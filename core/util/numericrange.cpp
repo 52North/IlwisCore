@@ -1,0 +1,156 @@
+#include <QDataStream>
+#include "ilwis.h"
+#include "serializationoptions.h"
+#include "numericrange.h"
+
+using namespace Ilwis;
+
+NumericRange::NumericRange() : _min(0), _max(-1) {
+
+}
+NumericRange::NumericRange(double mi, double ma, double step) : _step(step), _undefined(rUNDEF) {
+    setMin(mi);
+    setMax(ma);
+}
+NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
+{
+    set(vr);
+}
+
+bool NumericRange::isValid() const
+{
+    return _min <= _max ;
+}
+
+Range *NumericRange::clone() const {
+    return new NumericRange(_min, _max);
+}
+
+bool NumericRange::contains(double v, bool inclusive) const
+{
+    if (!isValid())
+        return false;
+
+    if ( inclusive)
+        return v >= _min && v <= _max;
+    return v > _min && v < _max;
+
+}
+
+double NumericRange::max() const
+{
+    return _max;
+}
+double NumericRange::min() const
+{
+    return _min;
+}
+void NumericRange::setMin(double v)
+{
+    if (_step == 1){
+        _min = (qint64) v;
+    } else
+        _min = v;
+}
+
+void NumericRange::setMax(double v)
+{
+    if (_step == 1){
+        _max = (qint64) v;
+    } else
+        _max = v;
+}
+
+void NumericRange::setStep(double step) {
+    _step = step;
+}
+
+double NumericRange::step() const {
+    return _step;
+}
+
+NumericRange& NumericRange::operator+=(double v)
+{
+    if ( !isValid()){
+        setMin(v);
+        setMax(v);
+    }
+    else {
+        if ( v > _max )
+            setMax(v);
+        if ( v < _min)
+            setMin(v);
+    }
+    return *this;
+}
+
+bool NumericRange::operator==(const NumericRange& vr) {
+    return vr.max() == max() && vr.min() == min() && vr.step() == step();
+}
+
+QString NumericRange::toString() const {
+    //TODO
+    return sUNDEF;
+}
+void NumericRange::set(const NumericRange& vr)
+{
+    _step = vr._step;
+    setMin(vr._min);
+    setMax(vr._max);
+}
+
+double NumericRange::evaluate(double v, bool inclusive) const
+{
+    if ( !contains(v, inclusive))
+        return _undefined;
+    if ( (_step - (int)_step) == 0.0)
+        return (qint32)(v + 0.5);
+    return v;
+}
+
+
+long NumericRange::significantDigits(double m1) const{
+    if ( fabs(m1) > 1e30)
+        return 100;
+
+    QString s = QString::number(m1);
+    for(int i=s.size() - 1; i != 0; --i ) {
+        QChar c = s[i];
+        if ( c != '0') {
+            if ( s.indexOf(".") > 0) // '.' is not counted for significant numbers
+                return i;
+            return i -1;
+        }
+    }
+    return s.size();
+}
+
+IlwisTypes NumericRange::determineType() const{
+
+    IlwisTypes vt = itUNKNOWN;
+    if ( _step == 1) { // integer part
+        bool sig = min() < 0;
+        if ( max() <=128 && sig)
+            vt =  itINT8;
+        else if ( max() <= 255 && !sig)
+            vt =  itUINT8;
+        else if ( max() <= 32768 && sig)
+            vt =  itINT16;
+        else if ( max() <= 65536 && !sig)
+            vt =  itUINT32;
+        else if ( max() <= 2147483647 && sig)
+            vt =  itINT32;
+        else if ( max() <= 4294967296 && !sig)
+           vt =  itUINT32;
+        else
+            vt =  itINT64; // unlikely but anyway
+    } else { // real part
+        int signif1 = std::max(significantDigits(min()), significantDigits(max()));
+        if ( signif1 > 6)
+           vt =  itDOUBLE;
+        else
+            vt =  itFLOAT;
+    }
+    return vt;
+}
+

@@ -1,0 +1,72 @@
+#ifndef ERRORHANDLING_H
+#define ERRORHANDLING_H
+
+#include <QDateTime>
+#include <QQueue>
+#include "Kernel_global.h"
+
+class QSqlError;
+
+namespace Ilwis {
+/*!
+ \brief logs issues within the system
+
+ Ilwis error/warning system is a system that stacks issues that arose in a logger in the kernel. Usualy methods that generate
+ an error also give a false/invalid return value. It is up to the programmer than to decide what to do. He always has a trace of what
+ happened in the issue logger. With creation of objects the issues that arose during creation are transfered to the objects after creation while the general
+ stack is cleared.
+ The philosophy of the error system is that it stays out of the way unless the client wants is.
+
+*/
+class KERNELSHARED_EXPORT IssueObject {
+public:
+    enum LogMessageFormat{lmfFull};
+    /*!
+     \brief identifies the severity of the issue
+
+     Critical errors will stop the system. Usualy are errors in the configuration of the system
+     Errors will not stop the system but probably will abort the action or miss some part of the action
+     Warnings are meant to signify non critical changes to the action. Results might be sligthly off but not overly so
+     Messages are just messages, no effect on the action
+    */
+    enum IssueType{itNone=0, itCritical=1, itError=2, itWarning=4,itMessage=8, itAll=255};
+
+    IssueObject();
+    IssueObject(const QString& message, int it);
+
+    QString message() const;
+    QDateTime time() const;
+    int type() const;
+    QString logMessage(LogMessageFormat lmf = lmfFull) const;
+
+private:
+    QDateTime _itime;
+    QString   _message;
+    int _itype;
+};
+
+class KERNELSHARED_EXPORT IssueLogger
+{
+public:
+    IssueLogger();
+
+    void log(const QString& message, int it=IssueObject::itError);
+    void logSql(const QSqlError& err);
+    void log(const QString &objectName, const QString &message, int it=IssueObject::itError);
+
+    QString popfirst(int it=IssueObject::itAll);
+    QString poplast(int it=IssueObject::itAll);
+    QString popList(int it=IssueObject::itAll, int number=-1);
+    IssueObject::IssueType maxIssueLevel() const;
+    void copy(IssueLogger& other);
+    void clear();
+
+private:
+    QString _lastmessage;
+    quint32 _repeatCount;
+    QQueue<IssueObject> _issues;
+
+};
+}
+
+#endif // ERRORHANDLING_H

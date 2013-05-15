@@ -1,0 +1,69 @@
+#ifndef RASTERLAYER_H
+#define RASTERLAYER_H
+
+#include "Kernel_global.h"
+
+namespace Ilwis {
+
+class Resource;
+class Grid;
+
+class KERNELSHARED_EXPORT GridCoverage : public Coverage
+{
+public:
+    enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
+    friend class PixelIterator;
+    friend class GridBlock;
+    friend class Grid;
+
+    GridCoverage();
+    GridCoverage(const Resource& res);
+    ~GridCoverage();
+
+    IlwisTypes ilwisType() const;
+
+    const Ilwis::IGeoReference &georeference() const;
+    void setGeoreference(const IGeoReference& grf) ;
+    Size size() const;
+    void size(const Size& sz);
+    void setDomain(const IDomain &dom);
+
+    bool storeBinaryData() ;
+    void copyBinary(const IlwisData<GridCoverage> &gc, int index);
+
+    double coord2value(const Coordinate &c, InterpolationMethod method=ipNEARESTNEIGHBOUR){
+        if ( _georef->isValid() && c.isValid()) {
+            Point2D<double> pix = _georef->coord2Pixel(c);
+            return pix2value(pix, method);
+        }
+        return rUNDEF;
+    }
+
+    double pix2value(const Point3D<double>& pix, InterpolationMethod method=ipNEARESTNEIGHBOUR){
+        if ( _georef->isValid() && !connector().isNull()) {
+            if ( _grid.isNull()) {
+                _grid.reset(connector()->loadGridData(this));
+                if (_grid.isNull())
+                    return rUNDEF;
+            }
+
+            double v = _grid->value(pix, (int)method);
+            return range()->evaluate(v);
+        }
+        return rUNDEF;
+    }
+
+protected:
+    QScopedPointer<Grid> _grid;
+
+private:
+    IGeoReference _georef;
+};
+
+typedef IlwisData<GridCoverage> IGridCoverage;
+}
+
+Q_DECLARE_METATYPE(Ilwis::IGridCoverage)
+
+
+#endif // RASTERLAYER_H

@@ -1,0 +1,56 @@
+#include <QString>
+#include <functional>
+
+#include "kernel.h"
+#include "ilwis.h"
+#include "angle.h"
+#include "point.h"
+#include "ilwisobject.h"
+#include "ilwisdata.h"
+#include "ellipsoid.h"
+#include "geodeticdatum.h"
+#include "projection.h"
+#include "ProjectionImplementation.h"
+#include "coordinatesystem.h"
+#include "conventionalcoordinatesystem.h"
+#include "projectionimplementationinternal.h"
+#include "platecaree.h"
+
+using namespace Ilwis;
+using namespace Internal;
+
+PlateCaree::PlateCaree(const Ilwis::Resource &item)
+{
+
+}
+
+PlateCaree::~PlateCaree()
+{
+}
+
+Coordinate PlateCaree::ll2crd(const LatLon &ll) const
+{
+    return Coordinate(ll.lon(), ll.lat());
+}
+
+LatLon PlateCaree::crd2ll(const Coordinate &crd) const
+{
+    return LatLon(crd);
+}
+
+bool PlateCaree::canUse(const Ilwis::Resource &resource)
+{
+    QString prj = resource.code();
+    if ( prj == sUNDEF)
+        return false;
+    if ( prj == "PRJPC")
+        return true;
+
+    return false;
+}
+
+bool PlateCaree::prepare(const QString& parms){
+    return true;
+}
+
+

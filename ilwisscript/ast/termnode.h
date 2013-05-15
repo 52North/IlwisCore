@@ -1,0 +1,31 @@
+#ifndef TERMNODE_H
+#define TERMNODE_H
+
+class TermNode : public ASTNode
+{
+public:
+    TermNode();
+    void setNumerical(char *num);
+    void setId(IDNode *node);
+    void setExpression(ExpressionNode *n);
+    void setString(char *s);
+    void setParameters(ParametersNode *n);
+    QString nodeType() const;
+    void setLogicalNegation(bool yesno);
+    void setNumericalNegation(bool yesno);
+    bool evaluate(SymbolTable& symbols, int scope);
+    void addRange(RangeDefinitionNode *n);
+private:
+    enum ContentState{csNumerical, csString, csExpression, csMethod,csID};
+    double _number;
+    QString _string;
+    QSharedPointer<ExpressionNode> _expression;
+    QSharedPointer<IDNode> _id;
+    QSharedPointer<ParametersNode> _parameters;
+    std::vector<QSharedPointer<RangeDefinitionNode> > _ranges;
+    ContentState _content;
+    bool _logicalNegation;
+    bool  _numericalNegation;
+};
+
+#endif // TERMNODE_H
