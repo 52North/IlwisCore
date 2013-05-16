@@ -21,18 +21,16 @@ GridInterpolator::GridInterpolator(Grid &grid) : _grid(grid)
 }
 
 double GridInterpolator::pix2value(const Point3D<double>& pix, int method) {
-    return 0;
-
-//    double v = rUNDEF;
-//    switch( method) {
-//    case 0: //nearestneighbour
-//        return _grid.value(pix.x(), pix.y(), pix.z());
-//    case 1: //bilinear
-//        return bilinear(pix);
-//    case 2: //bicubic
-//        return bicubic(pix);
-//    }
-//    return v;
+    double v = rUNDEF;
+    switch( method) {
+    case 0: //nearestneighbour
+        return _grid.value(pix.x(), pix.y(), pix.z());
+    case 1: //bilinear
+        return bilinear(pix);
+    case 2: //bicubic
+        return bicubic(pix);
+    }
+    return v;
 
 }
 

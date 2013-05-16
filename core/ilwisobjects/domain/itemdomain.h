@@ -8,6 +8,11 @@ namespace Ilwis {
 
 class ItemRange;
 
+/*!
+ItemDomains are domains that speak about discrete data. For example the domain of a thematic classification. There are various
+item domains that are all defined by the item type they control. This is passed as template parameter to the domain.
+The range of the domain contains all the valid items for that domain.
+ */
 template<class C> class ItemDomain : public Domain
 {
 public:
