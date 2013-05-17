@@ -97,18 +97,6 @@ NamedIdentifierRange *NamedIdentifier::createRange()
     return new NamedIdentifierRange();
 }
 
-void NamedIdentifier::store(QDataStream &s, const SerializationOptions &) const
-{
-    s << _name;
-}
-
-void NamedIdentifier::load(QDataStream &s)
-{
-    s >> _name;
-}
-
-
-
 bool NamedIdentifier::isValid() const {
     return _name != sUNDEF && _name != "";
 }
