@@ -38,20 +38,12 @@ Coordinate Projection::latlon2coord(const LatLon &ll) const
 
 LatLon Projection::coord2latlon(const Coordinate &crd) const
 {
-    if ( _implementation.isNull()) {
-        ERROR1(ERR_NO_INITIALIZED_1, name());
-
-        return llUNDEF;
-    }
     return _implementation->coord2latlon(crd);
 
 }
 
 bool Projection::prepare(const QString &parms)
 {
-    if ( _implementation.isNull()) {
-        return ERROR1(ERR_NO_INITIALIZED_1, name());
-    }
     return _implementation->prepare(parms);
 }
 
@@ -123,6 +115,18 @@ Projection::FindMatch Projection::find(const QString &v1, const QString &value)
         return fmMatch;
     return fmNoValue;
 }
+
+
+bool Projection::isEqual() const
+{
+    return false;
+}
+
+bool Projection::isValid() const
+{
+    return !_implementation.isNull();
+}
+
 
 
 

@@ -24,6 +24,7 @@ public:
     bool prepare(const QString& parms);
     bool prepare();
     IlwisTypes ilwisType() const;
+    bool isValid() const;
 
 private:
     IEllipsoid _ellipsoid;

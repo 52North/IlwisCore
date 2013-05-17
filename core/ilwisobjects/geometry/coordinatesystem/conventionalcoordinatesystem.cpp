@@ -38,28 +38,21 @@ Coordinate ConventionalCoordinateSystem::coord2coord(const ICoordinateSystem &so
 
 LatLon ConventionalCoordinateSystem::coord2latlon(const Coordinate &crdSource) const
 {
-    if (_projection.isValid() && crdSource != crdUNDEF) {
-        LatLon pl = _projection->coord2latlon(crdSource);
-        if (!pl.isValid())
-            return llUNDEF;
-        if (abs(pl.lon()) > 90)
-            return llUNDEF;
-        return pl;
-    }
-    else
+    LatLon pl = _projection->coord2latlon(crdSource);
+    if (!pl.isValid())
         return llUNDEF;
+    if (abs(pl.lon()) > 90)
+        return llUNDEF;
+    return pl;
 }
 
 Coordinate ConventionalCoordinateSystem::latlon2coord(const LatLon &ll) const
 {
-    if (_projection.isValid() && ll.isValid()) {
-       Coordinate xy = _projection->latlon2coord(ll);
-       if (xy == crdUNDEF)
-         return crdUNDEF;
-        return xy;
-     }
-     else
+    Coordinate xy = _projection->latlon2coord(ll);
+    if (xy == crdUNDEF)
         return crdUNDEF;
+    return xy;
+
 }
 
 
@@ -91,6 +84,11 @@ bool ConventionalCoordinateSystem::isLatLon() const
 IlwisTypes ConventionalCoordinateSystem::ilwisType() const
 {
     return itCONVENTIONALCOORDSYSTEM;
+}
+
+bool ConventionalCoordinateSystem::isValid() const
+{
+    return _projection.isValid() && _ellipsoid.isValid();
 }
 
 

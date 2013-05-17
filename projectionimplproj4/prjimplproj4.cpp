@@ -11,7 +11,7 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "ProjectionImplementation.h"
-#include "proj_api.h"
+#include "proj4\proj_api.h"
 #include "prjimplproj4.h"
 #include "proj4parameters.h"
 #include "coordinatesystem.h"
@@ -155,8 +155,10 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
         return Coordinate();
     }
 
-    if ( _outputIsLatLon)
-        return Coordinate(Degrees(y,false).degrees(),Degrees(x, false).degrees());
+    if ( _outputIsLatLon) {
+        //return Coordinate(Degrees(y,false).degrees(),Degrees(x, false).degrees());
+        return Coordinate(y * RAD_TO_DEG, x * RAD_TO_DEG);
+    }
     return Coordinate(x,y);
 }
 

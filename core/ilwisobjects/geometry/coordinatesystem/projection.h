@@ -40,7 +40,8 @@ public:
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
     QString parameterName(Projection::ProjectionParamValue pv) const;
 
-    bool isEqual();
+    bool isEqual() const;
+    bool isValid() const;
 
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);
 protected:
