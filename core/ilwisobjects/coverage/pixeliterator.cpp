@@ -129,7 +129,7 @@ inline bool PixelIterator::moveXYZ(int n) {
         _localOffset += _x;
         if ( (_y % _grid->maxLines()) == 0) {
             ++_currentBlock;
-            _localOffset = 0;
+            _localOffset = _x;
         }
         if ( _y > _endy) {
             ++_z;
