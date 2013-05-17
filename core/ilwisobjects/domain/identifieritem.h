@@ -37,8 +37,6 @@ public:
     bool operator==(const NamedIdentifier& item) const;
     QString itemType() const;
     static Ilwis::NamedIdentifierRange *createRange();
-    virtual void store(QDataStream &s, const SerializationOptions& opt) const;
-    virtual void load(QDataStream &s);
 
 private:
     QString _name;
