@@ -91,13 +91,13 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     kernel()->startClock();
     for(int i =0; i < cores; ++i) {
         PixelIterator iter(_outputGC,boxes[i]);
-        //futures[i] = std::async(std::launch::async, resampleFun, iter);
-        resampleFun(iter);
+        futures[i] = std::async(std::launch::async, resampleFun, iter);
+        //resampleFun(iter);
     }
     kernel()->endClock();
-//    for(int i =0; i < cores; ++i) {
-//        res &= futures[i].get();
-//    }
+    for(int i =0; i < cores; ++i) {
+        res &= futures[i].get();
+    }
 
     if ( res && ctx != 0) {
         QVariant value;
