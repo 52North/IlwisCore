@@ -47,6 +47,7 @@ public:
      *connector maybe for input/output or both. This enum describes how a connector can be used.
      */
     enum ConnectorMode{cmINPUT, cmOUTPUT, cmINOUT};
+    enum StoreMode{smMETADATA=1, smBINARYDATA=2};
 
     IlwisObject();
     IlwisObject(const Resource &resource);
@@ -137,8 +138,7 @@ public:
     */
    void setSerializationOptions(const SerializationOptions& opt);
    SerializationOptions serializationOptions() const;
-   bool storeMetaData() ;
-   virtual bool storeBinaryData() const;
+   virtual bool store(int mode=smMETADATA | smBINARYDATA);
    /*!
     connectTo allocates a connector of a certain format to the ilwisobject.
     * \param url the source/target were the connector connects to. The url maybe empty, internally an url will be created based on the format, name and working catalog
@@ -165,9 +165,8 @@ protected:
    QScopedPointer<ConnectorInterface>& connector(ConnectorMode mode=cmINOUT);
    const QScopedPointer<ConnectorInterface> &connector(ConnectorMode mode=cmINOUT) const;
    bool setValid(bool yesno);
-
-
-
+   bool storeMetaData() ;
+   bool storeBinaryData() ;
 private:
 
    bool _valid;

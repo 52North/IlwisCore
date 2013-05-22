@@ -240,8 +240,21 @@ bool IlwisObject::storeMetaData() {
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
 
 }
-bool IlwisObject::storeBinaryData() const{
-    return false;
+bool IlwisObject::storeBinaryData() {
+    if (!connector(cmOUTPUT).isNull())
+        return connector(cmOUTPUT)->storeBinaryData(this);
+    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+}
+
+bool IlwisObject::store(int storemode)
+{
+    bool ok = true;
+    if ( storemode & smMETADATA)
+        ok &= storeMetaData();
+    if ( storemode & smBINARYDATA)
+        ok &= storeBinaryData();
+
+    return ok;
 }
 
 //------ statics ----------------------------------------------
