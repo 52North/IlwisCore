@@ -35,7 +35,8 @@ Coordinate PlateCaree::ll2crd(const LatLon &ll) const
 
 LatLon PlateCaree::crd2ll(const Coordinate &crd) const
 {
-    return LatLon(crd);
+    LatLon ll(crd.y() * 180.0 / M_PI, crd.x() * 180.0 / M_PI);
+    return ll;
 }
 
 bool PlateCaree::canUse(const Ilwis::Resource &resource)
