@@ -27,12 +27,11 @@
 #include "containerstatistics.h"
 #include "coverage.h"
 #include "georeference.h"
-#include "boost/numeric/ublas/matrix.hpp"
-#include "boostext.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "grid.h"
 #include "gridcoverage.h"
+#include "gridinterpolator.h"
 //#include "identity.h"
 #include "OperationExpression.h"
 #include "operationmetadata.h"
@@ -69,11 +68,12 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
             return false;
 
     auto resampleFun = [&](PixelIterator iterOut) -> bool {
+        GridInterpolator interpolator(_inputGC, _method);
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
            Coordinate c = _outputGC->georeference()->pixel2Coord(position);
            Coordinate c2 = _inputGC->coordinateSystem()->coord2coord(_outputGC->coordinateSystem(),c);
-           *iterOut = _inputGC->coord2value(c2, _method);
+           *iterOut = interpolator.coord2value(c2);
             ++iterOut;
         }
         return true;
@@ -91,13 +91,14 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     kernel()->startClock();
     for(int i =0; i < cores; ++i) {
         PixelIterator iter(_outputGC,boxes[i]);
-        futures[i] = std::async(std::launch::async, resampleFun, iter);
-        //resampleFun(iter);
+       futures[i] = std::async(std::launch::async, resampleFun, iter);
+       // resampleFun(iter);
     }
-    kernel()->endClock();
+
     for(int i =0; i < cores; ++i) {
         res &= futures[i].get();
     }
+    kernel()->endClock();
 
     if ( res && ctx != 0) {
         QVariant value;
