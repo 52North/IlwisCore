@@ -15,6 +15,7 @@ public:
     friend class PixelIterator;
     friend class GridBlock;
     friend class Grid;
+    friend class GridInterpolator;
 
     GridCoverage();
     GridCoverage(const Resource& res);
@@ -28,7 +29,7 @@ public:
     void size(const Size& sz);
     void setDomain(const IDomain &dom);
 
-    bool storeBinaryData() ;
+    //bool storeBinaryData() ;
     void copyBinary(const IlwisData<GridCoverage> &gc, int index);
 
     double coord2value(const Coordinate &c, InterpolationMethod method=ipNEARESTNEIGHBOUR){
@@ -47,14 +48,16 @@ public:
                     return rUNDEF;
             }
 
-            double v = _grid->value(pix, (int)method);
+            double v = _grid->value(pix);
             return range()->evaluate(v);
         }
         return rUNDEF;
     }
 
 protected:
+    Grid *grid();
     QScopedPointer<Grid> _grid;
+    std::mutex _mutex;
 
 private:
     IGeoReference _georef;

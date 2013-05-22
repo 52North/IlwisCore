@@ -91,11 +91,26 @@ void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
     });
 }
 
-bool GridCoverage::storeBinaryData() {
-    if (!connector(cmOUTPUT).isNull())
-        return connector(cmOUTPUT)->storeBinaryData(this);
-    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+Grid *GridCoverage::grid()
+{
+    Locker lock(_mutex);
+    if ( _georef->isValid() && !connector().isNull()) {
+        if ( _grid.isNull()) {
+            _grid.reset(connector()->loadGridData(this));
+            if (_grid.isNull())
+                return 0;
+        }
+        Grid *grd = _grid.data();
+        return grd;
+    }
+    return 0;
 }
+
+//bool GridCoverage::storeBinaryData() {
+//    if (!connector(cmOUTPUT).isNull())
+//        return connector(cmOUTPUT)->storeBinaryData(this);
+//    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+//}
 
 Size GridCoverage::size() const
 {
