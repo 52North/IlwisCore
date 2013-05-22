@@ -157,7 +157,7 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 
     if ( _outputIsLatLon) {
         //return Coordinate(Degrees(y,false).degrees(),Degrees(x, false).degrees());
-        return Coordinate(y * RAD_TO_DEG, x * RAD_TO_DEG);
+        return Coordinate(x * RAD_TO_DEG, y * RAD_TO_DEG);
     }
     return Coordinate(x,y);
 }
