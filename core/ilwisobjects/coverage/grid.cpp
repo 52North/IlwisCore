@@ -104,7 +104,9 @@ bool GridBlockInternal::load() {
 
 
 //----------------------------------------------------------------------
-Grid::Grid(const Size& sz, int maxLines) : _maxLines(maxLines), _interpolator(*this){
+Grid::Grid(const Size& sz, int maxLines) : _maxLines(maxLines){
+    //Locker lock(_mutex);
+
     setSize(sz);
     quint64 bytesNeeded = _size.totalSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
@@ -145,18 +147,14 @@ void Grid::clear() {
     _blocks.clear();
 }
 
-double Grid::value(double x, double y, double z) {
-    if ( x <0 || y < 0 || z < 0)
+double Grid::value(const Voxel& vox) {
+    if ( vox.x() <0 || vox.y() < 0 || vox.z() < 0)
         return rUNDEF;
-    quint32 yoff = (qint32)y % _maxLines;
-    quint32 block = y / _maxLines;
-    quint32 bandBlocks = _blocksPerBand * z;
-    quint32 offset = _offsets[yoff][x];
+    quint32 yoff = (qint32)vox.y() % _maxLines;
+    quint32 block = vox.y() / _maxLines;
+    quint32 bandBlocks = _blocksPerBand * vox.z();
+    quint32 offset = _offsets[yoff][vox.x()];
     return value(bandBlocks + block, offset);
-}
-
-double Grid::value(const Point3D<double>& pix, int method) {
-    return _interpolator.pix2value(pix,method);
 }
 
 inline double &Grid::value(quint32 block, int offset )  {
@@ -168,8 +166,9 @@ inline double &Grid::value(quint32 block, int offset )  {
     return _blocks[_cacheHead]->at(offset);
 }
 
-inline void Grid::setValue(quint32 block, int offset, double v ) {
 
+
+inline void Grid::setValue(quint32 block, int offset, double v ) {
     if ( _blocks.size() <= _inMemoryIndex) {
         _blocks[block]->at(offset) = v;
         return ;
@@ -215,7 +214,6 @@ char *Grid::blockAsMemory(quint32 block, bool creation) {
 }
 
 void Grid::setSize(const Size& sz) {
-    Locker lock(_mutex);
     if ( _blocks.size() != 0)
         clear();
     _size = sz;
@@ -268,7 +266,6 @@ int Grid::numberOfBlocks() {
 
 inline bool Grid::update(quint32 block, bool creation) {
     Locker lock(_mutex);
-
     if ( block >= _blocks.size() )
         return false;
     if ( !_blocks[block]->isLoaded()) {

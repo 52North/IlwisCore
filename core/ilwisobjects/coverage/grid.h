@@ -4,7 +4,6 @@
 #include "Kernel_global.h"
 #include <list>
 #include <mutex>
-#include "gridinterpolator.h"
 
 
 namespace Ilwis {
@@ -66,13 +65,14 @@ class KERNELSHARED_EXPORT Grid
 public:
     friend class GridInterpolator;
 
-    Grid(const Size& sz, int maxLines=300);
+    Grid(const Size& sz, int maxLines=500);
     virtual ~Grid();
 
     void clear();
 
-    double value(const Point3D<double> &pix, int method=0);
+    //double value(const Point3D<double> &pix, int method=0);
     double& value(quint32 block, int offset );
+    double value(const Voxel& pix) ;
     void setValue(quint32 block, int offset, double v );
 
     quint32 blocks() const;
@@ -88,10 +88,10 @@ public:
 private:
     double bilinear(const Point3D<double> &pix) const;
     double bicubic(const Point3D<double> &pix) const;
-    double  value(double x, double y, double z);
     int numberOfBlocks();
     inline bool update(quint32 block, bool creation=false);
 
+    std::mutex _mutex;
     std::vector< GridBlockInternal *> _blocks;
     QList<quint32> _cache;
     quint32 _inMemoryIndex;
@@ -104,8 +104,6 @@ private:
     quint32 _cacheHead =0;
     std::vector<std::vector<quint32>> _offsets;
     std::vector<quint32> _blockOffsets;
-    GridInterpolator _interpolator;
-    std::mutex _mutex;
 };
 }
 
