@@ -17,9 +17,6 @@ public:
     void setDescription(const QString &desc);
     void setCode(const QString &code);
 
-    void store(QDataStream &s, const SerializationOptions& opt) const;
-    void load(QDataStream &s);
-
 private:
     QString _description;
     QString _code;

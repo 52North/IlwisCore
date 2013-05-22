@@ -47,15 +47,6 @@ void ThematicItem::setCode(const QString &code)
 }
 
 
-void ThematicItem::store(QDataStream &s, const SerializationOptions &opt) const
-{
-    NamedIdentifier::store(s, opt) ;
-    s << _code << _description;
-}
-
-void ThematicItem::load(QDataStream &s)
-{
-}
 
 
 
