@@ -85,6 +85,7 @@ void PixelIterator::copy(const PixelIterator &iter) {
     _positionid = iter._positionid;
     _endpositionid = iter._endpositionid;
     _localOffset = iter._localOffset;
+    _currentBlock = iter._currentBlock;
 
 }
 
@@ -129,7 +130,7 @@ inline bool PixelIterator::moveXYZ(int n) {
         _localOffset += _x;
         if ( (_y % _grid->maxLines()) == 0) {
             ++_currentBlock;
-            _localOffset = _x;
+            _localOffset = 0;
         }
         if ( _y > _endy) {
             ++_z;
