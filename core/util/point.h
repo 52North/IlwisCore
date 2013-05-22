@@ -118,6 +118,23 @@ public:
         }
     }
 
+    Point2D(Point2D<CrdType>&& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
+    }
+
+    Point2D(const Point2D<CrdType>& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
+    }
+
+    virtual ~Point2D() {
+    }
+
+    Ilwis::Point2D<CrdType>& operator=(const Ilwis::Point2D<CrdType>& p2) {
+        this->x( p2.x());
+        this->y( p2.y());
+        return *this;
+    }
+
+
+
     /*!
      Constructs a 2D point from a 3D point. This constructor mainly exist for easy conversion between the two point models. Of course the
      third dimension will be lost after this conversion
@@ -240,12 +257,24 @@ public:
         z(v3);
     }
 
+    virtual ~Point3D() {
+
+    }
+
     /*!
      Copy constructor for 2D points. It ensure that 2D and 3D points can be interchanged
      * \param 2D point
      */
     Point3D(const Point2D<CrdType>& p) : Point<CrdType, 3>(p.x(), p.y()) {
         z(0);
+    }
+
+    Point3D(Point3D<CrdType>&& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
+        this->z(crd.y());
+    }
+
+    Point3D(const Point3D<CrdType>& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
+        this->z(crd.y());
     }
 
     template<typename U> Point3D(const Point3D<U>& p) {
@@ -292,6 +321,13 @@ public:
         this->x( p2.x());
         this->y( p2.y());
         this->z(0);
+        return *this;
+    }
+
+    Ilwis::Point3D<CrdType>& operator=(const Ilwis::Point3D<CrdType>& p2) {
+        this->x( p2.x());
+        this->y( p2.y());
+        this->z(p2.z());
         return *this;
     }
 
@@ -390,8 +426,8 @@ public:
     LatLon() : Ilwis::Point2D<Degrees>(), _height(Ilwis::rUNDEF) {}
     LatLon(const Degrees& lat, const Degrees& lon, double h=0) : Ilwis::Point2D<Degrees>(lon, lat) , _height(h) {}
     LatLon(const Point3D<double>& crd) : Ilwis::Point2D<Degrees>() {
-        setLat(crd.x());
-        setLon(crd.y());
+        x(crd.x());
+        y(crd.y());
         z(crd.z());
     }
 
