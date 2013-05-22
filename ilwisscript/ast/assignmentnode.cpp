@@ -107,8 +107,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             gcresult->setName(result);
             gcresult->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
             gcresult->setCreateTime(Ilwis::Time::now());
-            gcresult->storeMetaData();
-            gcresult->storeBinaryData();
+            gcresult->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
         symbols.addSymbol(_result->id(), scope, 0, _expression->value())  ;
         return true;
