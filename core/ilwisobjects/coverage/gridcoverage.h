@@ -32,15 +32,15 @@ public:
     //bool storeBinaryData() ;
     void copyBinary(const IlwisData<GridCoverage> &gc, int index);
 
-    double coord2value(const Coordinate &c, InterpolationMethod method=ipNEARESTNEIGHBOUR){
+    double coord2value(const Coordinate &c){
         if ( _georef->isValid() && c.isValid()) {
             Point2D<double> pix = _georef->coord2Pixel(c);
-            return pix2value(pix, method);
+            return pix2value(pix);
         }
         return rUNDEF;
     }
 
-    double pix2value(const Point3D<double>& pix, InterpolationMethod method=ipNEARESTNEIGHBOUR){
+    double pix2value(const Point3D<double>& pix){
         if ( _georef->isValid() && !connector().isNull()) {
             if ( _grid.isNull()) {
                 _grid.reset(connector()->loadGridData(this));
