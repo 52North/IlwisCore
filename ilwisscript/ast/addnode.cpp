@@ -58,10 +58,22 @@ bool AddNode::handleAdd(const NodeValue& vright) {
 }
 
 bool AddNode::handleSubstract(const NodeValue& vright) {
+    QString expr;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
        _value = {_value.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
        return true;
+    }else if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
+        expr = QString("binarymathraster(%1,%2,substract)").arg(_value.toString()).arg(vright.toDouble());
+    } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
+        expr = QString("binarymathraster(%1,%2,substract)").arg(vright.toString()).arg(_value.toDouble());
+    } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
+        expr = QString("binarymathraster(%1,%2,substract)").arg(vright.toString()).arg(_value.toString());
     }
-    return false;
+    Ilwis::ExecutionContext ctx;
+    bool ok = Ilwis::commandhandler()->execute(expr, &ctx);
+    if ( !ok || ctx._results.size() != 1)
+        return false;
+    _value = {ctx._results[0], NodeValue::ctMethod};
+    return true;
 }
 
