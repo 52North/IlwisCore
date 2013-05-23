@@ -102,7 +102,7 @@ quint64 Script::createMetadata()
     Resource res(url, itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","ilwisscript");
-    res.addProperty("inparameters",1);
+    res.addProperty("inparameters","1");
     res.addProperty("pin_1_type", itFILE | itSTRING);
     res.addProperty("pin_1_name", TR("input script file"));
     res.addProperty("pin_1_domain","none");
