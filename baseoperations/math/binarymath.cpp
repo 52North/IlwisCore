@@ -3,6 +3,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <functional>
+#include <future>
 
 #include "kernel.h"
 #include "ilwis.h"
@@ -27,6 +28,8 @@
 #include "containerstatistics.h"
 #include "coverage.h"
 #include "georeference.h"
+#include "boost/numeric/ublas/matrix.hpp"
+#include "boostext.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "grid.h"
@@ -66,67 +69,110 @@ bool BinaryMath::setOutput(ExecutionContext *ctx) {
 }
 
 bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx) {
-    PixelIterator iterIn(_inputGC1, _box);
-    PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
 
-    double v_in = 0;
-    for_each(iterOut, iterOut.end(), [&](double& v){
-        if ( (v_in = *iterIn) != rUNDEF) {
-            switch(_operator) {
+    auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
+        PixelIterator iterIn(_inputGC1, box);
+        PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
+
+        double v_in = 0;
+        for_each(iterOut, iterOut.end(), [&](double& v){
+            if ( (v_in = *iterIn) != rUNDEF) {
+                switch(_operator) {
                 case otPLUS:
-                   v = v_in + _number;break;
+                    v = v_in + _number;break;
                 case otMINUS:
-                   v = v_in - _number;break;
+                    v = v_in - _number;break;
                 case otDIV:
-                if ( _number != 0)
-                    v = v_in / _number;
-                else
-                    v = rUNDEF;
-                break;
+                    if ( _number != 0)
+                        v = v_in / _number;
+                    else
+                        v = rUNDEF;
+                    break;
                 case otMULT:
                     v = v_in * _number;break;
+                }
             }
-         }
-        ++iterIn;
-    });
+            ++iterIn;
+        });
+    };
+
+    std::vector<Box3D<qint32>> boxes;
+
+    int cores = OperationHelper::subdivideTasks(_outputGC,boxes);
+
+    if ( cores == iUNDEF)
+        return false;
+
+    std::vector<std::future<bool>> futures(cores);
+    bool res = true;
+
+    for(int i =0; i < cores; ++i) {
+        futures[i] = std::async(std::launch::async, binaryMath, boxes[i]);
+    }
+
+    for(int i =0; i < cores; ++i) {
+        res &= futures[i].get();
+    }
+
 
     return setOutput(ctx);
 
 }
 
 bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
-    PixelIterator iterIn1(_inputGC1, _box);
-    PixelIterator iterIn2(_inputGC2, _box);
-    PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
+    auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
+        PixelIterator iterIn1(_inputGC1, box);
+        PixelIterator iterIn2(_inputGC2, box);
+        PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
 
-    double v_in1 = 0;
-    double v_in2 = 0;
-    for_each(iterOut, iterOut.end(), [&](double& v){
-        v_in1 = *iterIn1;
-        v_in2 = *iterIn2;
-        if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
-            switch(_operator) {
+        double v_in1 = 0;
+        double v_in2 = 0;
+        for_each(iterOut, iterOut.end(), [&](double& v){
+            v_in1 = *iterIn1;
+            v_in2 = *iterIn2;
+            if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
+                switch(_operator) {
                 case otPLUS:
-                   v = v_in1 + v_in2;break;
+                    v = v_in1 + v_in2;break;
                 case otMINUS:
-                   v = v_in1 - v_in2;break;
+                    v = v_in1 - v_in2;break;
                 case otDIV:
-                if ( v_in2 != 0)
-                    v = v_in1 / v_in2;
-                else
-                    v = rUNDEF;
-                break;
+                    if ( v_in2 != 0)
+                        v = v_in1 / v_in2;
+                    else
+                        v = rUNDEF;
+                    break;
                 case otMULT:
                     v = v_in1 * v_in2;break;
+                }
             }
-        }
-        ++iterIn1;
-        ++iterIn2;
-    });
+            ++iterIn1;
+            ++iterIn2;
+        });
+        return true;
+    };
 
-    return setOutput(ctx);
+    std::vector<Box3D<qint32>> boxes;
 
+    int cores = OperationHelper::subdivideTasks(_outputGC,boxes);
 
+    if ( cores == iUNDEF)
+        return false;
+
+    std::vector<std::future<bool>> futures(cores);
+    bool res = true;
+
+    for(int i =0; i < cores; ++i) {
+        futures[i] = std::async(std::launch::async, binaryMath, boxes[i]);
+    }
+
+    for(int i =0; i < cores; ++i) {
+        res &= futures[i].get();
+    }
+    if (res)
+        return setOutput(ctx);
+
+    return false;
 }
 
 bool BinaryMath::execute(ExecutionContext *ctx)
@@ -291,8 +337,9 @@ quint64 BinaryMath::createMetadata()
     QString url = QString("ilwis://operations/binarymathraster");
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
-    res.addProperty("longname","binarymathRaster");
-    res.addProperty("inparameters",3);
+    res.addProperty("longname","binarymathraster");
+    res.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
+    res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRIDCOVERAGE | itNUMERIC);
     res.addProperty("pin_1_name", TR("input gridcoverage or number"));
     res.addProperty("pin_1_domain","value");
