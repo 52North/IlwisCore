@@ -95,8 +95,8 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                     QSqlRecord rec = db2.record();
                     values[rec.value("propertyname").toString()] = rec.value("propertyvalue").toString();
                 }
-                int n = values["inparameters"].toInt();
-                if ( n != expr.parameterCount())
+                QString parmcount = values["inparameters"];
+                if ( !expr.matchesParameterCount(parmcount))
                     continue;
                 bool found = true;
                 for(int i=0; i < expr.parameterCount(); ++i) {
