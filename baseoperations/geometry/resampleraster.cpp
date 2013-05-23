@@ -80,25 +80,23 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     };
 
     std::vector<Box3D<qint32>> boxes;
-    int cores = std::min(QThread::idealThreadCount() - 1, _outputGC->size().ysize());
-    if ( _outputGC->size().totalSize() < 10000)
-        cores = 1;
-    OperationHelper::splitBoxY(cores,_outputGC->size(),boxes);
+    int cores = OperationHelper::subdivideTasks(_outputGC, boxes);
+    if ( cores == iUNDEF)
+        return false;
 
     std::vector<std::future<bool>> futures(cores);
     bool res = true;
 
-    kernel()->startClock();
+//    kernel()->startClock();
     for(int i =0; i < cores; ++i) {
         PixelIterator iter(_outputGC,boxes[i]);
        futures[i] = std::async(std::launch::async, resampleFun, iter);
-       // resampleFun(iter);
     }
 
     for(int i =0; i < cores; ++i) {
         res &= futures[i].get();
     }
-    kernel()->endClock();
+//    kernel()->endClock();
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -157,7 +155,8 @@ quint64 ResampleRaster::createMetadata()
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","resample");
-    res.addProperty("inparameters",3);
+    res.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
+    res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));
