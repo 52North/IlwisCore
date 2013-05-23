@@ -300,6 +300,23 @@ QString OperationExpression::name(bool caseInsensitive) const
     return  _name;
 }
 
+bool OperationExpression::matchesParameterCount(const QString& match, bool in) const {
+    int count = parameterCount(in);
+    QStringList parts = match.split("|");
+    foreach(const QString& part, parts) {
+        bool ok;
+        int index = part.toInt(&ok);
+        if (!ok) {
+            return ERROR0("Illegal metdata definition");
+        }
+        if ( index == count)
+            return true;
+    }
+    return false;
+
+
+}
+
 int OperationExpression::parameterCount(bool in) const
 {
     const QList<Parameter>& parameters = in ? _inParameters : _outParameters;
