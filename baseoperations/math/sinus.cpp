@@ -138,7 +138,7 @@ quint64 Sinus::createMetadata() {
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","sinus");
-    res.addProperty("inparameters",1);
+    res.addProperty("inparameters","1");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_domain","value");
