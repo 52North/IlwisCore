@@ -90,6 +90,7 @@ public:
     bool isValid() const;
     QUrl metaUrl(bool simple=true) const;
     void setExpression(const QString &e);
+    bool matchesParameterCount(const QString &match, bool in=true) const;
 private:
     QString _name;
     QList<Parameter> _inParameters;
