@@ -29,3 +29,4 @@
 #define WARN_HAS_STATUS2 "Object %1 has status %2"
 #define ERR_ILLEGAL_VALUE_2 "Illegal %1 value : %2"
 #define ERR_ILLEGAL_PARM_3 "Illegal parameter %1 value: %2 in %3"
+#define ERR_ILLEGAL_NUM_PARM3 "Illegal number of parameters in %1. Expected %2, got %3"
