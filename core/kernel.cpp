@@ -181,7 +181,7 @@ bool Kernel::error(const QString &message, const QString p1, const QString p2, c
     else if ( p3 == sUNDEF)
         issues()->log(TR(message).arg(p1, p2));
     else
-        issues()->log(TR(message).arg(p1, p2, p3));
+        issues()->log(TR(message).arg(p1).arg(p2).arg(p3));
     return false;
 }
 
