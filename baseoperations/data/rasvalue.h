@@ -1,6 +1,8 @@
 #ifndef RASVALUE_H
 #define RASVALUE_H
 
+namespace Ilwis {
+namespace BaseOperations {
 class RasValue : public OperationImplementation
 {
 public:
@@ -14,6 +16,10 @@ public:
     static quint64 createMetadata();
 private:
     IGridCoverage _inputGC;
+    Voxel _vox;
+
 };
+}
+}
 
 #endif // RASVALUE_H
