@@ -12,14 +12,15 @@ OperationMetaData::OperationMetaData()
 
 OperationMetaData::OperationMetaData(const Resource &res) : IlwisObject(res)
 {
-    bool ok;
-    int n = res["inparameters"].toInt(&ok);
-    if ( ok) {
-        parmfromResource(res,n,"pin");
+    QString pcount = res["inparameters"].toString();
+    if ( pcount != "") {
+        QStringList parts = pcount.split("|");
+        parmfromResource(res,parts.back().toInt(),"pin");
     }
-    n = res["outparameters"].toInt(&ok);
-    if ( ok) {
-        parmfromResource(res,n,"pout");
+    pcount = res["outparameters"].toString();
+    if ( pcount != "") {
+        QStringList parts = pcount.split("|");
+        parmfromResource(res,parts.back().toInt(),"pout");
     }
     _namespace = res["namespace"].toString();
     _longName = res["longname"].toString();
