@@ -1,34 +1,7 @@
-#include <QString>
-#include <QVector>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
-
-#include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "domain.h"
-#include "numericrange.h"
-#include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "valuedefiner.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "georeference.h"
-#include "connectorinterface.h"
-#include "grid.h"
+#include "raster.h"
 #include "gridcoverage.h"
 #include "pixeliterator.h"
-#include "resource.h"
+
 
 
 quint64 Ilwis::GridBlockInternal::_blockid = 0;

@@ -1,44 +1,8 @@
-#include <QString>
-#include <QVector>
-#include <QSqlQuery>
-#include <QSqlError>
 #include <functional>
 #include <future>
-
-#include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "domain.h"
-#include "numericrange.h"
-#include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "valuedefiner.h"
-#include "connectorinterface.h"
-#include "abstractfactory.h"
-#include "connectorfactory.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "georeference.h"
-#include "boost/numeric/ublas/matrix.hpp"
-#include "boostext.h"
-#include "simpelgeoreference.h"
-#include "cornersgeoreference.h"
-#include "grid.h"
-#include "gridcoverage.h"
-#include "OperationExpression.h"
-#include "operationmetadata.h"
-#include "operation.h"
-#include "operationhelper.h"
-#include "commandhandler.h"
+#include "raster.h"
+#include "ilwisoperation.h"
+#include "pixeliterator.h"
 #include "pixeliterator.h"
 #include "binarymath.h"
 
@@ -95,6 +59,7 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx) {
             }
             ++iterIn;
         });
+        return true;
     };
 
     std::vector<Box3D<qint32>> boxes;

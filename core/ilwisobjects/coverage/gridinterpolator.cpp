@@ -1,34 +1,4 @@
-#include <QList>
-#include <QDebug>
-#include <QDir>
-#include <QTemporaryFile>
-#include <iostream>
-#include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "errorobject.h"
-#include "size.h"
-#include "ilwiscontext.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "domain.h"
-#include "numericrange.h"
-#include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "valuedefiner.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "georeference.h"
-#include "connectorinterface.h"
-#include "grid.h"
-#include "gridcoverage.h"
+#include "raster.h"
 #include "gridinterpolator.h"
 
 using namespace Ilwis;
