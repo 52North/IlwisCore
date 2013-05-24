@@ -45,6 +45,23 @@ QString NumericDomain::value(double v) const
     return QString::number(v)    ;
 }
 
+Domain::Containement NumericDomain::contains(const QString &value) const
+{
+    if ( !_range.isNull()) {
+        bool ok;
+        double v = value.toDouble(&ok);
+        if (!ok)
+            return Domain::cNONE;
+        QSharedPointer<NumericRange> vr(_range.dynamicCast<NumericRange>());
+        if ( !vr.isNull() && vr->contains(v))
+            return Domain::cSELF;
+        if (!ok && !isStrict() && parent().isValid())
+            if (parent()->contains(value) == Domain::cSELF)
+                return Domain::cPARENT;
+    }
+    return Domain::cNONE;
+}
+
 
 
 

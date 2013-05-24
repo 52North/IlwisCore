@@ -20,6 +20,7 @@ The strict flag limits this behavior. For the behaviour of the individual domain
 class KERNELSHARED_EXPORT Domain : public IlwisObject
 {
 public:
+    enum Containement{cSELF, cPARENT, cNONE};
     Domain();
     Domain(const Resource& res);
     /*!
@@ -64,6 +65,7 @@ public:
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QVariant &v);
+    virtual Containement contains(const QString& value) const = 0;
 
 private:
     bool _strict;

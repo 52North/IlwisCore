@@ -24,7 +24,15 @@ public:
     ~ItemDomain() {
         delete _range;
     }
+    Domain::Containement contains(const QString& val) const{
+        if(item(val) != 0)
+            return Domain::cSELF;
 
+        if (!isStrict() && parent().isValid())
+            if (parent()->contains(val) == Domain::cSELF)
+                return Domain::cPARENT;
+        return Domain::cNONE;
+    }
     /*!
      returns a string representation of the item pointed to by the index
      * \param 0 based index, if the index is invalid sUNDEF will be returned

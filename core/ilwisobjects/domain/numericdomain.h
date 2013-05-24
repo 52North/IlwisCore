@@ -15,6 +15,7 @@ public:
     }
     void setRange(Range *vr);
     QString value(double v) const;
+    Domain::Containement contains(const QString& value) const;
 
     IlwisTypes valueType() const;
     IlwisTypes ilwisType() const;
