@@ -37,11 +37,18 @@ OperationImplementation::State Script::prepare() {
         QFileInfo inf( url.toLocalFile());
         bool exists = inf.exists();
         if (exists && inf.suffix() == "isf") {
+            std::string text;
             std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
             if(in.is_open() && in.good()) {
-                _bufferSize = inf.size();
-                _buffer.reset(new char[_bufferSize + 1]);
-                in.read(_buffer.get(), _bufferSize) ;
+                while(!in.eof()) {
+                    std::string line;
+                    std::getline(in, line);
+                    text += line + ";";
+                }
+                char *buf = new char[text.size()];
+                memcpy(buf,text.c_str(), text.size());
+                _buffer.reset( buf );
+                _bufferSize = text.size();
                 return sPREPARED;
             }
         } else {
