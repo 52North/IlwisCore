@@ -14,6 +14,8 @@ public:
     Ilwis::OperationImplementation::State prepare();
 
     static quint64 createMetadata();
+private:
+    IGridCoverage _inputGC;
 };
 }
 }

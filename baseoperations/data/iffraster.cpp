@@ -20,16 +20,39 @@ IffRaster::IffRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
 
 bool IffRaster::execute(ExecutionContext *ctx)
 {
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare()) != sPREPARED)
+            return false;
+
     return false;
 }
 
-Ilwis::OperationImplementation *IffRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+OperationImplementation *IffRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-    return 0;
+    return new IffRaster(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State IffRaster::prepare()
+OperationImplementation::State IffRaster::prepare()
 {
+    QString gc = _expression.parm(0).value();
+    QString outputName = _expression.parm(0,false).value();
+
+    if (!_inputGC.prepare(gc)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+        return sPREPAREFAILED;
+    }
+    const Parameter& choice1 = _expression.parm(1);
+    QString outputchoice1 = choice1.value();
+    Resource map1 = mastercatalog()->name2Resource(outputchoice1, itGRIDCOVERAGE);
+    if ( !map1.isValid() && choice1.domain() != sUNDEF) {
+        IDomain dm;
+        dm.prepare(choice1.domain());
+        if ( dm->contains(choice1.value()) != Domain::cNONE) {
+
+        }
+
+    }
+
     return sNOTPREPARED;
 }
 
