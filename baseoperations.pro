@@ -25,14 +25,16 @@ HEADERS += \
     baseoperations/math/sinus.h \
     baseoperations/math/binarymath.h \
     baseoperations/geometry/resampleraster.h \
-    baseoperations/data/rasvalue.h
+    baseoperations/data/rasvalue.h \
+    baseoperations/data/iffraster.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
     baseoperations/math/sinus.cpp \
     baseoperations/math/binarymath.cpp \
     baseoperations/geometry/resampleraster.cpp \
-    baseoperations/data/rasvalue.cpp
+    baseoperations/data/rasvalue.cpp \
+    baseoperations/data/iffraster.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
