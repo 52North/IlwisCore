@@ -163,7 +163,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/commandhandler.h \
     core/ilwisobjects/operation/operationhelper.h \
     core/ilwisobjects/coverage/gridinterpolator.h \
-    core/util/locker.h
+    core/util/locker.h \
+    core/ilwisobjects/coverage/raster.h \
+    core/ilwisobjects/operation/ilwisoperation.h
 
 
 
