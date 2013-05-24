@@ -105,13 +105,13 @@ quint64 RasValue::createMetadata()
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with any domain"));
-    res.addProperty("pin_2_type", itINT32);
+    res.addProperty("pin_2_type", itINTEGER);
     res.addProperty("pin_2_name", TR("column"));
     res.addProperty("pin_2_desc",TR("column number in the grid"));
-    res.addProperty("pin_3_type", itINT32);
+    res.addProperty("pin_3_type", itINTEGER);
     res.addProperty("pin_3_name", TR("row"));
     res.addProperty("pin_3_desc",TR("row number in the grid"));
-    res.addProperty("pin_4_type", itINT32);
+    res.addProperty("pin_4_type", itINTEGER);
     res.addProperty("pin_4_name", TR("band number"));
     res.addProperty("pin_4_desc",TR("band number in the grid, optional"));
     res.addProperty("outparameters",1);
