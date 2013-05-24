@@ -51,7 +51,6 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     std::vector<std::future<bool>> futures(cores);
     bool res = true;
 
-//    kernel()->startClock();
     for(int i =0; i < cores; ++i) {
         PixelIterator iter(_outputGC,boxes[i]);
        futures[i] = std::async(std::launch::async, resampleFun, iter);
@@ -60,7 +59,6 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     for(int i =0; i < cores; ++i) {
         res &= futures[i].get();
     }
-//    kernel()->endClock();
 
     if ( res && ctx != 0) {
         QVariant value;
