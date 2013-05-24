@@ -8,7 +8,7 @@
 #include "abstractfactory.h"
 
 namespace Ilwis {
-namespace RasterOperations {
+namespace BaseOperations {
 class RasterOperationsModule : public Module
 {
     Q_OBJECT

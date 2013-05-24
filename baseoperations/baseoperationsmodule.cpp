@@ -35,9 +35,10 @@
 #include "math/sinus.h"
 #include "math/binarymath.h"
 #include "geometry/resampleraster.h"
+#include "data/rasvalue.h"
 
 using namespace Ilwis;
-using namespace RasterOperations;
+using namespace BaseOperations;
 
 RasterOperationsModule::RasterOperationsModule(QObject *parent) : Module(parent, "RasterOperations", "iv40","1.0")
 {
@@ -54,6 +55,7 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(Sinus::createMetadata(), Sinus::create);
     commandhandler()->addOperation(BinaryMath::createMetadata(), BinaryMath::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
+    commandhandler()->addOperation(RasValue::createMetadata(), RasValue::create);
 }
 
 QString RasterOperationsModule::name() const
