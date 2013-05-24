@@ -2,6 +2,7 @@
 #define PLUS_H
 
 namespace Ilwis {
+namespace BaseOperations{
 class BinaryMath : public OperationImplementation
 {
 public:
@@ -29,6 +30,7 @@ private:
     Box3D<qint32> _box;
     OperatorType _operator;
 };
+}
 }
 
 #endif // PLUS_H

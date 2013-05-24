@@ -2,6 +2,7 @@
 #define SIN_H
 
 namespace Ilwis {
+namespace BaseOperations{
 class Sinus : public OperationImplementation
 {
 public:
@@ -21,6 +22,7 @@ private:
     double _number;
 
 };
+}
 }
 
 #endif // SIN_H

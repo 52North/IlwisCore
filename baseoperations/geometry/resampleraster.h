@@ -2,6 +2,7 @@
 #define RESAMPLERASTER_H
 
 namespace Ilwis {
+namespace BaseOperations {
 class ResampleRaster : public OperationImplementation
 {
 public:
@@ -23,6 +24,7 @@ private:
     Box3D<qint32> _box;
 
 };
+}
 }
 
 #endif // RESAMPLERASTER_H

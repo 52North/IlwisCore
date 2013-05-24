@@ -42,6 +42,7 @@
 #include "sinus.h"
 
 using namespace Ilwis;
+using namespace BaseOperations;
 
 Sinus::Sinus() {
 

@@ -44,6 +44,7 @@
 #include "resampleraster.h"
 
 using namespace Ilwis;
+using namespace BaseOperations;
 
 
 Ilwis::OperationImplementation *ResampleRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)

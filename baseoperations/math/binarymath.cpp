@@ -43,6 +43,7 @@
 #include "binarymath.h"
 
 using namespace Ilwis;
+using namespace BaseOperations;
 
 
 OperationImplementation *BinaryMath::create(quint64 metaid, const Ilwis::OperationExpression &expr)
