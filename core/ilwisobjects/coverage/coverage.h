@@ -4,6 +4,10 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+
+class Table;
+typedef IlwisData<Table> ITable;
+
 class KERNELSHARED_EXPORT Coverage : public IlwisObject, public ValueDefiner
 {
 public:
