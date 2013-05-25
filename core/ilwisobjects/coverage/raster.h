@@ -9,7 +9,7 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "connectorinterface.h"
 #include "containerstatistics.h"
 #include "coverage.h"

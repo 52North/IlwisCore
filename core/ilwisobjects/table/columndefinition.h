@@ -2,7 +2,7 @@
 #define COLUMN_H
 
 namespace Ilwis {
-class KERNELSHARED_EXPORT ColumnDefinition : public Identity, public ValueDefiner
+class KERNELSHARED_EXPORT ColumnDefinition : public Identity
 {
 public:
     ColumnDefinition();
@@ -10,6 +10,10 @@ public:
     bool isValid() const;
 
     QString type() const;
+    const DataDefinition &datadef() const;
+    DataDefinition &datadef();
+private:
+    DataDefinition _datadef;
 
 };
 }

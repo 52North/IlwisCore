@@ -8,7 +8,7 @@ namespace Ilwis {
 class Table;
 typedef IlwisData<Table> ITable;
 
-class KERNELSHARED_EXPORT Coverage : public IlwisObject, public ValueDefiner
+class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
 public:
     Coverage();
@@ -25,12 +25,15 @@ public:
     ITable attributeTable(IlwisTypes type) const ;
     void attributeTable(IlwisTypes type, const ITable& tbl);
     CoverageStatistics& statistics();
+    const DataDefinition& datadef() const;
+    DataDefinition& datadef();
 
 private:
     ICoordinateSystem _coordinateSystem;
     Box2D<double> _envelope;
     QHash<IlwisTypes, ITable> _attributeTables;
     CoverageStatistics _statistics;
+    DataDefinition _datadef;
 
 };
 

@@ -7,6 +7,7 @@
 CONFIG += plugin
 TARGET = ilwisscript
 
+QMAKE_CXXFLAGS += -Wno-unknown-pragmas
 
 include(global.pri)
 

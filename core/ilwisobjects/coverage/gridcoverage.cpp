@@ -44,12 +44,6 @@ IlwisTypes GridCoverage::ilwisType() const
 }
 
 
-void GridCoverage::setDomain(const IDomain& dom){
-    ValueDefiner::setDomain(dom);
-
-}
-
-
 void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
     IGridCoverage gcNew;
     gcNew.set(this);

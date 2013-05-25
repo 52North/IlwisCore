@@ -4,7 +4,7 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "range.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "connectorinterface.h"
 #include "basetable.h"

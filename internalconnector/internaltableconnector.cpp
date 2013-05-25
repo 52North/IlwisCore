@@ -7,7 +7,7 @@
 #include "domain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "basetable.h"

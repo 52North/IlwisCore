@@ -33,7 +33,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/domain.cpp \
     core/ilwisobjects/domain/thematicitem.cpp \
     core/util/range.cpp \
-    core/ilwisobjects/valuedefiner.cpp \
     core/catalog/catalog.cpp \
     core/catalog/catalogconnector.cpp \
     core/connectorfactory.cpp \
@@ -78,7 +77,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/operationhelper.cpp \
     core/ilwisobjects/coverage/blockiterator.cpp \
     core/ilwisobjects/coverage/gridinterpolator.cpp \
-    core/util/locker.cpp
+    core/util/locker.cpp \
+    core/ilwisobjects/domain/datadefinition.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -106,7 +106,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/domain.h \
     core/ilwisobjects/domain/thematicitem.h \
     core/util/range.h \
-    core/ilwisobjects/valuedefiner.h \
     core/catalog/catalog.h \
     core/catalog/catalogconnector.h \
     core/connectorfactory.h \
@@ -165,7 +164,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/gridinterpolator.h \
     core/util/locker.h \
     core/ilwisobjects/coverage/raster.h \
-    core/ilwisobjects/operation/ilwisoperation.h
+    core/ilwisobjects/operation/ilwisoperation.h \
+    core/ilwisobjects/domain/datadefinition.h
 
 
 

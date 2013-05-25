@@ -18,7 +18,7 @@
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "containerstatistics.h"
@@ -77,7 +77,7 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
             resource.addProperty("georeference", IVARIANT(inputGC->georeference()));
     }
     if ( what & itDOMAIN) {
-        resource.addProperty("domain", IVARIANT(inputGC->domain()));
+        resource.addProperty("domain", IVARIANT(inputGC->datadef().domain()));
     }
     resource.prepare();
 

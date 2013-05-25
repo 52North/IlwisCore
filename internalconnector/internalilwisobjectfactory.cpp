@@ -32,7 +32,7 @@
 #include "projectionfactory.h"
 #include "nullprojection.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "containerstatistics.h"
@@ -194,7 +194,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
         }
     }
     if ( dom.isValid()){
-        coverage->setDomain(dom);
+        coverage->datadef().domain(dom);
     }
     return true;
 }

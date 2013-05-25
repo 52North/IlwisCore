@@ -67,7 +67,7 @@ public:
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return 0;
         }
-        return _range->item(nam) ;
+        return static_cast<C *>(_range->item(nam)) ;
     }
     /*!
      Adds an item of the templated type to the range. If no range is yet defined, one will be created

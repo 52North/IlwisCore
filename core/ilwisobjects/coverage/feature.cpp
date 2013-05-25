@@ -10,7 +10,7 @@
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"

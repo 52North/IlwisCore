@@ -89,7 +89,7 @@ OperationImplementation::State Sinus::prepare()
         if(!dom.prepare("min1to1"))
             return sPREPAREFAILED;
 
-        _outputGC->setDomain(dom);
+        _outputGC->datadef().domain(dom);
         if ( outputName != sUNDEF)
             _outputGC->setName(outputName);
         _spatialCase = true;

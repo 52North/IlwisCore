@@ -38,7 +38,7 @@
 #include "thematicitem.h"
 #include "range.h"
 #include "itemrange.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"

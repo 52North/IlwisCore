@@ -11,7 +11,7 @@
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "containerstatistics.h"
@@ -37,10 +37,10 @@ InternalGridCoverageConnector::InternalGridCoverageConnector(const Resource &ite
 
 bool InternalGridCoverageConnector::loadMetaData(IlwisObject *data){
     GridCoverage *gcoverage = static_cast<GridCoverage *>(data);
-    if(_dataType == gcoverage->range().isNull())
+    if(_dataType == gcoverage->datadef().range().isNull())
         return false;
-    if ( !gcoverage->range().isNull())
-        _dataType = gcoverage->range()->determineType();
+    if ( !gcoverage->datadef().range().isNull())
+        _dataType = gcoverage->datadef().range()->determineType();
 
     return true;
 }

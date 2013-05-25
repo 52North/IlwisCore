@@ -167,7 +167,7 @@ bool BinaryMath::prepareCoverageCoverage() {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
         return false;
     }
-    bool isNumeric = _inputGC1->domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->domain()->ilwisType() == itNUMERICDOMAIN;
+    bool isNumeric = _inputGC1->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
     if (!isNumeric)
         return false;
 
@@ -175,11 +175,11 @@ bool BinaryMath::prepareCoverageCoverage() {
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-    auto nrange1 = _inputGC1->range().dynamicCast<NumericRange>();
+    auto nrange1 = _inputGC1->datadef().range().dynamicCast<NumericRange>();
     if (nrange1.isNull())
         return false;
 
-    auto nrange2 = _inputGC2->range().dynamicCast<NumericRange>();
+    auto nrange2 = _inputGC2->datadef().range().dynamicCast<NumericRange>();
     if (nrange2.isNull())
         return false;
 
@@ -208,8 +208,8 @@ bool BinaryMath::prepareCoverageCoverage() {
 
     IDomain dom;
     dom.prepare("value");
-    _outputGC->setDomain(dom);
-    _outputGC->setRange(newRange);
+    _outputGC->datadef().domain(dom);
+    _outputGC->datadef().range(newRange);
 
     _coveragecoverage = true;
     return true;
@@ -225,7 +225,7 @@ bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
         return false;
     }
-    if(_inputGC1->domain()->ilwisType() != itNUMERICDOMAIN)
+    if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)
         return false;
 
     _number = _expression.parm(nindex).value().toDouble();
@@ -234,7 +234,7 @@ bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-    auto nrange = _inputGC1->range().dynamicCast<NumericRange>();
+    auto nrange = _inputGC1->datadef().range().dynamicCast<NumericRange>();
     if (nrange.isNull())
         return false;
     double rmax, rmin;
@@ -262,8 +262,8 @@ bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
 
     IDomain dom;
     dom.prepare("value");
-    _outputGC->setDomain(dom);
-    _outputGC->setRange(newRange);
+    _outputGC->datadef().domain(dom);
+    _outputGC->datadef().range(newRange);
 
     return true;
 }

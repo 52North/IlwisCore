@@ -15,7 +15,7 @@
 #include "projection.h"
 #include "domain.h"
 #include "numericrange.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "connectorinterface.h"
 #include "columndefinition.h"
 #include "table.h"
@@ -108,6 +108,16 @@ void Coverage::attributeTable(IlwisTypes type, const ITable &tbl)
 CoverageStatistics &Coverage::statistics()
 {
     return _statistics;
+}
+
+const DataDefinition &Coverage::datadef() const
+{
+    return _datadef;
+}
+
+DataDefinition &Coverage::datadef()
+{
+    return _datadef;
 }
 
 

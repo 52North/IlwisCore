@@ -27,9 +27,7 @@ public:
     void setGeoreference(const IGeoReference& grf) ;
     Size size() const;
     void size(const Size& sz);
-    void setDomain(const IDomain &dom);
 
-    //bool storeBinaryData() ;
     void copyBinary(const IlwisData<GridCoverage> &gc, int index);
 
     double coord2value(const Coordinate &c){
@@ -49,7 +47,7 @@ public:
             }
 
             double v = _grid->value(pix);
-            return range()->evaluate(v);
+            return datadef().range()->evaluate(v);
         }
         return rUNDEF;
     }

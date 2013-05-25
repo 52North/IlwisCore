@@ -21,7 +21,7 @@
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "coordinatesystem.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"

@@ -13,7 +13,7 @@
 #include "domain.h"
 #include "coordinatesystem.h"
 #include "range.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "connectorinterface.h"
 #include "basetable.h"
@@ -73,7 +73,7 @@ bool DatabaseTable::createTable()
     QString stmt = QString("Create table %1 (").arg(internalName());
     stmt += "record_index INTEGER";
     for(int i = 0; i < _columnDefinitionsByName.size(); ++i) {
-        QString ty = valueType2DataType(_columnDefinitionsByIndex[i].domain()->valueType());
+        QString ty = valueType2DataType(_columnDefinitionsByIndex[i].datadef().domain()->valueType());
         stmt += ",";
         stmt += _columnDefinitionsByIndex[i].name() + " " + ty;
     }
@@ -95,7 +95,7 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
     if(!_sqlCreateDone)
         createTable();
     else {
-        QString type = valueType2DataType(_columnDefinitionsByName[name].domain()->valueType());
+        QString type = valueType2DataType(_columnDefinitionsByName[name].datadef().domain()->valueType());
         QSqlQuery db(_database);
         QString query = QString("ALTER TABLE %1 ADD %2 %3 ").arg(internalName()).arg(name).arg(type);
         if ( !db.exec(query)){
@@ -140,7 +140,7 @@ void DatabaseTable::record(quint32 rec, const QVariantList &vars, quint32 offset
         QString columnPart;
         QString valuePart;
         for(int count=0; count < vars.size(); ++count) {
-            QString dataType = valueType2DataType(_columnDefinitionsByIndex[offset + count].domain()->valueType());
+            QString dataType = valueType2DataType(_columnDefinitionsByIndex[offset + count].datadef().domain()->valueType());
             bool needQuotes = dataType == "TEXT";
 
             if ( count > 0) {
@@ -164,7 +164,7 @@ void DatabaseTable::record(quint32 rec, const QVariantList &vars, quint32 offset
         QString rest;
         for(int count=0; count < vars.size(); ++count) {
             int index = offset + count;
-            QString dataType = valueType2DataType(_columnDefinitionsByIndex[index].domain()->valueType());
+            QString dataType = valueType2DataType(_columnDefinitionsByIndex[index].datadef().domain()->valueType());
             bool needQuotes = dataType == "TEXT";
             if ( count > 0)
                 rest += ",";
@@ -215,7 +215,7 @@ void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
         return ;
     QString stmt;
     const ColumnDefinition& def = _columnDefinitionsByName[col];
-    QString dataType = valueType2DataType(def.domain()->valueType());
+    QString dataType = valueType2DataType(def.datadef().domain()->valueType());
     if ( dataType == sUNDEF) {
         kernel()->issues()->log(TR("Invalid datatype in column definition"));
         return;
@@ -289,7 +289,7 @@ void DatabaseTable::column(const QString &nme, const QVariantList &vars, quint32
     int outside = offset + vars.size() - _rows;
     int inside = offset + vars.size() - outside;
     QSqlQuery db(_database);
-    QString dataType = valueType2DataType(_columnDefinitionsByName[nme].domain()->valueType());
+    QString dataType = valueType2DataType(_columnDefinitionsByName[nme].datadef().domain()->valueType());
     bool needQuotes = dataType == "TEXT";
     quint32 count = 0;
     if ( inside > 0) {
