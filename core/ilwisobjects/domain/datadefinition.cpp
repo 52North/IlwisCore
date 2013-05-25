@@ -7,30 +7,41 @@
 #include "numericdomain.h"
 #include "range.h"
 #include "numericrange.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 
 using namespace Ilwis;
 
-ValueDefiner::ValueDefiner() : _range(0)
+DataDefinition::DataDefinition() : _range(0)
 {
 }
 
-Ilwis::PRange ValueDefiner::range() const
+
+DataDefinition::DataDefinition(const DataDefinition& def)
+{
+    domain(def.domain());
+    _range.reset(def.range()->clone());
+}
+
+DataDefinition::~DataDefinition()
+{
+}
+
+Ilwis::PRange DataDefinition::range() const
 {
     return _range;
 }
 
-void ValueDefiner::setRange(Range* vr)
+void DataDefinition::range(Range* vr)
 {
     _range = QSharedPointer<Range>(vr);
 }
 
-IDomain ValueDefiner::domain() const
+IDomain DataDefinition::domain() const
 {
     return _domain;
 }
 
-void ValueDefiner::setDomain(const IDomain &dom)
+void DataDefinition::domain(const IDomain &dom)
 {
     _domain = dom;
     if ( _domain->ilwisType() == itNUMERICDOMAIN) {
