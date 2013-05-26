@@ -47,7 +47,7 @@ bool InternalGridCoverageConnector::loadMetaData(IlwisObject *data){
 
 Grid *InternalGridCoverageConnector::loadGridData(IlwisObject* data){
     GridCoverage *gc = static_cast<GridCoverage *>(data);
-            Grid *grid = new Grid(gc->size());
+    Grid *grid = new Grid(gc->size());
     grid->prepare();
 
     return grid;
