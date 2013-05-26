@@ -22,6 +22,13 @@ DataDefinition::DataDefinition(const DataDefinition& def)
     _range.reset(def.range()->clone());
 }
 
+DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
+{
+    domain(dm);
+    if ( rng)
+        _range.reset(rng);
+}
+
 DataDefinition::~DataDefinition()
 {
 }
@@ -52,4 +59,18 @@ void DataDefinition::domain(const IDomain &dom)
     }
 }
 
+bool DataDefinition::isValid() const
+{
+    return _domain.isValid();
+}
+
+
+DataDefinition operator +(const DataDefinition &def1, const DataDefinition &def2)
+{
+    if ( !def1.isValid() && def2.isValid())
+        return def2;
+    if ( !def2.isValid() && def1.isValid())
+        return def1;
+
+}
 
