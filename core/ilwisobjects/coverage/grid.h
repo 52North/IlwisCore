@@ -40,12 +40,15 @@ public:
 private:
     void prepare() {
         if (!_initialized) {
+            Locker lock(_mutex);
+            if ( _initialized) // may happen due to multithreading
+                return;
             _data.resize(blockSize());
             std::fill(_data.begin(), _data.end(), _undef);
             _initialized = true;
         }
     }
-
+    std::mutex _mutex;
     std::vector<double> _data;
     double _undef;
     quint32 _index;
