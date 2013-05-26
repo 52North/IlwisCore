@@ -84,8 +84,7 @@ void PixelIterator::init() {
 
     bool inside = contains(Pixel(_x,_y));
     if ( inside) {
-        _raster->pix2value(Voxel(_x,_y,0));
-        _grid = _raster->_grid.data();
+        _grid = _raster->grid();
     }
 
     initPosition();
