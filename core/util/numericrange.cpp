@@ -154,3 +154,10 @@ IlwisTypes NumericRange::determineType() const{
     return vt;
 }
 
+NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2)
+{
+    return new NumericRange(std::min(nr1->min(), nr2->min()),
+                            std::max(nr1->max(), nr2->max()),
+                            std::min(nr1->step(), nr2->step()));
+}
+

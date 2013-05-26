@@ -36,10 +36,9 @@ public:
 
     bool contains(double v, bool inclusive = true) const;
     double max() const;
+    void setMax(double v);
     double min() const;
     void setMin(double v);
-
-    void setMax(double v);
 
     void setStep(double step);
     double step() const ;
@@ -53,6 +52,8 @@ public:
     double evaluate(double, bool inclusive=true) const;
 
     IlwisTypes determineType() const;
+
+    static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2);
 private:
     double _min;
     double _max;
@@ -61,6 +62,8 @@ private:
 
     long significantDigits(double m1) const;
 };
+
+typedef QSharedPointer<NumericRange> SPNumericRange;
 
 }
 

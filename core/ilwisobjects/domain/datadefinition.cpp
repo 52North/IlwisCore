@@ -7,6 +7,7 @@
 #include "numericdomain.h"
 #include "range.h"
 #include "numericrange.h"
+#include "itemrange.h"
 #include "datadefinition.h"
 
 using namespace Ilwis;
@@ -70,10 +71,40 @@ bool DataDefinition::isValid() const
 
 DataDefinition operator +(const DataDefinition &def1, const DataDefinition &def2)
 {
+    IDomain dm;
     if ( !def1.isValid() && def2.isValid())
         return def2;
     if ( !def2.isValid() && def1.isValid())
         return def1;
 
+    if ( def1.domain()->ilwisType() == itNUMERICDOMAIN && def1.domain()->ilwisType() == itNUMERICDOMAIN) {
+        if ( def1.domain()->name() == "boolean" && def1.domain()->name() == "boolean") {
+            return DataDefinition(def1.domain());
+        }
+        SPNumericRange nr1 = def1.range().dynamicCast<NumericRange>();
+        SPNumericRange nr2 = def1.range().dynamicCast<NumericRange>();
+        NumericRange *nrNew = NumericRange::merge(nr1, nr2);
+        if ( def1.domain()->name() == def1.domain()->name()) {
+            return DataDefinition(def1.domain(), nrNew);
+        } else {
+            dm.prepare("value");
+            return DataDefinition(dm, nrNew);
+        }
+    }
+    if ( def1.domain()->ilwisType() == itITEMDOMAIN && def1.domain()->ilwisType() == itITEMDOMAIN) {
+        SPItemRange nr1 = def1.range().dynamicCast<ItemRange>();
+        SPItemRange nr2 = def1.range().dynamicCast<ItemRange>();
+        ItemRange *nrNew = ItemRange::merge(nr1, nr2);
+        if ( def1.domain()->name() == def1.domain()->name()) {
+            return DataDefinition(def1.domain(), nrNew);
+        } else {
+            dm.prepare("value");
+            return DataDefinition(dm, nrNew);
+        }
+    }
+    return DataDefinition();
+
 }
+
+
 

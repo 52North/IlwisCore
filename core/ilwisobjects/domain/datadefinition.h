@@ -21,7 +21,7 @@ protected:
     PRange _stretchRange;
 };
 
-DataDefinition operator+(const DataDefinition& def1, const DataDefinition& def2);
+KERNELSHARED_EXPORT DataDefinition operator+(const DataDefinition& def1, const DataDefinition& def2);
 }
 
 #endif // DATADEFINITION_H

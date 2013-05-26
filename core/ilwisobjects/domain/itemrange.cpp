@@ -19,3 +19,8 @@ DomainItem *ItemRange::create(const QString& type){
 void ItemRange::addCreateItem(const QString& type, CreateItemFunc func){
     _createItem[type] = func;
 }
+
+ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedPointer<ItemRange> &nr2)
+{
+    return 0;
+}

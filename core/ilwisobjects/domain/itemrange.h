@@ -24,10 +24,13 @@ public:
 
     static DomainItem *create(const QString& type);
     static void addCreateItem(const QString& type, CreateItemFunc func);
+    static ItemRange *merge(const QSharedPointer<ItemRange>& nr1, const QSharedPointer<ItemRange>& nr2);
 
 private:
     static QHash<QString, CreateItemFunc> _createItem;
 };
+
+typedef QSharedPointer<ItemRange> SPItemRange;
 }
 
 #endif // ITEMRANGE_H
