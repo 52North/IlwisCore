@@ -1,39 +1,7 @@
-#include <QString>
-#include <QVector>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
-
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "domain.h"
-#include "numericrange.h"
-#include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "datadefinition.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "georeference.h"
+#include "raster.h"
 #include "connectorinterface.h"
-#include "grid.h"
-#include "gridcoverage.h"
-#include "pixeliterator.h"
-#include "resource.h"
-#include "operationmetadata.h"
-#include "operationExpression.h"
-#include "connectorinterface.h"
-#include "operation.h"
-#include "operationhelper.h"
+#include "ilwisoperation.h"
 
 using namespace Ilwis;
 
