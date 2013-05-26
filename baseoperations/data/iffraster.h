@@ -16,6 +16,9 @@ public:
     static quint64 createMetadata();
 private:
     IGridCoverage _inputGC;
+
+    DataDefinition findOutputDataDef(const OperationExpression &expr) const;
+    DataDefinition findParameterDataDef(const Parameter &choice) const;
 };
 }
 }
