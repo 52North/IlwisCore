@@ -31,7 +31,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
         if((_prepState = prepare()) != sPREPARED)
             return false;
 
-    auto resampleFun = [&](PixelIterator iterOut) -> bool {
+    std::function<bool(const Box3D<qint32>&)> resampleFun = [&](const Box3D<qint32>& box) -> bool {
+        PixelIterator iterOut(_outputGC,box);
         GridInterpolator interpolator(_inputGC, _method);
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
@@ -43,22 +44,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
         return true;
     };
 
-    std::vector<Box3D<qint32>> boxes;
-    int cores = OperationHelper::subdivideTasks(_outputGC, boxes);
-    if ( cores == iUNDEF)
-        return false;
-
-    std::vector<std::future<bool>> futures(cores);
-    bool res = true;
-
-    for(int i =0; i < cores; ++i) {
-        PixelIterator iter(_outputGC,boxes[i]);
-       futures[i] = std::async(std::launch::async, resampleFun, iter);
-    }
-
-    for(int i =0; i < cores; ++i) {
-        res &= futures[i].get();
-    }
+    bool res = OperationHelper::execute(resampleFun, _outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;

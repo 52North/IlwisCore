@@ -86,7 +86,8 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx) {
 }
 
 bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
-    auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
+    std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
+    //auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
         PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
@@ -118,23 +119,8 @@ bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
         return true;
     };
 
-    std::vector<Box3D<qint32>> boxes;
+    bool res = OperationHelper::execute(binaryMath, _outputGC);
 
-    int cores = OperationHelper::subdivideTasks(_outputGC,boxes);
-
-    if ( cores == iUNDEF)
-        return false;
-
-    std::vector<std::future<bool>> futures(cores);
-    bool res = true;
-
-    for(int i =0; i < cores; ++i) {
-        futures[i] = std::async(std::launch::async, binaryMath, boxes[i]);
-    }
-
-    for(int i =0; i < cores; ++i) {
-        res &= futures[i].get();
-    }
     if (res)
         return setOutput(ctx);
 
