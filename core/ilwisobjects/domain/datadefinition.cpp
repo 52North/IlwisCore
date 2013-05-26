@@ -19,7 +19,10 @@ DataDefinition::DataDefinition() : _range(0)
 DataDefinition::DataDefinition(const DataDefinition& def)
 {
     domain(def.domain());
-    _range.reset(def.range()->clone());
+    if ( !def.range().isNull())
+        _range.reset(def.range()->clone());
+    else
+        _range.reset(0);
 }
 
 DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
@@ -51,7 +54,7 @@ IDomain DataDefinition::domain() const
 void DataDefinition::domain(const IDomain &dom)
 {
     _domain = dom;
-    if ( _domain->ilwisType() == itNUMERICDOMAIN) {
+    if ( _domain.isValid() && _domain->ilwisType() == itNUMERICDOMAIN) {
         INumericDomain nd = _domain.get<NumericDomain>();
         Range *r = nd->range<Range>()->clone();
         if ( r)
