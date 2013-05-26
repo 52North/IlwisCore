@@ -31,7 +31,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
         if((_prepState = prepare()) != sPREPARED)
             return false;
 
-    std::function<bool(const Box3D<qint32>&)> resampleFun = [&](const Box3D<qint32>& box) -> bool {
+    BoxedAsync resampleFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(_outputGC,box);
         GridInterpolator interpolator(_inputGC, _method);
         while(iterOut != iterOut.end()) {
