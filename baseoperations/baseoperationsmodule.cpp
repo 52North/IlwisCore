@@ -6,6 +6,7 @@
 #include "baseoperationsmodule.h"
 #include "math/sinus.h"
 #include "math/binarymath.h"
+#include "math/binarylogical.h"
 #include "geometry/resampleraster.h"
 #include "data/rasvalue.h"
 #include "data/iffraster.h"
@@ -27,6 +28,7 @@ void RasterOperationsModule::prepare()
 {
     commandhandler()->addOperation(Sinus::createMetadata(), Sinus::create);
     commandhandler()->addOperation(BinaryMath::createMetadata(), BinaryMath::create);
+    commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
     commandhandler()->addOperation(RasValue::createMetadata(), RasValue::create);
     commandhandler()->addOperation(IffRaster::createMetadata(), IffRaster::create);

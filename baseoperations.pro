@@ -26,7 +26,8 @@ HEADERS += \
     baseoperations/math/binarymath.h \
     baseoperations/geometry/resampleraster.h \
     baseoperations/data/rasvalue.h \
-    baseoperations/data/iffraster.h
+    baseoperations/data/iffraster.h \
+    baseoperations/math/binarylogical.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -34,7 +35,8 @@ SOURCES += \
     baseoperations/math/binarymath.cpp \
     baseoperations/geometry/resampleraster.cpp \
     baseoperations/data/rasvalue.cpp \
-    baseoperations/data/iffraster.cpp
+    baseoperations/data/iffraster.cpp \
+    baseoperations/math/binarylogical.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
