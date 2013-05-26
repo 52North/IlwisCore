@@ -222,8 +222,8 @@ relation  returns [ RelationNode *node]
 	:	add1=add				{ node->setLeftTerm(add1); } 
 		(
 		(
-		'=' 					{ op = OperationNode::oEQ; } 
-		| '/=' 					{ op = OperationNode::oNEQ; } 
+		'==' 					{ op = OperationNode::oEQ; } 
+		| '!=' 					{ op = OperationNode::oNEQ; } 
 		| '<' 					{ op = OperationNode::oLESS; } 
 		| '<=' 					{ op = OperationNode::oLESSEQ; } 
 		| '>=' 					{ op = OperationNode::oGREATEREQ; } 
