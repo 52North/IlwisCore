@@ -7,7 +7,7 @@ public:
     RelationNode();
      QString nodeType() const;
      bool evaluate(SymbolTable& symbols, int scope);
- private:
+private:
      bool handleEQ(const NodeValue &vright);
      bool handleNEQ(const NodeValue &vright);
      bool handleGREATEREQ(const NodeValue &vright);

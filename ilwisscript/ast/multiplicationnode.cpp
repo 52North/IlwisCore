@@ -42,19 +42,9 @@ bool MultiplicationNode::handleTimes(const NodeValue& vright) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
         _value = {vright.toDouble() * _value.toDouble(), NodeValue::ctNumerical};
         return true;
-    }else if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
-        expr = QString("binarymathraster(%1,%2,times)").arg(_value.toString()).arg(vright.toDouble());
-    } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
-        expr = QString("binarymathraster(%1,%2,times)").arg(vright.toString()).arg(_value.toDouble());
-    } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
-        expr = QString("binarymathraster(%1,%2,times)").arg(vright.toString()).arg(_value.toString());
     }
-    Ilwis::ExecutionContext ctx;
-    bool ok = Ilwis::commandhandler()->execute(expr, &ctx);
-    if ( !ok || ctx._results.size() != 1)
-        return false;
-    _value = {ctx._results[0], NodeValue::ctMethod};
-    return true;
+
+    return handleBinaryCoverageCases(vright, "binarymathraster", "times");
 }
 
 bool MultiplicationNode::handleDiv(const NodeValue& vright) {
@@ -64,19 +54,8 @@ bool MultiplicationNode::handleDiv(const NodeValue& vright) {
             return false;
         _value = {_value.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
         return true;
-    }else if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
-        expr = QString("binarymathraster(%1,%2,divide)").arg(_value.toString()).arg(vright.toDouble());
-    } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
-        expr = QString("binarymathraster(%1,%2,divide)").arg(vright.toString()).arg(_value.toDouble());
-    } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
-        expr = QString("binarymathraster(%1,%2,divide)").arg(vright.toString()).arg(_value.toString());
     }
-    Ilwis::ExecutionContext ctx;
-    bool ok = Ilwis::commandhandler()->execute(expr, &ctx);
-    if ( !ok || ctx._results.size() != 1)
-        return false;
-    _value = {ctx._results[0], NodeValue::ctMethod};
-    return true;
+    return handleBinaryCoverageCases(vright, "binarymathraster", "divide");
 }
 
 bool MultiplicationNode::handleMod(const NodeValue& vright) {
@@ -85,5 +64,5 @@ bool MultiplicationNode::handleMod(const NodeValue& vright) {
        _value = {_value.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarymathraster", "mod");
 }

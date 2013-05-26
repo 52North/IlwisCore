@@ -4,6 +4,9 @@
 
 
 namespace Ilwis {
+
+typedef  std::function<bool(const Box3D<qint32>&)> BoxedAsync;
+
 class KERNELSHARED_EXPORT OperationHelper
 {
 public:

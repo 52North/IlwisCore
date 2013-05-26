@@ -2,6 +2,7 @@
 #include "operationnode.h"
 #include "relationnode.h"
 #include "symboltable.h"
+#include "commandhandler.h"
 
 RelationNode::RelationNode()
 {
@@ -41,12 +42,14 @@ bool RelationNode::evaluate(SymbolTable &symbols, int scope)
     return ret;
 }
 
+
 bool RelationNode::handleEQ(const NodeValue& vright) {
+
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
        _value = {vright.toDouble() == _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "eq");
 }
 
 bool RelationNode::handleNEQ(const NodeValue& vright) {
@@ -54,7 +57,7 @@ bool RelationNode::handleNEQ(const NodeValue& vright) {
        _value = {vright.toDouble() != _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","neq");
 }
 
 bool RelationNode::handleGREATEREQ(const NodeValue& vright) {
@@ -62,7 +65,7 @@ bool RelationNode::handleGREATEREQ(const NodeValue& vright) {
        _value = {vright.toDouble() >= _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "greatereq");
 }
 
 bool RelationNode::handleGREATER(const NodeValue& vright) {
@@ -70,7 +73,7 @@ bool RelationNode::handleGREATER(const NodeValue& vright) {
        _value = {vright.toDouble() > _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","greater");
 }
 
 bool RelationNode::handleLESS(const NodeValue& vright) {
@@ -78,7 +81,7 @@ bool RelationNode::handleLESS(const NodeValue& vright) {
        _value = {vright.toDouble() < _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","less");
 }
 
 bool RelationNode::handleLESSEQ(const NodeValue& vright) {
@@ -86,5 +89,5 @@ bool RelationNode::handleLESSEQ(const NodeValue& vright) {
        _value = {vright.toDouble() <= _value.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright,"binarylogicalraster", "lesseq");
 }

@@ -19,6 +19,7 @@ public:
 
 
 protected:
+    bool handleBinaryCoverageCases(const NodeValue &vright, const QString& operation, const QString &relation);
 
     QSharedPointer<ASTNode> _leftTerm;
     QVector< RightTerm > _rightTerm;

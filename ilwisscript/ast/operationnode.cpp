@@ -1,6 +1,8 @@
 #include <QVariant>
 #include "astnode.h"
 #include "operationnode.h"
+#include "commandhandler.h"
+#include "symboltable.h"
 
 OperationNode::OperationNode()
 {
@@ -32,6 +34,23 @@ bool OperationNode::evaluate(SymbolTable &symbols, int scope)
 bool OperationNode::isValid() const
 {
     return ! _leftTerm.isNull();
+}
+
+bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QString &operation, const QString& relation) {
+    QString expr;
+    if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toString()).arg(vright.toDouble()).arg(relation);
+    } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toDouble()).arg(_value.toString()).arg(relation);
+    } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString()).arg(_value.toString()).arg(relation);
+    }
+    Ilwis::ExecutionContext ctx;
+    bool ok = Ilwis::commandhandler()->execute(expr, &ctx);
+    if ( !ok || ctx._results.size() != 1)
+        return false;
+    _value = {ctx._results[0], NodeValue::ctMethod};
+    return true;
 }
 
 
