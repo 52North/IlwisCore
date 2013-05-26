@@ -42,10 +42,9 @@ bool ExpressionNode::handleAnd(const NodeValue& vright) {
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)){
         _value = {_value.toLongLong() & vright.toLongLong(), NodeValue::ctNumerical};
-        //_value = value.convert(_value.type());
         return true;
     }
-    return false;
+   return handleBinaryCoverageCases(vright, "binarylogicalraster", "and");
 }
 
 bool ExpressionNode::handleOr(const NodeValue& vright) {
@@ -54,10 +53,9 @@ bool ExpressionNode::handleOr(const NodeValue& vright) {
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)){
         _value = {_value.toLongLong() | vright.toLongLong(), NodeValue::ctNumerical};
-        //_value = value.convert(_value.type());
         return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "or");
 }
 
 bool ExpressionNode::handleXor(const NodeValue& vright) {
@@ -66,8 +64,7 @@ bool ExpressionNode::handleXor(const NodeValue& vright) {
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) &&SymbolTable::isIntegerNumerical(_value)){
         _value = {_value.toLongLong() ^ vright.toLongLong(), NodeValue::ctNumerical};
-        //_value = value.convert(_value.type());
         return true;
     }
-    return false;
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "xor");
 }
