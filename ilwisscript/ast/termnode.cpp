@@ -1,9 +1,7 @@
 #include <QStringList>
 
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "raster.h"
 #include "astnode.h"
 #include "idnode.h"
 #include "kernel.h"
@@ -99,10 +97,10 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
             bool ok = _parameters->child(i)->evaluate(symbols, scope);
             if (!ok)
                 return false;
-
+            QString name = getName(_parameters->child(i)->value());
             if ( i != 0)
                 parms += ",";
-            parms += _parameters->child(i)->value().toString();
+            parms += name;
 
         }
         parms += ")";
@@ -135,6 +133,18 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
 
     }
     return false;
+}
+
+QString TermNode::getName(const QVariant& var) const {
+    QString name = var.toString();
+    if (name != "")
+        return name;
+    QString typeName = var.typeName();
+    if ( typeName == "Ilwis::IGridCoverage") {
+        Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
+        name = gcov->name();
+    }
+    return name;
 }
 
 void TermNode::addRange(RangeDefinitionNode *n)

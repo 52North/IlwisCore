@@ -26,6 +26,8 @@ private:
     ContentState _content;
     bool _logicalNegation;
     bool  _numericalNegation;
+
+    QString getName(const QVariant &var) const;
 };
 
 #endif // TERMNODE_H
