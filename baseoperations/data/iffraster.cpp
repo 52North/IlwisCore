@@ -3,6 +3,7 @@
 #include <future>
 #include "raster.h"
 #include "ilwisoperation.h"
+#include "pixeliterator.h"
 #include "iffraster.h"
 
 using namespace Ilwis;
@@ -16,6 +17,7 @@ IffRaster::IffRaster()
 IffRaster::IffRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
     OperationImplementation(metaid, expr)
 {
+    _number[0] = _number[1] = rUNDEF;
 }
 
 bool IffRaster::execute(ExecutionContext *ctx)
@@ -24,6 +26,52 @@ bool IffRaster::execute(ExecutionContext *ctx)
         if((_prepState = prepare()) != sPREPARED)
             return false;
 
+    BoxedAsyncFunc iffunc = [&](const Box3D<qint32>& box) -> bool {
+
+        PixelIterator iterOut(_outputGC,box);
+        PixelIterator iterIn(_inputGC,box);
+        PixelIterator iter1, iter2;
+        bool isCoverage1 = _coverages[0].isValid();
+        bool isCoverage2 = _coverages[1].isValid();
+        if ( isCoverage1)
+            iter1 = PixelIterator(_coverages[0], box);
+        if ( isCoverage2)
+            iter2 = PixelIterator(_coverages[1], box);
+
+        while(iterOut != iterOut.end()) {
+            double v1,v2;
+            if ( isCoverage1) {
+                v1 = *iter1;
+                ++iter1;
+            }
+            if ( isCoverage2) {
+                v2 = *iter2;
+                ++iter2;
+            }
+            if (_number[0] != rUNDEF)
+                v1 = _number[0];
+            if ( _number[1] != rUNDEF)
+                v2 = _number[1];
+
+            *iterOut = *iterIn ? v1 : v2;
+
+            ++iterOut;
+            ++iterIn;
+        }
+        return true;
+
+    };
+
+    bool res = OperationHelper::execute(iffunc, _outputGC);
+
+    if ( res && ctx != 0) {
+        QVariant value;
+        value.setValue<IGridCoverage>(_outputGC);
+
+        ctx->_results.push_back(value);
+
+        return true;
+    }
     return false;
 }
 
@@ -44,35 +92,30 @@ OperationImplementation::State IffRaster::prepare()
     DataDefinition outputDataDef = findOutputDataDef(_expression);
 
 
-//    if ( !map1.isValid() && choice1.domain() != sUNDEF) {
-//        IDomain dm; const Parameter& choice1 = _expression.parm(1);
-//        QString outputchoice1 = choice1.value();
-//        Resource map1 = mastercatalog()->name2Resource(outputchoice1, itGRIDCOVERAGE);
-//        dm.prepare(outputDomainName);
-//        if ( dm->contains(choice1.value()) != Domain::cNONE) {
-
-//        }
-
-//    }
+    OperationHelper helper;
+    helper.initialize(_inputGC, _outputGC, _expression.parm(0),
+                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+    _outputGC->setName(outputName);
+    _outputGC->datadef() = outputDataDef;
 
     return sNOTPREPARED;
 }
 
-DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) const{
+DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) {
     IDomain dm;
     QString domName = expr.parm(0,false).domain();
     if ( domName != sUNDEF) {
         if( dm.prepare(domName))
             return DataDefinition(dm);
     }
-    DataDefinition def1 = findParameterDataDef(expr.parm(1));
-    DataDefinition def2 = findParameterDataDef(expr.parm(2));
+    DataDefinition def1 = findParameterDataDef(expr,0);
+    DataDefinition def2 = findParameterDataDef(expr,1);
 
-    //return def1 + def2;
-    return DataDefinition();
+    return DataDefinition::merge(def1,def2);
 }
 
-DataDefinition IffRaster::findParameterDataDef(const Parameter& parm) const {
+DataDefinition IffRaster::findParameterDataDef(const OperationExpression &expr, int index)  {
+    const Parameter& parm = expr.parm(index);
     DataDefinition def;
     QString parmvalue = parm.value();
 
@@ -81,16 +124,18 @@ DataDefinition IffRaster::findParameterDataDef(const Parameter& parm) const {
         IGridCoverage gc;
         if(gc.prepare(res)) {
             def = gc->datadef();
+            _coverages[index] = gc;
         }
     } else {
         bool ok;
-        parmvalue.toDouble(&ok);
+        _number[index] =parmvalue.toDouble(&ok);
         if ( ok){
             def.domain().prepare("value");
         } else {
             std::vector<QString> bools = {"true","false","yes","no"};
             auto iter = std::find(bools.begin(), bools.end(), parmvalue.toLower());
             if ( iter != bools.end()) {
+                _number[index] = parmvalue == "true" || parmvalue == "yes" ? 1 : 0;
                 def.domain().prepare("bool");
             }
         }
@@ -100,10 +145,10 @@ DataDefinition IffRaster::findParameterDataDef(const Parameter& parm) const {
 
 quint64 IffRaster::createMetadata()
 {
-    QString url = QString("ilwis://operations/iffraster");
+    QString url = QString("ilwis://operations/iff");
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
-    res.addProperty("longname","iffraster");
+    res.addProperty("longname","iff");
     res.addProperty("syntax","iffraster(gridcoverage,outputchoicetrue, outputchoicefalse)");
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
