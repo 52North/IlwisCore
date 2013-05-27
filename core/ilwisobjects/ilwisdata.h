@@ -105,7 +105,7 @@ public:
         _implementation = QExplicitlySharedDataPointer<IlwisObject>(new T);
         if (_implementation.data() != 0) {
             _implementation.data()->prepare();
-            _implementation.data()->setName(QString("_INTERNAL_%1").arg(_implementation.data()->id()));
+            _implementation.data()->setName(QString("%1_%2").arg(INTERNAL_PREFIX).arg(_implementation.data()->id()));
         }
         return _implementation.data() != 0;
     }
@@ -120,6 +120,21 @@ public:
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
     bool prepare(const QString& name){
+        if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
+            QString sid = name.mid(11);
+            bool ok;
+            quint64 id = sid.toLongLong(&ok);
+            if (ok){
+                ESPIlwisObject data = mastercatalog()->get(id);
+                if ( data.data() != 0) {
+                    _implementation = data;
+                    return true;
+                }
+
+            }
+            return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
+
+        }
         auto type = kernel()->demangle(typeid(T).name());
         auto tp = IlwisObject::name2Type(type);
         auto item = mastercatalog()->name2Resource(name,tp );
