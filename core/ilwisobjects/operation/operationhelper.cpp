@@ -50,6 +50,7 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     resource.prepare();
 
     outputGC.prepare(resource);
+   //mastercatalog()->addItems({resource});
 
     return box;
 }

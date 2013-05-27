@@ -22,7 +22,7 @@ Parameter::Parameter(const QString &key, const QString &value, IlwisTypes tp) :
         _type = Parameter::determineType(value);
 }
 
-Parameter::Parameter(const QString &rawvalue, IlwisTypes tp)
+Parameter::Parameter(const QString &rawvalue, IlwisTypes tp) : _domain(sUNDEF)
 {
     QString value = rawvalue;
     int index = value.indexOf('[');
@@ -90,8 +90,8 @@ IlwisTypes Parameter::determineType(const QString& value) {
     if ( type != itUNKNOWN)
         return type;
 
-    if ( value.left(10) == "_INTERNAL_") {
-        QString sid = value.mid(10);
+    if ( value.left(10) == INTERNAL_PREFIX) {
+        QString sid = value.mid(11);
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if ( ok) {
