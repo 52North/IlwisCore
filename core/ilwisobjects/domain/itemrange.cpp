@@ -22,5 +22,6 @@ void ItemRange::addCreateItem(const QString& type, CreateItemFunc func){
 
 ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedPointer<ItemRange> &nr2)
 {
+    //TODO
     return 0;
 }
