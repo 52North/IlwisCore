@@ -154,7 +154,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
     if (!coverage->prepare())
         return false;
 
-    coverage->setName(QString("_INTERNAL_%1").arg(coverage->id()));
+    coverage->setName(QString("%1_%2").arg(INTERNAL_PREFIX).arg(coverage->id()));
 
     ICoordinateSystem csy;
     if (QString(item["coordinatesystem"].typeName()) == "Ilwis::ICoordinateSystem")
