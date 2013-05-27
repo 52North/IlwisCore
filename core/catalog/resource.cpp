@@ -98,6 +98,11 @@ Resource::Resource(quint64 tp, const QUrl &url) :
 
     checkUrl(tp);
     prepare();
+    if ( url == INTERNAL_OBJECT) {
+        QString resext = url.toString() + "/" + name();
+        _resource = QUrl(resext);
+    }
+
 }
 
 Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(),

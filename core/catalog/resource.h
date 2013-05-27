@@ -7,7 +7,8 @@
 class QSqlRecord;
 class QSqlQuery;
 
-#define INTERNAL_OBJECT (QUrl("ilwis://internal"))
+#define INTERNAL_OBJECT (QUrl("ilwis://internalcatalog"))
+
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT Resource : public Identity
