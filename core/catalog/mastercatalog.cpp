@@ -205,6 +205,24 @@ IlwisTypes MasterCatalog::id2type(quint64 iid) const {
 
 Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 {
+    if ( tp == itUNKNOWN) {
+        std::vector<IlwisTypes> types { itGRIDCOVERAGE, itFEATURECOVERAGE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
+        for(IlwisTypes type: types) {
+            Resource res = name2Resource(name, type);
+            if (res.isValid())
+                return res.ilwisType();
+        }
+        if ( name.left(10) == "_INTERNAL_") {
+            QString sid = name.mid(10);
+            bool ok;
+            quint64 id = sid.toLongLong(&ok);
+            if ( ok) {
+                return id2Resource(id);
+            }
+
+        }
+        return Resource();
+    }
     auto resolvedName = name2url(name, tp);
     if (!resolvedName.isValid())
         return Resource();

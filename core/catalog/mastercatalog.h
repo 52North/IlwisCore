@@ -27,9 +27,9 @@ public:
     bool addItems(const QList<Resource> &items);
     bool removeItems(const QList<Resource> &items);
     quint64 resource2id(const QUrl& url, IlwisTypes tp) const;
-    Resource name2Resource(const QString& name, IlwisTypes tp) const;
+    Resource name2Resource(const QString& name, IlwisTypes tp = itUNKNOWN) const;
     Resource id2Resource(quint64 iid) const;
-    QUrl id2resource(quint64 id) const;
+    //QUrl id2url(quint64 id) const;
     IlwisTypes id2type(quint64 id) const;
     quint64 createId() const;
     void registerObject(ESPObject &data);
