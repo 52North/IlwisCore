@@ -4,6 +4,8 @@
 #include "Kernel_global.h"
 #include "ilwis.h"
 
+#define INTERNAL_PREFIX "_INTERNAL_"
+
 namespace Ilwis {
 
 struct SerializationOptions;
