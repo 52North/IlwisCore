@@ -105,7 +105,7 @@ public:
         _implementation = QExplicitlySharedDataPointer<IlwisObject>(new T);
         if (_implementation.data() != 0) {
             _implementation.data()->prepare();
-            _implementation.data()->setName(QString("internal_%1").arg(_implementation.data()->id()));
+            _implementation.data()->setName(QString("_INTERNAL_%1").arg(_implementation.data()->id()));
         }
         return _implementation.data() != 0;
     }
