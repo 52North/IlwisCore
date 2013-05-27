@@ -90,6 +90,19 @@ IlwisTypes Parameter::determineType(const QString& value) {
     if ( type != itUNKNOWN)
         return type;
 
+    if ( value.left(10) == "_INTERNAL_") {
+        QString sid = value.mid(10);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if ( ok) {
+            ESPObject obj =  mastercatalog()->get(id);
+            if ( obj.data() != 0)
+                return obj->ilwisType();
+        }
+
+    }
+
+
     bool ok;
     ushort vu = value.toUShort(&ok);
     if ( ok && vu < 255)
