@@ -104,7 +104,7 @@ OperationImplementation::State IffRaster::prepare()
 DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) {
     IDomain dm;
     QString domName = expr.parm(0,false).domain();
-    if ( domName != sUNDEF) {
+    if ( domName != sUNDEF && domName != "") {
         if( dm.prepare(domName))
             return DataDefinition(dm);
     }
@@ -119,10 +119,10 @@ DataDefinition IffRaster::findParameterDataDef(const OperationExpression &expr, 
     DataDefinition def;
     QString parmvalue = parm.value();
 
-    Resource res = mastercatalog()->name2Resource(parmvalue, itGRIDCOVERAGE);
-    if ( res.isValid()) {
+    quint64 gcid = mastercatalog()->name2id(parmvalue, itGRIDCOVERAGE);
+    if ( gcid != i64UNDEF) {
         IGridCoverage gc;
-        if(gc.prepare(res)) {
+        if(gc.prepare(gcid)) {
             def = gc->datadef();
             _coverages[index] = gc;
         }
