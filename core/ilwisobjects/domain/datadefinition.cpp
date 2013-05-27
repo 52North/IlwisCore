@@ -37,6 +37,14 @@ DataDefinition::~DataDefinition()
 {
 }
 
+DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
+{
+    domain(def1.domain());
+    _range = def1.range();
+
+    return *this;
+}
+
 Ilwis::PRange DataDefinition::range() const
 {
     return _range;
@@ -69,7 +77,7 @@ bool DataDefinition::isValid() const
 }
 
 
-DataDefinition operator +(const DataDefinition &def1, const DataDefinition &def2)
+DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefinition &def2)
 {
     IDomain dm;
     if ( !def1.isValid() && def2.isValid())
@@ -103,8 +111,8 @@ DataDefinition operator +(const DataDefinition &def1, const DataDefinition &def2
         }
     }
     return DataDefinition();
-
 }
+
 
 
 

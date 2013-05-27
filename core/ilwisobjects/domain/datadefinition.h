@@ -9,11 +9,14 @@ public:
     DataDefinition(const IDomain& dm, Ilwis::Range *rng=0);
     DataDefinition();
     ~DataDefinition();
+    DataDefinition& operator=(const DataDefinition& def1);
     QSharedPointer<Range> range() const;
     void range(Ilwis::Range *vr);
     IDomain domain() const;
     void domain(const IDomain& dom);
     bool isValid() const;
+
+    static DataDefinition merge(const DataDefinition &def1, const DataDefinition &def2);
 
 protected:
     IDomain _domain;
@@ -21,7 +24,6 @@ protected:
     PRange _stretchRange;
 };
 
-KERNELSHARED_EXPORT DataDefinition operator+(const DataDefinition& def1, const DataDefinition& def2);
 }
 
 #endif // DATADEFINITION_H
