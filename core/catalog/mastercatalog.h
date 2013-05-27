@@ -29,7 +29,7 @@ public:
     quint64 resource2id(const QUrl& url, IlwisTypes tp) const;
     Resource name2Resource(const QString& name, IlwisTypes tp = itUNKNOWN) const;
     Resource id2Resource(quint64 iid) const;
-    //QUrl id2url(quint64 id) const;
+    quint64 name2id(const QString& name, IlwisTypes tp= itUNKNOWN) const;
     IlwisTypes id2type(quint64 id) const;
     quint64 createId() const;
     void registerObject(ESPObject &data);

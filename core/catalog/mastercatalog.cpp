@@ -193,6 +193,23 @@ Resource MasterCatalog::id2Resource(quint64 iid) const {
     return Resource();
 }
 
+quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
+{
+    if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
+        QString sid = name.mid(11);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPObject data = mastercatalog()->get(id);
+            if ( data.data() != 0) {
+                data->id();
+            }
+        }
+    }
+    Resource res = name2Resource(name,tp);
+    return res.id();
+}
+
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
     QString query = QString("select type from mastercatalog where itemid = %1").arg(iid);
     QSqlQuery results = kernel()->database().exec(query);
@@ -212,15 +229,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
             if (res.isValid())
                 return res.ilwisType();
         }
-        if ( name.left(10) == "_INTERNAL_") {
-            QString sid = name.mid(10);
-            bool ok;
-            quint64 id = sid.toLongLong(&ok);
-            if ( ok) {
-                return id2Resource(id);
-            }
 
-        }
         return Resource();
     }
     auto resolvedName = name2url(name, tp);
