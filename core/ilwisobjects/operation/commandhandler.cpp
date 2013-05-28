@@ -54,8 +54,8 @@ bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
     OperationExpression expr(command);
     quint64 id = findOperationId(expr);
     if ( id != i64UNDEF) {
-        OperationImplementation *oper = create( expr);
-        if ( oper && oper->isValid())
+        QScopedPointer<OperationImplementation> oper(create( expr));
+        if ( !oper.isNull() && oper->isValid())
             return oper->execute(ctx);
     }
     return false;
