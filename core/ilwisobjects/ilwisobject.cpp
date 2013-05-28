@@ -202,7 +202,7 @@ bool operator==(const IlwisObject& obj1, const IlwisObject& obj2) {
 
 bool IlwisObject::fromInternal(const QSqlRecord &rec)
 {
-    setName(rec.field("name").value().toString());
+    setName(rec.field("code").value().toString()); // name and code are the same here
     setDescription(rec.field("description").value().toString());
     setCode(rec.field("code").value().toString());
     setConnector(0);
