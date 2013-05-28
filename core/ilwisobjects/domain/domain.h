@@ -6,6 +6,7 @@
 namespace Ilwis {
 
 class Domain;
+class Range;
 
 typedef Ilwis::IlwisData<Ilwis::Domain> IDomain;
 
@@ -67,6 +68,12 @@ public:
     static IlwisTypes ilwType(const QVariant &v);
     virtual Containement contains(const QString& value) const = 0;
 
+    template<typename T=Range> T *range() {
+        return dynamic_cast<T *>(getRange());
+    }
+
+protected:
+    virtual Range *getRange() = 0;
 private:
     bool _strict;
     IDomain _parentDomain;
