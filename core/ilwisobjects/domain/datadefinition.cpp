@@ -5,8 +5,12 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "numericdomain.h"
+#include "itemdomain.h"
 #include "range.h"
 #include "numericrange.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
 #include "itemrange.h"
 #include "datadefinition.h"
 
@@ -63,13 +67,14 @@ IDomain DataDefinition::domain() const
 void DataDefinition::domain(const IDomain &dom)
 {
     _domain = dom;
-    if ( _domain.isValid() && _domain->ilwisType() == itNUMERICDOMAIN) {
-        INumericDomain nd = _domain.get<NumericDomain>();
-        Range *r = nd->range<Range>()->clone();
-        if ( r)
-            _range.reset(r);
-    }
+    if ( !_domain.isValid())
+        return;
+
+    Range *r = _domain->range<>();
+    if ( r)
+        _range.reset(r->clone());
 }
+
 
 bool DataDefinition::isValid() const
 {
