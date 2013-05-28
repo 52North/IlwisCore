@@ -83,7 +83,6 @@ OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpres
 OperationImplementation::State IffRaster::prepare()
 {
     QString gc = _expression.parm(0).value();
-    QString outputName = _expression.parm(0,false).value();
 
     if (!_inputGC.prepare(gc)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
@@ -95,10 +94,10 @@ OperationImplementation::State IffRaster::prepare()
     OperationHelper helper;
     helper.initialize(_inputGC, _outputGC, _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
-    _outputGC->setName(outputName);
+
     _outputGC->datadef() = outputDataDef;
 
-    return sNOTPREPARED;
+    return sPREPARED;
 }
 
 DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) {
@@ -108,8 +107,8 @@ DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) {
         if( dm.prepare(domName))
             return DataDefinition(dm);
     }
-    DataDefinition def1 = findParameterDataDef(expr,0);
-    DataDefinition def2 = findParameterDataDef(expr,1);
+    DataDefinition def1 = findParameterDataDef(expr,1);
+    DataDefinition def2 = findParameterDataDef(expr,2);
 
     return DataDefinition::merge(def1,def2);
 }
@@ -117,26 +116,33 @@ DataDefinition IffRaster::findOutputDataDef(const OperationExpression &expr ) {
 DataDefinition IffRaster::findParameterDataDef(const OperationExpression &expr, int index)  {
     const Parameter& parm = expr.parm(index);
     DataDefinition def;
-    QString parmvalue = parm.value();
+    QString parmvalue = parm.value().toLower();
 
     quint64 gcid = mastercatalog()->name2id(parmvalue, itGRIDCOVERAGE);
     if ( gcid != i64UNDEF) {
         IGridCoverage gc;
         if(gc.prepare(gcid)) {
             def = gc->datadef();
-            _coverages[index] = gc;
+            _coverages[index - 1] = gc;
         }
     } else {
         bool ok;
-        _number[index] =parmvalue.toDouble(&ok);
+        _number[index - 1] =parmvalue.toDouble(&ok);
         if ( ok){
             def.domain().prepare("value");
         } else {
-            std::vector<QString> bools = {"true","false","yes","no"};
+            std::vector<QString> bools = {"true","false","yes","no","?"};
             auto iter = std::find(bools.begin(), bools.end(), parmvalue.toLower());
             if ( iter != bools.end()) {
-                _number[index] = parmvalue == "true" || parmvalue == "yes" ? 1 : 0;
-                def.domain().prepare("bool");
+                int v = 0;
+                if ( parmvalue == "?" )
+                    v= 2;
+                else if ( parmvalue == "yes" || parmvalue == "true")
+                    v = 1;
+                _number[index - 1] = v;
+                IDomain dm;
+                dm.prepare("boolean");
+                def.domain(dm);
             }
         }
     }
