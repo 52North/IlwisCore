@@ -202,7 +202,7 @@ quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
         if (ok){
             ESPObject data = mastercatalog()->get(id);
             if ( data.data() != 0) {
-                data->id();
+                return data->id();
             }
         }
     }
