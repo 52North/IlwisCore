@@ -10,15 +10,16 @@ public:
     NumericDomain();
     NumericDomain(const Resource& res);
 
-    template<typename T> T *range() const{
-        return dynamic_cast<T *>(_range.data());
-    }
+
     void setRange(Range *vr);
     QString value(double v) const;
     Domain::Containement contains(const QString& value) const;
 
     IlwisTypes valueType() const;
     IlwisTypes ilwisType() const;
+
+protected:
+    Range *getRange();
 private:
     long significantDigits(double m1);
 

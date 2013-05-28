@@ -38,6 +38,11 @@ IlwisTypes NumericDomain::ilwisType() const
     return itNUMERICDOMAIN;
 }
 
+Range *NumericDomain::getRange()
+{
+    return _range.data();
+}
+
 QString NumericDomain::value(double v) const
 {
     //TODO formatting according to domain(step size and valuetype, other specifiers belong at UI level).
