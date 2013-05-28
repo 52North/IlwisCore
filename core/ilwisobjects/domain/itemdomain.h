@@ -113,9 +113,6 @@ public:
         _theme = theme;
     }
 
-    const ItemRange *range() const{
-        return _range;
-    }
 
     IlwisTypes ilwisType() const {
         return itITEMDOMAIN;
@@ -125,11 +122,16 @@ public:
         return ilwisType();
     }
 
+protected:
+    Range *getRange(){
+        return _range;
+    }
 
 private:
     ItemRange *_range;
     QString _theme;
 };
+
 }
 
 #endif // ITEMDOMAIN_H

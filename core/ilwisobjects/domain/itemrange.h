@@ -20,10 +20,12 @@ public:
     virtual bool isValid() const = 0;
     virtual void add(DomainItem *item) = 0;
     virtual void remove(const QString& nm) = 0;
+    double evaluate(double v, bool inclusive = true) const;
 
 
     static DomainItem *create(const QString& type);
     static void addCreateItem(const QString& type, CreateItemFunc func);
+
     static ItemRange *merge(const QSharedPointer<ItemRange>& nr1, const QSharedPointer<ItemRange>& nr2);
 
 private:

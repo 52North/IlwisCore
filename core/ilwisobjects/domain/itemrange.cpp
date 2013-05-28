@@ -9,6 +9,12 @@ using namespace Ilwis;
 
 QHash<QString, CreateItemFunc> ItemRange::_createItem;
 
+double ItemRange::evaluate(double v, bool ) const
+{
+    //TODO  more advanced impl needed? may cost performance
+    return v;
+}
+
 DomainItem *ItemRange::create(const QString& type){
     auto iter = _createItem.find(type);
     if ( iter != _createItem.end())
