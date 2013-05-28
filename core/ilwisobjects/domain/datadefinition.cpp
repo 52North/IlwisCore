@@ -86,8 +86,8 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
         return def1;
 
     if ( def1.domain()->ilwisType() == itNUMERICDOMAIN && def1.domain()->ilwisType() == itNUMERICDOMAIN) {
-        if ( def1.domain()->name() == "boolean" && def1.domain()->name() == "boolean") {
-            return DataDefinition(def1.domain());
+        if ( def1.domain()->code() == "boolean" && def2.domain()->code() == "boolean") {
+            return DataDefinition(def1);
         }
         SPNumericRange nr1 = def1.range().dynamicCast<NumericRange>();
         SPNumericRange nr2 = def1.range().dynamicCast<NumericRange>();
