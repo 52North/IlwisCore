@@ -17,6 +17,7 @@ namespace Ilwis {
 
 typedef unsigned char byte;
 
+const quint8  bUNDEF = 2;
 const short  shUNDEF = -32767;
 const short  shILLEGAL = shUNDEF + 1;
 const long   iUNDEF  = -2147483647L;
