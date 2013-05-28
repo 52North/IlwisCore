@@ -8,3 +8,4 @@ count,0,999999999,1,1,1,,value,Integer counting
 distance,0,1000000000,0.01,0,1,Meter,value,Distance measuring
 NDVI,-1,1,0.01,0,1,,min1to1,Normalized difference vegetation Index
 percentage,0,100,0.01,0,0,,value,Percentage
+boolean,0,2,1,1,1,,value,boolean domain with undefines
