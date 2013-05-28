@@ -170,8 +170,11 @@ quint32 NamedIdentifierRange::count() const
 
 Range *NamedIdentifierRange::clone() const
 {
-    //TODO
-    return 0;
+    NamedIdentifierRange *nir = new NamedIdentifierRange();
+    for(const auto &iter: _items) {
+        nir->add( (*iter).clone());
+    }
+    return nir;
 }
 
 
