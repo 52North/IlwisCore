@@ -46,6 +46,11 @@ void ThematicItem::setCode(const QString &code)
     _code = code;
 }
 
+DomainItem *ThematicItem::clone() const
+{
+    return new ThematicItem(name(), _code, _description);
+}
+
 
 
 

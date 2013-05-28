@@ -53,6 +53,11 @@ bool IndexedIdentifier::operator==(const IndexedIdentifier &item) const
     return _prefix == item._prefix && _index == item._index;
 }
 
+DomainItem *IndexedIdentifier::clone() const
+{
+    return new IndexedIdentifier(_prefix, _index);
+}
+
 bool IndexedIdentifier::isValid() const{
     return true;
 }
@@ -95,6 +100,11 @@ QString NamedIdentifier::itemType() const
 NamedIdentifierRange *NamedIdentifier::createRange()
 {
     return new NamedIdentifierRange();
+}
+
+DomainItem *NamedIdentifier::clone() const
+{
+    return new NamedIdentifier(_name);
 }
 
 bool NamedIdentifier::isValid() const {

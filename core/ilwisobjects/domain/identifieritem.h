@@ -18,6 +18,7 @@ public:
     QString prefix() const;
     void setPrefix(const QString& pf);
     bool operator==(const IndexedIdentifier& item) const;
+    DomainItem *clone() const;
 
     QString itemType() const;
     bool isValid() const;
@@ -37,6 +38,7 @@ public:
     bool operator==(const NamedIdentifier& item) const;
     QString itemType() const;
     static Ilwis::NamedIdentifierRange *createRange();
+    DomainItem *clone() const;
 
 private:
     QString _name;

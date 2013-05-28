@@ -16,6 +16,7 @@ public:
     QString description() const;
     void setDescription(const QString &desc);
     void setCode(const QString &code);
+    DomainItem *clone() const;
 
 private:
     QString _description;
