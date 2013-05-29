@@ -39,49 +39,38 @@ void Coverage::setEnvelope(const Box2D<double> &bnds)
     _envelope = bnds;
 }
 
-ITable Coverage::attributeTable(IlwisTypes type) const
+ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
 {
-    IlwisTypes ft = type & itPOINTCOVERAGE;
-    if ( ft && _attributeTables.contains(ft)) {
-        return _attributeTables[itPOINTCOVERAGE];
-    } else {
-        IlwisTypes ft = type & itSEGMENTCOVERAGE;
-        if ( ft && _attributeTables.contains(ft)) {
-            return _attributeTables[itSEGMENTCOVERAGE];
-        } else {
-            IlwisTypes ft = type & itPOLYGONCOVERAGE;
-            if ( ft && _attributeTables.contains(ft)) {
-                return _attributeTables[itPOLYGONCOVERAGE];
-            } else {
-                IlwisTypes ft = type & itGRIDCOVERAGE;
-                if ( ft && _attributeTables.contains(ft)) {
-                    return _attributeTables[itGRIDCOVERAGE];
-                }
-            }
-        }
+    if ( ind < (qint32)_attTables.size()){
+        int index = ind < 0 ? 0 : ind + 1;
+        IlwisTypes ft = type & itPOINTCOVERAGE;
+        if ( ft && _attTables[index].contains(ft))
+            return _attTables[index][itPOINTCOVERAGE];
+        ft = type & itSEGMENTCOVERAGE;
+        if ( ft && _attTables[index].contains(ft))
+            return _attTables[index][itSEGMENTCOVERAGE];
+        ft = type & itPOLYGONCOVERAGE;
+        if ( ft && _attTables[index].contains(ft))
+            return _attTables[index][itPOLYGONCOVERAGE];
+        ft = type & itGRIDCOVERAGE;
+        if ( ft && _attTables[index].contains(ft))
+            return _attTables[index][itGRIDCOVERAGE];
     }
     return ITable();
 }
 
-void Coverage::attributeTable(IlwisTypes type, const ITable &tbl)
+void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
 {
-    if ( type & itCOVERAGE) {
-        IlwisTypes ft = type & itPOINTCOVERAGE;
-        if ( ft) {
-            _attributeTables[ft] = tbl;
-        }
-        ft = type & itSEGMENTCOVERAGE;
-        if ( ft) {
-            _attributeTables[ft] = tbl;
-        }
-        ft = type & itPOLYGONCOVERAGE;
-        if ( ft) {
-            _attributeTables[ft] = tbl;
-        }
-        ft = type & itGRIDCOVERAGE;
-        if ( ft) {
-            _attributeTables[ft] = tbl;
-        }
+    if ( type & itCOVERAGE && ind < (qint32)_attTables.size()) {
+        int index = ind < 0 ? 0 : ind + 1;
+        if ( (type & itPOINTCOVERAGE) != 0 )
+            _attTables[index][itPOINTCOVERAGE] = tbl;
+        if ( (type & itSEGMENTCOVERAGE) != 0 )
+            _attTables[index][itSEGMENTCOVERAGE] = tbl;
+        if ( (type & itPOLYGONCOVERAGE) != 0 )
+            _attTables[index][itPOLYGONCOVERAGE] = tbl;
+        if ( (type & itGRIDCOVERAGE) != 0 )
+            _attTables[index][itGRIDCOVERAGE] = tbl;
     }
 }
 
@@ -99,7 +88,6 @@ DataDefinition &Coverage::datadef()
 {
     return _datadef;
 }
-
 
 
 

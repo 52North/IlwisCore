@@ -41,9 +41,12 @@ private:
 
 };
 
-typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+//typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
-
+class IFeatureCoverage : public IlwisData<FeatureCoverage> {
+public:
+    QVariant operator()(quint32 fnumber, const QString& column, const QString& indexvalue="");
+};
 
 }
 

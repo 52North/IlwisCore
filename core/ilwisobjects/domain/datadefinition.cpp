@@ -16,7 +16,7 @@
 
 using namespace Ilwis;
 
-DataDefinition::DataDefinition() : _range(0)
+DataDefinition::DataDefinition() : _coveragerange(0), _indexrange(0)
 {
 }
 
@@ -25,16 +25,22 @@ DataDefinition::DataDefinition(const DataDefinition& def)
 {
     domain(def.domain());
     if ( !def.range().isNull())
-        _range.reset(def.range()->clone());
+        _coveragerange.reset(def.range()->clone());
     else
-        _range.reset(0);
+        _coveragerange.reset(0);
+
+    domain(def.domain(daINDEX), daINDEX);
+    if ( !def.range(daINDEX).isNull())
+        _coveragerange.reset(def.range(daINDEX)->clone());
+    else
+        _coveragerange.reset(0);
 }
 
 DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
 {
     domain(dm);
     if ( rng)
-        _range.reset(rng);
+        _coveragerange.reset(rng);
 }
 
 DataDefinition::~DataDefinition()
@@ -44,47 +50,70 @@ DataDefinition::~DataDefinition()
 DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
 {
     domain(def1.domain());
-    _range = def1.range();
+    domain(def1.domain(daINDEX), daINDEX);
+    _coveragerange = def1.range(daCOVERAGE);
+    _indexrange = def1.range(daINDEX);
+
 
     return *this;
 }
 
-Ilwis::PRange DataDefinition::range() const
+Ilwis::PRange DataDefinition::range(DomainAxis da) const
 {
-    return _range;
+    if ( da == daCOVERAGE)
+        return _coveragerange;
+    return _indexrange;
 }
 
-void DataDefinition::range(Range* vr)
+void DataDefinition::range(Range* vr, DomainAxis da)
 {
-    _range = QSharedPointer<Range>(vr);
+    if ( da == daCOVERAGE)
+        _coveragerange = QSharedPointer<Range>(vr);
+    else
+        _indexrange = QSharedPointer<Range>(vr);
 }
 
-IDomain DataDefinition::domain() const
+IDomain DataDefinition::domain(DomainAxis da) const
 {
-    return _domain;
+    if ( da == daCOVERAGE)
+        return _coveragedomain;
+    return _indexdomain;
 }
 
-void DataDefinition::domain(const IDomain &dom)
+void DataDefinition::domain(const IDomain &dom, DomainAxis da)
 {
-    _domain = dom;
-    if ( !_domain.isValid())
-        return;
+    if ( da == daCOVERAGE) {
+        _coveragedomain = dom;
+        if ( !_coveragedomain.isValid())
+            return;
 
-    Range *r = _domain->range<>();
-    if ( r)
-        _range.reset(r->clone());
+        Range *r = _coveragedomain->range<>();
+        if ( r)
+            _coveragerange.reset(r->clone());
+    } else {
+        _indexdomain = dom;
+        if ( !_indexdomain.isValid())
+            return;
+
+        Range *r = _indexdomain->range<>();
+        if ( r)
+            _indexrange.reset(r->clone());
+
+    }
+
 }
 
 
 bool DataDefinition::isValid() const
 {
-    return _domain.isValid();
+    return _coveragedomain.isValid();
 }
 
 
 DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefinition &def2)
 {
     IDomain dm;
+    DataDefinition def;
     if ( !def1.isValid() && def2.isValid())
         return def2;
     if ( !def2.isValid() && def1.isValid())
@@ -92,17 +121,39 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
 
     if ( def1.domain()->ilwisType() == itNUMERICDOMAIN && def1.domain()->ilwisType() == itNUMERICDOMAIN) {
         if ( def1.domain()->code() == "boolean" && def2.domain()->code() == "boolean") {
-            return DataDefinition(def1);
+            def = DataDefinition(def1);
         }
         SPNumericRange nr1 = def1.range().dynamicCast<NumericRange>();
         SPNumericRange nr2 = def1.range().dynamicCast<NumericRange>();
         NumericRange *nrNew = NumericRange::merge(nr1, nr2);
         if ( def1.domain()->name() == def1.domain()->name()) {
-            return DataDefinition(def1.domain(), nrNew);
+            def =  DataDefinition(def1.domain(), nrNew);
         } else {
             dm.prepare("value");
-            return DataDefinition(dm, nrNew);
+            def = DataDefinition(dm, nrNew);
         }
+        bool def1Valid = def1.domain(daINDEX).isValid();
+        bool def2Valid = def2.domain(daINDEX).isValid();
+        if ( !def2Valid && !def1Valid)
+            return def;
+        if ( def1Valid && def2Valid) {
+            SPNumericRange nr1 = def1.range(daINDEX).dynamicCast<NumericRange>();
+            SPNumericRange nr2 = def1.range(daINDEX).dynamicCast<NumericRange>();
+            NumericRange *nrNew = NumericRange::merge(nr1, nr2);
+            if ( def1.domain(daINDEX)->name() == def1.domain(daINDEX)->name()) {
+                def.domain(def1.domain(daINDEX));
+            } else {
+                dm.prepare("value");
+                def.domain(dm, daINDEX);
+            }
+            def.range(nrNew, daINDEX);
+        } else {
+            DataDefinition defTemp = def1.domain(daINDEX).isValid() ? def1 : def2;
+            def.range(defTemp.range(daINDEX)->clone(), daINDEX);
+            def.domain(defTemp.domain(daINDEX), daINDEX);
+        }
+        return def;
+
     }
     if ( def1.domain()->ilwisType() == itITEMDOMAIN && def1.domain()->ilwisType() == itITEMDOMAIN) {
         SPItemRange nr1 = def1.range().dynamicCast<ItemRange>();
@@ -111,7 +162,7 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
         if ( def1.domain()->name() == def1.domain()->name()) {
             return DataDefinition(def1.domain(), nrNew);
         } else {
-            dm.prepare("value");
+            dm.prepare("blavla");
             return DataDefinition(dm, nrNew);
         }
     }

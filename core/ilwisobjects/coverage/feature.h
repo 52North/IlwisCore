@@ -15,10 +15,10 @@ public:
     virtual const Geometry& geometry(quint32 index=0) const = 0;
     virtual void add(const Geometry& geom) = 0;
     virtual void attributeRecord(const SPAttributeRecord& record) = 0;
-    QVariant operator[](const QString& name);
+    QVariant operator()(const QString& name, int index = -1);
 
 protected:
-    virtual QVariant value(const QString& name) = 0;
+    virtual QVariant value(const QString& name, int index=-1) = 0;
 
 };
 
@@ -56,7 +56,7 @@ public:
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
     Feature& operator=(const Feature& f) ; // no assignment , _featureid is unique
-    QVariant value(const QString& name);
+    QVariant value(const QString& name, int index=-1);
     static quint64 _idbase;
     quint32 _itemid; // from the domain
     quint64 _featureid; // unique
@@ -81,7 +81,7 @@ public:
     void attributeRecord(const SPAttributeRecord& record) ;
     void setProxy(SPFeature f, quint32 index);
 protected:
-    QVariant value(const QString& name);
+    QVariant value(const QString& name, int index=-1);
 private:
     SPFeature _feature;
     quint32 _trackIndex;

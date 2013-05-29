@@ -86,6 +86,12 @@ quint32 FeatureCoverage::featureCount(IlwisTypes types) const
     return 0;
 }
 
+//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------
+
+QVariant IFeatureCoverage::operator ()(quint32 index, const QString &column, const QString &vdomainValue)
+{
+}
 
 
 

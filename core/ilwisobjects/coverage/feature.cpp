@@ -15,8 +15,8 @@ using namespace Ilwis;
 
 quint64 Feature::_idbase = 0;
 
-QVariant FeatureInterface::operator [](const QString &name) {
-    return value(name);
+QVariant FeatureInterface::operator ()(const QString &name, int index) {
+    return value(name, index);
 }
 
 //--------------------------------------------
@@ -34,9 +34,9 @@ Feature &Feature::operator =(const Feature &f)
     return *this;
 }
 
-QVariant Feature::value(const QString &name)
+QVariant Feature::value(const QString &name, int index)
 {
-    return _record->cellByKey(itemId(), name);
+    return _record->cellByKey(itemId(), name, index);
 }
 
 Feature::Feature(quint64 v): _itemid(v){
@@ -101,10 +101,10 @@ void FeatureProxy::setProxy(SPFeature f, quint32 index) {
     _trackIndex = index;
 }
 
-QVariant FeatureProxy::value(const QString &name)
+QVariant FeatureProxy::value(const QString &name, int index)
 {
     if ( isValid())
-        return _feature->operator [](name) ;
+        return _feature->operator ()(name, index) ;
     return QVariant();
 }
 

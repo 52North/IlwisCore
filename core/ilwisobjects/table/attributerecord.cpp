@@ -10,86 +10,124 @@
 
 using namespace Ilwis;
 
-AttributeRecord::AttributeRecord(const ITable &attTable, const QString &keyColumn) : _tableImpl(attTable), _keyColumn(keyColumn)
+AttributeRecord::AttributeRecord(const ITable &attTable, const QString &keyColumn) : _coverageTable(attTable), _keyColumn(keyColumn)
 {
 }
 
-quint32 AttributeRecord::columns() const
+quint32 AttributeRecord::columns(bool coverages) const
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
-        return iUNDEF;
+    if ( coverages) {
+        if ( _coverageTable.isValid())
+            return _coverageTable->columns();
     }
-    return _tableImpl->columns();
+    else if ( _indexTable.isValid())
+        return _indexTable->columns();
+    return iUNDEF;
 }
 
 
-ColumnDefinition AttributeRecord::columndefinition(const QString &nme) const
+ColumnDefinition AttributeRecord::columndefinition(const QString &nme, bool coverages) const
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
-        return ColumnDefinition();
-    }
-    return _tableImpl->columndefinition(nme);
+    if ( coverages ) {
+        if ( _coverageTable.isValid())
+            return _coverageTable->columndefinition(nme);
+    } else if ( _indexTable.isValid() )
+        return _indexTable->columndefinition(nme);
+
+    return ColumnDefinition();
 }
 
-quint32 AttributeRecord::columnIndex(const QString &nme) const
+quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 {
-
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
-        return iUNDEF;
+    if ( coverages) {
+        if (_coverageTable.isValid()) {
+            return _coverageTable->columnIndex(nme);
+        }
+    } else if ( _indexTable.isValid() ) {
+        return _indexTable->columnIndex(nme)        ;
     }
-    return _tableImpl->columnIndex(nme);
+    return iUNDEF;
 }
 
 
-bool AttributeRecord::addColumn(const ColumnDefinition &def)
+bool AttributeRecord::addColumn(const ColumnDefinition &def, bool coverages)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
-        return false;
+    if ( coverages ) {
+        if (_coverageTable.isValid()) {
+        return _coverageTable->addColumn(def);
+        }
+    } else if ( _indexTable.isValid() ) {
+        return _indexTable->addColumn(def)        ;
     }
-    return _tableImpl->addColumn(def);
+    return false;
+
 }
 
 
-bool AttributeRecord::addColumn(const QString &nme, const IDomain &domain)
+bool AttributeRecord::addColumn(const QString &nme, const IDomain &domain, bool coverages)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,"attribute table");
-        return false;
+    if ( coverages ) {
+        if (_coverageTable.isValid()) {
+        return _coverageTable->addColumn(nme, domain);
+        }
+    } else if ( _indexTable.isValid() ) {
+        return _indexTable->addColumn(nme, domain) ;
     }
-    return _tableImpl->addColumn(nme, domain);
+    return false;
 }
 
-QVariant AttributeRecord::cellByKey(quint64 itemId, const QString& col) {
+QVariant AttributeRecord::cellByKey(quint64 itemId, const QString& col, int index) {
     if ( _keyColumn == sUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1,"key column");
         return QVariant();
     }
-    if ( _index.size() == 0) {
-        indexKey();
+    if ( index == -1) {
+        if ( _coverageIndex.size() == 0) {
+            indexCoverageKey();
+        }
+        auto iter = _coverageIndex.find(itemId);
+        if ( iter == _coverageIndex.end()) {
+            return QVariant();
+        }
+        return _coverageTable->cell(col,(*iter).second);
+    } else {
+        if ( _verticalIndex[index].size() == 0) {
+            indexVerticalIndex(index);
+        }
+        auto iter = _coverageIndex.find(itemId);
+        if ( iter == _coverageIndex.end()) {
+            return QVariant();
+        }
+        return _indexTable->cell(col,(*iter).second);
     }
-    auto iter = _index.find(itemId);
-    if ( iter == _index.end()) {
-        return QVariant();
-    }
-    return _tableImpl->cell(col,(*iter).second);
-
+    return QVariant();
 }
 
-void AttributeRecord::indexKey(){
+void AttributeRecord::indexVerticalIndex(int index){
     quint32 rec = 0;
-    QVariantList values = _tableImpl->column(_keyColumn);
+    QVariantList values = _indexTable->column(_keyColumn);
     for(const QVariant& val : values) {
-            _index[val.toInt()] = rec++;
+        _verticalIndex[index][val.toInt()] = rec++;
+    }
+
+}
+
+void AttributeRecord::indexCoverageKey(){
+    quint32 rec = 0;
+    QVariantList values = _coverageTable->column(_keyColumn);
+    for(const QVariant& val : values) {
+        _coverageIndex[val.toInt()] = rec++;
     }
 }
 
-void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn)
+void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn, int indexCount)
 {
-    _tableImpl = tbl;
-    _keyColumn = keyColumn;
-    _index.clear();
+    if ( indexCount == -1) {
+        _coverageTable = tbl;
+        _keyColumn = keyColumn;
+        _coverageIndex.clear();
+    } else {
+        _verticalIndex.resize(indexCount);
+        _indexTable = tbl;
+    }
 }

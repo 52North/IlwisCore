@@ -15,6 +15,7 @@ namespace Ilwis {
 
 class Table;
 typedef IlwisData<Table> ITable;
+typedef QHash<IlwisTypes, ITable> AttributeTables;
 
 class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
@@ -30,8 +31,8 @@ public:
     Box2D<double> envelope() const;
     void setEnvelope(const Box2D<double>& bnds);
 
-    ITable attributeTable(IlwisTypes type) const ;
-    void attributeTable(IlwisTypes type, const ITable& tbl);
+    ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
+    void attributeTable(IlwisTypes type, const ITable& tbl, qint32 index=-1 );
     CoverageStatistics& statistics();
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
@@ -39,13 +40,15 @@ public:
 private:
     ICoordinateSystem _coordinateSystem;
     Box2D<double> _envelope;
-    QHash<IlwisTypes, ITable> _attributeTables;
+    std::vector<AttributeTables> _attTables;
     CoverageStatistics _statistics;
     DataDefinition _datadef;
 
 };
 
 typedef IlwisData<Coverage> ICoverage;
+
+
 }
 
 
