@@ -63,6 +63,8 @@ void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
 {
     if ( type & itCOVERAGE && ind < (qint32)_attTables.size()) {
         int index = ind < 0 ? 0 : ind + 1;
+        if ( index == _attTables.size())
+            _attTables.push_back(AttributeTables());
         if ( (type & itPOINTCOVERAGE) != 0 )
             _attTables[index][itPOINTCOVERAGE] = tbl;
         if ( (type & itSEGMENTCOVERAGE) != 0 )
