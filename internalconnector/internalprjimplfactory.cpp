@@ -6,16 +6,10 @@
 #include <QStringList>
 
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
+#include "geometries.h"
 #include "ilwisdata.h"
 #include "factory.h"
 #include "abstractfactory.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
 #include "projection.h"
 #include "ilwisobjectfactory.h"
 #include "projectionimplementation.h"

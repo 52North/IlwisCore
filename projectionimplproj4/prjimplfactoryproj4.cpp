@@ -6,11 +6,7 @@
 #include <QStringList>
 
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
+#include "geometries.h"
 #include "ilwisdata.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -20,7 +16,6 @@
 #include "ilwisobjectfactory.h"
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
-#include <functional>
 #include "prjmplfactoryproj4.h"
 #include "proj_api.h"
 #include "prjimplproj4.h"

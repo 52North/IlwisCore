@@ -1,11 +1,7 @@
 #include <QString>
 
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisobject.h"
+#include "geometries.h"
 #include "ilwisdata.h"
 #include "domain.h"
 #include "coordinatesystem.h"

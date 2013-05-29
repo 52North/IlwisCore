@@ -1,7 +1,6 @@
 #include <QUrl>
 #include "module.h"
 #include "kernel.h"
-#include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
 #include "mastercatalog.h"

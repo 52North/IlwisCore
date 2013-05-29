@@ -1,13 +1,8 @@
 #include <QStringList>
 #include <QSharedPointer>
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "line.h"
+#include "geometries.h"
 #include "geometry.h"
-#include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
 #include "datadefinition.h"

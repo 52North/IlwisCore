@@ -1,4 +1,3 @@
-#include "serializationoptions.h"
 #include "angle.h"
 
 Ilwis::Angle operator+(const Ilwis::Angle& a1, const Ilwis::Angle& a2) {

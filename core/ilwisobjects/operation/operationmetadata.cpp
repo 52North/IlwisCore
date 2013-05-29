@@ -2,7 +2,6 @@
 #include "ilwisdata.h"
 #include "ilwisobject.h"
 #include "operationmetadata.h"
-#include <QDebug>
 
 using namespace Ilwis;
 

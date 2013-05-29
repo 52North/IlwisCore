@@ -1,9 +1,4 @@
-#include <QString>
-#include <QVector>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
-
+#include "kernel.h"
 #include "raster.h"
 #include "pixeliterator.h"
 

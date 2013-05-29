@@ -9,6 +9,7 @@ public:
     enum State{sNOTPREPARED,sPREPARED, sPREPAREFAILED};
     OperationImplementation() : _prepState(sNOTPREPARED) {}
     OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e);
+    virtual ~OperationImplementation() {}
     const IOperationMetaData& metadata() const;
     virtual bool execute(ExecutionContext *ctx)=0;
     virtual bool isValid() const;

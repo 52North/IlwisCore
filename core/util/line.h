@@ -1,9 +1,6 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <boost/geometry/geometries/linestring.hpp>
-#include <boost/geometry/geometries/register/linestring.hpp>
-
 namespace Ilwis{
 template<class PointType=Point2D<double> >
 class Line2D : public bg::model::linestring<PointType > {

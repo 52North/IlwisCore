@@ -2,10 +2,6 @@
 #define BOX_H
 
 #include <QSize>
-
-#include <boost/geometry/geometries/box.hpp>
-#include <boost/geometry/geometries/register/box.hpp>
-#include <type_traits>
 #include "size.h"
 
 namespace bg = boost::geometry;

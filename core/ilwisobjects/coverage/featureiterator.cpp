@@ -1,35 +1,14 @@
 #include <iterator>
-#include <QString>
-#include <QVector>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "line.h"
-#include "geometry.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "ellipsoid.h"
-#include "geodeticdatum.h"
-#include "projection.h"
-#include "domain.h"
+#include "coverage.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
+#include "geometry.h"
 #include "feature.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "connectorinterface.h"
-#include "resource.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
 

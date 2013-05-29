@@ -3,14 +3,14 @@
 
 #include <QSize>
 
-#include "ilwis.h"
+//#include "ilwis.h"
 #include <cstddef>
 #include <boost/mpl/int.hpp>
 #include <boost\geometry\core\tag.hpp>
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
+//#include <boost/geometry/io/wkt/wkt.hpp>
 #include <boost/mpl/int.hpp>
 
 

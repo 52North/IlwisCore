@@ -1,11 +1,7 @@
 #include <QStringList>
 #include <boost/geometry.hpp>
 #include "ilwis.h"
-#include "serializationoptions.h"
-#include "angle.h"
-#include "point.h"
-#include "line.h"
-#include "box.h"
+#include "geometries.h"
 #include "geometry.h"
 
 using namespace Ilwis;

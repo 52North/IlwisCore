@@ -1,6 +1,6 @@
 #include <QStringList>
 
-#include "ilwis.h"
+#include "kernel.h"
 #include "raster.h"
 #include "astnode.h"
 #include "idnode.h"

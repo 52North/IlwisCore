@@ -1,25 +1,9 @@
-#include <QSqlQuery>
-#include <QSqlError>
-
 #include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "ilwisdata.h"
-#include "connectorinterface.h"
-#include "domain.h"
+#include "raster.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "coordinatesystem.h"
-#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "containerstatistics.h"
-#include "coverage.h"
-#include "containerstatistics.h"
-#include "georeference.h"
-#include "grid.h"
-#include "gridcoverage.h"
 #include "ilwisobjectconnector.h"
 #include "InternalGridCoverageConnector.h"
 

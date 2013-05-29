@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include "raster.h"
 #include "ilwisoperation.h"
 #include "rasvalue.h"

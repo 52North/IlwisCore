@@ -1,6 +1,4 @@
 #include "kernel.h"
-#include "ilwis.h"
-#include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
 #include "range.h"

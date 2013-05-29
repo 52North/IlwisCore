@@ -1,7 +1,5 @@
 #include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "geometries.h"
 #include "astnode.h"
 #include "rangedefinitionnode.h"
 

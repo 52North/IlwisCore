@@ -1,11 +1,9 @@
-#include <QString>
 #include <functional>
 
 #include "kernel.h"
 #include "ilwis.h"
 #include "angle.h"
 #include "point.h"
-#include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"

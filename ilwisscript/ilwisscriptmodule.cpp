@@ -3,12 +3,8 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
 #include "OperationExpression.h"
 #include "ilwisscriptmodule.h"
-#include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"

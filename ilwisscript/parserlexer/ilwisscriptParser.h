@@ -155,9 +155,7 @@ has the callable functions (rules) shown below,
 #include <QStringList>
 #include <QHash>
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "geometries.h"
 #include "astnode.h"
 #include "idnode.h"
 #include "scriptnode.h"

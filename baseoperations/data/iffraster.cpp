@@ -1,6 +1,7 @@
 #include <QString>
 #include <functional>
 #include <future>
+#include "kernel.h"
 #include "raster.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"

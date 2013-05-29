@@ -1,13 +1,7 @@
-#include <QString>
-
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "geometries.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
-#include "domain.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
 #include "boost/numeric/ublas/matrix.hpp"

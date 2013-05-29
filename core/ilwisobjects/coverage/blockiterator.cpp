@@ -1,6 +1,6 @@
+#include "kernel.h"
 #include "raster.h"
 #include "pixeliterator.h"
-#include "resource.h"
 #include "blockiterator.h"
 
 using namespace Ilwis;

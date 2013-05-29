@@ -2,6 +2,14 @@
 #define BASELAYER_H
 
 #include "Kernel_global.h"
+#include "geometries.h"
+#include "ilwisobject.h"
+#include "ilwisdata.h"
+#include "domain.h"
+#include "coordinatesystem.h"
+#include "datadefinition.h"
+#include "connectorinterface.h"
+#include "containerstatistics.h"
 
 namespace Ilwis {
 

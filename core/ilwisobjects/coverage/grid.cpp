@@ -1,15 +1,9 @@
-#include <QList>
 #include <QDebug>
 #include <QDir>
 #include <QTemporaryFile>
 #include <iostream>
 #include "kernel.h"
-#include "ilwis.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
-#include "errorobject.h"
-#include "size.h"
+#include "geometries.h"
 #include "ilwiscontext.h"
 #include "grid.h"
 
