@@ -165,7 +165,9 @@ HEADERS += core/kernel.h\
     core/util/locker.h \
     core/ilwisobjects/coverage/raster.h \
     core/ilwisobjects/operation/ilwisoperation.h \
-    core/ilwisobjects/domain/datadefinition.h
+    core/ilwisobjects/domain/datadefinition.h \
+    core/util/polygon.h \
+    core/util/geometries.h
 
 
 
