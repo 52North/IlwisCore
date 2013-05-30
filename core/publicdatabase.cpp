@@ -62,12 +62,12 @@ void PublicDatabase::prepare() {
 
     doQuery(stmt, sql);
 
-    stmt = "CREATE TABLE projectedcsy ( \
-        code TEXT NOT NULL PRIMARY KEY, \
-        name TEXT NOT NULL, \
-        proj_params TEXT NOT NULL)";
+//    stmt = "CREATE TABLE projectedcsy ( \
+//        code TEXT NOT NULL PRIMARY KEY, \
+//        name TEXT NOT NULL, \
+//        proj_params TEXT NOT NULL)";
 
-    doQuery(stmt, sql);
+//    doQuery(stmt, sql);
 
 
     stmt = "create table ellipsoid (  code TEXT, name TEXT, wkt TEXT, authority TEXT, majoraxis REAL, invflattening REAL, source TEXT, description TEXT)";
@@ -132,7 +132,7 @@ void PublicDatabase::loadPublicTables() {
     insertFile("ellipsoids.csv",sqlPublic);
     insertFile("projections.csv",sqlPublic);
     insertFile("numericdomains.csv",sqlPublic);
-    insertProj4Epsg(sqlPublic);
+    //insertProj4Epsg(sqlPublic);
 }
 
 void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
