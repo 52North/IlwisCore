@@ -152,9 +152,10 @@ public:
             }
             return true;
         } else {
-            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
+            if(tp != itUNKNOWN && prepare(Resource(name, tp)))
+                return true;
         }
-        return false;
+        return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
 
     }
 
