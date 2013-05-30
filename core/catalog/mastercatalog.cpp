@@ -287,9 +287,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
             return QUrl();
         }
     } else if ( name.indexOf("code=epsg:")== 0 ) {
-        //TODO other tables then projectedcsy
         auto code = name.right(name.size() - 5);
-        return QString("ilwis://tables/projectedcsy?code=%1").arg(code);
+        return QString("ilwis://projection/code=%1").arg(code);
 
     } else if ( name.left(6) == "code=proj4:") {
         auto code = name.right(name.size() - 5);
