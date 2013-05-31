@@ -13,6 +13,13 @@ class CatalogConnector;
 
 typedef QExplicitlySharedDataPointer<IlwisObject> ESPObject;
 
+/*!
+ Master catalog holds references to all discovered data files, operations and to all instantiated ilwis objects
+ The master catalog is basically a database and all information about resources that ilwis can handle can be
+ found in this database. The fields in the database are a reflection of the fields in the resource class and the
+ variable set of properties each resource can have.
+ Main function of the mastercatalog is
+ */
 class KERNELSHARED_EXPORT MasterCatalog
 {
     friend KERNELSHARED_EXPORT MasterCatalog* mastercatalog();
