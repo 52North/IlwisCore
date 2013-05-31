@@ -62,14 +62,6 @@ void PublicDatabase::prepare() {
 
     doQuery(stmt, sql);
 
-//    stmt = "CREATE TABLE projectedcsy ( \
-//        code TEXT NOT NULL PRIMARY KEY, \
-//        name TEXT NOT NULL, \
-//        proj_params TEXT NOT NULL)";
-
-//    doQuery(stmt, sql);
-
-
     stmt = "create table ellipsoid (  code TEXT, name TEXT, wkt TEXT, authority TEXT, majoraxis REAL, invflattening REAL, source TEXT, description TEXT)";
     doQuery(stmt, sql);
 
@@ -132,51 +124,6 @@ void PublicDatabase::loadPublicTables() {
     insertFile("ellipsoids.csv",sqlPublic);
     insertFile("projections.csv",sqlPublic);
     insertFile("numericdomains.csv",sqlPublic);
-    //insertProj4Epsg(sqlPublic);
-}
-
-void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
-    auto basePath = context()->ilwisFolder().absoluteFilePath() + "/resources";
-    QFileInfo info(basePath + "/epsg.pcs");
-    if ( !info.exists())
-        return;
-
-    QFile inifile(info.canonicalFilePath());
-    if (!inifile.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-    QTextStream textfile(&inifile);
-    QString text = textfile.readAll();
-
-    QStringList lines = text.split("\n");
-    bool ok = sqlPublic.prepare("INSERT INTO projectedcsy VALUES(\
-                  :code,:name,:proj_params )" );
-    QString line, name;
-    int i = 0;
-    while( i < lines.size()) {
-        line = lines[i];
-        if ( line[0] == '#' && name == "")
-            name = line.right(line.size() - 2);
-        else if ( line[0] == '<') {
-            int index = line.indexOf('>');
-            QString epgsTxt = "epsg:" + line.mid(1,index - 1);
-            QString projTxt = line.mid(index + 2, line.size() - 4 - index);
-            projTxt = projTxt.trimmed();
-            sqlPublic.bindValue(":code", epgsTxt);
-            sqlPublic.bindValue(":name", name);
-            sqlPublic.bindValue(":proj_params", projTxt);
-            ok = sqlPublic.exec();
-            if (!ok) {
-                kernel()->issues()->logSql(sqlPublic.lastError());
-                return;
-            }
-            name = "";
-        } else if ( line[0] == '#') { // comment line, skip it, next line will be empty
-            ++i;
-            name = "";
-        }
-        ++i;
-
-    }
 }
 
 void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
