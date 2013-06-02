@@ -78,7 +78,11 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/blockiterator.cpp \
     core/ilwisobjects/coverage/gridinterpolator.cpp \
     core/util/locker.cpp \
-    core/ilwisobjects/domain/datadefinition.cpp
+    core/ilwisobjects/domain/datadefinition.cpp \
+    core/ilwisobjects/geometry/georeference/ctpgeoreference.cpp \
+    core/ilwisobjects/geometry/georeference/controlpoint.cpp \
+    core/ilwisobjects/geometry/georeference/planarctpgeoreference.cpp \
+    core/util/mathhelper.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -167,7 +171,11 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/ilwisoperation.h \
     core/ilwisobjects/domain/datadefinition.h \
     core/util/polygon.h \
-    core/util/geometries.h
+    core/util/geometries.h \
+    core/ilwisobjects/geometry/georeference/ctpgeoreference.h \
+    core/ilwisobjects/geometry/georeference/controlpoint.h \
+    core/ilwisobjects/geometry/georeference/planarctpgeoreference.h \
+    core/util/mathhelper.h
 
 
 
