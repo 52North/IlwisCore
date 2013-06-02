@@ -6,7 +6,6 @@
 #include "angle.h"
 #include "point.h"
 
-//#include <boost/geometry.hpp>
 #include <boost/geometry/io/wkt/wkt.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
