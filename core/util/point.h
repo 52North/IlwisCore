@@ -5,13 +5,10 @@
 
 //#include "ilwis.h"
 #include <cstddef>
+#include <boost/geometry.hpp>
 #include <boost/mpl/int.hpp>
-#include <boost\geometry\core\tag.hpp>
-#include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
-//#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/mpl/int.hpp>
 
 
 namespace bg = boost::geometry;
@@ -124,7 +121,30 @@ public:
     Point2D(const Point2D<CrdType>& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
     }
 
+    Point2D(const std::vector<CrdType>& v) : Point<CrdType, 2>() {
+        if ( v.size() < 2) {
+            *this = Point2D<CrdType>();
+            return;
+        }
+        this->x(v[0]);
+        this->y(v[1]);
+     }
+
     virtual ~Point2D() {
+    }
+
+    operator std::vector<CrdType> () {
+        std::vector<CrdType> v(2);
+        v[0] = this->x();
+        v[1] = this->y();
+        return v;
+    }
+
+    bool isNear(const Point2D<CrdType>& pnt, double delta) {
+        if (!this->isValid() || !pnt.isValid())
+            return false;
+        double d = boost::geometry::distance(*this, pnt);
+        return d <= delta;
     }
 
     Ilwis::Point2D<CrdType>& operator=(const Ilwis::Point2D<CrdType>& p2) {
@@ -152,6 +172,15 @@ public:
             return *this;
         this->x(this->x() + vec[0]);
         this->y(this->y() + vec[1]);
+
+        return *this;
+    }
+
+    Point2D<CrdType>& operator-= (const std::vector<CrdType>& vec){
+        if (!this->isValid() || !vec.size() != 2)
+            return *this;
+        this->x(this->x() - vec[0]);
+        this->y(this->y() - vec[1]);
 
         return *this;
     }
@@ -277,6 +306,19 @@ public:
         this->z(crd.y());
     }
 
+    Point3D(const std::vector<CrdType>& v) : Point<CrdType, 3>() {
+        if ( v.size() < 2) {
+            *this = Point3D<CrdType>();
+            return;
+        }
+        if ( v.size() <= 2 ) {
+            this->x(v[0]);
+            this->y(v[1]);
+        }
+        this->z(v[2]);
+
+    }
+
     template<typename U> Point3D(const Point3D<U>& p) {
         this->x(p.x());
         this->y(p.y());
@@ -294,6 +336,20 @@ public:
             this->y(this->undefined);
 
         }
+    }
+
+    operator std::vector<CrdType> () {
+        std::vector<CrdType> v(3);
+        v[0] = this->x();
+        v[1] = this->y();
+        v[3] = this->z();
+        return v;
+    }
+    bool isNear(const Point3D<CrdType>& pnt, double delta) {
+        if (!this->isValid() || !pnt.isValid())
+            return false;
+        double d = boost::geometry::distance(*this, pnt);
+        return d <= delta;
     }
 
     /*!
@@ -343,6 +399,16 @@ public:
         this->x(this->x() + vec[0]);
         this->y(this->y() + vec[1]);
         this->z(this->z() + vec[2]);
+
+        return *this;
+    }
+
+    Point3D<CrdType>& operator-= (const std::vector<CrdType>& vec){
+        if (!this->isValid() || !vec.size() == 3)
+            return *this;
+        this->x(this->x() - vec[0]);
+        this->y(this->y() - vec[1]);
+        this->z(this->z() - vec[2]);
 
         return *this;
     }
@@ -443,6 +509,13 @@ public:
        z(ll.z());
     }
 
+    LatLon& operator=(const LatLon& ll) {
+        this->x( ll.x());
+        this->y( ll.y());
+        this->z( ll.z());
+        return *this;
+    }
+
     /*!
      returns the z value of a point
      * \return z value
@@ -517,6 +590,14 @@ operator+(const Ilwis::Point2D<CrdType>& p1, const std::vector<CrdType>& vec) {
     return p3;
 }
 
+template<typename CrdType=qint32> Ilwis::Point2D<CrdType>
+operator-(const Ilwis::Point2D<CrdType>& p1, const std::vector<CrdType>& vec) {
+    if (p1.isValid() == false ||  vec.size() != 2 )
+        return Ilwis::Point2D<CrdType>();
+    Ilwis::Point2D<CrdType> p3(p1.x() - vec[0], p1.y() - vec[1]) ;
+    return p3;
+}
+
 
 
 template<typename CrdType=qint32> Ilwis::Point2D<CrdType>
@@ -550,6 +631,14 @@ operator-(const Ilwis::Point3D<CrdType>& p1, const Ilwis::Point3D<CrdType>& p2) 
     v[1] = p1.y() - p2.y();
     v[2] = p1.z() - p2.z();
     return v;
+}
+
+template<typename CrdType=qint32> Ilwis::Point3D<CrdType>
+operator-(const Ilwis::Point3D<CrdType>& p1, const std::vector<CrdType>& vec) {
+     if (p1.isValid() == false ||  vec.size() != 3 )
+        return std::vector<CrdType>();
+     Ilwis::Point2D<CrdType> p3(p1.x() - vec[0], p1.y() - vec[1], p1.z() - vec[2]) ;
+    return p3;
 }
 
 template<typename CrdType=qint32> Ilwis::Point3D<CrdType>
@@ -589,6 +678,7 @@ typedef Ilwis::Point3D<> Voxel;
 typedef Ilwis::Point3D<double> Coordinate;
 typedef Ilwis::Point2D<double> Coordinate2d;
 typedef Ilwis::Point2D<quint32>  Pixel_u;
+typedef Ilwis::Point2D<double>  Pixel_d; // identical to Coordinate2d but meant to be used for pixels with sub pixel accuracy, not for world coordinate
 typedef Ilwis::Point3D<quint32>  Voxel_u;
 
 BOOST_GEOMETRY_REGISTER_POINT_2D_GET_SET(Coordinate2d, double, cs::cartesian, x, y, x, y)
