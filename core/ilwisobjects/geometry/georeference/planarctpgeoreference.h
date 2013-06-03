@@ -22,8 +22,8 @@ private:
     Eigen::Matrix2d _jacobian;
     double _sigma;
     Transformation _transformation;
-    std::vector<Coefficient> _pixel;
-    std::vector<Coefficient> _coord;
+    std::vector<Coefficient> _colrowCoef;
+    std::vector<Coefficient> _xyCoef;
     Coefficient _avgCrd;
     Coefficient _avgPix;
 

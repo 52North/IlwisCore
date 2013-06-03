@@ -69,22 +69,22 @@ Point2D<double> PlanarCTPGeoReference::coord2Pixel(const Coordinate &crd) const
     }
     switch (_transformation) {
     case tTHIRDORDER:
-        rc += {(_pixel[6].x * crd.x() + _pixel[7].x * crd.y()) * X2 + (_pixel[8].x * crd.x() + _pixel[9].x * crd.y()) * Y2,
-                (_pixel[6].y * crd.x() + _pixel[7].y * crd.y()) * X2 +(_pixel[8].y * crd.x() + _pixel[9].x * crd.y()) * Y2};
+        rc += {(_colrowCoef[6].x * crd.x() + _colrowCoef[7].x * crd.y()) * X2 + (_colrowCoef[8].x * crd.x() + _colrowCoef[9].x * crd.y()) * Y2,
+                (_colrowCoef[6].y * crd.x() + _colrowCoef[7].y * crd.y()) * X2 +(_colrowCoef[8].y * crd.x() + _colrowCoef[9].x * crd.y()) * Y2};
     case tFULLSECONDORDER:
-        rc += {_pixel[4].x * X2 + _pixel[5].x * Y2, _pixel[4].y * X2 + _pixel[5].y * Y2};
+        rc += {_colrowCoef[4].x * X2 + _colrowCoef[5].x * Y2, _colrowCoef[4].y * X2 + _colrowCoef[5].y * Y2};
     case tSECONDORDER:
-        rc += {_pixel[3].x * XY,_pixel[3].y * XY};
+        rc += {_colrowCoef[3].x * XY,_colrowCoef[3].y * XY};
     case tAFFINE:
     case tCONFORM:
-        rc += {_pixel[0].x, _pixel[0].y};
-        rc += {_pixel[1].x * crd.x() + _pixel[2].x * crd.y(), _pixel[1].y * crd.x() + _pixel[2].y * crd.y()};
+        rc += {_colrowCoef[0].x, _colrowCoef[0].y};
+        rc += {_colrowCoef[1].x * crd.x() + _colrowCoef[2].x * crd.y(), _colrowCoef[1].y * crd.x() + _colrowCoef[2].y * crd.y()};
         break;
     case tPROJECTIVE:
-        rc.x( rc.x() + (_pixel[0].x * crd.x() + _pixel[1].x * crd.y() + _pixel[2].x) /
-                       (_pixel[6].y * crd.x() + _pixel[7].y * crd.y() + 1));
-        rc.y(rc.y() + (_pixel[3].x * crd.x() + _pixel[4].x * crd.y() + _pixel[5].x) /
-                      (_pixel[6].y * crd.x() + _pixel[7].y * crd.y() + 1));
+        rc.x( rc.x() + (_colrowCoef[0].x * crd.x() + _colrowCoef[1].x * crd.y() + _colrowCoef[2].x) /
+                       (_colrowCoef[6].y * crd.x() + _colrowCoef[7].y * crd.y() + 1));
+        rc.y(rc.y() + (_colrowCoef[3].x * crd.x() + _colrowCoef[4].x * crd.y() + _colrowCoef[5].x) /
+                      (_colrowCoef[6].y * crd.x() + _colrowCoef[7].y * crd.y() + 1));
         break;
     }
     return rc;
@@ -102,12 +102,12 @@ Coordinate PlanarCTPGeoReference::crdInverseOfAffine(const Pixel_d& pix) const
     // det = ag - bf ;  detX = (Col -c)g - (Row -h)b
     //    detY = (Row -h)a - (Col -c)f
     // yields X = detX/det and Y = detY / det  provided  det <> 0
-    double a = _pixel[1].x;
-    double b = _pixel[2].y;
-    double c = _pixel[0].x;
-    double f = _pixel[1].y;
-    double g = _pixel[2].y;
-    double h = _pixel[0].y;
+    double a = _colrowCoef[1].x;
+    double b = _colrowCoef[2].y;
+    double c = _colrowCoef[0].x;
+    double f = _colrowCoef[1].y;
+    double g = _colrowCoef[2].y;
+    double h = _colrowCoef[0].y;
     double rDet = a * g - b * f;
     Coordinate crd;
     if (std::abs(rDet) < EPS10)
@@ -131,14 +131,14 @@ Coordinate PlanarCTPGeoReference::crdInverseOfProjective(const Pixel_d& pix) con
     // Using Cramers determinants rule:
     // det = pt - qs ;  detX = rt - qu  and detY = pu - rs
     // yields X = detX/det and Y = detY / det  provided  det <> 0
-    double a = _pixel[0].x;
-    double b = _pixel[1].x;
-    double c = _pixel[2].x;
-    double d = _pixel[6].x;
-    double e = _pixel[7].x;
-    double f = _pixel[3].x;
-    double g = _pixel[4].x;
-    double h = _pixel[5].x;
+    double a = _colrowCoef[0].x;
+    double b = _colrowCoef[1].x;
+    double c = _colrowCoef[2].x;
+    double d = _colrowCoef[6].x;
+    double e = _colrowCoef[7].x;
+    double f = _colrowCoef[3].x;
+    double g = _colrowCoef[4].x;
+    double h = _colrowCoef[5].x;
     double p = a - d * pix.x();
     double q = b - e * pix.x();
     double r = pix.x()  - c;
@@ -157,7 +157,6 @@ Coordinate PlanarCTPGeoReference::crdInverseOfProjective(const Pixel_d& pix) con
 }
 
 
-
 Coordinate PlanarCTPGeoReference::crdInverseOfHigherOrder(const Pixel_d& pix)
 {
     // Solving the following Coord2RowCol 3rd oreder equations for X and Y:
@@ -165,7 +164,7 @@ Coordinate PlanarCTPGeoReference::crdInverseOfHigherOrder(const Pixel_d& pix)
     // Row = r0 + r1X + r2Y + r3XY + r4XX + r5YY + r6XXX + r7XXY + r8XYY + r9YYY  (II)
     // 2nd order if c6 == c7 == c8 == c9 == r6 == r7 == r8 == r9 == 0
     Coordinate crdNext = Coordinate(0,0,0);     // initial crd guess
-    std::vector<double> nextPix { _pixel[0].x, _pixel[0].y }; // initial column and row
+    std::vector<double> nextPix { _colrowCoef[0].x, _colrowCoef[0].y }; // initial column and row
     Pixel_d deltaPix = pix;
     deltaPix -= nextPix;
     makeJacobianMatrix(crdNext, _jacobian);// linear appr matrix of Coord2RowCol in (0,0)
@@ -217,25 +216,25 @@ Coordinate PlanarCTPGeoReference::crdInverseOfHigherOrder(const Pixel_d& pix)
 void PlanarCTPGeoReference::makeJacobianMatrix(const Coordinate &crdIn , Eigen::Matrix2d& rmJ)
 {                     // Jacobian for 2nd/3rd order inversion
      //double	c0 = coeffCol[0];
-    double	c1 = _pixel[1].x;
-    double	c2 = _pixel[2].x;
-    double	c3 = _pixel[3].x;
-    double	c4 = _pixel[4].x;
-    double	c5 = _pixel[5].x;
-    double	c6 = _pixel[6].x;
-    double	c7 = _pixel[7].x;
-    double	c8 = _pixel[8].x;
-    double	c9 = _pixel[9].x;
+    double	c1 = _colrowCoef[1].x;
+    double	c2 = _colrowCoef[2].x;
+    double	c3 = _colrowCoef[3].x;
+    double	c4 = _colrowCoef[4].x;
+    double	c5 = _colrowCoef[5].x;
+    double	c6 = _colrowCoef[6].x;
+    double	c7 = _colrowCoef[7].x;
+    double	c8 = _colrowCoef[8].x;
+    double	c9 = _colrowCoef[9].x;
 
-    double	r1 = _pixel[1].y;
-    double	r2 = _pixel[2].y;
-    double	r3 = _pixel[3].y;
-    double	r4 = _pixel[4].y;
-    double	r5 = _pixel[5].y;
-    double	r6 = _pixel[6].y;
-    double	r7 = _pixel[7].y;
-    double	r8 = _pixel[8].y;
-    double	r9 = _pixel[9].y;
+    double	r1 = _colrowCoef[1].y;
+    double	r2 = _colrowCoef[2].y;
+    double	r3 = _colrowCoef[3].y;
+    double	r4 = _colrowCoef[4].y;
+    double	r5 = _colrowCoef[5].y;
+    double	r6 = _colrowCoef[6].y;
+    double	r7 = _colrowCoef[7].y;
+    double	r8 = _colrowCoef[8].y;
+    double	r9 = _colrowCoef[9].y;
 
     double x = crdIn.x();
     double y = crdIn.y();
@@ -270,8 +269,8 @@ bool PlanarCTPGeoReference::compute()
   int iRes = 0;
   std::vector<Coordinate> crdXY(iRecs);
   std::vector<Coordinate> pixColRow(iRecs);
-  _pixel.resize(10);;
-  _coord.resize(10);
+  _colrowCoef.resize(10);;
+  _xyCoef.resize(10);
   double rSumX = 0;
   double rSumY = 0;
   double rSumRow = 0;
@@ -349,31 +348,31 @@ bool PlanarCTPGeoReference::compute()
       else {
         double a = (sxc - syr) / (scc + srr);
         double b = (sxr + syc) / (scc + srr);
-        _coord[1].x =  a;
-        _coord[2].x =  b;
-        _coord[1].x =  b;
-        _coord[2].y = -a;
-        _coord[0].y =  0;
-        _coord[0].y =  0;
+        _xyCoef[1].x =  a;
+        _xyCoef[2].x =  b;
+        _xyCoef[1].x =  b;
+        _xyCoef[2].y = -a;
+        _xyCoef[0].y =  0;
+        _xyCoef[0].y =  0;
         double rDet = a * a + b * b;
-        _pixel[1].x =  a / rDet;
-        _pixel[2].x =  b / rDet;
-        _pixel[1].y =  b / rDet;
-        _pixel[2].y = -a / rDet;
-        _pixel[0].x =  0;
-        _pixel[0].y =  0;
+        _colrowCoef[1].x =  a / rDet;
+        _colrowCoef[2].x =  b / rDet;
+        _colrowCoef[1].y =  b / rDet;
+        _colrowCoef[2].y = -a / rDet;
+        _colrowCoef[0].x =  0;
+        _colrowCoef[0].y =  0;
       }
     }
     else if (_transformation == tPROJECTIVE) {
-      iRes = MathHelper::findOblique(iNr, pixColRow, crdXY, _pixel, true);
+      iRes = MathHelper::findOblique(iNr, pixColRow, crdXY, _colrowCoef, true);
       if (iRes == 0)
-        iRes = MathHelper::findOblique(iNr, crdXY, pixColRow, _pixel, false);
+        iRes = MathHelper::findOblique(iNr, crdXY, pixColRow, _colrowCoef, false);
     }
     else {
       int iTerms = minnr();
-      iRes = MathHelper::findPolynom(iTerms, iNr, crdXY, pixColRow, _pixel);
+      iRes = MathHelper::findPolynom(iTerms, iNr, crdXY, pixColRow, _colrowCoef);
       if (iRes == 0)
-        iRes = MathHelper::findPolynom(iTerms, iNr, pixColRow, crdXY, _coord);
+        iRes = MathHelper::findPolynom(iTerms, iNr, pixColRow, crdXY, _xyCoef);
 
     }
   }
