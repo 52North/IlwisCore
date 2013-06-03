@@ -46,6 +46,7 @@ private:
     bool fillDatumRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillProjectionRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillValueDomainRecord(const QStringList &parts, QSqlQuery &sqlPublic);
+    void insertProj4Epsg(QSqlQuery &sqlPublic);
     bool doQuery(QString &query, QSqlQuery &sqlPublic);
 };
 }

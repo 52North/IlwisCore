@@ -315,10 +315,16 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& item)
     QString code = item.code();
     QString projParms = code;
     if ( code.left(6) != "proj4:"){
-        QStringList parts = code.split(":");
-        if ( parts.size() == 2 && parts[0].toLower() == "epsg") {
-            QString epsg =  epsg2String(parts[1].toInt());
-            projParms = epsg;
+        QString query = QString("select * from projectedcsy where code='%1'").arg(code);
+        QSqlQuery db(kernel()->database());
+        if ( db.exec(query)) {
+            if (db.next()) {
+                QSqlRecord rec = db.record();
+                projParms = rec.value("proj_params").toString();
+            } else {
+                kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("coordinatesystem", item.name()));
+                return 0;
+            }
         }
     } else {
         projParms = code.mid(6);
@@ -330,7 +336,6 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& item)
     return csy;
 
 }
-
 
 IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& item) const {
     QString query;
