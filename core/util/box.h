@@ -7,6 +7,10 @@
 namespace bg = boost::geometry;
 
 namespace Ilwis {
+/*!
+The box class is an abstraction for any rectangular area or volumne used in Ilwis. It is applicable for both
+grid like areas ( e.g. rasters) as world coordinate areas.
+ */
 template<class CsyType=qint32> class Box2D : public bg::model::box<Ilwis::Point2D<CsyType> > {
 public:
     Box2D() : bg::model::box<Ilwis::Point2D<CsyType> >(Ilwis::Point2D<CsyType>(0,0),Ilwis::Point2D<CsyType>(0,0)){
@@ -26,6 +30,10 @@ public:
     Box2D(const Size& sz) : bg::model::box<Ilwis::Point2D<qint32> >(Point2D<qint32>(0,0),Point2D<qint32>(sz.xsize(), sz.ysize())){
     }
 
+    /*!
+     Constructs a box based on a WKT bases coordinate string
+     * \param envelope, the coordinate string marked as POLYGON
+     */
     Box2D(const QString& envelope) : bg::model::box<Ilwis::Point2D<CsyType> >(Point2D<CsyType>(0,0),Point2D<CsyType>(0,0)){
         int index1 = envelope.indexOf("(");
         if ( index1 != -1) {
