@@ -5,7 +5,7 @@
 
 namespace Ilwis {
 
-typedef boost::variant<Pixel, Coordinate2d, Coordinate, Line2D<Coordinate2d>,  Line2D<Pixel>  > GeometryType;
+typedef boost::variant<Pixel, Coordinate2d, Coordinate, Line2D<Coordinate2d>, Line2D<Coordinate>, Line2D<Pixel>, Polygon > GeometryType;
 
 class KERNELSHARED_EXPORT Geometry {
 public:
