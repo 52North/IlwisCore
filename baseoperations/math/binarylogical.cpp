@@ -60,6 +60,9 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx) {
                     v = v_in1 > _number; break;
                 case otGREATEREQ:
                     v = v_in1 >= _number; break;
+                default:
+                    v = rUNDEF;
+                    return false;
                 }
             }
             ++iterIn;
@@ -120,6 +123,9 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx) {
                     v = v_in1 > v_in2; break;
                 case otGREATEREQ:
                     v = v_in1 >= v_in2; break;
+                default:
+                    v = rUNDEF;
+                    return false;
                 }
             }
             ++iterIn1;
