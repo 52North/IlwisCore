@@ -91,8 +91,20 @@ QString Catalog::resolve(const QString &name, IlwisTypes tp) const
     if ( results.next()) {
         QSqlRecord rec = results.record();
         return rec.value(0).toString();
+    } else {
+        auto resolvedName = name;
+        if ( context()->workingCatalog()) {
+            resolvedName =  context()->workingCatalog()->location().toString() + "/" + name;
+            query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
+                            where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
+                    and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
+            auto viaExtType = kernel()->database().exec(query);
+            if ( viaExtType.next()){ // if it is in the extended type than it is ok
+                return resolvedName;
+            }
+        }
+        return sUNDEF;
     }
-    return sUNDEF;
 }
 
 QUrl Catalog::parentCatalog() const
