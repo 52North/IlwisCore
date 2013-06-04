@@ -248,8 +248,9 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
                         where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
                 and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName.toString()).arg(tp);
         auto viaExtType = kernel()->database().exec(query);
-                //TODO this can probably be more efficient, later
-        while ( viaExtType.next()){
+        bool isExternalRef = true;
+        while ( viaExtType.next()){ // external reference finding
+            isExternalRef = false;
             bool ok;
             auto propertyid = viaExtType.value(0).toLongLong(&ok);
             if (!ok) {
@@ -258,6 +259,9 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
             auto type = id2type(propertyid);
             if ( type & tp)
                 return id2Resource(propertyid);
+        }
+        if ( !isExternalRef) { // it was not an external reference but an internal one; if it was external it will never come here
+            return Resource(QUrl(resolvedName), tp);
         }
     }
     return Resource();
@@ -288,7 +292,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         }
     } else if ( name.indexOf("code=epsg:")== 0 ) {
         auto code = name.right(name.size() - 5);
-        return QString("ilwis://projection/code=%1").arg(code);
+        return QString("ilwis://tables/projectedcsy?code=%1").arg(code);
 
     } else if ( name.left(6) == "code=proj4:") {
         auto code = name.right(name.size() - 5);
