@@ -5,6 +5,7 @@
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "baseoperationsmodule.h"
+#include "math/unarymath.h"
 #include "math/sinus.h"
 #include "math/binarymath.h"
 #include "math/binarylogical.h"

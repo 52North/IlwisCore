@@ -4,6 +4,7 @@
 #include "raster.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
+#include "unarymath.h"
 #include "sinus.h"
 
 using namespace Ilwis;
@@ -13,7 +14,7 @@ Sinus::Sinus() {
 
 }
 
-Sinus::Sinus(quint64 metaid,const Ilwis::OperationExpression& expr) : OperationImplementation(metaid, expr),_spatialCase(true), _number(rUNDEF)
+Sinus::Sinus(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr)
 {
 
 }
@@ -26,18 +27,8 @@ bool Sinus::execute(ExecutionContext *ctx)
 
     QVariant value;
     if ( _spatialCase) {
-        PixelIterator iterIn(_inputGC, _box);
-        PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
-
-        double v_in = 0;
-        for_each(iterOut, iterOut.end(), [&](double& v){
-            if ( (v_in = *iterIn) != rUNDEF) {
-                v = sin(v_in);
-            }
-            ++iterIn;
-        });
-
-        value.setValue<IGridCoverage>(_outputGC);
+        UnaryFunction fun = sin;
+        return UnaryMath::execute(fun, ctx);
 
 
     } else {
@@ -57,66 +48,29 @@ OperationImplementation *Sinus::create(quint64 metaid, const Ilwis::OperationExp
 
 OperationImplementation::State Sinus::prepare()
 {
-    IlwisTypes ptype = _expression.parm(0).valuetype();
+    OperationImplementation::State state = UnaryMath::prepare();
+    if ( state != sPREPARED)
+        return state;
 
+    IDomain dom;
+    if(!dom.prepare("min1to1"))
+        return sPREPAREFAILED;
 
-    if ( ptype & itNUMERIC ) {
-        _spatialCase = false;
-        bool ok;
-        _number = _expression.parm(0).value().toDouble(&ok);
-        if (!ok) {
-            ERROR2(ERR_NO_OBJECT_TYPE_FOR_2,"Numerical value", "sinus operation");
-            _number = rUNDEF;
-            return sPREPAREFAILED;
-        }
-        return sPREPARED;
-
-    } else if ( ptype == itGRIDCOVERAGE) {
-        QString gc = _expression.parm(0).value();
-        QString outputName = _expression.parm(0,false).value();
-
-        if (!_inputGC.prepare(gc)) {
-            ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
-            return sPREPAREFAILED;
-        }
-        OperationHelper helper;
-        _box = helper.initialize(_inputGC, _outputGC, _expression.parm(0),
-                                    itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
-        if ( !_outputGC.isValid()) {
-            ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
-            return sPREPAREFAILED;
-        }
-        IDomain dom;
-        if(!dom.prepare("min1to1"))
-            return sPREPAREFAILED;
-
-        _outputGC->datadef().domain(dom);
-        if ( outputName != sUNDEF)
-            _outputGC->setName(outputName);
-        _spatialCase = true;
-        return sPREPARED;
-    }
-    return sNOTPREPARED;
+    _outputGC->datadef().domain(dom);
+    return sPREPARED;
 }
 
 quint64 Sinus::createMetadata() {
+
     QString url = QString("ilwis://operations/sin");
     Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
+    UnaryMath::populateMetadata(res);
     res.addProperty("longname","sinus");
-    res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_domain","value");
     res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical domain; values are considered to be radians"));
     res.addProperty("outparameters",1);
     res.addProperty("pout_1_type", itGRIDCOVERAGE);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_domain","min1to1");
     res.addProperty("pout_1_desc",TR("output gridcoverage with a numerical domain; values are between -1 and 1"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
 
     mastercatalog()->addItems({res});
     return res.id();
