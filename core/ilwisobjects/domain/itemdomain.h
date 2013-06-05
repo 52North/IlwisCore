@@ -50,24 +50,24 @@ public:
      * \param 0 based index, if the index is invalid 0 will be returned
      * \return a (pointer to) domain item or 0 if no items are defined
      */
-    C* item(quint32 index) const {
+    SPDomainItem item(quint32 index) const {
         if (!_range) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return 0;
         }
-        return static_cast<C *>(_range->item(index)) ;
+        return _range->item(index) ;
     }
     /*!
      returns a pointer to the item that is identified by the string name
      * \param a name that must be in the range of the domain. If not a 0 pointer will be returned
      * \return a (pointer to) domain item or 0 if no items are defined
      */
-    C* item(const QString& nam) const{
+    SPDomainItem item(const QString& nam) const{
         if (!_range) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
-            return 0;
+            return SPDomainItem();
         }
-        return static_cast<C *>(_range->item(nam)) ;
+        return _range->item(nam) ;
     }
     /*!
      Adds an item of the templated type to the range. If no range is yet defined, one will be created
@@ -131,6 +131,8 @@ private:
     ItemRange *_range;
     QString _theme;
 };
+
+
 
 }
 

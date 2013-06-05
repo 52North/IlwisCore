@@ -15,6 +15,8 @@ public:
 
 
 };
+
+typedef QSharedPointer<DomainItem> SPDomainItem;
 }
 
 #endif // DOMAINITEM_H
