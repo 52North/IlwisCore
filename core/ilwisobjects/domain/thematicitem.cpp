@@ -4,9 +4,9 @@
 #include "identity.h"
 #include "ilwisdata.h"
 #include "ilwisobject.h"
+#include "domainitem.h"
 #include "domain.h"
 #include "itemdomain.h"
-#include "domainitem.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
 

@@ -7,6 +7,7 @@
 #include <QUrlQuery>
 
 #include "kernel.h"
+#include "domainitem.h"
 #include "raster.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -15,7 +16,6 @@
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "itemdomain.h"
-#include "domainitem.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
 #include "resource.h"
