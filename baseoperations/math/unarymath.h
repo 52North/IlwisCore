@@ -17,13 +17,14 @@ public:
 protected:
     static void populateMetadata(Resource &res);
     Ilwis::OperationImplementation::State prepare();
-    bool execute(UnaryFunction fun, ExecutionContext *ctx);
+    bool execute( ExecutionContext *ctx);
 
     IGridCoverage _inputGC;
     IGridCoverage _outputGC;
     Box3D<qint32> _box;
     bool _spatialCase;
     double _number;
+    UnaryFunction _unaryFun;
 
 };
 }

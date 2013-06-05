@@ -18,33 +18,42 @@ UnaryMath::UnaryMath(quint64 metaid,const Ilwis::OperationExpression& expr) : Op
 
 }
 
-bool UnaryMath::execute(UnaryFunction fun, ExecutionContext *ctx)
+bool UnaryMath::execute(ExecutionContext *ctx)
 {
-    BoxedAsyncFunc unaryFun = [&](const Box3D<qint32>& box) -> bool {
-        PixelIterator iterIn(_inputGC, _box);
-        PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare()) != sPREPARED)
+            return false;
 
-        double v_in = 0;
-        for_each(iterOut, iterOut.end(), [&](double& v){
-            if ( (v_in = *iterIn) != rUNDEF) {
-                v = fun(v_in);
-            }
-            ++iterIn;
-        });
-        return true;
-    };
+    QVariant value;
+    if ( _spatialCase) {
+        BoxedAsyncFunc unaryFun = [&](const Box3D<qint32>& box) -> bool {
+            PixelIterator iterIn(_inputGC, _box);
+            PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
 
-    bool res = OperationHelper::execute(unaryFun, _outputGC);
+            double v_in = 0;
+            for_each(iterOut, iterOut.end(), [&](double& v){
+                if ( (v_in = *iterIn) != rUNDEF) {
+                    v = _unaryFun(v_in);
+                }
+                ++iterIn;
+            });
+            return true;
+        };
 
-    if ( res && ctx != 0) {
-        QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
+        bool res = OperationHelper::execute(unaryFun, _outputGC);
 
+        if ( res && ctx != 0) {
+            QVariant value;
+            value.setValue<IGridCoverage>(_outputGC);
+        }
+    } else {
+        double v = sin(_number);
+        value.setValue<double>(v);
+    }
+    if ( ctx && value.isValid())
         ctx->_results.push_back(value);
 
-        return true;
-    }
-    return false;
+    return true;
 }
 
 OperationImplementation::State UnaryMath::prepare()

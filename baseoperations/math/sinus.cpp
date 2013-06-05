@@ -19,28 +19,6 @@ Sinus::Sinus(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(
 
 }
 
-bool Sinus::execute(ExecutionContext *ctx)
-{
-    if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
-            return false;
-
-    QVariant value;
-    if ( _spatialCase) {
-        UnaryFunction fun = sin;
-        return UnaryMath::execute(fun, ctx);
-
-
-    } else {
-        double v = sin(_number);
-        value.setValue<double>(v);
-    }
-    if ( ctx && value.isValid())
-        ctx->_results.push_back(value);
-
-    return true;
-}
-
 OperationImplementation *Sinus::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
     return new Sinus(metaid,expr);
@@ -57,6 +35,7 @@ OperationImplementation::State Sinus::prepare()
         return sPREPAREFAILED;
 
     _outputGC->datadef().domain(dom);
+    _unaryFun = sin;
     return sPREPARED;
 }
 
