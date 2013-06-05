@@ -10,8 +10,10 @@ class NamedIdentifierRange;
 class KERNELSHARED_EXPORT IndexedIdentifier : public DomainItem
 {
 public:
+    friend class IndexedIdentifierRange;
+
     IndexedIdentifier();
-    IndexedIdentifier(const QString& label, quint32 ind=0);
+    IndexedIdentifier(const QString& label, quint32 ind=0, qint32 cnt =iUNDEF);
     QString name(quint32 ind = 0) const;
     quint32 index() const;
     void setIndex(quint32 ind);
@@ -22,8 +24,10 @@ public:
 
     QString itemType() const;
     bool isValid() const;
+    static ItemRange *createRange();
 private:
     quint32 _index;
+    quint32 _count;
     QString _prefix;
 
 };
@@ -43,6 +47,9 @@ public:
 private:
     QString _name;
 };
+
+typedef QSharedPointer<NamedIdentifier> SPNamedIdentifier;
+typedef QSharedPointer<IndexedIdentifier> SPIndexedIdentifier;
 }
 
 #endif // IDENTIFIERITEM_H

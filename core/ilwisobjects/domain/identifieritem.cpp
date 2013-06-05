@@ -14,10 +14,12 @@ IndexedIdentifier::IndexedIdentifier() : _index(0),_prefix("")
 {
 }
 
-IndexedIdentifier::IndexedIdentifier(const QString &label, quint32 ind)
+IndexedIdentifier::IndexedIdentifier(const QString &label, quint32 ind, qint32 cnt)
 {
     _prefix = label;
     _index = ind;
+    if ( cnt != iUNDEF)
+        _count = cnt;
 }
 
 
@@ -65,6 +67,11 @@ bool IndexedIdentifier::isValid() const{
 QString IndexedIdentifier::itemType() const
 {
     return "IndexedIdentifier";
+}
+
+ItemRange *IndexedIdentifier::createRange()
+{
+    return new IndexedIdentifierRange();
 }
 
 
