@@ -38,9 +38,9 @@ IlwisTypes NumericDomain::ilwisType() const
     return itNUMERICDOMAIN;
 }
 
-Range *NumericDomain::getRange()
+PRange NumericDomain::getRange()
 {
-    return _range.data();
+    return _range;
 }
 
 QString NumericDomain::value(double v) const

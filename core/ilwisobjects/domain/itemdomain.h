@@ -16,13 +16,12 @@ The range of the domain contains all the valid items for that domain.
 template<class C> class ItemDomain : public Domain
 {
 public:
-    ItemDomain<C>() : _range(0){
+    ItemDomain<C>()  {
     }
-    ItemDomain(const Resource& res) : Domain(res), _range(0) {
+    ItemDomain(const Resource& res) : Domain(res) {
     }
 
     ~ItemDomain() {
-        delete _range;
     }
     Domain::Containement contains(const QString& val) const{
         if(item(val) != 0)
@@ -39,7 +38,7 @@ public:
      * \return the string representation or sUNDEDF in case no items are defined
      */
     QString value(double index) const {
-        if (!_range) {
+        if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return sUNDEF;
         }
@@ -51,7 +50,7 @@ public:
      * \return a (pointer to) domain item or 0 if no items are defined
      */
     SPDomainItem item(quint32 index) const {
-        if (!_range) {
+        if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return 0;
         }
@@ -63,7 +62,7 @@ public:
      * \return a (pointer to) domain item or 0 if no items are defined
      */
     SPDomainItem item(const QString& nam) const{
-        if (!_range) {
+        if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return SPDomainItem();
         }
@@ -75,8 +74,8 @@ public:
      *
      */
     void addItem(C* thing) {
-        if ( !_range) {
-            _range = C::createRange();
+        if ( _range.isNull()) {
+            _range.reset(C::createRange());
         }
        _range->add(thing);
     }
@@ -85,7 +84,7 @@ public:
      * \param the item to be removed
      */
     void removeItem(const QString& nme){
-        if (!_range) {
+        if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return ;
         }
@@ -99,7 +98,7 @@ public:
         }
     }
     quint32 count() const {
-        if (!_range) {
+        if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return iUNDEF;
         }
@@ -123,12 +122,12 @@ public:
     }
 
 protected:
-    Range *getRange(){
-        return _range;
+    PRange getRange(){
+        return _range.dynamicCast<Range>();
     }
 
 private:
-    ItemRange *_range;
+    SPItemRange _range;
     QString _theme;
 };
 
