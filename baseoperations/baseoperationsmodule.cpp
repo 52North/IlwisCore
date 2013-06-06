@@ -6,7 +6,7 @@
 #include "pixeliterator.h"
 #include "baseoperationsmodule.h"
 #include "math/unarymath.h"
-#include "math/sinus.h"
+#include "math/unarymathoperations.h"
 #include "math/binarymath.h"
 #include "math/binarylogical.h"
 #include "geometry/resampleraster.h"
@@ -29,6 +29,10 @@ QString RasterOperationsModule::getInterfaceVersion() const
 void RasterOperationsModule::prepare()
 {
     commandhandler()->addOperation(Sinus::createMetadata(), Sinus::create);
+    commandhandler()->addOperation(Cosine::createMetadata(), Cosine::create);
+    commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
+    commandhandler()->addOperation(Arcsine::createMetadata(), Arcsine::create);
+    commandhandler()->addOperation(Arccosine::createMetadata(), Arccosine::create);
     commandhandler()->addOperation(BinaryMath::createMetadata(), BinaryMath::create);
     commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
