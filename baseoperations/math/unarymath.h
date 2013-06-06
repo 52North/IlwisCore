@@ -12,10 +12,10 @@ public:
     enum UnaryOperations{uoSIN, uoCOS, uoTAN, uoSQRT, uoASIN, uoACOS, uoATAN, uoLog10, uoLN, uoABS, uoCEIL,
                          uoFLOOR,uoCOSH, uoEXP, uoNEG,uoRND,uoSGN,uoSINH,uoTANH};
     UnaryMath();
-    UnaryMath(quint64 metaid, const Ilwis::OperationExpression &expr);
+    UnaryMath(quint64 metaid, const Ilwis::OperationExpression &expr, const QString& outpDom, UnaryFunction fun);
 
 protected:
-    static void populateMetadata(Resource &res);
+    static Resource populateMetadata(const QString &item, const QString &longname, const QString& outputDom);
     Ilwis::OperationImplementation::State prepare();
     bool execute( ExecutionContext *ctx);
 
@@ -25,6 +25,7 @@ protected:
     bool _spatialCase;
     double _number;
     UnaryFunction _unaryFun;
+    QString _outputDomain;
 
 };
 }

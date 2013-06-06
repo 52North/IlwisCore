@@ -13,7 +13,12 @@ UnaryMath::UnaryMath() {
 
 }
 
-UnaryMath::UnaryMath(quint64 metaid,const Ilwis::OperationExpression& expr) : OperationImplementation(metaid, expr),_spatialCase(true), _number(rUNDEF)
+UnaryMath::UnaryMath(quint64 metaid, const Ilwis::OperationExpression& expr, const QString &outpDom, UnaryFunction fun) :
+    OperationImplementation(metaid, expr),
+    _spatialCase(true),
+    _number(rUNDEF),
+    _outputDomain(outpDom),
+    _unaryFun(fun)
 {
 
 }
@@ -74,9 +79,6 @@ OperationImplementation::State UnaryMath::prepare()
 
     } else if ( ptype == itGRIDCOVERAGE) {
         QString gc = _expression.parm(0).value();
-        QString outputName = _expression.parm(0,false).value();
-        if ( outputName != sUNDEF)
-            _outputGC->setName(outputName);
 
         if (!_inputGC.prepare(gc)) {
             ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
@@ -89,6 +91,16 @@ OperationImplementation::State UnaryMath::prepare()
             ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
             return sPREPAREFAILED;
         }
+        QString outputName = _expression.parm(0,false).value();
+        if ( outputName != sUNDEF)
+            _outputGC->setName(outputName);
+
+        IDomain dom;
+        if(!dom.prepare(_outputDomain))
+            return sPREPAREFAILED;
+
+        _outputGC->datadef().domain(dom);
+        _unaryFun = sin;
 
         _spatialCase = true;
         return sPREPARED;
@@ -96,8 +108,9 @@ OperationImplementation::State UnaryMath::prepare()
     return sNOTPREPARED;
 }
 
-void UnaryMath::populateMetadata(Resource& res) {
-
+Resource UnaryMath::populateMetadata(const QString& item, const QString& longname, const QString& outputDom) {
+    Resource res(QUrl(item), itOPERATIONMETADATA);
+    res.addProperty("longname",longname);
     res.addProperty("namespace","ilwis");
     res.addProperty("inparameters","1");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
@@ -106,10 +119,14 @@ void UnaryMath::populateMetadata(Resource& res) {
     res.addProperty("outparameters",1);
     res.addProperty("pout_1_type", itGRIDCOVERAGE);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
+    res.addProperty("pout_1_type", itGRIDCOVERAGE);
+    res.addProperty("pout_1_domain",outputDom);
     res.prepare();
     QString url = res.url().toString();
     url += "=" + QString::number(res.id());
     res.setUrl(url);
+
+    return res;
 
 }
 
