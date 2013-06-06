@@ -82,7 +82,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/georeference/ctpgeoreference.cpp \
     core/ilwisobjects/geometry/georeference/controlpoint.cpp \
     core/ilwisobjects/geometry/georeference/planarctpgeoreference.cpp \
-    core/util/mathhelper.cpp
+    core/util/mathhelper.cpp \
+    core/ilwisobjects/domain/textdomain.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -175,7 +176,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/georeference/ctpgeoreference.h \
     core/ilwisobjects/geometry/georeference/controlpoint.h \
     core/ilwisobjects/geometry/georeference/planarctpgeoreference.h \
-    core/util/mathhelper.h
+    core/util/mathhelper.h \
+    core/ilwisobjects/domain/textdomain.h
 
 
 
