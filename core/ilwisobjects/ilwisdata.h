@@ -57,7 +57,8 @@ public:
     }
 
     template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
-        set(dynamic_cast<T>(obj._implementation.data())) ;
+        if (_implementation.data()!= 0)
+            set(dynamic_cast<T>(obj._implementation.data())) ;
         return *this;
     }
 
