@@ -26,20 +26,26 @@ bool UnaryMath::execute(ExecutionContext *ctx)
 
     QVariant value;
     if ( _spatialCase) {
-        PixelIterator iterIn(_inputGC, _box);
-        PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
+        BoxedAsyncFunc unaryFun = [&](const Box3D<qint32>& box) -> bool {
+            PixelIterator iterIn(_inputGC, _box);
+            PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
 
-        double v_in = 0;
-        for_each(iterOut, iterOut.end(), [&](double& v){
-            if ( (v_in = *iterIn) != rUNDEF) {
-                v = sin(v_in);
-            }
-            ++iterIn;
-        });
+            double v_in = 0;
+            for_each(iterOut, iterOut.end(), [&](double& v){
+                if ( (v_in = *iterIn) != rUNDEF) {
+                    v = _unaryFun(v_in);
+                }
+                ++iterIn;
+            });
+            return true;
+        };
 
-        value.setValue<IGridCoverage>(_outputGC);
+        bool res = OperationHelper::execute(unaryFun, _outputGC);
 
-
+        if ( res && ctx != 0) {
+            QVariant value;
+            value.setValue<IGridCoverage>(_outputGC);
+        }
     } else {
         double v = sin(_number);
         value.setValue<double>(v);
@@ -48,11 +54,6 @@ bool UnaryMath::execute(ExecutionContext *ctx)
         ctx->_results.push_back(value);
 
     return true;
-}
-
-OperationImplementation *UnaryMath::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new UnaryMath(metaid,expr);
 }
 
 OperationImplementation::State UnaryMath::prepare()
@@ -74,6 +75,8 @@ OperationImplementation::State UnaryMath::prepare()
     } else if ( ptype == itGRIDCOVERAGE) {
         QString gc = _expression.parm(0).value();
         QString outputName = _expression.parm(0,false).value();
+        if ( outputName != sUNDEF)
+            _outputGC->setName(outputName);
 
         if (!_inputGC.prepare(gc)) {
             ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
@@ -86,40 +89,28 @@ OperationImplementation::State UnaryMath::prepare()
             ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
             return sPREPAREFAILED;
         }
-        IDomain dom;
-        if(!dom.prepare("min1to1"))
-            return sPREPAREFAILED;
 
-        _outputGC->datadef().domain(dom);
-        if ( outputName != sUNDEF)
-            _outputGC->setName(outputName);
         _spatialCase = true;
         return sPREPARED;
     }
     return sNOTPREPARED;
 }
 
-quint64 UnaryMath::createMetadata() {
-    QString url = QString("ilwis://operations/sin");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
+void UnaryMath::populateMetadata(Resource& res) {
+
     res.addProperty("namespace","ilwis");
-    res.addProperty("longname","UnaryMath");
     res.addProperty("inparameters","1");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_domain","value");
-    res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical domain; values are considered to be radians"));
     res.addProperty("outparameters",1);
     res.addProperty("pout_1_type", itGRIDCOVERAGE);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_domain","min1to1");
-    res.addProperty("pout_1_desc",TR("output gridcoverage with a numerical domain; values are between -1 and 1"));
     res.prepare();
+    QString url = res.url().toString();
     url += "=" + QString::number(res.id());
     res.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
 }
 
 

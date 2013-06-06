@@ -1,8 +1,11 @@
-#ifndef SIN_H
-#define SIN_H
+#ifndef UNARYMATH_H
+#define UNARYMATH_H
 
 namespace Ilwis {
 namespace BaseOperations{
+
+typedef std::function<double(double)> UnaryFunction;
+
 class UnaryMath : public OperationImplementation
 {
 public:
@@ -11,20 +14,20 @@ public:
     UnaryMath();
     UnaryMath(quint64 metaid, const Ilwis::OperationExpression &expr);
 
-    bool execute(ExecutionContext *ctx=0);
-    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+protected:
+    static void populateMetadata(Resource &res);
     Ilwis::OperationImplementation::State prepare();
+    bool execute( ExecutionContext *ctx);
 
-    static quint64 createMetadata();
-private:
     IGridCoverage _inputGC;
     IGridCoverage _outputGC;
     Box3D<qint32> _box;
     bool _spatialCase;
     double _number;
+    UnaryFunction _unaryFun;
 
 };
 }
 }
 
-#endif // SIN_H
+#endif // UNARYMATH_H
