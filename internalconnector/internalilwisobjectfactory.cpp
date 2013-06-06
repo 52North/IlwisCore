@@ -13,6 +13,7 @@
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "ilwisobjectfactory.h"
+#include "textdomain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "itemdomain.h"
@@ -86,6 +87,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         if ( sub == "indexed")
             return new ItemDomain<IndexedIdentifier>();
     }
+    case itTEXTDOMAIN:
+        return new TextDomain();
     case itGRIDCOVERAGE:
         return new GridCoverage();
     case itTABLE:
@@ -257,6 +260,8 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& item) const{
     QString code = item.code();
     if ( code != "") {
+        if ( code == "text")
+            return new TextDomain(item);
         QSqlQuery db(kernel()->database());
         QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
         if (db.exec(query)) {
