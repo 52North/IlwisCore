@@ -241,6 +241,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
     auto results = kernel()->database().exec(query);
     if ( results.next()) {
         auto rec = results.record();
+        quint64 tttp = rec.value("type").toLongLong();
         return Resource(rec);
 
     } else {
@@ -261,7 +262,9 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
                 return id2Resource(propertyid);
         }
         if ( !isExternalRef) { // it was not an external reference but an internal one; if it was external it will never come here
-            return Resource(QUrl(resolvedName), tp);
+            // this is a new item which only existed as reference but now gets real, so add it to the catalog
+            Resource res(QUrl(resolvedName), tp);
+            const_cast<MasterCatalog *>(this)->addItems({res});
         }
     }
     return Resource();
@@ -297,6 +300,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     } else if ( name.left(6) == "code=proj4:") {
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
+    } else if ( name.left(12) == "code=domain:") {
+        return QString("ilwis://internal/%1").arg(name);
     }
     if ( context()->workingCatalog()) {
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
