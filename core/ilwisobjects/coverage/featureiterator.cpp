@@ -103,7 +103,9 @@ bool FeatureIterator::init()
 {
     if ( _isInitial)     {
         _isInitial = false;
-        _fcoverage->connector()->loadBinaryData(_fcoverage.ptr());
+        bool ok = _fcoverage->connector()->loadBinaryData(_fcoverage.ptr());
+        if (!ok)
+            return false;
         if ( _fcoverage->_features.size() > 0 ) {
             _iterFeatures = _fcoverage->_features.begin();
             _trackCounter = 0;
