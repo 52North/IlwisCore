@@ -10,7 +10,7 @@
 
 using namespace Ilwis;
 
-IndexedIdentifier::IndexedIdentifier() : _index(0),_prefix("")
+IndexedIdentifier::IndexedIdentifier() : _index(0),_prefix(""),_count(iUNDEF)
 {
 }
 
@@ -57,7 +57,7 @@ bool IndexedIdentifier::operator==(const IndexedIdentifier &item) const
 
 DomainItem *IndexedIdentifier::clone() const
 {
-    return new IndexedIdentifier(_prefix, _index);
+    return new IndexedIdentifier(_prefix, _index, _count);
 }
 
 bool IndexedIdentifier::isValid() const{
