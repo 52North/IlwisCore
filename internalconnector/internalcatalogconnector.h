@@ -14,6 +14,7 @@ public:
 private:
     bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);
     bool createPcs(QSqlQuery &db);
+    bool createSpecialDomains();
 };
 }
 }

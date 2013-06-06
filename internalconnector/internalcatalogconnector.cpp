@@ -30,9 +30,20 @@ bool InternalCatalogConnector::loadItems()
     ok &= createItems(db,"datum", itGEODETICDATUM);
     ok &= createItems(db,"numericdomain", itNUMERICDOMAIN);
     ok &= createPcs(db);
+    ok &= createSpecialDomains();
 
     return ok;
 
+}
+
+bool InternalCatalogConnector::createSpecialDomains() {
+    QString url = QString("ilwis://internal/code=domain:text");
+    Resource item(url, itTEXTDOMAIN);
+    item.setCode("text");
+    item.setName("Text domain");
+    item.setContainer(QUrl("ilwis://system"));
+    item.prepare();
+    return mastercatalog()->addItems({item});
 }
 
 bool InternalCatalogConnector::canUse(const QUrl &res) const
