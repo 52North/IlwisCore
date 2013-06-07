@@ -167,7 +167,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
         bounds = Box2D<double>(item["envelope"].toString());
     }
     if ( bounds.isValid()) {
-        coverage->setEnvelope(bounds);
+        coverage->envelope(bounds);
     }
     IDomain dom;
     QString gg = QString(item["domain"].typeName());
