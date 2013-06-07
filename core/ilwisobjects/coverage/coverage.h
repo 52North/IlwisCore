@@ -24,18 +24,17 @@ public:
     Coverage(const Resource& res);
     ~Coverage();
 
-   // virtual QVector<double> value(const Coordinate& c) = 0;
-
     ICoordinateSystem coordinateSystem() const;
     void setCoordinateSystem(const ICoordinateSystem& csy);
     Box2D<double> envelope() const;
-    void setEnvelope(const Box2D<double>& bnds);
+    void envelope(const Box2D<double>& bnds);
 
     ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
     void attributeTable(IlwisTypes type, const ITable& tbl, qint32 index=-1 );
     CoverageStatistics& statistics();
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
+    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
 
 private:
     ICoordinateSystem _coordinateSystem;

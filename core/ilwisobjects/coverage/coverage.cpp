@@ -34,7 +34,7 @@ Box2D<double> Coverage::envelope() const
     return _envelope;
 }
 
-void Coverage::setEnvelope(const Box2D<double> &bnds)
+void Coverage::envelope(const Box2D<double> &bnds)
 {
     _envelope = bnds;
 }
@@ -62,7 +62,7 @@ ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
 void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
 {
     if ( type & itCOVERAGE && ind < (qint32)_attTables.size()) {
-        int index = ind < 0 ? 0 : ind + 1;
+        quint32 index = ind < 0 ? 0 : ind + 1;
         if ( index == _attTables.size())
             _attTables.push_back(AttributeTables());
         if ( (type & itPOINTCOVERAGE) != 0 )
@@ -91,5 +91,16 @@ DataDefinition &Coverage::datadef()
     return _datadef;
 }
 
+
+QVariant Coverage::value(const QString &colName, quint32 itemid, IlwisTypes type, qint32 index)
+{
+    ITable tbl = attributeTable(type, index);
+    if (!tbl.isValid())
+        return QVariant();
+    ColumnDefinition coldef = tbl->columndefinition(colName);
+    if ( !coldef.isValid())
+        return QVariant();
+    return coldef.datadef().domain()->value(itemid);
+}
 
 
