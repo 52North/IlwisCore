@@ -52,7 +52,7 @@ bool BaseTable::createTable()
 
 bool BaseTable::addColumn(const ColumnDefinition& def){
     if ( _columnDefinitionsByName.contains(def.name())) {
-        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name()));
+        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name()),IssueObject::itWarning);
         return false;
     }
     _columnDefinitionsByName[def.name()] = def;
@@ -65,7 +65,7 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
 bool BaseTable::addColumn(const QString &name, const IDomain& domain)
 {
     if ( _columnDefinitionsByName.contains(name)) {
-        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name));
+        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name),IssueObject::itWarning);
         return false;
     }
     _columnDefinitionsByName[name] = ColumnDefinition(name, domain,_columnDefinitionsByName.size());
