@@ -79,7 +79,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare()
     }
     _outputGC->setGeoreference(grf);
     Box2Dd env = grf->pixel2Coord(grf->size());
-    _outputGC->setEnvelope(env);
+    _outputGC->envelope(env);
     if ( outputName != sUNDEF)
         _outputGC->setName(outputName);
 
