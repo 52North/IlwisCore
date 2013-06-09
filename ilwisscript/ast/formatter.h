@@ -1,10 +1,10 @@
 #ifndef FORMATNODE_H
 #define FORMATNODE_H
 
-class FormatNode : public ASTNode
+class Formatter : public ASTNode
 {
 public:
-    FormatNode();
+    Formatter();
 
     void setFormatNameSpace(IDNode *node);
     void setFormat(char *s);

@@ -2,29 +2,29 @@
 #include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"
-#include "formatnode.h"
+#include "formatter.h"
 
-FormatNode::FormatNode() : ASTNode("formatnode")
+Formatter::Formatter() : ASTNode("Formatter")
 {
 }
 
-void FormatNode::setFormatNameSpace(IDNode *node)
+void Formatter::setFormatNameSpace(IDNode *node)
 {
     _namespace = QSharedPointer<IDNode>(node);
 }
 
-void FormatNode::setFormat(char *s)
+void Formatter::setFormat(char *s)
 {
     QString quoted(s);
     _format = quoted.mid(1, quoted.size() - 2);
 }
 
-void FormatNode::setDataType(const QString &tp)
+void Formatter::setDataType(const QString &tp)
 {
     _dataType = tp;
 }
 
-QString FormatNode::fnamespace() const
+QString Formatter::fnamespace() const
 {
     if (_namespace.isNull())
         return sUNDEF;
@@ -32,17 +32,17 @@ QString FormatNode::fnamespace() const
     return _namespace->id();
 }
 
-QString FormatNode::format() const
+QString Formatter::format() const
 {
     return _format;
 }
 
-QString FormatNode::dataType() const
+QString Formatter::dataType() const
 {
     return _dataType;
 }
 
-//bool FormatNode::evaluate(SymbolTable &symbols, int scope)
+//bool Formatter::evaluate(SymbolTable &symbols, int scope)
 //{
 //    return false;
 //}

@@ -1,14 +1,14 @@
 #ifndef SCRIPTNODE_H
 #define SCRIPTNODE_H
 
-class FormatNode;
+class Formatter;
 
 class ScriptNode : public ASTNode
 {
 public:
     ScriptNode();
     QString nodeType() const;
-    static FormatNode *activeFormat(IlwisTypes type);
+    static Formatter *activeFormat(IlwisTypes type);
     static void setActiveFormat(quint64, const QSharedPointer<ASTNode>& node);
 
 private:

@@ -10,8 +10,8 @@
 #include "expressionnode.h"
 #include "symboltable.h"
 #include "assignmentnode.h"
-#include "formatnode.h"
-#include "modifierpart.h"
+#include "formatter.h"
+#include "formatters.h"
 #include "scriptnode.h"
 #include "raster.h"
 #include "ilwisdata.h"
@@ -48,7 +48,7 @@ void AssignmentNode::setResult(IDNode *node)
     _result =QSharedPointer<IDNode>(node);
 }
 
-void AssignmentNode::setTypeModifierPart(ASTNode *node)
+void AssignmentNode::setFormatPart(ASTNode *node)
 {
     _typemodifier = QSharedPointer<ASTNode>(node);
 }
@@ -72,14 +72,18 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
     bool res = _expression->evaluate(symbols, scope);
     if ( res) {
         if ( !_typemodifier.isNull()) {
-            ModifierPart *tnode = static_cast<ModifierPart *>(_typemodifier.data());
-            format = tnode->format();
-            fnamespace = tnode->fnamespace();
+            ASTNode *node = static_cast<ASTNode *>(_typemodifier.data());
+            if ( node->noOfChilderen()!= 1)
+                return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");
+
+            Formatter *fnode = static_cast<Formatter *>(node->child(0).data());
+            format = fnode->format();
+            fnamespace = fnode->fnamespace();
         }
         NodeValue val = _expression->value();
         if ( val.typeName() == QString("Ilwis::IGridCoverage")) {
             if ( format == "" || format == sUNDEF) {
-                FormatNode *fnode = ScriptNode::activeFormat(itGRIDCOVERAGE);
+                Formatter *fnode = ScriptNode::activeFormat(itGRIDCOVERAGE);
                 if ( fnode) {
                     format = fnode->format();
                     fnamespace = fnode->fnamespace();

@@ -110,6 +110,9 @@ OperationImplementation::State UnaryMath::prepare()
 
 Resource UnaryMath::populateMetadata(const QString& item, const QString& longname, const QString& outputDom) {
     Resource res(QUrl(item), itOPERATIONMETADATA);
+    int index = item.lastIndexOf("/");
+    QString name = item.mid(index);
+    res.addProperty("syntax", QString("%1(gridcoverage|double)").arg(name));
     res.addProperty("longname",longname);
     res.addProperty("namespace","ilwis");
     res.addProperty("inparameters","1");

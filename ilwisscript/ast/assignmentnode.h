@@ -12,7 +12,7 @@ public:
     void setExpression(ExpressionNode *node);
     QString nodeType() const;
     bool evaluate(SymbolTable &symbols, int scope);
-    void setTypeModifierPart(ASTNode *node);
+    void setFormatPart(ASTNode *node);
 private:
     bool _defintion;
     QSharedPointer<IDNode> _result;

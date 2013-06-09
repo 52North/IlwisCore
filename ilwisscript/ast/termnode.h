@@ -14,7 +14,7 @@ public:
     void setLogicalNegation(bool yesno);
     void setNumericalNegation(bool yesno);
     bool evaluate(SymbolTable& symbols, int scope);
-    void addRange(RangeDefinitionNode *n);
+    void addSelector(Selector *n);
 private:
     enum ContentState{csNumerical, csString, csExpression, csMethod,csID};
     double _number;
@@ -22,7 +22,7 @@ private:
     QSharedPointer<ExpressionNode> _expression;
     QSharedPointer<IDNode> _id;
     QSharedPointer<ParametersNode> _parameters;
-    std::vector<QSharedPointer<RangeDefinitionNode> > _ranges;
+    std::vector<QSharedPointer<Selector> > _selectors;
     ContentState _content;
     bool _logicalNegation;
     bool  _numericalNegation;

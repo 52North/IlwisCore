@@ -9,7 +9,7 @@
 #include "operationnode.h"
 #include "expressionnode.h"
 #include "parametersnode.h"
-#include "rangedefinitionnode.h"
+#include "selectornode.h"
 #include "termnode.h"
 #include "commandhandler.h"
 
@@ -120,8 +120,8 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
             value = symbols.get(_id->id(), scope, ok).toString();
         else
             value = _id->id();
-        if ( _ranges.size() > 0) {
-            for(QSharedPointer<RangeDefinitionNode> range: _ranges)  {
+        if ( _selectors.size() > 0) {
+            for(QSharedPointer<Selector> range: _selectors)  {
                 if ( range->box().isValid())
                     value += "[" + range->box().toString() + "]";
                 else
@@ -147,7 +147,7 @@ QString TermNode::getName(const QVariant& var) const {
     return name;
 }
 
-void TermNode::addRange(RangeDefinitionNode *n)
+void TermNode::addSelector(Selector *n)
 {
-    _ranges.push_back(QSharedPointer<RangeDefinitionNode>(n));
+    _selectors.push_back(QSharedPointer<Selector>(n));
 }

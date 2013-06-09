@@ -33,6 +33,14 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Arcsine::createMetadata(), Arcsine::create);
     commandhandler()->addOperation(Arccosine::createMetadata(), Arccosine::create);
+    commandhandler()->addOperation(ArcTangent::createMetadata(), ArcTangent::create);
+    commandhandler()->addOperation(Log10::createMetadata(), Log10::create);
+    commandhandler()->addOperation(NaturalLogarithm::createMetadata(), NaturalLogarithm::create);
+    commandhandler()->addOperation(Ceil::createMetadata(), Ceil::create);
+    commandhandler()->addOperation(Floor::createMetadata(), Floor::create);
+    commandhandler()->addOperation(Sign::createMetadata(), Sign::create);
+    commandhandler()->addOperation(CosineH::createMetadata(), CosineH::create);
+    commandhandler()->addOperation(SineH::createMetadata(), SineH::create);
     commandhandler()->addOperation(BinaryMath::createMetadata(), BinaryMath::create);
     commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);

@@ -19,7 +19,7 @@ options {
 #include "assignmentnode.h"
 #include "scriptlinenode.h"
 #include "parametersNode.h"
-#include "rangedefinitionnode.h"
+#include "selectornode.h"
 #include "termnode.h"
 #include "variableNode.h"
 #include "returnnode.h"
@@ -30,10 +30,9 @@ options {
 #include "commandnode.h"
 #include "whilenode.h"
 #include "breaknode.h"
-#include "formatnode.h"
 #include "valuerangenode.h"
-#include "dompartnode.h"
-#include "modifierpart.h"
+#include "domainformatter.h"
+#include "formatter.h"
 #include "functionstatementnode.h"
 }
 
@@ -96,15 +95,21 @@ statement returns [ ASTNode *node]
 	|	whileStatement					{ node = $whileStatement.node; }
 	|	functionStatement				{ node = $functionStatement.node; }
 	|	commandStatement				{ node = $commandStatement.node; }
-	|	formatModifier					{ node = $formatModifier.node; }
+	|	dataFormatter					{ node = $dataFormatter.node; }
+	|	defineStatement
 	;
+
+defineStatement
+	:	'define' ID '=' STRING
+	;
+
 	
 assignmentStatement returns [ AssignmentNode *node]
 @init{
 	node= new AssignmentNode();
 }
 	:	ID 						{ node->setResult(new IDNode((char *)($ID.text->chars))); }
-		(typeModifierPart 				{ node->setTypeModifierPart($typeModifierPart.node); }
+		(formatPart 				{ node->setFormatPart($formatPart.node); }
 		)?
 		(':=' | '=')					{ node->setDefintion(true); } 
 		expression 					{ node->setExpression($expression.node);}
@@ -147,20 +152,20 @@ term returns [ TermNode *node]
 	|	id1 = ID '(' 					{ node->setId(new IDNode((char *)($id1.text->chars))); }
 		(actualParameters				{   node->setParameters($actualParameters.node); }
 		)? ')'						
-	|	id2 = ID (id3=rangeDef)+			{ node->setId(new IDNode((char *)($id2.text->chars)));node->addRange($id3.node);}
+	|	id2 = ID (id3=selector)+			{ node->setId(new IDNode((char *)($id2.text->chars)));node->addSelector($id3.node);}
 	|	id2 = ID					{ node->setId(new IDNode((char *)($id2.text->chars)));}
 	;
 
-rangeDef returns [ RangeDefinitionNode *node]
+selector returns [ Selector *node]
 @init{
-	node = new RangeDefinitionNode("rangedefinitionnode");
+	node = new Selector("selector");
 }
-	: '[' id1=INT id2=INT ',' id3=INT id4=INT ']'		{ node->setRangeType("box"); node->setBounds((char *)($id1.text->chars),
-										(char *)($id2.text->chars),
-										(char *)($id3.text->chars),
-										(char *)($id4.text->chars)); }
-	| '[' ID ']'						{ node->setRangeType("var"); node->setVariable((char *)($ID.text->chars));}
-	| '[' INT ']'						{ node->setRangeType("index"); node->setVariable((char *)($INT.text->chars));}
+	: '[' id1=INT id2=INT ',' id3=INT id4=INT ']'		{ node->setSelectorType("box"); node->setBounds((char *)($id1.text->chars),
+									(char *)($id2.text->chars),
+									(char *)($id3.text->chars),
+									(char *)($id4.text->chars)); }
+	| '[' ID ']'						{ node->setSelectorType("var"); node->setVariable((char *)($ID.text->chars));}
+	| '[' INT ']'						{ node->setSelectorType("index"); node->setVariable((char *)($INT.text->chars));}
 	;
 
 negation  returns [ TermNode *node]
@@ -287,31 +292,49 @@ breakStatement returns [ BreakNode *node]
 	:	'break' 'when' expression		{ node->addChild($expression.node); } 
 	;		
 
-typeModifierPart returns [ ModifierPart *node]
+formatPart returns [ ASTNode *node]
+
+	:	'{' formatters '}'			{ node=$formatters.node;}
+	;
+
+formatters returns [ ASTNode *node ]
 @init{
+	node = new ASTNode("Formatters");
 }
-	:	'{' modifierPart'}'			{ node=$modifierPart.node;}
+	: formatter					{ node->addChild($formatter.node); }
+	| formatter ';' formatters			{ node->addChild($formatter.node); }
 	;
 
-modifierPart returns [ ModifierPart *node]
-@init{
-	node = new ModifierPart();
-}		
-	: formatModifier				{ node->addChild($formatModifier.node);}
-	| domPart					{ node->addChild($domPart.node);}
-	| formatModifier ';' domPart			{ node->addChild($formatModifier.node);node->addChild($domPart.node);}
+formatter returns [ ASTNode *node]
+	
+	: dataFormatter				{ node = $dataFormatter.node;}
+	| domainFormatter			{ node = $domainFormatter.node;}
+	| grouper
+	| reintepreter
 	;
 
-formatModifier returns [ FormatNode *node]
+grouper	: 'groupBy' '(' idlist')'
+	;
+
+reintepreter
+	: 'reinterpret(' idlist '=' ID ',' STRING ',' STRING ')'
+	| 'reinterpret(' STRING ')'
+	;
+	
+idlist	: ID+
+	
+	;
+
+dataFormatter returns [ Formatter *node]
 @init{
-	node = new FormatNode();
+	node = new Formatter();
 }	
-	: 'format' '=' ID ':' STRING ':' id1=datatype 	{ node->setDataType($id1.typeName);
+	: 'format' '(' ID ',' STRING ',' id1=datatype ')'{ node->setDataType($id1.typeName);
 							  node->setFormatNameSpace(new IDNode((char *)($ID.text->chars)));
 							  node->setFormat((char *)($STRING.text->chars));}	
-	| 'format' '=' ID ':' STRING			{ node->setFormatNameSpace(new IDNode((char *)($ID.text->chars)));
+	| 'format' '(' ID ',' STRING ')'			{ node->setFormatNameSpace(new IDNode((char *)($ID.text->chars)));
 							  node->setFormat((char *)($STRING.text->chars));}
-	| 'format' '=' STRING				{ node->setFormat((char *)($STRING.text->chars)); }
+	| 'format' '(' STRING ')'			{ node->setFormat((char *)($STRING.text->chars)); }
 	;
 
 datatype returns [ QString typeName]
@@ -322,9 +345,9 @@ datatype returns [ QString typeName]
 	| 'table'					{ typeName = "table"; }	
 	;
 	
-domPart returns [ DomPartNode *node]
+domainFormatter returns [ DomainFormatter *node]
 @init{
-	node = new DomPartNode();
+	node = new DomainFormatter();
 }
 	:	'dom' '=' ID 			{ node->setDomainId(new IDNode((char *)($ID.text->chars)));}
 	|	'dom' '=' valrangePart 		{ node->setValueRange($valrangePart.node);}

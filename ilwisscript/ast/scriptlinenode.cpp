@@ -3,7 +3,7 @@
 #include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"
-#include "formatnode.h"
+#include "formatter.h"
 #include "scriptnode.h"
 #include "scriptlinenode.h"
 
@@ -20,9 +20,9 @@ bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
 {
     foreach(QSharedPointer<ASTNode> node, _childeren) {
         if ( node->nodeType() == "formatnode") {
-            FormatNode *fnode = static_cast<FormatNode *>(node.data());
+            Formatter *fnode = static_cast<Formatter *>(node.data());
             if ( fnode->dataType() == "gridcoverage")
-            ScriptNode::setActiveFormat(itGRIDCOVERAGE, node)   ;
+                ScriptNode::setActiveFormat(itGRIDCOVERAGE, node)   ;
 
         }
         if (!node->evaluate(symbols, scope)) {

@@ -1,10 +1,10 @@
-#ifndef DOMPARTNODE_H
-#define DOMPARTNODE_H
+#ifndef DomainFormatter_H
+#define DomainFormatter_H
 
-class DomPartNode : public ASTNode
+class DomainFormatter : public ASTNode
 {
 public:
-    DomPartNode();
+    DomainFormatter();
     void setDomainId(IDNode *node);
     void setValueRange(ValueRangeNode *node);
     QString nodeType() const;
@@ -14,4 +14,4 @@ private:
     QSharedPointer<ValueRangeNode> _valrange;
 };
 
-#endif // DOMPARTNODE_H
+#endif // DomainFormatter_H

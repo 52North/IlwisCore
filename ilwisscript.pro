@@ -45,13 +45,12 @@ SOURCES += \
     ilwisscript/ast/functionstatementnode.cpp \
     ilwisscript/ast/whilenode.cpp \
     ilwisscript/ast/breaknode.cpp \
-    ilwisscript/ast/dompartnode.cpp \
     ilwisscript/ast/valuerangenode.cpp \
     ilwisscript/symboltable.cpp \
     ilwisscript/parserlexer/runtimechecks.cpp \
-    ilwisscript/ast/formatnode.cpp \
-    ilwisscript/ast/modifierpart.cpp \
-    ilwisscript/ast/rangedefinitionnode.cpp
+    ilwisscript/ast/selectornode.cpp \
+    ilwisscript/ast/formatter.cpp \
+    ilwisscript/ast/domainformatter.cpp
 
 
 HEADERS +=\
@@ -80,12 +79,12 @@ HEADERS +=\
     ilwisscript/ast/functionstatementnode.h \
     ilwisscript/ast/whilenode.h \
     ilwisscript/ast/breaknode.h \
-    ilwisscript/ast/dompartnode.h \
     ilwisscript/ast/valuerangenode.h \
     ilwisscript/symboltable.h \
-    ilwisscript/ast/formatnode.h \
-    ilwisscript/ast/modifierpart.h \
-    ilwisscript/ast/rangedefinitionnode.h
+    ilwisscript/ast/selectornode.h \
+    ilwisscript/ast/formatters.h \
+    ilwisscript/ast/formatter.h \
+    ilwisscript/ast/domainformatter.h
 
 
 INCLUDEPATH += $$PWD/core \

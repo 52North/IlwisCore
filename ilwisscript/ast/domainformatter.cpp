@@ -3,24 +3,24 @@
 #include "astnode.h"
 #include "idnode.h"
 #include "valuerangenode.h"
-#include "dompartnode.h"
+#include "domainformatter.h"
 
-DomPartNode::DomPartNode()
+DomainFormatter::DomainFormatter()
 {
 }
 
-void DomPartNode::setDomainId(IDNode *node)
+void DomainFormatter::setDomainId(IDNode *node)
 {
     _domainId = QSharedPointer<IDNode>(node);
 }
 
-void DomPartNode::setValueRange(ValueRangeNode *node)
+void DomainFormatter::setValueRange(ValueRangeNode *node)
 {
     _valrange = QSharedPointer<ValueRangeNode>(node);
 
 }
 
-QString DomPartNode::nodeType() const
+QString DomainFormatter::nodeType() const
 {
     return "dompart";
 }

@@ -3,10 +3,10 @@
 
 class DomPartNode;
 
-class ModifierPart : public ASTNode
+class Formatters : public ASTNode
 {
 public:
-    ModifierPart();
+    Formatters();
 
     QString fnamespace() const;
     QString format() const;
