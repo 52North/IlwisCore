@@ -358,10 +358,10 @@ valrangePart returns [ ValueRangeNode *node]
 	;	
 	
 ifStatement returns [ ASTNode *node]
-	:	'if' expression 'then' statement+
-		('elsif' expression 'then' statement+)*
-		('else' statement+)?
-		'endif' 
+	:	'if' expression ('\n')* 'then' ('\n')* statement+
+		( ('\n')* 'elsif' expression ('\n')* 'then' ('\n')* statement+)*
+		( ('\n')* 'else' ('\n')* statement+)?
+		('\n')* 'endif' 
 	;
 returnStatement returns [ ReturnNode *node]
 @init{
