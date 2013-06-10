@@ -265,6 +265,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
             // this is a new item which only existed as reference but now gets real, so add it to the catalog
             Resource res(QUrl(resolvedName), tp);
             const_cast<MasterCatalog *>(this)->addItems({res});
+            return res;
         }
     }
     return Resource();
