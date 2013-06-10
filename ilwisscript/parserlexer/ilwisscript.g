@@ -32,6 +32,7 @@ options {
 #include "breaknode.h"
 #include "valuerangenode.h"
 #include "domainformatter.h"
+#include "ifnode.h"
 #include "formatter.h"
 #include "functionstatementnode.h"
 }
@@ -357,11 +358,14 @@ valrangePart returns [ ValueRangeNode *node]
 	:	'vr' '=' 
 	;	
 	
-ifStatement returns [ ASTNode *node]
-	:	'if' expression ('\n')* 'then' ('\n')* statement+
-		( ('\n')* 'elsif' expression ('\n')* 'then' ('\n')* statement+)*
-		( ('\n')* 'else' ('\n')* statement+)?
-		('\n')* 'endif' 
+ifStatement returns [ Ifnode *node]
+@init{
+	node = new Ifnode();
+}
+	:	'if' expression 'then' (result=statement)+ 	{ node->setCondition($expression.node); node->addThen($result.node); } 
+		('else' (result2=statement)+)?			{ node->addElse($result2.node ); }
+		'endif'
+	
 	;
 returnStatement returns [ ReturnNode *node]
 @init{
