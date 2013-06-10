@@ -39,11 +39,18 @@ OperationImplementation::State Script::prepare() {
         if (exists && inf.suffix() == "isf") {
             std::string text;
             std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
+            bool ignorenl=false;
             if(in.is_open() && in.good()) {
                 while(!in.eof()) {
                     std::string line;
                     std::getline(in, line);
-                    text += line + ";";
+                    if (line.find("if ") != std::string::npos){
+                        ignorenl=true;
+                    }
+                    if (line.find("endif") != std::string::npos){
+                        ignorenl=false;
+                    }
+                    text += line + (ignorenl ? " " : ";");
                 }
                 char *buf = new char[text.size()];
                 memcpy(buf,text.c_str(), text.size());
@@ -68,13 +75,6 @@ bool Script::execute(ExecutionContext *ctx)
             return false;
 
     ANTLR3_UINT8 * bufferData = (ANTLR3_UINT8 *) _buffer.get();
-    for(int i=0; i < _bufferSize; ++i) {
-        if ( bufferData[i] == '\n') { //replace newlines with ; which are the actual seperators
-            bufferData[i]=';';
-        }
-    }
-    if ( bufferData[_bufferSize - 1] != ';')
-        bufferData[_bufferSize - 1] = ';';
 
     pANTLR3_INPUT_STREAM input = antlr3StringStreamNew(bufferData,  ANTLR3_ENC_8BIT,  _bufferSize, (pANTLR3_UINT8)"ScriptText");
     if(input == NULL)
