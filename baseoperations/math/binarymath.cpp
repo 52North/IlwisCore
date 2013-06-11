@@ -4,7 +4,6 @@
 #include "raster.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
-#include "pixeliterator.h"
 #include "binarymath.h"
 
 using namespace Ilwis;
