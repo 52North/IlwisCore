@@ -87,7 +87,7 @@ public:
         std::for_each(begin, end, [this,&undefined,&sigDigits,&rest] (const DataType& sample){
            this->_count++;
             if ( sample != undefined) {
-                 rest = abs(sample - (quint64)sample);
+                 rest = fabs(sample - (quint64)sample);
                  sigDigits = std::max(sigDigits, rest - sigDigits);
                  this->_nettoCount++;
                  this->_min = std::min( this->_min, sample);
