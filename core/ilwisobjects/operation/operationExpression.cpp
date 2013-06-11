@@ -154,20 +154,26 @@ void OperationExpression::setExpression(const QString &e) {
     QString dummy = e;
     int index1 = e.indexOf(" ");
     int index2 = e.indexOf("=");
-    if ( index1 != -1 && ( index1 < index2 || index2 == -1)) {
-        _type = otCommand;
-        for(int i = 0; i < index1; ++i){
-            if ( !(e[i].isDigit() || e[i].isLetter() || e[i] == '-')){
-                _type = otFunction;
-                break;
+    int index3 = e.indexOf("[");
+    if ( index3 != -1)
+        _type = otSelection;
+    else {
+        if ( index1 != -1 && ( index1 < index2 || index2 == -1)) {
+            _type = otCommand;
+            for(int i = 0; i < index1; ++i){
+                if ( !(e[i].isDigit() || e[i].isLetter() || e[i] == '-')){
+                    _type = otFunction;
+                    break;
+                }
             }
         }
-    }
-
+     }
     if ( _type == otFunction) {
         parseFunctionExpression(e);
     } else if ( _type == otCommand) {
         parseCommandExpression(e);
+    } else if ( _type == otSelection) {
+        parseSelectors(e);
     }
 }
 
@@ -204,15 +210,16 @@ void OperationExpression::parseCommandExpression(const QString &e) {
     }
 }
 
-void  OperationExpression::parseSelectors(const QString& selectors) {
-    QString sel = selectors;
-    sel = sel.remove('[');
-    QStringList parts = sel.split("]");
-    for(const QString& part : parts){
-        if ( part != "") {
-            _selectors.push_back(part);
-        }
-    }
+void  OperationExpression::parseSelectors(const QString& e) {
+    int index = e.indexOf("[");
+    int index2 = e.indexOf("=");
+    int index3 = e.indexOf("{");
+    QString inpPart = e.mid(index, e.size() - index - 1);
+    _inParameters.push_back(Parameter(inpPart));
+    QString outputPart =  index3 == -1 ? e.left(index2) : e.left(index3);
+    _outParameters.push_back(Parameter(outputPart));
+    _name = "selection";
+
 }
 
 void OperationExpression::specialExpressions(const QString &e) {
@@ -224,21 +231,18 @@ void OperationExpression::specialExpressions(const QString &e) {
 
 void OperationExpression::parseFunctionExpression(const QString &txt) {
     QString e = txt;
-    int indexB = e.indexOf("[");
-    if ( indexB != -1) {
-        parseSelectors(e.mid(indexB));
-    }
     int index = e.indexOf("(");
-    if ( index == -1 ) {
-        QString cleaned = indexB > 0 ? txt.left(indexB) : txt;
-        specialExpressions(cleaned);
-    }
+    if ( index == -1)
+        specialExpressions(txt);
+
     int index2 = e.indexOf("=");
-    if ( _name == "") {
-        if ( index2 != -1)
-            _name = e.mid(index2+1, index - index2 - 1);
-        else
-            _name = e.left(index);
+    if ( index != -1) {
+        if ( _name == "") {
+            if ( index2 != -1)
+                _name = e.mid(index2+1, index - index2 - 1);
+            else
+                _name = e.left(index);
+        }
     }
 
     QString start = e.left(index2);

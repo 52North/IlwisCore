@@ -5,7 +5,7 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
-    enum OperationType{otUnknown=0,otFunction=1, otCommand=2};
+    enum OperationType{otUnknown=0,otFunction=1, otCommand=2, otSelection=4};
 
 class KERNELSHARED_EXPORT Parameter : public Identity{
 public:
@@ -96,7 +96,7 @@ private:
     QList<Parameter> _inParameters;
     QList<Parameter> _outParameters;
     OperationType _type;
-    std::vector<QString> _selectors;
+    QString _selection;
 
     void parseFunctionExpression(const QString &txt);
     void parseCommandExpression(const QString &expr);

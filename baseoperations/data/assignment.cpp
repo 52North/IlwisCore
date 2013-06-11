@@ -18,6 +18,10 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 
 bool Assignment::execute(ExecutionContext *ctx)
 {
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare()) != sPREPARED)
+            return false;
+
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn(_inputGC, box);
         PixelIterator iterOut(_outputGC, box);
