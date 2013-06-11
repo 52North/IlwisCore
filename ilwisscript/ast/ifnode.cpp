@@ -1,3 +1,5 @@
+#include "kernel.h"
+#include "errorobject.h"
 #include "symboltable.h"
 #include "astnode.h"
 #include "operationnode.h"
@@ -10,6 +12,33 @@ Ifnode::Ifnode() : ASTNode("IfNode")
 
 bool Ifnode::evaluate(SymbolTable &symbols, int scope)
 {
+    if (_condition.isNull())
+        throw Ilwis::ScriptSyntaxError(TR("uninitialized condition in 'if' statement"));
+    _condition->evaluate(symbols, scope);
+    if ( _condition->value().content() != NodeValue::ctBOOLEAN)
+        throw Ilwis::ScriptSyntaxError(TR("'If' statement needs a boolean condition to function"));
+    bool branch = _condition->value().toBool();
+    bool ok = true;
+    if ( branch) {
+        for(quint32 i=0; i < _then.size(); ++i) {
+            if ( _then[i].isNull()){
+                kernel()->issues()->log("Then clause contains uninitialized statements", Ilwis::IssueObject::itWarning);
+                continue;
+            }
+
+            ok &= _then[i]->evaluate(symbols, scope);
+        }
+    } else {
+        for(quint32 i=0; i < _else.size(); ++i) {
+            if ( _else[i].isNull()){
+                kernel()->issues()->log("Else clause contains uninitialized statements", Ilwis::IssueObject::itWarning);
+                continue;
+            }
+
+            ok &= _else[i]->evaluate(symbols, scope);
+        }
+        return ok;
+    }
     return false;
 }
 
