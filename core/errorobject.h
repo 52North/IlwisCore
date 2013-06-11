@@ -40,6 +40,11 @@ class KERNELSHARED_EXPORT InternalError : public ErrorObject {
 public:
     explicit InternalError(const QString& message);
 };
+
+class KERNELSHARED_EXPORT ScriptSyntaxError : public ErrorObject {
+public:
+    explicit ScriptSyntaxError(const QString& message);
+};
 }
 
 #endif // ERROROBJECT_H

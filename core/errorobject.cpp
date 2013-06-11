@@ -20,3 +20,8 @@ QString ErrorObject::message() const
 InternalError::InternalError(const QString &message) : ErrorObject(message)
 {
 }
+
+
+ScriptSyntaxError::ScriptSyntaxError(const QString &message) : ErrorObject(message)
+{
+}
