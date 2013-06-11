@@ -48,7 +48,6 @@ bool UnaryMath::execute(ExecutionContext *ctx)
         bool res = OperationHelper::execute(unaryFun, _outputGC);
 
         if ( res && ctx != 0) {
-            QVariant value;
             value.setValue<IGridCoverage>(_outputGC);
         }
     } else {
