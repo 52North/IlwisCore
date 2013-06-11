@@ -83,7 +83,6 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
 
     QSqlQuery db(kernel()->database());
     QSqlQuery db2(kernel()->database());
-   //QString query = QString("select * from mastercatalog where resource like '%1%s' and (type & %2) != 0").arg(expr.metaUrl().toString()).arg(itOPERATIONMETADATA);
     QString query = QString("select * from mastercatalog where resource like '%1%' ").arg(expr.metaUrl().toString());
     if (db.exec(query)) {
         while ( db.next()){
