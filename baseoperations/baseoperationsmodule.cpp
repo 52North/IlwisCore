@@ -12,6 +12,7 @@
 #include "geometry/resampleraster.h"
 #include "data/rasvalue.h"
 #include "data/iffraster.h"
+#include "data/assignment.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -46,6 +47,7 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
     commandhandler()->addOperation(RasValue::createMetadata(), RasValue::create);
     commandhandler()->addOperation(IffRaster::createMetadata(), IffRaster::create);
+    commandhandler()->addOperation(Assignment::createMetadata(), Assignment::create);
 }
 
 QString RasterOperationsModule::name() const

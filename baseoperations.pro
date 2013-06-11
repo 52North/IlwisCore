@@ -28,7 +28,8 @@ HEADERS += \
     baseoperations/data/iffraster.h \
     baseoperations/math/binarylogical.h \
     baseoperations/math/unarymath.h \
-    baseoperations/math/unarymathoperations.h
+    baseoperations/math/unarymathoperations.h \
+    baseoperations/data/assignment.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -38,7 +39,8 @@ SOURCES += \
     baseoperations/data/iffraster.cpp \
     baseoperations/math/binarylogical.cpp \
     baseoperations/math/unarymath.cpp \
-    baseoperations/math/unarymathoperations.cpp
+    baseoperations/math/unarymathoperations.cpp \
+    baseoperations/data/assignment.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
