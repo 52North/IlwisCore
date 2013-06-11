@@ -96,9 +96,12 @@ private:
     QList<Parameter> _inParameters;
     QList<Parameter> _outParameters;
     OperationType _type;
+    std::vector<QString> _selectors;
 
-    void parseFunctionExpression(const QString &expr);
+    void parseFunctionExpression(const QString &txt);
     void parseCommandExpression(const QString &expr);
+    void parseSelectors(const QString& selectors);
+    void specialExpressions(const QString &e);
 };
 
 

@@ -204,17 +204,43 @@ void OperationExpression::parseCommandExpression(const QString &e) {
     }
 }
 
-void OperationExpression::parseFunctionExpression(const QString &e) {
+void  OperationExpression::parseSelectors(const QString& selectors) {
+    QString sel = selectors;
+    sel = sel.remove('[');
+    QStringList parts = sel.split("]");
+    for(const QString& part : parts){
+        if ( part != "") {
+            _selectors.push_back(part);
+        }
+    }
+}
+
+void OperationExpression::specialExpressions(const QString &e) {
+    //TODO other cases of special expressions
+    _name = "assignment";
+    _inParameters.push_back(Parameter(e.mid(e.indexOf("=")+1),itCOVERAGE));
+
+}
+
+void OperationExpression::parseFunctionExpression(const QString &txt) {
+    QString e = txt;
+    int indexB = e.indexOf("[");
+    if ( indexB != -1) {
+        parseSelectors(e.mid(indexB));
+    }
     int index = e.indexOf("(");
-    if ( index == -1 )
-        return;
+    if ( index == -1 ) {
+        QString cleaned = indexB > 0 ? txt.left(indexB) : txt;
+        specialExpressions(cleaned);
+    }
     int index2 = e.indexOf("=");
-    if ( index2 != -1)
-        _name = e.mid(index2+1, index - index2 - 1);
-    else
-        _name = e.left(index);
-    int len =  e.size() - index - 2;
-    QString rest = e.mid(index + 1 , len);
+    if ( _name == "") {
+        if ( index2 != -1)
+            _name = e.mid(index2+1, index - index2 - 1);
+        else
+            _name = e.left(index);
+    }
+
     QString start = e.left(index2);
     int blockCount = 0;
     int quoteCount = 0;
@@ -246,34 +272,37 @@ void OperationExpression::parseFunctionExpression(const QString &e) {
             cur = index3 + shift;
         }
     }
+    if (index > 0) {
+        int len =  e.size() - index - 2;
+        QString rest = e.mid(index + 1 , len);
+        //indexes.push_back(0);
+        indexes.clear();
+        blockCount = quoteCount = count = 0;
+        foreach(const QChar& cu, rest) {
+            char c = cu.toLatin1(); // eessions are not internatiolized, so its allowed
+            if ( c == '(' && quoteCount == 0)
+                blockCount++;
+            if ( c == ')' && quoteCount == 0)
+                blockCount--;
+            if ( c == '"' && quoteCount == 0)
+                quoteCount++;
+            else if ( c == '"' && quoteCount != 0)
+                quoteCount--;
 
-    //indexes.push_back(0);
-    indexes.clear();
-    blockCount = quoteCount = count = 0;
-    foreach(const QChar& cu, rest) {
-        char c = cu.toLatin1(); // eessions are not internatiolized, so its allowed
-        if ( c == '(' && quoteCount == 0)
-            blockCount++;
-        if ( c == ')' && quoteCount == 0)
-            blockCount--;
-        if ( c == '"' && quoteCount == 0)
-            quoteCount++;
-        else if ( c == '"' && quoteCount != 0)
-            quoteCount--;
-
-        if ( c == ',' && blockCount == 0 && quoteCount == 0)
-            indexes.push_back(++count);
-        else
-            ++count;
-    }
-    cur = 0;
-    indexes.push_back(rest.size() + 1);
-    for(int i =0; i < indexes.size(); ++i) {
-        int index4 = indexes[i];
-        QString part = rest.mid(cur, index4 - cur - 1) ;
-        part = part.trimmed();
-        _inParameters.push_back(Parameter(part));
-        cur = index4;
+            if ( c == ',' && blockCount == 0 && quoteCount == 0)
+                indexes.push_back(++count);
+            else
+                ++count;
+        }
+        cur = 0;
+        indexes.push_back(rest.size() + 1);
+        for(int i =0; i < indexes.size(); ++i) {
+            int index4 = indexes[i];
+            QString part = rest.mid(cur, index4 - cur - 1) ;
+            part = part.trimmed();
+            _inParameters.push_back(Parameter(part));
+            cur = index4;
+        }
     }
 }
 
