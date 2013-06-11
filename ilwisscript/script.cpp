@@ -70,6 +70,7 @@ OperationImplementation::State Script::prepare() {
 
 bool Script::execute(ExecutionContext *ctx)
 {
+    try{
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
             return false;
@@ -99,6 +100,10 @@ bool Script::execute(ExecutionContext *ctx)
     SymbolTable symbols;
     bool ok = scr->evaluate(symbols, 1000);
     return ok;
+    }
+    catch(Ilwis::ScriptSyntaxError& err) {
+        qDebug() << err.message();
+    }
 
 }
 
