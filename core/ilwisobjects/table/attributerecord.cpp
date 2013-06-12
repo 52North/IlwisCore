@@ -10,6 +10,10 @@
 
 using namespace Ilwis;
 
+AttributeRecord::AttributeRecord()
+{
+}
+
 AttributeRecord::AttributeRecord(const ITable &attTable, const QString &keyColumn) : _coverageTable(attTable), _keyColumn(keyColumn)
 {
 }
@@ -130,4 +134,9 @@ void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn, int 
         _verticalIndex.resize(indexCount);
         _indexTable = tbl;
     }
+}
+
+bool AttributeRecord::isValid() const
+{
+    return _coverageTable.isValid() && _keyColumn != "";
 }

@@ -10,6 +10,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT AttributeRecord
 {
 public:
+    AttributeRecord();
     AttributeRecord(const ITable& attTable, const QString& keyColumn);
 
     quint32 columns(bool coverages=true) const;
@@ -19,6 +20,7 @@ public:
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
      QVariant cellByKey(quint64 itemId, const QString &col, int index=-1);
      void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=-1);
+     bool isValid() const;
 private:
     void indexCoverageKey();
     void indexVerticalIndex(int index);
