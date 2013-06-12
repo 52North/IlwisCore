@@ -92,7 +92,10 @@ Ilwis::OperationImplementation::State Selection::prepare()
         box = _inputGC->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN;
 
-    } else {
+    }
+    index = selector.indexOf("polygon=");
+    if ( index != -1)
+    {
         QString crdlist = "polygon(" + selector.mid(index+1) + ")";
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
@@ -104,7 +107,7 @@ Ilwis::OperationImplementation::State Selection::prepare()
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
-        _attribColumn =  selector.mid(index+11);
+        _attribColumn =  selector.mid(index+10);
         copylist |= itGRIDSIZE | itGEOREF | itENVELOPE;
     }
 
