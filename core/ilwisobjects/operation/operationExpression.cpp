@@ -214,10 +214,28 @@ void  OperationExpression::parseSelectors(const QString& e) {
     int index = e.indexOf("[");
     int index2 = e.indexOf("=");
     int index3 = e.indexOf("{");
-    QString inpPart = e.mid(index, e.size() - index - 1);
-    _inParameters.push_back(Parameter(inpPart));
+    QString selectPart = e.mid(index+1, e.size() - index - 2);
+    QString inputMap = e.mid(index2+1, index - index2 - 1);
+    _inParameters.push_back(Parameter(inputMap, itCOVERAGE));
     QString outputPart =  index3 == -1 ? e.left(index2) : e.left(index3);
-    _outParameters.push_back(Parameter(outputPart));
+    _outParameters.push_back(Parameter(outputPart, itCOVERAGE));
+    int index4=selectPart.indexOf(",");
+    if ( index4 == -1) { //either id or number
+        bool ok;
+        int layer = selectPart.toUInt(&ok);
+        if ( ok) {
+            _inParameters.push_back(Parameter(QString("layer=%1").arg(layer),itSTRING));
+        } else {
+            _inParameters.push_back(Parameter(QString("attribute=%1").arg(selectPart), itSTRING));
+        }
+    } else {
+        QStringList parts = selectPart.split(",");
+        if ( parts.size() == 2) {
+            _inParameters.push_back(Parameter(QString("box=%1").arg(selectPart),itSTRING));
+        } else {
+           _inParameters.push_back(Parameter(QString("polygon=%1").arg(selectPart), itSTRING));
+        }
+    }
     _name = "selection";
 
 }
