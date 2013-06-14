@@ -55,28 +55,32 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     return box;
 }
 
-int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint32> &bounds, std::vector<Box3D<qint32> > &boxes)
+int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
 {
     if ( !gcov.isValid() || gcov->size().isNull() || gcov->size().ysize() == 0) {
         return ERROR1(ERR_NO_INITIALIZED_1, "Grid size");
         return iUNDEF;
     }
+
     int cores = std::min(QThread::idealThreadCount(),gcov->size().ysize());
     if (gcov->size().totalSize() < 10000)
         cores = 1;
 
     boxes.clear();
     boxes.resize(cores);
+    Box3D<qint32> bounds = bnds;
+    if ( bounds.isNull())
+        bounds = Box3D<qint32>(gcov->size());
     int left = 0; //bounds.min_corner().x();
-    int right = bounds.max_corner().x();
-    int top = bounds.max_corner().y();
+    int right = bounds.size().xsize();
+    int top = bounds.size().ysize();
     int step = bounds.size().ysize() / cores;
     int currentY = 0;
 
     for(int i=0 ; i < cores; ++i){
         Box3D<qint32> smallBox(Pixel(left, currentY), Pixel(right, std::min(top,currentY + step)) );
         boxes[i] = smallBox;
-        currentY = i != cores - 1 ? currentY + step + 1 : top - currentY;
+        currentY = currentY + step + 1 ;
     }
     return cores;
 }
