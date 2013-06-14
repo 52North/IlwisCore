@@ -41,8 +41,8 @@ void Coverage::envelope(const Box2D<double> &bnds)
 
 ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
 {
-    if ( ind < (qint32)_attTables.size()){
-        int index = ind < 0 ? 0 : ind + 1;
+    int index = ind < 0 ? 0 : ind + 1;
+    if ( index < (qint32)_attTables.size()){
         IlwisTypes ft = type & itPOINTCOVERAGE;
         if ( ft && _attTables[index].contains(ft))
             return _attTables[index][itPOINTCOVERAGE];
