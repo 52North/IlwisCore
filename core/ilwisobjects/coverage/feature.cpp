@@ -20,7 +20,7 @@ QVariant FeatureInterface::operator ()(const QString &name, int index) {
 }
 
 //--------------------------------------------
-Feature::Feature() : _itemid(i64UNDEF), _featureid(i64UNDEF){
+Feature::Feature() : _itemid(iUNDEF), _featureid(i64UNDEF){
 }
 
 Feature::~Feature()
@@ -39,7 +39,7 @@ QVariant Feature::value(const QString &name, int index)
     return _record->cellByKey(itemId(), name, index);
 }
 
-Feature::Feature(quint64 v): _itemid(v){
+Feature::Feature(quint32 v): _itemid(v){
     _featureid = _idbase++;
 }
 
@@ -58,7 +58,7 @@ quint64 Feature::featureid() const{
 
 bool Feature::isValid() const {
 
-    return _itemid != i64UNDEF ;
+    return _itemid != iUNDEF ;
 }
 
 const Geometry &Feature::geometry(quint32 index) const

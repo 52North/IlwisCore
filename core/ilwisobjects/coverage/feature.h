@@ -34,7 +34,7 @@ class KERNELSHARED_EXPORT Feature : public FeatureInterface {
 
 public:
     Feature();
-    Feature(quint64 v) ;
+    Feature(quint32 v) ;
     ~Feature();
 
     /*!
