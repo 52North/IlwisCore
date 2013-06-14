@@ -39,7 +39,7 @@ bool Selection::execute(ExecutionContext *ctx)
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
                 if ( rec.isValid()) {
-                    QVariant var = rec.cellByKey(v,_attribColumn)    ;
+                    QVariant var = rec.cellByKey(v_in,_attribColumn)    ;
                     v = var.toDouble();
                 } else {
                     v = v_in;
