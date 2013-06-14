@@ -28,8 +28,10 @@ bool Selection::execute(ExecutionContext *ctx)
             return false;
 
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
-        PixelIterator iterIn(_inputGC, box);
+        Box3D<double> inenvelope = _outputGC->envelope();
+        Box2D<qint32> inpbox = _inputGC->georeference()->coord2Pixel(inenvelope);
         PixelIterator iterOut(_outputGC, box);
+        PixelIterator iterIn(_inputGC, inpbox);
         AttributeRecord rec;
         if ( _attribColumn != "")
             rec = AttributeRecord(_inputGC->attributeTable(itCOVERAGE), "coverage_key");

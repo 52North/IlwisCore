@@ -70,23 +70,8 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx) {
         return true;
     };
 
-    std::vector<Box3D<qint32>> boxes;
-
-    int cores = OperationHelper::subdivideTasks(_outputGC,boxes);
-
-    if ( cores == iUNDEF)
-        return false;
-
-    std::vector<std::future<bool>> futures(cores);
-    bool res = true;
-
-    for(int i =0; i < cores; ++i) {
-        futures[i] = std::async(std::launch::async, BinaryLogical, boxes[i]);
-    }
-
-    for(int i =0; i < cores; ++i) {
-        res &= futures[i].get();
-    }
+    if (!OperationHelper::execute(BinaryLogical, _outputGC))
+            return false;
 
 
     return setOutput(ctx);
