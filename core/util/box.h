@@ -207,16 +207,6 @@ QString toString() const {
 
 }
 
-void store(QDataStream &s, const SerializationOptions &opt) const{
-
-    this->min_corner().store(s, opt);
-    this->max_corner().store(s, opt);
-}
-
-void load(QDataStream &s){
-    return s;
-}
-
 private:
 void normalize() {
     Ilwis::Point2D<CsyType>& pmin = this->min_corner();
@@ -244,6 +234,7 @@ void normalize() {
 
 template<class CsyType=qint32> class Box3D : public bg::model::box<Ilwis::Point3D<CsyType> > {
 public:
+    enum Dimension{dim0=0, dimX=1, dimY=2, dimZ=4};
     Box3D() : bg::model::box<Ilwis::Point3D<CsyType> >(Ilwis::Point3D<CsyType>(0,0,0),Ilwis::Point3D<CsyType>(0,0,0)){
     }
 
@@ -315,6 +306,21 @@ public:
         }
     }
 
+    void copyFrom(const Box3D<CsyType>& box, quint32 dimensions=dimX | dimY | dimZ) {
+        if ( dimensions & dimX) {
+            this->min_corner().x((box.min_corner().x()));
+            this->max_corner().x((box.max_corner().x()));
+        }
+        if ( dimensions & dimY) {
+            this->min_corner().y((box.min_corner().y()));
+            this->max_corner().y((box.max_corner().y()));
+        }
+        if ( dimensions & dimZ) {
+            this->min_corner().z((box.min_corner().z()));
+            this->max_corner().z((box.max_corner().z()));
+        }
+    }
+
     CsyType xlength() const {
         return std::abs(this->min_corner().x() - this->max_corner().x()) + 1;
     }
@@ -335,7 +341,7 @@ public:
     }
 
     bool isNull() const {
-        return this->xlength() == 0 && this->ylength() == 0 && this->zlength() == 0;
+        return this->min_corner() == this->max_corner();
     }
 
     bool contains(const Ilwis::Point3D<CsyType>& p) const {
@@ -531,6 +537,7 @@ Q_DECLARE_METATYPE(Ilwis::Box2D<qint32>)
 Q_DECLARE_METATYPE(Ilwis::Box2D<quint32>)
 //Q_DECLARE_METATYPE(Ilwis::Box2D<float>)
 Q_DECLARE_METATYPE(Ilwis::Box2D<double>)
+Q_DECLARE_METATYPE(Ilwis::Box3D<double>)
 
 
 #endif // BOX_H
