@@ -27,11 +27,14 @@ bool Selection::execute(ExecutionContext *ctx)
         if((_prepState = prepare()) != sPREPARED)
             return false;
 
-    std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
-        Box3D<double> inenvelope = _outputGC->envelope();
-        Box2D<qint32> inpbox = _inputGC->georeference()->coord2Pixel(inenvelope);
+    std::function<bool(const Box3D<qint32>)> selection = [&](const Box3D<qint32> box ) -> bool {
+        Box3D<double> inenvelope = _outputGC->georeference()->pixel2Coord(Box2D<qint32>(box.min_corner(), box.max_corner()));
+        Box3D<qint32> inpbox = _inputGC->georeference()->coord2Pixel(inenvelope);
+        inpbox.ensure(box.size());
+        inpbox.copyFrom(box, Box3D<>::dimZ);
         PixelIterator iterOut(_outputGC, box);
         PixelIterator iterIn(_inputGC, inpbox);
+
         AttributeRecord rec;
         if ( _attribColumn != "")
             rec = AttributeRecord(_inputGC->attributeTable(itCOVERAGE), "coverage_key");
@@ -49,11 +52,12 @@ bool Selection::execute(ExecutionContext *ctx)
             }
             ++iterIn;
             ++iterOut;
-        });
+        }
+        );
         return true;
     };
 
-    bool res = OperationHelper::execute(Assign, _outputGC);
+    bool res = OperationHelper::execute(selection, _outputGC, _box);
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -89,7 +93,7 @@ Ilwis::OperationImplementation::State Selection::prepare()
     int index = selector.indexOf("box=");
     Box2D<double> box;
     if ( index != -1) {
-        QString crdlist = "box(" + selector.mid(index+5) + ")";
+        QString crdlist = "box(" + selector.mid(index+4) + ")";
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN;
