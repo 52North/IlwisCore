@@ -36,6 +36,7 @@ private:
     IlwisObject *createGridCoverage(const Resource &item) const;
     IlwisObject *createTable(const Resource &item) const;
     IlwisObject *createOperationMetaData(const Resource &item) const;
+    IlwisObject *createGeoreference(const Resource &item) const;
     bool createCoverage(const Ilwis::Resource &item, Coverage *coverage) const;
 };
 }

@@ -66,6 +66,8 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
         return createTable(item);
     } else if ( item.ilwisType() & itOPERATIONMETADATA) {
         return createOperationMetaData(item);
+    } else if ( item.ilwisType() & itGEOREF) {
+        return createGeoreference(item);
     }
     return 0;
 }
@@ -105,6 +107,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Ellipsoid();
     case itOPERATIONMETADATA:
         return new OperationMetaData();
+    case itGEOREF:
+        return new CornersGeoReference();
     }
     return 0;
 }
@@ -129,6 +133,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& item) const
     } else if ( item.ilwisType() & itTABLE) {
         return true;
     }else if ( item.ilwisType() & itOPERATIONMETADATA) {
+        return true;
+    } else if ( item.ilwisType() & itGEOREF) {
         return true;
     }
 
@@ -415,6 +421,28 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& item) con
     }
 
     return 0;
+}
+
+IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& item) const {
+//    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+//    ConnectorInterface *connector = factory->createFromResource<>(item, "internal");
+
+//    if(!connector) {
+//        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+//        return 0;
+//    }
+
+    CornersGeoReference *cgrf = new CornersGeoReference();
+    cgrf->setName( item["name"].toString());
+    cgrf->setCreateTime(Time::now());
+    cgrf->setModifiedTime(Time::now());
+    cgrf->coordinateSystem(item["coordinatesystem"].value<ICoordinateSystem>());
+    cgrf->setEnvelope(item["envelope"].value<Box2D<double>>());
+//    Size sz = item["size"].value<Size>();
+    cgrf->size(item["size"].value<Size>());
+    cgrf->centerOfPixel(item["centerofpixel"].toBool());
+
+    return cgrf;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& item) const {
