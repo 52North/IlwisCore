@@ -27,7 +27,7 @@ private:
     Features::iterator _iterFeatures;
     bool _isInitial;
     Box3D<double> _envelope;
-    int _trackCounter;
+    quint32 _trackCounter;
     Flow _flow;
     FeatureProxy _proxy;
 };
