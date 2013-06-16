@@ -284,7 +284,7 @@ void DatabaseTable::column(const QString &nme, const QVariantList &vars, quint32
     QSqlQuery db(_database);
     QString dataType = valueType2DataType(_columnDefinitionsByName[nme].datadef().domain()->valueType());
     bool needQuotes = dataType == "TEXT";
-    quint32 count = 0;
+    qint32 count = 0;
     if ( inside > 0) {
         QString stmt = QString("UPDATE %1 SET " ).arg(internalName());
         for(count=0; count < vars.size(); ++count) {
