@@ -118,7 +118,7 @@ public:
     }
 
     IlwisTypes valueType() const {
-        return ilwisType();
+        return C::valueType();
     }
 
 protected:
@@ -131,7 +131,16 @@ private:
     QString _theme;
 };
 
+class ThematicItem;
+class IndexedIdentifier;
+class NamedIdentifier;
 
+typedef IlwisData<ItemDomain<ThematicItem>>  IThematicDomain ;
+typedef IlwisData<ItemDomain<IndexedIdentifier>>  IIndexedIdDomain ;
+typedef IlwisData<ItemDomain<NamedIdentifier>>  INamedIdDomain ;
+typedef ItemDomain<ThematicItem>  ThematicDomain ;
+typedef ItemDomain<IndexedIdentifier>  IndexedIdDomain ;
+typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
 
 }
 
