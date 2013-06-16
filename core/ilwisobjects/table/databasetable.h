@@ -112,7 +112,7 @@ private:
 
     QString valueType2DataType(IlwisTypes ty) {
         QString vType=sUNDEF;
-        if ( (ty >= 1024 &&  ty <= itINT64) || ty == itITEMDOMAIN) {
+        if ( (ty >= 1024 &&  ty <= itINT64) || ((ty & itDOMAINITEM) != 0)) {
             vType = "Integer"        ;
         } else if ( ty >= 1024 &&ty <= itDOUBLE) {
             vType = "Real";
