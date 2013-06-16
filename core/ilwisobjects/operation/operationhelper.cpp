@@ -36,6 +36,7 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     if ( what & itCOORDSYSTEM) {
         resource.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
     }
+
     if ( what & itGEOREF) {
         if ( box.isNull() || !box.isValid()) {
             sz = inputGC->size();
@@ -50,7 +51,14 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     resource.prepare();
 
     outputGC.prepare(resource);
-   //mastercatalog()->addItems({resource});
+    if ( what & itTABLE) {
+        if ( inputGC->attributeTable(itGRIDCOVERAGE).isValid())    {
+            if ( inputGC->datadef().domain() == outputGC->datadef().domain()) {
+                if ( outputGC.isValid())
+                    outputGC->attributeTable(itGRIDCOVERAGE,inputGC->attributeTable(itGRIDCOVERAGE));
+            }
+        }
+    }
 
     return box;
 }
@@ -63,7 +71,7 @@ int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint3
     }
 
     int cores = std::min(QThread::idealThreadCount(),gcov->size().ysize());
-    if (gcov->size().totalSize() < 10000)
+    //if (gcov->size().totalSize() < 10000)
         cores = 1;
 
     boxes.clear();
@@ -78,9 +86,9 @@ int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint3
     int currentY = 0;
 
     for(int i=0 ; i < cores; ++i){
-        Box3D<qint32> smallBox(Pixel(left, currentY), Pixel(right, std::min(top,currentY + step)) );
+        Box3D<qint32> smallBox(Pixel(left, currentY), Pixel(right - 1, std::min(top - 1,currentY + step)) );
         boxes[i] = smallBox;
-        currentY = currentY + step + 1 ;
+        currentY = currentY + step  ;
     }
     return cores;
 }
