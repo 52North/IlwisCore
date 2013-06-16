@@ -68,7 +68,7 @@ Ilwis::OperationImplementation::State Assignment::prepare()
     }
     OperationHelper helper;
     helper.initialize(_inputGC, _outputGC, _expression.parm(0),
-                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN);
+                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
     return sPREPARED;
 }
 
