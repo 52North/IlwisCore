@@ -21,16 +21,19 @@ Selection::Selection(quint64 metaid, const Ilwis::OperationExpression &expr) : O
 {
 }
 
+Selection::~Selection()
+{
+}
+
 bool Selection::execute(ExecutionContext *ctx)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
             return false;
 
-    std::function<bool(const Box3D<qint32>)> selection = [&](const Box3D<qint32> box ) -> bool {
-        Box3D<double> inenvelope = _outputGC->georeference()->pixel2Coord(Box2D<qint32>(box.min_corner(), box.max_corner()));
-        Box3D<qint32> inpbox = _inputGC->georeference()->coord2Pixel(inenvelope);
-        inpbox.ensure(box.size());
+    BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
+        Box3D<qint32> inpbox = box.size();
+        inpbox += _base;
         inpbox.copyFrom(box, Box3D<>::dimZ);
         PixelIterator iterOut(_outputGC, box);
         PixelIterator iterIn(_inputGC, inpbox);
@@ -44,8 +47,10 @@ bool Selection::execute(ExecutionContext *ctx)
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
                 if ( rec.isValid()) {
-                    QVariant var = rec.cellByKey(v_in,_attribColumn)    ;
+                    QVariant var = rec.cellByKey(v_in,_attribColumn);
                     v = var.toDouble();
+                    if ( isNumericalUndef(v))
+                        v = rUNDEF;
                 } else {
                     v = v_in;
                 }
@@ -96,7 +101,8 @@ Ilwis::OperationImplementation::State Selection::prepare()
         QString crdlist = "box(" + selector.mid(index+4) + ")";
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
-        copylist |= itDOMAIN;
+        copylist |= itDOMAIN | itTABLE;
+        _base = _box.min_corner();
 
     }
     index = selector.indexOf("polygon=");
@@ -105,7 +111,7 @@ Ilwis::OperationImplementation::State Selection::prepare()
         QString crdlist = "polygon(" + selector.mid(index+1) + ")";
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
-        copylist |= itDOMAIN;
+        copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
@@ -135,7 +141,12 @@ Ilwis::OperationImplementation::State Selection::prepare()
         IGeoReference  grf;
         grf.prepare(res);
         _outputGC->setGeoreference(grf);
+
+       _outputGC->envelope(box);
     }
+    QString outputName = _expression.parm(0,false).value();
+    if ( outputName != sUNDEF)
+        _outputGC->setName(outputName);
     return sPREPARED;
 }
 
