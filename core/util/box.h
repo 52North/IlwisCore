@@ -433,18 +433,29 @@ Box3D<CsyType>& operator -=(const Ilwis::Point2D<CsyType>& pnew) {
 
 }
 
-Box3D<CsyType>& operator +=(std::initializer_list<CsyType> il) {
-    int size = il.size();
+Box3D<CsyType>& operator +=(const std::vector<CsyType>& vec) {
+    int size = vec.size();
     if ( size == 3) {
-        Ilwis::Point2D<CsyType>& pmin = this->min_corner();
-        Ilwis::Point2D<CsyType>& pmax = this->max_corner();
-        pmin += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
-        pmax += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
+        this->min_corner() += vec;
+        this->max_corner() += vec;
         normalize();
     }
 
     return *this;
 }
+
+//Box3D<CsyType>& operator +=(std::initializer_list<CsyType> il) {
+//    int size = il.size();
+//    if ( size == 3) {
+//        Ilwis::Point2D<CsyType>& pmin = this->min_corner();
+//        Ilwis::Point2D<CsyType>& pmax = this->max_corner();
+//        pmin += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
+//        pmax += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
+//        normalize();
+//    }
+
+//    return *this;
+//}
 
 Box3D<CsyType>& operator *=(std::initializer_list<CsyType> il) {
     int size = il.size();
