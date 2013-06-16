@@ -99,7 +99,7 @@ inline bool PixelIterator::moveXYZ(int n) {
         ++_y;
         _x = _box.min_corner().x();
         _yChanged = true;
-        _localOffset += _x;
+        _localOffset = _x + _y * _grid->size().xsize();
         if ( (_y % _grid->maxLines()) == 0) {
             ++_currentBlock;
             _localOffset = 0;
