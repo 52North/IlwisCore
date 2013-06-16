@@ -15,6 +15,7 @@
 #include "resource.h"
 #include "ilwisobjectconnector.h"
 #include "ilwiscontext.h"
+#include "catalog.h"
 #include "version.h"
 
 
@@ -64,9 +65,9 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     Locker lock(_mutex);
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
-    if ( !resource.isValid())
+    if ( !resource.isValid()) {
         resource = Resource(url,ilwisType(), false);
-   //
+    }
     if ( url == QUrl()) {
         resource.setName(name());
     }
@@ -276,8 +277,6 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "ItemDomain";
     case  itTIMEDOMAIN:
         return "TimeDomain";
-    case  itREPRESENTATION:
-        return "Representation";
     case  itCOORDSYSTEM:
         return "CoordinateSystem";
     case  itCONVENTIONALCOORDSYSTEM:
@@ -329,8 +328,6 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itITEMDOMAIN;
     if ( name.compare( "Domain",Qt::CaseInsensitive) == 0)
         return  itDOMAIN;
-    if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
-        return  itREPRESENTATION;
     if ( name.compare( "CoordinateSystem",Qt::CaseInsensitive) == 0)
         return  itCOORDSYSTEM;
     if ( name.compare( "ConventionalCoordinateSystem",Qt::CaseInsensitive) == 0)
