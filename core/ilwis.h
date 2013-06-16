@@ -114,13 +114,22 @@ const quint64 itDOUBLE = 2 * itFLOAT;
 const quint64 itVALUERANGE = 2 * itDOUBLE;
 const quint64 itSTRING = 2 * itVALUERANGE;
 const quint64 itTIME = 2 * itSTRING;
-const quint64 itCOORD = 2 * itTIME;
-const quint64 itCOORD3D = 2 * itCOORD;
+const quint64 itCOORD2D = 2 * itTIME;
+const quint64 itCOORD3D = 2 * itCOORD2D;
 const quint64 itPIXEL = 2 *itCOORD3D;
 const quint64 itVOXEL = 2 * itPIXEL;
 const quint64 itBINARY = 2 * itVOXEL;
 const quint64 itFILE = 2 * itBINARY;
 const quint64 itURL = 2 * itFILE;
+const quint64 itTHEMATICITEM = 2 * itFILE;
+const quint64 itNAMEDITEM = 2 * itTHEMATICITEM;
+const quint64 itINDEXEDITEM = 2 * itNAMEDITEM;
+const quint64 itNUMERICITEM = 2 * itINDEXEDITEM;
+const quint64 itTIMEITEM = 2 * itNUMERICITEM;
+const quint64 itPOINT = 2 * itTIMEITEM;
+const quint64 itLINE = 2 * itPOINT;
+const quint64 itPOLYGON = 2 * itLINE;
+const quint64 itCOLOR = 2 * itPOLYGON;
 
 
 const quint64 itCOVERAGE = itPOINTCOVERAGE | itGRIDCOVERAGE | itPOLYGONCOVERAGE | itSEGMENTCOVERAGE | itCOVERAGELIST;
@@ -133,6 +142,7 @@ const quint64 itILWISOBJECT = itCOVERAGE | itDOMAIN | itOBJECTCOLLECTION | itCOO
          itELLIPSOID | itPROJECTION | itTABLE | itREPRESENTATION | itGEOREF | itOPERATIONMETADATA;
 const quint64 itINTEGER = itINT8 | itUINT8 | itINT16 | itUINT16 | itINT32 | itINT64 | itUINT32 | itUINT64;
 const quint64 itNUMERIC = itINTEGER | itFLOAT | itDOUBLE;
+const quint64 itDOMAINITEM = itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM;
 
 const quint64 itLOCATION = itFILE | itURL;
 const quint64 itANY = 0x8888888888888888;
@@ -201,6 +211,8 @@ template<class T> T undef() {
     }
     return T();
 }
+
+#define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
 
 
 #endif // ILWIS_H
