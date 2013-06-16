@@ -64,14 +64,19 @@ bool IndexedIdentifier::isValid() const{
     return true;
 }
 
-QString IndexedIdentifier::itemType() const
-{
-    return "IndexedIdentifier";
-}
+//QString IndexedIdentifier::itemType() const
+//{
+//    return "IndexedIdentifier";
+//}
 
 ItemRange *IndexedIdentifier::createRange()
 {
     return new IndexedIdentifierRange();
+}
+
+IlwisTypes IndexedIdentifier::valueType()
+{
+    return itINDEXEDITEM;
 }
 
 
@@ -99,14 +104,19 @@ bool NamedIdentifier::operator ==(const NamedIdentifier &item) const
     return _name == item.name();
 }
 
-QString NamedIdentifier::itemType() const
-{
-    return "NamedIdentifier";
-}
+//QString NamedIdentifier::itemType() const
+//{
+//    return "NamedIdentifier";
+//}
 
 NamedIdentifierRange *NamedIdentifier::createRange()
 {
     return new NamedIdentifierRange();
+}
+
+IlwisTypes NamedIdentifier::valueType()
+{
+    return itNAMEDITEM;
 }
 
 DomainItem *NamedIdentifier::clone() const

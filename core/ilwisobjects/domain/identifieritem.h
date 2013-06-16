@@ -22,9 +22,10 @@ public:
     bool operator==(const IndexedIdentifier& item) const;
     DomainItem *clone() const;
 
-    QString itemType() const;
+//    QString itemType() const;
     bool isValid() const;
     static ItemRange *createRange();
+    static IlwisTypes valueType();
 private:
     quint32 _index;
     quint32 _count;
@@ -40,9 +41,10 @@ public:
     QString name(quint32 n = 0) const;
     void setName(const QString& n);
     bool operator==(const NamedIdentifier& item) const;
-    QString itemType() const;
-    static Ilwis::NamedIdentifierRange *createRange();
+//    QString itemType() const;
     DomainItem *clone() const;
+    static Ilwis::NamedIdentifierRange *createRange();
+    static IlwisTypes valueType();
 
 private:
     QString _name;

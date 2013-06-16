@@ -9,7 +9,7 @@ public:
     virtual ~DomainItem() {}
 
     virtual bool isValid() const = 0;
-    virtual QString itemType() const = 0;
+    //virtual QString itemType() const = 0;
     virtual QString name(quint32 index= 0) const =0 ;
     virtual DomainItem *clone() const=0;
 
