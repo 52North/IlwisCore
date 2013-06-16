@@ -26,11 +26,6 @@ ThematicItem::ThematicItem(const QString &nm, const QString &cde, const QString 
 {
 }
 
-QString ThematicItem::itemType() const
-{
-    return "ThematicItem";
-}
-
 QString ThematicItem::description() const
 {
     return _description;
@@ -49,6 +44,11 @@ void ThematicItem::setCode(const QString &code)
 DomainItem *ThematicItem::clone() const
 {
     return new ThematicItem(name(), _code, _description);
+}
+
+IlwisTypes ThematicItem::valueType()
+{
+    return itTHEMATICITEM;
 }
 
 

@@ -11,12 +11,12 @@ public:
 
     ThematicItem();
     ThematicItem(const QString &name, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
-    QString itemType() const;
 
     QString description() const;
     void setDescription(const QString &desc);
     void setCode(const QString &code);
     DomainItem *clone() const;
+    static IlwisTypes valueType();
 
 private:
     QString _description;
