@@ -40,6 +40,17 @@ Resource::Resource() : _size(0), _ilwtype(itUNKNOWN), _extendedType(itUNKNOWN)
 {
 }
 
+Resource::Resource(const Resource &res) : Identity(res)
+{
+    _properties = res._properties;
+    _resource = res._resource;
+    _container = res._container;
+    _size = res._size;
+    _dimensions = res._dimensions;
+    _ilwtype = res._ilwtype;
+    _extendedType = res._extendedType;
+}
+
 Resource::Resource(const QString& code, quint64 tp, bool isNew) :
     _resource(QUrl(code)),
     _size(0),
@@ -298,7 +309,7 @@ QString Resource::toLocalFile(bool relative) const {
 QString Resource::toLocalFile(const QUrl& url, bool relative) {
 
     QFileInfo localFile(url.toLocalFile());
-    if ( localFile.exists())
+    if ( localFile.exists() && relative == false)
         return localFile.absoluteFilePath();
 
     if ( localFile.fileName() == "")
