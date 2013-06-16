@@ -32,14 +32,14 @@ Operation::Operation(const Ilwis::OperationExpression &e)
 
 }
 
-UPOperationImplementation& Operation::operator->(){
-    if ( _operation)
+SPOperationImplementation& Operation::operator->(){
+    if (! _operation.isNull())
         return _operation;
     throw ErrorObject(TR("Using uninitialized operation"));
 }
 
-const UPOperationImplementation& Operation::operator->() const{
-    if ( _operation)
+const SPOperationImplementation& Operation::operator->() const{
+    if ( !_operation.isNull())
         return _operation;
     throw ErrorObject(TR("Using uninitialized operation"));
 }

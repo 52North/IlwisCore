@@ -22,7 +22,7 @@ protected:
     virtual State prepare() =0;
 };
 
-typedef std::unique_ptr<OperationImplementation> UPOperationImplementation;
+typedef QScopedPointer<OperationImplementation> SPOperationImplementation;
 
 class KERNELSHARED_EXPORT Operation
 {
@@ -30,12 +30,12 @@ public:
     Operation() {}
 
     Operation(const Ilwis::OperationExpression &e);
-    UPOperationImplementation& operator->();
-    const UPOperationImplementation& operator->() const;
+    SPOperationImplementation& operator->();
+    const SPOperationImplementation& operator->() const;
     bool isValid() const;
 
 private:
-    UPOperationImplementation _operation;
+    SPOperationImplementation _operation;
 
 
 };
