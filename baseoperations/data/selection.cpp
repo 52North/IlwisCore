@@ -102,7 +102,8 @@ Ilwis::OperationImplementation::State Selection::prepare()
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN | itTABLE;
-        _base = _box.min_corner();
+        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y()};
+        _base = vec;
 
     }
     index = selector.indexOf("polygon=");
