@@ -28,6 +28,7 @@ class KERNELSHARED_EXPORT Operation
 {
 public:
     Operation() {}
+    virtual ~Operation();
 
     Operation(const Ilwis::OperationExpression &e);
     SPOperationImplementation& operator->();

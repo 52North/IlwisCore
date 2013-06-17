@@ -32,6 +32,9 @@ Operation::Operation(const Ilwis::OperationExpression &e)
 
 }
 
+Operation::~Operation() {
+}
+
 SPOperationImplementation& Operation::operator->(){
     if (! _operation.isNull())
         return _operation;
