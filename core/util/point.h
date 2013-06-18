@@ -607,7 +607,7 @@ operator*(const Ilwis::Point2D<CrdType>& p1, double v) {
 }
 
 template<typename CrdType=qint32> Ilwis::Point2D<CrdType>
-operator/(Ilwis::Point2D<CrdType>& p1, double v) {
+operator/(const Ilwis::Point2D<CrdType>& p1, double v) {
     if (!p1.isValid() || v == 0)
         return Ilwis::Point2D<CrdType>();
     Ilwis::Point2D<CrdType> p3(p1.x() / v, p1.y() / v) ;
@@ -688,7 +688,10 @@ BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Coordinate, double, cs::cartesian, x, y
 BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel, qint32, cs::cartesian, x, y, z, x, y, z)
 BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel_u, quint32, cs::cartesian, x, y, z, x, y, z)
 
-
+Q_DECLARE_METATYPE(Coordinate)
+Q_DECLARE_METATYPE(Pixel)
+Q_DECLARE_METATYPE(Voxel)
+Q_DECLARE_METATYPE(Pixel_d)
 
 
 
