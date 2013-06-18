@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "unarymath.h"
@@ -10,11 +11,11 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
-Sinus::Sinus(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
+Sine::Sine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
 {}
-OperationImplementation *Sinus::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sinus(metaid,expr);}
+OperationImplementation *Sine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sine(metaid,expr);}
 
-quint64 Sinus::createMetadata() {
+quint64 Sine::createMetadata() {
     Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/sin"), "sine", "min1to1");
     res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
     res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between -1 and 1");

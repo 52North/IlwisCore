@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "gridinterpolator.h"
@@ -26,7 +27,7 @@ ResampleRaster::ResampleRaster(quint64 metaid, const Ilwis::OperationExpression 
 {
 }
 
-bool ResampleRaster::execute(ExecutionContext *ctx)
+bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -37,7 +38,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
         GridInterpolator interpolator(_inputGC, _method);
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
-           Coordinate c = _outputGC->georeference()->pixel2Coord(position);
+           Coordinate c = _outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
            Coordinate c2 = _inputGC->coordinateSystem()->coord2coord(_outputGC->coordinateSystem(),c);
            *iterOut = interpolator.coord2value(c2);
             ++iterOut;
@@ -58,7 +59,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx)
     return false;
 }
 
-Ilwis::OperationImplementation::State ResampleRaster::prepare()
+Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *ctx)
 {
     QString gc = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();

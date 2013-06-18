@@ -10,11 +10,11 @@ public:
     BinaryMath();
     BinaryMath(quint64 metaid, const Ilwis::OperationExpression &expr);
 
-    bool execute(ExecutionContext *ctx);
+    bool execute(ExecutionContext *ctx, SymbolTable& symTable);
     static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    State prepare();
+    State prepare(ExecutionContext *ctx=0);
 private:
     bool executeCoverageNumber(Ilwis::ExecutionContext *ctx);
     bool executeCoverageCoverage(Ilwis::ExecutionContext *ctx);

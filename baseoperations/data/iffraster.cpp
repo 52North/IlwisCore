@@ -3,6 +3,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "iffraster.h"
@@ -21,7 +22,7 @@ IffRaster::IffRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
     _number[0] = _number[1] = rUNDEF;
 }
 
-bool IffRaster::execute(ExecutionContext *ctx)
+bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -81,7 +82,7 @@ OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpres
     return new IffRaster(metaid, expr);
 }
 
-OperationImplementation::State IffRaster::prepare()
+OperationImplementation::State IffRaster::prepare(ExecutionContext *)
 {
     QString gc = _expression.parm(0).value();
 

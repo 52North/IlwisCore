@@ -11,7 +11,7 @@ public:
     OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e);
     virtual ~OperationImplementation() {}
     const IOperationMetaData& metadata() const;
-    virtual bool execute(ExecutionContext *ctx)=0;
+    virtual bool execute(ExecutionContext *ctx, SymbolTable& symTable)=0;
     virtual bool isValid() const;
 
 protected:
@@ -19,7 +19,7 @@ protected:
     OperationExpression _expression;
     State _prepState;
 
-    virtual State prepare() =0;
+    virtual State prepare(ExecutionContext *ctx=0) =0;
 };
 
 typedef QScopedPointer<OperationImplementation> SPOperationImplementation;

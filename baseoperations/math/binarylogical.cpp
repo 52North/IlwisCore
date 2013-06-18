@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "binarylogical.h"
@@ -127,7 +128,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx) {
     return false;
 }
 
-bool BinaryLogical::execute(ExecutionContext *ctx)
+bool BinaryLogical::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -195,7 +196,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     return true;
 }
 
-OperationImplementation::State BinaryLogical::prepare() {
+OperationImplementation::State BinaryLogical::prepare(ExecutionContext *) {
     if ( _expression.parameterCount() != 3){
         return sPREPAREFAILED;
     }

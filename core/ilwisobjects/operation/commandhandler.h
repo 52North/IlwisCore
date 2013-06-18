@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <map>
 #include "Kernel_global.h"
+#include "symboltable.h"
 
 
 namespace Ilwis {
@@ -32,7 +33,8 @@ public:
     explicit CommandHandler(QObject *parent);
     ~CommandHandler();
 
-    bool execute(const QString &command, ExecutionContext *ctx=0);
+    bool execute(const QString &command, ExecutionContext *ctx);
+    bool execute(const QString &command, ExecutionContext *ctx, SymbolTable& symTable);
     void addOperation(quint64 id, CreateOperation op);
     OperationImplementation *create(const Ilwis::OperationExpression &expr);
     quint64 findOperationId(const OperationExpression &expr) const;

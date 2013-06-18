@@ -4,6 +4,7 @@
 #include "operationmetadata.h"
 #include "operationExpression.h"
 #include "connectorinterface.h"
+#include "symboltable.h"
 #include "commandhandler.h"
 #include "operation.h"
 

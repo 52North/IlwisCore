@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "assignment.h"
@@ -16,7 +17,7 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 {
 }
 
-bool Assignment::execute(ExecutionContext *ctx)
+bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -54,7 +55,7 @@ Ilwis::OperationImplementation *Assignment::create(quint64 metaid, const Ilwis::
     return new Assignment(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Assignment::prepare()
+Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *)
 {
     if ( _expression.parameterCount() != 1) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));

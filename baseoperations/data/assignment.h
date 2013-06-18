@@ -10,9 +10,9 @@ public:
     Assignment();
     Assignment(quint64 metaid, const Ilwis::OperationExpression &expr);
 
-    bool execute(ExecutionContext *ctx=0);
+    bool execute(ExecutionContext *ctx,SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
-    Ilwis::OperationImplementation::State prepare();
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx=0);
 
     static quint64 createMetadata();
 private:

@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "rasvalue.h"
 
@@ -15,7 +16,7 @@ RasValue::RasValue(quint64 metaid, const Ilwis::OperationExpression &expr) :
 {
 }
 
-bool RasValue::execute(ExecutionContext *ctx)
+bool RasValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -32,7 +33,7 @@ Ilwis::OperationImplementation *RasValue::create(quint64 metaid, const Ilwis::Op
         return new RasValue(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State RasValue::prepare()
+Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *)
 {
     if ( _expression.parameterCount() < 3 || _expression.parameterCount() > 4) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","3 or 4",QString::number(_expression.parameterCount()));

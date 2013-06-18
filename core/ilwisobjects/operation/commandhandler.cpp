@@ -10,6 +10,7 @@
 #include "ilwisdata.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
+#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 #include "mastercatalog.h"
@@ -55,8 +56,23 @@ bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
     quint64 id = findOperationId(expr);
     if ( id != i64UNDEF) {
         QScopedPointer<OperationImplementation> oper(create( expr));
-        if ( !oper.isNull() && oper->isValid())
-            return oper->execute(ctx);
+        if ( !oper.isNull() && oper->isValid()) {
+            SymbolTable tbl;
+            return oper->execute(ctx, tbl);
+        }
+    }
+    return false;
+}
+
+bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    OperationExpression expr(command);
+    quint64 id = findOperationId(expr);
+    if ( id != i64UNDEF) {
+        QScopedPointer<OperationImplementation> oper(create( expr));
+        if ( !oper.isNull() && oper->isValid()) {
+            return oper->execute(ctx, symTable);
+        }
     }
     return false;
 }

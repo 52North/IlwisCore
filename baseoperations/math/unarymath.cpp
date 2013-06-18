@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "unarymath.h"
@@ -23,7 +24,7 @@ UnaryMath::UnaryMath(quint64 metaid, const Ilwis::OperationExpression& expr, con
 
 }
 
-bool UnaryMath::execute(ExecutionContext *ctx)
+bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -60,7 +61,7 @@ bool UnaryMath::execute(ExecutionContext *ctx)
     return true;
 }
 
-OperationImplementation::State UnaryMath::prepare()
+OperationImplementation::State UnaryMath::prepare(ExecutionContext *ctx)
 {
     IlwisTypes ptype = _expression.parm(0).valuetype();
 

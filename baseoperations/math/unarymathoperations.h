@@ -3,11 +3,11 @@
 
 namespace Ilwis {
 namespace BaseOperations{
-class Sinus : public UnaryMath
+class Sine : public UnaryMath
 {
 public:
-    Sinus() {}
-    Sinus(quint64 metaid, const Ilwis::OperationExpression &expr);
+    Sine() {}
+    Sine(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 };

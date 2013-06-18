@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "binarymath.h"
@@ -112,7 +113,7 @@ bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
     return false;
 }
 
-bool BinaryMath::execute(ExecutionContext *ctx)
+bool BinaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -239,7 +240,7 @@ bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
     return true;
 }
 
-OperationImplementation::State BinaryMath::prepare() {
+OperationImplementation::State BinaryMath::prepare(ExecutionContext *) {
     if ( _expression.parameterCount() != 3){
         return sPREPAREFAILED;
     }
