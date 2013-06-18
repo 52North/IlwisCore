@@ -42,6 +42,7 @@
 #include "feature.h"
 #include "operationmetadata.h"
 #include "operationExpression.h"
+#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 
