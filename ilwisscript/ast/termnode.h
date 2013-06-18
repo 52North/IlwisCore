@@ -1,6 +1,7 @@
 #ifndef TERMNODE_H
 #define TERMNODE_H
 
+namespace Ilwis {
 class TermNode : public ASTNode
 {
 public:
@@ -29,5 +30,6 @@ private:
 
     QString getName(const QVariant &var) const;
 };
+}
 
 #endif // TERMNODE_H

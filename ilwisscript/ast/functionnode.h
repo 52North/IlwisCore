@@ -1,6 +1,7 @@
 #ifndef FUNCTIONNODE_H
 #define FUNCTIONNODE_H
 
+namespace Ilwis{
 class FunctionNode : public IDNode
 {
 public:
@@ -16,5 +17,5 @@ private:
     QVector< QSharedPointer<VariableNode> > _parameters;
     QSharedPointer<ReturnNode> _return;
 };
-
+}
 #endif // FUNCTIONNODE_H

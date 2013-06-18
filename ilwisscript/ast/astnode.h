@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QVariant>
 
+namespace Ilwis {
 class SymbolTable;
 
 class NodeValue : public QVariant {
@@ -46,5 +47,6 @@ protected:
     QString _type;
 
 };
+}
 
 #endif // ASTNODE_H

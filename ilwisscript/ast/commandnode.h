@@ -1,6 +1,7 @@
 #ifndef COMMANDNODE_H
 #define COMMANDNODE_H
 
+namespace Ilwis {
 class CommandNode : public ASTNode
 {
 public:
@@ -13,5 +14,6 @@ private:
     QString _command;
     QHash< QString, QSharedPointer<ExpressionNode> > _options;
 };
+}
 
 #endif // COMMANDNODE_H

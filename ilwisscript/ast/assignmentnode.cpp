@@ -28,6 +28,7 @@
 #include "ilwiscontext.h"
 #include "juliantime.h"
 
+using namespace Ilwis;
 
 AssignmentNode::AssignmentNode() : _defintion(false)
 {

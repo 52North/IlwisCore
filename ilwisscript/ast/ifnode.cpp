@@ -6,6 +6,8 @@
 #include "expressionnode.h"
 #include "ifnode.h"
 
+using namespace Ilwis;
+
 Ifnode::Ifnode() : ASTNode("IfNode")
 {
 }

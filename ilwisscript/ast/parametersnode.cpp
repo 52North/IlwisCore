@@ -3,6 +3,8 @@
 #include "expressionnode.h"
 #include "parametersnode.h"
 
+using namespace Ilwis;
+
 ParametersNode::ParametersNode()
 {
 }

@@ -1,6 +1,8 @@
 #include "symboltable.h"
 #include "astnode.h"
 
+using namespace Ilwis;
+
 NodeValue::NodeValue() : _content(ctUNKNOW){
 }
 
@@ -37,7 +39,7 @@ bool ASTNode::addChild(ASTNode *n)
     return true;
 }
 
-bool ASTNode::evaluate(SymbolTable& symbols, int scope)
+bool ASTNode::evaluate(Ilwis::SymbolTable& symbols, int scope)
 {
     foreach(QSharedPointer<ASTNode> node, _childeren) {
         if (!node->evaluate(symbols, scope)) {

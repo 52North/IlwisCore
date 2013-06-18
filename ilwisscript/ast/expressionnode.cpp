@@ -3,6 +3,8 @@
 #include "expressionnode.h"
 #include "symboltable.h"
 
+using namespace Ilwis;
+
 ExpressionNode::ExpressionNode()
 {
 }

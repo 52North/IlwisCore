@@ -4,6 +4,8 @@
 #include "expressionnode.h"
 #include "commandnode.h"
 
+using namespace Ilwis;
+
 CommandNode::CommandNode()
 {
 }

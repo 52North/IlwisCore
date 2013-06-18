@@ -4,6 +4,8 @@
 #include "symboltable.h"
 #include "commandhandler.h"
 
+using namespace Ilwis;
+
 RelationNode::RelationNode()
 {
 }

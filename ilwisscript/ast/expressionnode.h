@@ -1,6 +1,8 @@
 #ifndef EXPRESSIONNODE_H
 #define EXPRESSIONNODE_H
 
+namespace Ilwis{
+
 class ExpressionNode : public OperationNode
 {
 public:
@@ -14,5 +16,6 @@ private:
     bool handleXor(const NodeValue &vright);
 
 };
+}
 
 #endif // EXPRESSIONNODE_H

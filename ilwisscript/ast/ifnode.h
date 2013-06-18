@@ -1,6 +1,9 @@
 #ifndef IFNODE_H
 #define IFNODE_H
 
+namespace Ilwis {
+
+
 class Ifnode : public ASTNode
 {
 public:
@@ -18,5 +21,6 @@ private:
 
 
 };
+}
 
 #endif // IFNODE_H

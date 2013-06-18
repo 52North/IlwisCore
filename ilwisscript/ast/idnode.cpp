@@ -8,6 +8,7 @@
 #include "astnode.h"
 #include "idnode.h"
 
+using namespace Ilwis;
 
 IDNode::IDNode(char *name) : _text(name), _isreference(false)
 {

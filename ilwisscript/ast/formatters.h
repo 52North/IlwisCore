@@ -1,6 +1,7 @@
 #ifndef MODIFIERPART_H
 #define MODIFIERPART_H
 
+namespace Ilwis {
 class DomPartNode;
 
 class Formatters : public ASTNode
@@ -11,5 +12,6 @@ public:
     QString fnamespace() const;
     QString format() const;
 };
+}
 
 #endif // MODIFIERPART_H

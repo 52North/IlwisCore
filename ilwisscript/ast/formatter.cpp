@@ -4,6 +4,8 @@
 #include "idnode.h"
 #include "formatter.h"
 
+using namespace Ilwis;
+
 Formatter::Formatter() : ASTNode("Formatter")
 {
 }

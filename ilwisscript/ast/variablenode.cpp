@@ -10,6 +10,8 @@
 #include "variablenode.h"
 #include "symboltable.h"
 
+using namespace Ilwis;
+
 VariableNode::VariableNode(bool constant) : IDNode(0), _constant(constant)
 {
 }

@@ -1,6 +1,7 @@
 #ifndef Selector_H
 #define Selector_H
 
+namespace Ilwis {
 class Selector : public ASTNode
 {
 public:
@@ -17,5 +18,6 @@ private:
     QString _variable;
     QString _selectorType;
 };
+}
 
 #endif // Selector_H

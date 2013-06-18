@@ -13,6 +13,8 @@
 #include "termnode.h"
 #include "commandhandler.h"
 
+using namespace Ilwis;
+
 TermNode::TermNode() : _logicalNegation(false), _numericalNegation(false)
 {
 }

@@ -6,6 +6,8 @@
 #include "formatter.h"
 #include "scriptnode.h"
 
+using namespace Ilwis;
+
 std::map<quint64, QSharedPointer<ASTNode> > ScriptNode::_activeFormat;
 
 ScriptNode::ScriptNode()

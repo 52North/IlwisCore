@@ -5,6 +5,8 @@
 #include "valuerangenode.h"
 #include "domainformatter.h"
 
+using namespace Ilwis;
+
 DomainFormatter::DomainFormatter()
 {
 }

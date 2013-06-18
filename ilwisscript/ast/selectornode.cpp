@@ -3,6 +3,9 @@
 #include "astnode.h"
 #include "selectornode.h"
 
+using namespace Ilwis;
+
+
 Selector::Selector(const QString& tp) : ASTNode(tp)
 {
     _box = Ilwis::Box2D<int>(Ilwis::Point2D<int>(0,0), Ilwis::Point2D<int>(0,0));

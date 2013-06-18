@@ -4,6 +4,7 @@
 #include <QVariant>
 #include "ilwis.h"
 
+namespace Ilwis {
 class VariableNode  : public IDNode
 {
 public:
@@ -18,5 +19,6 @@ private:
     QVariant _value;
 
 };
+}
 
 #endif // VARIABLENPDE_H

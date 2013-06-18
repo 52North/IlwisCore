@@ -5,6 +5,8 @@
 #include "symboltable.h"
 #include "commandhandler.h"
 
+using namespace Ilwis;
+
 AddNode::AddNode()
 {
 }

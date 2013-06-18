@@ -1,6 +1,7 @@
 #ifndef FORMATNODE_H
 #define FORMATNODE_H
 
+namespace Ilwis {
 class Formatter : public ASTNode
 {
 public:
@@ -17,5 +18,6 @@ private:
     QString _format;
     QString _dataType;
 };
+}
 
 #endif // FORMATNODE_H

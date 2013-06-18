@@ -1,6 +1,7 @@
 #ifndef AssignmentNode_H
 #define AssignmentNode_H
 
+namespace Ilwis {
 class AssignmentNode : public ASTNode
 {
 public:
@@ -19,5 +20,6 @@ private:
     QSharedPointer<ASTNode> _typemodifier;
     QSharedPointer<ExpressionNode> _expression;
  };
+}
 
 #endif // AssignmentNode_H

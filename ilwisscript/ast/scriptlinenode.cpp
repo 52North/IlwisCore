@@ -7,6 +7,8 @@
 #include "scriptnode.h"
 #include "scriptlinenode.h"
 
+using namespace Ilwis;
+
 ScriptLineNode::ScriptLineNode()
 {
 }

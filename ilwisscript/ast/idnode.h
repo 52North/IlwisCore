@@ -1,6 +1,7 @@
 #ifndef IDNODE_H
 #define IDNODE_H
 
+namespace Ilwis {
 class IDNode : public ASTNode
 {
 public:
@@ -31,5 +32,6 @@ protected:
 
 
 };
+}
 
 #endif // IDNODE_H

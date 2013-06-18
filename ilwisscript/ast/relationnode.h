@@ -1,6 +1,7 @@
 #ifndef RELATIONNODE_H
 #define RELATIONNODE_H
 
+namespace Ilwis {
 class RelationNode : public OperationNode
 {
 public:
@@ -15,5 +16,6 @@ private:
      bool handleLESS(const NodeValue &vright);
      bool handleLESSEQ(const NodeValue &vright);
 };
+}
 
 #endif // RELATIONNODE_H

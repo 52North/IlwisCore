@@ -1,6 +1,7 @@
 #ifndef MULTIPLICATIONNODE_H
 #define MULTIPLICATIONNODE_H
 
+namespace Ilwis {
 class MultiplicationNode : public OperationNode
 {
 public:
@@ -12,5 +13,6 @@ private:
     bool handleDiv(const NodeValue &vright);
     bool handleTimes(const NodeValue &vright);
 };
+}
 
 #endif // MULTIPLICATIONNODE_H

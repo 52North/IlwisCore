@@ -1,6 +1,10 @@
 #ifndef SCRIPTNODE_H
 #define SCRIPTNODE_H
 
+
+
+namespace Ilwis {
+
 class Formatter;
 
 class ScriptNode : public ASTNode
@@ -14,5 +18,6 @@ public:
 private:
     static std::map<quint64, QSharedPointer<ASTNode> > _activeFormat;
 };
+}
 
 #endif // SCRIPTNODE_H

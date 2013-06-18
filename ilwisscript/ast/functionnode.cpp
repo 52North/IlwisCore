@@ -9,6 +9,8 @@
 #include "returnnode.h"
 #include "functionnode.h"
 
+using namespace Ilwis;
+
 FunctionNode::FunctionNode(char *s) : IDNode(s)
 {
 }

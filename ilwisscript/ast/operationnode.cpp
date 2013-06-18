@@ -4,6 +4,8 @@
 #include "commandhandler.h"
 #include "symboltable.h"
 
+using namespace Ilwis;
+
 OperationNode::OperationNode()
 {
 }

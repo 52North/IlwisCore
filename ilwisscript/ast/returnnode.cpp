@@ -1,6 +1,8 @@
 #include "astnode.h"
 #include "returnnode.h"
 
+using namespace Ilwis;
+
 ReturnNode::ReturnNode()
 {
 }

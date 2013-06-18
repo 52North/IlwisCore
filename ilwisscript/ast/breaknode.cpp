@@ -1,6 +1,8 @@
 #include "astnode.h"
 #include "breaknode.h"
 
+using namespace Ilwis;
+
 BreakNode::BreakNode()
 {
 }

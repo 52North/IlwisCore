@@ -3,6 +3,8 @@
 #include "expressionnode.h"
 #include "whilenode.h"
 
+using namespace Ilwis;
+
 WhileNode::WhileNode()
 {
 }

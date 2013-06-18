@@ -1,6 +1,7 @@
 #ifndef OPERATIONNODE_H
 #define OPERATIONNODE_H
 
+namespace Ilwis {
 class OperationNode : public ASTNode
 {
 public:
@@ -25,6 +26,6 @@ protected:
     QVector< RightTerm > _rightTerm;
 
 
-};
+};}
 
 #endif // OPERATIONNODE_H

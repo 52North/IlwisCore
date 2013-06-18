@@ -1,6 +1,8 @@
 #include "astnode.h"
 #include "valuerangenode.h"
 
+using namespace Ilwis;
+
 ValueRangeNode::ValueRangeNode()
 {
 }

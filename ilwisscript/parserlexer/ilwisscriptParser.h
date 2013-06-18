@@ -196,6 +196,8 @@ has the callable functions (rules) shown below,
 #include "formatter.h"
 #include "functionstatementnode.h"
 
+using namespace Ilwis;
+
 /* =============================================================================
  * Standard antlr3 C runtime definitions
  */

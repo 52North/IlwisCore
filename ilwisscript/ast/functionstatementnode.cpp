@@ -5,6 +5,8 @@
 #include "parametersnode.h"
 #include "functionstatementnode.h"
 
+using namespace Ilwis;
+
 FunctionStatementNode::FunctionStatementNode(char *s) : IDNode(s)
 {
 }

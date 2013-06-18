@@ -1,6 +1,7 @@
 #ifndef FUNCTIONSTATEMENTNODE_H
 #define FUNCTIONSTATEMENTNODE_H
 
+namespace Ilwis {
 class FunctionStatementNode : public IDNode
 {
 public:
@@ -12,5 +13,6 @@ private:
     QSharedPointer<ParametersNode> _parameters;
 
 };
+}
 
 #endif // FUNCTIONSTATEMENTNODE_H
