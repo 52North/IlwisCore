@@ -144,7 +144,11 @@ const quint64 itINTEGER = itINT8 | itUINT8 | itINT16 | itUINT16 | itINT32 | itIN
 const quint64 itNUMERIC = itINTEGER | itFLOAT | itDOUBLE;
 const quint64 itDOMAINITEM = itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM;
 
-const quint64 itLOCATION = itFILE | itURL;
+const quint64 itRESOURCELOCATION = itFILE | itURL;
+const quint64 itCOORDINATE = itCOORD2D | itCOORD3D;
+const quint64 itDISCRETECOORD = itPIXEL | itVOXEL;
+const quint64 itLOCATION = itCOORDINATE | itDISCRETECOORD;
+
 const quint64 itANY = 0x8888888888888888;
 
 //#define M_LN10      2.30258509299404568402
