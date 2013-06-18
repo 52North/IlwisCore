@@ -9,10 +9,8 @@ class KERNELSHARED_EXPORT SimpelGeoReference : public GeoReference
 public:
     SimpelGeoReference();
     SimpelGeoReference(const Resource& res);
-    virtual Coordinate pixel2Coord(const Pixel&) const;
-    virtual Point2D<double> coord2Pixel(const Coordinate& crd) const;
-    virtual Box2D<double> pixel2Coord(const Box2D<qint32> &box ) const;
-    virtual Box2D<qint32> coord2Pixel(const Box2D<double> &box) const;
+    virtual Coordinate pixel2Coord(const Pixel_d&) const;
+    virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
     virtual double pixelSize() const;
 
     std::vector<double> matrix() const;
