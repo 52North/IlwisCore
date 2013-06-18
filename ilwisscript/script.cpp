@@ -8,12 +8,13 @@
 #include "identity.h"
 #include "OperationExpression.h"
 #include "operationmetadata.h"
+#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 #include "script.h"
 #include "parserlexer/IlwisScriptLexer.h"
 #include "parserlexer/IlwisScriptParser.h"
-#include "symboltable.h"
+
 
 
 using namespace Ilwis;
@@ -30,7 +31,7 @@ Script::Script(quint64 metaid,const Ilwis::OperationExpression &expr) : Operatio
 {
 }
 
-OperationImplementation::State Script::prepare() {
+OperationImplementation::State Script::prepare(ExecutionContext *) {
     QString txt = _expression.parm(0).value();
     QUrl url(txt);
     if ( url.isValid() && url.scheme() == "file") {
@@ -68,11 +69,11 @@ OperationImplementation::State Script::prepare() {
     return sNOTPREPARED;
 }
 
-bool Script::execute(ExecutionContext *ctx)
+bool Script::execute(ExecutionContext *ctx, SymbolTable& )
 {
     try{
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx)) != sPREPARED)
             return false;
 
     ANTLR3_UINT8 * bufferData = (ANTLR3_UINT8 *) _buffer.get();
