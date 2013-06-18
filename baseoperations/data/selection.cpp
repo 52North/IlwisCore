@@ -68,8 +68,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-
-        ctx->_results.push_back(value);
+        ctx->addOutput(symTable, value, _outputGC->name(), itGRIDCOVERAGE);
     }
     return res;
 }

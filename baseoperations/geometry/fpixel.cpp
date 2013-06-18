@@ -27,8 +27,7 @@ bool FPixel::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     QVariant value;
     value.setValue<Voxel>(_voxel);
-    ctx->_results.push_back(value);
-
+    ctx->addOutput(symTable, value, sUNDEF, itVOXEL);
     return true;
 }
 

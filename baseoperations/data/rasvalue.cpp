@@ -23,7 +23,7 @@ bool RasValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     double v = _inputGC->pix2value(_vox);
     if ( ctx) {
-        ctx->_results.push_back(QVariant(v));
+        ctx->addOutput(symTable, QVariant(v), sUNDEF, itDOUBLE);
     }
     return true;
 }

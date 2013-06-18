@@ -69,12 +69,10 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-
-        ctx->_results.push_back(value);
-
-        return true;
+        ctx->_results.push_back(_outputGC->name());
+        symTable.addSymbol(_outputGC->name(),0, itGRIDCOVERAGE,value);
     }
-    return false;
+    return res;
 }
 
 OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpression &expr)

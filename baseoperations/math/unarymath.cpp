@@ -49,14 +49,16 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
         bool res = OperationHelper::execute(unaryFun, _outputGC);
 
         if ( res && ctx != 0) {
+            QVariant value;
             value.setValue<IGridCoverage>(_outputGC);
+            ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE );
         }
     } else {
         double v = sin(_number);
-        value.setValue<double>(v);
+        ctx->addOutput(symTable, QVariant(v), sUNDEF, itDOUBLE);
+
     }
-    if ( ctx && value.isValid())
-        ctx->_results.push_back(value);
+
 
     return true;
 }

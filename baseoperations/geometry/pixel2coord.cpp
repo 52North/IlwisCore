@@ -30,9 +30,9 @@ OperationImplementation *Pixel2Coord::create(quint64 metaid, const Ilwis::Operat
 
 Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx)
 {
-    if (!ctx || ctx->_results.size() == 0)
+    //if (!ctx || ctx->_results.size() == 0)
         return sPREPAREFAILED;
-    Voxel vx = ctx->_results[0].value<Voxel>();
+    //Voxel vx = ctx->_results[0].value<Voxel>();
 
 }
 

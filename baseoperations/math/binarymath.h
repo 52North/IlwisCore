@@ -16,11 +16,11 @@ public:
 
     State prepare(ExecutionContext *ctx=0);
 private:
-    bool executeCoverageNumber(Ilwis::ExecutionContext *ctx);
-    bool executeCoverageCoverage(Ilwis::ExecutionContext *ctx);
+    bool executeCoverageNumber(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
+    bool executeCoverageCoverage(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
     bool prepareCoverageCoverage();
     bool prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2);
-    bool setOutput(ExecutionContext *ctx);
+    bool setOutput(ExecutionContext *ctx, SymbolTable& symTable);
 
     bool _coveragecoverage;
     IGridCoverage _inputGC1;

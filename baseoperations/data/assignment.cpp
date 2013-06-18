@@ -44,8 +44,8 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-
-        ctx->_results.push_back(value);
+        ctx->_results.push_back(_outputGC->name());
+        symTable.addSymbol(_outputGC->name(),0, itGRIDCOVERAGE,value);
     }
     return res;
 }

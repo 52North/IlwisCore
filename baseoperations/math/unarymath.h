@@ -24,8 +24,8 @@ protected:
     Box3D<qint32> _box;
     bool _spatialCase;
     double _number;
-    UnaryFunction _unaryFun;
     QString _outputDomain;
+    UnaryFunction _unaryFun;
 
 };
 }

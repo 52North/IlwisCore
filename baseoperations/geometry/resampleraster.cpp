@@ -51,12 +51,9 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-
-        ctx->_results.push_back(value);
-
-        return true;
+        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE );
     }
-    return false;
+    return res;
 }
 
 Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *ctx)

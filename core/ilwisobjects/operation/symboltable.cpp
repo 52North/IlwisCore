@@ -10,6 +10,8 @@
 
 using namespace Ilwis;
 
+quint64 SymbolTable::_symbolid = 0;
+
 SymbolTable::SymbolTable() //:
     //QHash<QString, Symbol>()
 {
@@ -73,4 +75,10 @@ bool SymbolTable::isDataLink(const QVariant& value) {
     }
     return true;
 
+}
+
+QString SymbolTable::newAnonym()
+{
+    _symbolid++;
+    return QString("__%1__%2").arg(ANONPREFIX).arg(_symbolid);
 }

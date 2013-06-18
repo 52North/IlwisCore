@@ -24,17 +24,16 @@ BinaryMath::BinaryMath(quint64 metaid,const Ilwis::OperationExpression &expr) : 
 {
 }
 
-bool BinaryMath::setOutput(ExecutionContext *ctx) {
+bool BinaryMath::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-
-        ctx->_results.push_back(value);
+        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE );
     }
     return _outputGC.isValid();
 }
 
-bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx) {
+bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTable) {
 
     auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn(_inputGC1, box);
@@ -67,11 +66,11 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx) {
             return false;
 
 
-    return setOutput(ctx);
+    return setOutput(ctx, symTable);
 
 }
 
-bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
+bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
     std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
     //auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
@@ -108,7 +107,7 @@ bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx) {
     bool res = OperationHelper::execute(binaryMath, _outputGC);
 
     if (res)
-        return setOutput(ctx);
+        return setOutput(ctx, symTable);
 
     return false;
 }
@@ -120,10 +119,10 @@ bool BinaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     if ( _coveragecoverage) {
-        return executeCoverageCoverage(ctx);
+        return executeCoverageCoverage(ctx, symTable);
 
     } else  {
-        return executeCoverageNumber(ctx);
+        return executeCoverageNumber(ctx, symTable);
     }
     return true;
 }

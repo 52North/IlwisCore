@@ -5,6 +5,8 @@
 #include <QVariant>
 #include <QMultiHash>
 
+#define ANONPREFIX "ANON"
+
 namespace Ilwis {
 struct KERNELSHARED_EXPORT Symbol{
     Symbol(int scope, int tp, const QVariant& v) : _type(tp), _scope(scope), _var(v) {}
@@ -26,8 +28,10 @@ public:
     static bool isRealNumerical(const QVariant &var) ;
     static bool isIntegerNumerical(const QVariant &var) ;
     static bool isDataLink(const QVariant &value);
+    static QString newAnonym();
 private:
     QMultiHash<QString, Symbol> _symbols;
+    static quint64 _symbolid;
 
     
     
