@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QMultiHash>
 
+namespace Ilwis {
 struct KERNELSHARED_EXPORT Symbol{
     Symbol(int scope, int tp, const QVariant& v) : _type(tp), _scope(scope), _var(v) {}
     int _type;
@@ -13,7 +14,7 @@ struct KERNELSHARED_EXPORT Symbol{
     QVariant _modifier;
 };
 
-class KERNELSHARED_EXPORT SymbolTable : private QHash<QString, Symbol>
+class KERNELSHARED_EXPORT SymbolTable //: private QHash<QString, Symbol>
 {
 public:
     SymbolTable();
@@ -31,5 +32,6 @@ private:
     
     
 };
+}
 
 #endif // SYMBOLTABLE_H

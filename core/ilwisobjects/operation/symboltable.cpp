@@ -8,9 +8,10 @@
 #include "ilwiscontext.h"
 #include "symboltable.h"
 
+using namespace Ilwis;
 
-SymbolTable::SymbolTable() :
-    QHash<QString, Symbol>()
+SymbolTable::SymbolTable() //:
+    //QHash<QString, Symbol>()
 {
 }
 
