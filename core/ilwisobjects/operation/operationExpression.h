@@ -5,14 +5,16 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+    class SymbolTable;
+
     enum OperationType{otUnknown=0,otFunction=1, otCommand=2, otSelection=4};
 
 class KERNELSHARED_EXPORT Parameter : public Identity{
 public:
 
     Parameter();
-    Parameter(const QString& name, const QString& value, IlwisTypes=itUNKNOWN);
-    Parameter(const QString& value, IlwisTypes=itUNKNOWN);
+    Parameter(const QString& name, const QString& value, IlwisTypes ,const SymbolTable& );
+    Parameter(const QString& value, IlwisTypes, const SymbolTable &);
     virtual ~Parameter();
     QString value() const;
     QString domain() const;
@@ -21,7 +23,7 @@ public:
     IlwisTypes valuetype() const;
     bool isEqual(const Parameter& parm) const;
     bool isValid() const;
-    static IlwisTypes determineType(const QString &value) ;
+    static IlwisTypes determineType(const QString &value, const SymbolTable& symtab) ;
 
 private:
     QString _key;
@@ -52,7 +54,7 @@ public:
      * \param expr textual form of the expression
      * \param type enum marking the type of the expression, function or command.
      */
-    OperationExpression(const QString& expr);
+    OperationExpression(const QString& expr, const SymbolTable& symtab=SymbolTable());
     /*!
      *  returns the parameter at a defined placed in either the input or the output
      * \param index rank order number of the parameters to be returned
@@ -89,7 +91,7 @@ public:
      */
     bool isValid() const;
     QUrl metaUrl(bool simple=true) const;
-    void setExpression(const QString &e);
+    void setExpression(const QString &e, const SymbolTable &symtab);
     bool matchesParameterCount(const QString &match, bool in=true) const;
 private:
     QString _name;
@@ -98,10 +100,10 @@ private:
     OperationType _type;
     QString _selection;
 
-    void parseFunctionExpression(const QString &txt);
-    void parseCommandExpression(const QString &expr);
-    void parseSelectors(const QString& selectors);
-    void specialExpressions(const QString &e);
+    void parseFunctionExpression(const QString &txt, const SymbolTable &symtab);
+    void parseCommandExpression(const QString &expr, const SymbolTable &symtab);
+    void parseSelectors(const QString& selectors, const SymbolTable &symtab);
+    void specialExpressions(const QString &e, const SymbolTable &symtab);
 };
 
 

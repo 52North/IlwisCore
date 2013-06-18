@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "ilwisobject.h"
 #include "catalog.h"
+#include "symboltable.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "OperationExpression.h"
@@ -12,17 +13,17 @@ using namespace Ilwis;
 Parameter::Parameter() {
 }
 
-Parameter::Parameter(const QString &key, const QString &value, IlwisTypes tp) :
+Parameter::Parameter(const QString &key, const QString &value, IlwisTypes tp, const SymbolTable &symtab) :
     Identity(key),
     _value(value),
     _domain(sUNDEF)
 {
     _type = tp;
     if ( _type == itUNKNOWN)
-        _type = Parameter::determineType(value);
+        _type = Parameter::determineType(value, symtab);
 }
 
-Parameter::Parameter(const QString &rawvalue, IlwisTypes tp) : _domain(sUNDEF)
+Parameter::Parameter(const QString &rawvalue, IlwisTypes tp, const SymbolTable &symtab) : _domain(sUNDEF)
 {
     QString value = rawvalue;
     int index = value.indexOf('[');
@@ -35,7 +36,7 @@ Parameter::Parameter(const QString &rawvalue, IlwisTypes tp) : _domain(sUNDEF)
     _value = value;
     _type = tp;
     if ( _type == itUNKNOWN)
-        _type = Parameter::determineType(_value);
+        _type = Parameter::determineType(_value, symtab);
 }
 
 Ilwis::Parameter::~Parameter()
@@ -80,7 +81,7 @@ bool Parameter::isValid() const
     return !_value.isEmpty();
 }
 
-IlwisTypes Parameter::determineType(const QString& value) {
+IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
     IlwisTypes tp = IlwisObject::findType(value);
     if ( tp != itUNKNOWN)
         return tp;
@@ -141,12 +142,12 @@ Ilwis::OperationExpression::~OperationExpression()
 {
 }
 
-OperationExpression::OperationExpression(const QString &e)
+OperationExpression::OperationExpression(const QString &e, const SymbolTable &symtab)
 {
-    setExpression(e);
+    setExpression(e, symtab);
 }
 
-void OperationExpression::setExpression(const QString &e) {
+void OperationExpression::setExpression(const QString &e, const SymbolTable &symtab) {
     _name = "";
     _inParameters.clear();
     _outParameters.clear();
@@ -169,15 +170,15 @@ void OperationExpression::setExpression(const QString &e) {
         }
      }
     if ( _type == otFunction) {
-        parseFunctionExpression(e);
+        parseFunctionExpression(e, symtab);
     } else if ( _type == otCommand) {
-        parseCommandExpression(e);
+        parseCommandExpression(e, symtab);
     } else if ( _type == otSelection) {
-        parseSelectors(e);
+        parseSelectors(e, symtab);
     }
 }
 
-void OperationExpression::parseCommandExpression(const QString &e) {
+void OperationExpression::parseCommandExpression(const QString &e, const SymbolTable &symtab) {
     int blockCount = 0;
     int quoteCount = 0;
     int count = 0;
@@ -205,53 +206,53 @@ void OperationExpression::parseCommandExpression(const QString &e) {
         if ( current == 0)
             _name = part;
         else
-            _inParameters.push_back(Parameter(part));
+            _inParameters.push_back(Parameter(part, itUNKNOWN, symtab));
         current = index;
     }
 }
 
-void  OperationExpression::parseSelectors(const QString& e) {
+void  OperationExpression::parseSelectors(const QString& e, const SymbolTable &symtab) {
     int index = e.indexOf("[");
     int index2 = e.indexOf("=");
     int index3 = e.indexOf("{");
     QString selectPart = e.mid(index+1, e.size() - index - 2);
     QString inputMap = e.mid(index2+1, index - index2 - 1);
-    _inParameters.push_back(Parameter(inputMap, itCOVERAGE));
+    _inParameters.push_back(Parameter(inputMap, itCOVERAGE, symtab));
     QString outputPart =  index3 == -1 ? e.left(index2) : e.left(index3);
-    _outParameters.push_back(Parameter(outputPart, itCOVERAGE));
+    _outParameters.push_back(Parameter(outputPart, itCOVERAGE, symtab));
     int index4=selectPart.indexOf(",");
     if ( index4 == -1) { //either id or number
         bool ok;
         int layer = selectPart.toUInt(&ok);
         if ( ok) {
-            _inParameters.push_back(Parameter(QString("layer=%1").arg(layer),itSTRING));
+            _inParameters.push_back(Parameter(QString("layer=%1").arg(layer),itSTRING,symtab));
         } else {
-            _inParameters.push_back(Parameter(QString("attribute=%1").arg(selectPart), itSTRING));
+            _inParameters.push_back(Parameter(QString("attribute=%1").arg(selectPart), itSTRING, symtab));
         }
     } else {
         QStringList parts = selectPart.split(",");
         if ( parts.size() == 2) {
-            _inParameters.push_back(Parameter(QString("box=%1").arg(selectPart),itSTRING));
+            _inParameters.push_back(Parameter(QString("box=%1").arg(selectPart),itSTRING, symtab));
         } else {
-           _inParameters.push_back(Parameter(QString("polygon=%1").arg(selectPart), itSTRING));
+           _inParameters.push_back(Parameter(QString("polygon=%1").arg(selectPart), itSTRING, symtab));
         }
     }
     _name = "selection";
 
 }
 
-void OperationExpression::specialExpressions(const QString &e) {
+void OperationExpression::specialExpressions(const QString &e, const SymbolTable &symtab) {
     //TODO other cases of special expressions
     _name = "assignment";
-    _inParameters.push_back(Parameter(e.mid(e.indexOf("=")+1),itCOVERAGE));
+    _inParameters.push_back(Parameter(e.mid(e.indexOf("=")+1),itCOVERAGE, symtab));
 
 }
 
-void OperationExpression::parseFunctionExpression(const QString &txt) {
+void OperationExpression::parseFunctionExpression(const QString &txt, const SymbolTable &symtab) {
     QString e = txt;
     int index = e.indexOf("(");
     if ( index == -1)
-        specialExpressions(txt);
+        specialExpressions(txt,symtab);
 
     int index2 = e.indexOf("=");
     if ( index != -1) {
@@ -289,7 +290,7 @@ void OperationExpression::parseFunctionExpression(const QString &txt) {
             int index3 = indexes[i];
             QString part = start.mid(cur, index3 - cur - shift) ;
             part = part.trimmed();
-            _outParameters.push_back(Parameter(part));
+            _outParameters.push_back(Parameter(part,itUNKNOWN, symtab));
             shift = 1;
             cur = index3 + shift;
         }
@@ -322,7 +323,7 @@ void OperationExpression::parseFunctionExpression(const QString &txt) {
             int index4 = indexes[i];
             QString part = rest.mid(cur, index4 - cur - 1) ;
             part = part.trimmed();
-            _inParameters.push_back(Parameter(part));
+            _inParameters.push_back(Parameter(part,itUNKNOWN, symtab));
             cur = index4;
         }
     }
