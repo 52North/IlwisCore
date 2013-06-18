@@ -8,9 +8,9 @@
 #include <QUrlQuery>
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
-#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 #include "mastercatalog.h"

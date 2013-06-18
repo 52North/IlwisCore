@@ -3,12 +3,12 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include "kernel.h"
+#include "symboltable.h"
 #include "OperationExpression.h"
 #include "ilwisscriptmodule.h"
 #include "ilwisdata.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
-#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 #include "script.h"

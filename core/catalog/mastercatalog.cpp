@@ -20,6 +20,7 @@
 #include "catalogconnectorfactory.h"
 #include "catalog.h"
 #include "mastercatalog.h"
+#include "symboltable.h"
 #include "operationExpression.h"
 #include "ilwiscontext.h"
 

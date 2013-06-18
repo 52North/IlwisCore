@@ -2,9 +2,9 @@
 #include "ilwisdata.h"
 #include "ilwisobject.h"
 #include "operationmetadata.h"
+#include "symboltable.h"
 #include "operationExpression.h"
 #include "connectorinterface.h"
-#include "symboltable.h"
 #include "commandhandler.h"
 #include "operation.h"
 
