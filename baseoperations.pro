@@ -30,7 +30,10 @@ HEADERS += \
     baseoperations/math/unarymath.h \
     baseoperations/math/unarymathoperations.h \
     baseoperations/data/assignment.h \
-    baseoperations/data/selection.h
+    baseoperations/data/selection.h \
+    baseoperations/geometry/pixel2coord.h \
+    baseoperations/geometry/fpixel.h \
+    baseoperations/geometry/fcoordinate.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -42,7 +45,10 @@ SOURCES += \
     baseoperations/math/unarymath.cpp \
     baseoperations/math/unarymathoperations.cpp \
     baseoperations/data/assignment.cpp \
-    baseoperations/data/selection.cpp
+    baseoperations/data/selection.cpp \
+    baseoperations/geometry/pixel2coord.cpp \
+    baseoperations/geometry/fpixel.cpp \
+    baseoperations/geometry/fcoordinate.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
