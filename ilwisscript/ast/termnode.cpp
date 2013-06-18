@@ -106,7 +106,7 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
         parms += ")";
         QString expression = _id->id() + parms;
         Ilwis::ExecutionContext ctx;
-        bool ok = Ilwis::commandhandler()->execute(expression, &ctx);
+        bool ok = Ilwis::commandhandler()->execute(expression, &ctx, symbols);
         if ( !ok || ctx._results.size() != 1)
             return false;
         _value = {ctx._results[0], NodeValue::ctMethod};
@@ -141,6 +141,10 @@ QString TermNode::getName(const QVariant& var) const {
         return name;
     QString typeName = var.typeName();
     if ( typeName == "Ilwis::IGridCoverage") {
+        Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
+        name = gcov->name();
+    }
+    if ( typeName == "Coordinate") {
         Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
         name = gcov->name();
     }
