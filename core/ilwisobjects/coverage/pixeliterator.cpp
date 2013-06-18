@@ -99,17 +99,18 @@ inline bool PixelIterator::moveXYZ(int n) {
         ++_y;
         _x = _box.min_corner().x();
         _yChanged = true;
-        _localOffset = _x + _y * _grid->size().xsize();
-        if ( (_y % _grid->maxLines()) == 0) {
+        qint32 ylocal = _y % _grid->maxLines();
+        _localOffset = _x + ylocal * _grid->size().xsize();
+        if ( ylocal == 0) {
             ++_currentBlock;
-            _localOffset = 0;
+            _localOffset = _x;
         }
         if ( _y > _endy) {
             ++_z;
             ++_currentBlock;
             _zChanged = true;
             _y = _box.min_corner().y();
-            _localOffset = 0;
+            _localOffset = _box.min_corner().x();
             if ( _z >= _endz) { // done with this iteration block
                 _positionid = _endpositionid;
                 return false;
