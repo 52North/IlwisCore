@@ -46,7 +46,6 @@ SOURCES += \
     ilwisscript/ast/whilenode.cpp \
     ilwisscript/ast/breaknode.cpp \
     ilwisscript/ast/valuerangenode.cpp \
-    ilwisscript/symboltable.cpp \
     ilwisscript/parserlexer/runtimechecks.cpp \
     ilwisscript/ast/selectornode.cpp \
     ilwisscript/ast/formatter.cpp \
@@ -81,7 +80,6 @@ HEADERS +=\
     ilwisscript/ast/whilenode.h \
     ilwisscript/ast/breaknode.h \
     ilwisscript/ast/valuerangenode.h \
-    ilwisscript/symboltable.h \
     ilwisscript/ast/selectornode.h \
     ilwisscript/ast/formatters.h \
     ilwisscript/ast/formatter.h \
