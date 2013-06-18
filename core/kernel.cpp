@@ -40,9 +40,9 @@
 #include "attributerecord.h"
 #include "geometry.h"
 #include "feature.h"
+#include "symboltable.h"
 #include "operationmetadata.h"
 #include "operationExpression.h"
-#include "symboltable.h"
 #include "operation.h"
 #include "commandhandler.h"
 
