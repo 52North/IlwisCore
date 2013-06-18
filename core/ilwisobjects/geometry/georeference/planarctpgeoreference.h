@@ -12,8 +12,8 @@ public:
                     tTHIRDORDER, tPROJECTIVE } ;
     PlanarCTPGeoReference();
     PlanarCTPGeoReference(const Resource& res);
-    virtual Coordinate pixel2Coord(const Pixel&pix) const;
-    virtual Point2D<double> coord2Pixel(const Coordinate& crd) const;
+    virtual Coordinate pixel2Coord(const Pixel_d &pix) const;
+    virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
     bool isValid() const;
     virtual double pixelSize() const;
     virtual bool compute();

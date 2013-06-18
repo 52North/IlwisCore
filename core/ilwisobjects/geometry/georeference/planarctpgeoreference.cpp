@@ -19,7 +19,7 @@ PlanarCTPGeoReference::PlanarCTPGeoReference()
 {
 }
 
-Coordinate PlanarCTPGeoReference::pixel2Coord(const Pixel &pix) const
+Coordinate PlanarCTPGeoReference::pixel2Coord(const Pixel_d &pix) const
 {
     if (!isValid() || !pix.isValid())
         return Coordinate();
@@ -50,7 +50,7 @@ Coordinate PlanarCTPGeoReference::pixel2Coord(const Pixel &pix) const
     return c;
 }
 
-Point2D<double> PlanarCTPGeoReference::coord2Pixel(const Coordinate &crd) const
+Pixel_d PlanarCTPGeoReference::coord2Pixel(const Coordinate &crd) const
 {
     if(!(isValid() && crd.isValid()))
         return Point2D<double>();
