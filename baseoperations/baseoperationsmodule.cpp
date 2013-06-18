@@ -2,6 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "baseoperationsmodule.h"
@@ -14,6 +15,9 @@
 #include "data/iffraster.h"
 #include "data/assignment.h"
 #include "data/selection.h"
+#include "geometry/fcoordinate.h"
+#include "geometry/fpixel.h"
+#include "geometry/pixel2coord.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -30,7 +34,7 @@ QString RasterOperationsModule::getInterfaceVersion() const
 
 void RasterOperationsModule::prepare()
 {
-    commandhandler()->addOperation(Sinus::createMetadata(), Sinus::create);
+    commandhandler()->addOperation(Sine::createMetadata(), Sine::create);
     commandhandler()->addOperation(Cosine::createMetadata(), Cosine::create);
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Arcsine::createMetadata(), Arcsine::create);
@@ -50,6 +54,9 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(IffRaster::createMetadata(), IffRaster::create);
     commandhandler()->addOperation(Assignment::createMetadata(), Assignment::create);
     commandhandler()->addOperation(Selection::createMetadata(), Selection::create);
+    commandhandler()->addOperation(FCoordinate::createMetadata(), FCoordinate::create);
+    commandhandler()->addOperation(FPixel::createMetadata(), FPixel::create);
+    commandhandler()->addOperation(Pixel2Coord::createMetadata(), Pixel2Coord::create);
 }
 
 QString RasterOperationsModule::name() const
