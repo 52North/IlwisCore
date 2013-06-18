@@ -21,7 +21,9 @@ struct KERNELSHARED_EXPORT ExecutionContext {
     ExecutionContext();
     bool _silent;
     bool _threaded;
-    QVector<QVariant> _results;
+    qint16 _scope=1000;
+    std::vector<QString> _results;
+    void addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp);
 };
 
 class KERNELSHARED_EXPORT CommandHandler : public QObject

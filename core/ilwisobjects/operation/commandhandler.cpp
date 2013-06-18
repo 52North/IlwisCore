@@ -31,6 +31,13 @@ void ExecutionContext::clear()
 ExecutionContext::ExecutionContext() : _silent(false), _threaded(true){
 }
 
+void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp)
+{
+    QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
+    tbl.addSymbol(name,_scope, tp, var);
+    _results.push_back(name);
+}
+
 Ilwis::CommandHandler* Ilwis::commandhandler() {
     if (Ilwis::CommandHandler::_commandHandler == 0) {
         Ilwis::CommandHandler::_commandHandler = new Ilwis::CommandHandler(kernel()->parent());
