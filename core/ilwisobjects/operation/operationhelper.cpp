@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "raster.h"
 #include "connectorinterface.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 
 using namespace Ilwis;
