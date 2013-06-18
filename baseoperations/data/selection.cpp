@@ -2,6 +2,7 @@
 #include "raster.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
+#include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "columndefinition.h"
@@ -25,7 +26,7 @@ Selection::~Selection()
 {
 }
 
-bool Selection::execute(ExecutionContext *ctx)
+bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare()) != sPREPARED)
@@ -78,7 +79,7 @@ Ilwis::OperationImplementation *Selection::create(quint64 metaid, const Ilwis::O
     return new Selection(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Selection::prepare()
+Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *)
 {
     if ( _expression.parameterCount() != 2) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));
@@ -102,7 +103,7 @@ Ilwis::OperationImplementation::State Selection::prepare()
         _box = Box3D<qint32>(crdlist);
         box = _inputGC->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN | itTABLE;
-        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y()};
+        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
         _base = vec;
 
     }
