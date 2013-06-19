@@ -18,6 +18,7 @@
 #include "geometry/fcoordinate.h"
 #include "geometry/fpixel.h"
 #include "geometry/pixel2coord.h"
+#include "geometry/coord2pixel.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -57,6 +58,7 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(FCoordinate::createMetadata(), FCoordinate::create);
     commandhandler()->addOperation(FPixel::createMetadata(), FPixel::create);
     commandhandler()->addOperation(Pixel2Coord::createMetadata(), Pixel2Coord::create);
+    commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
 }
 
 QString RasterOperationsModule::name() const
