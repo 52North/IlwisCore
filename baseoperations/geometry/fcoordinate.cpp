@@ -52,13 +52,15 @@ Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *, c
     }
     double sz = 0;
     if (_expression.parameterCount() == 3) {
-        double sz = _expression.parm(0).value().toDouble(&ok);
+        sz = _expression.parm(0).value().toDouble(&ok);
         if (!ok){
             ERROR2(ERR_ILLEGAL_VALUE_2,"coordinate","x");
             return sPREPAREFAILED;
         }
     }
     _coord = Coordinate(sx,sy,sz);
+
+    return sPREPARED;
 }
 
 quint64 FCoordinate::createMetadata()
@@ -83,6 +85,7 @@ quint64 FCoordinate::createMetadata()
     res.addProperty("pout_1_type", itCOORDINATE);
     res.addProperty("pout_1_name", TR("coordinate"));
     res.addProperty("pout_1_desc",TR("coordinate"));
+    res.addProperty("status","internal");
     res.prepare();
     url += "=" + QString::number(res.id());
     res.setUrl(url);
