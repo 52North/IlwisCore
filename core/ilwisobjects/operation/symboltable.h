@@ -8,12 +8,14 @@
 #define ANONPREFIX "ANON"
 
 namespace Ilwis {
-struct KERNELSHARED_EXPORT Symbol{
-    Symbol(int scope, int tp, const QVariant& v) : _type(tp), _scope(scope), _var(v) {}
-    int _type;
+class KERNELSHARED_EXPORT Symbol{
+public:
+    Symbol(int scope=iUNDEF, quint64 tp=itUNKNOWN, const QVariant& v=QVariant()) ;
+    quint64 _type;
     int _scope;
     QVariant _var;
     QVariant _modifier;
+    bool isValid() const;
 };
 
 class KERNELSHARED_EXPORT SymbolTable //: private QHash<QString, Symbol>
@@ -22,7 +24,8 @@ public:
     SymbolTable();
 
     void addSymbol(const QString& name, int scope, quint64 tp, const QVariant &v=QVariant());
-    QVariant get(const QString& name, int scope, bool& ok);
+    QVariant getValue(const QString& name, int scope=1000) const;
+    Symbol getSymbol(const QString& name, int scope=1000) const;
 
     static bool isNumerical(const QVariant &var) ;
     static bool isRealNumerical(const QVariant &var) ;
@@ -30,7 +33,7 @@ public:
     static bool isDataLink(const QVariant &value);
     static QString newAnonym();
 private:
-    QMultiHash<QString, Symbol> _symbols;
+    QHash<QString, Symbol> _symbols;
     static quint64 _symbolid;
 
     

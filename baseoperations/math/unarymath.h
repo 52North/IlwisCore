@@ -16,7 +16,7 @@ public:
 
 protected:
     static Resource populateMetadata(const QString &item, const QString &longname, const QString& outputDom);
-    Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx=0);
+    Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *, const Ilwis::SymbolTable &);
     bool execute( ExecutionContext *ctx, SymbolTable& symTable);
 
     IGridCoverage _inputGC;

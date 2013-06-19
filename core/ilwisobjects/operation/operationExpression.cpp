@@ -86,6 +86,10 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
     if ( tp != itUNKNOWN)
         return tp;
 
+    Symbol sym = symtab.getSymbol(value);
+    if ( sym.isValid() && sym._type != itUNKNOWN)
+        return sym._type;
+
     QString s = context()->workingCatalog()->resolve(value);
     IlwisTypes type = IlwisObject::findType(s) ;
     if ( type != itUNKNOWN)
@@ -100,9 +104,7 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
             if ( obj.data() != 0)
                 return obj->ilwisType();
         }
-
     }
-
 
     bool ok;
     ushort vu = value.toUShort(&ok);
@@ -127,6 +129,8 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
     value.toDouble(&ok);
     if ( ok)
        return itDOUBLE;
+
+
 
     return itSTRING;
 

@@ -20,7 +20,7 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
@@ -55,7 +55,7 @@ Ilwis::OperationImplementation *Assignment::create(quint64 metaid, const Ilwis::
     return new Assignment(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *)
+Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, const SymbolTable &)
 {
     if ( _expression.parameterCount() != 1) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));

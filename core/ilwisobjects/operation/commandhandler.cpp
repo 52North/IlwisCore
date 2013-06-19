@@ -59,12 +59,12 @@ CommandHandler::~CommandHandler(){
 }
 
 bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
-    OperationExpression expr(command);
+    SymbolTable tbl;
+    OperationExpression expr(command, tbl);
     quint64 id = findOperationId(expr);
     if ( id != i64UNDEF) {
         QScopedPointer<OperationImplementation> oper(create( expr));
         if ( !oper.isNull() && oper->isValid()) {
-            SymbolTable tbl;
             return oper->execute(ctx, tbl);
         }
     }
@@ -73,7 +73,7 @@ bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
 
 bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, SymbolTable &symTable)
 {
-    OperationExpression expr(command);
+    OperationExpression expr(command, symTable);
     quint64 id = findOperationId(expr);
     if ( id != i64UNDEF) {
         QScopedPointer<OperationImplementation> oper(create( expr));

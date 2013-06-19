@@ -10,7 +10,7 @@ public:
     Script(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx, SymbolTable &);
-    OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx=0);
+    OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const Ilwis::SymbolTable &);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
 
     static quint64 createMetadata();

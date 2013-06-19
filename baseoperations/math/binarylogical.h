@@ -14,7 +14,7 @@ public:
     static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    State prepare(ExecutionContext *ctx=0);
+    State prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &);
 private:
     bool executeCoverageNumber(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
     bool executeCoverageCoverage(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);

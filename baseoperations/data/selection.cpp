@@ -29,7 +29,7 @@ Selection::~Selection()
 bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
@@ -78,7 +78,7 @@ Ilwis::OperationImplementation *Selection::create(quint64 metaid, const Ilwis::O
     return new Selection(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *)
+Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, const SymbolTable &)
 {
     if ( _expression.parameterCount() != 2) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));

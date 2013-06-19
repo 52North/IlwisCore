@@ -30,7 +30,7 @@ ResampleRaster::ResampleRaster(quint64 metaid, const Ilwis::OperationExpression 
 bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
@@ -56,7 +56,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return res;
 }
 
-Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *ctx)
+Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *, const SymbolTable & )
 {
     QString gc = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();

@@ -27,7 +27,7 @@ UnaryMath::UnaryMath(quint64 metaid, const Ilwis::OperationExpression& expr, con
 bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
     QVariant value;
@@ -63,7 +63,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return true;
 }
 
-OperationImplementation::State UnaryMath::prepare(ExecutionContext *ctx)
+OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const SymbolTable&)
 {
     IlwisTypes ptype = _expression.parm(0).valuetype();
 

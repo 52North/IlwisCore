@@ -19,7 +19,7 @@ RasValue::RasValue(quint64 metaid, const Ilwis::OperationExpression &expr) :
 bool RasValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     double v = _inputGC->pix2value(_vox);
     if ( ctx) {
@@ -33,7 +33,7 @@ Ilwis::OperationImplementation *RasValue::create(quint64 metaid, const Ilwis::Op
         return new RasValue(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *)
+Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, const SymbolTable&)
 {
     if ( _expression.parameterCount() < 3 || _expression.parameterCount() > 4) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","3 or 4",QString::number(_expression.parameterCount()));

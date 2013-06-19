@@ -11,7 +11,7 @@ public:
     FPixel(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx, SymbolTable& symTable);
-    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx=0);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable&);
 
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();

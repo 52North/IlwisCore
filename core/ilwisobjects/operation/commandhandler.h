@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <map>
 #include "Kernel_global.h"
+#include "ilwis.h"
 #include "symboltable.h"
 
 

@@ -19,9 +19,8 @@ SymbolTable::SymbolTable() //:
 
 void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QVariant& v)
 {
-    bool ok;
-    get(name,scope, ok); // do we already have it?
-    if (ok)
+    QVariant var = getValue(name,scope); // do we already have it?
+    if (var.isValid())
         return;
     if ( tp == 0) {
         if ( isRealNumerical(v))
@@ -32,21 +31,32 @@ void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QV
             tp = itSTRING;
 
     }
-    _symbols.insert(name, Symbol(scope, tp, v));
+    Symbol sym(scope, tp, v);
+    _symbols[name] = sym;
 }
 
-QVariant SymbolTable::get(const QString &name, int scope, bool &ok)
+QVariant SymbolTable::getValue(const QString &name, int scope) const
 {
-    ok = true;
-    QHash<QString, Symbol>::iterator   iter = _symbols.find(name);
+    QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
         if ( iter.value()._scope == scope) {
             return iter.value()._var;
         }
         ++iter;
     }
-    ok = false;
     return QVariant();
+}
+
+Symbol SymbolTable::getSymbol(const QString &name, int scope) const
+{
+    QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
+    while (iter != _symbols.end() && iter.key() == name) {
+        if ( iter.value()._scope <= scope) {
+            return iter.value();
+        }
+        ++iter;
+    }
+    return Symbol();
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {
@@ -81,4 +91,14 @@ QString SymbolTable::newAnonym()
 {
     _symbolid++;
     return QString("__%1__%2").arg(ANONPREFIX).arg(_symbolid);
+}
+
+
+Symbol::Symbol(int scope, quint64 tp, const QVariant &v) : _type(tp), _scope(scope), _var(v)
+{
+}
+
+bool Symbol::isValid() const
+{
+    return _var.isValid() && _scope != iUNDEF;
 }

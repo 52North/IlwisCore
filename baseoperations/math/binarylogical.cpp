@@ -130,7 +130,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
 bool BinaryLogical::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
     if ( _coveragecoverage) {
@@ -195,7 +195,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     return true;
 }
 
-OperationImplementation::State BinaryLogical::prepare(ExecutionContext *) {
+OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const SymbolTable&) {
     if ( _expression.parameterCount() != 3){
         return sPREPAREFAILED;
     }

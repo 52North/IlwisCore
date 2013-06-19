@@ -25,7 +25,7 @@ IffRaster::IffRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
 bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
     BoxedAsyncFunc iffunc = [&](const Box3D<qint32>& box) -> bool {
@@ -80,7 +80,7 @@ OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpres
     return new IffRaster(metaid, expr);
 }
 
-OperationImplementation::State IffRaster::prepare(ExecutionContext *)
+OperationImplementation::State IffRaster::prepare(ExecutionContext *, const SymbolTable &)
 {
     QString gc = _expression.parm(0).value();
 

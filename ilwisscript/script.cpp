@@ -31,7 +31,7 @@ Script::Script(quint64 metaid,const Ilwis::OperationExpression &expr) : Operatio
 {
 }
 
-OperationImplementation::State Script::prepare(ExecutionContext *) {
+OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolTable&) {
     QString txt = _expression.parm(0).value();
     QUrl url(txt);
     if ( url.isValid() && url.scheme() == "file") {
@@ -72,8 +72,9 @@ OperationImplementation::State Script::prepare(ExecutionContext *) {
 bool Script::execute(ExecutionContext *ctx, SymbolTable& )
 {
     try{
+    SymbolTable symbols;
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare(ctx)) != sPREPARED)
+        if((_prepState = prepare(ctx, symbols)) != sPREPARED)
             return false;
 
     ANTLR3_UINT8 * bufferData = (ANTLR3_UINT8 *) _buffer.get();
@@ -98,7 +99,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& )
 
     //Run the parser rule. This also runs the lexer to create the token stream.
     ASTNode *scr = psr->script(psr);
-    SymbolTable symbols;
+
     bool ok = scr->evaluate(symbols, 1000);
     return ok;
     }

@@ -19,7 +19,7 @@ protected:
     OperationExpression _expression;
     State _prepState;
 
-    virtual State prepare(ExecutionContext *ctx=0) =0;
+    virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
 };
 
 typedef QScopedPointer<OperationImplementation> SPOperationImplementation;

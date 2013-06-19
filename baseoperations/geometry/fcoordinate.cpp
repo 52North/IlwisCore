@@ -20,7 +20,7 @@ FCoordinate::FCoordinate(quint64 metaid, const Ilwis::OperationExpression &expr)
 bool FCoordinate::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare()) != sPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     if ( !_coord.isValid())
         return false;
@@ -37,7 +37,7 @@ Ilwis::OperationImplementation *FCoordinate::create(quint64 metaid, const Ilwis:
     return new FCoordinate(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *)
+Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *, const SymbolTable &)
 {
     bool ok;
     double sx = _expression.parm(0).value().toDouble(&ok);
