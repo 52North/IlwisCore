@@ -63,6 +63,13 @@ OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolT
             return sPREPAREFAILED;
         }
     } else {
+        QString text = txt.trimmed();
+        if ( text[text.size() - 1] != ';')
+            text += ';';
+        char *buf = new char[text.size()];
+        memcpy(buf,text.toLatin1(), text.size());
+        _buffer.reset( buf );
+        _bufferSize = text.size();
         return sPREPARED;
     }
 
