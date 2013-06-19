@@ -1,4 +1,5 @@
 #include <QHash>
+#include "ilwis.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "expressionnode.h"

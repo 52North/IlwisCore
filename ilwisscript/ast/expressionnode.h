@@ -11,9 +11,9 @@ public:
     bool evaluate(SymbolTable& symbols, int scope);
 
 private:
-    bool handleAnd(const NodeValue &vright);
-    bool handleOr(const NodeValue &vright);
-    bool handleXor(const NodeValue &vright);
+    bool handleAnd(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleOr(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleXor(const NodeValue &vright, Ilwis::SymbolTable &symbols);
 
 };
 }

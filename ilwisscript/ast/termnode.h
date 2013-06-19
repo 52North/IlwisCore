@@ -28,7 +28,7 @@ private:
     bool _logicalNegation;
     bool  _numericalNegation;
 
-    QString getName(const QVariant &var) const;
+    QString getName(const Ilwis::NodeValue &var) const;
 };
 }
 

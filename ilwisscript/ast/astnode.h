@@ -14,14 +14,17 @@ public:
 
     NodeValue();
     NodeValue(const QVariant& v, ContentType tp=NodeValue::ctUNKNOW);
+    NodeValue(const QVariant& v, const QString& nid, ContentType tp=NodeValue::ctUNKNOW);
 
     NodeValue& operator=(QVariant a);
-    NodeValue& operator=(NodeValue a) ;
+    NodeValue& operator=(const NodeValue& a) ;
 
     void setContentType(ContentType tp);
     ContentType content() const;
+    QString id() const;
 private:
     NodeValue::ContentType _content;
+    QString _id=sUNDEF;
 
 };
 class ASTNode

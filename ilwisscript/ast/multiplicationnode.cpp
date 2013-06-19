@@ -1,3 +1,4 @@
+#include "ilwis.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "multiplicationnode.h"
@@ -25,11 +26,11 @@ bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope)
         term._rightTerm->evaluate(symbols, scope) ;
         const NodeValue& vright = term._rightTerm->value();
         if ( term._operator == OperationNode::oTIMES ){
-            ret = handleTimes(vright);
+            ret = handleTimes(vright, symbols);
         } else   if ( term._operator == OperationNode::oDIVIDED ){
-            ret = handleDiv(vright);
+            ret = handleDiv(vright, symbols);
         }else   if ( term._operator == OperationNode::oMOD ){
-            ret = handleMod(vright);
+            ret = handleMod(vright, symbols);
         }
 
         if (!ret)
@@ -39,17 +40,17 @@ bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope)
     return ret;
 }
 
-bool MultiplicationNode::handleTimes(const NodeValue& vright) {
+bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbols) {
     QString expr;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
         _value = {vright.toDouble() * _value.toDouble(), NodeValue::ctNumerical};
         return true;
     }
 
-    return handleBinaryCoverageCases(vright, "binarymathraster", "times");
+    return handleBinaryCoverageCases(vright, "binarymathraster", "times", symbols);
 }
 
-bool MultiplicationNode::handleDiv(const NodeValue& vright) {
+bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols) {
     QString expr;
     if (SymbolTable:: isNumerical(vright) && SymbolTable::isNumerical(_value)) {
         if ( vright.toDouble() == 0)
@@ -57,14 +58,14 @@ bool MultiplicationNode::handleDiv(const NodeValue& vright) {
         _value = {_value.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "divide");
+    return handleBinaryCoverageCases(vright, "binarymathraster", "divide", symbols);
 }
 
-bool MultiplicationNode::handleMod(const NodeValue& vright) {
+bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)) {
         bool ok1, ok2;
        _value = {_value.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "mod");
+    return handleBinaryCoverageCases(vright, "binarymathraster", "mod", symbols);
 }

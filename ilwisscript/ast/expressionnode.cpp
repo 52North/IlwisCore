@@ -1,3 +1,4 @@
+#include "ilwis.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "expressionnode.h"
@@ -25,11 +26,11 @@ bool ExpressionNode::evaluate(SymbolTable &symbols, int scope)
         term._rightTerm->evaluate(symbols, scope) ;
         const NodeValue& vright = term._rightTerm->value();
         if ( term._operator == OperationNode::oAND ){
-            ret = handleAnd(vright);
+            ret = handleAnd(vright, symbols);
         } else   if ( term._operator == OperationNode::oOR ){
-            ret = handleOr(vright);
+            ret = handleOr(vright, symbols);
         } else   if ( term._operator == OperationNode::oXOR ){
-            ret = handleXor(vright);
+            ret = handleXor(vright, symbols);
         }
         if (!ret)
             return false;
@@ -38,7 +39,7 @@ bool ExpressionNode::evaluate(SymbolTable &symbols, int scope)
     return ret;
 }
 
-bool ExpressionNode::handleAnd(const NodeValue& vright) {
+bool ExpressionNode::handleAnd(const NodeValue& vright,SymbolTable &symbols) {
     if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
         _value =  {_value.toBool() &&  vright.toBool(), NodeValue::ctBOOLEAN};
         return true;
@@ -46,10 +47,10 @@ bool ExpressionNode::handleAnd(const NodeValue& vright) {
         _value = {_value.toLongLong() & vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-   return handleBinaryCoverageCases(vright, "binarylogicalraster", "and");
+   return handleBinaryCoverageCases(vright, "binarylogicalraster", "and", symbols);
 }
 
-bool ExpressionNode::handleOr(const NodeValue& vright) {
+bool ExpressionNode::handleOr(const NodeValue& vright,SymbolTable &symbols) {
     if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
         _value =  {_value.toBool() ||  vright.toBool(), NodeValue::ctBOOLEAN};
         return true;
@@ -57,10 +58,10 @@ bool ExpressionNode::handleOr(const NodeValue& vright) {
         _value = {_value.toLongLong() | vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "or");
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "or", symbols);
 }
 
-bool ExpressionNode::handleXor(const NodeValue& vright) {
+bool ExpressionNode::handleXor(const NodeValue& vright,SymbolTable &symbols) {
     if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
         _value =  {_value.toBool() ^  vright.toBool(), NodeValue::ctBOOLEAN};
         return true;
@@ -68,5 +69,5 @@ bool ExpressionNode::handleXor(const NodeValue& vright) {
         _value = {_value.toLongLong() ^ vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "xor");
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "xor", symbols);
 }

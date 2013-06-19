@@ -40,9 +40,8 @@ bool IDNode::isReference() const {
 bool IDNode::evaluate(SymbolTable& symbols, int scope) {
 
 
-    bool ok;
-    symbols.get(id(), scope, ok);
-    if ( ok) {
+    QVariant var = symbols.getValue(id(), scope);
+    if ( var.isValid()) {
         _isreference = true;
         return true;
     }

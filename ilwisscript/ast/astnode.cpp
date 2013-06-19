@@ -1,3 +1,4 @@
+#include "ilwis.h"
 #include "symboltable.h"
 #include "astnode.h"
 
@@ -10,15 +11,20 @@ NodeValue::NodeValue(const QVariant& v, ContentType tp) : QVariant(v), _content(
 
 }
 
+NodeValue::NodeValue(const QVariant &v, const QString &nid, NodeValue::ContentType tp) :  QVariant(v), _content(tp), _id(nid)
+{
+}
+
 NodeValue& NodeValue::operator=(QVariant a) {
     setValue(a);
     _content = ctUNKNOW;
     return *this;
 }
 
-NodeValue& NodeValue::operator=(NodeValue a) {
+NodeValue& NodeValue::operator=(const NodeValue& a) {
     operator=((QVariant)a);
     _content = a._content;
+    _id = a.id();
     return *this;
 }
 void NodeValue::setContentType(ContentType tp) {
@@ -27,6 +33,11 @@ void NodeValue::setContentType(ContentType tp) {
 
 NodeValue::ContentType NodeValue::content() const {
     return _content;
+}
+
+QString NodeValue::id() const
+{
+    return _id;
 }
 //--------------------------------------------------------------
 ASTNode::ASTNode() : _evaluated(false), _type("astnode")
@@ -39,7 +50,7 @@ bool ASTNode::addChild(ASTNode *n)
     return true;
 }
 
-bool ASTNode::evaluate(Ilwis::SymbolTable& symbols, int scope)
+bool ASTNode::evaluate(SymbolTable& symbols, int scope)
 {
     foreach(QSharedPointer<ASTNode> node, _childeren) {
         if (!node->evaluate(symbols, scope)) {

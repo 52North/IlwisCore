@@ -9,9 +9,9 @@ public:
     QString nodeType() const;
     bool evaluate(SymbolTable &symbols, int scope);
 private:
-    bool handleMod(const NodeValue &vright);
-    bool handleDiv(const NodeValue &vright);
-    bool handleTimes(const NodeValue &vright);
+    bool handleMod(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleDiv(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleTimes(const NodeValue &vright, Ilwis::SymbolTable &symbols);
 };
 }
 

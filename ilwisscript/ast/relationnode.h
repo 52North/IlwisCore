@@ -9,12 +9,12 @@ public:
      QString nodeType() const;
      bool evaluate(SymbolTable& symbols, int scope);
 private:
-     bool handleEQ(const NodeValue &vright);
-     bool handleNEQ(const NodeValue &vright);
-     bool handleGREATEREQ(const NodeValue &vright);
-     bool handleGREATER(const NodeValue &vright);
-     bool handleLESS(const NodeValue &vright);
-     bool handleLESSEQ(const NodeValue &vright);
+     bool handleEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleNEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleGREATEREQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleGREATER(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleLESS(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleLESSEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
 };
 }
 

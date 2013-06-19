@@ -111,15 +111,14 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
         bool ok = Ilwis::commandhandler()->execute(expression, &ctx, symbols);
         if ( !ok || ctx._results.size() != 1)
             return false;
-        _value = {ctx._results[0], NodeValue::ctMethod};
+        _value = {symbols.getValue(ctx._results[0]), ctx._results[0], NodeValue::ctMethod};
         return true;
 
     } else if ( _content == csID) {
-        bool ok = true;
         _id->evaluate(symbols, scope);
         QString value;
         if ( _id->isReference())
-            value = symbols.get(_id->id(), scope, ok).toString();
+            value = symbols.getValue(_id->id(), scope).toString();
         else
             value = _id->id();
         if ( _selectors.size() > 0) {
@@ -131,26 +130,28 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
             }
         }
         _value = {value, NodeValue::ctID};
-        return ok;
+        return value != "" && value != sUNDEF;
 
     }
     return false;
 }
 
-QString TermNode::getName(const QVariant& var) const {
+QString TermNode::getName(const NodeValue& var) const {
     QString name = var.toString();
     if (name != "")
         return name;
-    QString typeName = var.typeName();
-    if ( typeName == "Ilwis::IGridCoverage") {
-        Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
-        name = gcov->name();
-    }
-    if ( typeName == "Coordinate") {
-        Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
-        name = gcov->name();
-    }
-    return name;
+//    QString typeName = var.typeName();
+//    if ( typeName == "Ilwis::IGridCoverage") {
+//        Ilwis::IGridCoverage gcov = var.value<Ilwis::IGridCoverage>();
+//        name = gcov->name();
+//    }
+//    if ( typeName == "Coordinate") {
+//        name = var.id();
+//    }
+//    if ( typeName == "Voxel") {
+//        name = var.id();
+//    }
+    return var.id();
 }
 
 void TermNode::addSelector(Selector *n)

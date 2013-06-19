@@ -27,9 +27,9 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope)
         const NodeValue& vright = term._rightTerm->value();
         QString pp = vright.toString();
         if ( term._operator == OperationNode::oADD ){
-            ret = handleAdd(vright);
+            ret = handleAdd(vright, symbols);
         } else   if ( term._operator == OperationNode::oSUBSTRACT ){
-            ret = handleSubstract(vright);
+            ret = handleSubstract(vright, symbols);
         }
         if (!ret)
             return false;
@@ -38,22 +38,22 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope)
     return ret;
 }
 
-bool AddNode::handleAdd(const NodeValue& vright) {
+bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols) {
     QString expr;
     //bool ok1, ok2;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
        _value = {vright.toDouble() + _value.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "add");
+    return handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
 }
 
-bool AddNode::handleSubstract(const NodeValue& vright) {
+bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols) {
     QString expr;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
        _value = {_value.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "substract");
+    return handleBinaryCoverageCases(vright, "binarymathraster", "substract", symbols);
 }
 
