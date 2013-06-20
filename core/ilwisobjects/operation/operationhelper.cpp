@@ -64,6 +64,57 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     return box;
 }
 
+IIlwisObject OperationHelper::initialize(const IIlwisObject &inputObject, IlwisTypes tp, const Parameter& parm, quint64 what)
+{
+    Resource resource(tp);
+    if (inputObject->ilwisType() & itCOVERAGE) {
+        ICoverage covInput = inputObject.get<Coverage>();
+        if (inputObject->ilwisType() == itGRIDCOVERAGE) {
+            IGridCoverage gcInput = inputObject.get<GridCoverage>();
+            if ( what & itGRIDSIZE) {
+                Size sz = gcInput->size();
+                Box3D<qint32> box(sz);
+                resource.addProperty("size", IVARIANT(box.size()));
+            }
+            if ( what & itGEOREF) {
+                resource.addProperty("georeference", IVARIANT(gcInput->georeference()));
+            }
+        }
+        if ( what & itENVELOPE) {
+            Box2D<double> bounds = covInput->envelope();
+            resource.addProperty("envelope", IVARIANT(bounds));
+        }
+        if ( what & itCOORDSYSTEM) {
+            resource.addProperty("coordinatesystem", IVARIANT(covInput->coordinateSystem()));
+        }
+        if ( what & itDOMAIN) {
+            resource.addProperty("domain", IVARIANT(covInput->datadef().domain()));
+        }
+    }
+
+    resource.prepare();
+    IIlwisObject obj;
+    obj.prepare(resource);
+    if (inputObject->ilwisType() & itCOVERAGE) {
+        ICoverage covInput = inputObject.get<Coverage>();
+        ICoverage covOutput = inputObject.get<Coverage>();
+        if (inputObject->ilwisType() == itGRIDCOVERAGE) {
+            //IGridCoverage gcInput = inputObject.get<GridCoverage>();
+        }
+        if ( what & itTABLE) {
+            if ( covInput->attributeTable(itGRIDCOVERAGE).isValid())    {
+                if ( covInput->datadef().domain() == covOutput->datadef().domain()) {
+                    if ( covOutput.isValid())
+                        covOutput->attributeTable(tp,covInput->attributeTable(tp));
+                }
+            }
+        }
+
+    }
+
+    return obj;
+}
+
 int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
 {
     if ( !gcov.isValid() || gcov->size().isNull() || gcov->size().ysize() == 0) {
@@ -72,7 +123,7 @@ int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint3
     }
 
     int cores = std::min(QThread::idealThreadCount(),gcov->size().ysize());
-    //if (gcov->size().totalSize() < 10000)
+    if (gcov->size().totalSize() < 10000)
         cores = 1;
 
     boxes.clear();

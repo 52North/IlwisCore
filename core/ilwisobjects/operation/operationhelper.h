@@ -34,6 +34,7 @@ public:
         }
         return res;
     }
+    IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, const Parameter &parm, quint64 what);
 };
 }
 
