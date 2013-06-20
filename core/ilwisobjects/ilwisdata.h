@@ -120,7 +120,7 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const QString& name){
+    bool prepare(const QString& name, IlwisTypes tp=itANY){
         if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
             QString sid = name.mid(11);
             bool ok;
@@ -136,8 +136,10 @@ public:
             return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
 
         }
-        auto type = kernel()->demangle(typeid(T).name());
-        auto tp = IlwisObject::name2Type(type);
+        if ( tp == itANY) {
+            auto type = kernel()->demangle(typeid(T).name());
+            tp = IlwisObject::name2Type(type);
+        }
         auto item = mastercatalog()->name2Resource(name,tp );
         if (item.isValid()) {
             if (!mastercatalog()->isRegistered(item.id())) {
@@ -234,6 +236,7 @@ template<class T> bool operator!=(const IlwisData<T>& d1, const IlwisData<T>& d2
     return d1->id() != d2->id();
 }
 
+typedef Ilwis::IlwisData<Ilwis::IlwisObject> IIlwisObject;
 
 }
 

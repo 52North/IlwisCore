@@ -18,7 +18,6 @@ class QSqlRecord;
 
 namespace Ilwis {
 
-class IIlwisObject;
 class IlwisObjectFactory;
 class ConnectorInterface;
 class Resource;
@@ -181,6 +180,7 @@ private:
    std::mutex _mutex;
 
 };
+
 
 }
 
