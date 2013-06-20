@@ -100,7 +100,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             gcresult->setCreateTime(Ilwis::Time::now());
             gcresult->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
         }
-        Symbol sym = symbols.getSymbol(_result->id());
+        Symbol sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
 
         symbols.addSymbol(_result->id(), scope, tp, _expression->value())  ;
