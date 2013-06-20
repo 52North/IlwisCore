@@ -83,7 +83,16 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
 }
 
 IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& item) const{
-    return 0;
+    if ( !item.isValid()) {
+        ERROR1(ERR_NO_INITIALIZED_1,"resource");
+        return 0;
+    }
+    FeatureCoverage *fcoverage = new FeatureCoverage(item);
+    if (!createCoverage(item, fcoverage))
+        return 0;
+
+    return fcoverage;
+
 }
 
 IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource& item) const{
