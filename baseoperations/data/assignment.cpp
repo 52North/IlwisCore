@@ -1,5 +1,11 @@
 #include "kernel.h"
 #include "raster.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "attributerecord.h"
+#include "geometry.h"
+#include "feature.h"
+#include "featurecoverage.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
@@ -18,15 +24,16 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 {
 }
 
-bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
-{
-    if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
-            return false;
+bool Assignment::assignFeatureCoverage() {
+    return false;
+}
 
+bool Assignment::assignGridCoverage() {
+    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
-        PixelIterator iterIn(_inputGC, box);
-        PixelIterator iterOut(_outputGC, box);
+        IGridCoverage inputGC = _inputObj.get<GridCoverage>();
+        PixelIterator iterIn(inputGC, box);
+        PixelIterator iterOut(outputGC, box);
 
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
@@ -40,13 +47,23 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(Assign, _outputGC);
+    return  OperationHelper::execute(Assign, outputGC);
 
-    if ( res && ctx != 0) {
-        QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
-        ctx->_results.push_back(_outputGC->name());
-        symTable.addSymbol(_outputGC->name(),0, itGRIDCOVERAGE,value);
+}
+
+bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
+    bool res = false;
+    if ( _inputObj->ilwisType() == itGRIDCOVERAGE) {
+        if((res = assignGridCoverage()) == true)
+            setOutput<GridCoverage>(ctx, symTable);
+    }
+    if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
+//        if((res = assignFeatureCoverage()) == true)
+//            setOutput<FeatureCoverage>(ctx, symTable);
     }
     return res;
 }
@@ -69,19 +86,9 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
         ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
         return sPREPAREFAILED;
     }
-//    if ( res.ilwisType() == itGRIDCOVERAGE) {
-//        if (!_inputGC.prepare(coverage)) {
-//            ERROR2(ERR_COULD_NOT_LOAD_2,coverage,"");
-//            return sPREPAREFAILED;
-//        }
-//    } else if ( res.ilwisType() == itPOLYGONCOVERAGE) {
-//        IIlwisObject ob;
-//        ob.prepare(coverage, res.ilwisType());
-//    }
-    IIlwisObject objIn;
-    objIn.prepare(coverage, res.ilwisType());
+    _inputObj.prepare(coverage, res.ilwisType());
     OperationHelper helper;
-    helper.initialize(objIn, res.ilwisType(), _expression.parm(0),
+    _outputObj = helper.initialize(_inputObj, res.ilwisType(), _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
     return sPREPARED;
 }
