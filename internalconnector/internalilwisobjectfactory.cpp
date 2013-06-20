@@ -9,6 +9,14 @@
 #include "kernel.h"
 #include "domainitem.h"
 #include "raster.h"
+#include "numericrange.h"
+#include "numericdomain.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "attributerecord.h"
+#include "geometry.h"
+#include "feature.h"
+#include "featurecoverage.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
@@ -68,7 +76,13 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
         return createOperationMetaData(item);
     } else if ( item.ilwisType() & itGEOREF) {
         return createGeoreference(item);
+    } else if ( item.ilwisType() & itFEATURECOVERAGE) {
+        return createFeatureCoverage(item);
     }
+    return 0;
+}
+
+IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& item) const{
     return 0;
 }
 
@@ -110,6 +124,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
     case itGEOREF:
         return new CornersGeoReference();
     }
+    if ( type & itFEATURECOVERAGE)
+        return new FeatureCoverage();
     return 0;
 }
 
@@ -135,6 +151,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& item) const
     }else if ( item.ilwisType() & itOPERATIONMETADATA) {
         return true;
     } else if ( item.ilwisType() & itGEOREF) {
+        return true;
+    } else if ( item.ilwisType() & itFEATURECOVERAGE) {
         return true;
     }
 

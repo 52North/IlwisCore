@@ -38,6 +38,7 @@ private:
     IlwisObject *createOperationMetaData(const Resource &item) const;
     IlwisObject *createGeoreference(const Resource &item) const;
     bool createCoverage(const Ilwis::Resource &item, Coverage *coverage) const;
+    IlwisObject *createFeatureCoverage(const Resource &item) const;
 };
 }
 }
