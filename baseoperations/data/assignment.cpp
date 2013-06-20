@@ -3,6 +3,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
+#include "mastercatalog.h"
 #include "assignment.h"
 
 using namespace Ilwis;
@@ -62,13 +63,25 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
         return sPREPAREFAILED;
     }
 
-    QString gc = _expression.parm(0).value();
-    if (!_inputGC.prepare(gc)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    QString coverage = _expression.parm(0).value();
+    Resource res = mastercatalog()->name2Resource(coverage);
+    if ( !res.isValid()) {
+        ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
         return sPREPAREFAILED;
     }
+//    if ( res.ilwisType() == itGRIDCOVERAGE) {
+//        if (!_inputGC.prepare(coverage)) {
+//            ERROR2(ERR_COULD_NOT_LOAD_2,coverage,"");
+//            return sPREPAREFAILED;
+//        }
+//    } else if ( res.ilwisType() == itPOLYGONCOVERAGE) {
+//        IIlwisObject ob;
+//        ob.prepare(coverage, res.ilwisType());
+//    }
+    IIlwisObject objIn;
+    objIn.prepare(coverage, res.ilwisType());
     OperationHelper helper;
-    helper.initialize(_inputGC, _outputGC, _expression.parm(0),
+    helper.initialize(objIn, res.ilwisType(), _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
     return sPREPARED;
 }
