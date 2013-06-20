@@ -5,7 +5,7 @@
 #include <QVariant>
 #include <QMultiHash>
 
-#define ANONPREFIX "ANON"
+#define ANONPREFIX "__ANON__"
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT Symbol{
@@ -21,10 +21,12 @@ public:
 class KERNELSHARED_EXPORT SymbolTable //: private QHash<QString, Symbol>
 {
 public:
+    enum GetAction { gaKEEP, gaREMOVE, gaREMOVEIFANON};
     SymbolTable();
 
     void addSymbol(const QString& name, int scope, quint64 tp, const QVariant &v=QVariant());
     QVariant getValue(const QString& name, int scope=1000) const;
+    Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
     Symbol getSymbol(const QString& name, int scope=1000) const;
 
     static bool isNumerical(const QVariant &var) ;

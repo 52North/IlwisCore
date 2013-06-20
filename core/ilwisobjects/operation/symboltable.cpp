@@ -47,11 +47,27 @@ QVariant SymbolTable::getValue(const QString &name, int scope) const
     return QVariant();
 }
 
+Symbol SymbolTable::getSymbol(const QString &name, GetAction act, int scope)
+{
+    QHash<QString, Symbol>::iterator   iter = _symbols.find(name);
+    while (iter != _symbols.end() && iter.key() == name) {
+        if ( iter.value()._scope <= scope) {
+            Symbol sym = iter.value();
+            bool isAnonymous = name.indexOf(ANONPREFIX) == 0;
+            if ((isAnonymous && act == gaREMOVEIFANON) || act == gaREMOVE)
+                _symbols.erase(iter);
+            return sym;
+        }
+        ++iter;
+    }
+    return Symbol();
+}
+
 Symbol SymbolTable::getSymbol(const QString &name, int scope) const
 {
     QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
-        if ( iter.value()._scope <= scope) {
+        if ( iter.value()._scope == scope) {
             return iter.value();
         }
         ++iter;
@@ -90,7 +106,7 @@ bool SymbolTable::isDataLink(const QVariant& value) {
 QString SymbolTable::newAnonym()
 {
     _symbolid++;
-    return QString("__%1__%2").arg(ANONPREFIX).arg(_symbolid);
+    return QString("%1%2").arg(ANONPREFIX).arg(_symbolid);
 }
 
 
@@ -102,3 +118,5 @@ bool Symbol::isValid() const
 {
     return _var.isValid() && _scope != iUNDEF;
 }
+
+
