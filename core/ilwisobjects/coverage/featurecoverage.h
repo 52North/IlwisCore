@@ -50,4 +50,6 @@ public:
 
 }
 
+Q_DECLARE_METATYPE(Ilwis::IFeatureCoverage)
+
 #endif // FEATURECOVERAGE_H
