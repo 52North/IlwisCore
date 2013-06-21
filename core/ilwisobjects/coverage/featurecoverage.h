@@ -38,6 +38,7 @@ private:
     Features _features;
     std::vector<FeatureInfo> _featureInfo;
     FeatureFactory *_featureFactory;
+    std::mutex _mutex2;
 
 
 };

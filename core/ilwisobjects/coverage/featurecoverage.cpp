@@ -37,6 +37,7 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 }
 
 SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom, quint32 itemId, const SPAttributeRecord& record) {
+    Locker lock(_mutex);
     _featureTypes |= geom.ilwisType();
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
@@ -52,6 +53,7 @@ SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom, quint32 itemId, co
 }
 
 SPFeatureI FeatureCoverage::newFeatureFrom(const FeatureInterface& existingFeature) {
+    Locker lock(_mutex);
     if ( !existingFeature.isValid())
         return SPFeatureI();
     SPFeatureI clonedFeature = existingFeature.clone();
@@ -66,6 +68,7 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const FeatureInterface& existingFeatu
 
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 {
+    Locker lock(_mutex2);
     switch(types){
     case itPOINT:
         _featureInfo[0]._count = cnt;break;
