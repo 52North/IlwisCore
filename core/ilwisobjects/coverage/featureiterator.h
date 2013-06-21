@@ -30,6 +30,7 @@ private:
     quint32 _trackCounter;
     Flow _flow;
     FeatureProxy _proxy;
+    FeatureProxy _illegal;
 };
 }
 

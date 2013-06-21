@@ -16,6 +16,7 @@ using namespace Ilwis;
 
 FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true), _trackCounter(0),_flow(fFEATURES)
 {
+    init();
 }
 
 FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const Box3D<double>& envelope) :
@@ -23,7 +24,8 @@ FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const
     _isInitial(true),
     _envelope(envelope),
     _trackCounter(0),
-    _flow(fFEATURES)
+    _flow(fFEATURES),
+    _illegal(FeatureProxy(true))
 {
 
 }
@@ -83,6 +85,9 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
 FeatureInterface &FeatureIterator::operator *()
 {
     init();
+    if ( _iterFeatures == _fcoverage->_features.end())
+        return _illegal;
+
     _proxy.setProxy(*_iterFeatures, _trackCounter);
     return _proxy;
 }
@@ -122,14 +127,14 @@ bool FeatureIterator::move() {
             _iterFeatures = _fcoverage->_features.begin();
             ++_trackCounter;
         }
-        while((*_iterFeatures)->_track.size() < _trackCounter) {
+        while((*_iterFeatures)->trackSize() <= _trackCounter) {
             ++_iterFeatures;
             if (_iterFeatures == _fcoverage->_features.end())
                 return false;
         }
     } else if (_flow == fTRACK) {
         ++_trackCounter;
-        if ( _trackCounter >= (*_iterFeatures)->_track.size()) {
+        if ( _trackCounter >= (*_iterFeatures)->trackSize()) {
             ++_iterFeatures;
             _trackCounter = 0;
             if ( _iterFeatures == _fcoverage->_features.end())
