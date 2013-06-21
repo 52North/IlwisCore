@@ -68,13 +68,13 @@ IlwisTypes Geometry::ilwisType() const {
     case 0:
     case 1:
     case 2:
-        return itPOINTCOVERAGE;
+        return itPOINT;
     case 3:
     case 4:
-        return itSEGMENTCOVERAGE;
+        return itLINE;
     case 5:
     case 6:
-        return itPOLYGONCOVERAGE;
+        return itPOLYGON;
     }
     return itUNKNOWN;
 }
