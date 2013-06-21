@@ -6,6 +6,7 @@
 #include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
+#include "featureiterator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
@@ -25,7 +26,15 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 }
 
 bool Assignment::assignFeatureCoverage() {
-    return false;
+
+    IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
+    IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
+    FeatureIterator iterIn(inputFC);
+    for_each(iterIn, iterIn.end(), [&](FeatureInterface& feature){
+        outputFC->newFeatureFrom(feature);
+    });
+
+    return true;
 }
 
 bool Assignment::assignGridCoverage() {
@@ -36,6 +45,9 @@ bool Assignment::assignGridCoverage() {
         PixelIterator iterOut(outputGC, box);
 
         double v_in = 0;
+        //TODO in principle the stl::copy should work but as yet there is no overload yet(20130621) for
+        // + and - operator which is required for this
+        //stl::copy(iterIn, iterIn.end(), iterOut);
         for_each(iterOut, iterOut.end(), [&](double& v){
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
@@ -62,8 +74,8 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
             setOutput<GridCoverage>(ctx, symTable);
     }
     if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
-//        if((res = assignFeatureCoverage()) == true)
-//            setOutput<FeatureCoverage>(ctx, symTable);
+        if((res = assignFeatureCoverage()) == true)
+            setOutput<FeatureCoverage>(ctx, symTable);
     }
     return res;
 }
@@ -76,7 +88,7 @@ Ilwis::OperationImplementation *Assignment::create(quint64 metaid, const Ilwis::
 Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, const SymbolTable &)
 {
     if ( _expression.parameterCount() != 1) {
-        ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));
+        ERROR3(ERR_ILLEGAL_NUM_PARM3,"assignment","1",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;
     }
 
@@ -90,6 +102,9 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
     OperationHelper helper;
     _outputObj = helper.initialize(_inputObj, res.ilwisType(), _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
+    QString outname = _expression.parm(0,false).value();
+    if ( outname != sUNDEF)
+        _outputObj->setName(outname);
     return sPREPARED;
 }
 
