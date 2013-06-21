@@ -166,6 +166,8 @@ protected:
    bool setValid(bool yesno);
    bool storeMetaData() ;
    bool storeBinaryData() ;
+
+   std::mutex _mutex;
 private:
 
    bool _valid;
@@ -177,7 +179,7 @@ private:
    QScopedPointer<Ilwis::ConnectorInterface> _connector;
    QScopedPointer<Ilwis::ConnectorInterface> _outConnector;
    static QVector<IlwisTypeFunction> _typeFunctions;
-   std::mutex _mutex;
+
 
 };
 
