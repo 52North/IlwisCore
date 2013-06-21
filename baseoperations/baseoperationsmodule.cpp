@@ -19,6 +19,7 @@
 #include "geometry/fpixel.h"
 #include "geometry/pixel2coord.h"
 #include "geometry/coord2pixel.h"
+#include "util/text2output.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -59,11 +60,12 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(FPixel::createMetadata(), FPixel::create);
     commandhandler()->addOperation(Pixel2Coord::createMetadata(), Pixel2Coord::create);
     commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
+    commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
 }
 
 QString RasterOperationsModule::name() const
 {
-    return "Raster Operations plugin";
+    return "Base Operations plugin";
 }
 
 QString RasterOperationsModule::version() const

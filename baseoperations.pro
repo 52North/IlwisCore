@@ -34,7 +34,8 @@ HEADERS += \
     baseoperations/geometry/pixel2coord.h \
     baseoperations/geometry/fpixel.h \
     baseoperations/geometry/fcoordinate.h \
-    baseoperations/geometry/coord2pixel.h
+    baseoperations/geometry/coord2pixel.h \
+    baseoperations/util/text2output.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -50,7 +51,8 @@ SOURCES += \
     baseoperations/geometry/pixel2coord.cpp \
     baseoperations/geometry/fpixel.cpp \
     baseoperations/geometry/fcoordinate.cpp \
-    baseoperations/geometry/coord2pixel.cpp
+    baseoperations/geometry/coord2pixel.cpp \
+    baseoperations/util/text2output.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
