@@ -36,31 +36,42 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeature &FeatureCoverage::newFeature(const Geometry& geom, quint64 itemId, const SPAttributeRecord& record) {
+SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom, quint32 itemId, const SPAttributeRecord& record) {
     _featureTypes |= geom.ilwisType();
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
 
     CreateFeature create = _featureFactory->getCreator("feature");
-    Feature *f = create(itemId);
+    FeatureInterface *f = create(itemId);
     f->add(geom);
     f->attributeRecord(record);
-    SPFeature p(f);
+    SPFeatureI p(f);
     _features.push_back(p);
     return _features.back();
 }
+
+SPFeatureI FeatureCoverage::newFeatureFrom(const FeatureInterface& existingFeature) {
+    if ( !existingFeature.isValid())
+        return SPFeatureI();
+    SPFeatureI clonedFeature = existingFeature.clone();
+    _features.push_back(clonedFeature);
+    quint32 cnt = featureCount(clonedFeature->ilwisType());
+    setFeatureCount(clonedFeature->ilwisType(),++cnt );
+    return _features.back();
+}
+
 
 
 
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 {
     switch(types){
-    case itPOINTCOVERAGE:
+    case itPOINT:
         _featureInfo[0]._count = cnt;break;
-    case itSEGMENTCOVERAGE:
+    case itLINE:
         _featureInfo[1]._count = cnt; break;
-    case itPOLYGONCOVERAGE:
+    case itPOLYGON:
         _featureInfo[2]._count = cnt; break;
     }
 }
@@ -70,16 +81,16 @@ IlwisTypes FeatureCoverage::ilwisType() const
     return itFEATURECOVERAGE;
 }
 
-quint32 FeatureCoverage::featureCount(IlwisTypes types) const
+quint32 FeatureCoverage::featureCount(IlwisTypes types, int ) const
 {
     switch(types){
-    case itPOINTCOVERAGE:
+    case itPOINT:
         return _featureInfo[0]._count;break;
-    case itSEGMENTCOVERAGE:
+    case itLINE:
         return _featureInfo[1]._count; break;
-    case itPOLYGONCOVERAGE:
+    case itPOLYGON:
         return _featureInfo[2]._count; break;
-    case itFEATURECOVERAGE:
+    default:
         return _featureInfo[0]._count + _featureInfo[1]._count + _featureInfo[2]._count;
 
     }
@@ -87,11 +98,7 @@ quint32 FeatureCoverage::featureCount(IlwisTypes types) const
 }
 
 //-----------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------
 
-QVariant IFeatureCoverage::operator ()(quint32 index, const QString &column, const QString &vdomainValue)
-{
-}
 
 
 

@@ -7,7 +7,7 @@
 
 namespace Ilwis {
 
-typedef std::vector<SPFeature> Features;
+typedef std::vector<SPFeatureI> Features;
 
 class FeatureIterator;
 class FeatureFactory;
@@ -27,8 +27,9 @@ public:
 
     IlwisTypes featureTypes() const;
     void featureTypes(IlwisTypes types);
-    SPFeature& newFeature(const Ilwis::Geometry &geom, quint64 itemId, const Ilwis::SPAttributeRecord &record);
-    quint32 featureCount(IlwisTypes types=itFEATURECOVERAGE) const;
+    SPFeatureI& newFeature(const Ilwis::Geometry &geom, quint32 itemId, const Ilwis::SPAttributeRecord &record);
+    SPFeatureI newFeatureFrom(const FeatureInterface &existingFeature);
+    quint32 featureCount(IlwisTypes types=itFEATURECOVERAGE, int index=iUNDEF) const;
     void setFeatureCount(IlwisTypes types, quint32 cnt);
     IlwisTypes ilwisType() const;
 
@@ -41,15 +42,9 @@ private:
 
 };
 
-//typedef IlwisData<FeatureCoverage> IFeatureCoverage;
-
-class IFeatureCoverage : public IlwisData<FeatureCoverage> {
-public:
-    QVariant operator()(quint32 fnumber, const QString& column, const QString& indexvalue="");
-};
+typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
 }
-
 Q_DECLARE_METATYPE(Ilwis::IFeatureCoverage)
 
 #endif // FEATURECOVERAGE_H
