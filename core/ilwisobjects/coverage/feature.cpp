@@ -83,12 +83,40 @@ void Feature::attributeRecord(const SPAttributeRecord& record){
     _record = record;
 }
 
-Ilwis::Feature *createFeature(quint64 ItemId) {
+SPFeatureI Feature::clone() const
+{
+    Feature *f = new Feature(itemId());
+    f->_track = _track;
+    f->_record = _record;
+
+    return SPFeatureI(f);
+
+}
+
+IlwisTypes Feature::ilwisType(qint32 index) const
+{
+    if ( index != iUNDEF ) {
+        if ( index < _track.size())
+            return geometry(index).ilwisType();
+        return itUNKNOWN;
+    }
+    IlwisTypes type=itUNKNOWN;
+    for(const Geometry& geom : _track)
+        type |= geom.ilwisType();
+    return type;
+}
+
+quint32 Feature::trackSize() const
+{
+    return _track.size();
+}
+
+Ilwis::FeatureInterface *createFeature(quint64 ItemId) {
     return new Feature(ItemId);
 }
 //------------------------------------------------------
 
-FeatureProxy::FeatureProxy()
+FeatureProxy::FeatureProxy(bool illegal) : _illegal(illegal)
 {
 }
 
@@ -96,9 +124,17 @@ FeatureProxy::~FeatureProxy()
 {
 }
 
-void FeatureProxy::setProxy(SPFeature f, quint32 index) {
+void FeatureProxy::setProxy(const SPFeatureI& f, quint32 index) {
     _feature = f;
     _trackIndex = index;
+}
+
+SPFeatureI FeatureProxy::clone() const
+{
+    if ( _feature.isNull())
+        return SPFeatureI();
+
+    return _feature->clone();
 }
 
 QVariant FeatureProxy::value(const QString &name, int index)
@@ -130,6 +166,9 @@ quint64 FeatureProxy::featureid() const
 
 bool FeatureProxy::isValid() const
 {
+    if ( _illegal)
+        return false;
+
     return !_feature.isNull();
 }
 
@@ -150,6 +189,17 @@ void FeatureProxy::attributeRecord(const SPAttributeRecord &record)
 {
     if ( isValid())
         _feature->attributeRecord(record) ;
+}
+
+IlwisTypes FeatureProxy::ilwisType(qint32 ) const
+{
+
+    return _feature->geometry(_trackIndex).ilwisType();
+}
+
+quint32 FeatureProxy::trackSize() const
+{
+    return 1;
 }
 
 

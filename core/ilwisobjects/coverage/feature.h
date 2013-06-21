@@ -5,6 +5,10 @@
 
 namespace Ilwis {
 
+class FeatureInterface;
+
+typedef QSharedPointer<FeatureInterface> SPFeatureI;
+
 class KERNELSHARED_EXPORT FeatureInterface {
 public:
     virtual ~FeatureInterface() {}
@@ -16,11 +20,16 @@ public:
     virtual void add(const Geometry& geom) = 0;
     virtual void attributeRecord(const SPAttributeRecord& record) = 0;
     QVariant operator()(const QString& name, int index = -1);
+    virtual SPFeatureI clone() const=0;
+    virtual IlwisTypes ilwisType(qint32 index=iUNDEF) const = 0;
+    virtual quint32 trackSize() const = 0;
 
 protected:
     virtual QVariant value(const QString& name, int index=-1) = 0;
 
 };
+
+
 
 /*!
 The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular
@@ -52,6 +61,9 @@ public:
     const Geometry& geometry(quint32 index=0) const;
     void add(const Geometry& geom);
     void attributeRecord(const SPAttributeRecord& record);
+    SPFeatureI clone() const;
+    IlwisTypes ilwisType(qint32 index=iUNDEF) const;
+    quint32 trackSize() const;
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
@@ -66,11 +78,9 @@ private:
 
 };
 
-typedef QSharedPointer<Feature> SPFeature;
-
 class KERNELSHARED_EXPORT FeatureProxy : public FeatureInterface {
 public:
-    FeatureProxy();
+    FeatureProxy(bool illegal=false);
     ~FeatureProxy();
     quint32 itemId() const ;
     void itemId(quint32 v) ;
@@ -79,17 +89,21 @@ public:
     const Geometry& geometry(quint32 index=0) const ;
     void add(const Geometry& geom) ;
     void attributeRecord(const SPAttributeRecord& record) ;
-    void setProxy(SPFeature f, quint32 index);
+    void setProxy(const SPFeatureI &f, quint32 index);
+    SPFeatureI clone() const;
+    IlwisTypes ilwisType(qint32 index=iUNDEF) const;
+    quint32 trackSize() const;
 protected:
     QVariant value(const QString& name, int index=-1);
 private:
-    SPFeature _feature;
+    SPFeatureI _feature;
     quint32 _trackIndex;
     const Geometry _invalidGeom;
+    bool _illegal;
 };
 
 bool operator==(const Feature& f1, const Feature& f2) ;
 
 }
-Ilwis::Feature *createFeature(quint64 itemId);
+Ilwis::FeatureInterface *createFeature(quint64 itemId);
 #endif // FEATURE_H
