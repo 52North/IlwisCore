@@ -5,9 +5,9 @@
 #include <map>
 
 namespace Ilwis {
-class Feature;
+class FeatureInterface;
 
-typedef std::function<Feature *(quint64 itemId)>  CreateFeature;
+typedef std::function<FeatureInterface *(quint64 itemId)>  CreateFeature;
 
 class FeatureFactory : public AbstractFactory
 {
