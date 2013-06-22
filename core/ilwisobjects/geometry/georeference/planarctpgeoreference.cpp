@@ -189,25 +189,25 @@ Coordinate PlanarCTPGeoReference::crdInverseOfHigherOrder(const Pixel_d& pix)
     Coordinate crdGap(gapStart,gapStart);
     Coordinate crd0(0,0);
     int iCount = 0;
-    while ( !crdGap.isNear(crd0, gapStart * 2) && iCount < 10) {
-        makeJacobianMatrix(crdNext, _jacobian);
-        detJ = _jacobian.determinant();
-        if (std::abs(detJ) < EPS10)
-            return crdUNDEF;
-        else  {
-            _jacobian = _jacobian.inverse();
-        }
-        deltaPix -= nextPix;
-        //improvement of crd found (linear approx) using inverse Jacobian matrix
-        crdNext += addJac();
-        crdTrue = Coordinate(crdNext.x() + _avgCrd.x, crdNext.y() + _avgCrd.y);
-        nextPix = coord2Pixel(crdTrue);
-        crdGap = deltaPix;
-        nextPix[0] -= _avgPix.x;
-        nextPix[1] -= _avgPix.y;
+//    while ( !crdGap.isNear(crd0, gapStart * 2) && iCount < 10) {
+//        makeJacobianMatrix(crdNext, _jacobian);
+//        detJ = _jacobian.determinant();
+//        if (std::abs(detJ) < EPS10)
+//            return crdUNDEF;
+//        else  {
+//            _jacobian = _jacobian.inverse();
+//        }
+//        deltaPix -= nextPix;
+//        //improvement of crd found (linear approx) using inverse Jacobian matrix
+//        crdNext += addJac();
+//        crdTrue = Coordinate(crdNext.x() + _avgCrd.x, crdNext.y() + _avgCrd.y);
+//        nextPix = coord2Pixel(crdTrue);
+//        crdGap = deltaPix;
+//        nextPix[0] -= _avgPix.x;
+//        nextPix[1] -= _avgPix.y;
 
-        iCount++;
-    }
+//        iCount++;
+//    }
     if (iCount < 10)
         return crdNext;
     return crdUNDEF;

@@ -1,5 +1,4 @@
 #include "kernel.h"
-#include "geometries.h"
 #include "coverage.h"
 #include "columndefinition.h"
 #include "table.h"
@@ -29,12 +28,12 @@ void Coverage::setCoordinateSystem(const ICoordinateSystem &csy)
     _coordinateSystem = csy;
 }
 
-Box2D<double> Coverage::envelope() const
+Box3D<double> Coverage::envelope() const
 {
     return _envelope;
 }
 
-void Coverage::envelope(const Box2D<double> &bnds)
+void Coverage::envelope(const Box3D<double> &bnds)
 {
     _envelope = bnds;
 }

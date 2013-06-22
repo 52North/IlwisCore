@@ -4,8 +4,6 @@
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
-#include "boost/numeric/ublas/matrix.hpp"
-#include "boostext.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 

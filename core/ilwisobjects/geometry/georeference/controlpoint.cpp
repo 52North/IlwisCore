@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "angle.h"
 #include "point.h"
+#include "box.h"
 #include "controlpoint.h"
 
 using namespace Ilwis;

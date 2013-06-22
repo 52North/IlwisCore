@@ -26,8 +26,8 @@ public:
 
     ICoordinateSystem coordinateSystem() const;
     void setCoordinateSystem(const ICoordinateSystem& csy);
-    Box2D<double> envelope() const;
-    void envelope(const Box2D<double>& bnds);
+    Box3D<double> envelope() const;
+    void envelope(const Box3D<double> &bnds);
 
     ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
     void attributeTable(IlwisTypes type, const ITable& tbl, qint32 index=-1 );
@@ -38,7 +38,7 @@ public:
 
 private:
     ICoordinateSystem _coordinateSystem;
-    Box2D<double> _envelope;
+    Box3D<double> _envelope;
     std::vector<AttributeTables> _attTables;
     CoverageStatistics _statistics;
     DataDefinition _datadef;

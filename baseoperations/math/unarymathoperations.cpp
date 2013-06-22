@@ -146,7 +146,12 @@ quint64 NaturalLogarithm::createMetadata() {
 }
 //----------------------------------------------------------
 
-Abs::Abs(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", std::abs<double>)
+double abs2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return v;
+}
+Abs::Abs(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", abs2)
 {}
 OperationImplementation *Abs::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Abs(metaid,expr);}
 

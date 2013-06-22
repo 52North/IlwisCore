@@ -4,18 +4,11 @@
 #include <QSize>
 
 //#include "ilwis.h"
-#include <cstddef>
-#include <boost/geometry.hpp>
-#include <boost/mpl/int.hpp>
-#include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/geometries/register/point.hpp>
 
 
-namespace bg = boost::geometry;
+
 
 namespace Ilwis {
-
-class SerializationOptions;
 
 /*!
  * A representation of a point in the cartesian space. It is the base class for the Point2D and Point3D classes. The type
@@ -24,7 +17,7 @@ class SerializationOptions;
  * is now left upto the using context ( realworld coordinate systems, grid system, uni-sphere systems etc...).
  */
 template<class CrdType=qint32, int dim=2>
-class Point : public bg::model::point<CrdType, dim, bg::cartesian_tag>
+class Point
 {
 public:
 
@@ -33,27 +26,27 @@ public:
      * \return the x value
      */
     CrdType x() const {
-        return this->template get<0>();
+        return _x;
     }
     /*!
      return the y value of a point
      * \return the y value
      */
     CrdType y() const {
-        return this->template get<1>();
+        return _y;
     }
 
     /*!
      sets the x value of a point
     */
     void x(CrdType v) {
-        this->template set<0>(v);
+        _x = v;
     }
     /*!
      sets the y value of a point
     */
     void y(CrdType v) {
-        this->template set<1>(v);
+        _y = v;
     }
     /*!
      a point is valid if both its x and y have a valid value;
@@ -63,16 +56,14 @@ public:
         return x() != undefined && y() != undefined ;
     }
 
-    virtual void store(QDataStream &s, const SerializationOptions &opt) const = 0;
-
 protected:
     Point(){
         init();
     }
     Point(CrdType d1, CrdType d2) {
         init();
-        this->template set<0>(d1);
-        this->template set<1>(d2);
+        this->x(d1);
+        this->y(d2);
     }
 
     CrdType undefined;
@@ -80,9 +71,11 @@ protected:
 private:
     void init() {
         undefined  = undef<CrdType>();
-        this->template set<0>(undefined);
-        this->template set<1>(undefined);
+        this->x(undefined);
+        this->y(undefined);
     }
+    CrdType _x;
+    CrdType _y;
 };
 
 /*!
@@ -140,12 +133,12 @@ public:
         return v;
     }
 
-    bool isNear(const Point2D<CrdType>& pnt, double delta) {
-        if (!this->isValid() || !pnt.isValid())
-            return false;
-        double d = boost::geometry::distance(*this, pnt);
-        return d <= delta;
-    }
+//    bool isNear(const Point2D<CrdType>& pnt, double delta) {
+//        if (!this->isValid() || !pnt.isValid())
+//            return false;
+//        double d = boost::geometry::distance(*this, pnt);
+//        return d <= delta;
+//    }
 
     Ilwis::Point2D<CrdType>& operator=(const Ilwis::Point2D<CrdType>& p2) {
         this->x( p2.x());
@@ -248,22 +241,6 @@ public:
         return !(operator==(pnt));
     }
 
-    /*!
-    \se Ilwis::IlwisObject::store
-     */
-    void store(QDataStream &s, const SerializationOptions &) const{
-        s << QString("2D");
-        s << this->x();
-        s << this->y();
-
-    }
-    /*!
-    \se Ilwis::IlwisObject::load
-     */
-    void load(QDataStream &s){
-    }
-
-
 };
 
 /*!
@@ -299,11 +276,11 @@ public:
     }
 
     Point3D(Point3D<CrdType>&& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
-        this->z(crd.y());
+        this->z(crd.z());
     }
 
     Point3D(const Point3D<CrdType>& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
-        this->z(crd.y());
+        this->z(crd.z());
     }
 
     Point3D(const std::vector<CrdType>& v) : Point<CrdType, 3>() {
@@ -345,19 +322,19 @@ public:
         v[3] = this->z();
         return v;
     }
-    bool isNear(const Point3D<CrdType>& pnt, double delta) {
-        if (!this->isValid() || !pnt.isValid())
-            return false;
-        double d = boost::geometry::distance(*this, pnt);
-        return d <= delta;
-    }
+//    bool isNear(const Point3D<CrdType>& pnt, double delta) {
+//        if (!this->isValid() || !pnt.isValid())
+//            return false;
+//        double d = boost::geometry::distance(*this, pnt);
+//        return d <= delta;
+//    }
 
     /*!
      returns the z value of a point
      * \return z value
      */
     CrdType z() const {
-        return this->template get<2>();
+        return _z;
     }
 
     /*!
@@ -365,7 +342,7 @@ public:
      * \param z value
      */
     void z(CrdType v) {
-        this->template set<2>(v);
+        _z = v;
     }
 
     /*!
@@ -468,18 +445,8 @@ public:
         return *this;
     }
 
-    /*!
-    \se Ilwis::IlwisObject::store
-     */
-    void store(QDataStream &s, const SerializationOptions &) const{
-        s << QString("3D");
-        s << this->x();
-        s << this->y();
-        s << this->z();
-
-    }
-    void load(QDataStream &s){
-    }
+private:
+    CrdType _z;
 
 };
 
@@ -681,12 +648,7 @@ typedef Ilwis::Point2D<quint32>  Pixel_u;
 typedef Ilwis::Point2D<double>  Pixel_d; // identical to Coordinate2d but meant to be used for pixels with sub pixel accuracy, not for world coordinate
 typedef Ilwis::Point3D<quint32>  Voxel_u;
 
-BOOST_GEOMETRY_REGISTER_POINT_2D_GET_SET(Coordinate2d, double, cs::cartesian, x, y, x, y)
-BOOST_GEOMETRY_REGISTER_POINT_2D_GET_SET(Pixel, qint32, cs::cartesian, x, y, x, y)
-BOOST_GEOMETRY_REGISTER_POINT_2D_GET_SET(Pixel_u, quint32, cs::cartesian, x, y, x, y)
-BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Coordinate, double, cs::cartesian, x, y, z, x, y, z)
-BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel, qint32, cs::cartesian, x, y, z, x, y, z)
-BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel_u, quint32, cs::cartesian, x, y, z, x, y, z)
+
 
 Q_DECLARE_METATYPE(Coordinate)
 Q_DECLARE_METATYPE(Pixel)

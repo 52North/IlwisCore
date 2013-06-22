@@ -4,37 +4,35 @@
 #include <QSize>
 #include "size.h"
 
-namespace bg = boost::geometry;
-
 namespace Ilwis {
 /*!
 The box class is an abstraction for any rectangular area or volumne used in Ilwis. It is applicable for both
 grid like areas ( e.g. rasters) as world coordinate areas.
  */
-template<class CsyType=qint32> class Box2D : public bg::model::box<Ilwis::Point2D<CsyType> > {
+template<class CsyType=qint32> class Box2D {
 public:
-    Box2D() : bg::model::box<Ilwis::Point2D<CsyType> >(Ilwis::Point2D<CsyType>(0,0),Ilwis::Point2D<CsyType>(0,0)){
+    Box2D() : _min_corner(Point2D<CsyType>(0,0)), _max_corner(Ilwis::Point2D<CsyType>(0,0)){
     }
 
-    Box2D(const Ilwis::Point2D<CsyType>& pMin, const Ilwis::Point2D<CsyType>& pMax) : bg::model::box<Ilwis::Point2D<CsyType> >(pMin,pMax){
+    Box2D(const Ilwis::Point2D<CsyType>& pMin, const Ilwis::Point2D<CsyType>& pMax) : _min_corner(pMin), _max_corner(pMax){
         normalize();
     }
 
-    Box2D(const Box2D<CsyType>& bx) : bg::model::box<Ilwis::Point2D<CsyType> >(bx.min_corner(), bx.max_corner()) {
+    Box2D(const Box2D<CsyType>& bx) : _min_corner(bx.min_corner()), _max_corner(bx.max_corner()) {
 
     }
 
-    Box2D(const QSize& sz) : bg::model::box<Ilwis::Point2D<qint32> >(Point2D<qint32>(0,0),Point2D<qint32>(sz.width(), sz.height())){
+    Box2D(const QSize& sz) : _min_corner(Point2D<CsyType>(0,0)),_max_corner(Point2D<CsyType>(sz.width()-1, sz.height()-1)){
     }
 
-    Box2D(const Size& sz) : bg::model::box<Ilwis::Point2D<qint32> >(Point2D<qint32>(0,0),Point2D<qint32>(sz.xsize(), sz.ysize())){
+    Box2D(const Size& sz) : _min_corner(Point2D<qint32>(0,0)),_max_corner(Point2D<qint32>(sz.xsize()-1, sz.ysize()-1)){
     }
 
     /*!
      Constructs a box based on a WKT bases coordinate string
      * \param envelope, the coordinate string marked as POLYGON
      */
-    Box2D(const QString& envelope) : bg::model::box<Ilwis::Point2D<CsyType> >(Point2D<CsyType>(0,0),Point2D<CsyType>(0,0)){
+    Box2D(const QString& envelope) :  _min_corner(Point2D<CsyType>(0,0)), _max_corner(Ilwis::Point2D<CsyType>(0,0)){
         int index1 = envelope.indexOf("(");
         if ( index1 != -1) {
             int index2 = envelope.indexOf(")")    ;
@@ -62,6 +60,22 @@ public:
             this->max_corner().x((CsyType)p2[0].trimmed().toDouble());
             this->max_corner().y((CsyType)p2[1].trimmed().toDouble());
         }
+    }
+
+    Point2D<CsyType> min_corner() const {
+        return _min_corner;
+    }
+
+    Point2D<CsyType> max_corner() const {
+        return _max_corner;
+    }
+
+    Point2D<CsyType>& min_corner()  {
+        return _min_corner;
+    }
+
+    Point2D<CsyType>& max_corner()  {
+        return _max_corner;
     }
 
     CsyType width() const {
@@ -208,6 +222,10 @@ QString toString() const {
 }
 
 private:
+    Point2D<CsyType> _min_corner;
+    Point2D<CsyType> _max_corner;
+
+
 void normalize() {
     Ilwis::Point2D<CsyType>& pmin = this->min_corner();
     Ilwis::Point2D<CsyType>& pmax = this->max_corner();
@@ -232,24 +250,26 @@ void normalize() {
 
 };
 
-template<class CsyType=qint32> class Box3D : public bg::model::box<Ilwis::Point3D<CsyType> > {
+template<class CsyType=qint32> class Box3D  {
 public:
     enum Dimension{dim0=0, dimX=1, dimY=2, dimZ=4};
-    Box3D() : bg::model::box<Ilwis::Point3D<CsyType> >(Ilwis::Point3D<CsyType>(0,0,0),Ilwis::Point3D<CsyType>(0,0,0)){
+    Box3D() : _min_corner(Point3D<CsyType>(0.0,0.0,0.0)), _max_corner(Ilwis::Point3D<CsyType>(0.0,0.0,0.0)){
     }
 
-    Box3D(const Ilwis::Point3D<CsyType>& pMin, const Ilwis::Point3D<CsyType>& pMax) : bg::model::box<Ilwis::Point3D<CsyType> >(pMin,pMax){
+    Box3D(const Ilwis::Point3D<CsyType>& pMin, const Ilwis::Point3D<CsyType>& pMax) : _min_corner(pMin), _max_corner(pMax){
         normalize();
     }
 
-    Box3D(const Box3D<CsyType>& bx) : bg::model::box<Ilwis::Point3D<CsyType> >(bx.min_corner(), bx.max_corner()) {
+//    Box3D(const Box2D<CsyType>& bx) : _min_corner(bx.min_corner()), _max_corner(bx.max_corner()) {
 
+//    }
+
+
+
+    Box3D(const Size& sz) : _min_corner(Point3D<qint32>(0,0,0)),_max_corner(Point3D<qint32>(sz.xsize()-1, sz.ysize()-1,sz.zsize()-1)){
     }
 
-    Box3D(const Size& sz) : bg::model::box<Ilwis::Point3D<qint32> >(Point3D<qint32>(0,0,0),Point3D<qint32>(sz.xsize()-1, sz.ysize()-1, sz.zsize()-1)){
-    }
-
-    Box3D(const QString& envelope) : bg::model::box<Ilwis::Point3D<CsyType> >(Point3D<CsyType>(0,0,0),Point3D<CsyType>(0,0,0)){
+    Box3D(const QString& envelope) : _min_corner(Point3D<CsyType>(0,0,0)), _max_corner(Ilwis::Point3D<CsyType>(0,0,0)){
         int index1 = envelope.indexOf("(");
         if ( index1 != -1) {
             int index2 = envelope.indexOf(")")    ;
@@ -282,7 +302,7 @@ public:
         }
     }
 
-    Box3D(const Box2D<CsyType>& box) : bg::model::box<Ilwis::Point3D<CsyType> >(box.min_corner(), box.max_corner()){
+    Box3D(const Box2D<CsyType>& box) : _min_corner(box.min_corner()), _max_corner(box.max_corner()){
         this->min_corner().z(0);
         this->max_corner().z(0);
     }
@@ -292,6 +312,21 @@ public:
                                               this->min_corner().y()),
                              Point2D<CsyType>(this->max_corner().x(),
                                               this->max_corner().y()));
+    }
+    Point3D<CsyType> min_corner() const {
+        return _min_corner;
+    }
+
+    Point3D<CsyType> max_corner() const {
+        return _max_corner;
+    }
+
+    Point3D<CsyType>& min_corner()  {
+        return _min_corner;
+    }
+
+    Point3D<CsyType>& max_corner()  {
+        return _max_corner;
     }
 
     void ensure(const Size& sz) {
@@ -497,7 +532,11 @@ QString toString() const {
 }
 
 private:
+    Point3D<CsyType> _min_corner;
+    Point3D<CsyType> _max_corner;
+
 void normalize() {
+
     Ilwis::Point3D<CsyType>& pmin = this->min_corner();
     Ilwis::Point3D<CsyType>& pmax = this->max_corner();
     if ( pmin.x() > pmax.x()) {
@@ -534,10 +573,6 @@ void normalize() {
 typedef Ilwis::Box2D<double> Box2Dd;
 typedef Ilwis::Box2D<qint32> Box2Di;
 typedef Ilwis::Box2D<quint32> Box2Dui;
-
-BOOST_GEOMETRY_REGISTER_BOX(Box2Dd,Coordinate2d, min_corner(), max_corner())
-BOOST_GEOMETRY_REGISTER_BOX(Box2Di,Pixel, min_corner(), max_corner())
-BOOST_GEOMETRY_REGISTER_BOX(Box2Dui,Pixel_u, min_corner(), max_corner())
 
 
 //Q_DECLARE_METATYPE(Ilwis::Box2D<qint8>)

@@ -2,6 +2,7 @@
 #include <QSharedPointer>
 #include "kernel.h"
 #include "geometries.h"
+#include "polygon.h"
 #include "geometry.h"
 #include "ilwisdata.h"
 #include "domain.h"

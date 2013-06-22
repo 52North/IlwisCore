@@ -38,6 +38,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
+#include "polygon.h"
 #include "geometry.h"
 #include "feature.h"
 #include "symboltable.h"

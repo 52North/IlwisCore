@@ -3,7 +3,7 @@
 
 namespace Ilwis{
 template<class PointType=Point2D<double> >
-class Line2D : public bg::model::linestring<PointType > {
+class Line2D  : public std::vector<PointType> {
 public:
 
     Line2D<PointType>& operator+=(const std::vector<double>& vec){
@@ -72,6 +72,6 @@ private:
 };
 }
 
-BOOST_GEOMETRY_REGISTER_LINESTRING_TEMPLATED(Ilwis::Line2D)
+
 
 #endif // LINE_H

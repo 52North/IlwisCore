@@ -14,7 +14,7 @@ public:
 
     virtual Coordinate pixel2Coord(const Pixel_d&) const = 0;
     virtual Pixel_d coord2Pixel(const Coordinate& crd) const = 0;
-    virtual Box2D<double> pixel2Coord(const Box2D<qint32>& box ) const;
+    virtual Box2D<double> pixel2Coord(const Box2D<qint32> &box ) const;
     virtual Box2D<qint32> coord2Pixel(const Box2D<double>& box) const;
     ICoordinateSystem coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);

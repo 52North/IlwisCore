@@ -17,14 +17,7 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     Box3D<qint32> box(sz);
 
     if ( what & itGRIDSIZE) {
-        QString range = parm.modifier("range");
-        if (range != sUNDEF) {
-            box = Box3D<qint32>(range);
-            if ( box.zlength() == 0) {
-                box.max_corner().z(box.min_corner().z() + 1);
-            }
-        }
-        resource.addProperty("size", IVARIANT(box.size()));
+        resource.addProperty("size", IVARIANT(sz));
     }
     if ( what & itENVELOPE) {
         if ( box.isNull() || !box.isValid()) {

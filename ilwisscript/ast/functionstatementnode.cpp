@@ -33,8 +33,6 @@ bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope)
             NodeValue nvalue = var.value<NodeValue>();
             if ( parm != "")
                 parm += ",";
-            QString tst = nvalue.value<QString>();
-            int kk = nvalue.content();
             if ( nvalue.content() == NodeValue::ctString){
                 parm += nvalue.value<QString>();
             }
