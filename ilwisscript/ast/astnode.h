@@ -10,7 +10,7 @@ class SymbolTable;
 
 class NodeValue : public QVariant {
 public:
-    enum ContentType{ctUNKNOW, ctNumerical, ctString, ctExpression, ctMethod,ctBOOLEAN, ctID};
+    enum ContentType{ctUNKNOW, ctNumerical, ctString, ctExpression, ctMethod,ctBOOLEAN, ctID, ctLIST};
 
     NodeValue();
     NodeValue(const QVariant& v, ContentType tp=NodeValue::ctUNKNOW);
@@ -51,5 +51,7 @@ protected:
 
 };
 }
+
+Q_DECLARE_METATYPE(Ilwis::NodeValue);
 
 #endif // ASTNODE_H
