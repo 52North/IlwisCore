@@ -92,6 +92,7 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
 
     } else if ( _content == csString) {
         _value = {_string, NodeValue::ctString};
+        return true;
 
     } else if ( _content == csMethod) {
         QString parms = "(";
