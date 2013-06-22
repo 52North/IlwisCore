@@ -18,7 +18,7 @@ QString ExpressionNode::nodeType() const
 bool ExpressionNode::evaluate(SymbolTable &symbols, int scope)
 {
     OperationNode::evaluate(symbols, scope);
-    const QVariant& vleft = _leftTerm->value();
+    const NodeValue& vleft = _leftTerm->value();
     _value = vleft;
     bool ret  = true;
 
