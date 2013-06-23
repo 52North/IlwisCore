@@ -26,7 +26,7 @@ const IGeoReference& GridCoverage::georeference() const
     return _georef;
 }
 
-void GridCoverage::setGeoreference(const IGeoReference &grf)
+void GridCoverage::georeference(const IGeoReference &grf)
 {
     _georef = grf;
     if ( _grid.isNull() == false) { // remove the current grid, all has become uncertain

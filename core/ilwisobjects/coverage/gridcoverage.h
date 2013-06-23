@@ -24,7 +24,7 @@ public:
     IlwisTypes ilwisType() const;
 
     const Ilwis::IGeoReference &georeference() const;
-    void setGeoreference(const IGeoReference& grf) ;
+    void georeference(const IGeoReference& grf) ;
     Size size() const;
     void size(const Size& sz);
 
