@@ -141,7 +141,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         res.addProperty("centerofpixel",_inputGC->georeference()->centerOfPixel());
         IGeoReference  grf;
         grf.prepare(res);
-        _outputGC->setGeoreference(grf);
+        _outputGC->georeference(grf);
 
        _outputGC->envelope(box);
     }
