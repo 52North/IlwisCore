@@ -225,16 +225,6 @@ QUrl IlwisObject::target() const
     return _outConnector->source();
 }
 
-void IlwisObject::setSerializationOptions(const SerializationOptions &opt)
-{
-    _serializationOptions = opt;
-}
-
-SerializationOptions IlwisObject::serializationOptions() const
-{
-    return _serializationOptions;
-}
-
 bool IlwisObject::storeMetaData() {
     if ( !connector(cmOUTPUT).isNull())
         return connector(cmOUTPUT)->storeMetaData(this);

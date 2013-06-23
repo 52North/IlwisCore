@@ -128,15 +128,6 @@ public:
     * \return url that is sufficient to find the target
     */
    QUrl target() const;
-   /*!
-    * \brief setSerializationOptions sets which options will be used for the serialization (\se IlwisObject::store).
-    *
-    * the serialization is not always serialzing all. That is not needed in all cases. This member determines how the serialization will work
-    *
-    * \param opt
-    */
-   void setSerializationOptions(const SerializationOptions& opt);
-   SerializationOptions serializationOptions() const;
    virtual bool store(int mode=smMETADATA | smBINARYDATA);
    /*!
     connectTo allocates a connector of a certain format to the ilwisobject.
@@ -175,7 +166,6 @@ private:
    bool _changed;
    Time _modifiedTime;
    Time _createTime;
-   SerializationOptions _serializationOptions;
    QScopedPointer<Ilwis::ConnectorInterface> _connector;
    QScopedPointer<Ilwis::ConnectorInterface> _outConnector;
    static QVector<IlwisTypeFunction> _typeFunctions;
