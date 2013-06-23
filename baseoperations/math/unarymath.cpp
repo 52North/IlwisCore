@@ -30,7 +30,6 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    QVariant value;
     if ( _spatialCase) {
         BoxedAsyncFunc unaryFun = [&](const Box3D<qint32>& box) -> bool {
             PixelIterator iterIn(_inputGC, _box);
@@ -54,7 +53,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE );
         }
     } else {
-        double v = sin(_number);
+        double v = _unaryFun(_number);
         ctx->addOutput(symTable, QVariant(v), sUNDEF, itDOUBLE);
 
     }
