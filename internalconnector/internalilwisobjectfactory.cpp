@@ -265,7 +265,7 @@ IlwisObject *InternalIlwisObjectFactory::createGridCoverage(const Resource& item
 
     }
     if ( grf.isValid())
-        gcoverage->setGeoreference(grf);
+        gcoverage->georeference(grf);
     if ( sz.isValid())
         gcoverage->size(sz);
 
