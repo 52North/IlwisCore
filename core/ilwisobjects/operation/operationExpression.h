@@ -19,7 +19,6 @@ public:
     QString value() const;
     QString domain() const;
     void domain(const QString& dom);
-    QString modifier(const QString &key) const;
     IlwisTypes valuetype() const;
     bool isEqual(const Parameter& parm) const;
     bool isValid() const;
@@ -28,7 +27,6 @@ public:
 private:
     QString _key;
     QString _value;
-    std::map<QString,QString> _modifiers;
     IlwisTypes _type;
     QString _domain;
 };

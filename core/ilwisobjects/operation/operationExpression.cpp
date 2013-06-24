@@ -23,16 +23,8 @@ Parameter::Parameter(const QString &key, const QString &value, IlwisTypes tp, co
         _type = Parameter::determineType(value, symtab);
 }
 
-Parameter::Parameter(const QString &rawvalue, IlwisTypes tp, const SymbolTable &symtab) : _domain(sUNDEF)
+Parameter::Parameter(const QString &value, IlwisTypes tp, const SymbolTable &symtab) : _domain(sUNDEF)
 {
-    QString value = rawvalue;
-    int index = value.indexOf('[');
-    if ( index != -1) {
-        int index2 = value.indexOf(']');
-        QString rangePart = value.mid(index + 1,  index2 - index - 1);
-        _modifiers["range"] = rangePart;
-        value = value.left(index);
-    }
     _value = value;
     _type = tp;
     if ( _type == itUNKNOWN)
@@ -56,14 +48,6 @@ QString Parameter::domain() const
 void Parameter::domain(const QString &dom)
 {
     _domain = dom;
-}
-
-QString Parameter::modifier(const QString &key) const
-{
-    auto iter = _modifiers.find(key);
-    if ( iter != _modifiers.end())
-        return (*iter).second;
-    return sUNDEF;
 }
 
 IlwisTypes Parameter::valuetype() const
