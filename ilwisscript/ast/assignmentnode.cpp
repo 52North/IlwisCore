@@ -25,6 +25,7 @@
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalog.h"
+#include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
 
@@ -99,11 +100,14 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             gcresult->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
             gcresult->setCreateTime(Ilwis::Time::now());
             gcresult->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+            if ( result.indexOf(INTERNAL_PREFIX) == -1) {
+                mastercatalog()->addItems({gcresult->source()});
+            }
         }
         Symbol sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
 
-        symbols.addSymbol(_result->id(), scope, tp, _expression->value())  ;
+        symbols.addSymbol(_result->id(), scope, tp, _expression->value());
         return true;
     }
     return false;
