@@ -5,8 +5,6 @@
 #include <QVariant>
 #include <QMultiHash>
 
-#define ANONPREFIX "__ANON__"
-
 namespace Ilwis {
 class KERNELSHARED_EXPORT Symbol{
 public:
