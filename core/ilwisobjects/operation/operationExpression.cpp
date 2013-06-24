@@ -160,19 +160,19 @@ void OperationExpression::setExpression(const QString &e, const SymbolTable &sym
     int index1 = e.indexOf(" ");
     int index2 = e.indexOf("=");
     int index3 = e.indexOf("[");
-    if ( index3 != -1)
-        _type = otSelection;
-    else {
-        if ( index1 != -1 && ( index1 < index2 || index2 == -1)) {
-            _type = otCommand;
-            for(int i = 0; i < index1; ++i){
-                if ( !(e[i].isDigit() || e[i].isLetter() || e[i] == '-')){
-                    _type = otFunction;
-                    break;
-                }
+    bool isCommand = index1 != -1 && ( index1 < index2 || index2 == -1);
+    if ( isCommand) {
+        _type = otCommand;
+        for(int i = 0; i < index1; ++i){
+            if ( !(e[i].isDigit() || e[i].isLetter() || e[i] == '-')){
+                _type = otFunction;
+                break;
             }
         }
-     }
+    }
+    else if ( index3 != -1)
+        _type = otSelection;
+
     if ( _type == otFunction) {
         parseFunctionExpression(e, symtab);
     } else if ( _type == otCommand) {
@@ -183,6 +183,12 @@ void OperationExpression::setExpression(const QString &e, const SymbolTable &sym
 }
 
 void OperationExpression::parseCommandExpression(const QString &e, const SymbolTable &symtab) {
+    if ( e.left(6) == "script"){ // special case , all after tyhe script statement is the script text
+        _name = "script";
+        QString rest = e.mid(7).trimmed();
+        _inParameters.push_back(Parameter(rest, itSTRING, symtab));
+        return;
+    }
     int blockCount = 0;
     int quoteCount = 0;
     int count = 0;
@@ -371,6 +377,10 @@ QString OperationExpression::name(bool caseInsensitive) const
 
 bool OperationExpression::matchesParameterCount(const QString& match, bool in) const {
     int count = parameterCount(in);
+    if ( match.right(1) == "+") {
+        QString n = match.left(match.size() - 1);
+        return count >= n.toInt();
+    }
     QStringList parts = match.split("|");
     foreach(const QString& part, parts) {
         bool ok;
