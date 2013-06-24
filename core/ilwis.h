@@ -149,7 +149,7 @@ const quint64 itCOORDINATE = itCOORD2D | itCOORD3D;
 const quint64 itDISCRETECOORD = itPIXEL | itVOXEL;
 const quint64 itLOCATION = itCOORDINATE | itDISCRETECOORD;
 
-const quint64 itANY = 0x8888888888888888;
+const quint64 itANY = 0xFFFFFFFFFFFFFFFF;
 
 //#define M_LN10      2.30258509299404568402
 #ifndef M_PI
