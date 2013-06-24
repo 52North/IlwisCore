@@ -69,7 +69,7 @@ public:
      * \brief source returns the resource location were this connector is attached to
      * \return the url of the source
      */
-    virtual QUrl source() const { return QUrl();}
+    virtual Resource& source() = 0;
 
 };
 
