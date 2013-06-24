@@ -22,11 +22,10 @@ public:
 
      \param filter filter definition
     */
-    QUrl location() const;
     ConnectorInterface* clone() const;
 
     virtual bool canUse(const QUrl& res) const = 0;
-
+    Resource& source();
 protected:
      Resource _location;
 };

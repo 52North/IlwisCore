@@ -15,9 +15,9 @@
 
 using namespace Ilwis;
 
-QUrl CatalogConnector::location() const
+Resource &CatalogConnector::source()
 {
-    return _location.url();
+    return _location;
 }
 
 ConnectorInterface *CatalogConnector::clone() const
