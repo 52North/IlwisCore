@@ -15,7 +15,7 @@ IlwisTypes IlwisObjectConnector::type() const
     return _resource.ilwisType();
 }
 
-QUrl IlwisObjectConnector::source() const
+Resource &IlwisObjectConnector::source()
 {
-    return _resource.url();
+    return _resource;
 }

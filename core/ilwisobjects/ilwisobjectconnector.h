@@ -12,7 +12,7 @@ public:
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
-    QUrl source() const;
+    Resource& source() ;
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QString defaultName) {
