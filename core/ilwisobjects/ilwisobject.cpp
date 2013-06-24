@@ -90,6 +90,19 @@ bool IlwisObject::prepare( ) {
     return true;
 }
 
+void IlwisObject::setName(const QString &nm)
+{
+    Identity::setName(nm);
+    if ( !connector().isNull())
+        connector()->source().setName(nm);
+}
+
+void IlwisObject::setCode(const QString& cd) {
+    Identity::setCode(cd);
+    if ( !connector().isNull())
+        connector()->source().setCode(cd);
+}
+
 QDateTime IlwisObject::modifiedTime() const
 {
     return _modifiedTime;
@@ -211,17 +224,17 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
     return true;
 }
 
-QUrl IlwisObject::source() const
+Resource IlwisObject::source() const
 {
     if ( _connector.isNull() == false)
         return _connector->source();
-    return QUrl();
+    return Resource();
 }
 
-QUrl IlwisObject::target() const
+Resource IlwisObject::target() const
 {
     if ( _outConnector.isNull())
-        return source();
+        return Resource();
     return _outConnector->source();
 }
 

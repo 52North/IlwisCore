@@ -53,6 +53,8 @@ public:
     virtual ~IlwisObject();
 
     virtual bool prepare();
+    void setName(const QString& nm);
+    void setCode(const QString &cd);
 
    /*!
     \brief returns the moment when the object was last modified
@@ -122,12 +124,12 @@ public:
     * \brief source the location of the source that represents the physical read origin of this object
     * \return url that is sufficient to find the source
     */
-   QUrl source() const;
+   Resource source() const;
    /*!
     * \brief target the location of the source that represents the physical write target of this object
     * \return url that is sufficient to find the target
     */
-   QUrl target() const;
+   Resource target() const;
    virtual bool store(int mode=smMETADATA | smBINARYDATA);
    /*!
     connectTo allocates a connector of a certain format to the ilwisobject.
