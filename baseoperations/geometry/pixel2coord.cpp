@@ -24,7 +24,7 @@ bool Pixel2Coord::execute(ExecutionContext *ctx, SymbolTable& symTable)
     Coordinate crd = _inputGC->georeference()->pixel2Coord(Pixel_d(_voxel.x(), _voxel.y()));
     QVariant var;
     var.setValue<Coordinate>(crd);
-    ctx->addOutput(symTable,var,_outName,itCOORD3D);
+    ctx->addOutput(symTable,var,_outName,itCOORD3D, Resource());
 
     return true;
 }

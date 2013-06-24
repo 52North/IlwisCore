@@ -27,7 +27,7 @@ bool FCoordinate::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     QVariant value;
     value.setValue<Voxel>(_coord);
-    ctx->addOutput(symTable, value, sUNDEF, itCOORD3D);
+    ctx->addOutput(symTable, value, sUNDEF, itCOORD3D, Resource());
 
     return true;
 }

@@ -28,7 +28,7 @@ bool BinaryLogical::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE );
+        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE, _outputGC->source() );
     }
     return _outputGC.isValid();
 }
