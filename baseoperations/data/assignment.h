@@ -20,8 +20,13 @@ private:
         QVariant value;
         IlwisData<T> outputObj = _outputObj.get<T>();
         value.setValue<IlwisData<T>>(outputObj);
-        ctx->_results.push_back(outputObj->name());
+        QString name = outputObj->name();
+        ctx->_results.push_back(name);
+        Resource res = outputObj->source();
         symTable.addSymbol(_outputObj->name(),0, _outputObj->ilwisType(),value);
+        if ( name.indexOf(INTERNAL_PREFIX) == -1 && res.isValid()) {
+            mastercatalog()->addItems({res});
+        }
 
     }
     IIlwisObject _inputObj;
