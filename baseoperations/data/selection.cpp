@@ -35,6 +35,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
         Box3D<qint32> inpbox = box.size();
         inpbox += _base;
+        inpbox += std::vector<qint32>{0, box.min_corner().y(),0};
         inpbox.copyFrom(box, Box3D<>::dimZ);
         PixelIterator iterOut(_outputGC, box);
         PixelIterator iterIn(_inputGC, inpbox);
@@ -68,7 +69,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable, value, _outputGC->name(), itGRIDCOVERAGE);
+        ctx->addOutput(symTable, value, _outputGC->name(), itGRIDCOVERAGE,_outputGC->source());
     }
     return res;
 }
