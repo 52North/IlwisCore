@@ -31,11 +31,14 @@ void ExecutionContext::clear()
 ExecutionContext::ExecutionContext() : _silent(false), _threaded(true){
 }
 
-void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp)
+void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& res)
 {
     QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
     tbl.addSymbol(name,_scope, tp, var);
     _results.push_back(name);
+    if ( name.indexOf(INTERNAL_PREFIX) == -1 && res.isValid()) {
+        mastercatalog()->addItems({res});
+    }
 }
 
 Ilwis::CommandHandler* Ilwis::commandhandler() {
@@ -129,7 +132,7 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                         found = false;
                         break;
                     }
-                    IlwisTypes tpMeta = (*iter).second.toLongLong();
+                    IlwisTypes tpMeta = (*iter).second.toULongLong();
                     if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
                         found = false;
                         break;
