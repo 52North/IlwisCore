@@ -37,7 +37,13 @@ Ilwis::OperationImplementation *Text2Output::create(quint64 metaid, const Ilwis:
 
 Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
 {
-    _text = _expression.parm(0).value();
+    for(int i=0; i < _expression.parameterCount(); ++i){
+        QString str = _expression.parm(i).value();
+        if ( str.size() > 0 && str[0] == '"' && str[str.size()-1] == '"'){
+            str = str.remove('"');
+        }
+        _text += str;
+    }
     if ( _expression.parameterCount() == 2)     {
         //TODO, file based cases
     }
@@ -51,12 +57,12 @@ quint64 Text2Output::createMetadata()
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","text2output");
-    res.addProperty("syntax","text2output(text[,target-file])");
-    res.addProperty("inparameters","1|2");
-    res.addProperty("pin_1_type", itSTRING);
+    res.addProperty("syntax","text2output(text,[text]+)");
+    res.addProperty("inparameters","1+");
+    res.addProperty("pin_1_type", itANY);
     res.addProperty("pin_1_name", TR("input string"));
     res.addProperty("pin_1_desc",TR("input string"));
-    res.addProperty("pin_2_type", itSTRING);
+    res.addProperty("pin_2_type", itANY);
     res.addProperty("pin_2_name", TR("filename or path"));
     res.addProperty("pin_2_desc",TR("optional file were strings will be written; if no path is provided, current working folder will be used"));
     res.addProperty("outparameters",0);
