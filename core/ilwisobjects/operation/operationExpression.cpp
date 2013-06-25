@@ -219,16 +219,16 @@ void  OperationExpression::parseSelectors(const QString& e, const SymbolTable &s
         bool ok;
         int layer = selectPart.toUInt(&ok);
         if ( ok) {
-            _inParameters.push_back(Parameter(QString("layer=%1").arg(layer),itSTRING,symtab));
+            _inParameters.push_back(Parameter(QString("\"layer=%1\"").arg(layer),itSTRING,symtab));
         } else {
-            _inParameters.push_back(Parameter(QString("attribute=%1").arg(selectPart), itSTRING, symtab));
+            _inParameters.push_back(Parameter(QString("\"attribute=%1\"").arg(selectPart), itSTRING, symtab));
         }
     } else {
         QStringList parts = selectPart.split(",");
         if ( parts.size() == 2) {
-            _inParameters.push_back(Parameter(QString("box=%1").arg(selectPart),itSTRING, symtab));
+            _inParameters.push_back(Parameter(QString("\"box=%1\"").arg(selectPart),itSTRING, symtab));
         } else {
-           _inParameters.push_back(Parameter(QString("polygon=%1").arg(selectPart), itSTRING, symtab));
+           _inParameters.push_back(Parameter(QString("\"polygon=%1\"").arg(selectPart), itSTRING, symtab));
         }
     }
     _name = "selection";
