@@ -96,6 +96,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
 
 
     QString selector = _expression.parm(1).value();
+    selector = selector.remove('"');
     int index = selector.indexOf("box=");
     Box2D<double> box;
     if ( index != -1) {
