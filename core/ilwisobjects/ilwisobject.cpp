@@ -90,8 +90,11 @@ bool IlwisObject::prepare( ) {
     return true;
 }
 
-void IlwisObject::setName(const QString &nm)
+void IlwisObject::setName(const QString &nam)
 {
+    QString nm = nam;
+    if ( nm == INTERNAL_PREFIX)
+        nm += QString::number(id());
     Identity::setName(nm);
     if ( !connector().isNull())
         connector()->source().setName(nm);
