@@ -19,7 +19,7 @@ typedef std::function<OperationImplementation *(quint64 metaid, const OperationE
 
 struct KERNELSHARED_EXPORT ExecutionContext {
     void clear();
-    ExecutionContext();
+    ExecutionContext(bool threaded=true);
     bool _silent;
     bool _threaded;
     qint16 _scope=1000;

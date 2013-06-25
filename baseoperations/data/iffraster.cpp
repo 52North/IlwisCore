@@ -64,7 +64,7 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     };
 
-    bool res = OperationHelper::execute(iffunc, _outputGC);
+    bool res = OperationHelper::execute(ctx, iffunc, _outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;

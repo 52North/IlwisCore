@@ -46,7 +46,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(resampleFun, _outputGC);
+    bool res = OperationHelper::execute(ctx, resampleFun, _outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;

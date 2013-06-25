@@ -28,7 +28,7 @@ void ExecutionContext::clear()
     _results.clear();
 }
 
-ExecutionContext::ExecutionContext() : _silent(false), _threaded(true){
+ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(threaded){
 }
 
 void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& res)

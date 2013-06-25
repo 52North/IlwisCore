@@ -45,7 +45,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return true;
         };
 
-        bool res = OperationHelper::execute(unaryFun, _outputGC);
+        bool res = OperationHelper::execute(ctx, unaryFun, _outputGC);
 
         if ( res && ctx != 0) {
             QVariant value;

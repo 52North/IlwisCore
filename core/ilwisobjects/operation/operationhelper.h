@@ -12,12 +12,12 @@ class KERNELSHARED_EXPORT OperationHelper
 public:
     OperationHelper();
     static Box3D<qint32> initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC,  const Parameter &parm, quint64 what);
-    static int subdivideTasks(const IGridCoverage& gcov, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
+    static int subdivideTasks(ExecutionContext *ctx,const IGridCoverage& gcov, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
 
-    template<typename T> static bool execute(T func, IGridCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, IGridCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
         std::vector<Box3D<qint32>> boxes;
 
-        int cores = OperationHelper::subdivideTasks(outputGC,bounds, boxes);
+        int cores = OperationHelper::subdivideTasks(ctx,outputGC,bounds, boxes);
 
         if ( cores == iUNDEF)
             return false;

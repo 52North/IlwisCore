@@ -32,8 +32,8 @@ private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
 
-    bool assignGridCoverage();
-    bool assignFeatureCoverage();
+    bool assignGridCoverage(ExecutionContext *ctx);
+    bool assignFeatureCoverage(ExecutionContext *ctx);
 };
 }
 }

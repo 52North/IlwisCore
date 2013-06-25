@@ -108,7 +108,7 @@ IIlwisObject OperationHelper::initialize(const IIlwisObject &inputObject, IlwisT
     return obj;
 }
 
-int OperationHelper::subdivideTasks(const IGridCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
+int OperationHelper::subdivideTasks(ExecutionContext *ctx,const IGridCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
 {
     if ( !gcov.isValid() || gcov->size().isNull() || gcov->size().ysize() == 0) {
         return ERROR1(ERR_NO_INITIALIZED_1, "Grid size");

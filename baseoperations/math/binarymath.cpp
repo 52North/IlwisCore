@@ -62,7 +62,7 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTa
         return true;
     };
 
-    if (!OperationHelper::execute(binaryMath, _outputGC))
+    if (!OperationHelper::execute(ctx, binaryMath, _outputGC))
             return false;
 
 
@@ -104,7 +104,7 @@ bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& sym
         return true;
     };
 
-    bool res = OperationHelper::execute(binaryMath, _outputGC);
+    bool res = OperationHelper::execute(ctx, binaryMath, _outputGC);
 
     if (res)
         return setOutput(ctx, symTable);

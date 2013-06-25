@@ -26,7 +26,7 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 {
 }
 
-bool Assignment::assignFeatureCoverage() {
+bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 
     IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
     IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
@@ -38,7 +38,7 @@ bool Assignment::assignFeatureCoverage() {
     return true;
 }
 
-bool Assignment::assignGridCoverage() {
+bool Assignment::assignGridCoverage(ExecutionContext *ctx) {
     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
         IGridCoverage inputGC = _inputObj.get<GridCoverage>();
@@ -60,7 +60,7 @@ bool Assignment::assignGridCoverage() {
         return true;
     };
 
-    return  OperationHelper::execute(Assign, outputGC);
+    return  OperationHelper::execute(ctx, Assign, outputGC);
 
 }
 
@@ -71,11 +71,11 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     bool res = false;
     if ( _inputObj->ilwisType() == itGRIDCOVERAGE) {
-        if((res = assignGridCoverage()) == true)
+        if((res = assignGridCoverage(ctx)) == true)
             setOutput<GridCoverage>(ctx, symTable);
     }
     if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
-        if((res = assignFeatureCoverage()) == true)
+        if((res = assignFeatureCoverage(ctx)) == true)
             setOutput<FeatureCoverage>(ctx, symTable);
     }
     return res;

@@ -64,7 +64,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(selection, _outputGC, _box);
+    bool res = OperationHelper::execute(ctx,selection, _outputGC, _box);
 
     if ( res && ctx != 0) {
         QVariant value;
