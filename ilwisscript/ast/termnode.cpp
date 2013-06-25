@@ -123,11 +123,21 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
         else
             value = _id->id();
         if ( _selectors.size() > 0) {
-            for(QSharedPointer<Selector> range: _selectors)  {
-                if ( range->box().isValid())
-                    value += "[" + range->box().toString() + "]";
-                else
-                    value += "[" + range->variable() + "]";
+            // selectors are handled by successive calls to the selection operation and in the end giving the temp object to the value
+            for(QSharedPointer<Selector> selector: _selectors)  {
+                QString selectordef;
+                if ( !selector->box().isNull())
+                    selectordef = QString("\"box=%1 %2, %3 %4\"").arg(selector->box().min_corner().x()).arg(selector->box().min_corner().y()).
+                                                                arg(selector->box().max_corner().x()).arg(selector->box().max_corner().y());
+                else if ( selector->variable() != sUNDEF)
+                    selectordef = "\"attribute=" + selector->variable() + "\"";
+                QString outname = INTERNAL_PREFIX;
+                QString expression = QString("%1=selection(%2,%3)").arg(outname).arg(value).arg(selectordef);
+                Ilwis::ExecutionContext ctx;
+                if(!Ilwis::commandhandler()->execute(expression, &ctx, symbols))
+                    return false;
+                QString outgc = ctx._results[0];
+                value = outgc;
             }
         }
         _value = {value, NodeValue::ctID};
