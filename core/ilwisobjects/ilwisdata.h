@@ -122,7 +122,7 @@ public:
     */
     bool prepare(const QString& name, IlwisTypes tp=itANY){
         if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
-            QString sid = name.mid(11);
+            QString sid = name.mid(10);
             bool ok;
             quint64 id = sid.toLongLong(&ok);
             if (ok){
