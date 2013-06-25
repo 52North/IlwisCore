@@ -142,6 +142,19 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     }
 }
 
+void Resource::setName(const QString &nm)
+{
+    Identity::setName(nm);
+    if ( nm.indexOf(INTERNAL_PREFIX) != -1)  {
+        QString url = _resource.toString();
+        int index = url.lastIndexOf("/");
+        if ( index != -1) {
+            url = url.left(index+1) + nm;
+        }
+        _resource = QUrl(url);
+    }
+}
+
 QVariant Resource::operator [](const QString &prop) const
 {
     QString property = prop.toLower();
