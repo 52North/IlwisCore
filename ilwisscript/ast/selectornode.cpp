@@ -6,7 +6,7 @@
 using namespace Ilwis;
 
 
-Selector::Selector(const QString& tp) : ASTNode(tp)
+Selector::Selector(const QString& tp) : ASTNode(tp), _variable(sUNDEF)
 {
     _box = Ilwis::Box2D<int>(Ilwis::Point2D<int>(0,0), Ilwis::Point2D<int>(0,0));
 }
