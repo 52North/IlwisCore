@@ -35,6 +35,8 @@ options {
 #include "ifnode.h"
 #include "formatter.h"
 #include "functionstatementnode.h"
+
+using namespace Ilwis;
 }
 
 
@@ -153,7 +155,8 @@ term returns [ TermNode *node]
 	|	id1 = ID '(' 					{ node->setId(new IDNode((char *)($id1.text->chars))); }
 		(actualParameters				{   node->setParameters($actualParameters.node); }
 		)? ')'						
-	|	id2 = ID (id3=selector)+			{ node->setId(new IDNode((char *)($id2.text->chars)));node->addSelector($id3.node);}
+	|	id2 = ID 					{ node->setId(new IDNode((char *)($id2.text->chars)));}
+		(id3=selector					{node->addSelector($id3.node);})+
 	|	id2 = ID					{ node->setId(new IDNode((char *)($id2.text->chars)));}
 	;
 
