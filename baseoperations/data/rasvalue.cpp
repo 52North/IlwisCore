@@ -57,10 +57,10 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
 
 quint64 RasValue::createMetadata()
 {
-    QString url = QString("ilwis://operations/rasvalue");
+    QString url = QString("ilwis://operations/gridvalue");
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
-    res.addProperty("longname","rasvalue");
+    res.addProperty("longname","gridvalue");
     res.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
     res.addProperty("inparameters","3|4");
     res.addProperty("pin_1_type", itGRIDCOVERAGE);
