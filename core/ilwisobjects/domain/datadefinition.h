@@ -22,9 +22,9 @@ public:
 protected:
     IDomain _coveragedomain;
     IDomain _indexdomain;
-    PRange _coveragerange;
-    PRange _indexrange;
-    PRange _stretchRange;
+    SPRange _coveragerange;
+    SPRange _indexrange;
+    SPRange _stretchRange;
 };
 
 }

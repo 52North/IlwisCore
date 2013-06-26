@@ -58,10 +58,11 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
     return *this;
 }
 
-Ilwis::PRange DataDefinition::range(DomainAxis da) const
+Ilwis::SPRange DataDefinition::range(DomainAxis da) const
 {
-    if ( da == daCOVERAGE)
+    if ( da == daCOVERAGE){
         return _coveragerange;
+    }
     return _indexrange;
 }
 
@@ -87,7 +88,7 @@ void DataDefinition::domain(const IDomain &dom, DomainAxis da)
         if ( !_coveragedomain.isValid())
             return;
 
-        PRange r = _coveragedomain->range<>();
+        SPRange r = _coveragedomain->range<>();
         if ( r)
             _coveragerange.reset(r->clone());
     } else {
@@ -95,7 +96,7 @@ void DataDefinition::domain(const IDomain &dom, DomainAxis da)
         if ( !_indexdomain.isValid())
             return;
 
-        PRange r = _indexdomain->range<>();
+        SPRange r = _indexdomain->range<>();
         if ( r)
             _indexrange.reset(r->clone());
 
