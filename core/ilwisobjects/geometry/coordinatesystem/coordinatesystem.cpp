@@ -3,7 +3,7 @@
 #include "kernel.h"
 #include "geometries.h"
 #include "ilwisdata.h"
-#include "domain.h"
+//#include "domain.h"
 #include "coordinatesystem.h"
 
 using namespace Ilwis;
