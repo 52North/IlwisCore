@@ -116,7 +116,7 @@ int OperationHelper::subdivideTasks(ExecutionContext *ctx,const IGridCoverage& g
     }
 
     int cores = std::min(QThread::idealThreadCount(),gcov->size().ysize());
-    if (gcov->size().totalSize() < 10000)
+    if (gcov->size().totalSize() < 10000 || ctx->_threaded == false)
         cores = 1;
 
     boxes.clear();
