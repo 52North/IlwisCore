@@ -45,7 +45,7 @@ public:
      copies the range to a new instance. This pointer has to be deleted by the caller
      * \return the new Range
      */
-    virtual double evaluate(double, bool inclusive = true) const { return rUNDEF; }
+    virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
     virtual Range *clone() const = 0;
 protected:
 private:
@@ -54,7 +54,7 @@ private:
 
 
 };
-typedef QSharedPointer<Range> PRange;
+typedef QSharedPointer<Range> SPRange;
 }
 
 #endif // RANGE_H

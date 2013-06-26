@@ -49,7 +49,7 @@ public:
 
     QString toString() const ;
     void set(const NumericRange& vr);
-    double evaluate(double, bool inclusive=true) const;
+    double ensure(double, bool inclusive=true) const;
 
     IlwisTypes determineType() const;
 

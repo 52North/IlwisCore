@@ -99,7 +99,7 @@ void NumericRange::set(const NumericRange& vr)
     setMax(vr._max);
 }
 
-double NumericRange::evaluate(double v, bool inclusive) const
+double NumericRange::ensure(double v, bool inclusive) const
 {
     if ( !contains(v, inclusive))
         return _undefined;
