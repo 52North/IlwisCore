@@ -4,7 +4,6 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
-#include "pixeliterator.h"
 #include "unarymath.h"
 
 using namespace Ilwis;

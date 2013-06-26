@@ -4,8 +4,8 @@
 #include "kernel.h"
 #include "raster.h"
 #include "symboltable.h"
-#include "ilwisoperation.h"
 #include "pixeliterator.h"
+#include "ilwisoperation.h"
 #include "iffraster.h"
 
 using namespace Ilwis;
