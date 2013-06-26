@@ -4,7 +4,6 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
-#include "pixeliterator.h"
 #include "gridinterpolator.h"
 #include "resampleraster.h"
 
@@ -36,11 +35,13 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(_outputGC,box);
         GridInterpolator interpolator(_inputGC, _method);
+        SPRange range = _inputGC->datadef().range();
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
            Coordinate c = _outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
            Coordinate c2 = _inputGC->coordinateSystem()->coord2coord(_outputGC->coordinateSystem(),c);
-           *iterOut = interpolator.coord2value(c2);
+           double v = interpolator.coord2value(c2);
+           *iterOut = range->ensure(v);
             ++iterOut;
         }
         return true;
