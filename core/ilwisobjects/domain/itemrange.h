@@ -20,7 +20,7 @@ public:
     virtual bool isValid() const = 0;
     virtual void add(DomainItem *item) = 0;
     virtual void remove(const QString& nm) = 0;
-    double evaluate(double v, bool inclusive = true) const;
+    double ensure(double v, bool inclusive = true) const;
 
 
     static DomainItem *create(const QString& type);

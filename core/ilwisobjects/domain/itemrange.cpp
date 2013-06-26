@@ -9,7 +9,7 @@ using namespace Ilwis;
 
 QHash<QString, CreateItemFunc> ItemRange::_createItem;
 
-double ItemRange::evaluate(double v, bool ) const
+double ItemRange::ensure(double v, bool ) const
 {
     //TODO  more advanced impl needed? may cost performance
     return v;
