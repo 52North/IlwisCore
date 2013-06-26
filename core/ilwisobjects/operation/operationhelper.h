@@ -32,6 +32,16 @@ public:
         for(int i =0; i < cores; ++i) {
             res &= futures[i].get();
         }
+
+        if ( res && outputGC.isValid()) {
+            if ( outputGC->datadef().domain()->valueType() & itNUMERIC) {
+                CoverageStatistics stats;
+                PixelIterator iter(outputGC);
+                stats.calculate(iter, iter.end());
+                NumericRange *rng = new NumericRange(stats.min(), stats.max(), std::pow(10,-stats.significantDigits()));
+                outputGC->datadef().range(rng,DataDefinition::daCOVERAGE);
+            }
+        }
         return res;
     }
     IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, const Parameter &parm, quint64 what);
