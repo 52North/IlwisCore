@@ -9,6 +9,8 @@
 #include "operationmetadata.h"
 #include "operation.h"
 #include "commandhandler.h"
+#include "pixeliterator.h"
+#include "containerstatistics.h"
 #include "operationhelper.h"
 
 #endif // ILWISOPERATION_H
