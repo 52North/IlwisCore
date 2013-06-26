@@ -47,7 +47,7 @@ public:
             }
 
             double v = _grid->value(pix);
-            return datadef().range()->evaluate(v);
+            return datadef().range()->ensure(v);
         }
         return rUNDEF;
     }
