@@ -38,7 +38,7 @@ IlwisTypes NumericDomain::ilwisType() const
     return itNUMERICDOMAIN;
 }
 
-PRange NumericDomain::getRange()
+SPRange NumericDomain::getRange()
 {
     return _range;
 }

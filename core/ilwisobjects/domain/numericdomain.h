@@ -19,11 +19,11 @@ public:
     IlwisTypes ilwisType() const;
 
 protected:
-    PRange getRange();
+    SPRange getRange();
 private:
     long significantDigits(double m1);
 
-    PRange _range;
+    SPRange _range;
 
 };
 
