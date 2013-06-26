@@ -1,5 +1,8 @@
 #include "kernel.h"
 #include "raster.h"
+#include "boostext.h"
+#include "polygon.h"
+#include "linerasterizer.h"
 #include "pixeliterator.h"
 
 
@@ -23,6 +26,32 @@ PixelIterator::PixelIterator(IGridCoverage raster, const Box3D<>& box, double st
     _isValid(false)
 {
     init();
+}
+
+PixelIterator::PixelIterator(IGridCoverage raster, const Polygon &pol, const ICoordinateSystem& csyIn, double step) :
+    _raster(raster),
+    _localOffset(0),
+    _currentBlock(0),
+    _step(step),
+    _flow(fXYZ),
+    _isValid(false)
+{
+    init();
+    _polboundayChanges.resize(raster->size().ysize());
+    Coordinate crdLast;
+    LineRasterizer rasteriszer(_raster->georeference(), csyIn);
+    for(const Coordinate2d& crd : pol.outer()) {
+        if ( crdLast.isValid()) {
+            std::vector<Pixel> pixels = rasteriszer.rasterize(crdLast, crd);
+            for(const Pixel& pixel : pixels){
+                _polboundayChanges[pixel.y()].push_back(pixel.x());
+            }
+        }
+        crdLast = crd;
+    }
+    for(auto& line : _polboundayChanges) {
+        std::sort(line.begin(), line.end())   ;
+    }
 }
 
 PixelIterator::PixelIterator(const PixelIterator& iter)  {
@@ -59,6 +88,7 @@ void PixelIterator::copy(const PixelIterator &iter) {
     _endpositionid = iter._endpositionid;
     _localOffset = iter._localOffset;
     _currentBlock = iter._currentBlock;
+    _polboundayChanges = iter._polboundayChanges;
 
 }
 
@@ -120,6 +150,36 @@ inline bool PixelIterator::moveXYZ(int n) {
     return true;
 }
 
+bool PixelIterator::moveXYZByPol(int n) {
+//    _x += n * _step;
+//    _localOffset += n;
+//    _xChanged = true;
+//    _yChanged = _zChanged = false;
+//    if ( _x > _endx) {
+//        ++_y;
+//        _x = _box.min_corner().x();
+//        _yChanged = true;
+//        qint32 ylocal = _y % _grid->maxLines();
+//        _localOffset = _x + ylocal * _grid->size().xsize();
+//        if ( ylocal == 0) {
+//            ++_currentBlock;
+//            _localOffset = _x;
+//        }
+//        if ( _y > _endy) {
+//            ++_z;
+//            ++_currentBlock;
+//            _zChanged = true;
+//            _y = _box.min_corner().y();
+//            _localOffset = _box.min_corner().x();
+//            if ( _z >= _endz) { // done with this iteration block
+//                _positionid = _endpositionid;
+//                return false;
+//            }
+//        }
+//    }
+    return true;
+}
+
 inline bool PixelIterator::isAtEnd() const {
     return _x == _box.max_corner().x() &&
            _y == _box.max_corner().y() &&
@@ -132,19 +192,24 @@ Voxel PixelIterator::position() const
 }
 
 inline bool PixelIterator::move(int n) {
-    if (isAtEnd()) {
-        _positionid = _endpositionid;
-        return false;
-    }
-    bool ok;
-    if ( _flow == fXYZ) {
-        ok = moveXYZ(n);
-    }
-    else if ( _flow == fYXZ){
-    }
-    if (ok)
-        _positionid = calcPosId();
 
+    bool ok;
+    if (_polboundayChanges.size() > 0) {
+
+
+    } else {
+        if (isAtEnd()) {
+            _positionid = _endpositionid;
+            return false;
+        }
+        if ( _flow == fXYZ) {
+            ok = moveXYZ(n);
+        }
+        else if ( _flow == fYXZ){
+        }
+        if (ok)
+            _positionid = calcPosId();
+    }
     return ok;
 }
 
