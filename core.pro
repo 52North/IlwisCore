@@ -85,7 +85,8 @@ SOURCES += core/kernel.cpp \
     core/util/mathhelper.cpp \
     core/ilwisobjects/domain/textdomain.cpp \
     core/ilwisobjects/geometry/georeference/georefadapter.cpp \
-    core/ilwisobjects/operation/symboltable.cpp
+    core/ilwisobjects/operation/symboltable.cpp \
+    core/util/linerasterizer.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -181,7 +182,8 @@ HEADERS += core/kernel.h\
     core/util/mathhelper.h \
     core/ilwisobjects/domain/textdomain.h \
     core/ilwisobjects/geometry/georeference/georefadapter.h \
-    core/ilwisobjects/operation/symboltable.h
+    core/ilwisobjects/operation/symboltable.h \
+    core/util/linerasterizer.h
 
 
 
