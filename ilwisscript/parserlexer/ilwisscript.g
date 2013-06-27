@@ -35,7 +35,7 @@ options {
 #include "ifnode.h"
 #include "formatter.h"
 #include "functionstatementnode.h"
-
+ 
 using namespace Ilwis;
 }
 
@@ -365,8 +365,8 @@ ifStatement returns [ Ifnode *node]
 @init{
 	node = new Ifnode();
 }
-	:	'if' expression 'then' (result=statement)+ 	{ node->setCondition($expression.node); node->addThen($result.node); } 
-		('else' (result2=statement)+)?			{ node->addElse($result2.node ); }
+	:	'if' expression (EOL)? 'then' EOL* (result=statement {node->addThen($result.node);} EOL* )+ { node->setCondition($expression.node);  } 
+		('else' EOL* (result2=statement  {node->addElse($result2.node ); } EOL*)+)?			
 		'endif'
 	
 	;
