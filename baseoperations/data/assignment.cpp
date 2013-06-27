@@ -17,12 +17,14 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
-Assignment::Assignment()
+Assignment::Assignment() : _number(rILLEGAL)
 {
 }
 
 
-Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
+Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
+    OperationImplementation(metaid, expr),
+    _number(rILLEGAL)
 {
 }
 
@@ -70,13 +72,19 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     bool res = false;
-    if ( _inputObj->ilwisType() == itGRIDCOVERAGE) {
-        if((res = assignGridCoverage(ctx)) == true)
-            setOutput<GridCoverage>(ctx, symTable);
-    }
-    if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
-        if((res = assignFeatureCoverage(ctx)) == true)
-            setOutput<FeatureCoverage>(ctx, symTable);
+    if ( _number != rILLEGAL) {
+
+    } else {
+        if ( _inputObj.isValid()) {
+            if ( _inputObj->ilwisType() == itGRIDCOVERAGE) {
+                if((res = assignGridCoverage(ctx)) == true)
+                    setOutput<GridCoverage>(ctx, symTable);
+            }
+            if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
+                if((res = assignFeatureCoverage(ctx)) == true)
+                    setOutput<FeatureCoverage>(ctx, symTable);
+            }
+        }
     }
     return res;
 }
@@ -93,19 +101,27 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
         return sPREPAREFAILED;
     }
 
-    QString coverage = _expression.parm(0).value();
-    Resource res = mastercatalog()->name2Resource(coverage);
-    if ( !res.isValid()) {
-        ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
-        return sPREPAREFAILED;
+    bool ok;
+    _number = _expression.parm(0).value().toDouble(&ok);
+    if ( !ok) {
+        _number = rILLEGAL;
+        QString coverage = _expression.parm(0).value();
+        Resource res = mastercatalog()->name2Resource(coverage);
+        if ( !res.isValid()) {
+            ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
+            return sPREPAREFAILED;
+        }
+        _inputObj.prepare(coverage, res.ilwisType());
+        OperationHelper helper;
+        _outputObj = helper.initialize(_inputObj, res.ilwisType(), _expression.parm(0),
+                                       itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
+        QString outname = _expression.parm(0,false).value();
+        if ( outname != sUNDEF)
+            _outputObj->setName(outname);
+    } else {
+        _varName = _expression.parm(0,false).value();
     }
-    _inputObj.prepare(coverage, res.ilwisType());
-    OperationHelper helper;
-    _outputObj = helper.initialize(_inputObj, res.ilwisType(), _expression.parm(0),
-                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
-    QString outname = _expression.parm(0,false).value();
-    if ( outname != sUNDEF)
-        _outputObj->setName(outname);
+
     return sPREPARED;
 }
 
@@ -115,13 +131,13 @@ quint64 Assignment::createMetadata()
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","assignment");
-    res.addProperty("syntax","assignment(gridcoverage)");
+    res.addProperty("syntax","assignment(thing)");
     res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with any domain"));
-    res.addProperty("pout_1_type", itGRIDCOVERAGE);
-    res.addProperty("pout_1_name", TR("copied object"));
+    res.addProperty("pin_1_type", itANY);
+    res.addProperty("pin_1_name", TR("input thing"));
+    res.addProperty("pin_1_desc",TR("input thing"));
+    res.addProperty("pout_1_type", itANY);
+    res.addProperty("pout_1_name", TR("copied thing"));
     res.addProperty("pout_1_desc",TR(""));
     res.prepare();
     url += "=" + QString::number(res.id());

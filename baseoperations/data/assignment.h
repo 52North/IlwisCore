@@ -31,6 +31,8 @@ private:
     }
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
+    double _number;
+    QString _varName;
 
     bool assignGridCoverage(ExecutionContext *ctx);
     bool assignFeatureCoverage(ExecutionContext *ctx);
