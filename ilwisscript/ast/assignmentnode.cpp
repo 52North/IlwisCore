@@ -83,7 +83,9 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             fnamespace = fnode->fnamespace();
         }
         NodeValue val = _expression->value();
+        QString result = _result->id();
         if ( val.typeName() == QString("Ilwis::IGridCoverage")) {
+            Ilwis::IGridCoverage gcresult = val.value<Ilwis::IGridCoverage>();
             if ( format == "" || format == sUNDEF) {
                 Formatter *fnode = ScriptNode::activeFormat(itGRIDCOVERAGE);
                 if ( fnode) {
@@ -91,26 +93,25 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
                     fnamespace = fnode->fnamespace();
                 }
             }
-            if ( format == "" || format == sUNDEF) {
-                return false;
+            if ( format != "" && format != sUNDEF) {
+
+
+                gcresult->setName(result);
+                gcresult->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
+                gcresult->setCreateTime(Ilwis::Time::now());
+                gcresult->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+
             }
-            Ilwis::IGridCoverage gcresult = val.value<Ilwis::IGridCoverage>();
-            QString result = _result->id();
-            gcresult->setName(result);
-            gcresult->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
-            gcresult->setCreateTime(Ilwis::Time::now());
-            gcresult->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
             if ( result.indexOf(INTERNAL_PREFIX) == -1) {
                 mastercatalog()->addItems({gcresult->source()});
             }
         }
         Symbol sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
-
         symbols.addSymbol(_result->id(), scope, tp, _expression->value());
+
         return true;
     }
     return false;
 }
-
 
