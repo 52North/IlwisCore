@@ -108,6 +108,9 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
         }
         Symbol sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
+        if ( tp == itUNKNOWN) {
+            tp = Domain::ilwType(val);
+        }
         symbols.addSymbol(_result->id(), scope, tp, _expression->value());
 
         return true;
