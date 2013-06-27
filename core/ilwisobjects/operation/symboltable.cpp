@@ -20,8 +20,11 @@ SymbolTable::SymbolTable() //:
 void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QVariant& v)
 {
     QVariant var = getValue(name,scope); // do we already have it?
-    if (var.isValid())
+    if (var.isValid()){
+        _symbols[name]._var = v;
+        _symbols[name]._type = tp;
         return;
+    }
     if ( tp == 0) {
         if ( isRealNumerical(v))
             tp = itDOUBLE;
@@ -80,16 +83,28 @@ bool SymbolTable::isNumerical(const QVariant& var) {
 }
 
 bool SymbolTable::isRealNumerical(const QVariant& var)  {
-    return var.type() == QMetaType::Float ||  var.type() == QMetaType::Double;
+    QString tpname = var.typeName();
+    bool ok =  var.type() == QMetaType::Float ||  var.type() == QMetaType::Double;
+    if ( ok)
+        return true;
+    var.toDouble(&ok);
+    return ok;
 }
 
 bool SymbolTable::isIntegerNumerical(const QVariant& var) {
     QMetaType::Type tp = static_cast<QMetaType::Type>(var.type());
-    return tp == QMetaType::Int ||  tp == QMetaType::UInt ||
+    bool ok = tp == QMetaType::Int ||  tp == QMetaType::UInt ||
             tp == QMetaType::LongLong ||  tp == QMetaType::ULongLong ||
             tp == QMetaType::Long ||  tp == QMetaType::ULong ||
             tp == QMetaType::Short || tp == QMetaType::UShort ||
             tp == QMetaType::Char || tp == QMetaType::UChar;
+    if ( ok)
+        return true;
+    var.toLongLong(&ok);
+    if ( ok)
+        return true;
+    var.toULongLong(&ok);
+    return ok;
 }
 
 bool SymbolTable::isDataLink(const QVariant& value) {
