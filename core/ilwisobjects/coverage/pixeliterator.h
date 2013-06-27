@@ -28,7 +28,6 @@ public:
     bool isValid() const;
     PixelIterator();
     PixelIterator(IGridCoverage raster, const Box3D<>& box=Box3D<>(), double step=1.0);
-    PixelIterator(IGridCoverage raster, const Polygon& pol, const Ilwis::ICoordinateSystem &csyIn, double step=1.0);
     PixelIterator(const PixelIterator& iter);
 
     PixelIterator& operator=(const PixelIterator& iter);
@@ -83,7 +82,6 @@ protected:
     void initPosition();
     bool move(int n);
     bool moveXYZ(int n) ;
-    bool moveXYZByPol(int n) ;
     quint64 calcPosId() const {
         return _x + _y * 1e5 + _z*1e10 + _raster->id() * 1e13;
     }
@@ -109,8 +107,6 @@ protected:
     bool _xChanged =false;
     bool _yChanged = false;
     bool _zChanged = false;
-    std::vector<std::vector<int>> _polboundayChanges;
-
 };
 
 }
