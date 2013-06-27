@@ -31,6 +31,24 @@ Script::Script(quint64 metaid,const Ilwis::OperationExpression &expr) : Operatio
 {
 }
 
+bool Script::detectIf(const std::string& line) {
+    int index = line.find("if ");
+    if ( index == std::string::npos)
+        return false;
+    if ( index == 0)
+        return true;
+
+    int index1 = line.find('"');
+    int index2 = line.find_last_of('"');
+    bool ok = index < index1 || index > index2;
+    if (!ok)
+        return false;
+
+    if ( index != 0 && line[index -1] == ' ')
+        return true;
+
+}
+
 OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolTable&) {
     QString txt = _expression.parm(0).value();
     QUrl url(txt);
@@ -45,7 +63,9 @@ OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolT
                 while(!in.eof()) {
                     std::string line;
                     std::getline(in, line);
-                    if (line.find("if ") != std::string::npos){
+                    if ( line == "") // skip empty lines
+                        continue;
+                    if (detectIf(line)){
                         ignorenl=true;
                     }
                     if (line.find("endif") != std::string::npos){

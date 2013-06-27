@@ -14,9 +14,12 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
 
     static quint64 createMetadata();
+
 private:
     std::unique_ptr<char []> _buffer;
     quint32 _bufferSize;
+
+    bool detectIf(const std::string &line);
 
 };
 }
