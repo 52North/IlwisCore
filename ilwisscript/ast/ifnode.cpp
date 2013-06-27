@@ -41,7 +41,7 @@ bool Ifnode::evaluate(SymbolTable &symbols, int scope)
         }
         return ok;
     }
-    return false;
+    return ok;
 }
 
 void Ifnode::setCondition(ExpressionNode *expr)
