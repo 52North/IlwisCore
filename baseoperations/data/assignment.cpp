@@ -113,7 +113,7 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
         }
         _inputObj.prepare(coverage, res.ilwisType());
         OperationHelper helper;
-        _outputObj = helper.initialize(_inputObj, res.ilwisType(), _expression.parm(0),
+        _outputObj = helper.initialize(_inputObj, res.ilwisType(),
                                        itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
         if ( outname != sUNDEF)
