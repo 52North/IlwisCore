@@ -124,8 +124,14 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                 if ( !expr.matchesParameterCount(parmcount))
                     continue;
                 bool found = true;
-                for(int i=0; i < expr.parameterCount(); ++i) {
-                    QString key = QString("pin_%1_type").arg(i+1);
+                long index;
+                if ( (index = parmcount.indexOf('+')) != -1) {
+                    index = parmcount.left(index).toUInt();
+                } else
+                    index = 10000;
+                for(long i=0; i < expr.parameterCount(); ++i) {
+                    int n = min(i+1, index);
+                    QString key = QString("pin_%1_type").arg(n);
                     IlwisTypes tpExpr = expr.parm(i).valuetype();
                     auto iter = values.find(key);
                     if ( iter == values.end()){
