@@ -11,7 +11,7 @@ class KERNELSHARED_EXPORT OperationHelper
 {
 public:
     OperationHelper();
-    static Box3D<qint32> initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC,  const Parameter &parm, quint64 what);
+    static Box3D<qint32> initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC, const Ilwis::Parameter &parm, quint64 what);
     static int subdivideTasks(ExecutionContext *ctx,const IGridCoverage& gcov, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
 
     template<typename T> static bool execute(ExecutionContext* ctx, T func, IGridCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
@@ -44,7 +44,7 @@ public:
         }
         return res;
     }
-    IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, const Parameter &parm, quint64 what);
+    static IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what);
 };
 }
 

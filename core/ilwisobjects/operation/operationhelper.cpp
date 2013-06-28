@@ -57,7 +57,7 @@ Box3D<qint32> OperationHelper::initialize(const IGridCoverage &inputGC, IGridCov
     return box;
 }
 
-IIlwisObject OperationHelper::initialize(const IIlwisObject &inputObject, IlwisTypes tp, const Parameter& parm, quint64 what)
+IIlwisObject OperationHelper::initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what)
 {
     Resource resource(tp);
     if (inputObject->ilwisType() & itCOVERAGE) {
@@ -90,7 +90,7 @@ IIlwisObject OperationHelper::initialize(const IIlwisObject &inputObject, IlwisT
     obj.prepare(resource);
     if (inputObject->ilwisType() & itCOVERAGE) {
         ICoverage covInput = inputObject.get<Coverage>();
-        ICoverage covOutput = inputObject.get<Coverage>();
+        ICoverage covOutput = obj.get<Coverage>();
         if (inputObject->ilwisType() == itGRIDCOVERAGE) {
             //IGridCoverage gcInput = inputObject.get<GridCoverage>();
         }
