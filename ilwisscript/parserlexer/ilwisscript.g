@@ -281,10 +281,11 @@ whileStatement returns [ WhileNode *node]
 @init{
 	node = new WhileNode();
 }
-	:	'while' expression EOL			{ node->setCondition($expression.node); }
-		( (statement|				{ node->addChild($statement.node); }
-		breakStatement				{ node->addChild($breakStatement.node); }
-		) EOL
+	:	'while' expression 'do' (EOL)*	{ node->setCondition($expression.node); }
+		( (statement 				{ node->addChild($statement.node); }
+		|				
+		breakStatement  			{ node->addChild($breakStatement.node); }
+		) (EOL)*	 
 		)*
 		'endwhile' 
 	;
