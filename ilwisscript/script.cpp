@@ -31,8 +31,8 @@ Script::Script(quint64 metaid,const Ilwis::OperationExpression &expr) : Operatio
 {
 }
 
-bool Script::detectIf(const std::string& line) {
-    int index = line.find("if ");
+bool Script::detectKey(const std::string& line, const std::string& key) {
+    int index = line.find(key);
     if ( index == std::string::npos)
         return false;
     if ( index == 0)
@@ -58,20 +58,20 @@ OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolT
         if (exists && inf.suffix() == "isf") {
             std::string text;
             std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
-            bool ignorenl=false;
+            int ignorenCount=0;
             if(in.is_open() && in.good()) {
                 while(!in.eof()) {
                     std::string line;
                     std::getline(in, line);
                     if ( line == "") // skip empty lines
                         continue;
-                    if (detectIf(line)){
-                        ignorenl=true;
+                    if (detectKey(line, "if") || detectKey(line, "while") ){
+                        ignorenCount++;
                     }
-                    if (line.find("endif") != std::string::npos){
-                        ignorenl=false;
+                    if (detectKey(line, "endif") || detectKey(line, "endwhile")) {
+                        ignorenCount--;
                     }
-                    text += line + (ignorenl ? " " : ";");
+                    text += line + (ignorenCount != 0 ? " " : ";");
                 }
                 char *buf = new char[text.size()];
                 memcpy(buf,text.c_str(), text.size());

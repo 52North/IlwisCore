@@ -19,7 +19,7 @@ private:
     std::unique_ptr<char []> _buffer;
     quint32 _bufferSize;
 
-    bool detectIf(const std::string &line);
+    bool detectKey(const std::string &line, const std::string &key);
 
 };
 }
