@@ -10,8 +10,11 @@ public:
     QString nodeType() const;
 
 
+    bool evaluate(SymbolTable &symbols, int scope);
 private:
     QSharedPointer<ExpressionNode> _condition;
+
+    bool checkCondition(Ilwis::SymbolTable &symbols, int scope);
 
 };
 }
