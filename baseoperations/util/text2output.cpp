@@ -44,9 +44,6 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *ctx
         }
         _text += str;
     }
-    if ( _expression.parameterCount() == 2)     {
-        //TODO, file based cases
-    }
     return sPREPARED;
 
 }
