@@ -83,6 +83,11 @@ void PixelIterator::init() {
     if ( inside) {
         _grid = _raster->grid();
     }
+    if ( _grid == 0) {
+        _isValid = false;
+        ERROR1(ERR_NO_INITIALIZED_1,_raster->name());
+        return;
+    }
 
     initPosition();
     quint64 shift = _x + _y * 1e5 + (_z + 1) *1e10;
