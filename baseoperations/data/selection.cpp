@@ -26,23 +26,26 @@ Selection::~Selection()
 {
 }
 
+
 bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
+    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
 
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
         Box3D<qint32> inpbox = box.size();
         inpbox += _base;
         inpbox += std::vector<qint32>{0, box.min_corner().y(),0};
         inpbox.copyFrom(box, Box3D<>::dimZ);
-        PixelIterator iterOut(_outputGC, box);
-        PixelIterator iterIn(_inputGC, inpbox);
+        PixelIterator iterOut(outputGC, box);
+        PixelIterator iterIn(inputGC, inpbox);
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(_inputGC->attributeTable(itCOVERAGE), "coverage_key");
+            rec = AttributeRecord(inputGC->attributeTable(itCOVERAGE), "coverage_key");
 
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
@@ -64,14 +67,16 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(ctx,selection, _outputGC, _box);
+    bool res = OperationHelper::execute(ctx,selection, outputGC, _box);
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable, value, _outputGC->name(), itGRIDCOVERAGE,_outputGC->source());
+        value.setValue<IGridCoverage>(outputGC);
+        ctx->addOutput(symTable, value, outputGC->name(), itGRIDCOVERAGE,outputGC->source());
     }
     return res;
+
+
 }
 
 Ilwis::OperationImplementation *Selection::create(quint64 metaid, const Ilwis::OperationExpression &expr)
@@ -79,30 +84,32 @@ Ilwis::OperationImplementation *Selection::create(quint64 metaid, const Ilwis::O
     return new Selection(metaid, expr);
 }
 
+
 Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, const SymbolTable &)
 {
     if ( _expression.parameterCount() != 2) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;
     }
-
+    IlwisTypes inputType = itGRIDCOVERAGE;
     QString gc = _expression.parm(0).value();
-    if (!_inputGC.prepare(gc)) {
+    if (!_inputObj.prepare(gc, inputType)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-    OperationHelper helper;
+    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
     quint64 copylist = itCOORDSYSTEM;
 
 
     QString selector = _expression.parm(1).value();
     selector = selector.remove('"');
+
     int index = selector.indexOf("box=");
     Box2D<double> box;
     if ( index != -1) {
         QString crdlist = "box(" + selector.mid(index+4) + ")";
         _box = Box3D<qint32>(crdlist);
-        box = _inputGC->georeference()->pixel2Coord(_box);
+        box = inputGC->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN | itTABLE;
         std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
         _base = vec;
@@ -111,14 +118,12 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     index = selector.indexOf("polygon=");
     if ( index != -1)
     {
-        QString crdlist = "polygon(" + selector.mid(index+1) + ")";
-        _box = Box3D<qint32>(crdlist);
-        box = _inputGC->georeference()->pixel2Coord(_box);
+        //TODO
         copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
-        if (! _inputGC->attributeTable(itCOVERAGE).isValid()) {
+        if (! inputGC->attributeTable(itCOVERAGE).isValid()) {
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
@@ -126,30 +131,32 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         copylist |= itGRIDSIZE | itGEOREF | itENVELOPE;
     }
 
-    helper.initialize(_inputGC, _outputGC, _expression.parm(0), copylist);
-    if ( (copylist & itDOMAIN) == 0) {
-        if ( _attribColumn != "") {
-            _outputGC->datadef() = _inputGC->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef();
-        } else {
-           _outputGC->datadef() = _inputGC->datadef();
-        }
-    }
-    if ( (copylist & itGEOREF) == 0) {
+     _outputObj = OperationHelper::initialize(_inputObj,inputType, copylist);
+     if ( !_outputObj.isValid()) {
+         ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
+         return sPREPAREFAILED;
+     }
+     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+     if ( (copylist & itDOMAIN) == 0) {
+         outputGC->datadef() = _attribColumn != "" ? inputGC->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef()
+                                                   : outputGC->datadef() = inputGC->datadef();
+     }
+     QString outputName = _expression.parm(0,false).value();
+     if ( outputName != sUNDEF)
+         _outputObj->setName(outputName);
+     if ( (copylist & itGEOREF) == 0) {
         Resource res(QUrl("ilwis://internal/georeference"),itCORNERSGEOREF);
         res.addProperty("size", IVARIANT(_box.size()));
         res.addProperty("envelope", IVARIANT(box));
-        res.addProperty("coordinatesystem", IVARIANT(_inputGC->coordinateSystem()));
-        res.addProperty("name", _outputGC->name());
-        res.addProperty("centerofpixel",_inputGC->georeference()->centerOfPixel());
+        res.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
+        res.addProperty("name", _outputObj->name());
+        res.addProperty("centerofpixel",inputGC->georeference()->centerOfPixel());
         IGeoReference  grf;
         grf.prepare(res);
-        _outputGC->georeference(grf);
-
-       _outputGC->envelope(box);
+        outputGC->georeference(grf);
+        outputGC->envelope(box);
     }
-    QString outputName = _expression.parm(0,false).value();
-    if ( outputName != sUNDEF)
-        _outputGC->setName(outputName);
+
     return sPREPARED;
 }
 

@@ -18,11 +18,13 @@ public:
 
     static quint64 createMetadata();
 private:
-    IGridCoverage _inputGC;
-    IGridCoverage _outputGC;
+    IIlwisObject _inputObj;
+    IIlwisObject _outputObj;
     QString _attribColumn;
     Box3D<qint32> _box;
     std::vector<qint32> _base;
+
+
 };
 }
 }
