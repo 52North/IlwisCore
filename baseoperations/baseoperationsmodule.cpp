@@ -18,6 +18,7 @@
 #include "geometry/fpixel.h"
 #include "geometry/pixel2coord.h"
 #include "geometry/coord2pixel.h"
+#include "geometry/gridsize.h"
 #include "util/text2output.h"
 
 using namespace Ilwis;
@@ -60,6 +61,7 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(Pixel2Coord::createMetadata(), Pixel2Coord::create);
     commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
     commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
+    commandhandler()->addOperation(GridSize::createMetadata(), GridSize::create);
 }
 
 QString RasterOperationsModule::name() const
