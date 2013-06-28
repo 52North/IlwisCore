@@ -49,7 +49,7 @@ bool RelationNode::evaluate(SymbolTable &symbols, int scope)
 bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols) {
 
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() == _value.toDouble(), NodeValue::ctBOOLEAN};
+       _value = {_value.toDouble() == vright.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarylogicalraster", "eq", symbols);
@@ -57,7 +57,7 @@ bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols) {
 
 bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() != _value.toDouble(), NodeValue::ctBOOLEAN};
+       _value = {_value.toDouble() != vright.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarylogicalraster","neq", symbols);
@@ -65,7 +65,7 @@ bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols) {
 
 bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() >= _value.toDouble(), NodeValue::ctBOOLEAN};
+       _value = {_value.toDouble() >= vright.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarylogicalraster", "greatereq", symbols);
@@ -73,7 +73,7 @@ bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols)
 
 bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() > _value.toDouble(), NodeValue::ctBOOLEAN};
+        _value = { _value.toDouble() > vright.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarylogicalraster","greater", symbols);
@@ -81,7 +81,7 @@ bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols) {
 
 bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() < _value.toDouble(), NodeValue::ctBOOLEAN};
+       _value = { _value.toDouble() < vright.toDouble() , NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarylogicalraster","less", symbols);
@@ -89,7 +89,7 @@ bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols) {
 
 bool RelationNode::handleLESSEQ(const NodeValue& vright,SymbolTable &symbols) {
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() <= _value.toDouble(), NodeValue::ctBOOLEAN};
+        _value = {_value.toDouble() <= vright.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCoverageCases(vright,"binarylogicalraster", "lesseq",symbols);
