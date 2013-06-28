@@ -17,11 +17,10 @@ public:
 
 
 private:
-    IGridCoverage _inputGC;
-    IGridCoverage _outputGC;
+    IIlwisObject _inputObj;
+    IIlwisObject _outputObj;
     IGeoReference _targetGrf;
     GridCoverage::InterpolationMethod _method;
-    Box3D<qint32> _box;
 
 };
 }

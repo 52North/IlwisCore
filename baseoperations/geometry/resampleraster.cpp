@@ -31,15 +31,16 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-
+    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
-        PixelIterator iterOut(_outputGC,box);
-        GridInterpolator interpolator(_inputGC, _method);
-        SPRange range = _inputGC->datadef().range();
+        PixelIterator iterOut(outputGC,box);
+        GridInterpolator interpolator(inputGC, _method);
+        SPRange range = inputGC->datadef().range();
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
-           Coordinate c = _outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
-           Coordinate c2 = _inputGC->coordinateSystem()->coord2coord(_outputGC->coordinateSystem(),c);
+           Coordinate c = outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
+           Coordinate c2 = inputGC->coordinateSystem()->coord2coord(outputGC->coordinateSystem(),c);
            double v = interpolator.coord2value(c2);
            *iterOut = range->ensure(v);
             ++iterOut;
@@ -47,12 +48,12 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(ctx, resampleFun, _outputGC);
+    bool res = OperationHelper::execute(ctx, resampleFun, outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE, _outputGC->source() );
+        value.setValue<IGridCoverage>(outputGC);
+        ctx->addOutput(symTable,value,outputGC->name(), itGRIDCOVERAGE, outputGC->source() );
     }
     return res;
 }
@@ -62,12 +63,12 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     QString gc = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    if (!_inputGC.prepare(gc)) {
+    if (!_inputObj.prepare(gc, itGRIDCOVERAGE)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-    _box = OperationHelper::initialize(_inputGC, _outputGC, _expression.parm(0),itDOMAIN);
-    if ( !_outputGC.isValid()) {
+    _outputObj = OperationHelper::initialize(_inputObj,itGRIDCOVERAGE, itDOMAIN);
+    if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;
     }
@@ -76,11 +77,12 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( !grf.isValid()) {
         return sPREPAREFAILED;
     }
-    _outputGC->georeference(grf);
+    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    outputGC->georeference(grf);
     Box2Dd env = grf->pixel2Coord(grf->size());
-    _outputGC->envelope(env);
+    outputGC->envelope(env);
     if ( outputName != sUNDEF)
-        _outputGC->setName(outputName);
+        outputGC->setName(outputName);
 
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")
