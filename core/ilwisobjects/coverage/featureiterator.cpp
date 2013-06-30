@@ -15,15 +15,23 @@
 
 using namespace Ilwis;
 
+FeatureIterator::FeatureIterator() :
+    _isInitial(true),
+    _trackCounter(0),
+    _flow(fFEATURES),
+    _illegal(FeatureProxy(true))
+{
+}
+
 FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true), _trackCounter(0),_flow(fFEATURES)
 {
     init();
 }
 
-FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const Box3D<double>& envelope) :
+FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset) :
     _fcoverage(fcoverage),
     _isInitial(true),
-    _envelope(envelope),
+    _subset(_subset),
     _trackCounter(0),
     _flow(fFEATURES),
     _illegal(FeatureProxy(true))
@@ -38,6 +46,7 @@ FeatureIterator::FeatureIterator(const FeatureIterator &iter)
     _iterFeatures = iter._iterFeatures;
     _trackCounter = iter._trackCounter;
     _flow = iter._flow;
+    _subset = iter._subset;
 }
 
 FeatureIterator &FeatureIterator::operator ++()
