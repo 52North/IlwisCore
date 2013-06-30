@@ -130,7 +130,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& )
     bool ok = scr->evaluate(symbols, 1000);
     return ok;
     }
-    catch(Ilwis::ScriptSyntaxError& err) {
+    catch(Ilwis::ScriptError& err) {
         qDebug() << err.message();
     }
 
