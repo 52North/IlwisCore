@@ -61,7 +61,7 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTa
         return true;
     };
 
-    if (!OperationHelper::execute(ctx, binaryMath, _outputGC))
+    if (!OperationHelperRaster::execute(ctx, binaryMath, _outputGC))
             return false;
 
 
@@ -103,7 +103,7 @@ bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& sym
         return true;
     };
 
-    bool res = OperationHelper::execute(ctx, binaryMath, _outputGC);
+    bool res = OperationHelperRaster::execute(ctx, binaryMath, _outputGC);
 
     if (res)
         return setOutput(ctx, symTable);
@@ -141,7 +141,7 @@ bool BinaryMath::prepareCoverageCoverage() {
     if (!isNumeric)
         return false;
 
-    OperationHelper helper;
+    OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
@@ -200,7 +200,7 @@ bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
 
     _number = _expression.parm(nindex).value().toDouble();
 
-    OperationHelper helper;
+    OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 

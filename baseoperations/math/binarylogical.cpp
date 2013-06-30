@@ -69,7 +69,7 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
         return true;
     };
 
-    if (!OperationHelper::execute(ctx, BinaryLogical, _outputGC))
+    if (!OperationHelperRaster::execute(ctx, BinaryLogical, _outputGC))
             return false;
 
 
@@ -118,7 +118,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
         return true;
     };
 
-   bool res = OperationHelper::execute(ctx, binaryLogical, _outputGC);
+   bool res = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
 
     if (res && ctx)
         return setOutput(ctx, symTable);
@@ -157,7 +157,7 @@ bool BinaryLogical::prepareCoverageCoverage() {
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"domain","logical operation");
     }
 
-    OperationHelper helper;
+    OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(0),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
@@ -183,7 +183,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
 
     _number = _expression.parm(nindex).value().toDouble();
 
-    OperationHelper helper;
+    OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
                                 itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 

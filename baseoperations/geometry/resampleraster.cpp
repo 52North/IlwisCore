@@ -48,7 +48,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(ctx, resampleFun, outputGC);
+    bool res = OperationHelperRaster::execute(ctx, resampleFun, outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -67,7 +67,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-    _outputObj = OperationHelper::initialize(_inputObj,itGRIDCOVERAGE, itDOMAIN);
+    _outputObj = OperationHelperRaster::initialize(_inputObj,itGRIDCOVERAGE, itDOMAIN);
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;

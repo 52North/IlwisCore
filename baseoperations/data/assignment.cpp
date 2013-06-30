@@ -62,7 +62,7 @@ bool Assignment::assignGridCoverage(ExecutionContext *ctx) {
         return true;
     };
 
-    return  OperationHelper::execute(ctx, Assign, outputGC);
+    return  OperationHelperRaster::execute(ctx, Assign, outputGC);
 
 }
 
@@ -112,7 +112,7 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
             return sPREPAREFAILED;
         }
         _inputObj.prepare(coverage, res.ilwisType());
-        OperationHelper helper;
+        OperationHelperRaster helper;
         _outputObj = helper.initialize(_inputObj, res.ilwisType(),
                                        itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
