@@ -111,7 +111,8 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
         Ilwis::ExecutionContext ctx;
         bool ok = Ilwis::commandhandler()->execute(expression, &ctx, symbols);
         if ( !ok || ctx._results.size() != 1)
-            return false;
+            throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
+
         _value = {symbols.getValue(ctx._results[0]), ctx._results[0], NodeValue::ctMethod};
         return true;
 
@@ -134,8 +135,9 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
                 QString outname = INTERNAL_PREFIX;
                 QString expression = QString("%1=selection(%2,%3)").arg(outname).arg(value).arg(selectordef);
                 Ilwis::ExecutionContext ctx;
-                if(!Ilwis::commandhandler()->execute(expression, &ctx, symbols))
-                    return false;
+                if(!Ilwis::commandhandler()->execute(expression, &ctx, symbols)) {
+                    throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
+                }
                 QString outgc = ctx._results[0];
                 value = outgc;
             }
