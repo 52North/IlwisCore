@@ -44,7 +44,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return true;
         };
 
-        bool res = OperationHelper::execute(ctx, unaryFun, _outputGC);
+        bool res = OperationHelperRaster::execute(ctx, unaryFun, _outputGC);
 
         if ( res && ctx != 0) {
             QVariant value;
@@ -84,7 +84,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
             ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
             return sPREPAREFAILED;
         }
-        OperationHelper helper;
+        OperationHelperRaster helper;
         _box = helper.initialize(_inputGC, _outputGC, _expression.parm(0),
                                     itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( !_outputGC.isValid()) {
