@@ -67,7 +67,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelper::execute(ctx,selection, outputGC, _box);
+    bool res = OperationHelperRaster::execute(ctx,selection, outputGC, _box);
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -131,7 +131,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         copylist |= itGRIDSIZE | itGEOREF | itENVELOPE;
     }
 
-     _outputObj = OperationHelper::initialize(_inputObj,inputType, copylist);
+     _outputObj = OperationHelperRaster::initialize(_inputObj,inputType, copylist);
      if ( !_outputObj.isValid()) {
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
