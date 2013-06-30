@@ -22,6 +22,15 @@ InternalError::InternalError(const QString &message) : ErrorObject(message)
 }
 
 
-ScriptSyntaxError::ScriptSyntaxError(const QString &message) : ErrorObject(message)
+ScriptSyntaxError::ScriptSyntaxError(const QString &message) : ScriptError(message)
+{
+}
+
+ScriptExecutionError::ScriptExecutionError(const QString &message) : ScriptError(message)
+{
+}
+
+
+ScriptError::ScriptError(const QString &message) : ErrorObject(message)
 {
 }

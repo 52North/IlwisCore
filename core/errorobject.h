@@ -41,9 +41,18 @@ public:
     explicit InternalError(const QString& message);
 };
 
-class KERNELSHARED_EXPORT ScriptSyntaxError : public ErrorObject {
+class KERNELSHARED_EXPORT ScriptError : public ErrorObject {
+public:
+    explicit ScriptError(const QString& message);
+};
+class KERNELSHARED_EXPORT ScriptSyntaxError : public ScriptError {
 public:
     explicit ScriptSyntaxError(const QString& message);
+};
+
+class KERNELSHARED_EXPORT ScriptExecutionError : public ScriptError {
+public:
+    explicit ScriptExecutionError(const QString& message);
 };
 }
 
