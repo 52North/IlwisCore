@@ -145,6 +145,11 @@ QVariant FeatureProxy::value(const QString &name, int index)
     return QVariant();
 }
 
+FeatureProxy &FeatureProxy::operator =(const Feature &)
+{
+    return *this;
+}
+
 quint32 FeatureProxy::itemId() const
 {
     if ( isValid())

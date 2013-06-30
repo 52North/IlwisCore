@@ -74,7 +74,7 @@ private:
     quint64 _featureid; // unique
     std::vector<Geometry> _track;
     SPAttributeRecord _record;
-    const Geometry _invalidGeom;
+    Geometry _invalidGeom;
 
 };
 
@@ -96,9 +96,10 @@ public:
 protected:
     QVariant value(const QString& name, int index=-1);
 private:
+    FeatureProxy& operator=(const Feature& f) ;
     SPFeatureI _feature;
     quint32 _trackIndex;
-    const Geometry _invalidGeom;
+    Geometry _invalidGeom;
     bool _illegal;
 };
 
