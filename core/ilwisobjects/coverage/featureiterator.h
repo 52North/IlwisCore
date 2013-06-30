@@ -7,8 +7,9 @@ class KERNELSHARED_EXPORT FeatureIterator  : public std::iterator<std::random_ac
 {
 public:
     enum Flow{fFEATURES, fTRACK, fBYATTRIBUTE};
+    FeatureIterator();
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
-    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const Box3D<double>& envelope);
+    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32>& subset);
     FeatureIterator(const FeatureIterator& iter);
     FeatureIterator& operator++() ;
     FeatureIterator operator++(int);
@@ -26,7 +27,7 @@ private:
     IFeatureCoverage _fcoverage;
     Features::iterator _iterFeatures;
     bool _isInitial;
-    Box3D<double> _envelope;
+    std::vector<quint32> _subset;
     quint32 _trackCounter;
     Flow _flow;
     FeatureProxy _proxy;
