@@ -2,7 +2,7 @@
 #define OPERATIONHELPER_H
 
 namespace Ilwis {
-class OperationHelper
+class KERNELSHARED_EXPORT OperationHelper
 {
 public:
     OperationHelper();
