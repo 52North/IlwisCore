@@ -174,6 +174,14 @@ void DatabaseTable::record(quint32 rec, const QVariantList &vars, quint32 offset
     }
 }
 
+QVariant DatabaseTable::cell(quint32 index, quint32 rec) const{
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if (iter == _columnDefinitionsByIndex.end()) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
+        return QVariant();
+    }
+    return cell(iter.value().name(), rec);
+}
 QVariant DatabaseTable::cell(const QString& col, quint32 rec) const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return QVariantList();
@@ -200,6 +208,14 @@ QVariant DatabaseTable::cell(const QString& col, quint32 rec) const{
     }
     return QVariant();
 
+}
+void DatabaseTable::cell(quint32 index, quint32 rec, const QVariant &var) {
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if (iter == _columnDefinitionsByIndex.end()) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
+        return;
+    }
+    cell(iter.value().name(), rec, var);
 }
 
 void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
@@ -247,6 +263,15 @@ void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
 
 }
 
+QVariantList DatabaseTable::column(quint32 index) const {
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if (iter == _columnDefinitionsByIndex.end()) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
+        return QVariantList();
+    }
+    return column(iter.value().name());
+}
+
 QVariantList DatabaseTable::column(const QString& nme)  const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return QVariantList();
@@ -268,6 +293,16 @@ QVariantList DatabaseTable::column(const QString& nme)  const{
         kernel()->issues()->logSql(db.lastError());
     }
     return QVariantList();
+}
+
+void DatabaseTable::column(quint32 index, const QVariantList &vars, quint32 offset)
+{
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if (iter == _columnDefinitionsByIndex.end() ) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
+        return ;
+    }
+    column(iter.value().name(), vars, offset)    ;
 }
 
 void DatabaseTable::column(const QString &nme, const QVariantList &vars, quint32 offset)

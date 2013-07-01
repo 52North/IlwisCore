@@ -65,20 +65,35 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
     return true;
 }
 
-QVariantList FlatTable::column(const QString &nme) const
-{
+QVariantList FlatTable::column(quint32 index) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariantList();
 
-    QVariantList data;
-
-    quint32 index = columnIndex(nme);
     if ( !isColumnIndexValid(index))
         return QVariantList();
+
+    QVariantList data;
     for(quint32 i=0; i < _rows; ++i) {
         data << _datagrid[i][index];
     }
     return data;
+}
+
+QVariantList FlatTable::column(const QString &nme) const
+{
+    quint32 index = columnIndex(nme);
+    return column(index);
+
+}
+
+void FlatTable::column(quint32 index, const QVariantList &vars, quint32 offset)
+{
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if (iter == _columnDefinitionsByIndex.end()) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
+        return ;
+    }
+    column(iter.value().name(), vars, offset);
 }
 
 void FlatTable::column(const QString &nme, const QVariantList &vars, quint32 offset)
@@ -139,6 +154,14 @@ QVariant FlatTable::cell(const QString& col, quint32 rec) const {
         return QVariantList();
 
     quint32 index = columnIndex(col);
+    return cell(index , rec);
+}
+
+QVariant FlatTable::cell(const quint32 index, quint32 rec) const
+{
+    if (!const_cast<FlatTable *>(this)->initLoad())
+        return QVariantList();
+
     if ( !isColumnIndexValid(index))
         return QVariantList();
     if ( rec < _rows)
@@ -147,16 +170,24 @@ QVariant FlatTable::cell(const QString& col, quint32 rec) const {
     return QVariant();
 }
 
+void  FlatTable::cell(quint32 index, quint32 rec, const QVariant& var){
+    if (!const_cast<FlatTable *>(this)->initLoad())
+        return ;
+
+    if ( !isColumnIndexValid(index))
+        return;
+    if ( rec < _rows)
+        _datagrid[rec][index] = var;
+}
+
 void FlatTable::cell(const QString &col, quint32 rec, const QVariant &var)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
 
     quint32 index = columnIndex(col);
-    if ( !isColumnIndexValid(index))
-        return;
-    if ( rec < _rows)
-        _datagrid[rec][index] = var;
+    cell(index, rec, var);
+
 }
 
 IlwisTypes FlatTable::ilwisType() const

@@ -87,6 +87,7 @@ public:
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
     virtual QVariantList column(const QString& nme) const = 0;
+    virtual QVariantList column(quint32 index) const = 0;
     /*!
      sets a column with values from variantlist. The list doesnt need to contain all the rows in a column but may contain a subset
      . Note that the rows are in consecutive order.
@@ -95,6 +96,7 @@ public:
      * \param offset starting row form where the values are set. If the number of values to be added goes beyond the size of the table, new records will be added
      */
     virtual void column(const QString& nme, const QVariantList& vars, quint32 offset=0) = 0;
+    virtual void column(const quint32 index, const QVariantList& vars, quint32 offset=0) = 0;
     /*!
      returns the value of a single record/field combination ( a cell).
      * \param col column name
@@ -102,6 +104,7 @@ public:
      * \return the value of the cell or an invalid qvariant if an error occured. The nature of the error can be found in the issue logger
      */
     virtual QVariant cell(const QString& col, quint32 rec) const = 0;
+    virtual QVariant cell(const quint32 index, quint32 rec) const = 0;
     /*!
      Sets the value of a singel cell
      * \param col column name of the cell to be set
@@ -109,6 +112,8 @@ public:
      * \param var the new value of the cell
      */
     virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
+    virtual void cell(quint32 col, quint32 rec, const QVariant& var) = 0;
+
 
     virtual quint32 columnIndex(const QString& nme) const = 0;
 

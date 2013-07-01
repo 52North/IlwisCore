@@ -25,18 +25,22 @@ public:
     \se Ilwis::Table
      */
     QVariantList column(const QString& nme) const;
+    QVariantList column(quint32 index) const;
     /*!
     \se Ilwis::Table
      */
     void column(const QString& nme, const QVariantList& vars, quint32 offset=0);
+    void column(quint32 index, const QVariantList &vars, quint32 offset);
     /*!
     \se Ilwis::Table
      */
     QVariant cell(const QString& col, quint32 rec) const;
+    QVariant cell(const quint32 index, quint32 rec) const;
     /*!
     \se Ilwis::Table
      */
     void cell(const QString& col, quint32 rec, const QVariant& var);
+    void cell(quint32, quint32 rec, const QVariant& var);
     /*!
     \se Ilwis::Table
      */
@@ -55,6 +59,7 @@ public:
     bool addColumn(const ColumnDefinition& def);
 
     IlwisTypes ilwisType() const;
+
 protected:
     bool isColumnIndexValid(quint32 index) const{
         bool ok =  index != iUNDEF && _datagrid.size() != 0 && index < _datagrid[0].size();
