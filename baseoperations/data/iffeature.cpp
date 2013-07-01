@@ -41,48 +41,26 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     SubSetAsyncFunc iffunc = [&](const std::vector<quint32>& subset) -> bool {
 
-//        FeatureIterator iterOut(_outputFC);
-//        FeatureIterator iterIn(_inputFC,subset);
-//        FeatureIterator iter1, iter2;
-//        iter1 = iterOut;
-//        bool isCoverage1 = _coverages[0].isValid();
-//        bool isCoverage2 = _coverages[1].isValid();
-//        if ( isCoverage1)
-//            iter1 = FeatureIterator(_coverages[0].get<FeatureCoverage>(), subset);
-//        if ( isCoverage2)
-//            iter2 = FeatureIterator(_coverages[1].get<FeatureCoverage>(), subset);
+        FeatureIterator iterOut(_outputFC);
+        FeatureIterator iterIn(_inputFC,subset);
 
-//        while(iterIn != iterIn.end()) {
-//            FeatureInterface v1,v2;
-//            if ( isCoverage1) {
-//                v1 = *iter1;
-//                ++iter1;
-//            }
-//            if ( isCoverage2) {
-//                v2 = *iter2;
-//                ++iter2;
-//            }
-//            if (_number[0] != rUNDEF)
-//                v1 = _number[0];
-//            if ( _number[1] != rUNDEF)
-//                v2 = _number[1];
+        while(iterIn != iterIn.end()) {
+            _outputFC->newFeatureFrom(*iterIn);
 
-//            *iterOut = *iterIn ? v1 : v2;
-
-//            ++iterOut;
-//            ++iterIn;
-//        }
+            ++iterOut;
+            ++iterIn;
+        }
         return true;
 
     };
 
-//    bool res = OperationHelperRaster::execute(ctx, iffunc, _outputGC);
+    bool res = OperationHelperFeatures::execute(ctx, iffunc, _outputFC);
 
-//    if ( res && ctx != 0) {
-//        QVariant value;
-//        value.setValue<IFeatureCoverage>(_outputFC);
-//        ctx->addOutput(symTable,value,_outputFC->name(),itGRIDCOVERAGE,_outputGC->source());
-//    }
+    if ( res && ctx != 0) {
+        QVariant value;
+        value.setValue<IFeatureCoverage>(_outputFC);
+        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURECOVERAGE,_outputFC->source());
+    }
     return true;
 }
 
