@@ -23,9 +23,9 @@ public:
     virtual SPFeatureI clone() const=0;
     virtual IlwisTypes ilwisType(qint32 index=iUNDEF) const = 0;
     virtual quint32 trackSize() const = 0;
-
-protected:
     virtual QVariant value(const QString& name, int index=-1) = 0;
+protected:
+
 
 };
 
@@ -64,11 +64,12 @@ public:
     SPFeatureI clone() const;
     IlwisTypes ilwisType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
+    QVariant value(const QString& name, int index=-1);
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
     Feature& operator=(const Feature& f) ; // no assignment , _featureid is unique
-    QVariant value(const QString& name, int index=-1);
+
     static quint64 _idbase;
     quint32 _itemid; // from the domain
     quint64 _featureid; // unique
@@ -93,10 +94,11 @@ public:
     SPFeatureI clone() const;
     IlwisTypes ilwisType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
-protected:
+    FeatureProxy& operator=(const FeatureProxy& f) ;
     QVariant value(const QString& name, int index=-1);
+protected:
+
 private:
-    FeatureProxy& operator=(const Feature& f) ;
     SPFeatureI _feature;
     quint32 _trackIndex;
     Geometry _invalidGeom;
