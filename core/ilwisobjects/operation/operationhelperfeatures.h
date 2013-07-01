@@ -5,11 +5,14 @@ namespace Ilwis {
 
 typedef  std::function<bool(const std::vector<quint32>&)> SubSetAsyncFunc;
 
-class OperationHelperFeatures
+class KERNELSHARED_EXPORT OperationHelperFeatures
 {
 public:
     OperationHelperFeatures();
-    IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what);
+    static IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what);
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, IFeatureCoverage& outputGC, std::vector<quint32> subset=std::vector<quint32>()){
+        return false;
+    }
 };
 }
 
