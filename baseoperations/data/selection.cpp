@@ -168,14 +168,14 @@ quint64 Selection::createMetadata()
     res.addProperty("longname","selection");
     res.addProperty("syntax","selection(coverage,selection-definition)");
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itCOVERAGE);
-    res.addProperty("pin_1_name", TR("input coverage"));
+    res.addProperty("pin_1_type", itGRIDCOVERAGE);
+    res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with a domain as specified by the selection"));
     res.addProperty("pin_2_type", itSTRING);
     res.addProperty("pin_2_name", TR("selection-definition"));
     res.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    res.addProperty("pout_1_type", itCOVERAGE);
-    res.addProperty("pout_1_name", TR("coverage were the selection has been applied"));
+    res.addProperty("pout_1_type", itGRIDCOVERAGE);
+    res.addProperty("pout_1_name", TR("gridcoverage were the selection has been applied"));
     res.addProperty("pout_1_desc",TR(""));
     res.prepare();
     url += "=" + QString::number(res.id());
