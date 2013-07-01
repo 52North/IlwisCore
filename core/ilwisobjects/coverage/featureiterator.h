@@ -17,7 +17,7 @@ public:
     FeatureIterator& operator-(int);
     bool operator==(const FeatureIterator& rhs) ;
     bool operator!=(const FeatureIterator& rhs);
-    FeatureInterface& operator*();
+    FeatureProxy operator*();
     FeatureIterator end() const;
     void flow(Flow f);
 
@@ -30,7 +30,6 @@ private:
     std::vector<quint32> _subset;
     quint32 _trackCounter;
     Flow _flow;
-    FeatureProxy _proxy;
     FeatureProxy _illegal;
 };
 }
