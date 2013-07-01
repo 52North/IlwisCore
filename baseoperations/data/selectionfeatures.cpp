@@ -140,7 +140,8 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          _outputObj->setName(outputName);
 
      if ( _attribColumn != "") {
-         Resource res(outputName, itFLATTABLE);
+         QString url = "ilwis://internal/" + outputName;
+         Resource res(url, itFLATTABLE);
          _attTable.prepare(res);
          IDomain covdom;
          if (!covdom.prepare("count")){
