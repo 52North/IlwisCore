@@ -80,7 +80,7 @@ bool AttributeRecord::addColumn(const QString &nme, const IDomain &domain, bool 
     return false;
 }
 
-QVariant AttributeRecord::cellByKey(quint64 itemId, const QString& col, int index) {
+QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) {
     if ( _keyColumn == sUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1,"key column");
         return QVariant();
@@ -89,7 +89,7 @@ QVariant AttributeRecord::cellByKey(quint64 itemId, const QString& col, int inde
         if ( _coverageIndex.size() == 0) {
             indexCoverageKey();
         }
-        auto iter = _coverageIndex.find(itemId);
+        auto iter = _coverageIndex.find(key);
         if ( iter == _coverageIndex.end()) {
             return QVariant();
         }
@@ -98,12 +98,19 @@ QVariant AttributeRecord::cellByKey(quint64 itemId, const QString& col, int inde
         if ( _verticalIndex[index].size() == 0) {
             indexVerticalIndex(index);
         }
-        auto iter = _coverageIndex.find(itemId);
+        auto iter = _coverageIndex.find(key);
         if ( iter == _coverageIndex.end()) {
             return QVariant();
         }
         return _indexTable->cell(col,(*iter).second);
     }
+    return QVariant();
+}
+
+QVariant AttributeRecord::cellByIndex(quint64 index, quint32 colIndex, int )
+{
+    if ( index < _indexTable->rows())
+        return _indexTable->cell(index, colIndex);
     return QVariant();
 }
 

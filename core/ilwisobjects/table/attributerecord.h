@@ -18,9 +18,10 @@ public:
     bool addColumn(const ColumnDefinition& def, bool coverages=true);
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
-     QVariant cellByKey(quint64 itemId, const QString &col, int index=-1);
-     void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=-1);
-     bool isValid() const;
+    QVariant cellByKey(quint64 key, const QString &col, int index=-1);
+    QVariant cellByIndex(quint64 index, quint32 colIndex, int zindex=-1);
+    void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=-1);
+    bool isValid() const;
 private:
     void indexCoverageKey();
     void indexVerticalIndex(int index);
