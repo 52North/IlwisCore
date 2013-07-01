@@ -145,8 +145,11 @@ QVariant FeatureProxy::value(const QString &name, int index)
     return QVariant();
 }
 
-FeatureProxy &FeatureProxy::operator =(const Feature &)
+FeatureProxy &FeatureProxy::operator =(const FeatureProxy &f)
 {
+    _feature = f._feature;
+    _trackIndex = f._trackIndex;
+    _illegal = f._illegal;
     return *this;
 }
 
