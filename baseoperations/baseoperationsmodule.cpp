@@ -5,21 +5,22 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "baseoperationsmodule.h"
-#include "math/unarymath.h"
-#include "math/unarymathoperations.h"
-#include "math/binarymath.h"
-#include "math/binarylogical.h"
-#include "geometry/resampleraster.h"
 #include "data/rasvalue.h"
 #include "data/ifoperation.h"
 #include "data/iffraster.h"
 #include "data/assignment.h"
 #include "data/selection.h"
+#include "data/selectionfeatures.h"
+#include "geometry/resampleraster.h"
 #include "geometry/fcoordinate.h"
 #include "geometry/fpixel.h"
 #include "geometry/pixel2coord.h"
 #include "geometry/coord2pixel.h"
 #include "geometry/gridsize.h"
+#include "math/unarymath.h"
+#include "math/unarymathoperations.h"
+#include "math/binarymath.h"
+#include "math/binarylogical.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
 
@@ -59,6 +60,7 @@ void RasterOperationsModule::prepare()
     commandhandler()->addOperation(RasValue::createMetadata(), RasValue::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
     commandhandler()->addOperation(Selection::createMetadata(), Selection::create);
+    commandhandler()->addOperation(SelectionFeatures::createMetadata(), SelectionFeatures::create);
     commandhandler()->addOperation(Sign::createMetadata(), Sign::create);
     commandhandler()->addOperation(Sine::createMetadata(), Sine::create);
     commandhandler()->addOperation(SineH::createMetadata(), SineH::create);

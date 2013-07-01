@@ -39,7 +39,8 @@ HEADERS += \
     baseoperations/geometry/gridsize.h \
     baseoperations/util/stringoperations.h \
     baseoperations/data/ifoperation.h \
-    baseoperations/data/iffeature.h
+    baseoperations/data/iffeature.h \
+    baseoperations/data/selectionfeatures.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -60,7 +61,8 @@ SOURCES += \
     baseoperations/geometry/gridsize.cpp \
     baseoperations/util/stringoperations.cpp \
     baseoperations/data/ifoperation.cpp \
-    baseoperations/data/iffeature.cpp
+    baseoperations/data/iffeature.cpp \
+    baseoperations/data/selectionfeatures.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
