@@ -92,14 +92,16 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
        return _iterFeatures != iter._iterFeatures;
 }
 
-FeatureInterface &FeatureIterator::operator *()
+FeatureProxy FeatureIterator::operator *()
 {
     init();
     if ( _iterFeatures == _fcoverage->_features.end())
         return _illegal;
 
-    _proxy.setProxy(*_iterFeatures, _trackCounter);
-    return _proxy;
+    FeatureProxy proxy;
+    proxy.setProxy(*_iterFeatures, _trackCounter);
+
+    return proxy;
 }
 
 FeatureIterator FeatureIterator::end() const
@@ -131,7 +133,7 @@ bool FeatureIterator::init()
 }
 
 bool FeatureIterator::move() {
-    if ( _flow == fFEATURES) {
+    if ( _flow == fFEATURES ) {
         ++_iterFeatures;
         if ( _iterFeatures == _fcoverage->_features.end()) {
             _iterFeatures = _fcoverage->_features.begin();
