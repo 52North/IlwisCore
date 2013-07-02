@@ -16,14 +16,11 @@
 using namespace Ilwis;
 
 FeatureIterator::FeatureIterator() :
-    _isInitial(true),
-    _trackCounter(0),
-    _flow(fFEATURES),
-    _illegal(FeatureProxy(true))
+    _isInitial(true)
 {
 }
 
-FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true), _trackCounter(0),_flow(fFEATURES)
+FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true)
 {
     init();
 }
@@ -31,12 +28,9 @@ FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage
 FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset) :
     _fcoverage(fcoverage),
     _isInitial(true),
-    _subset(_subset),
-    _trackCounter(0),
-    _flow(fFEATURES),
-    _illegal(FeatureProxy(true))
+    _subset(_subset)
 {
-
+    init();
 }
 
 FeatureIterator::FeatureIterator(const FeatureIterator &iter)
@@ -44,15 +38,13 @@ FeatureIterator::FeatureIterator(const FeatureIterator &iter)
     _fcoverage = iter._fcoverage;
     _isInitial = iter._isInitial;
     _iterFeatures = iter._iterFeatures;
-    _trackCounter = iter._trackCounter;
-    _flow = iter._flow;
     _subset = iter._subset;
 }
 
 FeatureIterator &FeatureIterator::operator ++()
 {
     if (!init()){
-        move();
+       move();
     }
     return *this;
 }
@@ -69,16 +61,18 @@ FeatureIterator FeatureIterator::operator ++(int)
 
 FeatureIterator &FeatureIterator::operator +(int distance)
 {
-    init();
-    _iterFeatures = _iterFeatures + distance;
+    if(!init()) {
+        move(distance);
+    }
     return *this;
 
 }
 
 FeatureIterator &FeatureIterator::operator -(int distance)
 {
-    init();
-    _iterFeatures = _iterFeatures - distance;
+    if(!init()) {
+        move(-distance);
+    }
     return *this;
 }
 
@@ -92,16 +86,10 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
        return _iterFeatures != iter._iterFeatures;
 }
 
-FeatureProxy FeatureIterator::operator *()
+SPFeatureI FeatureIterator::operator *()
 {
-    init();
-    if ( _iterFeatures == _fcoverage->_features.end())
-        return _illegal;
-
-    FeatureProxy proxy;
-    proxy.setProxy(*_iterFeatures, _trackCounter);
-
-    return proxy;
+     init();
+     return *_iterFeatures;
 }
 
 FeatureIterator FeatureIterator::end() const
@@ -111,47 +99,55 @@ FeatureIterator FeatureIterator::end() const
     return temp;
 }
 
-void FeatureIterator::flow(FeatureIterator::Flow f)
+FeatureIterator FeatureIterator::end()
 {
-    _flow = f;
+    FeatureIterator temp(*this);
+    temp._iterFeatures = _fcoverage->_features.end();
+    return temp;
 }
+
 
 bool FeatureIterator::init()
 {
     if ( _isInitial)     {
+        _useVectorIter = _subset.size() == 0 || _subset.size() == _fcoverage->featureCount();
         _isInitial = false;
         bool ok = _fcoverage->connector()->loadBinaryData(_fcoverage.ptr());
         if (!ok)
             return false;
         if ( _fcoverage->_features.size() > 0 ) {
+            _iterPosition = 0;
             _iterFeatures = _fcoverage->_features.begin();
-            _trackCounter = 0;
+            if ( _subset.size() > 0) {
+                _iterFeatures += _subset[_iterPosition];
+            }
         }
     } else
         return false;
     return true;
 }
 
-bool FeatureIterator::move() {
-    if ( _flow == fFEATURES ) {
-        ++_iterFeatures;
+bool FeatureIterator::move(qint32 distance) {
+    if (_useVectorIter){
+        _iterFeatures += distance;
         if ( _iterFeatures == _fcoverage->_features.end()) {
-            _iterFeatures = _fcoverage->_features.begin();
-            ++_trackCounter;
+            _iterFeatures = _fcoverage->_features.end();
+            return false;
         }
-        while((*_iterFeatures)->trackSize() <= _trackCounter) {
-            ++_iterFeatures;
-            if (_iterFeatures == _fcoverage->_features.end())
-                return false;
+    }else {
+        if ( _iterPosition + distance < 0) {
+            _iterPosition = 0;
+            _iterFeatures = _fcoverage->_features.end();
+            return false;
         }
-    } else if (_flow == fTRACK) {
-        ++_trackCounter;
-        if ( _trackCounter >= (*_iterFeatures)->trackSize()) {
-            ++_iterFeatures;
-            _trackCounter = 0;
-            if ( _iterFeatures == _fcoverage->_features.end())
-                return false;
+        _iterPosition += distance;
+        if ( _iterPosition >= _subset.size()) {
+            _iterPosition = _subset.size();
+            _iterFeatures = _fcoverage->_features.end();
+            return false;
         }
+        _iterFeatures = _fcoverage->_features.begin() + _subset[_iterPosition];
+
     }
     return true;
 

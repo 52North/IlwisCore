@@ -6,7 +6,6 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT FeatureIterator  : public std::iterator<std::random_access_iterator_tag, int>
 {
 public:
-    enum Flow{fFEATURES, fTRACK, fBYATTRIBUTE};
     FeatureIterator();
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32>& subset);
@@ -17,20 +16,18 @@ public:
     FeatureIterator& operator-(int);
     bool operator==(const FeatureIterator& rhs) ;
     bool operator!=(const FeatureIterator& rhs);
-    FeatureProxy operator*();
+    SPFeatureI operator*();
     FeatureIterator end() const;
-    void flow(Flow f);
-
+    FeatureIterator end();
 private:
     bool init();
-    bool move();
+    bool move(qint32 distance=1);
     IFeatureCoverage _fcoverage;
     Features::iterator _iterFeatures;
     bool _isInitial;
     std::vector<quint32> _subset;
-    quint32 _trackCounter;
-    Flow _flow;
-    FeatureProxy _illegal;
+    quint32 _iterPosition = iUNDEF;
+    bool _useVectorIter = true;
 };
 }
 
