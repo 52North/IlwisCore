@@ -10,11 +10,11 @@
 
 using namespace Ilwis;
 
-BaseTable::BaseTable() : Table(), _rows(iUNDEF), _columns(iUNDEF), _dataloaded(false)
+BaseTable::BaseTable() : Table(), _rows(0), _columns(0), _dataloaded(false)
 {
 }
 
-BaseTable::BaseTable(const Resource& res) : Table(res) {
+BaseTable::BaseTable(const Resource& res) : Table(res), _rows(0), _columns(0),_dataloaded(false) {
 
 }
 
@@ -40,7 +40,7 @@ void BaseTable::setRows(quint32 r)
 bool BaseTable::createTable()
 {
     if (!isValid()) {
-        kernel()->issues()->log(TR("Not created, DatabaseTable %1 already exists").arg(name()), IssueObject::itWarning);
+        kernel()->issues()->log(TR("Not created, Table %1 already exists").arg(name()), IssueObject::itWarning);
         return false;
     }
     if ( _columnDefinitionsByName.size() ==  0) {
