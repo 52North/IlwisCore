@@ -54,28 +54,31 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
             rec = AttributeRecord(inputFC->attributeTable(itFEATURECOVERAGE), "feature_id");
         SPAttributeRecord attrib (new AttributeRecord(_attTable, "feature_id"));
         quint64 v_in = 0;
-        for_each(iterIn, iterIn.end(), [&](FeatureProxy feature){
+        for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
             QVariant v;
             if ( rec.isValid()) {
-                FeatureProxy feature = *iterIn;
-                v_in = feature.value("feature_id").toULongLong();
+                SPFeatureI feature = *iterIn;
+                v_in = feature->value("feature_id").toULongLong();
                 v = rec.cellByKey(v_in,_attribColumn);
             } else {
                 v = v_in;
             }
             SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-            newFeature->attributeRecord(attrib);
-            _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
+            if ( !newFeature.isNull()) {
+                newFeature->attributeRecord(attrib);
+                _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
+            }
 
             ++iterIn;
         }
         );
         return true;
     };
-
-    bool res = OperationHelperFeatures::execute(ctx,selection, outputFC);
+    ctx->_threaded = false;
+    bool res = OperationHelperFeatures::execute(ctx,selection, inputFC);
 
     if ( res && ctx != 0) {
+        outputFC->attributeTable(outputFC->featureTypes(),_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->addOutput(symTable, value, outputFC->name(), itFEATURECOVERAGE,outputFC->source());
@@ -131,9 +134,9 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-     IFeatureCoverage outputGC = _outputObj.get<FeatureCoverage>();
+     IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
-         outputGC->datadef() = inputFC->datadef();
+         outputFC->datadef() = inputFC->datadef();
      }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)
