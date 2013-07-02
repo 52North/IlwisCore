@@ -53,11 +53,11 @@ SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom, quint32 itemId, co
     return _features.back();
 }
 
-SPFeatureI FeatureCoverage::newFeatureFrom(const FeatureInterface& existingFeature) {
+SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature) {
     Locker lock(_mutex);
-    if ( !existingFeature.isValid())
+    if ( existingFeature.isNull() || existingFeature->isValid() == false)
         return SPFeatureI();
-    SPFeatureI clonedFeature = existingFeature.clone();
+    SPFeatureI clonedFeature = existingFeature->clone();
     _features.push_back(clonedFeature);
     quint32 cnt = featureCount(clonedFeature->ilwisType());
     setFeatureCount(clonedFeature->ilwisType(),++cnt );
@@ -70,6 +70,7 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const FeatureInterface& existingFeatu
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 {
     Locker lock(_mutex2);
+    _featureTypes |= types;
     switch(types){
     case itPOINT:
         _featureInfo[0]._count = cnt;break;

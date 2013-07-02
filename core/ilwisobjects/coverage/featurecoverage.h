@@ -28,7 +28,7 @@ public:
     IlwisTypes featureTypes() const;
     void featureTypes(IlwisTypes types);
     SPFeatureI& newFeature(const Ilwis::Geometry &geom, quint32 itemId, const Ilwis::SPAttributeRecord &record);
-    SPFeatureI newFeatureFrom(const FeatureInterface &existingFeature);
+    SPFeatureI newFeatureFrom(const Ilwis::SPFeatureI &existingFeature);
     quint32 featureCount(IlwisTypes types=itFEATURECOVERAGE, int index=iUNDEF) const;
     void setFeatureCount(IlwisTypes types, quint32 cnt);
     IlwisTypes ilwisType() const;
