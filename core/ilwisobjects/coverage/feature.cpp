@@ -16,8 +16,12 @@ using namespace Ilwis;
 
 quint64 Feature::_idbase = 0;
 
-QVariant FeatureInterface::operator ()(const QString &name, int index) {
-    return value(name, index);
+SPFeatureI::SPFeatureI(FeatureInterface *f) : QSharedPointer<FeatureInterface>(f)
+{
+}
+
+QVariant SPFeatureI::operator ()(const QString &name, int index) {
+    return (*this)->value(name, index);
 }
 
 //--------------------------------------------
@@ -115,100 +119,3 @@ quint32 Feature::trackSize() const
 Ilwis::FeatureInterface *createFeature(quint64 ItemId) {
     return new Feature(ItemId);
 }
-//------------------------------------------------------
-
-FeatureProxy::FeatureProxy(bool illegal) : _illegal(illegal)
-{
-}
-
-FeatureProxy::~FeatureProxy()
-{
-}
-
-void FeatureProxy::setProxy(const SPFeatureI& f, quint32 index) {
-    _feature = f;
-    _trackIndex = index;
-}
-
-SPFeatureI FeatureProxy::clone() const
-{
-    if ( _feature.isNull())
-        return SPFeatureI();
-
-    return _feature->clone();
-}
-
-QVariant FeatureProxy::value(const QString &name, int index)
-{
-    if ( isValid())
-        return _feature->operator ()(name, index) ;
-    return QVariant();
-}
-
-FeatureProxy &FeatureProxy::operator =(const FeatureProxy &f)
-{
-    _feature = f._feature;
-    _trackIndex = f._trackIndex;
-    _illegal = f._illegal;
-    return *this;
-}
-
-quint32 FeatureProxy::itemId() const
-{
-    if ( isValid())
-        _feature->itemId();
-    return iUNDEF;
-}
-
-void FeatureProxy::itemId(quint32 v)
-{
-    if ( isValid())
-        _feature->itemId(v);
-}
-
-quint64 FeatureProxy::featureid() const
-{
-    if ( isValid())
-        _feature->featureid();
-    return i64UNDEF;
-}
-
-bool FeatureProxy::isValid() const
-{
-    if ( _illegal)
-        return false;
-
-    return !_feature.isNull();
-}
-
-const Geometry &FeatureProxy::geometry(quint32) const
-{
-    if ( isValid())
-        _feature->geometry(_trackIndex);
-    return _invalidGeom;
-}
-
-void FeatureProxy::add(const Geometry &geom)
-{
-    if ( isValid())
-        _feature->add(geom)  ;
-}
-
-void FeatureProxy::attributeRecord(const SPAttributeRecord &record)
-{
-    if ( isValid())
-        _feature->attributeRecord(record) ;
-}
-
-IlwisTypes FeatureProxy::ilwisType(qint32 ) const
-{
-
-    return _feature->geometry(_trackIndex).ilwisType();
-}
-
-quint32 FeatureProxy::trackSize() const
-{
-    return 1;
-}
-
-

@@ -5,9 +5,9 @@
 
 namespace Ilwis {
 
-class FeatureInterface;
+class SPFeatureI;
 
-typedef QSharedPointer<FeatureInterface> SPFeatureI;
+//typedef QSharedPointer<FeatureInterface> SPFeatureI;
 
 class KERNELSHARED_EXPORT FeatureInterface {
 public:
@@ -29,7 +29,11 @@ protected:
 
 };
 
-
+class KERNELSHARED_EXPORT SPFeatureI : public QSharedPointer<FeatureInterface> {
+public:
+    SPFeatureI(FeatureInterface *f=0);
+    QVariant operator ()(const QString &name, int index=-1);
+};
 
 /*!
 The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular
@@ -79,31 +83,7 @@ private:
 
 };
 
-class KERNELSHARED_EXPORT FeatureProxy : public FeatureInterface {
-public:
-    FeatureProxy(bool illegal=false);
-    ~FeatureProxy();
-    quint32 itemId() const ;
-    void itemId(quint32 v) ;
-    quint64 featureid() const ;
-    bool isValid() const  ;
-    const Geometry& geometry(quint32 index=0) const ;
-    void add(const Geometry& geom) ;
-    void attributeRecord(const SPAttributeRecord& record) ;
-    void setProxy(const SPFeatureI &f, quint32 index);
-    SPFeatureI clone() const;
-    IlwisTypes ilwisType(qint32 index=iUNDEF) const;
-    quint32 trackSize() const;
-    FeatureProxy& operator=(const FeatureProxy& f) ;
-    QVariant value(const QString& name, int index=-1);
-protected:
 
-private:
-    SPFeatureI _feature;
-    quint32 _trackIndex;
-    Geometry _invalidGeom;
-    bool _illegal;
-};
 
 bool operator==(const Feature& f1, const Feature& f2) ;
 
