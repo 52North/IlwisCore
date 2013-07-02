@@ -33,7 +33,7 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
     IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
     IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
     FeatureIterator iterIn(inputFC);
-    for_each(iterIn, iterIn.end(), [&](FeatureProxy feature){
+    for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
         outputFC->newFeatureFrom(feature);
     });
 
