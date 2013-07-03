@@ -83,7 +83,7 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 
 IlwisTypes FeatureCoverage::ilwisType() const
 {
-    return itFEATURECOVERAGE;
+    return featureTypes();
 }
 
 quint32 FeatureCoverage::featureCount(IlwisTypes types, int ) const
