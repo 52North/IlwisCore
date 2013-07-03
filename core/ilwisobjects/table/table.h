@@ -65,6 +65,7 @@ public:
      * \return a column definition or an invalid defintion if a non existing column was retrieved
      */
     virtual ColumnDefinition columndefinition(const QString& nme) const=0;
+    virtual ColumnDefinition columndefinition(quint32 index) const=0;
 
     /*!
      retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives
