@@ -269,13 +269,13 @@ bool IlwisObject::store(int storemode)
 QString IlwisObject::type2Name(IlwisTypes t)
 {
     switch(t) {
-    case  itGRIDCOVERAGE:
+    case  itGRID:
         return "GridCoverage";
-    case  itPOLYGONCOVERAGE:
+    case  itPOLYGON:
         return "PolygonCoverage";
-    case  itSEGMENTCOVERAGE:
+    case  itLINE:
         return "LineCoverage";
-    case  itPOINTCOVERAGE:
+    case  itPOINT:
         return "PointCoverage";
     case  itNUMERICDOMAIN:
         return "ValueDomain";
@@ -319,13 +319,13 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
     }
 
     if ( name.compare("GridCoverage",Qt::CaseInsensitive) == 0)
-        return  itGRIDCOVERAGE;
+        return  itGRID;
     if ( name.compare( "PolygonCoverage",Qt::CaseInsensitive) == 0)
-        return  itPOLYGONCOVERAGE;
+        return  itPOLYGON;
     if ( name.compare( "LineCoverage",Qt::CaseInsensitive) == 0)
-        return  itSEGMENTCOVERAGE;
+        return  itLINE;
     if ( name.compare( "PointCoverage",Qt::CaseInsensitive) == 0)
-        return  itPOINTCOVERAGE;
+        return  itPOINT;
     if ( name.compare( "FeatureCoverage",Qt::CaseInsensitive) == 0)
         return  itFEATURECOVERAGE;
     if ( name.compare( "ValueDomain",Qt::CaseInsensitive) == 0)

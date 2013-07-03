@@ -224,7 +224,7 @@ IlwisTypes MasterCatalog::id2type(quint64 iid) const {
 Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 {
     if ( tp == itUNKNOWN) {
-        std::vector<IlwisTypes> types { itGRIDCOVERAGE, itFEATURECOVERAGE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
+        std::vector<IlwisTypes> types { itGRID, itFEATURECOVERAGE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
         for(IlwisTypes type: types) {
             Resource res = name2Resource(name, type);
             if (res.isValid())

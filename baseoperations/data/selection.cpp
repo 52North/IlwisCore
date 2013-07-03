@@ -72,7 +72,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(outputGC);
-        ctx->addOutput(symTable, value, outputGC->name(), itGRIDCOVERAGE,outputGC->source());
+        ctx->addOutput(symTable, value, outputGC->name(), itGRID,outputGC->source());
     }
     return res;
 
@@ -91,7 +91,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;
     }
-    IlwisTypes inputType = itGRIDCOVERAGE;
+    IlwisTypes inputType = itGRID;
     QString gc = _expression.parm(0).value();
     if (!_inputObj.prepare(gc, inputType)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
@@ -168,13 +168,13 @@ quint64 Selection::createMetadata()
     res.addProperty("longname","selection");
     res.addProperty("syntax","selection(coverage,selection-definition)");
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE);
+    res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with a domain as specified by the selection"));
     res.addProperty("pin_2_type", itSTRING);
     res.addProperty("pin_2_name", TR("selection-definition"));
     res.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    res.addProperty("pout_1_type", itGRIDCOVERAGE);
+    res.addProperty("pout_1_type", itGRID);
     res.addProperty("pout_1_name", TR("gridcoverage were the selection has been applied"));
     res.addProperty("pout_1_desc",TR(""));
     res.prepare();

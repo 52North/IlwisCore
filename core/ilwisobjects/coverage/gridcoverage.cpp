@@ -41,7 +41,7 @@ void GridCoverage::georeference(const IGeoReference &grf)
 
 IlwisTypes GridCoverage::ilwisType() const
 {
-    return itGRIDCOVERAGE;
+    return itGRID;
 }
 
 

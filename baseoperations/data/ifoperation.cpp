@@ -37,7 +37,7 @@ DataDefinition IfOperation::findParameterDataDef(const OperationExpression &expr
     DataDefinition def;
     QString parmvalue = parm.value().toLower();
 
-    quint64 gcid = mastercatalog()->name2id(parmvalue, itGRIDCOVERAGE);
+    quint64 gcid = mastercatalog()->name2id(parmvalue, itGRID);
     if ( gcid != i64UNDEF) {
         ICoverage cov;
         if(cov.prepare(gcid)) {

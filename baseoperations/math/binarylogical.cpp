@@ -27,7 +27,7 @@ bool BinaryLogical::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(), itGRIDCOVERAGE, _outputGC->source() );
+        ctx->addOutput(symTable,value,_outputGC->name(), itGRID, _outputGC->source() );
     }
     return _outputGC.isValid();
 }
@@ -223,11 +223,11 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
     else if ( oper == "greatereq")
         _operator = otGREATEREQ;
 
-    if ( ((ptype1 | ptype2) & (itGRIDCOVERAGE | itNUMERIC)) ) {
+    if ( ((ptype1 | ptype2) & (itGRID | itNUMERIC)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
-    } else if ( ptype1 & ptype2 & itGRIDCOVERAGE ) {
+    } else if ( ptype1 & ptype2 & itGRID ) {
         if(!prepareCoverageCoverage())
             return sPREPAREFAILED;
     }
@@ -243,11 +243,11 @@ quint64 BinaryLogical::createMetadata()
     res.addProperty("longname","binarylogicalraster");
     res.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE | itNUMERIC);
+    res.addProperty("pin_1_type", itGRID | itNUMERIC);
     res.addProperty("pin_1_name", TR("input gridcoverage or number/boolean"));
     res.addProperty("pin_1_domain","value");
     res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical/boolean domain or number"));
-    res.addProperty("pin_2_type", itGRIDCOVERAGE | itNUMERIC);
+    res.addProperty("pin_2_type", itGRID | itNUMERIC);
     res.addProperty("pin_2_name", TR("input gridcoverage or number"));
     res.addProperty("pin_2_domain","value");
     res.addProperty("pin_2_desc",TR("input gridcoverage with a numerical/boolean domain or number"));
@@ -256,7 +256,7 @@ quint64 BinaryLogical::createMetadata()
     res.addProperty("pin_3_domain","string");
     res.addProperty("pin_3_desc",TR("operator applied to the other 2 input parameters"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRIDCOVERAGE);
+    res.addProperty("pout_1_type", itGRID);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_domain","value");
     res.addProperty("pout_1_desc",TR("output gridcoverage with a boolean domain"));

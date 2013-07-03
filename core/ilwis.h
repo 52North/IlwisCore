@@ -74,11 +74,11 @@ inline qint64 max(qint64 a, qint64 b) { return a>=b && a!=i64UNDEF ? a : b;}
 typedef quint64 IlwisTypes;
 
 const quint64 itUNKNOWN = 0; //0
-const quint64 itPOINTCOVERAGE =  1; //1
-const quint64 itSEGMENTCOVERAGE =  2 * itPOINTCOVERAGE; //2
-const quint64 itPOLYGONCOVERAGE = 2 * itSEGMENTCOVERAGE; //4
-const quint64 itGRIDCOVERAGE = 2 * itPOLYGONCOVERAGE; //8
-const quint64 itCOVERAGELIST = 2 * itGRIDCOVERAGE; //16
+const quint64 itPOINT =  1; //1
+const quint64 itLINE =  2 * itPOINT; //2
+const quint64 itPOLYGON = 2 * itLINE; //4
+const quint64 itGRID = 2 * itPOLYGON; //8
+const quint64 itCOVERAGELIST = 2 * itGRID; //16
 const quint64 itOBJECTCOLLECTION =  2 * itCOVERAGELIST; //32
 const quint64 itNUMERICDOMAIN =  2 * itOBJECTCOLLECTION; //64
 const quint64 itITEMDOMAIN = 2 * itNUMERICDOMAIN; //128
@@ -126,14 +126,11 @@ const quint64 itNAMEDITEM = 2 * itTHEMATICITEM;
 const quint64 itINDEXEDITEM = 2 * itNAMEDITEM;
 const quint64 itNUMERICITEM = 2 * itINDEXEDITEM;
 const quint64 itTIMEITEM = 2 * itNUMERICITEM;
-const quint64 itPOINT = 2 * itTIMEITEM;
-const quint64 itLINE = 2 * itPOINT;
-const quint64 itPOLYGON = 2 * itLINE;
-const quint64 itCOLOR = 2 * itPOLYGON;
+const quint64 itCOLOR = 2 * itTIMEITEM;
 
 
-const quint64 itCOVERAGE = itPOINTCOVERAGE | itGRIDCOVERAGE | itPOLYGONCOVERAGE | itSEGMENTCOVERAGE | itCOVERAGELIST;
-const quint64 itFEATURECOVERAGE = itPOINTCOVERAGE | itPOLYGONCOVERAGE | itSEGMENTCOVERAGE;
+const quint64 itCOVERAGE = itPOINT | itGRID | itPOLYGON | itLINE | itCOVERAGELIST;
+const quint64 itFEATURECOVERAGE = itPOINT | itPOLYGON | itLINE;
 const quint64 itCOORDSYSTEM = itCONVENTIONALCOORDSYSTEM | itORTHOCOORDSYSTEM;
 const quint64 itTABLE = itFLATTABLE | itDATABASETABLE;
 const quint64 itDOMAIN =  itNUMERICDOMAIN | itITEMDOMAIN | itTIMEDOMAIN | itCOORDDOMAIN | itCOLORDOMAIN | itTEXTDOMAIN;

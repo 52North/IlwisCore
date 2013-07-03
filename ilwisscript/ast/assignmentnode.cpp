@@ -95,13 +95,13 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
         if (  tp & itCOVERAGE) {
             Ilwis::ICoverage coverage;
-            if ( tp & itGRIDCOVERAGE)
+            if ( tp & itGRID)
                 coverage = sym._var.value<Ilwis::IGridCoverage>().get<Coverage>();
             else
                 coverage = sym._var.value<Ilwis::IFeatureCoverage>().get<Coverage>();
 
             if ( format == "" || format == sUNDEF) {
-                Formatter *fnode = ScriptNode::activeFormat(itGRIDCOVERAGE);
+                Formatter *fnode = ScriptNode::activeFormat(itGRID);
                 if ( fnode) {
                     format = fnode->format();
                     fnamespace = fnode->fnamespace();

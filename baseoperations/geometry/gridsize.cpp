@@ -67,7 +67,7 @@ quint64 GridSize::createMetadata()
     res.addProperty("longname","gridsize");
     res.addProperty("syntax","gridsize(gridcoverage,xsize|ysize|zsize)");
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE);
+    res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("gridcoverage"));
     res.addProperty("pin_1_desc",TR("gridcoverage from which a dimension size is retrieved"));
     res.addProperty("pin_2_type", itSTRING);

@@ -76,7 +76,7 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     } else {
         if ( _inputObj.isValid()) {
-            if ( _inputObj->ilwisType() == itGRIDCOVERAGE) {
+            if ( _inputObj->ilwisType() == itGRID) {
                 if((res = assignGridCoverage(ctx)) == true)
                     setOutput<GridCoverage>(ctx, symTable);
             }

@@ -42,36 +42,36 @@ ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
 {
     int index = ind < 0 ? 0 : ind + 1;
     if ( index < (qint32)_attTables.size()){
-        IlwisTypes ft = type & itPOINTCOVERAGE;
+        IlwisTypes ft = type & itPOINT;
         if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itPOINTCOVERAGE];
-        ft = type & itSEGMENTCOVERAGE;
+            return _attTables[index][itPOINT];
+        ft = type & itLINE;
         if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itSEGMENTCOVERAGE];
-        ft = type & itPOLYGONCOVERAGE;
+            return _attTables[index][itLINE];
+        ft = type & itPOLYGON;
         if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itPOLYGONCOVERAGE];
-        ft = type & itGRIDCOVERAGE;
+            return _attTables[index][itPOLYGON];
+        ft = type & itGRID;
         if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itGRIDCOVERAGE];
+            return _attTables[index][itGRID];
     }
     return ITable();
 }
 
 void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
 {
-    if ( type & itCOVERAGE && ind < (qint32)_attTables.size()) {
+    if ( ind < (qint32)_attTables.size()) {
         quint32 index = ind < 0 ? 0 : ind + 1;
         if ( index == _attTables.size())
             _attTables.push_back(AttributeTables());
-        if ( (type & itPOINTCOVERAGE) != 0 )
-            _attTables[index][itPOINTCOVERAGE] = tbl;
-        if ( (type & itSEGMENTCOVERAGE) != 0 )
-            _attTables[index][itSEGMENTCOVERAGE] = tbl;
-        if ( (type & itPOLYGONCOVERAGE) != 0 )
-            _attTables[index][itPOLYGONCOVERAGE] = tbl;
-        if ( (type & itGRIDCOVERAGE) != 0 )
-            _attTables[index][itGRIDCOVERAGE] = tbl;
+        if ( (type & itPOINT) != 0 )
+            _attTables[index][itPOINT] = tbl;
+        if ( (type & itLINE) != 0 )
+            _attTables[index][itLINE] = tbl;
+        if ( (type & itPOLYGON) != 0 )
+            _attTables[index][itPOLYGON] = tbl;
+        if ( (type & itGRID) != 0 )
+            _attTables[index][itGRID] = tbl;
     }
 }
 

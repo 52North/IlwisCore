@@ -70,7 +70,7 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature) {
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 {
     Locker lock(_mutex2);
-    _featureTypes |= types;
+     _featureTypes |= types;
     switch(types){
     case itPOINT:
         _featureInfo[0]._count = cnt;break;

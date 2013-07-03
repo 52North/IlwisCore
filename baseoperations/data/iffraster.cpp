@@ -70,7 +70,7 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(),itGRIDCOVERAGE,_outputGC->source());
+        ctx->addOutput(symTable,value,_outputGC->name(),itGRID,_outputGC->source());
     }
     return res;
 }
@@ -110,17 +110,17 @@ quint64 IffRaster::createMetadata()
     res.addProperty("longname","iff");
     res.addProperty("syntax","iffraster(gridcoverage,outputchoicetrue, outputchoicefalse)");
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRIDCOVERAGE);
+    res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with boolean domain"));
-    res.addProperty("pin_2_type", itNUMERIC | itSTRING | itBOOL | itGRIDCOVERAGE);
+    res.addProperty("pin_2_type", itNUMERIC | itSTRING | itBOOL | itGRID);
     res.addProperty("pin_2_name", TR("true choice"));
     res.addProperty("pin_2_desc",TR("value returned when the boolean input pixel is true"));
-    res.addProperty("pin_3_type", itNUMERIC | itSTRING | itBOOL | itGRIDCOVERAGE);
+    res.addProperty("pin_3_type", itNUMERIC | itSTRING | itBOOL | itGRID);
     res.addProperty("pin_3_name", TR("false choice"));
     res.addProperty("pin_3_desc",TR("value returned when the boolean input pixel is false"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRIDCOVERAGE);
+    res.addProperty("pout_1_type", itGRID);
     res.addProperty("pout_1_name", TR("gridcoverage"));
     res.addProperty("pout_1_desc",TR("gridcoverage with all pixels that correspond to the true value in the input having a value"));
     res.prepare();
