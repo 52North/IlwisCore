@@ -52,6 +52,7 @@ public:
     \se Ilwis::IlwisObject::ilwisType
      */
     ColumnDefinition columndefinition(const QString& nme) const;
+    ColumnDefinition columndefinition(quint32 index) const;
     /*!
     \se Ilwis::Table
      */

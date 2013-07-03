@@ -96,6 +96,14 @@ ColumnDefinition BaseTable::columndefinition(const QString &nme) const
     return ColumnDefinition();
 }
 
+ColumnDefinition BaseTable::columndefinition(quint32 index) const
+{
+    auto iter = _columnDefinitionsByIndex.find(index);
+    if ( iter != _columnDefinitionsByIndex.end())
+        return iter.value();
+    return ColumnDefinition();
+}
+
 
 bool BaseTable::prepare()
 {
