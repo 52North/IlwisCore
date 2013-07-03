@@ -112,9 +112,11 @@ bool FeatureIterator::init()
     if ( _isInitial)     {
         _useVectorIter = _subset.size() == 0 || _subset.size() == _fcoverage->featureCount();
         _isInitial = false;
-        bool ok = _fcoverage->connector()->loadBinaryData(_fcoverage.ptr());
-        if (!ok)
-            return false;
+        if ( _fcoverage->_features.size() == 0) {
+            bool ok = _fcoverage->connector()->loadBinaryData(_fcoverage.ptr());
+            if (!ok)
+                return false;
+        }
         if ( _fcoverage->_features.size() > 0 ) {
             _iterPosition = 0;
             _iterFeatures = _fcoverage->_features.begin();
