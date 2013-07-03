@@ -38,6 +38,7 @@ public:
      \return bool false if any errors did occur. The issue stack will have the exact error
     */
     bool code2Record(const QString& code, const QString& table, QSqlRecord& rec);
+    QString findAlias(const QString& name, const QString& type, const QString& nspace);
 
 private:
     void loadPublicTables();

@@ -127,6 +127,17 @@ bool PublicDatabase::code2Record(const QString &code, const QString &table, QSql
     return false;
 }
 
+QString PublicDatabase::findAlias(const QString &name, const QString &type, const QString &nspace)
+{
+    QSqlQuery db(kernel()->database());
+    QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='%3'").arg(name).arg(type).arg(nspace);
+    if ( db.exec(query)) {
+        if ( db.next())
+            return db.value(0).toString();
+    }
+    return sUNDEF;
+}
+
 void PublicDatabase::loadPublicTables() {
     QSqlQuery sqlPublic(*this);
     insertFile("datums.csv", sqlPublic);
