@@ -52,7 +52,7 @@ public:
     SPDomainItem item(quint32 index) const {
         if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
-            return 0;
+            return SPDomainItem();
         }
         return _range->item(index) ;
     }
