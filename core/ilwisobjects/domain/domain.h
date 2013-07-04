@@ -68,12 +68,12 @@ public:
     static IlwisTypes ilwType(const QVariant &v);
     virtual Containement contains(const QString& value) const = 0;
 
-    template<typename T=Range> QSharedPointer<T> range() {
+    template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();
     }
 
 protected:
-    virtual QSharedPointer<Range> getRange() = 0;
+    virtual QSharedPointer<Range> getRange() const = 0;
 private:
     bool _strict;
     IDomain _parentDomain;
