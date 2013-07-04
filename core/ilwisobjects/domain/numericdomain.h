@@ -19,7 +19,7 @@ public:
     IlwisTypes ilwisType() const;
 
 protected:
-    SPRange getRange();
+    SPRange getRange() const;
 private:
     long significantDigits(double m1);
 
