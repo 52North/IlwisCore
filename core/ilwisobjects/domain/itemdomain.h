@@ -122,7 +122,7 @@ public:
     }
 
 protected:
-    SPRange getRange(){
+    SPRange getRange() const{
         return _range.dynamicCast<Range>();
     }
 
