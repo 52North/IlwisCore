@@ -13,7 +13,7 @@ public:
     virtual Containement contains(const QString& value) const;
     IlwisTypes ilwisType() const;
 private:
-    QSharedPointer<Range> getRange();
+    QSharedPointer<Range> getRange() const;
 };
 typedef IlwisData<TextDomain> ITextDomain;
 }

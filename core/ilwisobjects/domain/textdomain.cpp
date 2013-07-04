@@ -35,7 +35,7 @@ IlwisTypes TextDomain::ilwisType() const
     return itTEXTDOMAIN;
 }
 
-QSharedPointer<Range> TextDomain::getRange()
+QSharedPointer<Range> TextDomain::getRange() const
 {
     return QSharedPointer<Range>();
 }
