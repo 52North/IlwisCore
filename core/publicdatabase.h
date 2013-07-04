@@ -9,7 +9,7 @@ namespace Ilwis {
 /*!
 The PublicDatabase class exposes the internal database of Ilwis to the outside world. The default implementation is an in memory sqllite database
  */
-class PublicDatabase : public QSqlDatabase
+class KERNELSHARED_EXPORT PublicDatabase : public QSqlDatabase
 {
 public:
     /*!
