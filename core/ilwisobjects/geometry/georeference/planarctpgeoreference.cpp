@@ -402,9 +402,11 @@ quint32 PlanarCTPGeoReference::minnr() const
 
 bool PlanarCTPGeoReference::isValid() const
 {
+    return false;
 }
 
 double PlanarCTPGeoReference::pixelSize() const
 {
+    return 0;
 }
 
