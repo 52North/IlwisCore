@@ -54,7 +54,7 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     };
 
-    bool res = OperationHelperFeatures::execute(ctx, iffunc, _outputFC);
+    bool res = OperationHelperFeatures::execute(ctx, iffunc, _inputFC, _outputFC);
 
     if ( res && ctx != 0) {
         QVariant value;
