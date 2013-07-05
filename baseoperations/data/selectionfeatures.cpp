@@ -75,7 +75,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         return true;
     };
     ctx->_threaded = false;
-    bool res = OperationHelperFeatures::execute(ctx,selection, inputFC);
+    bool res = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
     if ( res && ctx != 0) {
         outputFC->attributeTable(outputFC->featureTypes(),_attTable);
