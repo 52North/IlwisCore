@@ -1,7 +1,6 @@
 #ifndef TABLE_H
 #define TABLE_H
 
-#include <QVariantList>
 #include <QSqlDatabase>
 #include <unordered_map>
 
@@ -66,6 +65,7 @@ public:
      */
     virtual ColumnDefinition columndefinition(const QString& nme) const=0;
     virtual ColumnDefinition columndefinition(quint32 index) const=0;
+    virtual ColumnDefinition& columndefinition(quint32 index) = 0;
 
     /*!
      retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives
@@ -73,7 +73,7 @@ public:
      * \param n the row/record number of the record
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
-    virtual QVariantList record(quint32 n) const = 0;
+    virtual std::vector<QVariant> record(quint32 n) const = 0;
     /*!
      sets a record with values from variantlist. The list doesnt need to contain all the fields in a record but may contain a subset
      . Note that the fields are in consecutive order. It is up to the programmer that the order of fields in the list match the order of fields in the table
@@ -87,8 +87,8 @@ public:
      * \param nme name of the column to be returned
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
-    virtual QVariantList column(const QString& nme) const = 0;
-    virtual QVariantList column(quint32 index) const = 0;
+    virtual std::vector<QVariant> column(const QString& nme) const = 0;
+    virtual std::vector<QVariant> column(quint32 index) const = 0;
     /*!
      sets a column with values from variantlist. The list doesnt need to contain all the rows in a column but may contain a subset
      . Note that the rows are in consecutive order.
@@ -96,8 +96,8 @@ public:
      * \param vars values of the rows
      * \param offset starting row form where the values are set. If the number of values to be added goes beyond the size of the table, new records will be added
      */
-    virtual void column(const QString& nme, const QVariantList& vars, quint32 offset=0) = 0;
-    virtual void column(const quint32 index, const QVariantList& vars, quint32 offset=0) = 0;
+    virtual void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
+    virtual void column(const quint32 index, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
     /*!
      returns the value of a single record/field combination ( a cell).
      * \param col column name
@@ -114,7 +114,6 @@ public:
      */
     virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
     virtual void cell(quint32 col, quint32 rec, const QVariant& var) = 0;
-
 
     virtual quint32 columnIndex(const QString& nme) const = 0;
 

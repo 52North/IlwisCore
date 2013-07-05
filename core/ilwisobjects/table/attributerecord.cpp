@@ -116,7 +116,7 @@ QVariant AttributeRecord::cellByIndex(quint64 index, quint32 colIndex, int )
 
 void AttributeRecord::indexVerticalIndex(int index){
     quint32 rec = 0;
-    QVariantList values = _indexTable->column(_keyColumn);
+    std::vector<QVariant> values = _indexTable->column(_keyColumn);
     for(const QVariant& val : values) {
         _verticalIndex[index][val.toInt()] = rec++;
     }
@@ -125,7 +125,7 @@ void AttributeRecord::indexVerticalIndex(int index){
 
 void AttributeRecord::indexCoverageKey(){
     quint32 rec = 0;
-    QVariantList values = _coverageTable->column(_keyColumn);
+    std::vector<QVariant> values = _coverageTable->column(_keyColumn);
     for(const QVariant& val : values) {
         _coverageIndex[val.toInt()] = rec++;
     }

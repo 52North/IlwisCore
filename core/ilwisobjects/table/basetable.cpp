@@ -118,6 +118,11 @@ bool BaseTable::isValid() const
     return _rows != 0 && _columns != 0;
 }
 
+ColumnDefinition &BaseTable::columndefinition(quint32 index)
+{
+    return _columnDefinitionsByIndex[index]    ;
+}
+
 bool  BaseTable::initLoad() {
     if ( !this->isValid()) {
         kernel()->issues()->log(TR(ERR_NO_INITIALIZED_1).arg("table"));

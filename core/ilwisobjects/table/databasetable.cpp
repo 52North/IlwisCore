@@ -99,18 +99,18 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
     return true;
 }
 
-QVariantList DatabaseTable::record(quint32 n) const {
+std::vector<QVariant> DatabaseTable::record(quint32 n) const {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
-        return QVariantList();
+        return std::vector<QVariant>();
 
     QSqlQuery db(_database);
     QString query = QString("Select * from %1 where record_index=%2 ").arg(internalName().arg(n));
     if ( db.exec(query)){
         if ( db.next()) {
             QSqlRecord rec = db.record();
-            QVariantList values;
+            std::vector<QVariant> values(rec.count());
             for(int i = 0; i < rec.count(); ++i) {
-                values << rec.value(i);
+                values[i] = rec.value(i);
             }
             return values;
 
@@ -120,7 +120,7 @@ QVariantList DatabaseTable::record(quint32 n) const {
         }
         kernel()->issues()->logSql(db.lastError());
     }
-    return QVariantList();
+    return std::vector<QVariant>();
 }
 
 void DatabaseTable::record(quint32 rec, const QVariantList &vars, quint32 offset)
@@ -184,7 +184,7 @@ QVariant DatabaseTable::cell(quint32 index, quint32 rec) const{
 }
 QVariant DatabaseTable::cell(const QString& col, quint32 rec) const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
-        return QVariantList();
+        return QVariant();
 
     quint32 index = columnIndex(col);
     if ( index == iUNDEF)
@@ -263,26 +263,26 @@ void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
 
 }
 
-QVariantList DatabaseTable::column(quint32 index) const {
+std::vector<QVariant> DatabaseTable::column(quint32 index) const {
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
-        return QVariantList();
+        return std::vector<QVariant>();
     }
     return column(iter.value().name());
 }
 
-QVariantList DatabaseTable::column(const QString& nme)  const{
+std::vector<QVariant> DatabaseTable::column(const QString& nme)  const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
-        return QVariantList();
+        return std::vector<QVariant>();
 
     QSqlQuery db(_database);
     QString query = QString("Select %1 from %2").arg(nme,internalName());
     if ( db.exec(query)){
         if ( db.next()) {
-            QVariantList values;
+            std::vector<QVariant> values;
             do {
-                values << db.value(0) ;
+                values.push_back(db.value(0)) ;
             } while(db.next());
             return values;
 
@@ -292,10 +292,10 @@ QVariantList DatabaseTable::column(const QString& nme)  const{
         }
         kernel()->issues()->logSql(db.lastError());
     }
-    return QVariantList();
+    return std::vector<QVariant>();
 }
 
-void DatabaseTable::column(quint32 index, const QVariantList &vars, quint32 offset)
+void DatabaseTable::column(quint32 index, const std::vector<QVariant> &vars, quint32 offset)
 {
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end() ) {
@@ -305,7 +305,7 @@ void DatabaseTable::column(quint32 index, const QVariantList &vars, quint32 offs
     column(iter.value().name(), vars, offset)    ;
 }
 
-void DatabaseTable::column(const QString &nme, const QVariantList &vars, quint32 offset)
+void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars, quint32 offset)
 {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;

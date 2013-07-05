@@ -1,7 +1,6 @@
 #ifndef BASETABLE_H
 #define BASETABLE_H
 
-#include <QVariantList>
 #include <QSqlDatabase>
 #include <unordered_map>
 
@@ -53,30 +52,30 @@ public:
      */
     ColumnDefinition columndefinition(const QString& nme) const;
     ColumnDefinition columndefinition(quint32 index) const;
-    /*!
-    \se Ilwis::Table
-     */
-    virtual QVariantList record(quint32 n) const = 0;
-    /*!
-    \se Ilwis::Table
-     */
-    virtual void record(quint32 rec, const QVariantList& vars, quint32 offset=0) = 0;
-    /*!
-    \se Ilwis::Table
-     */
-    virtual QVariantList column(const QString& nme) const = 0;
-    /*!
-    \se Ilwis::Table
-     */
-    virtual void column(const QString& nme, const QVariantList& vars, quint32 offset=0) = 0;
-    /*!
-    \se Ilwis::Table::column
-     */
-    virtual QVariant cell(const QString& col, quint32 rec) const = 0;
-    /*!
-    \se Ilwis::Table::cell
-     */
-    virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
+//    /*!
+//    \se Ilwis::Table
+//     */
+//    virtual std::vector<QVariant> record(quint32 n) const = 0;
+//    /*!
+//    \se Ilwis::Table
+//     */
+//    virtual void record(quint32 rec, const QVariantList& vars, quint32 offset=0) = 0;
+//    /*!
+//    \se Ilwis::Table
+//     */
+//    virtual std::vector<QVariant> column(const QString& nme) const = 0;
+//    /*!
+//    \se Ilwis::Table
+//     */
+//    virtual void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
+//    /*!
+//    \se Ilwis::Table::column
+//     */
+//    virtual QVariant cell(const QString& col, quint32 rec) const = 0;
+//    /*!
+//    \se Ilwis::Table::cell
+//     */
+//    virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
 
 
     bool prepare();
@@ -85,6 +84,8 @@ public:
      * \return true when valid.
      */
     bool isValid() const;
+    ColumnDefinition& columndefinition(quint32 index);
+
 protected:
     quint32 _rows;
     quint32 _columns;

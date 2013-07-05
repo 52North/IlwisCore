@@ -82,7 +82,7 @@ public:
     /*!
     \se Ilwis::Table
      */
-    QVariantList record(quint32 n) const ;
+    std::vector<QVariant> record(quint32 n) const ;
     /*!
     \se Ilwis::Table
      */
@@ -90,13 +90,13 @@ public:
     /*!
     \se Ilwis::Table
      */
-    QVariantList column(const QString& nme) const;
-    QVariantList column(quint32 index) const;
+    std::vector<QVariant> column(const QString& nme) const;
+    std::vector<QVariant> column(quint32 index) const;
     /*!
     \se Ilwis::Table
      */
-    void column(const QString& nme, const QVariantList& vars, quint32 offset=0);
-    void column(quint32 index, const QVariantList &vars, quint32 offset);
+    void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0);
+    void column(quint32 index, const std::vector<QVariant> &vars, quint32 offset);
     /*!
     \se Ilwis::Table
      */

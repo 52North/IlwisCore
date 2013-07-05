@@ -65,38 +65,38 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
     return true;
 }
 
-QVariantList FlatTable::column(quint32 index) const {
+std::vector<QVariant> FlatTable::column(quint32 index) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return QVariantList();
+        return std::vector<QVariant>();
 
     if ( !isColumnIndexValid(index))
-        return QVariantList();
+        return std::vector<QVariant>();
 
-    QVariantList data;
+    std::vector<QVariant> data(rows());
     for(quint32 i=0; i < _rows; ++i) {
-        data << _datagrid[i][index];
+        data[i] = _datagrid[i][index];
     }
     return data;
 }
 
-QVariantList FlatTable::column(const QString &nme) const
+std::vector<QVariant> FlatTable::column(const QString &nme) const
 {
     quint32 index = columnIndex(nme);
     return column(index);
 
 }
 
-void FlatTable::column(quint32 index, const QVariantList &vars, quint32 offset)
+void FlatTable::column(quint32 index, const std::vector<QVariant> &vars, quint32 offset)
 {
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return ;
     }
-    column(iter.value().name(), vars, offset);
+    column((*iter).name(), vars, offset);
 }
 
-void FlatTable::column(const QString &nme, const QVariantList &vars, quint32 offset)
+void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, quint32 offset)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
@@ -117,21 +117,23 @@ void FlatTable::column(const QString &nme, const QVariantList &vars, quint32 off
 
 }
 
-QVariantList FlatTable::record(quint32 rec) const
+std::vector<QVariant> FlatTable::record(quint32 rec) const
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return QVariantList();
-    QVariantList data;
+        return std::vector<QVariant>();
+    std::vector<QVariant> data;
 
     if ( rec < _rows && _datagrid.size() != 0) {
+        data.resize(columns());
+        int col = 0;
         for(const QVariant& var : _datagrid[rec])
-            data << var;
+            data[col++] = var;
     }else
         kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg(name()),IssueObject::itWarning);
     return data;
 }
 
-void FlatTable::record(quint32 rec, const QVariantList &vars, quint32 offset)
+void FlatTable::record(quint32 rec, const QVariantList& vars, quint32 offset)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
@@ -151,7 +153,7 @@ void FlatTable::record(quint32 rec, const QVariantList &vars, quint32 offset)
 
 QVariant FlatTable::cell(const QString& col, quint32 rec) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return QVariantList();
+        return QVariant();
 
     quint32 index = columnIndex(col);
     return cell(index , rec);
@@ -160,10 +162,10 @@ QVariant FlatTable::cell(const QString& col, quint32 rec) const {
 QVariant FlatTable::cell(const quint32 index, quint32 rec) const
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return QVariantList();
+        return QVariant();
 
     if ( !isColumnIndexValid(index))
-        return QVariantList();
+        return QVariant();
     if ( rec < _rows)
         return _datagrid[rec][index];
     kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg(name()),IssueObject::itWarning);
