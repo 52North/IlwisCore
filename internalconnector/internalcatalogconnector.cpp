@@ -40,7 +40,7 @@ bool InternalCatalogConnector::createSpecialDomains() {
     QString url = QString("ilwis://internal/code=domain:text");
     Resource item(url, itTEXTDOMAIN);
     item.setCode("text");
-    item.setName("Text domain");
+    item.setName("Text domain", false);
     item.setContainer(QUrl("ilwis://system"));
     item.prepare();
     return mastercatalog()->addItems({item});
@@ -62,7 +62,7 @@ bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
             QString url = QString("ilwis://tables/projectedcsy?code=%1").arg(code);
             Resource item(url, itCONVENTIONALCOORDSYSTEM);
             item.setCode(code);
-            item.setName(name);
+            item.setName(name, false);
             item["wkt"] = name;
             item.setContainer(QUrl("ilwis://system"));
             items.push_back(item);
@@ -85,9 +85,9 @@ bool InternalCatalogConnector::createItems(QSqlQuery& db, const QString& table, 
             QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
             Resource item(url, type);
             if ( type == itNUMERICDOMAIN) // for valuedomain name=code
-                item.setName(rec.value("code").toString());
+                item.setName(rec.value("code").toString(), false);
             else
-                item.setName(rec.value("name").toString());
+                item.setName(rec.value("name").toString(), false);
 
             item.setCode(code);
             item.setExtendedType(extType);

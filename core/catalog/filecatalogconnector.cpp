@@ -63,7 +63,7 @@ Resource FileCatalogConnector::loadFolder(const QFileInfo& file, QUrl container,
     }
     item.setContainer(container);
     QString name = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-    item.setName(name);
+    item.setName(name, false);
 
     return item;
 }
