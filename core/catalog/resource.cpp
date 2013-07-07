@@ -142,17 +142,20 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     }
 }
 
-void Resource::setName(const QString &nm)
+void Resource::setName(const QString &nm, bool adaptUrl)
 {
     Identity::setName(nm);
-    if ( nm.indexOf(INTERNAL_PREFIX) != -1)  {
+    if ( !adaptUrl)
+        return;
+
+    //if ( nm.indexOf(INTERNAL_PREFIX) != -1)  {
         QString url = _resource.toString();
         int index = url.lastIndexOf("/");
         if ( index != -1) {
             url = url.left(index+1) + nm;
         }
         _resource = QUrl(url);
-    }
+   // }
 }
 
 QVariant Resource::operator [](const QString &prop) const
@@ -196,7 +199,7 @@ void Resource::setUrl(const QUrl &url)
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
         QString sname = urlTxt.mid(19,index1-19);
-        setName(sname);
+        setName(sname, false);
         int index2 = urlTxt.indexOf("/", index1);
         QString scode = urlTxt.mid(index1 + 1, index2 - index1);
         setCode(sname + "_" + scode );
@@ -205,7 +208,7 @@ void Resource::setUrl(const QUrl &url)
     QFileInfo inf(_resource.toLocalFile());
     if ( urlTxt != "file://") {
         if ( !url.hasFragment()) {
-            setName(inf.fileName());
+            setName(inf.fileName(), false);
             _container = QUrl::fromLocalFile(inf.absolutePath());
         } else {
             QString fragment = url.fragment();
@@ -214,14 +217,14 @@ void Resource::setUrl(const QUrl &url)
             int index = fpath.toInt(&ok);
             if ( ok) { //TODO other cases than indexes; no example yet so postponed till there is one
                 QString name = QString("%1_%2").arg(inf.fileName()).arg(index);
-                setName(name);
+                setName(name, false);
                 _container = QUrl(url.toString(QUrl::RemoveFragment));
             }
 
         }
     }
     else
-        setName("root");
+        setName("root", false);
 }
 
 QUrl Resource::container() const
@@ -354,7 +357,7 @@ void Resource::checkUrl(IlwisTypes tp) {
         QString name = res.right(res.size() - index - 1);
         if ( index2 != -1)
             setCode(name);
-        setName(name);
+        setName(name, false);
     }
 }
 

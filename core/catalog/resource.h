@@ -22,7 +22,7 @@ public:
     Resource(const QSqlRecord& rec);
     virtual ~Resource() {}
 
-    void setName(const QString& nm);
+    void setName(const QString& nm, bool adaptUrl=true);
     QVariant operator[] (const QString& property) const;
     bool hasProperty(const QString& property) const;
     void addProperty(const QString& key, const QVariant& value );
