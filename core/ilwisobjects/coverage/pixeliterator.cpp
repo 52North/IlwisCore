@@ -138,7 +138,7 @@ Voxel PixelIterator::position() const
     return Voxel(_x, _y, _z);
 }
 
-inline bool PixelIterator::move(int n) {
+bool PixelIterator::move(int n) {
 
     bool ok;
     if (isAtEnd()) {
