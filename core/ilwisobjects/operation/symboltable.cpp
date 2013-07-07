@@ -34,7 +34,7 @@ void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QV
             if ( v.type() == QMetaType::QString)
                 tp = itSTRING;
             QString typname = v.typeName();
-            if ( typname == "Ilwis::Coordinate")
+            if ( typname == "Coordinate")
                 tp = itCOORDINATE;
         }
 
