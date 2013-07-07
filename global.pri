@@ -1,6 +1,7 @@
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_CXXFLAGS += -Wno-sign-compare
+QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 
 CONFIG(debug, debug|release) {
 CONF=debug
