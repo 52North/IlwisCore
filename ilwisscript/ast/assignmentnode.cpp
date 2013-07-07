@@ -107,8 +107,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
                     fnamespace = fnode->fnamespace();
                 }
             }
+            coverage->setName(result);
             if ( format != "" && format != sUNDEF) {
-                coverage->setName(result);
                 coverage->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
                 coverage->setCreateTime(Ilwis::Time::now());
                 coverage->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
@@ -117,11 +117,12 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             if ( result.indexOf(INTERNAL_PREFIX) == -1) {
                 mastercatalog()->addItems({coverage->source()});
             }
-        }
-        sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
-        tp = sym.isValid() ? sym._type : itUNKNOWN;
-        if ( tp == itUNKNOWN) {
-            tp = Domain::ilwType(val);
+        } else {
+            sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
+            tp = sym.isValid() ? sym._type : itUNKNOWN;
+            if ( tp == itUNKNOWN) {
+                tp = Domain::ilwType(val);
+            }
         }
         symbols.addSymbol(_result->id(), scope, tp, _expression->value());
 
