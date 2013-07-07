@@ -30,8 +30,13 @@ void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QV
             tp = itDOUBLE;
         else if (isIntegerNumerical(v))
             tp = itINT32;
-        else if ( v.type() == QMetaType::QString)
-            tp = itSTRING;
+        else {
+            if ( v.type() == QMetaType::QString)
+                tp = itSTRING;
+            QString typname = v.typeName();
+            if ( typname == "Ilwis::Coordinate")
+                tp = itCOORDINATE;
+        }
 
     }
     Symbol sym(scope, tp, v);
