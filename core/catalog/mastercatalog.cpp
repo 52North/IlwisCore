@@ -242,7 +242,6 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
     auto results = kernel()->database().exec(query);
     if ( results.next()) {
         auto rec = results.record();
-        quint64 tttp = rec.value("type").toLongLong();
         return Resource(rec);
 
     } else {
@@ -362,6 +361,8 @@ void MasterCatalog::registerObject(ESPObject &data)
         QHash<quint64,ESPObject>::iterator iter = _lookup.find(data->id());
         data = iter.value();
     } else {
+        if ( !data->isInternal())
+            addItems({data->source()});
         _lookup[data->id()] = data;
 
     }
