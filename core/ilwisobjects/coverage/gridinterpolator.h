@@ -7,6 +7,7 @@ class Grid;
 class KERNELSHARED_EXPORT GridInterpolator
 {
 public:
+    enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
 
     GridInterpolator(const IGridCoverage& gcov, int method) ;
     double pix2value(const Point3D<double> &pix);

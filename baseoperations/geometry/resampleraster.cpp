@@ -22,7 +22,7 @@ ResampleRaster::ResampleRaster()
 
 ResampleRaster::ResampleRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
     OperationImplementation(metaid, expr),
-    _method(GridCoverage::ipBICUBIC)
+    _method(GridInterpolator::ipBICUBIC)
 {
 }
 
@@ -86,11 +86,11 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
 
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")
-        _method = GridCoverage::ipNEARESTNEIGHBOUR;
+        _method = GridInterpolator::ipNEARESTNEIGHBOUR;
     else if ( method.toLower() == "bilinear")
-        _method = GridCoverage::ipBILINEAR;
+        _method = GridInterpolator::ipBILINEAR;
     else if (  method.toLower() == "bicubic")
-        _method =GridCoverage::ipBICUBIC;
+        _method =GridInterpolator::ipBICUBIC;
     else {
         ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
         return sPREPAREFAILED;

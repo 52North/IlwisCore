@@ -20,7 +20,7 @@ private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     IGeoReference _targetGrf;
-    GridCoverage::InterpolationMethod _method;
+    Ilwis::GridInterpolator::InterpolationMethod _method;
 
 };
 }
