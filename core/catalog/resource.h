@@ -43,6 +43,7 @@ public:
     bool operator()(const Ilwis::Resource& resource);
 
     static QString toLocalFile(const QUrl& url, bool relative=false) ;
+    Resource copy(quint64 id) const;
 
 protected:
     QHash<QString, QVariant> _properties;

@@ -339,6 +339,14 @@ QString Resource::toLocalFile(const QUrl& url, bool relative) {
     return localFile.absoluteFilePath();
 }
 
+Resource Resource::copy(quint64 id) const
+{
+    Resource res = *this;
+    res._id = id;
+    res.prepare(); // generate new id
+    return res;
+}
+
 void Resource::checkUrl(IlwisTypes tp) {
     if ( mastercatalog()->contains(_resource, tp)) {
         Resource res = mastercatalog()->name2Resource(_resource.toString(), tp);
