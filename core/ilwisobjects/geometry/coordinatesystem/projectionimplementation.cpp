@@ -16,8 +16,8 @@
 using namespace Ilwis;
 
 ProjectionImplementation::ProjectionImplementation(const QString &type) :
-    _projtype(type),
-    _coordinateSystem(0)
+    _coordinateSystem(0),
+    _projtype(type)
 {
     _parameters[Projection::Projection::pvX0] = 0;
     _parameters[Projection::pvY0] = 0;

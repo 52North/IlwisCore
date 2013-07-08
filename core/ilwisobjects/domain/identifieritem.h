@@ -28,8 +28,8 @@ public:
     static IlwisTypes valueType();
 private:
     quint32 _index;
-    quint32 _count;
     QString _prefix;
+    quint32 _count;
 
 };
 
