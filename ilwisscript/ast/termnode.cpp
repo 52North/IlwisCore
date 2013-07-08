@@ -119,8 +119,12 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
     } else if ( _content == csID) {
         _id->evaluate(symbols, scope);
         QString value;
-        if ( _id->isReference())
-            value = symbols.getValue(_id->id(), scope).toString();
+        if ( _id->isReference()) {
+            if ( symbols.getSymbol(_id->id(),scope).isValid())
+                value = _id->id();
+            else
+                return false;
+        }
         else
             value = _id->id();
         if ( _selectors.size() > 0) {
