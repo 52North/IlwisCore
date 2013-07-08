@@ -10,6 +10,7 @@ public:
     static ConnectorInterface *create(const Resource &, bool);
     bool loadItems();
     bool canUse(const QUrl& res) const;
+    QString provider() const;
 
 private:
     bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);

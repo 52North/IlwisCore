@@ -51,6 +51,11 @@ bool InternalCatalogConnector::canUse(const QUrl &res) const
     return res.scheme() == "ilwis";
 }
 
+QString InternalCatalogConnector::provider() const
+{
+    return "internal";
+}
+
 bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
     QString query = QString("Select * from projectedcsy");
     if ( db.exec(query)) {

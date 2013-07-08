@@ -37,6 +37,11 @@ Grid *InternalGridCoverageConnector::loadGridData(IlwisObject* data){
     return grid;
 }
 
+QString Ilwis::Internal::InternalGridCoverageConnector::provider() const
+{
+    return "internal";
+}
+
 IlwisObject *InternalGridCoverageConnector::create() const
 {
     return new GridCoverage();

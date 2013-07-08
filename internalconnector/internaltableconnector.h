@@ -14,6 +14,7 @@ public:
     virtual IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
     bool loadBinaryData(IlwisObject *);
+    QString provider() const;
 };
 }
 }

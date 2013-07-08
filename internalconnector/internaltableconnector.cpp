@@ -47,3 +47,8 @@ bool InternalTableConnector::loadBinaryData(IlwisObject *obj)
         return false;
     return true;
 }
+
+QString InternalTableConnector::provider() const
+{
+    return "internal";
+}

@@ -11,6 +11,7 @@ public:
 
     bool loadMetaData(IlwisObject *data);
     Grid *loadGridData(Ilwis::IlwisObject *) ;
+    QString provider() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &item, bool load=true);
 
