@@ -70,6 +70,7 @@ public:
      * \return the url of the source
      */
     virtual Resource& source() = 0;
+    virtual QString provider() const = 0;
 
 };
 
