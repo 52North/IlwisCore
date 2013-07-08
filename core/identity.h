@@ -21,6 +21,8 @@ struct SerializationOptions;
 */
 class KERNELSHARED_EXPORT Identity {
 public:
+    friend class Resource;
+
     Identity();
 
     /*!
