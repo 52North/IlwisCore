@@ -86,6 +86,9 @@ Pixel_d PlanarCTPGeoReference::coord2Pixel(const Coordinate &crd) const
         rc.y(rc.y() + (_colrowCoef[3].x * crd.x() + _colrowCoef[4].x * crd.y() + _colrowCoef[5].x) /
                       (_colrowCoef[6].y * crd.x() + _colrowCoef[7].y * crd.y() + 1));
         break;
+    default:
+        return Pixel_d();
+
     }
     return rc;
 }
