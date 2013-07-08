@@ -11,7 +11,7 @@ class Grid;
 class KERNELSHARED_EXPORT GridCoverage : public Coverage
 {
 public:
-    enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
+
     friend class PixelIterator;
     friend class GridBlock;
     friend class Grid;
@@ -22,6 +22,7 @@ public:
     ~GridCoverage();
 
     IlwisTypes ilwisType() const;
+    virtual GridCoverage *copy() ;
 
     const Ilwis::IGeoReference &georeference() const;
     void georeference(const IGeoReference& grf) ;
@@ -54,6 +55,7 @@ public:
 
 protected:
     Grid *grid();
+    void copyTo(IlwisObject *obj);
     QScopedPointer<Grid> _grid;
     std::mutex _mutex;
 

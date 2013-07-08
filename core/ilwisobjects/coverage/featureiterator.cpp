@@ -28,7 +28,7 @@ FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage
 FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset) :
     _fcoverage(fcoverage),
     _isInitial(true),
-    _subset(_subset)
+    _subset(subset)
 {
     init();
 }
@@ -137,7 +137,7 @@ bool FeatureIterator::move(qint32 distance) {
             return false;
         }
     }else {
-        if ( _iterPosition + distance < 0) {
+        if ( (qint32)_iterPosition + distance < 0) {
             _iterPosition = 0;
             _iterFeatures = _fcoverage->_features.end();
             return false;

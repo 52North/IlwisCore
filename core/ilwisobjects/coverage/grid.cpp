@@ -24,6 +24,22 @@ Size GridBlockInternal::size() const {
     return _size;
 }
 
+GridBlockInternal *GridBlockInternal::clone()
+{
+    GridBlockInternal *block = new GridBlockInternal(_size.xsize(), _size.ysize());
+    block->prepare();
+    block->_undef = _undef;
+    block->_index = 0;
+    block->_blockSize = _blockSize;
+    if(!isLoaded())
+        load();
+    std::copy(_data.begin(), _data.end(), block->_data.begin());
+
+    return block;
+
+
+}
+
 char *GridBlockInternal::blockAsMemory() {
     prepare();
     return (char *)&_data[0];
@@ -130,6 +146,19 @@ Size Grid::size() const {
 int Grid::maxLines() const
 {
     return _maxLines;
+}
+
+Grid *Grid::clone()
+{
+    Grid *grid = new Grid(_size, _maxLines);
+    grid->prepare();
+    for(int i=0; i < _blocks.size(); ++i) {
+        grid->_blocks[i] = _blocks[i]->clone();
+    }
+    grid->_inMemoryIndex = 1;
+    grid->_memUsed = _memUsed;
+    return grid;
+
 }
 
 void Grid::clear() {

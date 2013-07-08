@@ -86,6 +86,22 @@ IlwisTypes FeatureCoverage::ilwisType() const
     return featureTypes();
 }
 
+FeatureCoverage *FeatureCoverage::clone()
+{
+    FeatureCoverage *fcov = new FeatureCoverage();
+    copyTo(fcov);
+    return fcov;
+}
+
+void FeatureCoverage::copyTo(IlwisObject *obj)
+{
+    Coverage::copyTo(obj);
+    FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
+    fcov->_featureTypes = _featureTypes;
+    fcov->_featureInfo = _featureInfo;
+    fcov->_features = _features;
+}
+
 quint32 FeatureCoverage::featureCount(IlwisTypes types, int ) const
 {
     switch(types){

@@ -36,7 +36,10 @@ public:
     DataDefinition& datadef();
     QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
 
+protected:
+    void copyTo(IlwisObject *obj) ;
 private:
+
     ICoordinateSystem _coordinateSystem;
     Box3D<double> _envelope;
     std::vector<AttributeTables> _attTables;

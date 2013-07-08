@@ -102,4 +102,16 @@ QVariant Coverage::value(const QString &colName, quint32 itemid, IlwisTypes type
     return coldef.datadef().domain()->value(itemid);
 }
 
+void Coverage::copyTo(IlwisObject *obj)
+{
+    IlwisObject::copyTo(obj);
+    Coverage *cov = static_cast<Coverage *>(obj);
+    cov->_coordinateSystem = _coordinateSystem;
+    cov->_envelope = _envelope;
+    cov->_attTables = _attTables;
+    cov->_statistics = _statistics;
+    cov->_datadef = _datadef;
+
+}
+
 

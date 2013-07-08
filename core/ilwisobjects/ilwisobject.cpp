@@ -83,6 +83,11 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
 
 }
 
+IlwisObject *IlwisObject::copy()
+{
+    return 0;
+}
+
 
 bool IlwisObject::prepare( ) {
     _valid = true;
@@ -227,6 +232,11 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
     return true;
 }
 
+bool IlwisObject::isInternal() const
+{
+    return name().indexOf(INTERNAL_PREFIX) == 0;
+}
+
 Resource IlwisObject::source() const
 {
     if ( _connector.isNull() == false)
@@ -251,6 +261,30 @@ bool IlwisObject::storeBinaryData() {
     if (!connector(cmOUTPUT).isNull())
         return connector(cmOUTPUT)->storeBinaryData(this);
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+}
+
+void IlwisObject::copyTo(IlwisObject *obj)
+{
+    obj->setName(name());
+    obj->setCode(code());
+    obj->setDescription(description());
+    obj->_valid = _valid;
+    obj->_readOnly = _readOnly;
+    obj->_changed = _changed;
+    obj->_modifiedTime = Time::now();
+    obj->_createTime = Time::now();
+    const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
+    if ( !factory)
+        return;
+    Resource resource = source().copy(obj->id());
+    if (!_connector.isNull()){
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
+        obj->setConnector(conn, cmINPUT);
+    }
+    if ( !_outConnector.isNull()) {
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
+        obj->setConnector(conn, cmOUTPUT);
+    }
 }
 
 bool IlwisObject::store(int storemode)

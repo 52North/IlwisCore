@@ -44,6 +44,14 @@ IlwisTypes GridCoverage::ilwisType() const
     return itGRID;
 }
 
+GridCoverage *GridCoverage::copy()
+{
+    GridCoverage *gc = new GridCoverage();
+    copyTo(gc);
+    return gc;
+
+}
+
 
 void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
     IGridCoverage gcNew;
@@ -72,6 +80,18 @@ Grid *GridCoverage::grid()
         return grd;
     }
     return 0;
+}
+
+void GridCoverage::copyTo(IlwisObject *obj)
+{
+    Locker lock(_mutex);
+    Coverage::copyTo(obj);
+    GridCoverage *gc = static_cast<GridCoverage *>(obj);
+    gc->_georef = _georef;
+    if ( _grid) {
+        gc->_grid.reset(_grid->clone());
+    }
+
 }
 
 //bool GridCoverage::storeBinaryData() {

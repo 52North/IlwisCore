@@ -15,6 +15,7 @@ public:
 
 
     Size size() const ;
+    GridBlockInternal *clone();
 
     double& at(quint32 index) {
         prepare();
@@ -34,7 +35,6 @@ public:
     quint32 blockSize();
     bool isLoaded() const;
     inline bool unload() ;
-
     bool load();
 
 private:
@@ -88,6 +88,7 @@ public:
     quint32 blockSize(quint32 index) const;
     Size size() const;
     int maxLines() const;
+    Grid * clone() ;
 private:
     double bilinear(const Point3D<double> &pix) const;
     double bicubic(const Point3D<double> &pix) const;
@@ -99,7 +100,7 @@ private:
     QList<quint32> _cache;
     quint32 _inMemoryIndex;
     qint64 _memUsed;
-    quint64 _bandSize;
+    //quint64 _bandSize;
     quint32 _blocksPerBand;
     std::vector<quint32> _blockSizes;
     Size _size;

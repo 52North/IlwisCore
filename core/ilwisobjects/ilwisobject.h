@@ -119,6 +119,7 @@ public:
    virtual bool prepare(const QString& def);
 
    bool fromInternal(const QSqlRecord& rec);
+   bool isInternal() const;
 
    /*!
     * \brief source the location of the source that represents the physical read origin of this object
@@ -147,6 +148,8 @@ public:
     \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
     \return IlwisObject a created ilwisobject of the specified type
    */
+   virtual IlwisObject *copy() ;
+
    static IlwisObject *create(const Resource& item);
    static IlwisTypes findType(const QString &resource);
    static QString type2Name(IlwisTypes t);
@@ -159,6 +162,7 @@ protected:
    bool setValid(bool yesno);
    bool storeMetaData() ;
    bool storeBinaryData() ;
+   void copyTo(IlwisObject *obj);
 
    std::mutex _mutex;
 private:
