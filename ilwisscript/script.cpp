@@ -46,7 +46,7 @@ bool Script::detectKey(const std::string& line, const std::string& key) {
 
     if ( index != 0 && line[index -1] == ' ')
         return true;
-
+    return false;
 }
 
 OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolTable&) {
