@@ -91,6 +91,7 @@ public:
     QUrl metaUrl(bool simple=true) const;
     void setExpression(const QString &e, const SymbolTable &symtab);
     bool matchesParameterCount(const QString &match, bool in=true) const;
+    QString toString() const;
 private:
     QString _name;
     QList<Parameter> _inParameters;

@@ -120,6 +120,8 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
 
 }
 
+
+
 //----------------------------------------
 
 OperationExpression::OperationExpression()
@@ -415,6 +417,36 @@ QUrl Ilwis::OperationExpression::metaUrl(bool simple) const
     }
     return QUrl(url);
 
+}
+
+QString OperationExpression::toString() const
+{
+    QString expression;
+    if ( _type == otFunction) {
+        for(const Parameter& parm : _outParameters) {
+            if ( expression != "")
+                expression += ", ";
+            if ( expression == "" )
+                expression += "( ";
+
+            expression += parm.value();
+
+        }
+        if ( expression != "")
+            expression += " ) = ";
+        expression += _name;
+        expression += "( ";
+        int count = 0;
+        for(const Parameter& parm : _inParameters) {
+            if ( count++ != 0)
+                expression += ", ";
+            expression += parm.value();
+        }
+        expression += ")"    ;
+    }
+    //TODO other cases
+
+    return expression;
 }
 
 
