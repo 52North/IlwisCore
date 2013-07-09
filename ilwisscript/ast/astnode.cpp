@@ -1,4 +1,5 @@
-#include "ilwis.h"
+#include "kernel.h"
+#include "errorobject.h"
 #include "symboltable.h"
 #include "astnode.h"
 
@@ -81,4 +82,17 @@ QSharedPointer<ASTNode> ASTNode::child(int i) const
         return _childeren[i];
 
     return QSharedPointer<ASTNode>();
+}
+
+QVariant ASTNode::resolveValue(const NodeValue &val, SymbolTable &symbols)
+{
+    QVariant var = val;
+    if ( val.content() == NodeValue::ctID) {
+        Symbol sym = symbols.getSymbol(var.toString());
+        if(!sym.isValid()) {
+            throw ScriptError(QString(TR(ERR_ILLEGAL_VALUE_2)).arg("parameter").arg(var.toString()));
+        }
+        var = sym._var;
+    }
+    return var;
 }

@@ -44,6 +44,7 @@ public:
    }
 
 protected:
+    QVariant resolveValue(const NodeValue &value, SymbolTable& symbols);
     QVector<QSharedPointer<ASTNode> > _childeren;
     bool _evaluated;
     NodeValue _value;
