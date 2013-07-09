@@ -87,6 +87,10 @@ bool SymbolTable::isNumerical(const QVariant& var) {
     return isRealNumerical(var) || isIntegerNumerical(var);
 }
 
+bool SymbolTable::isString(const QVariant& var) {
+    return var.canConvert<QString>();
+}
+
 bool SymbolTable::isRealNumerical(const QVariant& var)  {
     QString tpname = var.typeName();
     bool ok =  var.type() == QMetaType::Float ||  var.type() == QMetaType::Double;
