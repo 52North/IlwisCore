@@ -9,8 +9,10 @@ options {
 #include <QString>
 #include <QStringList>
 #include <QHash>
-#include "ilwis.h"
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "geometries.h"
+#include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"
 #include "scriptnode.h"
