@@ -35,10 +35,19 @@ Ilwis::OperationImplementation *Text2Output::create(quint64 metaid, const Ilwis:
     return new Text2Output(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, const Ilwis::SymbolTable &symTable)
 {
     for(int i=0; i < _expression.parameterCount(); ++i){
-        QString str = _expression.parm(i).value();
+        const Parameter& parm = _expression.parm(i);
+        QString str = sUNDEF;
+        if ( parm.valuetype() == itSTRING)
+          str = parm.value();
+        else {
+            Symbol sym = symTable.getSymbol(parm.value());
+            if ( sym._type & itNUMERIC)
+                str = sym._var.toString();
+        }
+
         if ( str.size() > 0 && str[0] == '"' && str[str.size()-1] == '"'){
             str = str.remove('"');
         }
