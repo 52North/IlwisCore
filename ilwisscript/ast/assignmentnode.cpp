@@ -3,6 +3,8 @@
 #include <QSqlError>
 
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "raster.h"
 #include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"
@@ -13,7 +15,6 @@
 #include "formatter.h"
 #include "formatters.h"
 #include "scriptnode.h"
-#include "raster.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
@@ -21,7 +22,6 @@
 #include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
-#include "ilwisdata.h"
 #include "domain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
@@ -94,46 +94,17 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
         Symbol sym = symbols.getSymbol(val.toString(),SymbolTable::gaREMOVEIFANON);
         IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
         if (  tp & itCOVERAGE) {
+            bool ok;
             if ( tp & itGRID) {
-                IGridCoverage gcov = sym._var.value<Ilwis::IGridCoverage>().get<GridCoverage>();
-                GridCoverage *obj = gcov->copy();
-                obj->setName(result);
-                IGridCoverage gcovCopy;
-                gcovCopy.set(obj);
-                QVariant var;
-                var.setValue<IGridCoverage>(gcovCopy);
-                symbols.addSymbol(result, scope, tp, var);
-                return true;
+                ok = copyObject<GridCoverage>(sym, result,symbols);
             }
             else
-                IFeatureCoverage fcov = sym._var.value<Ilwis::IFeatureCoverage>().get<FeatureCoverage>();
+                ok = copyObject<FeatureCoverage>(sym, result,symbols);
+            if(!ok) {
+                throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
+            }
+            return ok;
 
-
-//            Ilwis::ICoverage coverage;
-//            if ( tp & itGRID)
-//                coverage = sym._var.value<Ilwis::IGridCoverage>().get<Coverage>();
-//            else
-//                coverage = sym._var.value<Ilwis::IFeatureCoverage>().get<Coverage>();
-
-//            if ( format == "" || format == sUNDEF) {
-//                Formatter *fnode = ScriptNode::activeFormat(itGRID);
-//                if ( fnode) {
-//                    format = fnode->format();
-//                    fnamespace = fnode->fnamespace();
-//                }
-//            }
-//            mastercatalog()->removeItems({coverage->source()});
-//            mastercatalog()->unregister(coverage->id()); // will be added shortly again under a different name;
-//            coverage->setName(result);
-//            if ( format != "" && format != sUNDEF) {
-//                coverage->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
-//                coverage->setCreateTime(Ilwis::Time::now());
-//                coverage->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
-
-//            }
-//            if ( result.indexOf(INTERNAL_PREFIX) == -1) {
-//                mastercatalog()->addItems({coverage->source()});
-//            }
         } else {
             sym = symbols.getSymbol(_result->id(),SymbolTable::gaREMOVEIFANON);
             tp = sym.isValid() ? sym._type : itUNKNOWN;
@@ -141,8 +112,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
                 tp = Domain::ilwType(val);
             }
         }
-        //symbols.addSymbol(_result->id(), scope, tp, _expression->value());
-        symbols.addSymbol(_result->id(), scope, tp, sym._var);
+        symbols.addSymbol(_result->id(), scope, tp, _expression->value());
+        //symbols.addSymbol(_result->id(), scope, tp, sym._var);
 
         return true;
     }

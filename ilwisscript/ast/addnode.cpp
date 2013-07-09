@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "errorobject.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "addnode.h"
@@ -39,19 +40,18 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope)
 }
 
 bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols) {
-    QString expr;
-    //bool ok1, ok2;
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {vright.toDouble() + _value.toDouble(), NodeValue::ctNumerical};
+    QVariant var = resolveValue(_value, symbols);
+    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
+       _value = {vright.toDouble() + var.toDouble(), NodeValue::ctNumerical};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
 }
 
 bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols) {
-    QString expr;
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-       _value = {_value.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
+    QVariant var = resolveValue(_value, symbols);
+    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
+       _value = {var.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
        return true;
     }
     return handleBinaryCoverageCases(vright, "binarymathraster", "substract", symbols);

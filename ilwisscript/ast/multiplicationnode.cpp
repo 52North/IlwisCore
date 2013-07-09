@@ -1,4 +1,5 @@
-#include "ilwis.h"
+#include "kernel.h"
+#include "errorobject.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "multiplicationnode.h"
@@ -41,9 +42,9 @@ bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope)
 }
 
 bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbols) {
-    QString expr;
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(_value)) {
-        _value = {vright.toDouble() * _value.toDouble(), NodeValue::ctNumerical};
+    QVariant var = resolveValue(_value, symbols);
+    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
+        _value = {vright.toDouble() * var.toDouble(), NodeValue::ctNumerical};
         return true;
     }
 
@@ -51,20 +52,21 @@ bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbo
 }
 
 bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols) {
-    QString expr;
-    if (SymbolTable:: isNumerical(vright) && SymbolTable::isNumerical(_value)) {
+    QVariant var = resolveValue(_value, symbols);
+    if (SymbolTable:: isNumerical(vright) && SymbolTable::isNumerical(var)) {
         if ( vright.toDouble() == 0)
             return false;
-        _value = {_value.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
+        _value = {var.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
         return true;
     }
     return handleBinaryCoverageCases(vright, "binarymathraster", "divide", symbols);
 }
 
 bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols) {
-    if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)) {
+    QVariant var = resolveValue(_value, symbols);
+    if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(var)) {
         bool ok1, ok2;
-       _value = {_value.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
+       _value = {var.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
     return handleBinaryCoverageCases(vright, "binarymathraster", "mod", symbols);
