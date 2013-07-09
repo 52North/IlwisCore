@@ -32,7 +32,7 @@ public:
     quint32 featureCount(IlwisTypes types=itFEATURECOVERAGE, int index=iUNDEF) const;
     void setFeatureCount(IlwisTypes types, quint32 cnt);
     IlwisTypes ilwisType() const;
-    FeatureCoverage *clone();
+    FeatureCoverage *copy();
 
 protected:
     void copyTo(IlwisObject *obj);
