@@ -32,7 +32,7 @@ public:
     static bool isIntegerNumerical(const QVariant &var) ;
     static bool isDataLink(const QVariant &value);
     static QString newAnonym();
-    bool isString(const QVariant &var);
+    static bool isString(const QVariant &var);
 private:
     QHash<QString, Symbol> _symbols;
     static quint64 _symbolid;
