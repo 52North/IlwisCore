@@ -37,6 +37,8 @@
 #include "projectionfactory.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "georefimplementation.h"
+#include "georefimplementationfactory.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "ilwisobjectconnector.h"
@@ -119,8 +121,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new GridCoverage();
     case itTABLE:
         return new FlatTable();
-    case itCORNERSGEOREF:
-        return new CornersGeoReference();
+    case itGEOREF:
+        return new GeoReference();
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem();
     case itNUMERICDOMAIN:
@@ -131,8 +133,6 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Ellipsoid();
     case itOPERATIONMETADATA:
         return new OperationMetaData();
-    case itGEOREF:
-        return new CornersGeoReference();
     }
     if ( type & itFEATURECOVERAGE)
         return new FeatureCoverage();
@@ -250,12 +250,18 @@ IlwisObject *InternalIlwisObjectFactory::createGridCoverage(const Resource& item
     } else{
         Box2D<double> bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
-            CornersGeoReference *cgeoref = new CornersGeoReference();
-            cgeoref->setName("subset_" + gcoverage->name());
-            cgeoref->coordinateSystem(gcoverage->coordinateSystem());
-            cgeoref->setEnvelope(bounds);
-            cgeoref->size(sz);
-            grf.set(static_cast<GeoReference *>(cgeoref));
+//            GeoReference *cgeoref = new GeoReference();
+//            GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("georefimplementationfactory");
+//            GeoRefImplementation *impl = grfFac->create("corners");
+//            if ( !impl) {
+//                ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"corners georef",item.name());
+//                return 0;
+//            }
+            grf = GeoReference::create("corners");
+            grf->setName("subset_" + gcoverage->name());
+            grf->coordinateSystem(gcoverage->coordinateSystem());
+            grf->impl<CornersGeoReference>()->setEnvelope(bounds);
+            grf->size(sz);
             if (!grf->compute()){
                 ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "Georeference");
                 return 0;
@@ -452,20 +458,12 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& item) con
 }
 
 IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& item) const {
-//    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-//    ConnectorInterface *connector = factory->createFromResource<>(item, "internal");
-
-//    if(!connector) {
-//        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
-//        return 0;
-//    }
-
-    CornersGeoReference *cgrf = new CornersGeoReference();
+    GeoReference *cgrf = GeoReference::create("corners");
     cgrf->setName( item["name"].toString());
     cgrf->setCreateTime(Time::now());
     cgrf->setModifiedTime(Time::now());
     cgrf->coordinateSystem(item["coordinatesystem"].value<ICoordinateSystem>());
-    cgrf->setEnvelope(item["envelope"].value<Box2D<double>>());
+    cgrf->impl<CornersGeoReference>()->setEnvelope(item["envelope"].value<Box2D<double>>());
 //    Size sz = item["size"].value<Size>();
     cgrf->size(item["size"].value<Size>());
     cgrf->centerOfPixel(item["centerofpixel"].toBool());

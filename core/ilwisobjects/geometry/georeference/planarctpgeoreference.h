@@ -17,6 +17,7 @@ public:
     bool isValid() const;
     virtual double pixelSize() const;
     virtual bool compute();
+    static QString typeName();
 
 private:
     Eigen::Matrix2d _jacobian;

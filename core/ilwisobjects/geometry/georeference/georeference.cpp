@@ -6,52 +6,104 @@
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
-
+#include "georefimplementation.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "georefimplementationfactory.h"
 
 using namespace Ilwis;
 
-GeoReference::GeoReference() : _centerOfPixel(true)
+
+
+GeoReference::GeoReference()
 {
 }
 
-GeoReference::GeoReference(const Resource& res) : IlwisObject(res), _centerOfPixel(true)
+GeoReference::GeoReference(const Resource& res) : IlwisObject(res)
 {
+}
+
+GeoReference::~GeoReference()
+{
+}
+
+GeoReference  *GeoReference::create(const QString& type) {
+    GeoReference *georef = new GeoReference();
+    GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("ilwis::georefimplementationfactory");
+    GeoRefImplementation *impl = grfFac->create(type);
+    if ( !impl) {
+        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,type);
+        return 0;
+    }
+    georef->impl(impl);
+    return georef;
+}
+
+Coordinate GeoReference::pixel2Coord(const Pixel_d &pixel) const
+{
+    return _georefImpl->pixel2Coord(pixel);
+}
+
+Pixel_d GeoReference::coord2Pixel(const Coordinate &crd) const
+{
+    // for performance reasons no isValid check here, haas tobe checked before hand
+    return _georefImpl->coord2Pixel(crd);
+}
+
+double GeoReference::pixelSize() const
+{
+    // for performance reasons no isValid check here, haas tobe checked before hand
+    return _georefImpl->pixelSize();
+}
+
+bool GeoReference::compute()
+{
+    if ( isValid())
+        return _georefImpl->compute();
+    return false;
 }
 
 ICoordinateSystem GeoReference::coordinateSystem() const
 {
-    return _csy;
+    if ( isValid())
+        return _georefImpl->coordinateSystem();
+    return ICoordinateSystem();
 }
 
  void GeoReference::coordinateSystem(const ICoordinateSystem& csy)
 {
-     _csy = csy;
+     if ( isValid())
+        _georefImpl->coordinateSystem(csy);
+
  }
 
 
 Size GeoReference::size() const
 {
-    return _size;
+    if ( isValid())
+        return _georefImpl->size();
+    return Size();
 
 }
 
 void GeoReference::size(const Size &sz)
 {
     // size must always be positive or undefined
-    if (sz.xsize() > 0 && sz.ysize() > 0)
-        _size = sz;
-
-
+    if ( isValid() && sz.xsize() > 0 && sz.ysize() > 0)
+        _georefImpl->size(sz);
 }
 
 bool GeoReference::centerOfPixel() const
 {
-    return _centerOfPixel;
+    if ( isValid())
+        return _georefImpl->centerOfPixel();
+    return false;
 }
 
 void GeoReference::centerOfPixel(bool yesno)
 {
-    _centerOfPixel = true;
+    if ( isValid())
+        _georefImpl->centerOfPixel(yesno);
 }
 
 void GeoReference::adapter(GeoRefAdapter *adapt)
@@ -85,5 +137,22 @@ Box2D<qint32> GeoReference::coord2Pixel(const Box2D<double> &box) const
     Pixel p2 = coord2Pixel(box.max_corner());
     return Box2D<qint32>(p1,p2);
 }
+
+bool GeoReference::isValid() const
+{
+    return !_georefImpl.isNull();
+}
+
+void GeoReference::impl(GeoRefImplementation *impl)
+{
+    _georefImpl.reset(impl);
+}
+
+IlwisTypes GeoReference::ilwisType() const
+{
+    return itGEOREF;
+}
+
+
 
 

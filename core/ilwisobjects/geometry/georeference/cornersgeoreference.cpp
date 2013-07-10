@@ -4,20 +4,20 @@
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
+#include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 
 using namespace Ilwis;
 
-CornersGeoReference::CornersGeoReference() : _isCornersOfCorners(false)
+CornersGeoReference::CornersGeoReference() : SimpelGeoReference("corners"),  _isCornersOfCorners(false)
 {
 
 }
 
-CornersGeoReference::CornersGeoReference(const Resource &res) :
-    SimpelGeoReference(res),
-    _isCornersOfCorners(false)
+GeoRefImplementation *CornersGeoReference::create()
 {
+    return new CornersGeoReference();
 }
 
 void CornersGeoReference::setEnvelope(const Box2D<double> &env)
@@ -30,13 +30,13 @@ bool CornersGeoReference::compute()
     bool a = size().isNull();
     bool b = _envelope.isValid();
     if (a || !b)
-        return setValid(false);
+        return false;
 
     _a12 = _a21 = 0;
     std::vector<double> vec = _envelope.max_corner() - _envelope.min_corner();
 
     if (abs(vec[0]) < 1e-6 || abs(vec[1]) < 1e-6) {
-        return setValid(false);
+        return false;
     }
     if (_isCornersOfCorners) {
         _a11  = size().xsize() / vec[0];
@@ -51,16 +51,11 @@ bool CornersGeoReference::compute()
         _b2 = 0.5 - _a22 * _envelope.max_corner().y();
     }
     _det = _a11 * _a22;
-    setValid(true);
+
 
     return true;
 }
 
-
-IlwisTypes CornersGeoReference::ilwisType() const
-{
-    return itCORNERSGEOREF;
-}
 
 bool CornersGeoReference::isCornersOfCorners() const
 {
@@ -70,6 +65,11 @@ bool CornersGeoReference::isCornersOfCorners() const
 Box2D<double> CornersGeoReference::envelope() const
 {
     return _envelope;
+}
+
+QString CornersGeoReference::typeName()
+{
+    return "corners";
 }
 
 

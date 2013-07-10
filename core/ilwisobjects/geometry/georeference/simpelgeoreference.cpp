@@ -4,34 +4,36 @@
 #include "geometries.h"
 #include "ilwisdata.h"
 #include "coordinatesystem.h"
-#include "georefadapter.h"
 #include "georeference.h"
+#include "georefimplementation.h"
 #include "simpelgeoreference.h"
 
 
 using namespace Ilwis;
 
-SimpelGeoReference::SimpelGeoReference()
+SimpelGeoReference::SimpelGeoReference(const QString& type) : GeoRefImplementation(type)
 {
     clear();
 }
 
-SimpelGeoReference::SimpelGeoReference(const Resource &res) :
-    GeoReference(res),
-    _det(0)
+SimpelGeoReference::SimpelGeoReference() : GeoRefImplementation("simpel")
 {
     clear();
+}
+
+GeoRefImplementation *SimpelGeoReference::create()
+{
+    return new SimpelGeoReference();
 }
 
 void SimpelGeoReference::clear() {
     _a11 = _a12 = _a22 = _a21 = rUNDEF;
     _b1 = _b2 = rUNDEF;
+    _det = 0;
 }
 
-Coordinate SimpelGeoReference::pixel2Coord(const Pixel_d &rc) const
+Coordinate SimpelGeoReference::pixel2Coord(const Pixel_d &pix) const
 {
-    Pixel_d pix = adapter().isNull() ? rc : adapter()->adaptBefore(rc);
-
     double x = centerOfPixel() ? pix.x() + 0.5 : pix.x();
     double y = centerOfPixel()? pix.y() + 0.5 : pix.y();
     Coordinate c((_a22 * (x - _b1) - _a12 * (y - _b2)) / _det,
@@ -45,7 +47,7 @@ Pixel_d SimpelGeoReference::coord2Pixel(const Coordinate &crd) const
     double rRow = _a21 * crd.x() + _a22 * crd.y() + _b2; // - 1;
     Pixel_d pix(rCol, rRow);
 
-    return adapter().isNull() ? pix : adapter()->adaptAfter(pix);
+    return pix;
 }
 
 double SimpelGeoReference::pixelSize() const
@@ -62,6 +64,11 @@ std::vector<double> SimpelGeoReference::matrix() const {
 
 std::vector<double> SimpelGeoReference::support() const {
     return {_b1, _b2};
+}
+
+QString SimpelGeoReference::typeName()
+{
+    return "corners";
 }
 
 

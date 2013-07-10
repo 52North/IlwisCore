@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "raster.h"
+#include "georefimplementation.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "symboltable.h"
@@ -145,7 +146,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
      if ( outputName != sUNDEF)
          _outputObj->setName(outputName);
      if ( (copylist & itGEOREF) == 0) {
-        Resource res(QUrl("ilwis://internal/georeference"),itCORNERSGEOREF);
+        Resource res(QUrl("ilwis://internal/georeference"),itGEOREF);
         res.addProperty("size", IVARIANT(_box.size()));
         res.addProperty("envelope", IVARIANT(box));
         res.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));

@@ -5,11 +5,10 @@ namespace Ilwis {
 
 
 
-class CTPGeoReference : public GeoReference
+class CTPGeoReference : public GeoRefImplementation
 {
 public:
-    CTPGeoReference();
-    CTPGeoReference(const Resource& res);
+    CTPGeoReference(const QString &type);
     bool isValid() const;
     ControlPoint& controlPoint(quint32 index);
     quint32 nrControlPoints() const;

@@ -21,6 +21,7 @@
 #include "connectorfactory.h"
 #include "catalogconnector.h"
 #include "featurefactory.h"
+#include "georefimplementationfactory.h"
 #include "catalog.h"
 #include "module.h"
 #include "mastercatalog.h"
@@ -98,6 +99,10 @@ void Kernel::init() {
     FeatureFactory *featureFac = new FeatureFactory();
     featureFac->addCreator("feature", createFeature);
     addFactory(featureFac);
+
+    GeoRefImplementationFactory *georefFac = new GeoRefImplementationFactory();
+    georefFac->prepare();
+    addFactory(georefFac);
 
 
     _modules.addModules();

@@ -4,17 +4,19 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
-class KERNELSHARED_EXPORT SimpelGeoReference : public GeoReference
+class KERNELSHARED_EXPORT SimpelGeoReference : public GeoRefImplementation
 {
 public:
     SimpelGeoReference();
-    SimpelGeoReference(const Resource& res);
-    virtual Coordinate pixel2Coord(const Pixel_d&) const;
+    SimpelGeoReference(const QString &type);
+    static GeoRefImplementation * create();
+     virtual Coordinate pixel2Coord(const Pixel_d&) const;
     virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
     virtual double pixelSize() const;
 
     std::vector<double> matrix() const;
     std::vector<double> support() const;
+    static QString typeName();
 protected:
     void clear();
     double _a11,_a12,_a22,_a21,_b1,_b2;

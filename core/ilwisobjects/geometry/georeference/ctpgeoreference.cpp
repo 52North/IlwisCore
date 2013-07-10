@@ -7,18 +7,15 @@
 #include "coordinatesystem.h"
 #include "controlpoint.h"
 #include "georeference.h"
+#include "georefimplementation.h"
 #include "ctpgeoreference.h"
 
 using namespace Ilwis;
 
 
 //-------------------------------------------------------
-CTPGeoReference::CTPGeoReference() : GeoReference()
+CTPGeoReference::CTPGeoReference(const QString& type) : GeoRefImplementation(type)
 {
-}
-
-CTPGeoReference::CTPGeoReference(const Resource& res) : GeoReference(res) {
-
 }
 
 bool CTPGeoReference::isValid() const

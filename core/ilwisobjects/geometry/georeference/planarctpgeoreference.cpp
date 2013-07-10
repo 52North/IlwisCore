@@ -7,15 +7,15 @@
 #include "coordinatesystem.h"
 #include "controlpoint.h"
 #include "georeference.h"
+#include "georefimplementation.h"
 #include "ctpgeoreference.h"
-//#include "Eigen/Core"
 #include "Eigen/LU"
 #include "mathhelper.h"
 #include "planarctpgeoreference.h"
 
 using namespace Ilwis;
 
-PlanarCTPGeoReference::PlanarCTPGeoReference()
+PlanarCTPGeoReference::PlanarCTPGeoReference() : CTPGeoReference("planartiepoints")
 {
 }
 
@@ -264,7 +264,6 @@ void PlanarCTPGeoReference::makeJacobianMatrix(const Coordinate &crdIn , Eigen::
 
 bool PlanarCTPGeoReference::compute()
 {
-  setValid(false);
   int i, iNr;
   int iRecs = nrControlPoints();
   if (iRecs == 0)
@@ -379,8 +378,12 @@ bool PlanarCTPGeoReference::compute()
 
     }
   }
-  setValid(iRes == 0);
   return isValid();
+}
+
+QString PlanarCTPGeoReference::typeName()
+{
+    return "planartiepoints";
 }
 
 quint32 PlanarCTPGeoReference::minnr() const

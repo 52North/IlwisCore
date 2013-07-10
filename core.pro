@@ -88,7 +88,9 @@ SOURCES += core/kernel.cpp \
     core/util/linerasterizer.cpp \
     core/ilwisobjects/operation/operationhelpergrid.cpp \
     core/ilwisobjects/operation/operationhelper.cpp \
-    core/ilwisobjects/operation/operationhelperfeatures.cpp
+    core/ilwisobjects/operation/operationhelperfeatures.cpp \
+    core/ilwisobjects/geometry/georeference/georefimplementation.cpp \
+    core/ilwisobjects/geometry/georeference/georefimplementationfactory.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -187,7 +189,9 @@ HEADERS += core/kernel.h\
     core/util/linerasterizer.h \
     core/ilwisobjects/operation/operationhelpergrid.h \
     core/ilwisobjects/operation/operationhelper.h \
-    core/ilwisobjects/operation/operationhelperfeatures.h
+    core/ilwisobjects/operation/operationhelperfeatures.h \
+    core/ilwisobjects/geometry/georeference/georefimplementation.h \
+    core/ilwisobjects/geometry/georeference/georefimplementationfactory.h
 
 
 

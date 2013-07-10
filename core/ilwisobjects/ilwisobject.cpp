@@ -323,10 +323,6 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "ConventionalCoordinateSystem";
     case  itGEOREF:
         return "Georeference";
-    case  itCORNERSGEOREF:
-        return "CornersGeoreference";
-    case  itTIEPOINTGEOREF:
-        return "TiePointsCornersGeoreference";
     case  itTABLE:
         return "Table";
     case  itPROJECTION:
