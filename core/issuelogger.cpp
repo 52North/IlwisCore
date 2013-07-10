@@ -1,4 +1,10 @@
 #include <QSqlError>
+#include <QFile>
+#include <QDataStream>
+#include <QDir>
+#include <QDataStream>
+#include <fstream>
+#include "ilwiscontext.h"
 #include "errorobject.h"
 #include "issuelogger.h"
 
@@ -8,11 +14,12 @@ IssueObject::IssueObject()
 {
 }
 
-Ilwis::IssueObject::IssueObject(const QString &message, int it)
+Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id)
 {
     _message = message;
     _itype = it;
     _itime = QDateTime::currentDateTime();
+    _id = id;
 }
 
 QString Ilwis::IssueObject::message() const
@@ -39,39 +46,109 @@ QString Ilwis::IssueObject::logMessage(Ilwis::IssueObject::LogMessageFormat) con
     return QString("%1 %2 %3").arg(type, _itime.toString(), _message);
 }
 
+int IssueObject::codeLine() const {
+    return _line;
+}
+
+QString IssueObject::codeFunc() const {
+    return _func;
+}
+
+QString IssueObject::codeFile() const {
+    return _file;
+}
+
+void IssueObject::addCodeInfo(int line, const QString &func, const QString &file)
+{
+    _line = line;
+    _func = func;
+    _file = file;
+}
+
+void IssueObject::stream(std::ofstream& stream, LogMessageFormat frmt) {
+    stream << _id << " ; " <<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
+    if ( frmt == lmCODE) {
+        stream << _id << " ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
+    }
+}
+
+quint64 IssueObject::id() const
+{
+    return _id;
+}
+
 //---------------------------------------------------------------------------
 IssueLogger::IssueLogger() : _repeatCount(0)
 {
+    QString apploc= context()->ilwisFolder().absoluteFilePath();
+    apploc += "/log";
+    QDir dir(apploc);
+    if ( !dir.exists())
+        dir.mkdir(apploc);
+    QString rlogFilePath = apploc + "/logfile.txt";
+    QString clogFilePath = apploc + "/logfile_ext.txt";
+    _logFileRegular.open(rlogFilePath.toLatin1());
+    _logFileCode.open(clogFilePath.toLatin1());
 }
 
-void IssueLogger::log(const QString &message, int it)
+IssueLogger::~IssueLogger()
+{
+    if (_logFileCode.is_open())
+        _logFileCode.close();
+    if ( _logFileRegular.is_open())
+        _logFileRegular.close();
+}
+
+quint64 IssueLogger::log(const QString &message, int it)
 {
     ++_repeatCount;
     if ( _lastmessage == message && _repeatCount == 10) {
-        return;
+        return _issueId;
     } else {
         if ( _repeatCount > 10 && _lastmessage != message ){
-            _issues.enqueue(IssueObject(QString("Message repeated %1 times").arg(_repeatCount), it));
+            _issues.enqueue(IssueObject(QString("Message repeated %1 times").arg(_repeatCount), it, _issueId));
             throw ErrorObject("Error message cascade");
         }
         _repeatCount = 0;
     }
 
-    _issues.enqueue(IssueObject(message, it));
+    _issues.enqueue(IssueObject(message, it, _issueId));
+    if ( _lastmessage == message)
+        return _issueId;
+    IssueObject& obj = _issues.back();
+    if ( _logFileRegular.is_open()) {
+        obj.stream(_logFileRegular, IssueObject::lmREGULAR);
+    }
+
     _lastmessage = message;
+    return _issueId++;
 }
 
-void IssueLogger::log(const QString& objectName, const QString &message, int it)
+quint64 IssueLogger::log(const QString& objectName, const QString &message, int it)
 {
     QString newmessage = objectName + ":" + message;
-    log(newmessage, it);
+    return log(newmessage, it);
+}
+
+void IssueLogger::addCodeInfo(quint64 issueid, int line, const QString &func, const QString &file)
+{
+    for(auto iter=_issues.begin(); iter != _issues.end(); ++iter) {
+        IssueObject& issue = *iter;
+        if ( issue.id() == issueid) {
+            issue.addCodeInfo(line, func, file);
+            if ( _logFileCode.is_open()) {
+                issue.stream(_logFileCode, IssueObject::lmCODE);
+            }
+            break;
+        }
+    }
 }
 
 
-void IssueLogger::logSql(const QSqlError &err)
+quint64 IssueLogger::logSql(const QSqlError &err)
 {
     //TODO more info about the error for databases
-   log(err.text(), IssueObject::itError);
+   return log(err.text(), IssueObject::itError);
 }
 
 QString IssueLogger::popList(int, int) {

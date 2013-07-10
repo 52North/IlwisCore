@@ -20,7 +20,7 @@ namespace Ilwis {
 */
 class KERNELSHARED_EXPORT IssueObject {
 public:
-    enum LogMessageFormat{lmfFull};
+    enum LogMessageFormat{lmFULL, lmREGULAR, lmCODE};
     /*!
      \brief identifies the severity of the issue
 
@@ -32,16 +32,27 @@ public:
     enum IssueType{itNone=0, itCritical=1, itError=2, itWarning=4,itMessage=8, itAll=255};
 
     IssueObject();
-    IssueObject(const QString& message, int it);
+    IssueObject(const QString& message, int it, quint64 id);
 
     QString message() const;
     QDateTime time() const;
     int type() const;
-    QString logMessage(LogMessageFormat lmf = lmfFull) const;
+    QString logMessage(LogMessageFormat lmf = lmFULL) const;
+    void addCodeInfo(int line, const QString& func, const QString& file);
+    quint64 id() const;
 
+    int codeLine() const;
+    QString codeFunc() const;
+    QString codeFile() const;
+    void stream(std::ofstream &stream, LogMessageFormat frmt);
 private:
     QDateTime _itime;
     QString   _message;
+    quint64 _id;
+    int _line = -1;
+    QString _func = "?";
+    QString _file = "?";
+
     int _itype;
 };
 
@@ -49,10 +60,12 @@ class KERNELSHARED_EXPORT IssueLogger
 {
 public:
     IssueLogger();
+    ~IssueLogger();
 
-    void log(const QString& message, int it=IssueObject::itError);
-    void logSql(const QSqlError& err);
-    void log(const QString &objectName, const QString &message, int it=IssueObject::itError);
+    quint64 log(const QString& message, int it=IssueObject::itError);
+    quint64 logSql(const QSqlError& err);
+    quint64 log(const QString &objectName, const QString &message, int it=IssueObject::itError);
+    void addCodeInfo(quint64 issueid,int line, const QString& func, const QString& file);
 
     QString popfirst(int it=IssueObject::itAll);
     QString poplast(int it=IssueObject::itAll);
@@ -64,7 +77,10 @@ public:
 private:
     QString _lastmessage;
     quint32 _repeatCount;
+    quint64 _issueId=0;
     QQueue<IssueObject> _issues;
+    std::ofstream _logFileRegular;
+    std::ofstream _logFileCode;
 
 };
 }
