@@ -45,7 +45,10 @@ public:
     QString codeFunc() const;
     QString codeFile() const;
     void stream(std::ofstream &stream, LogMessageFormat frmt);
+
 private:
+    std::string type2String();
+
     QDateTime _itime;
     QString   _message;
     quint64 _id;

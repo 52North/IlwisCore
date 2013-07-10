@@ -66,15 +66,29 @@ void IssueObject::addCodeInfo(int line, const QString &func, const QString &file
 }
 
 void IssueObject::stream(std::ofstream& stream, LogMessageFormat frmt) {
-    stream << _id << " ; " <<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
+    stream << _id << " ; " << type2String() << " ; " <<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
     if ( frmt == lmCODE) {
-        stream << _id << " ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
+        stream << _id << " ; " << type2String() <<" ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
     }
 }
 
 quint64 IssueObject::id() const
 {
     return _id;
+}
+
+std::string IssueObject::type2String() {
+    switch(_itype) {
+    case itCritical:
+        return "Critical";
+    case itError:
+        return "Error";
+    case itWarning:
+        return "Warning";
+    case itMessage:
+        return "Message";
+    }
+    return "Text";
 }
 
 //---------------------------------------------------------------------------
