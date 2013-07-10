@@ -50,9 +50,9 @@ void Module::prepare() {
 
 //------------------------------------------------------
 ModuleMap::~ModuleMap() {
-    foreach(Module *m, *this){
-        delete m;
-    }
+//    foreach(Module *m, *this){
+//        delete m;
+//    }
 }
 
 void ModuleMap::addModules() {
