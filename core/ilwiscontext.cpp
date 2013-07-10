@@ -41,7 +41,7 @@ IlwisContext::~IlwisContext()
 
 void IlwisContext::addSystemLocation(const QUrl &res)
 {
-    if ( _systemlocations.indexOf(res) < 0) {
+    if ( std::find(_systemlocations.begin(), _systemlocations.end(), res) == _systemlocations.end() ) {
         _systemlocations.push_back(res);
     }
 

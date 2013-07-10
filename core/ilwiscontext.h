@@ -34,7 +34,7 @@ private:
     void init();
     static IlwisContext *_context;
 
-    QVector<QUrl> _systemlocations;
+    std::vector<QUrl> _systemlocations;
     //QThreadStorage<Catalog *> _workingCatalog;
     Catalog *_workingCatalog;
     quint64 _memoryLimit;
