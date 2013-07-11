@@ -72,27 +72,62 @@ QString AssignmentNode::nodeType() const
     return "assignment";
 }
 
+IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
+    IlwisTypes tp = sym._type;
+    if ( tp & itGRID)
+            return sym._var.value<Ilwis::IGridCoverage>().get<IlwisObject>();
+    if ( tp & itFEATURECOVERAGE)
+            return sym._var.value<Ilwis::IFeatureCoverage>().get<IlwisObject>();
+    return IIlwisObject();
+
+}
+
+void AssignmentNode::getFormat(ASTNode *node, QString& format, QString& fnamespace) const {
+    Formatter *fnode = static_cast<Formatter *>(node->child(0).data());
+    format = fnode->format();
+    fnamespace = fnode->fnamespace();
+
+    if ( format == "" || format == sUNDEF) {
+        Formatter *fnode = ScriptNode::activeFormat(itGRID);
+        if ( fnode) {
+            format = fnode->format();
+            fnamespace = fnode->fnamespace();
+        }
+    }
+}
+
+void AssignmentNode::store2Format(ASTNode *node, const Symbol& sym, const QString& result) {
+    QString format, fnamespace;
+    getFormat(node, format, fnamespace);
+    if ( format != "" && format != sUNDEF) {
+        Ilwis::IIlwisObject object = getObject(sym);
+        object->setName(result);
+        object->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
+        object->setCreateTime(Ilwis::Time::now());
+        object->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+
+     }
+}
+
 bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
 {
     if ( _expression.isNull())
         return false;
 
-    QString format, fnamespace;
+
     bool res = _expression->evaluate(symbols, scope);
     if ( res) {
+        NodeValue val = _expression->value();
+        Symbol sym = symbols.getSymbol(val.toString(),SymbolTable::gaREMOVEIFANON);
+        IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
+        QString result = _result->id();
         if ( !_typemodifier.isNull()) {
             ASTNode *node = static_cast<ASTNode *>(_typemodifier.data());
             if ( node->noOfChilderen()!= 1)
                 return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");
+            store2Format(node, sym, result);
 
-            Formatter *fnode = static_cast<Formatter *>(node->child(0).data());
-            format = fnode->format();
-            fnamespace = fnode->fnamespace();
         }
-        NodeValue val = _expression->value();
-        QString result = _result->id();
-        Symbol sym = symbols.getSymbol(val.toString(),SymbolTable::gaREMOVEIFANON);
-        IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
         if (  tp & itCOVERAGE) {
             bool ok;
             if ( tp & itGRID) {
@@ -103,6 +138,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
             if(!ok) {
                 throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
             }
+
             return ok;
 
         } else {
