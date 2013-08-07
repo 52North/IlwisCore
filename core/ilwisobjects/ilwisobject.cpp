@@ -282,7 +282,7 @@ void IlwisObject::copyTo(IlwisObject *obj)
         obj->setConnector(conn, cmINPUT);
     }
     if ( !_outConnector.isNull()) {
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _outConnector->provider());
         obj->setConnector(conn, cmOUTPUT);
     }
 }
