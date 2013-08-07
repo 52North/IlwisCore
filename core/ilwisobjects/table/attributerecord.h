@@ -23,7 +23,7 @@ public:
     void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=-1);
     bool isValid() const;
 private:
-    void indexCoverageKey();
+    void indexCOVERAGEKEYCOLUMN();
     void indexVerticalIndex(int index);
     ITable _coverageTable;
     ITable _indexTable;

@@ -87,7 +87,7 @@ QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) 
     }
     if ( index == -1) {
         if ( _coverageIndex.size() == 0) {
-            indexCoverageKey();
+            indexCOVERAGEKEYCOLUMN();
         }
         auto iter = _coverageIndex.find(key);
         if ( iter == _coverageIndex.end()) {
@@ -123,7 +123,7 @@ void AttributeRecord::indexVerticalIndex(int index){
 
 }
 
-void AttributeRecord::indexCoverageKey(){
+void AttributeRecord::indexCOVERAGEKEYCOLUMN(){
     quint32 rec = 0;
     std::vector<QVariant> values = _coverageTable->column(_keyColumn);
     for(const QVariant& val : values) {
