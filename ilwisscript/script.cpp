@@ -96,10 +96,9 @@ OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolT
     return sNOTPREPARED;
 }
 
-bool Script::execute(ExecutionContext *ctx, SymbolTable& )
+bool Script::execute(ExecutionContext *ctx, SymbolTable& symbols )
 {
     try{
-    SymbolTable symbols;
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symbols)) != sPREPARED)
             return false;
