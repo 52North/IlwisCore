@@ -146,7 +146,7 @@ private:
 
 
 };
-typedef ContainerStatistics<double> CoverageStatistics;
+typedef ContainerStatistics<double> NumericStatistics;
 }
 
 #endif // ContainerStatistics_H
