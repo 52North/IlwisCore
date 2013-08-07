@@ -31,9 +31,9 @@ DataDefinition::DataDefinition(const DataDefinition& def)
 
     domain(def.domain(daINDEX), daINDEX);
     if ( !def.range(daINDEX).isNull())
-        _coveragerange.reset(def.range(daINDEX)->clone());
+        _indexrange.reset(def.range(daINDEX)->clone());
     else
-        _coveragerange.reset(0);
+        _indexrange.reset(0);
 }
 
 DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
