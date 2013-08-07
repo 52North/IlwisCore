@@ -72,8 +72,12 @@ Kernel::Kernel(QObject *parent) :
 }
 
 void Kernel::init() {
+
     if ( !_version.isNull())
         return;
+     _issues.reset( new IssueLogger());
+
+     issues()->log(QString("Ilwis started at %1").arg(Time::now().toString()),IssueObject::itMessage);
 
     _version.reset(new Version());
     _version->addBinaryVersion(Ilwis::Version::bvFORMAT30);
@@ -81,7 +85,7 @@ void Kernel::init() {
     _version->addBinaryVersion(Ilwis::Version::bvPOLYGONFORMAT37);
     _version->addODFVersion("3.1");
 
-    _issues.reset( new IssueLogger());
+
 
     _dbPublic = QSqlDatabase::addDatabase("QSQLITE");
     _dbPublic.setHostName("localhost");
@@ -114,6 +118,7 @@ void Kernel::init() {
 }
 
 Kernel::~Kernel() {
+    issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
     _dbPublic.close();
     delete mastercatalog();
     delete context();
