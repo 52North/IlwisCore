@@ -45,6 +45,9 @@ MasterCatalog::MasterCatalog()
 MasterCatalog::~MasterCatalog()
 {
     qDeleteAll(_catalogs);
+    _lookup.clear();
+    _knownHashes.clear();
+    _catalogs.clear();
 }
 
 bool MasterCatalog::prepare()
@@ -155,8 +158,8 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     }
 
     for(const Resource &item : items) {
-        if ( _lookup.contains(item.id()))
-            continue;
+        //if ( _lookup.contains(item.id()))
+        //    continue;
         if ( mastercatalog()->contains(item.url(), item.ilwisType()))
             continue;
 
