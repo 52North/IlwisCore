@@ -75,7 +75,7 @@ void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
     }
 }
 
-CoverageStatistics &Coverage::statistics()
+NumericStatistics &Coverage::statistics()
 {
     return _statistics;
 }

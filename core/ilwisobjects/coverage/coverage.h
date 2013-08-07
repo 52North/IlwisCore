@@ -31,7 +31,7 @@ public:
 
     ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
     void attributeTable(IlwisTypes type, const ITable& tbl, qint32 index=-1 );
-    CoverageStatistics& statistics();
+    NumericStatistics& statistics();
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
     QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
@@ -43,7 +43,7 @@ private:
     ICoordinateSystem _coordinateSystem;
     Box3D<double> _envelope;
     std::vector<AttributeTables> _attTables;
-    CoverageStatistics _statistics;
+    NumericStatistics _statistics;
     DataDefinition _datadef;
 
 };
@@ -52,6 +52,8 @@ typedef IlwisData<Coverage> ICoverage;
 
 
 }
+
+
 
 
 
