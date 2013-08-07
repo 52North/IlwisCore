@@ -33,7 +33,7 @@ public:
 
         if ( res && outputGC.isValid()) {
             if ( outputGC->datadef().domain()->valueType() & itNUMERIC) {
-                CoverageStatistics stats;
+                NumericStatistics stats;
                 PixelIterator iter(outputGC);
                 stats.calculate(iter, iter.end());
                 NumericRange *rng = new NumericRange(stats.min(), stats.max(), std::pow(10,-stats.significantDigits()));
