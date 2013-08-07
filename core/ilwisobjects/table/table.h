@@ -129,4 +129,9 @@ protected:
 typedef IlwisData<Table> ITable;
 }
 
+// special columns
+#define COVERAGEKEYCOLUMN "coverage_key"
+#define FEATUREIDCOLUMN "feature_id"
+#define FEATUREVALUECOLUMN "feature_value"
+
 #endif // TABLE_H
