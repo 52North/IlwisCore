@@ -46,7 +46,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputGC->attributeTable(itCOVERAGE), "coverage_key");
+            rec = AttributeRecord(inputGC->attributeTable(itCOVERAGE), COVERAGEKEYCOLUMN);
 
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){

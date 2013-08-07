@@ -51,14 +51,14 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputFC->attributeTable(itFEATURECOVERAGE), "feature_id");
-        SPAttributeRecord attrib (new AttributeRecord(_attTable, "feature_id"));
+            rec = AttributeRecord(inputFC->attributeTable(itFEATURECOVERAGE), FEATUREIDCOLUMN);
+        SPAttributeRecord attrib (new AttributeRecord(_attTable, FEATUREIDCOLUMN));
         quint64 v_in = 0;
         for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
             QVariant v;
             if ( rec.isValid()) {
                 SPFeatureI feature = *iterIn;
-                v_in = feature->value("feature_id").toULongLong();
+                v_in = feature->value(FEATUREIDCOLUMN).toULongLong();
                 v = rec.cellByKey(v_in,_attribColumn);
             } else {
                 v = v_in;
@@ -150,7 +150,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          if (!covdom.prepare("count")){
              return sPREPAREFAILED;
          }
-         _attTable->addColumn("feature_id",covdom);
+         _attTable->addColumn(FEATUREIDCOLUMN,covdom);
          _attTable->addColumn(_attribColumn, inputFC->attributeTable(itFEATURECOVERAGE)->columndefinition(_attribColumn).datadef().domain());
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
