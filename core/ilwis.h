@@ -213,7 +213,7 @@ template<class T> T undef() {
 }
 
 #define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
-#define hasType(a,b) ( (a & b) != 0)
+#define hasType(a,b) ( ((a) & (b)) != 0)
 
 
 #endif // ILWIS_H
