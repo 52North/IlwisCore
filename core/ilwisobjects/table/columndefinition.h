@@ -12,8 +12,11 @@ public:
     QString type() const;
     const DataDefinition &datadef() const;
     DataDefinition &datadef();
+    bool isMultiple() const;
+    void multiple(bool yesno);
 private:
     DataDefinition _datadef;
+    bool _multiple;
 
 };
 }

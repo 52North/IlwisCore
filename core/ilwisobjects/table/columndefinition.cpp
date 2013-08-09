@@ -9,11 +9,11 @@
 
 using namespace Ilwis;
 
-ColumnDefinition::ColumnDefinition()
+ColumnDefinition::ColumnDefinition() : _multiple(false)
 {
 }
 
-ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) : Identity(nm, colindex)
+ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) : Identity(nm, colindex), _multiple(false)
 {
     datadef().domain(dom);
 }
@@ -36,6 +36,16 @@ const DataDefinition &ColumnDefinition::datadef() const
 DataDefinition &ColumnDefinition::datadef()
 {
     return _datadef;
+}
+
+bool ColumnDefinition::isMultiple() const
+{
+    return _multiple;
+}
+
+void ColumnDefinition::multiple(bool yesno)
+{
+    _multiple = yesno;
 }
 
 
