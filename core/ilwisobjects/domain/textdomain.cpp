@@ -20,12 +20,12 @@ IlwisTypes TextDomain::valueType() const
     return itSTRING;
 }
 
-QString TextDomain::value(double) const
+QString TextDomain::value(const QVariant &v) const
 {
-    return sUNDEF;
+    return v.toString();
 }
 
-Domain::Containement TextDomain::contains(const QString &) const
+Domain::Containement TextDomain::contains(const QVariant &) const
 {
     return Domain::cSELF;
 }

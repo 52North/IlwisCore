@@ -23,8 +23,8 @@ public:
 
     ~ItemDomain() {
     }
-    Domain::Containement contains(const QString& val) const{
-        if(item(val) != 0)
+    Domain::Containement contains(const QVariant& val) const{
+        if(item(val.toString()) != 0)
             return Domain::cSELF;
 
         if (!isStrict() && parent().isValid())
@@ -37,12 +37,12 @@ public:
      * \param 0 based index, if the index is invalid sUNDEF will be returned
      * \return the string representation or sUNDEDF in case no items are defined
      */
-    QString value(double index) const {
+    QString value(const QVariant& v) const {
         if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return sUNDEF;
         }
-       return _range->value(index);
+        return _range->value(v.toInt());
     }
     /*!
      returns a pointer to the domain item pointed to by the index

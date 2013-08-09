@@ -43,14 +43,14 @@ SPRange NumericDomain::getRange() const
     return _range;
 }
 
-QString NumericDomain::value(double v) const
+QString NumericDomain::value(const QVariant &v) const
 {
     //TODO formatting according to domain(step size and valuetype, other specifiers belong at UI level).
 
-    return QString::number(v)    ;
+    return v.toString();
 }
 
-Domain::Containement NumericDomain::contains(const QString &value) const
+Domain::Containement NumericDomain::contains(const QVariant &value) const
 {
     if ( !_range.isNull()) {
         bool ok;

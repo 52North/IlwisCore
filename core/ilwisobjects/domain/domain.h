@@ -42,7 +42,7 @@ public:
     /s IlwisObject
     */
     virtual IlwisTypes valueType() const = 0;
-    virtual QString value(double v) const = 0;
+    virtual QString value(const QVariant& ) const = 0;
     /*!
      returns the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)
      some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to
@@ -66,7 +66,7 @@ public:
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QVariant &v);
-    virtual Containement contains(const QString& value) const = 0;
+    virtual Containement contains(const QVariant& value) const = 0;
 
     template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();

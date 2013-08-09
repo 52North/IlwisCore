@@ -9,8 +9,8 @@ public:
     TextDomain(const Resource& res);
 
     virtual IlwisTypes valueType() const;
-    virtual QString value(double) const;
-    virtual Containement contains(const QString& value) const;
+    virtual QString value(const QVariant& v) const;
+    virtual Containement contains(const QVariant& ) const;
     IlwisTypes ilwisType() const;
 private:
     QSharedPointer<Range> getRange() const;
