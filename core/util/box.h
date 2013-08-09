@@ -3,13 +3,14 @@
 
 #include <QSize>
 #include "size.h"
+#include "range.h"
 
 namespace Ilwis {
 /*!
 The box class is an abstraction for any rectangular area or volumne used in Ilwis. It is applicable for both
 grid like areas ( e.g. rasters) as world coordinate areas.
  */
-template<class CsyType=qint32> class Box2D {
+template<class CsyType=qint32> class Box2D : public Range{
 public:
     Box2D() : _min_corner(Point2D<CsyType>(0,0)), _max_corner(Ilwis::Point2D<CsyType>(0,0)){
     }
@@ -60,6 +61,16 @@ public:
             this->max_corner().x((CsyType)p2[0].trimmed().toDouble());
             this->max_corner().y((CsyType)p2[1].trimmed().toDouble());
         }
+    }
+
+    IlwisTypes valueType() const{
+        if (std::is_floating_point<CsyType>::value)
+            return itCOORD2D;
+        return itPIXEL;
+    }
+
+    Range *clone() const{
+        return new Box2D<CsyType>(*this);
     }
 
     Point2D<CsyType> min_corner() const {
@@ -209,10 +220,10 @@ bool operator!=(const Box2D<CsyType>& box ) const {
 
 QString toString() const {
     if (std::is_floating_point<CsyType>::value)
-        return QString("POLYGON(%1 %2,%3 %4)").arg(this->min_corner().x(),0,'f').
-                arg(this->min_corner().y(),0,'f').
-                arg(this->max_corner().x(),0,'f').
-                arg(this->max_corner().y(),0,'f');
+        return QString("POLYGON(%1 %2,%3 %4)").arg((double)this->min_corner().x(),0,'f').
+                arg((double)this->min_corner().y(),0,'g').
+                arg((double)this->max_corner().x(),0,'g').
+                arg((double)this->max_corner().y(),0,'g');
     else
         return QString("POLYGON(%1 %2,%3 %4)").arg(this->min_corner().x()).
                 arg(this->min_corner().y()).
@@ -313,6 +324,17 @@ public:
                              Point2D<CsyType>(this->max_corner().x(),
                                               this->max_corner().y()));
     }
+
+    IlwisTypes valueType() const{
+        if (std::is_floating_point<CsyType>::value)
+            return itCOORD3D;
+        return itVOXEL;
+    }
+
+    Range *clone() const{
+        return 0;
+    }
+
     Point3D<CsyType> min_corner() const {
         return _min_corner;
     }
