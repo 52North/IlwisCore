@@ -90,7 +90,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/operationhelper.cpp \
     core/ilwisobjects/operation/operationhelperfeatures.cpp \
     core/ilwisobjects/geometry/georeference/georefimplementation.cpp \
-    core/ilwisobjects/geometry/georeference/georefimplementationfactory.cpp
+    core/ilwisobjects/geometry/georeference/georefimplementationfactory.cpp \
+    core/ilwisobjects/domain/coordinatedomain.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -191,7 +192,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/operationhelper.h \
     core/ilwisobjects/operation/operationhelperfeatures.h \
     core/ilwisobjects/geometry/georeference/georefimplementation.h \
-    core/ilwisobjects/geometry/georeference/georefimplementationfactory.h
+    core/ilwisobjects/geometry/georeference/georefimplementationfactory.h \
+    core/ilwisobjects/domain/coordinatedomain.h
 
 
 
