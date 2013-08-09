@@ -23,6 +23,8 @@ public:
 
     bool isValid() const ;
     Box2D<double> envelope() ;
+    Box2D<double> envelope() const;
+
     IlwisTypes ilwisType() const ;
 
 

@@ -20,6 +20,13 @@ bool Geometry::isValid() const {
     return true;
 }
 
+Box2D<double> Geometry::envelope() const{
+    if (!_bounds.isValid()) {
+        return const_cast<Geometry *>(this)->envelope();
+    }
+    return _bounds;
+}
+
 Box2D<double> Geometry::envelope() {
     if (!_bounds.isValid()) {
         switch(_geometry.which()){
