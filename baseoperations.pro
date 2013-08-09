@@ -3,21 +3,21 @@
 # Project created by QtCreator 2013-04-22T08:25:30
 #
 #-------------------------------------------------
+CONFIG += plugin
+TARGET = baseoperations
+
+include(global.pri)
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
+DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 QT       += sql
 
 QT       -= gui
 
-CONFIG += plugin
-TARGET = baseoperations
 TEMPLATE = lib
 
-include(global.pri)
-
-DEFINES += baseoperations_LIBRARY
-
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+DEFINES += BASEOPERATIONS_LIBRARY
 
 HEADERS += \
     baseoperations/baseoperationsmodule.h \

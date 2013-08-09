@@ -9,19 +9,19 @@
 
 namespace Ilwis {
 namespace BaseOperations {
-class RasterOperationsModule : public Module
+class BaseOperationsModule : public Module
 {
     Q_OBJECT
     Q_INTERFACES(Ilwis::Module)
 public:
-    explicit RasterOperationsModule(QObject *parent = 0);
+    explicit BaseOperationsModule(QObject *parent = 0);
 
     QString getInterfaceVersion() const;
     QString name() const;
     QString version() const;
     void prepare();
 
-    Q_PLUGIN_METADATA(IID "n52.ilwis.rasteroperations" FILE  "baseoperations.json")
+    Q_PLUGIN_METADATA(IID "n52.ilwis.baseoperations" FILE  "baseoperations.json")
 
 };
 }

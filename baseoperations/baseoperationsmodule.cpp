@@ -28,17 +28,17 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
-RasterOperationsModule::RasterOperationsModule(QObject *parent) : Module(parent, "RasterOperations", "iv40","1.0")
+BaseOperationsModule::BaseOperationsModule(QObject *parent) : Module(parent, "BaseOperations", "iv40","1.0")
 {
 }
 
-QString RasterOperationsModule::getInterfaceVersion() const
+QString BaseOperationsModule::getInterfaceVersion() const
 {
     return "iv40";
 
 }
 
-void RasterOperationsModule::prepare()
+void BaseOperationsModule::prepare()
 {
     commandhandler()->addOperation(Arccosine::createMetadata(), Arccosine::create);
     commandhandler()->addOperation(Arcsine::createMetadata(), Arcsine::create);
@@ -73,12 +73,12 @@ void RasterOperationsModule::prepare()
 
 }
 
-QString RasterOperationsModule::name() const
+QString BaseOperationsModule::name() const
 {
     return "Base Operations plugin";
 }
 
-QString RasterOperationsModule::version() const
+QString BaseOperationsModule::version() const
 {
     return "1.0";
 }
