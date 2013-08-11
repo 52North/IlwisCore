@@ -199,8 +199,8 @@ Resource MasterCatalog::id2Resource(quint64 iid) const {
 
 quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
 {
-    if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
-        QString sid = name.mid(11);
+    if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
+        QString sid = name.mid(12);
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if (ok){
@@ -364,7 +364,7 @@ void MasterCatalog::registerObject(ESPObject &data)
         QHash<quint64,ESPObject>::iterator iter = _lookup.find(data->id());
         data = iter.value();
     } else {
-        if ( !data->isInternal())
+        if ( !data->isAnonymous())
             addItems({data->source()});
         _lookup[data->id()] = data;
 
