@@ -57,6 +57,6 @@ QString Identity::code() const
 void Identity::prepare(quint64 base) {
     if ( _id == i64UNDEF) {
         _id = base + Identity::_baseId++;
-        setName(QString("%1%2").arg(INTERNAL_PREFIX).arg(_id)); // default name
+        setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
     }
 }

@@ -106,7 +106,7 @@ public:
         _implementation = QExplicitlySharedDataPointer<IlwisObject>(new T);
         if (_implementation.data() != 0) {
             _implementation.data()->prepare();
-            _implementation.data()->setName(QString("%1_%2").arg(INTERNAL_PREFIX).arg(_implementation.data()->id()));
+            _implementation.data()->setName(QString("%1_%2").arg(ANONYMOUS_PREFIX).arg(_implementation.data()->id()));
         }
         return _implementation.data() != 0;
     }
@@ -121,8 +121,8 @@ public:
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
     bool prepare(const QString& name, IlwisTypes tp=itANY){
-        if ( name.left(10) == INTERNAL_PREFIX) { // internal objects are not in the catalog
-            QString sid = name.mid(10);
+        if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
+            QString sid = name.mid(11);
             bool ok;
             quint64 id = sid.toLongLong(&ok);
             if (ok){

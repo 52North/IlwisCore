@@ -4,7 +4,7 @@
 #include "Kernel_global.h"
 #include "ilwis.h"
 
-#define INTERNAL_PREFIX "_INTERNAL_"
+#define ANONYMOUS_PREFIX "_ANONYMOUS_"
 
 namespace Ilwis {
 

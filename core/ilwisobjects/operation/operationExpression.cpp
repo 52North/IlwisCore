@@ -79,8 +79,8 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
     if ( type != itUNKNOWN)
         return type;
 
-    if ( value.left(10) == INTERNAL_PREFIX) {
-        QString sid = value.mid(11);
+    if ( value.left(11) == ANONYMOUS_PREFIX) {
+        QString sid = value.mid(12);
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if ( ok) {

@@ -36,7 +36,7 @@ void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QS
     QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
     tbl.addSymbol(name,_scope, tp, var);
     _results.push_back(name);
-    if ( name.indexOf(INTERNAL_PREFIX) == -1 && res.isValid()) {
+    if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && res.isValid()) {
         mastercatalog()->addItems({res});
     }
 }

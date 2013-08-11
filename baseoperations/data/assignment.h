@@ -24,7 +24,7 @@ private:
         ctx->_results.push_back(name);
         Resource res = outputObj->source();
         symTable.addSymbol(_outputObj->name(),0, _outputObj->ilwisType(),value);
-        if ( name.indexOf(INTERNAL_PREFIX) == -1 && res.isValid()) {
+        if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && res.isValid()) {
             mastercatalog()->addItems({res});
         }
 

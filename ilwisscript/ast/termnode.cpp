@@ -136,7 +136,7 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
                                                                 arg(selector->box().max_corner().x()).arg(selector->box().max_corner().y());
                 else if ( selector->variable() != sUNDEF)
                     selectordef = "\"attribute=" + selector->variable() + "\"";
-                QString outname = INTERNAL_PREFIX;
+                QString outname = ANONYMOUS_PREFIX;
                 QString expression = QString("%1=selection(%2,%3)").arg(outname).arg(value).arg(selectordef);
                 Ilwis::ExecutionContext ctx;
                 if(!Ilwis::commandhandler()->execute(expression, &ctx, symbols)) {

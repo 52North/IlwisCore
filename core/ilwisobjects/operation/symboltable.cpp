@@ -61,7 +61,7 @@ Symbol SymbolTable::getSymbol(const QString &name, GetAction act, int scope)
     while (iter != _symbols.end() && iter.key() == name) {
         if ( iter.value()._scope <= scope) {
             Symbol sym = iter.value();
-            bool isAnonymous = name.indexOf(INTERNAL_PREFIX) == 0;
+            bool isAnonymous = name.indexOf(ANONYMOUS_PREFIX) == 0;
             if ((isAnonymous && act == gaREMOVEIFANON) || act == gaREMOVE)
                 _symbols.erase(iter);
             return sym;
@@ -130,7 +130,7 @@ bool SymbolTable::isDataLink(const QVariant& value) {
 QString SymbolTable::newAnonym()
 {
     _symbolid++;
-    return QString("%1%2").arg(INTERNAL_PREFIX).arg(_symbolid);
+    return QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_symbolid);
 }
 
 
