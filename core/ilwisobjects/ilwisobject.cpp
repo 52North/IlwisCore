@@ -98,7 +98,7 @@ bool IlwisObject::prepare( ) {
 void IlwisObject::setName(const QString &nam)
 {
     QString nm = nam;
-    if ( nm == INTERNAL_PREFIX)
+    if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     Identity::setName(nm);
     if ( !connector().isNull())
@@ -232,9 +232,9 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
     return true;
 }
 
-bool IlwisObject::isInternal() const
+bool IlwisObject::isAnonymous() const
 {
-    return name().indexOf(INTERNAL_PREFIX) == 0;
+    return name().indexOf(ANONYMOUS_PREFIX) != 0;
 }
 
 Resource IlwisObject::source() const

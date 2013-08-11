@@ -119,7 +119,7 @@ public:
    virtual bool prepare(const QString& def);
 
    bool fromInternal(const QSqlRecord& rec);
-   bool isInternal() const;
+   bool isAnonymous() const;
 
    /*!
     * \brief source the location of the source that represents the physical read origin of this object
