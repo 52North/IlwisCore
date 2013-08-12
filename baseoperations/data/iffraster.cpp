@@ -70,7 +70,7 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(),itGRID,_outputGC->source());
+        ctx->addOutput(symTable,value,_outputGC->name(),itGRID,_outputGC->resource());
     }
     return res;
 }

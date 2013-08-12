@@ -59,7 +59,7 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputFC);
-        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURECOVERAGE,_outputFC->source());
+        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURECOVERAGE,_outputFC->resource());
     }
     return true;
 }

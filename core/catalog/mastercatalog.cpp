@@ -365,7 +365,7 @@ void MasterCatalog::registerObject(ESPObject &data)
         data = iter.value();
     } else {
         if ( !data->isAnonymous())
-            addItems({data->source()});
+            addItems({data->resource()});
         _lookup[data->id()] = data;
 
     }
