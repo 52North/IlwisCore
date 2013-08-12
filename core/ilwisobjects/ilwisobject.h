@@ -45,7 +45,7 @@ public:
      *
      *connector maybe for input/output or both. This enum describes how a connector can be used.
      */
-    enum ConnectorMode{cmINPUT, cmOUTPUT, cmINOUT};
+    enum ConnectorMode{cmINPUT=1, cmOUTPUT=2, cmEXTENDED=4};
     enum StoreMode{smMETADATA=1, smBINARYDATA=2};
 
     IlwisObject();
@@ -90,7 +90,7 @@ public:
     \param connector the connector to be used
     \param input defines the nature of the connector.
    */
-   virtual void setConnector(ConnectorInterface *connector, ConnectorMode mode=cmINOUT);
+   virtual void setConnector(ConnectorInterface *connector, int mode=cmINPUT | cmOUTPUT);
 
    /*!
     * \brief isEqual compares the properties of ilwisobjects to test for equality.
@@ -125,12 +125,11 @@ public:
     * \brief source the location of the source that represents the physical read origin of this object
     * \return url that is sufficient to find the source
     */
-   Resource source() const;
+   virtual Resource resource(int mode=cmINPUT) const;
    /*!
     * \brief target the location of the source that represents the physical write target of this object
     * \return url that is sufficient to find the target
     */
-   Resource target() const;
    virtual bool store(int mode=smMETADATA | smBINARYDATA);
    /*!
     connectTo allocates a connector of a certain format to the ilwisobject.
@@ -157,8 +156,8 @@ public:
    static void addTypeFunction(IlwisTypeFunction);
 
 protected:
-   QScopedPointer<ConnectorInterface>& connector(ConnectorMode mode=cmINOUT);
-   const QScopedPointer<ConnectorInterface> &connector(ConnectorMode mode=cmINOUT) const;
+   QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
+   const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
    bool setValid(bool yesno);
    bool storeMetaData() ;
    bool storeBinaryData() ;

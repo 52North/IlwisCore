@@ -174,9 +174,9 @@ bool IlwisObject::prepare(const QString &)
     return true;
 }
 
-void IlwisObject::setConnector(ConnectorInterface *connector, ConnectorMode mode)
+void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
 {
-    if (mode == cmINPUT || mode == cmINOUT){
+    if (mode & cmINPUT){
         quint64 pointer = (quint64) ( _outConnector.data());
         quint64 npointer = (quint64) ( connector);
         if ( pointer != npointer || npointer == 0)
@@ -186,7 +186,7 @@ void IlwisObject::setConnector(ConnectorInterface *connector, ConnectorMode mode
             ERROR1("Duplicate connector assignement for input/output in %1", name());
         }
     }
-    if ( mode == cmOUTPUT){
+    if ( mode & cmOUTPUT){
         quint64 pointer = (quint64) ( _connector.data());
         quint64 npointer = (quint64) ( connector);
         if ( pointer != npointer || npointer == 0)
@@ -198,21 +198,21 @@ void IlwisObject::setConnector(ConnectorInterface *connector, ConnectorMode mode
     }
 }
 
-QScopedPointer<ConnectorInterface> &IlwisObject::connector(ConnectorMode mode)
+QScopedPointer<ConnectorInterface> &IlwisObject::connector(int mode)
 {
-    if ( mode == cmINPUT)
+    if ( mode & cmINPUT)
         return _connector;
-    else if ( mode == cmOUTPUT)
+    else if ( mode & cmOUTPUT)
         if ( _outConnector.data() != 0)
             return _outConnector;
     return _connector;
 }
 
-const QScopedPointer<ConnectorInterface> &IlwisObject::connector(ConnectorMode mode) const
+const QScopedPointer<ConnectorInterface> &IlwisObject::connector(int mode) const
 {
-    if (  mode == cmINPUT)
+    if (  mode & cmINPUT)
         return _connector;
-    else if ( mode == cmOUTPUT)
+    else if ( mode & cmOUTPUT)
         if ( _outConnector.data() != 0)
             return _outConnector;
     return _connector;
@@ -234,21 +234,23 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
 
 bool IlwisObject::isAnonymous() const
 {
-    return name().indexOf(ANONYMOUS_PREFIX) != 0;
+    return name().indexOf(ANONYMOUS_PREFIX) == 0;
 }
 
-Resource IlwisObject::source() const
+Resource IlwisObject::resource(int mode) const
 {
-    if ( _connector.isNull() == false)
-        return _connector->source();
-    return Resource();
-}
-
-Resource IlwisObject::target() const
-{
-    if ( _outConnector.isNull())
+    if ( mode == cmINPUT) {
+        if ( _connector.isNull() == false)
+           return _connector->source();
         return Resource();
-    return _outConnector->source();
+    } else if (mode == cmOUTPUT) {
+        if ( _outConnector.isNull() == false) {
+            return _outConnector->source();
+        }
+        else if ( _connector.isNull() == false)
+           return _connector->source();
+    }
+    return Resource();
 }
 
 bool IlwisObject::storeMetaData() {
@@ -276,13 +278,13 @@ void IlwisObject::copyTo(IlwisObject *obj)
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;
-    Resource resource = source().copy(obj->id());
+    Resource res = resource().copy(obj->id());
     if (!_connector.isNull()){
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _connector->provider());
         obj->setConnector(conn, cmINPUT);
     }
     if ( !_outConnector.isNull()) {
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _outConnector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _outConnector->provider());
         obj->setConnector(conn, cmOUTPUT);
     }
 }
