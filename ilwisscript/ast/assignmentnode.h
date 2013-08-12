@@ -20,6 +20,7 @@ private:
         IlwisData<T1> coverage =  sym._var.value<IlwisData<T1>>();
         if (!coverage.isValid())
             return false;
+        bool wasAnonymous = coverage->isAnonymous();
         T1 *obj = coverage->copy();
         if(!obj)
             return false;
@@ -29,6 +30,8 @@ private:
         QVariant var;
         var.setValue<IlwisData<T1>>(gcovCopy);
         symbols.addSymbol(name, 1000, obj->ilwisType(), var);
+        if ( wasAnonymous)
+            mastercatalog()->addItems({gcovCopy->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
         return true;
     }

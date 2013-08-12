@@ -11,7 +11,6 @@
 #include "operationnode.h"
 #include "expressionnode.h"
 #include "symboltable.h"
-#include "assignmentnode.h"
 #include "formatter.h"
 #include "formatters.h"
 #include "scriptnode.h"
@@ -35,6 +34,7 @@
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
+#include "assignmentnode.h"
 
 using namespace Ilwis;
 
@@ -101,9 +101,13 @@ void AssignmentNode::store2Format(ASTNode *node, const Symbol& sym, const QStrin
     getFormat(node, format, fnamespace);
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
+        bool wasAnonymous = object->isAnonymous();
         object->setName(result);
         object->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
         object->setCreateTime(Ilwis::Time::now());
+        if ( wasAnonymous)
+            mastercatalog()->addItems({object->resource(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
+
         object->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
 
      }
