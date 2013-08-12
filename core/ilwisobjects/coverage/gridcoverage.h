@@ -53,6 +53,7 @@ public:
         return rUNDEF;
     }
 
+    Resource resource(int mode=cmINPUT) const;
 protected:
     Grid *grid();
     void copyTo(IlwisObject *obj);

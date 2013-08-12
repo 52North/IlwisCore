@@ -102,6 +102,17 @@ QVariant Coverage::value(const QString &colName, quint32 itemid, IlwisTypes type
     return coldef.datadef().domain()->value(itemid);
 }
 
+Resource Coverage::resource(int mode) const
+{
+    Resource res = IlwisObject::resource(mode);
+    if ( mode & IlwisObject::cmEXTENDED) {
+        res["domain"] = datadef().domain()->id();
+        res["coordinatesystem"] = coordinateSystem()->id();
+        res.setExtendedType( res.extendedType() | itDOMAIN | itCOORDSYSTEM);
+    }
+    return res;
+}
+
 void Coverage::copyTo(IlwisObject *obj)
 {
     IlwisObject::copyTo(obj);

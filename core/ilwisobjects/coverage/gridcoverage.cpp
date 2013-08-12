@@ -94,11 +94,15 @@ void GridCoverage::copyTo(IlwisObject *obj)
 
 }
 
-//bool GridCoverage::storeBinaryData() {
-//    if (!connector(cmOUTPUT).isNull())
-//        return connector(cmOUTPUT)->storeBinaryData(this);
-//    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
-//}
+Resource GridCoverage::resource(int mode) const
+{
+    Resource res = Coverage::resource(mode);
+    if ( mode & IlwisObject::cmEXTENDED) {
+        res["georeference()"] = georeference()->id();
+        res.setExtendedType( res.extendedType() | itGEOREF);
+    }
+    return res;
+}
 
 Size GridCoverage::size() const
 {

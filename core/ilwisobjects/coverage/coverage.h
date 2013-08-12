@@ -35,6 +35,7 @@ public:
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
     QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
+    Resource resource(int mode=cmINPUT) const;
 
 protected:
     void copyTo(IlwisObject *obj) ;
