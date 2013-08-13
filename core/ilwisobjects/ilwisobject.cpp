@@ -67,6 +67,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     resource = mastercatalog()->id2Resource(id());
     if ( !resource.isValid()) {
         resource = Resource(url,ilwisType(), false);
+        resource.setId(id());
     }
     if ( url == QUrl()) {
         resource.setName(name());
@@ -239,11 +240,11 @@ bool IlwisObject::isAnonymous() const
 
 Resource IlwisObject::resource(int mode) const
 {
-    if ( mode == cmINPUT) {
+    if ( mode & cmINPUT) {
         if ( _connector.isNull() == false)
            return _connector->source();
         return Resource();
-    } else if (mode == cmOUTPUT) {
+    } else if (mode & cmOUTPUT) {
         if ( _outConnector.isNull() == false) {
             return _outConnector->source();
         }
