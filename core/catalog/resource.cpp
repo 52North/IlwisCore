@@ -318,6 +318,11 @@ bool Resource::operator ()(const Resource &resource)
     return *this < resource;
 }
 
+void Resource::setId(quint64 newid)
+{
+    Identity::setId(newid);
+}
+
 QString Resource::toLocalFile(bool relative) const {
     return toLocalFile(_resource, relative);
 }

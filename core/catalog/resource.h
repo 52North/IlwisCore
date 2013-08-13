@@ -41,6 +41,7 @@ public:
     bool store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const;
     bool isValid() const;
     bool operator()(const Ilwis::Resource& resource);
+    void setId(quint64 newid);
 
     static QString toLocalFile(const QUrl& url, bool relative=false) ;
     Resource copy(quint64 id) const;
