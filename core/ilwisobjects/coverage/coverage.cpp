@@ -106,8 +106,8 @@ Resource Coverage::resource(int mode) const
 {
     Resource res = IlwisObject::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
-        res["domain"] = datadef().domain()->id();
-        res["coordinatesystem"] = coordinateSystem()->id();
+        res.addProperty("domain", datadef().domain()->id());
+        res.addProperty("coordinatesystem", coordinateSystem()->id());
         res.setExtendedType( res.extendedType() | itDOMAIN | itCOORDSYSTEM);
     }
     return res;
