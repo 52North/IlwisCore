@@ -60,3 +60,8 @@ void Identity::prepare(quint64 base) {
         setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
     }
 }
+
+void Identity::setId(quint64 newid)
+{
+    _id = newid;
+}

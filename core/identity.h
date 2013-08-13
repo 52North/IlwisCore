@@ -62,6 +62,7 @@ protected:
     Identity(const QString &name, qint64 id=i64UNDEF, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
 
     void prepare(quint64 base=0);
+    void setId(quint64 newid);
 
 private:
     quint64 _id;
