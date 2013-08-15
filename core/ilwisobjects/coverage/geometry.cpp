@@ -11,7 +11,7 @@
 
 using namespace Ilwis;
 
-Geometry::Geometry(const GeometryType& geom) : _geometry(geom){
+Geometry::Geometry(const GeometryType& geom) : _geometry(geom), _bounds(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF)){
 
 }
 
