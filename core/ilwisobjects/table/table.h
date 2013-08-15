@@ -81,7 +81,7 @@ public:
      * \param vars the list values to be set
      * \param offset starting point of the field to be set
      */
-    virtual void record(quint32 rec, const QVariantList& vars, quint32 offset=0) = 0;
+    virtual void record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
     /*!
      returns the content of a column
      * \param nme name of the column to be returned

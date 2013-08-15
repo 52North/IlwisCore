@@ -123,7 +123,7 @@ std::vector<QVariant> DatabaseTable::record(quint32 n) const {
     return std::vector<QVariant>();
 }
 
-void DatabaseTable::record(quint32 rec, const QVariantList &vars, quint32 offset)
+void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset)
 {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;

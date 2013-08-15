@@ -86,7 +86,7 @@ public:
     /*!
     \se Ilwis::Table
      */
-    void record(quint32 rec, const QVariantList& vars, quint32 offset=0);
+    void record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset=0);
     /*!
     \se Ilwis::Table
      */

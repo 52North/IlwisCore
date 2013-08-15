@@ -133,7 +133,7 @@ std::vector<QVariant> FlatTable::record(quint32 rec) const
     return data;
 }
 
-void FlatTable::record(quint32 rec, const QVariantList& vars, quint32 offset)
+void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
@@ -144,8 +144,9 @@ void FlatTable::record(quint32 rec, const QVariantList& vars, quint32 offset)
     }
 
     quint32 col = offset;
+    int cols = std::min(vars.size() - offset, _columns);
     for(const QVariant& var : vars) {
-        if ( col < _columns)
+        if ( col < cols)
             _datagrid[rec][col++] = var;
     }
 
