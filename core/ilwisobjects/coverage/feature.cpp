@@ -41,7 +41,7 @@ Feature &Feature::operator =(const Feature &f)
 
 QVariant Feature::value(const QString &name, int index)
 {
-    return _record->cellByKey(itemId(), name, index);
+    return _record->cellByKey(featureid(), name, index);
 }
 
 Feature::Feature(quint32 v): _itemid(v){
