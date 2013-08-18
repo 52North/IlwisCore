@@ -110,6 +110,6 @@ bool Ilwis::operator==(const Ilwis::Size& sz1, const Ilwis::Size& sz2){
 }
 
 bool Ilwis::operator!=(const Ilwis::Size& sz1, const Ilwis::Size& sz2){
-    return operator ==(sz1, sz2);
+    return !operator ==(sz1, sz2);
 }
 

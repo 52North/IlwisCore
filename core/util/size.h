@@ -107,6 +107,14 @@ private:
     
 };
 
+//bool operator==(const Size& sz1, const Size& sz2) {
+//    return sz1.xsize() == sz2.xsize() && sz1.ysize() == sz2.ysize() && sz1.zsize() == sz2.zsize();
+//}
+
+//bool operator!=(const Size& sz1, const Size& sz2) {
+//    return ! operator==(sz1, sz2);
+//}
+
 KERNELSHARED_EXPORT Ilwis::Size operator+(const Ilwis::Size& sz1, const Ilwis::Size& sz2);
 KERNELSHARED_EXPORT Ilwis::Size operator-(const Ilwis::Size& sz1, const Ilwis::Size& sz2);
 KERNELSHARED_EXPORT bool operator==(const Ilwis::Size& sz1, const Ilwis::Size& sz2);
