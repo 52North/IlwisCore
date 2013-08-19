@@ -70,6 +70,7 @@ quint64 FPixel::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","pixel");
     res.addProperty("syntax","pixel(x,y[,z])");
+    res.addProperty("description",TR("translates a x and y value (optional z) into a single pixel object"));
     res.addProperty("inparameters","2|3");
     res.addProperty("pin_1_type", itNUMERIC);
     res.addProperty("pin_1_name", TR("x"));

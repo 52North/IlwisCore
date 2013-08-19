@@ -109,6 +109,7 @@ quint64 IffRaster::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","iff");
     res.addProperty("syntax","iffraster(gridcoverage,outputchoicetrue, outputchoicefalse)");
+    res.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));

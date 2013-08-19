@@ -62,6 +62,7 @@ quint64 RasValue::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","gridvalue");
     res.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
+    res.addProperty("description",TR("returns the value at pixel location x,y (optional z)"));
     res.addProperty("inparameters","3|4");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));

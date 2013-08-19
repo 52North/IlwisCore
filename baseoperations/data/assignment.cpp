@@ -131,6 +131,7 @@ quint64 Assignment::createMetadata()
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","assignment");
+    res.addProperty("description",TR("copies the values/properties of the right hand of the expression to the left hand named object"));
     res.addProperty("syntax","assignment(thing)");
     res.addProperty("inparameters","1");
     res.addProperty("pin_1_type", itANY);

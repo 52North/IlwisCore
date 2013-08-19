@@ -66,6 +66,7 @@ quint64 GridSize::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","gridsize");
     res.addProperty("syntax","gridsize(gridcoverage,xsize|ysize|zsize)");
+    res.addProperty("description",TR("returns the pixel extent of a grid coverage"));
     res.addProperty("inparameters","2");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("gridcoverage"));

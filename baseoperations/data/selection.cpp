@@ -168,6 +168,7 @@ quint64 Selection::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","selection");
     res.addProperty("syntax","selection(coverage,selection-definition)");
+    res.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
     res.addProperty("inparameters","2");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));

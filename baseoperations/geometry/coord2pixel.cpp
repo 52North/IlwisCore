@@ -76,6 +76,7 @@ quint64 Coord2Pixel::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","coord2pixel");
     res.addProperty("syntax","Coord2Pixel(gridcoverage|georef,Coordinate)");
+    res.addProperty("description",TR("translates a coordinate to a pixel location based on the supplied georeference"));
     res.addProperty("inparameters","2");
     res.addProperty("pin_1_type", itGRID | itGEOREF);
     res.addProperty("pin_1_name", TR("input gridcoverage or georeference"));
