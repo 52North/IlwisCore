@@ -64,7 +64,7 @@ public:
                         vec[i] = values[i].toDouble();
                     }
                     stats.calculate(vec.begin(), vec.end());
-                    NumericRange *rng = new NumericRange(stats.min(), stats.max(), std::pow(10,-stats.significantDigits()));
+                    NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
                     def.datadef().range(rng,DataDefinition::daCOVERAGE);
                 }
             }
