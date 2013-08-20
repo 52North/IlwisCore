@@ -24,7 +24,7 @@ public:
      * \param y y dimension of the Size
      * \param z z dimension of the Size, defaults to 0.
      */
-    Size(qint32 x, qint32 y, qint32 z=0);
+    Size(qint32 x, qint32 y, qint32 z=1);
     /*!
      Copy constructor
      * \param other Size
