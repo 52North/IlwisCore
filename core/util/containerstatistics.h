@@ -30,8 +30,8 @@ public:
         quint64 _count;
     };
 
-    enum PropertySets{pBASIC=0, pMIN=1, pMAX=2, pDISTANCE=4, pRANGE=8,pNETTOCOUNT=16, pCOUNT=32, pSUM=64,
-                      pMEAN=128, pMEDIAN=256, pSTDEV=512, pHISTOGRAM=1024, pLAST=2048, pALL=4294967296};
+    enum PropertySets{pBASIC=0, pMIN=1, pMAX=2, pDISTANCE=4, pDELTA=8,pNETTOCOUNT=16, pCOUNT=32, pSUM=64,
+                      pMEAN=128, pMEDIAN=256, pPREDOMINANT=512, pSTDEV=1024, pHISTOGRAM=2048, pLAST=4096, pALL=4294967296};
 
     ContainerStatistics(){
         _sigDigits = shUNDEF;
@@ -107,7 +107,7 @@ public:
         _markers[index(pMIN)] = boost::accumulators::min(basicMarkers);
         _markers[index(pMAX)] = boost::accumulators::max(basicMarkers);
         _markers[index(pDISTANCE)] = std::abs(prop(pMAX) - prop(pMIN));
-        _markers[index(pRANGE)] = prop(pMAX) - prop(pMIN);
+        _markers[index(pDELTA)] = prop(pMAX) - prop(pMIN);
         _markers[index(pNETTOCOUNT)] = boost::accumulators::count(basicMarkers);
         _markers[index(pCOUNT)] = count;
         _markers[index(pSUM)] = boost::accumulators::sum(basicMarkers);
@@ -132,7 +132,7 @@ public:
             }
 
             _bins.resize(bins);
-            double delta  = prop(pRANGE);
+            double delta  = prop(pDELTA);
             for(int i=0; i < bins; ++i ) {
                 _bins[i] = i * ( delta / bins);
             }
