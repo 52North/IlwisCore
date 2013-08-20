@@ -89,6 +89,9 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
                 return obj->ilwisType();
         }
     }
+    std::set<QString> booleans ={ "yes","no","true","false"};
+    if ( booleans.find(value.toLower()) != booleans.end())
+        return itBOOL;
 
     bool ok;
     ushort vu = value.toUShort(&ok);
