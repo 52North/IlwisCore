@@ -76,7 +76,15 @@ public:
     bool isAtEnd() const;
     Voxel position() const;
 protected:
-    PixelIterator(quint64 posid );
+    PixelIterator(quint64 posid ) :
+        _localOffset(0),
+        _currentBlock(0),
+        _step(0),
+        _flow(fXYZ),
+        _isValid(false),
+        _positionid(posid)
+    {
+    }
 
     void init();
     void initPosition();

@@ -31,16 +31,6 @@ PixelIterator::PixelIterator(const PixelIterator& iter)  {
     copy(iter);
 }
 
-inline PixelIterator::PixelIterator(quint64 posid ) :
-    _localOffset(0),
-    _currentBlock(0),
-    _step(0),
-    _flow(fXYZ),
-    _isValid(false),
-    _positionid(posid)
-{
-}
-
 
 void PixelIterator::copy(const PixelIterator &iter) {
     _raster = iter._raster;
