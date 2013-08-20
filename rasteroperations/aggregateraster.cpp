@@ -4,6 +4,7 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "blockiterator.h"
 #include "gridinterpolator.h"
 #include "aggregateraster.h"
 
@@ -22,7 +23,7 @@ AggregateRaster::AggregateRaster()
 
 AggregateRaster::AggregateRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
     OperationImplementation(metaid, expr),
-    _method(GridInterpolator::ipBICUBIC)
+    _method(NumericStatistics::pSUM)
 {
 }
 
@@ -31,24 +32,25 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
+
     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
-    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
-    BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
-        PixelIterator iterOut(outputGC,box);
-        GridInterpolator interpolator(inputGC, _method);
-        SPRange range = inputGC->datadef().range();
+    PixelIterator iterOut(outputGC);
+    BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize));
+    NumericStatistics stats;
+
+    BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         while(iterOut != iterOut.end()) {
-           Voxel position = iterOut.position();
-           Coordinate c = outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
-           Coordinate c2 = inputGC->coordinateSystem()->coord2coord(outputGC->coordinateSystem(),c);
-           double v = interpolator.coord2value(c2);
-           *iterOut = range->ensure(v);
+            GridBlock& block = *blockIter;
+            stats.calculate(block.begin(), block.end(), _method);
+            double v = stats[_method];
+           *iterOut = v;
             ++iterOut;
+            ++blockIter;
         }
         return true;
     };
 
-    bool res = OperationHelperRaster::execute(ctx, resampleFun, outputGC);
+    bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -58,43 +60,89 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return res;
 }
 
+NumericStatistics::PropertySets AggregateRaster::toMethod(const QString& nm) {
+    QString mname = nm.toLower();
+    if ( mname == "avg")
+        return NumericStatistics::pMEAN;
+    else if ( mname == "min")
+        return NumericStatistics::pMIN;
+    else if ( mname == "max")
+        return NumericStatistics::pMAX;
+    else if ( mname == "med")
+        return NumericStatistics::pMEDIAN;
+    else if ( mname == "pred")
+        return NumericStatistics::pPREDOMINANT;
+    else if ( mname == "std")
+        return NumericStatistics::pSTDEV;
+    else if ( mname == "sum")
+        return NumericStatistics::pSUM;
+
+    return NumericStatistics::pLAST    ;
+}
+
 Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext *, const SymbolTable & )
 {
     QString gc = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
+    int copylist = itDOMAIN | itCOORDSYSTEM;
 
     if (!_inputObj.prepare(gc, itGRID)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
 
-    _outputObj = OperationHelperRaster::initialize(_inputObj,itGRID, itDOMAIN | itCOORDSYSTEM);
+    _method = toMethod(_expression.parm(1).value());
+    if ( _method == NumericStatistics::pLAST) {
+        ERROR2(ERR_ILLEGAL_VALUE_2, "parameter value", " aggregation method");
+        return sPREPAREFAILED;
+    }
+    bool ok;
+    _groupSize = _expression.parm(2).value().toInt(&ok);
+    if ( !ok || _groupSize < 2) {
+        ERROR2(ERR_ILLEGAL_VALUE_2, "aggregation group size", QString::number(_groupSize));
+        return sPREPAREFAILED;
+    }
+
+    _grouped = _expression.parm(3).value() == "true";
+    if ( !_grouped)
+        copylist |= itGEOREF;
+
+    _outputObj = OperationHelperRaster::initialize(_inputObj,itGRID, copylist);
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;
     }
-    IGeoReference grf;
-    grf.prepare(_expression.parm(1).value());
-    if ( !grf.isValid()) {
-        return sPREPAREFAILED;
+    QString outputBaseName = outputName;
+    int index = 0;
+    if ( (index = outputName.lastIndexOf(".")) != -1) {
+        outputBaseName = outputName.left(index);
     }
+    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
-    outputGC->georeference(grf);
-    Box2Dd env = grf->pixel2Coord(grf->size());
-    outputGC->envelope(env);
     if ( outputName != sUNDEF)
-        outputGC->setName(outputName);
+        _outputObj->setName(outputName);
 
-    QString method = _expression.parm(2).value();
-    if ( method.toLower() == "nearestneighbour")
-        _method = GridInterpolator::ipNEARESTNEIGHBOUR;
-    else if ( method.toLower() == "bilinear")
-        _method = GridInterpolator::ipBILINEAR;
-    else if (  method.toLower() == "bicubic")
-        _method =GridInterpolator::ipBICUBIC;
-    else {
-        ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
-        return sPREPAREFAILED;
+    Box3D<qint32> box(inputGC->georeference()->size());
+    if ( _grouped) {
+        int xs = box.xlength();
+        int ys = box.ylength();
+        int newxs = xs / _groupSize;
+        int newys = ys / _groupSize;
+        box = Box3D<qint32>(Size(newxs, newys));
+
+    }
+    if ( _expression.parameterCount() == 5 || _grouped) {
+        Box2D<double> envlope = inputGC->georeference()->pixel2Coord(box);
+        Resource res(QUrl("ilwis://internal/georeference"),itGEOREF);
+        res.addProperty("size", IVARIANT(box.size()));
+        res.addProperty("envelope", IVARIANT(envlope));
+        res.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
+        res.addProperty("name", outputBaseName);
+        res.addProperty("centerofpixel",inputGC->georeference()->centerOfPixel());
+        IGeoReference  grf;
+        grf.prepare(res);
+        outputGC->georeference(grf);
+        outputGC->envelope(envlope);
     }
 
     return sPREPARED;
@@ -107,7 +155,7 @@ quint64 AggregateRaster::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","aggregateraster raster coverage");
     res.addProperty("syntax","resample(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
-    res.addProperty("inparameters","3");
+    res.addProperty("inparameters","4|5");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));

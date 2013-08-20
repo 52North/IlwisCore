@@ -34,6 +34,5 @@ OTHER_FILES += \
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
-INCLUDEPATH += $$PWD/projectionimplproj4 \
-                $$PWD/../external/proj4
-DEPENDPATH += $$PWD/projectionimplproj4
+INCLUDEPATH += $$PWD/core
+DEPENDPATH += $$PWD/core

@@ -20,8 +20,11 @@ private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     IGeoReference _targetGrf;
-    Ilwis::GridInterpolator::InterpolationMethod _method;
+    NumericStatistics::PropertySets _method;
+    bool _grouped;
+    int _groupSize;
 
+    NumericStatistics::PropertySets toMethod(const QString &nm);
 };
 }
 }

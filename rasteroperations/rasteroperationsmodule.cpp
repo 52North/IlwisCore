@@ -11,8 +11,11 @@
 #include "operationmetadata.h"
 #include "operation.h"
 #include "commandhandler.h"
+#include "raster.h"
+#include "aggregateraster.h"
 
 using namespace Ilwis;
+using namespace RasterOperations;
 
 RasterOperationsModule::RasterOperationsModule(QObject *parent) :
     Module(parent, "RasterOperations", "iv40","1.0")
@@ -27,7 +30,7 @@ QString RasterOperationsModule::getInterfaceVersion() const
 
 void RasterOperationsModule::prepare()
 {
-   // commandhandler()->addOperation(Script::createMetadata(), Script::create);
+   commandhandler()->addOperation(AggregateRaster::createMetadata(), AggregateRaster::create);
 
 }
 
