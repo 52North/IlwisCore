@@ -61,14 +61,6 @@ Size CellIterator::blocksize() const
     return _block->size();
 }
 
-bool operator==(const CellIterator& iter1, const CellIterator& iter2) {
-    return iter1.blocksize() == iter2.blocksize() && iter1.position() == iter2.position();
-}
-
-bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
-    return ! operator==(iter1, iter2);
-}
-
 //--------------------------------------------------------
 GridBlock::GridBlock(BlockIterator& iter) :
     _iterator(iter)
@@ -76,15 +68,15 @@ GridBlock::GridBlock(BlockIterator& iter) :
     // for efficiency the blocks and offsets are precalculated at the cost of some memory
     // when calculating the linear postions only very basic operations are needed then
     int ysize = iter._raster->size().ysize();
-    int blockYSize = iter._raster->_grid->maxLines();
+    _blockYSize = iter._raster->_grid->maxLines();
     int blockXSize = iter._raster->_grid->size().xsize();
     _internalBlockNumber.resize(ysize);
     _offsets.resize(ysize);
     qint32 base = 0;
     for(int i=0; i < ysize; ++i ) {
-        if ( i == blockYSize)
+        if ( i == _blockYSize)
             base = 0;
-        _internalBlockNumber[i] = i / blockYSize;
+        _internalBlockNumber[i] = i / _blockYSize;
         _offsets[i] = base;
         base += blockXSize;
     }
@@ -99,7 +91,9 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
     const Size& sz = _iterator._blocksize;
     if ( sz.contains(x,y,z)) {
         qint32 ypos = _iterator._y + y;
-        return _iterator._raster->_grid->value(_internalBlockNumber[ypos ], _offsets[ypos] + x);
+        quint32 block = ypos/ _blockYSize;
+        ypos = ypos % _blockYSize;
+        return _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] + x);
     }
     ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
     return _iterator._outside;
@@ -127,22 +121,46 @@ BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<>
     _blocksize(sz)
 
 {
+}
+
+BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos), _block(*this)
+{
 
 }
 
 BlockIterator& BlockIterator::operator ++()
 {
-    moveXYZ(_blocksize.xsize());
+    quint32 dist = _blocksize.xsize();
+    if ( _x + dist > _endx)
+        dist = _endx - _x;
+    move(dist);
     return *this;
+
 }
 
 BlockIterator &BlockIterator::operator --()
 {
-    moveXYZ(-_blocksize.xsize());
+    move(-_blocksize.xsize());
     return *this;
+}
+
+BlockIterator BlockIterator::end() const
+{
+    return BlockIterator(_endpositionid);
+}
+
+bool BlockIterator::operator==(const BlockIterator &iter) const
+{
+    return PixelIterator::operator ==(iter);
+}
+
+bool BlockIterator::operator!=(const BlockIterator& iter) const{
+    return ! operator ==(iter);
 }
 
 Size BlockIterator::blockSize() const
 {
     return _blocksize;
 }
+
+

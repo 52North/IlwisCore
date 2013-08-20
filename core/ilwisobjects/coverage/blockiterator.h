@@ -9,7 +9,7 @@ namespace Ilwis {
 class BlockIterator;
 class GridBlock;
 
-class CellIterator : public std::iterator<std::random_access_iterator_tag, double> {
+class KERNELSHARED_EXPORT CellIterator : public std::iterator<std::random_access_iterator_tag, double> {
 public:
     CellIterator(GridBlock *bl, quint32 start=0);
 
@@ -39,7 +39,15 @@ private:
     qint32 _position;
 };
 
-class GridBlock {
+bool operator==(const CellIterator& iter1, const CellIterator& iter2) {
+    return iter1.blocksize() == iter2.blocksize() && iter1.position() == iter2.position();
+}
+
+bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
+    return ! Ilwis::operator==(iter1, iter2);
+}
+
+class KERNELSHARED_EXPORT GridBlock {
 
 public:
     GridBlock(BlockIterator& biter);
@@ -51,21 +59,26 @@ private:
     BlockIterator& _iterator;
     std::vector<qint32> _internalBlockNumber;
     std::vector<qint32> _offsets;
+    quint32 _blockYSize;
 };
 
-class BlockIterator : private PixelIterator {
+class KERNELSHARED_EXPORT BlockIterator : protected PixelIterator {
 public:
     friend class GridBlock;
 
-    BlockIterator( IGridCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>() , double step=rUNDEF);
+    BlockIterator( IGridCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>() , double step=1);
 
     GridBlock& operator*() {
         return _block;
     }
     BlockIterator& operator++();
     BlockIterator& operator--();
+    BlockIterator end() const ;
+    bool operator==(const BlockIterator& iter) const;
+    bool operator!=(const BlockIterator& iter) const;
     Size blockSize() const;
 private:
+    BlockIterator(quint64 endpos);
     GridBlock _block;
     Size _blocksize;
     double _outside=rILLEGAL;
