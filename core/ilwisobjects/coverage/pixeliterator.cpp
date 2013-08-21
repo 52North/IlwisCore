@@ -88,16 +88,18 @@ void PixelIterator::init() {
 }
 
 inline bool PixelIterator::moveXYZ(int n) {
-    _x += n * _step;
+    quint32 delta = n * _step;
+    _x += delta;
     _localOffset += n;
     _xChanged = true;
     _yChanged = _zChanged = false;
     if ( _x > _endx) {
-        ++_y;
+        quint32 xsize = _grid->size().xsize();
+        _y += (delta / xsize) + 1;
         _x = _box.min_corner().x();
         _yChanged = true;
         qint32 ylocal = _y % _grid->maxLines();
-        _localOffset = _x + ylocal * _grid->size().xsize();
+        _localOffset = _x + ylocal * xsize;
         if ( ylocal == 0) {
             ++_currentBlock;
             _localOffset = _x;
