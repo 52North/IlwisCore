@@ -48,7 +48,8 @@ double &CellIterator::operator*()
     int y = (_position - z * size2d) / sz.xsize();
     int x = _position - z * size2d - y * sz.xsize();
 
-    return (*_block)(x,y,z);
+    double &v =  (*_block)(x,y,z);
+    return v;
 }
 
 qint32 CellIterator::position() const
@@ -69,7 +70,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
     // when calculating the linear postions only very basic operations are needed then
     int ysize = iter._raster->size().ysize();
     _blockYSize = iter._raster->_grid->maxLines();
-    int blockXSize = iter._raster->_grid->size().xsize();
+    _blockXSize = iter._raster->_grid->size().xsize();
     _internalBlockNumber.resize(ysize);
     _offsets.resize(ysize);
     qint32 base = 0;
@@ -78,7 +79,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
             base = 0;
         _internalBlockNumber[i] = i / _blockYSize;
         _offsets[i] = base;
-        base += blockXSize;
+        base += _blockXSize;
     }
 }
 
@@ -93,7 +94,7 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
         qint32 ypos = _iterator._y + y;
         quint32 block = ypos/ _blockYSize;
         ypos = ypos % _blockYSize;
-        return _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] + x);
+        return _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] +  _iterator._x +  x);
     }
     ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
     return _iterator._outside;
@@ -131,8 +132,14 @@ BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos), _block(*th
 BlockIterator& BlockIterator::operator ++()
 {
     quint32 dist = _blocksize.xsize();
-    if ( _x + dist > _endx)
-        dist = _endx - _x;
+    if ( _y + dist  > _endy) {
+        dist = 1e9; // big number, force and end to the iteration
+    } else {
+        if ( _x + dist * 2 > _endx) {
+            dist = 1 + _endx - _x + ( (_endx - _box.min_corner().x() + 1) * ( _block.size().ysize() - 1));
+
+        }
+    }
     move(dist);
     return *this;
 
@@ -162,5 +169,6 @@ Size BlockIterator::blockSize() const
 {
     return _blocksize;
 }
+
 
 

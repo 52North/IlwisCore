@@ -60,6 +60,7 @@ private:
     std::vector<qint32> _internalBlockNumber;
     std::vector<qint32> _offsets;
     quint32 _blockYSize;
+    quint32 _blockXSize;
 };
 
 class KERNELSHARED_EXPORT BlockIterator : protected PixelIterator {
@@ -82,7 +83,6 @@ private:
     GridBlock _block;
     Size _blocksize;
     double _outside=rILLEGAL;
-
 };
 
 
