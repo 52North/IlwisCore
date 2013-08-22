@@ -50,6 +50,9 @@ public:
             throw ErrorObject(TR(ERR_COULD_NOT_CONVERT_2).arg("georef").arg(GrfT::typeName()));
         return sptr;
     }
+    template<typename GrfT> bool grfType() const {
+        return dynamic_cast<GrfT *>(_georefImpl.data()) != 0;
+    }
 
     static GeoReference *create(const QString& type);
 
