@@ -183,18 +183,16 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
         if ( pointer != npointer || npointer == 0)
             _connector.reset(connector);
         else {
-            _valid = false;
-            ERROR1("Duplicate connector assignement for input/output in %1", name());
+            kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
     }
-    if ( mode & cmOUTPUT){
-        quint64 pointer = (quint64) ( _connector.data());
+    if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
+        quint64 pointer = (quint64) ( _outConnector.data());
         quint64 npointer = (quint64) ( connector);
         if ( pointer != npointer || npointer == 0)
-         _outConnector.reset(connector);
+            _outConnector.reset(connector);
         else {
-            _valid = false;
-            ERROR1("Duplicate connector assignement for input/output in %1", name());
+            kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
     }
 }
