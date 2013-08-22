@@ -34,11 +34,12 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
-    PixelIterator iterOut(outputGC);
-    BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize));
+
     NumericStatistics stats;
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
+        PixelIterator iterOut(outputGC, box);
+        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize));
         while(iterOut != iterOut.end()) {
             GridBlock& block = *blockIter;
             stats.calculate(block.begin(), block.end(), _method);
@@ -132,7 +133,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {
-        Box2D<double> envlope = inputGC->georeference()->pixel2Coord(box);
+        Box2D<double> envlope = inputGC->envelope();
         Resource res(QUrl("ilwis://internal/georeference"),itGEOREF);
         res.addProperty("size", IVARIANT(box.size()));
         res.addProperty("envelope", IVARIANT(envlope));
