@@ -54,11 +54,11 @@ bool MasterCatalog::prepare()
 {
     QSettings settings("52n","ilwis4");
 
-    QString local = settings.value("localfilesystem",QVariant(sUNDEF)).toString();
-    if ( local == sUNDEF) {
-        QUrl res("file://");
-        addContainer(res);
-    }
+    //TODO this piece code must move to a more appropriate place; at this moment it
+    // is not guaranteed that the catalogconnectors are already known due to the order of the plugins
+    // as they are loaded.
+//    QString local = settings.value("localfilesystem",QVariant(sUNDEF)).toString();
+
     return true;
 }
 
