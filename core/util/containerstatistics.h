@@ -67,7 +67,8 @@ public:
         if ( distance == 0)
             _sigDigits = 0;
         else{
-            int lenBase = log10(abs(prop(pMAX) - prop(pMIN))) / 2;
+            double d = prop(pMAX) - prop(pMIN);
+            int lenBase = log10(std::abs(d)) / 2;
             QString num = QString::number(distance,'g',10);
             quint32 len = num.size();
             for(int i=num.size() - 2; i >=0; ++i){
