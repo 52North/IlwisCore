@@ -35,11 +35,11 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
 
-    NumericStatistics stats;
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputGC, box);
         BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize));
+        NumericStatistics stats;
         while(iterOut != iterOut.end()) {
             GridBlock& block = *blockIter;
             stats.calculate(block.begin(), block.end(), _method);
