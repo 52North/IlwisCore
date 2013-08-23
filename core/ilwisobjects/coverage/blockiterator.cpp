@@ -94,7 +94,8 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
         qint32 ypos = _iterator._y + y;
         quint32 block = ypos/ _blockYSize;
         ypos = ypos % _blockYSize;
-        return _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] +  _iterator._x +  x);
+        double &v = _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] +  _iterator._x +  x);
+        return v;
     }
     ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
     return _iterator._outside;
@@ -132,13 +133,14 @@ BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos), _block(*th
 BlockIterator& BlockIterator::operator ++()
 {
     quint32 dist = _blocksize.xsize();
-    if ( _y + dist  > _endy) {
+    if ( _y + dist - 1 > _endy) {
         dist = 1e9; // big number, force and end to the iteration
     } else {
-        if ( _x + dist * 2 > _endx) {
+        if ( _x + dist >= _endx) {
             dist = 1 + _endx - _x + ( (_endx - _box.min_corner().x() + 1) * ( _block.size().ysize() - 1));
 
         }
+
     }
     move(dist);
     return *this;
