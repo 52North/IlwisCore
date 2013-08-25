@@ -55,6 +55,7 @@ public:
     Size size() const;
     CellIterator begin() ;
     CellIterator end() ;
+    qint32 offset(quint32 y) const;
 private:
     BlockIterator& _iterator;
     std::vector<qint32> _internalBlockNumber;

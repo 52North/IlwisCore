@@ -75,7 +75,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
     _offsets.resize(ysize);
     qint32 base = 0;
     for(int i=0; i < ysize; ++i ) {
-        if ( i == _blockYSize)
+        if ( i % _blockYSize == 0)
             base = 0;
         _internalBlockNumber[i] = i / _blockYSize;
         _offsets[i] = base;
@@ -92,9 +92,8 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
     const Size& sz = _iterator._blocksize;
     if ( sz.contains(x,y,z)) {
         qint32 ypos = _iterator._y + y;
-        quint32 block = ypos/ _blockYSize;
-        ypos = ypos % _blockYSize;
-        double &v = _iterator._raster->_grid->value(_internalBlockNumber[block ], _offsets[ypos] +  _iterator._x +  x);
+        //quint32 block = ypos/ _blockYSize;
+        double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ], _offsets[ypos] +  _iterator._x +  x);
         return v;
     }
     ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
@@ -114,6 +113,11 @@ CellIterator GridBlock::begin()
 CellIterator GridBlock::end()
 {
     return CellIterator(this, size().totalSize());
+}
+
+qint32 GridBlock::offset(quint32 y) const
+{
+    return _offsets[y];
 }
 
 
@@ -138,11 +142,12 @@ BlockIterator& BlockIterator::operator ++()
     } else {
         if ( _x + dist >= _endx) {
             dist = 1 + _endx - _x + ( (_endx - _box.min_corner().x() + 1) * ( _block.size().ysize() - 1));
-
+            //dist = 1 + _endx - _x + _block.offset(_y + _block.size().ysize() - 1) - _block.offset(_y );
         }
 
     }
     move(dist);
+
     return *this;
 
 }
