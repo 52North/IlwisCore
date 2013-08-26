@@ -104,44 +104,47 @@ public:
             }
 
         });
+        bool isUndefined = boost::accumulators::count(basicMarkers) == 0;
         std::fill(_markers.begin(), _markers.end(), rUNDEF);
-        _markers[index(pMIN)] = boost::accumulators::min(basicMarkers);
-        _markers[index(pMAX)] = boost::accumulators::max(basicMarkers);
-        _markers[index(pDISTANCE)] = std::abs(prop(pMAX) - prop(pMIN));
-        _markers[index(pDELTA)] = prop(pMAX) - prop(pMIN);
-        _markers[index(pNETTOCOUNT)] = boost::accumulators::count(basicMarkers);
-        _markers[index(pCOUNT)] = count;
-        _markers[index(pSUM)] = boost::accumulators::sum(basicMarkers);
-        _markers[index(pMEAN)] = boost::accumulators::mean(basicMarkers);
-        _markers[index(pMEDIAN)] = boost::accumulators::median(median);
-        findSignificantDigits(sigDigits);
+        if( !isUndefined) {
+            _markers[index(pMIN)] = boost::accumulators::min(basicMarkers);
+            _markers[index(pMAX)] = boost::accumulators::max(basicMarkers);
+            _markers[index(pDISTANCE)] = std::abs(prop(pMAX) - prop(pMIN));
+            _markers[index(pDELTA)] = prop(pMAX) - prop(pMIN);
+            _markers[index(pNETTOCOUNT)] = boost::accumulators::count(basicMarkers);
+            _markers[index(pCOUNT)] = count;
+            _markers[index(pSUM)] = boost::accumulators::sum(basicMarkers);
+            _markers[index(pMEAN)] = boost::accumulators::mean(basicMarkers);
+            _markers[index(pMEDIAN)] = boost::accumulators::median(median);
+            findSignificantDigits(sigDigits);
 
-        if ( mode & pSTDEV) {
-            _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
-        }
-        if ( mode & pHISTOGRAM) {
-            int bins = 1;
-            double ncount = prop(pNETTOCOUNT);
-            if ( ncount > 1) {
-                if ( prop(pSTDEV) == rUNDEF) {
-                    _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
-                }
-                if ( _markers[pSTDEV] != rUNDEF ) {
-                    double h = 3.5 * _markers[pSTDEV] / pow(ncount, 0.3333);
-                    bins = prop(pDISTANCE) / h;
-                }
+            if ( mode & pSTDEV) {
+                _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
             }
+            if ( mode & pHISTOGRAM) {
+                int bins = 1;
+                double ncount = prop(pNETTOCOUNT);
+                if ( ncount > 1) {
+                    if ( prop(pSTDEV) == rUNDEF) {
+                        _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
+                    }
+                    if ( _markers[pSTDEV] != rUNDEF ) {
+                        double h = 3.5 * _markers[pSTDEV] / pow(ncount, 0.3333);
+                        bins = prop(pDISTANCE) / h;
+                    }
+                }
 
-            _bins.resize(bins);
-            double delta  = prop(pDELTA);
-            for(int i=0; i < bins; ++i ) {
-                _bins[i] = i * ( delta / bins);
+                _bins.resize(bins);
+                double delta  = prop(pDELTA);
+                for(int i=0; i < bins; ++i ) {
+                    _bins[i] = i * ( delta / bins);
+                }
+                double rmax = prop(pMAX);
+                std::for_each(begin, end, [&] (const DataType& sample){
+                    quint16 index = bins * (double)(rmax - sample) / delta;
+                    _bins[index++];
+                });
             }
-            double rmax = prop(pMAX);
-            std::for_each(begin, end, [&] (const DataType& sample){
-                quint16 index = bins * (double)(rmax - sample) / delta;
-                _bins[index++];
-            });
         }
 
         return false;
