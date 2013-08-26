@@ -37,9 +37,14 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
-        Size sz = outputGC->size();
+        //Size sz = outputGC->size();
         PixelIterator iterOut(outputGC, box);
-        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize), Size(sz.xsize() * _groupSize, sz.ysize()*_groupSize));
+        Box3D<qint32> inpBox(Point3D<qint32>(box.min_corner().x(), box.min_corner().y() * _groupSize),
+                             Point3D<qint32>((box.max_corner().x()+1) * _groupSize - 1, (box.max_corner().y() + 1) * _groupSize - 1));
+
+        //BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize), Size(sz.xsize() * _groupSize, sz.ysize()*_groupSize));
+        //Box3D<qint32> sz2(Size(sz.xsize() * _groupSize, sz.ysize()*_groupSize));
+        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize), inpBox);
         NumericStatistics stats;
         while(iterOut != iterOut.end()) {
             GridBlock& block = *blockIter;
@@ -47,14 +52,11 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             double v = stats[_method];
            *iterOut = v;
             ++iterOut;
-            if ( iterOut.ychanged()) {
-                qDebug() << v;
-            }
             ++blockIter;
         }
         return true;
     };
-    ctx->_threaded = false;
+    //ctx->_threaded = false;
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
 
     if ( res && ctx != 0) {
