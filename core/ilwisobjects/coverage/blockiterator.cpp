@@ -115,10 +115,11 @@ CellIterator GridBlock::end()
     return CellIterator(this, size().totalSize());
 }
 
-qint32 GridBlock::offset(quint32 y) const
-{
-    return _offsets[y];
-}
+//quint32 GridBlock::offset(quint32 y) const
+//{
+//    quint32 v = _offsets[y];
+//    return v;
+//}
 
 
 BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box, double step) :
@@ -141,8 +142,7 @@ BlockIterator& BlockIterator::operator ++()
         dist = 1e9; // big number, force and end to the iteration
     } else {
         if ( _x + dist >= _endx) {
-            dist = 1 + _endx - _x + ( (_endx - _box.min_corner().x() + 1) * ( _block.size().ysize() - 1));
-            //dist = 1 + _endx - _x + _block.offset(_y + _block.size().ysize() - 1) - _block.offset(_y );
+            dist = 1 + _endx - _x + ( _block._blockXSize) * ( _block.size().ysize() - 1);
         }
 
     }

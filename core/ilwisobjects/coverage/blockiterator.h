@@ -49,17 +49,17 @@ bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
 
 class KERNELSHARED_EXPORT GridBlock {
 
+    friend class BlockIterator;
 public:
     GridBlock(BlockIterator& biter);
     double& operator()(quint32 x, quint32 y, quint32 z=0);
     Size size() const;
     CellIterator begin() ;
     CellIterator end() ;
-    qint32 offset(quint32 y) const;
 private:
     BlockIterator& _iterator;
-    std::vector<qint32> _internalBlockNumber;
-    std::vector<qint32> _offsets;
+    std::vector<quint32> _internalBlockNumber;
+    std::vector<quint32> _offsets;
     quint32 _blockYSize;
     quint32 _blockXSize;
 };
