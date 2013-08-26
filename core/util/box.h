@@ -588,7 +588,16 @@ void normalize() {
 
 
 };
-
+template<typename CsyType> Box3D<CsyType> operator *(const Box3D<CsyType>& box, const double& v) {
+    Ilwis::Point3D<CsyType> pmin = box.min_corner();
+    Ilwis::Point3D<CsyType> pmax = box.max_corner();
+    double deltaX = box.xlength() * v / 2;
+    double deltaY = box.ylength() * v / 2;
+    double deltaZ = box.zlength() * v / 2;
+    pmin -= {(CsyType)deltaX, (CsyType)deltaY, (CsyType)deltaZ};
+    pmax += {(CsyType)deltaX, (CsyType)deltaY, (CsyType)deltaZ};
+    return Box3D<CsyType>(pmin, pmax);
+}
 
 }
 
