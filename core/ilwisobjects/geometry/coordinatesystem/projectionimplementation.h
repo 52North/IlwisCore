@@ -24,6 +24,7 @@ public:
     QVariant parameter(Projection::ProjectionParamValue type) const;
     virtual void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
     QString parameterName(Projection::ProjectionParamValue pv) const;
+    virtual QString toProj4() const = 0;
 
     bool isEqual();
 
