@@ -33,6 +33,7 @@ public:
     void setAuthority(const QString &auth);
     QString wkt() const;
     void setWkt(const QString &wkt);
+    QString toProj4() const;
 
     IlwisTypes ilwisType() const;
 
