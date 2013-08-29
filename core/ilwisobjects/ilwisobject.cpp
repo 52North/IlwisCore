@@ -252,18 +252,6 @@ Resource IlwisObject::resource(int mode) const
     return Resource();
 }
 
-bool IlwisObject::storeMetaData() {
-    if ( !connector(cmOUTPUT).isNull())
-        return connector(cmOUTPUT)->storeMetaData(this);
-    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
-
-}
-bool IlwisObject::storeBinaryData() {
-    if (!connector(cmOUTPUT).isNull())
-        return connector(cmOUTPUT)->storeBinaryData(this);
-    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
-}
-
 void IlwisObject::copyTo(IlwisObject *obj)
 {
     obj->setName(name());
@@ -290,13 +278,10 @@ void IlwisObject::copyTo(IlwisObject *obj)
 
 bool IlwisObject::store(int storemode)
 {
-    bool ok = true;
-    if ( storemode & smMETADATA)
-        ok &= storeMetaData();
-    if ( storemode & smBINARYDATA)
-        ok &= storeBinaryData();
+    if (!connector(cmOUTPUT).isNull())
+        return connector(cmOUTPUT)->store(this, storemode);
 
-    return ok;
+    return ERROR1(ERR_NO_INITIALIZED_1,"connector");
 }
 
 //------ statics ----------------------------------------------

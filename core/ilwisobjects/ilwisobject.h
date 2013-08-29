@@ -159,8 +159,6 @@ protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
    bool setValid(bool yesno);
-   bool storeMetaData() ;
-   bool storeBinaryData() ;
    void copyTo(IlwisObject *obj);
 
    std::mutex _mutex;
