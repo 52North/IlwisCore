@@ -41,6 +41,18 @@ public:
         return *this;
     }
 
+    PixelIterator& operator+=(int n) {
+        move(n);
+        return *this;
+    }
+
+    PixelIterator& operator-=(int n) {
+        move(-n);
+        return *this;
+    }
+
+
+
     PixelIterator &operator ()(const Voxel &vox)
     {
         _x = vox.x();
@@ -75,6 +87,14 @@ public:
     bool zchanged() const;
     bool isAtEnd() const;
     Voxel position() const;
+    quint32 linearPosition() const;
+    int operator -(const PixelIterator &iter2);
+
+    PixelIterator operator+(int n) {
+        PixelIterator iter(*this);
+        this->move(n);
+        return iter;
+    }
 protected:
     PixelIterator(quint64 posid ) :
         _localOffset(0),
@@ -116,6 +136,8 @@ protected:
     bool _yChanged = false;
     bool _zChanged = false;
 };
+
+
 
 }
 #endif // PixelIterator_H

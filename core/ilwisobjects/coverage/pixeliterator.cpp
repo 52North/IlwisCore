@@ -131,6 +131,12 @@ Voxel PixelIterator::position() const
     return Voxel(_x, _y, _z);
 }
 
+quint32 PixelIterator::linearPosition() const
+{
+    Size sz = _grid->size();
+    return sz.xsize() * sz.ysize() * _z + sz.xsize() * _y + _x;
+}
+
 bool PixelIterator::move(int n) {
 
     bool ok;
@@ -212,6 +218,10 @@ void PixelIterator::initPosition() {
     _currentBlock += _z * _grid->blocksPerBand();
 
     _positionid = calcPosId();
+}
+
+int PixelIterator:: operator-(const PixelIterator& iter) {
+    return linearPosition() - iter.linearPosition();
 }
 
 
