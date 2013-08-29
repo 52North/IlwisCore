@@ -133,6 +133,11 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
     return ERROR1(ERR_NO_INITIALIZED_1,"Projection");
 }
 
+QString ProjectionImplementationProj4::toProj4() const
+{
+    return _targetDef;
+}
+
 Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 {
     if ( _pjBase == 0 || _pjLatlon == 0) {

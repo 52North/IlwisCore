@@ -15,6 +15,7 @@ public:
      void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
      void setEllipsoid(const Ilwis::IEllipsoid &ell);
      bool prepare(const QString& parms="");
+     QString toProj4() const;
 private:
     QString _targetDef;
     projPJ  _pjLatlon;
