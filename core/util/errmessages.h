@@ -32,3 +32,4 @@
 #define ERR_ILLEGAL_NUM_PARM3 "Illegal number of parameters in %1. Expected %2, got %3"
 #define ERR_NO_FOUND2 "No %1 found for this %2"
 #define ERR_OPERATION_FAILID1 "Operation %1 failed"
+#define ERR_OPERATION_NOTSUPPORTED2 "%1 not supported for %2"
