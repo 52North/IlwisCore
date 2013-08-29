@@ -102,6 +102,7 @@ public:
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
             ConnectorInterface *cif =  createConnector(item, false);
+            cif->format(format);
             return dynamic_cast<T *>(cif);
         }
 

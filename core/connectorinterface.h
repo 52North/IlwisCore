@@ -29,11 +29,7 @@ public:
      \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
     */
     virtual bool loadMetaData(IlwisObject* ) { return false;}
-    /*!
-     * \brief storeMetaData stores the metadata and non binary information to the source of the connector
-     * \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
-     */
-    virtual bool storeMetaData(IlwisObject* )  { return false; }
+
     /*!
      * \brief loadGridData loads the 2D or 3D raster data from the source into memory
      *
@@ -47,7 +43,7 @@ public:
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
     virtual bool loadBinaryData(IlwisObject* ) { return false; }
-    virtual bool storeBinaryData(IlwisObject* ) { return false; }
+    virtual bool store(IlwisObject *, int ) { return false; }
 
     virtual bool execute(const OperationExpression& , ExecutionContext *) { return false; }
     /*!
@@ -71,6 +67,8 @@ public:
      */
     virtual Resource& source() = 0;
     virtual QString provider() const = 0;
+    virtual void format(const QString&) {}
+    virtual QString format() const { return sUNDEF; }
 
 };
 
