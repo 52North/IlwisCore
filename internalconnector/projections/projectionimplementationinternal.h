@@ -11,6 +11,7 @@ public:
     Coordinate latlon2coord(const LatLon&) const;
     LatLon coord2latlon(const Coordinate&) const;
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);
+    QString toProj4() const;
 protected:
     virtual Coordinate ll2crd(const LatLon&) const = 0;
     virtual LatLon crd2ll(const Coordinate&) const = 0;
