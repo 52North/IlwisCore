@@ -62,6 +62,7 @@ private:
     std::vector<quint32> _offsets;
     quint32 _blockYSize;
     quint32 _blockXSize;
+    quint32 _bandOffset;
 };
 
 class KERNELSHARED_EXPORT BlockIterator : protected PixelIterator {

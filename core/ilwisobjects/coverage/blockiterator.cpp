@@ -81,6 +81,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
         _offsets[i] = base;
         base += _blockXSize;
     }
+    _bandOffset = iter._raster->_grid->blocksPerBand();
 }
 
 double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
@@ -92,8 +93,7 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
     const Size& sz = _iterator._blocksize;
     if ( sz.contains(x,y,z)) {
         qint32 ypos = _iterator._y + y;
-        //quint32 block = ypos/ _blockYSize;
-        double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ], _offsets[ypos] +  _iterator._x +  x);
+        double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ] + _bandOffset * z, _offsets[ypos] +  _iterator._x +  x);
         return v;
     }
     ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
@@ -115,12 +115,6 @@ CellIterator GridBlock::end()
     return CellIterator(this, size().totalSize());
 }
 
-//quint32 GridBlock::offset(quint32 y) const
-//{
-//    quint32 v = _offsets[y];
-//    return v;
-//}
-
 
 BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box, double step) :
     PixelIterator(raster,box,step),
@@ -139,7 +133,7 @@ BlockIterator& BlockIterator::operator ++()
 {
     quint32 dist = _blocksize.xsize();
     if ( _y + dist - 1 > _endy) {
-        dist = 1e9; // big number, force and end to the iteration
+        dist = linearPosition() + dist + 1;
     } else {
         if ( _x + dist >= _endx) {
             dist = 1 + _endx - _x + ( _block._blockXSize) * ( _block.size().ysize() - 1);

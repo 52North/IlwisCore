@@ -17,12 +17,13 @@ public:
 
 
 private:
+    quint32 groupSize(int dim=0);
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     IGeoReference _targetGrf;
     NumericStatistics::PropertySets _method;
     bool _grouped;
-    int _groupSize;
+    std::vector<quint32> _groupSize = {1,1,1};
 
     NumericStatistics::PropertySets toMethod(const QString &nm);
 };

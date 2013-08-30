@@ -107,7 +107,7 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IGridCover
     int currentY = 0;
 
     for(int i=0 ; i < cores; ++i){
-        Box3D<qint32> smallBox(Pixel(left, currentY), Pixel(right - 1, std::min(top - 1,currentY + step)) );
+        Box3D<qint32> smallBox(Voxel(left, currentY,0), Voxel(right - 1, std::min(top - 1,currentY + step),bounds.zlength()) );
         boxes[i] = smallBox;
         currentY = currentY + step  ;
     }

@@ -39,12 +39,14 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         //Size sz = outputGC->size();
         PixelIterator iterOut(outputGC, box);
-        Box3D<qint32> inpBox(Point3D<qint32>(box.min_corner().x(), box.min_corner().y() * _groupSize),
-                             Point3D<qint32>((box.max_corner().x()+1) * _groupSize - 1, (box.max_corner().y() + 1) * _groupSize - 1));
+        Box3D<qint32> inpBox(Point3D<qint32>(box.min_corner().x(),
+                                             box.min_corner().y() * groupSize(1),
+                                             box.min_corner().z() * groupSize(2)),
+                             Point3D<qint32>((box.max_corner().x()+1) * groupSize(0) - 1,
+                                             (box.max_corner().y() + 1) * groupSize(1) - 1,
+                                             (box.max_corner().z() + 1) * groupSize(2) - 1) );
 
-        //BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize), Size(sz.xsize() * _groupSize, sz.ysize()*_groupSize));
-        //Box3D<qint32> sz2(Size(sz.xsize() * _groupSize, sz.ysize()*_groupSize));
-        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(_groupSize,_groupSize), inpBox);
+        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
         while(iterOut != iterOut.end()) {
             GridBlock& block = *blockIter;
@@ -56,7 +58,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         return true;
     };
-    //ctx->_threaded = false;
+    ctx->_threaded = false;
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
 
     if ( res && ctx != 0) {
@@ -97,16 +99,35 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-
     _method = toMethod(_expression.parm(1).value());
     if ( _method == NumericStatistics::pLAST) {
         ERROR2(ERR_ILLEGAL_VALUE_2, "parameter value", " aggregation method");
         return sPREPAREFAILED;
     }
     bool ok;
-    _groupSize = _expression.parm(2).value().toInt(&ok);
-    if ( !ok || _groupSize < 2) {
-        ERROR2(ERR_ILLEGAL_VALUE_2, "aggregation group size", QString::number(_groupSize));
+    quint32 groupSz = _expression.parm(2).value().toInt(&ok);
+    if (!ok) {
+        QString blist = _expression.parm(2).value();
+        blist.remove("{");
+        blist.remove("}");
+        QStringList dims = blist.split(" ");
+        if ( dims.size() > 0) {
+            for(int i=0; i < dims.size(); ++i)     {
+                quint32 val = dims[i].toInt(&ok);
+                if ( ok) {
+                    _groupSize[i] = val;
+                }else
+                    break;
+            }
+        }
+
+    }else {
+        _groupSize[0] = groupSz;
+        _groupSize[1] = groupSz;
+
+    }
+    if ( !ok || groupSize() < 2) {
+        ERROR2(ERR_ILLEGAL_VALUE_2, "aggregation group size", QString::number(groupSize()));
         return sPREPAREFAILED;
     }
 
@@ -133,9 +154,11 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( _grouped) {
         int xs = box.xlength();
         int ys = box.ylength();
-        int newxs = xs / _groupSize;
-        int newys = ys / _groupSize;
-        box = Box3D<qint32>(Size(newxs, newys));
+        int zs = box.zlength();
+        int newxs = xs / groupSize(0);
+        int newys = ys / groupSize(1);
+        int newzs = zs / groupSize(2);
+        box = Box3D<qint32>(Size(newxs, newys, newzs));
 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {
@@ -161,7 +184,7 @@ quint64 AggregateRaster::createMetadata()
     Resource res(QUrl(url), itOPERATIONMETADATA);
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","aggregateraster raster coverage");
-    res.addProperty("syntax","resample(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
+    res.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
     res.addProperty("inparameters","4|5");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
@@ -169,9 +192,9 @@ quint64 AggregateRaster::createMetadata()
     res.addProperty("pin_2_type", itSTRING);
     res.addProperty("pin_2_name", TR("Aggregation Method"));
     res.addProperty("pin_2_desc",TR("the method how pixels inside a group will be accumulated"));
-    res.addProperty("pin_3_type", itINTEGER);
+    res.addProperty("pin_3_type", itINTEGER | itSTRING);
     res.addProperty("pin_3_name", TR("Groupsize"));
-    res.addProperty("pin_3_desc",TR("The size of the block used to aggregate"));
+    res.addProperty("pin_3_desc",TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
     res.addProperty("pin_4_type", itBOOL);
     res.addProperty("pin_4_name", TR("change geometry"));
     res.addProperty("pin_4_desc",TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
@@ -188,6 +211,11 @@ quint64 AggregateRaster::createMetadata()
 
     mastercatalog()->addItems({res});
     return res.id();
+}
+
+quint32 AggregateRaster::groupSize(int dim)
+{
+    return _groupSize[dim];
 }
 
 
