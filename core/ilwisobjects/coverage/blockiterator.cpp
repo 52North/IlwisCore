@@ -49,6 +49,9 @@ double &CellIterator::operator*()
     int x = _position - z * size2d - y * sz.xsize();
 
     double &v =  (*_block)(x,y,z);
+    if ( v == 86) {
+        qDebug() << "sy";
+    }
     return v;
 }
 
@@ -71,6 +74,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
     int ysize = iter._raster->size().ysize();
     _blockYSize = iter._raster->_grid->maxLines();
     _blockXSize = iter._raster->_grid->size().xsize();
+    _XYSize = iter._raster->_grid->size().xsize() * iter._raster->_grid->size().ysize();
     _internalBlockNumber.resize(ysize);
     _offsets.resize(ysize);
     qint32 base = 0;
@@ -115,9 +119,9 @@ CellIterator GridBlock::end()
     return CellIterator(this, size().totalSize());
 }
 
-
-BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box, double step) :
-    PixelIterator(raster,box,step),
+//----------------------------------------------------------------------------------------------
+BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box) :
+    PixelIterator(raster,box),
     _block(*this),
     _blocksize(sz)
 
@@ -141,6 +145,10 @@ BlockIterator& BlockIterator::operator ++()
 
     }
     move(dist);
+    if ( zchanged()) {
+        dist = _block._XYSize * (_blocksize.zsize() - 1);
+        move(dist);
+    }
 
     return *this;
 

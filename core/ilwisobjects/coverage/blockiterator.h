@@ -63,13 +63,14 @@ private:
     quint32 _blockYSize;
     quint32 _blockXSize;
     quint32 _bandOffset;
+    quint64 _XYSize;
 };
 
 class KERNELSHARED_EXPORT BlockIterator : protected PixelIterator {
 public:
     friend class GridBlock;
 
-    BlockIterator( IGridCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>() , double step=1);
+    BlockIterator( IGridCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>());
 
     GridBlock& operator*() {
         return _block;
