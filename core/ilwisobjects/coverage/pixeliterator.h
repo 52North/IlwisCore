@@ -27,7 +27,7 @@ public:
      */
     bool isValid() const;
     PixelIterator();
-    PixelIterator(IGridCoverage raster, const Box3D<>& box=Box3D<>(), double step=1.0);
+    PixelIterator(IGridCoverage raster, const Box3D<>& box=Box3D<>());
     PixelIterator(const PixelIterator& iter);
 
     PixelIterator& operator=(const PixelIterator& iter);
@@ -99,7 +99,6 @@ protected:
     PixelIterator(quint64 posid ) :
         _localOffset(0),
         _currentBlock(0),
-        _step(0),
         _flow(fXYZ),
         _isValid(false),
         _positionid(posid)
@@ -109,7 +108,7 @@ protected:
     void init();
     void initPosition();
     bool move(int n);
-    bool moveXYZ(int n) ;
+    bool moveXYZ(int delta) ;
     quint64 calcPosId() const {
         return _x + _y * 1e5 + _z*1e10 + _raster->id() * 1e13;
     }
@@ -124,7 +123,6 @@ protected:
     qint32 _z = 0;
     qint32 _localOffset = 0;
     qint32 _currentBlock = 0;
-    double _step;
     Flow _flow;
     bool _isValid;
     qint32 _endx;

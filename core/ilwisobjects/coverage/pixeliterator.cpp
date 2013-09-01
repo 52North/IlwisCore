@@ -10,16 +10,15 @@ bool PixelIterator::isValid() const {
     return _isValid;
 }
 
-PixelIterator::PixelIterator() : _localOffset(0), _currentBlock(0), _step(0), _flow(fXYZ),_isValid(false),_positionid(0) {
+PixelIterator::PixelIterator() : _localOffset(0), _currentBlock(0), _flow(fXYZ),_isValid(false),_positionid(0) {
 
 }
 
-PixelIterator::PixelIterator(IGridCoverage raster, const Box3D<>& box, double step) :
+PixelIterator::PixelIterator(IGridCoverage raster, const Box3D<>& box) :
     _raster(raster),
     _box(box),
     _localOffset(0),
     _currentBlock(0),
-    _step(step),
     _flow(fXYZ),
     _isValid(false)
 {
@@ -37,7 +36,6 @@ void PixelIterator::copy(const PixelIterator &iter) {
     if ( _raster.isValid()) // TODO beyond end marker(end()) dont have a valid raster, no problem just yet but it maybe needed in the future
         _grid = _raster->_grid.data();
     _box = iter._box;
-    _step = iter._step;
     _isValid = iter._isValid;
     _flow = iter._flow;
     _positionid = iter._positionid;
@@ -87,27 +85,30 @@ void PixelIterator::init() {
     _xChanged = _yChanged = _zChanged = false;
 }
 
-inline bool PixelIterator::moveXYZ(int n) {
-    quint32 delta = n * _step;
+inline bool PixelIterator::moveXYZ(int delta) {
     _x += delta;
-    _localOffset += n;
+    _localOffset += delta;
     _xChanged = true;
     _yChanged = _zChanged = false;
     if ( _x > _endx) {
-        quint32 xsize = _grid->size().xsize();
-        _y += (delta / xsize) + 1;
-        _x = _box.min_corner().x();
+        quint32 distance = _x - _box.min_corner().x();
+        _xChanged = distance %  _box.xlength() != 0;
+        _y += std::ceil(delta / _box.xlength());
+        _x = _box.min_corner().x() + delta % _box.xlength() - 1;
         _yChanged = true;
         qint32 ylocal = _y % _grid->maxLines();
-        quint32 block = _y / _grid->maxLines();
-        _localOffset = _x + ylocal * xsize;
-        if ( block != _currentBlock) {
-            _currentBlock = block;
+        quint32 localblock = _y /  _grid->maxLines();
+        quint32 bandblocks = _grid->blocksPerBand() * _z;
+        _localOffset = _x + ylocal * _grid->size().xsize();
+        if ( bandblocks + localblock != _currentBlock) {
+            _currentBlock = bandblocks + localblock;;
             _localOffset = _x;
         }
         if ( _y > _endy) {
-            ++_z;
-            ++_currentBlock;
+           // quint64 xysize = xsize * _grid->size().ysize();
+            quint32 deltaz = distance / _box.volume();
+            _z += deltaz;
+            _currentBlock += deltaz * _grid->blocksPerBand();
             _zChanged = true;
             _y = _box.min_corner().y();
             _localOffset = _box.min_corner().x();
