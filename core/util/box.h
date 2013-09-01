@@ -101,6 +101,13 @@ public:
         return QSize(width(), height());
     }
 
+    quint32 area() const {
+        if ( !isValid())
+            return iUNDEF;
+
+        return width() * height();
+    }
+
     bool contains(const Ilwis::Point2D<CsyType>& p) const {
         const Ilwis::Point2D<CsyType>& pmin = this->min_corner();
         const Ilwis::Point2D<CsyType>& pmax = this->max_corner();
@@ -388,6 +395,20 @@ public:
 
     CsyType zlength() const {
         return std::abs(this->min_corner().z() - this->max_corner().z()) + 1;
+    }
+
+    quint32 volume() const {
+        if ( !isValid())
+            return iUNDEF;
+
+        return xlength() * ylength() * zlength();
+    }
+
+    quint32 area() const {
+        if ( !isValid())
+            return iUNDEF;
+
+        return xlength() * ylength();
     }
 
     Size size() const {
