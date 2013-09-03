@@ -93,9 +93,10 @@ inline bool PixelIterator::moveXYZ(int delta) {
     if ( _x > _endx) {
         quint32 distance = _x - _box.min_corner().x();
         _xChanged = distance %  _box.xlength() != 0;
-        _y += std::ceil(delta / _box.xlength());
-        _x = _box.min_corner().x() + delta % _box.xlength() - 1;
-        _yChanged = true;
+        quint32 newy = _y + (_x - _box.min_corner().x()) / _box.xlength();
+        _x = _box.min_corner().x() + (_x - _box.min_corner().x()) % _box.xlength();
+        _yChanged = newy != _y;
+        _y = newy;
         qint32 ylocal = _y % _grid->maxLines();
         quint32 localblock = _y /  _grid->maxLines();
         quint32 bandblocks = _grid->blocksPerBand() * _z;
@@ -105,13 +106,13 @@ inline bool PixelIterator::moveXYZ(int delta) {
             _localOffset = _x;
         }
         if ( _y > _endy) {
-           // quint64 xysize = xsize * _grid->size().ysize();
-            quint32 deltaz = distance / _box.volume();
-            _z += deltaz;
-            _currentBlock += deltaz * _grid->blocksPerBand();
-            _zChanged = true;
-            _y = _box.min_corner().y();
-            _localOffset = _box.min_corner().x();
+            quint32 newz = _z + (_y - _box.min_corner().y()) / _box.ylength();
+            _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
+            _zChanged = newz != _z;
+            _z = newz;
+            _y = _box.min_corner().y() + (_y - _box.min_corner().y()) % _box.ylength();
+            localblock = _y /  _grid->maxLines();
+            _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
             if ( _z >= _endz) { // done with this iteration block
                 _positionid = _endpositionid;
                 return false;
@@ -124,7 +125,7 @@ inline bool PixelIterator::moveXYZ(int delta) {
 inline bool PixelIterator::isAtEnd() const {
     return _x == _box.max_corner().x() &&
            _y == _box.max_corner().y() &&
-            _z == _box.max_corner().z();
+           _z == _box.max_corner().z();
 }
 
 Voxel PixelIterator::position() const

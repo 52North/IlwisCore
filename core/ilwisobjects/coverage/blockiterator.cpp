@@ -49,8 +49,11 @@ double &CellIterator::operator*()
     int x = _position - z * size2d - y * sz.xsize();
 
     double &v =  (*_block)(x,y,z);
+    if ( v == 44) {
+        qDebug() << "s1";
+    }
     if ( v == 86) {
-        qDebug() << "sy";
+        qDebug() << "s2";
     }
     return v;
 }
@@ -140,7 +143,7 @@ BlockIterator& BlockIterator::operator ++()
         dist = linearPosition() + dist + 1;
     } else {
         if ( _x + dist >= _endx) {
-            dist = 1 + _endx - _x + ( _block._blockXSize) * ( _block.size().ysize() - 1);
+            dist = 1 + _endx - _x + ( _box.xlength()) * ( _block.size().ysize() - 1);
         }
 
     }
