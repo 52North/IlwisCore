@@ -58,7 +58,6 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         return true;
     };
-    ctx->_threaded = false;
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
 
     if ( res && ctx != 0) {
