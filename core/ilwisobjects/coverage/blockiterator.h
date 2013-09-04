@@ -11,7 +11,10 @@ class GridBlock;
 
 class KERNELSHARED_EXPORT CellIterator : public std::iterator<std::random_access_iterator_tag, double> {
 public:
-    CellIterator(GridBlock *bl, quint32 start=0);
+    friend bool operator==(const CellIterator& iter1, const CellIterator& iter2);
+
+    CellIterator(GridBlock *bl, bool end);
+
 
     CellIterator& operator=(CellIterator& iter);
 
@@ -30,17 +33,23 @@ public:
 
     double& operator*() ;
 
-    qint32 position() const;
+   //qint32 position() const;
     Ilwis::Size blocksize() const;
 
 private:
     void move(int n);
     GridBlock  *_block;
-    qint32 _position;
+    qint32 _positionx;
+    qint32 _positiony;
+    qint32 _positionz;
+
 };
 
 bool operator==(const CellIterator& iter1, const CellIterator& iter2) {
-    return iter1.blocksize() == iter2.blocksize() && iter1.position() == iter2.position();
+    return iter1.blocksize() == iter2.blocksize() &&
+            iter1._positionx== iter2._positionx &&
+            iter1._positiony== iter2._positiony &&
+            iter1._positionz== iter2._positionz;
 }
 
 bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
@@ -50,12 +59,14 @@ bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
 class KERNELSHARED_EXPORT GridBlock {
 
     friend class BlockIterator;
+
 public:
     GridBlock(BlockIterator& biter);
     double& operator()(quint32 x, quint32 y, quint32 z=0);
     Size size() const;
     CellIterator begin() ;
     CellIterator end() ;
+    const BlockIterator& iterator() const;
 private:
     BlockIterator& _iterator;
     std::vector<quint32> _internalBlockNumber;
@@ -66,7 +77,7 @@ private:
     quint64 _XYSize;
 };
 
-class KERNELSHARED_EXPORT BlockIterator : protected PixelIterator {
+class KERNELSHARED_EXPORT BlockIterator : public PixelIterator {
 public:
     friend class GridBlock;
 

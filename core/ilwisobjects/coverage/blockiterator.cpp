@@ -5,14 +5,21 @@
 
 using namespace Ilwis;
 
-CellIterator::CellIterator(GridBlock *bl, quint32 start) : _block(bl), _position(start){
+CellIterator::CellIterator(GridBlock *bl, bool end) :
+    _block(bl),
+    _positionx(end ? _block->size().xsize() : 0),
+    _positiony(end ? _block->size().ysize() : 0),
+    _positionz(end ? _block->size().zsize() : 0)
+{
 
 }
 
 CellIterator &CellIterator::operator=(CellIterator &iter)
 {
     _block = iter._block;
-    _position = iter._position;
+    _positionx = iter._positionx;
+    _positiony = iter._positiony;
+    _positionz = iter._positionz;
 
     return *this;
 }
@@ -33,35 +40,34 @@ CellIterator CellIterator::operator--(int)
 
 void CellIterator::move(int n){
     const Size& sz = _block->size();
-    _position += n;
-    if ( _position >= sz.totalSize())
-        _position = sz.totalSize();
-    else if( _position < 0)
-        _position = 0;
+    if ( _positionx < sz.xsize() - 1)
+        ++_positionx;
+    else if ( _positiony < sz.ysize() - 1) {
+        ++_positiony;
+        _positionx = 0;
+    } else if ( _positionz < sz.zsize() - 1) {
+        ++_positionz;
+        _positionx = _positiony = 0;
+    } else {
+        _positionx = sz.xsize();
+        _positiony = sz.ysize();
+        _positionz = sz.zsize();
+    }
 }
 
 double &CellIterator::operator*()
 {
-    const Size& sz = _block->size();
-    quint32 size2d = sz.xsize() * sz.ysize();
-    int z = _position / size2d;
-    int y = (_position - z * size2d) / sz.xsize();
-    int x = _position - z * size2d - y * sz.xsize();
-
-    double &v =  (*_block)(x,y,z);
-    if ( v == 44) {
-        qDebug() << "s1";
-    }
-    if ( v == 86) {
+    double &v =  (*_block)(_positionx,_positiony,_positionz);
+    if ( v == 156) {
         qDebug() << "s2";
     }
     return v;
 }
 
-qint32 CellIterator::position() const
-{
-    return _position;
-}
+//qint32 CellIterator::position() const
+//{
+//    return _position;
+//}
 
 Size CellIterator::blocksize() const
 {
@@ -84,7 +90,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
     for(int i=0; i < ysize; ++i ) {
         if ( i % _blockYSize == 0)
             base = 0;
-        _internalBlockNumber[i] = i / _blockYSize;
+        _internalBlockNumber[i] =   i / _blockYSize;
         _offsets[i] = base;
         base += _blockXSize;
     }
@@ -97,14 +103,11 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
         _iterator._outside = rILLEGAL;
     }
 
-    const Size& sz = _iterator._blocksize;
-    if ( sz.contains(x,y,z)) {
-        qint32 ypos = _iterator._y + y;
-        double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ] + _bandOffset * z, _offsets[ypos] +  _iterator._x +  x);
-        return v;
-    }
-    ERROR2(ERR_ILLEGAL_VALUE_2, "block position", QString("%1,%2,%3").arg(x,y,z));
-    return _iterator._outside;
+    quint32 zbase = _iterator._z + z;
+    qint32 ypos = _iterator._y + y;
+    double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ] + _bandOffset * zbase, _offsets[ypos] +  _iterator._x +  x);
+    return v;
+
 }
 
 Size GridBlock::size() const
@@ -114,12 +117,17 @@ Size GridBlock::size() const
 
 CellIterator GridBlock::begin()
 {
-    return CellIterator(this);
+    return CellIterator(this, false);
 }
 
 CellIterator GridBlock::end()
 {
-    return CellIterator(this, size().totalSize());
+    return CellIterator(this, true);
+}
+
+const BlockIterator &GridBlock::iterator() const
+{
+    return _iterator;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -149,7 +157,7 @@ BlockIterator& BlockIterator::operator ++()
     }
     move(dist);
     if ( zchanged()) {
-        dist = _block._XYSize * (_blocksize.zsize() - 1);
+        dist = _box.xlength() * _box.ylength() * (_blocksize.zsize() - 1);
         move(dist);
     }
 
