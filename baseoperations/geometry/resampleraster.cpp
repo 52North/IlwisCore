@@ -106,6 +106,7 @@ quint64 ResampleRaster::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","resample");
     res.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
+    res.addProperty("description",TR("translates a gridcoverage from one geometry (coordinatesystem+georeference) to another"));
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));

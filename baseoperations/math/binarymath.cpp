@@ -275,6 +275,7 @@ quint64 BinaryMath::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","binarymathraster");
     res.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
+    res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRID | itNUMERIC);
     res.addProperty("pin_1_name", TR("input gridcoverage or number"));

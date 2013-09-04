@@ -242,6 +242,7 @@ quint64 BinaryLogical::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","binarylogicalraster");
     res.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
+        res.addProperty("description",TR("generates a new boolean map based on the logical condition used"));
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itGRID | itNUMERIC);
     res.addProperty("pin_1_name", TR("input gridcoverage or number/boolean"));

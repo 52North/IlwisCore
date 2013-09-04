@@ -113,6 +113,7 @@ Resource UnaryMath::populateMetadata(const QString& item, const QString& longnam
     int index = item.lastIndexOf("/");
     QString name = item.mid(index);
     res.addProperty("syntax", QString("%1(gridcoverage|double)").arg(name));
+    res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
     res.addProperty("longname",longname);
     res.addProperty("namespace","ilwis");
     res.addProperty("inparameters","1");
