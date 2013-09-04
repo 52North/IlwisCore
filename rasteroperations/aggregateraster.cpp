@@ -185,6 +185,7 @@ quint64 AggregateRaster::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","aggregateraster raster coverage");
     res.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
+    res.addProperty("description",TR("generates a gridcoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation "));
     res.addProperty("inparameters","4|5");
     res.addProperty("pin_1_type", itGRID);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
