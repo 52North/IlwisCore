@@ -78,7 +78,7 @@ void PixelIterator::init() {
     }
 
     initPosition();
-    quint64 shift = _x + _y * 1e5 + (_z + 1) *1e10;
+    quint64 shift = _x + _y * 1e5 + (_endz + 1) *1e10;
     _endpositionid = _positionid + shift;
     //_endpositionid = _endx + _endy * 1e5 + _endz*1e10 + _raster->id() * 1e13;
     _isValid = inside;
@@ -91,12 +91,11 @@ inline bool PixelIterator::moveXYZ(int delta) {
     _xChanged = true;
     _yChanged = _zChanged = false;
     if ( _x > _endx) {
-        quint32 distance = _x - _box.min_corner().x();
-        _xChanged = distance %  _box.xlength() != 0;
-        quint32 newy = _y + (_x - _box.min_corner().x()) / _box.xlength();
+        _xChanged = (_x - delta) %  _box.xlength() != 0;
+        qint32 tempy = _y + (_x - _box.min_corner().x()) / _box.xlength();
         _x = _box.min_corner().x() + (_x - _box.min_corner().x()) % _box.xlength();
-        _yChanged = newy != _y;
-        _y = newy;
+        _yChanged = tempy != _y;
+        std::swap(_y,tempy);
         qint32 ylocal = _y % _grid->maxLines();
         quint32 localblock = _y /  _grid->maxLines();
         quint32 bandblocks = _grid->blocksPerBand() * _z;
@@ -111,9 +110,10 @@ inline bool PixelIterator::moveXYZ(int delta) {
             _zChanged = newz != _z;
             _z = newz;
             _y = _box.min_corner().y() + (_y - _box.min_corner().y()) % _box.ylength();
+            _yChanged = _y != tempy;
             localblock = _y /  _grid->maxLines();
             _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
-            if ( _z >= _endz) { // done with this iteration block
+            if ( _z > _endz) { // done with this iteration block
                 _positionid = _endpositionid;
                 return false;
             }
@@ -131,6 +131,11 @@ inline bool PixelIterator::isAtEnd() const {
 Voxel PixelIterator::position() const
 {
     return Voxel(_x, _y, _z);
+}
+
+const Box3D<> &PixelIterator::box() const
+{
+    return _box;
 }
 
 quint32 PixelIterator::linearPosition() const

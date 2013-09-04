@@ -87,6 +87,7 @@ public:
     bool zchanged() const;
     bool isAtEnd() const;
     Voxel position() const;
+    const Box3D<>& box() const;
     quint32 linearPosition() const;
     int operator -(const PixelIterator &iter2);
 
