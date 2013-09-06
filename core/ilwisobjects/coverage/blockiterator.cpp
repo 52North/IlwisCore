@@ -5,6 +5,7 @@
 
 using namespace Ilwis;
 
+
 CellIterator::CellIterator(GridBlock *bl, bool end) :
     _block(bl),
     _positionx(end ? _block->size().xsize() : 0),
@@ -64,15 +65,23 @@ double &CellIterator::operator*()
     return v;
 }
 
-//qint32 CellIterator::position() const
-//{
-//    return _position;
-//}
 
 Size CellIterator::blocksize() const
 {
     return _block->size();
 }
+
+bool Ilwis::operator==(const CellIterator& iter1, const CellIterator& iter2) {
+    return iter1.blocksize() == iter2.blocksize() &&
+            iter1._positionx== iter2._positionx &&
+            iter1._positiony== iter2._positiony &&
+            iter1._positionz== iter2._positionz;
+}
+
+bool Ilwis::operator!=(const CellIterator& iter1, const CellIterator& iter2) {
+    return ! Ilwis::operator==(iter1, iter2);
+}
+
 
 //--------------------------------------------------------
 GridBlock::GridBlock(BlockIterator& iter) :
@@ -130,11 +139,27 @@ const BlockIterator &GridBlock::iterator() const
     return _iterator;
 }
 
+GridBlock::operator std::vector<double>()
+{
+    const Size& sz = _iterator.blockSize();
+    int count = 0;
+    std::vector<double> v(sz.totalSize());
+    for(quint32 z=0; z < sz.zsize(); ++z) {
+        for(quint32 y=0; z < sz.ysize(); ++y) {
+            for(quint32 x=0; z < sz.xsize(); ++x) {
+                v[count++] = operator ()(x,y,z);
+            }
+        }
+    }
+    return v;
+}
+
 //----------------------------------------------------------------------------------------------
 BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box) :
     PixelIterator(raster,box),
     _block(*this),
-    _blocksize(sz)
+    _blocksize(sz),
+    _stepsizes(sz)
 
 {
 }
@@ -189,6 +214,13 @@ Size BlockIterator::blockSize() const
 {
     return _blocksize;
 }
+
+void BlockIterator::stepsizes(const Size &stepsizes)
+{
+    _stepsizes = stepsizes;
+}
+
+
 
 
 

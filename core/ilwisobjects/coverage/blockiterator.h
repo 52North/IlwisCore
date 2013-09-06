@@ -45,16 +45,9 @@ private:
 
 };
 
-bool operator==(const CellIterator& iter1, const CellIterator& iter2) {
-    return iter1.blocksize() == iter2.blocksize() &&
-            iter1._positionx== iter2._positionx &&
-            iter1._positiony== iter2._positiony &&
-            iter1._positionz== iter2._positionz;
-}
+KERNELSHARED_EXPORT bool operator==(const CellIterator& iter1, const CellIterator& iter2);
 
-bool operator!=(const CellIterator& iter1, const CellIterator& iter2) {
-    return ! Ilwis::operator==(iter1, iter2);
-}
+KERNELSHARED_EXPORT bool operator!=(const CellIterator& iter1, const CellIterator& iter2);
 
 class KERNELSHARED_EXPORT GridBlock {
 
@@ -67,6 +60,7 @@ public:
     CellIterator begin() ;
     CellIterator end() ;
     const BlockIterator& iterator() const;
+    operator std::vector<double>();
 private:
     BlockIterator& _iterator;
     std::vector<quint32> _internalBlockNumber;
@@ -92,10 +86,12 @@ public:
     bool operator==(const BlockIterator& iter) const;
     bool operator!=(const BlockIterator& iter) const;
     Size blockSize() const;
+    void stepsizes(const Size& stepsize);
 private:
     BlockIterator(quint64 endpos);
     GridBlock _block;
     Size _blocksize;
+    Size _stepsizes;
     double _outside=rILLEGAL;
 };
 
