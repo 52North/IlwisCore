@@ -12,7 +12,9 @@
 #include "operation.h"
 #include "commandhandler.h"
 #include "raster.h"
+#include "pixeliterator.h"
 #include "aggregateraster.h"
+#include "areanumbering.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;
@@ -31,6 +33,7 @@ QString RasterOperationsModule::getInterfaceVersion() const
 void RasterOperationsModule::prepare()
 {
    commandhandler()->addOperation(AggregateRaster::createMetadata(), AggregateRaster::create);
+   commandhandler()->addOperation(AreaNumbering::createMetadata(), AreaNumbering::create);
 
 }
 
