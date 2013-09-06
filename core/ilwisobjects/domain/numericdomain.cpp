@@ -13,6 +13,7 @@ NumericDomain::NumericDomain()
 {
     setStrict(false);
     setRange(new NumericRange(-1e300, 1e300));
+
 }
 
 NumericDomain::NumericDomain(const Resource& res) : Domain(res) {
