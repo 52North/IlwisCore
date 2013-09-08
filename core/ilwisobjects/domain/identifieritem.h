@@ -21,11 +21,12 @@ public:
     void setPrefix(const QString& pf);
     bool operator==(const IndexedIdentifier& item) const;
     DomainItem *clone() const;
+    IlwisTypes valueType() const;
 
-//    QString itemType() const;
     bool isValid() const;
     static ItemRange *createRange();
-    static IlwisTypes valueType();
+    static IlwisTypes valueTypeS();
+
 private:
     quint32 _index;
     QString _prefix;
@@ -41,10 +42,11 @@ public:
     QString name(quint32 n = 0) const;
     void setName(const QString& n);
     bool operator==(const NamedIdentifier& item) const;
-//    QString itemType() const;
+    IlwisTypes valueType() const;
+
     DomainItem *clone() const;
     static Ilwis::NamedIdentifierRange *createRange();
-    static IlwisTypes valueType();
+    static IlwisTypes valueTypeS();
 
 private:
     QString _name;

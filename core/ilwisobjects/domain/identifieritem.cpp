@@ -74,11 +74,15 @@ ItemRange *IndexedIdentifier::createRange()
     return new IndexedIdentifierRange();
 }
 
-IlwisTypes IndexedIdentifier::valueType()
+IlwisTypes IndexedIdentifier::valueTypeS()
 {
     return itINDEXEDITEM;
 }
 
+IlwisTypes IndexedIdentifier::valueType() const
+{
+    return valueTypeS();
+}
 
 //---------------------------------------------------------------
 NamedIdentifier::NamedIdentifier() : _name(sUNDEF)
@@ -104,20 +108,22 @@ bool NamedIdentifier::operator ==(const NamedIdentifier &item) const
     return _name == item.name();
 }
 
-//QString NamedIdentifier::itemType() const
-//{
-//    return "NamedIdentifier";
-//}
+IlwisTypes NamedIdentifier::valueType() const
+{
+    return valueTypeS();
+}
 
 NamedIdentifierRange *NamedIdentifier::createRange()
 {
     return new NamedIdentifierRange();
 }
 
-IlwisTypes NamedIdentifier::valueType()
+IlwisTypes NamedIdentifier::valueTypeS()
 {
     return itNAMEDITEM;
 }
+
+
 
 DomainItem *NamedIdentifier::clone() const
 {
