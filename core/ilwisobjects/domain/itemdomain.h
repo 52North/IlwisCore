@@ -73,7 +73,7 @@ public:
      * \param the item to be added. Note that ownership of the item is transferred to the range. no delete allowed
      *
      */
-    void addItem(C* thing) {
+    void addItem(DomainItem* thing) {
         if ( _range.isNull()) {
             _range.reset(C::createRange());
         }
@@ -94,7 +94,7 @@ public:
     void addRange(const ItemRange& range)
     {
         for(quint32 i=0; i < range.count(); ++i) {
-            addItem(range.item(i));
+            addItem(range.item(i)->clone());
         }
     }
     quint32 count() const {
@@ -118,7 +118,7 @@ public:
     }
 
     IlwisTypes valueType() const {
-        return C::valueType();
+        return C::valueTypeS();
     }
 
 protected:
@@ -134,10 +134,12 @@ private:
 class ThematicItem;
 class IndexedIdentifier;
 class NamedIdentifier;
+class NumericItem;
 
 typedef IlwisData<ItemDomain<ThematicItem>>  IThematicDomain ;
 typedef IlwisData<ItemDomain<IndexedIdentifier>>  IIndexedIdDomain ;
 typedef IlwisData<ItemDomain<NamedIdentifier>>  INamedIdDomain ;
+typedef IlwisData<ItemDomain<NumericItem>>  INumericItemDomain ;
 typedef ItemDomain<ThematicItem>  ThematicDomain ;
 typedef ItemDomain<IndexedIdentifier>  IndexedIdDomain ;
 typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
