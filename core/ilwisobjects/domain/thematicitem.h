@@ -16,7 +16,8 @@ public:
     void setDescription(const QString &desc);
     void setCode(const QString &code);
     DomainItem *clone() const;
-    static IlwisTypes valueType();
+    static IlwisTypes valueTypeS();
+    IlwisTypes valueType() const;
 
 private:
     QString _description;

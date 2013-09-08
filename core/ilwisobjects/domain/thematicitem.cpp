@@ -46,9 +46,14 @@ DomainItem *ThematicItem::clone() const
     return new ThematicItem(name(), _code, _description);
 }
 
-IlwisTypes ThematicItem::valueType()
+IlwisTypes ThematicItem::valueTypeS()
 {
     return itTHEMATICITEM;
+}
+
+IlwisTypes ThematicItem::valueType() const
+{
+    return valueTypeS();
 }
 
 
