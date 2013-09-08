@@ -5,7 +5,7 @@
 
 using namespace Ilwis;
 
-NumericRange::NumericRange() : _min(0), _max(-1) {
+NumericRange::NumericRange() : _min(0), _max(-1),_step(0) {
 
 }
 NumericRange::NumericRange(double mi, double ma, double step) : _step(step), _undefined(rUNDEF) {
@@ -53,6 +53,14 @@ void NumericRange::setMin(double v)
         _min = v;
 }
 
+double NumericRange::distance() const
+{
+    if ( !isValid())
+        return rUNDEF;
+
+    return _max - _min;
+}
+
 void NumericRange::setMax(double v)
 {
     if (_step == 1){
@@ -88,9 +96,37 @@ bool NumericRange::operator==(const NumericRange& vr) {
     return vr.max() == max() && vr.min() == min() && vr.step() == step();
 }
 
+bool NumericRange::operator<(const NumericRange &vr)
+{
+    return max() < vr.max() && min() < vr.min();
+}
+
+bool NumericRange::operator>(const NumericRange &vr)
+{
+    return max() > vr.max() && min() > vr.min();
+}
+
 QString NumericRange::toString() const {
-    //TODO
-    return sUNDEF;
+    if(!isValid())
+        return "? ? ?";
+    long n1 = significantDigits(_min);
+    long n2 = significantDigits(_max);
+    long n = std::max(n1, n2);
+    bool isfloat = _step == 0 || _step - (quint64)_step != 0;
+    if (isfloat){
+        QString rng = QString::number(_min,'f',n);
+        rng += ' ';
+        rng += QString::number(_min,'f',n);
+        if ( _step != 0){
+            rng += ' ';
+            rng += QString::number(_step) ;
+        }
+        return rng;
+    }
+    QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_step);
+    return rng;
+
+
 }
 void NumericRange::set(const NumericRange& vr)
 {

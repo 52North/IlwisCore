@@ -39,6 +39,7 @@ public:
     void setMax(double v);
     double min() const;
     void setMin(double v);
+    double distance() const;
 
     void setStep(double step);
     double step() const ;
@@ -46,6 +47,8 @@ public:
     NumericRange& operator+=(double v);
 
     bool operator==(const NumericRange& vr);
+    bool operator<(const NumericRange& vr);
+    bool operator>(const NumericRange& vr);
 
     QString toString() const ;
     void set(const NumericRange& vr);
@@ -54,6 +57,7 @@ public:
     IlwisTypes determineType() const;
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2);
+
 private:
     double _min;
     double _max;
