@@ -66,6 +66,8 @@ Pixel_d PlanarCTPGeoReference::coord2Pixel(const Coordinate &crd) const
     case tSECONDORDER:
         XY = c.x() * c.y();
         break;
+    default:
+        break;
     }
     switch (_transformation) {
     case tTHIRDORDER:
