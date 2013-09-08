@@ -1,16 +1,21 @@
 #include <QString>
 #include <typeinfo>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
 #include "domainitem.h"
 #include "itemrange.h"
 #include "identifieritem.h"
+#include "domain.h"
+#include "itemdomain.h"
+#include "thematicitem.h"
 #include "identifierrange.h"
 
 using namespace Ilwis;
 
 IndexedIdentifierRange::IndexedIdentifierRange() : _count(0)
 {
+    _vt = itINDEXEDITEM;
 }
 
 bool IndexedIdentifierRange::contains(const QString& item ) const{
@@ -100,6 +105,7 @@ void IndexedIdentifierRange::remove(const QString& item)
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
 {
+        _vt = itNAMEDITEM;
 }
 
 NamedIdentifierRange::~NamedIdentifierRange()
@@ -143,7 +149,6 @@ void NamedIdentifierRange::add(DomainItem *thing)
 
     return ;
 }
-
 
 bool NamedIdentifierRange::operator==(const ItemRange &range) const
 {
@@ -206,13 +211,14 @@ Range *NamedIdentifierRange::clone() const
     for(const auto &iter: _items) {
         nir->add( (*iter).clone());
     }
+    NamedIdentifierRange pp;
     return nir;
 }
 
 
-NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &item)
+NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 {
-   this->add(new NamedIdentifier(item));
+    this->add(new NamedIdentifier(itemdef));
 
     return *this;
 }
@@ -227,7 +233,14 @@ QString NamedIdentifierRange::toString() const {
     return res;
 }
 
+//---------------------------------------------------------
+ThematicRange::ThematicRange()
+{
+  _vt = itTHEMATICITEM;
+}
 
-
-
-
+ThematicRange &ThematicRange::operator<<(const QString &itemdef)
+{
+    add(new ThematicItem(itemdef));
+    return *this;
+}

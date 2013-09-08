@@ -58,6 +58,13 @@ private:
     QHash<QString, SPNamedIdentifier> _items;
     QVector<SPNamedIdentifier> _indexes;
 };
+
+class ThematicRange : public NamedIdentifierRange {
+public:
+    ThematicRange();
+    ~ThematicRange() {}
+    ThematicRange& operator<<(const QString& itemdef);
+};
 }
 
 #endif // IDENTIFIERRANGE_H
