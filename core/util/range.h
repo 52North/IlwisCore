@@ -48,7 +48,6 @@ public:
     virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
     virtual Range *clone() const = 0;
 protected:
-private:
     IlwisTypes _vt;
 
 
