@@ -13,7 +13,7 @@
 
 
 namespace Ilwis {
-typedef QExplicitlySharedDataPointer<IlwisObject> ESPIlwisObject;
+typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 
 /*!
  \brief container for an instance of an IlwisObject
@@ -40,15 +40,15 @@ public:
 
 
     ~IlwisData() {
-        if (_implementation.data()!= 0  ) // there is always one extra reference in the registerd objects, so 2 means last object will disappear
-            if ( _implementation.data()->ref.load() == 2)
-                mastercatalog()->unregister(_implementation.data()->id());
+        if (_implementation.get()!= 0  ) // there is always one extra reference in the registerd objects, so 2 means last object will disappear
+            if ( _implementation.use_count() == 2)
+                mastercatalog()->unregister(_implementation.get()->id());
     }
 
     void set(T *data) {
         if ( data != nullptr) {
             if (!mastercatalog()->isRegistered(data->id())) {
-                _implementation = data;
+                _implementation.reset(data);
                 mastercatalog()->registerObject(_implementation);
             }
             else
@@ -57,20 +57,20 @@ public:
     }
 
     template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
-        if (_implementation.data()!= 0)
-            set(dynamic_cast<T>(obj._implementation.data())) ;
+        if (_implementation.get()!= 0)
+            set(dynamic_cast<T>(obj._implementation.get())) ;
         return *this;
     }
 
     T *operator->() {
-        T* p =  static_cast<T *>(_implementation.data());
+        T* p =  static_cast<T *>(_implementation.get());
         if (!p)
             throw ErrorObject(TR("Using unitialized object"));
         return p;
     }
 
     T *operator->() const{
-        T* p =  static_cast<T *>(_implementation.data());
+        T* p =  static_cast<T *>(_implementation.get());
         if (!p)
             throw ErrorObject(TR("Using unitialized object"));
         return p;
@@ -91,11 +91,19 @@ public:
      \return Returns a new "upgraded" reference to the class.
     */
     template<class C> IlwisData<C> get() const {
-        QExplicitlySharedDataPointer<C> p(dynamic_cast<C *>(_implementation.data()));
-        if (!p)
-            throw ErrorObject(TR("Using unitialized object"));
+//        std::shared_ptr<C> p(dynamic_cast<C *>(_implementation.get()));
+//        if (!p)
+//            throw ErrorObject(TR("Using unitialized object"));
 
-        return IlwisData<C>(p);
+//        return IlwisData<C>(p);
+        if (_implementation.get() == 0)
+            throw ErrorObject(TR("Using unitialized object"));
+        if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {
+            IlwisData<C> obj;
+            obj._implementation = std::static_pointer_cast<C>(_implementation);
+            return  obj;
+        }
+        return IlwisData<C>();
     }
     /*!
      \brief create a new pristine IlwisObject. It has no connector (yet) and exists only in memory
@@ -103,12 +111,12 @@ public:
       \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
     bool prepare() {
-        _implementation = QExplicitlySharedDataPointer<IlwisObject>(new T);
-        if (_implementation.data() != 0) {
-            _implementation.data()->prepare();
-            _implementation.data()->setName(QString("%1_%2").arg(ANONYMOUS_PREFIX).arg(_implementation.data()->id()));
+        _implementation = std::shared_ptr<IlwisObject>(new T);
+        if (_implementation.get() != 0) {
+            _implementation.get()->prepare();
+            _implementation.get()->setName(QString("%1_%2").arg(ANONYMOUS_PREFIX).arg(_implementation.get()->id()));
         }
-        return _implementation.data() != 0;
+        return _implementation.get() != 0;
     }
 
     /*!
@@ -127,7 +135,7 @@ public:
             quint64 id = sid.toLongLong(&ok);
             if (ok){
                 ESPIlwisObject data = mastercatalog()->get(id);
-                if ( data.data() != 0) {
+                if ( data.get() != 0) {
                     _implementation = data;
                     return true;
                 }
@@ -205,7 +213,7 @@ public:
             _implementation = ESPIlwisObject(data);
         } else
             _implementation = mastercatalog()->get(iid);
-        if ( _implementation.data() == 0) {
+        if ( _implementation.get() == 0) {
             return ERROR0("Corrupted object registration");
         }
         mastercatalog()->registerObject(_implementation);
@@ -220,7 +228,7 @@ public:
      \return bool true of an object is allocated
     */
     bool isValid() const {
-        return _implementation.data() != 0;
+        return _implementation.get() != 0;
     }
 
 

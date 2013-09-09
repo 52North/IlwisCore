@@ -87,20 +87,20 @@ bool MasterCatalog::addContainer(const QUrl &location)
 }
 
 
-ESPObject MasterCatalog::get(const QUrl &resource, IlwisTypes type) const
+ESPIlwisObject MasterCatalog::get(const QUrl &resource, IlwisTypes type) const
 {
     quint64 id = resource2id(resource, type);
     return get(id);
 }
 
-ESPObject MasterCatalog::get(quint64 id) const
+ESPIlwisObject MasterCatalog::get(quint64 id) const
 {
     if ( id != i64UNDEF) {
         auto iter = _lookup.find(id);
         if ( iter != _lookup.end())
             return iter.value();
     }
-    return QExplicitlySharedDataPointer<IlwisObject>();
+    return ESPIlwisObject();
 }
 
 bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
@@ -204,8 +204,8 @@ quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if (ok){
-            ESPObject data = mastercatalog()->get(id);
-            if ( data.data() != 0) {
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
                 return data->id();
             }
         }
@@ -335,7 +335,7 @@ bool MasterCatalog::isRegistered(quint64 id) const
 
 bool MasterCatalog::unregister(quint64 id)
 {
-    QHash<quint64,ESPObject>::const_iterator iter = _lookup.find(id);
+    QHash<quint64,ESPIlwisObject>::const_iterator iter = _lookup.find(id);
     if ( iter != _lookup.end()) {
         _lookup.remove(id);
     }
@@ -358,10 +358,10 @@ std::list<Resource> MasterCatalog::select(const QUrl &res, const QString &select
 
 }
 
-void MasterCatalog::registerObject(ESPObject &data)
+void MasterCatalog::registerObject(ESPIlwisObject &data)
 {
-    if ( data.data() == 0) {
-        QHash<quint64,ESPObject>::iterator iter = _lookup.find(data->id());
+    if ( data.get() == 0) {
+        QHash<quint64,ESPIlwisObject>::iterator iter = _lookup.find(data->id());
         data = iter.value();
     } else {
         if ( !data->isAnonymous())

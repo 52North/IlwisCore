@@ -32,7 +32,7 @@ typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
  reference to the object are automatically reflected in the others because they are the same object.
 
 */
-class KERNELSHARED_EXPORT IlwisObject : public QObject, public QSharedData, public Identity
+class KERNELSHARED_EXPORT IlwisObject : public QObject, public Identity
 {
     Q_OBJECT
 

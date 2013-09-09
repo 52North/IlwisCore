@@ -84,8 +84,8 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if ( ok) {
-            ESPObject obj =  mastercatalog()->get(id);
-            if ( obj.data() != 0)
+            ESPIlwisObject obj =  mastercatalog()->get(id);
+            if ( obj.get() != 0)
                 return obj->ilwisType();
         }
     }
