@@ -50,8 +50,8 @@ double NumericItemRange::index(double v) const
     if (!isValid())
         return rUNDEF;
 
-    quint32 mark1=iUNDEF, mark2=iUNDEF;
     for(quint32 ind = 0; ind < _items.size(); ++ind) {
+        quint32 mark1=iUNDEF, mark2=iUNDEF;
         const NumericRange& rng = _items[ind]->range();
         if ( v >= rng.min()){
             mark1 = ind;
@@ -59,10 +59,10 @@ double NumericItemRange::index(double v) const
         if ( v < rng.max()){
             mark2 = ind;
         }
-        if ( mark1 != rUNDEF && mark2 != rUNDEF) {
+        if ( mark1 != iUNDEF && mark2 != iUNDEF) {
             if ( isContinous())
-                return ind;
-            return ind + (v - rng.min()) / rng.distance();
+                return ind + (v - rng.min()) / rng.distance();
+            return ind;
         }
     }
     return rUNDEF;
@@ -93,9 +93,9 @@ void NumericItemRange::add(DomainItem *item)
     if (!item->isValid())
         return;
     SPNumericItem nitem(static_cast<NumericItem *>(item));
-    for(auto iter = _items.begin(); iter != _items.begin(); ++iter) {
-        if ( (*iter)->range() > nitem->range()) {
-            _items.insert(iter,1, nitem );
+    for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
+        if ( nitem->range() > (*iter)->range()) {
+            _items.insert(iter.base(),1, nitem );
             return;
         }
     }
@@ -162,7 +162,7 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
             return *this;
         }
         bool ok;
-        double vmin = _items[0]->range().max();
+        double vmin = _items[_items.size() - 1]->range().max();
         double vmax = itemdef.toDouble(&ok) ;
         if (!ok) {
             ERROR1(ERR_NO_INITIALIZED_1, "numeric item range");
@@ -170,7 +170,7 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         double step = _items[0]->range().step();
         if ( step == 0)
             vmin += EPS8;
-        add(new NumericItem({vmin,vmax, step}));
+        add(new NumericItem({vmin+step,vmax, step}));
     }
     return *this;
 }
