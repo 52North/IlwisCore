@@ -52,6 +52,8 @@ public:
         }
         return rUNDEF;
     }
+    IlwisData<GridCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
+    IlwisData<GridCoverage> get(const QString& item1, const QString& item2=sUNDEF);
 
     Resource resource(int mode=cmINPUT) const;
 protected:

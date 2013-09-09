@@ -2,8 +2,13 @@
 #include "raster.h"
 #include "gridcoverage.h"
 #include "pixeliterator.h"
-
-
+#include "connectorinterface.h"
+#include "symboltable.h"
+#include "domainitem.h"
+#include "itemdomain.h"
+#include "numericitem.h"
+#include "numericitemrange.h"
+#include "ilwisoperation.h"
 
 quint64 Ilwis::GridBlockInternal::_blockid = 0;
 
@@ -65,6 +70,41 @@ void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
          v = *iterIn;
         ++iterIn;
     });
+}
+
+IGridCoverage GridCoverage::get(quint32 index1, quint32 index2)
+{
+    IGridCoverage gcovParent;
+    gcovParent.set(this);
+    IGridCoverage gcov = OperationHelperRaster::initialize(gcovParent,itGRID, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+    gcov->size(Size(size().xsize(), size().ysize()));
+    gcov->_grid.reset(gcov->_grid->clone(index1, index2));
+
+    return gcov;
+
+}
+
+IGridCoverage GridCoverage::get(const QString &item1, const QString &item2)
+{
+    IDomain indexDomain = datadef().domain(DataDefinition::daINDEX);
+    if (!indexDomain.isValid())
+        return IGridCoverage();
+    if ( indexDomain->valueType() == itNUMERICITEM)  {
+        double item1Index = item1.toDouble();
+        INumericItemDomain numdom = indexDomain.get<NumericItemDomain>();
+        SPNumericItemRange numrange = numdom->range<NumericItemRange>();
+        double index1 = numrange->index(item1Index);
+        double rest1 = index1 - (int)index1;
+        if ( abs(rest1) > EPS8 && numrange->isContinous()) {
+            int lowerIndex = std::ceil(rest1);
+            QString expr = numrange->interpolation();
+            expr = expr.arg(QString("(1-%1)*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex)).arg(QString("%1%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
+            IGridCoverage mp = Operation::execute<IGridCoverage>(expr);
+            if ( mp.isValid())
+                return mp;
+        }
+    }
+    return IGridCoverage();
 }
 
 Grid *GridCoverage::grid()
