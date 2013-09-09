@@ -37,7 +37,7 @@ public:
     template<typename T> static T execute(const QString& txt){
         SymbolTable symtbl;
         ExecutionContext ctx;
-        OperationExpression o(txt);
+        OperationExpression o("script " + txt);
         Operation op(o);
         bool ok =  op->execute(&ctx,symtbl);
         if (!ok)
