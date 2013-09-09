@@ -59,7 +59,7 @@ private:
     QVector<SPNamedIdentifier> _indexes;
 };
 
-class ThematicRange : public NamedIdentifierRange {
+class KERNELSHARED_EXPORT ThematicRange : public NamedIdentifierRange {
 public:
     ThematicRange();
     ~ThematicRange() {}
