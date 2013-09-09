@@ -95,10 +95,11 @@ IGridCoverage GridCoverage::get(const QString &item1, const QString &item2)
         SPNumericItemRange numrange = numdom->range<NumericItemRange>();
         double index1 = numrange->index(item1Index);
         double rest1 = index1 - (int)index1;
-        if ( abs(rest1) > EPS8 && numrange->isContinous()) {
-            int lowerIndex = std::ceil(rest1);
+        if ( std::abs(rest1) > EPS8 && numrange->isContinous()) {
+            int lowerIndex = std::floor(index1);
             QString expr = numrange->interpolation();
-            expr = expr.arg(QString("(1-%1)*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex)).arg(QString("%1%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
+            QString nm = QString("%1_%2_%3").arg(name()).arg(lowerIndex).arg(lowerIndex+1);
+            expr = nm + "=" + expr.arg(QString("(1-%1)*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
             IGridCoverage mp = Operation::execute<IGridCoverage>(expr);
             if ( mp.isValid())
                 return mp;
