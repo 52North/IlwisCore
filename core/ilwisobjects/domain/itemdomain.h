@@ -93,9 +93,10 @@ public:
 
     void addRange(const ItemRange& range)
     {
-        for(quint32 i=0; i < range.count(); ++i) {
-            addItem(range.item(i)->clone());
+        if ( _range.isNull()) {
+            _range.reset(C::createRange());
         }
+        _range->addRange(range);
     }
     quint32 count() const {
         if (_range.isNull()) {
@@ -143,6 +144,7 @@ typedef IlwisData<ItemDomain<NumericItem>>  INumericItemDomain ;
 typedef ItemDomain<ThematicItem>  ThematicDomain ;
 typedef ItemDomain<IndexedIdentifier>  IndexedIdDomain ;
 typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
+typedef ItemDomain<NumericItem>  NumericItemDomain ;
 
 }
 

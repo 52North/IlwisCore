@@ -31,3 +31,10 @@ ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedP
     //TODO
     return 0;
 }
+
+void ItemRange::addRange(const ItemRange &range)
+{
+    for(quint32 i=0; i < range.count(); ++i) {
+        add(range.item(i)->clone());
+    }
+}
