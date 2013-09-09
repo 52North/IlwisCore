@@ -155,6 +155,22 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
                 }
             }
         }
+        ERROR1(ERR_NO_INITIALIZED_1, "numeric item range");
+    } if ( parts.size() == 1) {
+        if ( count() == 0) {
+            ERROR1(ERR_NO_INITIALIZED_1, "numeric item range");
+            return *this;
+        }
+        bool ok;
+        double vmin = _items[0]->range().max();
+        double vmax = itemdef.toDouble(&ok) ;
+        if (!ok) {
+            ERROR1(ERR_NO_INITIALIZED_1, "numeric item range");
+        }
+        double step = _items[0]->range().step();
+        if ( step == 0)
+            vmin += EPS8;
+        add(new NumericItem({vmin,vmax, step}));
     }
     return *this;
 }
@@ -164,8 +180,19 @@ bool NumericItemRange::isContinous() const
     return _interpolation != "";
 }
 
-void NumericItemRange::setInterpolation(const QString &ip)
+QString NumericItemRange::interpolation() const
+{
+    return _interpolation;
+}
+
+void NumericItemRange::interpolation(const QString &ip)
 {
     _interpolation = ip;
+}
+
+void NumericItemRange::addRange(const ItemRange &range)
+{
+    ItemRange::addRange(range);
+    _interpolation = static_cast<const NumericItemRange&>(range).interpolation();
 }
 
