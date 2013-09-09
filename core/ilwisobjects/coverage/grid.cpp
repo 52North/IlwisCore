@@ -148,11 +148,19 @@ int Grid::maxLines() const
     return _maxLines;
 }
 
-Grid *Grid::clone()
+Grid *Grid::clone(quint32 index1, quint32 index2)
 {
-    Grid *grid = new Grid(_size, _maxLines);
+    if ( index2 < index1){
+        ERROR2(ERR_INVALID_INIT_FOR_2,TR("grid limits"),TR("clone grid"));
+        return 0;
+    }
+    quint32 start = index1 == iUNDEF ? 0 : index1;
+    quint32 end = index2 == iUNDEF ? _blocks.size() : index2 + 1;
+
+    Grid *grid = new Grid(Size(_size.xsize(), _size.ysize(), end - start), _maxLines);
     grid->prepare();
-    for(int i=0; i < _blocks.size(); ++i) {
+
+    for(int i=start; i < end; ++i) {
         grid->_blocks[i] = _blocks[i]->clone();
     }
     grid->_inMemoryIndex = 1;

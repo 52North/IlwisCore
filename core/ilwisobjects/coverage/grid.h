@@ -88,7 +88,7 @@ public:
     quint32 blockSize(quint32 index) const;
     Size size() const;
     int maxLines() const;
-    Grid * clone() ;
+    Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
 private:
     double bilinear(const Point3D<double> &pix) const;
     double bicubic(const Point3D<double> &pix) const;
