@@ -3,9 +3,9 @@
 
 namespace Ilwis {
 
-class NumericItemRange;
+class  NumericItemRange;
 
-class NumericItem : public DomainItem
+class KERNELSHARED_EXPORT NumericItem : public DomainItem
 {
 public:
     NumericItem();

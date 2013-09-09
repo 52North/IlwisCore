@@ -6,8 +6,9 @@ namespace Ilwis {
 class DomainItem;
 
 typedef DomainItem* (*CreateItemFunc)(const QString&);
+typedef QSharedPointer<DomainItem> SPDomainItem;
 
-class ItemRange : public Range
+class KERNELSHARED_EXPORT ItemRange : public Range
 {
 public:
     ItemRange() {}
@@ -21,12 +22,14 @@ public:
     virtual void add(DomainItem *item) = 0;
     virtual void remove(const QString& nm) = 0;
     double ensure(double v, bool inclusive = true) const;
+    virtual void addRange(const ItemRange& range);
 
 
     static DomainItem *create(const QString& type);
     static void addCreateItem(const QString& type, CreateItemFunc func);
     static ItemRange *merge(const QSharedPointer<ItemRange>& nr1, const QSharedPointer<ItemRange>& nr2);
 
+protected:
 private:
     static QHash<QString, CreateItemFunc> _createItem;
 };

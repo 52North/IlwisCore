@@ -3,7 +3,7 @@
 
 namespace Ilwis {
 
-class NumericItemRange : public ItemRange
+class KERNELSHARED_EXPORT NumericItemRange : public ItemRange
 {
 public:
     NumericItemRange();
@@ -21,12 +21,17 @@ public:
     ItemRange *clone() const;
     NumericItemRange &operator <<(const QString &itemdef);
     bool isContinous() const;
-    void setInterpolation(const QString& ip);
-    double index(double v);
+    void interpolation(const QString& ip);
+    QString interpolation() const;
+
+protected:
+    void addRange(const ItemRange &range);
 private:
     std::vector<SPNumericItem> _items;
     QString _interpolation;
 };
+
+typedef QSharedPointer<NumericItemRange> SPNumericItemRange;
 }
 
 #endif // NUMERICITEMRANGE_H
