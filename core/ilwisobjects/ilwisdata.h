@@ -38,6 +38,11 @@ public:
         _implementation = impl;
     }
 
+    template<typename K> IlwisData(const IlwisData<K>& obj) {
+       _implementation = std::dynamic_pointer_cast<T>(obj._implementation);
+    }
+
+
 
     ~IlwisData() {
         if (_implementation.get()!= 0  ) // there is always one extra reference in the registerd objects, so 2 means last object will disappear
