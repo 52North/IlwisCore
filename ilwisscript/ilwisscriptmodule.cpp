@@ -9,8 +9,8 @@
 #include "ilwisdata.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
-#include "operation.h"
 #include "commandhandler.h"
+#include "operation.h"
 #include "script.h"
 
 using namespace Ilwis;

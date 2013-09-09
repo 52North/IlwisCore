@@ -45,8 +45,8 @@
 #include "symboltable.h"
 #include "operationmetadata.h"
 #include "operationExpression.h"
-#include "operation.h"
 #include "commandhandler.h"
+#include "operation.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
