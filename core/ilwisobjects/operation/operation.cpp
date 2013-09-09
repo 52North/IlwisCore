@@ -55,7 +55,6 @@ bool Operation::isValid() const
     return _operation->isValid();
 }
 
-
 bool OperationImplementation::isValid() const
 {
     return _expression.isValid() && _metadata.isValid();

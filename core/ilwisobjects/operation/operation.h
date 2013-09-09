@@ -34,6 +34,18 @@ public:
     SPOperationImplementation& operator->();
     const SPOperationImplementation& operator->() const;
     bool isValid() const;
+    template<typename T> static T execute(const QString& txt){
+        SymbolTable symtbl;
+        ExecutionContext ctx;
+        OperationExpression o(txt);
+        Operation op(o);
+        bool ok =  op->execute(&ctx,symtbl);
+        if (!ok)
+            return T();
+        T obj = symtbl.getValue(ctx._results[0]).value<T>();
+        return obj;
+
+    }
 
 private:
     SPOperationImplementation _operation;
