@@ -10,6 +10,7 @@
 #include "datadefinition.h"
 #include "connectorinterface.h"
 #include "containerstatistics.h"
+#include "commandhandler.h"
 
 namespace Ilwis {
 
