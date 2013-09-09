@@ -4,8 +4,8 @@
 #include "symboltable.h"
 #include "OperationExpression.h"
 #include "operationmetadata.h"
-#include "operation.h"
 #include "commandhandler.h"
+#include "operation.h"
 #include "text2output.h"
 
 using namespace Ilwis;
