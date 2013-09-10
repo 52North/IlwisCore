@@ -44,15 +44,17 @@ bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QSt
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
         expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toString()).arg(vright.toDouble()).arg(relation);
     } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
-        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toDouble()).arg(_value.toString()).arg(relation);
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString()).arg(_value.toDouble()).arg(relation);
     } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
         expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString()).arg(_value.toString()).arg(relation);
+    } else if (SymbolTable::isDataLink(vright) && SymbolTable::isNumerical(_value)) {
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString()).arg(_value.toDouble()).arg(relation);
     }
     Ilwis::ExecutionContext ctx;
     bool ok = Ilwis::commandhandler()->execute(expr, &ctx,symbols);
     if ( !ok || ctx._results.size() != 1)
         return false;
-    _value = {symbols.getValue(ctx._results[0]), NodeValue::ctMethod};
+    _value = {ctx._results[0], NodeValue::ctID};
     return true;
 }
 
