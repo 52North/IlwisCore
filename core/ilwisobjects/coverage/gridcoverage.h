@@ -60,6 +60,7 @@ protected:
     Grid *grid();
     void copyTo(IlwisObject *obj);
     QScopedPointer<Grid> _grid;
+    Size _size;
     std::mutex _mutex;
 
 private:

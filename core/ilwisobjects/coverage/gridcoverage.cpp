@@ -97,9 +97,15 @@ IGridCoverage GridCoverage::get(const QString &item1, const QString &item2)
         double rest1 = index1 - (int)index1;
         if ( std::abs(rest1) > EPS8 && numrange->isContinous()) {
             int lowerIndex = std::floor(index1);
+            double rest2 = 1.0 - rest1;
             QString expr = numrange->interpolation();
-            QString nm = QString("%1_%2_%3").arg(name()).arg(lowerIndex).arg(lowerIndex+1);
-            expr = nm + "=" + expr.arg(QString("(1-%1)*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
+            QString nm = name();
+            int ind = 0;
+            if( (ind=nm.lastIndexOf(".")) != -1){
+                nm = nm.left(ind);
+            }
+            nm = QString("%1_%2_%3").arg(nm).arg(lowerIndex).arg(lowerIndex+1);
+            expr = nm + "=" + expr.arg(QString("%1*%2[%3]").arg(rest2).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
             IGridCoverage mp = Operation::execute<IGridCoverage>(expr);
             if ( mp.isValid())
                 return mp;
@@ -147,12 +153,14 @@ Resource GridCoverage::resource(int mode) const
 
 Size GridCoverage::size() const
 {
+    if (_size.isValid() && !_size.isNull())
+        return _size;
     if (!_grid.isNull())
-        return _grid->size();
-    if ( _georef.isValid())
-        return _georef->size();
+        const_cast<GridCoverage *>(this)->_size = _grid->size();
+    else if ( _georef.isValid())
+        const_cast<GridCoverage *>(this)->_size = _georef->size();
 
-    return Size();
+    return _size;
 
 }
 
@@ -160,6 +168,7 @@ void GridCoverage::size(const Size &sz)
 {
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0) {
+        _size = sz;
         if (!_grid.isNull())
             _grid->setSize(sz);
         if (_georef.isValid())
