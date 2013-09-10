@@ -59,9 +59,6 @@ void CellIterator::move(int n){
 double &CellIterator::operator*()
 {
     double &v =  (*_block)(_positionx,_positiony,_positionz);
-    if ( v == 156) {
-        qDebug() << "s2";
-    }
     return v;
 }
 
