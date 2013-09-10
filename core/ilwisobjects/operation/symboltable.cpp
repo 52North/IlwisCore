@@ -6,6 +6,7 @@
 #include "ilwis.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
+#include "mastercatalog.h"
 #include "symboltable.h"
 
 using namespace Ilwis;
@@ -119,9 +120,17 @@ bool SymbolTable::isIntegerNumerical(const QVariant& var) {
 bool SymbolTable::isDataLink(const QVariant& value) {
     QString resolvedv = value.toString();
     if ( !resolvedv.contains(QRegExp("\\\\|/"))) {
-        resolvedv = Ilwis::context()->workingCatalog()->resolve(resolvedv);
-        if ( resolvedv == sUNDEF)
+        bool ok;
+        resolvedv.toDouble(&ok);
+        if (ok)
             return false;
+        resolvedv = Ilwis::context()->workingCatalog()->resolve(resolvedv);
+        if ( resolvedv == sUNDEF) {
+            quint64 id = mastercatalog()->name2id(resolvedv);
+            if ( id != i64UNDEF)
+                return true;
+            return false;
+        }
     }
     return true;
 
