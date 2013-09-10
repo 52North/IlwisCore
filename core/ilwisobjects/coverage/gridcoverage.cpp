@@ -106,7 +106,7 @@ IGridCoverage GridCoverage::get(const QString &item1, const QString &item2)
             }
             nm = QString("%1_%2_%3").arg(nm).arg(lowerIndex).arg(lowerIndex+1);
             expr = nm + "=" + expr.arg(QString("%1*%2[%3]").arg(rest2).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
-            IGridCoverage mp = Operation::execute<IGridCoverage>(expr);
+            IGridCoverage mp = Operation::calculate<IGridCoverage>(nm,expr);
             if ( mp.isValid())
                 return mp;
         }
