@@ -40,7 +40,8 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         Box3D<qint32> inpbox = box.size();
         inpbox += _base;
         inpbox += std::vector<qint32>{0, box.min_corner().y(),0};
-        inpbox.copyFrom(box, Box3D<>::dimZ);
+        if ( _zvalue == iUNDEF)
+            inpbox.copyFrom(box, Box3D<>::dimZ);
         PixelIterator iterOut(outputGC, box);
         PixelIterator iterIn(inputGC, inpbox);
 
@@ -131,6 +132,22 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         _attribColumn =  selector.mid(index+10);
         copylist |= itGRIDSIZE | itGEOREF | itENVELOPE;
     }
+    int indexindex = selector.indexOf("index=");
+    if ( indexindex != -1) {
+        copylist |= itDOMAIN | itGEOREF | itENVELOPE | itTABLE;
+        _box = Box3D<>(inputGC->size());
+        QString zvalues = selector.mid(6);
+        bool ok;
+        _zvalue = zvalues.toInt(&ok);
+        if ( !ok || _zvalue < 0) {
+            ERROR3(ERR_ILLEGAL_PARM_3, TR("layer index"), zvalues,"Selection");
+            return sPREPAREFAILED;
+        }
+        _box.min_corner().z(_zvalue);
+        _box.max_corner().z(_zvalue);
+        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
+        _base = vec;
+    }
 
      _outputObj = OperationHelperRaster::initialize(_inputObj,inputType, copylist);
      if ( !_outputObj.isValid()) {
@@ -157,6 +174,10 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         outputGC->georeference(grf);
         outputGC->envelope(box);
     }
+     if(indexindex != -1)  {
+         Size sz(outputGC->size().xsize(),outputGC->size().xsize(), 1);
+         outputGC->size(sz);
+     }
 
     return sPREPARED;
 }
