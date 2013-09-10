@@ -26,7 +26,6 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope)
     foreach(RightTerm term, _rightTerm) {
         term._rightTerm->evaluate(symbols, scope) ;
         const NodeValue& vright = term._rightTerm->value();
-        QString pp = vright.toString();
         if ( term._operator == OperationNode::oADD ){
             ret = handleAdd(vright, symbols);
         } else   if ( term._operator == OperationNode::oSUBSTRACT ){
@@ -45,7 +44,8 @@ bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols) {
        _value = {vright.toDouble() + var.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
+    bool ok = handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
+    return ok;
 }
 
 bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols) {
