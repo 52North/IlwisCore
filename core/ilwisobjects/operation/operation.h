@@ -36,11 +36,18 @@ public:
     bool isValid() const;
     template<typename T> static T execute(const QString& txt){
         SymbolTable symtbl;
+        bool ok = false;
         ExecutionContext ctx;
         OperationExpression o("script " + txt);
         Operation op(o);
-        bool ok =  op->execute(&ctx,symtbl);
-        if (!ok)
+        try{
+            ok =  op->execute(&ctx,symtbl);
+        } catch (const ErrorObject& err) {
+            kernel()->issues()->log(err.message());
+            return T();
+        }
+
+        if (!ok || ctx._results.size() == 0)
             return T();
         T obj = symtbl.getValue(ctx._results[0]).value<T>();
         return obj;
