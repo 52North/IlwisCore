@@ -134,6 +134,9 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
                 if ( !selector->box().isNull())
                     selectordef = QString("\"box=%1 %2, %3 %4\"").arg(selector->box().min_corner().x()).arg(selector->box().min_corner().y()).
                                                                 arg(selector->box().max_corner().x()).arg(selector->box().max_corner().y());
+                else if (selector->selectorType() == "index") {
+                    selectordef = "\"index=" + selector->variable() + "\"";
+                }
                 else if ( selector->variable() != sUNDEF)
                     selectordef = "\"attribute=" + selector->variable() + "\"";
                 QString outname = ANONYMOUS_PREFIX;
