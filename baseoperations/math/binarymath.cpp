@@ -256,7 +256,7 @@ OperationImplementation::State BinaryMath::prepare(ExecutionContext *,const Symb
     else
         _operator = otMULT;
 
-    if ( ((ptype1 | ptype2) & (itGRID | itNUMERIC)) ) {
+    if ( (ptype1 == itGRID && hasType(ptype2,itNUMERIC)) || (ptype2 == itGRID && hasType(ptype1,itNUMERIC)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
