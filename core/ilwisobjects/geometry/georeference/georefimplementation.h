@@ -17,7 +17,7 @@ public:
 protected:
 
     ICoordinateSystem _csy;
-    Size _size;
+    QSize _size;
     bool _centerOfPixel;
 };
 }

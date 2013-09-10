@@ -38,7 +38,7 @@ void GeoRefImplementation::size(const Size &sz)
 {
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0)
-         _size = sz;
+         _size = sz.toQSize();
 }
 
 bool GeoRefImplementation::centerOfPixel() const
