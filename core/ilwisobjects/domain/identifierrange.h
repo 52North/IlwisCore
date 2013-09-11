@@ -26,6 +26,8 @@ public:
     QString value(quint32 index) const;
     quint32 count() const;
     void count(quint32 nr);
+    virtual bool isContinous() const;
+    void interpolation(const QString&) {}
 
 
 private:
@@ -53,6 +55,8 @@ public:
     Range *clone() const;
 
     QString toString() const;
+    virtual bool isContinous() const;
+    void interpolation(const QString&) {}
 
 private:
     QHash<QString, SPNamedIdentifier> _items;
