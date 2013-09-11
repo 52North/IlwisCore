@@ -53,6 +53,11 @@ void IndexedIdentifierRange::count(quint32 nr)
     _count = nr;
 }
 
+bool IndexedIdentifierRange::isContinous() const
+{
+    return false;
+}
+
 SPDomainItem IndexedIdentifierRange::item(const QString& nam) const{
     return SPDomainItem();
 }
@@ -231,6 +236,11 @@ QString NamedIdentifierRange::toString() const {
         res += item->name();
     }
     return res;
+}
+
+bool NamedIdentifierRange::isContinous() const
+{
+    return false;
 }
 
 //---------------------------------------------------------
