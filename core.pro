@@ -93,7 +93,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/georeference/georefimplementationfactory.cpp \
     core/ilwisobjects/domain/coordinatedomain.cpp \
     core/ilwisobjects/domain/numericitem.cpp \
-    core/ilwisobjects/domain/numericitemrange.cpp
+    core/ilwisobjects/domain/numericitemrange.cpp \
+    core/ilwisobjects/coverage/indexslicer.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -197,7 +198,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/georeference/georefimplementationfactory.h \
     core/ilwisobjects/domain/coordinatedomain.h \
     core/ilwisobjects/domain/numericitem.h \
-    core/ilwisobjects/domain/numericitemrange.h
+    core/ilwisobjects/domain/numericitemrange.h \
+    core/ilwisobjects/coverage/indexslicer.h
 
 
 
