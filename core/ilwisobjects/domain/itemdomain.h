@@ -91,11 +91,9 @@ public:
         _range->remove(nme);
     }
 
-    void addRange(const ItemRange& range)
+    void range(const ItemRange& range)
     {
-        if ( _range.isNull()) {
-            _range.reset(C::createRange());
-        }
+        _range.reset(C::createRange());
         _range->addRange(range);
     }
     quint32 count() const {
