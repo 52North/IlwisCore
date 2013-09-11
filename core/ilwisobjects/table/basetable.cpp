@@ -143,7 +143,7 @@ quint32 BaseTable::columnIndex(const QString &nme) const
 {
     auto iter = _columnDefinitionsByName.find(nme);
     if ( iter == _columnDefinitionsByName.end()) {
-        kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg(nme).arg(name()),IssueObject::itWarning);
+        //kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg(nme).arg(name()),IssueObject::itWarning);
         return iUNDEF;
     }
     return iter.value().id();
