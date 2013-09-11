@@ -60,8 +60,10 @@ double NumericItemRange::index(double v) const
             mark2 = ind;
         }
         if ( mark1 != iUNDEF && mark2 != iUNDEF) {
-            if ( isContinous())
+            bool ok = isContinous();
+            if (ok ) {
                 return ind + (v - rng.min()) / rng.distance();
+            }
             return ind;
         }
     }
@@ -131,6 +133,7 @@ ItemRange *NumericItemRange::clone() const
     for(const SPNumericItem& it: _items) {
         items->add(it->clone());
     }
+    items->interpolation(interpolation());
 
     return items;
 
@@ -174,21 +177,6 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         add(new NumericItem({vmin+step,vmax, step}));
     }
     return *this;
-}
-
-bool NumericItemRange::isContinous() const
-{
-    return _interpolation != "";
-}
-
-QString NumericItemRange::interpolation() const
-{
-    return _interpolation;
-}
-
-void NumericItemRange::interpolation(const QString &ip)
-{
-    _interpolation = ip;
 }
 
 void NumericItemRange::addRange(const ItemRange &range)
