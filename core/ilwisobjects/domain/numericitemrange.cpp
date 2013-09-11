@@ -56,7 +56,7 @@ double NumericItemRange::index(double v) const
         if ( v >= rng.min()){
             mark1 = ind;
         }
-        if ( v < rng.max()){
+        if ( v <= rng.max()){
             mark2 = ind;
         }
         if ( mark1 != iUNDEF && mark2 != iUNDEF) {
