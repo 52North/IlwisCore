@@ -90,26 +90,40 @@ IGridCoverage GridCoverage::get(const QString &item1, const QString &item2)
     if (!indexDomain.isValid())
         return IGridCoverage();
     if ( indexDomain->valueType() == itNUMERICITEM)  {
-        double item1Index = item1.toDouble();
+        bool ok;
+        double item1Index = item1.toDouble(&ok);
+        if (!ok){
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Sub setting"));
+        }
+
         INumericItemDomain numdom = indexDomain.get<NumericItemDomain>();
         SPNumericItemRange numrange = numdom->range<NumericItemRange>();
         double index1 = numrange->index(item1Index);
+        if ( index1 == rUNDEF){
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Sub setting"));
+            return IGridCoverage();
+        }
+        int ind = 0;
+        QString basename = name();
+        if( (ind=basename.lastIndexOf(".")) != -1){
+            basename = basename.left(ind);
+        }
+        QString cname, expr;
         double rest1 = index1 - (int)index1;
         if ( std::abs(rest1) > EPS8 && numrange->isContinous()) {
             int lowerIndex = std::floor(index1);
             double rest2 = 1.0 - rest1;
-            QString expr = numrange->interpolation();
-            QString nm = name();
-            int ind = 0;
-            if( (ind=nm.lastIndexOf(".")) != -1){
-                nm = nm.left(ind);
-            }
-            nm = QString("%1_%2_%3").arg(nm).arg(lowerIndex).arg(lowerIndex+1);
-            expr = nm + "=" + expr.arg(QString("%1*%2[%3]").arg(rest2).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
-            IGridCoverage mp = Operation::calculate<IGridCoverage>(nm,expr);
-            if ( mp.isValid())
-                return mp;
+            expr = numrange->interpolation();
+            cname = QString("%1_%2_%3").arg(basename).arg(lowerIndex).arg(lowerIndex+1);
+            expr = cname + "=" + expr.arg(QString("%1*%2[%3]").arg(rest2).arg(name()).arg(lowerIndex)).arg(QString("%1*%2[%3]").arg(rest1).arg(name()).arg(lowerIndex+1));
+        } else {
+            cname = QString("%1_%2").arg(basename).arg(index1);
+            expr = QString("%1=%2[%3]").arg(cname).arg(name()).arg(index1);
+
         }
+        IGridCoverage mp = Operation::calculate<IGridCoverage>(cname,expr);
+        if ( mp.isValid())
+            return mp;
     }
     return IGridCoverage();
 }
