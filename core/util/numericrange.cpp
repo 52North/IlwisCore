@@ -23,7 +23,9 @@ bool NumericRange::isValid() const
 }
 
 Range *NumericRange::clone() const {
-    return new NumericRange(_min, _max, _step);
+    NumericRange *rng = new NumericRange(_min, _max, _step);
+    rng->interpolation(interpolation());
+    return rng;
 }
 
 bool NumericRange::contains(double v, bool inclusive) const

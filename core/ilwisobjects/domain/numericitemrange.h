@@ -20,15 +20,11 @@ public:
     QString toString() const;
     ItemRange *clone() const;
     NumericItemRange &operator <<(const QString &itemdef);
-    bool isContinous() const;
-    void interpolation(const QString& ip);
-    QString interpolation() const;
 
 protected:
     void addRange(const ItemRange &range);
 private:
     std::vector<SPNumericItem> _items;
-    QString _interpolation;
 };
 
 typedef QSharedPointer<NumericItemRange> SPNumericItemRange;
