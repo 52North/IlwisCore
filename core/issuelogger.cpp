@@ -67,9 +67,9 @@ void IssueObject::addCodeInfo(int line, const QString &func, const QString &file
 }
 
 void IssueObject::stream(std::ofstream& stream, LogMessageFormat frmt) {
-    stream << _id << " ; " << std::setw(9) << type2String() << " ; " <<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
+    stream << std::setw(4) << _id << " ; " << std::setw(9) << type2String() << " ; " << std::setw(27)<<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
     if ( frmt == lmCODE) {
-        stream << _id << " ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
+        stream << std::setw(4) << _id << " ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
     }
 }
 
