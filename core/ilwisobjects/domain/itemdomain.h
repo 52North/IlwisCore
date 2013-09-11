@@ -91,7 +91,7 @@ public:
         _range->remove(nme);
     }
 
-    void range(const ItemRange& range)
+    void setRange(const ItemRange& range)
     {
         _range.reset(C::createRange());
         _range->addRange(range);
