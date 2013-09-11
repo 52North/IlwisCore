@@ -152,6 +152,7 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
                 }
                 if (ok) {
                     add(new NumericItem({mn,mx, step}));
+                    return *this;
                 }
             }
         }
