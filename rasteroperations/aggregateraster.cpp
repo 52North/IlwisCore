@@ -149,7 +149,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
 
-    Box3D<qint32> box(inputGC->georeference()->size());
+    Box3D<qint32> box(inputGC->size());
     if ( _grouped) {
         int xs = box.xlength();
         int ys = box.ylength();
@@ -172,6 +172,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         grf.prepare(res);
         outputGC->georeference(grf);
         outputGC->envelope(envlope);
+        outputGC->size(box.size());
     }
 
     return sPREPARED;
