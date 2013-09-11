@@ -19,3 +19,18 @@ IlwisTypes Range::valueType() const {
 
     return _vt;
 }
+
+bool Range::isContinous() const
+{
+    return _interpolation.size() != 0;
+}
+
+QString Range::interpolation() const
+{
+    return _interpolation;
+}
+
+void Range::interpolation(const QString &ip)
+{
+    _interpolation = ip;
+}
