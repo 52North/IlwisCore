@@ -82,6 +82,7 @@ public:
     Time getEnd() const { return Time(max());}
     Duration getStep() const { return _step;}
     QString toString(bool local=true, Time::Mode mode=Time::mDATETIME);
+    bool contains(const QString& value, bool inclusive = true) const;
 
 private:
     Duration _step;

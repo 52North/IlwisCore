@@ -837,6 +837,12 @@ QString TimeInterval::toString(bool local, Time::Mode mode) {
     return QString("%1/%2").arg(sb ,se);
 }
 
+bool TimeInterval::contains(const QString &value, bool ) const
+{
+    //TODO
+    return true;
+}
+
 
 TimeInterval& TimeInterval::operator=(const TimeInterval& tiv){
     setMin(tiv.min());
