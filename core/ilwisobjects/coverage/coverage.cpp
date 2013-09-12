@@ -2,6 +2,12 @@
 #include "coverage.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "domain.h"
+#include "itemdomain.h"
+#include "domainitem.h"
+#include "numericitem.h"
+#include "itemrange.h"
+#include "numericitemrange.h"
 
 using namespace Ilwis;
 
@@ -111,6 +117,48 @@ Resource Coverage::resource(int mode) const
         res.setExtendedType( res.extendedType() | itDOMAIN | itCOORDSYSTEM);
     }
     return res;
+}
+
+double Coverage::index(const QString &value)
+{
+    DataDefinition::DomainAxis axis = DataDefinition::daINDEX;
+    if (! datadef().range(axis)->contains(value))
+        return rUNDEF;
+
+    bool isContinuous = datadef().range(axis)->isContinuous();
+    if ( hasType(datadef().domain(axis)->valueType(), itNUMBER )) {
+        double v = value.toDouble();
+        if ( isContinuous )
+            return v;
+        return (int)v;
+    }
+    IlwisTypes valueType = datadef().domain(axis)->valueType();
+    if ( hasType(datadef().domain(axis)->ilwisType(), itITEMDOMAIN)) {
+        SPItemRange rng = datadef().domain(axis)->range<ItemRange>();
+        if ( !rng->isValid())
+            return rUNDEF;
+        SPDomainItem domItem = rng->item(value);
+
+        for(quint32 idxAxis : _indexValues) {
+            if ( idxAxis == domItem->raw())
+                return idxAxis;
+            if ( hasType(valueType, itNUMERICITEM )) {
+                SPNumericItemRange rng = datadef().domain()->range<NumericItemRange>();
+                return rng->index(value.toDouble());
+            }
+        }
+    }
+    return rUNDEF;
+}
+
+bool Coverage::setIndexes(const std::vector<QString> &items)
+{
+    DataDefinition::DomainAxis axis = DataDefinition::daINDEX;
+    _indexValues.resize(items.size());
+    for(int i=0; i < items.size(); ++i) {
+//        SPDomainItem domItem = _datadef().domain(axis);
+//        _indexValues[i] = items[i]->raw();
+    }
 }
 
 void Coverage::copyTo(IlwisObject *obj)

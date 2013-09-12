@@ -15,11 +15,14 @@
 namespace Ilwis {
 
 class Table;
+class ItemRange;
+
 typedef IlwisData<Table> ITable;
 typedef QHash<IlwisTypes, ITable> AttributeTables;
 
 class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
+
 public:
     Coverage();
     Coverage(const Resource& res);
@@ -37,6 +40,8 @@ public:
     DataDefinition& datadef();
     QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
     Resource resource(int mode=cmINPUT) const;
+    double index(const QString& value);
+    bool setIndexes(const std::vector<QString> &items);
 
 protected:
     void copyTo(IlwisObject *obj) ;
@@ -47,6 +52,7 @@ private:
     std::vector<AttributeTables> _attTables;
     NumericStatistics _statistics;
     DataDefinition _datadef;
+    std::vector<quint32> _indexValues;
 
 };
 
