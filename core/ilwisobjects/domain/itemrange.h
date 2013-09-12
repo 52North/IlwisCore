@@ -23,6 +23,7 @@ public:
     virtual void remove(const QString& nm) = 0;
     double ensure(double v, bool inclusive = true) const;
     virtual void addRange(const ItemRange& range);
+    virtual std::vector<SPDomainItem> items() const = 0;
 
 
     static DomainItem *create(const QString& type);
