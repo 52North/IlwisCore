@@ -13,7 +13,7 @@ public:
     SPDomainItem item(quint32 index) const ;
     SPDomainItem item(const QString &def) const ;
     virtual double index(double v) const;
-    bool contains(const QString& name) const ;
+    bool contains(const QString& name, bool inclusive = true) const ;
     bool isValid() const ;
     void add(DomainItem *item) ;
     void remove(const QString& nm) ;

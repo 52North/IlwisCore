@@ -60,7 +60,7 @@ double NumericItemRange::index(double v) const
             mark2 = ind;
         }
         if ( mark1 != iUNDEF && mark2 != iUNDEF) {
-            bool ok = isContinous();
+            bool ok = isContinuous();
             if (ok ) {
                 return ind + (v - rng.min()) / rng.distance();
             }
@@ -70,7 +70,7 @@ double NumericItemRange::index(double v) const
     return rUNDEF;
 }
 
-bool NumericItemRange::contains(const QString &name) const
+bool NumericItemRange::contains(const QString &name, bool ) const
 {
     for(const SPNumericItem& it: _items) {
         if ( it->name() == name)
