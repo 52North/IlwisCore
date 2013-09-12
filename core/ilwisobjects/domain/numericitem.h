@@ -8,13 +8,14 @@ class  NumericItemRange;
 class KERNELSHARED_EXPORT NumericItem : public DomainItem
 {
 public:
+    friend class NumericItemRange;
     NumericItem();
     NumericItem(const NumericRange &vr);
 
     virtual ~NumericItem() {}
 
     bool isValid() const;
-    QString name(quint32 index= 0) const ;
+    QString name() const ;
     DomainItem *clone() const;
     IlwisTypes valueType() const;
 

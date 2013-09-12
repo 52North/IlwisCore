@@ -23,7 +23,7 @@ bool NumericItem::isValid() const
     return _valuerange.isValid();
 }
 
-QString NumericItem::name(quint32 index) const
+QString NumericItem::name() const
 {
     return _valuerange.toString();
 }
