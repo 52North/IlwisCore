@@ -146,6 +146,11 @@ double NumericRange::ensure(double v, bool inclusive) const
     return v;
 }
 
+bool NumericRange::contains(const QString &value, bool inclusive) const
+{
+    return contains(value.toDouble(), inclusive);
+}
+
 
 long NumericRange::significantDigits(double m1) const{
     if ( fabs(m1) > 1e30)

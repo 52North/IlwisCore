@@ -35,6 +35,7 @@ public:
     Range *clone() const ;
 
     bool contains(double v, bool inclusive = true) const;
+    bool contains(const QString& value, bool inclusive = true) const;
     double max() const;
     void setMax(double v);
     double min() const;
@@ -53,7 +54,6 @@ public:
     QString toString() const ;
     void set(const NumericRange& vr);
     double ensure(double, bool inclusive=true) const;
-
     IlwisTypes determineType() const;
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2);
