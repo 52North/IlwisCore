@@ -23,26 +23,24 @@ void IndexSlicer::grid(const IGridCoverage &cov)
     _raster = cov;
 }
 
-IGridCoverage IndexSlicer::operator()(const QString &item1, const QString &item2, const QString &step)
+IGridCoverage IndexSlicer::operator()(const QString &item)
 {
     IDomain indexDomain = _raster->datadef().domain(DataDefinition::daINDEX);
     if (!indexDomain.isValid())
         return IGridCoverage();
-    if ( hasType(indexDomain->valueType(), itNUMERICVALUES)) {
-
-        bool ok;
-        double itemIndex = item1.toDouble(&ok);
-        if (!ok){
-            ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Sub setting"));
-        }
+    if ( hasType(indexDomain->valueType(), itNUMERIC)) {
 
         QString basename = makeBaseName();
 
         double index;
         if ( indexDomain->valueType() == itNUMERICITEM)  {
-            index = findIndexNumericalItem(indexDomain, itemIndex);
-        } else if ( hasType(indexDomain->valueType(),itNUMERIC)) {
-            index  = findIndexNumber(indexDomain, itemIndex);
+            index = _raster->index(item);
+        } else if ( hasType(indexDomain->valueType(),itNUMBER)) {
+            index  = findIndexNumber(indexDomain, item.toDouble());
+        }
+        if ( index == rUNDEF){
+            ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Index slicing"));
+            return IGridCoverage();
         }
         QString cname;
         QString expr = makeExpression(index, basename, cname);
@@ -66,7 +64,7 @@ QString IndexSlicer::makeBaseName() const {
 QString IndexSlicer::makeExpression(double index, const QString& basename, QString& cname) {
     double rest1 = index - (int)index;
     QString expr =  _raster->datadef().range(DataDefinition::daINDEX)->interpolation();
-    bool isContinous = _raster->datadef().range(DataDefinition::daINDEX)->isContinous();
+    bool isContinous = _raster->datadef().range(DataDefinition::daINDEX)->isContinuous();
     if ( std::abs(rest1) > EPS8 && isContinous) {
         int lowerIndex = std::floor(index);
         double rest2 = 1.0 - rest1;
@@ -95,13 +93,11 @@ double IndexSlicer::findIndexNumber(const IDomain& indexDomain, double itemIndex
     return rUNDEF;
 }
 
-double IndexSlicer::findIndexNumericalItem(const IDomain& indexDomain, double itemIndex) const{
-    INumericItemDomain numdom = indexDomain.get<NumericItemDomain>();
-    SPNumericItemRange numrange = numdom->range<NumericItemRange>();
-    double index1 = numrange->index(itemIndex);
-    if ( index1 == rUNDEF){
-        ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Index slicing"));
-        return rUNDEF;
-    }
-    return index1;
+double IndexSlicer::findIndexNumericalItem(const IDomain& indexDomain, const QString& itemIndex) const{
+//    INumericItemDomain numdom = indexDomain.get<NumericItemDomain>();
+//    SPNumericItemRange numrange = numdom->range<NumericItemRange>();
+//    //double index1 = _raster->index(indexItem);
+//    double index1 = numrange->index(itemIndex);
+
+//    return index1;
 }
