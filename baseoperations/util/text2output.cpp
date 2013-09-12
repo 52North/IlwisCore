@@ -44,7 +44,7 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, c
           str = parm.value();
         else {
             Symbol sym = symTable.getSymbol(parm.value());
-            if ( sym._type & itNUMERIC)
+            if ( sym._type & itNUMBER)
                 str = sym._var.toString();
         }
 

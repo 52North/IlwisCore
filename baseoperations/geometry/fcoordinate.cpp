@@ -73,13 +73,13 @@ quint64 FCoordinate::createMetadata()
     res.addProperty("syntax","coordinate(x,y[,z])");
     res.addProperty("description",TR("translates a x and y value (optional z) into a single coordinate object"));
     res.addProperty("inparameters","2|3");
-    res.addProperty("pin_1_type", itNUMERIC);
+    res.addProperty("pin_1_type", itNUMBER);
     res.addProperty("pin_1_name", TR("x"));
     res.addProperty("pin_1_desc",TR("x part of coordinate"));
-    res.addProperty("pin_2_type", itNUMERIC);
+    res.addProperty("pin_2_type", itNUMBER);
     res.addProperty("pin_2_name", TR("y"));
     res.addProperty("pin_2_desc",TR("y part of coordinate"));
-    res.addProperty("pin_3_type", itNUMERIC);
+    res.addProperty("pin_3_type", itNUMBER);
     res.addProperty("pin_3_name", TR("z"));
     res.addProperty("pin_3_desc",TR("z part of coordinate, optional"));
     res.addProperty("outparameters",1);

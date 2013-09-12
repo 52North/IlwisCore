@@ -187,7 +187,7 @@ bool BinaryMath::prepareCoverageCoverage() {
 
 bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
 
-    int mindex = (ptype1 & itNUMERIC) == 0 ? 0 : 1;
+    int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
 
     QString gc =  _expression.parm(mindex).value();
@@ -256,7 +256,7 @@ OperationImplementation::State BinaryMath::prepare(ExecutionContext *,const Symb
     else
         _operator = otMULT;
 
-    if ( (ptype1 == itGRID && hasType(ptype2,itNUMERIC)) || (ptype2 == itGRID && hasType(ptype1,itNUMERIC)) ) {
+    if ( (ptype1 == itGRID && hasType(ptype2,itNUMBER)) || (ptype2 == itGRID && hasType(ptype1,itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
@@ -277,11 +277,11 @@ quint64 BinaryMath::createMetadata()
     res.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
     res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRID | itNUMERIC);
+    res.addProperty("pin_1_type", itGRID | itNUMBER);
     res.addProperty("pin_1_name", TR("input gridcoverage or number"));
     res.addProperty("pin_1_domain","value");
     res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical domain or number"));
-    res.addProperty("pin_2_type", itGRID | itNUMERIC);
+    res.addProperty("pin_2_type", itGRID | itNUMBER);
     res.addProperty("pin_2_name", TR("input gridcoverage or number"));
     res.addProperty("pin_2_domain","value");
     res.addProperty("pin_2_desc",TR("input gridcoverage with a numerical domain or number"));

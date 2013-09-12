@@ -104,10 +104,10 @@ quint64 IfFeature::createMetadata()
     res.addProperty("pin_1_type", itFEATURECOVERAGE);
     res.addProperty("pin_1_name", TR("input featurecoverage"));
     res.addProperty("pin_1_desc",TR("input featurecoverage with boolean domain"));
-    res.addProperty("pin_2_type", itNUMERIC | itSTRING | itBOOL | itFEATURECOVERAGE);
+    res.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURECOVERAGE);
     res.addProperty("pin_2_name", TR("true choice"));
     res.addProperty("pin_2_desc",TR("value returned when the boolean input feature is true"));
-    res.addProperty("pin_3_type", itNUMERIC | itSTRING | itBOOL | itFEATURECOVERAGE);
+    res.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURECOVERAGE);
     res.addProperty("pin_3_name", TR("false choice"));
     res.addProperty("pin_3_desc",TR("value returned when the boolean input feature is false"));
     res.addProperty("outparameters",1);

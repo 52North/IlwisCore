@@ -66,7 +66,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
     IlwisTypes ptype = _expression.parm(0).valuetype();
 
 
-    if ( ptype & itNUMERIC ) {
+    if ( ptype & itNUMBER ) {
         _spatialCase = false;
         bool ok;
         _number = _expression.parm(0).value().toDouble(&ok);

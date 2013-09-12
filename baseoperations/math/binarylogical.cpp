@@ -170,7 +170,7 @@ bool BinaryLogical::prepareCoverageCoverage() {
 
 bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
 
-    int mindex = (ptype1 & itNUMERIC) == 0 ? 0 : 1;
+    int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
 
     QString gc =  _expression.parm(mindex).value();
@@ -223,7 +223,7 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
     else if ( oper == "greatereq")
         _operator = otGREATEREQ;
 
-    if ( ((ptype1 | ptype2) & (itGRID | itNUMERIC)) ) {
+    if ( ((ptype1 | ptype2) & (itGRID | itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
@@ -244,11 +244,11 @@ quint64 BinaryLogical::createMetadata()
     res.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
         res.addProperty("description",TR("generates a new boolean map based on the logical condition used"));
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRID | itNUMERIC);
+    res.addProperty("pin_1_type", itGRID | itNUMBER);
     res.addProperty("pin_1_name", TR("input gridcoverage or number/boolean"));
     res.addProperty("pin_1_domain","value");
     res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical/boolean domain or number"));
-    res.addProperty("pin_2_type", itGRID | itNUMERIC);
+    res.addProperty("pin_2_type", itGRID | itNUMBER);
     res.addProperty("pin_2_name", TR("input gridcoverage or number"));
     res.addProperty("pin_2_domain","value");
     res.addProperty("pin_2_desc",TR("input gridcoverage with a numerical/boolean domain or number"));

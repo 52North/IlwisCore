@@ -72,13 +72,13 @@ quint64 FPixel::createMetadata()
     res.addProperty("syntax","pixel(x,y[,z])");
     res.addProperty("description",TR("translates a x and y value (optional z) into a single pixel object"));
     res.addProperty("inparameters","2|3");
-    res.addProperty("pin_1_type", itNUMERIC);
+    res.addProperty("pin_1_type", itNUMBER);
     res.addProperty("pin_1_name", TR("x"));
     res.addProperty("pin_1_desc",TR("x part of pixel"));
-    res.addProperty("pin_2_type", itNUMERIC);
+    res.addProperty("pin_2_type", itNUMBER);
     res.addProperty("pin_2_name", TR("y"));
     res.addProperty("pin_2_desc",TR("y part of pixel"));
-    res.addProperty("pin_3_type", itNUMERIC);
+    res.addProperty("pin_3_type", itNUMBER);
     res.addProperty("pin_3_name", TR("z"));
     res.addProperty("pin_3_desc",TR("z part of pixel, optional"));
     res.addProperty("outparameters",1);
