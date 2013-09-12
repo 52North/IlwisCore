@@ -10,7 +10,7 @@
 
 using namespace Ilwis;
 
-IndexedIdentifier::IndexedIdentifier() : _raw(iUNDEF),_prefix(""),_count(iUNDEF)
+IndexedIdentifier::IndexedIdentifier() : _prefix(""),_count(iUNDEF)
 {
 }
 
@@ -83,7 +83,7 @@ IlwisTypes IndexedIdentifier::valueType() const
 }
 
 //---------------------------------------------------------------
-NamedIdentifier::NamedIdentifier() : _name(sUNDEF), _raw(iUNDEF)
+NamedIdentifier::NamedIdentifier() : _name(sUNDEF)
 {
 }
 
@@ -109,11 +109,6 @@ bool NamedIdentifier::operator ==(const NamedIdentifier &item) const
 IlwisTypes NamedIdentifier::valueType() const
 {
     return valueTypeS();
-}
-
-quint32 NamedIdentifier::raw() const
-{
-    return _raw;
 }
 
 NamedIdentifierRange *NamedIdentifier::createRange()

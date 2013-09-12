@@ -28,7 +28,6 @@ public:
     static IlwisTypes valueTypeS();
 
 private:
-    quint32 _raw;
     QString _prefix;
     quint32 _count;
 
@@ -45,7 +44,6 @@ public:
     void setName(const QString& n);
     bool operator==(const NamedIdentifier& item) const;
     IlwisTypes valueType() const;
-    quint32 raw() const;
 
     DomainItem *clone() const;
     static Ilwis::NamedIdentifierRange *createRange();
@@ -53,7 +51,6 @@ public:
 
 private:
     QString _name;
-    quint32 _raw;
 };
 
 typedef QSharedPointer<NamedIdentifier> SPNamedIdentifier;
