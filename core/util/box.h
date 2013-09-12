@@ -119,6 +119,11 @@ public:
         return contains(box.min_corner()) && contains(box.max_corner());
     }
 
+    bool contains(const QString& value, bool inclusive = true) const {
+        //TODO
+        return false;
+    }
+
     bool isValid() const {
         return this->min_corner().isValid() && this->max_corner().isValid();
     }
