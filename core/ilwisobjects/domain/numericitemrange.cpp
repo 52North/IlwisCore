@@ -97,6 +97,8 @@ void NumericItemRange::add(DomainItem *item)
     SPNumericItem nitem(static_cast<NumericItem *>(item));
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
         if ( nitem->range() > (*iter)->range()) {
+            if ( nitem->raw() == iUNDEF)
+                nitem->_raw = _items.size();
             _items.insert(iter.base(),1, nitem );
             return;
         }
@@ -177,6 +179,13 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         add(new NumericItem({vmin+step,vmax, step}));
     }
     return *this;
+}
+
+std::vector<SPDomainItem> NumericItemRange::items() const
+{
+    std::vector<SPDomainItem> its(_items.size());
+    std::copy(_items.begin(), _items.end(), its.begin());
+    return its;
 }
 
 void NumericItemRange::addRange(const ItemRange &range)

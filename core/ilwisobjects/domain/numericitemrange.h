@@ -20,6 +20,7 @@ public:
     QString toString() const;
     ItemRange *clone() const;
     NumericItemRange &operator <<(const QString &itemdef);
+    std::vector<SPDomainItem> items() const;
 
 protected:
     void addRange(const ItemRange &range);
