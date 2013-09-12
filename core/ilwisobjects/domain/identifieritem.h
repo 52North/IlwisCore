@@ -14,9 +14,9 @@ public:
 
     IndexedIdentifier();
     IndexedIdentifier(const QString& label, quint32 ind=0, qint32 cnt =iUNDEF);
-    QString name(quint32 ind = 0) const;
-    quint32 index() const;
-    void setIndex(quint32 ind);
+    QString name() const;
+    quint32 raw() const;
+    //void setIndex(quint32 ind);
     QString prefix() const;
     void setPrefix(const QString& pf);
     bool operator==(const IndexedIdentifier& item) const;
@@ -28,7 +28,7 @@ public:
     static IlwisTypes valueTypeS();
 
 private:
-    quint32 _index;
+    quint32 _raw;
     QString _prefix;
     quint32 _count;
 
@@ -36,13 +36,16 @@ private:
 
 class KERNELSHARED_EXPORT NamedIdentifier : public DomainItem {
 public:
+    friend class NamedIdentifierRange;
+
     NamedIdentifier();
     NamedIdentifier(const QString& name);
     bool isValid() const;
-    QString name(quint32 n = 0) const;
+    QString name() const;
     void setName(const QString& n);
     bool operator==(const NamedIdentifier& item) const;
     IlwisTypes valueType() const;
+    quint32 raw() const;
 
     DomainItem *clone() const;
     static Ilwis::NamedIdentifierRange *createRange();
@@ -50,6 +53,7 @@ public:
 
 private:
     QString _name;
+    quint32 _raw;
 };
 
 typedef QSharedPointer<NamedIdentifier> SPNamedIdentifier;

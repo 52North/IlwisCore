@@ -10,34 +10,32 @@
 
 using namespace Ilwis;
 
-IndexedIdentifier::IndexedIdentifier() : _index(0),_prefix(""),_count(iUNDEF)
+IndexedIdentifier::IndexedIdentifier() : _raw(iUNDEF),_prefix(""),_count(iUNDEF)
 {
 }
 
 IndexedIdentifier::IndexedIdentifier(const QString &label, quint32 ind, qint32 cnt)
 {
     _prefix = label;
-    _index = ind;
+    _raw = ind;
     if ( cnt != iUNDEF)
         _count = cnt;
 }
 
 
-QString IndexedIdentifier::name(quint32 ind) const
+QString IndexedIdentifier::name() const
 {
+    if ( _raw == iUNDEF)
+        return _prefix;
+
     if ( _prefix != "")
-        return QString("%1_%2").arg(_prefix).arg(_index + ind);
-    return QString::number(_index + ind);
+        return QString("%1_%2").arg(_prefix).arg(_raw);
+    return QString::number(_raw);
 }
 
-quint32 IndexedIdentifier::index() const
+quint32 IndexedIdentifier::raw() const
 {
-    return _index;
-}
-
-void IndexedIdentifier::setIndex(quint32 ind)
-{
-    _index = ind;
+    return _raw;
 }
 
 QString IndexedIdentifier::prefix() const
@@ -52,12 +50,12 @@ void IndexedIdentifier::setPrefix(const QString &pf)
 
 bool IndexedIdentifier::operator==(const IndexedIdentifier &item) const
 {
-    return _prefix == item._prefix && _index == item._index;
+    return _prefix == item._prefix && _raw == item._raw;
 }
 
 DomainItem *IndexedIdentifier::clone() const
 {
-    return new IndexedIdentifier(_prefix, _index, _count);
+    return new IndexedIdentifier(_prefix, _raw, _count);
 }
 
 bool IndexedIdentifier::isValid() const{
@@ -85,7 +83,7 @@ IlwisTypes IndexedIdentifier::valueType() const
 }
 
 //---------------------------------------------------------------
-NamedIdentifier::NamedIdentifier() : _name(sUNDEF)
+NamedIdentifier::NamedIdentifier() : _name(sUNDEF), _raw(iUNDEF)
 {
 }
 
@@ -93,7 +91,7 @@ NamedIdentifier::NamedIdentifier(const QString &nm) : _name(nm)
 {
 }
 
-QString NamedIdentifier::name(quint32 ) const
+QString NamedIdentifier::name() const
 {
     return _name;
 }
@@ -113,6 +111,11 @@ IlwisTypes NamedIdentifier::valueType() const
     return valueTypeS();
 }
 
+quint32 NamedIdentifier::raw() const
+{
+    return _raw;
+}
+
 NamedIdentifierRange *NamedIdentifier::createRange()
 {
     return new NamedIdentifierRange();
@@ -123,11 +126,11 @@ IlwisTypes NamedIdentifier::valueTypeS()
     return itNAMEDITEM;
 }
 
-
-
 DomainItem *NamedIdentifier::clone() const
 {
-    return new NamedIdentifier(_name);
+  NamedIdentifier *nid = new NamedIdentifier(_name);
+  nid->_raw = _raw;
+  return nid;
 }
 
 bool NamedIdentifier::isValid() const {
