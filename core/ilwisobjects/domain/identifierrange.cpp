@@ -65,6 +65,11 @@ SPDomainItem IndexedIdentifierRange::item(const QString& nam) const{
     return SPDomainItem();
 }
 
+SPDomainItem IndexedIdentifierRange::itemByOrder(quint32 index) const
+{
+    return item(index);
+}
+
 Range *IndexedIdentifierRange::clone() const
 {
     IndexedIdentifierRange *irange = new IndexedIdentifierRange();
@@ -104,15 +109,6 @@ QString IndexedIdentifierRange::toString() const
         res += QString::number(i);
     }
     return res;
-}
-
-std::vector<SPDomainItem> IndexedIdentifierRange::items() const
-{
-    std::vector<SPDomainItem> its;
-    for(quint32 i=0; i < _count; ++i) {
-        its.push_back(item(i));
-    }
-    return its;
 }
 
 void IndexedIdentifierRange::remove(const QString& item)
@@ -165,6 +161,7 @@ void NamedIdentifierRange::add(DomainItem *thing)
     if ( nid->raw() == iUNDEF)
         nid->_raw = _byRaw.size();
     _byRaw[nid->_raw] = nid;
+    _byOrder.push_back(nid);
 
     return ;
 }
@@ -190,6 +187,12 @@ void NamedIdentifierRange::remove(const QString &name)
     quint32 iraw = (*iter).second->raw();
     _byName.erase(name);
     _byRaw.erase(iraw);
+    for(int i=0; i < count(); ++i) {
+        if ( _byOrder[i]->name() == name){
+            _byOrder.erase(_byOrder.begin() + i);
+            break;
+        }
+    }
 
     return ;
 }
@@ -218,14 +221,14 @@ SPDomainItem NamedIdentifierRange::item(const QString& nam) const{
     return SPDomainItem();
 }
 
-std::vector<SPDomainItem> NamedIdentifierRange::items() const
+SPDomainItem NamedIdentifierRange::itemByOrder(quint32 index) const
 {
-    std::vector<SPDomainItem> its;
-    for(auto kvp : _byName) {
-        its.push_back(kvp.second);
-    }
-    return its;
+    if (index < count())
+        return _byOrder[index];
+    return SPDomainItem();
 }
+
+
 
 
 quint32 NamedIdentifierRange::count() const

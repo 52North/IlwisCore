@@ -12,6 +12,7 @@ public:
     quint32 count() const ;
     SPDomainItem item(quint32 index) const ;
     SPDomainItem item(const QString &def) const ;
+    SPDomainItem itemByOrder(quint32 index) const;
     virtual double index(double v) const;
     bool contains(const QString& name, bool inclusive = true) const ;
     bool isValid() const ;
@@ -20,7 +21,6 @@ public:
     QString toString() const;
     ItemRange *clone() const;
     NumericItemRange &operator <<(const QString &itemdef);
-    std::vector<SPDomainItem> items() const;
 
 protected:
     void addRange(const ItemRange &range);

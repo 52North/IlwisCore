@@ -45,6 +45,11 @@ SPDomainItem NumericItemRange::item(const QString &name) const
     return SPDomainItem();
 }
 
+SPDomainItem NumericItemRange::itemByOrder(quint32 index) const
+{
+    return item(index);
+}
+
 double NumericItemRange::index(double v) const
 {
     if (!isValid())
@@ -179,13 +184,6 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         add(new NumericItem({vmin+step,vmax, step}));
     }
     return *this;
-}
-
-std::vector<SPDomainItem> NumericItemRange::items() const
-{
-    std::vector<SPDomainItem> its(_items.size());
-    std::copy(_items.begin(), _items.end(), its.begin());
-    return its;
 }
 
 void NumericItemRange::addRange(const ItemRange &range)
