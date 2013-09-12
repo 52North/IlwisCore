@@ -18,7 +18,7 @@ IndexedIdentifierRange::IndexedIdentifierRange() : _count(0)
     _vt = itINDEXEDITEM;
 }
 
-bool IndexedIdentifierRange::contains(const QString& item ) const{
+bool IndexedIdentifierRange::contains(const QString& item , bool ) const{
     if (_start->prefix() != "") {
         if ( _start->prefix() != item.left(_start->prefix().size()))
             return false;
@@ -42,7 +42,10 @@ bool IndexedIdentifierRange::operator==(const IndexedIdentifierRange& range){
 }
 
 QString IndexedIdentifierRange::value(quint32 index) const{
-    return _start->name(index);
+    QString s =  _start->name();
+    if ( index < count())
+        return s + QString::number(index);
+    return sUNDEF;
 }
 quint32 IndexedIdentifierRange::count() const{
     return _count;
@@ -53,7 +56,7 @@ void IndexedIdentifierRange::count(quint32 nr)
     _count = nr;
 }
 
-bool IndexedIdentifierRange::isContinous() const
+bool IndexedIdentifierRange::isContinuous() const
 {
     return false;
 }
@@ -93,7 +96,7 @@ void IndexedIdentifierRange::add(DomainItem *thing)
 QString IndexedIdentifierRange::toString() const
 {
     QString res;
-    for(quint32 i=_start->index(); i < _start->index() + _count; ++i) {
+    for(quint32 i=0; i < _count; ++i) {
         if ( res!= "")
             res = res +  ",";
         if ( _start->prefix() != "")
@@ -110,14 +113,14 @@ void IndexedIdentifierRange::remove(const QString& item)
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
 {
-        _vt = itNAMEDITEM;
+    _vt = itNAMEDITEM;
 }
 
 NamedIdentifierRange::~NamedIdentifierRange()
 {
 }
 
-bool NamedIdentifierRange::contains(const QString& name) const
+bool NamedIdentifierRange::contains(const QString& name, bool ) const
 {
     if ( name == "" || name == "?")
         return false;
@@ -129,7 +132,7 @@ bool NamedIdentifierRange::contains(const QString& name) const
 
 bool NamedIdentifierRange::isValid() const
 {
-    return _items.size() != 0;
+    return _byName.size() != 0;
 }
 
 
@@ -149,18 +152,20 @@ void NamedIdentifierRange::add(DomainItem *thing)
     }
 
     SPNamedIdentifier nid(static_cast<NamedIdentifier *>(thing));
-    _items[thing->name()] = nid;
-    _indexes.push_back(nid);
+    _byName[thing->name()] = nid;
+    if ( nid->raw() == iUNDEF)
+        nid->_raw = _byRaw.size();
+    _byRaw[nid->_raw] = nid;
 
     return ;
 }
 
 bool NamedIdentifierRange::operator==(const ItemRange &range) const
 {
-    if ( _items.count() != range.count())
+    if ( _byName.size() != range.count())
         return false;
 
-    for(int i = 0; i < _indexes.count(); ++i) {
+    for(int i = 0; i < _byName.size(); ++i) {
         if (!contains(range.item(i)->name()))
             return false;
     }
@@ -170,13 +175,12 @@ bool NamedIdentifierRange::operator==(const ItemRange &range) const
 
 void NamedIdentifierRange::remove(const QString &name)
 {
-    SPDomainItem it = item(name);
-    if (!it)
-        return ;
-
-    _items.remove(name);
-    int ind = _indexes.indexOf(it.dynamicCast<NamedIdentifier>());
-    _indexes.remove(ind);
+    auto iter = _byName.find(name);
+    if ( iter == _byName.end())
+        return;
+    quint32 iraw = (*iter).second->raw();
+    _byName.erase(name);
+    _byRaw.erase(iraw);
 
     return ;
 }
@@ -190,33 +194,32 @@ QString NamedIdentifierRange::value(quint32 index) const
     return it->name();
 }
 
-SPDomainItem NamedIdentifierRange::item(quint32 index) const {
-    if ( index <= 0 || index >= count())
-        return SPDomainItem();
-
-    return _indexes[index];
+SPDomainItem NamedIdentifierRange::item(quint32 iraw) const {
+    auto iter = _byRaw.find(iraw);
+    if ( iter != _byRaw.end())
+        return (*iter).second;
+    return SPDomainItem();
 }
 
 SPDomainItem NamedIdentifierRange::item(const QString& nam) const{
-    auto iter = _items.find(nam);
-    if (iter != _items.end())
-        return iter.value();
+    auto iter = _byName.find(nam);
+    if (iter != _byName.end())
+        return (*iter).second;
 
     return SPDomainItem();
 }
 
 quint32 NamedIdentifierRange::count() const
 {
-    return _items.size();
+    return _byName.size();
 }
 
 Range *NamedIdentifierRange::clone() const
 {
     NamedIdentifierRange *nir = new NamedIdentifierRange();
-    for(const auto &iter: _items) {
-        nir->add( (*iter).clone());
+    for(auto kvp: _byName) {
+        nir->add( kvp.second->clone());
     }
-    NamedIdentifierRange pp;
     return nir;
 }
 
@@ -230,15 +233,15 @@ NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 
 QString NamedIdentifierRange::toString() const {
     QString res;
-    foreach(SPNamedIdentifier item, _indexes) {
+    for(auto item :_byName) {
         if (res!= "")
             res += ",";
-        res += item->name();
+        res += item.second->name();
     }
     return res;
 }
 
-bool NamedIdentifierRange::isContinous() const
+bool NamedIdentifierRange::isContinuous() const
 {
     return false;
 }
