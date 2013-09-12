@@ -17,7 +17,7 @@ public:
     virtual quint32 count() const = 0;
     virtual SPDomainItem item(quint32 index) const = 0;
     virtual SPDomainItem item(const QString &nam) const = 0;
-    virtual bool contains(const QString& name) const = 0;
+    virtual bool contains(const QString& name, bool inclusive = true) const = 0;
     virtual bool isValid() const = 0;
     virtual void add(DomainItem *item) = 0;
     virtual void remove(const QString& nm) = 0;

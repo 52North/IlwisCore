@@ -13,7 +13,7 @@ class KERNELSHARED_EXPORT IndexedIdentifierRange : public ItemRange
 public:
     IndexedIdentifierRange();
 
-    bool contains(const QString& name) const;
+    bool contains(const QString& name, bool inclusive = true) const;
     bool isValid() const;
     bool operator==(const IndexedIdentifierRange& range);
     void remove(const QString& nm);
@@ -26,10 +26,11 @@ public:
     QString value(quint32 index) const;
     quint32 count() const;
     void count(quint32 nr);
-    virtual bool isContinous() const;
+    virtual bool isContinuous() const;
     void interpolation(const QString&) {}
 
 
+    quint32 raw(const QString &item) const;
 private:
    SPIndexedIdentifier _start;
    quint32 _count;
@@ -41,7 +42,7 @@ public:
     NamedIdentifierRange();
     ~NamedIdentifierRange();
 
-    bool contains(const QString& name) const;
+    bool contains(const QString& name, bool inclusive = true) const;
     bool isValid() const;
     void add(DomainItem *item);
     void remove(const QString& item);
@@ -49,18 +50,18 @@ public:
     bool operator==(const ItemRange& range) const;
 
     QString value(quint32 index) const;
-    SPDomainItem item(quint32 index) const;
+    SPDomainItem item(quint32 iraw) const;
     SPDomainItem item(const QString &nam) const;
     quint32 count() const;
     Range *clone() const;
 
     QString toString() const;
-    virtual bool isContinous() const;
+    virtual bool isContinuous() const;
     void interpolation(const QString&) {}
 
 private:
-    QHash<QString, SPNamedIdentifier> _items;
-    QVector<SPNamedIdentifier> _indexes;
+    std::map<QString, SPNamedIdentifier> _byName;
+    std::map<quint32, SPNamedIdentifier> _byRaw;
 };
 
 class KERNELSHARED_EXPORT ThematicRange : public NamedIdentifierRange {
