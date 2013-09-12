@@ -20,6 +20,7 @@ public:
     Range *clone() const;
     SPDomainItem item(quint32 index) const;
     SPDomainItem item(const QString &nam) const;
+    std::vector<SPDomainItem> items() const;
     void add(DomainItem *item);
     QString toString() const;
 
@@ -31,6 +32,7 @@ public:
 
 
     quint32 raw(const QString &item) const;
+
 private:
    SPIndexedIdentifier _start;
    quint32 _count;
@@ -52,6 +54,7 @@ public:
     QString value(quint32 index) const;
     SPDomainItem item(quint32 iraw) const;
     SPDomainItem item(const QString &nam) const;
+    std::vector<SPDomainItem> items() const;
     quint32 count() const;
     Range *clone() const;
 

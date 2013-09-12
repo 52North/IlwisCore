@@ -106,6 +106,15 @@ QString IndexedIdentifierRange::toString() const
     return res;
 }
 
+std::vector<SPDomainItem> IndexedIdentifierRange::items() const
+{
+    std::vector<SPDomainItem> its;
+    for(quint32 i=0; i < _count; ++i) {
+        its.push_back(item(i));
+    }
+    return its;
+}
+
 void IndexedIdentifierRange::remove(const QString& item)
 {
 }
@@ -208,6 +217,16 @@ SPDomainItem NamedIdentifierRange::item(const QString& nam) const{
 
     return SPDomainItem();
 }
+
+std::vector<SPDomainItem> NamedIdentifierRange::items() const
+{
+    std::vector<SPDomainItem> its;
+    for(auto kvp : _byName) {
+        its.push_back(kvp.second);
+    }
+    return its;
+}
+
 
 quint32 NamedIdentifierRange::count() const
 {
