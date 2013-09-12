@@ -47,8 +47,9 @@ public:
      */
     virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
     virtual Range *clone() const = 0;
+    virtual bool contains(const QString& value, bool inclusive = true) const = 0;
 
-    virtual bool isContinous() const;
+    virtual bool isContinuous() const;
     void interpolation(const QString& ip);
     virtual QString interpolation() const;
 protected:

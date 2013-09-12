@@ -20,7 +20,7 @@ IlwisTypes Range::valueType() const {
     return _vt;
 }
 
-bool Range::isContinous() const
+bool Range::isContinuous() const
 {
     return _interpolation.size() != 0;
 }
