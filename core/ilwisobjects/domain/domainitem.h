@@ -5,14 +5,19 @@ namespace Ilwis {
 class DomainItem
 {
 public:
-    DomainItem() {}
+    DomainItem() : _raw(iUNDEF) {}
     virtual ~DomainItem() {}
 
     virtual bool isValid() const = 0;
-    virtual QString name(quint32 index= 0) const =0 ;
+    virtual QString name() const =0 ;
     virtual DomainItem *clone() const=0;
     virtual IlwisTypes valueType() const = 0;
-
+    virtual quint32 raw() const
+    {
+        return _raw;
+    }
+protected:
+     quint32 _raw;
 
 };
 
