@@ -111,6 +111,24 @@ public:
         _theme = theme;
     }
 
+    void setParent(const IDomain& dm){
+        if ( !hasType(dm->ilwisType(), itITEMDOMAIN) ) {
+            return;
+        }
+        if (!hasType(dm->valueType(), valueType())) {
+            return;
+        }
+//        IItemDomain dmitem = dm.get<ItemDomain>();
+//        if ( theme() != dmitem->theme())
+//            return;
+
+       // bool ok = range<ItemRange>()->alignDomainWith(dmitem);
+        //if (!ok)
+        //    return ;
+
+        Domain::setParent(dm);
+
+    }
 
     IlwisTypes ilwisType() const {
         return itITEMDOMAIN;
