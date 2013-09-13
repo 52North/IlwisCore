@@ -16,7 +16,7 @@
 
 using namespace Ilwis;
 
-DataDefinition::DataDefinition() : _coveragerange(0), _indexrange(0)
+DataDefinition::DataDefinition() : _layerRange(0), _indexrange(0)
 {
 }
 
@@ -25,13 +25,13 @@ DataDefinition::DataDefinition(const DataDefinition& def)
 {
     domain(def.domain());
     if ( !def.range().isNull())
-        _coveragerange.reset(def.range()->clone());
+        _layerRange.reset(def.range()->clone());
     else
-        _coveragerange.reset(0);
+        _layerRange.reset(0);
 
-    domain(def.domain(daINDEX), daINDEX);
-    if ( !def.range(daINDEX).isNull())
-        _indexrange.reset(def.range(daINDEX)->clone());
+    domain(def.domain(daLAYERINDEX), daLAYERINDEX);
+    if ( !def.range(daLAYERINDEX).isNull())
+        _indexrange.reset(def.range(daLAYERINDEX)->clone());
     else
         _indexrange.reset(0);
 }
@@ -40,7 +40,7 @@ DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
 {
     domain(dm);
     if ( rng)
-        _coveragerange.reset(rng);
+        _layerRange.reset(rng);
 }
 
 DataDefinition::~DataDefinition()
@@ -50,9 +50,9 @@ DataDefinition::~DataDefinition()
 DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
 {
     domain(def1.domain());
-    domain(def1.domain(daINDEX), daINDEX);
-    _coveragerange = def1.range(daCOVERAGE);
-    _indexrange = def1.range(daINDEX);
+    domain(def1.domain(daLAYERINDEX), daLAYERINDEX);
+    _layerRange = def1.range(daLAYER);
+    _indexrange = def1.range(daLAYERINDEX);
 
 
     return *this;
@@ -60,37 +60,37 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
 
 Ilwis::SPRange DataDefinition::range(DomainAxis da) const
 {
-    if ( da == daCOVERAGE){
-        return _coveragerange;
+    if ( da == daLAYER){
+        return _layerRange;
     }
     return _indexrange;
 }
 
 void DataDefinition::range(Range* vr, DomainAxis da)
 {
-    if ( da == daCOVERAGE)
-        _coveragerange = QSharedPointer<Range>(vr);
+    if ( da == daLAYER)
+        _layerRange = QSharedPointer<Range>(vr);
     else
         _indexrange = QSharedPointer<Range>(vr);
 }
 
 IDomain DataDefinition::domain(DomainAxis da) const
 {
-    if ( da == daCOVERAGE)
-        return _coveragedomain;
+    if ( da == daLAYER)
+        return _layerdomain;
     return _indexdomain;
 }
 
 void DataDefinition::domain(const IDomain &dom, DomainAxis da)
 {
-    if ( da == daCOVERAGE) {
-        _coveragedomain = dom;
-        if ( !_coveragedomain.isValid())
+    if ( da == daLAYER) {
+        _layerdomain = dom;
+        if ( !_layerdomain.isValid())
             return;
 
-        SPRange r = _coveragedomain->range<>();
+        SPRange r = _layerdomain->range<>();
         if ( r)
-            _coveragerange.reset(r->clone());
+            _layerRange.reset(r->clone());
     } else {
         _indexdomain = dom;
         if ( !_indexdomain.isValid())
@@ -107,7 +107,7 @@ void DataDefinition::domain(const IDomain &dom, DomainAxis da)
 
 bool DataDefinition::isValid() const
 {
-    return _coveragedomain.isValid();
+    return _layerdomain.isValid();
 }
 
 
@@ -133,25 +133,25 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
             dm.prepare("value");
             def = DataDefinition(dm, nrNew);
         }
-        bool def1Valid = def1.domain(daINDEX).isValid();
-        bool def2Valid = def2.domain(daINDEX).isValid();
+        bool def1Valid = def1.domain(daLAYERINDEX).isValid();
+        bool def2Valid = def2.domain(daLAYERINDEX).isValid();
         if ( !def2Valid && !def1Valid)
             return def;
         if ( def1Valid && def2Valid) {
-            SPNumericRange nr1 = def1.range(daINDEX).dynamicCast<NumericRange>();
-            SPNumericRange nr2 = def1.range(daINDEX).dynamicCast<NumericRange>();
+            SPNumericRange nr1 = def1.range(daLAYERINDEX).dynamicCast<NumericRange>();
+            SPNumericRange nr2 = def1.range(daLAYERINDEX).dynamicCast<NumericRange>();
             NumericRange *nrNew = NumericRange::merge(nr1, nr2);
-            if ( def1.domain(daINDEX)->name() == def1.domain(daINDEX)->name()) {
-                def.domain(def1.domain(daINDEX));
+            if ( def1.domain(daLAYERINDEX)->name() == def1.domain(daLAYERINDEX)->name()) {
+                def.domain(def1.domain(daLAYERINDEX));
             } else {
                 dm.prepare("value");
-                def.domain(dm, daINDEX);
+                def.domain(dm, daLAYERINDEX);
             }
-            def.range(nrNew, daINDEX);
+            def.range(nrNew, daLAYERINDEX);
         } else {
-            DataDefinition defTemp = def1.domain(daINDEX).isValid() ? def1 : def2;
-            def.range(defTemp.range(daINDEX)->clone(), daINDEX);
-            def.domain(defTemp.domain(daINDEX), daINDEX);
+            DataDefinition defTemp = def1.domain(daLAYERINDEX).isValid() ? def1 : def2;
+            def.range(defTemp.range(daLAYERINDEX)->clone(), daLAYERINDEX);
+            def.domain(defTemp.domain(daLAYERINDEX), daLAYERINDEX);
         }
         return def;
 

@@ -47,6 +47,10 @@ public:
     ESPIlwisObject get(quint64 id) const;
     bool contains(const QUrl &url, IlwisTypes type) const;
 
+#ifdef QT_DEBUG
+    quint32 lookupSize() const { return _lookup.size(); }
+
+#endif
 private:
     static MasterCatalog *_masterCatalog;
     quint64 _baseid;

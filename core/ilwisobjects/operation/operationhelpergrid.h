@@ -37,7 +37,7 @@ public:
                 PixelIterator iter(outputGC);
                 stats.calculate(iter, iter.end());
                 NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
-                outputGC->datadef().range(rng,DataDefinition::daCOVERAGE);
+                outputGC->datadef().range(rng,DataDefinition::daLAYER);
             }
         }
         return res;

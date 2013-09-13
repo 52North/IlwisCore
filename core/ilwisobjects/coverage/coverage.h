@@ -34,14 +34,14 @@ public:
     void envelope(const Box3D<double> &bnds);
 
     ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
-    void attributeTable(IlwisTypes type, const ITable& tbl, qint32 index=-1 );
+    void attributeTable(IlwisTypes type, const ITable& tbl, qint32 layerIndex=-1 );
     NumericStatistics& statistics();
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
-    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
+    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 layerIndex = -1);
     Resource resource(int mode=cmINPUT) const;
-    double index(const QString& value);
-    bool setIndexes(const ItemRange &items);
+    double layerIndex(const QString& value);
+    void setLayerIndexes(const ItemRange &items);
 
 protected:
     void copyTo(IlwisObject *obj) ;

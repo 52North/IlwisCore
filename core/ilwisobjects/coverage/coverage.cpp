@@ -119,9 +119,9 @@ Resource Coverage::resource(int mode) const
     return res;
 }
 
-double Coverage::index(const QString &value)
+double Coverage::layerIndex(const QString &value)
 {
-    DataDefinition::DomainAxis axis = DataDefinition::daINDEX;
+    DataDefinition::DomainAxis axis = DataDefinition::daLAYERINDEX;
     if (! datadef().range(axis)->contains(value))
         return rUNDEF;
 
@@ -154,7 +154,7 @@ double Coverage::index(const QString &value)
     return rUNDEF;
 }
 
-bool Coverage::setIndexes(const ItemRange &items)
+void Coverage::setLayerIndexes(const ItemRange &items)
 {
     _indexValues.resize(items.count());
     for(int i=0; i < items.count(); ++i) {

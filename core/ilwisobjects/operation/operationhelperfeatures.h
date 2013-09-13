@@ -65,7 +65,7 @@ public:
                     }
                     stats.calculate(vec.begin(), vec.end());
                     NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
-                    def.datadef().range(rng,DataDefinition::daCOVERAGE);
+                    def.datadef().range(rng,DataDefinition::daLAYER);
                 }
             }
         }
