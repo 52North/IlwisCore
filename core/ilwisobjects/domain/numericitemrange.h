@@ -26,6 +26,7 @@ protected:
     void addRange(const ItemRange &range);
 private:
     std::vector<SPNumericItem> _items;
+    bool validNumber(QString value) const;
 };
 
 typedef QSharedPointer<NumericItemRange> SPNumericItemRange;

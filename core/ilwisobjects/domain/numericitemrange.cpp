@@ -36,13 +36,27 @@ SPDomainItem NumericItemRange::item(quint32 index) const
        return SPDomainItem();
 }
 
-SPDomainItem NumericItemRange::item(const QString &name) const
+SPDomainItem NumericItemRange::item(const QString &item) const
 {
-    for(const SPNumericItem& it: _items) {
-        if ( it->name() == name)
-            return it;
+    QStringList parts = item.split(" ");
+    if ( parts.size() == 0 || parts.size() > 3){
+        ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), item);
+        return SPDomainItem();
     }
-    return SPDomainItem();
+    bool ok;
+    double v1 = index(parts[0].toDouble(&ok));
+    if ( v1 == rUNDEF  && ok) {
+        ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), item);
+        return SPDomainItem();
+    }
+    if (parts.size() > 1) {
+        double v2 = index(parts[1].toDouble(&ok));
+        if ( !ok || ((int)v1 - (int)v2 != 0)) {
+            ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), item);
+            return SPDomainItem();
+        }
+    }
+    return _items[(int)v1];
 }
 
 SPDomainItem NumericItemRange::itemByOrder(quint32 index) const
@@ -75,13 +89,32 @@ double NumericItemRange::index(double v) const
     return rUNDEF;
 }
 
+bool NumericItemRange::validNumber(QString value) const{
+    bool oknumber;
+    double v = value.toDouble(&oknumber);
+    if (!oknumber) {
+        return ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), value);
+    }
+
+    return index(v) != rUNDEF;
+
+}
+
 bool NumericItemRange::contains(const QString &name, bool ) const
 {
-    for(const SPNumericItem& it: _items) {
-        if ( it->name() == name)
-            return true;
+    QStringList items = name.split(";");
+    for(const QString& item : items) {
+        QStringList parts = item.split(" ");
+        if ( parts.size() == 0 || parts.size() > 3){
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), name);
+        }
+        bool ok = validNumber(parts[0]);
+        if (parts.size() > 1)
+            ok &= validNumber(parts[1]);
+        if (!ok)
+            return false;
     }
-    return false;
+    return true;
 }
 
 bool NumericItemRange::isValid() const
@@ -108,8 +141,10 @@ void NumericItemRange::add(DomainItem *item)
             return;
         }
     }
-    if ( _items.size() == 0) // no overlapping items allowed; so the only case that is legal here is the first
+    if ( _items.size() == 0) { // no overlapping items allowed; so the only case that is legal here is the first
+        nitem->_raw = 0;
         _items.push_back(nitem);
+    }
 
 }
 
