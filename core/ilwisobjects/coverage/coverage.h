@@ -41,7 +41,7 @@ public:
     QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 index = -1);
     Resource resource(int mode=cmINPUT) const;
     double index(const QString& value);
-    bool setIndexes(const std::vector<QString> &items);
+    bool setIndexes(const ItemRange &items);
 
 protected:
     void copyTo(IlwisObject *obj) ;

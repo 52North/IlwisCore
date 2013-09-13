@@ -132,32 +132,34 @@ double Coverage::index(const QString &value)
             return v;
         return (int)v;
     }
-    IlwisTypes valueType = datadef().domain(axis)->valueType();
     if ( hasType(datadef().domain(axis)->ilwisType(), itITEMDOMAIN)) {
+
         SPItemRange rng = datadef().domain(axis)->range<ItemRange>();
         if ( !rng->isValid())
             return rUNDEF;
-        SPDomainItem domItem = rng->item(value);
+        IlwisTypes valueType = datadef().domain(axis)->valueType();
+        if ( hasType(valueType, itNUMERICITEM )) {
+            SPNumericItemRange rng = datadef().domain(axis)->range<NumericItemRange>();
+            return rng->index(value.toDouble());
+        }
 
-        for(quint32 idxAxis : _indexValues) {
-            if ( idxAxis == domItem->raw())
-                return idxAxis;
-            if ( hasType(valueType, itNUMERICITEM )) {
-                SPNumericItemRange rng = datadef().domain()->range<NumericItemRange>();
-                return rng->index(value.toDouble());
-            }
+        SPDomainItem domItem = rng->item(value);
+        int idx = 0;
+        for(quint32 rawAxis : _indexValues) {
+             if ( rawAxis == domItem->raw())
+                return idx;
+             ++idx;
         }
     }
     return rUNDEF;
 }
 
-bool Coverage::setIndexes(const std::vector<QString> &items)
+bool Coverage::setIndexes(const ItemRange &items)
 {
-    DataDefinition::DomainAxis axis = DataDefinition::daINDEX;
-    _indexValues.resize(items.size());
-    for(int i=0; i < items.size(); ++i) {
-//        SPDomainItem domItem = _datadef().domain(axis);
-//        _indexValues[i] = items[i]->raw();
+    _indexValues.resize(items.count());
+    for(int i=0; i < items.count(); ++i) {
+        SPDomainItem ditem = items.itemByOrder(i);
+        _indexValues[i] = ditem.isNull() ? iUNDEF : ditem->raw();
     }
 }
 
