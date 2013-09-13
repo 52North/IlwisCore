@@ -276,6 +276,7 @@ ThematicRange::ThematicRange()
 
 ThematicRange &ThematicRange::operator<<(const QString &itemdef)
 {
-    add(new ThematicItem(itemdef));
+    QStringList parts = itemdef.split(" ");
+    add(new ThematicItem(parts));
     return *this;
 }
