@@ -64,7 +64,7 @@ quint64 RasValue::createMetadata()
     res.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
     res.addProperty("description",TR("returns the value at pixel location x,y (optional z)"));
     res.addProperty("inparameters","3|4");
-    res.addProperty("pin_1_type", itGRID);
+    res.addProperty("pin_1_type", itRASTER);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with any domain"));
     res.addProperty("pin_2_type", itINTEGER);

@@ -49,7 +49,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if ( res && ctx != 0) {
             QVariant value;
             value.setValue<IGridCoverage>(_outputGC);
-            ctx->addOutput(symTable,value,_outputGC->name(), itGRID,_outputGC->resource() );
+            ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
         }
     } else {
         double v = _unaryFun(_number);
@@ -77,7 +77,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         }
         return sPREPARED;
 
-    } else if ( ptype == itGRID) {
+    } else if ( ptype == itRASTER) {
         QString gc = _expression.parm(0).value();
 
         if (!_inputGC.prepare(gc)) {
@@ -117,13 +117,13 @@ Resource UnaryMath::populateMetadata(const QString& item, const QString& longnam
     res.addProperty("longname",longname);
     res.addProperty("namespace","ilwis");
     res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itGRID);
+    res.addProperty("pin_1_type", itRASTER);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_domain","value");
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_domain",outputDom);
     res.prepare();
     QString url = res.url().toString();

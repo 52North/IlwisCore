@@ -12,7 +12,7 @@ OperationHelperRaster::OperationHelperRaster()
 
 Box3D<qint32> OperationHelperRaster::initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC, const Parameter& parm, quint64 what)
 {
-    Resource resource(itGRID);
+    Resource resource(itRASTER);
     Size sz = inputGC->size();
     Box3D<qint32> box(sz);
 
@@ -46,10 +46,10 @@ Box3D<qint32> OperationHelperRaster::initialize(const IGridCoverage &inputGC, IG
 
     outputGC.prepare(resource);
     if ( what & itTABLE) {
-        if ( inputGC->attributeTable(itGRID).isValid())    {
+        if ( inputGC->attributeTable(itRASTER).isValid())    {
             if ( inputGC->datadef().domain() == outputGC->datadef().domain()) {
                 if ( outputGC.isValid())
-                    outputGC->attributeTable(itGRID,inputGC->attributeTable(itGRID));
+                    outputGC->attributeTable(itRASTER,inputGC->attributeTable(itRASTER));
             }
         }
     }
@@ -61,7 +61,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
 {
     Resource resource(tp);
     if (inputObject->ilwisType() & itCOVERAGE) {
-        if (inputObject->ilwisType() == itGRID) {
+        if (inputObject->ilwisType() == itRASTER) {
             IGridCoverage gcInput = inputObject.get<GridCoverage>();
             if ( what & itGRIDSIZE) {
                 Size sz = gcInput->size();

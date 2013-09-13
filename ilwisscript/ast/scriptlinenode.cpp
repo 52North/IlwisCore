@@ -24,7 +24,7 @@ bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
         if ( node->nodeType() == "formatnode") {
             Formatter *fnode = static_cast<Formatter *>(node.data());
             if ( fnode->dataType() == "gridcoverage")
-                ScriptNode::setActiveFormat(itGRID, node)   ;
+                ScriptNode::setActiveFormat(itRASTER, node)   ;
 
         }
         if (!node->evaluate(symbols, scope)) {

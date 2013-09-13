@@ -57,9 +57,9 @@ ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
         ft = type & itPOLYGON;
         if ( ft && _attTables[index].contains(ft))
             return _attTables[index][itPOLYGON];
-        ft = type & itGRID;
+        ft = type & itRASTER;
         if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itGRID];
+            return _attTables[index][itRASTER];
     }
     return ITable();
 }
@@ -76,8 +76,8 @@ void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
             _attTables[index][itLINE] = tbl;
         if ( (type & itPOLYGON) != 0 )
             _attTables[index][itPOLYGON] = tbl;
-        if ( (type & itGRID) != 0 )
-            _attTables[index][itGRID] = tbl;
+        if ( (type & itRASTER) != 0 )
+            _attTables[index][itRASTER] = tbl;
     }
 }
 

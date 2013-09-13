@@ -74,7 +74,7 @@ QString AssignmentNode::nodeType() const
 
 IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
     IlwisTypes tp = sym._type;
-    if ( tp & itGRID)
+    if ( tp & itRASTER)
             return sym._var.value<Ilwis::IGridCoverage>().get<IlwisObject>();
     if ( tp & itFEATURECOVERAGE)
             return sym._var.value<Ilwis::IFeatureCoverage>().get<IlwisObject>();
@@ -88,7 +88,7 @@ void AssignmentNode::getFormat(ASTNode *node, QString& format, QString& fnamespa
     fnamespace = fnode->fnamespace();
 
     if ( format == "" || format == sUNDEF) {
-        Formatter *fnode = ScriptNode::activeFormat(itGRID);
+        Formatter *fnode = ScriptNode::activeFormat(itRASTER);
         if ( fnode) {
             format = fnode->format();
             fnamespace = fnode->fnamespace();
@@ -134,7 +134,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
         }
         if (  tp & itCOVERAGE) {
             bool ok;
-            if ( tp & itGRID) {
+            if ( tp & itRASTER) {
                 ok = copyObject<GridCoverage>(sym, result,symbols);
             }
             else

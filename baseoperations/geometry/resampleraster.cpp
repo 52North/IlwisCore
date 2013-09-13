@@ -53,7 +53,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itGRID, outputGC->resource() );
+        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
 }
@@ -63,11 +63,11 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     QString gc = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    if (!_inputObj.prepare(gc, itGRID)) {
+    if (!_inputObj.prepare(gc, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-    _outputObj = OperationHelperRaster::initialize(_inputObj,itGRID, itDOMAIN);
+    _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, itDOMAIN);
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;
@@ -108,7 +108,7 @@ quint64 ResampleRaster::createMetadata()
     res.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
     res.addProperty("description",TR("translates a gridcoverage from one geometry (coordinatesystem+georeference) to another"));
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRID);
+    res.addProperty("pin_1_type", itRASTER);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));
     res.addProperty("pin_2_type", itGEOREF);
@@ -118,7 +118,7 @@ quint64 ResampleRaster::createMetadata()
     res.addProperty("pin_3_name", TR("Resampling method"));
     res.addProperty("pin_3_desc",TR("The method used to aggregate pixels from the input map in the geometry of the output map"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_desc",TR("output gridcoverage with the domain of the input map"));
     res.prepare();

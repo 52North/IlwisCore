@@ -27,7 +27,7 @@ bool BinaryMath::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IGridCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(), itGRID,_outputGC->resource() );
+        ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
     }
     return _outputGC.isValid();
 }
@@ -256,11 +256,11 @@ OperationImplementation::State BinaryMath::prepare(ExecutionContext *,const Symb
     else
         _operator = otMULT;
 
-    if ( (ptype1 == itGRID && hasType(ptype2,itNUMBER)) || (ptype2 == itGRID && hasType(ptype1,itNUMBER)) ) {
+    if ( (ptype1 == itRASTER && hasType(ptype2,itNUMBER)) || (ptype2 == itRASTER && hasType(ptype1,itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
-    } else if ( ptype1 & ptype2 & itGRID ) {
+    } else if ( ptype1 & ptype2 & itRASTER ) {
         if(!prepareCoverageCoverage())
             return sPREPAREFAILED;
     }
@@ -277,11 +277,11 @@ quint64 BinaryMath::createMetadata()
     res.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
     res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itGRID | itNUMBER);
+    res.addProperty("pin_1_type", itRASTER | itNUMBER);
     res.addProperty("pin_1_name", TR("input gridcoverage or number"));
     res.addProperty("pin_1_domain","value");
     res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical domain or number"));
-    res.addProperty("pin_2_type", itGRID | itNUMBER);
+    res.addProperty("pin_2_type", itRASTER | itNUMBER);
     res.addProperty("pin_2_name", TR("input gridcoverage or number"));
     res.addProperty("pin_2_domain","value");
     res.addProperty("pin_2_desc",TR("input gridcoverage with a numerical domain or number"));
@@ -290,7 +290,7 @@ quint64 BinaryMath::createMetadata()
     res.addProperty("pin_3_domain","string");
     res.addProperty("pin_3_desc",TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_domain","value");
     res.addProperty("pout_1_desc",TR("output gridcoverage with a numerical domain"));

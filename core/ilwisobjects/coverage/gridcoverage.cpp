@@ -46,7 +46,7 @@ void GridCoverage::georeference(const IGeoReference &grf)
 
 IlwisTypes GridCoverage::ilwisType() const
 {
-    return itGRID;
+    return itRASTER;
 }
 
 GridCoverage *GridCoverage::copy()
@@ -76,7 +76,7 @@ IGridCoverage GridCoverage::get(quint32 index1, quint32 index2)
 {
     IGridCoverage gcovParent;
     gcovParent.set(this);
-    IGridCoverage gcov = OperationHelperRaster::initialize(gcovParent,itGRID, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+    IGridCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
     gcov->size(Size(size().xsize(), size().ysize()));
     gcov->_grid.reset(gcov->_grid->clone(index1, index2));
 

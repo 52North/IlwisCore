@@ -77,8 +77,8 @@ const quint64 itUNKNOWN = 0; //0
 const quint64 itPOINT =  1; //1
 const quint64 itLINE =  2 * itPOINT; //2
 const quint64 itPOLYGON = 2 * itLINE; //4
-const quint64 itGRID = 2 * itPOLYGON; //8
-const quint64 itCOVERAGELIST = 2 * itGRID; //16
+const quint64 itRASTER = 2 * itPOLYGON; //8
+const quint64 itCOVERAGELIST = 2 * itRASTER; //16
 const quint64 itOBJECTCOLLECTION =  2 * itCOVERAGELIST; //32
 const quint64 itNUMERICDOMAIN =  2 * itOBJECTCOLLECTION; //64
 const quint64 itITEMDOMAIN = 2 * itNUMERICDOMAIN; //128
@@ -128,7 +128,7 @@ const quint64 itTIMEITEM = 2 * itNUMERICITEM;
 const quint64 itCOLOR = 2 * itTIMEITEM;
 
 
-const quint64 itCOVERAGE = itPOINT | itGRID | itPOLYGON | itLINE | itCOVERAGELIST;
+const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE | itCOVERAGELIST;
 const quint64 itFEATURECOVERAGE = itPOINT | itPOLYGON | itLINE;
 const quint64 itCOORDSYSTEM = itCONVENTIONALCOORDSYSTEM | itORTHOCOORDSYSTEM;
 const quint64 itTABLE = itFLATTABLE | itDATABASETABLE;

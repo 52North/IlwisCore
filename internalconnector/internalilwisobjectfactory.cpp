@@ -71,7 +71,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
         return createDomain(item);
     } else if ( item.ilwisType() & itCOORDSYSTEM) {
         return createCsyFromCode(item);
-    } else if ( item.ilwisType() & itGRID) {
+    } else if ( item.ilwisType() & itRASTER) {
         return createGridCoverage(item);
     } else if ( item.ilwisType() & itTABLE) {
         return createTable(item);
@@ -117,7 +117,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
     }
     case itTEXTDOMAIN:
         return new TextDomain();
-    case itGRID:
+    case itRASTER:
         return new GridCoverage();
     case itTABLE:
         return new FlatTable();
@@ -154,7 +154,7 @@ bool InternalIlwisObjectFactory::canUse(const Resource& item) const
         return true;
     } else if ( item.ilwisType() & itCOORDSYSTEM) {
         return true;
-    } else if ( item.ilwisType() & itGRID) {
+    } else if ( item.ilwisType() & itRASTER) {
         return true;
     } else if ( item.ilwisType() & itTABLE) {
         return true;

@@ -78,7 +78,7 @@ quint64 Coord2Pixel::createMetadata()
     res.addProperty("syntax","Coord2Pixel(gridcoverage|georef,Coordinate)");
     res.addProperty("description",TR("translates a coordinate to a pixel location based on the supplied georeference"));
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itGRID | itGEOREF);
+    res.addProperty("pin_1_type", itRASTER | itGEOREF);
     res.addProperty("pin_1_name", TR("input gridcoverage or georeference"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain or georefence"));
     res.addProperty("pin_2_type", itCOORD3D);

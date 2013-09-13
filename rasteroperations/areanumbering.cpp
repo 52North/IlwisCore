@@ -56,7 +56,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itGRID, outputGC->resource() );
+        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
 }
@@ -67,7 +67,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     QString outputName = _expression.parm(0,false).value();
     int copylist = itCOORDSYSTEM | itGEOREF;
 
-    if (!_inputObj.prepare(gc, itGRID)) {
+    if (!_inputObj.prepare(gc, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
@@ -77,7 +77,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
         ERROR2(ERR_ILLEGAL_VALUE_2, "parameter value", "connected number");
         return sPREPAREFAILED;
     }
-     _outputObj = OperationHelperRaster::initialize(_inputObj,itGRID, copylist);
+     _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, copylist);
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;
@@ -112,14 +112,14 @@ quint64 AreaNumbering::createMetadata()
     res.addProperty("syntax","areaNumbering(inputgridcoverage,connected (4|8))");
     res.addProperty("description",TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itGRID);
+    res.addProperty("pin_1_type", itRASTER);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain item, boolean or identifier domain"));
     res.addProperty("pin_2_type", itUINT8);
     res.addProperty("pin_2_name", TR("Connectivity"));
     res.addProperty("pin_2_desc",TR("Connected cells, maybe 4 or 8"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_desc",TR("output gridcoverage with the identifier domain"));
     res.prepare();

@@ -63,7 +63,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IGridCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itGRID, outputGC->resource() );
+        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
 }
@@ -94,7 +94,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     QString outputName = _expression.parm(0,false).value();
     int copylist = itDOMAIN | itCOORDSYSTEM;
 
-    if (!_inputObj.prepare(gc, itGRID)) {
+    if (!_inputObj.prepare(gc, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
@@ -134,7 +134,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( !_grouped)
         copylist |= itGEOREF;
 
-    _outputObj = OperationHelperRaster::initialize(_inputObj,itGRID, copylist);
+    _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, copylist);
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
         return sPREPAREFAILED;
@@ -187,7 +187,7 @@ quint64 AggregateRaster::createMetadata()
     res.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
     res.addProperty("description",TR("generates a gridcoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation "));
     res.addProperty("inparameters","4|5");
-    res.addProperty("pin_1_type", itGRID);
+    res.addProperty("pin_1_type", itRASTER);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));
     res.addProperty("pin_2_type", itSTRING);
@@ -203,7 +203,7 @@ quint64 AggregateRaster::createMetadata()
     res.addProperty("pin_5_name", TR("georeference name"));
     res.addProperty("pin_5_desc",TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itGRID);
+    res.addProperty("pout_1_type", itRASTER);
     res.addProperty("pout_1_name", TR("output gridcoverage"));
     res.addProperty("pout_1_desc",TR("output gridcoverage with the domain of the input map"));
     res.prepare();
