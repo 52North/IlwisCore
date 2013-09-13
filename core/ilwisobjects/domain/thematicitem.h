@@ -10,7 +10,8 @@ class KERNELSHARED_EXPORT ThematicItem : public NamedIdentifier
 public:
 
     ThematicItem();
-    ThematicItem(const QString &name, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
+    //ThematicItem(const QString &name, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
+    ThematicItem(const QStringList &parts);
 
     QString description() const;
     void setDescription(const QString &desc);

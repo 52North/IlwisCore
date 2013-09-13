@@ -22,8 +22,21 @@ ThematicItem::ThematicItem()
     setDescription(sUNDEF);
 }
 
-ThematicItem::ThematicItem(const QString &nm, const QString &cde, const QString &descr) : NamedIdentifier(nm),_description(descr), _code(cde)
-{
+//ThematicItem::ThematicItem(const QString &nm, const QString &cde, const QString &descr) : NamedIdentifier(nm),_description(descr), _code(cde)
+//{
+//}
+
+ThematicItem::ThematicItem(const QStringList& parts) {
+    if ( parts.size() > 0) {
+        setName(parts[0]);
+        if ( parts.size() > 1)
+            setCode(parts[1]);
+        if ( parts.size() == 3) {
+            QString desc = parts[2];
+            desc.remove("\"");
+            setDescription(desc);
+        }
+    }
 }
 
 QString ThematicItem::description() const
@@ -43,7 +56,7 @@ void ThematicItem::setCode(const QString &code)
 
 DomainItem *ThematicItem::clone() const
 {
-    return new ThematicItem(name(), _code, _description);
+    return new ThematicItem({name(), _code, _description});
 }
 
 IlwisTypes ThematicItem::valueTypeS()
