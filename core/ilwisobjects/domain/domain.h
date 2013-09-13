@@ -58,7 +58,7 @@ public:
     compared to this one as the parent domain ( the generic numeric domain) will accept all values.
      * \sets the parent domain; it may be set to invalid
      */
-    void setParent(const IDomain& dm);
+    virtual void setParent(const IDomain& dm);
 
     /*!
      translates the type of a variant to a compatible ilwis type
