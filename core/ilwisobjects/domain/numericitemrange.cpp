@@ -227,3 +227,5 @@ void NumericItemRange::addRange(const ItemRange &range)
     _interpolation = static_cast<const NumericItemRange&>(range).interpolation();
 }
 
+
+
