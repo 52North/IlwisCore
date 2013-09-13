@@ -23,9 +23,9 @@ private:
     bool setOutput(ExecutionContext *ctx, SymbolTable& symTable);
 
     bool _coveragecoverage;
-    IGridCoverage _inputGC1;
-    IGridCoverage _inputGC2;
-    IGridCoverage _outputGC;
+    IRasterCoverage _inputGC1;
+    IRasterCoverage _inputGC2;
+    IRasterCoverage _outputGC;
     double _number;
     Box3D<qint32> _box;
     OperatorType _operator;

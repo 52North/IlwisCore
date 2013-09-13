@@ -48,7 +48,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
         if ( res && ctx != 0) {
             QVariant value;
-            value.setValue<IGridCoverage>(_outputGC);
+            value.setValue<IRasterCoverage>(_outputGC);
             ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
         }
     } else {

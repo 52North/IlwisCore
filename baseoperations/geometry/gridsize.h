@@ -14,7 +14,7 @@ public:
     static quint64 createMetadata();
     OperationImplementation::State prepare(ExecutionContext *, const SymbolTable &);
 private:
-    IGridCoverage _inputGC;
+    IRasterCoverage _inputGC;
     QString _dim;
 
 };

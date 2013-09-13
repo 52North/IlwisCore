@@ -33,7 +33,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
 
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
@@ -46,7 +46,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                                              (box.max_corner().y() + 1) * groupSize(1) - 1,
                                              (box.max_corner().z() + 1) * groupSize(2) - 1) );
 
-        BlockIterator blockIter(_inputObj.get<GridCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+        BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
         while(iterOut != iterOut.end()) {
             GridBlock& block = *blockIter;
@@ -62,7 +62,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(outputGC);
+        value.setValue<IRasterCoverage>(outputGC);
         ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
@@ -144,8 +144,8 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( (index = outputName.lastIndexOf(".")) != -1) {
         outputBaseName = outputName.left(index);
     }
-    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
 

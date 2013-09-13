@@ -31,8 +31,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
-    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputGC,box);
         GridInterpolator interpolator(inputGC, _method);
@@ -52,7 +52,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(outputGC);
+        value.setValue<IRasterCoverage>(outputGC);
         ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
@@ -77,7 +77,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( !grf.isValid()) {
         return sPREPAREFAILED;
     }
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
     outputGC->georeference(grf);
     Box2Dd env = grf->pixel2Coord(grf->size());
     outputGC->envelope(env);

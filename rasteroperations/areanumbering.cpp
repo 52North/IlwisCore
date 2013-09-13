@@ -36,12 +36,12 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
 
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputGC, box);
-        PixelIterator iterIn(_inputObj.get<GridCoverage>());
+        PixelIterator iterIn(_inputObj.get<RasterCoverage>());
         AreaNumberer numberer(box.xlength(),_connectivity);
         while(iterOut != iterOut.end()) {
             double v = numberer.value(iterIn) ;
@@ -55,7 +55,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(outputGC);
+        value.setValue<IRasterCoverage>(outputGC);
         ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
     }
     return res;
@@ -83,7 +83,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
         return sPREPAREFAILED;
     }
 
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
 

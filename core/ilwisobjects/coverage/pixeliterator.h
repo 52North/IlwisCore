@@ -27,7 +27,7 @@ public:
      */
     bool isValid() const;
     PixelIterator();
-    PixelIterator(IGridCoverage raster, const Box3D<>& box=Box3D<>());
+    PixelIterator(IRasterCoverage raster, const Box3D<>& box=Box3D<>());
     PixelIterator(const PixelIterator& iter);
 
     PixelIterator& operator=(const PixelIterator& iter);
@@ -116,7 +116,7 @@ protected:
 
     void copy(const PixelIterator& iter);
 
-    IGridCoverage _raster;
+    IRasterCoverage _raster;
     Grid *_grid;
     Box3D<> _box;
     qint32 _x = 0;

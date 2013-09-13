@@ -33,8 +33,8 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
-    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
 
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
         Box3D<qint32> inpbox = box.size();
@@ -73,7 +73,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(outputGC);
+        value.setValue<IRasterCoverage>(outputGC);
         ctx->addOutput(symTable, value, outputGC->name(), itRASTER,outputGC->resource());
     }
     return res;
@@ -99,7 +99,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
         return sPREPAREFAILED;
     }
-    IGridCoverage inputGC = _inputObj.get<GridCoverage>();
+    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
     quint64 copylist = itCOORDSYSTEM;
 
 
@@ -154,7 +154,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-     IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+     IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
          outputGC->datadef() = _attribColumn != "" ? inputGC->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef()
                                                    : outputGC->datadef() = inputGC->datadef();

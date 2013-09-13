@@ -9,10 +9,10 @@ class KERNELSHARED_EXPORT OperationHelperRaster
 {
 public:
     OperationHelperRaster();
-    static Box3D<qint32> initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC, const Ilwis::Parameter &parm, quint64 what);
-    static int subdivideTasks(ExecutionContext *ctx,const IGridCoverage& gcov, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
+    static Box3D<qint32> initialize(const IRasterCoverage &inputGC, IRasterCoverage &outputGC, const Ilwis::Parameter &parm, quint64 what);
+    static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& gcov, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
 
-    template<typename T> static bool execute(ExecutionContext* ctx, T func, IGridCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
         std::vector<Box3D<qint32>> boxes;
 
         int cores = OperationHelperRaster::subdivideTasks(ctx,outputGC,bounds, boxes);

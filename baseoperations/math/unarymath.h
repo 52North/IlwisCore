@@ -19,8 +19,8 @@ protected:
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *, const Ilwis::SymbolTable &);
     bool execute( ExecutionContext *ctx, SymbolTable& symTable);
 
-    IGridCoverage _inputGC;
-    IGridCoverage _outputGC;
+    IRasterCoverage _inputGC;
+    IRasterCoverage _outputGC;
     Box3D<qint32> _box;
     bool _spatialCase;
     double _number;

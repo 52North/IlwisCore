@@ -15,7 +15,7 @@ public:
 
     static quint64 createMetadata();
 private:
-    IGridCoverage _inputGC;
+    IRasterCoverage _inputGC;
     Voxel _vox;
 
 };

@@ -75,7 +75,7 @@ QString AssignmentNode::nodeType() const
 IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
     IlwisTypes tp = sym._type;
     if ( tp & itRASTER)
-            return sym._var.value<Ilwis::IGridCoverage>().get<IlwisObject>();
+            return sym._var.value<Ilwis::IRasterCoverage>().get<IlwisObject>();
     if ( tp & itFEATURECOVERAGE)
             return sym._var.value<Ilwis::IFeatureCoverage>().get<IlwisObject>();
     return IIlwisObject();
@@ -135,7 +135,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
         if (  tp & itCOVERAGE) {
             bool ok;
             if ( tp & itRASTER) {
-                ok = copyObject<GridCoverage>(sym, result,symbols);
+                ok = copyObject<RasterCoverage>(sym, result,symbols);
             }
             else
                 ok = copyObject<FeatureCoverage>(sym, result,symbols);

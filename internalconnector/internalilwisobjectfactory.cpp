@@ -118,7 +118,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
     case itTEXTDOMAIN:
         return new TextDomain();
     case itRASTER:
-        return new GridCoverage();
+        return new RasterCoverage();
     case itTABLE:
         return new FlatTable();
     case itGEOREF:
@@ -226,7 +226,7 @@ IlwisObject *InternalIlwisObjectFactory::createGridCoverage(const Resource& item
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
     }
-    GridCoverage *gcoverage = new GridCoverage(item);
+    RasterCoverage *gcoverage = new RasterCoverage(item);
     if (!createCoverage(item, gcoverage))
         return 0;
 

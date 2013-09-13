@@ -37,9 +37,9 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         bool isCoverage1 = _coverages[0].isValid();
         bool isCoverage2 = _coverages[1].isValid();
         if ( isCoverage1)
-            iter1 = PixelIterator(_coverages[0].get<GridCoverage>(), box);
+            iter1 = PixelIterator(_coverages[0].get<RasterCoverage>(), box);
         if ( isCoverage2)
-            iter2 = PixelIterator(_coverages[1].get<GridCoverage>(), box);
+            iter2 = PixelIterator(_coverages[1].get<RasterCoverage>(), box);
 
         while(iterOut != iterOut.end()) {
             double v1,v2;
@@ -69,7 +69,7 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
+        value.setValue<IRasterCoverage>(_outputGC);
         ctx->addOutput(symTable,value,_outputGC->name(),itRASTER,_outputGC->resource());
     }
     return res;

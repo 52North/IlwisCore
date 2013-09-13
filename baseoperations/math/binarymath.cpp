@@ -26,7 +26,7 @@ BinaryMath::BinaryMath(quint64 metaid,const Ilwis::OperationExpression &expr) : 
 bool BinaryMath::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
-        value.setValue<IGridCoverage>(_outputGC);
+        value.setValue<IRasterCoverage>(_outputGC);
         ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
     }
     return _outputGC.isValid();

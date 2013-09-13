@@ -4,7 +4,7 @@
 
 using namespace Ilwis;
 
-GridInterpolator::GridInterpolator(const IGridCoverage& gcov, int method) : _gcoverage(gcov), _method(method) {
+GridInterpolator::GridInterpolator(const IRasterCoverage& gcov, int method) : _gcoverage(gcov), _method(method) {
     _grid = _gcoverage->grid();
     _grf = _gcoverage->georeference();
     _valid = _grf.isValid() && _grid != 0;

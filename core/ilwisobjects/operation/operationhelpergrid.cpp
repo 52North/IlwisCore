@@ -10,7 +10,7 @@ OperationHelperRaster::OperationHelperRaster()
 {
 }
 
-Box3D<qint32> OperationHelperRaster::initialize(const IGridCoverage &inputGC, IGridCoverage &outputGC, const Parameter& parm, quint64 what)
+Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputGC, IRasterCoverage &outputGC, const Parameter& parm, quint64 what)
 {
     Resource resource(itRASTER);
     Size sz = inputGC->size();
@@ -62,7 +62,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     Resource resource(tp);
     if (inputObject->ilwisType() & itCOVERAGE) {
         if (inputObject->ilwisType() == itRASTER) {
-            IGridCoverage gcInput = inputObject.get<GridCoverage>();
+            IRasterCoverage gcInput = inputObject.get<RasterCoverage>();
             if ( what & itGRIDSIZE) {
                 Size sz = gcInput->size();
                 Box3D<qint32> box(sz);
@@ -84,7 +84,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     return obj;
 }
 
-int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IGridCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
+int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& gcov, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
 {
     if ( !gcov.isValid() || gcov->size().isNull() || gcov->size().ysize() == 0) {
         return ERROR1(ERR_NO_INITIALIZED_1, "Grid size");

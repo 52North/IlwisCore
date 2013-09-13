@@ -14,20 +14,20 @@
 
 using namespace Ilwis;
 
-IndexSlicer::IndexSlicer(const IGridCoverage &cov) : _raster(cov)
+IndexSlicer::IndexSlicer(const IRasterCoverage &cov) : _raster(cov)
 {
 }
 
-void IndexSlicer::grid(const IGridCoverage &cov)
+void IndexSlicer::grid(const IRasterCoverage &cov)
 {
     _raster = cov;
 }
 
-IGridCoverage IndexSlicer::operator()(const QString &item)
+IRasterCoverage IndexSlicer::operator()(const QString &item)
 {
     IDomain indexDomain = _raster->datadef().domain(DataDefinition::daLAYERINDEX);
     if (!indexDomain.isValid())
-        return IGridCoverage();
+        return IRasterCoverage();
     if ( hasType(indexDomain->valueType(), itNUMERIC)) {
 
         QString basename = makeBaseName();
@@ -40,16 +40,16 @@ IGridCoverage IndexSlicer::operator()(const QString &item)
         }
         if ( index == rUNDEF){
             ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("item boundary"), TR("Index slicing"));
-            return IGridCoverage();
+            return IRasterCoverage();
         }
         QString cname;
         QString expr = makeExpression(index, basename, cname);
 
-        IGridCoverage mp = Operation::calculate<IGridCoverage>(cname,expr);
+        IRasterCoverage mp = Operation::calculate<IRasterCoverage>(cname,expr);
         if ( mp.isValid())
             return mp;
     }
-    return IGridCoverage();
+    return IRasterCoverage();
 }
 
 QString IndexSlicer::makeBaseName() const {

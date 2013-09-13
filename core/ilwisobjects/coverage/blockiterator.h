@@ -75,7 +75,7 @@ class KERNELSHARED_EXPORT BlockIterator : public PixelIterator {
 public:
     friend class GridBlock;
 
-    BlockIterator( IGridCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>());
+    BlockIterator( IRasterCoverage raster, const Size& sz, const Box3D<>& box=Box3D<>());
 
     GridBlock& operator*() {
         return _block;

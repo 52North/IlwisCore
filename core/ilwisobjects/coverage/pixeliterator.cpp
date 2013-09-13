@@ -14,7 +14,7 @@ PixelIterator::PixelIterator() : _localOffset(0), _currentBlock(0), _flow(fXYZ),
 
 }
 
-PixelIterator::PixelIterator(IGridCoverage raster, const Box3D<>& box) :
+PixelIterator::PixelIterator(IRasterCoverage raster, const Box3D<>& box) :
     _raster(raster),
     _box(box),
     _localOffset(0),

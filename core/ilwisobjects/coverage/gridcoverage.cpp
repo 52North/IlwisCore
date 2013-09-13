@@ -14,24 +14,24 @@ quint64 Ilwis::GridBlockInternal::_blockid = 0;
 
 using namespace Ilwis;
 
-GridCoverage::GridCoverage()
+RasterCoverage::RasterCoverage()
 {
 }
 
-GridCoverage::GridCoverage(const Resource& res) : Coverage(res){
+RasterCoverage::RasterCoverage(const Resource& res) : Coverage(res){
 
 }
 
-GridCoverage::~GridCoverage()
+RasterCoverage::~RasterCoverage()
 {
 }
 
-const IGeoReference& GridCoverage::georeference() const
+const IGeoReference& RasterCoverage::georeference() const
 {
     return _georef;
 }
 
-void GridCoverage::georeference(const IGeoReference &grf)
+void RasterCoverage::georeference(const IGeoReference &grf)
 {
     _georef = grf;
     if ( _grid.isNull() == false) { // remove the current grid, all has become uncertain
@@ -44,22 +44,22 @@ void GridCoverage::georeference(const IGeoReference &grf)
     }
 }
 
-IlwisTypes GridCoverage::ilwisType() const
+IlwisTypes RasterCoverage::ilwisType() const
 {
     return itRASTER;
 }
 
-GridCoverage *GridCoverage::copy()
+RasterCoverage *RasterCoverage::copy()
 {
-    GridCoverage *gc = new GridCoverage();
+    RasterCoverage *gc = new RasterCoverage();
     copyTo(gc);
     return gc;
 
 }
 
 
-void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
-    IGridCoverage gcNew;
+void RasterCoverage::copyBinary(const IRasterCoverage& gc, int index) {
+    IRasterCoverage gcNew;
     gcNew.set(this);
     Size inputSize =  gc->size();
     Size sz(inputSize.xsize(),inputSize.ysize(), 1);
@@ -72,11 +72,11 @@ void GridCoverage::copyBinary(const IGridCoverage& gc, int index) {
     });
 }
 
-IGridCoverage GridCoverage::get(quint32 index1, quint32 index2)
+IRasterCoverage RasterCoverage::get(quint32 index1, quint32 index2)
 {
-    IGridCoverage gcovParent;
+    IRasterCoverage gcovParent;
     gcovParent.set(this);
-    IGridCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+    IRasterCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
     gcov->size(Size(size().xsize(), size().ysize()));
     gcov->_grid.reset(gcov->_grid->clone(index1, index2));
 
@@ -84,7 +84,7 @@ IGridCoverage GridCoverage::get(quint32 index1, quint32 index2)
 
 }
 
-Grid *GridCoverage::grid()
+Grid *RasterCoverage::grid()
 {
     Locker lock(_mutex);
     if ( _georef->isValid() && !connector().isNull()) {
@@ -99,11 +99,11 @@ Grid *GridCoverage::grid()
     return 0;
 }
 
-void GridCoverage::copyTo(IlwisObject *obj)
+void RasterCoverage::copyTo(IlwisObject *obj)
 {
     Locker lock(_mutex);
     Coverage::copyTo(obj);
-    GridCoverage *gc = static_cast<GridCoverage *>(obj);
+    RasterCoverage *gc = static_cast<RasterCoverage *>(obj);
     gc->_georef = _georef;
     if ( _grid) {
         gc->_grid.reset(_grid->clone());
@@ -111,7 +111,7 @@ void GridCoverage::copyTo(IlwisObject *obj)
 
 }
 
-Resource GridCoverage::resource(int mode) const
+Resource RasterCoverage::resource(int mode) const
 {
     Resource res = Coverage::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
@@ -121,20 +121,20 @@ Resource GridCoverage::resource(int mode) const
     return res;
 }
 
-Size GridCoverage::size() const
+Size RasterCoverage::size() const
 {
     if (_size.isValid() && !_size.isNull())
         return _size;
     if (!_grid.isNull())
-        const_cast<GridCoverage *>(this)->_size = _grid->size();
+        const_cast<RasterCoverage *>(this)->_size = _grid->size();
     else if ( _georef.isValid())
-        const_cast<GridCoverage *>(this)->_size = _georef->size();
+        const_cast<RasterCoverage *>(this)->_size = _georef->size();
 
     return _size;
 
 }
 
-void GridCoverage::size(const Size &sz)
+void RasterCoverage::size(const Size &sz)
 {
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0) {

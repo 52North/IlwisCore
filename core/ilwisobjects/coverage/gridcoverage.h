@@ -8,7 +8,7 @@ namespace Ilwis {
 class Resource;
 class Grid;
 
-class KERNELSHARED_EXPORT GridCoverage : public Coverage
+class KERNELSHARED_EXPORT RasterCoverage : public Coverage
 {
 public:
 
@@ -17,19 +17,19 @@ public:
     friend class Grid;
     friend class GridInterpolator;
 
-    GridCoverage();
-    GridCoverage(const Resource& res);
-    ~GridCoverage();
+    RasterCoverage();
+    RasterCoverage(const Resource& res);
+    ~RasterCoverage();
 
     IlwisTypes ilwisType() const;
-    virtual GridCoverage *copy() ;
+    virtual RasterCoverage *copy() ;
 
     const Ilwis::IGeoReference &georeference() const;
     void georeference(const IGeoReference& grf) ;
     Size size() const;
     void size(const Size& sz);
 
-    void copyBinary(const IlwisData<GridCoverage> &gc, int index);
+    void copyBinary(const IlwisData<RasterCoverage> &gc, int index);
 
     double coord2value(const Coordinate &c){
         if ( _georef->isValid() && c.isValid()) {
@@ -52,7 +52,7 @@ public:
         }
         return rUNDEF;
     }
-    IlwisData<GridCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
+    IlwisData<RasterCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
 
     Resource resource(int mode=cmINPUT) const;
 protected:
@@ -66,10 +66,10 @@ private:
     IGeoReference _georef;
 };
 
-typedef IlwisData<GridCoverage> IGridCoverage;
+typedef IlwisData<RasterCoverage> IRasterCoverage;
 }
 
-Q_DECLARE_METATYPE(Ilwis::IGridCoverage)
+Q_DECLARE_METATYPE(Ilwis::IRasterCoverage)
 
 
 #endif // RASTERLAYER_H

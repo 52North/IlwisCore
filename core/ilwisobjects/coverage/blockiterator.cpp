@@ -152,7 +152,7 @@ GridBlock::operator std::vector<double>()
 }
 
 //----------------------------------------------------------------------------------------------
-BlockIterator::BlockIterator(IGridCoverage raster, const Size &sz, const Box3D<> &box) :
+BlockIterator::BlockIterator(IRasterCoverage raster, const Size &sz, const Box3D<> &box) :
     PixelIterator(raster,box),
     _block(*this),
     _blocksize(sz),

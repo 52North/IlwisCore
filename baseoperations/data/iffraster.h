@@ -15,8 +15,8 @@ public:
 
     static quint64 createMetadata();
 private:
-    IGridCoverage _inputGC;
-    IGridCoverage _outputGC;
+    IRasterCoverage _inputGC;
+    IRasterCoverage _outputGC;
 
 
 //    DataDefinition findOutputDataDef(const OperationExpression &expr) ;

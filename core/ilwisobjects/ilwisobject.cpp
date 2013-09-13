@@ -290,7 +290,7 @@ QString IlwisObject::type2Name(IlwisTypes t)
 {
     switch(t) {
     case  itRASTER:
-        return "GridCoverage";
+        return "RasterCoverage";
     case  itPOLYGON:
         return "PolygonCoverage";
     case  itLINE:
@@ -334,7 +334,7 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         name = dname.right(name.size() - index - 2);
     }
 
-    if ( name.compare("GridCoverage",Qt::CaseInsensitive) == 0)
+    if ( name.compare("RasterCoverage",Qt::CaseInsensitive) == 0)
         return  itRASTER;
     if ( name.compare( "PolygonCoverage",Qt::CaseInsensitive) == 0)
         return  itPOLYGON;

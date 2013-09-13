@@ -13,7 +13,7 @@ public:
     static quint64 createMetadata();
 protected:
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const Ilwis::SymbolTable &symTable);
-    IGridCoverage _inputGC;
+    IRasterCoverage _inputGC;
     Voxel _voxel;
     QString _outName=sUNDEF;
 };

@@ -41,9 +41,9 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 }
 
 bool Assignment::assignGridCoverage(ExecutionContext *ctx) {
-    IGridCoverage outputGC = _outputObj.get<GridCoverage>();
+    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
-        IGridCoverage inputGC = _inputObj.get<GridCoverage>();
+        IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
         PixelIterator iterIn(inputGC, box);
         PixelIterator iterOut(outputGC, box);
 
@@ -78,7 +78,7 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if ( _inputObj.isValid()) {
             if ( _inputObj->ilwisType() == itRASTER) {
                 if((res = assignGridCoverage(ctx)) == true)
-                    setOutput<GridCoverage>(ctx, symTable);
+                    setOutput<RasterCoverage>(ctx, symTable);
             }
             if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
                 if((res = assignFeatureCoverage(ctx)) == true)

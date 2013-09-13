@@ -20,7 +20,7 @@ InternalGridCoverageConnector::InternalGridCoverageConnector(const Resource &ite
 }
 
 bool InternalGridCoverageConnector::loadMetaData(IlwisObject *data){
-    GridCoverage *gcoverage = static_cast<GridCoverage *>(data);
+    RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
     if(_dataType == gcoverage->datadef().range().isNull())
         return false;
     if ( !gcoverage->datadef().range().isNull())
@@ -30,7 +30,7 @@ bool InternalGridCoverageConnector::loadMetaData(IlwisObject *data){
 }
 
 Grid *InternalGridCoverageConnector::loadGridData(IlwisObject* data){
-    GridCoverage *gc = static_cast<GridCoverage *>(data);
+    RasterCoverage *gc = static_cast<RasterCoverage *>(data);
     Grid *grid = new Grid(gc->size());
     grid->prepare();
 
@@ -44,7 +44,7 @@ QString Ilwis::Internal::InternalGridCoverageConnector::provider() const
 
 IlwisObject *InternalGridCoverageConnector::create() const
 {
-    return new GridCoverage();
+    return new RasterCoverage();
 }
 
 
