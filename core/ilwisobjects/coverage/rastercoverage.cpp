@@ -1,6 +1,6 @@
 #include "kernel.h"
 #include "raster.h"
-#include "gridcoverage.h"
+#include "rastercoverage.h"
 #include "pixeliterator.h"
 #include "connectorinterface.h"
 #include "symboltable.h"

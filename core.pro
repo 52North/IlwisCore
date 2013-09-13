@@ -24,7 +24,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/georeference/georeference.cpp \
     core/ilwisobjects/geometry/georeference/simpelgeoreference.cpp \
     core/ilwisobjects/geometry/georeference/cornersgeoreference.cpp \
-    core/ilwisobjects/coverage/gridcoverage.cpp \
     core/ilwisobjects/coverage/coverage.cpp \
     core/publicdatabase.cpp \
     core/ilwisobjects/ilwisobjectfactory.cpp \
@@ -94,7 +93,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/coordinatedomain.cpp \
     core/ilwisobjects/domain/numericitem.cpp \
     core/ilwisobjects/domain/numericitemrange.cpp \
-    core/ilwisobjects/coverage/indexslicer.cpp
+    core/ilwisobjects/coverage/indexslicer.cpp \
+    core/ilwisobjects/coverage/rastercoverage.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -112,7 +112,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/georeference/simpelgeoreference.h \
     core/util/boostext.h \
     core/ilwisobjects/geometry/georeference/cornersgeoreference.h \
-    core/ilwisobjects/coverage/gridcoverage.h \
     core/ilwisobjects/coverage/coverage.h \
     core/publicdatabase.h \
     core/ilwisobjects/ilwisobjectfactory.h \
@@ -199,7 +198,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/coordinatedomain.h \
     core/ilwisobjects/domain/numericitem.h \
     core/ilwisobjects/domain/numericitemrange.h \
-    core/ilwisobjects/coverage/indexslicer.h
+    core/ilwisobjects/coverage/indexslicer.h \
+    core/ilwisobjects/coverage/rastercoverage.h
 
 
 
