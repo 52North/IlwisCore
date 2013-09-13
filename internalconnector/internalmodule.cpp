@@ -47,7 +47,7 @@ void InternalModule::prepare()
     if (!factory)
         return ;
 
-    factory->addCreator(itRASTER,"internal", InternalGridCoverageConnector::create);
+    factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();

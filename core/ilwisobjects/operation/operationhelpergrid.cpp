@@ -16,7 +16,7 @@ Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputGC, 
     Size sz = inputGC->size();
     Box3D<qint32> box(sz);
 
-    if ( what & itGRIDSIZE) {
+    if ( what & itRASTERSIZE) {
         resource.addProperty("size", IVARIANT(sz));
     }
     if ( what & itENVELOPE) {
@@ -63,7 +63,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     if (inputObject->ilwisType() & itCOVERAGE) {
         if (inputObject->ilwisType() == itRASTER) {
             IRasterCoverage gcInput = inputObject.get<RasterCoverage>();
-            if ( what & itGRIDSIZE) {
+            if ( what & itRASTERSIZE) {
                 Size sz = gcInput->size();
                 Box3D<qint32> box(sz);
                 resource.addProperty("size", IVARIANT(box.size()));

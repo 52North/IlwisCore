@@ -159,7 +159,7 @@ bool BinaryLogical::prepareCoverageCoverage() {
 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(0),
-                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+                                itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     IDomain dom;
     dom.prepare("bool");
@@ -185,7 +185,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
-                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+                                itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
      IDomain dom;
     dom.prepare("boolean");

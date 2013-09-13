@@ -130,7 +130,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
             return sPREPAREFAILED;
         }
         _attribColumn =  selector.mid(index+10);
-        copylist |= itGRIDSIZE | itGEOREF | itENVELOPE;
+        copylist |= itRASTERSIZE | itGEOREF | itENVELOPE;
     }
     int indexindex = selector.indexOf("index=");
     if ( indexindex != -1) {

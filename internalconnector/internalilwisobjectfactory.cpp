@@ -72,7 +72,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
     } else if ( item.ilwisType() & itCOORDSYSTEM) {
         return createCsyFromCode(item);
     } else if ( item.ilwisType() & itRASTER) {
-        return createGridCoverage(item);
+        return createRasterCoverage(item);
     } else if ( item.ilwisType() & itTABLE) {
         return createTable(item);
     } else if ( item.ilwisType() & itOPERATIONMETADATA) {
@@ -221,7 +221,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
     return true;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createGridCoverage(const Resource& item) const {
+IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& item) const {
     if ( !item.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
@@ -280,7 +280,7 @@ IlwisObject *InternalIlwisObjectFactory::createGridCoverage(const Resource& item
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
         return 0;
     }
-    InternalGridCoverageConnector *connector = factory->createFromResource<InternalGridCoverageConnector>(item, "internal");
+    InternalRasterCoverageConnector *connector = factory->createFromResource<InternalRasterCoverageConnector>(item, "internal");
     if ( !connector) {
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", item.name());
         return 0;

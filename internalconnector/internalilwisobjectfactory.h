@@ -33,7 +33,7 @@ private:
     IlwisObject *createEllipsoidFromQuery(const QString &query, const Resource& resource) const;
     IlwisObject *createDomain(const Resource &item) const;
     IlwisObject *createCsyFromCode(const Resource &item) const;
-    IlwisObject *createGridCoverage(const Resource &item) const;
+    IlwisObject *createRasterCoverage(const Resource &item) const;
     IlwisObject *createTable(const Resource &item) const;
     IlwisObject *createOperationMetaData(const Resource &item) const;
     IlwisObject *createGeoreference(const Resource &item) const;

@@ -4,10 +4,10 @@
 namespace Ilwis {
 
 namespace Internal {
-class InternalGridCoverageConnector : public IlwisObjectConnector
+class InternalRasterCoverageConnector : public IlwisObjectConnector
 {
 public:
-    InternalGridCoverageConnector(const Ilwis::Resource &item,bool load=true);
+    InternalRasterCoverageConnector(const Ilwis::Resource &item,bool load=true);
 
     bool loadMetaData(IlwisObject *data);
     Grid *loadGridData(Ilwis::IlwisObject *) ;

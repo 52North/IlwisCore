@@ -34,7 +34,7 @@ private:
     double _number;
     QString _varName;
 
-    bool assignGridCoverage(ExecutionContext *ctx);
+    bool assignRasterCoverage(ExecutionContext *ctx);
     bool assignFeatureCoverage(ExecutionContext *ctx);
 };
 }

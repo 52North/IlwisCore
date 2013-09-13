@@ -40,7 +40,7 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
     return true;
 }
 
-bool Assignment::assignGridCoverage(ExecutionContext *ctx) {
+bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
     IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
         IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
@@ -77,7 +77,7 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
     } else {
         if ( _inputObj.isValid()) {
             if ( _inputObj->ilwisType() == itRASTER) {
-                if((res = assignGridCoverage(ctx)) == true)
+                if((res = assignRasterCoverage(ctx)) == true)
                     setOutput<RasterCoverage>(ctx, symTable);
             }
             if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
@@ -114,7 +114,7 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
         _inputObj.prepare(coverage, res.ilwisType());
         OperationHelperRaster helper;
         _outputObj = helper.initialize(_inputObj, res.ilwisType(),
-                                       itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
+                                       itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
         if ( outname != sUNDEF)
             _outputObj->setName(outname);

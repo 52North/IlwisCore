@@ -93,7 +93,7 @@ OperationImplementation::State IffRaster::prepare(ExecutionContext *, const Symb
 
     OperationHelperRaster helper;
     helper.initialize(_inputGC, _outputGC, _expression.parm(0),
-                                itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+                                itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     _outputGC->datadef() = outputDataDef;
 

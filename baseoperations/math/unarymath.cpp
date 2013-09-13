@@ -86,7 +86,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         }
         OperationHelperRaster helper;
         _box = helper.initialize(_inputGC, _outputGC, _expression.parm(0),
-                                    itGRIDSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+                                    itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( !_outputGC.isValid()) {
             ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
             return sPREPAREFAILED;
