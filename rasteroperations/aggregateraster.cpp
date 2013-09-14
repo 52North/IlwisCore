@@ -5,7 +5,6 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "blockiterator.h"
-#include "gridinterpolator.h"
 #include "aggregateraster.h"
 
 using namespace Ilwis;
