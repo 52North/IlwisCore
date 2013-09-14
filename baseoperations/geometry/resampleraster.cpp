@@ -4,7 +4,7 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
-#include "gridinterpolator.h"
+#include "rasterinterpolator.h"
 #include "resampleraster.h"
 
 using namespace Ilwis;
@@ -22,7 +22,7 @@ ResampleRaster::ResampleRaster()
 
 ResampleRaster::ResampleRaster(quint64 metaid, const Ilwis::OperationExpression &expr) :
     OperationImplementation(metaid, expr),
-    _method(GridInterpolator::ipBICUBIC)
+    _method(RasterInterpolator::ipBICUBIC)
 {
 }
 
@@ -35,7 +35,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputGC,box);
-        GridInterpolator interpolator(inputGC, _method);
+        RasterInterpolator interpolator(inputGC, _method);
         SPRange range = inputGC->datadef().range();
         while(iterOut != iterOut.end()) {
            Voxel position = iterOut.position();
@@ -86,11 +86,11 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
 
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")
-        _method = GridInterpolator::ipNEARESTNEIGHBOUR;
+        _method = RasterInterpolator::ipNEARESTNEIGHBOUR;
     else if ( method.toLower() == "bilinear")
-        _method = GridInterpolator::ipBILINEAR;
+        _method = RasterInterpolator::ipBILINEAR;
     else if (  method.toLower() == "bicubic")
-        _method =GridInterpolator::ipBICUBIC;
+        _method =RasterInterpolator::ipBICUBIC;
     else {
         ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
         return sPREPAREFAILED;

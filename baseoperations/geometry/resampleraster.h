@@ -20,7 +20,7 @@ private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     IGeoReference _targetGrf;
-    Ilwis::GridInterpolator::InterpolationMethod _method;
+    Ilwis::RasterInterpolator::InterpolationMethod _method;
 
 };
 }

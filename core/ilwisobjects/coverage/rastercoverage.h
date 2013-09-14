@@ -15,7 +15,7 @@ public:
     friend class PixelIterator;
     friend class GridBlock;
     friend class Grid;
-    friend class GridInterpolator;
+    friend class RasterInterpolator;
 
     RasterCoverage();
     RasterCoverage(const Resource& res);
