@@ -3,6 +3,8 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "range.h"
+#include "domain.h"
+#include "itemdomain.h"
 #include "domainitem.h"
 #include "itemrange.h"
 #include "identifieritem.h"
@@ -61,6 +63,11 @@ bool IndexedIdentifierRange::isContinuous() const
     return false;
 }
 
+bool IndexedIdentifierRange::alignWithParent(const IDomain &dom)
+{
+    return false;
+}
+
 SPDomainItem IndexedIdentifierRange::item(const QString& nam) const{
     return SPDomainItem();
 }
@@ -114,6 +121,16 @@ QString IndexedIdentifierRange::toString() const
 void IndexedIdentifierRange::remove(const QString& item)
 {
 }
+
+qint32 IndexedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
+{
+    if ( index + step >= _count)
+        return _count;
+    if ( index + step < 0)
+        return 0;
+    return index + step;
+}
+
 
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
@@ -266,6 +283,41 @@ QString NamedIdentifierRange::toString() const {
 bool NamedIdentifierRange::isContinuous() const
 {
     return false;
+}
+
+bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
+{
+    INamedIdDomain numdom = dom.get<NamedIdDomain>();
+    if ( !numdom.isValid())
+        return false;
+
+    std::map<QString, SPDomainItem> parentItems;
+    for(SPDomainItem item : numdom) {
+        parentItems[item->name()] = item;
+    }
+
+    for(SPDomainItem item : _byOrder) {
+        auto iter = parentItems.find(item->name());
+        if ( iter == parentItems.end()){
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),item->name());
+        }
+        item->raw((*iter).second->raw());
+    }
+    _byRaw.clear();
+    for(SPDomainItem item : _byOrder){
+        _byRaw[item->raw()] = item.staticCast<NamedIdentifier>();
+    }
+    return false;
+
+}
+
+qint32 NamedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
+{
+    if ( index + step >= _byOrder.size())
+        return _byOrder.size();
+    if ( index + step < 0)
+        return 0;
+    return index + step;
 }
 
 //---------------------------------------------------------

@@ -29,11 +29,10 @@ public:
     void count(quint32 nr);
     virtual bool isContinuous() const;
     void interpolation(const QString&) {}
-
-
     quint32 raw(const QString &item) const;
-
+    qint32 gotoIndex(qint32 index, qint32 step) const;
 private:
+   bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
    quint32 _count;
 };
@@ -61,8 +60,9 @@ public:
     QString toString() const;
     virtual bool isContinuous() const;
     void interpolation(const QString&) {}
-
+    qint32 gotoIndex(qint32 index, qint32 step) const;
 private:
+    bool alignWithParent(const IDomain& dom);
     std::map<QString, SPNamedIdentifier> _byName;
     std::map<quint32, SPNamedIdentifier> _byRaw;
     std::vector<SPNamedIdentifier> _byOrder;
@@ -74,6 +74,7 @@ public:
     ~ThematicRange() {}
     ThematicRange& operator<<(const QString& itemdef);
 };
+
 }
 
 #endif // IDENTIFIERRANGE_H

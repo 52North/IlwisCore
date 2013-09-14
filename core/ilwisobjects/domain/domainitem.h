@@ -12,6 +12,10 @@ public:
     virtual QString name() const =0 ;
     virtual DomainItem *clone() const=0;
     virtual IlwisTypes valueType() const = 0;
+    virtual void raw(quint32 r) {
+        _raw = r;
+    }
+
     virtual quint32 raw() const
     {
         return _raw;

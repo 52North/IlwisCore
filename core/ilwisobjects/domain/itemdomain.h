@@ -3,6 +3,7 @@
 
 #include "range.h"
 #include "itemrange.h"
+#include "itemiterator.h"
 
 namespace Ilwis {
 
@@ -16,6 +17,8 @@ The range of the domain contains all the valid items for that domain.
 template<class C> class ItemDomain : public Domain
 {
 public:
+    template<typename T> friend class ItemIterator;
+
     ItemDomain<C>()  {
     }
     ItemDomain(const Resource& res) : Domain(res) {
@@ -118,13 +121,13 @@ public:
         if (!hasType(dm->valueType(), valueType())) {
             return;
         }
-//        IItemDomain dmitem = dm.get<ItemDomain>();
-//        if ( theme() != dmitem->theme())
-//            return;
+        IlwisData<ItemDomain<C>> dmitem = dm.get<ItemDomain<C>>();
+        if ( theme() != dmitem->theme())
+            return;
 
-       // bool ok = range<ItemRange>()->alignDomainWith(dmitem);
-        //if (!ok)
-        //    return ;
+        bool ok = _range->alignWithParent(dm);
+        if (!ok)
+            return ;
 
         Domain::setParent(dm);
 
@@ -138,6 +141,14 @@ public:
         return C::valueTypeS();
     }
 
+    ItemIterator<C> begin() const {
+        return ItemIterator<C>(*this);
+    }
+
+    ItemIterator<C> end() const {
+        return ItemIterator<C>(*this, count());
+    }
+
 protected:
     SPRange getRange() const{
         return _range.dynamicCast<Range>();
@@ -147,6 +158,14 @@ private:
     SPItemRange _range;
     QString _theme;
 };
+
+template<typename T> Ilwis::ItemIterator<T> begin(const Ilwis::IlwisData<Ilwis::ItemDomain<T>>& idom) {
+    return idom->begin();
+}
+
+template<typename T> Ilwis::ItemIterator<T> end(const Ilwis::IlwisData<Ilwis::ItemDomain<T>>& idom) {
+    return idom->end();
+}
 
 class ThematicItem;
 class IndexedIdentifier;
@@ -163,5 +182,7 @@ typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
 typedef ItemDomain<NumericItem>  NumericItemDomain ;
 
 }
+
+
 
 #endif // ITEMDOMAIN_H

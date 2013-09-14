@@ -1,7 +1,10 @@
 #include <QString>
 #include <QSharedPointer>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
+#include "domain.h"
+#include "itemdomain.h"
 #include "numericrange.h"
 #include "domainitem.h"
 #include "itemrange.h"

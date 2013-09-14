@@ -21,12 +21,14 @@ public:
     QString toString() const;
     ItemRange *clone() const;
     NumericItemRange &operator <<(const QString &itemdef);
+    qint32 gotoIndex(qint32 index, qint32 step) const;
 
 protected:
     void addRange(const ItemRange &range);
 private:
     std::vector<SPNumericItem> _items;
     bool validNumber(QString value) const;
+    bool alignWithParent(const IDomain& dom);
 };
 
 typedef QSharedPointer<NumericItemRange> SPNumericItemRange;

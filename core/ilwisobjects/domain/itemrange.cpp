@@ -1,7 +1,10 @@
 #include <QString>
 #include <typeinfo>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
+#include "domain.h"
+#include "itemdomain.h"
 #include "domainitem.h"
 #include "itemrange.h"
 

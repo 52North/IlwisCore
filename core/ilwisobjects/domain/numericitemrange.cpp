@@ -1,10 +1,13 @@
 #include <QString>
 #include <typeinfo>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
 #include "domainitem.h"
 #include "numericrange.h"
 #include "domainitem.h"
+#include "domain.h"
+#include "itemdomain.h"
 #include "numericitem.h"
 #include "itemrange.h"
 #include "numericitemrange.h"
@@ -145,6 +148,28 @@ void NumericItemRange::add(DomainItem *item)
         nitem->_raw = 0;
         _items.push_back(nitem);
     }
+}
+
+bool NumericItemRange::alignWithParent(const IDomain &dom)
+{
+    INumericItemDomain numdom = dom.get<NumericItemDomain>();
+    if ( !numdom.isValid())
+        return false;
+    ItemIterator<NumericItem> iterParent(numdom);
+    std::map<QString, SPDomainItem> parentItems;
+    for(SPDomainItem item : iterParent) {
+        parentItems[item->name()] = item;
+    }
+
+    for(SPDomainItem item : _items) {
+        // TODO: a bit more flexible in the future with overlapping ranges; absent step sizes
+        auto iter = parentItems.find(item->name());
+        if ( iter == parentItems.end()){
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),item->name());
+        }
+        item = (*iter).second;
+    }
+    return false;
 
 }
 
@@ -219,6 +244,15 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         add(new NumericItem({vmin+step,vmax, step}));
     }
     return *this;
+}
+
+qint32 NumericItemRange::gotoIndex(qint32 index, qint32 step) const
+{
+    if ( index + step >= _items.size())
+        return _items.size();
+    if ( index + step < 0)
+        return 0;
+    return index + step;
 }
 
 void NumericItemRange::addRange(const ItemRange &range)
