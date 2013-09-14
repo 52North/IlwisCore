@@ -74,7 +74,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/operationExpression.cpp \
     core/ilwisobjects/operation/commandhandler.cpp \
     core/ilwisobjects/coverage/blockiterator.cpp \
-    core/ilwisobjects/coverage/gridinterpolator.cpp \
     core/util/locker.cpp \
     core/ilwisobjects/domain/datadefinition.cpp \
     core/ilwisobjects/geometry/georeference/ctpgeoreference.cpp \
@@ -94,7 +93,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/numericitem.cpp \
     core/ilwisobjects/domain/numericitemrange.cpp \
     core/ilwisobjects/coverage/indexslicer.cpp \
-    core/ilwisobjects/coverage/rastercoverage.cpp
+    core/ilwisobjects/coverage/rastercoverage.cpp \
+    core/ilwisobjects/coverage/rasterinterpolator.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -175,7 +175,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/operationExpression.h \
     core/ilwisobjects/operation/operationconnector.h \
     core/ilwisobjects/operation/commandhandler.h \
-    core/ilwisobjects/coverage/gridinterpolator.h \
     core/util/locker.h \
     core/ilwisobjects/coverage/raster.h \
     core/ilwisobjects/operation/ilwisoperation.h \
@@ -199,7 +198,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/numericitem.h \
     core/ilwisobjects/domain/numericitemrange.h \
     core/ilwisobjects/coverage/indexslicer.h \
-    core/ilwisobjects/coverage/rastercoverage.h
+    core/ilwisobjects/coverage/rastercoverage.h \
+    core/ilwisobjects/coverage/rasterinterpolator.h \
+    core/ilwisobjects/domain/itemiterator.h
 
 
 
