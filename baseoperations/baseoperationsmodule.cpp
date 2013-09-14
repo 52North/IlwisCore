@@ -2,7 +2,7 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
-#include "gridinterpolator.h"
+#include "rasterinterpolator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "baseoperationsmodule.h"
