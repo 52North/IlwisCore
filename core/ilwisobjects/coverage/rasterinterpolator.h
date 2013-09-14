@@ -4,12 +4,12 @@
 namespace Ilwis {
 class Grid;
 
-class KERNELSHARED_EXPORT GridInterpolator
+class KERNELSHARED_EXPORT RasterInterpolator
 {
 public:
     enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
 
-    GridInterpolator(const IRasterCoverage& gcov, int method) ;
+    RasterInterpolator(const IRasterCoverage& gcov, int method) ;
     double pix2value(const Point3D<double> &pix);
     double coord2value(const Coordinate& crd);
 

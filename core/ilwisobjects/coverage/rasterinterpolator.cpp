@@ -1,16 +1,16 @@
 #include "kernel.h"
 #include "raster.h"
-#include "gridinterpolator.h"
+#include "rasterinterpolator.h"
 
 using namespace Ilwis;
 
-GridInterpolator::GridInterpolator(const IRasterCoverage& gcov, int method) : _gcoverage(gcov), _method(method) {
+RasterInterpolator::RasterInterpolator(const IRasterCoverage& gcov, int method) : _gcoverage(gcov), _method(method) {
     _grid = _gcoverage->grid();
     _grf = _gcoverage->georeference();
     _valid = _grf.isValid() && _grid != 0;
 }
 
-double GridInterpolator::pix2value(const Point3D<double>& pix) {
+double RasterInterpolator::pix2value(const Point3D<double>& pix) {
     double v = rUNDEF;
     switch( _method) {
     case 0: //nearestneighbour
@@ -24,7 +24,7 @@ double GridInterpolator::pix2value(const Point3D<double>& pix) {
 
 }
 
-double GridInterpolator::coord2value(const Coordinate &crd)
+double RasterInterpolator::coord2value(const Coordinate &crd)
 {
      if (!_valid && crd.isValid())
         return rUNDEF;
@@ -32,7 +32,7 @@ double GridInterpolator::coord2value(const Coordinate &crd)
      return pix2value(pix);
 }
 
-double GridInterpolator::bilinear(const Point3D<double>& pix) {
+double RasterInterpolator::bilinear(const Point3D<double>& pix) {
     double y = pix.y() - 0.5;
     double x = pix.x() - 0.5;
 
@@ -61,7 +61,7 @@ double GridInterpolator::bilinear(const Point3D<double>& pix) {
 
 }
 
-double GridInterpolator::bicubic(const Point3D<double> &pix)
+double RasterInterpolator::bicubic(const Point3D<double> &pix)
 {
     double y = pix.y() - 0.5;
     double x = pix.x() - 0.5;
@@ -78,7 +78,7 @@ double GridInterpolator::bicubic(const Point3D<double> &pix)
     return rUNDEF;
 }
 
-double GridInterpolator::bicubicPolynom(double values[], const double& delta)
+double RasterInterpolator::bicubicPolynom(double values[], const double& delta)
 {
     double result = values[1] +
                      delta * (( values[2] - values[1]/2 - values[0]/3 -values[3]/6) +
@@ -87,7 +87,7 @@ double GridInterpolator::bicubicPolynom(double values[], const double& delta)
     return result;
 }
 
-double GridInterpolator::bicubicResult(long row, long column, long z, const double& deltaCol)
+double RasterInterpolator::bicubicResult(long row, long column, long z, const double& deltaCol)
 {
   long i;
   if ( row >= _gcoverage->size().ysize())
@@ -101,7 +101,7 @@ double GridInterpolator::bicubicResult(long row, long column, long z, const doub
   return rUNDEF;
 }
 
-bool GridInterpolator::resolveRealUndefs(double values[])
+bool RasterInterpolator::resolveRealUndefs(double values[])
 {
     if ( values[1]==rUNDEF){
         if (values[2]==rUNDEF)
