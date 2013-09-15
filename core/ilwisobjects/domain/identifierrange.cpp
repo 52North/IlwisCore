@@ -4,8 +4,8 @@
 #include "ilwisdata.h"
 #include "range.h"
 #include "domain.h"
-#include "itemdomain.h"
 #include "domainitem.h"
+#include "itemdomain.h"
 #include "itemrange.h"
 #include "identifieritem.h"
 #include "domain.h"
@@ -105,6 +105,18 @@ void IndexedIdentifierRange::add(DomainItem *thing)
     return;
 }
 
+void IndexedIdentifierRange::add(SPDomainItem item)
+{
+    if (!item->isValid())
+        return;
+
+    SPIndexedIdentifier ii = item.staticCast<IndexedIdentifier>();
+    _start = ii;
+    _count = ii->_count;
+
+    return;
+}
+
 QString IndexedIdentifierRange::toString() const
 {
     QString res;
@@ -181,6 +193,24 @@ void NamedIdentifierRange::add(DomainItem *thing)
     _byOrder.push_back(nid);
 
     return ;
+}
+
+void NamedIdentifierRange::add(SPDomainItem item)
+{
+    if (item.isNull() || !item->isValid() || !hasType(item->valueType(),itNAMEDITEM)) {
+        return;
+    }
+
+    auto iter = _byName.find(item->name());
+    if ( iter != _byName.end())
+        return;
+
+    SPNamedIdentifier nid = item.staticCast<NamedIdentifier>();
+    _byName[item->name()] = nid;
+    if ( nid->raw() == iUNDEF)
+        nid->_raw = _byRaw.size();
+    _byRaw[nid->_raw] = nid;
+    _byOrder.push_back(nid);
 }
 
 bool NamedIdentifierRange::operator==(const ItemRange &range) const
@@ -296,16 +326,19 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
         parentItems[item->name()] = item;
     }
 
-    for(SPDomainItem item : _byOrder) {
-        auto iter = parentItems.find(item->name());
+    for(int i=0; i < _byOrder.size(); ++i) {
+        auto iter = parentItems.find(_byOrder[i]->name());
         if ( iter == parentItems.end()){
-            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),item->name());
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_byOrder[i]->name());
         }
-        item->raw((*iter).second->raw());
+        _byOrder[i] = (*iter).second.staticCast<NamedIdentifier>();
     }
+    //TODO at this moment we should start checking all item in the master catalog using this domain/range.
     _byRaw.clear();
-    for(SPDomainItem item : _byOrder){
-        _byRaw[item->raw()] = item.staticCast<NamedIdentifier>();
+    _byName.clear();
+    for(SPNamedIdentifier item : _byOrder){
+        _byRaw[item->raw()] = item;
+        _byName[item->name()] = item;
     }
     return false;
 
