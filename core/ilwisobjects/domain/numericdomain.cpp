@@ -39,6 +39,20 @@ IlwisTypes NumericDomain::ilwisType() const
     return itNUMERICDOMAIN;
 }
 
+void NumericDomain::setParent(const IDomain &dm)
+{
+    if ( _range.isNull()) {
+        return;
+    }
+    if ( dm->ilwisType() != itNUMERICDOMAIN || dm->valueType() != itNUMBER)
+        return;
+    SPNumericRange numrange = dm->range<NumericRange>();
+    if ( !numrange->contains(_range))
+        return;
+
+    Domain::setParent(dm);
+}
+
 SPRange NumericDomain::getRange() const
 {
     return _range;
@@ -61,12 +75,14 @@ Domain::Containement NumericDomain::contains(const QVariant &value) const
         QSharedPointer<NumericRange> vr(_range.dynamicCast<NumericRange>());
         if ( !vr.isNull() && vr->contains(v))
             return Domain::cSELF;
-        if (!ok && !isStrict() && parent().isValid())
+        if (!ok && parent().isValid())
             if (parent()->contains(value) == Domain::cSELF)
                 return Domain::cPARENT;
     }
     return Domain::cNONE;
 }
+
+
 
 
 

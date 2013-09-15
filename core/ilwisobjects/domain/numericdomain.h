@@ -18,6 +18,8 @@ public:
     IlwisTypes valueType() const;
     IlwisTypes ilwisType() const;
 
+    void setParent(const IDomain &dm);
+
 protected:
     SPRange getRange() const;
 private:
