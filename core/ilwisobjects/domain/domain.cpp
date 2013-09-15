@@ -7,11 +7,11 @@
 
 using namespace Ilwis;
 
-Domain::Domain()
+Domain::Domain(): _strict(true)
 {
 }
 
-Domain::Domain(const Resource& res) : IlwisObject(res)
+Domain::Domain(const Resource& res) : IlwisObject(res), _strict(true)
 {
 }
 
