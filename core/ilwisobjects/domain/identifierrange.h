@@ -22,6 +22,7 @@ public:
     SPDomainItem item(const QString &nam) const;
     SPDomainItem itemByOrder(quint32 index) const;
     void add(DomainItem *item);
+    void add(SPDomainItem item);
     QString toString() const;
 
     QString value(quint32 index) const;
@@ -46,6 +47,7 @@ public:
     bool contains(const QString& name, bool inclusive = true) const;
     bool isValid() const;
     void add(DomainItem *item);
+    void add(SPDomainItem item);
     void remove(const QString& item);
     NamedIdentifierRange& operator<<(const QString& itemdef);
     bool operator==(const ItemRange& range) const;
