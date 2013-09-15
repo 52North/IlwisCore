@@ -96,11 +96,6 @@ public:
      \return Returns a new "upgraded" reference to the class.
     */
     template<class C> IlwisData<C> get() const {
-//        std::shared_ptr<C> p(dynamic_cast<C *>(_implementation.get()));
-//        if (!p)
-//            throw ErrorObject(TR("Using unitialized object"));
-
-//        return IlwisData<C>(p);
         if (_implementation.get() == 0)
             throw ErrorObject(TR("Using unitialized object"));
         if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {
