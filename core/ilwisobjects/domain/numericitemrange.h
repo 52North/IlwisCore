@@ -17,6 +17,7 @@ public:
     bool contains(const QString& name, bool inclusive = true) const ;
     bool isValid() const ;
     void add(DomainItem *item) ;
+    void add(SPDomainItem item);
     void remove(const QString& nm) ;
     QString toString() const;
     ItemRange *clone() const;

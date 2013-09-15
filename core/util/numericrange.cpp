@@ -148,7 +148,22 @@ double NumericRange::ensure(double v, bool inclusive) const
 
 bool NumericRange::contains(const QString &value, bool inclusive) const
 {
-    return contains(value.toDouble(), inclusive);
+    bool ok;
+    double v = value.toDouble(&ok);
+    if (!ok)
+        return false;
+    if ( v == rUNDEF)
+        return false;
+    return contains(v, inclusive);
+}
+
+bool NumericRange::contains(SPRange rng, bool inclusive) const
+{
+    if ( rng.isNull())
+        return false;
+    SPNumericRange numrange = rng.staticCast<NumericRange>();
+    bool ok = contains(numrange->min(), inclusive);
+    return ok && contains(numrange->max(), inclusive);
 }
 
 

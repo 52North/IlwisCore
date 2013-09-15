@@ -150,6 +150,26 @@ void NumericItemRange::add(DomainItem *item)
     }
 }
 
+void NumericItemRange::add(SPDomainItem item)
+{
+    if ( item.isNull() || !item->isValid() || item->valueType() != itNUMERICITEM)
+        return;
+
+    SPNumericItem nitem = item.staticCast<NumericItem>();
+    for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
+        if ( nitem->range() > (*iter)->range()) {
+            if ( nitem->raw() == iUNDEF)
+                nitem->_raw = _items.size();
+            _items.insert(iter.base(),1, nitem );
+            return;
+        }
+    }
+    if ( _items.size() == 0) { // no overlapping items allowed; so the only case that is legal here is the first
+        nitem->_raw = 0;
+        _items.push_back(nitem);
+    }
+}
+
 bool NumericItemRange::alignWithParent(const IDomain &dom)
 {
     INumericItemDomain numdom = dom.get<NumericItemDomain>();
@@ -161,13 +181,13 @@ bool NumericItemRange::alignWithParent(const IDomain &dom)
         parentItems[item->name()] = item;
     }
 
-    for(SPDomainItem item : _items) {
-        // TODO: a bit more flexible in the future with overlapping ranges; absent step sizes
-        auto iter = parentItems.find(item->name());
+    for(int i=0; i < _items.size(); ++i) {
+        // TODO: a bit more flexible in the future(maybe?) with overlapping ranges; absent step sizes
+        auto iter = parentItems.find(_items[i]->name());
         if ( iter == parentItems.end()){
-            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),item->name());
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_items[i]->name());
         }
-        item = (*iter).second;
+        _items[i] = (*iter).second.staticCast<NumericItem>();
     }
     return false;
 
@@ -178,6 +198,7 @@ void NumericItemRange::remove(const QString &nm)
      for(auto iter = _items.begin(); iter != _items.begin(); ++iter) {
         if ( (*iter)->name() == nm) {
             _items.erase(iter);
+            break;
         }
      }
 }

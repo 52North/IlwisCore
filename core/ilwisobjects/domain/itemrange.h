@@ -23,6 +23,7 @@ public:
     virtual bool contains(const QString& name, bool inclusive = true) const = 0;
     virtual bool isValid() const = 0;
     virtual void add(DomainItem *item) = 0;
+    virtual void add(SPDomainItem item) = 0;
     virtual void remove(const QString& nm) = 0;
     double ensure(double v, bool inclusive = true) const;
     virtual void addRange(const ItemRange& range);

@@ -36,6 +36,7 @@ public:
 
     bool contains(double v, bool inclusive = true) const;
     bool contains(const QString& value, bool inclusive = true) const;
+    bool contains(SPRange rng, bool inclusive=true) const;
     double max() const;
     void setMax(double v);
     double min() const;
