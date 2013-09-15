@@ -14,12 +14,12 @@ ItemDomains are domains that handle discrete data. For example the domain of a t
 item domains that are all defined by the item type they control. This is passed as template parameter to the domain.
 The range of the domain contains all the valid items for that domain.
  */
-template<class C> class ItemDomain : public Domain
+template<class D> class ItemDomain : public Domain
 {
 public:
     template<typename T> friend class ItemIterator;
 
-    ItemDomain<C>()  {
+    ItemDomain<D>()  {
     }
     ItemDomain(const Resource& res) : Domain(res) {
     }
@@ -30,7 +30,7 @@ public:
         if(item(val.toString()) != 0)
             return Domain::cSELF;
 
-        if (!isStrict() && parent().isValid())
+        if ( parent().isValid())
             if (parent()->contains(val) == Domain::cSELF)
                 return Domain::cPARENT;
         return Domain::cNONE;
@@ -69,6 +69,9 @@ public:
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return SPDomainItem();
         }
+        if(considerParent() ) {
+
+        }
         return _range->item(nam) ;
     }
     /*!
@@ -77,10 +80,27 @@ public:
      *
      */
     void addItem(DomainItem* thing) {
+        if (thing == 0)
+            return;
         if ( _range.isNull()) {
-            _range.reset(C::createRange());
+            _range.reset(D::createRange());
         }
-       _range->add(thing);
+        if (parent().isValid()) {
+            IDomain dm = parent();
+            IlwisData<ItemDomain<D>> itemdom = dm.get<ItemDomain<D>>();
+            if(!itemdom.isValid()){
+                ERROR2(ERR_COULD_NOT_CONVERT_2,TR("domain"), TR("correct item domain"));
+                return;
+            }
+            SPDomainItem item = itemdom->item(thing->name());
+            if (item.isNull()){
+                ERROR2(ERR_NOT_FOUND2,thing->name(), TR("parent domain"));
+                return;
+            }
+            delete thing;
+            _range->add(item);
+        }else
+            _range->add(thing);
     }
     /*!
      removes an item from the range
@@ -96,7 +116,7 @@ public:
 
     void setRange(const ItemRange& range)
     {
-        _range.reset(C::createRange());
+        _range.reset(D::createRange());
         _range->addRange(range);
     }
     quint32 count() const {
@@ -121,7 +141,7 @@ public:
         if (!hasType(dm->valueType(), valueType())) {
             return;
         }
-        IlwisData<ItemDomain<C>> dmitem = dm.get<ItemDomain<C>>();
+        IlwisData<ItemDomain<D>> dmitem = dm.get<ItemDomain<D>>();
         if ( theme() != dmitem->theme())
             return;
 
@@ -138,15 +158,15 @@ public:
     }
 
     IlwisTypes valueType() const {
-        return C::valueTypeS();
+        return D::valueTypeS();
     }
 
-    ItemIterator<C> begin() const {
-        return ItemIterator<C>(*this);
+    ItemIterator<D> begin() const {
+        return ItemIterator<D>(*this);
     }
 
-    ItemIterator<C> end() const {
-        return ItemIterator<C>(*this, count());
+    ItemIterator<D> end() const {
+        return ItemIterator<D>(*this, count());
     }
 
 protected:
@@ -155,6 +175,10 @@ protected:
     }
 
 private:
+    bool considerParent() const{
+        return !parent().isValid();
+    }
+
     SPItemRange _range;
     QString _theme;
 };
