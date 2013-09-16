@@ -25,7 +25,7 @@ protected:
 private:
     long significantDigits(double m1);
 
-    SPRange _range;
+    SPNumericRange _range;
 
 };
 
