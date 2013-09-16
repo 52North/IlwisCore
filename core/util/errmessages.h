@@ -26,7 +26,6 @@
 #define ERR_COULD_NOT_CONVERT_2 "Could not convert %1 to %2"
 #define ERR_MISSING_1 "Missing resource : %1"
 #define ERR_ILLEGAL_QUERY_1 "Illegal sql query in %1"
-#define WARN_HAS_STATUS2 "Object %1 has status %2"
 #define ERR_ILLEGAL_VALUE_2 "Illegal %1 value : %2"
 #define ERR_ILLEGAL_PARM_3 "Illegal parameter %1 value: %2 in %3"
 #define ERR_ILLEGAL_NUM_PARM3 "Illegal number of parameters in %1. Expected %2, got %3"
@@ -34,3 +33,8 @@
 #define ERR_OPERATION_FAILID1 "Operation %1 failed"
 #define ERR_OPERATION_NOTSUPPORTED2 "%1 not supported for %2"
 #define ERR_NOT_FOUND2 "%1 not found in %2"
+
+#define WARN_HAS_STATUS2 "Object %1 has status %2"
+#define WARN_NOT_PART_OF2 "%1 is not part of %2"
+#define WARN_PART_OF2 "%1 is part of %2"
+
