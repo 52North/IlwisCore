@@ -21,7 +21,7 @@ The strict flag limits this behavior. For the behaviour of the individual domain
 class KERNELSHARED_EXPORT Domain : public IlwisObject
 {
 public:
-    enum Containement{cSELF, cPARENT, cNONE};
+    enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
     Domain();
     Domain(const Resource& res);
     /*!
@@ -59,6 +59,8 @@ public:
      * \sets the parent domain; it may be set to invalid
      */
     virtual void setParent(const IDomain& dm);
+    bool addChildDomain(quint64 idchild);
+    void removeChildDomain(quint64 idchild);
 
     /*!
      translates the type of a variant to a compatible ilwis type
@@ -74,6 +76,7 @@ public:
 
 protected:
     virtual QSharedPointer<Range> getRange() const = 0;
+    std::set<quint64> _childDomains;
 private:
     bool _strict;
     IDomain _parentDomain;

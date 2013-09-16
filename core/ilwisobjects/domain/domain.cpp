@@ -35,6 +35,16 @@ void Domain::setParent(const IDomain &dm)
     _parentDomain = dm;
 }
 
+bool Domain::addChildDomain(quint64 idchild)
+{
+    _childDomains.insert(idchild);
+}
+
+void Domain::removeChildDomain(quint64 idchild)
+{
+    _childDomains.erase(idchild);
+}
+
 IlwisTypes Domain::ilwType(const QVariant &v)
 {
     QVariant::Type ty = v.type();
