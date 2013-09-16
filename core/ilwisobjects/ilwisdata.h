@@ -115,6 +115,7 @@ public:
         if (_implementation.get() != 0) {
             _implementation.get()->prepare();
             _implementation.get()->setName(QString("%1_%2").arg(ANONYMOUS_PREFIX).arg(_implementation.get()->id()));
+             mastercatalog()->registerObject(_implementation);
         }
         return _implementation.get() != 0;
     }
