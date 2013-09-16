@@ -166,6 +166,14 @@ bool NumericRange::contains(SPRange rng, bool inclusive) const
     return ok && contains(numrange->max(), inclusive);
 }
 
+bool NumericRange::contains(NumericRange *rng, bool inclusive) const
+{
+    if ( !rng)
+        return false;
+    bool ok = contains(rng->min(), inclusive);
+    return ok && contains(rng->max(), inclusive);
+}
+
 
 long NumericRange::significantDigits(double m1) const{
     if ( fabs(m1) > 1e30)
