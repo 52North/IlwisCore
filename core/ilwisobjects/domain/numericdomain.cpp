@@ -23,7 +23,12 @@ NumericDomain::NumericDomain(const Resource& res) : Domain(res) {
 
 void NumericDomain::setRange(Range *vr)
 {
-    _range = QSharedPointer<Range>(vr);
+    if ( hasType(vr->valueType(), itNUMBER) == false)
+        return;
+    if ( parent().isValid()) {
+        parent()->range<NumericRange>()->contains(static_cast<NumericRange *>(vr));
+    }
+    _range = QSharedPointer<NumericRange>(static_cast<NumericRange *>(vr));
 }
 
 IlwisTypes NumericDomain::valueType() const
