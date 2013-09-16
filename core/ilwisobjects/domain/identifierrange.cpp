@@ -340,7 +340,7 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
         _byRaw[item->raw()] = item;
         _byName[item->name()] = item;
     }
-    return false;
+    return true;
 
 }
 
