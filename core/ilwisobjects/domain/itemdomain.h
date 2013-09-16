@@ -25,15 +25,19 @@ public:
     }
 
     ~ItemDomain() {
+        if ( parent().isValid())
+            parent()->removeChildDomain(this->id());
     }
+
     Domain::Containement contains(const QVariant& val) const{
+        if ( parent().isValid() && !isStrict())
+            if (parent()->contains(val) == Domain::cSELF)
+                return Domain::cPARENT;
+
         if(item(val.toString()) != 0)
             return Domain::cSELF;
 
-        if ( parent().isValid())
-            if (parent()->contains(val) == Domain::cSELF)
-                return Domain::cPARENT;
-        return Domain::cNONE;
+         return Domain::cNONE;
     }
     /*!
      returns a string representation of the item pointed to by the index
@@ -69,8 +73,10 @@ public:
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return SPDomainItem();
         }
-        if(considerParent() ) {
-
+        if(parent().isValid() && !isStrict()) {
+            IDomain dm = parent();
+            IlwisData<ItemDomain<D>> parentdom = dm.get<ItemDomain<D>>();
+            return parentdom->item(nam);
         }
         return _range->item(nam) ;
     }
@@ -87,14 +93,16 @@ public:
         }
         if (parent().isValid()) {
             IDomain dm = parent();
-            IlwisData<ItemDomain<D>> itemdom = dm.get<ItemDomain<D>>();
-            if(!itemdom.isValid()){
+            IlwisData<ItemDomain<D>> parentdom = dm.get<ItemDomain<D>>();
+            if(!parentdom.isValid()){
                 ERROR2(ERR_COULD_NOT_CONVERT_2,TR("domain"), TR("correct item domain"));
+                delete thing;
                 return;
             }
-            SPDomainItem item = itemdom->item(thing->name());
+            SPDomainItem item = parentdom->item(thing->name());
             if (item.isNull()){
-                ERROR2(ERR_NOT_FOUND2,thing->name(), TR("parent domain"));
+                WARN2(WARN_NOT_PART_OF2,thing->name(), TR("parent domain"));
+                delete thing;
                 return;
             }
             delete thing;
@@ -111,11 +119,43 @@ public:
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return ;
         }
+        if ( _childDomains.size() > 0) {
+            for(quint64 childid: _childDomains) {
+                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid) ;
+                if ( childDom.isValid()) {
+                    if ( childDom->contains(nme) == Domain::cSELF) {
+                        WARN2(WARN_PART_OF2,nme, TR("related/child domain"));
+                        return;
+                    }
+                }
+            }
+        }
         _range->remove(nme);
     }
 
     void setRange(const ItemRange& range)
     {
+        if ( _childDomains.size() > 0) {
+            for(quint64 childid: _childDomains) {
+                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid) ;
+                if ( childDom.isValid()) {
+                    if(!range.contains(childDom->_range)) {
+                        WARN2(WARN_NOT_PART_OF2,"item range", TR("child domain"));
+                        return;
+                    }
+                }
+            }
+        }
+
+        if ( parent().isValid()){
+            IDomain dm = parent();
+            IlwisData<ItemDomain<D>> itemdom = dm.get<ItemDomain<D>>();
+            if (!itemdom->_range->contains(range)){
+                WARN2(WARN_NOT_PART_OF2,"item range", TR("parent domain"));
+                return  ;
+            }
+        }
+
         _range.reset(D::createRange());
         _range->addRange(range);
     }
@@ -135,6 +175,15 @@ public:
     }
 
     void setParent(const IDomain& dm){
+        if ( !dm.isValid() && parent().isValid()){
+            // cut the relation with the parent; raws remain the same but no relation with parent any more;
+            IDomain dmp = parent();
+            IlwisData<ItemDomain<D>> dmparent = dmp.get<ItemDomain<D>>();
+            dmparent->removeChildDomain(id());
+            _range.reset(static_cast<ItemRange *>(_range->clone()));
+            Domain::setParent(dm);
+            return ;
+        }
         if ( !hasType(dm->ilwisType(), itITEMDOMAIN) ) {
             return;
         }
@@ -148,6 +197,7 @@ public:
         bool ok = _range->alignWithParent(dm);
         if (!ok)
             return ;
+        dm->addChildDomain(this->id());
 
         Domain::setParent(dm);
 
