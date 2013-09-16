@@ -183,19 +183,19 @@ QString Kernel::demangle(const char *mangled_name)
     return type;
 }
 
-bool Kernel::error(const QString &message, const QString p1, const QString p2, const QString p3, const QString& file,  int line, const QString& func)
+bool Kernel::message(const QString &message, IssueObject::IssueType tp, const QString p1, const QString p2, const QString p3, const QString& file,  int line, const QString& func)
 {
     QFileInfo inf(file);
     QString name = inf.fileName();
     quint64 issueid;
     if ( p1 == sUNDEF)
-        issueid =issues()->log(TR(message));
+        issueid =issues()->log(TR(message),tp);
     else if (p2 == sUNDEF)
-        issueid =issues()->log(TR(message).arg(p1));
+        issueid =issues()->log(TR(message).arg(p1),tp);
     else if ( p3 == sUNDEF)
-        issueid =issues()->log(TR(message).arg(p1, p2));
+        issueid =issues()->log(TR(message).arg(p1, p2),tp);
     else
-        issueid =issues()->log(TR(message).arg(p1).arg(p2).arg(p3));
+        issueid =issues()->log(TR(message).arg(p1).arg(p2).arg(p3),tp);
     if ( issueid != i64UNDEF) {
         issues()->addCodeInfo(issueid, line, func, name);
     }

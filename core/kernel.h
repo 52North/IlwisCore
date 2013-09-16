@@ -113,7 +113,7 @@ public:
      * \param p2 (optional) error specific fill value
      * \return always return false. means the macros can be used directly in the return statement of the place were the error occurred. At these places usually a false is returned
      */
-    bool error(const QString& message, const QString p1, const QString p2, const QString p3, const QString& file, int line, const QString& func);
+    bool message(const QString& message, IssueObject::IssueType, const QString p1, const QString p2, const QString p3, const QString& file, int line, const QString& func);
 
     /*!
      * Returns a const reference to a factory of a certain combination of type and subtype.
@@ -188,10 +188,15 @@ public slots:
 }
 
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-#define ERROR0(m) ( kernel()->error(m,sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
-#define ERROR1(m, p) ( kernel()->error(m, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
-#define ERROR2(m, p1, p2) ( kernel()->error(m, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
-#define ERROR3(m, p1, p2, p3) ( kernel()->error(m,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define ERROR0(m) ( kernel()->message(m,IssueObject::itError, sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define ERROR1(m, p) ( kernel()->message(m,IssueObject::itError, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define ERROR2(m, p1, p2) ( kernel()->message(m,IssueObject::itError, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define ERROR3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itError,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+
+#define WARN(m) ( kernel()->message(m,IssueObject::itWarning,sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define WARN1(m, p) ( kernel()->message(m,IssueObject::itWarning, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define WARN2(m, p1, p2) ( kernel()->message(m,IssueObject::itWarning, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define WARN3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itWarning,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 
 typedef QList<IlwisTypes> IlwTypeList;
 
