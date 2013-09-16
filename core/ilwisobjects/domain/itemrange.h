@@ -21,6 +21,8 @@ public:
     virtual SPDomainItem item(const QString &nam) const = 0;
     virtual SPDomainItem itemByOrder(quint32 index) const = 0;
     virtual bool contains(const QString& name, bool inclusive = true) const = 0;
+    virtual bool contains(SPRange rng, bool inclusive=true) const;
+    virtual bool contains(const ItemRange& itemrng, bool inclusive=true) const;
     virtual bool isValid() const = 0;
     virtual void add(DomainItem *item) = 0;
     virtual void add(SPDomainItem item) = 0;
@@ -28,6 +30,7 @@ public:
     double ensure(double v, bool inclusive = true) const;
     virtual void addRange(const ItemRange& range);
     virtual qint32 gotoIndex(qint32 index, qint32 step) const =0;
+
 
     static DomainItem *create(const QString& type);
     static void addCreateItem(const QString& type, CreateItemFunc func);

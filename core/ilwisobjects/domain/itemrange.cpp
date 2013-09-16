@@ -12,6 +12,25 @@ using namespace Ilwis;
 
 QHash<QString, CreateItemFunc> ItemRange::_createItem;
 
+bool ItemRange::contains(SPRange rng, bool ) const
+{
+    SPItemRange itemrng = rng.staticCast<ItemRange>();
+    for(int  i=0; i < itemrng->count(); ++i) {
+        if(!contains(itemrng->itemByOrder(i)->name()))
+            return false;
+    }
+    return true;
+}
+
+bool ItemRange::contains(const ItemRange &itemrng, bool ) const
+{
+    for(int  i=0; i < itemrng.count(); ++i) {
+        if(!contains(itemrng.itemByOrder(i)->name()))
+            return false;
+    }
+    return true;
+}
+
 double ItemRange::ensure(double v, bool ) const
 {
     //TODO  more advanced impl needed? may cost performance
