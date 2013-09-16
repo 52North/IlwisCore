@@ -12,6 +12,7 @@ public:
     virtual QString value(const QVariant& v) const;
     virtual Containement contains(const QVariant& ) const;
     IlwisTypes ilwisType() const;
+    void setParent(const IDomain& ){}
 private:
     QSharedPointer<Range> getRange() const;
 };
