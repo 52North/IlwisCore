@@ -27,10 +27,12 @@ public:
      */
     bool isValid() const;
     PixelIterator();
-    PixelIterator(IRasterCoverage raster, const Box3D<>& box=Box3D<>());
+    PixelIterator(const IRasterCoverage& raster, const Box3D<>& box=Box3D<>());
     PixelIterator(const PixelIterator& iter);
+    PixelIterator(PixelIterator &&iter);
 
     PixelIterator& operator=(const PixelIterator& iter);
+    PixelIterator& operator=(const PixelIterator&& iter);
 
     PixelIterator& operator++() {
         move(1);
@@ -51,7 +53,15 @@ public:
         return *this;
     }
 
-
+    double& operator[](quint32 index){
+        _x = 0;
+        _y = 0;
+        _z = 0;
+        _yChanged = _xChanged = _zChanged = true;
+        initPosition();
+        move(index);
+        return this->operator *();
+    }
 
     PixelIterator &operator ()(const Voxel &vox)
     {
@@ -69,6 +79,10 @@ public:
 
     bool operator==(const PixelIterator& iter) const;
     bool operator!=(const PixelIterator& iter) const;
+    bool operator<(const PixelIterator& iter) const;
+    bool operator<=(const PixelIterator& iter) const;
+    bool operator>(const PixelIterator& iter) const;
+    bool operator>=(const PixelIterator& iter) const;
 
     double& operator*() {
         return _grid->value(_currentBlock, _localOffset );
@@ -77,6 +91,11 @@ public:
     const double& operator*() const {
         return  _grid->value(_currentBlock, _localOffset);
     }
+
+    double* operator->() {
+        return &(_grid->value(_currentBlock, _localOffset ));
+    }
+
 
     PixelIterator end() const ;
 
@@ -96,13 +115,25 @@ public:
         this->move(n);
         return iter;
     }
+
 protected:
-    PixelIterator(quint64 posid ) :
+    PixelIterator(quint64 endpos ) :
+        _grid(0),
+        _x(0),
+        _y(0),
+        _z(0),
         _localOffset(0),
         _currentBlock(0),
         _flow(fXYZ),
-        _isValid(false),
-        _positionid(posid)
+        _isValid(true),
+        _endx(0),
+        _endy(0),
+        _endz(0),
+        _linearposition(endpos),
+        _endposition(endpos),
+        _xChanged(false),
+        _yChanged(false),
+        _zChanged(false)
     {
     }
 
@@ -110,10 +141,6 @@ protected:
     void initPosition();
     bool move(int n);
     bool moveXYZ(int delta) ;
-    quint64 calcPosId() const {
-        return _x + _y * 1e5 + _z*1e10 + _raster->id() * 1e13;
-    }
-
     void copy(const PixelIterator& iter);
 
     IRasterCoverage _raster;
@@ -129,14 +156,21 @@ protected:
     qint32 _endx;
     qint32 _endy;
     qint32 _endz;
-    quint64 _positionid;
-    quint64 _endpositionid;
+    quint64 _linearposition;
+    quint64 _endposition;
     bool _xChanged =false;
     bool _yChanged = false;
     bool _zChanged = false;
 };
 
+inline Ilwis::PixelIterator begin(const IRasterCoverage& gcov) {
+    return PixelIterator(gcov);
+}
 
+inline Ilwis::PixelIterator end(const IRasterCoverage& gcov) {
+    PixelIterator iter(gcov);
+    return iter.end();
+}
 
 }
 #endif // PixelIterator_H

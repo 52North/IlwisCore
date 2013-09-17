@@ -10,11 +10,28 @@ bool PixelIterator::isValid() const {
     return _isValid;
 }
 
-PixelIterator::PixelIterator() : _localOffset(0), _currentBlock(0), _flow(fXYZ),_isValid(false),_positionid(0) {
+PixelIterator::PixelIterator() :
+    _grid(0),
+    _x(0),
+    _y(0),
+    _z(0),
+    _localOffset(0),
+    _currentBlock(0),
+    _flow(fXYZ),
+    _isValid(true),
+    _endx(0),
+    _endy(0),
+    _endz(0),
+    _linearposition(0),
+    _endposition(0),
+    _xChanged(false),
+    _yChanged(false),
+    _zChanged(false)
+{
 
 }
 
-PixelIterator::PixelIterator(IRasterCoverage raster, const Box3D<>& box) :
+PixelIterator::PixelIterator(const IRasterCoverage &raster, const Box3D<>& box) :
     _raster(raster),
     _box(box),
     _localOffset(0),
@@ -25,6 +42,34 @@ PixelIterator::PixelIterator(IRasterCoverage raster, const Box3D<>& box) :
     init();
 }
 
+
+PixelIterator::PixelIterator(PixelIterator&& iter) :
+    _raster(std::move(iter._raster)),
+    _grid(std::move(iter._grid)),
+    _box(std::move(iter._box)),
+    _x(iter._x),
+    _y(iter._y),
+    _z(iter._z),
+    _localOffset(iter._localOffset),
+    _currentBlock(iter._currentBlock),
+    _flow(iter._flow),
+    _isValid(iter._isValid),
+    _endx(iter._endx),
+    _endy(iter._endy),
+    _endz(iter._endz),
+    _linearposition(iter._linearposition),
+    _endposition(iter._endposition),
+    _xChanged(iter._xChanged),
+    _yChanged(iter._yChanged),
+    _zChanged(iter._zChanged)
+{
+//    _raster = IRasterCoverage();
+//    _box = Box3D<>();
+//    _localOffset = 0;
+//    _currentBlock = 0;
+//    _flow = fXYZ;
+//    _isValid = false;
+}
 
 PixelIterator::PixelIterator(const PixelIterator& iter)  {
     copy(iter);
@@ -38,15 +83,14 @@ void PixelIterator::copy(const PixelIterator &iter) {
     _box = iter._box;
     _isValid = iter._isValid;
     _flow = iter._flow;
-    _positionid = iter._positionid;
     _x = iter._x;
     _y = iter._y;
     _z = iter._z;
     _endx = iter._endx;
     _endy = iter._endy;
     _endz = iter._endz;
-    _positionid = iter._positionid;
-    _endpositionid = iter._endpositionid;
+    _linearposition = iter._linearposition;
+    _endposition = iter._endposition;
     _localOffset = iter._localOffset;
     _currentBlock = iter._currentBlock;
 
@@ -78,18 +122,17 @@ void PixelIterator::init() {
     }
 
     initPosition();
-    quint64 shift = _x + _y * 1e5 + (_endz + 1) *1e10;
-    _endpositionid = _positionid + shift;
-    //_endpositionid = _endx + _endy * 1e5 + _endz*1e10 + _raster->id() * 1e13;
     _isValid = inside;
     _xChanged = _yChanged = _zChanged = false;
 }
 
 inline bool PixelIterator::moveXYZ(int delta) {
     _x += delta;
+    _linearposition += delta;
     _localOffset += delta;
     _xChanged = true;
     _yChanged = _zChanged = false;
+
     if ( _x > _endx) {
         _xChanged = (_x - delta) %  _box.xlength() != 0;
         qint32 tempy = _y + (_x - _box.min_corner().x()) / _box.xlength();
@@ -114,7 +157,7 @@ inline bool PixelIterator::moveXYZ(int delta) {
             localblock = _y /  _grid->maxLines();
             _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
             if ( _z > _endz) { // done with this iteration block
-                _positionid = _endpositionid;
+                _linearposition = _endposition;
                 return false;
             }
         }
@@ -140,15 +183,15 @@ const Box3D<> &PixelIterator::box() const
 
 quint32 PixelIterator::linearPosition() const
 {
-    Size sz = _grid->size();
-    return sz.xsize() * sz.ysize() * _z + sz.xsize() * _y + _x;
+   // return sz.xsize() * sz.ysize() * _z + sz.xsize() * _y + _x;
+    return _linearposition;
 }
 
 bool PixelIterator::move(int n) {
 
     bool ok;
     if (isAtEnd()) {
-        _positionid = _endpositionid;
+        _linearposition = _endposition;
         return false;
     }
     if ( _flow == fXYZ) {
@@ -156,13 +199,16 @@ bool PixelIterator::move(int n) {
     }
     else if ( _flow == fYXZ){
     }
-    if (ok)
-        _positionid = calcPosId();
 
     return ok;
 }
 
 PixelIterator& PixelIterator::operator=(const PixelIterator& iter) {
+    copy(iter);
+    return *this;
+}
+
+PixelIterator& PixelIterator::operator=(const PixelIterator&& iter) {
     copy(iter);
     return *this;
 }
@@ -180,17 +226,37 @@ inline PixelIterator PixelIterator::operator--(int) {
 }
 
 bool PixelIterator::operator==(const PixelIterator& iter) const{
-    return _positionid == iter._positionid;
+    return _linearposition == iter._linearposition;
 }
 
 bool PixelIterator::operator!=(const PixelIterator& iter) const{
     return ! operator ==(iter);
 }
 
+bool PixelIterator::operator<(const PixelIterator &iter) const
+{
+    return _linearposition < iter._linearposition;
+}
 
+bool PixelIterator::operator>(const PixelIterator &iter) const
+{
+    return _linearposition > iter._linearposition;
+}
+
+bool PixelIterator::operator<=(const PixelIterator &iter) const
+{
+    return _linearposition <= iter._linearposition;
+}
+
+bool PixelIterator::operator>=(const PixelIterator &iter) const
+{
+    return _linearposition >= iter._linearposition;
+}
 
 PixelIterator PixelIterator::end() const {
-    return PixelIterator(_endpositionid);
+    PixelIterator iter(*this);
+    iter += _endposition;
+    return iter;
 }
 
 void PixelIterator::setFlow(Flow flw) {
@@ -219,12 +285,13 @@ bool PixelIterator::zchanged() const {
 
 void PixelIterator::initPosition() {
     const Size& sz = _raster->size();
-    quint64 linearPos = _y * sz.xsize() + _x;
+    quint64 linpos = _y * sz.xsize() + _x;
     _currentBlock = _y / _grid->maxLines();
-    _localOffset = linearPos - _currentBlock * _grid->maxLines() * sz.xsize();
+    _localOffset = linpos - _currentBlock * _grid->maxLines() * sz.xsize();
     _currentBlock += _z * _grid->blocksPerBand();
+    _linearposition = sz.xsize() * sz.ysize() * _z + linpos;
+    _endposition = sz.xsize() * sz.ysize() * sz.zsize();
 
-    _positionid = calcPosId();
 }
 
 int PixelIterator:: operator-(const PixelIterator& iter) {
