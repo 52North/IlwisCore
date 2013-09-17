@@ -195,7 +195,7 @@ BlockIterator &BlockIterator::operator --()
 
 BlockIterator BlockIterator::end() const
 {
-    return BlockIterator(_endpositionid);
+    return BlockIterator(_endposition);
 }
 
 bool BlockIterator::operator==(const BlockIterator &iter) const
