@@ -53,11 +53,13 @@ public:
     void set(T *data) {
         if ( data != nullptr) {
             if (!mastercatalog()->isRegistered(data->id())) {
+                removeCurrent();
                 _implementation.reset(data);
                 mastercatalog()->registerObject(_implementation);
             }
-            else
+            else {
                 _implementation = mastercatalog()->get(data->id());
+            }
         }
     }
 
@@ -111,6 +113,7 @@ public:
       \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
     bool prepare() {
+        removeCurrent();
         _implementation = std::shared_ptr<IlwisObject>(new T);
         if (_implementation.get() != 0) {
             _implementation.get()->prepare();
@@ -137,6 +140,7 @@ public:
             if (ok){
                 ESPIlwisObject data = mastercatalog()->get(id);
                 if ( data.get() != 0) {
+                    removeCurrent();
                     _implementation = data;
                     return true;
                 }
@@ -157,6 +161,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
                 data->prepare();
+                removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
             } else {
@@ -179,6 +184,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",item.name());
                 }
                 data->prepare();
+                removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
             } else {
@@ -211,6 +217,7 @@ public:
             else {
                 return ERROR1("Couldnt create ilwisobject %1",item.name());
             }
+            removeCurrent();
             _implementation = ESPIlwisObject(data);
         } else
             _implementation = mastercatalog()->get(iid);
@@ -234,6 +241,15 @@ public:
 
 
 private:
+    void removeCurrent() {
+        if ( _implementation && _implementation->id() != i64UNDEF) {
+            ESPIlwisObject obj= mastercatalog()->get( _implementation->id() );
+            if(obj.use_count() <= 3) { // current _impl + one in the lookup + the one just created
+                 mastercatalog()->unregister(_implementation->id());
+            }
+        }
+    }
+
     ESPIlwisObject _implementation;
 };
 
