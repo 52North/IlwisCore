@@ -23,6 +23,13 @@ public:
 
     }
 
+    Box2D(Box2D<CsyType>&& box) :
+        _min_corner(std::move(box._min_corner)),
+        _max_corner(std::move(box._max_corner))
+    {
+        box._min_corner = box._max_corner = Point3D<CsyType>();
+    }
+
     Box2D(const QSize& sz) : _min_corner(Point2D<CsyType>(0,0)),_max_corner(Point2D<CsyType>(sz.width()-1, sz.height()-1)){
     }
 
@@ -130,6 +137,20 @@ public:
 
     bool isNull() const {
         return this->width() == 0 && this->height() == 0;
+    }
+
+    Box2D<CsyType>& operator=(Box2D<CsyType>&& box) {
+        _min_corner = std::move(box._min_corner);
+        _max_corner = std::move(box._max_corner);
+
+        box._min_corner = box._max_corner = Point2D<CsyType>();
+        return *this;
+    }
+
+    Box2D<CsyType>& operator=(const Box2D<CsyType>& box) {
+        _min_corner = std::move(box._min_corner);
+        _max_corner = std::move(box._max_corner);
+        return *this;
     }
 
     Box2D<CsyType>& operator +=(const CsyType& v) {
@@ -330,6 +351,19 @@ public:
         this->max_corner().z(0);
     }
 
+    Box3D(Box3D<CsyType>&& box) :
+        _min_corner(std::move(box._min_corner)),
+        _max_corner(std::move(box._max_corner))
+    {
+        box._min_corner = box._max_corner = Point3D<CsyType>();
+    }
+
+    Box3D(const Box3D<CsyType>& box) :
+        _min_corner(box._min_corner),
+        _max_corner(box._max_corner)
+    {
+    }
+
     operator Box2D<CsyType> (){
         return Box2D<CsyType>(Point2D<CsyType>(this->min_corner().x(),
                                               this->min_corner().y()),
@@ -441,6 +475,18 @@ public:
 
     bool isValid() const {
         return this->min_corner().isValid() && this->max_corner().isValid();
+    }
+
+    Box3D<CsyType>& operator=(const Box3D<CsyType>&& box) {
+        _min_corner = std::move(box._min_corner);
+        _max_corner = std::move(box._max_corner);
+        return *this;
+    }
+
+    Box3D<CsyType>& operator=(const Box3D<CsyType>& box) {
+        _min_corner = std::move(box._min_corner);
+        _max_corner = std::move(box._max_corner);
+        return *this;
     }
 
     Box3D<CsyType>& operator +=(const CsyType& v) {

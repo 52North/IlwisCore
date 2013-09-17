@@ -68,7 +68,7 @@ protected:
 
     CrdType undefined;
 
-private:
+protected:
     void init() {
         undefined  = undef<CrdType>();
         this->x(undefined);
@@ -109,6 +109,7 @@ public:
     }
 
     Point2D(Point2D<CrdType>&& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
+        crd._x = crd._y = this->undefined;
     }
 
     Point2D(const Point2D<CrdType>& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
@@ -146,6 +147,12 @@ public:
         return *this;
     }
 
+    Ilwis::Point2D<CrdType>& operator=(const Ilwis::Point2D<CrdType>&& p2) {
+        this->x( p2._x);
+        this->y( p2._y);
+        return *this;
+    }
+
 
 
     /*!
@@ -155,6 +162,8 @@ public:
      */
     Point2D(const Point<CrdType,3>& p) : Point<CrdType, 2>(p.x(),p.y()) {
     }
+
+
     /*!
      operator += addes a vector of 2 values to a point shifting it in 2D space. Using undefined values in the vector may lead to unpredictable results
      * \param a vector with a pair of values
@@ -361,6 +370,13 @@ public:
         this->x( p2.x());
         this->y( p2.y());
         this->z(p2.z());
+        return *this;
+    }
+
+    Ilwis::Point3D<CrdType>& operator=(const Ilwis::Point3D<CrdType>&& p2) {
+        this->x( p2._x);
+        this->y( p2._y);
+        this->z(p2._z);
         return *this;
     }
 
