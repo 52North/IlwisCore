@@ -40,8 +40,8 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             iter1 = PixelIterator(_coverages[0].get<RasterCoverage>(), box);
         if ( isCoverage2)
             iter2 = PixelIterator(_coverages[1].get<RasterCoverage>(), box);
-
-        while(iterOut != iterOut.end()) {
+        PixelIterator iterEnd = iterOut.end();
+        while(iterOut != iterEnd) {
             double v1,v2;
             if ( isCoverage1) {
                 v1 = *iter1;

@@ -37,7 +37,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterOut(outputGC,box);
         RasterInterpolator interpolator(inputGC, _method);
         SPRange range = inputGC->datadef().range();
-        while(iterOut != iterOut.end()) {
+        PixelIterator iterEnd = iterOut.end();
+        while(iterOut != iterEnd) {
            Voxel position = iterOut.position();
            Coordinate c = outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
            Coordinate c2 = inputGC->coordinateSystem()->coord2coord(outputGC->coordinateSystem(),c);

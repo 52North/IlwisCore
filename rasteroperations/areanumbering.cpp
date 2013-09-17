@@ -43,7 +43,8 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterOut(outputGC, box);
         PixelIterator iterIn(_inputObj.get<RasterCoverage>());
         AreaNumberer numberer(box.xlength(),_connectivity);
-        while(iterOut != iterOut.end()) {
+        PixelIterator iterEnd = iterOut.end();
+        while(iterOut != iterEnd) {
             double v = numberer.value(iterIn) ;
            *iterOut = v;
             ++iterOut;

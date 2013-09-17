@@ -47,7 +47,8 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
         BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
-        while(iterOut != iterOut.end()) {
+        PixelIterator iterEnd = iterOut.end();
+        while(iterOut != iterEnd) {
             GridBlock& block = *blockIter;
             stats.calculate(block.begin(), block.end(), _method);
             double v = stats[_method];

@@ -43,8 +43,8 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
         FeatureIterator iterOut(_outputFC);
         FeatureIterator iterIn(_inputFC,subset);
-
-        while(iterIn != iterIn.end()) {
+        FeatureIterator iterEnd = iterOut.end();
+        while(iterIn != iterEnd) {
             _outputFC->newFeatureFrom(*iterIn);
 
             ++iterOut;
