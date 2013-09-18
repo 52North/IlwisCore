@@ -22,6 +22,7 @@ public:
     void setContentType(ContentType tp);
     ContentType content() const;
     QString id() const;
+    QString toString() const;
 private:
     NodeValue::ContentType _content;
     QString _id=sUNDEF;

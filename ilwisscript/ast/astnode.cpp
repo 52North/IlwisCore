@@ -9,7 +9,8 @@ NodeValue::NodeValue() : _content(ctUNKNOW){
 }
 
 NodeValue::NodeValue(const QVariant& v, ContentType tp) : QVariant(v), _content(tp) {
-
+    if ( tp == ctID)
+        _id = v.toString();
 }
 
 NodeValue::NodeValue(const QVariant &v, const QString &nid, NodeValue::ContentType tp) :  QVariant(v), _content(tp), _id(nid)
@@ -39,6 +40,13 @@ NodeValue::ContentType NodeValue::content() const {
 QString NodeValue::id() const
 {
     return _id;
+}
+
+QString NodeValue::toString() const
+{
+    if ( _content == ctMethod || _content == ctID)
+        return _id;
+    return QVariant::toString();
 }
 //--------------------------------------------------------------
 ASTNode::ASTNode() : _evaluated(false), _type("astnode")
