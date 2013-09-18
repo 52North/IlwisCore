@@ -20,6 +20,7 @@ QString ScriptLineNode::nodeType() const
 
 bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
 {
+     _evaluated = true;
     foreach(QSharedPointer<ASTNode> node, _childeren) {
         if ( node->nodeType() == "formatnode") {
             Formatter *fnode = static_cast<Formatter *>(node.data());
@@ -28,9 +29,14 @@ bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
 
         }
         if (!node->evaluate(symbols, scope)) {
-            return false;
+            _evaluated =  false;
+            break;
         }
     }
-    _evaluated = true;
+    // we do not keep al binary data in memory for rasters as within a script they might not get out of scope until
+    // the script finishes. This quickly fills up memory. So we unload all binaries and the raster will reload when it
+    // is needed (if it all). This means a slight performance hit but it is necessary
+    symbols.unloadRasters();
+
     return _evaluated;
 }
