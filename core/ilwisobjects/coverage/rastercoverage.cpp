@@ -72,17 +72,17 @@ void RasterCoverage::copyBinary(const IRasterCoverage& gc, int index) {
     });
 }
 
-IRasterCoverage RasterCoverage::get(quint32 index1, quint32 index2)
-{
-    IRasterCoverage gcovParent;
-    gcovParent.set(this);
-    IRasterCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
-    gcov->size(Size(size().xsize(), size().ysize()));
-    gcov->_grid.reset(gcov->_grid->clone(index1, index2));
+//IRasterCoverage RasterCoverage::get(quint32 index1, quint32 index2)
+//{
+//    IRasterCoverage gcovParent;
+//    gcovParent.set(this);
+//    IRasterCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+//    gcov->size(Size(size().xsize(), size().ysize()));
+//    gcov->_grid.reset(gcov->_grid->clone(index1, index2));
 
-    return gcov;
+//    return gcov;
 
-}
+//}
 
 Grid *RasterCoverage::grid()
 {
@@ -132,6 +132,12 @@ Size RasterCoverage::size() const
 
     return _size;
 
+}
+
+void RasterCoverage::unloadBinary() {
+    if (!_grid == NULL) {
+        return _grid->unload();
+    }
 }
 
 void RasterCoverage::size(const Size &sz)

@@ -324,6 +324,15 @@ inline bool Grid::update(quint32 block, bool creation) {
     return true;
 }
 
+void Grid::unload() {
+    Locker lock(_mutex);
+    _cache.clear();
+    for(GridBlockInternal *block : _blocks) {
+        block->unload();
+    }
+    _inMemoryIndex = 0;
+}
+
 
 
 

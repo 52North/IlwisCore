@@ -89,6 +89,7 @@ public:
     Size size() const;
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
+    void unload();
 private:
     double bilinear(const Point3D<double> &pix) const;
     double bicubic(const Point3D<double> &pix) const;

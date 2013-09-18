@@ -52,9 +52,10 @@ public:
         }
         return rUNDEF;
     }
-    IlwisData<RasterCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
+//    IlwisData<RasterCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
 
     Resource resource(int mode=cmINPUT) const;
+    void unloadBinary();
 protected:
     Grid *grid();
     void copyTo(IlwisObject *obj);
