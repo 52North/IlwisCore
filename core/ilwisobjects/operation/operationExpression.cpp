@@ -10,7 +10,7 @@
 
 using namespace Ilwis;
 
-Parameter::Parameter() {
+Parameter::Parameter() : _key(sUNDEF), _value(sUNDEF), _type(itUNKNOWN), _domain(sUNDEF) {
 }
 
 Parameter::Parameter(const QString &key, const QString &value, IlwisTypes tp, const SymbolTable &symtab) :
