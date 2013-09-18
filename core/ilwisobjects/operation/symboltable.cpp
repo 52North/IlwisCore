@@ -3,7 +3,9 @@
 #include <QVector>
 #include <QUrl>
 #include <QRegExp>
-#include "ilwis.h"
+#include <QStringList>
+#include "kernel.h"
+#include "raster.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
@@ -82,6 +84,17 @@ Symbol SymbolTable::getSymbol(const QString &name, int scope) const
         ++iter;
     }
     return Symbol();
+}
+
+void SymbolTable::unloadRasters()
+{
+    for(Symbol& sym: _symbols) {
+        if ( sym._type == itRASTER) {
+            IRasterCoverage gc = sym._var.value<IRasterCoverage>();
+            if ( gc.isValid())
+                gc->unloadBinary();
+        }
+    }
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {

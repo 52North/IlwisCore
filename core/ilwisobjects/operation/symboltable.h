@@ -26,6 +26,7 @@ public:
     QVariant getValue(const QString& name, int scope=1000) const;
     Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
     Symbol getSymbol(const QString& name, int scope=1000) const;
+    void unloadRasters();
 
     static bool isNumerical(const QVariant &var) ;
     static bool isRealNumerical(const QVariant &var) ;
@@ -33,6 +34,7 @@ public:
     static bool isDataLink(const QVariant &value);
     static QString newAnonym();
     static bool isString(const QVariant &var);
+
 private:
     QHash<QString, Symbol> _symbols;
     static quint64 _symbolid;
