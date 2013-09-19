@@ -8,6 +8,7 @@
 #include "domainitem.h"
 #include "itemrange.h"
 #include "identifieritem.h"
+#include "identifierrange.h"
 #include "itemdomain.h"
 #include "areanumbering.h"
 
@@ -37,12 +38,11 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
-
+    AreaNumberer numberer(outputGC->size().xsize(),_connectivity);
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputGC, box);
         PixelIterator iterIn(_inputObj.get<RasterCoverage>());
-        AreaNumberer numberer(box.xlength(),_connectivity);
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
             double v = numberer.value(iterIn) ;
@@ -52,7 +52,15 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         return true;
     };
+    ctx->_threaded = false; // operation can not be run in parallel
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
+
+    INamedIdDomain iddom = outputGC->datadef().domain().get<NamedIdDomain>();
+    NamedIdentifierRange range;
+    for(int i=0; i < numberer.lastid(); ++i) {
+        range << QString("area_%1").arg(i);
+    }
+    iddom->setRange(range);
 
     if ( res && ctx != 0) {
         QVariant value;
@@ -95,10 +103,12 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     }
 
     IDomain dom;
-    Resource res(outputBaseName, itITEMDOMAIN);
+    QString domname = QString("ilwis://internalcatalog/%1").arg(outputBaseName);
+    Resource res(QUrl(domname), itITEMDOMAIN | itNAMEDITEM);
     if (!dom.prepare(res))
         return sPREPAREFAILED;
     outputGC->datadef().domain(dom);
+    mastercatalog()->addItems({res});
 
 
     return sPREPARED;
@@ -147,15 +157,20 @@ quint32 AreaNumberer::value(const PixelIterator &inIter)
     return 0;
 }
 
+quint32 AreaNumberer::lastid() const
+{
+    return _currentId;
+}
+
 double AreaNumberer::do4connected(const PixelIterator &in)  {
     qint32 x = in.position().x();
-    qint32 y = in.position().x();
+    qint32 y = in.position().y();
     double v = *in;
     double out = rUNDEF;
 
     if ( x == 0 && y == 0) {
         out = _currentId;
-        _neighboursIn[x] = *in;
+        _neighboursIn[x] = v;
         _neighboursOut[x] = _currentId++;
     } else if ( y == 0) {
         if ( v == _neighboursIn[x-1] ) {

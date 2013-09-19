@@ -28,6 +28,7 @@ public:
     AreaNumberer(quint32 xsize, quint8 connectivity);
 
     quint32 value(const Ilwis::PixelIterator &inIter);
+    quint32 lastid() const;
 
 private:
     quint8 _connectivity;
