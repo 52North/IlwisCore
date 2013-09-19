@@ -135,7 +135,7 @@ Size RasterCoverage::size() const
 }
 
 void RasterCoverage::unloadBinary() {
-    if (!_grid == NULL) {
+    if (_grid != 0) {
         return _grid->unload();
     }
 }
@@ -150,9 +150,9 @@ void RasterCoverage::size(const Size &sz)
         if (_georef.isValid())
             _georef->size(sz);
     }
-
-
 }
+
+
 
 
 
