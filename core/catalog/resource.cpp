@@ -96,6 +96,12 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     checkUrl(tp);
     if ( isNew)
         prepare();
+    QString nm = url.toString();
+    int index = nm.lastIndexOf("/");
+    if ( index != -1){
+        nm = nm.mid(index + 1);
+        setName(nm);
+    }
 }
 
 Resource::Resource(quint64 tp, const QUrl &url) :
