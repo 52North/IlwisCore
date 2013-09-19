@@ -297,11 +297,11 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
     return mastercatalog()->name2Resource(property.toString(), type);
 }
 
-IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& item) const{
-    QString code = item.code();
-    if ( code != "") {
+IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
+    QString code = resource.code();
+    if ( code != sUNDEF) {
         if ( code == "text")
-            return new TextDomain(item);
+            return new TextDomain(resource);
         QSqlQuery db(kernel()->database());
         QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
         if (db.exec(query)) {
@@ -312,7 +312,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& item) cons
                     if (db.exec(query)) {
                         if ( db.next()){
                             QSqlRecord rec = db.record();
-                            NumericDomain *dv = new NumericDomain(item);
+                            NumericDomain *dv = new NumericDomain(resource);
 
                             dv->fromInternal(rec);
                             double vmin = rec.field("minv").value().toDouble();
@@ -350,7 +350,13 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& item) cons
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
         }
     }else {
-        kernel()->issues()->log(TR(ERR_MISSING_CODE_FOR_SYSTEM_OBJECT));
+        if ( hasType(resource.ilwisType(), itITEMDOMAIN )){
+            if ( hasType(resource.ilwisType(), itNAMEDITEM)) {
+                Resource res = resource;
+                res.setIlwisType(itITEMDOMAIN);
+                return new ItemDomain<NamedIdentifier>(res);
+            }
+        }
     }
 
     return 0;
