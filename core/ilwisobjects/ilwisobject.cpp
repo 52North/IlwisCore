@@ -344,10 +344,10 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itPOINT;
     if ( name.compare( "FeatureCoverage",Qt::CaseInsensitive) == 0)
         return  itFEATURECOVERAGE;
-    if ( name.compare( "ValueDomain",Qt::CaseInsensitive) == 0)
-        return  itNUMERICDOMAIN;
     if ( name.mid(0,10) == "ItemDomain") // contains template construct, so different comparison
         return  itITEMDOMAIN;
+    if ( name == "NumericDomain") // contains template construct, so different comparison
+        return  itNUMERICDOMAIN;
     if ( name.compare( "Domain",Qt::CaseInsensitive) == 0)
         return  itDOMAIN;
     if ( name.compare( "CoordinateSystem",Qt::CaseInsensitive) == 0)
