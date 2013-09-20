@@ -32,7 +32,7 @@ IRasterCoverage IndexSlicer::operator()(const QString &item)
 
         QString basename = makeBaseName();
 
-        double index;
+        double index = rUNDEF;
         if ( indexDomain->valueType() == itNUMERICITEM)  {
             index = _raster->layerIndex(item);
         } else if ( hasType(indexDomain->valueType(),itNUMBER)) {
