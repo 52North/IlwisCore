@@ -373,5 +373,13 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
 
 
 
+#ifdef QT_DEBUG
 
+void MasterCatalog::dumpLookup() const
+{
+    for(auto pr : _lookup) {
+        qDebug() << pr->name();
+    }
+}
 
+#endif

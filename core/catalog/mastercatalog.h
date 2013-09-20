@@ -49,6 +49,7 @@ public:
 
 #ifdef QT_DEBUG
     quint32 lookupSize() const { return _lookup.size(); }
+    void dumpLookup() const;
 
 #endif
 private:
