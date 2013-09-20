@@ -189,7 +189,7 @@ quint32 PixelIterator::linearPosition() const
 
 bool PixelIterator::move(int n) {
 
-    bool ok;
+    bool ok = false;
     if (isAtEnd()) {
         _linearposition = _endposition;
         return false;
