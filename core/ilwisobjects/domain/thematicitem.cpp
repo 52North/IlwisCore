@@ -18,23 +18,19 @@ inline bool operator == (const Ilwis::ThematicItem& item1, const Ilwis::Thematic
 
 ThematicItem::ThematicItem()
 {
-    setCode(sUNDEF);
-    setDescription(sUNDEF);
+    code(sUNDEF);
+    description(sUNDEF);
 }
-
-//ThematicItem::ThematicItem(const QString &nm, const QString &cde, const QString &descr) : NamedIdentifier(nm),_description(descr), _code(cde)
-//{
-//}
 
 ThematicItem::ThematicItem(const QStringList& parts) {
     if ( parts.size() > 0) {
         setName(parts[0]);
         if ( parts.size() > 1)
-            setCode(parts[1]);
+            code(parts[1]);
         if ( parts.size() == 3) {
             QString desc = parts[2];
             desc.remove("\"");
-            setDescription(desc);
+            description(desc);
         }
     }
 }
@@ -44,12 +40,17 @@ QString ThematicItem::description() const
     return _description;
 }
 
-void ThematicItem::setDescription(const QString &desc)
+QString ThematicItem::code() const
+{
+    return _code;
+}
+
+void ThematicItem::description(const QString &desc)
 {
     _description = desc;
 }
 
-void ThematicItem::setCode(const QString &code)
+void ThematicItem::code(const QString &code)
 {
     _code = code;
 }

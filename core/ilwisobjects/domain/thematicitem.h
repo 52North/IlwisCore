@@ -14,8 +14,9 @@ public:
     ThematicItem(const QStringList &parts);
 
     QString description() const;
-    void setDescription(const QString &desc);
-    void setCode(const QString &code);
+    QString code() const;
+    void description(const QString &desc);
+    void code(const QString &code);
     DomainItem *clone() const;
     static IlwisTypes valueTypeS();
     IlwisTypes valueType() const;
@@ -26,6 +27,7 @@ private:
 };
 
 typedef IlwisData<ItemDomain<ThematicItem> > IThematicDomain;
+typedef QSharedPointer<ThematicItem> SPThematicItem;
 
 }
 
