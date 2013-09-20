@@ -787,7 +787,7 @@ TimeInterval TimeInterval::operator+(const TimeInterval& interval){
         return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step));
     }
     else if (  (double)interval.getStep() == tUNDEF || _step == tUNDEF) {
-        TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step));
+        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step));
     }
     return TimeInterval();
 }
@@ -796,7 +796,7 @@ TimeInterval TimeInterval::operator-(const TimeInterval& interval){
         return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step));
     }
     else if (  interval.getStep() == tUNDEF || _step == tUNDEF) {
-        TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step));
+        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step));
     }
     return TimeInterval();
 }
