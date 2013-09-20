@@ -41,6 +41,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     AreaNumberer numberer(outputGC->size().xsize(),_connectivity);
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
+        //pass one
         PixelIterator iterOut(outputGC, box);
         PixelIterator iterIn(_inputObj.get<RasterCoverage>());
         PixelIterator iterEnd = iterOut.end();
@@ -50,6 +51,15 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
             ++iterOut;
             ++iterIn;
         }
+        //pass two
+        for(auto iterPass2 : numberer.pass2Entries()) {
+            for(double& v : _outputObj.get<RasterCoverage>()){
+                if ( v == iterPass2.first){
+                    v = iterPass2.second;
+                }
+            }
+        }
+
         return true;
     };
     ctx->_threaded = false; // operation can not be run in parallel
@@ -149,6 +159,11 @@ AreaNumberer::AreaNumberer(quint32 xsize, quint8 connectivity) : _connectivity(c
     _neighboursOut.resize(xsize);
 }
 
+std::map<int, int> AreaNumberer::pass2Entries()
+{
+    return _pass2Changes;
+}
+
 quint32 AreaNumberer::value(const PixelIterator &inIter)
 {
     if ( _connectivity == 4) {
@@ -182,22 +197,18 @@ double AreaNumberer::do4connected(const PixelIterator &in)  {
             _neighboursIn[x] = v;
             _neighboursOut[x] = _currentId++;
         }
-    } else if ( x == 0) {
-        if ( v == _neighboursIn[0]) {
-            out = _neighboursOut[0];
-            _neighboursIn[x] = v;
-            _neighboursOut[x] = _neighboursOut[0];
-        } else {
-            if ( v == _neighboursIn[x-1]) {
-                out = _neighboursOut[x-1];
-                _neighboursIn[x] = v;
-                _neighboursOut[x] = _neighboursOut[x-1];
-            }
-        }
-    } else if ( v == _neighboursIn[x]){
+    } else if ( v == _neighboursIn[x] ){
         out = _neighboursOut[x];
         _neighboursIn[x] = v;
-        _neighboursOut[x] = _neighboursOut[x];
+        if ( x > 0 && y > 0 &&
+             v == _neighboursIn[x - 1] &&
+             _neighboursOut[x] != _neighboursOut[x-1]){
+            _pass2Changes[_neighboursOut[x-1]] = _neighboursOut[x];
+        }
+    } else if ( x > 0 && v == _neighboursIn[x - 1]) {
+        out = _neighboursOut[x - 1];
+        _neighboursIn[x] = v;
+        _neighboursOut[x] = _neighboursOut[x - 1];
     } else {
         out = _currentId;
         _neighboursIn[x] = v;

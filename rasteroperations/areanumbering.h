@@ -26,8 +26,9 @@ private:
 class AreaNumberer {
 public:
     AreaNumberer(quint32 xsize, quint8 connectivity);
-
+    std::map<int,int> pass2Entries();
     quint32 value(const Ilwis::PixelIterator &inIter);
+
     quint32 lastid() const;
 
 private:
@@ -35,6 +36,7 @@ private:
     quint32 _currentId = 0;
     std::vector<double> _neighboursIn;
     std::vector<double> _neighboursOut;
+    std::map<int,int> _pass2Changes;
     double do4connected(const Ilwis::PixelIterator &in);
 };
 }
