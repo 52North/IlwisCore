@@ -16,10 +16,10 @@ public:
 
     State prepare(ExecutionContext *ctx,const SymbolTable&);
 private:
-    bool executeCoverageNumber(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
-    bool executeCoverageCoverage(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
-    bool prepareCoverageCoverage();
-    bool prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2);
+    bool executeRasterNumber(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
+    bool executeRasterRaster(Ilwis::ExecutionContext *ctx, SymbolTable& symTable);
+    bool prepareRasterRaster();
+    bool prepareRasterNumber(IlwisTypes ptype1, IlwisTypes ptype2);
     bool setOutput(ExecutionContext *ctx, SymbolTable& symTable);
 
     bool _coveragecoverage;

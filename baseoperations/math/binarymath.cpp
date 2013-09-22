@@ -32,7 +32,7 @@ bool BinaryMath::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     return _outputGC.isValid();
 }
 
-bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTable) {
+bool BinaryMath::executeRasterNumber(ExecutionContext *ctx, SymbolTable& symTable) {
 
     auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn(_inputGC1, box);
@@ -69,7 +69,7 @@ bool BinaryMath::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTa
 
 }
 
-bool BinaryMath::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
+bool BinaryMath::executeRasterRaster(ExecutionContext *ctx, SymbolTable& symTable) {
     std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
     //auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
@@ -118,15 +118,15 @@ bool BinaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     if ( _coveragecoverage) {
-        return executeCoverageCoverage(ctx, symTable);
+        return executeRasterRaster(ctx, symTable);
 
     } else  {
-        return executeCoverageNumber(ctx, symTable);
+        return executeRasterNumber(ctx, symTable);
     }
     return true;
 }
 
-bool BinaryMath::prepareCoverageCoverage() {
+bool BinaryMath::prepareRasterRaster() {
     QString gc =  _expression.parm(0).value();
     if (!_inputGC1.prepare(gc)) {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
@@ -185,7 +185,7 @@ bool BinaryMath::prepareCoverageCoverage() {
     return true;
 }
 
-bool BinaryMath::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
+bool BinaryMath::prepareRasterNumber(IlwisTypes ptype1, IlwisTypes ptype2) {
 
     int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
@@ -257,11 +257,11 @@ OperationImplementation::State BinaryMath::prepare(ExecutionContext *,const Symb
         _operator = otMULT;
 
     if ( (ptype1 == itRASTER && hasType(ptype2,itNUMBER)) || (ptype2 == itRASTER && hasType(ptype1,itNUMBER)) ) {
-        if(!prepareCoverageNumber(ptype1, ptype2))
+        if(!prepareRasterNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
     } else if ( ptype1 & ptype2 & itRASTER ) {
-        if(!prepareCoverageCoverage())
+        if(!prepareRasterRaster())
             return sPREPAREFAILED;
     }
 
@@ -275,7 +275,7 @@ quint64 BinaryMath::createMetadata()
     res.addProperty("namespace","ilwis");
     res.addProperty("longname","binarymathraster");
     res.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
-    res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
+    res.addProperty("description",TR("generates a new numrical gridcoverage based on the operation, applied to all the pixels"));
     res.addProperty("inparameters","3");
     res.addProperty("pin_1_type", itRASTER | itNUMBER);
     res.addProperty("pin_1_name", TR("input gridcoverage or number"));
