@@ -38,7 +38,7 @@ public:
     NumericStatistics& statistics();
     const DataDefinition& datadef() const;
     DataDefinition& datadef();
-    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURECOVERAGE, qint32 layerIndex = -1);
+    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURE, qint32 layerIndex = -1);
     Resource resource(int mode=cmINPUT) const;
     double layerIndex(const QString& value);
     void setLayerIndexes(const ItemRange &items);

@@ -78,10 +78,10 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         return sPREPARED;
 
     } else if ( ptype == itRASTER) {
-        QString gc = _expression.parm(0).value();
+        QString rasterCoverage = _expression.parm(0).value();
 
-        if (!_inputGC.prepare(gc)) {
-            ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+        if (!_inputGC.prepare(rasterCoverage)) {
+            ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
             return sPREPAREFAILED;
         }
         OperationHelperRaster helper;

@@ -43,9 +43,9 @@ OperationImplementation *GridSize::create(quint64 metaid, const Ilwis::Operation
 }
 
 OperationImplementation::State GridSize::prepare(ExecutionContext *, const SymbolTable& ){
-    QString gc = _expression.parm(0).value();
-    if (!_inputGC.prepare(gc)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    QString rasterCoverage = _expression.parm(0).value();
+    if (!_inputGC.prepare(rasterCoverage)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
      QString dim  =_expression.parm(1).value().toLower();

@@ -76,7 +76,7 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
     IlwisTypes tp = sym._type;
     if ( tp & itRASTER)
             return sym._var.value<Ilwis::IRasterCoverage>().get<IlwisObject>();
-    if ( tp & itFEATURECOVERAGE)
+    if ( tp & itFEATURE)
             return sym._var.value<Ilwis::IFeatureCoverage>().get<IlwisObject>();
     return IIlwisObject();
 

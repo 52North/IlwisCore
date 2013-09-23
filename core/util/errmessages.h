@@ -37,4 +37,5 @@
 #define WARN_HAS_STATUS2 "Object %1 has status %2"
 #define WARN_NOT_PART_OF2 "%1 is not part of %2"
 #define WARN_PART_OF2 "%1 is part of %2"
+#define WARN_COULDNT_CREATE_OBJECT_FOR_1 "Could not create %1"
 

@@ -163,12 +163,12 @@ protected:
     bool _zChanged = false;
 };
 
-inline Ilwis::PixelIterator begin(const IRasterCoverage& gcov) {
-    return PixelIterator(gcov);
+inline Ilwis::PixelIterator begin(const IRasterCoverage& rasterCoverage) {
+    return PixelIterator(rasterCoverage);
 }
 
-inline Ilwis::PixelIterator end(const IRasterCoverage& gcov) {
-    PixelIterator iter(gcov);
+inline Ilwis::PixelIterator end(const IRasterCoverage& rasterCoverage) {
+    PixelIterator iter(rasterCoverage);
     return iter.end();
 }
 

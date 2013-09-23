@@ -51,7 +51,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputFC->attributeTable(itFEATURECOVERAGE), FEATUREIDCOLUMN);
+            rec = AttributeRecord(inputFC->attributeTable(itFEATURE), FEATUREIDCOLUMN);
         SPAttributeRecord attrib (new AttributeRecord(_attTable, FEATUREIDCOLUMN));
         quint64 v_in = 0;
         for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
@@ -81,7 +81,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         outputFC->attributeTable(outputFC->featureTypes(),_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
-        ctx->addOutput(symTable, value, outputFC->name(), itFEATURECOVERAGE,outputFC->resource());
+        ctx->addOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
     }
     return true;
 }
@@ -93,7 +93,7 @@ Ilwis::OperationImplementation *SelectionFeatures::create(quint64 metaid, const 
 
 Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContext *, const SymbolTable &)
 {
-    IlwisTypes inputType = itFEATURECOVERAGE;
+    IlwisTypes inputType = itFEATURE;
     QString fc = _expression.parm(0).value();
     if (!_inputObj.prepare(fc, inputType)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,fc,"");
@@ -121,7 +121,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
-        if (! inputFC->attributeTable(itFEATURECOVERAGE).isValid()) {
+        if (! inputFC->attributeTable(itFEATURE).isValid()) {
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
@@ -151,7 +151,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
              return sPREPAREFAILED;
          }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
-         _attTable->addColumn(_attribColumn, inputFC->attributeTable(itFEATURECOVERAGE)->columndefinition(_attribColumn).datadef().domain());
+         _attTable->addColumn(_attribColumn, inputFC->attributeTable(itFEATURE)->columndefinition(_attribColumn).datadef().domain());
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO selections in features on bounding box
@@ -168,13 +168,13 @@ quint64 SelectionFeatures::createMetadata()
     res.addProperty("syntax","selection(featurecoverage,selection-definition)");
     res.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
     res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itFEATURECOVERAGE);
+    res.addProperty("pin_1_type", itFEATURE);
     res.addProperty("pin_1_name", TR("input gridcoverage"));
     res.addProperty("pin_1_desc",TR("input gridcoverage with a domain as specified by the selection"));
     res.addProperty("pin_2_type", itSTRING);
     res.addProperty("pin_2_name", TR("selection-definition"));
     res.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    res.addProperty("pout_1_type", itFEATURECOVERAGE);
+    res.addProperty("pout_1_type", itFEATURE);
     res.addProperty("pout_1_name", TR("gridcoverage were the selection has been applied"));
     res.addProperty("pout_1_desc",TR(""));
     res.prepare();

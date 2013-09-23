@@ -343,7 +343,7 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
     if ( name.compare( "PointCoverage",Qt::CaseInsensitive) == 0)
         return  itPOINT;
     if ( name.compare( "FeatureCoverage",Qt::CaseInsensitive) == 0)
-        return  itFEATURECOVERAGE;
+        return  itFEATURE;
     if ( name.mid(0,10) == "ItemDomain") // contains template construct, so different comparison
         return  itITEMDOMAIN;
     if ( name == "NumericDomain") // contains template construct, so different comparison

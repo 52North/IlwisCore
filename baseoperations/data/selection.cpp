@@ -94,9 +94,9 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         return sPREPAREFAILED;
     }
     IlwisTypes inputType = itRASTER;
-    QString gc = _expression.parm(0).value();
-    if (!_inputObj.prepare(gc, inputType)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    QString rasterCoverage = _expression.parm(0).value();
+    if (!_inputObj.prepare(rasterCoverage, inputType)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
     IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();

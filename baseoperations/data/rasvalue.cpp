@@ -40,9 +40,9 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
         return sPREPAREFAILED;
     }
 
-    QString gc = _expression.parm(0).value();
-    if (!_inputGC.prepare(gc)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    QString rasterCoverage = _expression.parm(0).value();
+    if (!_inputGC.prepare(rasterCoverage)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
     _vox = Voxel(_expression.parm(1).value().toInt(), _expression.parm(2).value().toInt());

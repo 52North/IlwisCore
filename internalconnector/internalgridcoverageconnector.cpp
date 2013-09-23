@@ -30,8 +30,8 @@ bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data){
 }
 
 Grid *InternalRasterCoverageConnector::loadGridData(IlwisObject* data){
-    RasterCoverage *gc = static_cast<RasterCoverage *>(data);
-    Grid *grid = new Grid(gc->size());
+    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(data);
+    Grid *grid = new Grid(rasterCoverage->size());
     grid->prepare();
 
     return grid;

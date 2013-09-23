@@ -36,9 +36,9 @@ OperationImplementation *Coord2Pixel::create(quint64 metaid, const Ilwis::Operat
 
 Ilwis::OperationImplementation::State Coord2Pixel::prepare(ExecutionContext *ctx, const SymbolTable& symTable)
 {
-    QString gc = _expression.parm(0).value();
-    if (!_inputGC.prepare(gc)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    QString rasterCoverage = _expression.parm(0).value();
+    if (!_inputGC.prepare(rasterCoverage)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
     if ( _expression.parameterCount() == 2) {

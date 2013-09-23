@@ -59,7 +59,7 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputFC);
-        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURECOVERAGE,_outputFC->resource());
+        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURE,_outputFC->resource());
     }
     return true;
 }
@@ -79,7 +79,7 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
     }
 
     OperationHelperFeatures helper;
-    IIlwisObject obj = helper.initialize(_inputFC.get<IlwisObject>(), itFEATURECOVERAGE, itENVELOPE | itCOORDSYSTEM) ;
+    IIlwisObject obj = helper.initialize(_inputFC.get<IlwisObject>(), itFEATURE, itENVELOPE | itCOORDSYSTEM) ;
     if ( !obj.isValid()) {
         ERROR2(ERR_INVALID_INIT_FOR_2,"FeatureCoverage",fc);
         return sPREPAREFAILED;
@@ -101,17 +101,17 @@ quint64 IfFeature::createMetadata()
     res.addProperty("syntax","iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)");
     res.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
     res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itFEATURECOVERAGE);
+    res.addProperty("pin_1_type", itFEATURE);
     res.addProperty("pin_1_name", TR("input featurecoverage"));
     res.addProperty("pin_1_desc",TR("input featurecoverage with boolean domain"));
-    res.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURECOVERAGE);
+    res.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
     res.addProperty("pin_2_name", TR("true choice"));
     res.addProperty("pin_2_desc",TR("value returned when the boolean input feature is true"));
-    res.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURECOVERAGE);
+    res.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
     res.addProperty("pin_3_name", TR("false choice"));
     res.addProperty("pin_3_desc",TR("value returned when the boolean input feature is false"));
     res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itFEATURECOVERAGE);
+    res.addProperty("pout_1_type", itFEATURE);
     res.addProperty("pout_1_name", TR("featurecoverage"));
     res.addProperty("pout_1_desc",TR("featurecoverage with all features that correspond to the true value in the input having a value"));
     res.prepare();

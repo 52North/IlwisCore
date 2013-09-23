@@ -26,6 +26,8 @@ void ExecutionContext::clear()
     _silent = false;
     _threaded = true;
     _results.clear();
+    _masterCsy = sUNDEF;
+    _masterGeoref = sUNDEF;
 }
 
 ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(threaded){

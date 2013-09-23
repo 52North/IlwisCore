@@ -51,20 +51,20 @@ IlwisTypes RasterCoverage::ilwisType() const
 
 RasterCoverage *RasterCoverage::copy()
 {
-    RasterCoverage *gc = new RasterCoverage();
-    copyTo(gc);
-    return gc;
+    RasterCoverage *rasterCoverage = new RasterCoverage();
+    copyTo(rasterCoverage);
+    return rasterCoverage;
 
 }
 
 
-void RasterCoverage::copyBinary(const IRasterCoverage& gc, int index) {
+void RasterCoverage::copyBinary(const IRasterCoverage& rasterCoverage, int index) {
     IRasterCoverage gcNew;
     gcNew.set(this);
-    Size inputSize =  gc->size();
+    Size inputSize =  rasterCoverage->size();
     Size sz(inputSize.xsize(),inputSize.ysize(), 1);
     gcNew->georeference()->size(sz);
-    PixelIterator iterIn(gc, Box3D<>(Voxel(0,0,index), Voxel(inputSize.xsize(), inputSize.ysize(), index + 1)));
+    PixelIterator iterIn(rasterCoverage, Box3D<>(Voxel(0,0,index), Voxel(inputSize.xsize(), inputSize.ysize(), index + 1)));
     PixelIterator iterOut(gcNew, Box3D<>(Size(inputSize.xsize(), inputSize.ysize(), 1)));
     for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
@@ -76,11 +76,11 @@ void RasterCoverage::copyBinary(const IRasterCoverage& gc, int index) {
 //{
 //    IRasterCoverage gcovParent;
 //    gcovParent.set(this);
-//    IRasterCoverage gcov = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
-//    gcov->size(Size(size().xsize(), size().ysize()));
-//    gcov->_grid.reset(gcov->_grid->clone(index1, index2));
+//    IRasterCoverage rasterCoverage = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+//    rasterCoverage->size(Size(size().xsize(), size().ysize()));
+//    rasterCoverage->_grid.reset(rasterCoverage->_grid->clone(index1, index2));
 
-//    return gcov;
+//    return rasterCoverage;
 
 //}
 
@@ -103,10 +103,10 @@ void RasterCoverage::copyTo(IlwisObject *obj)
 {
     Locker lock(_mutex);
     Coverage::copyTo(obj);
-    RasterCoverage *gc = static_cast<RasterCoverage *>(obj);
-    gc->_georef = _georef;
+    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(obj);
+    rasterCoverage->_georef = _georef;
     if ( _grid) {
-        gc->_grid.reset(_grid->clone());
+        rasterCoverage->_grid.reset(_grid->clone());
     }
 
 }

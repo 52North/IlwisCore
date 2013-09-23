@@ -20,7 +20,7 @@
 #include "geometry/gridsize.h"
 #include "math/unarymath.h"
 #include "math/unarymathoperations.h"
-#include "math/binarymath.h"
+#include "math/binarymathraster.h"
 #include "math/binarylogical.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
@@ -45,7 +45,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(ArcTangent::createMetadata(), ArcTangent::create);
     commandhandler()->addOperation(Assignment::createMetadata(), Assignment::create);
     commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
-    commandhandler()->addOperation(BinaryMath::createMetadata(), BinaryMath::create);
+    commandhandler()->addOperation(BinaryMathRaster::createMetadata(), BinaryMathRaster::create);
     commandhandler()->addOperation(Ceil::createMetadata(), Ceil::create);
     commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
     commandhandler()->addOperation(Cosine::createMetadata(), Cosine::create);

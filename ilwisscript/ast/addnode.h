@@ -11,6 +11,7 @@ public:
 private:
     bool handleAdd(const NodeValue &vright, Ilwis::SymbolTable &symbols);
     bool handleSubstract(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    IlwisTypes typesUsed(const NodeValue &vright, Ilwis::SymbolTable &symbols) const;
 };
 }
 

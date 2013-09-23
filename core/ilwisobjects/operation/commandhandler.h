@@ -24,6 +24,8 @@ struct KERNELSHARED_EXPORT ExecutionContext {
     bool _threaded;
     qint16 _scope=1000;
     std::vector<QString> _results;
+    QString _masterGeoref;
+    QString _masterCsy;
     void addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Ilwis::Resource &res);
 };
 

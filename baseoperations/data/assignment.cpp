@@ -80,7 +80,7 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
                 if((res = assignRasterCoverage(ctx)) == true)
                     setOutput<RasterCoverage>(ctx, symTable);
             }
-            if ( (_inputObj->ilwisType() & itFEATURECOVERAGE)!= 0) {
+            if ( (_inputObj->ilwisType() & itFEATURE)!= 0) {
                 if((res = assignFeatureCoverage(ctx)) == true)
                     setOutput<FeatureCoverage>(ctx, symTable);
             }

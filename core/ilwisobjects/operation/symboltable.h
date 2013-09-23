@@ -27,6 +27,7 @@ public:
     Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
     Symbol getSymbol(const QString& name, int scope=1000) const;
     void unloadRasters();
+    IlwisTypes ilwisType(const QString& symname) const;
 
     static bool isNumerical(const QVariant &var) ;
     static bool isRealNumerical(const QVariant &var) ;

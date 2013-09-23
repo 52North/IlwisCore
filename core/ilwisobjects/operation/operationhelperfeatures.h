@@ -10,7 +10,7 @@ class KERNELSHARED_EXPORT OperationHelperFeatures
 public:
     OperationHelperFeatures();
     static IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what);
-    static int subdivideTasks(ExecutionContext *ctx, const IFeatureCoverage& gcov, std::vector<std::vector<quint32> > &subsets);
+    static int subdivideTasks(ExecutionContext *ctx, const IFeatureCoverage& rasterCoverage, std::vector<std::vector<quint32> > &subsets);
     template<typename T> static bool execute(ExecutionContext* ctx, T func, IFeatureCoverage& inputFC, IFeatureCoverage& outputFC){
         std::vector<std::vector<quint32>> subsets;
 

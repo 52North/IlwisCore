@@ -83,7 +83,7 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
 
 IlwisTypes FeatureCoverage::ilwisType() const
 {
-    return itFEATURECOVERAGE;
+    return itFEATURE;
 }
 
 FeatureCoverage *FeatureCoverage::copy()

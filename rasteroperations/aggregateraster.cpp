@@ -90,12 +90,12 @@ NumericStatistics::PropertySets AggregateRaster::toMethod(const QString& nm) {
 
 Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString gc = _expression.parm(0).value();
+    QString rasterCoverage = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     int copylist = itDOMAIN | itCOORDSYSTEM;
 
-    if (!_inputObj.prepare(gc, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    if (!_inputObj.prepare(rasterCoverage, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
     _method = toMethod(_expression.parm(1).value());

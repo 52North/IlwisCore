@@ -142,14 +142,14 @@ bool BinaryLogical::execute(ExecutionContext *ctx, SymbolTable& symTable)
 }
 
 bool BinaryLogical::prepareCoverageCoverage() {
-    QString gc =  _expression.parm(0).value();
-    if (!_inputGC1.prepare(gc)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
+    QString rasterCoverage =  _expression.parm(0).value();
+    if (!_inputGC1.prepare(rasterCoverage)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
         return false;
     }
-    gc =  _expression.parm(1).value();
-    if (!_inputGC2.prepare(gc)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
+    rasterCoverage =  _expression.parm(1).value();
+    if (!_inputGC2.prepare(rasterCoverage)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
         return false;
     }
     bool isNumeric = _inputGC1->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
@@ -173,9 +173,9 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
 
-    QString gc =  _expression.parm(mindex).value();
-    if (!_inputGC1.prepare(gc)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(gc, ""));
+    QString rasterCoverage =  _expression.parm(mindex).value();
+    if (!_inputGC1.prepare(rasterCoverage)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
         return false;
     }
     if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)

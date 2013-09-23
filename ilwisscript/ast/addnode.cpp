@@ -44,7 +44,14 @@ bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols) {
        _value = {vright.toDouble() + var.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    bool ok = handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
+    IlwisTypes used = typesUsed(vright, symbols);
+    bool ok = false;
+    if ( hasType(used, itRASTER))
+        ok = handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols);
+    else if ( (used & itFEATURE) == 0){
+        ok = handleBinaryCoverageCases(vright, "binarymathfeature", "add", symbols);
+
+    }
     return ok;
 }
 
@@ -54,6 +61,24 @@ bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols) {
        _value = {var.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "substract", symbols);
+    IlwisTypes used = typesUsed(vright, symbols);
+    bool ok = false;
+    if ( hasType(used, itRASTER))
+        ok = handleBinaryCoverageCases(vright, "binarymathraster", "substract", symbols);
+    else if (  (used & itFEATURE) == 0){
+        ok = handleBinaryCoverageCases(vright, "binarymathfeature", "substract", symbols);
+
+    }
+    return ok;
+}
+
+IlwisTypes AddNode::typesUsed(const NodeValue& vright, SymbolTable &symbols) const {
+    IlwisTypes tp1 = symbols.ilwisType(vright.id());
+    IlwisTypes tp2 = symbols.ilwisType(_value.id());
+
+    if ( tp1 == itUNKNOWN || tp2 == itUNKNOWN)
+        return itUNKNOWN;
+    return tp1 | tp2;
+
 }
 

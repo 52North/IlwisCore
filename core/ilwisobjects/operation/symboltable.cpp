@@ -90,11 +90,20 @@ void SymbolTable::unloadRasters()
 {
     for(Symbol& sym: _symbols) {
         if ( sym._type == itRASTER) {
-            IRasterCoverage gc = sym._var.value<IRasterCoverage>();
-            if ( gc.isValid())
-                gc->unloadBinary();
+            IRasterCoverage rasterCoverage = sym._var.value<IRasterCoverage>();
+            if ( rasterCoverage.isValid())
+                rasterCoverage->unloadBinary();
         }
     }
+}
+
+IlwisTypes SymbolTable::ilwisType(const QString &symname) const
+{
+    auto iter = _symbols.find(symname);
+    if ( iter != _symbols.end()) {
+        return iter.value()._type;
+    }
+    return itUNKNOWN;
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {

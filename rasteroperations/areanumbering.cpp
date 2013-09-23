@@ -82,12 +82,12 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
 Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString gc = _expression.parm(0).value();
+    QString rasterCoverage = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     int copylist = itCOORDSYSTEM | itGEOREF;
 
-    if (!_inputObj.prepare(gc, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,gc,"");
+    if (!_inputObj.prepare(rasterCoverage, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
         return sPREPAREFAILED;
     }
     bool ok;

@@ -79,7 +79,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) con
         return createOperationMetaData(item);
     } else if ( item.ilwisType() & itGEOREF) {
         return createGeoreference(item);
-    } else if ( item.ilwisType() & itFEATURECOVERAGE) {
+    } else if ( item.ilwisType() & itFEATURE) {
         return createFeatureCoverage(item);
     }
     return 0;
@@ -134,7 +134,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
     case itOPERATIONMETADATA:
         return new OperationMetaData();
     }
-    if ( type & itFEATURECOVERAGE)
+    if ( type & itFEATURE)
         return new FeatureCoverage();
     return 0;
 }
@@ -162,7 +162,7 @@ bool InternalIlwisObjectFactory::canUse(const Resource& item) const
         return true;
     } else if ( item.ilwisType() & itGEOREF) {
         return true;
-    } else if ( item.ilwisType() & itFEATURECOVERAGE) {
+    } else if ( item.ilwisType() & itFEATURE) {
         return true;
     }
 

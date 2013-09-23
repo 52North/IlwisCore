@@ -29,7 +29,7 @@ public:
     Size size() const;
     void size(const Size& sz);
 
-    void copyBinary(const IlwisData<RasterCoverage> &gc, int index);
+    void copyBinary(const IlwisData<RasterCoverage> &rasterCoverage, int index);
 
     double coord2value(const Coordinate &c){
         if ( _georef->isValid() && c.isValid()) {
