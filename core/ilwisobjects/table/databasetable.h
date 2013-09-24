@@ -13,7 +13,7 @@ class KERNELSHARED_EXPORT DatabaseTable : public BaseTable
 public:
 
     DatabaseTable();
-    DatabaseTable(const Resource& res);
+    DatabaseTable(const Resource& resource);
     ~DatabaseTable();
 
     void setDatabase(const QSqlDatabase& base);

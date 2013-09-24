@@ -11,7 +11,7 @@ Domain::Domain(): _strict(true)
 {
 }
 
-Domain::Domain(const Resource& res) : IlwisObject(res), _strict(true)
+Domain::Domain(const Resource& resource) : IlwisObject(resource), _strict(true)
 {
 }
 

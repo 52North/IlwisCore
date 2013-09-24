@@ -39,10 +39,10 @@ IlwisContext::~IlwisContext()
     delete _workingCatalog;
 }
 
-void IlwisContext::addSystemLocation(const QUrl &res)
+void IlwisContext::addSystemLocation(const QUrl &resource)
 {
-    if ( std::find(_systemlocations.begin(), _systemlocations.end(), res) == _systemlocations.end() ) {
-        _systemlocations.push_back(res);
+    if ( std::find(_systemlocations.begin(), _systemlocations.end(), resource) == _systemlocations.end() ) {
+        _systemlocations.push_back(resource);
     }
 
 }

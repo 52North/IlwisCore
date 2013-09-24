@@ -14,7 +14,7 @@ class KERNELSHARED_EXPORT CoordinateSystem : public IlwisObject
 {
 public:
     CoordinateSystem();
-    CoordinateSystem(const Ilwis::Resource &res);
+    CoordinateSystem(const Ilwis::Resource &resource);
 
     virtual Coordinate coord2coord(const ICoordinateSystem& sourceCs, const Coordinate& crdSource) const =0;
     virtual LatLon coord2latlon(const Coordinate &crdSource) const =0;

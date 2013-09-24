@@ -18,7 +18,7 @@ RasterCoverage::RasterCoverage()
 {
 }
 
-RasterCoverage::RasterCoverage(const Resource& res) : Coverage(res){
+RasterCoverage::RasterCoverage(const Resource& resource) : Coverage(resource){
 
 }
 
@@ -51,20 +51,30 @@ IlwisTypes RasterCoverage::ilwisType() const
 
 RasterCoverage *RasterCoverage::copy()
 {
-    RasterCoverage *rasterCoverage = new RasterCoverage();
-    copyTo(rasterCoverage);
-    return rasterCoverage;
+    RasterCoverage *raster = new RasterCoverage();
+    copyTo(raster);
+    return raster;
 
 }
 
+const DataDefinition &RasterCoverage::datadef() const
+{
+    return _datadefCoverage;
+}
 
-void RasterCoverage::copyBinary(const IRasterCoverage& rasterCoverage, int index) {
+DataDefinition &RasterCoverage::datadef()
+{
+    return _datadefCoverage;
+}
+
+
+void RasterCoverage::copyBinary(const IRasterCoverage& raster, int index) {
     IRasterCoverage gcNew;
     gcNew.set(this);
-    Size inputSize =  rasterCoverage->size();
+    Size inputSize =  raster->size();
     Size sz(inputSize.xsize(),inputSize.ysize(), 1);
     gcNew->georeference()->size(sz);
-    PixelIterator iterIn(rasterCoverage, Box3D<>(Voxel(0,0,index), Voxel(inputSize.xsize(), inputSize.ysize(), index + 1)));
+    PixelIterator iterIn(raster, Box3D<>(Voxel(0,0,index), Voxel(inputSize.xsize(), inputSize.ysize(), index + 1)));
     PixelIterator iterOut(gcNew, Box3D<>(Size(inputSize.xsize(), inputSize.ysize(), 1)));
     for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
@@ -76,11 +86,11 @@ void RasterCoverage::copyBinary(const IRasterCoverage& rasterCoverage, int index
 //{
 //    IRasterCoverage gcovParent;
 //    gcovParent.set(this);
-//    IRasterCoverage rasterCoverage = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
-//    rasterCoverage->size(Size(size().xsize(), size().ysize()));
-//    rasterCoverage->_grid.reset(rasterCoverage->_grid->clone(index1, index2));
+//    IRasterCoverage raster = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
+//    raster->size(Size(size().xsize(), size().ysize()));
+//    raster->_grid.reset(raster->_grid->clone(index1, index2));
 
-//    return rasterCoverage;
+//    return raster;
 
 //}
 
@@ -103,22 +113,24 @@ void RasterCoverage::copyTo(IlwisObject *obj)
 {
     Locker lock(_mutex);
     Coverage::copyTo(obj);
-    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(obj);
-    rasterCoverage->_georef = _georef;
+    RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
+    raster->_georef = _georef;
+    raster->_datadefCoverage = _datadefCoverage;
     if ( _grid) {
-        rasterCoverage->_grid.reset(_grid->clone());
+        raster->_grid.reset(_grid->clone());
     }
 
 }
 
-Resource RasterCoverage::resource(int mode) const
+Resource RasterCoverage::source(int mode) const
 {
-    Resource res = Coverage::resource(mode);
+    Resource resource = Coverage::source(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
-        res["georeference()"] = georeference()->id();
-        res.setExtendedType( res.extendedType() | itGEOREF);
+        resource["georeference()"] = georeference()->id();
+        resource.addProperty("domain", _datadefCoverage.domain()->id());
+        resource.setExtendedType( resource.extendedType() | itGEOREF);
     }
-    return res;
+    return resource;
 }
 
 Size RasterCoverage::size() const

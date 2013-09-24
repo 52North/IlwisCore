@@ -75,13 +75,13 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         return true;
     };
     ctx->_threaded = false;
-    bool res = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
+    bool resource = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
-    if ( res && ctx != 0) {
+    if ( resource && ctx != 0) {
         outputFC->attributeTable(outputFC->featureTypes(),_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
-        ctx->addOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
+        ctx->addOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
     }
     return true;
 }
@@ -134,18 +134,14 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-     IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
-     if ( (copylist & itDOMAIN) == 0) {
-         outputFC->datadef() = inputFC->datadef();
-     }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)
          _outputObj->setName(outputName);
 
      if ( _attribColumn != "") {
          QString url = "ilwis://internal/" + outputName;
-         Resource res(url, itFLATTABLE);
-         _attTable.prepare(res);
+         Resource resource(url, itFLATTABLE);
+         _attTable.prepare(resource);
          IDomain covdom;
          if (!covdom.prepare("count")){
              return sPREPAREFAILED;
@@ -162,26 +158,26 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
 quint64 SelectionFeatures::createMetadata()
 {
     QString url = QString("ilwis://operations/selection");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","selection");
-    res.addProperty("syntax","selection(featurecoverage,selection-definition)");
-    res.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
-    res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itFEATURE);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with a domain as specified by the selection"));
-    res.addProperty("pin_2_type", itSTRING);
-    res.addProperty("pin_2_name", TR("selection-definition"));
-    res.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    res.addProperty("pout_1_type", itFEATURE);
-    res.addProperty("pout_1_name", TR("gridcoverage were the selection has been applied"));
-    res.addProperty("pout_1_desc",TR(""));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","selection");
+    resource.addProperty("syntax","selection(featurecoverage,selection-definition)");
+    resource.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
+    resource.addProperty("inparameters","2");
+    resource.addProperty("pin_1_type", itFEATURE);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with a domain as specified by the selection"));
+    resource.addProperty("pin_2_type", itSTRING);
+    resource.addProperty("pin_2_name", TR("selection-definition"));
+    resource.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    resource.addProperty("pout_1_type", itFEATURE);
+    resource.addProperty("pout_1_name", TR("rastercoverage were the selection has been applied"));
+    resource.addProperty("pout_1_desc",TR(""));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 
 }

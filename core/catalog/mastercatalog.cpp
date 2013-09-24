@@ -115,18 +115,18 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
 }
 
 bool MasterCatalog::removeItems(const QList<Resource> &items){
-    for(const Resource &item : items) {
-        auto iter = _knownHashes.find(Ilwis::qHash(item));
+    for(const Resource &resource : items) {
+        auto iter = _knownHashes.find(Ilwis::qHash(resource));
         if ( iter != _knownHashes.end()) {
             _knownHashes.erase(iter);
         }
-        QString stmt = QString("DELETE FROM mastercatalog WHERE item = %1" ).arg(item.id());
+        QString stmt = QString("DELETE FROM mastercatalog WHERE resource = %1" ).arg(resource.id());
         QSqlQuery db(kernel()->database());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
         }
-        stmt = QString("DELETE FROM catalogitemproperties WHERE item = %1").arg(item.id());
+        stmt = QString("DELETE FROM catalogitemproperties WHERE resource = %1").arg(resource.id());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
@@ -157,14 +157,14 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
         return false;
     }
 
-    for(const Resource &item : items) {
-        //if ( _lookup.contains(item.id()))
+    for(const Resource &resource : items) {
+        //if ( _lookup.contains(resource.id()))
         //    continue;
-        if ( mastercatalog()->contains(item.url(), item.ilwisType()))
+        if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
             continue;
 
-         _knownHashes.insert(Ilwis::qHash(item));
-        item.store(queryItem, queryProperties);
+         _knownHashes.insert(Ilwis::qHash(resource));
+        resource.store(queryItem, queryProperties);
     }
 
 
@@ -210,8 +210,8 @@ quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
             }
         }
     }
-    Resource res = name2Resource(name,tp);
-    return res.id();
+    Resource resource = name2Resource(name,tp);
+    return resource.id();
 }
 
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
@@ -229,9 +229,9 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
     if ( tp == itUNKNOWN) {
         std::vector<IlwisTypes> types { itRASTER, itFEATURE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
         for(IlwisTypes type: types) {
-            Resource res = name2Resource(name, type);
-            if (res.isValid())
-                return res.ilwisType();
+            Resource resource = name2Resource(name, type);
+            if (resource.isValid())
+                return resource.ilwisType();
         }
 
         return Resource();
@@ -265,10 +265,10 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
                 return id2Resource(propertyid);
         }
         if ( !isExternalRef) { // it was not an external reference but an internal one; if it was external it will never come here
-            // this is a new item which only existed as reference but now gets real, so add it to the catalog
-            Resource res(QUrl(resolvedName), tp);
-            const_cast<MasterCatalog *>(this)->addItems({res});
-            return res;
+            // this is a new resource which only existed as reference but now gets real, so add it to the catalog
+            Resource resource(QUrl(resolvedName), tp);
+            const_cast<MasterCatalog *>(this)->addItems({resource});
+            return resource;
         }
     }
     return Resource();
@@ -344,10 +344,10 @@ bool MasterCatalog::unregister(quint64 id)
 
 }
 
-std::list<Resource> MasterCatalog::select(const QUrl &res, const QString &selection) const
+std::list<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
-    QString query = QString("select * from mastercatalog where container = '%1' %2").arg(res.toString(), rest);
+    QString query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     QSqlQuery results = kernel()->database().exec(query);
     std::list<Resource> items;
     while( results.next()) {
@@ -365,7 +365,7 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
         data = iter.value();
     } else {
         if ( !data->isAnonymous())
-            addItems({data->resource()});
+            addItems({data->source()});
         _lookup[data->id()] = data;
 
     }

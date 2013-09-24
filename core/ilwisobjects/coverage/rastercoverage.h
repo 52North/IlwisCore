@@ -18,18 +18,20 @@ public:
     friend class RasterInterpolator;
 
     RasterCoverage();
-    RasterCoverage(const Resource& res);
+    RasterCoverage(const Resource& resource);
     ~RasterCoverage();
 
     IlwisTypes ilwisType() const;
     virtual RasterCoverage *copy() ;
 
+    const DataDefinition& datadef() const;
+    DataDefinition& datadef();
     const Ilwis::IGeoReference &georeference() const;
     void georeference(const IGeoReference& grf) ;
     Size size() const;
     void size(const Size& sz);
 
-    void copyBinary(const IlwisData<RasterCoverage> &rasterCoverage, int index);
+    void copyBinary(const IlwisData<RasterCoverage> &raster, int index);
 
     double coord2value(const Coordinate &c){
         if ( _georef->isValid() && c.isValid()) {
@@ -52,19 +54,20 @@ public:
         }
         return rUNDEF;
     }
-//    IlwisData<RasterCoverage> get(quint32 index1, quint32 index2 = iUNDEF);
 
-    Resource resource(int mode=cmINPUT) const;
+
+    Resource source(int mode=cmINPUT) const;
     void unloadBinary();
 protected:
     Grid *grid();
-    void copyTo(IlwisObject *obj);
     QScopedPointer<Grid> _grid;
-    Size _size;
-    std::mutex _mutex;
+    void copyTo(IlwisObject *obj);
 
 private:
+    DataDefinition _datadefCoverage;
     IGeoReference _georef;
+    Size _size;
+    std::mutex _mutex;
 };
 
 typedef IlwisData<RasterCoverage> IRasterCoverage;

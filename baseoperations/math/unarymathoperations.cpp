@@ -16,12 +16,12 @@ Sine::Sine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(me
 OperationImplementation *Sine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sine(metaid,expr);}
 
 quint64 Sine::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/sin"), "sine", "min1to1");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between -1 and 1");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sin"), "sine", "min1to1");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
@@ -29,12 +29,12 @@ Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMat
 OperationImplementation *Cosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Cosine(metaid,expr);}
 
 quint64 Cosine::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/cos"), "cosine", "min1to1");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between -1 and 1");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cos"), "cosine", "min1to1");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //----------------------------------------------------------
@@ -49,12 +49,12 @@ Tangent::Tangent(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryM
 OperationImplementation *Tangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Tangent(metaid,expr);}
 
 quint64 Tangent::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/tan"), "Tangent", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; ");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/tan"), "Tangent", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; ");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //----------------------------------------------------------
@@ -68,12 +68,12 @@ Arcsine::Arcsine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryM
 OperationImplementation *Arcsine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arcsine(metaid,expr);}
 
 quint64 Arcsine::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/asin"), "Arcsine", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain;with value between -1 and 1 ");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between pi/2 and -pi/2");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/asin"), "Arcsine", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value between -1 and 1 ");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between pi/2 and -pi/2");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //----------------------------------------------------------
@@ -87,12 +87,12 @@ Arccosine::Arccosine(quint64 metaid,const Ilwis::OperationExpression& expr) : Un
 OperationImplementation *Arccosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arccosine(metaid,expr);}
 
 quint64 Arccosine::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/acos"), "Arccosine", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain with value between -1 and 1; ");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between 0 and pi");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/acos"), "Arccosine", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain with value between -1 and 1; ");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between 0 and pi");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //----------------------------------------------------------
@@ -101,12 +101,12 @@ ArcTangent::ArcTangent(quint64 metaid,const Ilwis::OperationExpression& expr) : 
 OperationImplementation *ArcTangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcTangent(metaid,expr);}
 
 quint64 ArcTangent::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain;with value between -pi/2 and pi/2 ");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain; values are between -1 and 1");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value between -pi/2 and pi/2 ");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 double logten(double v){
@@ -119,12 +119,12 @@ Log10::Log10(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(
 OperationImplementation *Log10::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Log10(metaid,expr);}
 
 quint64 Log10::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/log10"), "Log10", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain;with value larger than zero ");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/log10"), "Log10", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value larger than zero ");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 double naturallog(double v){
@@ -137,12 +137,12 @@ NaturalLogarithm::NaturalLogarithm(quint64 metaid,const Ilwis::OperationExpressi
 OperationImplementation *NaturalLogarithm::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new NaturalLogarithm(metaid,expr);}
 
 quint64 NaturalLogarithm::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain;with value larger than zero ");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value larger than zero ");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 
@@ -156,12 +156,12 @@ Abs::Abs(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(meta
 OperationImplementation *Abs::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Abs(metaid,expr);}
 
 quint64 Abs::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/abs"), "Absolute value", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain");
-    res.addProperty("pout_1_desc","output gridcoverage with a positive numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/abs"), "Absolute value", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
+    resource.addProperty("pout_1_desc","output rastercoverage with a positive numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 Ceil::Ceil(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::ceil<int>)
@@ -169,12 +169,12 @@ Ceil::Ceil(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(me
 OperationImplementation *Ceil::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Ceil(metaid,expr);}
 
 quint64 Ceil::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value", "integer");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain");
-    res.addProperty("pout_1_desc","output gridcoverage with a integer numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value", "integer");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
+    resource.addProperty("pout_1_desc","output rastercoverage with a integer numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 Floor::Floor(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::floor<int>)
@@ -182,12 +182,12 @@ Floor::Floor(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(
 OperationImplementation *Floor::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
 
 quint64 Floor::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/floor"), "Floor value", "integer");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain");
-    res.addProperty("pout_1_desc","output gridcoverage with a integer numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/floor"), "Floor value", "integer");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
+    resource.addProperty("pout_1_desc","output rastercoverage with a integer numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 double sign(double v) {
@@ -203,12 +203,12 @@ Sign::Sign(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(me
 OperationImplementation *Sign::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
 
 quint64 Sign::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/sgn"), "Sign", "integer");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain");
-    res.addProperty("pout_1_desc","output gridcoverage with values -1,0,1 depending on the sign of the input value");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sgn"), "Sign", "integer");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
+    resource.addProperty("pout_1_desc","output rastercoverage with values -1,0,1 depending on the sign of the input value");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 CosineH::CosineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", cosh)
@@ -216,12 +216,12 @@ CosineH::CosineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryM
 OperationImplementation *CosineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineH(metaid,expr);}
 
 quint64 CosineH::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------
 SineH::SineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sinh)
@@ -229,11 +229,11 @@ SineH::SineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(
 OperationImplementation *SineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineH(metaid,expr);}
 
 quint64 SineH::createMetadata() {
-    Resource res = UnaryMath::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine", "value");
-    res.addProperty("pin_1_desc","input gridcoverage with a numerical domain; values are considered to be radians");
-    res.addProperty("pout_1_desc","output gridcoverage with a numerical domain");
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine", "value");
+    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
+    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 //----------------------------------------------------------

@@ -44,12 +44,12 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return true;
         };
 
-        bool res = OperationHelperRaster::execute(ctx, unaryFun, _outputGC);
+        bool resource = OperationHelperRaster::execute(ctx, unaryFun, _outputGC);
 
-        if ( res && ctx != 0) {
+        if ( resource && ctx != 0) {
             QVariant value;
             value.setValue<IRasterCoverage>(_outputGC);
-            ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
+            ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->source() );
         }
     } else {
         double v = _unaryFun(_number);
@@ -78,17 +78,17 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         return sPREPARED;
 
     } else if ( ptype == itRASTER) {
-        QString rasterCoverage = _expression.parm(0).value();
+        QString raster = _expression.parm(0).value();
 
-        if (!_inputGC.prepare(rasterCoverage)) {
-            ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+        if (!_inputGC.prepare(raster)) {
+            ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
             return sPREPAREFAILED;
         }
         OperationHelperRaster helper;
         _box = helper.initialize(_inputGC, _outputGC, _expression.parm(0),
                                     itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( !_outputGC.isValid()) {
-            ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
+            ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
             return sPREPAREFAILED;
         }
         QString outputName = _expression.parm(0,false).value();
@@ -109,28 +109,28 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
 }
 
 Resource UnaryMath::populateMetadata(const QString& item, const QString& longname, const QString& outputDom) {
-    Resource res(QUrl(item), itOPERATIONMETADATA);
+    Resource resource(QUrl(item), itOPERATIONMETADATA);
     int index = item.lastIndexOf("/");
     QString name = item.mid(index);
-    res.addProperty("syntax", QString("%1(gridcoverage|double)").arg(name));
-    res.addProperty("description",TR("generates a new numrical gridcoverage/featurecoverage based on the operation, applied to all the pixels"));
-    res.addProperty("longname",longname);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_domain","value");
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_domain",outputDom);
-    res.prepare();
-    QString url = res.url().toString();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    resource.addProperty("syntax", QString("%1(rastercoverage|double)").arg(name));
+    resource.addProperty("description",TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
+    resource.addProperty("longname",longname);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("inparameters","1");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_domain","value");
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_domain",outputDom);
+    resource.prepare();
+    QString url = resource.url().toString();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    return res;
+    return resource;
 
 }
 

@@ -73,7 +73,7 @@ public:
 };
 
 
-typedef ConnectorInterface* (*ConnectorCreate)(const Resource& item, bool load);
+typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load);
 }
 
 #endif // ICONNECTOR_H

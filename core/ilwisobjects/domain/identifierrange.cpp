@@ -20,6 +20,11 @@ IndexedIdentifierRange::IndexedIdentifierRange() : _count(0)
     _vt = itINDEXEDITEM;
 }
 
+IndexedIdentifierRange::IndexedIdentifierRange(const QString &prefix, quint32 count, quint32 start)
+{
+    add(new IndexedIdentifier(prefix,0, count));
+}
+
 bool IndexedIdentifierRange::contains(const QString& item , bool ) const{
     if (_start->prefix() != "") {
         if ( _start->prefix() != item.left(_start->prefix().size()))
@@ -119,15 +124,15 @@ void IndexedIdentifierRange::add(SPDomainItem item)
 
 QString IndexedIdentifierRange::toString() const
 {
-    QString res;
+    QString resource;
     for(quint32 i=0; i < _count; ++i) {
-        if ( res!= "")
-            res = res +  ",";
+        if ( resource!= "")
+            resource = resource +  ",";
         if ( _start->prefix() != "")
-            res += _start->prefix() + "_";
-        res += QString::number(i);
+            resource += _start->prefix() + "_";
+        resource += QString::number(i);
     }
-    return res;
+    return resource;
 }
 
 void IndexedIdentifierRange::remove(const QString& item)
@@ -301,13 +306,13 @@ NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 }
 
 QString NamedIdentifierRange::toString() const {
-    QString res;
+    QString resource;
     for(auto item :_byName) {
-        if (res!= "")
-            res += ",";
-        res += item.second->name();
+        if (resource!= "")
+            resource += ",";
+        resource += item.second->name();
     }
-    return res;
+    return resource;
 }
 
 bool NamedIdentifierRange::isContinuous() const

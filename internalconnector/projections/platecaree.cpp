@@ -19,7 +19,7 @@
 using namespace Ilwis;
 using namespace Internal;
 
-PlateCaree::PlateCaree(const Ilwis::Resource &item)
+PlateCaree::PlateCaree(const Ilwis::Resource &resource)
 {
 
 }

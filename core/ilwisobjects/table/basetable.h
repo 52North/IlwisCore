@@ -15,7 +15,7 @@ class KERNELSHARED_EXPORT BaseTable : public Table
 public:
 
     BaseTable();
-    BaseTable(const Resource& res);
+    BaseTable(const Resource& resource);
     ~BaseTable();
 
     /*!

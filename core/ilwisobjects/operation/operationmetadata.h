@@ -29,7 +29,7 @@ class KERNELSHARED_EXPORT OperationMetaData : public IlwisObject
 {
 public:
     OperationMetaData();
-    OperationMetaData(const Resource& res);
+    OperationMetaData(const Resource& resource);
     ~OperationMetaData();
     IlwisTypes ilwisType() const;
 
@@ -42,7 +42,7 @@ private:
     QString _namespace;
     QString _longName;
 
-    void parmfromResource(const Resource &res, int n, const QString &base);
+    void parmfromResource(const Resource &resource, int n, const QString &base);
 
 };
 

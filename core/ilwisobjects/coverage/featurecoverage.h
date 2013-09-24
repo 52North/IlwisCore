@@ -23,7 +23,7 @@ public:
     friend class FeatureIterator;
 
     FeatureCoverage();
-    FeatureCoverage(const Resource &res);
+    FeatureCoverage(const Resource &resource);
 
     IlwisTypes featureTypes() const;
     void featureTypes(IlwisTypes types);

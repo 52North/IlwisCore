@@ -20,8 +20,8 @@
 
 using namespace Ilwis;
 
-ProjectionImplementation *ProjectionImplementationProj4::create(const Resource& item) {
-    return new ProjectionImplementationProj4(item);
+ProjectionImplementation *ProjectionImplementationProj4::create(const Resource& resource) {
+    return new ProjectionImplementationProj4(resource);
 }
 
 void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValue type, const QVariant &v)
@@ -60,9 +60,9 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     _pjBase = pj_init_plus(_targetDef.toLatin1());
 }
 
-ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &item)
+ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &resource)
 {
-    QString cd = item.code();
+    QString cd = resource.code();
     _outputIsLatLon = cd == "latlong" || cd == "longlat";
     _targetDef = QString("+proj=%1").arg(cd);
     _pjLatlon =  pj_init_plus("+proj=latlong +ellps=WGS84");

@@ -9,7 +9,7 @@ class KERNELSHARED_EXPORT RasterInterpolator
 public:
     enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
 
-    RasterInterpolator(const IRasterCoverage& rasterCoverage, int method) ;
+    RasterInterpolator(const IRasterCoverage& raster, int method) ;
     double pix2value(const Point3D<double> &pix);
     double coord2value(const Coordinate& crd);
 

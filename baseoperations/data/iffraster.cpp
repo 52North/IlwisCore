@@ -65,14 +65,14 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     };
 
-    bool res = OperationHelperRaster::execute(ctx, iffunc, _outputGC);
+    bool resource = OperationHelperRaster::execute(ctx, iffunc, _outputGC);
 
-    if ( res && ctx != 0) {
+    if ( resource && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(),itRASTER,_outputGC->resource());
+        ctx->addOutput(symTable,value,_outputGC->name(),itRASTER,_outputGC->source());
     }
-    return res;
+    return resource;
 }
 
 OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpression &expr)
@@ -82,10 +82,10 @@ OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpres
 
 OperationImplementation::State IffRaster::prepare(ExecutionContext *, const SymbolTable &)
 {
-    QString rasterCoverage = _expression.parm(0).value();
+    QString raster = _expression.parm(0).value();
 
-    if (!_inputGC.prepare(rasterCoverage)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    if (!_inputGC.prepare(raster)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     DataDefinition outputDataDef = findOutputDataDef(_expression);
@@ -105,29 +105,29 @@ OperationImplementation::State IffRaster::prepare(ExecutionContext *, const Symb
 quint64 IffRaster::createMetadata()
 {
     QString url = QString("ilwis://operations/iff");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","iff");
-    res.addProperty("syntax","iffraster(gridcoverage,outputchoicetrue, outputchoicefalse)");
-    res.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
-    res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with boolean domain"));
-    res.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itRASTER);
-    res.addProperty("pin_2_name", TR("true choice"));
-    res.addProperty("pin_2_desc",TR("value returned when the boolean input pixel is true"));
-    res.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itRASTER);
-    res.addProperty("pin_3_name", TR("false choice"));
-    res.addProperty("pin_3_desc",TR("value returned when the boolean input pixel is false"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("gridcoverage"));
-    res.addProperty("pout_1_desc",TR("gridcoverage with all pixels that correspond to the true value in the input having a value"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","iff");
+    resource.addProperty("syntax","iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)");
+    resource.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with boolean domain"));
+    resource.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itRASTER);
+    resource.addProperty("pin_2_name", TR("true choice"));
+    resource.addProperty("pin_2_desc",TR("value returned when the boolean input pixel is true"));
+    resource.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itRASTER);
+    resource.addProperty("pin_3_name", TR("false choice"));
+    resource.addProperty("pin_3_desc",TR("value returned when the boolean input pixel is false"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("rastercoverage"));
+    resource.addProperty("pout_1_desc",TR("rastercoverage with all pixels that correspond to the true value in the input having a value"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

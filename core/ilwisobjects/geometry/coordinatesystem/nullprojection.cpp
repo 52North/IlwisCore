@@ -12,10 +12,10 @@
 
 using namespace Ilwis;
 
-NullProjection::NullProjection(const Resource& item)
+NullProjection::NullProjection(const Resource& resource)
 {
-    setName(item.name());
-    setCode(item.code());
+    setName(resource.name());
+    setCode(resource.code());
     setDescription("Null Projection");
 }
 

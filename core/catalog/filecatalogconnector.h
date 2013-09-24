@@ -7,10 +7,10 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT FileCatalogConnector : public CatalogConnector
 {
 protected:
-    FileCatalogConnector(const Resource &item);
+    FileCatalogConnector(const Resource &resource);
 
     QFileInfoList loadFolders(const QStringList &namefilter);
-    Resource loadFolder(const QFileInfo &file, QUrl container, const QString &path, const QUrl &res);
+    Resource loadFolder(const QFileInfo &file, QUrl container, const QString &path, const QUrl &url);
 };
 }
 

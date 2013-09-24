@@ -43,9 +43,9 @@ OperationImplementation *GridSize::create(quint64 metaid, const Ilwis::Operation
 }
 
 OperationImplementation::State GridSize::prepare(ExecutionContext *, const SymbolTable& ){
-    QString rasterCoverage = _expression.parm(0).value();
-    if (!_inputGC.prepare(rasterCoverage)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    QString raster = _expression.parm(0).value();
+    if (!_inputGC.prepare(raster)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
      QString dim  =_expression.parm(1).value().toLower();
@@ -62,26 +62,26 @@ OperationImplementation::State GridSize::prepare(ExecutionContext *, const Symbo
 quint64 GridSize::createMetadata()
 {
     QString url = QString("ilwis://operations/gridsize");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","gridsize");
-    res.addProperty("syntax","gridsize(gridcoverage,xsize|ysize|zsize)");
-    res.addProperty("description",TR("returns the pixel extent of a grid coverage"));
-    res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("gridcoverage"));
-    res.addProperty("pin_1_desc",TR("gridcoverage from which a dimension size is retrieved"));
-    res.addProperty("pin_2_type", itSTRING);
-    res.addProperty("pin_2_name", TR("dimension"));
-    res.addProperty("pin_2_desc",TR("Dimension"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itINT32);
-    res.addProperty("pout_1_name", TR("size"));
-    res.addProperty("pout_1_desc",TR("Lenght in one dimension meausred in grid cells"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","gridsize");
+    resource.addProperty("syntax","gridsize(rastercoverage,xsize|ysize|zsize)");
+    resource.addProperty("description",TR("returns the pixel extent of a grid coverage"));
+    resource.addProperty("inparameters","2");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("rastercoverage from which a dimension size is retrieved"));
+    resource.addProperty("pin_2_type", itSTRING);
+    resource.addProperty("pin_2_name", TR("dimension"));
+    resource.addProperty("pin_2_desc",TR("Dimension"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itINT32);
+    resource.addProperty("pout_1_name", TR("size"));
+    resource.addProperty("pout_1_desc",TR("Lenght in one dimension meausred in grid cells"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

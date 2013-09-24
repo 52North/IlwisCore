@@ -41,11 +41,11 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 }
 
 bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
-        IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
-        PixelIterator iterIn(inputGC, box);
-        PixelIterator iterOut(outputGC, box);
+        IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+        PixelIterator iterIn(inputRaster, box);
+        PixelIterator iterOut(outputRaster, box);
 
         double v_in = 0;
         //TODO in principle the stl::copy should work but as yet there is no overload yet(20130621) for
@@ -62,7 +62,7 @@ bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
         return true;
     };
 
-    return  OperationHelperRaster::execute(ctx, Assign, outputGC);
+    return  OperationHelperRaster::execute(ctx, Assign, outputRaster);
 
 }
 
@@ -71,22 +71,22 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    bool res = false;
+    bool resource = false;
     if ( _number != rILLEGAL) {
 
     } else {
         if ( _inputObj.isValid()) {
             if ( _inputObj->ilwisType() == itRASTER) {
-                if((res = assignRasterCoverage(ctx)) == true)
+                if((resource = assignRasterCoverage(ctx)) == true)
                     setOutput<RasterCoverage>(ctx, symTable);
             }
             if ( (_inputObj->ilwisType() & itFEATURE)!= 0) {
-                if((res = assignFeatureCoverage(ctx)) == true)
+                if((resource = assignFeatureCoverage(ctx)) == true)
                     setOutput<FeatureCoverage>(ctx, symTable);
             }
         }
     }
-    return res;
+    return resource;
 }
 
 Ilwis::OperationImplementation *Assignment::create(quint64 metaid, const Ilwis::OperationExpression &expr)
@@ -106,14 +106,14 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
     if ( !ok) {
         _number = rILLEGAL;
         QString coverage = _expression.parm(0).value();
-        Resource res = mastercatalog()->name2Resource(coverage);
-        if ( !res.isValid()) {
+        Resource resource = mastercatalog()->name2Resource(coverage);
+        if ( !resource.isValid()) {
             ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
             return sPREPAREFAILED;
         }
-        _inputObj.prepare(coverage, res.ilwisType());
+        _inputObj.prepare(coverage, resource.ilwisType());
         OperationHelperRaster helper;
-        _outputObj = helper.initialize(_inputObj, res.ilwisType(),
+        _outputObj = helper.initialize(_inputObj, resource.ilwisType(),
                                        itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
         if ( outname != sUNDEF)
@@ -128,23 +128,23 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
 quint64 Assignment::createMetadata()
 {
     QString url = QString("ilwis://operations/assignment");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","assignment");
-    res.addProperty("description",TR("copies the values/properties of the right hand of the expression to the left hand named object"));
-    res.addProperty("syntax","assignment(thing)");
-    res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itANY);
-    res.addProperty("pin_1_name", TR("input thing"));
-    res.addProperty("pin_1_desc",TR("input thing"));
-    res.addProperty("pout_1_type", itANY);
-    res.addProperty("pout_1_name", TR("copied thing"));
-    res.addProperty("pout_1_desc",TR(""));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","assignment");
+    resource.addProperty("description",TR("copies the values/properties of the right hand of the expression to the left hand named object"));
+    resource.addProperty("syntax","assignment(thing)");
+    resource.addProperty("inparameters","1");
+    resource.addProperty("pin_1_type", itANY);
+    resource.addProperty("pin_1_name", TR("input thing"));
+    resource.addProperty("pin_1_desc",TR("input thing"));
+    resource.addProperty("pout_1_type", itANY);
+    resource.addProperty("pout_1_name", TR("copied thing"));
+    resource.addProperty("pout_1_desc",TR(""));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 
 }

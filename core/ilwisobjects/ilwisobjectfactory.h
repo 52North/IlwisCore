@@ -35,11 +35,11 @@ public:
     /*!
      \brief prototype for the mandatory creation method that all ilwisobject factories must suport
 
-     \param item a pointer the location of the resource from which the ilwisobject is created
+     \param resource a pointer the location of the resource from which the ilwisobject is created
      \return IlwisObject the created ilwisobject or 0 if something went wrong
     */
 
-    virtual IlwisObject *create(const Resource &item) const = 0;
+    virtual IlwisObject *create(const Resource &resource) const = 0;
     virtual IlwisObject *create(IlwisTypes, const QString& sub = sUNDEF ) const { return (sub == sUNDEF ? nullptr: nullptr); }
 
 protected:

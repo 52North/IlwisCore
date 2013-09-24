@@ -90,9 +90,9 @@ void SymbolTable::unloadRasters()
 {
     for(Symbol& sym: _symbols) {
         if ( sym._type == itRASTER) {
-            IRasterCoverage rasterCoverage = sym._var.value<IRasterCoverage>();
-            if ( rasterCoverage.isValid())
-                rasterCoverage->unloadBinary();
+            IRasterCoverage raster = sym._var.value<IRasterCoverage>();
+            if ( raster.isValid())
+                raster->unloadBinary();
         }
     }
 }

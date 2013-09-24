@@ -12,7 +12,7 @@ CoordinateSystem::CoordinateSystem()
 {
 }
 
-CoordinateSystem::CoordinateSystem(const Resource& res) : IlwisObject(res)
+CoordinateSystem::CoordinateSystem(const Resource& resource) : IlwisObject(resource)
 {
 }
 

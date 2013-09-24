@@ -38,12 +38,12 @@ bool InternalCatalogConnector::loadItems()
 
 bool InternalCatalogConnector::createSpecialDomains() {
     QString url = QString("ilwis://internal/code=domain:text");
-    Resource item(url, itTEXTDOMAIN);
-    item.setCode("text");
-    item.setName("Text domain", false);
-    item.setContainer(QUrl("ilwis://system"));
-    item.prepare();
-    return mastercatalog()->addItems({item});
+    Resource resource(url, itTEXTDOMAIN);
+    resource.setCode("text");
+    resource.setName("Text domain", false);
+    resource.setContainer(QUrl("ilwis://system"));
+    resource.prepare();
+    return mastercatalog()->addItems({resource});
 }
 
 bool InternalCatalogConnector::canUse(const QUrl &res) const
@@ -65,12 +65,12 @@ bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
             QString code = rec.value("code").toString();
             QString name = rec.value("name").toString();
             QString url = QString("ilwis://tables/projectedcsy?code=%1").arg(code);
-            Resource item(url, itCONVENTIONALCOORDSYSTEM);
-            item.setCode(code);
-            item.setName(name, false);
-            item["wkt"] = name;
-            item.setContainer(QUrl("ilwis://system"));
-            items.push_back(item);
+            Resource resource(url, itCONVENTIONALCOORDSYSTEM);
+            resource.setCode(code);
+            resource.setName(name, false);
+            resource["wkt"] = name;
+            resource.setContainer(QUrl("ilwis://system"));
+            items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
     } else {
@@ -88,20 +88,20 @@ bool InternalCatalogConnector::createItems(QSqlQuery& db, const QString& table, 
             QString code = rec.value("code").toString();
             IlwisTypes extType = rec.value("extendedtype").toLongLong();
             QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
-            Resource item(url, type);
+            Resource resource(url, type);
             if ( type == itNUMERICDOMAIN) // for valuedomain name=code
-                item.setName(rec.value("code").toString(), false);
+                resource.setName(rec.value("code").toString(), false);
             else
-                item.setName(rec.value("name").toString(), false);
+                resource.setName(rec.value("name").toString(), false);
 
-            item.setCode(code);
-            item.setExtendedType(extType);
-            item.setDescription(rec.value("description").toString());
-            item.setContainer(QUrl("ilwis://system"));
+            resource.setCode(code);
+            resource.setExtendedType(extType);
+            resource.setDescription(rec.value("description").toString());
+            resource.setContainer(QUrl("ilwis://system"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
-                item["wkt"] = wkt;
-            items.push_back(item);
+                resource["wkt"] = wkt;
+            items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
     } else {

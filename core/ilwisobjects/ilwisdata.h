@@ -128,7 +128,7 @@ public:
      on success initializes it. After that it registers itself to the system to prevent the creation of other instances of this resource.
      Any warnings or errors during its creation are transferred to the created object and the issue stack is cleared.
 
-     \param res the resource to be instanced as an IlwisObject
+     \param resource the resource to be instanced as an IlwisObject
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
@@ -153,10 +153,10 @@ public:
             auto type = kernel()->demangle(typeid(T).name());
             tp = IlwisObject::name2Type(type);
         }
-        auto item = mastercatalog()->name2Resource(name,tp );
-        if (item.isValid()) {
-            if (!mastercatalog()->isRegistered(item.id())) {
-                T *data = static_cast<T *>(IlwisObject::create(item));
+        auto resource = mastercatalog()->name2Resource(name,tp );
+        if (resource.isValid()) {
+            if (!mastercatalog()->isRegistered(resource.id())) {
+                T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
@@ -165,7 +165,7 @@ public:
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
             } else {
-                _implementation = mastercatalog()->get(item.id());
+                _implementation = mastercatalog()->get(resource.id());
             }
             return true;
         } else {
@@ -176,23 +176,23 @@ public:
 
     }
 
-    bool prepare(const Resource& item){
-        if (item.isValid()) {
-            if (!mastercatalog()->isRegistered(item.id())) {
-                T *data = static_cast<T *>(IlwisObject::create(item));
+    bool prepare(const Resource& resource){
+        if (resource.isValid()) {
+            if (!mastercatalog()->isRegistered(resource.id())) {
+                T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
-                    return ERROR1("Couldnt create ilwisobject %1",item.name());
+                    return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
                 data->prepare();
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
             } else {
-                _implementation = mastercatalog()->get(item.id());
+                _implementation = mastercatalog()->get(resource.id());
             }
             return true;
         } else {
-            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,item.name());
+            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,resource.name());
         }
         return false;
 
@@ -209,13 +209,13 @@ public:
      \return bool succes of the creation process. Any issues can be found in the issuelogger
     */
     bool prepare(const quint64& iid){
-        Resource item = mastercatalog()->id2Resource(iid);
+        Resource resource = mastercatalog()->id2Resource(iid);
         if (!mastercatalog()->isRegistered(iid)) {
-            T *data = static_cast<T *>(IlwisObject::create(item));
+            T *data = static_cast<T *>(IlwisObject::create(resource));
             if ( data != 0)
                 data->prepare();
             else {
-                return ERROR1("Couldnt create ilwisobject %1",item.name());
+                return ERROR1("Couldnt create ilwisobject %1",resource.name());
             }
             removeCurrent();
             _implementation = ESPIlwisObject(data);

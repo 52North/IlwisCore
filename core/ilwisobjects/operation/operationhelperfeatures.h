@@ -10,7 +10,7 @@ class KERNELSHARED_EXPORT OperationHelperFeatures
 public:
     OperationHelperFeatures();
     static IIlwisObject initialize(const IIlwisObject &inputObject, IlwisTypes tp, quint64 what);
-    static int subdivideTasks(ExecutionContext *ctx, const IFeatureCoverage& rasterCoverage, std::vector<std::vector<quint32> > &subsets);
+    static int subdivideTasks(ExecutionContext *ctx, const IFeatureCoverage& raster, std::vector<std::vector<quint32> > &subsets);
     template<typename T> static bool execute(ExecutionContext* ctx, T func, IFeatureCoverage& inputFC, IFeatureCoverage& outputFC){
         std::vector<std::vector<quint32>> subsets;
 
@@ -65,7 +65,7 @@ public:
                     }
                     stats.calculate(vec.begin(), vec.end());
                     NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
-                    def.datadef().range(rng,DataDefinition::daLAYER);
+                    def.datadef().range(rng);
                 }
             }
         }

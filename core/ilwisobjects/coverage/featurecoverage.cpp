@@ -21,7 +21,7 @@ FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
 }
 
-FeatureCoverage::FeatureCoverage(const Resource& res) : Coverage(res),_featureTypes(itUNKNOWN),_featureFactory(0)
+FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0)
 {
     _featureInfo.resize(3);
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;

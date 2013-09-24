@@ -106,7 +106,7 @@ void AssignmentNode::store2Format(ASTNode *node, const Symbol& sym, const QStrin
         object->connectTo(QUrl(), format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
         object->setCreateTime(Ilwis::Time::now());
         if ( wasAnonymous)
-            mastercatalog()->addItems({object->resource(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
+            mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
         object->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
 

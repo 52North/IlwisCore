@@ -14,16 +14,16 @@ CoordinateDomain::CoordinateDomain()
 {
 }
 
-CoordinateDomain::CoordinateDomain(const Resource &res) : Domain(res)
+CoordinateDomain::CoordinateDomain(const Resource &resource) : Domain(resource)
 {
-    if ( hasType(res.ilwisType(),itCOVERAGE)) {
+    if ( hasType(resource.ilwisType(),itCOVERAGE)) {
         ICoverage cov;
-        if( cov.prepare(res)) {
+        if( cov.prepare(resource)) {
             _csy = cov->coordinateSystem();
             _envelope.reset(cov->envelope().clone());
         }
-    } else if ( hasType(res.ilwisType(),itCOORDSYSTEM)) {
-        _csy.prepare(res);
+    } else if ( hasType(resource.ilwisType(),itCOORDSYSTEM)) {
+        _csy.prepare(resource);
     }
 }
 

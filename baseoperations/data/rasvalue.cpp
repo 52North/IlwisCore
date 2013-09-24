@@ -40,9 +40,9 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
         return sPREPAREFAILED;
     }
 
-    QString rasterCoverage = _expression.parm(0).value();
-    if (!_inputGC.prepare(rasterCoverage)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    QString raster = _expression.parm(0).value();
+    if (!_inputGC.prepare(raster)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     _vox = Voxel(_expression.parm(1).value().toInt(), _expression.parm(2).value().toInt());
@@ -58,32 +58,32 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
 quint64 RasValue::createMetadata()
 {
     QString url = QString("ilwis://operations/gridvalue");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","gridvalue");
-    res.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
-    res.addProperty("description",TR("returns the value at pixel location x,y (optional z)"));
-    res.addProperty("inparameters","3|4");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with any domain"));
-    res.addProperty("pin_2_type", itINTEGER);
-    res.addProperty("pin_2_name", TR("column"));
-    res.addProperty("pin_2_desc",TR("column number in the grid"));
-    res.addProperty("pin_3_type", itINTEGER);
-    res.addProperty("pin_3_name", TR("row"));
-    res.addProperty("pin_3_desc",TR("row number in the grid"));
-    res.addProperty("pin_4_type", itINTEGER);
-    res.addProperty("pin_4_name", TR("band number"));
-    res.addProperty("pin_4_desc",TR("band number in the grid, optional"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itDOUBLE);
-    res.addProperty("pout_1_name", TR("value at the indicated location"));
-    res.addProperty("pout_1_desc",TR(""));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","gridvalue");
+    resource.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
+    resource.addProperty("description",TR("returns the value at pixel location x,y (optional z)"));
+    resource.addProperty("inparameters","3|4");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with any domain"));
+    resource.addProperty("pin_2_type", itINTEGER);
+    resource.addProperty("pin_2_name", TR("column"));
+    resource.addProperty("pin_2_desc",TR("column number in the grid"));
+    resource.addProperty("pin_3_type", itINTEGER);
+    resource.addProperty("pin_3_name", TR("row"));
+    resource.addProperty("pin_3_desc",TR("row number in the grid"));
+    resource.addProperty("pin_4_type", itINTEGER);
+    resource.addProperty("pin_4_name", TR("band number"));
+    resource.addProperty("pin_4_desc",TR("band number in the grid, optional"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itDOUBLE);
+    resource.addProperty("pout_1_name", TR("value at the indicated location"));
+    resource.addProperty("pout_1_desc",TR(""));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

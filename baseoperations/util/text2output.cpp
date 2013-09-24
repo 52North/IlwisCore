@@ -60,22 +60,22 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, c
 quint64 Text2Output::createMetadata()
 {
     QString url = QString("ilwis://operations/text2output");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","text2output");
-    res.addProperty("syntax","text2output(text,[text]+)");
-    res.addProperty("inparameters","1+");
-    res.addProperty("pin_1_type", itANY);
-    res.addProperty("pin_1_name", TR("input string"));
-    res.addProperty("pin_1_desc",TR("input string"));
-    res.addProperty("pin_2_type", itANY);
-    res.addProperty("pin_2_name", TR("filename or path"));
-    res.addProperty("pin_2_desc",TR("optional file were strings will be written; if no path is provided, current working folder will be used"));
-    res.addProperty("outparameters",0);
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","text2output");
+    resource.addProperty("syntax","text2output(text,[text]+)");
+    resource.addProperty("inparameters","1+");
+    resource.addProperty("pin_1_type", itANY);
+    resource.addProperty("pin_1_name", TR("input string"));
+    resource.addProperty("pin_1_desc",TR("input string"));
+    resource.addProperty("pin_2_type", itANY);
+    resource.addProperty("pin_2_name", TR("filename or path"));
+    resource.addProperty("pin_2_desc",TR("optional file were strings will be written; if no path is provided, current working folder will be used"));
+    resource.addProperty("outparameters",0);
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

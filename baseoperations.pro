@@ -22,7 +22,6 @@ DEFINES += BASEOPERATIONS_LIBRARY
 HEADERS += \
     baseoperations/baseoperationsmodule.h \
     baseoperations/baseoperations_global.h \
-    baseoperations/math/binarymath.h \
     baseoperations/geometry/resampleraster.h \
     baseoperations/data/rasvalue.h \
     baseoperations/data/iffraster.h \
@@ -40,11 +39,12 @@ HEADERS += \
     baseoperations/util/stringoperations.h \
     baseoperations/data/ifoperation.h \
     baseoperations/data/iffeature.h \
-    baseoperations/data/selectionfeatures.h
+    baseoperations/data/selectionfeatures.h \
+    baseoperations/math/binarymathraster.h \
+    baseoperations/math/binarymathfeature.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
-    baseoperations/math/binarymath.cpp \
     baseoperations/geometry/resampleraster.cpp \
     baseoperations/data/rasvalue.cpp \
     baseoperations/data/iffraster.cpp \
@@ -62,7 +62,9 @@ SOURCES += \
     baseoperations/util/stringoperations.cpp \
     baseoperations/data/ifoperation.cpp \
     baseoperations/data/iffeature.cpp \
-    baseoperations/data/selectionfeatures.cpp
+    baseoperations/data/selectionfeatures.cpp \
+    baseoperations/math/binarymathraster.cpp \
+    baseoperations/math/binarymathfeature.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore

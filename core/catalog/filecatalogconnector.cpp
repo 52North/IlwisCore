@@ -17,7 +17,7 @@
 
 using namespace Ilwis;
 
-FileCatalogConnector::FileCatalogConnector(const Resource &item) : CatalogConnector(item){
+FileCatalogConnector::FileCatalogConnector(const Resource &resource) : CatalogConnector(resource){
 }
 
 QFileInfoList FileCatalogConnector::loadFolders(const QStringList& namefilter)
@@ -49,9 +49,9 @@ QFileInfoList FileCatalogConnector::loadFolders(const QStringList& namefilter)
     return fileList;
 }
 
-Resource FileCatalogConnector::loadFolder(const QFileInfo& file, QUrl container, const QString& path, const QUrl& res)
+Resource FileCatalogConnector::loadFolder(const QFileInfo& file, QUrl container, const QString& path, const QUrl& url)
 {
-    Resource item(res, itCATALOG);
+    Resource resource(url, itCATALOG);
     //drives have the format file:///c:/ while folders have file:///c:/myfolder; note the slash
     //drives must be recognized as container and formatted as such
     int index = path.lastIndexOf(QRegExp("\\\\|/"));
@@ -61,9 +61,9 @@ Resource FileCatalogConnector::loadFolder(const QFileInfo& file, QUrl container,
         else
             container = QUrl("file:///" + path.left(3));
     }
-    item.setContainer(container);
+    resource.setContainer(container);
     QString name = file.isRoot() ? file.absoluteFilePath() : file.fileName();
-    item.setName(name, false);
+    resource.setName(name, false);
 
-    return item;
+    return resource;
 }

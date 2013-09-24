@@ -10,12 +10,12 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *Ilwis::Internal::InternalRasterCoverageConnector::create(const Ilwis::Resource &item,bool load)
+ConnectorInterface *Ilwis::Internal::InternalRasterCoverageConnector::create(const Ilwis::Resource &resource,bool load)
 {
-    return new InternalRasterCoverageConnector(item, load);
+    return new InternalRasterCoverageConnector(resource, load);
 }
 
-InternalRasterCoverageConnector::InternalRasterCoverageConnector(const Resource &item, bool load) : IlwisObjectConnector(item, load)
+InternalRasterCoverageConnector::InternalRasterCoverageConnector(const Resource &resource, bool load) : IlwisObjectConnector(resource, load)
 {
 }
 
@@ -30,8 +30,8 @@ bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data){
 }
 
 Grid *InternalRasterCoverageConnector::loadGridData(IlwisObject* data){
-    RasterCoverage *rasterCoverage = static_cast<RasterCoverage *>(data);
-    Grid *grid = new Grid(rasterCoverage->size());
+    RasterCoverage *raster = static_cast<RasterCoverage *>(data);
+    Grid *grid = new Grid(raster->size());
     grid->prepare();
 
     return grid;

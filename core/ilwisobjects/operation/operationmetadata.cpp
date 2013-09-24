@@ -9,36 +9,36 @@ OperationMetaData::OperationMetaData()
 {
 }
 
-OperationMetaData::OperationMetaData(const Resource &res) : IlwisObject(res)
+OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(resource)
 {
-    QString pcount = res["inparameters"].toString();
+    QString pcount = resource["inparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        parmfromResource(res,parts.back().toInt(),"pin");
+        parmfromResource(resource,parts.back().toInt(),"pin");
     }
-    pcount = res["outparameters"].toString();
+    pcount = resource["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        parmfromResource(res,parts.back().toInt(),"pout");
+        parmfromResource(resource,parts.back().toInt(),"pout");
     }
-    _namespace = res["namespace"].toString();
-    _longName = res["longname"].toString();
+    _namespace = resource["namespace"].toString();
+    _longName = resource["longname"].toString();
 }
 
 OperationMetaData::~OperationMetaData()
 {
 }
 
-void OperationMetaData::parmfromResource(const Resource &res, int n, const QString& base) {
+void OperationMetaData::parmfromResource(const Resource &resource, int n, const QString& base) {
     for(int i=0; i < n; ++i)    {
         QString parmBase = base + QString("_%1_").arg(i+1);
 
         bool ok;
-        quint64 tp = res[parmBase + "type"].toLongLong(&ok);
+        quint64 tp = resource[parmBase + "type"].toLongLong(&ok);
         if (!ok)
             tp = i64UNDEF;
-        QString name = res[parmBase + "name"].toString();
-        QString domainName = res[parmBase + "domain"].toString();
+        QString name = resource[parmBase + "name"].toString();
+        QString domainName = resource[parmBase + "domain"].toString();
         newParameter(OperationParameter::ptINPUT,name,tp,domainName);
     }
 }

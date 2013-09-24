@@ -49,7 +49,7 @@ public:
     enum StoreMode{smMETADATA=1, smBINARYDATA=2};
 
     IlwisObject();
-    IlwisObject(const Resource &resource);
+    IlwisObject(const Resource &source);
     virtual ~IlwisObject();
 
     virtual bool prepare();
@@ -125,7 +125,7 @@ public:
     * \brief source the location of the source that represents the physical read origin of this object
     * \return url that is sufficient to find the source
     */
-   virtual Resource resource(int mode=cmINPUT) const;
+   virtual Resource source(int mode=cmINPUT) const;
    /*!
     * \brief target the location of the source that represents the physical write target of this object
     * \return url that is sufficient to find the target
@@ -149,8 +149,8 @@ public:
    */
    virtual IlwisObject *copy() ;
 
-   static IlwisObject *create(const Resource& item);
-   static IlwisTypes findType(const QString &resource);
+   static IlwisObject *create(const Resource& source);
+   static IlwisTypes findType(const QString &source);
    static QString type2Name(IlwisTypes t);
    static IlwisTypes name2Type(const QString &name);
    static void addTypeFunction(IlwisTypeFunction);

@@ -36,9 +36,9 @@ OperationImplementation *Coord2Pixel::create(quint64 metaid, const Ilwis::Operat
 
 Ilwis::OperationImplementation::State Coord2Pixel::prepare(ExecutionContext *ctx, const SymbolTable& symTable)
 {
-    QString rasterCoverage = _expression.parm(0).value();
-    if (!_inputGC.prepare(rasterCoverage)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    QString raster = _expression.parm(0).value();
+    if (!_inputGC.prepare(raster)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     if ( _expression.parameterCount() == 2) {
@@ -72,26 +72,26 @@ Ilwis::OperationImplementation::State Coord2Pixel::prepare(ExecutionContext *ctx
 quint64 Coord2Pixel::createMetadata()
 {
     QString url = QString("ilwis://operations/coord2pixel");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","coord2pixel");
-    res.addProperty("syntax","Coord2Pixel(gridcoverage|georef,Coordinate)");
-    res.addProperty("description",TR("translates a coordinate to a pixel location based on the supplied georeference"));
-    res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itRASTER | itGEOREF);
-    res.addProperty("pin_1_name", TR("input gridcoverage or georeference"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain or georefence"));
-    res.addProperty("pin_2_type", itCOORD3D);
-    res.addProperty("pin_2_name", TR("source pixel"));
-    res.addProperty("pin_2_desc",TR("the coordinate that has to translted to a pixel location"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itPIXEL);
-    res.addProperty("pout_1_name", TR("Pixel"));
-    res.addProperty("pout_1_desc",TR("Pixel"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","coord2pixel");
+    resource.addProperty("syntax","Coord2Pixel(rastercoverage|georef,Coordinate)");
+    resource.addProperty("description",TR("translates a coordinate to a pixel location based on the supplied georeference"));
+    resource.addProperty("inparameters","2");
+    resource.addProperty("pin_1_type", itRASTER | itGEOREF);
+    resource.addProperty("pin_1_name", TR("input rastercoverage or georeference"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain or georefence"));
+    resource.addProperty("pin_2_type", itCOORD3D);
+    resource.addProperty("pin_2_name", TR("source pixel"));
+    resource.addProperty("pin_2_desc",TR("the coordinate that has to translted to a pixel location"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itPIXEL);
+    resource.addProperty("pout_1_name", TR("Pixel"));
+    resource.addProperty("pout_1_desc",TR("Pixel"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

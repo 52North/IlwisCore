@@ -33,6 +33,7 @@
 #define ERR_OPERATION_FAILID1 "Operation %1 failed"
 #define ERR_OPERATION_NOTSUPPORTED2 "%1 not supported for %2"
 #define ERR_NOT_FOUND2 "%1 not found in %2"
+#define ERR_NOT_COMPATIBLE2 "%1 is not compatible with %2"
 
 #define WARN_HAS_STATUS2 "Object %1 has status %2"
 #define WARN_NOT_PART_OF2 "%1 is not part of %2"

@@ -15,7 +15,7 @@ class KERNELSHARED_EXPORT Resource : public Identity
 {
 public:
     Resource();
-    Resource(const Resource& res);
+    Resource(const Resource& resource);
     Resource(const QUrl& url, quint64 tp, bool isNew=true);
     Resource(const QString &code, quint64 tp, bool isNew=true);
     Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT);

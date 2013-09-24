@@ -19,7 +19,7 @@ GeoReference::GeoReference()
 {
 }
 
-GeoReference::GeoReference(const Resource& res) : IlwisObject(res)
+GeoReference::GeoReference(const Resource& resource) : IlwisObject(resource)
 {
 }
 

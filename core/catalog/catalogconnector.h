@@ -11,7 +11,7 @@ class Catalog;
 class KERNELSHARED_EXPORT CatalogConnector : public ConnectorInterface
 {
 public:
-    CatalogConnector(const Resource& item) : _location(item) {}
+    CatalogConnector(const Resource& resource) : _location(resource) {}
     virtual ~CatalogConnector() {}
 
     virtual bool loadItems() = 0;
@@ -24,7 +24,7 @@ public:
     */
     ConnectorInterface* clone() const;
 
-    virtual bool canUse(const QUrl& res) const = 0;
+    virtual bool canUse(const QUrl& resource) const = 0;
     Resource& source();
 protected:
      Resource _location;

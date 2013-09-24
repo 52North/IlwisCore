@@ -10,10 +10,10 @@ OperationHelperRaster::OperationHelperRaster()
 {
 }
 
-Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputGC, IRasterCoverage &outputGC, const Parameter& parm, quint64 what)
+Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Parameter& parm, quint64 what)
 {
     Resource resource(itRASTER);
-    Size sz = inputGC->size();
+    Size sz = inputRaster->size();
     Box3D<qint32> box(sz);
 
     if ( what & itRASTERSIZE) {
@@ -21,35 +21,35 @@ Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputGC, 
     }
     if ( what & itENVELOPE) {
         if ( box.isNull() || !box.isValid()) {
-            sz = inputGC->size();
+            sz = inputRaster->size();
             box  = Box3D<qint32>(sz);
         }
-        Box2D<double> bounds = inputGC->georeference()->pixel2Coord(box);
+        Box2D<double> bounds = inputRaster->georeference()->pixel2Coord(box);
         resource.addProperty("envelope", IVARIANT(bounds));
     }
     if ( what & itCOORDSYSTEM) {
-        resource.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
+        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
     }
 
     if ( what & itGEOREF) {
         if ( box.isNull() || !box.isValid()) {
-            sz = inputGC->size();
+            sz = inputRaster->size();
             box  = Box3D<qint32>(sz);
         }
         if ( sz.xsize() == box.xlength() && sz.ysize() == box.ylength())
-            resource.addProperty("georeference", IVARIANT(inputGC->georeference()));
+            resource.addProperty("georeference", IVARIANT(inputRaster->georeference()));
     }
     if ( what & itDOMAIN) {
-        resource.addProperty("domain", IVARIANT(inputGC->datadef().domain()));
+        resource.addProperty("domain", IVARIANT(inputRaster->datadef().domain()));
     }
     resource.prepare();
 
-    outputGC.prepare(resource);
+    outputRaster.prepare(resource);
     if ( what & itTABLE) {
-        if ( inputGC->attributeTable(itRASTER).isValid())    {
-            if ( inputGC->datadef().domain() == outputGC->datadef().domain()) {
-                if ( outputGC.isValid())
-                    outputGC->attributeTable(itRASTER,inputGC->attributeTable(itRASTER));
+        if ( inputRaster->attributeTable(itRASTER).isValid())    {
+            if ( inputRaster->datadef().domain() == outputRaster->datadef().domain()) {
+                if ( outputRaster.isValid())
+                    outputRaster->attributeTable(itRASTER,inputRaster->attributeTable(itRASTER));
             }
         }
     }
@@ -84,22 +84,22 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     return obj;
 }
 
-int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& rasterCoverage, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
+int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
 {
-    if ( !rasterCoverage.isValid() || rasterCoverage->size().isNull() || rasterCoverage->size().ysize() == 0) {
+    if ( !raster.isValid() || raster->size().isNull() || raster->size().ysize() == 0) {
         return ERROR1(ERR_NO_INITIALIZED_1, "Grid size");
         return iUNDEF;
     }
 
-    int cores = std::min(QThread::idealThreadCount(),rasterCoverage->size().ysize());
-    if (rasterCoverage->size().totalSize() < 10000 || ctx->_threaded == false)
+    int cores = std::min(QThread::idealThreadCount(),raster->size().ysize());
+    if (raster->size().totalSize() < 10000 || ctx->_threaded == false)
         cores = 1;
 
     boxes.clear();
     boxes.resize(cores);
     Box3D<qint32> bounds = bnds;
     if ( bounds.isNull())
-        bounds = Box3D<qint32>(rasterCoverage->size());
+        bounds = Box3D<qint32>(raster->size());
     int left = 0; //bounds.min_corner().x();
     int right = bounds.size().xsize();
     int top = bounds.size().ysize();

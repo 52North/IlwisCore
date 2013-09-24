@@ -57,49 +57,49 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 {
 }
 
-Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& item) const
+Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource) const
 {
-    if ( item.url().scheme()!="ilwis")
+    if ( resource.url().scheme()!="ilwis")
         return 0;
 
 
-    if ( item.ilwisType() & itELLIPSOID) {
-        return createEllipsoid(item);
-    } else if ( item.ilwisType() & itPROJECTION) {
-        return createProjection(item) ;
-    }  else if ( item.ilwisType() & itDOMAIN) {
-        return createDomain(item);
-    } else if ( item.ilwisType() & itCOORDSYSTEM) {
-        return createCsyFromCode(item);
-    } else if ( item.ilwisType() & itRASTER) {
-        return createRasterCoverage(item);
-    } else if ( item.ilwisType() & itTABLE) {
-        return createTable(item);
-    } else if ( item.ilwisType() & itOPERATIONMETADATA) {
-        return createOperationMetaData(item);
-    } else if ( item.ilwisType() & itGEOREF) {
-        return createGeoreference(item);
-    } else if ( item.ilwisType() & itFEATURE) {
-        return createFeatureCoverage(item);
+    if ( resource.ilwisType() & itELLIPSOID) {
+        return createEllipsoid(resource);
+    } else if ( resource.ilwisType() & itPROJECTION) {
+        return createProjection(resource) ;
+    }  else if ( resource.ilwisType() & itDOMAIN) {
+        return createDomain(resource);
+    } else if ( resource.ilwisType() & itCOORDSYSTEM) {
+        return createCsyFromCode(resource);
+    } else if ( resource.ilwisType() & itRASTER) {
+        return createRasterCoverage(resource);
+    } else if ( resource.ilwisType() & itTABLE) {
+        return createTable(resource);
+    } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
+        return createOperationMetaData(resource);
+    } else if ( resource.ilwisType() & itGEOREF) {
+        return createGeoreference(resource);
+    } else if ( resource.ilwisType() & itFEATURE) {
+        return createFeatureCoverage(resource);
     }
     return 0;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& item) const{
-    if ( !item.isValid()) {
+IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& resource) const{
+    if ( !resource.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
     }
-    FeatureCoverage *fcoverage = new FeatureCoverage(item);
-    if (!createCoverage(item, fcoverage))
+    FeatureCoverage *fcoverage = new FeatureCoverage(resource);
+    if (!createCoverage(resource, fcoverage))
         return 0;
 
     return fcoverage;
 
 }
 
-IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource& item) const{
-    return new OperationMetaData(item);
+IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource& resource) const{
+    return new OperationMetaData(resource);
 }
 
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
@@ -139,30 +139,30 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
     return 0;
 }
 
-bool InternalIlwisObjectFactory::canUse(const Resource& item) const
+bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 {
-    if ( item.url().scheme()!="ilwis")
+    if ( resource.url().scheme()!="ilwis")
         return false;
 
-    if ( item.ilwisType() & itELLIPSOID) {
+    if ( resource.ilwisType() & itELLIPSOID) {
         return true;
-    } else if ( item.ilwisType() & itPROJECTION) {
+    } else if ( resource.ilwisType() & itPROJECTION) {
         return true;
-    } else if ( item.ilwisType() & itGEODETICDATUM) {
+    } else if ( resource.ilwisType() & itGEODETICDATUM) {
         return true;
-    } else if ( item.ilwisType() & itDOMAIN) {
+    } else if ( resource.ilwisType() & itDOMAIN) {
         return true;
-    } else if ( item.ilwisType() & itCOORDSYSTEM) {
+    } else if ( resource.ilwisType() & itCOORDSYSTEM) {
         return true;
-    } else if ( item.ilwisType() & itRASTER) {
+    } else if ( resource.ilwisType() & itRASTER) {
         return true;
-    } else if ( item.ilwisType() & itTABLE) {
+    } else if ( resource.ilwisType() & itTABLE) {
         return true;
-    }else if ( item.ilwisType() & itOPERATIONMETADATA) {
+    }else if ( resource.ilwisType() & itOPERATIONMETADATA) {
         return true;
-    } else if ( item.ilwisType() & itGEOREF) {
+    } else if ( resource.ilwisType() & itGEOREF) {
         return true;
-    } else if ( item.ilwisType() & itFEATURE) {
+    } else if ( resource.ilwisType() & itFEATURE) {
         return true;
     }
 
@@ -171,7 +171,7 @@ bool InternalIlwisObjectFactory::canUse(const Resource& item) const
 
 
 
-bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *coverage) const {
+bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Coverage *coverage) const {
 
     if (!coverage->prepare())
         return false;
@@ -179,11 +179,11 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
     coverage->setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(coverage->id()));
 
     ICoordinateSystem csy;
-    if (QString(item["coordinatesystem"].typeName()) == "Ilwis::ICoordinateSystem")
-        csy = item["coordinatesystem"].value<Ilwis::ICoordinateSystem>();
-    else if( QString(item["coordinatesystem"].typeName()) == "QString" &&
-             item["coordinatesystem"].toString() != sUNDEF  ) {
-        Resource resource = property2Resource(item["coordinatesystem"], itCOORDSYSTEM);
+    if (QString(resource["coordinatesystem"].typeName()) == "Ilwis::ICoordinateSystem")
+        csy = resource["coordinatesystem"].value<Ilwis::ICoordinateSystem>();
+    else if( QString(resource["coordinatesystem"].typeName()) == "QString" &&
+             resource["coordinatesystem"].toString() != sUNDEF  ) {
+        Resource resource = property2Resource(resource["coordinatesystem"], itCOORDSYSTEM);
         if ( resource.isValid()) {
             if (!csy.prepare(resource))
                 return false;
@@ -194,55 +194,57 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& item, Coverage *
     }
 
     Box2D<double> bounds;
-    if ( QString(item["envelope"].typeName()) == "Ilwis::Box2D<double>") {
-        bounds = item["envelope"].value<Ilwis::Box2D<double>>();
-    }else if (QString(item["envelope"].typeName()) == "QString" &&
-              item["envelope"].toString() != sUNDEF) {
-        bounds = Box2D<double>(item["envelope"].toString());
+    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box2D<double>") {
+        bounds = resource["envelope"].value<Ilwis::Box2D<double>>();
+    }else if (QString(resource["envelope"].typeName()) == "QString" &&
+              resource["envelope"].toString() != sUNDEF) {
+        bounds = Box2D<double>(resource["envelope"].toString());
     }
     if ( bounds.isValid()) {
         coverage->envelope(bounds);
     }
-    IDomain dom;
-    QString gg = QString(item["domain"].typeName());
-    if (QString(item["domain"].typeName()) == "Ilwis::IDomain")
-        dom = item["domain"].value<Ilwis::IDomain>();
-    else if( QString(item["domain"].typeName()) == "QString" &&
-             item["domain"].toString() != sUNDEF  ) {
-        Resource resource = property2Resource(item["domain"], itDOMAIN);
-        if ( resource.isValid()) {
-            if (!dom.prepare(resource))
-                return false;
+    if ( resource.ilwisType() == itRASTER) {
+        IDomain dom;
+        if (QString(resource["domain"].typeName()) == "Ilwis::IDomain")
+            dom = resource["domain"].value<Ilwis::IDomain>();
+        else if( QString(resource["domain"].typeName()) == "QString" &&
+                 resource["domain"].toString() != sUNDEF  ) {
+            Resource resource = property2Resource(resource["domain"], itDOMAIN);
+            if ( resource.isValid()) {
+                if (!dom.prepare(resource))
+                    return false;
+            }
         }
-    }
-    if ( dom.isValid()){
-        coverage->datadef().domain(dom);
+        if ( dom.isValid()){
+            RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
+            raster->datadef().domain(dom);
+        }
     }
     return true;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& item) const {
-    if ( !item.isValid()) {
+IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& resource) const {
+    if ( !resource.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
     }
-    RasterCoverage *gcoverage = new RasterCoverage(item);
-    if (!createCoverage(item, gcoverage))
+    RasterCoverage *gcoverage = new RasterCoverage(resource);
+    if (!createCoverage(resource, gcoverage))
         return 0;
 
     Size sz;
-    if ( QString(item["size"].typeName()) == "Ilwis::Size"){
-        sz = item["size"].value<Size>();
-    } else if (QString(item["size"].typeName()) == "QSize") {
-        sz = item["size"].toSize();
+    if ( QString(resource["size"].typeName()) == "Ilwis::Size"){
+        sz = resource["size"].value<Size>();
+    } else if (QString(resource["size"].typeName()) == "QSize") {
+        sz = resource["size"].toSize();
     }
 
     IGeoReference grf;
-    if (QString(item["georeference"].typeName()) == "Ilwis::IGeoReference")
-        grf = item["georeference"].value<Ilwis::IGeoReference>();
-    else if( QString(item["georeference"].typeName()) == "QString"  &&
-             item["georeference"].toString() != sUNDEF) {
-        Resource resource = property2Resource(item["georeference"], itGEOREF);
+    if (QString(resource["georeference"].typeName()) == "Ilwis::IGeoReference")
+        grf = resource["georeference"].value<Ilwis::IGeoReference>();
+    else if( QString(resource["georeference"].typeName()) == "QString"  &&
+             resource["georeference"].toString() != sUNDEF) {
+        Resource resource = property2Resource(resource["georeference"], itGEOREF);
         if ( resource.isValid()) {
             if (!grf.prepare(resource))
                 return 0;
@@ -254,7 +256,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& it
 //            GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("georefimplementationfactory");
 //            GeoRefImplementation *impl = grfFac->create("corners");
 //            if ( !impl) {
-//                ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"corners georef",item.name());
+//                ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"corners georef",resource.name());
 //                return 0;
 //            }
             grf = GeoReference::create("corners");
@@ -280,9 +282,9 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& it
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
         return 0;
     }
-    InternalRasterCoverageConnector *connector = factory->createFromResource<InternalRasterCoverageConnector>(item, "internal");
+    InternalRasterCoverageConnector *connector = factory->createFromResource<InternalRasterCoverageConnector>(resource, "internal");
     if ( !connector) {
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", item.name());
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
         return 0;
     }
     gcoverage->setConnector(connector);
@@ -362,8 +364,8 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
     return 0;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& item) const {
-    QString code = item.code();
+IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource) const {
+    QString code = resource.code();
     QString projParms = code;
     if ( code.left(6) != "proj4:"){
         QString query = QString("select * from projectedcsy where code='%1'").arg(code);
@@ -373,24 +375,24 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& item)
                 QSqlRecord rec = db.record();
                 projParms = rec.value("proj_params").toString();
             } else {
-                kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("coordinatesystem", item.name()));
+                kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("coordinatesystem", resource.name()));
                 return 0;
             }
         }
     } else {
         projParms = code.mid(6);
     }
-    ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem(item);
-    csy->setName(item.name());
-    csy->setCode(item.code());
+    ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem(resource);
+    csy->setName(resource.name());
+    csy->setCode(resource.code());
     csy->prepare("proj4=" + projParms);
     return csy;
 
 }
 
-IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& item) const {
+IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resource) const {
     QString query;
-    QString code = item.code();
+    QString code = resource.code();
     if ( code != "") {
         QSqlQuery db(kernel()->database());
         query = QString("Select * from projection where code = '%1'").arg(code);
@@ -398,12 +400,12 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& item) 
             if (db.next()) {
                 QSqlRecord rec = db.record();
                 //if ( code == "longlat") // special case
-                //    return new NullProjection(item);
-                const ProjectionFactory *factory =  kernel()->factory<ProjectionFactory>("ProjectionFactory",item);
+                //    return new NullProjection(resource);
+                const ProjectionFactory *factory =  kernel()->factory<ProjectionFactory>("ProjectionFactory",resource);
                 if ( factory) {
-                    ProjectionImplementation *projimpl = static_cast<ProjectionImplementation *>(factory->create(item));
+                    ProjectionImplementation *projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
                     if (!projimpl) {
-                        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("projection", item.name()));
+                        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("projection", resource.name()));
                         return 0;
                     }
                     Projection *proj = new Projection();
@@ -413,7 +415,7 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& item) 
                     proj->setWkt(rec.field("wkt").value().toString());
                     return proj;
                 } else {
-                    kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("ProjectionFactory",item.name()));
+                    kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("ProjectionFactory",resource.name()));
                 }
             } else {
                 kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
@@ -427,17 +429,17 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& item) 
     return 0;
 }
 
-GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& item) const {
+GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource) const {
     QString query;
-    if ( item.code() != sUNDEF) {
-        QString code = item.code();
+    if ( resource.code() != sUNDEF) {
+        QString code = resource.code();
         if ( code != "") {
             query = QString("Select * from datum where code = '%1'").arg(code);
         }
     }
-    if ( item["area"] != sUNDEF) {
-        QString name = item.name();
-        QString area = item["area"].toString();
+    if ( resource["area"] != sUNDEF) {
+        QString name = resource.name();
+        QString area = resource["area"].toString();
         query = QString("Select * from datum where name='%1' and area='%1'").arg(name, area);
     }
 
@@ -463,47 +465,47 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& item) con
     return 0;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& item) const {
+IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource) const {
     GeoReference *cgrf = GeoReference::create("corners");
-    cgrf->setName( item["name"].toString());
+    cgrf->setName( resource["name"].toString());
     cgrf->setCreateTime(Time::now());
     cgrf->setModifiedTime(Time::now());
-    cgrf->coordinateSystem(item["coordinatesystem"].value<ICoordinateSystem>());
-    cgrf->impl<CornersGeoReference>()->setEnvelope(item["envelope"].value<Box2D<double>>());
-//    Size sz = item["size"].value<Size>();
-    cgrf->size(item["size"].value<Size>());
-    cgrf->centerOfPixel(item["centerofpixel"].toBool());
+    cgrf->coordinateSystem(resource["coordinatesystem"].value<ICoordinateSystem>());
+    cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Box2D<double>>());
+//    Size sz = resource["size"].value<Size>();
+    cgrf->size(resource["size"].value<Size>());
+    cgrf->centerOfPixel(resource["centerofpixel"].toBool());
 
     return cgrf;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& item) const {
+IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource) const {
 
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    ConnectorInterface *connector = factory->createFromResource<>(item, "internal");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
 
    if(!connector) {
-       kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+       kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
        return 0;
    }
     Table *tbl;
-    if ( item.ilwisType() == itFLATTABLE)
-        tbl = new FlatTable(item);
+    if ( resource.ilwisType() == itFLATTABLE)
+        tbl = new FlatTable(resource);
     else
-        tbl = new DatabaseTable(item);
+        tbl = new DatabaseTable(resource);
     tbl->setConnector(connector);
     return tbl;
 
 }
-IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& item) const {
+IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resource) const {
     QString query    ;
-    QString code = item.code();
+    QString code = resource.code();
 
     if ( code != sUNDEF) {
         query = QString("Select * from ellipsoid where code = '%1'").arg(code);
 
     }else {
-        QUrlQuery queryItem(item.url());
+        QUrlQuery queryItem(resource.url());
         if ( queryItem.hasQueryItem("wkt")) {
 
             QString wkt = queryItem.queryItemValue("wkt");
@@ -513,7 +515,7 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& item) c
 
         }
     }
-    return createEllipsoidFromQuery(query, item);
+    return createEllipsoidFromQuery(query, resource);
 }
 
 IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString &query, const Resource& resource) const {

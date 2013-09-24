@@ -15,7 +15,7 @@ Coverage::Coverage()
 {
 }
 
-Coverage::Coverage(const Resource &res) : IlwisObject(res)
+Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
 
 }
@@ -86,14 +86,14 @@ NumericStatistics &Coverage::statistics()
     return _statistics;
 }
 
-const DataDefinition &Coverage::datadef() const
+const DataDefinition &Coverage::datadefIndex() const
 {
-    return _datadef;
+    return _indexdefinition;
 }
 
-DataDefinition &Coverage::datadef()
+DataDefinition &Coverage::datadefIndex()
 {
-    return _datadef;
+    return _indexdefinition;
 }
 
 
@@ -108,38 +108,36 @@ QVariant Coverage::value(const QString &colName, quint32 itemid, IlwisTypes type
     return coldef.datadef().domain()->value(itemid);
 }
 
-Resource Coverage::resource(int mode) const
+Resource Coverage::source(int mode) const
 {
-    Resource res = IlwisObject::resource(mode);
+    Resource resource = IlwisObject::source(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
-        res.addProperty("domain", datadef().domain()->id());
-        res.addProperty("coordinatesystem", coordinateSystem()->id());
-        res.setExtendedType( res.extendedType() | itDOMAIN | itCOORDSYSTEM);
+        resource.addProperty("coordinatesystem", coordinateSystem()->id());
+        resource.setExtendedType( resource.extendedType() | itDOMAIN | itCOORDSYSTEM);
     }
-    return res;
+    return resource;
 }
 
 double Coverage::layerIndex(const QString &value)
 {
-    DataDefinition::DomainAxis axis = DataDefinition::daLAYERINDEX;
-    if (! datadef().range(axis)->contains(value))
+    if (! _indexdefinition.range()->contains(value))
         return rUNDEF;
 
-    bool isContinuous = datadef().range(axis)->isContinuous();
-    if ( hasType(datadef().domain(axis)->valueType(), itNUMBER )) {
+    bool isContinuous = _indexdefinition.range()->isContinuous();
+    if ( hasType(_indexdefinition.domain()->valueType(), itNUMBER )) {
         double v = value.toDouble();
         if ( isContinuous )
             return v;
         return (int)v;
     }
-    if ( hasType(datadef().domain(axis)->ilwisType(), itITEMDOMAIN)) {
+    if ( hasType(_indexdefinition.domain()->ilwisType(), itITEMDOMAIN)) {
 
-        SPItemRange rng = datadef().domain(axis)->range<ItemRange>();
+        SPItemRange rng = _indexdefinition.domain()->range<ItemRange>();
         if ( !rng->isValid())
             return rUNDEF;
-        IlwisTypes valueType = datadef().domain(axis)->valueType();
+        IlwisTypes valueType = _indexdefinition.domain()->valueType();
         if ( hasType(valueType, itNUMERICITEM )) {
-            SPNumericItemRange rng = datadef().domain(axis)->range<NumericItemRange>();
+            SPNumericItemRange rng = _indexdefinition.domain()->range<NumericItemRange>();
             return rng->index(value.toDouble());
         }
 
@@ -171,8 +169,7 @@ void Coverage::copyTo(IlwisObject *obj)
     cov->_envelope = _envelope;
     cov->_attTables = _attTables;
     cov->_statistics = _statistics;
-    cov->_datadef = _datadef;
-
+    cov->_indexdefinition = _indexdefinition;
 }
 
 

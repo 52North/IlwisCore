@@ -67,31 +67,31 @@ quint64 FCoordinate::createMetadata()
 {
 
     QString url = QString("ilwis://operations/coordinate");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","coordinate");
-    res.addProperty("syntax","coordinate(x,y[,z])");
-    res.addProperty("description",TR("translates a x and y value (optional z) into a single coordinate object"));
-    res.addProperty("inparameters","2|3");
-    res.addProperty("pin_1_type", itNUMBER);
-    res.addProperty("pin_1_name", TR("x"));
-    res.addProperty("pin_1_desc",TR("x part of coordinate"));
-    res.addProperty("pin_2_type", itNUMBER);
-    res.addProperty("pin_2_name", TR("y"));
-    res.addProperty("pin_2_desc",TR("y part of coordinate"));
-    res.addProperty("pin_3_type", itNUMBER);
-    res.addProperty("pin_3_name", TR("z"));
-    res.addProperty("pin_3_desc",TR("z part of coordinate, optional"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itCOORDINATE);
-    res.addProperty("pout_1_name", TR("coordinate"));
-    res.addProperty("pout_1_desc",TR("coordinate"));
-    res.addProperty("status","internal");
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","coordinate");
+    resource.addProperty("syntax","coordinate(x,y[,z])");
+    resource.addProperty("description",TR("translates a x and y value (optional z) into a single coordinate object"));
+    resource.addProperty("inparameters","2|3");
+    resource.addProperty("pin_1_type", itNUMBER);
+    resource.addProperty("pin_1_name", TR("x"));
+    resource.addProperty("pin_1_desc",TR("x part of coordinate"));
+    resource.addProperty("pin_2_type", itNUMBER);
+    resource.addProperty("pin_2_name", TR("y"));
+    resource.addProperty("pin_2_desc",TR("y part of coordinate"));
+    resource.addProperty("pin_3_type", itNUMBER);
+    resource.addProperty("pin_3_name", TR("z"));
+    resource.addProperty("pin_3_desc",TR("z part of coordinate, optional"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itCOORDINATE);
+    resource.addProperty("pout_1_name", TR("coordinate"));
+    resource.addProperty("pout_1_desc",TR("coordinate"));
+    resource.addProperty("status","internal");
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 

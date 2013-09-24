@@ -14,7 +14,7 @@ ConventionalCoordinateSystem::ConventionalCoordinateSystem() : _unit("meter")
 {
 }
 
-ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &res) : CoordinateSystem(res)
+ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &resource) : CoordinateSystem(resource)
 {
 }
 

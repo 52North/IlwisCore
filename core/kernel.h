@@ -147,7 +147,7 @@ public:
      * Returns a facotry for a certain kind of objects and resource. The method tries to find a factory of a certain kind that can handle that type of resource. It will query the known factories through the canUse method if it can handle the resource. If so it will return the factory
      * \return an instanciated factory or 0. In the case of 0 the issuelogger will log the error
      */
-    template<class T> const T *factory(const QString& kind, const Resource& item) const {
+    template<class T> const T *factory(const QString& kind, const Resource& resource) const {
         QString type = kind.toLower();
         for(QHash<QString, FactoryInterface *>::const_iterator iter = _masterfactory.begin(); iter != _masterfactory.end(); ++iter) {
             QStringList slist = iter.key().split("::");
@@ -157,7 +157,7 @@ public:
                 found =  back == type;
             }
             if (found ) {
-                if ( iter.value()->canUse(item))
+                if ( iter.value()->canUse(resource))
                     return dynamic_cast<T *>(iter.value());
             }
         }

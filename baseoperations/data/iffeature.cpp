@@ -54,12 +54,12 @@ bool IfFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     };
 
-    bool res = OperationHelperFeatures::execute(ctx, iffunc, _inputFC, _outputFC);
+    bool resource = OperationHelperFeatures::execute(ctx, iffunc, _inputFC, _outputFC);
 
-    if ( res && ctx != 0) {
+    if ( resource && ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputFC);
-        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURE,_outputFC->resource());
+        ctx->addOutput(symTable,value,_outputFC->name(),itFEATURE,_outputFC->source());
     }
     return true;
 }
@@ -86,8 +86,8 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
     }
     _outputFC = obj.get<FeatureCoverage>();
 
-    DataDefinition outputDataDef = findOutputDataDef(_expression);
-    _outputFC->datadef() = outputDataDef;
+//    DataDefinition outputDataDef = findOutputDataDef(_expression);
+//    _outputFC->datadef() = outputDataDef;
 
     return sPREPARED;
 }
@@ -95,29 +95,29 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
 quint64 IfFeature::createMetadata()
 {
     QString url = QString("ilwis://operations/iff");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","iff");
-    res.addProperty("syntax","iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)");
-    res.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
-    res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itFEATURE);
-    res.addProperty("pin_1_name", TR("input featurecoverage"));
-    res.addProperty("pin_1_desc",TR("input featurecoverage with boolean domain"));
-    res.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
-    res.addProperty("pin_2_name", TR("true choice"));
-    res.addProperty("pin_2_desc",TR("value returned when the boolean input feature is true"));
-    res.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
-    res.addProperty("pin_3_name", TR("false choice"));
-    res.addProperty("pin_3_desc",TR("value returned when the boolean input feature is false"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itFEATURE);
-    res.addProperty("pout_1_name", TR("featurecoverage"));
-    res.addProperty("pout_1_desc",TR("featurecoverage with all features that correspond to the true value in the input having a value"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","iff");
+    resource.addProperty("syntax","iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)");
+    resource.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itFEATURE);
+    resource.addProperty("pin_1_name", TR("input featurecoverage"));
+    resource.addProperty("pin_1_desc",TR("input featurecoverage with boolean domain"));
+    resource.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
+    resource.addProperty("pin_2_name", TR("true choice"));
+    resource.addProperty("pin_2_desc",TR("value returned when the boolean input feature is true"));
+    resource.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
+    resource.addProperty("pin_3_name", TR("false choice"));
+    resource.addProperty("pin_3_desc",TR("value returned when the boolean input feature is false"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itFEATURE);
+    resource.addProperty("pout_1_name", TR("featurecoverage"));
+    resource.addProperty("pout_1_desc",TR("featurecoverage with all features that correspond to the true value in the input having a value"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

@@ -118,8 +118,8 @@ public:
     virtual quint32 columnIndex(const QString& nme) const = 0;
 
 protected:
-    Table(const Resource& res) :
-    IlwisObject(res)
+    Table(const Resource& resource) :
+    IlwisObject(resource)
     {}
 
     Table() : IlwisObject()

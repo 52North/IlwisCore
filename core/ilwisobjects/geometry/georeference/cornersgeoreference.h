@@ -8,7 +8,7 @@ class KERNELSHARED_EXPORT CornersGeoReference : public SimpelGeoReference
 {
 public:
     CornersGeoReference();
-    CornersGeoReference(const Resource& res);
+    CornersGeoReference(const Resource& resource);
     void setEnvelope(const Box2D<double>& env);
     bool compute();
     QSize computeGridSize() const;

@@ -31,46 +31,46 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
-    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
-        PixelIterator iterOut(outputGC,box);
-        RasterInterpolator interpolator(inputGC, _method);
-        SPRange range = inputGC->datadef().range();
+        PixelIterator iterOut(outputRaster,box);
+        RasterInterpolator interpolator(inputRaster, _method);
+        SPRange range = inputRaster->datadef().range();
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
            Voxel position = iterOut.position();
-           Coordinate c = outputGC->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
-           Coordinate c2 = inputGC->coordinateSystem()->coord2coord(outputGC->coordinateSystem(),c);
-           double v = interpolator.coord2value(c2);
+           Coordinate cOut = outputRaster->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
+           Coordinate cIn = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),cOut);
+           double v = interpolator.coord2value(cIn);
            *iterOut = range->ensure(v);
             ++iterOut;
         }
         return true;
     };
 
-    bool res = OperationHelperRaster::execute(ctx, resampleFun, outputGC);
+    bool resource = OperationHelperRaster::execute(ctx, resampleFun, outputRaster);
 
-    if ( res && ctx != 0) {
+    if ( resource && ctx != 0) {
         QVariant value;
-        value.setValue<IRasterCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
+        value.setValue<IRasterCoverage>(outputRaster);
+        ctx->addOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
     }
-    return res;
+    return resource;
 }
 
 Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString rasterCoverage = _expression.parm(0).value();
+    QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    if (!_inputObj.prepare(rasterCoverage, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    if (!_inputObj.prepare(raster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, itDOMAIN);
     if ( !_outputObj.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
+        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
     IGeoReference grf;
@@ -78,12 +78,12 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( !grf.isValid()) {
         return sPREPAREFAILED;
     }
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
-    outputGC->georeference(grf);
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    outputRaster->georeference(grf);
     Box2Dd env = grf->pixel2Coord(grf->size());
-    outputGC->envelope(env);
+    outputRaster->envelope(env);
     if ( outputName != sUNDEF)
-        outputGC->setName(outputName);
+        outputRaster->setName(outputName);
 
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")
@@ -103,31 +103,31 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
 quint64 ResampleRaster::createMetadata()
 {
     QString url = QString("ilwis://operations/resample");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","resample");
-    res.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
-    res.addProperty("description",TR("translates a gridcoverage from one geometry (coordinatesystem+georeference) to another"));
-    res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));
-    res.addProperty("pin_2_type", itGEOREF);
-    res.addProperty("pin_2_name", TR("target georeference"));
-    res.addProperty("pin_2_desc",TR("the georeference to which the input coverage will be morphed"));
-    res.addProperty("pin_3_type", itSTRING);
-    res.addProperty("pin_3_name", TR("Resampling method"));
-    res.addProperty("pin_3_desc",TR("The method used to aggregate pixels from the input map in the geometry of the output map"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_desc",TR("output gridcoverage with the domain of the input map"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","resample");
+    resource.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
+    resource.addProperty("description",TR("translates a rastercoverage from one geometry (coordinatesystem+georeference) to another"));
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain"));
+    resource.addProperty("pin_2_type", itGEOREF);
+    resource.addProperty("pin_2_name", TR("target georeference"));
+    resource.addProperty("pin_2_desc",TR("the georeference to which the input coverage will be morphed"));
+    resource.addProperty("pin_3_type", itSTRING);
+    resource.addProperty("pin_3_name", TR("Resampling method"));
+    resource.addProperty("pin_3_desc",TR("The method used to aggregate pixels from the input map in the geometry of the output map"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_desc",TR("output rastercoverage with the domain of the input map"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 

@@ -49,10 +49,10 @@ public:
      Not all factories can create all the objects of course. This method checks if a resource is usefull
      for a factory
 
-     \param item the resource to be tested
+     \param resource the resource to be tested
      \return bool true if the object type indicated by the resource can be created by the factory
     */
-    virtual bool canUse(const Resource& item) const = 0;
+    virtual bool canUse(const Resource& resource) const = 0;
     /*!
      * \brief prepare initializes the factory
      * \return

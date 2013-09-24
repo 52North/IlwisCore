@@ -21,8 +21,8 @@ public:
     IlwisContext();
     ~IlwisContext();
 
-    void addSystemLocation(const QUrl &res);
-    void removeSystemLocation(const QUrl &res);
+    void addSystemLocation(const QUrl &resource);
+    void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;
     Catalog* workingCatalog() const;
     void setWorkingCatalog(const Ilwis::Catalog &cat);

@@ -6,7 +6,7 @@
 
 using namespace Ilwis;
 
-IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &item, bool) : _resource(item)
+IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool) : _resource(resource)
 {
 }
 

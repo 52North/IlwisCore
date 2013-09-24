@@ -31,7 +31,7 @@ private:
         var.setValue<IlwisData<T1>>(gcovCopy);
         symbols.addSymbol(name, 1000, obj->ilwisType(), var);
         if ( wasAnonymous)
-            mastercatalog()->addItems({gcovCopy->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
+            mastercatalog()->addItems({gcovCopy->source(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
         return true;
     }

@@ -11,7 +11,7 @@ public:
     enum Transformation { tCONFORM, tAFFINE, tSECONDORDER, tFULLSECONDORDER,
                     tTHIRDORDER, tPROJECTIVE } ;
     PlanarCTPGeoReference();
-    PlanarCTPGeoReference(const Resource& res);
+    PlanarCTPGeoReference(const Resource& resource);
     virtual Coordinate pixel2Coord(const Pixel_d &pix) const;
     virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
     bool isValid() const;

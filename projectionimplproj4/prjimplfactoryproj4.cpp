@@ -38,9 +38,9 @@ ProjectionImplFactoryProj4::ProjectionImplFactoryProj4() : ProjectionFactory("Pr
     }
 }
 
-ProjectionImplementation *ProjectionImplFactoryProj4::create(const Ilwis::Resource &item) const{
+ProjectionImplementation *ProjectionImplFactoryProj4::create(const Ilwis::Resource &resource) const{
 
-    return new ProjectionImplementationProj4(item);
+    return new ProjectionImplementationProj4(resource);
 }
 
 ProjectionImplementation *ProjectionImplFactoryProj4::create(const QString &) const

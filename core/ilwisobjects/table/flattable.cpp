@@ -14,7 +14,7 @@ FlatTable::FlatTable()
 {
 }
 
-FlatTable::FlatTable(const Resource& res) : BaseTable(res){
+FlatTable::FlatTable(const Resource& resource) : BaseTable(resource){
 
 }
 

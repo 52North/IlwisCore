@@ -33,8 +33,8 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
-    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
 
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
         Box3D<qint32> inpbox = box.size();
@@ -42,12 +42,12 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         inpbox += std::vector<qint32>{0, box.min_corner().y(),0};
         if ( _zvalue == iUNDEF)
             inpbox.copyFrom(box, Box3D<>::dimZ);
-        PixelIterator iterOut(outputGC, box);
-        PixelIterator iterIn(inputGC, inpbox);
+        PixelIterator iterOut(outputRaster, box);
+        PixelIterator iterIn(inputRaster, inpbox);
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputGC->attributeTable(itCOVERAGE), COVERAGEKEYCOLUMN);
+            rec = AttributeRecord(inputRaster->attributeTable(itCOVERAGE), COVERAGEKEYCOLUMN);
 
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
@@ -69,14 +69,14 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool res = OperationHelperRaster::execute(ctx,selection, outputGC, _box);
+    bool resource = OperationHelperRaster::execute(ctx,selection, outputRaster, _box);
 
-    if ( res && ctx != 0) {
+    if ( resource && ctx != 0) {
         QVariant value;
-        value.setValue<IRasterCoverage>(outputGC);
-        ctx->addOutput(symTable, value, outputGC->name(), itRASTER,outputGC->resource());
+        value.setValue<IRasterCoverage>(outputRaster);
+        ctx->addOutput(symTable, value, outputRaster->name(), itRASTER,outputRaster->source());
     }
-    return res;
+    return resource;
 
 
 }
@@ -94,12 +94,12 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         return sPREPAREFAILED;
     }
     IlwisTypes inputType = itRASTER;
-    QString rasterCoverage = _expression.parm(0).value();
-    if (!_inputObj.prepare(rasterCoverage, inputType)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    QString raster = _expression.parm(0).value();
+    if (!_inputObj.prepare(raster, inputType)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
     quint64 copylist = itCOORDSYSTEM;
 
 
@@ -111,7 +111,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     if ( index != -1) {
         QString crdlist = "box(" + selector.mid(index+4) + ")";
         _box = Box3D<qint32>(crdlist);
-        box = inputGC->georeference()->pixel2Coord(_box);
+        box = inputRaster->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN | itTABLE;
         std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
         _base = vec;
@@ -125,7 +125,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
-        if (! inputGC->attributeTable(itCOVERAGE).isValid()) {
+        if (! inputRaster->attributeTable(itCOVERAGE).isValid()) {
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
@@ -135,7 +135,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     int indexindex = selector.indexOf("index=");
     if ( indexindex != -1) {
         copylist |= itDOMAIN | itGEOREF | itENVELOPE | itTABLE;
-        _box = Box3D<>(inputGC->size());
+        _box = Box3D<>(inputRaster->size());
         QString zvalues = selector.mid(6);
         bool ok;
         _zvalue = zvalues.toInt(&ok);
@@ -154,29 +154,29 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-     IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
-         outputGC->datadef() = _attribColumn != "" ? inputGC->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef()
-                                                   : outputGC->datadef() = inputGC->datadef();
+         outputRaster->datadef() = _attribColumn != "" ? inputRaster->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef()
+                                                   : outputRaster->datadef() = inputRaster->datadef();
      }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)
          _outputObj->setName(outputName);
      if ( (copylist & itGEOREF) == 0) {
-        Resource res(QUrl("ilwis://internal/georeference"),itGEOREF);
-        res.addProperty("size", IVARIANT(_box.size()));
-        res.addProperty("envelope", IVARIANT(box));
-        res.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
-        res.addProperty("name", _outputObj->name());
-        res.addProperty("centerofpixel",inputGC->georeference()->centerOfPixel());
+        Resource resource(QUrl("ilwis://internal/georeference"),itGEOREF);
+        resource.addProperty("size", IVARIANT(_box.size()));
+        resource.addProperty("envelope", IVARIANT(box));
+        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
+        resource.addProperty("name", _outputObj->name());
+        resource.addProperty("centerofpixel",inputRaster->georeference()->centerOfPixel());
         IGeoReference  grf;
-        grf.prepare(res);
-        outputGC->georeference(grf);
-        outputGC->envelope(box);
+        grf.prepare(resource);
+        outputRaster->georeference(grf);
+        outputRaster->envelope(box);
     }
      if(indexindex != -1)  {
-         Size sz(outputGC->size().xsize(),outputGC->size().xsize(), 1);
-         outputGC->size(sz);
+         Size sz(outputRaster->size().xsize(),outputRaster->size().xsize(), 1);
+         outputRaster->size(sz);
      }
 
     return sPREPARED;
@@ -185,27 +185,27 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
 quint64 Selection::createMetadata()
 {
     QString url = QString("ilwis://operations/selection");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","selection");
-    res.addProperty("syntax","selection(coverage,selection-definition)");
-    res.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
-    res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with a domain as specified by the selection"));
-    res.addProperty("pin_2_type", itSTRING);
-    res.addProperty("pin_2_name", TR("selection-definition"));
-    res.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("gridcoverage were the selection has been applied"));
-    res.addProperty("pout_1_desc",TR(""));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","selection");
+    resource.addProperty("syntax","selection(coverage,selection-definition)");
+    resource.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
+    resource.addProperty("inparameters","2");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with a domain as specified by the selection"));
+    resource.addProperty("pin_2_type", itSTRING);
+    resource.addProperty("pin_2_name", TR("selection-definition"));
+    resource.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("rastercoverage were the selection has been applied"));
+    resource.addProperty("pout_1_desc",TR(""));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 
 }
 

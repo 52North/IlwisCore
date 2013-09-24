@@ -14,7 +14,7 @@ BaseTable::BaseTable() : Table(), _rows(0), _columns(0), _dataloaded(false)
 {
 }
 
-BaseTable::BaseTable(const Resource& res) : Table(res), _rows(0), _columns(0),_dataloaded(false) {
+BaseTable::BaseTable(const Resource& resource) : Table(resource), _rows(0), _columns(0),_dataloaded(false) {
 
 }
 

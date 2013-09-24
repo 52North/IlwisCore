@@ -23,7 +23,7 @@ class KERNELSHARED_EXPORT Domain : public IlwisObject
 public:
     enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
     Domain();
-    Domain(const Resource& res);
+    Domain(const Resource& resource);
     /*!
      return the strict status of the domain. When a domain is set to strict it will only compare domain properties
      to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts

@@ -25,7 +25,7 @@ void IndexSlicer::grid(const IRasterCoverage &cov)
 
 IRasterCoverage IndexSlicer::operator()(const QString &item)
 {
-    IDomain indexDomain = _raster->datadef().domain(DataDefinition::daLAYERINDEX);
+    IDomain indexDomain = _raster->datadefIndex().domain();
     if (!indexDomain.isValid())
         return IRasterCoverage();
     if ( hasType(indexDomain->valueType(), itNUMERIC)) {
@@ -63,8 +63,8 @@ QString IndexSlicer::makeBaseName() const {
 
 QString IndexSlicer::makeExpression(double index, const QString& basename, QString& cname) {
     double rest1 = index - (int)index;
-    QString expr =  _raster->datadef().range(DataDefinition::daLAYERINDEX)->interpolation();
-    bool isContinous = _raster->datadef().range(DataDefinition::daLAYERINDEX)->isContinuous();
+    QString expr =  _raster->datadefIndex().range()->interpolation();
+    bool isContinous = _raster->datadefIndex().range()->isContinuous();
     if ( std::abs(rest1) > EPS8 && isContinous) {
         int lowerIndex = std::floor(index);
         double rest2 = 1.0 - rest1;

@@ -40,7 +40,7 @@ public:
     void registerObject(ESPIlwisObject &data);
     bool isRegistered(quint64 id) const;
     bool unregister(quint64);
-    std::list<Resource> select(const QUrl& res, const QString& selection) const;
+    std::list<Resource> select(const QUrl& resource, const QString& selection) const;
 
     QUrl name2url(const QString &name, IlwisTypes tp=itUNKNOWN) const;
     ESPIlwisObject get(const QUrl &resource, IlwisTypes type) const;

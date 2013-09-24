@@ -68,22 +68,22 @@ public:
      * Creates a connector based on the properties of the resource. The method will try to find a create function based on the type of the resource and the provider
      This method is usually called from objectfactories in a plug-in that implements a defined set of connectors. At that place the name of the provider is known and can be used.
      outside the plug-in the name of the provider is often not known and can not be used.
-     * \param item a resource of a certain type. To work the type must have a valid IlwisType
+     * \param resource a resource of a certain type. To work the type must have a valid IlwisType
      * \param provider an identifier identifying the connector type
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
 
-    template<class T=ConnectorInterface> T *createFromResource(const Resource& item, const QString &provider) const{
-        ConnectorFilter filter(item.ilwisType(), provider);
+    template<class T=ConnectorInterface> T *createFromResource(const Resource& resource, const QString &provider) const{
+        ConnectorFilter filter(resource.ilwisType(), provider);
         auto iter = _creatorsPerObject.find(filter);
         if ( iter == _creatorsPerObject.end())
             return 0;
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
-            ConnectorInterface *cif =  createConnector(item, true);
+            ConnectorInterface *cif =  createConnector(resource, true);
             return dynamic_cast<T *>(cif);
         }
-        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
 
     }
@@ -91,23 +91,23 @@ public:
     /*!
      * Creates a connector based on the properties of the resource. The method will try to find a create function based on the type of the resource and the format
      This method is usually called when a object must be connected to a specific format. For example when a script forces the use of a certain output format.
-     * \param item a resource of a certain type. To work the type must have a valid IlwisType
+     * \param resource a resource of a certain type. To work the type must have a valid IlwisType
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
-    template<class T=ConnectorInterface> T *createFromFormat(const Resource& item, const QString &format, const QString& provider=sUNDEF) const{
+    template<class T=ConnectorInterface> T *createFromFormat(const Resource& resource, const QString &format, const QString& provider=sUNDEF) const{
         ConnectorFormatSelector filter(format, provider);
         auto iter = _creatorsPerFormat.find(filter);
         if ( iter == _creatorsPerFormat.end())
             return 0;
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
-            ConnectorInterface *cif =  createConnector(item, false);
+            ConnectorInterface *cif =  createConnector(resource, false);
             cif->format(format);
             return dynamic_cast<T *>(cif);
         }
 
 
-        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",item.name()));
+        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
     }
 

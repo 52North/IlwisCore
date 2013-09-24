@@ -55,30 +55,30 @@ Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx,
 quint64 StringFind::createMetadata()
 {
     QString url = QString("ilwis://operations/stringfind");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","stringfind");
-    res.addProperty("syntax","stringfind(source,searchtext,[,begin])");
-    res.addProperty("inparameters","2|3");
-    res.addProperty("pin_1_type", itANY);
-    res.addProperty("pin_1_name", TR("input string"));
-    res.addProperty("pin_1_desc",TR("input string"));
-    res.addProperty("pin_2_type", itANY);
-    res.addProperty("pin_2_name", TR("search string"));
-    res.addProperty("pin_2_desc",TR("string to be found in in the input string"));
-    res.addProperty("pin_3_type", itINT32);
-    res.addProperty("pin_3_name", TR("start_index"));
-    res.addProperty("pin_3_desc",TR("optional index from where to begin the search"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_name", TR("output index"));
-    res.addProperty("pout_1_type", itINT32);
-    res.addProperty("pout_1_desc",TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","stringfind");
+    resource.addProperty("syntax","stringfind(source,searchtext,[,begin])");
+    resource.addProperty("inparameters","2|3");
+    resource.addProperty("pin_1_type", itANY);
+    resource.addProperty("pin_1_name", TR("input string"));
+    resource.addProperty("pin_1_desc",TR("input string"));
+    resource.addProperty("pin_2_type", itANY);
+    resource.addProperty("pin_2_name", TR("search string"));
+    resource.addProperty("pin_2_desc",TR("string to be found in in the input string"));
+    resource.addProperty("pin_3_type", itINT32);
+    resource.addProperty("pin_3_name", TR("start_index"));
+    resource.addProperty("pin_3_desc",TR("optional index from where to begin the search"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_name", TR("output index"));
+    resource.addProperty("pout_1_type", itINT32);
+    resource.addProperty("pout_1_desc",TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -133,30 +133,30 @@ Ilwis::OperationImplementation::State StringSub::prepare(ExecutionContext *ctx, 
 quint64 StringSub::createMetadata()
 {
     QString url = QString("ilwis://operations/stringsub");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","stringsub");
-    res.addProperty("syntax","stringsub(source,begin,[,end])");
-    res.addProperty("inparameters","2|3");
-    res.addProperty("pin_1_type", itANY);
-    res.addProperty("pin_1_name", TR("input string"));
-    res.addProperty("pin_1_desc",TR("input string"));
-    res.addProperty("pin_2_type", itINT32);
-    res.addProperty("pin_2_name", TR("begin"));
-    res.addProperty("pin_2_desc",TR("start index of the substring in the input string"));
-    res.addProperty("pin_3_type", itINT32);
-    res.addProperty("pin_3_name", TR("end"));
-    res.addProperty("pin_3_desc",TR("optional index from where to end the substring, if not present the string will go until the end"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_name", TR("sub string"));
-    res.addProperty("pout_1_type", itSTRING);
-    res.addProperty("pout_1_desc",TR("a sub string from the input string"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","stringsub");
+    resource.addProperty("syntax","stringsub(source,begin,[,end])");
+    resource.addProperty("inparameters","2|3");
+    resource.addProperty("pin_1_type", itANY);
+    resource.addProperty("pin_1_name", TR("input string"));
+    resource.addProperty("pin_1_desc",TR("input string"));
+    resource.addProperty("pin_2_type", itINT32);
+    resource.addProperty("pin_2_name", TR("begin"));
+    resource.addProperty("pin_2_desc",TR("start index of the substring in the input string"));
+    resource.addProperty("pin_3_type", itINT32);
+    resource.addProperty("pin_3_name", TR("end"));
+    resource.addProperty("pin_3_desc",TR("optional index from where to end the substring, if not present the string will go until the end"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_name", TR("sub string"));
+    resource.addProperty("pout_1_type", itSTRING);
+    resource.addProperty("pout_1_desc",TR("a sub string from the input string"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 //---------------------------------------------------------------------------------
@@ -196,28 +196,28 @@ Ilwis::OperationImplementation::State StringReplace::prepare(ExecutionContext *c
 quint64 StringReplace::createMetadata()
 {
     QString url = QString("ilwis://operations/stringreplace");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","stringreplace");
-    res.addProperty("syntax","StringReplace(source,searchtext,replacetext)");
-    res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itANY);
-    res.addProperty("pin_1_name", TR("input string"));
-    res.addProperty("pin_1_desc",TR("input string"));
-    res.addProperty("pin_2_type", itSTRING);
-    res.addProperty("pin_2_name", TR("search string"));
-    res.addProperty("pin_2_desc",TR("string to be found in in the input string"));
-    res.addProperty("pin_3_type", itSTRING);
-    res.addProperty("pin_3_name", TR("replace string"));
-    res.addProperty("pin_3_desc",TR("the search string will be replaced with the replace string"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_name", TR("output index"));
-    res.addProperty("pout_1_type", itINT32);
-    res.addProperty("pout_1_desc",TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","stringreplace");
+    resource.addProperty("syntax","StringReplace(source,searchtext,replacetext)");
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itANY);
+    resource.addProperty("pin_1_name", TR("input string"));
+    resource.addProperty("pin_1_desc",TR("input string"));
+    resource.addProperty("pin_2_type", itSTRING);
+    resource.addProperty("pin_2_name", TR("search string"));
+    resource.addProperty("pin_2_desc",TR("string to be found in in the input string"));
+    resource.addProperty("pin_3_type", itSTRING);
+    resource.addProperty("pin_3_name", TR("replace string"));
+    resource.addProperty("pin_3_desc",TR("the search string will be replaced with the replace string"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_name", TR("output index"));
+    resource.addProperty("pout_1_type", itINT32);
+    resource.addProperty("pout_1_desc",TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

@@ -162,8 +162,8 @@ QString TermNode::getName(const NodeValue& var) const {
         return name;
 //    QString typeName = var.typeName();
 //    if ( typeName == "Ilwis::IRasterCoverage") {
-//        Ilwis::IRasterCoverage rasterCoverage = var.value<Ilwis::IRasterCoverage>();
-//        name = rasterCoverage->name();
+//        Ilwis::IRasterCoverage raster = var.value<Ilwis::IRasterCoverage>();
+//        name = raster->name();
 //    }
 //    if ( typeName == "Coordinate") {
 //        name = var.id();

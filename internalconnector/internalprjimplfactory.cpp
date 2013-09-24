@@ -26,11 +26,11 @@ ProjectionImplFactory::ProjectionImplFactory() : ProjectionFactory("ProjectionFa
 {
 }
 
-ProjectionImplementation *ProjectionImplFactory::create(const Ilwis::Resource &item) const{
-    QString prj = item.code();
+ProjectionImplementation *ProjectionImplFactory::create(const Ilwis::Resource &resource) const{
+    QString prj = resource.code();
 
     if ( prj == "PRJPC")
-        return new PlateCaree(item);
+        return new PlateCaree(resource);
 
     return 0;
 }

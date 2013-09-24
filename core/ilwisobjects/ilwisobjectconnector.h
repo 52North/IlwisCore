@@ -8,7 +8,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT IlwisObjectConnector : public ConnectorInterface
 {
 public:
-    IlwisObjectConnector(const Ilwis::Resource &item, bool );
+    IlwisObjectConnector(const Ilwis::Resource &resource, bool );
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;

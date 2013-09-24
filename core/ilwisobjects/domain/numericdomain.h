@@ -8,7 +8,7 @@ class KERNELSHARED_EXPORT NumericDomain : public Domain
 {
 public:
     NumericDomain();
-    NumericDomain(const Resource& res);
+    NumericDomain(const Resource& resource);
 
 
     void setRange(Range *vr);

@@ -19,12 +19,12 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *Ilwis::Internal::InternalTableConnector::create(const Ilwis::Resource &item,bool load)
+ConnectorInterface *Ilwis::Internal::InternalTableConnector::create(const Ilwis::Resource &resource,bool load)
 {
-    return new InternalTableConnector(item, load);
+    return new InternalTableConnector(resource, load);
 }
 
-InternalTableConnector::InternalTableConnector(const Resource &item, bool load) : IlwisObjectConnector(item, load)
+InternalTableConnector::InternalTableConnector(const Resource &resource, bool load) : IlwisObjectConnector(resource, load)
 {
 }
 

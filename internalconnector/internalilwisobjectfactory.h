@@ -21,24 +21,24 @@ class InternalIlwisObjectFactory : public IlwisObjectFactory
 public:
     InternalIlwisObjectFactory();
 
-    virtual Ilwis::IlwisObject *create(const Resource & item) const;
+    virtual Ilwis::IlwisObject *create(const Resource & resource) const;
     virtual IlwisObject *create(IlwisTypes type, const QString &subtype=sUNDEF) const;
-    bool canUse(const Ilwis::Resource &item) const;
+    bool canUse(const Ilwis::Resource &resource) const;
 
 private:
     Resource property2Resource(const QVariant &property, IlwisTypes type) const;
-    IlwisObject *createEllipsoid(const Resource &item) const;
-    GeodeticDatum *createDatum(const Resource &item) const;
-    IlwisObject *createProjection(const Resource &item) const;
+    IlwisObject *createEllipsoid(const Resource &resource) const;
+    GeodeticDatum *createDatum(const Resource &resource) const;
+    IlwisObject *createProjection(const Resource &resource) const;
     IlwisObject *createEllipsoidFromQuery(const QString &query, const Resource& resource) const;
-    IlwisObject *createDomain(const Resource &item) const;
-    IlwisObject *createCsyFromCode(const Resource &item) const;
-    IlwisObject *createRasterCoverage(const Resource &item) const;
-    IlwisObject *createTable(const Resource &item) const;
-    IlwisObject *createOperationMetaData(const Resource &item) const;
-    IlwisObject *createGeoreference(const Resource &item) const;
-    bool createCoverage(const Ilwis::Resource &item, Coverage *coverage) const;
-    IlwisObject *createFeatureCoverage(const Resource &item) const;
+    IlwisObject *createDomain(const Resource &resource) const;
+    IlwisObject *createCsyFromCode(const Resource &resource) const;
+    IlwisObject *createRasterCoverage(const Resource &resource) const;
+    IlwisObject *createTable(const Resource &resource) const;
+    IlwisObject *createOperationMetaData(const Resource &resource) const;
+    IlwisObject *createGeoreference(const Resource &resource) const;
+    bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage) const;
+    IlwisObject *createFeatureCoverage(const Resource &resource) const;
 };
 }
 }

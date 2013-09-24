@@ -11,7 +11,7 @@ TextDomain::TextDomain()
 {
 }
 
-TextDomain::TextDomain(const Resource &res) : Domain(res)
+TextDomain::TextDomain(const Resource &resource) : Domain(resource)
 {
 }
 

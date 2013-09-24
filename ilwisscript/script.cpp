@@ -139,28 +139,28 @@ quint64 Script::createMetadata()
 {
     QString urlTxt = QString("ilwis://operations/script");
     QUrl url(urlTxt);
-    Resource res(url, itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","ilwisscript");
-    res.addProperty("syntax","script file|script scriptline(,scriptline)*");
-    res.addProperty("inparameters","1");
-    res.addProperty("pin_1_type", itFILE | itSTRING);
-    res.addProperty("pin_1_name", TR("input script file"));
-    res.addProperty("pin_1_domain","none");
-    res.addProperty("pin_1_desc",TR("input file containing script commands"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itBOOL);
-    res.addProperty("pout_1_name", TR("succes"));
-    res.addProperty("pout_1_domain","bool");
-    res.addProperty("pout_1_desc",TR("returns the succes of the execution of the script"));
+    Resource resource(url, itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","ilwisscript");
+    resource.addProperty("syntax","script file|script scriptline(,scriptline)*");
+    resource.addProperty("inparameters","1");
+    resource.addProperty("pin_1_type", itFILE | itSTRING);
+    resource.addProperty("pin_1_name", TR("input script file"));
+    resource.addProperty("pin_1_domain","none");
+    resource.addProperty("pin_1_desc",TR("input file containing script commands"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itBOOL);
+    resource.addProperty("pout_1_name", TR("succes"));
+    resource.addProperty("pout_1_domain","bool");
+    resource.addProperty("pout_1_desc",TR("returns the succes of the execution of the script"));
 
-    res.prepare();
-    urlTxt += "=" + QString::number(res.id());
-    res.setUrl(QUrl(urlTxt));
+    resource.prepare();
+    urlTxt += "=" + QString::number(resource.id());
+    resource.setUrl(QUrl(urlTxt));
 //    IOperationMetaData md;
-//    if(!md.prepare(res)) {
+//    if(!md.prepare(resource)) {
 //        return i64UNDEF;
 //    }
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

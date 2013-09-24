@@ -9,7 +9,7 @@ public:
     InternalCatalogConnector();
     static ConnectorInterface *create(const Resource &, bool);
     bool loadItems();
-    bool canUse(const QUrl& res) const;
+    bool canUse(const QUrl& resource) const;
     QString provider() const;
 
 private:

@@ -18,7 +18,7 @@ DatabaseTable::DatabaseTable() : _sqlCreateDone(false)
 {
 }
 
-DatabaseTable::DatabaseTable(const Resource& res) : BaseTable(res), _sqlCreateDone(false)
+DatabaseTable::DatabaseTable(const Resource& resource) : BaseTable(resource), _sqlCreateDone(false)
 {
 }
 

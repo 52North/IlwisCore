@@ -40,15 +40,15 @@ Resource::Resource() : _size(0), _ilwtype(itUNKNOWN), _extendedType(itUNKNOWN)
 {
 }
 
-Resource::Resource(const Resource &res) : Identity(res)
+Resource::Resource(const Resource &resource) : Identity(resource)
 {
-    _properties = res._properties;
-    _resource = res._resource;
-    _container = res._container;
-    _size = res._size;
-    _dimensions = res._dimensions;
-    _ilwtype = res._ilwtype;
-    _extendedType = res._extendedType;
+    _properties = resource._properties;
+    _resource = resource._resource;
+    _container = resource._container;
+    _size = resource._size;
+    _dimensions = resource._dimensions;
+    _ilwtype = resource._ilwtype;
+    _extendedType = resource._extendedType;
 }
 
 Resource::Resource(const QString& code, quint64 tp, bool isNew) :
@@ -352,28 +352,28 @@ QString Resource::toLocalFile(const QUrl& url, bool relative) {
 
 Resource Resource::copy(quint64 id) const
 {
-    Resource res = *this;
-    res._id = id;
-    res.prepare(); // generate new id
-    return res;
+    Resource resource = *this;
+    resource._id = id;
+    resource.prepare(); // generate new id
+    return resource;
 }
 
 void Resource::checkUrl(IlwisTypes tp) {
     if ( mastercatalog()->contains(_resource, tp)) {
-        Resource res = mastercatalog()->name2Resource(_resource.toString(), tp);
-        *this = res;
+        Resource resource = mastercatalog()->name2Resource(_resource.toString(), tp);
+        *this = resource;
         return;
     }
     else if ( _resource.scheme() == "file") {
         setUrl(_resource);
     }
     else if ( _resource.scheme() == "ilwis") {
-        QString res = _resource.toString();
-        int index = res.lastIndexOf("/");
-        int index2 = res.lastIndexOf("code=");
+        QString resource = _resource.toString();
+        int index = resource.lastIndexOf("/");
+        int index2 = resource.lastIndexOf("code=");
         if ( index2 > index)
             index = index2 + 4;
-        QString name = res.right(res.size() - index - 1);
+        QString name = resource.right(resource.size() - index - 1);
         if ( index2 != -1)
             setCode(name);
         setName(name, false);

@@ -22,10 +22,10 @@ private:
         value.setValue<IlwisData<T>>(outputObj);
         QString name = outputObj->name();
         ctx->_results.push_back(name);
-        Resource res = outputObj->resource();
+        Resource resource = outputObj->source();
         symTable.addSymbol(_outputObj->name(),0, _outputObj->ilwisType(),value);
-        if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && res.isValid()) {
-            mastercatalog()->addItems({res});
+        if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && resource.isValid()) {
+            mastercatalog()->addItems({resource});
         }
 
     }

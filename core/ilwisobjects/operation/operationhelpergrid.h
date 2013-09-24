@@ -9,13 +9,13 @@ class KERNELSHARED_EXPORT OperationHelperRaster
 {
 public:
     OperationHelperRaster();
-    static Box3D<qint32> initialize(const IRasterCoverage &inputGC, IRasterCoverage &outputGC, const Ilwis::Parameter &parm, quint64 what);
-    static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& rasterCoverage, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
+    static Box3D<qint32> initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Ilwis::Parameter &parm, quint64 what);
+    static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
 
-    template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputGC, const Box3D<qint32>& bounds=Box3D<qint32>()) {
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputRaster, const Box3D<qint32>& bounds=Box3D<qint32>()) {
         std::vector<Box3D<qint32>> boxes;
 
-        int cores = OperationHelperRaster::subdivideTasks(ctx,outputGC,bounds, boxes);
+        int cores = OperationHelperRaster::subdivideTasks(ctx,outputRaster,bounds, boxes);
 
         if ( cores == iUNDEF)
             return false;
@@ -31,13 +31,13 @@ public:
             res &= futures[i].get();
         }
 
-        if ( res && outputGC.isValid()) {
-            if ( outputGC->datadef().domain()->valueType() & itNUMERIC) {
+        if ( res && outputRaster.isValid()) {
+            if ( outputRaster->datadef().domain()->valueType() & itNUMERIC) {
                 NumericStatistics stats;
-                PixelIterator iter(outputGC);
+                PixelIterator iter(outputRaster);
                 stats.calculate(iter, iter.end());
                 NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
-                outputGC->datadef().range(rng,DataDefinition::daLAYER);
+                outputRaster->datadef().range(rng);
             }
         }
         return res;

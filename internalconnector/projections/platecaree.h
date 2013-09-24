@@ -6,7 +6,7 @@ namespace Internal {
 class PlateCaree : public ProjectionImplementationInternal
 {
 public:
-    PlateCaree(const Ilwis::Resource &item);
+    PlateCaree(const Ilwis::Resource &resource);
     ~PlateCaree();
     Coordinate ll2crd(const LatLon&) const;
     LatLon crd2ll(const Coordinate&) const;

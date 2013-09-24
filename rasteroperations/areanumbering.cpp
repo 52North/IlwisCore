@@ -37,12 +37,12 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
-    AreaNumberer numberer(outputGC->size().xsize(),_connectivity);
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    AreaNumberer numberer(outputRaster->size().xsize(),_connectivity);
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
         //pass one
-        PixelIterator iterOut(outputGC, box);
+        PixelIterator iterOut(outputRaster, box);
         PixelIterator iterIn(_inputObj.get<RasterCoverage>());
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
@@ -63,9 +63,9 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
     ctx->_threaded = false; // operation can not be run in parallel
-    bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
+    bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputRaster);
 
-    INamedIdDomain iddom = outputGC->datadef().domain().get<NamedIdDomain>();
+    INamedIdDomain iddom = outputRaster->datadef().domain().get<NamedIdDomain>();
     NamedIdentifierRange range;
     for(int i=0; i < numberer.lastid(); ++i) {
         range << QString("area_%1").arg(i);
@@ -74,20 +74,20 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IRasterCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
+        value.setValue<IRasterCoverage>(outputRaster);
+        ctx->addOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
     }
     return res;
 }
 
 Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString rasterCoverage = _expression.parm(0).value();
+    QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     int copylist = itCOORDSYSTEM | itGEOREF;
 
-    if (!_inputObj.prepare(rasterCoverage, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    if (!_inputObj.prepare(raster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     bool ok;
@@ -98,11 +98,11 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     }
      _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, copylist);
     if ( !_outputObj.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
+        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
 
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
 
@@ -114,11 +114,11 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
 
     IDomain dom;
     QString domname = QString("ilwis://internalcatalog/%1").arg(outputBaseName);
-    Resource res(QUrl(domname), itITEMDOMAIN | itNAMEDITEM);
-    if (!dom.prepare(res))
+    Resource resource(QUrl(domname), itITEMDOMAIN | itNAMEDITEM);
+    if (!dom.prepare(resource))
         return sPREPAREFAILED;
-    outputGC->datadef().domain(dom);
-    mastercatalog()->addItems({res});
+    outputRaster->datadef().domain(dom);
+    mastercatalog()->addItems({resource});
 
 
     return sPREPARED;
@@ -127,28 +127,28 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
 quint64 AreaNumbering::createMetadata()
 {
     QString url = QString("ilwis://operations/areanumbering");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","AreaNumbering raster coverage");
-    res.addProperty("syntax","areaNumbering(inputgridcoverage,connected (4|8))");
-    res.addProperty("description",TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
-    res.addProperty("inparameters","2");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with domain item, boolean or identifier domain"));
-    res.addProperty("pin_2_type", itUINT8);
-    res.addProperty("pin_2_name", TR("Connectivity"));
-    res.addProperty("pin_2_desc",TR("Connected cells, maybe 4 or 8"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_desc",TR("output gridcoverage with the identifier domain"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","AreaNumbering raster coverage");
+    resource.addProperty("syntax","areaNumbering(inputgridcoverage,connected (4|8))");
+    resource.addProperty("description",TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
+    resource.addProperty("inparameters","2");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain item, boolean or identifier domain"));
+    resource.addProperty("pin_2_type", itUINT8);
+    resource.addProperty("pin_2_name", TR("Connectivity"));
+    resource.addProperty("pin_2_desc",TR("Connected cells, maybe 4 or 8"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_desc",TR("output rastercoverage with the identifier domain"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 

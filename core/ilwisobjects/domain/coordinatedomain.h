@@ -6,7 +6,7 @@ class CoordinateDomain : public Domain
 {
 public:
     CoordinateDomain();
-    CoordinateDomain(const Resource& res);
+    CoordinateDomain(const Resource& resource);
 
     void setRange(Range *vr);
     Domain::Containement contains(const QVariant& value) const;

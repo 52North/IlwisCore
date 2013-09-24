@@ -25,7 +25,7 @@ class KERNELSHARED_EXPORT GeoReference : public IlwisObject, public GeoRefInterf
 {
 public:
     GeoReference();
-    GeoReference(const Resource& res);
+    GeoReference(const Resource& resource);
     ~GeoReference();
 
     Coordinate pixel2Coord(const Pixel_d&) const;

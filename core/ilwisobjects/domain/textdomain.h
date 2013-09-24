@@ -6,7 +6,7 @@ class KERNELSHARED_EXPORT TextDomain : public Domain
 {
 public:
     TextDomain();
-    TextDomain(const Resource& res);
+    TextDomain(const Resource& resource);
 
     virtual IlwisTypes valueType() const;
     virtual QString value(const QVariant& v) const;

@@ -39,10 +39,10 @@ DataDefinition IfOperation::findParameterDataDef(const OperationExpression &expr
 
     quint64 gcid = mastercatalog()->name2id(parmvalue, itRASTER);
     if ( gcid != i64UNDEF) {
-        ICoverage cov;
+        IRasterCoverage cov;
         if(cov.prepare(gcid)) {
             def = cov->datadef();
-            _coverages[index - 1] = cov;
+            _coverages[index - 1] = cov.get<Coverage>();
         }
     } else {
         bool ok;

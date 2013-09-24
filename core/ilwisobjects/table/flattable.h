@@ -6,7 +6,7 @@ class KERNELSHARED_EXPORT FlatTable : public BaseTable
 {
 public:
     FlatTable();
-    FlatTable(const Resource& res);
+    FlatTable(const Resource& resource);
     ~FlatTable();
 
     /*!

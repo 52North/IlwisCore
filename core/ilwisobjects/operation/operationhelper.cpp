@@ -3,7 +3,7 @@
 #include <future>
 #include <memory>
 #include "kernel.h"
-#include "coverage.h"
+#include "raster.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
@@ -36,18 +36,27 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
         if ( what & itCOORDSYSTEM) {
             covOutput->setCoordinateSystem(covInput->coordinateSystem());
         }
-        if ( what & itDOMAIN) {
-            covOutput->datadef() = covInput->datadef();
+        if ( hasType(what,itDOMAIN) && hasType(tp, itRASTER) ) {
+            IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
+            IRasterCoverage rasCoverageOut = outputObject.get<RasterCoverage>();
+            rasCoverageOut->datadef() = rasCoverageIn->datadef();
         }
 
-
-        if ( what & itTABLE) {
+        if ( hasType(what,itTABLE)) {
             if ( covInput->attributeTable(tp).isValid())    {
-                if ( covInput->datadef().domain() == covOutput->datadef().domain()) {
-                    if ( covOutput.isValid())
-                        covOutput->attributeTable(tp,covInput->attributeTable(tp));
+                if ( covOutput.isValid()) {
+                    if ( hasType(tp, itRASTER)) {
+                        IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
+                        IRasterCoverage rasCoverageOut = outputObject.get<RasterCoverage>();
+                        if ( !rasCoverageIn.isValid() || !rasCoverageOut.isValid())
+                            return;
+                        if(rasCoverageIn->datadef().domain() != rasCoverageOut->datadef().domain())
+                            return;
+                    }
+                    covOutput->attributeTable(tp,covInput->attributeTable(tp));
                 }
             }
+
         }
     }
 }

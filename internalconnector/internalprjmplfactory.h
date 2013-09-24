@@ -8,7 +8,7 @@ class ProjectionImplFactory : public ProjectionFactory
 public:
     ProjectionImplFactory();
 
-    ProjectionImplementation *create(const Ilwis::Resource &item) const;
+    ProjectionImplementation *create(const Ilwis::Resource &resource) const;
     ProjectionImplementation *create(const QString&) const;
     virtual bool canUse(const Ilwis::Resource &resource) const;
     virtual bool prepare();

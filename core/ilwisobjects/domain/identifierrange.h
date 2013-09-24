@@ -12,6 +12,7 @@ class KERNELSHARED_EXPORT IndexedIdentifierRange : public ItemRange
 {
 public:
     IndexedIdentifierRange();
+    IndexedIdentifierRange(const QString& prefix, quint32 count, quint32 start=0);
 
     bool contains(const QString& name, bool inclusive = true) const;
     bool isValid() const;

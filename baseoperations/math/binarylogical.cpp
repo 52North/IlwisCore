@@ -27,7 +27,7 @@ bool BinaryLogical::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputGC);
-        ctx->addOutput(symTable,value,_outputGC->name(), itRASTER, _outputGC->resource() );
+        ctx->addOutput(symTable,value,_outputGC->name(), itRASTER, _outputGC->source() );
     }
     return _outputGC.isValid();
 }
@@ -118,9 +118,9 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
         return true;
     };
 
-   bool res = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
+   bool resource = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
 
-    if (res && ctx)
+    if (resource && ctx)
         return setOutput(ctx, symTable);
 
     return false;
@@ -142,14 +142,14 @@ bool BinaryLogical::execute(ExecutionContext *ctx, SymbolTable& symTable)
 }
 
 bool BinaryLogical::prepareCoverageCoverage() {
-    QString rasterCoverage =  _expression.parm(0).value();
-    if (!_inputGC1.prepare(rasterCoverage)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
+    QString raster =  _expression.parm(0).value();
+    if (!_inputGC1.prepare(raster)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    rasterCoverage =  _expression.parm(1).value();
-    if (!_inputGC2.prepare(rasterCoverage)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
+    raster =  _expression.parm(1).value();
+    if (!_inputGC2.prepare(raster)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
     bool isNumeric = _inputGC1->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
@@ -173,9 +173,9 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
 
-    QString rasterCoverage =  _expression.parm(mindex).value();
-    if (!_inputGC1.prepare(rasterCoverage)) {
-        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(rasterCoverage, ""));
+    QString raster =  _expression.parm(mindex).value();
+    if (!_inputGC1.prepare(raster)) {
+        kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
     if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)
@@ -238,34 +238,34 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
 quint64 BinaryLogical::createMetadata()
 {
     QString url = QString("ilwis://operations/binarylogicalraster");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","binarylogicalraster");
-    res.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
-        res.addProperty("description",TR("generates a new boolean map based on the logical condition used"));
-    res.addProperty("inparameters","3");
-    res.addProperty("pin_1_type", itRASTER | itNUMBER);
-    res.addProperty("pin_1_name", TR("input gridcoverage or number/boolean"));
-    res.addProperty("pin_1_domain","value");
-    res.addProperty("pin_1_desc",TR("input gridcoverage with a numerical/boolean domain or number"));
-    res.addProperty("pin_2_type", itRASTER | itNUMBER);
-    res.addProperty("pin_2_name", TR("input gridcoverage or number"));
-    res.addProperty("pin_2_domain","value");
-    res.addProperty("pin_2_desc",TR("input gridcoverage with a numerical/boolean domain or number"));
-    res.addProperty("pin_3_type", itSTRING);
-    res.addProperty("pin_3_name", TR("Operator"));
-    res.addProperty("pin_3_domain","string");
-    res.addProperty("pin_3_desc",TR("operator applied to the other 2 input parameters"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_domain","value");
-    res.addProperty("pout_1_desc",TR("output gridcoverage with a boolean domain"));
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","binarylogicalraster");
+    resource.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
+        resource.addProperty("description",TR("generates a new boolean map based on the logical condition used"));
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itRASTER | itNUMBER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage or number/boolean"));
+    resource.addProperty("pin_1_domain","value");
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
+    resource.addProperty("pin_2_type", itRASTER | itNUMBER);
+    resource.addProperty("pin_2_name", TR("input rastercoverage or number"));
+    resource.addProperty("pin_2_domain","value");
+    resource.addProperty("pin_2_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
+    resource.addProperty("pin_3_type", itSTRING);
+    resource.addProperty("pin_3_name", TR("Operator"));
+    resource.addProperty("pin_3_domain","string");
+    resource.addProperty("pin_3_desc",TR("operator applied to the other 2 input parameters"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_domain","value");
+    resource.addProperty("pout_1_desc",TR("output rastercoverage with a boolean domain"));
 
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

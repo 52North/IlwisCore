@@ -32,12 +32,12 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
 
 
     BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
-        //Size sz = outputGC->size();
-        PixelIterator iterOut(outputGC, box);
+        //Size sz = outputRaster->size();
+        PixelIterator iterOut(outputRaster, box);
         Box3D<qint32> inpBox(Point3D<qint32>(box.min_corner().x(),
                                              box.min_corner().y() * groupSize(1),
                                              box.min_corner().z() * groupSize(2)),
@@ -58,12 +58,12 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         return true;
     };
-    bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputGC);
+    bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputRaster);
 
     if ( res && ctx != 0) {
         QVariant value;
-        value.setValue<IRasterCoverage>(outputGC);
-        ctx->addOutput(symTable,value,outputGC->name(), itRASTER, outputGC->resource() );
+        value.setValue<IRasterCoverage>(outputRaster);
+        ctx->addOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
     }
     return res;
 }
@@ -90,12 +90,12 @@ NumericStatistics::PropertySets AggregateRaster::toMethod(const QString& nm) {
 
 Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString rasterCoverage = _expression.parm(0).value();
+    QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     int copylist = itDOMAIN | itCOORDSYSTEM;
 
-    if (!_inputObj.prepare(rasterCoverage, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,rasterCoverage,"");
+    if (!_inputObj.prepare(raster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
     _method = toMethod(_expression.parm(1).value());
@@ -136,7 +136,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
 
     _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, copylist);
     if ( !_outputObj.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1, "output gridcoverage");
+        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
     QString outputBaseName = outputName;
@@ -144,12 +144,12 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( (index = outputName.lastIndexOf(".")) != -1) {
         outputBaseName = outputName.left(index);
     }
-    IRasterCoverage inputGC = _inputObj.get<RasterCoverage>();
-    IRasterCoverage outputGC = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
 
-    Box3D<qint32> box(inputGC->size());
+    Box3D<qint32> box(inputRaster->size());
     if ( _grouped) {
         int xs = box.xlength();
         int ys = box.ylength();
@@ -161,18 +161,18 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {
-        Box2D<double> envlope = inputGC->envelope();
-        Resource res(QUrl("ilwis://internal/georeference"),itGEOREF);
-        res.addProperty("size", IVARIANT(box.size()));
-        res.addProperty("envelope", IVARIANT(envlope));
-        res.addProperty("coordinatesystem", IVARIANT(inputGC->coordinateSystem()));
-        res.addProperty("name", outputBaseName);
-        res.addProperty("centerofpixel",inputGC->georeference()->centerOfPixel());
+        Box2D<double> envlope = inputRaster->envelope();
+        Resource resource(QUrl("ilwis://internal/georeference"),itGEOREF);
+        resource.addProperty("size", IVARIANT(box.size()));
+        resource.addProperty("envelope", IVARIANT(envlope));
+        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
+        resource.addProperty("name", outputBaseName);
+        resource.addProperty("centerofpixel",inputRaster->georeference()->centerOfPixel());
         IGeoReference  grf;
-        grf.prepare(res);
-        outputGC->georeference(grf);
-        outputGC->envelope(envlope);
-        outputGC->size(box.size());
+        grf.prepare(resource);
+        outputRaster->georeference(grf);
+        outputRaster->envelope(envlope);
+        outputRaster->size(box.size());
     }
 
     return sPREPARED;
@@ -181,37 +181,37 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
 quint64 AggregateRaster::createMetadata()
 {
     QString url = QString("ilwis://operations/aggregateraster");
-    Resource res(QUrl(url), itOPERATIONMETADATA);
-    res.addProperty("namespace","ilwis");
-    res.addProperty("longname","aggregateraster raster coverage");
-    res.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
-    res.addProperty("description",TR("generates a gridcoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation "));
-    res.addProperty("inparameters","4|5");
-    res.addProperty("pin_1_type", itRASTER);
-    res.addProperty("pin_1_name", TR("input gridcoverage"));
-    res.addProperty("pin_1_desc",TR("input gridcoverage with domain any domain"));
-    res.addProperty("pin_2_type", itSTRING);
-    res.addProperty("pin_2_name", TR("Aggregation Method"));
-    res.addProperty("pin_2_desc",TR("the method how pixels inside a group will be accumulated"));
-    res.addProperty("pin_3_type", itINTEGER | itSTRING);
-    res.addProperty("pin_3_name", TR("Groupsize"));
-    res.addProperty("pin_3_desc",TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
-    res.addProperty("pin_4_type", itBOOL);
-    res.addProperty("pin_4_name", TR("change geometry"));
-    res.addProperty("pin_4_desc",TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
-    res.addProperty("pin_5_type", itSTRING);
-    res.addProperty("pin_5_name", TR("georeference name"));
-    res.addProperty("pin_5_desc",TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
-    res.addProperty("outparameters",1);
-    res.addProperty("pout_1_type", itRASTER);
-    res.addProperty("pout_1_name", TR("output gridcoverage"));
-    res.addProperty("pout_1_desc",TR("output gridcoverage with the domain of the input map"));
-    res.prepare();
-    url += "=" + QString::number(res.id());
-    res.setUrl(url);
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","aggregateraster raster coverage");
+    resource.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
+    resource.addProperty("description",TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation "));
+    resource.addProperty("inparameters","4|5");
+    resource.addProperty("pin_1_type", itRASTER);
+    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain"));
+    resource.addProperty("pin_2_type", itSTRING);
+    resource.addProperty("pin_2_name", TR("Aggregation Method"));
+    resource.addProperty("pin_2_desc",TR("the method how pixels inside a group will be accumulated"));
+    resource.addProperty("pin_3_type", itINTEGER | itSTRING);
+    resource.addProperty("pin_3_name", TR("Groupsize"));
+    resource.addProperty("pin_3_desc",TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
+    resource.addProperty("pin_4_type", itBOOL);
+    resource.addProperty("pin_4_name", TR("change geometry"));
+    resource.addProperty("pin_4_desc",TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
+    resource.addProperty("pin_5_type", itSTRING);
+    resource.addProperty("pin_5_name", TR("georeference name"));
+    resource.addProperty("pin_5_desc",TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itRASTER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_desc",TR("output rastercoverage with the domain of the input map"));
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
 
-    mastercatalog()->addItems({res});
-    return res.id();
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }
 
 quint32 AggregateRaster::groupSize(int dim)

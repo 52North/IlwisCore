@@ -52,12 +52,12 @@ public:
 
     /*!
      Features are tied to a domain to give them meaning.
-     * \return  the id of the domain item that is tied to this feature
+     * \return  the id of the domain resource that is tied to this feature
      */
     quint32 itemId() const ;
     /*!
      Features are tied to a domain to give them meaning.
-     * \param v sets the domain item to which this feature is bound
+     * \param v sets the domain resource to which this feature is bound
      */
     void itemId(quint32 v);
     quint64 featureid() const;

@@ -21,7 +21,7 @@ public:
 
     ItemDomain<D>()  {
     }
-    ItemDomain(const Resource& res) : Domain(res) {
+    ItemDomain(const Resource& resource) : Domain(resource) {
     }
 
     ~ItemDomain() {

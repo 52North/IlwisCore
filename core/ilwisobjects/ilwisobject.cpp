@@ -49,14 +49,14 @@ IlwisObject::~IlwisObject()
 }
 
 
-IlwisObject *IlwisObject::create(const Resource& item) {
+IlwisObject *IlwisObject::create(const Resource& resource) {
 
-    const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",item);
+    const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",resource);
 
     if ( factory)
-        return factory->create(item);
+        return factory->create(resource);
     else {
-        kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(item.name()));
+        kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(resource.name()));
     }
     return 0;
 }
@@ -236,18 +236,18 @@ bool IlwisObject::isAnonymous() const
     return name().indexOf(ANONYMOUS_PREFIX) == 0;
 }
 
-Resource IlwisObject::resource(int mode) const
+Resource IlwisObject::source(int mode) const
 {
     if ( mode & cmINPUT) {
         if ( _connector.isNull() == false)
-           return _connector->source();
+            return _connector->source();
         return Resource();
     } else if (mode & cmOUTPUT) {
         if ( _outConnector.isNull() == false) {
             return _outConnector->source();
         }
         else if ( _connector.isNull() == false)
-           return _connector->source();
+            return _connector->source();
     }
     return Resource();
 }
@@ -265,13 +265,13 @@ void IlwisObject::copyTo(IlwisObject *obj)
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;
-    Resource res = resource().copy(obj->id());
+    Resource resource = source().copy(obj->id());
     if (!_connector.isNull()){
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _connector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
         obj->setConnector(conn, cmINPUT);
     }
     if ( !_outConnector.isNull()) {
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _outConnector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _outConnector->provider());
         obj->setConnector(conn, cmOUTPUT);
     }
 }

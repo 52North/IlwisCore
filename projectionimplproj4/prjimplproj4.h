@@ -5,12 +5,12 @@ namespace Ilwis {
 class ProjectionImplementationProj4 : public ProjectionImplementation
 {
 public:
-    ProjectionImplementationProj4(const Ilwis::Resource &item);
+    ProjectionImplementationProj4(const Ilwis::Resource &resource);
     ~ProjectionImplementationProj4();
     Coordinate latlon2coord(const LatLon&) const;
     LatLon coord2latlon(const Coordinate&) const;
     static bool canUse(const Ilwis::Resource &) { return true;}
-    static ProjectionImplementation *create(const Ilwis::Resource &item);
+    static ProjectionImplementation *create(const Ilwis::Resource &resource);
      bool compute() { return true; }
      void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
      void setEllipsoid(const Ilwis::IEllipsoid &ell);
