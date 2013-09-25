@@ -111,7 +111,7 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
         if ( def1.domain()->name() == def1.domain()->name()) {
             def =  DataDefinition(def1.domain(), nrNew);
         } else {
-            dm.prepare("value");
+            dm.prepare("numerical");
             def = DataDefinition(dm, nrNew);
         }
         return def;

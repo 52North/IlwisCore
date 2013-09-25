@@ -119,7 +119,7 @@ Resource UnaryMath::populateMetadata(const QString& item, const QString& longnam
     resource.addProperty("inparameters","1");
     resource.addProperty("pin_1_type", itRASTER);
     resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_domain","value");
+    resource.addProperty("pin_1_domain","numerical");
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_type", itRASTER);
     resource.addProperty("pout_1_name", TR("output rastercoverage"));
