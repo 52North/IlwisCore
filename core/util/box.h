@@ -198,6 +198,7 @@ Box2D<CsyType>& operator +=(const Ilwis::Point2D<CsyType>& pnew) {
     return *this;
 
 }
+
 Box2D<CsyType>& operator -=(const Ilwis::Point2D<CsyType>& pnew) {
     Ilwis::Point2D<CsyType>& pmin = this->min_corner();
     Ilwis::Point2D<CsyType>& pmax = this->max_corner();
@@ -241,6 +242,12 @@ normalize();
 }
 
 return *this;
+}
+
+Box2D<CsyType>& operator +=(const Box2D<CsyType>& box) {
+    operator+=(box.min_corner());
+    operator+=(box.max_corner());
+    return *this;
 }
 
 bool operator==(const Box2D<CsyType>& box ) const {
