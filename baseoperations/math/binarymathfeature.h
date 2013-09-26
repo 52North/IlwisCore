@@ -19,8 +19,9 @@ public:
 private:
     IFeatureCoverage _inputFeatureSet1;
     IFeatureCoverage _inputFeatureSet2;
+    IFeatureCoverage _outputFeatures;
     ICoordinateSystem _csyTarget;
-    IDomain _domTarget;
+    Box3D<double> addEnvelopes() const;
 };
 }
 }
