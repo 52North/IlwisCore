@@ -2,10 +2,11 @@ CODE,MIN,MAX,STEP,RESOLUTION_STRICT,STRICT,UNIT,PARENT,DESCRIPTION
 value,-1.00E+300,1.00E+300,0,0,0,,,Generic value domain
 image16,0,65536,1,1,1,,value,Default 16-bits image domain (DN)
 image,0,255,1,1,1,,image16,Default 8-bits image domain (DN)
-min1to1,-1,1,0.01,0,1,,value,Value Domain  -1.00 .. 1.00
-nilto1,0,1,0.01,0,1,,value,Value Domain 0.00 .. 1.00
+min1to1,-1,1,0.01,0,1,,value,value Domain  -1.00 .. 1.00
+nilto1,0,1,0.01,0,1,,value,value Domain 0.00 .. 1.00
 count,0,999999999,1,1,1,,value,Integer counting
 distance,0,1000000000,0.01,0,1,Meter,value,Distance measuring
 NDVI,-1,1,0.01,0,1,,min1to1,Normalized difference vegetation Index
 percentage,0,100,0.01,0,0,,value,Percentage
-boolean,0,2,1,1,1,,value,boolean domain with undefines
+boolean,0,2,1,1,1,,value,Boolean domain with undefs
+integer,-1.00E+300,1.00E+300,0,0,0,,value,Generic value domain for with step size 1
