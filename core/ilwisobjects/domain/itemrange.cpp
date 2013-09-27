@@ -57,6 +57,7 @@ ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedP
 void ItemRange::addRange(const ItemRange &range)
 {
     for(quint32 i=0; i < range.count(); ++i) {
-        add(range.item(i)->clone());
+        if (!contains(range.item(i)->name()))
+            add(range.item(i)->clone());
     }
 }

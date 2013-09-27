@@ -148,6 +148,16 @@ qint32 IndexedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
     return index + step;
 }
 
+IndexedIdentifierRange IndexedIdentifierRange::merge(const QSharedPointer<IndexedIdentifierRange> &nr1, const QSharedPointer<IndexedIdentifierRange> &nr2)
+{
+    SPIndexedIdentifier index1 = nr1->item(0).staticCast<IndexedIdentifier>();
+    SPIndexedIdentifier index2 = nr2->item(0).staticCast<IndexedIdentifier>();
+    if ( index1->prefix() != index2->prefix())
+        return IndexedIdentifierRange();
+    return IndexedIdentifierRange(index1->prefix(), nr1->count() + nr2->count());
+
+}
+
 
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
@@ -356,6 +366,15 @@ qint32 NamedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
     if ( index + step < 0)
         return 0;
     return index + step;
+}
+
+NamedIdentifierRange NamedIdentifierRange::merge(const QSharedPointer<NamedIdentifierRange> &nr1, const QSharedPointer<NamedIdentifierRange> &nr2)
+{
+    NamedIdentifierRange newRange;
+    newRange.addRange(*nr1.data());
+    newRange.addRange(*nr2.data());
+
+    return newRange;
 }
 
 //---------------------------------------------------------
