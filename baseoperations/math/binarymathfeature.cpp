@@ -81,9 +81,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     Box2D<double> envelope = addEnvelopes();
     _outputFeatures->setCoordinateSystem(_csyTarget);
     _outputFeatures->envelope(envelope);
-//    if ( _inputFeatureSet1->ilwisType() == _inputFeatureSet2->ilwisType()) {
-//        Table::mergeTables(_inputFeatureSet1->attributeTable())
-//    }
+    //Table::mergeTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)
         _outputFeatures->setName(outname);
