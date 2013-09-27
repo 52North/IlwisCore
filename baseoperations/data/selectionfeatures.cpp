@@ -51,7 +51,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputFC->attributeTable(itFEATURE), FEATUREIDCOLUMN);
+            rec = AttributeRecord(inputFC->attributeTable(), FEATUREIDCOLUMN);
         SPAttributeRecord attrib (new AttributeRecord(_attTable, FEATUREIDCOLUMN));
         quint64 v_in = 0;
         for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
@@ -78,7 +78,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
     bool resource = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
     if ( resource && ctx != 0) {
-        outputFC->attributeTable(outputFC->featureTypes(),_attTable);
+        outputFC->attributeTable(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->addOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
@@ -121,7 +121,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
-        if (! inputFC->attributeTable(itFEATURE).isValid()) {
+        if (! inputFC->attributeTable().isValid()) {
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
@@ -147,7 +147,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
              return sPREPAREFAILED;
          }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
-         _attTable->addColumn(_attribColumn, inputFC->attributeTable(itFEATURE)->columndefinition(_attribColumn).datadef().domain());
+         _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain());
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO selections in features on bounding box

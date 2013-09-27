@@ -44,41 +44,18 @@ void Coverage::envelope(const Box3D<double> &bnds)
     _envelope = bnds;
 }
 
-ITable Coverage::attributeTable(IlwisTypes type, qint32 ind) const
+AttributeTable Coverage::attributeTable(AttributeType attType) const
 {
-    int index = ind < 0 ? 0 : ind + 1;
-    if ( index < (qint32)_attTables.size()){
-        IlwisTypes ft = type & itPOINT;
-        if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itPOINT];
-        ft = type & itLINE;
-        if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itLINE];
-        ft = type & itPOLYGON;
-        if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itPOLYGON];
-        ft = type & itRASTER;
-        if ( ft && _attTables[index].contains(ft))
-            return _attTables[index][itRASTER];
-    }
-    return ITable();
+    if ( attType == atCOVERAGE)
+        return _attTable;
+    return _attTableIndex;
 }
 
-void Coverage::attributeTable(IlwisTypes type, const ITable &tbl, qint32 ind)
+void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
 {
-    if ( ind < (qint32)_attTables.size()) {
-        quint32 index = ind < 0 ? 0 : ind + 1;
-        if ( index == _attTables.size())
-            _attTables.push_back(AttributeTables());
-        if ( (type & itPOINT) != 0 )
-            _attTables[index][itPOINT] = tbl;
-        if ( (type & itLINE) != 0 )
-            _attTables[index][itLINE] = tbl;
-        if ( (type & itPOLYGON) != 0 )
-            _attTables[index][itPOLYGON] = tbl;
-        if ( (type & itRASTER) != 0 )
-            _attTables[index][itRASTER] = tbl;
-    }
+    if ( attType == atCOVERAGE)
+        _attTable = tbl;
+    _attTableIndex = tbl;
 }
 
 NumericStatistics &Coverage::statistics()
@@ -97,9 +74,9 @@ DataDefinition &Coverage::datadefIndex()
 }
 
 
-QVariant Coverage::value(const QString &colName, quint32 itemid, IlwisTypes type, qint32 index)
+QVariant Coverage::value(const QString &colName, quint32 itemid, qint32 index)
 {
-    ITable tbl = attributeTable(type, index);
+    AttributeTable tbl = attributeTable(index != -1 ? atINDEX : atCOVERAGE);
     if (!tbl.isValid())
         return QVariant();
     ColumnDefinition coldef = tbl->columndefinition(colName);
@@ -167,7 +144,8 @@ void Coverage::copyTo(IlwisObject *obj)
     Coverage *cov = static_cast<Coverage *>(obj);
     cov->_coordinateSystem = _coordinateSystem;
     cov->_envelope = _envelope;
-    cov->_attTables = _attTables;
+    cov->_attTable = _attTable;
+    cov->_attTableIndex = _attTableIndex;
     cov->_statistics = _statistics;
     cov->_indexdefinition = _indexdefinition;
 }

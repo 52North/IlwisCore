@@ -18,12 +18,13 @@ class Table;
 class ItemRange;
 
 typedef IlwisData<Table> ITable;
-typedef QHash<IlwisTypes, ITable> AttributeTables;
+typedef ITable AttributeTable;
 
 class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
 
 public:
+    enum AttributeType{atCOVERAGE, atINDEX};
     Coverage();
     Coverage(const Resource& source);
     ~Coverage();
@@ -33,12 +34,12 @@ public:
     Box3D<double> envelope() const;
     void envelope(const Box3D<double> &bnds);
 
-    ITable attributeTable(IlwisTypes type, qint32 ind=-1) const ;
-    void attributeTable(IlwisTypes type, const ITable& tbl, qint32 layerIndex=-1 );
+    AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
+    void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
     NumericStatistics& statistics();
     const DataDefinition& datadefIndex() const;
     DataDefinition& datadefIndex();
-    QVariant value(const QString& colName, quint32 itemid, IlwisTypes type=itFEATURE, qint32 layerIndex = -1);
+    QVariant value(const QString& colName, quint32 itemid, qint32 layerIndex = -1);
     Resource source(int mode=cmINPUT) const;
     double layerIndex(const QString& value);
     void setLayerIndexes(const ItemRange &items);
@@ -49,7 +50,8 @@ private:
 
     ICoordinateSystem _coordinateSystem;
     Box3D<double> _envelope;
-    std::vector<AttributeTables> _attTables;
+    AttributeTable _attTable;
+    AttributeTable _attTableIndex;
     NumericStatistics _statistics;
     DataDefinition _indexdefinition;
     std::vector<quint32> _indexValues;

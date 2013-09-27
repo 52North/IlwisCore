@@ -43,7 +43,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
         }
 
         if ( hasType(what,itTABLE)) {
-            if ( covInput->attributeTable(tp).isValid())    {
+            if ( covInput->attributeTable().isValid())    {
                 if ( covOutput.isValid()) {
                     if ( hasType(tp, itRASTER)) {
                         IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
@@ -53,7 +53,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
                         if(rasCoverageIn->datadef().domain() != rasCoverageOut->datadef().domain())
                             return;
                     }
-                    covOutput->attributeTable(tp,covInput->attributeTable(tp));
+                    covOutput->attributeTable(covInput->attributeTable());
                 }
             }
 

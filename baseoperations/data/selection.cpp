@@ -47,7 +47,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
         AttributeRecord rec;
         if ( _attribColumn != "")
-            rec = AttributeRecord(inputRaster->attributeTable(itCOVERAGE), COVERAGEKEYCOLUMN);
+            rec = AttributeRecord(inputRaster->attributeTable(), COVERAGEKEYCOLUMN);
 
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
@@ -125,7 +125,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     }
     index = selector.indexOf("attribute=");
     if ( index != -1 ) {
-        if (! inputRaster->attributeTable(itCOVERAGE).isValid()) {
+        if (! inputRaster->attributeTable().isValid()) {
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
@@ -156,7 +156,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
      }
      IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
-         outputRaster->datadef() = _attribColumn != "" ? inputRaster->attributeTable(itCOVERAGE)->columndefinition(_attribColumn).datadef()
+         outputRaster->datadef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
                                                    : outputRaster->datadef() = inputRaster->datadef();
      }
      QString outputName = _expression.parm(0,false).value();

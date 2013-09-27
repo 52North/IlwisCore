@@ -46,10 +46,10 @@ Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputRast
 
     outputRaster.prepare(resource);
     if ( what & itTABLE) {
-        if ( inputRaster->attributeTable(itRASTER).isValid())    {
+        if ( inputRaster->attributeTable().isValid())    {
             if ( inputRaster->datadef().domain() == outputRaster->datadef().domain()) {
                 if ( outputRaster.isValid())
-                    outputRaster->attributeTable(itRASTER,inputRaster->attributeTable(itRASTER));
+                    outputRaster->attributeTable(inputRaster->attributeTable());
             }
         }
     }
