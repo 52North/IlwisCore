@@ -246,11 +246,11 @@ quint64 BinaryLogical::createMetadata()
     resource.addProperty("inparameters","3");
     resource.addProperty("pin_1_type", itRASTER | itNUMBER);
     resource.addProperty("pin_1_name", TR("input rastercoverage or number/boolean"));
-    resource.addProperty("pin_1_domain","numerical");
+    resource.addProperty("pin_1_domain","value");
     resource.addProperty("pin_1_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
     resource.addProperty("pin_2_type", itRASTER | itNUMBER);
     resource.addProperty("pin_2_name", TR("input rastercoverage or number"));
-    resource.addProperty("pin_2_domain","numerical");
+    resource.addProperty("pin_2_domain","value");
     resource.addProperty("pin_2_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
     resource.addProperty("pin_3_type", itSTRING);
     resource.addProperty("pin_3_name", TR("Operator"));
@@ -259,7 +259,7 @@ quint64 BinaryLogical::createMetadata()
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_type", itRASTER);
     resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_domain","numerical");
+    resource.addProperty("pout_1_domain","value");
     resource.addProperty("pout_1_desc",TR("output rastercoverage with a boolean domain"));
 
     resource.prepare();
