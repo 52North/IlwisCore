@@ -94,7 +94,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/numericitemrange.cpp \
     core/ilwisobjects/coverage/indexslicer.cpp \
     core/ilwisobjects/coverage/rastercoverage.cpp \
-    core/ilwisobjects/coverage/rasterinterpolator.cpp
+    core/ilwisobjects/coverage/rasterinterpolator.cpp \
+    core/ilwisobjects/table/tablemerger.cpp \
+    core/ilwisobjects/domain/domainmerger.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -200,7 +202,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/indexslicer.h \
     core/ilwisobjects/coverage/rastercoverage.h \
     core/ilwisobjects/coverage/rasterinterpolator.h \
-    core/ilwisobjects/domain/itemiterator.h
+    core/ilwisobjects/domain/itemiterator.h \
+    core/ilwisobjects/table/tablemerger.h \
+    core/ilwisobjects/domain/domainmerger.h
 
 
 
