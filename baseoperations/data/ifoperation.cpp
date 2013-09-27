@@ -48,7 +48,7 @@ DataDefinition IfOperation::findParameterDataDef(const OperationExpression &expr
         bool ok;
         _number[index - 1] =parmvalue.toDouble(&ok);
         if ( ok){
-            def.domain().prepare("numerical");
+            def.domain().prepare("value");
         } else {
             std::vector<QString> bools = {"true","false","yes","no","?"};
             auto iter = std::find(bools.begin(), bools.end(), parmvalue.toLower());
