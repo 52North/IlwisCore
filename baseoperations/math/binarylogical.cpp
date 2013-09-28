@@ -42,22 +42,22 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
             double v_in1 = *iterIn;
             if ( v_in1 != rUNDEF && _number != rUNDEF) {
                 switch(_operator) {
-                case otAND:
-                case otEQ:
+                case loAND:
+                case loEQ:
                     v = v_in1 == _number; break;
-                case otOR:
+                case loOR:
                     v = ((bool)v_in1) || ((bool)_number); break;
-                case otXOR:
+                case loXOR:
                     v = ((bool)v_in1) ^ ((bool)_number); break;
-                case otLESS:
+                case loLESS:
                     v = v_in1 < _number; break;
-                case otLESSEQ:
+                case loLESSEQ:
                     v = v_in1 <= _number; break;
-                case otNEQ:
+                case loNEQ:
                     v = v_in1 != _number; break;
-                case otGREATER:
+                case loGREATER:
                     v = v_in1 > _number; break;
-                case otGREATEREQ:
+                case loGREATEREQ:
                     v = v_in1 >= _number; break;
                 default:
                     v = rUNDEF;
@@ -90,22 +90,22 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
             v_in2 = *iterIn2;
             if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
                 switch(_operator) {
-                case otAND:
-                case otEQ:
+                case loAND:
+                case loEQ:
                     v = v_in1 == v_in2; break;
-                case otOR:
+                case loOR:
                     v = ((bool)v_in1) || ((bool)v_in2); break;
-                case otXOR:
+                case loXOR:
                     v = ((bool)v_in1) ^ ((bool)v_in2); break;
-                case otLESS:
+                case loLESS:
                     v = v_in1 < v_in2; break;
-                case otLESSEQ:
+                case loLESSEQ:
                     v = v_in1 <= v_in2; break;
-                case otNEQ:
+                case loNEQ:
                     v = v_in1 != v_in2; break;
-                case otGREATER:
+                case loGREATER:
                     v = v_in1 > v_in2; break;
-                case otGREATEREQ:
+                case loGREATEREQ:
                     v = v_in1 >= v_in2; break;
                 default:
                     v = rUNDEF;
@@ -205,23 +205,23 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
     QString oper = _expression.parm(2).value();
     oper = oper.toLower();
     if ( oper == "and")
-        _operator = otAND;
+        _operator = loAND;
     else if ( oper == "or")
-        _operator = otOR;
+        _operator = loOR;
     else if ( oper == "xor")
-        _operator = otXOR;
+        _operator = loXOR;
     else if ( oper == "less")
-        _operator = otLESS;
+        _operator = loLESS;
     else if ( oper == "lesseq")
-        _operator = otLESSEQ;
+        _operator = loLESSEQ;
     else if ( oper == "neq")
-        _operator = otNEQ;
+        _operator = loNEQ;
     else if ( oper == "eq")
-        _operator = otEQ;
+        _operator = loEQ;
     else if ( oper == "greater")
-        _operator = otGREATER;
+        _operator = loGREATER;
     else if ( oper == "greatereq")
-        _operator = otGREATEREQ;
+        _operator = loGREATEREQ;
 
     if ( ((ptype1 | ptype2) & (itRASTER | itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))

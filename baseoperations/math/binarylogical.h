@@ -6,7 +6,6 @@ namespace BaseOperations{
 class BinaryLogical : public OperationImplementation
 {
 public:
-    enum OperatorType{otNONE,otAND, otOR, otXOR, otLESS, otLESSEQ, otNEQ, otEQ, otGREATER, otGREATEREQ};
     BinaryLogical();
     BinaryLogical(quint64 metaid, const Ilwis::OperationExpression &expr);
 
@@ -28,7 +27,7 @@ private:
     IRasterCoverage _outputGC;
     double _number;
     Box3D<qint32> _box;
-    OperatorType _operator;
+    LogicalOperator _operator;
 };
 }
 }
