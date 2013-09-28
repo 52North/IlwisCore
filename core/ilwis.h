@@ -69,6 +69,8 @@ inline double max(double a, double b) { return (a>=b && a!=rUNDEF) ? a : b; }
 inline long min(long a, long b) { return ((a<=b && a!=iUNDEF) || b==iUNDEF) ? a : b; }
 inline long max(long a, long b) { return (a>=b && a!=iUNDEF) ? a : b; }
 inline qint64 max(qint64 a, qint64 b) { return a>=b && a!=i64UNDEF ? a : b;}
+
+enum LogicalOperator{loNONE,loAND, loOR, loXOR, loLESS, loLESSEQ, loNEQ, loEQ, loGREATER, loGREATEREQ};
 }
 
 typedef quint64 IlwisTypes;
@@ -212,6 +214,8 @@ template<class T> T undef() {
     }
     return T();
 }
+
+
 
 #define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
 #define hasType(a,b) ( ((a) & (b)) != 0)
