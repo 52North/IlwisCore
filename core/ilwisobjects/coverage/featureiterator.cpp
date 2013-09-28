@@ -39,6 +39,7 @@ FeatureIterator::FeatureIterator(const FeatureIterator &iter)
     _isInitial = iter._isInitial;
     _iterFeatures = iter._iterFeatures;
     _subset = iter._subset;
+    _iterPosition = iter._iterPosition;
 }
 
 FeatureIterator &FeatureIterator::operator ++()
