@@ -68,11 +68,13 @@ public:
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QVariant &v);
+    static IlwisTypes ilwType(const QString &value);
     virtual Containement contains(const QVariant& value) const = 0;
 
     template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();
     }
+
 
 protected:
     virtual QSharedPointer<Range> getRange() const = 0;

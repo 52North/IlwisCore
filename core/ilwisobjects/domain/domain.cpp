@@ -45,6 +45,38 @@ void Domain::removeChildDomain(quint64 idchild)
     _childDomains.erase(idchild);
 }
 
+IlwisTypes Domain::ilwType(const QString &value) {
+    std::set<QString> booleans ={ "yes","no","true","false"};
+    if ( booleans.find(value.toLower()) != booleans.end())
+        return itBOOL;
+
+    bool ok;
+    ushort vu = value.toUShort(&ok);
+    if ( ok && vu < 255)
+        return itUINT8;
+    if ( ok)
+        return itUINT16;
+    short vs = value.toShort(&ok);
+    if ( ok && vs > -128 && vs < 128)
+        return itINT8;
+    if ( ok)
+       return itINT16;
+    value.toULong(&ok);
+    if ( ok)
+        return itUINT32;
+    value.toLong(&ok);
+    if ( ok)
+       return itINT32;
+    value.toLongLong(&ok);
+    if ( ok)
+        return itINT64;
+    value.toDouble(&ok);
+    if ( ok)
+       return itDOUBLE;
+
+    return IlwisObject::findType(value);
+}
+
 IlwisTypes Domain::ilwType(const QVariant &v)
 {
     QVariant::Type ty = v.type();

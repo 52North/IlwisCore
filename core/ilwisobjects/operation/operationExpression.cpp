@@ -1,7 +1,9 @@
 #include <QString>
 #include <QUrl>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "ilwisobject.h"
+#include "domain.h"
 #include "catalog.h"
 #include "symboltable.h"
 #include "mastercatalog.h"
@@ -89,37 +91,37 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
                 return obj->ilwisType();
         }
     }
-    std::set<QString> booleans ={ "yes","no","true","false"};
-    if ( booleans.find(value.toLower()) != booleans.end())
-        return itBOOL;
+//    std::set<QString> booleans ={ "yes","no","true","false"};
+//    if ( booleans.find(value.toLower()) != booleans.end())
+//        return itBOOL;
 
-    bool ok;
-    ushort vu = value.toUShort(&ok);
-    if ( ok && vu < 255)
-        return itUINT8;
-    if ( ok)
-        return itUINT16;
-    short vs = value.toShort(&ok);
-    if ( ok && vs > -128 && vs < 128)
-        return itINT8;
-    if ( ok)
-       return itINT16;
-    value.toULong(&ok);
-    if ( ok)
-        return itUINT32;
-    value.toLong(&ok);
-    if ( ok)
-       return itINT32;
-    value.toLongLong(&ok);
-    if ( ok)
-        return itINT64;
-    value.toDouble(&ok);
-    if ( ok)
-       return itDOUBLE;
+//    bool ok;
+//    ushort vu = value.toUShort(&ok);
+//    if ( ok && vu < 255)
+//        return itUINT8;
+//    if ( ok)
+//        return itUINT16;
+//    short vs = value.toShort(&ok);
+//    if ( ok && vs > -128 && vs < 128)
+//        return itINT8;
+//    if ( ok)
+//       return itINT16;
+//    value.toULong(&ok);
+//    if ( ok)
+//        return itUINT32;
+//    value.toLong(&ok);
+//    if ( ok)
+//       return itINT32;
+//    value.toLongLong(&ok);
+//    if ( ok)
+//        return itINT64;
+//    value.toDouble(&ok);
+//    if ( ok)
+//       return itDOUBLE;
 
+    tp = Domain::ilwType(value);
 
-
-    return itSTRING;
+    return tp == itUNKNOWN ? itSTRING : tp;
 
 }
 
