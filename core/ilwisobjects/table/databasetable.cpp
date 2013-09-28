@@ -431,6 +431,10 @@ bool DatabaseTable::initLoad()
     return BaseTable::initLoad();
 }
 
+std::vector<quint32> DatabaseTable::select(const QString &conditions) const{
+    return std::vector<quint32>();
+}
+
 
 
 

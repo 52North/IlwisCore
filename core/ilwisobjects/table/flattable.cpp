@@ -7,6 +7,7 @@
 #include "connectorinterface.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "tableselector.h"
 
 using namespace Ilwis;
 
@@ -64,6 +65,8 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
     }
     return true;
 }
+
+
 
 std::vector<QVariant> FlatTable::column(quint32 index) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
@@ -196,4 +199,9 @@ void FlatTable::cell(const QString &col, quint32 rec, const QVariant &var)
 IlwisTypes FlatTable::ilwisType() const
 {
     return itFLATTABLE;
+}
+
+std::vector<quint32> FlatTable::select(const QString &conditions) const
+{
+    return TableSelector::select(this, conditions);
 }

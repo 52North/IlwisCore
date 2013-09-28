@@ -114,8 +114,9 @@ public:
      */
     virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
     virtual void cell(quint32 col, quint32 rec, const QVariant& var) = 0;
-
     virtual quint32 columnIndex(const QString& nme) const = 0;
+
+    virtual std::vector<quint32> select(const QString& conditions) const = 0;
 
 protected:
     Table(const Resource& resource) :

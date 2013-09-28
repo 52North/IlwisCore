@@ -111,6 +111,7 @@ public:
     void drop();
     IlwisTypes ilwisType() const;
 
+    std::vector<quint32> select(const QString &conditions) const;
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;

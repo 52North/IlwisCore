@@ -57,6 +57,7 @@ public:
     \se Ilwis::Table
      */
     bool addColumn(const ColumnDefinition& def);
+    std::vector<quint32> select(const QString &conditions) const;
 
     IlwisTypes ilwisType() const;
 
