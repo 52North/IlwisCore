@@ -17,13 +17,12 @@ public:
     virtual quint64 featureid() const = 0;
     virtual bool isValid() const = 0 ;
     virtual const Geometry& geometry(quint32 index=0) const = 0;
-    virtual void add(const Geometry& geom) = 0;
-    virtual void attributeRecord(const SPAttributeRecord& record) = 0;
+    virtual void set(const Geometry& geom, int index = 0) = 0;
     QVariant operator()(const QString& name, int index = -1);
     virtual SPFeatureI clone() const=0;
-    virtual IlwisTypes ilwisType(qint32 index=iUNDEF) const = 0;
+    virtual IlwisTypes ilwisType(qint32 index=0) const = 0;
     virtual quint32 trackSize() const = 0;
-    virtual QVariant value(const QString& name, int index=-1) = 0;
+    virtual QVariant cell(const QString& name, int index=-1) = 0;
 protected:
 
 
@@ -33,6 +32,26 @@ class KERNELSHARED_EXPORT SPFeatureI : public QSharedPointer<FeatureInterface> {
 public:
     SPFeatureI(FeatureInterface *f=0);
     QVariant operator ()(const QString &name, int index=-1);
+};
+
+class KERNELSHARED_EXPORT FeatureNode : public FeatureInterface {
+public:
+    virtual quint32 itemId() const ;
+
+    virtual quint64 featureid() const ;
+    virtual bool isValid() const  ;
+    virtual const Geometry& geometry(quint32 index=0) const ;
+    virtual void set(const Geometry& geom, int index = 0) ;
+    virtual SPFeatureI clone() const;
+    virtual IlwisTypes ilwisType(qint32 index=0) const ;
+    virtual quint32 trackSize() const ;
+    virtual QVariant cell(const QString& name, int index=-1) ;
+private:
+    QSharedPointer<Feature> _feature;
+    Geometry _geometry;
+    quint32 _index;
+
+    virtual void itemId(quint32 v) {}
 };
 
 /*!
@@ -63,12 +82,11 @@ public:
     quint64 featureid() const;
     bool isValid() const ;
     const Geometry& geometry(quint32 index=0) const;
-    void add(const Geometry& geom);
-    void attributeRecord(const SPAttributeRecord& record);
+    void set(const Geometry& geom, int index = 0);
     SPFeatureI clone() const;
     IlwisTypes ilwisType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
-    QVariant value(const QString& name, int index=-1);
+    QVariant cell(const QString& name, int index=-1);
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique

@@ -23,6 +23,43 @@ SPFeatureI::SPFeatureI(FeatureInterface *f) : QSharedPointer<FeatureInterface>(f
 QVariant SPFeatureI::operator ()(const QString &name, int index) {
     return (*this)->value(name, index);
 }
+//--------------------------------------------
+quint32 FeatureNode::itemId() const {
+    if ( _feature.isNull())
+        return iUNDEF;
+    return _feature->itemId();
+}
+
+quint64 FeatureNode::featureid() const {
+    if ( _feature.isNull())
+        return i64UNDEF;
+    return _feature->featureid();
+}
+
+bool FeatureNode::isValid() const{
+    return true;
+}
+
+const Geometry& FeatureNode::geometry(quint32 ) const {
+    return _geometry;
+}
+
+void FeatureNode::set(const Geometry& geom, int ) {
+    _geometry = geom;
+}
+
+SPFeatureI FeatureNode::clone() const
+{
+    return QSharedPointer<FeatureNode>(new FeatureNode()) ;
+}
+
+IlwisTypes FeatureNode::ilwisType(qint32) const{
+    return _geometry.ilwisType();
+}
+
+QVariant FeatureNode::cell(const QString& name, int) {
+
+}
 
 //--------------------------------------------
 Feature::Feature() : _itemid(iUNDEF), _featureid(i64UNDEF){
