@@ -59,7 +59,7 @@ std::vector<LogicalExpressionPart> LogicalExpressionParser::parts() const
 //---------------------------------------------------
 LogicalExpressionPart::LogicalExpressionPart(const QString &ex)
 {
-    QString expr = ex.toLower().trimmed();
+    QString expr = ex.trimmed();
     typedef std::pair<QString, LogicalOperator> CondP;
     std::map<QString, LogicalOperator> conditions = {CondP("<=", loLESSEQ),CondP(">=", loGREATEREQ),
                                                      CondP("!=", loNEQ),CondP("==", loEQ),
@@ -71,8 +71,11 @@ LogicalExpressionPart::LogicalExpressionPart(const QString &ex)
             QString right = expr.mid(index + condition.first.size());
             _field = left.trimmed();
             _value = right.trimmed();
+            _value = _value.remove('\"');
             _condition = condition.second;
             _vt = Domain::ilwType(_value);
+            if ( _vt == itUNKNOWN)
+                _vt = itSTRING;
             break;
         }
     }
