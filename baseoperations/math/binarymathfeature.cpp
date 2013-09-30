@@ -97,5 +97,32 @@ Box3D<double> BinaryMathFeature::addEnvelopes() const {
 
 quint64 BinaryMathFeature::createMetadata()
 {
+    QString url = QString("ilwis://operations/binarymathfeatures");
+    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    resource.addProperty("namespace","ilwis");
+    resource.addProperty("longname","binarymathfeatures");
+    resource.addProperty("syntax","binarymathfeatures(featurecoverage1,featurescoverage2,add|substract)");
+    resource.addProperty("description",TR("generates a new featurecoverage that puts all the features of both coverages into one coverage"));
+    resource.addProperty("inparameters","3");
+    resource.addProperty("pin_1_type", itFEATURE);
+    resource.addProperty("pin_1_name", TR("input feature coverage"));
+    resource.addProperty("pin_1_desc",TR("input feature coverage"));
+    resource.addProperty("pin_2_type", itFEATURE);
+    resource.addProperty("pin_2_name", TR("input feature coverage"));
+    resource.addProperty("pin_2_desc",TR("input feature coverage"));
+    resource.addProperty("pin_3_type", itSTRING);
+    resource.addProperty("pin_3_name", TR("Operator"));
+    resource.addProperty("pin_3_domain","string");
+    resource.addProperty("pin_3_desc",TR("operator (add, substract) applied to the other 2 input operators"));
+    resource.addProperty("outparameters",1);
+    resource.addProperty("pout_1_type", itFEATURE);
+    resource.addProperty("pout_1_name", TR("output featurecoverage"));
+    resource.addProperty("pout_1_desc",TR("output feature coverage"));
 
+    resource.prepare();
+    url += "=" + QString::number(resource.id());
+    resource.setUrl(url);
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
 }

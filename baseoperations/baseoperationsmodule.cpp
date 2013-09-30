@@ -2,6 +2,14 @@
 #include <future>
 #include "kernel.h"
 #include "raster.h"
+#include "geometries.h"
+#include "polygon.h"
+#include "geometry.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "attributerecord.h"
+#include "feature.h"
+#include "featurecoverage.h"
 #include "rasterinterpolator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
@@ -21,9 +29,11 @@
 #include "math/unarymath.h"
 #include "math/unarymathoperations.h"
 #include "math/binarymathraster.h"
+#include "math/binarymathfeature.h"
 #include "math/binarylogical.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
+
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -70,6 +80,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(StringReplace::createMetadata(), StringReplace::create);
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
+    commandhandler()->addOperation(BinaryMathFeature::createMetadata(), BinaryMathFeature::create);
 
 }
 
