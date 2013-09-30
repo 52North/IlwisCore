@@ -72,7 +72,7 @@ bool IndexedIdentifier::isValid() const{
 
 ItemRange *IndexedIdentifier::createRange()
 {
-    return new IndexedIdentifierRange();
+    return new IndexedIdentifierRange("",0);
 }
 
 IlwisTypes IndexedIdentifier::valueTypeS()

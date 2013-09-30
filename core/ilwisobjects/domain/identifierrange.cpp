@@ -32,7 +32,7 @@ bool IndexedIdentifierRange::contains(const QString& item , bool ) const{
     }
     int index = item.indexOf("_");
     if ( index != -1) {
-        QString num = item.mid(index);
+        QString num = item.mid(index + 1);
         bool ok;
         quint32 itemIndex = num.toULong(&ok);
         return ok && itemIndex < _count;
