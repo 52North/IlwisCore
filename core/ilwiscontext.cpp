@@ -32,6 +32,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
     QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
+    _workingCatalog = new Catalog(); // empty catalog
 }
 
 IlwisContext::~IlwisContext()
