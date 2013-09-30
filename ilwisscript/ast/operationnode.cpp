@@ -24,9 +24,9 @@ void OperationNode::addRightTerm(OperationNode::Operators op, ASTNode *node)
     _rightTerm.push_back(term);
 }
 
-bool OperationNode::evaluate(SymbolTable &symbols, int scope)
+bool OperationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-   bool ok =  _leftTerm->evaluate(symbols, scope)   ;
+   bool ok =  _leftTerm->evaluate(symbols, scope, ctx)   ;
    const NodeValue& vleft = _leftTerm->value();
    _value = vleft;
    return ok;
@@ -39,7 +39,8 @@ bool OperationNode::isValid() const
     return ! _leftTerm.isNull();
 }
 
-bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QString &operation, const QString& relation,SymbolTable &symbols) {
+bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QString &operation,
+                                              const QString& relation,SymbolTable &symbols, ExecutionContext *ctx) {
     QString expr;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
         expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toString()).arg(vright.toDouble()).arg(relation);
@@ -50,11 +51,11 @@ bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QSt
     } else if (SymbolTable::isDataLink(vright) && SymbolTable::isNumerical(_value)) {
         expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString()).arg(_value.toDouble()).arg(relation);
     }
-    Ilwis::ExecutionContext ctx;
-    bool ok = Ilwis::commandhandler()->execute(expr, &ctx,symbols);
-    if ( !ok || ctx._results.size() != 1)
+
+    bool ok = Ilwis::commandhandler()->execute(expr, ctx,symbols);
+    if ( !ok || ctx->_results.size() != 1)
         return false;
-    _value = {ctx._results[0], NodeValue::ctID};
+    _value = {ctx->_results[0], NodeValue::ctID};
     return true;
 }
 

@@ -18,7 +18,7 @@ QString ScriptLineNode::nodeType() const
     return "scriptline";
 }
 
-bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
+bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx )
 {
      _evaluated = true;
     foreach(QSharedPointer<ASTNode> node, _childeren) {
@@ -28,7 +28,7 @@ bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope )
                 ScriptNode::setActiveFormat(itRASTER, node)   ;
 
         }
-        if (!node->evaluate(symbols, scope)) {
+        if (!node->evaluate(symbols, scope, ctx)) {
             _evaluated =  false;
             break;
         }

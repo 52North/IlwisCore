@@ -7,7 +7,7 @@ class ParametersNode : public ASTNode
 public:
     ParametersNode();
     QString nodeType() const;
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 };
 }
 

@@ -8,7 +8,7 @@ class Ifnode : public ASTNode
 {
 public:
     Ifnode();
-    bool evaluate(SymbolTable& symbols, int scope);
+    bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
     void setCondition(ExpressionNode *expr);
     void addThen(ASTNode *node);
     void addElse(ASTNode *node);

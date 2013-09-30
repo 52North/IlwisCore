@@ -11,7 +11,7 @@ public:
     VariableNode(bool constant);
     QString nodeType() const;
     void setExpression(ExpressionNode *node);
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 
 private:
     QSharedPointer<ExpressionNode> _expression;

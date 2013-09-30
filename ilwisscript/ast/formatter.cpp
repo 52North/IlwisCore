@@ -44,7 +44,7 @@ QString Formatter::dataType() const
     return _dataType;
 }
 
-//bool Formatter::evaluate(SymbolTable &symbols, int scope)
+//bool Formatter::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 //{
 //    return false;
 //}

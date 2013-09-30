@@ -37,7 +37,7 @@ bool IDNode::isReference() const {
 }
 
 
-bool IDNode::evaluate(SymbolTable& symbols, int scope) {
+bool IDNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx) {
 
 
     QVariant var = symbols.getValue(id(), scope);

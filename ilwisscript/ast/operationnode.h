@@ -15,12 +15,13 @@ public:
     OperationNode();
     void setLeftTerm(ASTNode *node);
     void addRightTerm(OperationNode::Operators op, ASTNode *node);
-    bool evaluate(SymbolTable& symbols, int scope);
+    bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
     bool isValid() const;
 
 
 protected:
-    bool handleBinaryCoverageCases(const NodeValue &vright, const QString& operation, const QString &relation, Ilwis::SymbolTable &symbols);
+    bool handleBinaryCoverageCases(const NodeValue &vright, const QString& operation, const QString &relation,
+                                   Ilwis::SymbolTable &symbols, ExecutionContext *ctx);
 
     QSharedPointer<ASTNode> _leftTerm;
     QVector< RightTerm > _rightTerm;

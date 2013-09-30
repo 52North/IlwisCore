@@ -59,10 +59,10 @@ bool ASTNode::addChild(ASTNode *n)
     return true;
 }
 
-bool ASTNode::evaluate(SymbolTable& symbols, int scope)
+bool ASTNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext* ctx)
 {
     foreach(QSharedPointer<ASTNode> node, _childeren) {
-        if (!node->evaluate(symbols, scope)) {
+        if (!node->evaluate(symbols, scope, ctx)) {
             return false;
         }
     }

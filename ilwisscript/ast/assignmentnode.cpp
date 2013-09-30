@@ -113,13 +113,13 @@ void AssignmentNode::store2Format(ASTNode *node, const Symbol& sym, const QStrin
      }
 }
 
-bool AssignmentNode::evaluate(SymbolTable& symbols, int scope)
+bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx)
 {
     if ( _expression.isNull())
         return false;
 
 
-    bool res = _expression->evaluate(symbols, scope);
+    bool res = _expression->evaluate(symbols, scope, ctx);
     if ( res) {
         NodeValue val = _expression->value();
         Symbol sym = symbols.getSymbol(val.toString(),SymbolTable::gaREMOVEIFANON);

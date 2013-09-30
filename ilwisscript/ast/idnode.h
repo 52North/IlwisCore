@@ -21,7 +21,7 @@ public:
       \return bool true if the value can be found in the symbol table
     */
     bool isReference() const;
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 
 protected:
     IlwisTypes tentativeFileType(const QString &ext) const;

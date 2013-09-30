@@ -8,12 +8,12 @@ class ExpressionNode : public OperationNode
 public:
     ExpressionNode();
     QString nodeType() const;
-    bool evaluate(SymbolTable& symbols, int scope);
+    bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
 
 private:
-    bool handleAnd(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-    bool handleOr(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-    bool handleXor(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleAnd(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleOr(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleXor(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
 
 };
 }

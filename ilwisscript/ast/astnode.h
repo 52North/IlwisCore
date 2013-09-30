@@ -7,6 +7,7 @@
 
 namespace Ilwis {
 class SymbolTable;
+struct ExecutionContext ;
 
 class NodeValue : public QVariant {
 public:
@@ -35,7 +36,7 @@ public:
     ASTNode(const QString& t) : _type(t) {}
     virtual ~ASTNode() {}
    bool addChild(ASTNode *n);
-   virtual bool evaluate(SymbolTable& symbols, int scope);
+   virtual bool evaluate(SymbolTable& symbols, int scope, ExecutionContext* ctx);
    virtual NodeValue value() const;
    bool isValid() const;
    int noOfChilderen() const;

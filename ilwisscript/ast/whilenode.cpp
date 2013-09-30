@@ -20,27 +20,27 @@ QString WhileNode::nodeType() const
     return "whileStatement";
 }
 
-bool WhileNode::checkCondition(SymbolTable &symbols, int scope) {
+bool WhileNode::checkCondition(SymbolTable &symbols, int scope, ExecutionContext *ctx) {
 
-    _condition->evaluate(symbols, scope);
+    _condition->evaluate(symbols, scope, ctx);
     return _condition->value() == true;
 }
 
-bool WhileNode::evaluate(SymbolTable &symbols, int scope) {
+bool WhileNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx) {
     if (_condition.isNull())
         return false;
 
     if ( !_condition->isValid())
         return false;
 
-    while( checkCondition(symbols, scope)) {
+    while( checkCondition(symbols, scope, ctx)) {
         foreach(QSharedPointer<ASTNode> node, _childeren) {
             if ( node->nodeType() == "breakStatement") {
-                node->evaluate(symbols, scope);
+                node->evaluate(symbols, scope, ctx);
                 if ( node->value() == false)
                     break;
             } else
-                node->evaluate(symbols, scope);
+                node->evaluate(symbols, scope, ctx);
         }
     }
     return true;

@@ -22,11 +22,11 @@ QString FunctionStatementNode::nodeType() const
     return "functionStatement";
 }
 
-bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope)
+bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
     QString parm;
     if ( !_parameters.isNull()){
-        _parameters->evaluate(symbols, scope);
+        _parameters->evaluate(symbols, scope, ctx);
         auto val = _parameters->value();
         auto values = val.value<QVariantList>();
         for(const auto& var : values) {
@@ -45,6 +45,5 @@ bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope)
 
     }
     QString exp = QString("%1(%2)").arg(id()).arg(parm);
-    ExecutionContext ctx;
-    return commandhandler()->execute(exp,&ctx, symbols);
+    return commandhandler()->execute(exp,ctx, symbols);
 }

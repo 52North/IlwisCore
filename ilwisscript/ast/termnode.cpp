@@ -76,10 +76,10 @@ void TermNode::setNumericalNegation(bool yesno)
     _numericalNegation = yesno;
 }
 
-bool TermNode::evaluate(SymbolTable &symbols, int scope)
+bool TermNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
     if ( _content == csExpression)  {
-        if (_expression->evaluate(symbols, scope)) {
+        if (_expression->evaluate(symbols, scope, ctx)) {
             _value = {_expression->value(), NodeValue::ctExpression};
             return true;
         }
@@ -97,7 +97,7 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
     } else if ( _content == csMethod) {
         QString parms = "(";
         for(int i=0; i < _parameters->noOfChilderen(); ++i) {
-            bool ok = _parameters->child(i)->evaluate(symbols, scope);
+            bool ok = _parameters->child(i)->evaluate(symbols, scope, ctx);
             if (!ok)
                 return false;
             QString name = getName(_parameters->child(i)->value());
@@ -108,16 +108,15 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
         }
         parms += ")";
         QString expression = _id->id() + parms;
-        Ilwis::ExecutionContext ctx;
-        bool ok = Ilwis::commandhandler()->execute(expression, &ctx, symbols);
-        if ( !ok || ctx._results.size() != 1)
+        bool ok = Ilwis::commandhandler()->execute(expression, ctx, symbols);
+        if ( !ok || ctx->_results.size() != 1)
             throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
 
-        _value = {symbols.getValue(ctx._results[0]), ctx._results[0], NodeValue::ctMethod};
+        _value = {symbols.getValue(ctx->_results[0]), ctx->_results[0], NodeValue::ctMethod};
         return true;
 
     } else if ( _content == csID) {
-        _id->evaluate(symbols, scope);
+        _id->evaluate(symbols, scope, ctx);
         QString value;
         if ( _id->isReference()) {
             if ( symbols.getSymbol(_id->id(),scope).isValid())
@@ -141,11 +140,10 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope)
                     selectordef = "\"attribute=" + selector->variable() + "\"";
                 QString outname = ANONYMOUS_PREFIX;
                 QString expression = QString("%1=selection(%2,%3)").arg(outname).arg(value).arg(selectordef);
-                Ilwis::ExecutionContext ctx;
-                if(!Ilwis::commandhandler()->execute(expression, &ctx, symbols)) {
+                if(!Ilwis::commandhandler()->execute(expression, ctx, symbols)) {
                     throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
                 }
-                QString outgc = ctx._results[0];
+                QString outgc = ctx->_results[0];
                 value = outgc;
             }
         }

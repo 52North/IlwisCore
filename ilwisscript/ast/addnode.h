@@ -7,10 +7,10 @@ class AddNode : public OperationNode
 public:
     AddNode();
     QString nodeType() const;
-    bool evaluate(SymbolTable& symbols, int scope);
+    bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
 private:
-    bool handleAdd(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-    bool handleSubstract(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleAdd(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleSubstract(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
     IlwisTypes typesUsed(const NodeValue &vright, Ilwis::SymbolTable &symbols) const;
 };
 }

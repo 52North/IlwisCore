@@ -7,11 +7,11 @@ class MultiplicationNode : public OperationNode
 public:
     MultiplicationNode();
     QString nodeType() const;
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 private:
-    bool handleMod(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-    bool handleDiv(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-    bool handleTimes(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+    bool handleMod(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleDiv(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleTimes(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
 };
 }
 

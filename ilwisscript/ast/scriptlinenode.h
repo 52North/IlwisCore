@@ -7,7 +7,7 @@ class ScriptLineNode : public ASTNode
 public:
     ScriptLineNode();
     QString nodeType() const;
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 };
 }
 

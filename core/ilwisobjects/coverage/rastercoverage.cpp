@@ -42,6 +42,10 @@ void RasterCoverage::georeference(const IGeoReference &grf)
         _georef->compute();
         setCoordinateSystem(grf->coordinateSystem()); // mandatory
     }
+    if (_georef.isValid())
+        _size = _georef->size();
+    else
+        _size = Size();
 }
 
 IlwisTypes RasterCoverage::ilwisType() const

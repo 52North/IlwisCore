@@ -14,7 +14,7 @@ public:
     QString nodeType() const;
     void setLogicalNegation(bool yesno);
     void setNumericalNegation(bool yesno);
-    bool evaluate(SymbolTable& symbols, int scope);
+    bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
     void addSelector(Selector *n);
 private:
     enum ContentState{csNumerical, csString, csExpression, csMethod,csID};

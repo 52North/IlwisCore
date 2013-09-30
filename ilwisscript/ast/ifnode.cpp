@@ -12,11 +12,11 @@ Ifnode::Ifnode() : ASTNode("IfNode")
 {
 }
 
-bool Ifnode::evaluate(SymbolTable &symbols, int scope)
+bool Ifnode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
     if (_condition.isNull())
         throw Ilwis::ScriptSyntaxError(TR("uninitialized condition in 'if' statement"));
-    _condition->evaluate(symbols, scope);
+    _condition->evaluate(symbols, scope, ctx);
     if ( _condition->value().content() != NodeValue::ctBOOLEAN)
         throw Ilwis::ScriptSyntaxError(TR("'If' statement needs a boolean condition to function"));
     bool branch = _condition->value().toBool();
@@ -28,7 +28,7 @@ bool Ifnode::evaluate(SymbolTable &symbols, int scope)
                 continue;
             }
 
-            ok &= _then[i]->evaluate(symbols, scope);
+            ok &= _then[i]->evaluate(symbols, scope, ctx);
         }
     } else {
         for(quint32 i=0; i < _else.size(); ++i) {
@@ -37,7 +37,7 @@ bool Ifnode::evaluate(SymbolTable &symbols, int scope)
                 continue;
             }
 
-            ok &= _else[i]->evaluate(symbols, scope);
+            ok &= _else[i]->evaluate(symbols, scope, ctx);
         }
         return ok;
     }

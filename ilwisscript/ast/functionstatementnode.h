@@ -9,7 +9,7 @@ public:
     void setParameters(ParametersNode *parm);
     QString nodeType() const;
 
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
 private:
     QSharedPointer<ParametersNode> _parameters;
 

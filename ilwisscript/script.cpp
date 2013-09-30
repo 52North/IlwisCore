@@ -126,7 +126,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& symbols )
     //Run the parser rule. This also runs the lexer to create the token stream.
     ASTNode *scr = psr->script(psr);
 
-    bool ok = scr->evaluate(symbols, 1000);
+    bool ok = scr->evaluate(symbols, 1000, ctx);
     return ok;
     }
     catch(Ilwis::ScriptError& err) {

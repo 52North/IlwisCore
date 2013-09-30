@@ -16,27 +16,27 @@ QString RelationNode::nodeType() const
     return "relation";
 }
 
-bool RelationNode::evaluate(SymbolTable &symbols, int scope)
+bool RelationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    if (!OperationNode::evaluate(symbols, scope))
+    if (!OperationNode::evaluate(symbols, scope, ctx))
         return false;
 
     bool ret = true;
     foreach(RightTerm term, _rightTerm) {
-        term._rightTerm->evaluate(symbols, scope) ;
+        term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
         if ( term._operator == OperationNode::oEQ ){
-            ret = handleEQ(vright, symbols);
+            ret = handleEQ(vright, symbols, ctx);
         } else   if ( term._operator == OperationNode::oGREATER ){
-            ret = handleGREATER(vright, symbols);
+            ret = handleGREATER(vright, symbols, ctx);
         } else   if ( term._operator == OperationNode::oGREATEREQ ){
-            ret = handleGREATEREQ(vright, symbols);
+            ret = handleGREATEREQ(vright, symbols, ctx);
         }  else   if ( term._operator == OperationNode::oLESS ){
-            ret = handleLESS(vright, symbols);
+            ret = handleLESS(vright, symbols, ctx);
         } else   if ( term._operator == OperationNode::oLESSEQ ){
-            ret = handleLESSEQ(vright, symbols);
+            ret = handleLESSEQ(vright, symbols, ctx);
         }  else   if ( term._operator == OperationNode::oNEQ ){
-            ret = handleNEQ(vright, symbols);
+            ret = handleNEQ(vright, symbols, ctx);
         }
         if(!ret) {
             return ret;
@@ -46,7 +46,7 @@ bool RelationNode::evaluate(SymbolTable &symbols, int scope)
 }
 
 
-bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
 
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
@@ -58,10 +58,10 @@ bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols) {
        _value = {var1.toString() == var2.toString(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "eq", symbols);
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "eq", symbols, ctx);
 }
 
-bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
     if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
@@ -72,45 +72,45 @@ bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols) {
        _value = {var1.toString() != var2.toString(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","neq", symbols);
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","neq", symbols, ctx);
 }
 
-bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
     if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
        _value = {var1.toDouble() >= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "greatereq", symbols);
+    return handleBinaryCoverageCases(vright, "binarylogicalraster", "greatereq", symbols, ctx);
 }
 
-bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
     if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
         _value = { var1.toDouble() > var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","greater", symbols);
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","greater", symbols, ctx);
 }
 
-bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
     if ( SymbolTable::isNumerical(var1) && SymbolTable::isNumerical(var2)) {
        _value = { var1.toDouble() < var2.toDouble() , NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","less", symbols);
+    return handleBinaryCoverageCases(vright, "binarylogicalraster","less", symbols, ctx);
 }
 
-bool RelationNode::handleLESSEQ(const NodeValue& vright,SymbolTable &symbols) {
+bool RelationNode::handleLESSEQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(_value,symbols);
     QVariant var2 = resolveValue(vright, symbols);
     if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
         _value = {var1.toDouble() <= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright,"binarylogicalraster", "lesseq",symbols);
+    return handleBinaryCoverageCases(vright,"binarylogicalraster", "lesseq",symbols, ctx);
 }

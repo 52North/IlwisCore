@@ -15,11 +15,11 @@ QString ParametersNode::nodeType() const
     return "actualParameters";
 }
 
-bool ParametersNode::evaluate(SymbolTable &symbols, int scope)
+bool ParametersNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
     QList<QVariant> values;
     foreach(QSharedPointer<ASTNode> node, _childeren) {
-        if (!node->evaluate(symbols, scope)) {
+        if (!node->evaluate(symbols, scope, ctx)) {
             return false;
         } else {
             QVariant var;

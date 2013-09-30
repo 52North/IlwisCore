@@ -12,7 +12,7 @@ public:
     //void setDomPart(ASTNode *node);
     void setExpression(ExpressionNode *node);
     QString nodeType() const;
-    bool evaluate(SymbolTable &symbols, int scope);
+    bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
     void setFormatPart(ASTNode *node);
 
 private:

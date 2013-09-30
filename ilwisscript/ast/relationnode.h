@@ -7,14 +7,14 @@ class RelationNode : public OperationNode
 public:
     RelationNode();
      QString nodeType() const;
-     bool evaluate(SymbolTable& symbols, int scope);
+     bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
 private:
-     bool handleEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-     bool handleNEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-     bool handleGREATEREQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-     bool handleGREATER(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-     bool handleLESS(const NodeValue &vright, Ilwis::SymbolTable &symbols);
-     bool handleLESSEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols);
+     bool handleEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleNEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleGREATEREQ(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleGREATER(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleLESS(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleLESSEQ(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
 };
 }
 

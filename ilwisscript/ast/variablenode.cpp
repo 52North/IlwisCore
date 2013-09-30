@@ -27,11 +27,11 @@ void VariableNode::setExpression(ExpressionNode * node)
     _expression = QSharedPointer<ExpressionNode>(node)    ;
 }
 
-bool VariableNode::evaluate(SymbolTable& symbols, int scope)
+bool VariableNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx)
 {
     QVariant var;
     if ( !_expression.isNull()) {
-        _expression->evaluate(symbols, scope);
+        _expression->evaluate(symbols, scope, ctx);
         var = _expression->value();
     }
 
@@ -39,7 +39,7 @@ bool VariableNode::evaluate(SymbolTable& symbols, int scope)
     foreach(QSharedPointer<ASTNode> node, _childeren) {
         if ( node->nodeType() == "ID") {
             IDNode *idnode = static_cast<IDNode *>( node.data());
-            idnode->evaluate(symbols, scope);
+            idnode->evaluate(symbols, scope, ctx);
             IlwisTypes type = idnode->type();
             symbols.addSymbol(idnode->id(), scope,type, var);
         }
