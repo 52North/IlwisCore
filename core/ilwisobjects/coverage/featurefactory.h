@@ -6,8 +6,9 @@
 
 namespace Ilwis {
 class FeatureInterface;
+class FeatureCoverage;
 
-typedef std::function<FeatureInterface *(quint64 itemId)>  CreateFeature;
+typedef std::function<FeatureInterface *(FeatureCoverage* fcoverage)>  CreateFeature;
 
 class FeatureFactory : public AbstractFactory
 {

@@ -54,32 +54,6 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 }
 
 
-bool AttributeRecord::addColumn(const ColumnDefinition &def, bool coverages)
-{
-    if ( coverages ) {
-        if (_coverageTable.isValid()) {
-        return _coverageTable->addColumn(def);
-        }
-    } else if ( _indexTable.isValid() ) {
-        return _indexTable->addColumn(def)        ;
-    }
-    return false;
-
-}
-
-
-bool AttributeRecord::addColumn(const QString &nme, const IDomain &domain, bool coverages)
-{
-    if ( coverages ) {
-        if (_coverageTable.isValid()) {
-        return _coverageTable->addColumn(nme, domain);
-        }
-    } else if ( _indexTable.isValid() ) {
-        return _indexTable->addColumn(nme, domain) ;
-    }
-    return false;
-}
-
 QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) {
     if ( _keyColumn == sUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1,"key column");

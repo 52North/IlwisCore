@@ -14,8 +14,6 @@ public:
     AttributeRecord(const ITable& attTable, const QString& keyColumn);
 
     quint32 columns(bool coverages=true) const;
-    bool addColumn(const QString &name, const IDomain &domain, bool coverages=true);
-    bool addColumn(const ColumnDefinition& def, bool coverages=true);
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
     QVariant cellByKey(quint64 key, const QString &col, int index=-1);
