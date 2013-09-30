@@ -26,6 +26,7 @@ struct KERNELSHARED_EXPORT ExecutionContext {
     std::vector<QString> _results;
     QString _masterGeoref;
     QString _masterCsy;
+    std::ostream *_out;
     void addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Ilwis::Resource &resource);
 };
 

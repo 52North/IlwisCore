@@ -6,6 +6,7 @@
 #include <QSqlField>
 #include <QSqlError>
 #include <QUrlQuery>
+#include <iostream>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "symboltable.h"
@@ -28,9 +29,11 @@ void ExecutionContext::clear()
     _results.clear();
     _masterCsy = sUNDEF;
     _masterGeoref = sUNDEF;
+    _out = &std::cout;
 }
 
 ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(threaded){
+    _out = &std::cout;
 }
 
 void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource)
