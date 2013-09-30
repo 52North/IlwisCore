@@ -7,6 +7,7 @@
 #include "connectorinterface.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "logicalexpressionparser.h"
 #include "tableselector.h"
 
 using namespace Ilwis;
