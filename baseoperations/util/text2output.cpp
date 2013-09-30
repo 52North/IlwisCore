@@ -25,7 +25,7 @@ bool Text2Output::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    std::cout << _text.toStdString() << "\n"    ;
+    (*ctx->_out) << _text.toStdString() << "\n"    ;
 
     return true;
 }
