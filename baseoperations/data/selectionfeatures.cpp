@@ -49,25 +49,10 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
     SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
 
-        AttributeRecord rec;
-        if ( _attribColumn != "")
-            rec = AttributeRecord(inputFC->attributeTable(), FEATUREIDCOLUMN);
-        SPAttributeRecord attrib (new AttributeRecord(_attTable, FEATUREIDCOLUMN));
-        quint64 v_in = 0;
         for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
-            QVariant v;
-            if ( rec.isValid()) {
-                SPFeatureI feature = *iterIn;
-                v_in = feature->value(FEATUREIDCOLUMN).toULongLong();
-                v = rec.cellByKey(v_in,_attribColumn);
-            } else {
-                v = v_in;
-            }
+            QVariant v = feature->cell(_attribColumn);
             SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-            if ( !newFeature.isNull()) {
-                newFeature->attributeRecord(attrib);
-                _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
-            }
+            _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
 
             ++iterIn;
         }
