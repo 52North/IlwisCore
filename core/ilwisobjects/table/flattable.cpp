@@ -76,7 +76,7 @@ std::vector<QVariant> FlatTable::column(quint32 index) const {
     if ( !isColumnIndexValid(index))
         return std::vector<QVariant>();
 
-    std::vector<QVariant> data(rows());
+    std::vector<QVariant> data(records());
     for(quint32 i=0; i < _rows; ++i) {
         data[i] = _datagrid[i][index];
     }

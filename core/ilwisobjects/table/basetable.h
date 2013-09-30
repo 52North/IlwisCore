@@ -21,7 +21,7 @@ public:
     /*!
     \se Ilwis::Table
      */
-    virtual quint32 rows() const;
+    virtual quint32 records() const;
     /*!
     \se Ilwis::Table
      */

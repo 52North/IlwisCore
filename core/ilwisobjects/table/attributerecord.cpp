@@ -83,7 +83,7 @@ QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) 
 
 QVariant AttributeRecord::cellByIndex(quint64 index, quint32 colIndex, int )
 {
-    if ( index < _indexTable->rows())
+    if ( index < _indexTable->records())
         return _indexTable->cell(index, colIndex);
     return QVariant();
 }

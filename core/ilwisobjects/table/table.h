@@ -27,7 +27,7 @@ public:
      return the number of rows in a table
      * \return rows in the table
      */
-    virtual quint32 rows() const=0;
+    virtual quint32 records() const=0;
     /*!
      returns the number of columns in a table
      * \return columns in the table

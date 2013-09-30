@@ -22,7 +22,7 @@ BaseTable::~BaseTable()
 {
 }
 
-quint32 BaseTable::rows() const
+quint32 BaseTable::records() const
 {
     return _rows;
 }
