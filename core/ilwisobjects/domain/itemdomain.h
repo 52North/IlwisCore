@@ -25,8 +25,6 @@ public:
     }
 
     ~ItemDomain() {
-        if ( parent().isValid())
-            parent()->removeChildDomain(this->id());
     }
 
     Domain::Containement contains(const QVariant& val) const{
@@ -120,8 +118,8 @@ public:
             return ;
         }
         if ( _childDomains.size() > 0) {
-            for(quint64 childid: _childDomains) {
-                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid) ;
+            for(auto childid: _childDomains) {
+                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid.first) ;
                 if ( childDom.isValid()) {
                     if ( childDom->contains(nme) == Domain::cSELF) {
                         WARN2(WARN_PART_OF2,nme, TR("related/child domain"));
@@ -136,8 +134,8 @@ public:
     void setRange(const ItemRange& range)
     {
         if ( _childDomains.size() > 0) {
-            for(quint64 childid: _childDomains) {
-                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid) ;
+            for(auto childid: _childDomains) {
+                IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid.first) ;
                 if ( childDom.isValid()) {
                     if(!range.contains(childDom->_range)) {
                         WARN2(WARN_NOT_PART_OF2,"item range", TR("child domain"));
@@ -197,7 +195,6 @@ public:
         bool ok = _range->alignWithParent(dm);
         if (!ok)
             return ;
-        dm->addChildDomain(this->id());
 
         Domain::setParent(dm);
 
