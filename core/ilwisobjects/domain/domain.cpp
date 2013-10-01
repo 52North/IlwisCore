@@ -13,6 +13,8 @@ Domain::Domain(): _strict(true)
 
 Domain::Domain(const Resource& resource) : IlwisObject(resource), _strict(true)
 {
+    if ( parent().isValid())
+        parent()->removeChildDomain(this->id());
 }
 
 bool Ilwis::Domain::isStrict() const
@@ -32,17 +34,34 @@ IDomain Domain::parent() const
 
 void Domain::setParent(const IDomain &dm)
 {
+    if ( dm.isValid())
+        dm->addChildDomain(id());
+    else
+        _parentDomain->removeChildDomain(id());
     _parentDomain = dm;
+
+
 }
 
-bool Domain::addChildDomain(quint64 idchild)
+void Domain::addChildDomain(quint64 idchild)
 {
-    _childDomains.insert(idchild);
+    auto iter = _childDomains.find(idchild);
+    if ( iter != _childDomains.end())
+        (*iter).second++;
+    else
+        _childDomains[idchild] = 1;
 }
 
-void Domain::removeChildDomain(quint64 idchild)
+bool Domain::removeChildDomain(quint64 idchild)
 {
-    _childDomains.erase(idchild);
+    auto iter = _childDomains.find(idchild);
+    if ( iter != _childDomains.end()) {
+        (*iter).second--;
+        if ( (*iter).second == 0)
+            _childDomains.erase(idchild);
+        return true;
+    }
+    return false;
 }
 
 IlwisTypes Domain::ilwType(const QString &value) {

@@ -59,14 +59,16 @@ public:
      * \sets the parent domain; it may be set to invalid
      */
     virtual void setParent(const IDomain& dm);
-    bool addChildDomain(quint64 idchild);
-    void removeChildDomain(quint64 idchild);
+
 
     /*!
      translates the type of a variant to a compatible ilwis type
      * \param the variant to be typed
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
+
+
+
     static IlwisTypes ilwType(const QVariant &v);
     static IlwisTypes ilwType(const QString &value);
     virtual Containement contains(const QVariant& value) const = 0;
@@ -77,8 +79,11 @@ public:
 
 
 protected:
+    void addChildDomain(quint64 idchild);
+    bool removeChildDomain(quint64 idchild);
+
     virtual QSharedPointer<Range> getRange() const = 0;
-    std::set<quint64> _childDomains;
+    std::map<quint64, quint32> _childDomains;
 private:
     bool _strict;
     IDomain _parentDomain;
