@@ -55,13 +55,22 @@ Catalog *createCatalog()  {
     return new Catalog();
 }
 
-Ilwis::Kernel* kernel() {
+Ilwis::Kernel* Ilwis::kernel() {
     if (Kernel::_kernel == 0) {
         Kernel::_kernel = new Kernel();
         Kernel::_kernel->init();
 
     }
     return Kernel::_kernel;
+}
+
+bool Ilwis::initIlwis(){
+    try {
+        return kernel() != 0;
+    } catch (const ErrorObject& err) {
+        std::cout << err.message().toStdString();
+    }
+    return false;
 }
 
 

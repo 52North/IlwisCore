@@ -183,11 +183,12 @@ signals:
 public slots:
 
 };
-
+KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
+KERNELSHARED_EXPORT bool initIlwis();
 
 }
 
-KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
+
 #define ERROR0(m) ( kernel()->message(m,IssueObject::itError, sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 #define ERROR1(m, p) ( kernel()->message(m,IssueObject::itError, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 #define ERROR2(m, p1, p2) ( kernel()->message(m,IssueObject::itError, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
