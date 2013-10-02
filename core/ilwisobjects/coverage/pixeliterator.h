@@ -62,8 +62,6 @@ public:
         _y = 0;
         _z = 0;
         _yChanged = _xChanged = _zChanged = true;
-        if (!isValid())
-            throw ErrorObject(TR("Invalid data grid accessed"));
         initPosition();
         move(index);
         return this->operator *();
@@ -75,8 +73,6 @@ public:
         _y = vox.y();
         _z = vox.z();
         _yChanged = _xChanged = _zChanged = true;
-        if (!isValid())
-            throw ErrorObject(TR("Invalid data grid accessed"));
         initPosition();
         return *this;
     }
@@ -93,14 +89,10 @@ public:
     bool operator>=(const PixelIterator& iter) const;
 
     double& operator*() {
-        if (!isValid())
-            throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
         return _grid->value(_currentBlock, _localOffset );
     }
 
     const double& operator*() const {
-        if (!isValid())
-            throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
         return  _grid->value(_currentBlock, _localOffset);
     }
 

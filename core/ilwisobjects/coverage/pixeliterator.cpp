@@ -115,8 +115,8 @@ void PixelIterator::init() {
     }
     if ( _grid == 0) {
         _isValid = false;
-        ERROR1(ERR_NO_INITIALIZED_1,_raster->name());
-        return;
+        if (!isValid())
+            throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
     }
 
     initPosition();
