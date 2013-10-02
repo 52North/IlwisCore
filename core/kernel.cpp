@@ -46,6 +46,7 @@
 #include "operationExpression.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "tranquilizer.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
@@ -208,6 +209,17 @@ bool Kernel::message(const QString &message, IssueObject::IssueType tp, const QS
         issues()->addCodeInfo(issueid, line, func, name);
     }
     return false;
+}
+
+SPTranquilizer Kernel::createTrq(const QString& title, const QString& description, qint64 end, qint32 step) {
+    std::shared_ptr<Tranquilizer> trq (new Tranquilizer(title, description, end, step));
+    connect(trq.get(),&Tranquilizer::doMove, this, &Kernel::doProgress );
+    return trq;
+}
+
+void Kernel::doProgress(quint64 id, qint32 amount)
+{
+
 }
 
 void Kernel::startClock(){

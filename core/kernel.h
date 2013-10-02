@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <fstream>
+#include <memory>
 #include "boost/current_function.hpp"
 #include <time.h>
 #include "Kernel_global.h"
@@ -26,8 +27,10 @@ class Version;
 class FactoryInterface;
 class IssueLogger;
 class Resource;
+class Tranquilizer;
 
 typedef QScopedPointer<Version> SPVersion;
+typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
 /*!
  The Kernel class a singleton object that controls some essential resources in the system.
@@ -167,6 +170,7 @@ public:
     void startClock();
     void endClock();
 
+    SPTranquilizer createTrq(const QString &title, const QString &description, qint64 end, qint32 step);
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;
     ModuleMap _modules;
@@ -181,6 +185,7 @@ signals:
     void doCommand(const QString& expr, ExecutionContext* ctx);
 
 public slots:
+    void doProgress(quint64 id, qint32 amount);
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
