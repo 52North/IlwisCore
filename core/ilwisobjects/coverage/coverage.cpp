@@ -90,7 +90,7 @@ Resource Coverage::source(int mode) const
     Resource resource = IlwisObject::source(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
         resource.addProperty("coordinatesystem", coordinateSystem()->id());
-        resource.setExtendedType( resource.extendedType() | itDOMAIN | itCOORDSYSTEM);
+        resource.setExtendedType( resource.extendedType() | itCOORDSYSTEM);
     }
     return resource;
 }
