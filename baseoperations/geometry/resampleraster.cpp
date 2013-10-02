@@ -33,8 +33,11 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+    SPTranquilizer trq = kernel()->createTrq("resample", "", outputRaster->size().ysize(),1);
+
     BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
         PixelIterator iterOut(outputRaster,box);
+        iterOut.setTranquilizer(trq);
         RasterInterpolator interpolator(inputRaster, _method);
         SPRange range = inputRaster->datadef().range();
         PixelIterator iterEnd = iterOut.end();
