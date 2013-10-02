@@ -61,6 +61,7 @@ public:
     CellIterator end() ;
     const BlockIterator& iterator() const;
     operator std::vector<double>();
+    bool isValid() const;
 private:
     BlockIterator& _iterator;
     std::vector<quint32> _internalBlockNumber;

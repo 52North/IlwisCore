@@ -27,7 +27,9 @@ public:
      *An iterator is valid if bounding box and grid are a valid combination. The rest of the internal members of the iterator are calculated from this
      * \return true if the bounding box fits in the grid.
      */
-    bool isValid() const;
+    bool isValid() const{
+        return _isValid;
+    }
     PixelIterator();
     PixelIterator(const IRasterCoverage& raster, const Box3D<>& box=Box3D<>());
     PixelIterator(const PixelIterator& iter);
@@ -60,6 +62,8 @@ public:
         _y = 0;
         _z = 0;
         _yChanged = _xChanged = _zChanged = true;
+        if (!isValid())
+            throw ErrorObject(TR("Invalid data grid accessed"));
         initPosition();
         move(index);
         return this->operator *();
@@ -71,6 +75,8 @@ public:
         _y = vox.y();
         _z = vox.z();
         _yChanged = _xChanged = _zChanged = true;
+        if (!isValid())
+            throw ErrorObject(TR("Invalid data grid accessed"));
         initPosition();
         return *this;
     }
@@ -87,10 +93,14 @@ public:
     bool operator>=(const PixelIterator& iter) const;
 
     double& operator*() {
+        if (!isValid())
+            throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
         return _grid->value(_currentBlock, _localOffset );
     }
 
     const double& operator*() const {
+        if (!isValid())
+            throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
         return  _grid->value(_currentBlock, _localOffset);
     }
 

@@ -7,10 +7,6 @@
 
 using namespace Ilwis;
 
-bool PixelIterator::isValid() const {
-    return _isValid;
-}
-
 PixelIterator::PixelIterator() :
     _grid(0),
     _x(0),
