@@ -131,6 +131,13 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
     return DataDefinition();
 }
 
+//-----------------------------------------------------------
+bool Ilwis::operator==(const DataDefinition &def1, const DataDefinition &def2)
+{
+    return def1.domain() == def2.domain();
+}
 
-
-
+bool Ilwis::operator!=(const DataDefinition &def1, const DataDefinition &def2)
+{
+    return !operator==(def1, def2);
+}

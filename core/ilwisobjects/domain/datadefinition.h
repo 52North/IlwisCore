@@ -24,6 +24,9 @@ protected:
     SPRange _stretchRange;
 };
 
+KERNELSHARED_EXPORT bool operator==(const DataDefinition& def1, const DataDefinition& def2);
+KERNELSHARED_EXPORT bool operator!=(const DataDefinition& def1, const DataDefinition& def2);
+
 }
 
 #endif // DATADEFINITION_H

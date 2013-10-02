@@ -19,6 +19,9 @@ private:
     bool _multiple;
 
 };
+
+KERNELSHARED_EXPORT bool operator==(const ColumnDefinition& def1, const ColumnDefinition& def2);
+KERNELSHARED_EXPORT bool operator!=(const ColumnDefinition& def1, const ColumnDefinition& def2);
 }
 
 #endif // COLUMN_H

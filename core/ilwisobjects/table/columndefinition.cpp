@@ -49,3 +49,14 @@ void ColumnDefinition::multiple(bool yesno)
 }
 
 
+//---------------------------------------------------------
+
+bool Ilwis::operator==(const ColumnDefinition &def1, const ColumnDefinition &def2)
+{
+    return def1.datadef() == def2.datadef();
+}
+
+bool Ilwis::operator!=(const ColumnDefinition &def1, const ColumnDefinition &def2)
+{
+    return !operator==(def1, def2);
+}

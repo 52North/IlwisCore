@@ -20,6 +20,7 @@
 #include "operationmetadata.h"
 #include "operation.h"
 #include "commandhandler.h"
+#include "tablemerger.h"
 #include "binarymathfeature.h"
 
 using namespace Ilwis;
@@ -39,10 +40,12 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    //IFeatureCoverage outputFC = _outputFeatures.get<FeatureCoverage>();
-    IFeatureCoverage inputFC = _outputFeatures.get<FeatureCoverage>();
-    FeatureIterator iterIn(inputFC);
-    for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
+    FeatureIterator iterIn1(_inputFeatureSet1);
+    for_each(iterIn1, iterIn1.end(), [&](SPFeatureI feature){
+        _outputFeatures->newFeatureFrom(feature);
+    });
+    FeatureIterator iterIn2(_inputFeatureSet2);
+    for_each(iterIn2, iterIn2.end(), [&](SPFeatureI feature){
         _outputFeatures->newFeatureFrom(feature);
     });
     return true;
@@ -81,7 +84,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     Box2D<double> envelope = addEnvelopes();
     _outputFeatures->setCoordinateSystem(_csyTarget);
     _outputFeatures->envelope(envelope);
-    //Table::mergeTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
+    //TableMerger::mergeTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)
         _outputFeatures->setName(outname);
