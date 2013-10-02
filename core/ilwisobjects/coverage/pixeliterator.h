@@ -5,7 +5,9 @@
 
 namespace Ilwis {
 
-//class Polygon;
+class Tranquilizer;
+
+typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
 /*!
  * \brief The PixelIterator class an iterator class that iteratos over all the pixels in an grid (or subsection of it)
@@ -116,6 +118,10 @@ public:
         return iter;
     }
 
+    void setTranquilizer(const SPTranquilizer& trq) {
+        _trq = trq;
+    }
+
 protected:
     PixelIterator(quint64 endpos ) :
         _grid(0),
@@ -161,6 +167,7 @@ protected:
     bool _xChanged =false;
     bool _yChanged = false;
     bool _zChanged = false;
+    SPTranquilizer _trq;
 };
 
 inline Ilwis::PixelIterator begin(const IRasterCoverage& raster) {

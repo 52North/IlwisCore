@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "raster.h"
 #include "linerasterizer.h"
+#include "tranquilizer.h"
 #include "pixeliterator.h"
 
 
@@ -93,6 +94,7 @@ void PixelIterator::copy(const PixelIterator &iter) {
     _endposition = iter._endposition;
     _localOffset = iter._localOffset;
     _currentBlock = iter._currentBlock;
+    _trq = iter._trq;
 
 }
 
@@ -143,6 +145,8 @@ inline bool PixelIterator::moveXYZ(int delta) {
         quint32 localblock = _y /  _grid->maxLines();
         quint32 bandblocks = _grid->blocksPerBand() * _z;
         _localOffset = _x + ylocal * _grid->size().xsize();
+        if (_trq)
+            _trq->move();
         if ( bandblocks + localblock != _currentBlock) {
             _currentBlock = bandblocks + localblock;;
             _localOffset = _x;
