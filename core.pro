@@ -96,7 +96,10 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/rastercoverage.cpp \
     core/ilwisobjects/coverage/rasterinterpolator.cpp \
     core/ilwisobjects/operation/logicalexpressionparser.cpp \
-    core/ilwisobjects/table/tableselector.cpp
+    core/ilwisobjects/table/tableselector.cpp \
+    core/ilwisobjects/table/tablemerger.cpp \
+    core/ilwisobjects/domain/domainmerger.cpp \
+    core/util/tranquilizer.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -204,7 +207,10 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/rasterinterpolator.h \
     core/ilwisobjects/domain/itemiterator.h \
     core/ilwisobjects/operation/logicalexpressionparser.h \
-    core/ilwisobjects/table/tableselector.h
+    core/ilwisobjects/table/tableselector.h \
+    core/ilwisobjects/table/tablemerger.h \
+    core/ilwisobjects/domain/domainmerger.h \
+    core/util/tranquilizer.h
 
 
 
