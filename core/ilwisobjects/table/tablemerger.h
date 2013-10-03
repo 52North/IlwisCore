@@ -2,7 +2,7 @@
 #define TABLEMERGER_H
 
 namespace Ilwis {
-class TableMerger
+class KERNELSHARED_EXPORT TableMerger
 {
 public:
     TableMerger();
