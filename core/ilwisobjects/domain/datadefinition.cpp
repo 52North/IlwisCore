@@ -58,11 +58,6 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
     return *this;
 }
 
-Ilwis::SPRange DataDefinition::range() const
-{
-    return _range;
-}
-
 void DataDefinition::range(Range* vr)
 {
         _range = QSharedPointer<Range>(vr);
@@ -89,6 +84,15 @@ void DataDefinition::domain(const IDomain &dom)
 bool DataDefinition::isValid() const
 {
     return _domain.isValid();
+}
+
+bool DataDefinition::isCompatibleWith(const DataDefinition &def) const
+{
+    if (!isValid())
+        return false;
+
+    return _domain->isCompatibleWith(def.domain());
+
 }
 
 
