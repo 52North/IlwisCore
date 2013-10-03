@@ -6,6 +6,7 @@
 
 namespace Ilwis {
 
+typedef std::map<quint32, quint32> RenumberMap;
 /*!
  * \brief The Range class base interface for all objects that need to define a range of values.
  *
@@ -47,6 +48,11 @@ public:
      */
     virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
     virtual Range *clone() const = 0;
+    template<typename T> T *merge(const QSharedPointer<T>& range1,const QSharedPointer<T>& range2,RenumberMap *rnm=0){
+        T::merge(range1, range2, rnm);
+    }
+
+
     virtual bool contains(const QString& value, bool inclusive = true) const = 0;
 
     virtual bool isContinuous() const;
