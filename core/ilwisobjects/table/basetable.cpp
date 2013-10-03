@@ -32,7 +32,7 @@ quint32 BaseTable::columns() const
     return _columns;
 }
 
-void BaseTable::setRows(quint32 r)
+void BaseTable::records(quint32 r)
 {
     _rows = r;
 }
