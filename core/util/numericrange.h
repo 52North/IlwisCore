@@ -58,7 +58,7 @@ public:
     double ensure(double, bool inclusive=true) const;
     IlwisTypes determineType() const;
 
-    static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2);
+    static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2,RenumberMap *rnm=0);
 
 private:
     double _min;
