@@ -87,6 +87,14 @@ Domain::Containement NumericDomain::contains(const QVariant &value) const
     return Domain::cNONE;
 }
 
+bool NumericDomain::isCompatibleWith(const IDomain& dom) const {
+    if ( !dom->isValid())
+        return false;
+    if(dom->ilwisType() != itNUMERICDOMAIN)
+        return false;
+    return true;
+}
+
 
 
 

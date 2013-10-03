@@ -13,6 +13,7 @@ public:
     virtual Containement contains(const QVariant& ) const;
     IlwisTypes ilwisType() const;
     void setParent(const IDomain& ){}
+    bool isCompatibleWith(const IDomain &dom) const;
 private:
     QSharedPointer<Range> getRange() const;
 };

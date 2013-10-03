@@ -10,6 +10,7 @@ public:
 
     void setRange(Range *vr);
     Domain::Containement contains(const QVariant& value) const;
+    bool isCompatibleWith(const IDomain &dom) const;
     QString value(const QVariant& v) const;
 
     IlwisTypes valueType() const;
