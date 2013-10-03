@@ -9,6 +9,7 @@ public:
     DomainMerger(const IDomain& dom1, const IDomain& dom2);
     void mergeDomains(const IDomain& dom1, const IDomain& dom2);
 
+
 protected:
     IDomain _domain1;
     IDomain _domain2;
@@ -40,7 +41,7 @@ class ItemDomainMergerNamedItems : private DomainMerger {
 
 
 private:
-    void renumber(const Ilwis::NamedIdentifierRange &newRange, const QSharedPointer<NamedIdentifierRange> &range1, QSharedPointer<NamedIdentifierRange> &range2);
+    void renumber(const std::unique_ptr<Ilwis::NamedIdentifierRange> &newRange, const QSharedPointer<NamedIdentifierRange> &range1, QSharedPointer<NamedIdentifierRange> &range2);
 };
 }
 
