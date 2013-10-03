@@ -64,8 +64,8 @@ inline float floatConv(double x)  { return ((x == rUNDEF) || (x < -FLT_MAX) || (
 inline double doubleConv(short x) { return x == shUNDEF ? rUNDEF : (double)x; }
 inline double doubleConv(long x)  { return x == iUNDEF ? rUNDEF : (double)x; }
 inline double doubleConv(float x) { return x == flUNDEF ? rUNDEF : (double)x; }
-inline double min(double a, double b) { return ((a<=b && a!=rUNDEF) || b==rUNDEF) ? a : b; }
-inline double max(double a, double b) { return (a>=b && a!=rUNDEF) ? a : b; }
+inline double min(double a, double b) { return ((a<=b && a!=rUNDEF && a!= iUNDEF)  || b==rUNDEF) ? a : b; }
+inline double max(double a, double b) { return (a>=b && a!=rUNDEF && a != iUNDEF) ? a : b; }
 inline long min(long a, long b) { return ((a<=b && a!=iUNDEF) || b==iUNDEF) ? a : b; }
 inline long max(long a, long b) { return (a>=b && a!=iUNDEF) ? a : b; }
 inline qint64 max(qint64 a, qint64 b) { return a>=b && a!=i64UNDEF ? a : b;}
