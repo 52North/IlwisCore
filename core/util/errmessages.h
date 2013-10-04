@@ -14,6 +14,7 @@
 #define ERR_MISSING_SYSTEM_FILE_1 "Missing system file. can not open %1"
 #define ERR_MISSING_DATA_FILE_1 "Missing data file %1"
 #define ERR_COULD_NOT_OPEN_READING_1 "Could not open for reading %1"
+#define ERR_COULD_NOT_OPEN_READING_2 "Could not open for reading %1: %2"
 #define ERR_COULD_NOT_OPEN_WRITING_1 "Could not open for writing %1"
 #define ERR_ILLEGAL_VALUE_RANGE_DEFINITION_1 "Illegal value range definition in %1"
 #define ERR_NO_INITIALIZED_1 "%1 not properly initialized"
