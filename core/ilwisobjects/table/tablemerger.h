@@ -9,7 +9,6 @@ public:
     static ITable mergeTables(const ITable &tbl1, const ITable &tbl2, Ilwis::RenumberMap *renumberer=0);
 private:
     static ColumnDefinition mergeColumnDefinitions(const Ilwis::ColumnDefinition &def1, const Ilwis::ColumnDefinition &def2, RenumberMap* renum=0);
-    static SPRange mergeRanges(const SPRange &rang1, const SPRange &rang2);
 };
 }
 
