@@ -134,5 +134,6 @@ typedef IlwisData<Table> ITable;
 #define COVERAGEKEYCOLUMN "coverage_key"
 #define FEATUREIDCOLUMN "feature_id"
 #define FEATUREVALUECOLUMN "feature_value"
+#define FEATURETYPECOLUMN "feature_type"
 
 #endif // TABLE_H
