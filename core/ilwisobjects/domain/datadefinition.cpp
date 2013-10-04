@@ -29,11 +29,6 @@ DataDefinition::DataDefinition(const DataDefinition& def)
     else
         _range.reset(0);
 
-    domain(def.domain());
-    if ( !def.range().isNull())
-        _range.reset(def.range()->clone());
-    else
-        _range.reset(0);
     _stretchRange = def._stretchRange;
 }
 
