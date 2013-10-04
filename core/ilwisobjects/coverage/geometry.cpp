@@ -1,5 +1,5 @@
 #include <QStringList>
-#include "ilwis.h"
+#include "kernel.h"
 #include "angle.h"
 #include "point.h"
 #include "box.h"
@@ -7,6 +7,9 @@
 #include <type_traits>
 #include <boost/geometry.hpp>
 #include "polygon.h"
+#include "ilwisobject.h"
+#include "ilwisdata.h"
+#include "coordinatesystem.h"
 #include "geometry.h"
 
 using namespace Ilwis;
@@ -89,4 +92,48 @@ IlwisTypes Geometry::ilwisType() const {
         return itPOLYGON;
     }
     return itUNKNOWN;
+}
+
+Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordinateSystem &csyTarget) const
+{
+    if ( !csyTarget.isValid() || csySource != csyTarget){
+        return *this;
+    }
+    switch(_geometry.which()){
+    case 0:
+    case 1:
+    case 2:{
+        Point2D<double> p = (boost::get<Point2D<> >(_geometry));
+        Point2D<double> pnt(csyTarget->coord2coord(csySource, Coordinate2d(p.x(), p.y()))) ;
+        return Geometry(pnt);
+        return Geometry(p);
+    }
+    case 3:
+    case 4:{
+        const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
+        Line2D<Coordinate2d > newline(line.size());
+        std::transform(line.begin(), line.end(),newline.begin(),[&](const Coordinate2d& crd) -> Coordinate2d
+            { return csyTarget->coord2coord(csySource, crd);});
+        return Geometry(newline);
+    }
+    case 5:
+    case 6:{
+        const Polygon& pol = (boost::get<Polygon >(_geometry));
+        Polygon newPol;
+        newPol.outer().resize(pol.outer().size());
+        newPol.inners().resize(pol.inners().size());
+        std::transform(pol.outer().begin(), pol.outer().end(),newPol.outer().begin(),[&](const Coordinate2d& crd) -> Coordinate2d
+            {return csyTarget->coord2coord(csySource, crd);});
+        auto iter = newPol.inners().begin();
+        for(const auto& hole : pol.inners()){
+            (*iter).resize(hole.size());
+            std::transform(hole.begin(), hole.end(),(*iter).begin(),[&](const Coordinate2d& crd) -> Coordinate2d
+                { return csyTarget->coord2coord(csySource, crd);});
+            ++iter;
+
+        }
+        return Geometry(newPol);
+    }
+    }
+    return Geometry();
 }
