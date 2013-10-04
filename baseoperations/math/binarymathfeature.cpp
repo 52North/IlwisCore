@@ -42,11 +42,11 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     FeatureIterator iterIn1(_inputFeatureSet1);
     for_each(iterIn1, iterIn1.end(), [&](SPFeatureI feature){
-        _outputFeatures->newFeatureFrom(feature);
+        _outputFeatures->newFeatureFrom(feature, _inputFeatureSet1->coordinateSystem());
     });
     FeatureIterator iterIn2(_inputFeatureSet2);
     for_each(iterIn2, iterIn2.end(), [&](SPFeatureI feature){
-        _outputFeatures->newFeatureFrom(feature);
+        _outputFeatures->newFeatureFrom(feature, _inputFeatureSet2->coordinateSystem());
     });
     return true;
 }
