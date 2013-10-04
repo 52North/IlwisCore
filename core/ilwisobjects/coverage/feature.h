@@ -41,7 +41,7 @@ public:
        ~FeatureNode() {}
 private:
     FeatureNode();
-    FeatureNode(const Geometry geometry, Feature* feature, quint32 index );
+    FeatureNode(const Ilwis::Geometry &geometry, Feature* feature, quint32 index );
 
     virtual quint64 featureid() const ;
     virtual bool isValid() const  ;

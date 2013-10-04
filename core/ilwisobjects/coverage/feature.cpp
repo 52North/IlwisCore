@@ -27,7 +27,7 @@ FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){
 
 }
 
-FeatureNode::FeatureNode(const Geometry geometry, Feature *feature, quint32 index ) :
+FeatureNode::FeatureNode(const Geometry& geometry, Feature *feature, quint32 index ) :
     _feature(feature),
     _geometry(geometry),
     _index(index)
@@ -149,10 +149,6 @@ void Feature::set(const Geometry &geom, int index)
 bool operator==(const Feature& f1, const Feature& f2) {
     return f1.featureid() == f2.featureid();
 }
-
-//void Feature::attributeRecord(const SPAttributeRecord& record){
-//    _record = record;
-//}
 
 FeatureInterface *Feature::clone() const
 {
