@@ -55,13 +55,22 @@ SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom) {
     return _features.back();
 }
 
-SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature) {
+SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
     if ( existingFeature.isNull() || existingFeature->isValid() == false)
         return SPFeatureI();
     SPFeatureI newFeature = new Feature(this);
-    for(int i=0; i < existingFeature->trackSize(); ++i)
-        newFeature->set(existingFeature->geometry(),i);
+    for(int i=0; i < existingFeature->trackSize(); ++i){
+//        if (coordinateSystem() == csySource || !csySource.isValid()) {
+//            newFeature->set(existingFeature->geometry(),i);
+//        } else {
+//           Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
+//           newFeature->set(geom, i);
+//        }
+          Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
+          newFeature->set(geom, i);
+
+    }
     _features.push_back(newFeature);
     quint32 cnt = featureCount(newFeature->ilwisType());
     setFeatureCount(newFeature->ilwisType(),++cnt );
