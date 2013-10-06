@@ -96,17 +96,21 @@ IlwisTypes Geometry::ilwisType() const {
 
 Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordinateSystem &csyTarget) const
 {
-    if ( !csyTarget.isValid() || csySource != csyTarget){
+    if ( !csyTarget.isValid() || csySource == csyTarget){
         return *this;
     }
+    try{
     switch(_geometry.which()){
     case 0:
-    case 1:
-    case 2:{
-        Point2D<double> p = (boost::get<Point2D<> >(_geometry));
+    case 1:{
+        Point2D<double> p = (boost::get<Point2D<double> >(_geometry));
         Point2D<double> pnt(csyTarget->coord2coord(csySource, Coordinate2d(p.x(), p.y()))) ;
         return Geometry(pnt);
-        return Geometry(p);
+    }
+    case 2:{
+        Point3D<double> p = (boost::get<Point3D<double> >(_geometry));
+        Point3D<double> pnt(csyTarget->coord2coord(csySource, Coordinate2d(p.x(), p.y()))) ;
+        return Geometry(pnt);
     }
     case 3:
     case 4:{
@@ -135,5 +139,9 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
         return Geometry(newPol);
     }
     }
+    } catch(boost::bad_get& ex) {
+        kernel()->issues()->log(ex.what());
+    }
+
     return Geometry();
 }
