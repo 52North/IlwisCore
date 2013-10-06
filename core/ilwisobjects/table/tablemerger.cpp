@@ -23,27 +23,30 @@ TableMerger::TableMerger()
 {
 }
 
-ITable TableMerger::mergeTables(const ITable& tbl1, const ITable& tbl2, RenumberMap *renumberer ) {
+ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) {
     std::vector<ColumnDefinition> newdefs;
     quint32 records = 0;
+    quint32 index = 0;
     for(int c1 = 0; c1 < tbl1->columns(); ++c1) {
         auto coldef1 = tbl1->columndefinition(c1);
         ColumnDefinition coldef2;
         if ( (coldef2=tbl2->columndefinition(coldef1.name())).isValid() && coldef1.name() != COVERAGEKEYCOLUMN){
             if (coldef1.datadef().isCompatibleWith(coldef2.datadef())){
-                ColumnDefinition defnew = mergeColumnDefinitions(coldef1, coldef2, renumberer);
-                newdefs.push_back(ColumnDefinition(defnew));
+                ColumnDefinition defnew = mergeColumnDefinitions(coldef1, coldef2, &(_renumberers[coldef2.name()]));
+                newdefs.push_back(ColumnDefinition(defnew, index));
             } else {
                 QString newname = tbl2->name() + "_" + coldef2.name();
-                newdefs.push_back(ColumnDefinition(coldef1));
+                _columnRenames[coldef2.name()] = newname;
+                newdefs.push_back(ColumnDefinition(coldef1, index));
                 ColumnDefinition defnew(coldef2);
                 defnew.setName(newname);
-                newdefs.push_back(ColumnDefinition(defnew));
+                newdefs.push_back(ColumnDefinition(defnew, index));
 
             }
         }else {
-            newdefs.push_back(ColumnDefinition(coldef1));
+            newdefs.push_back(ColumnDefinition(coldef1, index));
         }
+        ++index;
     }
     for(int c2 = 0; c2 < tbl2->columns(); ++c2) {
         auto coldef2 = tbl2->columndefinition(c2);
@@ -51,23 +54,53 @@ ITable TableMerger::mergeTables(const ITable& tbl1, const ITable& tbl2, Renumber
             QString colName = COVERAGEKEYCOLUMN;
             if (tbl1->columndefinition(COVERAGEKEYCOLUMN).isValid() ){
                 colName =QString("%1_%2").arg(COVERAGEKEYCOLUMN).arg(tbl2->id());
+                _columnRenames[coldef2.name()] = colName;
             }
-            newdefs.push_back(ColumnDefinition(coldef2));
+            newdefs.push_back(ColumnDefinition(coldef2, index++));
             newdefs.back().setName(colName);
         } else{
             if ( !tbl1->columndefinition(coldef2.name()).isValid()){
-                newdefs.push_back(ColumnDefinition(coldef2));
+                newdefs.push_back(ColumnDefinition(coldef2, index++));
             }
         }
     }
 
     IFlatTable newTable;
-    newTable.prepare();
+    newTable.prepare(QString("ilwis://internalcatalog/%1_%2").arg(tbl1->name(), tbl2->name()));
     newTable->records(records);
     for(const ColumnDefinition& def : newdefs) {
         newTable->addColumn(def);
     }
     return newTable;
+}
+
+void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &sourceTable2, ITable &targetTable) const
+{
+    for(int col=0; col < sourceTable1->columns(); ++col ) {
+        const auto& coldef = sourceTable1->columndefinition(col);
+        auto values = sourceTable1->column(coldef.name()) ;
+        targetTable->column(coldef.name(),values);
+    }
+    for(int col=0; col < sourceTable2->columns(); ++col ) {
+        const auto& coldef = sourceTable2->columndefinition(col);
+        auto values = sourceTable2->column(coldef.name()) ;
+        QString targetColName = coldef.name();
+        std::map<QString, QString>::const_iterator iter;
+        if ( (iter = _columnRenames.find(targetColName)) != _columnRenames.end()) {
+            targetColName = (*iter).second;
+        }
+        std::map<QString, RenumberMap>::const_iterator iterR;
+        if ( (iterR = _renumberers.find(targetColName)) != _renumberers.end()) {
+            const RenumberMap& renumberer = (*iterR).second;
+            for(auto pair : renumberer) {
+                for(auto& val : values) {
+                    if ( pair.first == val)
+                        val = pair.second;
+                }
+            }
+        }
+        targetTable->column(targetColName,values, sourceTable1->records());
+    }
 }
 
 ColumnDefinition TableMerger::mergeColumnDefinitions(const ColumnDefinition &def1, const ColumnDefinition &def2, RenumberMap *renumberer) {
