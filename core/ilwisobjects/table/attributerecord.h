@@ -4,6 +4,7 @@
 #define hash32(x) ((x)*2654435761)
 #define H_BITS 24 // Hashtable size
 #define H_SHIFT (32-H_BITS)
+#define COVERAGETABLE -1
 
 
 namespace Ilwis {
@@ -16,9 +17,11 @@ public:
     quint32 columns(bool coverages=true) const;
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
-    QVariant cellByKey(quint64 key, const QString &col, int index=-1);
-    QVariant cellByIndex(quint64 index, quint32 colIndex, int zindex=-1);
-    void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=-1);
+    QVariant cellByKey(quint64 key, quint32 colIndex, int index=COVERAGETABLE);
+    QVariant cellByRecord(quint64 record, quint32 colIndex, int index=COVERAGETABLE) const;
+    QVariant cellByRecord(quint64 record, quint32 colIndex, const QVariant &var, int index);
+    void cellByKey(quint64 key, quint32 colIndex, const QVariant &var, int index);
+    void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=COVERAGETABLE);
     bool isValid() const;
 private:
     void indexKeyColumn();
