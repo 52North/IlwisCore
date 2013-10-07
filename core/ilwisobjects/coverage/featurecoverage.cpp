@@ -39,7 +39,23 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 
 SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
-    _featureTypes |= geom.ilwisType();
+    SPFeatureI newfeature = createNewFeature(geom.ilwisType());
+    newfeature->set(geom);
+    return newfeature;
+}
+
+SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
+    Locker lock(_mutex);
+    SPFeatureI newfeature = createNewFeature(existingFeature->ilwisType());
+    for(int i=0; i < existingFeature->trackSize(); ++i){
+          Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
+          newfeature->set(geom, i);
+    }
+    return newfeature;
+}
+
+SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
+    _featureTypes |= tp;
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
@@ -48,36 +64,8 @@ SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     CreateFeature create = _featureFactory->getCreator("feature");
     IFeatureCoverage fcoverage;
     fcoverage.set(this);
-    FeatureInterface *f = create(this);
-    f->set(geom);
-    SPFeatureI p(f);
-    quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
-    if ( colIndex == iUNDEF) {
-        ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
-        return SPFeatureI();
-    }
-    _record->cellByRecord(_features.size(), colIndex, p->featureid(), -1);
-    _features.push_back(p);
-    return _features.back();
-}
+    SPFeatureI newFeature(create(this));
 
-SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
-    Locker lock(_mutex);
-    if ( existingFeature.isNull() || existingFeature->isValid() == false)
-        return SPFeatureI();
-    if ( _featureFactory == 0) {
-        _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
-    }
-    CreateFeature create = _featureFactory->getCreator("feature");
-    IFeatureCoverage fcoverage;
-    fcoverage.set(this);
-    FeatureInterface *f = create(this);
-    for(int i=0; i < existingFeature->trackSize(); ++i){
-          Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
-          f->set(geom, i);
-
-    }
-    SPFeatureI newFeature(f);
     _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
     quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
@@ -90,8 +78,6 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
     setFeatureCount(newFeature->ilwisType(),++cnt );
     return _features.back();
 }
-
-
 
 
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)

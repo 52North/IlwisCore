@@ -49,6 +49,7 @@ private:
     QSharedPointer<AttributeRecord> _record;
 
 
+    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
