@@ -183,8 +183,13 @@ void  FlatTable::cell(quint32 index, quint32 rec, const QVariant& var){
 
     if ( !isColumnIndexValid(index))
         return;
-    if ( rec < _rows)
-        _datagrid[rec][index] = var;
+    if ( rec >= _rows) {
+        _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
+        _rows = _datagrid.size();
+        rec = _rows - 1;
+    }
+    _datagrid[rec][index] = var;
+
 }
 
 void FlatTable::cell(const QString &col, quint32 rec, const QVariant &var)
