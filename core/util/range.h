@@ -6,7 +6,7 @@
 
 namespace Ilwis {
 
-typedef std::map<quint32, quint32> RenumberMap;
+typedef std::map<quint64, quint64> RenumberMap;
 /*!
  * \brief The Range class base interface for all objects that need to define a range of values.
  *
