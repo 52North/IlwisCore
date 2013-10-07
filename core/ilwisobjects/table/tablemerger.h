@@ -7,7 +7,7 @@ class KERNELSHARED_EXPORT TableMerger
 public:
     TableMerger();
     ITable mergeMetadataTables(const ITable &tbl1, const ITable &tbl2);
-    void mergeTableData(const ITable &sourceTable1, const ITable &sourceTable2, ITable &targetTable) const;
+    void mergeTableData(const ITable &sourceTable1,const ITable &sourceTable2, ITable &targetTable, const std::vector<QString>& except=std::vector<QString>()) const;
 private:
     std::map<QString, RenumberMap> _renumberers;
     std::map<QString, QString> _columnRenames;

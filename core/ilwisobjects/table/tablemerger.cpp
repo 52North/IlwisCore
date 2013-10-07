@@ -74,15 +74,21 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
     return newTable;
 }
 
-void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &sourceTable2, ITable &targetTable) const
+void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &sourceTable2, ITable &targetTable, const std::vector<QString>& except) const
 {
     for(int col=0; col < sourceTable1->columns(); ++col ) {
         const auto& coldef = sourceTable1->columndefinition(col);
+        auto iter = std::find(except.begin(), except.end(), coldef.name());
+        if ( iter != except.end())
+            continue;
         auto values = sourceTable1->column(coldef.name()) ;
         targetTable->column(coldef.name(),values);
     }
     for(int col=0; col < sourceTable2->columns(); ++col ) {
         const auto& coldef = sourceTable2->columndefinition(col);
+        auto iter = std::find(except.begin(), except.end(), coldef.name());
+        if ( iter != except.end())
+            continue;
         auto values = sourceTable2->column(coldef.name()) ;
         QString targetColName = coldef.name();
         std::map<QString, QString>::const_iterator iter;

@@ -52,7 +52,8 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
     });
 
     AttributeTable attTarget = _outputFeatures->attributeTable();
-    _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget);
+    _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget, {FEATUREIDCOLUMN});
+
     return true;
 }
 
