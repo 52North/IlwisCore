@@ -37,7 +37,7 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom) {
+SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
     _featureTypes |= geom.ilwisType();
     if ( _featureFactory == 0) {
@@ -51,6 +51,12 @@ SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom) {
     FeatureInterface *f = create(this);
     f->set(geom);
     SPFeatureI p(f);
+    quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
+    if ( colIndex == iUNDEF) {
+        ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
+        return SPFeatureI();
+    }
+    _record->cellByRecord(_features.size(), colIndex, p->featureid(), -1);
     _features.push_back(p);
     return _features.back();
 }
