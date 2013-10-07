@@ -86,8 +86,8 @@ void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &source
     }
     for(int col=0; col < sourceTable2->columns(); ++col ) {
         const auto& coldef = sourceTable2->columndefinition(col);
-        auto iter = std::find(except.begin(), except.end(), coldef.name());
-        if ( iter != except.end())
+        auto iterex = std::find(except.begin(), except.end(), coldef.name());
+        if ( iterex != except.end())
             continue;
         auto values = sourceTable2->column(coldef.name()) ;
         QString targetColName = coldef.name();
