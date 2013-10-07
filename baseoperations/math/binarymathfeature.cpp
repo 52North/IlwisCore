@@ -40,6 +40,7 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
+
     FeatureIterator iterIn1(_inputFeatureSet1);
     for_each(iterIn1, iterIn1.end(), [&](SPFeatureI feature){
         _outputFeatures->newFeatureFrom(feature, _inputFeatureSet1->coordinateSystem());
