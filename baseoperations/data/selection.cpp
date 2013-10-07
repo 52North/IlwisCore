@@ -54,7 +54,8 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
                 if ( rec.isValid()) {
-                    QVariant var = rec.cellByKey(v_in,_attribColumn);
+                    quint32 colIndex  = rec.columnIndex(_attribColumn);
+                    QVariant var = rec.cellByKey(v_in,colIndex);
                     v = var.toDouble();
                     if ( isNumericalUndef(v))
                         v = rUNDEF;
