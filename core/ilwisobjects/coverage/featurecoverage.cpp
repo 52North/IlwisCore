@@ -59,18 +59,26 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
     Locker lock(_mutex);
     if ( existingFeature.isNull() || existingFeature->isValid() == false)
         return SPFeatureI();
-    SPFeatureI newFeature = new Feature(this);
+    if ( _featureFactory == 0) {
+        _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
+    }
+    CreateFeature create = _featureFactory->getCreator("feature");
+    IFeatureCoverage fcoverage;
+    fcoverage.set(this);
+    FeatureInterface *f = create(this);
     for(int i=0; i < existingFeature->trackSize(); ++i){
-//        if (coordinateSystem() == csySource || !csySource.isValid()) {
-//            newFeature->set(existingFeature->geometry(),i);
-//        } else {
-//           Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
-//           newFeature->set(geom, i);
-//        }
           Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
-          newFeature->set(geom, i);
+          f->set(geom, i);
 
     }
+    SPFeatureI newFeature(f);
+    _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
+    quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
+    if ( colIndex == iUNDEF) {
+        ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
+        return SPFeatureI();
+    }
+    _record->cellByRecord(_features.size(), colIndex, newFeature->featureid(), -1);
     _features.push_back(newFeature);
     quint32 cnt = featureCount(newFeature->ilwisType());
     setFeatureCount(newFeature->ilwisType(),++cnt );
