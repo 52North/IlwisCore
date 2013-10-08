@@ -167,6 +167,8 @@ const double EPS12=1.e-12;
 const double EPS10=1.e-10;
 const double EPS8=1.e-8;
 const double EPS7=1.e-7;
+const double EPS6=1.e-6;
+const double EPS5=1.e-5;
 
 
 template<class T> inline IlwisTypes numericType() {
