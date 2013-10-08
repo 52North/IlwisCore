@@ -131,6 +131,21 @@ public:
         return false;
     }
 
+    bool equals(Box2D<CsyType>& box, double delta=0) const {
+        const Ilwis::Point2D<CsyType>& pmin = box.min_corner();
+        const Ilwis::Point2D<CsyType>& pmax = box.max_corner();
+
+        if ( std::abs( min_corner().x() - pmin.x()) > delta)
+            return false;
+        if ( std::abs( min_corner().y() - pmin.y()) > delta)
+            return false;
+        if ( std::abs( max_corner().x() - pmax.x()) > delta)
+            return false;
+        if ( std::abs( max_corner().y() - pmax.y()) > delta)
+            return false;
+        return true;
+    }
+
     bool isValid() const {
         return this->min_corner().isValid() && this->max_corner().isValid();
     }
@@ -478,6 +493,25 @@ public:
 
     bool contains(const Box3D<CsyType>& box) const{
         return contains(box.min_corner()) && contains(box.max_corner());
+    }
+
+    bool equals(Box3D<CsyType>& box, double delta=0) const {
+        const Ilwis::Point3D<CsyType>& pmin = box.min_corner();
+        const Ilwis::Point3D<CsyType>& pmax = box.max_corner();
+
+        if ( std::abs( min_corner().x() - pmin.x()) > delta)
+            return false;
+        if ( std::abs( min_corner().y() - pmin.y()) > delta)
+            return false;
+        if ( std::abs( min_corner().z() - pmin.z()) > delta)
+            return false;
+        if ( std::abs( max_corner().x() - pmax.x()) > delta)
+            return false;
+        if ( std::abs( max_corner().y() - pmax.y()) > delta)
+            return false;
+        if ( std::abs( max_corner().z() - pmax.z()) > delta)
+            return false;
+        return true;
     }
 
     bool isValid() const {
