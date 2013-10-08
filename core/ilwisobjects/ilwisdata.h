@@ -265,6 +265,8 @@ typedef Ilwis::IlwisData<Ilwis::IlwisObject> IIlwisObject;
 
 }
 
+Q_DECLARE_METATYPE(Ilwis::IIlwisObject)
+
 template<class C> QDataStream & operator << ( QDataStream & s, const Ilwis::IlwisData<C> & obj ){
     if ( obj.isValid() == false)
         return s;
