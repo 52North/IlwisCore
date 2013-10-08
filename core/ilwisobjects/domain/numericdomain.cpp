@@ -58,6 +58,28 @@ void NumericDomain::setParent(const IDomain &dm)
     Domain::setParent(dm);
 }
 
+QString NumericDomain::standardNumericDomainName(double vmin, double vmax)
+{
+    QString domName="value";
+    bool isInt = std::abs(vmin - (int)vmin) == 0 && std::abs(vmax - (int)vmax) == 0;
+    if ( isInt) {
+        if ( vmin >= 0 && vmax < 256)
+            domName = "image";
+        else  if ( vmin >= 0 && vmax < 65536)
+            domName = "image16";
+        else if ( vmax >= 0) {
+            domName = "count";
+        } else
+            domName = "Integer";
+    } else {
+        if ( vmin >= -1 && vmax <= 1)
+            domName = "min1to1" ;
+        else if ( vmin >= 0 && vmax <=1)
+            domName = "nilto1";
+    }
+    return domName;
+}
+
 SPRange NumericDomain::getRange() const
 {
     return _range;
