@@ -1,6 +1,8 @@
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "errorobject.h"
 #include "symboltable.h"
+#include "mastercatalog.h"
 #include "astnode.h"
 
 using namespace Ilwis;
@@ -98,9 +100,11 @@ QVariant ASTNode::resolveValue(const NodeValue &val, SymbolTable &symbols)
     if ( val.content() == NodeValue::ctID) {
         Symbol sym = symbols.getSymbol(var.toString());
         if(!sym.isValid()) {
-            throw ScriptError(QString(TR(ERR_ILLEGAL_VALUE_2)).arg("parameter").arg(var.toString()));
-        }
-        var = sym._var;
+            quint64 id = mastercatalog()->name2id(var.toString());
+            if ( id == i64UNDEF)
+                throw ScriptError(QString(TR(ERR_ILLEGAL_VALUE_2)).arg("parameter").arg(var.toString()));
+        } else
+            var = sym._var;
     }
     return var;
 }
