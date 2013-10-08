@@ -38,7 +38,7 @@ public:
      if the number is smaller the excess records will be deleted
      * \param r the new row number
      */
-    virtual void setRows(quint32 r)=0;
+    virtual void records(quint32 r)=0;
     /*!
      Creates a table based on the definitions in the columndefinition members. Has no effect on an already vreated table. The latter is no error and will only generate a warning in the issue logger;
      * \return true if succesfull
@@ -134,5 +134,6 @@ typedef IlwisData<Table> ITable;
 #define COVERAGEKEYCOLUMN "coverage_key"
 #define FEATUREIDCOLUMN "feature_id"
 #define FEATUREVALUECOLUMN "feature_value"
+#define FEATURETYPECOLUMN "feature_type"
 
 #endif // TABLE_H

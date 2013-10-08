@@ -6,6 +6,9 @@
 
 namespace Ilwis {
 
+class CoordinateSystem;
+typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+
 typedef boost::variant<Pixel, Coordinate2d, Coordinate, Line2D<Coordinate2d>, Line2D<Pixel>, Polygon > GeometryType;
 
 class KERNELSHARED_EXPORT Geometry {
@@ -26,6 +29,7 @@ public:
     Box2D<double> envelope() const;
 
     IlwisTypes ilwisType() const ;
+    Geometry transform(const ICoordinateSystem& csySource,const ICoordinateSystem& csyTarger) const;
 
 
 private:

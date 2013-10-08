@@ -38,9 +38,8 @@ void DomainMerger::mergeDomains(const IDomain &dom1, const IDomain &dom2)
 
         }
     }
-
-
 }
+
 
 //--------------------------------------------------------------------
 NumericDomainMerger::NumericDomainMerger(const IDomain &dom1, const IDomain &dom2) : DomainMerger(dom1, dom2)
@@ -75,8 +74,8 @@ bool ItemDomainMergerIndexedItems::merge()
     QSharedPointer<IndexedIdentifierRange> range1 = _domain1->range<IndexedIdentifierRange>();
     QSharedPointer<IndexedIdentifierRange> range2 = _domain1->range<IndexedIdentifierRange>();
 
-    IndexedIdentifierRange newRange = IndexedIdentifierRange::merge(range1, range2);
-    if ( newRange.count() == 0)
+    std::unique_ptr<IndexedIdentifierRange> newRange(IndexedIdentifierRange::merge(range1, range2));
+    if ( newRange->count() == 0)
         return false;
 
     for(quint32 i=0; i < range2->count(); ++i) {
@@ -84,7 +83,7 @@ bool ItemDomainMergerIndexedItems::merge()
     }
 
     iddom.prepare();
-    iddom->setRange(newRange);
+    iddom->setRange(*newRange.get());
     _mergedDomain = iddom;
     return true;
 }
@@ -108,8 +107,8 @@ bool ItemDomainMergerNamedItems::merge()
     QSharedPointer<NamedIdentifierRange> range1 = _domain1->range<NamedIdentifierRange>();
     QSharedPointer<NamedIdentifierRange> range2 = _domain1->range<NamedIdentifierRange>();
 
-    NamedIdentifierRange newRange = NamedIdentifierRange::merge(range1, range2);
-    if ( newRange.count() == 0)
+    std::unique_ptr<NamedIdentifierRange> newRange(NamedIdentifierRange::merge(range1, range2));
+    if ( newRange->count() == 0)
         return false;
 
     bool skipRenumber = (_domain1->parent() == _domain2->parent()) &&
@@ -125,21 +124,21 @@ bool ItemDomainMergerNamedItems::merge()
         }
 
         iddom.prepare();
-        iddom->setRange(newRange);
+        iddom->setRange(*(newRange.get()));
         _mergedDomain = iddom;
         return true;
     }
 }
 
-void ItemDomainMergerNamedItems::renumber(const NamedIdentifierRange& newRange,
+void ItemDomainMergerNamedItems::renumber(const std::unique_ptr<NamedIdentifierRange>& newRange,
                                           const QSharedPointer<NamedIdentifierRange>& range1,
                                           QSharedPointer<NamedIdentifierRange>& range2 ) {
     quint32 maxraw = 0;
     for(int i=0; i < range1->count(); ++i) {
         maxraw = std::max(range1->itemByOrder(i)->raw(), maxraw);
     }
-    for(int i=0; i < newRange.count(); ++i)    {
-        SPDomainItem item = newRange.item(i);
+    for(int i=0; i < newRange->count(); ++i)    {
+        SPDomainItem item = newRange->item(i);
         bool inrange1 = range1->contains(item->name());
         bool inrange2 = range2->contains(item->name());
         if ( !inrange1 && inrange2){

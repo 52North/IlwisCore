@@ -29,6 +29,7 @@
 #include "math/unarymath.h"
 #include "math/unarymathoperations.h"
 #include "math/binarymathraster.h"
+#include "tablemerger.h"
 #include "math/binarymathfeature.h"
 #include "math/binarylogical.h"
 #include "util/text2output.h"

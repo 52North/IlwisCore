@@ -220,7 +220,7 @@ IlwisTypes NumericRange::determineType() const{
     return vt;
 }
 
-NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2)
+NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),
                             std::max(nr1->max(), nr2->max()),

@@ -37,6 +37,23 @@ public:
 
          return Domain::cNONE;
     }
+
+    bool isCompatibleWith(const IDomain& dom) const {
+        if ( !dom->isValid())
+            return false;
+        if(dom->ilwisType() != itITEMDOMAIN)
+            return false;
+        if (!valueType() != dom->valueType())
+            return false;
+        IlwisData<ItemDomain<D>> itemdom = dom.get<ItemDomain<D>>();
+        if ( itemdom->theme() ==sUNDEF && !itemdom->parent().isValid())
+            return false;
+        if ( itemdom->parent().isValid() && parent().isValid()){
+            return itemdom->parent() == parent();
+        }
+        return itemdom->theme() == theme();
+
+    }
     /*!
      returns a string representation of the item pointed to by the index
      * \param 0 based index, if the index is invalid sUNDEF will be returned
@@ -227,7 +244,7 @@ private:
     }
 
     SPItemRange _range;
-    QString _theme;
+    QString _theme = sUNDEF;
 };
 
 template<typename T> Ilwis::ItemIterator<T> begin(const Ilwis::IlwisData<Ilwis::ItemDomain<T>>& idom) {

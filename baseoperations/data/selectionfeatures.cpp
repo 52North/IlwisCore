@@ -133,6 +133,8 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
          _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain());
+         IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
+         outputFC->attributeTable(_attTable);
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO selections in features on bounding box

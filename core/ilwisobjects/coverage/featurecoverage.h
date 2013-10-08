@@ -30,8 +30,8 @@ public:
 
     IlwisTypes featureTypes() const;
     void featureTypes(IlwisTypes types);
-    SPFeatureI &newFeature(const Ilwis::Geometry &geom);
-    SPFeatureI newFeatureFrom(const Ilwis::SPFeatureI &existingFeature);
+    SPFeatureI newFeature(const Ilwis::Geometry &geom);
+    SPFeatureI newFeatureFrom(const Ilwis::SPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
     quint32 featureCount(IlwisTypes types=itFEATURE, int index=iUNDEF) const;
     void setFeatureCount(IlwisTypes types, quint32 cnt);
     IlwisTypes ilwisType() const;
@@ -49,6 +49,7 @@ private:
     QSharedPointer<AttributeRecord> _record;
 
 
+    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;

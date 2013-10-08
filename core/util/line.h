@@ -5,6 +5,8 @@ namespace Ilwis{
 template<class PointType=Point2D<double> >
 class Line2D  : public std::vector<PointType> {
 public:
+    Line2D(quint32 sz=0) : std::vector<PointType>(sz) {
+    }
 
     Line2D<PointType>& operator+=(const std::vector<double>& vec){
         if (!isValid() || vec.size() != 2)

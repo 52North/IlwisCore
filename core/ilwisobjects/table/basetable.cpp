@@ -32,7 +32,7 @@ quint32 BaseTable::columns() const
     return _columns;
 }
 
-void BaseTable::setRows(quint32 r)
+void BaseTable::records(quint32 r)
 {
     _rows = r;
 }
@@ -130,7 +130,7 @@ bool  BaseTable::initLoad() {
     }
     if (!_dataloaded) {
         _dataloaded = true; // to prevent other inits to pass through here
-        if (! connector()->loadBinaryData(this)) {
+        if (!connector().isNull() && ! connector()->loadBinaryData(this)) {
             kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg("table", name()));
              _dataloaded = false;
             return false;

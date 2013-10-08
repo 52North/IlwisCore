@@ -36,7 +36,7 @@ public:
     void interpolation(const QString&) {}
     qint32 gotoIndex(qint32 index, qint32 step) const;
 
-    static IndexedIdentifierRange merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2);
+    static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
 private:
    bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
@@ -69,7 +69,32 @@ public:
     qint32 gotoIndex(qint32 index, qint32 step) const;
     quint32 count() const;
 
-    static NamedIdentifierRange merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2);
+    static NamedIdentifierRange *merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2,RenumberMap *rnm=0);
+
+protected:
+    template<typename T> static void addItems(ItemRange *items,
+                                         const QSharedPointer<NamedIdentifierRange>& nr1,
+                                         const QSharedPointer<NamedIdentifierRange>& nr2,
+                                            RenumberMap *rnm=0){
+        quint32 maxraw = 0;
+        for(int i=0; i < nr1->count(); ++i) {
+            maxraw = std::max(nr1->itemByOrder(i)->raw(), maxraw);
+            items->add(nr1->itemByOrder(i)->clone());
+        }
+        for(int i=0; i < nr2->count(); ++i)    {
+            SPDomainItem item = nr2->item(i);
+            if (!items->contains(item->name())) {
+                QSharedPointer<T> newid((T*)item->clone());
+                if ( rnm)
+                    newid->raw(maxraw);
+                items->add(newid);
+            }
+            if ( rnm)
+                (*rnm)[item->raw()] = maxraw;
+            ++maxraw;
+        }
+    }
+
 private:
     bool alignWithParent(const IDomain& dom);
     std::map<QString, SPNamedIdentifier> _byName;
@@ -82,6 +107,7 @@ public:
     ThematicRange();
     ~ThematicRange() {}
     ThematicRange& operator<<(const QString& itemdef);
+    static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
 };
 
 }

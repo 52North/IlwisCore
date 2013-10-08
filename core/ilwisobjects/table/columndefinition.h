@@ -6,6 +6,7 @@ class KERNELSHARED_EXPORT ColumnDefinition : public Identity
 {
 public:
     ColumnDefinition();
+    ColumnDefinition(const ColumnDefinition& def, quint32 index);
     ColumnDefinition(const QString& nm, const IDomain &dom, quint64 colindex = i64UNDEF);
     bool isValid() const;
 
@@ -19,6 +20,9 @@ private:
     bool _multiple;
 
 };
+
+KERNELSHARED_EXPORT bool operator==(const ColumnDefinition& def1, const ColumnDefinition& def2);
+KERNELSHARED_EXPORT bool operator!=(const ColumnDefinition& def1, const ColumnDefinition& def2);
 }
 
 #endif // COLUMN_H

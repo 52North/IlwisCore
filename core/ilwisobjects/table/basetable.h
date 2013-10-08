@@ -29,7 +29,7 @@ public:
     /*!
     \se Ilwis::Table
      */
-    virtual void setRows(quint32 r);
+    virtual void records(quint32 r);
     /*!
     \se Ilwis::Table
      */

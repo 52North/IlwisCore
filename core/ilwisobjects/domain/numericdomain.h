@@ -14,6 +14,7 @@ public:
     void setRange(Range *vr);
     QString value(const QVariant&) const;
     Domain::Containement contains(const QVariant &value) const;
+    bool isCompatibleWith(const IDomain &dom) const;
 
     IlwisTypes valueType() const;
     IlwisTypes ilwisType() const;

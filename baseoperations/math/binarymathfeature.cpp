@@ -20,6 +20,7 @@
 #include "operationmetadata.h"
 #include "operation.h"
 #include "commandhandler.h"
+#include "tablemerger.h"
 #include "binarymathfeature.h"
 
 using namespace Ilwis;
@@ -39,12 +40,20 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    //IFeatureCoverage outputFC = _outputFeatures.get<FeatureCoverage>();
-    IFeatureCoverage inputFC = _outputFeatures.get<FeatureCoverage>();
-    FeatureIterator iterIn(inputFC);
-    for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
-        _outputFeatures->newFeatureFrom(feature);
+
+    FeatureIterator iterIn1(_inputFeatureSet1);
+    for_each(iterIn1, iterIn1.end(), [&](SPFeatureI feature){
+        _outputFeatures->newFeatureFrom(feature, _inputFeatureSet1->coordinateSystem());
     });
+
+    FeatureIterator iterIn2(_inputFeatureSet2);
+    for_each(iterIn2, iterIn2.end(), [&](SPFeatureI feature){
+        _outputFeatures->newFeatureFrom(feature, _inputFeatureSet2->coordinateSystem());
+    });
+
+    AttributeTable attTarget = _outputFeatures->attributeTable();
+    _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget, {FEATUREIDCOLUMN});
+
     return true;
 }
 
@@ -53,7 +62,7 @@ OperationImplementation *BinaryMathFeature::create(quint64 metaid, const Ilwis::
     return new BinaryMathFeature(metaid, expr);
 }
 
-OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx, const SymbolTable &sym)
+OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
     QString featureCovName =  _expression.parm(0).value();
     if (!_inputFeatureSet1.prepare(featureCovName)) {
@@ -81,7 +90,11 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     Box2D<double> envelope = addEnvelopes();
     _outputFeatures->setCoordinateSystem(_csyTarget);
     _outputFeatures->envelope(envelope);
-    //Table::mergeTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
+
+    ITable attTable = _merger.mergeMetadataTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
+    attTable->records(_inputFeatureSet1->featureCount() + _inputFeatureSet2->featureCount());
+    _outputFeatures->attributeTable(attTable);
+
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)
         _outputFeatures->setName(outname);

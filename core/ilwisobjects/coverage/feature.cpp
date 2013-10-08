@@ -22,12 +22,16 @@ SPFeatureI::SPFeatureI(FeatureInterface *f) : QSharedPointer<FeatureInterface>(f
 QVariant SPFeatureI::operator ()(const QString &name, int index) {
     return (*this)->cell(name, index);
 }
+
+void SPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
+    return (*this)->cell(name, var, index);
+}
 //--------------------------------------------
 FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){
 
 }
 
-FeatureNode::FeatureNode(const Geometry geometry, Feature *feature, quint32 index ) :
+FeatureNode::FeatureNode(const Geometry& geometry, Feature *feature, quint32 index ) :
     _feature(feature),
     _geometry(geometry),
     _index(index)
@@ -67,7 +71,14 @@ quint32 FeatureNode::trackSize() const{
 }
 
 QVariant FeatureNode::cell(const QString& name, int) {
-    return _feature->_record->cellByKey(featureid(), name, _index);
+    quint32 colIndex  = _feature->_record->columnIndex(name);
+    return _feature->_record->cellByKey(featureid(), colIndex, _index);
+}
+
+void FeatureNode::cell(const QString &name, const QVariant &var, int index)
+{
+    quint32 colIndex  = _feature->_record->columnIndex(name);
+    return _feature->_record->cellByKey(featureid(), colIndex, var, _index);
 }
 
 quint32 FeatureNode::index() const{
@@ -110,11 +121,23 @@ Feature &Feature::operator =(const Feature &f)
 
 QVariant Feature::cell(const QString &name, int index)
 {
-    if ( index < 0)
-        return _record->cellByKey(featureid(), name, index);
+    if ( index < 0){
+        quint32 colIndex  = _record->columnIndex(name);
+        return _record->cellByKey(featureid(), colIndex, index);
+    }
     if ( index >= 0 && index < _track.size())
         return _track[index]->cell(name);
     return QVariant();
+}
+
+void Feature::cell(const QString &name, const QVariant &var, int index)
+{
+    if ( index < 0) {
+        quint32 colIndex  = _record->columnIndex(name);
+        _record->cellByKey(featureid(), colIndex, var, index);
+    }
+    if ( index >= 0 && index < _track.size())
+        _track[index]->cell(name,var);
 }
 
 quint64 Feature::featureid() const{
@@ -149,10 +172,6 @@ void Feature::set(const Geometry &geom, int index)
 bool operator==(const Feature& f1, const Feature& f2) {
     return f1.featureid() == f2.featureid();
 }
-
-//void Feature::attributeRecord(const SPAttributeRecord& record){
-//    _record = record;
-//}
 
 FeatureInterface *Feature::clone() const
 {

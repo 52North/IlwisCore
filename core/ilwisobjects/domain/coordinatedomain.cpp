@@ -49,6 +49,15 @@ Domain::Containement CoordinateDomain::contains(const QVariant &value) const
     return Domain::cNONE;
 }
 
+bool CoordinateDomain::isCompatibleWith(const IDomain& dom) const {
+    if ( !dom->isValid())
+        return false;
+    if(dom->ilwisType() != itCOORDDOMAIN)
+        return false;
+    ICoordinateDomain crddom = dom.get<CoordinateDomain>();
+    return  coordinateSystem() == crddom->coordinateSystem();
+}
+
 
 IlwisTypes CoordinateDomain::ilwisType() const
 {

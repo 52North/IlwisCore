@@ -29,11 +29,6 @@ DataDefinition::DataDefinition(const DataDefinition& def)
     else
         _range.reset(0);
 
-    domain(def.domain());
-    if ( !def.range().isNull())
-        _range.reset(def.range()->clone());
-    else
-        _range.reset(0);
     _stretchRange = def._stretchRange;
 }
 
@@ -56,11 +51,6 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
 
 
     return *this;
-}
-
-Ilwis::SPRange DataDefinition::range() const
-{
-    return _range;
 }
 
 void DataDefinition::range(Range* vr)
@@ -89,6 +79,15 @@ void DataDefinition::domain(const IDomain &dom)
 bool DataDefinition::isValid() const
 {
     return _domain.isValid();
+}
+
+bool DataDefinition::isCompatibleWith(const DataDefinition &def) const
+{
+    if (!isValid())
+        return false;
+
+    return _domain->isCompatibleWith(def.domain());
+
 }
 
 
@@ -131,6 +130,13 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
     return DataDefinition();
 }
 
+//-----------------------------------------------------------
+bool Ilwis::operator==(const DataDefinition &def1, const DataDefinition &def2)
+{
+    return def1.domain() == def2.domain();
+}
 
-
-
+bool Ilwis::operator!=(const DataDefinition &def1, const DataDefinition &def2)
+{
+    return !operator==(def1, def2);
+}

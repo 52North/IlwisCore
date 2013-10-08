@@ -27,7 +27,9 @@ public:
      *An iterator is valid if bounding box and grid are a valid combination. The rest of the internal members of the iterator are calculated from this
      * \return true if the bounding box fits in the grid.
      */
-    bool isValid() const;
+    bool isValid() const{
+        return _isValid;
+    }
     PixelIterator();
     PixelIterator(const IRasterCoverage& raster, const Box3D<>& box=Box3D<>());
     PixelIterator(const PixelIterator& iter);

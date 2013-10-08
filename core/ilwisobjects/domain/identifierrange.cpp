@@ -8,7 +8,6 @@
 #include "itemdomain.h"
 #include "itemrange.h"
 #include "identifieritem.h"
-#include "domain.h"
 #include "itemdomain.h"
 #include "thematicitem.h"
 #include "identifierrange.h"
@@ -148,13 +147,13 @@ qint32 IndexedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
     return index + step;
 }
 
-IndexedIdentifierRange IndexedIdentifierRange::merge(const QSharedPointer<IndexedIdentifierRange> &nr1, const QSharedPointer<IndexedIdentifierRange> &nr2)
+IndexedIdentifierRange *IndexedIdentifierRange::merge(const QSharedPointer<IndexedIdentifierRange> &nr1, const QSharedPointer<IndexedIdentifierRange> &nr2,RenumberMap *rnm)
 {
     SPIndexedIdentifier index1 = nr1->item(0).staticCast<IndexedIdentifier>();
     SPIndexedIdentifier index2 = nr2->item(0).staticCast<IndexedIdentifier>();
     if ( index1->prefix() != index2->prefix())
-        return IndexedIdentifierRange();
-    return IndexedIdentifierRange(index1->prefix(), nr1->count() + nr2->count());
+        return 0;
+    return new IndexedIdentifierRange(index1->prefix(), nr1->count() + nr2->count());
 
 }
 
@@ -368,11 +367,13 @@ qint32 NamedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
     return index + step;
 }
 
-NamedIdentifierRange NamedIdentifierRange::merge(const QSharedPointer<NamedIdentifierRange> &nr1, const QSharedPointer<NamedIdentifierRange> &nr2)
+NamedIdentifierRange *NamedIdentifierRange::merge(const QSharedPointer<NamedIdentifierRange> &nr1, const QSharedPointer<NamedIdentifierRange> &nr2, RenumberMap *rnm)
 {
-    NamedIdentifierRange newRange;
-    newRange.addRange(*nr1.data());
-    newRange.addRange(*nr2.data());
+    NamedIdentifierRange *newRange = new NamedIdentifierRange();
+    newRange->addRange(*nr1.data());
+    newRange->addRange(*nr2.data());
+
+    addItems<NamedIdentifier>(newRange, nr1, nr2, rnm);
 
     return newRange;
 }
@@ -381,6 +382,17 @@ NamedIdentifierRange NamedIdentifierRange::merge(const QSharedPointer<NamedIdent
 ThematicRange::ThematicRange()
 {
   _vt = itTHEMATICITEM;
+}
+
+ThematicRange *ThematicRange::merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2,RenumberMap *renumberer)
+{
+    ThematicRange *newRange = new ThematicRange();
+    newRange->addRange(*nr1.data());
+    newRange->addRange(*nr2.data());
+
+    addItems<ThematicItem>(newRange, nr1, nr2, renumberer);
+
+    return newRange;
 }
 
 ThematicRange &ThematicRange::operator<<(const QString &itemdef)

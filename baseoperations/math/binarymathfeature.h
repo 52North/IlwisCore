@@ -21,6 +21,8 @@ private:
     IFeatureCoverage _inputFeatureSet2;
     IFeatureCoverage _outputFeatures;
     ICoordinateSystem _csyTarget;
+    RenumberMap _renumberer;
+    TableMerger _merger;
     Box3D<double> addEnvelopes() const;
 };
 }

@@ -21,6 +21,7 @@ public:
     virtual IlwisTypes ilwisType(qint32 index=0) const = 0;
     virtual quint32 trackSize() const = 0;
     virtual QVariant cell(const QString& name, int index=-1) = 0;
+    virtual void cell(const QString& name, const QVariant& var, int index=-1) = 0;
 protected:
 
 
@@ -30,6 +31,7 @@ class KERNELSHARED_EXPORT SPFeatureI : public QSharedPointer<FeatureInterface> {
 public:
     SPFeatureI(FeatureInterface *f=0);
     QVariant operator ()(const QString &name, int index=-1);
+    void operator ()(const QString &name, const QVariant& var, int index=-1);
 };
 
 class Feature;
@@ -41,7 +43,7 @@ public:
        ~FeatureNode() {}
 private:
     FeatureNode();
-    FeatureNode(const Geometry geometry, Feature* feature, quint32 index );
+    FeatureNode(const Ilwis::Geometry &geometry, Feature* feature, quint32 index );
 
     virtual quint64 featureid() const ;
     virtual bool isValid() const  ;
@@ -51,6 +53,7 @@ private:
     virtual IlwisTypes ilwisType(qint32 index=0) const ;
     virtual quint32 trackSize() const ;
     virtual QVariant cell(const QString& name, int index=-1) ;
+    virtual void cell(const QString& name, const QVariant& var, int index=-1);
     quint32 index() const;
     void setIndex(quint32 ind);
 
@@ -90,6 +93,7 @@ public:
     IlwisTypes ilwisType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
     QVariant cell(const QString& name, int index=-1);
+    void cell(const QString& name, const QVariant& var, int index=-1);
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique

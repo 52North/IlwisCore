@@ -59,25 +59,21 @@ public:
      * \sets the parent domain; it may be set to invalid
      */
     virtual void setParent(const IDomain& dm);
-
-
     /*!
      translates the type of a variant to a compatible ilwis type
      * \param the variant to be typed
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
 
-
-
-    static IlwisTypes ilwType(const QVariant &v);
-    static IlwisTypes ilwType(const QString &value);
     virtual Containement contains(const QVariant& value) const = 0;
+    virtual bool isCompatibleWith(const IDomain& dom) const = 0;
 
     template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();
     }
 
-
+    static IlwisTypes ilwType(const QVariant &v);
+    static IlwisTypes ilwType(const QString &value);
 protected:
     void addChildDomain(quint64 idchild);
     bool removeChildDomain(quint64 idchild);

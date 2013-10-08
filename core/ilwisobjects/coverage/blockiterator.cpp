@@ -86,6 +86,8 @@ GridBlock::GridBlock(BlockIterator& iter) :
 {
     // for efficiency the blocks and offsets are precalculated at the cost of some memory
     // when calculating the linear postions only very basic operations are needed then
+    if (! isValid())
+        return ;
     int ysize = iter._raster->size().ysize();
     _blockYSize = iter._raster->_grid->maxLines();
     _blockXSize = iter._raster->_grid->size().xsize();
@@ -105,6 +107,8 @@ GridBlock::GridBlock(BlockIterator& iter) :
 
 double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
 {
+    if ( !isValid())
+        throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
     if ( _iterator._outside != rILLEGAL) {
         _iterator._outside = rILLEGAL;
     }
@@ -134,6 +138,11 @@ CellIterator GridBlock::end()
 const BlockIterator &GridBlock::iterator() const
 {
     return _iterator;
+}
+
+bool GridBlock::isValid() const
+{
+    return _iterator.isValid();
 }
 
 GridBlock::operator std::vector<double>()

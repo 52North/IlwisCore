@@ -54,7 +54,7 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 }
 
 
-QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) {
+QVariant AttributeRecord::cellByKey(quint64 key, quint32 colIndex, int index) {
     if ( _keyColumn == sUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1,"key column");
         return QVariant();
@@ -67,7 +67,7 @@ QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) 
         if ( iter == _coverageIndex.end()) {
             return QVariant();
         }
-        return _coverageTable->cell(col,(*iter).second);
+        return _coverageTable->cell(colIndex,(*iter).second);
     } else {
         if ( _verticalIndex[index].size() == 0) {
             indexVerticalIndex(index);
@@ -76,15 +76,59 @@ QVariant AttributeRecord::cellByKey(quint64 key, const QString& col, int index) 
         if ( iter == _coverageIndex.end()) {
             return QVariant();
         }
-        return _indexTable->cell(col,(*iter).second);
+        return _indexTable->cell(colIndex,(*iter).second);
     }
     return QVariant();
 }
 
-QVariant AttributeRecord::cellByIndex(quint64 index, quint32 colIndex, int )
+void AttributeRecord::cellByKey(quint64 key, quint32 colIndex, const QVariant& var, int index) {
+    if ( _keyColumn == sUNDEF) {
+        ERROR1(ERR_NO_INITIALIZED_1,"key column");
+        return;
+    }
+    if ( index == COVERAGETABLE) {
+        if ( _coverageIndex.size() == 0) {
+            indexKeyColumn();
+        }
+        quint32 recIndex = key;
+        if ( key != NEW_RECORD) {
+            auto iter = _coverageIndex.find(key);
+            if ( iter != _coverageIndex.end()) {
+                return;
+            } else
+                recIndex= (*iter).second;
+        }
+
+        return _coverageTable->cell(colIndex,recIndex, var);
+    } else {
+        if ( _verticalIndex[index].size() == 0) {
+            indexVerticalIndex(index);
+        }
+        auto iter = _coverageIndex.find(key);
+        if ( iter == _coverageIndex.end()) {
+            return;
+        }
+        _indexTable->cell(colIndex,(*iter).second, var);
+    }
+}
+
+QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, int index) const
 {
-    if ( index < _indexTable->records())
-        return _indexTable->cell(index, colIndex);
+    if ( index == COVERAGETABLE) {
+        return _coverageTable->cell(colIndex, record);
+    } else {
+        return _indexTable->cell(colIndex, record);
+    }
+    return QVariant();
+}
+
+QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, const QVariant& var, int index)
+{
+    if ( index == COVERAGETABLE) {
+        _coverageTable->cell(colIndex, record,var);
+    } else {
+        _indexTable->cell(colIndex, record, var);
+    }
     return QVariant();
 }
 
