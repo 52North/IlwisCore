@@ -11,6 +11,7 @@ public:
     OperationHelperRaster();
     static Box3D<qint32> initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Ilwis::Parameter &parm, quint64 what);
     static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
+    static bool resample(IRasterCoverage& input1, IRasterCoverage& input2, ExecutionContext *ctx);
 
     template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputRaster, const Box3D<qint32>& bounds=Box3D<qint32>()) {
         std::vector<Box3D<qint32>> boxes;
