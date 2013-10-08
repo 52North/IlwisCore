@@ -71,7 +71,6 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
 
 bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
     std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
-    //auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
         PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
@@ -103,6 +102,11 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
         return true;
     };
 
+    if ( !_inputGC1->georeference()->isCompatible(_inputGC2->georeference())) {
+        if (!OperationHelperRaster::resample(_inputGC1, _inputGC2, ctx)) {
+            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+        }
+    }
     bool resource = OperationHelperRaster::execute(ctx, binaryMath, _outputGC);
 
     if (resource)
@@ -157,11 +161,11 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
     switch(_operator) {
         case otPLUS:
            rmin = nrange1->min() + nrange2->min();
-           rmax = nrange1->max() + nrange1->max();
+           rmax = nrange1->max() + nrange2->max();
            break;
         case otMINUS:
             rmin = nrange1->min() - nrange2->min();
-            rmax = nrange1->max() - nrange1->max();
+            rmax = nrange1->max() - nrange2->max();
             break;
         case otDIV:
             rmin = nrange2->min() != 0 ? nrange1->min() / nrange2->min() : std::min(nrange1->min(), nrange2->min());
@@ -169,7 +173,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
             break;
         case otMULT:
             rmin = nrange1->min() * nrange2->min();
-            rmax = nrange1->max() * nrange1->max();
+            rmax = nrange1->max() * nrange2->max();
             break;
     }
     NumericRange *newRange = new NumericRange(rmin,
