@@ -55,3 +55,8 @@ bool GeoRefImplementation::compute()
 {
     return true;
 }
+
+bool GeoRefImplementation::isCompatible(const IGeoReference &georefOther) const
+{
+    return false;
+}

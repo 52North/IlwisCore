@@ -59,7 +59,7 @@ double SimpelGeoReference::pixelSize() const
 }
 
 std::vector<double> SimpelGeoReference::matrix() const {
-    return {_a11,_a21,_a21,_a22};
+    return {_a11,_a21,_a12,_a22};
 }
 
 std::vector<double> SimpelGeoReference::support() const {
@@ -68,7 +68,26 @@ std::vector<double> SimpelGeoReference::support() const {
 
 QString SimpelGeoReference::typeName()
 {
-    return "corners";
+    return "simple";
+}
+
+bool SimpelGeoReference::isCompatible(const IGeoReference &georefOther) const
+{
+
+    if ( !georefOther->grfType<SimpelGeoReference>())
+        return false;
+    QSharedPointer<SimpelGeoReference> grfsmpl = georefOther->impl<SimpelGeoReference>();
+    double delta = EPS6;
+    const std::vector<double>& mat = grfsmpl->matrix();
+    bool ok = std::abs(mat[0] - _a11) < delta && std::abs(mat[1] - _a21) < delta &&
+            std::abs(mat[2] - _a12) < delta && delta && std::abs(mat[3] - _a22) < delta;
+    if (!ok)
+        return false;
+    const std::vector<double>& sup = grfsmpl->support();
+    ok = std::abs(sup[0] - _b1) < delta && std::abs(sup[1] - _b2) < delta;
+
+    return ok;
+
 }
 
 
