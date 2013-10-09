@@ -77,7 +77,7 @@ public:
      * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter
      * atCOVERAGE as parameter also gives the attributeable
      *
-     * \param attType
+     * \param attType the type of table required (atCOVERAGE or atINDEX)
      * \return an AttributeTable
      */
     AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
