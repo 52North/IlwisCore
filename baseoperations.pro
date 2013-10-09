@@ -41,7 +41,8 @@ HEADERS += \
     baseoperations/data/iffeature.h \
     baseoperations/data/selectionfeatures.h \
     baseoperations/math/binarymathraster.h \
-    baseoperations/math/binarymathfeature.h
+    baseoperations/math/binarymathfeature.h \
+    baseoperations/geometry/mastergeoreference.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -64,7 +65,8 @@ SOURCES += \
     baseoperations/data/iffeature.cpp \
     baseoperations/data/selectionfeatures.cpp \
     baseoperations/math/binarymathraster.cpp \
-    baseoperations/math/binarymathfeature.cpp
+    baseoperations/math/binarymathfeature.cpp \
+    baseoperations/geometry/mastergeoreference.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
