@@ -21,6 +21,7 @@ public:
     Time(const QString& isostring);
     Time(double secondssince0);
     Time(const QDateTime &time);
+    virtual ~Time();
     operator double() const;
     operator QDateTime() const;
     Time& operator=(double t);
@@ -74,24 +75,28 @@ public:
     TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""));
     TimeInterval operator+(const TimeInterval& interval);
     TimeInterval operator-(const TimeInterval& interval);
-    Time operator++();
-    Time operator--();
     TimeInterval& operator=(const TimeInterval& tiv);
-    void reset(bool atStart=true);
-    Time getBegin() const { return Time(min());}
-    Time getEnd() const { return Time(max());}
+    Time begin() const { return Time(min());}
+    Time end() const { return Time(max());}
+    void begin(const Time& t) ;
+    void end(const Time& t);
     Duration getStep() const { return _step;}
     QString toString(bool local=true, Time::Mode mode=Time::mDATETIME);
     bool contains(const QString& value, bool inclusive = true) const;
+    bool contains(const Time& value, bool inclusive = true) const;
+    QString value(const QVariant& v) const;
 
 private:
     Duration _step;
-    Time _current;
 
 };
 
 #define tUNDEF Time(0)
 
 }
+
+Q_DECLARE_METATYPE(Ilwis::Time)
+Q_DECLARE_METATYPE(Ilwis::Duration)
+Q_DECLARE_METATYPE(Ilwis::TimeInterval)
 
 #endif // TIME_H

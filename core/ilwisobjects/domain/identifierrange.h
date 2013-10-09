@@ -26,7 +26,7 @@ public:
     void add(DomainItem *item);
     void add(SPDomainItem item);
 
-    QString value(quint32 index) const;
+    QString value(const QVariant& v) const;
     QString toString() const;
     quint32 raw(const QString &item) const;
 
@@ -56,7 +56,7 @@ public:
     void add(DomainItem *item);
     void add(SPDomainItem item);
     void remove(const QString& item);
-    QString value(quint32 index) const;
+    QString value(const QVariant& v) const;
     NamedIdentifierRange& operator<<(const QString& itemdef);
     SPDomainItem item(quint32 iraw) const;
     SPDomainItem item(const QString &nam) const;

@@ -100,6 +100,10 @@ Time::Time(const QDateTime& time){
 
 }
 
+Time::~Time()
+{
+}
+
 Time::Time(double juliand) {
     _julianday = juliand;
 }
@@ -768,14 +772,12 @@ bool Duration::isValid() const{
 
 //-------------------------------------------
 TimeInterval::TimeInterval() {
-    _current = tUNDEF;
     _step = Duration(tUNDEF);
 }
 
 TimeInterval::TimeInterval(const Time& beg, const Time& en, const Duration& stp) :
 NumericRange((double)beg, (double)en),
-_step(stp),
-_current(beg)
+_step(stp)
 {
     if ( (double)beg == BIGTIME) {
         min(-BIGTIME);
@@ -801,34 +803,6 @@ TimeInterval TimeInterval::operator-(const TimeInterval& interval){
     return TimeInterval();
 }
 
-Time TimeInterval::operator++(){
-
-    if ( min() == rUNDEF || max() == rUNDEF || _step == Duration())
-        return tUNDEF;
-    if ( _current == tUNDEF)
-        _current = Time(min());
-    _current = _current + _step;
-    if ( _current > Time(max()))
-        return tUNDEF;
-    return _current;
-
-}
-
-Time TimeInterval::operator--() {
-    if ( min() == rUNDEF || max() == rUNDEF || _step == Duration())
-        return tUNDEF;
-    if ( _current == tUNDEF)
-        _current = Time(max());
-    _current = _current  - _step;
-    if ( _current < Time(min()))
-        return tUNDEF;
-    return _current;
-}
-
-void TimeInterval::reset(bool atStart){
-    _current = Time(atStart ? min() : max());
-}
-
 QString TimeInterval::toString(bool local, Time::Mode mode) {
     Time begin(min());
     Time end(max());
@@ -837,10 +811,29 @@ QString TimeInterval::toString(bool local, Time::Mode mode) {
     return QString("%1/%2").arg(sb ,se);
 }
 
-bool TimeInterval::contains(const QString &value, bool ) const
+bool TimeInterval::contains(const QString &value, bool inclusive) const
 {
-    //TODO
-    return true;
+    Time t(value);
+    if ( !t.isValid())
+        return false;
+    return NumericRange::contains(t, inclusive);
+
+}
+
+bool TimeInterval::contains(const Time &value, bool inclusive) const
+{
+    return NumericRange::contains(value, inclusive);
+}
+
+QString TimeInterval::value(const QVariant &v) const
+{
+    QString type = v.typeName();
+    if ( type != "Ilwis::Time"){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
+        return sUNDEF;
+    }
+    Time t = v.value<Ilwis::Time>();
+    return t.toString();
 }
 
 
@@ -850,6 +843,16 @@ TimeInterval& TimeInterval::operator=(const TimeInterval& tiv){
     _step = tiv.getStep();
 
     return *this;
+}
+
+void TimeInterval::begin(const Time &t)
+{
+    NumericRange::min(t);
+}
+
+void TimeInterval::end(const Time &t)
+{
+    NumericRange::max(t);
 }
 
 

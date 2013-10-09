@@ -19,8 +19,14 @@ NumericItemRange::NumericItemRange()
     _vt = itNUMERICITEM;
 }
 
-QString NumericItemRange::value(quint32 index) const
+QString NumericItemRange::value(const QVariant& v) const
 {
+    bool ok;
+    quint32 index = v.toUInt(&ok);
+    if (!ok){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
+        return sUNDEF;
+    }
     if ( index < _items.size())
         return _items[index]->name();
     return sUNDEF;

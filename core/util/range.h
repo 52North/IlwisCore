@@ -58,6 +58,7 @@ public:
     virtual bool isContinuous() const;
     void interpolation(const QString& ip);
     virtual QString interpolation() const;
+    virtual QString value(const QVariant& v) const = 0;
 protected:
     IlwisTypes _vt;
     QString _interpolation;

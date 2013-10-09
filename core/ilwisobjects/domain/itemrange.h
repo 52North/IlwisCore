@@ -15,7 +15,7 @@ public:
 
     ItemRange() {}
 
-    virtual QString value(quint32 index) const = 0;
+    virtual QString value(const QVariant& v) const = 0;
     virtual quint32 count() const = 0;
     virtual SPDomainItem item(quint32 raw) const = 0;
     virtual SPDomainItem item(const QString &nam) const = 0;

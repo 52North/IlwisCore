@@ -47,7 +47,13 @@ bool IndexedIdentifierRange::operator==(const IndexedIdentifierRange& range){
     return _start == range._start;
 }
 
-QString IndexedIdentifierRange::value(quint32 index) const{
+QString IndexedIdentifierRange::value(const QVariant &v) const{
+    bool ok;
+    quint32 index = v.toUInt(&ok);
+    if (!ok){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
+        return sUNDEF;
+    }
     QString s =  _start->name();
     if ( index < count())
         return s + QString::number(index);
@@ -258,8 +264,14 @@ void NamedIdentifierRange::remove(const QString &name)
     return ;
 }
 
-QString NamedIdentifierRange::value(quint32 index) const
+QString NamedIdentifierRange::value(const QVariant& v) const
 {
+    bool ok;
+    quint32 index = v.toUInt(&ok);
+    if (!ok){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
+        return sUNDEF;
+    }
     SPNamedIdentifier it = item(index).dynamicCast<NamedIdentifier>();
     if (!it)
         return sUNDEF;
