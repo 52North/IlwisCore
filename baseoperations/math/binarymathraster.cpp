@@ -178,7 +178,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
     }
     NumericRange *newRange = new NumericRange(rmin,
                                               rmax,
-                                              std::min(nrange1->step(), nrange2->step()));
+                                              std::min(nrange1->resolution(), nrange2->resolution()));
 
     IDomain dom;
     dom.prepare("value");
@@ -232,7 +232,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     }
     NumericRange *newRange = new NumericRange(rmin,
                                               rmax,
-                                              nrange->step());
+                                              nrange->resolution());
 
     IDomain dom;
     dom.prepare("value");

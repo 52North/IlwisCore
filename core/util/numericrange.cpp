@@ -5,12 +5,12 @@
 
 using namespace Ilwis;
 
-NumericRange::NumericRange() : _min(0), _max(-1),_step(0) {
+NumericRange::NumericRange() : _min(0), _max(-1),_resolution(0) {
 
 }
-NumericRange::NumericRange(double mi, double ma, double step) : _step(step), _undefined(rUNDEF) {
-    setMin(mi);
-    setMax(ma);
+NumericRange::NumericRange(double mi, double ma, double step) : _resolution(step), _undefined(rUNDEF) {
+    min(mi);
+    max(ma);
 }
 NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
 {
@@ -23,7 +23,7 @@ bool NumericRange::isValid() const
 }
 
 Range *NumericRange::clone() const {
-    NumericRange *rng = new NumericRange(_min, _max, _step);
+    NumericRange *rng = new NumericRange(_min, _max, _resolution);
     rng->interpolation(interpolation());
     return rng;
 }
@@ -47,9 +47,9 @@ double NumericRange::min() const
 {
     return _min;
 }
-void NumericRange::setMin(double v)
+void NumericRange::min(double v)
 {
-    if (_step == 1){
+    if (_resolution == 1){
         _min = (qint64) v;
     } else
         _min = v;
@@ -63,39 +63,39 @@ double NumericRange::distance() const
     return _max - _min;
 }
 
-void NumericRange::setMax(double v)
+void NumericRange::max(double v)
 {
-    if (_step == 1){
+    if (_resolution == 1){
         _max = (qint64) v;
     } else
         _max = v;
 }
 
-void NumericRange::setStep(double step) {
-    _step = step;
+void NumericRange::resolution(double step) {
+    _resolution = step;
 }
 
-double NumericRange::step() const {
-    return _step;
+double NumericRange::resolution() const {
+    return _resolution;
 }
 
 NumericRange& NumericRange::operator+=(double v)
 {
     if ( !isValid()){
-        setMin(v);
-        setMax(v);
+        min(v);
+        max(v);
     }
     else {
         if ( v > _max )
-            setMax(v);
+            max(v);
         if ( v < _min)
-            setMin(v);
+            min(v);
     }
     return *this;
 }
 
 bool NumericRange::operator==(const NumericRange& vr) {
-    return vr.max() == max() && vr.min() == min() && vr.step() == step();
+    return vr.max() == max() && vr.min() == min() && vr.resolution() == resolution();
 }
 
 bool NumericRange::operator<(const NumericRange &vr)
@@ -114,34 +114,34 @@ QString NumericRange::toString() const {
     long n1 = significantDigits(_min);
     long n2 = significantDigits(_max);
     long n = std::max(n1, n2);
-    bool isfloat = _step == 0 || _step - (quint64)_step != 0;
+    bool isfloat = _resolution == 0 || _resolution - (quint64)_resolution != 0;
     if (isfloat){
         QString rng = QString::number(_min,'f',n);
         rng += ' ';
         rng += QString::number(_min,'f',n);
-        if ( _step != 0){
+        if ( _resolution != 0){
             rng += ' ';
-            rng += QString::number(_step) ;
+            rng += QString::number(_resolution) ;
         }
         return rng;
     }
-    QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_step);
+    QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_resolution);
     return rng;
 
 
 }
 void NumericRange::set(const NumericRange& vr)
 {
-    _step = vr._step;
-    setMin(vr._min);
-    setMax(vr._max);
+    _resolution = vr._resolution;
+    min(vr._min);
+    max(vr._max);
 }
 
 double NumericRange::ensure(double v, bool inclusive) const
 {
     if ( !contains(v, inclusive))
         return _undefined;
-    if ( (_step - (int)_step) == 0.0)
+    if ( (_resolution - (int)_resolution) == 0.0)
         return (qint32)(v + 0.5);
     return v;
 }
@@ -194,7 +194,7 @@ long NumericRange::significantDigits(double m1) const{
 IlwisTypes NumericRange::determineType() const{
 
     IlwisTypes vt = itUNKNOWN;
-    if ( _step == 1) { // integer part
+    if ( _resolution == 1) { // integer part
         bool sig = min() < 0;
         if ( max() <=128 && sig)
             vt =  itINT8;
@@ -224,6 +224,6 @@ NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),
                             std::max(nr1->max(), nr2->max()),
-                            std::min(nr1->step(), nr2->step()));
+                            std::min(nr1->resolution(), nr2->resolution()));
 }
 

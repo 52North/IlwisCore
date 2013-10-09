@@ -259,7 +259,7 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         if (!ok) {
             ERROR1(ERR_NO_INITIALIZED_1, "numeric item range");
         }
-        double step = _items[0]->range().step();
+        double step = _items[0]->range().resolution();
         if ( step == 0)
             vmin += EPS8;
         add(new NumericItem({vmin+step,vmax, step}));

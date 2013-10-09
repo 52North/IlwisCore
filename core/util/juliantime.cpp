@@ -778,7 +778,7 @@ _step(stp),
 _current(beg)
 {
     if ( (double)beg == BIGTIME) {
-        setMin(-BIGTIME);
+        min(-BIGTIME);
     }
 }
 
@@ -845,8 +845,8 @@ bool TimeInterval::contains(const QString &value, bool ) const
 
 
 TimeInterval& TimeInterval::operator=(const TimeInterval& tiv){
-    setMin(tiv.min());
-    setMax(tiv.max());
+    min(tiv.min());
+    max(tiv.max());
     _step = tiv.getStep();
 
     return *this;
