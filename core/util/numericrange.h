@@ -23,7 +23,7 @@ public:
      * \param ma maximum of the range
      * \param step resolution of the range.
      */
-    NumericRange(double mi, double ma, double step=0);
+    NumericRange(double mi, double ma, double resolution=0);
     /*!
      * \brief NumericRange copy constructor
      * \param vr other value range
@@ -39,13 +39,13 @@ public:
     bool contains(SPRange rng, bool inclusive=true) const;
     bool contains(NumericRange *rng, bool inclusive=true) const;
     double max() const;
-    void setMax(double v);
+    void max(double v);
     double min() const;
-    void setMin(double v);
+    void min(double v);
     double distance() const;
 
-    void setStep(double step);
-    double step() const ;
+    void resolution(double resolution);
+    double resolution() const ;
 
     NumericRange& operator+=(double v);
 
@@ -63,7 +63,7 @@ public:
 private:
     double _min;
     double _max;
-    double _step;
+    double _resolution;
     double _undefined;
 
     long significantDigits(double m1) const;

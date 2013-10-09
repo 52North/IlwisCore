@@ -106,6 +106,20 @@ void GeoReference::centerOfPixel(bool yesno)
         _georefImpl->centerOfPixel(yesno);
 }
 
+bool GeoReference::isCompatible(const IGeoReference &georefOther) const
+{
+    if (!georefOther.isValid())
+        return false;
+
+    if ( coordinateSystem() != georefOther->coordinateSystem())
+        return false;
+
+    if ( isValid())
+        return _georefImpl->isCompatible(georefOther);
+
+    return false;
+}
+
 void GeoReference::adapter(GeoRefAdapter *adapt)
 {
     _adapter.reset(adapt);

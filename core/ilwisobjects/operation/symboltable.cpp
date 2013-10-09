@@ -103,7 +103,8 @@ IlwisTypes SymbolTable::ilwisType(const QString &symname) const
     if ( iter != _symbols.end()) {
         return iter.value()._type;
     }
-    return itUNKNOWN;
+    IlwisTypes tp = IlwisObject::findType(symname);
+    return tp;
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {

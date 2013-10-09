@@ -231,7 +231,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
         for(IlwisTypes type: types) {
             Resource resource = name2Resource(name, type);
             if (resource.isValid())
-                return resource.ilwisType();
+                return resource;
         }
 
         return Resource();

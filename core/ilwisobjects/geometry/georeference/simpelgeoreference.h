@@ -13,6 +13,7 @@ public:
      virtual Coordinate pixel2Coord(const Pixel_d&) const;
     virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
     virtual double pixelSize() const;
+    bool isCompatible(const IGeoReference &georefOther) const;
 
     std::vector<double> matrix() const;
     std::vector<double> support() const;

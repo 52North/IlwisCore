@@ -114,3 +114,37 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCov
     return cores;
 }
 
+bool OperationHelperRaster::resample(IRasterCoverage& raster1, IRasterCoverage& raster2, ExecutionContext *ctx) {
+    if ( !raster1.isValid())
+        return false;
+
+    IGeoReference commonGeoref = raster1->georeference();
+    if ( ctx->_masterGeoref != sUNDEF) {
+        if(!commonGeoref.prepare(ctx->_masterGeoref))
+            return false;
+    }
+    if (raster1->georeference()!= commonGeoref ){
+        Resource res;
+        res.prepare();
+        QString expr = QString("%3=resample(%1,%2,bicubic)").arg(raster1->source().url().toString()).arg(commonGeoref->source().url().toString()).arg(res.name());
+        ExecutionContext ctxLocal;
+        SymbolTable symtabLocal;
+        if(!commandhandler()->execute(expr,&ctxLocal,symtabLocal))
+            return false;
+        QVariant var = symtabLocal.getValue(res.name());
+        raster1 = var.value<IRasterCoverage>();
+    }
+    if ( raster2.isValid() && raster2->georeference()!= commonGeoref ){
+        Resource res;
+        res.prepare();
+        QString expr = QString("%3=resample(%1,%2,bicubic)").arg(raster2->source().url().toString()).arg(commonGeoref->source().url().toString()).arg(res.name());
+        ExecutionContext ctxLocal;
+        SymbolTable symtabLocal;
+        if(!commandhandler()->execute(expr,&ctxLocal,symtabLocal))
+            return false;
+        QVariant var = symtabLocal.getValue(res.name());
+        raster2 = var.value<IRasterCoverage>();
+    }
+    return true;
+}
+
