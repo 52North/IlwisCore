@@ -8,7 +8,7 @@ class KERNELSHARED_EXPORT NumericItemRange : public ItemRange
 public:
     NumericItemRange();
 
-    QString value(quint32 index) const ;
+    QString value(const QVariant& v) const;
     quint32 count() const ;
     SPDomainItem item(quint32 index) const ;
     SPDomainItem item(const QString &def) const ;

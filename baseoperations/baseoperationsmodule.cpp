@@ -14,6 +14,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "baseoperationsmodule.h"
+#include "tablemerger.h"
 #include "data/rasvalue.h"
 #include "data/ifoperation.h"
 #include "data/iffraster.h"
@@ -26,14 +27,15 @@
 #include "geometry/pixel2coord.h"
 #include "geometry/coord2pixel.h"
 #include "geometry/gridsize.h"
+#include "geometry/mastergeoreference.h"
 #include "math/unarymath.h"
 #include "math/unarymathoperations.h"
 #include "math/binarymathraster.h"
-#include "tablemerger.h"
 #include "math/binarymathfeature.h"
 #include "math/binarylogical.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
+
 
 
 using namespace Ilwis;
@@ -82,6 +84,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
     commandhandler()->addOperation(BinaryMathFeature::createMetadata(), BinaryMathFeature::create);
+    commandhandler()->addOperation(MasterGeoreference::createMetadata(), MasterGeoreference::create);
 
 }
 

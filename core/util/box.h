@@ -80,6 +80,7 @@ public:
         return new Box2D<CsyType>(*this);
     }
 
+
     Point2D<CsyType> min_corner() const {
         return _min_corner;
     }
@@ -271,6 +272,32 @@ bool operator==(const Box2D<CsyType>& box ) const {
 
 bool operator!=(const Box2D<CsyType>& box ) const {
     return !(operator==(box));
+}
+
+QString value(const QVariant& v) const{
+    QString type = v.typeName();
+    bool ok = type == "Ilwis::Box2D<qint32>" || type == "Ilwis::Box2D<quint32>" ||
+            type == "Ilwis::Box2D<double>" || "Ilwis::Box3D<qint32>" ||
+            type == "Ilwis::Box3D<quint32>" || type == "Ilwis::Box3D<double>";
+
+    if (!ok){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "box");
+        return sUNDEF;
+    }
+    if ( type == "Ilwis::Box2D<qint32>"){
+        Box2D<qint32> box = v.value<Box2D<qint32>>();
+        return box.toString();
+    }
+    if ( type == "Ilwis::Box2D<quint32>"){
+        Box2D<quint32> box = v.value<Box2D<quint32>>();
+        return box.toString();
+    }
+    if ( type == "Ilwis::Box2D<double>"){
+        Box2D<double> box = v.value<Box2D<double>>();
+        return box.toString();
+    }
+    return sUNDEF;
+
 }
 
 QString toString() const {
@@ -613,19 +640,6 @@ Box3D<CsyType>& operator +=(const std::vector<CsyType>& vec) {
 
     return *this;
 }
-
-//Box3D<CsyType>& operator +=(std::initializer_list<CsyType> il) {
-//    int size = il.size();
-//    if ( size == 3) {
-//        Ilwis::Point2D<CsyType>& pmin = this->min_corner();
-//        Ilwis::Point2D<CsyType>& pmax = this->max_corner();
-//        pmin += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
-//        pmax += {*(il.begin()), *(il.begin() + 1),*(il.begin() + 2)};
-//        normalize();
-//    }
-
-//    return *this;
-//}
 
 Box3D<CsyType>& operator *=(std::initializer_list<CsyType> il) {
     int size = il.size();

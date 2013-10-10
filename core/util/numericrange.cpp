@@ -1,6 +1,5 @@
 #include <QDataStream>
-#include "ilwis.h"
-#include "serializationoptions.h"
+#include "kernel.h"
 #include "numericrange.h"
 
 using namespace Ilwis;
@@ -129,6 +128,21 @@ QString NumericRange::toString() const {
     return rng;
 
 
+}
+
+QString NumericRange::value(const QVariant &v) const
+{
+    bool ok;
+    double vtemp = v.toDouble(&ok);
+    if (!ok){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "number");
+        return sUNDEF;
+    }
+    if ( std::floor(_resolution) == _resolution ) {
+        return _min >= 0 ? QString::number((quint64)vtemp) : QString::number((qint64)vtemp);
+    }
+    int decimals = _resolution != 0 ? std::log10(_resolution) : 12;
+    return QString::number(vtemp, 'g', decimals);
 }
 void NumericRange::set(const NumericRange& vr)
 {

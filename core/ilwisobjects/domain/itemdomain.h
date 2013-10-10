@@ -64,7 +64,7 @@ public:
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return sUNDEF;
         }
-        return _range->value(v.toInt());
+        return _range->value(v);
     }
     /*!
      returns a pointer to the domain item pointed to by the index
