@@ -22,6 +22,7 @@ public:
 protected:
     bool handleBinaryCoverageCases(const NodeValue &vright, const QString& operation, const QString &relation,
                                    Ilwis::SymbolTable &symbols, ExecutionContext *ctx);
+    IlwisTypes typesUsed(const NodeValue &vright, SymbolTable &symbols) const;
 
     QSharedPointer<ASTNode> _leftTerm;
     QVector< RightTerm > _rightTerm;
