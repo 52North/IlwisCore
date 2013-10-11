@@ -21,6 +21,7 @@
 #include "data/assignment.h"
 #include "data/selection.h"
 #include "data/selectionfeatures.h"
+#include "data/selectiontable.h"
 #include "geometry/resampleraster.h"
 #include "geometry/fcoordinate.h"
 #include "geometry/fpixel.h"
@@ -59,6 +60,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(Assignment::createMetadata(), Assignment::create);
     commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
     commandhandler()->addOperation(BinaryMathRaster::createMetadata(), BinaryMathRaster::create);
+    commandhandler()->addOperation(BinaryMathFeature::createMetadata(), BinaryMathFeature::create);
     commandhandler()->addOperation(Ceil::createMetadata(), Ceil::create);
     commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
     commandhandler()->addOperation(Cosine::createMetadata(), Cosine::create);
@@ -69,12 +71,14 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(GridSize::createMetadata(), GridSize::create);
     commandhandler()->addOperation(IffRaster::createMetadata(), IffRaster::create);
     commandhandler()->addOperation(Log10::createMetadata(), Log10::create);
+    commandhandler()->addOperation(MasterGeoreference::createMetadata(), MasterGeoreference::create);
     commandhandler()->addOperation(NaturalLogarithm::createMetadata(), NaturalLogarithm::create);
     commandhandler()->addOperation(Pixel2Coord::createMetadata(), Pixel2Coord::create);
     commandhandler()->addOperation(RasValue::createMetadata(), RasValue::create);
     commandhandler()->addOperation(ResampleRaster::createMetadata(), ResampleRaster::create);
     commandhandler()->addOperation(Selection::createMetadata(), Selection::create);
     commandhandler()->addOperation(SelectionFeatures::createMetadata(), SelectionFeatures::create);
+    commandhandler()->addOperation(SelectionTable::createMetadata(), SelectionTable::create);
     commandhandler()->addOperation(Sign::createMetadata(), Sign::create);
     commandhandler()->addOperation(Sine::createMetadata(), Sine::create);
     commandhandler()->addOperation(SineH::createMetadata(), SineH::create);
@@ -83,9 +87,6 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(StringReplace::createMetadata(), StringReplace::create);
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
-    commandhandler()->addOperation(BinaryMathFeature::createMetadata(), BinaryMathFeature::create);
-    commandhandler()->addOperation(MasterGeoreference::createMetadata(), MasterGeoreference::create);
-
 }
 
 QString BaseOperationsModule::name() const
