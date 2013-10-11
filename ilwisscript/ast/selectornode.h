@@ -11,12 +11,27 @@ public:
     Ilwis::Box2D<int> box() const;
     QString variable() const;
     QString selectorType() const;
+    void beginCol(const QString& col);
+    QString beginCol() const;
+    void endCol(const QString& col);
+    QString endCol() const;
+    void beginRec(const QString& col);
+    quint32 beginRec() const;
+    void endRec(const QString& col);
+    quint32 endRec() const;
+    void keyColumns(const QString& keys);
+    QString keyColumns() const;
 
     void setVariable(const QString &v);
 private:
     Ilwis::Box2D<int> _box;
     QString _variable;
     QString _selectorType;
+    QString _beginCol;
+    QString _endCol;
+    quint32 _beginRec;
+    quint32 _endRec;
+    QString _keyColumns;
 };
 }
 
