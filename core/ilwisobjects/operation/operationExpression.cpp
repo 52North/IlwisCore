@@ -91,33 +91,6 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
                 return obj->ilwisType();
         }
     }
-//    std::set<QString> booleans ={ "yes","no","true","false"};
-//    if ( booleans.find(value.toLower()) != booleans.end())
-//        return itBOOL;
-
-//    bool ok;
-//    ushort vu = value.toUShort(&ok);
-//    if ( ok && vu < 255)
-//        return itUINT8;
-//    if ( ok)
-//        return itUINT16;
-//    short vs = value.toShort(&ok);
-//    if ( ok && vs > -128 && vs < 128)
-//        return itINT8;
-//    if ( ok)
-//       return itINT16;
-//    value.toULong(&ok);
-//    if ( ok)
-//        return itUINT32;
-//    value.toLong(&ok);
-//    if ( ok)
-//       return itINT32;
-//    value.toLongLong(&ok);
-//    if ( ok)
-//        return itINT64;
-//    value.toDouble(&ok);
-//    if ( ok)
-//       return itDOUBLE;
 
     tp = Domain::ilwType(value);
 
@@ -218,9 +191,10 @@ void  OperationExpression::parseSelectors(const QString& e, const SymbolTable &s
     int index3 = e.indexOf("{");
     QString selectPart = e.mid(index+1, e.size() - index - 2);
     QString inputMap = e.mid(index2+1, index - index2 - 1);
-    _inParameters.push_back(Parameter(inputMap, itCOVERAGE, symtab));
+    _inParameters.push_back(Parameter(inputMap, itUNKNOWN, symtab));
     QString outputPart =  index3 == -1 ? e.left(index2) : e.left(index3);
-    _outParameters.push_back(Parameter(outputPart, itCOVERAGE, symtab));
+    IlwisType valueType =  hasType(_inParameters.back().valuetype(), itCOVERAGE) ? itCOVERAGE : itTABLE;
+    _outParameters.push_back(Parameter(outputPart, valueType, symtab));
     int index4=selectPart.indexOf(",");
     if ( index4 == -1) { //either id or number
         bool ok;
