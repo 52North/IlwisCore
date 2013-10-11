@@ -40,7 +40,8 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
     SPFeatureI newfeature = createNewFeature(geom.ilwisType());
-    newfeature->set(geom);
+    if (newfeature != nullptr)
+        newfeature->set(geom);
     return newfeature;
 }
 
