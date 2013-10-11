@@ -232,6 +232,9 @@ public:
     ItemIterator<D> end() const {
         return ItemIterator<D>(*this, count());
     }
+    bool isValid() const {
+        return !_range.isNull();
+    }
 
 protected:
     SPRange getRange() const{
