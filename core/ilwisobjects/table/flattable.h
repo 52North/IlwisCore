@@ -34,8 +34,8 @@ public:
     /*!
     \se Ilwis::Table
      */
-    QVariant cell(const QString& col, quint32 rec) const;
-    QVariant cell(const quint32 index, quint32 rec) const;
+    QVariant cell(const QString& col, quint32 rec, bool asRaw=true) const;
+    QVariant cell(const quint32 index, quint32 rec, bool asRaw=true) const;
     /*!
     \se Ilwis::Table
      */

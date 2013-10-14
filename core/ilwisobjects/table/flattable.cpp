@@ -156,23 +156,29 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
 
 }
 
-QVariant FlatTable::cell(const QString& col, quint32 rec) const {
+QVariant FlatTable::cell(const QString& col, quint32 rec, bool asRaw) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariant();
 
     quint32 index = columnIndex(col);
-    return cell(index , rec);
+    return cell(index , rec, asRaw);
 }
 
-QVariant FlatTable::cell(const quint32 index, quint32 rec) const
+QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariant();
 
     if ( !isColumnIndexValid(index))
         return QVariant();
-    if ( rec < _rows)
-        return _datagrid[rec][index];
+    if ( rec < _rows) {
+        QVariant var = _datagrid[rec][index];
+        if ( !asRaw) {
+            ColumnDefinition coldef = columndefinition(index);
+            return coldef.datadef().domain()->value(var.toInt());
+        }
+        return var;
+    }
     kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg(name()),IssueObject::itWarning);
     return QVariant();
 }

@@ -104,8 +104,8 @@ public:
      * \param rec record number
      * \return the value of the cell or an invalid qvariant if an error occured. The nature of the error can be found in the issue logger
      */
-    virtual QVariant cell(const QString& col, quint32 rec) const = 0;
-    virtual QVariant cell(const quint32 index, quint32 rec) const = 0;
+    virtual QVariant cell(const QString& col, quint32 rec, bool asRaw=true) const = 0;
+    virtual QVariant cell(const quint32 index, quint32 rec, bool asRaw=true) const = 0;
     /*!
      Sets the value of a singel cell
      * \param col column name of the cell to be set
@@ -129,6 +129,8 @@ protected:
 };
 typedef IlwisData<Table> ITable;
 }
+
+Q_DECLARE_METATYPE(Ilwis::ITable)
 
 // special columns
 #define COVERAGEKEYCOLUMN "coverage_key"
