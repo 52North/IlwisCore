@@ -60,7 +60,7 @@ protected:
     bool _valid;
 };
 
-class Duration : public Time {
+class KERNELSHARED_EXPORT Duration : public Time {
 public:
     Duration(const QString& step="");
     Duration(double r);
@@ -69,7 +69,7 @@ public:
     double get(TimePart part) const;
 };
 
-class TimeInterval : public NumericRange {
+class KERNELSHARED_EXPORT TimeInterval : public NumericRange {
 public:
     TimeInterval();
     TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""));
