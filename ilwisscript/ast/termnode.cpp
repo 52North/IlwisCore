@@ -135,6 +135,22 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
                                                                 arg(selector->box().max_corner().x()).arg(selector->box().max_corner().y());
                 else if (selector->selectorType() == "index") {
                     selectordef = "\"index=" + selector->variable() + "\"";
+                } else if (selector->selectorType() == "columnrange") {
+                    selectordef = QString("\"columnrange=%1,%2").arg(selector->beginCol()).arg(selector->endCol());
+                    if ( selector->keyColumns() != sUNDEF)
+                        selectordef += "," + selector->keyColumns();
+                    selectordef += "\"";
+                }else if (selector->selectorType() == "recordrange") {
+                    selectordef = QString("\"recordrange=%1,%2").arg(selector->beginRec()).arg(selector->endRec());
+                    selectordef += "\"";
+                }else if (selector->selectorType() == "columnrecordrange") {
+                    selectordef = QString("\"columnrecordrange=%1,%2,%3, %4").arg(selector->beginCol()).
+                                                                              arg(selector->endCol()).
+                                                                              arg(selector->beginRec()).
+                                                                              arg(selector->endRec());
+                    if ( selector->keyColumns() != sUNDEF)
+                        selectordef += "," + selector->keyColumns();
+                    selectordef += "\"";
                 }
                 else if ( selector->variable() != sUNDEF)
                     selectordef = "\"attribute=" + selector->variable() + "\"";

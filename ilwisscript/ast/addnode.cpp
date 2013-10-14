@@ -72,13 +72,5 @@ bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols, Exec
     return ok;
 }
 
-IlwisTypes AddNode::typesUsed(const NodeValue& vright, SymbolTable &symbols) const {
-    IlwisTypes tp1 = symbols.ilwisType(vright.id());
-    IlwisTypes tp2 = symbols.ilwisType(_value.id());
 
-    if ( tp1 == itUNKNOWN || tp2 == itUNKNOWN)
-        return itUNKNOWN;
-    return tp1 | tp2;
-
-}
 

@@ -132,6 +132,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& symbols )
     catch(Ilwis::ScriptError& err) {
         qDebug() << err.message();
     }
+    return false;
 
 }
 

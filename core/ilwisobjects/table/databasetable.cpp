@@ -174,15 +174,15 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
     }
 }
 
-QVariant DatabaseTable::cell(quint32 index, quint32 rec) const{
+QVariant DatabaseTable::cell(quint32 index, quint32 rec, bool asRaw) const{
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return QVariant();
     }
-    return cell(iter.value().name(), rec);
+    return cell(iter.value().name(), rec, asRaw);
 }
-QVariant DatabaseTable::cell(const QString& col, quint32 rec) const{
+QVariant DatabaseTable::cell(const QString& col, quint32 rec, bool asRaw) const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return QVariant();
 
@@ -197,6 +197,10 @@ QVariant DatabaseTable::cell(const QString& col, quint32 rec) const{
             QVariant value;
             for(int i = 0; i < rec.count(); ++i) {
                 value = rec.value(i);
+            }
+            if ( !asRaw) {
+                ColumnDefinition coldef = columndefinition(index);
+                return coldef.datadef().domain()->value(value.toInt());
             }
             return value;
 

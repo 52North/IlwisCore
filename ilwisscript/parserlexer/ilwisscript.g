@@ -170,8 +170,23 @@ selector returns [ Selector *node]
 									(char *)($id2.text->chars),
 									(char *)($id3.text->chars),
 									(char *)($id4.text->chars)); }
-	| '[' ID ']'						{ node->setSelectorType("var"); node->setVariable((char *)($ID.text->chars));}
+	| '[' id1=ID (',' 'key=' id2=ID )? ']'			{ node->setSelectorType("var"); 
+									node->setVariable((char *)($id1.text->chars));
+									node->keyColumns($id2.text->chars);}
 	| '[' INT ']'						{ node->setSelectorType("index"); node->setVariable((char *)($INT.text->chars));}
+	| '[' id1=ID  id2=ID (',''key=' id3=ID )?']'		{ node->setSelectorType("columnrange");
+								node->beginCol($id1.text->chars); 
+								node->endCol($id2.text->chars); 
+								node->keyColumns($id3.text->chars);} 
+	| '[' id1=INT  id2=INT ']'				{ node->setSelectorType("recordrange"); 
+								node->beginRec($id1.text->chars); 
+								node->endRec($id2.text->chars); }
+	| '[' id1=ID id2=ID ',' id3=INT id4=INT (',' 'key=' id5=ID )? ']'		{ node->setSelectorType("columnrecordrange");
+								node->beginCol($id1.text->chars); 
+								node->endCol($id2.text->chars); 
+								node->beginRec($id3.text->chars); 
+								node->endRec($id4.text->chars);								
+								node->keyColumns($id5.text->chars);} 
 	;
 
 negation  returns [ TermNode *node]
