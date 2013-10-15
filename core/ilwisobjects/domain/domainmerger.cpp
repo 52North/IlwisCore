@@ -26,18 +26,34 @@ DomainMerger::DomainMerger(const IDomain &dom1, const IDomain &dom2) : _domain1(
 
 }
 
-void DomainMerger::mergeDomains(const IDomain &dom1, const IDomain &dom2)
+IDomain DomainMerger::mergeDomains(const IDomain &dom1, const IDomain &dom2)
 {
     if ( _domain1.isValid() && _domain2.isValid() &&
          _domain1->valueType() == _domain2->valueType()){
         if ( dom1->valueType() == itNUMBER ){
             NumericDomainMerger merger(dom1, dom2);
-
+            merger.merge();
         } else if ( dom1->valueType() == itINDEXEDITEM){
-            NumericDomainMerger merger(dom1, dom2);
+            ItemDomainMergerIndexedItems merger(dom1, dom2);
+            merger.merge();
+
+        } else if ( dom1->valueType() == itNAMEDITEM){
+            ItemDomainMergerNamedItems merger(dom1, dom2);
+            merger.merge();
 
         }
     }
+    return _mergedDomain;
+}
+
+std::map<quint32, quint32> DomainMerger::renumberer() const
+{
+    return _renumber;
+}
+
+IDomain DomainMerger::mergedDomain() const
+{
+    return _mergedDomain;
 }
 
 

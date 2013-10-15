@@ -52,6 +52,7 @@ public:
      */
     ColumnDefinition columndefinition(const QString& nme) const;
     ColumnDefinition columndefinition(quint32 index) const;
+    ColumnDefinition& columndefinition(quint32 index);
 //    /*!
 //    \se Ilwis::Table
 //     */
@@ -84,7 +85,6 @@ public:
      * \return true when valid.
      */
     bool isValid() const;
-    ColumnDefinition& columndefinition(quint32 index);
 
 protected:
     quint32 _rows;
@@ -94,6 +94,7 @@ protected:
     bool _dataloaded;
 
     virtual bool initLoad();
+    void copyTo(IlwisObject *obj);
     quint32 columnIndex(const QString& nme) const;
 };
 }

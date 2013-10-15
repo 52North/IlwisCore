@@ -139,6 +139,22 @@ bool  BaseTable::initLoad() {
     return true;
 }
 
+void BaseTable::copyTo(IlwisObject *obj)
+{
+    IlwisObject::copyTo(obj);
+    BaseTable *btable = static_cast<BaseTable *>(obj);
+    btable->_rows = _rows;
+    btable->_columns = _columns;
+    btable->_columnDefinitionsByIndex = _columnDefinitionsByIndex;
+    btable->_columnDefinitionsByName = _columnDefinitionsByName;
+    btable->_dataloaded = _dataloaded;
+
+    for(const auto& def : _columnDefinitionsByIndex) {
+        std::vector<QVariant> colvalues = column(def.name());
+        btable->column(def.name(), colvalues);
+    }
+}
+
 quint32 BaseTable::columnIndex(const QString &nme) const
 {
     auto iter = _columnDefinitionsByName.find(nme);

@@ -58,10 +58,12 @@ void NumericDomain::setParent(const IDomain &dm)
     Domain::setParent(dm);
 }
 
-QString NumericDomain::standardNumericDomainName(double vmin, double vmax)
+QString NumericDomain::standardNumericDomainName(double vmin, double vmax, double step)
 {
     QString domName="value";
     bool isInt = std::abs(vmin - (int)vmin) == 0 && std::abs(vmax - (int)vmax) == 0;
+    if ( step - (int)step != 0)
+        isInt = false;
     if ( isInt) {
         if ( vmin >= 0 && vmax < 256)
             domName = "image";

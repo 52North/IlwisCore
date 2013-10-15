@@ -113,7 +113,7 @@ assignmentStatement returns [ AssignmentNode *node]
 @init{
 	node= new AssignmentNode();
 }
-	:	ID 						{ node->setResult(new IDNode((char *)($ID.text->chars))); }
+	:	ID (selector)?						{ node->setResult(new IDNode((char *)($ID.text->chars))); }
 		(formatPart 				{ node->setFormatPart($formatPart.node); }
 		)?
 		(':=' | '=')					{ node->setDefintion(true); } 
@@ -171,22 +171,22 @@ selector returns [ Selector *node]
 									(char *)($id3.text->chars),
 									(char *)($id4.text->chars)); }
 	| '[' id1=ID (',' 'key=' id2=ID )? ']'			{ node->setSelectorType("var"); 
-									node->setVariable((char *)($id1.text->chars));
-									node->keyColumns($id2.text->chars);}
+								node->setVariable((char *)($id1.text->chars));
+								if ( id2 != 0) node->keyColumns((char *)$id2.text->chars);}
 	| '[' INT ']'						{ node->setSelectorType("index"); node->setVariable((char *)($INT.text->chars));}
 	| '[' id1=ID  id2=ID (',''key=' id3=ID )?']'		{ node->setSelectorType("columnrange");
-								node->beginCol($id1.text->chars); 
-								node->endCol($id2.text->chars); 
-								node->keyColumns($id3.text->chars);} 
+								node->beginCol((char *)$id1.text->chars); 
+								node->endCol((char *)$id2.text->chars); 
+								if ( id3 != 0) node->keyColumns((char *)$id3.text->chars);} 
 	| '[' id1=INT  id2=INT ']'				{ node->setSelectorType("recordrange"); 
-								node->beginRec($id1.text->chars); 
-								node->endRec($id2.text->chars); }
+								node->beginRec((char *)$id1.text->chars); 
+								node->endRec((char *)$id2.text->chars); }
 	| '[' id1=ID id2=ID ',' id3=INT id4=INT (',' 'key=' id5=ID )? ']'		{ node->setSelectorType("columnrecordrange");
-								node->beginCol($id1.text->chars); 
-								node->endCol($id2.text->chars); 
-								node->beginRec($id3.text->chars); 
-								node->endRec($id4.text->chars);								
-								node->keyColumns($id5.text->chars);} 
+								node->beginCol((char *)$id1.text->chars); 
+								node->endCol((char *)$id2.text->chars); 
+								node->beginRec((char *)$id3.text->chars); 
+								node->endRec((char *)$id4.text->chars);
+								if ( id5 != 0) node->keyColumns((char *)$id5.text->chars);} 
 	;
 
 negation  returns [ TermNode *node]

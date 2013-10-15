@@ -213,6 +213,17 @@ IlwisTypes FlatTable::ilwisType() const
     return itFLATTABLE;
 }
 
+IlwisObject *FlatTable::copy()
+{
+    FlatTable *tbl = new FlatTable();
+    copyTo(tbl);
+    return tbl;
+}
+
+void FlatTable::copyTo(IlwisObject *obj){
+    BaseTable::copyTo(obj);
+}
+
 std::vector<quint32> FlatTable::select(const QString &conditions) const
 {
     return TableSelector::select(this, conditions);

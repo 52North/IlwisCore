@@ -60,15 +60,17 @@ public:
     std::vector<quint32> select(const QString &conditions) const;
 
     IlwisTypes ilwisType() const;
+    IlwisObject *copy() ;
 
 protected:
     bool isColumnIndexValid(quint32 index) const{
-        bool ok =  index != iUNDEF && _datagrid.size() != 0 && index < _datagrid[0].size();
+        bool ok =  index != iUNDEF ;
         if ( ok)
             return true;
         else
             return false;
     }
+    void copyTo(IlwisObject *obj);
     std::vector< std::vector<QVariant> > _datagrid;
 
 

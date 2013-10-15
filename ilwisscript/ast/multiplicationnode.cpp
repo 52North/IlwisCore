@@ -48,7 +48,7 @@ bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbo
         return true;
     }
 
-    return handleBinaryCoverageCases(vright, "binarymathraster", "times", symbols, ctx);
+    return handleBinaryCases(vright, "binarymathraster", "times", symbols, ctx);
 }
 
 bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
@@ -59,7 +59,7 @@ bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols
         _value = {var.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "divide", symbols, ctx);
+    return handleBinaryCases(vright, "binarymathraster", "divide", symbols, ctx);
 }
 
 bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -69,5 +69,5 @@ bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols,
        _value = {var.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
-    return handleBinaryCoverageCases(vright, "binarymathraster", "mod", symbols, ctx);
+    return handleBinaryCases(vright, "binarymathraster", "mod", symbols, ctx);
 }

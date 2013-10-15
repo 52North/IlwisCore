@@ -17,21 +17,21 @@ public:
 
 private:
     template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols) {
-        IlwisData<T1> coverage =  sym._var.value<IlwisData<T1>>();
-        if (!coverage.isValid())
+        IlwisData<T1> source =  sym._var.value<IlwisData<T1>>();
+        if (!source.isValid())
             return false;
-        bool wasAnonymous = coverage->isAnonymous();
-        T1 *obj = coverage->copy();
+        bool wasAnonymous = source->isAnonymous();
+        T1 *obj = static_cast<T1 *>(source->copy());
         if(!obj)
             return false;
         obj->setName(name);
-        IlwisData<T1> gcovCopy;
-        gcovCopy.set(obj);
+        IlwisData<T1> target;
+        target.set(obj);
         QVariant var;
-        var.setValue<IlwisData<T1>>(gcovCopy);
+        var.setValue<IlwisData<T1>>(target);
         symbols.addSymbol(name, 1000, obj->ilwisType(), var);
         if ( wasAnonymous)
-            mastercatalog()->addItems({gcovCopy->source(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
+            mastercatalog()->addItems({target->source(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
         return true;
     }

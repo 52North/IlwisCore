@@ -4,6 +4,7 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "numericoperation.h"
 #include "binarymathraster.h"
 
 using namespace Ilwis;
@@ -19,7 +20,7 @@ BinaryMathRaster::BinaryMathRaster() : _coveragecoverage(false)
 {
 }
 
-BinaryMathRaster::BinaryMathRaster(quint64 metaid,const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr) , _coveragecoverage(false)
+BinaryMathRaster::BinaryMathRaster(quint64 metaid,const Ilwis::OperationExpression &expr) : NumericOperation(metaid, expr) , _coveragecoverage(false)
 {
 }
 
@@ -38,24 +39,8 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
         PixelIterator iterIn(_inputGC1, box);
         PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
 
-        double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
-            if ( (v_in = *iterIn) != rUNDEF) {
-                switch(_operator) {
-                case otPLUS:
-                    v = v_in + _number;break;
-                case otMINUS:
-                    v = v_in - _number;break;
-                case otDIV:
-                    if ( _number != 0)
-                        v = v_in / _number;
-                    else
-                        v = rUNDEF;
-                    break;
-                case otMULT:
-                    v = v_in * _number;break;
-                }
-            }
+            v = calc(*iterIn, _number1);
             ++iterIn;
         });
         return true;
@@ -75,27 +60,8 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
         PixelIterator iterIn2(_inputGC2, box);
         PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
 
-        double v_in1 = 0;
-        double v_in2 = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
-            v_in1 = *iterIn1;
-            v_in2 = *iterIn2;
-            if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
-                switch(_operator) {
-                case otPLUS:
-                    v = v_in1 + v_in2;break;
-                case otMINUS:
-                    v = v_in1 - v_in2;break;
-                case otDIV:
-                    if ( v_in2 != 0)
-                        v = v_in1 / v_in2;
-                    else
-                        v = rUNDEF;
-                    break;
-                case otMULT:
-                    v = v_in1 * v_in2;break;
-                }
-            }
+            v = calc(*iterIn1, *iterIn2);
             ++iterIn1;
             ++iterIn2;
         });
@@ -157,28 +123,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
     if (nrange2.isNull())
         return false;
 
-    double rmax, rmin;
-    switch(_operator) {
-        case otPLUS:
-           rmin = nrange1->min() + nrange2->min();
-           rmax = nrange1->max() + nrange2->max();
-           break;
-        case otMINUS:
-            rmin = nrange1->min() - nrange2->min();
-            rmax = nrange1->max() - nrange2->max();
-            break;
-        case otDIV:
-            rmin = nrange2->min() != 0 ? nrange1->min() / nrange2->min() : std::min(nrange1->min(), nrange2->min());
-            rmax = nrange2->max() != 0 ? nrange1->max() / nrange2->max() : std::min(nrange1->max(), nrange2->max());
-            break;
-        case otMULT:
-            rmin = nrange1->min() * nrange2->min();
-            rmax = nrange1->max() * nrange2->max();
-            break;
-    }
-    NumericRange *newRange = new NumericRange(rmin,
-                                              rmax,
-                                              std::min(nrange1->resolution(), nrange2->resolution()));
+    NumericRange *newRange = constructRangeFrom(nrange1, nrange2);
 
     IDomain dom;
     dom.prepare("value");
@@ -202,7 +147,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)
         return false;
 
-    _number = _expression.parm(nindex).value().toDouble();
+    _number1 = _expression.parm(nindex).value().toDouble();
 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
@@ -211,28 +156,8 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     auto nrange = _inputGC1->datadef().range().dynamicCast<NumericRange>();
     if (nrange.isNull())
         return false;
-    double rmax, rmin;
-    switch(_operator) {
-        case otPLUS:
-           rmin = nrange->min() + _number;
-           rmax = nrange->max() + _number;
-           break;
-        case otMINUS:
-            rmin = nrange->min() - _number;
-            rmax = nrange->max() - _number;
-            break;
-        case otDIV:
-            rmin = _number != 0 ? nrange->min() / _number : nrange->min();
-            rmax = _number != 0 ? nrange->max() / _number : nrange->max();
-            break;
-        case otMULT:
-            rmin = nrange->min() * _number;
-            rmax = nrange->max() * _number;
-            break;
-    }
-    NumericRange *newRange = new NumericRange(rmin,
-                                              rmax,
-                                              nrange->resolution());
+
+    NumericRange *newRange = constructRangeFrom(nrange, _number1);
 
     IDomain dom;
     dom.prepare("value");
@@ -250,15 +175,7 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
     IlwisTypes ptype1 = _expression.parm(0).valuetype();
     IlwisTypes ptype2 = _expression.parm(1).valuetype();
 
-    QString oper = _expression.parm(2).value();
-    if ( oper.toLower() == "add")
-        _operator = otPLUS;
-    else if ( oper.toLower() == "substract")
-        _operator = otMINUS;
-    else if ( oper == "divide")
-        _operator = otDIV;
-    else
-        _operator = otMULT;
+    mathoperator(_expression.parm(2).value());
 
     if ( (ptype1 == itRASTER && hasType(ptype2,itNUMBER)) || (ptype2 == itRASTER && hasType(ptype1,itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))

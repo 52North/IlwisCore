@@ -27,6 +27,7 @@ void ExecutionContext::clear()
     _silent = false;
     _threaded = true;
     _results.clear();
+    _additionalInfo.clear();
     _masterCsy = sUNDEF;
     _masterGeoref = sUNDEF;
     _out = &std::cout;
@@ -36,12 +37,14 @@ ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(th
     _out = &std::cout;
 }
 
-void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource)
+void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource, const QString& addInfo)
 {
     QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
     tbl.addSymbol(name,_scope, tp, var);
     _results.clear();
     _results.push_back(name);
+    if ( addInfo != sUNDEF)
+        _additionalInfo[name] = addInfo;
     if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && resource.isValid()) {
         mastercatalog()->addItems({resource});
     }

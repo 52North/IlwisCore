@@ -20,14 +20,18 @@ public:
 
 
 protected:
-    bool handleBinaryCoverageCases(const NodeValue &vright, const QString& operation, const QString &relation,
+    bool handleBinaryCases(const NodeValue &vright, const QString& operation, const QString &relation,
                                    Ilwis::SymbolTable &symbols, ExecutionContext *ctx);
+    bool handleTableCases(const NodeValue &vright, const QString &operation, const QString &relation,
+                          SymbolTable &symbols, ExecutionContext *ctx);
     IlwisTypes typesUsed(const NodeValue &vright, SymbolTable &symbols) const;
 
     QSharedPointer<ASTNode> _leftTerm;
     QVector< RightTerm > _rightTerm;
 
 
+private:
+    QString additionalInfo(ExecutionContext *ctx, const QString &key) const;
 };}
 
 #endif // OPERATIONNODE_H

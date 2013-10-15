@@ -99,7 +99,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/table/tableselector.cpp \
     core/ilwisobjects/table/tablemerger.cpp \
     core/ilwisobjects/domain/domainmerger.cpp \
-    core/util/tranquilizer.cpp
+    core/util/tranquilizer.cpp \
+    core/ilwisobjects/operation/numericoperation.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -210,7 +211,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/table/tableselector.h \
     core/ilwisobjects/table/tablemerger.h \
     core/ilwisobjects/domain/domainmerger.h \
-    core/util/tranquilizer.h
+    core/util/tranquilizer.h \
+    core/ilwisobjects/operation/numericoperation.h
 
 
 

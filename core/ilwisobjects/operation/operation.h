@@ -3,6 +3,9 @@
 
 namespace Ilwis {
 
+class OperationExpression;
+class SymbolTable;
+
 class KERNELSHARED_EXPORT OperationImplementation : public Identity
 {
 public:

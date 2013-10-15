@@ -58,7 +58,7 @@ bool RelationNode::handleEQ(const NodeValue& vright,SymbolTable &symbols, Execut
        _value = {var1.toString() == var2.toString(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "eq", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster", "eq", symbols, ctx);
 }
 
 bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -72,7 +72,7 @@ bool RelationNode::handleNEQ(const NodeValue& vright,SymbolTable &symbols, Execu
        _value = {var1.toString() != var2.toString(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","neq", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster","neq", symbols, ctx);
 }
 
 bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -82,7 +82,7 @@ bool RelationNode::handleGREATEREQ(const NodeValue& vright,SymbolTable &symbols,
        _value = {var1.toDouble() >= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "greatereq", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster", "greatereq", symbols, ctx);
 }
 
 bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -92,7 +92,7 @@ bool RelationNode::handleGREATER(const NodeValue& vright,SymbolTable &symbols, E
         _value = { var1.toDouble() > var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","greater", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster","greater", symbols, ctx);
 }
 
 bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -102,7 +102,7 @@ bool RelationNode::handleLESS(const NodeValue& vright,SymbolTable &symbols, Exec
        _value = { var1.toDouble() < var2.toDouble() , NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster","less", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster","less", symbols, ctx);
 }
 
 bool RelationNode::handleLESSEQ(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -112,5 +112,5 @@ bool RelationNode::handleLESSEQ(const NodeValue& vright,SymbolTable &symbols, Ex
         _value = {var1.toDouble() <= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
-    return handleBinaryCoverageCases(vright,"binarylogicalraster", "lesseq",symbols, ctx);
+    return handleBinaryCases(vright,"binarylogicalraster", "lesseq",symbols, ctx);
 }

@@ -19,6 +19,7 @@ public:
 private:
     ITable _inputTable;
     ITable _outputTable;
+    std::vector<QString> _columns;
 };
 }
 }

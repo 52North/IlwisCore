@@ -21,7 +21,8 @@ public:
 
     void setParent(const IDomain &dm);
 
-    static QString standardNumericDomainName(double vmin, double vmax) ;
+    static QString standardNumericDomainName(double vmin, double vmax, double step=rUNDEF) ;
+
 
 protected:
     SPRange getRange() const;

@@ -97,12 +97,17 @@ void SymbolTable::unloadRasters()
     }
 }
 
-IlwisTypes SymbolTable::ilwisType(const QString &symname) const
+IlwisTypes SymbolTable::ilwisType(const QVariant &value, const QString& symname) const
 {
+    if ( symname == sUNDEF) { // not a referenced value
+        return Domain::ilwType(value);
+    }
+
     auto iter = _symbols.find(symname);
     if ( iter != _symbols.end()) {
         return iter.value()._type;
     }
+
     IlwisTypes tp = IlwisObject::findType(symname);
     return tp;
 }

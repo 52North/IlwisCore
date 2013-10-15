@@ -47,9 +47,12 @@ bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols, ExecutionC
     IlwisTypes used = typesUsed(vright, symbols);
     bool ok = false;
     if ( hasType(used, itRASTER))
-        ok = handleBinaryCoverageCases(vright, "binarymathraster", "add", symbols, ctx);
-    else if ( (used & itFEATURE) == 0){
-        ok = handleBinaryCoverageCases(vright, "binarymathfeature", "add", symbols, ctx);
+        ok = handleBinaryCases(vright, "binarymathraster", "add", symbols, ctx);
+    else if ( hasType(used , itFEATURE)){
+        ok = handleBinaryCases(vright, "binarymathfeature", "add", symbols, ctx);
+
+    } else if ( hasType(used,itTABLE)){
+        ok = handleTableCases(vright, "binarymathtable", "add", symbols, ctx);
 
     }
     return ok;
@@ -64,9 +67,9 @@ bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols, Exec
     IlwisTypes used = typesUsed(vright, symbols);
     bool ok = false;
     if ( hasType(used, itRASTER))
-        ok = handleBinaryCoverageCases(vright, "binarymathraster", "substract", symbols, ctx);
+        ok = handleBinaryCases(vright, "binarymathraster", "substract", symbols, ctx);
     else if (  (used & itFEATURE) == 0){
-        ok = handleBinaryCoverageCases(vright, "binarymathfeature", "substract", symbols, ctx);
+        ok = handleBinaryCases(vright, "binarymathfeature", "substract", symbols, ctx);
 
     }
     return ok;

@@ -47,7 +47,7 @@ bool ExpressionNode::handleAnd(const NodeValue& vright,SymbolTable &symbols, Exe
         _value = {_value.toLongLong() & vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-   return handleBinaryCoverageCases(vright, "binarylogicalraster", "and", symbols, ctx);
+   return handleBinaryCases(vright, "binarylogicalraster", "and", symbols, ctx);
 }
 
 bool ExpressionNode::handleOr(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -58,7 +58,7 @@ bool ExpressionNode::handleOr(const NodeValue& vright,SymbolTable &symbols, Exec
         _value = {_value.toLongLong() | vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "or", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster", "or", symbols, ctx);
 }
 
 bool ExpressionNode::handleXor(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -69,5 +69,5 @@ bool ExpressionNode::handleXor(const NodeValue& vright,SymbolTable &symbols, Exe
         _value = {_value.toLongLong() ^ vright.toLongLong(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCoverageCases(vright, "binarylogicalraster", "xor", symbols, ctx);
+    return handleBinaryCases(vright, "binarylogicalraster", "xor", symbols, ctx);
 }

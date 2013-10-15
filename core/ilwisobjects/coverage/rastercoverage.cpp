@@ -86,18 +86,6 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, int index) {
     });
 }
 
-//IRasterCoverage RasterCoverage::get(quint32 index1, quint32 index2)
-//{
-//    IRasterCoverage gcovParent;
-//    gcovParent.set(this);
-//    IRasterCoverage raster = OperationHelperRaster::initialize(gcovParent,itRASTER, itDOMAIN | itCOORDSYSTEM | itGEOREF);
-//    raster->size(Size(size().xsize(), size().ysize()));
-//    raster->_grid.reset(raster->_grid->clone(index1, index2));
-
-//    return raster;
-
-//}
-
 Grid *RasterCoverage::grid()
 {
     Locker lock(_mutex);

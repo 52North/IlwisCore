@@ -13,6 +13,7 @@
 #include "rasterinterpolator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "numericoperation.h"
 #include "baseoperationsmodule.h"
 #include "tablemerger.h"
 #include "data/rasvalue.h"
@@ -34,6 +35,7 @@
 #include "math/binarymathraster.h"
 #include "math/binarymathfeature.h"
 #include "math/binarylogical.h"
+#include "math/binarymathtable.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
 
@@ -61,6 +63,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(BinaryLogical::createMetadata(), BinaryLogical::create);
     commandhandler()->addOperation(BinaryMathRaster::createMetadata(), BinaryMathRaster::create);
     commandhandler()->addOperation(BinaryMathFeature::createMetadata(), BinaryMathFeature::create);
+    commandhandler()->addOperation(BinaryMathTable::createMetadata(), BinaryMathTable::create);
     commandhandler()->addOperation(Ceil::createMetadata(), Ceil::create);
     commandhandler()->addOperation(Coord2Pixel::createMetadata(), Coord2Pixel::create);
     commandhandler()->addOperation(Cosine::createMetadata(), Cosine::create);

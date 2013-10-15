@@ -3,10 +3,9 @@
 
 namespace Ilwis {
 namespace BaseOperations{
-class BinaryMathRaster : public OperationImplementation
+class BinaryMathRaster : public NumericOperation
 {
 public:
-    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV};
     BinaryMathRaster();
     BinaryMathRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
 
@@ -26,9 +25,7 @@ private:
     IRasterCoverage _inputGC1;
     IRasterCoverage _inputGC2;
     IRasterCoverage _outputGC;
-    double _number;
     Box3D<qint32> _box;
-    OperatorType _operator;
 };
 }
 }

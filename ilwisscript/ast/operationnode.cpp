@@ -39,7 +39,7 @@ bool OperationNode::isValid() const
     return ! _leftTerm.isNull();
 }
 
-bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QString &operation,
+bool OperationNode::handleBinaryCases(const NodeValue& vright, const QString &operation,
                                               const QString& relation,SymbolTable &symbols, ExecutionContext *ctx) {
     QString expr;
     if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
@@ -59,14 +59,45 @@ bool OperationNode::handleBinaryCoverageCases(const NodeValue& vright, const QSt
     return true;
 }
 
+bool OperationNode::handleTableCases(const NodeValue& vright, const QString &operation,
+                                              const QString& relation,SymbolTable &symbols, ExecutionContext *ctx) {
+    QString expr;
+    if ( SymbolTable::isNumerical(vright) && SymbolTable::isDataLink(_value)){
+        expr = QString("%1(%2,%3,%4,%5)").arg(operation).arg(_value.toString()).
+                                          arg(additionalInfo(ctx,_value.toString())).
+                                          arg(vright.toDouble()).arg(relation);
+    } else if (SymbolTable::isNumerical(_value) && SymbolTable::isDataLink(vright)){
+        expr = QString("%1(%2,%3,%4, %5)").arg(operation).arg(vright.toString()).
+                                           arg(additionalInfo(ctx,vright.toString())).
+                                           arg(_value.toDouble()).arg(relation);
+    } else if (SymbolTable::isDataLink(_value) && SymbolTable::isDataLink(vright)) {
+        expr = QString("%1(%2,%3,%4,%5)").arg(operation).arg(vright.toString()).arg(_value.toString()).arg(relation);
+    } else if (SymbolTable::isDataLink(vright) && SymbolTable::isNumerical(_value)) {
+        expr = QString("%1(%2,%3,%4,%5)").arg(operation).arg(vright.toString()).arg(_value.toDouble()).arg(relation);
+    }
+
+    bool ok = Ilwis::commandhandler()->execute(expr, ctx,symbols);
+    if ( !ok || ctx->_results.size() != 1)
+        return false;
+    _value = {ctx->_results[0], NodeValue::ctID};
+    return true;
+}
+
 IlwisTypes OperationNode::typesUsed(const NodeValue& vright, SymbolTable &symbols) const {
-    IlwisTypes tp1 = symbols.ilwisType(vright.id());
-    IlwisTypes tp2 = symbols.ilwisType(_value.id());
+    IlwisTypes tp1 = symbols.ilwisType(vright, vright.id());
+    IlwisTypes tp2 = symbols.ilwisType(_value, _value.id());
 
     if ( tp1 == itUNKNOWN || tp2 == itUNKNOWN)
         return itUNKNOWN;
     return tp1 | tp2;
 
+}
+
+QString OperationNode::additionalInfo(ExecutionContext *ctx, const QString& key ) const {
+    const auto& iter = ctx->_additionalInfo.find(key);
+    if ( iter == ctx->_additionalInfo.end())
+        return sUNDEF;
+    return (*iter).second;
 }
 
 

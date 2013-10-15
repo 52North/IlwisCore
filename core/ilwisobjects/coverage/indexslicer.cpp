@@ -99,5 +99,5 @@ double IndexSlicer::findIndexNumericalItem(const IDomain& indexDomain, const QSt
 //    //double index1 = _raster->index(indexItem);
 //    double index1 = numrange->index(itemIndex);
 
-//    return index1;
+    return rUNDEF;
 }

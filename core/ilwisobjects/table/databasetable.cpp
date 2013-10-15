@@ -439,6 +439,20 @@ std::vector<quint32> DatabaseTable::select(const QString &conditions) const{
     return std::vector<quint32>();
 }
 
+IlwisObject *DatabaseTable::copy()
+{
+    DatabaseTable *tbl = new DatabaseTable();
+    copyTo(tbl);
+    return tbl;
+}
+
+void DatabaseTable::copyTo(IlwisObject *obj){
+    BaseTable::copyTo(obj);
+    DatabaseTable *tbl = static_cast<DatabaseTable *>(obj);
+    tbl->_database = _database;
+    tbl->_sqlCreateDone = _sqlCreateDone;
+}
+
 
 
 

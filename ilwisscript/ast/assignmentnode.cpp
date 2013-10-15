@@ -132,13 +132,16 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
             store2Format(node, sym, result);
 
         }
-        if (  tp & itCOVERAGE) {
+        if (  hasType(tp, itILWISOBJECT)) {
             bool ok;
-            if ( tp & itRASTER) {
+            if ( hasType(tp, itRASTER)) {
                 ok = copyObject<RasterCoverage>(sym, result,symbols);
             }
-            else
+            else if hasType(tp, itFEATURE)
                 ok = copyObject<FeatureCoverage>(sym, result,symbols);
+            else if hasType(tp, itTABLE)
+                ok = copyObject<Table>(sym, result,symbols);
+
             if(!ok) {
                 throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
             }

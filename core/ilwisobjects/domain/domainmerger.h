@@ -7,8 +7,10 @@ class DomainMerger
 public:
     DomainMerger();
     DomainMerger(const IDomain& dom1, const IDomain& dom2);
-    void mergeDomains(const IDomain& dom1, const IDomain& dom2);
-
+    IDomain mergeDomains(const IDomain& dom1, const IDomain& dom2);
+    std::map<quint32, quint32> renumberer() const;
+    virtual bool merge() = 0;
+    IDomain mergedDomain() const;
 
 protected:
     IDomain _domain1;

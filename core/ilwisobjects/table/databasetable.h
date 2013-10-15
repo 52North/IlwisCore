@@ -112,6 +112,7 @@ public:
     IlwisTypes ilwisType() const;
 
     std::vector<quint32> select(const QString &conditions) const;
+    IlwisObject *copy();
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;
@@ -153,7 +154,7 @@ private:
 
     quint32 numberOfExistingRecords();
     bool initLoad();
-
+    void copyTo(IlwisObject *obj);
 };
 typedef IlwisData<DatabaseTable> IDBTable;
 }
