@@ -193,7 +193,7 @@ void  OperationExpression::parseSelectors(const QString& e, const SymbolTable &s
     QString inputMap = e.mid(index2+1, index - index2 - 1);
     _inParameters.push_back(Parameter(inputMap, itUNKNOWN, symtab));
     QString outputPart =  index3 == -1 ? e.left(index2) : e.left(index3);
-    IlwisType valueType =  hasType(_inParameters.back().valuetype(), itCOVERAGE) ? itCOVERAGE : itTABLE;
+    IlwisTypes valueType =  hasType(_inParameters.back().valuetype(), itCOVERAGE) ? itCOVERAGE : itTABLE;
     _outParameters.push_back(Parameter(outputPart, valueType, symtab));
     int index4=selectPart.indexOf(",");
     if ( index4 == -1) { //either id or number
