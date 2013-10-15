@@ -23,6 +23,31 @@ TableMerger::TableMerger()
 {
 }
 
+bool TableMerger::mergeMetadataTables(ITable& tblOut, const ITable& tblIn, const std::vector<QString>& columns) {
+    for(const auto colName : columns) {
+        auto coldefIn = tblIn->columndefinition(colName);
+        if ( !coldefIn.isValid()) {
+            ERROR2(ERR_NOT_FOUND2, colName, tblIn->name());
+            return false;
+        }
+        ColumnDefinition coldefOut;
+        if ( (coldefOut=tblOut->columndefinition(coldefIn.name())).isValid()){
+            if (coldefIn.datadef().isCompatibleWith(coldefOut.datadef())){
+                ColumnDefinition defnew = mergeColumnDefinitions(coldefOut, coldefIn, &(_renumberers[colName]));
+                tblOut->columndefinition(coldefOut.id()) = defnew;
+            } else {
+                ERROR2(ERR_NOT_COMPATIBLE2,"column definition",tblIn->name());
+                return false;
+            }
+        }else {
+            tblOut->addColumn(ColumnDefinition(coldefIn, tblOut->columns()));
+        }
+        quint32 recs = std::max(tblIn->records(), tblOut->records());
+        tblOut->records(recs);
+    }
+    return true;
+}
+
 ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) {
     std::vector<ColumnDefinition> newdefs;
     quint32 records = 0;
