@@ -40,10 +40,10 @@ bool TableMerger::mergeMetadataTables(ITable& tblOut, const ITable& tblIn, const
                 return false;
             }
         }else {
-            tblOut->addColumn(ColumnDefinition(coldefIn, tblOut->columns()));
+            tblOut->addColumn(ColumnDefinition(coldefIn, tblOut->columnCount()));
         }
-        quint32 recs = std::max(tblIn->records(), tblOut->records());
-        tblOut->records(recs);
+        quint32 recs = std::max(tblIn->recordCount(), tblOut->recordCount());
+        tblOut->recordCount(recs);
     }
     return true;
 }
@@ -52,7 +52,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
     std::vector<ColumnDefinition> newdefs;
     quint32 records = 0;
     quint32 index = 0;
-    for(int c1 = 0; c1 < tbl1->columns(); ++c1) {
+    for(int c1 = 0; c1 < tbl1->columnCount(); ++c1) {
         auto coldef1 = tbl1->columndefinition(c1);
         ColumnDefinition coldef2;
         if ( (coldef2=tbl2->columndefinition(coldef1.name())).isValid() && coldef1.name() != COVERAGEKEYCOLUMN){
@@ -73,7 +73,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
         }
         ++index;
     }
-    for(int c2 = 0; c2 < tbl2->columns(); ++c2) {
+    for(int c2 = 0; c2 < tbl2->columnCount(); ++c2) {
         auto coldef2 = tbl2->columndefinition(c2);
         if ( coldef2.name() == COVERAGEKEYCOLUMN) {
             QString colName = COVERAGEKEYCOLUMN;
@@ -92,7 +92,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
 
     IFlatTable newTable;
     newTable.prepare(QString("ilwis://internalcatalog/%1_%2").arg(tbl1->name(), tbl2->name()));
-    newTable->records(records);
+    newTable->recordCount(records);
     for(const ColumnDefinition& def : newdefs) {
         newTable->addColumn(def);
     }
@@ -101,7 +101,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
 
 void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &sourceTable2, ITable &targetTable, const std::vector<QString>& except) const
 {
-    for(int col=0; col < sourceTable1->columns(); ++col ) {
+    for(int col=0; col < sourceTable1->columnCount(); ++col ) {
         const auto& coldef = sourceTable1->columndefinition(col);
         auto iter = std::find(except.begin(), except.end(), coldef.name());
         if ( iter != except.end())
@@ -109,7 +109,7 @@ void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &source
         auto values = sourceTable1->column(coldef.name()) ;
         targetTable->column(coldef.name(),values);
     }
-    for(int col=0; col < sourceTable2->columns(); ++col ) {
+    for(int col=0; col < sourceTable2->columnCount(); ++col ) {
         const auto& coldef = sourceTable2->columndefinition(col);
         auto iterex = std::find(except.begin(), except.end(), coldef.name());
         if ( iterex != except.end())
@@ -130,7 +130,7 @@ void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &source
                 }
             }
         }
-        targetTable->column(targetColName,values, sourceTable1->records());
+        targetTable->column(targetColName,values, sourceTable1->recordCount());
     }
 }
 

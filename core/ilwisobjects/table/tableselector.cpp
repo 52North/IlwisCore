@@ -24,7 +24,7 @@ std::vector<quint32> TableSelector::select(const Table* table, const QString &co
     if ( !parser.isValid()) {
         return std::vector<quint32>();
     }
-    std::vector<bool> status(table->records(),false);
+    std::vector<bool> status(table->recordCount(),false);
     for(auto part : parser.parts()) {
         std::vector<QVariant> data = table->column(part.field());
         if (data.size() == 0) {

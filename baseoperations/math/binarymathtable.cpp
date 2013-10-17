@@ -43,7 +43,7 @@ bool BinaryMathTable::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    std::vector<QVariant> data1(_inputTable->records(), _number1), data2(_inputTable->records(), _number2),outdata(_inputTable->records(), rUNDEF);
+    std::vector<QVariant> data1(_inputTable->recordCount(), _number1), data2(_inputTable->recordCount(), _number2),outdata(_inputTable->recordCount(), rUNDEF);
     if ( _column1 != sUNDEF)
         data1 = _inputTable->column(_column1);
 
@@ -126,7 +126,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
         newRange = constructRangeFrom(def.datadef().range<NumericRange>(), number);
     }
     if ( _outColumn == sUNDEF)
-        _outColumn = "column_" + QString::number(_inputTable->columns());
+        _outColumn = "column_" + QString::number(_inputTable->columnCount());
 
     QString outName = _expression.parm(0, false).value();
     if ( table != outName) {
@@ -147,7 +147,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
     int index = _outputTable->columnIndex(_outColumn);
     IDomain dom;
     dom.prepare("value");
-    ColumnDefinition coldef(_outColumn,dom, index == iUNDEF ? _outputTable->columns() : index);
+    ColumnDefinition coldef(_outColumn,dom, index == iUNDEF ? _outputTable->columnCount() : index);
     coldef.datadef().range(newRange);
     if ( index == iUNDEF)
         _outputTable->addColumn(coldef);

@@ -92,7 +92,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     _outputFeatures->envelope(envelope);
 
     ITable attTable = _merger.mergeMetadataTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
-    attTable->records(_inputFeatureSet1->featureCount() + _inputFeatureSet2->featureCount());
+    attTable->recordCount(_inputFeatureSet1->featureCount() + _inputFeatureSet2->featureCount());
     _outputFeatures->attributeTable(attTable);
 
     QString outname = _expression.parm(0,false).value();

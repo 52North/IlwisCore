@@ -76,7 +76,7 @@ std::vector<QVariant> FlatTable::column(quint32 index) const {
     if ( !isColumnIndexValid(index))
         return std::vector<QVariant>();
 
-    std::vector<QVariant> data(records());
+    std::vector<QVariant> data(recordCount());
     for(quint32 i=0; i < _rows; ++i) {
         data[i] = _datagrid[i][index];
     }
@@ -110,7 +110,7 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
         return ;
     quint32 rec = offset;
     for(const QVariant& var : vars) {
-        if ( rec < _rows)
+        if ( rec < _datagrid.size())
             _datagrid[rec++][index] = var;
         else {
             _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
@@ -128,7 +128,7 @@ std::vector<QVariant> FlatTable::record(quint32 rec) const
     std::vector<QVariant> data;
 
     if ( rec < _rows && _datagrid.size() != 0) {
-        data.resize(columns());
+        data.resize(columnCount());
         int col = 0;
         for(const QVariant& var : _datagrid[rec])
             data[col++] = var;
@@ -227,4 +227,13 @@ void FlatTable::copyTo(IlwisObject *obj){
 std::vector<quint32> FlatTable::select(const QString &conditions) const
 {
     return TableSelector::select(this, conditions);
+}
+
+bool FlatTable::merge(const IlwisObject *obj, int options)
+{
+    if (!obj.isValid() || ! hasType(obj->ilwisType(), itTABLE))
+        return false;
+   // ITable tbl = obj.get<Table>();
+
+    return true;
 }

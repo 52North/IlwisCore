@@ -22,17 +22,17 @@ BaseTable::~BaseTable()
 {
 }
 
-quint32 BaseTable::records() const
+quint32 BaseTable::recordCount() const
 {
     return _rows;
 }
 
-quint32 BaseTable::columns() const
+quint32 BaseTable::columnCount() const
 {
     return _columns;
 }
 
-void BaseTable::records(quint32 r)
+void BaseTable::recordCount(quint32 r)
 {
     _rows = r;
 }
@@ -104,6 +104,31 @@ ColumnDefinition BaseTable::columndefinition(quint32 index) const
     return ColumnDefinition();
 }
 
+ColumnDefinition &BaseTable::columndefinition(quint32 index)
+{
+    return _columnDefinitionsByIndex[index];
+}
+
+void BaseTable::columndefinition(const ColumnDefinition &coldef)
+{
+    if ( coldef.id() >=  _columnDefinitionsByIndex.size())     {
+        addColumn(coldef.name(), coldef.datadef().domain());
+    } else {
+        auto iter1 = _columnDefinitionsByIndex.find(coldef.id());
+        auto iter2 = _columnDefinitionsByName.find(coldef.name());
+        if ( iter1 != _columnDefinitionsByIndex.end()) {
+            _columnDefinitionsByName.remove(iter1.value().name());
+            _columnDefinitionsByIndex.remove(coldef.id());
+
+        }else if ( iter2 != _columnDefinitionsByName.end()) {
+            _columnDefinitionsByIndex.remove(iter2.value().id());
+            _columnDefinitionsByName.remove(coldef.name());
+        }
+        _columnDefinitionsByName[coldef.name()] = coldef;
+        _columnDefinitionsByIndex[coldef.id()] = coldef;
+    }
+}
+
 
 bool BaseTable::prepare()
 {
@@ -116,11 +141,6 @@ bool BaseTable::prepare()
 bool BaseTable::isValid() const
 {
     return _rows != 0 && _columns != 0;
-}
-
-ColumnDefinition &BaseTable::columndefinition(quint32 index)
-{
-    return _columnDefinitionsByIndex[index]    ;
 }
 
 bool  BaseTable::initLoad() {
@@ -143,7 +163,6 @@ void BaseTable::copyTo(IlwisObject *obj)
 {
     IlwisObject::copyTo(obj);
     BaseTable *btable = static_cast<BaseTable *>(obj);
-    btable->_rows = _rows;
     btable->_columns = _columns;
     btable->_columnDefinitionsByIndex = _columnDefinitionsByIndex;
     btable->_columnDefinitionsByName = _columnDefinitionsByName;
@@ -153,6 +172,7 @@ void BaseTable::copyTo(IlwisObject *obj)
         std::vector<QVariant> colvalues = column(def.name());
         btable->column(def.name(), colvalues);
     }
+    btable->_rows = _rows;
 }
 
 quint32 BaseTable::columnIndex(const QString &nme) const

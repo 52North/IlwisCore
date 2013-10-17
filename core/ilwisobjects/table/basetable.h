@@ -21,15 +21,15 @@ public:
     /*!
     \se Ilwis::Table
      */
-    virtual quint32 records() const;
+    virtual quint32 recordCount() const;
     /*!
     \se Ilwis::Table
      */
-    virtual quint32 columns() const;
+    virtual quint32 columnCount() const;
     /*!
     \se Ilwis::Table
      */
-    virtual void records(quint32 r);
+    virtual void recordCount(quint32 r);
     /*!
     \se Ilwis::Table
      */
@@ -53,6 +53,7 @@ public:
     ColumnDefinition columndefinition(const QString& nme) const;
     ColumnDefinition columndefinition(quint32 index) const;
     ColumnDefinition& columndefinition(quint32 index);
+    void columndefinition(const ColumnDefinition &coldef);
 //    /*!
 //    \se Ilwis::Table
 //     */

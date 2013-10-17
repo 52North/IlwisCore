@@ -58,6 +58,7 @@ public:
      */
     bool addColumn(const ColumnDefinition& def);
     std::vector<quint32> select(const QString &conditions) const;
+    bool merge(const IlwisObject *obj, int options=0);
 
     IlwisTypes ilwisType() const;
     IlwisObject *copy() ;
