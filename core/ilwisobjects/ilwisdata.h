@@ -64,7 +64,7 @@ public:
     }
 
     template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
-        set(dynamic_cast<T *>(obj._implementation.get())) ;
+         set(dynamic_cast<T *>(obj._implementation.get())) ;
         return *this;
     }
 
@@ -96,7 +96,7 @@ public:
 
      \return Returns a new "upgraded" reference to the class.
     */
-    template<class C> IlwisData<C> get() const {
+    template<class C=IlwisObject> IlwisData<C> get() const {
         if (_implementation.get() == 0)
             throw ErrorObject(TR("Using unitialized object"));
         if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {
