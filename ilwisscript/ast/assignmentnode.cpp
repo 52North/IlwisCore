@@ -145,7 +145,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
             else if hasType(tp, itFEATURE)
                 ok = copyObject<FeatureCoverage>(sym, result,symbols);
             else if hasType(tp, itTABLE){
-                ok = copyObject<Table>(sym, result,symbols);
+                ok = copyObject<Table>(sym, result,symbols,true);
                 if (!_selector.isNull()){
                     QString varName = _selector->variable();
                     ITable source =  sym._var.value<ITable>();

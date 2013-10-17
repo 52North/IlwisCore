@@ -22,21 +22,28 @@ public:
     void addSelector(Selector *n);
 
 private:
-    template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols) {
+    template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols, bool useMerge=false) {
         IlwisData<T1> source =  sym._var.value<IlwisData<T1>>();
         if (!source.isValid())
             return false;
         bool wasAnonymous = source->isAnonymous();
+        bool done = false;
         IlwisData<T1> target;
-        if ( target.prepare(name)) {
-            target->merge(source.ptr());
-        } else {
+        if ( useMerge) {
+            if ( target.prepare(name)) {
+                done = target->merge(source.ptr());
+            }
+        }
+        if(!done) {
             T1 *obj = static_cast<T1 *>(source->copy());
             if(!obj)
                 return false;
             obj->setName(name);
             target.set(obj);
         }
+        if ( !target.isValid())
+            return false;
+
         QVariant var;
         var.setValue<IlwisData<T1>>(target);
         symbols.addSymbol(name, 1000, target->ilwisType(), var);
