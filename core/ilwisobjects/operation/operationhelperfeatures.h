@@ -54,7 +54,7 @@ public:
             //TODO better handling for multiple feature types
             if ( !tbl.isValid())
                 return false;
-            for(int i=0; i < tbl->columns(); ++i ){
+            for(int i=0; i < tbl->columnCount(); ++i ){
                 ColumnDefinition& def = tbl->columndefinition(i);
                 if ( def.datadef().domain()->valueType() & itNUMERIC) {
                     ContainerStatistics<double> stats;
