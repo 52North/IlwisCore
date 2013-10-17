@@ -231,9 +231,10 @@ std::vector<quint32> FlatTable::select(const QString &conditions) const
 
 bool FlatTable::merge(const IlwisObject *obj, int options)
 {
-    if (!obj.isValid() || ! hasType(obj->ilwisType(), itTABLE))
+    if (obj != 0 || ! hasType(obj->ilwisType(), itTABLE))
         return false;
-   // ITable tbl = obj.get<Table>();
+   const ITable tbl;
+  // tbl.set(static_cast<const Table *>(obj));
 
     return true;
 }
