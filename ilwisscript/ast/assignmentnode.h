@@ -1,7 +1,12 @@
 #ifndef AssignmentNode_H
 #define AssignmentNode_H
 
+#include "ilwisdata.h"
+
 namespace Ilwis {
+
+class Selector;
+
 class AssignmentNode : public ASTNode
 {
 public:
@@ -14,6 +19,7 @@ public:
     QString nodeType() const;
     bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
     void setFormatPart(ASTNode *node);
+    void addSelector(Selector *n);
 
 private:
     template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols) {
@@ -21,15 +27,19 @@ private:
         if (!source.isValid())
             return false;
         bool wasAnonymous = source->isAnonymous();
-        T1 *obj = static_cast<T1 *>(source->copy());
-        if(!obj)
-            return false;
-        obj->setName(name);
         IlwisData<T1> target;
-        target.set(obj);
+        if ( target.prepare(name)) {
+            target->merge(source.ptr());
+        } else {
+            T1 *obj = static_cast<T1 *>(source->copy());
+            if(!obj)
+                return false;
+            obj->setName(name);
+            target.set(obj);
+        }
         QVariant var;
         var.setValue<IlwisData<T1>>(target);
-        symbols.addSymbol(name, 1000, obj->ilwisType(), var);
+        symbols.addSymbol(name, 1000, target->ilwisType(), var);
         if ( wasAnonymous)
             mastercatalog()->addItems({target->source(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
@@ -42,6 +52,7 @@ private:
     QSharedPointer<IDNode> _result;
     QSharedPointer<ASTNode> _typemodifier;
     QSharedPointer<ExpressionNode> _expression;
+    QSharedPointer<Selector> _selector;
 };
 }
 

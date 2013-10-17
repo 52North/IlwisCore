@@ -3,7 +3,6 @@
 #include <QSqlError>
 
 #include "kernel.h"
-#include "ilwisdata.h"
 #include "raster.h"
 #include "symboltable.h"
 #include "astnode.h"
@@ -34,6 +33,7 @@
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
+#include "selectornode.h"
 #include "assignmentnode.h"
 
 using namespace Ilwis;
@@ -60,6 +60,11 @@ void AssignmentNode::setResult(IDNode *node)
 void AssignmentNode::setFormatPart(ASTNode *node)
 {
     _typemodifier = QSharedPointer<ASTNode>(node);
+}
+
+void AssignmentNode::addSelector(Selector *n)
+{
+    _selector.reset(n);
 }
 
 void AssignmentNode::setExpression(ExpressionNode *node)
@@ -139,13 +144,27 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
             }
             else if hasType(tp, itFEATURE)
                 ok = copyObject<FeatureCoverage>(sym, result,symbols);
-            else if hasType(tp, itTABLE)
+            else if hasType(tp, itTABLE){
                 ok = copyObject<Table>(sym, result,symbols);
+                if (!_selector.isNull()){
+                    QString varName = _selector->variable();
+                    ITable source =  sym._var.value<ITable>();
+                    QString oldColName = ctx->_additionalInfo[source->name()];
+                    QVariant newT= symbols.getValue(result);
+                    ITable newTable = newT.value<ITable>();
+                    ColumnDefinition coldef = newTable->columndefinition(oldColName);
+                    if ( coldef.isValid()){
+                        coldef.setName(varName);
+                        newTable->columndefinition(coldef);
+                    }
+                }
+            }
 
             if(!ok) {
                 throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
             }
-
+            ctx->clear(true);
+            ctx->_results.push_back(result);
             return ok;
 
         } else {
