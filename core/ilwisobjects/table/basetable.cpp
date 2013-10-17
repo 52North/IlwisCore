@@ -55,8 +55,10 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
         kernel()->issues()->log(TR("Adding duplicate column %1").arg(name()),IssueObject::itWarning);
         return false;
     }
-    _columnDefinitionsByName[def.name()] = def;
-    _columnDefinitionsByIndex[def.id()] = _columnDefinitionsByName[def.name()];
+    ColumnDefinition coldef = def;
+    coldef.columnindex(_columnDefinitionsByIndex.size());
+    _columnDefinitionsByName[coldef.name()] = coldef;
+    _columnDefinitionsByIndex[coldef.columnindex()] = _columnDefinitionsByName[coldef.name()];
     _columns = _columnDefinitionsByName.size();
 
     return true;
