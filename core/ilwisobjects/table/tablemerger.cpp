@@ -23,6 +23,36 @@ TableMerger::TableMerger()
 {
 }
 
+bool TableMerger::copyColumns(const ITable &tblSource, ITable& tbltarget, int options) {
+    int index = 0;
+    if (!tblSource.isValid() || !tbltarget.isValid()){
+        return ERROR1(ERR_NO_INITIALIZED_1, "Tables");
+    }
+    std::map<QString, QString> nameMapping;
+    for(int c1 = 0; c1 < tblSource->columnCount(); ++c1) {
+        auto coldef1 = tblSource->columndefinition(c1);
+        ColumnDefinition coldef2;
+        if ( (coldef2=tbltarget->columndefinition(coldef1.name())).isValid()){
+            if (!coldef1.datadef().isCompatibleWith(coldef2.datadef()) || options != 0){
+                ColumnDefinition coldef( QString("%1_%2").arg(tblSource->name()).arg(coldef1.name()), coldef1.datadef().domain(), tbltarget->columnCount() + index);
+                tbltarget->addColumn(coldef);
+                nameMapping[coldef1.name()] = coldef.name();
+                continue;
+            }
+        }else {
+            tbltarget->addColumn(coldef1);
+        }
+        nameMapping[coldef1.name()] = coldef1.name();
+    }
+    for(int col=0; col < tblSource->columnCount(); ++col ) {
+        const auto& coldef = tblSource->columndefinition(col);
+        auto values = tblSource->column(coldef.name()) ;
+        QString colName = nameMapping[coldef.name()];
+        tbltarget->column(colName,values);
+    }
+    return true;
+}
+
 bool TableMerger::mergeMetadataTables(ITable& tblOut, const ITable& tblIn, const std::vector<QString>& columns) {
     for(const auto colName : columns) {
         auto coldefIn = tblIn->columndefinition(colName);
