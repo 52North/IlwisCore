@@ -22,10 +22,10 @@ quint32 AttributeRecord::columns(bool coverages) const
 {
     if ( coverages) {
         if ( _coverageTable.isValid())
-            return _coverageTable->columns();
+            return _coverageTable->columnCount();
     }
     else if ( _indexTable.isValid())
-        return _indexTable->columns();
+        return _indexTable->columnCount();
     return iUNDEF;
 }
 
