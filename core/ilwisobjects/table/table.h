@@ -27,18 +27,18 @@ public:
      return the number of rows in a table
      * \return rows in the table
      */
-    virtual quint32 records() const=0;
+    virtual quint32 recordCount() const=0;
     /*!
      returns the number of columns in a table
      * \return columns in the table
      */
-    virtual quint32 columns() const=0;
+    virtual quint32 columnCount() const=0;
     /*!
      sets the number of rows in a table. If the number of rows is bigger than the current number of rows is the extra records will be filled with null values
      if the number is smaller the excess records will be deleted
      * \param r the new row number
      */
-    virtual void records(quint32 r)=0;
+    virtual void recordCount(quint32 r)=0;
     /*!
      Creates a table based on the definitions in the columndefinition members. Has no effect on an already vreated table. The latter is no error and will only generate a warning in the issue logger;
      * \return true if succesfull
@@ -66,6 +66,7 @@ public:
     virtual ColumnDefinition columndefinition(const QString& nme) const=0;
     virtual ColumnDefinition columndefinition(quint32 index) const=0;
     virtual ColumnDefinition& columndefinition(quint32 index) = 0;
+    virtual void columndefinition(const ColumnDefinition& coldef) = 0;
 
     /*!
      retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives
