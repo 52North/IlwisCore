@@ -7,7 +7,17 @@ namespace Ilwis {
 
 class Resource;
 class Grid;
-
+/*!
+ * \brief The RasterCoverage class The RasterCoverage class
+ *
+ * In Ilwis-Objects remote sensing imagery is accessed through raster-coverages. In this context a raster-coverage is a stack of 2D rasters (1..n)
+ * in which all layers of the stack have the same raster size and pixel size. The z component is referred to as the ‘layer-index’ or ‘index’.  A layer
+ * is always rectangular as are its pixels. As a raster coverage relation between its pixels and the real world is covered by the georeference class.
+ * It translates pixel positions to real world coordinates and vice-versa.
+ *
+ * In a RasterCoverage we use 2 kinds of attribute tables: Index-tables and Coverage-tables.
+ * A Coverage-table has object data in its initial position, the Index table has records at all other positions.
+ */
 class KERNELSHARED_EXPORT RasterCoverage : public Coverage
 {
 public:
@@ -23,9 +33,9 @@ public:
     RasterCoverage();
 
     /*!
-     * The constructor for a RasterCoverage with a certain resource
+     * The constructor for a RasterCoverage with a certain Resource
      *
-     * \sa IlwisObject(const Resource &source)
+     * \sa IlwisObject
      * \param resource The resource to use
      */
     RasterCoverage(const Resource& resource);
@@ -33,47 +43,44 @@ public:
     ~RasterCoverage();
 
     /*!
-     * \brief ilwisType Returns the IlwisType of this object
+     * Returns the IlwisType of this object
      *
      * \return the IlwisType of this object
      */
     IlwisTypes ilwisType() const;
 
     /*!
-     * \brief copy copies (clones) this rastercoverage
+     * copies (clones) this rastercoverage
      * \return a copy of this rastercoverage
      */
     virtual RasterCoverage *copy() ;
 
     /*!
-     * \brief datadef Returns the datadef of this rastercoverage
+     * \brief Returns the DataDefinition of this rastercoverage
      *
-     * The datadef when is a range on the domain
-     * \sa DataDefenition
      * \return the datadefinition of this rastercoverage
      */
     const DataDefinition& datadef() const;
 
 
     /*!
-     * \brief datadef Returns the datadef of this rastercoverage
+     * \brief Returns the DataDefinition of this rastercoverage
      *
-     * The datadef when is a range on the domain
-     * \sa DataDefenition
      * \return the datadefinition of this rastercoverage
      */
     DataDefinition& datadef();
 
     /*!
-     * \brief georeference returns the georeference of this RasterCoverage
+     * Returns the IGeoReference of this RasterCoverage
+     *
      * \return the georeference
      */
     const Ilwis::IGeoReference &georeference() const;
 
     /*!
-     * \brief georeference Replaces the existing georeference with a new one
+     * \brief Replaces the existing IGeoReference with a new one
      *
-     * replaces the old georeference with the new one, if the georeference is not null
+     * replaces the old IGeoReference with the new one, if the georeference is not null
      * it also resets the binary data.
      * if the georeference is valid it computes and sets the new coordinatesystem and the new size
      *
@@ -82,14 +89,14 @@ public:
     void georeference(const IGeoReference& grf) ;
 
     /*!
-     * Returns the size of this rastercoverage, if the size is unknown of invalid it looks up the correct size and returns this instead
-     * size in row-col
-     * \return the size of this rastercoverage
+     * Returns the size of this RasterCoverage
+     *
+     * \return the size of this RasterCoverage
      */
     Size size() const;
 
     /*!
-     * assigns a new size to this rastercoverage
+     * assigns a new size to this RasterCoverage
      * size in row-col
      * \param sz the new size, must always be positive or undefined
      */
@@ -139,14 +146,14 @@ public:
     }
 
     /*!
-     * Gives the resource for this coverage
+     * Gives the Resource used for this coverage
      *
-     * \return the resource for this coverage
+     * \return the resource used for this coverage
      */
     Resource source(int mode=cmINPUT) const;
 
     /*!
-     * unload the grid
+     * unload the grid generally used to clear some memory
      */
     void unloadBinary();
 

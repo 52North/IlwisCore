@@ -22,24 +22,30 @@ typedef ITable AttributeTable;
 /*!
  * \brief The Coverage class
  *
+ * In Ilwis we have two kinds of coverages. Raster coverages for imagery and feature coverages for vector data.
+ *
  */
 class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
 
 public:
-
+    /*!
+     * An AttributeTable can have 2 types depending on the object, it can be a coveragetable,
+     * in which the features are defined at only 1 index, or it can be a indextable,
+     * in which the features are defined at all known indexes.
+     */
     enum AttributeType{atCOVERAGE, atINDEX};
 
     /*!
      * The constructor for an empty coverage
      */
     Coverage();
-    /*!
-     * The constructor for an coverage based on a resource
-     * \sa IlwisObject(const Resource &source)
-     * \param source
-     */
 
+    /*!
+     * The constructor for an coverage based on a Resource
+     * \sa IlwisObject
+     * \param source Resource that has to be used
+     */
     Coverage(const Resource& source);
 
     ~Coverage();
@@ -58,7 +64,7 @@ public:
     void setCoordinateSystem(const ICoordinateSystem& csy);
 
     /*!
-     * Query for the envelope of this coverage
+     * Query for the envelope of this coverage, must fit in the coordinate system
      *
      * \return the envelope of this coverage if it has one or else null
      */
@@ -94,32 +100,30 @@ public:
     void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
 
     /*!
-     * Query for the statistics of this coverage
+     * Query for the NumbericStatistics of this coverage
      * \return the statistics of this coverage
      */
     NumericStatistics& statistics();
 
     /*!
-     * Query for the datadefinition
+     * Query for the DataDefinition
      *
-     * \sa DataDefinition
      * \return de datadefinition van deze coverage
      */
     const DataDefinition& datadefIndex() const;
 
     /*!
-     * Query for the datadefinition
+     * Query for the DataDefinition
      *
-     * \sa DataDefinition
      * \return de datadefinition van deze coverage
      */
     DataDefinition& datadefIndex();
 
     /*!
-     * \brief value returns a value in the Coverage- or Indextable
+     * \brief Returns a value in the Coverage- or Index-table
      *
-     * using the the colname and the itemid this function will return the correspondending value from the Coveragetable
-     * if you ad a index, the value will be retrieved from the Indextable instead
+     * Using the the colname and the itemid this function will return the correspondending value from the Coveragetable
+     * if you ad a index, the value will be retrieved from the Indextable instead.
      *
      * \param colName name of the required collumn
      * \param itemid id of the item in the collumn
@@ -136,18 +140,20 @@ public:
     Resource source(int mode=cmINPUT) const;
 
     /*!
-     * \brief layerIndex translates a value to a index from the Indextable
-     * note : the returned index is not necessarily retrievable, as it is possible to get doubles back
+     * \brief Translates a value to a index from the Indextable
+     *
+     * note : the returned index is not necessarily retrievable, as it is possible to get doubles or indices not in the table back
      * this happens for interpollation purposes and such
+     *
      * \param value the value that must be translated to a index
      * \return the index of the value
      */
     double layerIndex(const QString& value);
 
     /*!
-     * \brief setLayerIndexes sets the supplied items at the indexes
+     * \brief Sets the supplied items at the indexes
      *
-     * uses the order specified in the itemrange itself
+     * Uses the order specified in the itemrange itself
      *
      * \param items the items that have to be added
      */

@@ -12,19 +12,64 @@ typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 /*!
  * \brief The PixelIterator class an iterator class that iteratos over all the pixels in an grid (or subsection of it)
  *
- *The pixeliterator is the main access mechanism (together with the blockiterator) to pixels in 2D or 3D gridcoverages. Basically it sees the pixels as one long linear space and moves over it. The movement (flow) can have several directions
- *which resembles directions in the 'real' world. In the default case it moves first over the x dirdction, than the y and finally the z direction. But one could just as well first move in the z direction than x, than y. Internally these movements
- *are translated to offsets in the linear space. The pixel iterator obeys the normal rules for iterators in the STL and thus can be combined with the algorithms in this library.
+ * The pixeliterator is the main access mechanism (together with the blockiterator) to pixels in 2D or 3D gridcoverages. Basically it sees the pixels as one long linear space and moves over it. The movement (flow) can have several directions
+ * which resembles directions in the 'real' world. In the default case it moves first over the x dirdction, than the y and finally the z direction. But one could just as well first move in the z direction than x, than y. Internally these movements
+ * are translated to offsets in the linear space. The pixel iterator obeys the normal rules for iterators in the STL and thus can be combined with the algorithms in this library.
+ *
+ * Here are basically two flavors of the  pixeliterator : the pixel iterator itself and the blockiterator. The pixeliterator moves over single pixels, the blockiterator  moves over an [n x m x p] size block (some algorithms need this).
+ * So how does this work? Suppose you want to count all the pixels in a raster-coverage with a value greater than 100. First the crude way (there are other more elegant ways to do this)
+ *
+ *    1 PixelIterator iterator(someraster);
+ *    2 PixelIterator endlocation = end(someraster);
+ *    3 int count = 0;
+ *    4 while ( iterator != endlocation){
+ *    5     if (*iterator > 100)
+ *    6           ++count;
+ *    7 }
+ *
+ * In line 1 a new pixeliterator is created. The simplest constructor only needs the raster-coverage as parameter. In line 2 we create the end iterator.  By definition (in c++) the end iterator is located at one container cell beyond the last valid location within the container. With the pixel iterator this means +1 layer beyond the last pixel in the last layer. The end method in line 2 is a convenience method that generates an iterator that satisfies this.
+ * Line 4 is end-condition for the traversing the raster-coverage. In line 5 the data of a pixel is accessed by using the ‘*’ operator on the iterator. This operator returns a reference to a double (64-bit) numerical value that is the value of the pixels.
+ *
+ * A more modern way (using lambda’s)
+ *
+ *    1 int count = 0;
+ *    2 std::for_each (begin(someraster), end(someraster) , [&](double& v)){
+ *    3     if v > 100) ++count;
+ *    4 });
+ *
+ * It becomes more interesting  when we are combining iterators. Suppose in the example above we want to create a new raster-coverage that only contains the pixels with a numerical value greater than 100
+ *
+ *    1 PixelIterator iterInput(someraster);
+ *    2 std::for_each(begin(outputRaster), end(outputRaster) , [&](double& v)){
+ *    3     if v > 100) v = *iterInput;
+ *    4    ++iterInput;
+ *    5 });
+ *
+ * In line 1 we define a iterator for the input, the output operator(invisible) is hidden behind convenience begin() and end() methods. Remember that the ‘*’operator gives a reference to the value of (in this case output) raster-coverage. ‘for_each’ uses this operator to give access to values of the container and exposes this through the double& (so also a reference). We only need to set this value to actually change values in the output raster-coverage. That’s all. Assuming that input and output have the same geometry.
+ * The other interesting part is that the pixeliterator integrates with the existing STL library of C++. Giving access to a large number of existing basic algorithms. Suppose You need to copy all of the values of a raster-coverage to a vector(array) and do some operation on it. Due to memory limitations this might not always be a good idea, but there are certainly enough use cases were this is useful.
+ *
+ *    std::vector<double> data(someraster.size().totalSize());
+ *    std::copy(begin(someraster), end(someraster), data.begin());
+ *
+ * or swapping of the pixels of two raster-coverages
+ *
+ *    swap_ranges(begin(someraster),end(someraster), begin(otherraster));
+ *
+ * Note that because the iterator ‘automatically’ moves in layer-index direction all algorithms also work on stacks of raster layers.
+ *
  */
 class KERNELSHARED_EXPORT PixelIterator  : public std::iterator<std::random_access_iterator_tag, double> {
 public:
-
+    /*!
+     * The possible flows, not all are implemented.
+     * atm only xyz works
+     */
     enum Flow { fXYZ, fYXZ, fXZY, fYZX, fZXY, fZYX};
 
     /*!
      * \brief isValid tells if an iterator is in a valid state.
      *
-     *An iterator is valid if bounding box and grid are a valid combination. The rest of the internal members of the iterator are calculated from this
+     * An iterator is valid if bounding box and grid are a valid combination. The rest of the internal members of the iterator are calculated from this
      * \return true if the bounding box fits in the grid.
      */
     bool isValid() const{
@@ -33,14 +78,14 @@ public:
 
 
     /*!
-     * \brief PixelIterator The empty constructor for PixelIterator
+     * \brief The empty constructor for PixelIterator
      *
      * This constructor creates an empty and clean PixelIterator
      */
     PixelIterator();
 
     /*!
-     * \brief PixelIterator Constructs a PixelIterator from a raster and a bounding box
+     * \brief Constructs a PixelIterator from a raster and a bounding box
      *
      * Constructs a PixelIterator from the raster and the bounding box
      * The bounding box is the area within the raster which should be walked by the PixelIterator
@@ -60,28 +105,28 @@ public:
     PixelIterator(const PixelIterator& iter);
 
     /*!
-     * \brief PixelIterator move constructor
+     * \brief Move constructor
      * \param iter PixelIterator that must be moved
      */
     PixelIterator(PixelIterator &&iter);
 
     /*!
-     * \brief operator = copy constructor
+     * \brief Copy constructor
      * \param iter pixeliterator that must be copied
      * \return
      */
     PixelIterator& operator=(const PixelIterator& iter);
 
     /*!
-     * \brief operator = move opperation
+     * \brief Move operation
      * \param iter PixelIterator that must be moved
      * \return the new PixelIterator that is actually still the same
      */
     PixelIterator& operator=(const PixelIterator&& iter);
 
     /*!
-     * \brief operator ++ adds 1 to this PixelIterator
-     * \return This + 1
+     * \brief Adds 1 to this PixelIterator
+     * \return This iterator moved 1
      */
     PixelIterator& operator++() {
         move(1);
@@ -89,8 +134,8 @@ public:
     }
 
     /*!
-     * \brief operator -- substracts 1 from this PixelIterator
-     * \return this - 1
+     * \brief Substracts 1 from this PixelIterator
+     * \return This iterator moved -1
      */
     PixelIterator& operator--() {
         move(-1);
@@ -98,9 +143,9 @@ public:
     }
 
     /*!
-     * \brief operator += adds n to this PixelIterator
+     * \brief Adds n to this PixelIterator
      * \param n amount to add to this PixelIterator
-     * \return this + n
+     * \return this iterator moved n
      */
     PixelIterator& operator+=(int n) {
         move(n);
@@ -108,22 +153,22 @@ public:
     }
 
     /*!
-     * \brief operator -= substracts n from this PixelIterator
+     * \brief Substracts n from this PixelIterator
      * \param n amount to substract
-     * \return this - n
+     * \return this iterator moved -n
      */
     PixelIterator& operator-=(int n) {
         move(-n);
         return *this;
     }
 
-    /*! //?//
-     * \brief operator [] moves the PixelIterator to a certain index
+    /*!
+     * \brief Random acces operator
      *
-     * resets the position of thepixeliterator and than moves to the specified index
+     * Moves to the specified index and returns a pointer to the value at this index
      *
      * \param index the target index
-     * \return a PixelIterator at index
+     * \return the value at the index
      */
     double& operator[](quint32 index){
         _x = 0;
@@ -135,9 +180,11 @@ public:
         return this->operator *();
     }
 
-    /*! //?//
-     * \brief operator () moves the PixelIterator to the given Voxel
-     * moves the PixelIterator to the given Voxel, also adjusts the lineairposition
+    /*!
+     * \brief Moves the PixelIterator to the given Voxel
+     *
+     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition
+     *
      * \param vox the Voxel to move to
      * \return this at the given Voxel
      */
@@ -152,18 +199,18 @@ public:
     }
 
     /*!
-     * \brief operator ++ adds 1 to this PixelIterator
-     * \return this + 1
+     * \brief Adds 1 to this PixelIterator
+     * \return this iterator moved 1
      */
     PixelIterator operator++(int);
 
     /*!
-     * \brief operator -- substracts 1 from this PixelIterator
-     * \return this - 1
+     * \brief Substracts 1 from this PixelIterator
+     * \return this iterator moved -1
      */
     PixelIterator operator--(int);
 
-    /*! //?//
+    /*!
      * \brief operator []
      * \param vox
      * \return
@@ -171,49 +218,49 @@ public:
     PixelIterator& operator[](const Voxel& vox);
 
     /*!
-     * \brief operator == checks if this PixelIterator has the same linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has the same linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition is equal
      */
     bool operator==(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator != Checks if this PixelIterator has a different linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has a different linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition is not equal
      */
     bool operator!=(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator < Checks if this PixelIterator has a smaller linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has a smaller linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition(this)<linearPosition(iter)
      */
     bool operator<(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator <= Checks if this PixelIterator has a smaller or equal linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has a smaller or equal linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition(this)<=linearPosition(iter)
      */
     bool operator<=(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator > Checks if this PixelIterator has a bigger linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has a bigger linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition(this)>linearPosition(iter)
      */
     bool operator>(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator >= Checks if this PixelIterator has a bigger or equal linearPosition as another PixelIterator
+     * \brief Checks if this PixelIterator has a bigger or equal linearPosition as another PixelIterator
      * \param iter another PixelIterator
      * \return true when linearPosition(this)>=linearPosition(iter)
      */
     bool operator>=(const PixelIterator& iter) const;
 
     /*!
-     * \brief operator * Query for a reference to the current vallue of the PixelIterator
+     * \brief Query for a reference to the current vallue of the PixelIterator
      * \return reference to the currentvalue
      */
     double& operator*() {
@@ -221,7 +268,7 @@ public:
     }
 
     /*!
-     * \brief operator * Query for a reference to the current vallue of the PixelIterator
+     * \brief Query for a reference to the current vallue of the PixelIterator
      * \return reference to the currentvalue
      */
     const double& operator*() const {
@@ -229,7 +276,7 @@ public:
     }
 
     /*!
-     * \brief operator -> Query for a pointer to the current value of the PixelIterator
+     * \brief Query for a pointer to the current value of the PixelIterator
      * \return ->value(this(current))
      */
     double* operator->() {
@@ -237,15 +284,15 @@ public:
     }
 
     /*!
-     * \brief end returns the end position of this PixelIterator, this is 1 past the actual lastblock of the boundingbox
+     * \brief Returns the end position of this PixelIterator, this is 1 past the actual lastblock of the boundingbox
      * \return the endvalue of the lineairposition
      */
     PixelIterator end() const ;
 
     /*!
-     * \brief setFlow changes the flow of this PixelIterator
+     * \brief Changes the flow of this PixelIterator
      *
-     * changes the flow according to the submitted value for flw,
+     * Changes the flow according to the submitted value for flw,
      * if flw =fXYZ
      * this means that the pixeliterator will start at the first row in x direction,
      * at the end of this row, it will go 1 in y direction and start over in x direction,
@@ -257,65 +304,65 @@ public:
     void setFlow(Flow flw);
 
     /*!
-     * \brief contains checks if a certain pixel is inside this PixelIterator
+     * \brief Checks if a certain pixel is inside this PixelIterator
      * \param pix the pixel to be checked
      * \return true when the pixel is in this PixelIterator
      */
     bool contains(const Pixel& pix) ;
 
     /*!
-     * \brief xchanged checks if the x coordinate has changed in the last step taken
+     * \brief Checks if the x coordinate has changed in the last step taken
      * \return true if the x has changed
      */
     bool xchanged() const;
 
     /*!
-     * \brief ychanged checks if the y coordinate has changed in the last step taken
+     * \brief Checks if the y coordinate has changed in the last step taken
      * \return true if the y has changed
      */
     bool ychanged() const;
 
     /*!
-     * \brief zchanged checks if the z coordinate has changed in the last step taken
+     * \brief Checks if the z coordinate has changed in the last step taken
      * \return true if the z has changed
      */
     bool zchanged() const;
 
     /*!
-     * \brief isAtEnd checks if this PixelIterator is at its endpoint
+     * \brief Checks if this PixelIterator is at its endpoint
      * \return true if it is at the end
      */
     bool isAtEnd() const;
 
     /*!
-     * \brief position Query for the current position of this PixelIterator
-     * \return a Voxel with the current position of this PixelIterator
+     * \brief Query for the current non lineair position of this PixelIterator
+     * \return a Voxel with the current non lineair position of this PixelIterator
      */
     Voxel position() const;
 
     /*!
-     * \brief box Query for the bounding box of this PixelIterator
+     * \brief Query for the bounding box of this PixelIterator
      * \return the bounding box of this PixelIterator
      */
     const Box3D<>& box() const;
 
     /*!
-     * \brief linearPosition Query for the linearPosition of this PixelIterator
+     * \brief Query for the linearPosition of this PixelIterator
      * \return the lineairposition
      */
     quint32 linearPosition() const;
 
     /*!
-     * \brief operator - substracts another pixeliterator fomr this PixelIterator
+     * \brief Substracts another pixeliterator fomr this PixelIterator
      * \param iter2 another PixelIterator
-     * \return lineairposition(this)-lineairposition(iter2)
+     * \return this iterator moved -iter2.linearPosition()
      */
     int operator -(const PixelIterator &iter2);
 
     /*!
-     * \brief operator + adds n to this PixelIterator and returns it
+     * \brief Adds n to this PixelIterator and returns it
      * \param n the amount to be added
-     * \return this + n
+     * \return this iterator moved n
      */
     PixelIterator operator+(int n) {
         PixelIterator iter(*this);
@@ -323,8 +370,8 @@ public:
         return iter;
     }
 
-    /*! //?//
-     * \brief setTranquilizer gui stuffz
+    /*!
+     * \brief ProgressMeter
      * \param trq
      */
     void setTranquilizer(const SPTranquilizer& trq) {

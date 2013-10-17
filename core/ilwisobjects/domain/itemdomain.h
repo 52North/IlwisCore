@@ -10,23 +10,48 @@ namespace Ilwis {
 class ItemRange;
 
 /*!
-ItemDomains are domains that handle discrete data. For example the domain of a thematic classification. There are various
-item domains that are all defined by the item type they control. This is passed as template parameter to the domain.
-The range of the domain contains all the valid items for that domain.
+ * An item domain is a domain that contains discrete items (duh).  The items determine the value type of the domain. Item domains with different value types are not compatible. We have the following value (and thus Item) types
+ *
+ * - %NamedIdentifier
+ * - %IndexedIdentifier
+ * - Thematic
+ * - Numeric
+ * - %Time
+ *
+ * The differences between the first three are rather subtle. They are all just labels. First of all, identifiers have no attached meaning. They are labels, they identify something. As such, a  street sign has no attached meaning apart from the fact that it marks a location. From the name itself you don’t get extra information. The difference between named and indexed easier. Named are unique names (in the domain), indexed are prefixes plus a number.
+ * Thematic items are also labels but they have meaning. Their name implies the value they represent.  As such, these items may have metadata associated with them further defining the item.
+ * The difference is quite subtle but it has effects. For example, because a thematic item has meaning it makes sense to have a standard (UI) presentation  for it. This makes no sense for an identifier item as the name implies nothing.
+ * Numeric items are ordered  items that have numeric sub-ranges. For example 0-100,100-200,300-400. Time Interval Items are ordered sets of time intervals. For example 20090301-20090311, 20090312-20090322,20090323-20090402. They are very similar to numerical items .
+ * Item domains have a property called “theme”. In a way this is a poor man’s parent domain. In cases where it is not feasible or practical to define a whole parent domain (e.g. insufficient knowledge) one can make item domains compatible by giving them the same theme. At a string based representation  level of the items they become comparable but not on the programmatic level below that (see later). What is meant by this? All items in an item domain have a string representation(name). If item domains have the same theme you may assume that names in the domain are pointing to things of the same type/identity.  But always remember that this is a shallow equality. The domains don’t have knowledge of each other, their internal representation is different. Only parent domains enforce that also the internal representation is equal.
+ * All child domains have by definition have the same theme.
  */
 template<class D> class ItemDomain : public Domain
 {
 public:
     template<typename T> friend class ItemIterator;
 
+    /*!
+     * Creates an empty ItemDomain of type D
+     */
     ItemDomain<D>()  {
     }
+
+    /*!
+     * Creates an itemdomain from a Resource
+     * \param resource The resource to be used by this ItemDomain
+     */
     ItemDomain(const Resource& resource) : Domain(resource) {
     }
 
     ~ItemDomain() {
     }
-
+    /*!
+     * Checks if the value is contained in either this domain or the parentdomain.
+     *
+     * \sa Domain
+     * \param val The value to be checked
+     * \return cPARENT when the value is contained in the parent and this domain is not strict, cSELF if the value is contained in this domain and cNONE if the value is contained in neither
+     */
     Domain::Containement contains(const QVariant& val) const{
         if ( parent().isValid() && !isStrict())
             if (parent()->contains(val) == Domain::cSELF)
@@ -38,6 +63,16 @@ public:
          return Domain::cNONE;
     }
 
+    /*!
+     * Checks if this itemdomain is compatible  with another domain,
+     * will not be compatible if the other domain is:
+     * - invalid
+     * - not an itemdomain
+     * - has another or an undefined theme (both the parent of the other domain and itself)
+     *
+     * \param dom the domain to be tested
+     * \return true when compatible
+     */
     bool isCompatibleWith(const IDomain& dom) const {
         if ( !dom->isValid())
             return false;
@@ -54,8 +89,10 @@ public:
         return itemdom->theme() == theme();
 
     }
+
     /*!
-     returns a string representation of the item pointed to by the index
+     * returns a string representation of the item pointed to by the index
+     *
      * \param 0 based index, if the index is invalid sUNDEF will be returned
      * \return the string representation or sUNDEDF in case no items are defined
      */
@@ -66,8 +103,10 @@ public:
         }
         return _range->value(v);
     }
+
     /*!
-     returns a pointer to the domain item pointed to by the index
+     * returns a pointer to the domain item pointed to by the index
+     *
      * \param 0 based index, if the index is invalid 0 will be returned
      * \return a (pointer to) domain item or 0 if no items are defined
      */
@@ -78,8 +117,10 @@ public:
         }
         return _range->item(index) ;
     }
+
     /*!
-     returns a pointer to the item that is identified by the string name
+     * returns a pointer to the item that is identified by the string name
+     *
      * \param a name that must be in the range of the domain. If not a 0 pointer will be returned
      * \return a (pointer to) domain item or 0 if no items are defined
      */
@@ -95,8 +136,10 @@ public:
         }
         return _range->item(nam) ;
     }
+
     /*!
-     Adds an item of the templated type to the range. If no range is yet defined, one will be created
+     * Adds an item of the templated type to the range. If no range is yet defined, one will be created
+     *
      * \param the item to be added. Note that ownership of the item is transferred to the range. no delete allowed
      *
      */
@@ -125,8 +168,10 @@ public:
         }else
             _range->add(thing);
     }
+
     /*!
-     removes an item from the range
+     * removes an item from the range
+     *
      * \param the item to be removed
      */
     void removeItem(const QString& nme){
@@ -148,6 +193,11 @@ public:
         _range->remove(nme);
     }
 
+    /*!
+     * Sets a new range on this ItemDomain, if the excisting range / parent range / child range contain the new range
+     *
+     * \param range The new ItemRange
+     */
     void setRange(const ItemRange& range)
     {
         if ( _childDomains.size() > 0) {
@@ -174,6 +224,12 @@ public:
         _range.reset(D::createRange());
         _range->addRange(range);
     }
+
+    /*!
+     * Query for the amount of items in the ItemRange of this ItemDomain
+     *
+     * \return the amount of items in the ItemRange of this domain or undefined if there are no items in the range
+     */
     quint32 count() const {
         if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
@@ -182,13 +238,29 @@ public:
         return _range->count();
     }
 
+    /*!
+     * Query for the theme of this ItemDomain
+     * \return The theme of this ItemDomain
+     */
     QString theme() const {
         return _theme;
     }
+
+    /*!
+     * Changes the Theme of this ItemDomain
+     * \param theme The new Theme of this Itemdomain
+     */
     void setTheme(const QString& theme) {
         _theme = theme;
     }
 
+    /*!
+     * Changes the parent IDomain of this ItemDomain.
+     * If the new IDomain is invalid and this ItemDomain has a parent, the parent will be removed and a raw ItemDomain remains
+     * If the new domain does not meet the requirements but is valid nothing will happen
+     *
+     * \param dm The new Domain
+     */
     void setParent(const IDomain& dm){
         if ( !dm.isValid() && parent().isValid()){
             // cut the relation with the parent; raws remain the same but no relation with parent any more;
@@ -217,21 +289,47 @@ public:
 
     }
 
+    /*!
+     * Query for the ilwisType of this object (this domain)
+     * \sa IlwisObject
+     * \return itITEMDOMAIN
+     */
     IlwisTypes ilwisType() const {
         return itITEMDOMAIN;
     }
 
+    /*!
+     * Query for the type of objects in this domain
+     * \sa IlwisObject
+     * \return D.ilwisType()
+     */
     IlwisTypes valueType() const {
         return D::valueTypeS();
     }
 
+    /*!
+     * Create an ItemIterator over this domain
+     * This ItemIterators current position is at the start
+     * \return ItemIterator<D>(*this)
+     */
     ItemIterator<D> begin() const {
         return ItemIterator<D>(*this);
     }
 
+    /*!
+     * Create an ItemIterator over this domain
+     * This ItemIterators current position is at the end
+     * \return ItemIterator<D>(*this, count())
+     */
     ItemIterator<D> end() const {
         return ItemIterator<D>(*this, count());
     }
+
+    /*!
+     * Check if this is a valid domain
+     * A ItemDomain is valid when the range is not null
+     * \return true if this domain is valid
+     */
     bool isValid() const {
         return !_range.isNull();
     }
