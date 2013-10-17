@@ -15,6 +15,8 @@ public:
     DataDefinition &datadef();
     bool isMultiple() const;
     void multiple(bool yesno);
+    void columnindex(quint64 idx);
+    quint64 columnindex() const;
 private:
     DataDefinition _datadef;
     bool _multiple;

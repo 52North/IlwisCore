@@ -55,6 +55,16 @@ void ColumnDefinition::multiple(bool yesno)
     _multiple = yesno;
 }
 
+void ColumnDefinition::columnindex(quint64 idx)
+{
+    setId(idx);
+}
+
+quint64 ColumnDefinition::columnindex() const
+{
+    return id();
+}
+
 
 //---------------------------------------------------------
 
