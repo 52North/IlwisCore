@@ -89,6 +89,11 @@ IlwisObject *IlwisObject::copy()
     return 0;
 }
 
+bool IlwisObject::merge(const IlwisObject *, int )
+{
+    return false;
+}
+
 
 bool IlwisObject::prepare( ) {
     _valid = true;

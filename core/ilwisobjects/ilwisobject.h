@@ -148,6 +148,7 @@ public:
     \return IlwisObject a created ilwisobject of the specified type
    */
    virtual IlwisObject *copy() ;
+   virtual bool merge(const IlwisObject* obj, int options=0);
 
    static IlwisObject *create(const Resource& source);
    static IlwisTypes findType(const QString &source);
