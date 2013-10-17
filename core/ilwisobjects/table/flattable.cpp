@@ -7,6 +7,7 @@
 #include "connectorinterface.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "tablemerger.h"
 #include "logicalexpressionparser.h"
 #include "tableselector.h"
 
@@ -231,10 +232,13 @@ std::vector<quint32> FlatTable::select(const QString &conditions) const
 
 bool FlatTable::merge(const IlwisObject *obj, int options)
 {
-    if (obj != 0 || ! hasType(obj->ilwisType(), itTABLE))
+    if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
         return false;
-   const ITable tbl;
-  // tbl.set(static_cast<const Table *>(obj));
+    ITable tblTarget(this);
+    ITable tblSource(static_cast<Table *>(const_cast<IlwisObject *>(obj)));
+
+    TableMerger merger;
+    merger.copyColumns(tblSource, tblTarget, options);
 
     return true;
 }
