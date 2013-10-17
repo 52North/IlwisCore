@@ -18,7 +18,7 @@ class Resource;
 typedef std::function<OperationImplementation *(quint64 metaid, const OperationExpression&)> CreateOperation;
 
 struct KERNELSHARED_EXPORT ExecutionContext {
-    void clear();
+    void clear(bool resultsOnly=false);
     ExecutionContext(bool threaded=true);
     bool _silent;
     bool _threaded;

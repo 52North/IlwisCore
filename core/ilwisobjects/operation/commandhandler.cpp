@@ -22,15 +22,18 @@ Ilwis::CommandHandler *Ilwis::CommandHandler::_commandHandler= 0;
 using namespace Ilwis;
 
 //-----------------------------------
-void ExecutionContext::clear()
+void ExecutionContext::clear(bool resultsOnly)
 {
-    _silent = false;
-    _threaded = true;
+
     _results.clear();
     _additionalInfo.clear();
-    _masterCsy = sUNDEF;
-    _masterGeoref = sUNDEF;
-    _out = &std::cout;
+    if (!resultsOnly) {
+        _masterCsy = sUNDEF;
+        _masterGeoref = sUNDEF;
+        _silent = false;
+        _threaded = true;
+        _out = &std::cout;
+    }
 }
 
 ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(threaded){
