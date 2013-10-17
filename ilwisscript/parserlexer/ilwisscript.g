@@ -113,8 +113,9 @@ assignmentStatement returns [ AssignmentNode *node]
 @init{
 	node= new AssignmentNode();
 }
-	:	ID (selector)?						{ node->setResult(new IDNode((char *)($ID.text->chars))); }
-		(formatPart 				{ node->setFormatPart($formatPart.node); }
+	:	ID (id=selector					{ node->addSelector($id.node);})?						
+								{ node->setResult(new IDNode((char *)($ID.text->chars))); }
+		(formatPart 					{ node->setFormatPart($formatPart.node); }
 		)?
 		(':=' | '=')					{ node->setDefintion(true); } 
 		expression 					{ node->setExpression($expression.node);}
