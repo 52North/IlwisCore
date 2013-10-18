@@ -31,6 +31,10 @@ ICoordinateSystem Coverage::coordinateSystem() const
 
 void Coverage::setCoordinateSystem(const ICoordinateSystem &csy)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     _coordinateSystem = csy;
 }
 
@@ -41,6 +45,10 @@ Box3D<double> Coverage::envelope() const
 
 void Coverage::envelope(const Box3D<double> &bnds)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     _envelope = bnds;
 }
 
@@ -53,6 +61,9 @@ AttributeTable Coverage::attributeTable(AttributeType attType) const
 
 void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
     if ( attType == atCOVERAGE)
         _attTable = tbl;
     _attTableIndex = tbl;
@@ -131,6 +142,10 @@ double Coverage::layerIndex(const QString &value)
 
 void Coverage::setLayerIndexes(const ItemRange &items)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     _indexValues.resize(items.count());
     for(int i=0; i < items.count(); ++i) {
         SPDomainItem ditem = items.itemByOrder(i);

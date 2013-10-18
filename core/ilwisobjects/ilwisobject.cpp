@@ -63,6 +63,8 @@ IlwisObject *IlwisObject::create(const Resource& resource) {
 
 void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
     Locker lock(_mutex);
+    if ( isReadOnly())
+        return;
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
     if ( !resource.isValid()) {
@@ -103,6 +105,9 @@ bool IlwisObject::prepare( ) {
 
 void IlwisObject::setName(const QString &nam)
 {
+    if ( isReadOnly())
+        return;
+
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
@@ -112,6 +117,10 @@ void IlwisObject::setName(const QString &nam)
 }
 
 void IlwisObject::setCode(const QString& cd) {
+    if ( isReadOnly())
+        return;
+    _changed = true;
+
     Identity::setCode(cd);
     if ( !connector().isNull())
         connector()->source().setCode(cd);
@@ -124,6 +133,9 @@ QDateTime IlwisObject::modifiedTime() const
 
 void IlwisObject::setModifiedTime(const Time &tme)
 {
+    if ( isReadOnly())
+        return;
+    _changed = true;
     _modifiedTime = tme;
 }
 
@@ -134,6 +146,9 @@ Time IlwisObject::createTime() const
 
 void IlwisObject::setCreateTime(const Time &time)
 {
+    if ( isReadOnly())
+        return;
+    _changed = true;
     _createTime = time;
 }
 
@@ -158,6 +173,9 @@ bool IlwisObject::isValid() const
 
 bool IlwisObject::setValid(bool yesno)
 {
+    if ( isReadOnly())
+        return _valid;
+    _changed = true;
     _valid = yesno;
     return _valid;
 }
@@ -170,18 +188,36 @@ bool IlwisObject::isReadOnly() const
 
 }
 
+void IlwisObject::setReadOnly(bool yesno)
+{
+
+    _readOnly = yesno;
+}
+
 bool IlwisObject::hasChanged() const
 {
     return _changed;
 }
 
+void IlwisObject::changed(bool yesno)
+{
+    _changed = yesno;
+}
+
 bool IlwisObject::prepare(const QString &)
 {
+    if ( isReadOnly())
+        return false;
+    changed(true);
     return true;
 }
 
 void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
 {
+    if ( isReadOnly())
+        return;
+    _changed = true;
+
     if (mode & cmINPUT){
         quint64 pointer = (quint64) ( _outConnector.data());
         quint64 npointer = (quint64) ( connector);
@@ -228,6 +264,10 @@ bool operator==(const IlwisObject& obj1, const IlwisObject& obj2) {
 
 bool IlwisObject::fromInternal(const QSqlRecord &rec)
 {
+    if ( isReadOnly())
+        return false;
+    _changed = true;
+
     setName(rec.field("code").value().toString()); // name and code are the same here
     setDescription(rec.field("description").value().toString());
     setCode(rec.field("code").value().toString());

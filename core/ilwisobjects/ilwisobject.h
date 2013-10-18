@@ -114,7 +114,9 @@ public:
     * \return readonly or not
     */
    virtual bool isReadOnly() const;
+   virtual void setReadOnly(bool yesno);
    virtual bool hasChanged() const;
+   virtual void changed(bool yesno) ;
    virtual IlwisTypes ilwisType() const = 0;
    virtual bool prepare(const QString& def);
 

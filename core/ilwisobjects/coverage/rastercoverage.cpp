@@ -33,6 +33,10 @@ const IGeoReference& RasterCoverage::georeference() const
 
 void RasterCoverage::georeference(const IGeoReference &grf)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     _georef = grf;
     if ( _grid.isNull() == false) { // remove the current grid, all has become uncertain
         _grid.reset(0);
@@ -146,8 +150,12 @@ void RasterCoverage::unloadBinary() {
 
 void RasterCoverage::size(const Size &sz)
 {
+    if ( isReadOnly())
+        return;
+
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0) {
+        changed(true);
         _size = sz;
         if (!_grid.isNull())
             _grid->setSize(sz);
