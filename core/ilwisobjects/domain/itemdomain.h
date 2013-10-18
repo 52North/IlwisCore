@@ -146,6 +146,9 @@ public:
     void addItem(DomainItem* thing) {
         if (thing == 0)
             return;
+        if ( isReadOnly())
+            return;
+        changed(true);
         if ( _range.isNull()) {
             _range.reset(D::createRange());
         }
@@ -175,10 +178,13 @@ public:
      * \param the item to be removed
      */
     void removeItem(const QString& nme){
+        if ( isReadOnly())
+            return;
         if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return ;
         }
+        changed(true);
         if ( _childDomains.size() > 0) {
             for(auto childid: _childDomains) {
                 IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid.first) ;
@@ -200,6 +206,9 @@ public:
      */
     void setRange(const ItemRange& range)
     {
+        if ( isReadOnly())
+            return;
+        changed(true);
         if ( _childDomains.size() > 0) {
             for(auto childid: _childDomains) {
                 IlwisData<ItemDomain<D>> childDom = mastercatalog()->get(childid.first) ;
@@ -251,6 +260,9 @@ public:
      * \param theme The new Theme of this Itemdomain
      */
     void setTheme(const QString& theme) {
+        if ( isReadOnly())
+            return;
+        changed(true);
         _theme = theme;
     }
 
@@ -262,6 +274,9 @@ public:
      * \param dm The new Domain
      */
     void setParent(const IDomain& dm){
+        if ( isReadOnly())
+            return;
+        changed(true);
         if ( !dm.isValid() && parent().isValid()){
             // cut the relation with the parent; raws remain the same but no relation with parent any more;
             IDomain dmp = parent();

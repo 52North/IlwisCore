@@ -337,6 +337,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                     dv->setParent(dom);
                                 }
                             }
+                            dv->setReadOnly(true);
                             return dv;
                         }else {
                             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));

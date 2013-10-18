@@ -23,6 +23,9 @@ NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
 
 void NumericDomain::setRange(Range *vr)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
     if ( hasType(vr->valueType(), itNUMBER) == false)
         return;
     if ( parent().isValid()) {
@@ -46,6 +49,10 @@ IlwisTypes NumericDomain::ilwisType() const
 
 void NumericDomain::setParent(const IDomain &dm)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     if ( _range.isNull()) {
         return;
     }
