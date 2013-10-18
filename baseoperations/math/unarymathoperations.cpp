@@ -17,8 +17,8 @@ OperationImplementation *Sine::create(quint64 metaid, const Ilwis::OperationExpr
 
 quint64 Sine::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sin"), "sine", "min1to1");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
+    resource.addProperty("pin_1_desc", QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -30,8 +30,8 @@ OperationImplementation *Cosine::create(quint64 metaid, const Ilwis::OperationEx
 
 quint64 Cosine::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cos"), "cosine", "min1to1");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -50,8 +50,8 @@ OperationImplementation *Tangent::create(quint64 metaid, const Ilwis::OperationE
 
 quint64 Tangent::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/tan"), "Tangent", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; ");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; "));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -69,8 +69,8 @@ OperationImplementation *Arcsine::create(quint64 metaid, const Ilwis::OperationE
 
 quint64 Arcsine::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/asin"), "Arcsine", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value between -1 and 1 ");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between pi/2 and -pi/2");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -1 and 1 "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between pi/2 and -pi/2"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -88,8 +88,8 @@ OperationImplementation *Arccosine::create(quint64 metaid, const Ilwis::Operatio
 
 quint64 Arccosine::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/acos"), "Arccosine", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain with value between -1 and 1; ");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between 0 and pi");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain with value between -1 and 1; "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between 0 and pi"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -102,8 +102,8 @@ OperationImplementation *ArcTangent::create(quint64 metaid, const Ilwis::Operati
 
 quint64 ArcTangent::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value between -pi/2 and pi/2 ");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain; values are between -1 and 1");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -pi/2 and pi/2 "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -120,8 +120,8 @@ OperationImplementation *Log10::create(quint64 metaid, const Ilwis::OperationExp
 
 quint64 Log10::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/log10"), "Log10", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value larger than zero ");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -138,8 +138,8 @@ OperationImplementation *NaturalLogarithm::create(quint64 metaid, const Ilwis::O
 
 quint64 NaturalLogarithm::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain;with value larger than zero ");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -157,8 +157,8 @@ OperationImplementation *Abs::create(quint64 metaid, const Ilwis::OperationExpre
 
 quint64 Abs::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/abs"), "Absolute value", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
-    resource.addProperty("pout_1_desc","output rastercoverage with a positive numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -170,8 +170,8 @@ OperationImplementation *Ceil::create(quint64 metaid, const Ilwis::OperationExpr
 
 quint64 Ceil::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value", "integer");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
-    resource.addProperty("pout_1_desc","output rastercoverage with a integer numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -183,8 +183,8 @@ OperationImplementation *Floor::create(quint64 metaid, const Ilwis::OperationExp
 
 quint64 Floor::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/floor"), "Floor value", "integer");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
-    resource.addProperty("pout_1_desc","output rastercoverage with a integer numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -204,8 +204,8 @@ OperationImplementation *Sign::create(quint64 metaid, const Ilwis::OperationExpr
 
 quint64 Sign::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sgn"), "Sign", "integer");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain");
-    resource.addProperty("pout_1_desc","output rastercoverage with values -1,0,1 depending on the sign of the input value");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with values -1,0,1 depending on the sign of the input value"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -217,8 +217,8 @@ OperationImplementation *CosineH::create(quint64 metaid, const Ilwis::OperationE
 
 quint64 CosineH::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -230,8 +230,8 @@ OperationImplementation *SineH::create(quint64 metaid, const Ilwis::OperationExp
 
 quint64 SineH::createMetadata() {
     Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine", "value");
-    resource.addProperty("pin_1_desc","input rastercoverage with a numerical domain; values are considered to be radians");
-    resource.addProperty("pout_1_desc","output rastercoverage with a numerical domain");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
     mastercatalog()->addItems({resource});
     return resource.id();
