@@ -47,8 +47,12 @@ bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbo
         _value = {vright.toDouble() * var.toDouble(), NodeValue::ctNumerical};
         return true;
     }
-
-    return handleBinaryCases(vright, "binarymathraster", "times", symbols, ctx);
+    IlwisTypes used = typesUsed(vright, symbols);
+    if ( hasType(used, itRASTER))
+        return handleBinaryCases(vright, "binarymathraster", "times", symbols, ctx);
+    if ( hasType(used, itTABLE))
+        handleTableCases(vright, "binarymathtable", "times", symbols, ctx);
+    return false;
 }
 
 bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
@@ -59,7 +63,12 @@ bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols
         _value = {var.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCases(vright, "binarymathraster", "divide", symbols, ctx);
+    IlwisTypes used = typesUsed(vright, symbols);
+    if ( hasType(used, itRASTER))
+        return handleBinaryCases(vright, "binarymathraster", "divide", symbols, ctx);
+    if ( hasType(used, itTABLE))
+        return handleTableCases(vright, "binarymathtable", "divide", symbols, ctx);
+    return false;
 }
 
 bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
@@ -69,5 +78,10 @@ bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols,
        _value = {var.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
-    return handleBinaryCases(vright, "binarymathraster", "mod", symbols, ctx);
+    IlwisTypes used = typesUsed(vright, symbols);
+    if ( hasType(used, itRASTER))
+        return handleBinaryCases(vright, "binarymathraster", "mod", symbols, ctx);
+    if ( hasType(used, itTABLE))
+        return handleTableCases(vright, "binarymathtable", "mod", symbols, ctx);
+    return false;
 }
