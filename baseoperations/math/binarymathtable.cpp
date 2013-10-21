@@ -114,7 +114,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 
     } else {
         ColumnDefinition def = def1.isValid() ? def1 : def2;
-        double number = _number1 == rUNDEF ? _number2 : _number2;
+        double number = _number1 == rUNDEF ? _number2 : _number1;
         if (!hasType(def.datadef().domain()->valueType(),itNUMBER)){
             ERROR2(ERR_NOT_COMPATIBLE2,_column1, TR("numeric"));
             return sPREPAREFAILED;
