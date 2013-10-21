@@ -46,8 +46,14 @@ bool SelectionTable::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     QString addInfo;
+    quint32 start = 0;
+    quint32 stop = _inputTable->recordCount();
+    if ( _records.size() != 0) {
+        start = _records[0].first;
+        stop = _records[0].second;
+    }
     for(const auto& colname : _columns) {
-        std::vector<QVariant> coldata = _inputTable->column(colname);
+        std::vector<QVariant> coldata = _inputTable->column(colname,start, stop);
         _outputTable->column(colname, coldata);
         if ( addInfo !="")
             addInfo += ",";
@@ -69,23 +75,35 @@ Ilwis::OperationImplementation::State SelectionTable::prepare(ExecutionContext *
         ERROR2(ERR_COULD_NOT_LOAD_2,table,"");
         return sPREPAREFAILED;
     }
-    QString columnExpression = _expression.parm(1).value();
-    if ( columnExpression.indexOf(",") == -1){
-
-    }
+    QString selectionExpression = _expression.parm(1).value();
     QString outName = _expression.parm(0, false).value();
     if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
         _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
         _outputTable->setName(outName);
 
     }
-    columnExpression = columnExpression.remove('\"');
+    selectionExpression = selectionExpression.remove('\"');
     int index;
-    if ( (index=columnExpression.indexOf("attribute="))!=-1){
-        _columns.push_back(columnExpression.mid(10));
+    if ( (index=selectionExpression.indexOf("attribute="))!=-1){
+        _columns.push_back(selectionExpression.mid(10));
+    } else if ((index=selectionExpression.indexOf("recordrange="))!= -1){
+        for(int  i = 0; i < _inputTable->columnCount(); ++i){
+            _columns.push_back(_inputTable->columndefinition(i).name());
+        }
+        QStringList parts = selectionExpression.mid(12).split(",");
+        for(int i=0; i < parts.size() / 2; i+=2) {
+            _records.push_back(std::pair<quint32, quint32>(parts[i].toUInt(), parts[i+1].toUInt()));
+        }
     }
     TableMerger merger;
     bool ok = merger.mergeMetadataTables(_outputTable, _inputTable, _columns);
+    if ( _records.size() != 0) {
+        quint32 recs= 0;
+        for(const auto& rng : _records) {
+            recs += rng.second - rng.first;
+        }
+        _outputTable->recordCount(recs);
+    }
     if (!ok)
         return sPREPAREFAILED;
 
