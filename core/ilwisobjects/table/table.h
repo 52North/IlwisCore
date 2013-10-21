@@ -88,8 +88,8 @@ public:
      * \param nme name of the column to be returned
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
-    virtual std::vector<QVariant> column(const QString& nme) const = 0;
-    virtual std::vector<QVariant> column(quint32 index) const = 0;
+    virtual std::vector<QVariant> column(const QString& nme, quint32 start=0, quint32 stop=2e9) const = 0;
+    virtual std::vector<QVariant> column(quint32 index, quint32 start=0, quint32 stop=2e9) const = 0;
     /*!
      sets a column with values from variantlist. The list doesnt need to contain all the rows in a column but may contain a subset
      . Note that the rows are in consecutive order.

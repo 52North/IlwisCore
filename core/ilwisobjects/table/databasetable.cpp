@@ -267,16 +267,16 @@ void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
 
 }
 
-std::vector<QVariant> DatabaseTable::column(quint32 index) const {
+std::vector<QVariant> DatabaseTable::column(quint32 index, quint32 start, quint32 stop) const {
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return std::vector<QVariant>();
     }
-    return column(iter.value().name());
+    return column(iter.value().name(), start, stop);
 }
 
-std::vector<QVariant> DatabaseTable::column(const QString& nme)  const{
+std::vector<QVariant> DatabaseTable::column(const QString& nme, quint32 start, quint32 stop)  const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return std::vector<QVariant>();
 
@@ -284,9 +284,14 @@ std::vector<QVariant> DatabaseTable::column(const QString& nme)  const{
     QString query = QString("Select %1 from %2").arg(nme,internalName());
     if ( db.exec(query)){
         if ( db.next()) {
+            stop = std::min(stop, _rows);
+            start = std::max((quint32)0, start);
             std::vector<QVariant> values;
+            int count = 0;
             do {
-                values.push_back(db.value(0)) ;
+                if ( count >= start && count < stop)
+                    values.push_back(db.value(0)) ;
+                ++count;
             } while(db.next());
             return values;
 

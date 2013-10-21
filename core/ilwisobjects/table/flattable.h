@@ -24,8 +24,8 @@ public:
     /*!
     \se Ilwis::Table
      */
-    std::vector<QVariant> column(const QString& nme) const;
-    std::vector<QVariant> column(quint32 index) const;
+    std::vector<QVariant> column(const QString& nme, quint32 start=0, quint32 stop=2e9) const;
+    std::vector<QVariant> column(quint32 index, quint32 start=0, quint32 stop=2e9) const;
     /*!
     \se Ilwis::Table
      */
@@ -58,7 +58,6 @@ public:
      */
     bool addColumn(const ColumnDefinition& def);
     std::vector<quint32> select(const QString &conditions) const;
-    bool merge(const IlwisObject *obj, int options=0);
 
     IlwisTypes ilwisType() const;
     IlwisObject *copy() ;

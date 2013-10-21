@@ -70,24 +70,26 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
 
 
 
-std::vector<QVariant> FlatTable::column(quint32 index) const {
+std::vector<QVariant> FlatTable::column(quint32 index, quint32 start, quint32 stop) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return std::vector<QVariant>();
 
     if ( !isColumnIndexValid(index))
         return std::vector<QVariant>();
 
-    std::vector<QVariant> data(recordCount());
-    for(quint32 i=0; i < _rows; ++i) {
-        data[i] = _datagrid[i][index];
+    stop = std::min(stop, _rows);
+    start = std::max((quint32)0, start);
+    std::vector<QVariant> data(stop - start);
+    for(quint32 i=start; i < stop; ++i) {
+        data[i - start] = _datagrid[i][index];
     }
     return data;
 }
 
-std::vector<QVariant> FlatTable::column(const QString &nme) const
+std::vector<QVariant> FlatTable::column(const QString &nme, quint32 start, quint32 stop) const
 {
     quint32 index = columnIndex(nme);
-    return column(index);
+    return column(index, start, stop);
 
 }
 
@@ -230,15 +232,3 @@ std::vector<quint32> FlatTable::select(const QString &conditions) const
     return TableSelector::select(this, conditions);
 }
 
-bool FlatTable::merge(const IlwisObject *obj, int options)
-{
-    if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
-        return false;
-    ITable tblTarget(this);
-    ITable tblSource(static_cast<Table *>(const_cast<IlwisObject *>(obj)));
-
-    TableMerger merger;
-    merger.copyColumns(tblSource, tblTarget, options);
-
-    return true;
-}
