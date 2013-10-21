@@ -90,6 +90,8 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(StringReplace::createMetadata(), StringReplace::create);
     commandhandler()->addOperation(Tangent::createMetadata(), Tangent::create);
     commandhandler()->addOperation(Text2Output::createMetadata(), Text2Output::create);
+
+
 }
 
 QString BaseOperationsModule::name() const
