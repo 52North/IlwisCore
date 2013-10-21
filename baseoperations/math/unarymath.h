@@ -9,6 +9,7 @@ typedef std::function<double(double)> UnaryFunction;
 class UnaryMath : public OperationImplementation
 {
 public:
+    enum OperationType{otSPATIAL, otTABLE, otNUMBER};
     enum UnaryOperations{uoSIN, uoCOS, uoTAN, uoSQRT, uoASIN, uoACOS, uoATAN, uoLog10, uoLN, uoABS, uoCEIL,
                          uoFLOOR,uoCOSH, uoEXP, uoNEG,uoRND,uoSGN,uoSINH,uoTANH};
     UnaryMath();
@@ -21,8 +22,12 @@ protected:
 
     IRasterCoverage _inputGC;
     IRasterCoverage _outputGC;
+    ITable _inputTable;
+    ITable _outputTable;
+    QString _outColumn;
+    QString _inColumn;
     Box3D<qint32> _box;
-    bool _spatialCase;
+    OperationType _case;
     double _number;
     QString _outputDomain;
     UnaryFunction _unaryFun;
