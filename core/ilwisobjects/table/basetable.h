@@ -87,6 +87,7 @@ public:
      */
     bool isValid() const;
 
+    bool merge(const IlwisObject *obj, int options);
 protected:
     quint32 _rows;
     quint32 _columns;

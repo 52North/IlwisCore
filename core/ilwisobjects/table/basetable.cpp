@@ -7,6 +7,7 @@
 #include "connectorinterface.h"
 #include "table.h"
 #include "basetable.h"
+#include "tablemerger.h"
 
 using namespace Ilwis;
 
@@ -186,6 +187,20 @@ quint32 BaseTable::columnIndex(const QString &nme) const
     }
     return iter.value().id();
 }
+
+bool BaseTable::merge(const IlwisObject *obj, int options)
+{
+    if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
+        return false;
+    ITable tblTarget(this);
+    ITable tblSource(static_cast<Table *>(const_cast<IlwisObject *>(obj)));
+
+    TableMerger merger;
+    merger.copyColumns(tblSource, tblTarget, options);
+
+    return true;
+}
+
 
 
 
