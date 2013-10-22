@@ -5,7 +5,7 @@ namespace Ilwis {
 
 
 
-class CTPGeoReference : public GeoRefImplementation
+class KERNELSHARED_EXPORT CTPGeoReference : public GeoRefImplementation
 {
 public:
     CTPGeoReference(const QString &type);

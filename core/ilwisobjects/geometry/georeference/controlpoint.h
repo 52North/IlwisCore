@@ -2,7 +2,7 @@
 #define CONTROLPOINT_H
 
 namespace Ilwis {
-class ControlPoint : public Coordinate{
+class KERNELSHARED_EXPORT ControlPoint : public Coordinate{
 public:
     ControlPoint(bool invalid=false);
     ControlPoint(const Coordinate& crd, const Pixel& pix);
