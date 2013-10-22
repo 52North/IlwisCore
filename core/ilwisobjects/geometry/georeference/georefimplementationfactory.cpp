@@ -11,6 +11,11 @@
 #include "georeference.h"
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
+#include "controlpoint.h"
+#include "ctpgeoreference.h"
+#include "Eigen/LU"
+#include "mathhelper.h"
+#include "planarctpgeoreference.h"
 #include "georefimplementationfactory.h"
 
 using namespace Ilwis;
@@ -41,6 +46,7 @@ bool GeoRefImplementationFactory::prepare()
 
     addCreator("simpel",SimpelGeoReference::create);
     addCreator("corners",CornersGeoReference::create);
+    addCreator("tiepoints",PlanarCTPGeoReference::create);
 
     return true;
 }
