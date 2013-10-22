@@ -5,7 +5,7 @@ namespace Ilwis{
 
 
 
-class PlanarCTPGeoReference : public CTPGeoReference
+class KERNELSHARED_EXPORT PlanarCTPGeoReference : public CTPGeoReference
 {
 public:
     enum Transformation { tCONFORM, tAFFINE, tSECONDORDER, tFULLSECONDORDER,
@@ -17,8 +17,10 @@ public:
     bool isValid() const;
     virtual double pixelSize() const;
     virtual bool compute();
+    void transformation(Transformation tr);
     static QString typeName();
 
+    static GeoRefImplementation *create();
 private:
     Eigen::Matrix2d _jacobian;
     double _sigma;

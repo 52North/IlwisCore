@@ -15,6 +15,11 @@
 
 using namespace Ilwis;
 
+GeoRefImplementation *PlanarCTPGeoReference::create()
+{
+    return new PlanarCTPGeoReference();
+}
+
 PlanarCTPGeoReference::PlanarCTPGeoReference() : CTPGeoReference("planartiepoints")
 {
 }
@@ -381,6 +386,11 @@ bool PlanarCTPGeoReference::compute()
     }
   }
   return isValid();
+}
+
+void PlanarCTPGeoReference::transformation(PlanarCTPGeoReference::Transformation tr)
+{
+    _transformation = tr;
 }
 
 QString PlanarCTPGeoReference::typeName()
