@@ -45,9 +45,9 @@ bool MathHelper::findOblique(int iPoints,
     for (int i = 0; i < 8; ++i) {
         double vb = sol(i);
         if ( useCols)
-            coef[i].x = vb;
+            coef[i]._x = vb;
         else
-            coef[i].y = vb;
+            coef[i]._y = vb;
     }
     return true;
 }
@@ -151,8 +151,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
     } // term
 
     for (term = 0; term < MAXTERMS; ++term) {
-        coef[term].x = 0;
-        coef[term].y = 0;
+        coef[term]._x = 0;
+        coef[term]._y = 0;
     }
     //  Apply Inverse to Both Dependent Vectors and Give Coefficients
     for (term = 0; term < iTerms; ++term)
@@ -164,8 +164,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
             D0 += DU[row] * InvMat[term][row];
             D1 += DV[row] * InvMat[term][row];
         }
-        coef[term].x = D0;
-        coef[term].y = D1;
+        coef[term]._x = D0;
+        coef[term]._y = D1;
     }
     return 0;
 }

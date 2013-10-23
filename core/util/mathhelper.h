@@ -4,7 +4,8 @@
 namespace Ilwis {
 
 struct Coefficient{
-    double x,y;
+    Coefficient(double x=0, double y=0) : _x(x), _y(y){}
+    double _x,_y;
 };
 
 class MathHelper
