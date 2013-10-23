@@ -20,7 +20,7 @@ CTPGeoReference::CTPGeoReference(const QString& type) : GeoRefImplementation(typ
 
 bool CTPGeoReference::isValid() const
 {
-    return true;
+    return _controlPoints.size() >= 2;
 }
 
 ControlPoint &CTPGeoReference::controlPoint(quint32 index)
