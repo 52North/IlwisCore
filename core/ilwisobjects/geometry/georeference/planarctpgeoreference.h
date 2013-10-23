@@ -8,8 +8,10 @@ namespace Ilwis{
 class KERNELSHARED_EXPORT PlanarCTPGeoReference : public CTPGeoReference
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     enum Transformation { tCONFORM, tAFFINE, tSECONDORDER, tFULLSECONDORDER,
-                    tTHIRDORDER, tPROJECTIVE } ;
+                    tTHIRDORDER, tPROJECTIVE, tUNKNOWN } ;
     PlanarCTPGeoReference();
     PlanarCTPGeoReference(const Resource& resource);
     virtual Coordinate pixel2Coord(const Pixel_d &pix) const;
