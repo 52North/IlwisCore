@@ -134,13 +134,6 @@ public:
         return v;
     }
 
-//    bool isNear(const Point2D<CrdType>& pnt, double delta) {
-//        if (!this->isValid() || !pnt.isValid())
-//            return false;
-//        double d = boost::geometry::distance(*this, pnt);
-//        return d <= delta;
-//    }
-
     Ilwis::Point2D<CrdType>& operator=(const Ilwis::Point2D<CrdType>& p2) {
         this->x( p2.x());
         this->y( p2.y());
@@ -170,7 +163,7 @@ public:
      * \return a reference to a shifted 2D point
      */
     Point2D<CrdType>& operator+= (const std::vector<CrdType>& vec){
-        if (!this->isValid() || !vec.size() != 2)
+        if (!this->isValid() || vec.size() != 2)
             return *this;
         this->x(this->x() + vec[0]);
         this->y(this->y() + vec[1]);
@@ -179,12 +172,18 @@ public:
     }
 
     Point2D<CrdType>& operator-= (const std::vector<CrdType>& vec){
-        if (!this->isValid() || !vec.size() != 2)
+        if (!this->isValid() || vec.size() != 2)
             return *this;
         this->x(this->x() - vec[0]);
         this->y(this->y() - vec[1]);
 
         return *this;
+    }
+
+    double distance(const Point2D<CrdType>& crd) {
+        if ( !crd.isValid() || !this->isValid())
+            return this->undefined;
+        return std::sqrt(std::pow(abs(this->x() - crd.x()),2) + std::pow(abs(this->y() - crd.y()),2));
     }
 
     /*!
@@ -331,12 +330,7 @@ public:
         v[3] = this->z();
         return v;
     }
-//    bool isNear(const Point3D<CrdType>& pnt, double delta) {
-//        if (!this->isValid() || !pnt.isValid())
-//            return false;
-//        double d = boost::geometry::distance(*this, pnt);
-//        return d <= delta;
-//    }
+
 
     /*!
      returns the z value of a point
@@ -387,21 +381,23 @@ public:
      * \return the changed point.
      */
     Point3D<CrdType>& operator+= (const std::vector<CrdType>& vec){
-        if (!this->isValid() || !vec.size() == 3)
+        if (!this->isValid() || (vec.size() > 3 || vec.size() < 2))
             return *this;
         this->x(this->x() + vec[0]);
         this->y(this->y() + vec[1]);
-        this->z(this->z() + vec[2]);
+        if ( vec.size() == 3)
+            this->z(this->z() + vec[2]);
 
         return *this;
     }
 
     Point3D<CrdType>& operator-= (const std::vector<CrdType>& vec){
-        if (!this->isValid() || !vec.size() == 3)
+        if (!this->isValid() || (vec.size() > 3 || vec.size() < 2))
             return *this;
         this->x(this->x() - vec[0]);
         this->y(this->y() - vec[1]);
-        this->z(this->z() - vec[2]);
+        if ( vec.size() == 3)
+            this->z(this->z() - vec[2]);
 
         return *this;
     }
@@ -422,11 +418,12 @@ public:
      * \return the changed point.
      */
     Point3D<CrdType>& operator*=(const std::vector<CrdType>& vec){
-        if (!this->isValid() || !vec.size() == 3)
+        if (!this->isValid() || (vec.size() > 3 || vec.size() < 2))
             return *this;
         this->x(this->x() * vec[0]);
         this->y(this->y() * vec[1]);
-        this->z(this->z() * vec[2]);
+        if ( vec.size() == 3)
+            this->z(this->z() * vec[2]);
 
         return *this;
     }
@@ -441,7 +438,8 @@ public:
             return *this;
         this->x(this->x() * v);
         this->y(this->y() * v);
-        this->z(this->z() * v);
+        if ( this->z() != this->undefined)
+            this->z(this->z() * v);
 
         return *this;
     }
@@ -456,9 +454,20 @@ public:
             return *this;
         this->x(this->x() / v);
         this->y(this->y() / v);
-        this->z(this->z() / v);
+        if ( this->z() != this->undefined)
+            this->z(this->z() / v);
 
         return *this;
+    }
+
+    double distance(const Point3D<CrdType>& crd) {
+        if ( !crd.isValid() || !this->isValid())
+            return this->undefined;
+        if ( crd.z() == this->undefined && z() == this->undefined)
+            return std::sqrt(std::pow(abs(this->x() - crd.x()),2) + std::pow(abs(this->y() - crd.y()),2));
+        if ( crd.z() == this->undefined || this->z() == this->undefined)
+            return this->undefined;
+        return std::sqrt(std::pow(abs(this->x() - crd.x()),2) + std::pow(abs(this->y() - crd.y()),2) + + std::pow(abs(this->z() - crd.z()),2));
     }
 
 private:
