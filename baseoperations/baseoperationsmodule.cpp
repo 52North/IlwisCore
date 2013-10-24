@@ -38,8 +38,7 @@
 #include "math/binarymathtable.h"
 #include "util/text2output.h"
 #include "util/stringoperations.h"
-
-
+#include "data/setvaluerange.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -82,6 +81,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(Selection::createMetadata(), Selection::create);
     commandhandler()->addOperation(SelectionFeatures::createMetadata(), SelectionFeatures::create);
     commandhandler()->addOperation(SelectionTable::createMetadata(), SelectionTable::create);
+    commandhandler()->addOperation(SetValueRange::createMetadata(), SetValueRange::create);
     commandhandler()->addOperation(Sign::createMetadata(), Sign::create);
     commandhandler()->addOperation(Sine::createMetadata(), Sine::create);
     commandhandler()->addOperation(SineH::createMetadata(), SineH::create);

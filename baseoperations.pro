@@ -44,7 +44,8 @@ HEADERS += \
     baseoperations/math/binarymathfeature.h \
     baseoperations/geometry/mastergeoreference.h \
     baseoperations/data/selectiontable.h \
-    baseoperations/math/binarymathtable.h
+    baseoperations/math/binarymathtable.h \
+    baseoperations/data/setvaluerange.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -70,7 +71,8 @@ SOURCES += \
     baseoperations/math/binarymathfeature.cpp \
     baseoperations/geometry/mastergeoreference.cpp \
     baseoperations/data/selectiontable.cpp \
-    baseoperations/math/binarymathtable.cpp
+    baseoperations/math/binarymathtable.cpp \
+    baseoperations/data/setvaluerange.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
