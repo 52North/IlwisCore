@@ -281,7 +281,7 @@ commandStatement returns [ CommandNode *node]
 	:	
 	id1 = ID					{ node->setCommand((char *)($id1.text->chars)); }						 
 	(
-	' -' 
+	'--' 
 	id2 = ID 					{ flag = QString((char *)($id2.text->chars));}
 	('='
 	expression					{ expr = $expression.node; }
