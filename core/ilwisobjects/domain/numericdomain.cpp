@@ -12,16 +12,16 @@ using namespace Ilwis;
 NumericDomain::NumericDomain()
 {
     setStrict(false);
-    setRange(new NumericRange(-1e300, 1e300));
+    range(new NumericRange(-1e300, 1e300));
 
 }
 
 NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
     setStrict(false);
-    setRange(new NumericRange(-1e300, 1e300));
+    range(new NumericRange(-1e300, 1e300));
 }
 
-void NumericDomain::setRange(Range *vr)
+void NumericDomain::range(Range *vr)
 {
     if ( isReadOnly())
         return;
@@ -29,7 +29,7 @@ void NumericDomain::setRange(Range *vr)
     if ( hasType(vr->valueType(), itNUMBER) == false)
         return;
     if ( parent().isValid()) {
-        parent()->range<NumericRange>()->contains(static_cast<NumericRange *>(vr));
+        parent()->range2range<NumericRange>()->contains(static_cast<NumericRange *>(vr));
     }
     _range = QSharedPointer<NumericRange>(static_cast<NumericRange *>(vr));
 }
@@ -58,7 +58,7 @@ void NumericDomain::setParent(const IDomain &dm)
     }
     if ( dm->ilwisType() != itNUMERICDOMAIN || dm->valueType() != itNUMBER)
         return;
-    SPNumericRange numrange = dm->range<NumericRange>();
+    SPNumericRange numrange = dm->range2range<NumericRange>();
     if ( !numrange->contains(_range))
         return;
 

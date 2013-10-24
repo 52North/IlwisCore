@@ -198,6 +198,14 @@ public:
         }
         _range->remove(nme);
     }
+    void range(Range *rng){
+        if ( isReadOnly())
+            return;
+        changed(true);
+        if ( rng && rng->valueType() == valueType()){
+            _range.reset(static_cast<ItemRange *>(rng));
+        }
+    }
 
     /*!
      * Sets a new range on this ItemDomain, if the excisting range / parent range / child range contain the new range

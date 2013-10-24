@@ -67,11 +67,11 @@ bool NumericDomainMerger::merge()
 {
     INumericDomain numericDom;
 
-    Range *newRange = NumericRange::merge(_domain1->range<NumericRange>(), _domain2->range<NumericRange>());
+    Range *newRange = NumericRange::merge(_domain1->range2range<NumericRange>(), _domain2->range2range<NumericRange>());
     if (!newRange)
         return false;
     numericDom.prepare();
-    numericDom->setRange(newRange);
+    numericDom->range(newRange);
     _mergedDomain = numericDom;
 
     return true;
@@ -87,8 +87,8 @@ bool ItemDomainMergerIndexedItems::merge()
 {
     IIndexedIdDomain iddom;
 
-    QSharedPointer<IndexedIdentifierRange> range1 = _domain1->range<IndexedIdentifierRange>();
-    QSharedPointer<IndexedIdentifierRange> range2 = _domain1->range<IndexedIdentifierRange>();
+    QSharedPointer<IndexedIdentifierRange> range1 = _domain1->range2range<IndexedIdentifierRange>();
+    QSharedPointer<IndexedIdentifierRange> range2 = _domain1->range2range<IndexedIdentifierRange>();
 
     std::unique_ptr<IndexedIdentifierRange> newRange(IndexedIdentifierRange::merge(range1, range2));
     if ( newRange->count() == 0)
@@ -120,8 +120,8 @@ bool ItemDomainMergerNamedItems::merge()
     if (!notPossible)
         return false;
 
-    QSharedPointer<NamedIdentifierRange> range1 = _domain1->range<NamedIdentifierRange>();
-    QSharedPointer<NamedIdentifierRange> range2 = _domain1->range<NamedIdentifierRange>();
+    QSharedPointer<NamedIdentifierRange> range1 = _domain1->range2range<NamedIdentifierRange>();
+    QSharedPointer<NamedIdentifierRange> range2 = _domain1->range2range<NamedIdentifierRange>();
 
     std::unique_ptr<NamedIdentifierRange> newRange(NamedIdentifierRange::merge(range1, range2));
     if ( newRange->count() == 0)

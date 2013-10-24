@@ -24,7 +24,7 @@ public:
      *
      * \param vr The new range
      */
-    void setRange(Range *vr);
+    void range(Range *vr);
 
     /*!
      * //notdoneyet

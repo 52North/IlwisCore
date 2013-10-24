@@ -9,6 +9,7 @@
 #include "numericdomain.h"
 #include "numericitem.h"
 #include "numericitemrange.h"
+#include "numericrange.h"
 #include "ilwisoperation.h"
 #include "indexslicer.h"
 
@@ -87,7 +88,7 @@ QString IndexSlicer::makeExpression(double index, const QString& basename, QStri
 
 double IndexSlicer::findIndexNumber(const IDomain& indexDomain, double itemIndex) const{
     INumericDomain numdom = indexDomain.get<NumericDomain>();
-    SPNumericRange numrange = numdom->range<NumericRange>();
+    SPNumericRange numrange = numdom->range2range<NumericRange>();
     if ( numrange->contains(itemIndex))
         return itemIndex;
     return rUNDEF;
