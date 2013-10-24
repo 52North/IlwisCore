@@ -324,9 +324,9 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                             // TODO, implement unit stuff
                             //QString unit = rec.field("unit").value().toString();
                             if ( fmod(step,1.0) == 0 && step != 0)
-                                dv->setRange(new NumericRange(vmin, vmax,1));
+                                dv->range(new NumericRange(vmin, vmax,1));
                             else
-                                dv->setRange(new NumericRange(vmin, vmax));
+                                dv->range(new NumericRange(vmin, vmax));
 
                             dv->setStrict(range_strict ? true : false);
                             QString parent = rec.field("parent").value().toString();
