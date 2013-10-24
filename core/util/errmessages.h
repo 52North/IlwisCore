@@ -40,4 +40,5 @@
 #define WARN_NOT_PART_OF2 "%1 is not part of %2"
 #define WARN_PART_OF2 "%1 is part of %2"
 #define WARN_COULDNT_CREATE_OBJECT_FOR_1 "Could not create %1"
+#define WARN_READ_ONLY1 "%1 is read only"
 
