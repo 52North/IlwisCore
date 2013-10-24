@@ -55,6 +55,7 @@ public:
      * \return true when compatible
      */
     bool isCompatibleWith(const IDomain &dom) const;
+    void range(Range *) {}
 
 private:
     QSharedPointer<Range> getRange() const;
