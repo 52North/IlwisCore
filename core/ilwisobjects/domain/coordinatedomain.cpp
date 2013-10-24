@@ -69,6 +69,11 @@ ICoordinateSystem CoordinateDomain::coordinateSystem() const
     return _csy;
 }
 
+void CoordinateDomain::range(Range *)
+{
+
+}
+
 SPRange CoordinateDomain::getRange() const
 {
     return _envelope;

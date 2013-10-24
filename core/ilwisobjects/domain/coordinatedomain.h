@@ -63,6 +63,7 @@ public:
      * \return the ICoordinateSystem
      */
     ICoordinateSystem coordinateSystem() const;
+    void range(Range *);
 
 protected:
     SPRange getRange() const;
