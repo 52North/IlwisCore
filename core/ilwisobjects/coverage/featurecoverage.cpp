@@ -47,7 +47,11 @@ SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
 
 SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
+
     SPFeatureI newfeature = createNewFeature(existingFeature->ilwisType());
+    if (newfeature == nullptr)
+        return newfeature;
+
     for(int i=0; i < existingFeature->trackSize(); ++i){
           Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
           newfeature->set(geom, i);
@@ -56,6 +60,10 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
 }
 
 SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
+    if ( isReadOnly())
+        return SPFeatureI();
+    changed(true);
+
     _featureTypes |= tp;
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
