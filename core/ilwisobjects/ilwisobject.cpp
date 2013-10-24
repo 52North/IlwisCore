@@ -201,6 +201,7 @@ bool IlwisObject::hasChanged() const
 
 void IlwisObject::changed(bool yesno)
 {
+    _modifiedTime = Time::now();
     _changed = yesno;
 }
 
