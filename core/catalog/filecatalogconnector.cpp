@@ -30,12 +30,12 @@ QFileInfoList FileCatalogConnector::loadFolders(const QStringList& namefilter)
         QFileInfoList dirs;
         foreach(QFileInfo inf , fileList) {
              QDir dir(inf.canonicalPath());
-             dirs.append(dir.entryInfoList(QDir::Dirs));
+             dirs.append(dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot));
         }
         fileList.append(dirs);;
     } else {
         QDir folder(location.toLocalFile());
-        folder.setFilter(QDir::Dirs);
+        folder.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
         if (!folder.exists()) {
             kernel()->issues()->log(TR(ERR_COULD_NOT_OPEN_READING_1).arg(folder.absolutePath()));
             return QFileInfoList();
