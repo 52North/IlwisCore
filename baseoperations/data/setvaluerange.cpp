@@ -37,6 +37,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
     double lmin = _min == rUNDEF ? numrange->min() : std::max(_min, rngDomain->min());
     double lmax = _max == rUNDEF ? numrange->max() : std::min(_max, rngDomain->max());
     double lstep = _step == rUNDEF ? numrange->resolution() : std::max(_step, rngDomain->resolution());
+    bool defaultMinmaxUsed = rngDomain->min() == -1.00E+15 || rngDomain->min() == -1.00E+300;
     NumericRange *rng = new NumericRange(lmin, lmax,lstep);
     datadef.range(rng);
     datadef.domain()->range(rng);
@@ -44,7 +45,10 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _table.isValid()) {
         std::vector<QVariant> data = _table->column(_columnName);
         for(auto& val : data) {
-            val = val.toDouble() >= lmin && val.toDouble() <= lmax ? val : rUNDEF;
+            val = rng->ensure(val.toDouble());
+            if (!defaultMinmaxUsed && lstep != 0){
+                val = rngDomain->min() + lstep * ((qint64)(val.toDouble() - rngDomain->min()) / lstep);
+            }
         }
         _table->column(_columnName, data);
     } else {
@@ -52,7 +56,10 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
             PixelIterator iter(_raster, box);
 
             for_each(iter, iter.end(), [&](double& val){
-                val = val >= lmin && val <= lmax ? val : rUNDEF;
+                val = rng->ensure(val);
+                if (!defaultMinmaxUsed && lstep != 0){
+                    val = rngDomain->min() + lstep * ((qint64)(val - rngDomain->min()) / lstep);
+                }
             });
             return true;
         };
@@ -158,9 +165,9 @@ quint64 SetValueRange::createMetadata()
     resource.addProperty("pin_3_type", itNUMBER);
     resource.addProperty("pin_3_name", TR("maximum"));
     resource.addProperty("pin_3_desc",TR("maximum of the new value range. If the value is undefined it will be ignored"));
-    resource.addProperty("pin_3_type", itNUMBER);
-    resource.addProperty("pin_3_name", TR("resolution"));
-    resource.addProperty("pin_3_desc",TR("optional resolution of the new value range. If the value is undefined it will be ignored"));
+    resource.addProperty("pin_4_type", itNUMBER);
+    resource.addProperty("pin_4_name", TR("resolution"));
+    resource.addProperty("pin_4_desc",TR("optional resolution of the new value range. If the value is undefined it will be ignored"));
     resource.addProperty("outparameters",0);
 
     resource.prepare();
