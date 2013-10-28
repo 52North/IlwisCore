@@ -40,12 +40,22 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, c
     for(int i=0; i < _expression.parameterCount(); ++i){
         const Parameter& parm = _expression.parm(i);
         QString str = sUNDEF;
-        if ( parm.valuetype() == itSTRING)
+        if ( parm.valuetype() == itSTRING){
           str = parm.value();
+          QString var = symTable.getValue(str).toString();
+          if ( var != "")
+              str = var;
+        }
         else {
             Symbol sym = symTable.getSymbol(parm.value());
-            if ( sym._type & itNUMBER)
-                str = sym._var.toString();
+            if ( sym._type & itNUMBER){
+                QString tp = sym._var.typeName();
+                if ( tp == "QVariantList"){
+                    QVariantList lst = sym._var.value<QVariantList>();
+                    str =  lst[0].toString();
+                }else
+                    str = sym._var.toString();
+            }
         }
 
         if ( str.size() > 0 && str[0] == '"' && str[str.size()-1] == '"'){

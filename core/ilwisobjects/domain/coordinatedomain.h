@@ -2,6 +2,9 @@
 #define COORDINATEDOMAIN_H
 
 namespace Ilwis {
+/**
+ * The CoordinateDomain class implements a coordinate based type of domain
+ */
 class CoordinateDomain : public Domain
 {
 public:

@@ -65,8 +65,9 @@ Ilwis::Kernel* Ilwis::kernel() {
     return Kernel::_kernel;
 }
 
-bool Ilwis::initIlwis(){
+bool Ilwis::initIlwis(QFileInfo configFile){
     try {
+        context()->loadConfigFile(configFile);
         return kernel() != 0;
     } catch (const ErrorObject& err) {
         std::cout << err.message().toStdString();

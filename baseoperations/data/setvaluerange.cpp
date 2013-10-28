@@ -48,9 +48,6 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
             val = rng->ensure(val.toDouble());
             if (!defaultMinmaxUsed && lstep != 0){
                 val = rngDomain->min() + lstep * ((qint64)(val.toDouble() - rngDomain->min()) / lstep);
-                if (!defaultMinmaxUsed && lstep != 0){
-                    val = rngDomain->min() + lstep * ((qint64)(val - rngDomain->min()) / lstep);
-                }
             }
         }
         _table->column(_columnName, data);

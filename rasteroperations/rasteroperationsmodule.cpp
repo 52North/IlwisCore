@@ -15,6 +15,7 @@
 #include "pixeliterator.h"
 #include "aggregateraster.h"
 #include "areanumbering.h"
+#include "crossrasters.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;
@@ -34,6 +35,7 @@ void RasterOperationsModule::prepare()
 {
    commandhandler()->addOperation(AggregateRaster::createMetadata(), AggregateRaster::create);
    commandhandler()->addOperation(AreaNumbering::createMetadata(), AreaNumbering::create);
+   commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
 
 }
 

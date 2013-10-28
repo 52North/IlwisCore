@@ -13,13 +13,10 @@ public:
     AssignmentNode();
     bool isDefinition() const;
     void setDefintion(bool yesno);
-    void setResult(IDNode *node);
-    //void setDomPart(ASTNode *node);
     void setExpression(ExpressionNode *node);
     QString nodeType() const;
     bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
-    void setFormatPart(ASTNode *node);
-    void addSelector(Selector *n);
+    void addOutputs(OutParametersNode *p);
 
 private:
     template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols, bool useMerge=false) {
@@ -53,13 +50,11 @@ private:
         return true;
     }
     IIlwisObject getObject(const Symbol &sym) const;
-    void getFormat(ASTNode *node, QString &format, QString &fnamespace) const;
-    void store2Format(ASTNode *node, const Symbol &sym, const QString &result);
+    void getFormat(QSharedPointer<Ilwis::ASTNode> &node, QString &format, QString &fnamespace) const;
+    void store2Format(QSharedPointer<Ilwis::ASTNode> &node, const Symbol &sym, const QString &result);
     bool _defintion;
-    QSharedPointer<IDNode> _result;
-    QSharedPointer<ASTNode> _typemodifier;
     QSharedPointer<ExpressionNode> _expression;
-    QSharedPointer<Selector> _selector;
+    QSharedPointer<OutParametersNode> _outParms;
 };
 }
 

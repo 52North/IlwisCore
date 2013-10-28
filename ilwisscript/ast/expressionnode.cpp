@@ -25,49 +25,51 @@ bool ExpressionNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext 
     foreach(RightTerm term, _rightTerm) {
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
-        if ( term._operator == OperationNode::oAND ){
-            ret = handleAnd(vright, symbols, ctx);
-        } else   if ( term._operator == OperationNode::oOR ){
-            ret = handleOr(vright, symbols, ctx);
-        } else   if ( term._operator == OperationNode::oXOR ){
-            ret = handleXor(vright, symbols, ctx);
+        for(int i=0; i < vright.size(); ++i) {
+            if ( term._operator == OperationNode::oAND ){
+                ret = handleAnd(i,vright, symbols, ctx);
+            } else   if ( term._operator == OperationNode::oOR ){
+                ret = handleOr(i,vright, symbols, ctx);
+            } else   if ( term._operator == OperationNode::oXOR ){
+                ret = handleXor(i,vright, symbols, ctx);
+            }
+            if (!ret)
+                return false;
         }
-        if (!ret)
-            return false;
     }
 
     return ret;
 }
 
-bool ExpressionNode::handleAnd(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
-        _value =  {_value.toBool() &&  vright.toBool(), NodeValue::ctBOOLEAN};
+bool ExpressionNode::handleAnd(int index, const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    if ( vright.canConvert(index,QVariant::Bool) && _value.canConvert(index,QVariant::Bool)) {
+        _value =  {_value.toBool(index) &&  vright.toBool(index), NodeValue::ctBOOLEAN};
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)){
-        _value = {_value.toLongLong() & vright.toLongLong(), NodeValue::ctNumerical};
+        _value = {_value.toLongLong(index) & vright.toLongLong(index), NodeValue::ctNumerical};
         return true;
     }
-   return handleBinaryCases(vright, "binarylogicalraster", "and", symbols, ctx);
+   return handleBinaryCases(index, vright, "binarylogicalraster", "and", symbols, ctx);
 }
 
-bool ExpressionNode::handleOr(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
-        _value =  {_value.toBool() ||  vright.toBool(), NodeValue::ctBOOLEAN};
+bool ExpressionNode::handleOr(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    if ( vright.canConvert(index,QVariant::Bool) && _value.canConvert(index,QVariant::Bool)) {
+        _value =  {_value.toBool(index) ||  vright.toBool(index), NodeValue::ctBOOLEAN};
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(_value)){
-        _value = {_value.toLongLong() | vright.toLongLong(), NodeValue::ctNumerical};
+        _value = {_value.toLongLong(index) | vright.toLongLong(index), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCases(vright, "binarylogicalraster", "or", symbols, ctx);
+    return handleBinaryCases(index, vright, "binarylogicalraster", "or", symbols, ctx);
 }
 
-bool ExpressionNode::handleXor(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    if ( vright.canConvert(QVariant::Bool) && _value.canConvert(QVariant::Bool)) {
-        _value =  {_value.toBool() ^  vright.toBool(), NodeValue::ctBOOLEAN};
+bool ExpressionNode::handleXor(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    if ( vright.canConvert(index,QVariant::Bool) && _value.canConvert(index,QVariant::Bool)) {
+        _value =  {_value.toBool(index) ^  vright.toBool(index), NodeValue::ctBOOLEAN};
         return true;
     } else  if ( SymbolTable::isIntegerNumerical(vright) &&SymbolTable::isIntegerNumerical(_value)){
-        _value = {_value.toLongLong() ^ vright.toLongLong(), NodeValue::ctNumerical};
+        _value = {_value.toLongLong(index) ^ vright.toLongLong(index), NodeValue::ctNumerical};
         return true;
     }
-    return handleBinaryCases(vright, "binarylogicalraster", "xor", symbols, ctx);
+    return handleBinaryCases(index,vright, "binarylogicalraster", "xor", symbols, ctx);
 }

@@ -9,7 +9,7 @@ namespace Ilwis {
 class SymbolTable;
 struct ExecutionContext ;
 
-class NodeValue : public QVariant {
+class NodeValue : public QVariantList {
 public:
     enum ContentType{ctUNKNOW, ctNumerical, ctString, ctExpression, ctMethod,ctBOOLEAN, ctID, ctLIST};
 
@@ -17,16 +17,24 @@ public:
     NodeValue(const QVariant& v, ContentType tp=NodeValue::ctUNKNOW);
     NodeValue(const QVariant& v, const QString& nid, ContentType tp=NodeValue::ctUNKNOW);
 
-    NodeValue& operator=(QVariant a);
+    NodeValue& operator=(const QVariant& a);
     NodeValue& operator=(const NodeValue& a) ;
 
     void setContentType(ContentType tp);
     ContentType content() const;
-    QString id() const;
+    QString id(int index=0) const;
     QString toString() const;
+    bool canConvert(int index, int targetTypeId) const;
+    qint64 toLongLong(int index, bool *ok=0) const;
+    qint64 toBool(int index) const;
+    double toDouble(int index, bool *ok=0) const;
+    int toInt(int index, bool *ok=0) const;
+    QString toString(int index) const;
+    QVariant value(int index=0) const;
+
 private:
     NodeValue::ContentType _content;
-    QString _id=sUNDEF;
+    QList<QString> _ids;
 
 };
 class ASTNode
@@ -46,7 +54,7 @@ public:
    }
 
 protected:
-    QVariant resolveValue(const NodeValue &value, SymbolTable& symbols);
+    QVariant resolveValue(int index, const NodeValue &value, SymbolTable& symbols);
     QVector<QSharedPointer<ASTNode> > _childeren;
     bool _evaluated;
     NodeValue _value;

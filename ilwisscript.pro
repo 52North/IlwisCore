@@ -50,7 +50,8 @@ SOURCES += \
     ilwisscript/ast/selectornode.cpp \
     ilwisscript/ast/formatter.cpp \
     ilwisscript/ast/domainformatter.cpp \
-    ilwisscript/ast/ifnode.cpp
+    ilwisscript/ast/ifnode.cpp \
+    ilwisscript/ast/outparametersnode.cpp
 
 
 HEADERS +=\
@@ -84,7 +85,8 @@ HEADERS +=\
     ilwisscript/ast/formatters.h \
     ilwisscript/ast/formatter.h \
     ilwisscript/ast/domainformatter.h \
-    ilwisscript/ast/ifnode.h
+    ilwisscript/ast/ifnode.h \
+    ilwisscript/ast/outparametersnode.h
 
 
 INCLUDEPATH += $$PWD/core \

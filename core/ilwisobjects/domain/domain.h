@@ -44,6 +44,7 @@ public:
      * \return the strict state.
      */
     bool isStrict() const;
+
     /*!
      * sets the strict status of the domain. When a domain is set to strict it will only compare domain properties
      * to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts

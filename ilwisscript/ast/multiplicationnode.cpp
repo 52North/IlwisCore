@@ -26,62 +26,64 @@ bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope, ExecutionCont
     foreach(RightTerm term, _rightTerm) {
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
-        if ( term._operator == OperationNode::oTIMES ){
-            ret = handleTimes(vright, symbols, ctx);
-        } else   if ( term._operator == OperationNode::oDIVIDED ){
-            ret = handleDiv(vright, symbols, ctx);
-        }else   if ( term._operator == OperationNode::oMOD ){
-            ret = handleMod(vright, symbols, ctx);
-        }
+        for(int i=0; i < vright.size(); ++i) {
+            if ( term._operator == OperationNode::oTIMES ){
+                ret = handleTimes(i, vright, symbols, ctx);
+            } else   if ( term._operator == OperationNode::oDIVIDED ){
+                ret = handleDiv(i, vright, symbols, ctx);
+            }else   if ( term._operator == OperationNode::oMOD ){
+                ret = handleMod(i, vright, symbols, ctx);
+            }
 
-        if (!ret)
-            return false;
+            if (!ret)
+                return false;
+        }
     }
 
     return ret;
 }
 
-bool MultiplicationNode::handleTimes(const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
-    QVariant var = resolveValue(_value, symbols);
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
-        _value = {vright.toDouble() * var.toDouble(), NodeValue::ctNumerical};
+bool MultiplicationNode::handleTimes(int index, const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
+    QVariant var = resolveValue(index, _value, symbols);
+    if ( SymbolTable::isNumerical(vright[index]) && SymbolTable::isNumerical(var)) {
+        _value = {vright.toDouble(index) * var.toDouble(), NodeValue::ctNumerical};
         return true;
     }
-    IlwisTypes used = typesUsed(vright, symbols);
+    IlwisTypes used = typesUsed(index, vright, symbols);
     if ( hasType(used, itRASTER))
-        return handleBinaryCases(vright, "binarymathraster", "times", symbols, ctx);
+        return handleBinaryCases(index, vright, "binarymathraster", "times", symbols, ctx);
     if ( hasType(used, itTABLE))
-        handleTableCases(vright, "binarymathtable", "times", symbols, ctx);
+        handleTableCases(index, vright, "binarymathtable", "times", symbols, ctx);
     return false;
 }
 
-bool MultiplicationNode::handleDiv(const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
-    QVariant var = resolveValue(_value, symbols);
-    if (SymbolTable:: isNumerical(vright) && SymbolTable::isNumerical(var)) {
-        if ( vright.toDouble() == 0)
+bool MultiplicationNode::handleDiv(int index, const NodeValue& vright, SymbolTable &symbols, ExecutionContext *ctx) {
+    QVariant var = resolveValue( index, _value, symbols);
+    if (SymbolTable:: isNumerical(vright[index]) && SymbolTable::isNumerical(var)) {
+        if ( vright.toDouble(index) == 0)
             return false;
-        _value = {var.toDouble() /  vright.toDouble(), NodeValue::ctNumerical};
+        _value = {var.toDouble() /  vright.toDouble(index), NodeValue::ctNumerical};
         return true;
     }
-    IlwisTypes used = typesUsed(vright, symbols);
+    IlwisTypes used = typesUsed(index, vright, symbols);
     if ( hasType(used, itRASTER))
-        return handleBinaryCases(vright, "binarymathraster", "divide", symbols, ctx);
+        return handleBinaryCases(index, vright, "binarymathraster", "divide", symbols, ctx);
     if ( hasType(used, itTABLE))
-        return handleTableCases(vright, "binarymathtable", "divide", symbols, ctx);
+        return handleTableCases(index, vright, "binarymathtable", "divide", symbols, ctx);
     return false;
 }
 
-bool MultiplicationNode::handleMod(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    QVariant var = resolveValue(_value, symbols);
-    if ( SymbolTable::isIntegerNumerical(vright) && SymbolTable::isIntegerNumerical(var)) {
+bool MultiplicationNode::handleMod(int index, const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    QVariant var = resolveValue(index, _value, symbols);
+    if ( SymbolTable::isIntegerNumerical(vright[index]) && SymbolTable::isIntegerNumerical(var)) {
         bool ok1, ok2;
-       _value = {var.toInt(&ok1) %  vright.toInt(&ok2), NodeValue::ctNumerical};
+       _value = {var.toInt(&ok1) %  vright.toInt(index, &ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }
-    IlwisTypes used = typesUsed(vright, symbols);
+    IlwisTypes used = typesUsed(index, vright, symbols);
     if ( hasType(used, itRASTER))
-        return handleBinaryCases(vright, "binarymathraster", "mod", symbols, ctx);
+        return handleBinaryCases(index, vright, "binarymathraster", "mod", symbols, ctx);
     if ( hasType(used, itTABLE))
-        return handleTableCases(vright, "binarymathtable", "mod", symbols, ctx);
+        return handleTableCases(index, vright, "binarymathtable", "mod", symbols, ctx);
     return false;
 }

@@ -32,7 +32,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
     QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
-    _workingCatalog = new Catalog(); // empty catalog
+    _workingCatalog = new Catalog(); // empty catalog>
 }
 
 IlwisContext::~IlwisContext()
@@ -53,8 +53,21 @@ void IlwisContext::removeSystemLocation(const QUrl &)
     //TODO
 }
 
+void IlwisContext::loadConfigFile(QFileInfo configFile){
+    if (configFile.exists()){
+        QSettings settings(configFile.filePath(), QSettings::IniFormat);
+        this->_ilwisDir = QFileInfo(settings.value("ilwisDir").toString());
+        if (!this->_ilwisDir.isDir()){
+            printf_s("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
+            this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
+        }
+    }else{
+        this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
+    }
+}
+
 QFileInfo IlwisContext::ilwisFolder() const {
-    return QFileInfo( qApp->applicationDirPath());
+    return this->_ilwisDir;
 }
 
 void IlwisContext::init()
@@ -65,6 +78,7 @@ void IlwisContext::init()
     if ( working == sUNDEF) {
 
     }
+    this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }
 
 Catalog *IlwisContext::workingCatalog() const{

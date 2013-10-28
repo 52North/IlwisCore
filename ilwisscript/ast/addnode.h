@@ -9,8 +9,8 @@ public:
     QString nodeType() const;
     bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
 private:
-    bool handleAdd(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
-    bool handleSubstract(const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleAdd(int index,const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+    bool handleSubstract(int index, const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
 };
 }
 
