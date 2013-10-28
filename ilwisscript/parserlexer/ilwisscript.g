@@ -113,14 +113,23 @@ assignmentStatement returns [ AssignmentNode *node]
 @init{
 	node= new AssignmentNode();
 }
-	:	ID (id=selector					{ node->addSelector($id.node);})?						
-								{ node->setResult(new IDNode((char *)($ID.text->chars))); }
-		(formatPart 					{ node->setFormatPart($formatPart.node); }
-		)?
+	:	outlist						{ node->setOutput($outlist.node); }
 		(':=' | '=')					{ node->setDefintion(true); } 
 		expression 					{ node->setExpression($expression.node);}
 	;	
 
+outlist 
+@init{ returns [ OutputNode *node]
+	node= new OutputNode();
+}
+	: id1=ID (sel1=selector					{ node->addSelector($id1.text->chars),$sel1.node);}		)?						
+								{ node->addResult(new IDNode((char *)($id1.text->chars))); }
+	(format1=formatPart 					{ node->addFormatPart($id1.text->chars),$format1.node); }  	)?	 
+	(',' id2=ID (sel2=selector				{ node->addSelector($id2.text->chars),$sel2.node);})?						
+								{ node->addResult(new IDNode((char *)($id2.text->chars))); }
+	(format2=formatPart 					{ node->addFormatPart($id2.text->chars),$format2.node); } 	 )?)*
+	;
+	
 actualParameters returns [ ParametersNode *node]
 @init{
 	node = new ParametersNode();
