@@ -34,7 +34,14 @@ public:
     bool isValid() const;
     Range *clone() const ;
 
-    bool contains(double v, bool inclusive = true) const;
+    bool contains(double v, bool inclusive = true) const{
+        if (!isValid())
+            return false;
+
+        if ( inclusive)
+            return v >= _min && v <= _max;
+        return v > _min && v < _max;
+    }
     bool contains(const QString& value, bool inclusive = true) const;
     bool contains(SPRange rng, bool inclusive=true) const;
     bool contains(NumericRange *rng, bool inclusive=true) const;
@@ -56,7 +63,15 @@ public:
     QString toString() const ;
     QString value(const QVariant& v) const;
     void set(const NumericRange& vr);
-    double ensure(double, bool inclusive=true) const;
+    double ensure(double v, bool inclusive=true) const
+    {
+        if ( !contains(v, inclusive))
+            return _undefined;
+
+        if ( _resolution != 0.0)
+            v = (qint64)(v / _resolution) * _resolution;
+        return v;
+    }
     IlwisTypes determineType() const;
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2,RenumberMap *rnm=0);

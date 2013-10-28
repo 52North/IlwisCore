@@ -27,17 +27,6 @@ Range *NumericRange::clone() const {
     return rng;
 }
 
-bool NumericRange::contains(double v, bool inclusive) const
-{
-    if (!isValid())
-        return false;
-
-    if ( inclusive)
-        return v >= _min && v <= _max;
-    return v > _min && v < _max;
-
-}
-
 double NumericRange::max() const
 {
     return _max;
@@ -149,15 +138,6 @@ void NumericRange::set(const NumericRange& vr)
     _resolution = vr._resolution;
     min(vr._min);
     max(vr._max);
-}
-
-double NumericRange::ensure(double v, bool inclusive) const
-{
-    if ( !contains(v, inclusive))
-        return _undefined;
-    if ( (_resolution - (int)_resolution) == 0.0)
-        return (qint32)(v + 0.5);
-    return v;
 }
 
 bool NumericRange::contains(const QString &value, bool inclusive) const
