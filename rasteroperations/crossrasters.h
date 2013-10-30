@@ -4,6 +4,7 @@
 namespace Ilwis {
 namespace RasterOperations {
 
+
 class CrossRasters : public OperationImplementation
 {
 public:
@@ -16,6 +17,11 @@ public:
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
     static quint64 createMetadata();
+
+private:
+    IRasterCoverage _inputRaster1;
+    IRasterCoverage _inputRaster2;
+    ITable _outputTable;
 };
 }
 }
