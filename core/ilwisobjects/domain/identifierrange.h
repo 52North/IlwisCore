@@ -11,31 +11,145 @@ class NamedIdentifier;
 class KERNELSHARED_EXPORT IndexedIdentifierRange : public ItemRange
 {
 public:
+
+    /**
+     * Constructor for an empty IndexedIdentifierRange
+     */
     IndexedIdentifierRange();
+
+    /**
+     * Constructs a new IndexedIdentifierRange from the given values
+     *
+     * @param prefix the prefix that should be used
+     * @param count
+     * @param start
+     */
     IndexedIdentifierRange(const QString& prefix, quint32 count, quint32 start=0);
 
+    /**
+     * @brief contains
+     * @param name
+     * @param inclusive
+     * @return
+     */
     bool contains(const QString& name, bool inclusive = true) const;
+
+    /**
+     * @brief isValid
+     * @return
+     */
     bool isValid() const;
+
+    /**
+     * @brief operator ==
+     * @param range
+     * @return
+     */
     bool operator==(const IndexedIdentifierRange& range);
 
+    /**
+     * @brief remove
+     * @param nm
+     */
     void remove(const QString& nm);
+
+    /**
+     * @brief clone
+     * @return
+     */
     Range *clone() const;
+
+    /**
+     * @brief item
+     * @param index
+     * @return
+     */
     SPDomainItem item(quint32 index) const;
+
+    /**
+     * @brief item
+     * @param nam
+     * @return
+     */
     SPDomainItem item(const QString &nam) const;
+
+    /**
+     * @brief itemByOrder
+     * @param index
+     * @return
+     */
     SPDomainItem itemByOrder(quint32 index) const;
+
+    /**
+     * @brief add
+     * @param item
+     */
     void add(DomainItem *item);
+
+    /**
+     * @brief add
+     * @param item
+     */
     void add(SPDomainItem item);
 
+    /**
+     * @brief value
+     * @param v
+     * @return
+     */
     QString value(const QVariant& v) const;
+
+    /**
+     * @brief toString
+     * @return
+     */
     QString toString() const;
+
+    /**
+     * @brief raw
+     * @param item
+     * @return
+     */
     quint32 raw(const QString &item) const;
 
+    /**
+     * @brief count
+     * @return
+     */
     quint32 count() const;
+
+    /**
+     * @brief count
+     * @param nr
+     */
     void count(quint32 nr);
+
+    /**
+     * @brief isContinuous
+     * @return
+     */
     virtual bool isContinuous() const;
+
+    /**
+     * @brief interpolation
+     */
     void interpolation(const QString&) {}
+
+    /**
+     * @brief gotoIndex
+     * @param index
+     * @param step
+     * @return
+     */
     qint32 gotoIndex(qint32 index, qint32 step) const;
 
+    /**
+     * @brief merge
+     * @param nr1
+     * @param nr2
+     * @param rnm
+     * @return
+     */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
 private:
    bool alignWithParent(const IDomain& dom);
