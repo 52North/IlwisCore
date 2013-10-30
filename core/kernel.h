@@ -189,7 +189,7 @@ public slots:
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-KERNELSHARED_EXPORT bool initIlwis();
+KERNELSHARED_EXPORT bool initIlwis(QFileInfo configFile = QFileInfo());
 
 }
 

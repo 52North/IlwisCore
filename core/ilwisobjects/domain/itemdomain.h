@@ -198,6 +198,13 @@ public:
         }
         _range->remove(nme);
     }
+
+    /**
+     * Tries to set a new range on this ItemDomain
+     * Will fail if the range doesnt fit
+     *
+     * @param rng the new range
+     */
     void range(Range *rng){
         if ( isReadOnly())
             return;

@@ -21,6 +21,7 @@ public:
     IlwisContext();
     ~IlwisContext();
 
+    void loadConfigFile(QFileInfo configFile);
     void addSystemLocation(const QUrl &resource);
     void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;
@@ -39,6 +40,7 @@ private:
     Catalog *_workingCatalog;
     quint64 _memoryLimit;
     quint64 _memoryLeft;
+    QFileInfo _ilwisDir;
 };
 KERNELSHARED_EXPORT IlwisContext* context();
 }

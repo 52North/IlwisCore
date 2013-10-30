@@ -138,7 +138,7 @@ bool MasterCatalog::removeItems(const QList<Resource> &items){
 
 bool MasterCatalog::addItems(const QList<Resource>& items)
 {
-    QSqlQuery queryItem, queryProperties;
+    QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
                   :itemid,:name,:code,:container,:resource,:type,:extendedtype, :size,:dimensions \
