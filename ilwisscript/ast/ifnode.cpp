@@ -19,7 +19,7 @@ bool Ifnode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
     _condition->evaluate(symbols, scope, ctx);
     if ( _condition->value().content() != NodeValue::ctBOOLEAN)
         throw Ilwis::ScriptSyntaxError(TR("'If' statement needs a boolean condition to function"));
-    bool branch = _condition->value().toBool();
+    bool branch = _condition->value().toBool(0);
     bool ok = true;
     if ( branch) {
         for(quint32 i=0; i < _then.size(); ++i) {

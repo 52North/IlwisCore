@@ -23,7 +23,7 @@ QString WhileNode::nodeType() const
 bool WhileNode::checkCondition(SymbolTable &symbols, int scope, ExecutionContext *ctx) {
 
     _condition->evaluate(symbols, scope, ctx);
-    return _condition->value() == true;
+    return _condition->value().toBool(0) == true;
 }
 
 bool WhileNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx) {
@@ -37,7 +37,7 @@ bool WhileNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
         foreach(QSharedPointer<ASTNode> node, _childeren) {
             if ( node->nodeType() == "breakStatement") {
                 node->evaluate(symbols, scope, ctx);
-                if ( node->value() == false)
+                if ( node->value().toBool(0) == false)
                     break;
             } else
                 node->evaluate(symbols, scope, ctx);

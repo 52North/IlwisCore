@@ -28,17 +28,21 @@ bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope, ExecutionC
     if ( !_parameters.isNull()){
         _parameters->evaluate(symbols, scope, ctx);
         auto val = _parameters->value();
-        auto values = val.value<QVariantList>();
+        auto values = val[0].value<QVariantList>();
         for(const auto& var : values) {
             NodeValue nvalue = var.value<NodeValue>();
             if ( parm != "")
                 parm += ",";
             if ( nvalue.content() == NodeValue::ctString){
-                parm += nvalue.value<QString>();
+                parm += nvalue[0].value<QString>();
             }
             if ( nvalue.content() == NodeValue::ctID) {
-                QString val = nvalue.toString();
-                parm += val;
+                QString val = nvalue[0].toString();
+//                QString val2 = symbols.getValue(val).toString();
+//                if ( val2 != "")
+//                    parm += val2;
+//                else
+                    parm += val;
             }
         }
 

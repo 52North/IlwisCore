@@ -61,10 +61,10 @@ OperationImplementation::State GridSize::prepare(ExecutionContext *, const Symbo
 
 quint64 GridSize::createMetadata()
 {
-    QString url = QString("ilwis://operations/gridsize");
+    QString url = QString("ilwis://operations/rastersize");
     Resource resource(QUrl(url), itOPERATIONMETADATA);
     resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","gridsize");
+    resource.addProperty("longname","rastersize");
     resource.addProperty("syntax","gridsize(rastercoverage,xsize|ysize|zsize)");
     resource.addProperty("description",TR("returns the pixel extent of a grid coverage"));
     resource.addProperty("inparameters","2");

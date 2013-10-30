@@ -21,13 +21,15 @@ DEFINES += PROJECTIONIMPLPROJ4_LIBRARY
 SOURCES += \ 
     rasteroperations/rasteroperationsmodule.cpp \
     rasteroperations/aggregateraster.cpp \
-    rasteroperations/areanumbering.cpp
+    rasteroperations/areanumbering.cpp \
+    rasteroperations/crossrasters.cpp
 
 
 HEADERS += \
     rasteroperations/rasteroperationsmodule.h \
     rasteroperations/aggregateraster.h \
-    rasteroperations/areanumbering.h
+    rasteroperations/areanumbering.h \
+    rasteroperations/crossrasters.h
 
 
 OTHER_FILES += \ 

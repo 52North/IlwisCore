@@ -18,6 +18,7 @@ options {
 #include "scriptnode.h"
 #include "operationnode.h"
 #include "expressionnode.h"
+#include "outparametersnode.h"
 #include "assignmentnode.h"
 #include "scriptlinenode.h"
 #include "parametersNode.h"
@@ -113,13 +114,23 @@ assignmentStatement returns [ AssignmentNode *node]
 @init{
 	node= new AssignmentNode();
 }
-	:	ID (id=selector					{ node->addSelector($id.node);})?						
-								{ node->setResult(new IDNode((char *)($ID.text->chars))); }
-		(formatPart 					{ node->setFormatPart($formatPart.node); }
-		)?
+	:	outParameters					{ node->addOutputs($outParameters.node); }
 		(':=' | '=')					{ node->setDefintion(true); } 
 		expression 					{ node->setExpression($expression.node);}
-	;	
+	;
+	
+outParameters returns [ OutParametersNode *node]
+@init{
+	node= new OutParametersNode();
+}
+	: id1=ID (sel1=selector					{ node->addSelector((char *)($id1.text->chars),$sel1.node);}		)?						
+								{ node->addResult(new IDNode((char *)($id1.text->chars))); }
+		(for1=formatPart 				{ node->addSpecifier((char *)($id1.text->chars), $for1.node); }	)?
+	(',' id2=ID (sel2=selector				{ node->addSelector((char *)($id2.text->chars), $sel2.node);}		)?						
+								{ node->addResult(new IDNode((char *)($id2.text->chars))); }
+		(for2=formatPart 				{ node->addSpecifier((char *)($id2.text->chars), $for2.node); }	)?
+	)*		
+	;			
 
 actualParameters returns [ ParametersNode *node]
 @init{

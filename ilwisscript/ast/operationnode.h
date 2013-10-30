@@ -20,11 +20,11 @@ public:
 
 
 protected:
-    bool handleBinaryCases(const NodeValue &vright, const QString& operation, const QString &relation,
+    bool handleBinaryCases(int index, const NodeValue &vright, const QString& operation, const QString &relation,
                                    Ilwis::SymbolTable &symbols, ExecutionContext *ctx);
-    bool handleTableCases(const NodeValue &vright, const QString &operation, const QString &relation,
+    bool handleTableCases(int index, const NodeValue &vright, const QString &operation, const QString &relation,
                           SymbolTable &symbols, ExecutionContext *ctx);
-    IlwisTypes typesUsed(const NodeValue &vright, SymbolTable &symbols) const;
+    IlwisTypes typesUsed(int index, const NodeValue &vright, SymbolTable &symbols) const;
 
     QSharedPointer<ASTNode> _leftTerm;
     QVector< RightTerm > _rightTerm;

@@ -51,6 +51,11 @@ QVariant SymbolTable::getValue(const QString &name, int scope) const
     QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
         if ( iter.value()._scope == scope) {
+            QString tp = iter.value()._var.typeName();
+            if ( tp == "QVariantList"){
+                QVariantList lst = iter.value()._var.value<QVariantList>();
+                return lst[0];
+            }
             return iter.value()._var;
         }
         ++iter;

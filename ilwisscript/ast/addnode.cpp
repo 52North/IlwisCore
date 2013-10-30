@@ -26,50 +26,52 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
     foreach(RightTerm term, _rightTerm) {
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
-        if ( term._operator == OperationNode::oADD ){
-            ret = handleAdd(vright, symbols, ctx);
-        } else   if ( term._operator == OperationNode::oSUBSTRACT ){
-            ret = handleSubstract(vright, symbols, ctx);
+        for(int i=0; i < vright.size(); ++i) {
+            if ( term._operator == OperationNode::oADD ){
+                ret = handleAdd(i, vright, symbols, ctx);
+            } else   if ( term._operator == OperationNode::oSUBSTRACT ){
+                ret = handleSubstract(i, vright, symbols, ctx);
+            }
+            if (!ret)
+                return false;
         }
-        if (!ret)
-            return false;
     }
 
     return ret;
 }
 
-bool AddNode::handleAdd(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    QVariant var = resolveValue(_value, symbols);
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
-       _value = {vright.toDouble() + var.toDouble(), NodeValue::ctNumerical};
+bool AddNode::handleAdd(int index, const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    QVariant var = resolveValue(index, _value, symbols);
+    if ( SymbolTable::isNumerical(vright[index]) && SymbolTable::isNumerical(var)) {
+       _value = {vright.toDouble(index) + var.toDouble(), NodeValue::ctNumerical};
        return true;
     }
-    IlwisTypes used = typesUsed(vright, symbols);
+    IlwisTypes used = typesUsed(index, vright, symbols);
     bool ok = false;
     if ( hasType(used, itRASTER))
-        ok = handleBinaryCases(vright, "binarymathraster", "add", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathraster", "add", symbols, ctx);
     else if ( hasType(used , itFEATURE)){
-        ok = handleBinaryCases(vright, "binarymathfeature", "add", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathfeature", "add", symbols, ctx);
 
     } else if ( hasType(used,itTABLE)){
-        ok = handleTableCases(vright, "binarymathtable", "add", symbols, ctx);
+        ok = handleTableCases(index, vright, "binarymathtable", "add", symbols, ctx);
 
     }
     return ok;
 }
 
-bool AddNode::handleSubstract(const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
-    QVariant var = resolveValue(_value, symbols);
-    if ( SymbolTable::isNumerical(vright) && SymbolTable::isNumerical(var)) {
-       _value = {var.toDouble() -  vright.toDouble(), NodeValue::ctNumerical};
+bool AddNode::handleSubstract(int index, const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
+    QVariant var = resolveValue(index, _value, symbols);
+    if ( SymbolTable::isNumerical(vright[index]) && SymbolTable::isNumerical(var)) {
+       _value = {var.toDouble() -  vright.toDouble(index), NodeValue::ctNumerical};
        return true;
     }
-    IlwisTypes used = typesUsed(vright, symbols);
+    IlwisTypes used = typesUsed(index, vright, symbols);
     bool ok = false;
     if ( hasType(used, itRASTER))
-        ok = handleBinaryCases(vright, "binarymathraster", "substract", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathraster", "substract", symbols, ctx);
     else if (  (used & itFEATURE) == 0){
-        ok = handleBinaryCases(vright, "binarymathfeature", "substract", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathfeature", "substract", symbols, ctx);
 
     }
     return ok;
