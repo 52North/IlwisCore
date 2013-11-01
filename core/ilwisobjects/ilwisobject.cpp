@@ -439,4 +439,3 @@ IlwisTypes IlwisObject::findType(const QString &resource)
 }
 
 
-

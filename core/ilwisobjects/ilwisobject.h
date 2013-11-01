@@ -152,6 +152,12 @@ public:
    virtual IlwisObject *copy() ;
    virtual bool merge(const IlwisObject* obj, int options=0);
 
+   template<typename T> static T create(const QString& def){
+       T object;
+       object.prepare(def);
+       return object;
+   }
+
    static IlwisObject *create(const Resource& source);
    static IlwisTypes findType(const QString &source);
    static QString type2Name(IlwisTypes t);
