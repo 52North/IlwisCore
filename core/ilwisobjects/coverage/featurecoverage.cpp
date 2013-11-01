@@ -83,8 +83,8 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     }
     _record->cellByRecord(_features.size(), colIndex, newFeature->featureid(), -1);
     _features.push_back(newFeature);
-    quint32 cnt = featureCount(newFeature->ilwisType());
-    setFeatureCount(newFeature->ilwisType(),++cnt );
+    quint32 cnt = featureCount(tp);
+    setFeatureCount(tp,++cnt );
     return _features.back();
 }
 
