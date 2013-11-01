@@ -22,6 +22,9 @@ private:
     IRasterCoverage _inputRaster1;
     IRasterCoverage _inputRaster2;
     ITable _outputTable;
+    INamedIdDomain _crossDomain;
+
+    bool cross(const Box3D<qint32> box);
 };
 }
 }
