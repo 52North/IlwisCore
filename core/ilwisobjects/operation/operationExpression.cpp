@@ -263,9 +263,10 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
         indexes.push_back(start.size());
         for(int i =0; i < indexes.size(); ++i) {
             int index3 = indexes[i];
-            QString part = start.mid(cur, index3 - cur - shift) ;
+            QString part = start.mid(cur, index3 - cur) ;
             part = part.trimmed();
-            _outParameters.push_back(Parameter(part,itUNKNOWN, symtab));
+            Parameter parm(part,itUNKNOWN, symtab);
+            _outParameters.push_back(parm);
             shift = 1;
             cur = index3 + shift;
         }
