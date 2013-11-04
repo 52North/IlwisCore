@@ -343,6 +343,14 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "LineCoverage";
     case  itPOINT:
         return "PointCoverage";
+    case  itPOINT+itLINE:
+        return "FeatureCoverage";
+    case  itPOINT+itPOLYGON:
+        return "FeatureCoverage";
+    case  itPOLYGON+itLINE:
+        return "FeatureCoverage";
+    case  itPOINT+itLINE+itPOLYGON:
+        return "FeatureCoverage";
     case  itNUMERICDOMAIN:
         return "ValueDomain";
     case  itITEMDOMAIN:
