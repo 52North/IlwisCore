@@ -158,6 +158,12 @@ public:
        return object;
    }
 
+   template<typename T> static T create(quint64 id){
+       T object;
+       object.prepare(id);
+       return object;
+   }
+
    static IlwisObject *create(const Resource& source);
    static IlwisTypes findType(const QString &source);
    static QString type2Name(IlwisTypes t);
