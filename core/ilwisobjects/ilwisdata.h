@@ -86,10 +86,6 @@ public:
         return operator->();
     }
 
-    ESPIlwisObject shared_ptr(){
-        return _implementation;
-    }
-
     /*!
      \brief casts an object to another object based on the template parameter.
 
