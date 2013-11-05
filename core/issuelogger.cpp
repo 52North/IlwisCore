@@ -93,7 +93,7 @@ std::string IssueObject::type2String() {
 }
 
 //---------------------------------------------------------------------------
-IssueLogger::IssueLogger() : _repeatCount(0)
+IssueLogger::IssueLogger(QObject *parent) : QObject(parent), _repeatCount(0)
 {
     QString apploc= context()->ilwisFolder().absoluteFilePath();
     apploc += "/log";
@@ -134,6 +134,7 @@ quint64 IssueLogger::log(const QString &message, int it)
     if ( _logFileRegular.is_open()) {
         obj.stream(_logFileRegular, IssueObject::lmREGULAR);
     }
+    emit ilwiserrormessage(message);
 
     _lastmessage = message;
     return _issueId++;

@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QQueue>
+#include <fstream>
 #include "Kernel_global.h"
 
 class QSqlError;
@@ -59,10 +60,12 @@ private:
     int _itype;
 };
 
-class KERNELSHARED_EXPORT IssueLogger
+class KERNELSHARED_EXPORT IssueLogger : public QObject
 {
+    Q_OBJECT
+
 public:
-    IssueLogger();
+    explicit IssueLogger(QObject *parent=0);
     ~IssueLogger();
 
     quint64 log(const QString& message, int it=IssueObject::itError);
@@ -76,6 +79,9 @@ public:
     IssueObject::IssueType maxIssueLevel() const;
     void copy(IssueLogger& other);
     void clear();
+
+signals:
+    void ilwiserrormessage(const QString& message);
 
 private:
     QString _lastmessage;
