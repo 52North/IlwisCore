@@ -26,6 +26,7 @@ public:
      * \return returns the message of the exception
      */
     QString message() const;
+    virtual const char* what() const throw();
 
 signals:
 
@@ -39,20 +40,24 @@ private:
 class KERNELSHARED_EXPORT InternalError : public ErrorObject {
 public:
     explicit InternalError(const QString& message);
+    const char* what() const throw();
 };
 
 class KERNELSHARED_EXPORT ScriptError : public ErrorObject {
 public:
     explicit ScriptError(const QString& message);
+    virtual const char* what() const throw();
 };
 class KERNELSHARED_EXPORT ScriptSyntaxError : public ScriptError {
 public:
     explicit ScriptSyntaxError(const QString& message);
+    const char* what() const throw();
 };
 
 class KERNELSHARED_EXPORT ScriptExecutionError : public ScriptError {
 public:
     explicit ScriptExecutionError(const QString& message);
+    const char* what() const throw();
 };
 }
 
