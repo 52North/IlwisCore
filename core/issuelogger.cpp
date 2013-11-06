@@ -36,6 +36,7 @@ QDateTime Ilwis::IssueObject::time() const
 
 int Ilwis::IssueObject::type() const
 {
+    // dummy remark
     return _itype;
 }
 
