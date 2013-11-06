@@ -15,7 +15,7 @@ typedef Ilwis::IlwisData<Ilwis::Domain> IDomain;
  * and time datatypes. Basically every datatype used in Ilwis is tied to a domain. Domains can be hierarchically organized meaning that
  * A domain maybe a generalization of other domains. The purpose of this is to be able to use subsets of domains in general cases. For example
  * the landcover classification system Corine is fairly large and subsetting seems (in relevant cases) reasonable. If the subset would
- * have no relation to the whole thematic domain (Corine) it would be impossible to reuse it in cases were a corine domain is exprected.
+ * have no relation to the whole thematic domain (Corine) it would be impossible to reuse it in cases were a corine domain is expected.
  * The strict flag limits this behavior. For the behaviour of the individual domain types see the relevant class.
  */
 class KERNELSHARED_EXPORT Domain : public IlwisObject
@@ -78,7 +78,7 @@ public:
      * some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to
      * compare properties. For example the default percentage domain has a value range of 0-100 but it is not strict. Other numeric domains maybe freely
      * compared to this one as the parent domain ( the generic numeric domain) will accept all values.
-     * \sets the parent domain; it may be set to invalid
+     * \param dm sets the parent domain; it may be set to invalid
      */
     virtual void setParent(const IDomain& dm);
 

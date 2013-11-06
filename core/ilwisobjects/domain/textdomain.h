@@ -55,6 +55,8 @@ public:
      * \return true when compatible
      */
     bool isCompatibleWith(const IDomain &dom) const;
+
+    //@override
     void range(Range *) {}
 
 private:

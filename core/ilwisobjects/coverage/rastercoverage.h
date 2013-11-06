@@ -127,7 +127,7 @@ public:
     }
 
     /*!
-     * Gives the value of a certain pixel
+     * Gives the value of a certain pixel in the grid
      * \param pix the pixel
      * \return the value at the pixel or undefined
      */

@@ -32,9 +32,9 @@ public:
     ~DataDefinition();
 
     /*!
-     * \brief operator =
-     * \param def1
-     * \return
+     * Assigns the values of the other DataDefinition to this
+     * \param def1 the other DataDefinition
+     * \return a copy of the other DataDefinition
      */
     DataDefinition& operator=(const DataDefinition& def1);
 

@@ -7,148 +7,162 @@
 namespace Ilwis {
 
 class NamedIdentifier;
-
+/**
+ * Because this class had to fit an interface there are a couple of empty functions and parameters, these should not be used.
+ *
+ *
+ */
 class KERNELSHARED_EXPORT IndexedIdentifierRange : public ItemRange
 {
 public:
 
     /**
-     * Constructor for an empty IndexedIdentifierRange
+     * Constructor for an empty IndexedIdentifierRange.
      */
     IndexedIdentifierRange();
 
     /**
-     * Constructs a new IndexedIdentifierRange from the given values
+     * Constructs a new IndexedIdentifierRange and adds a IndexedIdentifier based on the given values.
      *
-     * @param prefix the prefix that should be used
-     * @param count
-     * @param start
+     * @param prefix the prefix that should be used for the IndexedIdentifier
+     * @param count the count that should be used for the IndexedIdentifier
+     * @param start empty parameter
      */
     IndexedIdentifierRange(const QString& prefix, quint32 count, quint32 start=0);
 
     /**
-     * @brief contains
-     * @param name
-     * @param inclusive
-     * @return
+     * Checks if a certain string is contained in this IndexedIdentifierRange.
+     *
+     * @param name name of the object that is to be checked
+     * @param inclusive empty parameter
+     * @return true if the item is contained in this IndexedIdentifierRange
      */
     bool contains(const QString& name, bool inclusive = true) const;
 
     /**
-     * @brief isValid
-     * @return
+     * Checks if this IndexedIdentifierRange is valid.
+     *
+     * @return true when valid
      */
     bool isValid() const;
 
     /**
-     * @brief operator ==
-     * @param range
-     * @return
+     * Checks if this IndexedIdentifierRange is equal to another IndexedIdentifierRange.
+     *
+     * @param range the other range
+     * @return true when equal
      */
     bool operator==(const IndexedIdentifierRange& range);
 
     /**
-     * @brief remove
-     * @param nm
+     * Removes an IndexedIdentifier from this range.
+     *
+     * @param nm name of the object to be removed
      */
     void remove(const QString& nm);
 
     /**
-     * @brief clone
-     * @return
+     * Copies this IndexedIdentifierRange range
+     *
+     * @return a copy of this
      */
     Range *clone() const;
 
     /**
-     * @brief item
-     * @param index
-     * @return
+     * Returns the IndexedIdentifier at the given index, gives an empty object when the index is larger than the position of the last object.
+     *
+     * @param index the index
+     * @return IndexedIdentifier, can be empty
      */
     SPDomainItem item(quint32 index) const;
 
     /**
-     * @brief item
-     * @param nam
-     * @return
+     * empty function
+     *
      */
     SPDomainItem item(const QString &nam) const;
 
     /**
-     * @brief itemByOrder
-     * @param index
-     * @return
+     * returns the item at the given index
+     * @param the index
+     * @return the item at the index
      */
     SPDomainItem itemByOrder(quint32 index) const;
 
     /**
-     * @brief add
-     * @param item
+     * Adds a new IndexedIdentifier to this range, only works when item is valid
+     *
+     * @param item the item that has to be added
      */
     void add(DomainItem *item);
 
     /**
-     * @brief add
-     * @param item
+     * Adds a new IndexedIdentifier to this range, only works when item is valid
+     *
+     * @param item the item that has to be added
      */
     void add(SPDomainItem item);
 
     /**
-     * @brief value
-     * @param v
-     * @return
+     * Creates a QString with the value from a QVariant, only works when the QVariant is valid, will return iUNDEF when this is not the case.
+     *
+     * @param v the QVariant to be converted
+     * @return the value in string form
      */
     QString value(const QVariant& v) const;
 
     /**
-     * @brief toString
-     * @return
+     * Creates and returns a String representation of this IndexedIdentifierRange
+     *
+     * @return a String of this object
      */
     QString toString() const;
 
-    /**
-     * @brief raw
-     * @param item
-     * @return
-     */
     quint32 raw(const QString &item) const;
 
     /**
-     * @brief count
-     * @return
+     * Returns the current count.
+     *
+     * @return the current count
      */
     quint32 count() const;
 
     /**
-     * @brief count
-     * @param nr
+     * Changes the current count to a new value.
+     *
+     * @param nr the new count
      */
     void count(quint32 nr);
 
     /**
-     * @brief isContinuous
-     * @return
+     * Checks if this object is continuous, which it is not.
+     *
+     * @return false
      */
     virtual bool isContinuous() const;
 
     /**
-     * @brief interpolation
+     * empty function
      */
     void interpolation(const QString&) {}
 
     /**
-     * @brief gotoIndex
-     * @param index
-     * @param step
-     * @return
+     * calculates the next index based on the current index and the size of the step
+     * cannot go below 0 or over the count limit
+     *
+     * @param index the current index
+     * @param step the size of the step, can be negative
+     * @return the new index( 0=>result <=count)
      */
     qint32 gotoIndex(qint32 index, qint32 step) const;
 
     /**
-     * @brief merge
-     * @param nr1
-     * @param nr2
-     * @param rnm
-     * @return
+     * merges 2 IndexedIdentifierRange 's into one
+     *
+     * @param nr1 one of the IndexedIdentifierRanges to be merged
+     * @param nr2 one of the IndexedIdentifierRanges to be merged
+     * @param rnm empty parameter
+     * @return the result of the merging
      */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
 private:
@@ -160,29 +174,143 @@ private:
 class KERNELSHARED_EXPORT NamedIdentifierRange : public ItemRange
 {
 public:
+    /**
+     * Constructs an empty NamedIdentifierRange
+     */
     NamedIdentifierRange();
+
     ~NamedIdentifierRange();
 
+    /**
+     * Checks if this NamedIdentifierRange contains a certain NamedIdentifier
+     *
+     * @param name the name of the identifier
+     * @param inclusive empty parameter
+     * @return true when the identifier is in the range
+     */
     bool contains(const QString& name, bool inclusive = true) const;
+
+    /**
+     * Checks if this NamedIdentifierRange is valid
+     * @return true when valid
+     */
     bool isValid() const;
+
+    /**
+     * Compares another NamedIdentifierRange with this one
+     *
+     * @param range another NamedIdentifierRange
+     * @return true when they are the same (equal)
+     */
     bool operator==(const ItemRange& range) const;
 
+    /**
+     * Adds a new NamedIdentifier to this NamedIdentifierRange, will fail if the item you want to add is invalid
+     *
+     * @param item the new NamedIdentifier that should be added
+     */
     void add(DomainItem *item);
+
+    /**
+     * Adds a new NamedIdentifier to this NamedIdentifierRange, will fail if the item you want to add is invalid
+     *
+     * @param item the new NamedIdentifier that should be added
+     */
     void add(SPDomainItem item);
+
+    /**
+     * Removes an NamedIdentifier from this NamedIdentifierRange
+     *
+     * @param item the name of the NamedIdentifier that should be removed
+     */
     void remove(const QString& item);
+
+    /**
+     * Returns the value at a certain Index, will fail if the supplied QVariant is invalid
+     *
+     * @param v the QVariant with the index
+     * @return the value at the index or sUNDEF
+     */
     QString value(const QVariant& v) const;
+
+    /**
+     * override of the << operator, the << operator now adds the string as a NamedIdentifier into this range
+     *
+     * @param itemdef The name of the NamedIdentifier that should be added
+     * @return this with an extra identifier
+     */
     NamedIdentifierRange& operator<<(const QString& itemdef);
+
+    /**
+     * Tries to find a NamedIdentifier in this range with the same raw value as specified. if it fails it will return an empty domain item
+     * @param iraw the raw value searched for
+     * @return the requested NamedIdentifier or an empty SPDomainItem
+     */
     SPDomainItem item(quint32 iraw) const;
+
+    /**
+     * Tries to find a NamedIdentifier in this range with the same name as specified, if it fail it will return an empty domain item
+     * @param nam the name seached for
+     * @return the requested NamedIdentifier or an empty SPDomainItem
+     */
     SPDomainItem item(const QString &nam) const;
+
+    /**
+     * Query for the NamedIdentifier at the given index
+     * @param index the index
+     * @return the NamedIdentifier at the index, or an empty SPDomainItem if the index is invalid
+     */
     SPDomainItem itemByOrder(quint32 index) const;
+
+    /**
+     * Creates a clone of this range
+     *
+     * @return a clone of this range
+     */
     Range *clone() const;
 
+    /**
+     * Creates a String representation of this object
+     * @return a string
+     */
     QString toString() const;
+
+    /**
+     * Checks if this NamedIdentifierRange is continuous (its not)
+     * @return false
+     */
     virtual bool isContinuous() const;
+
+    /**
+     * empty function
+     */
     void interpolation(const QString&) {}
+
+    /**
+     * calculates the next index based on the current index and the size of the step
+     * cannot go below 0 or over the count limit
+     *
+     * @param index the current index
+     * @param step the size of the step, can be negative
+     * @return the new index( 0=>result <=count)
+     */
     qint32 gotoIndex(qint32 index, qint32 step) const;
+
+    /**
+     * Returns the current count.
+     *
+     * @return the current count
+     */
     quint32 count() const;
 
+    /**
+     * merges 2 NamedIdentifierRange 's into one
+     *
+     * @param nr1 one of the IndexedIdentifierRanges to be merged
+     * @param nr2 one of the IndexedIdentifierRanges to be merged
+     * @param rnm specification of how to renumber the new range default=0
+     * @return the result of the merging
+     */
     static NamedIdentifierRange *merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
 protected:
