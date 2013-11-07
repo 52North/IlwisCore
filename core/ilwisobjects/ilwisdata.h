@@ -176,6 +176,7 @@ public:
     }
 
     bool prepare(const Resource& resource){
+        mastercatalog()->addContainer(resource.container());
         if (resource.isValid()) {
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource));
