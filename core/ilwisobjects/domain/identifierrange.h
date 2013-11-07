@@ -106,13 +106,6 @@ public:
     QString toString() const;
 
     /**
-     * @brief raw
-     * @param item
-     * @return
-     */
-    quint32 raw(const QString &item) const;
-
-    /**
      * @brief count
      * @return
      */
