@@ -66,6 +66,9 @@ public:
      * \return the ICoordinateSystem
      */
     ICoordinateSystem coordinateSystem() const;
+    /**
+     * empty function
+     */
     void range(Range *);
 
 protected:

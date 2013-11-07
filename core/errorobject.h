@@ -1,8 +1,10 @@
 #ifndef ERROROBJECT_H
 #define ERROROBJECT_H
 
-#include <QtCore>
 #include "Kernel_global.h"
+
+#include <exception>
+#include <QString>
 
 namespace Ilwis {
 
@@ -12,8 +14,7 @@ namespace Ilwis {
  *Exceptions are not widely used in ILwis, there is more a reliance on return values. But were they are used they must be derived from ErrorObject
  *The reason is that there must still be logging to the issuelogger and this can be done through the errorobject
  */
-class KERNELSHARED_EXPORT ErrorObject :public QException
-{
+class KERNELSHARED_EXPORT ErrorObject :public std::exception{
 public:
     /*!
      * \brief ErrorObject constructor
@@ -27,10 +28,6 @@ public:
      */
     QString message() const;
     virtual const char* what() const throw();
-
-signals:
-
-public slots:
 
 private:
     QString _message;

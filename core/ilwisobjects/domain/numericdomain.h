@@ -27,8 +27,8 @@ public:
     void range(Range *vr);
 
     /*!
-     * //notdoneyet
-     * \return
+     * for the time being a empty function
+     * \return QVariant.toString
      */
     QString value(const QVariant&) const;
 

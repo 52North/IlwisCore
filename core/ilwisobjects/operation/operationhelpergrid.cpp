@@ -4,6 +4,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 
+#include <QThread>
 using namespace Ilwis;
 
 OperationHelperRaster::OperationHelperRaster()

@@ -18,11 +18,15 @@ class ItemRange;
  * - Numeric
  * - %Time
  *
- * The differences between the first three are rather subtle. They are all just labels. First of all, identifiers have no attached meaning. They are labels, they identify something. As such, a  street sign has no attached meaning apart from the fact that it marks a location. From the name itself you don’t get extra information. The difference between named and indexed easier. Named are unique names (in the domain), indexed are prefixes plus a number.
+ * The differences between the first three are rather subtle. They are all just labels. First of all, identifiers have no attached meaning. They are labels, they identify something. As such, a  street sign has no attached meaning apart from the fact that it marks a location.
+ * From the name itself you don’t get extra information. The difference between named and indexed easier. Named are unique names (in the domain), indexed are prefixes plus a number.
  * Thematic items are also labels but they have meaning. Their name implies the value they represent.  As such, these items may have metadata associated with them further defining the item.
  * The difference is quite subtle but it has effects. For example, because a thematic item has meaning it makes sense to have a standard (UI) presentation  for it. This makes no sense for an identifier item as the name implies nothing.
  * Numeric items are ordered  items that have numeric sub-ranges. For example 0-100,100-200,300-400. Time Interval Items are ordered sets of time intervals. For example 20090301-20090311, 20090312-20090322,20090323-20090402. They are very similar to numerical items .
- * Item domains have a property called “theme”. In a way this is a poor man’s parent domain. In cases where it is not feasible or practical to define a whole parent domain (e.g. insufficient knowledge) one can make item domains compatible by giving them the same theme. At a string based representation  level of the items they become comparable but not on the programmatic level below that (see later). What is meant by this? All items in an item domain have a string representation(name). If item domains have the same theme you may assume that names in the domain are pointing to things of the same type/identity.  But always remember that this is a shallow equality. The domains don’t have knowledge of each other, their internal representation is different. Only parent domains enforce that also the internal representation is equal.
+ * Item domains have a property called “theme”. In a way this is a poor man’s parent domain. In cases where it is not feasible or practical to define a whole parent domain (e.g. insufficient knowledge) one can make item domains compatible by giving them the same theme. At a
+ * string based representation  level of the items they become comparable but not on the programmatic level below that (see later). What is meant by this? All items in an item domain have a string representation(name).
+ * If item domains have the same theme you may assume that names in the domain are pointing to things of the same type/identity.  But always remember that this is a shallow equality. The domains don’t have knowledge of each other, their internal representation is different.
+ * Only parent domains enforce that also the internal representation is equal.
  * All child domains have by definition have the same theme.
  */
 template<class D> class ItemDomain : public Domain

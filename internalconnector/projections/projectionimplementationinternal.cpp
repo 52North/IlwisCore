@@ -1,5 +1,6 @@
 #include <QString>
 #include <functional>
+#include <QtMath>
 
 #include "kernel.h"
 #include "ilwis.h"

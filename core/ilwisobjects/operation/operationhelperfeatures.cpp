@@ -1,4 +1,5 @@
 #include <QString>
+#include <QThread>
 #include <functional>
 #include <future>
 #include <memory>
