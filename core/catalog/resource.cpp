@@ -9,6 +9,8 @@
 #include "identity.h"
 #include "kernel.h"
 #include "resource.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
@@ -99,8 +101,8 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     QString nm = url.toString();
     int index = nm.lastIndexOf("/");
     if ( index != -1){
-        nm = nm.mid(index + 1);
-        setName(nm);
+        setName(nm.mid(index + 1));
+        addContainer(nm.left(index));
     }
 }
 
@@ -127,7 +129,7 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
                                                            rec.value("code").toString())
 {
     _resource = rec.value("resource").toString();
-    _container = rec.value("container").toString();
+    addContainer(rec.value("container").toString());
     _size = rec.value("size").toLongLong();
     _dimensions = rec.value("dimensions").toString();
     _ilwtype = rec.value("type").toLongLong();
@@ -200,6 +202,7 @@ QUrl Resource::url() const
 
 void Resource::setUrl(const QUrl &url)
 {
+    _container.clear();
     _resource = url;
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
@@ -215,7 +218,7 @@ void Resource::setUrl(const QUrl &url)
     if ( urlTxt != "file://") {
         if ( !url.hasFragment()) {
             setName(inf.fileName(), false);
-            _container = QUrl::fromLocalFile(inf.absolutePath());
+            addContainer(QUrl::fromLocalFile(inf.absolutePath()));
         } else {
             QString fragment = url.fragment();
             QString fpath = fragment.split("=").back();
@@ -224,7 +227,7 @@ void Resource::setUrl(const QUrl &url)
             if ( ok) { //TODO other cases than indexes; no example yet so postponed till there is one
                 QString name = QString("%1_%2").arg(inf.fileName()).arg(index);
                 setName(name, false);
-                _container = QUrl(url.toString(QUrl::RemoveFragment));
+                addContainer(QUrl(url.toString(QUrl::RemoveFragment)));
             }
 
         }
@@ -233,9 +236,11 @@ void Resource::setUrl(const QUrl &url)
         setName("root", false);
 }
 
-QUrl Resource::container() const
+QUrl Resource::container(int level) const
 {
-    return _container;
+    if ( level < _container.size())
+        return _container[level];
+    return QUrl();
 }
 
 quint64 Resource::size() const
@@ -248,8 +253,11 @@ QString Resource::dimensions() const
     return _dimensions;
 }
 
-void Resource::setContainer(const QUrl& url) {
-    _container = url;
+void Resource::addContainer(const QUrl& url, int level) {
+    if ( level < _container.size())
+        _container[0] = url;
+    else
+        _container.push_back(url);
 }
 
 IlwisTypes Resource::ilwisType() const
