@@ -9,6 +9,7 @@
 #include "identity.h"
 #include "resource.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalogconnector.h"
 
 

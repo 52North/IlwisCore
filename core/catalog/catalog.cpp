@@ -8,6 +8,7 @@
 #include "ilwisdata.h"
 #include "resource.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalogconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -53,9 +54,9 @@ bool Catalog::prepare(const QUrl &resource, const QString& filter)
     QStringList parts = resource.path().split("/");
     QString cid = parts.back();
 
-    setName(cid);
-
     Identity::prepare();
+
+    setName(cid);
 
     return true;
 }
