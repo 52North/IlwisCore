@@ -20,6 +20,11 @@
 #include "pixeliterator.h"
 #include "aggregateraster.h"
 #include "areanumbering.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "itemrange.h"
+#include "identifierrange.h"
+#include "itemdomain.h"
 #include "crossrasters.h"
 
 using namespace Ilwis;
