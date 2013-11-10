@@ -56,7 +56,7 @@ private:
     static MasterCatalog *_masterCatalog;
     quint64 _baseid;
     QHash<quint64, ESPIlwisObject> _lookup;
-    QMultiMap<QUrl, CatalogConnector*  > _catalogs;
+    std::set<QUrl> _catalogs;
     std::set<uint> _knownHashes;
 
 
