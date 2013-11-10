@@ -4,6 +4,8 @@
 #include "numericdomain.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "internalgridcoverageconnector.h"
 
