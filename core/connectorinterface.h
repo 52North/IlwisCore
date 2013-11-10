@@ -69,6 +69,8 @@ public:
     virtual QString provider() const = 0;
     virtual void format(const QString&) {}
     virtual QString format() const { return sUNDEF; }
+    virtual bool isValid() const { return true;}
+    virtual bool canUse(const Resource& ) const { return true; }
 
 };
 
