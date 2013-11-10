@@ -11,7 +11,7 @@ class KERNELSHARED_EXPORT CatalogConnectorFactory : public AbstractFactory
 {
 public:
     CatalogConnectorFactory();
-    QList<CatalogConnector *> create(const QUrl &location) const;
+    QList<CatalogConnector *> create(const Ilwis::Resource &location) const;
     void add(ConnectorCreate cc);
 
 private:
