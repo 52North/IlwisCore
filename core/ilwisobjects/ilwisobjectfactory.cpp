@@ -4,6 +4,7 @@
 #include "abstractfactory.h"
 #include "mastercatalog.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "connectorfactory.h"
 #include "ilwisobjectfactory.h"
