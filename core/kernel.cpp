@@ -20,6 +20,8 @@
 #include "catalogconnectorfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnector.h"
+#include "containerconnector.h"
+#include "folderconnector.h"
 #include "featurefactory.h"
 #include "georefimplementationfactory.h"
 #include "catalog.h"
@@ -110,6 +112,8 @@ void Kernel::init() {
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
 
+    confac->addCreator(itCONTAINER,"container", FolderConnector::create);
+
     FeatureFactory *featureFac = new FeatureFactory();
     featureFac->addCreator("feature", createFeature);
     addFactory(featureFac);
@@ -121,7 +125,7 @@ void Kernel::init() {
 
     _modules.addModules();
 
-    mastercatalog()->addContainer(QUrl("ilwis://system"));
+    mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
 
    // ItemRange::addCreateItem("ThematicItem", ThematicItem::createRange());
 
