@@ -30,6 +30,13 @@ protected:
 
     Resource _resource;
     std::mutex _mutex;
+protected:
+    std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
+    const std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
+
+private:
+    std::unique_ptr<ContainerConnector> _incontainerconnector;
+    std::unique_ptr<ContainerConnector> _outcontainerconnector;
 };
 }
 
