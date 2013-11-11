@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QFileInfo>
 #include "Kernel_global.h"
 #include "identity.h"
 #include "resource.h"
