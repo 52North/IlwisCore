@@ -13,7 +13,8 @@ public:
     QString provider() const;
 
     bool prepare();
-    QStringList sources(const QString& filter, int options=foFULLPATHS) const;
+    std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
+    QFileInfo toLocalFile(const QUrl &url) const;
 private:
     bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);
     bool createPcs(QSqlQuery &db);

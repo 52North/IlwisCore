@@ -37,10 +37,10 @@ bool InternalCatalogConnector::prepare()
 
 }
 
-QStringList InternalCatalogConnector::sources(const QString &filter, int options) const
+std::vector<QUrl> InternalCatalogConnector::sources(const QStringList &, int ) const
 {
     //TODO full list??
-    return QStringList();
+    return std::vector<QUrl>();
 }
 
 bool InternalCatalogConnector::createSpecialDomains() {
@@ -63,6 +63,9 @@ QString InternalCatalogConnector::provider() const
     return "internal";
 }
 
+QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
+    return QFileInfo();
+}
 bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
     QString query = QString("Select * from projectedcsy");
     if ( db.exec(query)) {
