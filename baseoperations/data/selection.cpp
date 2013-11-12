@@ -164,7 +164,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
      if ( outputName != sUNDEF)
          _outputObj->setName(outputName);
      if ( (copylist & itGEOREF) == 0) {
-        Resource resource(QUrl("ilwis://internal/georeference"),itGEOREF);
+        Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
         resource.addProperty("size", IVARIANT(_box.size()));
         resource.addProperty("envelope", IVARIANT(box));
         resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));

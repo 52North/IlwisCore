@@ -44,7 +44,7 @@ std::vector<QUrl> InternalCatalogConnector::sources(const QStringList &, int ) c
 }
 
 bool InternalCatalogConnector::createSpecialDomains() {
-    QString url = QString("ilwis://internal/code=domain:text");
+    QString url = QString("ilwis://internalcatalog/code=domain:text");
     Resource resource(url, itTEXTDOMAIN);
     resource.setCode("text");
     resource.setName("Text domain", false);
@@ -64,7 +64,7 @@ QString InternalCatalogConnector::provider() const
 }
 
 QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
-    return QFileInfo();
+    return url.toLocalFile();
 }
 bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
     QString query = QString("Select * from projectedcsy");

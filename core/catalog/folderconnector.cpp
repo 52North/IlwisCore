@@ -81,6 +81,9 @@ std::vector<QUrl> FolderConnector::loadFolders(const QStringList& namefilter) co
             return  std::vector<QUrl>();
         }
         fileList = folder.entryList();
+        for(QString& file : fileList) {
+            file = source().url().toString() + "/" + file;
+        }
         folder.setFilter(QDir::Files);
         QStringList files = folder.entryList(namefilter);
         for(QString file : files) {

@@ -162,7 +162,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {
         Box2D<double> envlope = inputRaster->envelope();
-        Resource resource(QUrl("ilwis://internal/georeference"),itGEOREF);
+        Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
         resource.addProperty("size", IVARIANT(box.size()));
         resource.addProperty("envelope", IVARIANT(envlope));
         resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
