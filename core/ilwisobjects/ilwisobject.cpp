@@ -65,6 +65,11 @@ IlwisObject *IlwisObject::create(const Resource& resource) {
 
 void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
     Locker lock(_mutex);
+    if (!url.isValid()){
+        ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
+        return;
+    }
+
     if ( isReadOnly())
         return;
     Resource resource;
