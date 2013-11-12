@@ -14,8 +14,9 @@ IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
-    if ( factory)
+    if ( factory && resource.url().isValid()){
          _incontainerconnector.reset(dynamic_cast<ContainerConnector *>(factory->createSuitable(Resource(resource.url(), itCONTAINER))));
+    }
     else {
         kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(resource.name()));
     }
