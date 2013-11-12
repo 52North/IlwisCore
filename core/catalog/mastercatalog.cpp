@@ -79,7 +79,7 @@ bool MasterCatalog::addContainer(const QUrl &location)
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",location.toString());
     }
     UPContainerConnector container(cfactory->createSuitable<ContainerConnector>(Resource(location, itCONTAINER)));
-    if ( container == 0) {
+    if ( container == 0 || !container->isValid()) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
     }
 
