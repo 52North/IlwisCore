@@ -126,12 +126,18 @@ bool FolderConnector::canUse(const Resource& resource) const  {
     QFileInfo inf(resource.url().toLocalFile());
     if ( inf.isDir())
         return true;
-    if ( inf.exists()) {
-        QDir dir(inf.absolutePath());
-        if ( dir.exists())
-            return true;
+    //if ( inf.exists()) {
+    QDir dir(inf.absolutePath());
+    if ( dir.exists())
+        return true;
 
-    }
+    //}
     return false;
+}
+
+bool FolderConnector::isValid() const
+{
+    QFileInfo inf(source().toLocalFile());
+    return inf.exists();
 }
 
