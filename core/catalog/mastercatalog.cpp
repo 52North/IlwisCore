@@ -65,6 +65,11 @@ bool MasterCatalog::prepare()
 
 bool MasterCatalog::addContainer(const QUrl &location)
 {
+    QString loc = location.toString();
+    if ( loc.indexOf("ilwis://tables") == 0||
+         loc.indexOf("ilwis://factory") == 0
+         || loc.isEmpty())
+        return true;
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
@@ -302,7 +307,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
-        return QString("ilwis://internal/%1").arg(name);
+        return QString("ilwis://internalcatalog/%1").arg(name);
     }
     if ( context()->workingCatalog()) {
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
