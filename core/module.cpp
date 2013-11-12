@@ -6,6 +6,8 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "catalog.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "errorobject.h"

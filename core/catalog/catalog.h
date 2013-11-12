@@ -5,10 +5,12 @@
 #include <QVector>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QFileInfo>
 #include "Kernel_global.h"
 #include "identity.h"
 #include "resource.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalogconnector.h"
 
 

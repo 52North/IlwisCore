@@ -124,7 +124,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          _outputObj->setName(outputName);
 
      if ( _attribColumn != "") {
-         QString url = "ilwis://internal/" + outputName;
+         QString url = "ilwis://internalcatalog/" + outputName;
          Resource resource(url, itFLATTABLE);
          _attTable.prepare(resource);
          IDomain covdom;

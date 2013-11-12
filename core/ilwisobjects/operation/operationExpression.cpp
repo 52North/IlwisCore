@@ -5,6 +5,8 @@
 #include "ilwisobject.h"
 #include "domain.h"
 #include "catalog.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "symboltable.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"

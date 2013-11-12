@@ -3,11 +3,14 @@
 
 #include "Kernel_global.h"
 
-typedef bool (* CheckUsage)(const Ilwis::Resource&);
+
+
 
 namespace Ilwis {
 
 class Resource;
+class ContainerConnector;
+typedef std::unique_ptr<Ilwis::ContainerConnector> UPContainerConnector;
 
 /*!
  * \brief The AbstractFactory class implements some of the more general methods that are in de FactoryInterface
@@ -57,5 +60,7 @@ private:
 
 };
 }
+
+typedef bool (* CheckUsage)(const Ilwis::Resource&,const Ilwis::UPContainerConnector &);
 
 #endif // ABSTRACTFACTORY_H

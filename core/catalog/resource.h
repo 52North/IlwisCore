@@ -29,8 +29,8 @@ public:
     QUrl url() const;
     void setUrl(const QUrl& url);
     QString toLocalFile(bool relative=false) const;
-    QUrl container() const;
-    void setContainer(const QUrl &url);
+    QUrl container(int level=0) const;
+    void addContainer(const QUrl &url, int level=0);
     quint64 size() const;
     QString dimensions() const;
     IlwisTypes ilwisType() const;
@@ -49,7 +49,7 @@ public:
 protected:
     QHash<QString, QVariant> _properties;
     QUrl _resource;
-    QUrl _container;
+    std::vector<QUrl> _container;
     quint64 _size;
     QString _dimensions;
     IlwisTypes _ilwtype;

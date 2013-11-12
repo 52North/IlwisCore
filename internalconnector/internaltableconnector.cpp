@@ -13,6 +13,8 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "containerstatistics.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "internaltableconnector.h"
 

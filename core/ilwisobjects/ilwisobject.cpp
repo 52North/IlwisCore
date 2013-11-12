@@ -13,6 +13,8 @@
 #include "ilwisobjectfactory.h"
 #include "ilwisdata.h"
 #include "resource.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
 #include "ilwiscontext.h"
 #include "catalog.h"

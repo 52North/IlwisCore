@@ -13,6 +13,7 @@
 #include "kernel.h"
 #include "resource.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalogconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -44,7 +45,6 @@ MasterCatalog::MasterCatalog()
 
 MasterCatalog::~MasterCatalog()
 {
-    qDeleteAll(_catalogs);
     _lookup.clear();
     _knownHashes.clear();
     _catalogs.clear();
@@ -65,25 +65,27 @@ bool MasterCatalog::prepare()
 
 bool MasterCatalog::addContainer(const QUrl &location)
 {
-    if ( _catalogs.contains(location))
+    QString loc = location.toString();
+    if ( loc.indexOf("ilwis://tables") == 0||
+         loc.indexOf("ilwis://factory") == 0
+         || loc.isEmpty())
+        return true;
+    if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource(location, itCATALOG);
-    auto *cfactory = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory", resource);
+    Resource resource(location, itANY); // the system determines if it is a real container; we dont know it here
+    auto *cfactory = kernel()->factory<ConnectorFactory>("connectorfactory", resource);
     if (!cfactory) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",location.toString());
     }
-    auto connectors= cfactory->create(location);
-    if ( connectors.size() == 0) {
+    UPContainerConnector container(cfactory->createSuitable<ContainerConnector>(Resource(location, itCONTAINER)));
+    if ( container == 0) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
     }
 
     addItems({resource});
-    for(CatalogConnector *conn: connectors) {
-        _catalogs.insert(location, conn);
-        conn->loadItems();
-    }
-    return true;
+    _catalogs.insert(location);
+    return container->prepare();
 }
 
 
@@ -305,7 +307,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
-        return QString("ilwis://internal/%1").arg(name);
+        return QString("ilwis://internalcatalog/%1").arg(name);
     }
     if ( context()->workingCatalog()) {
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);

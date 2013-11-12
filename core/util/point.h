@@ -56,6 +56,10 @@ public:
         return x() != undefined && y() != undefined ;
     }
 
+    bool is0() const{
+        return x() == 0 && y() == 0 ;
+    }
+
 protected:
     Point(){
         init();
@@ -372,6 +376,10 @@ public:
         this->y( p2._y);
         this->z(p2._z);
         return *this;
+    }
+
+    bool is0() const{
+        return this->x() == 0 && this->y() == 0 && this->z() == 0 ;
     }
 
     /*!

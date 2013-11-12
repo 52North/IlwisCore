@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "factory.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnector.h"
@@ -14,13 +15,13 @@ CatalogConnectorFactory::CatalogConnectorFactory() : AbstractFactory("catalogcon
 {
 }
 
-QList<CatalogConnector *> CatalogConnectorFactory::create(const QUrl &location) const{
+QList<CatalogConnector *> CatalogConnectorFactory::create(const Resource &location) const{
 
     QList<CatalogConnector *> finalList;
     QListIterator<ConnectorCreate> iter(_creatorsPerObject);
     while(iter.hasNext()) {
         ConnectorCreate createFunc = iter.next();
-        CatalogConnector *conn = static_cast<CatalogConnector *>(createFunc(Resource(location, itCATALOG),true));
+        CatalogConnector *conn = static_cast<CatalogConnector *>(createFunc(location,true));
         if ( conn && conn->canUse(location)) {
             finalList.push_back(conn);
         } else

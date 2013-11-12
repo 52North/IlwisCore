@@ -6,6 +6,8 @@
 #include <QStringList>
 #include "kernel.h"
 #include "raster.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"

@@ -81,7 +81,9 @@ public:
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
             ConnectorInterface *cif =  createConnector(resource, true);
-            return dynamic_cast<T *>(cif);
+            if ( cif->canUse(resource))
+                return dynamic_cast<T *>(cif);
+            delete cif;
         }
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
@@ -109,6 +111,23 @@ public:
 
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
+    }
+
+    template<class T=ConnectorInterface> T *createSuitable(const Resource& resource, const QString &provider=sUNDEF) const{
+        for(auto iter=_creatorsPerObject.begin(); iter != _creatorsPerObject.end(); ++iter){
+            if ( !hasType(iter.key()._objectTypes, resource.ilwisType()))
+                continue;
+            ConnectorCreate createConnector = iter.value();
+            if ( createConnector && ( iter.key()._provider == provider || provider == sUNDEF)) {
+                ConnectorInterface *cif =  createConnector(resource, true);
+                if ( cif->canUse(resource))
+                    return dynamic_cast<T *>(cif);
+                delete cif;
+            }
+        }
+        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
+        return 0;
+
     }
 
 protected:

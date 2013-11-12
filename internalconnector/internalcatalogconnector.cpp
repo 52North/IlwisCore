@@ -7,6 +7,7 @@
 #include "resource.h"
 #include "mastercatalog.h"
 #include "connectorinterface.h"
+#include "containerconnector.h"
 #include "catalogconnector.h"
 #include "internalcatalogconnector.h"
 
@@ -18,11 +19,11 @@ ConnectorInterface *InternalCatalogConnector::create(const Resource&, bool ) {
 
 }
 
-InternalCatalogConnector::InternalCatalogConnector() : CatalogConnector(Resource(QUrl(),itUNKNOWN))
+InternalCatalogConnector::InternalCatalogConnector() :ContainerConnector(Resource(QUrl("ilwis://internalcatalog"),itCONTAINER))
 {
 }
 
-bool InternalCatalogConnector::loadItems()
+bool InternalCatalogConnector::prepare()
 {
     QSqlQuery db(kernel()->database());
     bool ok = createItems(db,"projection", itPROJECTION);
@@ -36,19 +37,25 @@ bool InternalCatalogConnector::loadItems()
 
 }
 
+std::vector<QUrl> InternalCatalogConnector::sources(const QStringList &, int ) const
+{
+    //TODO full list??
+    return std::vector<QUrl>();
+}
+
 bool InternalCatalogConnector::createSpecialDomains() {
-    QString url = QString("ilwis://internal/code=domain:text");
+    QString url = QString("ilwis://internalcatalog/code=domain:text");
     Resource resource(url, itTEXTDOMAIN);
     resource.setCode("text");
     resource.setName("Text domain", false);
-    resource.setContainer(QUrl("ilwis://system"));
+    resource.addContainer(QUrl("ilwis://internalcatalog"));
     resource.prepare();
     return mastercatalog()->addItems({resource});
 }
 
-bool InternalCatalogConnector::canUse(const QUrl &res) const
+bool InternalCatalogConnector::canUse(const Resource &res) const
 {
-    return res.scheme() == "ilwis";
+    return res.url().scheme() == "ilwis";
 }
 
 QString InternalCatalogConnector::provider() const
@@ -56,6 +63,9 @@ QString InternalCatalogConnector::provider() const
     return "internal";
 }
 
+QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
+    return url.toLocalFile();
+}
 bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
     QString query = QString("Select * from projectedcsy");
     if ( db.exec(query)) {
@@ -69,7 +79,7 @@ bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
             resource.setCode(code);
             resource.setName(name, false);
             resource["wkt"] = name;
-            resource.setContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://system"));
             items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
@@ -97,7 +107,7 @@ bool InternalCatalogConnector::createItems(QSqlQuery& db, const QString& table, 
             resource.setCode(code);
             resource.setExtendedType(extType);
             resource.setDescription(rec.value("description").toString());
-            resource.setContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://system"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
                 resource["wkt"] = wkt;

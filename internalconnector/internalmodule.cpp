@@ -2,6 +2,8 @@
 #include <QSqlQuery>
 
 #include "kernel.h"
+#include "connectorinterface.h"
+#include "containerconnector.h"
 #include "angle.h"
 #include "point.h"
 #include "internalmodule.h"
@@ -46,6 +48,7 @@ void InternalModule::prepare()
     ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory)
         return ;
+    factory->addCreator(itCONTAINER,"internal",InternalCatalogConnector::create);
 
     factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
@@ -54,8 +57,6 @@ void InternalModule::prepare()
     projfactory->prepare();
     kernel()->addFactory(projfactory );
 
-    CatalogConnectorFactory *catfactory = kernel()->factory<CatalogConnectorFactory>("catalogconnectorfactory","ilwis");
-    catfactory->add(InternalCatalogConnector::create);
 
 }
 
