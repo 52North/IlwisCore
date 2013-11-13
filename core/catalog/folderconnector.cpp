@@ -137,7 +137,7 @@ bool FolderConnector::canUse(const Resource& resource) const  {
 
 bool FolderConnector::isValid() const
 {
-    QFileInfo inf(source().toLocalFile());
+    QFileInfo inf(source().url().toLocalFile());
     return inf.exists();
 }
 
