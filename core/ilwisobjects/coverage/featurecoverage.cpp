@@ -108,7 +108,7 @@ IlwisTypes FeatureCoverage::ilwisType() const
     return itFEATURE;
 }
 
-FeatureCoverage *FeatureCoverage::copy()
+FeatureCoverage *FeatureCoverage::clone()
 {
     FeatureCoverage *fcov = new FeatureCoverage();
     copyTo(fcov);

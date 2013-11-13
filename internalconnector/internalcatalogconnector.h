@@ -15,6 +15,8 @@ public:
     bool prepare();
     std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const;
     QFileInfo toLocalFile(const QUrl &url) const;
+
+    bool isValid() const;
 private:
     bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);
     bool createPcs(QSqlQuery &db);

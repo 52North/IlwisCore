@@ -57,7 +57,7 @@ IlwisTypes RasterCoverage::ilwisType() const
     return itRASTER;
 }
 
-RasterCoverage *RasterCoverage::copy()
+RasterCoverage *RasterCoverage::clone()
 {
     RasterCoverage *raster = new RasterCoverage();
     copyTo(raster);
@@ -115,6 +115,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     if ( _grid) {
         raster->_grid.reset(_grid->clone());
     }
+    raster->_size = _size;
 
 }
 

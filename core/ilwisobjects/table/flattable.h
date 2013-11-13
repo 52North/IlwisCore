@@ -60,7 +60,7 @@ public:
     std::vector<quint32> select(const QString &conditions) const;
 
     IlwisTypes ilwisType() const;
-    IlwisObject *copy() ;
+    IlwisObject *clone() ;
 
 protected:
     bool isColumnIndexValid(quint32 index) const{

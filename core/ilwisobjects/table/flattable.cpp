@@ -216,7 +216,7 @@ IlwisTypes FlatTable::ilwisType() const
     return itFLATTABLE;
 }
 
-IlwisObject *FlatTable::copy()
+IlwisObject *FlatTable::clone()
 {
     FlatTable *tbl = new FlatTable();
     copyTo(tbl);

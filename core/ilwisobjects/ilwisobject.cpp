@@ -93,7 +93,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
 
 }
 
-IlwisObject *IlwisObject::copy()
+IlwisObject *IlwisObject::clone()
 {
     return 0;
 }

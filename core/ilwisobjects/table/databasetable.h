@@ -112,7 +112,7 @@ public:
     IlwisTypes ilwisType() const;
 
     std::vector<quint32> select(const QString &conditions) const;
-    IlwisObject *copy();
+    IlwisObject *clone();
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;

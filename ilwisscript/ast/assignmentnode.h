@@ -32,7 +32,7 @@ private:
             }
         }
         if(!done) {
-            T1 *obj = static_cast<T1 *>(source->copy());
+            T1 *obj = static_cast<T1 *>(source->clone());
             if(!obj)
                 return false;
             obj->setName(name);

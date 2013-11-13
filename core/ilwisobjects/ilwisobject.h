@@ -149,7 +149,7 @@ public:
     \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
     \return IlwisObject a created ilwisobject of the specified type
    */
-   virtual IlwisObject *copy() ;
+   virtual IlwisObject *clone() ;
    virtual bool merge(const IlwisObject* obj, int options=0);
 
    template<typename T> static T create(const QString& def){

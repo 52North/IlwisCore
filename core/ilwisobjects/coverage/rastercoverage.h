@@ -53,7 +53,7 @@ public:
      * copies (clones) this rastercoverage
      * \return a copy of this rastercoverage
      */
-    virtual RasterCoverage *copy() ;
+    virtual RasterCoverage *clone() ;
 
     /*!
      * \brief Returns the DataDefinition of this rastercoverage

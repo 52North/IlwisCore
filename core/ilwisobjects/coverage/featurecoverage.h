@@ -35,7 +35,7 @@ public:
     quint32 featureCount(IlwisTypes types=itFEATURE, int index=iUNDEF) const;
     void setFeatureCount(IlwisTypes types, quint32 cnt);
     IlwisTypes ilwisType() const;
-    FeatureCoverage *copy();
+    FeatureCoverage *clone();
     QSharedPointer<AttributeRecord> record() const;
 
 protected:
