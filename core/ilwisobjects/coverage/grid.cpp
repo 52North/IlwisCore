@@ -155,13 +155,15 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
         return 0;
     }
     quint32 start = index1 == iUNDEF ? 0 : index1;
-    quint32 end = index2 == iUNDEF ? _blocks.size() : index2 + 1;
+    quint32 end = index2 == iUNDEF ? _blocks.size() / _blocksPerBand : index2 + 1;
 
     Grid *grid = new Grid(Size(_size.xsize(), _size.ysize(), end - start), _maxLines);
     grid->prepare();
 
-    for(int i=start; i < end; ++i) {
-        grid->_blocks[i] = _blocks[i]->clone();
+    quint32 startBlock = start * _blocksPerBand;
+    quint32 endBlock = std::min(end * _blocksPerBand, _blocks.size());
+    for(int i=startBlock, j=0; i < endBlock; ++i, ++j) {
+        grid->_blocks[j] = _blocks[i]->clone();
     }
     grid->_inMemoryIndex = 1;
     grid->_memUsed = _memUsed;
