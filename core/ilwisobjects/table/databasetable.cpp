@@ -444,7 +444,7 @@ std::vector<quint32> DatabaseTable::select(const QString &conditions) const{
     return std::vector<quint32>();
 }
 
-IlwisObject *DatabaseTable::copy()
+IlwisObject *DatabaseTable::clone()
 {
     DatabaseTable *tbl = new DatabaseTable();
     copyTo(tbl);

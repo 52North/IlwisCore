@@ -49,16 +49,10 @@ public:
      */
     QString value(const QVariant& v) const;
 
-    /*!
-     * Query to the type of values in this domain
-     * \return itCOORD3D
-     */
+    //@override
     IlwisTypes valueType() const;
 
-    /*!
-     * Query to the type of this domain
-     * \return itCOORDDOMAIN
-     */
+    //@override
     IlwisTypes ilwisType() const;
 
     /*!
@@ -66,6 +60,7 @@ public:
      * \return the ICoordinateSystem
      */
     ICoordinateSystem coordinateSystem() const;
+
     /**
      * empty function
      */

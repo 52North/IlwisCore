@@ -77,11 +77,7 @@ public:
      */
     DomainItem *clone() const;
 
-    /**
-     * Query to the ilwistype of this object
-     *
-     * @return itINDEXEDITEM
-     */
+    //@override
     IlwisTypes valueType() const;
 
     /**
@@ -97,11 +93,7 @@ public:
      */
     static ItemRange *createRange();
 
-    /**
-     * Query to the ilwistype of this object
-     *
-     * @return itINDEXEDITEM
-     */
+    //@override
     static IlwisTypes valueTypeS();
 
 private:

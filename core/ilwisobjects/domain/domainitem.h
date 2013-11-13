@@ -30,11 +30,7 @@ public:
      */
     virtual DomainItem *clone() const=0;
 
-    /**
-     * Returns the IlwisTypes value of this DomainItem
-     * @sa IlwisTypes
-     * @return the type of this DomainItem
-     */
+    //@override
     virtual IlwisTypes valueType() const = 0;
 
     /**

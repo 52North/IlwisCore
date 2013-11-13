@@ -33,6 +33,7 @@ public:
 
     /*!
      * Assigns the values of the other DataDefinition to this
+     *(copy constructor)
      * \param def1 the other DataDefinition
      * \return a copy of the other DataDefinition
      */
@@ -40,6 +41,7 @@ public:
 
     /*!
      * Changes the range of this DataDefinition to the one specified
+     * *invalid range will make this DataDefinition invalid*
      * \param vr The new Range
      */
     void range(Ilwis::Range *vr);
@@ -59,13 +61,16 @@ public:
 
     /*!
      * Sets a new domain to this DataDefinition
+     * Also sets the range of this domain as the new range of this DataDefinition
+     *
      * \param dom The new Domain
      */
     void domain(const IDomain& dom);
 
     /*!
      * Checks if this Datadefinition is valid
-     * A DataDefinition is valid when its IDomain is valid
+     * A DataDefinition is valid when its Domain is valid
+     *
      * \return true when valid
      */
     bool isValid() const;

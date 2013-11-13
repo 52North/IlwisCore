@@ -323,20 +323,12 @@ public:
 
     }
 
-    /*!
-     * Query for the ilwisType of this object (this domain)
-     * \sa IlwisObject
-     * \return itITEMDOMAIN
-     */
+    //@override
     IlwisTypes ilwisType() const {
         return itITEMDOMAIN;
     }
 
-    /*!
-     * Query for the type of objects in this domain
-     * \sa IlwisObject
-     * \return D.ilwisType()
-     */
+    //@override
     IlwisTypes valueType() const {
         return D::valueTypeS();
     }

@@ -8,7 +8,8 @@ class DomainItem;
 typedef DomainItem* (*CreateItemFunc)(const QString&);
 typedef QSharedPointer<DomainItem> SPDomainItem;
 /**
- * Template for the ItemRange subclasses, for the description of the virtual functions see the subclass you want to use
+ * Template for the ItemRange subclasses. A Range decides what kind of values the items on this range can take. a Range is an essential component of Domains
+ * because it determines the possible values within a domain
  */
 class KERNELSHARED_EXPORT ItemRange : public Range
 {
@@ -123,7 +124,8 @@ public:
 
     /**
      * combines a index and a step size into a new position
-     *
+     * the index cannot be lower as 0, neither can it be higher than the maximum index.
+     * step size may be negative.
      * @param index the (current) index
      * @param step step size
      * @return the new index

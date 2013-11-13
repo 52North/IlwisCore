@@ -4,6 +4,13 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+/**
+ * A Numericdomain has a range of numeric items,
+ * Numeric items are ordered  items that have numeric sub-ranges. For example 0-100,100-200,300-400.
+ *
+ *\sa Domain
+ *\sa ItemDomain
+ */
 class KERNELSHARED_EXPORT NumericDomain : public Domain
 {
 public:
@@ -20,14 +27,16 @@ public:
     NumericDomain(const Resource& resource);
 
     /*!
-     * Changes the Range of this NumericDomain
-     *
+     * Changes the Range of this NumericDomain.
+     * This function only works if the readonly flag has not been set and the new range has to contain numericitems.
+     * (be a NumericItemRange)
+     * \sa NumericItemRange
      * \param vr The new range
      */
     void range(Range *vr);
 
     /*!
-     * for the time being a empty function
+     * still has to been finished
      * \return QVariant.toString
      */
     QString value(const QVariant&) const;
@@ -42,28 +51,21 @@ public:
     Domain::Containement contains(const QVariant &value) const;
 
     /*!
-     * Checks if this numbericdomain is compatible  with another IDomain,
+     * Checks if this NumericDomain is compatible  with another IDomain,
      * will not be compatible if the other domain is:
      * - invalid
-     * - not a NumbericDomain
+     * - not a NumericDomain
      *
      * \param dom the domain to be tested
      * \return true when compatible
      */
     bool isCompatibleWith(const IDomain &dom) const;
 
-    /*!
-     * Query for the type of the objects in this domain
-     * \sa IlwisObject
-     * \return The type of the object in this domains range
-     */
+    //@override
     IlwisTypes valueType() const;
 
-    /*!
-     * Query for the ilwisType of this object (this domain)
-     * \sa IlwisObject
-     * \return itNUMBERICDOMAIN
-     */
+
+    //@override
     IlwisTypes ilwisType() const;
 
     /*!
@@ -73,12 +75,22 @@ public:
     void setParent(const IDomain &dm);
 
     /*!
-     * Determines the Standard name for this NumbericDomain with the given parameters
+     * Determines the Standard name for this NumericDomain with the given parameters
+     * The standard name is used to differentiate between different NumericDomains
+     *
+     * The name can be:
+     * - "value" : generic real value domain
+     * - "image" : 0- 8 bits integer
+     * - "image16" : 0- 16 bits integer
+     * - "count" : integer positive domain
+     * - "integer" : generic integer domain
+     * - "min1to1" : -1 to 1 real value domain
+     * - "nilto1" : 0 to 1 real value domain
      *
      * \param vmin minimum value
      * \param vmax maximum value
      * \param step step size
-     * \return String with the standard name of this domain: "image","image16","count","integer","min1to1" OR "nilto1"
+     * \return String with the standard name of this domain
      */
     static QString standardNumericDomainName(double vmin, double vmax, double step=rUNDEF) ;
 

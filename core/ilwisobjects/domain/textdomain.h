@@ -16,11 +16,7 @@ public:
      */
     TextDomain(const Resource& resource);
 
-    /*!
-     * Query for the type of the objects in this domain
-     * \sa IlwisObject
-     * \return itSTRING
-     */
+    //@override
     virtual IlwisTypes valueType() const;
 
     /*!
@@ -36,11 +32,7 @@ public:
      */
     virtual Containement contains(const QVariant& ) const;
 
-    /*!
-     * Query for the ilwisType of this object (this domain)
-     * \sa IlwisObject
-     * \return itTEXTDOMAIN
-     */
+    //@override
     IlwisTypes ilwisType() const;
 
     /*!

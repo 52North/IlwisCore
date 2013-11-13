@@ -66,6 +66,10 @@ QString InternalCatalogConnector::provider() const
 QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
     return url.toLocalFile();
 }
+
+bool InternalCatalogConnector::isValid() const{
+    return true;
+}
 bool InternalCatalogConnector::createPcs(QSqlQuery& db) {
     QString query = QString("Select * from projectedcsy");
     if ( db.exec(query)) {

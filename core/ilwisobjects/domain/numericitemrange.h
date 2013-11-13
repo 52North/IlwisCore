@@ -2,12 +2,16 @@
 #define NUMERICITEMRANGE_H
 
 namespace Ilwis {
-
+/**
+ * This is a range of numeric item, for example 0-300. items can have sub ranges within this NumericItemRange.
+ * for example items in 0-300 could be 0-100, 100-200 and 200-300.
+ *\sa ItemRange
+ */
 class KERNELSHARED_EXPORT NumericItemRange : public ItemRange
 {
 public:
     /**
-     * @brief NumericItemRange
+     * Constructs an empty NumbericItemRange
      */
     NumericItemRange();
 
@@ -51,6 +55,7 @@ public:
 
     /**
      * generates a String representation of this NumericItemRange
+     *
      * @return a string
      */
     QString toString() const;
@@ -66,6 +71,7 @@ public:
      * valid string:
      * max length = 3, different numbers should be seperated by ' '
      * min length = 1
+     * example: this << "'1''2''3'";
      *
      * @param itemdef the new item to be added
      * @return this

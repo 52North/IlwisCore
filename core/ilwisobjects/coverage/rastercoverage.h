@@ -17,6 +17,10 @@ class Grid;
  *
  * In a RasterCoverage we use 2 kinds of attribute tables: Index-tables and Coverage-tables.
  * A Coverage-table has object data in its initial position, the Index table has records at all other positions.
+ *
+ * In order to get a rastervalue you need to use either coord2value() or pix2value(), where coord2value simply translates the coordinates to pixels
+ * and calls pix2value with those. The returned value is always a double or undefined. undefined values only happen when you query outside the raster,
+ * or when the raster is not fully initialized.
  */
 class KERNELSHARED_EXPORT RasterCoverage : public Coverage
 {
@@ -42,21 +46,19 @@ public:
 
     ~RasterCoverage();
 
-    /*!
-     * Returns the IlwisType of this object
-     *
-     * \return the IlwisType of this object
-     */
+    //@override
     IlwisTypes ilwisType() const;
 
     /*!
-     * copies (clones) this rastercoverage
+     * copies (clones) this rastercoverage to a new raster with a new unique id
+     *
      * \return a copy of this rastercoverage
      */
-    virtual RasterCoverage *copy() ;
+    virtual RasterCoverage *clone() ;
 
     /*!
-     * \brief Returns the DataDefinition of this rastercoverage
+     * Returns the DataDefinition of this rastercoverage
+     * can be null if it is not set
      *
      * \return the datadefinition of this rastercoverage
      */
@@ -64,7 +66,8 @@ public:
 
 
     /*!
-     * \brief Returns the DataDefinition of this rastercoverage
+     * Returns the DataDefinition of this rastercoverage
+     * can be null if it is not set
      *
      * \return the datadefinition of this rastercoverage
      */
@@ -72,6 +75,7 @@ public:
 
     /*!
      * Returns the IGeoReference of this RasterCoverage
+     * can be null if it is not set
      *
      * \return the georeference
      */
@@ -91,13 +95,20 @@ public:
     /*!
      * Returns the size of this RasterCoverage
      *
+     * A size can, depending on the raster either be 2D or 3D
+     * size in row-col for 2D
+     * and in row-col-heigth for 3D
+     *
+     * \sa Size
      * \return the size of this RasterCoverage
      */
     Size size() const;
 
     /*!
      * assigns a new size to this RasterCoverage
-     * size in row-col
+     * size in row-col for 2D
+     * and in row-col-heigth for 3D
+     *
      * \param sz the new size, must always be positive or undefined
      */
     void size(const Size& sz);
@@ -106,7 +117,7 @@ public:
      * \brief copyBinary Copies the binary data of this RasterCoverage
      *
      * The data will be coppied on the supplied raster, the index decides the starting point of the copy,
-     * and the size of the raster decides the endpoint
+     * and the size of the raster decides the endpoint. only works when both rasters have the same geometrie and domain
      *
      * \param raster The target of the binary copy
      * \param index The starting point of the copy
@@ -115,6 +126,11 @@ public:
 
     /*!
      * Gives the value at a certain coordinate
+     * The coordinate must fit in the raster, and can either be 2D or 3D
+     * This function will use the georeference to transform the coordinates in pixels
+     * and use those pixels to call the pix2value()
+     *
+     * \sa pix2value()
      * \param c the coordinate
      * \return the value at the coordinates or undefined
      */
@@ -128,6 +144,10 @@ public:
 
     /*!
      * Gives the value of a certain pixel in the grid
+     * The pixel point, be it 2D or 3D must fit in the Size of the raster for this function to return an actual value,
+     * if the pixel does not fit in the rastersize, it will return undefined.
+     * This function requires a valid georeference and a non null grid, if this is not the case undefined will be returned
+     *
      * \param pix the pixel
      * \return the value at the pixel or undefined
      */
@@ -147,13 +167,13 @@ public:
 
     /*!
      * Gives the Resource used for this coverage
-     *
+     * \sa Resource
      * \return the resource used for this coverage
      */
     Resource source(int mode=cmINPUT) const;
 
     /*!
-     * unload the grid generally used to clear some memory
+     * unload the grid, generally used to clear some memory
      */
     void unloadBinary();
 
