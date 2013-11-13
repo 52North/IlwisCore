@@ -118,6 +118,9 @@ public:
      */
     QString toString() const;
 
+    /**
+     * non existant in cpp file
+     */
     quint32 raw(const QString &item) const;
 
     /**
@@ -243,7 +246,7 @@ public:
 
     /**
      * Tries to find a NamedIdentifier in this range with the same raw value as specified. if it fails it will return an empty domain item
-     * @param iraw the raw value searched for
+     * @param iraw the raw searched for
      * @return the requested NamedIdentifier or an empty SPDomainItem
      */
     SPDomainItem item(quint32 iraw) const;

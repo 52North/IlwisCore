@@ -27,12 +27,12 @@ public:
     enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
     /*!
-     * Creates an empty new strict IDomain
+     * Creates an empty new strict Domain
      */
     Domain();
 
     /*!
-     * Creates a new strict domain based on a Resource
+     * Creates a new strict Domain based on a Resource
      * \param resource The resource to be used for this domain
      */
     Domain(const Resource& resource);
@@ -54,13 +54,14 @@ public:
     void setStrict(bool yesno);
 
     /*!
-    * /s IlwisObject
+    * returns the IlwisType of this domain
+    *
+    * \sa IlwisObject
     */
     virtual IlwisTypes valueType() const = 0;
 
     /*!
-     * \brief value
-     * \return
+     * translates a qvariant into a qstring based on the domain
      */
     virtual QString value(const QVariant& ) const = 0;
 
@@ -108,6 +109,7 @@ public:
      * translates the type of a variant to a compatible ilwis type
      *
      * \param the variant to be typed
+     * \sa IlwisObject
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QVariant &v);
@@ -116,6 +118,7 @@ public:
      * Translates a String to a compatible ilwis type
      *
      * \param value the string to be translated
+     * \sa IlwisObject
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QString &value);

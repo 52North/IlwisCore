@@ -25,12 +25,69 @@ class Resource;
 typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
 
 /*!
- \brief A class that is the baseclass for all Geospatial data classes and their directly supporting classes
-
- The class should only be used for instances that must be singletons in the system. That is, there may exist only
- one instance of it. The purpose of the class is to ensure automatic consistency of data in the system. Changes to one
- reference to the object are automatically reflected in the others because they are the same object.
-
+ *\brief A class that is the baseclass for all Geospatial data classes and their directly supporting classes
+ *
+ * The class should only be used for instances that must be singletons in the system. That is, there may exist only
+ * one instance of it. The purpose of the class is to ensure automatic consistency of data in the system. Changes to one
+ * reference to the object are automatically reflected in the others because they are the same object.
+ *
+ * A IlwisObject has a IlwisType, which can be any of the following, or a combination thereof:
+ *
+ * - itUNKNOWN : type not known
+ * - itPOINT : a point (on a map)
+ * - itLINE : a Line or a LineCoverage
+ * - itPOLYGON : a polygon (on a map)
+ * - itRASTER :a RasterCoverage
+ * - itCOVERAGELIST : a list of Coverage s
+ * - itOBJECTCOLLECTION : a list of IlwisObject s
+ * - itNUMERICDOMAIN : a Domain with Numberic values (NumbericDomain
+ * - itITEMDOMAIN : a ItemDomain
+ * - itTIMEDOMAIN : -
+ * - itCOORDDOMAIN : a Coordinate based domain (CoordinateDomain)
+ * - itCOLORDOMAIN : a Color based domain
+ * - itTEXTDOMAIN : a String based domain
+ * - itCONVENTIONALCOORDSYSTEM : Projected coordinate system or lat-lon
+ * - itORTHOCOORDSYSTEM : -
+ * - itELLIPSOID : a geographical ellipsoid
+ * - itPROJECTION :
+ * - itDATABASETABLE : a table from a database
+ * - itFLATTABLE : a table from memory
+ * - itREPRESENTATION :
+ * - itGEOREF :
+ * - itENVELOPE : Bounding Box
+ * - itOPERATIONMETADATA :
+ * - itRASTERSIZE : the size in pixels of a raster
+ * - itCATALOG : a collection of ilwisobjects
+ * - itCONTAINER : external organisation of the ilwisobjects
+ * - itGEODETICDATUM : geodetic datum
+ * - itBOOL : a boolean value
+ * - itINT8 : a 8 bit signed integer value
+ * - itUINT8 : a 8 bit unsigned integer value
+ * - itUINT16 : a 16 bit signed integer value
+ * - itINT16 : a 16 bit unsigned integer value
+ * - itUINT32 : a 32 bit unsigned integer value
+ * - itINT32 : a 32 bit signed integer value
+ * - itUINT64 : a 64 bit unsigned integer value
+ * - itINT64 : a 64 bit signed integer value
+ * - itFLOAT : a float value
+ * - itDOUBLE : a double value
+ * - itVALUERANGE : a range of numeric values
+ * - itSTRING : a String value
+ * - itTIME : a time value
+ * - itCOORD2D : a 2D (x,y) coordinate
+ * - itCOORD3D : a 3D (x,y,z) coordinate
+ * - itPIXEL : a pixel (x,y)
+ * - itVOXEL : a voxel, a (x,y,z) pixel
+ * - itBINARY : a binary value
+ * - itFILE : a file
+ * - itURL : an url value
+ * - itTHEMATICITEM : an item on a thematic domain
+ * - itNAMEDITEM : an item on a named domain
+ * - itINDEXEDITEM : an item on a indexed domain
+ * - itNUMERICITEM : an item on a NumericDomain
+ * - itTIMEITEM : an item on a time domain
+ * - itCOLOR : an item on a color domain
+ * - itANY : the wildcard type
 */
 class KERNELSHARED_EXPORT IlwisObject : public QObject, public Identity
 {
@@ -117,6 +174,12 @@ public:
    virtual void setReadOnly(bool yesno);
    virtual bool hasChanged() const;
    virtual void changed(bool yesno) ;
+
+   /**
+    * Gives the IlwisType of this object
+    * \sa IlwisObject
+    * @return the ilwisType of this IlwisObject
+    */
    virtual IlwisTypes ilwisType() const = 0;
    virtual bool prepare(const QString& def);
 
