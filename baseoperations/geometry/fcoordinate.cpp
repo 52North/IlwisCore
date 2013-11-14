@@ -45,7 +45,7 @@ Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *, c
         ERROR2(ERR_ILLEGAL_VALUE_2,"coordinate","x");
         return sPREPAREFAILED;
     }
-    double sy = _expression.parm(0).value().toDouble(&ok);
+    double sy = _expression.parm(1).value().toDouble(&ok);
     if (!ok){
         ERROR2(ERR_ILLEGAL_VALUE_2,"coordinate","y");
         return sPREPAREFAILED;
