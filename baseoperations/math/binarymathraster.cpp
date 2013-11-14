@@ -41,9 +41,6 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
 
         for_each(iterOut, iterOut.end(), [&](double& v){
             v = calc(*iterIn, _number1);
-            //if (iterOut.position().x() == 500 && iterOut.position().y() == 500){
-            //    qDebug() << iterOut.linearPosition();
-           // }
             ++iterIn;
         });
         return true;
@@ -54,7 +51,6 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
             return false;
 
 
-    double v2 = _outputGC->pix2value(Voxel(500,500,0));
     return setOutput(ctx, symTable);
 
 }
