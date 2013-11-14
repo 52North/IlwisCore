@@ -121,6 +121,11 @@ Resource::Resource(quint64 tp, const QUrl &url) :
         QString resext = url.toString() + "/" + name();
         _resource = QUrl(resext);
     }
+    QString nm = _resource.toString();
+    int index = nm.lastIndexOf("/");
+    if ( index != -1){
+        addContainer(nm.left(index));
+    }
 
 }
 
