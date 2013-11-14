@@ -60,9 +60,9 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         return true;
     };
     ctx->_threaded = false;
-    bool resource = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
+    bool ok = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
-    if ( resource && ctx != 0) {
+    if ( ok && ctx != 0) {
         outputFC->attributeTable(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
