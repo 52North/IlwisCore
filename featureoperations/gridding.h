@@ -18,6 +18,7 @@ public:
 private:
     ICoordinateSystem _csy;
     IFeatureCoverage _outfeatures;
+    ITable _attTable;
     Coordinate2d _top;
     double _cellXSize;
     double _cellYSize;

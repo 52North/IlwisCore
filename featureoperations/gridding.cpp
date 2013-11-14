@@ -43,9 +43,9 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
     for(int fx=0; fx < _xsize; ++fx) {
         for(int fy=0; fy < _ysize; ++fy) {
             Coordinate2d c1(_top + std::vector<double>{_cellXSize * fx, _cellYSize * fy });
-            Coordinate2d c2(_top + std::vector<double>{_cellXSize * fx+1, _cellYSize * fy });
-            Coordinate2d c3(_top + std::vector<double>{_cellXSize * fx+1, _cellYSize * fy+1 });
-            Coordinate2d c4(_top + std::vector<double>{_cellXSize * fx, _cellYSize * fy+1 });
+            Coordinate2d c2(_top +std::vector<double>{_cellXSize * (fx+1), _cellYSize * fy });
+            Coordinate2d c3(_top + std::vector<double>{_cellXSize * (fx+1), _cellYSize * (fy+1) });
+            Coordinate2d c4(_top + std::vector<double>{_cellXSize * fx, _cellYSize * (fy+1) });
             Polygon pol;
             pol.outer().push_back(c1);
             pol.outer().push_back(c2);
@@ -54,6 +54,12 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
             pol.outer().push_back(c1);
             _outfeatures->newFeature({pol});
         }
+    }
+
+    if ( ctx != 0) {
+        QVariant value;
+        value.setValue<IFeatureCoverage>(_outfeatures);
+        ctx->addOutput(symTable, value, _outfeatures->name(), itFEATURE,_outfeatures->source());
     }
     return true;
 }
@@ -72,7 +78,7 @@ quint64 Gridding::createMetadata()
     resource.addProperty("syntax","gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)");
     resource.addProperty("description",TR("generates a new featurecoverage(polygons) were the polygons form a rectangular grid"));
     resource.addProperty("inparameters","6");
-    resource.addProperty("pin_1_type", itFEATURE);
+    resource.addProperty("pin_1_type", itCOORDSYSTEM);
     resource.addProperty("pin_1_name", TR("coordinate-syste,"));
     resource.addProperty("pin_1_desc",TR("The coordinate system of the to be created polygon coverage"));
     resource.addProperty("pin_2_type", itCOORDINATE);
@@ -122,31 +128,41 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
         return sPREPAREFAILED;
     }
     bool ok;
-    _cellXSize = _expression.parm(3).value().toDouble(&ok);
+    _cellXSize = _expression.parm(2).value().toDouble(&ok);
     if ( !ok ) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","3");
         return sPREPAREFAILED;
     }
 
-    _cellYSize = _expression.parm(4).value().toDouble(&ok);
+    _cellYSize = _expression.parm(3).value().toDouble(&ok);
     if ( !ok ) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","4");
         return sPREPAREFAILED;
     }
 
-    _xsize = _expression.parm(5).value().toDouble(&ok);
+    _xsize = _expression.parm(4).value().toDouble(&ok);
     if ( !ok ) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","5");
         return sPREPAREFAILED;
     }
 
-    _ysize = _expression.parm(6).value().toDouble(&ok);
+    _ysize = _expression.parm(5).value().toDouble(&ok);
     if ( !ok ) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","6");
         return sPREPAREFAILED;
     }
+    QString outputName = _expression.parm(0,false).value();
+    QString url = "ilwis://internalcatalog/" + outputName;
+    Resource resource(url, itFLATTABLE);
+    _attTable.prepare(resource);
+    IDomain covdom;
+    if (!covdom.prepare("count")){
+        return sPREPAREFAILED;
+    }
+    _attTable->addColumn(FEATUREIDCOLUMN,covdom);
     _outfeatures.prepare();
     _outfeatures->setCoordinateSystem(_csy);
+    _outfeatures->attributeTable(_attTable);
     Box2D<double> env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
     _outfeatures->envelope(env);
 
