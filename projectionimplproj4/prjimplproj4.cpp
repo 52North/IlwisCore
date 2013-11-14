@@ -14,6 +14,7 @@
 #include "proj4\proj_api.h"
 #include "prjimplproj4.h"
 #include "proj4parameters.h"
+#include "box.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 
