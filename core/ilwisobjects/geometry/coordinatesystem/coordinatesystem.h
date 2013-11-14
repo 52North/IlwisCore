@@ -23,9 +23,11 @@ public:
     virtual bool canConvertToLatLon() const;
     virtual bool canConvertToCoordinate() const;
     virtual Coordinate inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate& crd) const;
+    Box3D<double> envelope() const;
+    void envelope(const Box3D<double> &bnds);
 
 private:
-    //Envelope _bounds;
+    Box3D<double> _bounds;
 
 };
 

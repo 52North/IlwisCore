@@ -49,5 +49,15 @@ Coordinate CoordinateSystem::inverseCoordinateConversion(const CoordinateSystem&
     return Coordinate();
 }
 
+Box3D<double> CoordinateSystem::envelope() const
+{
+    return _bounds;
+}
+
+void CoordinateSystem::envelope(const Box3D<double> &bnds)
+{
+    _bounds = bnds;
+}
+
 
 
