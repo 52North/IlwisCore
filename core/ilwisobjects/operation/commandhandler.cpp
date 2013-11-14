@@ -152,6 +152,8 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                     }
                     IlwisTypes tpMeta = (*iter).second.toULongLong();
                     if ( tpMeta != itSTRING) { // string matches with all
+                        if ( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))
+                            continue;
                         if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
                             found = false;
                             break;
