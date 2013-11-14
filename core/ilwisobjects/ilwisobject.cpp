@@ -78,8 +78,8 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         resource = Resource(url,ilwisType(), false);
         resource.setId(id());
     }
-    if ( url == QUrl()) {
-        resource.setName(name());
+    if ( url != QUrl()) {
+        resource.setUrl(url);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
