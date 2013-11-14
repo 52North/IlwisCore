@@ -112,7 +112,7 @@ void Kernel::init() {
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
 
-    confac->addCreator(itCONTAINER,"container", FolderConnector::create);
+    confac->addCreator(itCONTAINER,"ilwis", FolderConnector::create);
 
     FeatureFactory *featureFac = new FeatureFactory();
     featureFac->addCreator("feature", createFeature);
