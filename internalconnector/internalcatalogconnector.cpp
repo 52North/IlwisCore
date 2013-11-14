@@ -64,7 +64,8 @@ QString InternalCatalogConnector::provider() const
 }
 
 QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
-    return url.toLocalFile();
+    QFileInfo inf = url.toLocalFile();
+    return inf;
 }
 
 bool InternalCatalogConnector::isValid() const{
