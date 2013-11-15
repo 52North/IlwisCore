@@ -5,6 +5,9 @@
 #include "ilwis.h"
 
 #define ANONYMOUS_PREFIX "_ANONYMOUS_"
+#define NAME_ALIAS "_IDPLACEHOLDER_"
+#define SZ_ANONYMOUS_PREFIX (strlen(ANONYMOUS_PREFIX))
+#define SZ_NAME_ALIAS (strlen(NAME_ALIAS))
 
 namespace Ilwis {
 

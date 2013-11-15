@@ -148,6 +148,22 @@ public:
             return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
 
         }
+        if ( name.indexOf(NAME_ALIAS) == 0) {
+            QString sid = name.mid(SZ_NAME_ALIAS);
+            bool ok;
+            quint64 id = sid.toLongLong(&ok);
+            if (ok){
+                ESPIlwisObject data = mastercatalog()->get(id);
+                if ( data.get() != 0) {
+                    removeCurrent();
+                    _implementation = data;
+                    return true;
+                }
+
+            }
+            return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
+
+        }
         if ( tp == itANY) {
             auto type = kernel()->demangle(typeid(T).name());
             tp = IlwisObject::name2Type(type);
