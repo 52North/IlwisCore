@@ -22,14 +22,16 @@ SOURCES += \
     rasteroperations/rasteroperationsmodule.cpp \
     rasteroperations/aggregateraster.cpp \
     rasteroperations/areanumbering.cpp \
-    rasteroperations/crossrasters.cpp
+    rasteroperations/crossrasters.cpp \
+    rasteroperations/rasterstretchoperation.cpp
 
 
 HEADERS += \
     rasteroperations/rasteroperationsmodule.h \
     rasteroperations/aggregateraster.h \
     rasteroperations/areanumbering.h \
-    rasteroperations/crossrasters.h
+    rasteroperations/crossrasters.h \
+    rasteroperations/rasterstrechoperation.h
 
 
 OTHER_FILES += \ 
