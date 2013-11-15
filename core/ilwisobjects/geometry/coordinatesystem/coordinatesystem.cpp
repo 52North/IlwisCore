@@ -51,12 +51,12 @@ Coordinate CoordinateSystem::inverseCoordinateConversion(const CoordinateSystem&
 
 Box3D<double> CoordinateSystem::envelope() const
 {
-    return _bounds;
+    return _envelope;
 }
 
-void CoordinateSystem::envelope(const Box3D<double> &bnds)
+void CoordinateSystem::envelope(const Box3D<double> &env)
 {
-    _bounds = bnds;
+    _envelope = env;
 }
 
 
