@@ -93,9 +93,9 @@ void AttributeRecord::cellByKey(quint64 key, quint32 colIndex, const QVariant& v
         quint32 recIndex = key;
         if ( key != NEW_RECORD) {
             auto iter = _coverageIndex.find(key);
-            if ( iter != _coverageIndex.end()) {
+            if ( iter == _coverageIndex.end())
                 return;
-            } else
+            else
                 recIndex= (*iter).second;
         }
 
