@@ -11,6 +11,7 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "ProjectionImplementation.h"
+#include "box.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "projectionimplementationinternal.h"
