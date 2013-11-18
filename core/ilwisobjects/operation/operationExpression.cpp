@@ -84,7 +84,18 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
         return type;
 
     if ( value.left(11) == ANONYMOUS_PREFIX) {
-        QString sid = value.mid(12);
+        QString sid = value.mid(11);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if ( ok) {
+            ESPIlwisObject obj =  mastercatalog()->get(id);
+            if ( obj.get() != 0)
+                return obj->ilwisType();
+        }
+    }
+
+    if ( value.indexOf(NAME_ALIAS) == 0) {
+        QString sid = value.mid(SZ_NAME_ALIAS);
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if ( ok) {

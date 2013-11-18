@@ -201,8 +201,19 @@ Resource MasterCatalog::id2Resource(quint64 iid) const {
 
 quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
 {
+    if ( name.indexOf(NAME_ALIAS) == 0) {
+        QString sid = name.mid(SZ_NAME_ALIAS);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
+                return data->id();
+            }
+        }
+    }
     if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
-        QString sid = name.mid(12);
+        QString sid = name.mid(11);
         bool ok;
         quint64 id = sid.toLongLong(&ok);
         if (ok){

@@ -24,10 +24,10 @@ public:
     virtual bool canConvertToCoordinate() const;
     virtual Coordinate inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate& crd) const;
     Box3D<double> envelope() const;
-    void envelope(const Box3D<double> &bnds);
+    void envelope(const Box3D<double> &env);
 
 private:
-    Box3D<double> _bounds;
+    Box3D<double> _envelope;
 
 };
 
