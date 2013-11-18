@@ -196,6 +196,8 @@ public:
             mastercatalog()->addContainer(resource1.container());
             quint64 id = mastercatalog()->url2id(resource1.url(), resource1.ilwisType());
             Resource resource = mastercatalog()->id2Resource(id);
+            if (!resource.isValid())
+                resource = resource1;
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
