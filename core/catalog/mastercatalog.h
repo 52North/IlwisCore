@@ -31,7 +31,7 @@ public:
     bool addContainer(const QUrl &location);
     bool addItems(const QList<Resource> &items);
     bool removeItems(const QList<Resource> &items);
-    quint64 resource2id(const QUrl& url, IlwisTypes tp) const;
+    quint64 url2id(const QUrl& url, IlwisTypes tp) const;
     Resource name2Resource(const QString& name, IlwisTypes tp = itUNKNOWN) const;
     Resource id2Resource(quint64 iid) const;
     quint64 name2id(const QString& name, IlwisTypes tp= itUNKNOWN) const;
