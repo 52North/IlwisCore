@@ -145,3 +145,12 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
 
     return Geometry();
 }
+
+bool Geometry::within(const Geometry &geom) const
+{
+    if ( geom._geometry.which() == 0 && _geometry.which() == 5) {
+        const Polygon& pol = (boost::get<Polygon >(_geometry));
+        Point2D<double> p = (boost::get<Point2D<double> >(geom._geometry));
+        return boost::geometry::within(p, pol);
+    }
+}
