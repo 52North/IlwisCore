@@ -54,6 +54,11 @@ public:
         return rUNDEF;
     }
 
+    std::vector<HistogramBin> histogram() {
+        return _bins;
+    }
+
+
     double prop(PropertySets method) const{
         return operator[](method);
     }
