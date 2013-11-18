@@ -18,11 +18,10 @@ public:
 
 
 protected:
-    IRasterCoverage _stretchFrom;
-    IRasterCoverage _stretchTo;
-    IDomain _domain;
+    IIlwisObject _inputObj;
+    IIlwisObject _outputObj;
 
-    bool stretch(IRasterCoverage toStretch, IDomain range);
+    bool stretch(IRasterCoverage toStretch);
 };
 
 class HistogramEqualizationOperation : public OperationImplementation
@@ -40,7 +39,6 @@ public:
 protected:
     IRasterCoverage _stretchFrom;
     IRasterCoverage _stretchTo;
-    IDomain _domain;
 };
 
 }

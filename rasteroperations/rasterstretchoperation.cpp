@@ -29,10 +29,10 @@ Ilwis::OperationImplementation *LinearStretchOperation::create(quint64 metaid,co
     return new LinearStretchOperation(metaid, expr);
 }
 
-bool LinearStretchOperation::stretch(IRasterCoverage toStretch, IDomain range)
+bool LinearStretchOperation::stretch(IRasterCoverage toStretch)
 {
 
-    // TODO
+    // TODO do _statistics histogram calculation
 
     return false;
 }
@@ -53,7 +53,38 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    // TODO
+    if (!_inputObj.prepare(raster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
+        return sPREPAREFAILED;
+    }
+
+    // TODO prepare output raster
+    _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, itDOMAIN);
+    if ( !_outputObj.isValid()) {
+        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
+        return sPREPAREFAILED;
+    }
+    IGeoReference grf;
+    grf.prepare(_expression.parm(1).value());
+    if ( !grf.isValid()) {
+        return sPREPAREFAILED;
+    }
+    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    outputRaster->georeference(grf);
+    Box2Dd env = grf->pixel2Coord(grf->size());
+    outputRaster->envelope(env);
+    if ( outputName != sUNDEF)
+        outputRaster->setName(outputName);
+
+    /*
+    RasterCoverage output;
+    QString outputId = QString("ilwis://internalcatalog/%1").arg(outputName);
+    if (!output.prepare(outputId, itRASTER)) {
+        ERROR1(ERR_NO_INITIALIZED_1,outputName);
+        return sPREPAREFAILED;
+    }
+    */
+
 
     return sNOTPREPARED;
 }
@@ -66,13 +97,10 @@ quint64 LinearStretchOperation::createMetadata()
     resource.addProperty("longname","rescale input values to an output map");
     resource.addProperty("syntax","stretch(raster, range");
     resource.addProperty("description",TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
-    resource.addProperty("inparameters","2");
+    resource.addProperty("inparameters","1");
     resource.addProperty("pin_1_type", itRASTER);
     resource.addProperty("pin_1_name", TR("rastercoverage to stretch"));
     resource.addProperty("pin_1_desc",TR("input rastercoverage with domain item or numeric"));
-    resource.addProperty("pin_2_type", itDOMAIN);
-    resource.addProperty("pin_2_name", TR("output domain"));
-    resource.addProperty("pin_2_desc",TR("histogram output range as domain numeric"));
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_type", itRASTER);
     resource.addProperty("pout_1_name", TR("output rastercoverage"));
