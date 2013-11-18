@@ -152,8 +152,7 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
         return sPREPAREFAILED;
     }
     QString outputName = _expression.parm(0,false).value();
-    QString url = "ilwis://internalcatalog/" + outputName;
-    Resource resource(url, itFLATTABLE);
+     Resource resource = outputName != sUNDEF ? Resource("ilwis://internalcatalog/" + outputName, itFLATTABLE) : Resource(itFLATTABLE);
     _attTable.prepare(resource);
     IDomain covdom;
     if (!covdom.prepare("count")){
