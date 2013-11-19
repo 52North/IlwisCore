@@ -148,6 +148,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->setName(outputName);
+    outputRaster->setCoordinateSystem(inputRaster->coordinateSystem());
 
     Box3D<qint32> box(inputRaster->size());
     if ( _grouped) {
@@ -165,12 +166,14 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
         resource.addProperty("size", IVARIANT(box.size()));
         resource.addProperty("envelope", IVARIANT(envlope));
-        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
+        resource.addProperty("coordinatesystem", inputRaster->coordinateSystem()->id());
         resource.addProperty("name", outputBaseName);
         resource.addProperty("centerofpixel",inputRaster->georeference()->centerOfPixel());
         IGeoReference  grf;
-        grf.prepare(resource);
-        outputRaster->georeference(grf);
+        if (grf.prepare(resource)) {
+            mastercatalog()->addItems({resource});
+            outputRaster->georeference(grf);
+        }
         outputRaster->envelope(envlope);
         outputRaster->size(box.size());
     }
