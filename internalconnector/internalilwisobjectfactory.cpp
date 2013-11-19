@@ -179,13 +179,14 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
     coverage->setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(coverage->id()));
 
     ICoordinateSystem csy;
-    if (QString(resource["coordinatesystem"].typeName()) == "Ilwis::ICoordinateSystem")
+    QString typnm = resource["coordinatesystem"].typeName();
+    if (typnm == "Ilwis::ICoordinateSystem")
         csy = resource["coordinatesystem"].value<Ilwis::ICoordinateSystem>();
-    else if( QString(resource["coordinatesystem"].typeName()) == "QString" &&
+    else if( typnm == "QString" &&
              resource["coordinatesystem"].toString() != sUNDEF  ) {
-        Resource resource = property2Resource(resource["coordinatesystem"], itCOORDSYSTEM);
-        if ( resource.isValid()) {
-            if (!csy.prepare(resource))
+        Resource newresource = property2Resource(resource["coordinatesystem"], itCOORDSYSTEM);
+        if ( newresource.isValid()) {
+            if (!csy.prepare(newresource))
                 return false;
         }
     }
@@ -205,13 +206,14 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
     }
     if ( resource.ilwisType() == itRASTER) {
         IDomain dom;
-        if (QString(resource["domain"].typeName()) == "Ilwis::IDomain")
+        QString tpname = resource["domain"].typeName();
+        if (tpname == "Ilwis::IDomain")
             dom = resource["domain"].value<Ilwis::IDomain>();
-        else if( QString(resource["domain"].typeName()) == "QString" &&
+        else if( tpname == "QString" &&
                  resource["domain"].toString() != sUNDEF  ) {
-            Resource resource = property2Resource(resource["domain"], itDOMAIN);
-            if ( resource.isValid()) {
-                if (!dom.prepare(resource))
+            Resource newresource = property2Resource(resource["domain"], itDOMAIN);
+            if ( newresource.isValid()) {
+                if (!dom.prepare(newresource))
                     return false;
             }
         }
@@ -240,13 +242,13 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     }
 
     IGeoReference grf;
-    if (QString(resource["georeference"].typeName()) == "Ilwis::IGeoReference")
+    QString tpnam = resource["georeference"].typeName();
+    if (tpnam == "Ilwis::IGeoReference")
         grf = resource["georeference"].value<Ilwis::IGeoReference>();
-    else if( QString(resource["georeference"].typeName()) == "QString"  &&
-             resource["georeference"].toString() != sUNDEF) {
-        Resource resource = property2Resource(resource["georeference"], itGEOREF);
-        if ( resource.isValid()) {
-            if (!grf.prepare(resource))
+    else if( tpnam == "QString"  && resource["georeference"].toString() != sUNDEF) {
+        Resource newresource = property2Resource(resource["georeference"], itGEOREF);
+        if ( newresource.isValid()) {
+            if (!grf.prepare(newresource))
                 return 0;
         }
     } else{
@@ -296,7 +298,12 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property, IlwisTypes type) const{
     if ( !property.isValid() || property.isNull() )
         return Resource();
-    return mastercatalog()->name2Resource(property.toString(), type);
+    bool ok;
+    quint64 id = property.toULongLong(&ok);
+    if ( ok)
+        return mastercatalog()->id2Resource(id);
+    else
+        return mastercatalog()->name2Resource(property.toString(), type);
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
@@ -467,11 +474,19 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
 }
 
 IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource) const {
-    GeoReference *cgrf = GeoReference::create("corners");
+    GeoReference *cgrf = GeoReference::create("corners", resource);
     cgrf->setName( resource["name"].toString());
     cgrf->setCreateTime(Time::now());
     cgrf->setModifiedTime(Time::now());
-    cgrf->coordinateSystem(resource["coordinatesystem"].value<ICoordinateSystem>());
+    ICoordinateSystem csy;
+    bool ok;
+    quint64 id = resource["coordinatesystem"].toULongLong(&ok);
+    if ( ok) {
+        csy = mastercatalog()->get(id);
+    } else
+       csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
+
+    cgrf->coordinateSystem(csy);
     cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Box2D<double>>());
 //    Size sz = resource["size"].value<Size>();
     cgrf->size(resource["size"].value<Size>());
