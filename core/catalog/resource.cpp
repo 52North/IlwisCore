@@ -290,7 +290,6 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
     queryItem.bindValue(":container", container().toString());
-    QString dum = url().toString();
     queryItem.bindValue(":resource", url().toString());
     queryItem.bindValue(":type", ilwisType());
     queryItem.bindValue(":extendedtype", _extendedType);
@@ -306,7 +305,8 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
         queryProperties.bindValue(":itemid", id());
         QString nameItem = iter.key();
         queryProperties.bindValue(":propertyname",nameItem);
-        queryProperties.bindValue(":propertyvalue", iter.value().toString());
+        QString v = iter.value().toString();
+        queryProperties.bindValue(":propertyvalue", v);
         ok = queryProperties.exec();
         if (!ok) {
             kernel()->issues()->logSql(queryProperties.lastError());
