@@ -27,8 +27,8 @@ GeoReference::~GeoReference()
 {
 }
 
-GeoReference  *GeoReference::create(const QString& type) {
-    GeoReference *georef = new GeoReference();
+GeoReference  *GeoReference::create(const QString& type,const Resource& resource) {
+    GeoReference *georef = new GeoReference(resource);
     GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("ilwis::georefimplementationfactory");
     GeoRefImplementation *impl = grfFac->create(type);
     if ( !impl) {
