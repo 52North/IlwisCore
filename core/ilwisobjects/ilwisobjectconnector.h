@@ -18,7 +18,10 @@ protected:
     template<class T> T setObject(const QString& propeprty, const QString defaultName) {
 
         T object;
-        auto id = _resource[propeprty].toLongLong();
+        bool ok;
+        auto id = _resource[propeprty].toLongLong(&ok);
+        if (!ok)
+            return 0;
         Resource resource = mastercatalog()->id2Resource(id);
         if ( resource.code() != sUNDEF)
             object.prepare(id);

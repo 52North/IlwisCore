@@ -47,6 +47,7 @@ public:
     Resource copy(quint64 id) const;
 
 protected:
+    void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);
     QHash<QString, QVariant> _properties;
     QUrl _resource;
     std::vector<QUrl> _container;

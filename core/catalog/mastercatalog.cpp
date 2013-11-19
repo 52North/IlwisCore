@@ -91,7 +91,7 @@ bool MasterCatalog::addContainer(const QUrl &location)
 
 ESPIlwisObject MasterCatalog::get(const QUrl &resource, IlwisTypes type) const
 {
-    quint64 id = resource2id(resource, type);
+    quint64 id = url2id(resource, type);
     return get(id);
 }
 
@@ -109,7 +109,7 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     auto hash = Ilwis::qHash2(url, type);
     auto  iter = _knownHashes.find(hash);
     if ( iter != _knownHashes.end()) {
-        auto id = resource2id(url, type);
+        auto id = url2id(url, type);
         if ( id != i64UNDEF)
             return true;
     }
@@ -173,7 +173,7 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     return true;
 
 }
-quint64 MasterCatalog::resource2id(const QUrl &url, IlwisTypes tp) const
+quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp) const
 {
     auto query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
     auto results = kernel()->database().exec(query);

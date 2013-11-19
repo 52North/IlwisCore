@@ -191,9 +191,13 @@ public:
 
     }
 
-    bool prepare(const Resource& resource){
-        mastercatalog()->addContainer(resource.container());
-        if (resource.isValid()) {
+    bool prepare(const Resource& resource1){
+        if (resource1.isValid()) {
+            mastercatalog()->addContainer(resource1.container());
+            quint64 id = mastercatalog()->url2id(resource1.url(), resource1.ilwisType());
+            Resource resource = mastercatalog()->id2Resource(id);
+            if (!resource.isValid())
+                resource = resource1;
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
@@ -208,7 +212,7 @@ public:
             }
             return true;
         } else {
-            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,resource.name());
+            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,resource1.name());
         }
         return false;
 

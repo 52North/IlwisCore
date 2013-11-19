@@ -159,6 +159,7 @@ public:
      */
     void setLayerIndexes(const ItemRange &items);
 
+    void setName(const QString &nam);
 protected:
     void copyTo(IlwisObject *obj) ;
 private:

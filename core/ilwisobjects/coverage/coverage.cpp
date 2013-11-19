@@ -152,6 +152,24 @@ void Coverage::setLayerIndexes(const ItemRange &items)
         _indexValues[i] = ditem.isNull() ? iUNDEF : ditem->raw();
     }
 }
+void Coverage::setName(const QString &nam)
+{
+    if ( isReadOnly())
+        return;
+    changed(true);
+
+    IlwisObject::setName(nam);
+    if ( _attTable.isValid()) {
+        if ( _attTable->isAnonymous()) {
+            _attTable->setName(nam + "_attributes");
+        }
+    }
+    if ( _attTableIndex.isValid()) {
+        if (_attTableIndex->isAnonymous()) {
+            _attTable->setName(nam + "_indexattributes");
+        }
+    }
+}
 
 void Coverage::copyTo(IlwisObject *obj)
 {

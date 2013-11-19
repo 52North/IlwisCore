@@ -31,6 +31,8 @@ public:
     IlwisTypes ilwisType() const ;
     Geometry transform(const ICoordinateSystem& csySource,const ICoordinateSystem& csyTarger) const;
 
+    bool within(const Geometry& geom) const;
+
 
 private:
     GeometryType _geometry;

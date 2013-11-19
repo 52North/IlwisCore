@@ -65,7 +65,7 @@ Resource::Resource(const QString& code, quint64 tp, bool isNew) :
     int index = code.indexOf(":");
     if ( index != -1 && index < 6) {
         _resource = QUrl(code);
-        checkUrl(tp);
+        stringAsUrl(code, tp, isNew);
     } else {
         //QString url;
         if ( code.left(4)=="code"){
@@ -92,18 +92,7 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
 {
-    if ( tp == itUNKNOWN)
-        return;
-
-    checkUrl(tp);
-    if ( isNew)
-        prepare();
-    QString nm = url.toString();
-    int index = nm.lastIndexOf("/");
-    if ( index != -1){
-        setName(nm.mid(index + 1));
-        addContainer(nm.left(index));
-    }
+    stringAsUrl(url.toString(), tp, isNew);
 }
 
 Resource::Resource(quint64 tp, const QUrl &url) :
@@ -369,6 +358,21 @@ Resource Resource::copy(quint64 id) const
     resource._id = id;
     resource.prepare(); // generate new id
     return resource;
+}
+
+void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
+{
+    if ( tp == itUNKNOWN)
+        return;
+
+    checkUrl(tp);
+    if ( isNew)
+        prepare();
+    int index = txt.lastIndexOf("/");
+    if ( index != -1){
+        setName(txt.mid(index + 1));
+        addContainer(txt.left(index));
+    }
 }
 
 void Resource::checkUrl(IlwisTypes tp) {
