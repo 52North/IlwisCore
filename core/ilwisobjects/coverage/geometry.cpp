@@ -148,9 +148,16 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
 
 bool Geometry::within(const Geometry &geom) const{
     //until now only for point.within(polygon)
-    if ( geom._geometry.which() == 5 && _geometry.which() == 0) {
+    if ( geom._geometry.which() == 5 && _geometry.which() >= 0 && _geometry.which() <= 2) {
         const Polygon& pol = (boost::get<Polygon >(geom._geometry));
-        Point2D<double> p = (boost::get<Point2D<double> >(_geometry));
+        Point2D<double> p;
+        if (_geometry.which() == 0)
+            p = (boost::get<Pixel >(_geometry));
+        else if (_geometry.which() == 1)
+            p = (boost::get<Coordinate2d >(_geometry));
+        else if (_geometry.which() == 2)
+            p = (boost::get<Coordinate >(_geometry));
         return boost::geometry::within(p, pol);
     }
+    return false;
 }
