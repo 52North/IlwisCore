@@ -159,6 +159,11 @@ public:
      */
     void setLayerIndexes(const ItemRange &items);
 
+    /**
+     * Changes the name of this coverage
+     *
+     * @param nam the new name of this coverage
+     */
     void setName(const QString &nam);
 protected:
     void copyTo(IlwisObject *obj) ;
