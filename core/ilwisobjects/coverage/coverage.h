@@ -23,7 +23,7 @@ typedef ITable AttributeTable;
  * \brief The Coverage class
  *
  * In Ilwis we have two kinds of coverages. Raster coverages for imagery and feature coverages for vector data.
- *
+ * A coverage controls the validity and meaning of data. A resource can be mapped to a coverage, and by this way be accessed
  */
 class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
@@ -33,6 +33,7 @@ public:
      * An AttributeTable can have 2 types depending on the object, it can be a coveragetable,
      * in which the features are defined at only 1 index, or it can be a indextable,
      * in which the features are defined at all known indexes.
+     * the indexes can for example describe different measurements at different times
      */
     enum AttributeType{atCOVERAGE, atINDEX};
 
@@ -43,6 +44,7 @@ public:
 
     /*!
      * The constructor for an coverage based on a Resource
+     *
      * \sa IlwisObject
      * \param source Resource that has to be used
      */
@@ -53,18 +55,23 @@ public:
     /*!
      * Query for the coordinate system of this coverage
      *
+     * \sa ICoordinateSystem
      * \return the coordinate system if it has one or else null
      */
     ICoordinateSystem coordinateSystem() const;
 
     /*!
      * Changes the coordinate system of this coverage into the one specified
+     *
+     * \sa ICoordinateSystem
      * \param the new coordinate system
      */
     void setCoordinateSystem(const ICoordinateSystem& csy);
 
     /*!
      * Query for the envelope of this coverage, must fit in the coordinate system
+     * a envelope decides what domain within a coordinate system is valid, or in this case,
+     * which part of the coordinate system is covered by this coverage
      *
      * \return the envelope of this coverage if it has one or else null
      */
@@ -72,13 +79,14 @@ public:
 
     /*!
      * Changes the envelope of this coverage to the one specified
+     * a envelope decides what domain within a coordinate system is valid, or in this case,
+     * which part of the coordinate system is covered by this coverage
      *
      * \param the new envelope
      */
     void envelope(const Box3D<double> &bnds);
 
     /*!
-     * \brief Gives either the Coveragetable or the Indextable
      *
      * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter
      * atCOVERAGE as parameter also gives the attributeable
@@ -106,16 +114,18 @@ public:
     NumericStatistics& statistics();
 
     /*!
-     * Query for the DataDefinition
+     * Returns the DataDefinition of this rastercoverage
+     * can be null if it is not set
      *
-     * \return de datadefinition van deze coverage
+     * \return the datadefinition of this rastercoverage
      */
     const DataDefinition& datadefIndex() const;
 
     /*!
-     * Query for the DataDefinition
+     * Returns the DataDefinition of this rastercoverage
+     * can be null if it is not set
      *
-     * \return de datadefinition van deze coverage
+     * \return the datadefinition of this rastercoverage
      */
     DataDefinition& datadefIndex();
 
@@ -132,17 +142,13 @@ public:
      */
     QVariant value(const QString& colName, quint32 itemid, qint32 layerIndex = -1);
 
-    /*!
-     * Gives the Resource of this coverage
-     *
-     * \return the Resourece of this coverage
-     */
+    //@override
     Resource source(int mode=cmINPUT) const;
 
     /*!
-     * \brief Translates a value to a index from the Indextable
+     * Translates a value to a index from the Indextable
      *
-     * note : the returned index is not necessarily retrievable, as it is possible to get doubles or indices not in the table back
+     * note : the returned index is not necessarily an entry in the index table, as it is possible to get doubles or indices not in the table back
      * this happens for interpollation purposes and such
      *
      * \param value the value that must be translated to a index
@@ -151,10 +157,10 @@ public:
     double layerIndex(const QString& value);
 
     /*!
-     * \brief Sets the supplied items at the indexes
+     * Sets the supplied items at the indexes
      *
      * Uses the order specified in the itemrange itself
-     *
+     * \sa ItemRange
      * \param items the items that have to be added
      */
     void setLayerIndexes(const ItemRange &items);
@@ -165,6 +171,7 @@ public:
      * @param nam the new name of this coverage
      */
     void setName(const QString &nam);
+
 protected:
     void copyTo(IlwisObject *obj) ;
 private:
