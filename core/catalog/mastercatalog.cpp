@@ -67,8 +67,9 @@ bool MasterCatalog::addContainer(const QUrl &location)
 {
     QString loc = location.toString();
     if ( loc.indexOf("ilwis://tables") == 0||
-         loc.indexOf("ilwis://factory") == 0
-         || loc.isEmpty())
+         loc.indexOf("ilwis://factory") == 0 ||
+         loc.indexOf("ilwis://system") == 0 ||
+         loc.isEmpty())
         return true;
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
@@ -302,10 +303,12 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
             table = "ellipsoid";
         else if ( tp & itGEODETICDATUM)
             table = "datum";
-        auto query = QString("select code from %1 where wkt='%2'").arg(table, wkt);
+        //auto query = QString("select code from %1 where wkt='%2'").arg(table, wkt);
+        auto query = QString("select code from %1 where wkt like '%%2%'").arg(table, wkt);
         auto codes = kernel()->database().exec(query);
         if ( codes.next()) {
-            return QString("ilwis://tables/%1?code=%2").arg(table,codes.value(0).toString());
+            QString res = QString("ilwis://tables/%1?code=%2").arg(table,codes.value(0).toString());
+            return res;
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(wkt));
             return QUrl();
