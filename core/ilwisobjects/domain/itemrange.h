@@ -150,6 +150,7 @@ public:
      */
     ItemRange *merge(const QSharedPointer<Range> &otherRange) const;
 
+    virtual void clear() = 0;
     /**
      * Merges 2 itemranges into a new one
      *
