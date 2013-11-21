@@ -9,11 +9,11 @@
 
 using namespace Ilwis;
 
-ColumnDefinition::ColumnDefinition() : _multiple(false)
+ColumnDefinition::ColumnDefinition() : _multiple(false), _changed(false)
 {
 }
 
-ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) : Identity(def.name(), index), _multiple(false)
+ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) : Identity(def.name(), index), _multiple(false), _changed(false)
 {
     datadef().domain(def.datadef().domain());
     datadef().range(def.datadef().range()->clone());
@@ -63,6 +63,16 @@ void ColumnDefinition::columnindex(quint64 idx)
 quint64 ColumnDefinition::columnindex() const
 {
     return id();
+}
+
+bool ColumnDefinition::isChanged() const
+{
+    return _changed;
+}
+
+void ColumnDefinition::changed(bool yesno)
+{
+    _changed = yesno;
 }
 
 
