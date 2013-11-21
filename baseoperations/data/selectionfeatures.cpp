@@ -131,6 +131,10 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          if (!covdom.prepare("count")){
              return sPREPAREFAILED;
          }
+         if ( _attTable->columnIndex(_attribColumn) == iUNDEF) {
+             ERROR2(ERR_NOT_FOUND2, TR("column"), _attTable->name());
+             return sPREPAREFAILED;
+         }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
          _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain());
          IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
