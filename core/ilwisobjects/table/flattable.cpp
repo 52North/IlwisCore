@@ -8,6 +8,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "tablemerger.h"
+#include "itemrange.h"
 #include "logicalexpressionparser.h"
 #include "tableselector.h"
 
@@ -112,9 +113,11 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
     if ( !isColumnIndexValid(index))
         return ;
     quint32 rec = offset;
+    _columnDefinitionsByIndex[index].changed(true);
     for(const QVariant& var : vars) {
-        if ( rec < _datagrid.size())
+        if ( rec < _datagrid.size()){
             _datagrid[rec++][index] = var;
+        }
         else {
             _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
             _datagrid[rec++][index] = var;
@@ -123,6 +126,7 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
     }
 
 }
+
 
 std::vector<QVariant> FlatTable::record(quint32 rec) const
 {
@@ -149,6 +153,8 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
         _rows = _datagrid.size();
         rec = _rows - 1;
     }
+    for(int i=0; i < _columnDefinitionsByIndex.size(); ++i)
+        _columnDefinitionsByIndex[i].changed(true);
 
     quint32 col = offset;
     int cols = std::min(vars.size() - offset, _columns);
@@ -162,7 +168,6 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
 QVariant FlatTable::cell(const QString& col, quint32 rec, bool asRaw) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariant();
-
     quint32 index = columnIndex(col);
     return cell(index , rec, asRaw);
 }
@@ -192,6 +197,7 @@ void  FlatTable::cell(quint32 index, quint32 rec, const QVariant& var){
 
     if ( !isColumnIndexValid(index))
         return;
+    _columnDefinitionsByIndex[index].changed(true);
     if ( rec >= _rows) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
         _rows = _datagrid.size();
