@@ -168,6 +168,8 @@ public:
      * @return the result of the merging
      */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
+
+    void clear();
 private:
    bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
@@ -305,6 +307,7 @@ public:
      * @return the current count
      */
     quint32 count() const;
+    void clear();
 
     /**
      * merges 2 NamedIdentifierRange 's into one
