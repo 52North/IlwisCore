@@ -131,8 +131,8 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          if (!covdom.prepare("count")){
              return sPREPAREFAILED;
          }
-         if ( _attTable->columnIndex(_attribColumn) == iUNDEF) {
-             ERROR2(ERR_NOT_FOUND2, TR("column"), _attTable->name());
+         if ( inputFC->attributeTable()->columnIndex(_attribColumn) == iUNDEF) {
+             ERROR2(ERR_NOT_FOUND2, TR("column"), inputFC->attributeTable()->name());
              return sPREPAREFAILED;
          }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
