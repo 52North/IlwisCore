@@ -222,9 +222,22 @@ void BaseTable::adjustRange(int index) {
         SPNumericRange rng = coldef.datadef().range<NumericRange>();
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
-            auto minmaxv = std::minmax(values.begin(), values.end());
-            rng->min((*(minmaxv.first)).toDouble());
-            rng->max((*(minmaxv.second)).toDouble());
+            double vmin=1e208, vmax=-1e208;
+            for(const QVariant& var : values ){
+                double v = var.toDouble();
+                if ( !isNumericalUndef(v))
+                    vmin = std::min(vmin, v) ;
+                v = var.toDouble();
+                if (!isNumericalUndef(v))                         {
+                    vmax = std::max(vmax, v)    ;
+                }
+
+            }
+            if ( vmin != 1e208 && vmax != -1e208) { //something has changed
+                rng->min(vmin);
+                rng->max(vmax);
+                _columnDefinitionsByName[coldef.name()] = coldef;
+            }
         }
     } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
         SPItemRange rng = coldef.datadef().range<ItemRange>();
@@ -238,6 +251,7 @@ void BaseTable::adjustRange(int index) {
                     rng->add(item);
                 }
             }
+            _columnDefinitionsByName[coldef.name()] = coldef;
         }
     }
     coldef.changed(false);
