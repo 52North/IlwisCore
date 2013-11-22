@@ -59,6 +59,7 @@ public:
      * @return a string
      */
     QString toString() const;
+    void clear();
 
     //@override
     ItemRange *clone() const;

@@ -214,6 +214,14 @@ IlwisTypes NumericRange::determineType() const{
     return vt;
 }
 
+void NumericRange::clear()
+{
+    _min = 0;
+    _max = -1;
+    _undefined = rUNDEF;
+
+}
+
 NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),

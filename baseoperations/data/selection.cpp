@@ -70,6 +70,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
+    ctx->_threaded = false;
     bool resource = OperationHelperRaster::execute(ctx,selection, outputRaster, _box);
 
     if ( resource && ctx != 0) {

@@ -73,6 +73,7 @@ public:
         return v;
     }
     IlwisTypes determineType() const;
+    void clear();
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2,RenumberMap *rnm=0);
 

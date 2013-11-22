@@ -110,6 +110,7 @@ protected:
     bool _dataloaded;
 
     virtual bool initLoad();
+    virtual void adjustRange(int index);
     void copyTo(IlwisObject *obj);
     quint32 columnIndex(const QString& nme) const;
 };

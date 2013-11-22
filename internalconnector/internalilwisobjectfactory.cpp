@@ -176,7 +176,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
     if (!coverage->prepare())
         return false;
 
-    coverage->setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(coverage->id()));
+    //coverage->setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(coverage->id()));
 
     ICoordinateSystem csy;
     QString typnm = resource["coordinatesystem"].typeName();

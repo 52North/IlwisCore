@@ -7,6 +7,8 @@
 #include "connectorinterface.h"
 #include "table.h"
 #include "basetable.h"
+#include "domainitem.h"
+#include "itemdomain.h"
 #include "tablemerger.h"
 
 using namespace Ilwis;
@@ -94,21 +96,33 @@ IlwisTypes BaseTable::ilwisType() const
 ColumnDefinition BaseTable::columndefinition(const QString &nme) const
 {
     auto iter = _columnDefinitionsByName.find(nme);
-    if ( iter != _columnDefinitionsByName.end())
-        return iter.value();
+    if ( iter != _columnDefinitionsByName.end()) {
+        if (iter.value().isChanged()) {
+            int index = columnIndex(nme);
+            const_cast<BaseTable *>(this)->adjustRange(index);
+        }
+       return iter.value();
+    }
     return ColumnDefinition();
 }
 
 ColumnDefinition BaseTable::columndefinition(quint32 index) const
 {
     auto iter = _columnDefinitionsByIndex.find(index);
-    if ( iter != _columnDefinitionsByIndex.end())
+    if ( iter != _columnDefinitionsByIndex.end()) {
+        if (iter.value().isChanged()) {
+            const_cast<BaseTable *>(this)->adjustRange(index);
+        }
         return iter.value();
+    }
     return ColumnDefinition();
 }
 
 ColumnDefinition &BaseTable::columndefinition(quint32 index)
 {
+    if ( _columnDefinitionsByIndex[index].isChanged()) {
+        adjustRange(index);
+    }
     return _columnDefinitionsByIndex[index];
 }
 
@@ -199,6 +213,49 @@ bool BaseTable::merge(const IlwisObject *obj, int options)
     merger.copyColumns(tblSource, tblTarget, options);
 
     return true;
+}
+
+void BaseTable::adjustRange(int index) {
+
+    ColumnDefinition& coldef = _columnDefinitionsByIndex[index];
+    if( hasType(coldef.datadef().domain()->ilwisType(), itNUMERICDOMAIN)) {
+        SPNumericRange rng = coldef.datadef().range<NumericRange>();
+        std::vector<QVariant> values = column(coldef.id());
+        if ( values.size() > 0 && !rng.isNull()) {
+            double vmin=1e208, vmax=-1e208;
+            for(const QVariant& var : values ){
+                double v = var.toDouble();
+                if ( !isNumericalUndef(v))
+                    vmin = std::min(vmin, v) ;
+                v = var.toDouble();
+                if (!isNumericalUndef(v))                         {
+                    vmax = std::max(vmax, v)    ;
+                }
+
+            }
+            if ( vmin != 1e208 && vmax != -1e208) { //something has changed
+                rng->min(vmin);
+                rng->max(vmax);
+                _columnDefinitionsByName[coldef.name()] = coldef;
+            }
+        }
+    } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
+        SPItemRange rng = coldef.datadef().range<ItemRange>();
+        std::vector<QVariant> values = column(coldef.id());
+        if ( values.size() > 0 && !rng.isNull()) {
+            rng->clear();
+            for(auto qval : values) {
+                quint32 id = qval.toUInt();
+                SPDomainItem item = rng->item(id);
+                if ( !item.isNull()) {
+                    rng->add(item);
+                }
+            }
+            _columnDefinitionsByName[coldef.name()] = coldef;
+        }
+    }
+    coldef.changed(false);
+
 }
 
 

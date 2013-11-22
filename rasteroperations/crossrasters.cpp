@@ -115,7 +115,11 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     }
 
     IFlatTable newTable;
-    newTable.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    if ( outputName != sUNDEF)
+        newTable.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    else
+        newTable.prepare();
+
     QString crossName = QString("%1_%2").arg(raster1, raster2);
     crossName.replace(".","_");
     _crossDomain.prepare();
