@@ -194,7 +194,7 @@ public:
      * \param rec record number of the cell to be set
      * \param var the new value of the cell
      */
-    virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
+    virtual void setCell(const QString& col, quint32 rec, const QVariant& var) = 0;
 
     /*!
      * Sets the value of a singel cell
@@ -203,7 +203,7 @@ public:
      * \param rec record number of the cell to be set
      * \param var the new value of the cell
      */
-    virtual void cell(quint32 col, quint32 rec, const QVariant& var) = 0;
+    virtual void setCell(quint32 col, quint32 rec, const QVariant& var) = 0;
 
     /**
      * Translates a String with a column name into a column index

@@ -48,10 +48,10 @@ public:
     QVariant cell(const quint32 index, quint32 rec, bool asRaw=true) const;
 
     //@override
-    void cell(const QString& col, quint32 rec, const QVariant& var);
+    void setCell(const QString& col, quint32 rec, const QVariant& var);
 
     //@override
-    void cell(quint32, quint32 rec, const QVariant& var);
+    void setCell(quint32, quint32 rec, const QVariant& var);
 
     //@override
     bool prepare();

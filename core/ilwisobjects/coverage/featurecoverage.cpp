@@ -81,7 +81,7 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
         return SPFeatureI();
     }
-    _record->cellByRecord(_features.size(), colIndex, newFeature->featureid(), -1);
+    _record->cellByRecord(_features.size(), colIndex, QVariant(newFeature->featureid()), -1);
     _features.push_back(newFeature);
     quint32 cnt = featureCount(tp);
     setFeatureCount(tp,++cnt );

@@ -54,7 +54,7 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 }
 
 
-QVariant AttributeRecord::cellByKey(quint64 key, quint32 colIndex, int index) {
+QVariant AttributeRecord::cellByKey(quint64 key, quint32 colIndex, int index, bool asRaw){
     if ( _keyColumn == sUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1,"key column");
         return QVariant();
@@ -67,7 +67,7 @@ QVariant AttributeRecord::cellByKey(quint64 key, quint32 colIndex, int index) {
         if ( iter == _coverageIndex.end()) {
             return QVariant();
         }
-        return _coverageTable->cell(colIndex,(*iter).second);
+        return _coverageTable->cell(colIndex,(*iter).second, asRaw);
     } else {
         if ( _verticalIndex[index].size() == 0) {
             indexVerticalIndex(index);
@@ -99,7 +99,7 @@ void AttributeRecord::cellByKey(quint64 key, quint32 colIndex, const QVariant& v
                 recIndex= (*iter).second;
         }
 
-        return _coverageTable->cell(colIndex,recIndex, var);
+        return _coverageTable->setCell(colIndex,recIndex, var);
     } else {
         if ( _verticalIndex[index].size() == 0) {
             indexVerticalIndex(index);
@@ -108,28 +108,27 @@ void AttributeRecord::cellByKey(quint64 key, quint32 colIndex, const QVariant& v
         if ( iter == _coverageIndex.end()) {
             return;
         }
-        _indexTable->cell(colIndex,(*iter).second, var);
+        _indexTable->setCell(colIndex,(*iter).second, var);
     }
 }
 
-QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, int index) const
+QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, int index, bool asRaw) const
 {
     if ( index == COVERAGETABLE) {
-        return _coverageTable->cell(colIndex, record);
+        return _coverageTable->cell(colIndex, record, asRaw);
     } else {
-        return _indexTable->cell(colIndex, record);
+        return _indexTable->cell(colIndex, record, asRaw);
     }
     return QVariant();
 }
 
-QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, const QVariant& var, int index)
+void AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, const QVariant& var, int index)
 {
     if ( index == COVERAGETABLE) {
-        _coverageTable->cell(colIndex, record,var);
+        _coverageTable->setCell(colIndex, record,var);
     } else {
-        _indexTable->cell(colIndex, record, var);
+        _indexTable->setCell(colIndex, record, var);
     }
-    return QVariant();
 }
 
 void AttributeRecord::indexVerticalIndex(int index){

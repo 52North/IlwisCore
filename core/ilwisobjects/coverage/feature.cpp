@@ -19,12 +19,12 @@ SPFeatureI::SPFeatureI(FeatureInterface *f) : QSharedPointer<FeatureInterface>(f
 {
 }
 
-QVariant SPFeatureI::operator ()(const QString &name, int index) {
-    return (*this)->cell(name, index);
+QVariant SPFeatureI::operator ()(const QString &name, int index, bool asRaw) {
+    return (*this)->cell(name, index, asRaw);
 }
 
 void SPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
-    return (*this)->cell(name, var, index);
+    return (*this)->setCell(name, var, index);
 }
 //--------------------------------------------
 FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){
@@ -70,12 +70,12 @@ quint32 FeatureNode::trackSize() const{
     return 1;
 }
 
-QVariant FeatureNode::cell(const QString& name, int) {
+QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
     quint32 colIndex  = _feature->_record->columnIndex(name);
-    return _feature->_record->cellByKey(featureid(), colIndex, _index);
+    return _feature->_record->cellByKey(featureid(), colIndex, _index, asRaw);
 }
 
-void FeatureNode::cell(const QString &name, const QVariant &var, int index)
+void FeatureNode::setCell(const QString &name, const QVariant &var, int index)
 {
     quint32 colIndex  = _feature->_record->columnIndex(name);
     return _feature->_record->cellByKey(featureid(), colIndex, var, _index);
@@ -119,25 +119,25 @@ Feature &Feature::operator =(const Feature &f)
     return *this;
 }
 
-QVariant Feature::cell(const QString &name, int index)
+QVariant Feature::cell(const QString &name, int index, bool asRaw)
 {
     if ( index < 0){
         quint32 colIndex  = _record->columnIndex(name);
-        return _record->cellByKey(featureid(), colIndex, index);
+        return _record->cellByKey(featureid(), colIndex, index, asRaw);
     }
     if ( index >= 0 && index < _track.size())
-        return _track[index]->cell(name);
-    return QVariant();
+        return _track[index]->cell(name, index, asRaw);
+    return QVariant();//TODO shouldn't this raise a std::out_of_range exception or similar?
 }
 
-void Feature::cell(const QString &name, const QVariant &var, int index)
+void Feature::setCell(const QString &name, const QVariant &var, int index)
 {
     if ( index < 0) {
         quint32 colIndex  = _record->columnIndex(name);
         _record->cellByKey(featureid(), colIndex, var, index);
     }
     if ( index >= 0 && index < _track.size())
-        _track[index]->cell(name,var);
+        _track[index]->setCell(name,var);
 }
 
 quint64 Feature::featureid() const{

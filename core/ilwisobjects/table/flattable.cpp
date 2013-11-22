@@ -186,7 +186,7 @@ QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
     return QVariant();
 }
 
-void  FlatTable::cell(quint32 index, quint32 rec, const QVariant& var){
+void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
 
@@ -201,13 +201,13 @@ void  FlatTable::cell(quint32 index, quint32 rec, const QVariant& var){
 
 }
 
-void FlatTable::cell(const QString &col, quint32 rec, const QVariant &var)
+void FlatTable::setCell(const QString &col, quint32 rec, const QVariant &var)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
 
     quint32 index = columnIndex(col);
-    cell(index, rec, var);
+    setCell(index, rec, var);
 
 }
 

@@ -80,7 +80,7 @@ public:
 //    virtual QVariant cell(const QString& col, quint32 rec) const = 0;
 //
 //    //@override
-//    virtual void cell(const QString& col, quint32 rec, const QVariant& var) = 0;
+//    virtual void setCell(const QString& col, quint32 rec, const QVariant& var) = 0;
 
     //@override
     bool prepare();

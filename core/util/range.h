@@ -46,12 +46,12 @@ public:
      copies the range to a new instance. This pointer has to be deleted by the caller
      * \return the new Range
      */
-    virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
     virtual Range *clone() const = 0;
     template<typename T> T *merge(const QSharedPointer<T>& range1,const QSharedPointer<T>& range2,RenumberMap *rnm=0){
         T::merge(range1, range2, rnm);
     }
 
+    virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
 
     virtual bool contains(const QString& value, bool inclusive = true) const = 0;
 
