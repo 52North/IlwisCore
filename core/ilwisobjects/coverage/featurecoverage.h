@@ -17,6 +17,7 @@ class AttributeRecord;
 
 struct FeatureInfo {
     quint32 _count;
+    std::vector<quint32> _perIndex;
 };
 /**
  * A feature in Ilwis-Objects is anything that can have one or more geometries and has one distinct
@@ -101,7 +102,7 @@ public:
      * @param geom the geometry that has to be used for the new feature
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    SPFeatureI newFeature(const Ilwis::Geometry &geom);
+    SPFeatureI newFeature(const Ilwis::Geometry &geom, int index=0);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -141,7 +142,8 @@ public:
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes types, quint32 cnt);
+    void setFeatureCount(IlwisTypes types, quint32 cnt, int index=0);
+    quint32 maxIndex() const;
 
     //@override
     IlwisTypes ilwisType() const;
@@ -170,9 +172,11 @@ private:
     FeatureFactory *_featureFactory;
     std::mutex _mutex2;
     QSharedPointer<AttributeRecord> _record;
+    quint32 _maxIndex;
 
 
-    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp);
+    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp, int index=0);
+    void adaptFeatureCounts(int tp, quint32 cnt, int index);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;

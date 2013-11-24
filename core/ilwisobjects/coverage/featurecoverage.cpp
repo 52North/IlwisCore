@@ -15,13 +15,13 @@
 
 using namespace Ilwis;
 
-FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
+FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
 {
     _featureInfo.resize(3);
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
 }
 
-FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0)
+FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
 {
     _featureInfo.resize(3);
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
@@ -37,9 +37,9 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
+SPFeatureI FeatureCoverage::newFeature(const Geometry& geom, int index) {
     Locker lock(_mutex);
-    SPFeatureI newfeature = createNewFeature(geom.ilwisType());
+    SPFeatureI newfeature = createNewFeature(geom.ilwisType(), index);
     if (newfeature != nullptr)
         newfeature->set(geom);
     return newfeature;
@@ -53,13 +53,13 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
         return newfeature;
 
     for(int i=0; i < existingFeature->trackSize(); ++i){
-          Geometry geom = existingFeature->geometry().transform(coordinateSystem(), csySource);
+          Geometry geom = existingFeature->geometry().transform(csySource);
           newfeature->set(geom, i);
     }
     return newfeature;
 }
 
-SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
+SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp, int index) {
     if ( isReadOnly())
         return SPFeatureI();
     changed(true);
@@ -82,25 +82,57 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
         return SPFeatureI();
     }
     _record->cellByRecord(_features.size(), colIndex, QVariant(newFeature->featureid()), -1);
-    _features.push_back(newFeature);
+    if ( index < _features.size()){
+        _features[index] = newFeature;
+    }
+    else {
+        if ( index > _features.size())
+            _features.resize(index);
+        _features.push_back(newFeature);
+    }
+
     quint32 cnt = featureCount(tp);
     setFeatureCount(tp,++cnt );
     return _features.back();
 }
 
 
-void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt)
+void FeatureCoverage::adaptFeatureCounts(int tp, quint32 cnt, int index) {
+    auto adapt = [&] () {
+        quint32 current =_featureInfo[tp]._perIndex[index];
+        qint32 delta = cnt - _featureInfo[tp]._count;
+        _featureInfo[tp]._perIndex[index] = current + delta;
+    };
+
+    if ( index < _featureInfo[tp]._perIndex.size()){
+        adapt();
+    } else {
+        if ( index > _featureInfo[tp]._perIndex.size() ) {
+            _featureInfo[tp]._perIndex.resize(index + 1,0);
+            _maxIndex = index + 1;
+        }
+        adapt();
+    }
+    _featureInfo[tp]._count = cnt;
+}
+
+void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt, int index)
 {
     Locker lock(_mutex2);
      _featureTypes |= types;
     switch(types){
     case itPOINT:
-        _featureInfo[0]._count = cnt;break;
+        adaptFeatureCounts(0, cnt, index);break;
     case itLINE:
-        _featureInfo[1]._count = cnt; break;
+        adaptFeatureCounts(1, cnt, index);break;
     case itPOLYGON:
-        _featureInfo[2]._count = cnt; break;
+        adaptFeatureCounts(2, cnt, index);break;
     }
+}
+
+quint32 FeatureCoverage::maxIndex() const
+{
+    return _maxIndex;
 }
 
 IlwisTypes FeatureCoverage::ilwisType() const
@@ -129,20 +161,24 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     fcov->_features = _features;
 }
 
-quint32 FeatureCoverage::featureCount(IlwisTypes types, int ) const
+quint32 FeatureCoverage::featureCount(IlwisTypes types, int index) const
 {
-    switch(types){
-    case itPOINT:
-        return _featureInfo[0]._count;break;
-    case itLINE:
-        return _featureInfo[1]._count; break;
-    case itPOLYGON:
-        return _featureInfo[2]._count; break;
-    default:
-        return _featureInfo[0]._count + _featureInfo[1]._count + _featureInfo[2]._count;
+    auto countFeatures = [&] (int tp){
+        if ( index == iUNDEF)
+            return _featureInfo[tp]._count;
+        else
+            return  _featureInfo[tp]._perIndex.size() < index ? _featureInfo[tp]._perIndex[index] : 0;
+    };
 
-    }
-    return 0;
+    quint32 count=0;
+    if ( hasType(types, itPOINT))
+        count += countFeatures(0);
+    if ( hasType(types, itLINE))
+        count += countFeatures(1);
+    if ( hasType(types, itPOLYGON))
+        count += countFeatures(2);
+
+    return count;
 }
 
 //-----------------------------------------------------------------
