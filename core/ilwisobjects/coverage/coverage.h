@@ -95,6 +95,8 @@ public:
      * \return an AttributeTable
      */
     AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
+    AttributeTable &attributeTable(AttributeType attType=atCOVERAGE);
+    bool hasAttributes(AttributeType attType=atCOVERAGE) const;
 
     /*!
      * \brief Sets a new Coveragetable or Indextable
@@ -105,6 +107,7 @@ public:
      * \param tbl the new table
      * \param attType the type of the new table
      */
+
     void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
 
     /*!
