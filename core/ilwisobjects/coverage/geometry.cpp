@@ -14,7 +14,11 @@
 
 using namespace Ilwis;
 
-Geometry::Geometry(const GeometryType& geom) : _geometry(geom), _bounds(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF)){
+Geometry::Geometry(const GeometryType& geom, const ICoordinateSystem &csy) :
+    _geometry(geom),
+    _bounds(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF)),
+  _csy(csy)
+{
 
 }
 
@@ -94,9 +98,9 @@ IlwisTypes Geometry::ilwisType() const {
     return itUNKNOWN;
 }
 
-Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordinateSystem &csyTarget) const
+Geometry Geometry::transform(const ICoordinateSystem &csyTarget) const
 {
-    if ( !csyTarget.isValid() || csySource == csyTarget){
+    if ( !csyTarget.isValid()|| !_csy.isValid() || _csy == csyTarget){
         return *this;
     }
     try{
@@ -104,21 +108,21 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
     case 0:
     case 1:{
         Point2D<double> p = (boost::get<Point2D<double> >(_geometry));
-        Point2D<double> pnt(csyTarget->coord2coord(csySource, Coordinate2d(p.x(), p.y()))) ;
+        Point2D<double> pnt(csyTarget->coord2coord(_csy, Coordinate2d(p.x(), p.y()))) ;
         return Geometry(pnt);
     }
     case 2:{
         Point3D<double> p = (boost::get<Point3D<double> >(_geometry));
-        Point3D<double> pnt(csyTarget->coord2coord(csySource, Coordinate2d(p.x(), p.y()))) ;
-        return Geometry(pnt);
+        Point3D<double> pnt(csyTarget->coord2coord(_csy, Coordinate2d(p.x(), p.y()))) ;
+        return Geometry(pnt, csyTarget);
     }
     case 3:
     case 4:{
         const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
         Line2D<Coordinate2d > newline(line.size());
         std::transform(line.begin(), line.end(),newline.begin(),[&](const Coordinate2d& crd) -> Coordinate2d
-            { return csyTarget->coord2coord(csySource, crd);});
-        return Geometry(newline);
+            { return csyTarget->coord2coord(_csy, crd);});
+        return Geometry(newline, csyTarget);
     }
     case 5:
     case 6:{
@@ -127,16 +131,16 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
         newPol.outer().resize(pol.outer().size());
         newPol.inners().resize(pol.inners().size());
         std::transform(pol.outer().begin(), pol.outer().end(),newPol.outer().begin(),[&](const Coordinate2d& crd) -> Coordinate2d
-            {return csyTarget->coord2coord(csySource, crd);});
+            {return csyTarget->coord2coord(_csy, crd);});
         auto iter = newPol.inners().begin();
         for(const auto& hole : pol.inners()){
             (*iter).resize(hole.size());
             std::transform(hole.begin(), hole.end(),(*iter).begin(),[&](const Coordinate2d& crd) -> Coordinate2d
-                { return csyTarget->coord2coord(csySource, crd);});
+                { return csyTarget->coord2coord(_csy, crd);});
             ++iter;
 
         }
-        return Geometry(newPol);
+        return Geometry(newPol, csyTarget);
     }
     }
     } catch(boost::bad_get& ex) {
@@ -144,6 +148,13 @@ Geometry Geometry::transform(const ICoordinateSystem &csySource, const ICoordina
     }
 
     return Geometry();
+}
+
+ICoordinateSystem Geometry::coordinateSystem() const{
+    return _csy;
+}
+void Geometry::coordinateSystem(const ICoordinateSystem& csy){
+    _csy = csy;
 }
 
 bool Geometry::within(const Geometry &geom) const{

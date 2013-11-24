@@ -14,7 +14,7 @@ typedef boost::variant<Pixel, Coordinate2d, Coordinate, Line2D<Coordinate2d>, Li
 class KERNELSHARED_EXPORT Geometry {
 public:
     Geometry() {}
-    Geometry(const GeometryType& geom) ;
+    Geometry(const GeometryType& geom, const ICoordinateSystem& csy = ICoordinateSystem()) ;
 
     template<typename GeometryType> GeometryType toType() const{
         return boost::get<GeometryType>(_geometry);
@@ -24,12 +24,15 @@ public:
         _geometry = geom;
     }
 
+    ICoordinateSystem coordinateSystem() const;
+    void coordinateSystem(const ICoordinateSystem&);
+
     bool isValid() const ;
     Box2D<double> envelope() ;
     Box2D<double> envelope() const;
 
     IlwisTypes ilwisType() const ;
-    Geometry transform(const ICoordinateSystem& csySource,const ICoordinateSystem& csyTarger) const;
+    Geometry transform(const ICoordinateSystem& csyTarger) const;
 
     bool within(const Geometry& geom) const;
 
@@ -37,6 +40,7 @@ public:
 private:
     GeometryType _geometry;
     Box2D<double> _bounds;
+    ICoordinateSystem _csy;
 };
 }
 
