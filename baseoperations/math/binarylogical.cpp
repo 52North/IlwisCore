@@ -237,35 +237,16 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
 
 quint64 BinaryLogical::createMetadata()
 {
-    QString url = QString("ilwis://operations/binarylogicalraster");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","binarylogicalraster");
-    resource.addProperty("syntax","binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
-        resource.addProperty("description",TR("generates a new boolean map based on the logical condition used"));
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itRASTER | itNUMBER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage or number/boolean"));
-    resource.addProperty("pin_1_domain","value");
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
-    resource.addProperty("pin_2_type", itRASTER | itNUMBER);
-    resource.addProperty("pin_2_name", TR("input rastercoverage or number"));
-    resource.addProperty("pin_2_domain","value");
-    resource.addProperty("pin_2_desc",TR("input rastercoverage with a numerical/boolean domain or number"));
-    resource.addProperty("pin_3_type", itSTRING);
-    resource.addProperty("pin_3_name", TR("Operator"));
-    resource.addProperty("pin_3_domain","string");
-    resource.addProperty("pin_3_desc",TR("operator applied to the other 2 input parameters"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_domain","value");
-    resource.addProperty("pout_1_desc",TR("output rastercoverage with a boolean domain"));
+    OperationResource operation({"ilwis://operations/binarylogicalraster"});
+    operation.setSyntax("binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
+    operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0,itRASTER | itNUMBER, TR("input rastercoverage or number/boolean"),TR("input rastercoverage with a numerical/boolean domain or number"));
+    operation.addInParameter(1,itRASTER | itNUMBER, TR("input rastercoverage or number/boolean"),TR("input rastercoverage with a numerical/boolean domain or number"));
+    operation.addInParameter(2,itSTRING , TR("Operator"),TR("operator applied to the other 2 input parameters"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output rastercoverage"),TR("output rastercoverage with a boolean domain"));
 
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
-
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
