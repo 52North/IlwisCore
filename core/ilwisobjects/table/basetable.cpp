@@ -2,6 +2,8 @@
 #include "ilwisdata.h"
 #include "domain.h"
 #include "range.h"
+#include "angle.h"
+#include "point.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "connectorinterface.h"
@@ -176,6 +178,11 @@ bool  BaseTable::initLoad() {
     return true;
 }
 
+void BaseTable::dataLoaded(bool yesno)
+{
+    _dataloaded = yesno;
+}
+
 void BaseTable::copyTo(IlwisObject *obj)
 {
     IlwisObject::copyTo(obj);
@@ -202,6 +209,12 @@ quint32 BaseTable::columnIndex(const QString &nme) const
     return iter.value().id();
 }
 
+void BaseTable::columnCount(int cnt)
+{
+    if ( cnt >= 0)
+        _columns = cnt;
+}
+
 bool BaseTable::merge(const IlwisObject *obj, int options)
 {
     if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
@@ -213,6 +226,11 @@ bool BaseTable::merge(const IlwisObject *obj, int options)
     merger.copyColumns(tblSource, tblTarget, options);
 
     return true;
+}
+
+bool BaseTable::isDataLoaded() const
+{
+    return _dataloaded;
 }
 
 void BaseTable::adjustRange(int index) {
@@ -244,14 +262,15 @@ void BaseTable::adjustRange(int index) {
         }
     } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
         SPItemRange rng = coldef.datadef().range<ItemRange>();
+        SPItemRange rngDomain = coldef.datadef().domain()->range2range<ItemRange>();
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
             rng->clear();
             for(auto qval : values) {
                 quint32 id = qval.toUInt();
-                SPDomainItem item = rng->item(id);
+                SPDomainItem item = rngDomain->item(id);
                 if ( !item.isNull()) {
-                    rng->add(item);
+                    rng->add(item->clone());
                 }
             }
             _columnDefinitionsByName[coldef.name()] = coldef;
@@ -259,6 +278,62 @@ void BaseTable::adjustRange(int index) {
     }
     coldef.changed(false);
 
+}
+
+QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
+    QVariant actualval= inputVar;
+    if ( QString(inputVar.typeName()) == "QString"){
+        QString txt = inputVar.toString();
+        ColumnDefinition& coldef = columndefinition(columnIndex);
+        if ( !coldef.isValid())
+            return QVariant();
+
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
+            return actualval;
+        }
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itITEMDOMAIN) && txt == sUNDEF){
+            return QVariant((int)iUNDEF);
+        }
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itNUMERICDOMAIN) && txt == sUNDEF){
+            return rUNDEF;
+        }
+        bool ok;
+        double v = inputVar.toDouble(&ok);
+        if ( ok ){
+            actualval = v;
+        } else {
+        SPItemRange rng1 = coldef.datadef().domain()->range2range<ItemRange>();
+        SPItemRange rng2 = coldef.datadef().range<ItemRange>();
+
+        SPDomainItem item = rng1->item(inputVar.toString());
+        if ( item.isNull()){
+            WARN2(WARN_INVALID_OBJECT,"domain item "+ inputVar.toString(), "column");
+            return QVariant((int)iUNDEF);
+        }
+        if ( !rng2->contains(item->name())){
+            rng2->add(item->clone());
+        }
+        actualval = item->raw();
+        }
+
+    }
+    return actualval;
+}
+
+void BaseTable::fillColumns(const ColumnDefinition& def){
+    IlwisTypes valueType = def.datadef().domain()->valueType();
+    std::vector<QVariant> col(recordCount());
+    for(auto& var : col) {
+        if ( hasType(valueType, itINTEGER | itDOMAINITEM))
+            var = QVariant((int)iUNDEF);
+        else if ( hasType(valueType, itDOUBLE | itFLOAT))
+           var = QVariant(rUNDEF);
+        else if ( hasType(valueType, itSTRING))
+            var = QVariant(sUNDEF);
+        else if ( hasType(valueType, itCOORDINATE))
+            var.setValue(crdUNDEF);
+    }
+    column(def.name(),col);
 }
 
 

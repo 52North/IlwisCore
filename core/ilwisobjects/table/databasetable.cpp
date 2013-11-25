@@ -34,7 +34,7 @@ void DatabaseTable::drop() {
             kernel()->issues()->logSql(db.lastError());
         }
     }
-    _dataloaded = false;
+    dataLoaded(false);
     _sqlCreateDone = false;
 }
 
@@ -95,6 +95,8 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
             kernel()->issues()->logSql(db.lastError());
             return false;
         }
+        if ( isDataLoaded())
+            fillColumns(columndefinition(name));
     }
     return true;
 }
@@ -128,7 +130,7 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;
      QSqlQuery db(_database);
-    if ( rec >= _rows || rec == iUNDEF) {
+    if ( rec >= recordCount() || rec == iUNDEF) {
         QString stmt = QString("INSERT INTO %1 " ).arg(internalName());
         QString columnPart;
         QString valuePart;
@@ -152,7 +154,7 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
             return ;
         }
     }
-    else if ( rec < _rows) {
+    else if ( rec < recordCount()) {
         QString stmt = QString("UPDATE %1 SET " ).arg(internalName());
         QString rest;
         for(int count=0; count < vars.size(); ++count) {
@@ -222,7 +224,7 @@ void DatabaseTable::setCell(quint32 index, quint32 rec, const QVariant &var) {
     setCell(iter.value().name(), rec, var);
 }
 
-void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &var)
+void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &inputvar)
 {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;
@@ -233,7 +235,8 @@ void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &var
         kernel()->issues()->log(TR("Invalid datatype in column definition"));
         return;
     }
-    if ( rec >= _rows){
+    QVariant actualvar = checkInput(inputvar, def.id());
+    if ( rec >= recordCount()){
         stmt = QString("INSERT INTO %1 " ).arg(internalName());
         QString columnPart;
         QString valuePart;
@@ -242,19 +245,19 @@ void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &var
 
         columnPart +=  def.name();
         if ( needQuotes )
-            valuePart += QString("'%1'").arg(var.toString());
+            valuePart += QString("'%1'").arg(actualvar.toString());
         else
-            valuePart += QString("%1").arg(var.toString());
+            valuePart += QString("%1").arg(actualvar.toString());
         stmt += "(" + columnPart + ")" + "VALUES(" + valuePart + ")";
-     } else if ( rec < _rows) {
+    } else if ( rec < recordCount()) {
         stmt = QString("UPDATE %1 SET " ).arg(internalName());
         QString rest;
 
         bool needQuotes = dataType == "TEXT";
         if ( needQuotes )
-            rest += QString(" %1='%2' ").arg( def.name()).arg(var.toString());
+            rest += QString(" %1='%2' ").arg( def.name()).arg(actualvar.toString());
         else
-            rest += QString(" %1=%2 ").arg( def.name()).arg(var.toString());
+            rest += QString(" %1=%2 ").arg( def.name()).arg(actualvar.toString());
         stmt += rest + QString(" where record_index=%1").arg(rec);
     }
     QSqlQuery db(_database);
@@ -284,7 +287,7 @@ std::vector<QVariant> DatabaseTable::column(const QString& nme, quint32 start, q
     QString query = QString("Select %1 from %2").arg(nme,internalName());
     if ( db.exec(query)){
         if ( db.next()) {
-            stop = std::min(stop, _rows);
+            stop = std::min(stop, recordCount());
             start = std::max((quint32)0, start);
             std::vector<QVariant> values;
             int count = 0;
@@ -322,8 +325,8 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
     quint32 index = columnIndex(nme);
     if ( index == iUNDEF)
         return ;
-    _rows = numberOfExistingRecords();
-    int outside = offset + vars.size() - _rows;
+    recordCount(numberOfExistingRecords());
+    int outside = offset + vars.size() - recordCount();
     int inside = offset + vars.size() - outside;
     QSqlQuery db(_database);
     QString dataType = valueType2DataType(_columnDefinitionsByName[nme].datadef().domain()->valueType());
@@ -332,11 +335,12 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
     if ( inside > 0) {
         QString stmt = QString("UPDATE %1 SET " ).arg(internalName());
         for(count=0; count < vars.size(); ++count) {
+            QVariant actualvar = checkInput(vars[count],index);
             QString rest;
             if ( needQuotes )
-                rest += QString(" %1='%2' ").arg( _columnDefinitionsByIndex[index].name()).arg(vars[count].toString());
+                rest += QString(" %1='%2' ").arg( _columnDefinitionsByIndex[index].name()).arg(actualvar.toString());
             else
-                rest += QString(" %1=%2 ").arg( _columnDefinitionsByIndex[index].name()).arg(vars[count].toString());
+                rest += QString(" %1=%2 ").arg( _columnDefinitionsByIndex[index].name()).arg(actualvar.toString());
             QString query = stmt + rest + QString(" where record_index=%1").arg(offset + count);
             if ( !db.exec(query)){
                 kernel()->issues()->logSql(db.lastError());
@@ -348,15 +352,16 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
     if ( outside > 0) {
         QString stmt = QString("INSERT INTO %1 " ).arg(internalName());
         for(count=0; count < vars.size(); ++count) {
+            QVariant actualvar = checkInput(vars[count],index);
             QString rest;
             if ( needQuotes )
                 rest += QString("(%1,record_index) VALUES('%2', %3)").arg( _columnDefinitionsByIndex[index].name()).
-                        arg(vars[count].toString()).
-                        arg(_rows + count);
+                        arg(actualvar.toString()).
+                        arg(recordCount() + count);
             else
                 rest += QString("(%1,record_index) VALUES(%2, %3)").arg( _columnDefinitionsByIndex[index].name()).
-                        arg(vars[count].toString()).
-                        arg(_rows + count);
+                        arg(actualvar.toString()).
+                        arg(recordCount() + count);
 
             QString query = stmt + rest;
             if ( !db.exec(query)){
@@ -366,7 +371,7 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
         }
 
     }
-    _rows = _rows + std::max(0,outside);
+    recordCount(recordCount() + std::max(0,outside));
 
 }
 
@@ -383,13 +388,13 @@ bool DatabaseTable::prepare()
         if (  Table::isValid())
             return true;
 
-        _rows = numberOfExistingRecords();
+        recordCount(numberOfExistingRecords());
         QSqlQuery db(_database);
         QString query = QString("select * from %1 limit 1").arg(internalName());
         if ( db.exec(query)) {
             if ( db.next()) {
                QSqlRecord rec = db.record();
-               _columns = rec.count();
+               columnCount(rec.count());
 
             }
 

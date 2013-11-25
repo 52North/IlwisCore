@@ -5,6 +5,7 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "connectorinterface.h"
+#include "domainitem.h"
 #include "basetable.h"
 #include "flattable.h"
 #include "tablemerger.h"
@@ -31,7 +32,7 @@ bool FlatTable::createTable()
 {
     if(!BaseTable::createTable())
         return false;
-    for(unsigned int i=0; i < _rows; ++i)
+    for(unsigned int i=0; i < recordCount(); ++i)
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
     return true;
 }
@@ -51,8 +52,11 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain)
     bool ok = BaseTable::addColumn(name, domain);
     if(!ok)
         return false;
-    for(std::vector<QVariant>& row : _datagrid) {
-        row.push_back(QVariant());
+    if ( isDataLoaded()){
+        for(std::vector<QVariant>& row : _datagrid) {
+            row.push_back(QVariant());
+        }
+        fillColumns(columndefinition(name));
     }
     return true;
 
@@ -63,13 +67,14 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
     bool ok = BaseTable::addColumn(def);
     if(!ok)
         return false;
-    for(std::vector<QVariant>& row : _datagrid) {
-        row.push_back(QVariant());
+    if (  isDataLoaded()) {
+        for(std::vector<QVariant>& row : _datagrid) {
+            row.push_back(QVariant());
+        }
+        fillColumns(def);
     }
     return true;
 }
-
-
 
 std::vector<QVariant> FlatTable::column(quint32 index, quint32 start, quint32 stop) const {
     if (!const_cast<FlatTable *>(this)->initLoad())
@@ -78,7 +83,7 @@ std::vector<QVariant> FlatTable::column(quint32 index, quint32 start, quint32 st
     if ( !isColumnIndexValid(index))
         return std::vector<QVariant>();
 
-    stop = std::min(stop, _rows);
+    stop = std::min(stop, recordCount());
     start = std::max((quint32)0, start);
     std::vector<QVariant> data(stop - start);
     for(quint32 i=start; i < stop; ++i) {
@@ -120,8 +125,8 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
         }
         else {
             _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
-            _datagrid[rec++][index] = var;
-            _rows = _datagrid.size();
+            _datagrid[rec++][index] = checkInput(var,index);
+            recordCount(_datagrid.size());
         }
     }
 
@@ -134,7 +139,7 @@ std::vector<QVariant> FlatTable::record(quint32 rec) const
         return std::vector<QVariant>();
     std::vector<QVariant> data;
 
-    if ( rec < _rows && _datagrid.size() != 0) {
+    if ( rec < recordCount() && _datagrid.size() != 0) {
         data.resize(columnCount());
         int col = 0;
         for(const QVariant& var : _datagrid[rec])
@@ -148,19 +153,21 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
-    if ( rec >= _rows ) {
+    if ( rec >=recordCount() ) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
-        _rows = _datagrid.size();
-        rec = _rows - 1;
+        recordCount(_datagrid.size());
+        rec = recordCount() - 1;
     }
     for(int i=0; i < _columnDefinitionsByIndex.size(); ++i)
         _columnDefinitionsByIndex[i].changed(true);
 
     quint32 col = offset;
-    int cols = std::min(vars.size() - offset, _columns);
+    int cols = std::min(vars.size() - offset, columnCount());
     for(const QVariant& var : vars) {
-        if ( col < cols)
-            _datagrid[rec][col++] = var;
+        if ( col < cols){
+            _datagrid[rec][col] = checkInput(var, col);
+            ++col;
+        }
     }
 
 }
@@ -179,7 +186,7 @@ QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 
     if ( !isColumnIndexValid(index))
         return QVariant();
-    if ( rec < _rows) {
+    if ( rec < recordCount()) {
         QVariant var = _datagrid[rec][index];
         if ( !asRaw) {
             ColumnDefinition coldef = columndefinition(index);
@@ -198,12 +205,13 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
     if ( !isColumnIndexValid(index))
         return;
     _columnDefinitionsByIndex[index].changed(true);
-    if ( rec >= _rows) {
+
+    if ( rec >= recordCount()) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
-        _rows = _datagrid.size();
-        rec = _rows - 1;
+        recordCount(_datagrid.size());
+        rec = recordCount() - 1;
     }
-    _datagrid[rec][index] = var;
+    _datagrid[rec][index] = checkInput(var, index);
 
 }
 
