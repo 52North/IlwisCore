@@ -53,8 +53,8 @@ Resource::Resource(const Resource &resource) : Identity(resource)
     _extendedType = resource._extendedType;
 }
 
-Resource::Resource(const QString& code, quint64 tp, bool isNew) :
-    _resource(QUrl(code)),
+Resource::Resource(const QString& name, quint64 tp, bool isNew) :
+    _resource(QUrl(name)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -62,13 +62,13 @@ Resource::Resource(const QString& code, quint64 tp, bool isNew) :
     if ( tp == itUNKNOWN)
         return;
 
-    int index = code.indexOf(":");
+    int index = name.indexOf(":");
     if ( index != -1 && index < 6) {
-        _resource = QUrl(code);
-        stringAsUrl(code, tp, isNew);
+        _resource = QUrl(name);
+        stringAsUrl(name, tp, isNew);
     } else {
         //QString url;
-        if ( code.left(4)=="code"){
+        if ( name.left(4)=="name"){
             QString factoryType = sUNDEF;
             if ( tp & itCOORDSYSTEM)
                 factoryType = "coordinatesystem";
@@ -76,8 +76,15 @@ Resource::Resource(const QString& code, quint64 tp, bool isNew) :
                 factoryType = "projection";
             if ( tp & itELLIPSOID)
                 factoryType = "ellipsoid";
-            QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(code);
+            QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
              _resource = QUrl(c);
+        }else {
+            if( isNew){
+                if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){ // must be internal object
+                   QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(name));
+                   _resource = urltxt;
+                }
+            }
         }
         checkUrl(tp);
     }
