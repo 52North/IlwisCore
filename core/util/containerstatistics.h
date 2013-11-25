@@ -158,11 +158,11 @@ public:
         return prop(pMAX) != rUNDEF;
     }
 
-    double stretchLinear(double input, int stretchRange) {
+    double stretchLinear(double input, int stretchRange) const {
         if ( input == rUNDEF)
             return rUNDEF;
 
-        double stretchFactor = stretchRange / _bins.size();
+        double stretchFactor = stretchRange / prop(pDELTA);
         quint16 index = getOffsetFactorFor(input);
         return _bins[index]._limit * stretchFactor;
     }
@@ -173,7 +173,7 @@ private:
     quint32 _sigDigits;
     std::vector<HistogramBin> _bins;
 
-    quint32 index(PropertySets method) const{
+    quint32 index(PropertySets method) const {
         if ( method == 0)
             return 0;
         return (quint32)(log(method) / log(2) + 0.2);
@@ -194,7 +194,7 @@ private:
     }
 
 
-    quint16 getOffsetFactorFor(const DataType& sample) {
+    quint16 getOffsetFactorFor(const DataType& sample) const {
         double rmax = prop(pMAX);
         return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
     }

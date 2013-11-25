@@ -45,11 +45,12 @@ bool LinearStretchOperation::stretch(IRasterCoverage toStretch)
 
 
     SPNumericRange rng = _inputRaster->datadef().range<NumericRange>();
+    double valueRange = rng->distance();
     PixelIterator iterInput(_inputRaster);
 
     std::for_each(begin(_outputRaster), end(_outputRaster), [&](double& v) {
         double vin = *iterInput;
-        v = statistics.stretchLinear(vin, rng->distance());
+        v = statistics.stretchLinear(vin, valueRange);
         ++iterInput;
     });
 
