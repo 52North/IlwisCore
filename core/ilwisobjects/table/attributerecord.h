@@ -17,9 +17,9 @@ public:
     quint32 columns(bool coverages=true) const;
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
-    QVariant cellByKey(quint64 key, quint32 colIndex, int index=COVERAGETABLE);
-    QVariant cellByRecord(quint64 record, quint32 colIndex, int index=COVERAGETABLE) const;
-    QVariant cellByRecord(quint64 record, quint32 colIndex, const QVariant &var, int index);
+    QVariant cellByKey(quint64 key, quint32 colIndex, int index=COVERAGETABLE, bool asRaw=true);
+    QVariant cellByRecord(quint64 record, quint32 colIndex, int index=COVERAGETABLE, bool asRaw=true) const;
+    void cellByRecord(quint64 record, quint32 colIndex, const QVariant &var, int index);
     void cellByKey(quint64 key, quint32 colIndex, const QVariant &var, int index);
     void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=COVERAGETABLE);
     bool isValid() const;

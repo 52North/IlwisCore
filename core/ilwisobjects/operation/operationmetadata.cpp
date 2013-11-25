@@ -98,3 +98,62 @@ OperationParameter::OperationParameter(quint16 index, OperationParameter::Parame
     _domainName(domain)
 {
 }
+
+//-------------------------------------------------------------------------------
+OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) : Resource(inurl,itOPERATIONMETADATA)
+{
+    prepare();
+    QString urls = url().toString() + "=" + QString::number(id());
+    setUrl(urls);
+    addProperty("namespace",nmspace);
+}
+
+void OperationResource::setLongName(const QString &longname)
+{
+    addProperty("longname",longname);
+}
+
+void OperationResource::setSyntax(const QString &syntax)
+{
+    addProperty("syntax",syntax);
+}
+
+void OperationResource::setInParameterCount(const std::vector<quint32> &counts)
+{
+    QString lst;
+    for(quint32 num : counts) {
+        if ( lst != "")
+            lst += "|";
+        lst += QString::number(num);
+    }
+    addProperty("inparameters",lst);
+}
+
+void OperationResource::setOutParameterCount(const std::vector<quint32> &counts)
+{
+    QString lst;
+    for(quint32 num : counts) {
+        if ( lst != "")
+            lst += "|";
+        lst += QString::number(num);
+    }
+    addProperty("outparameters",lst);
+}
+
+void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
+{
+    QString prefix = "pin_" + QString::number(order) + "_";
+    addProperty(prefix + "type", type);
+    addProperty(prefix + "name", nme);
+    addProperty(prefix + "desc", description);
+}
+
+void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
+{
+    QString prefix = "pout_" + QString::number(order) + "_";
+    addProperty(prefix + "type", type);
+    addProperty(prefix + "name", nme);
+    addProperty(prefix + "desc", description);
+}
+
+

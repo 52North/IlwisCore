@@ -18,19 +18,18 @@ public:
 
     void setDatabase(const QSqlDatabase& base);
     QSqlDatabase database() const;
-    /*!
-    \se Ilwis::Table
-     */
+    //@override
     bool createTable();
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     bool addColumn(const QString &name, const IDomain &domain);
+
+    //@override
     bool prepare();
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     bool isValid() const;
+
     QString internalName() const;
 
     template<class T> bool insertColumn(const QString& col, const QVector<T>& values, const IDomain& dom){
@@ -79,40 +78,47 @@ public:
         return executeStatement(query,col, values);
     }
 
-    /*!
-    \se Ilwis::Table
-     */
+    //@override
     std::vector<QVariant> record(quint32 n) const ;
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     void record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset=0);
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     std::vector<QVariant> column(const QString& nme, quint32 start=0, quint32 stop=2e9) const;
+
+    //@override
     std::vector<QVariant> column(quint32 index, quint32 start=0, quint32 stop=2e9) const;
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0);
+
+    //@override
     void column(quint32 index, const std::vector<QVariant> &vars, quint32 offset);
-    /*!
-    \se Ilwis::Table
-     */
+
+    //@override
     QVariant cell(const QString& col, quint32 rec, bool asRaw=true) const;
+
+    //@override
     QVariant cell(quint32, quint32 rec, bool asRaw=true) const;
-    /*!
-    \se Ilwis::Table
-     */
-    void cell(const QString& col, quint32 rec, const QVariant& var);
-    void cell(quint32, quint32 rec, const QVariant& var);
+
+    //@override
+    void setCell(const QString& col, quint32 rec, const QVariant& var);
+
+    //@override
+    void setCell(quint32, quint32 rec, const QVariant& var);
 
     void drop();
+
+    //@override
     IlwisTypes ilwisType() const;
 
+    //@override
     std::vector<quint32> select(const QString &conditions) const;
+
+    //@override
     IlwisObject *clone();
+
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;

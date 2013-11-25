@@ -56,21 +56,10 @@ public:
      */
     virtual RasterCoverage *clone() ;
 
-    /*!
-     * Returns the DataDefinition of this rastercoverage
-     * can be null if it is not set
-     *
-     * \return the datadefinition of this rastercoverage
-     */
+    //@override
     const DataDefinition& datadef() const;
 
-
-    /*!
-     * Returns the DataDefinition of this rastercoverage
-     * can be null if it is not set
-     *
-     * \return the datadefinition of this rastercoverage
-     */
+    //@override
     DataDefinition& datadef();
 
     /*!
@@ -109,6 +98,7 @@ public:
      * size in row-col for 2D
      * and in row-col-heigth for 3D
      *
+     * \sa Size
      * \param sz the new size, must always be positive or undefined
      */
     void size(const Size& sz);
@@ -144,7 +134,7 @@ public:
 
     /*!
      * Gives the value of a certain pixel in the grid
-     * The pixel point, be it 2D or 3D must fit in the Size of the raster for this function to return an actual value,
+     * The pixel point, be it 2D or 3D must fit in envelope of this coverage for this function to return an actual value,
      * if the pixel does not fit in the rastersize, it will return undefined.
      * This function requires a valid georeference and a non null grid, if this is not the case undefined will be returned
      *
@@ -165,11 +155,7 @@ public:
         return rUNDEF;
     }
 
-    /*!
-     * Gives the Resource used for this coverage
-     * \sa Resource
-     * \return the resource used for this coverage
-     */
+    //@override
     Resource source(int mode=cmINPUT) const;
 
     /*!

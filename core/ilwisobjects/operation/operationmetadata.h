@@ -6,6 +6,19 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+
+class KERNELSHARED_EXPORT OperationResource : public Resource{
+public:
+    OperationResource(const QUrl& url, const QString& nmspace="ilwis");
+    void setLongName(const QString& longname);
+    void setSyntax(const QString& syntax);
+    void setInParameterCount(const std::vector<quint32>& counts);
+    void setOutParameterCount(const std::vector<quint32>& counts);
+    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
+    void addOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
+
+};
+
 class KERNELSHARED_EXPORT OperationParameter : public Identity
 {
 public:

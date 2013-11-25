@@ -221,6 +221,11 @@ QString NumericItemRange::toString() const
     return names;
 }
 
+void NumericItemRange::clear()
+{
+    _items.clear();
+}
+
 ItemRange *NumericItemRange::clone() const
 {
     ItemRange *items = new NumericItemRange();

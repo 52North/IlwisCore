@@ -213,16 +213,16 @@ QVariant DatabaseTable::cell(const QString& col, quint32 rec, bool asRaw) const{
     return QVariant();
 
 }
-void DatabaseTable::cell(quint32 index, quint32 rec, const QVariant &var) {
+void DatabaseTable::setCell(quint32 index, quint32 rec, const QVariant &var) {
     auto iter = _columnDefinitionsByIndex.find(index);
     if (iter == _columnDefinitionsByIndex.end()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return;
     }
-    cell(iter.value().name(), rec, var);
+    setCell(iter.value().name(), rec, var);
 }
 
-void DatabaseTable::cell(const QString &col, quint32 rec, const QVariant &var)
+void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &var)
 {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;

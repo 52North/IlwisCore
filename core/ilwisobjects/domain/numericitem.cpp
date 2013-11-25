@@ -56,6 +56,11 @@ void NumericItem::range(const NumericRange &valuerange)
     _valuerange = valuerange;
 }
 
+void NumericItem::clear()
+{
+    _valuerange.clear();
+}
+
 Ilwis::NumericItemRange *NumericItem::createRange(){
     return new NumericItemRange();
 }

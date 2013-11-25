@@ -17,9 +17,12 @@ public:
     void multiple(bool yesno);
     void columnindex(quint64 idx);
     quint64 columnindex() const;
+    bool isChanged() const;
+    void changed(bool yesno);
 private:
     DataDefinition _datadef;
     bool _multiple;
+    bool _changed;
 
 };
 

@@ -79,11 +79,19 @@ bool TableMerger::mergeMetadataTables(ITable& tblOut, const ITable& tblIn, const
 }
 
 ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) {
+    if (!tbl1.isValid() || !tbl2.isValid())
+        return ITable();
+
     std::vector<ColumnDefinition> newdefs;
     quint32 records = 0;
     quint32 index = 0;
     for(int c1 = 0; c1 < tbl1->columnCount(); ++c1) {
         auto coldef1 = tbl1->columndefinition(c1);
+        if ( !coldef1.isValid()){
+            WARN2(WARN_INVALID_OBJECT, TR("column"), tbl1->name());
+            continue;
+        }
+
         ColumnDefinition coldef2;
         if ( (coldef2=tbl2->columndefinition(coldef1.name())).isValid() && coldef1.name() != COVERAGEKEYCOLUMN){
             if (coldef1.datadef().isCompatibleWith(coldef2.datadef())){
@@ -105,6 +113,11 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
     }
     for(int c2 = 0; c2 < tbl2->columnCount(); ++c2) {
         auto coldef2 = tbl2->columndefinition(c2);
+        if ( !coldef2.isValid()) {
+            WARN2(WARN_INVALID_OBJECT, TR("column"), tbl2->name());
+            continue;
+        }
+
         if ( coldef2.name() == COVERAGEKEYCOLUMN) {
             QString colName = COVERAGEKEYCOLUMN;
             if (tbl1->columndefinition(COVERAGEKEYCOLUMN).isValid() ){

@@ -48,10 +48,10 @@ bool CrossRasters::cross(const Box3D<qint32> box){
         quint32 v1 = combo  - v2 * SHIFTER;
         QString id = QString("%1 * %2").arg(_inputRaster1->datadef().domain()->value(v1)).arg(_inputRaster2->datadef().domain()->value(v2));
         *idrange << id;
-        _outputTable->cell(0,record,QVariant(record));
-        _outputTable->cell(1,record,QVariant(v1));
-        _outputTable->cell(2,record,QVariant(v2));
-        _outputTable->cell(3,record,QVariant(element.second))        ;
+        _outputTable->setCell(0,record,QVariant(record));
+        _outputTable->setCell(1,record,QVariant(v1));
+        _outputTable->setCell(2,record,QVariant(v2));
+        _outputTable->setCell(3,record,QVariant(element.second))        ;
         ++record;
     }
     _crossDomain->range(idrange);
@@ -115,7 +115,11 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     }
 
     IFlatTable newTable;
-    newTable.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    if ( outputName != sUNDEF)
+        newTable.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    else
+        newTable.prepare();
+
     QString crossName = QString("%1_%2").arg(raster1, raster2);
     crossName.replace(".","_");
     _crossDomain.prepare();

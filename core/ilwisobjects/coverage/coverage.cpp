@@ -59,6 +59,20 @@ AttributeTable Coverage::attributeTable(AttributeType attType) const
     return _attTableIndex;
 }
 
+AttributeTable& Coverage::attributeTable(AttributeType attType)
+{
+    if ( attType == atCOVERAGE)
+        return _attTable;
+    return _attTableIndex;
+}
+
+bool Coverage::hasAttributes(Coverage::AttributeType attType) const
+{
+    if ( attType == atCOVERAGE)
+        return _attTable.isValid();
+    return _attTableIndex.isValid();
+}
+
 void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
 {
     if ( isReadOnly())

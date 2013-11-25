@@ -163,6 +163,12 @@ IndexedIdentifierRange *IndexedIdentifierRange::merge(const QSharedPointer<Index
 
 }
 
+void IndexedIdentifierRange::clear()
+{
+    _count = 0;
+    //_start.reset(0);
+}
+
 
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
@@ -307,6 +313,13 @@ SPDomainItem NamedIdentifierRange::itemByOrder(quint32 index) const
 quint32 NamedIdentifierRange::count() const
 {
     return _byName.size();
+}
+
+void NamedIdentifierRange::clear()
+{
+    _byName.clear();
+    _byOrder.clear();
+    _byRaw.clear();
 }
 
 Range *NamedIdentifierRange::clone() const

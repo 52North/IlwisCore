@@ -180,6 +180,8 @@ public:
         return this->operator *();
     }
 
+    QVariant operator()(const QString& column,Coverage::AttributeType attType=Coverage::atCOVERAGE);
+
     /*!
      * \brief Moves the PixelIterator to the given Voxel
      *

@@ -2,6 +2,8 @@
 #include "raster.h"
 #include "linerasterizer.h"
 #include "tranquilizer.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "pixeliterator.h"
 
 
@@ -211,6 +213,15 @@ PixelIterator& PixelIterator::operator=(const PixelIterator& iter) {
 PixelIterator& PixelIterator::operator=(const PixelIterator&& iter) {
     copy(iter);
     return *this;
+}
+
+QVariant PixelIterator::operator()(const QString &column,Coverage::AttributeType attType)
+{
+    if ( _raster->hasAttributes(attType)) {
+        quint32 raw = operator *();
+        return _raster->attributeTable(attType)->cell(column, raw);
+    }
+    return QVariant();
 }
 
 inline PixelIterator PixelIterator::operator++(int) {
