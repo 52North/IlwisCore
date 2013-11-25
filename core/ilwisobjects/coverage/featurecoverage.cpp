@@ -37,9 +37,9 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeatureI FeatureCoverage::newFeature(const Geometry& geom, int index) {
+SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
-    SPFeatureI newfeature = createNewFeature(geom.ilwisType(), index);
+    SPFeatureI newfeature = createNewFeature(geom.ilwisType());
     if (newfeature != nullptr)
         newfeature->set(geom);
     return newfeature;
@@ -59,7 +59,7 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
     return newfeature;
 }
 
-SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp, int index) {
+SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( isReadOnly())
         return SPFeatureI();
     changed(true);
@@ -82,14 +82,7 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp, int index) {
         return SPFeatureI();
     }
     _record->cellByRecord(_features.size(), colIndex, QVariant(newFeature->featureid()), -1);
-    if ( index < _features.size()){
-        _features[index] = newFeature;
-    }
-    else {
-        if ( index > _features.size())
-            _features.resize(index);
-        _features.push_back(newFeature);
-    }
+    _features.push_back(newFeature);
 
     quint32 cnt = featureCount(tp);
     setFeatureCount(tp,++cnt );
@@ -107,7 +100,7 @@ void FeatureCoverage::adaptFeatureCounts(int tp, quint32 cnt, int index) {
     if ( index < _featureInfo[tp]._perIndex.size()){
         adapt();
     } else {
-        if ( index > _featureInfo[tp]._perIndex.size() ) {
+        if ( index >= _featureInfo[tp]._perIndex.size() ) {
             _featureInfo[tp]._perIndex.resize(index + 1,0);
             _maxIndex = index + 1;
         }

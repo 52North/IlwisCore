@@ -102,7 +102,7 @@ public:
      * @param geom the geometry that has to be used for the new feature
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    SPFeatureI newFeature(const Ilwis::Geometry &geom, int index=0);
+    SPFeatureI newFeature(const Ilwis::Geometry &geom);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -175,7 +175,7 @@ private:
     quint32 _maxIndex;
 
 
-    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp, int index=0);
+    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp);
     void adaptFeatureCounts(int tp, quint32 cnt, int index);
 };
 
