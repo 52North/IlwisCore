@@ -218,6 +218,9 @@ bool BaseTable::merge(const IlwisObject *obj, int options)
 void BaseTable::adjustRange(int index) {
 
     ColumnDefinition& coldef = _columnDefinitionsByIndex[index];
+    if (!coldef.isValid())
+        return;
+
     if( hasType(coldef.datadef().domain()->ilwisType(), itNUMERICDOMAIN)) {
         SPNumericRange rng = coldef.datadef().range<NumericRange>();
         std::vector<QVariant> values = column(coldef.id());
