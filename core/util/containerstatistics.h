@@ -133,8 +133,8 @@ public:
                     if ( prop(pSTDEV) == rUNDEF) {
                         _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
                     }
-                    if ( _markers[pSTDEV] != rUNDEF ) {
-                        double h = 3.5 * _markers[pSTDEV] / pow(ncount, 0.3333);
+                    if ( _markers[index(pSTDEV)] != rUNDEF ) {
+                        double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
                         bins = prop(pDISTANCE) / h;
                     }
                 }
@@ -142,21 +142,29 @@ public:
                 _bins.resize(bins);
                 double delta  = prop(pDELTA);
                 for(int i=0; i < bins; ++i ) {
-                    _bins[i] = i * ( delta / bins);
+                    _bins[i] = HistogramBin(i * ( delta / bins));
                 }
-                double rmax = prop(pMAX);
                 std::for_each(begin, end, [&] (const DataType& sample){
-                    quint16 index = bins * (double)(rmax - sample) / delta;
-                    _bins[index++];
+                    quint16 index = getOffsetFactorFor(sample);
+                    _bins[index]._count++;
                 });
             }
         }
 
-        return false;
+        return true;
     }
 
     bool isValid() const {
         return prop(pMAX) != rUNDEF;
+    }
+
+    double stretchLinear(double input, int stretchRange) {
+        if ( input == rUNDEF)
+            return rUNDEF;
+
+        double stretchFactor = stretchRange / _bins.size();
+        quint16 index = getOffsetFactorFor(input);
+        return _bins[index]._limit * stretchFactor;
     }
 
 private:
@@ -185,6 +193,11 @@ private:
 
     }
 
+
+    quint16 getOffsetFactorFor(const DataType& sample) {
+        double rmax = prop(pMAX);
+        return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
+    }
 
 
 };
