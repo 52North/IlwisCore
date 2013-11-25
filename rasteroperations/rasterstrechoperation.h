@@ -18,8 +18,8 @@ public:
 
 
 protected:
-    IIlwisObject _inputObj;
-    IIlwisObject _outputObj;
+    IRasterCoverage _inputRaster;
+    IRasterCoverage _outputRaster;
 
     bool stretch(IRasterCoverage toStretch);
 };

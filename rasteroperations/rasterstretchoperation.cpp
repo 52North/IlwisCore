@@ -10,6 +10,8 @@
 #include "identifierrange.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "pixeliterator.h"
+#include "numericrange.h"
 #include "rasterstrechoperation.h"
 
 using namespace Ilwis;
@@ -29,12 +31,29 @@ Ilwis::OperationImplementation *LinearStretchOperation::create(quint64 metaid,co
     return new LinearStretchOperation(metaid, expr);
 }
 
+/**
+ * \todo TODO do stretching histogram
+ */
 bool LinearStretchOperation::stretch(IRasterCoverage toStretch)
 {
+    NumericStatistics& statistics = _inputRaster->statistics();
+    statistics.calculate(begin(_inputRaster), end(_inputRaster), NumericStatistics::pHISTOGRAM);
 
-    // TODO do _statistics histogram calculation
+    // TODO separate histogram into own class (and move
+    // certain operations to it
+    std::vector<NumericStatistics::HistogramBin> histogram = statistics.histogram();
 
-    return false;
+
+    SPNumericRange rng = _inputRaster->datadef().range<NumericRange>();
+    PixelIterator iterInput(_inputRaster);
+
+    std::for_each(begin(_outputRaster), end(_outputRaster), [&](double& v) {
+        double vin = *iterInput;
+        v = statistics.stretchLinear(vin, rng->distance());
+        ++iterInput;
+    });
+
+    return true;
 }
 
 bool LinearStretchOperation::execute(ExecutionContext *ctx,SymbolTable& symTable)
@@ -43,64 +62,60 @@ bool LinearStretchOperation::execute(ExecutionContext *ctx,SymbolTable& symTable
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    // TODO do linear stretch of histogram
+    bool ok = stretch(_inputRaster);
 
-    return false;
+    if ( ok && ctx != 0) {
+        QVariant value;
+        value.setValue<IRasterCoverage>(_outputRaster);
+        ctx->addOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source() );
+    }
+    return ok;
 }
 
 Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    QString raster = _expression.parm(0).value();
+    QString intputName = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    if (!_inputObj.prepare(raster, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
+    if (!_inputRaster.prepare(intputName, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,intputName,"");
         return sPREPAREFAILED;
     }
 
-    // TODO prepare output raster
-    _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, itDOMAIN);
-    if ( !_outputObj.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
+    _outputRaster = OperationHelperRaster::initialize(_inputRaster, itRASTER, itDOMAIN);
+    if ( !_outputRaster.isValid()) {
+        ERROR1(ERR_NO_INITIALIZED_1, outputName);
         return sPREPAREFAILED;
     }
-    IGeoReference grf;
-    grf.prepare(_expression.parm(1).value());
-    if ( !grf.isValid()) {
-        return sPREPAREFAILED;
-    }
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
-    outputRaster->georeference(grf);
-    Box2Dd env = grf->pixel2Coord(grf->size());
-    outputRaster->envelope(env);
-    if ( outputName != sUNDEF)
-        outputRaster->setName(outputName);
-
-    /*
-    RasterCoverage output;
-    QString outputId = QString("ilwis://internalcatalog/%1").arg(outputName);
-    if (!output.prepare(outputId, itRASTER)) {
-        ERROR1(ERR_NO_INITIALIZED_1,outputName);
-        return sPREPAREFAILED;
-    }
-    */
+    _outputRaster->georeference(_inputRaster->georeference());
+    _outputRaster->setCoordinateSystem(_inputRaster->coordinateSystem());
 
 
-    return sNOTPREPARED;
+    _outputRaster->setName(outputName);
+
+    return sPREPARED;
 }
 
+/**
+ * @todo add input parameter(s) to control stretch range
+ * @brief LinearStretchOperation::createMetadata
+ * @return the operation's resource id
+ */
 quint64 LinearStretchOperation::createMetadata()
 {
-    QString url = QString("ilwis://operations/stretch");
+    QString url = QString("ilwis://operations/linearstretch");
     Resource resource(QUrl(url), itOPERATIONMETADATA);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","rescale input values to an output map");
-    resource.addProperty("syntax","stretch(raster, range");
+    resource.addProperty("syntax","stretch(raster");
     resource.addProperty("description",TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
     resource.addProperty("inparameters","1");
     resource.addProperty("pin_1_type", itRASTER);
     resource.addProperty("pin_1_name", TR("rastercoverage to stretch"));
     resource.addProperty("pin_1_desc",TR("input rastercoverage with domain item or numeric"));
+
+    // TODO use intput parameter(s) to control stretch range
+
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_type", itRASTER);
     resource.addProperty("pout_1_name", TR("output rastercoverage"));
