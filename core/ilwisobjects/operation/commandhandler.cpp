@@ -36,8 +36,9 @@ void ExecutionContext::clear(bool resultsOnly)
     }
 }
 
-ExecutionContext::ExecutionContext(bool threaded) : _silent(false), _threaded(threaded){
-    _out = &std::cout;
+ExecutionContext::ExecutionContext(bool threaded) {
+    clear();
+    _threaded = threaded;
 }
 
 void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource, const QString& addInfo)
