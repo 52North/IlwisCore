@@ -22,6 +22,7 @@ public:
     virtual quint32 trackSize() const = 0;
     virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true) = 0;
     virtual void setCell(const QString& name, const QVariant& var, int index=-1) = 0;
+    virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
 protected:
 
 
@@ -54,6 +55,7 @@ private:
     virtual quint32 trackSize() const ;
     virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true) ;
     virtual void setCell(const QString& name, const QVariant& var, int index=-1);
+    ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     quint32 index() const;
     void setIndex(quint32 ind);
 
