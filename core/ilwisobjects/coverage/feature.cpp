@@ -140,6 +140,13 @@ void Feature::setCell(const QString &name, const QVariant &var, int index)
         _track[index]->setCell(name,var);
 }
 
+ColumnDefinition Feature::columndefinition(const QString &name, bool coverages) const{
+    if (_record->isValid())
+        return _record->columndefinition(name, coverages);
+    else
+        return ColumnDefinition();
+}
+
 quint64 Feature::featureid() const{
     return _featureid;
 }

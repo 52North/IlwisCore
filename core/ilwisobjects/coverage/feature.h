@@ -94,6 +94,7 @@ public:
     quint32 trackSize() const;
     QVariant cell(const QString& name, int index=-1, bool asRaw=true);
     void setCell(const QString& name, const QVariant& var, int index=-1);
+    ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
