@@ -27,7 +27,7 @@ private:
         bool done = false;
         IlwisData<T1> target;
         if ( useMerge) {
-            if ( target.prepare(name)) {
+            if ( target.prepare(name, source->ilwisType())) {
                 done = target->merge(source.ptr());
             }
         }
