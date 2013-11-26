@@ -3,6 +3,8 @@
 
 class QUrl;
 
+//TODO merge with abstractfactory as the split is not useful anymore
+
 namespace Ilwis {
 
 class Resource;
