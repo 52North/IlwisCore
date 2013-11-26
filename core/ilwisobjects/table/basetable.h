@@ -114,7 +114,7 @@ protected:
     quint32 columnIndex(const QString& nme) const;
     void columnCount(int cnt);
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
-    void fillColumns(const ColumnDefinition &def);
+    void initValuesColumn(const ColumnDefinition &def);
 private:
     quint32 _rows;
     quint32 _columns;

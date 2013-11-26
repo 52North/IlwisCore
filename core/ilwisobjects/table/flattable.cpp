@@ -56,7 +56,7 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain)
         for(std::vector<QVariant>& row : _datagrid) {
             row.push_back(QVariant());
         }
-        fillColumns(columndefinition(name));
+        initValuesColumn(columndefinition(name));
     }
     return true;
 
@@ -71,7 +71,7 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
         for(std::vector<QVariant>& row : _datagrid) {
             row.push_back(QVariant());
         }
-        fillColumns(def);
+        initValuesColumn(def);
     }
     return true;
 }
@@ -117,6 +117,7 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
     quint32 index = columnIndex(nme);
     if ( !isColumnIndexValid(index))
         return ;
+
     quint32 rec = offset;
     _columnDefinitionsByIndex[index].changed(true);
     for(const QVariant& var : vars) {
@@ -246,3 +247,17 @@ std::vector<quint32> FlatTable::select(const QString &conditions) const
     return TableSelector::select(this, conditions);
 }
 
+bool FlatTable::initLoad(){
+    if ( isDataLoaded())
+        return true;
+
+    bool ok = BaseTable::initLoad();
+
+    for(int i=0; i < columnCount() && _datagrid.size() > 0; ++i){
+        QVariant var = cell(i,0);
+        if ( !var.isValid()) {
+            initValuesColumn(columndefinition(i));
+        }
+    }
+    return ok;
+}

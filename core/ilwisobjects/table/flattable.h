@@ -85,7 +85,7 @@ protected:
     void copyTo(IlwisObject *obj);
     std::vector< std::vector<QVariant> > _datagrid;
 
-
+    bool initLoad();
 };
 typedef IlwisData<FlatTable> IFlatTable;
 }

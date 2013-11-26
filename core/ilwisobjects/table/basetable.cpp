@@ -320,7 +320,12 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
     return actualval;
 }
 
-void BaseTable::fillColumns(const ColumnDefinition& def){
+void BaseTable::initValuesColumn(const ColumnDefinition& def){
+    if ( !def.isValid()){
+        ERROR2(WARN_INVALID_OBJECT,TR("column definition"), name());
+        return;
+    }
+
     IlwisTypes valueType = def.datadef().domain()->valueType();
     std::vector<QVariant> col(recordCount());
     for(auto& var : col) {
