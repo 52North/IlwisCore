@@ -96,7 +96,7 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
             return false;
         }
         if ( isDataLoaded())
-            fillColumns(columndefinition(name));
+            initValuesColumn(columndefinition(name));
     }
     return true;
 }
@@ -438,11 +438,23 @@ quint32 DatabaseTable::numberOfExistingRecords()
 
 bool DatabaseTable::initLoad()
 {
+    if ( isDataLoaded())
+        return true;
+
     if(!_sqlCreateDone)
         if(!createTable())
             return false;
 
-    return BaseTable::initLoad();
+    bool ok =  BaseTable::initLoad();
+    for(int i=0; i < columnCount() ; ++i){
+        QVariant var = cell(i,0);
+        if ( !var.isValid()) {
+            initValuesColumn(columndefinition(i));
+        }
+
+    }
+
+    return ok;
 }
 
 std::vector<quint32> DatabaseTable::select(const QString &conditions) const{
