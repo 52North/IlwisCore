@@ -103,16 +103,22 @@ public:
     bool merge(const IlwisObject *obj, int options);
 
 protected:
-    quint32 _rows;
-    quint32 _columns;
+    bool isDataLoaded() const;
     QHash<QString, ColumnDefinition> _columnDefinitionsByName;
     QHash<quint32, ColumnDefinition> _columnDefinitionsByIndex;
-    bool _dataloaded;
 
     virtual bool initLoad();
+    void dataLoaded(bool yesno);
     virtual void adjustRange(int index);
     void copyTo(IlwisObject *obj);
     quint32 columnIndex(const QString& nme) const;
+    void columnCount(int cnt);
+    QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
+    void initValuesColumn(const ColumnDefinition &def);
+private:
+    quint32 _rows;
+    quint32 _columns;
+    bool _dataloaded;
 };
 }
 

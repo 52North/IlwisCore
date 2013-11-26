@@ -68,7 +68,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
         stringAsUrl(name, tp, isNew);
     } else {
         //QString url;
-        if ( name.left(4)=="name"){
+        if ( name.left(4)=="code"){
             QString factoryType = sUNDEF;
             if ( tp & itCOORDSYSTEM)
                 factoryType = "coordinatesystem";

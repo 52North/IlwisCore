@@ -81,6 +81,13 @@ void FeatureNode::setCell(const QString &name, const QVariant &var, int index)
     return _feature->_record->cellByKey(featureid(), colIndex, var, _index);
 }
 
+ColumnDefinition FeatureNode::columndefinition(const QString &name, bool coverages) const{
+    if (_feature->isValid())
+        return _feature->columndefinition(name, coverages);
+    else
+        return ColumnDefinition();
+}
+
 quint32 FeatureNode::index() const{
     return _index;
 }
@@ -138,6 +145,13 @@ void Feature::setCell(const QString &name, const QVariant &var, int index)
     }
     if ( index >= 0 && index < _track.size())
         _track[index]->setCell(name,var);
+}
+
+ColumnDefinition Feature::columndefinition(const QString &name, bool coverages) const{
+    if (_record->isValid())
+        return _record->columndefinition(name, coverages);
+    else
+        return ColumnDefinition();
 }
 
 quint64 Feature::featureid() const{

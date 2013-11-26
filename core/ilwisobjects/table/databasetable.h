@@ -103,7 +103,7 @@ public:
     QVariant cell(quint32, quint32 rec, bool asRaw=true) const;
 
     //@override
-    void setCell(const QString& col, quint32 rec, const QVariant& var);
+    void setCell(const QString& col, quint32 rec, const QVariant& inputvar);
 
     //@override
     void setCell(quint32, quint32 rec, const QVariant& var);
