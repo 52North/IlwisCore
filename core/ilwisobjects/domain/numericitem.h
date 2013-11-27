@@ -52,8 +52,8 @@ public:
      *
      * @return and empty NumbericItemRange
      */
-
     void clear();
+
     static Ilwis::NumericItemRange *createRange();
 
 

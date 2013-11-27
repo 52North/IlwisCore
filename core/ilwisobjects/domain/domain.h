@@ -22,7 +22,11 @@ class KERNELSHARED_EXPORT Domain : public IlwisObject
 {
 public:
     /*!
-     * Enumerates the possible containment cases: cSELF,cPARENT,cDECLARED and cNONE
+     * Enumerates the possible containment cases: cSELF,cPARENT,cDECLARED and cNONE<br>
+     * - cSELF means containment within the domain asked
+     * - cPARENT means containment within the parent of this domain
+     * - cDECLARED means //todo
+     * - cNONE means no containment at all in relation to this domain
      */
     enum Containement{cSELF=1, cPARENT=2, cDECLARED=3, cNONE=0};
 
@@ -33,31 +37,30 @@ public:
 
     /*!
      * Creates a new strict Domain based on a Resource
+     *
      * \param resource The resource to be used for this domain
      */
     Domain(const Resource& resource);
 
     /*!
-     * return the strict status of the domain. When a domain is set to strict it will only compare domain properties
-     * to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts
+     * return the strict status of the domain. When a domain is set to strict it will only compare domain properties<br>
+     * to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts<br>
      * a strict numeric domain min1to1, it will refuse a generic numeric domain as that may contain other (possible illegal) values.
+     *
      * \return the strict state.
      */
     bool isStrict() const;
 
     /*!
-     * sets the strict status of the domain. When a domain is set to strict it will only compare domain properties
-     * to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts
+     * sets the strict status of the domain. When a domain is set to strict it will only compare domain properties<br>
+     * to domain types that are identical to itself. Parent domain properties are ignored. For example if a operation only accepts<br>
      * a strict numeric domain min1to1, it will refuse a generic numeric domain as that may contain other (possible illegal) values.
+     *
      * \param the new state
      */
     void setStrict(bool yesno);
 
-    /*!
-    * returns the IlwisType of this domain
-    *
-    * \sa IlwisObject
-    */
+    //override
     virtual IlwisTypes valueType() const = 0;
 
     /*!
@@ -66,19 +69,21 @@ public:
     virtual QString value(const QVariant& ) const = 0;
 
     /*!
-     * returns the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)
-     * some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to
-     * compare properties. For example the default percentage domain has a value range of 0-100 but it is not strict. Other numeric domains maybe freely
+     * returns the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)<br>
+     * some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to<br>
+     * compare properties. For example the default percentage domain has a value range of 0-100 but it is not strict. Other numeric domains maybe freely<br>
      * compared to this one as the parent domain ( the generic numeric domain) will accept all values.
+     *
      * \return the parent domain; it may be invalid
      */
     IDomain parent() const;
 
     /*!
-     * sets the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)
-     * some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to
-     * compare properties. For example the default percentage domain has a value range of 0-100 but it is not strict. Other numeric domains maybe freely
+     * sets the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)<br>
+     * some properties of the parent domain to create a more limited behavior. When not strict the parent domain can be used to<br>
+     * compare properties. For example the default percentage domain has a value range of 0-100 but it is not strict. Other numeric domains maybe freely<br>
      * compared to this one as the parent domain ( the generic numeric domain) will accept all values.
+     *
      * \param dm sets the parent domain; it may be set to invalid
      */
     virtual void setParent(const IDomain& dm);
@@ -87,12 +92,12 @@ public:
      * Checks if this Domain contains a certain value
      *
      * \param value the value to check
-     * \return true if the value is in this Domain
+     * \return depends on the implementation of the subclass
      */
     virtual Containement contains(const QVariant& value) const = 0;
 
     /*!
-     * Checks if the Domain is compatible with another domain
+     * Checks if the Domain is compatible with another domain<br>
      * See the relevant subclass for more info
      * \param dom another domain
      * \return true if the Domains are compatible
@@ -103,19 +108,43 @@ public:
         return this->getRange().dynamicCast<T>();
     }
 
+    /**
+     * sets a new range on this domain, for requirements on the parameter and ensures on the function see the relevant subclass
+     *
+     * @param rng the new range
+     */
     virtual void range(Range *rng) = 0;
 
     /*!
-     * translates the type of a variant to a compatible ilwis type
+     * translates the type of a variant to a compatible ilwis type<br>
      *
-     * \param the variant to be typed
+     * recognises:
+     *  - itUINT8
+     *  - itUINT16
+     *  - itUINT32
+     *  - itINT8
+     *  - itINT16
+     *  - itINT32
+     *  - itINT64
+     *  - itBOOL
+     *  - itDOUBLE
+     *
+     * \param the variant to be translated
      * \sa IlwisObject
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
     static IlwisTypes ilwType(const QVariant &v);
 
     /*!
-     * Translates a String to a compatible ilwis type
+     * Translates a String to a compatible ilwis type<br>
+     *
+     * recognises:
+     *  - itUINT8
+     *  - itDOUBLE
+     *  - itINT32
+     *  - itINT64
+     *  - itSTRING
+     *  - itTIME
      *
      * \param value the string to be translated
      * \sa IlwisObject

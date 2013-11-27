@@ -30,9 +30,9 @@ class KERNELSHARED_EXPORT Coverage : public IlwisObject
 
 public:
     /*!
-     * An AttributeTable can have 2 types depending on the object, it can be a coveragetable,
-     * in which the features are defined at only 1 index, or it can be a indextable,
-     * in which the features are defined at all known indexes.
+     * An AttributeTable can have 2 types depending on the object, it can be a coveragetable,<br>
+     * in which the features are defined at only 1 index, or it can be a indextable,<br>
+     * in which the features are defined at all known indexes.<br>
      * the indexes can for example describe different measurements at different times
      */
     enum AttributeType{atCOVERAGE, atINDEX};
@@ -43,7 +43,7 @@ public:
     Coverage();
 
     /*!
-     * The constructor for an coverage based on a Resource
+     * The constructor for an coverage based on a Resource<br>
      *
      * requires the resource to have an id and a name, code and description are optional
      *
@@ -64,7 +64,9 @@ public:
     ICoordinateSystem coordinateSystem() const;
 
     /*!
-     * Changes the coordinate system of this coverage into the one specified
+     * Changes the coordinate system of this coverage into the one specified<br>
+     * does not work if this coverage is readonly<br>
+     * sets the changed flag
      *
      * \sa ICoordinateSystem
      * \param the new coordinate system
@@ -72,9 +74,9 @@ public:
     void setCoordinateSystem(const ICoordinateSystem& csy);
 
     /*!
-     * Query for the envelope of this coverage, must fit in the coordinate system
-     * a envelope decides what domain within a coordinate system is valid, or in this case,
-     * which part of the coordinate system is covered by this coverage
+     * Query for the envelope of this coverage, must fit in the coordinate system<br>
+     * a envelope decides what domain within a coordinate system is valid, or in this case,<br>
+     * which part of the coordinate system is covered by this coverage<br>
      * do note that the envelope should not be bigger than the coordinateSystem
      *
      * \return the envelope of this coverage if it has one or else null
@@ -82,10 +84,11 @@ public:
     Box3D<double> envelope() const;
 
     /*!
-     * Changes the envelope of this coverage to the one specified
-     * a envelope decides what domain within a coordinate system is valid, or in this case,
-     * which part of the coordinate system is covered by this coverage
-     * do note that the envelope should not be bigger than the coordinateSystem
+     * Changes the envelope of this coverage to the one specified<br>
+     * a envelope decides what domain within a coordinate system is valid, or in this case,<br>
+     * which part of the coordinate system is covered by this coverage<br>
+     * do note that the envelope should not be bigger than the coordinateSystem<br>
+     * sets the changed flag
      *
      * \param the new envelope
      */
@@ -93,20 +96,36 @@ public:
 
     /*!
      *
-     * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter
-     * atCOVERAGE as parameter also gives the attributeable
+     * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter<br>
+     * atCOVERAGE as parameter also results in the attributeable
      *
      * \param attType the type of table required (atCOVERAGE or atINDEX)
      * \return an AttributeTable
      */
     AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
+
+    /*!
+     * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter<br>
+     * atCOVERAGE as parameter also results in the attributeable
+     *
+     * \param attType the type of table required (atCOVERAGE or atINDEX)
+     * \return an AttributeTable
+     */
     AttributeTable &attributeTable(AttributeType attType=atCOVERAGE);
+
+    /**
+     * Checks for a valid attributetable.<br>
+     * the parameter decides between coverage and index table. anyhting different than atCOVERAGE or atINDEX is not allowed
+     *
+     * @param attType must be atCOVERAGE or atINDEX
+     * @return true if this coverage has a valid table of the chosen type
+     */
     bool hasAttributes(AttributeType attType=atCOVERAGE) const;
 
     /*!
      * \brief Sets a new Coveragetable or Indextable
      *
-     * When called without parameter, or with atCOVERAGE as parameter you will replace the Coveragetable
+     * When called without parameter, or with atCOVERAGE as parameter you will replace the Coveragetable<br>
      * When called with atINDEX as parameter it will replace the Indextable
      *
      * \param tbl the new table
@@ -124,7 +143,7 @@ public:
     NumericStatistics& statistics();
 
     /*!
-     * Returns the DataDefinition of this rastercoverage
+     * Returns the DataDefinition of this rastercoverage<br>
      * can be null if it is not set
      *
      * \sa DataDefinition
@@ -133,7 +152,7 @@ public:
     const DataDefinition& datadefIndex() const;
 
     /*!
-     * Returns the DataDefinition of this rastercoverage
+     * Returns the DataDefinition of this rastercoverage<br>
      * can be null if it is not set
      *
      * \sa DataDefinition
@@ -144,7 +163,7 @@ public:
     /*!
      * \brief Returns a value in the Coverage- or Index-table
      *
-     * Using the colname and the itemid this function will return the correspondending value from the Coveragetable
+     * Using the colname and the itemid this function will return the correspondending value from the Coveragetable<br>
      * if you add an index, the value will be retrieved from the Indextable instead.
      *
      * \param colName name of the required collumn, must be a valid name
@@ -158,14 +177,14 @@ public:
     Resource source(int mode=cmINPUT) const;
 
     /*!
-     * Translates a value to a index from the Indextable
+     * Translates a value to a index from the Indextable<br>
      *
-     * note : the returned index is not necessarily an entry in the index table, as it is possible to get doubles or indices not in the table back
-     * this happens for interpollation purposes and such. example:
-     * the table :  index   0   1   2   3   4
-     *              value   3   6   -	9   12
-     * the - means undefined. if you now request 5, you will get 0.8 or something like that (depends on interpollation method etc)
-     * if you request 7.5 you will probably get the index 2.0 , but the value at this index is actually not defined,
+     * note : the returned index is not necessarily an entry in the index table, as it is possible to get doubles or indices not in the table back<br>
+     * this happens for interpollation purposes and such. example:<br>
+     * the table :  index   0   1   2   3   4<br>
+     *              value   3   6   -	9   12<br>
+     * the - means undefined. if you now request 5, you will get 0.8 or something like that (depends on interpollation method etc)<br>
+     * if you request 7.5 you will probably get the index 2.0 , but the value at this index is actually not defined,<br>
      * because for some reason this index is not entered in the table
      *
      * \param value the value that must be translated to a index
@@ -174,19 +193,21 @@ public:
     double layerIndex(const QString& value);
 
     /*!
-     * Sets the supplied items at the indexes
-     * only works when this coverage is not readonly
+     * Sets the supplied items at the indexes<br>
+     * only works when this coverage is not readonly<br>
      * Uses the order specified in the itemrange itself
+     *
      * \sa ItemRange
      * \param items the items that have to be added
      */
     void setLayerIndexes(const ItemRange &items);
 
     /**
-     * Changes the name of this coverage
-     * only works if this coverage is not readonly
-     * will also adjust the name of the attribute and or indextable
+     * Changes the name of this coverage<br>
+     * only works if this coverage is not readonly<br>
+     * will also adjust the name of the attribute and or indextable<br>
      * to respectively "name"_attributes and "name"_indexattributes
+     *
      * @param nam the new name of this coverage
      */
     void setName(const QString &nam);

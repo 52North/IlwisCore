@@ -61,7 +61,7 @@ typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 class KERNELSHARED_EXPORT PixelIterator  : public std::iterator<std::random_access_iterator_tag, double> {
 public:
     /*!
-     * The possible flows, not all are implemented (yet).
+     * The possible flows, not all are implemented (yet).<br>
      * atm only xyz works
      */
     enum Flow { fXYZ, fYXZ, fXZY, fYZX, fZXY, fZYX};
@@ -87,8 +87,8 @@ public:
     /*!
      * \brief Constructs a PixelIterator from a raster and a bounding box
      *
-     * Constructs a PixelIterator from the raster and the bounding box
-     * The bounding box is the area within the raster which should be walked by the PixelIterator
+     * Constructs a PixelIterator from the raster and the bounding box<br>
+     * The bounding box is the area within the raster which should be walked by the PixelIterator<br>
      * If one of the parameters was invalid the PixelIterator will also be invalid
      *
      * \param raster The raster from which this PixelIterator should be created
@@ -110,9 +110,9 @@ public:
     PixelIterator(PixelIterator &&iter);
 
     /*!
-     * override of the operator=
-     * copies the values of the supplied iterator onto this one
-     *  so: this=iter;
+     * override of the operator=<br>
+     * copies the values of the supplied iterator onto this one<br>
+     *  so: this=iter;<br>
      * results in this getting the same values as iter
      *
      * \param iter pixeliterator that must be copied
@@ -121,9 +121,9 @@ public:
     PixelIterator& operator=(const PixelIterator& iter);
 
     /*!
-     * override of the operator=
-     * copies the values of the supplied iterator onto this one
-     *  so: this=iter;
+     * override of the operator=<br>
+     * copies the values of the supplied iterator onto this one<br>
+     *  so: this=iter;<br>
      * results in this getting the same values as iter
      *
      * \param iter pixeliterator that must be copied
@@ -196,8 +196,8 @@ public:
     /*!
      * \brief Moves the PixelIterator to the given Voxel
      *
-     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition (index) of this iterator
-     * the voxel should have all three coordinates defined.
+     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition (index) of this iterator<br>
+     * the voxel should have all three coordinates defined.<br>
      * invalid voxel will cause this iterator to become invalid.
      *
      * \param vox the Voxel to move to
@@ -312,11 +312,11 @@ public:
     /*!
      * \brief Changes the flow of this PixelIterator
      *
-     * Changes the flow according to the submitted value for flw,
-     * if flw =fXYZ
-     * this means that the pixeliterator will start at the first row in x direction,
-     * at the end of this row, it will go 1 in y direction and start over in x direction,
-     * at the end of the y row, it will go 1 in z direction and start over
+     * Changes the flow according to the submitted value for flw,<br>
+     * if flw =fXYZ<br>
+     * this means that the pixeliterator will start at the first row in x direction,<br>
+     * at the end of this row, it will go 1 in y direction and start over in x direction,<br>
+     * at the end of the y row, it will go 1 in z direction and start over<br>
      *
      * note at this moment only the xyz flow is implemented
      * \param flw the requested flow
@@ -379,7 +379,7 @@ public:
 
     /*!
      * \brief Substracts another pixeliterator fomr this PixelIterator
-     * the direction moved in the raster depends on the boundingbox in combination with the flow
+     * the direction moved in the raster depends on the boundingbox in combination with the flow<br>
      * this might have unexpected results if both iterators have a different flow.
      * \param iter2 another PixelIterator
      * \return this iterator moved -iter2.linearPosition()
