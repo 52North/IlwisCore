@@ -61,7 +61,7 @@ typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 class KERNELSHARED_EXPORT PixelIterator  : public std::iterator<std::random_access_iterator_tag, double> {
 public:
     /*!
-     * The possible flows, not all are implemented.
+     * The possible flows, not all are implemented (yet).
      * atm only xyz works
      */
     enum Flow { fXYZ, fYXZ, fXZY, fYZX, fZXY, fZYX};
@@ -69,7 +69,7 @@ public:
     /*!
      * \brief isValid tells if an iterator is in a valid state.
      *
-     * An iterator is valid if bounding box and grid are a valid combination. The rest of the internal members of the iterator are calculated from this
+     * An iterator is valid if bounding box and grid are a valid combination.
      * \return true if the bounding box fits in the grid.
      */
     bool isValid() const{
@@ -80,7 +80,7 @@ public:
     /*!
      * \brief The empty constructor for PixelIterator
      *
-     * This constructor creates an empty and clean PixelIterator
+     * This constructor creates an empty PixelIterator
      */
     PixelIterator();
 
@@ -89,7 +89,6 @@ public:
      *
      * Constructs a PixelIterator from the raster and the bounding box
      * The bounding box is the area within the raster which should be walked by the PixelIterator
-     * and it also calculates the rest of the internal members from these parameters
      * If one of the parameters was invalid the PixelIterator will also be invalid
      *
      * \param raster The raster from which this PixelIterator should be created
@@ -105,27 +104,36 @@ public:
     PixelIterator(const PixelIterator& iter);
 
     /*!
-     * \brief Move constructor
-     * \param iter PixelIterator that must be moved
+     * \brief Copy constructor
+     * \param iter PixelIterator that must be copied
      */
     PixelIterator(PixelIterator &&iter);
 
     /*!
-     * \brief Copy constructor
+     * override of the operator=
+     * copies the values of the supplied iterator onto this one
+     *  so: this=iter;
+     * results in this getting the same values as iter
+     *
      * \param iter pixeliterator that must be copied
-     * \return
+     * \return this, with the modified values
      */
     PixelIterator& operator=(const PixelIterator& iter);
 
     /*!
-     * \brief Move operation
-     * \param iter PixelIterator that must be moved
-     * \return the new PixelIterator that is actually still the same
+     * override of the operator=
+     * copies the values of the supplied iterator onto this one
+     *  so: this=iter;
+     * results in this getting the same values as iter
+     *
+     * \param iter pixeliterator that must be copied
+     * \return this, with the modified values
      */
     PixelIterator& operator=(const PixelIterator&& iter);
 
     /*!
      * \brief Adds 1 to this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \return This iterator moved 1
      */
     PixelIterator& operator++() {
@@ -135,6 +143,7 @@ public:
 
     /*!
      * \brief Substracts 1 from this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \return This iterator moved -1
      */
     PixelIterator& operator--() {
@@ -144,6 +153,7 @@ public:
 
     /*!
      * \brief Adds n to this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \param n amount to add to this PixelIterator
      * \return this iterator moved n
      */
@@ -154,6 +164,7 @@ public:
 
     /*!
      * \brief Substracts n from this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \param n amount to substract
      * \return this iterator moved -n
      */
@@ -185,7 +196,9 @@ public:
     /*!
      * \brief Moves the PixelIterator to the given Voxel
      *
-     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition
+     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition (index) of this iterator
+     * the voxel should have all three coordinates defined.
+     * invalid voxel will cause this iterator to become invalid.
      *
      * \param vox the Voxel to move to
      * \return this at the given Voxel
@@ -202,20 +215,25 @@ public:
 
     /*!
      * \brief Adds 1 to this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \return this iterator moved 1
      */
     PixelIterator operator++(int);
 
     /*!
      * \brief Substracts 1 from this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \return this iterator moved -1
      */
     PixelIterator operator--(int);
 
     /*!
-     * \brief operator []
-     * \param vox
-     * \return
+     * \brief Random acces operator
+     *
+     * Moves to the specified voxel, requires a valid voxel
+     *
+     * \param index the target index
+     * \return this iterator at the specified voxel
      */
     PixelIterator& operator[](const Voxel& vox);
 
@@ -262,7 +280,7 @@ public:
     bool operator>=(const PixelIterator& iter) const;
 
     /*!
-     * \brief Query for a reference to the current vallue of the PixelIterator
+     * \brief Query for a reference to the current value of the PixelIterator
      * \return reference to the currentvalue
      */
     double& operator*() {
@@ -278,7 +296,7 @@ public:
     }
 
     /*!
-     * \brief Query for a pointer to the current value of the PixelIterator
+     * \brief Query for the current value of the PixelIterator
      * \return ->value(this(current))
      */
     double* operator->() {
@@ -307,6 +325,7 @@ public:
 
     /*!
      * \brief Checks if a certain pixel is inside this PixelIterator
+     *
      * \param pix the pixel to be checked
      * \return true when the pixel is in this PixelIterator
      */
@@ -314,18 +333,21 @@ public:
 
     /*!
      * \brief Checks if the x coordinate has changed in the last step taken
+     * all movement and/or position change commands automatically set the x y and z flags when appropiate
      * \return true if the x has changed
      */
     bool xchanged() const;
 
     /*!
      * \brief Checks if the y coordinate has changed in the last step taken
+     * all movement and/or position change commands automatically set the x y and z flags when appropiate
      * \return true if the y has changed
      */
     bool ychanged() const;
 
     /*!
      * \brief Checks if the z coordinate has changed in the last step taken
+     * all movement and/or position change commands automatically set the x y and z flags when appropiate
      * \return true if the z has changed
      */
     bool zchanged() const;
@@ -344,6 +366,7 @@ public:
 
     /*!
      * \brief Query for the bounding box of this PixelIterator
+     * the bounding box decides which part of the raster this PixelIterator should walk, thus its size can never be bigger than the rastersize
      * \return the bounding box of this PixelIterator
      */
     const Box3D<>& box() const;
@@ -356,6 +379,8 @@ public:
 
     /*!
      * \brief Substracts another pixeliterator fomr this PixelIterator
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
+     * this might have unexpected results if both iterators have a different flow.
      * \param iter2 another PixelIterator
      * \return this iterator moved -iter2.linearPosition()
      */
@@ -363,6 +388,7 @@ public:
 
     /*!
      * \brief Adds n to this PixelIterator and returns it
+     * the direction moved in the raster depends on the boundingbox in combination with the flow
      * \param n the amount to be added
      * \return this iterator moved n
      */

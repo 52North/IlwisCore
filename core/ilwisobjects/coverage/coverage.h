@@ -45,7 +45,10 @@ public:
     /*!
      * The constructor for an coverage based on a Resource
      *
+     * requires the resource to have an id and a name, code and description are optional
+     *
      * \sa IlwisObject
+     * \sa Resource
      * \param source Resource that has to be used
      */
     Coverage(const Resource& source);
@@ -72,6 +75,7 @@ public:
      * Query for the envelope of this coverage, must fit in the coordinate system
      * a envelope decides what domain within a coordinate system is valid, or in this case,
      * which part of the coordinate system is covered by this coverage
+     * do note that the envelope should not be bigger than the coordinateSystem
      *
      * \return the envelope of this coverage if it has one or else null
      */
@@ -81,6 +85,7 @@ public:
      * Changes the envelope of this coverage to the one specified
      * a envelope decides what domain within a coordinate system is valid, or in this case,
      * which part of the coordinate system is covered by this coverage
+     * do note that the envelope should not be bigger than the coordinateSystem
      *
      * \param the new envelope
      */
@@ -112,6 +117,8 @@ public:
 
     /*!
      * Query for the NumbericStatistics of this coverage
+     *
+     *
      * \return the statistics of this coverage
      */
     NumericStatistics& statistics();
@@ -120,6 +127,7 @@ public:
      * Returns the DataDefinition of this rastercoverage
      * can be null if it is not set
      *
+     * \sa DataDefinition
      * \return the datadefinition of this rastercoverage
      */
     const DataDefinition& datadefIndex() const;
@@ -128,6 +136,7 @@ public:
      * Returns the DataDefinition of this rastercoverage
      * can be null if it is not set
      *
+     * \sa DataDefinition
      * \return the datadefinition of this rastercoverage
      */
     DataDefinition& datadefIndex();
@@ -135,13 +144,13 @@ public:
     /*!
      * \brief Returns a value in the Coverage- or Index-table
      *
-     * Using the the colname and the itemid this function will return the correspondending value from the Coveragetable
-     * if you ad a index, the value will be retrieved from the Indextable instead.
+     * Using the colname and the itemid this function will return the correspondending value from the Coveragetable
+     * if you add an index, the value will be retrieved from the Indextable instead.
      *
-     * \param colName name of the required collumn
-     * \param itemid id of the item in the collumn
-     * \param layerIndex the index of the Indextable, default =-1 = Coveragetable
-     * \return the requested value
+     * \param colName name of the required collumn, must be a valid name
+     * \param itemid id of the item in the collumn, must be a valid id
+     * \param layerIndex the index of the Indextable, default =-1 = Coveragetable any negative index other than -1, will cause errors
+     * \return the requested value, when all parameters are valid
      */
     QVariant value(const QString& colName, quint32 itemid, qint32 layerIndex = -1);
 
@@ -152,7 +161,12 @@ public:
      * Translates a value to a index from the Indextable
      *
      * note : the returned index is not necessarily an entry in the index table, as it is possible to get doubles or indices not in the table back
-     * this happens for interpollation purposes and such
+     * this happens for interpollation purposes and such. example:
+     * the table :  index   0   1   2   3   4
+     *              value   3   6   -	9   12
+     * the - means undefined. if you now request 5, you will get 0.8 or something like that (depends on interpollation method etc)
+     * if you request 7.5 you will probably get the index 2.0 , but the value at this index is actually not defined,
+     * because for some reason this index is not entered in the table
      *
      * \param value the value that must be translated to a index
      * \return the index of the value
@@ -161,7 +175,7 @@ public:
 
     /*!
      * Sets the supplied items at the indexes
-     *
+     * only works when this coverage is not readonly
      * Uses the order specified in the itemrange itself
      * \sa ItemRange
      * \param items the items that have to be added
@@ -170,7 +184,9 @@ public:
 
     /**
      * Changes the name of this coverage
-     *
+     * only works if this coverage is not readonly
+     * will also adjust the name of the attribute and or indextable
+     * to respectively "name"_attributes and "name"_indexattributes
      * @param nam the new name of this coverage
      */
     void setName(const QString &nam);

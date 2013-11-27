@@ -12,13 +12,16 @@ class KERNELSHARED_EXPORT DataDefinition
 public:
     /*!
      * Copy constructor
+     * copies the values of the given DataDefinition to a new one, will also copy 0 and NULL values
      * \param def DataDefinition to be copied onto the new one
      */
     DataDefinition(const DataDefinition &def);
 
     /*!
      * Constructs a new DataDefinition based on an IDomain and a Range
-     *
+     * sets the domain of the new DataDefinition as dm, and sets the range to rng, if rng != 0
+     * if rng = 0 (defaultvalue) it will set the domain->range2range() as range (the range will be equal to the domain)
+     * \sa Domain
      * \param dm The Domain of the new DataDefinition
      * \param rng The range of the new DataDefinition
      */
@@ -55,13 +58,15 @@ public:
 
     /*!
      * Query for the domain of this DataDefinition
+     * can return invalid domains
      * \return The IDomain of this DataDefinition
      */
     IDomain domain() const;
 
     /*!
      * Sets a new domain to this DataDefinition
-     * Also sets the range of this domain as the new range of this DataDefinition
+     * Also sets the range of this domain as the new range of this DataDefinition if the domain can be converted to a range
+     * will not do anything to the range if the given domain is invalid
      *
      * \param dom The new Domain
      */
@@ -71,13 +76,16 @@ public:
      * Checks if this Datadefinition is valid
      * A DataDefinition is valid when its Domain is valid
      *
+     * \sa Domain
      * \return true when valid
      */
     bool isValid() const;
 
     /*!
      * Checks if this DataDefinition is compatible with some other DataDefinition
-     * They are Compatible when they are both valid and their IDomain 's are compatible
+     * They are Compatible when they are both valid and their IDomain's are compatible
+     * def cannot be null
+     * \sa Domain
      * \param def the other DataDefinition
      * \return true when compatible
      */

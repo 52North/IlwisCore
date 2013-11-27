@@ -38,6 +38,8 @@ public:
 
     /*!
      * The constructor for a RasterCoverage with a certain Resource
+     * This resource must have a name and an Id
+     * code and description are optional
      *
      * \sa IlwisObject
      * \param resource The resource to use
@@ -63,7 +65,7 @@ public:
     DataDefinition& datadef();
 
     /*!
-     * Returns the IGeoReference of this RasterCoverage
+     * Returns a reference to the IGeoReference of this RasterCoverage
      * can be null if it is not set
      *
      * \return the georeference
@@ -74,7 +76,7 @@ public:
      * \brief Replaces the existing IGeoReference with a new one
      *
      * replaces the old IGeoReference with the new one, if the georeference is not null
-     * it also resets the binary data.
+     * it also resets the binary data because the new georeference can have a different size, making the original data invalid.
      * if the georeference is valid it computes and sets the new coordinatesystem and the new size
      *
      * \param grf the new georeference
@@ -97,6 +99,8 @@ public:
      * assigns a new size to this RasterCoverage
      * size in row-col for 2D
      * and in row-col-heigth for 3D
+     * the Size cannot be changed if this rastercoverage is readonly.
+     * also changes the size of the georeference.
      *
      * \sa Size
      * \param sz the new size, must always be positive or undefined
@@ -136,6 +140,7 @@ public:
      * Gives the value of a certain pixel in the grid
      * The pixel point, be it 2D or 3D must fit in envelope of this coverage for this function to return an actual value,
      * if the pixel does not fit in the rastersize, it will return undefined.
+     * if the grid is null, it will also return undefined
      * This function requires a valid georeference and a non null grid, if this is not the case undefined will be returned
      *
      * \param pix the pixel
