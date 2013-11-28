@@ -81,11 +81,26 @@ void FeatureNode::setCell(const QString &name, const QVariant &var, int index)
     return _feature->_record->cellByKey(featureid(), colIndex, var, _index);
 }
 
-ColumnDefinition FeatureNode::columndefinition(const QString &name, bool coverages) const{
+ColumnDefinition FeatureNode::columndefinition(const QString &name, bool ) const{
     if (_feature->isValid())
-        return _feature->columndefinition(name, coverages);
+        return _feature->columndefinition(name, false);
     else
         return ColumnDefinition();
+}
+
+ColumnDefinition FeatureNode::columndefinition(quint32 index, bool) const
+{
+    if (_feature->isValid())
+        return _feature->columndefinition(index, false);
+    else
+        return ColumnDefinition();
+}
+
+quint32 FeatureNode::attributeColumnCount(bool ) const
+{
+    if (_feature->isValid())
+        return _feature->attributeColumnCount(false);
+    return iUNDEF;
 }
 
 quint32 FeatureNode::index() const{
@@ -152,6 +167,21 @@ ColumnDefinition Feature::columndefinition(const QString &name, bool coverages) 
         return _record->columndefinition(name, coverages);
     else
         return ColumnDefinition();
+}
+
+ColumnDefinition Feature::columndefinition(quint32 index, bool coverages) const
+{
+    if (_record->isValid())
+        return _record->columndefinition(index, coverages);
+    else
+        return ColumnDefinition();
+}
+
+quint32 Feature::attributeColumnCount(bool coverages) const
+{
+    if (_record->isValid())
+        return _record->columnCount(coverages);
+    return iUNDEF;
 }
 
 quint64 Feature::featureid() const{
