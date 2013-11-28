@@ -89,6 +89,11 @@ public:
             _sigDigits = std::min(len, _sigDigits);
         }
     }
+    void binCount(quint32 value) {
+        _binCount = value;
+    }
+
+
 
     template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, PropertySets mode=pBASIC){
         Basic basicMarkers;
@@ -127,22 +132,24 @@ public:
                 _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
             }
             if ( mode & pHISTOGRAM) {
-                int bins = 1;
+
                 double ncount = prop(pNETTOCOUNT);
                 if ( ncount > 1) {
-                    if ( prop(pSTDEV) == rUNDEF) {
-                        _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
-                    }
-                    if ( _markers[index(pSTDEV)] != rUNDEF ) {
-                        double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
-                        bins = prop(pDISTANCE) / h;
+                    if (_binCount == iUNDEF ){
+                        if ( prop(pSTDEV) == rUNDEF) {
+                            _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
+                        }
+                        if ( _markers[index(pSTDEV)] != rUNDEF ) {
+                            double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
+                            _binCount = prop(pDISTANCE) / h;
+                        }
                     }
                 }
 
-                _bins.resize(bins);
+                _bins.resize(_binCount);
                 double delta  = prop(pDELTA);
-                for(int i=0; i < bins; ++i ) {
-                    _bins[i] = HistogramBin(i * ( delta / bins));
+                for(int i=0; i < _binCount; ++i ) {
+                    _bins[i] = HistogramBin(i * ( delta / _binCount));
                 }
                 std::for_each(begin, end, [&] (const DataType& sample){
                     quint16 index = getOffsetFactorFor(sample);
@@ -172,6 +179,7 @@ private:
 
     quint32 _sigDigits;
     std::vector<HistogramBin> _bins;
+    quint32 _binCount=iUNDEF;
 
     quint32 index(PropertySets method) const {
         if ( method == 0)
@@ -195,8 +203,18 @@ private:
 
 
     quint16 getOffsetFactorFor(const DataType& sample) const {
-        double rmax = prop(pMAX);
-        return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
+        //double rmax = prop(pMAX);
+        //return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
+        double rmin = prop(pMIN);
+        return _bins.size() * (double)(sample - rmin) / prop(pDELTA);
+    }
+
+    double getBinWidth() const {
+        if (_bins.size() > 1) {
+            return _bins[1]._limit;
+        } else {
+            return _bins[0]._limit;
+        }
     }
 
 
