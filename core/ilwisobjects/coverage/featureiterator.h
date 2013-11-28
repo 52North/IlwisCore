@@ -123,4 +123,13 @@ private:
 };
 }
 
+inline Ilwis::FeatureIterator begin(const Ilwis::IFeatureCoverage &fcoverage) {
+    return Ilwis::FeatureIterator(fcoverage);
+}
+
+inline Ilwis::FeatureIterator end(const Ilwis::IFeatureCoverage &fcoverage) {
+    Ilwis::FeatureIterator iter(fcoverage);
+    return iter.end();
+}
+
 #endif // FEATUREITERATOR_H

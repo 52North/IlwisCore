@@ -278,7 +278,7 @@ QString NamedIdentifierRange::value(const QVariant& v) const
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
         return sUNDEF;
     }
-    SPNamedIdentifier it = item(index).dynamicCast<NamedIdentifier>();
+    SPNamedIdentifier it = item(index).staticCast<NamedIdentifier>();
     if (!it)
         return sUNDEF;
 

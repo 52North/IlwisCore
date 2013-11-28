@@ -20,6 +20,15 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
 
 }
 
+ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex) :
+    Identity(name, colindex),
+    _datadef(def),
+    _multiple(false),
+    _changed(false)
+{
+
+}
+
 ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) : Identity(nm, colindex), _multiple(false)
 {
     datadef().domain(dom);
