@@ -114,6 +114,10 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
 
+    if ( isReadOnly())
+        return ;
+    changed(true);
+
     quint32 index = columnIndex(nme);
     if ( !isColumnIndexValid(index))
         return ;
@@ -152,8 +156,13 @@ std::vector<QVariant> FlatTable::record(quint32 rec) const
 
 void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
+
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
+
+    if ( isReadOnly())
+        return ;
+    changed(true);
     if ( rec >=recordCount() ) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
         recordCount(_datagrid.size());
@@ -205,6 +214,11 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
 
     if ( !isColumnIndexValid(index))
         return;
+
+    if ( isReadOnly())
+        return ;
+    changed(true);
+
     _columnDefinitionsByIndex[index].changed(true);
 
     if ( rec >= recordCount()) {
@@ -220,6 +234,10 @@ void FlatTable::setCell(const QString &col, quint32 rec, const QVariant &var)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         return ;
+
+    if ( isReadOnly())
+        return ;
+    changed(true);
 
     quint32 index = columnIndex(col);
     setCell(index, rec, var);
