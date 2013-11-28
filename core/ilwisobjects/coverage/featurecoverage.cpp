@@ -68,20 +68,20 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
-    _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
+    //_record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
 
     CreateFeature create = _featureFactory->getCreator("feature");
     IFeatureCoverage fcoverage;
     fcoverage.set(this);
     SPFeatureI newFeature(create(this));
 
-    _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
+    _record.reset(new AttributeRecord(_features.size(), attributeTable()));
     quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
         return SPFeatureI();
     }
-    _record->cellByRecord(_features.size(), colIndex, QVariant(newFeature->featureid()), -1);
+    _record->cell(colIndex, QVariant(newFeature->featureid()));
     _features.push_back(newFeature);
 
     quint32 cnt = featureCount(tp);
