@@ -13,19 +13,24 @@ public:
     virtual ~DomainItem() {}
 
     /**
-     * Checks if this DomainItemis valid
+     * Checks the validity of this DomainItem<br>
+     * when a item is valid depends on the implementation
+     *
      * @return true when valid
      */
     virtual bool isValid() const = 0;
 
     /**
-     * Query for the name of this DomainItem
+     * Query for the name of this DomainItem<br>
+     * a name should never be null, but besides that it all depends on the implementation
      * @return the name
      */
     virtual QString name() const =0 ;
 
     /**
-     * Clones this DomainItem
+     * Clones this DomainItem<br>
+     * a clone should fully copy all the internal members of a item onto the new item
+     *
      * @return a clone of this
      */
     virtual DomainItem *clone() const=0;
@@ -44,6 +49,7 @@ public:
 
     /**
      * Query for the raw value of this DomainItem
+     *
      * @return the raw value
      */
     virtual quint32 raw() const
