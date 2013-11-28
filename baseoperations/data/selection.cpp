@@ -65,7 +65,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
             if ( v_in != rUNDEF) {
                 if ( _attribColumn != "") {
                     quint32 rec = coverageIndex[v_in];
-                    QVariant var = inputRaster->attributeTable()->cell(rec,colIndex);
+                    QVariant var = inputRaster->attributeTable()->cell(colIndex, rec);
                     v = var.toDouble();
                     if ( isNumericalUndef(v))
                         v = rUNDEF;
