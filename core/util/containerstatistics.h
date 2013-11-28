@@ -174,6 +174,25 @@ public:
         return _bins[index]._limit * stretchFactor;
     }
 
+    /**
+     * Stretches the value range by percent. Lower and upper limits are stretched equally.
+     * If stretch value is undefined, the limits of the current value range are returned.
+     *
+     * @brief stretches lower and upper limits by percent.
+     * @param percent how much the limits shall be stretched.
+     * @return stretched limits of the value range.
+     */
+    std::pair<double,double> stretchLimits(double percent) const {
+        if (percent == rUNDEF) {
+            return std::pair<double,double>(prop(pMIN),prop(pMAX));
+        }
+        double delta = prop(pDELTA);
+        double downsizeBy = percent * delta / 100;
+        double newLower = prop(pMIN) + downsizeBy;
+        double newUpper = prop(pMAX) - downsizeBy;
+        return std::pair<double,double>(newLower,newUpper);
+    }
+
 private:
     std::vector<double> _markers;
 

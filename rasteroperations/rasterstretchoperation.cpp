@@ -112,7 +112,7 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
 
     if (upper == rUNDEF) {
         double percent = lower;
-        //_limits = statistics.stretchLimits(percent);
+        _limits = statistics.stretchLimits(percent);
     } else
         _limits = std::pair<double, double>(lower, upper);
 
