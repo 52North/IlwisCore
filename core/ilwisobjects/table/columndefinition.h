@@ -7,7 +7,8 @@ class KERNELSHARED_EXPORT ColumnDefinition : public Identity
 public:
     ColumnDefinition();
     ColumnDefinition(const ColumnDefinition& def, quint32 index);
-    ColumnDefinition(const QString& nm, const IDomain &dom, quint64 colindex = i64UNDEF);
+    ColumnDefinition(const QString& name, const DataDefinition& def, quint64 colindex);
+    ColumnDefinition(const QString& nm, const IDomain &dom, quint64 colindex=i64UNDEF);
     bool isValid() const;
 
     QString type() const;
