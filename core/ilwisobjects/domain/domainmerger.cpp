@@ -144,6 +144,7 @@ bool ItemDomainMergerNamedItems::merge()
         _mergedDomain = iddom;
         return true;
     }
+    return true;
 }
 
 void ItemDomainMergerNamedItems::renumber(const std::unique_ptr<NamedIdentifierRange>& newRange,
