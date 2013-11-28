@@ -18,7 +18,7 @@ AttributeRecord::AttributeRecord(const ITable &attTable, const QString &keyColum
 {
 }
 
-quint32 AttributeRecord::columns(bool coverages) const
+quint32 AttributeRecord::columnCount(bool coverages) const
 {
     if ( coverages) {
         if ( _coverageTable.isValid())
@@ -37,6 +37,17 @@ ColumnDefinition AttributeRecord::columndefinition(const QString &nme, bool cove
             return _coverageTable->columndefinition(nme);
     } else if ( _indexTable.isValid() )
         return _indexTable->columndefinition(nme);
+
+    return ColumnDefinition();
+}
+
+ColumnDefinition AttributeRecord::columndefinition(int index, bool coverages) const
+{
+    if ( coverages ) {
+        if ( _coverageTable.isValid())
+            return _coverageTable->columndefinition(index);
+    } else if ( _indexTable.isValid() )
+        return _indexTable->columndefinition(index);
 
     return ColumnDefinition();
 }
