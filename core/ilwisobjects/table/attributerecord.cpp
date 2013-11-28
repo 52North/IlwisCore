@@ -14,7 +14,7 @@ AttributeRecord::AttributeRecord()
 {
 }
 
-AttributeRecord::AttributeRecord(const ITable &attTable, const QString &keyColumn) : _coverageTable(attTable), _keyColumn(keyColumn)
+AttributeRecord::AttributeRecord(quint32 keyrecord, const ITable &attTable) : _coverageTable(attTable), _keyRecord(keyrecord)
 {
 }
 
@@ -41,13 +41,13 @@ ColumnDefinition AttributeRecord::columndefinition(const QString &nme, bool cove
     return ColumnDefinition();
 }
 
-ColumnDefinition AttributeRecord::columndefinition(int index, bool coverages) const
+ColumnDefinition AttributeRecord::columndefinition(int colindex, bool coverages) const
 {
     if ( coverages ) {
         if ( _coverageTable.isValid())
-            return _coverageTable->columndefinition(index);
+            return _coverageTable->columndefinition(colindex);
     } else if ( _indexTable.isValid() )
-        return _indexTable->columndefinition(index);
+        return _indexTable->columndefinition(colindex);
 
     return ColumnDefinition();
 }
@@ -64,114 +64,38 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
     return iUNDEF;
 }
 
-
-QVariant AttributeRecord::cellByKey(quint64 key, quint32 colIndex, int index, bool asRaw){
-    if ( _keyColumn == sUNDEF) {
-        ERROR1(ERR_NO_INITIALIZED_1,"key column");
-        return QVariant();
-    }
+void AttributeRecord::cell(quint32 colIndex, const QVariant &var, int index)
+{
     if ( index == -1) {
-        if ( _coverageIndex.size() == 0) {
-            indexKeyColumn();
-        }
-        auto iter = _coverageIndex.find(key);
-        if ( iter == _coverageIndex.end()) {
-            return QVariant();
-        }
-        return _coverageTable->cell(colIndex,(*iter).second, asRaw);
+        _coverageTable->cell(colIndex, _keyRecord);
     } else {
-        if ( _verticalIndex[index].size() == 0) {
-            indexVerticalIndex(index);
-        }
-        auto iter = _coverageIndex.find(key);
-        if ( iter == _coverageIndex.end()) {
-            return QVariant();
-        }
-        return _indexTable->cell(colIndex,(*iter).second);
+        _indexTable->cell(colIndex,_keyRecord * index);
+    }
+}
+
+
+QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
+    if ( index == -1) {
+        return _coverageTable->cell(colIndex, _keyRecord, asRaw);
+    } else {
+        return _indexTable->cell(colIndex,_keyRecord * index, asRaw);
     }
     return QVariant();
 }
 
-void AttributeRecord::cellByKey(quint64 key, quint32 colIndex, const QVariant& var, int index) {
-    if ( _keyColumn == sUNDEF) {
-        ERROR1(ERR_NO_INITIALIZED_1,"key column");
-        return;
-    }
-    if ( index == COVERAGETABLE) {
-        if ( _coverageIndex.size() == 0) {
-            indexKeyColumn();
-        }
-        quint32 recIndex = key;
-        if ( key != NEW_RECORD) {
-            auto iter = _coverageIndex.find(key);
-            if ( iter == _coverageIndex.end())
-                return;
-            else
-                recIndex= (*iter).second;
-        }
-
-        return _coverageTable->setCell(colIndex,recIndex, var);
-    } else {
-        if ( _verticalIndex[index].size() == 0) {
-            indexVerticalIndex(index);
-        }
-        auto iter = _coverageIndex.find(key);
-        if ( iter == _coverageIndex.end()) {
-            return;
-        }
-        _indexTable->setCell(colIndex,(*iter).second, var);
-    }
-}
-
-QVariant AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, int index, bool asRaw) const
-{
-    if ( index == COVERAGETABLE) {
-        return _coverageTable->cell(colIndex, record, asRaw);
-    } else {
-        return _indexTable->cell(colIndex, record, asRaw);
-    }
-    return QVariant();
-}
-
-void AttributeRecord::cellByRecord(quint64 record, quint32 colIndex, const QVariant& var, int index)
-{
-    if ( index == COVERAGETABLE) {
-        _coverageTable->setCell(colIndex, record,var);
-    } else {
-        _indexTable->setCell(colIndex, record, var);
-    }
-}
-
-void AttributeRecord::indexVerticalIndex(int index){
-    quint32 rec = 0;
-    std::vector<QVariant> values = _indexTable->column(_keyColumn);
-    for(const QVariant& val : values) {
-        _verticalIndex[index][val.toInt()] = rec++;
-    }
-
-}
-
-void AttributeRecord::indexKeyColumn(){
-    quint32 rec = 0;
-    std::vector<QVariant> values = _coverageTable->column(_keyColumn);
-    for(const QVariant& val : values) {
-        _coverageIndex[val.toInt()] = rec++;
-    }
-}
-
-void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn, int indexCount)
-{
-    if ( indexCount == -1) {
-        _coverageTable = tbl;
-        _keyColumn = keyColumn;
-        _coverageIndex.clear();
-    } else {
-        _verticalIndex.resize(indexCount);
-        _indexTable = tbl;
-    }
-}
+//void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn, int indexCount)
+//{
+//    if ( indexCount == -1) {
+//        _coverageTable = tbl;
+//        _keyColumn = keyColumn;
+//        _coverageIndex.clear();
+//    } else {
+//        _verticalIndex.resize(indexCount);
+//        _indexTable = tbl;
+//    }
+//}
 
 bool AttributeRecord::isValid() const
 {
-    return _coverageTable.isValid() && _keyColumn != "";
+    return _coverageTable.isValid() && _keyRecord != iUNDEF;
 }
