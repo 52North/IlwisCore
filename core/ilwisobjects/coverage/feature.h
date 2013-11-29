@@ -118,7 +118,7 @@ private:
     static quint64 _idbase;
     quint64 _featureid; // unique
     std::vector<SPFeatureNode> _track;
-    UPAttributeRecord _record;
+    SPAttributeRecord _record;
     Geometry _invalidGeom;
 
 };
