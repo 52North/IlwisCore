@@ -115,6 +115,7 @@ protected:
     void columnCount(int cnt);
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
     void initValuesColumn(const ColumnDefinition &def);
+    void initRecord(std::vector<QVariant>& values) const;
 private:
     quint32 _rows;
     quint32 _columns;

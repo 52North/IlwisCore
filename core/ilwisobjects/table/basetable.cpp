@@ -359,6 +359,23 @@ void BaseTable::initValuesColumn(const ColumnDefinition& def){
     column(def.name(),col);
 }
 
+void BaseTable::initRecord(std::vector<QVariant> &values) const
+{
+    values.resize(columnCount());
+    for(int i=0; i < columnCount(); ++i) {
+        const ColumnDefinition &coldef  = columndefinition(i);
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
+            values[i] = sUNDEF;
+        }
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itITEMDOMAIN) ){
+            values[i] = QVariant((int)iUNDEF);
+        }
+        if ( hasType(coldef.datadef().domain()->ilwisType(),itNUMERICDOMAIN)){
+            values[i] = rUNDEF;
+        }
+    }
+}
+
 
 
 
