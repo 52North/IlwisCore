@@ -176,6 +176,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
                 data->prepare();
+                data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
@@ -204,6 +205,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
                 data->prepare();
+                data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
