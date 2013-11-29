@@ -119,6 +119,7 @@ public:
     //@override
     IlwisObject *clone();
 
+    void newRecord();
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;

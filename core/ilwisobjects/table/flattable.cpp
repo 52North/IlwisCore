@@ -37,6 +37,16 @@ bool FlatTable::createTable()
     return true;
 }
 
+void FlatTable::newRecord()
+{
+    if (!const_cast<FlatTable *>(this)->initLoad())
+        return ;
+
+    std::vector<QVariant> values;
+    initRecord(values);
+    record(NEW_RECORD, values);
+}
+
 bool FlatTable::prepare()
 {
     return Table::prepare();

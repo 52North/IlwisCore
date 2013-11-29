@@ -113,6 +113,7 @@ public:
      * @param coldef the new columndefinition to be set
      */
     virtual void columndefinition(const ColumnDefinition& coldef) = 0;
+    virtual void newRecord() = 0;
 
     /*!
      * retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives
