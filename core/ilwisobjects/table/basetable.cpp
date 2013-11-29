@@ -56,6 +56,11 @@ bool BaseTable::createTable()
 }
 
 bool BaseTable::addColumn(const ColumnDefinition& def){
+
+    if ( isReadOnly())
+        return false;
+    changed(true);
+
     if ( _columnDefinitionsByName.contains(def.name())) {
         kernel()->issues()->log(TR("Adding duplicate column %1").arg(name()),IssueObject::itWarning);
         return false;
@@ -71,6 +76,10 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
 
 bool BaseTable::addColumn(const QString &name, const IDomain& domain)
 {
+    if ( isReadOnly())
+        return false;
+    changed(true);
+
     if ( _columnDefinitionsByName.contains(name)) {
         kernel()->issues()->log(TR("Adding duplicate column %1").arg(name),IssueObject::itWarning);
         return false;
@@ -211,6 +220,10 @@ quint32 BaseTable::columnIndex(const QString &nme) const
 
 void BaseTable::columnCount(int cnt)
 {
+    if ( isReadOnly())
+        return ;
+    changed(true);
+
     if ( cnt >= 0)
         _columns = cnt;
 }
@@ -219,6 +232,11 @@ bool BaseTable::merge(const IlwisObject *obj, int options)
 {
     if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
         return false;
+
+    if ( isReadOnly())
+        return false ;
+    changed(true);
+
     ITable tblTarget(this);
     ITable tblSource(static_cast<Table *>(const_cast<IlwisObject *>(obj)));
 

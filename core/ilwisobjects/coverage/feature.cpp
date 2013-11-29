@@ -72,13 +72,13 @@ quint32 FeatureNode::trackSize() const{
 
 QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
     quint32 colIndex  = _feature->_record->columnIndex(name);
-    return _feature->_record->cellByKey(featureid(), colIndex, _index, asRaw);
+    return _feature->_record->cell(colIndex, _index, asRaw);
 }
 
 void FeatureNode::setCell(const QString &name, const QVariant &var, int index)
 {
     quint32 colIndex  = _feature->_record->columnIndex(name);
-    return _feature->_record->cellByKey(featureid(), colIndex, var, _index);
+    return _feature->_record->cell(colIndex, var, _index);
 }
 
 ColumnDefinition FeatureNode::columndefinition(const QString &name, bool ) const{
@@ -145,7 +145,7 @@ QVariant Feature::cell(const QString &name, int index, bool asRaw)
 {
     if ( index < 0){
         quint32 colIndex  = _record->columnIndex(name);
-        return _record->cellByKey(featureid(), colIndex, index, asRaw);
+        return _record->cell(colIndex, index, asRaw);
     }
     if ( index >= 0 && index < _track.size())
         return _track[index]->cell(name, index, asRaw);
@@ -156,7 +156,7 @@ void Feature::setCell(const QString &name, const QVariant &var, int index)
 {
     if ( index < 0) {
         quint32 colIndex  = _record->columnIndex(name);
-        _record->cellByKey(featureid(), colIndex, var, index);
+        _record->cell(colIndex, var, index);
     }
     if ( index >= 0 && index < _track.size())
         _track[index]->setCell(name,var);
