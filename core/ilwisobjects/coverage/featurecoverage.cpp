@@ -74,14 +74,14 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     IFeatureCoverage fcoverage;
     fcoverage.set(this);
     SPFeatureI newFeature(create(this));
+    //fcoverage->attributeTable()->newRecord();
 
-    _record.reset(new AttributeRecord(_features.size(), attributeTable()));
-    quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
+    quint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
         return SPFeatureI();
     }
-    _record->cell(colIndex, QVariant(newFeature->featureid()));
+    newFeature->setCell(colIndex, QVariant(newFeature->featureid()));
     _features.push_back(newFeature);
 
     quint32 cnt = featureCount(tp);
@@ -138,11 +138,6 @@ FeatureCoverage *FeatureCoverage::clone()
     FeatureCoverage *fcov = new FeatureCoverage();
     copyTo(fcov);
     return fcov;
-}
-
-QSharedPointer<AttributeRecord> FeatureCoverage::record() const
-{
-    return _record;
 }
 
 void FeatureCoverage::copyTo(IlwisObject *obj)

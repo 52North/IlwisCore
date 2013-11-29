@@ -155,14 +155,6 @@ public:
      */
     FeatureCoverage *clone();
 
-    /**
-     * Query for the attribute record of this FeatureCoverage
-     *
-     * \sa AttributeRecord
-     * @return pointer to the Attributerecord of this featurecoverage
-     */
-    QSharedPointer<AttributeRecord> record() const;
-
 protected:
     void copyTo(IlwisObject *obj);
 private:
@@ -171,7 +163,6 @@ private:
     std::vector<FeatureInfo> _featureInfo;
     FeatureFactory *_featureFactory;
     std::mutex _mutex2;
-    QSharedPointer<AttributeRecord> _record;
     quint32 _maxIndex;
 
 
