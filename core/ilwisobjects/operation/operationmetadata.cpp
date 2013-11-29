@@ -142,7 +142,7 @@ void OperationResource::setOutParameterCount(const std::vector<quint32> &counts)
 
 void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
 {
-    QString prefix = "pin_" + QString::number(order) + "_";
+    QString prefix = "pin_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
@@ -150,7 +150,7 @@ void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QSt
 
 void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
 {
-    QString prefix = "pout_" + QString::number(order) + "_";
+    QString prefix = "pout_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
