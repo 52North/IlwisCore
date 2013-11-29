@@ -228,13 +228,16 @@ void Kernel::doProgress(quint64 id, qint32 amount)
 }
 
 void Kernel::startClock(){
-    _start_clock = clock();
+     _start_clock = clock();
 }
 
-void Kernel::endClock(){
+void Kernel::endClock(const QString& label){
     clock_t end = clock();
     double total = (double)(end - _start_clock) / CLOCKS_PER_SEC;
-    qDebug() << "calc old in " << total << " seconds";
+    if ( label == "")
+        std::cout << "calc old in " << total << " seconds";
+    else
+        std::cout << label.toStdString() << ": "<< "calc old in " << total << " seconds" << "\n";
 
 }
 

@@ -168,7 +168,7 @@ public:
     }
     //for debugging
     void startClock();
-    void endClock();
+    void endClock(const QString &label="");
 
     SPTranquilizer createTrq(const QString &title, const QString &description, qint64 end, qint32 step);
 private:
