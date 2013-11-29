@@ -70,15 +70,33 @@ quint32 FeatureNode::trackSize() const{
     return 1;
 }
 
-QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
-    quint32 colIndex  = _feature->_record->columnIndex(name);
-    return _feature->_record->cell(colIndex, _index, asRaw);
+QVariant FeatureNode::cell(quint32 colIndex, int , bool asRaw)
+{
+    if ( _feature->isValid())
+        return _feature->_record->cell(colIndex, _index, asRaw);
+    return QVariant();
+
 }
 
-void FeatureNode::setCell(const QString &name, const QVariant &var, int index)
+QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
+    if ( _feature->isValid()){
+        quint32 colIndex  = _feature->_record->columnIndex(name);
+        return cell(colIndex, asRaw);
+    }
+    return QVariant();
+}
+
+void FeatureNode::setCell(const QString &name, const QVariant &var, int )
 {
     quint32 colIndex  = _feature->_record->columnIndex(name);
-    return _feature->_record->cell(colIndex, var, _index);
+    return setCell(colIndex, var, _index);
+}
+
+void FeatureNode::setCell(quint32 colIndex, const QVariant &var, int )
+{
+    if ( _feature->isValid()){
+        _feature->_record->cell(colIndex, var, _index);
+    }
 }
 
 ColumnDefinition FeatureNode::columndefinition(const QString &name, bool ) const{
@@ -118,19 +136,19 @@ Feature::~Feature()
 {
 }
 
-Feature::Feature(const SPAttributeRecord& rec) {
+Feature::Feature(AttributeRecord *rec) {
     _featureid = _idbase++;
-    _record = rec;
+    _record.reset(rec);
 }
 
-Feature::Feature(const IFeatureCoverage& fcoverage){
+Feature::Feature(const IFeatureCoverage& fcoverage, int rec){
     _featureid = _idbase++;
-    _record = fcoverage->record();
+    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable()));
 }
 
-Feature::Feature(const FeatureCoverage* fcoverage){
+Feature::Feature(const FeatureCoverage* fcoverage, int rec){
     _featureid = _idbase++;
-    _record = fcoverage->record();
+    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable()));
 }
 
 Feature::Feature(const Feature &f) {
@@ -139,6 +157,16 @@ Feature::Feature(const Feature &f) {
 Feature &Feature::operator =(const Feature &f)
 {
     return *this;
+}
+
+QVariant Feature::cell(quint32 colIndex, int index, bool asRaw)
+{
+    if ( index < 0){
+        return _record->cell(colIndex, index, asRaw);
+    }
+    if ( index >= 0 && index < _track.size())
+        return _track[index]->cell(colIndex, index, asRaw);
+    return QVariant();//TODO shouldn't this raise a std::out_of_range exception or similar?
 }
 
 QVariant Feature::cell(const QString &name, int index, bool asRaw)
@@ -160,6 +188,15 @@ void Feature::setCell(const QString &name, const QVariant &var, int index)
     }
     if ( index >= 0 && index < _track.size())
         _track[index]->setCell(name,var);
+}
+
+void Feature::setCell(quint32 colIndex, const QVariant &var, int index)
+{
+    if ( index < 0) {
+        _record->cell(colIndex, var, index);
+    }
+    if ( index >= 0 && index < _track.size())
+        _track[index]->setCell(colIndex,var);
 }
 
 ColumnDefinition Feature::columndefinition(const QString &name, bool coverages) const{
@@ -219,12 +256,11 @@ bool operator==(const Feature& f1, const Feature& f2) {
 
 FeatureInterface *Feature::clone() const
 {
-    Feature *f = new Feature(_record);
+    Feature *f = new Feature(_record->clone());
     for(const SPFeatureNode& node : _track){
         SPFeatureNode ptr(static_cast<FeatureNode *>(node->clone()));
         f->_track.push_back(ptr);
     }
-    f->_record = _record;
 
     return f;
 
@@ -247,6 +283,8 @@ quint32 Feature::trackSize() const
 {
     return _track.size();
 }
+
+
 
 Ilwis::FeatureInterface *createFeature(FeatureCoverage* fcoverage) {
     return new Feature(fcoverage);

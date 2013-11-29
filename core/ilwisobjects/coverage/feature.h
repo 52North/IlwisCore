@@ -20,8 +20,10 @@ public:
     virtual FeatureInterface *clone() const=0;
     virtual IlwisTypes ilwisType(qint32 index=0) const = 0;
     virtual quint32 trackSize() const = 0;
-    virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true) = 0;
+    virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true)  = 0;
     virtual void setCell(const QString& name, const QVariant& var, int index=-1) = 0;
+    virtual void setCell(quint32 colIndex, const QVariant& var, int index=-1) = 0;
+    virtual QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) = 0;
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
@@ -55,8 +57,10 @@ private:
     virtual FeatureInterface *clone() const;
     virtual IlwisTypes ilwisType(qint32 index=0) const ;
     virtual quint32 trackSize() const ;
+    QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) ;
     virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true) ;
     virtual void setCell(const QString& name, const QVariant& var, int index=-1);
+    virtual void setCell(quint32 colIndex, const QVariant& var, int index=-1);
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;
@@ -87,8 +91,8 @@ class KERNELSHARED_EXPORT Feature : public FeatureInterface {
 
 public:
     Feature();
-    Feature(const Ilwis::IFeatureCoverage &fcoverage) ;
-    Feature(const FeatureCoverage* fcoverage);
+    Feature(const Ilwis::IFeatureCoverage &fcoverage, int rec=iUNDEF) ;
+    Feature(const FeatureCoverage* fcoverage, int rec=iUNDEF);
     ~Feature();
 
     quint64 featureid() const;
@@ -98,21 +102,23 @@ public:
     FeatureInterface* clone() const;
     IlwisTypes ilwisType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
+    QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) ;
     QVariant cell(const QString& name, int index=-1, bool asRaw=true);
     void setCell(const QString& name, const QVariant& var, int index=-1);
+    void setCell(quint32 colIndex, const QVariant& var, int index=-1) ;
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;
 
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
-    Feature(const SPAttributeRecord& rec);
+    Feature(AttributeRecord *rec);
     Feature& operator=(const Feature& f) ; // no assignment , _featureid is unique
 
     static quint64 _idbase;
     quint64 _featureid; // unique
     std::vector<SPFeatureNode> _track;
-    SPAttributeRecord _record;
+    UPAttributeRecord _record;
     Geometry _invalidGeom;
 
 };
