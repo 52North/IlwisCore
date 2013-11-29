@@ -67,9 +67,9 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 void AttributeRecord::cell(quint32 colIndex, const QVariant &var, int index)
 {
     if ( index == -1) {
-        _coverageTable->cell(colIndex, _keyRecord);
+        _coverageTable->setCell(colIndex, _keyRecord, var);
     } else {
-        _indexTable->cell(colIndex,_keyRecord * index);
+        _indexTable->setCell(colIndex,_keyRecord * index, var);
     }
 }
 
@@ -83,17 +83,10 @@ QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
     return QVariant();
 }
 
-//void AttributeRecord::setTable(const ITable &tbl, const QString& keyColumn, int indexCount)
-//{
-//    if ( indexCount == -1) {
-//        _coverageTable = tbl;
-//        _keyColumn = keyColumn;
-//        _coverageIndex.clear();
-//    } else {
-//        _verticalIndex.resize(indexCount);
-//        _indexTable = tbl;
-//    }
-//}
+AttributeRecord *AttributeRecord::clone() const
+{
+    return new AttributeRecord(_keyRecord, _coverageTable);
+}
 
 bool AttributeRecord::isValid() const
 {

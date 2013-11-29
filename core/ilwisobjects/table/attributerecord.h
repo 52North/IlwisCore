@@ -22,6 +22,7 @@ public:
     QVariant cell(quint32 colIndex, int index, bool asRaw);
     //void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=COVERAGETABLE);
     bool isValid() const;
+    AttributeRecord *clone() const;
 private:
     void indexKeyColumn();
     void indexVerticalIndex(int index);
@@ -33,7 +34,7 @@ private:
 
 };
 
-typedef QSharedPointer<AttributeRecord> SPAttributeRecord;
+typedef std::unique_ptr<AttributeRecord> UPAttributeRecord;
 }
 
 #endif // ATTRIBUTETABLE_H
