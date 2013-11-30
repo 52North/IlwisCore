@@ -296,10 +296,11 @@ QString NamedIdentifierRange::value(const QVariant& v) const
 }
 
 SPDomainItem NamedIdentifierRange::item(quint32 iraw) const {
+    if ( isNumericalUndef(iraw) || iraw >= _byRaw.size() || iraw < 0)
+        return SPDomainItem();
+
     return _byRaw.at(iraw);
-//    if ( iter != _byRaw.end())
-//        return (*iter).second;
-//    return SPDomainItem();
+
 }
 
 SPDomainItem NamedIdentifierRange::item(const QString& nam) const{
