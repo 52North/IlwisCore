@@ -96,7 +96,7 @@ SPRange NumericDomain::getRange() const
 
 QString NumericDomain::value(const QVariant &v) const
 {
-    //TODO formatting according to domain(step size and valuetype, other specifiers belong at UI level).
+    //TODO: formatting according to domain(step size and valuetype, other specifiers belong at UI level).
 
     return v.toString();
 }

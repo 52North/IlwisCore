@@ -161,13 +161,13 @@ void IlwisObject::setCreateTime(const Time &time)
 
 QString IlwisObject::toString()
 {
-    //TODO
+    //TODO:
     return "";
 }
 
 bool IlwisObject::isEqual(const IlwisObject &obj) const
 {
-    //TODO overrule this method for object types that need to do more checking
+    //TODO: overrule this method for object types that need to do more checking
     return id() == obj.id();
 }
 

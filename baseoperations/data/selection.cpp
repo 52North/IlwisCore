@@ -132,7 +132,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     index = selector.indexOf("polygon=");
     if ( index != -1)
     {
-        //TODO
+        //TODO:
         copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("attribute=");

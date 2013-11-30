@@ -23,7 +23,7 @@ Geometry::Geometry(const GeometryType& geom, const ICoordinateSystem &csy) :
 }
 
 bool Geometry::isValid() const {
-    //TODO
+    //TODO:
     return true;
 }
 
@@ -63,7 +63,7 @@ Box2D<double> Geometry::envelope() {
         }
         case 4:
         {
-            //TODO create line3d
+            //TODO: create line3d
             const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
             _bounds = boost::geometry::return_envelope<Box2D<double> >(line);
             break;

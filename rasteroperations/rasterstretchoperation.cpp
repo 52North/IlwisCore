@@ -32,13 +32,13 @@ Ilwis::OperationImplementation *LinearStretchOperation::create(quint64 metaid,co
 }
 
 /**
- * \todo TODO do stretching histogram
+ * \todo TODO: do stretching histogram
  */
 bool LinearStretchOperation::stretch(IRasterCoverage toStretch)
 {
     NumericStatistics& statistics = _inputRaster->statistics();
 
-    // TODO separate histogram into own class (and move
+    // TODO: separate histogram into own class (and move
     // certain operations to it
 
     SPNumericRange rng = _inputRaster->datadef().range<NumericRange>();

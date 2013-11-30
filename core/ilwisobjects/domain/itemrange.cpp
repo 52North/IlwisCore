@@ -33,7 +33,7 @@ bool ItemRange::contains(const ItemRange &itemrng, bool ) const
 
 double ItemRange::ensure(double v, bool ) const
 {
-    //TODO  more advanced impl needed? may cost performance
+    //TODO:  more advanced impl needed? may cost performance
     return v;
 }
 
@@ -50,7 +50,7 @@ void ItemRange::addCreateItem(const QString& type, CreateItemFunc func){
 
 ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedPointer<ItemRange> &nr2)
 {
-    //TODO
+    //TODO:
     return 0;
 }
 

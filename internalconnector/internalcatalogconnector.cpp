@@ -39,7 +39,7 @@ bool InternalCatalogConnector::prepare()
 
 std::vector<QUrl> InternalCatalogConnector::sources(const QStringList &, int ) const
 {
-    //TODO full list??
+    //TODO: full list??
     return std::vector<QUrl>();
 }
 

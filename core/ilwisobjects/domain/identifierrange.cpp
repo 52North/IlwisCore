@@ -383,7 +383,7 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
         }
         _byOrder[i] = (*iter).second.staticCast<NamedIdentifier>();
     }
-    //TODO at this moment we should start checking all item in the master catalog using this domain/range.
+    //TODO: at this moment we should start checking all item in the master catalog using this domain/range.
     _byRaw.clear();
     _byName.clear();
     for(SPNamedIdentifier item : _byOrder){

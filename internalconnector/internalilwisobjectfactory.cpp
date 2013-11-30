@@ -328,7 +328,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                             double vmax = rec.field("maxv").value().toDouble();
                             double step = rec.field("resolution").value().toDouble();
                             int range_strict = rec.field("range_strict").value().toInt();
-                            // TODO, implement unit stuff
+                            // TODO:, implement unit stuff
                             //QString unit = rec.field("unit").value().toString();
                             if ( fmod(step,1.0) == 0 && step != 0)
                                 dv->range(new NumericRange(vmin, vmax,1));
@@ -352,7 +352,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                     }
 
                 } else if (table == "thematicdomain"){
-                    //TODO internal thematic domains
+                    //TODO: internal thematic domains
                 }
 
             }

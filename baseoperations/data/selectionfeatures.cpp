@@ -101,7 +101,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
     index = selector.indexOf("polygon=");
     if ( index != -1)
     {
-        //TODO
+        //TODO:
         copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("attribute=");
@@ -141,7 +141,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          outputFC->attributeTable(_attTable);
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
-        //TODO selections in features on bounding box
+        //TODO: selections in features on bounding box
      }
      return sPREPARED;
 }

@@ -73,7 +73,7 @@ public:
         QString query = "Update %1 set %2=" ;
         if ( ty < 256)
             query += "?";
-        else if ( ty == itSTRING) //TODO other value cases
+        else if ( ty == itSTRING) //TODO: other value cases
                query = "'?'";
         return executeStatement(query,col, values);
     }
@@ -133,11 +133,11 @@ private:
         } else if ( ty == itSTRING) {
             vType = "Text";
         } else {
-            //TODO other domain types
-            //TODO the data types are somewhat dependent on the sql version used by the database
-            //TODO and at this moment I allow the tables to be connected to external databases though teh default is internal
-            //TODO it may be an idea to let the connector do a type mapping (textual of course) from a generalized types
-            //TODO ilwis is probably quite modest in its type use so that should be possible.
+            //TODO: other domain types
+            //TODO: the data types are somewhat dependent on the sql version used by the database
+            //TODO: and at this moment I allow the tables to be connected to external databases though teh default is internal
+            //TODO: it may be an idea to let the connector do a type mapping (textual of course) from a generalized types
+            //TODO: ilwis is probably quite modest in its type use so that should be possible.
         }
         return vType;
     }

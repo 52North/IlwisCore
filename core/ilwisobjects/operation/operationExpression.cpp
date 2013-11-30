@@ -230,7 +230,7 @@ void  OperationExpression::parseSelectors(const QString& e, const SymbolTable &s
 }
 
 void OperationExpression::specialExpressions(const QString &e, const SymbolTable &symtab) {
-    //TODO other cases of special expressions
+    //TODO: other cases of special expressions
     _name = "assignment";
     _inParameters.push_back(Parameter(e.mid(e.indexOf("=")+1),itCOVERAGE, symtab));
 
@@ -437,7 +437,7 @@ QString OperationExpression::toString() const
         }
         expression += ")"    ;
     }
-    //TODO other cases
+    //TODO: other cases
 
     return expression;
 }

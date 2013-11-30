@@ -52,7 +52,7 @@ void IlwisContext::addSystemLocation(const QUrl &resource)
 
 void IlwisContext::removeSystemLocation(const QUrl &)
 {
-    //TODO
+    //TODO:
 }
 
 void IlwisContext::loadConfigFile(QFileInfo configFile){
@@ -78,7 +78,7 @@ void IlwisContext::init()
 
     QString working = settings.value("workingcatalog",QVariant(sUNDEF)).toString();
     if ( working == sUNDEF) {
-        //TODO not a problem but maybe some default behaviour can be implemented here (e.g. like user/appdata or something)
+        //TODO: not a problem but maybe some default behaviour can be implemented here (e.g. like user/appdata or something)
     }
     this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }

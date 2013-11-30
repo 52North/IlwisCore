@@ -128,7 +128,7 @@ public:
     }
 
     bool contains(const QString& value, bool inclusive = true) const {
-        //TODO
+        //TODO:
         return false;
     }
 

@@ -160,7 +160,7 @@ void Kernel::deleteTLS(const QString &key) {
 }
 
 QString Kernel::translate(const QString& s) const {
-    //TODO implement translator class here and load in in the application object
+    //TODO: implement translator class here and load in in the application object
     return s;
 }
 
@@ -235,9 +235,9 @@ void Kernel::endClock(const QString& label){
     clock_t end = clock();
     double total = (double)(end - _start_clock) / CLOCKS_PER_SEC;
     if ( label == "")
-        std::cout << "calc old in " << total << " seconds";
+        qDebug() << "calc old in " << total << " seconds";
     else
-        std::cout << label.toStdString() << ": "<< "calc old in " << total << " seconds" << "\n";
+        qDebug() << label << ": "<< "calc old in " << QString::number(total,'g', 7) << " seconds";
 
 }
 
