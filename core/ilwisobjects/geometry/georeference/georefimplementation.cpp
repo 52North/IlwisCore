@@ -16,6 +16,7 @@ GeoRefImplementation::GeoRefImplementation(const QString &type) : Identity(type)
 
 GeoRefImplementation::~GeoRefImplementation()
 {
+    _csy.set(0);
 }
 
 ICoordinateSystem GeoRefImplementation::coordinateSystem() const

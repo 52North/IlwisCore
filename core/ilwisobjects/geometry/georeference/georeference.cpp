@@ -25,6 +25,9 @@ GeoReference::GeoReference(const Resource& resource) : IlwisObject(resource)
 
 GeoReference::~GeoReference()
 {
+//    if ( coordinateSystem().isValid())
+//        qDebug() << "use count " << name() << " : " <<  mastercatalog()->usecount(coordinateSystem()->id());
+
 }
 
 GeoReference  *GeoReference::create(const QString& type,const Resource& resource) {

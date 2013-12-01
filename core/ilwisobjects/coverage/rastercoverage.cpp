@@ -24,6 +24,7 @@ RasterCoverage::RasterCoverage(const Resource& resource) : Coverage(resource){
 
 RasterCoverage::~RasterCoverage()
 {
+    _georef.set(0);
 }
 
 const IGeoReference& RasterCoverage::georeference() const

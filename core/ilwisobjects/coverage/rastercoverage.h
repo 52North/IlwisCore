@@ -37,7 +37,7 @@ public:
     RasterCoverage();
 
     /*!
-     * The constructor for a RasterCoverage with a certain Resource.<br>
+     * The constructor for a RasterCoverage with a a Resource that is registered in the mastercatalog.<br>
      * This resource must have a name and an Id.<br>
      * Code and description are optional.
      *

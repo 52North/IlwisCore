@@ -60,6 +60,9 @@ public:
             else {
                 _implementation = mastercatalog()->get(data->id());
             }
+        }else {
+            removeCurrent();
+            _implementation.reset();
         }
     }
 
