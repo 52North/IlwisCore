@@ -398,4 +398,13 @@ void MasterCatalog::dumpLookup() const
     }
 }
 
+quint32 MasterCatalog::usecount(quint64 id)
+{
+    auto iter = _lookup.find(id);
+    if ( iter != _lookup.end()) {
+        return iter.value().use_count();
+    }
+    return 0;
+}
+
 #endif
