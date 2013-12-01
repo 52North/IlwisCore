@@ -41,6 +41,7 @@ DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
 
 DataDefinition::~DataDefinition()
 {
+    _domain.set(0);
 }
 
 DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
