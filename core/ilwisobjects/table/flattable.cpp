@@ -281,7 +281,7 @@ bool FlatTable::initLoad(){
 
     bool ok = BaseTable::initLoad();
 
-    for(int i=0; i < columnCount() && _datagrid.size() > 0; ++i){
+    for(int i=0; ok && i < columnCount() && _datagrid.size() > 0; ++i){
         QVariant var = cell(i,0);
         if ( !var.isValid()) {
             initValuesColumn(columndefinition(i));
