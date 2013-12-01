@@ -22,6 +22,34 @@ Geometry::Geometry(const GeometryType& geom, const ICoordinateSystem &csy) :
 
 }
 
+
+Geometry::Geometry(const QString& wktString){
+    int dim = wktDimensions(wktString);
+    if ( wktString.indexOf("POLYGON") == 0) {
+        if (dim == 2){
+            Polygon polygon;
+            boost::geometry::read_wkt(wktString.toStdString(), polygon);
+            _geometry = polygon;
+        }
+    }else if ( wktString.indexOf("LINESTRING") == 0) {
+        if ( dim == 2){
+            Line2D<Coordinate2d> line;
+            boost::geometry::read_wkt(wktString.toStdString(), line);
+            _geometry = line;
+        }
+    } else if ( wktString.indexOf("POINT") == 0) {
+        if ( dim == 2){
+            Coordinate2d point;
+            boost::geometry::read_wkt(wktString.toStdString(), point);
+            _geometry = point;
+        } else if ( dim == 3) {
+            Coordinate point;
+            boost::geometry::read_wkt(wktString.toStdString(), point);
+            _geometry = point;
+        }
+    }
+}
+
 bool Geometry::isValid() const {
     //TODO:
     return true;
@@ -171,4 +199,11 @@ bool Geometry::within(const Geometry &geom) const{
         return boost::geometry::within(p, pol);
     }
     return false;
+}
+
+
+int Geometry::wktDimensions(const QString& wktString){
+    QStringList parts = wktString.split(",");
+    parts = parts[1].split(" ");
+    return parts.size();
 }
