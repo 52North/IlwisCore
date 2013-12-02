@@ -34,7 +34,7 @@ public:
     Box2D<double> envelope() ;
     Box2D<double> envelope() const;
 
-    IlwisTypes featureType() const ;
+    IlwisTypes geometryType() const ;
     Geometry transform(const ICoordinateSystem& csyTarger) const;
 
     bool within(const Geometry& geom) const;

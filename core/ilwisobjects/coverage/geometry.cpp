@@ -110,7 +110,7 @@ Box2D<double> Geometry::envelope() {
     return _bounds;
 }
 
-IlwisTypes Geometry::featureType() const {
+IlwisTypes Geometry::geometryType() const {
     switch(_geometry.which()){
     case 0:
     case 1:
