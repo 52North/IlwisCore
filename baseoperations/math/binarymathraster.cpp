@@ -79,9 +79,7 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
     if ( _inputGC1 == _inputGC2)
         ctx->_threaded = false;
 
-    bool resource = OperationHelperRaster::execute(ctx, binaryMath, _outputGC);
-
-    if (resource)
+    if (OperationHelperRaster::execute(ctx, binaryMath, _outputGC))
         return setOutput(ctx, symTable);
 
     return false;
