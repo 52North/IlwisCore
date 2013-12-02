@@ -52,7 +52,7 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
             pol.outer().push_back(c3);
             pol.outer().push_back(c4);
             pol.outer().push_back(c1);
-            _outfeatures->newFeature({pol});
+            _outfeatures->newFeature({pol,_csy});
         }
     }
 
