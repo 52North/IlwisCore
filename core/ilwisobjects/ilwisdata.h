@@ -51,9 +51,9 @@ public:
     }
 
     void set(T *data) {
+        removeCurrent();
         if ( data != nullptr) {
             if (!mastercatalog()->isRegistered(data->id())) {
-                removeCurrent();
                 _implementation.reset(data);
                 mastercatalog()->registerObject(_implementation);
             }
@@ -61,14 +61,18 @@ public:
                 _implementation = mastercatalog()->get(data->id());
             }
         }else {
-            removeCurrent();
             _implementation.reset();
         }
     }
 
-    template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
+    template<typename K> IlwisData<T>& assign(const IlwisData<K>& obj) {
          set(dynamic_cast<T *>(obj._implementation.get())) ;
         return *this;
+    }
+
+    template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
+         set(dynamic_cast<T *>(obj._implementation.get())) ;
+         return assign(obj);
     }
 
     T *operator->() {
