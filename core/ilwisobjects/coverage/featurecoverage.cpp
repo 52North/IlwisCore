@@ -39,9 +39,15 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 
 SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
-    SPFeatureI newfeature = createNewFeature(geom.ilwisType());
-    if (newfeature != nullptr)
-        newfeature->set(geom);
+    SPFeatureI newfeature = createNewFeature(geom.featureType());
+    if (newfeature != nullptr){
+        Geometry newgeom = geom;
+        if ( geom.coordinateSystem().isValid() && geom.coordinateSystem() != coordinateSystem()){
+            newgeom = geom.transform(geom.coordinateSystem());
+       }
+        newgeom.coordinateSystem(coordinateSystem());
+        newfeature->set(newgeom);
+    }
     return newfeature;
 }
 
