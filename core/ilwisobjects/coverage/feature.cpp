@@ -63,7 +63,7 @@ FeatureInterface *FeatureNode::clone() const
 }
 
 IlwisTypes FeatureNode::ilwisType(qint32) const{
-    return _geometry.ilwisType();
+    return _geometry.featureType();
 }
 
 quint32 FeatureNode::trackSize() const{
@@ -270,12 +270,12 @@ IlwisTypes Feature::ilwisType(qint32 index) const
 {
     if ( index != iUNDEF ) {
         if ( index < _track.size())
-            return geometry(index).ilwisType();
+            return geometry(index).featureType();
         return itUNKNOWN;
     }
     IlwisTypes type=itUNKNOWN;
     for(const SPFeatureNode& node : _track)
-        type |= node->geometry().ilwisType();
+        type |= node->geometry().featureType();
     return type;
 }
 
