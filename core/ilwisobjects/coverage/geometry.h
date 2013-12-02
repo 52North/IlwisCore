@@ -12,10 +12,11 @@ typedef IlwisData<CoordinateSystem> ICoordinateSystem;
 //WARNING: add new types to the back else the switch/case statements in the class have to be adapted
 typedef boost::variant<Pixel, Coordinate2d, Coordinate, Line2D<Coordinate2d>, Line2D<Pixel>, Polygon > GeometryType;
 
+
 class KERNELSHARED_EXPORT Geometry {
 public:
     Geometry() {}
-    Geometry(const GeometryType& geom, const ICoordinateSystem& csy = ICoordinateSystem()) ;
+    Geometry(const GeometryType& geom, const ICoordinateSystem& csy) ;
     Geometry(const QString& wktString);
 
     template<typename GeometryType> GeometryType toType() const{
@@ -33,7 +34,7 @@ public:
     Box2D<double> envelope() ;
     Box2D<double> envelope() const;
 
-    IlwisTypes ilwisType() const ;
+    IlwisTypes featureType() const ;
     Geometry transform(const ICoordinateSystem& csyTarger) const;
 
     bool within(const Geometry& geom) const;

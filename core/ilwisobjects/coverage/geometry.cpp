@@ -110,7 +110,7 @@ Box2D<double> Geometry::envelope() {
     return _bounds;
 }
 
-IlwisTypes Geometry::ilwisType() const {
+IlwisTypes Geometry::featureType() const {
     switch(_geometry.which()){
     case 0:
     case 1:
@@ -137,7 +137,7 @@ Geometry Geometry::transform(const ICoordinateSystem &csyTarget) const
     case 1:{
         Point2D<double> p = (boost::get<Point2D<double> >(_geometry));
         Point2D<double> pnt(csyTarget->coord2coord(_csy, Coordinate2d(p.x(), p.y()))) ;
-        return Geometry(pnt);
+        return Geometry(pnt, csyTarget);
     }
     case 2:{
         Point3D<double> p = (boost::get<Point3D<double> >(_geometry));
