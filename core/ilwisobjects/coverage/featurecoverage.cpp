@@ -54,7 +54,7 @@ SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
 SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
-    SPFeatureI newfeature = createNewFeature(existingFeature->ilwisType());
+    SPFeatureI newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)
         return newfeature;
 
