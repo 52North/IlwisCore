@@ -19,7 +19,6 @@ public:
     Geometry() {}
     Geometry(const GeometryType& geom, const ICoordinateSystem& csy) ;
     Geometry(const QString &wkt, const ICoordinateSystem& csy = ICoordinateSystem()) ;
-    Geometry(const QString& wktString);
 
     template<typename GeometryType> GeometryType toType() const{
         return boost::get<GeometryType>(_geometry);
@@ -37,7 +36,7 @@ public:
     Box2D<double> envelope() const;
 
     bool fromWKT(const QString &wkt);
-    QString toWKT() const;
+    const QString toWKT() const;
 
     IlwisTypes geometryType() const ;
     Geometry transform(const ICoordinateSystem& csyTarger) const;
@@ -49,7 +48,7 @@ private:
     GeometryType _geometry;
     Box2D<double> _bounds;
     ICoordinateSystem _csy;
-    int wktDimensions(const QString &wktString);
+    int wktDimensions(const QString &wkt);
 };
 }
 

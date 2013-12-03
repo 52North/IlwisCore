@@ -30,34 +30,6 @@ Geometry::Geometry(const QString &wkt, const ICoordinateSystem &csy):
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Geometry",wkt);
 }
 
-
-Geometry::Geometry(const QString& wktString){
-    int dim = wktDimensions(wktString);
-    if ( wktString.indexOf("POLYGON") == 0) {
-        if (dim == 2){
-            Polygon polygon;
-            boost::geometry::read_wkt(wktString.toStdString(), polygon);
-            _geometry = polygon;
-        }
-    }else if ( wktString.indexOf("LINESTRING") == 0) {
-        if ( dim == 2){
-            Line2D<Coordinate2d> line;
-            boost::geometry::read_wkt(wktString.toStdString(), line);
-            _geometry = line;
-        }
-    } else if ( wktString.indexOf("POINT") == 0) {
-        if ( dim == 2){
-            Coordinate2d point;
-            boost::geometry::read_wkt(wktString.toStdString(), point);
-            _geometry = point;
-        } else if ( dim == 3) {
-            Coordinate point;
-            boost::geometry::read_wkt(wktString.toStdString(), point);
-            _geometry = point;
-        }
-    }
-}
-
 bool Geometry::isValid() const {
     //TODO:
     return true;
@@ -71,30 +43,42 @@ Box2D<double> Geometry::envelope() const{
 }
 
 bool Geometry::fromWKT(const QString &wkt){
-    //        typedef model::ring< point > ring;
-    //        typedef model::polygon< point > polygon;
-    //        typedef model::multi_polygon< polygon > polygons;
-    //        typedef model::box< point > box;
-    if (!wkt.left(5).compare("POINT",Qt::CaseInsensitive)){
-        if (wkt.left(8).right(3).contains("Z",Qt::CaseInsensitive)){
-//            boost::geometry::coordinate_system<> csy;
-//            typedef boost::geometry::model::point<double,3,csy> point;
-//            boost::geometry::read_wkt(wkt,p);
-//            std::cout << boost::geometry::dsv(p) << std::endl;
-        }
-
-    }
-
-    if (!wkt.left(7).compare("POLYGON",Qt::CaseInsensitive)){
-        Polygon poly;
-        boost::geometry::read_wkt(wkt.toStdString(), poly);
-        boost::geometry::correct(poly);
-        _geometry = poly;
-    }
+    int dim = wktDimensions(wkt);
+    if ( wkt.indexOf("POLYGON", 0, Qt::CaseInsensitive) == 0) {
+        if (dim == 2){
+            Polygon polygon;
+            boost::geometry::read_wkt(wkt.toStdString(), polygon);
+            boost::geometry::correct(polygon);
+            _geometry = polygon;
+        }else
+            return false;
+    }else if ( wkt.indexOf("LINESTRING", 0, Qt::CaseInsensitive) == 0) {
+        if ( dim == 2){
+            Line2D<Coordinate2d> line;
+            boost::geometry::read_wkt(wkt.toStdString(), line);
+            boost::geometry::correct(line);
+            _geometry = line;
+        }else
+            return false;
+    } else if ( wkt.indexOf("POINT", 0, Qt::CaseInsensitive) == 0) {
+        if ( dim == 2){
+            Coordinate2d point;
+            boost::geometry::read_wkt(wkt.toStdString(), point);
+            boost::geometry::correct(point);
+            _geometry = point;
+        } else if ( dim == 3) {
+            Coordinate point;
+            boost::geometry::read_wkt(wkt.toStdString(), point);
+            boost::geometry::correct(point);
+            _geometry = point;
+        }else
+            return false;
+    }else
+        return false;
     return true;
 }
 
-QString Geometry::toWKT() const{
+const QString Geometry::toWKT() const{
     if (!_bounds.isValid()) {
         std::stringstream ret;
         try{
@@ -116,8 +100,7 @@ QString Geometry::toWKT() const{
                     break;
                 }
                 case 4:{
-                    //TODO create line3d
-                    ret << boost::geometry::wkt(boost::get<Line2D<Coordinate2d> >(_geometry));
+                    ret << boost::geometry::wkt(boost::get<Line2D<Pixel> >(_geometry));
                     break;
                 }
                 case 5:{
@@ -278,8 +261,12 @@ bool Geometry::within(const Geometry &geom) const{
 }
 
 
-int Geometry::wktDimensions(const QString& wktString){
-    QStringList parts = wktString.split(",");
-    parts = parts[1].split(" ");
-    return parts.size();
+int Geometry::wktDimensions(const QString &wkt){
+    if(-1 != wkt.indexOf(" ZM",5,Qt::CaseInsensitive)){
+        return 4;
+    }else if ((-1 != wkt.indexOf(" Z",5,Qt::CaseInsensitive)) ||  (-1 != wkt.indexOf(" M",5,Qt::CaseInsensitive))){
+        return 3;
+    }else{
+        return 2;
+    }
 }

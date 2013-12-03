@@ -15,6 +15,7 @@ public:
     virtual quint64 featureid() const = 0;
     virtual bool isValid() const = 0 ;
     virtual const Geometry& geometry(quint32 index=0) const = 0;
+    virtual Geometry& geometry(quint32 index=0) = 0;
     virtual void set(const Geometry& geom, int index = 0) = 0;
     QVariant operator()(const QString& name, int index = -1, bool asRaw=true);
     virtual FeatureInterface *clone() const=0;
@@ -52,7 +53,8 @@ private:
 
     virtual quint64 featureid() const ;
     virtual bool isValid() const  ;
-    virtual const Geometry& geometry(quint32 index=0) const ;
+    virtual const Ilwis::Geometry &geometry(quint32 index=0) const;
+    virtual Ilwis::Geometry &geometry(quint32 index=0);
     virtual void set(const Geometry& geom, int index = 0) ;
     virtual FeatureInterface *clone() const;
     virtual IlwisTypes geometryType(qint32 index=0) const ;
@@ -97,6 +99,7 @@ public:
 
     quint64 featureid() const;
     bool isValid() const ;
+    Geometry& geometry(quint32 index=0);
     const Geometry& geometry(quint32 index=0) const;
     void set(const Geometry& geom, int index = 0);
     FeatureInterface* clone() const;
