@@ -9,6 +9,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT Symbol{
 public:
     Symbol(int scope=iUNDEF, quint64 tp=itUNKNOWN, const QVariant& v=QVariant()) ;
+    virtual ~Symbol();
     quint64 _type;
     int _scope;
     QVariant _var;
@@ -21,6 +22,7 @@ class KERNELSHARED_EXPORT SymbolTable //: private QHash<QString, Symbol>
 public:
     enum GetAction { gaKEEP, gaREMOVE, gaREMOVEIFANON};
     SymbolTable();
+    virtual ~SymbolTable();
 
     void addSymbol(const QString& name, int scope, quint64 tp, const QVariant &v=QVariant());
     QVariant getValue(const QString& name, int scope=1000) const;

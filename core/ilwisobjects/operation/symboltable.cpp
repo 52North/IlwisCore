@@ -22,6 +22,10 @@ SymbolTable::SymbolTable() //:
 {
 }
 
+SymbolTable::~SymbolTable(){
+    _symbols.clear();
+}
+
 void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QVariant& v)
 {
     QVariant var = getValue(name,scope); // do we already have it?
@@ -180,6 +184,11 @@ QString SymbolTable::newAnonym()
 
 Symbol::Symbol(int scope, quint64 tp, const QVariant &v) : _type(tp), _scope(scope), _var(v)
 {
+}
+
+Symbol::~Symbol()
+{
+
 }
 
 bool Symbol::isValid() const
