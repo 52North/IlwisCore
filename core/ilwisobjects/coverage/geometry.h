@@ -3,6 +3,7 @@
 
 #include <boost/variant.hpp>
 #include "boostext.h"
+#include <QString>
 
 namespace Ilwis {
 
@@ -15,6 +16,7 @@ class KERNELSHARED_EXPORT Geometry {
 public:
     Geometry() {}
     Geometry(const GeometryType& geom, const ICoordinateSystem& csy = ICoordinateSystem()) ;
+    Geometry(const QString &wkt, const ICoordinateSystem& csy = ICoordinateSystem()) ;
 
     template<typename GeometryType> GeometryType toType() const{
         return boost::get<GeometryType>(_geometry);
@@ -30,6 +32,9 @@ public:
     bool isValid() const ;
     Box2D<double> envelope() ;
     Box2D<double> envelope() const;
+
+    bool fromWKT(const QString &wkt);
+    QString toWKT() const;
 
     IlwisTypes ilwisType() const ;
     Geometry transform(const ICoordinateSystem& csyTarger) const;
