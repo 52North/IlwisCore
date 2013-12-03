@@ -42,6 +42,10 @@ public:
        _implementation = std::dynamic_pointer_cast<T>(obj._implementation);
     }
 
+    IlwisData(const IlwisData& obj) {
+       _implementation = obj._implementation;
+    }
+
 
 
     ~IlwisData() {
@@ -66,12 +70,18 @@ public:
     }
 
     template<typename K> IlwisData<T>& assign(const IlwisData<K>& obj) {
-         set(dynamic_cast<T *>(obj._implementation.get())) ;
+        if ( _implementation && obj->ilwisType() == _implementation->ilwisType())
+            set(static_cast<T *>(obj._implementation.get())) ;
+        else
+            set(dynamic_cast<T *>(obj._implementation.get())) ;
         return *this;
     }
 
     template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
-         set(dynamic_cast<T *>(obj._implementation.get())) ;
+         return assign(obj);
+    }
+
+    IlwisData& operator=(const IlwisData& obj) {
          return assign(obj);
     }
 
