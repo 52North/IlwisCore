@@ -188,7 +188,7 @@ bool NumericItemRange::alignWithParent(const IDomain &dom)
     }
 
     for(int i=0; i < _items.size(); ++i) {
-        // TODO: a bit more flexible in the future(maybe?) with overlapping ranges; absent step sizes
+        // TODO:: a bit more flexible in the future(maybe?) with overlapping ranges; absent step sizes
         auto iter = parentItems.find(_items[i]->name());
         if ( iter == parentItems.end()){
             return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_items[i]->name());

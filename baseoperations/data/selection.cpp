@@ -36,6 +36,20 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
 
+    quint32 rec = 0;
+    quint32 colIndex = iUNDEF;
+
+    std::unordered_map<quint32, quint32> coverageIndex;
+    if ( _attribColumn != "") {
+        AttributeTable tbl = inputRaster->attributeTable();
+        std::vector<QVariant> values = tbl->column(COVERAGEKEYCOLUMN);
+        for(const QVariant& val : values) {
+            coverageIndex[val.toInt()] = rec++;
+        }
+        colIndex  = tbl->columnIndex(_attribColumn);
+    }
+
+
     BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
         Box3D<qint32> inpbox = box.size();
         inpbox += _base;
@@ -45,17 +59,13 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterOut(outputRaster, box);
         PixelIterator iterIn(inputRaster, inpbox);
 
-        AttributeRecord rec;
-        if ( _attribColumn != "")
-            rec = AttributeRecord(inputRaster->attributeTable(), COVERAGEKEYCOLUMN);
-
         double v_in = 0;
         for_each(iterOut, iterOut.end(), [&](double& v){
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
-                if ( rec.isValid()) {
-                    quint32 colIndex  = rec.columnIndex(_attribColumn);
-                    QVariant var = rec.cellByKey(v_in,colIndex);
+                if ( _attribColumn != "") {
+                    quint32 rec = coverageIndex[v_in];
+                    QVariant var = inputRaster->attributeTable()->cell(colIndex, rec);
                     v = var.toDouble();
                     if ( isNumericalUndef(v))
                         v = rUNDEF;
@@ -122,7 +132,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     index = selector.indexOf("polygon=");
     if ( index != -1)
     {
-        //TODO
+        //TODO:
         copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("attribute=");

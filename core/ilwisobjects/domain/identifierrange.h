@@ -3,6 +3,7 @@
 
 #include "Kernel_global.h"
 #include <QVector>
+#include <unordered_map>
 
 namespace Ilwis {
 
@@ -346,7 +347,7 @@ protected:
 private:
     bool alignWithParent(const IDomain& dom);
     std::map<QString, SPNamedIdentifier> _byName;
-    std::map<quint32, SPNamedIdentifier> _byRaw;
+    std::vector<SPNamedIdentifier> _byRaw;
     std::vector<SPNamedIdentifier> _byOrder;
 };
 

@@ -72,7 +72,7 @@ bool Version::supportsModuleInterfaceVersion(const QString &version, const QStri
         return true;
 
     if ( throwError) {
-        QString sVers = "TODO";
+        QString sVers = "TODO:";
         throw ErrorObject(TR("This module interface version( %1) of the plugin %2 is not supported").arg(sVers).arg(module));
     }
     return false;

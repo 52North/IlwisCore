@@ -23,6 +23,7 @@ public:
     //@override
     bool createTable();
 
+    void newRecord();
     //@override
     std::vector<QVariant> record(quint32 n) const ;
 

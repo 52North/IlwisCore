@@ -63,15 +63,15 @@ IlwisObject *IlwisObject::create(const Resource& resource) {
     return 0;
 }
 
-void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
+bool IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
     Locker lock(_mutex);
     if (!url.isValid()){
         ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
-        return;
+        return false;
     }
 
     if ( isReadOnly())
-        return;
+        return false;
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
     if ( !resource.isValid()) {
@@ -83,13 +83,15 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
-        return;
+        return false;
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
     if (!conn)
-        return;
+        return false;
     setConnector(conn, cmode);
     if ( name() == sUNDEF)
         setName(resource.name());
+
+    return true;
 
 }
 
@@ -161,13 +163,13 @@ void IlwisObject::setCreateTime(const Time &time)
 
 QString IlwisObject::toString()
 {
-    //TODO
+    //TODO:
     return "";
 }
 
 bool IlwisObject::isEqual(const IlwisObject &obj) const
 {
-    //TODO overrule this method for object types that need to do more checking
+    //TODO: overrule this method for object types that need to do more checking
     return id() == obj.id();
 }
 

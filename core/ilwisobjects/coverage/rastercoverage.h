@@ -8,7 +8,7 @@ namespace Ilwis {
 class Resource;
 class Grid;
 /*!
- * \brief The RasterCoverage class The RasterCoverage class
+ * \brief The RasterCoverage class
  *
  * In Ilwis-Objects remote sensing imagery is accessed through raster-coverages. In this context a raster-coverage is a stack of 2D rasters (1..n)
  * in which all layers of the stack have the same raster size and pixel size. The z component is referred to as the ‘layer-index’ or ‘index’.  A layer
@@ -37,9 +37,12 @@ public:
     RasterCoverage();
 
     /*!
-     * The constructor for a RasterCoverage with a certain Resource
+     * The constructor for a RasterCoverage with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional.
      *
      * \sa IlwisObject
+     * \sa Resource
      * \param resource The resource to use
      */
     RasterCoverage(const Resource& resource);
@@ -50,7 +53,8 @@ public:
     IlwisTypes ilwisType() const;
 
     /*!
-     * copies (clones) this rastercoverage to a new raster with a new unique id
+     * Copies (clones) this rastercoverage to a new raster with a new unique id.<br>
+     * Also copies all of the binary data.
      *
      * \return a copy of this rastercoverage
      */
@@ -63,30 +67,30 @@ public:
     DataDefinition& datadef();
 
     /*!
-     * Returns the IGeoReference of this RasterCoverage
-     * can be null if it is not set
+     * Returns a reference to the IGeoReference of this RasterCoverage.<br>
+     * Can be null if it is not set.
      *
      * \return the georeference
      */
     const Ilwis::IGeoReference &georeference() const;
 
     /*!
-     * \brief Replaces the existing IGeoReference with a new one
+     * \brief Replaces the existing IGeoReference with a new one.
      *
-     * replaces the old IGeoReference with the new one, if the georeference is not null
-     * it also resets the binary data.
-     * if the georeference is valid it computes and sets the new coordinatesystem and the new size
+     * Replaces the old IGeoReference with the new one, if the georeference is not null.<br>
+     * It also resets the binary data because the new georeference can have a different size, making the original data invalid.<br>
+     * If the georeference is valid it computes and sets the new coordinatesystem and the new size.
      *
      * \param grf the new georeference
      */
     void georeference(const IGeoReference& grf) ;
 
     /*!
-     * Returns the size of this RasterCoverage
+     * Returns the size of this RasterCoverage<br>
      *
-     * A size can, depending on the raster either be 2D or 3D
-     * size in row-col for 2D
-     * and in row-col-heigth for 3D
+     * A size can, depending on the raster either be 2D or 3D.<br>
+     * Size in row-col for 2D.<br>
+     * And in row-col-heigth for 3D.
      *
      * \sa Size
      * \return the size of this RasterCoverage
@@ -94,9 +98,11 @@ public:
     Size size() const;
 
     /*!
-     * assigns a new size to this RasterCoverage
-     * size in row-col for 2D
-     * and in row-col-heigth for 3D
+     * Assigns a new size to this RasterCoverage.<br>
+     * Size in row-col for 2D.<br>
+     * And in row-col-heigth for 3D.<br>
+     * The Size cannot be changed if this rastercoverage is readonly.<br>
+     * Also changes the size of the georeference.
      *
      * \sa Size
      * \param sz the new size, must always be positive or undefined
@@ -106,8 +112,8 @@ public:
     /*!
      * \brief copyBinary Copies the binary data of this RasterCoverage
      *
-     * The data will be coppied on the supplied raster, the index decides the starting point of the copy,
-     * and the size of the raster decides the endpoint. only works when both rasters have the same geometrie and domain
+     * The data will be coppied on the supplied raster, the index decides the starting layer of the copy,<br>
+     * and the size of the raster decides the endpoint. only works when both rasters have the same geometrie and domain<br>
      *
      * \param raster The target of the binary copy
      * \param index The starting point of the copy
@@ -115,9 +121,9 @@ public:
     void copyBinary(const IlwisData<RasterCoverage> &raster, int index);
 
     /*!
-     * Gives the value at a certain coordinate
-     * The coordinate must fit in the raster, and can either be 2D or 3D
-     * This function will use the georeference to transform the coordinates in pixels
+     * transforms a certain coordinate to relevant the value<br>
+     * The coordinate must fit in the raster, and can either be 2D or 3D<br>
+     * This function will use the georeference to transform the coordinates in pixels<br>
      * and use those pixels to call the pix2value()
      *
      * \sa pix2value()
@@ -133,11 +139,14 @@ public:
     }
 
     /*!
-     * Gives the value of a certain pixel in the grid
-     * The pixel point, be it 2D or 3D must fit in envelope of this coverage for this function to return an actual value,
-     * if the pixel does not fit in the rastersize, it will return undefined.
-     * This function requires a valid georeference and a non null grid, if this is not the case undefined will be returned
-     *
+     * transforms the value of a certain pixel in the grid to the relevant value<br>
+     * The pixel point, be it 2D or 3D must fit in envelope of this coverage for this function to return an actual value,<br>
+     * if the pixel does not fit in the rastersize, it will return undefined.<br>
+     * if the grid is null, it will also return undefined<br>
+     * This function requires a valid georeference and a non null grid, if this is not the case undefined will be returned<br>
+     *<br>
+     * this function is rather inefficient, see PixelIterator if you require efficiency (recommended if you want to retrieve multiple pixels)
+     * \sa PixelIterator
      * \param pix the pixel
      * \return the value at the pixel or undefined
      */

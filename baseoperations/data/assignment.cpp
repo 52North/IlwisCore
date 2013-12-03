@@ -48,7 +48,7 @@ bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
         PixelIterator iterOut(outputRaster, box);
 
         double v_in = 0;
-        //TODO in principle the stl::copy should work but as yet there is no overload yet(20130621) for
+        //TODO: in principle the stl::copy should work but as yet there is no overload yet(20130621) for
         // + and - operator which is required for this
         //stl::copy(iterIn, iterIn.end(), iterOut);
         for_each(iterOut, iterOut.end(), [&](double& v){

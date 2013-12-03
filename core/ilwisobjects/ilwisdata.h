@@ -51,21 +51,28 @@ public:
     }
 
     void set(T *data) {
+        removeCurrent();
         if ( data != nullptr) {
             if (!mastercatalog()->isRegistered(data->id())) {
-                removeCurrent();
                 _implementation.reset(data);
                 mastercatalog()->registerObject(_implementation);
             }
             else {
                 _implementation = mastercatalog()->get(data->id());
             }
+        }else {
+            _implementation.reset();
         }
+    }
+
+    template<typename K> IlwisData<T>& assign(const IlwisData<K>& obj) {
+         set(dynamic_cast<T *>(obj._implementation.get())) ;
+        return *this;
     }
 
     template<typename K> IlwisData<T>& operator=(const IlwisData<K>& obj) {
          set(dynamic_cast<T *>(obj._implementation.get())) ;
-        return *this;
+         return assign(obj);
     }
 
     T *operator->() {
@@ -176,6 +183,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
                 data->prepare();
+                data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);
@@ -204,6 +212,7 @@ public:
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
                 data->prepare();
+                data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
                 mastercatalog()->registerObject(_implementation);

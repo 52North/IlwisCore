@@ -26,11 +26,27 @@ const IOperationMetaData &OperationImplementation::metadata() const
     return _metadata;
 }
 
+OperationExpression OperationImplementation::expression() const
+{
+    return _expression;
+}
+
+bool OperationImplementation::isValid() const
+{
+    return _expression.isValid() && _metadata.isValid();
+}
+
 //-----------------------------------------------------------------------------
 Operation::Operation(const Ilwis::OperationExpression &e)
 {
     _operation.reset(commandhandler()->create(e));
 
+}
+
+Operation& Operation::operator=(const Operation& op){
+    if (op.isValid())
+        _operation.reset(commandhandler()->create(op._operation->expression()));
+    return *this;
 }
 
 Operation::~Operation() {
@@ -55,10 +71,9 @@ bool Operation::isValid() const
     return _operation->isValid();
 }
 
-bool OperationImplementation::isValid() const
-{
-    return _expression.isValid() && _metadata.isValid();
-}
+
+
+
 
 
 

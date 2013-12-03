@@ -22,6 +22,7 @@ Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 
 Coverage::~Coverage()
 {
+    _coordinateSystem.set(0);
 }
 
 ICoordinateSystem Coverage::coordinateSystem() const

@@ -25,7 +25,7 @@ Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id)
 
 QString Ilwis::IssueObject::message() const
 {
-    //TODO some control over the output format of this string(should it have time or not?, location etc)
+    //TODO: some control over the output format of this string(should it have time or not?, location etc)
     return _message;
 }
 
@@ -163,12 +163,12 @@ void IssueLogger::addCodeInfo(quint64 issueid, int line, const QString &func, co
 
 quint64 IssueLogger::logSql(const QSqlError &err)
 {
-    //TODO more info about the error for databases
+    //TODO: more info about the error for databases
    return log(err.text(), IssueObject::itError);
 }
 
 QString IssueLogger::popList(int, int) {
-    //TODO prints <number> of items of the stack
+    //TODO: prints <number> of items of the stack
     return "?";
 }
 
@@ -197,14 +197,14 @@ void IssueLogger::copy(IssueLogger &other)
 }
 
 QString IssueLogger::popfirst(int) {
-    //TODO filtering on issue type
+    //TODO: filtering on issue type
     if ( _issues.size() > 0)
         return _issues.dequeue().message();
     return "?";
 }
 
 QString IssueLogger::poplast(int) {
-   //TODO filtering on issue type
+   //TODO: filtering on issue type
     if ( _issues.size() >0 )
         return _issues.takeLast().message();
     return "?";

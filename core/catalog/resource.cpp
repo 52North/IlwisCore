@@ -225,7 +225,7 @@ void Resource::setUrl(const QUrl &url)
             QString fpath = fragment.split("=").back();
             bool ok;
             int index = fpath.toInt(&ok);
-            if ( ok) { //TODO other cases than indexes; no example yet so postponed till there is one
+            if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
                 QString name = QString("%1_%2").arg(inf.fileName()).arg(index);
                 setName(name, false);
                 addContainer(QUrl(url.toString(QUrl::RemoveFragment)));

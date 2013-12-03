@@ -30,7 +30,7 @@ public:
     IndexedIdentifier(const QString& label, quint32 ind=0, qint32 cnt =iUNDEF);
 
     /**
-     * Query for the name of this IndexedIdentifier
+     * Query for the name of this IndexedIdentifier<br>
      * normally the name equalls prefix+index(raw)
      *
      * @return the name of this object
@@ -61,7 +61,7 @@ public:
     void setPrefix(const QString& pf);
 
     /**
-     * override of operator==
+     * override of operator==<br>
      *
      * an IndexedIdentifier is the equal to another if both the prefix and the raw are the same
      *

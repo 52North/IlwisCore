@@ -84,6 +84,6 @@ void ProjectionImplementationInternal::setCoordinateSystem(ConventionalCoordinat
 
 QString ProjectionImplementationInternal::toProj4() const
 {
-    return sUNDEF; // TODO
+    return sUNDEF; // TODO:
 
 }

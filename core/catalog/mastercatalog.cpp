@@ -54,7 +54,7 @@ bool MasterCatalog::prepare()
 {
     QSettings settings("52n","ilwis4");
 
-    //TODO this piece code must move to a more appropriate place; at this moment it
+    //TODO: this piece code must move to a more appropriate place; at this moment it
     // is not guaranteed that the catalogconnectors are already known due to the order of the plugins
     // as they are loaded.
 //    QString local = settings.value("localfilesystem",QVariant(sUNDEF)).toString();
@@ -396,6 +396,15 @@ void MasterCatalog::dumpLookup() const
     for(auto pr : _lookup) {
         qDebug() << pr->name();
     }
+}
+
+quint32 MasterCatalog::usecount(quint64 id)
+{
+    auto iter = _lookup.find(id);
+    if ( iter != _lookup.end()) {
+        return iter.value().use_count();
+    }
+    return 0;
 }
 
 #endif

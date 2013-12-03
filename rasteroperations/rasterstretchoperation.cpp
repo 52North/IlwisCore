@@ -32,24 +32,24 @@ Ilwis::OperationImplementation *LinearStretchOperation::create(quint64 metaid,co
 }
 
 /**
- * \todo TODO do stretching histogram
+ * \todo TODO: do stretching histogram
  */
 bool LinearStretchOperation::stretch(IRasterCoverage toStretch)
 {
     NumericStatistics& statistics = _inputRaster->statistics();
-    statistics.calculate(begin(_inputRaster), end(_inputRaster), NumericStatistics::pHISTOGRAM);
 
-    // TODO separate histogram into own class (and move
+    // TODO: separate histogram into own class (and move
     // certain operations to it
-    std::vector<NumericStatistics::HistogramBin> histogram = statistics.histogram();
-
 
     SPNumericRange rng = _inputRaster->datadef().range<NumericRange>();
+    double valueRange = rng->distance();
     PixelIterator iterInput(_inputRaster);
 
     std::for_each(begin(_outputRaster), end(_outputRaster), [&](double& v) {
         double vin = *iterInput;
-        v = statistics.stretchLinear(vin, rng->distance());
+        if(vin >= _limits.first && vin <= _limits.second) {
+            v = statistics.stretchLinear(vin, valueRange);
+        }
         ++iterInput;
     });
 
@@ -77,6 +77,21 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
     QString intputName = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
+    int parameterCount = _expression.parameterCount();
+    double lower=rUNDEF, upper=rUNDEF;
+    lower = _expression.parm(1).value().toDouble();
+    if (parameterCount==2 && lower < 0){
+        ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),  _expression.parm(0).value());
+        return sPREPAREFAILED;
+    }
+    if (parameterCount == 3) {
+        upper = _expression.parm(2).value().toDouble();
+        if ( upper < lower) {
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),  _expression.parm(0).value());
+            return sPREPAREFAILED ;
+        }
+    }
+
     if (!_inputRaster.prepare(intputName, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,intputName,"");
         return sPREPAREFAILED;
@@ -89,9 +104,17 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
     }
     _outputRaster->georeference(_inputRaster->georeference());
     _outputRaster->setCoordinateSystem(_inputRaster->coordinateSystem());
-
-
     _outputRaster->setName(outputName);
+
+    NumericStatistics& statistics = _inputRaster->statistics();
+    //statistics.binCount(10);
+    statistics.calculate(begin(_inputRaster), end(_inputRaster), NumericStatistics::pHISTOGRAM);
+
+    if (upper == rUNDEF) {
+        double percent = lower;
+        _limits = statistics.stretchLimits(percent);
+    } else
+        _limits = std::pair<double, double>(lower, upper);
 
     return sPREPARED;
 }
@@ -103,29 +126,19 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
  */
 quint64 LinearStretchOperation::createMetadata()
 {
-    QString url = QString("ilwis://operations/linearstretch");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","rescale input values to an output map");
-    resource.addProperty("syntax","stretch(raster");
-    resource.addProperty("description",TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
-    resource.addProperty("inparameters","1");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("rastercoverage to stretch"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain item or numeric"));
+    OperationResource operation({"ilwis://operations/linearstretch"});
+    operation.setLongName("rescale input values to an output map");
+    operation.setSyntax("stretch(raster");
+    operation.setDescription(TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
+    operation.setInParameterCount({2,3});
+    operation.addInParameter(0, itRASTER, TR("rastercoverage to stretch"), TR("input rastercoverage with domain item or numeric"));
+    operation.addInParameter(1, itNUMERIC, TR("percentage|number"));
+    operation.addInParameter(2, itNUMERIC, TR("number"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("output rastercoverage stretched"));
 
-    // TODO use intput parameter(s) to control stretch range
-
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_desc",TR("output rastercoverage stretched"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
-
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 
 

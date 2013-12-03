@@ -51,7 +51,7 @@ public:
         }
 
         if ( res && outputFC.isValid()) {
-            //TODO better handling for multiple feature types
+            //TODO: better handling for multiple feature types
             if ( !tbl.isValid())
                 return false;
             for(int i=0; i < tbl->columnCount(); ++i ){

@@ -95,7 +95,8 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
         bool wasAnonymous = object->isAnonymous();
         QUrl url = context()->workingCatalog()->location().toString() + "/" + result;
         object->setName(result);
-        object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
+        if(!object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT))
+            return;
         object->setCreateTime(Ilwis::Time::now());
         if ( wasAnonymous)
             mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});

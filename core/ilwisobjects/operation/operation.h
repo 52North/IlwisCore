@@ -16,6 +16,7 @@ public:
     const IOperationMetaData& metadata() const;
     virtual bool execute(ExecutionContext *ctx, SymbolTable& symTable)=0;
     virtual bool isValid() const;
+    OperationExpression expression() const;
 
 protected:
     IOperationMetaData _metadata;
@@ -34,6 +35,8 @@ public:
     virtual ~Operation();
 
     Operation(const Ilwis::OperationExpression &e);
+
+    Operation& operator=(const Operation& op);
     SPOperationImplementation& operator->();
     const SPOperationImplementation& operator->() const;
     bool isValid() const;

@@ -74,9 +74,12 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
             return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
         }
     }
-    bool resource = OperationHelperRaster::execute(ctx, binaryMath, _outputGC);
+    // TODO:, research this exception
+    // because of the swapping mechanism it is probably detrimental to use multithread here as blocks may continously be swapping
+    if ( _inputGC1 == _inputGC2)
+        ctx->_threaded = false;
 
-    if (resource)
+    if (OperationHelperRaster::execute(ctx, binaryMath, _outputGC))
         return setOutput(ctx, symTable);
 
     return false;

@@ -144,7 +144,8 @@ bool OperationHelperRaster::resample(IRasterCoverage& raster1, IRasterCoverage& 
         if(!commandhandler()->execute(expr,&ctxLocal,symtabLocal))
             return false;
         QVariant var = symtabLocal.getValue(res.name());
-        raster2 = var.value<IRasterCoverage>();
+        IRasterCoverage outRaster = var.value<IRasterCoverage>();
+        raster2.assign(outRaster);
     }
     return true;
 }

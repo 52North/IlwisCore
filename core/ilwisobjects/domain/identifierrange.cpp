@@ -214,8 +214,13 @@ void NamedIdentifierRange::add(DomainItem *thing)
     SPNamedIdentifier nid(static_cast<NamedIdentifier *>(thing));
     _byName[thing->name()] = nid;
     if ( nid->raw() == iUNDEF)
-        nid->_raw = _byRaw.size();
-    _byRaw[nid->_raw] = nid;
+        nid->_raw = _byOrder.size();
+    if ( nid->_raw < _byRaw.size())
+        _byRaw[nid->_raw] = nid;
+    else{
+        _byRaw.resize(nid->_raw + 100);
+        _byRaw[nid->_raw] = nid;
+    }
     _byOrder.push_back(nid);
 
     return ;
@@ -234,8 +239,13 @@ void NamedIdentifierRange::add(SPDomainItem item)
     SPNamedIdentifier nid = item.staticCast<NamedIdentifier>();
     _byName[item->name()] = nid;
     if ( nid->raw() == iUNDEF)
-        nid->_raw = _byRaw.size();
-    _byRaw[nid->_raw] = nid;
+        nid->_raw = _byOrder.size();
+    if ( nid->_raw < _byRaw.size())
+        _byRaw[nid->_raw] = nid;
+    else{
+        _byRaw.resize(nid->_raw + 100);
+        _byRaw[nid->_raw] = nid;
+    }
     _byOrder.push_back(nid);
 }
 
@@ -259,7 +269,7 @@ void NamedIdentifierRange::remove(const QString &name)
         return;
     quint32 iraw = (*iter).second->raw();
     _byName.erase(name);
-    _byRaw.erase(iraw);
+    _byRaw[iraw].reset(0);
     for(int i=0; i < count(); ++i) {
         if ( _byOrder[i]->name() == name){
             _byOrder.erase(_byOrder.begin() + i);
@@ -278,7 +288,7 @@ QString NamedIdentifierRange::value(const QVariant& v) const
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
         return sUNDEF;
     }
-    SPNamedIdentifier it = item(index).dynamicCast<NamedIdentifier>();
+    SPNamedIdentifier it = item(index).staticCast<NamedIdentifier>();
     if (!it)
         return sUNDEF;
 
@@ -286,10 +296,11 @@ QString NamedIdentifierRange::value(const QVariant& v) const
 }
 
 SPDomainItem NamedIdentifierRange::item(quint32 iraw) const {
-    auto iter = _byRaw.find(iraw);
-    if ( iter != _byRaw.end())
-        return (*iter).second;
-    return SPDomainItem();
+    if ( isNumericalUndef(iraw) || iraw >= _byRaw.size() || iraw < 0)
+        return SPDomainItem();
+
+    return _byRaw.at(iraw);
+
 }
 
 SPDomainItem NamedIdentifierRange::item(const QString& nam) const{
@@ -372,11 +383,16 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
         }
         _byOrder[i] = (*iter).second.staticCast<NamedIdentifier>();
     }
-    //TODO at this moment we should start checking all item in the master catalog using this domain/range.
+    //TODO: at this moment we should start checking all item in the master catalog using this domain/range.
     _byRaw.clear();
     _byName.clear();
     for(SPNamedIdentifier item : _byOrder){
-        _byRaw[item->raw()] = item;
+        if ( item->_raw < _byRaw.size())
+            _byRaw[item->_raw] = item;
+        else{
+            _byRaw.resize(item->_raw + 100);
+            _byRaw[item->_raw] = item;
+        }
         _byName[item->name()] = item;
     }
     return true;

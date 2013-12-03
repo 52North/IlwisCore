@@ -54,7 +54,7 @@ double GeodeticDatum::parameter(DatumParameters parm) const {
 
 bool GeodeticDatum::isValid() const
 {
-    return true; //TODO
+    return true; //TODO:
 }
 
 QString GeodeticDatum::area() const

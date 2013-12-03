@@ -39,16 +39,22 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 
 SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
-    SPFeatureI newfeature = createNewFeature(geom.ilwisType());
-    if (newfeature != nullptr)
-        newfeature->set(geom);
+    SPFeatureI newfeature = createNewFeature(geom.geometryType());
+    if (newfeature != nullptr){
+        Geometry newgeom = geom;
+        if ( geom.coordinateSystem().isValid() && geom.coordinateSystem() != coordinateSystem()){
+            newgeom = geom.transform(geom.coordinateSystem());
+       }
+        newgeom.coordinateSystem(coordinateSystem());
+        newfeature->set(newgeom);
+    }
     return newfeature;
 }
 
 SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
-    SPFeatureI newfeature = createNewFeature(existingFeature->ilwisType());
+    SPFeatureI newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)
         return newfeature;
 
@@ -68,20 +74,20 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
-    _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
+    //_record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
 
     CreateFeature create = _featureFactory->getCreator("feature");
     IFeatureCoverage fcoverage;
     fcoverage.set(this);
     SPFeatureI newFeature(create(this));
+    //fcoverage->attributeTable()->newRecord();
 
-    _record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
-    quint32 colIndex = _record->columnIndex(FEATUREIDCOLUMN);
+    quint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
         return SPFeatureI();
     }
-    _record->cellByRecord(_features.size(), colIndex, QVariant(newFeature->featureid()), -1);
+    newFeature->setCell(colIndex, QVariant(newFeature->featureid()));
     _features.push_back(newFeature);
 
     quint32 cnt = featureCount(tp);
@@ -138,11 +144,6 @@ FeatureCoverage *FeatureCoverage::clone()
     FeatureCoverage *fcov = new FeatureCoverage();
     copyTo(fcov);
     return fcov;
-}
-
-QSharedPointer<AttributeRecord> FeatureCoverage::record() const
-{
-    return _record;
 }
 
 void FeatureCoverage::copyTo(IlwisObject *obj)
