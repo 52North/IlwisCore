@@ -74,6 +74,7 @@ public:
      * Constructor for an empty FeatureCoverage
      */
     FeatureCoverage();
+    ~FeatureCoverage();
 
     /**
      * Constructs a FeatureCoverage from a Resource

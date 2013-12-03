@@ -11,7 +11,7 @@ class SPFeatureI;
 
 class KERNELSHARED_EXPORT FeatureInterface {
 public:
-    virtual ~FeatureInterface() {}
+    virtual ~FeatureInterface() ;
     virtual quint64 featureid() const = 0;
     virtual bool isValid() const = 0 ;
     virtual const Geometry& geometry(quint32 index=0) const = 0;

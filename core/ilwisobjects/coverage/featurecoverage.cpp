@@ -27,6 +27,10 @@ FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
 }
 
+FeatureCoverage::~FeatureCoverage() {
+
+}
+
 IlwisTypes FeatureCoverage::featureTypes() const
 {
     return _featureTypes;
