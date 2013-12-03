@@ -26,7 +26,7 @@ double RasterInterpolator::pix2value(const Point3D<double>& pix) {
 
 double RasterInterpolator::coord2value(const Coordinate &crd)
 {
-     if (!_valid && crd.isValid())
+     if (!_valid || !crd.isValid())
         return rUNDEF;
      Point2D<double> pix = _grf->coord2Pixel(crd);
      return pix2value(pix);
