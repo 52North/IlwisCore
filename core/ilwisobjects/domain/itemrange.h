@@ -17,7 +17,8 @@ public:
     template<typename T> friend class ItemDomain;
 
     /**
-     * Translates the given QVariant into a value in QString form
+     * Transforms a QVariant into the String representation of this value on the range.<br>
+     * Will only work when the given value is in this range.
      *
      * @param v The QVariant you want translated
      * @return a string with the value
@@ -25,14 +26,16 @@ public:
     virtual QString value(const QVariant& v) const = 0;
 
     /**
-     * Query for the amount of items in this range
+     * Query for the amount of items in this range.<br>
+     * Cannot be negative
      *
      * @return the amount of items
      */
     virtual quint32 count() const = 0;
 
     /**
-     * Query for an item based on the raw value of that item
+     * Query for an item based on the raw value of that item.<br>
+     * Will not work if there is no item with this raw value in the range.(returns null or undef)
      *
      * @param raw The raw value of the item
      * @return the item
@@ -40,7 +43,8 @@ public:
     virtual SPDomainItem item(quint32 raw) const = 0;
 
     /**
-     * Query for an item based on the name of that item
+     * Query for an item based on the name of that item.<br>
+     * Will not work if there is no item with this name in the range.(returns null or undef)
      *
      * @param nam the name of the item
      * @return the item
@@ -49,6 +53,7 @@ public:
 
     /**
      * Query for an item based on the index of that item
+     * Will not work if there is no item on this index in the range.(returns null or undef)
      *
      * @param index the index of the item
      * @return the item
@@ -56,55 +61,61 @@ public:
     virtual SPDomainItem itemByOrder(quint32 index) const = 0;
 
     /**
-     * Checks if the ItemRange contains a certain item
+     * Checks if the ItemRange contains a certain item.
+     * Returns true if there is and item which name matches the given string.
      *
      * @param name name of the item
-     * @param inclusive empty parameter
+     * @param inclusive template parameter
      * @return true if this range contains the item
      */
     virtual bool contains(const QString& name, bool inclusive = true) const = 0;
 
     /**
-     * Checks if the ItemRange contains a certain range of items
+     * Checks if the ItemRange contains a certain range of items.<br>
+     * The range must be valid.
      *
      * @param rng the range to be checked
-     * @param inclusive empty parameter
+     * @param inclusive template parameter
      * @return true if rng is contained in this ItemRange
      */
     virtual bool contains(SPRange rng, bool inclusive=true) const;
 
     /**
-     * Checks if the ItemRange contains a certain range of items
+     * Checks if the ItemRange contains a certain range of items.<br>
+     * The range must be valid.
      *
      * @param itemrng the range to be checked
-     * @param inclusive empty parameter
+     * @param inclusive template parameter
      * @return true if rng is contained in this ItemRange
      */
     virtual bool contains(const ItemRange& itemrng, bool inclusive=true) const;
 
     /**
-     * checks if this item is valid
+     * checks the validity of this range.
      *
      * @return true when valid
      */
     virtual bool isValid() const = 0;
 
     /**
-     * Adds an item to this ItemRange
+     * Adds an item to this ItemRange.<br>
+     * the added item must be valid.
      *
      * @param item the item to be added
      */
     virtual void add(DomainItem *item) = 0;
 
     /**
-     * Adds an item to this ItemRange
+     * Adds an item to this ItemRange.<br>
+     * The added item must be valid.
      *
      * @param item the item to be added
      */
     virtual void add(SPDomainItem item) = 0;
 
     /**
-     * Removes an item from this range
+     * Removes an item from this range.<br>
+     * If there is no item of this name in the range nothing will happen.
      *
      * @param nm the name of the item to be removed
      */
@@ -116,7 +127,9 @@ public:
     double ensure(double v, bool inclusive = true) const;
 
     /**
-     * adds a certain ItemRange to this range
+     * adds a certain ItemRange to this range.<br>
+     * In the case of duplicate items, only 1 will be kept in the final result.<br>
+     * The range that has to be added must be valid.
      *
      * @param range the range to be added
      */
@@ -143,7 +156,8 @@ public:
     static void addCreateItem(const QString& type, CreateItemFunc func);
 
     /**
-     * Merges this ItemRange with another
+     * Merges this ItemRange with another.<br>
+     * Both ranges must be valid, and both ranges must be itemranges for this to work.
      *
      * @param otherRange the other range to be merged
      * @return the result of the merging
@@ -153,6 +167,7 @@ public:
     virtual void clear() = 0;
     /**
      * Merges 2 itemranges into a new one
+     * Both ranges must be valid, and both ranges must be itemranges for this to work.
      *
      * @param nr1 the first ItemRange to be merged
      * @param nr2 the second ItemRange to be merged

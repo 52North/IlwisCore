@@ -43,9 +43,9 @@ public:
     Coverage();
 
     /*!
-     * The constructor for an coverage based on a Resource<br>
-     *
-     * requires the resource to have an id and a name, code and description are optional
+     * The constructor for a RasterCoverage with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional.
      *
      * \sa IlwisObject
      * \sa Resource

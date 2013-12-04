@@ -16,8 +16,10 @@ public:
     NumericItem();
 
     /**
-     * Constructor for a NumericItem with range vr
-     * @param vr the NumbericRange of this item
+     * Constructor for a NumericItem with range vr.<br>
+     * vr must be valid. vr will be set as the range of this item.
+     *
+     * @param vr the NumericRange of this item
      */
     NumericItem(const NumericRange &vr);
 
@@ -36,24 +38,31 @@ public:
     IlwisTypes valueType() const;
 
     /**
-     * Query for the range of this NumbericItem
-     * @return the NumbericRange of this
+     * Query for the range of this NumericItem.<br>
+     * Returns the numeric range of this item, if the range is not set it will return null
+     *
+     * @return the NumericRange of this
      */
     NumericRange range() const;
 
     /**
-     * Sets a new NumbericRange on this NumbericItem
+     * Sets a new NumericRange on this NumericItem.<br>
+     * The new range must be valid.
      * @param valuerange the new range
      */
     void range(const NumericRange &valuerange);
 
     /**
-     * Creates an empty NumbericItemRange
-     *
-     * @return and empty NumbericItemRange
+     * Clears the item range on this item.
+     *\sa NumericRange
      */
     void clear();
 
+    /**
+     * Creates a empty new NumericItemRange and returns this
+     * \sa NumericItemRange
+     * @return a empty new NumericItemRange
+     */
     static Ilwis::NumericItemRange *createRange();
 
 

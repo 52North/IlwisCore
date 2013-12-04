@@ -49,7 +49,10 @@ bool FeatureNode::isValid() const{
     return true;
 }
 
-const Geometry& FeatureNode::geometry(quint32 ) const {
+Geometry& FeatureNode::geometry(quint32 ){
+    return _geometry;
+}
+const Geometry& FeatureNode::geometry(quint32 ) const{
     return _geometry;
 }
 
@@ -231,8 +234,14 @@ bool Feature::isValid() const {
     return _record->isValid();
 }
 
-const Geometry &Feature::geometry(quint32 index) const
-{
+Geometry &Feature::geometry(quint32 index){
+    if ( index < _track.size())
+        return _track[index]->geometry();
+    ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
+
+    return _invalidGeom;
+}
+const Geometry &Feature::geometry(quint32 index) const{
     if ( index < _track.size())
         return _track[index]->geometry();
     ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
