@@ -1,5 +1,6 @@
 #include <QUrl>
 #include "kernel.h"
+#include "errorobject.h"
 #include "mastercatalog.h"
 #include "connectorinterface.h"
 #include "containerconnector.h"
@@ -35,20 +36,24 @@ Resource &IlwisObjectConnector::source()
 
 std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode)
 {
-    if ( mode & IlwisObject::cmINPUT)
+    if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
         return _incontainerconnector;
-    else if ( mode & IlwisObject::cmOUTPUT)
-        if ( _outcontainerconnector)
-            return _outcontainerconnector;
+    else if ( hasType(mode ,IlwisObject::cmOUTPUT) && _outcontainerconnector)
+        return _outcontainerconnector;
+    if (!_incontainerconnector)
+        throw ErrorObject(TR("Using uninitialized container"));
+
     return _incontainerconnector;
 }
 
 const std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode) const
 {
-    if ( mode &IlwisObject:: cmINPUT)
+    if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
         return _incontainerconnector;
-    else if ( mode & IlwisObject::cmOUTPUT)
-        if ( _outcontainerconnector)
-            return _outcontainerconnector;
+    else if ( hasType(mode,IlwisObject::cmOUTPUT) && _outcontainerconnector)
+        return _outcontainerconnector;
+    if (!_incontainerconnector)
+        throw ErrorObject(TR("Using uninitialized container"));
+
     return _incontainerconnector;
 }

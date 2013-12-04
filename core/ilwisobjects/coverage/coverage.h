@@ -53,7 +53,7 @@ public:
      */
     Coverage(const Resource& source);
 
-    ~Coverage();
+    virtual ~Coverage();
 
     /*!
      * Query for the coordinate system of this coverage

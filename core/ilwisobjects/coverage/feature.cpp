@@ -298,3 +298,9 @@ quint32 Feature::trackSize() const
 Ilwis::FeatureInterface *createFeature(FeatureCoverage* fcoverage) {
     return new Feature(fcoverage);
 }
+
+
+FeatureInterface::~FeatureInterface()
+{
+
+}
