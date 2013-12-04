@@ -41,12 +41,14 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         RasterInterpolator interpolator(inputRaster, _method);
         SPRange range = inputRaster->datadef().range();
         PixelIterator iterEnd = iterOut.end();
+        bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());
         while(iterOut != iterEnd) {
-           Voxel position = iterOut.position();
-           Coordinate cOut = outputRaster->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
-           Coordinate cIn = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),cOut);
-           double v = interpolator.coord2value(cIn);
-           *iterOut = range->ensure(v);
+            Voxel position = iterOut.position();
+            Coordinate coord = outputRaster->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
+            if ( !equalCsy)
+                coord = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),coord);
+            double v = interpolator.coord2value(coord);
+            *iterOut = range->ensure(v);
             ++iterOut;
         }
         return true;
