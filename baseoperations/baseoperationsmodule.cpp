@@ -85,6 +85,7 @@ void BaseOperationsModule::prepare()
     commandhandler()->addOperation(Sign::createMetadata(), Sign::create);
     commandhandler()->addOperation(Sine::createMetadata(), Sine::create);
     commandhandler()->addOperation(SineH::createMetadata(), SineH::create);
+    commandhandler()->addOperation(Sqrt::createMetadata(), Sqrt::create);
     commandhandler()->addOperation(StringFind::createMetadata(), StringFind::create);
     commandhandler()->addOperation(StringSub::createMetadata(), StringSub::create);
     commandhandler()->addOperation(StringReplace::createMetadata(), StringReplace::create);
