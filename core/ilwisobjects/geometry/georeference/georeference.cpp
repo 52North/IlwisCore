@@ -114,6 +114,9 @@ bool GeoReference::isCompatible(const IGeoReference &georefOther) const
     if (!georefOther.isValid())
         return false;
 
+    if (georefOther->id() == id())
+        return true;
+
     if ( coordinateSystem() != georefOther->coordinateSystem())
         return false;
 
