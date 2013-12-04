@@ -75,10 +75,6 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
         if (!OperationHelperRaster::resample(_inputGC1, _inputGC2, ctx)) {
             return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
         }
-        if (_inputGC2->connectTo(QUrl("file:///d:/Projects/Ilwis/Ilwis4/testdata/aatemp15.mpr"), "map","ilwis3",Ilwis::IlwisObject::cmOUTPUT)) {
-            _inputGC2->setCreateTime(Ilwis::Time::now());
-            _inputGC2->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
-        }
     }
     // TODO:, research this exception
     // because of the swapping mechanism it is probably detrimental to use multithread here as blocks may continously be swapping
