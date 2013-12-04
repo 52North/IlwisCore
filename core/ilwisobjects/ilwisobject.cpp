@@ -167,10 +167,13 @@ QString IlwisObject::toString()
     return "";
 }
 
-bool IlwisObject::isEqual(const IlwisObject &obj) const
+bool IlwisObject::isEqual(const IlwisObject *obj) const
 {
     //TODO: overrule this method for object types that need to do more checking
-    return id() == obj.id();
+    if ( obj == 0)
+        return false;
+
+    return id() == obj->id();
 }
 
 

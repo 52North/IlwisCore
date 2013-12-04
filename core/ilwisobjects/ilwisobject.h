@@ -21,6 +21,7 @@ namespace Ilwis {
 class IlwisObjectFactory;
 class ConnectorInterface;
 class Resource;
+class IlwisObject;
 
 typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
 
@@ -202,7 +203,7 @@ public:
      * \param obj an ilwisobject to be compared with
      * \return true when the objects are equal
      */
-    virtual bool isEqual(const IlwisObject &obj) const;
+    virtual bool isEqual(const Ilwis::IlwisObject *obj) const;
 
     /*!
      * \brief isValid Tests the validity of an ilwisobject.
