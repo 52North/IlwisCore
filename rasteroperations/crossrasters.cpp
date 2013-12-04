@@ -65,22 +65,22 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-//    std::function<bool(const Box3D<qint32>)> Cross = [&](const Box3D<qint32> box ) -> bool {
-//        PixelIterator iterIn1(_inputRaster1, box);
-//        PixelIterator iterIn2(_inputRaster2, box);
-//        std::unordered_map<quint64, quint64> combos;
-//        for_each(iterIn1, iterIn1.end(), [&](double& v1){
-//            qint32 v2 = *iterIn2;
-//            quint64 combo = v1 + v2 * 10e8;
-//            auto iterCombos = combos.find(combo);
-//            if ( iterCombos == combos.end())
-//                combos[combo] = 0;
-//            else
-//                (*(iterCombos)).second++;
-//            ++iterIn2;
-//        });
-//        return true;
-//    };
+    std::function<bool(const Box3D<qint32>)> Cross = [&](const Box3D<qint32> box ) -> bool {
+        PixelIterator iterIn1(_inputRaster1, box);
+        PixelIterator iterIn2(_inputRaster2, box);
+        std::unordered_map<quint64, quint64> combos;
+        for_each(iterIn1, iterIn1.end(), [&](double& v1){
+            qint32 v2 = *iterIn2;
+            quint64 combo = v1 + v2 * 10e8;
+            auto iterCombos = combos.find(combo);
+            if ( iterCombos == combos.end())
+                combos[combo] = 0;
+            else
+                (*(iterCombos)).second++;
+            ++iterIn2;
+        });
+        return true;
+    };
 
     bool ok = cross(_inputRaster1->size());
 
@@ -90,7 +90,7 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }
     }
 
-    return true;
+    return ok;
 }
 
 Ilwis::OperationImplementation *CrossRasters::create(quint64 metaid, const Ilwis::OperationExpression &expr)
