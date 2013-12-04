@@ -18,11 +18,14 @@ public:
      */
     BaseTable();
 
-    /**
-     * Constructs a new BaseTable using a resource
+    /*!
+     * The constructor for a BaseTable with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional.
      *
+     * \sa IlwisObject
      * \sa Resource
-     * @param resource the Resource that should be used
+     * \param resource The resource to use
      */
     BaseTable(const Resource& resource);
 
@@ -86,14 +89,14 @@ public:
     bool prepare();
 
     /*!
-    a table is valid if it has rows and columns
+     * a BaseTable is valid if it has rows and columns
      * \return true when valid.
      */
     bool isValid() const;
 
     /**
      * Merges this BaseTable with another BaseTable.
-     * Requires the given object to be a BaseTable, and the object cannot be null ofcourse
+     * Requires the given object to be a BaseTable, and the object cannot be null or undefined ofcourse
      *
      * \sa TableMerger
      * @param obj the object this shouls merge with

@@ -10,11 +10,14 @@ public:
      */
     FlatTable();
 
-    /**
-     * Constructs a new FlatTable using a resource
+    /*!
+     * The constructor for a FlatTable with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional.
      *
+     * \sa IlwisObject
      * \sa Resource
-     * @param resource the Resource that should be used
+     * \param resource The resource to use
      */
     FlatTable(const Resource& resource);
 
