@@ -161,12 +161,12 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     }
 
     for(const Resource &resource : items) {
-        //if ( _lookup.contains(resource.id()))
-        //    continue;
+        if (!resource.isValid())
+           continue;
         if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
-            continue;
+          continue;
 
-         _knownHashes.insert(Ilwis::qHash(resource));
+        _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
     }
 
