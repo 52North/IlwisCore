@@ -14,7 +14,7 @@ public:
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool compute();
-    bool isCompatible(const IGeoReference &georefOther) const;
+    virtual bool isCompatible(const IGeoReference &georefOther) const;
 protected:
 
     ICoordinateSystem _csy;
