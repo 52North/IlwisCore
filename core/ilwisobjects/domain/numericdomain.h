@@ -5,7 +5,7 @@
 
 namespace Ilwis {
 /**
- * A Numericdomain has a range of numeric items,
+ * A Numericdomain has a range of numeric items,<br>
  * Numeric items are ordered  items that have numeric sub-ranges. For example 0-100,100-200,300-400.
  *
  *\sa Domain
@@ -20,30 +20,32 @@ public:
     NumericDomain();
 
     /*!
-     * Creates a NumericDomain with supplied Resource
+     * The constructor for a NumericDomain with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional.
      *
      * \param resource Resource to be used
      */
     NumericDomain(const Resource& resource);
 
     /*!
-     * Changes the Range of this NumericDomain.
-     * This function only works if the readonly flag has not been set and the new range has to contain numericitems.
-     * (be a NumericItemRange)
+     * Changes the Range of this NumericDomain.<br>
+     * This function only works if the readonly flag has not been set and the new range has to contain numericitems.(be a NumericItemRange)
+     *
      * \sa NumericItemRange
      * \param vr The new range
      */
     void range(Range *vr);
 
     /*!
-     * still has to been finished
+     * still has to been finished, not yet done
      * \return QVariant.toString
      */
     QString value(const QVariant&) const;
 
     /*!
      * Checks if the value is contained in either this domain or the parentdomain.
-     *
+     * Has no preconditions.
      * \sa Domain
      * \param val The value to be checked
      * \return cPARENT when the value is contained in the parent and this domain is not strict, cSELF if the value is contained in this domain and cNONE if the value is contained in neither
@@ -51,8 +53,8 @@ public:
     Domain::Containement contains(const QVariant &value) const;
 
     /*!
-     * Checks if this NumericDomain is compatible  with another IDomain,
-     * will not be compatible if the other domain is:
+     * Checks if this NumericDomain is compatible  with another IDomain,<br>
+     * will not be compatible if the other domain is:<br>
      * - invalid
      * - not a NumericDomain
      *

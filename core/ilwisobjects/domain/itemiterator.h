@@ -16,7 +16,8 @@ public:
     }
 
     /**
-     * Constructs an ItemIterator from a ItemDomain and a current position
+     * Constructs an ItemIterator from an ItemDomain and a current position<br>
+     * The itemdomain cannot be null and the position must be valid
      *
      * @param dom the ItemDomain in IlwisData form
      * @param cur the current position in this domain, default = 0
@@ -26,7 +27,8 @@ public:
     }
 
     /**
-     * Constructs an ItemIterator from an ItemDomain and a current possition
+     * Constructs an ItemIterator from an ItemDomain and a current possition<br>
+     * The itemdomain cannot be null and the position must be valid
      *
      * @param dom The ItemDomain
      * @param cur The current position in this domain, default = 0

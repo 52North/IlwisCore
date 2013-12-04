@@ -24,29 +24,33 @@ public:
     ~Table() {}
 
     /*!
-     * return the number of rows in a table
+     * return the number of rows in a table.<br>
+     * cannot be negative.
      *
      * \return rows in the table
      */
     virtual quint32 recordCount() const=0;
 
     /*!
-     * returns the number of columns in a table
+     * returns the number of columns in a table.<br>
+     * cannot be negative.
      *
      * \return columns in the table
      */
     virtual quint32 columnCount() const=0;
 
     /*!
-     * sets the number of rows in a table. If the number of rows is bigger than the current number of rows is the extra records will be filled with null values
-     * if the number is smaller the excess records will be deleted
+     * sets the number of rows in a table. If the number of rows is bigger than the current number of rows is the extra records will be filled with null values.<br>
+     * if the number is smaller the excess records will be deleted.<br>
+     * Negative values are not allowed.<br>
      *
      * \param r the new row number
      */
     virtual void recordCount(quint32 r)=0;
 
     /*!
-     * Creates a table based on the definitions in the columndefinition members. Has no effect on an already vreated table. The latter is no error and will only generate a warning in the issue logger;
+     * Creates a table based on the definitions in the columndefinition members. Has no effect on an already vreated table.
+     * The latter is no error and will only generate a warning in the issue logger;
      *
      * \return true if succesfull
      */
