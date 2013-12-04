@@ -127,8 +127,18 @@ Projection::FindMatch Projection::find(const QString &v1, const QString &value)
 }
 
 
-bool Projection::isEqual() const
+bool Projection::isEqual(const IlwisObject *obj) const
 {
+    if ( !obj || !hasType(obj->ilwisType(), itPROJECTION))
+        return false;
+
+    if(id() == obj->id())
+        return true;
+
+    const Projection *prj = static_cast<const Projection *>(obj);
+    if ( !_implementation.isNull()) {
+        return _implementation->isEqual(prj->_implementation)    ;
+    }
     return false;
 }
 

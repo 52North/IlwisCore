@@ -26,8 +26,8 @@ public:
     QString parameterName(Projection::ProjectionParamValue pv) const;
     virtual QString toProj4() const = 0;
 
-    bool isEqual();
 
+    bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
 protected:
     ConventionalCoordinateSystem *_coordinateSystem;
 

@@ -25,7 +25,7 @@ public:
     bool prepare();
     IlwisTypes ilwisType() const;
     bool isValid() const;
-
+    bool isEqual(const Ilwis::IlwisObject *obj) const;
 private:
     IEllipsoid _ellipsoid;
     IProjection _projection;

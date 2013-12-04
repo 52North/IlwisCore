@@ -58,4 +58,11 @@ void ProjectionImplementation::setParameter(Projection::ProjectionParamValue typ
     _parameters[type] = value;
 }
 
+bool ProjectionImplementation::isEqual(const QScopedPointer<ProjectionImplementation>& projimpl) {
+    QString proj4a = toProj4();
+    QString proj4b = projimpl->toProj4();
+
+    return proj4a == proj4b;
+}
+
 

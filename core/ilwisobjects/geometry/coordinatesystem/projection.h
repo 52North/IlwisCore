@@ -41,7 +41,7 @@ public:
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
     QString parameterName(Projection::ProjectionParamValue pv) const;
 
-    bool isEqual() const;
+    bool isEqual(const IlwisObject* obj) const;
     bool isValid() const;
 
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);

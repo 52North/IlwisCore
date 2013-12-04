@@ -44,7 +44,7 @@ bool CoordinateSystem::canConvertToCoordinate() const
 
 Coordinate CoordinateSystem::inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate &crd) const
 {
-    if (cs.isEqual(cs))
+    if (cs.isEqual(&cs))
       return crd;
     return Coordinate();
 }

@@ -25,6 +25,7 @@ public:
     virtual Coordinate inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate& crd) const;
     Box3D<double> envelope() const;
     void envelope(const Box3D<double> &env);
+    virtual bool isLatLon() const = 0;
 
 private:
     Box3D<double> _envelope;

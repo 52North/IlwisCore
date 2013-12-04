@@ -20,7 +20,8 @@ ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &resou
 
 Coordinate ConventionalCoordinateSystem::coord2coord(const ICoordinateSystem &sourceCs, const Coordinate &crdSource) const
 {
-    if (sourceCs->isEqual(*this))
+
+    if (sourceCs->id() == id()) //  the 'real'isEqual test is too expensive here, as this method can be called 100000's of times (resample)
         return crdSource;
     LatLon ll = sourceCs->coord2latlon(crdSource);
     if ( ll.isValid()) {
@@ -48,6 +49,36 @@ Coordinate ConventionalCoordinateSystem::latlon2coord(const LatLon &ll) const
 
 }
 
+bool ConventionalCoordinateSystem::isEqual(const IlwisObject *obj) const
+{
+    if ( !obj || !hasType(obj->ilwisType(), itCONVENTIONALCOORDSYSTEM))
+        return false;
+
+    if(id() == obj->id())
+        return true;
+
+    const ConventionalCoordinateSystem *csy = static_cast<const ConventionalCoordinateSystem *>(obj);
+    if ( !csy->isValid())
+        return false;
+
+    if ( ellipsoid().isValid() && ellipsoid()->isEqual(csy->ellipsoid())) {
+        if ( csy->projection().isValid() && projection().isValid()){ //  special case; in general datums will be checked first
+            if (csy->projection()->code() == "longlat" && projection()->code() == "longlat")
+                return true;
+        }
+        if ( datum() && csy->datum()) {
+            if  (datum()->code() == csy->datum()->code())
+                    return true;
+        } else {
+            if ( csy->projection().isValid() && projection().isValid()) {
+                return csy->projection()->isEqual(projection().ptr());
+            }
+        }
+    }
+
+
+    return false;
+}
 
 const std::unique_ptr<GeodeticDatum>& ConventionalCoordinateSystem::datum() const
 {
@@ -81,7 +112,10 @@ IlwisTypes ConventionalCoordinateSystem::ilwisType() const
 
 bool ConventionalCoordinateSystem::isValid() const
 {
-    return _projection.isValid() && _ellipsoid.isValid();
+    bool ok1 =  _projection.isValid();
+    bool ok2 =_ellipsoid.isValid();
+
+    return ok1 && ok2;
 }
 
 
@@ -89,6 +123,8 @@ bool ConventionalCoordinateSystem::isValid() const
 void ConventionalCoordinateSystem::setProjection(const IProjection &proj)
 {
     _projection = proj;
+    if ( proj->code() == "longlat")
+        _unit = "degree";
 }
 
 IProjection ConventionalCoordinateSystem::projection() const
