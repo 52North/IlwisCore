@@ -38,7 +38,7 @@ bool Ellipsoid::isSpherical() const{
 bool Ellipsoid::isEqual(const IEllipsoid& ellips) const{
     double delta1 = abs(ellips->majorAxis() - majorAxis());
     double delta2 = abs(ellips->excentricity() - excentricity());
-    return delta1 < EPS15 && delta2 < EPS15;
+    return delta1 < 0.1 && delta2 < EPS6;
 }
 
 bool Ellipsoid::isValid() const{
@@ -251,6 +251,8 @@ IlwisTypes Ellipsoid::ilwisType() const
 {
     return itELLIPSOID;
 }
+
+
 
 
 
