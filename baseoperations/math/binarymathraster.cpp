@@ -59,13 +59,15 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
     std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
-        PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
+        PixelIterator iterOut(_outputGC, box);
 
-        for_each(iterOut, iterOut.end(), [&](double& v){
-            v = calc(*iterIn1, *iterIn2);
+        PixelIterator iterEnd = end(iterOut);
+        while(iterOut != iterEnd) {
+            *iterOut = calc(*iterIn1, *iterIn2);
             ++iterIn1;
             ++iterIn2;
-        });
+            ++iterOut;
+        };
         return true;
     };
 
@@ -73,10 +75,14 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
         if (!OperationHelperRaster::resample(_inputGC1, _inputGC2, ctx)) {
             return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
         }
+        if (_inputGC2->connectTo(QUrl("file:///d:/Projects/Ilwis/Ilwis4/testdata/aatemp15.mpr"), "map","ilwis3",Ilwis::IlwisObject::cmOUTPUT)) {
+            _inputGC2->setCreateTime(Ilwis::Time::now());
+            _inputGC2->store(IlwisObject::smBINARYDATA | IlwisObject::smMETADATA);
+        }
     }
     // TODO:, research this exception
     // because of the swapping mechanism it is probably detrimental to use multithread here as blocks may continously be swapping
-    if ( _inputGC1 == _inputGC2)
+    //if ( _inputGC1 == _inputGC2)
         ctx->_threaded = false;
 
     if (OperationHelperRaster::execute(ctx, binaryMath, _outputGC))
