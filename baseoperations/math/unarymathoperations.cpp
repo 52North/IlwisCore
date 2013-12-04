@@ -163,6 +163,27 @@ quint64 Abs::createMetadata() {
     mastercatalog()->addItems({resource});
     return resource.id();
 }
+
+//---------------------------------------------------------
+//----------------------------------------------------------
+
+double sqrt2(double v){
+    if ( v < 0)
+        return rUNDEF;
+    return std::sqrt(v);
+}
+Sqrt::Sqrt(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sqrt2)
+{}
+OperationImplementation *Sqrt::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sqrt(metaid,expr);}
+
+quint64 Sqrt::createMetadata() {
+    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sqrt"), "Absolute value", "value");
+    resource.addProperty("pin_1_desc",QString("input data source with a positive numerical domain (or 0)"));
+    resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
 //----------------------------------------------------------
 Ceil::Ceil(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::ceil<int>)
 {}
