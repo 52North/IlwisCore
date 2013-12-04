@@ -41,23 +41,23 @@ public:
 
     /*!
      * sets the number of rows in a table. If the number of rows is bigger than the current number of rows is the extra records will be filled with null values.<br>
-     * if the number is smaller the excess records will be deleted.<br>
-     * Negative values are not allowed.<br>
+     * if the number is smaller the excess records will be deleted. Requires you to call createTable() to take effect<br>
+     * Negative values are not allowed.
      *
      * \param r the new row number
      */
     virtual void recordCount(quint32 r)=0;
 
     /*!
-     * Creates a table based on the definitions in the columndefinition members. Has no effect on an already vreated table.
-     * The latter is no error and will only generate a warning in the issue logger;
+     * Creates a table based on the definitions in the columndefinition members. Will load the data in the specified amount of collumns and rows
      *
      * \return true if succesfull
      */
     virtual bool createTable() =0;
 
     /*!
-     * adds a column to the current set of columns of this table
+     * adds a column to the current set of columns of this table<br>
+     * the name string must be unique and the domain must be valid.
      *
      * \sa IDomain
      * \param name the name of a column must be unique among the columns
@@ -67,7 +67,8 @@ public:
     virtual bool addColumn(const QString &name, const IDomain &domain)=0;
 
     /*!
-     * adds a column to the current set of columns of this table
+     * adds a column to the current set of columns of this table. <br>
+     * The name string must be unique in the set of collumns and the domainname must be valid
      *
      * \param name the name of a column must be unique among the columns
      * \param domain the domain of the new column
@@ -76,7 +77,8 @@ public:
     virtual bool addColumn(const QString &name, const QString& domainname)=0;
 
     /*!
-     * adds a column to the column definitions
+     * adds a column to the column definitions. <br>
+     * ColumnDefinition must be valid.
      *
      * \param def
      * \return  true if succesful. Duplicate columns are not allowed
@@ -84,7 +86,7 @@ public:
     virtual bool addColumn(const ColumnDefinition& def)=0;
 
     /*!
-     * retrieves the definition of the column.
+     * retrieves the definition of the column with the given name. if there is no collumn with that name undefined will be returned.
      *
      * \sa ColumnDefinition
      * \param nme name of the column definition to be retrieved
@@ -93,7 +95,8 @@ public:
     virtual ColumnDefinition columndefinition(const QString& nme) const=0;
 
     /*!
-     * retrieves the definition of the column.
+     * retrieves the definition of the column. <br>
+     * if there is no collumn at this index undefined will be returned.
      *
      * \sa ColumnDefinition
      * \param index index of the column definition to be retrieved
@@ -102,7 +105,8 @@ public:
     virtual ColumnDefinition columndefinition(quint32 index) const=0;
 
     /*!
-     * retrieves the definition of the column.
+     * retrieves a pointer to the definition of the column.<br>
+     * if there is no collumn at this index nullptr will be returned.
      *
      * \sa ColumnDefinition
      * \param index index of the column definition to be retrieved
@@ -111,12 +115,15 @@ public:
     virtual ColumnDefinition& columndefinition(quint32 index) = 0;
 
     /**
-     * sets a new column definition
+     * sets a new column definition. The new definition must be valid.
      *
      * \sa ColumnDefinition
      * @param coldef the new columndefinition to be set
      */
     virtual void columndefinition(const ColumnDefinition& coldef) = 0;
+    /**
+     * Adds a new record to this table
+     */
     virtual void newRecord() = 0;
 
     /*!
@@ -132,14 +139,14 @@ public:
      * sets a record with values from variantlist. The list doesnt need to contain all the fields in a record but may contain a subset.
      * Note that the fields are in consecutive order. It is up to the programmer that the order of fields in the list match the order of fields in the table
      *
-     * \param rec record that has to be updated. It the record number is beyond the last record or the record is iUNDEF, the record will appended to the end
+     * \param rec record that has to be updated. If the record number is beyond the last record or the record is iUNDEF, the record will appended to the end
      * \param vars the list values to be set
      * \param offset starting point of the field to be set
      */
     virtual void record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
 
     /*!
-     * returns the content of a column
+     * returns the content of a column. Will create an error on the issuelogger if there is no collumn with that name, or when there is no record on the index
      *
      * \param nme name of the column to be returned
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
