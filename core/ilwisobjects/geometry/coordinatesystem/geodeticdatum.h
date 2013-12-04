@@ -17,6 +17,7 @@ public:
     void setAuthority(const QString &auth);
     double parameter(DatumParameters parm) const;
     bool isValid() const;
+    void fromCode(const QString& code);
 
     void set3TransformationParameters(double x, double z, double y);
     void set7TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale);

@@ -1,4 +1,7 @@
 #include <QSharedPointer>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 #include "kernel.h"
 #include "module.h"
@@ -55,6 +58,30 @@ double GeodeticDatum::parameter(DatumParameters parm) const {
 bool GeodeticDatum::isValid() const
 {
     return true; //TODO:
+}
+
+void GeodeticDatum::fromCode(const QString &code)
+{
+    QSqlQuery stmt(kernel()->database());
+    QString query = QString("Select * from datum where code='%1'").arg(code);
+
+    if (stmt.exec(query)) {
+        if ( stmt.next()) {
+            QString area = stmt.value(stmt.record().indexOf("area")).toString();
+            QString code = stmt.value(stmt.record().indexOf("code")).toString();
+            double dx = stmt.value(stmt.record().indexOf("dx")).toDouble();
+            double dy = stmt.value(stmt.record().indexOf("dy")).toDouble();
+            double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
+            setArea(area);
+            setCode(code);
+            set3TransformationParameters(dx, dy, dz);
+
+        } else {
+            kernel()->issues()->log(TR("No datum for this code %1").arg(code));
+        }
+    } else {
+        kernel()->issues()->logSql(stmt.lastError());
+    }
 }
 
 QString GeodeticDatum::area() const
