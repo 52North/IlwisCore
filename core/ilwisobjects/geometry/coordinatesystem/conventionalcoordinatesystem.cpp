@@ -18,6 +18,12 @@ ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &resou
 {
 }
 
+ConventionalCoordinateSystem::~ConventionalCoordinateSystem()
+{
+    _projection.set(0);
+    _ellipsoid.set(0);
+}
+
 Coordinate ConventionalCoordinateSystem::coord2coord(const ICoordinateSystem &sourceCs, const Coordinate &crdSource) const
 {
 

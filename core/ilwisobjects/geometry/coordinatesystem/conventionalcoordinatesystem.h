@@ -10,6 +10,7 @@ class KERNELSHARED_EXPORT ConventionalCoordinateSystem : public CoordinateSystem
 public:
     ConventionalCoordinateSystem();
     ConventionalCoordinateSystem(const Resource& resource);
+    ~ConventionalCoordinateSystem();
 
     Coordinate coord2coord(const ICoordinateSystem &sourceCs, const Coordinate& crdSource) const;
     LatLon coord2latlon(const Coordinate &crdSource) const;
