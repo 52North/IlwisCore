@@ -16,7 +16,7 @@ include(global.pri)
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-DEFINES += PROJECTIONIMPLPROJ4_LIBRARY
+DEFINES += RASTEROPERATIONS_LIBRARY
 
 SOURCES += \ 
     rasteroperations/rasteroperationsmodule.cpp \
