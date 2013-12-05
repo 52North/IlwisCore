@@ -130,7 +130,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         return sPREPAREFAILED;
     }
 
-    _grouped = _expression.parm(3).value() == "true";
+    _grouped = _expression.parm(3).value().toLower() == "true";
     if ( !_grouped)
         copylist |= itGEOREF;
 
