@@ -97,7 +97,7 @@ public:
      * @brief operator *
      * @return
      */
-    SPFeatureI operator*();
+    SPFeatureI& operator*();
 
     /**
      * @brief end
