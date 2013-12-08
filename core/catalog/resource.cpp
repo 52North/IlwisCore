@@ -154,17 +154,15 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
 void Resource::setName(const QString &nm, bool adaptUrl)
 {
     Identity::setName(nm);
-    if ( !adaptUrl)
+    if ( !adaptUrl || nm == sUNDEF)
         return;
 
-    //if ( nm.indexOf(INTERNAL_PREFIX) != -1)  {
-        QString url = _resource.toString();
-        int index = url.lastIndexOf("/");
-        if ( index != -1) {
-            url = url.left(index+1) + nm;
-        }
-        _resource = QUrl(url);
-   // }
+    QString url = _resource.toString();
+    int index = url.lastIndexOf("/");
+    if ( index != -1 ) {
+        url = url.left(index+1) + nm;
+    }
+    _resource = QUrl(url);
 }
 
 QVariant Resource::operator [](const QString &prop) const
@@ -296,6 +294,7 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
+    QString v = container().toString();
     queryItem.bindValue(":container", container().toString());
     queryItem.bindValue(":resource", url().toString());
     queryItem.bindValue(":type", ilwisType());
