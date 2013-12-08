@@ -2,6 +2,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QDesktopServices>
+#include <QJsonDocument>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
@@ -74,11 +75,15 @@ QFileInfo IlwisContext::ilwisFolder() const {
 
 void IlwisContext::init()
 {
-    QSettings settings("52n","ilwis4");
-
-    QString working = settings.value("workingcatalog",QVariant(sUNDEF)).toString();
-    if ( working == sUNDEF) {
-        //TODO: not a problem but maybe some default behaviour can be implemented here (e.g. like user/appdata or something)
+    QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    QString configfile = loc + "/" + "ilwis.config";
+    QFile file;
+    file.setFileName(configfile);
+    if (file.open(QIODevice::ReadOnly)) {
+        QString settings = file.readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
+        if ( !doc.isNull())
+            _configuration = doc.object();
     }
     this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }
@@ -118,6 +123,11 @@ quint64 IlwisContext::changeMemoryLeft(quint64 amount)
         _memoryLeft = 0;
 
     return _memoryLeft;
+}
+
+QJsonObject IlwisContext::configuration() const
+{
+    return _configuration;
 }
 
 
