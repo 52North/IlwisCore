@@ -232,9 +232,7 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
     _columnDefinitionsByIndex[index].changed(true);
 
     if ( rec >= recordCount()) {
-        _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
-        recordCount(_datagrid.size());
-        rec = recordCount() - 1;
+        newRecord();
     }
     _datagrid[rec][index] = checkInput(var, index);
 
