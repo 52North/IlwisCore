@@ -23,13 +23,14 @@ DEFINES += InternalConnector_LIBRARY
 HEADERS += \  
     internalconnector/internalmodule.h \
     internalconnector/internalcatalogconnector.h \
-    internalconnector/internalgridcoverageconnector.h \
     internalconnector/internalilwisobjectfactory.h \
     internalconnector/internaltableconnector.h \
     internalconnector/internalprjmplfactory.h \
     internalconnector/projections/platecaree.h \
     internalconnector/projections/projectionimplementationinternal.h \
-    internalconnector/epsg.h
+    internalconnector/epsg.h \
+    internalconnector/internalfeaturecoverageconnector.h \
+    internalconnector/internalrastercoverageconnector.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
@@ -40,12 +41,13 @@ DEPENDPATH += $$PWD/core
 SOURCES += \  
     internalconnector/internalmodule.cpp \
     internalconnector/internalcatalogconnector.cpp \
-    internalconnector/internalgridcoverageconnector.cpp \
     internalconnector/internalilwisobjectfactory.cpp \
     internalconnector/internaltableconnector.cpp \
     internalconnector/internalprjimplfactory.cpp \
     internalconnector/projections/platecaree.cpp \
-    internalconnector/projections/projectionimplementationinternal.cpp
+    internalconnector/projections/projectionimplementationinternal.cpp \
+    internalconnector/internalfeaturecoverageconnector.cpp \
+    internalconnector/internalrastercoverageconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json
