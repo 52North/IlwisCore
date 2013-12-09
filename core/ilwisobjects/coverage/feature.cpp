@@ -15,7 +15,7 @@ using namespace Ilwis;
 
 quint64 Feature::_idbase = 0;
 
-SPFeatureI::SPFeatureI(FeatureInterface *f) : QSharedPointer<FeatureInterface>(f)
+SPFeatureI::SPFeatureI(FeatureInterface *f) : std::unique_ptr<FeatureInterface>(f)
 {
 }
 

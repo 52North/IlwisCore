@@ -41,9 +41,9 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
+SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom) {
     Locker lock(_mutex);
-    SPFeatureI newfeature = createNewFeature(geom.geometryType());
+    SPFeatureI& newfeature = createNewFeature(geom.geometryType());
     if (newfeature != nullptr){
         Geometry newgeom = geom;
         if ( geom.coordinateSystem().isValid() && geom.coordinateSystem() != coordinateSystem()){
@@ -55,10 +55,10 @@ SPFeatureI FeatureCoverage::newFeature(const Geometry& geom) {
     return newfeature;
 }
 
-SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
+SPFeatureI &FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
-    SPFeatureI newfeature = createNewFeature(existingFeature->geometryType());
+    SPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)
         return newfeature;
 
@@ -69,9 +69,10 @@ SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, co
     return newfeature;
 }
 
-SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
-    if ( isReadOnly())
-        return SPFeatureI();
+Ilwis::SPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
+    if ( isReadOnly()){
+        throw FeatureCreationError(TR("Readonly feature coverage, no creation allowed"));
+    }
     changed(true);
 
     _featureTypes |= tp;
@@ -83,16 +84,16 @@ SPFeatureI FeatureCoverage::createNewFeature(IlwisTypes tp) {
     CreateFeature create = _featureFactory->getCreator("feature");
     IFeatureCoverage fcoverage;
     fcoverage.set(this);
-    SPFeatureI newFeature(create(this));
-    //fcoverage->attributeTable()->newRecord();
+    FeatureInterface *newFeature = create(this);
 
     quint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
-        return SPFeatureI();
+        throw FeatureCreationError(TR("failed to create feature"));
     }
     newFeature->setCell(colIndex, QVariant(newFeature->featureid()));
-    _features.push_back(newFeature);
+    _features.resize(_features.size() + 1);
+    _features.back().reset(newFeature);
 
     quint32 cnt = featureCount(tp);
     setFeatureCount(tp,++cnt );
@@ -156,7 +157,12 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
     fcov->_featureTypes = _featureTypes;
     fcov->_featureInfo = _featureInfo;
-    fcov->_features = _features;
+    fcov->_features.resize(_features.size());
+
+    for(int i=0; i < _features.size(); ++i){
+        if ( _features[i])
+            fcov->_features[i].reset(_features[i]->clone());
+    }
 }
 
 quint32 FeatureCoverage::featureCount(IlwisTypes types, int index) const

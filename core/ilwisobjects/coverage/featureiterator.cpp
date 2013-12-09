@@ -87,7 +87,7 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
        return _iterFeatures != iter._iterFeatures;
 }
 
-SPFeatureI FeatureIterator::operator *()
+SPFeatureI& FeatureIterator::operator *()
 {
      init();
      return *_iterFeatures;

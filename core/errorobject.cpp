@@ -55,3 +55,12 @@ const char *ScriptError::what() const throw()
 {
     return "ScriptError";
 }
+
+FeatureCreationError::FeatureCreationError(const QString &message) : ErrorObject(message)
+{
+}
+
+const char *FeatureCreationError::what() const throw()
+{
+    return "FeatureCreationError";
+}

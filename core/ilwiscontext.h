@@ -3,6 +3,7 @@
 
 #include "Kernel_global.h"
 #include <QThreadStorage>
+#include <QJsonObject>
 
 namespace Ilwis{
 
@@ -30,6 +31,7 @@ public:
     QUrl temporaryWorkLocation() const;
     quint64 memoryLeft() const;
     quint64 changeMemoryLeft(quint64 amount);
+    QJsonObject configuration() const;
 
 private:
     void init();
@@ -41,6 +43,7 @@ private:
     quint64 _memoryLimit;
     quint64 _memoryLeft;
     QFileInfo _ilwisDir;
+    QJsonObject _configuration;
 };
 KERNELSHARED_EXPORT IlwisContext* context();
 }

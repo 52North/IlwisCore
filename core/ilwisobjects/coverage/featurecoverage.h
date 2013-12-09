@@ -103,7 +103,7 @@ public:
      * @param geom the geometry that has to be used for the new feature
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    SPFeatureI newFeature(const Ilwis::Geometry &geom);
+    SPFeatureI& newFeature(const Ilwis::Geometry &geom);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -119,7 +119,7 @@ public:
      * @param csySource the coordinate system that should be used must of course be compatible with the given Feature
      * @return A new feature or a nullptr if the given Feature was invalid
      */
-    SPFeatureI newFeatureFrom(const Ilwis::SPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
+    SPFeatureI& newFeatureFrom(const Ilwis::SPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
 
     /**
      * Counts the amount of features of a given type in this FeatureCoverage, if you use the default value all features will be counted.
@@ -167,7 +167,7 @@ private:
     quint32 _maxIndex;
 
 
-    Ilwis::SPFeatureI createNewFeature(IlwisTypes tp);
+    Ilwis::SPFeatureI& createNewFeature(IlwisTypes tp);
     void adaptFeatureCounts(int tp, quint32 cnt, int index);
 };
 

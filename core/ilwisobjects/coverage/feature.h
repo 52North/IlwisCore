@@ -2,6 +2,7 @@
 #define FEATURE_H
 
 #include "Kernel_global.h"
+#include "boost/optional.hpp"
 
 namespace Ilwis {
 
@@ -33,7 +34,7 @@ protected:
 
 };
 
-class KERNELSHARED_EXPORT SPFeatureI : public QSharedPointer<FeatureInterface> {
+class KERNELSHARED_EXPORT SPFeatureI : public std::unique_ptr<FeatureInterface> {
 public:
     SPFeatureI(FeatureInterface *f=0);
     QVariant operator ()(const QString &name, int index=-1, bool asRaw=true);

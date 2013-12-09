@@ -26,10 +26,11 @@ private:
         bool wasAnonymous = source->isAnonymous();
         bool done = false;
         IlwisData<T1> target;
+        target.prepare(name, source->ilwisType());
         if ( useMerge) {
-            if ( target.prepare(name, source->ilwisType())) {
+            //if ( target.prepare(name, source->ilwisType())) {
                 done = target->merge(source.ptr());
-            }
+            //}
         }
         if(!done) {
             T1 *obj = static_cast<T1 *>(source->clone());

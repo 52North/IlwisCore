@@ -56,6 +56,12 @@ public:
     explicit ScriptExecutionError(const QString& message);
     const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT FeatureCreationError : public ErrorObject {
+public:
+    explicit FeatureCreationError(const QString& message);
+    const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H
