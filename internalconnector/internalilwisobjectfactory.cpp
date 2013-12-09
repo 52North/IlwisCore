@@ -28,6 +28,7 @@
 #include "itemdomain.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
+#include "numericitem.h"
 #include "resource.h"
 #include "geodeticdatum.h"
 #include "internalilwisobjectfactory.h"
@@ -42,7 +43,7 @@
 #include "simpelgeoreference.h"
 #include "cornersgeoreference.h"
 #include "ilwisobjectconnector.h"
-#include "internalgridcoverageconnector.h"
+#include "internalrastercoverageconnector.h"
 #include "basetable.h"
 #include "flattable.h"
 #include "databasetable.h"
@@ -93,6 +94,19 @@ IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& r
     FeatureCoverage *fcoverage = new FeatureCoverage(resource);
     if (!createCoverage(resource, fcoverage))
         return 0;
+
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    if (!factory) {
+        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
+        return 0;
+    }
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    if ( !connector) {
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
+        return 0;
+    }
+    fcoverage->setConnector(connector);
+    connector->loadMetaData(fcoverage);
 
     return fcoverage;
 
@@ -307,10 +321,11 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
+    if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
+        return new TextDomain(resource);
     QString code = resource.code();
     if ( code != sUNDEF) {
-        if ( code == "text")
-            return new TextDomain(resource);
+
         QSqlQuery db(kernel()->database());
         QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
         if (db.exec(query)) {
@@ -361,10 +376,25 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
         }
     }else {
         if ( hasType(resource.ilwisType(), itITEMDOMAIN )){
-            if ( hasType(resource.ilwisType(), itNAMEDITEM)) {
+            if ( hasType(resource.extendedType(), itNAMEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
                 return new ItemDomain<NamedIdentifier>(res);
+            }
+            if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
+                Resource res = resource;
+                res.setIlwisType(itITEMDOMAIN);
+                return new ItemDomain<IndexedIdentifier>(res);
+            }
+            if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
+                Resource res = resource;
+                res.setIlwisType(itITEMDOMAIN);
+                return new ItemDomain<ThematicItem>(res);
+            }
+            if ( hasType(resource.extendedType(), itNUMERICITEM)) {
+                Resource res = resource;
+                res.setIlwisType(itITEMDOMAIN);
+                return new ItemDomain<NumericItem>(res);
             }
         }
     }
