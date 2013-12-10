@@ -41,11 +41,23 @@ ExecutionContext::ExecutionContext(bool threaded) {
     _threaded = threaded;
 }
 
-void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource, const QString& addInfo)
+void ExecutionContext::setOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource, const QString& addInfo)
 {
     QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
     tbl.addSymbol(name,_scope, tp, var);
     _results.clear();
+    _results.push_back(name);
+    if ( addInfo != sUNDEF)
+        _additionalInfo[name] = addInfo;
+    if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && resource.isValid()) {
+        mastercatalog()->addItems({resource});
+    }
+}
+
+void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource& resource, const QString& addInfo)
+{
+    QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
+    tbl.addSymbol(name,_scope, tp, var);
     _results.push_back(name);
     if ( addInfo != sUNDEF)
         _additionalInfo[name] = addInfo;

@@ -28,7 +28,9 @@ struct KERNELSHARED_EXPORT ExecutionContext {
     QString _masterGeoref;
     QString _masterCsy;
     std::ostream *_out;
-    void addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Ilwis::Resource &resource, const QString &addInfo=sUNDEF);
+    void setOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Ilwis::Resource &resource, const QString &addInfo=sUNDEF);
+    void addOutput(SymbolTable &tbl, const QVariant &var, const QString &nme, quint64 tp, const Resource &resource, const QString &addInfo=sUNDEF);
+
 };
 
 class KERNELSHARED_EXPORT CommandHandler : public QObject
