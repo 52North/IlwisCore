@@ -22,7 +22,7 @@ ThematicItem::ThematicItem()
     description(sUNDEF);
 }
 
-ThematicItem::ThematicItem(const QStringList& parts) {
+ThematicItem::ThematicItem(const QStringList& parts, quint32 rawvalue) : NamedIdentifier(sUNDEF, rawvalue) {
     if ( parts.size() > 0) {
         setName(parts[0]);
         if ( parts.size() > 1)

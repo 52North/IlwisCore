@@ -32,7 +32,7 @@ bool GridSize::execute(ExecutionContext *ctx, SymbolTable &symTable)
     else if ( _dim == "zsize")
         dimsize = sz.zsize();
     QVariant var = dimsize;
-    ctx->addOutput(symTable,var,sUNDEF,itINT32, Resource());
+    ctx->setOutput(symTable,var,sUNDEF,itINT32, Resource());
 
     return true;
 }

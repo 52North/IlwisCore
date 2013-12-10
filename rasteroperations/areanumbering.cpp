@@ -75,7 +75,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(outputRaster);
-        ctx->addOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
+        ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
     }
     return res;
 }
