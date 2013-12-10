@@ -8,7 +8,7 @@ public:
     /**
      * constructs an empty DomainItem
      */
-    DomainItem() : _raw(iUNDEF) {}
+    DomainItem(quint32 rawvalue=iUNDEF) : _raw(rawvalue) {}
 
     virtual ~DomainItem() {}
 
