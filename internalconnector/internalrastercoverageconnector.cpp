@@ -7,7 +7,7 @@
 #include "connectorinterface.h"
 #include "containerconnector.h"
 #include "ilwisobjectconnector.h"
-#include "internalgridcoverageconnector.h"
+#include "internalrastercoverageconnector.h"
 
 using namespace Ilwis;
 using namespace Internal;

@@ -414,6 +414,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itITEMDOMAIN;
     if ( name == "NumericDomain") // contains template construct, so different comparison
         return  itNUMERICDOMAIN;
+    if ( name.compare( "TextDomain",Qt::CaseInsensitive) == 0)
+        return  itTEXTDOMAIN;
     if ( name.compare( "Domain",Qt::CaseInsensitive) == 0)
         return  itDOMAIN;
     if ( name.compare( "CoordinateSystem",Qt::CaseInsensitive) == 0)
@@ -438,6 +440,7 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCATALOG;
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
         return  itOPERATIONMETADATA;
+
 
     return itUNKNOWN;
 

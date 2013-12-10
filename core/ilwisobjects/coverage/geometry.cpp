@@ -264,9 +264,16 @@ bool Geometry::within(const Geometry &geom) const{
 int Geometry::wktDimensions(const QString &wkt){
     if(-1 != wkt.indexOf(" ZM",5,Qt::CaseInsensitive)){
         return 4;
-    }else if ((-1 != wkt.indexOf(" Z",5,Qt::CaseInsensitive)) ||  (-1 != wkt.indexOf(" M",5,Qt::CaseInsensitive))){
+    }else if ((-1 != wkt.indexOf(" Z",5,Qt::CaseInsensitive)) ||
+              (-1 != wkt.indexOf(" M",5,Qt::CaseInsensitive))
+              ){
         return 3;
     }else{
+        if ((0 == wkt.indexOf("POINT",0,Qt::CaseInsensitive)) &&
+             wkt.left(wkt.lastIndexOf(")")).mid(wkt.indexOf("(")+1).split(QRegExp("\\s+"),QString::SkipEmptyParts).count() == 3
+            ){
+            return 3;
+        }//TODO 3D/4D LINESTING and POLYGON dimension parsing without Z/ZM/M ?
         return 2;
     }
 }

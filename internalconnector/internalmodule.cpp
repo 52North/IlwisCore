@@ -19,7 +19,8 @@
 #include "catalogconnectorfactory.h"
 #include "internalcatalogconnector.h"
 #include "ilwisobjectconnector.h"
-#include "internalgridcoverageconnector.h"
+#include "internalrastercoverageconnector.h"
+#include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
 #include "projection.h"
 #include "ProjectionImplementation.h"
@@ -52,6 +53,7 @@ void InternalModule::prepare()
 
     factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
+    factory->addCreator(itFEATURE,"internal", InternalFeatureCoverageConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();

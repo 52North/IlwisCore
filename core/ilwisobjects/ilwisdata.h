@@ -130,13 +130,27 @@ public:
     */
     bool prepare() {
         removeCurrent();
-        _implementation = std::shared_ptr<IlwisObject>(new T);
-        if (_implementation.get() != 0) {
-            _implementation.get()->prepare();
-            _implementation.get()->setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_implementation.get()->id()));
-             mastercatalog()->registerObject(_implementation);
+        auto type = kernel()->demangle(typeid(T).name());
+
+        IlwisTypes tp = IlwisObject::name2Type(type);
+        Resource res;
+        res.prepare();
+        res.setIlwisType(tp);
+        if ( type =="Ilwis::ItemDomain<Ilwis::NamedIdentifier>"){
+            res.setExtendedType(itNAMEDITEM);
+        } else if ( type =="Ilwis::ItemDomain<Ilwis::IndexedIdentifier>"){
+            res.setExtendedType(itINDEXEDITEM);
+        } else if ( type =="Ilwis::ItemDomain<Ilwis::ThematicItem>"){
+            res.setExtendedType(itTHEMATICITEM);
+        } else if ( type =="Ilwis::ItemDomain<Ilwis::NumericItem>"){
+            res.setExtendedType(itNUMERICITEM);
         }
-        return _implementation.get() != 0;
+        QString name = QString("%1%2").arg(ANONYMOUS_PREFIX).arg(res.id());
+        QUrl url(QString("ilwis://internalcatalog/%1").arg(name));
+        res.setName(name);
+        res.setUrl(url);
+        return prepare(res);
+
     }
 
     /*!

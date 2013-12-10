@@ -216,8 +216,15 @@ void Resource::setUrl(const QUrl &url)
     QFileInfo inf(_resource.toLocalFile());
     if ( urlTxt != "file://") {
         if ( !url.hasFragment()) {
-            setName(inf.fileName(), false);
-            addContainer(QUrl::fromLocalFile(inf.absolutePath()));
+            if ( url.scheme() == "file"){
+                setName(inf.fileName(), false);
+                addContainer(QUrl::fromLocalFile(inf.absolutePath()));
+            } else {
+                QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
+                int index = path.lastIndexOf("/");
+                addContainer(path.left(index));
+                setName(path.mid(index + 1),false);
+            }
         } else {
             QString fragment = url.fragment();
             QString fpath = fragment.split("=").back();
@@ -230,6 +237,7 @@ void Resource::setUrl(const QUrl &url)
             }
 
         }
+
     }
     else
         setName("root", false);
