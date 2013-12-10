@@ -8,6 +8,7 @@ namespace RasterOperations {
 class CrossRasters : public OperationImplementation
 {
 public:
+    enum UndefHandling { uhIgnoreUndef1, uhIgnoreUndef2, uhIgnoreUndef, uhDontCare};
     CrossRasters();
 
     CrossRasters(quint64 metaid, const Ilwis::OperationExpression &expr);
@@ -22,9 +23,12 @@ private:
     IRasterCoverage _inputRaster1;
     IRasterCoverage _inputRaster2;
     ITable _outputTable;
+    IRasterCoverage _outputRaster;
     INamedIdDomain _crossDomain;
+    UndefHandling _undefhandling;
 
-    bool cross(const Box3D<qint32> box);
+    bool crossNoRaster(const Box3D<qint32> box);
+    bool crossWithRaster(const Box3D<qint32> box);
 };
 }
 }
