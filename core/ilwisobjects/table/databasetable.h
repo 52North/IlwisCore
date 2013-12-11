@@ -12,8 +12,23 @@ class KERNELSHARED_EXPORT DatabaseTable : public BaseTable
 {
 public:
 
+    /**
+     * Constructs an empty DatabaseTable and sets the sql create flag to false.
+     */
     DatabaseTable();
+
+    /*!
+     * The constructor for a DatabaseTable with a a Resource that is registered in the mastercatalog.<br>
+     * This resource must have a name and an Id.<br>
+     * Code and description are optional. <br>
+     * And sets the sql create flag to false.
+     *
+     * \sa IlwisObject
+     * \sa Resource
+     * \param source Resource that has to be used
+     */
     DatabaseTable(const Resource& resource);
+
     ~DatabaseTable();
 
     void setDatabase(const QSqlDatabase& base);
@@ -30,6 +45,13 @@ public:
     //@override
     bool isValid() const;
 
+    /**
+     * Will try to construct the name of this table using the resource of this DatabaseTable. <br>
+     * The String will be of the following form : "<name>_<id>". <br>
+     * If it fails sUNDEF will be returned.
+     *
+     * @return String representation of the name of this DatabaseTable
+     */
     QString internalName() const;
 
     template<class T> bool insertColumn(const QString& col, const QVector<T>& values, const IDomain& dom){
@@ -108,6 +130,11 @@ public:
     //@override
     void setCell(quint32, quint32 rec, const QVariant& var);
 
+    /**
+     * Drops the data in this DatabaseTable. <br>
+     * Also removes it from the database, and sets dataloaded and sql create to false. <br>
+     * If anything fails the error can be found on the issuelogger
+     */
     void drop();
 
     //@override
