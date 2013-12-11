@@ -22,11 +22,16 @@ BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Coordinate, double, cs::cartesian, x, y
 BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel, qint32, cs::cartesian, x, y, z, x, y, z)
 BOOST_GEOMETRY_REGISTER_POINT_3D_GET_SET(Voxel_u, quint32, cs::cartesian, x, y, z, x, y, z)
 
-BOOST_GEOMETRY_REGISTER_LINESTRING_TEMPLATED(Ilwis::Line2D)
+BOOST_GEOMETRY_REGISTER_LINESTRING(Ilwis::Line2D)
+BOOST_GEOMETRY_REGISTER_LINESTRING(Ilwis::Line3D)
 
 BOOST_GEOMETRY_REGISTER_BOX(Box2Dd,Coordinate2d, min_corner(), max_corner())
 BOOST_GEOMETRY_REGISTER_BOX(Box2Di,Pixel, min_corner(), max_corner())
 BOOST_GEOMETRY_REGISTER_BOX(Box2Dui,Pixel_u, min_corner(), max_corner())
+
+BOOST_GEOMETRY_REGISTER_BOX(Box3Dd,Coordinate, min_corner(), max_corner())
+BOOST_GEOMETRY_REGISTER_BOX(Box3Di,Voxel, min_corner(), max_corner())
+BOOST_GEOMETRY_REGISTER_BOX(Box3Dui,Voxel_u, min_corner(), max_corner())
 
 
 
