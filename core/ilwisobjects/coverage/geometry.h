@@ -19,7 +19,7 @@ public:
     Geometry() {}
     Geometry(const GeometryType& geom, const ICoordinateSystem& csy) ;
     Geometry(const QString &wkt, const ICoordinateSystem& csy = ICoordinateSystem()) ;
-
+    
     template<typename GeometryType> GeometryType toType() const{
         return boost::get<GeometryType>(_geometry);
     }
