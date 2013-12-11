@@ -90,7 +90,7 @@ NamedIdentifier::NamedIdentifier() : _name(sUNDEF)
 {
 }
 
-NamedIdentifier::NamedIdentifier(const QString &nm) : _name(nm)
+NamedIdentifier::NamedIdentifier(const QString &nm, quint32 rawvalue) : DomainItem(rawvalue), _name(nm)
 {
 }
 

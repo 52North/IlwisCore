@@ -25,7 +25,7 @@ public:
      * empty Strings should also be avoided when possible.
      * @param parts the list of strings or the parts
      */
-    ThematicItem(const QStringList &parts);
+    ThematicItem(const QStringList &parts, quint32 rawvalue=iUNDEF);
 
     /**
      * Query for the description of this ThematicItem

@@ -262,6 +262,7 @@ void BaseTable::adjustRange(int index) {
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
             double vmin=1e208, vmax=-1e208;
+            bool hasfraction = true;
             for(const QVariant& var : values ){
                 double v = var.toDouble();
                 if ( !isNumericalUndef(v))
@@ -270,11 +271,14 @@ void BaseTable::adjustRange(int index) {
                 if (!isNumericalUndef(v))                         {
                     vmax = std::max(vmax, v)    ;
                 }
+                hasfraction = hasfraction && (v - (qint64)v != 0);
 
             }
             if ( vmin != 1e208 && vmax != -1e208) { //something has changed
                 rng->min(vmin);
                 rng->max(vmax);
+                if (!hasfraction)
+                    rng->resolution(1);
                 _columnDefinitionsByName[coldef.name()] = coldef;
             }
         }

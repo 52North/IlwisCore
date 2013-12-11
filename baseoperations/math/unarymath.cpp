@@ -53,11 +53,11 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if ( resource && ctx != 0) {
             QVariant value;
             value.setValue<IRasterCoverage>(_outputGC);
-            ctx->addOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->source() );
+            ctx->setOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->source() );
         }
     } else if (_case == otNUMBER) {
         double v = _unaryFun(_number);
-        ctx->addOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
+        ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
 
     } else if (  _case == otTABLE) {
         std::vector<QVariant> data = _inputTable->column(_inColumn);
@@ -71,7 +71,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if ( _outputTable.isValid()) {
             QVariant var;
             var.setValue<ITable>(_outputTable);
-            ctx->addOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->source(),_outColumn);
+            ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->source(),_outColumn);
             return true;
         }
     }

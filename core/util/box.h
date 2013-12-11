@@ -732,6 +732,10 @@ typedef Ilwis::Box2D<double> Box2Dd;
 typedef Ilwis::Box2D<qint32> Box2Di;
 typedef Ilwis::Box2D<quint32> Box2Dui;
 
+typedef Ilwis::Box3D<double> Box3Dd;
+typedef Ilwis::Box3D<qint32> Box3Di;
+typedef Ilwis::Box3D<quint32> Box3Dui;
+
 
 //Q_DECLARE_METATYPE(Ilwis::Box2D<qint8>)
 //Q_DECLARE_METATYPE(Ilwis::Box2D<quint8>)
@@ -742,6 +746,8 @@ Q_DECLARE_METATYPE(Ilwis::Box2D<quint32>)
 //Q_DECLARE_METATYPE(Ilwis::Box2D<float>)
 Q_DECLARE_METATYPE(Ilwis::Box2D<double>)
 Q_DECLARE_METATYPE(Ilwis::Box3D<double>)
+Q_DECLARE_METATYPE(Ilwis::Box3D<qint32>)
+Q_DECLARE_METATYPE(Ilwis::Box3D<quint32>)
 
 
 #endif // BOX_H

@@ -26,7 +26,7 @@ bool StringFind::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
     int n = _text.indexOf(_searchText,_start);
     QVariant value = n;
-    ctx->addOutput(symTable, value, sUNDEF, itINT32, Resource());
+    ctx->setOutput(symTable, value, sUNDEF, itINT32, Resource());
 
     return true;
 }
@@ -98,7 +98,7 @@ bool StringSub::execute(ExecutionContext *ctx, SymbolTable &symTable)
     QString sub = _text.mid(_start,_end);
 
     QVariant value = sub;
-    ctx->addOutput(symTable, value, sUNDEF, itSTRING, Resource());
+    ctx->setOutput(symTable, value, sUNDEF, itSTRING, Resource());
 
     return true;
 }
@@ -175,7 +175,7 @@ bool StringReplace::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
     QString newString = _text.replace(_searchText, _replaceText);
     QVariant value = newString;
-    ctx->addOutput(symTable, value, sUNDEF, itSTRING, Resource());
+    ctx->setOutput(symTable, value, sUNDEF, itSTRING, Resource());
 
     return true;
 }

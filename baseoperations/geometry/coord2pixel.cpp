@@ -24,7 +24,7 @@ bool Coord2Pixel::execute(ExecutionContext *ctx, SymbolTable& symTable)
     Pixel pix = _inputGC->georeference()->coord2Pixel(_coord);
     QVariant var;
     var.setValue<Pixel>(pix);
-    ctx->addOutput(symTable,var,_outName,itPIXEL, Resource());
+    ctx->setOutput(symTable,var,_outName,itPIXEL, Resource());
 
     return true;
 }

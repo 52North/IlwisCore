@@ -66,7 +66,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         outputFC->attributeTable(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
-        ctx->addOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
+        ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
     }
     return true;
 }

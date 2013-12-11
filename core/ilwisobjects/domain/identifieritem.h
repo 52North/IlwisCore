@@ -117,7 +117,7 @@ public:
      *
      * @param name the name
      */
-    NamedIdentifier(const QString& name);
+    NamedIdentifier(const QString& name, quint32 rawvalue=iUNDEF);
 
     /**
      * Query to check if this object is valid

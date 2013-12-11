@@ -54,12 +54,16 @@ bool Geometry::fromWKT(const QString &wkt){
             return false;
     }else if ( wkt.indexOf("LINESTRING", 0, Qt::CaseInsensitive) == 0) {
         if ( dim == 2){
-            Line2D<Coordinate2d> line;
+            Line2D line;
             boost::geometry::read_wkt(wkt.toStdString(), line);
             boost::geometry::correct(line);
             _geometry = line;
-        }else
-            return false;
+        }else{
+            Line3D line;
+            boost::geometry::read_wkt(wkt.toStdString(), line);
+            boost::geometry::correct(line);
+            _geometry = line;
+            }
     } else if ( wkt.indexOf("POINT", 0, Qt::CaseInsensitive) == 0) {
         if ( dim == 2){
             Coordinate2d point;
@@ -96,11 +100,11 @@ const QString Geometry::toWKT() const{
                     break;
                 }
                 case 3:{
-                    ret << boost::geometry::wkt(boost::get<Line2D<Coordinate2d> >(_geometry));
+                    ret << boost::geometry::wkt(boost::get<Line2D >(_geometry));
                     break;
                 }
                 case 4:{
-                    ret << boost::geometry::wkt(boost::get<Line2D<Pixel> >(_geometry));
+                    ret << boost::geometry::wkt(boost::get<Line3D >(_geometry));
                     break;
                 }
                 case 5:{
@@ -144,15 +148,15 @@ Box2D<double> Geometry::envelope() {
         }
         case 3:
         {
-            const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
+            const Line2D& line = (boost::get<Line2D >(_geometry));
             _bounds = boost::geometry::return_envelope<Box2Dd>(line);
             break;
         }
         case 4:
         {
             //TODO: create line3d
-            const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
-            _bounds = boost::geometry::return_envelope<Box2D<double> >(line);
+            const Line3D& line = (boost::get<Line3D >(_geometry));
+            _bounds = boost::geometry::return_envelope<Box3D<double> >(line);
             break;
         }
         case 5:
@@ -203,11 +207,17 @@ Geometry Geometry::transform(const ICoordinateSystem &csyTarget) const
                 Point3D<double> pnt(csyTarget->coord2coord(_csy, Coordinate2d(p.x(), p.y()))) ;
                 return Geometry(pnt, csyTarget);
             }
-            case 3:
-            case 4:{
-                const Line2D<Coordinate2d>& line = (boost::get<Line2D<Coordinate2d> >(_geometry));
-                Line2D<Coordinate2d > newline(line.size());
+            case 3:{
+                const Line2D& line = (boost::get<Line2D>(_geometry));
+                Line2D newline(line.size());
                 std::transform(line.begin(), line.end(),newline.begin(),[&](const Coordinate2d& crd) -> Coordinate2d
+                    { return csyTarget->coord2coord(_csy, crd);});
+                return Geometry(newline, csyTarget);
+            }
+            case 4:{
+                const Line3D& line = (boost::get<Line3D >(_geometry));
+                Line3D newline(line.size());
+                std::transform(line.begin(), line.end(),newline.begin(),[&](const Coordinate& crd) -> Coordinate
                     { return csyTarget->coord2coord(_csy, crd);});
                 return Geometry(newline, csyTarget);
             }

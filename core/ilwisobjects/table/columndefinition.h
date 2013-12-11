@@ -28,7 +28,7 @@ public:
     ColumnDefinition(const ColumnDefinition& def, quint32 index);
 
     /**
-     * Constructs a new ColumnDefinition using a name, DataDefinition an a index<br>
+     * Constructs a new ColumnDefinition using a name, DataDefinition an index.<br>
      * The index cannot be negative.
      *
      * \sa DataDefinition
@@ -39,7 +39,9 @@ public:
     ColumnDefinition(const QString& name, const DataDefinition& def, quint64 colindex);
 
     /**
-     * Creates a new ColumnDefinition with just a Domain and no range
+     * Creates a new ColumnDefinition using a name, a Domain and an index. <br>
+     * Because only a Domain is used the range will not be set. <br>
+     * The index cannot be negative.
      * @param nm
      * @param dom
      * @param colindex
@@ -47,26 +49,32 @@ public:
     ColumnDefinition(const QString& nm, const IDomain &dom, quint64 colindex=i64UNDEF);
 
     /**
-     * @brief isValid
+     * Checks if this ColumnDefinition is valid.<br>
+     * To be valid a ColumnDefinition has to have a name that is not iUNDEF and a valid domain.
+     *
+     * \sa Domain
      * @return
      */
     bool isValid() const;
 
     /**
-     * @brief type
-     * @return
+     * Query for the type of this object. <br>
+     * Will return "Column".
+     * @return "Column"
      */
     QString type() const;
 
     /**
-     * @brief datadef
-     * @return
+     * Query for the DataDefinition of this ColumnDefinition.
+     *
+     * @return The DataDefinition
      */
     const DataDefinition &datadef() const;
 
     /**
-     * @brief datadef
-     * @return
+     * Query for the DataDefinition of this ColumnDefinition.
+     *
+     * @return The DataDefinition
      */
     DataDefinition &datadef();
 
@@ -77,32 +85,37 @@ public:
     bool isMultiple() const;
 
     /**
-     * @brief multiple
-     * @param yesno
+     * Sets the multiple flag
+     * @param yesno the new value of the multiple flag
      */
     void multiple(bool yesno);
 
     /**
-     * @brief columnindex
-     * @param idx
+     * Sets the index of the ColumnDefinition to the given value. <br>
+     * The new index should not be negative.
+     *
+     * @param idx The new index
      */
     void columnindex(quint64 idx);
 
     /**
-     * @brief columnindex
-     * @return
+     * Query for the index of this ColumnDefinition.
+     *
+     * @return The Columnindex of this ColumnDefinition
      */
     quint64 columnindex() const;
 
     /**
-     * @brief isChanged
-     * @return
+     * Query for the changed flag.
+     *
+     * @return true if this ColumnDefinition has been changed
      */
     bool isChanged() const;
 
     /**
-     * @brief changed
-     * @param yesno
+     * Sets the changed flag
+     *
+     * @param yesno the new value of the changed flag.
      */
     void changed(bool yesno);
 private:
