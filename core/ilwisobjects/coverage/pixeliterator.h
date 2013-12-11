@@ -394,7 +394,7 @@ public:
      */
     PixelIterator operator+(int n) {
         PixelIterator iter(*this);
-        this->move(n);
+        iter.move(n);
         return iter;
     }
 
