@@ -130,7 +130,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& symbols )
     return ok;
     }
     catch(Ilwis::ScriptError& err) {
-        qDebug() << err.message();
+        kernel()->issues()->log(err.message());
     }
     return false;
 
