@@ -663,26 +663,31 @@ bool operator!=(const Box3D<CsyType>& box ) const {
 }
 
 QString toString() const {
-    if (std::is_floating_point<CsyType>::value)
-        return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(this->min_corner().x(),0,'f').
-                arg(this->min_corner().y(),0,'f').
-                arg(this->min_corner().z(),0,'f').
-                arg(this->max_corner().x(),0,'f').
-                arg(this->max_corner().y(),0,'f').
-                arg(this->max_corner().z(),0,'f');
-    else
-        return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(this->min_corner().x()).
-                arg(this->min_corner().y()).
-                arg(this->min_corner().z()).
-                arg(this->max_corner().x()).
-                arg(this->max_corner().y()).
-                arg(this->max_corner().z());
-
+//    if (std::is_floating_point<CsyType>::value)
+    return Box3D::toString(*this);
 }
 
 private:
     Point3D<CsyType> _min_corner;
     Point3D<CsyType> _max_corner;
+
+static QString toString(const Box3D<int>& box){
+    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(box.min_corner().x()).
+            arg(box.min_corner().y()).
+            arg(box.min_corner().z()).
+            arg(box.max_corner().x()).
+            arg(box.max_corner().y()).
+            arg(box.max_corner().z());
+}
+
+template <typename T=double> static QString toString(const Box3D<T>& box){
+    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(box.min_corner().x(),0,'f').
+            arg(box.min_corner().y(),0,'f').
+            arg(box.min_corner().z(),0,'f').
+            arg(box.max_corner().x(),0,'f').
+            arg(box.max_corner().y(),0,'f').
+            arg(box.max_corner().z(),0,'f');
+}
 
 void normalize() {
 
