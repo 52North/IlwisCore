@@ -235,7 +235,9 @@ public:
      * \param index the target index
      * \return this iterator at the specified voxel
      */
-    PixelIterator& operator[](const Voxel& vox);
+    PixelIterator& operator[](const Voxel& vox){
+        return operator ()(vox);
+    }
 
     /*!
      * \brief Checks if this PixelIterator has the same linearPosition as another PixelIterator
@@ -394,7 +396,7 @@ public:
      */
     PixelIterator operator+(int n) {
         PixelIterator iter(*this);
-        this->move(n);
+        iter.move(n);
         return iter;
     }
 

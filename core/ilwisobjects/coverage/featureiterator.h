@@ -4,27 +4,26 @@
 namespace Ilwis {
 /**
  * FeatureIterator
- * The primary access method to the features and indexes is through the featureiterator. The
- * featureiterator abstracts the movement through the feature-elements by representing the whole
- * set of feature-elements as one linear set of feature-elements. Within this space a traditional(c++)
- * random access iterator has been defined with all the methods and operators traditionally associated
- * with such a concept. Particularly:
- *
+ * The primary access method to the features and indexes is through the featureiterator. The <br>
+ * featureiterator abstracts the movement through the feature-elements by representing the whole <br>
+ * set of feature-elements as one linear set of feature-elements. Within this space a traditional(c++) <br>
+ * random access iterator has been defined with all the methods and operators traditionally associated <br>
+ * with such a concept. Particularly: <br>
+ * <br>
  * - Operators ‘++’and ‘—‘ , moving one step in the data-array.
  * - Operator ‘*’accessing data
  * - Operator ‘[]’ random access
- *
- * Because this mechanism hides the actual organization of feature-elements and indexes, it allows in a
- * large number of cases for the very efficient formulating of algorithms.
- *
- * There are three modes of movement :
- *
+ * <br>
+ * Because this mechanism hides the actual organization of feature-elements and indexes, it allows in a <br>
+ * large number of cases for the very efficient formulating of algorithms. <br>
+ * <br>
+ * There are three modes of movement : <br>
+ * <br>
  * - Iterate through all feature-elements at the same index level and when done move to the
  * next index level. Or,
  * - Iterate through all feature-elements of a feature and then move to the next feature.
- *
+ * <br>
  * The first method is default.
- * The construction of featureiterators is somewhat more complex
  *
  *\sa FeatureCoverage
  */
@@ -32,82 +31,113 @@ class KERNELSHARED_EXPORT FeatureIterator  : public std::iterator<std::random_ac
 {
 public:
     /**
-     * @brief FeatureIterator
+     * Constructor for an empty FeatureIterator
      */
     FeatureIterator();
 
     /**
-     * @brief FeatureIterator
-     * @param fcoverage
+     * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
+     * iterate over all the features in the supplied coverage. <br>
+     * initialisation will fail if the supplied feature coverage is invalid.
+     *
+     * @param fcoverage The FeatureCoverage that should be iterated over
      */
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
 
     /**
-     * @brief FeatureIterator
-     * @param fcoverage
-     * @param subset
+     * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
+     * iterate over all the features in the supplied subset of this coverage. <br>
+     * initialisation will fail if the supplied feature coverage is invalid or if the subset is invalid(cannot be applied to the coverage).
+     *
+     * @param fcoverage The FeatureCoverage that should be iterated over
+     * @param subset The subset that should be iterated
      */
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32>& subset);
 
     /**
-     * @brief FeatureIterator
-     * @param iter
+     * Copy constructor.<br>
+     * Constructs a copy of the given FeatureIterator.<br>
+     * if the supplied FeatureIterator is invalid, the result of this will also be invalid.
+     *
+     * @param iter The FeatureIterator that should be copied
      */
     FeatureIterator(const FeatureIterator& iter);
 
     /**
-     * @brief operator ++
-     * @return
+     * Override of the operator ++ <br>
+     * Moves this FeatureIterator to the next feature.<br>
+     * Returns a reference to this FeatureIterator.
+     *
+     * @return a reference to this FeatureIterator.
      */
     FeatureIterator& operator++() ;
 
     /**
-     * @brief operator ++
-     * @return
+     * Override of the operator ++<br>
+     * Copies this FeatureIterator and moves the copy to the next feature. <br>
+     * Returns the copy.
+     *
+     * @return a copy of this moved by 1
      */
     FeatureIterator operator++(int);
 
+
     /**
-     * @brief operator +
-     * @return
+     * Override of the operator + <br>
+     * Moves this FeatureIterator n features.<br>
+     * Returns a reference to this FeatureIterator.
+     *
+     * @return a reference to this FeatureIterator.
      */
     FeatureIterator& operator+(int);
 
     /**
-     * @brief operator -
-     * @return
+     * Override of the operator - <br>
+     * Moves this FeatureIterator -n features.<br>
+     * Returns a reference to this FeatureIterator.
+     *
+     * @return a reference to this FeatureIterator.
      */
     FeatureIterator& operator-(int);
 
     /**
-     * @brief operator ==
-     * @param rhs
-     * @return
+     * Override of the == operator.<br>
+     * Compares the current feature of the 2 FeatureIterators, if they are the same true will be returned.<br>
+     * In all other cases false will be returned.
+     *
+     * @param rhs the FeatureIterator this one should be compared to
+     * @return true when they both are at the same feature
      */
     bool operator==(const FeatureIterator& rhs) ;
 
     /**
-     * @brief operator !=
-     * @param rhs
-     * @return
+     * Override of the != operator.<br>
+     * Compares the current feature of the 2 FeatureIterators, if they are the same false will be returned.<br>
+     * In all other cases true will be returned.
+     *
+     * @param rhs the FeatureIterator this one should be compared to
+     * @return false when they both are at the same feature
      */
     bool operator!=(const FeatureIterator& rhs);
 
     /**
-     * @brief operator *
-     * @return
+     * Creates and returns a reference to the features this FeatureIterator iterates over
+     *
+     * @return the features of this iterator
      */
     SPFeatureI& operator*();
 
     /**
-     * @brief end
-     * @return
+     * Returns a copy of this FeatureIterator which has as current feature the last feature in the coverage
+     *
+     * @return a FeatureIterator copy at the end of its coverage
      */
     FeatureIterator end() const;
 
     /**
-     * @brief end
-     * @return
+     * Returns a copy of this FeatureIterator which has as current feature the last feature in the coverage
+     *
+     * @return a FeatureIterator copy at the end of its coverage
      */
     FeatureIterator end();
 
