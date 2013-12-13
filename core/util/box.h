@@ -391,7 +391,7 @@ public:
             this->max_corner().x((CsyType)p2[0].trimmed().toDouble());
             this->max_corner().y((CsyType)p2[1].trimmed().toDouble());
             if ( p2.size() == 3)
-                this->min_corner().z((CsyType)p2[2].trimmed().toDouble());
+                this->max_corner().z((CsyType)p2[2].trimmed().toDouble());
         }
     }
 
@@ -672,7 +672,8 @@ private:
     Point3D<CsyType> _max_corner;
 
 static QString toString(const Box3D<int>& box){
-    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(box.min_corner().x()).
+    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").
+            arg(box.min_corner().x()).
             arg(box.min_corner().y()).
             arg(box.min_corner().z()).
             arg(box.max_corner().x()).
@@ -681,7 +682,8 @@ static QString toString(const Box3D<int>& box){
 }
 
 template <typename T=double> static QString toString(const Box3D<T>& box){
-    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(box.min_corner().x(),0,'f').
+    return QString("POLYGON(%1 %2 %3,%4 %5 %6)").
+            arg(box.min_corner().x(),0,'f').
             arg(box.min_corner().y(),0,'f').
             arg(box.min_corner().z(),0,'f').
             arg(box.max_corner().x(),0,'f').
