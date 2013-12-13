@@ -64,3 +64,12 @@ const char *FeatureCreationError::what() const throw()
 {
     return "FeatureCreationError";
 }
+
+GeometryError::GeometryError(const QString &message) : ErrorObject(message)
+{
+}
+
+const char *GeometryError::what() const throw()
+{
+    return "GeometryError";
+}

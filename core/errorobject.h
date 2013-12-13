@@ -62,6 +62,12 @@ public:
     explicit FeatureCreationError(const QString& message);
     const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT GeometryError : public ErrorObject {
+public:
+    explicit GeometryError(const QString& message);
+    const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H
