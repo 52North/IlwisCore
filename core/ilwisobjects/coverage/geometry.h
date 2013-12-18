@@ -22,21 +22,24 @@ class KERNELSHARED_EXPORT Geometry {
 public:
 
     /**
-     * @brief Geometry
+     * constructs an empty Geometry
      */
     Geometry() {}
 
     /**
-     * @brief Geometry
-     * @param geom
-     * @param csy
+     * Copy constructor for a Geometry on a given coordinatesystem
+     *
+     * @param geom the Geometry that should be copied
+     * @param csy The coordinateSystem the geometry should be copied onto
      */
     Geometry(const GeometryType& geom, const ICoordinateSystem& csy) ;
 
     /**
-     * @brief Geometry
-     * @param wkt
-     * @param csy
+     * Constructs a new Geometry from a String on a coordinatesystem.
+     * The string must be constructed to the wkt string standard.
+     *
+     * @param wkt The String, in wkt standard
+     * @param csy The target coordinates system, defaults to a new empty ICoordinateSystem
      */
     Geometry(const QString &wkt, const ICoordinateSystem& csy = ICoordinateSystem()) ;
 
@@ -48,71 +51,93 @@ public:
     }
 
     /**
-     *
+     * template function. sets the type of this geometry. can be:
+     * - Pixel
+     * - Coordinate2d
+     * - Coordinate
+     * - Line2D
+     * - Line3D
+     * - Polygon
      */
     template<typename GeometryType> void setGeometry(const GeometryType& geom) {
         _geometry = geom;
     }
 
     /**
-     * @brief coordinateSystem
-     * @return
+     * Query of the ICoordinateSystem of this geometry
+     *
+     * @return The CoordinateSystem of this geometry
      */
     ICoordinateSystem coordinateSystem() const;
 
     /**
-     * @brief coordinateSystem
+     * Sets the CoordinateSystem of this geometry
      */
     void coordinateSystem(const ICoordinateSystem&);
 
-    /**
-     * @brief isValid
-     * @return
-     */
+    //@override
     bool isValid() const ;
 
     /**
-     * @brief envelope
-     * @return
+     * Query for the bounding box of this geometry.
+     * The geometry will always fit in the boundingbox.
+     *
+     * @return The bounding box in a Box2D<double> format
      */
     Box2D<double> envelope() ;
 
     /**
-     * @brief envelope
-     * @return
+     * Query for the bounding box of this geometry.
+     * The geometry will always fit in the boundingbox.
+     *
+     * @return The bounding box in a Box2D<double> format
      */
     Box2D<double> envelope() const;
 
     /**
-     * @brief fromWKT
-     * @param wkt
-     * @return
+     * Generates this (empty) geometry using the supplied wkt string. if this geometry was already valid it will override the excesting values
+     *
+     * @param wkt the wkt string with the new geometry
+     * @return true if the string was read succesful
      */
     bool fromWKT(const QString &wkt);
 
     /**
-     * @brief toWKT
-     * @return
+     * Generates a wkt string that represents this geometry
+     *
+     * @return A String in wkt format
      */
     const QString toWKT() const;
 
     /**
-     * @brief geometryType
-     * @return
+     * Query for the ilwis type of the geometry
+     * results may be:
+     * - Pixel
+     * - Coordinate2d
+     * - Coordinate
+     * - Line2D
+     * - Line3D
+     * - Polygon
+     *
+     * \sa IlwisObject
+     * @return the IlwisType of this geometry
      */
     IlwisTypes geometryType() const ;
 
     /**
-     * @brief transform
-     * @param csyTarger
-     * @return
+     * Generates a Geometry copy of this geometry on the given target coordinate system
+     * both coordinate systems must not be the same and the target must be valid.
+     *
+     * @param csyTarger the target coordinatesystem
+     * @return the new geometry with as coordinatesystem the target
      */
     Geometry transform(const ICoordinateSystem& csyTarger) const;
 
     /**
-     * @brief within
-     * @param geom
-     * @return
+     * Checks if a point geometry is inside a polygon geometry, other cases not yet implemented
+     *
+     * @param geom the geometry that has to be within
+     * @return true if the geometry fits in this
      */
     bool within(const Geometry& geom) const;
 
