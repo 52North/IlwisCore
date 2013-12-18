@@ -332,6 +332,7 @@ public:
      * \return true when the pixel is in this PixelIterator
      */
     bool contains(const Pixel& pix) ;
+    bool contains(const Voxel& pix);
 
     /*!
      * \brief Checks if the x coordinate has changed in the last step taken
