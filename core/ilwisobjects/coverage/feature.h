@@ -12,22 +12,132 @@ class SPFeatureI;
 
 class KERNELSHARED_EXPORT FeatureInterface {
 public:
+
     virtual ~FeatureInterface() ;
+
+    /**
+     * Query for the id of this feature
+     * every feature is runtime unique and thus has a unique id
+     *
+     * @return the id of this feature
+     */
     virtual quint64 featureid() const = 0;
+
+    /**
+     * checks if this feature is valid
+     *
+     * @return true when valid
+     */
     virtual bool isValid() const = 0 ;
+
+    /**
+     * Returns a reference to the geometry of this feature at a certain index
+     *
+     * @param index the index of the geometry defaults to 0
+     * @return the geometry of this feature at the given index
+     */
     virtual const Geometry& geometry(quint32 index=0) const = 0;
+
+    /**
+     * Returns a reference to the geometry of this feature at a certain index
+     *
+     * @param index the index of the geometry defaults to 0
+     * @return the geometry of this feature at the given index
+     */
     virtual Geometry& geometry(quint32 index=0) = 0;
+
+    /**
+     * sets a Geometry on a given index of this feature
+     *
+     * @param geom the new geometry to be set
+     * @param index the index at which the geometry should be set defaults to 0
+     */
     virtual void set(const Geometry& geom, int index = 0) = 0;
+
+    /**
+     * This method gives acces to the attribute table of this feature, only 1 attribute table can be accessed based on the id of this feature
+     *
+     * @param name The name of the attribute
+     * @param index The index of the attribute
+     * @param asRaw when set to true will return only the raw value (defaults to true because setting it to false will cause efficiency loss)
+     * @return the requested attribute
+     */
     QVariant operator()(const QString& name, int index = -1, bool asRaw=true);
+
+    /**
+     * Clones / copies this feature
+     * @return a Copy of this feature
+     */
     virtual FeatureInterface *clone() const=0;
+
+    /**
+     * Query for the geometry type of this feature
+     * @param index
+     * @return
+     */
     virtual IlwisTypes geometryType(qint32 index=0) const = 0;
+
+    /**
+     * @brief trackSize
+     * @return
+     */
     virtual quint32 trackSize() const = 0;
+
+    /**
+     * @brief cell
+     * @param name
+     * @param index
+     * @param asRaw
+     * @return
+     */
     virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true)  = 0;
+
+    /**
+     * @brief setCell
+     * @param name
+     * @param var
+     * @param index
+     */
     virtual void setCell(const QString& name, const QVariant& var, int index=-1) = 0;
+
+    /**
+     * @brief setCell
+     * @param colIndex
+     * @param var
+     * @param index
+     */
     virtual void setCell(quint32 colIndex, const QVariant& var, int index=-1) = 0;
+
+    /**
+     * @brief cell
+     * @param colIndex
+     * @param index
+     * @param asRaw
+     * @return
+     */
     virtual QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) = 0;
+
+    /**
+     * @brief columndefinition
+     * @param name
+     * @param coverages
+     * @return
+     */
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
+
+    /**
+     * @brief columndefinition
+     * @param index
+     * @param coverages
+     * @return
+     */
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
+
+    /**
+     * @brief attributeColumnCount
+     * @param coverages
+     * @return
+     */
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
 protected:
 
