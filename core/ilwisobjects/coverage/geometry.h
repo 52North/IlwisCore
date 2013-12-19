@@ -145,6 +145,7 @@ private:
     GeometryType _geometry;
     Box2D<double> _bounds;
     ICoordinateSystem _csy;
+    bool _valid;
     int wktDimensions(const QString &wkt);
 };
 }

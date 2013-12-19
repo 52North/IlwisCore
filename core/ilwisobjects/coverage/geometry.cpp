@@ -17,33 +17,36 @@ using namespace Ilwis;
 Geometry::Geometry(const GeometryType& geom, const ICoordinateSystem &csy) :
     _geometry(geom),
     _bounds(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF)),
-    _csy(csy)
+    _csy(csy),
+    _valid(true)
 {
-
+    if (!_geometry.empty())
+        _bounds = this->envelope();
 }
 
 Geometry::Geometry(const QString &wkt, const ICoordinateSystem &csy):
     _bounds(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF)),
     _csy(csy)
 {
-    if (!this->fromWKT(wkt))
+    _valid = this->fromWKT(wkt);
+    if(!_valid)
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Geometry",wkt);
+    else
+        _bounds = this->envelope();
 }
 
 bool Geometry::isValid() const {
-    //TODO:
-    return true;
+    //TODO: check also semantical validity?!
+    return _valid && !_geometry.empty();// && _csy->envelope().contains(...);
 }
 
 Box2D<double> Geometry::envelope() const{
-    if (!_bounds.isValid()) {
-        return const_cast<Geometry *>(this)->envelope();
-    }
-    return _bounds;
+    return const_cast<Geometry *>(this)->envelope();
 }
 
 bool Geometry::fromWKT(const QString &wkt){
     int dim = wktDimensions(wkt);
+    _valid = false;
     if ( wkt.indexOf("POLYGON", 0, Qt::CaseInsensitive) == 0) {
         if (dim == 2){
             Polygon polygon;
@@ -79,50 +82,47 @@ bool Geometry::fromWKT(const QString &wkt){
             return false;
     }else
         return false;
+    _bounds = Box2D<double>(Coordinate2d(rUNDEF, rUNDEF), Coordinate2d(rUNDEF, rUNDEF));//invlidate _bounds
+    _valid = true;
     return true;
 }
 
 const QString Geometry::toWKT() const{
-    if (!_bounds.isValid()) {
-        std::stringstream ret;
-        try{
-            switch(_geometry.which()){
-                case 0:{
-                    ret << boost::geometry::wkt(boost::get<Point2D<> >(_geometry));
-                    break;
-                }
-                case 1:{
-                    ret << boost::geometry::wkt(boost::get<Point2D<double> >(_geometry));
-                    break;
-                }
-                case 2:{
-                    ret << boost::geometry::wkt(boost::get<Point3D<double> >(_geometry));
-                    break;
-                }
-                case 3:{
-                    ret << boost::geometry::wkt(boost::get<Line2D >(_geometry));
-                    break;
-                }
-                case 4:{
-                    ret << boost::geometry::wkt(boost::get<Line3D >(_geometry));
-                    break;
-                }
-                case 5:{
-                    ret << boost::geometry::wkt(boost::get<Polygon >(_geometry));
-                    break;
-                }
-                default:
-                    return QString("EMPTY");
+    std::stringstream ret;
+    try{
+        switch(_geometry.which()){
+            case 0:{
+                ret << boost::geometry::wkt(boost::get<Point2D<> >(_geometry));
+                break;
             }
-        }catch (boost::bad_get bg){
-            ERROR2(ERR_COULD_NOT_CONVERT_2,"boost::geometry",QString("WKT - %1").arg(bg.what()));
-            return QString();
+            case 1:{
+                ret << boost::geometry::wkt(boost::get<Point2D<double> >(_geometry));
+                break;
+            }
+            case 2:{
+                ret << boost::geometry::wkt(boost::get<Point3D<double> >(_geometry));
+                break;
+            }
+            case 3:{
+                ret << boost::geometry::wkt(boost::get<Line2D >(_geometry));
+                break;
+            }
+            case 4:{
+                ret << boost::geometry::wkt(boost::get<Line3D >(_geometry));
+                break;
+            }
+            case 5:{
+                ret << boost::geometry::wkt(boost::get<Polygon >(_geometry));
+                break;
+            }
+            default:
+                return QString("EMPTY");
         }
-        return QString(ret.str().c_str());
-    }else{
-        ERROR2(ERR_COULD_NOT_CONVERT_2,"boost::geometry",QString("WKT - invalid geomtry"));
+    }catch (boost::bad_get bg){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,"boost::geometry",QString("WKT - %1").arg(bg.what()));
         return QString();
     }
+    return QString(ret.str().c_str());
 }
 
 Box2D<double> Geometry::envelope() {
