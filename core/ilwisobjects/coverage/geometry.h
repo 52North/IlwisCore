@@ -35,7 +35,7 @@ public:
     Geometry(const GeometryType& geom, const ICoordinateSystem& csy) ;
 
     /**
-     * Constructs a new Geometry from a String on a coordinatesystem.
+     * Constructs a new Geometry from a String on a coordinatesystem.<br>
      * The string must be constructed to the wkt string standard.
      *
      * @param wkt The String, in wkt standard
@@ -79,7 +79,7 @@ public:
     bool isValid() const ;
 
     /**
-     * Query for the bounding box of this geometry.
+     * Query for the bounding box of this geometry.<br>
      * The geometry will always fit in the boundingbox.
      *
      * @return The bounding box in a Box2D<double> format
@@ -87,7 +87,7 @@ public:
     Box2D<double> envelope() ;
 
     /**
-     * Query for the bounding box of this geometry.
+     * Query for the bounding box of this geometry.<br>
      * The geometry will always fit in the boundingbox.
      *
      * @return The bounding box in a Box2D<double> format
@@ -110,7 +110,7 @@ public:
     const QString toWKT() const;
 
     /**
-     * Query for the ilwis type of the geometry
+     * Query for the ilwis type of the geometry<br>
      * results may be:
      * - Pixel
      * - Coordinate2d
@@ -125,7 +125,7 @@ public:
     IlwisTypes geometryType() const ;
 
     /**
-     * Generates a Geometry copy of this geometry on the given target coordinate system
+     * Generates a Geometry copy of this geometry on the given target coordinate system<br>
      * both coordinate systems must not be the same and the target must be valid.
      *
      * @param csyTarger the target coordinatesystem
