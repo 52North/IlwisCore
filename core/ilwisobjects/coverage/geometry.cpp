@@ -163,6 +163,7 @@ Box2D<double> Geometry::envelope() {
         {
             Polygon& pol = (boost::get<Polygon >(_geometry));
             _bounds = boost::geometry::return_envelope<Box2D<double> >(pol);
+            break;
         }
 
         case 6:
