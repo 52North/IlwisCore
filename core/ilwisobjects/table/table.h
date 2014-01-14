@@ -244,7 +244,7 @@ public:
 
     /**
      * Selects the indices of all collumns that meet the conditions specified in the conditions String<br>
-     * so for example: if conditions is col1 <5 && col2=="two"<br>
+     * so for example: if conditions is @code col1 < 5 AND col2 == "two" @endcode <br>
      * it will return all indices at which collumns 1 and 2 meet the requirements<br>
      *<br>
      * This function is still under development, only the most basic expressions are implemented at this time
