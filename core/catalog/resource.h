@@ -53,7 +53,7 @@ public:
     Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT);
 
     /**
-     * @brief Resource
+     * Creates a new Resource from a Database record, this record should come from the mastercatalog
      * @param rec
      */
     Resource(const QSqlRecord& rec);
@@ -61,46 +61,55 @@ public:
     virtual ~Resource() {}
 
     /**
-     * Changes the name of this resource, can
-     * @param nm
-     * @param adaptUrl
+     * Changes the name of this resource, can adapt the file name on the disk
+     *
+     * @param nm the new name of this Resource
+     * @param adaptUrl set to false if you do not want to change the file name
      */
     void setName(const QString& nm, bool adaptUrl=true);
 
     /**
-     * @brief operator []
-     * @param property
-     * @return
+     * override of the [] operator, allows you to query this resource for some of its data.<br>
+     *
+     * You can query either for an "id" or an "name", these will always work, any other property might fail.
+     *
+     * @param property the property that should be retrieved from the attributetable
+     * @return the Value of the property or iUNDEF
      */
     QVariant operator[] (const QString& property) const;
 
     /**
-     * @brief hasProperty
-     * @param property
-     * @return
+     * Checks whether this Resource has a certain property, a resource always has a "name" and a "id"
+     *
+     * @param property the property that should be checked
+     * @return true if the property excists within this resource
      */
     bool hasProperty(const QString& property) const;
 
     /**
-     * @brief addProperty
+     * Adds a property to this resource, a propert is a combination of a key and a value. <br>
+     * the key can also be seen as the name of the property.
      * @param key
      * @param value
      */
     void addProperty(const QString& key, const QVariant& value );
 
     /**
-     * @brief url
-     * @return
+     * Query for the url of this Resource, the url points to the file used to created this Resource
+     * @return An url to the file of this Resource
      */
     QUrl url() const;
 
     /**
-     * @brief setUrl
-     * @param url
+     * Changes The url of this Resource, and thus changes this whole Resource, as it will read the new file and refill all the fields using that.<br>
+     *
+     * The url has to be valid though.
+     * @param url The new url, must be valid
      */
     void setUrl(const QUrl& url);
 
     /**
+      -=-?
      * @brief toLocalFile
      * @param relative
      * @return
@@ -108,13 +117,18 @@ public:
     QString toLocalFile(bool relative=false) const;
 
     /**
-     * @brief container
-     * @param level
-     * @return
+     * Query for the url to the container of this Resource (the container of the file this Resource is based on, that is). <br>
+     * in the case of a folder structure, level references the amount of folders you want to "go up", so if you folder structure is:<br>
+     * 1\2\3\4\5\file.file<br>
+     * and you enter as level 3, you get as url 1/2/
+     *
+     * @param level the amount of levels above the file
+     * @return the url of the container specified
      */
     QUrl container(int level=0) const;
 
     /**
+      -=- dont know details
      * @brief addContainer
      * @param url
      * @param level
@@ -122,48 +136,59 @@ public:
     void addContainer(const QUrl &url, int level=0);
 
     /**
-     * @brief size
-     * @return
+     * Query for the size of this Resource
+     *
+     * @return the size of this Resource, cannot be <0
      */
     quint64 size() const;
 
     /**
-     * @brief dimensions
+     * Query this Resource for tis dimensions
+     * -=- ?
      * @return
      */
     QString dimensions() const;
 
     /**
-     * @brief ilwisType
-     * @return
+     * Returns the ilwis type of this Resource, anything is possible
+     *
+     * \sa IlwisObject
+     * @return The correct IlwisType
      */
     IlwisTypes ilwisType() const;
 
     /**
-     * @brief extendedType
-     * @return
+     * Returns the extended IlwisType
+     *
+     * \sa IlwisObject
+     * @return The correct IlwisType
      */
     IlwisTypes extendedType() const;
 
     /**
-     * @brief setIlwisType
-     * @param tp
+      -=- conditions?
+     * Sets the ilwistype of this Resource
+     *
+     * \sa IlwisObject
+     * @param tp the new ilwistype of this resource
      */
     void setIlwisType(IlwisTypes tp);
 
     /**
-     * @brief setExtendedType
-     * @param tp
+     * Sets the extendedType of this Resource
+     *
+     * \sa IlwisObject
+     * @param tp the new extended type of this resource
      */
     void setExtendedType(IlwisTypes tp);
 
     /**
-     * @brief prepare
+     * Prepares this Resource
      */
     void prepare();
 
     /**
-     * @brief store
+     * -=- ?
      * @param queryItem
      * @param queryProperties
      * @return
@@ -171,12 +196,17 @@ public:
     bool store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const;
 
     /**
-     * @brief isValid
-     * @return
+     * Checks if this Resource is valid
+     *
+     * a resource is valid if it has a valid name, a valid IlwisType and the url to the resource is valid
+     *
+     *
+     * @return true if this resource is valid
      */
     bool isValid() const;
 
     /**
+      -=- what does < do?, copy constructor?
      * @brief operator ()
      * @param resource
      * @return
@@ -184,23 +214,29 @@ public:
     bool operator()(const Ilwis::Resource& resource);
 
     /**
-     * @brief setId
-     * @param newid
+     * Sets a new id on this Resource. A new id has to be unique, and not registered in the catalog
+     *
+     * @param newid the new id of this resource
      */
     void setId(quint64 newid);
 
     /**
-     * @brief toLocalFile
-     * @param url
-     * @param relative
-     * @return
+     * Creates a localfile representing this Resource. <br>
+     * The url must be valid, and is should also represent the directory the file should be placed
+     *
+     * @param url The location of the file
+     * @param relative -=- what does it mean?>
+     * @return A Qurl to the file if succesful, or else a sUNDEF
      */
     static QString toLocalFile(const QUrl& url, bool relative=false);
 
     /**
-     * @brief copy
-     * @param id
-     * @return
+     * Copies this resource, only difference is the id, since Resources are always singletons. <br>
+     *
+     * The new Resource will be prepared and than returned
+     *
+     * @param id the id of the copy
+     * @return the copy
      */
     Resource copy(quint64 id) const;
 
