@@ -271,7 +271,7 @@ void BaseTable::adjustRange(int index) {
                 if (!isNumericalUndef(v))                         {
                     vmax = std::max(vmax, v)    ;
                 }
-                hasfraction = hasfraction && (v - (qint64)v != 0);
+                hasfraction |= (v - (qint64)v != 0);
 
             }
             if ( vmin != 1e208 && vmax != -1e208) { //something has changed
@@ -279,7 +279,7 @@ void BaseTable::adjustRange(int index) {
                 rng->max(vmax);
                 if (!hasfraction)
                     rng->resolution(1);
-                _columnDefinitionsByName[coldef.name()] = coldef;
+                _columnDefinitionsByName[coldef.name()].datadef() = coldef.datadef();
             }
         }
     } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
@@ -371,7 +371,7 @@ void BaseTable::initRecord(std::vector<QVariant> &values) const
 {
     values.resize(columnCount());
     for(int i=0; i < columnCount(); ++i) {
-        const ColumnDefinition &coldef  = columndefinition(i);
+        const ColumnDefinition &coldef  = const_cast<BaseTable *>(this)->columndefinition(i);
         if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
             values[i] = sUNDEF;
         }
