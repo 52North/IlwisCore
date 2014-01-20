@@ -48,7 +48,7 @@ public:
     void stream(std::ofstream &stream, LogMessageFormat frmt);
 
 private:
-    std::string type2String();
+    QString type2String() const;
 
     QDateTime _itime;
     QString   _message;

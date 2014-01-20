@@ -12,14 +12,16 @@ namespace Ilwis {
 
 /*!
  * A representation of a point in the cartesian space. It is the base class for the Point2D and Point3D classes. The type
- * of the coordinate (CrdType) must support the ==,+, -, * ,/ and copy operations (usuallu numerical) for this class to work properly.
+ * of the coordinate (CrdType) must support the ==,+, -, * ,/ and copy operations (usually numerical) for this class to work properly.
  * each point has a x and a y property. The meaning of the point is determined by the coordinate space it is used in. On purpose this meaning
  * is now left upto the using context ( realworld coordinate systems, grid system, uni-sphere systems etc...).
  */
-template<class CrdType=qint32, int dim=2>
+template<class CrdType=qint32>
 class Point
 {
 public:
+
+    virtual ~Point(){}
 
     /*!
      return the x value of a point
@@ -91,14 +93,14 @@ public:
     /*!
      default constructor
      */
-    Point2D() : Point<CrdType, 2>(){
+    Point2D() : Point<CrdType>(){
     }
     /*!
      constructs a 2D point from 2 values. The values must not be undefined else the point remains not valid
      * \param d1 first value
      * \param d2 second value
      */
-    Point2D(CrdType d1, CrdType d2) : Point<CrdType, 2>(d1,d2) {
+    Point2D(CrdType d1, CrdType d2) : Point<CrdType>(d1,d2) {
     }
 
     template<typename U> Point2D(const Point2D<U>& p) {
@@ -112,14 +114,14 @@ public:
         }
     }
 
-    Point2D(Point2D<CrdType>&& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
+    Point2D(Point2D<CrdType>&& crd) : Point<CrdType>(crd.x(),crd.y()) {
         crd._x = crd._y = this->undefined;
     }
 
-    Point2D(const Point2D<CrdType>& crd) : Point<CrdType, 2>(crd.x(),crd.y()) {
+    Point2D(const Point2D<CrdType>& crd) : Point<CrdType>(crd.x(),crd.y()) {
     }
 
-    Point2D(const std::vector<CrdType>& v) : Point<CrdType, 2>() {
+    Point2D(const std::vector<CrdType>& v) : Point<CrdType>() {
         if ( v.size() < 2) {
             *this = Point2D<CrdType>();
             return;
@@ -157,7 +159,7 @@ public:
      third dimension will be lost after this conversion
      * \param p 3D point
      */
-    Point2D(const Point<CrdType,3>& p) : Point<CrdType, 2>(p.x(),p.y()) {
+    Point2D(const Point<CrdType>& p) : Point<CrdType>(p.x(),p.y()) {
     }
 
 
@@ -259,9 +261,9 @@ public:
  * A point in 3D space. It is a derivative of the Point class. As the base class already offer the x,y components no
  *further implementation of these is needed. The class mostely implements special operations on 3D points and a z coordinate
  */
-template<typename CrdType=qint32> class Point3D : public Point<CrdType, 3> {
+template<typename CrdType=qint32> class Point3D : public Point<CrdType> {
 public:
-    Point3D() : Point<CrdType, 3>(){
+    Point3D() : Point<CrdType>(){
 
     }
     /*!
@@ -271,7 +273,7 @@ public:
      * \param v2 y dimension
      * \param v3 z dimension
      */
-    Point3D(CrdType v1, CrdType v2, CrdType v3=0) : Point<CrdType, 3>(v1,v2) {
+    Point3D(CrdType v1, CrdType v2, CrdType v3=0) : Point<CrdType>(v1,v2) {
         z(v3);
     }
 
@@ -283,19 +285,19 @@ public:
      Copy constructor for 2D points. It ensure that 2D and 3D points can be interchanged
      * \param 2D point
      */
-    Point3D(const Point2D<CrdType>& p) : Point<CrdType, 3>(p.x(), p.y()) {
+    Point3D(const Point2D<CrdType>& p) : Point<CrdType>(p.x(), p.y()) {
         z(0);
     }
 
-    Point3D(Point3D<CrdType>&& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
+    Point3D(Point3D<CrdType>&& crd) : Point<CrdType>(crd.x(),crd.y()) {
         this->z(crd.z());
     }
 
-    Point3D(const Point3D<CrdType>& crd) : Point<CrdType, 3>(crd.x(),crd.y()) {
+    Point3D(const Point3D<CrdType>& crd) : Point<CrdType>(crd.x(),crd.y()) {
         this->z(crd.z());
     }
 
-    Point3D(const std::vector<CrdType>& v) : Point<CrdType, 3>() {
+    Point3D(const std::vector<CrdType>& v) : Point<CrdType>() {
         if ( v.size() < 2) {
             *this = Point3D<CrdType>();
             return;

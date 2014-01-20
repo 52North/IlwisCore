@@ -235,7 +235,9 @@ public:
      * \param index the target index
      * \return this iterator at the specified voxel
      */
-    PixelIterator& operator[](const Voxel& vox);
+    PixelIterator& operator[](const Voxel& vox){
+        return operator ()(vox);
+    }
 
     /*!
      * \brief Checks if this PixelIterator has the same linearPosition as another PixelIterator
@@ -330,6 +332,7 @@ public:
      * \return true when the pixel is in this PixelIterator
      */
     bool contains(const Pixel& pix) ;
+    bool contains(const Voxel& pix);
 
     /*!
      * \brief Checks if the x coordinate has changed in the last step taken

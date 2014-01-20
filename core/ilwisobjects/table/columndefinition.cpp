@@ -13,7 +13,10 @@ ColumnDefinition::ColumnDefinition() : _multiple(false), _changed(false)
 {
 }
 
-ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) : Identity(def.name(), index), _multiple(false), _changed(false)
+ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
+    Identity(def.name(), index),
+    _multiple(false),
+    _changed(false)
 {
     datadef().domain(def.datadef().domain());
     datadef().range(def.datadef().range()->clone());
@@ -29,7 +32,10 @@ ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &de
 
 }
 
-ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) : Identity(nm, colindex), _multiple(false)
+ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) :
+    Identity(nm, colindex),
+    _multiple(false),
+    _changed(false)
 {
     datadef().domain(dom);
 }

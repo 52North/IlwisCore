@@ -279,7 +279,15 @@ bool PixelIterator::contains(const Pixel& pix) {
             pix.x() < _box.max_corner().x()  &&
             pix.y() >= _box.min_corner().y() &&
             pix.y() < _box.max_corner().y();
+}
 
+bool PixelIterator::contains(const Voxel& pix) {
+    return pix.x() >= _box.min_corner().x() &&
+            pix.x() < _box.max_corner().x()  &&
+            pix.y() >= _box.min_corner().y() &&
+            pix.y() < _box.max_corner().y() &&
+            pix.z() >= _box.min_corner().z() &&
+            pix.z() < _box.max_corner().z();
 }
 
 bool PixelIterator::xchanged() const {
