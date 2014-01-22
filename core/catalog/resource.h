@@ -44,7 +44,7 @@ namespace Ilwis {
  * though they need to be unique in the context they are used (e.g. A name in a <br>
  * expression must be unique in the context were the expression is valid, it isn’t <br>
  * necessarily unique in the context of the MasterCatalog). <br>
- *
+ * <br>
  * An instantiated IlwisObject is always coupled to a Resource. They share the same id
  */
 class KERNELSHARED_EXPORT Resource : public Identity
