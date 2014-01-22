@@ -11,6 +11,42 @@ class QSqlQuery;
 
 
 namespace Ilwis {
+/**
+ * Design In Ilwis a Resource is a unique definition of data or processing that can be translated <br>
+ * into a single IlwisObject or Catalog. For example the location to a shape file or a query <br>
+ * on a certain database. A Resource is identified by a unique combination of location <br>
+ * (an url) and type. Often a single data source can be mapped to several resources. E.g <br>
+ * a GeoTiff can be mapped to a GridCoverage obviously but it can also be mapped to a <br>
+ * CoordinateSystem as the data for a full definition of the CoordinateSystem is also part <br>
+ * of the GeoTiff file. Resources can be sub divided into three categories: data objects, <br>
+ * operation objects and catalogs. The data objects can be seen as “Ilwis objects light” <br>
+ * and the catalogs are the containers for these data objects. Containers are defined as <br>
+ * queries on the MasterCatalog). <br>
+ *
+ * Resources expose the following properties
+ * • URL describing the location of the data source. URL’s may contain fragments
+to pinpoint internal resources inside a compound source (the ‘#’ notation of
+urls).
+• The type of the data defined by this resource.
+• The container location of the resource. For files this is often simply a location
+in the hierarchical file system but for services or remote data this may well be
+the base url from which the service is called.
+• Its spatial location/ bounding box. Not relevant for all data types but invaluable
+for others.
+• Creation and modification times.
+• Supporting objects (by reference). An object can only be understood in its
+relation to other objects. A raster without its georeference or domain offers
+significant less information
+• A resource has a unique runtime id that is shared by the Ilwis object or catalog
+object it represents.
+• A name. A string that can be used as reference to the object. Expressions
+use the name to select a resource. Names need not be system unique,
+though they need to be unique in the context they are used (e.g. A name in a
+expression must be unique in the context were the expression is valid, it isn’t
+necessarily unique in the context of the MasterCatalog).
+
+An instantiated IlwisObject is always coupled to a Resource. They share the same id
+ */
 class KERNELSHARED_EXPORT Resource : public Identity
 {
 public:
@@ -36,20 +72,21 @@ public:
     Resource(const QUrl& url, quint64 tp, bool isNew=true);
 
     /**
-     * Creates a Resource
-     * @param code
-     * @param tp
-     * @param isNew
-     *-=-//inconsistent parameters .c en.h, idk which name to trust, code or name?
+     * Creates a Resource from a description in the form of a namespace name
+     *
+     * @param name name of the resource can be an url or a code
+     * @param tp the type of the resource
+     * @param isNew set to false if you are not making a new Resource defaults to true (singletons)
      */
-    Resource(const QString &code, quint64 tp, bool isNew=true);
+    Resource(const QString &name, quint64 tp, bool isNew=true);
 
     /**
-     * @brief Resource
-     * @param tp
-     * @param url
-     *-=-
+     * Creates an resource from a file, the file has to be specified with a valid url
+     *
+     * @param tp the type of the resource
+     * @param url The url to the file you want to load in this resource
      */
+    //TODO docu correct?
     Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT);
 
     /**
@@ -109,10 +146,10 @@ public:
     void setUrl(const QUrl& url);
 
     /**
-      -=-?
-     * @brief toLocalFile
-     * @param relative
-     * @return
+     * Generates the path to the local file of this Resource (C://etc/etc/etc)
+     *
+     * @param relative set to true if you want to generate the path relative to the current working directory
+     * @return the path to the local file, returns sUNDEF if something goes wrong
      */
     QString toLocalFile(bool relative=false) const;
 
@@ -128,10 +165,10 @@ public:
     QUrl container(int level=0) const;
 
     /**
-      -=- dont know details
-     * @brief addContainer
-     * @param url
-     * @param level
+     * adds a container to this resource, defines the container this resource is in inside ilwis
+     *
+     * @param url The container that has to be set
+     * @param level The level of the new container
      */
     void addContainer(const QUrl &url, int level=0);
 
@@ -143,8 +180,8 @@ public:
     quint64 size() const;
 
     /**
-     * Query this Resource for tis dimensions
-     * -=- ?
+     * Query this Resource for its dimensions. <br>
+     * the dimension of a Resource is in general some form of size, could be in bytes, but stuff like XxY pixels is also possible
      * @return
      */
     QString dimensions() const;
@@ -166,8 +203,9 @@ public:
     IlwisTypes extendedType() const;
 
     /**
-      -=- conditions?
-     * Sets the ilwistype of this Resource
+     * Sets the ilwistype of this Resource. <br>
+     *
+     * usefull in the case the type of this resource can not be resolved from the filename / extension
      *
      * \sa IlwisObject
      * @param tp the new ilwistype of this resource
@@ -188,28 +226,28 @@ public:
     void prepare();
 
     /**
-     * -=- ?
-     * @param queryItem
-     * @param queryProperties
-     * @return
+     * Store this resource in the sql database
+     *
+     * @param queryItem The item that should be stored
+     * @param queryProperties The properties of the item that should be stored
+     * @return true if stored succelful
      */
     bool store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const;
 
     /**
      * Checks if this Resource is valid
-     *
      * a resource is valid if it has a valid name, a valid IlwisType and the url to the resource is valid
-     *
      *
      * @return true if this resource is valid
      */
     bool isValid() const;
 
     /**
-      -=- what does < do?, copy constructor?
-     * @brief operator ()
-     * @param resource
-     * @return
+     * override of the operater, checks whether this Resource is smaller than the supplied resource, returns true if this is the case. <br>
+     * This method is for sorting purposes, it gets sorted first on url, and afterwards on ilwistype
+     *
+     * @param resource the resource this should be compared with
+     * @return true if this<resource
      */
     bool operator()(const Ilwis::Resource& resource);
 
@@ -221,11 +259,11 @@ public:
     void setId(quint64 newid);
 
     /**
-     * Creates a localfile representing this Resource. <br>
-     * The url must be valid, and is should also represent the directory the file should be placed
+     * Creates a localfile path representing this Resource. <br>
+     * The url must be valid.
      *
      * @param url The location of the file
-     * @param relative -=- what does it mean?>
+     * @param relative set to true if you want a path relative to the workingcatalog
      * @return A Qurl to the file if succesful, or else a sUNDEF
      */
     static QString toLocalFile(const QUrl& url, bool relative=false);

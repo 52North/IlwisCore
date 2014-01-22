@@ -134,6 +134,7 @@ public:
     Geometry transform(const ICoordinateSystem& csyTarger) const;
 
     /**
+     * //Checks if a certain geometry is inside (within) another geometry//
      * Checks if a point geometry is inside a polygon geometry, other cases not yet implemented
      *
      * @param geom the geometry that has to be within
