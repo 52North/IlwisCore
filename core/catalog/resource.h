@@ -22,30 +22,30 @@ namespace Ilwis {
  * operation objects and catalogs. The data objects can be seen as “Ilwis objects light” <br>
  * and the catalogs are the containers for these data objects. Containers are defined as <br>
  * queries on the MasterCatalog). <br>
+ * <br>
+ * Resources expose the following properties <br>
+ * - URL describing the location of the data source. URL’s may contain fragments<br>
+ * to pinpoint internal resources inside a compound source (the ‘#’ notation of<br>
+ * urls). <br>
+ * - The type of the data defined by this resource.<br>
+ * - The container location of the resource. For files this is often simply a location <br>
+ * in the hierarchical file system but for services or remote data this may well be <br>
+ * the base url from which the service is called. <br>
+ * - Its spatial location/ bounding box. Not relevant for all data types but invaluable <br>
+ * for others.<br>
+ * - Creation and modification times. <br>
+ * - Supporting objects (by reference). An object can only be understood in its <br>
+ * relation to other objects. A raster without its georeference or domain offers <br>
+ * significant less information <br>
+ * - A resource has a unique runtime id that is shared by the Ilwis object or catalog <br>
+ * object it represents. <br>
+ * - A name. A string that can be used as reference to the object. Expressions <br>
+ * use the name to select a resource. Names need not be system unique, <br>
+ * though they need to be unique in the context they are used (e.g. A name in a <br>
+ * expression must be unique in the context were the expression is valid, it isn’t <br>
+ * necessarily unique in the context of the MasterCatalog). <br>
  *
- * Resources expose the following properties
- * • URL describing the location of the data source. URL’s may contain fragments
-to pinpoint internal resources inside a compound source (the ‘#’ notation of
-urls).
-• The type of the data defined by this resource.
-• The container location of the resource. For files this is often simply a location
-in the hierarchical file system but for services or remote data this may well be
-the base url from which the service is called.
-• Its spatial location/ bounding box. Not relevant for all data types but invaluable
-for others.
-• Creation and modification times.
-• Supporting objects (by reference). An object can only be understood in its
-relation to other objects. A raster without its georeference or domain offers
-significant less information
-• A resource has a unique runtime id that is shared by the Ilwis object or catalog
-object it represents.
-• A name. A string that can be used as reference to the object. Expressions
-use the name to select a resource. Names need not be system unique,
-though they need to be unique in the context they are used (e.g. A name in a
-expression must be unique in the context were the expression is valid, it isn’t
-necessarily unique in the context of the MasterCatalog).
-
-An instantiated IlwisObject is always coupled to a Resource. They share the same id
+ * An instantiated IlwisObject is always coupled to a Resource. They share the same id
  */
 class KERNELSHARED_EXPORT Resource : public Identity
 {
