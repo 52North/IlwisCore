@@ -130,12 +130,13 @@ public:
     bool unregister(quint64);
 
     /**
-     * Select a record from the MasterCatalog
-     * -=-//details vergeten
+     * Selects multiple records from the MasterCatalog
+     * selection language not yet finished
      * @param resource
      * @param selection
-     * @return
+     * @return a list of the selected resources
      */
+    //TODO select language, finish docu
     std::list<Resource> select(const QUrl& resource, const QString& selection) const;
 
     /**

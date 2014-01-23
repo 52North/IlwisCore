@@ -77,11 +77,13 @@ public:
      * Query for the geometry type of this feature<br>
      *
      * can return:
-     * - -=-//welke types
+     * - //welke types
      * -
-     * @param index
-     * @return
+     * @param index the index at which you want to know the geometry type
+     * \sa IlwisObject
+     * @return the ilwistype of the geometry at the given index
      */
+    //TODO fill in the possible return types
     virtual IlwisTypes geometryType(qint32 index=0) const = 0;
 
     /**
@@ -137,11 +139,11 @@ public:
     virtual QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) = 0;
 
     /**
-     * Query for the ColumnDefinition, returns the ColumnDefinition from the record this feature has in the attribute table
+     * Query for the ColumnDefinition, returns the ColumnDefinition of the index or the coverage table
      *
      * @param name name of the collumn you want the ColumnDefinition from
-     * @param coverages -=-//wasdat?
-     * @return The ColumnDefinition of the specified column
+     * @param coverages set to false if you want to know the collumns in the index table
+     * @return The ColumnDefinition of the specified table of the collumn with the specified name
      * \sa ColumnDefinition
      */
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
@@ -156,11 +158,12 @@ public:
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
 
     /**
-      -=-//dunno
-     * @brief attributeColumnCount
-     * @param coverages
-     * @return
+     * Query for the amount of collumns in the index or coverage table.
+     *
+     * @param coverages set to false if you want to know the collumns in the index table
+     * @return the amount of collumns in the specified table
      */
+    //TODO link to att /index table?
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
 protected:
 
@@ -258,7 +261,7 @@ private:
      */
     void setIndex(quint32 ind);
 
-    //-=-//private?
+    //TODO private?
     Feature *_feature;
     Geometry _geometry;
     quint32 _index;
@@ -271,10 +274,10 @@ typedef std::shared_ptr<FeatureNode> SPFeatureNode;
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
 /*!
-The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular
-definition of a feature that has only one geometry. The reasoning for this is that an object that moves trough time is still the same
-object. Same is true for objects at different scales. To be able to represent these kind of data structures a feature can have multiple
-geometries organized in a vector. The index in the vector has meaning ( similar to z direction in gridcoverages) and uses the verticaldomain.
+ * The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular <br>
+ * definition of a feature that has only one geometry. The reasoning for this is that an object that moves trough time is still the same <br>
+ * object. Same is true for objects at different scales. To be able to represent these kind of data structures a feature can have multiple <br>
+ * geometries organized in a vector. The index in the vector has meaning ( similar to z direction in gridcoverages) and uses the verticaldomain. <br>
  */
 class KERNELSHARED_EXPORT Feature : public FeatureInterface {
     friend class FeatureCoverage;
@@ -290,16 +293,16 @@ public:
     /**
      * Constructs a new feature from a IFeatureCoverage
      *
-     * @param fcoverage
-     * @param rec -=-//whatdoesitdo
+     * @param fcoverage the coverage that should be used to construct this feature
+     * @param rec amount of records in the attribute table
      */
     Feature(const Ilwis::IFeatureCoverage &fcoverage, int rec=iUNDEF) ;
 
     /**
      * Constructs a new feature from a FeatureCoverage*
      *
-     * @param fcoverage
-     * @param rec -=-//whatdoesitdo
+     * @param fcoverage the feature coverage this feature should be constructed from
+     * @param rec amount of entries in the attributetable
      */
     Feature(const FeatureCoverage* fcoverage, int rec=iUNDEF);
 
