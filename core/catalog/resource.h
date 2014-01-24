@@ -3,6 +3,7 @@
 
 #include "Kernel_global.h"
 #include <QVariant>
+#include <QUrlQuery>
 
 class QSqlRecord;
 class QSqlQuery;
@@ -146,6 +147,21 @@ public:
     void setUrl(const QUrl& url);
 
     /**
+     * Gives access to the query when this Resource has been created with a url containing a query string. If there the url did
+     * not contain a query string the returned QUrlQuery is empty. This however can be checked via hasUrlQuery() beforehand.
+     *
+     * @return the query part of the resource url.
+     */
+    QUrlQuery urlQuery() const;
+
+    /**
+     * Indicates if the Resource has been created with a url containing a query string. If so it can be accessed by urlQuery().
+     *
+     * @return true if the Resource url has query parameters, false otherwise.
+     */
+    bool hasUrlQuery() const;
+
+    /**
      * Generates the path to the local file of this Resource (C://etc/etc/etc)
      *
      * @param relative set to true if you want to generate the path relative to the current working directory
@@ -282,6 +298,7 @@ protected:
     void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);
     QHash<QString, QVariant> _properties;
     QUrl _resource;
+    QUrlQuery _urlQuery;
     std::vector<QUrl> _container;
     quint64 _size;
     QString _dimensions;
