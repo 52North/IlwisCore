@@ -39,12 +39,8 @@ int Ilwis::IssueObject::type() const
     return _itype;
 }
 
-QString Ilwis::IssueObject::logMessage(Ilwis::IssueObject::LogMessageFormat) const
-{
-    QString type = "Unknown";
-    if ( _itype == itError)
-        type = "Unknown";
-    return QString("%1 %2 %3").arg(type, _itime.toString(), _message);
+QString Ilwis::IssueObject::logMessage(Ilwis::IssueObject::LogMessageFormat) const{
+    return QString("%1: (%2) %3").arg(type2String(), _itime.toString(), _message);
 }
 
 int IssueObject::codeLine() const {
@@ -67,7 +63,7 @@ void IssueObject::addCodeInfo(int line, const QString &func, const QString &file
 }
 
 void IssueObject::stream(std::ofstream& stream, LogMessageFormat frmt) {
-    stream << std::setw(4) << _id << " ; " << std::setw(9) << type2String() << " ; " << std::setw(27)<<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
+    stream << std::setw(4) << _id << " ; " << std::setw(9) << type2String().toStdString() << " ; " << std::setw(27)<<_itime.toString().toStdString() << " ; " << _message.toStdString() << std::endl;
     if ( frmt == lmCODE) {
         stream << std::setw(4) << _id << " ; " << _line << " : " << _func.toStdString() << " ; " << _file.toStdString() << std::endl;
     }
@@ -78,7 +74,7 @@ quint64 IssueObject::id() const
     return _id;
 }
 
-std::string IssueObject::type2String() {
+QString IssueObject::type2String() const{
     switch(_itype) {
     case itCritical:
         return "Critical";
@@ -134,7 +130,7 @@ quint64 IssueLogger::log(const QString &message, int it)
     if ( _logFileRegular.is_open()) {
         obj.stream(_logFileRegular, IssueObject::lmREGULAR);
     }
-    emit ilwiserrormessage(message);
+    emit ilwiserrormessage(obj.logMessage());
 
     _lastmessage = message;
     return _issueId++;

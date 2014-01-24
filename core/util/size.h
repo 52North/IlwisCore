@@ -22,7 +22,7 @@ public:
     Initializes the Size with proper values
      * \param x x dimension of the Size
      * \param y y dimension of the Size
-     * \param z z dimension of the Size, defaults to 0.
+     * \param z z dimension of the Size, defaults to 1.
      */
     Size(qint32 x, qint32 y, qint32 z=1);
     /*!

@@ -123,7 +123,11 @@ void FeatureCoverage::adaptFeatureCounts(int tp, quint32 cnt, int index) {
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt, int index)
 {
     Locker lock(_mutex2);
-     _featureTypes |= types;
+    if (cnt > 0)
+        _featureTypes |= types;
+    else
+        _featureTypes &= !types;
+
     switch(types){
     case itPOINT:
         adaptFeatureCounts(0, cnt, index);break;

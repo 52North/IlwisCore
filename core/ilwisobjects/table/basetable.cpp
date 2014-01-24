@@ -271,7 +271,7 @@ void BaseTable::adjustRange(int index) {
                 if (!isNumericalUndef(v))                         {
                     vmax = std::max(vmax, v)    ;
                 }
-                hasfraction = hasfraction && (v - (qint64)v != 0);
+                hasfraction |= (v - (qint64)v != 0);
 
             }
             if ( vmin != 1e208 && vmax != -1e208) { //something has changed
@@ -279,7 +279,7 @@ void BaseTable::adjustRange(int index) {
                 rng->max(vmax);
                 if (!hasfraction)
                     rng->resolution(1);
-                _columnDefinitionsByName[coldef.name()] = coldef;
+                _columnDefinitionsByName[coldef.name()].datadef() = coldef.datadef();
             }
         }
     } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
@@ -324,18 +324,22 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
         if ( ok ){
             actualval = v;
         } else {
-        SPItemRange rng1 = coldef.datadef().domain()->range2range<ItemRange>();
-        SPItemRange rng2 = coldef.datadef().range<ItemRange>();
+            SPItemRange rng1 = coldef.datadef().domain()->range2range<ItemRange>();
+            if (rng1.isNull()){
+                WARN2(WARN_INVALID_OBJECT," type for non-ItemDomain of item "+ txt, "column "+coldef.name());
+                return QVariant(rUNDEF);
+            }
+            SPItemRange rng2 = coldef.datadef().range<ItemRange>();
 
-        SPDomainItem item = rng1->item(inputVar.toString());
-        if ( item.isNull()){
-            WARN2(WARN_INVALID_OBJECT,"domain item "+ inputVar.toString(), "column");
-            return QVariant((int)iUNDEF);
-        }
-        if ( !rng2->contains(item->name())){
-            rng2->add(item->clone());
-        }
-        actualval = item->raw();
+            SPDomainItem item = rng1->item(txt);
+            if ( item.isNull()){
+                WARN2(WARN_INVALID_OBJECT,"domain item '"+txt+"'", "column "+coldef.name());
+                return QVariant((int)iUNDEF);
+            }
+            if ( !rng2->contains(item->name())){
+                rng2->add(item->clone());
+            }
+            actualval = item->raw();
         }
 
     }
@@ -367,7 +371,7 @@ void BaseTable::initRecord(std::vector<QVariant> &values) const
 {
     values.resize(columnCount());
     for(int i=0; i < columnCount(); ++i) {
-        const ColumnDefinition &coldef  = columndefinition(i);
+        const ColumnDefinition &coldef  = const_cast<BaseTable *>(this)->columndefinition(i);
         if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
             values[i] = sUNDEF;
         }

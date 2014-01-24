@@ -106,14 +106,20 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
     if ( !ok) {
         _number = rILLEGAL;
         QString coverage = _expression.parm(0).value();
-        Resource resource = mastercatalog()->name2Resource(coverage);
-        if ( !resource.isValid()) {
+        quint64 id = mastercatalog()->name2id(coverage);
+//        if ( !resource.isValid()) {
+//            ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
+//            return sPREPAREFAILED;
+//        }
+//        _inputObj.prepare(coverage, resource.ilwisType());
+
+        _inputObj.prepare(id);
+        if(!_inputObj->isValid()){
             ERROR1(ERR_COULD_NOT_OPEN_READING_1,coverage);
             return sPREPAREFAILED;
         }
-        _inputObj.prepare(coverage, resource.ilwisType());
         OperationHelperRaster helper;
-        _outputObj = helper.initialize(_inputObj, resource.ilwisType(),
+        _outputObj = helper.initialize(_inputObj, _inputObj->ilwisType(),
                                        itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
         if ( outname != sUNDEF)

@@ -83,6 +83,7 @@ void PublicDatabase::prepare() {
                 code TEXT ,\
                 container TEXT collate nocase,\
                 resource TEXT collate nocase, \
+                urlquery TEXT collate nocase, \
                 type INTEGER, \
                 extendedtype INTEGER, \
                 size INTEGER, \

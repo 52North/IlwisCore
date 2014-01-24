@@ -128,7 +128,7 @@ quint64 LinearStretchOperation::createMetadata()
 {
     OperationResource operation({"ilwis://operations/linearstretch"});
     operation.setLongName("rescale input values to an output map");
-    operation.setSyntax("stretch(raster");
+    operation.setSyntax("linearstretch(raster");
     operation.setDescription(TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
     operation.setInParameterCount({2,3});
     operation.addInParameter(0, itRASTER, TR("rastercoverage to stretch"), TR("input rastercoverage with domain item or numeric"));
