@@ -144,7 +144,7 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
-                  :itemid,:name,:urlquery,:code,:container,:resource,:type,:extendedtype, :size,:dimensions \
+                  :itemid,:name,:code,:container,:resource,:urlquery,:type,:extendedtype, :size,:dimensions \
                   )" );
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
