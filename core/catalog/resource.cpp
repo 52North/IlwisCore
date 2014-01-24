@@ -1,6 +1,7 @@
 #include <QRegExp>
 #include <QFileInfo>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QStringList>
 #include <QDir>
 #include <QSqlRecord>
@@ -46,6 +47,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
 {
     _properties = resource._properties;
     _resource = resource._resource;
+    _urlQuery = resource._urlQuery;
     _container = resource._container;
     _size = resource._size;
     _dimensions = resource._dimensions;
@@ -55,6 +57,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
 
 Resource::Resource(const QString& name, quint64 tp, bool isNew) :
     _resource(QUrl(name)),
+    _urlQuery(QUrlQuery(name)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -95,6 +98,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
 
 Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     _resource(url),
+    _urlQuery(QUrlQuery(url)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -104,6 +108,7 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
 
 Resource::Resource(quint64 tp, const QUrl &url) :
     _resource(url),
+    _urlQuery(QUrlQuery(url)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -130,6 +135,7 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
                                                            rec.value("code").toString())
 {
     _resource = rec.value("resource").toString();
+    _urlQuery = QUrlQuery(rec.value("urlquery").toString());
     addContainer(rec.value("container").toString());
     _size = rec.value("size").toLongLong();
     _dimensions = rec.value("dimensions").toString();
@@ -163,6 +169,7 @@ void Resource::setName(const QString &nm, bool adaptUrl)
         url = url.left(index+1) + nm;
     }
     _resource = QUrl(url);
+    _urlQuery = QUrlQuery(url);
 }
 
 QVariant Resource::operator [](const QString &prop) const
@@ -203,6 +210,7 @@ void Resource::setUrl(const QUrl &url)
 {
     _container.clear();
     _resource = url;
+    _urlQuery = QUrlQuery(url);
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
@@ -241,6 +249,16 @@ void Resource::setUrl(const QUrl &url)
     }
     else
         setName("root", false);
+}
+
+QUrlQuery Resource::urlQuery() const
+{
+    return _urlQuery;
+}
+
+bool Resource::hasUrlQuery() const
+{
+    return !_urlQuery.isEmpty();
 }
 
 QUrl Resource::container(int level) const
@@ -305,6 +323,7 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     QString v = container().toString();
     queryItem.bindValue(":container", container().toString());
     queryItem.bindValue(":resource", url().toString());
+    queryItem.bindValue(":urlquery", urlQuery().toString());
     queryItem.bindValue(":type", ilwisType());
     queryItem.bindValue(":extendedtype", _extendedType);
     queryItem.bindValue(":size", size());
