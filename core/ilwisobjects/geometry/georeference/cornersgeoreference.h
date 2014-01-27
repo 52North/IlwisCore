@@ -9,16 +9,16 @@ class KERNELSHARED_EXPORT CornersGeoReference : public SimpelGeoReference
 public:
     CornersGeoReference();
     CornersGeoReference(const Resource& resource);
-    void setEnvelope(const Box2D<double>& env);
+    void setEnvelope(const Envelope& env);
     bool compute();
     QSize computeGridSize() const;
     bool isCornersOfCorners() const;
-    Box2D<double> envelope() const;
+    Envelope envelope() const;
     static QString typeName();
 
     static GeoRefImplementation *create();
 private:
-    Box2D<double> _envelope;
+    Envelope _envelope;
     bool _isCornersOfCorners;
 
 };

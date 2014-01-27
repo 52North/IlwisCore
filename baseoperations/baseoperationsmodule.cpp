@@ -3,8 +3,6 @@
 #include "kernel.h"
 #include "raster.h"
 #include "geometries.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"

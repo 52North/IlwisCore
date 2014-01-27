@@ -136,15 +136,9 @@ public:
         Resource res;
         res.prepare();
         res.setIlwisType(tp);
-        if ( type =="Ilwis::ItemDomain<Ilwis::NamedIdentifier>"){
-            res.setExtendedType(itNAMEDITEM);
-        } else if ( type =="Ilwis::ItemDomain<Ilwis::IndexedIdentifier>"){
-            res.setExtendedType(itINDEXEDITEM);
-        } else if ( type =="Ilwis::ItemDomain<Ilwis::ThematicItem>"){
-            res.setExtendedType(itTHEMATICITEM);
-        } else if ( type =="Ilwis::ItemDomain<Ilwis::NumericItem>"){
-            res.setExtendedType(itNUMERICITEM);
-        }
+        tp = IlwisObject::name2ExtendedType(type);
+        if ( tp != itUNKNOWN)
+            res.setExtendedType(tp);
         QString name = QString("%1%2").arg(ANONYMOUS_PREFIX).arg(res.id());
         QUrl url(QString("ilwis://internalcatalog/%1").arg(name));
         res.setName(name);

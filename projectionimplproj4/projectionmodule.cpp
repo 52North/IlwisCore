@@ -1,8 +1,11 @@
 #include <QtPlugin>
 #include <QSqlQuery>
-#include "serializationoptions.h"
-#include "angle.h"
-#include "point.h"
+
+#include "kernel.h"
+#include "ilwis.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
+#include "location.h"
 #include "projectionmodule.h"
 #include "factory.h"
 #include "kernel.h"

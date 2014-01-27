@@ -7,8 +7,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "symboltable.h"
@@ -30,7 +28,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
         ICoverage covInput = inputObject.get<Coverage>();
         ICoverage covOutput = outputObject.get<Coverage>();
         if ( what & itENVELOPE) {
-            Box2D<double> bounds = covInput->envelope();
+            Envelope bounds = covInput->envelope();
             covOutput->envelope(bounds);
         }
         if ( what & itCOORDSYSTEM) {

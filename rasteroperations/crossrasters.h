@@ -27,8 +27,8 @@ private:
     INamedIdDomain _crossDomain;
     UndefHandling _undefhandling;
 
-    bool crossNoRaster(const Box3D<qint32> box);
-    bool crossWithRaster(const Box3D<qint32> box);
+    bool crossNoRaster(const BoundingBox& box);
+    bool crossWithRaster(const  BoundingBox& box);
 };
 }
 }

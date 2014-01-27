@@ -2,6 +2,7 @@ QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_CXXFLAGS += -Wno-sign-compare
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 CONFIG(debug, debug|release) {
 CONF=debug
@@ -16,6 +17,7 @@ win32{
     PLATFORM = win32
 }
 BOOST=../external
+GEOS=../external/geos
 
 QT += sql
 
@@ -43,7 +45,8 @@ INCLUDEPATH += core \
                 core/ilwisobjects/operation \
                 core/catalog \
                 core/ilwisobjects/domain \
-                $$BOOST
+                $$BOOST \
+                $$GEOS
 
 
 

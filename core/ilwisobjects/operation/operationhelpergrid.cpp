@@ -11,11 +11,11 @@ OperationHelperRaster::OperationHelperRaster()
 {
 }
 
-Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Parameter& parm, quint64 what)
+BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Parameter& parm, quint64 what)
 {
     Resource resource(itRASTER);
     Size sz = inputRaster->size();
-    Box3D<qint32> box(sz);
+    BoundingBox box(sz);
 
     if ( what & itRASTERSIZE) {
         resource.addProperty("size", IVARIANT(sz));
@@ -23,9 +23,9 @@ Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputRast
     if ( what & itENVELOPE) {
         if ( box.isNull() || !box.isValid()) {
             sz = inputRaster->size();
-            box  = Box3D<qint32>(sz);
+            box  = BoundingBox(sz);
         }
-        Box2D<double> bounds = inputRaster->georeference()->pixel2Coord(box);
+        Envelope bounds = inputRaster->georeference()->pixel2Coord(box);
         resource.addProperty("envelope", IVARIANT(bounds));
     }
     if ( what & itCOORDSYSTEM) {
@@ -35,7 +35,7 @@ Box3D<qint32> OperationHelperRaster::initialize(const IRasterCoverage &inputRast
     if ( what & itGEOREF) {
         if ( box.isNull() || !box.isValid()) {
             sz = inputRaster->size();
-            box  = Box3D<qint32>(sz);
+            box  = BoundingBox(sz);
         }
         if ( sz.xsize() == box.xlength() && sz.ysize() == box.ylength())
             resource.addProperty("georeference", IVARIANT(inputRaster->georeference()));
@@ -66,7 +66,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
             IRasterCoverage gcInput = inputObject.get<RasterCoverage>();
             if ( what & itRASTERSIZE) {
                 Size sz = gcInput->size();
-                Box3D<qint32> box(sz);
+                BoundingBox box(sz);
                 resource.addProperty("size", IVARIANT(box.size()));
             }
             if ( what & itGEOREF) {
@@ -85,7 +85,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     return obj;
 }
 
-int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const Box3D<qint32> &bnds, std::vector<Box3D<qint32> > &boxes)
+int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const BoundingBox &bnds, std::vector<BoundingBox > &boxes)
 {
     if ( !raster.isValid() || raster->size().isNull() || raster->size().ysize() == 0) {
         return ERROR1(ERR_NO_INITIALIZED_1, "Grid size");
@@ -98,17 +98,17 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCov
 
     boxes.clear();
     boxes.resize(cores);
-    Box3D<qint32> bounds = bnds;
+    BoundingBox bounds = bnds;
     if ( bounds.isNull())
-        bounds = Box3D<qint32>(raster->size());
-    int left = 0; //bounds.min_corner().x();
+        bounds = BoundingBox(raster->size());
+    int left = 0; //bounds.min_corner().x;
     int right = bounds.size().xsize();
     int top = bounds.size().ysize();
     int step = bounds.size().ysize() / cores;
     int currentY = 0;
 
     for(int i=0 ; i < cores; ++i){
-        Box3D<qint32> smallBox(Voxel(left, currentY,0), Voxel(right - 1, std::min(top - 1,currentY + step),bounds.zlength()) );
+        BoundingBox smallBox(Pixel(left, currentY,0), Pixel(right - 1, std::min(top - 1,currentY + step),bounds.zlength()) );
         boxes[i] = smallBox;
         currentY = currentY + step  ;
     }

@@ -61,12 +61,10 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/featureiterator.cpp \
     core/ilwisobjects/table/basetable.cpp \
     core/ilwisobjects/table/attributerecord.cpp \
-    core/ilwisobjects/coverage/geometry.cpp \
     core/ilwisobjects/coverage/featurefactory.cpp \
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.cpp \
     core/ilwisobjects/geometry/coordinatesystem/projection.cpp \
     core/ilwisobjects/geometry/coordinatesystem/proj4parameters.cpp \
-    core/ilwisobjects/geometry/coordinatesystem/nullprojection.cpp \
     core/ilwisobjects/geometry/coordinatesystem/ellipsoid.cpp \
     core/ilwisobjects/geometry/coordinatesystem/geodeticdatum.cpp \
     core/ilwisobjects/operation/operation.cpp \
@@ -102,7 +100,10 @@ SOURCES += core/kernel.cpp \
     core/util/tranquilizer.cpp \
     core/ilwisobjects/operation/numericoperation.cpp \
     core/catalog/containerconnector.cpp \
-    core/catalog/folderconnector.cpp
+    core/catalog/folderconnector.cpp \
+    core/util/coordinate.cpp \
+    core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
+    core/ilwisobjects/coverage/geometry.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -118,7 +119,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h \
     core/ilwisobjects/geometry/georeference/georeference.h \
     core/ilwisobjects/geometry/georeference/simpelgeoreference.h \
-    core/util/boostext.h \
     core/ilwisobjects/geometry/georeference/cornersgeoreference.h \
     core/ilwisobjects/coverage/coverage.h \
     core/publicdatabase.h \
@@ -151,12 +151,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/itemrange.h \
     core/util/serializationoptions.h \
     core/ilwisobjects/coverage/blockiterator.h \
-    core/util/point.h \
     core/util/angle.h \
     core/util/box.h \
     core/ilwisobjects/coverage/pixeliterator.h \
-    core/util/line.h \
-    core/ilwisobjects/coverage/geometry.h \
     core/ilwisobjects/coverage/feature.h \
     core/ilwisobjects/coverage/featurecoverage.h \
     core/catalog/filecatalogconnector.h \
@@ -175,7 +172,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/coordinatesystem/projectionfactory.h \
     core/ilwisobjects/geometry/coordinatesystem/projection.h \
     core/ilwisobjects/geometry/coordinatesystem/proj4parameters.h \
-    core/ilwisobjects/geometry/coordinatesystem/nullprojection.h \
     core/ilwisobjects/geometry/coordinatesystem/ellipsoid.h \
     core/ilwisobjects/geometry/coordinatesystem/geodeticdatum.h \
     core/ilwisobjects/operation/operation.h \
@@ -187,7 +183,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/raster.h \
     core/ilwisobjects/operation/ilwisoperation.h \
     core/ilwisobjects/domain/datadefinition.h \
-    core/util/polygon.h \
     core/util/geometries.h \
     core/ilwisobjects/geometry/georeference/ctpgeoreference.h \
     core/ilwisobjects/geometry/georeference/controlpoint.h \
@@ -216,9 +211,19 @@ HEADERS += core/kernel.h\
     core/util/tranquilizer.h \
     core/ilwisobjects/operation/numericoperation.h \
     core/catalog/containerconnector.h \
-    core/catalog/folderconnector.h
+    core/catalog/folderconnector.h \
+    core/util/location.h \
+    core/util/coordinate.h \
+    core/ilwisobjects/geometry/coordinatesystem/csytransform.h \
+    core/ilwisobjects/coverage/geometry.h
 
 
 
 
 
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos

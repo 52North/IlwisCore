@@ -3,8 +3,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
@@ -33,7 +31,7 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
     IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
     IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
     FeatureIterator iterIn(inputFC);
-    for_each(iterIn, iterIn.end(), [&](SPFeatureI& feature){
+    for_each(iterIn, iterIn.end(), [&](UPFeatureI& feature){
         outputFC->newFeatureFrom(feature);
     });
 
@@ -42,7 +40,7 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 
 bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
-    std::function<bool(const Box3D<qint32>)> Assign = [&](const Box3D<qint32> box ) -> bool {
+    std::function<bool(const BoundingBox)> Assign = [&](const BoundingBox box ) -> bool {
         IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
         PixelIterator iterIn(inputRaster, box);
         PixelIterator iterOut(outputRaster, box);
@@ -133,24 +131,15 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
 
 quint64 Assignment::createMetadata()
 {
-    QString url = QString("ilwis://operations/assignment");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","assignment");
-    resource.addProperty("description",TR("copies the values/properties of the right hand of the expression to the left hand named object"));
-    resource.addProperty("syntax","assignment(thing)");
-    resource.addProperty("inparameters","1");
-    resource.addProperty("pin_1_type", itANY);
-    resource.addProperty("pin_1_name", TR("input thing"));
-    resource.addProperty("pin_1_desc",TR("input thing"));
-    resource.addProperty("pout_1_type", itANY);
-    resource.addProperty("pout_1_name", TR("copied thing"));
-    resource.addProperty("pout_1_desc",TR(""));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/assignment"});
+    operation.setSyntax("assignment(thing)");
+    operation.setDescription(TR("copies the values/properties of the right hand of the expression to the left hand named object"));
+    operation.setInParameterCount({1});
+    operation.addInParameter(0,itANY , TR("input thing"),TR("input thing"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itANY, TR("copy of the object"));
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 
 }

@@ -35,7 +35,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
     SPTranquilizer trq = kernel()->createTrq("resample", "", outputRaster->size().ysize(),1);
 
-    BoxedAsyncFunc resampleFun = [&](const Box3D<qint32>& box) -> bool {
+    BoxedAsyncFunc resampleFun = [&](const BoundingBox& box) -> bool {
         PixelIterator iterOut(outputRaster,box);
         iterOut.setTranquilizer(trq);
         RasterInterpolator interpolator(inputRaster, _method);
@@ -43,8 +43,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterEnd = iterOut.end();
         bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());
         while(iterOut != iterEnd) {
-            Voxel position = iterOut.position();
-            Coordinate coord = outputRaster->georeference()->pixel2Coord(Pixel_d(position.x(),(position.y())));
+            Pixel position = iterOut.position();
+            Coordinate coord = outputRaster->georeference()->pixel2Coord(Pixeld(position.x,(position.y)));
             if ( !equalCsy)
                 coord = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),coord);
             double v = interpolator.coord2value(coord);
@@ -85,7 +85,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     }
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     outputRaster->georeference(grf);
-    Box2Dd env = grf->pixel2Coord(grf->size());
+    Envelope env = grf->pixel2Coord(grf->size());
     outputRaster->envelope(env);
     if ( outputName != sUNDEF)
         outputRaster->setName(outputName);

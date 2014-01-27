@@ -3,8 +3,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "symboltable.h"
@@ -52,7 +50,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }
         _table->column(_columnName, data);
     } else {
-        std::function<bool(const Box3D<qint32>)> SetValrange = [&](const Box3D<qint32> box ) -> bool {
+        std::function<bool(const BoundingBox)> SetValrange = [&](const BoundingBox box ) -> bool {
             PixelIterator iter(_raster, box);
 
             for_each(iter, iter.end(), [&](double& val){

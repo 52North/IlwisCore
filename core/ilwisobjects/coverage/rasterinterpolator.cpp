@@ -10,7 +10,7 @@ RasterInterpolator::RasterInterpolator(const IRasterCoverage& raster, int method
     _valid = _grf.isValid() && _grid != 0;
 }
 
-double RasterInterpolator::pix2value(const Point3D<double>& pix) {
+double RasterInterpolator::pix2value(const Pixeld& pix) {
     double v = rUNDEF;
     switch( _method) {
     case 0: //nearestneighbour
@@ -28,13 +28,13 @@ double RasterInterpolator::coord2value(const Coordinate &crd)
 {
      if (!_valid || !crd.isValid())
         return rUNDEF;
-     Point2D<double> pix = _grf->coord2Pixel(crd);
+     Pixeld pix = _grf->coord2Pixel(crd);
      return pix2value(pix);
 }
 
-double RasterInterpolator::bilinear(const Point3D<double>& pix) {
-    double y = pix.y() - 0.5;
-    double x = pix.x() - 0.5;
+double RasterInterpolator::bilinear(const Pixeld& pix) {
+    double y = pix.y - 0.5;
+    double x = pix.x - 0.5;
 
     _nbrows[1] = _nbrows[0] = (int)y;
     _nbrows[3] = _nbrows[2] = _nbrows[1] + 1;
@@ -48,7 +48,7 @@ double RasterInterpolator::bilinear(const Point3D<double>& pix) {
     _weight[3] = deltaY * deltaX;
     double tot_weight=0.0, totValue=0.0;
     for (int i = 0; i < 4; ++i) {
-        double rVal = _grid->value({_nbcols[i],_nbrows[i], pix.z()});
+        double rVal = _grid->value({_nbcols[i],_nbrows[i], pix.z});
         if (rVal != rUNDEF) {
             totValue +=  rVal * _weight[i];
             tot_weight += _weight[i];
@@ -61,16 +61,16 @@ double RasterInterpolator::bilinear(const Point3D<double>& pix) {
 
 }
 
-double RasterInterpolator::bicubic(const Point3D<double> &pix)
+double RasterInterpolator::bicubic(const Pixeld &pix)
 {
-    double y = pix.y() - 0.5;
-    double x = pix.x() - 0.5;
+    double y = pix.y - 0.5;
+    double x = pix.x - 0.5;
     long column = (long)x;
     long row = (long)y;
     double deltaY = y - row;
     double deltaX = x - column;
     for(short i=0; i<4; ++i)
-        _yvalues[i]=bicubicResult(row-1+i, column, pix.z(), deltaX);
+        _yvalues[i]=bicubicResult(row-1+i, column, pix.z, deltaX);
     if(resolveRealUndefs(_yvalues))
       return bicubicPolynom(_yvalues, deltaY);
 

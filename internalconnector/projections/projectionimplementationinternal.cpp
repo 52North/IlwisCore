@@ -4,8 +4,9 @@
 
 #include "kernel.h"
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
+#include "location.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
@@ -41,8 +42,8 @@ Coordinate ProjectionImplementationInternal::latlon2coord(const LatLon &ll) cons
         if (xy != crdUNDEF)
             return crdUNDEF;
         Coordinate crd;
-        crd.x(xy.x() * _maxis  + _easting);
-        crd.y(xy.y() * _maxis  + _northing);
+        crd.x = xy.x * _maxis  + _easting;
+        crd.y = xy.y * _maxis  + _northing;
         return crd;
     }
     else
@@ -53,7 +54,7 @@ Coordinate ProjectionImplementationInternal::latlon2coord(const LatLon &ll) cons
 LatLon ProjectionImplementationInternal::coord2latlon(const Coordinate &crdSource) const
 {
     if (_coordinateSystem->projection().isValid() && crdSource != crdUNDEF) {
-        Coordinate xy((crdSource.x() - _easting) / _maxis, (crdSource.y() - _northing) / _maxis);
+        Coordinate xy((crdSource.x - _easting) / _maxis, (crdSource.y - _northing) / _maxis);
 
         LatLon pl = crd2ll(xy);
         if (!pl.isValid())

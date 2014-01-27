@@ -1,4 +1,5 @@
 #include <QString>
+#include <QStringList>
 #include <functional>
 #include <future>
 #include <memory>
@@ -7,8 +8,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "symboltable.h"

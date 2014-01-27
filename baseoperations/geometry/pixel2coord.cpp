@@ -21,10 +21,10 @@ bool Pixel2Coord::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    Coordinate crd = _inputGC->georeference()->pixel2Coord(Pixel_d(_voxel.x(), _voxel.y()));
+    Coordinate crd = _inputGC->georeference()->pixel2Coord(Pixeld(_pixel.x, _pixel.y));
     QVariant var;
     var.setValue<Coordinate>(crd);
-    ctx->setOutput(symTable,var,_outName,itCOORD3D, Resource());
+    ctx->setOutput(symTable,var,_outName,itCOORDINATE, Resource());
 
     return true;
 }
@@ -44,7 +44,7 @@ Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx
     if ( _expression.parameterCount() == 2) {
         QString name = _expression.parm(1).value();
         QVariant var = symTable.getValue(name);
-        _voxel = var.value<Voxel>();
+        _pixel = var.value<Pixel>();
     }
     if ( _expression.parameterCount() == 3) {
         bool ok1, ok2, ok3=true;
@@ -58,12 +58,12 @@ Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx
             ERROR2(ERR_ILLEGAL_VALUE_2,"Pixel", QString("%1 %2 %3").arg(x,y,x));
             return sPREPAREFAILED;
         }
-        _voxel = Voxel(x,y,z)    ;
+        _pixel = Pixel(x,y,z)    ;
     }
     if ( _expression.parameterCount(false) == 1) {
         _outName = _expression.parm(0,true,false).value();
     }
-    if ( _voxel.isValid())
+    if ( _pixel.isValid())
         return sPREPARED;
 
     return sPREPAREFAILED;
@@ -81,13 +81,13 @@ quint64 Pixel2Coord::createMetadata()
     resource.addProperty("pin_1_type", itRASTER | itGEOREF);
     resource.addProperty("pin_1_name", TR("input rastercoverage or georeference"));
     resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain or georefence"));
-    resource.addProperty("pin_2_type", itVOXEL);
+    resource.addProperty("pin_2_type", itPIXEL);
     resource.addProperty("pin_2_name", TR("source pixel"));
     resource.addProperty("pin_2_desc",TR("the pixel that has to translted to a world coordinate"));
     resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itCOORD3D);
-    resource.addProperty("pout_1_name", TR("2D coordinate"));
-    resource.addProperty("pout_1_desc",TR("2D coordinate"));
+    resource.addProperty("pout_1_type", itCOORDINATE);
+    resource.addProperty("pout_1_name", TR("coordinate"));
+    resource.addProperty("pout_1_desc",TR("coordinate"));
     resource.prepare();
     url += "=" + QString::number(resource.id());
     resource.setUrl(url);

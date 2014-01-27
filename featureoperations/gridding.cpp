@@ -7,8 +7,10 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
+#include "geos/geom/CoordinateArraySequence.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+#include "geos/geom/GeometryFactory.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -42,17 +44,19 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     for(int fx=0; fx < _xsize; ++fx) {
         for(int fy=0; fy < _ysize; ++fy) {
-            Coordinate2d c1(_top + std::vector<double>{_cellXSize * fx, _cellYSize * fy });
-            Coordinate2d c2(_top +std::vector<double>{_cellXSize * (fx+1), _cellYSize * fy });
-            Coordinate2d c3(_top + std::vector<double>{_cellXSize * (fx+1), _cellYSize * (fy+1) });
-            Coordinate2d c4(_top + std::vector<double>{_cellXSize * fx, _cellYSize * (fy+1) });
-            Polygon pol;
-            pol.outer().push_back(c1);
-            pol.outer().push_back(c2);
-            pol.outer().push_back(c3);
-            pol.outer().push_back(c4);
-            pol.outer().push_back(c1);
-            _outfeatures->newFeature({pol,_csy});
+            Coordinate c1(_top + std::vector<double>{_cellXSize * fx, _cellYSize * fy });
+            Coordinate c2(_top +std::vector<double>{_cellXSize * (fx+1), _cellYSize * fy });
+            Coordinate c3(_top + std::vector<double>{_cellXSize * (fx+1), _cellYSize * (fy+1) });
+            Coordinate c4(_top + std::vector<double>{_cellXSize * fx, _cellYSize * (fy+1) });
+            geos::geom::CoordinateSequence *coords = new geos::geom::CoordinateArraySequence();
+            coords->add(c1);
+            coords->add(c2);
+            coords->add(c3);
+            coords->add(c4);
+            coords->add(c1);
+            geos::geom::LinearRing *outer = _outfeatures->geomfactory()->createLinearRing(coords);
+            geos::geom::Geometry *pol = _outfeatures->geomfactory()->createPolygon(outer, 0);
+            _outfeatures->newFeature(pol);
         }
     }
 
@@ -119,7 +123,7 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
 
     QString name = _expression.parm(1).value();
     QVariant var = symTable.getValue(name);
-    _top = var.value<Coordinate2d>();
+    _top = var.value<Coordinate>();
     if (!_top.isValid() || _top.is0()) {
         _top = var.value<Coordinate>();
     }
@@ -162,7 +166,7 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     _outfeatures.prepare();
     _outfeatures->setCoordinateSystem(_csy);
     _outfeatures->attributeTable(_attTable);
-    Box2D<double> env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
+    Envelope env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
     _outfeatures->envelope(env);
 
 

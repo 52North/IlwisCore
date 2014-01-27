@@ -3,8 +3,7 @@
 
 #include "kernel.h"
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
+#include "geometries.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"

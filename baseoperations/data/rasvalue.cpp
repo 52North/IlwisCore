@@ -21,7 +21,7 @@ bool RasValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    double v = _inputGC->pix2value(_vox);
+    double v = _inputGC->pix2value(_pix);
     if ( ctx) {
         ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
     }
@@ -45,10 +45,10 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    _vox = Voxel(_expression.parm(1).value().toInt(), _expression.parm(2).value().toInt());
+    _pix = Pixel(_expression.parm(1).value().toInt(), _expression.parm(2).value().toInt());
     if ( _expression.parameterCount() == 4)
-        _vox.z(_expression.parm(3).value().toInt());
-    if (!_vox.isValid()) {
+        _pix.z = _expression.parm(3).value().toInt();
+    if (!_pix.isValid()) {
         ERROR2(ERR_INVALID_PROPERTY_FOR_2,"Pixel coordinate","rasvalue");
         return sPREPAREFAILED;
     }

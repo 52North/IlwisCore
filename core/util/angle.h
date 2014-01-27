@@ -5,7 +5,6 @@
 #include <sstream>
 #include <iomanip>
 #include "ilwis.h"
-#include "serializationoptions.h"
 
 namespace Ilwis {
 class Angle {
@@ -85,13 +84,6 @@ public:
     virtual void asRadians(bool yesno) {
         _behaveAsRadians = yesno;
     }
-
-    void store(QDataStream &s, const SerializationOptions &) const{
-        s << QVariant(_radians);
-        s << QVariant(_behaveAsRadians);
-
-    }
-
 
 protected:
     double _radians;

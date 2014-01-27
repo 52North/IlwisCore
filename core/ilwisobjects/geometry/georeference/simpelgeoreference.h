@@ -10,8 +10,8 @@ public:
     SimpelGeoReference();
     SimpelGeoReference(const QString &type);
     static GeoRefImplementation * create();
-     virtual Coordinate pixel2Coord(const Pixel_d&) const;
-    virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
+     virtual Coordinate pixel2Coord(const Pixeld&) const;
+    virtual Pixeld coord2Pixel(const Coordinate& crd) const;
     virtual double pixelSize() const;
     bool isCompatible(const IGeoReference &georefOther) const;
 

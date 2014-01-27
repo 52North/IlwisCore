@@ -34,7 +34,7 @@ struct Combo {
     quint32 _count;
 };
 
-bool CrossRasters::crossWithRaster(const Box3D<qint32> box){
+bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     PixelIterator iterOut(_outputRaster, box);
@@ -106,7 +106,7 @@ bool CrossRasters::crossWithRaster(const Box3D<qint32> box){
     return true;
 }
 
-bool CrossRasters::crossNoRaster(const Box3D<qint32> box){
+bool CrossRasters::crossNoRaster( const BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     std::map<quint64, quint64> combos;

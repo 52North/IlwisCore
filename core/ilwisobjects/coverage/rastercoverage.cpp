@@ -83,8 +83,8 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, int index) {
     Size inputSize =  raster->size();
     Size sz(inputSize.xsize(),inputSize.ysize(), 1);
     gcNew->georeference()->size(sz);
-    PixelIterator iterIn(raster, Box3D<>(Voxel(0,0,index), Voxel(inputSize.xsize(), inputSize.ysize(), index + 1)));
-    PixelIterator iterOut(gcNew, Box3D<>(Size(inputSize.xsize(), inputSize.ysize(), 1)));
+    PixelIterator iterIn(raster, BoundingBox(Pixel(0,0,index), Pixel(inputSize.xsize(), inputSize.ysize(), index + 1)));
+    PixelIterator iterOut(gcNew, BoundingBox(Size(inputSize.xsize(), inputSize.ysize(), 1)));
     for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
         ++iterIn;

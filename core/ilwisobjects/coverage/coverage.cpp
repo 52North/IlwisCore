@@ -39,12 +39,12 @@ void Coverage::setCoordinateSystem(const ICoordinateSystem &csy)
     _coordinateSystem = csy;
 }
 
-Box3D<double> Coverage::envelope() const
+Envelope Coverage::envelope() const
 {
     return _envelope;
 }
 
-void Coverage::envelope(const Box3D<double> &bnds)
+void Coverage::envelope(const Envelope &bnds)
 {
     if ( isReadOnly())
         return;

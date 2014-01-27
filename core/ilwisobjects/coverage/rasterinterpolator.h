@@ -10,12 +10,12 @@ public:
     enum InterpolationMethod{ipNEARESTNEIGHBOUR, ipBILINEAR, ipBICUBIC};
 
     RasterInterpolator(const IRasterCoverage& raster, int method) ;
-    double pix2value(const Point3D<double> &pix);
+    double pix2value(const Pixeld &pix);
     double coord2value(const Coordinate& crd);
 
 private:
-    double bilinear(const Point3D<double> &pix) ;
-    double bicubic(const Point3D<double> &pix) ;
+    double bilinear(const Pixeld &pix) ;
+    double bicubic(const Pixeld &pix) ;
     double bicubicPolynom(double values[], const double &delta);
     double bicubicResult(long row, long column, long z, const double &deltaCol);
     bool resolveRealUndefs(double values[]);

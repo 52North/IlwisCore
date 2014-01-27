@@ -364,6 +364,7 @@ public:
      */
     static void addTypeFunction(IlwisTypeFunction);
 
+    static IlwisTypes name2ExtendedType(const QString &dname);
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;

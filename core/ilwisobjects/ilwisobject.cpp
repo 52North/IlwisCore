@@ -392,6 +392,23 @@ QString IlwisObject::type2Name(IlwisTypes t)
 
 }
 
+IlwisTypes IlwisObject::name2ExtendedType(const QString& dname) {
+    QString name = dname;
+    int index;
+    if ( (index = name.indexOf("::")) != -1){
+        name = dname.right(name.size() - index - 2);
+    }
+    if ( name == "ItemDomain<Ilwis::NamedIdentifier>")
+        return  itNAMEDITEM;
+    if ( name == "ItemDomain<Ilwis::IndexedIdentifier>")
+        return  itINDEXEDITEM;
+    if ( name == "ItemDomain<Ilwis::ThematicItem>")
+        return  itTHEMATICITEM;
+    if ( name == "ItemDomain<Ilwis::NumericItem>")
+        return  itNUMERICITEM;
+    return itUNKNOWN;
+}
+
 IlwisTypes IlwisObject::name2Type(const QString& dname)
 {
     QString name = dname;
@@ -438,6 +455,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itGEODETICDATUM;
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
+    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
+        return  itOPERATIONMETADATA;
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
         return  itOPERATIONMETADATA;
 

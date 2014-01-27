@@ -35,9 +35,9 @@ bool BinaryMathRaster::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
 
 bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTable) {
 
-    auto binaryMath = [&](const Box3D<qint32> box ) -> bool {
+    auto binaryMath = [&](const BoundingBox box ) -> bool {
         PixelIterator iterIn(_inputGC1, box);
-        PixelIterator iterOut(_outputGC, Box3D<qint32>(box.size()));
+        PixelIterator iterOut(_outputGC, BoundingBox(box.size()));
 
         for_each(iterOut, iterOut.end(), [&](double& v){
             v = calc(*iterIn, _number1);
@@ -56,7 +56,7 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
 }
 
 bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
-    std::function<bool(const Box3D<qint32>)> binaryMath = [&](const Box3D<qint32> box ) -> bool {
+    std::function<bool(const BoundingBox)> binaryMath = [&](const BoundingBox box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
         PixelIterator iterOut(_outputGC, box);

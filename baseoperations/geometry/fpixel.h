@@ -16,7 +16,7 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 private:
-    Voxel _voxel;
+    Pixel _pixel;
 };
 }
 }

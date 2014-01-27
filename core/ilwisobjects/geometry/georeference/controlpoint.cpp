@@ -1,7 +1,5 @@
 #include "kernel.h"
-#include "angle.h"
-#include "point.h"
-#include "box.h"
+#include "geometries.h"
 #include "controlpoint.h"
 
 using namespace Ilwis;
@@ -14,7 +12,7 @@ ControlPoint::ControlPoint(const Coordinate &crd, const Pixel &pix) : Coordinate
 {
 }
 
-ControlPoint::ControlPoint(const Coordinate &crd, const Pixel_d &pix) : Coordinate(crd), _gridLocation(pix), _active(false)
+ControlPoint::ControlPoint(const Coordinate &crd, const Pixeld &pix) : Coordinate(crd), _gridLocation(pix), _active(false)
 {
 }
 
@@ -32,12 +30,12 @@ void ControlPoint::llLocation(const LatLon &ll)
     _llLocation = ll;
 }
 
-Pixel_d ControlPoint::gridLocation() const
+Pixeld ControlPoint::gridLocation() const
 {
     return _gridLocation;
 }
 
-void ControlPoint::gridLocation(const Pixel_d &pix)
+void ControlPoint::gridLocation(const Pixeld &pix)
 {
     _gridLocation = pix;
 }

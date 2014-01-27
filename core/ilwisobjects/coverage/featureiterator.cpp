@@ -2,13 +2,12 @@
 
 #include "kernel.h"
 #include "coverage.h"
+#include "geos/geom/Geometry.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "featureiterator.h"
@@ -87,7 +86,7 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
        return _iterFeatures != iter._iterFeatures;
 }
 
-SPFeatureI& FeatureIterator::operator *()
+UPFeatureI& FeatureIterator::operator *()
 {
      init();
      return *_iterFeatures;

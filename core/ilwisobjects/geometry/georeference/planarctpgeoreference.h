@@ -14,8 +14,8 @@ public:
                     tTHIRDORDER, tPROJECTIVE, tUNKNOWN } ;
     PlanarCTPGeoReference();
     PlanarCTPGeoReference(const Resource& resource);
-    virtual Coordinate pixel2Coord(const Pixel_d &pix) const;
-    virtual Pixel_d coord2Pixel(const Coordinate& crd) const;
+    virtual Coordinate pixel2Coord(const Pixeld &pix) const;
+    virtual Pixeld coord2Pixel(const Coordinate& crd) const;
     bool isValid() const;
     virtual double pixelSize() const;
     virtual bool compute();
@@ -32,9 +32,9 @@ private:
     Coefficient _avgCrd;
     Coefficient _avgPix;
 
-    Coordinate crdInverseOfAffine(const Pixel_d &pix) const;
-    Coordinate crdInverseOfProjective(const Pixel_d &pix) const;
-    Coordinate crdInverseOfHigherOrder(const Pixel_d &pix);
+    Coordinate crdInverseOfAffine(const Pixeld &pix) const;
+    Coordinate crdInverseOfProjective(const Pixeld &pix) const;
+    Coordinate crdInverseOfHigherOrder(const Pixeld &pix);
     void makeJacobianMatrix(const Coordinate &crdIn, Eigen::Matrix2d &rmJ);
     quint32 minnr() const;
 

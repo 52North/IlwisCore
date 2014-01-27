@@ -7,8 +7,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "symboltable.h"
@@ -49,9 +47,9 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
     SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
 
-        for_each(iterIn, iterIn.end(), [&](SPFeatureI& feature){
+        for_each(iterIn, iterIn.end(), [&](UPFeatureI& feature){
             QVariant v = feature->cell(_attribColumn);
-            SPFeatureI& newFeature = outputFC->newFeatureFrom(feature);
+            UPFeatureI& newFeature = outputFC->newFeatureFrom(feature);
             _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
 
             ++iterIn;
@@ -92,10 +90,10 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
     selector = selector.remove('"');
 
     int index = selector.indexOf("box=");
-    Box2D<double> box;
+    Envelope box;
     if ( index != -1) {
         QString crdlist = "box(" + selector.mid(index+4) + ")";
-        _box = Box3D<double>(crdlist);
+        _box = Envelope(crdlist);
         copylist |= itDOMAIN | itTABLE;
     }
     index = selector.indexOf("polygon=");

@@ -10,7 +10,6 @@
 #include <QStringList>
 #include <QUrl>
 #include <fstream>
-#include <memory>
 #include "boost/current_function.hpp"
 #include <time.h>
 #include "Kernel_global.h"

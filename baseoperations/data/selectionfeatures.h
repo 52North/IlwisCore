@@ -21,7 +21,7 @@ private:
     IIlwisObject _outputObj;
     QString _attribColumn;
     ITable _attTable;
-    Box3D<double> _box;
+    Envelope _box;
 };
 }
 }

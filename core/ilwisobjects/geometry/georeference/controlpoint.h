@@ -6,18 +6,18 @@ class KERNELSHARED_EXPORT ControlPoint : public Coordinate{
 public:
     ControlPoint(bool invalid=false);
     ControlPoint(const Coordinate& crd, const Pixel& pix);
-    ControlPoint(const Coordinate& crd, const Pixel_d& pix );
+    ControlPoint(const Coordinate& crd, const Pixeld& pix );
     ControlPoint(const Coordinate& crd, const LatLon& ll);
 
     LatLon llLocation() const;
     void llLocation(const LatLon& ll);
-    Pixel_d gridLocation() const;
-    void gridLocation(const Pixel_d& pix);
+    Pixeld gridLocation() const;
+    void gridLocation(const Pixeld& pix);
     bool isActive() const;
     void active(bool yesno);
     bool isValid() const;
 private:
-    Pixel_d _gridLocation;
+    Pixeld _gridLocation;
     LatLon  _llLocation;
     bool _active;
     bool _neverValid;

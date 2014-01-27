@@ -22,12 +22,12 @@ bool FPixel::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    if ( !_voxel.isValid())
+    if ( !_pixel.isValid())
         return false;
 
     QVariant value;
-    value.setValue<Voxel>(_voxel);
-    ctx->setOutput(symTable, value, sUNDEF, itVOXEL, Resource());
+    value.setValue<Pixel>(_pixel);
+    ctx->setOutput(symTable, value, sUNDEF, itPIXEL, Resource());
     return true;
 }
 
@@ -41,23 +41,23 @@ Ilwis::OperationImplementation::State FPixel::prepare(ExecutionContext *, const 
     bool ok;
     double sx = _expression.parm(0).value().toLong(&ok);
     if (!ok){
-        ERROR2(ERR_ILLEGAL_VALUE_2,"voxel","x");
+        ERROR2(ERR_ILLEGAL_VALUE_2,"pixel","x");
         return sPREPAREFAILED;
     }
     double sy = _expression.parm(0).value().toLong(&ok);
     if (!ok){
-        ERROR2(ERR_ILLEGAL_VALUE_2,"voxel","y");
+        ERROR2(ERR_ILLEGAL_VALUE_2,"pixel","y");
         return sPREPAREFAILED;
     }
     double sz = 0;
     if (_expression.parameterCount() == 3) {
         sz = _expression.parm(0).value().toLong(&ok);
         if (!ok){
-            ERROR2(ERR_ILLEGAL_VALUE_2,"voxel","x");
+            ERROR2(ERR_ILLEGAL_VALUE_2,"pixel","x");
             return sPREPAREFAILED;
         }
     }
-    _voxel = Voxel(sx,sy,sz);
+    _pixel = Pixel(sx,sy,sz);
 
     return sPREPARED;
 }

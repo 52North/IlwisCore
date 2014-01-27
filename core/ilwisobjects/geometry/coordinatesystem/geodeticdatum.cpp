@@ -7,8 +7,7 @@
 #include "module.h"
 #include "connectorinterface.h"
 #include "identity.h"
-#include "angle.h"
-#include "point.h"
+#include "geometries.h"
 #include "ilwisdata.h"
 #include "geodeticdatum.h"
 
@@ -44,10 +43,10 @@ void GeodeticDatum::set7TransformationParameters(double x, double z, double y, d
 
 void GeodeticDatum::set10TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale, Coordinate center){
     set7TransformationParameters(x,y,z,rx,ry,rz,scale);
-    _datumParams[dmCENTERXR] = center.x();
-    _datumParams[dmCENTERXR] = center.y();
-    _datumParams[dmCENTERXR] = center.z();
-    setCode(QString("%1,%2,%3,%4").arg(code()).arg( center.x()).arg( center.y()).arg( center.z()));
+    _datumParams[dmCENTERXR] = center.x;
+    _datumParams[dmCENTERXR] = center.y;
+    _datumParams[dmCENTERXR] = center.z;
+    setCode(QString("%1,%2,%3,%4").arg(code()).arg( center.x).arg( center.y).arg( center.z));
 
 }
 

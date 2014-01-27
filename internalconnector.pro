@@ -38,6 +38,12 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM
 INCLUDEPATH += $$PWD/core
 DEPENDPATH += $$PWD/core
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
+
 SOURCES += \  
     internalconnector/internalmodule.cpp \
     internalconnector/internalcatalogconnector.cpp \

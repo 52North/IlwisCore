@@ -19,7 +19,7 @@ private:
     ICoordinateSystem _csy;
     IFeatureCoverage _outfeatures;
     ITable _attTable;
-    Coordinate2d _top;
+    Coordinate _top;
     double _cellXSize;
     double _cellYSize;
     quint32 _xsize;

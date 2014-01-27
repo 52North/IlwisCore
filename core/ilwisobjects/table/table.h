@@ -121,7 +121,7 @@ public:
      */
     virtual ColumnDefinition& columndefinition(quint32 index) = 0;
 
-    /**
+     /**
      * sets a new column definition. The new definition must be valid.
      *
      * \sa ColumnDefinition
@@ -253,6 +253,9 @@ public:
      * @return
      */
     virtual std::vector<quint32> select(const QString& conditions) const = 0;
+
+    virtual void dataLoaded(bool yesno) = 0;
+    virtual bool isDataLoaded() const = 0;
 
 protected:
     Table(const Resource& resource) :

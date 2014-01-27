@@ -1,0 +1,358 @@
+#ifndef Point_H
+#define Point_H
+
+#include <QSize>
+#include "angle.h"
+
+namespace Ilwis {
+
+/*!
+ * A point in 2D space. It is a derivative of the Point class. As the base class already offer the x,y components no
+ *further implementation of these is needed. The class mostely implements special operations on 2D points
+ */
+template<class CrdType=qint32, bool useDouble = false> class Location{
+public:
+    /*!
+     default constructor
+     */
+    Location() : x(undefined()), y(undefined()), z(undefined()){
+    }
+    /*!
+     constructs a 2D point from 2 values. The values must not be undefined() else the point remains not valid
+     * \param d1 first value
+     * \param d2 second value
+     */
+    Location(CrdType d1, CrdType d2, CrdType d3=0)  : x(d1), y(d2), z(d3){
+    }
+
+    template<typename U> Location(const Location<U>& p) {
+        if ( p.isValid()) {
+            this->x =(CrdType)p.x;
+            this->y =(CrdType)p.y;
+            this->z =(CrdType)p.z;
+        } else{
+            this->x =undefined();
+            this->y =undefined();
+            this->z = undefined();
+
+        }
+    }
+
+    Location(const Location<CrdType>& p) {
+        if ( p.isValid()) {
+            this->x =p.x;
+            this->y =p.y;
+            this->z =p.z;
+        } else{
+            this->x =undefined();
+            this->y =undefined();
+            this->z = undefined();
+
+        }
+    }
+
+    Location(Location<CrdType>&& crd) : x(crd.x), y(crd.y), z(crd.z){
+        crd.x = crd.y = this->undefined();
+    }
+
+
+    Location(const std::vector<CrdType>& v)  {
+        if ( v.size() < 2) {
+            *this = Location<CrdType>();
+            return;
+        }
+        this->x =v[0];
+        this->y =v[1];
+     }
+
+    virtual ~Location() {
+    }
+
+    /*!
+     a point is valid if both its x and y have a valid value;
+     * \return
+     */
+    bool isValid() const{
+        return x != undefined() && y != undefined() ;
+    }
+
+    bool is0() const{
+        return x == 0 && y == 0 ;
+    }
+
+    bool is3D() const {
+        if (!isValid())
+            return false;
+        return z != undefined();
+    }
+
+    operator std::vector<CrdType> () {
+
+        std::vector<CrdType> v {this->x, this->y, this->z};
+        return v;
+    }
+
+    Ilwis::Location<CrdType>& operator=(const Ilwis::Location<CrdType>& p2) {
+        this->x = p2.x;
+        this->y = p2.y;
+        this->z = p2.z;
+        return *this;
+    }
+
+    Ilwis::Location<CrdType>& operator=(const Ilwis::Location<CrdType>&& p2) {
+        this->x = p2.x;
+        this->y = p2.y;
+        this->z = p2.z;
+        return *this;
+    }
+
+
+
+    /*!
+     operator += addes a vector of 2 values to a point shifting it in 2D space. Using undefined() values in the vector may lead to unpredictable results
+     * \param a vector with a pair of values
+     * \return a reference to a shifted 2D point
+     */
+    Location<CrdType>& operator+= (const std::vector<CrdType>& vec){
+        if (!this->isValid() || vec.size() < 2)
+            return *this;
+
+        this->x =this->x + vec[0];
+        this->y =this->y + vec[1];
+        if ( vec.size() >= 3 && z != undefined())
+            this->z =this->z + vec[2];
+
+        return *this;
+    }
+
+    Location<CrdType>& operator-= (const std::vector<CrdType>& vec){
+        if (!this->isValid() || vec.size() < 22)
+            return *this;
+        this->x =this->x - vec[0];
+        this->y =this->y - vec[1];
+        if ( vec.size() >= 3 && z != undefined())
+            this->z =this->z - vec[2];
+
+        return *this;
+    }
+
+    double distance(const Location<CrdType>& crd) {
+        if ( !crd.isValid() || !this->isValid())
+            return this->undefined();
+        if ( z == undefined() || crd.z == undefined())
+            return std::sqrt(std::pow(abs(this->x - crd.x),2) + std::pow(abs(this->y - crd.y),2));
+        return std::sqrt(std::pow(abs(this->x - crd.x),2) + std::pow(abs(this->y - crd.y),2) + std::pow(abs(this->z - crd.z),2));
+    }
+
+    /*!
+     operator *= multiplies a point with a factor contained in the vector, shifting it in 2D space. Using undefined() values in the vector may lead to unpredictable results
+     * \param  a vector with a pair of values
+     * \return a reference to a shifted 2D point
+     */
+    Location<CrdType>& operator*=(const std::vector<CrdType>& vec){
+        if (!this->isValid() || vec.size() < 2)
+            return *this;
+        this->x =this->x * vec[0];
+        this->y =this->y * vec[1];
+        if ( vec.size() >= 3 && z != undefined())
+            this->z =this->z * vec[2];
+
+        return *this;
+    }
+
+    /*!
+     operator *= multipliesthe x,y values with a single factor , shifting it in 2D space. Using undefined() values may lead to unpredictable results
+     * \param  multiplier
+     * \return a reference to a shifted 2D point
+     */
+    Location<CrdType>& operator*=(int v){
+        if (!this->isValid())
+            return *this;
+        this->x =this->x * v;
+        this->y =this->y * v;
+        if ( z != undefined())
+            this->z =this->z * v;
+
+        return *this;
+    }
+
+    /*!
+     operator /= divides the coordinates of a point with a fixed value. The value must not be zero. If it is zero nothing happens
+     Using undefined() values may lead to unpredictable results
+     * \param v
+     * \return
+     */
+    Location<CrdType>& operator/=(int v){
+        if (!this->isValid() && v != 0)
+            return *this;
+        this->x =this->x / v;
+        this->y =this->y / v;
+        if ( z != undefined())
+            this->z =this->z / v;
+
+        return *this;
+    }
+
+    /*!
+     compares the coordinates of 2 points to see if they are equal. comparision with non valid points always leads to false
+     * \param pnt, point to be compared
+     * \return true if the points are at the same location.
+     */
+    bool operator==(const Location<CrdType>& pnt) const {
+        if (!this->isValid() || !pnt.isValid())
+            return false;
+
+        return pnt.x == this->x && pnt.y == this->y && pnt.z == this->z;
+    }
+    /*!
+     compares the coordinates of 2 points to see if they are not equal. comparision with non valid points always leads to true
+     * \param pnt, point to be compared
+     * \return true if the points are not at the same location.
+     */
+    bool operator!=(const Location<CrdType>& pnt){
+        return !(operator==(pnt));
+    }
+
+    double undefined() const { return  useDouble ? rUNDEF : iUNDEF;}
+    quint64 valuetype() const { return useDouble ? itDOUBLE : itINTEGER;}
+
+    CrdType x;
+    CrdType y;
+    CrdType z;
+
+};
+
+/*!
+A coordinate class for use withing geographic coordinate systems. It contains angles for its "x" and "y" members. It does contains a z-value but this is not
+often used. The class doesnt map exactly to a Point3D as the unit of x,y and z is different(angles vs meters).
+ */
+class LatLon : public Ilwis::Location<Degrees>{
+public:
+    LatLon() : Ilwis::Location<Degrees>() {}
+    LatLon(const Degrees& lat, const Degrees& lon, double h=0) : Ilwis::Location<Degrees>(lon, lat, h) {}
+
+    LatLon(const LatLon&& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
+    }
+
+    LatLon(const LatLon& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
+    }
+
+    LatLon& operator=(const LatLon& ll) {
+        this->x = ll.x;
+        this->y =  ll.y;
+        this->z = ll.z;
+        return *this;
+    }
+
+     /*!
+     returns the north-south position as an angle of a point ("y" direction). The value ranges between -90 and 90
+     * \return angle
+     */
+    double lat(Angle::Unit u=Angle::uDEGREES) const {
+        if ( u == Angle::uRADIANS)
+            return y.radians();
+        else
+            return y.degrees();
+    }
+
+    /*!
+     returns the east-west position as an angle of a point ("x" direction). The value ranges between -180 and 180
+     * \return angle
+     */
+    double lon(Angle::Unit u=Angle::uDEGREES) const {
+        if ( u == Angle::uRADIANS)
+            return x.radians();
+        else
+            return x.degrees();
+    }
+
+    /*!
+     sets the latitude of a LatLon point.
+     * \param l
+     */
+    void setLat(double l) {
+        y = Degrees(l);
+    }
+
+    void setLon(double l) {
+        x = Degrees(l);
+    }
+
+
+};
+
+#define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)
+
+
+
+template<typename CrdType>
+std::vector<CrdType> operator-(const Ilwis::Location<CrdType>& p1, const Ilwis::Location<CrdType>& p2) {
+    if (!(p1.isValid() && p2.isValid()))
+        return std::vector<int>();
+    std::vector<CrdType> v(3,0);
+    v[0] = p1.x - p2.x;
+    v[1] = p1.y - p2.y ;
+    if ( p1.z != p1.undefined() && p2.z != p2.undefined())
+        v[2] = p1.z - p2.z ;
+    return v;
+}
+
+template<typename CrdType>
+Ilwis::Location<CrdType> operator+(const Ilwis::Location<CrdType>& p1, const std::vector<CrdType>& vec) {
+    if (p1.isValid() == false ||  vec.size() < 2 )
+        return Ilwis::Location<CrdType>();
+    Ilwis::Location<CrdType> p3(p1.x + vec[0], p1.y + vec[1]) ;
+    if ( vec.size() >= 3 && p1.z != p1.undefined())
+        p3.z  = p1.z + vec[2];
+
+    return p3;
+}
+template<typename CrdType>
+Ilwis::Location<CrdType> operator-(const Ilwis::Location<CrdType>& p1, const std::vector<CrdType>& vec) {
+    if (p1.isValid() == false ||  vec.size() < 2 )
+        return Ilwis::Location<CrdType>();
+    Ilwis::Location<CrdType> p3(p1.x - vec[0], p1.y - vec[1]) ;
+
+    if ( vec.size() >= 3 && p1.z != p1.undefined())
+        p3.z = p1.z - vec[2];
+    return p3;
+}
+
+template<typename CrdType>
+Ilwis::Location<CrdType> operator*(const Ilwis::Location<CrdType>& p1, double v) {
+    Ilwis::Location<CrdType> p3(p1.x * v, p1.y * v) ;
+    if ( p1.z != p1.undefined())
+        p3.z = p3.z * v;
+    return p3;
+}
+
+template<typename CrdType>
+Ilwis::Location<CrdType> operator/(const Ilwis::Location<CrdType>& p1, double v) {
+    if (!p1.isValid() || v == 0)
+        return Ilwis::Location<CrdType>();
+    Ilwis::Location<CrdType> p3(p1.x / v, p1.y / v) ;
+    if ( p1.z != p1.undefined())
+        p3.z = p3.z / v;
+    return p3;
+}
+
+typedef Location<int> Pixel;
+typedef Location<double> Pixeld;
+
+} // end Ilwis namespace
+
+Q_DECLARE_METATYPE(Ilwis::Pixel)
+Q_DECLARE_METATYPE(Ilwis::Pixeld)
+
+
+
+
+
+
+
+
+
+
+
+
+#endif // Point_H

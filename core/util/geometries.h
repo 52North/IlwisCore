@@ -2,13 +2,12 @@
 #define GEOMETRIES_H
 
 #include <type_traits>
-
+#include "geos/geom/Coordinate.h"
 #include "angle.h"
-#include "point.h"
-
-
+#include "location.h"
+#include "coordinate.h"
 #include "box.h"
-#include "line.h"
+
 
 
 #endif // GEOMETRIES_H

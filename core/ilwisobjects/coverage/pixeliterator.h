@@ -94,7 +94,7 @@ public:
      * \param raster The raster from which this PixelIterator should be created
      * \param box The bounding box which desides what part of the raster should be walked
      */
-    PixelIterator(const IRasterCoverage& raster, const Box3D<>& box=Box3D<>());
+    PixelIterator(const IRasterCoverage& raster, const BoundingBox& box=BoundingBox());
 
     /*!
      * Copy's all the values from the existing PixelIterator onto this one
@@ -203,11 +203,11 @@ public:
      * \param vox the Voxel to move to
      * \return this at the given Voxel
      */
-    PixelIterator &operator ()(const Voxel &vox)
+    PixelIterator &operator ()(const Pixel &pix)
     {
-        _x = vox.x();
-        _y = vox.y();
-        _z = vox.z();
+        _x = pix.x;
+        _y = pix.y;
+        _z = pix.z;
         _yChanged = _xChanged = _zChanged = true;
         initPosition();
         return *this;
@@ -235,8 +235,8 @@ public:
      * \param index the target index
      * \return this iterator at the specified voxel
      */
-    PixelIterator& operator[](const Voxel& vox){
-        return operator ()(vox);
+    PixelIterator& operator[](const Pixel& pix){
+        return operator ()(pix);
     }
 
     /*!
@@ -332,7 +332,6 @@ public:
      * \return true when the pixel is in this PixelIterator
      */
     bool contains(const Pixel& pix) ;
-    bool contains(const Voxel& pix);
 
     /*!
      * \brief Checks if the x coordinate has changed in the last step taken
@@ -365,14 +364,14 @@ public:
      * \brief Query for the current non lineair position of this PixelIterator
      * \return a Voxel with the current non lineair position of this PixelIterator
      */
-    Voxel position() const;
+    Pixel position() const;
 
     /*!
      * \brief Query for the bounding box of this PixelIterator
      * the bounding box decides which part of the raster this PixelIterator should walk, thus its size can never be bigger than the rastersize
      * \return the bounding box of this PixelIterator
      */
-    const Box3D<>& box() const;
+    const BoundingBox& box() const;
 
     /*!
      * \brief Query for the linearPosition of this PixelIterator
@@ -438,7 +437,7 @@ protected:
 
     IRasterCoverage _raster;
     Grid *_grid;
-    Box3D<> _box;
+    BoundingBox _box;
     qint32 _x = 0;
     qint32 _y = 0;
     qint32 _z = 0;

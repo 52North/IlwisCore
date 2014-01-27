@@ -10,8 +10,8 @@ class GeoRefImplementation;
 
 class GeoRefInterface {
 public:
-    virtual Coordinate pixel2Coord(const Pixel_d&) const = 0;
-    virtual Pixel_d coord2Pixel(const Coordinate& crd) const = 0;
+    virtual Coordinate pixel2Coord(const Pixeld&) const = 0;
+    virtual Pixeld coord2Pixel(const Coordinate& crd) const = 0;
     virtual double pixelSize() const = 0;
     virtual bool compute() = 0;
     virtual void coordinateSystem(const ICoordinateSystem& csy)=0;
@@ -28,13 +28,13 @@ public:
     GeoReference(const Resource& resource);
     ~GeoReference();
 
-    Coordinate pixel2Coord(const Pixel_d&) const;
-    Pixel_d coord2Pixel(const Coordinate& crd) const;
+    Coordinate pixel2Coord(const Pixeld&) const;
+    Pixeld coord2Pixel(const Coordinate& crd) const;
     double pixelSize() const;
     bool compute();
 
-    virtual Box2D<double> pixel2Coord(const Box2D<qint32> &box ) const;
-    virtual Box2D<qint32> coord2Pixel(const Box2D<double>& box) const;
+    virtual Envelope pixel2Coord(const BoundingBox &box ) const;
+    virtual BoundingBox coord2Pixel(const Envelope &box) const;
     ICoordinateSystem coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
     Size size() const;

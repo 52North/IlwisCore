@@ -8,7 +8,7 @@ public:
     Selector(const QString &tp);
     void setBounds(const QString& x1, const QString& y1, const QString& x2, const QString& y2);
     void setSelectorType(const QString& tp);
-    Ilwis::Box2D<int> box() const;
+    BoundingBox box() const;
     QString variable() const;
     QString selectorType() const;
     void beginCol(const QString& col);
@@ -24,7 +24,7 @@ public:
 
     void setVariable(const QString &v);
 private:
-    Ilwis::Box2D<int> _box;
+    BoundingBox _box;
     QString _variable;
     QString _selectorType;
     QString _beginCol;

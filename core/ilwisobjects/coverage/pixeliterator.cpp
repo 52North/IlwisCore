@@ -30,7 +30,7 @@ PixelIterator::PixelIterator() :
 
 }
 
-PixelIterator::PixelIterator(const IRasterCoverage &raster, const Box3D<>& box) :
+PixelIterator::PixelIterator(const IRasterCoverage &raster, const BoundingBox& box) :
     _raster(raster),
     _box(box),
     _localOffset(0),
@@ -63,7 +63,7 @@ PixelIterator::PixelIterator(PixelIterator&& iter) :
     _zChanged(iter._zChanged)
 {
 //    _raster = IRasterCoverage();
-//    _box = Box3D<>();
+//    _box = BoundingBox;
 //    _localOffset = 0;
 //    _currentBlock = 0;
 //    _flow = fXYZ;
@@ -99,17 +99,17 @@ void PixelIterator::copy(const PixelIterator &iter) {
 void PixelIterator::init() {
     const Size& sz = _raster->size();
     if ( _box.isNull()) {
-        _box = Box3D<>(sz);
+        _box = BoundingBox(sz);
     }
     _box.ensure(sz);
 
-    _x = _box.min_corner().x();
-    _y = _box.min_corner().y();
-    _z = _box.min_corner().z();
+    _x = _box.min_corner().x;
+    _y = _box.min_corner().y;
+    _z = _box.min_corner().z;
 
-    _endx = _box.max_corner().x();
-    _endy = _box.max_corner().y();
-    _endz = _box.max_corner().z();
+    _endx = _box.max_corner().x;
+    _endy = _box.max_corner().y;
+    _endz = _box.max_corner().z;
 
     bool inside = contains(Pixel(_x,_y));
     if ( inside) {
@@ -134,9 +134,9 @@ inline bool PixelIterator::moveXYZ(int delta) {
     _yChanged = _zChanged = false;
 
     if ( _x > _endx) {
-        _xChanged = (_x - delta) %  _box.xlength() != 0;
-        qint32 tempy = _y + (_x - _box.min_corner().x()) / _box.xlength();
-        _x = _box.min_corner().x() + (_x - _box.min_corner().x()) % _box.xlength();
+        _xChanged = (_x - delta) %  (int)_box.xlength() != 0;
+        qint32 tempy = _y + (_x - _box.min_corner().x) / _box.xlength();
+        _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
         _yChanged = tempy != _y;
         std::swap(_y,tempy);
         qint32 ylocal = _y % _grid->maxLines();
@@ -150,11 +150,11 @@ inline bool PixelIterator::moveXYZ(int delta) {
             _localOffset = _x;
         }
         if ( _y > _endy) {
-            quint32 newz = _z + (_y - _box.min_corner().y()) / _box.ylength();
+            quint32 newz = _z + (_y - _box.min_corner().y) / _box.ylength();
             _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
             _zChanged = newz != _z;
             _z = newz;
-            _y = _box.min_corner().y() + (_y - _box.min_corner().y()) % _box.ylength();
+            _y = _box.min_corner().y + (_y - _box.min_corner().y) % (int)_box.ylength();
             _yChanged = _y != tempy;
             localblock = _y /  _grid->maxLines();
             _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
@@ -168,17 +168,17 @@ inline bool PixelIterator::moveXYZ(int delta) {
 }
 
 inline bool PixelIterator::isAtEnd() const {
-    return _x == _box.max_corner().x() &&
-           _y == _box.max_corner().y() &&
-           _z == _box.max_corner().z();
+    return _x == _box.max_corner().x &&
+           _y == _box.max_corner().y &&
+           _z == _box.max_corner().z;
 }
 
-Voxel PixelIterator::position() const
+Pixel PixelIterator::position() const
 {
-    return Voxel(_x, _y, _z);
+    return Pixel(_x, _y, _z);
 }
 
-const Box3D<> &PixelIterator::box() const
+const BoundingBox &PixelIterator::box() const
 {
     return _box;
 }
@@ -275,19 +275,10 @@ void PixelIterator::setFlow(Flow flw) {
 }
 
 bool PixelIterator::contains(const Pixel& pix) {
-    return pix.x() >= _box.min_corner().x() &&
-            pix.x() < _box.max_corner().x()  &&
-            pix.y() >= _box.min_corner().y() &&
-            pix.y() < _box.max_corner().y();
-}
-
-bool PixelIterator::contains(const Voxel& pix) {
-    return pix.x() >= _box.min_corner().x() &&
-            pix.x() < _box.max_corner().x()  &&
-            pix.y() >= _box.min_corner().y() &&
-            pix.y() < _box.max_corner().y() &&
-            pix.z() >= _box.min_corner().z() &&
-            pix.z() < _box.max_corner().z();
+    return pix.x >= _box.min_corner().x &&
+            pix.x < _box.max_corner().x  &&
+            pix.y >= _box.min_corner().y &&
+            pix.y < _box.max_corner().y;
 }
 
 bool PixelIterator::xchanged() const {

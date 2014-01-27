@@ -125,7 +125,7 @@ public:
      *
      * @return the features of this iterator
      */
-    SPFeatureI& operator*();
+    UPFeatureI& operator*();
 
     /**
      * Returns a copy of this FeatureIterator which has as current feature the last feature in the coverage

@@ -75,7 +75,7 @@ public:
 
     //double value(const Point3D<double> &pix, int method=0);
     double& value(quint32 block, int offset );
-    double value(const Voxel& pix) ;
+    double value(const Pixel& pix) ;
     void setValue(quint32 block, int offset, double v );
 
     quint32 blocks() const;
@@ -91,8 +91,8 @@ public:
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
     void unload();
 private:
-    double bilinear(const Point3D<double> &pix) const;
-    double bicubic(const Point3D<double> &pix) const;
+    double bilinear(const Pixeld &pix) const;
+    double bicubic(const Pixeld &pix) const;
     int numberOfBlocks();
     inline bool update(quint32 block, bool creation=false);
 

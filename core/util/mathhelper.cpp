@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "angle.h"
-#include "point.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
 #include <Eigen/Dense>
 #include "mathhelper.h"
 
@@ -28,18 +29,18 @@ bool MathHelper::findOblique(int iPoints,
             A(2*i,j) = 0;
             A(2*i+1,j) = 0;
         }
-        A(2*i, 0) = independent[i].x();
-        A(2*i, 1) = independent[i].y();
+        A(2*i, 0) = independent[i].x;
+        A(2*i, 1) = independent[i].y;
         A(2*i, 2) = 1;
-        A(2*i, 6) = - dependent[i].x() * independent[i].x();
-        A(2*i, 7) = - dependent[i].x() * independent[i].y();
-        A(2*i+1  , 3) = independent[i].x();
-        A(2*i+1  , 4) = independent[i].y();
+        A(2*i, 6) = - dependent[i].x * independent[i].x;
+        A(2*i, 7) = - dependent[i].x * independent[i].y;
+        A(2*i+1  , 3) = independent[i].x;
+        A(2*i+1  , 4) = independent[i].y;
         A(2*i+1  , 5) = 1;
-        A(2*i+1  , 6) = - dependent[i].y() * independent[i].x();
-        A(2*i+1  , 7) = - dependent[i].y() * independent[i].y();
-        b(2*i) = dependent[i].x();
-        b(2*i+1  ) = dependent[i].y();
+        A(2*i+1  , 6) = - dependent[i].y * independent[i].x;
+        A(2*i+1  , 7) = - dependent[i].y * independent[i].y;
+        b(2*i) = dependent[i].x;
+        b(2*i+1  ) = dependent[i].y;
     }
     Eigen::VectorXd sol = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
     for (int i = 0; i < 8; ++i) {
@@ -93,8 +94,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
         DY[0] = 1;
         for (i = 0; i < MaxPower; ++i)
         {
-            DX[i+1] = DX[i] * independent[point].x();
-            DY[i+1] = DY[i] * independent[point].y();
+            DX[i+1] = DX[i] * independent[point].x;
+            DY[i+1] = DY[i] * independent[point].y;
         }
         for (term = 0; term < iTerms; ++term)
             PolyProd[term] = DX[PowerX[term]] * DY[PowerY[term]];
@@ -102,8 +103,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
         //	Increment First Diagonal term in Matrix
         //	and First Element in Both Dependent Vectors
         Matrix[0][0] += 1;
-        DU[0] += dependent[point].x();
-        DV[0] += dependent[point].y();
+        DU[0] += dependent[point].x;
+        DV[0] += dependent[point].y;
 
         //	Increment Next Diagonal term in Matrix
         //	and Next Elements in Dependent Vectors
@@ -111,8 +112,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
         {
             D0 = PolyProd[row];
             Matrix[row][row] += D0 * D0;
-            DU[row] += dependent[point].x() * D0;
-            DV[row] += dependent[point].y() * D0;
+            DU[row] += dependent[point].x * D0;
+            DV[row] += dependent[point].y * D0;
 
             //  Increment Remainder of row up to Diagonal term
             //  and Copy to Corresponding column

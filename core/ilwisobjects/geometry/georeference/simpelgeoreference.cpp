@@ -32,20 +32,20 @@ void SimpelGeoReference::clear() {
     _det = 0;
 }
 
-Coordinate SimpelGeoReference::pixel2Coord(const Pixel_d &pix) const
+Coordinate SimpelGeoReference::pixel2Coord(const Pixeld &pix) const
 {
-    double x = centerOfPixel() ? pix.x() + 0.5 : pix.x();
-    double y = centerOfPixel()? pix.y() + 0.5 : pix.y();
+    double x = centerOfPixel() ? pix.x + 0.5 : pix.x;
+    double y = centerOfPixel()? pix.y + 0.5 : pix.y;
     Coordinate c((_a22 * (x - _b1) - _a12 * (y - _b2)) / _det,
                  (-_a21 * (x - _b1) + _a11 * (y - _b2)) / _det );
     return c;
 }
 
-Pixel_d SimpelGeoReference::coord2Pixel(const Coordinate &crd) const
+Pixeld SimpelGeoReference::coord2Pixel(const Coordinate &crd) const
 {
-    double rCol = _a11 * crd.x() + _a12 * crd.y() + _b1; // - 1;
-    double rRow = _a21 * crd.x() + _a22 * crd.y() + _b2; // - 1;
-    Pixel_d pix(rCol, rRow);
+    double rCol = _a11 * crd.x + _a12 * crd.y + _b1; // - 1;
+    double rRow = _a21 * crd.x + _a22 * crd.y + _b2; // - 1;
+    Pixeld pix(rCol, rRow);
 
     return pix;
 }

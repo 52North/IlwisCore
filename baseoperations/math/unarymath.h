@@ -26,7 +26,7 @@ protected:
     ITable _outputTable;
     QString _outColumn;
     QString _inColumn;
-    Box3D<qint32> _box;
+    BoundingBox _box;
     OperationType _case;
     double _number;
     QString _outputDomain;

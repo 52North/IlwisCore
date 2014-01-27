@@ -26,7 +26,7 @@ private:
     IRasterCoverage _inputGC2;
     IRasterCoverage _outputGC;
     double _number;
-    Box3D<qint32> _box;
+    BoundingBox _box;
     LogicalOperator _operator;
 };
 }

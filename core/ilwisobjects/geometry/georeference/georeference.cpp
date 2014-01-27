@@ -42,12 +42,12 @@ GeoReference  *GeoReference::create(const QString& type,const Resource& resource
     return georef;
 }
 
-Coordinate GeoReference::pixel2Coord(const Pixel_d &pixel) const
+Coordinate GeoReference::pixel2Coord(const Pixeld &pixel) const
 {
     return _georefImpl->pixel2Coord(pixel);
 }
 
-Pixel_d GeoReference::coord2Pixel(const Coordinate &crd) const
+Pixeld GeoReference::coord2Pixel(const Coordinate &crd) const
 {
     // for performance reasons no isValid check here, haas tobe checked before hand
     return _georefImpl->coord2Pixel(crd);
@@ -136,26 +136,26 @@ const QScopedPointer<Ilwis::GeoRefAdapter> &GeoReference::adapter() const
     return _adapter;
 }
 
-Box2D<double> GeoReference::pixel2Coord(const Box2D<qint32> &box) const
+Envelope GeoReference::pixel2Coord(const BoundingBox &box) const
 {
     if ( !box.isValid()) {
         ERROR2(ERR_INVALID_PROPERTY_FOR_2,"size", "box");
-        return Box2D<double>();
+        return Envelope();
     }
     Coordinate c1 = pixel2Coord(box.min_corner());
     Coordinate c2 = pixel2Coord(box.max_corner());
-    return Box2D<double>(c1,c2);
+    return Envelope(c1,c2);
 }
 
-Box2D<qint32> GeoReference::coord2Pixel(const Box2D<double> &box) const
+BoundingBox GeoReference::coord2Pixel(const Envelope &box) const
 {
     if ( !box.isValid()) {
         ERROR2(ERR_INVALID_PROPERTY_FOR_2,"size", "box");
-        return  Box2D<qint32>();
+        return  BoundingBox();
     }
     Pixel p1 = coord2Pixel(box.min_corner());
     Pixel p2 = coord2Pixel(box.max_corner());
-    return Box2D<qint32>(p1,p2);
+    return BoundingBox(p1,p2);
 }
 
 bool GeoReference::isValid() const

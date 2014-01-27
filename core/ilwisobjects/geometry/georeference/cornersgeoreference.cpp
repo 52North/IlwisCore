@@ -20,7 +20,7 @@ GeoRefImplementation *CornersGeoReference::create()
     return new CornersGeoReference();
 }
 
-void CornersGeoReference::setEnvelope(const Box2D<double> &env)
+void CornersGeoReference::setEnvelope(const Envelope &env)
 {
     _envelope = env;
 }
@@ -41,14 +41,14 @@ bool CornersGeoReference::compute()
     if (_isCornersOfCorners) {
         _a11  = size().xsize() / vec[0];
         _a22 = - size().ysize() / vec[1];
-        _b1 = - _a11 * _envelope.min_corner().x();
-        _b2 = - _a22 * _envelope.max_corner().y();
+        _b1 = - _a11 * _envelope.min_corner().x;
+        _b2 = - _a22 * _envelope.max_corner().y;
     }
     else {
         _a11 = (size().xsize() - 1) / vec[0];
         _a22 = - (size().ysize() - 1) / vec[1];
-        _b1 = 0.5 - _a11 * _envelope.min_corner().x();
-        _b2 = 0.5 - _a22 * _envelope.max_corner().y();
+        _b1 = 0.5 - _a11 * _envelope.min_corner().x;
+        _b2 = 0.5 - _a22 * _envelope.max_corner().y;
     }
     _det = _a11 * _a22;
 
@@ -62,7 +62,7 @@ bool CornersGeoReference::isCornersOfCorners() const
     return _isCornersOfCorners;
 }
 
-Box2D<double> CornersGeoReference::envelope() const
+Envelope CornersGeoReference::envelope() const
 {
     return _envelope;
 }

@@ -1,5 +1,5 @@
 #include <QUrl>
-#include "module.h"
+//#include "module.h"
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
@@ -35,17 +35,11 @@ void CoordinateDomain::setRange(Range *vr)
 Domain::Containement CoordinateDomain::contains(const QVariant &value) const
 {
     Coordinate crd = value.value<Coordinate>();
-    if ( _envelope->valueType() == itCOORD2D) {
-        QSharedPointer<Box2D<double>> box = _envelope.dynamicCast<Box2D<double>>();
+    if ( _envelope->valueType() == itCOORDINATE) {
+        QSharedPointer<Envelope> box = _envelope.dynamicCast<Envelope>();
         if ( box)
             return box->contains(crd) ? Domain::cSELF : Domain::cNONE;
     }
-    if ( _envelope->valueType() == itCOORD3D) {
-        QSharedPointer<Box3D<double>> box = _envelope.dynamicCast<Box3D<double>>();
-        if ( box)
-            return box->contains(crd) ? Domain::cSELF : Domain::cNONE;
-    }
-
     return Domain::cNONE;
 }
 
@@ -82,13 +76,13 @@ SPRange CoordinateDomain::getRange() const
 
 IlwisTypes CoordinateDomain::valueType() const
 {
-    return itCOORD3D;
+    return itCOORDINATE;
 }
 
 
 QString CoordinateDomain::value(const QVariant &v) const
 {
     Coordinate crd = v.value<Coordinate>();
-    QString c = QString("%1 %2 %3").arg(crd.x(), 0, 'g').arg(crd.y(), 0, 'g').arg(crd.z(), 0, 'g');
+    QString c = QString("%1 %2 %3").arg(crd.x, 0, 'g').arg(crd.y, 0, 'g').arg(crd.z, 0, 'g');
     return c;
 }

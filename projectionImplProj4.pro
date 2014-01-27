@@ -204,6 +204,12 @@ OTHER_FILES += \
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
+
 INCLUDEPATH += $$PWD/projectionimplproj4 \
                 $$PWD/../external/proj4
 DEPENDPATH += $$PWD/projectionimplproj4

@@ -132,7 +132,7 @@ public:
      */
     double coord2value(const Coordinate &c){
         if ( _georef->isValid() && c.isValid()) {
-            Point2D<double> pix = _georef->coord2Pixel(c);
+            Pixeld pix = _georef->coord2Pixel(c);
             return pix2value(pix);
         }
         return rUNDEF;
@@ -150,7 +150,7 @@ public:
      * \param pix the pixel
      * \return the value at the pixel or undefined
      */
-    double pix2value(const Point3D<double>& pix){
+    double pix2value(const Pixeld& pix){
         if ( _georef->isValid() && !connector().isNull()) {
             if ( _grid.isNull()) {
                 _grid.reset(connector()->loadGridData(this));

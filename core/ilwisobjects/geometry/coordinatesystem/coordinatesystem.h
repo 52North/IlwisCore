@@ -6,7 +6,7 @@
 namespace Ilwis {
 
 class CoordinateSystem;
-template<class T> class Box2D;
+template<class T> class Box;
 
 typedef IlwisData<CoordinateSystem> ICoordinateSystem;
 
@@ -19,16 +19,16 @@ public:
     virtual Coordinate coord2coord(const ICoordinateSystem& sourceCs, const Coordinate& crdSource) const =0;
     virtual LatLon coord2latlon(const Coordinate &crdSource) const =0;
     virtual Coordinate latlon2coord(const LatLon& ll) const = 0;
-    virtual Ilwis::Box2D<double> convertEnvelope(const ICoordinateSystem& sourceCs, const Ilwis::Box2D<double>& envelope) const;
+    virtual Ilwis::Envelope convertEnvelope(const ICoordinateSystem& sourceCs, const Envelope& envelope) const;
     virtual bool canConvertToLatLon() const;
     virtual bool canConvertToCoordinate() const;
     virtual Coordinate inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate& crd) const;
-    Box3D<double> envelope() const;
-    void envelope(const Box3D<double> &env);
+    Ilwis::Envelope envelope() const;
+    void envelope(const Envelope &env);
     virtual bool isLatLon() const = 0;
 
 private:
-    Box3D<double> _envelope;
+    Ilwis::Envelope _envelope;
 
 };
 

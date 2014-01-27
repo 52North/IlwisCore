@@ -5,13 +5,15 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
 #include "featurecoverage.h"
+#include "geos/geom/CoordinateFilter.h"
+#include "geos/geom/PrecisionModel.h"
+#include "geos/geom/GeometryFactory.h"
+#include "csytransform.h"
 
 using namespace Ilwis;
 
@@ -19,12 +21,18 @@ FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
 {
     _featureInfo.resize(3);
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
+    geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
+    _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
+    delete pm;
 }
 
 FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
 {
     _featureInfo.resize(3);
     _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
+    geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel( geos::geom::PrecisionModel::FLOATING);
+    _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
+    delete pm;
 }
 
 FeatureCoverage::~FeatureCoverage() {
@@ -41,35 +49,43 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-SPFeatureI &FeatureCoverage::newFeature(const Geometry& geom) {
+UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom) {
     Locker lock(_mutex);
-    SPFeatureI& newfeature = createNewFeature(geom.geometryType());
-    if (newfeature != nullptr){
-        Geometry newgeom = geom;
-        if ( geom.coordinateSystem().isValid() && geom.coordinateSystem() != coordinateSystem()){
-            newgeom = geom.transform(geom.coordinateSystem());
-       }
-        newgeom.coordinateSystem(coordinateSystem());
-        newfeature->set(newgeom);
+    UPFeatureI& newfeature = createNewFeature(geometryType(geom));
+    if (newfeature ){
+        CoordinateSystem *csy = CSY(geom);
+        if ( csy && !csy->isEqual(coordinateSystem().ptr())){
+            CsyTransform trans(csy, coordinateSystem());
+            geom->apply_rw(&trans);
+        }
+        geom->setUserData(coordinateSystem().ptr());
+        newfeature->set(geom);
     }
     return newfeature;
 }
 
-SPFeatureI &FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
+UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
-    SPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
+    UPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)
         return newfeature;
 
     for(int i=0; i < existingFeature->trackSize(); ++i){
-          Geometry geom = existingFeature->geometry().transform(csySource);
-          newfeature->set(geom, i);
+          UPGeometry& geom = existingFeature->geometry(i);
+          geos::geom::Geometry *newgeom = geom->clone();
+          if ( csySource.isValid() && csySource->isEqual(coordinateSystem().ptr())){
+              CsyTransform trans(csySource, coordinateSystem());
+              newgeom->apply_rw(&trans);
+          }
+          IlwisObject *obj = coordinateSystem().ptr();
+          newgeom->setUserData(obj);
+          newfeature->set(newgeom, i);
     }
     return newfeature;
 }
 
-Ilwis::SPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
+Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( isReadOnly()){
         throw FeatureCreationError(TR("Readonly feature coverage, no creation allowed"));
     }
@@ -189,8 +205,32 @@ quint32 FeatureCoverage::featureCount(IlwisTypes types, int index) const
     return count;
 }
 
+IlwisTypes FeatureCoverage::geometryType(const geos::geom::Geometry *geom){
+    switch ( geom->getGeometryTypeId()){
+    case geos::geom::GEOS_POINT:
+        return itPOINT;
+    case geos::geom::GEOS_LINESTRING:
+        return itLINE;
+    case geos::geom::GEOS_POLYGON:
+        return itPOLYGON;
+    default:
+        return  itUNKNOWN;
+    }
+}
+
+const UPGeomFactory& FeatureCoverage::geomfactory() const{
+    return _geomfactory;
+}
+
 //-----------------------------------------------------------------
 
-
+Ilwis::CoordinateSystem *CSY(geos::geom::Geometry *geom){
+    if ( geom == nullptr)
+        return 0;
+    void *ptr = geom->getUserData();
+    if (ptr == 0)
+        return 0;
+    return reinterpret_cast<Ilwis::CoordinateSystem *>(ptr);
+}
 
 

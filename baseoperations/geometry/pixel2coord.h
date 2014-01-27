@@ -14,7 +14,7 @@ public:
 protected:
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const Ilwis::SymbolTable &symTable);
     IRasterCoverage _inputGC;
-    Voxel _voxel;
+    Pixel _pixel;
     QString _outName=sUNDEF;
 };
 }

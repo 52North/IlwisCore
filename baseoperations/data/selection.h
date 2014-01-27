@@ -21,7 +21,7 @@ private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     QString _attribColumn;
-    Box3D<qint32> _box;
+    BoundingBox _box;
     std::vector<qint32> _base;
     int _zvalue = iUNDEF;
 

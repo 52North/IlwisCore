@@ -23,7 +23,7 @@ private:
     ICoordinateSystem _csyTarget;
     RenumberMap _renumberer;
     TableMerger _merger;
-    Box3D<double> addEnvelopes() const;
+    Envelope addEnvelopes() const;
 };
 }
 }

@@ -3,8 +3,9 @@
 
 #include "kernel.h"
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
+#include "location.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "ellipsoid.h"
@@ -181,8 +182,8 @@ LatLon ProjectionImplementationProj4::coord2latlon(const Coordinate &crd) const
         return LatLon();
     }
 
-    double x = crd.x();
-    double y = crd.y();
+    double x = crd.x;
+    double y = crd.y;
     int err = pj_transform(_pjBase,_pjLatlon, 1, 1, &x, &y, NULL );
     if ( err != 0) {
         QString error(pj_strerrno(err));

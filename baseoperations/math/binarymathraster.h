@@ -25,7 +25,7 @@ private:
     IRasterCoverage _inputGC1;
     IRasterCoverage _inputGC2;
     IRasterCoverage _outputGC;
-    Box3D<qint32> _box;
+    BoundingBox _box;
 };
 }
 }

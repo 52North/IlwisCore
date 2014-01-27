@@ -14,8 +14,8 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
+//#include "polygon.h"
+//#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "factory.h"
@@ -208,12 +208,12 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
         coverage->setCoordinateSystem(csy);
     }
 
-    Box2D<double> bounds;
-    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box2D<double>") {
-        bounds = resource["envelope"].value<Ilwis::Box2D<double>>();
+    Envelope bounds;
+    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box<double>") {
+        bounds = resource["envelope"].value<Envelope>();
     }else if (QString(resource["envelope"].typeName()) == "QString" &&
               resource["envelope"].toString() != sUNDEF) {
-        bounds = Box2D<double>(resource["envelope"].toString());
+        bounds = Envelope(resource["envelope"].toString());
     }
     if ( bounds.isValid()) {
         coverage->envelope(bounds);
@@ -266,7 +266,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
                 return 0;
         }
     } else{
-        Box2D<double> bounds = gcoverage->envelope();
+        Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
 //            GeoReference *cgeoref = new GeoReference();
 //            GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("georefimplementationfactory");
@@ -517,7 +517,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
        csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
 
     cgrf->coordinateSystem(csy);
-    cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Box2D<double>>());
+    cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
 //    Size sz = resource["size"].value<Size>();
     cgrf->size(resource["size"].value<Size>());
     cgrf->centerOfPixel(resource["centerofpixel"].toBool());

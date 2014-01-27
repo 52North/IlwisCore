@@ -5,20 +5,27 @@
 #include <unordered_map>
 #include "Kernel_global.h"
 
+namespace geos{
+namespace geom{
+class GeometryFactory;
+}
+}
 namespace Ilwis {
 
 class FeatureNode;
 
-typedef std::vector<SPFeatureI> Features;
+typedef std::vector<UPFeatureI> Features;
 
 class FeatureIterator;
 class FeatureFactory;
 class AttributeRecord;
+typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 struct FeatureInfo {
     quint32 _count;
     std::vector<quint32> _perIndex;
 };
+
 /**
  * A feature in Ilwis-Objects is anything that can have one or more geometries and has one distinct
  * identity. In the Ilwis-Objects terminology an ice berg tracked over time (assuming it doesn’t split) can
@@ -95,15 +102,15 @@ public:
     void featureTypes(IlwisTypes types);
 
     /**
-     * Creates a new SPFeatureI from the given geometry
+     * Creates a new UPFeatureI from the given geometry
      * you could say the geometry gets transformed into a feature
      *
-     * \sa SPFeatureI
+     * \sa UPFeatureI
      * \sa Geometry
      * @param geom the geometry that has to be used for the new feature
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    SPFeatureI& newFeature(const Ilwis::Geometry &geom);
+    UPFeatureI& newFeature(geos::geom::Geometry *geom);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -113,13 +120,13 @@ public:
      *
      * you could say this generates a copy of the existing feature with a new id and such
      *
-     * \sa SPFeatureI
+     * \sa UPFeatureI
      * \sa ICoordinateSystem
      * @param existingFeature the Feature that should be used as a template for the new one
      * @param csySource the coordinate system that should be used must of course be compatible with the given Feature
      * @return A new feature or a nullptr if the given Feature was invalid
      */
-    SPFeatureI& newFeatureFrom(const Ilwis::SPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
+    UPFeatureI& newFeatureFrom(const Ilwis::UPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
 
     /**
      * Counts the amount of features of a given type in this FeatureCoverage, if you use the default value all features will be counted.
@@ -156,6 +163,8 @@ public:
      */
     FeatureCoverage *clone();
 
+    static IlwisTypes geometryType(const geos::geom::Geometry *geom) ;
+    const UPGeomFactory &geomfactory() const;
 protected:
     void copyTo(IlwisObject *obj);
 private:
@@ -165,15 +174,20 @@ private:
     FeatureFactory *_featureFactory;
     std::mutex _mutex2;
     quint32 _maxIndex;
+    UPGeomFactory _geomfactory;
 
 
-    Ilwis::SPFeatureI& createNewFeature(IlwisTypes tp);
+    Ilwis::UPFeatureI& createNewFeature(IlwisTypes tp);
     void adaptFeatureCounts(int tp, quint32 cnt, int index);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
+
 }
+
+KERNELSHARED_EXPORT Ilwis::CoordinateSystem *CSY(geos::geom::Geometry *geom);
+
 Q_DECLARE_METATYPE(Ilwis::IFeatureCoverage)
 
 #endif // FEATURECOVERAGE_H

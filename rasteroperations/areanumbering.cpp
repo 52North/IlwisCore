@@ -40,7 +40,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     AreaNumberer numberer(outputRaster->size().xsize(),_connectivity);
 
-    BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
+    BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //pass one
         PixelIterator iterOut(outputRaster, box);
         PixelIterator iterIn(_inputObj.get<RasterCoverage>());
@@ -179,8 +179,8 @@ quint32 AreaNumberer::lastid() const
 }
 
 double AreaNumberer::do4connected(const PixelIterator &in)  {
-    qint32 x = in.position().x();
-    qint32 y = in.position().y();
+    qint32 x = in.position().x;
+    qint32 y = in.position().y;
     double v = *in;
     double out = rUNDEF;
 

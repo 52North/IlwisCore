@@ -2,9 +2,6 @@
 #include <QSharedPointer>
 #include "kernel.h"
 #include "coverage.h"
-#include "geometries.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
@@ -15,15 +12,15 @@ using namespace Ilwis;
 
 quint64 Feature::_idbase = 0;
 
-SPFeatureI::SPFeatureI(FeatureInterface *f) : std::unique_ptr<FeatureInterface>(f)
+UPFeatureI::UPFeatureI(FeatureInterface *f) : std::unique_ptr<FeatureInterface>(f)
 {
 }
 
-QVariant SPFeatureI::operator ()(const QString &name, int index, bool asRaw) {
+QVariant UPFeatureI::operator ()(const QString &name, int index, bool asRaw) {
     return (*this)->cell(name, index, asRaw);
 }
 
-void SPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
+void UPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
     return (*this)->setCell(name, var, index);
 }
 //--------------------------------------------
@@ -31,12 +28,11 @@ FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){
 
 }
 
-FeatureNode::FeatureNode(const Geometry& geometry, Feature *feature, quint32 index ) :
+FeatureNode::FeatureNode(geos::geom::Geometry *geom, Feature *feature, quint32 index ) :
     _feature(feature),
-    _geometry(geometry),
     _index(index)
 {
-
+    _geometry.reset(geom);
 }
 
 quint64 FeatureNode::featureid() const {
@@ -49,24 +45,24 @@ bool FeatureNode::isValid() const{
     return true;
 }
 
-Geometry& FeatureNode::geometry(quint32 ){
+UPGeometry& FeatureNode::geometry(quint32 ){
     return _geometry;
 }
-const Geometry& FeatureNode::geometry(quint32 ) const{
+const UPGeometry& FeatureNode::geometry(quint32 ) const{
     return _geometry;
 }
 
-void FeatureNode::set(const Geometry& geom, int ) {
-    _geometry = geom;
+void FeatureNode::set(geos::geom::Geometry *geom, int ) {
+    _geometry.reset(geom);
 }
 
 FeatureInterface *FeatureNode::clone() const
 {
-    return new FeatureNode(_geometry, _feature, _index) ;
+    return new FeatureNode(_geometry->clone(), _feature, _index) ;
 }
 
 IlwisTypes FeatureNode::geometryType(qint32) const{
-    return _geometry.geometryType();
+    return FeatureCoverage::geometryType(_geometry.get());
 }
 
 quint32 FeatureNode::trackSize() const{
@@ -234,22 +230,23 @@ bool Feature::isValid() const {
     return _record->isValid();
 }
 
-Geometry &Feature::geometry(quint32 index){
+UPGeometry &Feature::geometry(quint32 index){
     if ( index < _track.size())
         return _track[index]->geometry();
     ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
 
-    return _invalidGeom;
+    throw ErrorObject(TR("Invalid geomtry index"));
 }
-const Geometry &Feature::geometry(quint32 index) const{
+const UPGeometry &Feature::geometry(quint32 index) const{
     if ( index < _track.size())
         return _track[index]->geometry();
+
     ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
 
-    return _invalidGeom;
+    throw ErrorObject(TR("Invalid index size in track"));
 }
 
-void Feature::set(const Geometry &geom, int index)
+void Feature::set(geos::geom::Geometry *geom, int index)
 {
     if ( index < _track.size())
         _track[index]->set(geom);
@@ -279,12 +276,12 @@ IlwisTypes Feature::geometryType(qint32 index) const
 {
     if ( index != iUNDEF ) {
         if ( index < _track.size())
-            return geometry(index).geometryType();
+            return _track[index]->geometryType();
         return itUNKNOWN;
     }
     IlwisTypes type=itUNKNOWN;
     for(const SPFeatureNode& node : _track)
-        type |= node->geometry().geometryType();
+        type |= node->geometryType();
     return type;
 }
 

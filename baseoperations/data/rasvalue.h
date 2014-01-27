@@ -16,7 +16,7 @@ public:
     static quint64 createMetadata();
 private:
     IRasterCoverage _inputGC;
-    Voxel _vox;
+    Pixel _pix;
 
 };
 }

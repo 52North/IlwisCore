@@ -7,8 +7,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-#include "polygon.h"
-#include "geometry.h"
 #include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -42,12 +40,12 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     FeatureIterator iterIn1(_inputFeatureSet1);
-    for_each(iterIn1, iterIn1.end(), [&](SPFeatureI& feature){
+    for_each(iterIn1, iterIn1.end(), [&](UPFeatureI& feature){
         _outputFeatures->newFeatureFrom(feature, _inputFeatureSet1->coordinateSystem());
     });
 
     FeatureIterator iterIn2(_inputFeatureSet2);
-    for_each(iterIn2, iterIn2.end(), [&](SPFeatureI& feature){
+    for_each(iterIn2, iterIn2.end(), [&](UPFeatureI& feature){
         _outputFeatures->newFeatureFrom(feature, _inputFeatureSet2->coordinateSystem());
     });
 
@@ -87,7 +85,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
 
     Resource resource(_inputFeatureSet1->ilwisType() | _inputFeatureSet2->ilwisType());
     _outputFeatures.prepare(resource);
-    Box2D<double> envelope = addEnvelopes();
+    Envelope envelope = addEnvelopes();
     _outputFeatures->setCoordinateSystem(_csyTarget);
     _outputFeatures->envelope(envelope);
 
@@ -102,8 +100,8 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     return sPREPARED;
 }
 
-Box3D<double> BinaryMathFeature::addEnvelopes() const {
-    Box2D<double> envelope = _csyTarget->convertEnvelope(_inputFeatureSet1->coordinateSystem(),_inputFeatureSet1->envelope());
+Envelope BinaryMathFeature::addEnvelopes() const {
+    Envelope envelope = _csyTarget->convertEnvelope(_inputFeatureSet1->coordinateSystem(),_inputFeatureSet1->envelope());
     envelope += _csyTarget->convertEnvelope(_inputFeatureSet2->coordinateSystem(),_inputFeatureSet2->envelope());
     return envelope;
 }

@@ -34,9 +34,9 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     if ( _case == otSPATIAL) {
-        BoxedAsyncFunc unaryFun = [&](const Box3D<qint32>& box) -> bool {
+        BoxedAsyncFunc unaryFun = [&](const BoundingBox& box) -> bool {
             PixelIterator iterIn(_inputGC, _box);
-            PixelIterator iterOut(_outputGC, Box3D<qint32>(_box.size()));
+            PixelIterator iterOut(_outputGC, BoundingBox(_box.size()));
 
             double v_in = 0;
             for_each(iterOut, iterOut.end(), [&](double& v){

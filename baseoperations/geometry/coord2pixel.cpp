@@ -81,7 +81,7 @@ quint64 Coord2Pixel::createMetadata()
     resource.addProperty("pin_1_type", itRASTER | itGEOREF);
     resource.addProperty("pin_1_name", TR("input rastercoverage or georeference"));
     resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain or georefence"));
-    resource.addProperty("pin_2_type", itCOORD3D);
+    resource.addProperty("pin_2_type", itCOORDINATE);
     resource.addProperty("pin_2_name", TR("source pixel"));
     resource.addProperty("pin_2_desc",TR("the coordinate that has to translted to a pixel location"));
     resource.addProperty("outparameters",1);

@@ -28,8 +28,6 @@ const float flUNDEF = ((float)-1e38);
 const qint64 i64UNDEF = std::numeric_limits < qint64 >::min();
 
 #define sUNDEF "?"
-#define crdUNDEF Coordinate(rUNDEF, rUNDEF, rUNDEF)
-#define llUNDEF  LatLon(rUNDEF, rUNDEF)
 
 //round
 inline long roundx(float x) {
@@ -116,11 +114,9 @@ const quint64 itDOUBLE = 2 * itFLOAT;
 const quint64 itVALUERANGE = 2 * itDOUBLE;
 const quint64 itSTRING = 2 * itVALUERANGE;
 const quint64 itTIME = 2 * itSTRING;
-const quint64 itCOORD2D = 2 * itTIME;
-const quint64 itCOORD3D = 2 * itCOORD2D;
-const quint64 itPIXEL = 2 *itCOORD3D;
-const quint64 itVOXEL = 2 * itPIXEL;
-const quint64 itBINARY = 2 * itVOXEL;
+const quint64 itCOORDINATE = 2 * itTIME;
+const quint64 itPIXEL = 2 *itCOORDINATE;
+const quint64 itBINARY = 2 * itPIXEL;
 const quint64 itFILE = 2 * itBINARY;
 const quint64 itURL = 2 * itFILE;
 const quint64 itTHEMATICITEM = 2 * itFILE;
@@ -145,9 +141,7 @@ const quint64 itDOMAINITEM = itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNU
 const quint64 itIDENTIFIERITEM = itNAMEDITEM | itINDEXEDITEM;
 
 const quint64 itRESOURCELOCATION = itFILE | itURL;
-const quint64 itCOORDINATE = itCOORD2D | itCOORD3D;
-const quint64 itDISCRETECOORD = itPIXEL | itVOXEL;
-const quint64 itLOCATION = itCOORDINATE | itDISCRETECOORD;
+const quint64 itLOCATION = itCOORDINATE | itPIXEL;
 
 const quint64 itANY = 0xFFFFFFFFFFFFFFFF;
 

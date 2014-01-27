@@ -3,10 +3,13 @@
 
 #include "kernel.h"
 #include "ilwis.h"
-#include "angle.h"
-#include "point.h"
+ //#include "angle.h"
+//#include "point.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
+#include "location.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
@@ -36,7 +39,7 @@ Coordinate PlateCaree::ll2crd(const LatLon &ll) const
 
 LatLon PlateCaree::crd2ll(const Coordinate &crd) const
 {
-    LatLon ll(crd.y() * 180.0 / M_PI, crd.x() * 180.0 / M_PI);
+    LatLon ll(crd.y * 180.0 / M_PI, crd.x * 180.0 / M_PI);
     return ll;
 }
 

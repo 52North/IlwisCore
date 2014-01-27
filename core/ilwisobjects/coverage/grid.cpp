@@ -180,13 +180,13 @@ void Grid::clear() {
     _blocks.clear();
 }
 
-double Grid::value(const Voxel& vox) {
-    if ( vox.x() <0 || vox.y() < 0 || vox.z() < 0)
+double Grid::value(const Pixel &pix) {
+    if ( pix.x <0 || pix.y < 0 || pix.z < 0)
         return rUNDEF;
-    quint32 yoff = (qint32)vox.y() % _maxLines;
-    quint32 block = vox.y() / _maxLines;
-    quint32 bandBlocks = _blocksPerBand * vox.z();
-    quint32 offset = _offsets[yoff][vox.x()];
+    quint32 yoff = (qint32)pix.y % _maxLines;
+    quint32 block = pix.y / _maxLines;
+    quint32 bandBlocks = _blocksPerBand * pix.z;
+    quint32 offset = _offsets[yoff][pix.x];
     return value(bandBlocks + block, offset);
 }
 

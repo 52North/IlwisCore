@@ -3,6 +3,7 @@
 
 #include "Kernel_global.h"
 #include "geometries.h"
+#include "geos/geom/Geometry.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
@@ -81,7 +82,7 @@ public:
      *
      * \return the envelope of this coverage if it has one or else null
      */
-    Box3D<double> envelope() const;
+    Envelope envelope() const;
 
     /*!
      * Changes the envelope of this coverage to the one specified<br>
@@ -92,7 +93,7 @@ public:
      *
      * \param the new envelope
      */
-    void envelope(const Box3D<double> &bnds);
+    void envelope(const Envelope &bnds);
 
     /*!
      *
@@ -217,7 +218,7 @@ protected:
 private:
 
     ICoordinateSystem _coordinateSystem;
-    Box3D<double> _envelope;
+    Envelope _envelope;
     AttributeTable _attTable;
     AttributeTable _attTableIndex;
     NumericStatistics _statistics;

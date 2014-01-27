@@ -2,7 +2,7 @@
 
 #include "kernel.h"
 #include "angle.h"
-#include "point.h"
+#include "geometries.h"
 #include "ilwisdata.h"
 #include "ilwiscontext.h"
 #include "resource.h"
@@ -47,45 +47,45 @@ bool Ellipsoid::isValid() const{
 
 Coordinate Ellipsoid::latlon2Coord(const LatLon& sourceLatLon) const{
     Coordinate result;
-    double phi = sourceLatLon.x();
-    double lambda = sourceLatLon.y();
+    double phi = sourceLatLon.x;
+    double lambda = sourceLatLon.y;
     double sinPhi = sin(phi);
     double cosPhi = cos(phi);
     double sinLambda = sin(lambda);
     double cosLambda = cos(lambda);
     double e2 = 2 * _flattening - _flattening * _flattening;
     double N = _majorAxis / sqrt(1 - e2 * sinPhi * sinPhi);
-    double h = sourceLatLon.z();
-    result.x((N + h) * cosPhi * cosLambda);
-    result.y((N + h) * cosPhi * sinLambda);
-    result.z((N * (1 - e2) + h) * sinPhi);
+    double h = sourceLatLon.z;
+    result.x = (N + h) * cosPhi * cosLambda;
+    result.y  = (N + h) * cosPhi * sinLambda;
+    result.z = (N * (1 - e2) + h) * sinPhi;
     return result;
 }
 
 LatLon Ellipsoid::coord2latlon(const Coordinate& crdSource) const{
 
-    if ( crdSource.z() == 0)
+    if ( crdSource.z == 0)
         return LatLon();
     LatLon result;
-    double r = sqrt(crdSource.x() * crdSource.x() + crdSource.y() * crdSource.y());
+    double r = sqrt(crdSource.x * crdSource.x + crdSource.y * crdSource.y);
     double phiTry = 0;
     double e2 = 2 * _flattening - _flattening * _flattening;
-    double phiNext = atan2((crdSource.z() + e2*crdSource.z()),r);
+    double phiNext = atan2((crdSource.z + e2*crdSource.z),r);
     double N = _majorAxis; // start approximation
     while (abs(phiNext - phiTry) > EPS15 ) {
         phiTry = phiNext; // update trial phi
         N = _majorAxis / sqrt(1 - e2*sin(phiNext)*sin(phiNext));
-        phiNext = atan2((crdSource.z() + e2*N*sin(phiNext)),r);
+        phiNext = atan2((crdSource.z + e2*N*sin(phiNext)),r);
     }
-    result.x(phiNext);//set phi back to lat in degrees
-    result.y(atan2( crdSource.y(), crdSource.x()));// lon in degrees
-    result.z((r*cos(phiNext) + crdSource.z()*sin(phiNext)
-            - _majorAxis*sqrt(1 - e2*sin(phiNext)*sin(phiNext))));
+    result.x = Degrees(phiNext, false);//set phi back to lat in degrees
+    result.y = Degrees(atan2( crdSource.y, crdSource.x), false);// lon in degrees
+    result.z = Degrees(r*cos(phiNext) + crdSource.z*sin(phiNext)
+            - _majorAxis*sqrt(1 - e2*sin(phiNext)*sin(phiNext)), false);
     return result;
 }
 
 LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& sourceLatLon) const{
-    if ( sourceLatLon.z() == 0)
+    if ( sourceLatLon.z == 0)
         return LatLon();
 
     double mas = sourceEllipsoid->majorAxis();
@@ -93,9 +93,9 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
     double da = _majorAxis - mas;
     double df = _flattening - sourceEllipsoid->flattening();
 
-    double phi = sourceLatLon.x();
-    double lam = sourceLatLon.y();
-    double h = sourceLatLon.z();
+    double phi = sourceLatLon.x;
+    double lam = sourceLatLon.y;
+    double h = sourceLatLon.z;
     double sinPhi = sin(phi);
     double cosPhi = cos(phi);
     double sin2Phi = sinPhi * sinPhi;
@@ -117,9 +117,9 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
 
     h += dh;
     LatLon result;
-    result.x(phi);
-    result.y(lam);
-    result.z(h);
+    result.x = Degrees(phi, false);
+    result.y = Degrees(lam, false);
+    result.z = Degrees(h, false);
     return result;
 }
 
@@ -132,12 +132,12 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
 */
 double Ellipsoid::distance(const LatLon &begin, const LatLon& end) const{
     double c = rUNDEF;
-    if (abs(begin.x()) + EPS15 > 90 || abs(end.x()) + EPS15 > 90 )
+    if (abs(begin.x) + EPS15 > 90 || abs(end.x) + EPS15 > 90 )
         return c; // invalid latitudes for reliable computation
-    double phi1 = begin.x()* M_PI/180.0; //conversion to radians
-    double lam1 = begin.y() * M_PI/180.0;
-    double phi2 = end.x() * M_PI/180.0; //conversion to radians
-    double lam2 = end.y() * M_PI/180.0;
+    double phi1 = begin.x* M_PI/180.0; //conversion to radians
+    double lam1 = begin.y * M_PI/180.0;
+    double phi2 = end.x * M_PI/180.0; //conversion to radians
+    double lam2 = end.y * M_PI/180.0;
     double e2 = 2 * _flattening - _flattening * _flattening;
 
     double N1 = _majorAxis /sqrt(1 - e2 * sin(phi1)*sin(phi1));
@@ -161,12 +161,12 @@ double Ellipsoid::distance(const LatLon &begin, const LatLon& end) const{
 
 double Ellipsoid::azimuth(const LatLon& begin, const LatLon& end) const{
     double azim = rUNDEF;
-    if (abs(begin.x()) + EPS15 > 90 || abs(end.x()) + EPS15 > 90 )
+    if (abs(begin.x) + EPS15 > 90 || abs(end.x) + EPS15 > 90 )
         return azim; // invalid latitudes for reliable computation
-    double phi1 = begin.x()* M_PI/180.0; //conversion to radians
-    double lam1 = begin.y()* M_PI/180.0;
-    double phi2 = end.x() * M_PI/180.0; //conversion to radians
-    double lam2 = end.y() * M_PI/180.0;
+    double phi1 = begin.x* M_PI/180.0; //conversion to radians
+    double lam1 = begin.y* M_PI/180.0;
+    double phi2 = end.x * M_PI/180.0; //conversion to radians
+    double lam2 = end.y * M_PI/180.0;
     double e2 = 2 * _flattening - _flattening * _flattening;
     double N1 = _majorAxis /sqrt(1 - e2 * sin(phi1)*sin(phi1));
     double N = _majorAxis /sqrt(1 - e2 * sin(phi2)*sin(phi2));
@@ -186,17 +186,17 @@ Coordinate Ellipsoid::coord2coord(const Coordinate& ctsIn, const Coordinate& cts
 //double Rx, Ry, Rz; // rotations (off-diagonal elements in rot matrix, quasi sines) radians
 //double s;          //  scale difference (diagonal elements in rot matrix) nano-radians
     Coordinate ctsOut;
-    double x = ctsIn.x();
-    double y = ctsIn.y();
-    double z = ctsIn.z();
-    double x0 = ctsPivot.x();
-    double y0 = ctsPivot.y();
-    double z0 = ctsPivot.z();
+    double x = ctsIn.x;
+    double y = ctsIn.y;
+    double z = ctsIn.z;
+    double x0 = ctsPivot.x;
+    double y0 = ctsPivot.y;
+    double z0 = ctsPivot.z;
     // input coordinates from reference_system_1 (meters geocentric)
 
-    ctsOut.x(x + tx + s * (x - x0) + Rz * (y - y0) - Ry * (z - z0)) ;
-    ctsOut.y(y + ty - Rz * (x - x0) + s * (y - y0) + Rx * (z - z0)) ;
-    ctsOut.z(z + tz + Ry * (x - x0) - Rx * (y - y0) + s * (z - z0)) ;
+    ctsOut.x = x + tx + s * (x - x0) + Rz * (y - y0) - Ry * (z - z0) ;
+    ctsOut.y = y + ty - Rz * (x - x0) + s * (y - y0) + Rx * (z - z0) ;
+    ctsOut.z = z + tz + Ry * (x - x0) - Rx * (y - y0) + s * (z - z0) ;
   // output coordinates to reference_system_2  (meters geocentric)
 
     return ctsOut;

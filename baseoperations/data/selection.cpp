@@ -50,12 +50,12 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }
 
 
-    BoxedAsyncFunc selection = [&](const Box3D<qint32>& box ) -> bool {
-        Box3D<qint32> inpbox = box.size();
+    BoxedAsyncFunc selection = [&](const BoundingBox& box ) -> bool {
+        BoundingBox inpbox = box.size();
         inpbox += _base;
-        inpbox += std::vector<qint32>{0, box.min_corner().y(),0};
+        inpbox += std::vector<qint32>{0, box.min_corner().y,0};
         if ( _zvalue == iUNDEF)
-            inpbox.copyFrom(box, Box3D<>::dimZ);
+            inpbox.copyFrom(box, BoundingBox::dimZ);
         PixelIterator iterOut(outputRaster, box);
         PixelIterator iterIn(inputRaster, inpbox);
 
@@ -119,13 +119,13 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     selector = selector.remove('"');
 
     int index = selector.indexOf("box=");
-    Box2D<double> box;
+    Envelope box;
     if ( index != -1) {
         QString crdlist = "box(" + selector.mid(index+4) + ")";
-        _box = Box3D<qint32>(crdlist);
+        _box = BoundingBox(crdlist);
         box = inputRaster->georeference()->pixel2Coord(_box);
         copylist |= itDOMAIN | itTABLE;
-        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
+        std::vector<qint32> vec{_box.min_corner().x, _box.min_corner().y,_box.min_corner().z};
         _base = vec;
 
     }
@@ -147,7 +147,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
     int indexindex = selector.indexOf("index=");
     if ( indexindex != -1) {
         copylist |= itDOMAIN | itGEOREF | itENVELOPE | itTABLE;
-        _box = Box3D<>(inputRaster->size());
+        _box = BoundingBox(inputRaster->size());
         QString zvalues = selector.mid(6);
         bool ok;
         _zvalue = zvalues.toInt(&ok);
@@ -155,9 +155,9 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
             ERROR3(ERR_ILLEGAL_PARM_3, TR("layer index"), zvalues,"Selection");
             return sPREPAREFAILED;
         }
-        _box.min_corner().z(_zvalue);
-        _box.max_corner().z(_zvalue);
-        std::vector<qint32> vec{_box.min_corner().x(), _box.min_corner().y(),_box.min_corner().z()};
+        _box.min_corner().z = _zvalue;
+        _box.max_corner().z = _zvalue;
+        std::vector<qint32> vec{_box.min_corner().x, _box.min_corner().y,_box.min_corner().z};
         _base = vec;
     }
 

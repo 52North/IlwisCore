@@ -64,26 +64,10 @@ public:
     //@override
     ColumnDefinition& columndefinition(quint32 index);
 
+
     //@override
     void columndefinition(const ColumnDefinition &coldef);
 
-//    //@override
-//    virtual std::vector<QVariant> record(quint32 n) const = 0;
-
-//    //@override
-//    virtual void record(quint32 rec, const QVariantList& vars, quint32 offset=0) = 0;
-
-//    //@override
-//    virtual std::vector<QVariant> column(const QString& nme) const = 0;
-
-//    //@override
-//    virtual void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0) = 0;
-
-//    //@override
-//    virtual QVariant cell(const QString& col, quint32 rec) const = 0;
-//
-//    //@override
-//    virtual void setCell(const QString& col, quint32 rec, const QVariant& var) = 0;
 
     //@override
     bool prepare();
@@ -104,14 +88,13 @@ public:
      * @return true if the merging succeeded
      */
     bool merge(const IlwisObject *obj, int options);
-
-protected:
+    void dataLoaded(bool yesno);
     bool isDataLoaded() const;
+protected:
     QHash<QString, ColumnDefinition> _columnDefinitionsByName;
     QHash<quint32, ColumnDefinition> _columnDefinitionsByIndex;
 
     virtual bool initLoad();
-    void dataLoaded(bool yesno);
     virtual void adjustRange(int index);
     void copyTo(IlwisObject *obj);
     quint32 columnIndex(const QString& nme) const;

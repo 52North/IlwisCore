@@ -3,18 +3,18 @@
 
 namespace Ilwis {
 
-typedef  std::function<bool(const Box3D<qint32>&)> BoxedAsyncFunc;
+typedef  std::function<bool(const BoundingBox&)> BoxedAsyncFunc;
 
 class KERNELSHARED_EXPORT OperationHelperRaster
 {
 public:
     OperationHelperRaster();
-    static Box3D<qint32> initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Ilwis::Parameter &parm, quint64 what);
-    static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const Box3D<qint32>& bounds, std::vector<Box3D<qint32> > &boxes);
+    static BoundingBox initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Ilwis::Parameter &parm, quint64 what);
+    static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const BoundingBox& bounds, std::vector<BoundingBox > &boxes);
     static bool resample(IRasterCoverage& input1, IRasterCoverage& input2, ExecutionContext *ctx);
 
-    template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputRaster, const Box3D<qint32>& bounds=Box3D<qint32>()) {
-        std::vector<Box3D<qint32>> boxes;
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, IRasterCoverage& outputRaster, const BoundingBox& bounds=BoundingBox()) {
+        std::vector<BoundingBox> boxes;
 
         int cores = OperationHelperRaster::subdivideTasks(ctx,outputRaster,bounds, boxes);
 

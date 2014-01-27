@@ -35,15 +35,15 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
 
 
-    BoxedAsyncFunc aggregateFun = [&](const Box3D<qint32>& box) -> bool {
+    BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //Size sz = outputRaster->size();
         PixelIterator iterOut(outputRaster, box);
-        Box3D<qint32> inpBox(Point3D<qint32>(box.min_corner().x(),
-                                             box.min_corner().y() * groupSize(1),
-                                             box.min_corner().z() * groupSize(2)),
-                             Point3D<qint32>((box.max_corner().x()+1) * groupSize(0) - 1,
-                                             (box.max_corner().y() + 1) * groupSize(1) - 1,
-                                             (box.max_corner().z() + 1) * groupSize(2) - 1) );
+        BoundingBox inpBox(Pixel(box.min_corner().x,
+                                             box.min_corner().y * groupSize(1),
+                                             box.min_corner().z * groupSize(2)),
+                             Pixel((box.max_corner().x+1) * groupSize(0) - 1,
+                                             (box.max_corner().y + 1) * groupSize(1) - 1,
+                                             (box.max_corner().z + 1) * groupSize(2) - 1) );
 
         BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
@@ -150,7 +150,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         _outputObj->setName(outputName);
     outputRaster->setCoordinateSystem(inputRaster->coordinateSystem());
 
-    Box3D<qint32> box(inputRaster->size());
+    BoundingBox box(inputRaster->size());
     if ( _grouped) {
         int xs = box.xlength();
         int ys = box.ylength();
@@ -158,11 +158,11 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         int newxs = xs / groupSize(0);
         int newys = ys / groupSize(1);
         int newzs = zs / groupSize(2);
-        box = Box3D<qint32>(Size(newxs, newys, newzs));
+        box = BoundingBox(Size(newxs, newys, newzs));
 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {
-        Box2D<double> envlope = inputRaster->envelope();
+        Envelope envlope = inputRaster->envelope();
         Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
         resource.addProperty("size", IVARIANT(box.size()));
         resource.addProperty("envelope", IVARIANT(envlope));
