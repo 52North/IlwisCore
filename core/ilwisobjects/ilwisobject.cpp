@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QSqlRecord>
 #include <QSqlField>
+#include <QSqlQuery>
 #include "ilwis.h"
 #include "kernel.h"
 #include "issuelogger.h"
@@ -332,6 +333,12 @@ void IlwisObject::copyTo(IlwisObject *obj)
         Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _outConnector->provider());
         obj->setConnector(conn, cmOUTPUT);
     }
+}
+
+bool IlwisObject::isSystemObject() const {
+    QSqlQuery db(kernel()->database());
+    QString query = QString("Select linkedtable from codes where code = '%1'").arg(code());
+    return db.exec(query) &&  db.next();
 }
 
 bool IlwisObject::store(int storemode)

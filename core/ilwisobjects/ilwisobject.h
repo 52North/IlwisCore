@@ -310,6 +310,7 @@ public:
      * @return true when succesful
      */
     virtual bool merge(const IlwisObject* obj, int options=0);
+    bool isSystemObject() const;
 
     template<typename T> static T create(const QString& def){
         T object;
@@ -365,6 +366,7 @@ public:
     static void addTypeFunction(IlwisTypeFunction);
 
     static IlwisTypes name2ExtendedType(const QString &dname);
+
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
