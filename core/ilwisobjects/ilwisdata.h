@@ -198,6 +198,8 @@ public:
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
+                    _implementation.reset((T*)0);
+                    removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
                 data->prepare();
@@ -227,6 +229,8 @@ public:
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource));
                 if ( data == 0) {
+                    _implementation.reset((T*)0);
+                    removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
                 data->prepare();
@@ -262,6 +266,8 @@ public:
             if ( data != 0)
                 data->prepare();
             else {
+                _implementation.reset((T*)0);
+                removeCurrent();
                 return ERROR1("Couldnt create ilwisobject %1",resource.name());
             }
             removeCurrent();
