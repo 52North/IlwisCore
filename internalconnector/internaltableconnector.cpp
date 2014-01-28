@@ -47,6 +47,7 @@ bool InternalTableConnector::loadBinaryData(IlwisObject *obj)
 
     if(!table->createTable())
         return false;
+    _binaryIsLoaded = true;
     return true;
 }
 

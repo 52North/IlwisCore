@@ -13,6 +13,7 @@ public:
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
     Resource& source() ;
+    bool binaryIsLoaded() const;
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QString defaultName) {
@@ -32,6 +33,7 @@ protected:
     }
 
     Resource _resource;
+    bool _binaryIsLoaded;
     std::mutex _mutex;
 protected:
     std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);

@@ -43,6 +43,7 @@ public:
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
     virtual bool loadBinaryData(IlwisObject* ) { return false; }
+    virtual bool binaryIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
     virtual bool execute(const OperationExpression& , ExecutionContext *) { return false; }

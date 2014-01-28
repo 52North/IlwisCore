@@ -49,8 +49,17 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom) {
+UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
+
+    if ( load) {
+        Locker lock(_loadmutex);
+        if (!connector()->binaryIsLoaded()) {
+            connector()->loadBinaryData(this);
+        }
+    }
+
     Locker lock(_mutex);
+
     UPFeatureI& newfeature = createNewFeature(geometryType(geom));
     if (newfeature ){
         CoordinateSystem *csy = CSY(geom);
@@ -67,6 +76,9 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom) {
 UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
+    if (!connector()->binaryIsLoaded()) {
+        connector()->loadBinaryData(this);
+    }
     UPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)
         return newfeature;
