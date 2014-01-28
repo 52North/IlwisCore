@@ -34,7 +34,7 @@ private:
 
 };
 
-typedef std::shared_ptr<AttributeRecord> SPAttributeRecord;
+typedef std::unique_ptr<AttributeRecord> UPAttributeRecord;
 }
 
 #endif // ATTRIBUTETABLE_H

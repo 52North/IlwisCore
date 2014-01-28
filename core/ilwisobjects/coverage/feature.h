@@ -78,7 +78,7 @@ private:
 
 class FeatureCoverage;
 
-typedef std::shared_ptr<FeatureNode> SPFeatureNode;
+typedef std::unique_ptr<FeatureNode> UPFeatureNode;
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
 /*!
@@ -121,8 +121,8 @@ private:
 
     static quint64 _idbase;
     quint64 _featureid; // unique
-    std::vector<SPFeatureNode> _track;
-    SPAttributeRecord _record;
+    std::vector<UPFeatureNode> _track;
+    UPAttributeRecord _record;
 };
 
 

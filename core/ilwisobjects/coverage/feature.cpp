@@ -251,8 +251,8 @@ void Feature::set(geos::geom::Geometry *geom, int index)
     if ( index < _track.size())
         _track[index]->set(geom);
     else{
-        SPFeatureNode node( new FeatureNode(geom, this, _track.size()));
-        _track.push_back(node);
+        UPFeatureNode node( new FeatureNode(geom, this, _track.size()));
+        _track.push_back(std::move(node));
     }
 }
 
@@ -263,9 +263,9 @@ bool operator==(const Feature& f1, const Feature& f2) {
 FeatureInterface *Feature::clone() const
 {
     Feature *f = new Feature(_record->clone());
-    for(const SPFeatureNode& node : _track){
-        SPFeatureNode ptr(static_cast<FeatureNode *>(node->clone()));
-        f->_track.push_back(ptr);
+    for(const UPFeatureNode& node : _track){
+        UPFeatureNode ptr(static_cast<FeatureNode *>(node->clone()));
+        f->_track.push_back(std::move(ptr));
     }
 
     return f;
@@ -280,7 +280,7 @@ IlwisTypes Feature::geometryType(qint32 index) const
         return itUNKNOWN;
     }
     IlwisTypes type=itUNKNOWN;
-    for(const SPFeatureNode& node : _track)
+    for(const UPFeatureNode& node : _track)
         type |= node->geometryType();
     return type;
 }
