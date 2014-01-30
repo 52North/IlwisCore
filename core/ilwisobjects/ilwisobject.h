@@ -374,6 +374,7 @@ protected:
    void copyTo(IlwisObject *obj);
 
    std::mutex _mutex;
+   std::mutex _loadforstore;
 private:
 
    bool _valid;

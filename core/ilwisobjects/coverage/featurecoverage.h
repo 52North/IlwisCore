@@ -108,9 +108,11 @@ public:
      * \sa UPFeatureI
      * \sa Geometry
      * @param geom the geometry that has to be used for the new feature
+     * @param load the load parameter forces the coverage to load the features if they are not already loaded. There are
+     * cases were this behavior is not needed, e.g. when actually loading the features(uses this method)
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    UPFeatureI& newFeature(geos::geom::Geometry *geom);
+    UPFeatureI& newFeature(geos::geom::Geometry *geom, bool load=true);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -175,6 +177,7 @@ private:
     std::mutex _mutex2;
     quint32 _maxIndex;
     UPGeomFactory _geomfactory;
+    std::mutex _loadmutex;
 
 
     Ilwis::UPFeatureI& createNewFeature(IlwisTypes tp);

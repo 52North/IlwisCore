@@ -343,8 +343,13 @@ bool IlwisObject::isSystemObject() const {
 
 bool IlwisObject::store(int storemode)
 {
-    if (!connector(cmOUTPUT).isNull())
+    if (!connector(cmOUTPUT).isNull()) {
+        Locker lock(_loadforstore);
+        if (connector() && !connector()->binaryIsLoaded()) {
+            connector()->loadBinaryData(this);
+        }
         return connector(cmOUTPUT)->store(this, storemode);
+    }
 
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
 }

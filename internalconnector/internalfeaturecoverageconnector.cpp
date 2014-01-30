@@ -33,6 +33,7 @@ bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data)
 
 bool InternalFeatureCoverageConnector::loadBinaryData(Ilwis::IlwisObject *)
 {
+    _binaryIsLoaded = true;
     return true;
 }
 

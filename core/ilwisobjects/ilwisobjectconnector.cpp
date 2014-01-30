@@ -11,7 +11,7 @@
 
 using namespace Ilwis;
 
-IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool) : _resource(resource)
+IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool) : _resource(resource), _binaryIsLoaded(false)
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
@@ -32,6 +32,11 @@ IlwisTypes IlwisObjectConnector::type() const
 Resource &IlwisObjectConnector::source()
 {
     return _resource;
+}
+
+bool IlwisObjectConnector::binaryIsLoaded() const
+{
+    return _binaryIsLoaded;
 }
 
 std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode)
