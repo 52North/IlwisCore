@@ -22,7 +22,7 @@ public:
      * \param d1 first value
      * \param d2 second value
      */
-    Location(CrdType d1, CrdType d2, CrdType d3=0)  : x(d1), y(d2), z(d3){
+    Location(CrdType d1, CrdType d2, CrdType d3=Location::undefined())  : x(d1), y(d2), z(d3){
     }
 
     template<typename U> Location(const Location<U>& p) {
@@ -213,8 +213,8 @@ public:
         return !(operator==(pnt));
     }
 
-    double undefined() const { return  useDouble ? rUNDEF : iUNDEF;}
-    quint64 valuetype() const { return useDouble ? itDOUBLE : itINTEGER;}
+    static double undefined(){ return  useDouble ? rUNDEF : iUNDEF;}
+    static quint64 valuetype(){ return useDouble ? itDOUBLE : itINTEGER;}
 
     CrdType x;
     CrdType y;

@@ -194,14 +194,14 @@ public:
     QVariant operator()(const QString& column,Coverage::AttributeType attType=Coverage::atCOVERAGE);
 
     /*!
-     * \brief Moves the PixelIterator to the given Voxel
+     * \brief Moves the PixelIterator to the given Pixel
      *
-     * Moves the PixelIterator to the given Voxel, also adjusts the lineairposition (index) of this iterator<br>
+     * Moves the PixelIterator to the given Pixel, also adjusts the lineairposition (index) of this iterator<br>
      * the voxel should have all three coordinates defined.<br>
      * invalid voxel will cause this iterator to become invalid.
      *
-     * \param vox the Voxel to move to
-     * \return this at the given Voxel
+     * \param vox the Pixel to move to
+     * \return this at the given Pixel
      */
     PixelIterator &operator ()(const Pixel &pix)
     {
@@ -362,7 +362,7 @@ public:
 
     /*!
      * \brief Query for the current non lineair position of this PixelIterator
-     * \return a Voxel with the current non lineair position of this PixelIterator
+     * \return a Pixel with the current non lineair position of this PixelIterator
      */
     Pixel position() const;
 

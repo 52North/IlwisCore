@@ -17,7 +17,6 @@ win32{
     PLATFORM = win32
 }
 BOOST=../external
-GEOS=../external/geos
 
 QT += sql
 
@@ -45,8 +44,7 @@ INCLUDEPATH += core \
                 core/ilwisobjects/operation \
                 core/catalog \
                 core/ilwisobjects/domain \
-                $$BOOST \
-                $$GEOS
+                $$BOOST
 
 
 

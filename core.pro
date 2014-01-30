@@ -103,7 +103,7 @@ SOURCES += core/kernel.cpp \
     core/catalog/folderconnector.cpp \
     core/util/coordinate.cpp \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
-    core/ilwisobjects/coverage/geometry.cpp
+    core/ilwisobjects/coverage/geometryhelper.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -215,7 +215,7 @@ HEADERS += core/kernel.h\
     core/util/location.h \
     core/util/coordinate.h \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.h \
-    core/ilwisobjects/coverage/geometry.h
+    core/ilwisobjects/coverage/geometryhelper.h
 
 
 
