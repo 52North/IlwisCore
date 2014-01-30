@@ -27,6 +27,8 @@
 #include "itemdomain.h"
 #include "crossrasters.h"
 #include "rasterstrechoperation.h"
+#include "rasterfilter.h"
+#include "linearrasterfilter.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;
@@ -48,6 +50,7 @@ void RasterOperationsModule::prepare()
    commandhandler()->addOperation(AreaNumbering::createMetadata(), AreaNumbering::create);
    commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
    commandhandler()->addOperation(LinearStretchOperation::createMetadata(), LinearStretchOperation::create);
+   commandhandler()->addOperation(LinearRasterFilter::createMetadata(), LinearRasterFilter::create);
 
 }
 

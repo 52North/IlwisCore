@@ -23,7 +23,8 @@ SOURCES += \
     rasteroperations/aggregateraster.cpp \
     rasteroperations/areanumbering.cpp \
     rasteroperations/crossrasters.cpp \
-    rasteroperations/rasterstretchoperation.cpp
+    rasteroperations/rasterstretchoperation.cpp \
+    rasteroperations/linearrasterfilter.cpp
 
 
 HEADERS += \
@@ -31,7 +32,8 @@ HEADERS += \
     rasteroperations/aggregateraster.h \
     rasteroperations/areanumbering.h \
     rasteroperations/crossrasters.h \
-    rasteroperations/rasterstrechoperation.h
+    rasteroperations/rasterstrechoperation.h \
+    rasteroperations/linearrasterfilter.h
 
 
 OTHER_FILES += \ 
