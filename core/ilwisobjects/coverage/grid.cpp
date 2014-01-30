@@ -181,11 +181,12 @@ void Grid::clear() {
 }
 
 double Grid::value(const Pixel &pix) {
-    if ( pix.x <0 || pix.y < 0 || pix.z < 0)
+    if ( pix.x <0 || pix.y < 0 || (pix.z < 0 &&
+                                   pix.is3D()))
         return rUNDEF;
     quint32 yoff = (qint32)pix.y % _maxLines;
     quint32 block = pix.y / _maxLines;
-    quint32 bandBlocks = _blocksPerBand * pix.z;
+    quint32 bandBlocks = _blocksPerBand * (pix.is3D() ? pix.z : 0);
     quint32 offset = _offsets[yoff][pix.x];
     return value(bandBlocks + block, offset);
 }
