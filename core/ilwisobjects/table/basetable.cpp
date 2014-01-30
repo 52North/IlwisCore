@@ -62,7 +62,7 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
     changed(true);
 
     if ( _columnDefinitionsByName.contains(def.name())) {
-        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name()),IssueObject::itWarning);
+        kernel()->issues()->log(TR("Adding duplicate column %1 to %2").arg(def.name(), name()),IssueObject::itWarning);
         return false;
     }
     ColumnDefinition coldef = def;
