@@ -64,7 +64,7 @@ bool GridBlockInternal::isLoaded() const {
 inline bool GridBlockInternal::unload() {
     if ( _tempName == sUNDEF) {
         QString name = QString("gridblock_%1").arg(_id);
-        QDir localDir(context()->temporaryWorkLocation().toLocalFile());
+        QDir localDir(context()->cacheLocation().toLocalFile());
         if ( !localDir.exists()) {
             localDir.mkpath(localDir.absolutePath());
         }

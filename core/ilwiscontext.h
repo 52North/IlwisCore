@@ -28,7 +28,7 @@ public:
     QFileInfo ilwisFolder() const;
     Catalog* workingCatalog() const;
     void setWorkingCatalog(const Ilwis::Catalog &cat);
-    QUrl temporaryWorkLocation() const;
+    QUrl cacheLocation() const;
     quint64 memoryLeft() const;
     quint64 changeMemoryLeft(quint64 amount);
     QJsonObject configuration() const;
@@ -44,6 +44,7 @@ private:
     quint64 _memoryLeft;
     QFileInfo _ilwisDir;
     QJsonObject _configuration;
+    QUrl _cacheLocation;
 };
 KERNELSHARED_EXPORT IlwisContext* context();
 }

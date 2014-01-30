@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QDir>
 #include <QDataStream>
+#include <QUrl>
 #include <fstream>
 #include <iomanip>
 #include "ilwiscontext.h"

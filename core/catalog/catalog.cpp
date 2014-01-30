@@ -128,7 +128,7 @@ QUrl Catalog::filesystemLocation() const
     if (_location.scheme() == "file")
         return _location;
     else
-        return context()->temporaryWorkLocation();
+        return context()->cacheLocation();
 }
 
 
