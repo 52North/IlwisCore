@@ -105,7 +105,7 @@ GridBlock::GridBlock(BlockIterator& iter) :
     _bandOffset = iter._raster->_grid->blocksPerBand();
 }
 
-double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
+double& GridBlock::operator ()(qint32 x, qint32 y, qint32 z)
 {
     if ( !isValid())
         throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
@@ -113,11 +113,31 @@ double& GridBlock::operator ()(quint32 x, quint32 y, quint32 z)
         _iterator._outside = rILLEGAL;
     }
 
-    quint32 zbase = _iterator._z + z;
-    qint32 ypos = _iterator._y + y;
-    double &v = _iterator._raster->_grid->value(_internalBlockNumber[ypos ] + _bandOffset * zbase, _offsets[ypos] +  _iterator._x +  x);
+    actualPosition(x,y,z);
+    double &v = _iterator._raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] + x);
     return v;
 
+}
+
+double GridBlock::operator ()(qint32 x, qint32 y, qint32 z) const
+{
+    if ( !isValid())
+        throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
+    if ( _iterator._outside != rILLEGAL) {
+        _iterator._outside = rILLEGAL;
+    }
+
+    actualPosition(x,y,z);
+    double v = _iterator._raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] +  x);
+    return v;
+
+}
+
+void GridBlock::actualPosition(qint32& x, qint32& y, qint32& z) const
+{
+    x = std::max(0, std::min(_iterator._x + x, _iterator._endx));
+    y = std::max(0, std::min(_iterator._y + y, _iterator._endy));
+    z = std::max(0, std::min(_iterator._z + z, _iterator._endz));
 }
 
 Size GridBlock::size() const
@@ -145,6 +165,11 @@ bool GridBlock::isValid() const
     return _iterator.isValid();
 }
 
+Pixel GridBlock::position() const
+{
+    return _iterator.position();
+}
+
 GridBlock::operator std::vector<double>()
 {
     const Size& sz = _iterator.blockSize();
@@ -161,11 +186,11 @@ GridBlock::operator std::vector<double>()
 }
 
 //----------------------------------------------------------------------------------------------
-BlockIterator::BlockIterator(IRasterCoverage raster, const Size &sz, const BoundingBox &box) :
+BlockIterator::BlockIterator(IRasterCoverage raster, const Size &sz, const BoundingBox &box, const Size& stepsize) :
     PixelIterator(raster,box),
     _block(*this),
     _blocksize(sz),
-    _stepsizes(sz)
+    _stepsizes(stepsize.isValid() ? stepsize : sz)
 
 {
 }
@@ -177,18 +202,19 @@ BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos), _block(*th
 
 BlockIterator& BlockIterator::operator ++()
 {
-    quint32 dist = _blocksize.xsize();
+    quint32 dist = _stepsizes.xsize();
     if ( _y + dist - 1 > _endy) {
         dist = linearPosition() + dist + 1;
     } else {
-        if ( _x + dist >= _endx) {
-            dist = 1 + _endx - _x + ( _box.xlength()) * ( _block.size().ysize() - 1);
+        //if ( _x + dist >= _endx) {
+        if ( _x + dist > _endx) {
+            dist = 1 + _endx - _x + ( _box.xlength()) * ( _stepsizes.ysize() - 1);
         }
 
     }
     move(dist);
     if ( zchanged()) {
-        dist = _box.xlength() * _box.ylength() * (_blocksize.zsize() - 1);
+        dist = _box.xlength() * _box.ylength() * (_stepsizes.zsize() - 1);
         move(dist);
     }
 

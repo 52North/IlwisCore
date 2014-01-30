@@ -55,13 +55,15 @@ class KERNELSHARED_EXPORT GridBlock {
 
 public:
     GridBlock(BlockIterator& biter);
-    double& operator()(quint32 x, quint32 y, quint32 z=0);
+    double& operator()(qint32 x, qint32 y, qint32 z=0);
+    double operator()(qint32 x, qint32 y, qint32 z=0) const;
     Size size() const;
     CellIterator begin() ;
     CellIterator end() ;
     const BlockIterator& iterator() const;
     operator std::vector<double>();
     bool isValid() const;
+    Pixel position() const;
 private:
     BlockIterator& _iterator;
     std::vector<quint32> _internalBlockNumber;
@@ -70,15 +72,19 @@ private:
     quint32 _blockXSize;
     quint32 _bandOffset;
     quint64 _XYSize;
+    void actualPosition(qint32 &x, qint32 &y, qint32 &z) const;
 };
 
 class KERNELSHARED_EXPORT BlockIterator : public PixelIterator {
 public:
     friend class GridBlock;
 
-    BlockIterator( IRasterCoverage raster, const Size& sz, const BoundingBox& box=BoundingBox());
+    BlockIterator( IRasterCoverage raster, const Size& sz, const BoundingBox& box=BoundingBox(), const Size& steps=Size());
 
     GridBlock& operator*() {
+        return _block;
+    }
+    const GridBlock& operator*() const{
         return _block;
     }
     BlockIterator& operator++();
