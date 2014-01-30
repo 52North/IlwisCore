@@ -13,6 +13,8 @@
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
 #include "geos/geom/GeometryFactory.h"
+#include "geos/io/ParseException.h"
+#include "geometryhelper.h"
 #include "csytransform.h"
 
 using namespace Ilwis;
@@ -53,12 +55,12 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom) {
     Locker lock(_mutex);
     UPFeatureI& newfeature = createNewFeature(geometryType(geom));
     if (newfeature ){
-        CoordinateSystem *csy = CSY(geom);
+        CoordinateSystem *csy = GeometryHelper::getCoordinateSystem(geom);
         if ( csy && !csy->isEqual(coordinateSystem().ptr())){
             CsyTransform trans(csy, coordinateSystem());
             geom->apply_rw(&trans);
         }
-        geom->setUserData(coordinateSystem().ptr());
+        GeometryHelper::setCoordinateSystem(geom, coordinateSystem().ptr());
         newfeature->set(geom);
     }
     return newfeature;
@@ -78,8 +80,7 @@ UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, c
               CsyTransform trans(csySource, coordinateSystem());
               newgeom->apply_rw(&trans);
           }
-          IlwisObject *obj = coordinateSystem().ptr();
-          newgeom->setUserData(obj);
+          GeometryHelper::setCoordinateSystem(newgeom, coordinateSystem().ptr());
           newfeature->set(newgeom, i);
     }
     return newfeature;
@@ -206,31 +207,9 @@ quint32 FeatureCoverage::featureCount(IlwisTypes types, int index) const
 }
 
 IlwisTypes FeatureCoverage::geometryType(const geos::geom::Geometry *geom){
-    switch ( geom->getGeometryTypeId()){
-    case geos::geom::GEOS_POINT:
-        return itPOINT;
-    case geos::geom::GEOS_LINESTRING:
-        return itLINE;
-    case geos::geom::GEOS_POLYGON:
-        return itPOLYGON;
-    default:
-        return  itUNKNOWN;
-    }
+    return GeometryHelper::geometryType(geom);
 }
 
 const UPGeomFactory& FeatureCoverage::geomfactory() const{
     return _geomfactory;
 }
-
-//-----------------------------------------------------------------
-
-Ilwis::CoordinateSystem *CSY(geos::geom::Geometry *geom){
-    if ( geom == nullptr)
-        return 0;
-    void *ptr = geom->getUserData();
-    if (ptr == 0)
-        return 0;
-    return reinterpret_cast<Ilwis::CoordinateSystem *>(ptr);
-}
-
-
