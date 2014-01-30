@@ -70,6 +70,9 @@ void PublicDatabase::prepare() {
     stmt = "create table projection (  code TEXT, name TEXT, wkt TEXT, authority TEXT, description TEXT)";
     doQuery(stmt, sql);
 
+    stmt = "create table filters (  code TEXT, type TEXT, rows INTEGER, columns INTEGER,definition TEXT, gain REAL, description TEXT)";
+    doQuery(stmt, sql);
+
     stmt = "create table codes (  code TEXT, linkedtable TEXT)";
     doQuery(stmt, sql);
 
@@ -147,6 +150,7 @@ void PublicDatabase::loadPublicTables() {
     insertFile("ellipsoids.csv",sqlPublic);
     insertFile("projections.csv",sqlPublic);
     insertFile("numericdomains.csv",sqlPublic);
+    insertFile("filters.csv",sqlPublic);
     insertProj4Epsg(sqlPublic);
 }
 
@@ -224,6 +228,8 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
         }
 
         bool ok = true;
+        if ( parts.size() <= 1) // skipping empty lines
+            continue;
         if ( filename == "datums.csv")
             ok = fillDatumRecord(parts, sqlPublic);
         else if ( filename == "ellipsoids.csv")
@@ -232,6 +238,8 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
             ok = fillProjectionRecord(parts,sqlPublic);
         else if ( filename == "numericdomains.csv")
             ok = fillValueDomainRecord(parts, sqlPublic);
+        else if ( filename == "filters.csv")
+            ok = fillFiltersRecord(parts, sqlPublic);
         if (!ok)
             return ;
     }
@@ -266,6 +274,16 @@ bool PublicDatabase::fillEllipsoidRecord(const QStringList& parts, QSqlQuery &sq
 
 }
 
+bool PublicDatabase::fillFiltersRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+    if ( parts.size() == 7) {
+        auto parms = QString("'%1','%2',%3,%4,'%5',%6,'%7'").arg(parts[0],parts[1],parts[2], parts[3], parts[4],parts[5], parts[6]);
+        auto stmt = QString("INSERT INTO filters VALUES(%1)").arg(parms);
+        return doQuery(stmt, sqlPublic);
+    }
+    kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("filters.csv"),IssueObject::itCritical);
+    return false;
+
+}
 bool PublicDatabase::fillProjectionRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
     if ( parts.size() == 5) {
         auto parms = QString("'%1','%2','%3','%4','%5'").arg(parts[0],parts[1],parts[2], parts[3], parts[4]);
