@@ -5,7 +5,7 @@ using namespace Ilwis;
 
 CatalogQuery::CatalogQuery()
 {
-    int bits = log(itILWISOBJECT) / log(2);
+    int bits = 1 + log(itILWISOBJECT) / log(2);
     for(int i=1 ;i < bits; ++i) {
         _names[IlwisObject::type2Name(pow(2,i))] = pow(2,i);
     }

@@ -219,6 +219,7 @@ void Resource::setUrl(const QUrl &url)
         int index2 = urlTxt.indexOf("/", index1);
         QString scode = urlTxt.mid(index1 + 1, index2 - index1);
         setCode(sname + "_" + scode );
+        addContainer(QUrl("ilwis://operations"));
         return;
     }
     QFileInfo inf(_resource.toLocalFile());

@@ -53,6 +53,8 @@ bool Catalog::prepare(const QUrl &resource, const QString& filter)
 
     QStringList parts = resource.path().split("/");
     QString cid = parts.back();
+    if ( cid == "")
+        cid = "Catalog";
 
     Identity::prepare();
 

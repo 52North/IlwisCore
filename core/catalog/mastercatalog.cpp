@@ -69,6 +69,7 @@ bool MasterCatalog::addContainer(const QUrl &location)
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
          loc.indexOf("ilwis://system") == 0 ||
+         loc.indexOf("ilwis://operations") == 0 ||
          loc.isEmpty())
         return true;
     if ( _catalogs.find(location) != _catalogs.end())
