@@ -32,7 +32,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             covOutput->envelope(bounds);
         }
         if ( what & itCOORDSYSTEM) {
-            covOutput->setCoordinateSystem(covInput->coordinateSystem());
+            covOutput->coordinateSystem(covInput->coordinateSystem());
         }
         if ( hasType(what,itDOMAIN) && hasType(tp, itRASTER) ) {
             IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
