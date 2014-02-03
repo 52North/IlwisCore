@@ -311,6 +311,7 @@ public:
      */
     virtual bool merge(const IlwisObject* obj, int options=0);
     bool isSystemObject() const;
+    bool isInternalObject() const;
 
     template<typename T> static T create(const QString& def){
         T object;

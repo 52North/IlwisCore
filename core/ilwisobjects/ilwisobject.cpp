@@ -341,6 +341,16 @@ bool IlwisObject::isSystemObject() const {
     return db.exec(query) &&  db.next();
 }
 
+bool IlwisObject::isInternalObject() const
+{
+    if ( isAnonymous())
+        return true;
+    if (source().isValid()){
+        return source().url().scheme() == "ilwis";
+    }
+    return false;
+}
+
 bool IlwisObject::store(int storemode)
 {
     if (!connector(cmOUTPUT).isNull()) {
