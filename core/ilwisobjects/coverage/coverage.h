@@ -2,8 +2,8 @@
 #define BASELAYER_H
 
 #include "Kernel_global.h"
-#include "geometries.h"
 #include "geos/geom/Geometry.h"
+#include "geometries.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
@@ -72,7 +72,7 @@ public:
      * \sa ICoordinateSystem
      * \param the new coordinate system
      */
-    void setCoordinateSystem(const ICoordinateSystem& csy);
+    void coordinateSystem(const ICoordinateSystem& csy);
 
     /*!
      * Query for the envelope of this coverage, must fit in the coordinate system<br>
@@ -213,6 +213,7 @@ public:
      */
     void setName(const QString &nam);
 
+    bool prepare();
 protected:
     void copyTo(IlwisObject *obj) ;
 private:
