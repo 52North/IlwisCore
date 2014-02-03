@@ -25,12 +25,19 @@ Coverage::~Coverage()
     _coordinateSystem.set(0);
 }
 
+bool Coverage::prepare( ) {
+
+    bool ok = IlwisObject::prepare();
+
+    return ok;
+}
+
 ICoordinateSystem Coverage::coordinateSystem() const
 {
     return _coordinateSystem;
 }
 
-void Coverage::setCoordinateSystem(const ICoordinateSystem &csy)
+void Coverage::coordinateSystem(const ICoordinateSystem &csy)
 {
     if ( isReadOnly())
         return;

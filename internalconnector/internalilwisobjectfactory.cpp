@@ -205,7 +205,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
         }
     }
     if ( csy.isValid()){
-        coverage->setCoordinateSystem(csy);
+        coverage->coordinateSystem(csy);
     }
 
     Envelope bounds;
@@ -535,10 +535,10 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource) c
        return 0;
    }
     Table *tbl;
-    if ( resource.ilwisType() == itFLATTABLE)
-        tbl = new FlatTable(resource);
-    else
+    if ( resource.ilwisType() == itDATABASETABLE)
         tbl = new DatabaseTable(resource);
+    else
+        tbl = new FlatTable(resource);
     tbl->setConnector(connector);
     return tbl;
 

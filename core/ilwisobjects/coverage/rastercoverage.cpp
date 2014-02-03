@@ -45,7 +45,7 @@ void RasterCoverage::georeference(const IGeoReference &grf)
     }
     if ( _georef.isValid()) {
         _georef->compute();
-        setCoordinateSystem(grf->coordinateSystem()); // mandatory
+        coordinateSystem(grf->coordinateSystem()); // mandatory
     }
     if (_georef.isValid())
         _size = _georef->size();

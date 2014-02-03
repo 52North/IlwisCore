@@ -41,6 +41,21 @@ FeatureCoverage::~FeatureCoverage() {
 
 }
 
+bool FeatureCoverage::prepare( ) {
+
+    bool ok = Coverage::prepare();
+    if ( ok && !attributeTable().isValid()){
+        if ( isAnonymous())
+            ok =  attributeTable().prepare();
+        else
+            ok =  attributeTable().prepare(name());
+
+    }
+    if ( ok && attributeTable()->columnIndex(FEATUREIDCOLUMN) == iUNDEF)
+        attributeTable()->addColumn(FEATUREIDCOLUMN,"count");
+    return ok;
+}
+
 IlwisTypes FeatureCoverage::featureTypes() const
 {
     return _featureTypes;
@@ -49,6 +64,13 @@ IlwisTypes FeatureCoverage::featureTypes() const
 void FeatureCoverage::featureTypes(IlwisTypes types)
 {
     _featureTypes = types;
+}
+
+UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, bool load){
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt.toStdString());
+    if ( !geom)
+        throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
+    return newFeature(geom,load);
 }
 
 UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
@@ -99,6 +121,9 @@ UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, c
 }
 
 Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
+    if ( !coordinateSystem().isValid())
+        throw FeatureCreationError(TR("No coordinate system set"));
+
     if ( isReadOnly()){
         throw FeatureCreationError(TR("Readonly feature coverage, no creation allowed"));
     }
@@ -115,7 +140,7 @@ Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     fcoverage.set(this);
     FeatureInterface *newFeature = create(this);
 
-    quint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
+    qint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
     if ( colIndex == iUNDEF) {
         ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
         throw FeatureCreationError(TR("failed to create feature"));

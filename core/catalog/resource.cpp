@@ -65,6 +65,9 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
     if ( tp == itUNKNOWN)
         return;
 
+    if ( isNew)
+        prepare();
+
     int index = name.indexOf(":");
     if ( index != -1 && index < 6) {
         _resource = QUrl(name);
@@ -92,8 +95,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
         checkUrl(tp);
     }
 
-    if ( isNew)
-        prepare();
+
 }
 
 Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :

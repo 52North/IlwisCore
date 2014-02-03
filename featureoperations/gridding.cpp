@@ -164,7 +164,7 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     }
     _attTable->addColumn(FEATUREIDCOLUMN,covdom);
     _outfeatures.prepare();
-    _outfeatures->setCoordinateSystem(_csy);
+    _outfeatures->coordinateSystem(_csy);
     _outfeatures->attributeTable(_attTable);
     Envelope env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
     _outfeatures->envelope(env);

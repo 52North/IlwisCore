@@ -86,7 +86,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
     Resource resource(_inputFeatureSet1->ilwisType() | _inputFeatureSet2->ilwisType());
     _outputFeatures.prepare(resource);
     Envelope envelope = addEnvelopes();
-    _outputFeatures->setCoordinateSystem(_csyTarget);
+    _outputFeatures->coordinateSystem(_csyTarget);
     _outputFeatures->envelope(envelope);
 
     ITable attTable = _merger.mergeMetadataTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());

@@ -10,7 +10,7 @@ bessel,Bessel 1841                   ,Bessel 1841,,6377397.155,299.1528128,defau
 ELLBJ,Bessel 1841 (japan by law),Bessel 1841 (Japan),,6377397.155,299.1528154,default,
 ELLBO,Bonnenl,BonneNL,,6376950.4,309.6463779,default,
 clrk66,Clarke 1866                   ,Clarke 1866,EPSG:7008,6378206.4,294.9786982,default,
-clrk80 ,Clarke 1880                   ,Clarke 1880 (RGS),EPSG:7012,6378249.145,293.465,default,
+clrk80 ,Clarke 1880                   ,Clarke 1880 (RGS);Clarke_1880_RGS,EPSG:7012,6378249.145,293.465,default,
 ELLCI,Clarke 1880 (ign),Clarke 1880 (IGN),,6378249.2,293.466,default,
 CPM,Comm. des Poids et Mesures 1799,,,6375738.7,334.29,proj4,
 ELLCG,Cgms (meteosat),CGMS,,6378169,295.4880659,default,

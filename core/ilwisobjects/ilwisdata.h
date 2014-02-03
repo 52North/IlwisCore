@@ -30,6 +30,14 @@ public:
     template<class C> friend class IlwisData;
 
     IlwisData() {}
+    IlwisData(const QString& name, IlwisTypes tp=itANY){
+        prepare(name, tp);
+    }
+    IlwisData(const Resource& resource1){
+        prepare(resource1);
+    }
+
+
     IlwisData(T *data) {
         set(data);
     }
@@ -202,7 +210,12 @@ public:
                     removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",name);
                 }
-                data->prepare();
+                bool ok = data->prepare();
+                if ( !ok){
+                    delete data;
+                    return false;
+                }
+
                 data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
@@ -233,7 +246,11 @@ public:
                     removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
-                data->prepare();
+                bool ok = data->prepare();
+                if ( !ok){
+                    delete data;
+                    return false;
+                }
                 data->changed(false);
                 removeCurrent();
                 _implementation = ESPIlwisObject(data);
