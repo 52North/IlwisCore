@@ -1,0 +1,15 @@
+CODE,TYPE,COLUMNS,ROWS,DEFINITION,GAIN,DESCRIPTION
+average,linear,3,3,1 1 1 1 1 1 1 1 1 ,0.11111111,standard average or smooth filter 
+edgeenhancement,linear,3,3,-1 -1 -1 -1 16 -1 -1 -1 -1,0.125,detects linear features in an image
+laplace,linear,3,3,1 1 1 1 -8 1 1 1 1 1,1,edges enhancement
+shadowNW,linear,3,3,-3 -2 -1 -2 1 2 -1 2 4,1,creates shadow like areas;illumination is from the north-west
+dfdx,linear,5,1,1 -8 0 8 -1,0.08333333,calculates the first derivative in x-direction (df/dx) per pixel
+dfdy,linear,1,5,-1 8 0 -8 1,0.08333333,calculates the first derivative in y-direction (df/dx) per pixel
+dfddn,linear,5,5,1 0 0 0 0 0 -8 0 0 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 -1,0.83333333,It calculates the first derivative in the downward diagonal direction (df/downward diagonal) 
+dfdup,linear,5,5,0 0 0 0 -1 0 0 0 8 0 0 0 0 0 0 0 -8 0 0 0 1 0 0 0 0,0.83333333,It calculates the first derivative in the upward diagonal direction (df/upward diagonal)
+d2fdx2,linear,5,1,-1 16 -30 -16 -1,0.041666666,It calculates the second derivative in x-direction (d2f/dx2)
+d2fdy2,linear,1,5,-1 16 -30 -16 -1,0.041666666,It calculates the second derivative in y-direction (d2f / dy2)
+d2fdxdy,linear,5,5,-1 8 0 -8 1 8 -64 0 64 -8 0 0 0 0 0 -8 64 0 -64 8 1 -8 0 8 -1,0.006944444,It calculates the second derivative in all diagonal directions (d2f/dxdy)
+
+
+
