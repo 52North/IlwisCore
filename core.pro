@@ -219,28 +219,30 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/geometryhelper.h \
     core/ilwisobjects/operation/rasterfilter.h
 
-
-
-
-
-
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
 
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
 
-
-resources.files = resources/datums.csv \
-        resources/ellisoids.csv \
-        resources/datums.csv \
-        resources/numericdomains.csv \
-        resources/epsg.pcs \
-        resources/projections.csv \
-        resources/referencesystems.csv \
-        resources/filters.csv
+resources.files = core/resources/referencesystems.csv \
+    core/resources/projections.csv \
+    core/resources/numericdomains.csv \
+    core/resources/filters.csv \
+    core/resources/epsg.pcs \
+    core/resources/ellipsoids.csv \
+    core/resources/datums.csv
 
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
 
 INSTALLS += resources
+
+OTHER_FILES += \
+    core/resources/referencesystems.csv \
+    core/resources/projections.csv \
+    core/resources/numericdomains.csv \
+    core/resources/filters.csv \
+    core/resources/epsg.pcs \
+    core/resources/ellipsoids.csv \
+    core/resources/datums.csv
 
