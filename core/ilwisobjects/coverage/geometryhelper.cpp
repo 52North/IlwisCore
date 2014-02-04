@@ -46,13 +46,6 @@ IlwisTypes GeometryHelper::geometryType(const geos::geom::Geometry *geom){
         return itLINE;
     case geos::geom::GEOS_POLYGON:
     case geos::geom::GEOS_MULTIPOLYGON:
-        return itPOLYGON;
-    case geos::geom::GEOS_MULTIPOINT:
-        return itPOINT;
-    case geos::geom::GEOS_MULTILINESTRING:
-        return itLINE;
-    case geos::geom::GEOS_MULTIPOLYGON:
-        return itPOLYGON;
     case geos::geom::GEOS_LINEARRING:
         return itPOLYGON;
     case geos::geom::GEOS_GEOMETRYCOLLECTION:
