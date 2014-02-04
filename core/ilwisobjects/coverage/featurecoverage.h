@@ -22,7 +22,9 @@ class AttributeRecord;
 typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 struct FeatureInfo {
-    quint32 _count;
+    FeatureInfo() : _geomCnt(0), _subGeomCnt(0) {}
+    quint32 _geomCnt;
+    quint32 _subGeomCnt;
     std::vector<quint32> _perIndex;
 };
 
@@ -140,7 +142,7 @@ public:
      * @param index specification of the third dimension, when required
      * @return the amount of features of this type
      */
-    quint32 featureCount(IlwisTypes types=itFEATURE, int index=iUNDEF) const;
+    quint32 featureCount(IlwisTypes types=itFEATURE, bool subAsDistinct=false, int index=iUNDEF) const;
 
     /**
      * Changes the amount of features for a certain featuretype
@@ -153,7 +155,7 @@ public:
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes types, quint32 cnt, int index=0);
+    void setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 multicnt, int index=0);
     quint32 maxIndex() const;
 
     //@override
@@ -183,7 +185,7 @@ private:
 
 
     Ilwis::UPFeatureI& createNewFeature(IlwisTypes tp);
-    void adaptFeatureCounts(int tp, quint32 cnt, int index);
+    void adaptFeatureCounts(int tp, quint32 geomCnt, quint32 subGeomCnt, int index);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;

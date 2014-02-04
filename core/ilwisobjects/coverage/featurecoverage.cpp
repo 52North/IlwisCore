@@ -22,7 +22,6 @@ using namespace Ilwis;
 FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
 {
     _featureInfo.resize(3);
-    _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
     _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
     delete pm;
@@ -31,7 +30,6 @@ FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
 FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
 {
     _featureInfo.resize(3);
-    _featureInfo[0]._count =  _featureInfo[1]._count =  _featureInfo[2]._count = 0;
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel( geos::geom::PrecisionModel::FLOATING);
     _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
     delete pm;
@@ -84,7 +82,8 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 
     Locker lock(_mutex);
 
-    UPFeatureI& newfeature = createNewFeature(geometryType(geom));
+    IlwisTypes tp = geometryType(geom);
+    UPFeatureI& newfeature = createNewFeature(tp);
     if (newfeature ){
         CoordinateSystem *csy = GeometryHelper::getCoordinateSystem(geom);
         if ( csy && !csy->isEqual(coordinateSystem().ptr())){
@@ -93,6 +92,8 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
         }
         GeometryHelper::setCoordinateSystem(geom, coordinateSystem().ptr());
         newfeature->set(geom);
+        quint32 cnt = featureCount(tp);
+        setFeatureCount(tp,++cnt, geom->getNumGeometries() );
     }
     return newfeature;
 }
@@ -116,6 +117,7 @@ UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, c
           }
           GeometryHelper::setCoordinateSystem(newgeom, coordinateSystem().ptr());
           newfeature->set(newgeom, i);
+          setFeatureCount(newfeature->geometryType(),i, newgeom->getNumGeometries() );
     }
     return newfeature;
 }
@@ -149,16 +151,15 @@ Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     _features.resize(_features.size() + 1);
     _features.back().reset(newFeature);
 
-    quint32 cnt = featureCount(tp);
-    setFeatureCount(tp,++cnt );
+
     return _features.back();
 }
 
 
-void FeatureCoverage::adaptFeatureCounts(int tp, quint32 cnt, int index) {
+void FeatureCoverage::adaptFeatureCounts(int tp, quint32 geomCnt, quint32 subGeomCnt, int index) {
     auto adapt = [&] () {
         quint32 current =_featureInfo[tp]._perIndex[index];
-        qint32 delta = cnt - _featureInfo[tp]._count;
+        qint32 delta = geomCnt - _featureInfo[tp]._geomCnt;
         _featureInfo[tp]._perIndex[index] = current + delta;
     };
 
@@ -171,24 +172,28 @@ void FeatureCoverage::adaptFeatureCounts(int tp, quint32 cnt, int index) {
         }
         adapt();
     }
-    _featureInfo[tp]._count = cnt;
+    _featureInfo[tp]._geomCnt = geomCnt;
+    if ( geomCnt != 0)
+        _featureInfo[tp]._subGeomCnt += geomCnt > 0 ? subGeomCnt : -subGeomCnt;
+    else
+        _featureInfo[tp]._subGeomCnt = 0;
 }
 
-void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 cnt, int index)
+void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 subGeomCnt, int index)
 {
     Locker lock(_mutex2);
-    if (cnt > 0)
+    if (geomCnt > 0)
         _featureTypes |= types;
     else
         _featureTypes &= !types;
 
     switch(types){
     case itPOINT:
-        adaptFeatureCounts(0, cnt, index);break;
+        adaptFeatureCounts(0, geomCnt, subGeomCnt, index);break;
     case itLINE:
-        adaptFeatureCounts(1, cnt, index);break;
+        adaptFeatureCounts(1, geomCnt, subGeomCnt, index);break;
     case itPOLYGON:
-        adaptFeatureCounts(2, cnt, index);break;
+        adaptFeatureCounts(2, geomCnt, subGeomCnt, index);break;
     }
 }
 
@@ -223,11 +228,14 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     }
 }
 
-quint32 FeatureCoverage::featureCount(IlwisTypes types, int index) const
+quint32 FeatureCoverage::featureCount(IlwisTypes types, bool subAsDistinct, int index) const
 {
     auto countFeatures = [&] (int tp){
-        if ( index == iUNDEF)
-            return _featureInfo[tp]._count;
+        if ( index == iUNDEF){
+            if (subAsDistinct)
+                return _featureInfo[tp]._subGeomCnt;
+            return _featureInfo[tp]._geomCnt;
+        }
         else
             return  _featureInfo[tp]._perIndex.size() < index ? _featureInfo[tp]._perIndex[index] : 0;
     };

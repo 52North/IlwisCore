@@ -39,10 +39,13 @@ geos::geom::Geometry* GeometryHelper::fromWKT(std::string wkt) throw(geos::io::P
 IlwisTypes GeometryHelper::geometryType(const geos::geom::Geometry *geom){
     switch ( geom->getGeometryTypeId()){
     case geos::geom::GEOS_POINT:
+    case geos::geom::GEOS_MULTIPOINT:
         return itPOINT;
     case geos::geom::GEOS_LINESTRING:
+    case geos::geom::GEOS_MULTILINESTRING:
         return itLINE;
     case geos::geom::GEOS_POLYGON:
+    case geos::geom::GEOS_MULTIPOLYGON:
         return itPOLYGON;
     default:
         return  itUNKNOWN;
