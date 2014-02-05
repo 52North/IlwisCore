@@ -3,6 +3,7 @@
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
 #include "coordinate.h"
+#include <cmath>
 
 using namespace Ilwis;
 
@@ -11,7 +12,8 @@ Ilwis::Coordinate::Coordinate() : geos::geom::Coordinate(rUNDEF, rUNDEF, rUNDEF)
 }
 
 Ilwis::Coordinate::Coordinate(const geos::geom::Coordinate& crd) : geos::geom::Coordinate(crd){
-
+    if (std::isnan(this->z))
+        this->z = rUNDEF;
 }
 
 Ilwis::Coordinate::Coordinate(const Ilwis::Coordinate& crd) : geos::geom::Coordinate(crd.x,crd.y,crd.z){
@@ -71,8 +73,6 @@ Ilwis::Coordinate& Ilwis::Coordinate::operator=(const Coordinate&& p2) {
     this->z = p2.z;
     return *this;
 }
-
-
 
 /*!
  operator += addes a vector of 2 values to a point shifting it in 2D space. Using undefined() values in the vector may lead to unpredictable results
@@ -172,7 +172,7 @@ bool Ilwis::Coordinate::operator==(const Ilwis::Coordinate& pnt) const {
 }
 
 bool Coordinate::operator ==(const geos::geom::Coordinate &pnt) const{
-    return pnt.x == this->x && pnt.y == this->y && pnt.z == this->z;
+    return pnt.x == this->x && pnt.y == this->y && (pnt.z == this->z || (std::isnan(pnt.z) && this->z == rUNDEF));
 }
 /*!
  compares the coordinates of 2 points to see if they are not equal. comparision with non valid points always leads to true
@@ -183,11 +183,13 @@ bool Ilwis::Coordinate::operator!=(const Ilwis::Coordinate& pnt){
     return !(operator==(pnt));
 }
 
-Coordinate& Coordinate::operator=(const geos::geom::Coordinate& crd){
-    x = crd.x;
-    y = crd.y;
-    z = crd.z;
-
+Coordinate& Coordinate::operator =(const geos::geom::Coordinate& crd){
+    this->x = crd.x;
+    this->y = crd.y;
+    if (std::isnan(crd.z))
+        this->z = rUNDEF;
+    else
+        this->z = crd.z;
     return *this;
 }
 

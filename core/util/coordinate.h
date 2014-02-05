@@ -6,9 +6,9 @@ namespace geos{
     class CoordinateSequence;
     }
 }
+
 namespace Ilwis {
-class KERNELSHARED_EXPORT Coordinate : public geos::geom::Coordinate
-{
+class KERNELSHARED_EXPORT Coordinate : public geos::geom::Coordinate{
 public:
     Coordinate();
     Coordinate(double px, double py, double pz=rUNDEF);
