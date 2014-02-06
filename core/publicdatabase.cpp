@@ -76,7 +76,7 @@ void PublicDatabase::prepare() {
     stmt = "create table codes (  code TEXT, linkedtable TEXT)";
     doQuery(stmt, sql);
 
-    stmt = "create table dataformats (  code TEXT, name TEXT, description TEXT, extension TEXT,type TEXT,datatype INTEGER, connector TEXT)";
+    stmt = "create table dataformats (  code TEXT, name TEXT, description TEXT, extension TEXT,type TEXT,datatype INTEGER, connector TEXT, readwrite TEXT, extendedtype TEXT)";
     doQuery(stmt, sql);
 
     stmt = "create table numericdomain (  code TEXT, minv REAL, maxv REAL, resolution REAL,resolution_strict INTEGER, range_strict INTEGER,unit TEXT, parent TEXT,description TEXT)";
