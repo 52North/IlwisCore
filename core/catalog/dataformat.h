@@ -5,13 +5,16 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT DataFormat
 {
 public:
-    enum FormatProperties{fpCODE, fpNAME, fpDESCRIPTION, fpEXTENSION, fpCONTAINER, fpDATATYPE, fpCONNECTOR, fpREADWRITE};
+    enum FormatProperties{fpCODE, fpNAME, fpDESCRIPTION, fpEXTENSION, fpCONTAINER, fpDATATYPE, fpCONNECTOR, fpREADWRITE, fpEXTENDEDTYPE};
     DataFormat();
     DataFormat(const QString& code, const QString connector = sUNDEF);
-    static QStringList getFormatProperties(FormatProperties, IlwisTypes types, QString connector=sUNDEF, QString code=sUNDEF);
-    static bool setFormatInfo(const QString &path, const QString connector);
     QVariant property(FormatProperties prop) const;
     bool isValid() const;
+
+    static QVariantList getFormatProperties(FormatProperties, IlwisTypes types, QString connector=sUNDEF, QString code=sUNDEF);
+    static bool supports(FormatProperties fp, IlwisTypes tp, const QVariant& prop, const QString& connector=sUNDEF);
+    static bool setFormatInfo(const QString &path, const QString connector);
+
 private:
     QVariant set(const QVariant& original) const;
     std::map<FormatProperties, QVariant> _properties;

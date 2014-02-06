@@ -33,8 +33,8 @@ DataFormat::DataFormat(const QString &code, const QString connector)
 
 }
 
-QStringList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes types, QString connector, QString code){
-    QStringList result;
+QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes types, QString connector, QString code){
+    QVariantList result;
     QSqlQuery db(kernel()->database());
     QString field= "";
     switch( prop){
@@ -52,6 +52,10 @@ QStringList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes ty
             field = "datatype"; break;
         case fpCONNECTOR:
             field = "connector"; break;
+        case fpREADWRITE:
+            field = "readwrite"; break;
+        case fpEXTENDEDTYPE:
+            field = "extendedtype"; break;
     }
 
     QString stmt = QString("select %1 from dataformats where (datatype | %2) != 0").arg(field).arg(types);
@@ -62,18 +66,27 @@ QStringList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes ty
 
     if (db.exec(stmt)) {
         while(db.next()){
-            QString val = db.value(0).toString();
-            if ( val == sUNDEF)
-                continue;
-            QStringList parts = val.split(",");
-            for(QString part : parts) {
+            QVariant var = db.value(0).toString();
+            if ( var.type() == QMetaType::QString){
+                QStringList parts = var.toString().split(",");
+                for(QString part : parts) {
                     result += part;
-
+                }
             }
         }
 
     }
     return result;
+}
+
+bool DataFormat::supports(DataFormat::FormatProperties fp, IlwisTypes tp, const QVariant &prop, const QString& connector)
+{
+    QVariantList props = DataFormat::getFormatProperties(fp, tp,connector);
+    for(QVariant& p : props){
+        if ( p == prop)
+            return true;
+    }
+    return false;
 }
 
 bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
@@ -92,18 +105,24 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                     auto jsonValue  = *iter;
                     if ( jsonValue.isObject()) {
                         QJsonObject objv = jsonValue.toObject();
-                        QString code = objv.value("code").toString();
-                        QString name = objv.value("name").toString();
-                        QString desc = objv.value("description").toString();
-                        QString type = objv.value("type").toString();
-                        QString ext = objv.value("extension").toString();
-                        QString datatp = objv.value("datatypes").toString();
+                        QString code = objv.value("code").toString(sUNDEF);
+                        QString name = objv.value("name").toString(sUNDEF);
+                        QString desc = objv.value("description").toString(sUNDEF);
+                        QString type = objv.value("type").toString(sUNDEF);
+                        QString ext = objv.value("extension").toString(sUNDEF);
+                        QString datatp = objv.value("datatypes").toString(sUNDEF);
                         quint64 ilwtype = itUNKNOWN;
                         QStringList parts = datatp.split(",");
                         for(QString tp : parts)
                             ilwtype |= IlwisObject::name2Type(tp);
+                        QString rw = objv.value("readwrite").toString("r");
+                        QString extt = objv.value("extendedtype").toString(sUNDEF);
+                        quint64 exttypes = itUNKNOWN;
+                        parts = extt.split(",");
+                        for(QString tp : parts)
+                            exttypes |= IlwisObject::name2Type(tp);
 
-                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7'").arg(code,name,desc, ext,type).arg(ilwtype).arg(connector);
+                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7','%8',%9").arg(code,name,desc, ext,type).arg(ilwtype).arg(connector).arg(rw).arg(exttypes);
                         QString stmt = QString("INSERT INTO dataformats VALUES(%1)").arg(parms);
                         bool ok = sqlPublic.exec(stmt);
                         if (!ok) {
