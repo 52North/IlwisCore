@@ -104,7 +104,8 @@ SOURCES += core/kernel.cpp \
     core/util/coordinate.cpp \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
     core/ilwisobjects/coverage/geometryhelper.cpp \
-    core/ilwisobjects/operation/rasterfilter.cpp
+    core/ilwisobjects/operation/rasterfilter.cpp \
+    core/catalog/dataformat.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -217,7 +218,8 @@ HEADERS += core/kernel.h\
     core/util/coordinate.h \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.h \
     core/ilwisobjects/coverage/geometryhelper.h \
-    core/ilwisobjects/operation/rasterfilter.h
+    core/ilwisobjects/operation/rasterfilter.h \
+    core/catalog/dataformat.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
