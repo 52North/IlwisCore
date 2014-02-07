@@ -291,7 +291,7 @@ public:
      * \param fnamespace an additional identifier for selecting the correct connector. format names maybe identical from different connectors. The combination namespace-format is unique accross the system
      * \param cmode the mode of the connector to be created
      */
-    bool connectTo(const QUrl &url, const QString &format, const QString &fnamespace, ConnectorMode cmode);
+    void connectTo(const QUrl &url, const QString &format, const QString &fnamespace, ConnectorMode cmode);
 
     /*!
      *\brief Factory method for creating IlwisObjects

@@ -64,15 +64,16 @@ IlwisObject *IlwisObject::create(const Resource& resource) {
     return 0;
 }
 
-bool IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
+void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
     Locker lock(_mutex);
     if (!url.isValid()){
         ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
-        return false;
+        throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
     }
 
     if ( isReadOnly())
-        return false;
+        return throw ErrorObject(TR(QString("format %1 or data object is readonly").arg(format)));
+
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
     if ( !resource.isValid()) {
@@ -84,15 +85,14 @@ bool IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
-        return false;
+        throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
-    if (!conn)
-        return false;
+    if (!conn){
+        throw ErrorObject(TR(QString("couldnt find connector for %1").arg(format)));
+    }
     setConnector(conn, cmode);
     if ( name() == sUNDEF)
         setName(resource.name());
-
-    return true;
 
 }
 
