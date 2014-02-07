@@ -85,6 +85,8 @@ QString IssueObject::type2String() const{
         return "Warning";
     case itMessage:
         return "Message";
+    case itDebug:
+        return "Debug";
     }
     return "Text";
 }
