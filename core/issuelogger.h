@@ -30,7 +30,7 @@ public:
      Warnings are meant to signify non critical changes to the action. Results might be sligthly off but not overly so
      Messages are just messages, no effect on the action
     */
-    enum IssueType{itNone=0, itCritical=1, itError=2, itWarning=4,itMessage=8, itAll=255};
+    enum IssueType{itNone=0, itCritical=1, itError=2, itWarning=4, itMessage=8, itDebug=16, itAll=255};
 
     IssueObject();
     IssueObject(const QString& message, int it, quint64 id);

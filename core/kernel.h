@@ -203,6 +203,21 @@ KERNELSHARED_EXPORT bool initIlwis(QFileInfo configFile = QFileInfo());
 #define WARN2(m, p1, p2) ( kernel()->message(m,IssueObject::itWarning, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 #define WARN3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itWarning,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 
+#define MESSAGE0(m) ( kernel()->message(m,IssueObject::itMessage, sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define MESSAGE1(m, p) ( kernel()->message(m,IssueObject::itMessage, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define MESSAGE2(m, p1, p2) ( kernel()->message(m,IssueObject::itMessage, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define MESSAGE3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itMessage,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+
+#define DEBUG0(m) ( kernel()->message(m,IssueObject::itDebug, sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define DEBUG1(m, p) ( kernel()->message(m,IssueObject::itDebug, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define DEBUG2(m, p1, p2) ( kernel()->message(m,IssueObject::itDebug, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define DEBUG3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itDebug,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+
+#define CRITICAL0(m) ( kernel()->message(m,IssueObject::itCritical, sUNDEF, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define CRITICAL1(m, p) ( kernel()->message(m,IssueObject::itCritical, p, sUNDEF, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define CRITICAL2(m, p1, p2) ( kernel()->message(m,IssueObject::itCritical, p1, p2, sUNDEF, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define CRITICAL3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itCritical,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+
 typedef QList<IlwisTypes> IlwTypeList;
 
 
