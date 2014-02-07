@@ -11,118 +11,104 @@ class Angle {
 public:
     enum Unit{uRADIANS, uDEGREES};
 
-    Angle() : _radians(rUNDEF), _behaveAsRadians(true){}
-    Angle(double angle, bool asRadians=true) {
-        _behaveAsRadians = asRadians;
-        if ( asRadians)
-            _radians = angle;
+    Angle() : _degrees(rUNDEF){}
+    Angle(double angle, bool isRadian=false) {
+        if ( isRadian)
+            _degrees = angle * M_RAD_BASE;
         else
-            _radians = angle / M_RAD_BASE;
+            _degrees = angle ;
     }
     bool isValid() const {
-        return _radians >= 0;
+        return _degrees >= 0;
     }
 
     double degrees() const {
-        return _radians * M_RAD_BASE;
+        return _degrees ;
     }
 
     double radians() const {
-        return _radians;
+        return _degrees / M_RAD_BASE;
     }
     operator double() const {
-        return convertToDouble();
+        return _degrees;
     }
 
-    operator std::string() const {
+    QString toString(bool asRadians) {
         std::stringstream txt;
-        if ( _behaveAsRadians) {
-            txt << std::fixed << std::setprecision(8) << _radians;
-            return  txt.str();
+        if ( asRadians) {
+            txt << std::fixed << std::setprecision(8) << _degrees / M_RAD_BASE;
+            return  QString(txt.str().c_str());
         }
-        int dgr = (int)_radians;
-        int minutes = (_radians - dgr) * 60;
-        double sec = (( _radians - dgr) - minutes/60.0) * 3600.0;
+        int dgr = (int)_degrees;
+        int minutes = (_degrees - dgr) * 60;
+        double sec = (( _degrees - dgr) - minutes/60.0) * 3600.0;
         txt << dgr << " " << minutes <<"' " << std::fixed << std::setprecision(3) << sec;
-        return txt.str();
+        return QString(txt.str().c_str());
 
     }
 
     Angle& operator+=(const Angle& a) {
-        _radians += a.radians();
-        _radians = fmod(_radians ,2 * M_PI);
+        _degrees += a.degrees();
+        _degrees = fmod(_degrees ,360.0);
         return *this;
     }
 
     Angle& operator*=(double f) {
-        _radians *= f;
-        _radians = fmod(_radians ,2 * M_PI);
-        _radians = _radians > 0 ? _radians : 2 * M_PI - _radians;
+        _degrees *= f;
+        _degrees = fmod(_degrees ,360.0);
+        _degrees = _degrees > 0 ? _degrees : 360.0 - _degrees;
         return *this;
     }
 
     Angle& operator/=(double f) {
         if ( f == 0)
             return *this;
-        _radians /= f;
-        _radians = fmod(_radians ,2 * M_PI);
-        _radians = _radians > 0 ? _radians : 2 * M_PI - _radians;
+        _degrees /= f;
+        _degrees = fmod(_degrees ,360.0);
+        _degrees = _degrees > 0 ? _degrees : 360.0 - _degrees;
         return *this;
     }
 
     Angle& operator-=(const Angle& a) {
-        _radians -= a.radians();
-        _radians = fmod(_radians ,2 * M_PI);
-        _radians = _radians > 0 ? _radians : 2 * M_PI - _radians;
+        _degrees -= a.degrees();
+        _degrees = fmod(_degrees ,360.0);
+        _degrees = _degrees > 0 ? _degrees : 360.0 - _degrees;
         return *this;
-    }
-
-    bool asRadians() const {
-        return _behaveAsRadians;
-    }
-
-    virtual void asRadians(bool yesno) {
-        _behaveAsRadians = yesno;
     }
 
 protected:
-    double _radians;
-    bool _behaveAsRadians;
+    double _degrees;
 
-    virtual double convertToDouble() const {
-        if ( _behaveAsRadians )
-            return radians();
-        return degrees();
-    }
+
 };
 
-class Radians : public Angle{
-public:
-    Radians() : Angle() {}
-    Radians(double v, bool isDegrees=false) : Angle(v, !isDegrees ) {}
-    Radians(const Angle& r) { _radians = r.radians(); _behaveAsRadians = true;}
-    Radians& operator=(const Angle& r) {
-        _radians = r.radians();
-        _behaveAsRadians = true;
-        return *this;
-    }
-private:
-    virtual void asRadians(bool ) {}
-};
+//class Radians : public Angle{
+//public:
+//    Radians() : Angle() {}
+//    Radians(double v, bool isDegrees=false) : Angle(v, !isDegrees ) {}
+//    Radians(const Angle& r) { _degrees = r.radians(); _behaveAsRadians = true;}
+//    Radians& operator=(const Angle& r) {
+//        _degrees = r.radians();
+//        _behaveAsRadians = true;
+//        return *this;
+//    }
+//private:
+//    virtual void asRadians(bool ) {}
+//};
 
-class Degrees : public Angle{
-public:
-    Degrees() : Angle() {}
-    Degrees(double v, bool isDegrees=true) : Angle(v, !isDegrees) {}
-    Degrees(const Angle& r) { _radians = r.radians(); _behaveAsRadians = false;}
-    Degrees& operator=(const Angle& r) {
-        _radians = r.radians();
-        _behaveAsRadians = false;
-        return *this;
-    }
-private:
-   virtual void asRadians(bool ) {}
-};
+//class Degrees : public Angle{
+//public:
+//    Degrees() : Angle() {}
+//    Degrees(double v, bool isDegrees=true) : Angle(v, !isDegrees) {}
+//    Degrees(const Angle& r) { _degrees = r.radians(); _behaveAsRadians = false;}
+//    Degrees& operator=(const Angle& r) {
+//        _degrees = r.radians();
+//        _behaveAsRadians = false;
+//        return *this;
+//    }
+//private:
+//   virtual void asRadians(bool ) {}
+//};
 }
 
 

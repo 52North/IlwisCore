@@ -152,8 +152,8 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
         return Coordinate();
     }
 
-    double x = ll.lon(Angle::uRADIANS);
-    double y = ll.lat(Angle::uRADIANS);
+    double x = ll.lon().radians();
+    double y = ll.lat().radians();
     int err = pj_transform(_pjLatlon, _pjBase, 1, 1, &x, &y, NULL );
     if ( err != 0) {
         QString error(pj_strerrno(err));
@@ -192,7 +192,7 @@ LatLon ProjectionImplementationProj4::coord2latlon(const Coordinate &crd) const
         return LatLon();
     }
 
-    return LatLon(Degrees(y,false),Degrees(x, false));
+    return LatLon(Angle(y,true),Angle(x, true));
 }
 
 

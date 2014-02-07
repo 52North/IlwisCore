@@ -34,10 +34,10 @@ Coordinate ProjectionImplementationInternal::latlon2coord(const LatLon &ll) cons
     if (_coordinateSystem->projection().isValid() && ll.isValid()) {
         LatLon pl(ll);
         if (pl.lat() > M_PI_2)
-            pl.setLat( M_PI_2);
+            pl.lat(Angle(M_PI_2, true));
         else if (pl.lat() < -M_PI_2)
-            pl.setLat(-M_PI_2);
-        pl.setLon( pl.lon()-_centralMeridian);
+            pl.lat(Angle(-M_PI_2, true));
+        pl.lon( pl.lon()-_centralMeridian);
         Coordinate xy = ll2crd(pl);
         if (xy != crdUNDEF)
             return crdUNDEF;
@@ -61,7 +61,7 @@ LatLon ProjectionImplementationInternal::coord2latlon(const Coordinate &crdSourc
             return llUNDEF;
         if (abs(pl.lat()) > 90)
             return llUNDEF;
-        pl.setLon( pl.lon() + _centralMeridian);
+        pl.lon( pl.lon() + _centralMeridian);
         return pl;
     }
     else

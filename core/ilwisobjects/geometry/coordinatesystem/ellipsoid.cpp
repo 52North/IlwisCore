@@ -47,8 +47,8 @@ bool Ellipsoid::isValid() const{
 
 Coordinate Ellipsoid::latlon2Coord(const LatLon& sourceLatLon) const{
     Coordinate result;
-    double phi = sourceLatLon.x;
-    double lambda = sourceLatLon.y;
+    double phi = sourceLatLon.lon().radians();
+    double lambda = sourceLatLon.lat().radians();
     double sinPhi = sin(phi);
     double cosPhi = cos(phi);
     double sinLambda = sin(lambda);
@@ -77,10 +77,10 @@ LatLon Ellipsoid::coord2latlon(const Coordinate& crdSource) const{
         N = _majorAxis / sqrt(1 - e2*sin(phiNext)*sin(phiNext));
         phiNext = atan2((crdSource.z + e2*N*sin(phiNext)),r);
     }
-    result.x = Degrees(phiNext, false);//set phi back to lat in degrees
-    result.y = Degrees(atan2( crdSource.y, crdSource.x), false);// lon in degrees
-    result.z = Degrees(r*cos(phiNext) + crdSource.z*sin(phiNext)
-            - _majorAxis*sqrt(1 - e2*sin(phiNext)*sin(phiNext)), false);
+    result.x = Angle(phiNext, true);//set phi back to lat in degrees
+    result.y = Angle(atan2( crdSource.y, crdSource.x), true);// lon in degrees
+    result.z = Angle(r*cos(phiNext) + crdSource.z*sin(phiNext)
+            - _majorAxis*sqrt(1 - e2*sin(phiNext)*sin(phiNext)),true);
     return result;
 }
 
@@ -93,8 +93,8 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
     double da = _majorAxis - mas;
     double df = _flattening - sourceEllipsoid->flattening();
 
-    double phi = sourceLatLon.x;
-    double lam = sourceLatLon.y;
+    double phi = sourceLatLon.lon().radians();
+    double lam = sourceLatLon.lat().radians();
     double h = sourceLatLon.z;
     double sinPhi = sin(phi);
     double cosPhi = cos(phi);
@@ -117,9 +117,9 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
 
     h += dh;
     LatLon result;
-    result.x = Degrees(phi, false);
-    result.y = Degrees(lam, false);
-    result.z = Degrees(h, false);
+    result.x = Angle(phi,true);
+    result.y = Angle(lam, true);
+    result.z = Angle(h, true);
     return result;
 }
 
@@ -132,12 +132,12 @@ LatLon Ellipsoid::latlon2Coord(const IEllipsoid &sourceEllipsoid, const LatLon& 
 */
 double Ellipsoid::distance(const LatLon &begin, const LatLon& end) const{
     double c = rUNDEF;
-    if (abs(begin.x) + EPS15 > 90 || abs(end.x) + EPS15 > 90 )
+    if (abs(begin.lon()) + EPS15 > 90 || abs(end.lon()) + EPS15 > 90 )
         return c; // invalid latitudes for reliable computation
-    double phi1 = begin.x* M_PI/180.0; //conversion to radians
-    double lam1 = begin.y * M_PI/180.0;
-    double phi2 = end.x * M_PI/180.0; //conversion to radians
-    double lam2 = end.y * M_PI/180.0;
+    double phi1 = begin.lon().radians();
+    double lam1 = begin.lat().radians();
+    double phi2 = end.lon().radians();
+    double lam2 = end.lat().radians();
     double e2 = 2 * _flattening - _flattening * _flattening;
 
     double N1 = _majorAxis /sqrt(1 - e2 * sin(phi1)*sin(phi1));
@@ -161,12 +161,12 @@ double Ellipsoid::distance(const LatLon &begin, const LatLon& end) const{
 
 double Ellipsoid::azimuth(const LatLon& begin, const LatLon& end) const{
     double azim = rUNDEF;
-    if (abs(begin.x) + EPS15 > 90 || abs(end.x) + EPS15 > 90 )
+    if (abs(begin.lon()) + EPS15 > 90 || abs(end.lon()) + EPS15 > 90 )
         return azim; // invalid latitudes for reliable computation
-    double phi1 = begin.x* M_PI/180.0; //conversion to radians
-    double lam1 = begin.y* M_PI/180.0;
-    double phi2 = end.x * M_PI/180.0; //conversion to radians
-    double lam2 = end.y * M_PI/180.0;
+    double phi1 = begin.lon().radians();
+    double lam1 = begin.lat().radians();
+    double phi2 = end.lon().radians();
+    double lam2 = end.lat().radians();
     double e2 = 2 * _flattening - _flattening * _flattening;
     double N1 = _majorAxis /sqrt(1 - e2 * sin(phi1)*sin(phi1));
     double N = _majorAxis /sqrt(1 - e2 * sin(phi2)*sin(phi2));

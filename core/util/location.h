@@ -226,60 +226,60 @@ public:
 A coordinate class for use withing geographic coordinate systems. It contains angles for its "x" and "y" members. It does contains a z-value but this is not
 often used. The class doesnt map exactly to a Point3D as the unit of x,y and z is different(angles vs meters).
  */
-class LatLon : public Ilwis::Location<Degrees>{
-public:
-    LatLon() : Ilwis::Location<Degrees>() {}
-    LatLon(const Degrees& lat, const Degrees& lon, double h=0) : Ilwis::Location<Degrees>(lon, lat, h) {}
+//class LatLon : public Ilwis::Location<Degrees>{
+//public:
+//    LatLon() : Ilwis::Location<Degrees>() {}
+//    LatLon(const Degrees& lat, const Degrees& lon, double h=0) : Ilwis::Location<Degrees>(lon, lat, h) {}
 
-    LatLon(const LatLon&& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
-    }
+//    LatLon(const LatLon&& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
+//    }
 
-    LatLon(const LatLon& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
-    }
+//    LatLon(const LatLon& ll) :  Location<Degrees>(ll.x, ll.y, ll.z) {
+//    }
 
-    LatLon& operator=(const LatLon& ll) {
-        this->x = ll.x;
-        this->y =  ll.y;
-        this->z = ll.z;
-        return *this;
-    }
+//    LatLon& operator=(const LatLon& ll) {
+//        this->x = ll.x;
+//        this->y =  ll.y;
+//        this->z = ll.z;
+//        return *this;
+//    }
 
-     /*!
-     returns the north-south position as an angle of a point ("y" direction). The value ranges between -90 and 90
-     * \return angle
-     */
-    double lat(Angle::Unit u=Angle::uDEGREES) const {
-        if ( u == Angle::uRADIANS)
-            return y.radians();
-        else
-            return y.degrees();
-    }
+//     /*!
+//     returns the north-south position as an angle of a point ("y" direction). The value ranges between -90 and 90
+//     * \return angle
+//     */
+//    double lat(Angle::Unit u=Angle::uDEGREES) const {
+//        if ( u == Angle::uRADIANS)
+//            return y.radians();
+//        else
+//            return y.degrees();
+//    }
 
-    /*!
-     returns the east-west position as an angle of a point ("x" direction). The value ranges between -180 and 180
-     * \return angle
-     */
-    double lon(Angle::Unit u=Angle::uDEGREES) const {
-        if ( u == Angle::uRADIANS)
-            return x.radians();
-        else
-            return x.degrees();
-    }
+//    /*!
+//     returns the east-west position as an angle of a point ("x" direction). The value ranges between -180 and 180
+//     * \return angle
+//     */
+//    double lon(Angle::Unit u=Angle::uDEGREES) const {
+//        if ( u == Angle::uRADIANS)
+//            return x.radians();
+//        else
+//            return x.degrees();
+//    }
 
-    /*!
-     sets the latitude of a LatLon point.
-     * \param l
-     */
-    void setLat(double l) {
-        y = Degrees(l);
-    }
+//    /*!
+//     sets the latitude of a LatLon point.
+//     * \param l
+//     */
+//    void setLat(double l) {
+//        y = Degrees(l);
+//    }
 
-    void setLon(double l) {
-        x = Degrees(l);
-    }
+//    void setLon(double l) {
+//        x = Degrees(l);
+//    }
 
 
-};
+//};
 
 #define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)
 

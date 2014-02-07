@@ -1,6 +1,8 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
 
+#include "angle.h"
+
 namespace geos{
     namespace geom{
     class CoordinateSequence;
@@ -36,6 +38,19 @@ public:
     bool operator ==(const geos::geom::Coordinate &pnt) const;
     bool operator !=(const Ilwis::Coordinate &pnt);
 };
+
+class KERNELSHARED_EXPORT LatLon : public Ilwis::Coordinate {
+public:
+    LatLon();
+    LatLon(const Angle& latd, const Angle& lond, double h=0);
+    Angle lat() const;
+    Angle lon() const;
+
+    void lat(const Angle& lat);
+    void lon(const Angle& lon);
+};
+
+#define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)
 
 KERNELSHARED_EXPORT std::vector<double> operator-(const Ilwis::Coordinate& p1, const Ilwis::Coordinate& p2);
 KERNELSHARED_EXPORT Ilwis::Coordinate operator+(const Ilwis::Coordinate& p1, const std::vector<double>& vec);

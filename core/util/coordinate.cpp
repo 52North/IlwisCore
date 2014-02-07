@@ -241,5 +241,28 @@ Ilwis::Coordinate Ilwis::operator/(const Ilwis::Coordinate& p1, double v) {
     return p3;
 }
 
+//---------------------------------------------------------------------------
+LatLon::LatLon(){
 
+}
 
+LatLon::LatLon(const Angle &latd, const Angle &lond, double h){
+    lat(latd);
+    lon(lond);
+    z= h;
+}
+
+Angle LatLon::lat() const{
+    return y;
+}
+Angle LatLon::lon() const{
+    return x;
+}
+
+void LatLon::lat(const Angle& val){
+    y = val.degrees();
+}
+
+void LatLon::lon(const Angle& val){
+    x = val.degrees();
+}
