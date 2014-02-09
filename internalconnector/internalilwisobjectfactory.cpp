@@ -404,6 +404,9 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
 
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource) const {
     QString code = resource.code();
+    bool isUnknown = code == "unknown";
+    if ( isUnknown)
+        code = "epsg:4326";
     QString projParms = code;
     if ( code.left(6) != "proj4:"){
         QString query = QString("select * from projectedcsy where code='%1'").arg(code);
@@ -421,9 +424,16 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
         projParms = code.mid(6);
     }
     ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem(resource);
-    csy->setName(resource.name());
-    csy->setCode(resource.code());
+    if ( isUnknown){
+        csy->setName("unknown");
+        csy->setCode("unknown");
+        csy->setDescription(TR("Unknown coordinate system"));
+    }else{
+        csy->setName(resource.name());
+        csy->setCode(resource.code());
+    }
     csy->prepare("proj4=" + projParms);
+
     return csy;
 
 }
@@ -431,6 +441,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
 IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resource) const {
     QString query;
     QString code = resource.code();
+
     if ( code != "") {
         QSqlQuery db(kernel()->database());
         query = QString("Select * from projection where code = '%1'").arg(code);
