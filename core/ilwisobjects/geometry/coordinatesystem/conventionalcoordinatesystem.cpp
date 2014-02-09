@@ -29,7 +29,7 @@ Coordinate ConventionalCoordinateSystem::coord2coord(const ICoordinateSystem &so
 
     if (sourceCs->id() == id()) //  the 'real'isEqual test is too expensive here, as this method can be called 100000's of times (resample)
         return crdSource;
-    LatLon ll = sourceCs->coord2latlon(crdSource);
+    LatLon ll = sourceCs->isLatLon() ? LatLon(crdSource.y,crdSource.x) : sourceCs->coord2latlon(crdSource);
     if ( ll.isValid()) {
         return latlon2coord(ll);
     }
