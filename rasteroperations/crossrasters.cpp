@@ -249,6 +249,7 @@ quint64 CrossRasters::createMetadata()
     operation.setOutParameterCount({1,2});
     operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
     operation.addOutParameter(1,itRASTER, TR("output raster"),TR("optional output raster with the results of the cross operation"));
+    operation.setKeywords("cross,raster,table");
 
     mastercatalog()->addItems({operation});
     return operation.id();

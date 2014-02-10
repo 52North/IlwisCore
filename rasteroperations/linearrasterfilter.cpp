@@ -92,6 +92,7 @@ quint64 LinearRasterFilter::createMetadata()
     operation.addInParameter(1,itSTRING , TR("filter definition"),TR("Definition of the filter. This can be a predefined filter name or an expression defining the filter"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itTABLE, TR("output raster"),TR("output table with a numeric domain"));
+    operation.setKeywords("filter,raster,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();
