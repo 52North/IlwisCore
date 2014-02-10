@@ -187,25 +187,21 @@ HEADERS +=\
     ../external/proj4/geocent.h \
     ../external/proj4/emess.h
 
-unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
-}
-
 OTHER_FILES += \
     sources/projectionimplproj4/proj4/proj_config.h.in \
     sources/projectionimplproj4/projectionImplProj4.json \
     ../external/proj4/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+win32:CONFIG(release, debug|release): {
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
+else:win32:CONFIG(debug, debug|release): {
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+}
 
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos

@@ -129,7 +129,7 @@ bool ConventionalCoordinateSystem::isValid() const
 void ConventionalCoordinateSystem::setProjection(const IProjection &proj)
 {
     _projection = proj;
-    if ( proj->code() == "longlat")
+    if ( proj->code().contains("longlat") || proj->code().contains("latlon"))
         _unit = "degree";
 }
 

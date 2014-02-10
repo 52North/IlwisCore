@@ -221,8 +221,13 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/rasterfilter.h \
     core/catalog/dataformat.h
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+win32:CONFIG(release, debug|release): {
+    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
+else:win32:CONFIG(debug, debug|release): {
+    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
+}
 
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
