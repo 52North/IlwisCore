@@ -127,29 +127,19 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
 
 quint64 AreaNumbering::createMetadata()
 {
-    QString url = QString("ilwis://operations/areanumbering");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","AreaNumbering raster coverage");
-    resource.addProperty("syntax","areaNumbering(inputgridcoverage,connected (4|8))");
-    resource.addProperty("description",TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain item, boolean or identifier domain"));
-    resource.addProperty("pin_2_type", itUINT8);
-    resource.addProperty("pin_2_name", TR("Connectivity"));
-    resource.addProperty("pin_2_desc",TR("Connected cells, maybe 4 or 8"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_desc",TR("output rastercoverage with the identifier domain"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/areanumbering"});
+    operation.setSyntax("areaNumbering(inputgridcoverage,connected (4|8))");
+    operation.setDescription(TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("rastercoverage with domain item, boolean or identifier domain"));
+    operation.addInParameter(1,itUINT8 , TR("Connectivity"),TR("Connected cells, maybe 4 or 8"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output rastercoverage"),TR("output rastercoverage with the identifier domain"));
+    operation.addOutParameter(1,itRASTER, TR("output raster"),TR("output rastercoverage with the identifier domain"));
+    operation.setKeywords("areanumbering,raster,identifier,classification");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 
 

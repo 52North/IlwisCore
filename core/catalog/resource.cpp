@@ -155,7 +155,13 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
         QSqlRecord rec = db.record();
         QString key = rec.value("propertyname").toString() ;
         QVariant value = rec.value("propertyvalue");
-        _properties[key] = value;
+        QString stringlist = value.toString();
+        int n = 0;
+        if ( ( n = stringlist.indexOf("STRINGLIST:")) == 0){
+            stringlist = stringlist.mid(n);
+            value = stringlist.split(",");
+         }
+         _properties[key] = value;
     }
 }
 
@@ -323,7 +329,6 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
-    QString v = container().toString();
     queryItem.bindValue(":container", container().toString());
     queryItem.bindValue(":resource", url().toString());
     queryItem.bindValue(":urlquery", urlQuery().toString());
@@ -341,7 +346,10 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
         queryProperties.bindValue(":itemid", id());
         QString nameItem = iter.key();
         queryProperties.bindValue(":propertyname",nameItem);
-        QString v = iter.value().toString();
+        QString v;
+        if ( iter.value().type() == QMetaType::QStringList)
+            v = "STRINGLIST:" + iter.value().toStringList().join(",");
+        v = iter.value().toString();
         queryProperties.bindValue(":propertyvalue", v);
         ok = queryProperties.exec();
         if (!ok) {

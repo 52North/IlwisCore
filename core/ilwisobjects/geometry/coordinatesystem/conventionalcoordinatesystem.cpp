@@ -191,9 +191,11 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
     }
     bool ok =_projection.prepare(prj.id());
     _projection->setCoordinateSystem(this);
-    if ( _projection.isValid())  {// goegraphic doesnt have a true projection, the projection is a null projection
+    if ( _projection.isValid())  {
         ok = _projection->prepare(parms);
     }
+    if ( ok && (_projection->code().contains("longlat") || _projection->code().contains("latlon")))
+        _unit = "degrees";
 
 
     return ok;

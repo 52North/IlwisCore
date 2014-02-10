@@ -16,7 +16,7 @@ public:
     void setOutParameterCount(const std::vector<quint32>& counts);
     void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void addOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
-
+    void setKeywords(const QString &words);
 };
 
 class KERNELSHARED_EXPORT OperationParameter : public Identity
@@ -54,6 +54,7 @@ private:
     std::vector<std::unique_ptr<OperationParameter>> _outputParameters;
     QString _namespace;
     QString _longName;
+    QStringList _keywords;
 
     void parmfromResource(const Resource &resource, int n, const QString &base);
 

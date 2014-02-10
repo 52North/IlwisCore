@@ -23,6 +23,7 @@ OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(res
     }
     _namespace = resource["namespace"].toString();
     _longName = resource["longname"].toString();
+    _keywords = resource["keywords"].toStringList();
 }
 
 OperationMetaData::~OperationMetaData()
@@ -154,6 +155,11 @@ void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QS
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
+}
+
+void OperationResource::setKeywords(const QString& words) {
+
+    addProperty("keywords", words.split(","));
 }
 
 
