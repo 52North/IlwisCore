@@ -134,7 +134,6 @@ Kernel::~Kernel() {
     _dbPublic.close();
     delete mastercatalog();
     delete context();
-
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{

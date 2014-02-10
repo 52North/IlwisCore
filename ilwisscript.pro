@@ -88,29 +88,22 @@ HEADERS +=\
     ilwisscript/ast/ifnode.h \
     ilwisscript/ast/outparametersnode.h
 
+OTHER_FILES += ilwisscript/ilwisscript.json
 
 INCLUDEPATH += $$PWD/core \
                         ilwisscript \
                         ilwisscript/ast \
                         ilwisscript/internalmethods
 
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibantlr
+
 win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibantlr
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibantlr
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-}
 
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
-INCLUDEPATH += $$PWD/ilwisscript/parserlexer/include
-DEPENDPATH += $$PWD/ilwisscript/parserlexer/include
-
-OTHER_FILES += \
-    ilwisscript/ilwisscript.json
+INCLUDEPATH +=  $$PWD/../external/geos \
+                $$PWD/ilwisscript/parserlexer/include
+DEPENDPATH +=   $$PWD/../external/geos \
+                $$PWD/ilwisscript/parserlexer/include

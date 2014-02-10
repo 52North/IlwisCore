@@ -74,18 +74,16 @@ SOURCES += \
     baseoperations/math/binarymathtable.cpp \
     baseoperations/data/setvaluerange.cpp
 
+OTHER_FILES += \
+    baseoperations/baseoperations.json
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
 win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
     QMAKE_CXXFLAGS_RELEASE += -O2
-}
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
 }
 
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
 
-OTHER_FILES += \
-    baseoperations/baseoperations.json

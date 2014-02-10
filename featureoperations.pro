@@ -18,25 +18,6 @@ DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 DEFINES += FEATUREOPERATIONS_LIBRARY
 
-OTHER_FILES += \ 
-    featureoperations/featureoperations.json
-
-win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-}
-
-INCLUDEPATH += $$PWD/core
-DEPENDPATH += $$PWD/core
-
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
 HEADERS += \
     featureoperations/featureoperationsmodule.h \
     featureoperations/gridding.h
@@ -44,3 +25,19 @@ HEADERS += \
 SOURCES += \
     featureoperations/featureoperationsmodule.cpp \
     featureoperations/gridding.cpp
+
+OTHER_FILES += \ 
+    featureoperations/featureoperations.json
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
+
+win32:CONFIG(release, debug|release): {
+    QMAKE_CXXFLAGS_RELEASE += -O2
+}
+
+INCLUDEPATH +=  $$PWD/core \
+                $$PWD/../external/geos
+DEPENDPATH +=   $$PWD/core \
+                $$PWD/../external/geos

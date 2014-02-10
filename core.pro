@@ -221,12 +221,20 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/rasterfilter.h \
     core/catalog/dataformat.h
 
+
+OTHER_FILES += \
+    core/resources/referencesystems.csv \
+    core/resources/projections.csv \
+    core/resources/numericdomains.csv \
+    core/resources/filters.csv \
+    core/resources/epsg.pcs \
+    core/resources/ellipsoids.csv \
+    core/resources/datums.csv
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
 win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
     QMAKE_CXXFLAGS_RELEASE += -O2
-}
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
 }
 
 INCLUDEPATH += $$PWD/../external/geos
@@ -243,13 +251,4 @@ resources.files = core/resources/referencesystems.csv \
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
 
 INSTALLS += resources
-
-OTHER_FILES += \
-    core/resources/referencesystems.csv \
-    core/resources/projections.csv \
-    core/resources/numericdomains.csv \
-    core/resources/filters.csv \
-    core/resources/epsg.pcs \
-    core/resources/ellipsoids.csv \
-    core/resources/datums.csv
 
