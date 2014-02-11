@@ -43,6 +43,7 @@ public:
      * @param fcoverage The FeatureCoverage that should be iterated over
      */
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
+    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types);
 
     /**
      * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
@@ -150,6 +151,7 @@ private:
     std::vector<quint32> _subset;
     quint32 _iterPosition = iUNDEF;
     bool _useVectorIter = true;
+    IlwisTypes _types;
 };
 }
 

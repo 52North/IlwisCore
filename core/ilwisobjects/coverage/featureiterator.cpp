@@ -19,7 +19,7 @@ FeatureIterator::FeatureIterator() :
 {
 }
 
-FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true)
+FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true),_types(itFEATURE)
 {
     init();
 }
@@ -27,11 +27,19 @@ FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage
 FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset) :
     _fcoverage(fcoverage),
     _isInitial(true),
-    _subset(subset)
+    _subset(subset),
+    _types(itFEATURE)
 {
     init();
 }
 
+FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types) :
+    _fcoverage(fcoverage),
+    _isInitial(true),
+    _types(types)
+{
+
+}
 FeatureIterator::FeatureIterator(const FeatureIterator &iter)
 {
     _fcoverage = iter._fcoverage;
@@ -39,6 +47,7 @@ FeatureIterator::FeatureIterator(const FeatureIterator &iter)
     _iterFeatures = iter._iterFeatures;
     _subset = iter._subset;
     _iterPosition = iter._iterPosition;
+    _types = iter._types;
 }
 
 FeatureIterator &FeatureIterator::operator ++()
@@ -135,6 +144,10 @@ bool FeatureIterator::move(qint32 distance) {
         if ( _iterFeatures == _fcoverage->_features.end()) {
             _iterFeatures = _fcoverage->_features.end();
             return false;
+        }
+        if (_types != itFEATURE ){ // if we only want to include certain geometry types we need to move until we encounter one
+            while (!hasType((*_iterFeatures)->geometryType(),_types))
+                move(1);
         }
     }else {
         if ( (qint32)_iterPosition + distance < 0) {
