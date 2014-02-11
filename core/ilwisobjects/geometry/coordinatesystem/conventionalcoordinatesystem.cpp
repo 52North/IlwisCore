@@ -108,7 +108,7 @@ void ConventionalCoordinateSystem::setEllipsoid(const IEllipsoid &ell)
 
 bool ConventionalCoordinateSystem::isLatLon() const
 {
-    return _unit == "degree";
+    return _unit == "degrees";
 }
 
 IlwisTypes ConventionalCoordinateSystem::ilwisType() const
@@ -130,7 +130,7 @@ void ConventionalCoordinateSystem::setProjection(const IProjection &proj)
 {
     _projection = proj;
     if ( proj->code().contains("longlat") || proj->code().contains("latlon"))
-        _unit = "degree";
+        _unit = "degrees";
 }
 
 IProjection ConventionalCoordinateSystem::projection() const
