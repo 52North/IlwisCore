@@ -39,18 +39,14 @@ HEADERS += \
 OTHER_FILES += \ 
     rasteroperations/rasteroperations.json
 
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
 win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-}
 
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
-INCLUDEPATH += $$PWD/core
-DEPENDPATH += $$PWD/core
+INCLUDEPATH +=  $$PWD/core \
+                $$PWD/../external/geos
+DEPENDPATH +=   $$PWD/core \
+                $$PWD/../external/geos

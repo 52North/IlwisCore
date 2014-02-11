@@ -193,19 +193,15 @@ OTHER_FILES += \
     ../external/proj4/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
 
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
 win32:CONFIG(release, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32release/ -llibgeos
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-    LIBS += -L$$PWD/../libraries/win32debug/ -llibgeos
-}
 
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
-INCLUDEPATH += $$PWD/projectionimplproj4 \
+INCLUDEPATH +=  $$PWD/../external/geos \
+                $$PWD/projectionimplproj4 \
                 $$PWD/../external/proj4
-DEPENDPATH += $$PWD/projectionimplproj4
+DEPENDPATH +=   $$PWD/../external/geos \
+                $$PWD/projectionimplproj4
