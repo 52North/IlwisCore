@@ -23,6 +23,7 @@ Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
         } else {
             if ( pair.front() == "datum") {
                 _hasDatum = true;
+                _keyvalues["datum"] = pair.back();
             }
             _keyvalues[pair.front()] = pair.back();
         }
@@ -47,7 +48,7 @@ void Proj4Parameters::parseShifts(const QString& shifts) {
 QString Proj4Parameters::datum() const {
     QString dat = sUNDEF;
     if ( _hasDatum) {
-        if ( _keyvalues["dx"] == sUNDEF){
+        if ( _keyvalues.find("dx") == _keyvalues.end()){
             return sUNDEF;
         }
         dat = _keyvalues["dx"] + "," + _keyvalues["dy"] + "," + _keyvalues["dz"];

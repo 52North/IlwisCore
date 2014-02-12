@@ -26,12 +26,12 @@ ConventionalCoordinateSystem::~ConventionalCoordinateSystem()
 
 Coordinate ConventionalCoordinateSystem::coord2coord(const ICoordinateSystem &sourceCs, const Coordinate &crdSource) const
 {
-
+    //TODO isLatLon guard doesn't consider latlon cs other than WGS84!
     if (sourceCs->id() == id()) //  the 'real'isEqual test is too expensive here, as this method can be called 100000's of times (resample)
         return crdSource;
     LatLon ll = sourceCs->isLatLon() ? LatLon(crdSource.y,crdSource.x) : sourceCs->coord2latlon(crdSource);
     if ( ll.isValid()) {
-        return latlon2coord(ll);
+        return isLatLon() ? ll : latlon2coord(ll);
     }
     return Coordinate();
 }
