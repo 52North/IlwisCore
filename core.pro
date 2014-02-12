@@ -105,7 +105,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
     core/ilwisobjects/coverage/geometryhelper.cpp \
     core/ilwisobjects/operation/rasterfilter.cpp \
-    core/catalog/dataformat.cpp
+    core/catalog/dataformat.cpp \
+    core/ilwisobjects/domain/domainhelper.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -151,7 +152,6 @@ HEADERS += core/kernel.h\
     core/util/memorymanager.h \
     core/util/numericrange.h \
     core/ilwisobjects/domain/itemrange.h \
-    core/util/serializationoptions.h \
     core/ilwisobjects/coverage/blockiterator.h \
     core/util/angle.h \
     core/util/box.h \
@@ -219,7 +219,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/coordinatesystem/csytransform.h \
     core/ilwisobjects/coverage/geometryhelper.h \
     core/ilwisobjects/operation/rasterfilter.h \
-    core/catalog/dataformat.h
+    core/catalog/dataformat.h \
+    core/ilwisobjects/domain/domainhelper.h
 
 
 OTHER_FILES += \
