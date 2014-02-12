@@ -21,6 +21,11 @@ NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
     range(new NumericRange(-1e300, 1e300));
 }
 
+NumericDomain::NumericDomain(NumericRange *r)
+{
+    range(r);
+}
+
 void NumericDomain::range(Range *vr)
 {
     if ( isReadOnly())
