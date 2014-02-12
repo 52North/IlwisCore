@@ -4,6 +4,8 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+
+class NumericRange;
 /**
  * A Numericdomain has a range of numeric items,<br>
  * Numeric items are ordered  items that have numeric sub-ranges. For example 0-100,100-200,300-400.
@@ -27,6 +29,7 @@ public:
      * \param resource Resource to be used
      */
     NumericDomain(const Resource& resource);
+    NumericDomain(NumericRange *r);
 
     /*!
      * Changes the Range of this NumericDomain.<br>
@@ -106,6 +109,7 @@ private:
 };
 
 typedef IlwisData<NumericDomain> INumericDomain;
+typedef IlwisData<NumericDomain> ITimeDomain;
 }
 
 #endif // VALUEDOMAINDATA_H

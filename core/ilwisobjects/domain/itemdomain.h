@@ -47,6 +47,10 @@ public:
     ItemDomain(const Resource& resource) : Domain(resource) {
     }
 
+    ItemDomain(Range *rng) : Domain() {
+        range(rng);
+    }
+
     ~ItemDomain() {
     }
     /*!

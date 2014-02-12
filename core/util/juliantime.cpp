@@ -88,6 +88,11 @@ Time::Time(const QString& isoQString) {
     setValue(isoQString);
 }
 
+Time::Time(const char *isostring) : Time(QString(isostring))
+{
+
+}
+
 Time::Time(const QDateTime& time){
     _valid = true;
     int year = time.date().year();

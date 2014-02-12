@@ -11,7 +11,6 @@
 #include "resource.h"
 #include "numericrange.h"
 #include "juliantime.h"
-#include "serializationoptions.h"
 
 
 class QSqlRecord;

@@ -53,6 +53,7 @@ public:
      */
     //TODO link to isostring docu?
     Time(const QString& isostring);
+    Time(const char * isostring);
 
     /**
      * Creates a new time from an amount of seconds from  0-0-0000.
