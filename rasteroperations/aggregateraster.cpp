@@ -183,38 +183,22 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
 
 quint64 AggregateRaster::createMetadata()
 {
-    QString url = QString("ilwis://operations/aggregateraster");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","aggregateraster raster coverage");
-    resource.addProperty("syntax","aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
-    resource.addProperty("description",TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation "));
-    resource.addProperty("inparameters","4|5");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain"));
-    resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("Aggregation Method"));
-    resource.addProperty("pin_2_desc",TR("the method how pixels inside a group will be accumulated"));
-    resource.addProperty("pin_3_type", itINTEGER | itSTRING);
-    resource.addProperty("pin_3_name", TR("Groupsize"));
-    resource.addProperty("pin_3_desc",TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
-    resource.addProperty("pin_4_type", itBOOL);
-    resource.addProperty("pin_4_name", TR("change geometry"));
-    resource.addProperty("pin_4_desc",TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
-    resource.addProperty("pin_5_type", itSTRING);
-    resource.addProperty("pin_5_name", TR("georeference name"));
-    resource.addProperty("pin_5_desc",TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_desc",TR("output rastercoverage with the domain of the input map"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    OperationResource operation({"ilwis://operations/aggregateraster"});
+    operation.setSyntax("aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
+    operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
+    operation.setInParameterCount({4,5});
+    operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with domain any domain"));
+    operation.addInParameter(1,itSTRING , TR("Aggregation Method"),TR("the method how pixels inside a group will be accumulated"));
+    operation.addInParameter(2,itINTEGER | itSTRING , TR("Groupsize"),TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
+    operation.addInParameter(3,itBOOL , TR("change geometry"),TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
+    operation.addInParameter(4,itSTRING , TR("georeference name"),TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(1,itRASTER, TR("output rastercoverage with the domain of the input map"));
+    operation.setKeywords("aggregate,raster,geometry");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 
 quint32 AggregateRaster::groupSize(int dim)

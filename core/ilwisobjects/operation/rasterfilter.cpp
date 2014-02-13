@@ -30,7 +30,7 @@ bool LinearGridFilter::definition(const QString &name)
         if ( stmt.next()) {
             bool ok1,ok2,ok3;
             _columns = stmt.value("columns").toUInt(&ok1);
-            _rows = stmt.value("columns").toUInt(&ok2);
+            _rows = stmt.value("rows").toUInt(&ok2);
             if ( _rows % 2 != 0 && _columns % 2 != 0) {
                 _gain = stmt.value("gain").toDouble(&ok3);
                 if (ok1 && ok2 && ok3){
@@ -76,4 +76,51 @@ double LinearGridFilter::applyTo(const GridBlock& block)
 QSize LinearGridFilter::size() const
 {
     return QSize(_columns, _rows);
+}
+
+//-------------------------------------------------------------------
+RankOrderGridFilter::RankOrderGridFilter(const QString &name)
+{
+    QString query = QString("select * from filters where code='%1'").arg(name.toLower());
+    QSqlQuery stmt(kernel()->database());
+    if (stmt.exec(query)) {
+        if ( stmt.next()) {
+            bool ok1,ok2;
+            _columns = stmt.value("columns").toUInt(&ok1);
+            _rows = stmt.value("rows").toUInt(&ok2);
+            _valid = true;
+            if (ok1 && ok2 ){
+                _index = stmt.value("definition").toInt(&_valid);
+            }else
+                _valid = false;
+        }
+    }
+    if ( !_valid)
+        ERROR2(ERR_NO_INITIALIZED_2,"filter",name);
+}
+
+double RankOrderGridFilter::applyTo(const GridBlock &block)
+{
+    std::vector<double> values = block.toVector();
+    std::sort(values.begin(), values.end());
+    if ( _index  < values.size()) {
+        return values[_index];
+    }
+    return rUNDEF;
+}
+
+void RankOrderGridFilter::colrow(quint32 col, quint32 row)
+{
+    _rows = row;
+    _columns = col;
+}
+
+void RankOrderGridFilter::index(quint32 index)
+{
+    _index = index;
+}
+
+QSize RankOrderGridFilter::size() const
+{
+   return QSize(_columns, _rows);
 }
