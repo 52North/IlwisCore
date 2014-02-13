@@ -35,6 +35,25 @@ private:
 
 
 };
+
+class KERNELSHARED_EXPORT RankOrderGridFilter : public RasterFilter{
+public:
+    RankOrderGridFilter(const QString& name);
+
+    double applyTo(const Ilwis::GridBlock &block);
+    void colrow(quint32 col, quint32 row);
+    void index(quint32 index);
+    QSize size() const;
+
+private:
+    quint32 _columns;
+    quint32 _rows;
+    quint32 _index;
+
+    bool definition(const QString& name);
+
+
+};
 }
 
 #endif // RASTERFILTER_H
