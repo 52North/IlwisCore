@@ -54,6 +54,8 @@ class KERNELSHARED_EXPORT GridBlock {
     friend class BlockIterator;
 
 public:
+    enum Pivot{pLEFTUP, pCENTER};
+
     GridBlock(BlockIterator& biter);
     double& operator()(qint32 x, qint32 y, qint32 z=0);
     double operator()(qint32 x, qint32 y, qint32 z=0) const;
@@ -61,9 +63,9 @@ public:
     CellIterator begin() ;
     CellIterator end() ;
     const BlockIterator& iterator() const;
-    operator std::vector<double>();
     bool isValid() const;
     Pixel position() const;
+    std::vector<double> toVector(Pivot pivot = pCENTER) const;
 private:
     BlockIterator& _iterator;
     std::vector<quint32> _internalBlockNumber;

@@ -170,14 +170,20 @@ Pixel GridBlock::position() const
     return _iterator.position();
 }
 
-GridBlock::operator std::vector<double>()
-{
-    const Size& sz = _iterator.blockSize();
+std::vector<double> GridBlock::toVector(Pivot pivot) const{
+    const Size& size = _iterator.blockSize();
+    Pixel leftup(-size.xsize() /2,-size.ysize()/2,-size.zsize()/2);
+    Pixel rightdown(size.xsize() /2,size.ysize()/2,size.zsize()/2);
+    if ( pivot == pLEFTUP){
+        leftup = Pixel(0,0,0);
+        rightdown = Pixel(size.xsize(), size.ysize(), size.ysize());
+    }
+
     int count = 0;
-    std::vector<double> v(sz.totalSize());
-    for(quint32 z=0; z < sz.zsize(); ++z) {
-        for(quint32 y=0; z < sz.ysize(); ++y) {
-            for(quint32 x=0; z < sz.xsize(); ++x) {
+    std::vector<double> v(size.totalSize());
+    for(qint32 z=leftup.z; z <= rightdown.z ; ++z) {
+        for(qint32 y=leftup.y; y <= rightdown.y; ++y) {
+            for(qint32 x=leftup.x; x <= rightdown.x; ++x) {
                 v[count++] = operator ()(x,y,z);
             }
         }
