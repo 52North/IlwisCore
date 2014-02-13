@@ -29,6 +29,7 @@
 #include "rasterstrechoperation.h"
 #include "rasterfilter.h"
 #include "linearrasterfilter.h"
+#include "rankorderrasterfilter.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;
@@ -51,6 +52,7 @@ void RasterOperationsModule::prepare()
    commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
    commandhandler()->addOperation(LinearStretchOperation::createMetadata(), LinearStretchOperation::create);
    commandhandler()->addOperation(LinearRasterFilter::createMetadata(), LinearRasterFilter::create);
+   commandhandler()->addOperation(RankOrderRasterFilter::createMetadata(), RankOrderRasterFilter::create);
 
 }
 
