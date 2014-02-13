@@ -48,7 +48,7 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     case Projection::pvZONE:
         _targetDef += " +zone=" + value; break;
     case Projection::pvK0:
-        _targetDef += " +k0=" + value; break;
+        _targetDef += " +k_0=" + value; break;
     case Projection::pvELLCODE:
         _targetDef += " " + value; break;
     case Projection::pvNORTH:
@@ -84,7 +84,7 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         //std::function<void(double)> assign; // = [&](double v)  -> void {}
 
         std::map<QString,Projection::ProjectionParamValue>  alias = { { "lat_1",Projection::pvLAT1}, { "lat_2",Projection::pvLAT2},{ "lat_0",Projection::pvLAT0}, { "k",Projection::pvK0},
-                                                     { "lon_0",Projection::pvLON0}, { "x_0",Projection::pvX0}, { "y_0",Projection::pvY0}, { "zone",Projection::pvZONE}};
+                                                     { "lon_0",Projection::pvLON0}, { "x_0",Projection::pvX0}, { "y_0",Projection::pvY0}, { "zone",Projection::pvZONE},{ "k_0",Projection::pvK0}};
         auto assign = [&](const QString& proj4Name)->void
         {
             QString sv = proj4[proj4Name];
@@ -108,6 +108,11 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         QString shifts = proj4["towgs84"];
         if ( shifts != sUNDEF) {
             _targetDef += " +towgs84=" + shifts;
+        }
+
+        QString name = proj4["datum"];
+        if ( name != sUNDEF) {
+            _targetDef += " +datum=" + name;
         }
 
         for(auto iter= alias.begin(); iter != alias.end(); ++iter) {
