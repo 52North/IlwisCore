@@ -144,48 +144,73 @@ public:
      * Requires the Time that has to be added to be valid. (the time parameter) <br>
      * if this Time is invalid it will simply return tUNDEF.
      *
-     * @param time the time that should be substracted from this Time object
+     * @param time the time that should be added from this Time object
      * @return this after substraction
      */
     Time operator+(const Time& time) const;
 
     /**
-     * @brief operator <
-     * @param time
-     * @return
+     * Override of the < operator compares this time with another. <br>
+     * The comparison is based on the Julian Time of both Times. <br>
+     * Requires the Time that has to be added to be valid. (the time parameter) <br>
+     * if this Time is invalid it will simply return false.
+     *
+     * @param time the time that should be compared with this Time object
+     * @return true when the juliandate of this time is smaller than the other Time 's
      */
     bool operator <(const Time& time) const;
 
     /**
-     * @brief operator >
-     * @param time
-     * @return
+     * Override of the > operator compares this time with another. <br>
+     * The comparison is based on the Julian Time of both Times. <br>
+     * Requires the Time that has to be added to be valid. (the time parameter) <br>
+     * if this Time is invalid it will simply return false.
+     *
+     * @param time the time that should be compared with this Time object
+     * @return true when the juliandate of this time is bigger than the other Time 's
      */
     bool operator >(const Time& time) const;
 
     /**
-     * @brief operator ==
-     * @param time
-     * @return
+     * Override of the == operator compares this time with another. <br>
+     * The comparison is based on the Julian Time of both Times. <br>
+     * Requires the Time that has to be added to be valid. (the time parameter) <br>
+     * if this Time is invalid it will simply return false.
+     *
+     * @param time the time that should be compared with this Time object
+     * @return true when the juliandate of this time is equal to0 the other Time 's
      */
     bool operator ==(const Time& time) const;
 
     /**
-     * @brief operator !=
-     * @param time
-     * @return
+     * Override of the != operator compares this time with another. <br>
+     * The comparison is based on the Julian Time of both Times. <br>
+     * Requires the Time that has to be added to be valid. (the time parameter) <br>
+     * if this Time is invalid it will simply return false.
+     *
+     * @param time the time that should be compared with this Time object
+     * @return true when the juliandate of this time is not equal to the other Time 's
      */
     bool operator !=(const Time& time) const;
 
     /**
-     * @brief setValue
+     * Generates the fields of this time from an iso string. <br>
+     * accepted iso 8601 QStrings:
+     *
+     * - YYYY[-MM[-DD[Thh[:mm[:s[Z]]]]]]
+     * - YYYY[MM[DD[Thh[:mm[:s[Z]]]]]
+     *
+     * h,m,s may be fractions. internally they are formatted to a correct int representation
      * @param isostring
      */
     void setValue(const QString& isostring);
 
     /**
-     * @brief setYear
-     * @param year
+     * Sets the year field of this time. <br>
+     * if year is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setYear(int year);
 
