@@ -56,13 +56,15 @@ public:
     }
 
 
-    Location(const std::vector<CrdType>& v)  {
+    Location(const std::vector<CrdType>& v) : Location() {
         if ( v.size() < 2) {
             *this = Location<CrdType>();
             return;
         }
         this->x =v[0];
         this->y =v[1];
+        if ( v.size() >= 3)
+            this->z = v[2];
      }
 
     virtual ~Location() {
@@ -138,7 +140,7 @@ public:
 
     double distance(const Location<CrdType>& crd) {
         if ( !crd.isValid() || !this->isValid())
-            return this->undefined();
+            return rUNDEF;
         if ( z == undefined() || crd.z == undefined())
             return std::sqrt(std::pow(abs(this->x - crd.x),2) + std::pow(abs(this->y - crd.y),2));
         return std::sqrt(std::pow(abs(this->x - crd.x),2) + std::pow(abs(this->y - crd.y),2) + std::pow(abs(this->z - crd.z),2));
@@ -183,8 +185,10 @@ public:
      * \return
      */
     Location<CrdType>& operator/=(int v){
-        if (!this->isValid() && v != 0)
+        if (!this->isValid() || v == 0){
+            *this = Location<CrdType>();
             return *this;
+        }
         this->x =this->x / v;
         this->y =this->y / v;
         if ( z != undefined())
@@ -199,6 +203,9 @@ public:
      * \return true if the points are at the same location.
      */
     bool operator==(const Location<CrdType>& pnt) const {
+        if (!this->isValid() && !pnt.isValid())
+            return true;
+
         if (!this->isValid() || !pnt.isValid())
             return false;
 
@@ -298,20 +305,24 @@ std::vector<CrdType> operator-(const Ilwis::Location<CrdType>& p1, const Ilwis::
 }
 
 template<typename CrdType>
-Ilwis::Location<CrdType> operator+(const Ilwis::Location<CrdType>& p1, const std::vector<CrdType>& vec) {
+Ilwis::Location<CrdType> operator+(const Ilwis::Location<CrdType>& p1, const std::vector<double>& vec) {
     if (p1.isValid() == false ||  vec.size() < 2 )
         return Ilwis::Location<CrdType>();
-    Ilwis::Location<CrdType> p3(p1.x + vec[0], p1.y + vec[1]) ;
+    Ilwis::Location<CrdType> p3(p1);
+    p3.x = p1.x + vec[0];
+    p3.y = p1.y + vec[1] ;
     if ( vec.size() >= 3 && p1.z != p1.undefined())
         p3.z  = p1.z + vec[2];
 
     return p3;
 }
 template<typename CrdType>
-Ilwis::Location<CrdType> operator-(const Ilwis::Location<CrdType>& p1, const std::vector<CrdType>& vec) {
+Ilwis::Location<CrdType> operator-(const Ilwis::Location<CrdType>& p1, const std::vector<double>& vec) {
     if (p1.isValid() == false ||  vec.size() < 2 )
         return Ilwis::Location<CrdType>();
-    Ilwis::Location<CrdType> p3(p1.x - vec[0], p1.y - vec[1]) ;
+    Ilwis::Location<CrdType> p3(p1);
+    p3.x = p1.x - vec[0];
+    p3.y = p1.y - vec[1] ;
 
     if ( vec.size() >= 3 && p1.z != p1.undefined())
         p3.z = p1.z - vec[2];
@@ -322,7 +333,7 @@ template<typename CrdType>
 Ilwis::Location<CrdType> operator*(const Ilwis::Location<CrdType>& p1, double v) {
     Ilwis::Location<CrdType> p3(p1.x * v, p1.y * v) ;
     if ( p1.z != p1.undefined())
-        p3.z = p3.z * v;
+        p3.z = p1.z * v;
     return p3;
 }
 
@@ -332,7 +343,7 @@ Ilwis::Location<CrdType> operator/(const Ilwis::Location<CrdType>& p1, double v)
         return Ilwis::Location<CrdType>();
     Ilwis::Location<CrdType> p3(p1.x / v, p1.y / v) ;
     if ( p1.z != p1.undefined())
-        p3.z = p3.z / v;
+        p3.z = p1.z / v;
     return p3;
 }
 
