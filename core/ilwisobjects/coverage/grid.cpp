@@ -8,7 +8,7 @@
 #include "grid.h"
 
 using namespace Ilwis;
-GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size(lines,width,1)),_initialized(false), _loaded(false)
+GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(lines,width,1)),_initialized(false), _loaded(false)
 
 {
     _undef = undef<double>();
@@ -20,7 +20,7 @@ GridBlockInternal::~GridBlockInternal() {
 
 }
 
-Size GridBlockInternal::size() const {
+Size<> GridBlockInternal::size() const {
     return _size;
 }
 
@@ -114,11 +114,11 @@ bool GridBlockInternal::load() {
 
 
 //----------------------------------------------------------------------
-Grid::Grid(const Size& sz, int maxLines) : _maxLines(maxLines){
+Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
     //Locker lock(_mutex);
 
     setSize(sz);
-    quint64 bytesNeeded = _size.totalSize() * sizeof(double);
+    quint64 bytesNeeded = _size.volume() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
@@ -139,7 +139,7 @@ Grid::~Grid() {
     context()->changeMemoryLeft(_memUsed);
 }
 
-Size Grid::size() const {
+Size<> Grid::size() const {
     return _size;
 }
 
@@ -157,7 +157,7 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
     quint32 start = index1 == iUNDEF ? 0 : index1;
     quint32 end = index2 == iUNDEF ? _blocks.size() / _blocksPerBand : index2 + 1;
 
-    Grid *grid = new Grid(Size(_size.xsize(), _size.ysize(), end - start), _maxLines);
+    Grid *grid = new Grid(Size<>(_size.xsize(), _size.ysize(), end - start), _maxLines);
     grid->prepare();
 
     quint32 startBlock = start * _blocksPerBand;
@@ -172,7 +172,7 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
 }
 
 void Grid::clear() {
-    _size = Size();
+    _size = Size<>();
     _blockSizes.clear();
     for(quint32 i = 0; i < _blocks.size(); ++i) {
         delete _blocks[i];
@@ -181,9 +181,11 @@ void Grid::clear() {
 }
 
 double Grid::value(const Pixel &pix) {
-    if ( pix.x <0 || pix.y < 0 || (pix.z < 0 &&
-                                   pix.is3D()))
+    if (pix.x <0 || pix.y < 0 || pix.x >= _size.xsize() || pix.y >= _size.ysize() )
         return rUNDEF;
+    if ( pix.is3D() && (pix.z < 0 || pix.z >= _size.zsize()))
+        return rUNDEF;
+
     quint32 yoff = (qint32)pix.y % _maxLines;
     quint32 block = pix.y / _maxLines;
     quint32 bandBlocks = _blocksPerBand * (pix.is3D() ? pix.z : 0);
@@ -247,7 +249,7 @@ char *Grid::blockAsMemory(quint32 block, bool creation) {
 
 }
 
-void Grid::setSize(const Size& sz) {
+void Grid::setSize(const Size<>& sz) {
     if ( _blocks.size() != 0)
         clear();
     _size = sz;

@@ -14,7 +14,7 @@ public:
     ~GridBlockInternal();
 
 
-    Size size() const ;
+    Size<> size() const ;
     GridBlockInternal *clone();
 
     double& at(quint32 index) {
@@ -52,7 +52,7 @@ private:
     std::vector<double> _data;
     double _undef;
     quint32 _index;
-    Size _size;
+    Size<> _size;
     quint64 _id;
     bool _initialized;
     bool _loaded;
@@ -68,7 +68,7 @@ class KERNELSHARED_EXPORT Grid
 public:
     friend class GridInterpolator;
 
-    Grid(const Size& sz, int maxLines=500);
+    Grid(const Size<>& sz, int maxLines=500);
     virtual ~Grid();
 
     void clear();
@@ -83,10 +83,10 @@ public:
 
     void setBlock(quint32 block, const std::vector<double>& data, bool creation);
     char *blockAsMemory(quint32 block, bool creation);
-    void setSize(const Size& sz);
+    void setSize(const Size<>& sz);
     bool prepare() ;
     quint32 blockSize(quint32 index) const;
-    Size size() const;
+    Size<> size() const;
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
     void unload();
@@ -104,7 +104,7 @@ private:
     //quint64 _bandSize;
     quint32 _blocksPerBand;
     std::vector<quint32> _blockSizes;
-    Size _size;
+    Size<> _size;
     quint32 _maxLines;
     quint32 _cacheHead =0;
     std::vector<std::vector<quint32>> _offsets;

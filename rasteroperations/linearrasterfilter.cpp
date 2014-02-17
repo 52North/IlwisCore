@@ -30,7 +30,7 @@ bool LinearRasterFilter::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    BoxedAsyncFunc filterFun = [&](const BoundingBox& box) -> bool {
         PixelIterator iterOut(_outputRaster, box);
-        BlockIterator blockIter(_inputRaster,_filter->size(), box, Size(1,1,1));
+        BlockIterator blockIter(_inputRaster,_filter->size(), box, Size<>(1,1,1));
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
             *iterOut = _filter->applyTo(*blockIter);

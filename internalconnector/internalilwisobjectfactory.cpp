@@ -248,9 +248,9 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     if (!createCoverage(resource, gcoverage))
         return 0;
 
-    Size sz;
+    Size<> sz;
     if ( QString(resource["size"].typeName()) == "Ilwis::Size"){
-        sz = resource["size"].value<Size>();
+        sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
     }
@@ -530,7 +530,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
     cgrf->coordinateSystem(csy);
     cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
 //    Size sz = resource["size"].value<Size>();
-    cgrf->size(resource["size"].value<Size>());
+    cgrf->size(resource["size"].value<Size<>>());
     cgrf->centerOfPixel(resource["centerofpixel"].toBool());
 
     return cgrf;

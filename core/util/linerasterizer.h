@@ -13,7 +13,7 @@ private:
     IGeoReference _grf;
     ICoordinateSystem _csy;
 
-    bool inBounds(const Ilwis::Pixeld &cur, const Ilwis::Size &size) const;
+    bool inBounds(const Ilwis::Pixeld &cur, const Ilwis::Size<> &size) const;
 };
 }
 

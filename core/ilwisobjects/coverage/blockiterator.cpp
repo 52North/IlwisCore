@@ -40,7 +40,7 @@ CellIterator CellIterator::operator--(int)
 }
 
 void CellIterator::move(int n){
-    const Size& sz = _block->size();
+    const Size<>& sz = _block->size();
     if ( _positionx < sz.xsize() - 1)
         ++_positionx;
     else if ( _positiony < sz.ysize() - 1) {
@@ -63,7 +63,7 @@ double &CellIterator::operator*()
 }
 
 
-Size CellIterator::blocksize() const
+Ilwis::Size<> CellIterator::blocksize() const
 {
     return _block->size();
 }
@@ -140,7 +140,7 @@ void GridBlock::actualPosition(qint32& x, qint32& y, qint32& z) const
     z = std::max(0, std::min(_iterator._z + z, _iterator._endz));
 }
 
-Size GridBlock::size() const
+Size<> GridBlock::size() const
 {
     return _iterator.blockSize();
 }
@@ -171,7 +171,7 @@ Pixel GridBlock::position() const
 }
 
 std::vector<double> GridBlock::toVector(Pivot pivot) const{
-    const Size& size = _iterator.blockSize();
+    const Size<>& size = _iterator.blockSize();
     Pixel leftup(-size.xsize() /2,-size.ysize()/2,-size.zsize()/2);
     Pixel rightdown(size.xsize() /2,size.ysize()/2,size.zsize()/2);
     if ( pivot == pLEFTUP){
@@ -180,7 +180,7 @@ std::vector<double> GridBlock::toVector(Pivot pivot) const{
     }
 
     int count = 0;
-    std::vector<double> v(size.totalSize());
+    std::vector<double> v(size.volume());
     for(qint32 z=leftup.z; z <= rightdown.z ; ++z) {
         for(qint32 y=leftup.y; y <= rightdown.y; ++y) {
             for(qint32 x=leftup.x; x <= rightdown.x; ++x) {
@@ -192,7 +192,7 @@ std::vector<double> GridBlock::toVector(Pivot pivot) const{
 }
 
 //----------------------------------------------------------------------------------------------
-BlockIterator::BlockIterator(IRasterCoverage raster, const Size &sz, const BoundingBox &box, const Size& stepsize) :
+BlockIterator::BlockIterator(IRasterCoverage raster, const Size<> &sz, const BoundingBox &box, const Size<>& stepsize) :
     PixelIterator(raster,box),
     _block(*this),
     _blocksize(sz),
@@ -248,12 +248,12 @@ bool BlockIterator::operator!=(const BlockIterator& iter) const{
     return ! operator ==(iter);
 }
 
-Size BlockIterator::blockSize() const
+Size<> BlockIterator::blockSize() const
 {
     return _blocksize;
 }
 
-void BlockIterator::stepsizes(const Size &stepsizes)
+void BlockIterator::stepsizes(const Size<> &stepsizes)
 {
     _stepsizes = stepsizes;
 }

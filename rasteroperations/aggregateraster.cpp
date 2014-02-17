@@ -45,7 +45,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                                              (box.max_corner().y + 1) * groupSize(1) - 1,
                                              (box.max_corner().z + 1) * groupSize(2) - 1) );
 
-        BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+        BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
@@ -158,7 +158,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         int newxs = xs / groupSize(0);
         int newys = ys / groupSize(1);
         int newzs = zs / groupSize(2);
-        box = BoundingBox(Size(newxs, newys, newzs));
+        box = BoundingBox(Size<>(newxs, newys, newzs));
 
     }
     if ( _expression.parameterCount() == 5 || _grouped) {

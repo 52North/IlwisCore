@@ -14,7 +14,7 @@ OperationHelperRaster::OperationHelperRaster()
 BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Parameter& parm, quint64 what)
 {
     Resource resource(itRASTER);
-    Size sz = inputRaster->size();
+    Size<> sz = inputRaster->size();
     BoundingBox box(sz);
 
     if ( what & itRASTERSIZE) {
@@ -65,7 +65,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
         if (inputObject->ilwisType() == itRASTER) {
             IRasterCoverage gcInput = inputObject.get<RasterCoverage>();
             if ( what & itRASTERSIZE) {
-                Size sz = gcInput->size();
+                Size<> sz = gcInput->size();
                 BoundingBox box(sz);
                 resource.addProperty("size", IVARIANT(box.size()));
             }
@@ -92,8 +92,8 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCov
         return iUNDEF;
     }
 
-    int cores = std::min(QThread::idealThreadCount(),raster->size().ysize());
-    if (raster->size().totalSize() < 10000 || ctx->_threaded == false)
+    int cores = std::min(QThread::idealThreadCount(),(int)raster->size().ysize());
+    if (raster->size().volume() < 10000 || ctx->_threaded == false)
         cores = 1;
 
     boxes.clear();

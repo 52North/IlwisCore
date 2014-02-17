@@ -81,15 +81,15 @@ ICoordinateSystem GeoReference::coordinateSystem() const
  }
 
 
-Size GeoReference::size() const
+Size<> GeoReference::size() const
 {
     if ( isValid())
         return _georefImpl->size();
-    return Size();
+    return Size<>();
 
 }
 
-void GeoReference::size(const Size &sz)
+void GeoReference::size(const Size<> &sz)
 {
     // size must always be positive or undefined
     if ( isValid() && sz.xsize() > 0 && sz.ysize() > 0)

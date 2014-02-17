@@ -15,8 +15,8 @@ public:
     virtual double pixelSize() const = 0;
     virtual bool compute() = 0;
     virtual void coordinateSystem(const ICoordinateSystem& csy)=0;
-    virtual Size size() const=0;
-    virtual void size(const Size& sz)=0;
+    virtual Size<> size() const=0;
+    virtual void size(const Size<>& sz)=0;
     virtual bool centerOfPixel() const=0;
     virtual void centerOfPixel(bool yesno)=0;
 };
@@ -37,8 +37,8 @@ public:
     virtual BoundingBox coord2Pixel(const Envelope &box) const;
     ICoordinateSystem coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
-    Size size() const;
-    void size(const Size& sz);
+    Size<> size() const;
+    void size(const Size<>& sz);
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool isCompatible(const IlwisData<GeoReference>& georefOther) const;

@@ -50,7 +50,7 @@ void RasterCoverage::georeference(const IGeoReference &grf)
     if (_georef.isValid())
         _size = _georef->size();
     else
-        _size = Size();
+        _size = Size<>();
 }
 
 IlwisTypes RasterCoverage::ilwisType() const
@@ -80,11 +80,11 @@ DataDefinition &RasterCoverage::datadef()
 void RasterCoverage::copyBinary(const IRasterCoverage& raster, int index) {
     IRasterCoverage gcNew;
     gcNew.set(this);
-    Size inputSize =  raster->size();
-    Size sz(inputSize.xsize(),inputSize.ysize(), 1);
+    Size<> inputSize =  raster->size();
+    Size<> sz(inputSize.xsize(),inputSize.ysize(), 1);
     gcNew->georeference()->size(sz);
     PixelIterator iterIn(raster, BoundingBox(Pixel(0,0,index), Pixel(inputSize.xsize(), inputSize.ysize(), index + 1)));
-    PixelIterator iterOut(gcNew, BoundingBox(Size(inputSize.xsize(), inputSize.ysize(), 1)));
+    PixelIterator iterOut(gcNew, BoundingBox(Size<>(inputSize.xsize(), inputSize.ysize(), 1)));
     for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
         ++iterIn;
@@ -131,7 +131,7 @@ Resource RasterCoverage::source(int mode) const
     return resource;
 }
 
-Size RasterCoverage::size() const
+Size<> RasterCoverage::size() const
 {
     if (_size.isValid() && !_size.isNull())
         return _size;
@@ -150,7 +150,7 @@ void RasterCoverage::unloadBinary() {
     }
 }
 
-void RasterCoverage::size(const Size &sz)
+void RasterCoverage::size(const Size<> &sz)
 {
     if ( isReadOnly())
         return;

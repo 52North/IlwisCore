@@ -34,7 +34,7 @@ public:
     double& operator*() ;
 
    //qint32 position() const;
-    Ilwis::Size blocksize() const;
+    Ilwis::Size<> blocksize() const;
 
 private:
     void move(int n);
@@ -59,7 +59,7 @@ public:
     GridBlock(BlockIterator& biter);
     double& operator()(qint32 x, qint32 y, qint32 z=0);
     double operator()(qint32 x, qint32 y, qint32 z=0) const;
-    Size size() const;
+    Size<> size() const;
     CellIterator begin() ;
     CellIterator end() ;
     const BlockIterator& iterator() const;
@@ -81,7 +81,7 @@ class KERNELSHARED_EXPORT BlockIterator : public PixelIterator {
 public:
     friend class GridBlock;
 
-    BlockIterator( IRasterCoverage raster, const Size& sz, const BoundingBox& box=BoundingBox(), const Size& steps=Size());
+    BlockIterator(IRasterCoverage raster, const Size<> &sz, const BoundingBox& box=BoundingBox(), const Size<> &steps=Size<>());
 
     GridBlock& operator*() {
         return _block;
@@ -94,13 +94,13 @@ public:
     BlockIterator end() const ;
     bool operator==(const BlockIterator& iter) const;
     bool operator!=(const BlockIterator& iter) const;
-    Size blockSize() const;
-    void stepsizes(const Size& stepsize);
+    Size<> blockSize() const;
+    void stepsizes(const Size<>& stepsize);
 private:
     BlockIterator(quint64 endpos);
     GridBlock _block;
-    Size _blocksize;
-    Size _stepsizes;
+    Size<> _blocksize;
+    Size<> _stepsizes;
     double _outside=rILLEGAL;
 };
 

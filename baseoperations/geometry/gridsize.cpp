@@ -23,7 +23,7 @@ bool GridSize::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    Size sz = _inputGC->size();
+    Size<> sz = _inputGC->size();
     int dimsize = 0;
     if ( _dim == "xsize")
         dimsize =  sz.xsize();

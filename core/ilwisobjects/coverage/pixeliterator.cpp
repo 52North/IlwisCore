@@ -97,7 +97,7 @@ void PixelIterator::copy(const PixelIterator &iter) {
 }
 
 void PixelIterator::init() {
-    const Size& sz = _raster->size();
+    const Size<>& sz = _raster->size();
     if ( _box.isNull()) {
         _box = BoundingBox(sz);
     }
@@ -294,7 +294,7 @@ bool PixelIterator::zchanged() const {
 }
 
 void PixelIterator::initPosition() {
-    const Size& sz = _raster->size();
+    const Size<>& sz = _raster->size();
     quint64 linpos = _y * sz.xsize() + _x;
     _currentBlock = _y / _grid->maxLines();
     _localOffset = linpos - _currentBlock * _grid->maxLines() * sz.xsize();

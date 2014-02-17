@@ -7,6 +7,8 @@
 
 using namespace Ilwis;
 
+const double crdDeltaLim = 1e-8;
+
 Ilwis::Coordinate::Coordinate() : geos::geom::Coordinate(rUNDEF, rUNDEF, rUNDEF)
 {
 }
@@ -25,11 +27,13 @@ Ilwis::Coordinate::Coordinate(double px, double py, double pz) : geos::geom::Coo
 
 Ilwis::Coordinate::Coordinate(const std::vector<double>& v)  {
     if ( v.size() < 2) {
-        *this = Coordinate();
+        *this = Ilwis::Coordinate();
         return;
     }
     this->x =v[0];
     this->y =v[1];
+    if ( v.size() >= 3)
+        this->z = v[2];
 
  }
 
@@ -56,7 +60,15 @@ bool Ilwis::Coordinate::is3D() const {
 
 Ilwis::Coordinate::operator std::vector<double> () {
 
-    std::vector<double> v {this->x, this->y, this->z};
+    std::vector<double> v;
+    if ( !isValid())
+        return v;
+
+    if ( is3D()) {
+         v = {this->x, this->y, this->z};
+        return v;
+    }
+    v = {this->x, this->y};
     return v;
 }
 
@@ -80,8 +92,10 @@ Ilwis::Coordinate& Ilwis::Coordinate::operator=(const Coordinate&& p2) {
  * \return a reference to a shifted 2D point
  */
 Coordinate& Ilwis::Coordinate::operator+= (const std::vector<double> &vec){
-    if (!this->isValid() || vec.size() < 2)
+    if (!this->isValid() || vec.size() < 2){
+        *this = Ilwis::Coordinate();
         return *this;
+    }
 
     this->x =this->x + vec[0];
     this->y =this->y + vec[1];
@@ -92,8 +106,10 @@ Coordinate& Ilwis::Coordinate::operator+= (const std::vector<double> &vec){
 }
 
 Coordinate& Ilwis::Coordinate::operator-= (const std::vector<double>& vec){
-    if (!this->isValid() || vec.size() < 2)
+    if (!this->isValid() || vec.size() < 2){
+        *this = Ilwis::Coordinate();
         return *this;
+    }
     this->x =this->x - vec[0];
     this->y =this->y - vec[1];
     if ( vec.size() >= 3 && z != undefined())
@@ -116,8 +132,10 @@ double Ilwis::Coordinate::distance(const Coordinate& crd) {
  * \return a reference to a shifted 2D point
  */
 Ilwis::Coordinate& Ilwis::Coordinate::operator*=(const std::vector<double>& vec){
-    if (!this->isValid() || vec.size() < 2)
+    if (!this->isValid() || vec.size() < 2){
+        *this = Ilwis::Coordinate();
         return *this;
+    }
     this->x =this->x * vec[0];
     this->y =this->y * vec[1];
     if ( vec.size() >= 3 && z != undefined())
@@ -131,9 +149,11 @@ Ilwis::Coordinate& Ilwis::Coordinate::operator*=(const std::vector<double>& vec)
  * \param  multiplier
  * \return a reference to a shifted 2D point
  */
-Ilwis::Coordinate& Ilwis::Coordinate::operator*=(int v){
-    if (!this->isValid())
+Ilwis::Coordinate& Ilwis::Coordinate::operator*=(double v){
+    if (!this->isValid()){
+        *this = Ilwis::Coordinate();
         return *this;
+    }
     this->x =this->x * v;
     this->y =this->y * v;
     if ( z != undefined())
@@ -148,9 +168,11 @@ Ilwis::Coordinate& Ilwis::Coordinate::operator*=(int v){
  * \param v
  * \return
  */
-Ilwis::Coordinate& Ilwis::Coordinate::operator/=(int v){
-    if (!this->isValid() && v != 0)
+Ilwis::Coordinate& Ilwis::Coordinate::operator/=(double v){
+    if (!this->isValid() || v == 0){
+        *this = Ilwis::Coordinate();
         return *this;
+    }
     this->x =this->x / v;
     this->y =this->y / v;
     if ( z != undefined())
@@ -165,14 +187,20 @@ Ilwis::Coordinate& Ilwis::Coordinate::operator/=(int v){
  * \return true if the points are at the same Coordinate.
  */
 bool Ilwis::Coordinate::operator==(const Ilwis::Coordinate& pnt) const {
+    if ( !pnt.isValid() && !this->isValid())
+        return true;
+
     if (!this->isValid() || !pnt.isValid())
         return false;
 
-    return pnt.x == this->x && pnt.y == this->y && pnt.z == this->z;
+    return (std::abs(pnt.x -  this->x) < crdDeltaLim) && (std::abs(pnt.y - this->y) < crdDeltaLim) && (std::abs(pnt.z - this->z)<crdDeltaLim);
 }
 
 bool Coordinate::operator ==(const geos::geom::Coordinate &pnt) const{
-    return pnt.x == this->x && pnt.y == this->y && (pnt.z == this->z || (std::isnan(pnt.z) && this->z == rUNDEF));
+    if (!this->isValid() && (pnt.x == rUNDEF || pnt.y == rUNDEF || std::isnan(pnt.x) || std::isnan(pnt.y)))
+        return true;
+
+    return (std::abs(pnt.x -  this->x) < crdDeltaLim) && (std::abs(pnt.y - this->y) < crdDeltaLim) && ((std::abs(pnt.z - this->z)<crdDeltaLim) || (std::isnan(pnt.z) && this->z == rUNDEF));
 }
 /*!
  compares the coordinates of 2 points to see if they are not equal. comparision with non valid points always leads to true
@@ -208,7 +236,9 @@ std::vector<double> Ilwis::operator-(const Ilwis::Coordinate& p1, const Ilwis::C
 Ilwis::Coordinate Ilwis::operator+(const Ilwis::Coordinate& p1, const std::vector<double>& vec) {
     if (p1.isValid() == false ||  vec.size() < 2 )
         return Ilwis::Coordinate();
-    Ilwis::Coordinate p3(p1.x + vec[0], p1.y + vec[1]) ;
+    Ilwis::Coordinate p3 = p1;
+    p3.x =p1.x + vec[0];
+    p3.y = p1.y + vec[1] ;
     if ( vec.size() >= 3 && p1.z != p1.undefined())
         p3.z = p1.z + vec[2];
 
@@ -218,7 +248,9 @@ Ilwis::Coordinate Ilwis::operator+(const Ilwis::Coordinate& p1, const std::vecto
 Ilwis::Coordinate Ilwis::operator-(const Ilwis::Coordinate& p1, const std::vector<double>& vec) {
     if (p1.isValid() == false ||  vec.size() < 2 )
         return Ilwis::Coordinate();
-    Ilwis::Coordinate p3(p1.x - vec[0], p1.y - vec[1]) ;
+    Ilwis::Coordinate p3 = p1;
+    p3.x =p1.x - vec[0];
+    p3.y = p1.y - vec[1] ;
 
     if ( vec.size() >= 3 && p1.z != p1.undefined())
         p3.z = p1.z - vec[2];
@@ -226,7 +258,11 @@ Ilwis::Coordinate Ilwis::operator-(const Ilwis::Coordinate& p1, const std::vecto
 }
 
 Ilwis::Coordinate Ilwis::operator*(const Ilwis::Coordinate& p1, double v) {
-    Ilwis::Coordinate p3(p1.x * v, p1.y * v) ;
+    if (p1.isValid() == false || v == rUNDEF )
+        return Ilwis::Coordinate();
+    Ilwis::Coordinate p3 = p1;
+    p3.x =p1.x * v;
+    p3.y = p1.y * v ;
     if ( p1.z != p1.undefined())
         p3.z = p3.z * v;
     return p3;
@@ -235,7 +271,9 @@ Ilwis::Coordinate Ilwis::operator*(const Ilwis::Coordinate& p1, double v) {
 Ilwis::Coordinate Ilwis::operator/(const Ilwis::Coordinate& p1, double v) {
     if (!p1.isValid() || v == 0)
         return Ilwis::Coordinate();
-    Ilwis::Coordinate p3(p1.x / v, p1.y / v) ;
+    Ilwis::Coordinate p3 = p1;
+    p3.x =p1.x / v;
+    p3.y = p1.y / v ;
     if ( p1.z != p1.undefined())
         p3.z = p3.z / v;
     return p3;

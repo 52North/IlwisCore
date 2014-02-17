@@ -36,7 +36,7 @@ public:
     Box(const QSize& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.width()-1, sz.height()-1),0){
     }
 
-    Box(const Size& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.xsize()-1, sz.ysize()-1,sz.zsize()-1)){
+    template<typename T> Box(const Size<T>& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.xsize()-1, sz.ysize()-1,sz.zsize()-1)){
     }
 
     /*!
@@ -116,8 +116,8 @@ public:
         return std::abs(this->min_corner().z - this->max_corner().z) + 1;
     }
 
-    Size size() const {
-        return Size(xlength(), ylength(), zlength());
+    template<typename T=quint32> Size<T> size() const {
+        return Size<T>(xlength(), ylength(), zlength());
     }
 
     bool is3D() const {
@@ -359,7 +359,7 @@ QString value(const QVariant& v) const{
 
 }
 
-void ensure(const Size& sz) {
+template<typename T> void ensure(const Size<T>& sz) {
     if ( xlength() > sz.xsize()) {
         this->max_corner().x  = sz.xsize() - 1 ;
     }

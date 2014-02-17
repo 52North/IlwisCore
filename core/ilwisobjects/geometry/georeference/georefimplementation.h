@@ -9,8 +9,8 @@ public:
     virtual ~GeoRefImplementation();
     ICoordinateSystem coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
-    Size size() const;
-    void size(const Size& sz);
+    Size<> size() const;
+    void size(const Size<>& sz);
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool compute();
@@ -18,7 +18,7 @@ public:
 protected:
 
     ICoordinateSystem _csy;
-    QSize _size;
+    Size<> _size;
     bool _centerOfPixel;
 };
 }

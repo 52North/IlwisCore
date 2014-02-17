@@ -187,7 +187,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         outputRaster->envelope(box);
     }
      if(indexindex != -1)  {
-         Size sz(outputRaster->size().xsize(),outputRaster->size().xsize(), 1);
+         Size<> sz(outputRaster->size().xsize(),outputRaster->size().xsize(), 1);
          outputRaster->size(sz);
      }
 

@@ -51,7 +51,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/featurecoverage.cpp \
     core/ilwisobjects/coverage/feature.cpp \
     core/catalog/filecatalogconnector.cpp \
-    core/util/size.cpp \
     core/ilwisobjects/coverage/grid.cpp \
     core/ilwisobjects/coverage/pixeliterator.cpp \
     core/util/numericrange.cpp \

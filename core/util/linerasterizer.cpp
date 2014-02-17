@@ -85,6 +85,6 @@ std::vector<Pixel> LineRasterizer::rasterize(const Coordinate &start, const Coor
     return result;
 }
 
-bool LineRasterizer::inBounds(const Pixeld& cur, const Size& size) const{
+bool LineRasterizer::inBounds(const Pixeld& cur, const Ilwis::Size<> &size) const{
     return !( cur.x < 0 || cur.y < 0 || cur.x >= size.xsize() || cur.y >= size.ysize());
 }

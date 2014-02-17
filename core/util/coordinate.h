@@ -32,8 +32,8 @@ public:
     Coordinate &operator -=(const std::vector<double> &vec);
     double distance(const Coordinate &crd);
     Ilwis::Coordinate &operator *=(const std::vector<double> &vec);
-    Ilwis::Coordinate &operator *=(int v);
-    Ilwis::Coordinate &operator /=(int v);
+    Ilwis::Coordinate &operator *=(double v);
+    Ilwis::Coordinate &operator /=(double v);
     bool operator ==(const Ilwis::Coordinate &pnt) const;
     bool operator ==(const geos::geom::Coordinate &pnt) const;
     bool operator !=(const Ilwis::Coordinate &pnt);

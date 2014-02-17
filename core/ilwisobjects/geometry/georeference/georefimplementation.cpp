@@ -30,12 +30,12 @@ ICoordinateSystem GeoRefImplementation::coordinateSystem() const
 }
 
 
-Size GeoRefImplementation::size() const
+Size<> GeoRefImplementation::size() const
 {
     return _size;
 }
 
-void GeoRefImplementation::size(const Size &sz)
+void GeoRefImplementation::size(const Size<> &sz)
 {
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0)

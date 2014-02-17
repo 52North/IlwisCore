@@ -95,7 +95,7 @@ public:
      * \sa Size
      * \return the size of this RasterCoverage
      */
-    Size size() const;
+    Size<> size() const;
 
     /*!
      * Assigns a new size to this RasterCoverage.<br>
@@ -107,7 +107,7 @@ public:
      * \sa Size
      * \param sz the new size, must always be positive or undefined
      */
-    void size(const Size& sz);
+    void size(const Size<>& sz);
 
     /*!
      * \brief copyBinary Copies the binary data of this RasterCoverage
@@ -180,7 +180,7 @@ protected:
 private:
     DataDefinition _datadefCoverage;
     IGeoReference _georef;
-    Size _size;
+    Size<> _size;
     std::mutex _mutex;
 };
 
