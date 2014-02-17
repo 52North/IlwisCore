@@ -89,7 +89,6 @@ public:
     }
 
     operator std::vector<CrdType> () {
-
         std::vector<CrdType> v {this->x, this->y, this->z};
         return v;
     }
