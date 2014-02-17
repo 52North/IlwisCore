@@ -778,6 +778,7 @@ bool Duration::isValid() const{
 //-------------------------------------------
 TimeInterval::TimeInterval() {
     _step = Duration(tUNDEF);
+    _vt = itTIME;
 }
 
 TimeInterval::TimeInterval(const Time& beg, const Time& en, const Duration& stp) :
