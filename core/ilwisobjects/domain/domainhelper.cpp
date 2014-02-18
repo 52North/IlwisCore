@@ -21,7 +21,9 @@ DomainHelper::DomainHelper()
 IDomain DomainHelper::create(Range* range) {
     IDomain domain;
     switch(range->valueType()){
-    case itNUMBER:
+    case itINTEGER:
+    case itFLOAT:
+    case itDOUBLE:
     case itTIME:
         domain.set(new NumericDomain(static_cast<NumericRange *>(range)));break;
     case itTHEMATICITEM:
