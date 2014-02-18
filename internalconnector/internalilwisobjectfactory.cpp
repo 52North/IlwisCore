@@ -350,7 +350,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                 if ( fmod(step,1.0) == 0 && step != 0)
                                     dv->range(new TimeInterval(Time(vmin), Time(vmax)));
                                 else
-                                    dv->range(new NumericRange(Time(vmin), Time(vmax),Duration(QString("%1D").arg(step))));
+                                    dv->range(new TimeInterval(Time(vmin), Time(vmax),Duration(QString("%1D").arg(step))));
                             }else {
                                 if ( fmod(step,1.0) == 0 && step != 0)
                                     dv->range(new NumericRange(vmin, vmax,1));
