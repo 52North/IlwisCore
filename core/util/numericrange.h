@@ -42,7 +42,9 @@ public:
             return v >= _min && v <= _max;
         return v > _min && v < _max;
     }
-    bool contains(const QString& value, bool inclusive = true) const;
+
+
+    bool contains(const QVariant &value, bool inclusive = true) const;
     bool contains(SPRange rng, bool inclusive=true) const;
     bool contains(NumericRange *rng, bool inclusive=true) const;
     double max() const;

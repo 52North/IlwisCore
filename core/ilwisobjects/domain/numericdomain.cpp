@@ -61,7 +61,7 @@ void NumericDomain::setParent(const IDomain &dm)
     if ( _range.isNull()) {
         return;
     }
-    if ( dm->ilwisType() != itNUMERICDOMAIN || dm->valueType() != itNUMBER)
+    if ( dm->ilwisType() != itNUMERICDOMAIN || hasType(dm->valueType(), itNUMBER) == false)
         return;
     SPNumericRange numrange = dm->range2range<NumericRange>();
     if ( !numrange->contains(_range))
@@ -101,22 +101,15 @@ SPRange NumericDomain::getRange() const
 
 QString NumericDomain::value(const QVariant &v) const
 {
-    //TODO: formatting according to domain(step size and valuetype, other specifiers belong at UI level).
-
-    return v.toString();
+    return _range->value(v);
 }
 
 Domain::Containement NumericDomain::contains(const QVariant &value) const
 {
     if ( !_range.isNull()) {
-        bool ok;
-        double v = value.toDouble(&ok);
-        if (!ok)
-            return Domain::cNONE;
-        QSharedPointer<NumericRange> vr(_range.dynamicCast<NumericRange>());
-        if ( !vr.isNull() && vr->contains(v))
+        if ( !_range.isNull() && _range->contains(value))
             return Domain::cSELF;
-        if (!ok && parent().isValid())
+        if (parent().isValid())
             if (parent()->contains(value) == Domain::cSELF)
                 return Domain::cPARENT;
     }

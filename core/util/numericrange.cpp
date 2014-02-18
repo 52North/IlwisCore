@@ -140,7 +140,7 @@ void NumericRange::set(const NumericRange& vr)
     max(vr._max);
 }
 
-bool NumericRange::contains(const QString &value, bool inclusive) const
+bool NumericRange::contains(const QVariant &value, bool inclusive) const
 {
     bool ok;
     double v = value.toDouble(&ok);
