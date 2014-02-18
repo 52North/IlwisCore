@@ -10,3 +10,4 @@ NDVI,-1,1,0.01,0,1,,min1to1,Normalized difference vegetation Index
 percentage,0,100,0.01,0,0,,value,Percentage
 boolean,0,2,1,1,1,,value,Boolean domain with undefs
 integer,-1.00E+15,1.00E+15,1,0,0,,value,Generic value domain for with step size 1
+time,-1.00E+15,1.00E+15,0,0,0,Days,value,Generic time domain
