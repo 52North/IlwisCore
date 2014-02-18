@@ -25,6 +25,7 @@ public:
      */
     enum Mode{mUNKNOWN, mDATE,mDATETIME,mTIME,mDURATION};
 
+    Time();
     /**
      * Creates a new time. <br>
      * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
@@ -37,7 +38,7 @@ public:
      * @param min the amount of minutes of this time must be on [0,60]
      * @param sec the amount of seconds of this time must be on [0,60]
      */
-    Time(int yr=-4713, int mnth=1, int dy=1, int hr=0, int min=0, double sec=0);
+    Time(int yr, int mnth=1, int dy=1, int hr=0, int min=0, double sec=0);
 
     /**
      * @brief Time

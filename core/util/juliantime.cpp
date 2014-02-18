@@ -11,6 +11,14 @@
 
 using namespace Ilwis;
 
+const double minDeltaTime = 1e-8;
+
+Time::Time()
+{
+    _julianday = rUNDEF;
+    _valid = false;
+}
+
 Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
 {
     _valid = true;
@@ -155,18 +163,18 @@ Time& Time::operator=(double t) {
 
 bool Time::isLeapYear(int year)  const{
     if ( year == iUNDEF && abs(_julianday) > NOTIME)
-        return false;
+         return false;
 
-    int month, day, hour, minutes;
-    double seconds;
+     int month, day, hour, minutes;
+     double seconds;
 
-    if ( year == iUNDEF) {
-        julianToGregorian(year,month,day,hour,minutes,seconds);
-    }
-    if((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
-        return true; /* leap */
-    else
-        return false; /* no leap */
+     if ( year == iUNDEF) {
+         julianToGregorian(year,month,day,hour,minutes,seconds);
+     }
+     if((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+         return true; /* leap */
+     else
+         return false; /* no leap */
 }
 
 double Time::get(TimePart part) const{
@@ -194,20 +202,20 @@ double Time::get(TimePart part) const{
     if ( part == tpDAYOFMONTH)
         return day;
     if ( part == tpJULIANDAY) {
-        int tempYear = year;
-        year = isLeapYear() ? 1980 : 1981;
-        time_t p = toTime_t();
-        struct tm *time = gmtime(&p);
-        year = tempYear;
-        return time->tm_wday;
+        QDate date(year,month,day);
+        return date.toJulianDay();
     }
     if ( part == tpDAYOFTHEWEEK) {
-        int tempYear = year;
-        year = isLeapYear() ? 1980 : 1981;
-        time_t p = toTime_t();
-        struct tm *time = gmtime(&p);
-        year = tempYear;
-        return time->tm_yday;
+        QDate date(year,month,day);
+        return date.dayOfWeek();
+    }
+    if ( part == tpDAYOFTHEYEAR) {
+        QDate date(year,month,day);
+        return date.dayOfYear();
+    }
+    if ( part == tpWEEKNUMBER) {
+        QDate date(year,month,day);
+        return date.weekNumber();
     }
     if ( part == tpHOUR)
         return hour;
@@ -265,7 +273,7 @@ double Time::gregorianToJulian(int year, int month, int day, int hour, int minut
         jul += 2-ja+tolong(0.25*ja);
     }
     double fract = (double)hour/24.0 + (double)minutes/(24.0*60.0) + seconds / (24.0*60.0*60);
-    return jul + fract;
+    return jul + fract - 0.5;
 }
 
 void Time::julianToGregorian(int& year, int& month, int& day, int& hour, int& minutes, double& seconds) const{
@@ -288,7 +296,7 @@ void Time::julianToGregorian(int& year, int& month, int& day, int& hour, int& mi
         return;
 
     double ja;
-    double julian = tolong(_julianday);
+    double julian = tolong(_julianday + 0.5);
     double fract = _julianday - julian;
     if (julian > JGREG) {
         int jalpha = tolong(((julian-1867216)-0.25)/36524.25);
@@ -303,16 +311,17 @@ void Time::julianToGregorian(int& year, int& month, int& day, int& hour, int& mi
     if (month >12) month -= 12;
     year = jc-4715;
     if (month > 2) --year;
-    double hr = fract * 24.0;
-    double delta =  hr - int(hr + 0.5);
-    hour = abs(delta) < 1e-6 ? int(hr + 0.5) : hr;
+    double hr = 12.0 + fract * 24.0;
+    double delta =  hr - int(hr);
+    hour = std::abs(delta) < 1e-6 ? int(hr + 0.5 ) : hr;
     double min = (hr - hour) * 60.0;
-    delta = min - int(min + 0.5);
-    minutes = abs(delta)< 1e-6 ? int(min + 0.5) : min;
+    delta = min - int(min);
+    minutes = std::abs(delta)< 1e-6 ? int(min + 0.5) : min;
     seconds = (min - minutes) * 60.0;
 
-}
 
+
+}
 
 void Time::setValue(const QString& isoQString) {
     if ( isoQString == "?") {
@@ -373,6 +382,9 @@ void Time::parseYearPart(const QString& yearpart, int& year, int& month, int& da
         }
         if ( parts.size() > 2)
             day = parts[2].toLong();
+    }
+    if ( month > 12 || day >31){
+        _valid = false;
     }
 }
 
@@ -438,10 +450,11 @@ void Time::parseIsoString(const QString& isoQString, int& year, int& month, int&
         parseDayPart(isoQString.mid(8,6),hours, minutes, seconds);
     } else{
         QString yearpart = isoQString.split("T").front();
-        QString daypart = isoQString.split("T").front().split("Z").front();
-        if ( yearpart != "")
+
+        QString daypart = isoQString.split("T").back().split("Z").front();
+        if ( yearpart != "" && yearpart.indexOf(":") == -1)
             parseYearPart(yearpart,year, month,day);
-        if ( daypart != "")
+        if ( daypart != "" && ( isoQString.indexOf("T") >= 0 || isoQString.size() > 8))
             parseDayPart(daypart, hours, minutes, seconds);
     }
 }
@@ -459,10 +472,15 @@ bool Time::operator >(const Time& time) const{
     return _julianday > (double)time;
 }
 bool Time::operator ==(const Time& time) const{
+    if (!_valid && !time._valid)
+        return true;
+    if ( _julianday == rUNDEF && time._julianday == rUNDEF)
+        return true;
+
     if ( _julianday == rUNDEF)
         return false;
 
-    return _julianday == (double)time;
+    return std::abs(_julianday - (double)time) <= minDeltaTime;
 }
 
 bool Time::operator !=(const Time& time) const{
@@ -776,7 +794,7 @@ bool Duration::isValid() const{
 
 
 //-------------------------------------------
-TimeInterval::TimeInterval() {
+TimeInterval::TimeInterval() : NumericRange(-BIGTIME, BIGTIME,1){
     _step = Duration(tUNDEF);
     _vt = itTIME;
 }
