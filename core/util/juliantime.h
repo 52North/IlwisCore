@@ -59,11 +59,11 @@ public:
     Time(const char * isostring);
 
     /**
-     * Creates a new time from an amount of seconds from  0-0-0000.
+     * Creates a new time from an amount of seconds from  -4712
      *
-     * @param secondssince0 the amount of seconds after 0-0-0000
+     * @param days the amount of days after -4712
      */
-    Time(double secondssince0);
+    Time(double jd, Mode m =mDATETIME);
 
     /**
      * Creates a new Time from a QDateTime object. <br>
@@ -72,6 +72,7 @@ public:
      * @param time QDateTime that should be used to create this Time
      */
     Time(const QDateTime &time);
+    Time(const Time& time);
 
     /**
      * Deconstructor
@@ -253,7 +254,7 @@ public:
      * @param mode
      * @return
      */
-    virtual QString toString(bool local= true, Time::Mode mode=Time::mDATETIME) const;
+    virtual QString toString(bool local= true, Time::Mode mode=Time::mUNKNOWN) const;
 
     /**
      * @brief isValid
@@ -265,6 +266,8 @@ public:
      * @brief now
      * @return
      */
+    Time::Mode mode() const;
+
     static Time now();
 
 protected:
@@ -280,13 +283,14 @@ protected:
 
     double _julianday;
     bool _valid;
+    Time::Mode _mode = mDATETIME;
 };
 
 class KERNELSHARED_EXPORT Duration : public Time {
 public:
-    Duration(const QString& step="");
-    Duration(double r);
-    QString toString(bool local, Time::Mode mode) const;
+    Duration(const QString& step="",Time::Mode mode=Time::mDURATION);
+    Duration(double r,Time::Mode mode=Time::mDURATION);
+    QString toString(bool local, Time::Mode mode=Time::mDURATION) const;
     bool isValid() const;
     double get(TimePart part) const;
 };
@@ -303,10 +307,14 @@ public:
     void begin(const Time& t) ;
     void end(const Time& t);
     Duration getStep() const { return _step;}
-    QString toString(bool local=true, Time::Mode mode=Time::mDATETIME);
+    QString toString(bool local, Time::Mode mode) const;
     bool contains(const QString& value, bool inclusive = true) const;
     bool contains(const Time& value, bool inclusive = true) const;
+    bool contains(const QVariant& value, bool inclusive = true) const;
     QString value(const QVariant& v) const;
+
+    Range *clone() const ;
+    IlwisTypes valueType() const;
 
 private:
     Duration _step;
