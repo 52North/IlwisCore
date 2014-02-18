@@ -24,14 +24,14 @@ IndexedIdentifierRange::IndexedIdentifierRange(const QString &prefix, quint32 co
     add(new IndexedIdentifier(prefix,0, count));
 }
 
-bool IndexedIdentifierRange::contains(const QString& item , bool ) const{
+bool IndexedIdentifierRange::contains(const QVariant &item , bool ) const{
     if (_start->prefix() != "") {
-        if ( _start->prefix() != item.left(_start->prefix().size()))
+        if ( _start->prefix() != item.toString().left(_start->prefix().size()))
             return false;
     }
-    int index = item.indexOf("_");
+    int index = item.toString().indexOf("_");
     if ( index != -1) {
-        QString num = item.mid(index + 1);
+        QString num = item.toString().mid(index + 1);
         bool ok;
         quint32 itemIndex = num.toULong(&ok);
         return ok && itemIndex < _count;
@@ -180,8 +180,9 @@ NamedIdentifierRange::~NamedIdentifierRange()
 {
 }
 
-bool NamedIdentifierRange::contains(const QString& name, bool ) const
+bool NamedIdentifierRange::contains(const QVariant &v, bool ) const
 {
+    QString name = v.toString();
     if ( name == "" || name == "?")
         return false;
 

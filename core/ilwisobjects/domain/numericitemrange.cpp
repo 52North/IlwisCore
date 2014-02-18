@@ -109,13 +109,13 @@ bool NumericItemRange::validNumber(QString value) const{
 
 }
 
-bool NumericItemRange::contains(const QString &name, bool ) const
+bool NumericItemRange::contains(const QVariant &name, bool ) const
 {
-    QStringList items = name.split(";");
+    QStringList items = name.toString().split(";");
     for(const QString& item : items) {
         QStringList parts = item.split(" ");
         if ( parts.size() == 0 || parts.size() > 3){
-            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), name);
+            return ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), name.toString());
         }
         bool ok = validNumber(parts[0]);
         if (parts.size() > 1)

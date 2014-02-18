@@ -41,7 +41,7 @@ public:
     virtual double index(double v) const;
 
     //@override
-    bool contains(const QString& name, bool inclusive = true) const ;
+    bool contains(const QVariant& name, bool inclusive = true) const ;
 
     //@override
     bool isValid() const;

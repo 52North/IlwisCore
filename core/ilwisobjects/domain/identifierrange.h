@@ -38,7 +38,7 @@ public:
      * @param inclusive empty parameter
      * @return true if the item is contained in this IndexedIdentifierRange
      */
-    bool contains(const QString& name, bool inclusive = true) const;
+    bool contains(const QVariant& name, bool inclusive = true) const;
 
     /**
      * Checks if this IndexedIdentifierRange is valid.
@@ -194,7 +194,7 @@ public:
      * @param inclusive empty parameter
      * @return true when the identifier is in the range
      */
-    bool contains(const QString& name, bool inclusive = true) const;
+    bool contains(const QVariant& name, bool inclusive = true) const;
 
     /**
      * Checks if this NamedIdentifierRange is valid

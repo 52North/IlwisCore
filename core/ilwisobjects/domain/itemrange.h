@@ -68,7 +68,7 @@ public:
      * @param inclusive template parameter
      * @return true if this range contains the item
      */
-    virtual bool contains(const QString& name, bool inclusive = true) const = 0;
+    virtual bool contains(const QVariant& name, bool inclusive = true) const = 0;
 
     /**
      * Checks if the ItemRange contains a certain range of items.<br>

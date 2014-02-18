@@ -53,7 +53,7 @@ public:
 
     virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
 
-    virtual bool contains(const QString& value, bool inclusive = true) const = 0;
+    virtual bool contains(const QVariant& v, bool inclusive = true) const = 0;
 
     virtual bool isContinuous() const;
     void interpolation(const QString& ip);
