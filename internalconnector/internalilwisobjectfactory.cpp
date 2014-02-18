@@ -11,6 +11,7 @@
 #include "raster.h"
 #include "numericrange.h"
 #include "numericdomain.h"
+#include "juliantime.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
@@ -344,11 +345,18 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                             double step = rec.field("resolution").value().toDouble();
                             int range_strict = rec.field("range_strict").value().toInt();
                             // TODO:, implement unit stuff
-                            //QString unit = rec.field("unit").value().toString();
-                            if ( fmod(step,1.0) == 0 && step != 0)
-                                dv->range(new NumericRange(vmin, vmax,1));
-                            else
-                                dv->range(new NumericRange(vmin, vmax));
+                            QString unit = rec.field("unit").value().toString();
+                            if (unit == "Days"){
+                                if ( fmod(step,1.0) == 0 && step != 0)
+                                    dv->range(new TimeInterval(Time(vmin), Time(vmax)));
+                                else
+                                    dv->range(new NumericRange(Time(vmin), Time(vmax),Duration(QString("%1D").arg(step))));
+                            }else {
+                                if ( fmod(step,1.0) == 0 && step != 0)
+                                    dv->range(new NumericRange(vmin, vmax,1));
+                                else
+                                    dv->range(new NumericRange(vmin, vmax));
+                            }
 
                             dv->setStrict(range_strict ? true : false);
                             QString parent = rec.field("parent").value().toString();
@@ -396,6 +404,8 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                 res.setIlwisType(itITEMDOMAIN);
                 return new ItemDomain<NumericItem>(res);
             }
+        } if ( hasType(resource.ilwisType(), itNUMERICDOMAIN)){
+            return new NumericDomain(resource);
         }
     }
 
