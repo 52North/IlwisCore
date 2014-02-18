@@ -135,7 +135,6 @@ Time::operator QDateTime() const{
     return dt;
 }
 time_t Time::toTime_t() const{
-    struct tm time;
     if ( abs(_julianday) > NOTIME) {
         return (__int64) iUNDEF;
     }
@@ -143,13 +142,9 @@ time_t Time::toTime_t() const{
     double seconds;
     julianToGregorian(year,month,day,hour,minutes,seconds);
 
-    time.tm_year = year - 1900;
-    time.tm_mon  = month ;
-    time.tm_mday = day;
-    time.tm_hour = hour;
-    time.tm_min = minutes;
-    time.tm_sec = round(seconds);
-    return mktime(&time);
+    QDateTime t(QDate(year,month,day),QTime(hour,minutes,seconds));
+
+    return t.toTime_t();
 }
 
 Time::operator double() const{
@@ -226,17 +221,17 @@ double Time::get(TimePart part) const{
     return tUNDEF;
 }
 
-Time Time::operator-(const Time& time) const {
+Duration Time::operator-(const Time& time) const {
     if ( _julianday == rUNDEF)
-        return tUNDEF;
+        return Duration();
     if ( abs(_julianday) > NOTIME)
         return _julianday;
     double t1 = time;
     double t2 = *this;
-    return Time(t2 - t1);
+    return Duration(t2 - t1);
 }
 
-Time Time::operator+(const Time& time) const {
+Time Time::operator+(const Duration& time) const {
     if ( _julianday == rUNDEF)
         return tUNDEF;
 
@@ -454,7 +449,7 @@ void Time::parseIsoString(const QString& isoQString, int& year, int& month, int&
         QString daypart = isoQString.split("T").back().split("Z").front();
         if ( yearpart != "" && yearpart.indexOf(":") == -1)
             parseYearPart(yearpart,year, month,day);
-        if ( daypart != "" && ( isoQString.indexOf("T") >= 0 || isoQString.size() > 8))
+        if ( daypart != "" && ( isoQString.indexOf("T") >= 0 || isoQString.size() >= 8))
             parseDayPart(daypart, hours, minutes, seconds);
     }
 }
@@ -654,47 +649,37 @@ Time Time::now() {
 //-------------------------------------------
 Duration::Duration(const QString& duration) {
     QString definition = duration;
-    definition.toLower();
     QHash<QString, double> values;
-    values["y"] = -4713;
-    values["m"] = 1.0;
-    values["d"] = 1.0;
+    values["Y"] = -4713;
+    values["M"] = 1.0;
+    values["D"] = 1.0;
     values["h"] = 0.0;
-    values["min"] = 0.0;
+    values["m"] = 0.0;
     values["s"] = 0.0;
 
     QString v;
     double rest = 0;
-    bool timePart = false;
     for(int i=0; i < definition.size(); ++i) {
         char c = definition[i].toLatin1();
         if ( (c >= QLatin1Char('0') && c <= '9') || c == '.')
             v+=c;
-        else if ( c == 'y' || c == 'd' || c == 'h' || c == 's') {
+        else if ( c == 'Y' || c == 'M'|| c == 'D' || c == 'h' || c == 'm' ||c == 's') {
             double value = v.toDouble();
             values[QString(c)] += value;
             v = "";
         }
-        else if ( c == 't') {
-            timePart = true;
-            v = "";
-        } else if ( c == 'm' && timePart ) {
-            values["min"] += v.toDouble();
-            v = "";
-        }
-        else if ( c == 'm') {
-            values["m"] += v.toDouble();
+        else if ( c == 'T') {
             v = "";
         }
     }
     int year, month, day, hour, minute;
     double seconds;
-    year = values["y"];
+    year = values["Y"];
     seconds = values["s"];
-    minute = values["min"];
-    hour = values["h"];
-    day = values["d"];
-    month = values["m"];
+    minute = values["m"];
+    hour = values["h"] + 12;
+    day = values["D"];
+    month = values["M"];
 
     if ( seconds >= 60) {
         minute += ((int)seconds) % 60;

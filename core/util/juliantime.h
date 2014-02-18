@@ -4,6 +4,8 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+
+class Duration;
 /*!
  * \brief The Time class  utility class that handles all time related things within Ilwis
  *
@@ -18,7 +20,7 @@ public:
     /**
      * @brief The TimePart enum
      */
-    enum TimePart{tpYEAR, tpMONTH, tpDAYOFMONTH, tpJULIANDAY, tpDAYOFTHEWEEK, tpHOUR, tpMINUTE, tpSECOND, tpDATE, tpDAYTIME};
+    enum TimePart{tpYEAR, tpMONTH, tpDAYOFMONTH, tpJULIANDAY, tpDAYOFTHEWEEK, tpDAYOFTHEYEAR, tpWEEKNUMBER, tpHOUR, tpMINUTE, tpSECOND, tpDATE, tpDAYTIME};
 
     /**
      * @brief The Mode enum
@@ -137,7 +139,7 @@ public:
      * @param time the time that should be substracted from this Time object
      * @return this after substraction
      */
-    Time operator-(const Time& time) const;
+    Duration operator-(const Time& time) const;
 
     /**
      * Override of the + operator adds another time to this Time. <br>
@@ -148,7 +150,7 @@ public:
      * @param time the time that should be added from this Time object
      * @return this after substraction
      */
-    Time operator+(const Time& time) const;
+    Time operator+(const Duration& duration) const;
 
     /**
      * Override of the < operator compares this time with another. <br>
@@ -311,7 +313,7 @@ private:
 
 };
 
-#define tUNDEF Time(0)
+#define tUNDEF Time()
 
 }
 
