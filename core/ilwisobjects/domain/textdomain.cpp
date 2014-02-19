@@ -20,7 +20,7 @@ IlwisTypes TextDomain::valueType() const
     return itSTRING;
 }
 
-QString TextDomain::value(const QVariant &v) const
+QVariant TextDomain::impliedValue(const QVariant &v) const
 {
     return v.toString();
 }

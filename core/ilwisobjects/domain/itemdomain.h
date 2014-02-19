@@ -104,12 +104,12 @@ public:
      * \param 0 based index, if the index is invalid sUNDEF will be returned
      * \return the string representation or sUNDEDF in case no items are defined
      */
-    QString value(const QVariant& v) const {
+    QVariant impliedValue(const QVariant& v) const {
         if (_range.isNull()) {
             ERROR1(ERR_NO_INITIALIZED_1, name());
             return sUNDEF;
         }
-        return _range->value(v);
+        return _range->impliedValue(v);
     }
 
     /*!

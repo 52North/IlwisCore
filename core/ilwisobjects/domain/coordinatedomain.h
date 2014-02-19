@@ -59,7 +59,7 @@ public:
      * \param v The coordinate in Qvariant form
      * \return The coordinate in String form
      */
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
 
     //@override
     IlwisTypes valueType() const;

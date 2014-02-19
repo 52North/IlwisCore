@@ -878,7 +878,7 @@ bool TimeInterval::contains(const Time &value, bool inclusive) const
     return NumericRange::contains(value, inclusive);
 }
 
-QString TimeInterval::value(const QVariant &v) const
+QVariant TimeInterval::impliedValue(const QVariant &v) const
 {
     QString type = v.typeName();
     if ( type != "Ilwis::Time"){

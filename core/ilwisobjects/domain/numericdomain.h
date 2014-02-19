@@ -44,7 +44,7 @@ public:
      * still has to been finished, not yet done
      * \return QVariant.toString
      */
-    QString value(const QVariant&) const;
+    QVariant impliedValue(const QVariant&) const;
 
     /*!
      * Checks if the value is contained in either this domain or the parentdomain.

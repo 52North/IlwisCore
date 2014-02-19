@@ -110,7 +110,7 @@ public:
      * @param v the QVariant to be converted
      * @return the value in string form
      */
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
 
     /**
      * Creates and returns a String representation of this IndexedIdentifierRange
@@ -237,7 +237,7 @@ public:
      * @param v the QVariant with the index
      * @return the value at the index or sUNDEF
      */
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
 
     /**
      * override of the << operator, the << operator now adds the string as a NamedIdentifier into this range

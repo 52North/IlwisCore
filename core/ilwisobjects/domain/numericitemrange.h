@@ -16,7 +16,7 @@ public:
     NumericItemRange();
 
     //@override
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
 
     //@override
     quint32 count() const ;

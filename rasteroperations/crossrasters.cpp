@@ -72,8 +72,8 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
         quint32 v1 = combo  - v2 * SHIFTER;
-        QString elem1 = _inputRaster1->datadef().domain()->value(v1);
-        QString elem2 = _inputRaster2->datadef().domain()->value(v2);
+        QString elem1 = _inputRaster1->datadef().domain()->impliedValue(v1).toString();
+        QString elem2 = _inputRaster2->datadef().domain()->impliedValue(v2).toString();
         QString id = QString("%1 * %2").arg(elem1).arg(elem2);;
         switch (_undefhandling){
         case uhIgnoreUndef:
@@ -126,7 +126,8 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
         quint32 v1 = combo  - v2 * SHIFTER;
-        QString id = QString("%1 * %2").arg(_inputRaster1->datadef().domain()->value(v1)).arg(_inputRaster2->datadef().domain()->value(v2));
+        QString id = QString("%1 * %2").arg(_inputRaster1->datadef().domain()->impliedValue(v1).toString()).
+                arg(_inputRaster2->datadef().domain()->impliedValue(v2).toString());
         *idrange << id;
         _outputTable->setCell(0,record,QVariant(record));
         _outputTable->setCell(1,record,QVariant(v1));

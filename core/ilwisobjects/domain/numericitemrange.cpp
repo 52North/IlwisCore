@@ -19,7 +19,7 @@ NumericItemRange::NumericItemRange()
     _vt = itNUMERICITEM;
 }
 
-QString NumericItemRange::value(const QVariant& v) const
+QVariant NumericItemRange::impliedValue(const QVariant& v) const
 {
     bool ok;
     quint32 index = v.toUInt(&ok);

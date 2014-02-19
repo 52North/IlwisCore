@@ -341,7 +341,7 @@ bool operator!=(const Box<PointType>& box ) const {
     return !(operator==(box));
 }
 
-QString value(const QVariant& v) const{
+QVariant impliedValue(const QVariant& v) const{
     QString type = v.typeName();
     bool ok = type == "Ilwis::Box<Pixel>" || type == "Ilwis::Box<Coordinate>" ||
             type == "Ilwis::Box<Pixeld>" ;

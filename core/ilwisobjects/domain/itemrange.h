@@ -23,7 +23,7 @@ public:
      * @param v The QVariant you want translated
      * @return a string with the value
      */
-    virtual QString value(const QVariant& v) const = 0;
+    virtual QVariant impliedValue(const QVariant& v) const = 0;
 
     /**
      * Query for the amount of items in this range.<br>

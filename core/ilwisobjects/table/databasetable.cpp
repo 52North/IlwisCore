@@ -209,7 +209,7 @@ QVariant DatabaseTable::cell(const QString& col, quint32 rec, bool asRaw) const{
             }
             if ( !asRaw) {
                 ColumnDefinition coldef = columndefinition(index);
-                return coldef.datadef().domain()->value(value.toInt());
+                return coldef.datadef().domain()->impliedValue(value.toInt());
             }
             return value;
 

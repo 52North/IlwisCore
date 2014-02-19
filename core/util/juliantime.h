@@ -311,7 +311,7 @@ public:
     bool contains(const QString& value, bool inclusive = true) const;
     bool contains(const Time& value, bool inclusive = true) const;
     bool contains(const QVariant& value, bool inclusive = true) const;
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
 
     Range *clone() const ;
     IlwisTypes valueType() const;

@@ -80,7 +80,7 @@ IlwisTypes CoordinateDomain::valueType() const
 }
 
 
-QString CoordinateDomain::value(const QVariant &v) const
+QVariant CoordinateDomain::impliedValue(const QVariant &v) const
 {
     Coordinate crd = v.value<Coordinate>();
     QString c = QString("%1 %2 %3").arg(crd.x, 0, 'g').arg(crd.y, 0, 'g').arg(crd.z, 0, 'g');

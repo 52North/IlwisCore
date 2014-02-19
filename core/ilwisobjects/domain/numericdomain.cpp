@@ -99,9 +99,13 @@ SPRange NumericDomain::getRange() const
     return _range;
 }
 
-QString NumericDomain::value(const QVariant &v) const
+QVariant NumericDomain::impliedValue(const QVariant &v) const
 {
-    return _range->value(v);
+    if ( !_range.isNull()){
+        return _range->impliedValue(v);
+    }
+    ERROR2(ERR_INVALID_PROPERTY_FOR_2,"range", this->name());
+    return QVariant();
 }
 
 Domain::Containement NumericDomain::contains(const QVariant &value) const

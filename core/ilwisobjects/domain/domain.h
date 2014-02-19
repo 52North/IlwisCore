@@ -66,7 +66,7 @@ public:
     /*!
      * translates a qvariant into a qstring based on the domain
      */
-    virtual QString value(const QVariant& ) const = 0;
+    virtual QVariant impliedValue(const QVariant& v) const { return v ;}
 
     /*!
      * returns the parent domain of the domain. This maybe an invalid domain when no parent is set. The child domain specializes (ad/or adds)<br>
@@ -94,7 +94,7 @@ public:
      * \param value the value to check
      * \return depends on the implementation of the subclass
      */
-    virtual Containement contains(const QVariant& value) const = 0;
+    virtual Containement contains(const QVariant& impliedValue) const = 0;
 
     /*!
      * Checks if the Domain is compatible with another domain<br>
@@ -150,7 +150,7 @@ public:
      * \sa IlwisObject
      * \return the corresponding ilwis type. This maybe unknown if the variant contains a type that is not part of the base system of Ilwis
      */
-    static IlwisTypes ilwType(const QString &value);
+    static IlwisTypes ilwType(const QString &impliedValue);
 
 protected:
     void addChildDomain(quint64 idchild);

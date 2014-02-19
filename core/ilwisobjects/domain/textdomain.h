@@ -29,7 +29,7 @@ public:
      * \param v The variant of which you want the value
      * \return the value of v
      */
-    virtual QString value(const QVariant& v) const;
+    virtual QVariant impliedValue(const QVariant& v) const;
 
     /*!
      * Checks if this domain contains a certain value.<br>

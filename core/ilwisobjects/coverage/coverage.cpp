@@ -115,7 +115,7 @@ QVariant Coverage::value(const QString &colName, quint32 itemid, qint32 index)
     ColumnDefinition coldef = tbl->columndefinition(colName);
     if ( !coldef.isValid())
         return QVariant();
-    return coldef.datadef().domain()->value(itemid);
+    return coldef.datadef().domain()->impliedValue(itemid);
 }
 
 Resource Coverage::source(int mode) const

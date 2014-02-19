@@ -47,7 +47,7 @@ bool IndexedIdentifierRange::operator==(const IndexedIdentifierRange& range){
     return _start == range._start;
 }
 
-QString IndexedIdentifierRange::value(const QVariant &v) const{
+QVariant IndexedIdentifierRange::impliedValue(const QVariant &v) const{
     bool ok;
     quint32 index = v.toUInt(&ok);
     if (!ok){
@@ -281,7 +281,7 @@ void NamedIdentifierRange::remove(const QString &name)
     return ;
 }
 
-QString NamedIdentifierRange::value(const QVariant& v) const
+QVariant NamedIdentifierRange::impliedValue(const QVariant& v) const
 {
     bool ok;
     quint32 index = v.toUInt(&ok);
