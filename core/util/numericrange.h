@@ -63,7 +63,7 @@ public:
     bool operator>(const NumericRange& vr);
 
     QString toString() const ;
-    QString value(const QVariant& v) const;
+    QVariant impliedValue(const QVariant& v) const;
     void set(const NumericRange& vr);
     double ensure(double v, bool inclusive=true) const
     {
