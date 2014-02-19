@@ -14,12 +14,14 @@ public:
     static QVariantList getFormatProperties(FormatProperties, IlwisTypes types, QString connector=sUNDEF, QString code=sUNDEF);
     static bool supports(FormatProperties fp, IlwisTypes tp, const QVariant& prop, const QString& connector=sUNDEF);
     static bool setFormatInfo(const QString &path, const QString connector);
+    static std::multimap<QString, DataFormat> getSelectedBy(FormatProperties prop, const QString &selection);
 
 private:
     QVariant set(const QVariant& original) const;
     std::map<FormatProperties, QVariant> _properties;
     bool _isValid = false;
 
+    void setProps(QSqlQuery &db, const QString &code);
 };
 }
 

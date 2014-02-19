@@ -20,17 +20,56 @@ DataFormat::DataFormat(const QString &code, const QString connector)
         stmt += " and connector='" + connector + "'";
 
     if (db.exec(stmt) && db.next()) {
-        _properties[fpCODE] = code;
-        _properties[fpNAME] = set(db.value("name").toString());
-        _properties[fpDESCRIPTION] = set(db.value("description").toString());
-        _properties[fpEXTENSION] = set(db.value("extension"));
-        _properties[fpCONTAINER] = set(db.value("container").toString());
-        _properties[fpCONNECTOR] = set(db.value("connector").toString());
-        _properties[fpDATATYPE] = set(db.value("datatype").toULongLong());
-        _properties[fpREADWRITE] = set(db.value("readwrite").toString());
-        _isValid = true;
+
     }
 
+}
+
+void DataFormat::setProps(QSqlQuery& db, const QString &code){
+    _properties[fpCODE] = code;
+    _properties[fpNAME] = set(db.value("name").toString());
+    _properties[fpDESCRIPTION] = set(db.value("description").toString());
+    _properties[fpEXTENSION] = set(db.value("extension"));
+    //_properties[fpCONTAINER] = set(db.value("container").toString());
+    _properties[fpCONNECTOR] = set(db.value("connector").toString());
+    _properties[fpDATATYPE] = set(db.value("datatype").toULongLong());
+    _properties[fpREADWRITE] = set(db.value("readwrite").toString());
+    _isValid = true;
+}
+
+std::multimap<QString, DataFormat> DataFormat::getSelectedBy(FormatProperties prop, const QString& selection){
+    QString criterium;
+    QSqlQuery db(kernel()->database());
+    QString stmt = QString("select * from dataformats where %1").arg(selection);
+    std::multimap<QString, DataFormat> formats;
+    if (db.exec(stmt)) {
+        while(db.next()){
+            QString code = db.value("code").toString();
+            switch (prop){
+            case fpCODE:
+                criterium = code; break;
+            case fpNAME:
+                criterium = db.value("name").toString(); break;
+            case fpEXTENSION:
+                criterium = db.value("extension").toString(); break;
+            case fpCONNECTOR:
+                criterium = db.value("connector").toString(); break;
+//            case fpCONTAINER:
+//                criterium = db.value("container").toString(); break;
+            default:
+                ERROR2(ERR_OPERATION_NOTSUPPORTED2,"Property", "format selection");
+                return std::multimap<QString, DataFormat>();
+            }
+            if ( criterium.size() == 0 || criterium == sUNDEF)
+                continue;
+
+            DataFormat format;
+            format.setProps(db,code);
+            formats.insert(std::pair<QString, DataFormat>(criterium,format));
+        }
+
+    }
+    return formats;
 }
 
 QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes types, QString connector, QString code){
@@ -46,8 +85,8 @@ QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes t
             field = "description"; break;
         case fpEXTENSION:
             field = "extension"; break;
-        case fpCONTAINER:
-            field = "type"; break;
+//        case fpCONTAINER:
+//            field = "type"; break;
         case fpDATATYPE:
             field = "datatype"; break;
         case fpCONNECTOR:
@@ -166,3 +205,5 @@ QVariant DataFormat::set(const QVariant &original) const
     }
     return original;
 }
+
+
