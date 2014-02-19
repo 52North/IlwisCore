@@ -121,17 +121,18 @@ QString NumericRange::toString() const {
 
 QString NumericRange::value(const QVariant &v) const
 {
-    bool ok;
-    double vtemp = v.toDouble(&ok);
-    if (!ok){
-        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "number");
-        return sUNDEF;
-    }
-    if ( std::floor(_resolution) == _resolution ) {
-        return _min >= 0 ? QString::number((quint64)vtemp) : QString::number((qint64)vtemp);
-    }
-    int decimals = _resolution != 0 ? std::log10(_resolution) : 12;
-    return QString::number(vtemp, 'g', decimals);
+//    bool ok;
+//    double vtemp = v.toDouble(&ok);
+//    if (!ok){
+//        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "number");
+//        return sUNDEF;
+//    }
+//    if ( std::floor(_resolution) == _resolution ) {
+//        return _min >= 0 ? QString::number((quint64)vtemp) : QString::number((qint64)vtemp);
+//    }
+//    int decimals = _resolution != 0 ? std::log10(_resolution) : 12;
+//    return QString::number(vtemp, 'g', decimals);
+    return v.toString();
 }
 void NumericRange::set(const NumericRange& vr)
 {

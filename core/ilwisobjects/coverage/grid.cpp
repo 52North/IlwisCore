@@ -118,7 +118,7 @@ Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
     //Locker lock(_mutex);
 
     setSize(sz);
-    quint64 bytesNeeded = _size.volume() * sizeof(double);
+    quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);

@@ -123,11 +123,16 @@ public:
     bool is3D() const {
         return this->min_corner().is3D() && this->max_corner().is3D();
     }
-    quint32 area() const {
+    quint64 area() const {
         if ( !isValid())
-            return iUNDEF;
-
+            return 0;
         return xlength() * ylength();
+    }
+
+    quint64 volume() const {
+        if (!is3D())
+            return area();
+        return xlength() * ylength() * zlength();
     }
 
     bool contains(const PointType& p) const {

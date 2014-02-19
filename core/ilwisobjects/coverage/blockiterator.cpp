@@ -180,7 +180,7 @@ std::vector<double> GridBlock::toVector(Pivot pivot) const{
     }
 
     int count = 0;
-    std::vector<double> v(size.volume());
+    std::vector<double> v(size.linearSize());
     for(qint32 z=leftup.z; z <= rightdown.z ; ++z) {
         for(qint32 y=leftup.y; y <= rightdown.y; ++y) {
             for(qint32 x=leftup.x; x <= rightdown.x; ++x) {

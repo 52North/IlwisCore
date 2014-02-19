@@ -65,6 +65,7 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
                 }
             }
             ++iterIn;
+            return true;
         });
         return true;
     };
@@ -114,6 +115,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
             }
             ++iterIn1;
             ++iterIn2;
+            return true;
         });
         return true;
     };
