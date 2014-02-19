@@ -866,7 +866,7 @@ bool TimeInterval::contains(const QVariant& value, bool inclusive) const{
     QString type = value.typeName();
     if ( type != "Ilwis::Time"){
         ERROR2(ERR_COULD_NOT_CONVERT_2,value.toString(), "time");
-        return sUNDEF;
+        return false;
     }
     Time t = value.value<Ilwis::Time>();
     return contains(t, inclusive);
