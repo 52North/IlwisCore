@@ -93,7 +93,7 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCov
     }
 
     int cores = std::min(QThread::idealThreadCount(),(int)raster->size().ysize());
-    if (raster->size().volume() < 10000 || ctx->_threaded == false)
+    if (raster->size().linearSize() < 10000 || ctx->_threaded == false)
         cores = 1;
 
     boxes.clear();

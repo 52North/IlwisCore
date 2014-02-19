@@ -83,9 +83,7 @@ public:
     }
 
     bool is3D() const {
-        if (!isValid())
-            return false;
-        return z != undefined();
+        return isValid() && (z != undefined());
     }
 
     operator std::vector<CrdType> () {
@@ -166,7 +164,7 @@ public:
      * \param  multiplier
      * \return a reference to a shifted 2D point
      */
-    Location<CrdType>& operator*=(int v){
+    Location<CrdType>& operator*=(CrdType v){
         if (!this->isValid())
             return *this;
         this->x =this->x * v;
@@ -183,7 +181,7 @@ public:
      * \param v
      * \return
      */
-    Location<CrdType>& operator/=(int v){
+    Location<CrdType>& operator/=(CrdType v){
         if (!this->isValid() || v == 0){
             *this = Location<CrdType>();
             return *this;
@@ -287,7 +285,7 @@ often used. The class doesnt map exactly to a Point3D as the unit of x,y and z i
 
 //};
 
-#define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)
+//#define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)
 
 
 

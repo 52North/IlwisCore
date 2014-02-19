@@ -41,7 +41,7 @@ public:
      * \return the new size as a reference
      */
     Size& operator+=(const Size& sz){
-        if ( !isValid() || !sz.isValid()) {
+        if ( !isValid() ) {
             *this = Size();
             return *this;
         }
@@ -59,7 +59,7 @@ public:
      * \return the new size as a reference
      */
     Size& operator-=(const Size& sz){
-        if ( !isValid() || !sz.isValid()) {
+        if ( !isValid() ) {
             *this = Size();
             return *this;
         }
@@ -142,19 +142,20 @@ public:
     }
 
     /*!
-    product of the 3 dimension. It gives the total number of discreet points in the size
+    product of the 3 dimensions. It gives the total number of discrete points in the size.
+    Be aware or rounding errors on float or double typed Size!
      * \return
      */
-    double volume() const{
+    quint64 linearSize() const{
         if (!isValid())
-            return rUNDEF;
-
-        return xsize() * ysize() * zsize();
+            return 0;
+        return (quint64)xsize() * (quint64)ysize() * (quint64)zsize();
     }
 
     bool contains(T x, T y, T z=0) const{
         return x <= xsize() && y <= ysize() && z <= zsize();
     }
+
     bool isValid() const{
         if ( isNumericalUndef(_xsize) || isNumericalUndef(_ysize) || isNumericalUndef(_zsize)) // should not be possible but better safe then sorry
             return false;
