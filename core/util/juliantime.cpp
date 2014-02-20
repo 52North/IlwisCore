@@ -880,13 +880,14 @@ bool TimeInterval::contains(const Time &value, bool inclusive) const
 
 QVariant TimeInterval::impliedValue(const QVariant &v) const
 {
-    QString type = v.typeName();
-    if ( type != "Ilwis::Time"){
-        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
-        return sUNDEF;
-    }
-    Time t = v.value<Ilwis::Time>();
-    return t.toString();
+//    QString type = v.typeName();
+//    if ( type != "Ilwis::Time"){
+//        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
+//        return sUNDEF;
+//    }
+//    Time t = v.value<Ilwis::Time>();
+//    return t.toString();
+    return v;
 }
 
 Range *TimeInterval::clone() const
