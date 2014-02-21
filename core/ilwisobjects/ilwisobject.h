@@ -73,7 +73,9 @@ typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
  * - itDOUBLE : a double value
  * - itVALUERANGE : a range of numeric values
  * - itSTRING : a String value
- * - itTIME : a time value
+ * - itTIME : a time (hh,mm,sssss) value
+ * - itDATE : a date (yyyy,mm,dd) value
+ * - itDATETIME : a datetime (yyyy,mm,dd,hh,mm,sssss) value
  * - itCOORD2D : a 2D (x,y) coordinate
  * - itCOORD3D : a 3D (x,y,z) coordinate
  * - itPIXEL : a pixel (x,y)

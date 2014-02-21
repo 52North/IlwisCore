@@ -145,6 +145,8 @@ public:
      *  - itINT64
      *  - itSTRING
      *  - itTIME
+     *  - itDATE
+     *  - itDATETIME
      *
      * \param value the string to be translated
      * \sa IlwisObject
