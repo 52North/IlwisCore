@@ -25,6 +25,8 @@ IDomain DomainHelper::create(Range* range) {
     case itFLOAT:
     case itDOUBLE:
     case itTIME:
+    case itDATE:
+    case itDATETIME:
         domain.set(new NumericDomain(static_cast<NumericRange *>(range)));break;
     case itTHEMATICITEM:
         domain.set(new ThematicDomain(range)); break;

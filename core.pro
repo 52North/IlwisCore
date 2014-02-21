@@ -53,7 +53,6 @@ SOURCES += core/kernel.cpp \
     core/catalog/filecatalogconnector.cpp \
     core/ilwisobjects/coverage/grid.cpp \
     core/ilwisobjects/coverage/pixeliterator.cpp \
-    core/util/numericrange.cpp \
     core/ilwisobjects/table/flattable.cpp \
     core/ilwisobjects/table/databasetable.cpp \
     core/ilwisobjects/table/columndefinition.cpp \
@@ -105,7 +104,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/geometryhelper.cpp \
     core/ilwisobjects/operation/rasterfilter.cpp \
     core/catalog/dataformat.cpp \
-    core/ilwisobjects/domain/domainhelper.cpp
+    core/ilwisobjects/domain/domainhelper.cpp \
+    core/ilwisobjects/domain/numericrange.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -115,7 +115,6 @@ HEADERS += core/kernel.h\
     core/errorobject.h \
     core/factory.h \
     core/abstractfactory.h \
-    core/util/numericrange.h \
     core/ilwisobjects/ilwisdata.h \
     core/ilwisobjects/ilwisobject.h \
     core/ilwisobjects/geometry/coordinatesystem/coordinatesystem.h \
@@ -149,7 +148,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/identifieritem.h \
     core/ilwisobjects/domain/domainitem.h \
     core/util/memorymanager.h \
-    core/util/numericrange.h \
     core/ilwisobjects/domain/itemrange.h \
     core/ilwisobjects/coverage/blockiterator.h \
     core/util/angle.h \
@@ -219,7 +217,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/geometryhelper.h \
     core/ilwisobjects/operation/rasterfilter.h \
     core/catalog/dataformat.h \
-    core/ilwisobjects/domain/domainhelper.h
+    core/ilwisobjects/domain/domainhelper.h \
+    core/ilwisobjects/domain/numericrange.h
 
 
 OTHER_FILES += \

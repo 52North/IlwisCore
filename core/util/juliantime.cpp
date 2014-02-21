@@ -17,12 +17,14 @@ Time::Time()
 {
     _julianday = rUNDEF;
     _valid = false;
+    _valuetype = itUNKNOWN;
 }
 
 Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
 {
     _valid = true;
     _julianday = rUNDEF;
+    _valuetype = itDATE;
 
     int year = yr;
     int month;
@@ -55,6 +57,7 @@ Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
 
     int hour=0, minutes=0, seconds=0;
     if ( hour != iUNDEF) {
+         _valuetype |= itTIME;
         if ( hr >= 0 && hr <= 23 && _valid)
             hour = hr;
         else
@@ -72,7 +75,7 @@ Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
             _valid = false;
         }
     }else
-        _mode = mDATE;
+        _valuetype = itDATE;
 
     if ( _valid)
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
@@ -82,6 +85,7 @@ Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
 Time::Time(const time_t tmt){
     _valid = true;
     _julianday =rUNDEF;
+    _valuetype = itDATETIME;
     struct tm *time = gmtime(&tmt);
     int year = time->tm_year + 1900;
     int month = time->tm_mon;
@@ -95,6 +99,7 @@ Time::Time(const time_t tmt){
 Time::Time(const QString& isoQString) {
     _valid = true;
     _julianday = rUNDEF;
+    _valuetype = itUNKNOWN;
     setValue(isoQString);
 }
 
@@ -112,6 +117,7 @@ Time::Time(const QDateTime& time){
     int minutes = time.time().minute();
     double seconds = time.time().second();
     _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+    _valuetype = itDATETIME;
 
 }
 
@@ -119,17 +125,17 @@ Time::Time(const Time &time)
 {
     _julianday = time._julianday;
     _valid = time._valid;
-    _mode = time._mode;
+    _valuetype = time._valuetype;
 }
 
 Time::~Time()
 {
 }
 
-Time::Time(double juliand, Time::Mode m) {
+Time::Time(double juliand, IlwisTypes tp) {
     _julianday = juliand;
-    _mode = m;
     _valid = true;
+    _valuetype = tp;
 }
 
 Time::operator QDateTime() const{
@@ -193,7 +199,7 @@ double Time::get(TimePart part) const{
     int year, month, day, hour, minutes;
     double seconds;
     julianToGregorian(year,month,day,hour,minutes,seconds);
-    if ( _mode == mDATE || _mode == mDATETIME) {
+    if ( hasType(_valuetype, itDATE)) {
         if ( part == tpDATE) {
             QString date = QString("%1%2%3").arg(year,4,10,QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0'));
             return date.toDouble();
@@ -225,7 +231,7 @@ double Time::get(TimePart part) const{
             return date.weekNumber();
         }
     }
-    if ( _mode == mTIME || _mode == mDATETIME) {
+    if ( hasType(_valuetype, itTIME)) {
         if ( part == tpHOUR)
             return hour;
         if ( part == tpMINUTE)
@@ -240,10 +246,10 @@ Duration Time::operator-(const Time& time) const {
     if ( _julianday == rUNDEF)
         return Duration();
     if ( abs(_julianday) > NOTIME)
-        return Duration(_julianday, mode());
+        return Duration(_julianday, valueType());
     double t1 = time;
     double t2 = *this;
-    Duration d(t2 - t1, mode());
+    Duration d(t2 - t1, valueType());
     return d;
 }
 
@@ -252,10 +258,10 @@ Time Time::operator+(const Duration& time) const {
         return tUNDEF;
 
     if ( abs(_julianday) > NOTIME)
-        return Time(_julianday, mode());
+        return Time(_julianday, valueType());
     double t1 = time;
     double t2 = *this;
-    return Time(t2 + t1, mode());
+    return Time(t2 + t1, valueType());
 }
 //TODO defines up on top?
 #define IGREG (14+31*(10+12*1582))
@@ -452,12 +458,12 @@ void Time::parseIsoString(const QString& isoQString, int& year, int& month, int&
     if ( isoQString == "-*")
         _julianday = -BIGTIME;
     // special form YYYYMMDDHHMM without the T marker for time, often used in sattelite orbit times
+    _valuetype = itDATETIME;
     if ( isoQString.size() == 12 && isoQString.indexOf("T") == -1 &&
         isoQString.indexOf("-") == -1 &&
         isoQString.indexOf(":") == -1 &&
         isoQString.indexOf(".") == -1)
     {
-        _mode = mDATETIME;
         parseYearPart(isoQString.mid(0,8), year, month, day);
         parseDayPart(isoQString.mid(8,6),hours, minutes, seconds);
     } else{
@@ -468,13 +474,13 @@ void Time::parseIsoString(const QString& isoQString, int& year, int& month, int&
         if ( hasDate ){
             parseYearPart(yearpart,year, month,day);
         } else
-            _mode = mTIME;
+            _valuetype = itTIME;
 
         bool hasTime = daypart != "" && ( isoQString.indexOf("T") >= 0);
         if ( hasTime) {
             parseDayPart(daypart, hours, minutes, seconds);
         }else
-            _mode = _mode == mDATETIME ? mDATE : mUNKNOWN;
+            _valuetype = _valuetype == itDATETIME ? itDATE : itUNKNOWN;
     }
 }
 
@@ -513,12 +519,17 @@ bool Time::isValid() const {
     if ( _julianday == rUNDEF)
         return false;
 
-    return _valid;
+    return _valid && _valuetype != itUNKNOWN;
 }
 
-Time::Mode Time::mode() const
+IlwisTypes Time::valueType() const
 {
-    return _mode;
+    return _valuetype;
+}
+
+void Time::valueType(IlwisTypes tp)
+{
+    _valuetype = tp;
 }
 
 void Time::setYear(int yr) {
@@ -531,6 +542,8 @@ void Time::setYear(int yr) {
     julianToGregorian(year,month,day,hour,minutes,seconds);
     year = yr;
     _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+    if ( _valuetype == itTIME)
+        _valuetype = itDATETIME;
 }
 void Time::setMonth(int mnth){
     if ( mnth == iUNDEF) {
@@ -544,8 +557,11 @@ void Time::setMonth(int mnth){
         month = mnth;
     else
         _valid = false;
-    if ( _valid)
+    if ( _valid){
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        if ( _valuetype == itTIME)
+            _valuetype = itDATETIME;
+    }
 }
 
 void Time::setDay(int dy) {
@@ -573,8 +589,11 @@ void Time::setDay(int dy) {
                 _valid = false;
         }
     }
-    if ( _valid)
+    if ( _valid){
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        if ( _valuetype == itTIME)
+            _valuetype = itDATETIME;
+    }
 }
 
 void Time::setHour(int hr) {
@@ -589,8 +608,11 @@ void Time::setHour(int hr) {
         hour = hr;
     else
         _valid = false;
-    if ( _valid)
+    if ( _valid){
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        if ( _valuetype == itDATE)
+            _valuetype = itDATETIME;
+    }
 
 }
 
@@ -606,8 +628,11 @@ void Time::setMinute(int min) {
         minutes = min;
     else
         _valid = false;
-    if ( _valid)
+    if ( _valid){
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        if ( _valuetype == itDATE)
+            _valuetype = itDATETIME;
+    }
 
 }
 
@@ -625,15 +650,18 @@ void Time::setSecond(double sec) {
     else {
         _valid = false;
     }
-    if ( _valid)
+    if ( _valid){
         _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        if ( _valuetype == itDATE)
+            _valuetype = itDATETIME;
+    }
 }
 
 
 
-QString Time::toString(bool local, Time::Mode mode) const{
-    if ( mode == mUNKNOWN)
-        mode = _mode;
+QString Time::toString(bool local, IlwisTypes tp) const{
+    if ( tp == itUNKNOWN)
+        tp = _valuetype;
     if ( *this == tUNDEF || _julianday == rUNDEF)
         return "?";
     if ( abs(_julianday) > NOTIME && _julianday > 0)
@@ -644,7 +672,7 @@ QString Time::toString(bool local, Time::Mode mode) const{
     int year, month, day, hour, minutes;
     double seconds;
     julianToGregorian(year,month,day,hour,minutes,seconds);
-    if ( year == -4172 && mode != mTIME )
+    if ( year == -4172 && tp != itTIME )
         return "?";
     struct tm time;
     time.tm_year = isLeapYear() ? 96 : 97;
@@ -656,19 +684,19 @@ QString Time::toString(bool local, Time::Mode mode) const{
     time_t t = mktime(&time);
     if ( local) {
         struct tm *timeinfo = localtime(&t);
-        if ( mode == mDATE)
+        if ( tp == itDATE)
             return QString("%1-%2-%3").arg(year,4, 10, QLatin1Char('0')).arg(timeinfo->tm_mon + 1,2,10,QLatin1Char('0')).arg(timeinfo->tm_mday,2,10,QLatin1Char('0'));
-        else if ( mode == mDATETIME)
+        else if ( tp == itDATETIME)
             return QString("%1-%2-%3T%4:%5:%6").arg(year,4, 10, QLatin1Char('0')).arg(timeinfo->tm_mon + 1,2,10,QLatin1Char('0')).arg(timeinfo->tm_mday,2,10,QLatin1Char('0')).arg(timeinfo->tm_hour,2,10,QLatin1Char('0')).arg(timeinfo->tm_min,2,10,QLatin1Char('0')).arg(timeinfo->tm_sec,2,10,QLatin1Char('0'));
-        else if ( mode == mTIME)
+        else if ( tp == itTIME)
             return QString("T%1:%2:%3").arg(timeinfo->tm_hour,2,10,QLatin1Char('0')).arg(timeinfo->tm_min,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
     } else {
         //struct tm *timeinfo = gmtime(& t);
-        if ( mode == mDATE)
+        if ( tp == itDATE)
             return QString("%1-%2-%3").arg(year,4, 10, QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0'));
-        else if ( mode == mDATETIME)
+        else if ( tp == itDATETIME)
             return QString("%1-%2-%3T%4:%5:%6").arg(year,4,10,QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0')).arg(hour,2,10,QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
-        else if ( mode == mTIME)
+        else if ( tp == itTIME)
             return QString("T%1:%2:%3").arg(hour,2, 10, QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
     }
     return "?";
@@ -678,10 +706,10 @@ Time Time::now() {
     return Time(QDateTime::currentDateTime());
 }
 //-------------------------------------------
-Duration::Duration(const QString& duration, Time::Mode mode) {
+Duration::Duration(const QString& duration, IlwisTypes tp) {
     QString definition = duration;
     QHash<QString, double> values;
-    _mode = mode;
+    _valuetype = tp;
     values["Y"] = -4713;
     values["M"] = 1.0;
     values["D"] = 1.0;
@@ -737,14 +765,14 @@ Duration::Duration(const QString& duration, Time::Mode mode) {
     _julianday += rest;
 }
 
-Duration::Duration(double r,Time::Mode mode) : Time(r) {
+Duration::Duration(double r, IlwisTypes tp) : Time(r) {
     if ( r == rUNDEF || r == tUNDEF || r == 0)
         _valid = false;
     _valid = true;
-    _mode = mode;
+    _valuetype = tp;
 }
 
-QString Duration::toString(bool local, Time::Mode ) const{
+QString Duration::toString(bool local, IlwisTypes tp ) const{
     if ( *this == tUNDEF || _julianday == rUNDEF)
         return "";
     int year, month, day, hour, minutes;
@@ -812,44 +840,55 @@ bool Duration::isValid() const{
 
 
 //-------------------------------------------
-TimeInterval::TimeInterval() : NumericRange(-BIGTIME, BIGTIME,1){
+TimeInterval::TimeInterval(IlwisTypes tp) : NumericRange(-BIGTIME, BIGTIME,1){
     _step = Duration(tUNDEF);
-    _vt = itTIME;
+    _vt = tp;
 }
 
-TimeInterval::TimeInterval(const Time& beg, const Time& en, const Duration& stp) :
+TimeInterval::TimeInterval(const Time& beg, const Time& en, const Duration& stp, IlwisTypes tp) :
 NumericRange((double)beg, (double)en),
 _step(stp)
 {
     if ( (double)beg == BIGTIME) {
         min(-BIGTIME);
     }
+    _vt = tp;
+    if ( tp == itUNKNOWN){
+        _vt = itDATETIME;
+        if ( beg.valueType() == itDATE && en.valueType() == itDATE)
+            _vt = itDATE;
+        if ( beg.valueType() == itTIME && en.valueType() == itTIME)
+            _vt = itTIME;
+        if ( beg.valueType() == itTIME && en.valueType() == itDATE)
+            _vt = itUNKNOWN;
+    }
+
 }
 
 TimeInterval TimeInterval::operator+(const TimeInterval& interval){
     if ( _step == interval._step ) {
-        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step));
+        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step), valueType());
     }
     else if (  (double)interval.getStep() == tUNDEF || _step == tUNDEF) {
-        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step));
+        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
     }
     return TimeInterval();
 }
 TimeInterval TimeInterval::operator-(const TimeInterval& interval){
         if ( _step == interval._step ) {
-        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step));
+        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step, valueType()));
     }
     else if (  interval.getStep() == tUNDEF || _step == tUNDEF) {
-        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step));
+        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
     }
     return TimeInterval();
 }
 
-QString TimeInterval::toString(bool local, Time::Mode mode) const{
-    Time begin(min());
-    Time end(max());
-    QString sb = begin.toString(local,mode);
-    QString se = end.toString(local,mode);
+QString TimeInterval::toString(bool local, IlwisTypes tp) const{
+    Time begin(min(), tp);
+    Time end(max(), tp);
+    QString sb = begin.toString(local,tp);
+    QString se = end.toString(local,tp);
     return QString("%1/%2").arg(sb ,se);
 }
 
@@ -880,14 +919,16 @@ bool TimeInterval::contains(const Time &value, bool inclusive) const
 
 QVariant TimeInterval::impliedValue(const QVariant &v) const
 {
-//    QString type = v.typeName();
-//    if ( type != "Ilwis::Time"){
-//        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
-//        return sUNDEF;
-//    }
-//    Time t = v.value<Ilwis::Time>();
-//    return t.toString();
-    return v;
+
+    QString type = v.typeName();
+    if ( type != "Ilwis::Time"){
+        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
+        return sUNDEF;
+    }
+    Time t = v.value<Ilwis::Time>();
+    Time t2 = ensure(t);
+    t2.valueType(valueType());
+    return t2.toString();
 }
 
 Range *TimeInterval::clone() const
@@ -895,9 +936,10 @@ Range *TimeInterval::clone() const
     return new TimeInterval(min(), max(), _step);
 }
 
-IlwisTypes TimeInterval::valueType() const
+bool TimeInterval::isValid() const
 {
-    return itTIME;
+    bool ok = NumericRange::isValid();
+    return ok &&  valueType() != itUNKNOWN;
 }
 
 
@@ -905,6 +947,7 @@ TimeInterval& TimeInterval::operator=(const TimeInterval& tiv){
     min(tiv.min());
     max(tiv.max());
     _step = tiv.getStep();
+    _vt = tiv._vt;
 
     return *this;
 }

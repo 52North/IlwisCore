@@ -22,11 +22,6 @@ public:
      */
     enum TimePart{tpYEAR, tpMONTH, tpDAYOFMONTH, tpJULIANDAY, tpDAYOFTHEWEEK, tpDAYOFTHEYEAR, tpWEEKNUMBER, tpHOUR, tpMINUTE, tpSECOND, tpDATE, tpDAYTIME};
 
-    /**
-     * @brief The Mode enum
-     */
-    enum Mode{mUNKNOWN, mDATE,mDATETIME,mTIME,mDURATION};
-
     Time();
     /**
      * Creates a new time. <br>
@@ -63,7 +58,7 @@ public:
      *
      * @param days the amount of days after -4712
      */
-    Time(double jd, Mode m =mDATETIME);
+    Time(double jd, IlwisTypes m =itDATETIME);
 
     /**
      * Creates a new Time from a QDateTime object. <br>
@@ -254,7 +249,7 @@ public:
      * @param mode
      * @return
      */
-    virtual QString toString(bool local= true, Time::Mode mode=Time::mUNKNOWN) const;
+    virtual QString toString(bool local= true, IlwisTypes tp=itUNKNOWN) const;
 
     /**
      * @brief isValid
@@ -266,9 +261,10 @@ public:
      * @brief now
      * @return
      */
-    Time::Mode mode() const;
-
     static Time now();
+
+    IlwisTypes valueType() const;
+    void valueType(IlwisTypes tp);
 
 protected:
     double gregorianToJulian(int year, int month, int day, int hour, int minutes, double seconds) const;
@@ -283,22 +279,22 @@ protected:
 
     double _julianday;
     bool _valid;
-    Time::Mode _mode = mDATETIME;
+    IlwisTypes _valuetype;
 };
 
 class KERNELSHARED_EXPORT Duration : public Time {
 public:
-    Duration(const QString& step="",Time::Mode mode=Time::mDURATION);
-    Duration(double r,Time::Mode mode=Time::mDURATION);
-    QString toString(bool local, Time::Mode mode=Time::mDURATION) const;
+    Duration(const QString& step="",IlwisTypes tp=itTIME);
+    Duration(double r,IlwisTypes tp=itTIME);
+    QString toString(bool local, IlwisTypes tp=itTIME) const;
     bool isValid() const;
     double get(TimePart part) const;
 };
 
 class KERNELSHARED_EXPORT TimeInterval : public NumericRange {
 public:
-    TimeInterval();
-    TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""));
+    TimeInterval(IlwisTypes tp=itUNKNOWN);
+    TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""), IlwisTypes tp=itUNKNOWN);
     TimeInterval operator+(const TimeInterval& interval);
     TimeInterval operator-(const TimeInterval& interval);
     TimeInterval& operator=(const TimeInterval& tiv);
@@ -307,18 +303,17 @@ public:
     void begin(const Time& t) ;
     void end(const Time& t);
     Duration getStep() const { return _step;}
-    QString toString(bool local, Time::Mode mode) const;
+    QString toString(bool local, IlwisTypes) const;
     bool contains(const QString& value, bool inclusive = true) const;
     bool contains(const Time& value, bool inclusive = true) const;
     bool contains(const QVariant& value, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
 
     Range *clone() const ;
-    IlwisTypes valueType() const;
+    bool isValid() const;
 
 private:
     Duration _step;
-
 };
 
 #define tUNDEF Time()

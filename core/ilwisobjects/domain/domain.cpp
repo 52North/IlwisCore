@@ -115,6 +115,10 @@ IlwisTypes Domain::ilwType(const QVariant &v)
               return itSTRING; break;
         case QVariant::Time:
             return itTIME; break;
+        case QVariant::Date:
+            return itDATE; break;
+        case QVariant::DateTime:
+            return itDATETIME;
         default:
             return itUNKNOWN;
 
