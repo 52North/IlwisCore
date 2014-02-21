@@ -928,7 +928,7 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
     Time t = v.value<Ilwis::Time>();
     Time t2 = ensure(t);
     t2.valueType(valueType());
-    return t2.toString();
+    return IVARIANT(t2);
 }
 
 Range *TimeInterval::clone() const
