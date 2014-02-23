@@ -78,9 +78,7 @@ const quint64 itPOINT =  1; //1
 const quint64 itLINE =  2 * itPOINT; //2
 const quint64 itPOLYGON = 2 * itLINE; //4
 const quint64 itRASTER = 2 * itPOLYGON; //8
-const quint64 itCOVERAGELIST = 2 * itRASTER; //16
-const quint64 itOBJECTCOLLECTION =  2 * itCOVERAGELIST; //32
-const quint64 itNUMERICDOMAIN =  2 * itOBJECTCOLLECTION; //64
+const quint64 itNUMERICDOMAIN =  2 * itRASTER; //64
 const quint64 itITEMDOMAIN = 2 * itNUMERICDOMAIN; //128
 const quint64 itTIMEDOMAIN = 2 * itITEMDOMAIN; //256
 const quint64 itCOORDDOMAIN = 2 * itTIMEDOMAIN ; //512
@@ -125,15 +123,15 @@ const quint64 itNAMEDITEM = 2 * itTHEMATICITEM;
 const quint64 itINDEXEDITEM = 2 * itNAMEDITEM;
 const quint64 itNUMERICITEM = 2 * itINDEXEDITEM;
 const quint64 itTIMEITEM = 2 * itNUMERICITEM;
-const quint64 itCOLOR = 2 * itTIMEITEM;
+const quint64 itCONTINUOUSCOLOR = 2 * itTIMEITEM;
+const quint64 itPALLETCOLOR = 2 * itCONTINUOUSCOLOR;
 
-
-const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE | itCOVERAGELIST;
+const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE ;
 const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE;
 const quint64 itCOORDSYSTEM = itCONVENTIONALCOORDSYSTEM | itORTHOCOORDSYSTEM;
 const quint64 itTABLE = itFLATTABLE | itDATABASETABLE;
 const quint64 itDOMAIN =  itNUMERICDOMAIN | itITEMDOMAIN | itTIMEDOMAIN | itCOORDDOMAIN | itCOLORDOMAIN | itTEXTDOMAIN;
-const quint64 itILWISOBJECT = itCOVERAGE | itDOMAIN | itOBJECTCOLLECTION | itCOORDSYSTEM |
+const quint64 itILWISOBJECT = itCOVERAGE | itDOMAIN | itCOORDSYSTEM |
          itELLIPSOID | itPROJECTION | itTABLE | itREPRESENTATION | itGEOREF | itOPERATIONMETADATA;
 const quint64 itDATETIME = itDATE | itTIME;
 const quint64 itINTEGER = itINT8 | itUINT8 | itINT16 | itUINT16 | itINT32 | itINT64 | itUINT32 | itUINT64;
@@ -144,6 +142,7 @@ const quint64 itIDENTIFIERITEM = itNAMEDITEM | itINDEXEDITEM;
 
 const quint64 itRESOURCELOCATION = itFILE | itURL;
 const quint64 itLOCATION = itCOORDINATE | itPIXEL;
+const quint64 itCOLOR = itCONTINUOUSCOLOR | itPALLETCOLOR;
 
 const quint64 itANY = 0xFFFFFFFFFFFFFFFF;
 
