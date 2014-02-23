@@ -105,7 +105,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/rasterfilter.cpp \
     core/catalog/dataformat.cpp \
     core/ilwisobjects/domain/domainhelper.cpp \
-    core/ilwisobjects/domain/numericrange.cpp
+    core/ilwisobjects/domain/numericrange.cpp \
+    core/ilwisobjects/domain/colordomain.cpp \
+    core/ilwisobjects/domain/colorrange.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -218,7 +220,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/rasterfilter.h \
     core/catalog/dataformat.h \
     core/ilwisobjects/domain/domainhelper.h \
-    core/ilwisobjects/domain/numericrange.h
+    core/ilwisobjects/domain/numericrange.h \
+    core/ilwisobjects/domain/colordomain.h \
+    core/ilwisobjects/domain/colorrange.h
 
 
 OTHER_FILES += \
