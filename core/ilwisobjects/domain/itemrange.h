@@ -124,7 +124,7 @@ public:
     /**
      * at this moment a empty method, will always return the same double as you give it
      */
-    double ensure(double v, bool inclusive = true) const;
+    QVariant ensure(const QVariant& v, bool inclusive = true) const;
 
     /**
      * adds a certain ItemRange to this range.<br>

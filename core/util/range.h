@@ -51,7 +51,7 @@ public:
         T::merge(range1, range2, rnm);
     }
 
-    virtual double ensure(double, bool inclusive = true) const { return rUNDEF; }
+    virtual QVariant ensure(const QVariant& v, bool inclusive = true) const { return rUNDEF; }
 
     virtual bool contains(const QVariant& v, bool inclusive = true) const = 0;
 

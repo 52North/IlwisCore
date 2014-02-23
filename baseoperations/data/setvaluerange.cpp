@@ -43,7 +43,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _table.isValid()) {
         std::vector<QVariant> data = _table->column(_columnName);
         for(auto& val : data) {
-            val = rng->ensure(val.toDouble());
+            val = rng->ensure(val);
             if (!defaultMinmaxUsed && lstep != 0){
                 val = rngDomain->min() + lstep * ((qint64)(val.toDouble() - rngDomain->min()) / lstep);
             }
@@ -54,7 +54,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
             PixelIterator iter(_raster, box);
 
             for_each(iter, iter.end(), [&](double& val){
-                val = rng->ensure(val);
+                val = rng->ensure(val).value<double>();
                 if (!defaultMinmaxUsed && lstep != 0){
                     val = rngDomain->min() + lstep * ((qint64)(val - rngDomain->min()) / lstep);
                 }

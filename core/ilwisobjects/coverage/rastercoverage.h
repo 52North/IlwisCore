@@ -159,7 +159,7 @@ public:
             }
 
             double v = _grid->value(pix);
-            return datadef().range()->ensure(v);
+            return datadef().range()->ensure(v).value<double>();
         }
         return rUNDEF;
     }

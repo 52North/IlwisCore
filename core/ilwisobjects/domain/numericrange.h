@@ -65,13 +65,13 @@ public:
     QString toString() const ;
     QVariant impliedValue(const QVariant& v) const;
     void set(const NumericRange& vr);
-    double ensure(double v, bool inclusive=true) const
+    QVariant ensure(const QVariant& v, bool inclusive=true) const
     {
         if ( !contains(v, inclusive))
             return _undefined;
 
         if ( _resolution != 0.0)
-            v = (qint64)(v / _resolution) * _resolution;
+            return (qint64)(v.toDouble() / _resolution) * _resolution;
         return v;
     }
     IlwisTypes determineType() const;

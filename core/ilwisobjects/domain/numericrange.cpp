@@ -129,7 +129,7 @@ QVariant NumericRange::impliedValue(const QVariant &v) const
     }
     if ( _resolution == 0) // everything goes
         return v;
-    vtemp = ensure(vtemp);
+    vtemp = ensure(vtemp).value<double>();
     if ( vtemp == _undefined)
         return vtemp;
 

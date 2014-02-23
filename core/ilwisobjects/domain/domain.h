@@ -94,7 +94,7 @@ public:
      * \param value the value to check
      * \return depends on the implementation of the subclass
      */
-    virtual Containement contains(const QVariant& impliedValue) const = 0;
+    virtual Containement contains(const QVariant& value) const = 0;
 
     /*!
      * Checks if the Domain is compatible with another domain<br>
