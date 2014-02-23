@@ -926,7 +926,7 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
         return sUNDEF;
     }
     Time t = v.value<Ilwis::Time>();
-    Time t2 = ensure(t);
+    Time t2 = ensure((double)t).value<Ilwis::Time>();
     t2.valueType(valueType());
     return IVARIANT(t2);
 }
