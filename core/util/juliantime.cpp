@@ -933,7 +933,7 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
 
 Range *TimeInterval::clone() const
 {
-    return new TimeInterval(min(), max(), _step);
+    return new TimeInterval(min(), max(), _step, _vt);
 }
 
 bool TimeInterval::isValid() const
