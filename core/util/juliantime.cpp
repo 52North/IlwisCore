@@ -926,10 +926,7 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
         return sUNDEF;
     }
-    Time t = v.value<Ilwis::Time>();
-    Time t2 = ensure((double)t).value<Ilwis::Time>();
-    t2.valueType(valueType());
-    return IVARIANT(t2);
+    return ensure(v);
 }
 
 Range *TimeInterval::clone() const
