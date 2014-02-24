@@ -859,7 +859,8 @@ _step(stp)
             _vt = itDATE;
         if ( beg.valueType() == itTIME && en.valueType() == itTIME)
             _vt = itTIME;
-        if ( beg.valueType() == itTIME && en.valueType() == itDATE)
+        if ( (beg.valueType() == itTIME && en.valueType() == itDATE) ||
+             (beg.valueType() == itDATE && en.valueType() == itTIME))
             _vt = itUNKNOWN;
     }
 
