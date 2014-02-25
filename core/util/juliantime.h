@@ -67,6 +67,8 @@ public:
      * @param time QDateTime that should be used to create this Time
      */
     Time(const QDateTime &time);
+    Time(const QDate& date);
+    Time(const QTime& tm);
     Time(const Time& time);
 
     /**
@@ -249,7 +251,7 @@ public:
      * @param mode
      * @return
      */
-    virtual QString toString(bool local= true, IlwisTypes tp=itUNKNOWN) const;
+    virtual QString toString(bool local= false, IlwisTypes tp=itUNKNOWN) const;
 
     /**
      * @brief isValid

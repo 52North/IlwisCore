@@ -121,6 +121,16 @@ Time::Time(const QDateTime& time){
 
 }
 
+Time::Time(const QDate &date) : Time(QDateTime(date))
+{
+
+}
+
+Time::Time(const QTime &tm) : Time(QString("%1:%2:%3").arg(tm.hour()).arg(tm.minute()).arg(tm.second()))
+{
+
+}
+
 Time::Time(const Time &time)
 {
     _julianday = time._julianday;
@@ -476,7 +486,7 @@ void Time::parseIsoString(const QString& isoQString, int& year, int& month, int&
         } else
             _valuetype = itTIME;
 
-        bool hasTime = daypart != "" && ( isoQString.indexOf("T") >= 0);
+        bool hasTime = daypart != "" && (( isoQString.indexOf("T") >= 0) || (daypart.indexOf(":")>0 ));
         if ( hasTime) {
             parseDayPart(daypart, hours, minutes, seconds);
         }else
@@ -689,15 +699,15 @@ QString Time::toString(bool local, IlwisTypes tp) const{
         else if ( tp == itDATETIME)
             return QString("%1-%2-%3T%4:%5:%6").arg(year,4, 10, QLatin1Char('0')).arg(timeinfo->tm_mon + 1,2,10,QLatin1Char('0')).arg(timeinfo->tm_mday,2,10,QLatin1Char('0')).arg(timeinfo->tm_hour,2,10,QLatin1Char('0')).arg(timeinfo->tm_min,2,10,QLatin1Char('0')).arg(timeinfo->tm_sec,2,10,QLatin1Char('0'));
         else if ( tp == itTIME)
-            return QString("T%1:%2:%3").arg(timeinfo->tm_hour,2,10,QLatin1Char('0')).arg(timeinfo->tm_min,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
+            return QString("T%1:%2:%3").arg(timeinfo->tm_hour,2,10,QLatin1Char('0')).arg(timeinfo->tm_min,2,10,QLatin1Char('0')).arg(seconds,2 ,'g',2 ,QLatin1Char('0'));
     } else {
         //struct tm *timeinfo = gmtime(& t);
         if ( tp == itDATE)
             return QString("%1-%2-%3").arg(year,4, 10, QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0'));
         else if ( tp == itDATETIME)
-            return QString("%1-%2-%3T%4:%5:%6").arg(year,4,10,QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0')).arg(hour,2,10,QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
+            return QString("%1-%2-%3T%4:%5:%6").arg(year,4,10,QLatin1Char('0')).arg(month,2,10,QLatin1Char('0')).arg(day,2,10,QLatin1Char('0')).arg(hour,2,10,QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,2, 'g',2 ,QLatin1Char('0'));
         else if ( tp == itTIME)
-            return QString("T%1:%2:%3").arg(hour,2, 10, QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,'g',2 , 2,QLatin1Char('0'));
+            return QString("T%1:%2:%3").arg(hour,2, 10, QLatin1Char('0')).arg(minutes,2,10,QLatin1Char('0')).arg(seconds,2,'g',2 ,QLatin1Char('0'));
     }
     return "?";
 }
@@ -886,6 +896,9 @@ TimeInterval TimeInterval::operator-(const TimeInterval& interval){
 }
 
 QString TimeInterval::toString(bool local, IlwisTypes tp) const{
+    if (min() == rUNDEF || max() == rUNDEF)
+        return sUNDEF;
+
     Time begin(min(), tp);
     Time end(max(), tp);
     QString sb = begin.toString(local,tp);
@@ -895,6 +908,9 @@ QString TimeInterval::toString(bool local, IlwisTypes tp) const{
 
 bool TimeInterval::contains(const QString &value, bool inclusive) const
 {
+    if (min() == rUNDEF || max() == rUNDEF)
+        return false;
+
     Time t(value);
     if ( !t.isValid())
         return false;
@@ -903,12 +919,29 @@ bool TimeInterval::contains(const QString &value, bool inclusive) const
 }
 
 bool TimeInterval::contains(const QVariant& value, bool inclusive) const{
+    if (min() == rUNDEF || max() == rUNDEF)
+        return false;
+    if (!value.isValid() || value.isNull())
+        return false;
+
     QString type = value.typeName();
-    if ( type != "Ilwis::Time"){
+    if ( type != "Ilwis::Time" && type != "double" && type != "QDateTime" && type != "QDate" && type != "QTime"){
         ERROR2(ERR_COULD_NOT_CONVERT_2,value.toString(), "time");
         return false;
     }
-    Time t = value.value<Ilwis::Time>();
+    Time t;
+    if ( type == "Ilwis::Time")
+        t = value.value<Ilwis::Time>();
+    else if ( type == "double")
+        t = Time(value.toDouble());
+    else if ( type == "QDateTime")
+        t = Time(value.toDateTime());
+    else if ( type == "QTime")
+        t = Time(value.toTime());
+    else if ( type == "QDate")
+        t = Time(value.toDate());
+
+
     return contains(t, inclusive);
 
 }
@@ -927,7 +960,7 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
         return sUNDEF;
     }
     Time t = v.value<Ilwis::Time>();
-    Time t2 = ensure((double)t).value<Ilwis::Time>();
+    Time t2 = ensure((double)t).value<double>();
     t2.valueType(valueType());
     return IVARIANT(t2);
 }
