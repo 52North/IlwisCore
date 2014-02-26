@@ -42,6 +42,9 @@ std::list<Resource> Catalog::items() const
 
 bool Catalog::prepare(const QUrl &resource, const QString& filter)
 {
+    QString scheme =  resource.scheme();
+    if ( !resource.isValid() || scheme.size() <= 1)
+        return ERROR2(ERR_ILLEGAL_VALUE_2,"url",resource.toString());
 
     bool ok = mastercatalog()->addContainer(resource);
     if (!ok)
