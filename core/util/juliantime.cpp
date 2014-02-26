@@ -850,7 +850,7 @@ bool Duration::isValid() const{
 
 
 //-------------------------------------------
-TimeInterval::TimeInterval(IlwisTypes tp) : NumericRange(-BIGTIME, BIGTIME,1){
+TimeInterval::TimeInterval(IlwisTypes tp) : NumericRange(-BIGTIME, BIGTIME,0){
     _step = Duration(tUNDEF);
     _vt = tp;
 }
@@ -959,10 +959,11 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
         return sUNDEF;
     }
-    Time t = v.value<Ilwis::Time>();
-    Time t2 = ensure((double)t).value<double>();
-    t2.valueType(valueType());
-    return IVARIANT(t2);
+//    Time t = v.value<Ilwis::Time>();
+//    Time t2 = ensure((double)t).value<double>();
+//    t2.valueType(valueType());
+//    return IVARIANT(t2);
+    return ensure(v);
 }
 
 Range *TimeInterval::clone() const
