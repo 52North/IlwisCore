@@ -14,6 +14,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(Selection)
+
 Selection::Selection()
 {
 }
