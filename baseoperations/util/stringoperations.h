@@ -20,6 +20,8 @@ private:
     QString _text;
     QString _searchText;
     qint32 _start=0;
+
+    NEW_OPERATION(StringFind);
 };
 
 class StringSub : public OperationImplementation
@@ -34,6 +36,8 @@ public:
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &);
 
     static quint64 createMetadata();
+
+    NEW_OPERATION(StringSub);
 
 private:
     QString _text;
@@ -58,6 +62,8 @@ private:
     QString _text;
     QString _searchText;
     QString _replaceText;
+
+    NEW_OPERATION(StringReplace);
 };
 }
 }

@@ -86,9 +86,19 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
              _resource = QUrl(c);
         }else {
             if( isNew){
-                if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){ // must be internal object
-                   QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(name));
-                   _resource = urltxt;
+                if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){
+                    QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(name));
+                    Catalog *workingCatalog = context()->workingCatalog();
+                    if ( workingCatalog){
+                        QUrl url =  workingCatalog->filesystemLocation();
+                        if ( url.isValid() && url.scheme() == "file"){
+                            QString filepath = url.toLocalFile() + name;
+                            if (QFileInfo(filepath).exists()){
+                                urltxt = QUrl::fromLocalFile(filepath);
+                            }
+                        }
+                    }
+                    _resource = urltxt;
                 }
             }
         }

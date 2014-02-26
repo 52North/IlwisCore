@@ -18,6 +18,8 @@ private:
     IRasterCoverage _inputGC;
     Pixel _pix;
 
+    NEW_OPERATION(RasValue);
+
 };
 }
 }

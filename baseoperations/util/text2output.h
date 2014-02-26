@@ -18,6 +18,8 @@ public:
 
 private:
     QString _text;
+
+    NEW_OPERATION(Text2Output)    ;
 };
 }
 }

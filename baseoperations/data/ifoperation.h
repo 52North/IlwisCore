@@ -13,7 +13,8 @@ protected:
     DataDefinition findParameterDataDef(const OperationExpression &expr, int index);
     
     ICoverage _coverages[2];
-    double _number[2];    
+    double _number[2];
+
 };
 }
 }

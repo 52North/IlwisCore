@@ -8,6 +8,8 @@
 
 using namespace Ilwis;
 
+REGISTER_OPERATION(Pixel2Coord)
+
 Pixel2Coord::Pixel2Coord()
 {
 }
@@ -71,27 +73,16 @@ Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx
 
 quint64 Pixel2Coord::createMetadata()
 {
-    QString url = QString("ilwis://operations/pixel2coord");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","pixel2coord");
-    resource.addProperty("syntax","pixel2coord(rastercoverage|georef,Pixel)");
-    resource.addProperty("description",TR("translates a pixel to a coordinate location based on the supplied georeference"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itRASTER | itGEOREF);
-    resource.addProperty("pin_1_name", TR("input rastercoverage or georeference"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain or georefence"));
-    resource.addProperty("pin_2_type", itPIXEL);
-    resource.addProperty("pin_2_name", TR("source pixel"));
-    resource.addProperty("pin_2_desc",TR("the pixel that has to translted to a world coordinate"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itCOORDINATE);
-    resource.addProperty("pout_1_name", TR("coordinate"));
-    resource.addProperty("pout_1_desc",TR("coordinate"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/pixel2coord"});
+    operation.setSyntax("pixel2coord(rastercoverage|georef,Pixel)");
+    operation.setDescription(TR("translates a pixel to a coordinate location based on the supplied georeference"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER | itGEOREF, TR("input rastercoverage or georeference"),TR("input rastercoverage with domain any domain or georefence"));
+    operation.addInParameter(1,itPIXEL, TR("source pixel"),TR("the pixel that has to translted to a pixel location"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itCOORDINATE, TR("Coordinate"));
+    operation.setKeywords("pixel, coordinate, geometry, transformation");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

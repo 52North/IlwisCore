@@ -15,6 +15,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(Assignment)
+
 Assignment::Assignment() : _number(rILLEGAL)
 {
 }

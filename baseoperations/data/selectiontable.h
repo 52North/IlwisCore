@@ -21,6 +21,8 @@ private:
     ITable _outputTable;
     std::vector<QString> _columns;
     std::vector<std::pair<quint32, quint32>> _records;
+
+    NEW_OPERATION(SelectionTable);
 };
 }
 }

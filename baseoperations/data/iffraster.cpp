@@ -12,6 +12,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(IffRaster)
+
 IffRaster::IffRaster()
 {
 }

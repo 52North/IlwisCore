@@ -17,6 +17,8 @@ public:
     static quint64 createMetadata();
 private:
     Pixel _pixel;
+
+    NEW_OPERATION(FPixel);
 };
 }
 }

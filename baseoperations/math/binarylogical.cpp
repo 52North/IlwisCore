@@ -9,6 +9,7 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(BinaryLogical)
 
 OperationImplementation *BinaryLogical::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {

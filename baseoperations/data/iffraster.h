@@ -19,8 +19,7 @@ private:
     IRasterCoverage _outputGC;
 
 
-//    DataDefinition findOutputDataDef(const OperationExpression &expr) ;
-//    DataDefinition findParameterDataDef(const OperationExpression &expr, int index) ;
+    NEW_OPERATION(IffRaster);
 };
 }
 }

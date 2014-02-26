@@ -17,6 +17,8 @@ public:
     static quint64 createMetadata();
 private:
     Coordinate _coord;
+
+    NEW_OPERATION(FCoordinate);
 };
 }
 }

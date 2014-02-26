@@ -22,6 +22,8 @@ private:
     QString _attribColumn;
     ITable _attTable;
     Envelope _box;
+
+    NEW_OPERATION(SelectionFeatures);
 };
 }
 }

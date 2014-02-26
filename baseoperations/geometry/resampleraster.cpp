@@ -10,6 +10,7 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(ResampleRaster)
 
 Ilwis::OperationImplementation *ResampleRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
@@ -106,32 +107,20 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
 
 quint64 ResampleRaster::createMetadata()
 {
-    QString url = QString("ilwis://operations/resample");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","resample");
-    resource.addProperty("syntax","resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
-    resource.addProperty("description",TR("translates a rastercoverage from one geometry (coordinatesystem+georeference) to another"));
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with domain any domain"));
-    resource.addProperty("pin_2_type", itGEOREF);
-    resource.addProperty("pin_2_name", TR("target georeference"));
-    resource.addProperty("pin_2_desc",TR("the georeference to which the input coverage will be morphed"));
-    resource.addProperty("pin_3_type", itSTRING);
-    resource.addProperty("pin_3_name", TR("Resampling method"));
-    resource.addProperty("pin_3_desc",TR("The method used to aggregate pixels from the input map in the geometry of the output map"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_desc",TR("output rastercoverage with the domain of the input map"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    OperationResource operation({"ilwis://operations/resample"});
+    operation.setSyntax("resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
+    operation.setDescription(TR("translates a rastercoverage from one geometry (coordinatesystem+georeference) to another"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with domain any domain"));
+    operation.addInParameter(1,itGEOREF,  TR("target georeference"),TR("the georeference to which the input coverage will be morphed"));
+    operation.addInParameter(2,itSTRING, TR("Resampling method"),TR("The method used to aggregate pixels from the input map in the geometry of the output map") );
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
+    operation.setKeywords("raster, geometry, transformation");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 
 

@@ -22,6 +22,8 @@ private:
     double _min = rUNDEF;
     double _max = rUNDEF;
     double _step = rUNDEF;
+
+    NEW_OPERATION(SetValueRange)
 };
 }
 }

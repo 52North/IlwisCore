@@ -24,6 +24,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(IfFeature)
+
 Ilwis::BaseOperations::IfFeature::IfFeature()
 {
 }

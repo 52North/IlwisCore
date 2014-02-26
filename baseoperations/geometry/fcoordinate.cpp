@@ -9,6 +9,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(FCoordinate)
+
 FCoordinate::FCoordinate()
 {
 }
@@ -74,6 +76,7 @@ quint64 FCoordinate::createMetadata()
     operation.addInParameter(2,itNUMBER , TR("z"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOORDINATE, TR("coordinate"));
+    operation.setKeywords("coordinate");
 
     mastercatalog()->addItems({operation});
     return operation.id();

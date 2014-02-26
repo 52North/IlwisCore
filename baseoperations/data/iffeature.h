@@ -18,6 +18,8 @@ public:
 private:
     IFeatureCoverage _inputFC;
     IFeatureCoverage _outputFC;
+
+    NEW_OPERATION(IfFeature);
 };
 }
 }

@@ -28,6 +28,8 @@ private:
     double _number;
     BoundingBox _box;
     LogicalOperator _operator;
+
+    NEW_OPERATION(BinaryLogical);
 };
 }
 }

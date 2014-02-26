@@ -23,6 +23,8 @@ private:
     QString _column2 = sUNDEF;
     QString _outColumn = sUNDEF;
 
+    NEW_OPERATION(BinaryMathTable)    ;
+
 };
 }
 }

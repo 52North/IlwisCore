@@ -9,6 +9,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(FPixel)
+
 FPixel::FPixel()
 {
 }
@@ -64,32 +66,19 @@ Ilwis::OperationImplementation::State FPixel::prepare(ExecutionContext *, const 
 
 quint64 FPixel::createMetadata()
 {
+    OperationResource operation({"ilwis://operations/pixel"});
+    operation.setSyntax("pixel(x,y[,z])");
+    operation.setDescription(TR("translates a x and y value (optional z) into a single pixel object"));
+    operation.setInParameterCount({2,3});
+    operation.addInParameter(0,itNUMBER, TR("x"));
+    operation.addInParameter(1,itNUMBER, TR("y"));
+    operation.addInParameter(2,itNUMBER, TR("z"), TR("optional"));
 
-    QString url = QString("ilwis://operations/pixel");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","pixel");
-    resource.addProperty("syntax","pixel(x,y[,z])");
-    resource.addProperty("description",TR("translates a x and y value (optional z) into a single pixel object"));
-    resource.addProperty("inparameters","2|3");
-    resource.addProperty("pin_1_type", itNUMBER);
-    resource.addProperty("pin_1_name", TR("x"));
-    resource.addProperty("pin_1_desc",TR("x part of pixel"));
-    resource.addProperty("pin_2_type", itNUMBER);
-    resource.addProperty("pin_2_name", TR("y"));
-    resource.addProperty("pin_2_desc",TR("y part of pixel"));
-    resource.addProperty("pin_3_type", itNUMBER);
-    resource.addProperty("pin_3_name", TR("z"));
-    resource.addProperty("pin_3_desc",TR("z part of pixel, optional"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itCOORDINATE);
-    resource.addProperty("pout_1_name", TR("pixel"));
-    resource.addProperty("pout_1_desc",TR("pixel"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itPIXEL, TR("Pixel"));
+    operation.setKeywords("pixel, geometry");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 

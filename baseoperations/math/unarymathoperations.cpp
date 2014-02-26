@@ -11,6 +11,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(Sine)
+
 Sine::Sine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
 {}
 OperationImplementation *Sine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sine(metaid,expr);}
@@ -24,6 +26,7 @@ quint64 Sine::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(Cosine)
 Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
 {}
 OperationImplementation *Cosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Cosine(metaid,expr);}
@@ -44,6 +47,7 @@ double tangent(double v){
     return tan(v);
 }
 
+REGISTER_OPERATION(Tangent)
 Tangent::Tangent(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", tangent)
 {}
 OperationImplementation *Tangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Tangent(metaid,expr);}
@@ -63,6 +67,9 @@ double arcsine(double v){
         return rUNDEF;
     return asin(v);
 }
+
+REGISTER_OPERATION(Arcsine)
+
 Arcsine::Arcsine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", arcsine)
 {}
 OperationImplementation *Arcsine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arcsine(metaid,expr);}
@@ -82,6 +89,8 @@ double arccosine(double v){
         return rUNDEF;
     return asin(v);
 }
+
+REGISTER_OPERATION(Arccosine)
 Arccosine::Arccosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", arccosine)
 {}
 OperationImplementation *Arccosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arccosine(metaid,expr);}
@@ -96,6 +105,7 @@ quint64 Arccosine::createMetadata() {
 }
 
 //----------------------------------------------------------
+REGISTER_OPERATION(ArcTangent)
 ArcTangent::ArcTangent(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", atan)
 {}
 OperationImplementation *ArcTangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcTangent(metaid,expr);}
@@ -114,6 +124,7 @@ double logten(double v){
         return log10(v);
     return rUNDEF;
 }
+REGISTER_OPERATION(Log10)
 Log10::Log10(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", logten)
 {}
 OperationImplementation *Log10::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Log10(metaid,expr);}
@@ -132,6 +143,8 @@ double naturallog(double v){
         return log(v);
     return rUNDEF;
 }
+
+REGISTER_OPERATION(NaturalLogarithm)
 NaturalLogarithm::NaturalLogarithm(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", naturallog)
 {}
 OperationImplementation *NaturalLogarithm::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new NaturalLogarithm(metaid,expr);}
@@ -151,6 +164,7 @@ double abs2(double v){
         return rUNDEF;
     return v;
 }
+REGISTER_OPERATION(Abs)
 Abs::Abs(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", abs2)
 {}
 OperationImplementation *Abs::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Abs(metaid,expr);}
@@ -166,12 +180,12 @@ quint64 Abs::createMetadata() {
 
 //---------------------------------------------------------
 //----------------------------------------------------------
-
 double sqrt2(double v){
     if ( v < 0)
         return rUNDEF;
     return std::sqrt(v);
 }
+REGISTER_OPERATION(Sqrt)
 Sqrt::Sqrt(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sqrt2)
 {}
 OperationImplementation *Sqrt::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sqrt(metaid,expr);}
@@ -185,6 +199,7 @@ quint64 Sqrt::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(Ceil)
 Ceil::Ceil(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::ceil<int>)
 {}
 OperationImplementation *Ceil::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Ceil(metaid,expr);}
@@ -198,6 +213,7 @@ quint64 Ceil::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(Floor)
 Floor::Floor(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::floor<int>)
 {}
 OperationImplementation *Floor::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
@@ -219,6 +235,7 @@ double sign(double v) {
     return 0;
 }
 
+REGISTER_OPERATION(Sign)
 Sign::Sign(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", sign)
 {}
 OperationImplementation *Sign::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
@@ -232,6 +249,7 @@ quint64 Sign::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(CosineH)
 CosineH::CosineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", cosh)
 {}
 OperationImplementation *CosineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineH(metaid,expr);}
@@ -245,6 +263,7 @@ quint64 CosineH::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(SineH)
 SineH::SineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sinh)
 {}
 OperationImplementation *SineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineH(metaid,expr);}

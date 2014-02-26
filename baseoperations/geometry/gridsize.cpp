@@ -9,6 +9,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(GridSize)
+
 GridSize::GridSize()
 {
 }
@@ -61,27 +63,17 @@ OperationImplementation::State GridSize::prepare(ExecutionContext *, const Symbo
 
 quint64 GridSize::createMetadata()
 {
-    QString url = QString("ilwis://operations/rastersize");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","rastersize");
-    resource.addProperty("syntax","gridsize(rastercoverage,xsize|ysize|zsize)");
-    resource.addProperty("description",TR("returns the pixel extent of a grid coverage"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("rastercoverage from which a dimension size is retrieved"));
-    resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("dimension"));
-    resource.addProperty("pin_2_desc",TR("Dimension"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itINT32);
-    resource.addProperty("pout_1_name", TR("size"));
-    resource.addProperty("pout_1_desc",TR("Lenght in one dimension meausred in grid cells"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/rastersize"});
+    operation.setSyntax("gridsize(rastercoverage,xsize|ysize|zsize)");
+    operation.setDescription(TR("returns the pixel extent of a grid coverage"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER, TR("rastercoverage"),TR("rastercoverage from which a dimension size is retrieved"));
+    operation.addInParameter(1,itSTRING, TR("dimension"));
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itINT32, TR("size"),TR("Lenght in one dimension measured in grid cells") );
+    operation.setKeywords("raster, size");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

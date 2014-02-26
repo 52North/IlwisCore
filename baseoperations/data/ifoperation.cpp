@@ -11,6 +11,7 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+
 IfOperation::IfOperation()
 {
 }
