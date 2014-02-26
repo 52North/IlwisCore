@@ -9,6 +9,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(MasterGeoreference)
+
 MasterGeoreference::MasterGeoreference()
 {
 }
@@ -46,23 +48,16 @@ Ilwis::OperationImplementation::State MasterGeoreference::prepare(ExecutionConte
 
 quint64 MasterGeoreference::createMetadata()
 {
-    QString url = QString("ilwis://operations/mastergeoreference");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","mastergeoreference");
-    resource.addProperty("syntax","mastergeoref(rastercoverage|targetgeoref)");
-    resource.addProperty("description",TR("Sets the georeference for all operations that trigger an on the fly resampling of a gridcoverage"));
-    resource.addProperty("inparameters","1");
-    resource.addProperty("pin_1_type", itGEOREF | itRASTER);
-    resource.addProperty("pin_1_name", TR("georeference"));
-    resource.addProperty("pin_1_desc",TR("input georeference or raster, in which case it takes the georeference of the raster"));
-    resource.addProperty("outparameters",0);
-    resource.addProperty("pout_1_type", itUNKNOWN);
-    resource.addProperty("pout_1_name", TR(""));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/mastergeoreference"});
+    operation.setSyntax("mastergeoref(rastercoverage|targetgeoref)");
+    operation.setDescription(TR("Sets the georeference for all operations that trigger an on the fly resampling of a gridcoverage"));
+    operation.setInParameterCount({1});
+    operation.addInParameter(0,itGEOREF | itRASTER, TR("georeference"),TR("input georeference or raster, in which case it takes the georeference of the raster"));
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itUNKNOWN, TR(""));
+    operation.setKeywords("georeference");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

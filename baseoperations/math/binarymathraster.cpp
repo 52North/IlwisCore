@@ -10,6 +10,7 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(BinaryMathRaster)
 
 OperationImplementation *BinaryMathRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
@@ -197,35 +198,18 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
 
 quint64 BinaryMathRaster::createMetadata()
 {
-    QString url = QString("ilwis://operations/binarymathraster");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","binarymathraster");
-    resource.addProperty("syntax","binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
-    resource.addProperty("description",TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itRASTER | itNUMBER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage or number"));
-    resource.addProperty("pin_1_domain","value");
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with a numerical domain or number"));
-    resource.addProperty("pin_2_type", itRASTER | itNUMBER);
-    resource.addProperty("pin_2_name", TR("input rastercoverage or number"));
-    resource.addProperty("pin_2_domain","value");
-    resource.addProperty("pin_2_desc",TR("input rastercoverage with a numerical domain or number"));
-    resource.addProperty("pin_3_type", itSTRING);
-    resource.addProperty("pin_3_name", TR("Operator"));
-    resource.addProperty("pin_3_domain","string");
-    resource.addProperty("pin_3_desc",TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
-    resource.addProperty("pout_1_domain","value");
-    resource.addProperty("pout_1_desc",TR("output rastercoverage with a numerical domain"));
 
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/binarymathraster"});
+    operation.setSyntax("binarymathraster(gridcoverage1,gridcoverage2|number,add|substract|divide|times|mod)");
+    operation.setDescription(TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0,itRASTER | itNUMBER, TR("first input raster coverage or number"));
+    operation.addInParameter(1,itRASTER | itNUMBER, TR("second input raster coverage or number"));
+    operation.addInParameter(2,itSTRING , TR("Operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output raster coverage"));
+    operation.setKeywords("raster, operation");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

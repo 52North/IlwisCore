@@ -16,6 +16,8 @@ protected:
     IRasterCoverage _inputGC;
     Pixel _pixel;
     QString _outName=sUNDEF;
+
+    NEW_OPERATION(Pixel2Coord);
 };
 }
 

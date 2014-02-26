@@ -22,6 +22,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(BinaryMathTable)
+
 BinaryMathTable::BinaryMathTable()
 {
 }
@@ -159,39 +161,21 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 
 quint64 BinaryMathTable::createMetadata()
 {
-    QString url = QString("ilwis://operations/binarymathtable");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","binarymathtable");
-    resource.addProperty("syntax","binarymathtable(input-table, column-name|number,column-name|number,output-column-name, add|substract|divide|times|mod)");
-    resource.addProperty("description",TR("generates a new numerical table based on the operation, applied to all the cells of a column"));
-    resource.addProperty("inparameters","4|5");
-    resource.addProperty("pin_1_type", itTABLE);
-    resource.addProperty("pin_1_name", TR("input table-column"));
-    resource.addProperty("pin_1_desc",TR("input table-column from which the input column will be chosen"));
-    resource.addProperty("pin_2_type", itSTRING | itNUMBER);
-    resource.addProperty("pin_2_name", TR("input column name or number"));
-    resource.addProperty("pin_2_desc",TR("column with a numerical domain or number"));
-    resource.addProperty("pin_3_type", itSTRING | itNUMBER);
-    resource.addProperty("pin_3_name", TR("input column name or number"));
-    resource.addProperty("pin_3_desc",TR("column with a numerical domain or number"));
-    resource.addProperty("pin_4_type", itSTRING);
-    resource.addProperty("pin_4_name", TR("output column"));
-    resource.addProperty("pin_4_desc", TR("output column with a numeric domain. It is optional; else it will replicate the names of the input columns"));
-    resource.addProperty("pin_5_type", itSTRING);
-    resource.addProperty("pin_5_name", "operator");
-    resource.addProperty("pin_5_desc",TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itTABLE);
-    resource.addProperty("pout_1_name", TR("output table"));
-    resource.addProperty("pout_1_desc",TR("output table with a modified or added column with a numerical domain"));
+    OperationResource operation({"ilwis://operations/binarymathtable"});
+    operation.setSyntax("binarymathtable(input-table, column-name|number,column-name|number,output-column-name, add|substract|divide|times|mod)");
+    operation.setDescription(TR("generates a new numerical table based on the operation, applied to all the cells of a column"));
+    operation.setInParameterCount({4,5});
+    operation.addInParameter(0,itTABLE, TR("input table-column"),TR("input table-column from which the input column will be chosen"));
+    operation.addInParameter(1,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
+    operation.addInParameter(2,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
+    operation.addInParameter(3,itSTRING , TR("output column"),TR("output column with a numeric domain. It is optional; else it will replicate the names of the input columns"));
+    operation.addInParameter(4,itSTRING, TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itTABLE, TR("output table"));
+    operation.setKeywords("table, operation");
 
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
-
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 
 

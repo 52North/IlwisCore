@@ -25,6 +25,8 @@ private:
     std::vector<qint32> _base;
     int _zvalue = iUNDEF;
 
+    NEW_OPERATION(Selection)    ;
+
 
 };
 }

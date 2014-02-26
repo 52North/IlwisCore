@@ -21,6 +21,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(SelectionTable)
+
 Ilwis::OperationImplementation *SelectionTable::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
     return new SelectionTable(metaid, expr);

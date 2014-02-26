@@ -22,6 +22,8 @@ private:
     IGeoReference _targetGrf;
     Ilwis::RasterInterpolator::InterpolationMethod _method;
 
+    NEW_OPERATION(ResampleRaster);
+
 };
 }
 }

@@ -24,6 +24,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(BinaryMathFeature)
+
 BinaryMathFeature::BinaryMathFeature()
 {
 }
@@ -108,32 +110,17 @@ Envelope BinaryMathFeature::addEnvelopes() const {
 
 quint64 BinaryMathFeature::createMetadata()
 {
-    QString url = QString("ilwis://operations/binarymathfeatures");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","binarymathfeatures");
-    resource.addProperty("syntax","binarymathfeatures(featurecoverage1,featurescoverage2,add|substract)");
-    resource.addProperty("description",TR("generates a new featurecoverage that puts all the features of both coverages into one coverage"));
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itFEATURE);
-    resource.addProperty("pin_1_name", TR("input feature coverage"));
-    resource.addProperty("pin_1_desc",TR("input feature coverage"));
-    resource.addProperty("pin_2_type", itFEATURE);
-    resource.addProperty("pin_2_name", TR("input feature coverage"));
-    resource.addProperty("pin_2_desc",TR("input feature coverage"));
-    resource.addProperty("pin_3_type", itSTRING);
-    resource.addProperty("pin_3_name", TR("Operator"));
-    resource.addProperty("pin_3_domain","string");
-    resource.addProperty("pin_3_desc",TR("operator (add, substract) applied to the other 2 input operators"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itFEATURE);
-    resource.addProperty("pout_1_name", TR("output featurecoverage"));
-    resource.addProperty("pout_1_desc",TR("output feature coverage"));
+    OperationResource operation({"ilwis://operations/binarymathfeatures"});
+    operation.setSyntax("binarymathfeatures(featurecoverage1,featurescoverage2,add|substract)");
+    operation.setDescription(TR("generates a new featurecoverage that puts all the features of both coverages into one coverage"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0,itFEATURE, TR("first input feature coverage"));
+    operation.addInParameter(1,itFEATURE, TR("second input feature coverage"));
+    operation.addInParameter(2,itSTRING , TR("Operator"),TR("operator applied to the other 2 input parameters"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itFEATURE, TR("output featurecoverage"));
+    operation.setKeywords("features, merge");
 
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
-
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

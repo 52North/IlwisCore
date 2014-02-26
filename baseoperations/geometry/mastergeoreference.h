@@ -17,6 +17,8 @@ public:
     static quint64 createMetadata();
 private:
     IGeoReference _georef;
+
+    NEW_OPERATION(MasterGeoreference);
 };
 }
 }

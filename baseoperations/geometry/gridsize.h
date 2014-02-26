@@ -17,6 +17,8 @@ private:
     IRasterCoverage _inputGC;
     QString _dim;
 
+    NEW_OPERATION(GridSize);
+
 };
 }
 }

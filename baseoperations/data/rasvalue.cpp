@@ -7,6 +7,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(RasValue)
+
 RasValue::RasValue()
 {
 }

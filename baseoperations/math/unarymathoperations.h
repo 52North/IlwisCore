@@ -10,6 +10,8 @@ public:
     Sine(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Sine);
 };
 
 class Cosine : public UnaryMath
@@ -19,6 +21,8 @@ public:
     Cosine(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Cosine);
 };
 
 class Tangent : public UnaryMath
@@ -28,6 +32,8 @@ public:
     Tangent(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Tangent);
 };
 
 class Arcsine : public UnaryMath
@@ -37,6 +43,8 @@ public:
     Arcsine(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Arcsine);
 };
 
 class Arccosine : public UnaryMath
@@ -46,6 +54,9 @@ public:
     Arccosine(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+
+    NEW_OPERATION(Arccosine);
 };
 
 class ArcTangent : public UnaryMath
@@ -55,6 +66,8 @@ public:
     ArcTangent(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(ArcTangent);
 };
 
 class Log10 : public UnaryMath
@@ -64,6 +77,8 @@ public:
     Log10(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Log10);
 };
 
 class Sqrt : public UnaryMath
@@ -73,6 +88,8 @@ public:
     Sqrt(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Sqrt);
 };
 
 class NaturalLogarithm : public UnaryMath
@@ -82,6 +99,9 @@ public:
     NaturalLogarithm(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+
+    NEW_OPERATION(NaturalLogarithm);
 };
 
 class Abs : public UnaryMath
@@ -91,6 +111,9 @@ public:
     Abs(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+
+    NEW_OPERATION(Abs);
 };
 
 class Ceil : public UnaryMath
@@ -100,6 +123,8 @@ public:
     Ceil(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Ceil);
 };
 
 class Floor : public UnaryMath
@@ -109,6 +134,8 @@ public:
     Floor(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Floor);
 };
 
 class Sign : public UnaryMath
@@ -118,6 +145,8 @@ public:
     Sign(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(Sign);
 };
 
 class CosineH : public UnaryMath
@@ -127,6 +156,8 @@ public:
     CosineH(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(CosineH);
 };
 
 class SineH : public UnaryMath
@@ -136,6 +167,8 @@ public:
     SineH(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+
+    NEW_OPERATION(SineH);
 };
 }
 }

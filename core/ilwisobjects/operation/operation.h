@@ -27,6 +27,7 @@ protected:
 };
 
 typedef QScopedPointer<OperationImplementation> SPOperationImplementation;
+typedef std::function<Ilwis::OperationImplementation *(quint64 metaid, const OperationExpression&)> CreateOperation;
 
 class KERNELSHARED_EXPORT Operation
 {
@@ -60,14 +61,24 @@ public:
         }
         return T();
     }
+    // helper function
+    static std::nullptr_t registerOperation(quint64 id, Ilwis::CreateOperation op);
 
 private:
     SPOperationImplementation _operation;
 
 
 };
-typedef std::function<Ilwis::OperationImplementation *(quint64 metaid, const OperationExpression&)> CreateOperation;
+
 }
+
+#define NEW_OPERATION(name) \
+    private: \
+static name *dummy_operation;
+
+#define REGISTER_OPERATION(name) \
+    name *name::dummy_operation = Operation::registerOperation(name::createMetadata(),name::create);
+
 
 
 

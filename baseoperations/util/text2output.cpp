@@ -11,6 +11,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(Text2Output)
+
 Text2Output::Text2Output()
 {
 }

@@ -24,6 +24,8 @@ private:
     RenumberMap _renumberer;
     TableMerger _merger;
     Envelope addEnvelopes() const;
+
+    NEW_OPERATION(BinaryMathFeature);
 };
 }
 }

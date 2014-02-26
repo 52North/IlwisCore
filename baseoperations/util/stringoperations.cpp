@@ -11,6 +11,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(StringFind)
+
 StringFind::StringFind()
 {
 }
@@ -82,6 +84,8 @@ quint64 StringFind::createMetadata()
 }
 
 //--------------------------------------------------------------------------------------------------------
+REGISTER_OPERATION(StringSub)
+
 StringSub::StringSub()
 {
 }
@@ -160,6 +164,8 @@ quint64 StringSub::createMetadata()
 }
 
 //---------------------------------------------------------------------------------
+REGISTER_OPERATION(StringReplace)
+
 StringReplace::StringReplace()
 {
 }

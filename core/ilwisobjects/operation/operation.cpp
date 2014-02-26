@@ -10,8 +10,6 @@
 
 using namespace Ilwis;
 
-
-
 OperationImplementation::OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e) : _prepState(sNOTPREPARED)
 {
    _expression = e;
@@ -69,6 +67,12 @@ bool Operation::isValid() const
     if(!_operation)
         return false;
     return _operation->isValid();
+}
+
+std::nullptr_t Operation::registerOperation(quint64 id, CreateOperation op)
+{
+    Ilwis::commandhandler()->addOperation(id, op);
+    return nullptr;
 }
 
 

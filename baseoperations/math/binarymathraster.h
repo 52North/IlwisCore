@@ -26,6 +26,8 @@ private:
     IRasterCoverage _inputGC2;
     IRasterCoverage _outputGC;
     BoundingBox _box;
+
+    NEW_OPERATION(BinaryMathRaster)    ;
 };
 }
 }
