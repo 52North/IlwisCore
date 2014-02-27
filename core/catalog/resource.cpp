@@ -92,7 +92,9 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                     if ( workingCatalog){
                         QUrl url =  workingCatalog->filesystemLocation();
                         if ( url.isValid() && url.scheme() == "file"){
-                            QString filepath = url.toLocalFile() + name;
+                            QString filepath = url.toLocalFile();
+                            if (filepath[filepath.size()-1] != '/') filepath.append("/");
+                            filepath.append(name);
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
                             }
