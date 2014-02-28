@@ -20,68 +20,76 @@ Time::Time()
     _valuetype = itUNKNOWN;
 }
 
-Time::Time(int yr, int mnth, int dy, int hr, int min, double sec)
-{
+
+void Time::checkDate(int year, int month, int day){
+    if (_valid){
+        if ( month >= 1 && month <= 12){ //if valid month
+            if ( day >= 1 && day <= 31) { //if valid day of month
+                if ( month == 2) { //if February
+                    if ( isLeapYear(year) ){ // if leap year
+                        if ( day > 29 ) // and dy == 30,31
+                            _valid = false;
+                    }else if ( day > 28 )  // if not leap year and dy == 29,30,31
+                        _valid = false;
+                }else if ( day == 31){
+                    if (month == 4 || month == 6 || month == 9 || month == 11)// April, June, September, November
+                        _valid = false;
+                    // January, March, May, July, August, October, December
+                }
+            } else _valid = false;
+        } else _valid = false;
+    }
+}
+
+void Time::checkTime(int hour, int minute, double second){
+    if(_valid){
+        if ( hour < 0 || hour > 23)
+            _valid = false;
+        else if ( minute < 0 || minute > 59)
+            _valid = false;
+        else if ( second < 0.0 || second > 60.0)
+            _valid = false;
+    }
+}
+
+
+Time::Time(int year, int month, int day, int hour, int minute, double second){
+    _valuetype = itDATETIME;
+
     _valid = true;
-    _julianday = rUNDEF;
-    _valuetype = itDATE;
-
-    int year = yr;
-    int month;
-    if ( mnth >= 1 && mnth <= 12)
-        month = mnth;
-    else
-        _valid = false;
-
-    int day;
-    if ( dy >= 1 && dy <= 31 && _valid) {
-        if ( month == 2) {
-            if ( dy <= 29 && isLeapYear(yr)) {
-                day = dy;
-            } else if( dy <= 28 && !isLeapYear(yr))
-                day = dy;
-            else
-                _valid = false;
-        }else {
-            if ( month < 8 && (month + 1) % 2 == 0 && dy <= 31)
-                day = dy;
-            else if ( month >= 8 && month % 2 == 0 && dy <= 31)
-                day = dy;
-            else if ( dy <= 30)
-                day = dy;
-            else
-                _valid = false;
-        }
-    } else
-        _valid = false;
-
-    int hour=0, minutes=0, seconds=0;
-    if ( hour != iUNDEF) {
-         _valuetype |= itTIME;
-        if ( hr >= 0 && hr <= 23 && _valid)
-            hour = hr;
-        else
-            _valid = false;
-
-        if ( min >= 0 && min <= 59 && _valid)
-            minutes = min;
-        else
-            _valid = false;
-
-        if ( sec >= 0.0 && sec < 60.0  && _valid) {
-            seconds = sec;
-        }
-        else {
-            _valid = false;
-        }
-    }else
-        _valuetype = itDATE;
+    checkDate(year, month, day);
+    checkTime(hour, minute, second);
 
     if ( _valid)
-        _julianday = gregorianToJulian(year, month, day,hour,minutes,seconds);
+        _julianday = gregorianToJulian(year, month, day, hour, minute, second);
     else
         _julianday = rUNDEF;
 }
+
+Time::Time(int hour, int minute, double second){
+    _valuetype = itTIME;
+
+    _valid = true;
+    checkTime(hour, minute, second);
+
+    if ( _valid)
+        _julianday = gregorianToJulian(1900, 1, 1, hour, minute, second);
+    else
+        _julianday = rUNDEF;
+}
+
+Time::Time(int year, int month, int day){
+    _valuetype = itDATE;
+
+    _valid = true;
+    checkDate(year, month, day);
+
+    if ( _valid)
+        _julianday = gregorianToJulian(year, month, day, 0, 0, 0);
+    else
+        _julianday = rUNDEF;
+}
+
 Time::Time(const time_t tmt){
     _valid = true;
     _julianday =rUNDEF;
@@ -876,24 +884,24 @@ _step(stp)
 
 }
 
-TimeInterval TimeInterval::operator+(const TimeInterval& interval){
-    if ( _step == interval._step ) {
-        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step), valueType());
-    }
-    else if (  (double)interval.getStep() == tUNDEF || _step == tUNDEF) {
-        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
-    }
-    return TimeInterval();
-}
-TimeInterval TimeInterval::operator-(const TimeInterval& interval){
-        if ( _step == interval._step ) {
-        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step, valueType()));
-    }
-    else if (  interval.getStep() == tUNDEF || _step == tUNDEF) {
-        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
-    }
-    return TimeInterval();
-}
+//TimeInterval TimeInterval::operator+(const TimeInterval& interval){
+//    if ( _step == interval._step ) {
+//        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step), valueType());
+//    }
+//    else if (  (double)interval.getStep() == tUNDEF || _step == tUNDEF) {
+//        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
+//    }
+//    return TimeInterval();
+//}
+//TimeInterval TimeInterval::operator-(const TimeInterval& interval){
+//        if ( _step == interval._step ) {
+//        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step, valueType()));
+//    }
+//    else if (  interval.getStep() == tUNDEF || _step == tUNDEF) {
+//        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
+//    }
+//    return TimeInterval();
+//}
 
 QString TimeInterval::toString(bool local, IlwisTypes tp) const{
     if (min() == rUNDEF || max() == rUNDEF)

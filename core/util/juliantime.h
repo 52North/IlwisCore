@@ -24,7 +24,7 @@ public:
 
     Time();
     /**
-     * Creates a new time. <br>
+     * Creates a new time of type itDATETIME <br>
      * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
      * The julianday will be generated from these fields.
      *
@@ -35,7 +35,27 @@ public:
      * @param min the amount of minutes of this time must be on [0,60]
      * @param sec the amount of seconds of this time must be on [0,60]
      */
-    Time(int yr, int mnth=1, int dy=1, int hr=0, int min=0, double sec=0);
+    Time(int year, int month, int day, int hour, int minute, double second=0);
+    /**
+     * Creates a new time of type itTIME <br>
+     * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
+     * The julianday will be generated from these fields.
+     *
+     * @param hr the hour of this time must be on [0,24]
+     * @param min the amount of minutes of this time must be on [0,60]
+     * @param sec the amount of seconds of this time must be on [0,60]
+     */
+    Time(int hour, int minute, double second=0);
+    /**
+     * Creates a new time of type itDATE <br>
+     * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
+     * The julianday will be generated from these fields.
+     *
+     * @param yr the year of this time defaults to -4317
+     * @param mnth the month of this time must be on [1,12], defaults to 1
+     * @param dy the day of this time must fit within the month specified, defaults to 1
+     */
+    Time(int year, int month=1, int day=1);
 
     /**
      * @brief Time
@@ -269,10 +289,12 @@ public:
     void valueType(IlwisTypes tp);
 
 protected:
+    void checkDate(int year, int month, int day); // alters _valid
+    void checkTime(int hour, int minute, double second); //alters _valid
+
     double gregorianToJulian(int year, int month, int day, int hour, int minutes, double seconds) const;
     void julianToGregorian(int& year, int& month, int& day, int& hour, int& minutes, double& seconds) const;
     int julianyearday(int year, int month, int day) const;
-    void monthday(int year, int jday, int& month, int& day) const;
     int tolong(double val) const;
     void parseOrdinalDate(int ordinal, int year, int& month, int& day);
     void parseYearPart(const QString& yearpart, int& year, int& month, int& day) ;
@@ -297,8 +319,8 @@ class KERNELSHARED_EXPORT TimeInterval : public NumericRange {
 public:
     TimeInterval(IlwisTypes tp=itUNKNOWN);
     TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""), IlwisTypes tp=itUNKNOWN);
-    TimeInterval operator+(const TimeInterval& interval);
-    TimeInterval operator-(const TimeInterval& interval);
+//    TimeInterval operator+(const TimeInterval& interval);
+//    TimeInterval operator-(const TimeInterval& interval);
     TimeInterval& operator=(const TimeInterval& tiv);
     Time begin() const { return Time(min());}
     Time end() const { return Time(max());}
