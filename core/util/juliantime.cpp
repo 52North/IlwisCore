@@ -41,39 +41,39 @@ void Time::checkDate(int year, int month, int day){
     }
 }
 
-void Time::checkTime(int hour, int minute, double second){
+void Time::checkTime(int hour, int minute, double seconds){
     if(_valid){
         if ( hour < 0 || hour > 23)
             _valid = false;
         else if ( minute < 0 || minute > 59)
             _valid = false;
-        else if ( second < 0.0 || second > 60.0)
+        else if ( seconds < 0.0 || seconds >= 60.0)
             _valid = false;
     }
 }
 
 
-Time::Time(int year, int month, int day, int hour, int minute, double second){
+Time::Time(int year, int month, int day, int hour, int minute, double seconds){
     _valuetype = itDATETIME;
 
     _valid = true;
     checkDate(year, month, day);
-    checkTime(hour, minute, second);
+    checkTime(hour, minute, seconds);
 
     if ( _valid)
-        _julianday = gregorianToJulian(year, month, day, hour, minute, second);
+        _julianday = gregorianToJulian(year, month, day, hour, minute, seconds);
     else
         _julianday = rUNDEF;
 }
 
-Time::Time(int hour, int minute, double second){
+Time::Time(int hour, int minute, double seconds){
     _valuetype = itTIME;
 
     _valid = true;
-    checkTime(hour, minute, second);
+    checkTime(hour, minute, seconds);
 
     if ( _valid)
-        _julianday = gregorianToJulian(1900, 1, 1, hour, minute, second);
+        _julianday = gregorianToJulian(1900, 1, 1, hour, minute, seconds);
     else
         _julianday = rUNDEF;
 }

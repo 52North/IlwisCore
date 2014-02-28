@@ -436,7 +436,7 @@ protected:
     void copy(const PixelIterator& iter);
 
     IRasterCoverage _raster;
-    Grid *_grid;
+    Grid *_grid = 0;
     BoundingBox _box;
     qint32 _x = 0;
     qint32 _y = 0;

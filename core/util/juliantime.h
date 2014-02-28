@@ -35,7 +35,7 @@ public:
      * @param min the amount of minutes of this time must be on [0,60]
      * @param sec the amount of seconds of this time must be on [0,60]
      */
-    Time(int year, int month, int day, int hour, int minute, double second=0);
+    Time(int year, int month, int day, int hour, int minute, double seconds=0);
     /**
      * Creates a new time of type itTIME <br>
      * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
@@ -45,7 +45,7 @@ public:
      * @param min the amount of minutes of this time must be on [0,60]
      * @param sec the amount of seconds of this time must be on [0,60]
      */
-    Time(int hour, int minute, double second=0);
+    Time(int hour, int minute, double seconds=0);
     /**
      * Creates a new time of type itDATE <br>
      * If 1 of the parameters does not meet the requirements, the time object will be invalid. <br>
@@ -290,7 +290,7 @@ public:
 
 protected:
     void checkDate(int year, int month, int day); // alters _valid
-    void checkTime(int hour, int minute, double second); //alters _valid
+    void checkTime(int hour, int minute, double seconds); //alters _valid
 
     double gregorianToJulian(int year, int month, int day, int hour, int minutes, double seconds) const;
     void julianToGregorian(int& year, int& month, int& day, int& hour, int& minutes, double& seconds) const;
