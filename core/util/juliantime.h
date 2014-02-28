@@ -74,9 +74,9 @@ public:
     Time(const char * isostring);
 
     /**
-     * Creates a new time from an amount of seconds from  -4712
+     * Creates a new time from an amount of seconds from  0/0/-4712
      *
-     * @param days the amount of days after -4712
+     * @param days the amount of days after 0/0/-4712
      */
     Time(double jd, IlwisTypes m =itDATETIME);
 
@@ -236,37 +236,58 @@ public:
     void setYear(int year);
 
     /**
-     * @brief setMonth
-     * @param Mnt
+     * Sets the month field of this time. <br>
+     * if month is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setMonth(int Mnt);
 
     /**
-     * @brief setDay
-     * @param dy
+     * Sets the day field of this time. <br>
+     * if day is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setDay(int dy);
 
     /**
-     * @brief setHour
-     * @param hr
+     * Sets the hour field of this time. <br>
+     * if hour is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setHour(int hr);
 
     /**
-     * @brief setMinute
-     * @param min
+     * Sets the minute field of this time. <br>
+     * if minute is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setMinute(int min);
 
     /**
-     * @brief setSecond
-     * @param sec
+     * Sets the second field of this time. <br>
+     * if second is iUNDEF the julianday will be set to rUNDEF. <br>
+     * If you want to set the fields 1 by 1 you have to start at the biggest field or else they will override each other.
+     *
+     * @param year the new year of this Time
      */
     void setSecond(double sec);
 
     /**
-     * @brief toString
+     * Translates this type to a string format of one of the following types:
+     * - itDATE
+     * - itDATETIME
+     * - itTIME
+     *
+     * The typ defaults to the value type of this time
+     *
      * @param local
      * @param mode
      * @return
@@ -274,18 +295,24 @@ public:
     virtual QString toString(bool local= false, IlwisTypes tp=itUNKNOWN) const;
 
     /**
-     * @brief isValid
-     * @return
+     * Checks the validity of this time. <br>
+     * A time is invalid when there is no time set, or 1 or more of the inner members have an invalid value (negative value).
+     *
+     * @return true if this time is valid (the value within this time)
      */
     virtual bool isValid() const;
 
     /**
-     * @brief now
-     * @return
+     * Calculates the current time using the time of the system.
+     *
+     * @return the time at the moment of the call
      */
     static Time now();
 
+    //@override
     IlwisTypes valueType() const;
+
+    //@override
     void valueType(IlwisTypes tp);
 
 protected:
