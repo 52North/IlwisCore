@@ -134,7 +134,10 @@ QVariant NumericRange::impliedValue(const QVariant &v) const
         return vtemp;
 
     if ( (std::floor(_resolution) == _resolution) ) {
-        return _min >= 0 ? (quint64)vtemp : (qint64)vtemp;
+        if (_min >= 0)
+            return (quint64)vtemp;
+        else
+            return (qint64)vtemp;
     }
     return vtemp;
 
