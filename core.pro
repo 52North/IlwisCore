@@ -232,7 +232,9 @@ OTHER_FILES += \
     core/resources/filters.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
-    core/resources/datums.csv
+    core/resources/datums.csv \
+    LICENSE-2.0.txt \
+    installer.nsi
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
@@ -253,5 +255,9 @@ resources.files = core/resources/referencesystems.csv \
 
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
 
-INSTALLS += resources
+installer.files = LICENSE-2.0.txt \
+                installer.nsi
+installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+
+INSTALLS += resources installer
 
