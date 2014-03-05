@@ -81,12 +81,33 @@ public:
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
             ConnectorInterface *cif =  createConnector(resource, true);
-            if ( cif->canUse(resource))
+            if ( cif && cif->canUse(resource))
                 return dynamic_cast<T *>(cif);
             delete cif;
         }
         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",resource.name()));
         return 0;
+
+    }
+
+    template<class T=ConnectorInterface> QList<T*> connectorsForResource(const Resource& resource, const QString &provider="*") const{
+        ConnectorFilter filter(resource.ilwisType(), provider);
+        QList<T*> results;
+        for(auto key : _creatorsPerObject.keys()){
+            if ( filter == key) {
+                ConnectorCreate createConnector = _creatorsPerObject[key];
+                if ( createConnector ) {
+                    ConnectorInterface *cif =  createConnector(resource, true);
+                    if ( cif && cif->canUse(resource)){
+                        T* conn =  dynamic_cast<T *>(cif);
+                        if ( conn)
+                            results.push_back(conn);
+                    }else
+                        delete cif;
+                }
+            }
+        }
+        return results;
 
     }
 
@@ -104,8 +125,10 @@ public:
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
             ConnectorInterface *cif =  createConnector(resource, false);
-            cif->format(format);
-            return dynamic_cast<T *>(cif);
+            if ( cif){
+                cif->format(format);
+                return dynamic_cast<T *>(cif);
+            }
         }
 
 
@@ -113,14 +136,14 @@ public:
         return 0;
     }
 
-    template<class T=ConnectorInterface> T *createSuitable(const Resource& resource, const QString &provider=sUNDEF) const{
+    template<class T=ConnectorInterface> T *createContainerConnector(const Resource& resource, const QString &provider=sUNDEF) const{
         for(auto iter=_creatorsPerObject.begin(); iter != _creatorsPerObject.end(); ++iter){
             if ( !hasType(iter.key()._objectTypes, resource.ilwisType()))
                 continue;
             ConnectorCreate createConnector = iter.value();
             if ( createConnector && ( iter.key()._provider == provider || provider == sUNDEF)) {
                 ConnectorInterface *cif =  createConnector(resource, true);
-                if ( cif->canUse(resource))
+                if ( cif && cif->canUse(resource))
                     return dynamic_cast<T *>(cif);
                 delete cif;
             }

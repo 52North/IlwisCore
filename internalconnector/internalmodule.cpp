@@ -2,13 +2,10 @@
 #include <QSqlQuery>
 
 #include "kernel.h"
-#include "connectorinterface.h"
-#include "containerconnector.h"
 #include "geos/geom/Coordinate.h"
 #include "coordinate.h"
 #include "location.h"
 #include "internalmodule.h"
-#include "factory.h"
 #include "ilwisdata.h"
 #include "range.h"
 #include "connectorinterface.h"
@@ -16,10 +13,10 @@
 #include "connectorfactory.h"
 #include "ilwisobjectfactory.h"
 #include "internalilwisobjectfactory.h"
-#include "catalogconnector.h"
-#include "catalogconnectorfactory.h"
-#include "internalcatalogconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
+#include "internalcatalogconnector.h"
 #include "internalrastercoverageconnector.h"
 #include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
@@ -50,7 +47,7 @@ void InternalModule::prepare()
     ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory)
         return ;
-    factory->addCreator(itCONTAINER,"internal",InternalCatalogConnector::create);
+    factory->addCreator(itCATALOG,"internal",InternalCatalogConnector::create);
 
     factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);

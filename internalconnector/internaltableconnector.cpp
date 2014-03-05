@@ -14,8 +14,9 @@
 #include "flattable.h"
 #include "containerstatistics.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "internaltableconnector.h"
 
 using namespace Ilwis;

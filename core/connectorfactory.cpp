@@ -15,7 +15,9 @@ uint Ilwis::qHash(const ConnectorFilter& filter ){
 
 bool Ilwis::operator==(const ConnectorFilter& filter1, const ConnectorFilter& filter2 ){
     bool typeOk = (filter1._objectTypes & filter2._objectTypes) != 0;
-    bool providerOk = filter1._provider == filter2._provider;
+    //bool providerOk = filter1._provider == filter2._provider;
+    QRegExp regexpr(filter1._provider,Qt::CaseSensitive, QRegExp::Wildcard);
+    bool providerOk = regexpr.indexIn(filter2._provider) != -1;
     return  typeOk && providerOk;
 }
 

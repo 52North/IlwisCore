@@ -3,14 +3,11 @@
 #include <QFileInfo>
 #include <QSqlQuery>
 #include <QSqlRecord>
-#include "identity.h"
 #include "kernel.h"
 #include "ilwisdata.h"
-#include "resource.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalog.h"
@@ -20,41 +17,40 @@
 
 using namespace Ilwis;
 
-Catalog::Catalog(QObject *parent) :
-    QObject(parent)
+Catalog::Catalog()
 {
 }
 
-Catalog::Catalog(const Catalog &cat) : QObject(),
-    Identity(cat.name(),cat.id(),cat.code(),cat.description()),
-    _filter(cat._filter),
-    _location(cat._location),
-    _parent(cat._parent)
+Catalog::Catalog(const Resource &resource) : IlwisObject(resource)
 {
+}
+
+Catalog::~Catalog()
+{
+
 }
 
 std::list<Resource> Catalog::items() const
 {
-    return mastercatalog()->select(_location, _filter);
+    return mastercatalog()->select(source().url(), _filter);
 }
 
 
 
-bool Catalog::prepare(const QUrl &resource, const QString& filter)
+bool Catalog::prepare(const QString& filter)
 {
-    QString scheme =  resource.scheme();
-    if ( !resource.isValid() || scheme.size() <= 1)
-        return ERROR2(ERR_ILLEGAL_VALUE_2,"url",resource.toString());
+    QString scheme =  source().url().scheme();
+    if ( !source().isValid() || scheme.size() <= 1)
+        return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    bool ok = mastercatalog()->addContainer(resource);
+    bool ok = mastercatalog()->addContainer(source().url());
     if (!ok)
         return false;
 
-    _location = resource;
     CatalogQuery query;
     _filter = query.transformQuery(filter);
 
-    QStringList parts = resource.path().split("/");
+    QStringList parts = source().url().toString().split("/");
     QString cid = parts.back();
     if ( cid == "")
         cid = "Catalog";
@@ -74,7 +70,7 @@ QString Catalog::type() const
 
 bool Catalog::isValid() const
 {
-    return _location.isValid() && _filter != "";
+    return source().url().isValid() && _filter != "";
 }
 
 IlwisTypes Catalog::ilwisType() const {
@@ -90,17 +86,17 @@ QString Catalog::resolve(const QString &name, IlwisTypes tp) const
             return name;
         }
     }
-    QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(_location.toString());
+    QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(source().url().toString());
     if ( tp == itUNKNOWN) // incomplete info, we hope that the name will be unique. wrong selection must be handled at the caller side
-        query = QString("select resource from mastercatalog where name = '%1' and container='%2'").arg(name, _location.toString());
+        query = QString("select resource from mastercatalog where name = '%1' and container='%2'").arg(name, source().url().toString());
     QSqlQuery results = kernel()->database().exec(query);
     if ( results.next()) {
         QSqlRecord rec = results.record();
         return rec.value(0).toString();
     } else {
         auto resolvedName = name;
-        if ( context()->workingCatalog()) {
-            resolvedName =  context()->workingCatalog()->location().toString() + "/" + name;
+        if ( context()->workingCatalog().isValid()) {
+            resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
             query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                             where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
                     and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
@@ -123,17 +119,29 @@ void Catalog::setParentCatalog(const QUrl &url)
     _parent = url;
 }
 
-QUrl Catalog::location() const
-{
-    return _location;
-}
 
 QUrl Catalog::filesystemLocation() const
 {
-    if (_location.scheme() == "file")
-        return _location;
+    if (source().url().scheme() == "file")
+        return source().url();
     else
         return context()->cacheLocation();
+}
+
+IlwisObject *Catalog::clone()
+{
+    Catalog *catalog = new Catalog();
+    copyTo(catalog);
+
+    return catalog;
+}
+
+void Catalog::copyTo(IlwisObject* obj){
+    Locker lock(_mutex);
+    IlwisObject::copyTo(obj);
+    Catalog *catalog = static_cast<Catalog *>(obj);
+    catalog->_filter = _filter;
+    catalog->_parent = _parent;
 }
 
 

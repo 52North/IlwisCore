@@ -16,15 +16,14 @@
 #include "connectorinterface.h"
 #include "abstractfactory.h"
 #include "ilwisobjectfactory.h"
+#include "ilwisdata.h"
 #include "ilwiscontext.h"
-#include "catalogconnectorfactory.h"
 #include "connectorfactory.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
-#include "containerconnector.h"
-#include "folderconnector.h"
+#include "filecatalogconnector.h"
 #include "featurefactory.h"
 #include "georefimplementationfactory.h"
-#include "catalog.h"
 #include "module.h"
 #include "mastercatalog.h"
 #include "version.h"
@@ -52,9 +51,9 @@ Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
 using namespace Ilwis;
 
-Catalog *createCatalog()  {
-    return new Catalog();
-}
+//Catalog *createCatalog()  {
+//    return new Catalog();
+//}
 
 Ilwis::Kernel* Ilwis::kernel() {
     if (Kernel::_kernel == 0) {
@@ -104,13 +103,11 @@ void Kernel::init() {
 
     _dbPublic.prepare();
 
-    CatalogConnectorFactory *catfactory = new CatalogConnectorFactory();
-    addFactory(catfactory);
-
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
 
-    confac->addCreator(itCONTAINER,"ilwis", FolderConnector::create);
+    confac->addCreator(itCATALOG, "ilwis",FileCatalogConnector::create);
+
 
     FeatureFactory *featureFac = new FeatureFactory();
     featureFac->addCreator("feature", createFeature);
@@ -124,8 +121,6 @@ void Kernel::init() {
     _modules.addModules();
 
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
-
-   // ItemRange::addCreateItem("ThematicItem", ThematicItem::createRange());
 
 }
 

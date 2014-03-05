@@ -7,20 +7,28 @@
 #include "resource.h"
 #include "mastercatalog.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
 #include "internalcatalogconnector.h"
 
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *InternalCatalogConnector::create(const Resource&, bool ) {
-    return new InternalCatalogConnector();
+ConnectorInterface *InternalCatalogConnector::create(const Resource& resource, bool load ) {
+    if ( resource.url().scheme() == "ilwis")
+        return new InternalCatalogConnector(resource, load);
+    return nullptr;
 
 }
 
-InternalCatalogConnector::InternalCatalogConnector() :ContainerConnector(Resource(QUrl("ilwis://internalcatalog"),itCONTAINER))
+//InternalCatalogConnector::InternalCatalogConnector(const Resource& resource, bool load ) :CatalogConnector(Resource(QUrl("ilwis://internalcatalog"),itCATALOG), load)
+InternalCatalogConnector::InternalCatalogConnector(const Resource& resource, bool load ) :CatalogConnector(resource, load)
 {
+}
+
+InternalCatalogConnector::~InternalCatalogConnector()
+{
+
 }
 
 bool InternalCatalogConnector::prepare()
@@ -66,6 +74,11 @@ QString InternalCatalogConnector::provider() const
 QFileInfo InternalCatalogConnector::toLocalFile(const QUrl& url) const {
     QFileInfo inf = url.toLocalFile();
     return inf;
+}
+
+bool InternalCatalogConnector::loadItems()
+{
+    return true;
 }
 
 bool InternalCatalogConnector::isValid() const{

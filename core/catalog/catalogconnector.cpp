@@ -4,56 +4,52 @@
 #include <QUrl>
 #include <QFileInfo>
 #include "kernel.h"
-#include "identity.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "connectorfactory.h"
-#include "containerconnector.h"
-#include "catalog.h"
-#include  "resource.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
+#include "catalog.h"
 
 using namespace Ilwis;
 
-CatalogConnector::CatalogConnector(const Resource &resource) : _location(resource)
+CatalogConnector::CatalogConnector(const Resource &resource, bool load ) : IlwisObjectConnector(resource, load)
 {
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
-
-    if ( factory)
-        _containerconnector.reset(dynamic_cast<ContainerConnector *>(factory->createSuitable(Resource(resource.url(), itCONTAINER))));
-    else {
-        kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(resource.name()));
-    }
-}
-
-Resource &CatalogConnector::source()
-{
-    return _location;
 }
 
 bool CatalogConnector::isValid() const
 {
-    return _location.isValid() && _containerconnector;
+    return source().isValid();
 }
 
-std::unique_ptr<ContainerConnector> &CatalogConnector::containerConnector()
+Ilwis::IlwisObject *CatalogConnector::create() const
 {
-    return _containerconnector;
+    return new Catalog(source());
 }
 
-const std::unique_ptr<ContainerConnector> &CatalogConnector::containerConnector() const
+bool CatalogConnector::prepare()
 {
-    return _containerconnector;
+    const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
+    if (!factory) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",source().toLocalFile());
+    }
+
+    QList<CatalogConnector*> catalogs = factory->connectorsForResource<CatalogConnector>(source());
+    if ( catalogs.size() == 0) {
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", source().toLocalFile());
+    }
+    _dataProviders.resize(catalogs.size());
+    int  i =0;
+    for(CatalogConnector *catalog : catalogs) {
+        if (catalog->loadItems())
+           _dataProviders[i++].reset(catalog);
+        else
+            delete catalog;
+    }
+
+
+    return true;
 }
 
-ConnectorInterface *CatalogConnector::clone() const
-{
-//    CatalogConnector *connector = ConnectorInterface::create<CatalogConnector>(_location, "ilwis3");
-//    if(!connector) {
-//        kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("Connector",_location.toString()));
-//        return 0;
-//    }
 
-    return 0;
-}

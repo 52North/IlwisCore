@@ -9,7 +9,6 @@
 #include <memory>
 #include "errmessages.h"
 
-#define TR(s) (kernel()->translate(s))
 #define VALID(a) (a.isValid() && a->isValid())
 
 namespace Ilwis {
@@ -78,26 +77,25 @@ const quint64 itPOINT =  1; //1
 const quint64 itLINE =  2 * itPOINT; //2
 const quint64 itPOLYGON = 2 * itLINE; //4
 const quint64 itRASTER = 2 * itPOLYGON; //8
-const quint64 itNUMERICDOMAIN =  2 * itRASTER; //16
-const quint64 itITEMDOMAIN = 2 * itNUMERICDOMAIN; //32
-const quint64 itTIMEDOMAIN = 2 * itITEMDOMAIN; //64
-const quint64 itCOORDDOMAIN = 2 * itTIMEDOMAIN ; //128
-const quint64 itCOLORDOMAIN = 2 * itCOORDDOMAIN ; //256
-const quint64 itTEXTDOMAIN = 2 * itCOLORDOMAIN ; //512
-const quint64 itCONVENTIONALCOORDSYSTEM = 2 * itTEXTDOMAIN; //1024
-const quint64 itORTHOCOORDSYSTEM = 2 * itCONVENTIONALCOORDSYSTEM; //2048
-const quint64 itELLIPSOID = 2  * itORTHOCOORDSYSTEM;
-const quint64 itPROJECTION =  2 * itELLIPSOID;
-const quint64 itDATABASETABLE = 2 * itPROJECTION;
-const quint64 itFLATTABLE = 2 * itDATABASETABLE;
-const quint64 itREPRESENTATION = 2 * itFLATTABLE;
-const quint64 itGEOREF = 2 * itREPRESENTATION;
-const quint64 itOPERATIONMETADATA = 2 * itGEOREF;
-const quint64 itENVELOPE = 2 * itOPERATIONMETADATA;
-const quint64 itRASTERSIZE = 2 * itENVELOPE;
-const quint64 itCATALOG = 2 * itRASTERSIZE;
-const quint64 itCONTAINER = 2  * itCATALOG;
-const quint64 itGEODETICDATUM = 2  * itCONTAINER;
+const quint64 itNUMERICDOMAIN =  2 * itRASTER; //64
+const quint64 itITEMDOMAIN = 2 * itNUMERICDOMAIN; //128
+const quint64 itTIMEDOMAIN = 2 * itITEMDOMAIN; //256
+const quint64 itCOORDDOMAIN = 2 * itTIMEDOMAIN ; //512
+const quint64 itCOLORDOMAIN = 2 * itCOORDDOMAIN ; //1024
+const quint64 itTEXTDOMAIN = 2 * itCOLORDOMAIN ; //2048
+const quint64 itCONVENTIONALCOORDSYSTEM = 2 * itTEXTDOMAIN; //4096
+const quint64 itORTHOCOORDSYSTEM = 2 * itCONVENTIONALCOORDSYSTEM; //8192
+const quint64 itELLIPSOID = 2  * itORTHOCOORDSYSTEM; // 16384
+const quint64 itPROJECTION =  2 * itELLIPSOID; //32768
+const quint64 itDATABASETABLE = 2 * itPROJECTION; //65536
+const quint64 itFLATTABLE = 2 * itDATABASETABLE; //131072
+const quint64 itREPRESENTATION = 2 * itFLATTABLE; //262144
+const quint64 itGEOREF = 2 * itREPRESENTATION; //524288
+const quint64 itOPERATIONMETADATA = 2 * itGEOREF; //2097152
+const quint64 itCATALOG = 2 * itOPERATIONMETADATA;
+const quint64 itENVELOPE = 2 * itCATALOG; //1048576
+const quint64 itRASTERSIZE = 2 * itENVELOPE; //4194304
+const quint64 itGEODETICDATUM = 2  * itRASTERSIZE;
 const quint64 itBOOL = 2 * itGEODETICDATUM;
 const quint64 itINT8 = 2 * itBOOL;
 const quint64 itUINT8 = 2 * itINT8;
@@ -131,7 +129,7 @@ const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE;
 const quint64 itCOORDSYSTEM = itCONVENTIONALCOORDSYSTEM | itORTHOCOORDSYSTEM;
 const quint64 itTABLE = itFLATTABLE | itDATABASETABLE;
 const quint64 itDOMAIN =  itNUMERICDOMAIN | itITEMDOMAIN | itTIMEDOMAIN | itCOORDDOMAIN | itCOLORDOMAIN | itTEXTDOMAIN;
-const quint64 itILWISOBJECT = itCOVERAGE | itDOMAIN | itCOORDSYSTEM |
+const quint64 itILWISOBJECT = itCOVERAGE | itDOMAIN | itCOORDSYSTEM | itCATALOG |
          itELLIPSOID | itPROJECTION | itTABLE | itREPRESENTATION | itGEOREF | itOPERATIONMETADATA;
 const quint64 itDATETIME = itDATE | itTIME;
 const quint64 itINTEGER = itINT8 | itUINT8 | itINT16 | itUINT16 | itINT32 | itINT64 | itUINT32 | itUINT64;

@@ -2,6 +2,7 @@
 #include "Kernel_global.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
+#include "geos/geom/Coordinate.inl"
 #include "coordinate.h"
 #include <cmath>
 

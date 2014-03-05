@@ -1,19 +1,12 @@
-#include <QRegExp>
 #include <QFileInfo>
-#include <QUrl>
 #include <QUrlQuery>
-#include <QStringList>
-#include <QDir>
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include <QSqlError>
-#include "identity.h"
 #include "kernel.h"
-#include "resource.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
-#include "catalog.h"
 #include "ilwiscontext.h"
+#include "catalog.h"
 #include "mastercatalog.h"
 
 
@@ -88,13 +81,11 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
             if( isNew){
                 if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){
                     QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(name));
-                    Catalog *workingCatalog = context()->workingCatalog();
-                    if ( workingCatalog){
+                    ICatalog workingCatalog = context()->workingCatalog();
+                    if ( workingCatalog.isValid()){
                         QUrl url =  workingCatalog->filesystemLocation();
                         if ( url.isValid() && url.scheme() == "file"){
-                            QString filepath = url.toLocalFile();
-                            if (filepath[filepath.size()-1] != '/') filepath.append("/");
-                            filepath.append(name);
+                            QString filepath = url.toLocalFile() + name;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
                             }
@@ -427,7 +418,10 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     int index = txt.lastIndexOf("/");
     if ( index != -1){
         setName(txt.mid(index + 1));
-        addContainer(txt.left(index));
+        QString rest = txt.left(index);
+
+        if ( _resource.scheme().size() < rest.size() - 2 )
+            addContainer(rest);
     }
 }
 

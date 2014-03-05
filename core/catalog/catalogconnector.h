@@ -7,37 +7,37 @@
 namespace Ilwis {
 
 class Catalog;
-class ContainerConnector;
+class CatalogConnector;
 
+typedef std::unique_ptr<CatalogConnector> UPCatalogConnector;
 
-class KERNELSHARED_EXPORT CatalogConnector : public ConnectorInterface
+class KERNELSHARED_EXPORT CatalogConnector : public IlwisObjectConnector
 {
 public:
-    CatalogConnector(const Resource& resource);
+    enum FilterOptions{ foFULLPATHS=1, foNAMESONLY=2, foEXTENSIONFILTER=4};
+    enum OpenMode { omTEXT, omBINARY};
+
     virtual ~CatalogConnector() {}
+
+    Ilwis::IlwisObject *create() const;
+    virtual  bool prepare();
+
+    bool isValid() const;
+    virtual bool canUse(const Resource& resource) const = 0;
 
     virtual bool loadItems() = 0;
     virtual QStringList itemlist() const {return QStringList();}
-    /*!
-     \brief adds a filter to set of filters which this connector will use when adding items to a catalog
+    virtual std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const = 0;
 
-     The connector becomes owner of the filter has been added and ensure that it is finally deleted. No double filters allowed
+    virtual QFileInfo toLocalFile(const QUrl& datasource) const = 0;
 
-     \param filter filter definition
-    */
-    ConnectorInterface* clone() const;
-
-    virtual bool canUse(const Resource& resource) const = 0;
-    Resource& source();
-    bool isValid() const;
 protected:
-     Resource _location;
+    CatalogConnector(const Resource& resource, bool load);
 
-     std::unique_ptr<ContainerConnector>& containerConnector();
-     const std::unique_ptr<ContainerConnector>& containerConnector() const;
 
 private:
-    std::unique_ptr<ContainerConnector> _containerconnector;
+    std::vector<std::unique_ptr<CatalogConnector>> _dataProviders;
+
 };
 
 }

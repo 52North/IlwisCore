@@ -7,11 +7,11 @@
 #include <QSharedPointer>
 #include <QFileInfo>
 #include "Kernel_global.h"
-#include "identity.h"
-#include "resource.h"
-#include "connectorinterface.h"
-#include "containerconnector.h"
-#include "catalogconnector.h"
+#include "kernel.h"
+#include "ilwisdata.h"
+
+
+
 
 
 namespace Ilwis {
@@ -24,7 +24,7 @@ class CatalogFactory;
  The catalog class represents a view on the master-catalog. A catalog query on the master-catalog results in a catalog. The catalog it self doesnt contain any resources. The moment you request which
  resources are in the the catalog, it queries the master-catalog. This means that your view is always upto-date with what the master-catalog knows
  */
-class KERNELSHARED_EXPORT Catalog : public QObject, public Identity
+class KERNELSHARED_EXPORT Catalog : public IlwisObject
 {
     Q_OBJECT
 
@@ -33,18 +33,19 @@ public:
     /*!
      empty constructor
      */
-    explicit Catalog(QObject *parent = 0);
+    explicit Catalog();
     /*!
      copy constructor
      * \param cat
      */
-    Catalog(const Catalog& cat);
+    Catalog(const Resource& resource);
+    ~Catalog();
     /*!
      returns the filtered items out of the master-catalog.
      * \return list of resources
      */
     std::list<Resource> items() const;
-    virtual bool prepare(const QUrl &resource, const QString &filter="");
+    virtual bool prepare(const QString &filter="");
     QString type() const;
     bool isValid() const ;
     IlwisTypes ilwisType() const;
@@ -64,15 +65,15 @@ public:
     */
     QUrl parentCatalog() const;
     void setParentCatalog(const QUrl& url);
-    QUrl location() const;
     QUrl filesystemLocation() const;
+    IlwisObject *clone();
 
 
 protected:
     bool fillCatalog();
+    void copyTo(IlwisObject *obj);
 
     QString _filter;
-    QUrl _location;
     QUrl _parent;
 
     
@@ -81,10 +82,11 @@ signals:
 public slots:
     
 };
+typedef Ilwis::IlwisData<Ilwis::Catalog> ICatalog;
 }
 
-typedef QSharedPointer<Ilwis::Catalog> SPCatalog;
 
-Q_DECLARE_METATYPE(Ilwis::Catalog)
+
+Q_DECLARE_METATYPE(Ilwis::ICatalog)
 
 #endif // CATALOG_H

@@ -6,6 +6,8 @@
 #include <QUrl>
 #include <fstream>
 #include <iomanip>
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "ilwiscontext.h"
 #include "errorobject.h"
 #include "issuelogger.h"

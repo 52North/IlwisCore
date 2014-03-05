@@ -91,7 +91,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
         bool wasAnonymous = object->isAnonymous();
-        QUrl url = context()->workingCatalog()->location().toString() + "/" + result;
+        QUrl url = context()->workingCatalog()->source().url().toString() + "/" + result;
         object->setName(result);
         object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
         object->setCreateTime(Ilwis::Time::now());

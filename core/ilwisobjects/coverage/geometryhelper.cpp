@@ -8,6 +8,7 @@
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/Coordinate.h"
 #include "geos/io/WKTReader.h"
+#include "geos/io/WKTReader.inl"
 #include "geos/io/WKTWriter.h"
 #include "geos/io/ParseException.h"
 #include "coordinate.h"

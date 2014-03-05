@@ -5,14 +5,19 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+class CatalogConnector;
+typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
+
 class KERNELSHARED_EXPORT IlwisObjectConnector : public ConnectorInterface
 {
 public:
     IlwisObjectConnector(const Ilwis::Resource &resource, bool );
+    virtual ~IlwisObjectConnector();
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
     Resource& source() ;
+    const Resource &source() const;
     bool binaryIsLoaded() const;
 
 protected:
@@ -36,12 +41,12 @@ protected:
     bool _binaryIsLoaded;
     std::mutex _mutex;
 protected:
-    std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
-    const std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
+    UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
+    const UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
 
 private:
-    std::unique_ptr<ContainerConnector> _incontainerconnector;
-    std::unique_ptr<ContainerConnector> _outcontainerconnector;
+    UPCatalogConnector _incontainerconnector;
+    UPCatalogConnector _outcontainerconnector;
 };
 }
 

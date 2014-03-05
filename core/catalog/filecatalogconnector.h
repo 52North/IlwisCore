@@ -6,11 +6,24 @@
 namespace Ilwis {
 class KERNELSHARED_EXPORT FileCatalogConnector : public CatalogConnector
 {
-protected:
-    FileCatalogConnector(const Resource &resource);
+public:
+    static ConnectorInterface *create(const Resource &resource, bool load);
+    QFileInfo toLocalFile(const QUrl &datasource) const;
+    static  std::vector<QUrl> loadFolders(const Ilwis::Resource &source, const QStringList &namefilter, int options) ;
 
-    QFileInfoList loadFolders(const QStringList &namefilter) const;
-    Resource loadFolder(const QFileInfo &file, QUrl container, const QString &path, const QUrl &url) const;
+protected:
+    FileCatalogConnector(const Resource &resource, bool load=true);
+    bool prepare();
+
+    bool canUse(const Resource &resource) const;
+
+    std::vector<QUrl> sources(const QStringList &filters, int options =foFULLPATHS) const;
+    virtual bool loadItems();
+    QString provider() const;
+
+
+private:
+
 };
 }
 

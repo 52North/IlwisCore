@@ -5,8 +5,9 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "internalrastercoverageconnector.h"
 
 using namespace Ilwis;

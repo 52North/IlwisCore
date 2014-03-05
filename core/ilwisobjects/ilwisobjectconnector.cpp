@@ -3,11 +3,11 @@
 #include "errorobject.h"
 #include "mastercatalog.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
+#include "catalogconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
-#include "ilwisobjectconnector.h"
 
 using namespace Ilwis;
 
@@ -15,13 +15,14 @@ IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
-    if ( factory && resource.url().isValid()){
-         //incontainerconnector.reset(dynamic_cast<ContainerConnector *>(factory->createSuitable(Resource(resource.url(), itCONTAINER))));
-         _incontainerconnector.reset(dynamic_cast<ContainerConnector *>(factory->createSuitable(Resource(resource.container().url(), itCONTAINER))));
+    if ( factory && resource.url().isValid() && resource.container().isValid()){
+         _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(factory->createContainerConnector(Resource(resource.container().url(), itCATALOG))));
     }
-    else {
-        kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(resource.name()));
-    }
+}
+
+IlwisObjectConnector::~IlwisObjectConnector()
+{
+
 }
 
 IlwisTypes IlwisObjectConnector::type() const
@@ -34,12 +35,16 @@ Resource &IlwisObjectConnector::source()
     return _resource;
 }
 
+const Resource& IlwisObjectConnector::source() const{
+    return _resource;
+}
+
 bool IlwisObjectConnector::binaryIsLoaded() const
 {
     return _binaryIsLoaded;
 }
 
-std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode)
+UPCatalogConnector &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode)
 {
     if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
         return _incontainerconnector;
@@ -51,7 +56,7 @@ std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(Il
     return _incontainerconnector;
 }
 
-const std::unique_ptr<ContainerConnector> &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode) const
+const UPCatalogConnector &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode) const
 {
     if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
         return _incontainerconnector;

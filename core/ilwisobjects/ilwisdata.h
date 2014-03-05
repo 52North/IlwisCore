@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <typeinfo>
 #include <mutex>
-#include "ilwis.h"
+//#include "ilwis.h"
 #include "errorobject.h"
 #include "ilwisobject.h"
 #include "resource.h"

@@ -5,6 +5,7 @@
 #include "kernel.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
+#include "geos/geom/Coordinate.inl"
 #include "coordinate.h"
 #include "location.h"
 #include "ilwisobject.h"
@@ -51,7 +52,7 @@ Coordinate ProjectionImplementationInternal::latlon2coord(const LatLon &ll) cons
 
 }
 
-LatLon ProjectionImplementationInternal::coord2latlon(const Coordinate &crdSource) const
+LatLon ProjectionImplementationInternal::coord2latlon(const Ilwis::Coordinate &crdSource) const
 {
     if (_coordinateSystem->projection().isValid() && crdSource != crdUNDEF) {
         Coordinate xy((crdSource.x - _easting) / _maxis, (crdSource.y - _northing) / _maxis);

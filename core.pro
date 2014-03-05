@@ -37,7 +37,6 @@ SOURCES += core/kernel.cpp \
     core/connectorfactory.cpp \
     core/ilwiscontext.cpp \
     core/catalog/mastercatalog.cpp \
-    core/catalog/catalogconnectorfactory.cpp \
     core/catalog/catalogquery.cpp \
     core/catalog/resource.cpp \
     core/ilwisobjects/ilwisobjectconnector.cpp \
@@ -50,7 +49,6 @@ SOURCES += core/kernel.cpp \
     core/util/angle.cpp \
     core/ilwisobjects/coverage/featurecoverage.cpp \
     core/ilwisobjects/coverage/feature.cpp \
-    core/catalog/filecatalogconnector.cpp \
     core/ilwisobjects/coverage/grid.cpp \
     core/ilwisobjects/coverage/pixeliterator.cpp \
     core/ilwisobjects/table/flattable.cpp \
@@ -97,8 +95,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/domainmerger.cpp \
     core/util/tranquilizer.cpp \
     core/ilwisobjects/operation/numericoperation.cpp \
-    core/catalog/containerconnector.cpp \
-    core/catalog/folderconnector.cpp \
     core/util/coordinate.cpp \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
     core/ilwisobjects/coverage/geometryhelper.cpp \
@@ -107,7 +103,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/domainhelper.cpp \
     core/ilwisobjects/domain/numericrange.cpp \
     core/ilwisobjects/domain/colordomain.cpp \
-    core/ilwisobjects/domain/colorrange.cpp
+    core/ilwisobjects/domain/colorrange.cpp \
+    core/catalog/filecatalogconnector.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -138,7 +135,6 @@ HEADERS += core/kernel.h\
     core/connectorinterface.h \
     core/ilwiscontext.h \
     core/catalog/mastercatalog.h \
-    core/catalog/catalogconnectorfactory.h \
     core/catalog/catalogquery.h \
     core/catalog/resource.h \
     core/ilwisobjects/ilwisobjectconnector.h \
@@ -211,8 +207,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/domainmerger.h \
     core/util/tranquilizer.h \
     core/ilwisobjects/operation/numericoperation.h \
-    core/catalog/containerconnector.h \
-    core/catalog/folderconnector.h \
     core/util/location.h \
     core/util/coordinate.h \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.h \

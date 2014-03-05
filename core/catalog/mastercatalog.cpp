@@ -1,9 +1,4 @@
-#include <QString>
-#include <QUrl>
 #include <QRegExp>
-#include <QSharedPointer>
-#include <QVector>
-#include <QFileInfo>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -11,19 +6,17 @@
 #include <QSqlField>
 #include "identity.h"
 #include "kernel.h"
-#include "resource.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
-#include "catalogconnectorfactory.h"
+#include "ilwiscontext.h"
 #include "catalog.h"
-#include "mastercatalog.h"
 #include "symboltable.h"
 #include "operationExpression.h"
-#include "ilwiscontext.h"
+
 
 
 Ilwis::MasterCatalog *Ilwis::MasterCatalog::_masterCatalog = 0;
@@ -80,14 +73,19 @@ bool MasterCatalog::addContainer(const QUrl &location)
     if (!cfactory) {
         return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",location.toString());
     }
-    UPContainerConnector container(cfactory->createSuitable<ContainerConnector>(Resource(location, itCONTAINER)));
-    if ( container == 0 || !container->isValid()) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
-    }
+    bool ok = false;
+   // if ( resource.container().isValid()){
+        std::unique_ptr<CatalogConnector> container(cfactory->createContainerConnector<CatalogConnector>(Resource(location, itCATALOG)));
+        bool containerValid = container == nullptr;
+        if ( containerValid || !container->isValid()) {
+            return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
+        }
+        ok = container->prepare();
+   // }
 
     addItems({resource});
     _catalogs.insert(location);
-    return container->prepare();
+    return ok;
 }
 
 
@@ -324,7 +322,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     } else if ( name.left(12) == "code=domain:") {
         return QString("ilwis://internalcatalog/%1").arg(name);
     }
-    if ( context()->workingCatalog()) {
+    if ( context()->workingCatalog().isValid()) {
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
         if ( resolvedName != sUNDEF)
             return resolvedName;
