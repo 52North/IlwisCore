@@ -255,9 +255,11 @@ resources.files = core/resources/referencesystems.csv \
 
 resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
 
-installer.files = LICENSE-2.0.txt \
-                installer.nsi
-installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+license.files =  LICENSE-2.0.txt
+license.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
-INSTALLS += resources installer
+installer.files =installer.nsi
+installer.path = $$PWD/../output/$$PLATFORM$$CONF
+
+INSTALLS += resources license installer
 

@@ -14,7 +14,7 @@ Name "ILWIS 4"
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "LICENSE-2.0.txt"
+!insertmacro MUI_PAGE_LICENSE "bin\LICENSE-2.0.txt"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -39,23 +39,25 @@ VIAddVersionKey FileVersion "${VERSION}"
 VIAddVersionKey FileDescription ""
 VIAddVersionKey LegalCopyright ""
 ShowUninstDetails show
+RequestExecutionLevel user
 
 # Installer sections
 Section Main
     SetOutPath $INSTDIR
     SetOverwrite on
+
     File /r bin\*
     WriteUninstaller $INSTDIR\uninstall.exe
 
     SetOutPath $SMPROGRAMS
     CreateDirectory "$SMPROGRAMS\$(^Name)"
-    CreateShortcut "$SMPROGRAMS\$(^Name)\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
-    CreateShortcut "$SMPROGRAMS\$(^Name)\$(^Name).lnk" "python $INSTDIR\test.py"
+    CreateShortcut  "$SMPROGRAMS\$(^Name)\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
+    CreateShortcut  "$SMPROGRAMS\$(^Name)\$(^Name).lnk" "python $INSTDIR\test.py"
 SectionEnd
 
 # Uninstaller sections
 Section un.Main
     RmDir /r $INSTDIR
-    RmDir /r "/REBOOTOK $SMPROGRAMS\$(^Name)"
+    RmDir /r /REBOOTOK "$SMPROGRAMS\$(^Name)"
 SectionEnd
 
