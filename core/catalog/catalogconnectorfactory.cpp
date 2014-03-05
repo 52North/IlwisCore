@@ -3,7 +3,6 @@
 #include "kernel.h"
 #include "factory.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "catalogconnector.h"
