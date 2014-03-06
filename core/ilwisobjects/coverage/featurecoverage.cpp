@@ -138,8 +138,6 @@ Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     //_record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
 
     CreateFeature create = _featureFactory->getCreator("feature");
-    IFeatureCoverage fcoverage;
-    fcoverage.set(this);
     FeatureInterface *newFeature = create(this);
 
     qint32 colIndex = fcoverage->attributeTable()->columnIndex(FEATUREIDCOLUMN);
