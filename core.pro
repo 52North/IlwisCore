@@ -238,7 +238,7 @@ OTHER_FILES += \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
-win32:CONFIG(release, debug|release): {
+win32:CONFIG(release){
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
@@ -256,15 +256,20 @@ resources.path = $$DLLDESTDIR/resources
 
 win32{
     CONFIG(debug, debug|release) {
+        qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll"
+    }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
-                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll"
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll"
     }
-    qtdlls.files ="$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
-                  "$$[QT_INSTALL_PREFIX]/bin/libstd~1.dll" \
-                  "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
-                  "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
-                  "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \
-                  "$$[QT_INSTALL_PREFIX]/bin/icuuc51.dll"
+    qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libstd~1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icuuc51.dll"
     qtdlls.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
     qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/qtplugins)" $$escape_expand(\\n\\t)
@@ -275,7 +280,11 @@ win32{
         }
     }
 
-    qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
+    CONFIG(debug, debug|release) {
+        qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlited.dll
+    }else{
+        qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
+    }
     qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers
 }
 

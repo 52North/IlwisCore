@@ -60,7 +60,7 @@ void IlwisContext::removeSystemLocation(const QUrl &)
 void IlwisContext::loadConfigFile(QFileInfo configFile){
     if (configFile.exists()){
         QSettings settings(configFile.filePath(), QSettings::IniFormat);
-        this->_ilwisDir = QFileInfo(settings.value("ilwisDir").toString());
+        this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
         if (!this->_ilwisDir.isDir()){
             printf_s("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
             this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
