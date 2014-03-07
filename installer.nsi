@@ -1,8 +1,8 @@
-Name "ILWIS 4"
+Name "ILWIS Objects"
 
 #=======General Symbol Definitions==========
 !define VERSION "4.0.0 Alpha"
-!define COMPANY "52N GmbH"
+!define COMPANY "52North GmbH"
 !define URL www.52n.org
 !define REGKEY "SOFTWARE\$(^Name)"
 !define LICENCE_FILE "LICENSE-2.0.txt"
@@ -19,17 +19,19 @@ Var StartMenuGroup
 #=======Python Directory Definitions=========
 !define PYTHONDEFAULTDIR "C:\Python33"
 Var pythonDir
-Var verifyPythonDir
+Var verifyDir
 
 #=======Included files=======================
 !include MUI2.nsh
-!include Sections.nsh
+!include "WinMessages.nsh"
 
 #=======Installer pages======================
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "bin\${LICENCE_FILE}"
 !define MUI_DIRECTORYPAGE_TEXT_TOP "Please select installation directory!"
 !define MUI_DIRECTORYPAGE_VARIABLE $INSTDIR
+!define MUI_PAGE_CUSTOMFUNCTION_PRE prepareInstallDirVerify
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE leaveInstallDirVerify
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_COMPONENTSPAGE_NODESC
@@ -40,7 +42,6 @@ Var verifyPythonDir
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leavePythonDirVerify
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_COMPONENTS
 !insertmacro MUI_UNPAGE_INSTFILES
@@ -50,7 +51,7 @@ Var verifyPythonDir
 
 #=======Installer attributes=================
 OutFile setup.exe
-InstallDir $PROGRAMFILES32\52n\Ilwis4
+InstallDir $PROGRAMFILES32\52n\ILWISObjects
 CRCCheck on
 XPStyle on
 ShowInstDetails show
@@ -68,7 +69,7 @@ RequestExecutionLevel admin
 #======Callback functions====================
 Function .onInit
     StrCpy $pythonDir ${PYTHONDEFAULTDIR}
-    IntOp $verifyPythonDir 0 &
+    IntOp $verifyDir 0 &
 FunctionEnd
 
 Function un.onInit
@@ -76,7 +77,7 @@ Function un.onInit
 FunctionEnd
 
 Function .onVerifyInstDir
-    IntCmp $verifyPythonDir 0 Next
+    IntCmp $verifyDir 2 0 Next ; only if python directory is about to be selected
         IfFileExists "$pythondir\*.*" 0 NoNext
         IfFileExists "$pythondir\python.exe" 0 NoNext
         IfFileExists "$pythondir\README.txt" Next NoNext
@@ -90,26 +91,25 @@ Function .onVerifyInstDir
 
         NoNext:
             Abort
+    #TODO veryfy install director as empty?non-existing? otherwise waring!
     Next:
 FunctionEnd
 
-Function preparePythonDirVerify
-    IntOp $verifyPythonDir 1 |
-FunctionEnd
-Function leavePythonDirVerify
-    IntOp $verifyPythonDir 0 &
-FunctionEnd
-
 #======Regular functions====================
-!include "winmessages.nsh"
 !define ENV_HKCU 'HKCU "Environment"'
 
 Function appendPathEnv
+    ReadRegStr $2 HKLM Software\Microsoft\Windows\CurrentVersion $1
     Pop $0
     WriteRegExpandStr ${ENV_HKCU} PATH $0
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 FunctionEnd
 
+#converter slash <-> backslash
+#Push $INSTDIR
+#Push "\" <OR> Push "/" ; to indicate bad slash, which will be replaced by the other
+#Call StrSlash
+#Pop $R0
 Function StrSlash
       Exch $R3 ; $R3 = needle ("\" or "/")
       Exch
@@ -143,7 +143,7 @@ Function StrSlash
 FunctionEnd
 
 #=======Installer sections==================
-Section "ILWIS 4 (required)"
+Section "ILWIS Objects (required)" IOSecID
     SectionIn RO
     SetOverwrite on
 
@@ -178,7 +178,7 @@ Section "ILWIS 4 (required)"
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
 
-Section "Python API"
+Section "Python Extension" pySecID
     Push $INSTDIR
     Call appendPathEnv
     Push $INSTDIR
@@ -200,17 +200,17 @@ Section "Python API"
     WriteRegStr HKLM "${REGKEY}\python" Path $pythonDir
 SectionEnd
 
-Section "Start Menu Shortcuts"
+Section "Start Menu Shortcuts" ShCSecID
     SetOutPath "$SMPROGRAMS"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
     CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" "$INSTDIR\uninstall.exe"
-    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python API Test.lnk" '"$pythonDir\python.exe"' '"$INSTDIR\extensions\pythonapi\test.py"'
+    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python Extension Test.lnk" '"$pythonDir\python.exe"' '"$INSTDIR\extensions\pythonapi\test.py"'
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 #=======Uninstaller sections=======================
-Section "un.Python API"
+Section "un.Python Extension"
     ReadRegStr $pythonDir HKLM "${REGKEY}\python" Path
     DeleteRegValue HKLM "${REGKEY}\python" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\python"
@@ -239,7 +239,39 @@ Section "un.Start Menu Shortcuts"
     done:
 SectionEnd
 
-Section "un.ILWIS 4"
+Section "un.ILWIS Objects"
     RmDir /r /REBOOTOK $INSTDIR
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 SectionEnd
+
+#======Page callback functions=======================
+Function preparePythonDirVerify
+    IntOp $verifyDir 2 |
+    SectionGetFlags ${pySecID} $0 # Section Python Extension selected in Components page?
+    IntCmp $0 ${SF_SELECTED} +2 # scipt Python path selection if not selected
+        Abort
+FunctionEnd
+
+Function leavePythonDirVerify
+    IntOp $verifyDir 0 &
+FunctionEnd
+
+Function prepareInstallDirVerify
+    IntOp $verifyDir 1 |
+FunctionEnd
+
+Function leaveInstallDirVerify
+    IntOp $verifyDir 0 &
+FunctionEnd
+
+Function .onSelChange
+    SectionGetFlags ${pySecID} $0
+    IntCmp $0 ${SF_SELECTED} 0 noPy
+        GetDlgItem $R0 $HWNDPARENT 1
+        SendMessage $R0 ${WM_SETTEXT} 0 "STR:Next" /TIMEOUT=0
+        Goto done
+    noPy:
+        GetDlgItem $R0 $HWNDPARENT 1
+        SendMessage $R0 ${WM_SETTEXT} 0 "STR:Install" /TIMEOUT=0
+    done:
+FunctionEnd
