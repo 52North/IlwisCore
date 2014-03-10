@@ -24,6 +24,7 @@ Var verifyDir
 #=======Included files=======================
 !include MUI2.nsh
 !include "WinMessages.nsh"
+!include "WordFunc.nsh"
 
 #=======Installer pages======================
 !insertmacro MUI_PAGE_WELCOME
@@ -36,7 +37,7 @@ Var verifyDir
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_COMPONENTSPAGE_NODESC
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select Python 3.3 directory!"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.3.3 (32bit) installation! $\n Here you can download Python: http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi"
 !define MUI_DIRECTORYPAGE_VARIABLE $pythonDir
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preparePythonDirVerify
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leavePythonDirVerify
@@ -50,7 +51,7 @@ Var verifyDir
 !insertmacro MUI_LANGUAGE English
 
 #=======Installer attributes=================
-OutFile setup.exe
+OutFile "ILWISObjectsSetup.exe"
 InstallDir $PROGRAMFILES32\52n\ILWISObjects
 CRCCheck on
 XPStyle on
@@ -77,32 +78,58 @@ Function un.onInit
 FunctionEnd
 
 Function .onVerifyInstDir
-    IntCmp $verifyDir 2 0 Next ; only if python directory is about to be selected
+    IntCmp $verifyDir 1 0 Next PyCheck ; IntCmp <Var> <value> <isEqualJump> <isLessJump> <isMoreJump>
+       # IfFileExists $INSTDIR NoNext Next
+       # test on valid INSTDIR?
+
+    PyCheck:
+    IntCmp $verifyDir 2 0 Next Next ; only if python directory is about to be selected
         IfFileExists "$pythondir\*.*" 0 NoNext
         IfFileExists "$pythondir\python.exe" 0 NoNext
-        IfFileExists "$pythondir\README.txt" Next NoNext
+        IfFileExists "$pythondir\README.txt" 0 NoNext
 
         ClearErrors
         FileOpen $0 "$pythondir\README.txt" r
         IfErrors NoNext
         FileRead $0 $1
         FileClose $0
-        StrCmp $1 "This is Python version 3.3.3" Next NoNext
+        StrCmpS $1 "This is Python version 3.3.3$\r$\n" Next NoNext
 
-        NoNext:
-            Abort
-    #TODO veryfy install director as empty?non-existing? otherwise waring!
+    NoNext:
+        Abort
     Next:
 FunctionEnd
 
 #======Regular functions====================
 !define ENV_HKCU 'HKCU "Environment"'
 
-Function appendPathEnv
-    ReadRegStr $2 HKLM Software\Microsoft\Windows\CurrentVersion $1
-    Pop $0
-    WriteRegExpandStr ${ENV_HKCU} PATH $0
+Function setPathEnv
+    Exch $0
+    Push $1
+    Push $2
+    ReadRegStr $1 ${ENV_HKCU} PATH
+    ${WordAdd} $1 ";" "+$0" $2
+    WriteRegExpandStr ${ENV_HKCU} PATH "$2"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+    Pop $2
+    Pop $1
+    Pop $0
+FunctionEnd
+
+Function un.setPathEnv
+    Exch $0
+    Push $1
+    Push $2
+    ReadRegStr $1 ${ENV_HKCU} PATH
+    ${WordAdd} $1 ";" "-$0" $2
+    StrCmp $2 "" +3
+        WriteRegExpandStr ${ENV_HKCU} PATH "$2"
+        Goto +2
+        DeleteRegValue ${ENV_HKCU} PATH
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+    Pop $2
+    Pop $1
+    Pop $0
 FunctionEnd
 
 #converter slash <-> backslash
@@ -167,20 +194,20 @@ Section "ILWIS Objects (required)" IOSecID
     File bin\Qt5Gui*.dll
     File bin\${LICENCE_FILE}
 
-    WriteUninstaller $INSTDIR\uninstall.exe
+    WriteUninstaller "$INSTDIR\ILWISObjectsUninstall.exe"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall.exe
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\ILWISObjectsUninstall.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\ILWISObjectsUninstall.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
 
 Section "Python Extension" pySecID
     Push $INSTDIR
-    Call appendPathEnv
+    Call setPathEnv
     Push $INSTDIR
     Push "\"
     Call StrSlash
@@ -204,13 +231,19 @@ Section "Start Menu Shortcuts" ShCSecID
     SetOutPath "$SMPROGRAMS"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" "$INSTDIR\uninstall.exe"
-    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python Extension Test.lnk" '"$pythonDir\python.exe"' '"$INSTDIR\extensions\pythonapi\test.py"'
+    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" "$INSTDIR\ILWISObjectsUninstall.exe"
+    SectionGetFlags ${pySecID} $0
+    IntCmp $0 ${SF_SELECTED} 0 noPy
+        CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python Extension Test.lnk" '"$pythonDir\python.exe"' '-i "$INSTDIR\extensions\pythonapi\test.py"'
+        noPy:
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 #=======Uninstaller sections=======================
 Section "un.Python Extension"
+    Push $INSTDIR
+    Call un.setPathEnv
+
     ReadRegStr $pythonDir HKLM "${REGKEY}\python" Path
     DeleteRegValue HKLM "${REGKEY}\python" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\python"
@@ -230,7 +263,7 @@ Section "un.Start Menu Shortcuts"
     StrCmp $StartMenuGroup "" done
     RmDir /r /REBOOTOK "$SMPROGRAMS\$StartMenuGroup"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
-    Delete /REBOOTOK $INSTDIR\uninstall.exe
+    Delete /REBOOTOK $INSTDIR\ILWISObjectsUninstall.exe
     DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
     DeleteRegValue HKLM "${REGKEY}" Path
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
@@ -239,8 +272,29 @@ Section "un.Start Menu Shortcuts"
     done:
 SectionEnd
 
+Section "un.Log and config files"
+    Delete $INSTDIR\log\logfile.txt
+    Delete $INSTDIR\log\logfile_ext.txt
+    RmDir $INSTDIR\log
+SectionEnd
+
 Section "un.ILWIS Objects"
-    RmDir /r /REBOOTOK $INSTDIR
+    RmDir /r $INSTDIR\extensions
+    RmDir /r $INSTDIR\qtplugins
+    RmDir /r $INSTDIR\resources
+    Delete $INSTDIR\geos.dll
+    Delete $INSTDIR\icudt51.dll
+    Delete $INSTDIR\icuin51.dll
+    Delete $INSTDIR\icuuc51.dll
+    Delete $INSTDIR\ilwiscore.dll
+    Delete $INSTDIR\libgcc_s_dw2-1.dll
+    Delete $INSTDIR\libstdc++-6.dll
+    Delete $INSTDIR\libwinpthread-1.dll
+    Delete $INSTDIR\Qt5Core*.dll
+    Delete $INSTDIR\Qt5Sql*.dll
+    Delete $INSTDIR\Qt5Gui*.dll
+    Delete $INSTDIR\${LICENCE_FILE}
+    RmDir /REBOOTOK $INSTDIR
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 SectionEnd
 
@@ -262,13 +316,18 @@ FunctionEnd
 
 Function leaveInstallDirVerify
     IntOp $verifyDir 0 &
+    IfFileExists "$INSTDIR\*.*" NoNext Next
+    NoNext:
+        MessageBox MB_YESNO "The installation directory already exists! Do you want to continue the installation using this directoy (and possibly overwriting or deleting files contained)?" IDYES Next IDNO 0
+        Abort
+    Next:
 FunctionEnd
 
 Function .onSelChange
     SectionGetFlags ${pySecID} $0
     IntCmp $0 ${SF_SELECTED} 0 noPy
         GetDlgItem $R0 $HWNDPARENT 1
-        SendMessage $R0 ${WM_SETTEXT} 0 "STR:Next" /TIMEOUT=0
+        SendMessage $R0 ${WM_SETTEXT} 0 "STR:Next >" /TIMEOUT=0
         Goto done
     noPy:
         GetDlgItem $R0 $HWNDPARENT 1
