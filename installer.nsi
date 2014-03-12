@@ -37,7 +37,7 @@ Var verifyDir
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_COMPONENTSPAGE_NODESC
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.3.3 (32bit) installation! $\n Here you can download Python: http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the directory of you Python 3.3.3 (32bit) installation! $\n Here you can download Python: $\n$\n $\t http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi"
 !define MUI_DIRECTORYPAGE_VARIABLE $pythonDir
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preparePythonDirVerify
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leavePythonDirVerify
@@ -102,14 +102,15 @@ FunctionEnd
 
 #======Regular functions====================
 !define ENV_HKCU 'HKCU "Environment"'
+!define ENV_HKLM 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
 
 Function setPathEnv
     Exch $0
     Push $1
     Push $2
-    ReadRegStr $1 ${ENV_HKCU} PATH
+    ReadRegStr $1 ${ENV_HKLM} PATH
     ${WordAdd} $1 ";" "+$0" $2
-    WriteRegExpandStr ${ENV_HKCU} PATH "$2"
+    WriteRegExpandStr ${ENV_HKLM} PATH "$2"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
     Pop $2
     Pop $1
@@ -120,12 +121,12 @@ Function un.setPathEnv
     Exch $0
     Push $1
     Push $2
-    ReadRegStr $1 ${ENV_HKCU} PATH
+    ReadRegStr $1 ${ENV_HKLM} PATH
     ${WordAdd} $1 ";" "-$0" $2
     StrCmp $2 "" +3
-        WriteRegExpandStr ${ENV_HKCU} PATH "$2"
+        WriteRegExpandStr ${ENV_HKLM} PATH "$2"
         Goto +2
-        DeleteRegValue ${ENV_HKCU} PATH
+        DeleteRegValue ${ENV_HKLM} PATH
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
     Pop $2
     Pop $1
@@ -308,6 +309,9 @@ FunctionEnd
 
 Function leavePythonDirVerify
     IntOp $verifyDir 0 &
+
+    # ExecShell "open" "http://www.python.org/ftp/python/3.3.3/python-3.3.3.msi"
+
 FunctionEnd
 
 Function prepareInstallDirVerify
