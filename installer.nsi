@@ -25,6 +25,8 @@ Var verifyDir
 !include MUI2.nsh
 !include "WinMessages.nsh"
 !include "WordFunc.nsh"
+!include "LogicLib.nsh"
+!include "x64.nsh"
 
 #=======Installer pages======================
 !insertmacro MUI_PAGE_WELCOME
@@ -103,15 +105,34 @@ FunctionEnd
 #======Regular functions====================
 !define ENV_HKCU 'HKCU "Environment"'
 !define ENV_HKLM 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
+!define WIN32BIT_MAX_STRLEN 2047
 
+#64 bit version might need SetRegView 32|64
 Function setPathEnv
     Exch $0
     Push $1
     Push $2
-    ReadRegStr $1 ${ENV_HKLM} PATH
-    ${WordAdd} $1 ";" "+$0" $2
-    WriteRegExpandStr ${ENV_HKLM} PATH "$2"
-    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+    Push $3
+    Push $4
+    ReadRegStr $1 ${ENV_HKLM} PATH # returns empty string if more than 8192(1024) characters
+    StrCmp $1 "" error # if PATH was already more than ${NSIS_MAX_STRLEN}
+        StrLen $3 $0
+        StrLen $4 $1
+        IntOP $3 $3 + $4 # combined strlen
+        ${If} ${RunningX64}
+            IntCmp $3 ${NSIS_MAX_STRLEN} error 0 error # error if combined strlen is equal or more that ${NSIS_MAX_STRLEN}
+        ${Else}
+            IntCmp $3 ${WIN32BIT_MAX_STRLEN} error 0 error # error if combined strlen is equal or more that ${WIN32BIT_MAX_PATH_STRLEN}
+        ${EndIf}
+            ${WordAdd} $1 ";" "+$0" $2
+            WriteRegExpandStr ${ENV_HKLM} PATH "$2"
+            SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+            Goto done
+    error:
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} character. Please add '$0' manually to your PATH environment!"
+    done:
+    Pop $4
+    Pop $3
     Pop $2
     Pop $1
     Pop $0
@@ -188,7 +209,7 @@ Section "ILWIS Objects (required)" IOSecID
     File bin\icuuc51.dll
     File bin\ilwiscore.dll
     File bin\libgcc_s_dw2-1.dll
-    File bin\libstdc++-6.dll
+    File bin\libstdc*.dll
     File bin\libwinpthread-1.dll
     File bin\Qt5Core*.dll
     File bin\Qt5Sql*.dll
