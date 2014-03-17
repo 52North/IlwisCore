@@ -129,7 +129,7 @@ Function setPathEnv
             SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
             Goto done
     error:
-        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} character. Please add '$0' manually to your PATH environment!"
+        MessageBox MB_OK "Your PATH Environment contains/would contain zero or more than ${NSIS_MAX_STRLEN} character. Please add '$0' manually to your PATH environment!"
     done:
     Pop $4
     Pop $3
@@ -142,13 +142,17 @@ Function un.setPathEnv
     Exch $0
     Push $1
     Push $2
+    StrLen $1 $0
+    IntCmp $1 ${NSIS_MAX_STRLEN} error 0 error # skip if IlwisPath path is too long
     ReadRegStr $1 ${ENV_HKLM} PATH
-    ${WordAdd} $1 ";" "-$0" $2
-    StrCmp $2 "" +3
+    StrCmp $1 "" error
+        ${WordAdd} $1 ";" "-$0" $2
         WriteRegExpandStr ${ENV_HKLM} PATH "$2"
-        Goto +2
-        DeleteRegValue ${ENV_HKLM} PATH
-    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+        SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+        Goto done
+    error:
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} character. Please remove '$0' manually to your PATH environment!"
+    done:
     Pop $2
     Pop $1
     Pop $0
@@ -310,7 +314,7 @@ Section "un.ILWIS Objects"
     Delete $INSTDIR\icuuc51.dll
     Delete $INSTDIR\ilwiscore.dll
     Delete $INSTDIR\libgcc_s_dw2-1.dll
-    Delete $INSTDIR\libstdc++-6.dll
+    Delete $INSTDIR\libstdc*.dll
     Delete $INSTDIR\libwinpthread-1.dll
     Delete $INSTDIR\Qt5Core*.dll
     Delete $INSTDIR\Qt5Sql*.dll
