@@ -29,6 +29,7 @@ class KERNELSHARED_EXPORT Catalog : public IlwisObject
     Q_OBJECT
 
 public:
+    friend class CatalogConnector;
 
     /*!
      empty constructor
@@ -44,8 +45,9 @@ public:
      returns the filtered items out of the master-catalog.
      * \return list of resources
      */
-    std::list<Resource> items() const;
-    virtual bool prepare(const QString &filter="");
+    std::vector<Resource> items() const;
+    void addItems(const std::vector<Resource>& itemlist);
+    virtual bool prepare();
     QString type() const;
     bool isValid() const ;
     IlwisTypes ilwisType() const;
@@ -70,11 +72,14 @@ public:
 
 
 protected:
+
+private:
+    void addItemsPrivate(const std::vector<Resource>& itemlist, bool doclear=false); //  same as addItems but this ignores readonly flag; only used internally
     bool fillCatalog();
     void copyTo(IlwisObject *obj);
 
-    QString _filter;
     QUrl _parent;
+    std::vector<Resource> _items;
 
     
 signals:
