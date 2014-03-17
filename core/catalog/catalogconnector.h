@@ -8,8 +8,10 @@ namespace Ilwis {
 
 class Catalog;
 class CatalogConnector;
+class CatalogExplorer;
 
 typedef std::unique_ptr<CatalogConnector> UPCatalogConnector;
+typedef std::unique_ptr<CatalogExplorer> UPCatalogExplorer;
 
 class KERNELSHARED_EXPORT CatalogConnector : public IlwisObjectConnector
 {
@@ -17,29 +19,33 @@ public:
     enum FilterOptions{ foFULLPATHS=1, foNAMESONLY=2, foEXTENSIONFILTER=4};
     enum OpenMode { omTEXT, omBINARY};
 
+    CatalogConnector(const Resource& resource, bool load);
+    Ilwis::IlwisObject *create() const;
+
     virtual ~CatalogConnector() {}
 
-    Ilwis::IlwisObject *create() const;
-    virtual  bool prepare();
+    bool loadMetaData(IlwisObject *obj);
+    bool loadData(IlwisObject *obj);
 
     bool isValid() const;
-    virtual bool canUse(const Resource& resource) const = 0;
+    virtual bool canUse(const Resource& resource) const;
 
-    virtual bool loadItems() = 0;
-    virtual QStringList itemlist() const {return QStringList();}
-    virtual std::vector<QUrl> sources(const QStringList& filter, int options=foFULLPATHS) const = 0;
+    virtual QFileInfo toLocalFile(const Resource &datasource) const;
+    virtual QFileInfo toLocalFile(const QUrl &url) const;
 
-    virtual QFileInfo toLocalFile(const QUrl& datasource) const = 0;
+    QString provider() const;
+
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
 protected:
-    CatalogConnector(const Resource& resource, bool load);
+    virtual  bool loadExplorers();
 
 
 private:
-    std::vector<std::unique_ptr<CatalogConnector>> _dataProviders;
-
+    std::vector<UPCatalogExplorer> _dataProviders;
 };
 
 }
+
 
 #endif // CATALOGCONNECTOR_H
