@@ -7,13 +7,13 @@ namespace Internal {
 class InternalFeatureCoverageConnector : public IlwisObjectConnector
 {
 public:
-    InternalFeatureCoverageConnector(const Ilwis::Resource &resource,bool load=true);
+    InternalFeatureCoverageConnector(const Ilwis::Resource &resource,bool load=true,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject *data);
-    bool loadBinaryData(Ilwis::IlwisObject *) ;
+    bool loadData(Ilwis::IlwisObject *) ;
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
 
     IlwisObject *create() const;
 
