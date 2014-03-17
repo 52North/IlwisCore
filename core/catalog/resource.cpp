@@ -237,8 +237,10 @@ void Resource::setUrl(const QUrl &url)
     if ( urlTxt != "file://") {
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
-                setName(inf.fileName(), false);
-                addContainer(QUrl::fromLocalFile(inf.absolutePath()));
+                if ( !isRoot(inf.absolutePath())){
+                    setName(inf.fileName(), false);
+                    addContainer(QUrl::fromLocalFile(inf.absolutePath()));
+                }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
                 int index = path.lastIndexOf("/");
@@ -332,8 +334,8 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
-    queryItem.bindValue(":container", container().toString());
-    queryItem.bindValue(":resource", url().toString());
+    queryItem.bindValue(":container", N2LOCATION(container().toString()));
+    queryItem.bindValue(":resource", N2LOCATION(url().toString()));
     queryItem.bindValue(":urlquery", urlQuery().toString());
     queryItem.bindValue(":type", ilwisType());
     queryItem.bindValue(":extendedtype", _extendedType);
@@ -382,21 +384,32 @@ QString Resource::toLocalFile(bool relative) const {
     return toLocalFile(_resource, relative);
 }
 
-QString Resource::toLocalFile(const QUrl& url, bool relative) {
+QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext) {
 
     QFileInfo localFile(url.toLocalFile());
-    if ( localFile.exists() && relative == false)
-        return localFile.absoluteFilePath();
-
-    if ( localFile.fileName() == "")
-        return sUNDEF;
-    QString currentDir = context()->workingCatalog()->filesystemLocation().toLocalFile();
-    QString localDir = localFile.absolutePath();
-    if ( currentDir == localDir) {
-        if ( relative)
-            return localFile.fileName();
+    QString localPath = sUNDEF;
+    if ( localFile.exists() && relative == false){ // it is already a local file, so nothing more needed
+        localPath =  localFile.absoluteFilePath();
+    }else {
+        if ( localFile.fileName() == "") // invalid
+            return sUNDEF;
+        // contains no path so we will add the path of the working folder to it to create a fully defined path
+        QString currentDir = context()->workingCatalog()->filesystemLocation().toLocalFile();
+        QString localDir = localFile.absolutePath();
+        if ( currentDir == localDir) {
+            if ( relative)
+                localPath = localFile.fileName();
+        }
+        localPath = localFile.absoluteFilePath();
     }
-    return localFile.absoluteFilePath();
+    if ( ext != sUNDEF){ // if desired we can change the extension
+        int index;
+
+        if ( (index = localPath.lastIndexOf(".")) != -1)
+            localPath = localPath.left(index);
+        localPath += "." + ext;
+    }
+    return N2LOCATION(localPath);
 }
 
 Resource Resource::copy(quint64 id) const
@@ -416,12 +429,18 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     if ( isNew)
         prepare();
     int index = txt.lastIndexOf("/");
-    if ( index != -1){
+    if ( index != -1){ // name is by default the last part of the url
         setName(txt.mid(index + 1));
-        QString rest = txt.left(index);
+        QString rest = txt.left(index); // the rest is the container
 
-        if ( _resource.scheme().size() < rest.size() - 2 )
-            addContainer(rest);
+        // we might be at the root; no need then to add containers as there are none
+        if ( isRoot(txt))
+            return;
+
+        if (  isRoot(rest) && rest.endsWith("/") == false) // add the potential missing slash due to the 'left' of above (only windows?)
+            rest += "/";
+
+        addContainer(rest);
     }
 }
 
@@ -445,6 +464,24 @@ void Resource::checkUrl(IlwisTypes tp) {
             setCode(name);
         setName(name, false);
     }
+}
+
+bool Resource::isRoot(const QString& txt) {
+    bool ok1 = false;
+    bool ok2 = false;
+#ifdef Q_OS_WIN
+    ok1 = txt.indexOf(QRegExp("file:///[a-z,A-z]:")) == 0;
+    ok2 =  txt.size() <= 11;
+    if (!(ok1 && ok2)) {
+        ok1 = txt.indexOf(QRegExp("[a-z,A-z]:")) == 0;
+        ok2 = txt.size() <= 3;
+    }
+#endif
+    return ok1 & ok2;
+}
+
+bool Resource::isRoot() const {
+    return isRoot(_resource.toString());
 }
 
 
