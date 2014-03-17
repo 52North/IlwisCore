@@ -104,7 +104,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/numericrange.cpp \
     core/ilwisobjects/domain/colordomain.cpp \
     core/ilwisobjects/domain/colorrange.cpp \
-    core/catalog/filecatalogconnector.cpp
+    core/catalog/catalogexplorer.cpp \
+    core/catalog/foldercatalogexplorer.cpp \
+    core/catalog/catalogview.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -153,7 +155,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/pixeliterator.h \
     core/ilwisobjects/coverage/feature.h \
     core/ilwisobjects/coverage/featurecoverage.h \
-    core/catalog/filecatalogconnector.h \
     core/util/containerstatistics.h \
     core/ilwisobjects/coverage/grid.h \
     core/util/size.h \
@@ -216,7 +217,11 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/domainhelper.h \
     core/ilwisobjects/domain/numericrange.h \
     core/ilwisobjects/domain/colordomain.h \
-    core/ilwisobjects/domain/colorrange.h
+    core/ilwisobjects/domain/colorrange.h \
+    core/catalog/catalogexplorer.h \
+    core/catalog/foldercatalogexplorer.h \
+    core/prepareoptions.h \
+    core/catalog/catalogview.h
 
 
 OTHER_FILES += \
