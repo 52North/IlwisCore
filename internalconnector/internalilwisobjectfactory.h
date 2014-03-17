@@ -21,7 +21,7 @@ class InternalIlwisObjectFactory : public IlwisObjectFactory
 public:
     InternalIlwisObjectFactory();
 
-    virtual Ilwis::IlwisObject *create(const Resource & resource) const;
+    virtual Ilwis::IlwisObject *create(const Resource & resource,const PrepareOptions& options=PrepareOptions()) const;
     virtual IlwisObject *create(IlwisTypes type, const QString &subtype=sUNDEF) const;
     bool canUse(const Ilwis::Resource &resource) const;
 
@@ -39,6 +39,7 @@ private:
     IlwisObject *createGeoreference(const Resource &resource) const;
     bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage) const;
     IlwisObject *createFeatureCoverage(const Resource &resource) const;
+    IlwisObject *createCatalog(const Resource &resource) const;
 };
 }
 }
