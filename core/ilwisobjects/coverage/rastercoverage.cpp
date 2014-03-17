@@ -150,6 +150,20 @@ void RasterCoverage::unloadBinary() {
     }
 }
 
+PixelIterator RasterCoverage::end()
+{
+   const IRasterCoverage raster(this);
+   PixelIterator iter(raster);
+   return iter.end();
+
+}
+
+PixelIterator RasterCoverage::begin()
+{
+    IRasterCoverage raster(this);
+    return PixelIterator(raster);
+}
+
 void RasterCoverage::size(const Size<> &sz)
 {
     if ( isReadOnly())
