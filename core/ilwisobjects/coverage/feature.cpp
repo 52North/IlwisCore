@@ -20,6 +20,10 @@ QVariant UPFeatureI::operator ()(const QString &name, int index, bool asRaw) {
     return (*this)->cell(name, index, asRaw);
 }
 
+QVariant UPFeatureI::operator ()(const QString &name, bool asRaw) {
+    return (*this)->cell(name, -1, asRaw);
+}
+
 void UPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
     return (*this)->setCell(name, var, index);
 }
