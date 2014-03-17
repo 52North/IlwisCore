@@ -105,7 +105,6 @@ FunctionEnd
 #======Regular functions====================
 !define ENV_HKCU 'HKCU "Environment"'
 !define ENV_HKLM 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
-!define WIN32BIT_MAX_STRLEN 2047
 
 #64 bit version might need SetRegView 32|64
 Function setPathEnv
@@ -115,21 +114,20 @@ Function setPathEnv
     Push $3
     Push $4
     ReadRegStr $1 ${ENV_HKLM} PATH # returns empty string if more than 8192(1024) characters
-    StrCmp $1 "" error # if PATH was already more than ${NSIS_MAX_STRLEN}
+    StrCmp $1 "" emptyerror # if PATH was already more than ${NSIS_MAX_STRLEN}
         StrLen $3 $0
         StrLen $4 $1
         IntOP $3 $3 + $4 # combined strlen
-        ${If} ${RunningX64}
-            IntCmp $3 ${NSIS_MAX_STRLEN} error 0 error # error if combined strlen is equal or more that ${NSIS_MAX_STRLEN}
-        ${Else}
-            IntCmp $3 ${WIN32BIT_MAX_STRLEN} error 0 error # error if combined strlen is equal or more that ${WIN32BIT_MAX_PATH_STRLEN}
-        ${EndIf}
+        IntCmp $3 ${NSIS_MAX_STRLEN} exceederror 0 exceederror # error if combined strlen is equal or more that ${NSIS_MAX_STRLEN}
             ${WordAdd} $1 ";" "+$0" $2
             WriteRegExpandStr ${ENV_HKLM} PATH "$2"
             SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
             Goto done
-    error:
-        MessageBox MB_OK "Your PATH Environment contains/would contain zero or more than ${NSIS_MAX_STRLEN} character. Please add '$0' manually to your PATH environment!"
+    exceederror:
+        MessageBox MB_OK "Your PATH Environment would the limit of ${NSIS_MAX_STRLEN} characters. Please add '$0' manually to your PATH environment, if needed!"
+        Goto done
+    emptyerror:
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} characters. Please add '$0' manually to your PATH environment, if needed!"
     done:
     Pop $4
     Pop $3
@@ -151,7 +149,7 @@ Function un.setPathEnv
         SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
         Goto done
     error:
-        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} character. Please remove '$0' manually to your PATH environment!"
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} characters. Please remove '$0' manually from your PATH environment, if needed!"
     done:
     Pop $2
     Pop $1
