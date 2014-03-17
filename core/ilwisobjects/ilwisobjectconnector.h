@@ -11,14 +11,14 @@ typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
 class KERNELSHARED_EXPORT IlwisObjectConnector : public ConnectorInterface
 {
 public:
-    IlwisObjectConnector(const Ilwis::Resource &resource, bool );
+    IlwisObjectConnector(const Ilwis::Resource &resource, bool,const PrepareOptions& options=PrepareOptions() );
     virtual ~IlwisObjectConnector();
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
     Resource& source() ;
     const Resource &source() const;
-    bool binaryIsLoaded() const;
+    bool dataIsLoaded() const;
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QString defaultName) {
