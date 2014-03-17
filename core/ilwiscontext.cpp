@@ -9,6 +9,7 @@
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
