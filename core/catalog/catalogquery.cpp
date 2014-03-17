@@ -1,3 +1,6 @@
+#include <QString>
+#include "ilwis.h"
+#include "prepareoptions.h"
 #include "ilwisobject.h"
 #include "catalogquery.h"
 
