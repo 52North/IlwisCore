@@ -53,8 +53,9 @@ private:
     QString _authority;
     QScopedPointer<ProjectionImplementation> _implementation;
 };
+typedef Ilwis::IlwisData<Ilwis::Projection> IProjection;
 }
 
-typedef Ilwis::IlwisData<Ilwis::Projection> IProjection;
+
 
 #endif // PROJECTION_H
