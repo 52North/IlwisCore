@@ -9,6 +9,7 @@
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
@@ -58,34 +59,29 @@ bool MasterCatalog::prepare()
 
 bool MasterCatalog::addContainer(const QUrl &location)
 {
+    if ( !location.isValid()) // it is valid to try this with an empty url; just wont do anything
+        return true;
+
     QString loc = location.toString();
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
          loc.indexOf("ilwis://system") == 0 ||
          loc.indexOf("ilwis://operations") == 0 ||
+         loc == "file://" ||
+         loc == "ilwis:/" ||
          loc.isEmpty())
         return true;
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource(location, itANY); // the system determines if it is a real container; we dont know it here
-    auto *cfactory = kernel()->factory<ConnectorFactory>("connectorfactory", resource);
-    if (!cfactory) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",location.toString());
+    ICatalog catalog(location.toString());
+    if ( !catalog.isValid()){
+        return false;
     }
-    bool ok = false;
-   // if ( resource.container().isValid()){
-        std::unique_ptr<CatalogConnector> container(cfactory->createContainerConnector<CatalogConnector>(Resource(location, itCATALOG)));
-        bool containerValid = container == nullptr;
-        if ( containerValid || !container->isValid()) {
-            return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
-        }
-        ok = container->prepare();
-   // }
 
-    addItems({resource});
+    addItems({catalog->source()});
     _catalogs.insert(location);
-    return ok;
+    return true;
 }
 
 
@@ -116,6 +112,16 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     return false;
 }
 
+bool MasterCatalog::usesContainers(const QUrl &url) const
+{
+    return _containerExceptions.find(url.scheme()) == _containerExceptions.end();
+}
+
+void MasterCatalog::addContainerException(const QString &scheme)
+{
+    _containerExceptions.insert(scheme);
+}
+
 bool MasterCatalog::removeItems(const QList<Resource> &items){
     for(const Resource &resource : items) {
         auto iter = _knownHashes.find(Ilwis::qHash(resource));
@@ -138,7 +144,7 @@ bool MasterCatalog::removeItems(const QList<Resource> &items){
     return true;
 }
 
-bool MasterCatalog::addItems(const QList<Resource>& items)
+bool MasterCatalog::addItems(const std::vector<Resource>& items)
 {
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
@@ -173,6 +179,7 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     return true;
 
 }
+
 quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp) const
 {
     auto query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
@@ -359,12 +366,12 @@ bool MasterCatalog::unregister(quint64 id)
 
 }
 
-std::list<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
+std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     QSqlQuery results = kernel()->database().exec(query);
-    std::list<Resource> items;
+    std::vector<Resource> items;
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));

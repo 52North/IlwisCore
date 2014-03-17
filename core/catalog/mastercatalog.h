@@ -2,6 +2,7 @@
 #define MASTERCATALOG_H
 
 #include <QMultiMap>
+#include <QSqlQuery>
 #include <set>
 #include "Kernel_global.h"
 
@@ -50,7 +51,8 @@ public:
      * @param items the Resources that should be added
      * @return true when succesful
      */
-    bool addItems(const QList<Resource> &items);
+    bool addItems(const std::vector<Ilwis::Resource> &items);
+
 
     /**
      * Removes a list of Resources from the MasterCatalog
@@ -137,7 +139,7 @@ public:
      * @return a list of the selected resources
      */
     //TODO select language, finish docu
-    std::list<Resource> select(const QUrl& resource, const QString& selection) const;
+    std::vector<Resource> select(const QUrl& resource, const QString& selection) const;
 
     /**
      * Translates a name from the MasterCatalog to the correct url
@@ -173,6 +175,9 @@ public:
      */
     bool contains(const QUrl &url, IlwisTypes type) const;
 
+    bool usesContainers(const QUrl &scheme) const;
+    void addContainerException(const QString& scheme);
+
 #ifdef QT_DEBUG
     quint32 lookupSize() const { return _lookup.size(); }
     void dumpLookup() const;
@@ -185,6 +190,7 @@ private:
     QHash<quint64, ESPIlwisObject> _lookup;
     std::set<QUrl> _catalogs;
     std::set<uint> _knownHashes;
+    std::set<QString> _containerExceptions; // for some schemes the mastercatelog shouldnt try to find containers as they dont make sense;
 
 
 };
