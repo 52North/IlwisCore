@@ -17,7 +17,6 @@ Name "ILWIS Objects"
 Var StartMenuGroup
 
 #=======Python Directory Definitions=========
-!define PYTHONDEFAULTDIR "C:\Python33"
 Var pythonDir
 Var verifyDir
 
@@ -30,7 +29,7 @@ Var verifyDir
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "bin\${LICENCE_FILE}"
 !define MUI_DIRECTORYPAGE_TEXT_TOP "Please select installation directory!"
-!define MUI_DIRECTORYPAGE_VARIABLE $INSTDIR
+!define MUI_DIRECTORYPAGE_VARIABLE $Instdir
 !define MUI_PAGE_CUSTOMFUNCTION_PRE prepareInstallDirVerify
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE leaveInstallDirVerify
 !insertmacro MUI_PAGE_DIRECTORY
@@ -53,6 +52,7 @@ Var verifyDir
 #=======Installer attributes=================
 OutFile "ILWISObjectsSetup.exe"
 InstallDir $PROGRAMFILES32\52n\ILWISObjects
+#InstallDirRegKey HKLM "${REGKEY}" "InstallPath" <-- doesn't work!
 CRCCheck on
 XPStyle on
 ShowInstDetails show
@@ -69,7 +69,11 @@ RequestExecutionLevel admin
 
 #======Callback functions====================
 Function .onInit
-    StrCpy $pythonDir ${PYTHONDEFAULTDIR}
+    ReadRegStr $pythonDir HKLM "SOFTWARE\Wow6432Node\Python\PythonCore\3.3\InstallPath" ""
+    ReadRegStr $0 HKLM "${REGKEY}" "InstallPath" # workaround for InstallDirRegKey!!
+    StrCmp $0 "" done
+        StrCpy $Instdir $0
+    done:
     IntOp $verifyDir 0 &
 FunctionEnd
 
@@ -79,7 +83,7 @@ FunctionEnd
 
 Function .onVerifyInstDir
     IntCmp $verifyDir 1 0 Next PyCheck ; IntCmp <Var> <value> <isEqualJump> <isLessJump> <isMoreJump>
-       # IfFileExists $INSTDIR NoNext Next
+       # IfFileExists $Instdir NoNext Next
        # test on valid INSTDIR?
 
     PyCheck:
@@ -104,14 +108,31 @@ FunctionEnd
 !define ENV_HKCU 'HKCU "Environment"'
 !define ENV_HKLM 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
 
+#64 bit version might need SetRegView 32|64
 Function setPathEnv
     Exch $0
     Push $1
     Push $2
-    ReadRegStr $1 ${ENV_HKLM} PATH
-    ${WordAdd} $1 ";" "+$0" $2
-    WriteRegExpandStr ${ENV_HKLM} PATH "$2"
-    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+    Push $3
+    Push $4
+    ReadRegStr $1 ${ENV_HKLM} PATH # returns empty string if more than 8192(1024) characters
+    StrCmp $1 "" emptyerror # if PATH was already more than ${NSIS_MAX_STRLEN}
+        StrLen $3 $0
+        StrLen $4 $1
+        IntOP $3 $3 + $4 # combined strlen
+        IntCmp $3 ${NSIS_MAX_STRLEN} exceederror 0 exceederror # error if combined strlen is equal or more that ${NSIS_MAX_STRLEN}
+            ${WordAdd} $1 ";" "+$0" $2
+            WriteRegExpandStr ${ENV_HKLM} PATH "$2"
+            SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+            Goto done
+    exceederror:
+        MessageBox MB_OK "Your PATH Environment would the limit of ${NSIS_MAX_STRLEN} characters. Please add '$0' manually to your PATH environment, if needed!"
+        Goto done
+    emptyerror:
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} characters. Please add '$0' manually to your PATH environment, if needed!"
+    done:
+    Pop $4
+    Pop $3
     Pop $2
     Pop $1
     Pop $0
@@ -121,20 +142,24 @@ Function un.setPathEnv
     Exch $0
     Push $1
     Push $2
+    StrLen $1 $0
+    IntCmp $1 ${NSIS_MAX_STRLEN} error 0 error # skip if IlwisPath path is too long
     ReadRegStr $1 ${ENV_HKLM} PATH
-    ${WordAdd} $1 ";" "-$0" $2
-    StrCmp $2 "" +3
+    StrCmp $1 "" error
+        ${WordAdd} $1 ";" "-$0" $2
         WriteRegExpandStr ${ENV_HKLM} PATH "$2"
-        Goto +2
-        DeleteRegValue ${ENV_HKLM} PATH
-    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+        SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+        Goto done
+    error:
+        MessageBox MB_OK "Your PATH Environment contains zero or more than ${NSIS_MAX_STRLEN} characters. Please remove '$0' manually from your PATH environment, if needed!"
+    done:
     Pop $2
     Pop $1
     Pop $0
 FunctionEnd
 
 #converter slash <-> backslash
-#Push $INSTDIR
+#Push $Instdir
 #Push "\" <OR> Push "/" ; to indicate bad slash, which will be replaced by the other
 #Call StrSlash
 #Pop $R0
@@ -173,43 +198,45 @@ FunctionEnd
 #=======Installer sections==================
 Section "ILWIS Objects (required)" IOSecID
     SectionIn RO
-    SetOverwrite on
 
-    SetOutPath "$INSTDIR\extensions"
+    WriteRegStr HKLM "${REGKEY}" "InstallPath" $Instdir
+
+    SetOverwrite on
+    SetOutPath "$Instdir\extensions"
     File /r bin\extensions\*
-    SetOutPath "$INSTDIR\qtplugins"
+    SetOutPath "$Instdir\qtplugins"
     File /r bin\qtplugins\*
-    SetOutPath "$INSTDIR\resources"
+    SetOutPath "$Instdir\resources"
     File /r bin\resources\*
-    SetOutPath "$INSTDIR"
+    SetOutPath "$Instdir"
     File bin\geos.dll
     File bin\icudt51.dll
     File bin\icuin51.dll
     File bin\icuuc51.dll
     File bin\ilwiscore.dll
     File bin\libgcc_s_dw2-1.dll
-    File bin\libstdc++-6.dll
+    File bin\libstdc*.dll
     File bin\libwinpthread-1.dll
     File bin\Qt5Core*.dll
     File bin\Qt5Sql*.dll
     File bin\Qt5Gui*.dll
     File bin\${LICENCE_FILE}
 
-    WriteUninstaller "$INSTDIR\ILWISObjectsUninstall.exe"
+    WriteUninstaller "$Instdir\ILWISObjectsUninstall.exe"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\ILWISObjectsUninstall.exe
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\ILWISObjectsUninstall.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $Instdir\ILWISObjectsUninstall.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $Instdir\ILWISObjectsUninstall.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
 
 Section "Python Extension" pySecID
-    Push $INSTDIR
+    Push $Instdir
     Call setPathEnv
-    Push $INSTDIR
+    Push $Instdir
     Push "\"
     Call StrSlash
     Pop $R0
@@ -228,21 +255,21 @@ Section "Python Extension" pySecID
     WriteRegStr HKLM "${REGKEY}\python" Path $pythonDir
 SectionEnd
 
-Section "Start Menu Shortcuts" ShCSecID
+Section "-hidden Start Menu Shortcuts" ShCSecID
     SetOutPath "$SMPROGRAMS"
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" "$INSTDIR\ILWISObjectsUninstall.exe"
+    CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" "$Instdir\ILWISObjectsUninstall.exe"
     SectionGetFlags ${pySecID} $0
     IntCmp $0 ${SF_SELECTED} 0 noPy
-        CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python Extension Test.lnk" '"$pythonDir\python.exe"' '-i "$INSTDIR\extensions\pythonapi\test.py"'
+        CreateShortcut  "$SMPROGRAMS\$StartMenuGroup\$(^Name) Python Extension Test.lnk" '"$pythonDir\python.exe"' '-i "$Instdir\extensions\pythonapi\test.py"'
         noPy:
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 #=======Uninstaller sections=======================
 Section "un.Python Extension"
-    Push $INSTDIR
+    Push $Instdir
     Call un.setPathEnv
 
     ReadRegStr $pythonDir HKLM "${REGKEY}\python" Path
@@ -260,42 +287,40 @@ Section "un.Python Extension"
     Delete /REBOOTOK $pythonDir\Lib\site-packages\ilwisobjects.py
 SectionEnd
 
-Section "un.Start Menu Shortcuts"
+Section "un.Log and config files"
+    Delete $Instdir\log\logfile.txt
+    Delete $Instdir\log\logfile_ext.txt
+    RmDir $Instdir\log
+SectionEnd
+
+Section "un.ILWIS Objects"
     StrCmp $StartMenuGroup "" done
     RmDir /r /REBOOTOK "$SMPROGRAMS\$StartMenuGroup"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
-    Delete /REBOOTOK $INSTDIR\ILWISObjectsUninstall.exe
+    Delete /REBOOTOK $Instdir\ILWISObjectsUninstall.exe
     DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-    DeleteRegValue HKLM "${REGKEY}" Path
+    DeleteRegValue HKLM "${REGKEY}" "InstallPath"
     DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${REGKEY}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
     done:
-SectionEnd
 
-Section "un.Log and config files"
-    Delete $INSTDIR\log\logfile.txt
-    Delete $INSTDIR\log\logfile_ext.txt
-    RmDir $INSTDIR\log
-SectionEnd
-
-Section "un.ILWIS Objects"
-    RmDir /r $INSTDIR\extensions
-    RmDir /r $INSTDIR\qtplugins
-    RmDir /r $INSTDIR\resources
-    Delete $INSTDIR\geos.dll
-    Delete $INSTDIR\icudt51.dll
-    Delete $INSTDIR\icuin51.dll
-    Delete $INSTDIR\icuuc51.dll
-    Delete $INSTDIR\ilwiscore.dll
-    Delete $INSTDIR\libgcc_s_dw2-1.dll
-    Delete $INSTDIR\libstdc++-6.dll
-    Delete $INSTDIR\libwinpthread-1.dll
-    Delete $INSTDIR\Qt5Core*.dll
-    Delete $INSTDIR\Qt5Sql*.dll
-    Delete $INSTDIR\Qt5Gui*.dll
-    Delete $INSTDIR\${LICENCE_FILE}
-    RmDir /REBOOTOK $INSTDIR
+    RmDir /r $Instdir\extensions
+    RmDir /r $Instdir\qtplugins
+    RmDir /r $Instdir\resources
+    Delete $Instdir\geos.dll
+    Delete $Instdir\icudt51.dll
+    Delete $Instdir\icuin51.dll
+    Delete $Instdir\icuuc51.dll
+    Delete $Instdir\ilwiscore.dll
+    Delete $Instdir\libgcc_s_dw2-1.dll
+    Delete $Instdir\libstdc*.dll
+    Delete $Instdir\libwinpthread-1.dll
+    Delete $Instdir\Qt5Core*.dll
+    Delete $Instdir\Qt5Sql*.dll
+    Delete $Instdir\Qt5Gui*.dll
+    Delete $Instdir\${LICENCE_FILE}
+    RmDir /REBOOTOK $Instdir
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
 SectionEnd
 
@@ -320,7 +345,7 @@ FunctionEnd
 
 Function leaveInstallDirVerify
     IntOp $verifyDir 0 &
-    IfFileExists "$INSTDIR\*.*" NoNext Next
+    IfFileExists "$Instdir\*.*" NoNext Next
     NoNext:
         MessageBox MB_YESNO "The installation directory already exists! Do you want to continue the installation using this directoy (and possibly overwriting or deleting files contained)?" IDYES Next IDNO 0
         Abort
