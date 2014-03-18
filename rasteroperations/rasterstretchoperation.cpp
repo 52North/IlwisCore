@@ -116,7 +116,8 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
     } else
         _limits = std::pair<double, double>(lower, upper);
 
-    return sPREPARED;
+    _prepState = sPREPARED;
+    return _prepState;
 }
 
 /**
