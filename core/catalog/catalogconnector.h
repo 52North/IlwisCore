@@ -7,39 +7,45 @@
 namespace Ilwis {
 
 class Catalog;
-class ContainerConnector;
+class CatalogConnector;
+class CatalogExplorer;
 
+typedef std::unique_ptr<CatalogConnector> UPCatalogConnector;
+typedef std::unique_ptr<CatalogExplorer> UPCatalogExplorer;
 
-class KERNELSHARED_EXPORT CatalogConnector : public ConnectorInterface
+class KERNELSHARED_EXPORT CatalogConnector : public IlwisObjectConnector
 {
 public:
-    CatalogConnector(const Resource& resource);
+    enum FilterOptions{ foFULLPATHS=1, foNAMESONLY=2, foEXTENSIONFILTER=4};
+    enum OpenMode { omTEXT, omBINARY};
+
+    CatalogConnector(const Resource& resource, bool load);
+    Ilwis::IlwisObject *create() const;
+
     virtual ~CatalogConnector() {}
 
-    virtual bool loadItems() = 0;
-    virtual QStringList itemlist() const {return QStringList();}
-    /*!
-     \brief adds a filter to set of filters which this connector will use when adding items to a catalog
+    bool loadMetaData(IlwisObject *obj);
+    bool loadData(IlwisObject *obj);
 
-     The connector becomes owner of the filter has been added and ensure that it is finally deleted. No double filters allowed
-
-     \param filter filter definition
-    */
-    ConnectorInterface* clone() const;
-
-    virtual bool canUse(const Resource& resource) const = 0;
-    Resource& source();
     bool isValid() const;
-protected:
-     Resource _location;
+    virtual bool canUse(const Resource& resource) const;
 
-     std::unique_ptr<ContainerConnector>& containerConnector();
-     const std::unique_ptr<ContainerConnector>& containerConnector() const;
+    virtual QFileInfo toLocalFile(const Resource &datasource) const;
+    virtual QFileInfo toLocalFile(const QUrl &url) const;
+
+    QString provider() const;
+
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+
+protected:
+    virtual  bool loadExplorers();
+
 
 private:
-    std::unique_ptr<ContainerConnector> _containerconnector;
+    std::vector<UPCatalogExplorer> _dataProviders;
 };
 
 }
+
 
 #endif // CATALOGCONNECTOR_H

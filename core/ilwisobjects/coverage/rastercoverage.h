@@ -7,6 +7,7 @@ namespace Ilwis {
 
 class Resource;
 class Grid;
+class PixelIterator;
 /*!
  * \brief The RasterCoverage class
  *
@@ -171,6 +172,9 @@ public:
      * unload the grid, generally used to clear some memory
      */
     void unloadBinary();
+
+    PixelIterator end() ;
+    PixelIterator begin() ;
 
 protected:
     Grid *grid();

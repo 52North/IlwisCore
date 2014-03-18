@@ -21,7 +21,6 @@ DEFINES += InternalConnector_LIBRARY
 
 HEADERS += \  
     internalconnector/internalmodule.h \
-    internalconnector/internalcatalogconnector.h \
     internalconnector/internalilwisobjectfactory.h \
     internalconnector/internaltableconnector.h \
     internalconnector/internalprjmplfactory.h \
@@ -29,18 +28,19 @@ HEADERS += \
     internalconnector/projections/projectionimplementationinternal.h \
     internalconnector/epsg.h \
     internalconnector/internalfeaturecoverageconnector.h \
-    internalconnector/internalrastercoverageconnector.h
+    internalconnector/internalrastercoverageconnector.h \
+    internalconnector/internalcatalogexplorer.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
-    internalconnector/internalcatalogconnector.cpp \
     internalconnector/internalilwisobjectfactory.cpp \
     internalconnector/internaltableconnector.cpp \
     internalconnector/internalprjimplfactory.cpp \
     internalconnector/projections/platecaree.cpp \
     internalconnector/projections/projectionimplementationinternal.cpp \
     internalconnector/internalfeaturecoverageconnector.cpp \
-    internalconnector/internalrastercoverageconnector.cpp
+    internalconnector/internalrastercoverageconnector.cpp \
+    internalconnector/internalcatalogexplorer.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

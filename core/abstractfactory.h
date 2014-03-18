@@ -9,8 +9,8 @@
 namespace Ilwis {
 
 class Resource;
-class ContainerConnector;
-typedef std::unique_ptr<Ilwis::ContainerConnector> UPContainerConnector;
+class CatalogConnector;
+typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
 
 /*!
  * \brief The AbstractFactory class implements some of the more general methods that are in de FactoryInterface
@@ -61,6 +61,6 @@ private:
 };
 }
 
-typedef bool (* CheckUsage)(const Ilwis::Resource&,const Ilwis::UPContainerConnector &);
+typedef bool (* CheckUsage)(const Ilwis::Resource&,const Ilwis::UPCatalogConnector &);
 
 #endif // ABSTRACTFACTORY_H

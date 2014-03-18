@@ -4,12 +4,6 @@
 #include <QSqlRecord>
 #include <functional>
 #include "kernel.h"
-#include "factory.h"
-#include "connectorinterface.h"
-#include "containerconnector.h"
-#include "abstractfactory.h"
-#include "catalog.h"
-#include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "errorobject.h"
 #include "publicdatabase.h"

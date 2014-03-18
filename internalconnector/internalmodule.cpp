@@ -1,14 +1,12 @@
 #include <QtPlugin>
 #include <QSqlQuery>
-
+#include <QSqlRecord>
+#include <QSqlError>
 #include "kernel.h"
-#include "connectorinterface.h"
-#include "containerconnector.h"
 #include "geos/geom/Coordinate.h"
 #include "coordinate.h"
 #include "location.h"
 #include "internalmodule.h"
-#include "factory.h"
 #include "ilwisdata.h"
 #include "range.h"
 #include "connectorinterface.h"
@@ -16,10 +14,10 @@
 #include "connectorfactory.h"
 #include "ilwisobjectfactory.h"
 #include "internalilwisobjectfactory.h"
-#include "catalogconnector.h"
-#include "catalogconnectorfactory.h"
-#include "internalcatalogconnector.h"
+#include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "internalrastercoverageconnector.h"
 #include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
@@ -50,8 +48,7 @@ void InternalModule::prepare()
     ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory)
         return ;
-    factory->addCreator(itCONTAINER,"internal",InternalCatalogConnector::create);
-
+    factory->addCreator(itCATALOG,"internal",CatalogConnector::create);
     factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
     factory->addCreator(itFEATURE,"internal", InternalFeatureCoverageConnector::create);
@@ -59,6 +56,15 @@ void InternalModule::prepare()
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();
     kernel()->addFactory(projfactory );
+
+    QSqlQuery db(kernel()->database());
+
+    bool ok = createItems(db,"projection", itPROJECTION);
+    ok &= createItems(db,"ellipsoid", itELLIPSOID);
+    ok &= createItems(db,"datum", itGEODETICDATUM);
+    ok &= createItems(db,"numericdomain", itNUMERICDOMAIN);
+    ok &= createPcs(db);
+    ok &= createSpecialDomains();
 
 
 }
@@ -71,6 +77,70 @@ QString InternalModule::name() const
 QString InternalModule::version() const
 {
     return "1.0";
+}
+
+bool InternalModule::createSpecialDomains() {
+    QString url = QString("ilwis://internalcatalog/code=domain:text");
+    Resource resource(url, itTEXTDOMAIN);
+    resource.setCode("text");
+    resource.setName("Text domain", false);
+    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.prepare();
+    return mastercatalog()->addItems({resource});
+}
+
+bool InternalModule::createPcs(QSqlQuery& db) {
+    QString query = QString("Select * from projectedcsy");
+    if ( db.exec(query)) {
+        std::vector<Resource> items;
+        while (db.next()) {
+            QSqlRecord rec = db.record();
+            QString code = rec.value("code").toString();
+            QString name = rec.value("name").toString();
+            QString url = QString("ilwis://tables/projectedcsy?code=%1").arg(code);
+            Resource resource(url, itCONVENTIONALCOORDSYSTEM);
+            resource.setCode(code);
+            resource.setName(name, false);
+            resource["wkt"] = name;
+            resource.addContainer(QUrl("ilwis://system"));
+            items.push_back(resource);
+        }
+        return mastercatalog()->addItems(items);
+    } else {
+        kernel()->issues()->logSql(db.lastError());
+    }
+    return false;
+}
+
+bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes type) {
+    QString query = QString("Select * from %1").arg(table);
+    if ( db.exec(query)) {
+        std::vector<Resource> items;
+        while (db.next()) {
+            QSqlRecord rec = db.record();
+            QString code = rec.value("code").toString();
+            IlwisTypes extType = rec.value("extendedtype").toLongLong();
+            QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
+            Resource resource(url, type);
+            if ( type == itNUMERICDOMAIN) // for valuedomain name=code
+                resource.setName(rec.value("code").toString(), false);
+            else
+                resource.setName(rec.value("name").toString(), false);
+
+            resource.setCode(code);
+            resource.setExtendedType(extType);
+            resource.setDescription(rec.value("description").toString());
+            resource.addContainer(QUrl("ilwis://system"));
+            QString wkt = rec.value("wkt").toString();
+            if ( wkt != "" && wkt != sUNDEF)
+                resource["wkt"] = wkt;
+            items.push_back(resource);
+        }
+        return mastercatalog()->addItems(items);
+    } else {
+        kernel()->issues()->logSql(db.lastError());
+    }
+    return false;
 }
 
 

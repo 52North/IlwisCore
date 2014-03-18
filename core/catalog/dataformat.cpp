@@ -25,15 +25,31 @@ DataFormat::DataFormat(const QString &code, const QString connector)
 
 }
 
+DataFormat::DataFormat(const QString& connector, const QString &code, const QString &longname,
+                       const QString &extensions, const QString &access, IlwisTypes datatypes, const QString &description)
+{
+    _properties[fpCODE] = code;
+    _properties[fpNAME] = longname;
+    _properties[fpDESCRIPTION] = description;
+    _properties[fpEXTENSION] = extensions;
+    _properties[fpCONNECTOR] = connector;
+    _properties[fpDATATYPE] = datatypes;
+    _properties[fpREADWRITE] = access;
+    if (hasType(datatypes, itRASTER)){
+        _properties[fpEXTENDEDTYPE] = itGEOREF | itDOMAIN | itCOORDSYSTEM;
+    }
+
+}
+
 void DataFormat::setProps(QSqlQuery& db, const QString &code){
     _properties[fpCODE] = code;
     _properties[fpNAME] = set(db.value("name").toString());
     _properties[fpDESCRIPTION] = set(db.value("description").toString());
     _properties[fpEXTENSION] = set(db.value("extension"));
-    //_properties[fpCONTAINER] = set(db.value("container").toString());
     _properties[fpCONNECTOR] = set(db.value("connector").toString());
     _properties[fpDATATYPE] = set(db.value("datatype").toULongLong());
     _properties[fpREADWRITE] = set(db.value("readwrite").toString());
+    _properties[fpEXTENDEDTYPE] = set(db.value("extendedtype").toULongLong());
     _isValid = true;
 }
 
@@ -109,7 +125,8 @@ QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes t
             if ( var.type() == QMetaType::QString){
                 QStringList parts = var.toString().split(",");
                 for(QString part : parts) {
-                    result += part;
+                    if ( part.size() > 0)
+                        result += part;
                 }
             }
         }
@@ -189,6 +206,26 @@ QVariant DataFormat::property(DataFormat::FormatProperties prop) const
 bool DataFormat::isValid() const
 {
     return _isValid;
+}
+
+bool DataFormat::store()
+{
+    QSqlQuery sqlPublic(kernel()->database());
+    IlwisTypes extTypes = _properties[fpDATATYPE].toULongLong() == itRASTER ? itCOORDSYSTEM | itGEOREF | itDOMAIN : itUNKNOWN;
+    QString parms = QString("'%1','%2','%3','%4','file',%5,'%6','%7',%8").arg(_properties[fpCODE].toString(),
+                                                                            _properties[fpNAME].toString(),
+                                                                            _properties[fpDESCRIPTION].toString(),
+                                                                              _properties[fpEXTENSION].toString()).
+                                                                            arg(_properties[fpDATATYPE].toULongLong()).
+                                                                            arg(_properties[fpCONNECTOR].toString()).
+                                                                            arg(_properties[fpREADWRITE].toString()).
+                                                                            arg(extTypes);
+    QString stmt = QString("INSERT INTO dataformats VALUES(%1)").arg(parms);
+    bool ok = sqlPublic.exec(stmt);
+    if (!ok) {
+        return kernel()->issues()->logSql(sqlPublic.lastError());
+    }
+    return true;
 }
 
 QVariant DataFormat::set(const QVariant &original) const

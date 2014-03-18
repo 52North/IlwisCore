@@ -358,7 +358,11 @@ public:
      * \brief Checks if this PixelIterator is at its endpoint
      * \return true if it is at the end
      */
-    bool isAtEnd() const;
+    bool isAtEnd() const {
+        return _x == _endx &&
+               _y == _endy &&
+               _z == _endz;
+    }
 
     /*!
      * \brief Query for the current non lineair position of this PixelIterator
@@ -431,8 +435,8 @@ protected:
 
     void init();
     void initPosition();
-    bool move(int n);
-    bool moveXYZ(int delta) ;
+    //bool move(int n);
+    //bool moveXYZ(int delta) ;
     void copy(const PixelIterator& iter);
 
     IRasterCoverage _raster;
@@ -454,6 +458,40 @@ protected:
     bool _yChanged = false;
     bool _zChanged = false;
     SPTranquilizer _trq;
+
+
+    bool move(int n) {
+
+        bool ok = false;
+        if (isAtEnd()) {
+            _linearposition = _endposition;
+            return false;
+        }
+        if ( _flow == fXYZ) {
+            ok = moveXYZ(n);
+        }
+        else if ( _flow == fYXZ){
+        }
+
+        return ok;
+    }
+
+
+private:
+    bool moveXYZ(int delta) {
+        _x += delta;
+        _linearposition += delta;
+        _localOffset += delta;
+        _xChanged = true;
+        _yChanged = _zChanged = false;
+
+        if ( _x > _endx) {
+            return moveYZ(delta);
+        }
+        return true;
+    }
+
+    bool moveYZ(int delta);
 };
 
 inline Ilwis::PixelIterator begin(const IRasterCoverage& raster) {

@@ -1,9 +1,4 @@
-#include <QString>
-#include <QUrl>
 #include <QRegExp>
-#include <QSharedPointer>
-#include <QVector>
-#include <QFileInfo>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -11,19 +6,18 @@
 #include <QSqlField>
 #include "identity.h"
 #include "kernel.h"
-#include "resource.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "mastercatalog.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
-#include "catalogconnectorfactory.h"
+#include "ilwiscontext.h"
 #include "catalog.h"
-#include "mastercatalog.h"
 #include "symboltable.h"
 #include "operationExpression.h"
-#include "ilwiscontext.h"
+
 
 
 Ilwis::MasterCatalog *Ilwis::MasterCatalog::_masterCatalog = 0;
@@ -65,29 +59,29 @@ bool MasterCatalog::prepare()
 
 bool MasterCatalog::addContainer(const QUrl &location)
 {
+    if ( !location.isValid()) // it is valid to try this with an empty url; just wont do anything
+        return true;
+
     QString loc = location.toString();
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
          loc.indexOf("ilwis://system") == 0 ||
          loc.indexOf("ilwis://operations") == 0 ||
+         loc == "file://" ||
+         loc == "ilwis:/" ||
          loc.isEmpty())
         return true;
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource(location, itANY); // the system determines if it is a real container; we dont know it here
-    auto *cfactory = kernel()->factory<ConnectorFactory>("connectorfactory", resource);
-    if (!cfactory) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",location.toString());
-    }
-    UPContainerConnector container(cfactory->createSuitable<ContainerConnector>(Resource(location, itCONTAINER)));
-    if ( container == 0 || !container->isValid()) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", location.toString());
+    ICatalog catalog(location.toString());
+    if ( !catalog.isValid()){
+        return false;
     }
 
-    addItems({resource});
+    addItems({catalog->source()});
     _catalogs.insert(location);
-    return container->prepare();
+    return true;
 }
 
 
@@ -118,6 +112,16 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     return false;
 }
 
+bool MasterCatalog::usesContainers(const QUrl &url) const
+{
+    return _containerExceptions.find(url.scheme()) == _containerExceptions.end();
+}
+
+void MasterCatalog::addContainerException(const QString &scheme)
+{
+    _containerExceptions.insert(scheme);
+}
+
 bool MasterCatalog::removeItems(const QList<Resource> &items){
     for(const Resource &resource : items) {
         auto iter = _knownHashes.find(Ilwis::qHash(resource));
@@ -140,7 +144,7 @@ bool MasterCatalog::removeItems(const QList<Resource> &items){
     return true;
 }
 
-bool MasterCatalog::addItems(const QList<Resource>& items)
+bool MasterCatalog::addItems(const std::vector<Resource>& items)
 {
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
@@ -175,6 +179,7 @@ bool MasterCatalog::addItems(const QList<Resource>& items)
     return true;
 
 }
+
 quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp) const
 {
     auto query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
@@ -324,7 +329,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     } else if ( name.left(12) == "code=domain:") {
         return QString("ilwis://internalcatalog/%1").arg(name);
     }
-    if ( context()->workingCatalog()) {
+    if ( context()->workingCatalog().isValid()) {
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
         if ( resolvedName != sUNDEF)
             return resolvedName;
@@ -361,12 +366,12 @@ bool MasterCatalog::unregister(quint64 id)
 
 }
 
-std::list<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
+std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     QSqlQuery results = kernel()->database().exec(query);
-    std::list<Resource> items;
+    std::vector<Resource> items;
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));

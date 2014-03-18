@@ -6,10 +6,11 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
-#include "containerconnector.h"
+#include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
@@ -41,7 +42,6 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
 
 IlwisContext::~IlwisContext()
 {
-    delete _workingCatalog;
 }
 
 void IlwisContext::addSystemLocation(const QUrl &resource)
@@ -89,20 +89,17 @@ void IlwisContext::init()
     this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }
 
-Catalog *IlwisContext::workingCatalog() const{
+ICatalog IlwisContext::workingCatalog() const{
 //    if ( _workingCatalog.hasLocalData())
 //        return static_cast<Catalog *>(_workingCatalog.localData());
 
     return _workingCatalog;
 }
 
-void IlwisContext::setWorkingCatalog(const Catalog &cat)
+void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
-    if ( _workingCatalog) {
-        delete _workingCatalog;
-    }
-    mastercatalog()->addContainer(cat.location());
-    _workingCatalog = new Catalog(cat);
+    mastercatalog()->addContainer(cat->source().url());
+    _workingCatalog = cat;
 }
 
 QUrl IlwisContext::cacheLocation() const

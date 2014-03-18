@@ -5,15 +5,20 @@
 #include "Kernel_global.h"
 
 namespace Ilwis {
+class CatalogConnector;
+typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
+
 class KERNELSHARED_EXPORT IlwisObjectConnector : public ConnectorInterface
 {
 public:
-    IlwisObjectConnector(const Ilwis::Resource &resource, bool );
+    IlwisObjectConnector(const Ilwis::Resource &resource, bool,const PrepareOptions& options=PrepareOptions() );
+    virtual ~IlwisObjectConnector();
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
     Resource& source() ;
-    bool binaryIsLoaded() const;
+    const Resource &source() const;
+    bool dataIsLoaded() const;
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QString defaultName) {
@@ -36,12 +41,12 @@ protected:
     bool _binaryIsLoaded;
     std::mutex _mutex;
 protected:
-    std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
-    const std::unique_ptr<ContainerConnector>& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
+    UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
+    const UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
 
 private:
-    std::unique_ptr<ContainerConnector> _incontainerconnector;
-    std::unique_ptr<ContainerConnector> _outcontainerconnector;
+    UPCatalogConnector _incontainerconnector;
+    UPCatalogConnector _outcontainerconnector;
 };
 }
 

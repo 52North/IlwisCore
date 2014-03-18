@@ -5,8 +5,9 @@
 #include <QStringList>
 #include <typeinfo>
 #include <mutex>
-#include "ilwis.h"
+//#include "ilwis.h"
 #include "errorobject.h"
+#include "prepareoptions.h"
 #include "ilwisobject.h"
 #include "resource.h"
 #include "mastercatalog.h"
@@ -30,11 +31,11 @@ public:
     template<class C> friend class IlwisData;
 
     IlwisData() {}
-    IlwisData(const QString& name, IlwisTypes tp=itANY){
-        prepare(name, tp);
+    IlwisData(const QString& name, IlwisTypes tp=itANY, const PrepareOptions& options=PrepareOptions()){
+        prepare(name, tp, options);
     }
-    IlwisData(const Resource& resource1){
-        prepare(resource1);
+    IlwisData(const Resource& resource1,const PrepareOptions& options=PrepareOptions()){
+        prepare(resource1, options);
     }
 
 
@@ -164,7 +165,7 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const QString& name, IlwisTypes tp=itANY){
+    bool prepare(const QString& name, IlwisTypes tp=itANY,const PrepareOptions& options=PrepareOptions()){
         if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
             QString sid = name.mid(11);
             bool ok;
@@ -204,7 +205,7 @@ public:
         auto resource = mastercatalog()->name2Resource(name,tp );
         if (resource.isValid()) {
             if (!mastercatalog()->isRegistered(resource.id())) {
-                T *data = static_cast<T *>(IlwisObject::create(resource));
+                T *data = static_cast<T *>(IlwisObject::create(resource, options));
                 if ( data == 0) {
                     _implementation.reset((T*)0);
                     removeCurrent();
@@ -232,15 +233,17 @@ public:
 
     }
 
-    bool prepare(const Resource& resource1){
+    bool prepare(const Resource& resource1,const PrepareOptions& options=PrepareOptions()){
         if (resource1.isValid()) {
-            mastercatalog()->addContainer(resource1.container());
-            quint64 id = mastercatalog()->url2id(resource1.url(), resource1.ilwisType());
+            quint64 id = iUNDEF;
+            if ( mastercatalog()->usesContainers(resource1.url())) // containers dont make sense for services
+                mastercatalog()->addContainer(resource1.container());
+            id = mastercatalog()->url2id(resource1.url(), resource1.ilwisType());
             Resource resource = mastercatalog()->id2Resource(id);
             if (!resource.isValid())
                 resource = resource1;
             if (!mastercatalog()->isRegistered(resource.id())) {
-                T *data = static_cast<T *>(IlwisObject::create(resource));
+                T *data = static_cast<T *>(IlwisObject::create(resource, options));
                 if ( data == 0) {
                     _implementation.reset((T*)0);
                     removeCurrent();
@@ -276,10 +279,10 @@ public:
      \param name a string representation of a resource. This might be an Url/IlwisResource but other representations can also be used
      \return bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const quint64& iid){
+    bool prepare(const quint64& iid,const PrepareOptions& options=PrepareOptions()){
         Resource resource = mastercatalog()->id2Resource(iid);
         if (!mastercatalog()->isRegistered(iid)) {
-            T *data = static_cast<T *>(IlwisObject::create(resource));
+            T *data = static_cast<T *>(IlwisObject::create(resource, options));
             if ( data != 0)
                 data->prepare();
             else {

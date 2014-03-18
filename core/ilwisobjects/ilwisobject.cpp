@@ -4,19 +4,15 @@
 #include <QSqlRecord>
 #include <QSqlField>
 #include <QSqlQuery>
-#include "ilwis.h"
 #include "kernel.h"
-#include "issuelogger.h"
 #include "connectorinterface.h"
-#include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
 #include "ilwisobjectfactory.h"
 #include "ilwisdata.h"
-#include "resource.h"
-#include "connectorinterface.h"
-#include "containerconnector.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "version.h"
@@ -52,12 +48,12 @@ IlwisObject::~IlwisObject()
 }
 
 
-IlwisObject *IlwisObject::create(const Resource& resource) {
+IlwisObject *IlwisObject::create(const Resource& resource, const PrepareOptions &options) {
 
     const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",resource);
 
     if ( factory)
-        return factory->create(resource);
+        return factory->create(resource, options);
     else {
         kernel()->issues()->log(TR("Cann't find suitable factory for %1 ").arg(resource.name()));
     }
@@ -355,8 +351,8 @@ bool IlwisObject::store(int storemode)
 {
     if (!connector(cmOUTPUT).isNull()) {
         Locker lock(_loadforstore);
-        if (connector() && !connector()->binaryIsLoaded()) {
-            connector()->loadBinaryData(this);
+        if (connector() && !connector()->dataIsLoaded()) {
+            connector()->loadData(this);
         }
         return connector(cmOUTPUT)->store(this, storemode);
     }
@@ -485,6 +481,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itOPERATIONMETADATA;
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
         return  itOPERATIONMETADATA;
+    if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
+        return  itCATALOG;
 
 
     return itUNKNOWN;

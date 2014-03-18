@@ -4,9 +4,13 @@
 #include "factory.h"
 #include "connectorinterface.h"
 #include "abstractfactory.h"
+#include "catalogexplorer.h"
 #include "connectorfactory.h"
 
+
 using namespace Ilwis;
+
+std::vector<createCatalogExplorer> ConnectorFactory::_explorers;
 
 uint Ilwis::qHash(const ConnectorFilter& filter ){
 
@@ -15,7 +19,9 @@ uint Ilwis::qHash(const ConnectorFilter& filter ){
 
 bool Ilwis::operator==(const ConnectorFilter& filter1, const ConnectorFilter& filter2 ){
     bool typeOk = (filter1._objectTypes & filter2._objectTypes) != 0;
-    bool providerOk = filter1._provider == filter2._provider;
+    //bool providerOk = filter1._provider == filter2._provider;
+    QRegExp regexpr(filter1._provider,Qt::CaseSensitive, QRegExp::Wildcard);
+    bool providerOk = regexpr.indexIn(filter2._provider) != -1;
     return  typeOk && providerOk;
 }
 
@@ -65,6 +71,29 @@ void ConnectorFactory::addCreator(const QString& format,const QString &provider,
     if (!_creatorsPerFormat.contains(filter)){
         _creatorsPerFormat.insert(filter, func);
     }
+}
+
+std::nullptr_t ConnectorFactory::registerCatalogExplorer(createCatalogExplorer func)
+{
+    _explorers.push_back(func);
+
+    return nullptr;
+}
+
+std::vector<CatalogExplorer*> ConnectorFactory::explorersForResource(const Resource& resource, const QString &provider, const PrepareOptions &options) const{
+   std::vector<CatalogExplorer*> explorers;
+   for( createCatalogExplorer createFunc : _explorers){
+       CatalogExplorer *explorer = createFunc(resource, options);
+       if ( explorer){
+           bool resourceOk = explorer->canUse(resource);
+           bool providerOk = explorer->provider() == provider || provider == sUNDEF;
+           if (  resourceOk && providerOk) {
+               explorers.push_back(explorer);
+           }else
+               delete explorer;
+       }
+   }
+   return explorers;
 }
 
 

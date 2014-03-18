@@ -37,7 +37,6 @@ SOURCES += core/kernel.cpp \
     core/connectorfactory.cpp \
     core/ilwiscontext.cpp \
     core/catalog/mastercatalog.cpp \
-    core/catalog/catalogconnectorfactory.cpp \
     core/catalog/catalogquery.cpp \
     core/catalog/resource.cpp \
     core/ilwisobjects/ilwisobjectconnector.cpp \
@@ -50,7 +49,6 @@ SOURCES += core/kernel.cpp \
     core/util/angle.cpp \
     core/ilwisobjects/coverage/featurecoverage.cpp \
     core/ilwisobjects/coverage/feature.cpp \
-    core/catalog/filecatalogconnector.cpp \
     core/ilwisobjects/coverage/grid.cpp \
     core/ilwisobjects/coverage/pixeliterator.cpp \
     core/ilwisobjects/table/flattable.cpp \
@@ -97,8 +95,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/domainmerger.cpp \
     core/util/tranquilizer.cpp \
     core/ilwisobjects/operation/numericoperation.cpp \
-    core/catalog/containerconnector.cpp \
-    core/catalog/folderconnector.cpp \
     core/util/coordinate.cpp \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.cpp \
     core/ilwisobjects/coverage/geometryhelper.cpp \
@@ -107,7 +103,10 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/domainhelper.cpp \
     core/ilwisobjects/domain/numericrange.cpp \
     core/ilwisobjects/domain/colordomain.cpp \
-    core/ilwisobjects/domain/colorrange.cpp
+    core/ilwisobjects/domain/colorrange.cpp \
+    core/catalog/catalogexplorer.cpp \
+    core/catalog/foldercatalogexplorer.cpp \
+    core/catalog/catalogview.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -138,7 +137,6 @@ HEADERS += core/kernel.h\
     core/connectorinterface.h \
     core/ilwiscontext.h \
     core/catalog/mastercatalog.h \
-    core/catalog/catalogconnectorfactory.h \
     core/catalog/catalogquery.h \
     core/catalog/resource.h \
     core/ilwisobjects/ilwisobjectconnector.h \
@@ -157,7 +155,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/pixeliterator.h \
     core/ilwisobjects/coverage/feature.h \
     core/ilwisobjects/coverage/featurecoverage.h \
-    core/catalog/filecatalogconnector.h \
     core/util/containerstatistics.h \
     core/ilwisobjects/coverage/grid.h \
     core/util/size.h \
@@ -211,8 +208,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/domainmerger.h \
     core/util/tranquilizer.h \
     core/ilwisobjects/operation/numericoperation.h \
-    core/catalog/containerconnector.h \
-    core/catalog/folderconnector.h \
     core/util/location.h \
     core/util/coordinate.h \
     core/ilwisobjects/geometry/coordinatesystem/csytransform.h \
@@ -222,7 +217,11 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/domainhelper.h \
     core/ilwisobjects/domain/numericrange.h \
     core/ilwisobjects/domain/colordomain.h \
-    core/ilwisobjects/domain/colorrange.h
+    core/ilwisobjects/domain/colorrange.h \
+    core/catalog/catalogexplorer.h \
+    core/catalog/foldercatalogexplorer.h \
+    core/prepareoptions.h \
+    core/catalog/catalogview.h
 
 
 OTHER_FILES += \

@@ -14,6 +14,7 @@
 #include <time.h>
 #include "Kernel_global.h"
 #include "ilwis.h"
+#include "prepareoptions.h"
 #include "issuelogger.h"
 #include "module.h"
 #include "publicdatabase.h"
@@ -189,6 +190,7 @@ public slots:
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
 KERNELSHARED_EXPORT bool initIlwis(QFileInfo configFile = QFileInfo());
+#define TR(s) (kernel()->translate(s))
 
 }
 
