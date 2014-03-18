@@ -126,52 +126,40 @@ void PixelIterator::init() {
     _xChanged = _yChanged = _zChanged = false;
 }
 
-inline bool PixelIterator::moveXYZ(int delta) {
-    _x += delta;
-    _linearposition += delta;
-    _localOffset += delta;
-    _xChanged = true;
-    _yChanged = _zChanged = false;
 
-    if ( _x > _endx) {
-        _xChanged = (_x - delta) %  (int)_box.xlength() != 0;
-        qint32 tempy = _y + (_x - _box.min_corner().x) / _box.xlength();
-        _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
-        _yChanged = tempy != _y;
-        std::swap(_y,tempy);
-        qint32 ylocal = _y % _grid->maxLines();
-        quint32 localblock = _y /  _grid->maxLines();
-        quint32 bandblocks = _grid->blocksPerBand() * _z;
-        _localOffset = _x + ylocal * _grid->size().xsize();
-        if (_trq)
-            _trq->move();
-        if ( bandblocks + localblock != _currentBlock) {
-            _currentBlock = bandblocks + localblock;;
-            _localOffset = _x;
-        }
-        if ( _y > _endy) {
-            quint32 newz = _z + (_y - _box.min_corner().y) / _box.ylength();
-            _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
-            _zChanged = newz != _z;
-            _z = newz;
-            _y = _box.min_corner().y + (_y - _box.min_corner().y) % (int)_box.ylength();
-            _yChanged = _y != tempy;
-            localblock = _y /  _grid->maxLines();
-            _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
-            if ( _z > _endz) { // done with this iteration block
-                _linearposition = _endposition;
-                return false;
-            }
+bool PixelIterator::moveYZ(int delta){
+    _xChanged = (_x - delta) %  (int)_box.xlength() != 0;
+    qint32 tempy = _y + (_x - _box.min_corner().x) / _box.xlength();
+    _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
+    _yChanged = tempy != _y;
+    std::swap(_y,tempy);
+    qint32 ylocal = _y % _grid->maxLines();
+    quint32 localblock = _y /  _grid->maxLines();
+    quint32 bandblocks = _grid->blocksPerBand() * _z;
+    _localOffset = _x + ylocal * _grid->size().xsize();
+    if (_trq)
+        _trq->move();
+    if ( bandblocks + localblock != _currentBlock) {
+        _currentBlock = bandblocks + localblock;;
+        _localOffset = _x;
+    }
+    if ( _y > _endy) {
+        quint32 newz = _z + (_y - _box.min_corner().y) / _box.ylength();
+        _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
+        _zChanged = newz != _z;
+        _z = newz;
+        _y = _box.min_corner().y + (_y - _box.min_corner().y) % (int)_box.ylength();
+        _yChanged = _y != tempy;
+        localblock = _y /  _grid->maxLines();
+        _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
+        if ( _z > _endz) { // done with this iteration block
+            _linearposition = _endposition;
+            return false;
         }
     }
     return true;
 }
 
-inline bool PixelIterator::isAtEnd() const {
-    return _x == _box.max_corner().x &&
-           _y == _box.max_corner().y &&
-           _z == _box.max_corner().z;
-}
 
 Pixel PixelIterator::position() const
 {
@@ -187,22 +175,6 @@ quint32 PixelIterator::linearPosition() const
 {
    // return sz.xsize() * sz.ysize() * _z + sz.xsize() * _y + _x;
     return _linearposition;
-}
-
-bool PixelIterator::move(int n) {
-
-    bool ok = false;
-    if (isAtEnd()) {
-        _linearposition = _endposition;
-        return false;
-    }
-    if ( _flow == fXYZ) {
-        ok = moveXYZ(n);
-    }
-    else if ( _flow == fYXZ){
-    }
-
-    return ok;
 }
 
 PixelIterator& PixelIterator::operator=(const PixelIterator& iter) {

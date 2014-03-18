@@ -7,13 +7,13 @@ namespace Internal {
 class InternalTableConnector : public IlwisObjectConnector
 {
 public:
-    InternalTableConnector(const Resource &resource, bool load);
+    InternalTableConnector(const Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject* data);
     QString type() const;
     virtual IlwisObject *create() const;
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true);
-    bool loadBinaryData(IlwisObject *);
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    bool loadData(IlwisObject *);
     QString provider() const;
 };
 }

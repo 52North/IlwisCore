@@ -20,8 +20,9 @@
 #include "ilwiscontext.h"
 #include "connectorfactory.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
-#include "filecatalogconnector.h"
+#include "foldercatalogexplorer.h"
 #include "featurefactory.h"
 #include "georefimplementationfactory.h"
 #include "module.h"
@@ -106,7 +107,7 @@ void Kernel::init() {
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
 
-    confac->addCreator(itCATALOG, "ilwis",FileCatalogConnector::create);
+    confac->addCreator(itCATALOG, "ilwis",CatalogConnector::create);
 
 
     FeatureFactory *featureFac = new FeatureFactory();
@@ -120,7 +121,11 @@ void Kernel::init() {
 
     _modules.addModules();
 
+    mastercatalog()->addContainerException("http");
+    mastercatalog()->addContainerException("https");
+
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
+
 
 }
 

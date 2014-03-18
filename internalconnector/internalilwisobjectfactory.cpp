@@ -15,8 +15,6 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "attributerecord.h"
-//#include "polygon.h"
-//#include "geometry.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "factory.h"
@@ -51,6 +49,7 @@
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
 #include "epsg.h"
+#include "catalog.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -59,7 +58,7 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 {
 }
 
-Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource) const
+Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const PrepareOptions &) const
 {
     if ( resource.url().scheme()!="ilwis")
         return 0;
@@ -83,8 +82,31 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource)
         return createGeoreference(resource);
     } else if ( resource.ilwisType() & itFEATURE) {
         return createFeatureCoverage(resource);
+    } else if ( resource.ilwisType() & itCATALOG) {
+        return createCatalog(resource);
     }
     return 0;
+}
+
+IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource) const{
+    if ( hasType(resource.ilwisType(), itCATALOG)){
+        Catalog *cat = new Catalog(resource);
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        if (!factory) {
+            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
+            return 0;
+        }
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "ilwis");
+        if ( !connector) {
+            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
+            return 0;
+        }
+        cat->setConnector(connector);
+
+        return cat;
+
+    }
+    return nullptr;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& resource) const{
@@ -178,6 +200,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itGEOREF) {
         return true;
     } else if ( resource.ilwisType() & itFEATURE) {
+        return true;
+    } else if ( resource.ilwisType() & itCATALOG) {
         return true;
     }
 

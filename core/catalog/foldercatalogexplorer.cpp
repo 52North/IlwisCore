@@ -6,33 +6,35 @@
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
-#include "catalogconnector.h"
+#include "catalogexplorer.h"
 #include "connectorfactory.h"
 #include "ilwiscontext.h"
-#include "filecatalogconnector.h"
+#include "catalogexplorer.h"
+#include "catalogconnector.h"
+#include "foldercatalogexplorer.h"
 
 using namespace Ilwis;
 
-ConnectorInterface *FileCatalogConnector::create(const Resource &resource, bool load) {
+CatalogExplorer *FolderCatalogExplorer::create(const Resource &resource, bool load, const PrepareOptions &options) {
     if ( resource.ilwisType() == itCATALOG ){
         QDir localDir = resource.url().toLocalFile();
         if ( localDir.path() != "." && localDir.exists()){
-            return new FileCatalogConnector(resource, load);
+            return new FolderCatalogExplorer(resource, load, options);
         }
     }
     return nullptr;
 
 }
 
-FileCatalogConnector::FileCatalogConnector(const Resource &resource, bool load) : CatalogConnector(resource, load){
+FolderCatalogExplorer::FolderCatalogExplorer(const Resource &resource, bool , const PrepareOptions &options) : CatalogExplorer(resource,options){
 }
 
-std::vector<QUrl> FileCatalogConnector::sources(const QStringList &filters, int options ) const
+std::vector<QUrl> FolderCatalogExplorer::sources(const QStringList &filters, int options ) const
 {
-    return FileCatalogConnector::loadFolders(source(), filters, options);
+    return FolderCatalogExplorer::loadFolders(source(), filters, options);
 }
 
-std::vector<QUrl> FileCatalogConnector::loadFolders(const Resource& source, const QStringList& namefilter, int options)
+std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, const QStringList& namefilter, int options)
 {
     QStringList fileList;
 
@@ -46,20 +48,24 @@ std::vector<QUrl> FileCatalogConnector::loadFolders(const Resource& source, cons
          }
          fileList.append(dirs);
      } else {
-         QDir folder(location.toLocalFile());
+         QString p = location.toLocalFile();
+         QDir folder(p);
+         p = folder.absolutePath();
          folder.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
          if (!folder.exists()) {
              kernel()->issues()->log(TR(ERR_COULD_NOT_OPEN_READING_1).arg(folder.absolutePath()));
              return  std::vector<QUrl>();
          }
+         QString slash = location.toString().endsWith("/") ? "" : "/";
          fileList = folder.entryList();
+
          for(QString& file : fileList) {
-             file = source.url().toString() + "/" + file;
+             file = source.url().toString() + slash + file;
          }
          folder.setFilter(QDir::Files);
          QStringList files = folder.entryList(namefilter);
          for(QString file : files) {
-             QString fullfile = source.url().toString() + "/" +  file;
+             QString fullfile = source.url().toString() + slash +  file;
              fileList.push_back(fullfile);
          }
 
@@ -73,24 +79,22 @@ std::vector<QUrl> FileCatalogConnector::loadFolders(const Resource& source, cons
      return files;
 }
 
-QFileInfo FileCatalogConnector::toLocalFile(const QUrl& datasource) const
+QFileInfo FolderCatalogExplorer::toLocalFile(const QUrl& datasource) const
 {
     return QFileInfo(datasource.toLocalFile());
 }
 
-bool FileCatalogConnector::loadItems()
-{
-    //TODO for reading catalogs
-
-    return false;
-}
-
-QString FileCatalogConnector::provider() const
+QString FolderCatalogExplorer::provider() const
 {
     return "ilwis";
 }
 
-bool FileCatalogConnector::canUse(const Resource &resource) const
+std::vector<Resource> FolderCatalogExplorer::loadItems()
+{
+    return std::vector<Resource>();
+}
+
+bool FolderCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() == itCATALOG ){
         QDir localDir = resource.url().toLocalFile();
@@ -101,8 +105,5 @@ bool FileCatalogConnector::canUse(const Resource &resource) const
     return false;
 }
 
-bool FileCatalogConnector::prepare()
-{
-    return CatalogConnector::prepare();
-}
+
 

@@ -8,7 +8,7 @@
 #include "grid.h"
 
 using namespace Ilwis;
-GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(lines,width,1)),_initialized(false), _loaded(false)
+GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_initialized(false), _loaded(false)
 
 {
     _undef = undef<double>();
@@ -183,7 +183,7 @@ void Grid::clear() {
 double Grid::value(const Pixel &pix) {
     if (pix.x <0 || pix.y < 0 || pix.x >= _size.xsize() || pix.y >= _size.ysize() )
         return rUNDEF;
-    if ( pix.is3D() && (pix.z < 0 || pix.z >= _size.zsize()))
+   if ( pix.is3D() && (pix.z < 0 || pix.z >= _size.zsize()))
         return rUNDEF;
 
     quint32 yoff = (qint32)pix.y % _maxLines;

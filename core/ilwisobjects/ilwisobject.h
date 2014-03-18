@@ -11,6 +11,7 @@
 #include "resource.h"
 #include "numericrange.h"
 #include "juliantime.h"
+#include "prepareoptions.h"
 
 
 class QSqlRecord;
@@ -21,6 +22,7 @@ class IlwisObjectFactory;
 class ConnectorInterface;
 class Resource;
 class IlwisObject;
+struct PrepareOptions;
 
 typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
 
@@ -333,7 +335,7 @@ public:
      * @param source the Resource
      * @return a new ilwisObject when succesful, or 0 when it fails
      */
-    static IlwisObject *create(const Resource& source);
+    static IlwisObject *create(const Resource& source,const PrepareOptions& options=PrepareOptions());
 
     /**
       ??

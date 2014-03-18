@@ -12,6 +12,7 @@
 #include "connectorfactory.h"
 #include "catalog.h"
 #include "catalogquery.h"
+#include "catalogexplorer.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
 
@@ -30,35 +31,29 @@ Catalog::~Catalog()
 
 }
 
-std::list<Resource> Catalog::items() const
+std::vector<Resource> Catalog::items() const
 {
-    return mastercatalog()->select(source().url(), _filter);
+    return _items;
+}
+
+void Catalog::addItems(const std::vector<Resource> &itemlist)
+{
+    if ( isReadOnly())
+        return;
+    changed(true);
+
+    _items = itemlist;
 }
 
 
 
-bool Catalog::prepare(const QString& filter)
+bool Catalog::prepare()
 {
     QString scheme =  source().url().scheme();
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    bool ok = mastercatalog()->addContainer(source().url());
-    if (!ok)
-        return false;
-
-    CatalogQuery query;
-    _filter = query.transformQuery(filter);
-
-    QStringList parts = source().url().toString().split("/");
-    QString cid = parts.back();
-    if ( cid == "")
-        cid = "Catalog";
-
-    Identity::prepare();
-
-    setName(cid);
-
+    connector()->loadData(this);
     return true;
 }
 
@@ -70,7 +65,7 @@ QString Catalog::type() const
 
 bool Catalog::isValid() const
 {
-    return source().url().isValid() && _filter != "";
+    return source().url().isValid();
 }
 
 IlwisTypes Catalog::ilwisType() const {
@@ -116,6 +111,10 @@ QUrl Catalog::parentCatalog() const
 
 void Catalog::setParentCatalog(const QUrl &url)
 {
+    if ( isReadOnly())
+        return;
+    changed(true);
+
     _parent = url;
 }
 
@@ -136,11 +135,18 @@ IlwisObject *Catalog::clone()
     return catalog;
 }
 
+void Catalog::addItemsPrivate(const std::vector<Resource> &itemlist, bool doclear)
+{
+    if ( doclear)
+        _items.resize(0);
+
+    _items = itemlist;
+}
+
 void Catalog::copyTo(IlwisObject* obj){
     Locker lock(_mutex);
     IlwisObject::copyTo(obj);
     Catalog *catalog = static_cast<Catalog *>(obj);
-    catalog->_filter = _filter;
     catalog->_parent = _parent;
 }
 

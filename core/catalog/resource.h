@@ -282,7 +282,7 @@ public:
      * @param relative set to true if you want a path relative to the workingcatalog
      * @return A Qurl to the file if succesful, or else a sUNDEF
      */
-    static QString toLocalFile(const QUrl& url, bool relative=false);
+    static QString toLocalFile(const QUrl& url, bool relative=false, const QString &ext=sUNDEF);
 
     /**
      * Copies this resource, only difference is the id, since Resources are always singletons. <br>
@@ -293,6 +293,8 @@ public:
      * @return the copy
      */
     Resource copy(quint64 id) const;
+    bool isRoot() const;
+    static bool isRoot(const QString &txt) ;
 
 protected:
     void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);
@@ -307,6 +309,7 @@ protected:
 
     void checkUrl(IlwisTypes tp);
 
+private:
 };
 
 

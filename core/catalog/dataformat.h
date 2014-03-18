@@ -8,8 +8,11 @@ public:
     enum FormatProperties{fpCODE, fpNAME, fpDESCRIPTION, fpEXTENSION, fpCONTAINER, fpDATATYPE, fpCONNECTOR, fpREADWRITE, fpEXTENDEDTYPE};
     DataFormat();
     DataFormat(const QString& code, const QString connector = sUNDEF);
+    DataFormat(const QString &connector, const QString& code, const QString& longname,
+               const QString& extensions, const QString& access, IlwisTypes datatypes, const QString& description=sUNDEF);
     QVariant property(FormatProperties prop) const;
     bool isValid() const;
+    bool store();
 
     static QVariantList getFormatProperties(FormatProperties, IlwisTypes types, QString connector=sUNDEF, QString code=sUNDEF);
     static bool supports(FormatProperties fp, IlwisTypes tp, const QVariant& prop, const QString& connector=sUNDEF);

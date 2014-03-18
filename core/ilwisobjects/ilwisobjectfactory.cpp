@@ -13,7 +13,7 @@ IlwisObjectFactory::IlwisObjectFactory(const QString &ty, const QString &sub, co
 {
 }
 
-IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector) const {
+IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const PrepareOptions &) const {
     IlwisObject *object = connector->create();
     if ( object) {
         bool ok = connector->loadMetaData(object);

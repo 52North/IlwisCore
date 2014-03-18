@@ -14,6 +14,7 @@ class InternalModule : public Module
 {
     Q_OBJECT
     Q_INTERFACES(Ilwis::Module)
+
 public:
     explicit InternalModule(QObject *parent = 0);
 
@@ -21,6 +22,11 @@ public:
     QString name() const;
     QString version() const;
     void prepare();
+
+private:
+    bool createSpecialDomains();
+    bool createPcs(QSqlQuery &db);
+    bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.internalconnector" FILE  "internalconnector.json")
 

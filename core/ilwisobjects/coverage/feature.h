@@ -37,7 +37,8 @@ protected:
 class KERNELSHARED_EXPORT UPFeatureI : public std::unique_ptr<FeatureInterface> {
 public:
     UPFeatureI(FeatureInterface *f=0);
-    QVariant operator ()(const QString &name, int index=-1, bool asRaw=true);
+    QVariant operator ()(const QString &name, int index, bool asRaw=true);
+    QVariant operator ()(const QString &name, bool asRaw=true);
     void operator ()(const QString &name, const QVariant& var, int index=-1);
 };
 

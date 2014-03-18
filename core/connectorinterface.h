@@ -39,11 +39,11 @@ public:
      */
     virtual Grid* loadGridData(IlwisObject*) { return 0;}
     /*!
-     * \brief loadBinaryData loads bulk binary data into the ilwisobject.
+     * \brief loadData loads bulk binary data into the ilwisobject.
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
-    virtual bool loadBinaryData(IlwisObject* ) { return false; }
-    virtual bool binaryIsLoaded() const { return false; }
+    virtual bool loadData(IlwisObject* ) { return false; }
+    virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
     virtual bool execute(const OperationExpression& , ExecutionContext *) { return false; }
@@ -76,7 +76,7 @@ public:
 };
 
 
-typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load);
+typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load,const PrepareOptions& options);
 }
 
 #endif // ICONNECTOR_H

@@ -43,9 +43,15 @@ private:
             Locker lock(_mutex);
             if ( _initialized) // may happen due to multithreading
                 return;
+            try{
             _data.resize(blockSize());
             std::fill(_data.begin(), _data.end(), _undef);
             _initialized = true;
+            } catch(const std::bad_alloc& ){
+                throw ErrorObject( TR("Couldnt allocate memory for raster")) ;
+            }
+
+
         }
     }
     std::mutex _mutex;

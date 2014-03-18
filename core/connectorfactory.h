@@ -8,6 +8,9 @@
 namespace Ilwis {
 
 class ConnectorInterface;
+class CatalogExplorer;
+
+typedef std::function<Ilwis::CatalogExplorer*(const Ilwis::Resource &resource,const PrepareOptions& options)> createCatalogExplorer;
 
 //typedef ConnectorInterface* (*ConnectorCreate)(const IlwisResource &resource);
 //-----------------------------------------------------------------------------------------
@@ -73,14 +76,14 @@ public:
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
 
-    template<class T=ConnectorInterface> T *createFromResource(const Resource& resource, const QString &provider) const{
+    template<class T=ConnectorInterface> T *createFromResource(const Resource& resource, const QString &provider,const PrepareOptions& options=PrepareOptions()) const{
         ConnectorFilter filter(resource.ilwisType(), provider);
         auto iter = _creatorsPerObject.find(filter);
         if ( iter == _creatorsPerObject.end())
             return 0;
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
-            ConnectorInterface *cif =  createConnector(resource, true);
+            ConnectorInterface *cif =  createConnector(resource, true, options);
             if ( cif && cif->canUse(resource))
                 return dynamic_cast<T *>(cif);
             delete cif;
@@ -90,14 +93,14 @@ public:
 
     }
 
-    template<class T=ConnectorInterface> QList<T*> connectorsForResource(const Resource& resource, const QString &provider="*") const{
+    template<class T=ConnectorInterface> QList<T*> connectorsForResource(const Resource& resource, const QString &provider="*",const PrepareOptions& options=PrepareOptions()) const{
         ConnectorFilter filter(resource.ilwisType(), provider);
         QList<T*> results;
         for(auto key : _creatorsPerObject.keys()){
             if ( filter == key) {
                 ConnectorCreate createConnector = _creatorsPerObject[key];
                 if ( createConnector ) {
-                    ConnectorInterface *cif =  createConnector(resource, true);
+                    ConnectorInterface *cif =  createConnector(resource, true, options);
                     if ( cif && cif->canUse(resource)){
                         T* conn =  dynamic_cast<T *>(cif);
                         if ( conn)
@@ -117,14 +120,14 @@ public:
      * \param resource a resource of a certain type. To work the type must have a valid IlwisType
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
-    template<class T=ConnectorInterface> T *createFromFormat(const Resource& resource, const QString &format, const QString& provider=sUNDEF) const{
+    template<class T=ConnectorInterface> T *createFromFormat(const Resource& resource, const QString &format, const QString& provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const{
         ConnectorFormatSelector filter(format, provider);
         auto iter = _creatorsPerFormat.find(filter);
         if ( iter == _creatorsPerFormat.end())
             return 0;
         ConnectorCreate createConnector = iter.value();
         if ( createConnector ) {
-            ConnectorInterface *cif =  createConnector(resource, false);
+            ConnectorInterface *cif =  createConnector(resource, false, options);
             if ( cif){
                 cif->format(format);
                 return dynamic_cast<T *>(cif);
@@ -136,13 +139,13 @@ public:
         return 0;
     }
 
-    template<class T=ConnectorInterface> T *createContainerConnector(const Resource& resource, const QString &provider=sUNDEF) const{
+    template<class T=ConnectorInterface> T *createContainerConnector(const Resource& resource, const QString &provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const{
         for(auto iter=_creatorsPerObject.begin(); iter != _creatorsPerObject.end(); ++iter){
             if ( !hasType(iter.key()._objectTypes, resource.ilwisType()))
                 continue;
             ConnectorCreate createConnector = iter.value();
             if ( createConnector && ( iter.key()._provider == provider || provider == sUNDEF)) {
-                ConnectorInterface *cif =  createConnector(resource, true);
+                ConnectorInterface *cif =  createConnector(resource, true, options);
                 if ( cif && cif->canUse(resource))
                     return dynamic_cast<T *>(cif);
                 delete cif;
@@ -153,9 +156,14 @@ public:
 
     }
 
+     std::vector<CatalogExplorer*> explorersForResource(const Resource& resource, const QString &provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const;
+
+    static std::nullptr_t registerCatalogExplorer(createCatalogExplorer func);
+
 protected:
     QHash<ConnectorFilter, ConnectorCreate > _creatorsPerObject;
     QHash<ConnectorFormatSelector, ConnectorCreate > _creatorsPerFormat;
+    static std::vector<createCatalogExplorer> _explorers;
 };
 }
 

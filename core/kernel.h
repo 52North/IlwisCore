@@ -14,6 +14,7 @@
 #include <time.h>
 #include "Kernel_global.h"
 #include "ilwis.h"
+#include "prepareoptions.h"
 #include "issuelogger.h"
 #include "module.h"
 #include "publicdatabase.h"

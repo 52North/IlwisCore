@@ -76,8 +76,8 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 
     if ( load) {
         Locker lock(_loadmutex);
-        if (!connector()->binaryIsLoaded()) {
-            connector()->loadBinaryData(this);
+        if (!connector()->dataIsLoaded()) {
+            connector()->loadData(this);
         }
     }
 
@@ -102,8 +102,8 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker lock(_mutex);
 
-    if (!connector()->binaryIsLoaded()) {
-        connector()->loadBinaryData(this);
+    if (!connector()->dataIsLoaded()) {
+        connector()->loadData(this);
     }
     UPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
     if (newfeature == nullptr)

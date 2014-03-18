@@ -4,6 +4,7 @@
 #include "mastercatalog.h"
 #include "connectorinterface.h"
 #include "ilwisobjectconnector.h"
+#include "catalogexplorer.h"
 #include "catalogconnector.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -11,11 +12,11 @@
 
 using namespace Ilwis;
 
-IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool) : _resource(resource), _binaryIsLoaded(false)
+IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const PrepareOptions &) : _resource(resource), _binaryIsLoaded(false)
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
-    if ( factory && resource.url().isValid() && resource.container().isValid()){
+    if ( factory && resource.url().isValid() && resource.container().isValid() && mastercatalog()->usesContainers(resource.url())){
          _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(factory->createContainerConnector(Resource(resource.container().url(), itCATALOG))));
     }
 }
@@ -39,7 +40,7 @@ const Resource& IlwisObjectConnector::source() const{
     return _resource;
 }
 
-bool IlwisObjectConnector::binaryIsLoaded() const
+bool IlwisObjectConnector::dataIsLoaded() const
 {
     return _binaryIsLoaded;
 }
