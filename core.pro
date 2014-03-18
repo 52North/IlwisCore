@@ -231,11 +231,13 @@ OTHER_FILES += \
     core/resources/filters.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
-    core/resources/datums.csv
+    core/resources/datums.csv \
+    LICENSE-2.0.txt \
+    installer.nsi
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
-win32:CONFIG(release, debug|release): {
+win32:CONFIG(release){
     QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
@@ -249,8 +251,47 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv
+resources.path = $$DLLDESTDIR/resources
 
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
+win32{
+    CONFIG(debug, debug|release) {
+        qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll"
+    }else{
+        qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll"
+    }
+    qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/icuuc51.dll"
+    qtdlls.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
-INSTALLS += resources
+    qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/qtplugins)" $$escape_expand(\\n\\t)
+    !exists($$DLLDESTDIR/qtplugins) {
+        qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins $$escape_expand(\\n\\t)
+        !exists($$DLLDESTDIR/qtplugins/sqldrivers) {
+            qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins/sqldrivers $$escape_expand(\\n\\t)
+        }
+    }
 
+    CONFIG(debug, debug|release) {
+        qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlited.dll
+    }else{
+        qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
+    }
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers
+}
+
+license.files =  LICENSE-2.0.txt
+license.path = $$DLLDESTDIR
+
+installer.files =installer.nsi
+installer.path = $$PWD/../output/$$PLATFORM$$CONF
+
+INSTALLS += resources license installer qtdlls qtsqlplugin
+QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
