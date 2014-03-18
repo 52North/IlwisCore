@@ -209,7 +209,7 @@ Section "ILWIS Objects (required)" IOSecID
     SetOutPath "$Instdir\resources"
     File /r bin\resources\*
     SetOutPath "$Instdir"
-    File bin\geos.dll
+    File bin\libgeos*.dll
     File bin\icudt51.dll
     File bin\icuin51.dll
     File bin\icuuc51.dll
@@ -308,7 +308,7 @@ Section "un.ILWIS Objects"
     RmDir /r $Instdir\extensions
     RmDir /r $Instdir\qtplugins
     RmDir /r $Instdir\resources
-    Delete $Instdir\geos.dll
+    Delete $Instdir\libgeos*.dll
     Delete $Instdir\icudt51.dll
     Delete $Instdir\icuin51.dll
     Delete $Instdir\icuuc51.dll
