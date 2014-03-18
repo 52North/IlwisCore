@@ -6,14 +6,11 @@ namespace Ilwis {
 // optional parameter for the creation process
 struct PrepareOptions {
     PrepareOptions()  {}
-    PrepareOptions(const QString filter) : _filter(filter) {}
-    PrepareOptions(double undef) : _undefinedValue(undef){}
-    PrepareOptions(const QString& un, const QString& pw) : _userName(un), _password(pw){}
+    PrepareOptions(const QString filter) { _values["filter"] = filter; }
+    PrepareOptions(double undef) { _values["undefined"] = undef; }
+    PrepareOptions(const QString& un, const QString& pw) { _values["username"] = un; _values["password"] = pw;}
 
-    QString _filter = sUNDEF;
-    double _undefinedValue = rUNDEF;
-    QString _userName = sUNDEF;
-    QString _password = sUNDEF;
+    std::map<QString, QVariant> _values;
 };
 }
 
