@@ -387,7 +387,7 @@ void Time::setValue(const QString& isoQString) {
 void Time::parseOrdinalDate(int ordinal, int year, int& month, int& day) {
     int count = 0;
     int m=1;
-    int prevCount;
+    int prevCount = 0;
     for(; m <= 12 && count < ordinal; ++m) {
         if ( m % 2) {
             count += 31;
