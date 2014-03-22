@@ -494,11 +494,11 @@ private:
     bool moveYZ(int delta);
 };
 
-inline Ilwis::PixelIterator begin(const IRasterCoverage& raster) {
+inline Ilwis::PixelIterator begin(const Ilwis::IRasterCoverage& raster) {
     return PixelIterator(raster);
 }
 
-inline Ilwis::PixelIterator end(const IRasterCoverage& raster) {
+inline Ilwis::PixelIterator end(const Ilwis::IRasterCoverage& raster) {
     PixelIterator iter(raster);
     return iter.end();
 }
