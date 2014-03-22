@@ -7,6 +7,7 @@
 #include "attributerecord.h"
 #include "feature.h"
 #include "featurecoverage.h"
+#include "vertexiterator.h"
 
 using namespace Ilwis;
 
@@ -26,6 +27,16 @@ QVariant UPFeatureI::operator ()(const QString &name, bool asRaw) {
 
 void UPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
     return (*this)->setCell(name, var, index);
+}
+
+VertexIterator UPFeatureI::begin()
+{
+    return ::begin((*this)->geometry());
+}
+
+VertexIterator UPFeatureI::end()
+{
+    return ::end((*this)->geometry());
 }
 //--------------------------------------------
 FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){

@@ -5,8 +5,10 @@
 
 namespace Ilwis {
 
+class ColumnDefinition;
 class UPFeatureI;
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
+class VertexIterator;
 
 //typedef QSharedPointer<FeatureInterface> UPFeatureI;
 
@@ -40,6 +42,8 @@ public:
     QVariant operator ()(const QString &name, int index, bool asRaw=true);
     QVariant operator ()(const QString &name, bool asRaw=true);
     void operator ()(const QString &name, const QVariant& var, int index=-1);
+    VertexIterator begin();
+    VertexIterator end();
 };
 
 class Feature;
@@ -78,9 +82,11 @@ private:
 };
 
 class FeatureCoverage;
+class AttributeRecord;
 
 typedef std::unique_ptr<FeatureNode> UPFeatureNode;
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+typedef std::unique_ptr<AttributeRecord> UPAttributeRecord;
 
 /*!
 The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular
