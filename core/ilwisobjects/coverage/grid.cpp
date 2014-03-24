@@ -8,7 +8,7 @@
 #include "grid.h"
 
 using namespace Ilwis;
-GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_initialized(false), _loaded(false)
+GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_initialized(false), _inMemory(false)
 
 {
     _undef = undef<double>();
@@ -57,11 +57,8 @@ quint32 GridBlockInternal::blockSize() {
     return _blockSize;
 }
 
-bool GridBlockInternal::isLoaded() const {
-    return _loaded;
-}
-
 inline bool GridBlockInternal::unload() {
+    _inMemory = false;
     if ( _tempName == sUNDEF) {
         QString name = QString("gridblock_%1").arg(_id);
         QDir localDir(context()->cacheLocation().toLocalFile());
@@ -83,7 +80,6 @@ inline bool GridBlockInternal::unload() {
     if ( total != bytesNeeded) {
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,_tempName);
     }
-    _loaded = false;
     _initialized = false;
     _data.clear();
 
@@ -92,7 +88,7 @@ inline bool GridBlockInternal::unload() {
 }
 
 bool GridBlockInternal::load() {
-     _loaded = true;
+     _inMemory = true;
     prepare();
     if ( _tempName == sUNDEF) {
         return true; // totaly new block; never been swapped so no load needed
@@ -105,7 +101,7 @@ bool GridBlockInternal::load() {
 
     _swapFile->close();
     if ( total != bytesNeeded) {
-        _loaded = false;
+        _inMemory = false;
         return ERROR1(ERR_COULD_NOT_OPEN_READING_1,_tempName);
     }
     return true;
@@ -123,7 +119,7 @@ Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
-    _inMemoryIndex = std::max(1ULL, n * _memUsed / bytesNeeded);
+    _inMemoryIndex = 10; //std::max(1ULL, n * _memUsed / bytesNeeded);
     _blocksPerBand = n / sz.zsize();
 
 }
@@ -194,26 +190,31 @@ double Grid::value(const Pixel &pix) {
 }
 
 inline double &Grid::value(quint32 block, int offset )  {
-    if ( _blocks.size() <= _inMemoryIndex) // no cache case
+    if ( _allInMemory ) // no loads needed
         return _blocks[block]->at(offset);
 
-    update(block);
+    Locker lock(_mutex); // slower case. must prevent other threads to messup admin
+    if ( !_blocks[block]->isLoaded())
+      if(!update(block))
+          throw ErrorObject(TR("Grid block is out of bounds"));
 
-    return _blocks[_cacheHead]->at(offset);
+    return _blocks[block]->at(offset); // block is now in memory
 }
 
 
 
 inline void Grid::setValue(quint32 block, int offset, double v ) {
-    if ( _blocks.size() <= _inMemoryIndex) {
+    if ( _allInMemory ) {
         _blocks[block]->at(offset) = v;
         return ;
     }
 
-    if(!update(block))
-        return ;
+    Locker lock(_mutex);
+    if ( !_blocks[block]->isLoaded())
+        if(!update(block))
+            return ;
 
-    _blocks[_cacheHead]->at(offset) = v;
+    _blocks[block]->at(offset) = v;
 }
 
 quint32 Grid::blocks() const {
@@ -224,23 +225,24 @@ quint32 Grid::blocksPerBand() const {
     return _blocksPerBand;
 }
 
-void Grid::setBlock(quint32 block, const std::vector<double>& data, bool creation) {
-    if ( _blocks.size() <= _inMemoryIndex) { // no cache case
+void Grid::setBlockData(quint32 block, const std::vector<double>& data, bool creation) {
+    if ( _allInMemory) { // no cache case
         _blocks[block]->fill(data);
         return ;
     }
+    Locker lock(_mutex);
     if(!update(block, creation))
         return ;
     _blocks[_cache[block]]->fill(data);
 }
 
 char *Grid::blockAsMemory(quint32 block, bool creation) {
-    if ( _blocks.size() <= _inMemoryIndex) { // no cache case
+    if ( _allInMemory) { // no cache case
         GridBlockInternal *du = _blocks[block];
         char * p = du->blockAsMemory();
         return p;
     }
-
+    Locker lock(_mutex);
     if(!update(block, creation))
         return 0;
     GridBlockInternal *du = _blocks[_cache[block]];
@@ -269,6 +271,7 @@ bool Grid::prepare() {
     _blocks.resize(nblocks);
     _blockSizes.resize(nblocks);
     _blockOffsets.resize(nblocks);
+    _allInMemory = _blocks.size() <= _inMemoryIndex;
 
     for(quint32 i = 0; i < _blocks.size(); ++i) {
         int linesPerBlock = std::min((qint32)_maxLines, totalLines);
@@ -301,10 +304,9 @@ int Grid::numberOfBlocks() {
 }
 
 inline bool Grid::update(quint32 block, bool creation) {
-    Locker lock(_mutex);
-    if ( block >= _blocks.size() )
+    if ( block >= _blocks.size() ) // illegal, blocknumber is outside the allowed range
         return false;
-    if ( !_blocks[block]->isLoaded()) {
+    if ( !_blocks[block]->isLoaded()) { // if not loaded, load it from the temporary storage
         if(!_blocks[block]->load())
             return false;
     }
@@ -316,12 +318,11 @@ inline bool Grid::update(quint32 block, bool creation) {
     }
     else if ( _cache.front() != block) {
         int index = _cache.indexOf(block);
-        if (index >=0) {
+        if (index >=0) { //  find the block and move it to the front of the list; blocks that are in use are at the front to prevent them being unloaded
             _cache.removeOne(index);
         }
-        _cache.push_front(block);
-        _cacheHead = block; // for efficiency, no lookup what the head is
-        if ( index > (int)_inMemoryIndex) {
+        _cache.push_front(block); // block has now priority; if the block was not already in the list, the list will grow
+        if ( index > (int)_inMemoryIndex) { // the index is bigger than allowed, so the last element of the list is unloaded
             return _blocks[_cache[_inMemoryIndex]]->unload();
         }
 

@@ -33,7 +33,7 @@ public:
     void fill(const std::vector<double>& values);
 
     quint32 blockSize();
-    bool isLoaded() const;
+    bool isLoaded() const { return _inMemory; }
     inline bool unload() ;
     bool load();
 
@@ -61,7 +61,7 @@ private:
     Size<> _size;
     quint64 _id;
     bool _initialized;
-    bool _loaded;
+    bool _inMemory;
     static quint64 _blockid;
     QString _tempName = sUNDEF;
     QScopedPointer<QTemporaryFile> _swapFile;
@@ -74,7 +74,7 @@ class KERNELSHARED_EXPORT Grid
 public:
     friend class GridInterpolator;
 
-    Grid(const Size<>& sz, int maxLines=500);
+    Grid(const Size<>& sz, int maxLines=50);
     virtual ~Grid();
 
     void clear();
@@ -87,7 +87,7 @@ public:
     quint32 blocks() const;
     quint32 blocksPerBand() const;
 
-    void setBlock(quint32 block, const std::vector<double>& data, bool creation);
+    void setBlockData(quint32 block, const std::vector<double>& data, bool creation);
     char *blockAsMemory(quint32 block, bool creation);
     void setSize(const Size<>& sz);
     bool prepare() ;
@@ -112,9 +112,9 @@ private:
     std::vector<quint32> _blockSizes;
     Size<> _size;
     quint32 _maxLines;
-    quint32 _cacheHead =0;
     std::vector<std::vector<quint32>> _offsets;
     std::vector<quint32> _blockOffsets;
+    bool _allInMemory = false;
 };
 }
 
