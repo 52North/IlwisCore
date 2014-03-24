@@ -56,6 +56,11 @@ public:
     {
         return _raw;
     }
+
+    template<typename ItemType> QSharedPointer<ItemType> toType(){
+        return dynamic_cast<ItemType *>(this);
+    }
+
 protected:
      quint32 _raw;
 
