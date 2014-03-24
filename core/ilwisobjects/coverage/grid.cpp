@@ -119,7 +119,7 @@ Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
-    _inMemoryIndex = 10; //std::max(1ULL, n * _memUsed / bytesNeeded);
+    _inMemoryIndex = std::max(1ULL, n * _memUsed / bytesNeeded);
     _blocksPerBand = n / sz.zsize();
 
 }

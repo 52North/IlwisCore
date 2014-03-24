@@ -74,7 +74,7 @@ class KERNELSHARED_EXPORT Grid
 public:
     friend class GridInterpolator;
 
-    Grid(const Size<>& sz, int maxLines=50);
+    Grid(const Size<>& sz, int maxLines=500);
     virtual ~Grid();
 
     void clear();
