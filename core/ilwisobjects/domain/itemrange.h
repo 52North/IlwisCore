@@ -4,6 +4,9 @@
 namespace Ilwis {
 
 class DomainItem;
+class Domain;
+
+typedef IlwisData<Domain> IDomain;
 
 typedef DomainItem* (*CreateItemFunc)(const QString&);
 typedef QSharedPointer<DomainItem> SPDomainItem;

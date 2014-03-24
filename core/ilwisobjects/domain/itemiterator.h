@@ -22,7 +22,7 @@ public:
      * @param dom the ItemDomain in IlwisData form
      * @param cur the current position in this domain, default = 0
      */
-    ItemIterator( const IlwisData<ItemDomain<T>>& dom, quint32 cur=0) : _current(cur), _range(dom->_range){
+    ItemIterator( const IlwisData<ItemDomain<T>>& dom, quint32 cur=0) : _current(cur), _range(dynamic_cast<ItemRange *>(dom->_range.data())){
 
     }
 
@@ -33,7 +33,7 @@ public:
      * @param dom The ItemDomain
      * @param cur The current position in this domain, default = 0
      */
-    ItemIterator( const ItemDomain<T>& dom, quint32 cur=0) : _current(cur), _range(dom._range){
+    ItemIterator( const ItemDomain<T>& dom, quint32 cur=0) : _current(cur), _range(dynamic_cast<ItemRange *>(dom._range.data())){
 
     }
 
@@ -43,7 +43,7 @@ public:
      * @param rng The SPItemrange
      * @param cur The current position in this range, default = 0
      */
-    ItemIterator( const SPItemRange rng, quint32 cur=0) : _current(cur), _range(rng){
+    ItemIterator( ItemRange *rng, quint32 cur=0) : _current(cur), _range(rng){
 
     }
 
@@ -169,12 +169,12 @@ public:
      * override of operator *
      * @return
      */
-    QSharedPointer<T> operator*() {
+    T *operator*() {
         if ( _current != iUNDEF) {
-            QSharedPointer<T> obj =_range->itemByOrder(_current).staticCast<T>();
+            T *obj = static_cast<T *>(_range->itemByOrder(_current).data());
             return obj;
         }
-        return QSharedPointer<T>();
+        return 0;
     }
 
     /**
@@ -269,7 +269,7 @@ private:
     }
 
     quint32 _current;
-    SPItemRange _range;
+    ItemRange *_range;
 };
 
 template<typename T> ItemIterator<T> operator+(const ItemIterator<T>& iter, int n) {

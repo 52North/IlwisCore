@@ -372,8 +372,8 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
     if ( !numdom.isValid())
         return false;
 
-    std::map<QString, SPDomainItem> parentItems;
-    for(SPDomainItem item : numdom) {
+    std::map<QString, DomainItem *> parentItems;
+    for(DomainItem *item : numdom) {
         parentItems[item->name()] = item;
     }
 
@@ -382,7 +382,7 @@ bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
         if ( iter == parentItems.end()){
             return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_byOrder[i]->name());
         }
-        _byOrder[i] = (*iter).second.staticCast<NamedIdentifier>();
+        _byOrder[i] = SPNamedIdentifier(static_cast<NamedIdentifier *>((*iter).second->clone()));
     }
     //TODO: at this moment we should start checking all item in the master catalog using this domain/range.
     _byRaw.clear();

@@ -182,8 +182,8 @@ bool NumericItemRange::alignWithParent(const IDomain &dom)
     if ( !numdom.isValid())
         return false;
     ItemIterator<NumericItem> iterParent(numdom);
-    std::map<QString, SPDomainItem> parentItems;
-    for(SPDomainItem item : iterParent) {
+    std::map<QString, DomainItem *> parentItems;
+    for(DomainItem *item : iterParent) {
         parentItems[item->name()] = item;
     }
 
@@ -193,7 +193,7 @@ bool NumericItemRange::alignWithParent(const IDomain &dom)
         if ( iter == parentItems.end()){
             return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_items[i]->name());
         }
-        _items[i] = (*iter).second.staticCast<NumericItem>();
+        _items[i] = SPNumericItem(static_cast<NumericItem *>((*iter).second->clone()));
     }
     return false;
 
