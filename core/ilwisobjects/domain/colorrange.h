@@ -3,17 +3,17 @@
 
 namespace Ilwis{
 
+class ColorItem;
+typedef QSharedPointer<ColorItem> SPColorItem;
+
 class KERNELSHARED_EXPORT ColorRange : public Range
 {
 public:
     enum ColorModel{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
 
     ColorRange(IlwisTypes tp, ColorModel clrmodel);
-    IlwisTypes valueType() const;
     ColorModel defaultColorModel() const;
     void defaultColorModel(ColorModel m);
-    virtual bool contains(ColorRange *v, bool inclusive = true) const = 0;
-    virtual bool contains(const QVariant& v, bool inclusive = true) const = 0;
 
     static QColor toColor(quint64 clrint, ColorModel clrModel) ;
     static QColor toColor(const QVariant &v, ColorModel colormodel);
@@ -38,28 +38,41 @@ public:
     bool contains(const QVariant& v, bool inclusive = true) const;
     bool contains(ColorRange *v, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
+    IlwisTypes valueType() const;
 private:
     QColor _limit1;
     QColor _limit2;
 };
-class KERNELSHARED_EXPORT PallettedColorRange : public ColorRange {
+
+class ColorPalette : public ItemRange, public ColorRange  {
 public:
-    PallettedColorRange();
-    PallettedColorRange(const std::vector<QColor>& colors, ColorModel clrmodel=ColorRange::cmRGBA );
-    bool isValid() const;
-    QString toString() const;
-    Range *clone() const;
-    QVariant ensure(const QVariant& v, bool inclusive = true) const;
-    bool contains(const QVariant& v, bool inclusive = true) const;
-    bool contains(ColorRange *v, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
-    void addColor(const QColor& clr);
-    QColor color(quint32 index) const;
-    quint32 palletSize() const;
+
+    SPDomainItem item(quint32 raw) const;
+    SPDomainItem item(const QString &nam) const;
+    SPDomainItem itemByOrder(quint32 index) const;
+    QColor color(int index) const;
+
+    void add(DomainItem *item);
+    void add(SPDomainItem item);
+    void remove(const QString& nm);
+    void clear();
+
+    bool contains(const QVariant& color, bool inclusive = true) const;
+    bool contains(SPRange rng, bool inclusive=true) const;
+    bool contains(ItemRange *rng, bool inclusive=true) const;
+
+    QVariant ensure(const QVariant& v, bool inclusive = true) const;
+    quint32 count() const;
+    IlwisTypes valueType() const;
+
+    bool isValid() const;
 
 private:
-    std::vector<QColor> _pallet;
+    std::vector<SPColorItem> _colors;
+
 };
+
 
 }
 

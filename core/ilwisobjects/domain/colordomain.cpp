@@ -1,7 +1,11 @@
 #include <QColor>
 #include <QSharedPointer>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
+#include "itemrange.h"
+#include "domainitem.h"
+#include "coloritem.h"
 #include "colorrange.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
@@ -67,7 +71,13 @@ void ColorDomain::range(Range *colorrange)
     if ( hasType(colorrange->valueType(), itCOLOR) == false)
         return;
     if ( parent().isValid()) {
-        parent()->range2range<ColorRange>()->contains(static_cast<ColorRange *>(colorrange));
+        if ( colorrange->valueType() == itPALETTECOLOR){
+            if( cNONE == parent()->range2range<ColorPalette>()->contains(dynamic_cast<ColorPalette *>(colorrange)))
+                return;
+        } else if ( colorrange->valueType() == itCONTINUOUSCOLOR){
+            if( cNONE == parent()->range2range<ContinousColorRange>()->contains(dynamic_cast<ColorRange *>(colorrange)))
+                return;
+        }
     }
     _range = QSharedPointer<ColorRange>(static_cast<ColorRange *>(colorrange));
 }

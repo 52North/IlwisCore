@@ -1,7 +1,13 @@
 #include <QColor>
 #include <QRegularExpression>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "range.h"
+#include "domainitem.h"
+#include "domain.h"
+#include "itemrange.h"
+#include "coloritem.h"
+#include "itemiterator.h"
 #include "colorrange.h"
 
 using namespace Ilwis;
@@ -20,11 +26,6 @@ struct LocalColor{
 
 ColorRange::ColorRange(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
 {
-}
-
-IlwisTypes ColorRange::valueType() const
-{
-    return _valuetype;
 }
 
 ColorRange::ColorModel ColorRange::defaultColorModel() const
@@ -127,112 +128,6 @@ QColor ColorRange::toColor(quint64 clrint, ColorModel clrModel)
     return clr;
 }
 
-//--------------------------------------------
-PallettedColorRange::PallettedColorRange() : ColorRange(itPALLETCOLOR,ColorRange::cmRGBA)
-{
-
-}
-
-PallettedColorRange::PallettedColorRange(const std::vector<QColor> &colors, ColorRange::ColorModel clrmodel) :
-    ColorRange(itPALLETCOLOR, clrmodel),
-    _pallet(colors)
-{
-
-}
-
-bool PallettedColorRange::isValid() const
-{
-    return _pallet.size() > 0;
-}
-
-QString PallettedColorRange::toString() const
-{
-    QString colors;
-    for(const QColor& clr : _pallet){
-        if ( colors.size() > 0)
-            colors += " ";
-        colors += ColorRange::toString(clr, defaultColorModel());
-
-    }
-    return colors;
-}
-
-
-Range *PallettedColorRange::clone() const
-{
-    return new PallettedColorRange(_pallet);
-}
-
-QVariant PallettedColorRange::ensure(const QVariant &v, bool ) const
-{
-    QColor clr = toColor(v, defaultColorModel());
-    if ( !clr.isValid())
-        return QColor();
-    for(const QColor& palletClr : _pallet){
-        if ( palletClr == clr)
-            return clr;
-        //TODO calculate closest color
-    }
-
-
-    return QColor();
-}
-
-bool PallettedColorRange::contains(const QVariant &v, bool ) const
-{
-    if (!isValid())
-        return false;
-
-    for(const QColor& clr : _pallet){
-        if ( clr == v)
-            return true;
-    }
-    return false;
-}
-
-bool PallettedColorRange::contains(ColorRange *v, bool inclusive) const
-{
-    PallettedColorRange *pcr = dynamic_cast<PallettedColorRange *>(v);
-    if (pcr == nullptr)
-        return false;
-    for(quint32 index = 0; index < pcr->palletSize(); ++index) {
-        if ( !contains(pcr->color(index))){
-            return false;
-        }
-    }
-    return true;
-}
-
-QVariant PallettedColorRange::impliedValue(const QVariant &v) const
-{
-    QColor clr = toColor(v, defaultColorModel());
-    if ( !clr.isValid())
-        return QColor();
-    if ( contains(clr))
-        return clr;
-
-    return QColor();
-}
-
-void PallettedColorRange::addColor(const QColor &clr)
-{
-    _pallet.push_back(clr);
-}
-
-QColor PallettedColorRange::color(quint32 index) const
-{
-    if ( index < _pallet.size())
-        return _pallet[index];
-
-    return QColor();
-}
-
-quint32 PallettedColorRange::palletSize() const
-{
-    return _pallet.size();
-}
-
-
 //----------------------------------------------------------------
 ContinousColorRange::ContinousColorRange() : ColorRange(itCONTINUOUSCOLOR,ColorRange::cmRGBA)
 {
@@ -330,8 +225,8 @@ bool ContinousColorRange::contains(ColorRange *v, bool inclusive) const
     if ( ccr){
         return contains(IVARIANT(ccr->_limit1), inclusive) && contains(IVARIANT(ccr->_limit2),inclusive);
     } else {
-        PallettedColorRange *pcr = dynamic_cast< PallettedColorRange*>(v);
-        for(quint32 index = 0; index < pcr->palletSize(); ++index) {
+        ColorPalette *pcr = dynamic_cast< ColorPalette*>(v);
+        for(quint32 index = 0; index < pcr->count(); ++index) {
             if ( !contains(pcr->color(index), inclusive)){
                 return false;
             }
@@ -352,3 +247,138 @@ QVariant ContinousColorRange::impliedValue(const QVariant &v) const
     return QColor();
 
 }
+
+IlwisTypes ContinousColorRange::valueType() const
+{
+    return itCONTINUOUSCOLOR;
+}
+
+//---------------------------------------------------------------
+QVariant ColorPalette::impliedValue(const QVariant &v) const
+{
+    QColor clr = ColorRange::toColor(v, defaultColorModel());
+    if ( !clr.isValid())
+        return QColor();
+    if ( contains(clr))
+        return clr;
+
+    return QColor();
+}
+
+quint32 ColorPalette::count() const
+{
+    return _colors.size();
+}
+
+IlwisTypes ColorPalette::valueType() const
+{
+    return itPALETTECOLOR;
+}
+
+SPDomainItem ColorPalette::item(quint32 raw) const
+{
+    if (raw < count())
+        return _colors[raw];
+    return SPDomainItem();
+}
+
+SPDomainItem ColorPalette::item(const QString &nam) const
+{
+    //TODO not sure if there is a usefull implementation;
+    return SPDomainItem();
+}
+
+SPDomainItem ColorPalette::itemByOrder(quint32 index) const
+{
+    return item(index);
+}
+
+QColor ColorPalette::color(int index) const
+{
+    if ( index < _colors.size())
+        return _colors[index]->color();
+    return clrUNDEF;
+}
+
+void ColorPalette::add(DomainItem *item)
+{
+    _colors.push_back( SPColorItem(dynamic_cast<ColorItem *>(item)));
+}
+
+void ColorPalette::add(SPDomainItem item)
+{
+    SPColorItem citem = item.staticCast<ColorItem>();
+    _colors.push_back(citem);
+}
+
+void ColorPalette::remove(const QString &nm)
+{
+    ItemIterator<ColorItem> iter(this);
+    std::vector<int> toBeRemoved;
+    int count = 0;
+    while(iter != iter.end()){
+        ColorItem *item = *iter;
+        if ( item->name() == nm){
+            toBeRemoved.push_back(count++);
+        }
+    }
+    for(int i=0; i < toBeRemoved.size(); ++i){
+        _colors.erase(_colors.begin() + toBeRemoved[i] - i);
+    }
+}
+
+void ColorPalette::clear()
+{
+    _colors.resize(0);
+}
+
+bool ColorPalette::contains(const QVariant &color, bool inclusive) const
+{
+    if (!isValid())
+        return false;
+
+    for(const SPColorItem& clr : _colors){
+        if ( clr->color() == color)
+            return true;
+    }
+    return false;
+}
+
+bool ColorPalette::contains(SPRange rng, bool inclusive) const
+{
+    ItemIterator<ColorItem> iter(static_cast<ItemRange *>((rng.data())));
+    while(iter != iter.end()){
+        ColorItem *item = *iter;
+        if (!contains(item->color()))
+            return false;
+    }
+    return true;
+}
+
+bool ColorPalette::contains(ItemRange *rng, bool inclusive) const
+{
+    ItemIterator<ColorItem> iter(rng);
+    while(iter != iter.end()){
+        ColorItem *item = *iter;
+        if (!contains(item->color()))
+            return false;
+    }
+    return true;
+}
+
+QVariant ColorPalette::ensure(const QVariant &v, bool inclusive) const
+{
+    if ( !contains(v, inclusive))
+        return QColor();
+    return v;
+}
+
+bool ColorPalette::isValid() const
+{
+    return count() != 0;
+}
+
+
+
+
+
