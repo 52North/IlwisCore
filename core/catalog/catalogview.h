@@ -38,6 +38,7 @@ public:
      * \param cat
      */
     CatalogView(const CatalogView& cat);
+    ~CatalogView(){}
     /*!
      returns the filtered items out of the master-catalog.
      * \return list of resources

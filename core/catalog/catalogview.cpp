@@ -63,7 +63,7 @@ QString CatalogView::type() const
 
 bool CatalogView::isValid() const
 {
-    return _location.isValid() && _filter != "";
+    return _location.isValid(); // && _filter != "";
 }
 
 QUrl CatalogView::parentCatalogView() const
