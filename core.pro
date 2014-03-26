@@ -225,7 +225,8 @@ HEADERS += core/kernel.h\
     core/prepareoptions.h \
     core/catalog/catalogview.h \
     core/ilwisobjects/coverage/vertexiterator.h \
-    core/ilwisobjects/domain/coloritem.h
+    core/ilwisobjects/domain/coloritem.h \
+    core/ilwistypes.h
 
 
 OTHER_FILES += \
