@@ -14,3 +14,7 @@ http://52north.github.io/IlwisCore/
 Issue tracker
 --------------
 https://github.com/52North/IlwisCore/issues
+
+Download
+--------
+https://github.com/52North/IlwisCore/releases
