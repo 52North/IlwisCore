@@ -17,7 +17,7 @@ NumericItem::NumericItem()
 {
 }
 
-NumericItem::NumericItem(const NumericRange &vr) : _valuerange(vr)
+NumericItem::NumericItem(const QString label, const NumericRange &vr) : Identity(label), _valuerange(vr)
 {
 }
 
@@ -28,12 +28,15 @@ bool NumericItem::isValid() const
 
 QString NumericItem::name() const
 {
-    return _valuerange.toString();
+    return Identity::name();
 }
 
 DomainItem *NumericItem::clone() const
 {
-    return new NumericItem(_valuerange);
+    NumericItem *item =  new NumericItem(name(), _valuerange);
+    item->setCode(code());
+    item->setDescription(description());
+    return item;
 }
 
 IlwisTypes NumericItem::valueTypeS()
