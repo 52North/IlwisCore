@@ -57,7 +57,7 @@ public:
         return _raw;
     }
 
-    template<typename ItemType> QSharedPointer<ItemType> toType(){
+    template<typename ItemType> ItemType* toType(){
         return dynamic_cast<ItemType *>(this);
     }
 
