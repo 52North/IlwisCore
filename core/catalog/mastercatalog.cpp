@@ -6,6 +6,7 @@
 #include <QSqlField>
 #include "identity.h"
 #include "kernel.h"
+#include "oshelper.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
 #include "ilwisobjectconnector.h"
@@ -299,10 +300,16 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 
 QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; then assume it is already a unique resource
-        QUrl url(name);
-        if ( url.scheme().size() > 1)
+        bool ok = OSHelper::isAbsolute(name); // name might be a partial path
+        if ( ok && !OSHelper::isFileName(name))
             return name;
-        return QUrl::fromLocalFile(name).toString();
+        if ( ok){
+            return QUrl::fromLocalFile(name).toString();
+        }else {
+            QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
+            return resolvedName;
+        }
+
     }
     if ( name.indexOf("code=wkt:")==0) {
         auto code = name.right(name.size() - 5);
