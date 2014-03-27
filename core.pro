@@ -108,7 +108,8 @@ SOURCES += core/kernel.cpp \
     core/catalog/foldercatalogexplorer.cpp \
     core/catalog/catalogview.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
-    core/ilwisobjects/domain/coloritem.cpp
+    core/ilwisobjects/domain/coloritem.cpp \
+    core/oshelper.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -226,7 +227,8 @@ HEADERS += core/kernel.h\
     core/catalog/catalogview.h \
     core/ilwisobjects/coverage/vertexiterator.h \
     core/ilwisobjects/domain/coloritem.h \
-    core/ilwistypes.h
+    core/ilwistypes.h \
+    core/oshelper.h
 
 
 OTHER_FILES += \
