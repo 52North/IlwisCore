@@ -140,13 +140,7 @@ template<class T> T undef() {
 }
 
 
-inline QString N2LOCATION(const QString& somelocation) {
-#ifdef Q_OS_WIN
-    return somelocation.toLower();
-#else
-    return somelocation;
-#endif
-}
+
 
 
 #define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
