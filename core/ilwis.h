@@ -12,14 +12,8 @@
 *   - Geo - Processing engine in a web server environment.
 *   - Exploration of P2P, distributed processing, OpenCL/Cuda.
 *
-*The secondary objective is to create a UI toolbox to facilitate an easy way to create a user interface for applications using ILWIS NG . Since the advent of mobile devices the concepts of UI design has seen a lot of movement after being fairly static for the last 10 years. This is an interesting area of exploration.
- *
- * \section install_sec Installation
- *
- * \subsection step1 Step 1: Opening the box
- *
- * etc...
- */
+* The secondary objective is to create a UI toolbox to facilitate an easy way to create a user interface for applications using ILWIS NG . Since the advent of mobile devices the concepts of UI design has seen a lot of movement after being fairly static for the last 10 years. This is an interesting area of exploration.
+*/
 
 #include <QVariant>
 #include <limits>
