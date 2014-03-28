@@ -9,5 +9,6 @@ var searchData=
   ['operationimplementation',['OperationImplementation',['../class_ilwis_1_1_operation_implementation.html',1,'Ilwis']]],
   ['operationmetadata',['OperationMetaData',['../class_ilwis_1_1_operation_meta_data.html',1,'Ilwis']]],
   ['operationparameter',['OperationParameter',['../class_ilwis_1_1_operation_parameter.html',1,'Ilwis']]],
-  ['operationresource',['OperationResource',['../class_ilwis_1_1_operation_resource.html',1,'Ilwis']]]
+  ['operationresource',['OperationResource',['../class_ilwis_1_1_operation_resource.html',1,'Ilwis']]],
+  ['oshelper',['OSHelper',['../class_ilwis_1_1_o_s_helper.html',1,'Ilwis']]]
 ];
