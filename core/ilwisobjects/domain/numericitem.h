@@ -5,7 +5,7 @@ namespace Ilwis {
 
 class  NumericItemRange;
 
-class KERNELSHARED_EXPORT NumericItem : public DomainItem
+class KERNELSHARED_EXPORT NumericItem : public DomainItem, public Identity
 {
 public:
     friend class NumericItemRange;
@@ -21,7 +21,7 @@ public:
      *
      * @param vr the NumericRange of this item
      */
-    NumericItem(const NumericRange &vr);
+    NumericItem(const QString label, const NumericRange &vr);
 
     virtual ~NumericItem() {}
 
@@ -29,7 +29,7 @@ public:
     bool isValid() const;
 
     //@override
-    QString name() const ;
+    QString name() const;
 
     //@override
     DomainItem *clone() const;

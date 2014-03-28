@@ -36,36 +36,21 @@ std::vector<Resource> Catalog::items() const
     return _items;
 }
 
-void Catalog::addItems(const std::vector<Resource> &itemlist)
-{
-    if ( isReadOnly())
-        return;
-    changed(true);
-
-    _items = itemlist;
-}
-
-
-
 bool Catalog::prepare()
 {
     QString scheme =  source().url().scheme();
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    connector()->loadData(this);
-    return true;
-}
+    if( connector()->loadData(this))
+        return setValid(true);
 
-QString Catalog::type() const
-{
-    return "Catalog";
+    return false;
 }
-
 
 bool Catalog::isValid() const
 {
-    return source().url().isValid();
+    return source().url().isValid() && IlwisObject::isValid();
 }
 
 IlwisTypes Catalog::ilwisType() const {
@@ -80,6 +65,14 @@ QString Catalog::resolve(const QString &name, IlwisTypes tp) const
         if ( results.next()) {
             return name;
         }
+        // might have been a fragment
+        QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
+        query = QString("select resource from mastecatalog where resource = '%2'").arg(resolvedName);
+        results = kernel()->database().exec(query);
+        if ( results.next()) {
+            return resolvedName;
+        }
+
     }
     QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(source().url().toString());
     if ( tp == itUNKNOWN) // incomplete info, we hope that the name will be unique. wrong selection must be handled at the caller side

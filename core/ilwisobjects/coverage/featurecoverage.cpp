@@ -66,7 +66,7 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 }
 
 UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, bool load){
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt.toStdString());
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
     if ( !geom)
         throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
     return newFeature(geom,load);

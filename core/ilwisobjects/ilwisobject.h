@@ -296,13 +296,8 @@ public:
      */
     void connectTo(const QUrl &url, const QString &format, const QString &fnamespace, ConnectorMode cmode);
 
-    /*!
-     *\brief Factory method for creating IlwisObjects
-     *
-     *\param id of a resource a Url describing a unique Ilwis object.
-     *\param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
-     *\return IlwisObject a created ilwisobject of the specified type
-     */
+
+    //TODO. Puzzeld, this method is not allowed as duplicate copies are illegal
     virtual IlwisObject *clone() ;
 
     /**

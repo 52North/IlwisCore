@@ -8,6 +8,7 @@
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "mastercatalog.h"
+#include "oshelper.h"
 
 
 
@@ -334,8 +335,8 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
-    queryItem.bindValue(":container", N2LOCATION(container().toString()));
-    queryItem.bindValue(":resource", N2LOCATION(url().toString()));
+    queryItem.bindValue(":container", OSHelper::neutralizeFileName(container().toString()));
+    queryItem.bindValue(":resource", OSHelper::neutralizeFileName(url().toString()));
     queryItem.bindValue(":urlquery", urlQuery().toString());
     queryItem.bindValue(":type", ilwisType());
     queryItem.bindValue(":extendedtype", _extendedType);
@@ -409,7 +410,7 @@ QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext
             localPath = localPath.left(index);
         localPath += "." + ext;
     }
-    return N2LOCATION(localPath);
+    return OSHelper::neutralizeFileName(localPath);
 }
 
 Resource Resource::copy(quint64 id) const

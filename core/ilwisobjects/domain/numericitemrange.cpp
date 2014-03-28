@@ -241,19 +241,20 @@ ItemRange *NumericItemRange::clone() const
 NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
 {
     QStringList parts = itemdef.split(" ");
-    if( parts.size() > 1) {
+    if( parts.size() > 2) {
         bool ok;
         double step = 0;
-        double mn = parts[0].toDouble(&ok);
+        QString name = parts[0];
+        double mn = parts[1].toDouble(&ok);
         if(ok) {
-            double mx = parts[1].toDouble(&ok);
+            double mx = parts[2].toDouble(&ok);
             if ( ok) {
-                if ( parts.size() == 3) {
-                    step = parts[2].toDouble(&ok);
+                if ( parts.size() == 4) {
+                    step = parts[3].toDouble(&ok);
 
                 }
                 if (ok) {
-                    add(new NumericItem({mn,mx, step}));
+                    add(new NumericItem(name, {mn,mx, step}));
                     return *this;
                 }
             }
@@ -273,7 +274,8 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         double step = _items[0]->range().resolution();
         if ( step == 0)
             vmin += EPS8;
-        add(new NumericItem({vmin+step,vmax, step}));
+        QString label = QString("label_%1").arg(_items.size());
+        add(new NumericItem(label, {vmin+step,vmax, step}));
     }
     return *this;
 }

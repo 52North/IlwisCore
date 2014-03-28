@@ -10,8 +10,8 @@ namespace geom {
 namespace Ilwis {
 class KERNELSHARED_EXPORT GeometryHelper{
     public:
-        static std::string toWKT(const geos::geom::Geometry* geom);
-        static geos::geom::Geometry* fromWKT(std::string wkt)  throw(geos::io::ParseException);
+        static QString toWKT(const geos::geom::Geometry* geom);
+        static geos::geom::Geometry* fromWKT(const QString &wkt)  throw(geos::io::ParseException);
 
         static IlwisTypes geometryType(const geos::geom::Geometry* geom);
 
