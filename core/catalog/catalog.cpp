@@ -36,36 +36,21 @@ std::vector<Resource> Catalog::items() const
     return _items;
 }
 
-void Catalog::addItems(const std::vector<Resource> &itemlist)
-{
-    if ( isReadOnly())
-        return;
-    changed(true);
-
-    _items = itemlist;
-}
-
-
-
 bool Catalog::prepare()
 {
     QString scheme =  source().url().scheme();
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    connector()->loadData(this);
-    return true;
-}
+    if( connector()->loadData(this))
+        return setValid(true);
 
-QString Catalog::type() const
-{
-    return "Catalog";
+    return false;
 }
-
 
 bool Catalog::isValid() const
 {
-    return source().url().isValid();
+    return source().url().isValid() && IlwisObject::isValid();
 }
 
 IlwisTypes Catalog::ilwisType() const {

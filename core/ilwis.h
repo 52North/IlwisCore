@@ -1,6 +1,26 @@
 #ifndef ILWIS_H
 #define ILWIS_H
 
+/*! \mainpage Ilwis-Objects framework
+ *
+* \section intro_sec Introduction
+*
+*   The objective of the ILWIS NG is to create a framework that allows a seamless integration between heterogeneous data sources and processing sources. The framework will allow us to create applications that are largely independent of the format/nature of the underlying data containers or processing sources. Particularly we are thinking about:
+*
+*   - Scripting environment for accessing and manipulating GIS data containers in a more “database” like way (probably anchored in Python).
+*   - Desktop environment for integrating remote and local sources of data and processing
+*   - Geo - Processing engine in a web server environment.
+*   - Exploration of P2P, distributed processing, OpenCL/Cuda.
+*
+*The secondary objective is to create a UI toolbox to facilitate an easy way to create a user interface for applications using ILWIS NG . Since the advent of mobile devices the concepts of UI design has seen a lot of movement after being fairly static for the last 10 years. This is an interesting area of exploration.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *
+ * etc...
+ */
+
 #include <QVariant>
 #include <limits>
 #include <float.h>
