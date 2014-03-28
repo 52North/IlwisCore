@@ -27,14 +27,14 @@
 
 using namespace Ilwis;
 
-std::string GeometryHelper::toWKT(const geos::geom::Geometry* geom){
+QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
     geos::io::WKTWriter writer;
-    return writer.write(geom);
+    return QString::fromStdString(writer.write(geom));
 }
 
-geos::geom::Geometry* GeometryHelper::fromWKT(std::string wkt) throw(geos::io::ParseException){
+geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) throw(geos::io::ParseException){
     geos::io::WKTReader reader;
-    return reader.read(wkt);
+    return reader.read(wkt.toStdString());
 }
 
 IlwisTypes GeometryHelper::geometryType(const geos::geom::Geometry *geom){
