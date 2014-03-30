@@ -109,7 +109,8 @@ SOURCES += core/kernel.cpp \
     core/catalog/catalogview.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
-    core/oshelper.cpp
+    core/oshelper.cpp \
+    core/util/bresenham.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -229,7 +230,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/vertexiterator.h \
     core/ilwisobjects/domain/coloritem.h \
     core/ilwistypes.h \
-    core/oshelper.h
+    core/oshelper.h \
+    core/util/bresenham.h
     core/util/bresenham.h
 
 
