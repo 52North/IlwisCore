@@ -7,6 +7,9 @@
 namespace Ilwis {
 
 class GeoRefImplementation;
+class CoordinateSystem;
+typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+class GeoRefImplementation;
 
 class GeoRefInterface {
 public:
