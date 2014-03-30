@@ -1,7 +1,12 @@
 #include "kernel.h"
 #include "location.h"
+#include "ilwisdata.h"
+#include "size.h"
 #include "geos/geom/Coordinate.h"
-#include "geos/geom/Coordinate.inl"
+#include "coordinate.h"
+#include "box.h"
+#include "georeference.h"
+#include "geos/geom/Geometry.h"
 #include "geos/geom/CoordinateSequence.h"
 #include "coordinate.h"
 #include "vertexiterator.h"
@@ -9,50 +14,68 @@
 
 using namespace Ilwis;
 
-Bresenham::Bresenham()
-{
+Bresenham::Bresenham(const IGeoReference& grf) : _targetGrf(grf){
+
 }
 
-std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, VertexIterator &iterEnd)
+std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const VertexIterator &iterEnd)
 {
     VertexIterator iter = iterStart;
     std::vector<Pixel> result;
     Coordinate crd1, crd2 ;
-    while( iter != iterEnd){
+    while( iter != iterEnd - 1){
         crd1 = *iter;
         crd2 = *(++iter);
-        std::vector<Pixel> line  = makePixelLine(crd1, crd2);
+        std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid);
+        if (!_valid)
+            return std::vector<Pixel>();
         std::copy(line.begin(), line.end(), std::back_inserter(result));
     }
+    // remove duplicates
+    auto iterUnique = std::unique(result.begin(), result.end());
+    result.resize(std::distance(result.begin(),iterUnique));
     return result;
 }
 
-std::vector<Pixel> Bresenham::makePixelLine(Coordinate crdStart, Coordinate crdEnd) const
+std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Coordinate& crdEnd, bool& valid) const
 {
+    valid = false;
     std::vector<Pixel> result;
-    bool steep = (fabs(crdEnd.y - crdStart.y) > fabs(crdEnd.x - crdStart.x));
+    if ( !_targetGrf.isValid()){
+        ERROR2(ERR_NO_INITIALIZED_2,TR("target georeference"), "bresenham algorithm");
+        return result;
+    }
+
+    Pixeld pixStart = _targetGrf->coord2Pixel(crdStart);
+    Pixeld pixEnd = _targetGrf->coord2Pixel(crdEnd);
+    if ( !pixStart.isValid() || !pixEnd.isValid()){
+        ERROR2(ERR_INVALID_INIT_FOR_2, TR("coordinates"), "bresenham algorithm");
+        return result;
+    }
+    valid = true;
+    bool steep = (fabs(pixEnd.y - pixStart.y) > fabs(pixEnd.x - pixStart.x));
     if(steep)
     {
-        std::swap(crdStart.x, crdStart.y);
-        std::swap(crdEnd.x, crdEnd.y);
+        std::swap(pixStart.x, pixStart.y);
+        std::swap(pixEnd.x, pixEnd.y);
     }
 
-    if(crdStart.x > crdEnd.x)
+    if(pixStart.x > pixEnd.x)
     {
-        std::swap(crdStart.x, crdEnd.x);
-        std::swap(crdStart.y, crdEnd.y);
+        std::swap(pixStart.x, pixEnd.x);
+        std::swap(pixStart.y, pixEnd.y);
     }
 
-    double dx = crdEnd.x - crdStart.x;
-    double dy = fabs(crdEnd.y - crdStart.y);
+    double dx = pixEnd.x - pixStart.x;
+    double dy = fabs(pixEnd.y - pixStart.y);
 
     double error = dx / 2.0;
-    int ystep = (crdStart.y < crdEnd.y) ? 1 : -1;
-    int y = (int)crdStart.y;
+    int ystep = (pixStart.y < pixEnd.y) ? 1 : -1;
+    int y = (int)pixStart.y;
 
-    int maxX = (int)crdEnd.x;
+    int maxX = (int)pixEnd.x;
 
-    for(int x=(int)crdStart.x; x<maxX; x++)
+    for(int x=(int)pixStart.x; x<maxX; x++)
     {
         result.push_back(steep ? Pixel(y,x) : Pixel(x,y));
         error -= dy;
