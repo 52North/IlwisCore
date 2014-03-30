@@ -26,7 +26,7 @@ VertexIterator::VertexIterator(const UPGeometry& geom)
 
 VertexIterator::VertexIterator(const QString &wkt)
 {
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt.toStdString());
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
     setFromGeometry(geom);
     _internalGeom.reset(geom);
 }
@@ -52,7 +52,10 @@ VertexIterator &VertexIterator::operator=(const VertexIterator &iter)
     _partIndex = iter._partIndex;
     _pointCoordinates = iter._pointCoordinates;
     _pointMode = iter._pointMode;
+    _polygonMode = iter._polygonMode;
     _hasOwnership = iter._hasOwnership;
+    _linearSize = iter._linearSize;
+    _linearPosition = iter._linearPosition;
     if ( iter._internalGeom)
         _internalGeom.reset(iter._internalGeom->clone());
     else
@@ -134,7 +137,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
         return false;
     if (!compatible(iter))
         return false;
-    if ( iter._partIndex  == _partIndex && _partIndex == _coordinates.size()){
+    if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]->size() - 1){
         return true;    // end condition;
     }
     int j = 0;
@@ -211,11 +214,12 @@ const geos::geom::Coordinate &VertexIterator::operator*() const
 
 geos::geom::Coordinate &VertexIterator::operator*()
 {
-    if ( _linearPosition >= 0 && _linearPosition < _linearSize)
+    if ( (_linearPosition >= 0 && _linearPosition < _linearSize) && _partIndex >= 0 &&  _partIndex < _coordinates.size() ){
         if ( _pointMode){
             return *const_cast<geos::geom::Coordinate *>(_pointCoordinates[_index]);
         }
         return const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]->getAt(_index));
+    }
     throw ErrorObject(TR("vertex index out of range"));
 }
 
@@ -228,14 +232,14 @@ geos::geom::Coordinate *VertexIterator::operator->()
     throw ErrorObject(TR("vertex index out of range"));
 }
 
-VertexIterator VertexIterator::operator-(int n)
+VertexIterator VertexIterator::operator-(int n) const
 {
     VertexIterator iter(*this);
     iter -= n;
     return iter;
 }
 
-VertexIterator VertexIterator::operator+(int n)
+VertexIterator VertexIterator::operator+(int n) const
 {
     VertexIterator iter(*this);
     iter += n;
@@ -260,7 +264,8 @@ void VertexIterator::move(int n)
             _index = -1;
         }
     } else {
-        if (_index >= _coordinates[_partIndex]->size()){
+        int sz =  _coordinates[_partIndex]->size();
+        if (_index >=sz){ // weird compiler bug; (mingw 4.8.2), using result directly always leads to positive test
             ++_partIndex;
             _index = 0;
             if ( _polygonMode){
@@ -268,7 +273,8 @@ void VertexIterator::move(int n)
             }else
                 _nextSubGeometry = true;
             if ( _partIndex >= _coordinates.size()){
-                _partIndex = _coordinates.size();
+                _partIndex = _coordinates.size() - 1;
+                _index = _coordinates[_partIndex]->size();
                 _linearPosition = _linearSize;
             }
         } else{
@@ -276,8 +282,8 @@ void VertexIterator::move(int n)
                 --_partIndex;
                 if ( _partIndex < 0){
                     _partIndex = 0;
-                    _linearPosition = -1;
-                    _index = -1;
+                    _linearPosition = 0;
+                    _index = 0;
                 }else{
                     _index = _coordinates[_partIndex]->size() - 1;
                 }

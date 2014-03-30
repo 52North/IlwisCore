@@ -41,8 +41,8 @@ public:
     const geos::geom::Coordinate& operator*() const;
     geos::geom::Coordinate& operator*();
     geos::geom::Coordinate* operator->();
-    VertexIterator operator-(int n);
-    VertexIterator operator+(int n);
+    VertexIterator operator-(int n) const;
+    VertexIterator operator+(int n) const;
     bool nextSubGeometry() const;
 
 private:
@@ -76,6 +76,17 @@ inline Ilwis::VertexIterator end(std::unique_ptr<geos::geom::Geometry> &geom) {
     Ilwis::VertexIterator iter(geom);
     iter += 100000000; //  at the end;
     return iter;
+}
+
+inline Ilwis::VertexIterator begin(Ilwis::VertexIterator &iter) {
+    Ilwis::VertexIterator iterNew(iter);
+    return iterNew - 10000000;
+}
+
+inline Ilwis::VertexIterator end(Ilwis::VertexIterator& iter) {
+    Ilwis::VertexIterator iterNew(iter);
+    iterNew += 100000000; //  at the end;
+    return iterNew;
 }
 
 #endif // VERTEXITERATOR_H
