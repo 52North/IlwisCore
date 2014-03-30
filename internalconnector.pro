@@ -13,7 +13,6 @@ DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
 DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
 QT       += sql
-QT       -= gui
 
 TEMPLATE = lib
 

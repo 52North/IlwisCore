@@ -2,7 +2,7 @@
 #define COLORDOMAIN_H
 
 namespace Ilwis {
-class ColorDomain : public Domain
+class KERNELSHARED_EXPORT ColorDomain : public Domain
 {
 public:
     ColorDomain();

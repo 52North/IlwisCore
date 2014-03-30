@@ -4,9 +4,14 @@
 namespace geos{
 namespace geom {
 class LineString;
+class Geometry;
+class CoordinateSequence;
+class Coordinate;
 }
 }
 namespace Ilwis {
+
+typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 
 class KERNELSHARED_EXPORT VertexIterator : public std::iterator<std::random_access_iterator_tag, geos::geom::Coordinate>
 {
@@ -14,7 +19,9 @@ public:
     VertexIterator();
     VertexIterator(geos::geom::Geometry *geom);
     VertexIterator(const UPGeometry &geom);
-    //VertexIterator(const VertexIterator& iter);
+    VertexIterator(const QString& wkt);
+    VertexIterator(const VertexIterator& iter);
+    ~VertexIterator();
 
     VertexIterator& operator=(const VertexIterator& iter);
 
@@ -52,6 +59,8 @@ private:
     qint32 _linearPosition = 0;
     bool _pointMode = false;
     bool _polygonMode = false;
+    bool _hasOwnership = false;
+    std::unique_ptr<geos::geom::Geometry> _internalGeom;
 
 
     void storeLineString(const geos::geom::LineString *cline, int index);

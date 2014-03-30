@@ -5,7 +5,7 @@ namespace Ilwis {
 
 #define clrUNDEF QColor()
 
-class ColorItem : public DomainItem
+class KERNELSHARED_EXPORT ColorItem : public DomainItem
 {
 public:
     ColorItem(const QColor &clr=clrUNDEF);
@@ -24,6 +24,8 @@ public:
 
     QColor color() const;
     void color(const QColor clr);
+
+    static IlwisTypes valueTypeS();
 
 private:
     QColor _color;

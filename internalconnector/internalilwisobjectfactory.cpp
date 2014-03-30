@@ -5,6 +5,7 @@
 #include <QSqlError>
 #include <QSettings>
 #include <QUrlQuery>
+#include <QColor>
 
 #include "kernel.h"
 #include "domainitem.h"
@@ -25,9 +26,13 @@
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "itemdomain.h"
+#include "itemrange.h"
+#include "colorrange.h"
+#include "colordomain.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
 #include "numericitem.h"
+#include "coloritem.h"
 #include "resource.h"
 #include "geodeticdatum.h"
 #include "internalilwisobjectfactory.h"
@@ -151,6 +156,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
             return new ItemDomain<NamedIdentifier>();
         if ( sub == "indexed")
             return new ItemDomain<IndexedIdentifier>();
+        if ( sub == "palette")
+            return new ItemDomain<ColorItem>();
     }
     case itTEXTDOMAIN:
         return new TextDomain();
@@ -164,6 +171,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new ConventionalCoordinateSystem();
     case itNUMERICDOMAIN:
         return new NumericDomain();
+    case itCOLORDOMAIN:
+        return new ColorDomain();
     case itPROJECTION:
         return new Projection();
     case itELLIPSOID:
@@ -348,6 +357,9 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
     if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
         return new TextDomain(resource);
+
+    if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color")
+        return new ColorDomain(resource);
     QString code = resource.code();
     if ( code != sUNDEF) {
 
@@ -427,6 +439,11 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
                 return new ItemDomain<NumericItem>(res);
+            }
+            if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
+                Resource res = resource;
+                res.setIlwisType(itITEMDOMAIN);
+                return new ItemDomain<ColorItem>(res);
             }
         } if ( hasType(resource.ilwisType(), itNUMERICDOMAIN)){
             return new NumericDomain(resource);

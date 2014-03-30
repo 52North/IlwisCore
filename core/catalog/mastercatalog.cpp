@@ -250,7 +250,7 @@ IlwisTypes MasterCatalog::id2type(quint64 iid) const {
 
 Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 {
-    if ( tp == itUNKNOWN) {
+    if ( tp == itUNKNOWN) { // no definitive type given we, try to find based on name/type combination. will work mostely but not guaranteed. this is anyway a last resort method
         std::vector<IlwisTypes> types { itRASTER, itFEATURE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
         for(IlwisTypes type: types) {
             Resource resource = name2Resource(name, type);
@@ -302,6 +302,12 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; then assume it is already a unique resource
         bool ok = OSHelper::isAbsolute(name); // name might be a partial path
         if ( ok && !OSHelper::isFileName(name))
+    // translate name to url; we have the following cases
+    // * already is a path, no big deal; just make an url of it
+    // * is a code; construct a path leading to the internal connector as all codes are handled there
+    // * no, path, no code. So it must be in the current working catalog.
+    // * backup case. we try it by name. may fail as names are not necessarily unique. system is robust enough to handle fail cases
+
             return name;
         if ( ok){
             return QUrl::fromLocalFile(name).toString();
@@ -311,7 +317,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         }
 
     }
-    if ( name.indexOf("code=wkt:")==0) {
+    if ( name.indexOf("code=wkt:")==0) { // second case -- handle most codes cases
         auto code = name.right(name.size() - 5);
         auto wkt = code.mid(4);
         auto table = "projection";
@@ -339,7 +345,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     } else if ( name.left(12) == "code=domain:") {
         return QString("ilwis://internalcatalog/%1").arg(name);
     }
-    if ( context()->workingCatalog().isValid()) {
+    if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
         if ( resolvedName != sUNDEF)
             return resolvedName;
@@ -348,6 +354,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     if ( code.indexOf("code=") == 0)
         code = code.mid(5);
 
+    // fourth case -- try name
     auto query = QString("select resource,type from mastercatalog where name = '%1' or code='%1'").arg(code);
     auto results = kernel()->database().exec(query);
     while ( results.next()) {

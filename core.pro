@@ -110,6 +110,7 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
     core/oshelper.cpp
+    core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -229,6 +230,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/coloritem.h \
     core/ilwistypes.h \
     core/oshelper.h
+    core/util/bresenham.h
 
 
 OTHER_FILES += \

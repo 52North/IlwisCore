@@ -17,7 +17,7 @@ ColorItem::ColorItem(const QColor& clr) : _color(clrUNDEF)
 
 IlwisTypes ColorItem::valueType() const
 {
-    return itPALETTECOLOR;
+    return  ColorItem::valueTypeS();
 }
 
 QColor ColorItem::color() const
@@ -28,6 +28,11 @@ QColor ColorItem::color() const
 void ColorItem::color(const QColor clr)
 {
     _color = clr;
+}
+
+IlwisTypes ColorItem::valueTypeS()
+{
+    return itPALETTECOLOR;
 }
 
 DomainItem *ColorItem::clone() const

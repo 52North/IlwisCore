@@ -4,12 +4,14 @@
 #include "geos/geom/LineString.h"
 #include "geos/geom/point.h"
 #include "geos/geom/Polygon.h"
+#include "geos/io/ParseException.h"
 #include "kernel.h"
 #include "errorobject.h"
 #include "coverage.h"
 #include "feature.h"
 #include "featurecoverage.h"
 #include "vertexiterator.h"
+#include "geometryhelper.h"
 
 using namespace Ilwis;
 
@@ -20,6 +22,22 @@ VertexIterator::VertexIterator()
 VertexIterator::VertexIterator(const UPGeometry& geom)
 {
     setFromGeometry(geom.get());
+}
+
+VertexIterator::VertexIterator(const QString &wkt)
+{
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt.toStdString());
+    setFromGeometry(geom);
+    _internalGeom.reset(geom);
+}
+
+VertexIterator::VertexIterator(const VertexIterator &iter)
+{
+    operator=(iter)    ;
+}
+
+VertexIterator::~VertexIterator()
+{
 }
 
 VertexIterator::VertexIterator(geos::geom::Geometry *geom)
@@ -34,6 +52,12 @@ VertexIterator &VertexIterator::operator=(const VertexIterator &iter)
     _partIndex = iter._partIndex;
     _pointCoordinates = iter._pointCoordinates;
     _pointMode = iter._pointMode;
+    _hasOwnership = iter._hasOwnership;
+    if ( iter._internalGeom)
+        _internalGeom.reset(iter._internalGeom->clone());
+    else
+        _internalGeom.reset(0);
+
     return *this;
 }
 
