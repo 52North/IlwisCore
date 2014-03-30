@@ -32,9 +32,14 @@ QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
     return QString::fromStdString(writer.write(geom));
 }
 
-geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) throw(geos::io::ParseException){
+geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) {
+    try{
     geos::io::WKTReader reader;
     return reader.read(wkt.toStdString());
+    } catch (const geos::io::ParseException& ex){
+        ERROR1(ERR_OPERATION_FAILID1, "Well Known Text");
+        return 0;
+    }
 }
 
 IlwisTypes GeometryHelper::geometryType(const geos::geom::Geometry *geom){

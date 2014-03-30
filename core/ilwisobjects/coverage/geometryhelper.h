@@ -5,13 +5,16 @@ namespace geos {
 namespace geom {
     class Geometry;
 }
+namespace io{
+    class ParseException;
+}
 }
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT GeometryHelper{
     public:
         static QString toWKT(const geos::geom::Geometry* geom);
-        static geos::geom::Geometry* fromWKT(const QString &wkt)  throw(geos::io::ParseException);
+        static geos::geom::Geometry* fromWKT(const QString &wkt);
 
         static IlwisTypes geometryType(const geos::geom::Geometry* geom);
 
