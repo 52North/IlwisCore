@@ -6,6 +6,7 @@
 namespace geos{
     namespace geom{
     class CoordinateSequence;
+    class Coordinate;
     }
 }
 
