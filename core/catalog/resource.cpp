@@ -40,7 +40,8 @@ Resource::Resource() : _size(0), _ilwtype(itUNKNOWN), _extendedType(itUNKNOWN)
 Resource::Resource(const Resource &resource) : Identity(resource)
 {
     _properties = resource._properties;
-    _resource = resource._resource;
+    _normalizedUrl = resource._normalizedUrl;
+    _rawUrl = resource._rawUrl;
     _urlQuery = resource._urlQuery;
     _container = resource._container;
     _size = resource._size;
@@ -50,7 +51,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
 }
 
 Resource::Resource(const QString& name, quint64 tp, bool isNew) :
-    _resource(QUrl(name)),
+    _normalizedUrl(QUrl(name)),
     _urlQuery(QUrlQuery(name)),
     _size(0),
     _ilwtype(tp),
@@ -64,7 +65,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
 
     int index = name.indexOf(":");
     if ( index != -1 && index < 6) {
-        _resource = QUrl(name);
+        _normalizedUrl = QUrl(name);
         stringAsUrl(name, tp, isNew);
     } else {
         //QString url;
@@ -77,7 +78,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
             if ( tp & itELLIPSOID)
                 factoryType = "ellipsoid";
             QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
-             _resource = QUrl(c);
+             _normalizedUrl = QUrl(c);
         }else {
             if( isNew){
                 if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){
@@ -92,7 +93,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                             }
                         }
                     }
-                    _resource = urltxt;
+                    _normalizedUrl = urltxt;
                 }
             }
         }
@@ -103,7 +104,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
 }
 
 Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
-    _resource(url),
+    _normalizedUrl(url),
     _urlQuery(QUrlQuery(url)),
     _size(0),
     _ilwtype(tp),
@@ -112,9 +113,21 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     stringAsUrl(url.toString(), tp, isNew);
 }
 
-Resource::Resource(quint64 tp, const QUrl &url) :
-    _resource(url),
-    _urlQuery(QUrlQuery(url)),
+Resource::Resource(const QUrl& normalizedUrl,const QUrl &rawurl, quint64 tp, bool isNew) :
+    _normalizedUrl(normalizedUrl),
+    _rawUrl(rawurl),
+    _urlQuery(QUrlQuery(rawurl)),
+    _size(0),
+    _ilwtype(tp),
+    _extendedType(itUNKNOWN)
+{
+    stringAsUrl(normalizedUrl.toString(), tp, isNew);
+}
+
+Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
+    _normalizedUrl(normalizedUrl),
+    _rawUrl(rawUrl),
+    _urlQuery(QUrlQuery(rawUrl)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -124,11 +137,11 @@ Resource::Resource(quint64 tp, const QUrl &url) :
 
     checkUrl(tp);
     prepare();
-    if ( url == INTERNAL_OBJECT) {
-        QString resext = url.toString() + "/" + name();
-        _resource = QUrl(resext);
+    if ( normalizedUrl == INTERNAL_OBJECT) {
+        QString resext = normalizedUrl.toString() + "/" + name();
+        _normalizedUrl = QUrl(resext);
     }
-    QString nm = _resource.toString();
+    QString nm = _normalizedUrl.toString();
     int index = nm.lastIndexOf("/");
     if ( index != -1){
         addContainer(nm.left(index));
@@ -140,15 +153,14 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
                                                            rec.value("itemid").toLongLong(),
                                                            rec.value("code").toString())
 {
-    _resource = rec.value("resource").toString();
+    _normalizedUrl = rec.value("resource").toString();
+    _rawUrl = rec.value("rawresource").toString();
     _urlQuery = QUrlQuery(rec.value("urlquery").toString());
     addContainer(rec.value("container").toString());
     _size = rec.value("size").toLongLong();
     _dimensions = rec.value("dimensions").toString();
     _ilwtype = rec.value("type").toLongLong();
     _extendedType = rec.value("extendedtype").toLongLong();
-    //if ( (_ilwtype & itGEODETICDATUM) || (_ilwtype & itPROJECTION) || (_ilwtype & itELLIPSOID))
-    //    setCode(name());
 
     QString query = QString("Select * from catalogitemproperties where itemid=%1").arg(id());
     QSqlQuery db(kernel()->database());
@@ -169,18 +181,18 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     }
 }
 
-void Resource::setName(const QString &nm, bool adaptUrl)
+void Resource::setName(const QString &nm, bool adaptNormalizedUrl)
 {
     Identity::setName(nm);
-    if ( !adaptUrl || nm == sUNDEF)
+    if ( !adaptNormalizedUrl || nm == sUNDEF)
         return;
 
-    QString url = _resource.toString();
+    QString url = _normalizedUrl.toString();
     int index = url.lastIndexOf("/");
     if ( index != -1 ) {
         url = url.left(index+1) + nm;
     }
-    _resource = QUrl(url);
+    _normalizedUrl = QUrl(url);
     _urlQuery = QUrlQuery(url);
 }
 
@@ -213,15 +225,21 @@ void Resource::addProperty(const QString &key, const QVariant &value)
     _properties[key] = value;
 }
 
-QUrl Resource::url() const
+QUrl Resource::url(bool asRaw) const
 {
-    return _resource;
+    if ( asRaw && _rawUrl.isValid())
+        return _rawUrl;
+    return _normalizedUrl;
 }
 
-void Resource::setUrl(const QUrl &url)
+void Resource::setUrl(const QUrl &url, bool asRaw)
 {
     _container.clear();
-    _resource = url;
+    if ( asRaw)
+        _rawUrl = url;
+    else
+        _normalizedUrl = url;
+
     _urlQuery = QUrlQuery(url);
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
@@ -234,7 +252,7 @@ void Resource::setUrl(const QUrl &url)
         addContainer(QUrl("ilwis://operations"));
         return;
     }
-    QFileInfo inf(_resource.toLocalFile());
+    QFileInfo inf(_normalizedUrl.toLocalFile());
     if ( urlTxt != "file://") {
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
@@ -337,6 +355,7 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":code", code());
     queryItem.bindValue(":container", OSHelper::neutralizeFileName(container().toString()));
     queryItem.bindValue(":resource", OSHelper::neutralizeFileName(url().toString()));
+    queryItem.bindValue(":rawresource", OSHelper::neutralizeFileName(url(true).toString()));
     queryItem.bindValue(":urlquery", urlQuery().toString());
     queryItem.bindValue(":type", ilwisType());
     queryItem.bindValue(":extendedtype", _extendedType);
@@ -368,7 +387,7 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
 
 bool Resource::isValid() const
 {
-    return ( name() != sUNDEF && _ilwtype != itUNKNOWN && _resource.isValid());
+    return ( name() != sUNDEF && _ilwtype != itUNKNOWN && _normalizedUrl.isValid());
 }
 
 bool Resource::operator ()(const Resource &resource)
@@ -382,7 +401,7 @@ void Resource::setId(quint64 newid)
 }
 
 QString Resource::toLocalFile(bool relative) const {
-    return toLocalFile(_resource, relative);
+    return toLocalFile(_normalizedUrl, relative);
 }
 
 QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext) {
@@ -446,16 +465,16 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
 }
 
 void Resource::checkUrl(IlwisTypes tp) {
-    if ( mastercatalog()->contains(_resource, tp)) {
-        Resource resource = mastercatalog()->name2Resource(_resource.toString(), tp);
+    if ( mastercatalog()->contains(_normalizedUrl, tp)) {
+        Resource resource = mastercatalog()->name2Resource(_normalizedUrl.toString(), tp);
         *this = resource;
         return;
     }
-    else if ( _resource.scheme() == "file") {
-        setUrl(_resource);
+    else if ( _normalizedUrl.scheme() == "file") {
+        setUrl(_normalizedUrl);
     }
-    else if ( _resource.scheme() == "ilwis") {
-        QString resource = _resource.toString();
+    else if ( _normalizedUrl.scheme() == "ilwis") {
+        QString resource = _normalizedUrl.toString();
         int index = resource.lastIndexOf("/");
         int index2 = resource.lastIndexOf("code=");
         if ( index2 > index)
@@ -482,7 +501,7 @@ bool Resource::isRoot(const QString& txt) {
 }
 
 bool Resource::isRoot() const {
-    return isRoot(_resource.toString());
+    return isRoot(_normalizedUrl.toString());
 }
 
 

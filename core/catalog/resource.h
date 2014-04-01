@@ -70,7 +70,8 @@ public:
      * @param tp the type of the resource
      * @param isNew set to false if you are not making a new Resource defaults to true (singletons)
      */
-    Resource(const QUrl& url, quint64 tp, bool isNew=true);
+    Resource(const QUrl& url, const QUrl &rawurl, quint64 tp, bool isNew=true);
+    Resource(const QUrl &url, quint64 tp, bool isNew=true);
 
     /**
      * Creates a Resource from a description in the form of a namespace name
@@ -88,7 +89,7 @@ public:
      * @param url The url to the file you want to load in this resource
      */
     //TODO docu correct?
-    Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT);
+    Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT, const QUrl& rawUrl=QUrl());
 
     /**
      * Creates a new Resource from a Database record, this record should come from the mastercatalog
@@ -136,7 +137,7 @@ public:
      * Query for the url of this Resource, the url points to the file used to created this Resource
      * @return An url to the file of this Resource
      */
-    QUrl url() const;
+    QUrl url(bool asRaw=false) const;
 
     /**
      * Changes The url of this Resource, and thus changes this whole Resource, as it will read the new file and refill all the fields using that.<br>
@@ -144,7 +145,7 @@ public:
      * The url has to be valid though.
      * @param url The new url, must be valid
      */
-    void setUrl(const QUrl& url);
+    void setUrl(const QUrl& url, bool asRaw=false);
 
     /**
      * Gives access to the query when this Resource has been created with a url containing a query string. If there the url did
@@ -299,7 +300,8 @@ public:
 protected:
     void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);
     QHash<QString, QVariant> _properties;
-    QUrl _resource;
+    QUrl _normalizedUrl;
+    QUrl _rawUrl;
     QUrlQuery _urlQuery;
     std::vector<QUrl> _container;
     quint64 _size;
