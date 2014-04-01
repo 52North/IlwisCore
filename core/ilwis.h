@@ -39,6 +39,7 @@ const double rUNDEF = -1e308;
 const double rILLEGAL = rUNDEF + 1;
 const float flUNDEF = ((float)-1e38);
 const qint64 i64UNDEF = std::numeric_limits < qint64 >::min();
+const double clrUNDEF2 = (std::numeric_limits < quint32 >::max() + 1);
 
 #define sUNDEF "?"
 
