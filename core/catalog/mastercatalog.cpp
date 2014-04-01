@@ -153,7 +153,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
-                  :itemid,:name,:code,:container,:resource,:urlquery,:type,:extendedtype, :size,:dimensions \
+                  :itemid,:name,:code,:container,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions \
                   )" );
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
