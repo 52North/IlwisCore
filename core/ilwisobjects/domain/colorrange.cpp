@@ -17,12 +17,12 @@ using namespace Ilwis;
 //const quint64 colormask3 = 0xF0000000;
 //const quint64 colormask4 = 0xF000;
 
-struct LocalColor{
-    quint16 _component1;
-    quint16 _component2;
-    quint16 _component3;
-    quint16 _component4;
-};
+struct LocalColor {
+    quint8 _component1=0;
+    quint8 _component2=0;
+    quint8 _component3=0;
+    quint8 _component4=0;
+} ;
 
 ColorRange::ColorRange(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
 {
@@ -88,6 +88,8 @@ QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
             return clr;
         }
     } else if( v.type() == QMetaType::ULongLong){
+        return ColorRange::toColor(v.toULongLong(),colormodel);
+    } else if( v.type() == QMetaType::Double){
         return ColorRange::toColor(v.toULongLong(),colormodel);
     }
 
@@ -166,7 +168,11 @@ QVariant ContinousColorRange::ensure(const QVariant &v, bool inclusive) const
 
 bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
 {
-    QColor clr = v.value<QColor>();
+    QColor clr;
+    if( v.type() == QMetaType::Double){
+        clr =  ColorRange::toColor(v.toULongLong(),defaultColorModel());
+    } else
+        clr = v.value<QColor>();
     if ( !clr.isValid())
         return false;
 
@@ -238,6 +244,9 @@ bool ContinousColorRange::contains(ColorRange *v, bool inclusive) const
 
 QVariant ContinousColorRange::impliedValue(const QVariant &v) const
 {
+    if ( v == clrUNDEF2)
+        return QColor();
+
     QColor clr = toColor(v, defaultColorModel());
     if ( !clr.isValid())
         return QColor();
