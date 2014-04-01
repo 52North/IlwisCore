@@ -80,13 +80,24 @@ QString InternalModule::version() const
 }
 
 bool InternalModule::createSpecialDomains() {
+    std::vector<Resource> resources;
     QString url = QString("ilwis://internalcatalog/code=domain:text");
     Resource resource(url, itTEXTDOMAIN);
     resource.setCode("text");
     resource.setName("Text domain", false);
     resource.addContainer(QUrl("ilwis://internalcatalog"));
     resource.prepare();
-    return mastercatalog()->addItems({resource});
+    resources.push_back(resource);
+
+    url = QString("ilwis://internalcatalog/code=domain:color");
+    Resource colorResource(url, itCOLORDOMAIN);
+    colorResource.setCode("color");
+    colorResource.setName("Color domain", false);
+    colorResource.addContainer(QUrl("ilwis://internalcatalog"));
+    colorResource.prepare();
+    resources.push_back(colorResource);
+
+    return mastercatalog()->addItems(resources);
 }
 
 bool InternalModule::createPcs(QSqlQuery& db) {
