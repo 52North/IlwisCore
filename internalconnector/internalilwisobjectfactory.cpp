@@ -302,13 +302,6 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     } else{
         Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
-//            GeoReference *cgeoref = new GeoReference();
-//            GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("georefimplementationfactory");
-//            GeoRefImplementation *impl = grfFac->create("corners");
-//            if ( !impl) {
-//                ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"corners georef",resource.name());
-//                return 0;
-//            }
             grf = GeoReference::create("corners");
             grf->setName("subset_" + gcoverage->name());
             grf->coordinateSystem(gcoverage->coordinateSystem());
@@ -358,8 +351,12 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
     if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
         return new TextDomain(resource);
 
-    if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color")
-        return new ColorDomain(resource);
+    if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color") {
+        ColorDomain *dm = new ColorDomain(resource);
+        ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("(#ffffff"));
+        dm->range(rng);
+        return dm;
+    }
     QString code = resource.code();
     if ( code != sUNDEF) {
 
