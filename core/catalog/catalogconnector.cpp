@@ -84,7 +84,7 @@ ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bo
     return new CatalogConnector(resource, load);
 }
 
-bool CatalogConnector::loadMetaData(IlwisObject *)
+bool CatalogConnector::loadMetaData(IlwisObject *data,const PrepareOptions &)
 {
     return loadExplorers();
 }

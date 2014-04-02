@@ -9,7 +9,7 @@ class InternalFeatureCoverageConnector : public IlwisObjectConnector
 public:
     InternalFeatureCoverageConnector(const Ilwis::Resource &resource,bool load=true,const PrepareOptions& options=PrepareOptions());
 
-    bool loadMetaData(IlwisObject *data);
+    bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
     bool loadData(Ilwis::IlwisObject *) ;
     QString provider() const;
 

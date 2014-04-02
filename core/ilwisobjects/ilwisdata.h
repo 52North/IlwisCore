@@ -156,6 +156,12 @@ public:
 
     }
 
+    bool prepare(const QString& name,const PrepareOptions& options=PrepareOptions()){
+        auto type = kernel()->demangle(typeid(T).name());
+        IlwisTypes tp = IlwisObject::name2Type(type);
+        return prepare(name, tp, options);
+    }
+
     /*!
      The method ensures that a proper IlwisResource is requested from the system. It then tries to create the resource and
      on success initializes it. After that it registers itself to the system to prevent the creation of other instances of this resource.
@@ -165,7 +171,7 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const QString& name, IlwisTypes tp=itANY,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const QString& name, IlwisTypes tp,const PrepareOptions& options=PrepareOptions()){
         if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
             QString sid = name.mid(11);
             bool ok;

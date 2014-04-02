@@ -23,7 +23,7 @@ InternalRasterCoverageConnector::InternalRasterCoverageConnector(const Resource 
 {
 }
 
-bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data){
+bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
     if(_dataType == gcoverage->datadef().range().isNull())
         return false;

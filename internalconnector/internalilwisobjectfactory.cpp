@@ -134,7 +134,7 @@ IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& r
         return 0;
     }
     fcoverage->setConnector(connector);
-    connector->loadMetaData(fcoverage);
+    connector->loadMetaData(fcoverage, PrepareOptions());
 
     return fcoverage;
 
@@ -331,7 +331,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         return 0;
     }
     gcoverage->setConnector(connector);
-    connector->loadMetaData(gcoverage);
+    connector->loadMetaData(gcoverage, PrepareOptions());
 
     return gcoverage;
 }

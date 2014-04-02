@@ -25,7 +25,7 @@ InternalFeatureCoverageConnector::InternalFeatureCoverageConnector(const Ilwis::
 
 }
 
-bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data)
+bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     return true;
 }

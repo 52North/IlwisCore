@@ -12,6 +12,7 @@ class Resource;
 class Grid;
 class OperationExpression;
 class ExecutionContext;
+struct PrepareOptions;
 
 /*!
  * \brief The ConnectorInterface class all connectors are derived from this interface
@@ -28,7 +29,7 @@ public:
      \param data the ilwisobject to be initialized
      \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
     */
-    virtual bool loadMetaData(IlwisObject* ) { return false;}
+    virtual bool loadMetaData(IlwisObject*, const PrepareOptions & ) { return false;}
 
     /*!
      * \brief loadGridData loads the 2D or 3D raster data from the source into memory
@@ -42,7 +43,7 @@ public:
      * \brief loadData loads bulk binary data into the ilwisobject.
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
-    virtual bool loadData(IlwisObject* ) { return false; }
+    virtual bool loadData(IlwisObject*) { return false; }
     virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 

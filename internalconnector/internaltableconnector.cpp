@@ -32,7 +32,7 @@ InternalTableConnector::InternalTableConnector(const Resource &resource, bool lo
 {
 }
 
-bool InternalTableConnector::loadMetaData(IlwisObject *data)
+bool InternalTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
 {
     return true;
 }
