@@ -30,7 +30,7 @@ private:
 class KERNELSHARED_EXPORT ContinousColorRange  : public ColorRange{
 public:
     ContinousColorRange();
-    ContinousColorRange(const QColor& clr1=QColor("#000000"), const QColor& clr2=QColor("(#ffffff"), ColorModel colormodel=ColorRange::cmRGBA);
+    ContinousColorRange(const QColor& clr1=QColor("#000000"), const QColor& clr2=QColor("#FFFFFF"), ColorModel colormodel=ColorRange::cmRGBA);
     bool isValid() const;
     QString toString() const;
     Range *clone() const;

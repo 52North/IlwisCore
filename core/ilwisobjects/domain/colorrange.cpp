@@ -212,13 +212,13 @@ bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
     case ColorRange::cmRGBA :
     case ColorRange::cmHSLA :
         return component1a >= component1b && component1a <= component1c &&
-                component1a >= component2b && component1a <= component2c &&
-                component1a >= component3b && component1a <= component3c;
+                component2a >= component2b && component2a <= component2c &&
+                component3a >= component3b && component3a <= component3c;
     case ColorRange::cmCYMKA:
         return component1a >= component1b && component1a <= component1c &&
-                component1a >= component2b && component1a <= component2c &&
-                component1a >= component3b && component1a <= component3c &&
-                component1a >= component4b && component1a <= component4c;
+                component2a >= component2b && component2a <= component2c &&
+                component3a >= component3b && component3a <= component3c &&
+                component4a >= component4b && component4a <= component4c;
 
     }
     return false;
