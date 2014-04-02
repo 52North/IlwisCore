@@ -21,7 +21,7 @@ public:
     bool dataIsLoaded() const;
 
 protected:
-    template<class T> T setObject(const QString& propeprty, const QString defaultName) {
+    template<class T> T setObject(const QString& propeprty, const QUrl& defaultName) {
 
         T object;
         bool ok;
@@ -32,7 +32,7 @@ protected:
         if ( resource.code() != sUNDEF)
             object.prepare(id);
         else
-            object.prepare(defaultName);
+            object.prepare(defaultName.toString());
 
         return object;
     }
