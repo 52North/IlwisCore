@@ -353,7 +353,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
 
     if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color") {
         ColorDomain *dm = new ColorDomain(resource);
-        ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("(#ffffff"));
+        ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("#FFFFFF"));
         dm->range(rng);
         return dm;
     }
