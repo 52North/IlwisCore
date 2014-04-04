@@ -3,7 +3,6 @@
 #include "connectorinterface.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
-#include "domain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 

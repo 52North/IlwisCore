@@ -1,11 +1,13 @@
 #ifndef NUMERICITEM_H
 #define NUMERICITEM_H
 
+#include "thematicitem.h"
+
 namespace Ilwis {
 
 class  NumericItemRange;
 
-class KERNELSHARED_EXPORT NumericItem : public DomainItem, public Identity
+class KERNELSHARED_EXPORT NumericItem : public ThematicItem
 {
 public:
     friend class NumericItemRange;
@@ -27,9 +29,6 @@ public:
 
     //@override
     bool isValid() const;
-
-    //@override
-    QString name() const;
 
     //@override
     DomainItem *clone() const;

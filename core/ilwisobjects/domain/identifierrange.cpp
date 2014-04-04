@@ -8,7 +8,6 @@
 #include "itemdomain.h"
 #include "itemrange.h"
 #include "identifieritem.h"
-#include "itemdomain.h"
 #include "thematicitem.h"
 #include "identifierrange.h"
 
@@ -297,7 +296,7 @@ QVariant NamedIdentifierRange::impliedValue(const QVariant& v) const
 }
 
 SPDomainItem NamedIdentifierRange::item(quint32 iraw) const {
-    if ( isNumericalUndef(iraw) || iraw >= _byRaw.size() || iraw < 0)
+    if ( isNumericalUndef(iraw) || iraw >= _byRaw.size())
         return SPDomainItem();
 
     return _byRaw.at(iraw);

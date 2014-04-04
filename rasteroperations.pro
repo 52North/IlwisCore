@@ -25,7 +25,8 @@ SOURCES += \
     rasteroperations/crossrasters.cpp \
     rasteroperations/rasterstretchoperation.cpp \
     rasteroperations/linearrasterfilter.cpp \
-    rasteroperations/rankorderrasterfilter.cpp
+    rasteroperations/rankorderrasterfilter.cpp \
+    rasteroperations/rasterslicing.cpp
 
 
 HEADERS += \
@@ -35,7 +36,8 @@ HEADERS += \
     rasteroperations/crossrasters.h \
     rasteroperations/rasterstrechoperation.h \
     rasteroperations/linearrasterfilter.h \
-    rasteroperations/rankorderrasterfilter.h
+    rasteroperations/rankorderrasterfilter.h \
+    rasteroperations/rasterslicing.h
 
 
 OTHER_FILES += \ 

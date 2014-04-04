@@ -8,6 +8,8 @@
 #include "itemdomain.h"
 #include "numericrange.h"
 #include "itemrange.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
 #include "numericitem.h"
 #include "numericitemrange.h"
 
@@ -17,7 +19,7 @@ NumericItem::NumericItem()
 {
 }
 
-NumericItem::NumericItem(const QString label, const NumericRange &vr) : Identity(label), _valuerange(vr)
+NumericItem::NumericItem(const QString label, const NumericRange &vr) : ThematicItem({label}), _valuerange(vr)
 {
 }
 
@@ -26,16 +28,11 @@ bool NumericItem::isValid() const
     return _valuerange.isValid();
 }
 
-QString NumericItem::name() const
-{
-    return Identity::name();
-}
-
 DomainItem *NumericItem::clone() const
 {
     NumericItem *item =  new NumericItem(name(), _valuerange);
-    item->setCode(code());
-    item->setDescription(description());
+    item->code(code());
+    item->description(description());
     return item;
 }
 

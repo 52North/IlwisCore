@@ -4,6 +4,8 @@
 #include "range.h"
 #include "itemrange.h"
 #include "itemiterator.h"
+#include "domain.h"
+#include "domainitem.h"
 
 namespace Ilwis {
 

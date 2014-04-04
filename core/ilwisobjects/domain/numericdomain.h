@@ -2,6 +2,7 @@
 #define VALUEDOMAINDATA_H
 
 #include "Kernel_global.h"
+#include "domain.h"
 
 namespace Ilwis {
 
