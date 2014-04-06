@@ -1,7 +1,11 @@
 #ifndef PixelIterator_H
 #define PixelIterator_H
 
-
+namespace geos{
+namespace geom {
+class Geometery;
+}
+}
 
 namespace Ilwis {
 
@@ -83,6 +87,7 @@ public:
      * This constructor creates an empty PixelIterator
      */
     PixelIterator();
+    PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry *selection);
 
     /*!
      * \brief Constructs a PixelIterator from a raster and a bounding box
@@ -457,6 +462,9 @@ protected:
     bool _xChanged =false;
     bool _yChanged = false;
     bool _zChanged = false;
+    std::vector<std::vector<qint32>> _selectionPixels;
+    qint32 _selectionIndex = -1;
+    bool _insideSelection = false;
     SPTranquilizer _trq;
 
 
@@ -478,20 +486,39 @@ protected:
 
 
 private:
+
+
     bool moveXYZ(int delta) {
         _x += delta;
         _linearposition += delta;
         _localOffset += delta;
         _xChanged = true;
         _yChanged = _zChanged = false;
-
-        if ( _x > _endx) {
-            return moveYZ(delta);
+        if ( _selectionIndex < 0){
+            if ( _x > _endx) {
+                return moveYZ(delta);
+            }
+        } else {
+            if ( _selectionPixels[_y].size() == 0){
+                 _x = _endx + 1;
+                moveYZ(delta);
+                _selectionIndex = 0;
+                _insideSelection = false;
+            }
+            else if ( _x == _selectionPixels[_y][_selectionIndex]){ // passed a boundary on this row
+                _insideSelection = !_insideSelection;
+                if (!_insideSelection) {
+                    move2NextRow(delta);
+                }else
+                    ++_selectionIndex;
+            }
         }
         return true;
     }
 
     bool moveYZ(int delta);
+    void move2NextRow(int delta);
+    void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
 };
 
 inline Ilwis::PixelIterator begin(const Ilwis::IRasterCoverage& raster) {
