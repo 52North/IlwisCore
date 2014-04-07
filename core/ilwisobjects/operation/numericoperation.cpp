@@ -38,6 +38,10 @@ NumericRange *NumericOperation::constructRangeFrom(const SPNumericRange &range1,
         case otMULT:
             rmin = range1->min() * range2->min();
             rmax = range1->max() * range2->max();
+        case otPOW:
+            rmin = -1e100;
+            rmax = 1e100;
+
             break;
     }
     NumericRange *newRange = new NumericRange(rmin,
@@ -66,6 +70,9 @@ NumericRange *NumericOperation::constructRangeFrom(const SPNumericRange &range, 
         case otMULT:
             rmin = range->min() * number;
             rmax = range->max() * number;
+        case otPOW:
+            rmin = -1e100;
+            rmax = 1e100;
             break;
     }
     NumericRange *newRange = new NumericRange(rmin,
@@ -84,6 +91,8 @@ void NumericOperation::mathoperator(const QString &oper)
         _operator = otMINUS;
     else if ( oper == "divide")
         _operator = otDIV;
-    else
+    else if ( oper.toLower() == "times")
         _operator = otMULT;
+    else if ( oper.toLower() == "power")
+        _operator = otPOW;
 }

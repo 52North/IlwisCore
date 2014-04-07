@@ -5,7 +5,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT NumericOperation : public OperationImplementation
 {
 public:
-    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV};
+    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV, otPOW};
 
     NumericOperation();
 
@@ -32,6 +32,8 @@ protected:
                 break;
             case otMULT:
                 return v1 * v2;break;
+            case otPOW:
+                return std::pow(v1,v2);
             }
         }
         return rUNDEF;
