@@ -110,7 +110,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
     core/oshelper.cpp \
-    core/util/bresenham.cpp
+    core/util/bresenham.cpp \
+    core/ilwisobjects/operation/operationoverloads.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -231,7 +232,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/coloritem.h \
     core/ilwistypes.h \
     core/oshelper.h \
-    core/util/bresenham.h
+    core/util/bresenham.h \
+    core/ilwisobjects/operation/operationoverloads.h
     core/util/bresenham.h
 
 
