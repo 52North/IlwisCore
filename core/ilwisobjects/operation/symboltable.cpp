@@ -52,6 +52,9 @@ void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QV
 
 QVariant SymbolTable::getValue(const QString &name, int scope) const
 {
+    if ( name.isNull() || name.isEmpty())
+        return QVariant();
+
     QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
         if ( iter.value()._scope == scope) {
@@ -69,6 +72,9 @@ QVariant SymbolTable::getValue(const QString &name, int scope) const
 
 Symbol SymbolTable::getSymbol(const QString &name, GetAction act, int scope)
 {
+    if ( name.isNull() || name.isEmpty())
+        return Symbol();
+
     QHash<QString, Symbol>::iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
         if ( iter.value()._scope <= scope) {
