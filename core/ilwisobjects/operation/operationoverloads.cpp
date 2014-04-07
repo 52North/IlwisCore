@@ -82,3 +82,102 @@ IRasterCoverage operator*(const IRasterCoverage &raster1, double number)
     QString stmt = QString("script %1=%2 * %3").arg(name).arg(raster1->name()).arg(number);
     return doRasterOperation(stmt);
 }
+
+
+Ilwis::IRasterCoverage sin(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=sin(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage cos(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=cos(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage tan(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=tan(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage asin(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=asin(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage atan(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=atan(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage acos(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=acos(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage sinh(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=sinh(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage cosh(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=cosh(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage log10(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=log10(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage ln(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=ln(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage floor(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=floor(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage ceil(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=ceil(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage sign(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=sign(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
+Ilwis::IRasterCoverage sqrt(const Ilwis::IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=sqrt(%2)").arg(name).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
