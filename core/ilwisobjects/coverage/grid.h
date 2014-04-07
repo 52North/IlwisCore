@@ -47,6 +47,8 @@ private:
             _data.resize(blockSize());
             std::fill(_data.begin(), _data.end(), _undef);
             _initialized = true;
+            if (!isLoaded() && _tempName != sUNDEF)
+                load();
             } catch(const std::bad_alloc& ){
                 throw ErrorObject( TR("Couldnt allocate memory for raster")) ;
             }
