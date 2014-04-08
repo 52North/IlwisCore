@@ -141,7 +141,8 @@ public:
      *
      * @param nm the new name
      */
-    void setName(const QString& nm);
+    void name(const QString& nm);
+    QString name() const { return Identity::name(); }
 
     /**
      * Changes the code of this IlwisObject, can only happen when this object is not readonly,
@@ -149,7 +150,8 @@ public:
      *
      * @param cd the new code
      */
-    void setCode(const QString &cd);
+    void code(const QString &cd);
+    QString code() const { return Identity::code();}
 
     /*!
      *\brief returns the moment when the object was last modified
@@ -164,7 +166,7 @@ public:
      *
      *\param time
      */
-    void setModifiedTime(const Time& time);
+    void modifiedTime(const Time& time);
 
     /**
      * returns the create time of this object
@@ -178,7 +180,7 @@ public:
      *
      * @param time
      */
-    void setCreateTime(const Time& time);
+    void createTime(const Time& time);
 
     /*!
      * \brief translates the defintion of an object to a string representation
@@ -225,11 +227,11 @@ public:
     virtual bool isReadOnly() const;
 
     /**
-     * Changes the readonly state of this object. in order to do this it will both change the connectors readonly state and the objects
+     * Changes the readonly state of this object. in order to do this it will both change the connectors readonly state and the objects. If the connectors state can't be set to read/write only the state of the object will be set
      *
      * @param yesno the new readonly state
      */
-    virtual void setReadOnly(bool yesno);
+    virtual void readOnly(bool yesno);
 
     /**
      * Checks if this object has been changed, requires the changed flag to be set during the actual change, so might not always be fully acurate

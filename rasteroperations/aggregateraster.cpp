@@ -147,7 +147,7 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
-        _outputObj->setName(outputName);
+        _outputObj->name(outputName);
     outputRaster->coordinateSystem(inputRaster->coordinateSystem());
 
     BoundingBox box(inputRaster->size());

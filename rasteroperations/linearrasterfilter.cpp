@@ -74,7 +74,7 @@ Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionConte
         return sPREPAREFAILED;
     }
     if ( outputName != sUNDEF)
-        _outputRaster->setName(outputName);
+        _outputRaster->name(outputName);
     _filter.reset(new LinearGridFilter(expr));
     if ( !_filter->isValid())
         return sPREPAREFAILED;

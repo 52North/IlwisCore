@@ -88,7 +88,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     Envelope env = grf->pixel2Coord(grf->size());
     outputRaster->envelope(env);
     if ( outputName != sUNDEF)
-        outputRaster->setName(outputName);
+        outputRaster->name(outputName);
 
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")

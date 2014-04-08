@@ -211,7 +211,8 @@ public:
      *
      * @param nam the new name of this coverage
      */
-    void setName(const QString &nam);
+    void name(const QString &nam);
+    QString name() const { return IlwisObject::name(); }
 
     bool prepare();
 protected:

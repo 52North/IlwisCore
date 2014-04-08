@@ -123,7 +123,7 @@ Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, co
                                        itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF | itDOMAIN | itTABLE);
         QString outname = _expression.parm(0,false).value();
         if ( outname != sUNDEF)
-            _outputObj->setName(outname);
+            _outputObj->name(outname);
     } else {
         _varName = _expression.parm(0,false).value();
     }

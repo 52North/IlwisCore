@@ -36,7 +36,7 @@ private:
             T1 *obj = static_cast<T1 *>(source->clone());
             if(!obj)
                 return false;
-            obj->setName(name);
+            obj->name(name);
             target.set(obj);
         }
         if ( !target.isValid())

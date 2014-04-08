@@ -97,7 +97,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
 
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)
-        _outputFeatures->setName(outname);
+        _outputFeatures->name(outname);
 
     return sPREPARED;
 }

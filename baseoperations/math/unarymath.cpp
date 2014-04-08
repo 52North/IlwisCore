@@ -112,7 +112,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         }
         QString outputName = _expression.parm(0,false).value();
         if ( outputName != sUNDEF)
-            _outputGC->setName(outputName);
+            _outputGC->name(outputName);
 
         IDomain dom;
         if(!dom.prepare(_outputDomain))
@@ -149,7 +149,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
                 }
             } else if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
                 _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
-                _outputTable->setName(outName);
+                _outputTable->name(outName);
 
             }
         } else

@@ -104,7 +104,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
 
     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
     if ( outputName != sUNDEF)
-        _outputObj->setName(outputName);
+        _outputObj->name(outputName);
 
     QString outputBaseName = outputName;
     int index = 0;

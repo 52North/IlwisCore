@@ -104,7 +104,7 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
     }
     _outputRaster->georeference(_inputRaster->georeference());
     _outputRaster->coordinateSystem(_inputRaster->coordinateSystem());
-    _outputRaster->setName(outputName);
+    _outputRaster->name(outputName);
 
     NumericStatistics& statistics = _inputRaster->statistics();
     //statistics.binCount(10);

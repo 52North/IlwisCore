@@ -87,8 +87,8 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         throw ErrorObject(TR(QString("couldnt find connector for %1").arg(format)));
     }
     setConnector(conn, cmode);
-    if ( name() == sUNDEF)
-        setName(resource.name());
+    if ( Identity::name() == sUNDEF)
+        name(resource.name());
 
 }
 
@@ -109,7 +109,7 @@ bool IlwisObject::prepare( ) {
     return true;
 }
 
-void IlwisObject::setName(const QString &nam)
+void IlwisObject::name(const QString &nam)
 {
     if ( isReadOnly())
         return;
@@ -117,19 +117,19 @@ void IlwisObject::setName(const QString &nam)
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
-    Identity::setName(nm);
+    Identity::name(nm);
     if ( !connector().isNull())
-        connector()->source().setName(nm);
+        connector()->source().name(nm);
 }
 
-void IlwisObject::setCode(const QString& cd) {
+void IlwisObject::code(const QString& cd) {
     if ( isReadOnly())
         return;
     _changed = true;
 
-    Identity::setCode(cd);
+    Identity::code(cd);
     if ( !connector().isNull())
-        connector()->source().setCode(cd);
+        connector()->source().code(cd);
 }
 
 QDateTime IlwisObject::modifiedTime() const
@@ -137,7 +137,7 @@ QDateTime IlwisObject::modifiedTime() const
     return _modifiedTime;
 }
 
-void IlwisObject::setModifiedTime(const Time &tme)
+void IlwisObject::modifiedTime(const Time &tme)
 {
     if ( isReadOnly())
         return;
@@ -150,7 +150,7 @@ Time IlwisObject::createTime() const
     return _createTime;
 }
 
-void IlwisObject::setCreateTime(const Time &time)
+void IlwisObject::createTime(const Time &time)
 {
     if ( isReadOnly())
         return;
@@ -197,7 +197,7 @@ bool IlwisObject::isReadOnly() const
 
 }
 
-void IlwisObject::setReadOnly(bool yesno)
+void IlwisObject::readOnly(bool yesno)
 {
 
     _readOnly = yesno;
@@ -278,9 +278,9 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
         return false;
     _changed = true;
 
-    setName(rec.field("code").value().toString()); // name and code are the same here
+    name(rec.field("code").value().toString()); // name and code are the same here
     setDescription(rec.field("description").value().toString());
-    setCode(rec.field("code").value().toString());
+    code(rec.field("code").value().toString());
     setConnector(0);
 
     return true;
@@ -309,8 +309,8 @@ Resource IlwisObject::source(int mode) const
 
 void IlwisObject::copyTo(IlwisObject *obj)
 {
-    obj->setName(name());
-    obj->setCode(code());
+    obj->name(name());
+    obj->code(code());
     obj->setDescription(description());
     obj->_valid = _valid;
     obj->_readOnly = _readOnly;

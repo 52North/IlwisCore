@@ -150,7 +150,7 @@ public:
             res.setExtendedType(tp);
         QString name = QString("%1%2").arg(ANONYMOUS_PREFIX).arg(res.id());
         QUrl url(QString("ilwis://internalcatalog/%1").arg(name));
-        res.setName(name);
+        res.name(name);
         res.setUrl(url);
         return prepare(res);
 

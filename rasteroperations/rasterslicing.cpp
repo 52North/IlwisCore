@@ -101,7 +101,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
         return sPREPAREFAILED;
     }
     _outputRaster = outputObj.get<RasterCoverage>();
-    _outputRaster->setName(outputName);
+    _outputRaster->name(outputName);
 
     return sPREPARED;
 }

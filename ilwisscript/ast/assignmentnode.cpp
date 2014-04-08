@@ -92,9 +92,9 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
         Ilwis::IIlwisObject object = getObject(sym);
         bool wasAnonymous = object->isAnonymous();
         QUrl url = context()->workingCatalog()->source().url().toString() + "/" + result;
-        object->setName(result);
+        object->name(result);
         object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
-        object->setCreateTime(Ilwis::Time::now());
+        object->createTime(Ilwis::Time::now());
         if ( wasAnonymous)
             mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
@@ -141,7 +141,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                         ITable newTable = newT.value<ITable>();
                         ColumnDefinition coldef = newTable->columndefinition(oldColName);
                         if ( coldef.isValid()){
-                            coldef.setName(varName);
+                            coldef.name(varName);
                             newTable->columndefinition(coldef);
                         }
                     }

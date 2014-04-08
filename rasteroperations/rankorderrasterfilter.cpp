@@ -102,7 +102,7 @@ Ilwis::OperationImplementation::State RankOrderRasterFilter::prepare(ExecutionCo
         }
     }
     if ( outputName != sUNDEF)
-        _outputRaster->setName(outputName);
+        _outputRaster->name(outputName);
 
 
     return sPREPARED;

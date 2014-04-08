@@ -50,7 +50,7 @@ bool CatalogView::prepare(const QUrl &resource, const QString& filter)
 
     Identity::prepare();
 
-    setName(cid);
+    name(cid);
 
     return true;
 }

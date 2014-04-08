@@ -26,7 +26,7 @@ void GeodeticDatum::set3TransformationParameters(double x, double z, double y){
     _datumParams[dmDX] = x;
     _datumParams[dmDY] = y;
     _datumParams[dmDZ] = z;
-    setCode(QString("+towgs84=%1,%2,%3").arg(x).arg(y).arg(z));
+    code(QString("+towgs84=%1,%2,%3").arg(x).arg(y).arg(z));
      _isValid = true;
 }
 
@@ -36,7 +36,7 @@ void GeodeticDatum::set7TransformationParameters(double x, double z, double y, d
     _datumParams[dmRY] = ry;
     _datumParams[dmRZ] = rz;
     _datumParams[dmSCALE] = scale;
-   setCode(QString("%1,%2,%3,%4,%5").arg(code()).arg(x).arg(y).arg(z).arg(scale));
+   code(QString("%1,%2,%3,%4,%5").arg(code()).arg(x).arg(y).arg(z).arg(scale));
 
 
 }
@@ -46,7 +46,7 @@ void GeodeticDatum::set10TransformationParameters(double x, double z, double y, 
     _datumParams[dmCENTERXR] = center.x;
     _datumParams[dmCENTERXR] = center.y;
     _datumParams[dmCENTERXR] = center.z;
-    setCode(QString("%1,%2,%3,%4").arg(code()).arg( center.x).arg( center.y).arg( center.z));
+    code(QString("%1,%2,%3,%4").arg(code()).arg( center.x).arg( center.y).arg( center.z));
 
 }
 
@@ -59,24 +59,24 @@ bool GeodeticDatum::isValid() const
     return true; //TODO:
 }
 
-void GeodeticDatum::fromCode(const QString &code)
+void GeodeticDatum::fromCode(const QString &gcode)
 {
     QSqlQuery stmt(kernel()->database());
-    QString query = QString("Select * from datum where code='%1'").arg(code);
+    QString query = QString("Select * from datum where code='%1'").arg(gcode);
 
     if (stmt.exec(query)) {
         if ( stmt.next()) {
             QString area = stmt.value(stmt.record().indexOf("area")).toString();
-            QString code = stmt.value(stmt.record().indexOf("code")).toString();
+            QString geocode = stmt.value(stmt.record().indexOf("code")).toString();
             double dx = stmt.value(stmt.record().indexOf("dx")).toDouble();
             double dy = stmt.value(stmt.record().indexOf("dy")).toDouble();
             double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
             setArea(area);
-            setCode(code);
+            code(geocode);
             set3TransformationParameters(dx, dy, dz);
 
         } else {
-            kernel()->issues()->log(TR("No datum for this code %1").arg(code));
+            kernel()->issues()->log(TR("No datum for this code %1").arg(gcode));
         }
     } else {
         kernel()->issues()->logSql(stmt.lastError());

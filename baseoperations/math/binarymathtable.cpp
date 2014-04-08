@@ -140,7 +140,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
             }
         } else if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
             _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
-            _outputTable->setName(outName);
+            _outputTable->name(outName);
 
         }
     } else

@@ -105,7 +105,8 @@ public:
      * @param nm the new name of this Resource
      * @param adaptUrl set to false if you do not want to change the file name
      */
-    void setName(const QString& nm, bool adaptUrl=true);
+    void name(const QString& nm, bool adaptUrl=true);
+    QString name() const { return Identity::name(); }
 
     /**
      * override of the [] operator, allows you to query this resource for some of its data.<br>

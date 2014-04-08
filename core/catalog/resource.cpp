@@ -181,9 +181,9 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     }
 }
 
-void Resource::setName(const QString &nm, bool adaptNormalizedUrl)
+void Resource::name(const QString &nm, bool adaptNormalizedUrl)
 {
-    Identity::setName(nm);
+    Identity::name(nm);
     if ( !adaptNormalizedUrl || nm == sUNDEF)
         return;
 
@@ -245,10 +245,10 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
         QString sname = urlTxt.mid(19,index1-19);
-        setName(sname, false);
+        name(sname, false);
         int index2 = urlTxt.indexOf("/", index1);
         QString scode = urlTxt.mid(index1 + 1, index2 - index1);
-        setCode(sname + "_" + scode );
+        code(sname + "_" + scode );
         addContainer(QUrl("ilwis://operations"));
         return;
     }
@@ -257,14 +257,14 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
                 if ( !isRoot(inf.absolutePath())){
-                    setName(inf.fileName(), false);
+                    name(inf.fileName(), false);
                     addContainer(QUrl::fromLocalFile(inf.absolutePath()));
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
                 int index = path.lastIndexOf("/");
                 addContainer(path.left(index));
-                setName(path.mid(index + 1),false);
+                name(path.mid(index + 1),false);
             }
         } else {
             QString fragment = url.fragment();
@@ -272,8 +272,8 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             bool ok;
             int index = fpath.toInt(&ok);
             if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
-                QString name = QString("%1_%2").arg(inf.fileName()).arg(index);
-                setName(name, false);
+                QString rname = QString("%1_%2").arg(inf.fileName()).arg(index);
+                name(rname, false);
                 addContainer(QUrl(url.toString(QUrl::RemoveFragment)));
             }
 
@@ -281,7 +281,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
 
     }
     else
-        setName("root", false);
+        name("root", false);
 }
 
 QUrlQuery Resource::urlQuery() const
@@ -450,7 +450,7 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
         prepare();
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
-        setName(txt.mid(index + 1));
+        name(txt.mid(index + 1));
         QString rest = txt.left(index); // the rest is the container
 
         // we might be at the root; no need then to add containers as there are none
@@ -479,10 +479,10 @@ void Resource::checkUrl(IlwisTypes tp) {
         int index2 = resource.lastIndexOf("code=");
         if ( index2 > index)
             index = index2 + 4;
-        QString name = resource.right(resource.size() - index - 1);
+        QString rname = resource.right(resource.size() - index - 1);
         if ( index2 != -1)
-            setCode(name);
-        setName(name, false);
+            code(rname);
+        name(rname, false);
     }
 }
 

@@ -297,4 +297,5 @@ template<typename T> ItemIterator<T> operator-(int n,const ItemIterator<T>& iter
 }
 
 }
+
 #endif // ITEMITERATOR_H

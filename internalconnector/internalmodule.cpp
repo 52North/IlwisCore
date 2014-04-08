@@ -83,16 +83,16 @@ bool InternalModule::createSpecialDomains() {
     std::vector<Resource> resources;
     QString url = QString("ilwis://internalcatalog/code=domain:text");
     Resource resource(url, itTEXTDOMAIN);
-    resource.setCode("text");
-    resource.setName("Text domain", false);
+    resource.code("text");
+    resource.name("Text domain", false);
     resource.addContainer(QUrl("ilwis://internalcatalog"));
     resource.prepare();
     resources.push_back(resource);
 
     url = QString("ilwis://internalcatalog/code=domain:color");
     Resource colorResource(url, itCOLORDOMAIN);
-    colorResource.setCode("color");
-    colorResource.setName("Color domain", false);
+    colorResource.code("color");
+    colorResource.name("Color domain", false);
     colorResource.addContainer(QUrl("ilwis://internalcatalog"));
     colorResource.prepare();
     resources.push_back(colorResource);
@@ -110,8 +110,8 @@ bool InternalModule::createPcs(QSqlQuery& db) {
             QString name = rec.value("name").toString();
             QString url = QString("ilwis://tables/projectedcsy?code=%1").arg(code);
             Resource resource(url, itCONVENTIONALCOORDSYSTEM);
-            resource.setCode(code);
-            resource.setName(name, false);
+            resource.code(code);
+            resource.name(name, false);
             resource["wkt"] = name;
             resource.addContainer(QUrl("ilwis://system"));
             items.push_back(resource);
@@ -134,11 +134,11 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
             QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
             Resource resource(url, type);
             if ( type == itNUMERICDOMAIN) // for valuedomain name=code
-                resource.setName(rec.value("code").toString(), false);
+                resource.name(rec.value("code").toString(), false);
             else
-                resource.setName(rec.value("name").toString(), false);
+                resource.name(rec.value("name").toString(), false);
 
-            resource.setCode(code);
+            resource.code(code);
             resource.setExtendedType(extType);
             resource.setDescription(rec.value("description").toString());
             resource.addContainer(QUrl("ilwis://system"));

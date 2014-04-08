@@ -203,7 +203,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     QString crossName = QString("%1_%2").arg(raster1, raster2);
     crossName.replace(".","_");
     _crossDomain.prepare();
-    _crossDomain->setName(crossName);
+    _crossDomain->name(crossName);
     _crossDomain->range(new NamedIdentifierRange());
 
     if ( _expression.parameterCount(false) == 2) {
@@ -213,7 +213,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
                                     itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( _outputRaster.isValid()) {
             _outputRaster->datadef().domain(_crossDomain);
-            _outputRaster->setName(outputName);
+            _outputRaster->name(outputName);
         }
 
     }

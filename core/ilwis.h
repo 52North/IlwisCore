@@ -154,7 +154,7 @@ template<class T> T undef() {
     return T();
 }
 
-
+typedef quint32 Raw;
 
 
 

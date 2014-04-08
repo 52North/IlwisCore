@@ -29,7 +29,7 @@ QString Identity::name() const
     return _name;
 }
 
-void Identity::setName(const QString &n)
+void Identity::name(const QString &n)
 {
     _name =  n;
 }
@@ -44,7 +44,7 @@ void Identity::setDescription(const QString &desc)
     _description = desc;
 }
 
-void Identity::setCode(const QString &code)
+void Identity::code(const QString &code)
 {
     _code = code;
 }
@@ -57,7 +57,7 @@ QString Identity::code() const
 void Identity::prepare(quint64 base) {
     if ( _id == i64UNDEF) {
         _id = base + Identity::_baseId++;
-        setName(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
+        name(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
     }
 }
 

@@ -163,7 +163,7 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
 
             double f = (a - b) / a;
             _ellipsoid->setEllipsoid(a, f);
-            _ellipsoid->setName("Custom Ellipsoid for " + name());
+            _ellipsoid->name("Custom Ellipsoid for " + name());
         }
     }
     if ( proj4.hasDatum()) {

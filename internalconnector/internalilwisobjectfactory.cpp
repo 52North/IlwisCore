@@ -303,7 +303,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
             grf = GeoReference::create("corners");
-            grf->setName("subset_" + gcoverage->name());
+            grf->name("subset_" + gcoverage->name());
             grf->coordinateSystem(gcoverage->coordinateSystem());
             grf->impl<CornersGeoReference>()->setEnvelope(bounds);
             grf->size(sz);
@@ -400,7 +400,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                     dv->setParent(dom);
                                 }
                             }
-                            dv->setReadOnly(true);
+                            dv->readOnly(true);
                             return dv;
                         }else {
                             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
@@ -473,12 +473,12 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
     }
     ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem(resource);
     if ( isUnknown){
-        csy->setName("unknown");
-        csy->setCode("unknown");
+        csy->name("unknown");
+        csy->code("unknown");
         csy->setDescription(TR("Unknown coordinate system"));
     }else{
-        csy->setName(resource.name());
-        csy->setCode(resource.code());
+        csy->name(resource.name());
+        csy->code(resource.code());
     }
     csy->prepare("proj4=" + projParms);
 
@@ -547,11 +547,11 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
     if (db.exec(query) && db.next()) {
         GeodeticDatum *datum = new GeodeticDatum();
         QSqlRecord rec = db.record();
-        datum->setName(rec.field("name").value().toString());
+        datum->name(rec.field("name").value().toString());
         datum->setDescription(rec.field("description").value().toString());
         datum->setAuthority(rec.field("authority").value().toString());
         datum->setArea(rec.field("area").value().toString());
-        datum->setCode(rec.field("code").value().toString());
+        datum->code(rec.field("code").value().toString());
         datum->set3TransformationParameters(rec.field("dx").value().toDouble(),
                                             rec.field("dy").value().toDouble(),
                                             rec.field("dz").value().toDouble());
@@ -564,9 +564,9 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
 
 IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource) const {
     GeoReference *cgrf = GeoReference::create("corners", resource);
-    cgrf->setName( resource["name"].toString());
-    cgrf->setCreateTime(Time::now());
-    cgrf->setModifiedTime(Time::now());
+    cgrf->name( resource["name"].toString());
+    cgrf->createTime(Time::now());
+    cgrf->modifiedTime(Time::now());
     ICoordinateSystem csy;
     bool ok;
     quint64 id = resource["coordinatesystem"].toULongLong(&ok);

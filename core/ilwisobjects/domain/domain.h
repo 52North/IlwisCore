@@ -164,6 +164,7 @@ private:
     bool _strict;
     IDomain _parentDomain;
 };
+
 }
 
 Q_DECLARE_METATYPE(Ilwis::IDomain)

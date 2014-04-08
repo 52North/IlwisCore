@@ -121,7 +121,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
      }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)
-         _outputObj->setName(outputName);
+         _outputObj->name(outputName);
 
      if ( _attribColumn != "") {
          QString url = "ilwis://internalcatalog/" + outputName;

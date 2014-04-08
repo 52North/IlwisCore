@@ -33,7 +33,7 @@ public:
 
      \param code unique code from a code set that is unique for this class
     */
-    virtual void setCode(const QString& code);
+    virtual void code(const QString& code);
     /*!
      * \brief code returns the code of the identity. If no code is attached it will return sUNDEF ("?").
      *
@@ -57,7 +57,7 @@ public:
      * \brief setName sets the name of an object. All objects have names though names need not to be unique
      * \param n the name
      */
-    void setName(const QString& n);
+    void name(const QString& n);
     virtual QString description() const;
     void setDescription(const QString& desc);
 

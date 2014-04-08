@@ -102,7 +102,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
                 _columnRenames[coldef2.name()] = newname;
                 newdefs.push_back(ColumnDefinition(coldef1, index));
                 ColumnDefinition defnew(coldef2);
-                defnew.setName(newname);
+                defnew.name(newname);
                 newdefs.push_back(ColumnDefinition(defnew, index));
 
             }
@@ -125,7 +125,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
                 _columnRenames[coldef2.name()] = colName;
             }
             newdefs.push_back(ColumnDefinition(coldef2, index++));
-            newdefs.back().setName(colName);
+            newdefs.back().name(colName);
         } else{
             if ( !tbl1->columndefinition(coldef2.name()).isValid()){
                 newdefs.push_back(ColumnDefinition(coldef2, index++));

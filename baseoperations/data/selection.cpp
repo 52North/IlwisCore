@@ -175,7 +175,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
      }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)
-         _outputObj->setName(outputName);
+         _outputObj->name(outputName);
      if ( (copylist & itGEOREF) == 0) {
         Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
         resource.addProperty("size", IVARIANT(_box.size()));

@@ -111,7 +111,10 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
     core/oshelper.cpp \
     core/util/bresenham.cpp \
-    core/ilwisobjects/operation/operationoverloads.cpp
+    core/ilwisobjects/operation/operationoverloads.cpp \
+    core/ilwisobjects/operation/classification/featurespace.cpp \
+    core/ilwisobjects/operation/classification/sampleset.cpp \
+    core/ilwisobjects/operation/classification/samplestatistics.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -233,7 +236,10 @@ HEADERS += core/kernel.h\
     core/ilwistypes.h \
     core/oshelper.h \
     core/util/bresenham.h \
-    core/ilwisobjects/operation/operationoverloads.h
+    core/ilwisobjects/operation/operationoverloads.h \
+    core/ilwisobjects/operation/classification/featurespace.h \
+    core/ilwisobjects/operation/classification/sampleset.h \
+    core/ilwisobjects/operation/classification/samplestatistics.h
     core/util/bresenham.h
 
 

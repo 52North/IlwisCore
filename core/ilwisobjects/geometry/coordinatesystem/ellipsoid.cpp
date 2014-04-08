@@ -14,7 +14,7 @@ const IEllipsoid Ellipsoid::wgs84ellipsoid; //=IEllipsoid(QUrl(WGS84RESOURCE),QE
 
 Ellipsoid::Ellipsoid() : IlwisObject()
 {
-    setName("Sphere");
+    name("Sphere");
     setEllipsoid(6371007.1809185,0);
 }
 
@@ -23,7 +23,7 @@ Ellipsoid::Ellipsoid(const Resource& resource) : IlwisObject(resource) {
 
 Ellipsoid::Ellipsoid(double a, double f) : IlwisObject()
 {
-    setName("WGS84");
+    name("WGS84");
     setEllipsoid(a,f);
 
 }
@@ -229,7 +229,7 @@ void Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
     _minoraxis = a * (1.0 - _flattening);
     _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
     if(setCodeToo)
-        setCode(toProj4());
+        code(toProj4());
 
 }
 
