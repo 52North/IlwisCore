@@ -97,14 +97,14 @@ public:
     T *operator->() {
         T* p =  static_cast<T *>(_implementation.get());
         if (!p)
-            throw ErrorObject(TR("Using unitialized object"));
+            throw ErrorObject(TR("Using unitialized ilwis object"));
         return p;
     }
 
     T *operator->() const{
         T* p =  static_cast<T *>(_implementation.get());
         if (!p)
-            throw ErrorObject(TR("Using unitialized object"));
+            throw ErrorObject(TR("Using unitialized ilwis object"));
         return p;
     }
 
