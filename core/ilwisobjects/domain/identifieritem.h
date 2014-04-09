@@ -2,6 +2,7 @@
 #define IDENTIFIERITEM_H
 
 #include "Kernel_global.h"
+#include "domainitem.h"
 
 namespace Ilwis{
 
