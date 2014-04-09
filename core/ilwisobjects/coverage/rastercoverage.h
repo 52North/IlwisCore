@@ -5,6 +5,8 @@
 
 namespace Ilwis {
 
+const quint32 WHOLE_RASTER = 200000;
+
 class Resource;
 class Grid;
 class PixelIterator;
@@ -62,10 +64,10 @@ public:
     virtual RasterCoverage *clone() ;
 
     //@override
-    const DataDefinition& datadef() const;
+    const DataDefinition& datadef(quint32 layer=WHOLE_RASTER) const;
 
     //@override
-    DataDefinition& datadef();
+    DataDefinition& datadef(quint32 layer=WHOLE_RASTER);
 
     /*!
      * Returns a reference to the IGeoReference of this RasterCoverage.<br>
@@ -183,6 +185,7 @@ protected:
 
 private:
     DataDefinition _datadefCoverage;
+    std::vector<DataDefinition> _datadefBands;
     IGeoReference _georef;
     Size<> _size;
     std::mutex _mutex;

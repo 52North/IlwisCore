@@ -66,14 +66,24 @@ RasterCoverage *RasterCoverage::clone()
 
 }
 
-const DataDefinition &RasterCoverage::datadef() const
+const DataDefinition &RasterCoverage::datadef(quint32 layer) const
 {
-    return _datadefCoverage;
+    if ( layer == WHOLE_RASTER)
+        return _datadefCoverage;
+    if ( layer >= _datadefBands.size())
+        throw ErrorObject(TR("invalid index for layer access"));
+
+    return _datadefBands[layer];
 }
 
-DataDefinition &RasterCoverage::datadef()
+DataDefinition &RasterCoverage::datadef(quint32 layer)
 {
-    return _datadefCoverage;
+    if ( layer == WHOLE_RASTER)
+        return _datadefCoverage;
+    if ( layer >= _datadefBands.size())
+        _datadefBands.resize(layer + 1);
+
+    return _datadefBands[layer];
 }
 
 
