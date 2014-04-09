@@ -209,8 +209,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     if ( _expression.parameterCount(false) == 2) {
         outputName = _expression.parm(1,false).value();
         OperationHelperRaster helper;
-        helper.initialize(_inputRaster1, _outputRaster, _expression.parm(0),
-                                    itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+        helper.initialize(_inputRaster1, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( _outputRaster.isValid()) {
             _outputRaster->datadef().domain(_crossDomain);
             _outputRaster->name(outputName);

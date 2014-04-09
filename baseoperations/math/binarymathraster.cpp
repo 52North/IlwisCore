@@ -119,8 +119,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
         return false;
 
     OperationHelperRaster helper;
-    _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(0),
-                                itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+    _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     auto nrange1 = _inputGC1->datadef().range().dynamicCast<NumericRange>();
     if (nrange1.isNull())
@@ -157,8 +156,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     _number1 = _expression.parm(nindex).value().toDouble();
 
     OperationHelperRaster helper;
-    _box = helper.initialize(_inputGC1, _outputGC, _expression.parm(mindex),
-                                itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+    _box = helper.initialize(_inputGC1, _outputGC,itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     auto nrange = _inputGC1->datadef().range().dynamicCast<NumericRange>();
     if (nrange.isNull())

@@ -11,7 +11,7 @@ OperationHelperRaster::OperationHelperRaster()
 {
 }
 
-BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Parameter& parm, quint64 what)
+BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, quint64 what)
 {
     Resource resource(itRASTER);
     Size<> sz = inputRaster->size();

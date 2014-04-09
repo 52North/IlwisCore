@@ -104,8 +104,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
             return sPREPAREFAILED;
         }
         OperationHelperRaster helper;
-        _box = helper.initialize(_inputGC, _outputGC, _expression.parm(0),
-                                    itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+        _box = helper.initialize(_inputGC, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( !_outputGC.isValid()) {
             ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
             return sPREPAREFAILED;

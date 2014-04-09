@@ -4,12 +4,13 @@
 namespace Ilwis {
 
 typedef  std::function<bool(const BoundingBox&)> BoxedAsyncFunc;
+class Parameter;
 
 class KERNELSHARED_EXPORT OperationHelperRaster
 {
 public:
     OperationHelperRaster();
-    static BoundingBox initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, const Ilwis::Parameter &parm, quint64 what);
+    static BoundingBox initialize(const IRasterCoverage &inputRaster, IRasterCoverage &outputRaster, quint64 what);
     static int subdivideTasks(ExecutionContext *ctx,const IRasterCoverage& raster, const BoundingBox& bounds, std::vector<BoundingBox > &boxes);
     static bool resample(IRasterCoverage& input1, IRasterCoverage& input2, ExecutionContext *ctx);
 
