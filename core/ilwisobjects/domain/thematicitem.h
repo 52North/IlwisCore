@@ -70,7 +70,7 @@ private:
     QString _code;
 };
 
-typedef IlwisData<ItemDomain<ThematicItem> > IThematicDomain;
+//typedef IlwisData<ItemDomain<ThematicItem> > IThematicDomain;
 typedef QSharedPointer<ThematicItem> SPThematicItem;
 
 }
