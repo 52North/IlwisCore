@@ -475,6 +475,25 @@ template<typename PointType> Box<PointType> operator *(const Box<PointType>& box
     return Box<PointType>(pmin, pmax);
 }
 
+template<typename PointType> Box<PointType> operator +(const Box<PointType>& box, const std::vector<double>& shift) {
+    int shiftX = 0, shiftY=0, shiftZ = 0;
+    if ( shift.size() >= 1){
+        shiftX = shift[0];
+    }
+    if ( shift.size() >= 2)
+        shiftY = shift[1];
+    if ( shift.size() >= 3)
+        shiftZ = shift[2];
+
+    Box<PointType> newbox(box);
+
+    newbox += {shiftX, shiftY, shiftZ};
+
+    return newbox;
+
+
+}
+
 typedef Ilwis::Box<Ilwis::Pixel> BoundingBox;
 typedef Ilwis::Box<Ilwis::Coordinate> Envelope;
 
