@@ -43,8 +43,8 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
-    IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
+    IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
+    IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
 
     SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
@@ -84,7 +84,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
         ERROR2(ERR_COULD_NOT_LOAD_2,fc,"");
         return sPREPAREFAILED;
     }
-    IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
+    IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
     quint64 copylist = itCOORDSYSTEM;
 
 
@@ -137,7 +137,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          }
          _attTable->addColumn(FEATUREIDCOLUMN,covdom);
          _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
-         IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
+         IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
          outputFC->attributeTable(_attTable);
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {

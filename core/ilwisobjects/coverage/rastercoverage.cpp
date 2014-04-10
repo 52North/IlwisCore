@@ -6,8 +6,8 @@
 #include "symboltable.h"
 #include "domainitem.h"
 #include "itemdomain.h"
-#include "numericitem.h"
-#include "numericitemrange.h"
+#include "interval.h"
+#include "intervalrange.h"
 #include "ilwisoperation.h"
 
 quint64 Ilwis::GridBlockInternal::_blockid = 0;

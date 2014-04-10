@@ -68,7 +68,7 @@ Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionConte
     }
     QString expr = _expression.parm(1).value();
     int copylist = itDOMAIN | itCOORDSYSTEM | itGEOREF;
-    _outputRaster = OperationHelperRaster::initialize(_inputRaster.get<IlwisObject>(),itRASTER, copylist);
+    _outputRaster = OperationHelperRaster::initialize(_inputRaster.as<IlwisObject>(),itRASTER, copylist);
     if ( !_outputRaster.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;

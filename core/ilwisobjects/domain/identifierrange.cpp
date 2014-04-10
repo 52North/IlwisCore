@@ -367,7 +367,7 @@ bool NamedIdentifierRange::isContinuous() const
 
 bool NamedIdentifierRange::alignWithParent(const IDomain &dom)
 {
-    INamedIdDomain numdom = dom.get<NamedIdDomain>();
+    INamedIdDomain numdom = dom.as<NamedIdDomain>();
     if ( !numdom.isValid())
         return false;
 

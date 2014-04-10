@@ -7,8 +7,8 @@
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "numericdomain.h"
-#include "numericitem.h"
-#include "numericitemrange.h"
+#include "interval.h"
+#include "intervalrange.h"
 #include "numericrange.h"
 #include "ilwisoperation.h"
 #include "indexslicer.h"
@@ -94,7 +94,7 @@ double IndexSlicer::findIndexNumber(const IDomain& indexDomain, double itemIndex
 }
 
 double IndexSlicer::findIndexNumericalItem(const IDomain& indexDomain, const QString& itemIndex) const{
-//    INumericItemDomain numdom = indexDomain.get<NumericItemDomain>();
+//    IIntervalDomain numdom = indexDomain.as<IntervalDomain>();
 //    SPNumericItemRange numrange = numdom->range<NumericItemRange>();
 //    //double index1 = _raster->index(indexItem);
 //    double index1 = numrange->index(itemIndex);

@@ -37,13 +37,13 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     AreaNumberer numberer(outputRaster->size().xsize(),_connectivity);
 
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //pass one
         PixelIterator iterOut(outputRaster, box);
-        PixelIterator iterIn(_inputObj.get<RasterCoverage>());
+        PixelIterator iterIn(_inputObj.as<RasterCoverage>());
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
             double v = numberer.value(iterIn) ;
@@ -53,7 +53,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         //pass two
         for(auto iterPass2 : numberer.pass2Entries()) {
-            for(double& v : _outputObj.get<RasterCoverage>()){
+            for(double& v : _outputObj.as<RasterCoverage>()){
                 if ( v == iterPass2.first){
                     v = iterPass2.second;
                 }
@@ -65,7 +65,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     ctx->_threaded = false; // operation can not be run in parallel
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputRaster);
 
-    INamedIdDomain iddom = outputRaster->datadef().domain<>().get<NamedIdDomain>();
+    INamedIdDomain iddom = outputRaster->datadef().domain<>().as<NamedIdDomain>();
     NamedIdentifierRange range;
     for(int i=0; i < numberer.lastid(); ++i) {
         range << QString("area_%1").arg(i);
@@ -102,7 +102,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
         return sPREPAREFAILED;
     }
 
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->name(outputName);
 

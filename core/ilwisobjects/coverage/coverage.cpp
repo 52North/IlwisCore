@@ -5,9 +5,9 @@
 #include "domain.h"
 #include "domainitem.h"
 #include "itemdomain.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "itemrange.h"
-#include "numericitemrange.h"
+#include "intervalrange.h"
 
 using namespace Ilwis;
 
@@ -147,7 +147,7 @@ double Coverage::layerIndex(const QString &value)
             return rUNDEF;
         IlwisTypes valueType = _indexdefinition.domain()->valueType();
         if ( hasType(valueType, itNUMERICITEM )) {
-            SPNumericItemRange rng = _indexdefinition.domain()->range<NumericItemRange>();
+            SPIntervalRange rng = _indexdefinition.domain()->range<IntervalRange>();
             return rng->index(value.toDouble());
         }
 

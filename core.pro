@@ -84,8 +84,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/georeference/georefimplementation.cpp \
     core/ilwisobjects/geometry/georeference/georefimplementationfactory.cpp \
     core/ilwisobjects/domain/coordinatedomain.cpp \
-    core/ilwisobjects/domain/numericitem.cpp \
-    core/ilwisobjects/domain/numericitemrange.cpp \
     core/ilwisobjects/coverage/indexslicer.cpp \
     core/ilwisobjects/coverage/rastercoverage.cpp \
     core/ilwisobjects/coverage/rasterinterpolator.cpp \
@@ -114,7 +112,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/operationoverloads.cpp \
     core/ilwisobjects/operation/classification/featurespace.cpp \
     core/ilwisobjects/operation/classification/sampleset.cpp \
-    core/ilwisobjects/operation/classification/samplestatistics.cpp
+    core/ilwisobjects/operation/classification/samplestatistics.cpp \
+    core/ilwisobjects/domain/interval.cpp \
+    core/ilwisobjects/domain/intervalrange.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -205,8 +205,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/georeference/georefimplementation.h \
     core/ilwisobjects/geometry/georeference/georefimplementationfactory.h \
     core/ilwisobjects/domain/coordinatedomain.h \
-    core/ilwisobjects/domain/numericitem.h \
-    core/ilwisobjects/domain/numericitemrange.h \
     core/ilwisobjects/coverage/indexslicer.h \
     core/ilwisobjects/coverage/rastercoverage.h \
     core/ilwisobjects/coverage/rasterinterpolator.h \
@@ -239,7 +237,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/operationoverloads.h \
     core/ilwisobjects/operation/classification/featurespace.h \
     core/ilwisobjects/operation/classification/sampleset.h \
-    core/ilwisobjects/operation/classification/samplestatistics.h
+    core/ilwisobjects/operation/classification/samplestatistics.h \
+    core/ilwisobjects/domain/interval.h \
+    core/ilwisobjects/domain/intervalrange.h
     core/util/bresenham.h
 
 

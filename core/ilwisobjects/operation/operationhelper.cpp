@@ -25,8 +25,8 @@ OperationHelper::OperationHelper()
 void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisObject &outputObject, IlwisTypes tp, quint64 what)
 {
     if (inputObject->ilwisType() & itCOVERAGE) {
-        ICoverage covInput = inputObject.get<Coverage>();
-        ICoverage covOutput = outputObject.get<Coverage>();
+        ICoverage covInput = inputObject.as<Coverage>();
+        ICoverage covOutput = outputObject.as<Coverage>();
         if ( what & itENVELOPE) {
             Envelope bounds = covInput->envelope();
             covOutput->envelope(bounds);
@@ -35,8 +35,8 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             covOutput->coordinateSystem(covInput->coordinateSystem());
         }
         if ( hasType(what,itDOMAIN) && hasType(tp, itRASTER) ) {
-            IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
-            IRasterCoverage rasCoverageOut = outputObject.get<RasterCoverage>();
+            IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
+            IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
             rasCoverageOut->datadef() = rasCoverageIn->datadef();
         }
 
@@ -44,8 +44,8 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             if ( covInput->attributeTable().isValid())    {
                 if ( covOutput.isValid()) {
                     if ( hasType(tp, itRASTER)) {
-                        IRasterCoverage rasCoverageIn = inputObject.get<RasterCoverage>();
-                        IRasterCoverage rasCoverageOut = outputObject.get<RasterCoverage>();
+                        IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
+                        IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
                         if ( !rasCoverageIn.isValid() || !rasCoverageOut.isValid())
                             return;
                         if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())

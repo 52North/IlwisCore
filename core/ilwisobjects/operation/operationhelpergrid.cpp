@@ -63,7 +63,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
     Resource resource(tp);
     if (inputObject->ilwisType() & itCOVERAGE) {
         if (inputObject->ilwisType() == itRASTER) {
-            IRasterCoverage gcInput = inputObject.get<RasterCoverage>();
+            IRasterCoverage gcInput = inputObject.as<RasterCoverage>();
             if ( what & itRASTERSIZE) {
                 Size<> sz = gcInput->size();
                 BoundingBox box(sz);

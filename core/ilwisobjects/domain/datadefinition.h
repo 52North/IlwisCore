@@ -67,7 +67,7 @@ public:
     template<typename T=Domain> IlwisData<T> domain() const{
         if (!_domain.isValid())
             return IlwisData<T>();
-        return _domain.get<T>();
+        return _domain.as<T>();
     }
 
     /*!

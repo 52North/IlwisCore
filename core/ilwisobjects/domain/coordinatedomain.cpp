@@ -48,7 +48,7 @@ bool CoordinateDomain::isCompatibleWith(const IDomain& dom) const {
         return false;
     if(dom->ilwisType() != itCOORDDOMAIN)
         return false;
-    ICoordinateDomain crddom = dom.get<CoordinateDomain>();
+    ICoordinateDomain crddom = dom.as<CoordinateDomain>();
     return  coordinateSystem() == crddom->coordinateSystem();
 }
 

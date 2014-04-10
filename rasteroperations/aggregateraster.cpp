@@ -32,7 +32,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
 
 
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
@@ -45,7 +45,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                                              (box.max_corner().y + 1) * groupSize(1) - 1,
                                              (box.max_corner().z + 1) * groupSize(2) - 1) );
 
-        BlockIterator blockIter(_inputObj.get<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+        BlockIterator blockIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
@@ -144,8 +144,8 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
     if ( (index = outputName.lastIndexOf(".")) != -1) {
         outputBaseName = outputName.left(index);
     }
-    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     if ( outputName != sUNDEF)
         _outputObj->name(outputName);
     outputRaster->coordinateSystem(inputRaster->coordinateSystem());

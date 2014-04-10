@@ -32,8 +32,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
-    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
     SPTranquilizer trq = kernel()->createTrq("resample", "", outputRaster->size().ysize(),1);
 
     BoxedAsyncFunc resampleFun = [&](const BoundingBox& box) -> bool {
@@ -83,7 +83,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( !grf.isValid()) {
         return sPREPAREFAILED;
     }
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     outputRaster->georeference(grf);
     Envelope env = grf->pixel2Coord(grf->size());
     outputRaster->envelope(env);

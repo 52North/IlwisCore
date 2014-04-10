@@ -80,12 +80,12 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
     }
 
     OperationHelperFeatures helper;
-    IIlwisObject obj = helper.initialize(_inputFC.get<IlwisObject>(), itFEATURE, itENVELOPE | itCOORDSYSTEM) ;
+    IIlwisObject obj = helper.initialize(_inputFC.as<IlwisObject>(), itFEATURE, itENVELOPE | itCOORDSYSTEM) ;
     if ( !obj.isValid()) {
         ERROR2(ERR_INVALID_INIT_FOR_2,"FeatureCoverage",fc);
         return sPREPAREFAILED;
     }
-    _outputFC = obj.get<FeatureCoverage>();
+    _outputFC = obj.as<FeatureCoverage>();
 
 //    DataDefinition outputDataDef = findOutputDataDef(_expression);
 //    _outputFC->datadef() = outputDataDef;

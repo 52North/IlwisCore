@@ -35,8 +35,8 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
-    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
     quint32 rec = 0;
     quint32 colIndex = iUNDEF;
@@ -113,7 +113,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
     quint64 copylist = itCOORDSYSTEM;
 
 
@@ -168,7 +168,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-     IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
          outputRaster->datadef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
                                                    : outputRaster->datadef() = inputRaster->datadef();

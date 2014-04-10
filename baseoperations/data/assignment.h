@@ -18,7 +18,7 @@ public:
 private:
     template<typename T> void setOutput(ExecutionContext *ctx,SymbolTable& symTable) {
         QVariant value;
-        IlwisData<T> outputObj = _outputObj.get<T>();
+        IlwisData<T> outputObj = _outputObj.as<T>();
         value.setValue<IlwisData<T>>(outputObj);
         QString name = outputObj->name();
         ctx->_results.push_back(name);

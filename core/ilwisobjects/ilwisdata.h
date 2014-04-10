@@ -122,7 +122,7 @@ public:
 
      \return Returns a new "upgraded" reference to the class.
     */
-    template<class C=IlwisObject> IlwisData<C> get() const {
+    template<class C=IlwisObject> IlwisData<C> as() const {
         if (_implementation.get() == 0)
             throw ErrorObject(TR("Using unitialized object"));
         if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {

@@ -39,9 +39,9 @@ bool IffRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         bool isCoverage1 = _coverages[0].isValid();
         bool isCoverage2 = _coverages[1].isValid();
         if ( isCoverage1)
-            iter1 = PixelIterator(_coverages[0].get<RasterCoverage>(), box);
+            iter1 = PixelIterator(_coverages[0].as<RasterCoverage>(), box);
         if ( isCoverage2)
-            iter2 = PixelIterator(_coverages[1].get<RasterCoverage>(), box);
+            iter2 = PixelIterator(_coverages[1].as<RasterCoverage>(), box);
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
             double v1,v2;

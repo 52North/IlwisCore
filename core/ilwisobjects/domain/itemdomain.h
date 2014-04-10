@@ -90,7 +90,7 @@ public:
             return false;
         if (!valueType() != dom->valueType())
             return false;
-        IlwisData<ItemDomain<D>> itemdom = dom.get<ItemDomain<D>>();
+        IlwisData<ItemDomain<D>> itemdom = dom.as<ItemDomain<D>>();
         if ( itemdom->theme() ==sUNDEF && !itemdom->parent().isValid())
             return false;
         if ( itemdom->parent().isValid() && parent().isValid()){
@@ -141,7 +141,7 @@ public:
         }
         if(parent().isValid() && !isStrict()) {
             IDomain dm = parent();
-            IlwisData<ItemDomain<D>> parentdom = dm.get<ItemDomain<D>>();
+            IlwisData<ItemDomain<D>> parentdom = dm.as<ItemDomain<D>>();
             return parentdom->item(nam);
         }
         return _range->item(nam) ;
@@ -164,7 +164,7 @@ public:
         }
         if (parent().isValid()) {
             IDomain dm = parent();
-            IlwisData<ItemDomain<D>> parentdom = dm.get<ItemDomain<D>>();
+            IlwisData<ItemDomain<D>> parentdom = dm.as<ItemDomain<D>>();
             if(!parentdom.isValid()){
                 ERROR2(ERR_COULD_NOT_CONVERT_2,TR("domain"), TR("correct item domain"));
                 delete thing;
@@ -248,7 +248,7 @@ public:
 
         if ( parent().isValid()){
             IDomain dm = parent();
-            IlwisData<ItemDomain<D>> itemdom = dm.get<ItemDomain<D>>();
+            IlwisData<ItemDomain<D>> itemdom = dm.as<ItemDomain<D>>();
             if (!itemdom->_range->contains(range)){
                 WARN2(WARN_NOT_PART_OF2,"item range", TR("parent domain"));
                 return  ;
@@ -305,7 +305,7 @@ public:
         if ( !dm.isValid() && parent().isValid()){
             // cut the relation with the parent; raws remain the same but no relation with parent any more;
             IDomain dmp = parent();
-            IlwisData<ItemDomain<D>> dmparent = dmp.get<ItemDomain<D>>();
+            IlwisData<ItemDomain<D>> dmparent = dmp.as<ItemDomain<D>>();
             dmparent->removeChildDomain(id());
             _range.reset(static_cast<ItemRange *>(_range->clone()));
             Domain::setParent(dm);
@@ -317,7 +317,7 @@ public:
         if (!hasType(dm->valueType(), valueType())) {
             return;
         }
-        IlwisData<ItemDomain<D>> dmitem = dm.get<ItemDomain<D>>();
+        IlwisData<ItemDomain<D>> dmitem = dm.as<ItemDomain<D>>();
         if ( theme() != dmitem->theme())
             return;
 
@@ -391,16 +391,16 @@ template<typename T> Ilwis::ItemIterator<T> end(const Ilwis::IlwisData<Ilwis::It
 class ThematicItem;
 class IndexedIdentifier;
 class NamedIdentifier;
-class NumericItem;
+class Interval;
 
 typedef IlwisData<ItemDomain<ThematicItem>>  IThematicDomain ;
 typedef IlwisData<ItemDomain<IndexedIdentifier>>  IIndexedIdDomain ;
 typedef IlwisData<ItemDomain<NamedIdentifier>>  INamedIdDomain ;
-typedef IlwisData<ItemDomain<NumericItem>>  INumericItemDomain ;
+typedef IlwisData<ItemDomain<Interval>>  IIntervalDomain ;
 typedef ItemDomain<ThematicItem>  ThematicDomain ;
 typedef ItemDomain<IndexedIdentifier>  IndexedIdDomain ;
 typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
-typedef ItemDomain<NumericItem>  NumericItemDomain ;
+typedef ItemDomain<Interval>  IntervalDomain ;
 
 }
 

@@ -43,7 +43,7 @@ DataDefinition IfOperation::findParameterDataDef(const OperationExpression &expr
         IRasterCoverage cov;
         if(cov.prepare(gcid)) {
             def = cov->datadef();
-            _coverages[index - 1] = cov.get<Coverage>();
+            _coverages[index - 1] = cov.as<Coverage>();
         }
     } else {
         bool ok;

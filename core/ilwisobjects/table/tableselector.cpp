@@ -58,7 +58,7 @@ void TableSelector::stringCase(const LogicalExpressionPart& part, const ColumnDe
     QString fieldtxt = var.toString();
     if ( coldef.datadef().domain<>()->valueType() == itTHEMATICITEM){
         quint32 raw = var.toUInt();
-        INamedIdDomain domainid = coldef.datadef().domain<>().get<NamedIdDomain>();
+        INamedIdDomain domainid = coldef.datadef().domain<>().as<NamedIdDomain>();
         SPDomainItem item = domainid->item(raw);
         fieldtxt = item->name();
     }

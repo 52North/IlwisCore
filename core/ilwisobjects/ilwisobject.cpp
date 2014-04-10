@@ -424,7 +424,7 @@ IlwisTypes IlwisObject::name2ExtendedType(const QString& dname) {
         return  itINDEXEDITEM;
     if ( name == "ItemDomain<Ilwis::ThematicItem>")
         return  itTHEMATICITEM;
-    if ( name == "ItemDomain<Ilwis::NumericItem>")
+    if ( name == "ItemDomain<Ilwis::Interval>")
         return  itNUMERICITEM;
     return itUNKNOWN;
 }

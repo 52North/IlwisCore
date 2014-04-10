@@ -31,7 +31,7 @@
 #include "colordomain.h"
 #include "identifieritem.h"
 #include "thematicitem.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "coloritem.h"
 #include "resource.h"
 #include "geodeticdatum.h"
@@ -435,7 +435,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
             if ( hasType(resource.extendedType(), itNUMERICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<NumericItem>(res);
+                return new ItemDomain<Interval>(res);
             }
             if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
                 Resource res = resource;

@@ -5,7 +5,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "itemdomain.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "rasterslicing.h"
 
 using namespace Ilwis;
@@ -92,7 +92,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
     _bounds.resize(_numericItems->count(), 0);
     int  i =0;
     for(auto& v : _bounds){
-        v = _numericItems->item(i++)->toType<NumericItem>()->range().min();
+        v = _numericItems->item(i++)->toType<Interval>()->range().min();
     }
 
     IIlwisObject outputObj = OperationHelperRaster::initialize(_inputRaster,itRASTER, itCOORDSYSTEM | itGEOREF);
@@ -100,7 +100,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
-    _outputRaster = outputObj.get<RasterCoverage>();
+    _outputRaster = outputObj.as<RasterCoverage>();
     _outputRaster->name(outputName);
 
     return sPREPARED;
@@ -109,7 +109,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
 quint64 RasterSlicing::createMetadata()
 {
     OperationResource operation({"ilwis://operations/sliceraster"});
-    operation.setSyntax("sliceraster(inputgridcoverage, NumericItemDomain)");
+    operation.setSyntax("sliceraster(inputgridcoverage, IntervalDomain)");
     operation.setDescription(TR("Ranges of values of the input map are grouped together into one output class"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with domain value"));

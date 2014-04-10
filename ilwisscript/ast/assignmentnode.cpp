@@ -64,9 +64,9 @@ QString AssignmentNode::nodeType() const
 IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
     IlwisTypes tp = sym._type;
     if ( tp & itRASTER)
-            return sym._var.value<Ilwis::IRasterCoverage>().get<IlwisObject>();
+            return sym._var.value<Ilwis::IRasterCoverage>().as<IlwisObject>();
     if ( tp & itFEATURE)
-            return sym._var.value<Ilwis::IFeatureCoverage>().get<IlwisObject>();
+            return sym._var.value<Ilwis::IFeatureCoverage>().as<IlwisObject>();
     return IIlwisObject();
 
 }

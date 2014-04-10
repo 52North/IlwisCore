@@ -30,8 +30,8 @@ Assignment::Assignment(quint64 metaid, const Ilwis::OperationExpression &expr) :
 
 bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 
-    IFeatureCoverage outputFC = _outputObj.get<FeatureCoverage>();
-    IFeatureCoverage inputFC = _inputObj.get<FeatureCoverage>();
+    IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
+    IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
     FeatureIterator iterIn(inputFC);
     for_each(iterIn, iterIn.end(), [&](UPFeatureI& feature){
         outputFC->newFeatureFrom(feature);
@@ -41,9 +41,9 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
 }
 
 bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
-    IRasterCoverage outputRaster = _outputObj.get<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     std::function<bool(const BoundingBox)> Assign = [&](const BoundingBox box ) -> bool {
-        IRasterCoverage inputRaster = _inputObj.get<RasterCoverage>();
+        IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
         PixelIterator iterIn(inputRaster, box);
         PixelIterator iterOut(outputRaster, box);
 
