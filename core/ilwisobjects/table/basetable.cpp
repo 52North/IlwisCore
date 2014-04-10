@@ -284,7 +284,7 @@ void BaseTable::adjustRange(int index) {
         }
     } else if ( hasType(coldef.datadef().domain<>()->ilwisType(), itITEMDOMAIN)) {
         SPItemRange rng = coldef.datadef().range<ItemRange>();
-        SPItemRange rngDomain = coldef.datadef().domain<>()->range2range<ItemRange>();
+        SPItemRange rngDomain = coldef.datadef().domain<>()->range<ItemRange>();
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
             rng->clear();
@@ -324,7 +324,7 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
         if ( ok ){
             actualval = v;
         } else {
-            SPItemRange rng1 = coldef.datadef().domain<>()->range2range<ItemRange>();
+            SPItemRange rng1 = coldef.datadef().domain<>()->range<ItemRange>();
             if (rng1.isNull()){
                 WARN2(WARN_INVALID_OBJECT," type for non-ItemDomain of item "+ txt, "column "+coldef.name());
                 return QVariant(rUNDEF);

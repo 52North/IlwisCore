@@ -65,7 +65,7 @@ void DataDefinition::domain(const IDomain &dom)
     if ( !_domain.isValid())
         return;
 
-    SPRange r = _domain->range2range<>();
+    SPRange r = _domain->range<>();
     if ( r)
         _range.reset(r->clone());
 

@@ -142,12 +142,12 @@ double Coverage::layerIndex(const QString &value)
     }
     if ( hasType(_indexdefinition.domain()->ilwisType(), itITEMDOMAIN)) {
 
-        SPItemRange rng = _indexdefinition.domain()->range2range<ItemRange>();
+        SPItemRange rng = _indexdefinition.domain()->range<ItemRange>();
         if ( !rng->isValid())
             return rUNDEF;
         IlwisTypes valueType = _indexdefinition.domain()->valueType();
         if ( hasType(valueType, itNUMERICITEM )) {
-            SPNumericItemRange rng = _indexdefinition.domain()->range2range<NumericItemRange>();
+            SPNumericItemRange rng = _indexdefinition.domain()->range<NumericItemRange>();
             return rng->index(value.toDouble());
         }
 

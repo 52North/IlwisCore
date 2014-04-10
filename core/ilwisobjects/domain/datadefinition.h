@@ -20,7 +20,7 @@ public:
     /*!
      * Constructs a new DataDefinition based on an IDomain and a Range<br>
      * sets the domain of the new DataDefinition as dm, and sets the range to rng, if rng != 0<br>
-     * if rng = 0 (defaultvalue) it will set the domain->range2range() as range (the range will be equal to the domain)<br>
+     * if rng = 0 (defaultvalue) it will set the domain->range() as range (the range will be equal to the domain)<br>
      * if rng != 0, it must be a valid range, which will than be set as the range of this DataDefinition
      *
      * \sa Domain

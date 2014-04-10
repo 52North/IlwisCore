@@ -87,8 +87,7 @@ QString IndexSlicer::makeExpression(double index, const QString& basename, QStri
 }
 
 double IndexSlicer::findIndexNumber(const IDomain& indexDomain, double itemIndex) const{
-    INumericDomain numdom = indexDomain.get<NumericDomain>();
-    SPNumericRange numrange = numdom->range2range<NumericRange>();
+    SPNumericRange numrange = indexDomain->range<NumericRange>();
     if ( numrange->contains(itemIndex))
         return itemIndex;
     return rUNDEF;

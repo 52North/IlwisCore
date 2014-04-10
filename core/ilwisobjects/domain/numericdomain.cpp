@@ -33,7 +33,7 @@ void NumericDomain::range(Range *vr)
     if ( hasType(vr->valueType(), itNUMBER) == false)
         return;
     if ( parent().isValid()) {
-        parent()->range2range<NumericRange>()->contains(static_cast<NumericRange *>(vr));
+        parent()->range<NumericRange>()->contains(static_cast<NumericRange *>(vr));
     }
     _range = QSharedPointer<NumericRange>(static_cast<NumericRange *>(vr));
 }
@@ -62,7 +62,7 @@ void NumericDomain::setParent(const IDomain &dm)
     }
     if ( dm->ilwisType() != itNUMERICDOMAIN || hasType(dm->valueType(), itNUMBER) == false)
         return;
-    SPNumericRange numrange = dm->range2range<NumericRange>();
+    SPNumericRange numrange = dm->range<NumericRange>();
     if ( !numrange->contains(_range))
         return;
 

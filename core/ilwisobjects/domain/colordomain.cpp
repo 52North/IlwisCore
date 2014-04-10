@@ -72,10 +72,10 @@ void ColorDomain::range(Range *colorrange)
         return;
     if ( parent().isValid()) {
         if ( colorrange->valueType() == itPALETTECOLOR){
-            if( cNONE == parent()->range2range<ColorPalette>()->contains(dynamic_cast<ColorPalette *>(colorrange)))
+            if( cNONE == parent()->range<ColorPalette>()->contains(dynamic_cast<ColorPalette *>(colorrange)))
                 return;
         } else if ( colorrange->valueType() == itCONTINUOUSCOLOR){
-            if( cNONE == parent()->range2range<ContinousColorRange>()->contains(dynamic_cast<ColorRange *>(colorrange)))
+            if( cNONE == parent()->range<ContinousColorRange>()->contains(dynamic_cast<ColorRange *>(colorrange)))
                 return;
         }
     }

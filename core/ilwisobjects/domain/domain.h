@@ -104,7 +104,7 @@ public:
      */
     virtual bool isCompatibleWith(const IDomain& dom) const = 0;
 
-    template<typename T=Range> QSharedPointer<T> range2range() const{
+    template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();
     }
 
