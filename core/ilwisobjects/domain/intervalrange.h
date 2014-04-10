@@ -7,13 +7,13 @@ namespace Ilwis {
  * for example items in 0-300 could be 0-100, 100-200 and 200-300.
  *\sa ItemRange
  */
-class KERNELSHARED_EXPORT NumericItemRange : public ItemRange
+class KERNELSHARED_EXPORT IntervalRange : public ItemRange
 {
 public:
     /**
      * Constructs an empty NumericItemRange
      */
-    NumericItemRange();
+    IntervalRange();
 
     //@override
     QVariant impliedValue(const QVariant& v) const;
@@ -78,7 +78,7 @@ public:
      * <br>
      * there are 2 possible valid strings, the first case is:<br>
      * this << "1 2 3";<br>
-     * which is the simple case, it will simply add a NumericItem of the form new NumericItem(1(min),2(max),3(step))<br>
+     * which is the simple case, it will simply add a Interval of the form new Interval(1(min),2(max),3(step))<br>
      * <br>
      * and the second case is:<br>
      * this << "1"<br>
@@ -88,11 +88,11 @@ public:
      * if anything goes wrong a ERROR1 will be thrown<br>
      * be careful to make a valid item<br>
      *
-     * \sa NumericItem
+     * \sa Interval
      * @param itemdef the new item to be added
      * @return this
      */
-    NumericItemRange &operator <<(const QString &itemdef);
+    IntervalRange &operator <<(const QString &itemdef);
 
     //@override
     qint32 gotoIndex(qint32 index, qint32 step) const;
@@ -100,12 +100,12 @@ public:
 protected:
     void addRange(const ItemRange &range);
 private:
-    std::vector<SPNumericItem> _items;
+    std::vector<SPInterval> _items;
     bool validNumber(QString value) const;
     bool alignWithParent(const IDomain& dom);
 };
 
-typedef QSharedPointer<NumericItemRange> SPNumericItemRange;
+typedef QSharedPointer<IntervalRange> SPIntervalRange;
 }
 
 #endif // NUMERICITEMRANGE_H

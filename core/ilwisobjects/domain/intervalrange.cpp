@@ -8,18 +8,18 @@
 #include "domainitem.h"
 #include "domain.h"
 #include "itemdomain.h"
-#include "numericitem.h"
+#include "interval.h"
 #include "itemrange.h"
-#include "numericitemrange.h"
+#include "intervalrange.h"
 
 using namespace Ilwis;
 
-NumericItemRange::NumericItemRange()
+IntervalRange::IntervalRange()
 {
     _vt = itNUMERICITEM;
 }
 
-QVariant NumericItemRange::impliedValue(const QVariant& v) const
+QVariant IntervalRange::impliedValue(const QVariant& v) const
 {
     bool ok;
     quint32 index = v.toUInt(&ok);
@@ -33,19 +33,19 @@ QVariant NumericItemRange::impliedValue(const QVariant& v) const
 
 }
 
-quint32 NumericItemRange::count() const
+quint32 IntervalRange::count() const
 {
     return _items.size();
 }
 
-SPDomainItem NumericItemRange::item(quint32 index) const
+SPDomainItem IntervalRange::item(quint32 index) const
 {
        if ( index < _items.size())
            return _items[index];
        return SPDomainItem();
 }
 
-SPDomainItem NumericItemRange::item(const QString &item) const
+SPDomainItem IntervalRange::item(const QString &item) const
 {
     QStringList parts = item.split(" ");
     if ( parts.size() == 0 || parts.size() > 3){
@@ -68,12 +68,12 @@ SPDomainItem NumericItemRange::item(const QString &item) const
     return _items[(int)v1];
 }
 
-SPDomainItem NumericItemRange::itemByOrder(quint32 index) const
+SPDomainItem IntervalRange::itemByOrder(quint32 index) const
 {
     return item(index);
 }
 
-double NumericItemRange::index(double v) const
+double IntervalRange::index(double v) const
 {
     if (!isValid())
         return rUNDEF;
@@ -98,7 +98,7 @@ double NumericItemRange::index(double v) const
     return rUNDEF;
 }
 
-bool NumericItemRange::validNumber(QString value) const{
+bool IntervalRange::validNumber(QString value) const{
     bool oknumber;
     double v = value.toDouble(&oknumber);
     if (!oknumber) {
@@ -109,7 +109,7 @@ bool NumericItemRange::validNumber(QString value) const{
 
 }
 
-bool NumericItemRange::contains(const QVariant &name, bool ) const
+bool IntervalRange::contains(const QVariant &name, bool ) const
 {
     QStringList items = name.toString().split(";");
     for(const QString& item : items) {
@@ -126,12 +126,12 @@ bool NumericItemRange::contains(const QVariant &name, bool ) const
     return true;
 }
 
-bool NumericItemRange::isValid() const
+bool IntervalRange::isValid() const
 {
     return _items.size() != 0;
 }
 
-void NumericItemRange::add(DomainItem *item)
+void IntervalRange::add(DomainItem *item)
 {
     if (!item)
         return;
@@ -141,7 +141,7 @@ void NumericItemRange::add(DomainItem *item)
 
     if (!item->isValid())
         return;
-    SPNumericItem nitem(static_cast<NumericItem *>(item));
+    SPInterval nitem(static_cast<Interval *>(item));
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
         if ( nitem->range() > (*iter)->range()) {
             if ( nitem->raw() == iUNDEF)
@@ -156,12 +156,12 @@ void NumericItemRange::add(DomainItem *item)
     }
 }
 
-void NumericItemRange::add(SPDomainItem item)
+void IntervalRange::add(SPDomainItem item)
 {
     if ( item.isNull() || !item->isValid() || item->valueType() != itNUMERICITEM)
         return;
 
-    SPNumericItem nitem = item.staticCast<NumericItem>();
+    SPInterval nitem = item.staticCast<Interval>();
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
         if ( nitem->range() > (*iter)->range()) {
             if ( nitem->raw() == iUNDEF)
@@ -176,12 +176,12 @@ void NumericItemRange::add(SPDomainItem item)
     }
 }
 
-bool NumericItemRange::alignWithParent(const IDomain &dom)
+bool IntervalRange::alignWithParent(const IDomain &dom)
 {
-    INumericItemDomain numdom = dom.get<NumericItemDomain>();
+    IIntervalDomain numdom = dom.as<IntervalDomain>();
     if ( !numdom.isValid())
         return false;
-    ItemIterator<NumericItem> iterParent(numdom);
+    ItemIterator<Interval> iterParent(numdom);
     std::map<QString, DomainItem *> parentItems;
     for(DomainItem *item : iterParent) {
         parentItems[item->name()] = item;
@@ -193,13 +193,13 @@ bool NumericItemRange::alignWithParent(const IDomain &dom)
         if ( iter == parentItems.end()){
             return ERROR2(ERR_ILLEGAL_VALUE_2, TR("item in child domain"),_items[i]->name());
         }
-        _items[i] = SPNumericItem(static_cast<NumericItem *>((*iter).second->clone()));
+        _items[i] = SPInterval(static_cast<Interval *>((*iter).second->clone()));
     }
     return false;
 
 }
 
-void NumericItemRange::remove(const QString &nm)
+void IntervalRange::remove(const QString &nm)
 {
      for(auto iter = _items.begin(); iter != _items.begin(); ++iter) {
         if ( (*iter)->name() == nm) {
@@ -209,11 +209,11 @@ void NumericItemRange::remove(const QString &nm)
      }
 }
 
-QString NumericItemRange::toString() const
+QString IntervalRange::toString() const
 {   if ( _items.size() == 0)
         return sUNDEF;
     QString names;
-    for(const SPNumericItem& it: _items) {
+    for(const SPInterval& it: _items) {
         if ( names != "")
             names += ";";
         names += it->name();
@@ -221,15 +221,15 @@ QString NumericItemRange::toString() const
     return names;
 }
 
-void NumericItemRange::clear()
+void IntervalRange::clear()
 {
     _items.clear();
 }
 
-ItemRange *NumericItemRange::clone() const
+ItemRange *IntervalRange::clone() const
 {
-    ItemRange *items = new NumericItemRange();
-    for(const SPNumericItem& it: _items) {
+    ItemRange *items = new IntervalRange();
+    for(const SPInterval& it: _items) {
         items->add(it->clone());
     }
     items->interpolation(interpolation());
@@ -238,7 +238,7 @@ ItemRange *NumericItemRange::clone() const
 
 }
 
-NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
+IntervalRange &IntervalRange::operator <<(const QString &itemdef)
 {
     QStringList parts = itemdef.split(" ");
     if( parts.size() > 2) {
@@ -254,7 +254,7 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
 
                 }
                 if (ok) {
-                    add(new NumericItem(name, {mn,mx, step}));
+                    add(new Interval(name, {mn,mx, step}));
                     return *this;
                 }
             }
@@ -275,12 +275,12 @@ NumericItemRange &NumericItemRange::operator <<(const QString &itemdef)
         if ( step == 0)
             vmin += EPS8;
         QString label = QString("label_%1").arg(_items.size());
-        add(new NumericItem(label, {vmin+step,vmax, step}));
+        add(new Interval(label, {vmin+step,vmax, step}));
     }
     return *this;
 }
 
-qint32 NumericItemRange::gotoIndex(qint32 index, qint32 step) const
+qint32 IntervalRange::gotoIndex(qint32 index, qint32 step) const
 {
     if ( index + step >= _items.size())
         return _items.size();
@@ -289,10 +289,10 @@ qint32 NumericItemRange::gotoIndex(qint32 index, qint32 step) const
     return index + step;
 }
 
-void NumericItemRange::addRange(const ItemRange &range)
+void IntervalRange::addRange(const ItemRange &range)
 {
     ItemRange::addRange(range);
-    _interpolation = static_cast<const NumericItemRange&>(range).interpolation();
+    _interpolation = static_cast<const IntervalRange&>(range).interpolation();
 }
 
 
