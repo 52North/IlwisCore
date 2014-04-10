@@ -56,9 +56,9 @@ std::vector<quint32> TableSelector::select(const Table* table, const QString &co
 void TableSelector::stringCase(const LogicalExpressionPart& part, const ColumnDefinition& coldef, const QVariant& var, std::vector<bool>::iterator& iter) {
     QString text = part.value();
     QString fieldtxt = var.toString();
-    if ( coldef.datadef().domain()->valueType() == itTHEMATICITEM){
+    if ( coldef.datadef().domain<>()->valueType() == itTHEMATICITEM){
         quint32 raw = var.toUInt();
-        INamedIdDomain domainid = coldef.datadef().domain().get<NamedIdDomain>();
+        INamedIdDomain domainid = coldef.datadef().domain<>().get<NamedIdDomain>();
         SPDomainItem item = domainid->item(raw);
         fieldtxt = item->name();
     }

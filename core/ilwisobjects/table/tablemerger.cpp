@@ -34,7 +34,7 @@ bool TableMerger::copyColumns(const ITable &tblSource, ITable& tbltarget, int op
         ColumnDefinition coldef2;
         if ( (coldef2=tbltarget->columndefinition(coldef1.name())).isValid()){
             if (!coldef1.datadef().isCompatibleWith(coldef2.datadef()) || options != 0){
-                ColumnDefinition coldef( QString("%1_%2").arg(tblSource->name()).arg(coldef1.name()), coldef1.datadef().domain(), tbltarget->columnCount() + index);
+                ColumnDefinition coldef( QString("%1_%2").arg(tblSource->name()).arg(coldef1.name()), coldef1.datadef().domain<>(), tbltarget->columnCount() + index);
                 tbltarget->addColumn(coldef);
                 nameMapping[coldef1.name()] = coldef.name();
                 continue;
@@ -180,18 +180,18 @@ void TableMerger::mergeTableData(const ITable &sourceTable1,const ITable &source
 ColumnDefinition TableMerger::mergeColumnDefinitions(const ColumnDefinition &def1, const ColumnDefinition &def2, RenumberMap *renumberer) {
     Range *rng = 0;
 
-    if ( hasType(def1.datadef().domain()->valueType(),itNUMBER)){
+    if ( hasType(def1.datadef().domain<>()->valueType(),itNUMBER)){
         rng = NumericRange::merge(def1.datadef().range<NumericRange>(), def1.datadef().range<NumericRange>());
-    } else if (def1.datadef().domain()->valueType() == itINDEXEDITEM ) {
+    } else if (def1.datadef().domain<>()->valueType() == itINDEXEDITEM ) {
         rng = IndexedIdentifierRange::merge(def1.datadef().range<IndexedIdentifierRange>(), def1.datadef().range<IndexedIdentifierRange>());
-    } else if (def1.datadef().domain()->valueType() == itNAMEDITEM ) {
+    } else if (def1.datadef().domain<>()->valueType() == itNAMEDITEM ) {
         rng = NamedIdentifierRange::merge(def1.datadef().range<NamedIdentifierRange>(), def1.datadef().range<NamedIdentifierRange>(), renumberer);
-    } else if (def1.datadef().domain()->valueType() == itTHEMATICITEM ) {
+    } else if (def1.datadef().domain<>()->valueType() == itTHEMATICITEM ) {
         rng = ThematicRange::merge(def1.datadef().range<ThematicRange>(), def1.datadef().range<ThematicRange>(), renumberer);
     }
 
     QString colname = def1.name() == FEATUREIDCOLUMN ? FEATUREIDCOLUMN : def1.name() + "_" + def2.name();
-    ColumnDefinition coldef(colname, def1.datadef().domain());
+    ColumnDefinition coldef(colname, def1.datadef().domain<>());
     if ( rng)
         coldef.datadef().range(rng);
 

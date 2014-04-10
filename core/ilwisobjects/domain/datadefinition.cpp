@@ -23,7 +23,7 @@ DataDefinition::DataDefinition() : _range(0), _stretchRange(0)
 
 DataDefinition::DataDefinition(const DataDefinition& def)
 {
-    domain(def.domain());
+    domain(def.domain<>());
     if ( !def.range().isNull())
         _range.reset(def.range()->clone());
     else
@@ -59,11 +59,6 @@ void DataDefinition::range(Range* vr)
         _range = QSharedPointer<Range>(vr);
 }
 
-IDomain DataDefinition::domain() const
-{
-    return _domain;
-}
-
 void DataDefinition::domain(const IDomain &dom)
 {
     _domain = dom;
@@ -87,7 +82,7 @@ bool DataDefinition::isCompatibleWith(const DataDefinition &def) const
     if (!isValid())
         return false;
 
-    return _domain->isCompatibleWith(def.domain());
+    return _domain->isCompatibleWith(def.domain<>());
 
 }
 

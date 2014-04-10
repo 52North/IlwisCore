@@ -64,7 +64,11 @@ public:
      * can return invalid domains
      * \return The IDomain of this DataDefinition
      */
-    IDomain domain() const;
+    template<typename T=Domain> IlwisData<T> domain() const{
+        if (!_domain.isValid())
+            return IlwisData<T>();
+        return _domain.get<T>();
+    }
 
     /*!
      * Sets a new domain to this DataDefinition<br>

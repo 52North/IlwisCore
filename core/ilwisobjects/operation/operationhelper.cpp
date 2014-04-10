@@ -48,7 +48,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
                         IRasterCoverage rasCoverageOut = outputObject.get<RasterCoverage>();
                         if ( !rasCoverageIn.isValid() || !rasCoverageOut.isValid())
                             return;
-                        if(rasCoverageIn->datadef().domain() != rasCoverageOut->datadef().domain())
+                        if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())
                             return;
                     }
                     covOutput->attributeTable(covInput->attributeTable());

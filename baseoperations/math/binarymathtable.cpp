@@ -103,11 +103,11 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 
     NumericRange *newRange = 0;
     if ( def1.isValid() && def2.isValid())  {
-        if (!def1.datadef().domain()->isCompatibleWith(def2.datadef().domain())){
+        if (!def1.datadef().domain<>()->isCompatibleWith(def2.datadef().domain<>())){
             ERROR2(ERR_NOT_COMPATIBLE2,_column1, _column2);
             return sPREPAREFAILED;
         }
-        if (!(hasType(def1.datadef().domain()->valueType(),itNUMBER) && hasType(def2.datadef().domain()->valueType(), itNUMBER))){
+        if (!(hasType(def1.datadef().domain<>()->valueType(),itNUMBER) && hasType(def2.datadef().domain<>()->valueType(), itNUMBER))){
             ERROR2(ERR_NOT_COMPATIBLE2,_column1, _column2);
             return sPREPAREFAILED;
         }
@@ -117,7 +117,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
     } else {
         ColumnDefinition def = def1.isValid() ? def1 : def2;
         double number = _number1 == rUNDEF ? _number2 : _number1;
-        if (!hasType(def.datadef().domain()->valueType(),itNUMBER)){
+        if (!hasType(def.datadef().domain<>()->valueType(),itNUMBER)){
             ERROR2(ERR_NOT_COMPATIBLE2,_column1, TR("numeric"));
             return sPREPAREFAILED;
         }

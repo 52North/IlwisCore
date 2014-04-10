@@ -34,7 +34,7 @@ public:
         }
 
         if ( res && outputRaster.isValid()) {
-            if ( outputRaster->datadef().domain()->valueType() & itNUMERIC) {
+            if ( outputRaster->datadef().domain<>()->valueType() & itNUMERIC) {
                 NumericStatistics stats;
                 PixelIterator iter(outputRaster);
                 stats.calculate(iter, iter.end());

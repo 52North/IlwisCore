@@ -103,11 +103,11 @@ Ilwis::OperationImplementation::State SetValueRange::prepare(ExecutionContext *,
                 ERROR2(ERR_NOT_FOUND2, _columnName, objectName);
                 return sPREPAREFAILED;
             }
-            if (hasType(!_table->columndefinition(_columnName).datadef().domain()->valueType(), itNUMBER)) {
+            if (hasType(!_table->columndefinition(_columnName).datadef().domain<>()->valueType(), itNUMBER)) {
                 ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("operation"), TR("non numeric data"));
             }
         }  else {
-            if (hasType(!_raster->attributeTable()->columndefinition(_columnName).datadef().domain()->valueType(), itNUMBER)) {
+            if (hasType(!_raster->attributeTable()->columndefinition(_columnName).datadef().domain<>()->valueType(), itNUMBER)) {
                 ERROR2(ERR_OPERATION_NOTSUPPORTED2,TR("operation"), TR("non numeric data"));
             }
         }

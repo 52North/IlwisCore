@@ -65,7 +65,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     ctx->_threaded = false; // operation can not be run in parallel
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputRaster);
 
-    INamedIdDomain iddom = outputRaster->datadef().domain().get<NamedIdDomain>();
+    INamedIdDomain iddom = outputRaster->datadef().domain<>().get<NamedIdDomain>();
     NamedIdentifierRange range;
     for(int i=0; i < numberer.lastid(); ++i) {
         range << QString("area_%1").arg(i);

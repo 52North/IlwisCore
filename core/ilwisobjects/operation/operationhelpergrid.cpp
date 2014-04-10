@@ -41,14 +41,14 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
             resource.addProperty("georeference", IVARIANT(inputRaster->georeference()));
     }
     if ( what & itDOMAIN) {
-        resource.addProperty("domain", IVARIANT(inputRaster->datadef().domain()));
+        resource.addProperty("domain", IVARIANT(inputRaster->datadef().domain<>()));
     }
     resource.prepare();
 
     outputRaster.prepare(resource);
     if ( what & itTABLE) {
         if ( inputRaster->attributeTable().isValid())    {
-            if ( inputRaster->datadef().domain() == outputRaster->datadef().domain()) {
+            if ( inputRaster->datadef().domain<>() == outputRaster->datadef().domain<>()) {
                 if ( outputRaster.isValid())
                     outputRaster->attributeTable(inputRaster->attributeTable());
             }

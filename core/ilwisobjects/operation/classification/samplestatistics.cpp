@@ -273,6 +273,13 @@ void SampleHistogram::mergeClass(Raw key1, Raw key2)
     }
 }
 
+bool SampleHistogram::exists(Raw key) const
+{
+    if ( key >= _hist.size())
+        return false;
+    return _hist[key].size() > 0;
+}
+
 quint32 &SampleHistogram::select(Raw key, quint32 band, quint32 value)
 {
     if ( key >= _hist.size())

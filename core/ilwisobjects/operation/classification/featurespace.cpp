@@ -30,3 +30,8 @@ void FeatureSpace::addSample(const XY &xy, Raw classRaw)
 
 
 }
+
+void FeatureSpace::compute()
+{
+
+}

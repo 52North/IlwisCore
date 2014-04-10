@@ -32,6 +32,7 @@ public:
     FeatureSpace();
 
     void addSample(const XY& xy, Raw classRaw);
+    void compute();
 
 private:
     std::unordered_map<XY, FSInfo> _fsInfo;

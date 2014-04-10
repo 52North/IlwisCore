@@ -56,7 +56,7 @@ public:
                 return false;
             for(int i=0; i < tbl->columnCount(); ++i ){
                 ColumnDefinition& def = tbl->columndefinition(i);
-                if ( def.datadef().domain()->valueType() & itNUMERIC) {
+                if ( def.datadef().domain<>()->valueType() & itNUMERIC) {
                     ContainerStatistics<double> stats;
                     std::vector<QVariant> values = tbl->column(i);
                     std::vector<double> vec(values.size());

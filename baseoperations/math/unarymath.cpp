@@ -134,7 +134,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
             _inColumn = _expression.parm(1).value();
         }
         _outColumn = "column_" + QString::number(_inputTable->columnCount());
-        if (!hasType(_inputTable->columndefinition(_inColumn).datadef().domain()->valueType(), itNUMBER)) {
+        if (!hasType(_inputTable->columndefinition(_inColumn).datadef().domain<>()->valueType(), itNUMBER)) {
             ERROR2(ERR_NOT_COMPATIBLE2, TR("column"), _expression.name());
             return sPREPAREFAILED;
         }

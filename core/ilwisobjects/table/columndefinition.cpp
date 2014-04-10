@@ -18,7 +18,7 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
     _multiple(false),
     _changed(false)
 {
-    datadef().domain(def.datadef().domain());
+    datadef().domain(def.datadef().domain<>());
     datadef().range(def.datadef().range()->clone());
 
 }
@@ -42,7 +42,7 @@ ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint6
 
 bool ColumnDefinition::isValid() const
 {
-   return name() != sUNDEF && datadef().domain().isValid();
+   return name() != sUNDEF && datadef().domain<>().isValid();
 }
 
 QString ColumnDefinition::type() const

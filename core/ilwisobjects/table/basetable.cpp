@@ -140,7 +140,7 @@ ColumnDefinition &BaseTable::columndefinition(quint32 index)
 void BaseTable::columndefinition(const ColumnDefinition &coldef)
 {
     if ( coldef.id() >=  _columnDefinitionsByIndex.size())     {
-        addColumn(coldef.name(), coldef.datadef().domain());
+        addColumn(coldef.name(), coldef.datadef().domain<>());
     } else {
         auto iter1 = _columnDefinitionsByIndex.find(coldef.id());
         auto iter2 = _columnDefinitionsByName.find(coldef.name());
@@ -257,7 +257,7 @@ void BaseTable::adjustRange(int index) {
     if (!coldef.isValid())
         return;
 
-    if( hasType(coldef.datadef().domain()->ilwisType(), itNUMERICDOMAIN)) {
+    if( hasType(coldef.datadef().domain<>()->ilwisType(), itNUMERICDOMAIN)) {
         SPNumericRange rng = coldef.datadef().range<NumericRange>();
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
@@ -282,9 +282,9 @@ void BaseTable::adjustRange(int index) {
                 _columnDefinitionsByName[coldef.name()].datadef() = coldef.datadef();
             }
         }
-    } else if ( hasType(coldef.datadef().domain()->ilwisType(), itITEMDOMAIN)) {
+    } else if ( hasType(coldef.datadef().domain<>()->ilwisType(), itITEMDOMAIN)) {
         SPItemRange rng = coldef.datadef().range<ItemRange>();
-        SPItemRange rngDomain = coldef.datadef().domain()->range2range<ItemRange>();
+        SPItemRange rngDomain = coldef.datadef().domain<>()->range2range<ItemRange>();
         std::vector<QVariant> values = column(coldef.id());
         if ( values.size() > 0 && !rng.isNull()) {
             rng->clear();
@@ -310,13 +310,13 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
         if ( !coldef.isValid())
             return QVariant();
 
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itTEXTDOMAIN)) {
             return actualval;
         }
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itITEMDOMAIN) && txt == sUNDEF){
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itITEMDOMAIN) && txt == sUNDEF){
             return QVariant((int)iUNDEF);
         }
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itNUMERICDOMAIN) && txt == sUNDEF){
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itNUMERICDOMAIN) && txt == sUNDEF){
             return rUNDEF;
         }
         bool ok;
@@ -324,7 +324,7 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
         if ( ok ){
             actualval = v;
         } else {
-            SPItemRange rng1 = coldef.datadef().domain()->range2range<ItemRange>();
+            SPItemRange rng1 = coldef.datadef().domain<>()->range2range<ItemRange>();
             if (rng1.isNull()){
                 WARN2(WARN_INVALID_OBJECT," type for non-ItemDomain of item "+ txt, "column "+coldef.name());
                 return QVariant(rUNDEF);
@@ -352,7 +352,7 @@ void BaseTable::initValuesColumn(const ColumnDefinition& def){
         return;
     }
 
-    IlwisTypes valueType = def.datadef().domain()->valueType();
+    IlwisTypes valueType = def.datadef().domain<>()->valueType();
     std::vector<QVariant> col(recordCount());
     for(auto& var : col) {
         if ( hasType(valueType, itINTEGER | itDOMAINITEM))
@@ -372,13 +372,13 @@ void BaseTable::initRecord(std::vector<QVariant> &values) const
     values.resize(columnCount());
     for(int i=0; i < columnCount(); ++i) {
         const ColumnDefinition &coldef  = const_cast<BaseTable *>(this)->columndefinition(i);
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itTEXTDOMAIN)) {
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itTEXTDOMAIN)) {
             values[i] = sUNDEF;
         }
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itITEMDOMAIN) ){
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itITEMDOMAIN) ){
             values[i] = QVariant((int)iUNDEF);
         }
-        if ( hasType(coldef.datadef().domain()->ilwisType(),itNUMERICDOMAIN)){
+        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itNUMERICDOMAIN)){
             values[i] = rUNDEF;
         }
     }

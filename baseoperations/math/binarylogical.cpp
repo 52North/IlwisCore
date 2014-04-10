@@ -155,7 +155,7 @@ bool BinaryLogical::prepareCoverageCoverage() {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    bool isNumeric = _inputGC1->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
+    bool isNumeric = _inputGC1->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN;
     if (!isNumeric ){
         return ERROR2(ERR_INVALID_PROPERTY_FOR_2,"domain","logical operation");
     }
@@ -180,7 +180,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)
+    if(_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN)
         return false;
 
     _number = _expression.parm(nindex).value().toDouble();

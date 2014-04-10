@@ -34,6 +34,8 @@ public:
     void resetClass(Raw key);
     void mergeClass(Raw key1, Raw key2);
 
+    bool exists(Raw key) const;
+
     quint32& operator()(Raw raw, quint32 band, quint32 value) { return select(raw, band, value); }
 
 private:

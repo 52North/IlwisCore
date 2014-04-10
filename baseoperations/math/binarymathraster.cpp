@@ -114,7 +114,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    bool isNumeric = _inputGC1->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
+    bool isNumeric = _inputGC1->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN;
     if (!isNumeric)
         return false;
 
@@ -150,7 +150,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    if(_inputGC1->datadef().domain()->ilwisType() != itNUMERICDOMAIN)
+    if(_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN)
         return false;
 
     _number1 = _expression.parm(nindex).value().toDouble();
@@ -158,7 +158,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC,itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-    auto nrange = _inputGC1->datadef().range().dynamicCast<NumericRange>();
+    auto nrange = _inputGC1->datadef().range<NumericRange>();
     if (nrange.isNull())
         return false;
 

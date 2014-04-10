@@ -9,6 +9,8 @@ class Geometery;
 
 namespace Ilwis {
 
+typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
+
 class Tranquilizer;
 
 typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
@@ -88,6 +90,9 @@ public:
      */
     PixelIterator();
     PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry *selection);
+    PixelIterator(const IRasterCoverage& raster, UPGeometry selection) : PixelIterator(raster, selection.get()){
+
+    }
 
     /*!
      * \brief Constructs a PixelIterator from a raster and a bounding box
