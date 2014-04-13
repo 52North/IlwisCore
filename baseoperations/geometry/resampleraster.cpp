@@ -40,7 +40,6 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterOut(outputRaster,box);
         iterOut.setTranquilizer(trq);
         RasterInterpolator interpolator(inputRaster, _method);
-        SPRange range = inputRaster->datadef().range();
         PixelIterator iterEnd = iterOut.end();
         bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());
         while(iterOut != iterEnd) {
