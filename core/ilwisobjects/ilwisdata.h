@@ -124,7 +124,8 @@ public:
     */
     template<class C=IlwisObject> IlwisData<C> as() const {
         if (_implementation.get() == 0)
-            throw ErrorObject(TR("Using unitialized object"));
+            return IlwisData<C>();
+            //throw ErrorObject(TR("Using unitialized object"));
         if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {
             IlwisData<C> obj;
             obj._implementation = std::static_pointer_cast<C>(_implementation);
