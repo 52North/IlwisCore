@@ -438,7 +438,7 @@ ThematicRange *ThematicRange::merge(const QSharedPointer<ThematicRange> &nr1, co
 
 ThematicRange &ThematicRange::operator<<(const QString &itemdef)
 {
-    QStringList parts = itemdef.split(" ");
+    QStringList parts = itemdef.split("|");
     add(new ThematicItem(parts));
     return *this;
 }
