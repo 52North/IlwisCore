@@ -12,6 +12,10 @@ using namespace Ilwis;
 
 SampleSet::SampleSet()
 {
+    _sampleHistogram.reset(new SampleHistogram());
+    _sampleSum.reset(new SampleSum());
+    _sampleSumXY.reset(new SampleSumXY());
+    _sampleStats.reset(new SampleStatistics());
 }
 
 void SampleSet::sampleRasterList(const IRasterCoverage &raster)
@@ -33,7 +37,7 @@ void SampleSet::sampleRasterList(const IRasterCoverage &raster)
         ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("Sample list size"), raster->name());
 }
 
-void SampleSet::sampleRaster(const IRasterCoverage& raster){
+void SampleSet::sampleRaster(const IRasterCoverage& raster) {
     if ( _sampleMaps.isValid()){
         if (! _sampleMaps->georeference()->isCompatible(raster->georeference())){
             ERROR2(ERR_NOT_COMPATIBLE2,raster->name(), _sampleMaps->name());
@@ -59,37 +63,37 @@ bool SampleSet::prepare()
     BoundingBox box = _sampleMaps->size();
     for(auto v : _sampleMap){
         PixelIterator iter(_sampleMaps);
-        _sampleHistogram(v,iter.position().z, *iter)++;
-        _sampleSum(v, iter.position().z) = *iter;
+        _sampleHistogram->at(v,iter.position().z, *iter)++;
+        _sampleSum->at(v, iter.position().z) = *iter;
         std::vector<double> shift{0.0,0.0,(double)iter.position().z};
         BoundingBox subBox = box + shift;
         PixelIterator iter2(_sampleMaps, subBox);
         std::for_each(iter2, iter2.end(),[&](double &v) {
             if ( *iter2 == v)
-                _sampleSumXY(v,*iter, *iter) += (*iter) * (*iter);
+                _sampleSumXY->at(v,*iter, *iter) += (*iter) * (*iter);
             else
-                _sampleSumXY(v, *iter, *iter2) += (*iter2) * (*iter2);
+                _sampleSumXY->at(v, *iter, *iter2) += (*iter2) * (*iter2);
 
         });
 
         double sum, mean, num, std;
         for(int band = 0; band < _sampleMaps->size().zsize(); ++band){
             for(auto item : _sampleDomain) {
-              num = _sampleSum(item->raw(), _sampleMaps->size().zsize());
+              num = _sampleSum->at(item->raw(), _sampleMaps->size().zsize());
               if ( num == 0) {
                 mean = std = 0;
               }else {
-                 sum = _sampleSum(item->raw(),band);
+                 sum = _sampleSum->at(item->raw(),band);
                  mean = sum / num;
                  if ( num < 1) {
                     std = 0;
                  } else {
-                    double v = _sampleSumXY(item->raw(), band, band) - num * mean * mean;
+                    double v = _sampleSumXY->at(item->raw(), band, band) - num * mean * mean;
                     std = v * v / ( num - 1);
                  }
               }
-              _sampleStats(item->raw(), band, SampleCell::mMEAN)= mean;
-              _sampleStats(item->raw(), band, SampleCell::mSTANDARDDEV) = std;
+              _sampleStats->at(item->raw(), band, SampleCell::mMEAN)= mean;
+              _sampleStats->at(item->raw(), band, SampleCell::mSTANDARDDEV) = std;
 
             }
         }
@@ -103,12 +107,12 @@ bool SampleSet::prepare()
 Raw SampleSet::addClass(const QString& className){
     auto item = _sampleDomain->item(className);
     Raw raw = item->raw();
-    if ( !_sampleHistogram.exists(raw)){
+    if ( !_sampleHistogram->exists(raw)){
         ++_nrOfClasses;
-        _sampleHistogram.addClass(raw);
-        _sampleStats.addClass(raw);
-        _sampleSum.addClass(raw);
-        _sampleSumXY.addClass(raw);
+        _sampleHistogram->addClass(raw);
+        _sampleStats->addClass(raw);
+        _sampleSum->addClass(raw);
+        _sampleSumXY->addClass(raw);
     }
 
     return raw;
@@ -116,19 +120,19 @@ Raw SampleSet::addClass(const QString& className){
 }
 
 void SampleSet::deleteClass(Raw raw){
-    if ( !_sampleHistogram.exists(raw))
+    if ( !_sampleHistogram->exists(raw))
         return;
-    _sampleHistogram.delClass(raw);
-    _sampleStats.delClass(raw);
-    _sampleSum.delClass(raw);
-    _sampleSumXY.delClass(raw);
+    _sampleHistogram->delClass(raw);
+    _sampleStats->delClass(raw);
+    _sampleSum->delClass(raw);
+    _sampleSumXY->delClass(raw);
 
     for(auto& v : _sampleMap)
         if ( v == raw)
             v = iUNDEF;
 
-    for(auto featureSpace : _featureSpaces)
-        featureSpace.compute();
+    for(auto& featureSpace : _featureSpaces)
+        featureSpace.second->compute();
 
 }
 
@@ -136,17 +140,17 @@ Raw SampleSet::mergeClass(Raw raw1, Raw raw2){
     if ( raw1 == raw2)
         return raw1;
 
-    _sampleHistogram.mergeClass(raw1, raw2);
-    _sampleSum.mergeClass(raw1, raw2);
-    _sampleSumXY.mergeClass(raw1, raw2);
-    _sampleStats.mergeClass(raw1, raw2, _sampleSum, _sampleSumXY);
+    _sampleHistogram->mergeClass(raw1, raw2);
+    _sampleSum->mergeClass(raw1, raw2);
+    _sampleSumXY->mergeClass(raw1, raw2);
+    _sampleStats->mergeClass(raw1, raw2, _sampleSum, _sampleSumXY);
 
     for(auto& v : _sampleMap)
         if ( v == raw2)
             v = raw1;
 
-    for(auto featureSpace : _featureSpaces)
-        featureSpace.compute();
+    for(auto& featureSpace : _featureSpaces)
+        featureSpace.second->compute();
 
     return raw1;
 
@@ -154,16 +158,16 @@ Raw SampleSet::mergeClass(Raw raw1, Raw raw2){
 
 void SampleSet::changeSums(const Pixel& pixel, Raw targetClass, int change){
     quint32 nrOfBands = _sampleMaps->size().zsize();
-    _sampleSum(targetClass,nrOfBands)+=change;
+    _sampleSum->at(targetClass,nrOfBands)+=change;
     for(int band = 0 ; band < nrOfBands; ++band){
         Raw raw = _sampleMaps->pix2value(Pixel(pixel.x, pixel.y, pixel.z));
-        _sampleHistogram(targetClass, band, raw)+=change;
-        _sampleSum(targetClass, band) += raw;
+        _sampleHistogram->at(targetClass, band, raw)+=change;
+        _sampleSum->at(targetClass, band) += raw;
         for(quint32 band2 = band; band2 < nrOfBands; ++band2){
             if ( band2 == band)
-                _sampleSumXY(targetClass,band, band) += change * raw * raw;
+                _sampleSumXY->at(targetClass,band, band) += change * raw * raw;
             else
-                _sampleSumXY(targetClass, band, band2) += change * raw * _sampleMaps->pix2value(Pixel(pixel.x, pixel.y, band2));
+                _sampleSumXY->at(targetClass, band, band2) += change * raw * _sampleMaps->pix2value(Pixel(pixel.x, pixel.y, band2));
         }
     }
 }
@@ -181,15 +185,36 @@ void SampleSet::incrementSampels(Raw newClass){
     double mean = 0, std = 0, sum = 0;
     for(int band = 0 ; band < nrOfBands; ++band){
 
-        quint32 num = _sampleSum(newClass, nrOfBands);
+        quint32 num = _sampleSum->at(newClass, nrOfBands);
+        mean = sum / num;
         if ( num == 0)
             mean = std = 0;
         else{
-            sum =  _sampleSum(newClass, band);
+            sum =  _sampleSum->at(newClass, band);
         }
-        std = num == 1 ? 0 : std::sqrt(_sampleSumXY(newClass, band, band) - num * mean * mean) / (num - 1);
-        _sampleStats(newClass, band, SampleCell::mMEAN) = mean;
+        std = num == 1 ? 0 : std::sqrt(_sampleSumXY->at(newClass, band, band) - num * mean * mean) / (num - 1);
+        _sampleStats->at(newClass, band, SampleCell::mMEAN) = mean;
+        _sampleStats->at(newClass, band, SampleCell::mSTANDARDDEV) = std;
     }
+}
+
+void SampleSet::registerFeatureSpace(FeatureSpace *fs)
+{
+    if(!fs)
+        return;
+
+    auto iter = _featureSpaces.find(fs->id());
+    if ( iter !=  end(_featureSpaces)){
+        _featureSpaces[fs->id()].reset(fs);
+    }else
+        delete fs;
+}
+
+void SampleSet::unregisterFeatureSpace(quint64 id)
+{
+    auto iter = _featureSpaces.find(id);
+    if ( iter != end(_featureSpaces))
+        _featureSpaces.erase(iter);
 }
 
 bool SampleSet::isValid() const
@@ -217,3 +242,15 @@ void SampleSet::backgroundRaster(const IRasterCoverage& raster){
     }
     _background = raster;
 }
+
+UPSampleStatistics &SampleSet::statistics()
+{
+    return _sampleStats;
+}
+
+IRasterCoverage SampleSet::sampleMap() const
+{
+    return _sampleMap;
+}
+
+

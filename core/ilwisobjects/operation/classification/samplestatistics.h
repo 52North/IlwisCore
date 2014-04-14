@@ -36,10 +36,7 @@ public:
 
     bool exists(Raw key) const;
 
-    quint32& operator()(Raw raw, quint32 band, quint32 value) { return select(raw, band, value); }
-
-private:
-    quint32 &select(Raw key, quint32 band, quint32 value);
+    quint32 &at(Raw key, quint32 band, quint32 value);
 
 private:
     std::vector<std::vector<std::vector<quint32>>> _hist;
@@ -55,9 +52,9 @@ public:
     void resetClass(Raw key);
     void mergeClass(Raw key1, Raw key2);
     double pixelInClass(Raw key);
-    quint32& operator()(Raw raw, quint32 band1) { return select(raw, band1); }
+
+    quint32& at(Raw raw, quint32 band1);
 private:
-    quint32& select(Raw raw, quint32 band1);
     std::vector<std::vector<quint32>> _sums;
 };
 
@@ -69,9 +66,9 @@ public:
     void delClass(Raw key);
     void resetClass(Raw key);
     void mergeClass(Raw key1, Raw key2);
-    quint32& operator()(Raw key, quint32 band1, quint32 band2) { return select(key, band1, band2);}
+    quint32& at(Raw key, quint32 band1, quint32 band2);
+
 private:
-    quint32& select(Raw key, quint32 band1, quint32 band2);
     std::vector<std::vector<std::vector<quint32>>> _sums;
 
 };
@@ -84,14 +81,15 @@ public:
     void addClass(quint32 key);
     void delClass(quint32 key);
     void resetClass(Raw key);
-    void mergeClass(quint32 key1, quint32 key2, SampleSum &sum, SampleSumXY &sumXY);
-    double& operator()(Raw key, quint32 band, SampleCell::Marker val) { return select(key, band, val); }
+    void mergeClass(quint32 key1, quint32 key2, std::unique_ptr<SampleSum> &sum, std::unique_ptr<SampleSumXY> &sumXY);
+    double& at(Raw key, quint32 band, SampleCell::Marker val);
 
 private:
-    double& select(Raw key, quint32 band, SampleCell::Marker val);
     std::vector<std::vector<SampleCell>> _sampleSpace;
 
 };
+
+typedef std::unique_ptr<SampleStatistics> UPSampleStatistics;
 }
 
 #endif // SAMPLESTATISTICS_H
