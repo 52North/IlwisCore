@@ -385,8 +385,6 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "ValueDomain";
     case  itITEMDOMAIN:
         return "ItemDomain";
-    case  itTIMEDOMAIN:
-        return "TimeDomain";
     case  itCOLORDOMAIN:
         return "ColorDomain";
     case  itCOORDSYSTEM:
