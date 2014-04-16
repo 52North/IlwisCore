@@ -50,7 +50,7 @@ IlwisObject::~IlwisObject()
 
 IlwisObject *IlwisObject::create(const Resource& resource, const PrepareOptions &options) {
 
-    const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",resource);
+    const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",resource,options);
 
     if ( factory)
         return factory->create(resource, options);
