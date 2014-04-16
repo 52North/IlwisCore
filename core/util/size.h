@@ -117,6 +117,10 @@ public:
     T zsize() const{
         return _zsize;
     }
+
+    Size<T> twod() const{
+        return Size<T>(_xsize, _ysize,0);
+    }
     /*!
     returns the size in the x dimension as reference. So it can function as a setter
      * \return an 32-bits signed integers
