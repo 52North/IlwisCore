@@ -169,11 +169,37 @@ void PixelIterator::init() {
     _xChanged = _yChanged = _zChanged = false;
 }
 
+bool PixelIterator::moveXY(int delta){
+    _zChanged = (_z - delta) %  (int)_box.zlength() != 0;
+    qint32 tempx = _x + (_z - _box.min_corner().z) / _box.zlength();
+    _z = _box.min_corner().z + (_z - _box.min_corner().z) % (int)_box.zlength();
+    _xChanged = tempx != _x;
+    std::swap(_x,tempx);
+    qint32 ylocal = _y % _grid->maxLines();
+    _localOffset = _x + ylocal * _grid->size().xsize();
+    if (_trq)
+        _trq->move();
+    if ( _x > _endx) {
+        quint32 newy = _y + (_x - _box.min_corner().x) / _box.xlength();
+        _currentBlock = newy * _grid->blocksPerBand() + _x / _grid->maxLines();
+        _yChanged = newy != _y;
+        _y = newy;
+        _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
+        _xChanged = _x != tempx;
+        int localblock = _y /  _grid->maxLines();
+        _localOffset = _x * _grid->size().zsize() + _z - localblock * _grid->maxLines() * _grid->size().zsize();
+        if ( _y > _endy) { // done with this iteration block
+            _linearposition = _endposition;
+            return false;
+        }
+    }
+    return true;
+}
 
 bool PixelIterator::moveYZ(int delta){
     _xChanged = (_x - delta) %  (int)_box.xlength() != 0;
-    qint32 tempy = _y + (_x - _box.min_corner().x) / _box.xlength();
-    _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
+    qint32 tempy = _y + (_x - _box.min_corner().x) / _box.xlength(); // with a big delta, y might jump more number of lines == xdistance / box xsize
+    _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength(); //  the modulo xlength gives the jump in one line
     _yChanged = tempy != _y;
     std::swap(_y,tempy);
     qint32 ylocal = _y % _grid->maxLines();
