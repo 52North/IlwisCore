@@ -18,7 +18,29 @@ SampleSet::SampleSet()
     _sampleStats.reset(new SampleStatistics());
 }
 
-void SampleSet::sampleRasterList(const IRasterCoverage &raster)
+SampleSet::SampleSet(const Resource &res)
+{
+
+}
+
+SampleSet::SampleSet(const SampleSet &sampleset) : Identity(name(),id(), code(), description())
+{
+    _background = sampleset._background;
+    _sampleMap = sampleset._sampleMap;
+    _sampleMaps = sampleset._sampleMaps;
+    _sampleDomain = sampleset._sampleDomain;
+    _sampleStats.reset(sampleset._sampleStats->copy<SampleStatistics>());
+    _sampleHistogram.reset( sampleset._sampleHistogram->copy<SampleHistogram>());
+    _sampleSum.reset(sampleset._sampleSum->copy<SampleSum>());
+    _sampleSumXY.reset(sampleset._sampleSumXY->copy<SampleSumXY>());
+}
+
+SampleSet::~SampleSet()
+{
+
+}
+
+void SampleSet::sampleRasterSet(const IRasterCoverage &raster)
 {
     if ( !hasType(raster->datadef().domain<>()->valueType(), itNUMBER)){
         ERROR2(ERR_INVALID_PROPERTY_FOR_2, TR("Sample list domain"), raster->name());
@@ -59,6 +81,8 @@ bool SampleSet::prepare()
     if ( !_sampleMap.isValid()){
         OperationHelperRaster::initialize(_sampleMaps, _sampleMap, itDOMAIN | itGEOREF | itCOORDSYSTEM | itENVELOPE);
     }
+
+    Identity::prepare();
 
     BoundingBox box = _sampleMaps->size();
     for(auto v : _sampleMap){
@@ -102,6 +126,24 @@ bool SampleSet::prepare()
     return true;
 
 
+}
+
+SampleSet &SampleSet::operator=(const SampleSet &sampleset)
+{
+    name(sampleset.name());
+    code(sampleset.code());
+    setId(sampleset.id());
+    setDescription(sampleset.description());
+    _background = sampleset._background;
+    _sampleMap = sampleset._sampleMap;
+    _sampleMaps = sampleset._sampleMaps;
+    _sampleDomain = sampleset._sampleDomain;
+    _sampleStats.reset(sampleset._sampleStats->copy<SampleStatistics>());
+    _sampleHistogram.reset( sampleset._sampleHistogram->copy<SampleHistogram>());
+    _sampleSum.reset(sampleset._sampleSum->copy<SampleSum>());
+    _sampleSumXY.reset(sampleset._sampleSumXY->copy<SampleSumXY>());
+
+    return *this;
 }
 
 Raw SampleSet::addClass(const QString& className){
@@ -248,9 +290,24 @@ UPSampleStatistics &SampleSet::statistics()
     return _sampleStats;
 }
 
-IRasterCoverage SampleSet::sampleMap() const
+const UPSampleStatistics &SampleSet::statistics() const
+{
+    return _sampleStats;
+}
+
+IRasterCoverage SampleSet::sampleRaster() const
 {
     return _sampleMap;
+}
+
+IRasterCoverage SampleSet::sampleRasterSet() const
+{
+    return _sampleMaps;
+}
+
+IThematicDomain SampleSet::thematicDomain() const
+{
+    return _sampleDomain;
 }
 
 

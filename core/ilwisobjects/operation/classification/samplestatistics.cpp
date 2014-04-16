@@ -72,12 +72,33 @@ void SampleStatistics::mergeClass(quint32 key1, quint32 key2, std::unique_ptr<Sa
 
 double &SampleStatistics::at(Raw key, quint32 band, SampleCell::Marker marker)
 {
+    return valueAt(key, band, marker)    ;
+}
+
+double SampleStatistics::at(Raw key, quint32 band, SampleCell::Marker marker) const
+{
+    return const_cast<SampleStatistics *>(this)->valueAt(key, band, marker)    ;
+}
+
+double &SampleStatistics::valueAt(Raw key, quint32 band, SampleCell::Marker marker)
+{
     if ( key > _thematicDomain->count()){
      throw ErrorObject(TR("SampleStatistics index(es) out of range"));
     }
     if ( marker == SampleCell::mMEAN)
         return _sampleSpace[key][band]._classMean;
     return _sampleSpace[key][band]._classStd;
+
+}
+
+SampleStats *SampleStatistics::clone() const
+{
+    SampleStatistics  *stats = new SampleStatistics();
+    stats->_nrOfBands = _nrOfBands;
+    stats->_thematicDomain = _thematicDomain;
+    stats->_sampleSpace = _sampleSpace;
+
+    return stats;
 
 }
 //----------------------------------------------------------
@@ -136,6 +157,17 @@ double SampleSum::pixelInClass(Raw key)
     return (double) at(key, _nrOfBands);
 }
 
+SampleStats *SampleSum::clone() const
+{
+    SampleSum  *sums = new SampleSum();
+    sums->_nrOfBands = _nrOfBands;
+    sums->_thematicDomain = _thematicDomain;
+    sums->_sums = _sums;
+
+    return sums;
+
+}
+
 quint32 &SampleSum::at(Raw raw, quint32 band)
 {
     if ( raw >= _sums.size() || band >= _sums[raw].size())
@@ -156,6 +188,17 @@ void SampleSumXY::prepare(IThematicDomain thematicDomain, quint32 nrOfBands)
     for(auto item : _thematicDomain){
         addClass(item->raw());
     }
+}
+
+SampleStats *SampleSumXY::clone() const
+{
+    SampleSumXY  *sums = new SampleSumXY();
+    sums->_nrOfBands = _nrOfBands;
+    sums->_thematicDomain = _thematicDomain;
+    sums->_sums = _sums;
+
+    return sums;
+
 }
 
 void SampleSumXY::addClass(Raw key)
@@ -278,6 +321,18 @@ bool SampleHistogram::exists(Raw key) const
     if ( key >= _hist.size())
         return false;
     return _hist[key].size() > 0;
+}
+
+SampleStats *SampleHistogram::clone() const
+{
+    SampleHistogram  *hist = new SampleHistogram();
+    hist->_nrOfBands = _nrOfBands;
+    hist->_raster = _raster;
+    hist->_thematicDomain = _thematicDomain;
+    hist->_minValuesperBand = _minValuesperBand;
+    hist->_hist = _hist;
+
+    return hist;
 }
 
 quint32 &SampleHistogram::at(Raw key, quint32 band, quint32 value)

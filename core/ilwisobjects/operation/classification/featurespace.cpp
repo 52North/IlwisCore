@@ -45,7 +45,7 @@ void FeatureSpace::addSample(const Pixel &xy, Raw classRaw)
 
 void FeatureSpace::compute()
 {
-    PixelIterator iter(_sampleset->sampleMap());
+    PixelIterator iter(_sampleset->sampleRaster());
 
     while(iter != iter.end()){
         if ( isNumericalUndef(*iter))

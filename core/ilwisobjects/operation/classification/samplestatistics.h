@@ -3,6 +3,12 @@
 
 namespace Ilwis {
 
+class RasterCoverage;
+class ThematicItem;
+
+typedef IlwisData<RasterCoverage> IRasterCoverage;
+typedef IlwisData<ItemDomain<ThematicItem>> IThematicDomain;
+
 const int MAXCLASS{250};
 
 struct SampleCell {
@@ -20,6 +26,10 @@ public:
     virtual void addClass(Raw key) = 0;
     virtual void delClass(Raw key) = 0;
     virtual void resetClass(Raw key) = 0;
+    virtual SampleStats *clone() const = 0;
+    template<typename T> T* copy() const{
+        return static_cast<T *> (clone());
+    }
     virtual void mergeClass(Raw key1, Raw key2) {}
 protected:
     quint32 _nrOfBands;
@@ -35,6 +45,7 @@ public:
     void mergeClass(Raw key1, Raw key2);
 
     bool exists(Raw key) const;
+    SampleStats *clone() const;
 
     quint32 &at(Raw key, quint32 band, quint32 value);
 
@@ -53,6 +64,8 @@ public:
     void mergeClass(Raw key1, Raw key2);
     double pixelInClass(Raw key);
 
+    SampleStats *clone() const;
+
     quint32& at(Raw raw, quint32 band1);
 private:
     std::vector<std::vector<quint32>> _sums;
@@ -61,6 +74,7 @@ private:
 class SampleSumXY : public SampleStats
 {
 public:
+    SampleStats *clone() const;
     void prepare(IThematicDomain thematicDomain, quint32 nrOfBands);
     void addClass(Raw key);
     void delClass(Raw key);
@@ -73,20 +87,24 @@ private:
 
 };
 
-class SampleStatistics: public SampleStats
+class KERNELSHARED_EXPORT SampleStatistics: public SampleStats
 {
 public:
     SampleStatistics();
+
+    SampleStats *clone() const;
     void prepare(IThematicDomain thematicDomain, quint32 nrOfBands);
     void addClass(quint32 key);
     void delClass(quint32 key);
     void resetClass(Raw key);
     void mergeClass(quint32 key1, quint32 key2, std::unique_ptr<SampleSum> &sum, std::unique_ptr<SampleSumXY> &sumXY);
     double& at(Raw key, quint32 band, SampleCell::Marker val);
+    double at(Raw key, quint32 band, SampleCell::Marker val) const;
 
 private:
     std::vector<std::vector<SampleCell>> _sampleSpace;
 
+    double &valueAt(Raw key, quint32 band, SampleCell::Marker marker);
 };
 
 typedef std::unique_ptr<SampleStatistics> UPSampleStatistics;
