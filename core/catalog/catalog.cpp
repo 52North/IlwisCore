@@ -133,7 +133,10 @@ void Catalog::addItemsPrivate(const std::vector<Resource> &itemlist, bool doclea
     if ( doclear)
         _items.resize(0);
 
-    _items = itemlist;
+    for(auto resource : itemlist){
+        if(std::find(_items.begin(), _items.end(), resource) == _items.end())
+            _items.push_back(resource);
+    }
 }
 
 void Catalog::copyTo(IlwisObject* obj){

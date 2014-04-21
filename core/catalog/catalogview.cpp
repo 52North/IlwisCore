@@ -19,40 +19,105 @@ CatalogView::CatalogView(QObject *parent) :
 {
 }
 
+CatalogView::CatalogView(const QUrl &loc) : QObject(){
+    addLocation(loc);
+    QStringList parts = loc.toString().split("/");
+    name(parts.back());
+    _resource = Resource("ilwis://internalcatalog/" + name(), itCATALOGVIEW);
+    QStringList lst;
+    lst.append(loc.toString());
+    _resource["locations"] = lst;
+}
+
+CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resource.name(),resource.id(),resource.code()){
+    _filter = resource["filter"].toString();
+    QStringList lst = resource["locations"].toStringList();
+    for(auto url : lst){
+        _locations.push_back(QUrl(url));
+    }
+    _resource = resource;
+}
+
 CatalogView::CatalogView(const CatalogView &cat) : QObject(),
     Identity(cat.name(),cat.id(),cat.code(),cat.description()),
     _filter(cat._filter),
-    _location(cat._location),
-    _parent(cat._parent)
+    _locations(cat._locations),
+    _parent(cat._parent),
+    _resource(cat.resource())
 {
+}
+
+void CatalogView::addLocation(const QUrl& loc){
+    if ( std::find(_locations.begin(), _locations.end(), loc) == _locations.end()){
+        _locations.push_back(loc);
+        if ( name() != sUNDEF)
+            return;
+
+        QStringList parts = loc.toString().split("/");
+        QString cid = parts.back();
+        name(cid);
+    }
 }
 
 std::vector<Resource> CatalogView::items() const
 {
-    return mastercatalog()->select(_location, _filter);
+    if (!isValid())
+        return std::vector<Resource>();
+
+    std::vector<Resource> results;
+    for(auto location : _locations) {
+        std::vector<Resource> items =  mastercatalog()->select(location, _filter);
+        std::copy(items.begin(), items.end(),std::back_inserter(results));
+    }
+    std::set<Resource> uniques(results.begin(), results.end());
+    results.resize(uniques.size());
+    std::copy(uniques.begin(), uniques.end(), results.begin());
+    return results;
+
+}
+
+QString CatalogView::filter() const
+{
+    return _filter;
+}
+
+void CatalogView::filter(const QString &filter)
+{
+    CatalogQuery query;
+    _filter = query.transformQuery(filter);
+}
+
+Resource CatalogView::resource() const
+{
+    return _resource;
 }
 
 
 
-bool CatalogView::prepare(const QUrl &resource, const QString& filter)
+bool CatalogView::prepare()
 {
-
-    bool ok = mastercatalog()->addContainer(resource);
-    if (!ok)
-        return false;
-
-    _location = resource;
-    CatalogQuery query;
-    _filter = query.transformQuery(filter);
-
-    QStringList parts = resource.path().split("/");
-    QString cid = parts.back();
+    for(auto resource : _locations)
+        if(!mastercatalog()->addContainer(resource))
+            return false;
 
     Identity::prepare();
 
-    name(cid);
+
 
     return true;
+}
+
+CatalogView &CatalogView::operator=(const CatalogView &view)
+{
+    name(view.name());
+    setDescription(view.description());
+    code(view.code());
+    _filter = view._filter;
+    _locations = view._locations;
+    _resource = view._resource;
+
+    return *this;
+
 }
 
 QString CatalogView::type() const
@@ -63,7 +128,7 @@ QString CatalogView::type() const
 
 bool CatalogView::isValid() const
 {
-    return _location.isValid(); // && _filter != "";
+    return _locations.size() > 0; // && _filter != "";
 }
 
 QUrl CatalogView::parentCatalogView() const
