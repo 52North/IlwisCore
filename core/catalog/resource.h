@@ -203,6 +203,7 @@ public:
      * @return
      */
     QString dimensions() const;
+    void dimensions(const QString& dim);
 
     /**
      * Returns the ilwis type of this Resource, anything is possible

@@ -311,6 +311,11 @@ QString Resource::dimensions() const
     return _dimensions;
 }
 
+void Resource::dimensions(const QString &dim)
+{
+    _dimensions = dim;
+}
+
 void Resource::addContainer(const QUrl& url, int level) {
     if ( level < _container.size())
         _container[0] = url;
