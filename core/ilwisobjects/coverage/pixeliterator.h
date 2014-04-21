@@ -483,7 +483,8 @@ protected:
         if ( _flow == fXYZ) {
             ok = moveXYZ(n);
         }
-        else if ( _flow == fYXZ){
+        else if ( _flow == fZXY){
+            ok = moveZXY(n);
         }
 
         return ok;
@@ -492,6 +493,21 @@ protected:
 
 private:
 
+
+    bool moveZXY(int delta){
+        _z += delta;
+        _linearposition += delta * _box.xlength();
+        _localOffset += _box.xlength();
+        _zChanged = true;
+        _xChanged = _yChanged = false;
+        _currentBlock++;
+        if (_selectionIndex < 0){
+            if ( _z > _endz){
+                moveXY(delta);
+            }
+        }
+        return true;
+    }
 
     bool moveXYZ(int delta) {
         _x += delta;
@@ -522,6 +538,7 @@ private:
     }
 
     bool moveYZ(int delta);
+    bool moveXY(int delta);
     void move2NextRow(int delta);
     void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
 };

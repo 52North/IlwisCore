@@ -19,6 +19,7 @@
 #define ERR_ILLEGAL_VALUE_RANGE_DEFINITION_1 "Illegal value range definition in %1"
 #define ERR_NO_INITIALIZED_1 "%1 not properly initialized"
 #define ERR_NO_INITIALIZED_2 "%1 of %2 not properly initialized"
+#define ERR_NO_INITIALIZED_3 "%1 of %2 not properly initialized : %3"
 #define ERR_COLUMN_MISSING_2 "Column %1 missing from table %2"
 #define ERR_COULD_NOT_LOAD_2 "Could not load %1 %2"
 #define ERR_COULD_NOT_ALLOCATE_2 "Could not allocate %1 for %2"

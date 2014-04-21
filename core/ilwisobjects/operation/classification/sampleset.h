@@ -10,20 +10,28 @@ class SampleSumXY;
 class FeatureSpace;
 
 typedef std::unique_ptr<SampleStatistics> UPSampleStatistics;
+typedef std::unique_ptr<FeatureSpace> UPFeatureSpace;
 
 class KERNELSHARED_EXPORT SampleSet : public Identity
 {
 public:
     SampleSet();
+    SampleSet(const Resource& res);
+    SampleSet(const SampleSet& sampleset);
+    virtual ~SampleSet();
     bool prepare();
+    SampleSet& operator=(const SampleSet& sms);
 
-    void sampleRasterList(const IRasterCoverage& raster);
+    void sampleRasterSet(const IRasterCoverage& raster);
     void sampleRaster(const IRasterCoverage &raster);
     void thematicDomain(const IThematicDomain& dom);
     void backgroundRaster(const IRasterCoverage &raster);
 
     UPSampleStatistics& statistics() ;
-    IRasterCoverage sampleMap() const;
+    const UPSampleStatistics &statistics() const;
+    IRasterCoverage sampleRaster() const;
+    IRasterCoverage sampleRasterSet() const;
+    IThematicDomain thematicDomain() const;
 
     bool isValid() const;
 
@@ -50,12 +58,14 @@ private:
 
     quint32 _nrOfClasses = 0;
 
-    std::map<quint64, std::unique_ptr<FeatureSpace>> _featureSpaces;
+    std::map<quint64, UPFeatureSpace> _featureSpaces;
 
 
 
     void changeSums(const Pixel &pixel, Raw targetClass, int change);
 };
 }
+
+Q_DECLARE_METATYPE(Ilwis::SampleSet);
 
 #endif // SAMPLESET_H

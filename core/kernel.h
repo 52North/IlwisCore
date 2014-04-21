@@ -150,7 +150,7 @@ public:
      * Returns a facotry for a certain kind of objects and resource. The method tries to find a factory of a certain kind that can handle that type of resource. It will query the known factories through the canUse method if it can handle the resource. If so it will return the factory
      * \return an instanciated factory or 0. In the case of 0 the issuelogger will log the error
      */
-    template<class T> const T *factory(const QString& kind, const Resource& resource) const {
+    template<class T> const T *factory(const QString& kind, const Resource& resource, const PrepareOptions &options=PrepareOptions()) const {
         QString type = kind.toLower();
         for(QHash<QString, FactoryInterface *>::const_iterator iter = _masterfactory.begin(); iter != _masterfactory.end(); ++iter) {
             QStringList slist = iter.key().split("::");
@@ -160,6 +160,13 @@ public:
                 found =  back == type;
             }
             if (found ) {
+                QString key("connector");
+                if ( options.contains(key)){ // have we specified a specific connector>?
+                    if ( slist.size() > 1){ // are there enough items in the key
+                        if ( options._values.at(key) != slist[0]) // if the item in the key doesnt match the requested connector we pass it.
+                            return 0;
+                    }
+                }
                 if ( iter.value()->canUse(resource))
                     return dynamic_cast<T *>(iter.value());
             }
