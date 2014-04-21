@@ -38,15 +38,21 @@ public:
      * \param cat
      */
     CatalogView(const CatalogView& cat);
+    CatalogView(const QUrl &loc);
+    CatalogView(const Resource &resource);
     ~CatalogView(){}
-    /*!
-     returns the filtered items out of the master-catalog.
-     * \return list of resources
-     */
-    std::vector<Resource> items() const;
-    virtual bool prepare(const QUrl &resource, const QString &filter="");
+
+    virtual bool prepare();
+    CatalogView& operator=(const CatalogView& view);
+
+    void addLocation(const QUrl &loc);
     QString type() const;
     bool isValid() const ;
+    std::vector<Resource> items() const;
+    QString filter() const;
+    void filter(const QString& filter);
+    Resource resource() const;
+
      /*!
     Convenience method to retrieve the location the catalog is currently attached to.
 
@@ -63,8 +69,9 @@ protected:
     bool fillCatalog();
 
     QString _filter;
-    QUrl _location;
+    std::vector<QUrl> _locations;
     QUrl _parent;
+    Resource _resource;
 
     
 signals:
