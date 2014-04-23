@@ -21,27 +21,27 @@ DEFINES += RASTEROPERATIONS_LIBRARY
 SOURCES += \ 
     rasteroperations/rasteroperationsmodule.cpp \
     rasteroperations/aggregateraster.cpp \
-    rasteroperations/areanumbering.cpp \
     rasteroperations/crossrasters.cpp \
     rasteroperations/rasterstretchoperation.cpp \
-    rasteroperations/linearrasterfilter.cpp \
-    rasteroperations/rankorderrasterfilter.cpp \
-    rasteroperations/rasterslicing.cpp \
     rasteroperations/classification/rasterclassification.cpp \
-    rasteroperations/classification/classifier.cpp
+    rasteroperations/classification/classifier.cpp \
+    rasteroperations/classification/rasterslicing.cpp \
+    rasteroperations/classification/areanumbering.cpp \
+    rasteroperations/filter/rankorderrasterfilter.cpp \
+    rasteroperations/filter/linearrasterfilter.cpp
 
 
 HEADERS += \
     rasteroperations/rasteroperationsmodule.h \
     rasteroperations/aggregateraster.h \
-    rasteroperations/areanumbering.h \
     rasteroperations/crossrasters.h \
     rasteroperations/rasterstrechoperation.h \
-    rasteroperations/linearrasterfilter.h \
-    rasteroperations/rankorderrasterfilter.h \
-    rasteroperations/rasterslicing.h \
     rasteroperations/classification/rasterclassification.h \
-    rasteroperations/classification/classifier.h
+    rasteroperations/classification/classifier.h \
+    rasteroperations/classification/rasterslicing.h \
+    rasteroperations/classification/areanumbering.h \
+    rasteroperations/filter/rankorderrasterfilter.h \
+    rasteroperations/filter/linearrasterfilter.h
 
 
 OTHER_FILES += \ 
