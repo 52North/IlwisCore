@@ -19,7 +19,6 @@
 #include "operation.h"
 #include "pixeliterator.h"
 #include "aggregateraster.h"
-#include "areanumbering.h"
 #include "domainitem.h"
 #include "identifieritem.h"
 #include "itemrange.h"
@@ -27,9 +26,6 @@
 #include "itemdomain.h"
 #include "crossrasters.h"
 #include "rasterstrechoperation.h"
-#include "rasterfilter.h"
-#include "linearrasterfilter.h"
-#include "rankorderrasterfilter.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;
@@ -48,11 +44,8 @@ QString RasterOperationsModule::getInterfaceVersion() const
 void RasterOperationsModule::prepare()
 {
    commandhandler()->addOperation(AggregateRaster::createMetadata(), AggregateRaster::create);
-   commandhandler()->addOperation(AreaNumbering::createMetadata(), AreaNumbering::create);
    commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
    commandhandler()->addOperation(LinearStretchOperation::createMetadata(), LinearStretchOperation::create);
-   commandhandler()->addOperation(LinearRasterFilter::createMetadata(), LinearRasterFilter::create);
-   commandhandler()->addOperation(RankOrderRasterFilter::createMetadata(), RankOrderRasterFilter::create);
 
 }
 
