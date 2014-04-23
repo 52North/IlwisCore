@@ -183,8 +183,6 @@ bool PixelIterator::moveXY(int delta){
         _y = newy;
         _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
         _xChanged = _x != tempx;
-        //int localblock = _y /  _grid->maxLines();
-        //_localOffset = _x * _grid->size().zsize() + _z - localblock * _grid->maxLines() * _grid->size().zsize();
         if ( _y > _endy) { // done with this iteration block
             _linearposition = _endposition;
             return false;
