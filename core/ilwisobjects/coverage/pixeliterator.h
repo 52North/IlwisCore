@@ -499,7 +499,7 @@ private:
         _linearposition += delta * _box.xlength() * _box.ylength();
         _zChanged = true;
         _xChanged = _yChanged = false;
-        _currentBlock++;
+        _currentBlock += delta;
         if (_selectionIndex < 0){
             if ( _z > _endz){
                 return moveXY(delta);
