@@ -154,7 +154,7 @@ template<class T> T undef() {
     return T();
 }
 
-typedef quint32 Raw;
+typedef double Raw; // originally raws were integers and they still are but as the undefineds are doubles; they must fit in there
 
 
 
