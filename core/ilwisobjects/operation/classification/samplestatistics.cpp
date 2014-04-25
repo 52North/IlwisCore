@@ -19,18 +19,18 @@ void SampleStatistics::prepare(IThematicDomain thematicDomain, quint32 nrOfBands
     _nrOfBands = nrOfBands;
 
     _sampleSpace.resize(MAXCLASS + 1);
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
 }
 
-void SampleStatistics::addClass(quint32 key)
+void SampleStatistics::addClass(Raw key)
 {
     if ( _sampleSpace[key].size() != 0)
         return;
     _sampleSpace[key].resize(_nrOfBands);
 }
 
-void SampleStatistics::delClass(quint32 key)
+void SampleStatistics::delClass(Raw key)
 {
     if ( key >= _sampleSpace.size())
         return;
@@ -109,7 +109,7 @@ void SampleSum::prepare(IThematicDomain thematicDomain, quint32 nrOfBands)
     _nrOfBands = nrOfBands;
     _sums.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());
@@ -183,7 +183,7 @@ void SampleSumXY::prepare(IThematicDomain thematicDomain, quint32 nrOfBands)
     _nrOfBands = nrOfBands;
     _sums.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());
@@ -208,7 +208,7 @@ void SampleSumXY::addClass(Raw key)
     _sums[key].resize(_nrOfBands);
     int count = 0;
     for(auto& vec : _sums[key])
-        vec.resize(count++,0);
+        vec.resize(1 + count++,0);
 }
 
 void SampleSumXY::delClass(Raw key)
@@ -260,7 +260,7 @@ void SampleHistogram::prepare(IThematicDomain thematicDomain, const IRasterCover
 
     _hist.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());
