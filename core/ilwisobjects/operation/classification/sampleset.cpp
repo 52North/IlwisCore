@@ -25,7 +25,6 @@ SampleSet::SampleSet(const Resource &res)
 
 SampleSet::SampleSet(const SampleSet &sampleset) : Identity(name(),id(), code(), description())
 {
-    _background = sampleset._background;
     _sampleMap = sampleset._sampleMap;
     _sampleMaps = sampleset._sampleMaps;
     _sampleDomain = sampleset._sampleDomain;
@@ -33,6 +32,17 @@ SampleSet::SampleSet(const SampleSet &sampleset) : Identity(name(),id(), code(),
     _sampleHistogram.reset( sampleset._sampleHistogram->copy<SampleHistogram>());
     _sampleSum.reset(sampleset._sampleSum->copy<SampleSum>());
     _sampleSumXY.reset(sampleset._sampleSumXY->copy<SampleSumXY>());
+}
+
+SampleSet::SampleSet(const IRasterCoverage &samplemaps, const IThematicDomain &dom, const IRasterCoverage &samplemap) :
+    _sampleMap(samplemap),
+    _sampleMaps(samplemaps),
+    _sampleDomain(dom)
+{
+    _sampleHistogram.reset(new SampleHistogram());
+    _sampleSum.reset(new SampleSum());
+    _sampleSumXY.reset(new SampleSumXY());
+    _sampleStats.reset(new SampleStatistics());
 }
 
 SampleSet::~SampleSet()
@@ -80,52 +90,82 @@ bool SampleSet::prepare()
         return false;
     if ( !_sampleMap.isValid()){
         OperationHelperRaster::initialize(_sampleMaps, _sampleMap, itDOMAIN | itGEOREF | itCOORDSYSTEM | itENVELOPE);
+        return true;
     }
 
     Identity::prepare();
 
+
     BoundingBox box = _sampleMaps->size();
-    for(auto v : _sampleMap){
-        PixelIterator iter(_sampleMaps);
-        _sampleHistogram->at(v,iter.position().z, *iter)++;
-        _sampleSum->at(v, iter.position().z) = *iter;
-        std::vector<double> shift{0.0,0.0,(double)iter.position().z};
-        BoundingBox subBox = box + shift;
-        PixelIterator iter2(_sampleMaps, subBox);
-        std::for_each(iter2, iter2.end(),[&](double &v) {
-            if ( *iter2 == v)
-                _sampleSumXY->at(v,*iter, *iter) += (*iter) * (*iter);
-            else
-                _sampleSumXY->at(v, *iter, *iter2) += (*iter2) * (*iter2);
+    PixelIterator iterSampleMap(_sampleMap);
+    PixelIterator iterBands(_sampleMaps);
+    iterBands.setFlow(PixelIterator::fZXY);
+    PixelIterator iterBandsEnd = iterBands.end();
+    int nrOfBands = _sampleMaps->size().zsize();
 
-        });
+    _sampleHistogram->prepare(_sampleDomain, _sampleMaps);
+    _sampleSumXY->prepare(_sampleDomain, nrOfBands);
+    _sampleSum->prepare(_sampleDomain, nrOfBands);
+    _sampleStats->prepare(_sampleDomain, nrOfBands);
 
-        double sum, mean, num, std;
-        for(int band = 0; band < _sampleMaps->size().zsize(); ++band){
-            for(auto item : _sampleDomain) {
-              num = _sampleSum->at(item->raw(), _sampleMaps->size().zsize());
-              if ( num == 0) {
-                mean = std = 0;
-              }else {
-                 sum = _sampleSum->at(item->raw(),band);
-                 mean = sum / num;
-                 if ( num < 1) {
-                    std = 0;
-                 } else {
-                    double v = _sampleSumXY->at(item->raw(), band, band) - num * mean * mean;
-                    std = v * v / ( num - 1);
-                 }
-              }
-              _sampleStats->at(item->raw(), band, SampleCell::mMEAN)= mean;
-              _sampleStats->at(item->raw(), band, SampleCell::mSTANDARDDEV) = std;
+    while(iterBands != iterBandsEnd) {
+        Raw raw = *iterSampleMap;
+        if ( raw != rUNDEF)  {
+
+            std::vector<double> zcolumn(nrOfBands, rUNDEF);
+
+            for(double& v : zcolumn){
+                v = *iterBands;
+                ++iterBands;
+            }
+            for( int band = 0 ; band < nrOfBands; ++band){
+
+                // init _sampleHistogram:
+                // _sampleHistogram(this class, this band, this value) stores the NUMBER of pixels in this class in this band
+                // with this value. Each time it is recognised as being part of the sample set in MapSample it is incremented.
+                _sampleHistogram->at(raw ,band, zcolumn[band])++;
+                // init _sampleSum:
+                // _sampleSum stores (this class, this band) the sum of all pixelvalues.
+                _sampleSum->at(raw, band) += zcolumn[band];
+
+                for(int otherBand = band; otherBand < nrOfBands; ++otherBand){ // done with this sub column of the x has changed
+                    // init _sampleSumXY:
+                    //  stores in _sampleSumXY(this class, band1, band2) the sum of the product of the pixelvalues in band1 and band2.
+                    _sampleSumXY->at(raw, band, otherBand) += (zcolumn[band] * zcolumn[otherBand]);
+                }
 
             }
+            _sampleSum->at(raw, box.zlength())++;
+        }else
+            iterBands += nrOfBands - 1;
+        //++iterBands;
+        ++iterSampleMap;
+    }
+
+    double sum, mean, num, std;
+    for(int band = 0; band < _sampleMaps->size().zsize(); ++band){
+        for(auto item : _sampleDomain) {
+            num = _sampleSum->at(item->raw(), _sampleMaps->size().zsize());
+            if ( num == 0) {
+                mean = std = 0;
+            }else {
+                sum = _sampleSum->at(item->raw(),band);
+                mean = sum / num;
+                if ( num < 1) {
+                    std = 0;
+                } else {
+                    double v = _sampleSumXY->at(item->raw(), band, band) - num * mean * mean;
+                    std = v * v / ( num - 1);
+                }
+            }
+            _sampleStats->at(item->raw(), band, SampleCell::mMEAN)= mean;
+            _sampleStats->at(item->raw(), band, SampleCell::mSTANDARDDEV) = std;
+
         }
     }
 
+
     return true;
-
-
 }
 
 SampleSet &SampleSet::operator=(const SampleSet &sampleset)
@@ -134,7 +174,6 @@ SampleSet &SampleSet::operator=(const SampleSet &sampleset)
     code(sampleset.code());
     setId(sampleset.id());
     setDescription(sampleset.description());
-    _background = sampleset._background;
     _sampleMap = sampleset._sampleMap;
     _sampleMaps = sampleset._sampleMaps;
     _sampleDomain = sampleset._sampleDomain;
@@ -262,28 +301,10 @@ void SampleSet::unregisterFeatureSpace(quint64 id)
 bool SampleSet::isValid() const
 {
     bool ok = _sampleMaps.isValid() && _sampleDomain.isValid();
-    ok &= _background.isValid();
-    ok &= _sampleMaps->georeference()->isCompatible(_background->georeference());
-
 
     return ok;
 }
 
-void SampleSet::backgroundRaster(const IRasterCoverage& raster){
-    if ( _sampleMaps.isValid()){
-        if (! _sampleMaps->georeference()->isCompatible(raster->georeference())){
-            ERROR2(ERR_NOT_COMPATIBLE2,raster->name(), _sampleMaps->name());
-            return ;
-        }
-    }
-    if ( _sampleMap.isValid()){
-        if (! _sampleMap->georeference()->isCompatible(raster->georeference())){
-            ERROR2(ERR_NOT_COMPATIBLE2,raster->name(), _sampleMap->name());
-            return ;
-        }
-    }
-    _background = raster;
-}
 
 UPSampleStatistics &SampleSet::statistics()
 {

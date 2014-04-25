@@ -18,6 +18,7 @@ public:
     SampleSet();
     SampleSet(const Resource& res);
     SampleSet(const SampleSet& sampleset);
+    SampleSet(const IRasterCoverage& samplemaps, const IThematicDomain& dom, const IRasterCoverage& samplemap=IRasterCoverage());
     virtual ~SampleSet();
     bool prepare();
     SampleSet& operator=(const SampleSet& sms);
@@ -25,7 +26,6 @@ public:
     void sampleRasterSet(const IRasterCoverage& raster);
     void sampleRaster(const IRasterCoverage &raster);
     void thematicDomain(const IThematicDomain& dom);
-    void backgroundRaster(const IRasterCoverage &raster);
 
     UPSampleStatistics& statistics() ;
     const UPSampleStatistics &statistics() const;
@@ -47,7 +47,6 @@ public:
 
 
 private:
-    IRasterCoverage _background;
     IRasterCoverage _sampleMap;
     IRasterCoverage _sampleMaps;
     IThematicDomain _sampleDomain;
