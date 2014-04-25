@@ -65,6 +65,14 @@ SPDomainItem IntervalRange::item(const QString &item) const
             return SPDomainItem();
         }
     }
+    if (!ok){
+        for(auto val : _items) {
+            if ( val->name() == item){
+                return val;
+            }
+        }
+        return SPDomainItem();
+    }
     return _items[(int)v1];
 }
 
@@ -195,13 +203,13 @@ bool IntervalRange::alignWithParent(const IDomain &dom)
         }
         _items[i] = SPInterval(static_cast<Interval *>((*iter).second->clone()));
     }
-    return false;
+    return true;
 
 }
 
 void IntervalRange::remove(const QString &nm)
 {
-     for(auto iter = _items.begin(); iter != _items.begin(); ++iter) {
+     for(auto iter = _items.begin(); iter != _items.end(); ++iter) {
         if ( (*iter)->name() == nm) {
             _items.erase(iter);
             break;
@@ -240,7 +248,7 @@ ItemRange *IntervalRange::clone() const
 
 IntervalRange &IntervalRange::operator <<(const QString &itemdef)
 {
-    QStringList parts = itemdef.split(" ");
+    QStringList parts = itemdef.split("|");
     if( parts.size() > 2) {
         bool ok;
         double step = 0;
