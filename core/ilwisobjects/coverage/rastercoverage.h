@@ -121,7 +121,7 @@ public:
      * \param raster The target of the binary copy
      * \param index The starting point of the copy
      */
-    void copyBinary(const IlwisData<RasterCoverage> &raster, int index);
+    void copyBinary(const IlwisData<RasterCoverage> &raster, quint32 indexIn, quint32 indexOut=0);
 
     /*!
      * transforms a certain coordinate to relevant the value<br>
