@@ -4,6 +4,7 @@
 #include "kernel.h"
 #include "raster.h"
 #include "itemdomain.h"
+#include "thematicitem.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "classification/sampleset.h"
@@ -24,6 +25,10 @@ RasterClassification::RasterClassification(quint64 metaid, const Ilwis::Operatio
 
 bool RasterClassification::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx,symTable)) != sPREPARED)
+            return false;
+
     PixelIterator iterIn(_sampleSet.sampleRasterSet());
     iterIn.setFlow(PixelIterator::fZXY);
 
@@ -36,18 +41,35 @@ bool RasterClassification::execute(ExecutionContext *ctx, SymbolTable &symTable)
 }
 
 Ilwis::OperationImplementation::State RasterClassification::prepare(ExecutionContext *, const SymbolTable &sym){
-    QString samplesetName = _expression.parm(0).value();
-    _sampleSet = mastercatalog()->name2Resource(samplesetName);
-    if ( !_sampleSet.isValid()){
-        _sampleSet = sym.getValue(samplesetName).value<SampleSet>();
-        if (!_sampleSet.isValid()){
-            ERROR2(ERR_COULD_NOT_LOAD_2,"SampleSet", samplesetName);
-            return sPREPAREFAILED;
-        }
+    QString rasterSetName = _expression.parm(0).value();
+    IRasterCoverage rcSet;
+    if (!rcSet.prepare(rasterSetName)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,rasterSetName,"");
+        return sPREPAREFAILED;
     }
+
+    QString domain = _expression.parm(1).value();
+    IThematicDomain themes;
+    if ( !themes.prepare(domain)){
+        ERROR2(ERR_COULD_NOT_LOAD_2,domain,"");
+        return sPREPAREFAILED;
+    }
+
+    QString trainingsRaster = _expression.parm(2).value();
+    IRasterCoverage rcTraining;
+    if (!rcTraining.prepare(trainingsRaster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,trainingsRaster,"");
+        return sPREPAREFAILED;
+    }
+
+
+
+    _sampleSet = SampleSet(rcSet, themes, rcTraining);
+    _sampleSet.prepare();
+
     QString outputName = _expression.parm(0,false).value();
 
-    _outputRaster = OperationHelperRaster::initialize(_sampleSet.sampleRasterSet(),itRASTER, itCOORDSYSTEM | itGEODETICDATUM);
+    _outputRaster = OperationHelperRaster::initialize(_sampleSet.sampleRasterSet(),itRASTER, itCOORDSYSTEM | itGEODETICDATUM | itGEOREF);
    if ( !_outputRaster.isValid()) {
        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
        return sPREPAREFAILED;
@@ -58,7 +80,16 @@ Ilwis::OperationImplementation::State RasterClassification::prepare(ExecutionCon
        _outputRaster->name(outputName);
 
 
-    return sPREPARED;
+   return sPREPARED;
+}
+
+int RasterClassification::fillOperationMetadata(OperationResource &operation)
+{
+    operation.addInParameter(0,itRASTER , TR("Multiband raster"),TR("Multi band raster to be classified"));
+    operation.addInParameter(1,itITEMDOMAIN , TR("Thematic domain"),TR("Domain of the classified map"));
+    operation.addInParameter(2,itRASTER , TR("Training set"),TR("Raster containing trainingset(s) of pixels"));
+
+    return 3;
 }
 //-------------------------------------------------------
 
@@ -83,24 +114,24 @@ Ilwis::OperationImplementation::State BoxClassification::prepare(ExecutionContex
     }
 
     bool ok;
-    _widenFactor = _expression.parm(1).value().toDouble(&ok);
+    _widenFactor = _expression.parm(3).value().toDouble(&ok);
     if (!ok || _widenFactor <= 0){
         ERROR2(ERR_ILLEGAL_VALUE_2, "widen factor", _expression.parm(1).value());
     }
 
     _classifier.reset( new BoxClassifier(_widenFactor,_sampleSet));
 
-    return sNOTPREPARED;
+    return sPREPARED;
 }
 
 quint64 BoxClassification::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/boxclassifcation"});
+    OperationResource operation({"ilwis://operations/boxclassification"});
     operation.setSyntax("boxclassifcation(samplesetname,widen-factor)");
     operation.setDescription(TR("performs a multi-spectral image classification according to training pixels in a sample set"));
-    operation.setInParameterCount({2});
-    operation.addInParameter(0,itSAMPLESET , TR("Sampleset"),TR("Training set of pixels"));
-    operation.addInParameter(1,itDOUBLE , TR("widen-factor"),TR("allows you to widen (factor > 1) the boxes that are 'drawn' around class means"));
+    unsigned int n = RasterClassification::fillOperationMetadata(operation);
+    operation.setInParameterCount({1 + n});
+    operation.addInParameter(n,itNUMBER , TR("widen-factor"),TR("allows you to widen (factor > 1) the boxes that are 'drawn' around class means"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(1,itRASTER, TR("output rastercoverage with the domain of the sampleset"));
     operation.setKeywords("classification,raster");
