@@ -79,7 +79,7 @@ static name *dummy_operation;
 #define REGISTER_OPERATION(name) \
     name *name::dummy_operation = Operation::registerOperation(name::createMetadata(),name::create);
 
-
+Q_DECLARE_METATYPE(std::vector<quint32>)
 
 
 #endif // OPERATION_H
