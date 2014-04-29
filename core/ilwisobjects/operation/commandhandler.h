@@ -20,8 +20,9 @@ typedef std::function<OperationImplementation *(quint64 metaid, const OperationE
 struct KERNELSHARED_EXPORT ExecutionContext {
     void clear(bool resultsOnly=false);
     ExecutionContext(bool threaded=false);
-    bool _silent;
-    bool _threaded;
+    bool _silent = false;
+    bool _threaded = false;
+    bool _useAdditionalParameters = false;
     qint16 _scope=1000;
     std::vector<QString> _results;
     std::map<QString, QString> _additionalInfo;
