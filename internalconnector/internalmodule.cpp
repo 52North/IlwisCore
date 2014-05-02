@@ -66,6 +66,13 @@ void InternalModule::prepare()
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
+    QString url = QString("ilwis://internalcatalog/none");
+    Resource resource(url, itGEOREF);
+    resource.code("none");
+    resource.name("none", false);
+    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.prepare();
+    mastercatalog()->addItems({resource});
 
 }
 
