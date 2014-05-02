@@ -137,15 +137,15 @@ bool SampleSet::prepare()
             }
             _sampleSum->at(raw, box.zlength())++;
         }else
-            iterBands += nrOfBands - 1;
+            iterBands += nrOfBands;
         //++iterBands;
         ++iterSampleMap;
     }
 
     double sum, mean, num, std;
-    for(int band = 0; band < _sampleMaps->size().zsize(); ++band){
+    for(int band = 0; band < nrOfBands; ++band){
         for(auto item : _sampleDomain) {
-            num = _sampleSum->at(item->raw(), _sampleMaps->size().zsize());
+            num = _sampleSum->at(item->raw(), nrOfBands);
             if ( num == 0) {
                 mean = std = 0;
             }else {
