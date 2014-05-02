@@ -111,18 +111,17 @@ VertexIterator &VertexIterator::operator-=(int n)
 geos::geom::Coordinate &VertexIterator::operator[](quint32 n)
 {
     if ( n < _linearSize){
-        int total = 0;
-        int localIndex = 0;
         if ( _pointMode){
             return *const_cast<geos::geom::Coordinate*>(_pointCoordinates[n]);
         }
         else{
+            int j = 0;
             for(auto& vec : _coordinates){
-                if ( total + n >= vec->size()){
-                    return const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]->getAt(n - total));
+                if ( n < vec->size()){
+                    return const_cast<geos::geom::Coordinate&>(_coordinates[j]->getAt(n));
                 }
-                total += n;
-                ++localIndex;
+                n-= vec->size();
+                ++j;
             }
         }
     }
@@ -137,13 +136,19 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
         return false;
     if (!compatible(iter))
         return false;
-    if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]->size() - 1){
-        return true;    // end condition;
+    if(_pointMode){
+        if(_index == _pointCoordinates.size() - 1){
+            return true;
+        }
+    } else {
+        if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]->size() - 1){
+            return true;    // end condition;
+        }
     }
     int j = 0;
     if ( _pointMode){
          for(int i=0; i < _pointCoordinates.size(); ++i){
-             if(_pointCoordinates[i] != iter._pointCoordinates[i])
+             if(!(_pointCoordinates[i]->equals(*iter._pointCoordinates[i])))
                  return false;
          }
          return true;
@@ -154,6 +159,8 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
             if ( vec->getAt(i) != iter._coordinates[j]->getAt(i))
                 return false;
         }
+
+        ++j;
     }
     return true;
 }
@@ -187,19 +194,19 @@ bool VertexIterator::operator<=(const VertexIterator &iter) const
 {
     if(!compatible(iter))
         return false;
-    if ( _partIndex < iter._partIndex)
+    if ( _partIndex > iter._partIndex)
         return false;
-    return _index >= iter._index;
+    return _index <= iter._index;
 }
 
 bool VertexIterator::operator>=(const VertexIterator &iter) const
 {
     if(!compatible(iter))
         return false;
-    if ( _partIndex > iter._partIndex)
+    if ( _partIndex < iter._partIndex)
         return false;
 
-    return _index <= iter._index;
+    return _index >= iter._index;
 }
 
 const geos::geom::Coordinate &VertexIterator::operator*() const
@@ -311,6 +318,7 @@ void VertexIterator::setFromGeometry(geos::geom::Geometry *geom)
         }
     } else if ( geom->getGeometryTypeId() == geos::geom::GEOS_POINT){
         geos::geom::Point *pnt = dynamic_cast<geos::geom::Point *>(geom);
+        _coordinates.resize(1);
         _pointCoordinates.resize(1);
         _pointCoordinates[0] = pnt->getCoordinate();
         _linearSize += 1;
@@ -319,9 +327,9 @@ void VertexIterator::setFromGeometry(geos::geom::Geometry *geom)
         _coordinates.resize(geom->getNumGeometries());
         for(int j =0; j < geom->getNumGeometries(); ++j){
             const geos::geom::Point *pnt = dynamic_cast<const geos::geom::Point *>(geom->getGeometryN(j));
-            _pointCoordinates.resize(j);
+            _pointCoordinates.resize(j+1);
             _pointCoordinates[j] = pnt->getCoordinate();
-            _linearSize += _coordinates.size();
+            _linearSize += 1;
         }
         _pointMode = true;
     }else if ( geom->getGeometryTypeId() == geos::geom::GEOS_POLYGON){
@@ -358,9 +366,13 @@ bool VertexIterator::compatible(const VertexIterator &iter) const
         return false;
 
     int   j= 0;
-    for(auto vec : _coordinates){
-        if ( vec->size() != iter._coordinates[j]->size())
-            return false;
+    if(_pointMode){
+       return true;
+    } else{
+        for(auto vec : _coordinates){
+            if ( vec->size() != iter._coordinates[j]->size())
+                return false;
+        }
     }
     return true;
 }
