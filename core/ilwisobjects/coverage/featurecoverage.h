@@ -171,6 +171,7 @@ public:
     static IlwisTypes geometryType(const geos::geom::Geometry *geom) ;
     const UPGeomFactory &geomfactory() const;
     bool prepare();
+    std::vector<quint32> select(const QString& spatialQuery) const;
 protected:
     void copyTo(IlwisObject *obj);
 private:

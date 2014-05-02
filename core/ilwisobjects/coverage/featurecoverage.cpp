@@ -55,6 +55,12 @@ bool FeatureCoverage::prepare( ) {
     return ok;
 }
 
+std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
+{
+    //TODO implement spatial queries
+    return std::vector<quint32>();
+}
+
 IlwisTypes FeatureCoverage::featureTypes() const
 {
     return _featureTypes;
