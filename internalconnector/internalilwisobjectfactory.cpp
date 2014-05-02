@@ -289,6 +289,8 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         sz = resource["size"].toSize();
     }
 
+
+
     IGeoReference grf;
     QString tpnam = resource["georeference"].typeName();
     if (tpnam == "Ilwis::IGeoReference")
@@ -567,17 +569,19 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
     cgrf->name( resource["name"].toString());
     cgrf->createTime(Time::now());
     cgrf->modifiedTime(Time::now());
-    ICoordinateSystem csy;
-    bool ok;
-    quint64 id = resource["coordinatesystem"].toULongLong(&ok);
-    if ( ok) {
-        csy = mastercatalog()->get(id);
-    } else
-       csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
+    if ( resource.code() != "none"){
+        ICoordinateSystem csy;
+        bool ok;
+        quint64 id = resource["coordinatesystem"].toULongLong(&ok);
+        if ( ok) {
+            csy = mastercatalog()->get(id);
+        } else
+            csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
 
-    cgrf->coordinateSystem(csy);
-    cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
-//    Size sz = resource["size"].value<Size>();
+        cgrf->coordinateSystem(csy);
+
+        cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
+    }
     cgrf->size(resource["size"].value<Size<>>());
     cgrf->centerOfPixel(resource["centerofpixel"].toBool());
 
