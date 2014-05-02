@@ -167,6 +167,8 @@ public:
         return rUNDEF;
     }
 
+    NumericStatistics& statistics(int mode=0);
+
     //@override
     Resource source(int mode=cmINPUT) const;
 
