@@ -10,6 +10,7 @@
 #include "expressionnode.h"
 #include "parametersnode.h"
 #include "selectornode.h"
+#include "selectnode.h"
 #include "termnode.h"
 #include "commandhandler.h"
 
@@ -89,19 +90,28 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
         else
             _value = {_number, NodeValue::ctNumerical};
         return true;
-
     } else if ( _content == csString) {
         _value = {_string, NodeValue::ctString};
         return true;
 
     } else if ( _content == csMethod) {
         QString parms = "(";
+        for(int i=0; i < ctx->_additionalInfo.size() && ctx->_useAdditionalParameters; ++i){
+            QString extrapar = "extra" + QString::number(i);
+            auto iter = ctx->_additionalInfo.find(extrapar);
+            if ( iter != ctx->_additionalInfo.end()){
+                if ( parms.size() > 1)
+                    parms += ",";
+                parms += (*iter).second;
+            }
+        }
         for(int i=0; i < _parameters->noOfChilderen(); ++i) {
             bool ok = _parameters->child(i)->evaluate(symbols, scope, ctx);
+
             if (!ok)
                 return false;
             QString name = getName(_parameters->child(i)->value());
-            if ( i != 0)
+            if ( parms.size() > 1)
                 parms += ",";
             parms += name;
 
@@ -169,6 +179,8 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
     }
     return false;
 }
+
+
 
 QString TermNode::getName(const NodeValue& var) const {
     QString name = var.toString();

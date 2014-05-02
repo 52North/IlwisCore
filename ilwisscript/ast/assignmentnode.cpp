@@ -31,6 +31,7 @@
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
+#include "selectnode.h"
 #include "selectornode.h"
 #include "outparametersnode.h"
 #include "assignmentnode.h"
@@ -51,9 +52,9 @@ void AssignmentNode::setDefintion(bool yesno)
     _defintion= yesno;
 }
 
-void AssignmentNode::setExpression(ExpressionNode *node)
+void AssignmentNode::setExpression(ASTNode *node)
 {
-    _expression =QSharedPointer<ExpressionNode>(node);
+    _expression =QSharedPointer<ASTNode>(node);
 }
 
 QString AssignmentNode::nodeType() const
@@ -174,4 +175,10 @@ void AssignmentNode::addOutputs(OutParametersNode *p)
 {
     _outParms.reset(p);
 }
+
+void AssignmentNode::setOutId(IDNode *idnode)
+{
+    _idnode.reset(idnode);
+}
+
 
