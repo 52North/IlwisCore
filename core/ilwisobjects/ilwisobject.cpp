@@ -84,7 +84,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
     if (!conn){
-        throw ErrorObject(TR(QString("couldnt find connector for %1").arg(format)));
+        throw ErrorObject(TR(QString("couldnt connect to %1 datasource for").arg(format)));
     }
     setConnector(conn, cmode);
     if ( Identity::name() == sUNDEF)
@@ -293,7 +293,7 @@ bool IlwisObject::isAnonymous() const
 
 Resource IlwisObject::source(int mode) const
 {
-    if ( mode & cmINPUT) {
+    if ( mode & cmINPUT || mode == cmEXTENDED) {
         if ( _connector.isNull() == false)
             return _connector->source();
         return Resource();
