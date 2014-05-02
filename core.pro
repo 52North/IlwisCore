@@ -113,7 +113,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/classification/sampleset.cpp \
     core/ilwisobjects/operation/classification/samplestatistics.cpp \
     core/ilwisobjects/domain/interval.cpp \
-    core/ilwisobjects/domain/intervalrange.cpp
+    core/ilwisobjects/domain/intervalrange.cpp \
+    core/user.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -237,7 +238,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/classification/sampleset.h \
     core/ilwisobjects/operation/classification/samplestatistics.h \
     core/ilwisobjects/domain/interval.h \
-    core/ilwisobjects/domain/intervalrange.h
+    core/ilwisobjects/domain/intervalrange.h \
+    core/user.h
     core/util/bresenham.h
 
 
