@@ -36,15 +36,40 @@ SelectionFeatures::~SelectionFeatures()
 {
 }
 
+bool SelectionFeatures::createIndexes(const IFeatureCoverage& inputFC, ExecutionContext *ctx, SymbolTable &symTable){
+    std::set<quint32> resultset;
 
-bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
+    quint32 index = 0;
+    for(const auto& feature : inputFC){
+        QVariant val = feature(_attribColumn);
+        if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
+            if ( compare1(_operator,val.toString(), _rightSide.toString()))
+                resultset.insert(index);
+        } else {
+            bool ok1,ok2;
+            double v1 = val.toDouble(&ok1);
+            double v2 = _rightSide.toDouble(&ok2);
+            bool ok3 = compare1(_operator, v1, v2);
+            if ( ok1&& ok2 && ok3)
+                resultset.insert(index);
+
+        }
+        ++index;
+
+    }
+    Indices result(resultset.begin(), resultset.end());
+    if ( ctx != 0) {
+        QVariant value;
+        value.setValue<Indices>(result);
+        ctx->addOutput(symTable, value, sUNDEF, itINTEGER | itCOLLECTION, Resource());
+    }
+
+    return true;
+}
+
+bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, ExecutionContext *ctx, SymbolTable &symTable)
 {
-    if (_prepState == sNOTPREPARED)
-        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
-            return false;
-
     IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-    IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
 
     SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
@@ -68,7 +93,21 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
     }
-    return true;
+    return ok;
+}
+
+bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
+
+   IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
+
+    if ( _asIndex)
+        return createIndexes(inputFC, ctx, symTable);
+    else
+        return createCoverage(inputFC, ctx, symTable);
 }
 
 Ilwis::OperationImplementation *SelectionFeatures::create(quint64 metaid, const Ilwis::OperationExpression &expr)
@@ -110,8 +149,28 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
             ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
             return sPREPAREFAILED;
         }
-        _attribColumn =  selector.mid(index+10);
+        std::map<QString,LogicalOperator> operators = {{"==", loEQ},{"<=",loLESSEQ},{">=", loGREATEREQ},{"<",loLESS},{">", loGREATER},{"!=",loNEQ}};
+        int index1 = selector.indexOf("\"");
+        if ( index1 == -1)
+            index1 = 10000;
+        int index2 = 0;
+        for(auto op : operators){
+            if ((index2 = selector.indexOf(op.first)) != -1){
+                if ( index2 < index1)    {
+                    _operator = op.second;
+                    index = selector.indexOf("=");
+                    _attribColumn = selector.mid(index + 1, index2 - index - 1).trimmed();
+                    _rightSide = selector.mid(index2 + op.first.size()).trimmed();
+                    break;
+                }
+            }
+        }
+        if (_attribColumn.size() == 0)
+            _attribColumn =  selector.mid(index+10);
         copylist |= itENVELOPE;
+    }
+    if ( _expression.parameterCount() == 3){
+        _asIndex = _expression.parm(2).value().toLower() == "asindex";
     }
 
      _outputObj = OperationHelperFeatures::initialize(_inputObj,inputType, copylist);
@@ -148,27 +207,19 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
 
 quint64 SelectionFeatures::createMetadata()
 {
-    QString url = QString("ilwis://operations/selection");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","selection");
-    resource.addProperty("syntax","selection(featurecoverage,selection-definition)");
-    resource.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itFEATURE);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with a domain as specified by the selection"));
-    resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("selection-definition"));
-    resource.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    resource.addProperty("pout_1_type", itFEATURE);
-    resource.addProperty("pout_1_name", TR("rastercoverage were the selection has been applied"));
-    resource.addProperty("pout_1_desc",TR(""));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/selection"});
+    operation.setSyntax("selection(featurecoverage,selection-definition[,asIndex])");
+    operation.setDescription(TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
+    operation.setInParameterCount({2,3});
+    operation.addInParameter(0,itFEATURE, TR("input feature coverage"),TR("input feature rcoverage with a domain as specified by the selection"));
+    operation.addInParameter(1,itSTRING, TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    operation.addInParameter(2,itSTRING, TR("alternate return type"),TR("optional, if asIndex is used the result will be a selection of feature indexes in the coverage"));
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itFEATURE | itCOLLECTION, TR("Selection"),TR("coverage or index were the selection has been applied") );
+    operation.setKeywords("feature, selection");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
 
 }
