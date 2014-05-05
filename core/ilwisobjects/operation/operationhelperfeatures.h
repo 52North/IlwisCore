@@ -32,7 +32,7 @@ public:
         return true;
     }
 
-    template<typename T> static bool execute(ExecutionContext* ctx, T func, IFeatureCoverage& inputFC, IFeatureCoverage& outputFC, ITable& tbl){
+    template<typename T> static bool execute(ExecutionContext* ctx, T func, const IFeatureCoverage& inputFC, IFeatureCoverage& outputFC, ITable& tbl){
         std::vector<std::vector<quint32>> subsets;
 
         int cores = OperationHelperFeatures::subdivideTasks(ctx,inputFC, subsets);
