@@ -36,7 +36,6 @@ bool RasterClassification::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     bool res = _classifier->classify(iterIn, iterOut);
 
-    _outputRaster->statistics()
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
