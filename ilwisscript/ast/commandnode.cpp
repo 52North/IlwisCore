@@ -1,7 +1,10 @@
 #include <QHash>
+#include <set>
 #include "ilwis.h"
+#include "identity.h"
 #include "astnode.h"
 #include "operationnode.h"
+#include "symboltable.h"
 #include "expressionnode.h"
 #include "commandnode.h"
 
