@@ -55,10 +55,16 @@ bool FeatureCoverage::prepare( ) {
     return ok;
 }
 
-std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
+Indices FeatureCoverage::select(const QString &spatialQuery) const
 {
-    //TODO implement spatial queries
-    return std::vector<quint32>();
+    ExecutionContext ctx;
+    QString expr = QString("script %1=indexes from \"%2\" where %3").arg(Identity::newAnonymousName()).arg(source().url().toString()).arg(spatialQuery);
+    Ilwis::SymbolTable tbl;
+    if ( Ilwis::commandhandler()->execute(expr, &ctx, tbl) ){
+    if ( ctx._results.size() == 1)
+        return tbl.getValue<Indices>(ctx._results[0]);
+    }
+    return Indices();
 }
 
 IlwisTypes FeatureCoverage::featureTypes() const
