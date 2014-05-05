@@ -182,11 +182,7 @@ QVariant ASTNode::resolveValue(int index, const NodeValue &val, SymbolTable &sym
     QVariant var = val[index];
     if ( val.content() == NodeValue::ctID) {
         Symbol sym = symbols.getSymbol(var.toString());
-        if(!sym.isValid()) {
-            quint64 id = mastercatalog()->name2id(var.toString());
-            if ( id == i64UNDEF)
-                throw ScriptError(QString(TR(ERR_ILLEGAL_VALUE_2)).arg("parameter").arg(var.toString()));
-        } else{
+        if(sym.isValid()) {
             QString tp = sym._var.typeName();
             if ( tp == "QVariantList"){
                 QVariantList lst = sym._var.value<QVariantList>();
