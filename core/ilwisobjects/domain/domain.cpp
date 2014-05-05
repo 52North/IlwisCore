@@ -119,6 +119,8 @@ IlwisTypes Domain::ilwType(const QVariant &v)
             return itDATE; break;
         case QVariant::DateTime:
             return itDATETIME;
+        case QVariant::List:
+            return itCOLLECTION;
         default:
             return itUNKNOWN;
 
