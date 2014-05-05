@@ -57,7 +57,6 @@ private:
     bool _defintion;
     QSharedPointer<ASTNode> _expression;
     QSharedPointer<OutParametersNode> _outParms;
-    QSharedPointer<IDNode> _idnode;
 
 };
 }
