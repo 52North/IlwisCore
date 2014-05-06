@@ -45,8 +45,7 @@ HEADERS += \
     baseoperations/geometry/mastergeoreference.h \
     baseoperations/data/selectiontable.h \
     baseoperations/math/binarymathtable.h \
-    baseoperations/data/setvaluerange.h \
-    baseoperations/geometry/contains.h
+    baseoperations/data/setvaluerange.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -73,8 +72,7 @@ SOURCES += \
     baseoperations/geometry/mastergeoreference.cpp \
     baseoperations/data/selectiontable.cpp \
     baseoperations/math/binarymathtable.cpp \
-    baseoperations/data/setvaluerange.cpp \
-    baseoperations/geometry/contains.cpp
+    baseoperations/data/setvaluerange.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
