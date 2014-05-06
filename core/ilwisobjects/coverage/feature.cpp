@@ -17,15 +17,11 @@ UPFeatureI::UPFeatureI(FeatureInterface *f) : std::unique_ptr<FeatureInterface>(
 {
 }
 
-QVariant UPFeatureI::operator ()(const QString &name, int index, bool asRaw) {
+QVariant UPFeatureI::operator ()(const QString &name, bool asRaw, int index) const {
     return (*this)->cell(name, index, asRaw);
 }
 
-QVariant UPFeatureI::operator ()(const QString &name, bool asRaw) {
-    return (*this)->cell(name, -1, asRaw);
-}
-
-void UPFeatureI::operator ()(const QString &name, const QVariant &var, int index) {
+void UPFeatureI::operator ()(int index, const QString &name, const QVariant &var) {
     return (*this)->setCell(name, var, index);
 }
 

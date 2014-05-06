@@ -172,7 +172,8 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const QString& name, IlwisTypes tp,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const QString& nme, IlwisTypes tp,const PrepareOptions& options=PrepareOptions()){
+        QString name = Resource::quoted2string(nme);
         if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
             QString sid = name.mid(11);
             bool ok;

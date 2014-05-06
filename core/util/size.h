@@ -119,7 +119,7 @@ public:
     }
 
     Size<T> twod() const{
-        return Size<T>(_xsize, _ysize,0);
+        return Size<T>(_xsize, _ysize,1);
     }
     /*!
     returns the size in the x dimension as reference. So it can function as a setter

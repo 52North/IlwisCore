@@ -6,9 +6,9 @@
 #include "astnode.h"
 #include "idnode.h"
 #include "operationnode.h"
+#include "symboltable.h"
 #include "expressionnode.h"
 #include "variablenode.h"
-#include "symboltable.h"
 
 using namespace Ilwis;
 

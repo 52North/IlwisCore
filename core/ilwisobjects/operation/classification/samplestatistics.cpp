@@ -19,18 +19,22 @@ void SampleStatistics::prepare(IThematicDomain thematicDomain, quint32 nrOfBands
     _nrOfBands = nrOfBands;
 
     _sampleSpace.resize(MAXCLASS + 1);
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
+
+    for(auto item : _thematicDomain){
+        addClass(item->raw());
+    }
 
 }
 
-void SampleStatistics::addClass(quint32 key)
+void SampleStatistics::addClass(Raw key)
 {
     if ( _sampleSpace[key].size() != 0)
         return;
     _sampleSpace[key].resize(_nrOfBands);
 }
 
-void SampleStatistics::delClass(quint32 key)
+void SampleStatistics::delClass(Raw key)
 {
     if ( key >= _sampleSpace.size())
         return;
@@ -109,7 +113,7 @@ void SampleSum::prepare(IThematicDomain thematicDomain, quint32 nrOfBands)
     _nrOfBands = nrOfBands;
     _sums.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());
@@ -124,7 +128,7 @@ void SampleSum::addClass(Raw key)
     if ( _sums[key].size() != 0)
         return;
 
-    _sums[key].resize(_nrOfBands,0);
+    _sums[key].resize(_nrOfBands + 1,0);
 }
 
 void SampleSum::delClass(Raw key)
@@ -183,7 +187,7 @@ void SampleSumXY::prepare(IThematicDomain thematicDomain, quint32 nrOfBands)
     _nrOfBands = nrOfBands;
     _sums.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());
@@ -205,10 +209,10 @@ void SampleSumXY::addClass(Raw key)
 {
     if ( _sums[key].size() != 0)
         return;
-    _sums[key].resize(_nrOfBands);
+    _sums[key].resize(_nrOfBands + 1);
     int count = 0;
     for(auto& vec : _sums[key])
-        vec.resize(count++,0);
+        vec.resize(1 + count++,0);
 }
 
 void SampleSumXY::delClass(Raw key)
@@ -260,7 +264,7 @@ void SampleHistogram::prepare(IThematicDomain thematicDomain, const IRasterCover
 
     _hist.resize(MAXCLASS + 1);
 
-    addClass(0);
+    addClass(MAXCLASS); // == undefined value
 
     for(auto item : _thematicDomain){
         addClass(item->raw());

@@ -16,6 +16,7 @@ public:
     void setNumericalNegation(bool yesno);
     bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
     void addSelector(Selector *n);
+
 private:
     enum ContentState{csNumerical, csString, csExpression, csMethod,csID};
     double _number;
@@ -29,6 +30,10 @@ private:
     bool  _numericalNegation;
 
     QString getName(const Ilwis::NodeValue &var) const;
+    QString buildBracketSelection(QString &name);
+    bool doMethodStatement(SymbolTable &symbols, int scope, ExecutionContext *ctx);
+    bool doIDStatement(SymbolTable &symbols, int scope, ExecutionContext *ctx);
+    QString buildStatementSelection(ExecutionContext *ctx);
 };
 }
 

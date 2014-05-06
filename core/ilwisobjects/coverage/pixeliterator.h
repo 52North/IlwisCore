@@ -496,14 +496,13 @@ private:
 
     bool moveZXY(int delta){
         _z += delta;
-        _linearposition += delta * _box.xlength();
-        _localOffset += _box.xlength();
+        _linearposition += delta * _box.xlength() * _box.ylength();
         _zChanged = true;
         _xChanged = _yChanged = false;
-        _currentBlock++;
+        _currentBlock  = _z * _grid->blocksPerBand() + _y / _grid->maxLines();
         if (_selectionIndex < 0){
             if ( _z > _endz){
-                moveXY(delta);
+                return moveXY(delta);
             }
         }
         return true;

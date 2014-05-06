@@ -11,7 +11,7 @@ struct ExecutionContext ;
 
 class NodeValue : public QVariantList {
 public:
-    enum ContentType{ctUNKNOW, ctNumerical, ctString, ctExpression, ctMethod,ctBOOLEAN, ctID, ctLIST};
+    enum ContentType{ctUNKNOW, ctNumerical, ctString, ctExpression, ctMethod,ctBOOLEAN, ctID, ctLIST, ctCoordLists};
 
     NodeValue();
     NodeValue(const QVariant& v, ContentType tp=NodeValue::ctUNKNOW);
@@ -64,5 +64,6 @@ protected:
 }
 
 Q_DECLARE_METATYPE(Ilwis::NodeValue);
+
 
 #endif // ASTNODE_H

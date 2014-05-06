@@ -1,4 +1,5 @@
-#include "ilwis.h"
+#include "kernel.h"
+#include "prepareoptions.h"
 #include "astnode.h"
 #include "operationnode.h"
 #include "relationnode.h"
@@ -52,7 +53,10 @@ bool RelationNode::handleEQ(int index,const NodeValue& vright,SymbolTable &symbo
 
     QVariant var1 = resolveValue(index,_value,symbols);
     QVariant var2 = resolveValue(index, vright, symbols);
-    if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, "==")    ;
+    }
+    else if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
        _value = {var1.toDouble() == var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
@@ -66,7 +70,10 @@ bool RelationNode::handleEQ(int index,const NodeValue& vright,SymbolTable &symbo
 bool RelationNode::handleNEQ(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(index, _value,symbols);
     QVariant var2 = resolveValue(index, vright, symbols);
-    if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, "!=")    ;
+    }
+    else if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
        _value = {var1.toDouble() != var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
@@ -80,7 +87,10 @@ bool RelationNode::handleNEQ(int index,const NodeValue& vright,SymbolTable &symb
 bool RelationNode::handleGREATEREQ(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(index, _value,symbols);
     QVariant var2 = resolveValue(index, vright, symbols);
-    if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, ">=")    ;
+    }
+    else if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
        _value = {var1.toDouble() >= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
@@ -90,7 +100,10 @@ bool RelationNode::handleGREATEREQ(int index,const NodeValue& vright,SymbolTable
 bool RelationNode::handleGREATER(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(index, _value,symbols);
     QVariant var2 = resolveValue(index,vright, symbols);
-    if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, ">")    ;
+    }
+    else if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
         _value = { var1.toDouble() > var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
@@ -100,7 +113,10 @@ bool RelationNode::handleGREATER(int index,const NodeValue& vright,SymbolTable &
 bool RelationNode::handleLESS(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(index, _value,symbols);
     QVariant var2 = resolveValue(index, vright, symbols);
-    if ( SymbolTable::isNumerical(var1) && SymbolTable::isNumerical(var2)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, "<")    ;
+    }
+    else if ( SymbolTable::isNumerical(var1) && SymbolTable::isNumerical(var2)) {
        _value = { var1.toDouble() < var2.toDouble() , NodeValue::ctBOOLEAN};
        return true;
     }
@@ -110,9 +126,29 @@ bool RelationNode::handleLESS(int index,const NodeValue& vright,SymbolTable &sym
 bool RelationNode::handleLESSEQ(int index,const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var1 = resolveValue(index, _value,symbols);
     QVariant var2 = resolveValue(index, vright, symbols);
-    if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
+    if ( ctx->_useAdditionalParameters){
+        return handleImplicitCase(var1, var2, ctx, "<=")    ;
+    }
+    else if ( SymbolTable::isNumerical(var2) && SymbolTable::isNumerical(var1)) {
         _value = {var1.toDouble() <= var2.toDouble(), NodeValue::ctBOOLEAN};
        return true;
     }
     return handleBinaryCases(index, vright,"binarylogicalraster", "lesseq",symbols, ctx);
+}
+
+bool RelationNode::handleImplicitCase(const QVariant& var1, const QVariant& var2,  ExecutionContext *ctx, const QString& oper){
+    QString inname = ctx->_additionalInfo[IMPLICITPARMATER0];
+    QString outname = ANONYMOUS_PREFIX;
+    QString expression = QString("%1=select(%2,\"attribute=%3%4%5\",asIndex)").arg(outname).arg(inname).arg(var1.toString()).arg(oper).arg(var2.toString());
+    SymbolTable symbols;
+    int lastResult = ctx->_results.size();
+    if(!Ilwis::commandhandler()->execute(expression, ctx, symbols)) {
+        ERROR0(TR("Expression execution error in script; script aborted. See log for further details"));
+        return false;
+    }
+    Indices index = symbols.getValue<Indices>(ctx->_results[lastResult]);
+    QVariant value;
+    value.setValue<Indices>(index);
+    _value = {value, NodeValue::ctLIST};
+    return true;
 }

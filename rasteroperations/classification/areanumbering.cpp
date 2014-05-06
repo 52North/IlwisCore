@@ -15,6 +15,7 @@
 using namespace Ilwis;
 using namespace RasterOperations;
 
+REGISTER_OPERATION(AreaNumbering)
 
 Ilwis::OperationImplementation *AreaNumbering::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {

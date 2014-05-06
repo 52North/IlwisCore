@@ -91,9 +91,9 @@ void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
     _attTableIndex = tbl;
 }
 
-NumericStatistics &Coverage::statistics()
+NumericStatistics &Coverage::statistics(int  )
 {
-    return _statistics;
+        return _statistics;
 }
 
 const DataDefinition &Coverage::datadefIndex() const

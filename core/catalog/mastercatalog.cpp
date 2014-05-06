@@ -344,6 +344,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
         return QString("ilwis://internalcatalog/%1").arg(name);
+    }else if ( name.left(13) == "code=georef:") {
+        return QString("ilwis://internalcatalog/%1").arg(name);
     }
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);

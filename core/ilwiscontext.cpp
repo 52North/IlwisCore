@@ -98,6 +98,9 @@ ICatalog IlwisContext::workingCatalog() const{
 
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
+    if ( !cat.isValid())
+        return;
+
     mastercatalog()->addContainer(cat->source().url());
     _workingCatalog = cat;
 }

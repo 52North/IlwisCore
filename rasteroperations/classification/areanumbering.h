@@ -21,6 +21,8 @@ private:
     IIlwisObject _outputObj;
     quint8 _connectivity;
 
+    NEW_OPERATION(AreaNumbering);
+
 };
 
 class AreaNumberer {
@@ -38,6 +40,7 @@ private:
     std::vector<double> _neighboursOut;
     std::map<int,int> _pass2Changes;
     double do4connected(const Ilwis::PixelIterator &in);
+
 };
 }
 }

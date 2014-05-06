@@ -87,18 +87,40 @@ DataDefinition &RasterCoverage::datadef(quint32 layer)
 }
 
 
-void RasterCoverage::copyBinary(const IRasterCoverage& raster, int index) {
+void RasterCoverage::copyBinary(const IRasterCoverage& raster, quint32 inputIndex, quint32 outputIndex) {
+    if ( isNumericalUndef(inputIndex) || isNumericalUndef(outputIndex)){
+        ERROR2(ERR_ILLEGAL_VALUE_2,TR("layer index"), isNumericalUndef(inputIndex) ? "input" : "output");
+        return;
+    }
+    if ( inputIndex >= size().zsize()){
+       ERROR2(ERR_ILLEGAL_VALUE_2,TR("layer index"), "input");
+    }
     IRasterCoverage gcNew;
     gcNew.set(this);
     Size<> inputSize =  raster->size();
-    Size<> sz(inputSize.xsize(),inputSize.ysize(), 1);
+    Size<> sz(inputSize.xsize(),inputSize.ysize(), outputIndex + 1);
     gcNew->georeference()->size(sz);
-    PixelIterator iterIn(raster, BoundingBox(Pixel(0,0,index), Pixel(inputSize.xsize(), inputSize.ysize(), index + 1)));
-    PixelIterator iterOut(gcNew, BoundingBox(Size<>(inputSize.xsize(), inputSize.ysize(), 1)));
+    PixelIterator iterIn(raster, BoundingBox(Pixel(0,0,inputIndex), Pixel(inputSize.xsize(), inputSize.ysize(), inputIndex + 1)));
+    PixelIterator iterOut(gcNew, BoundingBox(Pixel(0,0,outputIndex), Pixel(inputSize.xsize(), inputSize.ysize(), outputIndex + 1)));
+    if ( raster->id() == id() && inputIndex == outputIndex){
+        ERROR2(ERR_ILLEGALE_OPERATION2, TR("copy"),TR("identical layers in same raster"));
+        return;
+    }
     for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
         ++iterIn;
     });
+}
+
+NumericStatistics &RasterCoverage::statistics(int mode)
+{
+    if ( mode == ContainerStatistics<double>::pNONE)
+        return Coverage::statistics(mode);
+    IRasterCoverage raster(this);
+    PixelIterator iter(raster);
+    statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode);
+
+    return Coverage::statistics(mode);
 }
 
 Grid *RasterCoverage::grid()
@@ -134,7 +156,7 @@ Resource RasterCoverage::source(int mode) const
 {
     Resource resource = Coverage::source(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
-        resource["georeference()"] = georeference()->id();
+        resource.addProperty("georeference", georeference()->id());
         resource.addProperty("domain", _datadefCoverage.domain()->id());
         resource.setExtendedType( resource.extendedType() | itDOMAIN |  itGEOREF);
     }

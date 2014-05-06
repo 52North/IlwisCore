@@ -94,8 +94,8 @@ public:
 
     SampleStats *clone() const;
     void prepare(IThematicDomain thematicDomain, quint32 nrOfBands);
-    void addClass(quint32 key);
-    void delClass(quint32 key);
+    void addClass(Raw key);
+    void delClass(Raw key);
     void resetClass(Raw key);
     void mergeClass(quint32 key1, quint32 key2, std::unique_ptr<SampleSum> &sum, std::unique_ptr<SampleSumXY> &sumXY);
     double& at(Raw key, quint32 band, SampleCell::Marker val);

@@ -21,6 +21,8 @@ private:
     IRasterCoverage _inputRaster;
     IRasterCoverage _outputRaster;
     std::unique_ptr<RasterFilter> _filter;
+
+    NEW_OPERATION(LinearRasterFilter);
 };
 }
 }

@@ -136,12 +136,19 @@ bool SymbolTable::isString(const QVariant& var) {
 }
 
 bool SymbolTable::isRealNumerical(const QVariant& var)  {
-    QString tpname = var.typeName();
     bool ok =  var.type() == QMetaType::Float ||  var.type() == QMetaType::Double;
     if ( ok)
         return true;
     var.toDouble(&ok);
     return ok;
+}
+
+bool SymbolTable::isIndex(int index, const QVariantList& var) {
+  QString tpname = var[index].typeName();
+  if ( tpname == "std::vector<quint32>" || tpname == "Indices")
+      return true;
+
+  return false;
 }
 
 bool SymbolTable::isIntegerNumerical(const QVariant& var) {

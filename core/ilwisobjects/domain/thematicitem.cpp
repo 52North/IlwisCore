@@ -55,8 +55,10 @@ void ThematicItem::code(const QString &code)
 
 DomainItem *ThematicItem::clone() const
 {
+
     ThematicItem *item = new ThematicItem({name(), _code, _description});
     item->_raw = _raw;
+
     return item;
 }
 

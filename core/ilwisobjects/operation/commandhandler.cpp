@@ -33,6 +33,7 @@ void ExecutionContext::clear(bool resultsOnly)
         _silent = false;
         _threaded = true;
         _out = &std::cout;
+        _useAdditionalParameters = false;
     }
 }
 

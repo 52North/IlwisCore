@@ -18,6 +18,8 @@ protected:
     IRasterCoverage _outputRaster;
     std::unique_ptr<Classifier> _classifier;
     Ilwis::OperationImplementation::State prepare(ExecutionContext *, const SymbolTable &sym);
+
+    static int fillOperationMetadata(OperationResource& operation);
 };
 
 class BoxClassification : public RasterClassification {

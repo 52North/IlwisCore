@@ -175,24 +175,23 @@ bool PixelIterator::moveXY(int delta){
     _z = _box.min_corner().z + (_z - _box.min_corner().z) % (int)_box.zlength();
     _xChanged = tempx != _x;
     std::swap(_x,tempx);
-    qint32 ylocal = _y % _grid->maxLines();
-    _localOffset = _x + ylocal * _grid->size().xsize();
     if (_trq)
         _trq->move();
     if ( _x > _endx) {
         quint32 newy = _y + (_x - _box.min_corner().x) / _box.xlength();
-        _currentBlock = newy * _grid->blocksPerBand() + _x / _grid->maxLines();
         _yChanged = newy != _y;
         _y = newy;
         _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
         _xChanged = _x != tempx;
-        int localblock = _y /  _grid->maxLines();
-        _localOffset = _x * _grid->size().zsize() + _z - localblock * _grid->maxLines() * _grid->size().zsize();
         if ( _y > _endy) { // done with this iteration block
             _linearposition = _endposition;
             return false;
         }
     }
+    qint32 ylocal = _y % _grid->maxLines();
+    _localOffset = _x + ylocal * _grid->size().xsize();
+    _currentBlock = _z * _grid->blocksPerBand() + _y / _grid->maxLines();
+    _linearposition = _x + _y * _grid->size().xsize() + _z * _grid->size().xsize() * _grid->size().ysize();
     return true;
 }
 

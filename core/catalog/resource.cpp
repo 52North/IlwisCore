@@ -509,5 +509,15 @@ bool Resource::isRoot() const {
     return isRoot(_normalizedUrl.toString());
 }
 
+QString Resource::quoted2string(const QString& name){
+    if ( name.size() == 0)
+        return name;
+
+    if (name[0] == '\"' && name[name.size()-1] == '\"'){
+        if ( name.indexOf("url|") == 1)
+        return name.mid(5,name.size() - 6);
+    }
+    return name;
+}
 
 

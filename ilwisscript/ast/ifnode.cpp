@@ -1,3 +1,4 @@
+#include <set>
 #include "kernel.h"
 #include "errorobject.h"
 #include "symboltable.h"

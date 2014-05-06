@@ -22,8 +22,15 @@ private:
     QString _attribColumn;
     ITable _attTable;
     Envelope _box;
+    bool _asIndex = false;
+    LogicalOperator _operator = loNONE;
+    QVariant _rightSide;
+
+    bool createCoverage(const IFeatureCoverage& inputFC, ExecutionContext *ctx, SymbolTable &symTable);
+    bool createIndexes(const IFeatureCoverage &inputFC, ExecutionContext *ctx, SymbolTable &symTable);
 
     NEW_OPERATION(SelectionFeatures);
+
 };
 }
 }

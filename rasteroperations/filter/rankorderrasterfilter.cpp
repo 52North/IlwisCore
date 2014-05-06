@@ -14,6 +14,8 @@
 using namespace Ilwis;
 using namespace RasterOperations;
 
+REGISTER_OPERATION(RankOrderRasterFilter)
+
 RankOrderRasterFilter::RankOrderRasterFilter()
 {
 }

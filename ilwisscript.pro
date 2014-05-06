@@ -51,7 +51,8 @@ SOURCES += \
     ilwisscript/ast/formatter.cpp \
     ilwisscript/ast/domainformatter.cpp \
     ilwisscript/ast/ifnode.cpp \
-    ilwisscript/ast/outparametersnode.cpp
+    ilwisscript/ast/outparametersnode.cpp \
+    ilwisscript/ast/selectnode.cpp
 
 
 HEADERS +=\
@@ -86,7 +87,8 @@ HEADERS +=\
     ilwisscript/ast/formatter.h \
     ilwisscript/ast/domainformatter.h \
     ilwisscript/ast/ifnode.h \
-    ilwisscript/ast/outparametersnode.h
+    ilwisscript/ast/outparametersnode.h \
+    ilwisscript/ast/selectnode.h
 
 OTHER_FILES += ilwisscript/ilwisscript.json
 

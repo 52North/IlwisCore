@@ -23,6 +23,9 @@ options {
 #include "scriptlinenode.h"
 #include "parametersNode.h"
 #include "selectornode.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
+#include "selectnode.h"
 #include "termnode.h"
 #include "variableNode.h"
 #include "returnnode.h"
@@ -55,45 +58,8 @@ scriptLine returns [ ASTNode *node]
 	node =  new ScriptLineNode();
 }
 	:	statement				 { node->addChild($statement.node); } 	';'
-	|	variable 				 { node->addChild($variable.node); } ';'
-	|	constant				 { node->addChild($constant.node); } ';'
-	|	function 				 { node->addChild($function.node); } ';'
 	| 	EOL
 	;
-	
-variable returns [ VariableNode *node]
-@init{
-	node = new VariableNode(false);
-}
-	:	'declare'id1 =  ID			{node->addChild(new IDNode((char *)($id1.text->chars)));}
-		(
-		',' 
-		id2=ID					{node->addChild(new IDNode((char *)($id2.text->chars)));}
-		)* 
-		':'
-		type 					{ node->setType($type.type); }				
-		(':=' 
-		expression				{ node->setExpression($expression.node); }
-		)? 
-	;	
-	
-constant returns [ VariableNode *node]
-@init{
-	node = new VariableNode(true);
-}
-	:	'constant' id1 = ID 				{ node->addChild(new IDNode((char *)($id1.text->chars)));}
-		':' 
-		type 						{ node->setType($type.type); }
-		':=' 
-		expression					{ node->setExpression($expression.node); } 
-	;
-	
-type returns [ quint64 type]
-	:	'Integer'					{ type= itINT32; }
-	|	'Boolean'					{ type =  itBOOL; }
-	|	'String'					{ type=  itSTRING;}
-	|	'Real'						{ type= itDOUBLE; }
-	;	
 	
 statement returns [ ASTNode *node]
 	:	assignmentStatement				{ node = $assignmentStatement.node; }
@@ -104,6 +70,20 @@ statement returns [ ASTNode *node]
 	|	dataFormatter					{ node = $dataFormatter.node; }
 	|	defineStatement
 	;
+	
+selectExpr returns [SelectNode *node]
+@init {
+  node = new SelectNode();
+} 
+	:      'indexes' 'from' sources 'where' expr=expression {  node->setInput($sources.source);
+								 node->setExpression($expr.node);
+									    }
+	;
+
+sources returns [ QString source]
+	:	STRING					{ source = "url|" + QString((char *)($STRING.text->chars));}
+	|	ID					{ source = "id|" + QString((char *)($ID.text->chars));}
+	;	
 
 defineStatement
 	:	'define' ID '=' STRING
@@ -115,8 +95,10 @@ assignmentStatement returns [ AssignmentNode *node]
 	node= new AssignmentNode();
 }
 	:	outParameters					{ node->addOutputs($outParameters.node); }
-		(':=' | '=')					{ node->setDefintion(true); } 
+		'='					{ node->setDefintion(true); } 
 		expression 					{ node->setExpression($expression.node);}
+        |       id1=ID '='						{ node->setOutId(new IDNode((char *)($id1.text->chars)));}
+                selectExpr					{ node->setExpression($selectExpr.node);}
 	;
 	
 outParameters returns [ OutParametersNode *node]
@@ -143,21 +125,6 @@ actualParameters returns [ ParametersNode *node]
 		)*
 	;
 	
-function returns [ FunctionNode *node]
-	:	'function' ID					{ node = new FunctionNode((char *)($ID.text->chars));}
-		'(' (var1=variable 				{ node->addParameter(var1); }
-		)?
-		(',' var2=variable 				{ node->addParameter(var2); }
-		)*
-		')' EOL			
-		'begin' EOL
-		(statement 					{ node->addChild($statement.node); }
-		EOL)*
-		( returnStatement 				{ node->setReturn($returnStatement.node); }
-		)?
-		'endfunction'
-	;		
-	
 term returns [ TermNode *node]
 @init{
 	node = new TermNode();
@@ -173,7 +140,7 @@ term returns [ TermNode *node]
 		(id3=selector					{node->addSelector($id3.node);})+
 	|	id2 = ID					{ node->setId(new IDNode((char *)($id2.text->chars)));}
 	;
-
+	
 selector returns [ Selector *node]
 @init{
 	node = new Selector("selector");
@@ -372,10 +339,14 @@ dataFormatter returns [ Formatter *node]
 	;
 
 datatype returns [ QString typeName]
-	: 'gridcoverage'				{ typeName = "gridcoverage"; }
+@init{
+}
+	: 'rastercoverage'				{ typeName = "gridcoverage"; }
 	| 'polygoncoverage'				{ typeName = "polygoncoverage"; }
 	| 'linecoverage'				{ typeName = "linecoverage";}
 	| 'pointcoverage'				{ typeName = "pointcoverage"; }
+	| 'featurecoverage'                             { typeName = "featurecoverage";}
+	| 'feature-index'                               { typeName = "feature-index";}
 	| 'table'					{ typeName = "table"; }	
 	;
 	

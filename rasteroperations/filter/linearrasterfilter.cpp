@@ -12,6 +12,8 @@
 using namespace Ilwis;
 using namespace RasterOperations;
 
+REGISTER_OPERATION(LinearRasterFilter)
+
 LinearRasterFilter::LinearRasterFilter()
 {
 }
