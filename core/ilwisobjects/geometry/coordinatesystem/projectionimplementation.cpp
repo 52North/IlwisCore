@@ -18,19 +18,19 @@ ProjectionImplementation::ProjectionImplementation(const QString &type) :
     _coordinateSystem(0),
     _projtype(type)
 {
-    _parameters[Projection::Projection::pvX0] = 0;
-    _parameters[Projection::pvY0] = 0;
-    _parameters[Projection::pvK0] = 0;
-    _parameters[Projection::pvLAT0] = 0;
-    _parameters[Projection::pvLAT1] = 0;
-    _parameters[Projection::pvLAT2] = 0;
-    _parameters[Projection::pvZONE] = 1;
-    _parameters[Projection::pvNORIENTED] =  true;
-    _parameters[Projection::pvAZIMYAXIS] = 0;
-    _parameters[Projection::pvTILTED] =  false;
-    _parameters[Projection::pvAZIMCLINE] = 0;
-    _parameters[Projection::pvHEIGHT] = 0;
-    _parameters[Projection::pvLON0] =  0;
+    _parameters[Projection::Projection::pvX0] = {rUNDEF};
+    _parameters[Projection::pvY0] = {0};
+    _parameters[Projection::pvK0] = {0};
+    _parameters[Projection::pvLAT0] = {0};
+    _parameters[Projection::pvLAT1] = {0};
+    _parameters[Projection::pvLAT2] = {0};
+    _parameters[Projection::pvZONE] = {1};
+    _parameters[Projection::pvNORIENTED] =  {true};
+    _parameters[Projection::pvAZIMYAXIS] = {0};
+    _parameters[Projection::pvTILTED] =  {false};
+    _parameters[Projection::pvAZIMCLINE] = {0};
+    _parameters[Projection::pvHEIGHT] = {0};
+    _parameters[Projection::pvLON0] =  {0};
 }
 
 QString ProjectionImplementation::type() const
@@ -46,14 +46,14 @@ void ProjectionImplementation::setCoordinateSystem(ConventionalCoordinateSystem 
 QVariant ProjectionImplementation::parameter(Projection::ProjectionParamValue type) const
 {
     if ( _parameters.contains(type)) {
-        return _parameters.value(type);
+        return _parameters.value(type)._value;
     }
     return QVariant();
 }
 
 void ProjectionImplementation::setParameter(Projection::ProjectionParamValue type, const QVariant &value)
 {
-    _parameters[type] = value;
+    _parameters[type] = {value, true};
 }
 
 bool ProjectionImplementation::isEqual(const QScopedPointer<ProjectionImplementation>& projimpl) {
@@ -61,6 +61,14 @@ bool ProjectionImplementation::isEqual(const QScopedPointer<ProjectionImplementa
     QString proj4b = projimpl->toProj4();
 
     return proj4a == proj4b;
+}
+
+QString ProjectionImplementation::toWKT(bool pretty)
+{
+    std::map<Projection::ProjectionParamValue, QString>  kvp = { { Projection::pvLAT1, "standard_parallel_1"}, { Projection::pvLAT2,"standard_parallel_2"},{ Projection::pvLAT0,"latitude_of_origin"}, { Projection::pvK0,"scale_factor"},
+                                                                   { Projection::pvLON0,"central_meridian"}, { Projection::pvX0,"false_easting"}, { Projection::pvY0,"false_northing"}};
+
+    return sUNDEF;
 }
 
 

@@ -42,28 +42,7 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
         for_each(iterOut, iterOut.end(), [&](double& v){
             double v_in1 = *iterIn;
             if ( v_in1 != rUNDEF && _number != rUNDEF) {
-                switch(_operator) {
-                case loAND:
-                case loEQ:
-                    v = v_in1 == _number; break;
-                case loOR:
-                    v = ((bool)v_in1) || ((bool)_number); break;
-                case loXOR:
-                    v = ((bool)v_in1) ^ ((bool)_number); break;
-                case loLESS:
-                    v = v_in1 < _number; break;
-                case loLESSEQ:
-                    v = v_in1 <= _number; break;
-                case loNEQ:
-                    v = v_in1 != _number; break;
-                case loGREATER:
-                    v = v_in1 > _number; break;
-                case loGREATEREQ:
-                    v = v_in1 >= _number; break;
-                default:
-                    v = rUNDEF;
-                    return false;
-                }
+                v = compare2(_operator, v_in1, _number);
             }
             ++iterIn;
             return true;
@@ -91,28 +70,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
             v_in1 = *iterIn1;
             v_in2 = *iterIn2;
             if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
-                switch(_operator) {
-                case loAND:
-                case loEQ:
-                    v = v_in1 == v_in2; break;
-                case loOR:
-                    v = ((bool)v_in1) || ((bool)v_in2); break;
-                case loXOR:
-                    v = ((bool)v_in1) ^ ((bool)v_in2); break;
-                case loLESS:
-                    v = v_in1 < v_in2; break;
-                case loLESSEQ:
-                    v = v_in1 <= v_in2; break;
-                case loNEQ:
-                    v = v_in1 != v_in2; break;
-                case loGREATER:
-                    v = v_in1 > v_in2; break;
-                case loGREATEREQ:
-                    v = v_in1 >= v_in2; break;
-                default:
-                    v = rUNDEF;
-                    return false;
-                }
+                v = compare2(_operator, v_in1, v_in2);
             }
             ++iterIn1;
             ++iterIn2;

@@ -36,6 +36,7 @@ public:
     QString toProj4() const;
 
     IlwisTypes ilwisType() const;
+    QString toWKT(bool pretty=false);
 
     QVariant parameter(Projection::ProjectionParamValue type) const;
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
