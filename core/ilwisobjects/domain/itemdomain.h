@@ -63,12 +63,22 @@ public:
      * \return cPARENT when the value is contained in the parent and this domain is not strict, cSELF if the value is contained in this domain and cNONE if the value is contained in neither
      */
     Domain::Containement contains(const QVariant& val) const{
-        if ( parent().isValid() && !isStrict())
-            if (parent()->contains(val) == Domain::cSELF)
-                return Domain::cPARENT;
 
-        if(item(val.toString()) != 0)
+        if (_range.isNull()) {
+            ERROR1(ERR_NO_INITIALIZED_1, name());
+            return Domain::cNONE;
+        }
+        if(_range->contains(val))
             return Domain::cSELF;
+
+        if ( parent().isValid() && !isStrict()){
+
+            IDomain dm = parent();
+            IlwisData<ItemDomain<D>> parentdom = dm.as<ItemDomain<D>>();
+            if ( parentdom->contains(val))
+                return Domain::cPARENT;
+        }
+
 
          return Domain::cNONE;
     }
@@ -88,10 +98,12 @@ public:
             return false;
         if(dom->ilwisType() != itITEMDOMAIN)
             return false;
-        if (!valueType() != dom->valueType())
+        IlwisTypes tp2 = dom->valueType();
+        IlwisTypes tp1 = valueType();
+        if ( tp1 != tp2)
             return false;
         IlwisData<ItemDomain<D>> itemdom = dom.as<ItemDomain<D>>();
-        if ( itemdom->theme() ==sUNDEF && !itemdom->parent().isValid())
+        if ( itemdom->theme() ==sUNDEF && !parent().isValid())
             return false;
         if ( itemdom->parent().isValid() && parent().isValid()){
             return itemdom->parent() == parent();
