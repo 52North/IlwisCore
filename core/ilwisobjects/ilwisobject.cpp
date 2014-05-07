@@ -391,6 +391,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "CoordinateSystem";
     case  itCONVENTIONALCOORDSYSTEM:
         return "ConventionalCoordinateSystem";
+    case itBOUNDSONLYCSY:
+        return "BoundsOnlyCoordinateSystem"        ;
     case  itGEOREF:
         return "Georeference";
     case  itTABLE:
@@ -459,6 +461,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCOORDSYSTEM;
     if ( name.compare( "ConventionalCoordinateSystem",Qt::CaseInsensitive) == 0)
         return  itCONVENTIONALCOORDSYSTEM;
+    if ( name.compare( "BoundsOnlyCoordinateSystem",Qt::CaseInsensitive) == 0)
+        return  itBOUNDSONLYCSY;
     if ( name.compare( "Georeference",Qt::CaseInsensitive) == 0)
         return  itGEOREF;
     if ( name.compare( "Table",Qt::CaseInsensitive) == 0)
