@@ -41,7 +41,7 @@ geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) {
         ERROR2(ERR_NOT_COMPATIBLE2, "WKT", TR("this wkt parser"));
         return 0;
     } catch (const geos::io::ParseException& ex){
-        ERROR1(ERR_OPERATION_FAILID1, "Well Known Text");
+        ERROR0(ex.what());
         return 0;
     }
 }
