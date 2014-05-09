@@ -3,6 +3,7 @@
 #include <memory>
 #include <functional>
 #include "geos/geom/Geometry.h"
+#include "geos/util/GEOSException.h"
 #include "kernel.h"
 #include "coverage.h"
 #include "columndefinition.h"
@@ -60,6 +61,7 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
     std::set<quint32> resultset;
     int index = 0;
     geos::geom::Geometry *geomRelation = _geometry.get();
+    try{
     if ( geomRelation != 0) {
         for(auto& iter : features){
             int geomcount = iter->trackSize();
@@ -73,6 +75,10 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
             }
             ++index;
         }
+    }
+    } catch(geos::util::GEOSException& exc){
+        ERROR0(QString(exc.what()));
+        return false;
     }
 
     std::vector<quint32> result(resultset.begin(), resultset.end());
