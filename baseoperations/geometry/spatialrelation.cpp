@@ -154,7 +154,7 @@ Ilwis::OperationImplementation *Covers::create(quint64 metaid, const Ilwis::Oper
 }
 
 bool Covers::covers(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomCoverage->covers(geomRelation);
+    return  geomRelation->covers(geomCoverage);
 }
 
 OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const SymbolTable &sym){
