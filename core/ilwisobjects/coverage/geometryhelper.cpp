@@ -34,8 +34,12 @@ QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
 
 geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) {
     try{
-    geos::io::WKTReader reader;
-    return reader.read(wkt.toStdString());
+        geos::io::WKTReader reader;
+        geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+        if (geom)
+            return geom;
+        ERROR2(ERR_NOT_COMPATIBLE2, "WKT", TR("this wkt parser"));
+        return 0;
     } catch (const geos::io::ParseException& ex){
         ERROR1(ERR_OPERATION_FAILID1, "Well Known Text");
         return 0;
