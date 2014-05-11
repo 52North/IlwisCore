@@ -35,12 +35,12 @@ public:
 
 
     bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
-    QString toWKT(bool pretty=false);
+    QString toWKT(quint32 spaces=0);
 protected:
     ConventionalCoordinateSystem *_coordinateSystem;
 
 private:
-    QHash<Projection::ProjectionParamValue, ProjectionParameter> _parameters;
+    std::map<Projection::ProjectionParamValue, ProjectionParameter> _parameters;
     QString _projtype;
 };
 }
