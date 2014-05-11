@@ -8,6 +8,7 @@
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "mastercatalog.h"
+#include "proj4parameters.h"
 #include "oshelper.h"
 
 
@@ -485,9 +486,19 @@ void Resource::checkUrl(IlwisTypes tp) {
         if ( index2 > index)
             index = index2 + 4;
         QString rname = resource.right(resource.size() - index - 1);
+        QString newName = rname;
+        if ((index = resource.indexOf("proj4:"))!=-1){
+            QString proj4Part = resource.mid(index + 6);
+            Proj4Def def = Proj4Parameters::lookupDefintion(proj4Part);
+            if ( def._name != sUNDEF){
+                newName = def._name;
+                rname = def._epsg;
+            }else
+                newName = "Unknown_csy_" + QString::number(id());
+        }
         if ( index2 != -1)
             code(rname);
-        name(rname, false);
+        name(newName, false);
     }
 }
 
