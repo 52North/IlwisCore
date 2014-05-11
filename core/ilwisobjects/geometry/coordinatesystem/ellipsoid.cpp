@@ -1,4 +1,7 @@
 #include <QString>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlField>
 
 #include "kernel.h"
 #include "angle.h"
@@ -223,14 +226,41 @@ double Ellipsoid::excentricity2() const
     return _excentricity * _excentricity;
 }
 
-void Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
+QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
     _flattening = invf == 0 ? 0 :1.0/invf; // invf = 0 for spheres
-    _majorAxis = a;
-    _minoraxis = a * (1.0 - _flattening);
-    _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
     if(setCodeToo)
         code(toProj4());
+    QString newName = "User defined";
 
+    QSqlQuery db(kernel()->database());
+    QString query = "Select * from ellipsoid";
+    if ( db.exec(query) ){
+        while( db.next()){
+             QSqlRecord rec = db.record();
+             double maxis = rec.field("majoraxis").value().toDouble();
+             double invflat = rec.field("invflattening").value().toDouble();
+             if ( std::abs(maxis - a) < 0.01 && std::abs(invflat - _flattening) < 0.01){
+                 return fromInternal(rec);
+             }
+        }
+    }
+    _majorAxis = a;
+    _minoraxis = a * (1.0 - invf);
+    _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
+
+    return newName;
+}
+
+QString Ellipsoid::fromInternal(const QSqlRecord& rec ){
+    IlwisObject::fromInternal(rec);
+    setWKTName(rec.field("wkt").value().toString());
+    setAuthority(rec.field("authority").value().toString());
+    _flattening = rec.field("invflattening").value().toDouble();
+    _majorAxis = rec.field("majoraxis").value().toDouble();
+    double invf = _flattening == 0 ? 0 : 1.0 / _flattening;
+    _minoraxis = _majorAxis * (1.0 - invf);
+    _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
+    return name();
 }
 
 QString Ellipsoid::authority() const
@@ -247,9 +277,28 @@ QString Ellipsoid::toProj4() const
     return QString("+a=%1 +b=%2").arg(_majorAxis).arg(_minoraxis);
 }
 
+QString Ellipsoid::toWKT(quint32 spaces) const
+{
+    QString indent = QString(" ").repeated(spaces);
+    QString ell = indent + "ELLIPSOID[\"";
+    if (_wkt != "") {
+        ell += _wkt;
+    }else{
+        ell += name();
+    }
+    ell += "\"," + QString::number(_majorAxis) + "," + QString::number(_flattening);
+    ell += "]";
+    return ell;
+}
+
 IlwisTypes Ellipsoid::ilwisType() const
 {
     return itELLIPSOID;
+}
+
+void Ellipsoid::setWKTName(const QString &wkt)
+{
+    _wkt = wkt;
 }
 
 
