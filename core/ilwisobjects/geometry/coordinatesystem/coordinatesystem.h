@@ -26,6 +26,7 @@ public:
     Ilwis::Envelope envelope() const;
     void envelope(const Envelope &env);
     virtual bool isLatLon() const = 0;
+    virtual QString toWKT(quint32 spaces=0) const=0;
 
 private:
     Ilwis::Envelope _envelope;
