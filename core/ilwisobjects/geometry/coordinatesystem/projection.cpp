@@ -109,12 +109,14 @@ IlwisTypes Projection::ilwisType() const
     return itPROJECTION;
 }
 
-QString Projection::toWKT(bool pretty)
+QString Projection::toWKT(quint32 spaces)
 {
   if ( _implementation.isNull()) {
       return sUNDEF;
   }
-  return _implementation->toWKT(pretty);
+  QString proj = "PROJECTION[\"" + _wkt + "\"],";
+  proj += _implementation->toWKT(spaces);
+  return proj;
 }
 
 void Projection::setCoordinateSystem(ConventionalCoordinateSystem *csy)
