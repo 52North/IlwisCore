@@ -1,9 +1,12 @@
 #include <QHash>
 #include <QString>
 #include <QStringList>
+#include <QDebug>
 #include "ilwis.h"
 #include "Kernel_global.h"
 #include "proj4parameters.h"
+
+std::multimap<quint32, Proj4Def> Proj4Parameters::_lookup;
 
 Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
 {
@@ -51,18 +54,18 @@ QString Proj4Parameters::datum() const {
         if ( _keyvalues.find("dx") == _keyvalues.end()){
             return sUNDEF;
         }
-        dat = _keyvalues["dx"] + "," + _keyvalues["dy"] + "," + _keyvalues["dz"];
-        if ( _keyvalues["rx"] != sUNDEF){
-            dat += "," + _keyvalues["rx"] + "," + _keyvalues["ry"] + "," + _keyvalues["rz"]+ "," + _keyvalues["dscale"];
+        dat = _keyvalues.at("dx") + "," + _keyvalues.at("dy") + "," + _keyvalues.at("dz");
+        if ( _keyvalues.at("rx") != sUNDEF){
+            dat += "," + _keyvalues.at("rx") + "," + _keyvalues.at("ry") + "," + _keyvalues.at("rz")+ "," + _keyvalues.at("dscale");
         }
     }
     return dat;
 }
 QString Proj4Parameters::operator [](const QString &key) const
 {
-    auto iter =  _keyvalues.constFind(key);
+    auto iter =  _keyvalues.find(key);
     if ( iter != _keyvalues.end())
-        return iter.value();
+        return (*iter).second;
     if (key == "towgs84")
         return datum();
     return sUNDEF;
@@ -71,4 +74,53 @@ QString Proj4Parameters::operator [](const QString &key) const
 bool Proj4Parameters::hasDatum() const
 {
     return _hasDatum;
+}
+
+bool Proj4Parameters::operator==(const Proj4Parameters &parms) const
+{
+    for(auto parm : _keyvalues){
+        if ( parm.first == "units" || parm.first == "no_defs")
+            continue;
+        auto iter = parms._keyvalues.find(parm.first);
+        if ( iter == parms._keyvalues.end())
+            return false;
+        if ( parm.second != (*iter).second)
+            return false;
+
+    }
+    return true;
+}
+
+Proj4Def Proj4Parameters::lookupDefintion(const QString& proj4Def) {
+    quint32 hasv = Proj4Parameters::hash(proj4Def);
+    auto iter = _lookup.find(hasv);
+    if ( iter == _lookup.end())
+        return Proj4Def();
+    Proj4Parameters defIn(proj4Def);
+    while(iter != _lookup.end() && (*iter).first == hasv){
+        Proj4Parameters defCur((*iter).second._proj4def);
+        if (defCur == defIn)
+            return (*iter).second;
+    }
+    return Proj4Def();
+}
+
+void Proj4Parameters::add2lookup(const QString& name, const QString& proj4def, const QString epsg){
+    quint32 hnum = hash(proj4def);
+    _lookup.insert(std::pair<quint32, Proj4Def>(hnum,{name, proj4def, epsg}));
+}
+
+quint32 Proj4Parameters::hash(QString code){
+    quint32 hasv = 0;
+    code = code.toLower();
+    code.remove("+no_defs");
+    QRegExp rx("+units=* ");
+    rx.setPatternSyntax(QRegExp::Wildcard);
+    code.remove(rx);
+    code.remove(" ");
+    for(auto c : code){
+        hasv += c.unicode();
+    }
+    return hasv;
+
 }
