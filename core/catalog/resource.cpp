@@ -194,7 +194,6 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
         url = url.left(index+1) + nm;
     }
     _normalizedUrl = QUrl(url);
-    _urlQuery = QUrlQuery(url);
 }
 
 QVariant Resource::operator [](const QString &prop) const
@@ -236,12 +235,12 @@ QUrl Resource::url(bool asRaw) const
 void Resource::setUrl(const QUrl &url, bool asRaw)
 {
     _container.clear();
-    if ( asRaw)
+    if ( asRaw) {
         _rawUrl = url;
-    else
+        _urlQuery = QUrlQuery(url);
+    } else
         _normalizedUrl = url;
 
-    _urlQuery = QUrlQuery(url);
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
