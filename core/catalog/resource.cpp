@@ -95,12 +95,13 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                         }
                     }
                     _normalizedUrl = urltxt;
+
                 }
             }
         }
         checkUrl(tp);
     }
-
+    _rawUrl = _normalizedUrl;// for the moment, can always overrule it
 
 }
 
