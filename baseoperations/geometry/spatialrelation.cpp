@@ -103,7 +103,7 @@ OperationImplementation::State SpatialRelationOperation::prepare(ExecutionContex
 
     QString quotedGeom = _expression.parm(1).value();
     QString geom = quotedGeom.remove('\"');
-    _geometry.reset(GeometryHelper::fromWKT(geom));
+    _geometry.reset(GeometryHelper::fromWKT(geom, ICoordinateSystem())); // dont use the csy of coverage; not relevant here
     if ( !_geometry){
         ERROR2(ERR_NO_INITIALIZED_2, TR("Geometry"), TR("Contains operation"));
         return sPREPAREFAILED;
