@@ -259,6 +259,9 @@ const UPGeometry &Feature::geometry(quint32 index) const{
 
 void Feature::set(geos::geom::Geometry *geom, int index)
 {
+    if (!geom)
+        return;
+
     if ( index < _track.size())
         _track[index]->set(geom);
     else{
