@@ -12,7 +12,9 @@
 #include "featurecoverage.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/PrecisionModel.inl"
+#endif
 #include "geos/geom/GeometryFactory.h"
 #include "geos/io/ParseException.h"
 #include "geometryhelper.h"
