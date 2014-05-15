@@ -182,7 +182,7 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
         _columnDefinitionsByIndex[i].changed(true);
 
     quint32 col = offset;
-    int cols = std::min(vars.size() - offset, columnCount());
+    int cols = std::min((quint32)vars.size() - offset, columnCount());
     for(const QVariant& var : vars) {
         if ( col < cols){
             _datagrid[rec][col] = checkInput(var, col);
