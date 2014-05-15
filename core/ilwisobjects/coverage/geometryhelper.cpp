@@ -1,4 +1,4 @@
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
@@ -8,7 +8,9 @@
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/Coordinate.h"
 #include "geos/io/WKTReader.h"
+#ifdef Q_OS_WIN
 #include "geos/io/WKTReader.inl"
+#endif
 #include "geos/io/WKTWriter.h"
 #include "geos/io/ParseException.h"
 #include "coordinate.h"
