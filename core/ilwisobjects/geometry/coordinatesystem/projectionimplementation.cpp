@@ -9,7 +9,7 @@
 #include "projection.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "proj4parameters.h"
 
 using namespace Ilwis;

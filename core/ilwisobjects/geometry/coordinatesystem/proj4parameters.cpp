@@ -2,7 +2,7 @@
 #include <QString>
 #include <QStringList>
 #include "ilwis.h"
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "proj4parameters.h"
 
 Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
