@@ -5,7 +5,9 @@
 #include "kernel.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Coordinate.inl"
+#endif
 #include "coordinate.h"
 #include "location.h"
 #include "ilwisobject.h"
@@ -16,7 +18,7 @@
 #include "box.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "projectionimplementationinternal.h"
 
 using namespace Ilwis;
