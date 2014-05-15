@@ -1,7 +1,7 @@
 #ifndef ILWISCONTEXT_H
 #define ILWISCONTEXT_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QThreadStorage>
 #include <QJsonObject>
 #include "ilwisdata.h"

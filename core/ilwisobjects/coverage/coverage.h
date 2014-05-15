@@ -1,7 +1,7 @@
 #ifndef BASELAYER_H
 #define BASELAYER_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "geos/geom/Geometry.h"
 #include "geometries.h"
 #include "ilwisobject.h"

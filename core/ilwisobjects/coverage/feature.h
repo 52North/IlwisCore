@@ -1,7 +1,7 @@
 #ifndef FEATURE_H
 #define FEATURE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
