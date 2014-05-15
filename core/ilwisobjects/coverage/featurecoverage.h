@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace geos{
 namespace geom{
