@@ -13,7 +13,6 @@ TEMPLATE = lib
 
 DEFINES += CORE_LIBRARY
 
-
 SOURCES += core/kernel.cpp \
     core/version.cpp \
     core/module.cpp \
@@ -174,7 +173,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/table/attributerecord.h \
     core/ilwisobjects/coverage/featurefactory.h \
     core/util/errmessages.h \
-    core/ilwisobjects/geometry/coordinatesystem/ProjectionImplementation.h \
+    core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
     core/ilwisobjects/geometry/coordinatesystem/projectionfactory.h \
     core/ilwisobjects/geometry/coordinatesystem/projection.h \
     core/ilwisobjects/geometry/coordinatesystem/proj4parameters.h \
@@ -237,7 +236,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/classification/sampleset.h \
     core/ilwisobjects/operation/classification/samplestatistics.h \
     core/ilwisobjects/domain/interval.h \
-    core/ilwisobjects/domain/intervalrange.h
+    core/ilwisobjects/domain/intervalrange.h \
+    core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
+    core/kernel_global.h
     core/util/bresenham.h
 
 
@@ -252,14 +253,9 @@ OTHER_FILES += \
     LICENSE-2.0.txt \
     installer.nsi
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
-win32:CONFIG(release){
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
+QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/core/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin
 
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
 
 resources.files = core/resources/referencesystems.csv \
     core/resources/projections.csv \
@@ -269,6 +265,12 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv
 resources.path = $$DLLDESTDIR/resources
+
+license.files =  LICENSE-2.0.txt
+license.path = $$DLLDESTDIR
+
+installer.files =installer.nsi
+installer.path = $$PWD/../output/$$PLATFORM$$CONF
 
 win32{
     CONFIG(debug, debug|release) {
@@ -301,14 +303,14 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers+
+
+    INSTALLS += resources license installer qtdlls qtsqlplugin
 }
 
-license.files =  LICENSE-2.0.txt
-license.path = $$DLLDESTDIR
 
-installer.files =installer.nsi
-installer.path = $$PWD/../output/$$PLATFORM$$CONF
 
-INSTALLS += resources license installer qtdlls qtsqlplugin
+INSTALLS += resources
 QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
+
+
