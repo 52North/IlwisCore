@@ -11,7 +11,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
 #include "numericoperation.h"
