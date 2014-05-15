@@ -11,6 +11,7 @@ class Classifier
 public:
     Classifier(const Ilwis::SampleSet &sampleset);
     virtual bool classify(PixelIterator& iter, Ilwis::PixelIterator &iterOut) const = 0;
+    virtual bool prepare() = 0;
 
 protected:
     const SampleSet& sampleset() const { return _sampleset; }
@@ -24,13 +25,13 @@ public:
     BoxClassifier(double factor, const SampleSet& sampleset);
 
     bool classify(PixelIterator& iter, Ilwis::PixelIterator &iterOut) const;
-
-private:
     bool prepare();
+private:
 
-    std::unordered_map<quint32, std::vector<double>> _boxMax;
-    std::unordered_map<quint32, std::vector<double>> _boxMin;
-    std::unordered_map<quint32, Raw> _classSequence;
+
+    std::vector<std::vector<double>> _boxMax;
+    std::vector<std::vector<double>> _boxMin;
+    std::vector<Raw> _classSequence;
     double _widenFactor;
 
 };

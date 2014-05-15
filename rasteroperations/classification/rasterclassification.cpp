@@ -34,10 +34,14 @@ bool RasterClassification::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     PixelIterator iterOut(_outputRaster);
 
-    _classifier->classify(iterIn, iterOut);
+    bool res = _classifier->classify(iterIn, iterOut);
 
-    return true;
-
+    if ( res && ctx != 0) {
+        QVariant value;
+        value.setValue<IRasterCoverage>(_outputRaster);
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source(IlwisObject::cmEXTENDED) );
+    }
+    return res;
 }
 
 Ilwis::OperationImplementation::State RasterClassification::prepare(ExecutionContext *, const SymbolTable &sym){
@@ -69,7 +73,7 @@ Ilwis::OperationImplementation::State RasterClassification::prepare(ExecutionCon
 
     QString outputName = _expression.parm(0,false).value();
 
-    _outputRaster = OperationHelperRaster::initialize(_sampleSet.sampleRasterSet(),itRASTER, itCOORDSYSTEM | itGEODETICDATUM | itGEOREF);
+    OperationHelperRaster::initialize(_sampleSet.sampleRasterSet(), _outputRaster, itCOORDSYSTEM | itGEODETICDATUM | itGEOREF | itRASTERSIZE);
    if ( !_outputRaster.isValid()) {
        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
        return sPREPAREFAILED;
@@ -120,6 +124,9 @@ Ilwis::OperationImplementation::State BoxClassification::prepare(ExecutionContex
     }
 
     _classifier.reset( new BoxClassifier(_widenFactor,_sampleSet));
+    if(!_classifier->prepare())
+        return sPREPAREFAILED;
+
 
     return sPREPARED;
 }

@@ -298,6 +298,7 @@ public:
     Resource copy(quint64 id) const;
     bool isRoot() const;
     static bool isRoot(const QString &txt) ;
+    static QString quoted2string(const QString &name);
 
 protected:
     void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);

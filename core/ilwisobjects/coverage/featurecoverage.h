@@ -115,7 +115,7 @@ public:
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
     UPFeatureI& newFeature(geos::geom::Geometry *geom, bool load=true);
-    UPFeatureI& newFeature(const QString& wkt, bool load=true);
+    UPFeatureI& newFeature(const QString& wkt, const Ilwis::ICoordinateSystem &csy=ICoordinateSystem(), bool load=true);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -171,6 +171,7 @@ public:
     static IlwisTypes geometryType(const geos::geom::Geometry *geom) ;
     const UPGeomFactory &geomfactory() const;
     bool prepare();
+    Indices select(const QString& spatialQuery) const;
 protected:
     void copyTo(IlwisObject *obj);
 private:

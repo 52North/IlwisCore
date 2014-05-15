@@ -84,7 +84,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
     Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
     if (!conn){
-        throw ErrorObject(TR(QString("couldnt find connector for %1").arg(format)));
+        throw ErrorObject(TR(QString("couldnt connect to %1 datasource for").arg(format)));
     }
     setConnector(conn, cmode);
     if ( Identity::name() == sUNDEF)
@@ -229,10 +229,13 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
     _changed = true;
 
     if (mode & cmINPUT){
-        quint64 pointer = (quint64) ( _outConnector.data());
+        quint64 pointer = (quint64) ( _connector.data());
         quint64 npointer = (quint64) ( connector);
-        if ( pointer != npointer || npointer == 0)
+        if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
+            if ( !_connector.isNull())
+                _connector->loadMetaData(this, PrepareOptions());
+        }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
@@ -293,7 +296,7 @@ bool IlwisObject::isAnonymous() const
 
 Resource IlwisObject::source(int mode) const
 {
-    if ( mode & cmINPUT) {
+    if ( mode & cmINPUT || mode == cmEXTENDED) {
         if ( _connector.isNull() == false)
             return _connector->source();
         return Resource();
@@ -391,6 +394,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "CoordinateSystem";
     case  itCONVENTIONALCOORDSYSTEM:
         return "ConventionalCoordinateSystem";
+    case itBOUNDSONLYCSY:
+        return "BoundsOnlyCoordinateSystem"        ;
     case  itGEOREF:
         return "Georeference";
     case  itTABLE:
@@ -459,6 +464,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCOORDSYSTEM;
     if ( name.compare( "ConventionalCoordinateSystem",Qt::CaseInsensitive) == 0)
         return  itCONVENTIONALCOORDSYSTEM;
+    if ( name.compare( "BoundsOnlyCoordinateSystem",Qt::CaseInsensitive) == 0)
+        return  itBOUNDSONLYCSY;
     if ( name.compare( "Georeference",Qt::CaseInsensitive) == 0)
         return  itGEOREF;
     if ( name.compare( "Table",Qt::CaseInsensitive) == 0)

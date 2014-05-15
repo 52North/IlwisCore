@@ -27,6 +27,7 @@ public:
     IlwisTypes ilwisType() const;
     bool isValid() const;
     bool isEqual(const Ilwis::IlwisObject *obj) const;
+    QString toWKT(quint32 spaces=0) const;
 private:
     IEllipsoid _ellipsoid;
     IProjection _projection;

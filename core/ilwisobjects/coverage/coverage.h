@@ -141,7 +141,7 @@ public:
      *
      * \return the statistics of this coverage
      */
-    NumericStatistics& statistics();
+    virtual NumericStatistics& statistics(int mode=0);
 
     /*!
      * Returns the DataDefinition of this rastercoverage<br>

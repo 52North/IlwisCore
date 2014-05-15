@@ -28,6 +28,11 @@ public:
     QVariant getValue(const QString& name, int scope=1000) const;
     Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
     Symbol getSymbol(const QString& name, int scope=1000) const;
+    template<typename T> T getValue(const QString& name){
+        QVariant var = getValue(name)    ;
+        return var.value<T>();
+    }
+
     void unloadRasters();
     IlwisTypes ilwisType(const QVariant &value, const QString &symname) const;
 
@@ -37,7 +42,7 @@ public:
     static bool isDataLink(const QVariant &value);
     static QString newAnonym();
     static bool isString(const QVariant &var);
-
+    static bool isIndex(int index, const QVariantList &var);
 private:
     QHash<QString, Symbol> _symbols;
     static quint64 _symbolid;
@@ -46,5 +51,9 @@ private:
     
 };
 }
+
+typedef std::vector<quint32> Indices;
+
+Q_DECLARE_METATYPE(Indices)
 
 #endif // SYMBOLTABLE_H

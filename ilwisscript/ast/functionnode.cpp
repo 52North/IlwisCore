@@ -1,5 +1,7 @@
 #include <QVariant>
+#include <set>
 #include "ilwis.h"
+#include "identity.h"
 #include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"

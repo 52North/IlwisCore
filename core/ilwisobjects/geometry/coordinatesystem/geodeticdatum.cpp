@@ -36,7 +36,7 @@ void GeodeticDatum::set7TransformationParameters(double x, double z, double y, d
     _datumParams[dmRY] = ry;
     _datumParams[dmRZ] = rz;
     _datumParams[dmSCALE] = scale;
-   code(QString("%1,%2,%3,%4,%5").arg(code()).arg(x).arg(y).arg(z).arg(scale));
+   code(QString("%1,%2,%3,%4,%5").arg(code()).arg(rx).arg(ry).arg(rz).arg(scale));
 
 
 }
@@ -73,6 +73,7 @@ void GeodeticDatum::fromCode(const QString &gcode)
             double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
             setArea(area);
             code(geocode);
+            setWktName(stmt.value(stmt.record().indexOf("wkt")).toString());
             set3TransformationParameters(dx, dy, dz);
 
         } else {
@@ -81,6 +82,28 @@ void GeodeticDatum::fromCode(const QString &gcode)
     } else {
         kernel()->issues()->logSql(stmt.lastError());
     }
+}
+
+void GeodeticDatum::setWktName(const QString &name)
+{
+    _wkt = name;
+}
+
+QString GeodeticDatum::toWKT(quint32 spaces) const
+{
+    QString dat;
+    QString indent = QString(" ").repeated(spaces);
+    QString ending = spaces == 0 ? "" : "\n";
+    if ( _wkt.size() > 0)
+        dat = indent + "DATUM[\"" + _wkt + "," + ending;
+    else{
+        dat = indent + "DATUM[\"Unknown\"," + ending;
+        dat += indent + "[" + code().toUpper() + "]" + ending;
+        dat.replace("+","");
+        dat.replace("=","[");
+    }
+
+    return dat;
 }
 
 QString GeodeticDatum::area() const

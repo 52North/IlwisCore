@@ -24,6 +24,39 @@ protected:
     State _prepState;
 
     virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
+
+    template<typename T, typename S> bool compare1(LogicalOperator oper, const T& v1, const S& v2){
+        switch(oper) {
+        case loAND:
+        case loEQ:
+            return v1 == v2;
+        case loLESS:
+            return v1 < v2;
+        case loLESSEQ:
+            return v1 <= v2;
+        case loNEQ:
+            return v1 != v2;
+        case loGREATER:
+            return v1 > v2;
+        case loGREATEREQ:
+            return v1 >= v2;
+        default:
+            return false;
+        }
+
+    }
+
+    template<typename T, typename S> bool compare2(LogicalOperator oper, const T& v1, const S& v2){
+        switch(oper) {
+        case loOR:
+            return ((bool)v1) || ((bool)v2);
+        case loXOR:
+            return ((bool)v1) ^ ((bool)v2);
+        default:
+            return  compare1(oper, v1, v2);
+        }
+
+    }
 };
 
 typedef QScopedPointer<OperationImplementation> SPOperationImplementation;
@@ -61,6 +94,9 @@ public:
         }
         return T();
     }
+
+
+
     // helper function
     static std::nullptr_t registerOperation(quint64 id, Ilwis::CreateOperation op);
 
@@ -79,7 +115,6 @@ static name *dummy_operation;
 #define REGISTER_OPERATION(name) \
     name *name::dummy_operation = Operation::registerOperation(name::createMetadata(),name::create);
 
-Q_DECLARE_METATYPE(std::vector<quint32>)
 
 
 #endif // OPERATION_H

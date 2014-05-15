@@ -112,6 +112,17 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, quint32 inputInde
     });
 }
 
+NumericStatistics &RasterCoverage::statistics(int mode)
+{
+    if ( mode == ContainerStatistics<double>::pNONE)
+        return Coverage::statistics(mode);
+    IRasterCoverage raster(this);
+    PixelIterator iter(raster);
+    statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode);
+
+    return Coverage::statistics(mode);
+}
+
 Grid *RasterCoverage::grid()
 {
     Locker lock(_mutex);
@@ -145,7 +156,7 @@ Resource RasterCoverage::source(int mode) const
 {
     Resource resource = Coverage::source(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
-        resource["georeference()"] = georeference()->id();
+        resource.addProperty("georeference", georeference()->id());
         resource.addProperty("domain", _datadefCoverage.domain()->id());
         resource.setExtendedType( resource.extendedType() | itDOMAIN |  itGEOREF);
     }

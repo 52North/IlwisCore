@@ -7,6 +7,13 @@ namespace Ilwis {
 
 class ConventionalCoordinateSystem;
 
+struct ProjectionParameter {
+    ProjectionParameter(){}
+    ProjectionParameter(const QVariant& var, bool isSet=false) : _value(var), _isSet(isSet){}
+    QVariant _value;
+    bool _isSet=false;
+};
+
 class KERNELSHARED_EXPORT ProjectionImplementation
 {
 public:
@@ -28,11 +35,12 @@ public:
 
 
     bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
+    QString toWKT(quint32 spaces=0);
 protected:
     ConventionalCoordinateSystem *_coordinateSystem;
 
 private:
-    QHash<Projection::ProjectionParamValue, QVariant> _parameters;
+    std::map<Projection::ProjectionParamValue, ProjectionParameter> _parameters;
     QString _projtype;
 };
 }

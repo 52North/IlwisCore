@@ -15,6 +15,7 @@ private:
      bool handleGREATER(int index,const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
      bool handleLESS(int index,const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
      bool handleLESSEQ(int index,const NodeValue &vright, Ilwis::SymbolTable &symbols, Ilwis::ExecutionContext *ctx);
+     bool handleImplicitCase(const QVariant &var1, const QVariant &var2, ExecutionContext *ctx, const QString &oper);
 };
 }
 

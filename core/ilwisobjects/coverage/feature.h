@@ -10,6 +10,8 @@ class UPFeatureI;
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 class VertexIterator;
 
+const int COVERAGEATRIB=-1;
+
 //typedef QSharedPointer<FeatureInterface> UPFeatureI;
 
 class KERNELSHARED_EXPORT FeatureInterface {
@@ -20,14 +22,14 @@ public:
     virtual const UPGeometry& geometry(quint32 index=0) const = 0;
     virtual UPGeometry& geometry(quint32 index=0) = 0;
     virtual void set(geos::geom::Geometry *geom, int index = 0) = 0;
-    QVariant operator()(const QString& name, int index = -1, bool asRaw=true);
+    QVariant operator()(const QString& name, int index = COVERAGEATRIB, bool asRaw=true);
     virtual FeatureInterface *clone() const=0;
     virtual IlwisTypes geometryType(qint32 index=0) const = 0;
     virtual quint32 trackSize() const = 0;
-    virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true)  = 0;
-    virtual void setCell(const QString& name, const QVariant& var, int index=-1) = 0;
-    virtual void setCell(quint32 colIndex, const QVariant& var, int index=-1) = 0;
-    virtual QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) = 0;
+    virtual QVariant cell(const QString& name, int index = COVERAGEATRIB, bool asRaw=true)  = 0;
+    virtual void setCell(const QString& name, const QVariant& var, int index = COVERAGEATRIB) = 0;
+    virtual void setCell(quint32 colIndex, const QVariant& var, int index = COVERAGEATRIB) = 0;
+    virtual QVariant cell(quint32 colIndex, int index = COVERAGEATRIB, bool asRaw=true) = 0;
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
@@ -39,9 +41,8 @@ protected:
 class KERNELSHARED_EXPORT UPFeatureI : public std::unique_ptr<FeatureInterface> {
 public:
     UPFeatureI(FeatureInterface *f=0);
-    QVariant operator ()(const QString &name, int index, bool asRaw=true);
-    QVariant operator ()(const QString &name, bool asRaw=true);
-    void operator ()(const QString &name, const QVariant& var, int index=-1);
+    QVariant operator ()(const QString &name, bool asRaw=true, int index = COVERAGEATRIB) const;
+    void operator ()(int index, const QString &name, const QVariant& var);
     VertexIterator begin();
     VertexIterator end();
 };
@@ -65,10 +66,10 @@ private:
     FeatureInterface *clone() const;
     IlwisTypes geometryType(qint32 index=0) const ;
     quint32 trackSize() const ;
-    QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) ;
-    virtual QVariant cell(const QString& name, int index=-1, bool asRaw=true) ;
-    virtual void setCell(const QString& name, const QVariant& var, int index=-1);
-    virtual void setCell(quint32 colIndex, const QVariant& var, int index=-1);
+    QVariant cell(quint32 colIndex, int index = COVERAGEATRIB, bool asRaw=true) ;
+    virtual QVariant cell(const QString& name, int index = COVERAGEATRIB, bool asRaw=true) ;
+    virtual void setCell(const QString& name, const QVariant& var, int index = COVERAGEATRIB);
+    virtual void setCell(quint32 colIndex, const QVariant& var, int index = COVERAGEATRIB);
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;
@@ -113,10 +114,10 @@ public:
     FeatureInterface* clone() const;
     IlwisTypes geometryType(qint32 index=iUNDEF) const;
     quint32 trackSize() const;
-    QVariant cell(quint32 colIndex, int index=-1, bool asRaw=true) ;
-    QVariant cell(const QString& name, int index=-1, bool asRaw=true);
-    void setCell(const QString& name, const QVariant& var, int index=-1);
-    void setCell(quint32 colIndex, const QVariant& var, int index=-1) ;
+    QVariant cell(quint32 colIndex, int index = COVERAGEATRIB, bool asRaw=true) ;
+    QVariant cell(const QString& name, int index = COVERAGEATRIB, bool asRaw=true);
+    void setCell(const QString& name, const QVariant& var, int index = COVERAGEATRIB);
+    void setCell(quint32 colIndex, const QVariant& var, int index = COVERAGEATRIB) ;
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;

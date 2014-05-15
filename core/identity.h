@@ -61,6 +61,9 @@ public:
     virtual QString description() const;
     void setDescription(const QString& desc);
 
+    static QString newAnonymousName() ; 
+
+
 protected:
     Identity(const QString &name, qint64 id=i64UNDEF, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
 

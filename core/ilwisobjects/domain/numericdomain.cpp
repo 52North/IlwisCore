@@ -112,7 +112,7 @@ Domain::Containement NumericDomain::contains(const QVariant &value) const
     if ( !_range.isNull()) {
         if ( !_range.isNull() && _range->contains(value))
             return Domain::cSELF;
-        if (parent().isValid())
+        if (parent().isValid() && !isStrict())
             if (parent()->contains(value) == Domain::cSELF)
                 return Domain::cPARENT;
     }

@@ -7,7 +7,6 @@ class SelectNode : public ASTNode
 public:
     SelectNode();
 
-    QUrl inputUrl() const;
     void setInput(const QString &inputUrl);
 
     QString inputId() const;
@@ -15,9 +14,9 @@ public:
     bool evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx);
     void setExpression(ExpressionNode *n);
 private:
-    QUrl _inputUrl ;
     QString _inputId = sUNDEF;
     QSharedPointer<ExpressionNode> _expression;
+    bool _isUrl=false;
 };
 }
 

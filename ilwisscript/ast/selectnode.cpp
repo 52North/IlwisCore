@@ -19,15 +19,13 @@ SelectNode::SelectNode()
 {
 }
 
-QUrl SelectNode::inputUrl() const
-{
-    return _inputUrl;
-}
-
 void SelectNode::setInput(const QString &input)
 {
-    if ( input.indexOf("url|") == 0 )
-        _inputUrl = input.mid(4);
+    if ( input.indexOf("url|") == 0 ){
+
+        _inputId = "\"" + QString(input).remove("\"") + "\"";
+        _isUrl = true;
+    }
     else
         _inputId = input.mid(3);
 }
@@ -38,11 +36,14 @@ QString SelectNode::inputId() const
 
 bool SelectNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    ctx->_additionalInfo["extra0"] = _inputId;
-    ctx->_additionalInfo["extra1"] = "true";
+    ctx->_additionalInfo[IMPLICITPARMATER0] = _inputId;
     ctx->_useAdditionalParameters = true;
-    _expression->evaluate(symbols, scope, ctx);
-    return false;
+    if(!_expression->evaluate(symbols, scope, ctx))
+        return false;
+
+    _value = _expression->value();
+
+    return true;
 }
 
 void SelectNode::setExpression(ExpressionNode *n)

@@ -15,6 +15,7 @@
 #include "catalogexplorer.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
+#include "oshelper.h"
 
 using namespace Ilwis;
 
@@ -57,17 +58,20 @@ IlwisTypes Catalog::ilwisType() const {
     return itCATALOG;
 }
 
-QString Catalog::resolve(const QString &name, IlwisTypes tp) const
+QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
 {
+    QString name = nm;
+    name = Resource::quoted2string(name);
+    name = OSHelper::neutralizeFileName(name);
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; check if it is the catalog
-        QString query = QString("select resource from mastecatalog where resource = '%2'").arg(name);
+        QString query = QString("select resource from mastercatalog where resource = '%2'").arg(name);
         QSqlQuery results = kernel()->database().exec(query);
         if ( results.next()) {
             return name;
         }
         // might have been a fragment
         QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
-        query = QString("select resource from mastecatalog where resource = '%2'").arg(resolvedName);
+        query = QString("select resource from mastercatalog where resource = '%2'").arg(resolvedName);
         results = kernel()->database().exec(query);
         if ( results.next()) {
             return resolvedName;

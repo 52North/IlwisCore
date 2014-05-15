@@ -13,6 +13,11 @@ namespace Ilwis {
 
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 
+struct VertexCoords{
+    VertexCoords(const geos::geom::CoordinateSequence * crds=0, bool isInterior=false) : _crds(crds), _isInterior(isInterior){}
+    const geos::geom::CoordinateSequence * _crds;
+    bool _isInterior = false;
+};
 class KERNELSHARED_EXPORT VertexIterator : public std::iterator<std::random_access_iterator_tag, geos::geom::Coordinate>
 {
 public:
@@ -31,7 +36,10 @@ public:
     VertexIterator operator--(int n);
     VertexIterator& operator+=(int n);
     VertexIterator& operator-=(int n);
+    VertexIterator operator-(int n) const;
+    VertexIterator operator+(int n) const;
     geos::geom::Coordinate& operator[](quint32 n);
+
     bool operator==(const VertexIterator& iter) const;
     bool operator!=(const VertexIterator& iter) const;
     bool operator<(const VertexIterator& iter) const;
@@ -41,15 +49,15 @@ public:
     const geos::geom::Coordinate& operator*() const;
     geos::geom::Coordinate& operator*();
     geos::geom::Coordinate* operator->();
-    VertexIterator operator-(int n) const;
-    VertexIterator operator+(int n) const;
+
     bool nextSubGeometry() const;
+    bool isInteriorVertex() const;
 
 private:
     void move(int n);
     void setFromGeometry(geos::geom::Geometry *geom);
     bool compatible(const VertexIterator& iter) const;
-    std::vector<const geos::geom::CoordinateSequence *> _coordinates;
+    std::vector<VertexCoords> _coordinates;
     std::vector<const geos::geom::Coordinate *> _pointCoordinates;
     bool _nextSubGeometry = false;
 
@@ -63,7 +71,7 @@ private:
     std::unique_ptr<geos::geom::Geometry> _internalGeom;
 
 
-    void storeLineString(const geos::geom::LineString *cline, int index);
+    void storeLineString(const geos::geom::LineString *cline, int index, bool isInterior=false);
 };
 
 }

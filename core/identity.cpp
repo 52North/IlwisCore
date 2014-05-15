@@ -1,6 +1,6 @@
 #include <QString>
 #include <QDataStream>
-#include "ilwis.h"
+#include "kernel.h"
 #include "identity.h"
 
 using namespace Ilwis;
@@ -42,6 +42,11 @@ QString Identity::description() const
 void Identity::setDescription(const QString &desc)
 {
     _description = desc;
+}
+
+QString Identity::newAnonymousName()
+{
+    return QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_baseId++);
 }
 
 void Identity::code(const QString &code)

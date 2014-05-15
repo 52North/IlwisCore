@@ -11,10 +11,12 @@ namespace io{
 }
 
 namespace Ilwis {
+
+
 class KERNELSHARED_EXPORT GeometryHelper{
     public:
         static QString toWKT(const geos::geom::Geometry* geom);
-        static geos::geom::Geometry* fromWKT(const QString &wkt);
+        static geos::geom::Geometry* fromWKT(const QString &wkt, const Ilwis::ICoordinateSystem &csy, const Ilwis::Envelope& env=Ilwis::Envelope());
 
         static IlwisTypes geometryType(const geos::geom::Geometry* geom);
 

@@ -344,6 +344,12 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
         return QString("ilwis://internalcatalog/%1").arg(name);
+    }else if ( name.left(12) == "code=georef:") {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://internalcatalog/%1").arg(shortname);
+    }else if ( name.left(9) == "code=csy:") {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://internalcatalog/%1").arg(shortname);
     }
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);

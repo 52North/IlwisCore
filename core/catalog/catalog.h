@@ -80,7 +80,7 @@ public:
 
      \return The full qualified resource
     */
-    virtual QString resolve(const QString& name, IlwisTypes tp=itUNKNOWN) const;
+    virtual QString resolve(const QString& nm, IlwisTypes tp=itUNKNOWN) const;
     /*!
     Retrieves the location the catalog is currently attached to.
 

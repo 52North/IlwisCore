@@ -21,6 +21,10 @@ void SampleStatistics::prepare(IThematicDomain thematicDomain, quint32 nrOfBands
     _sampleSpace.resize(MAXCLASS + 1);
     addClass(MAXCLASS); // == undefined value
 
+    for(auto item : _thematicDomain){
+        addClass(item->raw());
+    }
+
 }
 
 void SampleStatistics::addClass(Raw key)
@@ -124,7 +128,7 @@ void SampleSum::addClass(Raw key)
     if ( _sums[key].size() != 0)
         return;
 
-    _sums[key].resize(_nrOfBands,0);
+    _sums[key].resize(_nrOfBands + 1,0);
 }
 
 void SampleSum::delClass(Raw key)
@@ -205,7 +209,7 @@ void SampleSumXY::addClass(Raw key)
 {
     if ( _sums[key].size() != 0)
         return;
-    _sums[key].resize(_nrOfBands);
+    _sums[key].resize(_nrOfBands + 1);
     int count = 0;
     for(auto& vec : _sums[key])
         vec.resize(1 + count++,0);

@@ -17,7 +17,8 @@ Coverage::Coverage()
 
 Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
-
+    IDomain dom("count");
+    _indexdefinition = DataDefinition(dom, new NumericRange(0,100000));
 }
 
 Coverage::~Coverage()
@@ -91,9 +92,9 @@ void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
     _attTableIndex = tbl;
 }
 
-NumericStatistics &Coverage::statistics()
+NumericStatistics &Coverage::statistics(int  )
 {
-    return _statistics;
+        return _statistics;
 }
 
 const DataDefinition &Coverage::datadefIndex() const

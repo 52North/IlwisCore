@@ -8,6 +8,7 @@
 #include "ilwiscontext.h"
 #include "catalog.h"
 #include "mastercatalog.h"
+#include "proj4parameters.h"
 #include "oshelper.h"
 
 
@@ -94,12 +95,13 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                         }
                     }
                     _normalizedUrl = urltxt;
+
                 }
             }
         }
         checkUrl(tp);
     }
-
+    _rawUrl = _normalizedUrl;// for the moment, can always overrule it
 
 }
 
@@ -193,7 +195,6 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
         url = url.left(index+1) + nm;
     }
     _normalizedUrl = QUrl(url);
-    _urlQuery = QUrlQuery(url);
 }
 
 QVariant Resource::operator [](const QString &prop) const
@@ -235,12 +236,12 @@ QUrl Resource::url(bool asRaw) const
 void Resource::setUrl(const QUrl &url, bool asRaw)
 {
     _container.clear();
-    if ( asRaw)
+    if ( asRaw) {
         _rawUrl = url;
-    else
+        _urlQuery = QUrlQuery(url);
+    } else
         _normalizedUrl = url;
 
-    _urlQuery = QUrlQuery(url);
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
@@ -485,9 +486,19 @@ void Resource::checkUrl(IlwisTypes tp) {
         if ( index2 > index)
             index = index2 + 4;
         QString rname = resource.right(resource.size() - index - 1);
+        QString newName = rname;
+        if ((index = resource.indexOf("proj4:"))!=-1){
+            QString proj4Part = resource.mid(index + 6);
+            Proj4Def def = Proj4Parameters::lookupDefintion(proj4Part);
+            if ( def._name != sUNDEF){
+                newName = def._name;
+                rname = def._epsg;
+            }else
+                newName = "Unknown_csy_" + QString::number(id());
+        }
         if ( index2 != -1)
             code(rname);
-        name(rname, false);
+        name(newName, false);
     }
 }
 
@@ -509,5 +520,15 @@ bool Resource::isRoot() const {
     return isRoot(_normalizedUrl.toString());
 }
 
+QString Resource::quoted2string(const QString& name){
+    if ( name.size() == 0)
+        return name;
+
+    if (name[0] == '\"' && name[name.size()-1] == '\"'){
+        if ( name.indexOf("url|") == 1)
+        return name.mid(5,name.size() - 6);
+    }
+    return name;
+}
 
 

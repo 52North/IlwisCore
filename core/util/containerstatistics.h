@@ -30,8 +30,8 @@ public:
         quint64 _count;
     };
 
-    enum PropertySets{pBASIC=0, pMIN=1, pMAX=2, pDISTANCE=4, pDELTA=8,pNETTOCOUNT=16, pCOUNT=32, pSUM=64,
-                      pMEAN=128, pMEDIAN=256, pPREDOMINANT=512, pSTDEV=1024, pHISTOGRAM=2048, pLAST=4096, pALL=4294967296};
+    enum PropertySets{pNONE = 0, pBASIC=1, pMIN=2, pMAX=4, pDISTANCE=8, pDELTA=16,pNETTOCOUNT=32, pCOUNT=64, pSUM=128,
+                      pMEAN=256, pMEDIAN=512, pPREDOMINANT=1024, pSTDEV=2048, pHISTOGRAM=4096, pLAST=8192, pALL=4294967296};
 
     ContainerStatistics(){
         _sigDigits = shUNDEF;

@@ -7,6 +7,7 @@
 #include "ilwiscontext.h"
 #include "errorobject.h"
 #include "publicdatabase.h"
+#include "proj4parameters.h"
 
 using namespace Ilwis;
 
@@ -186,6 +187,7 @@ void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
                 kernel()->issues()->logSql(sqlPublic.lastError());
                 return;
             }
+            Proj4Parameters::add2lookup(name,projTxt,epgsTxt);
             name = "";
         } else if ( line[0] == '#') { // comment line, skip it, next line will be empty
             ++i;

@@ -57,6 +57,18 @@ bool FeatureCoverage::prepare( ) {
     return ok;
 }
 
+Indices FeatureCoverage::select(const QString &spatialQuery) const
+{
+    ExecutionContext ctx;
+    QString expr = QString("script %1=indexes from \"%2\" where %3").arg(Identity::newAnonymousName()).arg(source().url().toString()).arg(spatialQuery);
+    Ilwis::SymbolTable tbl;
+    if ( Ilwis::commandhandler()->execute(expr, &ctx, tbl) ){
+    if ( ctx._results.size() == 1)
+        return tbl.getValue<Indices>(ctx._results[0]);
+    }
+    return Indices();
+}
+
 IlwisTypes FeatureCoverage::featureTypes() const
 {
     return _featureTypes;
@@ -67,8 +79,8 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, bool load){
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
+UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSystem& foreigncsy, bool load){
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, foreigncsy.isValid() ? foreigncsy : coordinateSystem(), envelope());
     if ( !geom)
         throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
     return newFeature(geom,load);
