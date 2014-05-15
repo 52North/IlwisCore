@@ -1,7 +1,7 @@
 #ifndef ICONNECTOR_H
 #define ICONNECTOR_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QExplicitlySharedDataPointer>
 
 namespace Ilwis {

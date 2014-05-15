@@ -1,7 +1,7 @@
 #ifndef IDENTITY_H
 #define IDENTITY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 
 #define ANONYMOUS_PREFIX "_ANONYMOUS_"

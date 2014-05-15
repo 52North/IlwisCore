@@ -1,7 +1,7 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QVariant>
 #include <QUrlQuery>
 
