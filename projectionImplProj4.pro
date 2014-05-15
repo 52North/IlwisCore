@@ -13,8 +13,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+QMAKE_CXXFLAGS += -Wno-unused-parameter
 
 DEFINES += PROJECTIONIMPLPROJ4_LIBRARY
 
@@ -193,15 +192,10 @@ OTHER_FILES += \
     ../external/proj4/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
+QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-INCLUDEPATH +=  $$PWD/../external/geos \
-                $$PWD/projectionimplproj4 \
-                $$PWD/../external/proj4
-DEPENDPATH +=   $$PWD/../external/geos \
-                $$PWD/projectionimplproj4
+INCLUDEPATH +=  $$PWD/projectionimplproj4 \
+                $$PWD/$$EXTERNAL/proj4
+DEPENDPATH +=   $$PWD/projectionimplproj4
