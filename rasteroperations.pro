@@ -13,9 +13,6 @@ TEMPLATE = lib
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 DEFINES += RASTEROPERATIONS_LIBRARY
 
 SOURCES += \ 
@@ -47,14 +44,7 @@ HEADERS += \
 OTHER_FILES += \ 
     rasteroperations/rasteroperations.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
+QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
-INCLUDEPATH +=  $$PWD/core \
-                $$PWD/../external/geos
-DEPENDPATH +=   $$PWD/core \
-                $$PWD/../external/geos
