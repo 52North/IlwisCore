@@ -18,6 +18,9 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
+#include "feature.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 
 #include "geos/geom/CoordinateFilter.h"
 #include "csytransform.h"
@@ -32,12 +35,22 @@ QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
     return QString::fromStdString(writer.write(geom));
 }
 
-geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) {
+geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordinateSystem& csy, const Ilwis::Envelope& env) {
     try{
         geos::io::WKTReader reader;
         geos::geom::Geometry* geom = reader.read(wkt.toStdString());
-        if (geom)
+        if (geom){
+            if ( csy.isValid()){
+                GeometryHelper::setCoordinateSystem(geom, csy.ptr());
+            }else
+               GeometryHelper::setCoordinateSystem(geom,0);
+            if ( env.isValid() && !env.contains(geom)){
+                delete geom;
+                return 0;
+            }
+
             return geom;
+        }
         ERROR2(ERR_NOT_COMPATIBLE2, "WKT", TR("this wkt parser"));
         return 0;
     } catch (const geos::io::ParseException& ex){

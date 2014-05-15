@@ -26,7 +26,7 @@ VertexIterator::VertexIterator(const UPGeometry& geom)
 
 VertexIterator::VertexIterator(const QString &wkt)
 {
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, ICoordinateSystem());
     setFromGeometry(geom);
     _internalGeom.reset(geom);
 }
