@@ -1,7 +1,7 @@
 #ifndef THEMATICITEM_H
 #define THEMATICITEM_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "identifieritem.h"
 
 namespace Ilwis {
