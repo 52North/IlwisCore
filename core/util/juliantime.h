@@ -1,7 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
