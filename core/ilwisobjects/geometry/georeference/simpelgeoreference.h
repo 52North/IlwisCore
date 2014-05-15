@@ -1,7 +1,7 @@
 #ifndef SIMPELGEOREFERENCE_H
 #define SIMPELGEOREFERENCE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT SimpelGeoReference : public GeoRefImplementation

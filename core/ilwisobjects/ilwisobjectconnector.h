@@ -2,7 +2,7 @@
 #define ILWISOBJECTCONNECTOR_H
 
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 class CatalogConnector;

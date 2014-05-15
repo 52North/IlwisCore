@@ -1,7 +1,7 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QVariant>
 #include <QMultiHash>
 

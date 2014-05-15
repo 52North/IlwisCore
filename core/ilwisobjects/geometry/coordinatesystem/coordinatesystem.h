@@ -1,7 +1,7 @@
 #ifndef COORDINATESYSTEM_H
 #define COORDINATESYSTEM_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
