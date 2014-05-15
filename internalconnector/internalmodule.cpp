@@ -22,7 +22,7 @@
 #include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
 #include "projection.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "projectionfactory.h"
 #include "internalprjmplfactory.h"
 
