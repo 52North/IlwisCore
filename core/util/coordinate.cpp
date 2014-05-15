@@ -1,8 +1,10 @@
 #include <QStringList>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Coordinate.inl"
+#endif
 #include "coordinate.h"
 #include <cmath>
 
