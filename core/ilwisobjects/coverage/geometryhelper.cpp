@@ -37,7 +37,7 @@ QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
     return QString::fromStdString(writer.write(geom));
 }
 
-geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordinateSystem& csy, const Ilwis::Envelope& env) {
+geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordinateSystem& csy) {
     try{
         geos::io::WKTReader reader;
         geos::geom::Geometry* geom = reader.read(wkt.toStdString());
@@ -46,10 +46,6 @@ geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordin
                 GeometryHelper::setCoordinateSystem(geom, csy.ptr());
             }else
                GeometryHelper::setCoordinateSystem(geom,0);
-            if ( env.isValid() && !env.contains(geom)){
-                delete geom;
-                return 0;
-            }
 
             return geom;
         }
