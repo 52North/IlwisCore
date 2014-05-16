@@ -1,7 +1,7 @@
 #ifndef VALUEDOMAINDATA_H
 #define VALUEDOMAINDATA_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "domain.h"
 
 namespace Ilwis {

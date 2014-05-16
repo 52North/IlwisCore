@@ -1,6 +1,8 @@
 #include "kernel.h"
 #include "raster.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Envelope.inl"
+#endif
 #include "tranquilizer.h"
 #include "columndefinition.h"
 #include "table.h"

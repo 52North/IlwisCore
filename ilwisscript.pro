@@ -11,13 +11,17 @@ QMAKE_CXXFLAGS += -Wno-unknown-pragmas
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 QT       -= gui
 QT += sql
 
 TEMPLATE = lib
+
+win32{
+   ANTLRLIB=$PWD/../libraries/$$PLATFORM$$CONF/
+}
+linux {
+    ANTLRLIB=/usr/local/lib
+}
 
 DEFINES += ILWISSCRIPT_LIBRARY
 
@@ -97,15 +101,26 @@ INCLUDEPATH += $$PWD/core \
                         ilwisscript/ast \
                         ilwisscript/internalmethods
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibantlr
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
+
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    LIBS +=  -L$$ANTLRLIB -llibantlr
 }
+unix {
+    LIBS += -L$$ANTLRLIB -lantlr3c
+    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
+
 
 INCLUDEPATH +=  $$PWD/../external/geos \
                 $$PWD/ilwisscript/parserlexer/include
 DEPENDPATH +=   $$PWD/../external/geos \
                 $$PWD/ilwisscript/parserlexer/include
+
+INCLUDEPATH += $$ANTLRLIB/local/include
+DEPENDPATH += $$ANTLRLIB//local/include
+
+

@@ -2,7 +2,7 @@
 #include "geos/geom/Coordinate.h"
 //#include "geos/geom/Coordinate.inl"
 #include "geos/geom/LineString.h"
-#include "geos/geom/point.h"
+#include "geos/geom/Point.h"
 #include "geos/geom/Polygon.h"
 #include "geos/io/ParseException.h"
 #include "kernel.h"

@@ -9,7 +9,7 @@
 #include "blockiterator.h"
 #include "pixeliterator.h"
 #include "rasterfilter.h"
-#include "rankorderrasterFilter.h"
+#include "rankorderrasterfilter.h"
 
 using namespace Ilwis;
 using namespace RasterOperations;

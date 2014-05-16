@@ -13,6 +13,9 @@ TEMPLATE = lib
 
 DEFINES += CORE_LIBRARY
 
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
+}
 
 SOURCES += core/kernel.cpp \
     core/version.cpp \
@@ -114,9 +117,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/classification/samplestatistics.cpp \
     core/ilwisobjects/domain/interval.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
-    core/user.cpp \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
-    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp
+    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -177,7 +179,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/table/attributerecord.h \
     core/ilwisobjects/coverage/featurefactory.h \
     core/util/errmessages.h \
-    core/ilwisobjects/geometry/coordinatesystem/ProjectionImplementation.h \
+    core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
     core/ilwisobjects/geometry/coordinatesystem/projectionfactory.h \
     core/ilwisobjects/geometry/coordinatesystem/projection.h \
     core/ilwisobjects/geometry/coordinatesystem/proj4parameters.h \
@@ -241,9 +243,10 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/classification/samplestatistics.h \
     core/ilwisobjects/domain/interval.h \
     core/ilwisobjects/domain/intervalrange.h \
-    core/user.h \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h \
-    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h
+    core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
+    core/kernel_global.h \
+    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h
     core/util/bresenham.h
 
 
@@ -258,23 +261,6 @@ OTHER_FILES += \
     LICENSE-2.0.txt \
     installer.nsi
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-
-win32:CONFIG(release){
-    QMAKE_CXXFLAGS_RELEASE += -O2
-}
-
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
-
-resources.files = core/resources/referencesystems.csv \
-    core/resources/projections.csv \
-    core/resources/numericdomains.csv \
-    core/resources/filters.csv \
-    core/resources/epsg.pcs \
-    core/resources/ellipsoids.csv \
-    core/resources/datums.csv
-resources.path = $$DLLDESTDIR/resources
 
 win32{
     CONFIG(debug, debug|release) {
@@ -307,14 +293,36 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers+
+
+    INSTALLS += qtdlls qtsqlplugin
+
+    QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
+
+}
+unix {
+    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/core/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin
 }
 
+
+resources.files = core/resources/referencesystems.csv \
+    core/resources/projections.csv \
+    core/resources/numericdomains.csv \
+    core/resources/filters.csv \
+    core/resources/epsg.pcs \
+    core/resources/ellipsoids.csv \
+    core/resources/datums.csv
+resources.path = $$DLLDESTDIR/resources
+
 license.files =  LICENSE-2.0.txt
-license.path = $$DLLDESTDIR
+license.path =   $$PWD/../output/$$PLATFORM$$CONF/bin
 
 installer.files =installer.nsi
-installer.path = $$PWD/../output/$$PLATFORM$$CONF
+installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
-INSTALLS += resources license installer qtdlls qtsqlplugin
-QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
+INSTALLS += resources license installer
+
+
+
+
+

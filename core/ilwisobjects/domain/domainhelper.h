@@ -1,7 +1,7 @@
 #ifndef DOMAINFACTORY_H
 #define DOMAINFACTORY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
     class KERNELSHARED_EXPORT DomainHelper{

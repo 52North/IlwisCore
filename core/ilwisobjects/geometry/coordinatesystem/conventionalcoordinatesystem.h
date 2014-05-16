@@ -1,7 +1,7 @@
 #ifndef COORDINATESYSTEMVIALATLON_H
 #define COORDINATESYSTEMVIALATLON_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

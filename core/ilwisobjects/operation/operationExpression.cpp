@@ -7,7 +7,7 @@
 #include "symboltable.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 
 using namespace Ilwis;
 

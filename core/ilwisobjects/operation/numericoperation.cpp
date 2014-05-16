@@ -3,7 +3,7 @@
 #include "domain.h"
 #include "numericdomain.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
 #include "numericoperation.h"

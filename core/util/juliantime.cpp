@@ -171,7 +171,7 @@ Time::operator QDateTime() const{
 }
 time_t Time::toTime_t() const{
     if ( abs(_julianday) > NOTIME) {
-        return (__int64) iUNDEF;
+        return (qint64) iUNDEF;
     }
     int year, month, day, hour, minutes;
     double seconds;

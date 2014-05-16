@@ -1,7 +1,7 @@
 #ifndef RASTERLAYER_H
 #define RASTERLAYER_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

@@ -1,7 +1,7 @@
 #ifndef GEOREFERENCE_H
 #define GEOREFERENCE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "georefadapter.h"
 
 namespace Ilwis {

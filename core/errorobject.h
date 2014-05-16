@@ -1,7 +1,7 @@
 #ifndef ERROROBJECT_H
 #define ERROROBJECT_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 #include <exception>
 #include <QString>

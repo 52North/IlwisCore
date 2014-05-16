@@ -10,25 +10,33 @@ CONF=debug
 
 CONFIG(release, debug|release) {
 CONF=release
+QMAKE_CXXFLAGS_RELEASE += -O2
 }
 
 PLATFORM = generic
 win32{
     PLATFORM = win32
+    BOOST=../external
+    SHAREDEXT=dll
+    PREFIXSHARED=
 }
-BOOST=../external
+linux{
+    BOOST=/usr/include
+    GEOSINCL=/usr/include
+    GEOSLIB=/usr/lib
+    SHAREDEXT=so
+    PREFIXSHARED=lib
+}
+EXTERNAL=../external
 
 QT += sql
 
 plugin{
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}dll{
+}shared{
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }else {
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }
 
 INCLUDEPATH += core \
@@ -44,7 +52,20 @@ INCLUDEPATH += core \
                 core/ilwisobjects/operation \
                 core/catalog \
                 core/ilwisobjects/domain \
-                $$BOOST
+                $$BOOST \
+                $$EXTERNAL
 
+win32:{
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
+}
+linux:{
+INCLUDEPATH += $$GEOSINCL
+DEPENDPATH += $$GEOSINCL
+LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+}
 
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
 

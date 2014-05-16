@@ -12,7 +12,9 @@
 #include "featurecoverage.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/PrecisionModel.inl"
+#endif
 #include "geos/geom/GeometryFactory.h"
 #include "geos/io/ParseException.h"
 #include "geometryhelper.h"
@@ -78,7 +80,7 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
 }
 
 UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSystem& foreigncsy, bool load){
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, foreigncsy.isValid() ? foreigncsy : coordinateSystem(), envelope());
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, foreigncsy.isValid() ? foreigncsy : coordinateSystem());
     if ( !geom)
         throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
     return newFeature(geom,load);

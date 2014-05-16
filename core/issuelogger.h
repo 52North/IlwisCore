@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QQueue>
 #include <fstream>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 class QSqlError;
 

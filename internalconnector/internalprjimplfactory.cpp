@@ -15,7 +15,7 @@
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
 #include "internalprjmplfactory.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "projections/projectionimplementationinternal.h"
 #include "projections/platecaree.h"
 

@@ -3,7 +3,7 @@
 #include <QStringList>
 #include <QDebug>
 #include "ilwis.h"
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "proj4parameters.h"
 
 std::multimap<quint32, Proj4Def> Proj4Parameters::_lookup;

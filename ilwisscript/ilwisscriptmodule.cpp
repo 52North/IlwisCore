@@ -4,7 +4,7 @@
 #include <QSqlError>
 #include "kernel.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "ilwisscriptmodule.h"
 #include "ilwisdata.h"
 #include "operationExpression.h"
