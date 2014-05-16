@@ -17,11 +17,15 @@ PLATFORM = generic
 win32{
     PLATFORM = win32
     BOOST=../external
+    SHAREDEXT=dll
+    PREFIXSHARED=
 }
 linux{
     BOOST=/usr/include
     GEOSINCL=/usr/include
     GEOSLIB=/usr/lib
+    SHAREDEXT=so
+    PREFIXSHARED=lib
 }
 EXTERNAL=../external
 
