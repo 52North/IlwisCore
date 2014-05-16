@@ -51,7 +51,6 @@ bool LinearRasterFilter::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
     return res;
 
-    return false;
 }
 
 Ilwis::OperationImplementation *LinearRasterFilter::create(quint64 metaid, const Ilwis::OperationExpression &expr)
