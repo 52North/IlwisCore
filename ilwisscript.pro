@@ -17,10 +17,10 @@ QT += sql
 TEMPLATE = lib
 
 win32{
-   ANTLRLIB=$PWD/../libraries/$$PLATFORM$$CONF
+   ANTLRLIB=$PWD/../libraries/$$PLATFORM$$CONF/
 }
 linux {
-    ANTLRLIB=/usr/local
+    ANTLRLIB=/usr/local/lib
 }
 
 DEFINES += ILWISSCRIPT_LIBRARY
@@ -101,12 +101,18 @@ INCLUDEPATH += $$PWD/core \
                         ilwisscript/ast \
                         ilwisscript/internalmethods
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$ANTLRLIB/lib/ -lantlr3c
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
 
 
 
-QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    LIBS +=  -L$$ANTLRLIB -llibantlr
+}
+unix {
+    LIBS += -L$$ANTLRLIB -lantlr3c
+    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+}
 
 
 INCLUDEPATH +=  $$PWD/../external/geos \

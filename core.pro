@@ -13,6 +13,10 @@ TEMPLATE = lib
 
 DEFINES += CORE_LIBRARY
 
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
+}
+
 SOURCES += core/kernel.cpp \
     core/version.cpp \
     core/module.cpp \
@@ -112,7 +116,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/classification/sampleset.cpp \
     core/ilwisobjects/operation/classification/samplestatistics.cpp \
     core/ilwisobjects/domain/interval.cpp \
-    core/ilwisobjects/domain/intervalrange.cpp
+    core/ilwisobjects/domain/intervalrange.cpp \
+    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -238,7 +244,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/interval.h \
     core/ilwisobjects/domain/intervalrange.h \
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
-    core/kernel_global.h
+    core/kernel_global.h \
+    core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h
     core/util/bresenham.h
 
 
@@ -253,24 +261,6 @@ OTHER_FILES += \
     LICENSE-2.0.txt \
     installer.nsi
 
-
-QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/core/lib$${TARGET}.so $$PWD/../output/$$PLATFORM$$CONF/bin
-
-
-resources.files = core/resources/referencesystems.csv \
-    core/resources/projections.csv \
-    core/resources/numericdomains.csv \
-    core/resources/filters.csv \
-    core/resources/epsg.pcs \
-    core/resources/ellipsoids.csv \
-    core/resources/datums.csv
-resources.path = $$DLLDESTDIR/resources
-
-license.files =  LICENSE-2.0.txt
-license.path = $$DLLDESTDIR
-
-installer.files =installer.nsi
-installer.path = $$PWD/../output/$$PLATFORM$$CONF
 
 win32{
     CONFIG(debug, debug|release) {
@@ -305,12 +295,34 @@ win32{
     }
     qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers+
 
-    INSTALLS += resources license installer qtdlls qtsqlplugin
+    INSTALLS += qtdlls qtsqlplugin
+
+    QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
+
+}
+unix {
+    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/core/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin
 }
 
 
+resources.files = core/resources/referencesystems.csv \
+    core/resources/projections.csv \
+    core/resources/numericdomains.csv \
+    core/resources/filters.csv \
+    core/resources/epsg.pcs \
+    core/resources/ellipsoids.csv \
+    core/resources/datums.csv
+resources.path = $$DLLDESTDIR/resources
 
-INSTALLS += resources
-QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
+license.files =  LICENSE-2.0.txt
+license.path =   $$PWD/../output/$$PLATFORM$$CONF/bin
+
+installer.files =installer.nsi
+installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+
+INSTALLS += resources license installer
+
+
+
 
 
