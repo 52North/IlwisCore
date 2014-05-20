@@ -33,7 +33,8 @@ bool ItemRange::contains(const ItemRange &itemrng, bool ) const
 
 QVariant ItemRange::ensure(const QVariant &v, bool ) const
 {
-    //TODO:  more advanced impl needed? may cost performance
+    if ( contains(v))
+        return v;
     return v;
 }
 
