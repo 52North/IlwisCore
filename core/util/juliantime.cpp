@@ -281,7 +281,7 @@ Time Time::operator+(const Duration& time) const {
     double t2 = *this;
     return Time(t2 + t1, valueType());
 }
-//TODO defines up on top?
+
 #define IGREG (14+31*(10+12*1582))
 #define JGREG 2299160
 
