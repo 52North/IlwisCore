@@ -103,8 +103,6 @@ INCLUDEPATH += $$PWD/core \
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
-
-
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
     LIBS +=  -L$$ANTLRLIB -llibantlr
