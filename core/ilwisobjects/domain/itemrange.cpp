@@ -35,7 +35,7 @@ QVariant ItemRange::ensure(const QVariant &v, bool ) const
 {
     if ( contains(v))
         return v;
-    return v;
+    return QVariant();
 }
 
 DomainItem *ItemRange::create(const QString& type){
