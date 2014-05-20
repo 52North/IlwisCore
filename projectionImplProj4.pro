@@ -192,15 +192,14 @@ OTHER_FILES += \
     ../external/proj4/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}
-unix {
-    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
 INCLUDEPATH +=  $$PWD/projectionimplproj4 \
                 $$PWD/$$EXTERNAL/proj4
 DEPENDPATH +=   $$PWD/projectionimplproj4
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
