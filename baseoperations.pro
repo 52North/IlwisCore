@@ -8,13 +8,13 @@ TARGET = baseoperations
 
 include(global.pri)
 
-
-
 QT       += sql
 
 QT       -= gui
 
 TEMPLATE = lib
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 DEFINES += BASEOPERATIONS_LIBRARY
 
@@ -78,12 +78,10 @@ SOURCES += \
 OTHER_FILES += \
     baseoperations/baseoperations.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
-unix {
-    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}
+
 
