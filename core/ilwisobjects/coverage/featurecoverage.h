@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace geos{
 namespace geom{
@@ -115,7 +115,7 @@ public:
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
     UPFeatureI& newFeature(geos::geom::Geometry *geom, bool load=true);
-    UPFeatureI& newFeature(const QString& wkt, bool load=true);
+    UPFeatureI& newFeature(const QString& wkt, const Ilwis::ICoordinateSystem &csy=ICoordinateSystem(), bool load=true);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem

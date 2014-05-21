@@ -176,7 +176,7 @@ QVariant Feature::cell(quint32 colIndex, int index, bool asRaw)
     }
     if ( index >= 0 && index < _track.size())
         return _track[index]->cell(colIndex, index, asRaw);
-    return QVariant();//TODO: shouldn't this raise a std::out_of_range exception or similar?
+    return QVariant();
 }
 
 QVariant Feature::cell(const QString &name, int index, bool asRaw)
@@ -187,7 +187,7 @@ QVariant Feature::cell(const QString &name, int index, bool asRaw)
     }
     if ( index >= 0 && index < _track.size())
         return _track[index]->cell(name, index, asRaw);
-    return QVariant();//TODO: shouldn't this raise a std::out_of_range exception or similar?
+    return QVariant();
 }
 
 void Feature::setCell(const QString &name, const QVariant &var, int index)
@@ -259,6 +259,9 @@ const UPGeometry &Feature::geometry(quint32 index) const{
 
 void Feature::set(geos::geom::Geometry *geom, int index)
 {
+    if (!geom)
+        return;
+
     if ( index < _track.size())
         _track[index]->set(geom);
     else{

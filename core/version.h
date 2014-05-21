@@ -1,7 +1,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "module.h"
 
 

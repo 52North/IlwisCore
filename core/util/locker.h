@@ -1,7 +1,7 @@
 #ifndef LOCKER_H
 #define LOCKER_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 #include <mutex>
 

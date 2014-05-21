@@ -43,7 +43,7 @@
 /* -----------------------------------------
  * Include the ANTLR3 generated header file.
  */
-#include    "ilwisscriptLexer.h"
+#include    "IlwisScriptLexer.h"
 /* ----------------------------------------- */
 
 

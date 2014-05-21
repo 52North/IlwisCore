@@ -4,7 +4,7 @@
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
-#include "FPixel.h"
+#include "fpixel.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;

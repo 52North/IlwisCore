@@ -1,7 +1,7 @@
 #ifndef IDENTIFIERRANGE_H
 #define IDENTIFIERRANGE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QVector>
 #include <unordered_map>
 

@@ -51,6 +51,7 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "databasetable.h"
+#include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
 #include "epsg.h"
@@ -169,6 +170,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new GeoReference();
     case itCONVENTIONALCOORDSYSTEM:
         return new ConventionalCoordinateSystem();
+    case itBOUNDSONLYCSY:
+        return new BoundsOnlyCoordinateSystem();
     case itNUMERICDOMAIN:
         return new NumericDomain();
     case itCOLORDOMAIN:
@@ -455,10 +458,10 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource) const {
     QString code = resource.code();
     bool isUnknown = code == "unknown";
-    if ( isUnknown)
-        code = "epsg:4326";
     QString projParms = code;
-    if ( code.left(6) != "proj4:"){
+    if ( code.left(6) == "proj4:"){
+        projParms = code.mid(6);
+    }else if(!isUnknown){
         QString query = QString("select * from projectedcsy where code='%1'").arg(code);
         QSqlQuery db(kernel()->database());
         if ( db.exec(query)) {
@@ -470,19 +473,19 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
                 return 0;
             }
         }
-    } else {
-        projParms = code.mid(6);
     }
-    ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem(resource);
+    CoordinateSystem *csy = 0;
     if ( isUnknown){
+        csy = new BoundsOnlyCoordinateSystem(resource);
         csy->name("unknown");
         csy->code("unknown");
         csy->setDescription(TR("Unknown coordinate system"));
-    }else{
+    }else {
+        csy = new ConventionalCoordinateSystem(resource);
         csy->name(resource.name());
         csy->code(resource.code());
+        csy->prepare("proj4=" + projParms);
     }
-    csy->prepare("proj4=" + projParms);
 
     return csy;
 
@@ -565,13 +568,21 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
 }
 
 IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource) const {
-    GeoReference *cgrf = GeoReference::create("corners", resource);
-    cgrf->name( resource["name"].toString());
+    GeoReference *cgrf;
+    if ( resource.code() == "undetermined"){
+        Resource resnew = resource;
+        resnew.name(sUNDEF); // this will force a new object with a new id
+        resnew.setId(i64UNDEF);
+        cgrf = GeoReference::create("undetermined", resnew);
+    }else {
+        cgrf = GeoReference::create("corners", resource);
+        cgrf->name( resource["name"].toString());
+    }
     cgrf->createTime(Time::now());
     cgrf->modifiedTime(Time::now());
-    if ( resource.code() != "none"){
-        ICoordinateSystem csy;
-        bool ok;
+    ICoordinateSystem csy;
+    bool ok;
+    if ( resource.hasProperty("coordinatesystem")){
         quint64 id = resource["coordinatesystem"].toULongLong(&ok);
         if ( ok) {
             csy = mastercatalog()->get(id);
@@ -579,11 +590,14 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
             csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
 
         cgrf->coordinateSystem(csy);
-
-        cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
     }
-    cgrf->size(resource["size"].value<Size<>>());
-    cgrf->centerOfPixel(resource["centerofpixel"].toBool());
+
+    if ( resource.hasProperty("envelope"))
+        cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
+    if ( resource.hasProperty("size"))
+        cgrf->size(resource["size"].value<Size<>>());
+    if ( resource.hasProperty("centerofpixel"))
+        cgrf->centerOfPixel(resource["centerofpixel"].toBool());
 
     return cgrf;
 }
@@ -637,10 +651,6 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString 
     if (db.exec(query) && db.next()) {
         Ellipsoid *ellipsoid = new Ellipsoid(resource);
         ellipsoid->fromInternal(db.record());
-        double ma = db.record().field("majoraxis").value().toDouble();
-        double rf = db.record().field("invflattening").value().toDouble();
-        ellipsoid->setEllipsoid(ma,rf);
-        ellipsoid->setAuthority(db.record().field("authority").value().toString());
         return ellipsoid;
     }
     return 0;

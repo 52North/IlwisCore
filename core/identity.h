@@ -1,8 +1,7 @@
 #ifndef IDENTITY_H
 #define IDENTITY_H
 
-#include "Kernel_global.h"
-#include <mutex>
+#include "kernel_global.h"
 #include "ilwis.h"
 
 #define ANONYMOUS_PREFIX "_ANONYMOUS_"
@@ -62,7 +61,7 @@ public:
     virtual QString description() const;
     void setDescription(const QString& desc);
 
-    static QString newAnonymousName() ;
+    static QString newAnonymousName() ; 
 
 
 protected:

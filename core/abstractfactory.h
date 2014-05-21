@@ -1,7 +1,7 @@
 #ifndef ABSTRACTFACTORY_H
 #define ABSTRACTFACTORY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 
 

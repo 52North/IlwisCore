@@ -166,7 +166,6 @@ QString IlwisObject::toString()
 
 bool IlwisObject::isEqual(const IlwisObject *obj) const
 {
-    //TODO: overrule this method for object types that need to do more checking
     if ( obj == 0)
         return false;
 
@@ -229,10 +228,13 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
     _changed = true;
 
     if (mode & cmINPUT){
-        quint64 pointer = (quint64) ( _outConnector.data());
+        quint64 pointer = (quint64) ( _connector.data());
         quint64 npointer = (quint64) ( connector);
-        if ( pointer != npointer || npointer == 0)
+        if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
+            if ( !_connector.isNull())
+                _connector->loadMetaData(this, PrepareOptions());
+        }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
@@ -393,6 +395,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "CoordinateSystem";
     case  itCONVENTIONALCOORDSYSTEM:
         return "ConventionalCoordinateSystem";
+    case itBOUNDSONLYCSY:
+        return "BoundsOnlyCoordinateSystem"        ;
     case  itGEOREF:
         return "Georeference";
     case  itTABLE:
@@ -461,6 +465,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCOORDSYSTEM;
     if ( name.compare( "ConventionalCoordinateSystem",Qt::CaseInsensitive) == 0)
         return  itCONVENTIONALCOORDSYSTEM;
+    if ( name.compare( "BoundsOnlyCoordinateSystem",Qt::CaseInsensitive) == 0)
+        return  itBOUNDSONLYCSY;
     if ( name.compare( "Georeference",Qt::CaseInsensitive) == 0)
         return  itGEOREF;
     if ( name.compare( "Table",Qt::CaseInsensitive) == 0)

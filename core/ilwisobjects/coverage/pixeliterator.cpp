@@ -1,6 +1,8 @@
 #include "kernel.h"
 #include "raster.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/Envelope.inl"
+#endif
 #include "tranquilizer.h"
 #include "columndefinition.h"
 #include "table.h"
@@ -113,7 +115,7 @@ PixelIterator::PixelIterator(const PixelIterator& iter)  {
 
 void PixelIterator::copy(const PixelIterator &iter) {
     _raster = iter._raster;
-    if ( _raster.isValid()) // TODO: beyond end marker(end()) dont have a valid raster, no problem just yet but it maybe needed in the future
+    if ( _raster.isValid())
         _grid = _raster->_grid.data();
     _box = iter._box;
     _isValid = iter._isValid;

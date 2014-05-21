@@ -8,14 +8,13 @@ TARGET = baseoperations
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 QT       += sql
 
 QT       -= gui
 
 TEMPLATE = lib
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 DEFINES += BASEOPERATIONS_LIBRARY
 
@@ -45,7 +44,8 @@ HEADERS += \
     baseoperations/geometry/mastergeoreference.h \
     baseoperations/data/selectiontable.h \
     baseoperations/math/binarymathtable.h \
-    baseoperations/data/setvaluerange.h
+    baseoperations/data/setvaluerange.h \
+    baseoperations/geometry/spatialrelation.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -72,18 +72,16 @@ SOURCES += \
     baseoperations/geometry/mastergeoreference.cpp \
     baseoperations/data/selectiontable.cpp \
     baseoperations/math/binarymathtable.cpp \
-    baseoperations/data/setvaluerange.cpp
+    baseoperations/data/setvaluerange.cpp \
+    baseoperations/geometry/spatialrelation.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
 

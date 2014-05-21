@@ -22,7 +22,7 @@
 #include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
 #include "projection.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "projectionfactory.h"
 #include "internalprjmplfactory.h"
 
@@ -66,13 +66,23 @@ void InternalModule::prepare()
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
-    QString url = QString("ilwis://internalcatalog/none");
-    Resource resource(url, itGEOREF);
-    resource.code("none");
-    resource.name("none", false);
+    QString url = QString("ilwis://internalcatalog/unknown");
+    Resource resource(url, itBOUNDSONLYCSY);
+    resource.code("unknown");
+    resource.name("unknown", false);
     resource.addContainer(QUrl("ilwis://internalcatalog"));
     resource.prepare();
     mastercatalog()->addItems({resource});
+
+    url = QString("ilwis://internalcatalog/undetermined");
+    resource = Resource(url, itGEOREF);
+    resource.code("undetermined");
+    resource.name("undetermined", false);
+    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.prepare();
+    mastercatalog()->addItems({resource});
+
+
 
 }
 

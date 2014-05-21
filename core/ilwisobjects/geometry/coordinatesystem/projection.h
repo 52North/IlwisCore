@@ -1,7 +1,7 @@
 #ifndef PROJECTION_H
 #define PROJECTION_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
@@ -36,6 +36,7 @@ public:
     QString toProj4() const;
 
     IlwisTypes ilwisType() const;
+    QString toWKT(quint32 spaces=0);
 
     QVariant parameter(Projection::ProjectionParamValue type) const;
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);

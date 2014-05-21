@@ -4,7 +4,7 @@
 #include <QSqlError>
 #include "kernel.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "rasteroperationsmodule.h"
 #include "ilwisdata.h"
 #include "raster.h"

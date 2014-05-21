@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QDebug>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "locker.h"
 #include "identity.h"
 #include "resource.h"

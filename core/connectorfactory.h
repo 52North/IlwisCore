@@ -1,7 +1,7 @@
 #ifndef CONNECTORFACTORY_H
 #define CONNECTORFACTORY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QScopedPointer>
 #include <QHash>
 

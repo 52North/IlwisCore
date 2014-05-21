@@ -1,7 +1,7 @@
 #ifndef ELLIPSOID_H
 #define ELLIPSOID_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 class Ellipsoid;
@@ -26,11 +26,13 @@ public:
     double flattening() const;
     double excentricity() const;
     double excentricity2() const;
-    void setEllipsoid(double a, double f, bool setCodeToo=true);
+    QString setEllipsoid(double a, double f, bool setCodeToo=true);
     QString authority() const;
     void setAuthority(const QString &auth);
     QString toProj4() const;
+    QString toWKT(quint32 spaces=0) const;
     IlwisTypes ilwisType() const;
+    void setWKTName(const QString& wkt);
 
     LatLon latlon2Coord(const IEllipsoid &sourceEllipsoide, const LatLon &sourceLatLon) const;
     Coordinate latlon2Coord(const LatLon &sourceLatLon) const;
@@ -42,6 +44,7 @@ public:
 
     static const IEllipsoid wgs84ellipsoid;
 
+    QString fromInternal(const QSqlRecord &rec);
 private:
     Ellipsoid(double a, double f);
 
@@ -50,6 +53,7 @@ private:
     double _minoraxis;
     double _excentricity;
     QString _authority;
+    QString _wkt;
 };
 
 }

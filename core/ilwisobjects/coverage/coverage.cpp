@@ -17,7 +17,8 @@ Coverage::Coverage()
 
 Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
-
+    IDomain dom("count");
+    _indexdefinition = DataDefinition(dom, new NumericRange(0,100000));
 }
 
 Coverage::~Coverage()

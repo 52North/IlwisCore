@@ -88,6 +88,9 @@ CommandHandler::~CommandHandler(){
 }
 
 bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
+    if ( command == "") // ignore empty commands
+        return true;
+
     SymbolTable tbl;
     OperationExpression expr(command, tbl);
     quint64 id = findOperationId(expr);
@@ -102,6 +105,9 @@ bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
 
 bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if ( command == "") // ignore empty commands
+        return true;
+
     OperationExpression expr(command, symTable);
     quint64 id = findOperationId(expr);
     if ( id != i64UNDEF) {

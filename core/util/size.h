@@ -2,7 +2,7 @@
 #define SIZE_H
 
 #include <QSize>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

@@ -1,7 +1,7 @@
 #ifndef COORDINATESYSTEMVIALATLON_H
 #define COORDINATESYSTEMVIALATLON_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
@@ -27,6 +27,7 @@ public:
     IlwisTypes ilwisType() const;
     bool isValid() const;
     bool isEqual(const Ilwis::IlwisObject *obj) const;
+    QString toWKT(quint32 spaces=0) const;
 private:
     IEllipsoid _ellipsoid;
     IProjection _projection;
