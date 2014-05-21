@@ -442,3 +442,12 @@ ThematicRange &ThematicRange::operator<<(const QString &itemdef)
     add(new ThematicItem(parts));
     return *this;
 }
+
+Range *ThematicRange::clone() const
+{
+    ThematicRange *tr = new ThematicRange();
+    for(auto kvp: _byName) {
+        tr->add( kvp.second->clone());
+    }
+    return tr;
+}

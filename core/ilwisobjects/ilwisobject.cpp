@@ -236,6 +236,8 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
+        /*if ( !_connector.isNull())
+            _connector->loadMetaData(this, PrepareOptions());*/
     }
     if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
         quint64 pointer = (quint64) ( _outConnector.data());

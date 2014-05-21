@@ -87,4 +87,8 @@ QSharedPointer<Range> ColorDomain::getRange() const
     return _range;
 }
 
+void ColorDomain::setParent(const IDomain& dm){
+
+}
+
 

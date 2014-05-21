@@ -173,13 +173,14 @@ bool TermNode::doIDStatement(SymbolTable &symbols, int scope, ExecutionContext *
     if ( _selectors.size() > 0) {
         // selectors are handled by successive calls to the selection operation and in the end giving the temp object to the value
         expression = buildBracketSelection(value);
+        if(!Ilwis::commandhandler()->execute(expression, ctx, symbols)) {
+            throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
+        }
+        QString outgc = ctx->_results[0];
+        value = outgc;
     }
 
-    if(!Ilwis::commandhandler()->execute(expression, ctx, symbols)) {
-        throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
-    }
-    QString outgc = ctx->_results[0];
-    value = outgc;
+
     _value = {value, NodeValue::ctID};
     return value != "" && value != sUNDEF;
 }
