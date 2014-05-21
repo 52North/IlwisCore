@@ -101,9 +101,7 @@ INCLUDEPATH += $$PWD/core \
                         ilwisscript/ast \
                         ilwisscript/internalmethods
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
-
-
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
@@ -111,16 +109,15 @@ win32{
 }
 unix {
     LIBS += -L$$ANTLRLIB -lantlr3c
-    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
 
-INCLUDEPATH +=  $$PWD/../external/geos \
-                $$PWD/ilwisscript/parserlexer/include
-DEPENDPATH +=   $$PWD/../external/geos \
-                $$PWD/ilwisscript/parserlexer/include
+INCLUDEPATH +=  $$PWD/ilwisscript/parserlexer/include
+DEPENDPATH +=   $$PWD/ilwisscript/parserlexer/include
 
 INCLUDEPATH += $$ANTLRLIB/local/include
 DEPENDPATH += $$ANTLRLIB//local/include
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 

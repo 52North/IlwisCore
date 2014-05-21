@@ -3,12 +3,13 @@
 # Project created by QtCreator 2011-12-21T13:34:30
 #
 #-------------------------------------------------
+TARGET = ilwiscore
+TEMPLATE = lib
 
 include(global.pri)
 
 QT       += network sql xml
 
-TARGET = ilwiscore
 TEMPLATE = lib
 
 DEFINES += CORE_LIBRARY
@@ -300,9 +301,8 @@ win32{
     QMAKE_EXTRA_TARGETS = qtcreatepluginsdir
 
 }
-unix {
-    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/core/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin
-}
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 
 resources.files = core/resources/referencesystems.csv \

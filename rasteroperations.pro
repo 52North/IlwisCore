@@ -44,12 +44,10 @@ HEADERS += \
 OTHER_FILES += \ 
     rasteroperations/rasteroperations.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
-unix {
-    QMAKE_POST_LINK += $${QMAKE_COPY} $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET/$${PREFIXSHARED}$${TARGET}.$${SHAREDEXT} $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-}
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 

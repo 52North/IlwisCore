@@ -166,7 +166,6 @@ QString IlwisObject::toString()
 
 bool IlwisObject::isEqual(const IlwisObject *obj) const
 {
-    //TODO: overrule this method for object types that need to do more checking
     if ( obj == 0)
         return false;
 
