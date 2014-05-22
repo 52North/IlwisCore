@@ -207,6 +207,13 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32
         adaptFeatureCounts(1, geomCnt, subGeomCnt, index);break;
     case itPOLYGON:
         adaptFeatureCounts(2, geomCnt, subGeomCnt, index);break;
+    case itFEATURE:
+        //usually only used for resetting the count to 0
+        adaptFeatureCounts(0, geomCnt, subGeomCnt, index);
+        adaptFeatureCounts(1, geomCnt, subGeomCnt, index);
+        adaptFeatureCounts(2, geomCnt, subGeomCnt, index);
+        break;
+
     }
 }
 
