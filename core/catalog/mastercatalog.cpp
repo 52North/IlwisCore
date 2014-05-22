@@ -58,12 +58,26 @@ bool MasterCatalog::prepare()
 }
 
 
-bool MasterCatalog::addContainer(const QUrl &location)
+bool MasterCatalog::addContainer(const QUrl &inlocation)
 {
-    if ( !location.isValid()) // it is valid to try this with an empty url; just wont do anything
+    if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
 
-    QString loc = location.toString();
+    QString original = inlocation.toString().trimmed();;
+    QString loc = original;
+    if ( loc[loc.size() - 1] == '/' ){
+        loc = loc.left(loc.size() - 1);
+        int count = loc.count("/");
+        if ( loc.indexOf(":///") != -1){
+            if ( count == 3)
+                loc = original;
+        }else if ( loc.indexOf("://") != -1){
+            if ( count == 2){
+                loc= original;
+            }
+        }
+    }
+
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
          loc.indexOf("ilwis://system") == 0 ||
@@ -72,10 +86,11 @@ bool MasterCatalog::addContainer(const QUrl &location)
          loc == "ilwis:/" ||
          loc.isEmpty())
         return true;
+    QUrl location(loc);
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    ICatalog catalog(location.toString());
+    ICatalog catalog(loc);
     if ( !catalog.isValid()){
         return false;
     }
