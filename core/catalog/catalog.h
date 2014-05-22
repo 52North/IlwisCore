@@ -6,7 +6,7 @@
 #include <QUrl>
 #include <QSharedPointer>
 #include <QFileInfo>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "kernel.h"
 #include "ilwisdata.h"
 

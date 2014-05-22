@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <memory>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

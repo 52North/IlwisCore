@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QMap>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

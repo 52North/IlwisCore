@@ -2,7 +2,7 @@
 #include "geos/geom/Coordinate.h"
 //#include "geos/geom/Coordinate.inl"
 #include "geos/geom/LineString.h"
-#include "geos/geom/point.h"
+#include "geos/geom/Point.h"
 #include "geos/geom/Polygon.h"
 #include "geos/io/ParseException.h"
 #include "kernel.h"
@@ -26,7 +26,7 @@ VertexIterator::VertexIterator(const UPGeometry& geom)
 
 VertexIterator::VertexIterator(const QString &wkt)
 {
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, ICoordinateSystem());
     setFromGeometry(geom);
     _internalGeom.reset(geom);
 }
@@ -64,9 +64,9 @@ VertexIterator &VertexIterator::operator=(const VertexIterator &iter)
     return *this;
 }
 
-void VertexIterator::storeLineString(const geos::geom::LineString *cline, int index){
+void VertexIterator::storeLineString(const geos::geom::LineString *cline, int index, bool isInterior){
     const geos::geom::CoordinateSequence *seq = cline->getCoordinatesRO();
-     _coordinates[index] = seq;
+     _coordinates[index] = {seq, isInterior};
     _linearSize += seq->size();
 }
 
@@ -117,10 +117,10 @@ geos::geom::Coordinate &VertexIterator::operator[](quint32 n)
         else{
             int j = 0;
             for(auto& vec : _coordinates){
-                if ( n < vec->size()){
-                    return const_cast<geos::geom::Coordinate&>(_coordinates[j]->getAt(n));
+                if ( n < vec._crds->size()){
+                    return const_cast<geos::geom::Coordinate&>(_coordinates[j]._crds->getAt(n));
                 }
-                n-= vec->size();
+                n-= vec._crds->size();
                 ++j;
             }
         }
@@ -141,7 +141,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
             return true;
         }
     } else {
-        if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]->size() - 1){
+        if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]._crds->size() - 1){
             return true;    // end condition;
         }
     }
@@ -155,8 +155,8 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
     }
     for(const auto& vec : _coordinates){
 
-        for( int  i = 0; i <  vec->size(); ++i){
-            if ( vec->getAt(i) != iter._coordinates[j]->getAt(i))
+        for( int  i = 0; i <  vec._crds->size(); ++i){
+            if ( vec._crds->getAt(i) != iter._coordinates[j]._crds->getAt(i))
                 return false;
         }
 
@@ -215,7 +215,7 @@ const geos::geom::Coordinate &VertexIterator::operator*() const
         if ( _pointMode){
             return *_pointCoordinates[_index];
         }
-        return _coordinates[_partIndex]->getAt(_index);
+        return _coordinates[_partIndex]._crds->getAt(_index);
     throw ErrorObject(TR("vertex index out of range"));
 }
 
@@ -225,7 +225,7 @@ geos::geom::Coordinate &VertexIterator::operator*()
         if ( _pointMode){
             return *const_cast<geos::geom::Coordinate *>(_pointCoordinates[_index]);
         }
-        return const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]->getAt(_index));
+        return const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]._crds->getAt(_index));
     }
     throw ErrorObject(TR("vertex index out of range"));
 }
@@ -235,7 +235,7 @@ geos::geom::Coordinate *VertexIterator::operator->()
     if ( _linearPosition >= 0 && _linearPosition < _linearSize)
         if ( _pointMode)
             return const_cast<geos::geom::Coordinate *>(_pointCoordinates[_index]);
-        return &const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]->getAt(_index));
+        return &const_cast<geos::geom::Coordinate&>(_coordinates[_partIndex]._crds->getAt(_index));
     throw ErrorObject(TR("vertex index out of range"));
 }
 
@@ -258,8 +258,18 @@ bool VertexIterator::nextSubGeometry() const
     return _nextSubGeometry;
 }
 
+bool VertexIterator::isInteriorVertex() const{
+    if ( _polygonMode)
+        return _coordinates[_partIndex]._isInterior;
+    return false;
+}
 void VertexIterator::move(int n)
 {
+    if (_coordinates.size() == 0){
+        _index = 1000000;
+        return;
+    }
+
     _index += n;
     _linearPosition += n;
     _nextSubGeometry = false;
@@ -271,17 +281,14 @@ void VertexIterator::move(int n)
             _index = -1;
         }
     } else {
-        int sz =  _coordinates[_partIndex]->size();
+        int sz =  _coordinates[_partIndex]._crds->size();
         if (_index >=sz){ // weird compiler bug; (mingw 4.8.2), using result directly always leads to positive test
             ++_partIndex;
             _index = 0;
-            if ( _polygonMode){
-                _nextSubGeometry =  _polygonMode  ? _partIndex == 0 : false;
-            }else
-                _nextSubGeometry = true;
+            _nextSubGeometry = true;
             if ( _partIndex >= _coordinates.size()){
                 _partIndex = _coordinates.size() - 1;
-                _index = _coordinates[_partIndex]->size();
+                _index = _coordinates[_partIndex]._crds->size();
                 _linearPosition = _linearSize;
             }
         } else{
@@ -292,7 +299,7 @@ void VertexIterator::move(int n)
                     _linearPosition = 0;
                     _index = 0;
                 }else{
-                    _index = _coordinates[_partIndex]->size() - 1;
+                    _index = _coordinates[_partIndex]._crds->size() - 1;
                 }
             }
         }
@@ -342,15 +349,14 @@ void VertexIterator::setFromGeometry(geos::geom::Geometry *geom)
         _polygonMode = true;
 
     } else if ( geom->getGeometryTypeId() == geos::geom::GEOS_MULTIPOLYGON){
-        //TODO most likely this isnt yet complete, dont have a multipolygon test file atm
         _coordinates.resize(0);
         for(int j =0; j < geom->getNumGeometries(); ++j){
             int baseIndex = _coordinates.size();
             const geos::geom::Polygon *pol = dynamic_cast<const geos::geom::Polygon *>(geom->getGeometryN(j));
             _coordinates.resize(_coordinates.size() + 1 + pol->getNumInteriorRing());
-            storeLineString(pol->getExteriorRing(),0);
+            storeLineString(pol->getExteriorRing(), baseIndex );
             for(int j=0; j <pol->getNumInteriorRing(); ++j ){
-                storeLineString(pol->getInteriorRingN(j),baseIndex + j + 1);
+                storeLineString(pol->getInteriorRingN(j),baseIndex + j + 1, true);
             }
         }
         _polygonMode = true;
@@ -370,8 +376,11 @@ bool VertexIterator::compatible(const VertexIterator &iter) const
        return true;
     } else{
         for(auto vec : _coordinates){
-            if ( vec->size() != iter._coordinates[j]->size())
+            if ( j >= iter._coordinates.size() )
                 return false;
+            if ( vec._crds->size() != iter._coordinates[j]._crds->size())
+                return false;
+            ++j;
         }
     }
     return true;

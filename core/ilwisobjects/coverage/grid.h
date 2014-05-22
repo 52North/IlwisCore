@@ -1,7 +1,7 @@
 #ifndef Grid_H
 #define Grid_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <list>
 #include <mutex>
 

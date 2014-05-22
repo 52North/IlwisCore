@@ -1,7 +1,7 @@
 #ifndef DATABASETABLE_H
 #define DATABASETABLE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 /*!

@@ -13,7 +13,7 @@
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "projection.h"
-#include "ProjectionImplementation.h"
+#include "projectionimplementation.h"
 #include "box.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"

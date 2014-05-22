@@ -1,7 +1,7 @@
 #ifndef ILWISOBJECTFACTORY_H
 #define ILWISOBJECTFACTORY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 
 namespace Ilwis {

@@ -2,7 +2,7 @@
 #define RANGE_H
 
 #include <QSharedPointer>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

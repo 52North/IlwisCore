@@ -4,7 +4,7 @@
 #include <QMultiMap>
 #include <QSqlQuery>
 #include <set>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

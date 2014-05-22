@@ -1,4 +1,4 @@
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/Point.h"
@@ -8,7 +8,9 @@
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/Coordinate.h"
 #include "geos/io/WKTReader.h"
+#ifdef Q_OS_WIN
 #include "geos/io/WKTReader.inl"
+#endif
 #include "geos/io/WKTWriter.h"
 #include "geos/io/ParseException.h"
 #include "coordinate.h"
@@ -18,6 +20,9 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
+#include "feature.h"
+#include "coverage.h"
+#include "featurecoverage.h"
 
 #include "geos/geom/CoordinateFilter.h"
 #include "csytransform.h"
@@ -32,12 +37,22 @@ QString GeometryHelper::toWKT(const geos::geom::Geometry* geom){
     return QString::fromStdString(writer.write(geom));
 }
 
-geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt) {
+geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordinateSystem& csy) {
     try{
-    geos::io::WKTReader reader;
-    return reader.read(wkt.toStdString());
+        geos::io::WKTReader reader;
+        geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+        if (geom){
+            if ( csy.isValid()){
+                GeometryHelper::setCoordinateSystem(geom, csy.ptr());
+            }else
+               GeometryHelper::setCoordinateSystem(geom,0);
+
+            return geom;
+        }
+        ERROR2(ERR_NOT_COMPATIBLE2, "WKT", TR("this wkt parser"));
+        return 0;
     } catch (const geos::io::ParseException& ex){
-        ERROR1(ERR_OPERATION_FAILID1, "Well Known Text");
+        ERROR0(ex.what());
         return 0;
     }
 }

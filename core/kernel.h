@@ -12,7 +12,7 @@
 #include <fstream>
 #include "boost/current_function.hpp"
 #include <time.h>
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include "ilwis.h"
 #include "prepareoptions.h"
 #include "issuelogger.h"

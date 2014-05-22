@@ -14,6 +14,7 @@ public:
     virtual Coordinate latlon2coord(const LatLon& ll) const;
     virtual bool isLatLon() const;
     IlwisTypes ilwisType() const;
+    QString toWKT(quint32 spaces=0) const;
 };
 }
 

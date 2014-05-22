@@ -171,7 +171,7 @@ Time::operator QDateTime() const{
 }
 time_t Time::toTime_t() const{
     if ( abs(_julianday) > NOTIME) {
-        return (__int64) iUNDEF;
+        return (qint64) iUNDEF;
     }
     int year, month, day, hour, minutes;
     double seconds;
@@ -281,7 +281,7 @@ Time Time::operator+(const Duration& time) const {
     double t2 = *this;
     return Time(t2 + t1, valueType());
 }
-//TODO defines up on top?
+
 #define IGREG (14+31*(10+12*1582))
 #define JGREG 2299160
 

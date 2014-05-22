@@ -3,6 +3,7 @@
 #include <memory>
 #include <functional>
 #include "geos/geom/Geometry.h"
+#include "geos/util/GEOSException.h"
 #include "kernel.h"
 #include "coverage.h"
 #include "columndefinition.h"
@@ -11,7 +12,7 @@
 #include "feature.h"
 #include "featurecoverage.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
 #include "operationhelper.h"
@@ -60,6 +61,7 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
     std::set<quint32> resultset;
     int index = 0;
     geos::geom::Geometry *geomRelation = _geometry.get();
+    try{
     if ( geomRelation != 0) {
         for(auto& iter : features){
             int geomcount = iter->trackSize();
@@ -73,6 +75,10 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
             }
             ++index;
         }
+    }
+    } catch(geos::util::GEOSException& exc){
+        ERROR0(QString(exc.what()));
+        return false;
     }
 
     std::vector<quint32> result(resultset.begin(), resultset.end());
@@ -97,7 +103,7 @@ OperationImplementation::State SpatialRelationOperation::prepare(ExecutionContex
 
     QString quotedGeom = _expression.parm(1).value();
     QString geom = quotedGeom.remove('\"');
-    _geometry.reset(GeometryHelper::fromWKT(geom));
+    _geometry.reset(GeometryHelper::fromWKT(geom, ICoordinateSystem())); // dont use the csy of coverage; not relevant here
     if ( !_geometry){
         ERROR2(ERR_NO_INITIALIZED_2, TR("Geometry"), TR("Contains operation"));
         return sPREPAREFAILED;
@@ -148,7 +154,7 @@ Ilwis::OperationImplementation *Covers::create(quint64 metaid, const Ilwis::Oper
 }
 
 bool Covers::covers(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomCoverage->covers(geomRelation);
+    return  geomRelation->covers(geomCoverage);
 }
 
 OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const SymbolTable &sym){

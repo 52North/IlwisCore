@@ -1,7 +1,7 @@
 #ifndef CATALOGCONNECTOR_H
 #define CATALOGCONNECTOR_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 #include <QStringList>
 
 namespace Ilwis {

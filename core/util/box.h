@@ -5,6 +5,8 @@
 #include "size.h"
 #include "errmessages.h"
 #include "range.h"
+#include "geos/geom/Geometry.h"
+#include "geos/geom/Envelope.h"
 
 namespace Ilwis {
 /*!
@@ -158,6 +160,17 @@ public:
     bool contains(const QVariant& value, bool inclusive = true) const {
         //TODO:
         return false;
+    }
+
+    bool contains(const geos::geom::Geometry *geom) const{
+        if (!geom)
+            return false;
+
+        const geos::geom::Envelope *env = geom->getEnvelopeInternal();
+        if (!env)
+            return false;
+        return contains(PointType(env->getMinX(), env->getMinY())) &&
+                contains(PointType(env->getMaxX(), env->getMaxY()));
     }
 
     bool equals(Box<PointType>& box, double delta=0) const {

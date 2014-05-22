@@ -42,3 +42,8 @@ IlwisTypes BoundsOnlyCoordinateSystem::ilwisType() const
 {
     return itBOUNDSONLYCSY;
 }
+
+QString BoundsOnlyCoordinateSystem::toWKT(quint32 spaces) const
+{
+    return sUNDEF;
+}

@@ -110,7 +110,7 @@ bool IntervalRange::validNumber(QString value) const{
     bool oknumber;
     double v = value.toDouble(&oknumber);
     if (!oknumber) {
-        return ERROR2(ERR_ILLEGAL_VALUE_2, TR("numeric range"), value);
+        return false;
     }
 
     return index(v) != rUNDEF;
@@ -128,8 +128,14 @@ bool IntervalRange::contains(const QVariant &name, bool ) const
         bool ok = validNumber(parts[0]);
         if (parts.size() > 1)
             ok &= validNumber(parts[1]);
-        if (!ok)
-            return false;
+        if (!ok && parts.size() == 1){ // maybe we checked for the label
+            for(const auto& item : _items)    {
+                if (item->name() == parts[0]){
+                    return true;
+                }
+            }
+        }
+        return ok;
     }
     return true;
 }

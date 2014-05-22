@@ -13,9 +13,6 @@ TEMPLATE = lib
 
 include(global.pri)
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET
-DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-
 DEFINES += FEATUREOPERATIONS_LIBRARY
 
 HEADERS += \
@@ -29,15 +26,10 @@ SOURCES += \
 OTHER_FILES += \ 
     featureoperations/featureoperations.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/core/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
-
-win32:CONFIG(release, debug|release): {
-    QMAKE_CXXFLAGS_RELEASE += -O2
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
-INCLUDEPATH +=  $$PWD/core \
-                $$PWD/../external/geos
-DEPENDPATH +=   $$PWD/core \
-                $$PWD/../external/geos
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET

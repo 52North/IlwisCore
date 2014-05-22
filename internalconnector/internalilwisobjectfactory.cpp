@@ -651,10 +651,6 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString 
     if (db.exec(query) && db.next()) {
         Ellipsoid *ellipsoid = new Ellipsoid(resource);
         ellipsoid->fromInternal(db.record());
-        double ma = db.record().field("majoraxis").value().toDouble();
-        double rf = db.record().field("invflattening").value().toDouble();
-        ellipsoid->setEllipsoid(ma,rf);
-        ellipsoid->setAuthority(db.record().field("authority").value().toString());
         return ellipsoid;
     }
     return 0;

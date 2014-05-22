@@ -12,7 +12,9 @@
 #include "featurecoverage.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
+#ifdef Q_OS_WIN
 #include "geos/geom/PrecisionModel.inl"
+#endif
 #include "geos/geom/GeometryFactory.h"
 #include "geos/io/ParseException.h"
 #include "geometryhelper.h"
@@ -77,8 +79,8 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, bool load){
-    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt);
+UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSystem& foreigncsy, bool load){
+    geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, foreigncsy.isValid() ? foreigncsy : coordinateSystem());
     if ( !geom)
         throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
     return newFeature(geom,load);
@@ -205,6 +207,13 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32
         adaptFeatureCounts(1, geomCnt, subGeomCnt, index);break;
     case itPOLYGON:
         adaptFeatureCounts(2, geomCnt, subGeomCnt, index);break;
+    case itFEATURE:
+        //usually only used for resetting the count to 0
+        adaptFeatureCounts(0, geomCnt, subGeomCnt, index);
+        adaptFeatureCounts(1, geomCnt, subGeomCnt, index);
+        adaptFeatureCounts(2, geomCnt, subGeomCnt, index);
+        break;
+
     }
 }
 

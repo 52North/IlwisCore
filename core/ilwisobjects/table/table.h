@@ -4,7 +4,7 @@
 #include <QSqlDatabase>
 #include <unordered_map>
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 

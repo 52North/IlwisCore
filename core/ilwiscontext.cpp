@@ -62,7 +62,7 @@ void IlwisContext::loadConfigFile(QFileInfo configFile){
         QSettings settings(configFile.filePath(), QSettings::IniFormat);
         this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
         if (!this->_ilwisDir.isDir()){
-            printf_s("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
+            printf("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
             this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
         }
     }else{

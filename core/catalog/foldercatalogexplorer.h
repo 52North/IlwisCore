@@ -1,7 +1,7 @@
 #ifndef FolderCatalogExplorer_H
 #define FolderCatalogExplorer_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT FolderCatalogExplorer : public CatalogExplorer

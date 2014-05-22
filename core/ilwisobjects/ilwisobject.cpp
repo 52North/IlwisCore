@@ -166,7 +166,6 @@ QString IlwisObject::toString()
 
 bool IlwisObject::isEqual(const IlwisObject *obj) const
 {
-    //TODO: overrule this method for object types that need to do more checking
     if ( obj == 0)
         return false;
 
@@ -229,10 +228,13 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
     _changed = true;
 
     if (mode & cmINPUT){
-        quint64 pointer = (quint64) ( _outConnector.data());
+        quint64 pointer = (quint64) ( _connector.data());
         quint64 npointer = (quint64) ( connector);
-        if ( pointer != npointer || npointer == 0)
+        if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
+            if ( !_connector.isNull())
+                _connector->loadMetaData(this, PrepareOptions());
+        }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }

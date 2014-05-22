@@ -7,13 +7,13 @@
 #include "resource.h"
 #include "identity.h"
 #include "symboltable.h"
-#include "OperationExpression.h"
+#include "operationExpression.h"
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
 #include "script.h"
 #include "parserlexer/IlwisScriptLexer.h"
-#include "parserlexer/IlwisScriptParser.h"
+#include "parserlexer/ilwisscriptParser.h"
 
 
 

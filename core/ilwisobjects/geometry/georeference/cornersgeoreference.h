@@ -1,7 +1,7 @@
 #ifndef CORNERSGEOREFERENCE_H
 #define CORNERSGEOREFERENCE_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT CornersGeoReference : public SimpelGeoReference

@@ -1,7 +1,7 @@
 #ifndef DATUMDATA_H
 #define DATUMDATA_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
@@ -18,6 +18,8 @@ public:
     double parameter(DatumParameters parm) const;
     bool isValid() const;
     void fromCode(const QString& code);
+    void setWktName(const QString& name);
+    QString toWKT(quint32 spaces=0) const;
 
     void set3TransformationParameters(double x, double z, double y);
     void set7TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale);
@@ -27,6 +29,7 @@ private:
     QString _authority;
     std::vector<double> _datumParams;
     bool _isValid;
+    QString _wkt;
 };
 
 }

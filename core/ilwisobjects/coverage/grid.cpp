@@ -157,7 +157,7 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
     grid->prepare();
 
     quint32 startBlock = start * _blocksPerBand;
-    quint32 endBlock = std::min(end * _blocksPerBand, _blocks.size());
+    quint32 endBlock = std::min(end * _blocksPerBand, (quint32)_blocks.size());
     for(int i=startBlock, j=0; i < endBlock; ++i, ++j) {
         grid->_blocks[j] = _blocks[i]->clone();
     }
