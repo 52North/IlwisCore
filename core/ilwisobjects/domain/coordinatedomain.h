@@ -1,6 +1,8 @@
 #ifndef COORDINATEDOMAIN_H
 #define COORDINATEDOMAIN_H
 
+#include "domain.h"
+
 namespace Ilwis {
 /**
  * The CoordinateDomain class implements a coordinate based type of domain
