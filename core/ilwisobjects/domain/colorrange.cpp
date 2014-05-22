@@ -110,7 +110,7 @@ QString ColorRange::toString(const QColor &clr, ColorRange::ColorModel clrModel)
         color += QString("HSLA(%1,%2,%3,%4)").arg(clr.hueF()).arg(clr.saturationF()).arg(clr.lightnessF()).arg(clr.alphaF());
         break;
     case ColorRange::cmCYMKA:
-        color += QString("CMYKA(%1,%2,%3,%4)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+        color += QString("CMYKA(%1,%2,%3,%4,%5)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
         break;
     }
     return color;
