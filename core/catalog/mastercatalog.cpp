@@ -279,7 +279,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
     if (!resolvedName.isValid())
         return Resource();
 
-
+    resolvedName = OSHelper::neutralizeFileName(resolvedName.toString());
     auto query = QString("select * from mastercatalog where resource = '%1' and (type & %2) != 0").arg(resolvedName.toString()).arg(tp);
     auto results = kernel()->database().exec(query);
     if ( results.next()) {

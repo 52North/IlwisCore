@@ -344,9 +344,11 @@ protected:
         }
     }
 
+protected:
+    std::map<QString, SPNamedIdentifier> _byName;
+
 private:
     bool alignWithParent(const IDomain& dom);
-    std::map<QString, SPNamedIdentifier> _byName;
     std::vector<SPNamedIdentifier> _byRaw;
     std::vector<SPNamedIdentifier> _byOrder;
 };
@@ -357,6 +359,7 @@ public:
     ~ThematicRange() {}
     ThematicRange& operator<<(const QString& itemdef);
     static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
+    Range *clone() const;
 };
 
 }

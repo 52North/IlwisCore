@@ -1,6 +1,8 @@
 #ifndef COLORRANGE_H
 #define COLORRANGE_H
 
+#include <QColor>
+
 namespace Ilwis{
 
 class ColorItem;

@@ -269,7 +269,7 @@ void NamedIdentifierRange::remove(const QString &name)
         return;
     quint32 iraw = (*iter).second->raw();
     _byName.erase(name);
-    _byRaw[iraw].reset(0);
+    _byRaw.erase(_byRaw.begin() + iraw);
     for(int i=0; i < count(); ++i) {
         if ( _byOrder[i]->name() == name){
             _byOrder.erase(_byOrder.begin() + i);
@@ -441,4 +441,13 @@ ThematicRange &ThematicRange::operator<<(const QString &itemdef)
     QStringList parts = itemdef.split("|");
     add(new ThematicItem(parts));
     return *this;
+}
+
+Range *ThematicRange::clone() const
+{
+    ThematicRange *tr = new ThematicRange();
+    for(auto kvp: _byName) {
+        tr->add( kvp.second->clone());
+    }
+    return tr;
 }
