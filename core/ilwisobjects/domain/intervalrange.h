@@ -97,6 +97,7 @@ public:
     //@override
     qint32 gotoIndex(qint32 index, qint32 step) const;
 
+
 protected:
     void addRange(const ItemRange &range);
 private:

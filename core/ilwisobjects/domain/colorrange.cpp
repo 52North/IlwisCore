@@ -43,9 +43,12 @@ QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
     if ( v.type() == QMetaType::QColor)
         return QColor(v.value<QColor>());
     else if ( v.type() == QMetaType::QString){
-        QStringList parts = v.toString().split(QRegularExpression("(|,|)]"));
+        QRegExp separ("[(]|,|[)]");
+        QStringList parts = (v.toString()).split(separ);
+        if(parts.last().isEmpty())
+            parts.removeLast();
         QColor clr;
-        bool ok1,ok2,ok3, ok4, ok5=true;
+        bool ok1,ok2,ok3,ok4,ok5 =true;
         if ( parts.size() >= 5){
             double component1 = parts[1].toDouble(&ok1);
             double component2 = parts[2].toDouble(&ok2);
@@ -65,7 +68,7 @@ QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
                     clr.setRgb(component1,component2, component3);
                     clr.setAlpha(component4);
                 }
-            }else if ( parts[0].toLower() == "hsia"){
+            }else if ( parts[0].toLower() == "hsla"){
                 if ( isFractional){
                    clr.setHslF(component1,component2, component3);
                    clr.setAlphaF(component4);
@@ -75,7 +78,7 @@ QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
                     clr.setAlpha(component4);
                 }
 
-            } else if ( parts[0].toLower() == "hsia" && parts.size() == 6){
+            } else if ( parts[0].toLower() == "cmyka" && parts.size() == 6){
                 if ( isFractional){
                    clr.setCmykF(component1,component2, component3, component4);
                    clr.setAlphaF(component5);
@@ -102,10 +105,13 @@ QString ColorRange::toString(const QColor &clr, ColorRange::ColorModel clrModel)
     switch(clrModel){
     case ColorRange::cmRGBA:
         color += QString("RGBA(%1,%2,%3,%4)").arg(clr.redF()).arg(clr.greenF()).arg(clr.blueF()).arg(clr.alphaF());
+        break;
     case ColorRange::cmHSLA:
         color += QString("HSLA(%1,%2,%3,%4)").arg(clr.hueF()).arg(clr.saturationF()).arg(clr.lightnessF()).arg(clr.alphaF());
+        break;
     case ColorRange::cmCYMKA:
-        color += QString("CMYKA(%1,%2,%3,%4)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+        color += QString("CMYKA(%1,%2,%3,%4,%5)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+        break;
     }
     return color;
 }
