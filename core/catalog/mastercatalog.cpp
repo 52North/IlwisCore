@@ -63,7 +63,10 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
 
-    QString original = inlocation.toString().trimmed();;
+    QString original = inlocation.toString().trimmed();
+    if ( Resource::isRoot(original))
+        return true;
+
     QString loc = original;
     if ( loc[loc.size() - 1] == '/' ){
         loc = loc.left(loc.size() - 1);
@@ -83,6 +86,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
          loc.indexOf("ilwis://system") == 0 ||
          loc.indexOf("ilwis://operations") == 0 ||
          loc == "file://" ||
+         loc == "file:/" ||
          loc == "ilwis:/" ||
          loc.isEmpty())
         return true;
