@@ -23,7 +23,7 @@ win32{
     INCLUDEPATH += $$PWD/../external/geos
     DEPENDPATH += $$PWD/../external/geos
 }
-linux{
+unix{
     BOOST=/usr/include
     GEOSINCL=/usr/include
     GEOSLIB=/usr/lib
@@ -53,7 +53,4 @@ INCLUDEPATH += core \
                 $$BOOST \
                 $$EXTERNAL
 
-
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
 
