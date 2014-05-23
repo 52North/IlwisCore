@@ -30,3 +30,14 @@ bool OSHelper::isFileName(const QString &absolutepath)
 #endif
     return absolutepath.indexOf("/") == 0;
 }
+
+QString OSHelper::operatingSystem() {
+    QString operatingSystem;
+    #ifdef Q_OS_WIN
+    operatingSystem = "windows";
+    #endif
+    #ifdef Q_OS_LINUX
+       operatingSystem = "linux";
+    #endif
+    return operatingSystem;
+}

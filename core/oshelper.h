@@ -10,6 +10,7 @@ public:
     static QString neutralizeFileName(const QString& somelocation) ;
     static bool isAbsolute(const QString& fragment);
     static bool isFileName(const QString& filename);
+    static QString operatingSystem();
 };
 }
 
