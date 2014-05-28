@@ -1,6 +1,9 @@
 #ifndef NUMERICITEMRANGE_H
 #define NUMERICITEMRANGE_H
 
+#include "kernel_global.h"
+#include "itemrange.h"
+
 namespace Ilwis {
 /**
  * This is a range of numeric items, for example 0-300. items can have sub ranges within this NumericItemRange.
