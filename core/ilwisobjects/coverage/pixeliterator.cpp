@@ -350,6 +350,11 @@ int PixelIterator:: operator-(const PixelIterator& iter) {
     return linearPosition() - iter.linearPosition();
 }
 
+const IRasterCoverage& PixelIterator::raster() const
+{
+    return _raster;
+}
+
 
 void PixelIterator::move2NextRow(int delta)
 {
