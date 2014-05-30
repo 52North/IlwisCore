@@ -133,7 +133,8 @@ public:
      * Adds a new record to this table
      * It will be filled with appropriate default values depending on the domain(s)
      */
-    virtual void newRecord() = 0;
+    virtual quint32 newRecord() = 0;
+    virtual void removeRecord(quint32 rec) = 0;
 
     /*!
      * retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives<br>
@@ -276,5 +277,7 @@ Q_DECLARE_METATYPE(Ilwis::ITable)
 #define FEATUREIDCOLUMN "feature_id"
 #define FEATUREVALUECOLUMN "feature_value"
 #define FEATURETYPECOLUMN "feature_type"
+#define TRACKINDEXCOLUMN "track_index"
+#define TRACKVALUECOLUMN "track_value"
 
 #endif // TABLE_H
