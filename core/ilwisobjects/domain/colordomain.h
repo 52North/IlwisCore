@@ -17,6 +17,7 @@ public:
     bool isCompatibleWith(const IDomain& dom) const;
     void range(Range *colorrange);
     bool isOrdered() const;
+    void setParent(const IDomain& dm);
 
 protected:
     QSharedPointer<Range> getRange() const;
