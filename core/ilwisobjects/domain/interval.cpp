@@ -28,6 +28,11 @@ bool Interval::isValid() const
     return _valuerange.isValid();
 }
 
+bool Interval::isOrdered() const
+{
+    return true;
+}
+
 DomainItem *Interval::clone() const
 {
     Interval *item =  new Interval(name(), _valuerange);

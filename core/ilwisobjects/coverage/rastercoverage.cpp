@@ -196,6 +196,16 @@ PixelIterator RasterCoverage::begin()
     return PixelIterator(raster);
 }
 
+PixelIterator RasterCoverage::band(qint32 index)
+{
+    if ( index >= size().zsize() || index < 0)
+        return PixelIterator();
+
+    BoundingBox box(Pixel(0,0,index), Pixel(size().xsize()-1,size().ysize()-1, index));
+    IRasterCoverage raster(this);
+    return PixelIterator(raster,box);
+}
+
 void RasterCoverage::size(const Size<> &sz)
 {
     if ( isReadOnly())

@@ -43,39 +43,7 @@ const double clrUNDEF2 = (std::numeric_limits < quint32 >::max() + 1);
 
 #define sUNDEF "?"
 
-//round
-inline long roundx(float x) {
-    if ((x == flUNDEF) || (x > LONG_MAX) || (x < LONG_MIN))
-        return iUNDEF;
-    else
-        return (long)floor(x + 0.5);
-}
-inline long roundx(double x) {
-    if ((x == rUNDEF) || (x > LONG_MAX) || (x < LONG_MIN))
-        return iUNDEF;
-    else
-        return (long)floor(x + 0.5);
-}
 
-//compare
-inline byte   byteConv(short x)   { return x < 0 ? (byte)0 : x > 255 ? (byte)0 : (byte)x; }
-inline byte   byteConv(long  x)   { return x < 0 ? (byte)0 : x > 255 ? (byte)0 : (byte)x; }
-inline byte   byteConv(int x)     { return x < 0 ? (byte)0 : x > 255 ? (byte)0 : (byte)x; }
-inline byte   byteConv(double x)  { return byteConv(roundx(x)); }
-inline short  shortConv (long  x) { return  ((x == iUNDEF) || (x > SHRT_MAX) || (x < SHRT_MIN)) ? shUNDEF : (short)x; }
-inline short  shortConv(double x) { return shortConv(roundx(x)); }
-inline short  shortConv(short x)  { return x; }
-inline short  shortConv(int x)    { return ((x == iUNDEF) || (x > SHRT_MAX) || (x < SHRT_MIN)) ? shUNDEF : (short)x;}
-inline long   longConv(short x)   { return x == shUNDEF ? iUNDEF : (long)x; }
-inline long   longConv(int x)     { return (long)x; }
-inline long   longConv(float x)   { return roundx(x); }
-inline long   longConv(double x)  { return roundx(x); }
-inline float floatConv(short x)   { return x == shUNDEF ? flUNDEF : (float)x; }
-inline float floatConv(long x)    { return x == iUNDEF ? flUNDEF : (float)x; }
-inline float floatConv(double x)  { return ((x == rUNDEF) || (x < -FLT_MAX) || (x > FLT_MAX)) ? flUNDEF : (float)x; }
-inline double doubleConv(short x) { return x == shUNDEF ? rUNDEF : (double)x; }
-inline double doubleConv(long x)  { return x == iUNDEF ? rUNDEF : (double)x; }
-inline double doubleConv(float x) { return x == flUNDEF ? rUNDEF : (double)x; }
 inline double min(double a, double b) { return ((a<=b && a!=rUNDEF && a!= iUNDEF)  || b==rUNDEF) ? a : b; }
 inline double max(double a, double b) { return (a>=b && a!=rUNDEF && a != iUNDEF) ? a : b; }
 inline long min(long a, long b) { return ((a<=b && a!=iUNDEF) || b==iUNDEF) ? a : b; }
@@ -107,6 +75,7 @@ const double EPS7=1.e-7;
 const double EPS6=1.e-6;
 const double EPS5=1.e-5;
 
+const int COVERAGEATRIB = 100000000;
 
 template<class T> inline IlwisTypes numericType() {
     bool isSigned = std::numeric_limits<T>::is_signed;
@@ -159,5 +128,13 @@ typedef double Raw; // originally raws were integers and they still are but as t
 
 
 #define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
+
+//round
+template<typename T> T round(T x, T frac) {
+    if ( isNumericalUndef(x) || frac == 0)
+        return x;
+    T numvalue = (std::ceil(x / frac)) * frac;
+    return numvalue;
+}
 
 #endif // ILWIS_H

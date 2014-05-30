@@ -59,6 +59,16 @@ public:
     void interpolation(const QString& ip);
     virtual QString interpolation() const;
     virtual QVariant impliedValue(const QVariant& v) const { return v; }
+
+    template<typename T> T* as(){
+        return (dynamic_cast<T *>(this));
+    }
+
+    template<typename T> const T* as() const{
+         return (dynamic_cast<const T *>(this));
+    }
+
+
 protected:
     IlwisTypes _vt;
     QString _interpolation;

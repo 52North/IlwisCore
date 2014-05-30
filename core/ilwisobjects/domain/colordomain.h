@@ -16,7 +16,7 @@ public:
     Containement contains(const QVariant& value) const;
     bool isCompatibleWith(const IDomain& dom) const;
     void range(Range *colorrange);
-    void setParent(const IDomain& dm);
+    bool isOrdered() const;
 
 protected:
     QSharedPointer<Range> getRange() const;

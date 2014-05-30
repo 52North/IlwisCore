@@ -66,6 +66,7 @@ public:
      * \return true when compatible
      */
     bool isCompatibleWith(const IDomain &dom) const;
+    bool isOrdered() const;
 
     //@override
     IlwisTypes valueType() const;

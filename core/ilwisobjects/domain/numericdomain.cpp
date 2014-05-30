@@ -127,6 +127,11 @@ bool NumericDomain::isCompatibleWith(const IDomain& dom) const {
     return true;
 }
 
+bool NumericDomain::isOrdered() const
+{
+    return true;
+}
+
 
 
 
