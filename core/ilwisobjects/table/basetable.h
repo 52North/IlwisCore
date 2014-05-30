@@ -102,6 +102,7 @@ protected:
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
     void initValuesColumn(const ColumnDefinition &def);
     void initRecord(std::vector<QVariant>& values) const;
+    void removeRecord(quint32 rec);
 private:
     quint32 _rows;
     quint32 _columns;
