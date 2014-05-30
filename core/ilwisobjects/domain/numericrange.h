@@ -57,6 +57,7 @@ public:
     double resolution() const ;
 
     NumericRange& operator+=(double v);
+    void add(double v);
 
     bool operator==(const NumericRange& vr);
     bool operator<(const NumericRange& vr);
