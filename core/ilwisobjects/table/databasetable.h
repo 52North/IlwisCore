@@ -146,7 +146,8 @@ public:
     //@override
     IlwisObject *clone();
 
-    void newRecord();
+    quint32 newRecord();
+    void removeRecord(quint32);
 private:
     QSqlDatabase _database;
     bool _sqlCreateDone;
