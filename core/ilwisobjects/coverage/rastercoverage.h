@@ -179,6 +179,7 @@ public:
 
     PixelIterator end() ;
     PixelIterator begin() ;
+    PixelIterator band(qint32 index);
 
 protected:
     Grid *grid();

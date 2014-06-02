@@ -285,12 +285,18 @@ QVariant NamedIdentifierRange::impliedValue(const QVariant& v) const
     bool ok;
     quint32 index = v.toUInt(&ok);
     if (!ok){
+        QString typName = v.typeName();
+        if ( typName == "QString"){
+            SPNamedIdentifier it = item(v.toString()).staticCast<NamedIdentifier>();
+            if (it)
+                return it->raw();
+        }
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
-        return sUNDEF;
+        return QVariant();
     }
     SPNamedIdentifier it = item(index).staticCast<NamedIdentifier>();
     if (!it)
-        return sUNDEF;
+        return QVariant();
 
     return it->name();
 }

@@ -124,12 +124,19 @@ std::vector<QVariant> DatabaseTable::record(quint32 n) const {
     }
     return std::vector<QVariant>();
 }
-void DatabaseTable::newRecord() {
+quint32 DatabaseTable::newRecord() {
     if (!const_cast<DatabaseTable *>(this)->initLoad())
-        return ;
+        return iUNDEF;
     std::vector<QVariant> values;
     initRecord(values);
     record(NEW_RECORD, values);
+
+    return recordCount() - 1;
+}
+
+void DatabaseTable::removeRecord(quint32 )
+{
+    //TODO
 }
 
 void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset)

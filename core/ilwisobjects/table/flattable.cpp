@@ -37,14 +37,23 @@ bool FlatTable::createTable()
     return true;
 }
 
-void FlatTable::newRecord()
+quint32 FlatTable::newRecord()
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return ;
+        return iUNDEF;
 
     std::vector<QVariant> values;
     initRecord(values);
     record(NEW_RECORD, values);
+
+    return recordCount() - 1;
+}
+
+void FlatTable::removeRecord(quint32 rec)
+{
+    if ( rec < recordCount()){
+        _datagrid.erase(_datagrid.begin() + rec);
+    }
 }
 
 bool FlatTable::prepare()
@@ -178,9 +187,6 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
         recordCount(_datagrid.size());
         rec = recordCount() - 1;
     }
-    for(int i=0; i < _columnDefinitionsByIndex.size(); ++i)
-        _columnDefinitionsByIndex[i].changed(true);
-
     quint32 col = offset;
     int cols = std::min((quint32)vars.size() - offset, columnCount());
     for(const QVariant& var : vars) {

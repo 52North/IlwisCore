@@ -16,6 +16,7 @@ public:
     Containement contains(const QVariant& value) const;
     bool isCompatibleWith(const IDomain& dom) const;
     void range(Range *colorrange);
+    bool isOrdered() const;
     void setParent(const IDomain& dm);
 
 protected:

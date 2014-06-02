@@ -4,6 +4,7 @@
 #include "kernel_global.h"
 #include <QVector>
 #include <unordered_map>
+#include "itemrange.h"
 
 namespace Ilwis {
 

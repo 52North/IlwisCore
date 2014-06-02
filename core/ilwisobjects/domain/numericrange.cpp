@@ -82,6 +82,17 @@ NumericRange& NumericRange::operator+=(double v)
     return *this;
 }
 
+void NumericRange::add(double v)
+{
+    if ( isNumericalUndef(v))
+        return;
+
+    if ( v < min())
+         min(v);
+    if ( v > max())
+        max(v);
+}
+
 bool NumericRange::operator==(const NumericRange& vr) {
     return vr.max() == max() && vr.min() == min() && vr.resolution() == resolution();
 }
@@ -122,6 +133,9 @@ QString NumericRange::toString() const {
 QVariant NumericRange::impliedValue(const QVariant &v) const
 {
     bool ok;
+    if ( v == sUNDEF)
+        return _undefined;
+
     double vtemp = v.toDouble(&ok);
     if (!ok){
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "number");

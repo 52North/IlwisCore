@@ -422,6 +422,8 @@ public:
         _trq = trq;
     }
 
+    const Ilwis::IRasterCoverage &raster() const;
+
 protected:
     PixelIterator(quint64 endpos ) :
         _grid(0),
