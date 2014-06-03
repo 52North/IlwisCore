@@ -41,7 +41,8 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
         PixelIterator iterOut(_outputGC, BoundingBox(box.size()));
 
         for_each(iterOut, iterOut.end(), [&](double& v){
-            v = calc(*iterIn, _number1);
+
+            v = _firstorder ? calc(_number1, *iterIn) : calc(*iterIn, _number1);
             ++iterIn;
         });
         return true;
@@ -145,6 +146,7 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     int mindex = (ptype1 & itNUMBER) == 0 ? 0 : 1;
     int nindex = mindex ? 0 : 1;
 
+    _firstorder = mindex > nindex;
     QString raster =  _expression.parm(mindex).value();
     if (!_inputGC1.prepare(raster)) {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
