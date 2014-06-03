@@ -1,13 +1,16 @@
 #ifndef OPERATIONOVERLOADS_H
 #define OPERATIONOVERLOADS_H
+#include "kernel_global.h"
 
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator+(const Ilwis::IRasterCoverage& raster1, double);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator-(const Ilwis::IRasterCoverage& raster1, double);
+KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator-(double number,const Ilwis::IRasterCoverage &raster1);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator+(const Ilwis::IRasterCoverage& raster1, const Ilwis::IRasterCoverage& raster2);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator*(const Ilwis::IRasterCoverage& raster1, const Ilwis::IRasterCoverage& raster2);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator/(const Ilwis::IRasterCoverage& raster1, const Ilwis::IRasterCoverage& raster2);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator*(const Ilwis::IRasterCoverage& raster1, double);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator/(const Ilwis::IRasterCoverage& raster1, double);
+KERNELSHARED_EXPORT Ilwis::IRasterCoverage operator/(double number,const Ilwis::IRasterCoverage &raster1);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage sin(const Ilwis::IRasterCoverage& raster1);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage cos(const Ilwis::IRasterCoverage& raster1);
 KERNELSHARED_EXPORT Ilwis::IRasterCoverage tan(const Ilwis::IRasterCoverage& raster1);
