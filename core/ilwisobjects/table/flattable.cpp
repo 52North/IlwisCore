@@ -207,6 +207,8 @@ QVariant FlatTable::cell(const QString& col, quint32 rec, bool asRaw) const {
 
 QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 {
+    QVariant v = _datagrid[rec][index];
+    Time tm = v.value<Ilwis::Time>();
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariant();
 
