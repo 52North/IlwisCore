@@ -41,6 +41,7 @@ protected:
 
     double _number1 = rUNDEF;
     double _number2 = rUNDEF;
+    bool _firstorder = true;
     OperatorType _operator;
 };
 }
