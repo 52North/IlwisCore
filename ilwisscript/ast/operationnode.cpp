@@ -46,11 +46,11 @@ bool OperationNode::handleBinaryCases(int index, const NodeValue& vright, const 
 
     QString expr;
     if ( SymbolTable::isNumerical(vright[index]) && SymbolTable::isDataLink(_value[index])){
-        expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toString(index)).arg(vright.toDouble(index)).arg(relation);
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toDouble(index)).arg(_value.toString(index)).arg(relation);
     } else if (SymbolTable::isNumerical(_value[index]) && SymbolTable::isDataLink(vright[index])){
-        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString(index)).arg(_value.toDouble(index)).arg(relation);
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toDouble(index)).arg(vright.toString(index)).arg(relation);
     } else if (SymbolTable::isDataLink(_value[index]) && SymbolTable::isDataLink(vright[index])) {
-        expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString(index)).arg(_value.toString(index)).arg(relation);
+        expr = QString("%1(%2,%3,%4)").arg(operation).arg(_value.toString(index)).arg(vright.toString(index)).arg(relation);
     } else if (SymbolTable::isDataLink(vright[index]) && SymbolTable::isNumerical(_value[index])) {
         expr = QString("%1(%2,%3,%4)").arg(operation).arg(vright.toString(index)).arg(_value.toDouble(index)).arg(relation);
     }
