@@ -174,36 +174,15 @@ public:
     */
     bool prepare(const QString& nme, IlwisTypes tp,const PrepareOptions& options=PrepareOptions()){
         QString name = Resource::quoted2string(nme);
-        if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
-            QString sid = name.mid(11);
-            bool ok;
-            quint64 id = sid.toLongLong(&ok);
-            if (ok){
+        // see if it is an internal object (ANONYMOUS_, or ILWISOBJECT_)
+        quint64 id = IlwisObject::internalname2id(name);
+        if ( id != i64UNDEF) { // internal objects are not in the catalog
                 ESPIlwisObject data = mastercatalog()->get(id);
                 if ( data.get() != 0) {
                     removeCurrent();
                     _implementation = data;
                     return true;
                 }
-
-            }
-            return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
-
-        }
-        if ( name.indexOf(NAME_ALIAS) == 0) {
-            QString sid = name.mid(SZ_NAME_ALIAS);
-            bool ok;
-            quint64 id = sid.toLongLong(&ok);
-            if (ok){
-                ESPIlwisObject data = mastercatalog()->get(id);
-                if ( data.get() != 0) {
-                    removeCurrent();
-                    _implementation = data;
-                    return true;
-                }
-
-            }
-            return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
 
         }
         if ( tp == itANY) {
