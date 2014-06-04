@@ -124,7 +124,16 @@ IlwisTypes SymbolTable::ilwisType(const QVariant &value, const QString& symname)
     }
 
     IlwisTypes tp = IlwisObject::findType(symname);
-    return tp;
+    if ( tp != itUNKNOWN)
+        return tp;
+    quint64 id = mastercatalog()->name2id(symname);
+    if ( id != i64UNDEF){
+        IIlwisObject obj = mastercatalog()->get(id);
+        if ( obj.isValid()){
+            return obj->ilwisType();
+        }
+    }
+    return itUNKNOWN;
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {
