@@ -37,10 +37,16 @@ public:
     bool contains(double v, bool inclusive = true) const{
         if (!isValid())
             return false;
+        if ( isNumericalUndef(v))
+            return false;
 
-        if ( inclusive)
-            return v >= _min && v <= _max;
-        return v > _min && v < _max;
+        bool ok = inclusive ? v >= _min && v <= _max : v > _min && v < _max;
+        if (!ok || _resolution == 0 || _resolution == 1)
+            return ok;
+        double intpart;
+        double fractpart = modf(v / _resolution,&intpart);
+        return fractpart == 0;
+
     }
 
 
