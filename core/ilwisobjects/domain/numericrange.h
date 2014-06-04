@@ -45,7 +45,7 @@ public:
             return ok;
         double intpart;
         double fractpart = modf(v / _resolution,&intpart);
-        return fractpart == 0;
+        return fractpart < EPS10;
 
     }
 
@@ -74,12 +74,13 @@ public:
     void set(const NumericRange& vr);
     QVariant ensure(const QVariant& v, bool inclusive=true) const
     {
-        if ( !contains(v, inclusive))
+        double value = v.toDouble();
+        if ( _resolution != 0.0)
+             value = (qint64)(value / _resolution) * _resolution;
+        if ( !contains(value, inclusive))
             return _undefined;
 
-        if ( _resolution != 0.0)
-            return (qint64)(v.toDouble() / _resolution) * _resolution;
-        return v;
+        return value;
     }
     IlwisTypes determineType() const;
     void clear();
