@@ -495,6 +495,35 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
 
 }
 
+quint64 IlwisObject::internalname2id(const QString &name)
+{
+    int index = 0;
+    if ( (index = name.indexOf(NAME_ALIAS)) != -1) {
+        QString sid = name.mid(index + SZ_NAME_ALIAS);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
+                return data->id();
+            }
+        }
+    }
+    if ( (index = name.indexOf(ANONYMOUS_PREFIX)) != -1) { // internal objects are not in the catalog
+        QString sid = name.mid(index + SZ_ANONYMOUS_PREFIX);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
+                return data->id();
+            }
+        }
+    }
+    return i64UNDEF;
+
+}
+
 void IlwisObject::addTypeFunction(IlwisTypeFunction func)
 {
     _typeFunctions.push_back(func);

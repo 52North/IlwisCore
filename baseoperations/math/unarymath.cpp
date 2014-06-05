@@ -118,8 +118,6 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
             return sPREPAREFAILED;
 
         _outputGC->datadef().domain(dom);
-        _unaryFun = sin;
-
         _case = otSPATIAL;
         return sPREPARED;
     } else if ( hasType(ptype, itTABLE)) {

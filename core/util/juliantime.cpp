@@ -986,11 +986,11 @@ QVariant TimeInterval::impliedValue(const QVariant &v) const
 
 QVariant TimeInterval::ensure(const QVariant &v, bool inc) const
 {
-    double  value = Time(v);
-    Time t(NumericRange::ensure(value,inc));
+    Time temp = v.value<Ilwis::Time>();
+    Time t(NumericRange::ensure((double)temp,inc));
     if (!t.isValid())
         return QVariant();
-
+    t.valueType(temp.valueType());
     QVariant timev;
     timev.setValue<Ilwis::Time>(t);
     return timev;

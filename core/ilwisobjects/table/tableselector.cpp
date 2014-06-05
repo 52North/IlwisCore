@@ -34,7 +34,7 @@ std::vector<quint32> TableSelector::select(const Table* table, const QString &co
         const ColumnDefinition& coldef = table->columndefinition(part.field());
 
         auto iter = status.begin();
-        IlwisTypes vt = part.valueType();
+        IlwisTypes vt = coldef.datadef().domain()->valueType();
         for(const QVariant& var : data) {
             if ( hasType(vt, itNUMBER))
                 numericCase(part, var.toDouble(), iter);
@@ -97,7 +97,12 @@ void TableSelector::stringCase(const LogicalExpressionPart& part, const ColumnDe
 
 
 void TableSelector::numericCase(const LogicalExpressionPart& part, double val1, std::vector<bool>::iterator& iter) {
-    double val2 = part.value().toDouble();
+    double val2 = rUNDEF;
+    if ( part.value() != "?")
+        val2 = part.value().toDouble();
+    if ( isNumericalUndef(val1))
+        val1 = rUNDEF;
+
     LogicalOperator lconnector =  part.logicalConnector();
     switch(part.condition()){
     case loEQ:{

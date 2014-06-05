@@ -304,12 +304,13 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
     ColumnDefinition& coldef = columndefinition(columnIndex);
     QString typenm = inputVar.typeName();
     IlwisTypes domtype = coldef.datadef().domain<>()->ilwisType();
+    IDomain dm = coldef.datadef().domain<>();
     if ( domtype == itITEMDOMAIN){
         if ( inputVar == sUNDEF){
             return QVariant((int)iUNDEF);
         } else if ( typenm == "QString"){
-            actualval = coldef.datadef().domain<>()->impliedValue(inputVar);
-            SPItemRange rng1 = coldef.datadef().domain<>()->range<ItemRange>();
+            actualval = dm->impliedValue(inputVar);
+            SPItemRange rng1 = dm->range<ItemRange>();
             SPItemRange rng2 = coldef.datadef().range<ItemRange>();
 
             SPDomainItem item = rng1->item(inputVar.toString());
@@ -323,17 +324,28 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
         }
 
     }else if ( domtype == itNUMERICDOMAIN){
-        bool ok;
-        double v = typenm == "QString" ? coldef.datadef().domain<>()->impliedValue(inputVar).toDouble(&ok) : actualval.toDouble(&ok);
+        bool ok = true;
+        double v;
+        if (typenm == "QString")
+            v =  dm->impliedValue(inputVar).toDouble(&ok);
+        else if (  typenm == "Ilwis::Time" ){
+            Time tm = actualval.value<Ilwis::Time>();
+            v = tm;
+        }
+        else
+            actualval.toDouble(&ok);
         if (!ok || isNumericalUndef(v))
             return rUNDEF;
-        SPNumericRange rng = coldef.datadef().range<NumericRange>();
-        if ( !rng.isNull()){
-            rng->add(v);
+        if (! dm->contains(v))
+            actualval = rUNDEF;
+        else {
+            SPNumericRange rng = coldef.datadef().range<NumericRange>();
+            if ( !rng.isNull()){
+                rng->add(v);
+            }
         }
     } else if ( domtype == itTEXTDOMAIN){
-        if ( typenm != "QString")
-            return sUNDEF;
+        return dm->impliedValue(inputVar);
     }
     return actualval;
 }
