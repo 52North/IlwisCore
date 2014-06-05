@@ -68,7 +68,7 @@ public:
      * @param tp the ilwisType that belongs to the url
      * @return the id of the given url
      */
-    quint64 url2id(const QUrl& url, IlwisTypes tp) const;
+    quint64 url2id(const QUrl& url, IlwisTypes tp, bool casesensitive=true) const;
 
     /**
      * Translates a name that is in the MasterCatalog to the corret Resource

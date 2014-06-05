@@ -203,9 +203,11 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
 }
 
-quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp) const
+quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive) const
 {
-    auto query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
+    QString query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
+    if (!casesensitive)
+       query = QString("select itemid,type from mastercatalog where lower(resource) = '%1'").arg(url.toString().toLower()) ;
     auto results = kernel()->database().exec(query);
     while ( results.next()) {
         auto rec = results.record();
