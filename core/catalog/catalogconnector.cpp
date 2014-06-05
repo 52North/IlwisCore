@@ -57,6 +57,8 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
     Resource parentResource = mastercatalog()->id2Resource(id);
 
     QFileInfo parentPath =  containerConnector()->toLocalFile(parentResource);
+    if ( parentPath.fileName() == sUNDEF)
+        parentPath = parent;
     QFileInfo currentPath(parentPath.absoluteFilePath() + "/"+ ownSection);
     return currentPath;
 }
