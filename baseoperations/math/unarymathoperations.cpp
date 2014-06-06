@@ -27,7 +27,7 @@ quint64 Sine::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(Cosine)
-Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
+Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", cos)
 {}
 OperationImplementation *Cosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Cosine(metaid,expr);}
 

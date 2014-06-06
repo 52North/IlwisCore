@@ -7,8 +7,8 @@ OSHelper::OSHelper()
 {
 }
 
-QString OSHelper::neutralizeFileName(const QString& somelocation) {
-    if ( somelocation.indexOf("file://") == -1)
+QString OSHelper::neutralizeFileName(const QString& somelocation, bool allNames) {
+    if ( !allNames && somelocation.indexOf("file://") == -1)
         return somelocation;
 
 #ifdef Q_OS_WIN

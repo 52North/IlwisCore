@@ -16,7 +16,9 @@ IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
-    if ( factory && resource.url().isValid() && resource.container().isValid() && mastercatalog()->usesContainers(resource.url())){
+    if ( factory && resource.url().isValid() &&
+         resource.container().isValid() &&
+         mastercatalog()->usesContainers(resource.url())){
          _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(factory->createContainerConnector(Resource(resource.container().url(), itCATALOG))));
     }
 }

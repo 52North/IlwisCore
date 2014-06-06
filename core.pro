@@ -10,13 +10,7 @@ include(global.pri)
 
 QT       += network sql xml
 
-TEMPLATE = lib
-
 DEFINES += CORE_LIBRARY
-
-win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
-}
 
 SOURCES += core/kernel.cpp \
     core/version.cpp \
@@ -304,7 +298,6 @@ win32{
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
-
 resources.files = core/resources/referencesystems.csv \
     core/resources/projections.csv \
     core/resources/numericdomains.csv \
@@ -312,7 +305,14 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv
-resources.path = $$DLLDESTDIR/resources
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
+    resources.path = $$DLLDESTDIR/resources
+}
+unix {
+    resources.path = $$DESTDIR/resources
+}
 
 license.files =  LICENSE-2.0.txt
 license.path =   $$PWD/../output/$$PLATFORM$$CONF/bin

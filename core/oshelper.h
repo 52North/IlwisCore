@@ -7,7 +7,7 @@ class KERNELSHARED_EXPORT OSHelper
 public:
     OSHelper();
 
-    static QString neutralizeFileName(const QString& somelocation) ;
+    static QString neutralizeFileName(const QString& somelocation, bool allNames=false) ;
     static bool isAbsolute(const QString& fragment);
     static bool isFileName(const QString& filename);
     static QString operatingSystem();
