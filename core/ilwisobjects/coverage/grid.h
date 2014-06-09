@@ -92,7 +92,7 @@ public:
     void setBlockData(quint32 block, const std::vector<double>& data, bool creation);
     char *blockAsMemory(quint32 block, bool creation);
     void setSize(const Size<>& sz);
-    void addBand();
+    void setBandProperties(int n);
     bool prepare() ;
     quint32 blockSize(quint32 index) const;
     Size<> size() const;

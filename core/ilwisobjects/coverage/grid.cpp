@@ -260,8 +260,8 @@ void Grid::setSize(const Size<>& sz) {
 
 }
 
-void Grid::addBand(){
-    _size.zsize(_size.zsize() + 1);
+void Grid::setBandProperties(int n){
+    _size.zsize(_size.zsize() + n);
     quint32 oldBlocks = _blocks.size();
     quint32 newBlocks = numberOfBlocks();
     _blocks.resize(newBlocks);
