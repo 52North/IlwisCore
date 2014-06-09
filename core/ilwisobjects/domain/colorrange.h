@@ -41,6 +41,8 @@ public:
     bool contains(ColorRange *v, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
     IlwisTypes valueType() const;
+    QColor valueAt(quint32& index, const Ilwis::Range *rng);
+    quint32 count() const;
 private:
     QColor _limit1;
     QColor _limit2;

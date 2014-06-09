@@ -8,6 +8,7 @@
 #include "feature.h"
 #include "featurecoverage.h"
 #include "vertexiterator.h"
+#include "geometryhelper.h"
 
 using namespace Ilwis;
 
@@ -35,60 +36,61 @@ VertexIterator UPFeatureI::end()
     return ::end((*this)->geometry());
 }
 //--------------------------------------------
-FeatureNode::FeatureNode() : _feature(0), _index(iUNDEF){
+GeometryNode::GeometryNode() : _feature(0), _trackIndex(iUNDEF){
 
 }
 
-FeatureNode::FeatureNode(geos::geom::Geometry *geom, Feature *feature, quint32 index ) :
+GeometryNode::GeometryNode(geos::geom::Geometry *geom, Feature *feature, quint32 index ) :
     _feature(feature),
-    _index(index)
+    _trackIndex(index)
 {
     _geometry.reset(geom);
 }
 
-quint64 FeatureNode::featureid() const {
+quint64 GeometryNode::featureid() const {
     if ( _feature)
         return i64UNDEF;
     return _feature->featureid();
 }
 
-bool FeatureNode::isValid() const{
+bool GeometryNode::isValid() const{
     return true;
 }
 
-UPGeometry& FeatureNode::geometry(quint32 ){
-    return _geometry;
-}
-const UPGeometry& FeatureNode::geometry(quint32 ) const{
+UPGeometry& GeometryNode::geometry(const QVariant & ){
     return _geometry;
 }
 
-void FeatureNode::set(geos::geom::Geometry *geom, int ) {
+void GeometryNode::set(geos::geom::Geometry *geom, const QVariant&)
+{
     _geometry.reset(geom);
 }
-
-FeatureInterface *FeatureNode::clone() const
-{
-    return new FeatureNode(_geometry->clone(), _feature, _index) ;
+const UPGeometry& GeometryNode::geometry(const QVariant & ) const{
+    return _geometry;
 }
 
-IlwisTypes FeatureNode::geometryType(qint32) const{
+FeatureInterface *GeometryNode::clone() const
+{
+    return new GeometryNode(_geometry->clone(), _feature, _trackIndex) ;
+}
+
+IlwisTypes GeometryNode::geometryType(qint32) const{
     return FeatureCoverage::geometryType(_geometry.get());
 }
 
-quint32 FeatureNode::trackSize() const{
+quint32 GeometryNode::trackSize() const{
     return 1;
 }
 
-QVariant FeatureNode::cell(quint32 colIndex, int , bool asRaw)
+QVariant GeometryNode::cell(quint32 colIndex, const QVariant & , bool asRaw)
 {
     if ( _feature->isValid())
-        return _feature->_record->cell(colIndex, _index, asRaw);
+        return _feature->_record->cell(colIndex, _trackIndex, asRaw);
     return QVariant();
 
 }
 
-QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
+QVariant GeometryNode::cell(const QString& name, const QVariant &, bool asRaw) {
     if ( _feature->isValid()){
         quint32 colIndex  = _feature->_record->columnIndex(name);
         return cell(colIndex, asRaw);
@@ -96,27 +98,27 @@ QVariant FeatureNode::cell(const QString& name, int, bool asRaw) {
     return QVariant();
 }
 
-void FeatureNode::setCell(const QString &name, const QVariant &var, int )
+void GeometryNode::setCell(const QString &name, const QVariant &var, const QVariant& )
 {
     quint32 colIndex  = _feature->_record->columnIndex(name);
-    return setCell(colIndex, var, _index);
+    return setCell(colIndex, var, _trackIndex);
 }
 
-void FeatureNode::setCell(quint32 colIndex, const QVariant &var, int )
+void GeometryNode::setCell(quint32 colIndex, const QVariant &var, const QVariant & )
 {
     if ( _feature->isValid()){
-        _feature->_record->cell(colIndex, var, _index);
+        _feature->_record->cell(colIndex, var, _trackIndex);
     }
 }
 
-ColumnDefinition FeatureNode::columndefinition(const QString &name, bool ) const{
+ColumnDefinition GeometryNode::columndefinition(const QString &name, bool ) const{
     if (_feature->isValid())
         return _feature->columndefinition(name, false);
     else
         return ColumnDefinition();
 }
 
-ColumnDefinition FeatureNode::columndefinition(quint32 index, bool) const
+ColumnDefinition GeometryNode::columndefinition(quint32 index, bool) const
 {
     if (_feature->isValid())
         return _feature->columndefinition(index, false);
@@ -124,18 +126,18 @@ ColumnDefinition FeatureNode::columndefinition(quint32 index, bool) const
         return ColumnDefinition();
 }
 
-quint32 FeatureNode::attributeColumnCount(bool ) const
+quint32 GeometryNode::attributeColumnCount(bool ) const
 {
     if (_feature->isValid())
         return _feature->attributeColumnCount(false);
     return iUNDEF;
 }
 
-quint32 FeatureNode::index() const{
-    return _index;
+quint32 GeometryNode::trackIndex() const{
+    return _trackIndex;
 }
-void FeatureNode::setIndex(quint32 ind){
-    _index = ind;
+void GeometryNode::setTrackIndex(quint32 ind){
+    _trackIndex = ind;
 }
 
 //--------------------------------------------
@@ -146,19 +148,21 @@ Feature::~Feature()
 {
 }
 
-Feature::Feature(AttributeRecord *rec) {
+Feature::Feature(FeatureCoverage* fcoverage, AttributeRecord *rec) {
     _featureid = _idbase++;
     _record.reset(rec);
 }
 
-Feature::Feature(const IFeatureCoverage& fcoverage, int rec){
+Feature::Feature(IFeatureCoverage& fcoverage, int rec){
     _featureid = _idbase++;
-    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable()));
+    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable(),fcoverage->attributeTable(Coverage::atINDEX)));
+    _parentFCoverage = fcoverage.ptr();
 }
 
-Feature::Feature(const FeatureCoverage* fcoverage, int rec){
+Feature::Feature(FeatureCoverage* fcoverage, int rec){
     _featureid = _idbase++;
-    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable()));
+    _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable(),fcoverage->attributeTable(Coverage::atINDEX)));
+    _parentFCoverage = fcoverage;
 }
 
 Feature::Feature(const Feature &f) {
@@ -169,44 +173,61 @@ Feature &Feature::operator =(const Feature &f)
     return *this;
 }
 
-QVariant Feature::cell(quint32 colIndex, int index, bool asRaw)
+std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue) const
 {
-    if ( index < 0){
-        return _record->cell(colIndex, index, asRaw);
+    quint32 recordIndex = trackIndexValue == COVERAGEATRIB ? COVERAGEATRIB : _parentFCoverage->indexDefinition()(featureid(), trackIndexValue);
+    ITable& indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
+    quint32 trackIndex = 0;
+    if ( recordIndex < indexTable->recordCount())
+        trackIndex = indexTable->cell(TRACKINDEXCOLUMN,recordIndex).toUInt();
+    return std::pair<quint32, quint32>(recordIndex, trackIndex);
+}
+
+QVariant Feature::cell(quint32 colIndex, const QVariant &trackIndexValue, bool asRaw)
+{
+    if ( trackIndexValue == COVERAGEATRIB){
+        return _record->cell(colIndex, COVERAGEATRIB, asRaw);
     }
-    if ( index >= 0 && index < _track.size())
-        return _track[index]->cell(colIndex, index, asRaw);
+    TrackIndexes indexes = getIndexes(trackIndexValue);
+    if ( indexes.second < _track.size())
+        return _track[indexes.second]->cell(colIndex, indexes.first, asRaw);
     return QVariant();
 }
 
-QVariant Feature::cell(const QString &name, int index, bool asRaw)
+QVariant Feature::cell(const QString &name, const QVariant &trackIndexValue, bool asRaw)
 {
-    if ( index < 0){
+    if ( trackIndexValue  == COVERAGEATRIB){
         quint32 colIndex  = _record->columnIndex(name);
-        return _record->cell(colIndex, index, asRaw);
+        return _record->cell(colIndex, COVERAGEATRIB, asRaw);
     }
-    if ( index >= 0 && index < _track.size())
-        return _track[index]->cell(name, index, asRaw);
+    TrackIndexes indexes = getIndexes(trackIndexValue);
+    if ( indexes.second < _track.size())
+        return _track[indexes.second]->cell(name, indexes.first , asRaw);
     return QVariant();
 }
 
-void Feature::setCell(const QString &name, const QVariant &var, int index)
+void Feature::setCell(const QString &name, const QVariant &var, const QVariant &trackIndexValue)
 {
-    if ( index < 0) {
+    if ( trackIndexValue == COVERAGEATRIB) {
         quint32 colIndex  = _record->columnIndex(name);
-        _record->cell(colIndex, var, index);
+        _record->cell(colIndex, var, COVERAGEATRIB);
+    } else {
+        TrackIndexes indexes = getIndexes(trackIndexValue);
+        if ( indexes.second < _track.size())
+            _track[indexes.second]->setCell(name,var, indexes.first);
     }
-    if ( index >= 0 && index < _track.size())
-        _track[index]->setCell(name,var);
 }
 
-void Feature::setCell(quint32 colIndex, const QVariant &var, int index)
+void Feature::setCell(quint32 colIndex, const QVariant &var, const QVariant &trackIndexValue)
 {
-    if ( index < 0) {
-        _record->cell(colIndex, var, index);
+    if ( trackIndexValue == COVERAGEATRIB) {
+        _record->cell(colIndex, var, COVERAGEATRIB);
+    }else {
+        TrackIndexes indexes = getIndexes(trackIndexValue);
+        if ( indexes.second < _track.size())
+            _track[indexes.second]->setCell(colIndex,var);
     }
-    if ( index >= 0 && index < _track.size())
-        _track[index]->setCell(colIndex,var);
+
 }
 
 ColumnDefinition Feature::columndefinition(const QString &name, bool coverages) const{
@@ -231,6 +252,13 @@ quint32 Feature::attributeColumnCount(bool coverages) const
     return iUNDEF;
 }
 
+QVariant Feature::trackIndexValue(quint32 index) const
+{
+    if ( index < _track.size())
+        return _track[index]->cell(TRACKVALUECOLUMN);
+    return QVariant();
+}
+
 quint64 Feature::featureid() const{
     return _featureid;
 }
@@ -241,34 +269,70 @@ bool Feature::isValid() const {
     return _record->isValid();
 }
 
-UPGeometry &Feature::geometry(quint32 index){
-    if ( index < _track.size())
-        return _track[index]->geometry();
-    ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
+UPGeometry &Feature::geometry(const QVariant &trackIndexValue){
+    if ( !trackIndexValue.isValid() && _track.size() == 1)
+        return _track[0]->geometry();
+    TrackIndexes indexes = getIndexes(trackIndexValue);
+    if ( indexes.second < _track.size())
+        return _track[indexes.second]->geometry();
 
     throw ErrorObject(TR("Invalid geomtry index"));
 }
-const UPGeometry &Feature::geometry(quint32 index) const{
-    if ( index < _track.size())
-        return _track[index]->geometry();
+const UPGeometry &Feature::geometry(const QVariant &trackIndexValue) const{
+    if ( !trackIndexValue.isValid() && _track.size() == 1)
+        return _track[0]->geometry();
 
-    ERROR2(ERR_INVALID_PROPERTY_FOR_2,"index","geometry");
+     TrackIndexes indexes = getIndexes(trackIndexValue);
+    if ( indexes.second < _track.size())
+        return _track[indexes.second]->geometry();
 
     throw ErrorObject(TR("Invalid index size in track"));
 }
 
-void Feature::set(geos::geom::Geometry *geom, int index)
-{
-    if (!geom)
-        return;
+void Feature::add(geos::geom::Geometry *geom, const QVariant &trackIndexValue){
 
-    if ( index < _track.size())
-        _track[index]->set(geom);
-    else{
-        UPFeatureNode node( new FeatureNode(geom, this, _track.size()));
+    auto createNode = [&](UPFeatureI& node, const QVariant& value){
+        ITable& indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
+        indexTable->record(NEW_RECORD,{featureid(),_track.size(), value});
+        node.reset( new GeometryNode(geom, this, _track.size()));
+        _parentFCoverage->setFeatureCount(GeometryHelper::geometryType(geom),1,geom->getNumGeometries() );
+        _parentFCoverage->indexDefinition().addIndex(featureid(),value, 0);
+    };
+
+    if (!geom )
+        return;
+    if ( !trackIndexValue.isValid() ) {// special case, all feature with one geometry
+        UPFeatureI node;
+        createNode(node, 0); // trackindex is 0 as this is the default 1 track size case
+        _track.resize(1);
+        _track[0] = std::move(node);
+    } else if(_parentFCoverage->indexDefinition().domain()->contains(trackIndexValue)){
+        QVariant value = _parentFCoverage->indexDefinition().domain()->impliedValue(trackIndexValue);
+        if ( !value.isValid())
+            return;
+        UPFeatureI node; //( new GeometryNode(geom, this, _track.size()));
+        createNode(node, value);
         _track.push_back(std::move(node));
     }
 }
+
+void Feature::remove(const QVariant& trackIndexValue)
+{
+    TrackIndexes indexes = getIndexes(trackIndexValue);
+    _parentFCoverage->setFeatureCount(geometryType(indexes.second),-1,-_track[indexes.second]->geometry()->getNumGeometries(),indexes.second );
+    _track.erase(_track.begin() + indexes.second);
+    _parentFCoverage->attributeTable(Coverage::atINDEX)->removeRecord(indexes.first);
+    _parentFCoverage->indexDefinition().removeIndex(featureid(),indexes.second);
+}
+
+void Feature::set(geos::geom::Geometry *geom, const QVariant &trackIndexValue)
+{
+    TrackIndexes indexes = getIndexes(trackIndexValue);
+    _parentFCoverage->setFeatureCount(geometryType(indexes.second),indexes.second,-_track[indexes.second]->geometry()->getNumGeometries() );
+    _track[indexes.second]->set(geom);
+    _parentFCoverage->setFeatureCount(geometryType(indexes.second),indexes.second,_track[indexes.second]->geometry()->getNumGeometries() );
+}
+
 
 bool operator==(const Feature& f1, const Feature& f2) {
     return f1.featureid() == f2.featureid();
@@ -276,11 +340,12 @@ bool operator==(const Feature& f1, const Feature& f2) {
 
 FeatureInterface *Feature::clone() const
 {
-    Feature *f = new Feature(_record->clone());
-    for(const UPFeatureNode& node : _track){
-        UPFeatureNode ptr(static_cast<FeatureNode *>(node->clone()));
+    Feature *f = new Feature(_parentFCoverage, _record->clone());
+    for(const UPFeatureI& node : _track){
+        UPFeatureI ptr(static_cast<GeometryNode *>(node->clone()));
         f->_track.push_back(std::move(ptr));
     }
+    f->_parentFCoverage = _parentFCoverage;
 
     return f;
 
@@ -294,7 +359,7 @@ IlwisTypes Feature::geometryType(qint32 index) const
         return itUNKNOWN;
     }
     IlwisTypes type=itUNKNOWN;
-    for(const UPFeatureNode& node : _track)
+    for(const UPFeatureI& node : _track)
         type |= node->geometryType();
     return type;
 }

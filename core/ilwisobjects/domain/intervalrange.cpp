@@ -309,5 +309,15 @@ void IntervalRange::addRange(const ItemRange &range)
     _interpolation = static_cast<const IntervalRange&>(range).interpolation();
 }
 
+SPDomainItem IntervalRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itNUMERICITEM)){
+        IntervalRange *idrange = static_cast<IntervalRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
+
 
 

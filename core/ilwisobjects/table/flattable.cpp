@@ -75,7 +75,7 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain)
         for(std::vector<QVariant>& row : _datagrid) {
             row.push_back(QVariant());
         }
-        initValuesColumn(columndefinition(name));
+        initValuesColumn(name);
     }
     return true;
 
@@ -90,7 +90,7 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
         for(std::vector<QVariant>& row : _datagrid) {
             row.push_back(QVariant());
         }
-        initValuesColumn(def);
+        initValuesColumn(def.name());
     }
     return true;
 }
@@ -207,8 +207,6 @@ QVariant FlatTable::cell(const QString& col, quint32 rec, bool asRaw) const {
 
 QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 {
-    QVariant v = _datagrid[rec][index];
-    Time tm = v.value<Ilwis::Time>();
     if (!const_cast<FlatTable *>(this)->initLoad())
         return QVariant();
 
@@ -290,7 +288,7 @@ bool FlatTable::initLoad(){
     for(int i=0; ok && i < columnCount() && _datagrid.size() > 0; ++i){
         QVariant var = cell(i,0);
         if ( !var.isValid()) {
-            initValuesColumn(columndefinition(i));
+            initValuesColumn(columndefinition(i).name());
         }
     }
     return ok;

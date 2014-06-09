@@ -168,6 +168,15 @@ void IndexedIdentifierRange::clear()
     //_start.reset(0);
 }
 
+SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itINDEXEDITEM)){
+        IndexedIdentifierRange *idrange = static_cast<IndexedIdentifierRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
 
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
@@ -425,6 +434,16 @@ NamedIdentifierRange *NamedIdentifierRange::merge(const QSharedPointer<NamedIden
     return newRange;
 }
 
+SPDomainItem NamedIdentifierRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itNAMEDITEM)){
+        NamedIdentifierRange *idrange = static_cast<NamedIdentifierRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
+
 //---------------------------------------------------------
 ThematicRange::ThematicRange()
 {
@@ -457,3 +476,14 @@ Range *ThematicRange::clone() const
     }
     return tr;
 }
+
+SPDomainItem ThematicRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itTHEMATICITEM)){
+        ThematicRange *idrange = static_cast<ThematicRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
+

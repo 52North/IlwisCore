@@ -59,6 +59,7 @@ public:
     void interpolation(const QString& ip);
     virtual QString interpolation() const;
     virtual QVariant impliedValue(const QVariant& v) const { return v; }
+    virtual quint32 count() const = 0;
 
     template<typename T> T* as(){
         return (dynamic_cast<T *>(this));

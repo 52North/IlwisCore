@@ -4,7 +4,8 @@
 #include "pixeliterator.h"
 #include "connectorinterface.h"
 #include "symboltable.h"
-#include "domainitem.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "itemdomain.h"
 #include "interval.h"
 #include "intervalrange.h"
@@ -196,14 +197,65 @@ PixelIterator RasterCoverage::begin()
     return PixelIterator(raster);
 }
 
-PixelIterator RasterCoverage::band(qint32 index)
+PixelIterator RasterCoverage::band(const QVariant &trackIndex)
 {
+    int index = indexDefinition()(0,trackIndex);
     if ( index >= size().zsize() || index < 0)
         return PixelIterator();
 
     BoundingBox box(Pixel(0,0,index), Pixel(size().xsize()-1,size().ysize()-1, index));
     IRasterCoverage raster(this);
     return PixelIterator(raster,box);
+}
+
+void RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
+{
+    if ( inputIter.box().size().zsize() != 1)
+        return;
+
+    if ( !size().isValid() || size().isNull()){
+
+        coordinateSystem(inputIter.raster()->coordinateSystem());
+        georeference(inputIter.raster()->georeference());
+        datadef() = inputIter.raster()->datadef();
+        envelope(inputIter.raster()->envelope());
+
+        size(inputIter.box().size());
+        size(inputIter.box().size().twod());
+        for(int band = 0; band  < inputIter.box().zlength(); ++band){
+            addBand(band,datadef(),trackIndex);
+            grid()->setBandProperties(0);
+        }
+    }
+
+    if ( inputIter.box().xlength() != size().xsize() || inputIter.box().ylength() != size().ysize())
+        return;
+    if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain()))
+        return;
+    int index = indexDefinition()(0,trackIndex);
+    if ( index == iUNDEF){
+        index = size().zsize();
+        addBand(index,datadef(),trackIndex);
+        grid()->setBandProperties(1);
+        _size.zsize(size().zsize() + 1);
+    }
+    if ( grid()->size().zsize() > index) {
+        PixelIterator iter = band(trackIndex);
+        while(iter != iter.end()){
+            *iter = *inputIter;
+            ++iter;
+            ++inputIter;
+        }
+
+    }
+
+
+}
+
+void RasterCoverage::addBand(int index, const DataDefinition& def, const QVariant& trackIndexValue){
+    datadef(index) = def;
+    indexDefinition().addIndex(0,trackIndexValue,index);
+    attributeTable(Coverage::atINDEX)->record(index,{0,index, indexDefinition().domain()->impliedValue(trackIndexValue)});
 }
 
 void RasterCoverage::size(const Size<> &sz)
@@ -219,6 +271,8 @@ void RasterCoverage::size(const Size<> &sz)
             _grid->setSize(sz);
         if (_georef.isValid())
             _georef->size(sz);
+        for(int i = 0; i < sz.zsize(); ++i)
+            addBand(i,datadef(),i);
     }
 }
 

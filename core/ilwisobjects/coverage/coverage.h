@@ -9,6 +9,7 @@
 #include "domain.h"
 #include "coordinatesystem.h"
 #include "datadefinition.h"
+#include "indexdefinition.h"
 #include "connectorinterface.h"
 #include "containerstatistics.h"
 #include "commandhandler.h"
@@ -150,16 +151,12 @@ public:
      * \sa DataDefinition
      * \return the datadefinition of this rastercoverage
      */
-    const DataDefinition& datadefIndex() const;
+    const IndexDefinition& indexDefinition() const;
+    IndexDefinition& indexDefinition();
+    void indexDomain(const IDomain &dom);
+    virtual void indexValues(const std::vector<QVariant> &values);
 
-    /*!
-     * Returns the DataDefinition of this rastercoverage<br>
-     * can be null if it is not set
-     *
-     * \sa DataDefinition
-     * \return the datadefinition of this rastercoverage
-     */
-    DataDefinition& datadefIndex();
+
 
     /*!
      * \brief Returns a value in the Coverage- or Index-table
@@ -176,32 +173,6 @@ public:
 
     //@override
     Resource source(int mode=cmINPUT) const;
-
-    /*!
-     * Translates a value to a index from the Indextable<br>
-     *
-     * note : the returned index is not necessarily an entry in the index table, as it is possible to get doubles or indices not in the table back<br>
-     * this happens for interpollation purposes and such. example:<br>
-     * the table :  index   0   1   2   3   4<br>
-     *              value   3   6   -	9   12<br>
-     * the - means undefined. if you now request 5, you will get 0.8 or something like that (depends on interpollation method etc)<br>
-     * if you request 7.5 you will probably get the index 2.0 , but the value at this index is actually not defined,<br>
-     * because for some reason this index is not entered in the table
-     *
-     * \param value the value that must be translated to a index
-     * \return the index of the value
-     */
-    double layerIndex(const QString& value);
-
-    /*!
-     * Sets the supplied items at the indexes<br>
-     * only works when this coverage is not readonly<br>
-     * Uses the order specified in the itemrange itself
-     *
-     * \sa ItemRange
-     * \param items the items that have to be added
-     */
-    void setLayerIndexes(const ItemRange &items);
 
     /**
      * Changes the name of this coverage<br>
@@ -224,8 +195,8 @@ private:
     AttributeTable _attTable;
     AttributeTable _attTableIndex;
     NumericStatistics _statistics;
-    DataDefinition _indexdefinition;
-    std::vector<quint32> _indexValues;
+    IndexDefinition _indexdefinition;
+
 
 };
 

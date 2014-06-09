@@ -53,7 +53,6 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
          p = folder.absolutePath();
          folder.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
          if (!folder.exists()) {
-             kernel()->issues()->log(TR(ERR_COULD_NOT_OPEN_READING_1).arg(folder.absolutePath()));
              return  std::vector<QUrl>();
          }
          QString slash = location.toString().endsWith("/") ? "" : "/";
