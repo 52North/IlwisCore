@@ -18,7 +18,7 @@ NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
 
 bool NumericRange::isValid() const
 {
-    return _min <= _max ;
+    return _min <= _max && _resolution >= 0;
 }
 
 Range *NumericRange::clone() const {
@@ -60,7 +60,8 @@ void NumericRange::max(double v)
 }
 
 void NumericRange::resolution(double step) {
-    _resolution = step;
+    if ( step >= 0)
+        _resolution = step;
 }
 
 double NumericRange::resolution() const {
@@ -245,10 +246,34 @@ void NumericRange::clear()
 
 }
 
+quint32 NumericRange::count() const
+{
+    if ( _resolution == 0 || !isValid())
+        return iUNDEF;
+
+    return 1 + distance() / _resolution;
+}
+
 NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),
                             std::max(nr1->max(), nr2->max()),
                             std::min(nr1->resolution(), nr2->resolution()));
+}
+double NumericRange::valueAt(quint32& index, const Range *rng)
+{
+    if ( rng && hasType(rng->valueType(), itNUMBER) ){
+        const NumericRange *numrange = static_cast<const NumericRange *>(rng);
+        if ( numrange->resolution() != 0 ) {
+            double v = numrange->min() + numrange->resolution() * index;
+            if ( v > numrange->max())
+                v = rUNDEF;
+            return v;
+        }
+    }
+    index = iUNDEF;
+    return rUNDEF;
+
+
 }
 
