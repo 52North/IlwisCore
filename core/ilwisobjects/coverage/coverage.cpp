@@ -168,7 +168,7 @@ void Coverage::name(const QString &nam)
     }
     if ( _attTableIndex.isValid()) {
         if (_attTableIndex->isAnonymous()) {
-            _attTable->name(nam + "_indexattributes");
+            _attTableIndex->name(nam + "_indexattributes");
         }
     }
 }
