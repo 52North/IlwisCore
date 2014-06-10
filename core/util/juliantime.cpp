@@ -903,6 +903,8 @@ _step(stp)
     if ( (double)beg == BIGTIME) {
         min(-BIGTIME);
     }
+    if ( (double)_step != 0)
+        resolution(_step);
     _vt = tp;
     if ( tp == itUNKNOWN){
         _vt = itDATETIME;

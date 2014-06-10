@@ -3,6 +3,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "domain.h"
+#include "numericdomain.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "interval.h"
@@ -17,8 +18,11 @@ Coverage::Coverage()
 
 Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
-    IDomain dom("count");
-    _indexdefinition = DataDefinition(dom, new NumericRange(0,100000));
+    _attTableIndex.prepare();
+    _attTableIndex->addColumn(FEATUREIDCOLUMN,"count");
+    _attTableIndex->addColumn(TRACKINDEXCOLUMN,"count");
+   IDomain dom("count");
+   indexDomain(dom);
 }
 
 Coverage::~Coverage()
@@ -89,7 +93,8 @@ void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
     changed(true);
     if ( attType == atCOVERAGE)
         _attTable = tbl;
-    _attTableIndex = tbl;
+    else
+        _attTableIndex = tbl;
 }
 
 NumericStatistics &Coverage::statistics(int  )
@@ -97,14 +102,34 @@ NumericStatistics &Coverage::statistics(int  )
         return _statistics;
 }
 
-const DataDefinition &Coverage::datadefIndex() const
+const IndexDefinition &Coverage::indexDefinition() const
 {
     return _indexdefinition;
 }
 
-DataDefinition &Coverage::datadefIndex()
+IndexDefinition &Coverage::indexDefinition()
 {
     return _indexdefinition;
+}
+
+void Coverage::indexDomain(const IDomain& dom)
+{
+    _indexdefinition = {dom};
+    if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
+        _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
+    else
+        _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
+}
+
+void Coverage::indexValues(const std::vector<QVariant>& values){
+    int rec = 0;
+    _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
+    for(auto trackIndexValue : values){
+        if ( indexDefinition().domain()->contains(trackIndexValue)){
+            _attTableIndex->setCell(TRACKVALUECOLUMN, rec, trackIndexValue);
+        }
+
+    }
 }
 
 
@@ -129,52 +154,6 @@ Resource Coverage::source(int mode) const
     return resource;
 }
 
-double Coverage::layerIndex(const QString &value)
-{
-    if (! _indexdefinition.range()->contains(value))
-        return rUNDEF;
-
-    bool isContinuous = _indexdefinition.range()->isContinuous();
-    if ( hasType(_indexdefinition.domain()->valueType(), itNUMBER )) {
-        double v = value.toDouble();
-        if ( isContinuous )
-            return v;
-        return (int)v;
-    }
-    if ( hasType(_indexdefinition.domain()->ilwisType(), itITEMDOMAIN)) {
-
-        SPItemRange rng = _indexdefinition.domain()->range<ItemRange>();
-        if ( !rng->isValid())
-            return rUNDEF;
-        IlwisTypes valueType = _indexdefinition.domain()->valueType();
-        if ( hasType(valueType, itNUMERICITEM )) {
-            SPIntervalRange rng = _indexdefinition.domain()->range<IntervalRange>();
-            return rng->index(value.toDouble());
-        }
-
-        SPDomainItem domItem = rng->item(value);
-        int idx = 0;
-        for(quint32 rawAxis : _indexValues) {
-             if ( rawAxis == domItem->raw())
-                return idx;
-             ++idx;
-        }
-    }
-    return rUNDEF;
-}
-
-void Coverage::setLayerIndexes(const ItemRange &items)
-{
-    if ( isReadOnly())
-        return;
-    changed(true);
-
-    _indexValues.resize(items.count());
-    for(int i=0; i < items.count(); ++i) {
-        SPDomainItem ditem = items.itemByOrder(i);
-        _indexValues[i] = ditem.isNull() ? iUNDEF : ditem->raw();
-    }
-}
 void Coverage::name(const QString &nam)
 {
     if ( isReadOnly())

@@ -90,6 +90,8 @@ public:
     bool merge(const IlwisObject *obj, int options);
     void dataLoaded(bool yesno);
     bool isDataLoaded() const;
+    void initValuesColumn(const QString& colname);
+
 protected:
     QHash<QString, ColumnDefinition> _columnDefinitionsByName;
     QHash<quint32, ColumnDefinition> _columnDefinitionsByIndex;
@@ -100,7 +102,6 @@ protected:
     quint32 columnIndex(const QString& nme) const;
     void columnCount(int cnt);
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
-    void initValuesColumn(const ColumnDefinition &def);
     void initRecord(std::vector<QVariant>& values) const;
     void removeRecord(quint32 rec);
 private:

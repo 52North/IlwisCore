@@ -160,6 +160,7 @@ public:
      * @return the new index( 0=>result <=count)
      */
     qint32 gotoIndex(qint32 index, qint32 step) const;
+    void clear();
 
     /**
      * merges 2 IndexedIdentifierRange 's into one
@@ -171,7 +172,8 @@ public:
      */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
-    void clear();
+    static SPDomainItem valueAt(quint32 index, Range *rng);
+
 private:
    bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
@@ -321,6 +323,7 @@ public:
      */
     static NamedIdentifierRange *merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
+    static SPDomainItem valueAt(quint32 index, Range *rng);
 protected:
     template<typename T> static void addItems(ItemRange *items,
                                          const QSharedPointer<NamedIdentifierRange>& nr1,
@@ -361,6 +364,7 @@ public:
     ThematicRange& operator<<(const QString& itemdef);
     static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
     Range *clone() const;
+    static SPDomainItem valueAt(quint32 index, Range *rng);
 };
 
 }

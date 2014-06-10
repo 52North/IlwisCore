@@ -96,7 +96,7 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
             return false;
         }
         if ( isDataLoaded())
-            initValuesColumn(columndefinition(name));
+            initValuesColumn(name);
     }
     return true;
 }
@@ -463,7 +463,7 @@ bool DatabaseTable::initLoad()
     for(int i=0; i < columnCount() ; ++i){
         QVariant var = cell(i,0);
         if ( !var.isValid()) {
-            initValuesColumn(columndefinition(i));
+            initValuesColumn(columndefinition(i).name());
         }
 
     }

@@ -257,6 +257,7 @@ public:
 
     virtual void dataLoaded(bool yesno) = 0;
     virtual bool isDataLoaded() const = 0;
+    virtual void initValuesColumn(const QString& colname) = 0;
 
 protected:
     Table(const Resource& resource) :

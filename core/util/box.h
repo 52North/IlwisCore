@@ -212,6 +212,10 @@ public:
         return ok;
     }
 
+    quint32 count() const{
+        return 4;
+    }
+
     Box<PointType>& operator=(Box<PointType>&& box) {
         _min_corner = std::move(box._min_corner);
         _max_corner = std::move(box._max_corner);
@@ -439,6 +443,37 @@ QString toString() const {
                     arg(this->max_corner().y);
     }
 
+}
+PointType valueAt(quint32& index, const Range *rng){
+    if ( rng && (rng->count() == 4 ||  rng->count() == 8)){
+        const Box<PointType> *box = dynamic_cast<const Box<PointType> *>(rng);
+        if ( box){
+            switch (index) {
+            case 0:
+                return box->min_corner();
+            case 1:
+                return PointType(box->max_corner().x,box->min_corner().x, box->min_corner().z);
+            case 2:
+                return PointType(box->max_corner().x,box->max_corner().x, box->min_corner().z);
+            case 3:
+                return PointType(box->min_corner().x,box->max_corner().x, box->min_corner().z);
+            }
+            if ( is3D()){
+                switch (index) {
+                case 4:
+                    return box->min_corner();
+                case 5:
+                    return PointType(box->max_corner().x,box->min_corner().x, box->max_corner().z);
+                case 6:
+                    return PointType(box->max_corner().x,box->max_corner().x, box->max_corner().z);
+                case 7:
+                    return PointType(box->min_corner().x,box->max_corner().x, box->max_corner().z);
+                }
+            }
+        }
+    }
+    index = iUNDEF;
+    return PointType();
 }
 
 private:

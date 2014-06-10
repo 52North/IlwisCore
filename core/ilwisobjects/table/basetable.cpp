@@ -333,7 +333,7 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
             v = tm;
         }
         else
-            actualval.toDouble(&ok);
+            v = actualval.toDouble(&ok);
         if (!ok || isNumericalUndef(v))
             return rUNDEF;
         if (! dm->contains(v))
@@ -351,7 +351,8 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
 }
 
 
-void BaseTable::initValuesColumn(const ColumnDefinition& def){
+void BaseTable::initValuesColumn(const QString& colname){
+    ColumnDefinition def = columndefinition(colname);
     if ( !def.isValid()){
         ERROR2(WARN_INVALID_OBJECT,TR("column definition"), name());
         return;

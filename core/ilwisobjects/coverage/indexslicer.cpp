@@ -26,7 +26,7 @@ void IndexSlicer::grid(const IRasterCoverage &cov)
 
 IRasterCoverage IndexSlicer::operator()(const QString &item)
 {
-    IDomain indexDomain = _raster->datadefIndex().domain();
+    IDomain indexDomain = _raster->indexDefinition().domain();
     if (!indexDomain.isValid())
         return IRasterCoverage();
     if ( hasType(indexDomain->valueType(), itNUMERIC)) {
@@ -35,7 +35,7 @@ IRasterCoverage IndexSlicer::operator()(const QString &item)
 
         double index = rUNDEF;
         if ( indexDomain->valueType() == itNUMERICITEM)  {
-            index = _raster->layerIndex(item);
+            index = _raster->indexDefinition()(0, item);
         } else if ( hasType(indexDomain->valueType(),itNUMBER)) {
             index  = findIndexNumber(indexDomain, item.toDouble());
         }
@@ -64,8 +64,8 @@ QString IndexSlicer::makeBaseName() const {
 
 QString IndexSlicer::makeExpression(double index, const QString& basename, QString& cname) {
     double rest1 = index - (int)index;
-    QString expr =  _raster->datadefIndex().range()->interpolation();
-    bool isContinous = _raster->datadefIndex().range()->isContinuous();
+    QString expr =  _raster->indexDefinition().range()->interpolation();
+    bool isContinous = _raster->indexDefinition().range()->isContinuous();
     if ( std::abs(rest1) > EPS8 && isContinous) {
         int lowerIndex = std::floor(index);
         double rest2 = 1.0 - rest1;

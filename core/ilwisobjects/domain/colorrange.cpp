@@ -268,6 +268,18 @@ IlwisTypes ContinousColorRange::valueType() const
     return itCONTINUOUSCOLOR;
 }
 
+QColor ContinousColorRange::valueAt(quint32& index, const Range *rng)
+{
+    // TODO : indexes over the range of all possible colors
+    return QColor();
+
+}
+
+quint32 ContinousColorRange::count() const
+{
+    return iUNDEF;
+}
+
 //---------------------------------------------------------------
 QVariant ColorPalette::impliedValue(const QVariant &v) const
 {

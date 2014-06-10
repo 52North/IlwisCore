@@ -40,7 +40,10 @@ bool CatalogConnector::canUse(const Resource &resource) const
 QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
 {
     QString local = url.toLocalFile();
-//    QFileInfo localFile(local);
+    QFileInfo localFile(local);
+    if ( localFile.exists())
+        return local;
+
     int index = local.lastIndexOf("/");
     if ( index == -1){
         return QFileInfo();

@@ -1,6 +1,8 @@
 #ifndef ITEMRANGE_H
 #define ITEMRANGE_H
 
+#include "rangeiterator.h"
+
 namespace Ilwis {
 
 class DomainItem;
@@ -27,14 +29,6 @@ public:
      * @return a string with the value
      */
     virtual QVariant impliedValue(const QVariant& v) const = 0;
-
-    /**
-     * Query for the amount of items in this range.<br>
-     * Cannot be negative
-     *
-     * @return the amount of items
-     */
-    virtual quint32 count() const = 0;
 
     /**
      * Query for an item based on the raw value of that item.<br>
@@ -179,6 +173,7 @@ public:
      */
     static ItemRange *merge(const QSharedPointer<ItemRange>& nr1, const QSharedPointer<ItemRange>& nr2);
 
+    static SPDomainItem valueAt(quint32& index, const Range *rng);
 protected:
 private:
     virtual bool alignWithParent(const IDomain& dom) = 0;
@@ -186,6 +181,18 @@ private:
 };
 
 typedef QSharedPointer<ItemRange> SPItemRange;
+typedef Ilwis::RangeIterator<SPDomainItem, Ilwis::ItemRange> ItemRangeIterator;
+
+inline ItemRangeIterator begin(const Ilwis::ItemRange& rng) {
+    return ItemRangeIterator(&rng);
+}
+
+inline ItemRangeIterator end(const Ilwis::ItemRange& rng) {
+    auto iter = ItemRangeIterator(&rng);
+    iter += rng.count();
+    return iter;
+}
+
 }
 
 #endif // ITEMRANGE_H

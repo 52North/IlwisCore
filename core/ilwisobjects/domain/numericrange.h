@@ -3,6 +3,7 @@
 
 #include <QString>
 #include "range.h"
+#include "rangeiterator.h"
 
 namespace Ilwis {
 
@@ -85,8 +86,11 @@ public:
     }
     IlwisTypes determineType() const;
     void clear();
+    quint32 count() const;
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2,RenumberMap *rnm=0);
+
+    static double valueAt(quint32& index, const Range *rng);
 
 private:
     double _min;
@@ -98,7 +102,23 @@ private:
 };
 
 typedef QSharedPointer<NumericRange> SPNumericRange;
+typedef Ilwis::RangeIterator<double, Ilwis::NumericRange> NumericRangeIterator;
+
+inline NumericRangeIterator begin(const Ilwis::NumericRange& rng) {
+    return NumericRangeIterator(&rng);
+}
+
+inline NumericRangeIterator end(const Ilwis::NumericRange& rng) {
+    auto iter = NumericRangeIterator(&rng);
+    iter += rng.count();
+    return iter;
+}
+
 
 }
+
+
+
+
 
 #endif // NUMERICVALUERANGE_H

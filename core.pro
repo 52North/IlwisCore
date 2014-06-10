@@ -113,7 +113,10 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/interval.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
+    core/ilwisobjects/coverage/indexdefinition.cpp \
+    core/ilwisobjects/domain/rangeiterator.cpp
+
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -241,7 +244,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
     core/kernel_global.h \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h \
+    core/ilwisobjects/coverage/indexdefinition.h \
+    core/ilwisobjects/domain/rangeiterator.h
     core/util/bresenham.h
 
 

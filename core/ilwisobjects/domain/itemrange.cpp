@@ -66,4 +66,18 @@ void ItemRange::addRange(const ItemRange &range)
         if (!contains(range.item(i)->name()))
             add(range.item(i)->clone());
     }
+
 }
+
+SPDomainItem ItemRange::valueAt(quint32& index, const Range *rng){
+    if ( rng && hasType(rng->valueType(), itDOMAINITEM)){
+        const ItemRange *idrange = static_cast<const ItemRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    index = iUNDEF;
+    return SPDomainItem();
+}
+
+
