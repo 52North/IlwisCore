@@ -114,9 +114,7 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
-    core/ilwisobjects/coverage/indexdefinition.cpp \
-    core/ilwisobjects/domain/rangeiterator.cpp
-
+    core/ilwisobjects/coverage/indexdefinition.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
