@@ -5,6 +5,7 @@ namespace Ilwis {
 
 class Coverage;
 class GeodeticDatum;
+class GeoReference;
 
 namespace Internal {
 /*!
@@ -40,6 +41,7 @@ private:
     bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage) const;
     IlwisObject *createFeatureCoverage(const Resource &resource) const;
     IlwisObject *createCatalog(const Resource &resource) const;
+    GeoReference *createGrfFromCode(const Ilwis::Resource &resource) const;
 };
 }
 }
