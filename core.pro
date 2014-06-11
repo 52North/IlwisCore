@@ -114,8 +114,7 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
-    core/ilwisobjects/coverage/indexdefinition.cpp \
-
+    core/ilwisobjects/coverage/indexdefinition.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -245,7 +244,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h \
     core/ilwisobjects/coverage/indexdefinition.h \
-    core/ilwisobjects/domain/rangeiterator.h \
+    core/ilwisobjects/domain/rangeiterator.h
     core/util/bresenham.h
 
 
@@ -330,3 +329,4 @@ INSTALLS += resources license installer
 
 
 
+>>>>>>> 3fd274665d366bb09e4fbbf9e71330aabba6db80
