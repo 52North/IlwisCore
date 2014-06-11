@@ -46,8 +46,9 @@ public:
             return ok;
         double intpart;
         double fractpart = modf(v / _resolution,&intpart);
+        if((int)(fractpart + 0.5) == 1)
+            fractpart = 1 - fractpart;
         return fractpart < EPS10;
-
     }
 
 

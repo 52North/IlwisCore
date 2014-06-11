@@ -118,7 +118,7 @@ QString NumericRange::toString() const {
     if (isfloat){
         QString rng = QString::number(_min,'f',n);
         rng += ' ';
-        rng += QString::number(_min,'f',n);
+        rng += QString::number(_max,'f',n);
         if ( _resolution != 0){
             rng += ' ';
             rng += QString::number(_resolution) ;
@@ -127,8 +127,6 @@ QString NumericRange::toString() const {
     }
     QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_resolution);
     return rng;
-
-
 }
 
 QVariant NumericRange::impliedValue(const QVariant &v) const
