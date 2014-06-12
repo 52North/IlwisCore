@@ -324,9 +324,3 @@ installer.files =installer.nsi
 installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
-
-
-
-
-
->>>>>>> 3fd274665d366bb09e4fbbf9e71330aabba6db80
