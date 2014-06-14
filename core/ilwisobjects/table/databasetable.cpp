@@ -65,7 +65,7 @@ bool DatabaseTable::createTable()
 
     QString stmt = QString("Create table %1 (").arg(internalName());
     stmt += "record_index INTEGER";
-    for(int i = 0; i < _columnDefinitionsByName.size(); ++i) {
+    for(int i = 0; i < columnCount(); ++i) {
         QString ty = valueType2DataType(_columnDefinitionsByIndex[i].datadef().domain<>()->valueType());
         stmt += ",";
         stmt += _columnDefinitionsByIndex[i].name() + " " + ty;
@@ -88,7 +88,7 @@ bool DatabaseTable::addColumn(const QString &name, const IDomain &domain){
     if(!_sqlCreateDone)
         createTable();
     else {
-        QString type = valueType2DataType(_columnDefinitionsByName[name].datadef().domain<>()->valueType());
+        QString type = valueType2DataType(columndefinition(name).datadef().domain<>()->valueType());
         QSqlQuery db(_database);
         QString query = QString("ALTER TABLE %1 ADD %2 %3 ").arg(internalName()).arg(name).arg(type);
         if ( !db.exec(query)){
@@ -149,7 +149,7 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
         QString columnPart;
         QString valuePart;
         for(int count=0; count < vars.size(); ++count) {
-            QString dataType = valueType2DataType(_columnDefinitionsByIndex[offset + count].datadef().domain<>()->valueType());
+            QString dataType = valueType2DataType(columndefinition(offset + count).datadef().domain<>()->valueType());
             bool needQuotes = dataType == "TEXT";
 
             if ( count > 0) {
@@ -173,14 +173,14 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
         QString rest;
         for(int count=0; count < vars.size(); ++count) {
             int index = offset + count;
-            QString dataType = valueType2DataType(_columnDefinitionsByIndex[index].datadef().domain<>()->valueType());
+            QString dataType = valueType2DataType(columndefinition(index).datadef().domain<>()->valueType());
             bool needQuotes = dataType == "TEXT";
             if ( count > 0)
                 rest += ",";
             if ( needQuotes )
-                rest += QString(" %1='%2' ").arg( _columnDefinitionsByIndex[index].name()).arg(vars[count].toString());
+                rest += QString(" %1='%2' ").arg( columndefinition(index).name()).arg(vars[count].toString());
             else
-                rest += QString(" %1=%2 ").arg( _columnDefinitionsByIndex[index].name()).arg(vars[count].toString());
+                rest += QString(" %1=%2 ").arg(columndefinition(index).name()).arg(vars[count].toString());
         }
         stmt += rest + QString(" where record_index=%1").arg(rec);
         if ( !db.exec(stmt)){
@@ -191,12 +191,11 @@ void DatabaseTable::record(quint32 rec, const std::vector<QVariant> &vars, quint
 }
 
 QVariant DatabaseTable::cell(quint32 index, quint32 rec, bool asRaw) const{
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if (iter == _columnDefinitionsByIndex.end()) {
+    if (index >= columnCount()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return QVariant();
     }
-    return cell(iter.value().name(), rec, asRaw);
+    return cell(index, rec, asRaw);
 }
 QVariant DatabaseTable::cell(const QString& col, quint32 rec, bool asRaw) const{
     if (!const_cast<DatabaseTable *>(this)->initLoad())
@@ -230,12 +229,11 @@ QVariant DatabaseTable::cell(const QString& col, quint32 rec, bool asRaw) const{
 
 }
 void DatabaseTable::setCell(quint32 index, quint32 rec, const QVariant &var) {
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if (iter == _columnDefinitionsByIndex.end()) {
+    if (index >= columnCount()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
-        return;
+        return ;
     }
-    setCell(iter.value().name(), rec, var);
+    setCell(index, rec, var);
 }
 
 void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &inputvar)
@@ -243,7 +241,7 @@ void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &inp
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;
     QString stmt;
-    const ColumnDefinition& def = _columnDefinitionsByName[col];
+    const ColumnDefinition& def = columndefinition(col);
     QString dataType = valueType2DataType(def.datadef().domain<>()->valueType());
     if ( dataType == sUNDEF) {
         kernel()->issues()->log(TR("Invalid datatype in column definition"));
@@ -285,12 +283,11 @@ void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &inp
 }
 
 std::vector<QVariant> DatabaseTable::column(quint32 index, quint32 start, quint32 stop) const {
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if (iter == _columnDefinitionsByIndex.end()) {
+    if (index >= columnCount()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return std::vector<QVariant>();
     }
-    return column(iter.value().name(), start, stop);
+    return column(index, start, stop);
 }
 
 std::vector<QVariant> DatabaseTable::column(const QString& nme, quint32 start, quint32 stop)  const{
@@ -323,12 +320,11 @@ std::vector<QVariant> DatabaseTable::column(const QString& nme, quint32 start, q
 
 void DatabaseTable::column(quint32 index, const std::vector<QVariant> &vars, quint32 offset)
 {
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if (iter == _columnDefinitionsByIndex.end() ) {
+    if (index >= columnCount()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return ;
     }
-    column(iter.value().name(), vars, offset)    ;
+    column(index, vars, offset)    ;
 }
 
 void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars, quint32 offset)
@@ -343,7 +339,7 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
     int outside = offset + vars.size() - recordCount();
     int inside = offset + vars.size() - outside;
     QSqlQuery db(_database);
-    QString dataType = valueType2DataType(_columnDefinitionsByName[nme].datadef().domain<>()->valueType());
+    QString dataType = valueType2DataType(columndefinition(nme).datadef().domain<>()->valueType());
     bool needQuotes = dataType == "TEXT";
     qint32 count = 0;
     if ( inside > 0) {
@@ -352,9 +348,9 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
             QVariant actualvar = checkInput(vars[count],index);
             QString rest;
             if ( needQuotes )
-                rest += QString(" %1='%2' ").arg( _columnDefinitionsByIndex[index].name()).arg(actualvar.toString());
+                rest += QString(" %1='%2' ").arg( columndefinition(index).name()).arg(actualvar.toString());
             else
-                rest += QString(" %1=%2 ").arg( _columnDefinitionsByIndex[index].name()).arg(actualvar.toString());
+                rest += QString(" %1=%2 ").arg( columndefinition(index).name()).arg(actualvar.toString());
             QString query = stmt + rest + QString(" where record_index=%1").arg(offset + count);
             if ( !db.exec(query)){
                 kernel()->issues()->logSql(db.lastError());
@@ -369,11 +365,11 @@ void DatabaseTable::column(const QString &nme, const std::vector<QVariant> &vars
             QVariant actualvar = checkInput(vars[count],index);
             QString rest;
             if ( needQuotes )
-                rest += QString("(%1,record_index) VALUES('%2', %3)").arg( _columnDefinitionsByIndex[index].name()).
+                rest += QString("(%1,record_index) VALUES('%2', %3)").arg( columndefinition(index).name()).
                         arg(actualvar.toString()).
                         arg(recordCount() + count);
             else
-                rest += QString("(%1,record_index) VALUES(%2, %3)").arg( _columnDefinitionsByIndex[index].name()).
+                rest += QString("(%1,record_index) VALUES(%2, %3)").arg( columndefinition(index).name()).
                         arg(actualvar.toString()).
                         arg(recordCount() + count);
 
