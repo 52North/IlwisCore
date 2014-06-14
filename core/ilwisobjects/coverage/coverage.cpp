@@ -117,8 +117,10 @@ void Coverage::indexDomain(const IDomain& dom)
     _indexdefinition = {dom};
     if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
         _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
-    else
+    else{
+        _attTableIndex->columndefinition(TRACKVALUECOLUMN).datadef().domain(dom);
         _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
+    }
 }
 
 void Coverage::indexValues(const std::vector<QVariant>& values){
