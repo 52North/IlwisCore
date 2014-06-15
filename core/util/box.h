@@ -7,6 +7,8 @@
 #include "range.h"
 #include "geos/geom/Geometry.h"
 #include "geos/geom/Envelope.h"
+#include "geos/io/WKTReader.h"
+#include "geometryhelper.h"
 
 namespace Ilwis {
 /*!
@@ -158,7 +160,23 @@ public:
     }
 
     bool contains(const QVariant& value, bool inclusive = true) const {
-        //TODO:
+        QString typeNm = value.typeName();
+        if ( typeNm == "QString"){
+            QString wkt = value.toString();
+            geos::io::WKTReader reader;
+            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+            return contains(geom);
+        }else if ( typeNm == "Ilwis::BoundingBox"){
+            BoundingBox bb = value.value<Ilwis::BoundingBox>();
+            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y), bb.min_corner().z);
+            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y), bb.max_corner().z);
+            return ok;
+        }else if ( typeNm == "Ilwis::Envelope"){
+            Envelope bb = value.value<Ilwis::Envelope>();
+            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y), bb.min_corner().z);
+            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y), bb.max_corner().z);
+            return ok;
+        }
         return false;
     }
 
