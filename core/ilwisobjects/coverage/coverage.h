@@ -154,7 +154,7 @@ public:
     const IndexDefinition& indexDefinition() const;
     IndexDefinition& indexDefinition();
     void indexDomain(const IDomain &dom);
-    virtual void indexValues(const std::vector<QVariant> &values);
+    virtual std::vector<QVariant> indexValues() const;
 
 
 
