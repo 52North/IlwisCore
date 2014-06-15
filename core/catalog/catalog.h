@@ -52,6 +52,13 @@ public:
      * @return list of resources contained in the catalog
      */
     std::vector<Resource> items() const;
+
+    template<typename IObjectType=IIlwisObject> IObjectType item(const QVariant& indexValue) const{
+        IIlwisObject obj = createObject(indexValue)   ;
+        if ( obj.isValid() )
+            return obj.as<IObjectType>();
+        return IObjectType();
+    }
     /**
      * @brief Brings the Catalog in a valid state
      *
@@ -111,6 +118,8 @@ public:
 
 
 protected:
+    virtual IIlwisObject createObject(const QVariant& indexValue) const;
+    Resource item(quint32 index) const;
 
 private:
     void addItemsPrivate(const std::vector<Resource>& itemlist, bool doclear=false); //  ignores readonly flag; only used internally
