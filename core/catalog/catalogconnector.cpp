@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QFileInfo>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "connectorfactory.h"
@@ -11,7 +12,12 @@
 #include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
 #include "catalogexplorer.h"
+#include "domain.h"
+#include "indexdefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "catalog.h"
+#include "dataset.h"
 
 using namespace Ilwis;
 
@@ -105,6 +111,8 @@ bool CatalogConnector::loadData(IlwisObject *obj){
 
 Ilwis::IlwisObject *CatalogConnector::create() const
 {
+    if ( source().hasProperty("domain"))
+        return new DataSet(source());
     return new Catalog(source());
 }
 
