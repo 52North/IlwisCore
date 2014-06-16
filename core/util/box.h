@@ -160,27 +160,27 @@ public:
     }
 
     bool contains(const QVariant& value, bool inclusive = true) const {
-        QString typeNm = value.typeName();
-        if ( typeNm == "QString"){
-            QString wkt = value.toString();
-            geos::io::WKTReader reader;
-            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
-            return contains(geom);
-        }else if ( typeNm == "Ilwis::BoundingBox"){
-            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
-            if ( !bb.isValid())
-                return false;
-            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
-            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
-            return ok;
-        }else if ( typeNm == "Ilwis::Envelope"){
-            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
-            if ( ! bb.isValid())
-                return false;
-            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
-            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
-            return ok;
-        }
+//        QString typeNm = value.typeName();
+//        if ( typeNm == "QString"){
+//            QString wkt = value.toString();
+//            geos::io::WKTReader reader;
+//            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+//            return contains(geom);
+//        }else if ( typeNm == "Ilwis::BoundingBox"){
+//            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
+//            if ( !bb.isValid())
+//                return false;
+//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+//            return ok;
+//        }else if ( typeNm == "Ilwis::Envelope"){
+//            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
+//            if ( ! bb.isValid())
+//                return false;
+//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+//            return ok;
+//        }
         return false;
     }
 
