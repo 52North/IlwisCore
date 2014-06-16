@@ -8,7 +8,7 @@
 #include "geos/geom/Geometry.h"
 #include "geos/geom/Envelope.h"
 #include "geos/io/WKTReader.h"
-#include "geometryhelper.h"
+//#include "geometryhelper.h"
 
 namespace Ilwis {
 /*!
@@ -167,14 +167,18 @@ public:
             geos::geom::Geometry* geom = reader.read(wkt.toStdString());
             return contains(geom);
         }else if ( typeNm == "Ilwis::BoundingBox"){
-            BoundingBox bb = value.value<Ilwis::BoundingBox>();
-            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y), bb.min_corner().z);
-            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y), bb.max_corner().z);
+            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
+            if ( !bb.isValid())
+                return false;
+            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
             return ok;
         }else if ( typeNm == "Ilwis::Envelope"){
-            Envelope bb = value.value<Ilwis::Envelope>();
-            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y), bb.min_corner().z);
-            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y), bb.max_corner().z);
+            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
+            if ( ! bb.isValid())
+                return false;
+            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
             return ok;
         }
         return false;
