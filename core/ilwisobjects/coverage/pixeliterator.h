@@ -530,9 +530,6 @@ private:
                 _insideSelection = false;
             }
             else if ( _x == _selectionPixels[_y][_selectionIndex]){ // passed a boundary on this row
-                if ( _y == 736){
-                    qDebug() << "stop";
-                }
                 _insideSelection = !_insideSelection;
 
                 if (!_insideSelection ) {
