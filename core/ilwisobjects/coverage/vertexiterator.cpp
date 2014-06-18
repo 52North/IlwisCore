@@ -141,7 +141,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
             return true;
         }
     } else {
-        if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]._crds->size() - 1){
+        if ( iter._partIndex  == _coordinates.size() - 1 && _index == _coordinates[_partIndex]._crds->size() - 1){
             return true;    // end condition;
         }
     }
@@ -162,7 +162,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
 
         ++j;
     }
-    return true;
+    return false;
 }
 
 bool VertexIterator::operator!=(const VertexIterator &iter) const
@@ -281,15 +281,22 @@ void VertexIterator::move(int n)
             _index = -1;
         }
     } else {
+        if ( _coordinates[_partIndex]._crds == 0)
+            throw ErrorObject(TR("Vertex iterator not correctly initialized"));
         int sz =  _coordinates[_partIndex]._crds->size();
         if (_index >=sz){ // weird compiler bug; (mingw 4.8.2), using result directly always leads to positive test
-            ++_partIndex;
-            _index = 0;
-            _nextSubGeometry = true;
-            if ( _partIndex >= _coordinates.size()){
-                _partIndex = _coordinates.size() - 1;
-                _index = _coordinates[_partIndex]._crds->size();
-                _linearPosition = _linearSize;
+            while(_index - sz >= 0){
+                ++_partIndex;
+                _nextSubGeometry = true;
+                if(_index - sz == 0)
+                   _index = 0;
+                if ( _partIndex >= _coordinates.size()){
+                    _partIndex = _coordinates.size() - 1;
+                    _index = _coordinates[_partIndex]._crds->size();
+                    _linearPosition = _linearSize;
+                    break;
+                }
+                sz = _coordinates[_partIndex]._crds->size();
             }
         } else{
             if ( _index < 0){
@@ -344,7 +351,7 @@ void VertexIterator::setFromGeometry(geos::geom::Geometry *geom)
          _coordinates.resize(1 + pol->getNumInteriorRing());
         storeLineString(pol->getExteriorRing(),0);
         for(int j=0; j <pol->getNumInteriorRing(); ++j ){
-            storeLineString(pol->getInteriorRingN(j),j);
+            storeLineString(pol->getInteriorRingN(j),j + 1,true);
         }
         _polygonMode = true;
 

@@ -23,7 +23,8 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
     VertexIterator iter = iterStart;
     std::vector<Pixel> result;
     Coordinate crd1, crd2 ;
-    while( iter != iterEnd - 1){
+    auto endIter = iterEnd - 1;
+    while( iter != endIter){
         crd1 = *iter;
         crd2 = *(++iter);
         std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid);
