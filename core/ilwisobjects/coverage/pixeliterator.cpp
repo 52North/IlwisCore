@@ -356,13 +356,15 @@ const IRasterCoverage& PixelIterator::raster() const
 }
 
 
-void PixelIterator::move2NextSelection(int delta)
+bool PixelIterator::move2NextSelection(int delta)
 {
     if ( _selectionIndex  >= _selectionPixels[_y].size() - 1){ // this was the last boundary on this row
         _x = _endx + 1; // put x beyond the edge of the box so moveXY will trigger a y shift
-        moveYZ(delta);
+        if(!moveYZ(delta))
+            return false;
+
         if ( _y >= _selectionPixels.size() || _selectionPixels[_y].size() == 0 )
-            return;
+            return false;
         int xnew = _selectionPixels[_y][0];
         _linearposition += xnew - _box.min_corner().x;
         _localOffset += xnew - _box.min_corner().x;
@@ -380,6 +382,7 @@ void PixelIterator::move2NextSelection(int delta)
         moveYZ(delta);
         _x -= 1;
     }
+    return true;
 }
 
 void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPix)
