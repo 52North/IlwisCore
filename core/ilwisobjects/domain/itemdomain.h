@@ -378,6 +378,10 @@ public:
         return !_range.isNull();
     }
 
+    bool isOrdered() const{
+        return false;
+    }
+
 protected:
     SPRange getRange() const{
         return _range.dynamicCast<Range>();

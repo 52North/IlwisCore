@@ -1,6 +1,8 @@
 #include <QDateTime>
 #include <time.h>
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "domain.h"
 #include "range.h"
 #include "numericrange.h"
 #include "juliantime.h"
@@ -146,13 +148,43 @@ Time::Time(const Time &time)
     _valuetype = time._valuetype;
 }
 
+Time::Time(const QVariant& v) : _julianday(rUNDEF),_valuetype(itUNKNOWN){
+    IlwisTypes type = Domain::ilwType(v);
+    _valid = true;
+    if ( type == itDOUBLE){
+        _valuetype = itDATETIME;
+        _julianday = v.toDouble();
+    }else if ( hasType(type, itINTEGER)){
+        _valuetype = itDATETIME;
+        _julianday = v.toDouble();
+    } else if ( hasType(type, itSTRING)){
+        setValue(v.toString());
+    } else if ( type == itDATE){
+        *this = Time(v.value<QDate>());
+    } else if ( type == itTIME){
+        *this = Time(v.value<QTime>());
+    } else if (type == itDATETIME){
+        *this = Time(v.value<QDate>());
+    } else{
+        QString type = v.typeName();
+        if ( type == "Ilwis::Time"){
+            *this = v.value<Ilwis::Time>();
+        }else{
+            _valid = false;
+            _julianday = rUNDEF;
+            _valuetype = itUNKNOWN;
+        }
+
+    }
+}
+
 Time::~Time()
 {
 }
 
 Time::Time(double juliand, IlwisTypes tp) {
     _julianday = juliand;
-    _valid = true;
+    _valid = juliand != rUNDEF;
     _valuetype = tp;
 }
 
@@ -188,6 +220,7 @@ Time::operator double() const{
 
 Time& Time::operator=(double t) {
     _julianday = t;
+    _valid = _julianday != rUNDEF;
     return *this;
 }
 
@@ -870,6 +903,8 @@ _step(stp)
     if ( (double)beg == BIGTIME) {
         min(-BIGTIME);
     }
+    if ( (double)_step != 0)
+        resolution(_step);
     _vt = tp;
     if ( tp == itUNKNOWN){
         _vt = itDATETIME;
@@ -883,25 +918,6 @@ _step(stp)
     }
 
 }
-
-//TimeInterval TimeInterval::operator+(const TimeInterval& interval){
-//    if ( _step == interval._step ) {
-//        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step), valueType());
-//    }
-//    else if (  (double)interval.getStep() == tUNDEF || _step == tUNDEF) {
-//        return TimeInterval(Time(min() + interval.min()), Time(max() + interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
-//    }
-//    return TimeInterval();
-//}
-//TimeInterval TimeInterval::operator-(const TimeInterval& interval){
-//        if ( _step == interval._step ) {
-//        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step, valueType()));
-//    }
-//    else if (  interval.getStep() == tUNDEF || _step == tUNDEF) {
-//        return TimeInterval(Time(min() - interval.min()), Time(max() - interval.max(), _step == tUNDEF ? interval.getStep() : _step, valueType()));
-//    }
-//    return TimeInterval();
-//}
 
 QString TimeInterval::toString(bool local, IlwisTypes tp) const{
     if (min() == rUNDEF || max() == rUNDEF)
@@ -933,7 +949,7 @@ bool TimeInterval::contains(const QVariant& value, bool inclusive) const{
         return false;
 
     QString type = value.typeName();
-    if ( type != "Ilwis::Time" && type != "double" && type != "QDateTime" && type != "QDate" && type != "QTime"){
+    if ( type!= "QString" && type != "Ilwis::Time" && type != "double" && type != "QDateTime" && type != "QDate" && type != "QTime"){
         ERROR2(ERR_COULD_NOT_CONVERT_2,value.toString(), "time");
         return false;
     }
@@ -948,6 +964,8 @@ bool TimeInterval::contains(const QVariant& value, bool inclusive) const{
         t = Time(value.toTime());
     else if ( type == "QDate")
         t = Time(value.toDate());
+    else if (type == "QString")
+        t = Time(value.toString());
 
 
     return contains(t, inclusive);
@@ -962,16 +980,22 @@ bool TimeInterval::contains(const Time &value, bool inclusive) const
 QVariant TimeInterval::impliedValue(const QVariant &v) const
 {
 
-    QString type = v.typeName();
-    if ( type != "Ilwis::Time"){
-        ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "time");
-        return sUNDEF;
-    }
-//    Time t = v.value<Ilwis::Time>();
-//    Time t2 = ensure((double)t).value<double>();
-//    t2.valueType(valueType());
-//    return IVARIANT(t2);
-    return ensure(v);
+    Time t(v);
+    QVariant tvalue;
+    tvalue.setValue<Ilwis::Time>(t);
+    return ensure(tvalue);
+}
+
+QVariant TimeInterval::ensure(const QVariant &v, bool inc) const
+{
+    Time temp = v.value<Ilwis::Time>();
+    Time t(NumericRange::ensure((double)temp,inc));
+    if (!t.isValid())
+        return QVariant();
+    t.valueType(temp.valueType());
+    QVariant timev;
+    timev.setValue<Ilwis::Time>(t);
+    return timev;
 }
 
 Range *TimeInterval::clone() const

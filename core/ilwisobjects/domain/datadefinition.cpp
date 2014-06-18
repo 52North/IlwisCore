@@ -23,13 +23,7 @@ DataDefinition::DataDefinition() : _range(0), _stretchRange(0)
 
 DataDefinition::DataDefinition(const DataDefinition& def)
 {
-    domain(def.domain<>());
-    if ( !def.range().isNull())
-        _range.reset(def.range()->clone());
-    else
-        _range.reset(0);
-
-    _stretchRange = def._stretchRange;
+    operator=(def);
 }
 
 DataDefinition::DataDefinition(const IDomain &dm, Range *rng)
@@ -44,11 +38,18 @@ DataDefinition::~DataDefinition()
     _domain.set(0);
 }
 
-DataDefinition &DataDefinition::operator =(const DataDefinition &def1)
+DataDefinition &DataDefinition::operator =(const DataDefinition &def)
 {
-    domain(def1.domain());
-    _range = def1.range();
-    _stretchRange = def1._stretchRange;
+    domain(def.domain<>());
+    if ( !def.range().isNull())
+        _range.reset(def.range()->clone());
+    else
+        _range.reset(0);
+
+    if ( !def._stretchRange.isNull())
+        _stretchRange.reset(def._stretchRange->clone());
+    else
+        _stretchRange.reset(0);
 
 
     return *this;

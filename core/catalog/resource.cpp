@@ -254,7 +254,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
         return;
     }
     QFileInfo inf(_normalizedUrl.toLocalFile());
-    if ( urlTxt != "file://") {
+    if ( urlTxt != "file://" && urlTxt != "file:///") {
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
                 if ( !isRoot(inf.absolutePath())){
@@ -297,8 +297,9 @@ bool Resource::hasUrlQuery() const
 
 QUrl Resource::container(int level) const
 {
-    if ( level < _container.size())
-        return _container[level];
+    if ( level < _container.size()){
+            return _container[level];
+    }
     return QUrl();
 }
 
@@ -503,17 +504,7 @@ void Resource::checkUrl(IlwisTypes tp) {
 }
 
 bool Resource::isRoot(const QString& txt) {
-    bool ok1 = false;
-    bool ok2 = false;
-#ifdef Q_OS_WIN
-    ok1 = txt.indexOf(QRegExp("file:///[a-z,A-z]:")) == 0;
-    ok2 =  txt.size() <= 11;
-    if (!(ok1 && ok2)) {
-        ok1 = txt.indexOf(QRegExp("[a-z,A-z]:")) == 0;
-        ok2 = txt.size() <= 3;
-    }
-#endif
-    return ok1 & ok2;
+    return txt.endsWith("//");
 }
 
 bool Resource::isRoot() const {

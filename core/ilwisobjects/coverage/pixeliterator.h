@@ -422,6 +422,8 @@ public:
         _trq = trq;
     }
 
+    const Ilwis::IRasterCoverage &raster() const;
+
 protected:
     PixelIterator(quint64 endpos ) :
         _grid(0),
@@ -519,16 +521,20 @@ private:
                 return moveYZ(delta);
             }
         } else {
-            if ( _selectionPixels[_y].size() == 0){
+            int selectionPix = _selectionPixels[_y].size();
+            if (  selectionPix  == 0 ){
                  _x = _endx + 1;
-                moveYZ(delta);
+                 if(!moveYZ(delta))
+                    return false;
                 _selectionIndex = 0;
                 _insideSelection = false;
             }
             else if ( _x == _selectionPixels[_y][_selectionIndex]){ // passed a boundary on this row
                 _insideSelection = !_insideSelection;
-                if (!_insideSelection) {
-                    move2NextRow(delta);
+
+                if (!_insideSelection ) {
+                    if(!move2NextSelection(delta))
+                        return false;
                 }else
                     ++_selectionIndex;
             }
@@ -538,7 +544,7 @@ private:
 
     bool moveYZ(int delta);
     bool moveXY(int delta);
-    void move2NextRow(int delta);
+    bool move2NextSelection(int delta);
     void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
 };
 

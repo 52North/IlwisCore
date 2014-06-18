@@ -69,7 +69,6 @@ public:
      *
      * @param isostring the isostring with the time
      */
-    //TODO link to isostring docu?
     Time(const QString& isostring);
     Time(const char * isostring);
 
@@ -90,6 +89,7 @@ public:
     Time(const QDate& date);
     Time(const QTime& tm);
     Time(const Time& time);
+    Time(const QVariant &v);
 
     /**
      * Deconstructor
@@ -359,6 +359,7 @@ public:
     bool contains(const Time& value, bool inclusive = true) const;
     bool contains(const QVariant& value, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
+    QVariant ensure(const QVariant& v, bool inclusive=true) const;
 
     Range *clone() const ;
     bool isValid() const;

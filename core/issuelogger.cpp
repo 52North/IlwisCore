@@ -28,7 +28,6 @@ Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id)
 
 QString Ilwis::IssueObject::message() const
 {
-    //TODO: some control over the output format of this string(should it have time or not?, location etc)
     return _message;
 }
 
@@ -164,13 +163,7 @@ void IssueLogger::addCodeInfo(quint64 issueid, int line, const QString &func, co
 
 quint64 IssueLogger::logSql(const QSqlError &err)
 {
-    //TODO: more info about the error for databases
    return log(err.text(), IssueObject::itError);
-}
-
-QString IssueLogger::popList(int, int) {
-    //TODO: prints <number> of items of the stack
-    return "?";
 }
 
 IssueObject::IssueType IssueLogger::maxIssueLevel() const
@@ -197,15 +190,31 @@ void IssueLogger::copy(IssueLogger &other)
   }
 }
 
-QString IssueLogger::popfirst(int) {
-    //TODO: filtering on issue type
+QString IssueLogger::popfirst(int tp) {
+    if ( tp != IssueObject::itAll){
+        for(auto iter= --_issues.end(); iter != _issues.begin(); --iter ){
+            if (hasType((*iter).type(), tp)){
+                QString mes = (*iter).message();
+                _issues.erase(iter);
+                return mes;
+            }
+        }
+    }
     if ( _issues.size() > 0)
         return _issues.dequeue().message();
     return "?";
 }
 
-QString IssueLogger::poplast(int) {
-   //TODO: filtering on issue type
+QString IssueLogger::poplast(int tp) {
+    if ( tp != IssueObject::itAll){
+        for(auto iter= _issues.begin(); iter != _issues.end(); ++iter ){
+            if (hasType((*iter).type(), tp)){
+                QString mes = (*iter).message();
+                _issues.erase(iter);
+                return mes;
+            }
+        }
+    }
     if ( _issues.size() >0 )
         return _issues.takeLast().message();
     return "?";

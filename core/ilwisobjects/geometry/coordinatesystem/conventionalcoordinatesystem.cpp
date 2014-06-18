@@ -10,11 +10,11 @@
 
 using namespace Ilwis;
 
-ConventionalCoordinateSystem::ConventionalCoordinateSystem() : _unit("meter")
+ConventionalCoordinateSystem::ConventionalCoordinateSystem() : _unit(sUNDEF)
 {
 }
 
-ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &resource) : CoordinateSystem(resource)
+ConventionalCoordinateSystem::ConventionalCoordinateSystem(const Resource &resource) : CoordinateSystem(resource),_unit(sUNDEF)
 {
 }
 
@@ -229,7 +229,7 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
         ok = _projection->prepare(parms);
     }
     QString unit = proj4["units"];
-    if ( ok && (_projection->code().contains("longlat") || _projection->code().contains("latlon") || unit!="?"))
+    if ( ok && (_projection->code().contains("longlat") || _projection->code().contains("latlon") || unit=="?"))
         _unit = "degrees";
     else{
         if ( unit == "m")

@@ -92,12 +92,15 @@ public:
     void setBlockData(quint32 block, const std::vector<double>& data, bool creation);
     char *blockAsMemory(quint32 block, bool creation);
     void setSize(const Size<>& sz);
+    void setBandProperties(int n);
     bool prepare() ;
     quint32 blockSize(quint32 index) const;
     Size<> size() const;
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
     void unload();
+protected:
+
 private:
     double bilinear(const Pixeld &pix) const;
     double bicubic(const Pixeld &pix) const;

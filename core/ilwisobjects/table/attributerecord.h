@@ -12,7 +12,7 @@ class KERNELSHARED_EXPORT AttributeRecord
 {
 public:
     AttributeRecord();
-    AttributeRecord(quint32 keyrecord, const ITable& attTable);
+    AttributeRecord(quint32 keyrecord, const ITable& attTable, const Ilwis::ITable &indexTable);
 
     quint32 columnCount(bool coverages=true) const;
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;

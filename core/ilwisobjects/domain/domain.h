@@ -103,6 +103,7 @@ public:
      * \return true if the Domains are compatible
      */
     virtual bool isCompatibleWith(const IDomain& dom) const = 0;
+    virtual bool isOrdered() const = 0;
 
     template<typename T=Range> QSharedPointer<T> range() const{
         return this->getRange().dynamicCast<T>();

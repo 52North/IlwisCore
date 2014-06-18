@@ -566,6 +566,67 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
 
     return 0;
 }
+GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& resource) const{
+    QString code = resource.code().mid(7);
+    QStringList parts = code.split(",");
+    std::map<QString, QString> parameters;
+    for(auto part : parts){
+       QStringList kvp = part.split("=");
+       if (kvp.size() != 2)
+           return 0;
+       parameters[kvp[0].trimmed()] = kvp[1].trimmed();
+    }
+    bool isCorners = parameters["type"] == "corners";
+    GeoReference *cgrf = 0;
+    ICoordinateSystem csy;
+    Envelope env;
+    Size<> sz;
+    if ( isCorners){
+       cgrf = GeoReference::create("corners", resource);
+       cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
+    }
+
+    for(auto kvp : parameters){
+        if ( kvp.first == "csy"){
+            bool ok;
+            quint64 id = kvp.second.toULongLong(&ok);
+            if ( ok){
+                csy .prepare(id);
+            }else {
+                csy.prepare(kvp.second);
+            }
+            if (!csy.isValid())
+                return 0;
+        }
+        if ( kvp.first == "envelope"){
+            QStringList coords = kvp.second.split(" ");
+            if (!coords.size() == 4)
+                return 0;
+            bool ok1, ok2;
+            env += Coordinate(coords[0].toDouble(&ok1), coords[1].toDouble(&ok2));
+            if (!ok1 || !ok2)
+                return 0;
+            env += Coordinate(coords[2].toDouble(&ok1), coords[3].toDouble(&ok2));
+            if (!ok1 || !ok2)
+                return 0;
+        }
+        if ( kvp.first == "gridsize"){
+            QStringList dims = kvp.second.split(" ");
+            sz = Size<>(dims[0].toUInt(), dims[1].toUInt(),1);
+
+        }
+        if ( kvp.first == "name"){
+            cgrf->name(kvp.second);
+        }
+    }
+    if ( csy.isValid() && env.isValid() && sz.isValid()){
+        csy->envelope(env);
+        cgrf->coordinateSystem(csy);
+        cgrf->size(sz);
+        return cgrf;
+    }
+    return 0;
+}
 
 IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource) const {
     GeoReference *cgrf;
@@ -574,30 +635,49 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         resnew.name(sUNDEF); // this will force a new object with a new id
         resnew.setId(i64UNDEF);
         cgrf = GeoReference::create("undetermined", resnew);
+    } else if ( resource.code().indexOf("georef:") == 0){
+        cgrf = createGrfFromCode(resource);
+        if (cgrf == 0)
+            ERROR2(ERR_ILLEGAL_VALUE_2,"georef code", resource.code());
+
     }else {
         cgrf = GeoReference::create("corners", resource);
         cgrf->name( resource["name"].toString());
-    }
-    cgrf->createTime(Time::now());
-    cgrf->modifiedTime(Time::now());
-    ICoordinateSystem csy;
-    bool ok;
-    if ( resource.hasProperty("coordinatesystem")){
-        quint64 id = resource["coordinatesystem"].toULongLong(&ok);
-        if ( ok) {
-            csy = mastercatalog()->get(id);
-        } else
-            csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
 
-        cgrf->coordinateSystem(csy);
+
+        ICoordinateSystem csy;
+        bool ok;
+        if ( resource.hasProperty("coordinatesystem")){
+            quint64 id = resource["coordinatesystem"].toULongLong(&ok);
+            if ( ok) {
+                csy = mastercatalog()->get(id);
+            } else
+                csy =  resource["coordinatesystem"].value<ICoordinateSystem>();
+
+            cgrf->coordinateSystem(csy);
+        }
+
+        if ( resource.hasProperty("envelope"))
+            cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
+        if ( resource.hasProperty("size"))
+            cgrf->size(resource["size"].value<Size<>>());
+        if ( resource.hasProperty("centerofpixel"))
+            cgrf->centerOfPixel(resource["centerofpixel"].toBool());
     }
 
-    if ( resource.hasProperty("envelope"))
-        cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
-    if ( resource.hasProperty("size"))
-        cgrf->size(resource["size"].value<Size<>>());
-    if ( resource.hasProperty("centerofpixel"))
-        cgrf->centerOfPixel(resource["centerofpixel"].toBool());
+    if ( cgrf){
+
+        cgrf->createTime(Time::now());
+        cgrf->modifiedTime(Time::now());
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        Resource res= resource;
+        QString url = "ilwis://internalcatalog/" + cgrf->name();
+        res.setUrl(url);
+        res.setUrl(url,true);
+        res.name(cgrf->name());
+        ConnectorInterface *connector = factory->createFromResource<>(res, "internal");
+        cgrf->setConnector(connector);
+    }
 
     return cgrf;
 }

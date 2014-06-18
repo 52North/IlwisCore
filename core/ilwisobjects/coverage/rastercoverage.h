@@ -165,6 +165,7 @@ public:
             return datadef().range()->ensure(v).value<double>();
         }
         return rUNDEF;
+
     }
 
     NumericStatistics& statistics(int mode=0);
@@ -179,7 +180,9 @@ public:
 
     PixelIterator end() ;
     PixelIterator begin() ;
-
+    PixelIterator band(const QVariant& trackIndex);
+    bool band(const QVariant& trackIndex, PixelIterator inputData);
+    void addBand(int index, const DataDefinition &def, const QVariant &trackIndexValue);
 protected:
     Grid *grid();
     QScopedPointer<Grid> _grid;

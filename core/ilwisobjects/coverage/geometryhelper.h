@@ -12,6 +12,7 @@ namespace io{
 
 namespace Ilwis {
 
+class CoordinateSystem;
 
 class KERNELSHARED_EXPORT GeometryHelper{
     public:

@@ -26,7 +26,8 @@ public:
     //@override
     bool createTable();
 
-    void newRecord();
+    quint32 newRecord();
+    void removeRecord(quint32 rec);
     //@override
     std::vector<QVariant> record(quint32 n) const ;
 

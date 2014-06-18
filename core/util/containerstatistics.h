@@ -1,6 +1,8 @@
 #ifndef ContainerStatistics_H
 #define ContainerStatistics_H
 
+#include "kernel.h"
+#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -89,6 +91,7 @@ public:
             _sigDigits = std::min(len, _sigDigits);
         }
     }
+
     void binCount(quint32 value) {
         _binCount = value;
     }

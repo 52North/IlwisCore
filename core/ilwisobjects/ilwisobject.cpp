@@ -238,6 +238,8 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
+        /*if ( !_connector.isNull())
+            _connector->loadMetaData(this, PrepareOptions());*/
     }
     if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
         quint64 pointer = (quint64) ( _outConnector.data());
@@ -490,6 +492,35 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
 
 
     return itUNKNOWN;
+
+}
+
+quint64 IlwisObject::internalname2id(const QString &name)
+{
+    int index = 0;
+    if ( (index = name.indexOf(NAME_ALIAS)) != -1) {
+        QString sid = name.mid(index + SZ_NAME_ALIAS);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
+                return data->id();
+            }
+        }
+    }
+    if ( (index = name.indexOf(ANONYMOUS_PREFIX)) != -1) { // internal objects are not in the catalog
+        QString sid = name.mid(index + SZ_ANONYMOUS_PREFIX);
+        bool ok;
+        quint64 id = sid.toLongLong(&ok);
+        if (ok){
+            ESPIlwisObject data = mastercatalog()->get(id);
+            if ( data.get() != 0) {
+                return data->id();
+            }
+        }
+    }
+    return i64UNDEF;
 
 }
 

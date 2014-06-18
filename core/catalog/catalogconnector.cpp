@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QFileInfo>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "abstractfactory.h"
 #include "connectorinterface.h"
 #include "connectorfactory.h"
@@ -11,7 +12,12 @@
 #include "ilwisobjectconnector.h"
 #include "catalogconnector.h"
 #include "catalogexplorer.h"
+#include "domain.h"
+#include "indexdefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "catalog.h"
+#include "dataset.h"
 
 using namespace Ilwis;
 
@@ -40,7 +46,10 @@ bool CatalogConnector::canUse(const Resource &resource) const
 QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
 {
     QString local = url.toLocalFile();
-//    QFileInfo localFile(local);
+    QFileInfo localFile(local);
+    if ( localFile.exists())
+        return local;
+
     int index = local.lastIndexOf("/");
     if ( index == -1){
         return QFileInfo();
@@ -57,6 +66,8 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
     Resource parentResource = mastercatalog()->id2Resource(id);
 
     QFileInfo parentPath =  containerConnector()->toLocalFile(parentResource);
+    if ( parentPath.fileName() == sUNDEF)
+        parentPath = parent;
     QFileInfo currentPath(parentPath.absoluteFilePath() + "/"+ ownSection);
     return currentPath;
 }
@@ -100,6 +111,8 @@ bool CatalogConnector::loadData(IlwisObject *obj){
 
 Ilwis::IlwisObject *CatalogConnector::create() const
 {
+    if ( source().hasProperty("domain"))
+        return new DataSet(source());
     return new Catalog(source());
 }
 

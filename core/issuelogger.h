@@ -73,9 +73,8 @@ public:
     quint64 log(const QString &objectName, const QString &message, int it=IssueObject::itError);
     void addCodeInfo(quint64 issueid,int line, const QString& func, const QString& file);
 
-    QString popfirst(int it=IssueObject::itAll);
+    QString popfirst(int tp=IssueObject::itAll);
     QString poplast(int it=IssueObject::itAll);
-    QString popList(int it=IssueObject::itAll, int number=-1);
     IssueObject::IssueType maxIssueLevel() const;
     void copy(IssueLogger& other);
     void clear();

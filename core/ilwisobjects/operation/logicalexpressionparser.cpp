@@ -108,7 +108,7 @@ LogicalOperator LogicalExpressionPart::logicalConnector() const
 
 bool LogicalExpressionPart::isValid() const
 {
-    return _field != sUNDEF && _value != sUNDEF && _condition != loNONE && _vt != itUNKNOWN;
+    return _field != sUNDEF && _condition != loNONE && _vt != itUNKNOWN;
 }
 
 void LogicalExpressionPart::logicalConnector(LogicalOperator oper)

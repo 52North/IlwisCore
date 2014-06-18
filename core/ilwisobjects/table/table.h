@@ -120,6 +120,7 @@ public:
      * \return a reference to columndefinition or an invalid defintion if a non existing column was retrieved
      */
     virtual ColumnDefinition& columndefinition(quint32 index) = 0;
+    virtual ColumnDefinition &columndefinition(const QString &nme) = 0;
 
      /**
      * sets a new column definition. The new definition must be valid.
@@ -133,7 +134,8 @@ public:
      * Adds a new record to this table
      * It will be filled with appropriate default values depending on the domain(s)
      */
-    virtual void newRecord() = 0;
+    virtual quint32 newRecord() = 0;
+    virtual void removeRecord(quint32 rec) = 0;
 
     /*!
      * retrieves a record from a table. A record contains all the fields for one row. This method is implemented in the derivatives<br>
@@ -256,6 +258,7 @@ public:
 
     virtual void dataLoaded(bool yesno) = 0;
     virtual bool isDataLoaded() const = 0;
+    virtual void initValuesColumn(const QString& colname) = 0;
 
 protected:
     Table(const Resource& resource) :
@@ -276,5 +279,7 @@ Q_DECLARE_METATYPE(Ilwis::ITable)
 #define FEATUREIDCOLUMN "feature_id"
 #define FEATUREVALUECOLUMN "feature_value"
 #define FEATURETYPECOLUMN "feature_type"
+#define TRACKINDEXCOLUMN "track_index"
+#define TRACKVALUECOLUMN "track_value"
 
 #endif // TABLE_H

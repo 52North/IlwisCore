@@ -29,6 +29,7 @@ public:
 
     //@override
     bool isValid() const;
+     bool isOrdered() const;
 
     //@override
     DomainItem *clone() const;

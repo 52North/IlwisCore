@@ -40,6 +40,18 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             rasCoverageOut->datadef() = rasCoverageIn->datadef();
         }
 
+        if ( hasType(what,itGEOREF) && hasType(tp, itRASTER) ) {
+            IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
+            IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
+            rasCoverageOut->georeference(rasCoverageIn->georeference());
+        }
+
+        if ( hasType(what,itRASTERSIZE) && hasType(tp, itRASTER) ) {
+            IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
+            IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
+            rasCoverageOut->size(rasCoverageIn->size());
+        }
+
         if ( hasType(what,itTABLE)) {
             if ( covInput->attributeTable().isValid())    {
                 if ( covOutput.isValid()) {

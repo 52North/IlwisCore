@@ -260,6 +260,26 @@ void Grid::setSize(const Size<>& sz) {
 
 }
 
+void Grid::setBandProperties(int n){
+    _size.zsize(_size.zsize() + n);
+    quint32 oldBlocks = _blocks.size();
+    quint32 newBlocks = numberOfBlocks();
+    _blocks.resize(newBlocks);
+    _blockSizes.resize(newBlocks);
+    _blockOffsets.resize(newBlocks);
+    qint32 totalLines = _size.ysize();
+
+    for(quint32 block = oldBlocks; block < _blocks.size(); ++block) {
+        int linesPerBlock = std::min((qint32)_maxLines, totalLines);
+        _blocks[block] = new GridBlockInternal(linesPerBlock, _size.xsize());
+        _blockSizes[block] = linesPerBlock * _size.xsize();
+        _blockOffsets[block] = block == 0 ? 0 : _blockOffsets[block-1] +  _blockSizes[block];
+        totalLines -= _maxLines;
+        if ( totalLines <= 0) // to next band
+            totalLines = _size.ysize();
+    }
+}
+
 bool Grid::prepare() {
     Locker lock(_mutex);
     if ( _size.isNull()|| !_size.isValid() || _maxLines == 0) {

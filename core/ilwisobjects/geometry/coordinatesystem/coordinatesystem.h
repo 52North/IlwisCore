@@ -35,7 +35,7 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(Ilwis::ICoordinateSystem)
+Q_DECLARE_METATYPE(Ilwis::ICoordinateSystem);
 
 
 #endif // COORDINATESYSTEM_H

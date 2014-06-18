@@ -55,10 +55,29 @@ ItemRange *ItemRange::merge(const QSharedPointer<ItemRange> &nr1, const QSharedP
     return 0;
 }
 
+bool ItemRange::isOrdered() const
+{
+    return false;
+}
+
 void ItemRange::addRange(const ItemRange &range)
 {
     for(quint32 i=0; i < range.count(); ++i) {
         if (!contains(range.item(i)->name()))
             add(range.item(i)->clone());
     }
+
 }
+
+SPDomainItem ItemRange::valueAt(quint32& index, const Range *rng){
+    if ( rng && hasType(rng->valueType(), itDOMAINITEM)){
+        const ItemRange *idrange = static_cast<const ItemRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    index = iUNDEF;
+    return SPDomainItem();
+}
+
+

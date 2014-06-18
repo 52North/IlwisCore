@@ -113,7 +113,7 @@ QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes t
             field = "extendedtype"; break;
     }
 
-    QString stmt = QString("select %1 from dataformats where (datatype | %2) != 0").arg(field).arg(types);
+    QString stmt = QString("select %1 from dataformats where (datatype & %2) != 0").arg(field).arg(types);
     if ( code != sUNDEF)
         stmt += " and code='" + code + "'";
     if ( connector != sUNDEF)

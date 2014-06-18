@@ -2,7 +2,6 @@
 #define FEATURECOVERAGE_H
 
 #include <memory>
-#include <unordered_map>
 #include "kernel_global.h"
 
 namespace geos{
