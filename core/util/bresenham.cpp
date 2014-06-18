@@ -22,15 +22,20 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
 {
     VertexIterator iter = iterStart;
     std::vector<Pixel> result;
-    Coordinate crd1, crd2 ;
-    auto endIter = iterEnd - 1;
-    while( iter != endIter){
-        crd1 = *iter;
-        crd2 = *(++iter);
-        std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid);
+    Coordinate crd1 = *iter, crd2 ;
+    quint32 subcount = 0;
+    while( (++iter) != iterEnd ){
+        if ( iter.nextSubGeometry()){
+            crd1 = *iter;
+            ++iter;
+            ++subcount;
+        }
+        crd2 = *iter;
+        std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid, subcount);
         if (!_valid)
             return std::vector<Pixel>();
         std::copy(line.begin(), line.end(), std::back_inserter(result));
+        crd1 = crd2;
     }
     // remove duplicates
     auto iterUnique = std::unique(result.begin(), result.end());
@@ -38,7 +43,7 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
     return result;
 }
 
-std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Coordinate& crdEnd, bool& valid) const
+std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Coordinate& crdEnd, bool& valid, quint32 subcount) const
 {
     valid = false;
     std::vector<Pixel> result;
@@ -78,7 +83,7 @@ std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Co
 
     for(int x=(int)pixStart.x; x<maxX; x++)
     {
-        result.push_back(steep ? Pixel(y,x) : Pixel(x,y));
+        result.push_back(steep ? Pixel(y,x, subcount) : Pixel(x,y, subcount));
         error -= dy;
         if(error < 0)
         {

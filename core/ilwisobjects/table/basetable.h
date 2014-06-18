@@ -3,6 +3,7 @@
 
 #include <QSqlDatabase>
 #include <unordered_map>
+#include "boost/container/flat_map.hpp"
 
 #include "table.h"
 
@@ -63,6 +64,7 @@ public:
 
     //@override
     ColumnDefinition& columndefinition(quint32 index);
+    ColumnDefinition &columndefinition(const QString &nme);
 
 
     //@override
@@ -93,8 +95,8 @@ public:
     void initValuesColumn(const QString& colname);
 
 protected:
-    QHash<QString, ColumnDefinition> _columnDefinitionsByName;
-    QHash<quint32, ColumnDefinition> _columnDefinitionsByIndex;
+    boost::container::flat_map<QString, quint32> _columnDefinitionsByName;
+    std::vector<ColumnDefinition> _columnDefinitionsByIndex;
 
     virtual bool initLoad();
     virtual void adjustRange(int index);

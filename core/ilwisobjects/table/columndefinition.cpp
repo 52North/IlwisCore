@@ -9,13 +9,12 @@
 
 using namespace Ilwis;
 
-ColumnDefinition::ColumnDefinition() : _multiple(false), _changed(false)
+ColumnDefinition::ColumnDefinition() : _changed(false)
 {
 }
 
 ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
     Identity(def.name(), index),
-    _multiple(false),
     _changed(false)
 {
     datadef().domain(def.datadef().domain<>());
@@ -26,7 +25,6 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
 ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex) :
     Identity(name, colindex),
     _datadef(def),
-    _multiple(false),
     _changed(false)
 {
 
@@ -34,7 +32,6 @@ ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &de
 
 ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) :
     Identity(nm, colindex),
-    _multiple(false),
     _changed(false)
 {
     datadef().domain(dom);
@@ -58,16 +55,6 @@ const DataDefinition &ColumnDefinition::datadef() const
 DataDefinition &ColumnDefinition::datadef()
 {
     return _datadef;
-}
-
-bool ColumnDefinition::isMultiple() const
-{
-    return _multiple;
-}
-
-void ColumnDefinition::multiple(bool yesno)
-{
-    _multiple = yesno;
 }
 
 void ColumnDefinition::columnindex(quint64 idx)

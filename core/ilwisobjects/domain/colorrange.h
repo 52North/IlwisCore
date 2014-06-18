@@ -11,7 +11,7 @@ typedef QSharedPointer<ColorItem> SPColorItem;
 class KERNELSHARED_EXPORT ColorRange : public Range
 {
 public:
-    enum ColorModel{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+    enum ColorModel{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
 
     ColorRange(IlwisTypes tp, ColorModel clrmodel);
     ColorModel defaultColorModel() const;

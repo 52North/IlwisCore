@@ -356,17 +356,33 @@ const IRasterCoverage& PixelIterator::raster() const
 }
 
 
-void PixelIterator::move2NextRow(int delta)
+bool PixelIterator::move2NextSelection(int delta)
 {
     if ( _selectionIndex  >= _selectionPixels[_y].size() - 1){ // this was the last boundary on this row
         _x = _endx + 1; // put x beyond the edge of the box so moveXY will trigger a y shift
-        moveYZ(delta);
-        _selectionIndex = 0; // new row, so selection starts at 0 again
+        if(!moveYZ(delta))
+            return false;
+
+        if ( _y >= _selectionPixels.size() || _selectionPixels[_y].size() == 0 )
+            return false;
+        int xnew = _selectionPixels[_y][0];
+        _linearposition += xnew - _box.min_corner().x;
+        _localOffset += xnew - _box.min_corner().x;
+        _selectionIndex = 0;
         _insideSelection = false; //  we are not yet in a selection
-        if ( _selectionPixels[_y].size() > 0)
-            _x = _selectionPixels[_y][_selectionIndex] - delta; // -delta because the next iteration will add delta again to it setting it exact at the edge again
-    }else
-        ++_selectionIndex;
+        if ( _selectionPixels[_y].size() > 0){
+            _x = _selectionPixels[_y][0] - delta; // -delta because the next iteration will add delta again to it setting it exact at the edge again
+
+        }
+    }else{
+        int xnew = _selectionPixels[_y][++_selectionIndex];
+        _linearposition += xnew - _box.min_corner().x;
+        _localOffset += xnew - _box.min_corner().x;
+        _x = xnew;
+        moveYZ(delta);
+        _x -= 1;
+    }
+    return true;
 }
 
 void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPix)
@@ -399,6 +415,10 @@ void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPi
         }
         _selectionPixels[y].resize(cleaned.size());
         std::copy(cleaned.begin(), cleaned.end(), _selectionPixels[y].begin() ); //copy pixels to output vector
+        //TODO this is a stop gap to remove line with uneven number of points; must make a more general solution in the future
+        if ( _selectionPixels[y].size() % 2 == 1){
+            _selectionPixels[y].erase(_selectionPixels[y].begin() + _selectionPixels[y].size() / 2);
+        }
         ++y;
     }
     if ( ystart != iUNDEF){

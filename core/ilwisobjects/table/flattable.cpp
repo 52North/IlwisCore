@@ -120,12 +120,11 @@ std::vector<QVariant> FlatTable::column(const QString &nme, quint32 start, quint
 
 void FlatTable::column(quint32 index, const std::vector<QVariant> &vars, quint32 offset)
 {
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if (iter == _columnDefinitionsByIndex.end()) {
+    if (index >= columnCount()) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"Column index", name());
         return ;
     }
-    column((*iter).name(), vars, offset);
+    column( _columnDefinitionsByIndex[index].name(), vars, offset);
 }
 
 void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, quint32 offset)

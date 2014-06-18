@@ -208,12 +208,16 @@ PixelIterator RasterCoverage::band(const QVariant &trackIndex)
     return PixelIterator(raster,box);
 }
 
-void RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
+bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 {
     if ( inputIter.box().size().zsize() != 1)
-        return;
+        return false;
+    if ( !indexDefinition().domain()->contains(trackIndex))
+        return false;
 
-    if ( !size().isValid() || size().isNull()){
+
+    bool isFirstLayer = !size().isValid() || size().isNull();
+    if ( isFirstLayer ){ //  totally new band in new coverage, initialize everything
 
         coordinateSystem(inputIter.raster()->coordinateSystem());
         georeference(inputIter.raster()->georeference());
@@ -229,25 +233,23 @@ void RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
     }
 
     if ( inputIter.box().xlength() != size().xsize() || inputIter.box().ylength() != size().ysize())
-        return;
+        return false;
     if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain()))
-        return;
-    int index = indexDefinition()(0,trackIndex);
-    if ( index == iUNDEF){
-        index = size().zsize();
-        addBand(index,datadef(),trackIndex);
-        grid()->setBandProperties(1);
-        _size.zsize(size().zsize() + 1);
-    }
-    if ( grid()->size().zsize() > index) {
-        PixelIterator iter = band(trackIndex);
-        while(iter != iter.end()){
-            *iter = *inputIter;
-            ++iter;
-            ++inputIter;
-        }
+        return false;
 
+    quint32 index = isFirstLayer ?  size().zsize() - 1 : size().zsize(); // -1 because an empty map has z == 1
+    addBand(index,datadef(),trackIndex);
+    grid()->setBandProperties(1);
+    if ( !isFirstLayer)
+        _size.zsize(_size.zsize() + 1);
+
+    PixelIterator iter = band(trackIndex);
+    while(iter != iter.end()){
+        *iter = *inputIter;
+        ++iter;
+        ++inputIter;
     }
+    return true;
 
 
 }

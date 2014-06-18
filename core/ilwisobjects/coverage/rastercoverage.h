@@ -181,7 +181,7 @@ public:
     PixelIterator end() ;
     PixelIterator begin() ;
     PixelIterator band(const QVariant& trackIndex);
-    void band(const QVariant& trackIndex, PixelIterator inputData);
+    bool band(const QVariant& trackIndex, PixelIterator inputData);
     void addBand(int index, const DataDefinition &def, const QVariant &trackIndexValue);
 protected:
     Grid *grid();

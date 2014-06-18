@@ -69,7 +69,6 @@ public:
      *
      * @param isostring the isostring with the time
      */
-    //TODO link to isostring docu?
     Time(const QString& isostring);
     Time(const char * isostring);
 

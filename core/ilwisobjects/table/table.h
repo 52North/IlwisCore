@@ -120,6 +120,7 @@ public:
      * \return a reference to columndefinition or an invalid defintion if a non existing column was retrieved
      */
     virtual ColumnDefinition& columndefinition(quint32 index) = 0;
+    virtual ColumnDefinition &columndefinition(const QString &nme) = 0;
 
      /**
      * sets a new column definition. The new definition must be valid.

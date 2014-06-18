@@ -3,6 +3,7 @@
 
 #include "kernel_global.h"
 #include "boost/container/flat_map.hpp"
+#include "datadefinition.h"
 
 namespace Ilwis {
 class ItemRange;

@@ -12,7 +12,7 @@ public:
     std::vector<Pixel> rasterize(const VertexIterator& iterStart, const VertexIterator& iterEnd);
 
 private:
-    std::vector<Pixel> makePixelLine(const Ilwis::Coordinate &crdStart, const Ilwis::Coordinate &crdEnd, bool &valid) const;
+    std::vector<Pixel> makePixelLine(const Ilwis::Coordinate &crdStart, const Ilwis::Coordinate &crdEnd, bool &valid, quint32 subcount) const;
     IGeoReference _targetGrf;
     bool _valid = false;
 };

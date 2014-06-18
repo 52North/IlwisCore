@@ -86,7 +86,7 @@ public:
             kernel()->issues()->log(name(),TR("Database is not initialized"));
             return false;
         }
-        IDomain dom = _columnDefinitionsByName[col].datadef().domain<>();
+        IDomain dom = columndefinition(col).datadef().domain<>();
         if (!dom.isValid()) {
             kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_IN_4).arg("domain", "table", "column",col));
             return sUNDEF;
