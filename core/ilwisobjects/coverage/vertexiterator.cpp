@@ -128,6 +128,10 @@ geos::geom::Coordinate &VertexIterator::operator[](quint32 n)
     throw ErrorObject(TR("vertex index out of range"));
 }
 
+bool VertexIterator::isAtEnd(const VertexIterator &iter) const {
+    return iter._coordinates.size() == iter._partIndex &&  iter._index == 0;
+}
+
 bool VertexIterator::operator==(const VertexIterator &iter) const
 {
     if ( _index != iter._index)
@@ -141,9 +145,8 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
             return true;
         }
     } else {
-        if ( iter._partIndex  == _partIndex && _index == _coordinates[_partIndex]._crds->size() - 1){
-            return true;    // end condition;
-        }
+        if ( isAtEnd(iter) && isAtEnd(*this))
+            return true;
     }
     int j = 0;
     if ( _pointMode){
@@ -266,7 +269,7 @@ bool VertexIterator::isInteriorVertex() const{
 void VertexIterator::move(int n)
 {
     if (_coordinates.size() == 0){
-        _index = 1000000;
+        _index = ENDVERTEX;
         return;
     }
 
@@ -281,15 +284,17 @@ void VertexIterator::move(int n)
             _index = -1;
         }
     } else {
+        if ( _coordinates.size() <= _partIndex)
+            return;
         int sz =  _coordinates[_partIndex]._crds->size();
         if (_index >=sz){ // weird compiler bug; (mingw 4.8.2), using result directly always leads to positive test
             ++_partIndex;
             _index = 0;
             _nextSubGeometry = true;
-            if ( _partIndex >= _coordinates.size()){
-                _partIndex = _coordinates.size() - 1;
-                _index = _coordinates[_partIndex]._crds->size();
-                _linearPosition = _linearSize;
+            if ( n == ENDVERTEX){
+                _partIndex = _coordinates.size();
+                _index = 0;
+                _linearPosition = _linearSize + 1;
             }
         } else{
             if ( _index < 0){
@@ -344,7 +349,7 @@ void VertexIterator::setFromGeometry(geos::geom::Geometry *geom)
          _coordinates.resize(1 + pol->getNumInteriorRing());
         storeLineString(pol->getExteriorRing(),0);
         for(int j=0; j <pol->getNumInteriorRing(); ++j ){
-            storeLineString(pol->getInteriorRingN(j),j);
+            storeLineString(pol->getInteriorRingN(j),j + 1, true);
         }
         _polygonMode = true;
 
