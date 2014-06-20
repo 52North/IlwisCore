@@ -108,14 +108,14 @@ ColumnDefinition BaseTable::columndefinition(quint32 index) const
     return ColumnDefinition();
 }
 
-ColumnDefinition &BaseTable::columndefinitionRef(quint32 index)
+ColumnDefinition &BaseTable::columndefinition(quint32 index)
 {
     if ( index < _columnDefinitionsByIndex.size())
         return _columnDefinitionsByIndex[index];
-    throw ErrorObject(TR(QString("Invalid column index for %1 used").arg(name())));
+    throw ErrorObject(TR(QString("Invalid column index %1 used").arg(name())));
 }
 
-ColumnDefinition &BaseTable::columndefinitionRef(const QString &nme)
+ColumnDefinition &BaseTable::columndefinition(const QString &nme)
 {
     auto iter = _columnDefinitionsByName.find(nme);
     if ( iter != _columnDefinitionsByName.end()) {
@@ -288,7 +288,7 @@ void BaseTable::adjustRange(int index) {
 
 QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
     QVariant actualval= inputVar;
-    ColumnDefinition& coldef = columndefinitionRef(columnIndex);
+    ColumnDefinition& coldef = columndefinition(columnIndex);
     QString typenm = inputVar.typeName();
     IlwisTypes domtype = coldef.datadef().domain<>()->ilwisType();
     IlwisTypes valueType = coldef.datadef().domain<>()->valueType();

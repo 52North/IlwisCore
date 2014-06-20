@@ -119,8 +119,8 @@ public:
      * \param index index of the ColumnDefinition to be retrieved
      * \return a reference to columndefinition or an invalid defintion if a non existing column was retrieved
      */
-    virtual ColumnDefinition& columndefinitionRef(quint32 index) = 0;
-    virtual ColumnDefinition &columndefinitionRef(const QString &nme) = 0;
+    virtual ColumnDefinition& columndefinition(quint32 index) = 0;
+    virtual ColumnDefinition &columndefinition(const QString &nme) = 0;
 
      /**
      * sets a new column definition. The new definition must be valid.

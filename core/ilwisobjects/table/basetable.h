@@ -63,8 +63,8 @@ public:
     ColumnDefinition columndefinition(quint32 index) const;
 
     //@override
-    ColumnDefinition& columndefinitionRef(quint32 index);
-    ColumnDefinition &columndefinitionRef(const QString &nme);
+    ColumnDefinition& columndefinition(quint32 index);
+    ColumnDefinition &columndefinition(const QString &nme);
 
 
     //@override
