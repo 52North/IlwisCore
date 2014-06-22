@@ -5,16 +5,16 @@
 
 XPathParser::XPathParser(QIODevice *device): _iodevice(device)
 {
-    _query = new QXmlQuery;
 }
 
 XPathParser::~XPathParser()
 {
-    delete _query;
 }
 
-QXmlQuery *XPathParser::queryFromRoot(QString query)
+UPXmlQuery &XPathParser::queryFromRoot(QString query)
 {
+    if ( !_query)
+        _query.reset(new QXmlQuery);
     QString xPath(createXPathNamespaceDeclarations(_namespaces));
     xPath.append("doc($xml)").append(query);
     _query->bindVariable("xml", _iodevice);
@@ -22,11 +22,10 @@ QXmlQuery *XPathParser::queryFromRoot(QString query)
     return _query;
 }
 
-QXmlQuery *XPathParser::queryRelativeFrom(QXmlItem &item, QString query)
+UPXmlQuery &XPathParser::queryRelativeFrom(QXmlItem &item, QString query)
 {
-    if (!_query) {
-        _query = new QXmlQuery;
-    }
+    if ( !_query)
+        _query.reset(new QXmlQuery);
     _query->setFocus(item);
     QString xPath(createXPathNamespaceDeclarations(_namespaces));
     xPath.append(query);
