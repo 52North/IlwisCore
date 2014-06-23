@@ -299,7 +299,6 @@ public:
         return _implementation.get() != 0;
     }
 
-
 private:
     void removeCurrent() {
         if ( _implementation && _implementation->id() != i64UNDEF) {

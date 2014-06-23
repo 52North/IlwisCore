@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql xml xmlpatterns
+QT       += network sql xml
 
 DEFINES += CORE_LIBRARY
 
@@ -105,7 +105,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
     core/oshelper.cpp \
-    core/util/bresenham.cpp \
     core/ilwisobjects/operation/operationoverloads.cpp \
     core/ilwisobjects/operation/classification/featurespace.cpp \
     core/ilwisobjects/operation/classification/sampleset.cpp \
@@ -116,8 +115,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
     core/ilwisobjects/coverage/indexdefinition.cpp \
     core/catalog/dataset.cpp \
-    core/util/xpathparser.cpp \
-    core/util/xmlstreamparser.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -235,7 +232,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/coloritem.h \
     core/ilwistypes.h \
     core/oshelper.h \
-    core/util/bresenham.h \
     core/ilwisobjects/operation/operationoverloads.h \
     core/ilwisobjects/operation/classification/featurespace.h \
     core/ilwisobjects/operation/classification/sampleset.h \
@@ -249,8 +245,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/indexdefinition.h \
     core/ilwisobjects/domain/rangeiterator.h \
     core/catalog/dataset.h \
-    core/util/xpathparser.h \
-    core/util/xmlstreamparser.h
     core/util/bresenham.h
 
 
@@ -270,11 +264,13 @@ win32{
     CONFIG(debug, debug|release) {
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
-                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll"
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatternsd.dll"
     }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
-                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll"
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatterns.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
