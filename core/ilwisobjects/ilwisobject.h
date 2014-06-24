@@ -358,7 +358,7 @@ public:
      * @return the correspondending IlwisTypes
      */
     static IlwisTypes name2Type(const QString &name);
-    static quint64 internalname2id(const QString& name);
+    static quint64 internalname2id(const QString& name, bool resolve = true);
 
     /**
       ??
