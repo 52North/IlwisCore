@@ -1,12 +1,15 @@
 #ifndef XPATHPARSER_H
 #define XPATHPARSER_H
 
+#include "kernel_global.h"
+
+#include <memory>
 #include <QXmlQuery>
 #include <QXmlItem>
 #include <QIODevice>
 #include <QMapIterator>
 
-class QXmlItem;
+typedef std::unique_ptr<QXmlQuery> UPXmlQuery;
 
 class KERNELSHARED_EXPORT XPathParser
 {
@@ -27,12 +30,12 @@ public:
     }
 
 
-    QXmlQuery *queryFromRoot(QString query);
-    QXmlQuery *queryRelativeFrom(QXmlItem &item, QString query);
+    UPXmlQuery& queryFromRoot(QString query);
+    UPXmlQuery& queryRelativeFrom(QXmlItem &item, QString query);
     void addNamespaceMapping(QString prefix, QString ns);
 
 private:
-    QXmlQuery *_query;
+    UPXmlQuery _query;
     QIODevice *_iodevice;
     QMap<QString,QString> _namespaces;
 

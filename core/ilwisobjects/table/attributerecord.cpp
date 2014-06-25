@@ -83,6 +83,25 @@ QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
     return QVariant();
 }
 
+std::vector<QVariant> AttributeRecord::record(int index) const
+{
+    if ( index == -1) {
+        return _coverageTable->record(_keyRecord);
+    } else {
+        //TODO
+    }
+    return std::vector<QVariant>();
+}
+
+void AttributeRecord::record(std::vector<QVariant> values, int index) const
+{
+    if ( index == -1) {
+        return _coverageTable->record(_keyRecord, values);
+    } else {
+        //TODO
+    }
+}
+
 AttributeRecord *AttributeRecord::clone() const
 {
     return new AttributeRecord(_keyRecord, _coverageTable, _indexTable);

@@ -436,7 +436,10 @@ QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext
             localPath = localPath.left(index);
         localPath += "." + ext;
     }
-    return OSHelper::neutralizeFileName(localPath);
+    QFileInfo inf(OSHelper::neutralizeFileName(localPath));
+    if ( relative)
+        return inf.fileName();
+    return inf.absoluteFilePath();
 }
 
 Resource Resource::copy(quint64 id) const
