@@ -85,9 +85,10 @@ quint64 PointRasterCrossing::createMetadata()
     OperationResource operation({"ilwis://operations/pointrastercrossing"});
     operation.setSyntax("pointrastercrossing(inputpointmap, inputgridcoverage)");
     operation.setDescription(TR("adds columns to the attribute table with for each column the values of intersection of the raster coverage bands with the pointmap"));
-    operation.setInParameterCount({2});
+    operation.setInParameterCount({2,3});
     operation.addInParameter(0,itPOINT,  TR("intersecting point coverage"),TR("The point coverage with which the raster is to be crossed"));
     operation.addInParameter(1,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with any domain"));
+    operation.addInParameter(2,itSTRING, TR("prefix"),TR("optional prefix to create column names, if not present the system will use what is available(domain,/mapnam)"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itPOINT, TR("output point coverage"), TR("output point coverage with the extended attribute table"));
     operation.setKeywords("raster, point, intersection, cross");
@@ -116,6 +117,9 @@ OperationImplementation::State PointRasterCrossing::prepare(ExecutionContext *ct
         ERROR2(ERR_INVALID_PROPERTY_FOR_2,TR("number of points"), TR("pointrastercrossing operation"));
         return sPREPAREFAILED;
     }
+    if ( _expression.parameterCount() == 3){
+        _prefix = _expression.parm(2).value();
+    }
     AttributeTable attributes = makeAttributeTable(_inputFeatures->attributeTable());
 
     _outputFeatures = OperationHelperFeatures::initialize(_inputFeatures,itPOINT,itCOORDSYSTEM | itDOMAIN | itENVELOPE);
@@ -130,10 +134,16 @@ OperationImplementation::State PointRasterCrossing::prepare(ExecutionContext *ct
     return sPREPARED;
 }
 
-QString PointRasterCrossing::columnName(const QVariant& trackIndexValue)                                  {
-    QString columnName = _inputRaster->datadef().domain()->ilwisType() == itNUMERICDOMAIN ?
+QString PointRasterCrossing::columnName(const QVariant& trackIndexValue)
+{
+    QString columnName;
+    if ( _prefix == "") {
+    columnName = _inputRaster->datadef().domain()->ilwisType() == itNUMERICDOMAIN ?
                 QString("%1_%2").arg(_inputRaster->name()).arg(trackIndexValue.toString()) :
                 trackIndexValue.toString();
+    } else {
+        columnName = _prefix + "_" + trackIndexValue.toString();
+    }
     return columnName;
 }
 

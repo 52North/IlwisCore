@@ -23,6 +23,7 @@ private:
     IFeatureCoverage _outputFeatures;
     bool _doCoordTransform;
     quint32 _startColumn;
+    QString _prefix;
 
     NEW_OPERATION(PointRasterCrossing);
     QString columnName(const QVariant &trackIndexValue);
