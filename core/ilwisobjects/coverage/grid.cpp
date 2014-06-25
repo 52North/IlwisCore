@@ -1,5 +1,8 @@
 #include <QDebug>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 #include <QTemporaryFile>
 #include <iostream>
 #include "kernel.h"
@@ -110,9 +113,15 @@ bool GridBlockInternal::load() {
 
 
 //----------------------------------------------------------------------
-Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
+Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
     //Locker lock(_mutex);
 
+    if ( _maxLines == iUNDEF){
+        const QJsonObject& config = context()->configuration();
+        _maxLines = config["grid-blocksize"].toDouble();
+        if ( _maxLines == 0)
+            _maxLines = 500;
+    }
     setSize(sz);
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
