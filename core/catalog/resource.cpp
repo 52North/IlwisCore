@@ -78,6 +78,8 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                 factoryType = "projection";
             if ( tp & itELLIPSOID)
                 factoryType = "ellipsoid";
+            if ( tp & itGEOREF)
+                factoryType = "georef";
             QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
              _normalizedUrl = QUrl(c);
         }else {
