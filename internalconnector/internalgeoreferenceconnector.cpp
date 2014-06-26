@@ -15,7 +15,13 @@ using namespace Internal;
 
 ConnectorInterface *Ilwis::Internal::InternalGeoReferenceConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
 {
-    return new InternalGeoReferenceConnector(resource, load, options);
+    Resource res = resource;
+    if ( resource.code() == "undetermined"){
+        quint64 id = IlwisObject::internalname2id(resource.name(), false);
+        if ( id != i64UNDEF)
+            res.setId(id); // every undetermined has its own id; is already in the resource name.
+    }
+    return new InternalGeoReferenceConnector(res, load, options);
 }
 
 InternalGeoReferenceConnector::InternalGeoReferenceConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)

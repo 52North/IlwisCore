@@ -121,6 +121,16 @@ public:
     Size<T> twod() const{
         return Size<T>(_xsize, _ysize,1);
     }
+
+    QString toString() const{
+        if ( !isValid())
+            return sUNDEF;
+
+        QString strsize = QString::number(_xsize) + " x " + QString::number(_ysize);
+        if ( _zsize > 1 && !isNumericalUndef(_zsize))
+            strsize += " x " + QString::number(_zsize);
+        return strsize;
+    }
     /*!
     returns the size in the x dimension as reference. So it can function as a setter
      * \return an 32-bits signed integers
