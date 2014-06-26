@@ -570,11 +570,11 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     QString code = resource.code().mid(7);
     QStringList parts = code.split(",");
     std::map<QString, QString> parameters;
-    for(QString part : parts){
+    for(auto part : parts){
        int index = part.indexOf("=");
-       if (index < 0)
-           return 0;
-       parameters[part.left(index).trimmed()] = part.right(index + 1).trimmed();
+       QString key = part.left(index).trimmed();
+       QString value = part.mid(index + 1).trimmed();
+       parameters[key] = value;
     }
     bool isCorners = parameters["type"] == "corners";
     GeoReference *cgrf = 0;
@@ -593,6 +593,9 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
             if ( ok){
                 csy .prepare(id);
             }else {
+                QString name = kvp.second;
+                if ( name.left(4) == "epsg" ||  name.left(5) == "proj4")
+                    name = "code=" + name;
                 csy.prepare(kvp.second);
             }
             if (!csy.isValid())

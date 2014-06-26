@@ -86,7 +86,7 @@ public:
      *
      * \param grf the new georeference
      */
-    void georeference(const IGeoReference& grf) ;
+    void georeference(const IGeoReference& grf, bool resetData = false) ;
 
     /*!
      * Returns the size of this RasterCoverage<br>

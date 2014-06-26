@@ -33,23 +33,29 @@ const IGeoReference& RasterCoverage::georeference() const
     return _georef;
 }
 
-void RasterCoverage::georeference(const IGeoReference &grf)
+void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
 {
     if ( isReadOnly())
         return;
     changed(true);
 
     _georef = grf;
-    if ( _grid.isNull() == false) { // remove the current grid, all has become uncertain
+    if ( resetData)
+        _grid.reset(0);
+    else if ( _grid.isNull() == false && grf->size().twod() != _grid->size().twod() ) {
         _grid.reset(0);
 
     }
-    if ( _georef.isValid()) {
+    if ( _georef.isValid() ) {
         _georef->compute();
         coordinateSystem(grf->coordinateSystem()); // mandatory
     }
-    if (_georef.isValid())
-        _size = _georef->size();
+    if (_georef.isValid()){
+        if ( _size.isValid() && !_size.isNull() && !resetData)
+            _size = Size<>(_georef->size().xsize(), _georef->size().ysize(), _size.zsize());
+        else
+            _size = _georef->size();
+    }
     else
         _size = Size<>();
 }
