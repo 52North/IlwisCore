@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql xml
+QT       += network sql
 
 DEFINES += CORE_LIBRARY
 
@@ -265,12 +265,10 @@ win32{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll" \
-
     }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll" \
-
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
