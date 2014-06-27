@@ -11,6 +11,8 @@ class Coordinate;
 }
 namespace Ilwis {
 
+const qint32 ENDVERTEX = 100000000;
+
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 
 struct VertexCoords{
@@ -72,6 +74,7 @@ private:
 
 
     void storeLineString(const geos::geom::LineString *cline, int index, bool isInterior=false);
+    bool isAtEnd(const VertexIterator &iter) const;
 };
 
 }
@@ -82,18 +85,18 @@ inline Ilwis::VertexIterator begin(std::unique_ptr<geos::geom::Geometry> &geom) 
 
 inline Ilwis::VertexIterator end(std::unique_ptr<geos::geom::Geometry> &geom) {
     Ilwis::VertexIterator iter(geom);
-    iter += 100000000; //  at the end;
+    iter += Ilwis::ENDVERTEX; //  at the end;
     return iter;
 }
 
 inline Ilwis::VertexIterator begin(Ilwis::VertexIterator &iter) {
     Ilwis::VertexIterator iterNew(iter);
-    return iterNew - 10000000;
+    return iterNew - Ilwis::ENDVERTEX;
 }
 
 inline Ilwis::VertexIterator end(Ilwis::VertexIterator& iter) {
     Ilwis::VertexIterator iterNew(iter);
-    iterNew += 100000000; //  at the end;
+    iterNew += Ilwis::ENDVERTEX; //  at the end;
     return iterNew;
 }
 

@@ -4,17 +4,14 @@
 #
 #-------------------------------------------------
 CONFIG += plugin
-TARGET = baseoperations
-
-include(global.pri)
 
 QT       += sql
-
 QT       -= gui
 
+TARGET = baseoperations
 TEMPLATE = lib
 
-DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+include(global.pri)
 
 DEFINES += BASEOPERATIONS_LIBRARY
 
@@ -83,5 +80,7 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
+
+DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 

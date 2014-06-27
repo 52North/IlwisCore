@@ -14,7 +14,7 @@ AttributeRecord::AttributeRecord()
 {
 }
 
-AttributeRecord::AttributeRecord(quint32 keyrecord, const ITable &attTable) : _coverageTable(attTable), _keyRecord(keyrecord)
+AttributeRecord::AttributeRecord(quint32 keyrecord, const ITable &attTable,const ITable &indexTable) : _coverageTable(attTable), _indexTable(indexTable),_keyRecord(keyrecord)
 {
 }
 
@@ -66,26 +66,45 @@ quint32 AttributeRecord::columnIndex(const QString &nme, bool coverages) const
 
 void AttributeRecord::cell(quint32 colIndex, const QVariant &var, int index)
 {
-    if ( index == -1) {
+    if ( index == COVERAGEATRIB) {
         _coverageTable->setCell(colIndex, _keyRecord, var);
     } else {
-        _indexTable->setCell(colIndex,_keyRecord * index, var);
+        _indexTable->setCell(colIndex,index, var);
     }
 }
 
 
 QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
-    if ( index == -1) {
+    if ( index == COVERAGEATRIB) {
         return _coverageTable->cell(colIndex, _keyRecord, asRaw);
     } else {
-        return _indexTable->cell(colIndex,_keyRecord * index, asRaw);
+        return _indexTable->cell(colIndex,index, asRaw);
     }
     return QVariant();
 }
 
+std::vector<QVariant> AttributeRecord::record(int index) const
+{
+    if ( index == -1) {
+        return _coverageTable->record(_keyRecord);
+    } else {
+        //TODO
+    }
+    return std::vector<QVariant>();
+}
+
+void AttributeRecord::record(std::vector<QVariant> values, int index) const
+{
+    if ( index == -1) {
+        return _coverageTable->record(_keyRecord, values);
+    } else {
+        //TODO
+    }
+}
+
 AttributeRecord *AttributeRecord::clone() const
 {
-    return new AttributeRecord(_keyRecord, _coverageTable);
+    return new AttributeRecord(_keyRecord, _coverageTable, _indexTable);
 }
 
 bool AttributeRecord::isValid() const

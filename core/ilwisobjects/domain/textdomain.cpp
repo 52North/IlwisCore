@@ -38,6 +38,11 @@ bool TextDomain::isCompatibleWith(const IDomain& dom) const {
     return true;
 }
 
+bool TextDomain::isOrdered() const
+{
+    return false;
+}
+
 IlwisTypes TextDomain::ilwisType() const
 {
     return itTEXTDOMAIN;

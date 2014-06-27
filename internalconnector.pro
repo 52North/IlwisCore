@@ -25,7 +25,8 @@ HEADERS += \
     internalconnector/epsg.h \
     internalconnector/internalfeaturecoverageconnector.h \
     internalconnector/internalrastercoverageconnector.h \
-    internalconnector/internalcatalogexplorer.h
+    internalconnector/internalcatalogexplorer.h \
+    internalconnector/internalgeoreferenceconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     internalconnector/projections/projectionimplementationinternal.cpp \
     internalconnector/internalfeaturecoverageconnector.cpp \
     internalconnector/internalrastercoverageconnector.cpp \
-    internalconnector/internalcatalogexplorer.cpp
+    internalconnector/internalcatalogexplorer.cpp \
+    internalconnector/internalgeoreferenceconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

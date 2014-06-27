@@ -58,24 +58,43 @@ bool MasterCatalog::prepare()
 }
 
 
-bool MasterCatalog::addContainer(const QUrl &location)
+bool MasterCatalog::addContainer(const QUrl &inlocation)
 {
-    if ( !location.isValid()) // it is valid to try this with an empty url; just wont do anything
+    if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
 
-    QString loc = location.toString();
+    QString original = inlocation.toString().trimmed();
+    if ( Resource::isRoot(original))
+        return true;
+
+    QString loc = original;
+    if ( loc[loc.size() - 1] == '/' ){
+        loc = loc.left(loc.size() - 1);
+        int count = loc.count("/");
+        if ( loc.indexOf(":///") != -1){
+            if ( count == 3)
+                loc = original;
+        }else if ( loc.indexOf("://") != -1){
+            if ( count == 2){
+                loc= original;
+            }
+        }
+    }
+
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
          loc.indexOf("ilwis://system") == 0 ||
          loc.indexOf("ilwis://operations") == 0 ||
          loc == "file://" ||
+         loc == "file:/" ||
          loc == "ilwis:/" ||
          loc.isEmpty())
         return true;
+    QUrl location(loc);
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    ICatalog catalog(location.toString());
+    ICatalog catalog(loc);
     if ( !catalog.isValid()){
         return false;
     }
@@ -184,9 +203,11 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
 }
 
-quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp) const
+quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive) const
 {
-    auto query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
+    QString query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
+    if (!casesensitive)
+       query = QString("select itemid,type from mastercatalog where lower(resource) = '%1'").arg(url.toString().toLower()) ;
     auto results = kernel()->database().exec(query);
     while ( results.next()) {
         auto rec = results.record();
@@ -212,30 +233,12 @@ Resource MasterCatalog::id2Resource(quint64 iid) const {
 
 quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
 {
-    if ( name.indexOf(NAME_ALIAS) == 0) {
-        QString sid = name.mid(SZ_NAME_ALIAS);
-        bool ok;
-        quint64 id = sid.toLongLong(&ok);
-        if (ok){
-            ESPIlwisObject data = mastercatalog()->get(id);
-            if ( data.get() != 0) {
-                return data->id();
-            }
-        }
+    quint64 id = IlwisObject::internalname2id(name);
+    if ( id == i64UNDEF){
+        Resource resource = name2Resource(name,tp);
+        id =  resource.id();
     }
-    if ( name.left(11) == ANONYMOUS_PREFIX) { // internal objects are not in the catalog
-        QString sid = name.mid(11);
-        bool ok;
-        quint64 id = sid.toLongLong(&ok);
-        if (ok){
-            ESPIlwisObject data = mastercatalog()->get(id);
-            if ( data.get() != 0) {
-                return data->id();
-            }
-        }
-    }
-    Resource resource = name2Resource(name,tp);
-    return resource.id();
+    return id;
 }
 
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
@@ -264,7 +267,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
     if (!resolvedName.isValid())
         return Resource();
 
-
+    resolvedName = OSHelper::neutralizeFileName(resolvedName.toString());
     auto query = QString("select * from mastercatalog where resource = '%1' and (type & %2) != 0").arg(resolvedName.toString()).arg(tp);
     auto results = kernel()->database().exec(query);
     if ( results.next()) {

@@ -132,6 +132,22 @@ IlwisObject *Catalog::clone()
     return catalog;
 }
 
+IIlwisObject Catalog::createObject(const QVariant &indexValue) const
+{
+    bool ok;
+    IIlwisObject obj(indexValue.toUInt(&ok));
+    if (ok)
+        return obj;
+    return IIlwisObject();
+}
+
+Resource Catalog::item(quint32 index) const
+{
+    if ( index < _items.size())
+        return _items[index];
+    return Resource();
+}
+
 void Catalog::addItemsPrivate(const std::vector<Resource> &itemlist, bool doclear)
 {
     if ( doclear)
@@ -148,6 +164,7 @@ void Catalog::copyTo(IlwisObject* obj){
     IlwisObject::copyTo(obj);
     Catalog *catalog = static_cast<Catalog *>(obj);
     catalog->_parent = _parent;
+    catalog->prepare();
 }
 
 

@@ -78,6 +78,8 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                 factoryType = "projection";
             if ( tp & itELLIPSOID)
                 factoryType = "ellipsoid";
+            if ( tp & itGEOREF)
+                factoryType = "georef";
             QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
              _normalizedUrl = QUrl(c);
         }else {
@@ -254,7 +256,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
         return;
     }
     QFileInfo inf(_normalizedUrl.toLocalFile());
-    if ( urlTxt != "file://") {
+    if ( urlTxt != "file://" && urlTxt != "file:///") {
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
                 if ( !isRoot(inf.absolutePath())){
@@ -297,8 +299,9 @@ bool Resource::hasUrlQuery() const
 
 QUrl Resource::container(int level) const
 {
-    if ( level < _container.size())
-        return _container[level];
+    if ( level < _container.size()){
+            return _container[level];
+    }
     return QUrl();
 }
 
@@ -435,7 +438,10 @@ QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext
             localPath = localPath.left(index);
         localPath += "." + ext;
     }
-    return OSHelper::neutralizeFileName(localPath);
+    QFileInfo inf(OSHelper::neutralizeFileName(localPath));
+    if ( relative)
+        return inf.fileName();
+    return inf.absoluteFilePath();
 }
 
 Resource Resource::copy(quint64 id) const
@@ -496,24 +502,18 @@ void Resource::checkUrl(IlwisTypes tp) {
             }else
                 newName = "Unknown_csy_" + QString::number(id());
         }
-        if ( index2 != -1)
+        if ( index2 != -1){
+            if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
+                rname = rname.mid(index2 + 1);
+            }
             code(rname);
+        }
         name(newName, false);
     }
 }
 
 bool Resource::isRoot(const QString& txt) {
-    bool ok1 = false;
-    bool ok2 = false;
-#ifdef Q_OS_WIN
-    ok1 = txt.indexOf(QRegExp("file:///[a-z,A-z]:")) == 0;
-    ok2 =  txt.size() <= 11;
-    if (!(ok1 && ok2)) {
-        ok1 = txt.indexOf(QRegExp("[a-z,A-z]:")) == 0;
-        ok2 = txt.size() <= 3;
-    }
-#endif
-    return ok1 & ok2;
+    return txt.endsWith("//");
 }
 
 bool Resource::isRoot() const {

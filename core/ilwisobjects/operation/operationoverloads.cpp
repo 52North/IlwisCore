@@ -69,10 +69,24 @@ IRasterCoverage operator/(const IRasterCoverage &raster1, double number)
     return doRasterOperation(stmt);
 }
 
+IRasterCoverage operator/(double number,const IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=%2 / %3").arg(name).arg(number).arg(raster1->name());
+    return doRasterOperation(stmt);
+}
+
 IRasterCoverage operator-(const IRasterCoverage &raster1, double number)
 {
     QString name = ANONYMOUS_PREFIX;
     QString stmt = QString("script %1=%2 - %3").arg(name).arg(raster1->name()).arg(number);
+    return doRasterOperation(stmt);
+}
+
+IRasterCoverage operator-(double number,const IRasterCoverage &raster1)
+{
+    QString name = ANONYMOUS_PREFIX;
+    QString stmt = QString("script %1=%2 - %3").arg(name).arg(number).arg(raster1->name());
     return doRasterOperation(stmt);
 }
 

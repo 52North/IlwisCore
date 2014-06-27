@@ -82,9 +82,18 @@ void ColorDomain::range(Range *colorrange)
     _range = QSharedPointer<ColorRange>(static_cast<ColorRange *>(colorrange));
 }
 
+bool ColorDomain::isOrdered() const
+{
+    return false;
+}
+
 QSharedPointer<Range> ColorDomain::getRange() const
 {
     return _range;
+}
+
+void ColorDomain::setParent(const IDomain& dm){
+
 }
 
 

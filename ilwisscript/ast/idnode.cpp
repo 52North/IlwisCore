@@ -50,15 +50,16 @@ bool IDNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx) {
     if ( _type != itUNKNOWN){
         _text = Ilwis::context()->workingCatalog()->resolve(_text);
         return true;
+    }else {
+        quint64 id = mastercatalog()->name2id(_text);
+        if ( id != i64UNDEF){
+            IIlwisObject obj = mastercatalog()->get(id);
+            if ( obj.isValid()){
+                _type = obj->ilwisType();
+                return true;
+            }
+        }
     }
-
-    // see if it is an old style reference
-    _type = tentativeFileType(".mpr");
-    if ( _type != itUNKNOWN)
-        return true;
-    _type = tentativeFileType(".tbt");
-    if ( _type != itUNKNOWN)
-        return true;
 
     return false;
 }

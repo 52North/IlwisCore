@@ -8,15 +8,9 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql xml
-
-TEMPLATE = lib
+QT       += network sql xml xmlpatterns
 
 DEFINES += CORE_LIBRARY
-
-win32{
-    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
-}
 
 SOURCES += core/kernel.cpp \
     core/version.cpp \
@@ -119,7 +113,11 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/interval.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
+    core/ilwisobjects/coverage/indexdefinition.cpp \
+    core/catalog/dataset.cpp \
+    core/util/xpathparser.cpp \
+    core/util/xmlstreamparser.cpp
     core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
@@ -247,7 +245,12 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
     core/kernel_global.h \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
-    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h
+    core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h \
+    core/ilwisobjects/coverage/indexdefinition.h \
+    core/ilwisobjects/domain/rangeiterator.h \
+    core/catalog/dataset.h \
+    core/util/xpathparser.h \
+    core/util/xmlstreamparser.h
     core/util/bresenham.h
 
 
@@ -304,7 +307,6 @@ win32{
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
-
 resources.files = core/resources/referencesystems.csv \
     core/resources/projections.csv \
     core/resources/numericdomains.csv \
@@ -312,7 +314,14 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv
-resources.path = $$DLLDESTDIR/resources
+
+win32{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
+    resources.path = $$DLLDESTDIR/resources
+}
+unix {
+    resources.path = $$DESTDIR/resources
+}
 
 license.files =  LICENSE-2.0.txt
 license.path =   $$PWD/../output/$$PLATFORM$$CONF/bin
@@ -321,8 +330,3 @@ installer.files =installer.nsi
 installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
-
-
-
-
-

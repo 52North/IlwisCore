@@ -276,7 +276,6 @@ public:
      * @return true when this object is ANONYMOUS
      */
     bool isAnonymous() const;
-
     /*!
      * \brief source the location of the source that represents the physical read origin of this object
      * \return url that is sufficient to find the source
@@ -359,6 +358,7 @@ public:
      * @return the correspondending IlwisTypes
      */
     static IlwisTypes name2Type(const QString &name);
+    static quint64 internalname2id(const QString& name, bool resolve = true);
 
     /**
       ??

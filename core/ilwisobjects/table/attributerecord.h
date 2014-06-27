@@ -12,17 +12,21 @@ class KERNELSHARED_EXPORT AttributeRecord
 {
 public:
     AttributeRecord();
-    AttributeRecord(quint32 keyrecord, const ITable& attTable);
+    AttributeRecord(quint32 keyrecord, const ITable& attTable, const Ilwis::ITable &indexTable);
 
     quint32 columnCount(bool coverages=true) const;
     ColumnDefinition columndefinition(const QString& nme, bool coverages=true) const;
     ColumnDefinition columndefinition(int colindex, bool coverages=true) const;
     quint32 columnIndex(const QString& nme, bool coverages=true) const;
+    bool isValid() const;
+
     void cell(quint32 colIndex, const QVariant &var, int index=-1);
     QVariant cell(quint32 colIndex, int index, bool asRaw);
-    //void setTable(const ITable& tbl, const QString& keyColumn, int indexCount=COVERAGETABLE);
-    bool isValid() const;
+    std::vector<QVariant> record(int index = -1) const;
+    void record(std::vector<QVariant> values, int index = -1) const;
+
     AttributeRecord *clone() const;
+
 private:
     void indexKeyColumn();
     void indexVerticalIndex(int index);

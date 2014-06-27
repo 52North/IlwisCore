@@ -1,6 +1,8 @@
 #ifndef COLORRANGE_H
 #define COLORRANGE_H
 
+#include <QColor>
+
 namespace Ilwis{
 
 class ColorItem;
@@ -9,7 +11,7 @@ typedef QSharedPointer<ColorItem> SPColorItem;
 class KERNELSHARED_EXPORT ColorRange : public Range
 {
 public:
-    enum ColorModel{cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
+    enum ColorModel{cmNONE, cmRGBA, cmHSLA, cmCYMKA, cmGREYSCALE};
 
     ColorRange(IlwisTypes tp, ColorModel clrmodel);
     ColorModel defaultColorModel() const;
@@ -39,6 +41,8 @@ public:
     bool contains(ColorRange *v, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
     IlwisTypes valueType() const;
+    QColor valueAt(quint32& index, const Ilwis::Range *rng);
+    quint32 count() const;
 private:
     QColor _limit1;
     QColor _limit2;

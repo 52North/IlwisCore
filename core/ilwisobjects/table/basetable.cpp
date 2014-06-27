@@ -61,14 +61,13 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
         return false;
     changed(true);
 
-    if ( _columnDefinitionsByName.contains(def.name())) {
-        //kernel()->issues()->log(TR("Adding duplicate column %1 to %2").arg(def.name(), name()),IssueObject::itWarning);
+    if ( _columnDefinitionsByName.find(def.name()) != _columnDefinitionsByName.end()) { // no duplicates
         return false;
     }
     ColumnDefinition coldef = def;
     coldef.columnindex(_columnDefinitionsByIndex.size());
-    _columnDefinitionsByName[coldef.name()] = coldef;
-    _columnDefinitionsByIndex[coldef.columnindex()] = _columnDefinitionsByName[coldef.name()];
+    _columnDefinitionsByName[coldef.name()] = _columns;
+    _columnDefinitionsByIndex.push_back(coldef);
     _columns = _columnDefinitionsByName.size();
 
     return true;
@@ -76,19 +75,7 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
 
 bool BaseTable::addColumn(const QString &name, const IDomain& domain)
 {
-    if ( isReadOnly())
-        return false;
-    changed(true);
-
-    if ( _columnDefinitionsByName.contains(name)) {
-        kernel()->issues()->log(TR("Adding duplicate column %1").arg(name),IssueObject::itWarning);
-        return false;
-    }
-    _columnDefinitionsByName[name] = ColumnDefinition(name, domain,_columnDefinitionsByName.size());
-    _columnDefinitionsByIndex[_columnDefinitionsByName[name].id()] = _columnDefinitionsByName[name];
-    _columns = _columnDefinitionsByName.size();
-
-    return true;
+    return addColumn(ColumnDefinition(name, domain,_columns));
 }
 
 bool BaseTable::addColumn(const QString &name, const QString &domainname)
@@ -108,33 +95,34 @@ ColumnDefinition BaseTable::columndefinition(const QString &nme) const
 {
     auto iter = _columnDefinitionsByName.find(nme);
     if ( iter != _columnDefinitionsByName.end()) {
-        if (iter.value().isChanged()) {
-            int index = columnIndex(nme);
-            const_cast<BaseTable *>(this)->adjustRange(index);
-        }
-       return iter.value();
+       ColumnDefinition coldef = _columnDefinitionsByIndex[(*iter).second];
+       return coldef;
     }
     return ColumnDefinition();
 }
 
 ColumnDefinition BaseTable::columndefinition(quint32 index) const
 {
-    auto iter = _columnDefinitionsByIndex.find(index);
-    if ( iter != _columnDefinitionsByIndex.end()) {
-        if (iter.value().isChanged()) {
-            const_cast<BaseTable *>(this)->adjustRange(index);
-        }
-        return iter.value();
-    }
+    if ( index < _columnDefinitionsByIndex.size())
+        return _columnDefinitionsByIndex[index];
     return ColumnDefinition();
 }
 
-ColumnDefinition &BaseTable::columndefinition(quint32 index)
+ColumnDefinition &BaseTable::columndefinitionRef(quint32 index)
 {
-    if ( _columnDefinitionsByIndex[index].isChanged()) {
-        adjustRange(index);
+    if ( index < _columnDefinitionsByIndex.size())
+        return _columnDefinitionsByIndex[index];
+    throw ErrorObject(TR(QString("Invalid column index for %1 used").arg(name())));
+}
+
+ColumnDefinition &BaseTable::columndefinitionRef(const QString &nme)
+{
+    auto iter = _columnDefinitionsByName.find(nme);
+    if ( iter != _columnDefinitionsByName.end()) {
+       ColumnDefinition& coldef = _columnDefinitionsByIndex[(*iter).second];
+       return coldef;
     }
-    return _columnDefinitionsByIndex[index];
+    throw ErrorObject(TR(QString("Invalid column name %1 used").arg(name())));
 }
 
 void BaseTable::columndefinition(const ColumnDefinition &coldef)
@@ -142,18 +130,16 @@ void BaseTable::columndefinition(const ColumnDefinition &coldef)
     if ( coldef.id() >=  _columnDefinitionsByIndex.size())     {
         addColumn(coldef.name(), coldef.datadef().domain<>());
     } else {
-        auto iter1 = _columnDefinitionsByIndex.find(coldef.id());
-        auto iter2 = _columnDefinitionsByName.find(coldef.name());
-        if ( iter1 != _columnDefinitionsByIndex.end()) {
-            _columnDefinitionsByName.remove(iter1.value().name());
-            _columnDefinitionsByIndex.remove(coldef.id());
+        auto iter1 = _columnDefinitionsByName.find(coldef.name());
+        if ( iter1 != _columnDefinitionsByName.end()) {
+            ColumnDefinition cdef = coldef;
+            cdef.columnindex((*iter1).second);
+            _columnDefinitionsByIndex[cdef.columnindex()] = cdef;
+            (*iter1).second = cdef.columnindex();
 
-        }else if ( iter2 != _columnDefinitionsByName.end()) {
-            _columnDefinitionsByIndex.remove(iter2.value().id());
-            _columnDefinitionsByName.remove(coldef.name());
+        }else {
+            addColumn(coldef);
         }
-        _columnDefinitionsByName[coldef.name()] = coldef;
-        _columnDefinitionsByIndex[coldef.id()] = coldef;
     }
 }
 
@@ -215,7 +201,7 @@ quint32 BaseTable::columnIndex(const QString &nme) const
         //kernel()->issues()->log(TR(ERR_COLUMN_MISSING_2).arg(nme).arg(name()),IssueObject::itWarning);
         return iUNDEF;
     }
-    return iter.value().id();
+    return (*iter).second;
 }
 
 void BaseTable::columnCount(int cnt)
@@ -279,7 +265,6 @@ void BaseTable::adjustRange(int index) {
                 rng->max(vmax);
                 if (!hasfraction)
                     rng->resolution(1);
-                _columnDefinitionsByName[coldef.name()].datadef() = coldef.datadef();
             }
         }
     } else if ( hasType(coldef.datadef().domain<>()->ilwisType(), itITEMDOMAIN)) {
@@ -295,7 +280,6 @@ void BaseTable::adjustRange(int index) {
                     rng->add(item->clone());
                 }
             }
-            _columnDefinitionsByName[coldef.name()] = coldef;
         }
     }
     coldef.changed(false);
@@ -304,36 +288,21 @@ void BaseTable::adjustRange(int index) {
 
 QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
     QVariant actualval= inputVar;
-    if ( QString(inputVar.typeName()) == "QString"){
-        QString txt = inputVar.toString();
-        ColumnDefinition& coldef = columndefinition(columnIndex);
-        if ( !coldef.isValid())
-            return QVariant();
-
-        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itTEXTDOMAIN)) {
-            return actualval;
-        }
-        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itITEMDOMAIN) && txt == sUNDEF){
+    ColumnDefinition& coldef = columndefinitionRef(columnIndex);
+    QString typenm = inputVar.typeName();
+    IlwisTypes domtype = coldef.datadef().domain<>()->ilwisType();
+    IlwisTypes valueType = coldef.datadef().domain<>()->valueType();
+    IDomain dm = coldef.datadef().domain<>();
+    if ( domtype == itITEMDOMAIN){
+        if ( inputVar == sUNDEF){
             return QVariant((int)iUNDEF);
-        }
-        if ( hasType(coldef.datadef().domain<>()->ilwisType(),itNUMERICDOMAIN) && txt == sUNDEF){
-            return rUNDEF;
-        }
-        bool ok;
-        double v = inputVar.toDouble(&ok);
-        if ( ok ){
-            actualval = v;
-        } else {
-            SPItemRange rng1 = coldef.datadef().domain<>()->range<ItemRange>();
-            if (rng1.isNull()){
-                WARN2(WARN_INVALID_OBJECT," type for non-ItemDomain of item "+ txt, "column "+coldef.name());
-                return QVariant(rUNDEF);
-            }
+        } else if ( typenm == "QString"){
+            actualval = dm->impliedValue(inputVar);
+            SPItemRange rng1 = dm->range<ItemRange>();
             SPItemRange rng2 = coldef.datadef().range<ItemRange>();
 
-            SPDomainItem item = rng1->item(txt);
+            SPDomainItem item = rng1->item(inputVar.toString());
             if ( item.isNull()){
-                WARN2(WARN_INVALID_OBJECT,"domain item '"+txt+"'", "column "+coldef.name());
                 return QVariant((int)iUNDEF);
             }
             if ( !rng2->contains(item->name())){
@@ -342,11 +311,33 @@ QVariant BaseTable::checkInput(const QVariant& inputVar, quint32 columnIndex)  {
             actualval = item->raw();
         }
 
+    }else if ( domtype == itNUMERICDOMAIN){
+        if (typenm == "QString")
+            actualval =  dm->impliedValue(inputVar);
+        if ( hasType(valueType,itDATETIME) && actualval.value<Ilwis::Time>() == tUNDEF)
+            return actualval;
+        else if (isNumericalUndef(actualval.toDouble()))
+            return rUNDEF;
+        if (! dm->contains(actualval))
+            actualval = rUNDEF;
+        else {
+            SPNumericRange rng = coldef.datadef().range<NumericRange>();
+            if ( !rng.isNull()){
+                if ( hasType(valueType,itDATETIME))
+                    rng->add(actualval.value<Ilwis::Time>());
+                else
+                    rng->add(actualval.toDouble());
+            }
+        }
+    } else if ( domtype == itTEXTDOMAIN){
+        return dm->impliedValue(inputVar);
     }
     return actualval;
 }
 
-void BaseTable::initValuesColumn(const ColumnDefinition& def){
+
+void BaseTable::initValuesColumn(const QString& colname){
+    ColumnDefinition def = columndefinition(colname);
     if ( !def.isValid()){
         ERROR2(WARN_INVALID_OBJECT,TR("column definition"), name());
         return;
@@ -382,6 +373,11 @@ void BaseTable::initRecord(std::vector<QVariant> &values) const
             values[i] = rUNDEF;
         }
     }
+}
+
+void BaseTable::removeRecord(quint32 rec)
+{
+    --_rows;
 }
 
 

@@ -7,6 +7,8 @@
 #include "range.h"
 #include "geos/geom/Geometry.h"
 #include "geos/geom/Envelope.h"
+#include "geos/io/WKTReader.h"
+//#include "geometryhelper.h"
 
 namespace Ilwis {
 /*!
@@ -158,7 +160,27 @@ public:
     }
 
     bool contains(const QVariant& value, bool inclusive = true) const {
-        //TODO:
+//        QString typeNm = value.typeName();
+//        if ( typeNm == "QString"){
+//            QString wkt = value.toString();
+//            geos::io::WKTReader reader;
+//            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+//            return contains(geom);
+//        }else if ( typeNm == "Ilwis::BoundingBox"){
+//            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
+//            if ( !bb.isValid())
+//                return false;
+//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+//            return ok;
+//        }else if ( typeNm == "Ilwis::Envelope"){
+//            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
+//            if ( ! bb.isValid())
+//                return false;
+//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+//            return ok;
+//        }
         return false;
     }
 
@@ -210,6 +232,10 @@ public:
             ok &= this->min_corner().z == 0 && this->max_corner().z == 0;
         }
         return ok;
+    }
+
+    quint32 count() const{
+        return 4;
     }
 
     Box<PointType>& operator=(Box<PointType>&& box) {
@@ -439,6 +465,37 @@ QString toString() const {
                     arg(this->max_corner().y);
     }
 
+}
+PointType valueAt(quint32& index, const Range *rng){
+    if ( rng && (rng->count() == 4 ||  rng->count() == 8)){
+        const Box<PointType> *box = dynamic_cast<const Box<PointType> *>(rng);
+        if ( box){
+            switch (index) {
+            case 0:
+                return box->min_corner();
+            case 1:
+                return PointType(box->max_corner().x,box->min_corner().x, box->min_corner().z);
+            case 2:
+                return PointType(box->max_corner().x,box->max_corner().x, box->min_corner().z);
+            case 3:
+                return PointType(box->min_corner().x,box->max_corner().x, box->min_corner().z);
+            }
+            if ( is3D()){
+                switch (index) {
+                case 4:
+                    return box->min_corner();
+                case 5:
+                    return PointType(box->max_corner().x,box->min_corner().x, box->max_corner().z);
+                case 6:
+                    return PointType(box->max_corner().x,box->max_corner().x, box->max_corner().z);
+                case 7:
+                    return PointType(box->min_corner().x,box->max_corner().x, box->max_corner().z);
+                }
+            }
+        }
+    }
+    index = iUNDEF;
+    return PointType();
 }
 
 private:

@@ -168,6 +168,15 @@ void IndexedIdentifierRange::clear()
     //_start.reset(0);
 }
 
+SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itINDEXEDITEM)){
+        IndexedIdentifierRange *idrange = static_cast<IndexedIdentifierRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
 
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
@@ -269,7 +278,7 @@ void NamedIdentifierRange::remove(const QString &name)
         return;
     quint32 iraw = (*iter).second->raw();
     _byName.erase(name);
-    _byRaw[iraw].reset(0);
+    _byRaw.erase(_byRaw.begin() + iraw);
     for(int i=0; i < count(); ++i) {
         if ( _byOrder[i]->name() == name){
             _byOrder.erase(_byOrder.begin() + i);
@@ -285,12 +294,18 @@ QVariant NamedIdentifierRange::impliedValue(const QVariant& v) const
     bool ok;
     quint32 index = v.toUInt(&ok);
     if (!ok){
+        QString typName = v.typeName();
+        if ( typName == "QString"){
+            SPNamedIdentifier it = item(v.toString()).staticCast<NamedIdentifier>();
+            if (it)
+                return it->raw();
+        }
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
-        return sUNDEF;
+        return QVariant();
     }
     SPNamedIdentifier it = item(index).staticCast<NamedIdentifier>();
     if (!it)
-        return sUNDEF;
+        return QVariant();
 
     return it->name();
 }
@@ -419,6 +434,16 @@ NamedIdentifierRange *NamedIdentifierRange::merge(const QSharedPointer<NamedIden
     return newRange;
 }
 
+SPDomainItem NamedIdentifierRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itNAMEDITEM)){
+        NamedIdentifierRange *idrange = static_cast<NamedIdentifierRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
+
 //---------------------------------------------------------
 ThematicRange::ThematicRange()
 {
@@ -442,3 +467,23 @@ ThematicRange &ThematicRange::operator<<(const QString &itemdef)
     add(new ThematicItem(parts));
     return *this;
 }
+
+Range *ThematicRange::clone() const
+{
+    ThematicRange *tr = new ThematicRange();
+    for(auto kvp: _byName) {
+        tr->add( kvp.second->clone());
+    }
+    return tr;
+}
+
+SPDomainItem ThematicRange::valueAt(quint32 index, Range *rng){
+    if ( rng && hasType(rng->valueType(), itTHEMATICITEM)){
+        ThematicRange *idrange = static_cast<ThematicRange *>(rng);
+        if ( index < idrange->count()){
+            return idrange->item(index);
+        }
+    }
+    return SPDomainItem();
+}
+

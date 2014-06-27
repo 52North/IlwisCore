@@ -101,6 +101,7 @@ Proj4Def Proj4Parameters::lookupDefintion(const QString& proj4Def) {
         Proj4Parameters defCur((*iter).second._proj4def);
         if (defCur == defIn)
             return (*iter).second;
+        ++iter;
     }
     return Proj4Def();
 }

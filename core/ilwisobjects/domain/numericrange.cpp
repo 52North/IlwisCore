@@ -18,7 +18,7 @@ NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
 
 bool NumericRange::isValid() const
 {
-    return _min <= _max ;
+    return _min <= _max && _resolution >= 0;
 }
 
 Range *NumericRange::clone() const {
@@ -60,7 +60,8 @@ void NumericRange::max(double v)
 }
 
 void NumericRange::resolution(double step) {
-    _resolution = step;
+    if ( step >= 0)
+        _resolution = step;
 }
 
 double NumericRange::resolution() const {
@@ -80,6 +81,17 @@ NumericRange& NumericRange::operator+=(double v)
             min(v);
     }
     return *this;
+}
+
+void NumericRange::add(double v)
+{
+    if ( isNumericalUndef(v))
+        return;
+
+    if ( v < min())
+         min(v);
+    if ( v > max())
+        max(v);
 }
 
 bool NumericRange::operator==(const NumericRange& vr) {
@@ -106,7 +118,7 @@ QString NumericRange::toString() const {
     if (isfloat){
         QString rng = QString::number(_min,'f',n);
         rng += ' ';
-        rng += QString::number(_min,'f',n);
+        rng += QString::number(_max,'f',n);
         if ( _resolution != 0){
             rng += ' ';
             rng += QString::number(_resolution) ;
@@ -115,13 +127,14 @@ QString NumericRange::toString() const {
     }
     QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_resolution);
     return rng;
-
-
 }
 
 QVariant NumericRange::impliedValue(const QVariant &v) const
 {
     bool ok;
+    if ( v == sUNDEF)
+        return _undefined;
+
     double vtemp = v.toDouble(&ok);
     if (!ok){
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "number");
@@ -231,10 +244,34 @@ void NumericRange::clear()
 
 }
 
+quint32 NumericRange::count() const
+{
+    if ( _resolution == 0 || !isValid())
+        return iUNDEF;
+
+    return 1 + distance() / _resolution;
+}
+
 NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),
                             std::max(nr1->max(), nr2->max()),
                             std::min(nr1->resolution(), nr2->resolution()));
+}
+double NumericRange::valueAt(quint32& index, const Range *rng)
+{
+    if ( rng && hasType(rng->valueType(), itNUMBER) ){
+        const NumericRange *numrange = static_cast<const NumericRange *>(rng);
+        if ( numrange->resolution() != 0 ) {
+            double v = numrange->min() + numrange->resolution() * index;
+            if ( v > numrange->max())
+                v = rUNDEF;
+            return v;
+        }
+    }
+    index = iUNDEF;
+    return rUNDEF;
+
+
 }
 

@@ -25,7 +25,8 @@ SOURCES += \
     rasteroperations/classification/rasterslicing.cpp \
     rasteroperations/classification/areanumbering.cpp \
     rasteroperations/filter/rankorderrasterfilter.cpp \
-    rasteroperations/filter/linearrasterfilter.cpp
+    rasteroperations/filter/linearrasterfilter.cpp \
+    rasteroperations/transposeraster.cpp
 
 
 HEADERS += \
@@ -38,7 +39,8 @@ HEADERS += \
     rasteroperations/classification/rasterslicing.h \
     rasteroperations/classification/areanumbering.h \
     rasteroperations/filter/rankorderrasterfilter.h \
-    rasteroperations/filter/linearrasterfilter.h
+    rasteroperations/filter/linearrasterfilter.h \
+    rasteroperations/transposeraster.h
 
 
 OTHER_FILES += \ 

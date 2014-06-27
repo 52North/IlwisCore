@@ -25,6 +25,7 @@
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
 #include "internalprjmplfactory.h"
+#include "internalgeoreferenceconnector.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -52,6 +53,7 @@ void InternalModule::prepare()
     factory->addCreator(itRASTER,"internal", InternalRasterCoverageConnector::create);
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
     factory->addCreator(itFEATURE,"internal", InternalFeatureCoverageConnector::create);
+    factory->addCreator(itGEOREF,"internal", InternalGeoReferenceConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();

@@ -1,5 +1,8 @@
 #include <QDebug>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 #include <QTemporaryFile>
 #include <iostream>
 #include "kernel.h"
@@ -110,9 +113,15 @@ bool GridBlockInternal::load() {
 
 
 //----------------------------------------------------------------------
-Grid::Grid(const Size<> &sz, int maxLines) : _maxLines(maxLines){
+Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
     //Locker lock(_mutex);
 
+    if ( _maxLines == iUNDEF){
+        const QJsonObject& config = context()->configuration();
+        _maxLines = config["grid-blocksize"].toDouble();
+        if ( _maxLines == 0)
+            _maxLines = 500;
+    }
     setSize(sz);
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
@@ -258,6 +267,26 @@ void Grid::setSize(const Size<>& sz) {
     if ( _size.zsize() == 0)
         _size.zsize(1); // 1 grid at least in the grid;
 
+}
+
+void Grid::setBandProperties(int n){
+    _size.zsize(_size.zsize() + n);
+    quint32 oldBlocks = _blocks.size();
+    quint32 newBlocks = numberOfBlocks();
+    _blocks.resize(newBlocks);
+    _blockSizes.resize(newBlocks);
+    _blockOffsets.resize(newBlocks);
+    qint32 totalLines = _size.ysize();
+
+    for(quint32 block = oldBlocks; block < _blocks.size(); ++block) {
+        int linesPerBlock = std::min((qint32)_maxLines, totalLines);
+        _blocks[block] = new GridBlockInternal(linesPerBlock, _size.xsize());
+        _blockSizes[block] = linesPerBlock * _size.xsize();
+        _blockOffsets[block] = block == 0 ? 0 : _blockOffsets[block-1] +  _blockSizes[block];
+        totalLines -= _maxLines;
+        if ( totalLines <= 0) // to next band
+            totalLines = _size.ysize();
+    }
 }
 
 bool Grid::prepare() {

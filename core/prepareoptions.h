@@ -6,7 +6,7 @@ namespace Ilwis {
 // optional parameter for the creation process
 struct PrepareOptions {
     PrepareOptions()  {}
-    PrepareOptions(const QString filter) { _values["filter"] = filter; }
+    PrepareOptions(const QString& filter) { _values["filter"] = filter; }
     PrepareOptions(double undef) { _values["undefined"] = undef; }
     PrepareOptions(const QString& key, const QString& value) { _values[key] = value; }
 

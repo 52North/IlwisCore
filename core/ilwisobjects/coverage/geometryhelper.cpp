@@ -58,6 +58,9 @@ geos::geom::Geometry* GeometryHelper::fromWKT(const QString& wkt, const ICoordin
 }
 
 IlwisTypes GeometryHelper::geometryType(const geos::geom::Geometry *geom){
+    if ( geom == 0)
+        return itUNKNOWN;
+
     switch ( geom->getGeometryTypeId()){
     case geos::geom::GEOS_POINT:
     case geos::geom::GEOS_MULTIPOINT:

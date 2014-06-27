@@ -79,18 +79,6 @@ public:
     DataDefinition &datadef();
 
     /**
-     * @brief isMultiple
-     * @return
-     */
-    bool isMultiple() const;
-
-    /**
-     * Sets the multiple flag
-     * @param yesno the new value of the multiple flag
-     */
-    void multiple(bool yesno);
-
-    /**
      * Sets the index of the ColumnDefinition to the given value. <br>
      * The new index should not be negative.
      *
@@ -120,7 +108,6 @@ public:
     void changed(bool yesno);
 private:
     DataDefinition _datadef;
-    bool _multiple;
     bool _changed;
 
 };

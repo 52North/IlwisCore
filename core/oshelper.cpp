@@ -7,8 +7,8 @@ OSHelper::OSHelper()
 {
 }
 
-QString OSHelper::neutralizeFileName(const QString& somelocation) {
-    if ( somelocation.indexOf("file://") == -1)
+QString OSHelper::neutralizeFileName(const QString& somelocation, bool allNames) {
+    if ( !allNames && somelocation.indexOf("file://") == -1)
         return somelocation;
 
 #ifdef Q_OS_WIN
@@ -29,4 +29,15 @@ bool OSHelper::isFileName(const QString &absolutepath)
     return absolutepath.indexOf(":") == 1;
 #endif
     return absolutepath.indexOf("/") == 0;
+}
+
+QString OSHelper::operatingSystem() {
+    QString operatingSystem;
+    #ifdef Q_OS_WIN
+    operatingSystem = "windows";
+    #endif
+    #ifdef Q_OS_LINUX
+       operatingSystem = "linux";
+    #endif
+    return operatingSystem;
 }
