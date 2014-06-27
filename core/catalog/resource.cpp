@@ -78,6 +78,8 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                 factoryType = "projection";
             if ( tp & itELLIPSOID)
                 factoryType = "ellipsoid";
+            if ( tp & itGEOREF)
+                factoryType = "georef";
             QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
              _normalizedUrl = QUrl(c);
         }else {
@@ -500,8 +502,12 @@ void Resource::checkUrl(IlwisTypes tp) {
             }else
                 newName = "Unknown_csy_" + QString::number(id());
         }
-        if ( index2 != -1)
+        if ( index2 != -1){
+            if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
+                rname = rname.mid(index2 + 1);
+            }
             code(rname);
+        }
         name(newName, false);
     }
 }
