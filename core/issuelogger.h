@@ -4,6 +4,8 @@
 #include <QDateTime>
 #include <QQueue>
 #include <fstream>
+#include <thread>
+#include <map>
 #include "kernel_global.h"
 
 class QSqlError;
@@ -47,6 +49,7 @@ public:
     QString codeFile() const;
     void stream(std::ofstream &stream, LogMessageFormat frmt);
 
+
 private:
     QString type2String() const;
 
@@ -78,6 +81,8 @@ public:
     IssueObject::IssueType maxIssueLevel() const;
     void copy(IssueLogger& other);
     void clear();
+    bool silent() const;
+    void silent(bool yesno);
 
 signals:
     void ilwiserrormessage(const QString& message);
@@ -89,6 +94,7 @@ private:
     QQueue<IssueObject> _issues;
     std::ofstream _logFileRegular;
     std::ofstream _logFileCode;
+    static std::map<std::thread::id, bool> _silentThreads;
 
 };
 }
