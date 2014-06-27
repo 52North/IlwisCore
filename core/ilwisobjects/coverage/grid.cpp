@@ -12,7 +12,6 @@
 
 using namespace Ilwis;
 GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_initialized(false), _inMemory(false)
-
 {
     _undef = undef<double>();
     _id = ++_blockid;

@@ -7,6 +7,7 @@ namespace RasterOperations {
 class TransposeRaster : public OperationImplementation
 {
 public:
+    enum TransPoseMethod{tmMirrorHorizontal, tmMirrorVertical};
     TransposeRaster();
 
     TransposeRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
@@ -18,6 +19,11 @@ public:
     static quint64 createMetadata();
 
     NEW_OPERATION(TransposeRaster);
+
+private:
+    IRasterCoverage _inputRaster;
+    IRasterCoverage _outpraster;
+
 };
 }
 }

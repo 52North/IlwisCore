@@ -29,17 +29,29 @@ TransposeRaster::TransposeRaster(quint64 metaid, const Ilwis::OperationExpressio
 
 bool TransposeRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx,symTable)) != sPREPARED)
+            return false;
 
+    return false;
 }
 
 Ilwis::OperationImplementation *TransposeRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-
+    return new TransposeRaster(metaid, expr);
 }
 
 Ilwis::OperationImplementation::State TransposeRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
+    QString raster = _expression.parm(0).value();
+    QString outputName = _expression.parm(0,false).value();
+    QString method = _expression.parm(1).value();
 
+    if (!_inputRaster.prepare(raster, itRASTER)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
+        return sPREPAREFAILED;
+    }
+    return sPREPARED;
 }
 
 quint64 TransposeRaster::createMetadata()

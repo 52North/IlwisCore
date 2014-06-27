@@ -1,7 +1,9 @@
 #ifndef DATADEFINITION_H
 #define DATADEFINITION_H
 
+
 namespace Ilwis {
+
 /*!
  * The datadefinition class is closely related to domain. It defines the data as used by the object (whatever the object may be, e.g. a raster-coverage).
  * The domain concept is a general concept. Meaning that the range is uses it often much broader  than the actual range of data used by the object. A value

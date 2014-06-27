@@ -241,7 +241,7 @@ void DatabaseTable::setCell(const QString &col, quint32 rec, const QVariant &inp
     if (!const_cast<DatabaseTable *>(this)->initLoad())
         return ;
     QString stmt;
-    const ColumnDefinition& def = columndefinition(col);
+    const ColumnDefinition& def = columndefinitionRef(col);
     QString dataType = valueType2DataType(def.datadef().domain<>()->valueType());
     if ( dataType == sUNDEF) {
         kernel()->issues()->log(TR("Invalid datatype in column definition"));

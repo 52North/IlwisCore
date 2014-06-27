@@ -14,6 +14,8 @@
 
 using namespace Ilwis;
 
+std::map<std::thread::id, bool> IssueLogger::_silentThreads;
+
 IssueObject::IssueObject()
 {
 }
@@ -71,6 +73,8 @@ void IssueObject::stream(std::ofstream& stream, LogMessageFormat frmt) {
     }
 }
 
+
+
 quint64 IssueObject::id() const
 {
     return _id;
@@ -117,6 +121,11 @@ IssueLogger::~IssueLogger()
 quint64 IssueLogger::log(const QString &message, int it)
 {
     ++_repeatCount;
+    std::thread::id id = std::this_thread::get_id();
+    if ( _silentThreads.find(id)!= _silentThreads.end() && it != IssueObject::itCritical)
+        return i64UNDEF;
+
+
     if ( _lastmessage == message && _repeatCount == 10) {
         return _issueId;
     } else {
@@ -160,6 +169,25 @@ void IssueLogger::addCodeInfo(quint64 issueid, int line, const QString &func, co
     }
 }
 
+bool IssueLogger::silent() const
+{
+    std::thread::id id = std::this_thread::get_id();
+    auto iter = _silentThreads.find(id);
+    if ( iter != _silentThreads.end())
+        return iter->second;
+    return false;
+}
+
+void IssueLogger::silent(bool yesno)
+{
+    std::thread::id id = std::this_thread::get_id();
+    if ( yesno == false){
+        auto iter = _silentThreads.find(id) ;
+        if (iter != _silentThreads.end())
+            _silentThreads.erase(iter);
+    }else
+        _silentThreads[id] = true;
+}
 
 quint64 IssueLogger::logSql(const QSqlError &err)
 {
