@@ -567,7 +567,7 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource)
     return 0;
 }
 GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& resource) const{
-    QString code = resource.code().mid(7);
+    QString code = resource.code();
     QStringList parts = code.split(",");
     std::map<QString, QString> parameters;
     for(auto part : parts){
@@ -638,7 +638,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         resnew.name(sUNDEF); // this will force a new object with a new id
         resnew.setId(i64UNDEF);
         cgrf = GeoReference::create("undetermined", resnew);
-    } else if ( resource.code().indexOf("georef:") == 0){
+    } else if ( resource.name().indexOf("georef:") == 0){
         cgrf = createGrfFromCode(resource);
         if (cgrf == 0)
             ERROR2(ERR_ILLEGAL_VALUE_2,"georef code", resource.code());
