@@ -502,8 +502,12 @@ void Resource::checkUrl(IlwisTypes tp) {
             }else
                 newName = "Unknown_csy_" + QString::number(id());
         }
-        if ( index2 != -1)
+        if ( index2 != -1){
+            if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
+                rname = rname.mid(index2 + 1);
+            }
             code(rname);
+        }
         name(newName, false);
     }
 }
