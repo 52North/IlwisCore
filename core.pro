@@ -278,11 +278,11 @@ win32{
                       "$$[QT_INSTALL_PREFIX]/bin/icuuc51.dll"
     qtdlls.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
-    qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/qtplugins)" $$escape_expand(\\n\\t)
-    !exists($$DLLDESTDIR/qtplugins) {
-        qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins $$escape_expand(\\n\\t)
-        !exists($$DLLDESTDIR/qtplugins/sqldrivers) {
-            qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins/sqldrivers $$escape_expand(\\n\\t)
+    qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/plugins)" $$escape_expand(\\n\\t)
+    !exists($$DLLDESTDIR/plugins) {
+        qtcreatepluginsdir.commands += md $$DLLDESTDIR/plugins $$escape_expand(\\n\\t)
+        !exists($$DLLDESTDIR/plugins/sqldrivers) {
+            qtcreatepluginsdir.commands += md $$DLLDESTDIR/plugins/sqldrivers $$escape_expand(\\n\\t)
         }
     }
 
@@ -291,7 +291,7 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers+
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers+
 
     INSTALLS += qtdlls qtsqlplugin
 
