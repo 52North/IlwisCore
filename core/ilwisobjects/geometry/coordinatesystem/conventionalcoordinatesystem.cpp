@@ -89,18 +89,19 @@ bool ConventionalCoordinateSystem::isEqual(const IlwisObject *obj) const
 QString ConventionalCoordinateSystem::toWKT(quint32 spaces) const
 {
     QString wkt = "PROJCS[\"" + name() + "\"" + ",";
-    QString geocs, proj, ell;
+    QString geocs, proj, ell, datum;
     geocs += QString(" ").repeated(spaces);
     QString ending = spaces == 0 ? "" : "\n";
     if ( _datum){
         geocs += "GEOCS[\"";
         if ( name().indexOf("/") != -1){
-            geocs += name().left( name().indexOf("/")).trimmed() + "\",";
+            geocs += name().left( name().indexOf("/")).trimmed() + "\"";
         }else
-            geocs += name() + "\",";
+            geocs += name() + "\"";
 
-        geocs += _datum->toWKT(spaces * 2);
+        datum = _datum->toWKT(spaces * 2);
     }
+    QString primm = "PRIMEM[\"Greenwich\",0, AUTHORITY[\"EPSG\",8901\"]],";
     if ( _ellipsoid.isValid()){
         ell = _ellipsoid->toWKT(spaces * 2);
     }
@@ -108,13 +109,13 @@ QString ConventionalCoordinateSystem::toWKT(quint32 spaces) const
          proj= _projection->toWKT(spaces * 2) + ",";
 
     if ( geocs != ""){
-        wkt += geocs + "," + ell + "]" + ending;
+        wkt += geocs + (datum !="" ? "," + datum : "") + "," + ell + primm + "]," + ending;
     }else
-        wkt += ell;
-    wkt += "," + proj;
+        wkt += ell + ",";
+    wkt += proj;
 
     if ( _unit != ""){
-        wkt += ",UNIT[" + _unit + "1.0]";
+        wkt += "UNIT[" + _unit + ",1.0]";
     }
 
     return wkt + "]";
