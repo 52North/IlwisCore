@@ -4,13 +4,13 @@
 namespace Ilwis {
 namespace RasterOperations {
 
-class TransposeRaster : public OperationImplementation
+class MirrorRotateRaster : public OperationImplementation
 {
 public:
-    enum TransPoseMethod{tmMirrorHorizontal, tmMirrorVertical};
-    TransposeRaster();
+    enum TransPoseMethod{tmMirrorHorizontal, tmMirrorVertical, tmMirrorDiagonal, tmRotata90, tmRotate180, tmRotate270, tmTranspose};
+    MirrorRotateRaster();
 
-    TransposeRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
+    MirrorRotateRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx,SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
@@ -18,12 +18,14 @@ public:
 
     static quint64 createMetadata();
 
-    NEW_OPERATION(TransposeRaster);
+    NEW_OPERATION(MirrorRotateRaster);
 
 private:
     IRasterCoverage _inputRaster;
-    IRasterCoverage _outpraster;
+    IRasterCoverage _outputRaster;
+    TransPoseMethod _method;
 
+    void mirrorvertical(const Ilwis::BoundingBox &box);
 };
 }
 }
