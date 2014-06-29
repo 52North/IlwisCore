@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql
+QT       += network sql xmlpatterns
 
 DEFINES += CORE_LIBRARY
 
@@ -115,7 +115,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
     core/ilwisobjects/coverage/indexdefinition.cpp \
     core/catalog/dataset.cpp \
-    core/util/bresenham.cpp
+    core/util/bresenham.cpp \
+    core/util/xpathparser.cpp \
+    core/util/xmlstreamparser.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -245,7 +247,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/indexdefinition.h \
     core/ilwisobjects/domain/rangeiterator.h \
     core/catalog/dataset.h \
-    core/util/bresenham.h
+    core/util/bresenham.h \
+    core/util/xpathparser.h \
+    core/util/xmlstreamparser.h
 
 
 OTHER_FILES += \
