@@ -29,20 +29,33 @@ MirrorRotateRaster::MirrorRotateRaster(quint64 metaid, const Ilwis::OperationExp
 
 }
 
-void MirrorRotateRaster::mirrorvertical(const BoundingBox& box ){
-    PixelIterator iterIn(_inputRaster, box);
-    PixelIterator iterOut(_outputRaster, box);
-    std::vector<double> line(iterIn.box().xlength());
+bool MirrorRotateRaster::dimChanged(const PixelIterator& iter) const{
+    switch(_method)    {
+    case tmMirrorVertical:
+        return iter.ychanged();
+    case tmMirrorHorizontal:
+        return iter.xchanged();
+    case tmRotata90:
+        return iter.ychanged();
+    }
+    return false;
+}
+void MirrorRotateRaster::mirror(PixelIterator iterIn,PixelIterator iterOut, const BoundingBox& box, quint32 linelength ){
+    std::vector<double> line(linelength);
     auto iterLine = line.begin();
     auto end = iterIn.end();
-    for(; iterIn != end; ++iterIn){
-        if ( iterIn.ychanged()){
+    for(; iterIn != end; ++iterIn, ++iterLine){
+        if ( dimChanged(iterIn)){
             std::reverse(line.begin(), line.end());
             std::copy(line.begin(), line.end(),iterOut);
             iterLine = line.begin();
+            iterOut += iterIn.box().xlength();
         }
         (*iterLine) = *iterIn;
     }
+    // lastline
+    std::reverse(line.begin(), line.end());
+    std::copy(line.begin(), line.end(),iterOut);
 }
 
 bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
@@ -52,8 +65,12 @@ bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
 
     std::function<bool(const BoundingBox)> Transform = [&](const BoundingBox box ) -> bool {
-        if ( _method == tmMirrorVertical)
-            mirrorvertical(box);
+        if ( _method == tmMirrorVertical){
+             mirror(PixelIterator(_inputRaster, box),PixelIterator(_outputRaster, box), box, _outputRaster->size().xsize());
+        }
+        if ( _method == tmMirrorHorizontal){
+             mirror(PixelIterator(_inputRaster, box,PixelIterator::fYXZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().ysize());
+        }
 
         return true;
 

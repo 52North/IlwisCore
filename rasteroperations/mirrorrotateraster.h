@@ -25,7 +25,8 @@ private:
     IRasterCoverage _outputRaster;
     TransPoseMethod _method;
 
-    void mirrorvertical(const Ilwis::BoundingBox &box);
+    void mirror(Ilwis::PixelIterator iterIn, Ilwis::PixelIterator iterOut, const Ilwis::BoundingBox &box, quint32 linelength);
+    bool dimChanged(const PixelIterator& iter) const;
 };
 }
 }
