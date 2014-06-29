@@ -104,7 +104,7 @@ public:
      * \param raster The raster from which this PixelIterator should be created
      * \param box The bounding box which desides what part of the raster should be walked
      */
-    PixelIterator(const IRasterCoverage& raster, const BoundingBox& box=BoundingBox());
+    PixelIterator(const IRasterCoverage& raster, const BoundingBox& box=BoundingBox(), Flow flow=fXYZ);
 
     /*!
      * Copy's all the values from the existing PixelIterator onto this one
@@ -320,6 +320,7 @@ public:
      * \return the endvalue of the lineairposition
      */
     PixelIterator end() const ;
+    void toEnd();
 
     /*!
      * \brief Changes the flow of this PixelIterator
@@ -487,6 +488,8 @@ protected:
         }
         else if ( _flow == fZXY){
             ok = moveZXY(n);
+        } else if ( _flow == fYXZ) {
+            ok = moveYXZ(n);
         }
 
         return ok;
@@ -510,6 +513,19 @@ private:
         return true;
     }
 
+    bool moveYXZ(int delta){
+        _y += delta;
+        _linearposition += delta * _box.xlength();
+        _yChanged = true;
+        _xChanged = _zChanged = false;
+        if (_selectionIndex < 0){
+            if ( _y > _endy || _y < _box.min_corner().y){
+                return moveXZ(delta);
+            }
+        }
+        return true;
+    }
+
     bool moveXYZ(int delta) {
         _x += delta;
         _linearposition += delta;
@@ -517,7 +533,7 @@ private:
         _xChanged = true;
         _yChanged = _zChanged = false;
         if ( _selectionIndex < 0){
-            if ( _x > _endx) {
+            if ( _x > _endx || _x < _box.min_corner().x) {
                 return moveYZ(delta);
             }
         } else {
@@ -544,6 +560,7 @@ private:
 
     bool moveYZ(int delta);
     bool moveXY(int delta);
+    bool moveXZ(int delta);
     bool move2NextSelection(int delta);
     void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
 };
