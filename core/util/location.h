@@ -217,6 +217,17 @@ public:
         return !(operator==(pnt));
     }
 
+    operator std::vector<CrdType>() const{
+        std::vector<CrdType> v;
+        if( is3D())
+            v  = {x,y,z};
+        else
+            v = {x,y};
+        return v;
+
+
+    }
+
     static double undefined(){ return  useDouble ? rUNDEF : iUNDEF;}
     static quint64 valuetype(){ return useDouble ? itDOUBLE : itINTEGER;}
 
@@ -248,6 +259,19 @@ Ilwis::Location<CrdType> operator+(const Ilwis::Location<CrdType>& p1, const std
     p3.y = p1.y + vec[1] ;
     if ( vec.size() >= 3 && p1.z != p1.undefined())
         p3.z  = p1.z + vec[2];
+
+    return p3;
+}
+
+template<typename CrdType>
+Ilwis::Location<CrdType> operator+(const Ilwis::Location<CrdType>& p1, const Ilwis::Location<CrdType>& p2) {
+    if (p1.isValid() == false ||  p2.isValid() == false )
+        return Ilwis::Location<CrdType>();
+    Ilwis::Location<CrdType> p3;
+    p3.x = p1.x + p2.x;
+    p3.y = p1.y + p2.y ;
+    if ( p2.z != p2.undefined() && p1.z != p1.undefined())
+        p3.z  = p1.z + p2.z;
 
     return p3;
 }
