@@ -80,6 +80,19 @@ void IlwisContext::init()
     QString configfile = loc + "/" + "ilwis.config";
     QFile file;
     file.setFileName(configfile);
+    if ( !file.exists()){
+        if ( _ilwisDir.exists()){
+            configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
+            file.setFileName(configfile);
+            if (!file.exists()){
+                configfile = _ilwisDir.absoluteFilePath() + "/ilwis.config";
+                file.setFileName(configfile);
+            }
+        } else{
+            configfile = qApp->applicationDirPath() + "/resources/ilwis.config";
+            file.setFileName(configfile);
+        }
+    }
     if (file.open(QIODevice::ReadOnly)) {
         QString settings = file.readAll();
         QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
