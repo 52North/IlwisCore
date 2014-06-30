@@ -290,6 +290,12 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
+    } else if (QString(resource["size"].typeName()) == "QString") {
+        QStringList parts = resource["size"].toString().split(" ");
+        if ( parts.size() >= 2)
+            sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
+        if ( parts.size() == 3)
+            sz.zsize(parts[2].toInt());
     }
 
 
@@ -623,9 +629,10 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
         }
     }
     if ( csy.isValid() && env.isValid() && sz.isValid()){
-        csy->envelope(env);
         cgrf->coordinateSystem(csy);
+        cgrf->impl<CornersGeoReference>()->setEnvelope(env);
         cgrf->size(sz);
+        cgrf->compute();
         return cgrf;
     }
     return 0;
