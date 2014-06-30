@@ -591,6 +591,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
        cgrf = GeoReference::create("corners", resource);
        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     }
+    if ( cgrf == 0)
+        return 0;
 
     for(auto kvp : parameters){
         if ( kvp.first == "csy"){
@@ -608,7 +610,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
                 return 0;
         }
         if ( kvp.first == "envelope"){
-            QStringList coords = kvp.second.split(" ");
+            QString coordstring = kvp.second;
+            QStringList coords = coordstring.split(" ");
             if (!coords.size() == 4)
                 return 0;
             bool ok1, ok2;
@@ -628,6 +631,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
             cgrf->name(kvp.second);
         }
     }
+    if ( parameters.find("name") == parameters.end())
+        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     if ( csy.isValid() && env.isValid() && sz.isValid()){
         cgrf->coordinateSystem(csy);
         cgrf->impl<CornersGeoReference>()->setEnvelope(env);

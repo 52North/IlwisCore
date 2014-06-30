@@ -1,6 +1,9 @@
 #ifndef GEOMETRYHELPER_H
 #define GEOMETRYHELPER_H
 
+#include <complex>
+#include "angle.h"
+
 namespace geos {
 namespace geom {
     class Geometry;
@@ -26,6 +29,21 @@ class KERNELSHARED_EXPORT GeometryHelper{
         static Ilwis::CoordinateSystem* getCoordinateSystem(geos::geom::Geometry* geom);
 
         static void setCoordinateSystem(geos::geom::Geometry* geom, Ilwis::CoordinateSystem* csy);
+
+        template<typename PointType> static std::vector<PointType> rotate2d(const PointType &center, const Angle& angle, const std::vector<PointType>& inputPoints)
+        {
+            typedef std::complex<double> CPoint;
+            CPoint about(center.x, center.y);
+            std::vector<PointType> outputPoints;
+            for(auto p : inputPoints){
+                if ( p.isValid()){
+                    CPoint outPoint = (CPoint(p.x,p.y) - about) * exp(CPoint(0, angle.radians())) + about;
+                    outputPoints.push_back(PointType(outPoint.real(), outPoint.imag()));
+                }else
+                    outputPoints.push_back(PointType());
+            }
+            return outputPoints;
+        }
 };
 
 }
