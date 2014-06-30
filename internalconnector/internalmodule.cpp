@@ -26,6 +26,8 @@
 #include "projectionfactory.h"
 #include "internalprjmplfactory.h"
 #include "internalgeoreferenceconnector.h"
+#include "internaldomain.h"
+#include "internalcoordinatesystemconnector.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -54,6 +56,8 @@ void InternalModule::prepare()
     factory->addCreator(itTABLE,"internal", InternalTableConnector::create);
     factory->addCreator(itFEATURE,"internal", InternalFeatureCoverageConnector::create);
     factory->addCreator(itGEOREF,"internal", InternalGeoReferenceConnector::create);
+    factory->addCreator(itDOMAIN,"internal", InternalDomainConnector::create);
+    factory->addCreator(itCOORDSYSTEM,"internal", InternalCoordinatesystemConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();
