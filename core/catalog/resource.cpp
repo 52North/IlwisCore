@@ -90,7 +90,7 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                     if ( workingCatalog.isValid()){
                         QUrl url =  workingCatalog->filesystemLocation();
                         if ( url.isValid() && url.scheme() == "file"){
-                            QString filepath = url.toLocalFile() + name;
+                            QString filepath = url.toLocalFile() + "/" + name;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
                             }
@@ -501,8 +501,9 @@ void Resource::checkUrl(IlwisTypes tp) {
                 rname = def._epsg;
             }else
                 newName = "Unknown_csy_" + QString::number(id());
+            code(rname);
         }
-        if ( index2 != -1){
+        else if ( index2 != -1){
             if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
                 rname = rname.mid(index2 + 1);
             }

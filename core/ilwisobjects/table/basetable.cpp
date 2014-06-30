@@ -362,7 +362,7 @@ void BaseTable::initRecord(std::vector<QVariant> &values) const
 {
     values.resize(columnCount());
     for(int i=0; i < columnCount(); ++i) {
-        const ColumnDefinition &coldef  = const_cast<BaseTable *>(this)->columndefinition(i);
+        const ColumnDefinition &coldef  = const_cast<BaseTable *>(this)->columndefinitionRef(i);
         if ( hasType(coldef.datadef().domain<>()->ilwisType(),itTEXTDOMAIN)) {
             values[i] = sUNDEF;
         }

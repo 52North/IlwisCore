@@ -31,7 +31,7 @@ std::vector<quint32> TableSelector::select(const Table* table, const QString &co
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("expression"), conditions);
             return std::vector<quint32>();
         }
-        const ColumnDefinition& coldef = table->columndefinition(part.field());
+        const ColumnDefinition& coldef = const_cast<Table *>(table)->columndefinitionRef(part.field());
 
         auto iter = status.begin();
         IlwisTypes vt = coldef.datadef().domain()->valueType();

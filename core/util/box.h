@@ -83,6 +83,12 @@ public:
         }
     }
 
+    Box(const std::vector<PointType>& points){
+        for(auto point : points){
+            operator +=(point);
+        }
+    }
+
     IlwisTypes valueType() const{
         return max_corner().valuetype();
     }
@@ -160,27 +166,27 @@ public:
     }
 
     bool contains(const QVariant& value, bool inclusive = true) const {
-//        QString typeNm = value.typeName();
-//        if ( typeNm == "QString"){
-//            QString wkt = value.toString();
-//            geos::io::WKTReader reader;
-//            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
-//            return contains(geom);
-//        }else if ( typeNm == "Ilwis::BoundingBox"){
-//            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
-//            if ( !bb.isValid())
-//                return false;
-//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
-//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
-//            return ok;
-//        }else if ( typeNm == "Ilwis::Envelope"){
-//            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
-//            if ( ! bb.isValid())
-//                return false;
-//            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
-//            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
-//            return ok;
-//        }
+        //        QString typeNm = value.typeName();
+        //        if ( typeNm == "QString"){
+        //            QString wkt = value.toString();
+        //            geos::io::WKTReader reader;
+        //            geos::geom::Geometry* geom = reader.read(wkt.toStdString());
+        //            return contains(geom);
+        //        }else if ( typeNm == "Ilwis::BoundingBox"){
+        //            Box<Ilwis::Pixel> bb = value.value<Ilwis::Box<Ilwis::Pixel>>();
+        //            if ( !bb.isValid())
+        //                return false;
+        //            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+        //            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+        //            return ok;
+        //        }else if ( typeNm == "Ilwis::Envelope"){
+        //            Box<Ilwis::Coordinate> bb = value.value<Ilwis::Box<Ilwis::Coordinate>>();
+        //            if ( ! bb.isValid())
+        //                return false;
+        //            bool ok = contains(PointType(bb.min_corner().x, bb.min_corner().y, bb.min_corner().z));
+        //            ok &= contains(PointType(bb.max_corner().x, bb.max_corner().y, bb.max_corner().z));
+        //            return ok;
+        //        }
         return false;
     }
 
@@ -278,258 +284,264 @@ public:
         normalize();
     }
 
-Box<PointType>& operator +=(const PointType& pnew) {
-    if ( !pnew.isValid())
-        return *this;
+    Box<PointType>& operator +=(const PointType& pnew) {
+        if ( !pnew.isValid())
+            return *this;
 
 
 
-    PointType& pmin = this->min_corner();
-    PointType& pmax = this->max_corner();
-    if ( isNull() || !isValid()) {
-        pmin = pnew;
-        pmax = pnew;
-        return *this;
-    }
+        PointType& pmin = this->min_corner();
+        PointType& pmax = this->max_corner();
+        if ( isNull() || !isValid()) {
+            pmin = pnew;
+            pmax = pnew;
+            return *this;
+        }
 
-    if ( contains(pnew))
-        return *this;
-    if ( pmin.x > pnew.x)
-        pmin.x  = pnew.x;
-    if ( pmin.y > pnew.y)
-        pmin.y = pnew.y;
-    if ( pmax.x < pnew.x)
-        pmax.x = pnew.x;
-    if ( pmax.y < pnew.y)
-        pmax.y = pnew.y;
-    if ( is3D() && pnew.is3D()){
-        if ( pmin.z > pnew.z)
-            pmin.z  = pnew.z;
-        if ( pmax.z < pnew.z)
-            pmax.z = pnew.z;
-    }
-    normalize();
-
-    return *this;
-
-}
-
-Box<PointType>& operator -=(const PointType& pnew) {
-    if ( !pnew.isValid())
-        return *this;
-
-    PointType& pmin = this->min_corner();
-    PointType& pmax = this->max_corner();
-
-    if ( isNull() || !isValid()) {
-        pmin = pnew;
-        pmax = pnew;
-        return *this;
-    }
-
-    if ( !contains(pnew))
-        return *this;
-    if ( pmin.x() < pnew.x())
-        pmin.x = pnew.x();
-    if ( pmin.y < pnew.y)
-        pmin.y = pnew.y();
-    if ( pmax.x > pnew.x)
-        pmax.x  = pnew.x();
-    if ( pmax.y > pnew.y)
-        pmax.y = pnew.y();
-    if ( is3D() && pnew.is3D()){
-        if ( pmin.z < pnew.z)
-            pmin.z  = pnew.z;
-        if ( pmax.z > pnew.z)
-            pmax.z = pnew.z;
-    }
-    normalize();
-
-    return *this;
-
-}
-
-template<class T> Box<PointType>& operator +=(const std::vector<T>& vec) {
-    int size = vec.size();
-    if ( size == 2 || size == 3) {
-        this->min_corner() += vec;
-        this->max_corner() += vec;
+        if ( contains(pnew))
+            return *this;
+        if ( pmin.x > pnew.x)
+            pmin.x  = pnew.x;
+        if ( pmin.y > pnew.y)
+            pmin.y = pnew.y;
+        if ( pmax.x < pnew.x)
+            pmax.x = pnew.x;
+        if ( pmax.y < pnew.y)
+            pmax.y = pnew.y;
+        if ( is3D() && pnew.is3D()){
+            if ( pmin.z > pnew.z)
+                pmin.z  = pnew.z;
+            if ( pmax.z < pnew.z)
+                pmax.z = pnew.z;
+        }
         normalize();
-    }
 
-    return *this;
-}
-
-Box<PointType>& operator +=(const Box<PointType>& box) {
-    if ( !box.isValid())
         return *this;
 
-    operator+=(box.min_corner());
-    operator+=(box.max_corner());
-    return *this;
-}
+    }
 
-bool operator==(const Box<PointType>& box ) const {
-    if ( !box.isValid())
-        return false;
+    Box<PointType>& operator -=(const PointType& pnew) {
+        if ( !pnew.isValid())
+            return *this;
 
-    return box.max_corner() == this->max_corner() && this->min_corner() == box.min_corner();
-}
+        PointType& pmin = this->min_corner();
+        PointType& pmax = this->max_corner();
 
-bool operator!=(const Box<PointType>& box ) const {
-    return !(operator==(box));
-}
+        if ( isNull() || !isValid()) {
+            pmin = pnew;
+            pmax = pnew;
+            return *this;
+        }
 
-QVariant impliedValue(const QVariant& v) const{
-    QString type = v.typeName();
-    bool ok = type == "Ilwis::Box<Pixel>" || type == "Ilwis::Box<Coordinate>" ||
-            type == "Ilwis::Box<Pixeld>" ;
-    if (!ok){
+        if ( !contains(pnew))
+            return *this;
+        if ( pmin.x() < pnew.x())
+            pmin.x = pnew.x();
+        if ( pmin.y < pnew.y)
+            pmin.y = pnew.y();
+        if ( pmax.x > pnew.x)
+            pmax.x  = pnew.x();
+        if ( pmax.y > pnew.y)
+            pmax.y = pnew.y();
+        if ( is3D() && pnew.is3D()){
+            if ( pmin.z < pnew.z)
+                pmin.z  = pnew.z;
+            if ( pmax.z > pnew.z)
+                pmax.z = pnew.z;
+        }
+        normalize();
+
+        return *this;
+
+    }
+
+    template<class T> Box<PointType>& operator +=(const std::vector<T>& vec) {
+        int size = vec.size();
+        if ( size == 2 || size == 3) {
+            this->min_corner() += vec;
+            this->max_corner() += vec;
+            normalize();
+        }
+
+        return *this;
+    }
+
+    Box<PointType>& operator +=(const Box<PointType>& box) {
+        if ( !box.isValid())
+            return *this;
+
+        operator+=(box.min_corner());
+        operator+=(box.max_corner());
+        return *this;
+    }
+
+    bool operator==(const Box<PointType>& box ) const {
+        if ( !box.isValid())
+            return false;
+
+        return box.max_corner() == this->max_corner() && this->min_corner() == box.min_corner();
+    }
+
+    bool operator!=(const Box<PointType>& box ) const {
+        return !(operator==(box));
+    }
+
+    operator std::vector<PointType>() const{
+        std::vector<PointType> vec = {min_corner(), max_corner()};
+        return vec;
+
+    }
+
+    QVariant impliedValue(const QVariant& v) const{
+        QString type = v.typeName();
+        bool ok = type == "Ilwis::Box<Pixel>" || type == "Ilwis::Box<Coordinate>" ||
+                type == "Ilwis::Box<Pixeld>" ;
+        if (!ok){
+            return sUNDEF;
+        }
+        if ( type == "Ilwis::Box<Coordinate>"){
+            Box<Coordinate> box = v.value<Box<Coordinate>>();
+            return box.toString();
+        }
+        if ( type == "Ilwis::Box<Pixel>"){
+            Box<Pixel> box = v.value<Box<Pixel>>();
+            return box.toString();
+        }
+        if ( type == "Ilwis::Box<Pixeld>"){
+            Box<Pixeld> box = v.value<Box<Pixeld>>();
+            return box.toString();
+        }
         return sUNDEF;
-    }
-    if ( type == "Ilwis::Box<Coordinate>"){
-        Box<Coordinate> box = v.value<Box<Coordinate>>();
-        return box.toString();
-    }
-    if ( type == "Ilwis::Box<Pixel>"){
-        Box<Pixel> box = v.value<Box<Pixel>>();
-        return box.toString();
-    }
-    if ( type == "Ilwis::Box<Pixeld>"){
-        Box<Pixeld> box = v.value<Box<Pixeld>>();
-        return box.toString();
-    }
-    return sUNDEF;
 
-}
-
-template<typename T> void ensure(const Size<T>& sz) {
-    if ( xlength() > sz.xsize()) {
-        this->max_corner().x  = sz.xsize() - 1 ;
-    }
-    if ( ylength() > sz.ysize()) {
-        this->max_corner().y =  sz.ysize() - 1 ;
-    }
-    if ( zlength() > sz.zsize()) {
-        this->max_corner().z =  sz.zsize() - 1 ;
-    }
-}
-
-void copyFrom(const Box<PointType>& box, quint32 dimensions=dimX | dimY | dimZ) {
-    if ( dimensions & dimX) {
-        this->min_corner().x = box.min_corner().x;
-        this->max_corner().x  =box.max_corner().x;
-    }
-    if ( dimensions & dimY) {
-        this->min_corner().y = box.min_corner().y;
-        this->max_corner().y = box.max_corner().y;
-    }
-    if ( dimensions & dimZ) {
-        this->min_corner().z = box.min_corner().z;
-        this->max_corner().z = box.max_corner().z;
-    }
-}
-
-
-QString toString() const {
-    if ( is3D()) {
-        if (this->min_corner().valuetype() == itDOUBLE)
-            return QString("POLYGON(%1 %2 %3,%4 %5 %6)").
-                    arg((double)this->min_corner().x,0,'g').
-                    arg((double)this->min_corner().y,0,'g').
-                    arg((double)this->min_corner().z,0,'g').
-                    arg((double)this->max_corner().x,0,'g').
-                    arg((double)this->max_corner().y,0,'g').
-                    arg((double)this->max_corner().z,0,'g');
-        else
-            return QString("POLYGON(%1 %2 %3,%4 %5 %6)").arg(this->min_corner().x).
-                    arg(this->min_corner().y).
-                    arg(this->min_corner().z).
-                    arg(this->max_corner().x).
-                    arg(this->max_corner().y).
-                    arg(this->max_corner().z);
-
-
-    }else {
-        if (this->min_corner().valuetype() == itDOUBLE)
-            return QString("POLYGON(%1 %2,%3 %4)").
-                    arg((double)this->min_corner().x,0,'g').
-                    arg((double)this->min_corner().y,0,'g').
-                    arg((double)this->max_corner().x,0,'g').
-                    arg((double)this->max_corner().y,0,'g');
-        else
-            return QString("POLYGON(%1 %2,%3 %4)").
-                    arg(this->min_corner().x).
-                    arg(this->min_corner().y).
-                    arg(this->max_corner().x).
-                    arg(this->max_corner().y);
     }
 
-}
-PointType valueAt(quint32& index, const Range *rng){
-    if ( rng && (rng->count() == 4 ||  rng->count() == 8)){
-        const Box<PointType> *box = dynamic_cast<const Box<PointType> *>(rng);
-        if ( box){
-            switch (index) {
-            case 0:
-                return box->min_corner();
-            case 1:
-                return PointType(box->max_corner().x,box->min_corner().x, box->min_corner().z);
-            case 2:
-                return PointType(box->max_corner().x,box->max_corner().x, box->min_corner().z);
-            case 3:
-                return PointType(box->min_corner().x,box->max_corner().x, box->min_corner().z);
-            }
-            if ( is3D()){
+    template<typename T> void ensure(const Size<T>& sz) {
+        if ( xlength() > sz.xsize()) {
+            this->max_corner().x  = sz.xsize() - 1 ;
+        }
+        if ( ylength() > sz.ysize()) {
+            this->max_corner().y =  sz.ysize() - 1 ;
+        }
+        if ( zlength() > sz.zsize()) {
+            this->max_corner().z =  sz.zsize() - 1 ;
+        }
+    }
+
+    void copyFrom(const Box<PointType>& box, quint32 dimensions=dimX | dimY | dimZ) {
+        if ( dimensions & dimX) {
+            this->min_corner().x = box.min_corner().x;
+            this->max_corner().x  =box.max_corner().x;
+        }
+        if ( dimensions & dimY) {
+            this->min_corner().y = box.min_corner().y;
+            this->max_corner().y = box.max_corner().y;
+        }
+        if ( dimensions & dimZ) {
+            this->min_corner().z = box.min_corner().z;
+            this->max_corner().z = box.max_corner().z;
+        }
+    }
+
+
+    QString toString() const {
+        if ( is3D()) {
+            if (this->min_corner().valuetype() == itDOUBLE)
+                return QString("%1 %2 %3 %4 %5 %6").
+                        arg((double)this->min_corner().x,0,'g').
+                        arg((double)this->min_corner().y,0,'g').
+                        arg((double)this->min_corner().z,0,'g').
+                        arg((double)this->max_corner().x,0,'g').
+                        arg((double)this->max_corner().y,0,'g').
+                        arg((double)this->max_corner().z,0,'g');
+            else
+                return QString("%1 %2 %3%4 %5 %6").arg(this->min_corner().x).
+                        arg(this->min_corner().y).
+                        arg(this->min_corner().z).
+                        arg(this->max_corner().x).
+                        arg(this->max_corner().y).
+                        arg(this->max_corner().z);
+
+
+        }else {
+            if (this->min_corner().valuetype() == itDOUBLE)
+                return QString("%1 %2 %3 %4").
+                        arg((double)this->min_corner().x,0,'g').
+                        arg((double)this->min_corner().y,0,'g').
+                        arg((double)this->max_corner().x,0,'g').
+                        arg((double)this->max_corner().y,0,'g');
+            else
+                return QString("%1 %2 %3 %4").
+                        arg(this->min_corner().x).
+                        arg(this->min_corner().y).
+                        arg(this->max_corner().x).
+                        arg(this->max_corner().y);
+        }
+
+    }
+    PointType valueAt(quint32& index, const Range *rng){
+        if ( rng && (rng->count() == 4 ||  rng->count() == 8)){
+            const Box<PointType> *box = dynamic_cast<const Box<PointType> *>(rng);
+            if ( box){
                 switch (index) {
-                case 4:
+                case 0:
                     return box->min_corner();
-                case 5:
-                    return PointType(box->max_corner().x,box->min_corner().x, box->max_corner().z);
-                case 6:
-                    return PointType(box->max_corner().x,box->max_corner().x, box->max_corner().z);
-                case 7:
-                    return PointType(box->min_corner().x,box->max_corner().x, box->max_corner().z);
+                case 1:
+                    return PointType(box->max_corner().x,box->min_corner().x, box->min_corner().z);
+                case 2:
+                    return PointType(box->max_corner().x,box->max_corner().x, box->min_corner().z);
+                case 3:
+                    return PointType(box->min_corner().x,box->max_corner().x, box->min_corner().z);
+                }
+                if ( is3D()){
+                    switch (index) {
+                    case 4:
+                        return box->min_corner();
+                    case 5:
+                        return PointType(box->max_corner().x,box->min_corner().x, box->max_corner().z);
+                    case 6:
+                        return PointType(box->max_corner().x,box->max_corner().x, box->max_corner().z);
+                    case 7:
+                        return PointType(box->min_corner().x,box->max_corner().x, box->max_corner().z);
+                    }
                 }
             }
         }
+        index = iUNDEF;
+        return PointType();
     }
-    index = iUNDEF;
-    return PointType();
-}
 
 private:
     PointType _min_corner;
     PointType _max_corner;
 
 
-void normalize() {
-    PointType& pmin = this->min_corner();
-    PointType& pmax = this->max_corner();
-    if ( pmin.x > pmax.x) {
-        double v1 = pmin.x;
-        double v2 = pmax.x;
-        std::swap(v1, v2);
-        pmin.x  = v1;
-        pmax.x = v2;
+    void normalize() {
+        PointType& pmin = this->min_corner();
+        PointType& pmax = this->max_corner();
+        if ( pmin.x > pmax.x) {
+            double v1 = pmin.x;
+            double v2 = pmax.x;
+            std::swap(v1, v2);
+            pmin.x  = v1;
+            pmax.x = v2;
+
+        }
+        if ( pmin.y > pmax.y) {
+            double v1 = pmin.y;
+            double v2 = pmax.y;
+            std::swap(v1, v2);
+            pmin.y = v1;
+            pmax.y = v2;
+        }
+        if ( pmin.z > pmax.z) {
+            double v1 = pmin.z;
+            double v2 = pmax.z;
+            std::swap(v1, v2);
+            pmin.z = v1;
+            pmax.z = v2;
+        }
 
     }
-    if ( pmin.y > pmax.y) {
-        double v1 = pmin.y;
-        double v2 = pmax.y;
-        std::swap(v1, v2);
-        pmin.y = v1;
-        pmax.y = v2;
-    }
-    if ( pmin.z > pmax.z) {
-        double v1 = pmin.z;
-        double v2 = pmax.z;
-        std::swap(v1, v2);
-        pmin.z = v1;
-        pmax.z = v2;
-    }
-
-}
 
 
 };

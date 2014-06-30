@@ -1,6 +1,8 @@
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
+#include "kernel_global.h"
+
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 

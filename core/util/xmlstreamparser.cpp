@@ -1,4 +1,4 @@
-#include "kernel_global.h"
+
 #include <QMap>
 #include <QString>
 #include <QXmlStreamReader>

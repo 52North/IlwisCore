@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql xml xmlpatterns
+QT       += network sql xmlpatterns
 
 DEFINES += CORE_LIBRARY
 
@@ -105,7 +105,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/vertexiterator.cpp \
     core/ilwisobjects/domain/coloritem.cpp \
     core/oshelper.cpp \
-    core/util/bresenham.cpp \
     core/ilwisobjects/operation/operationoverloads.cpp \
     core/ilwisobjects/operation/classification/featurespace.cpp \
     core/ilwisobjects/operation/classification/sampleset.cpp \
@@ -116,9 +115,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
     core/ilwisobjects/coverage/indexdefinition.cpp \
     core/catalog/dataset.cpp \
+    core/util/bresenham.cpp \
     core/util/xpathparser.cpp \
     core/util/xmlstreamparser.cpp
-    core/util/bresenham.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -235,7 +234,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/coloritem.h \
     core/ilwistypes.h \
     core/oshelper.h \
-    core/util/bresenham.h \
     core/ilwisobjects/operation/operationoverloads.h \
     core/ilwisobjects/operation/classification/featurespace.h \
     core/ilwisobjects/operation/classification/sampleset.h \
@@ -249,9 +247,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/indexdefinition.h \
     core/ilwisobjects/domain/rangeiterator.h \
     core/catalog/dataset.h \
+    core/util/bresenham.h \
     core/util/xpathparser.h \
     core/util/xmlstreamparser.h
-    core/util/bresenham.h
 
 
 OTHER_FILES += \
@@ -270,11 +268,11 @@ win32{
     CONFIG(debug, debug|release) {
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
-                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll"
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll" \
     }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
-                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll"
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll" \
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
@@ -284,11 +282,11 @@ win32{
                       "$$[QT_INSTALL_PREFIX]/bin/icuuc51.dll"
     qtdlls.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
-    qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/qtplugins)" $$escape_expand(\\n\\t)
-    !exists($$DLLDESTDIR/qtplugins) {
-        qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins $$escape_expand(\\n\\t)
-        !exists($$DLLDESTDIR/qtplugins/sqldrivers) {
-            qtcreatepluginsdir.commands += md $$DLLDESTDIR/qtplugins/sqldrivers $$escape_expand(\\n\\t)
+    qtcreatepluginsdir.commands += @echo "exists($$DLLDESTDIR/plugins)" $$escape_expand(\\n\\t)
+    !exists($$DLLDESTDIR/plugins) {
+        qtcreatepluginsdir.commands += md $$DLLDESTDIR/plugins $$escape_expand(\\n\\t)
+        !exists($$DLLDESTDIR/plugins/sqldrivers) {
+            qtcreatepluginsdir.commands += md $$DLLDESTDIR/plugins/sqldrivers $$escape_expand(\\n\\t)
         }
     }
 
@@ -297,7 +295,7 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/qtplugins/sqldrivers+
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers+
 
     INSTALLS += qtdlls qtsqlplugin
 

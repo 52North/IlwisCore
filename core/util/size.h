@@ -126,9 +126,9 @@ public:
         if ( !isValid())
             return sUNDEF;
 
-        QString strsize = QString::number(_xsize) + " x " + QString::number(_ysize);
+        QString strsize = QString::number(_xsize) + " " + QString::number(_ysize);
         if ( _zsize > 1 && !isNumericalUndef(_zsize))
-            strsize += " x " + QString::number(_zsize);
+            strsize += " " + QString::number(_zsize);
         return strsize;
     }
     /*!

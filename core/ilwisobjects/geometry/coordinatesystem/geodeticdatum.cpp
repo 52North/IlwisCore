@@ -56,7 +56,15 @@ double GeodeticDatum::parameter(DatumParameters parm) const {
 
 bool GeodeticDatum::isValid() const
 {
-    return true; //TODO:
+    bool ok = true;
+    int count = 0;
+    for(auto parm : _datumParams){
+        if ( count != dmSCALE)
+            ok |= parm != 0;
+        ++count;
+    }
+    return ok && name() != sUNDEF;
+
 }
 
 void GeodeticDatum::fromCode(const QString &gcode)
@@ -91,13 +99,16 @@ void GeodeticDatum::setWktName(const QString &name)
 
 QString GeodeticDatum::toWKT(quint32 spaces) const
 {
+    if ( !isValid())
+        return "";
+
     QString dat;
     QString indent = QString(" ").repeated(spaces);
     QString ending = spaces == 0 ? "" : "\n";
     if ( _wkt.size() > 0)
         dat = indent + "DATUM[\"" + _wkt + "," + ending;
     else{
-        dat = indent + "DATUM[\"Unknown\"," + ending;
+        dat = indent + "DATUM[\" "+ (name() != sUNDEF ? name() : "UNKNOWN") + "\"," + ending;
         dat += indent + "[" + code().toUpper() + "]" + ending;
         dat.replace("+","");
         dat.replace("=","[");

@@ -165,7 +165,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
 
         ++j;
     }
-    return true;
+    return false;
 }
 
 bool VertexIterator::operator!=(const VertexIterator &iter) const
