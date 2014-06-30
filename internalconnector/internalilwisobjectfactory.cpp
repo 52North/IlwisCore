@@ -352,10 +352,15 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
         return Resource();
     bool ok;
     quint64 id = property.toULongLong(&ok);
-    if ( ok)
-        return mastercatalog()->id2Resource(id);
+    if ( ok){
+        ESPIlwisObject object =  mastercatalog()->get(id);
+        if ( object)
+            return object->source();
+    }
     else
         return mastercatalog()->name2Resource(property.toString(), type);
+
+    return Resource();
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{

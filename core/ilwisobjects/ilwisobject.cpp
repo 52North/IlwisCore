@@ -35,6 +35,7 @@ IlwisObject::IlwisObject() :
 
 IlwisObject::IlwisObject(const Resource& resource) :
     Identity(resource.name(), resource.id(), resource.code(), resource.description()) ,
+    _valid(false),
     _readOnly(false),
     _changed(false)
 {
