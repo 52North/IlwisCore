@@ -149,9 +149,9 @@ public:
                     }
                 }
 
-                _bins.resize(_binCount);
+                _bins.resize(_binCount + 1);
                 double delta  = prop(pDELTA);
-                for(int i=0; i < _binCount; ++i ) {
+                for(int i=0; i <= _binCount; ++i ) {
                     _bins[i] = HistogramBin(i * ( delta / _binCount));
                 }
                 std::for_each(begin, end, [&] (const DataType& sample){

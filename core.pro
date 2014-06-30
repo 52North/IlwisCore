@@ -257,7 +257,8 @@ OTHER_FILES += \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
     LICENSE-2.0.txt \
-    installer.nsi
+    installer.nsi \
+    core/resources/ilwis.config
 
 
 win32{
@@ -307,7 +308,8 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/filters.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
-    core/resources/datums.csv
+    core/resources/datums.csv \
+    core/resources/ilwis.config
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
