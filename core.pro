@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql
+QT       += network sql xmlpatterns
 
 DEFINES += CORE_LIBRARY
 
@@ -115,7 +115,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
     core/ilwisobjects/coverage/indexdefinition.cpp \
     core/catalog/dataset.cpp \
-    core/util/bresenham.cpp
+    core/util/bresenham.cpp \
+    core/util/xpathparser.cpp \
+    core/util/xmlstreamparser.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -245,7 +247,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/indexdefinition.h \
     core/ilwisobjects/domain/rangeiterator.h \
     core/catalog/dataset.h \
-    core/util/bresenham.h
+    core/util/bresenham.h \
+    core/util/xpathparser.h \
+    core/util/xmlstreamparser.h
 
 
 OTHER_FILES += \
@@ -266,10 +270,14 @@ win32{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatternsd.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Networkd.dll"
     }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatterns.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
@@ -292,7 +300,7 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers+
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers
 
     INSTALLS += qtdlls qtsqlplugin
 

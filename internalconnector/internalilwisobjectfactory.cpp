@@ -290,6 +290,12 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
+    } else if (QString(resource["size"].typeName()) == "QString") {
+        QStringList parts = resource["size"].toString().split(" ");
+        if ( parts.size() >= 2)
+            sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
+        if ( parts.size() == 3)
+            sz.zsize(parts[2].toInt());
     }
 
 
@@ -346,10 +352,15 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
         return Resource();
     bool ok;
     quint64 id = property.toULongLong(&ok);
-    if ( ok)
-        return mastercatalog()->id2Resource(id);
+    if ( ok){
+        ESPIlwisObject object =  mastercatalog()->get(id);
+        if ( object)
+            return object->source();
+    }
     else
         return mastercatalog()->name2Resource(property.toString(), type);
+
+    return Resource();
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
@@ -585,6 +596,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
        cgrf = GeoReference::create("corners", resource);
        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     }
+    if ( cgrf == 0)
+        return 0;
 
     for(auto kvp : parameters){
         if ( kvp.first == "csy"){
@@ -602,7 +615,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
                 return 0;
         }
         if ( kvp.first == "envelope"){
-            QStringList coords = kvp.second.split(" ");
+            QString coordstring = kvp.second;
+            QStringList coords = coordstring.split(" ");
             if (!coords.size() == 4)
                 return 0;
             bool ok1, ok2;
@@ -622,10 +636,13 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
             cgrf->name(kvp.second);
         }
     }
+    if ( parameters.find("name") == parameters.end())
+        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     if ( csy.isValid() && env.isValid() && sz.isValid()){
-        csy->envelope(env);
         cgrf->coordinateSystem(csy);
+        cgrf->impl<CornersGeoReference>()->setEnvelope(env);
         cgrf->size(sz);
+        cgrf->compute();
         return cgrf;
     }
     return 0;
