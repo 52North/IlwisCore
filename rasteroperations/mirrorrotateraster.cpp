@@ -88,12 +88,18 @@ bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( _method == tmRotate270){
              translatepixels(PixelIterator(_inputRaster, box,PixelIterator::fXYZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().xsize());
         }
-
         return true;
 
     };
 
-    return  OperationHelperRaster::execute(ctx, Transform, _outputRaster);
+    bool ok = OperationHelperRaster::execute(ctx, Transform, _outputRaster);
+
+    if ( ok && ctx != 0) {
+        QVariant value;
+        value.setValue<IRasterCoverage>(_outputRaster);
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source() );
+    }
+    return ok;
 }
 
 Ilwis::OperationImplementation *MirrorRotateRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
