@@ -30,6 +30,7 @@ private:
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.internalconnector" FILE  "internalconnector.json")
 
+    static IlwisTypes ilwisType(const QString &name);
 };
 }
 }
