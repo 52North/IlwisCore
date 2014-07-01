@@ -178,6 +178,9 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
 }
 
 IlwisTypes InternalModule::ilwisType(const QString &name) {
+    if ( name == sUNDEF)
+        return itUNKNOWN;
+
     QString objectlocation = name;
     if ( !name.contains(QRegExp("\\\\|/")))    {
         objectlocation = "ilwis://internalcatalog/" + name;
