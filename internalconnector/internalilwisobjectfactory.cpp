@@ -374,6 +374,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
         return dm;
     }
     QString code = resource.code();
+    Domain *newdomain = 0;
     if ( code != sUNDEF) {
 
         QSqlQuery db(kernel()->database());
@@ -416,17 +417,12 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                     dv->setParent(dom);
                                 }
                             }
-                            dv->readOnly(true);
-                            return dv;
+                            newdomain = dv;
                         }else {
                             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
                         }
                     }
-
-                } else if (table == "thematicdomain"){
-                    //TODO: internal thematic domains
                 }
-
             }
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
@@ -436,34 +432,39 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
             if ( hasType(resource.extendedType(), itNAMEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<NamedIdentifier>(res);
+                newdomain = new ItemDomain<NamedIdentifier>(res);
             }
-            if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
+            else if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<IndexedIdentifier>(res);
+                newdomain = new ItemDomain<IndexedIdentifier>(res);
             }
-            if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
+            else if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<ThematicItem>(res);
+                newdomain = new ItemDomain<ThematicItem>(res);
             }
-            if ( hasType(resource.extendedType(), itNUMERICITEM)) {
+            else if ( hasType(resource.extendedType(), itNUMERICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<Interval>(res);
+                newdomain = new ItemDomain<Interval>(res);
             }
-            if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
+            else if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<ColorItem>(res);
+                newdomain = new ItemDomain<ColorItem>(res);
             }
         } if ( hasType(resource.ilwisType(), itNUMERICDOMAIN)){
-            return new NumericDomain(resource);
+            newdomain = new NumericDomain(resource);
         }
     }
-
-    return 0;
+    if ( newdomain){
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        newdomain->setConnector(connector);
+        newdomain->readOnly(true);
+    }
+    return newdomain;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource) const {
@@ -498,6 +499,11 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
         csy->prepare("proj4=" + projParms);
     }
 
+    if ( csy){
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        csy->setConnector(connector);
+    }
     return csy;
 
 }
