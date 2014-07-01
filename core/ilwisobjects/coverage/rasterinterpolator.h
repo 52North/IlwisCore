@@ -11,7 +11,7 @@ public:
 
     RasterInterpolator(const IRasterCoverage& raster, int method) ;
     double pix2value(const Pixeld &pix);
-    double coord2value(const Coordinate& crd);
+    double coord2value(const Coordinate& crd, quint32 z);
 
 private:
     double bilinear(const Pixeld &pix) ;

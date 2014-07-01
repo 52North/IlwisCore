@@ -24,11 +24,12 @@ double RasterInterpolator::pix2value(const Pixeld& pix) {
 
 }
 
-double RasterInterpolator::coord2value(const Coordinate &crd)
+double RasterInterpolator::coord2value(const Coordinate &crd, quint32 z)
 {
      if (!_valid || !crd.isValid())
         return rUNDEF;
      Pixeld pix = _grf->coord2Pixel(crd);
+     pix.z = z;
      return pix2value(pix);
 }
 
