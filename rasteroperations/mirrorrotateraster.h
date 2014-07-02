@@ -7,7 +7,7 @@ namespace RasterOperations {
 class MirrorRotateRaster : public OperationImplementation
 {
 public:
-    enum TransPoseMethod{tmMirrorHorizontal, tmMirrorVertical, tmMirrorDiagonal, tmRotata90, tmRotate180, tmRotate270, tmTranspose};
+    enum TransPoseMethod{tmMirrorHorizontal, tmMirrorVertical, tmMirrorDiagonal, tmRotate90, tmRotate180, tmRotate270, tmTranspose};
     MirrorRotateRaster();
 
     MirrorRotateRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
@@ -25,7 +25,7 @@ private:
     IRasterCoverage _outputRaster;
     TransPoseMethod _method;
 
-    void mirror(Ilwis::PixelIterator iterIn, Ilwis::PixelIterator iterOut, const Ilwis::BoundingBox &box, quint32 linelength);
+    void translatepixels(Ilwis::PixelIterator iterIn, Ilwis::PixelIterator iterOut, const Ilwis::BoundingBox &box, quint32 linelength);
     bool dimChanged(const PixelIterator& iter) const;
 };
 }

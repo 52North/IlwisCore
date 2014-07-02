@@ -47,7 +47,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             Coordinate coord = outputRaster->georeference()->pixel2Coord(Pixeld(position.x,(position.y)));
             if ( !equalCsy)
                 coord = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),coord);
-            *iterOut = interpolator.coord2value(coord);
+            *iterOut = interpolator.coord2value(coord, iterOut.position().z);
             ++iterOut;
         }
         return true;
@@ -84,6 +84,9 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     }
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     outputRaster->georeference(grf);
+    Size<> sz = grf->size();
+    sz.zsize(_inputObj.as<RasterCoverage>()->size().zsize());
+    outputRaster->size(sz);
     Envelope env = grf->pixel2Coord(grf->size());
     outputRaster->envelope(env);
     if ( outputName != sUNDEF)

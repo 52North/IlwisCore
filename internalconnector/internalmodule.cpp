@@ -88,7 +88,7 @@ void InternalModule::prepare()
     resource.prepare();
     mastercatalog()->addItems({resource});
 
-
+    IlwisObject::addTypeFunction(InternalModule::ilwisType);
 
 }
 
@@ -175,6 +175,18 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
         kernel()->issues()->logSql(db.lastError());
     }
     return false;
+}
+
+IlwisTypes InternalModule::ilwisType(const QString &name) {
+    if ( name == sUNDEF)
+        return itUNKNOWN;
+
+    QString objectlocation = name;
+    if ( !name.contains(QRegExp("\\\\|/")))    {
+        objectlocation = "ilwis://internalcatalog/" + name;
+    }
+    Resource res = mastercatalog()->name2Resource(objectlocation);
+    return res.ilwisType();
 }
 
 

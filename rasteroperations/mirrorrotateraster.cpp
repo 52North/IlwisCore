@@ -35,12 +35,16 @@ bool MirrorRotateRaster::dimChanged(const PixelIterator& iter) const{
         return iter.ychanged();
     case tmMirrorHorizontal:
         return iter.xchanged();
-    case tmRotata90:
-        return iter.ychanged();
+    case tmRotate90:
+        return iter.xchanged();
+    case tmRotate270:
+        return iter.xchanged();
+    default:
+        break;
     }
     return false;
 }
-void MirrorRotateRaster::mirror(PixelIterator iterIn,PixelIterator iterOut, const BoundingBox& box, quint32 linelength ){
+void MirrorRotateRaster::translatepixels(PixelIterator iterIn,PixelIterator iterOut, const BoundingBox& box, quint32 linelength ){
     std::vector<double> line(linelength);
     auto iterLine = line.begin();
     auto end = iterIn.end();
@@ -66,17 +70,36 @@ bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     std::function<bool(const BoundingBox)> Transform = [&](const BoundingBox box ) -> bool {
         if ( _method == tmMirrorVertical){
-             mirror(PixelIterator(_inputRaster, box),PixelIterator(_outputRaster, box), box, _outputRaster->size().xsize());
+             translatepixels(PixelIterator(_inputRaster, box),PixelIterator(_outputRaster, box), box, _outputRaster->size().xsize());
         }
         if ( _method == tmMirrorHorizontal){
-             mirror(PixelIterator(_inputRaster, box,PixelIterator::fYXZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().ysize());
+             translatepixels(PixelIterator(_inputRaster, box,PixelIterator::fYXZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().ysize());
         }
-
+        if ( _method == tmRotate90){
+             translatepixels(PixelIterator(_inputRaster, box,PixelIterator::fYXZ),PixelIterator(_outputRaster, box,PixelIterator::fXYZ), box, _outputRaster->size().ysize());
+        }
+        if ( _method == tmRotate180){
+            _method = tmMirrorHorizontal;
+             translatepixels(PixelIterator(_inputRaster, box,PixelIterator::fYXZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().ysize());
+             _method = tmMirrorVertical;
+             translatepixels(PixelIterator(_outputRaster, box),PixelIterator(_outputRaster, box), box, _outputRaster->size().xsize());
+             _method = tmRotate180;
+        }
+        if ( _method == tmRotate270){
+             translatepixels(PixelIterator(_inputRaster, box,PixelIterator::fXYZ),PixelIterator(_outputRaster, box,PixelIterator::fYXZ), box, _outputRaster->size().xsize());
+        }
         return true;
 
     };
 
-    return  OperationHelperRaster::execute(ctx, Transform, _outputRaster);
+    bool ok = OperationHelperRaster::execute(ctx, Transform, _outputRaster);
+
+    if ( ok && ctx != 0) {
+        QVariant value;
+        value.setValue<IRasterCoverage>(_outputRaster);
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source() );
+    }
+    return ok;
 }
 
 Ilwis::OperationImplementation *MirrorRotateRaster::create(quint64 metaid, const Ilwis::OperationExpression &expr)
@@ -95,8 +118,8 @@ Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionConte
         return sPREPAREFAILED;
     }
     std::map<QString, TransPoseMethod> methods={{"mirrhor",tmMirrorHorizontal},{"mirrvert",tmMirrorVertical},
-                                                {"mirrdiag",tmMirrorDiagonal},{"transpose",tmTranspose},{"rotate90",tmRotata90},
-                                                {"rotate180",tmRotate180},{"rotate90",tmRotate270}};
+                                                {"mirrdiag",tmMirrorDiagonal},{"transpose",tmTranspose},{"rotate90",tmRotate90},
+                                                {"rotate180",tmRotate180},{"rotate270",tmRotate270}};
     auto iter = methods.find(method);
     if ( iter == methods.end()){
         ERROR2(ERR_NOT_FOUND2,method, TR("in method for mirrorrotate"));
@@ -105,7 +128,7 @@ Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionConte
     _method = iter->second;
     Size<> sz = _inputRaster->size();
     Envelope outputenv = _inputRaster->envelope();
-    if ( _method == tmTranspose || _method == tmRotata90 || _method == tmRotate270){
+    if ( _method == tmTranspose || _method == tmRotate90 || _method == tmRotate270){
         sz = Size<>(sz.ysize(), sz.xsize(), sz.zsize());
         Coordinate center = (outputenv.max_corner() + outputenv.min_corner()) / 2.0;
         auto rotated = GeometryHelper::rotate2d(center,90,(std::vector<Coordinate>)outputenv);

@@ -286,7 +286,8 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         return 0;
 
     Size<> sz;
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size"){
+    QString typenm = resource["size"].typeName();
+    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
@@ -375,6 +376,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
     }
     QString code = resource.code();
     Domain *newdomain = 0;
+    bool readonlyState = false;
     if ( code != sUNDEF) {
 
         QSqlQuery db(kernel()->database());
@@ -418,6 +420,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                 }
                             }
                             newdomain = dv;
+                            readonlyState = true;
                         }else {
                             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
                         }
@@ -462,7 +465,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
         const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
         ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
         newdomain->setConnector(connector);
-        newdomain->readOnly(true);
+        newdomain->readOnly(readonlyState);
     }
     return newdomain;
 }
