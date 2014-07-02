@@ -641,6 +641,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
         if ( kvp.first == "name"){
             cgrf->name(kvp.second);
         }
+        if ( kvp.first == "cornerofcorners")
+            cgrf->centerOfPixel(kvp.second.compare("yes") != 0);
     }
     if ( parameters.find("name") == parameters.end())
         cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
