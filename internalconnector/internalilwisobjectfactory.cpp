@@ -286,7 +286,8 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         return 0;
 
     Size<> sz;
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size"){
+    QString typenm = resource["size"].typeName();
+    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
