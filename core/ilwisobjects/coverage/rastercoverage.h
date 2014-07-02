@@ -168,7 +168,7 @@ public:
 
     }
 
-    NumericStatistics& statistics(int mode=0);
+    NumericStatistics& statistics(int mode=0, int bins=0);
 
     //@override
     Resource source(int mode=cmINPUT) const;
