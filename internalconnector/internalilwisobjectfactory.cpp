@@ -286,7 +286,8 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         return 0;
 
     Size<> sz;
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size"){
+    QString typenm = resource["size"].typeName();
+    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
@@ -643,6 +644,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
         if ( kvp.first == "name"){
             cgrf->name(kvp.second);
         }
+        if ( kvp.first == "cornerofcorners")
+            cgrf->centerOfPixel(kvp.second.compare("yes") != 0);
     }
     if ( parameters.find("name") == parameters.end())
         cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
