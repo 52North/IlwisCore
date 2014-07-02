@@ -516,11 +516,15 @@ private:
     bool moveYXZ(int delta){
         _y += delta;
         _linearposition += delta * _box.xlength();
+        _localOffset += delta * _box.xlength();
         _yChanged = true;
         _xChanged = _zChanged = false;
         if (_selectionIndex < 0){
             if ( _y > _endy || _y < _box.min_corner().y){
                 return moveXZ(delta);
+            }
+            if ( _localOffset >= _grid->blockSize(_currentBlock)){
+                return move2NextBlock();
             }
         }
         return true;
@@ -563,6 +567,7 @@ private:
     bool moveXZ(int delta);
     bool move2NextSelection(int delta);
     void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
+    bool move2NextBlock();
 };
 
 inline Ilwis::PixelIterator begin(const Ilwis::IRasterCoverage& raster) {

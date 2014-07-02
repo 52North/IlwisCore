@@ -290,6 +290,12 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         sz = resource["size"].value<Size<>>();
     } else if (QString(resource["size"].typeName()) == "QSize") {
         sz = resource["size"].toSize();
+    } else if (QString(resource["size"].typeName()) == "QString") {
+        QStringList parts = resource["size"].toString().split(" ");
+        if ( parts.size() >= 2)
+            sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
+        if ( parts.size() == 3)
+            sz.zsize(parts[2].toInt());
     }
 
 
@@ -346,10 +352,15 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
         return Resource();
     bool ok;
     quint64 id = property.toULongLong(&ok);
-    if ( ok)
-        return mastercatalog()->id2Resource(id);
+    if ( ok){
+        ESPIlwisObject object =  mastercatalog()->get(id);
+        if ( object)
+            return object->source();
+    }
     else
         return mastercatalog()->name2Resource(property.toString(), type);
+
+    return Resource();
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) const{
@@ -363,6 +374,8 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
         return dm;
     }
     QString code = resource.code();
+    Domain *newdomain = 0;
+    bool readonlyState = false;
     if ( code != sUNDEF) {
 
         QSqlQuery db(kernel()->database());
@@ -405,17 +418,13 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
                                     dv->setParent(dom);
                                 }
                             }
-                            dv->readOnly(true);
-                            return dv;
+                            newdomain = dv;
+                            readonlyState = true;
                         }else {
                             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
                         }
                     }
-
-                } else if (table == "thematicdomain"){
-                    //TODO: internal thematic domains
                 }
-
             }
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
@@ -425,34 +434,39 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource) 
             if ( hasType(resource.extendedType(), itNAMEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<NamedIdentifier>(res);
+                newdomain = new ItemDomain<NamedIdentifier>(res);
             }
-            if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
+            else if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<IndexedIdentifier>(res);
+                newdomain = new ItemDomain<IndexedIdentifier>(res);
             }
-            if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
+            else if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<ThematicItem>(res);
+                newdomain = new ItemDomain<ThematicItem>(res);
             }
-            if ( hasType(resource.extendedType(), itNUMERICITEM)) {
+            else if ( hasType(resource.extendedType(), itNUMERICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<Interval>(res);
+                newdomain = new ItemDomain<Interval>(res);
             }
-            if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
+            else if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                return new ItemDomain<ColorItem>(res);
+                newdomain = new ItemDomain<ColorItem>(res);
             }
         } if ( hasType(resource.ilwisType(), itNUMERICDOMAIN)){
-            return new NumericDomain(resource);
+            newdomain = new NumericDomain(resource);
         }
     }
-
-    return 0;
+    if ( newdomain){
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        newdomain->setConnector(connector);
+        newdomain->readOnly(readonlyState);
+    }
+    return newdomain;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource) const {
@@ -487,6 +501,11 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
         csy->prepare("proj4=" + projParms);
     }
 
+    if ( csy){
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        csy->setConnector(connector);
+    }
     return csy;
 
 }
@@ -628,9 +647,10 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     if ( parameters.find("name") == parameters.end())
         cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     if ( csy.isValid() && env.isValid() && sz.isValid()){
-        csy->envelope(env);
         cgrf->coordinateSystem(csy);
+        cgrf->impl<CornersGeoReference>()->setEnvelope(env);
         cgrf->size(sz);
+        cgrf->compute();
         return cgrf;
     }
     return 0;

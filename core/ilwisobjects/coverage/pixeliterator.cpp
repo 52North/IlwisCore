@@ -197,6 +197,8 @@ bool PixelIterator::moveXY(int delta){
     return true;
 }
 
+
+
 bool PixelIterator::moveXZ(int delta)
 {
     qint32 tempy = _y;
@@ -204,30 +206,48 @@ bool PixelIterator::moveXZ(int delta)
     _y = _box.min_corner().y + ( _y - _box.min_corner().y) % (int)_box.ylength();
     _x += (tempy - _y) / _box.ylength();
     _xChanged = tempx != _x;
-    std::swap(_x,tempx);
     qint32 ylocal = _y % _grid->maxLines();
-    quint32 localblock = _y /  _grid->maxLines();
-    quint32 bandblocks = _grid->blocksPerBand() * _z;
     _localOffset = _x + ylocal * _grid->size().xsize();
+    _linearposition = _x + _y * _grid->size().xsize() + _z * _grid->size().xsize() * _grid->size().ysize();
+
+//    quint32 localblock = _y /  _grid->maxLines();
+//    quint32 bandblocks = _grid->blocksPerBand() * _z;
+//    if ( bandblocks + localblock != _currentBlock) {
+//        _currentBlock = bandblocks + localblock;;
+//        _localOffset = _x;
+//    }
+    move2NextBlock();
+
     if (_trq)
         _trq->move();
-    if ( bandblocks + localblock != _currentBlock) {
-        _currentBlock = bandblocks + localblock;;
-        _localOffset = _x;
-    }
     if ( _x > _endx){
         quint32 newz = _z + (_x - _box.min_corner().x) / _box.xlength();
         _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
         _zChanged = newz != _z;
         _z = newz;
+        tempx = _x;
         _x = _box.min_corner().x + (_x - _box.min_corner().x) % (int)_box.xlength();
         _xChanged = _x != tempx;
-        localblock = _y /  _grid->maxLines();
+        quint32 localblock = _y /  _grid->maxLines();
         _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
         if ( _z > _endz) { // done with this iteration block
             _linearposition = _endposition;
             return false;
         }
+    }
+    return true;
+}
+
+bool PixelIterator::move2NextBlock() {
+    quint32 localblock = _y /  _grid->maxLines();
+    quint32 bandblocks = _grid->blocksPerBand() * _z;
+    if ( bandblocks + localblock != _currentBlock) {
+        _currentBlock = bandblocks + localblock;;
+        _localOffset = _x;
+    }
+    if ( _currentBlock >= _grid->blocks()){
+        _linearposition = _endposition;
+        return false;
     }
     return true;
 }
@@ -249,15 +269,18 @@ bool PixelIterator::moveYZ(int delta){
     _yChanged = tempy != _y;
     std::swap(_y,tempy);
     qint32 ylocal = _y % _grid->maxLines();
-    quint32 localblock = _y /  _grid->maxLines();
-    quint32 bandblocks = _grid->blocksPerBand() * _z;
     _localOffset = _x + ylocal * _grid->size().xsize();
+
+//    quint32 localblock = _y /  _grid->maxLines();
+//    quint32 bandblocks = _grid->blocksPerBand() * _z;
+
+//    if ( bandblocks + localblock != _currentBlock) {
+//        _currentBlock = bandblocks + localblock;;
+//        _localOffset = _x;
+//    }
+    move2NextBlock();
     if (_trq)
         _trq->move();
-    if ( bandblocks + localblock != _currentBlock) {
-        _currentBlock = bandblocks + localblock;;
-        _localOffset = _x;
-    }
     if ( _y > _endy) {
         quint32 newz = _z + (_y - _box.min_corner().y) / _box.ylength();
         _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
@@ -265,7 +288,7 @@ bool PixelIterator::moveYZ(int delta){
         _z = newz;
         _y = _box.min_corner().y + (_y - _box.min_corner().y) % (int)_box.ylength();
         _yChanged = _y != tempy;
-        localblock = _y /  _grid->maxLines();
+        quint32 localblock = _y /  _grid->maxLines();
         _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
         if ( _z > _endz) { // done with this iteration block
             _linearposition = _endposition;
@@ -275,7 +298,7 @@ bool PixelIterator::moveYZ(int delta){
         _y = _box.max_corner().y;
         --_z;
         _zChanged = true;
-        localblock = _y /  _grid->maxLines();
+         quint32 localblock = _y /  _grid->maxLines();
         _localOffset = _y * _grid->size().xsize() + _x - localblock * _grid->maxLines() * _grid->size().xsize();
         if ( _z < 0) {
             return false;

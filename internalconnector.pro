@@ -26,7 +26,9 @@ HEADERS += \
     internalconnector/internalfeaturecoverageconnector.h \
     internalconnector/internalrastercoverageconnector.h \
     internalconnector/internalcatalogexplorer.h \
-    internalconnector/internalgeoreferenceconnector.h
+    internalconnector/internalgeoreferenceconnector.h \
+    internalconnector/internaldomain.h \
+    internalconnector/internalcoordinatesystemconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -38,7 +40,9 @@ SOURCES += \
     internalconnector/internalfeaturecoverageconnector.cpp \
     internalconnector/internalrastercoverageconnector.cpp \
     internalconnector/internalcatalogexplorer.cpp \
-    internalconnector/internalgeoreferenceconnector.cpp
+    internalconnector/internalgeoreferenceconnector.cpp \
+    internalconnector/internaldomain.cpp \
+    internalconnector/internalcoordinatesystemconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json
