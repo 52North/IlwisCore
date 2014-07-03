@@ -29,13 +29,17 @@ XmlStreamParser::XmlStreamParser(QXmlStreamReader *reader): _reader(reader)
 XmlStreamParser::XmlStreamParser(QIODevice *device): _device(device)
 {
     _loop = new QEventLoop();
+    //qDebug() << "Connect I/O signals to resume parsing streamed data.";
+    connect(_device, SIGNAL(readChannelFinished()), this, SLOT(readChannelFinished()));
     connect(_device, SIGNAL(readyRead()), this, SLOT(readIncomingData()));
-    connect(_device, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
     _reader = new QXmlStreamReader();
+    //qDebug() << "Read first data buffer ...";
+    readIncomingData();
 }
 
 XmlStreamParser::~XmlStreamParser()
 {
+    _loop->quit();
     _loop->deleteLater();
 }
 
@@ -44,17 +48,18 @@ void XmlStreamParser::setXmlReader(QXmlStreamReader *reader)
     _reader = reader;
 }
 
-void XmlStreamParser::bytesWritten(qint64 bytes) {
-    qDebug() << "bytes written: " << bytes;
-    _reader->addData(_device->read(bytes));
+void XmlStreamParser::readChannelFinished() {
+    //qDebug() << "readChannelFinished()";
+    _readingChannelFinished = true;
     _loop->quit();
-    qDebug() << "... resume parsing.";
 }
 
 void XmlStreamParser::readIncomingData() {
-    qDebug() << "readIncomingData()";
+    //qDebug() << "readIncomingData(): chunk size: " << _device->size() << " bytes";
+    _reader->addData(_device->read(_device->size()));
+    //qDebug() << "... chunk written to device.";
+    _loop->quit();
 }
-
 
 QXmlStreamReader *XmlStreamParser::reader() const
 {
@@ -66,6 +71,16 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
     _namespaces[prefix] = ns;
 }
 
+void XmlStreamParser::addTargetNamespaceMapping(QString ns)
+{
+    _namespaces["target"] = ns;
+}
+
+QString XmlStreamParser::targetNamespace() const
+{
+    return _namespaces["target"];
+}
+
 QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri)
 {
     return _namespaces.key(namespaceUri);
@@ -74,7 +89,7 @@ QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri)
 bool XmlStreamParser::startParsing(QString qName)
 {
     if ( !_reader->isStartDocument()) {
-      readNext();
+        readNext();
     }
     if (canProceedParsing()) {
         readNextStartElement();
@@ -85,15 +100,20 @@ bool XmlStreamParser::startParsing(QString qName)
 
 bool XmlStreamParser::onError()
 {
-    if (_reader->error() == QXmlStreamReader::PrematureEndOfDocumentError) {
+    if ( isMoreDataExpected() ) {
         qDebug() << "Wait for new data ...";
         _loop->exec();
-        return false;
+        return true;
     } else {
         ERROR0(_reader->errorString());
-        return true;
+        return false;
     }
 }
+
+bool XmlStreamParser::isMoreDataExpected() {
+    return !_readingChannelFinished && _reader->error() == QXmlStreamReader::PrematureEndOfDocumentError;
+}
+
 
 bool XmlStreamParser::hasError() {
     return _reader->hasError();
@@ -101,7 +121,7 @@ bool XmlStreamParser::hasError() {
 
 bool XmlStreamParser::canProceedParsing()
 {
-    return !hasError() || ( hasError() && !onError() );
+    return !hasError() || ( hasError() && onError() );
 }
 
 QXmlStreamAttributes XmlStreamParser::attributes()
@@ -149,9 +169,6 @@ QString XmlStreamParser::qname()
 bool XmlStreamParser::readNextStartElement()
 {
     if (canProceedParsing()) {
-        if (_reader->isEndElement()) {
-            readNext();
-        }
         return _reader->readNextStartElement();
     }
     return false;

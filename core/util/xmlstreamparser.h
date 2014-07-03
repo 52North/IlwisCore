@@ -26,6 +26,8 @@ public:
     QXmlStreamReader *reader() const;
     void setXmlReader(QXmlStreamReader *reader);
     void addNamespaceMapping(QString prefix, QString ns);
+    void addTargetNamespaceMapping(QString ns);
+    QString targetNamespace() const;
 
     QString getPrefixForNamespaceUri(QString namespaceUri);
 
@@ -38,7 +40,6 @@ public:
     bool startParsing(QString qName);
     bool atEnd();
 
-    bool onError();
     bool hasError();
 
     QXmlStreamAttributes attributes() ;
@@ -88,7 +89,7 @@ public:
     bool isAtEndOf(QString qName) ;
 
 public slots:
-    void bytesWritten(qint64);
+    void readChannelFinished();
     void readIncomingData();
 
 
@@ -99,10 +100,14 @@ private:
     QEventLoop *_loop;
     QIODevice *_device;
     QMap<QString,QString> _namespaces;
+    bool _readingChannelFinished = false;
 
     bool isAtElement(QString qName);
 
+    bool isMoreDataExpected();
     bool canProceedParsing();
+
+    bool onError();
 
     static void doNothing() {}
 
