@@ -1,23 +1,33 @@
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
+#include <QObject>
+#include <QMap>
+
 #include "kernel_global.h"
 
+class QIODevice;
+class QEventLoop;
 class QXmlStreamReader;
 class QXmlStreamAttributes;
 
-class KERNELSHARED_EXPORT XmlStreamParser
+namespace Ilwis {
+
+class KERNELSHARED_EXPORT XmlStreamParser: QObject
 {
+    Q_OBJECT
+
 public:
 
     XmlStreamParser(QXmlStreamReader *reader);
     XmlStreamParser(QIODevice *device);
+    ~XmlStreamParser();
 
     QXmlStreamReader *reader() const;
     void setXmlReader(QXmlStreamReader *reader);
     void addNamespaceMapping(QString prefix, QString ns);
 
-    QString getPrefixForNamespaceUri(QString namespaceUri) const;
+    QString getPrefixForNamespaceUri(QString namespaceUri);
 
     /**
      * Starts parsing the underlying xml by reading the next/first start element.
@@ -25,19 +35,21 @@ public:
      * @param qName the root element's name.
      * @return true if element was found, false if not or the document has ended.
      */
-    bool startParsing(QString qName) const;
-    bool hasError() const;
-    bool atEnd() const;
+    bool startParsing(QString qName);
+    bool atEnd();
 
-    QXmlStreamAttributes attributes() const;
+    bool onError();
+    bool hasError();
 
-    QString readElementText() const;
+    QXmlStreamAttributes attributes() ;
 
-    QString name() const;
+    QString readElementText() ;
 
-    QString namespaceUri() const;
+    QString name();
 
-    QString qname() const;
+    QString namespaceUri() ;
+
+    QString qname();
 
     /**
      * Moves to next end element named by qName.
@@ -66,23 +78,31 @@ public:
      */
     bool findNextOf(std::initializer_list<QString> elementList, void (*callback)()=doNothing);
 
-    bool readNextStartElement() const;
+    bool readNextStartElement() ;
 
-    void skipCurrentElement() const;
+    void skipCurrentElement();
 
-    void readNext() const;
+    void readNext() ;
 
-    bool isAtBeginningOf(QString qName) const;
-    bool isAtEndOf(QString qName) const;
+    bool isAtBeginningOf(QString qName) ;
+    bool isAtEndOf(QString qName) ;
+
+public slots:
+    void bytesWritten(qint64);
+    void readIncomingData();
 
 
 protected:
     QXmlStreamReader *_reader;
 
 private:
+    QEventLoop *_loop;
+    QIODevice *_device;
     QMap<QString,QString> _namespaces;
 
-    bool isAtElement(QString qName) const;
+    bool isAtElement(QString qName);
+
+    bool canProceedParsing();
 
     static void doNothing() {}
 
@@ -93,4 +113,5 @@ private:
     }
 };
 
+}
 #endif // XMLPARSER_H

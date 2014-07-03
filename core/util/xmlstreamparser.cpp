@@ -1,12 +1,15 @@
 
 #include <QMap>
 #include <QString>
+#include <QIODevice>
+#include <QEventLoop>
 #include <QXmlStreamReader>
 #include <initializer_list>
 
+#include "kernel.h"
 #include "xmlstreamparser.h"
 
-
+using namespace Ilwis;
 
 /*
  *
@@ -23,15 +26,35 @@ XmlStreamParser::XmlStreamParser(QXmlStreamReader *reader): _reader(reader)
 {
 }
 
-XmlStreamParser::XmlStreamParser(QIODevice *device)
+XmlStreamParser::XmlStreamParser(QIODevice *device): _device(device)
 {
-    _reader = new QXmlStreamReader(device);
+    _loop = new QEventLoop();
+    connect(_device, SIGNAL(readyRead()), this, SLOT(readIncomingData()));
+    connect(_device, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+    _reader = new QXmlStreamReader();
+}
+
+XmlStreamParser::~XmlStreamParser()
+{
+    _loop->deleteLater();
 }
 
 void XmlStreamParser::setXmlReader(QXmlStreamReader *reader)
 {
     _reader = reader;
 }
+
+void XmlStreamParser::bytesWritten(qint64 bytes) {
+    qDebug() << "bytes written: " << bytes;
+    _reader->addData(_device->read(bytes));
+    _loop->quit();
+    qDebug() << "... resume parsing.";
+}
+
+void XmlStreamParser::readIncomingData() {
+    qDebug() << "readIncomingData()";
+}
+
 
 QXmlStreamReader *XmlStreamParser::reader() const
 {
@@ -43,71 +66,109 @@ void XmlStreamParser::addNamespaceMapping(QString prefix, QString ns)
     _namespaces[prefix] = ns;
 }
 
-QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri) const
+QString XmlStreamParser::getPrefixForNamespaceUri(QString namespaceUri)
 {
     return _namespaces.key(namespaceUri);
 }
 
-bool XmlStreamParser::startParsing(QString qName) const
+bool XmlStreamParser::startParsing(QString qName)
 {
     if ( !_reader->isStartDocument()) {
-      _reader->readNext();
+      readNext();
     }
-    _reader->readNextStartElement();
-    return isAtBeginningOf(qName);
+    if (canProceedParsing()) {
+        readNextStartElement();
+        return isAtBeginningOf(qName);
+    }
+    return false;
 }
 
-bool XmlStreamParser::hasError() const
+bool XmlStreamParser::onError()
 {
+    if (_reader->error() == QXmlStreamReader::PrematureEndOfDocumentError) {
+        qDebug() << "Wait for new data ...";
+        _loop->exec();
+        return false;
+    } else {
+        ERROR0(_reader->errorString());
+        return true;
+    }
+}
+
+bool XmlStreamParser::hasError() {
     return _reader->hasError();
 }
 
-QXmlStreamAttributes XmlStreamParser::attributes() const
+bool XmlStreamParser::canProceedParsing()
+{
+    return !hasError() || ( hasError() && !onError() );
+}
+
+QXmlStreamAttributes XmlStreamParser::attributes()
 {
     return _reader->attributes();
 }
 
-bool XmlStreamParser::atEnd() const
+bool XmlStreamParser::atEnd()
 {
     return _reader->atEnd();
 }
 
-QString XmlStreamParser::readElementText() const
+QString XmlStreamParser::readElementText()
 {
-    return _reader->readElementText();
+    if (canProceedParsing()) {
+        return _reader->readElementText();
+    }
+    return "";
 }
 
-QString XmlStreamParser::name() const
+QString XmlStreamParser::name()
 {
-    return _reader->name().toString();
+    if (canProceedParsing()) {
+        return _reader->name().toString();
+    }
+    return "";
 }
 
-QString XmlStreamParser::namespaceUri() const
+QString XmlStreamParser::namespaceUri()
 {
-    return _reader->namespaceUri().toString();
+    if (canProceedParsing()) {
+        return _reader->namespaceUri().toString();
+    }
+    return "";
 }
 
-QString XmlStreamParser::qname() const
+QString XmlStreamParser::qname()
 {
-    return _reader->qualifiedName().toString();
+    if (canProceedParsing()) {
+        return _reader->qualifiedName().toString();
+    }
+    return "";
 }
 
-bool XmlStreamParser::readNextStartElement() const
+bool XmlStreamParser::readNextStartElement()
 {
-    if (_reader->isEndElement()) {
+    if (canProceedParsing()) {
+        if (_reader->isEndElement()) {
+            readNext();
+        }
+        return _reader->readNextStartElement();
+    }
+    return false;
+}
+
+void XmlStreamParser::skipCurrentElement()
+{
+    if (canProceedParsing()) {
+        _reader->skipCurrentElement();
+    }
+}
+
+void XmlStreamParser::readNext()
+{
+    if (canProceedParsing()) {
         _reader->readNext();
     }
-    return _reader->readNextStartElement();
-}
-
-void XmlStreamParser::skipCurrentElement() const
-{
-    _reader->skipCurrentElement();
-}
-
-void XmlStreamParser::readNext() const
-{
-    _reader->readNext();
 }
 
 bool XmlStreamParser::moveToEndOf(QString qName)
@@ -117,13 +178,13 @@ bool XmlStreamParser::moveToEndOf(QString qName)
         if (_reader->isEndElement()) {
             found = isAtEndOf(qName);
             if ( !found) {
-                _reader->readNext();
+                readNext();
             }
         } else {
             if (_reader->isStartElement()) {
-                _reader->skipCurrentElement();
+                skipCurrentElement();
             }
-            _reader->readNext();
+            readNext();
         }
     }
     return found;
@@ -136,18 +197,18 @@ bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
     }
 
     bool found = false;
-    _reader->readNextStartElement();
+    readNextStartElement();
     nextElementDo(callback);
 
     while ( !(_reader->atEnd() || found)) {
         if (_reader->isStartElement()) {
             found = isAtBeginningOf(qName);
             if ( !found) {
-                _reader->skipCurrentElement();
-                _reader->readNext();
+                skipCurrentElement();
+                readNext();
             }
         } else {
-            if ( !_reader->readNextStartElement()) {
+            if ( !readNextStartElement()) {
                 break;
             }
             nextElementDo(callback);
@@ -166,7 +227,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
     bool found = false;
     QString startElement = name();
     bool onStartElement = _reader->isStartElement();
-    bool hasInnerStartElement = _reader->readNextStartElement();
+    bool hasInnerStartElement = readNextStartElement();
     if ( !onStartElement && !hasInnerStartElement) {
         return false;
     }
@@ -181,7 +242,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
                 }
             }
             if ( !found) {
-                bool hasNextNestedElement = _reader->readNextStartElement();
+                bool hasNextNestedElement = readNextStartElement();
                 bool atEndOfStartElement = name() == startElement;
                 if ( !hasNextNestedElement) {
                     if (atEndOfStartElement) {
@@ -191,7 +252,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
                 }
             }
         } else {
-            bool hasNextNestedElement = _reader->readNextStartElement();
+            bool hasNextNestedElement = readNextStartElement();
             bool atEndOfStartElement = name() == startElement;
             if ( !hasNextNestedElement) {
                 if (atEndOfStartElement) {
@@ -204,7 +265,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
     return found;
 }
 
-bool XmlStreamParser::isAtBeginningOf(QString qName) const
+bool XmlStreamParser::isAtBeginningOf(QString qName)
 {
     if (_reader->atEnd() || !_reader->isStartElement()) {
         return false;
@@ -212,7 +273,7 @@ bool XmlStreamParser::isAtBeginningOf(QString qName) const
     return isAtElement(qName);
 }
 
-bool XmlStreamParser::isAtEndOf(QString qName) const
+bool XmlStreamParser::isAtEndOf(QString qName)
 {
     if (_reader->atEnd() || !_reader->isEndElement()) {
         return false;
@@ -220,7 +281,7 @@ bool XmlStreamParser::isAtEndOf(QString qName) const
     return isAtElement(qName);
 }
 
-bool XmlStreamParser::isAtElement(QString qName) const
+bool XmlStreamParser::isAtElement(QString qName)
 {
     QString prefix;
     int splitIndex = qName.indexOf(":");
@@ -230,18 +291,18 @@ bool XmlStreamParser::isAtElement(QString qName) const
     QString name = qName.mid(splitIndex + 1);
 
     if (_reader->namespaceProcessing()) {
-        QString currentNamespace = _reader->namespaceUri().toString();
+        QString currentNamespace = namespaceUri();
         QString declaredNamespace = _namespaces[prefix];
         if (currentNamespace == declaredNamespace) {
-            return name == _reader->name().toString();
+            return this->name() == name;
         } else {
             return false;
         }
     } else {
         if (_reader->qualifiedName().isEmpty()) {
-            return _reader->name().toString() == qName;
+            return this->name() == qName;
         } else {
-            return _reader->qualifiedName().toString() == qName;
+            return this->qname() == qName;
         }
     }
 }
