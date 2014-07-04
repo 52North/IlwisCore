@@ -261,7 +261,8 @@ OTHER_FILES += \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
     LICENSE-2.0.txt \
-    installer.nsi
+    installer.nsi \
+    core/resources/ilwis.config
 
 
 win32{
@@ -269,10 +270,14 @@ win32{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Cored.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sqld.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Guid.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatternsd.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Networkd.dll"
     }else{
         qtdlls.files = "$$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll" \
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5XmlPatterns.dll" \
+                       "$$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
@@ -295,7 +300,7 @@ win32{
     }else{
         qtsqlplugin.files = $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
     }
-    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers+
+    qtsqlplugin.path = $$PWD/../output/$$PLATFORM$$CONF/bin/plugins/sqldrivers
 
     INSTALLS += qtdlls qtsqlplugin
 
@@ -311,7 +316,8 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/filters.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
-    core/resources/datums.csv
+    core/resources/datums.csv \
+    core/resources/ilwis.config
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin

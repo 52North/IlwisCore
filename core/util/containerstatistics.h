@@ -98,7 +98,7 @@ public:
 
 
 
-    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, PropertySets mode=pBASIC){
+    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, PropertySets mode=pBASIC, int bins = 0){
         Basic basicMarkers;
         Median median;
         quint64 count = 0;
@@ -138,7 +138,7 @@ public:
 
                 double ncount = prop(pNETTOCOUNT);
                 if ( ncount > 1) {
-                    if (_binCount == iUNDEF ){
+                    if (bins == 0 && _binCount == iUNDEF ){
                         if ( prop(pSTDEV) == rUNDEF) {
                             _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
                         }
@@ -146,12 +146,14 @@ public:
                             double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
                             _binCount = prop(pDISTANCE) / h;
                         }
+                    } else if(bins != 0){
+                        _binCount = bins-1;
                     }
                 }
 
-                _bins.resize(_binCount);
+                _bins.resize(_binCount + 1);
                 double delta  = prop(pDELTA);
-                for(int i=0; i < _binCount; ++i ) {
+                for(int i=0; i <= _binCount; ++i ) {
                     _bins[i] = HistogramBin(i * ( delta / _binCount));
                 }
                 std::for_each(begin, end, [&] (const DataType& sample){
@@ -228,7 +230,11 @@ private:
         //double rmax = prop(pMAX);
         //return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
         double rmin = prop(pMIN);
-        return _bins.size() * (double)(sample - rmin) / prop(pDELTA);
+        quint16 index = _bins.size() * (double)(sample - rmin) / prop(pDELTA);
+        if(index == _bins.size())
+            return index - 1;
+        else
+            return index;
     }
 
     double getBinWidth() const {
