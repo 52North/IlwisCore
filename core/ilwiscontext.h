@@ -37,8 +37,6 @@ public:
     const IlwisConfiguration& configuration() const;
     QFileInfo resourceRoot() const;
 
->>>>>>> Stashed changes
-
 private:
     void init();
     static IlwisContext *_context;
