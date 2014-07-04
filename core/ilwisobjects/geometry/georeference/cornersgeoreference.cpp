@@ -40,7 +40,8 @@ bool CornersGeoReference::compute()
     }
     if (!_centerOfPixel) { // corners of corner pixels
         _a11  = size().xsize() / vec[0];
-        _a22 = - size().ysize() / vec[1];
+        double tempy = size().ysize();
+        _a22 = - tempy / vec[1];
         _b1 = - _a11 * _envelope.min_corner().x;
         _b2 = - _a22 * _envelope.max_corner().y;
     }

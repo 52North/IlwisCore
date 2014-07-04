@@ -65,6 +65,8 @@ void IlwisContext::loadConfigFile(QFileInfo configFile){
             printf("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
             this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
         }
+        QString ilwconf =  _ilwisDir.filePath() + "resources/ilwis.config";
+        readJSON(ilwconf);
     }else{
         this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
     }
@@ -74,31 +76,22 @@ QFileInfo IlwisContext::ilwisFolder() const {
     return this->_ilwisDir;
 }
 
-void IlwisContext::init()
-{
-    QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-    QString configfile = loc + "/" + "ilwis.config";
+void IlwisContext::readJSON(QString filePath){
     QFile file;
-    file.setFileName(configfile);
-    if ( !file.exists()){
-        if ( _ilwisDir.exists()){
-            configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
-            file.setFileName(configfile);
-            if (!file.exists()){
-                configfile = _ilwisDir.absoluteFilePath() + "/ilwis.config";
-                file.setFileName(configfile);
-            }
-        } else{
-            configfile = qApp->applicationDirPath() + "/resources/ilwis.config";
-            file.setFileName(configfile);
-        }
-    }
+    file.setFileName(filePath);
     if (file.open(QIODevice::ReadOnly)) {
         QString settings = file.readAll();
         QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
         if ( !doc.isNull())
             _configuration = doc.object();
     }
+}
+
+void IlwisContext::init()
+{
+    QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+    QString configfile = loc + "/" + "ilwis.config";
+    readJSON(configfile);
     this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }
 

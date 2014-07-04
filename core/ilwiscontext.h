@@ -34,6 +34,7 @@ public:
     quint64 memoryLeft() const;
     quint64 changeMemoryLeft(quint64 amount);
     QJsonObject configuration() const;
+    void readJSON(QString fileToRead);
 
 private:
     void init();

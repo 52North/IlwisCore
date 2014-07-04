@@ -119,13 +119,13 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, quint32 inputInde
     });
 }
 
-NumericStatistics &RasterCoverage::statistics(int mode)
+NumericStatistics &RasterCoverage::statistics(int mode, int bins)
 {
     if ( mode == ContainerStatistics<double>::pNONE)
         return Coverage::statistics(mode);
     IRasterCoverage raster(this);
     PixelIterator iter(raster);
-    statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode);
+    statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode, bins);
 
     return Coverage::statistics(mode);
 }
