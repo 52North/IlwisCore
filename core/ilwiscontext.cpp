@@ -21,6 +21,7 @@ Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
 using namespace Ilwis;
 
+
 IlwisContext* Ilwis::context() {
     if (Ilwis::IlwisContext::_context == 0) {
         Ilwis::IlwisContext::_context = new Ilwis::IlwisContext();
@@ -29,6 +30,8 @@ IlwisContext* Ilwis::context() {
     }
     return Ilwis::IlwisContext::_context;
 }
+
+
 
 IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit)
 {
@@ -66,7 +69,7 @@ void IlwisContext::loadConfigFile(QFileInfo configFile){
             this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
         }
         QString ilwconf =  _ilwisDir.filePath() + "resources/ilwis.config";
-        readJSON(ilwconf);
+        //readJSON(ilwconf);
     }else{
         this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
     }
@@ -76,22 +79,26 @@ QFileInfo IlwisContext::ilwisFolder() const {
     return this->_ilwisDir;
 }
 
-void IlwisContext::readJSON(QString filePath){
-    QFile file;
-    file.setFileName(filePath);
-    if (file.open(QIODevice::ReadOnly)) {
-        QString settings = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
-        if ( !doc.isNull())
-            _configuration = doc.object();
-    }
-}
-
 void IlwisContext::init()
 {
     QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     QString configfile = loc + "/" + "ilwis.config";
-    readJSON(configfile);
+    QFileInfo file;
+    file.setFile(configfile);
+    if ( !file.exists()){
+        if ( _ilwisDir.exists()){
+            configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
+            file.setFile(configfile);
+            if (!file.exists()){
+                configfile = _ilwisDir.absoluteFilePath() + "/ilwis.config";
+                file.setFile(configfile);
+            }
+        } else{
+            configfile = qApp->applicationDirPath() + "/resources/ilwis.config";
+            file.setFile(configfile);
+        }
+    }
+    _configuration.prepare(file.absoluteFilePath());
     this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
 }
 
@@ -131,9 +138,29 @@ quint64 IlwisContext::changeMemoryLeft(quint64 amount)
     return _memoryLeft;
 }
 
-QJsonObject IlwisContext::configuration() const
+IlwisConfiguration &IlwisContext::configurationRef()
 {
     return _configuration;
 }
+
+const IlwisConfiguration &IlwisContext::configuration() const
+{
+    return _configuration;
+}
+
+QFileInfo IlwisContext::resourceRoot() const
+{
+    QString root = ilwisconfig("system-settings/resource-root",QString("app-base"));
+    if ( root == "app-base"){
+        return QFileInfo(ilwisFolder().absoluteFilePath() + "/resources");
+    }
+    QFileInfo inf(root + "/resources");
+    if ( inf.exists())
+        return inf;
+
+    return QFileInfo(ilwisFolder().absoluteFilePath() + "/resources");
+}
+
+
 
 
