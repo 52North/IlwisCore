@@ -116,10 +116,7 @@ Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
     //Locker lock(_mutex);
 
     if ( _maxLines == iUNDEF){
-        const QJsonObject& config = context()->configuration();
-        _maxLines = config["grid-blocksize"].toDouble();
-        if ( _maxLines == 0)
-            _maxLines = 500;
+         _maxLines = context()->configurationRef()("systemsettings/grid-blocksize",800);
     }
     setSize(sz);
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);

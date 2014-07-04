@@ -9,6 +9,8 @@
 #include <QIODevice>
 #include <QMapIterator>
 
+namespace Ilwis {
+
 typedef std::unique_ptr<QXmlQuery> UPXmlQuery;
 
 class KERNELSHARED_EXPORT XPathParser
@@ -40,5 +42,7 @@ private:
     QMap<QString,QString> _namespaces;
 
 };
+
+}
 
 #endif // XPATHPARSER_H

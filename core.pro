@@ -117,7 +117,8 @@ SOURCES += core/kernel.cpp \
     core/catalog/dataset.cpp \
     core/util/bresenham.cpp \
     core/util/xpathparser.cpp \
-    core/util/xmlstreamparser.cpp
+    core/util/xmlstreamparser.cpp \
+    core/util/ilwisconfiguration.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -249,7 +250,8 @@ HEADERS += core/kernel.h\
     core/catalog/dataset.h \
     core/util/bresenham.h \
     core/util/xpathparser.h \
-    core/util/xmlstreamparser.h
+    core/util/xmlstreamparser.h \
+    core/util/ilwisconfiguration.h
 
 
 OTHER_FILES += \
