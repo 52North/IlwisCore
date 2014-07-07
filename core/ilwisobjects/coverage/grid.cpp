@@ -83,7 +83,7 @@ inline bool GridBlockInternal::unload() {
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,_tempName);
     }
     _initialized = false;
-    _data.clear();
+    _data = std::vector<double>();
 
     return true;
 
@@ -116,7 +116,7 @@ Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
     //Locker lock(_mutex);
 
     if ( _maxLines == iUNDEF){
-         _maxLines = context()->configurationRef()("systemsettings/grid-blocksize",800);
+         _maxLines = context()->configurationRef()("systemsettings/grid-blocksize",500);
     }
     setSize(sz);
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
@@ -332,8 +332,17 @@ inline bool Grid::update(quint32 block, bool creation) {
     if ( block >= _blocks.size() ) // illegal, blocknumber is outside the allowed range
         return false;
     if ( !_blocks[block]->isLoaded()) { // if not loaded, load it from the temporary storage
-        if(!_blocks[block]->load())
+        try{
+        if(!_blocks[block]->load()){
             return false;
+        }
+        } catch (const OutOfMemoryError& err){ // probably exceeded memory cappacity, unload the blocks and try again.
+            unload(false);
+            if(!_blocks[block]->load()){
+                return false;
+            }
+
+        }
     }
     if ( creation || _cache.size() == 0) { // at create time we want to preserver the original order in memory
 
@@ -355,13 +364,20 @@ inline bool Grid::update(quint32 block, bool creation) {
     return true;
 }
 
-void Grid::unload() {
-    Locker lock(_mutex);
+void Grid::unloadInternal(){
     _cache.clear();
     for(GridBlockInternal *block : _blocks) {
         block->unload();
     }
     _inMemoryIndex = 0;
+}
+
+void Grid::unload(bool uselock) {
+    if ( uselock) {
+        Locker lock(_mutex);
+        unloadInternal();
+    }else
+        unloadInternal();
 }
 
 

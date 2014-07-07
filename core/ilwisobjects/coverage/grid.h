@@ -49,8 +49,8 @@ private:
             _initialized = true;
             if (!isLoaded() && _tempName != sUNDEF)
                 load();
-            } catch(const std::bad_alloc& ){
-                throw ErrorObject( TR("Couldnt allocate memory for raster")) ;
+            } catch(const std::bad_alloc& err){
+                throw OutOfMemoryError( TR("Couldnt allocate memory for raster")) ;
             }
 
 
@@ -98,7 +98,7 @@ public:
     Size<> size() const;
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
-    void unload();
+    void unload(bool uselock=true);
 protected:
 
 private:
@@ -106,6 +106,8 @@ private:
     double bicubic(const Pixeld &pix) const;
     int numberOfBlocks();
     inline bool update(quint32 block, bool creation=false);
+    void unloadInternal();
+
 
     std::mutex _mutex;
     std::vector< GridBlockInternal *> _blocks;
@@ -120,6 +122,7 @@ private:
     std::vector<std::vector<quint32>> _offsets;
     std::vector<quint32> _blockOffsets;
     bool _allInMemory = false;
+
 };
 }
 
