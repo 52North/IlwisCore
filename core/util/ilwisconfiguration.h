@@ -14,7 +14,6 @@ public:
     template<typename ValueType> ValueType operator ()(const QString& key, const ValueType& defaultValue){
         QString tempkey = key;
         tempkey.replace("/",".");
-        tempkey = "config." + tempkey;
         ValueType v = _configuration.get(tempkey.toStdString(),defaultValue);
         return v;
     }
