@@ -26,7 +26,6 @@ private:
 template<> inline QString IlwisConfiguration::operator ()(const QString& key, const QString& defaultValue){
     QString tempkey = key;
     tempkey.replace("/",".");
-    tempkey = "config." + tempkey;
     std::string v = _configuration.get(tempkey.toStdString(),defaultValue.toStdString());
     return QString::fromStdString(v);
 }
