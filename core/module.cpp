@@ -48,11 +48,28 @@ QString Module::getNameAndVersion() const{
 void Module::prepare() {
 }
 
+void Module::finalizePreparation(){
+
+}
+
 //------------------------------------------------------
 ModuleMap::~ModuleMap() {
 //    foreach(Module *m, *this){
 //        delete m;
 //    }
+}
+
+void ModuleMap ::loadPlugin(const QString& file){
+    QPluginLoader loader(file);
+    QObject *plugin = loader.instance();
+    if (plugin)  {
+        Module *module = qobject_cast<Module *>(plugin);
+        if (module != 0) {
+            module->prepare();
+            insert(module->name(),module);
+
+        }
+    }
 }
 
 void ModuleMap::addModules() {
@@ -63,21 +80,16 @@ void ModuleMap::addModules() {
     while(dirWalker.hasNext()) {
         dirWalker.next();
         QString file = dirWalker.filePath();
-        QPluginLoader loader(file);
-        QObject *plugin = loader.instance();
-        if (plugin)  {
-            Module *module = qobject_cast<Module *>(plugin);
-            if (module != 0) {
-                module->prepare();
-                insert(module->name(),module);
 
-            }
-        }
+        loadPlugin(file);
     }
+    QString file = context()->ilwisFolder().absoluteFilePath() + "/httpserver.dll";
+    loadPlugin(file);
+    initModules();
 }
 
 void ModuleMap::initModules(){
     foreach(Module *module,*this)
-        module->prepare();
+        module->finalizePreparation();
 
 }

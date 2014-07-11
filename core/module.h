@@ -59,11 +59,18 @@ public:
      */
     QString getNameAndVersion() const;
      /*!
-     *  prepare initialization routine of the module
+     *  prepare does the first level initialization routine of the module
      *
      *overruled in deravatives. Usually operations, creation methods for factories and other global accessible functions are transferred here to the system context. It depends on the module
      */
     virtual void prepare();
+    /*!
+    *  prepare does the second level initialization routine of the module. The http server module is the basis for all http related plugins. It must be initialized before
+    *  these modules do their initialization.
+    *
+    *overruled in deravatives but it seldom needed. So only use when it is needed else use the emopty default
+    */
+    virtual void finalizePreparation();
 protected:
 
 private:
@@ -86,6 +93,7 @@ public:
     void initModules();
 private:
 
+    void loadPlugin(const QString& file);
 };
 }
 
