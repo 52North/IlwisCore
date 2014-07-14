@@ -9,6 +9,7 @@
 #include <QUrl>
 #include <QDir>
 #include <cxxabi.h>
+#include <iostream>
 #include <QException>
 #include "kernel.h"
 #include "factory.h"
@@ -198,6 +199,10 @@ bool Kernel::message(const QString &message, IssueObject::IssueType tp, const QS
 {
     QFileInfo inf(file);
     QString name = inf.fileName();
+    if ( issues().isNull()){ // fall back if the logger has not been created yet.
+        std::cerr << message.toStdString();
+        return false;
+    }
     quint64 issueid;
     if ( p1 == sUNDEF)
         issueid =issues()->log(TR(message),tp);
