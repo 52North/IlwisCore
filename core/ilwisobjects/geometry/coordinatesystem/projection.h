@@ -46,6 +46,7 @@ public:
     bool isValid() const;
 
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);
+    bool isSet(Projection::ProjectionParamValue type) const;
 protected:
     static Projection::FindMatch find(const QString& v1, const QString& value) ;
 

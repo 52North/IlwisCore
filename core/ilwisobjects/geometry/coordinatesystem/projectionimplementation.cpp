@@ -64,6 +64,14 @@ bool ProjectionImplementation::isEqual(const QScopedPointer<ProjectionImplementa
     return proj4a == proj4b;
 }
 
+bool ProjectionImplementation::isSet(Projection::ProjectionParamValue type) const{
+    auto iter = _parameters.find(type);
+    if ( iter != _parameters.end()) {
+        return (*iter).second._isSet;
+    }
+    return false;
+}
+
 QString ProjectionImplementation::toWKT(quint32 spaces)
 {
     std::map<Projection::ProjectionParamValue, QString>  kvp = { { Projection::pvLAT1, "standard_parallel_1"}, { Projection::pvLAT2,"standard_parallel_2"},{ Projection::pvLAT0,"latitude_of_origin"}, { Projection::pvK0,"scale_factor"},

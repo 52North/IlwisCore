@@ -121,6 +121,14 @@ QString ConventionalCoordinateSystem::toWKT(quint32 spaces) const
     return wkt + "]";
 }
 
+QString ConventionalCoordinateSystem::toProj4() const
+{
+    if ( this->projection().isValid())
+        return this->projection()->toProj4();
+    else
+        return QString("?");
+}
+
 const std::unique_ptr<GeodeticDatum>& ConventionalCoordinateSystem::datum() const
 {
     return _datum;

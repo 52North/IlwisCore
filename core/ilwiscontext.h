@@ -24,7 +24,7 @@ public:
     IlwisContext();
     ~IlwisContext();
 
-    void loadConfigFile(QFileInfo configFile);
+    void loadIlwisLocationFile(QFileInfo configFile);
     void addSystemLocation(const QUrl &resource);
     void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;

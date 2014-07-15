@@ -293,6 +293,38 @@ LatLon::LatLon(const Angle &latd, const Angle &lond, double h){
     z= h;
 }
 
+LatLon::LatLon(const QString &lat, const QString &lon)
+{
+    auto func = [] ( QString value) -> double {
+        bool ok = true;
+        value = value.trimmed();
+        double sign = 1.0;
+        if ( value.right(1) == "S"){
+            sign = -1.0;
+        }else if ( value.right(1) == "W") {
+            sign = -1.0;
+        }
+        value.right(1).toLong(&ok);
+        if ( !ok)
+            value = value.left(value.size() -2);
+        QStringList parts = value.split(" ");
+        double v  = parts[0].toDouble(&ok);
+        if ( ok && parts.size() > 1) {
+            v += parts[1].toDouble(&ok) / 60.0;
+            if ( ok && parts.size() == 3){
+                v += parts[2].toDouble(&ok)/ (60.0 * 60.0);
+            }
+        }
+        if ( ok)
+            return sign * v;
+        return rUNDEF;
+    };
+    y = func( lat);
+    x = func( lon);
+    if ( x == rUNDEF || y == rUNDEF)
+        x = y = rUNDEF;
+}
+
 Angle LatLon::lat() const{
     return y;
 }

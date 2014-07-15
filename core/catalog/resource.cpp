@@ -81,7 +81,10 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
             if ( tp & itGEOREF)
                 factoryType = "georef";
            // QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
+
             QString scode = name.mid(5);
+            //int index = scode.indexOf(":");
+            //scode = scode.mid(index + 1);
             code(scode);
             _normalizedUrl = QUrl("ilwis://internalcatalog/" + this->name());
         }else {

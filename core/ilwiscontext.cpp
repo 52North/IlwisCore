@@ -60,7 +60,7 @@ void IlwisContext::removeSystemLocation(const QUrl &)
     //TODO:
 }
 
-void IlwisContext::loadConfigFile(QFileInfo configFile){
+void IlwisContext::loadIlwisLocationFile(QFileInfo configFile){
     if (configFile.exists()){
         QSettings settings(configFile.filePath(), QSettings::IniFormat);
         this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
@@ -68,8 +68,6 @@ void IlwisContext::loadConfigFile(QFileInfo configFile){
             printf("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
             this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
         }
-        QString ilwconf =  _ilwisDir.filePath() + "resources/ilwis.config";
-        //readJSON(ilwconf);
     }else{
         this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
     }
@@ -81,7 +79,12 @@ QFileInfo IlwisContext::ilwisFolder() const {
 
 void IlwisContext::init()
 {
+
+    QFileInfo inf(qApp->applicationDirPath() + "/ilwislocation.config");
+    loadIlwisLocationFile(inf)   ;
+
     QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+
     QString configfile = loc + "/" + "ilwis.config";
     QFileInfo file;
     file.setFile(configfile);
@@ -94,12 +97,13 @@ void IlwisContext::init()
                 file.setFile(configfile);
             }
         } else{
-            configfile = qApp->applicationDirPath() + "/resources/ilwis.config";
+
+            configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
             file.setFile(configfile);
         }
     }
     _configuration.prepare(file.absoluteFilePath());
-    this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
+
 }
 
 ICatalog IlwisContext::workingCatalog() const{

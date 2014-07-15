@@ -100,7 +100,7 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, quint32 inputInde
         return;
     }
     if ( inputIndex >= size().zsize()){
-       ERROR2(ERR_ILLEGAL_VALUE_2,TR("layer index"), "input");
+       //ERROR2(ERR_ILLEGAL_VALUE_2,TR("layer index"), "input");
     }
     IRasterCoverage gcNew;
     gcNew.set(this);
