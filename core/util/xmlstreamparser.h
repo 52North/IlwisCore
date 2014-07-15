@@ -6,6 +6,7 @@
 
 #include "kernel_global.h"
 
+class QTimer;
 class QIODevice;
 class QEventLoop;
 class QXmlStreamReader;
@@ -38,9 +39,13 @@ public:
      * @return true if element was found, false if not or the document has ended.
      */
     bool startParsing(QString qName);
+
+    bool isStartElement();
+    bool isEndElement();
     bool atEnd();
 
     bool hasError();
+    QString errorString();
 
     QXmlStreamAttributes attributes() ;
 
@@ -89,6 +94,7 @@ public:
     bool isAtEndOf(QString qName) ;
 
 public slots:
+    void abort();
     void readChannelFinished();
     void readIncomingData();
 
@@ -97,6 +103,7 @@ protected:
     QXmlStreamReader *_reader;
 
 private:
+    QTimer *_timer;
     QEventLoop *_loop;
     QIODevice *_device;
     QMap<QString,QString> _namespaces;
@@ -104,10 +111,8 @@ private:
 
     bool isAtElement(QString qName);
 
-    bool isMoreDataExpected();
+    bool resolveFromPrematureEndOfDocument();
     bool canProceedParsing();
-
-    bool onError();
 
     static void doNothing() {}
 
