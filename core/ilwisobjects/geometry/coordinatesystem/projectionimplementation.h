@@ -36,6 +36,7 @@ public:
 
     bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
     QString toWKT(quint32 spaces=0);
+    bool isSet(Projection::ProjectionParamValue type) const;
 protected:
     ConventionalCoordinateSystem *_coordinateSystem;
 
