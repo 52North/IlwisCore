@@ -25,7 +25,7 @@ public:
     virtual ~CatalogConnector() {}
 
     bool loadMetaData(IlwisObject *obj,const PrepareOptions&);
-    bool loadData(IlwisObject *obj);
+    bool loadData(IlwisObject *obj, const Ilwis::LoadOptions &options = LoadOptions());
 
     bool isValid() const;
     virtual bool canUse(const Resource& resource) const;

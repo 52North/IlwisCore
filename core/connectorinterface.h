@@ -14,6 +14,18 @@ class OperationExpression;
 class ExecutionContext;
 struct PrepareOptions;
 
+struct LoadOptions {
+    LoadOptions()  {}
+    LoadOptions(double undef) { _values["undefined"] = undef; }
+    LoadOptions(const QString& key, const QVariant& value) { _values[key] = value; }
+
+    bool contains(const QString& option) const{
+        return _values.find(option) != _values.end();
+    }
+
+    std::map<QString, QVariant> _values;
+};
+
 /*!
  * \brief The ConnectorInterface class all connectors are derived from this interface
  *
@@ -38,12 +50,11 @@ public:
      *Note that Ilwis doesnt make a difference between 2D and 3D griddata. If the local format has different storage methods for those they have to be resolved at connector level
      * \return returns the allocated grid
      */
-    virtual Grid* loadGridData(IlwisObject*) { return 0;}
-    /*!
+   /*!
      * \brief loadData loads bulk binary data into the ilwisobject.
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
-    virtual bool loadData(IlwisObject*) { return false; }
+    virtual bool loadData(IlwisObject*, const LoadOptions& options = LoadOptions()) { return false; }
     virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
