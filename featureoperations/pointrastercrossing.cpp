@@ -129,7 +129,7 @@ OperationImplementation::State PointRasterCrossing::prepare(ExecutionContext *ct
         _outputFeatures->attributeTable()->name(outputName);
     }
 
-    _doCoordTransform = _inputRaster->coordinateSystem() == _outputFeatures->coordinateSystem();
+    _doCoordTransform = _inputRaster->coordinateSystem() != _outputFeatures->coordinateSystem();
 
     return sPREPARED;
 }

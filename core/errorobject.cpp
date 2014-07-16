@@ -73,3 +73,12 @@ const char *GeometryError::what() const throw()
 {
     return "GeometryError";
 }
+
+OutOfMemoryError::OutOfMemoryError(const QString &message) : ErrorObject(message)
+{
+}
+
+const char *OutOfMemoryError::what() const throw()
+{
+    return "OutOfMemoryError";
+}

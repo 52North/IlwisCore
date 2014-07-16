@@ -3,6 +3,8 @@
 
 #include "xpathparser.h"
 
+using namespace Ilwis;
+
 XPathParser::XPathParser(QIODevice *device): _iodevice(device)
 {
 }

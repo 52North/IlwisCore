@@ -19,8 +19,6 @@ public:
     static GeoRefImplementation *create();
 private:
     Envelope _envelope;
-    bool _isCornersOfCorners;
-
 };
 
 typedef IlwisData<CornersGeoReference> ICornersGeoReference;

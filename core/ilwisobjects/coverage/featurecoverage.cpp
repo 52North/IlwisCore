@@ -126,7 +126,7 @@ UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, c
     for(int i=0; i < existingFeature->trackSize(); ++i){
           UPGeometry& geom = existingFeature->geometry(i);
           geos::geom::Geometry *newgeom = geom->clone();
-          if ( csySource.isValid() && csySource->isEqual(coordinateSystem().ptr())){
+          if ( csySource.isValid() && !csySource->isEqual(coordinateSystem().ptr())){
               CsyTransform trans(csySource, coordinateSystem());
               newgeom->apply_rw(&trans);
           }

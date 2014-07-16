@@ -143,7 +143,7 @@ Envelope GeoReference::pixel2Coord(const BoundingBox &box) const
         return Envelope();
     }
     Coordinate c1 = pixel2Coord(box.min_corner());
-    Coordinate c2 = pixel2Coord(box.max_corner());
+    Coordinate c2 = pixel2Coord(box.max_corner() + Pixel(1,1));
     return Envelope(c1,c2);
 }
 

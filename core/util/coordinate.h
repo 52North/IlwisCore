@@ -44,6 +44,7 @@ class KERNELSHARED_EXPORT LatLon : public Ilwis::Coordinate {
 public:
     LatLon();
     LatLon(const Angle& latd, const Angle& lond, double h=0);
+    LatLon(const QString& lat, const QString& lon);
     Angle lat() const;
     Angle lon() const;
 

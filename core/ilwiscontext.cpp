@@ -21,6 +21,7 @@ Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
 using namespace Ilwis;
 
+
 IlwisContext* Ilwis::context() {
     if (Ilwis::IlwisContext::_context == 0) {
         Ilwis::IlwisContext::_context = new Ilwis::IlwisContext();
@@ -29,6 +30,8 @@ IlwisContext* Ilwis::context() {
     }
     return Ilwis::IlwisContext::_context;
 }
+
+
 
 IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit)
 {
@@ -57,7 +60,7 @@ void IlwisContext::removeSystemLocation(const QUrl &)
     //TODO:
 }
 
-void IlwisContext::loadConfigFile(QFileInfo configFile){
+void IlwisContext::loadIlwisLocationFile(QFileInfo configFile){
     if (configFile.exists()){
         QSettings settings(configFile.filePath(), QSettings::IniFormat);
         this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
@@ -76,30 +79,31 @@ QFileInfo IlwisContext::ilwisFolder() const {
 
 void IlwisContext::init()
 {
+
+    QFileInfo inf(qApp->applicationDirPath() + "/ilwislocation.config");
+    loadIlwisLocationFile(inf)   ;
+
     QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+
     QString configfile = loc + "/" + "ilwis.config";
-    QFile file;
-    file.setFileName(configfile);
+    QFileInfo file;
+    file.setFile(configfile);
     if ( !file.exists()){
         if ( _ilwisDir.exists()){
             configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
-            file.setFileName(configfile);
+            file.setFile(configfile);
             if (!file.exists()){
                 configfile = _ilwisDir.absoluteFilePath() + "/ilwis.config";
-                file.setFileName(configfile);
+                file.setFile(configfile);
             }
         } else{
-            configfile = qApp->applicationDirPath() + "/resources/ilwis.config";
-            file.setFileName(configfile);
+
+            configfile = _ilwisDir.absoluteFilePath() + "/resources/ilwis.config";
+            file.setFile(configfile);
         }
     }
-    if (file.open(QIODevice::ReadOnly)) {
-        QString settings = file.readAll();
-        QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
-        if ( !doc.isNull())
-            _configuration = doc.object();
-    }
-    this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
+    _configuration.prepare(file.absoluteFilePath());
+
 }
 
 ICatalog IlwisContext::workingCatalog() const{
@@ -138,9 +142,29 @@ quint64 IlwisContext::changeMemoryLeft(quint64 amount)
     return _memoryLeft;
 }
 
-QJsonObject IlwisContext::configuration() const
+IlwisConfiguration &IlwisContext::configurationRef()
 {
     return _configuration;
 }
+
+const IlwisConfiguration &IlwisContext::configuration() const
+{
+    return _configuration;
+}
+
+QFileInfo IlwisContext::resourceRoot() const
+{
+    QString root = ilwisconfig("system-settings/resource-root",QString("app-base"));
+    if ( root == "app-base"){
+        return QFileInfo(ilwisFolder().absoluteFilePath() + "/resources");
+    }
+    QFileInfo inf(root + "/resources");
+    if ( inf.exists())
+        return inf;
+
+    return QFileInfo(ilwisFolder().absoluteFilePath() + "/resources");
+}
+
+
 
 

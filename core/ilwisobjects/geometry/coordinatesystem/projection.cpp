@@ -67,6 +67,15 @@ QVariant Projection::parameter(Projection::ProjectionParamValue type) const
     return _implementation->parameter(type);
 }
 
+bool Projection::isSet(Projection::ProjectionParamValue type) const
+{
+    if ( _implementation.isNull()) {
+        ERROR1(ERR_NO_INITIALIZED_1, name());
+        return false;
+    }
+    return _implementation->isSet(type);
+}
+
 void Projection::setParameter(Projection::ProjectionParamValue type, const QVariant &value)
 {
     if ( _implementation.isNull()) {

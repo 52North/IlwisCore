@@ -3,7 +3,7 @@
 
 #include "kernel_global.h"
 #include <QThreadStorage>
-#include <QJsonObject>
+#include "ilwisconfiguration.h"
 #include "ilwisdata.h"
 
 namespace Ilwis{
@@ -24,7 +24,7 @@ public:
     IlwisContext();
     ~IlwisContext();
 
-    void loadConfigFile(QFileInfo configFile);
+    void loadIlwisLocationFile(QFileInfo configFile);
     void addSystemLocation(const QUrl &resource);
     void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;
@@ -33,7 +33,9 @@ public:
     QUrl cacheLocation() const;
     quint64 memoryLeft() const;
     quint64 changeMemoryLeft(quint64 amount);
-    QJsonObject configuration() const;
+    IlwisConfiguration& configurationRef();
+    const IlwisConfiguration& configuration() const;
+    QFileInfo resourceRoot() const;
 
 private:
     void init();
@@ -45,10 +47,22 @@ private:
     quint64 _memoryLimit;
     quint64 _memoryLeft;
     QFileInfo _ilwisDir;
-    QJsonObject _configuration;
+    IlwisConfiguration _configuration;
     QUrl _cacheLocation;
 };
+
+
 KERNELSHARED_EXPORT IlwisContext* context();
+
+template<typename ValueType> ValueType ilwisconfig(const QString& key, const ValueType& defaultValue){
+    return context()->configurationRef()(key, defaultValue);
+}
+
+template<> inline QString ilwisconfig(const QString& key, const QString& defaultValue){
+    return context()->configurationRef()(key, defaultValue);
+}
+
+
 }
 
 

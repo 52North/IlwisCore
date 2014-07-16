@@ -68,6 +68,12 @@ public:
     explicit GeometryError(const QString& message);
     const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT OutOfMemoryError : public ErrorObject {
+public:
+    explicit OutOfMemoryError(const QString& message);
+    const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H

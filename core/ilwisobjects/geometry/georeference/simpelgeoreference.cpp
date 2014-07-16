@@ -34,10 +34,8 @@ void SimpelGeoReference::clear() {
 
 Coordinate SimpelGeoReference::pixel2Coord(const Pixeld &pix) const
 {
-    double x = centerOfPixel() ? pix.x + 0.5 : pix.x;
-    double y = centerOfPixel()? pix.y + 0.5 : pix.y;
-    Coordinate c((_a22 * (x - _b1) - _a12 * (y - _b2)) / _det,
-                 (-_a21 * (x - _b1) + _a11 * (y - _b2)) / _det );
+    Coordinate c((_a22 * (pix.x - _b1) - _a12 * (pix.y - _b2)) / _det,
+                 (-_a21 * (pix.x - _b1) + _a11 * (pix.y - _b2)) / _det );
     return c;
 }
 
