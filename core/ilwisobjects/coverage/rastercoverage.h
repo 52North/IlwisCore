@@ -1,7 +1,12 @@
 #ifndef RASTERLAYER_H
 #define RASTERLAYER_H
 
-#include "kernel_global.h"
+#include "kernel.h"
+#include "size.h"
+#include "location.h"
+#include "coverage.h"
+#include "georeference.h"
+#include "grid.h"
 
 namespace Ilwis {
 
@@ -155,12 +160,6 @@ public:
      */
     double pix2value(const Pixeld& pix){
         if ( _georef->isValid() && !connector().isNull()) {
-            if ( _grid.isNull()) {
-                _grid.reset(connector()->loadGridData(this));
-                if (_grid.isNull())
-                    return rUNDEF;
-            }
-
             double v = _grid->value(pix);
             return datadef().range()->ensure(v).value<double>();
         }
@@ -183,12 +182,15 @@ public:
     PixelIterator band(const QVariant& trackIndex);
     bool band(const QVariant& trackIndex, PixelIterator inputData);
     void addBand(int index, const DataDefinition &def, const QVariant &trackIndexValue);
+    UPGrid& gridRef();
+    const UPGrid &grid() const;
+    void getData(quint32 blockIndex);
 protected:
-    Grid *grid();
-    QScopedPointer<Grid> _grid;
+
     void copyTo(IlwisObject *obj);
 
 private:
+    std::unique_ptr<Grid> _grid;
     DataDefinition _datadefCoverage;
     std::vector<DataDefinition> _datadefBands;
     IGeoReference _georef;
