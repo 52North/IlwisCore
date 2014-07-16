@@ -23,7 +23,7 @@ private:
     double _weight[4];
     double _yvalues[4], _xvalues[4];
     IRasterCoverage _gcoverage;
-    Grid *_grid; // for peformance reason we store this; will be valid aslong as the coverage is there
+    const UPGrid &_grid; // for peformance reason we store this; will be valid aslong as the coverage is there
     IGeoReference _grf;
     int _method;
     bool _valid;

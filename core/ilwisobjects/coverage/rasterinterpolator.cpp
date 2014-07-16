@@ -4,8 +4,8 @@
 
 using namespace Ilwis;
 
-RasterInterpolator::RasterInterpolator(const IRasterCoverage& raster, int method) : _gcoverage(raster), _method(method) {
-    _grid = _gcoverage->grid();
+RasterInterpolator::RasterInterpolator(const IRasterCoverage& raster, int method) : _gcoverage(raster), _grid(_gcoverage->grid()),_method(method)  {
+
     _grf = _gcoverage->georeference();
     _valid = _grf.isValid() && _grid != 0;
 }
