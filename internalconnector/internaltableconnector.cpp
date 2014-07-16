@@ -43,7 +43,7 @@ IlwisObject *InternalTableConnector::create() const
     return new FlatTable(_resource);
 }
 
-bool InternalTableConnector::loadData(IlwisObject *obj)
+bool InternalTableConnector::loadData(IlwisObject *obj, const LoadOptions& options)
 {
     Table *table = static_cast<Table *>(obj);
 
