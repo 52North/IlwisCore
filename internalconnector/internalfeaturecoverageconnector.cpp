@@ -30,7 +30,7 @@ bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data, const Pre
     return true;
 }
 
-bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *)
+bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *, const LoadOptions& options)
 {
     _binaryIsLoaded = true;
     return true;
