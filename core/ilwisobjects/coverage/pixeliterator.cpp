@@ -116,7 +116,7 @@ PixelIterator::PixelIterator(const PixelIterator& iter)  {
 void PixelIterator::copy(const PixelIterator &iter) {
     _raster = iter._raster;
     if ( _raster.isValid())
-        _grid = _raster->_grid.data();
+        _grid = _raster->_grid.get();
     _box = iter._box;
     _isValid = iter._isValid;
     _flow = iter._flow;
@@ -158,7 +158,7 @@ void PixelIterator::init() {
 
     bool inside = contains(Pixel(_x,_y));
     if ( inside) {
-        _grid = _raster->grid();
+        _grid = _raster->gridRef().get();
     }
     if ( _grid == 0) {
         _isValid = false;
