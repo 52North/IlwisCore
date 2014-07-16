@@ -48,6 +48,7 @@ void MirrorRotateRaster::translatepixels(PixelIterator iterIn,PixelIterator iter
     std::vector<double> line(linelength);
     auto iterLine = line.begin();
     auto end = iterIn.end();
+    double v = *iterIn;
     for(; iterIn != end; ++iterIn, ++iterLine){
         if ( dimChanged(iterIn)){
             std::reverse(line.begin(), line.end());
@@ -68,7 +69,11 @@ bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
+    PixelIterator itertt = PixelIterator(_inputRaster);
+
+
     std::function<bool(const BoundingBox)> Transform = [&](const BoundingBox box ) -> bool {
+            double v1 = *itertt;
         if ( _method == tmMirrorVertical){
              translatepixels(PixelIterator(_inputRaster, box),PixelIterator(_outputRaster, box), box, _outputRaster->size().xsize());
         }
@@ -136,6 +141,7 @@ Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionConte
     }
 
     _outputRaster = OperationHelperRaster::initialize(_inputRaster,itRASTER,itCOORDSYSTEM | itDOMAIN);
+    _outputRaster->gridRef()->prepare(0,sz);
 
     QString grfs = QString("code=georef:type=corners,csy=%1,envelope=%2,gridsize=%3")
             .arg(_outputRaster->coordinateSystem()->id())
