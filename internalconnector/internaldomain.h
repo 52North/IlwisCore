@@ -15,7 +15,7 @@ public:
     QString type() const;
     virtual IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
-    bool loadData(IlwisObject *);
+    bool loadData(IlwisObject *, const LoadOptions& options = LoadOptions());
     QString provider() const;
 };
 }

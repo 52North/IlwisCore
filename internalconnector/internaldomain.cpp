@@ -28,7 +28,7 @@ IlwisObject *InternalDomainConnector::create() const
     return 0;
 }
 
-bool InternalDomainConnector::loadData(IlwisObject *obj)
+bool InternalDomainConnector::loadData(IlwisObject *obj, const LoadOptions &options)
 {
     return true;
 }
