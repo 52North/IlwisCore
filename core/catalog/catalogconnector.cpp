@@ -100,7 +100,7 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const PrepareOptions &)
     return loadExplorers();
 }
 
-bool CatalogConnector::loadData(IlwisObject *obj){
+bool CatalogConnector::loadData(IlwisObject *obj, const LoadOptions& options){
     Catalog *cat = static_cast<Catalog *>(obj);
     for(const auto& explorer : _dataProviders){
         std::vector<Resource> items = explorer->loadItems();
