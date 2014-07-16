@@ -39,7 +39,7 @@ IlwisObject *InternalGeoReferenceConnector::create() const
     return 0;
 }
 
-bool InternalGeoReferenceConnector::loadData(IlwisObject *obj)
+bool InternalGeoReferenceConnector::loadData(IlwisObject *obj, const LoadOptions &options)
 {
     return true;
 }
