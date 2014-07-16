@@ -1,16 +1,24 @@
 #ifndef Grid_H
 #define Grid_H
 
-#include "kernel_global.h"
 #include <list>
 #include <mutex>
-
+#include <QDir>
+#include <QTemporaryFile>
+#include <iostream>
+#include "kernel.h"
+#include "errorobject.h"
+#include "size.h"
+#include "location.h"
 
 namespace Ilwis {
 
-class GridBlockInternal{
+class RasterCoverage;
+struct LoadOptions;
+
+class GridBlockInternal {
 public:
-    GridBlockInternal(quint32 lines , quint32 width);
+    GridBlockInternal(quint32 blocknr, quint64 rasterid, quint32 lines , quint32 width);
     ~GridBlockInternal();
 
 
@@ -33,9 +41,9 @@ public:
     void fill(const std::vector<double>& values);
 
     quint32 blockSize();
-    bool isLoaded() const { return _inMemory; }
-    inline bool unload() ;
-    bool load();
+    bool inMemory() const { return _inMemory; }
+    inline bool save2Cache() ;
+    bool loadFromCache();
 
 private:
     void prepare() {
@@ -47,8 +55,11 @@ private:
             _data.resize(blockSize());
             std::fill(_data.begin(), _data.end(), _undef);
             _initialized = true;
-            if (!isLoaded() && _tempName != sUNDEF)
-                load();
+            if (!inMemory() && _tempName != sUNDEF)
+                loadFromCache();
+            else
+                needData();
+
             } catch(const std::bad_alloc& err){
                 throw OutOfMemoryError( TR("Couldnt allocate memory for raster")) ;
             }
@@ -56,15 +67,16 @@ private:
 
         }
     }
+
+    void needData();
     std::mutex _mutex;
     std::vector<double> _data;
     double _undef;
-    quint32 _index;
     Size<> _size;
     quint64 _id;
+    quint64 _rasterid;
     bool _initialized;
     bool _inMemory;
-    static quint64 _blockid;
     QString _tempName = sUNDEF;
     QScopedPointer<QTemporaryFile> _swapFile;
     quint64 _blockSize;
@@ -76,7 +88,7 @@ class KERNELSHARED_EXPORT Grid
 public:
     friend class GridInterpolator;
 
-    Grid(const Size<>& sz, int maxLines=iUNDEF);
+    Grid(int maxLines=iUNDEF);
     virtual ~Grid();
 
     void clear();
@@ -91,14 +103,15 @@ public:
 
     void setBlockData(quint32 block, const std::vector<double>& data, bool creation);
     char *blockAsMemory(quint32 block, bool creation);
-    void setSize(const Size<>& sz);
-    void setBandProperties(int n);
-    bool prepare() ;
+    void setBandProperties(RasterCoverage *raster, int n);
+    bool prepare(RasterCoverage *raster, const Size<> &sz) ;
     quint32 blockSize(quint32 index) const;
     Size<> size() const;
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
     void unload(bool uselock=true);
+    std::map<quint32, std::vector<quint32> > calcBlockLimits(const LoadOptions &options);
+    bool isValid() const;
 protected:
 
 private:
@@ -124,6 +137,8 @@ private:
     bool _allInMemory = false;
 
 };
+
+typedef std::unique_ptr<Grid> UPGrid;
 }
 
 
