@@ -10,7 +10,7 @@ public:
     InternalRasterCoverageConnector(const Ilwis::Resource &resource,bool load=true,const PrepareOptions& options=PrepareOptions());
 
     bool loadMetaData(IlwisObject *data, const PrepareOptions &options);
-    Grid *loadGridData(Ilwis::IlwisObject *) ;
+    bool loadData(Ilwis::IlwisObject *, const LoadOptions& options = LoadOptions()) ;
     QString provider() const;
 
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true, const Ilwis::PrepareOptions &options=PrepareOptions());
