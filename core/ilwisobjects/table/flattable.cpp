@@ -264,9 +264,12 @@ IlwisTypes FlatTable::ilwisType() const
 
 IlwisObject *FlatTable::clone()
 {
-    FlatTable *tbl = new FlatTable();
-    copyTo(tbl);
-    return tbl;
+    if (initLoad()){
+        FlatTable *tbl = new FlatTable();
+        copyTo(tbl);
+        return tbl;
+    }
+    return 0;
 }
 
 void FlatTable::copyTo(IlwisObject *obj){
