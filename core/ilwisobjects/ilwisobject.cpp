@@ -222,7 +222,7 @@ bool IlwisObject::prepare(const QString &)
     return true;
 }
 
-void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
+void IlwisObject::setConnector(ConnectorInterface *connector, int mode, const PrepareOptions &options)
 {
     if ( isReadOnly())
         return;
@@ -234,7 +234,7 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
             if ( !_connector.isNull())
-                _connector->loadMetaData(this, PrepareOptions());
+                _connector->loadMetaData(this, options);
         }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
