@@ -46,6 +46,7 @@ class KERNELSHARED_EXPORT GeometryHelper{
         }
 };
 
+typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 }
 
 #endif // GEOMETRYHELPER_H
