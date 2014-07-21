@@ -5,6 +5,8 @@
 #include <QMap>
 #include "kernel_global.h"
 
+class QFileInfo;
+
 namespace Ilwis {
 
 class ICommandInfo;
@@ -93,7 +95,7 @@ public:
     void initModules();
 private:
 
-    void loadPlugin(const QString& file);
+    void loadPlugin(const QFileInfo& file);
 };
 }
 
