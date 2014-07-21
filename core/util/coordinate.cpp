@@ -296,7 +296,10 @@ LatLon::LatLon(const Angle &latd, const Angle &lond, double h){
 LatLon::LatLon(const QString &lat, const QString &lon)
 {
     auto func = [] ( QString value) -> double {
-        bool ok = true;
+        bool ok;
+        double v =  value.toDouble(&ok);
+        if ( ok) // we were already a decimal variant; no further parsing needed
+            return v;
         value = value.trimmed();
         double sign = 1.0;
         if ( value.right(1) == "S"){
@@ -308,11 +311,11 @@ LatLon::LatLon(const QString &lat, const QString &lon)
         if ( !ok)
             value = value.left(value.size() -2);
         QStringList parts = value.split(" ");
-        double v  = parts[0].toDouble(&ok);
+        v  = parts[0].toDouble(&ok);
         if ( ok && parts.size() > 1) {
             v += parts[1].toDouble(&ok) / 60.0;
             if ( ok && parts.size() == 3){
-                v += parts[2].toDouble(&ok)/ (60.0 * 60.0);
+                v += parts[2].toDouble(&ok)/ 3600.0;
             }
         }
         if ( ok)
