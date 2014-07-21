@@ -3,6 +3,7 @@
 
 
 #include "kernel_global.h"
+#include "oshelper.h"
 
 namespace Ilwis {
 class CatalogConnector;
@@ -26,13 +27,13 @@ protected:
         T object;
         bool ok;
         auto id = _resource[propeprty].toLongLong(&ok);
+        if (ok){
+            Resource resource = mastercatalog()->id2Resource(id);
+            if ( resource.code() != sUNDEF)
+                ok = object.prepare(id);
+        }
         if (!ok)
-            return 0;
-        Resource resource = mastercatalog()->id2Resource(id);
-        if ( resource.code() != sUNDEF)
-            object.prepare(id);
-        else
-            object.prepare(defaultName.toString());
+            object.prepare(OSHelper::neutralizeFileName(defaultName.toString()));
 
         return object;
     }
