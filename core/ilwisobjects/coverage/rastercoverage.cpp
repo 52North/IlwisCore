@@ -40,7 +40,7 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     _georef = grf;
     if ( resetData)
         _grid.reset(0);
-    else if ( !_grid && grf->size().twod() != _grid->size().twod() ) {
+    else if ( !_grid || grf->size().twod() != _grid->size().twod() ) {
         _grid.reset(0);
 
     }
@@ -56,8 +56,8 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     }
     else
         _size = Size<>();
-    if ( _size.isValid() && !(_grid || _grid->isValid())){
-        grid()->prepare(this,_size);
+    if (!_grid && _size.isValid()){
+            gridRef()->prepare(this,_size);
     }
 }
 
