@@ -64,7 +64,7 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 {
 }
 
-Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const PrepareOptions &options) const
+Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const IOOptions &options) const
 {
     if ( resource.url().scheme()!="ilwis")
         return 0;
@@ -94,7 +94,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
     return 0;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource, const PrepareOptions &options) const{
+IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource, const IOOptions &options) const{
     if ( hasType(resource.ilwisType(), itCATALOG)){
         Catalog *cat = new Catalog(resource);
         const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
@@ -115,7 +115,7 @@ IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource,
     return nullptr;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& resource, const PrepareOptions &options) const{
+IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& resource, const IOOptions &options) const{
     if ( !resource.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
@@ -221,7 +221,7 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 
 
 
-bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Coverage *coverage, const PrepareOptions &options) const {
+bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Coverage *coverage, const IOOptions &options) const {
 
     if (!coverage->prepare())
         return false;
@@ -275,7 +275,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
     return true;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& resource, const IOOptions &options) const {
     if ( !resource.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
@@ -342,7 +342,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         return 0;
     }
     gcoverage->setConnector(connector,IlwisObject::cmINPUT,options);
-    //connector->loadMetaData(gcoverage, PrepareOptions());
+    //connector->loadMetaData(gcoverage, IOOptions());
 
     return gcoverage;
 }
@@ -363,7 +363,7 @@ Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property,
     return Resource();
 }
 
-IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, const PrepareOptions &options) const{
+IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, const IOOptions &options) const{
     if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
         return new TextDomain(resource);
 
@@ -469,7 +469,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
     return newdomain;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource, const IOOptions &options) const {
     QString code = resource.code();
     bool isUnknown = code == "unknown";
     QString projParms = code;
@@ -510,7 +510,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
 
 }
 
-IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resource, const IOOptions &options) const {
     QString query;
     QString code = resource.code();
 
@@ -550,7 +550,7 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
     return 0;
 }
 
-GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource, const PrepareOptions &options) const {
+GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource, const IOOptions &options) const {
     QString query;
     if ( resource.code() != sUNDEF) {
         QString code = resource.code();
@@ -661,7 +661,7 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     return 0;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& resource, const IOOptions &options) const {
     GeoReference *cgrf;
     if ( resource.code() == "undetermined"){
         Resource resnew = resource;
@@ -715,7 +715,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
     return cgrf;
 }
 
-IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, const IOOptions &options) const {
 
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
@@ -733,7 +733,7 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, c
     return tbl;
 
 }
-IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resource, const PrepareOptions &options) const {
+IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resource, const IOOptions &options) const {
     QString query    ;
     QString code = resource.code();
 

@@ -239,10 +239,10 @@ void Grid::setBlockData(quint32 block, const std::vector<double>& data, bool cre
         _blocks[block]->fill(data);
         return ;
     }
-    Locker lock(_mutex);
     if(!update(block, creation))
         return ;
-    _blocks[_cache[block]]->fill(data);
+    //block will be at front now
+    _blocks[_cache[0]]->fill(data);
 }
 
 char *Grid::blockAsMemory(quint32 block, bool creation) {
@@ -293,6 +293,11 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
 
     if ( _size.zsize() == 0)
         _size.zsize(1);
+
+    if ( _maxLines * sz.xsize() * 8 > 1e8){
+        _maxLines = 1e8 / (sz.xsize() * 8);
+    }
+
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
     _memUsed = std::min(bytesNeeded, mleft/2);
@@ -357,9 +362,11 @@ inline bool Grid::update(quint32 block, bool creation) {
     }
     if ( creation || _cache.size() == 0) { // at create time we want to preserver the original order in memory
 
-        if ( block > _inMemoryIndex )
+        if ( _cache.size() > 0 &&  block > _inMemoryIndex ){
             _blocks[_cache.back()]->save2Cache();
-        _cache.push_back(block);
+            _cache.removeLast();
+        }
+        _cache.push_front(block);
     }
     else if ( _cache.front() != block) {
         int index = _cache.indexOf(block);
@@ -368,7 +375,10 @@ inline bool Grid::update(quint32 block, bool creation) {
         }
         _cache.push_front(block); // block has now priority; if the block was not already in the list, the list will grow
         if ( index > (int)_inMemoryIndex) { // the index is bigger than allowed, so the last element of the list is unloaded
-            return _blocks[_cache[_inMemoryIndex]]->save2Cache();
+            if (_blocks[_cache.back()]->save2Cache()){
+                _cache.removeLast();
+                return true;
+            }
         }
 
     }
@@ -391,10 +401,10 @@ void Grid::unload(bool uselock) {
         unloadInternal();
 }
 
-std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const LoadOptions& options ){
+std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const IOOptions& options ){
     std::map<quint32, std::vector<quint32> > result;
     int blockplayer = blocksPerBand();
-    if ( options._values.size() == 0){
+    if ( options.size() == 0){
         quint32 lastblock = 0;
         for(int layer = 0; layer < size().zsize(); ++layer){
             for(int block = 0; block < blockplayer; ++block){
@@ -403,9 +413,9 @@ std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const LoadOptions
             lastblock += blockplayer;
         }
     }else {
-        auto iter = options._values.find("blockindex");
-        if ( iter != options._values.end()){
-            quint32 index = iter->second.toUInt();
+        auto bindex = options["blockindex"];
+        if ( bindex.isValid()){
+            quint32 index = bindex.toUInt();
             int layer = index / blockplayer;
             result[layer].push_back(index);
         }

@@ -14,7 +14,7 @@
 namespace Ilwis {
 
 class RasterCoverage;
-struct LoadOptions;
+struct IOOptions;
 
 class GridBlockInternal {
 public:
@@ -110,7 +110,7 @@ public:
     int maxLines() const;
     Grid * clone(quint32 index1=iUNDEF, quint32 index2=iUNDEF) ;
     void unload(bool uselock=true);
-    std::map<quint32, std::vector<quint32> > calcBlockLimits(const LoadOptions &options);
+    std::map<quint32, std::vector<quint32> > calcBlockLimits(const IOOptions &options);
     bool isValid() const;
 protected:
 

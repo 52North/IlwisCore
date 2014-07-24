@@ -12,19 +12,8 @@ class Resource;
 class Grid;
 class OperationExpression;
 class ExecutionContext;
-struct PrepareOptions;
+struct IOOptions;
 
-struct LoadOptions {
-    LoadOptions()  {}
-    LoadOptions(double undef) { _values["undefined"] = undef; }
-    LoadOptions(const QString& key, const QVariant& value) { _values[key] = value; }
-
-    bool contains(const QString& option) const{
-        return _values.find(option) != _values.end();
-    }
-
-    std::map<QString, QVariant> _values;
-};
 
 /*!
  * \brief The ConnectorInterface class all connectors are derived from this interface
@@ -41,7 +30,7 @@ public:
      \param data the ilwisobject to be initialized
      \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
     */
-    virtual bool loadMetaData(IlwisObject*, const PrepareOptions & ) { return false;}
+    virtual bool loadMetaData(IlwisObject*, const IOOptions & ) { return false;}
 
     /*!
      * \brief loadGridData loads the 2D or 3D raster data from the source into memory
@@ -54,7 +43,7 @@ public:
      * \brief loadData loads bulk binary data into the ilwisobject.
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
-    virtual bool loadData(IlwisObject*, const LoadOptions& options = LoadOptions()) { return false; }
+    virtual bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
     virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
@@ -88,7 +77,7 @@ public:
 };
 
 
-typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load,const PrepareOptions& options);
+typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load,const IOOptions& options);
 }
 
 #endif // ICONNECTOR_H

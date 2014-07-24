@@ -13,7 +13,7 @@ IlwisObjectFactory::IlwisObjectFactory(const QString &ty, const QString &sub, co
 {
 }
 
-IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const PrepareOptions &options) const {
+IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const IOOptions &options) const {
     IlwisObject *object = connector->create();
     if ( object) {
         object->setValid(true);

@@ -12,7 +12,7 @@
 
 using namespace Ilwis;
 
-IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const PrepareOptions &) : _resource(resource), _binaryIsLoaded(false)
+IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const IOOptions &) : _resource(resource), _binaryIsLoaded(false)
 {
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 

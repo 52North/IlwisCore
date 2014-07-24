@@ -7,7 +7,7 @@ CatalogExplorer::CatalogExplorer()
 {
 }
 
-CatalogExplorer::CatalogExplorer(const Resource &resource, const PrepareOptions &) : _resource(resource)
+CatalogExplorer::CatalogExplorer(const Resource &resource, const IOOptions &) : _resource(resource)
 {
 
 }

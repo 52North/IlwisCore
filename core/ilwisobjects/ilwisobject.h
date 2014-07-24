@@ -11,7 +11,7 @@
 #include "resource.h"
 #include "numericrange.h"
 #include "juliantime.h"
-#include "prepareoptions.h"
+#include "iooptions.h"
 
 
 class QSqlRecord;
@@ -22,7 +22,7 @@ class IlwisObjectFactory;
 class ConnectorInterface;
 class Resource;
 class IlwisObject;
-struct PrepareOptions;
+struct IOOptions;
 
 typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
 
@@ -199,7 +199,7 @@ public:
      *\param connector the connector to be used
      *\param input defines the nature of the connector.
      */
-    virtual void setConnector(ConnectorInterface *connector, int mode=cmINPUT | cmOUTPUT, const PrepareOptions &options=PrepareOptions());
+    virtual void setConnector(ConnectorInterface *connector, int mode=cmINPUT | cmOUTPUT, const IOOptions &options=IOOptions());
 
     /*!
      * \brief isEqual compares the properties of ilwisobjects to test for equality.
@@ -295,7 +295,7 @@ public:
      * \param fnamespace an additional identifier for selecting the correct connector. format names maybe identical from different connectors. The combination namespace-format is unique accross the system
      * \param cmode the mode of the connector to be created
      */
-    void connectTo(const QUrl &url, const QString &format, const QString &fnamespace, ConnectorMode cmode);
+    void connectTo(const QUrl &url, const QString &format, const QString &fnamespace, ConnectorMode cmode, const IOOptions &options = IOOptions());
 
 
     //TODO. Puzzeld, this method is not allowed as duplicate copies are illegal
@@ -331,7 +331,7 @@ public:
      * @param source the Resource
      * @return a new ilwisObject when succesful, or 0 when it fails
      */
-    static IlwisObject *create(const Resource& source,const PrepareOptions& options=PrepareOptions());
+    static IlwisObject *create(const Resource& source,const IOOptions& options=IOOptions());
 
     /**
       ??

@@ -80,7 +80,7 @@ std::nullptr_t ConnectorFactory::registerCatalogExplorer(createCatalogExplorer f
     return nullptr;
 }
 
-std::vector<CatalogExplorer*> ConnectorFactory::explorersForResource(const Resource& resource, const QString &provider, const PrepareOptions &options) const{
+std::vector<CatalogExplorer*> ConnectorFactory::explorersForResource(const Resource& resource, const QString &provider, const IOOptions &options) const{
    std::vector<CatalogExplorer*> explorers;
    for( createCatalogExplorer createFunc : _explorers){
        CatalogExplorer *explorer = createFunc(resource, options);

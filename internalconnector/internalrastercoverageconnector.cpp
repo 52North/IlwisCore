@@ -14,16 +14,16 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *Ilwis::Internal::InternalRasterCoverageConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
+ConnectorInterface *Ilwis::Internal::InternalRasterCoverageConnector::create(const Ilwis::Resource &resource,bool load,const IOOptions& options)
 {
     return new InternalRasterCoverageConnector(resource, load, options);
 }
 
-InternalRasterCoverageConnector::InternalRasterCoverageConnector(const Resource &resource, bool load,const PrepareOptions& options) : IlwisObjectConnector(resource, load, options)
+InternalRasterCoverageConnector::InternalRasterCoverageConnector(const Resource &resource, bool load,const IOOptions& options) : IlwisObjectConnector(resource, load, options)
 {
 }
 
-bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options){
+bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options){
     RasterCoverage *gcoverage = static_cast<RasterCoverage *>(data);
     if(_dataType == gcoverage->datadef().range().isNull())
         return false;
@@ -35,7 +35,7 @@ bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data, const Prep
     return true;
 }
 
-bool InternalRasterCoverageConnector::loadData(IlwisObject* data, const LoadOptions &options){
+bool InternalRasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options){
     return true;
 }
 

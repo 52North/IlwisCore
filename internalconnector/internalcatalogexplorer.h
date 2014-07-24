@@ -6,9 +6,9 @@ namespace Internal {
 class InternalCatalogExplorer : public CatalogExplorer
 {
 public:
-    InternalCatalogExplorer(const Ilwis::Resource &,const PrepareOptions& options=PrepareOptions());
+    InternalCatalogExplorer(const Ilwis::Resource &,const IOOptions& options=IOOptions());
     ~InternalCatalogExplorer();
-    static CatalogExplorer *create(const Resource &,const PrepareOptions& options=PrepareOptions());
+    static CatalogExplorer *create(const Resource &,const IOOptions& options=IOOptions());
 
     QFileInfo toLocalFile(const QUrl &url) const;
     std::vector<Resource> loadItems();

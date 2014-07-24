@@ -20,17 +20,17 @@
 using namespace Ilwis;
 using namespace Internal;
 
-InternalFeatureCoverageConnector::InternalFeatureCoverageConnector(const Ilwis::Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+InternalFeatureCoverageConnector::InternalFeatureCoverageConnector(const Ilwis::Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 
 }
 
-bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return true;
 }
 
-bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *, const LoadOptions& options)
+bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *, const IOOptions& options)
 {
     _binaryIsLoaded = true;
     return true;
@@ -41,7 +41,7 @@ QString InternalFeatureCoverageConnector::provider() const
     return "internal";
 }
 
-ConnectorInterface *InternalFeatureCoverageConnector::create(const Ilwis::Resource &resource, bool load, const PrepareOptions &options)
+ConnectorInterface *InternalFeatureCoverageConnector::create(const Ilwis::Resource &resource, bool load, const IOOptions &options)
 {
     return new  InternalFeatureCoverageConnector(resource, load, options);
 }

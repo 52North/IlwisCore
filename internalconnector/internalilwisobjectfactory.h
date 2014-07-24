@@ -22,25 +22,25 @@ class InternalIlwisObjectFactory : public IlwisObjectFactory
 public:
     InternalIlwisObjectFactory();
 
-    virtual Ilwis::IlwisObject *create(const Resource & resource,const PrepareOptions& options=PrepareOptions()) const;
+    virtual Ilwis::IlwisObject *create(const Resource & resource,const IOOptions& options=IOOptions()) const;
     virtual IlwisObject *create(IlwisTypes type, const QString &subtype=sUNDEF) const;
     bool canUse(const Ilwis::Resource &resource) const;
 
 private:
     Resource property2Resource(const QVariant &property, IlwisTypes type) const;
-    IlwisObject *createEllipsoid(const Resource &resource, const PrepareOptions &options) const;
-    GeodeticDatum *createDatum(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createProjection(const Resource &resource, const Ilwis::PrepareOptions &options) const;
+    IlwisObject *createEllipsoid(const Resource &resource, const IOOptions &options) const;
+    GeodeticDatum *createDatum(const Resource &resource, const Ilwis::IOOptions &options) const;
+    IlwisObject *createProjection(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createEllipsoidFromQuery(const QString &query, const Resource& resource) const;
-    IlwisObject *createDomain(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createCsyFromCode(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createRasterCoverage(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createTable(const Resource &resource, const PrepareOptions &options) const;
+    IlwisObject *createDomain(const Resource &resource, const Ilwis::IOOptions &options) const;
+    IlwisObject *createCsyFromCode(const Resource &resource, const Ilwis::IOOptions &options) const;
+    IlwisObject *createRasterCoverage(const Resource &resource, const Ilwis::IOOptions &options) const;
+    IlwisObject *createTable(const Resource &resource, const IOOptions &options) const;
     IlwisObject *createOperationMetaData(const Resource &resource) const;
-    IlwisObject *createGeoreference(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createFeatureCoverage(const Resource &resource, const Ilwis::PrepareOptions &options) const;
-    IlwisObject *createCatalog(const Resource &resource, const Ilwis::PrepareOptions &options) const;
+    IlwisObject *createGeoreference(const Resource &resource, const Ilwis::IOOptions &options) const;
+    bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage, const Ilwis::IOOptions &options) const;
+    IlwisObject *createFeatureCoverage(const Resource &resource, const Ilwis::IOOptions &options) const;
+    IlwisObject *createCatalog(const Resource &resource, const Ilwis::IOOptions &options) const;
     GeoReference *createGrfFromCode(const Ilwis::Resource &resource) const;
 };
 }

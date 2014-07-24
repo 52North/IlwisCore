@@ -12,7 +12,7 @@ typedef std::unique_ptr<Ilwis::CatalogConnector> UPCatalogConnector;
 class KERNELSHARED_EXPORT IlwisObjectConnector : public ConnectorInterface
 {
 public:
-    IlwisObjectConnector(const Ilwis::Resource &resource, bool,const PrepareOptions& options=PrepareOptions() );
+    IlwisObjectConnector(const Ilwis::Resource &resource, bool,const IOOptions& options=IOOptions() );
     virtual ~IlwisObjectConnector();
 
     virtual IlwisObject *create() const = 0;

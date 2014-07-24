@@ -90,17 +90,17 @@ QString CatalogConnector::provider() const
     return "ilwis";
 }
 
-ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
+ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
     return new CatalogConnector(resource, load);
 }
 
-bool CatalogConnector::loadMetaData(IlwisObject *data,const PrepareOptions &)
+bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 {
     return loadExplorers();
 }
 
-bool CatalogConnector::loadData(IlwisObject *obj, const LoadOptions& options){
+bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& options){
     Catalog *cat = static_cast<Catalog *>(obj);
     for(const auto& explorer : _dataProviders){
         std::vector<Resource> items = explorer->loadItems();

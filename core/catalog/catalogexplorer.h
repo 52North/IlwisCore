@@ -7,7 +7,7 @@ class KERNELSHARED_EXPORT CatalogExplorer
 {
 public:
     CatalogExplorer();
-    CatalogExplorer(const Resource& resource,const PrepareOptions& options=PrepareOptions());
+    CatalogExplorer(const Resource& resource,const IOOptions& options=IOOptions());
     virtual ~CatalogExplorer();
 
     virtual std::vector<Resource> loadItems() = 0;

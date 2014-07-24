@@ -7,7 +7,7 @@
 #include <mutex>
 //#include "ilwis.h"
 #include "errorobject.h"
-#include "prepareoptions.h"
+#include "iooptions.h"
 #include "ilwisobject.h"
 #include "resource.h"
 #include "mastercatalog.h"
@@ -31,10 +31,10 @@ public:
     template<class C> friend class IlwisData;
 
     IlwisData() {}
-    IlwisData(const QString& name, IlwisTypes tp=itANY, const PrepareOptions& options=PrepareOptions()){
+    IlwisData(const QString& name, IlwisTypes tp=itANY, const IOOptions& options=IOOptions()){
         prepare(name, tp, options);
     }
-    IlwisData(const Resource& resource1,const PrepareOptions& options=PrepareOptions()){
+    IlwisData(const Resource& resource1,const IOOptions& options=IOOptions()){
         prepare(resource1, options);
     }
 
@@ -157,7 +157,7 @@ public:
 
     }
 
-    bool prepare(const QString& name,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const QString& name,const IOOptions& options=IOOptions()){
         auto type = kernel()->demangle(typeid(T).name());
         IlwisTypes tp = IlwisObject::name2Type(type);
         return prepare(name, tp, options);
@@ -172,7 +172,7 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const QString& nme, IlwisTypes tp,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const QString& nme, IlwisTypes tp,const IOOptions& options=IOOptions()){
         QString name = Resource::quoted2string(nme);
         // see if it is an internal object (ANONYMOUS_, or ILWISOBJECT_)
         quint64 id = IlwisObject::internalname2id(name);
@@ -220,7 +220,7 @@ public:
 
     }
 
-    bool prepare(const Resource& resource1,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const Resource& resource1,const IOOptions& options=IOOptions()){
         if (resource1.isValid()) {
             quint64 id = iUNDEF;
             if ( mastercatalog()->usesContainers(resource1.url())) // containers dont make sense for services
@@ -266,7 +266,7 @@ public:
      \param name a string representation of a resource. This might be an Url/IlwisResource but other representations can also be used
      \return bool succes of the creation process. Any issues can be found in the issuelogger
     */
-    bool prepare(const quint64& iid,const PrepareOptions& options=PrepareOptions()){
+    bool prepare(const quint64& iid,const IOOptions& options=IOOptions()){
         Resource resource = mastercatalog()->id2Resource(iid);
         if (!mastercatalog()->isRegistered(iid)) {
             T *data = static_cast<T *>(IlwisObject::create(resource, options));
