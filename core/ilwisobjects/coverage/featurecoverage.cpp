@@ -129,6 +129,7 @@ UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, c
           if ( csySource.isValid() && !csySource->isEqual(coordinateSystem().ptr())){
               CsyTransform trans(csySource, coordinateSystem());
               newgeom->apply_rw(&trans);
+              newgeom->geometryChangedAction();
           }
           GeometryHelper::setCoordinateSystem(newgeom, coordinateSystem().ptr());
           newfeature->add(newgeom, existingFeature->trackIndexValue(i));
