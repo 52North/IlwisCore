@@ -230,7 +230,7 @@ bool Resource::hasProperty(const QString &prop) const
 
 void Resource::addProperty(const QString &key, const QVariant &value)
 {
-    _properties[key] = value;
+    _properties[key.toLower()] = value;
 }
 
 QUrl Resource::url(bool asRaw) const

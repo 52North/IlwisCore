@@ -7,12 +7,12 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT FolderCatalogExplorer : public CatalogExplorer
 {
 public:
-    static CatalogExplorer *create(const Resource &resource, bool load,const PrepareOptions& options=PrepareOptions());
+    static CatalogExplorer *create(const Resource &resource, bool load,const IOOptions& options=IOOptions());
     QFileInfo toLocalFile(const QUrl &datasource) const;
     static  std::vector<QUrl> loadFolders(const Ilwis::Resource &source, const QStringList &namefilter, int options) ;
 
 protected:
-    FolderCatalogExplorer(const Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    FolderCatalogExplorer(const Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
     bool canUse(const Resource &resource) const;
     QString provider() const;

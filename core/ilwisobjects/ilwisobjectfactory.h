@@ -39,11 +39,11 @@ public:
      \return IlwisObject the created ilwisobject or 0 if something went wrong
     */
 
-    virtual IlwisObject *create(const Resource &resource,const PrepareOptions& options=PrepareOptions()) const = 0;
+    virtual IlwisObject *create(const Resource &resource,const IOOptions& options=IOOptions()) const = 0;
     virtual IlwisObject *create(IlwisTypes, const QString& sub = sUNDEF ) const { return (sub == sUNDEF ? nullptr: nullptr); }
 
 protected:
-     IlwisObject *createObject(IlwisObjectConnector *connector,const PrepareOptions& options=PrepareOptions()) const;
+     IlwisObject *createObject(IlwisObjectConnector *connector,const IOOptions& options=IOOptions()) const;
 
 
 };

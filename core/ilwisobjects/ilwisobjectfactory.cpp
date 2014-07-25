@@ -13,15 +13,12 @@ IlwisObjectFactory::IlwisObjectFactory(const QString &ty, const QString &sub, co
 {
 }
 
-IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const PrepareOptions &options) const {
+IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const IOOptions &options) const {
     IlwisObject *object = connector->create();
     if ( object) {
-        bool ok = connector->loadMetaData(object, options);
-        if (ok) {
-            object->setValid(true);
-            object->setConnector(connector);
-            return object;
-        }
+        object->setValid(true);
+        object->setConnector(connector, IlwisObject::cmINPUT, options);
+        return object;
     }else {
         kernel()->issues()->log(TR("Could not create object"));
     }

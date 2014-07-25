@@ -1,20 +1,14 @@
-#include <QDebug>
-#include <QDir>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonValue>
-#include <QTemporaryFile>
-#include <iostream>
 #include "kernel.h"
-#include "geometries.h"
 #include "ilwiscontext.h"
+#include "connectorinterface.h"
+#include "geometries.h"
+#include "raster.h"
 #include "grid.h"
 
 using namespace Ilwis;
-GridBlockInternal::GridBlockInternal(quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_initialized(false), _inMemory(false)
+GridBlockInternal::GridBlockInternal(quint32 blocknr, quint64 rasterid,quint32 lines , quint32 width) :  _size(Size<>(width, lines,1)),_id(blocknr),_rasterid(rasterid), _initialized(false), _inMemory(false)
 {
     _undef = undef<double>();
-    _id = ++_blockid;
     _blockSize = _size.xsize()* _size.ysize();
 }
 
@@ -28,13 +22,15 @@ Size<> GridBlockInternal::size() const {
 
 GridBlockInternal *GridBlockInternal::clone()
 {
-    GridBlockInternal *block = new GridBlockInternal(_size.xsize(), _size.ysize());
+    GridBlockInternal *block = new GridBlockInternal(_id, i64UNDEF, _size.xsize(), _size.ysize());
     block->prepare();
     block->_undef = _undef;
-    block->_index = 0;
     block->_blockSize = _blockSize;
-    if(!isLoaded())
-        load();
+    if(!inMemory())
+        loadFromCache();
+    else if (!_initialized){
+        needData();
+    }
     std::copy(_data.begin(), _data.end(), block->_data.begin());
 
     return block;
@@ -59,7 +55,7 @@ quint32 GridBlockInternal::blockSize() {
     return _blockSize;
 }
 
-inline bool GridBlockInternal::unload() {
+inline bool GridBlockInternal::save2Cache() {
     _inMemory = false;
     if ( _tempName == sUNDEF) {
         QString name = QString("gridblock_%1").arg(_id);
@@ -89,7 +85,7 @@ inline bool GridBlockInternal::unload() {
 
 }
 
-bool GridBlockInternal::load() {
+bool GridBlockInternal::loadFromCache() {
      _inMemory = true;
     prepare();
     if ( _tempName == sUNDEF) {
@@ -110,9 +106,18 @@ bool GridBlockInternal::load() {
 
 }
 
+void GridBlockInternal::needData()
+{
+    IIlwisObject obj = mastercatalog()->get(_rasterid);
+    if ( obj.isValid()){
+        IRasterCoverage raster = obj.as<RasterCoverage>();
+        raster->getData(_id);
+    }
+}
+
 
 //----------------------------------------------------------------------
-Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
+Grid::Grid(int maxlines) : _inMemoryIndex(iUNDEF), _memUsed(0),_blocksPerBand(0), _maxLines(maxlines){
     //Locker lock(_mutex);
 
     if ( _maxLines == iUNDEF){
@@ -121,15 +126,6 @@ Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
              _maxLines = 1e8 / (sz.xsize() * 8);
          }
     }
-    setSize(sz);
-    quint64 bytesNeeded = _size.linearSize() * sizeof(double);
-    quint64 mleft = context()->memoryLeft();
-    _memUsed = std::min(bytesNeeded, mleft/2);
-    context()->changeMemoryLeft(-_memUsed);
-    int n = numberOfBlocks();
-    _inMemoryIndex = std::max(1ULL, n * _memUsed / bytesNeeded);
-    _blocksPerBand = n / sz.zsize();
-
 }
 
 quint32 Grid::blockSize(quint32 index) const {
@@ -161,8 +157,8 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
     quint32 start = index1 == iUNDEF ? 0 : index1;
     quint32 end = index2 == iUNDEF ? _blocks.size() / _blocksPerBand : index2 + 1;
 
-    Grid *grid = new Grid(Size<>(_size.xsize(), _size.ysize(), end - start), _maxLines);
-    grid->prepare();
+    Grid *grid = new Grid(_maxLines);
+    grid->prepare(0,Size<>(_size.xsize(), _size.ysize(), end - start));
 
     quint32 startBlock = start * _blocksPerBand;
     quint32 endBlock = std::min(end * _blocksPerBand, (quint32)_blocks.size());
@@ -177,11 +173,19 @@ Grid *Grid::clone(quint32 index1, quint32 index2)
 
 void Grid::clear() {
     _size = Size<>();
-    _blockSizes.clear();
+    _blockSizes = std::vector<quint32>();
     for(quint32 i = 0; i < _blocks.size(); ++i) {
         delete _blocks[i];
     }
-    _blocks.clear();
+    _blocks = std::vector< GridBlockInternal *>();
+    _cache = QList<quint32>();
+    _blockSizes =  std::vector<quint32>();
+    _offsets = std::vector<std::vector<quint32>>();
+    _blockOffsets = std::vector<quint32>();
+    _inMemoryIndex = iUNDEF;
+    _allInMemory = false;
+    _size = Size<>();
+
 }
 
 double Grid::value(const Pixel &pix) {
@@ -202,7 +206,7 @@ inline double &Grid::value(quint32 block, int offset )  {
         return _blocks[block]->at(offset);
 
     Locker lock(_mutex); // slower case. must prevent other threads to messup admin
-    if ( !_blocks[block]->isLoaded())
+    if ( !_blocks[block]->inMemory())
       if(!update(block))
           throw ErrorObject(TR("Grid block is out of bounds"));
 
@@ -218,7 +222,7 @@ inline void Grid::setValue(quint32 block, int offset, double v ) {
     }
 
     Locker lock(_mutex);
-    if ( !_blocks[block]->isLoaded())
+    if ( !_blocks[block]->inMemory())
         if(!update(block))
             return ;
 
@@ -238,10 +242,10 @@ void Grid::setBlockData(quint32 block, const std::vector<double>& data, bool cre
         _blocks[block]->fill(data);
         return ;
     }
-    Locker lock(_mutex);
     if(!update(block, creation))
         return ;
-    _blocks[_cache[block]]->fill(data);
+    //block will be at front now
+    _blocks[_cache[0]]->fill(data);
 }
 
 char *Grid::blockAsMemory(quint32 block, bool creation) {
@@ -259,16 +263,8 @@ char *Grid::blockAsMemory(quint32 block, bool creation) {
 
 }
 
-void Grid::setSize(const Size<>& sz) {
-    if ( _blocks.size() != 0)
-        clear();
-    _size = sz;
-    if ( _size.zsize() == 0)
-        _size.zsize(1); // 1 grid at least in the grid;
 
-}
-
-void Grid::setBandProperties(int n){
+void Grid::setBandProperties(RasterCoverage *raster, int n){
     _size.zsize(_size.zsize() + n);
     quint32 oldBlocks = _blocks.size();
     quint32 newBlocks = numberOfBlocks();
@@ -279,7 +275,7 @@ void Grid::setBandProperties(int n){
 
     for(quint32 block = oldBlocks; block < _blocks.size(); ++block) {
         int linesPerBlock = std::min((qint32)_maxLines, totalLines);
-        _blocks[block] = new GridBlockInternal(linesPerBlock, _size.xsize());
+        _blocks[block] = new GridBlockInternal(block,raster ? raster->id() : i64UNDEF,linesPerBlock, _size.xsize());
         _blockSizes[block] = linesPerBlock * _size.xsize();
         _blockOffsets[block] = block == 0 ? 0 : _blockOffsets[block-1] +  _blockSizes[block];
         totalLines -= _maxLines;
@@ -288,11 +284,31 @@ void Grid::setBandProperties(int n){
     }
 }
 
-bool Grid::prepare() {
+bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
     Locker lock(_mutex);
+
+    clear();
+    _size = sz;
+
     if ( _size.isNull()|| !_size.isValid() || _maxLines == 0) {
-        return ERROR0("Grid size not properly initialized");
+        return false;
     }
+
+    if ( _size.zsize() == 0)
+        _size.zsize(1);
+
+    if ( _maxLines * sz.xsize() * 8 > 1e8){
+        _maxLines = 1e8 / (sz.xsize() * 8);
+    }
+
+    quint64 bytesNeeded = _size.linearSize() * sizeof(double);
+    quint64 mleft = context()->memoryLeft();
+    _memUsed = std::min(bytesNeeded, mleft/2);
+    context()->changeMemoryLeft(-_memUsed);
+    int n = numberOfBlocks();
+    _inMemoryIndex = std::max(1ULL, n * _memUsed / bytesNeeded);
+    _blocksPerBand = n / sz.zsize();
+
 
     int nblocks = numberOfBlocks();
     qint32 totalLines = _size.ysize();
@@ -303,7 +319,7 @@ bool Grid::prepare() {
 
     for(quint32 i = 0; i < _blocks.size(); ++i) {
         int linesPerBlock = std::min((qint32)_maxLines, totalLines);
-        _blocks[i] = new GridBlockInternal(linesPerBlock, _size.xsize());
+        _blocks[i] = new GridBlockInternal(i, raster ? raster->id() : i64UNDEF,linesPerBlock, _size.xsize());
         _blockSizes[i] = linesPerBlock * _size.xsize();
         _blockOffsets[i] = i == 0 ? 0 : _blockOffsets[i-1] +  _blockSizes[i];
         totalLines -= _maxLines;
@@ -334,14 +350,14 @@ int Grid::numberOfBlocks() {
 inline bool Grid::update(quint32 block, bool creation) {
     if ( block >= _blocks.size() ) // illegal, blocknumber is outside the allowed range
         return false;
-    if ( !_blocks[block]->isLoaded()) { // if not loaded, load it from the temporary storage
+    if ( !_blocks[block]->inMemory()) { // if not loaded, load it from the temporary storage
         try{
-        if(!_blocks[block]->load()){
+        if(!_blocks[block]->loadFromCache()){
             return false;
         }
         } catch (const OutOfMemoryError& err){ // probably exceeded memory cappacity, unload the blocks and try again.
             unload(false);
-            if(!_blocks[block]->load()){
+            if(!_blocks[block]->loadFromCache()){
                 return false;
             }
 
@@ -349,9 +365,11 @@ inline bool Grid::update(quint32 block, bool creation) {
     }
     if ( creation || _cache.size() == 0) { // at create time we want to preserver the original order in memory
 
-        if ( block > _inMemoryIndex )
-            _blocks[_cache.back()]->unload();
-        _cache.push_back(block);
+        if ( _cache.size() > 0 &&  block > _inMemoryIndex ){
+            _blocks[_cache.back()]->save2Cache();
+            _cache.removeLast();
+        }
+        _cache.push_front(block);
     }
     else if ( _cache.front() != block) {
         int index = _cache.indexOf(block);
@@ -360,7 +378,10 @@ inline bool Grid::update(quint32 block, bool creation) {
         }
         _cache.push_front(block); // block has now priority; if the block was not already in the list, the list will grow
         if ( index > (int)_inMemoryIndex) { // the index is bigger than allowed, so the last element of the list is unloaded
-            return _blocks[_cache[_inMemoryIndex]]->unload();
+            if (_blocks[_cache.back()]->save2Cache()){
+                _cache.removeLast();
+                return true;
+            }
         }
 
     }
@@ -370,7 +391,7 @@ inline bool Grid::update(quint32 block, bool creation) {
 void Grid::unloadInternal(){
     _cache.clear();
     for(GridBlockInternal *block : _blocks) {
-        block->unload();
+        block->save2Cache();
     }
     _inMemoryIndex = 0;
 }
@@ -383,7 +404,36 @@ void Grid::unload(bool uselock) {
         unloadInternal();
 }
 
+std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const IOOptions& options ){
+    std::map<quint32, std::vector<quint32> > result;
+    int blockplayer = blocksPerBand();
+    if ( options.size() == 0){
+        quint32 lastblock = 0;
+        for(int layer = 0; layer < size().zsize(); ++layer){
+            for(int block = 0; block < blockplayer; ++block){
+                result[layer].push_back(lastblock + block);
+            }
+            lastblock += blockplayer;
+        }
+    }else {
+        auto bindex = options["blockindex"];
+        if ( bindex.isValid()){
+            quint32 index = bindex.toUInt();
+            int layer = index / blockplayer;
+            result[layer].push_back(index);
+        }
 
+    }
+
+
+    return result;
+
+}
+
+bool Grid::isValid() const
+{
+    return !(_size.isNull() || _size.isValid() || _inMemoryIndex == iUNDEF);
+}
 
 
 

@@ -12,7 +12,8 @@ class Resource;
 class Grid;
 class OperationExpression;
 class ExecutionContext;
-struct PrepareOptions;
+struct IOOptions;
+
 
 /*!
  * \brief The ConnectorInterface class all connectors are derived from this interface
@@ -29,7 +30,7 @@ public:
      \param data the ilwisobject to be initialized
      \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
     */
-    virtual bool loadMetaData(IlwisObject*, const PrepareOptions & ) { return false;}
+    virtual bool loadMetaData(IlwisObject*, const IOOptions & ) { return false;}
 
     /*!
      * \brief loadGridData loads the 2D or 3D raster data from the source into memory
@@ -38,12 +39,11 @@ public:
      *Note that Ilwis doesnt make a difference between 2D and 3D griddata. If the local format has different storage methods for those they have to be resolved at connector level
      * \return returns the allocated grid
      */
-    virtual Grid* loadGridData(IlwisObject*) { return 0;}
-    /*!
+   /*!
      * \brief loadData loads bulk binary data into the ilwisobject.
      * \return true when succesfull. If not succesful the reason can be found in the issuelogger
      */
-    virtual bool loadData(IlwisObject*) { return false; }
+    virtual bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
     virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
@@ -77,7 +77,7 @@ public:
 };
 
 
-typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load,const PrepareOptions& options);
+typedef ConnectorInterface* (*ConnectorCreate)(const Resource& resource, bool load,const IOOptions& options);
 }
 
 #endif // ICONNECTOR_H

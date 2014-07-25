@@ -11,8 +11,6 @@
 #include "intervalrange.h"
 #include "ilwisoperation.h"
 
-quint64 Ilwis::GridBlockInternal::_blockid = 0;
-
 using namespace Ilwis;
 
 RasterCoverage::RasterCoverage()
@@ -42,7 +40,7 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     _georef = grf;
     if ( resetData)
         _grid.reset(0);
-    else if ( _grid.isNull() == false && grf->size().twod() != _grid->size().twod() ) {
+    else if ( !_grid || grf->size().twod() != _grid->size().twod() ) {
         _grid.reset(0);
 
     }
@@ -58,6 +56,9 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     }
     else
         _size = Size<>();
+    if (!_grid && _size.isValid()){
+            gridRef()->prepare(this,_size);
+    }
 }
 
 IlwisTypes RasterCoverage::ilwisType() const
@@ -130,19 +131,18 @@ NumericStatistics &RasterCoverage::statistics(int mode, int bins)
     return Coverage::statistics(mode);
 }
 
-Grid *RasterCoverage::grid()
+UPGrid &RasterCoverage::gridRef()
 {
-    Locker lock(_mutex);
-    if ( _georef->isValid() && !connector().isNull()) {
-        if ( _grid.isNull()) {
-            _grid.reset(connector()->loadGridData(this));
-            if (_grid.isNull())
-                return 0;
-        }
-        Grid *grd = _grid.data();
-        return grd;
-    }
-    return 0;
+    if (!_grid)
+        _grid.reset( new Grid);
+    return _grid;
+}
+
+const UPGrid &RasterCoverage::grid() const
+{
+    if ( _grid)
+        return _grid;
+    throw ErrorObject(TR("Grid not yet initialized")) ;
 }
 
 void RasterCoverage::copyTo(IlwisObject *obj)
@@ -174,7 +174,7 @@ Size<> RasterCoverage::size() const
 {
     if (_size.isValid() && !_size.isNull())
         return _size;
-    if (!_grid.isNull())
+    if (_grid)
         const_cast<RasterCoverage *>(this)->_size = _grid->size();
     else if ( _georef.isValid())
         const_cast<RasterCoverage *>(this)->_size = _georef->size();
@@ -234,7 +234,7 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
         size(inputIter.box().size().twod());
         for(int band = 0; band  < inputIter.box().zlength(); ++band){
             addBand(band,datadef(),trackIndex);
-            grid()->setBandProperties(0);
+            grid()->setBandProperties(this,0);
         }
     }
 
@@ -245,7 +245,7 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 
     quint32 index = isFirstLayer ?  size().zsize() - 1 : size().zsize(); // -1 because an empty map has z == 1
     addBand(index,datadef(),trackIndex);
-    grid()->setBandProperties(1);
+    grid()->setBandProperties(this,index);
     if ( !isFirstLayer)
         _size.zsize(_size.zsize() + 1);
 
@@ -266,6 +266,13 @@ void RasterCoverage::addBand(int index, const DataDefinition& def, const QVarian
     attributeTable(Coverage::atINDEX)->record(index,{0,index, indexDefinition().domain()->impliedValue(trackIndexValue)});
 }
 
+void RasterCoverage::getData(quint32 blockIndex)
+{
+    if ( !connector().isNull()){
+        connector()->loadData(this, {"blockindex", blockIndex});
+    }
+}
+
 void RasterCoverage::size(const Size<> &sz)
 {
     if ( isReadOnly())
@@ -275,8 +282,7 @@ void RasterCoverage::size(const Size<> &sz)
     if (sz.xsize() > 0 && sz.ysize() > 0) {
         changed(true);
         _size = sz;
-        if (!_grid.isNull())
-            _grid->setSize(sz);
+        gridRef()->prepare(this, sz);
         if (_georef.isValid())
             _georef->size(sz);
         for(int i = 0; i < sz.zsize(); ++i)

@@ -23,16 +23,16 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *Ilwis::Internal::InternalTableConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
+ConnectorInterface *Ilwis::Internal::InternalTableConnector::create(const Ilwis::Resource &resource,bool load,const IOOptions& options)
 {
     return new InternalTableConnector(resource, load, options);
 }
 
-InternalTableConnector::InternalTableConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+InternalTableConnector::InternalTableConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 }
 
-bool InternalTableConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool InternalTableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return true;
 }
@@ -43,7 +43,7 @@ IlwisObject *InternalTableConnector::create() const
     return new FlatTable(_resource);
 }
 
-bool InternalTableConnector::loadData(IlwisObject *obj)
+bool InternalTableConnector::loadData(IlwisObject *obj, const IOOptions& options)
 {
     Table *table = static_cast<Table *>(obj);
 

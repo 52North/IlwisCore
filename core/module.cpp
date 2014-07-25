@@ -8,6 +8,7 @@
 #include "mastercatalog.h"
 #include "ilwisdata.h"
 #include "ilwiscontext.h"
+#include "supportlibraryloader.h"
 #include "errorobject.h"
 #include "version.h"
 
@@ -59,8 +60,8 @@ ModuleMap::~ModuleMap() {
 //    }
 }
 
-void ModuleMap ::loadPlugin(const QString& file){
-    QPluginLoader loader(file);
+void ModuleMap ::loadPlugin(const QFileInfo& file){
+    QPluginLoader loader(file.absoluteFilePath());
     QObject *plugin = loader.instance();
     if (plugin)  {
         Module *module = qobject_cast<Module *>(plugin);
@@ -76,12 +77,24 @@ void ModuleMap::addModules() {
 
     QString path = context()->ilwisFolder().absoluteFilePath() + "/extensions/";
     QDir folder(path);
-    QDirIterator dirWalker(folder, QDirIterator::Subdirectories);
-    while(dirWalker.hasNext()) {
-        dirWalker.next();
-        QString file = dirWalker.filePath();
+    QFileInfoList dirs = folder.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for(auto entry : dirs){
+        QFileInfo libraryconfig = entry.absoluteFilePath() + "/resources/libraries.config";
+        if ( libraryconfig.exists()){
+            SupportLibraryLoader libloader(libraryconfig.absoluteFilePath());
+            if ( libloader.isValid())
+                libloader.loadLibraries();
+        }
+    }
 
-        loadPlugin(file);
+    for(auto entry : dirs){
+        QStringList exts;
+        exts << "*.dll" << "*.so" << "*.DLL" << "*.SO";
+        QDir plugindir(entry.absoluteFilePath());
+        QFileInfoList libs = plugindir.entryInfoList(exts, QDir::Files);
+        for( auto lib : libs){
+            loadPlugin(lib);
+        }
     }
     QString file = context()->ilwisFolder().absoluteFilePath() + "/httpserver.dll";
     loadPlugin(file);

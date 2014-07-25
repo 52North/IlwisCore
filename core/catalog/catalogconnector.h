@@ -24,8 +24,8 @@ public:
 
     virtual ~CatalogConnector() {}
 
-    bool loadMetaData(IlwisObject *obj,const PrepareOptions&);
-    bool loadData(IlwisObject *obj);
+    bool loadMetaData(IlwisObject *obj,const IOOptions&);
+    bool loadData(IlwisObject *obj, const Ilwis::IOOptions &options = IOOptions());
 
     bool isValid() const;
     virtual bool canUse(const Resource& resource) const;
@@ -35,7 +35,7 @@ public:
 
     QString provider() const;
 
-    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const PrepareOptions& options=PrepareOptions());
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
 protected:
     virtual  bool loadExplorers();

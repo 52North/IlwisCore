@@ -118,7 +118,9 @@ SOURCES += core/kernel.cpp \
     core/util/bresenham.cpp \
     core/util/xpathparser.cpp \
     core/util/xmlstreamparser.cpp \
-    core/util/ilwisconfiguration.cpp
+    core/util/ilwisconfiguration.cpp \
+    core/util/supportlibraryloader.cpp \
+    core/iooptions.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -229,7 +231,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/domain/colorrange.h \
     core/catalog/catalogexplorer.h \
     core/catalog/foldercatalogexplorer.h \
-    core/prepareoptions.h \
+    core/iooptions.h \
     core/catalog/catalogview.h \
     core/ilwisobjects/coverage/vertexiterator.h \
     core/ilwisobjects/domain/coloritem.h \
@@ -251,7 +253,9 @@ HEADERS += core/kernel.h\
     core/util/bresenham.h \
     core/util/xpathparser.h \
     core/util/xmlstreamparser.h \
-    core/util/ilwisconfiguration.h
+    core/util/ilwisconfiguration.h \
+    core/util/supportlibraryloader.h \
+    core/iooptions.h
 
 
 OTHER_FILES += \

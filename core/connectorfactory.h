@@ -10,7 +10,7 @@ namespace Ilwis {
 class ConnectorInterface;
 class CatalogExplorer;
 
-typedef std::function<Ilwis::CatalogExplorer*(const Ilwis::Resource &resource,const PrepareOptions& options)> createCatalogExplorer;
+typedef std::function<Ilwis::CatalogExplorer*(const Ilwis::Resource &resource,const IOOptions& options)> createCatalogExplorer;
 
 //typedef ConnectorInterface* (*ConnectorCreate)(const IlwisResource &resource);
 //-----------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ public:
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
 
-    template<class T=ConnectorInterface> T *createFromResource(const Resource& resource, const QString &provider,const PrepareOptions& options=PrepareOptions()) const{
+    template<class T=ConnectorInterface> T *createFromResource(const Resource& resource, const QString &provider,const IOOptions& options=IOOptions()) const{
         ConnectorFilter filter(resource.ilwisType(), provider);
         auto iter = _creatorsPerObject.find(filter);
         if ( iter == _creatorsPerObject.end())
@@ -93,7 +93,7 @@ public:
 
     }
 
-    template<class T=ConnectorInterface> QList<T*> connectorsForResource(const Resource& resource, const QString &provider="*",const PrepareOptions& options=PrepareOptions()) const{
+    template<class T=ConnectorInterface> QList<T*> connectorsForResource(const Resource& resource, const QString &provider="*",const IOOptions& options=IOOptions()) const{
         ConnectorFilter filter(resource.ilwisType(), provider);
         QList<T*> results;
         for(auto key : _creatorsPerObject.keys()){
@@ -120,7 +120,7 @@ public:
      * \param resource a resource of a certain type. To work the type must have a valid IlwisType
      * \return an instantiation of a connector or 0. In the case of 0 the error can be found in the issuelogger
      */
-    template<class T=ConnectorInterface> T *createFromFormat(const Resource& resource, const QString &format, const QString& provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const{
+    template<class T=ConnectorInterface> T *createFromFormat(const Resource& resource, const QString &format, const QString& provider=sUNDEF,const IOOptions& options=IOOptions()) const{
         ConnectorFormatSelector filter(format, provider);
         auto iter = _creatorsPerFormat.find(filter);
         if ( iter == _creatorsPerFormat.end())
@@ -139,7 +139,7 @@ public:
         return 0;
     }
 
-    template<class T=ConnectorInterface> T *createContainerConnector(const Resource& resource, const QString &provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const{
+    template<class T=ConnectorInterface> T *createContainerConnector(const Resource& resource, const QString &provider=sUNDEF,const IOOptions& options=IOOptions()) const{
         for(auto iter=_creatorsPerObject.begin(); iter != _creatorsPerObject.end(); ++iter){
             if ( !hasType(iter.key()._objectTypes, resource.ilwisType()))
                 continue;
@@ -156,7 +156,7 @@ public:
 
     }
 
-     std::vector<CatalogExplorer*> explorersForResource(const Resource& resource, const QString &provider=sUNDEF,const PrepareOptions& options=PrepareOptions()) const;
+     std::vector<CatalogExplorer*> explorersForResource(const Resource& resource, const QString &provider=sUNDEF,const IOOptions& options=IOOptions()) const;
 
     static std::nullptr_t registerCatalogExplorer(createCatalogExplorer func);
 

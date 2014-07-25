@@ -13,7 +13,7 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *Ilwis::Internal::InternalGeoReferenceConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
+ConnectorInterface *Ilwis::Internal::InternalGeoReferenceConnector::create(const Ilwis::Resource &resource,bool load,const IOOptions& options)
 {
     Resource res = resource;
     if ( resource.code() == "undetermined"){
@@ -24,11 +24,11 @@ ConnectorInterface *Ilwis::Internal::InternalGeoReferenceConnector::create(const
     return new InternalGeoReferenceConnector(res, load, options);
 }
 
-InternalGeoReferenceConnector::InternalGeoReferenceConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+InternalGeoReferenceConnector::InternalGeoReferenceConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 }
 
-bool InternalGeoReferenceConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool InternalGeoReferenceConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return true;
 }
@@ -39,7 +39,7 @@ IlwisObject *InternalGeoReferenceConnector::create() const
     return 0;
 }
 
-bool InternalGeoReferenceConnector::loadData(IlwisObject *obj)
+bool InternalGeoReferenceConnector::loadData(IlwisObject *obj, const IOOptions &options)
 {
     return true;
 }

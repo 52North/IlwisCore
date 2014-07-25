@@ -9,16 +9,16 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *InternalDomainConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
+ConnectorInterface *InternalDomainConnector::create(const Ilwis::Resource &resource,bool load,const IOOptions& options)
 {
     return new InternalDomainConnector(resource, load, options);
 }
 
-InternalDomainConnector::InternalDomainConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+InternalDomainConnector::InternalDomainConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 }
 
-bool InternalDomainConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool InternalDomainConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return true;
 }
@@ -28,7 +28,7 @@ IlwisObject *InternalDomainConnector::create() const
     return 0;
 }
 
-bool InternalDomainConnector::loadData(IlwisObject *obj)
+bool InternalDomainConnector::loadData(IlwisObject *obj, const IOOptions &options)
 {
     return true;
 }

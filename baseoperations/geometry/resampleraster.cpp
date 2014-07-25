@@ -85,6 +85,10 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     outputRaster->georeference(grf);
     Size<> sz = grf->size();
+    if ( sz.isNull()){
+        ERROR1(ERR_NO_INITIALIZED_1, "output georeference");
+        return sPREPAREFAILED;
+    }
     sz.zsize(_inputObj.as<RasterCoverage>()->size().zsize());
     outputRaster->size(sz);
     Envelope env = grf->pixel2Coord(grf->size());

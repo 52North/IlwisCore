@@ -10,7 +10,7 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ConnectorInterface *InternalCoordinatesystemConnector::create(const Ilwis::Resource &resource,bool load,const PrepareOptions& options)
+ConnectorInterface *InternalCoordinatesystemConnector::create(const Ilwis::Resource &resource,bool load,const IOOptions& options)
 {
     Resource res = resource;
     if ( resource.code() == "unknown"){
@@ -21,11 +21,11 @@ ConnectorInterface *InternalCoordinatesystemConnector::create(const Ilwis::Resou
     return new InternalCoordinatesystemConnector(resource, load, options);
 }
 
-InternalCoordinatesystemConnector::InternalCoordinatesystemConnector(const Resource &resource, bool load, const PrepareOptions &options) : IlwisObjectConnector(resource, load, options)
+InternalCoordinatesystemConnector::InternalCoordinatesystemConnector(const Resource &resource, bool load, const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 }
 
-bool InternalCoordinatesystemConnector::loadMetaData(IlwisObject *data, const PrepareOptions &options)
+bool InternalCoordinatesystemConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
 {
     return true;
 }
@@ -35,7 +35,7 @@ IlwisObject *InternalCoordinatesystemConnector::create() const
     return 0;
 }
 
-bool InternalCoordinatesystemConnector::loadData(IlwisObject *obj)
+bool InternalCoordinatesystemConnector::loadData(IlwisObject *obj, const IOOptions& options )
 {
     return true;
 }

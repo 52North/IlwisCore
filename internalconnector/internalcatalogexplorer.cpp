@@ -19,7 +19,7 @@ using namespace Internal;
 
 REGISTER_CATALOGEXPLORER(InternalCatalogExplorer)
 
-CatalogExplorer *InternalCatalogExplorer::create(const Resource& resource, const PrepareOptions &options) {
+CatalogExplorer *InternalCatalogExplorer::create(const Resource& resource, const IOOptions &options) {
     if ( resource.url().scheme() == "ilwis")
         return new InternalCatalogExplorer(resource, options);
     return nullptr;
@@ -27,7 +27,7 @@ CatalogExplorer *InternalCatalogExplorer::create(const Resource& resource, const
 }
 
 //InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, bool load ) :CatalogConnector(Resource(QUrl("ilwis://internalcatalog"),itCATALOG), load)
-InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, const PrepareOptions &options) :CatalogExplorer(resource, options)
+InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, const IOOptions &options) :CatalogExplorer(resource, options)
 {
 }
 

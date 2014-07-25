@@ -1,4 +1,4 @@
-
+#include <QTimer>
 #include <QMap>
 #include <QString>
 #include <QIODevice>
@@ -28,12 +28,15 @@ XmlStreamParser::XmlStreamParser(QXmlStreamReader *reader): _reader(reader)
 
 XmlStreamParser::XmlStreamParser(QIODevice *device): _device(device)
 {
-    _loop = new QEventLoop();
-    //qDebug() << "Connect I/O signals to resume parsing streamed data.";
+    _timer = new QTimer;
+    _timer->setSingleShot(true);
+    _reader = new QXmlStreamReader();
+    _loop = new QEventLoop;
+
+    connect(_timer, SIGNAL(timeout()), this, SLOT(abort()));
     connect(_device, SIGNAL(readChannelFinished()), this, SLOT(readChannelFinished()));
     connect(_device, SIGNAL(readyRead()), this, SLOT(readIncomingData()));
-    _reader = new QXmlStreamReader();
-    //qDebug() << "Read first data buffer ...";
+
     readIncomingData();
 }
 
@@ -48,16 +51,26 @@ void XmlStreamParser::setXmlReader(QXmlStreamReader *reader)
     _reader = reader;
 }
 
-void XmlStreamParser::readChannelFinished() {
-    //qDebug() << "readChannelFinished()";
-    _readingChannelFinished = true;
+void XmlStreamParser::abort()
+{
     _loop->quit();
+    _reader->raiseError("No more data receiced ...");
 }
 
-void XmlStreamParser::readIncomingData() {
-    //qDebug() << "readIncomingData(): chunk size: " << _device->size() << " bytes";
-    _reader->addData(_device->read(_device->size()));
-    //qDebug() << "... chunk written to device.";
+void XmlStreamParser::readChannelFinished()
+{
+    qDebug() << "readChannelFinished()";
+    _readingChannelFinished = true;
+    readIncomingData();
+}
+
+void XmlStreamParser::readIncomingData()
+{
+    if (_device->size() > 0) {
+        qDebug() << "reading " << _device->size() << " bytes";
+        _reader->addData(_device->read(_device->size()));
+        qDebug() << "... chunk written to device.";
+    }
     _loop->quit();
 }
 
@@ -98,40 +111,83 @@ bool XmlStreamParser::startParsing(QString qName)
     return false;
 }
 
-bool XmlStreamParser::onError()
+bool XmlStreamParser::resolveFromPrematureEndOfDocument()
 {
-    if ( isMoreDataExpected() ) {
-        qDebug() << "Wait for new data ...";
-        _loop->exec();
-        return true;
-    } else {
-        ERROR0(_reader->errorString());
+    if (_reader->error() != QXmlStreamReader::PrematureEndOfDocumentError ) {
         return false;
     }
+    if ( !_readingChannelFinished) {
+        qDebug() << "Wait for new data ...";
+        _timer->start(10000); // ... limited to 10s
+        _loop->exec(); // wait for readyRead() or timeout()
+
+        qint64 line = _reader->lineNumber();
+        qDebug() << QString("Continue parsing at line %1").arg(line);
+    }
+    return true;
 }
 
-bool XmlStreamParser::isMoreDataExpected() {
-    return !_readingChannelFinished && _reader->error() == QXmlStreamReader::PrematureEndOfDocumentError;
+QString XmlStreamParser::errorString()
+{
+    return _reader->errorString();
 }
-
 
 bool XmlStreamParser::hasError() {
-    return _reader->hasError();
+    return _reader->hasError() && !resolveFromPrematureEndOfDocument();
 }
 
 bool XmlStreamParser::canProceedParsing()
 {
-    return !hasError() || ( hasError() && onError() );
+    if (_readingChannelFinished) {
+        if (hasError()) {
+            qWarning() << errorString();
+            ERROR1("Error parsing stream: %1", errorString());
+            return false;
+        }
+        return true;
+    } else {
+        if ( !hasError()) {
+            return true;
+        } else {
+            if (resolveFromPrematureEndOfDocument()) {
+               return true;
+            } else {
+                qWarning() << errorString();
+                ERROR0(errorString());
+                return false;
+            }
+        }
+    }
 }
 
 QXmlStreamAttributes XmlStreamParser::attributes()
 {
+    canProceedParsing();
     return _reader->attributes();
+}
+
+bool XmlStreamParser::isStartElement()
+{
+    if (canProceedParsing()) {
+        return _reader->isStartElement();
+    }
+    return false;
+}
+
+bool XmlStreamParser::isEndElement()
+{
+    if (canProceedParsing()) {
+        return _reader->isEndElement();
+    }
+    return false;
 }
 
 bool XmlStreamParser::atEnd()
 {
-    return _reader->atEnd();
+    if (canProceedParsing()) {
+        return _reader->atEnd();
+    }
+    return true;
 }
 
 QString XmlStreamParser::readElementText()
@@ -178,6 +234,7 @@ void XmlStreamParser::skipCurrentElement()
 {
     if (canProceedParsing()) {
         _reader->skipCurrentElement();
+        //moveToEndOf(qname());
     }
 }
 
@@ -191,14 +248,14 @@ void XmlStreamParser::readNext()
 bool XmlStreamParser::moveToEndOf(QString qName)
 {
     bool found = false;
-    while ( !(_reader->atEnd() || found)) {
-        if (_reader->isEndElement()) {
+    while ( !(atEnd() || found)) {
+        if (isEndElement()) {
             found = isAtEndOf(qName);
             if ( !found) {
                 readNext();
             }
         } else {
-            if (_reader->isStartElement()) {
+            if (isStartElement()) {
                 skipCurrentElement();
             }
             readNext();
@@ -209,7 +266,7 @@ bool XmlStreamParser::moveToEndOf(QString qName)
 
 bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 {
-    if (_reader->atEnd()) {
+    if (atEnd()) {
         return false;
     }
 
@@ -217,8 +274,8 @@ bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
     readNextStartElement();
     nextElementDo(callback);
 
-    while ( !(_reader->atEnd() || found)) {
-        if (_reader->isStartElement()) {
+    while ( !(atEnd() || found)) {
+        if (isStartElement()) {
             found = isAtBeginningOf(qName);
             if ( !found) {
                 skipCurrentElement();
@@ -237,21 +294,21 @@ bool XmlStreamParser::moveToNext(QString qName, void (*callback)())
 
 bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, void (*callback)())
 {
-    if (_reader->atEnd()) {
+    if (atEnd()) {
         return false;
     }
 
     bool found = false;
     QString startElement = name();
-    bool onStartElement = _reader->isStartElement();
+    bool onStartElement = isStartElement();
     bool hasInnerStartElement = readNextStartElement();
     if ( !onStartElement && !hasInnerStartElement) {
         return false;
     }
     nextElementDo(callback);
 
-    while ( !(_reader->atEnd() || found)) {
-        if (_reader->isStartElement()) {
+    while ( !(atEnd() || found)) {
+        if (isStartElement()) {
             for (QString qName : elementList) {
                 found = isAtBeginningOf(qName);
                 if (found) {
@@ -284,7 +341,7 @@ bool XmlStreamParser::findNextOf(std::initializer_list<QString> elementList, voi
 
 bool XmlStreamParser::isAtBeginningOf(QString qName)
 {
-    if (_reader->atEnd() || !_reader->isStartElement()) {
+    if (atEnd() || !isStartElement()) {
         return false;
     }
     return isAtElement(qName);
@@ -292,7 +349,7 @@ bool XmlStreamParser::isAtBeginningOf(QString qName)
 
 bool XmlStreamParser::isAtEndOf(QString qName)
 {
-    if (_reader->atEnd() || !_reader->isEndElement()) {
+    if (atEnd() || !isEndElement()) {
         return false;
     }
     return isAtElement(qName);
@@ -316,7 +373,7 @@ bool XmlStreamParser::isAtElement(QString qName)
             return false;
         }
     } else {
-        if (_reader->qualifiedName().isEmpty()) {
+        if (canProceedParsing() && _reader->qualifiedName().isEmpty()) {
             return this->name() == qName;
         } else {
             return this->qname() == qName;

@@ -62,7 +62,7 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
     QUrl parentUrl(QUrl::fromLocalFile(parent));
     quint64 id = mastercatalog()->url2id(parentUrl, itCATALOG);
     if ( id == i64UNDEF)
-        return QFileInfo();
+        return QFileInfo(parent);
     Resource parentResource = mastercatalog()->id2Resource(id);
 
     QFileInfo parentPath =  containerConnector()->toLocalFile(parentResource);
@@ -90,17 +90,17 @@ QString CatalogConnector::provider() const
     return "ilwis";
 }
 
-ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load,const PrepareOptions& options)
+ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
 {
     return new CatalogConnector(resource, load);
 }
 
-bool CatalogConnector::loadMetaData(IlwisObject *data,const PrepareOptions &)
+bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 {
     return loadExplorers();
 }
 
-bool CatalogConnector::loadData(IlwisObject *obj){
+bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& options){
     Catalog *cat = static_cast<Catalog *>(obj);
     for(const auto& explorer : _dataProviders){
         std::vector<Resource> items = explorer->loadItems();

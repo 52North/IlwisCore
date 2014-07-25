@@ -49,7 +49,7 @@ IlwisObject::~IlwisObject()
 }
 
 
-IlwisObject *IlwisObject::create(const Resource& resource, const PrepareOptions &options) {
+IlwisObject *IlwisObject::create(const Resource& resource, const IOOptions &options) {
 
     const IlwisObjectFactory *factory = kernel()->factory<IlwisObjectFactory>("IlwisObjectFactory",resource,options);
 
@@ -61,7 +61,7 @@ IlwisObject *IlwisObject::create(const Resource& resource, const PrepareOptions 
     return 0;
 }
 
-void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode) {
+void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
     Locker lock(_mutex);
     if (!url.isValid()){
         ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
@@ -87,7 +87,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     if (!conn){
         throw ErrorObject(TR(QString("couldnt connect to %1 datasource for").arg(format)));
     }
-    setConnector(conn, cmode);
+    setConnector(conn, cmode, options);
     if ( Identity::name() == sUNDEF)
         name(resource.name());
 
@@ -222,7 +222,7 @@ bool IlwisObject::prepare(const QString &)
     return true;
 }
 
-void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
+void IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IOOptions &options)
 {
     if ( isReadOnly())
         return;
@@ -234,13 +234,13 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode)
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
             if ( !_connector.isNull())
-                _connector->loadMetaData(this, PrepareOptions());
+                _connector->loadMetaData(this, options);
         }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
         /*if ( !_connector.isNull())
-            _connector->loadMetaData(this, PrepareOptions());*/
+            _connector->loadMetaData(this, IOOptions());*/
     }
     if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
         quint64 pointer = (quint64) ( _outConnector.data());
