@@ -122,8 +122,8 @@ Grid::Grid(int maxlines) : _inMemoryIndex(iUNDEF), _memUsed(0),_blocksPerBand(0)
 
     if ( _maxLines == iUNDEF){
          _maxLines = context()->configurationRef()("system-settings/grid-blocksize",500);
-         if ( _maxLines * sz.xsize() * 8 > 1e8){
-             _maxLines = 1e8 / (sz.xsize() * 8);
+         if ( _maxLines * size().xsize() * 8 > 1e8){
+             _maxLines = 1e8 / (size().xsize() * 8);
          }
     }
 }
