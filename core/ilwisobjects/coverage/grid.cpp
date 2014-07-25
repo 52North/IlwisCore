@@ -117,6 +117,9 @@ Grid::Grid(const Size<> &sz,int maxlines) : _maxLines(maxlines){
 
     if ( _maxLines == iUNDEF){
          _maxLines = context()->configurationRef()("system-settings/grid-blocksize",500);
+         if ( _maxLines * sz.xsize() * 8 > 1e8){
+             _maxLines = 1e8 / (sz.xsize() * 8);
+         }
     }
     setSize(sz);
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
