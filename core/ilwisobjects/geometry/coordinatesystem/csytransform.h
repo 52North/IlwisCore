@@ -2,7 +2,7 @@
 #define CSYTRANSFORM_H
 
 namespace Ilwis {
-class CsyTransform : public geos::geom::CoordinateFilter
+class KERNELSHARED_EXPORT CsyTransform : public geos::geom::CoordinateFilter
 {
 public:
     CsyTransform(const ICoordinateSystem& source, const ICoordinateSystem& target);
