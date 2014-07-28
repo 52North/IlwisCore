@@ -12,7 +12,7 @@ class Resource;
 class Grid;
 class OperationExpression;
 class ExecutionContext;
-struct IOOptions;
+class IOOptions;
 
 
 /*!
