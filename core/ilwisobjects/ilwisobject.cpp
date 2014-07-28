@@ -222,10 +222,10 @@ bool IlwisObject::prepare(const QString &)
     return true;
 }
 
-void IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IOOptions &options)
+bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IOOptions &options)
 {
     if ( isReadOnly())
-        return;
+        return false;
     _changed = true;
 
     if (mode & cmINPUT){
@@ -234,13 +234,11 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
             if ( !_connector.isNull())
-                _connector->loadMetaData(this, options);
+                return _connector->loadMetaData(this, options);
         }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
-        /*if ( !_connector.isNull())
-            _connector->loadMetaData(this, IOOptions());*/
     }
     if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
         quint64 pointer = (quint64) ( _outConnector.data());
@@ -251,6 +249,7 @@ void IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
     }
+    return true;
 }
 
 QScopedPointer<ConnectorInterface> &IlwisObject::connector(int mode)

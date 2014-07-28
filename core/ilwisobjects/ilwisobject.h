@@ -199,7 +199,7 @@ public:
      *\param connector the connector to be used
      *\param input defines the nature of the connector.
      */
-    virtual void setConnector(ConnectorInterface *connector, int mode=cmINPUT | cmOUTPUT, const IOOptions &options=IOOptions());
+    virtual bool setConnector(ConnectorInterface *connector, int mode=cmINPUT | cmOUTPUT, const IOOptions &options=IOOptions());
 
     /*!
      * \brief isEqual compares the properties of ilwisobjects to test for equality.
