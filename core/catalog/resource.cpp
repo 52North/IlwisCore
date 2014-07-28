@@ -261,7 +261,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
         return;
     }
     QFileInfo inf(_normalizedUrl.toLocalFile());
-    if ( urlTxt != "file://" && urlTxt != "file:///") {
+    if ( inf.isFile() && urlTxt != "file://" && urlTxt != "file:///") {
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file"){
                 if ( !isRoot(inf.absolutePath())){
