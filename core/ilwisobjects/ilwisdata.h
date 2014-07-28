@@ -213,7 +213,7 @@ public:
             }
             return true;
         } else {
-            if(tp != itUNKNOWN && prepare(Resource(name, tp)))
+            if(tp != itUNKNOWN && prepare(Resource(name, tp), options))
                 return true;
         }
         return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,name);
