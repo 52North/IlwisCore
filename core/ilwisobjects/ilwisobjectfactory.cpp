@@ -17,7 +17,9 @@ IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, c
     IlwisObject *object = connector->create();
     if ( object) {
         object->setValid(true);
-        object->setConnector(connector, IlwisObject::cmINPUT, options);
+        if (!object->setConnector(connector, IlwisObject::cmINPUT, options))
+            return 0;
+
         return object;
     }else {
         kernel()->issues()->log(TR("Could not create object"));
