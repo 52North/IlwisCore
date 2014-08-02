@@ -34,14 +34,8 @@ public:
      * \brief valueType returns the type of values contained in the range
      * \return an ilwistype
      */
-    virtual IlwisTypes valueType() const;
-    /*!
-     * \brief determineType determines the minimal range needed type for this range.
-     *
-     *For example a range of numbers can be in the 32 bits range while the range contains only the numbers between 0-255, so the minimal range would be itUINT8
-     * \return an ilwistype
-     */
-    virtual IlwisTypes determineType() const { return itUNKNOWN;}
+    virtual IlwisTypes valueType() const = 0;
+
      /*!
      copies the range to a new instance. This pointer has to be deleted by the caller
      * \return the new Range
@@ -71,7 +65,6 @@ public:
 
 
 protected:
-    IlwisTypes _vt;
     QString _interpolation;
 
 
