@@ -998,6 +998,11 @@ QVariant TimeInterval::ensure(const QVariant &v, bool inc) const
     return timev;
 }
 
+IlwisTypes TimeInterval::valueType() const
+{
+    return _vt;
+}
+
 Range *TimeInterval::clone() const
 {
     return new TimeInterval(min(), max(), _step, _vt);
