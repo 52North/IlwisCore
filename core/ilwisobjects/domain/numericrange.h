@@ -73,6 +73,8 @@ public:
 
     QString toString() const ;
     QVariant impliedValue(const QVariant& v) const;
+    IlwisTypes valueType() const;
+    IlwisTypes determineType(bool redo=false) ;
     void set(const NumericRange& vr);
     QVariant ensure(const QVariant& v, bool inclusive=true) const
     {
@@ -84,7 +86,7 @@ public:
 
         return value;
     }
-    IlwisTypes determineType() const;
+
     void clear();
     quint32 count() const;
 
@@ -93,12 +95,15 @@ public:
     static double valueAt(quint32& index, const Range *rng);
 
 private:
+
     double _min;
     double _max;
     double _resolution;
     double _undefined;
+    IlwisTypes _valuetype = itUNKNOWN;
 
     long significantDigits(double m1) const;
+
 };
 
 typedef QSharedPointer<NumericRange> SPNumericRange;
