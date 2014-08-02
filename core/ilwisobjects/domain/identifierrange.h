@@ -160,6 +160,7 @@ public:
      * @return the new index( 0=>result <=count)
      */
     qint32 gotoIndex(qint32 index, qint32 step) const;
+    IlwisTypes valueType() const;
     void clear();
 
     /**
@@ -311,6 +312,7 @@ public:
      * @return the current count
      */
     quint32 count() const;
+    IlwisTypes valueType() const;
     void clear();
 
     /**
@@ -365,6 +367,7 @@ public:
     static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
     Range *clone() const;
     static SPDomainItem valueAt(quint32 index, Range *rng);
+    IlwisTypes valueType() const;
 };
 
 }

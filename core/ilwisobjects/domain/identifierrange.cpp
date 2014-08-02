@@ -15,7 +15,6 @@ using namespace Ilwis;
 
 IndexedIdentifierRange::IndexedIdentifierRange() : _count(0)
 {
-    _vt = itINDEXEDITEM;
 }
 
 IndexedIdentifierRange::IndexedIdentifierRange(const QString &prefix, quint32 count, quint32 start)
@@ -152,6 +151,11 @@ qint32 IndexedIdentifierRange::gotoIndex(qint32 index, qint32 step) const
     return index + step;
 }
 
+IlwisTypes IndexedIdentifierRange::valueType() const
+{
+    return itINDEXEDITEM;
+}
+
 IndexedIdentifierRange *IndexedIdentifierRange::merge(const QSharedPointer<IndexedIdentifierRange> &nr1, const QSharedPointer<IndexedIdentifierRange> &nr2,RenumberMap *rnm)
 {
     SPIndexedIdentifier index1 = nr1->item(0).staticCast<IndexedIdentifier>();
@@ -181,7 +185,6 @@ SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, Range *rng){
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
 {
-    _vt = itNAMEDITEM;
 }
 
 NamedIdentifierRange::~NamedIdentifierRange()
@@ -341,6 +344,11 @@ quint32 NamedIdentifierRange::count() const
     return _byName.size();
 }
 
+IlwisTypes NamedIdentifierRange::valueType() const
+{
+    return itNAMEDITEM;
+}
+
 void NamedIdentifierRange::clear()
 {
     _byName.clear();
@@ -447,7 +455,6 @@ SPDomainItem NamedIdentifierRange::valueAt(quint32 index, Range *rng){
 //---------------------------------------------------------
 ThematicRange::ThematicRange()
 {
-  _vt = itTHEMATICITEM;
 }
 
 ThematicRange *ThematicRange::merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2,RenumberMap *renumberer)
@@ -485,5 +492,10 @@ SPDomainItem ThematicRange::valueAt(quint32 index, Range *rng){
         }
     }
     return SPDomainItem();
+}
+
+IlwisTypes ThematicRange::valueType() const
+{
+    return itTHEMATICITEM;
 }
 
