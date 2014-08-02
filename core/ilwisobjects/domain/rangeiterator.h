@@ -118,6 +118,10 @@ public:
         return RangeType::valueAt(_current, _range);
     }
 
+    quint32 current() const{
+        return _current;
+    }
+
 private:
     const Range *_range;
     quint32 _current;
