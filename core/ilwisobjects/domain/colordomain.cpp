@@ -3,13 +3,15 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "range.h"
+#include "ilwisobject.h"
+#include "ilwisdata.h"
+#include "domain.h"
+#include "datadefinition.h"
 #include "itemrange.h"
 #include "domainitem.h"
 #include "coloritem.h"
 #include "colorrange.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "domain.h"
+
 #include "colordomain.h"
 
 using namespace Ilwis;
@@ -28,7 +30,7 @@ ColorDomain::ColorDomain(const Resource &resource) : Domain(resource)
 IlwisTypes ColorDomain::valueType() const
 {
     if ( !_range.isNull())
-        _range->valueType();
+        return _range->valueType();
     return itUNKNOWN;
 }
 
@@ -72,14 +74,14 @@ void ColorDomain::range(Range *colorrange)
         return;
     if ( parent().isValid()) {
         if ( colorrange->valueType() == itPALETTECOLOR){
-            if( cNONE == parent()->range<ColorPalette>()->contains(dynamic_cast<ColorPalette *>(colorrange)))
+            if( cNONE == parent()->range<ColorPalette>()->contains(colorrange))
                 return;
         } else if ( colorrange->valueType() == itCONTINUOUSCOLOR){
-            if( cNONE == parent()->range<ContinousColorRange>()->contains(dynamic_cast<ColorRange *>(colorrange)))
+            if( cNONE == parent()->range<ContinousColorRange>()->contains(colorrange))
                 return;
         }
     }
-    _range = QSharedPointer<ColorRange>(static_cast<ColorRange *>(colorrange));
+                    _range = QSharedPointer<Range>(colorrange);
 }
 
 bool ColorDomain::isOrdered() const
