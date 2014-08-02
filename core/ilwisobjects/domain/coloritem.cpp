@@ -6,12 +6,13 @@
 #include "range.h"
 #include "itemrange.h"
 #include "domainitem.h"
+#include "datadefinition.h"
 #include "colorrange.h"
 #include "coloritem.h"
 
 using namespace Ilwis;
 
-ColorItem::ColorItem(const QColor& clr) : _color(clrUNDEF)
+ColorItem::ColorItem(const QColor& clr) : _color(clr)
 {
 }
 
