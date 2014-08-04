@@ -6,8 +6,10 @@
 #include "domainitem.h"
 #include "domain.h"
 #include "itemrange.h"
+#include "rangeiterator.h"
 #include "coloritem.h"
 #include "itemiterator.h"
+#include "datadefinition.h"
 #include "colorrange.h"
 
 using namespace Ilwis;
@@ -24,25 +26,25 @@ struct LocalColor {
     quint8 _component4=0;
 } ;
 
-ColorRange::ColorRange(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
+ColorRangeBase::ColorRangeBase(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
 {
 }
 
-ColorRange::ColorModel ColorRange::defaultColorModel() const
+ColorRangeBase::ColorModel ColorRangeBase::defaultColorModel() const
 {
     return _defaultModel;
 }
 
-void ColorRange::defaultColorModel(ColorRange::ColorModel m)
+void ColorRangeBase::defaultColorModel(ColorRangeBase::ColorModel m)
 {
     _defaultModel = m;
 }
 
-QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
+QColor ColorRangeBase::toColor(const QVariant &v, ColorRangeBase::ColorModel colormodel)
 {
-    if ( v.type() == QMetaType::QColor)
+    if ( v.type() == QVariant::Color)
         return QColor(v.value<QColor>());
-    else if ( v.type() == QMetaType::QString){
+    else if ( v.type() == QVariant::String){
         QRegExp separ("[(]|,|[)]");
         QStringList parts = (v.toString()).split(separ);
         if(parts.last().isEmpty())
@@ -90,46 +92,51 @@ QColor ColorRange::toColor(const QVariant &v, ColorRange::ColorModel colormodel)
             }
             return clr;
         }
-    } else if( v.type() == QMetaType::ULongLong){
-        return ColorRange::toColor(v.toULongLong(),colormodel);
-    } else if( v.type() == QMetaType::Double){
-        return ColorRange::toColor(v.toULongLong(),colormodel);
+    } else if( v.type() == QVariant::ULongLong){
+        return ColorRangeBase::toColor(v.toULongLong(),colormodel);
+    } else if( v.type() == QVariant::Double){
+        return ColorRangeBase::toColor(v.toULongLong(),colormodel);
     }
 
     return QColor();
 }
 
-QString ColorRange::toString(const QColor &clr, ColorRange::ColorModel clrModel)
+QString ColorRangeBase::toString(const QColor &clr, ColorRangeBase::ColorModel clrModel)
 {
     QString color;
     switch(clrModel){
-    case ColorRange::cmRGBA:
-        color += QString("RGBA(%1,%2,%3,%4)").arg(clr.redF()).arg(clr.greenF()).arg(clr.blueF()).arg(clr.alphaF());
+    case ColorRangeBase::cmRGBA:
+        color += QString("RGBA(%1 %2 %3 %4)").arg(clr.redF()).arg(clr.greenF()).arg(clr.blueF()).arg(clr.alphaF());
         break;
-    case ColorRange::cmHSLA:
-        color += QString("HSLA(%1,%2,%3,%4)").arg(clr.hueF()).arg(clr.saturationF()).arg(clr.lightnessF()).arg(clr.alphaF());
+    case ColorRangeBase::cmHSLA:
+        color += QString("HSLA(%1 %2 %3 %4)").arg(clr.hueF()).arg(clr.saturationF()).arg(clr.lightnessF()).arg(clr.alphaF());
         break;
-    case ColorRange::cmCYMKA:
-        color += QString("CMYKA(%1,%2,%3,%4,%5)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+    case ColorRangeBase::cmCYMKA:
+        color += QString("CMYKA(%1 %2 %3 %4 %5)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+        break;
+    case ColorRangeBase::cmGREYSCALE:
+        color += QString("GREY(%1)").arg(clr.red());
+        break;
+    default:
         break;
     }
     return color;
 }
 
-QColor ColorRange::toColor(quint64 clrint, ColorModel clrModel)
+QColor ColorRangeBase::toColor(quint64 clrint, ColorModel clrModel)
 {
 
     LocalColor *localcolor = reinterpret_cast<LocalColor *>(&clrint);
 
     QColor clr;
-    if ( clrModel == ColorRange::cmRGBA){
+    if ( clrModel == ColorRangeBase::cmRGBA){
         clr = QColor(localcolor->_component1,localcolor->_component2, localcolor->_component3);
         clr.setAlpha(localcolor->_component4);
     }
-    else if ( clrModel ==  ColorRange::cmHSLA){
+    else if ( clrModel ==  ColorRangeBase::cmHSLA){
         clr.setHsl(localcolor->_component1,localcolor->_component2, localcolor->_component3);
         clr.setAlpha(localcolor->_component4);
-    } else if ( clrModel ==  ColorRange::cmCYMKA){
+    } else if ( clrModel ==  ColorRangeBase::cmCYMKA){
         clr.setCmyk(localcolor->_component1,localcolor->_component2, localcolor->_component3, localcolor->_component4);
         //clr.setAlpha(localcolor->_component4); ??
     }
@@ -137,12 +144,12 @@ QColor ColorRange::toColor(quint64 clrint, ColorModel clrModel)
 }
 
 //----------------------------------------------------------------
-ContinousColorRange::ContinousColorRange() : ColorRange(itCONTINUOUSCOLOR,ColorRange::cmRGBA)
+ContinousColorRange::ContinousColorRange() : ColorRangeBase(itCONTINUOUSCOLOR,ColorRangeBase::cmRGBA)
 {
 
 }
 
-ContinousColorRange::ContinousColorRange(const QColor &clr1, const QColor &clr2, ColorRange::ColorModel colormodel) : ColorRange(itCONTINUOUSCOLOR,colormodel), _limit1(clr1), _limit2(clr2)
+ContinousColorRange::ContinousColorRange(const QColor &clr1, const QColor &clr2, ColorRangeBase::ColorModel colormodel) : ColorRangeBase(itCONTINUOUSCOLOR,colormodel), _limit1(clr1), _limit2(clr2)
 {
 
 }
@@ -157,7 +164,7 @@ QString ContinousColorRange::toString() const
     if (!isValid())
         return sUNDEF;
 
-    return ColorRange::toString(_limit1, defaultColorModel()) + "," + ColorRange::toString(_limit2, defaultColorModel());
+    return ColorRangeBase::toString(_limit1, defaultColorModel()) + "," + ColorRangeBase::toString(_limit2, defaultColorModel());
 }
 
 Range *ContinousColorRange::clone() const
@@ -175,8 +182,8 @@ QVariant ContinousColorRange::ensure(const QVariant &v, bool inclusive) const
 bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
 {
     QColor clr;
-    if( v.type() == QMetaType::Double){
-        clr =  ColorRange::toColor(v.toULongLong(),defaultColorModel());
+    if( v.type() == QVariant::Double){
+        clr =  ColorRangeBase::toColor(v.toULongLong(),defaultColorModel());
     } else
         clr = v.value<QColor>();
     if ( !clr.isValid())
@@ -188,18 +195,18 @@ bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
     QColor limit1,limit2;
 
     switch (defaultColorModel()) {
-    case ColorRange::cmRGBA :
-    case ColorRange::cmGREYSCALE:
+    case ColorRangeBase::cmRGBA :
+    case ColorRangeBase::cmGREYSCALE:
         clr.getRgbF(&component1a, &component2a, &component3a);
         _limit1.getRgbF(&component1b, &component2b, &component3b);
         _limit2.getRgbF(&component1c, &component2c, &component3c);
         break;
-    case ColorRange::cmHSLA :
+    case ColorRangeBase::cmHSLA :
         clr.getHslF(&component1a, &component2a, &component3a);
         _limit1.getHslF(&component1b, &component2b, &component3b);
         _limit2.getHslF(&component1c, &component2c, &component3c);
         break;
-    case ColorRange::cmCYMKA:
+    case ColorRangeBase::cmCYMKA:
         clr.getCmykF(&component1a, &component2a, &component3a,&component4a);
         limit1 = QColor(_limit1);
         limit2 = QColor(_limit2);
@@ -210,34 +217,36 @@ bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
         break;
     }
     switch(defaultColorModel()){
-    case ColorRange::cmGREYSCALE:{
+    case ColorRangeBase::cmGREYSCALE:{
         bool isGrey = component1a == component2a && component1a == component3a;
         if (!isGrey)
             return false;
     }
-    case ColorRange::cmRGBA :
-    case ColorRange::cmHSLA :
+    case ColorRangeBase::cmRGBA :
+    case ColorRangeBase::cmHSLA :
         return component1a >= component1b && component1a <= component1c &&
                 component2a >= component2b && component2a <= component2c &&
                 component3a >= component3b && component3a <= component3c;
-    case ColorRange::cmCYMKA:
+    case ColorRangeBase::cmCYMKA:
         return component1a >= component1b && component1a <= component1c &&
                 component2a >= component2b && component2a <= component2c &&
                 component3a >= component3b && component3a <= component3c &&
                 component4a >= component4b && component4a <= component4c;
+    default:
+        break;
 
     }
     return false;
 
 }
 
-bool ContinousColorRange::contains(ColorRange *v, bool inclusive) const
+bool ContinousColorRange::contains(const Range *rng,bool inclusive) const
 {
-    ContinousColorRange *ccr = dynamic_cast< ContinousColorRange*>(v);
+    const ContinousColorRange *ccr = dynamic_cast< const ContinousColorRange*>(rng);
     if ( ccr){
         return contains(IVARIANT(ccr->_limit1), inclusive) && contains(IVARIANT(ccr->_limit2),inclusive);
     } else {
-        ColorPalette *pcr = dynamic_cast< ColorPalette*>(v);
+        const ColorPalette *pcr = dynamic_cast< const ColorPalette*>(rng);
         for(quint32 index = 0; index < pcr->count(); ++index) {
             if ( !contains(pcr->color(index), inclusive)){
                 return false;
@@ -281,9 +290,14 @@ quint32 ContinousColorRange::count() const
 }
 
 //---------------------------------------------------------------
+ColorPalette::ColorPalette() : ColorRangeBase(itPALETTECOLOR,ColorRangeBase::cmRGBA)
+{
+
+}
+
 QVariant ColorPalette::impliedValue(const QVariant &v) const
 {
-    QColor clr = ColorRange::toColor(v, defaultColorModel());
+    QColor clr = ColorRangeBase::toColor(v, defaultColorModel());
     if ( !clr.isValid())
         return QColor();
     if ( contains(clr))
@@ -300,6 +314,15 @@ quint32 ColorPalette::count() const
 IlwisTypes ColorPalette::valueType() const
 {
     return itPALETTECOLOR;
+}
+
+QColor ColorPalette::valueAt(quint32 &index, const Ilwis::Range *rng)
+{
+    const ColorPalette *palette = reinterpret_cast<const ColorPalette*>(rng);
+    if ( index < palette->_colors.size())
+        return palette->_colors.at(index)->color() ;
+    index = iUNDEF;
+    return QColor();
 }
 
 SPDomainItem ColorPalette::item(quint32 raw) const
@@ -325,6 +348,39 @@ QColor ColorPalette::color(int index) const
     if ( index < _colors.size())
         return _colors[index]->color();
     return clrUNDEF;
+}
+
+QString ColorPalette::toString() const
+{
+    QString result;
+    for(int index = 0; index < _colors.size();++index ){
+        QString itemString = ColorRangeBase::toString(_colors[index]->color(), defaultColorModel());
+        if ( result != "")
+            result += ",";
+        result += QString::number(index) + "=" + itemString;
+
+    }
+    return result;
+}
+
+qint32 ColorPalette::gotoIndex(qint32 index, qint32 step) const
+{
+    if ( index + step >= _colors.size())
+        return _colors.size();
+    if ( index + step < 0)
+        return 0;
+    return index + step;
+}
+Range *ColorPalette::clone() const
+{
+    ColorPalette *palette = new ColorPalette();
+    for(const auto& item : _colors){
+        palette->add( item->clone());
+    }
+    palette->defaultColorModel(defaultColorModel());
+
+    //TODO does this check out?, multiple inheritance here
+    return reinterpret_cast<Range *>(palette);
 }
 
 void ColorPalette::add(DomainItem *item)
@@ -382,19 +438,33 @@ bool ColorPalette::contains(SPRange rng, bool inclusive) const
     return true;
 }
 
-bool ColorPalette::contains(ItemRange *rng, bool inclusive) const
+bool ColorPalette::contains(Range *rng, bool inclusive) const
 {
-    ItemIterator<ColorItem> iter(rng);
-    while(iter != iter.end()){
-        ColorItem *item = *iter;
-        if (!contains(item->color()))
+    if ( !rng || rng->valueType() != itPALETTECOLOR)
+        return false;
+
+    ColorPalette *palette = static_cast<ColorPalette *>(rng);
+    if (!palette)
+        return false;
+    RangeIterator<QColor, ColorPalette> iter(rng);
+    while(iter.isValid()){
+        QColor clr = *iter;
+        if (!contains(clr))
             return false;
+        ++iter;
     }
     return true;
 }
 
 QVariant ColorPalette::ensure(const QVariant &v, bool inclusive) const
 {
+    if ( hasType(Domain::ilwType(v), itNUMBER) ){
+        bool ok;
+        int index = v.toInt(&ok);
+        if ( !ok || index < 0 || _colors.size() <= index)
+            return QVariant();
+        return v;
+    }
     if ( !contains(v, inclusive))
         return QColor();
     return v;
@@ -405,6 +475,10 @@ bool ColorPalette::isValid() const
     return count() != 0;
 }
 
+bool ColorPalette::alignWithParent(const IDomain &dom){
+    //TODO dont think the internal structure of a palette is conductive to parent/child relations at the moment
+    return false;
+}
 
 
 

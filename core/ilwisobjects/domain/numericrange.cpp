@@ -155,6 +155,13 @@ QVariant NumericRange::impliedValue(const QVariant &v) const
     return vtemp;
 
 }
+
+IlwisTypes NumericRange::valueType() const
+{
+    if (_valuetype == itUNKNOWN)
+        const_cast<NumericRange *>(this)->determineType();
+    return _valuetype;
+}
 void NumericRange::set(const NumericRange& vr)
 {
     _resolution = vr._resolution;
@@ -212,33 +219,36 @@ long NumericRange::significantDigits(double m1) const{
     return s.size();
 }
 
-IlwisTypes NumericRange::determineType() const{
+IlwisTypes NumericRange::determineType(bool redo) {
 
-    IlwisTypes vt = itUNKNOWN;
-    if ( _resolution == 1) { // integer part
-        bool sig = min() < 0;
-        if ( max() <=128 && sig)
-            vt =  itINT8;
-        else if ( max() <= 255 && !sig)
-            vt =  itUINT8;
-        else if ( max() <= 32768 && sig)
-            vt =  itINT16;
-        else if ( max() <= 65536 && !sig)
-            vt =  itUINT32;
-        else if ( max() <= 2147483647 && sig)
-            vt =  itINT32;
-        else if ( max() <= 4294967296 && !sig)
-           vt =  itUINT32;
-        else
-            vt =  itINT64; // unlikely but anyway
-    } else { // real part
-        int signif1 = std::max(significantDigits(min()), significantDigits(max()));
-        if ( signif1 > 6)
-           vt =  itDOUBLE;
-        else
-            vt =  itFLOAT;
+    if ( _valuetype == itUNKNOWN || redo){
+        IlwisTypes vt = itUNKNOWN;
+        if ( _resolution == 1) { // integer part
+            bool sig = min() < 0;
+            if ( max() <=128 && sig)
+                vt =  itINT8;
+            else if ( max() <= 255 && !sig)
+                vt =  itUINT8;
+            else if ( max() <= 32768 && sig)
+                vt =  itINT16;
+            else if ( max() <= 65536 && !sig)
+                vt =  itUINT32;
+            else if ( max() <= 2147483647 && sig)
+                vt =  itINT32;
+            else if ( max() <= 4294967296 && !sig)
+               vt =  itUINT32;
+            else
+                vt =  itINT64; // unlikely but anyway
+        } else { // real part
+            int signif1 = std::max(significantDigits(min()), significantDigits(max()));
+            if ( signif1 > 6)
+               vt =  itDOUBLE;
+            else
+                vt =  itFLOAT;
+        }
+        _valuetype = vt;
     }
-    return vt;
+    return _valuetype;
 }
 
 void NumericRange::clear()

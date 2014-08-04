@@ -24,7 +24,7 @@ protected:
 
 private:
 
-    QSharedPointer<ColorRange> _range;
+    QSharedPointer<Range> _range;
 };
 
 typedef IlwisData<ColorDomain> IColorDomain;

@@ -4,20 +4,8 @@
 
 using namespace Ilwis;
 
-Range::Range() : _vt(itUNKNOWN)
+Range::Range()
 {
-}
-
-IlwisTypes Range::valueType() const {
-
-    if ( _vt != itUNKNOWN)
-        return _vt;
-
-    IlwisTypes vt = determineType();
-
-    const_cast<Range *>(this)->_vt = vt;
-
-    return _vt;
 }
 
 bool Range::isContinuous() const

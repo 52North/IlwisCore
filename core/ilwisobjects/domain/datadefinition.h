@@ -4,6 +4,8 @@
 
 namespace Ilwis {
 
+class ColorRangeBase;
+
 /*!
  * The datadefinition class is closely related to domain. It defines the data as used by the object (whatever the object may be, e.g. a raster-coverage).
  * The domain concept is a general concept. Meaning that the range is uses it often much broader  than the actual range of data used by the object. A value
@@ -58,8 +60,10 @@ public:
      *
      */
     template<typename T=Range> QSharedPointer<T> range() const{
-        return _range.staticCast<T>();
+          return _range.dynamicCast<T>();
     }
+
+
 
     /*!
      * Query for the domain of this DataDefinition<br>
@@ -115,6 +119,8 @@ protected:
     SPRange _range;
     SPRange _stretchRange;
 };
+
+
 
 KERNELSHARED_EXPORT bool operator==(const DataDefinition& def1, const DataDefinition& def2);
 KERNELSHARED_EXPORT bool operator!=(const DataDefinition& def1, const DataDefinition& def2);

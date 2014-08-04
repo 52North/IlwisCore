@@ -16,7 +16,6 @@ using namespace Ilwis;
 
 IntervalRange::IntervalRange()
 {
-    _vt = itNUMERICITEM;
 }
 
 QVariant IntervalRange::impliedValue(const QVariant& v) const
@@ -301,6 +300,11 @@ qint32 IntervalRange::gotoIndex(qint32 index, qint32 step) const
     if ( index + step < 0)
         return 0;
     return index + step;
+}
+
+IlwisTypes IntervalRange::valueType() const
+{
+    return itNUMERICITEM;
 }
 
 void IntervalRange::addRange(const ItemRange &range)

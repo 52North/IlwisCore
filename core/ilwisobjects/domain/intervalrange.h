@@ -99,6 +99,7 @@ public:
 
     //@override
     qint32 gotoIndex(qint32 index, qint32 step) const;
+    IlwisTypes valueType() const;
 
     static SPDomainItem valueAt(quint32 index, Range *rng);
 

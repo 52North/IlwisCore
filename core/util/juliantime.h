@@ -346,8 +346,6 @@ class KERNELSHARED_EXPORT TimeInterval : public NumericRange {
 public:
     TimeInterval(IlwisTypes tp=itUNKNOWN);
     TimeInterval(const Time& begin, const Time& end, const Duration& stp=Duration(""), IlwisTypes tp=itUNKNOWN);
-//    TimeInterval operator+(const TimeInterval& interval);
-//    TimeInterval operator-(const TimeInterval& interval);
     TimeInterval& operator=(const TimeInterval& tiv);
     Time begin() const { return Time(min());}
     Time end() const { return Time(max());}
@@ -360,12 +358,14 @@ public:
     bool contains(const QVariant& value, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
     QVariant ensure(const QVariant& v, bool inclusive=true) const;
+    IlwisTypes valueType() const;
 
     Range *clone() const ;
     bool isValid() const;
 
 private:
     Duration _step;
+    IlwisTypes _vt;
 };
 
 #define tUNDEF Time()

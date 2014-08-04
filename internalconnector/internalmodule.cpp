@@ -120,6 +120,15 @@ bool InternalModule::createSpecialDomains() {
     colorResource.prepare();
     resources.push_back(colorResource);
 
+    url = QString("ilwis://internalcatalog/code=domain:colorpalette");
+    Resource paletteResource(url, itITEMDOMAIN);
+    paletteResource.code("colorpalette");
+    paletteResource.name("Color Palette domain", false);
+    paletteResource.addContainer(QUrl("ilwis://internalcatalog"));
+    paletteResource.prepare();
+    resources.push_back(paletteResource);
+
+
     return mastercatalog()->addItems(resources);
 }
 
