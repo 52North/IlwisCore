@@ -118,7 +118,7 @@ void Coverage::indexDomain(const IDomain& dom)
     if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
         _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
     else{
-        _attTableIndex->columndefinition(TRACKVALUECOLUMN).datadef().domain(dom);
+        _attTableIndex->columndefinitionRef(TRACKVALUECOLUMN).datadef().domain(dom);
         _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
     }
 }
