@@ -166,6 +166,11 @@ bool NumericRange::contains(const QVariant &value, bool inclusive) const
 {
     bool ok;
     double v = value.toDouble(&ok);
+    if(QString(value.typeName()).compare("Ilwis::Time") == 0){
+        Time temp = value.value<Ilwis::Time>();
+        QVariant qVar ((double)temp);
+        v = qVar.toDouble(&ok);
+    }
     if (!ok)
         return false;
     if ( v == rUNDEF)

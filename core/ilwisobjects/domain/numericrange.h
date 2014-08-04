@@ -76,7 +76,6 @@ public:
     void set(const NumericRange& vr);
     QVariant ensure(const QVariant& v, bool inclusive=true) const
     {
-        double value = v.toDouble();
         if ( _resolution != 0.0)
              value = (qint64)(value / _resolution) * _resolution;
         if ( !contains(value, inclusive))
