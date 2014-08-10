@@ -16,6 +16,8 @@ const quint32 INDEX_NOT_PRESENT=1000000;
 class KERNELSHARED_EXPORT IndexDefinition : public DataDefinition
 {
 public:
+
+
     struct TrackIndex{
         TrackIndex(double tvalue, quint64 fid) : _trackValue(tvalue), _featureid(fid) {}
         double _trackValue;
@@ -40,6 +42,7 @@ public:
     quint32 indexSize() const;
 
     void addIndex(quint64 fid, const QVariant &tvalue, quint32 rec);
+    QVariant byOrder(quint32 record);
     void removeIndex(quint64 fid, const QVariant &tvalue);
     quint32 indexRecord(quint64 fid, const QVariant &tvalue) const;
 
@@ -48,8 +51,6 @@ private:
     double key(const QVariant& value) const;
     boost::container::flat_map<Ilwis::IndexDefinition::TrackIndex, quint32, IndexDefinition::LessTrack> _index;
 };
-
-
 
 }
 
