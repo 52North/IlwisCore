@@ -53,7 +53,9 @@ private:
 }
 
 typedef std::vector<quint32> Indices;
+typedef std::vector<double> Factors;
 
 Q_DECLARE_METATYPE(Indices)
+Q_DECLARE_METATYPE(Factors)
 
 #endif // SYMBOLTABLE_H
