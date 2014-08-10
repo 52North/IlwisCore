@@ -5,6 +5,7 @@
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
+#include "commandhandler.h"
 #include "operation.h"
 #include "numericoperation.h"
 
