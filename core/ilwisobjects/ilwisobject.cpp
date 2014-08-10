@@ -490,6 +490,33 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
 
+    // standard c++ types
+    if ( name.compare( "int",Qt::CaseInsensitive) == 0)
+        return  itINT32;
+    if ( name.compare( "long",Qt::CaseInsensitive) == 0)
+        return  itINT32;
+    if ( name.compare( "unsigned int",Qt::CaseInsensitive) == 0)
+        return  itUINT32;
+    if ( name.compare( "unsigned long",Qt::CaseInsensitive) == 0)
+        return  itUINT32;
+    if ( name.compare( "short",Qt::CaseInsensitive) == 0)
+        return  itUINT16;
+    if ( name.compare( "unsigned short",Qt::CaseInsensitive) == 0)
+        return  itUINT16;
+    if ( name.compare( "char",Qt::CaseInsensitive) == 0)
+        return  itINT8;
+    if ( name.compare( "unsigned char",Qt::CaseInsensitive) == 0)
+        return  itUINT8;
+    if ( name.compare( "double",Qt::CaseInsensitive) == 0)
+        return  itDOUBLE;
+    if ( name.compare( "float",Qt::CaseInsensitive) == 0)
+        return  itFLOAT;
+    if ( name.compare( "char const *",Qt::CaseInsensitive) == 0)
+        return  itSTRING;
+    if ( name.compare( "char *",Qt::CaseInsensitive) == 0)
+        return  itSTRING;
+
+
 
     return itUNKNOWN;
 
