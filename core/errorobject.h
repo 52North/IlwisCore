@@ -74,6 +74,12 @@ public:
     explicit OutOfMemoryError(const QString& message);
     const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT CheckExpressionError : public ErrorObject {
+public:
+    explicit CheckExpressionError(const QString& message);
+    const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H

@@ -82,3 +82,12 @@ const char *OutOfMemoryError::what() const throw()
 {
     return "OutOfMemoryError";
 }
+
+CheckExpressionError::CheckExpressionError(const QString &message) : ErrorObject(message)
+{
+}
+
+const char *CheckExpressionError::what() const throw()
+{
+    return "CheckExpressionError";
+}
