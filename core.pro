@@ -255,7 +255,8 @@ HEADERS += core/kernel.h\
     core/util/xmlstreamparser.h \
     core/util/ilwisconfiguration.h \
     core/util/supportlibraryloader.h \
-    core/iooptions.h
+    core/iooptions.h \
+    core/ilwisobjects/operation/operationspec.h
 
 
 OTHER_FILES += \
