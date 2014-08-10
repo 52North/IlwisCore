@@ -189,6 +189,21 @@ void IntervalRange::add(SPDomainItem item)
     }
 }
 
+void IntervalRange::add(const QVariant &iditem)
+{
+    if ( contains(iditem))
+        return;
+    QStringList items = iditem.toString().split(";");
+    for(const QString& item : items) {
+        QStringList parts = item.split(" ");
+        if ( parts.size() == 0 || parts.size() > 3){
+            return ;
+        }
+        add(new Interval(parts[0], NumericRange(parts[1].toDouble(), parts[2].toDouble())));
+    }
+
+}
+
 bool IntervalRange::alignWithParent(const IDomain &dom)
 {
     IIntervalDomain numdom = dom.as<IntervalDomain>();

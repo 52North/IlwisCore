@@ -54,6 +54,7 @@ public:
 
     //@override
     void add(SPDomainItem item);
+    void add(const QVariant& iditem);
 
     //@override
     void remove(const QString& nm) ;
