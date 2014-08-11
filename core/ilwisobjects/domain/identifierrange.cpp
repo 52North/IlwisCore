@@ -125,6 +125,13 @@ void IndexedIdentifierRange::add(SPDomainItem item)
     return;
 }
 
+void IndexedIdentifierRange::add(const QVariant &v)
+{
+    if ( contains(v))
+        return;
+    ++_count;
+}
+
 QString IndexedIdentifierRange::toString() const
 {
     QString resource;
@@ -172,9 +179,9 @@ void IndexedIdentifierRange::clear()
     //_start.reset(0);
 }
 
-SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, Range *rng){
+SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itINDEXEDITEM)){
-        IndexedIdentifierRange *idrange = static_cast<IndexedIdentifierRange *>(rng);
+        const IndexedIdentifierRange *idrange = static_cast<const IndexedIdentifierRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
@@ -259,6 +266,14 @@ void NamedIdentifierRange::add(SPDomainItem item)
         _byRaw[nid->_raw] = nid;
     }
     _byOrder.push_back(nid);
+}
+
+void NamedIdentifierRange::add(const QVariant &v)
+{
+    if (contains(v))
+        return;
+    if ( v.isValid() && v.toString() != "")
+        add( new NamedIdentifier(v.toString()));
 }
 
 bool NamedIdentifierRange::operator==(const ItemRange &range) const
@@ -442,9 +457,9 @@ NamedIdentifierRange *NamedIdentifierRange::merge(const QSharedPointer<NamedIden
     return newRange;
 }
 
-SPDomainItem NamedIdentifierRange::valueAt(quint32 index, Range *rng){
+SPDomainItem NamedIdentifierRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itNAMEDITEM)){
-        NamedIdentifierRange *idrange = static_cast<NamedIdentifierRange *>(rng);
+        const NamedIdentifierRange *idrange = static_cast<const NamedIdentifierRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
@@ -484,9 +499,9 @@ Range *ThematicRange::clone() const
     return tr;
 }
 
-SPDomainItem ThematicRange::valueAt(quint32 index, Range *rng){
+SPDomainItem ThematicRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itTHEMATICITEM)){
-        ThematicRange *idrange = static_cast<ThematicRange *>(rng);
+        const ThematicRange *idrange = static_cast<const ThematicRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }

@@ -1003,6 +1003,14 @@ IlwisTypes TimeInterval::valueType() const
     return _vt;
 }
 
+void TimeInterval::add(const QVariant &time)
+{
+    if ( contains(time))
+        return;
+    Time t = impliedValue(time).value<Ilwis::Time>();
+    NumericRange::add((double)t);
+}
+
 Range *TimeInterval::clone() const
 {
     return new TimeInterval(min(), max(), _step, _vt);

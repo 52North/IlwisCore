@@ -349,6 +349,7 @@ public:
     TimeInterval& operator=(const TimeInterval& tiv);
     Time begin() const { return Time(min());}
     Time end() const { return Time(max());}
+
     void begin(const Time& t) ;
     void end(const Time& t);
     Duration getStep() const { return _step;}
@@ -359,6 +360,7 @@ public:
     QVariant impliedValue(const QVariant& v) const;
     QVariant ensure(const QVariant& v, bool inclusive=true) const;
     IlwisTypes valueType() const;
+    void add(const QVariant &time);
 
     Range *clone() const ;
     bool isValid() const;

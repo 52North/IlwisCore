@@ -19,12 +19,7 @@ using namespace Ilwis;
 //const quint64 colormask3 = 0xF0000000;
 //const quint64 colormask4 = 0xF000;
 
-struct LocalColor {
-    quint8 _component1=0;
-    quint8 _component2=0;
-    quint8 _component3=0;
-    quint8 _component4=0;
-} ;
+
 
 ColorRangeBase::ColorRangeBase(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
 {
@@ -289,6 +284,48 @@ quint32 ContinousColorRange::count() const
     return iUNDEF;
 }
 
+void ContinousColorRange::add(const QVariant &v)
+{
+    if ( contains(v))
+        return;
+    QColor clr = toColor(v, defaultColorModel());
+    if ( !clr.isValid())
+        return;
+    if ( defaultColorModel() == ColorRangeBase::cmRGBA){
+        _limit1.setRed(std::min(_limit1.red(), clr.red()));
+        _limit1.setGreen(std::min(_limit1.green(), clr.green()));
+        _limit1.setBlue(std::min(_limit1.blue(), clr.blue()));
+        _limit1.setAlpha(std::min(_limit1.alpha(), clr.alpha()));
+        _limit2.setRed(std::max(_limit2.red(), clr.red()));
+        _limit2.setGreen(std::max(_limit2.green(), clr.green()));
+        _limit2.setBlue(std::max(_limit2.blue(), clr.blue()));
+        _limit2.setAlpha(std::max(_limit2.alpha(), clr.alpha()));
+    }else if (defaultColorModel() == ColorRangeBase::cmHSLA) {
+        _limit1.setHsl(std::min(_limit1.hue(), clr.hue()),
+                       std::min(_limit1.saturation(), clr.saturation()),
+                       std::min(_limit1.lightness(), clr.lightness()));
+        _limit1.setAlpha(std::min(_limit1.alpha(), clr.alpha()));
+        _limit2.setHsl(std::max(_limit2.hue(), clr.hue()),
+                       std::max(_limit2.saturation(), clr.saturation()),
+                       std::max(_limit2.lightness(), clr.lightness()));
+        _limit2.setAlpha(std::max(_limit2.alpha(), clr.alpha()));
+    }
+    else if ( defaultColorModel() == ColorRangeBase::cmCYMKA){
+        _limit1.setCmyk(std::min(_limit1.cyan(), clr.cyan()),
+                        std::min(_limit1.magenta(), clr.magenta()),
+                        std::min(_limit1.yellow(), clr.yellow()),
+                        std::min(_limit1.black(), clr.black()));
+        _limit1.setAlpha(std::min(_limit1.alpha(), clr.alpha()));
+        _limit2.setCmyk(std::max(_limit2.cyan(), clr.cyan()),
+                        std::max(_limit2.magenta(), clr.magenta()),
+                        std::max(_limit2.yellow(), clr.yellow()),
+                        std::max(_limit2.black(), clr.black()));
+        _limit2.setAlpha(std::max(_limit2.alpha(), clr.alpha()));
+
+    }
+
+}
+
 //---------------------------------------------------------------
 ColorPalette::ColorPalette() : ColorRangeBase(itPALETTECOLOR,ColorRangeBase::cmRGBA)
 {
@@ -379,8 +416,7 @@ Range *ColorPalette::clone() const
     }
     palette->defaultColorModel(defaultColorModel());
 
-    //TODO does this check out?, multiple inheritance here
-    return reinterpret_cast<Range *>(palette);
+    return palette;
 }
 
 void ColorPalette::add(DomainItem *item)
@@ -392,6 +428,14 @@ void ColorPalette::add(SPDomainItem item)
 {
     SPColorItem citem = item.staticCast<ColorItem>();
     _colors.push_back(citem);
+}
+
+void ColorPalette::add(const QVariant &color)
+{
+    if (contains(color))
+        return;
+    QColor newColor = toColor(color, defaultColorModel());
+    add(new ColorItem(newColor));
 }
 
 void ColorPalette::remove(const QString &nm)

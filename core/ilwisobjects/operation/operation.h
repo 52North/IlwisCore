@@ -69,6 +69,20 @@ public:
     virtual ~Operation();
 
     Operation(const Ilwis::OperationExpression &e);
+    template<typename ...Parms> Operation(const std::vector<QString>& outputnames, const QString& operation, Parms ...parms){
+        QString expression;
+        for(auto name : outputnames){
+            if ( expression != "")
+                expression += ",";
+            expression += name;
+        }
+        if ( expression != "")
+            expression += "=";
+        expression += operation;
+        expression += "(" + splitInParameters(parms...) + ")";
+        _operation.reset(commandhandler()->create(expression));
+
+    }
 
     Operation& operator=(const Operation& op);
     SPOperationImplementation& operator->();
@@ -97,14 +111,32 @@ public:
 
 
 
+
     // helper function
     static std::nullptr_t registerOperation(quint64 id, Ilwis::CreateOperation op);
 
 private:
+    template<typename T, typename ...Parms> QString splitInParameters(const T& parameter, Parms ...rest){
+        QString s = stringRepresentation(parameter);
+        s += splitInParameters(rest...);
+
+        return s;
+    }
+
+    QString splitInParameters(){
+        return "";
+    }
+
+    template<typename T> QString stringRepresentation(const T& var){
+        return "";
+    }
+
     SPOperationImplementation _operation;
 
 
 };
+
+
 
 }
 

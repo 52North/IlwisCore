@@ -51,6 +51,18 @@ double NumericRange::distance() const
     return std::abs(_max - _min);
 }
 
+void NumericRange::add(const QVariant &number)
+{
+    if ( contains(number))
+        return;
+    bool ok;
+    double value = number.toDouble(&ok);
+    if (!ok || isNumericalUndef(value))
+        return;
+    _min = std::min(value, _min);
+    _max = std::max(value, _max);
+}
+
 void NumericRange::max(double v)
 {
     if (_resolution == 1){

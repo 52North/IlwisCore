@@ -190,6 +190,10 @@ public:
         return false;
     }
 
+    void add(const QVariant &box){
+        //TODO:
+    }
+
     bool contains(const geos::geom::Geometry *geom) const{
         if (!geom)
             return false;
