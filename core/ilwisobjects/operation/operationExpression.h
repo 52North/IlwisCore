@@ -24,6 +24,7 @@ public:
     bool isValid() const;
     static IlwisTypes determineType(const QString &value, const SymbolTable& symtab) ;
 
+
 private:
     QString _key;
     QString _value;
@@ -92,6 +93,7 @@ public:
     void setExpression(const QString &e, const SymbolTable &symtab);
     bool matchesParameterCount(const QString &match, bool in=true) const;
     QString toString() const;
+    template<typename T> T input(quint32 ) { return T(); }
 private:
     QString _name;
     QList<Parameter> _inParameters;
@@ -104,6 +106,29 @@ private:
     void parseSelectors(const QString& selectors, const SymbolTable &symtab);
     void specialExpressions(const QString &e, const SymbolTable &symtab);
 };
+
+template<> inline int OperationExpression::input<qint32>(quint32 parmIndex) {
+    return parm(parmIndex).value().toInt();
+}
+
+template<> inline quint32 OperationExpression::input<quint32>(quint32 parmIndex) {
+    return parm(parmIndex).value().toUInt();
+}
+
+template<> inline double OperationExpression::input<double>(quint32 parmIndex) {
+    return parm(parmIndex).value().toDouble();
+}
+
+template<> inline QString OperationExpression::input<QString>(quint32 parmIndex) {
+    return parm(parmIndex).value();
+}
+
+template<> inline bool OperationExpression::input<bool>(quint32 parmIndex) {
+    QString v = parm(parmIndex).value().toLower();
+    return v == "yes" || v == "true";
+}
+
+
 
 
 

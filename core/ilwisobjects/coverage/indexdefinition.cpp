@@ -7,6 +7,7 @@
 #include "interval.h"
 #include "itemrange.h"
 #include "intervalrange.h"
+#include "identifierrange.h"
 #include "datadefinition.h"
 #include "indexdefinition.h"
 
@@ -57,8 +58,32 @@ quint32 IndexDefinition::indexSize() const
 void IndexDefinition::addIndex(quint64 fid, const QVariant& tvalue, quint32 rec)
 {
     double value = key(tvalue);
-    if ( value != rUNDEF)
-        _index[TrackIndex(value, fid)] = rec;
+    if ( value != rUNDEF){
+        TrackIndex trackIndex(value, fid);
+        _index[trackIndex] = rec;
+        _range->add(tvalue);;
+    }
+}
+
+QVariant IndexDefinition::byOrder(quint32 record)
+{
+    QVariant indexValue;
+    if ( record < _index.size()){
+        if ( hasType(domain()->valueType(), itNUMBER )) {
+            RangeIterator<double, NumericRange> iter(_range.data());
+            indexValue = iter[record];
+        } else if (hasType(domain()->valueType(), itNAMEDITEM)){
+            RangeIterator<SPDomainItem, NamedIdentifierRange> iter(_range.data());
+            indexValue = iter[record]->name();
+        }else if (hasType(domain()->valueType(), itINDEXEDITEM)){
+            RangeIterator<SPDomainItem, IndexedIdentifierRange> iter(_range.data());
+            indexValue = iter[record]->name();
+        }else if (hasType(domain()->valueType(), itDATETIME)){
+            RangeIterator<double, TimeInterval> iter(_range.data());
+            indexValue = iter[record];
+        }
+    }
+    return indexValue;
 }
 
 void IndexDefinition::removeIndex(quint64 fid, const QVariant& tvalue)

@@ -8,6 +8,13 @@ namespace Ilwis{
 class ColorItem;
 typedef QSharedPointer<ColorItem> SPColorItem;
 
+struct KERNELSHARED_EXPORT LocalColor {
+    quint8 _component1=0;
+    quint8 _component2=0;
+    quint8 _component3=0;
+    quint8 _component4=0;
+} ;
+
 
 class KERNELSHARED_EXPORT ColorRangeBase
 {
@@ -44,6 +51,7 @@ public:
     IlwisTypes valueType() const;
     static QColor valueAt(quint32& index, const Ilwis::Range *rng);
     quint32 count() const;
+    void add(const QVariant& v);
 private:
     QColor _limit1;
     QColor _limit2;
@@ -63,6 +71,7 @@ public:
 
     void add(DomainItem *item);
     void add(SPDomainItem item);
+    void add(const QVariant& color);
     void remove(const QString& nm);
     void clear();
 

@@ -104,6 +104,7 @@ public:
      * @param item the item that has to be added
      */
     void add(SPDomainItem item);
+    void add(const QVariant& v);
 
     /**
      * Creates a QString with the value from a QVariant, only works when the QVariant is valid, will return iUNDEF when this is not the case.
@@ -173,7 +174,7 @@ public:
      */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
-    static SPDomainItem valueAt(quint32 index, Range *rng);
+    static SPDomainItem valueAt(quint32 index, const Ilwis::Range *rng);
 
 private:
    bool alignWithParent(const IDomain& dom);
@@ -227,6 +228,7 @@ public:
      * @param item the new NamedIdentifier that should be added
      */
     void add(SPDomainItem item);
+    void add(const QVariant& v);
 
     /**
      * Removes an NamedIdentifier from this NamedIdentifierRange
@@ -325,7 +327,7 @@ public:
      */
     static NamedIdentifierRange *merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
-    static SPDomainItem valueAt(quint32 index, Range *rng);
+    static SPDomainItem valueAt(quint32 index, const Range *rng);
 protected:
     template<typename T> static void addItems(ItemRange *items,
                                          const QSharedPointer<NamedIdentifierRange>& nr1,
@@ -366,7 +368,7 @@ public:
     ThematicRange& operator<<(const QString& itemdef);
     static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
     Range *clone() const;
-    static SPDomainItem valueAt(quint32 index, Range *rng);
+    static SPDomainItem valueAt(quint32 index, const Range *rng);
     IlwisTypes valueType() const;
 };
 

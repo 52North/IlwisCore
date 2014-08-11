@@ -60,6 +60,7 @@ public:
     double min() const;
     void min(double v);
     double distance() const;
+    void add(const QVariant& number);
 
     void resolution(double resolution);
     double resolution() const ;

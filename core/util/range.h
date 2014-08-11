@@ -53,6 +53,7 @@ public:
     void interpolation(const QString& ip);
     virtual QString interpolation() const;
     virtual QVariant impliedValue(const QVariant& v) const { return v; }
+    virtual void add(const QVariant& v) = 0;
     virtual quint32 count() const = 0;
 
     template<typename T> T* as(){
