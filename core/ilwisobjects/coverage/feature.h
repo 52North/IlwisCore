@@ -120,7 +120,7 @@ public:
     UPGeometry& geometry(const QVariant& trackIndexValue = QVariant());
     void add(geos::geom::Geometry *geom,  const QVariant &trackIndexValue = QVariant());
     void remove(const QVariant& trackIndexValue);
-    void set(geos::geom::Geometry *geom,  const QVariant &trackIndexValue = QVariant());
+    void set(geos::geom::Geometry *geom, const QVariant &trackIndexValue = QVariant());
     FeatureInterface* clone() const;
     IlwisTypes geometryType(qint32 trackIndex=iUNDEF) const;
     quint32 trackSize() const;

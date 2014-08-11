@@ -42,10 +42,11 @@ public:
     void addIndex(quint64 fid, const QVariant &tvalue, quint32 rec);
     void removeIndex(quint64 fid, const QVariant &tvalue);
     quint32 indexRecord(quint64 fid, const QVariant &tvalue) const;
+    double key(const QVariant& value) const;
 
 private:
     quint32 indexInternal(const QVariant &value) const;
-    double key(const QVariant& value) const;
+
     boost::container::flat_map<Ilwis::IndexDefinition::TrackIndex, quint32, IndexDefinition::LessTrack> _index;
 };
 
