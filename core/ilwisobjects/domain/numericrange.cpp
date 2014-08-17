@@ -279,6 +279,18 @@ quint32 NumericRange::count() const
     return 1 + distance() / _resolution;
 }
 
+void NumericRange::store(QDataStream &stream)
+{
+    _valuetype = itUNKNOWN;
+    stream << _min << _max << _resolution << _undefined;
+}
+
+void NumericRange::load(QDataStream &stream)
+{
+    _valuetype = itUNKNOWN;
+    stream >> _min >> _max >> _resolution >> _undefined;
+}
+
 NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)
 {
     return new NumericRange(std::min(nr1->min(), nr2->min()),

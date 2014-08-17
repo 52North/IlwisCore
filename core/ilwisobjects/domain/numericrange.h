@@ -90,6 +90,8 @@ public:
 
     void clear();
     quint32 count() const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 
     static NumericRange *merge(const QSharedPointer<NumericRange>& nr1, const QSharedPointer<NumericRange>& nr2,RenumberMap *rnm=0);
 
