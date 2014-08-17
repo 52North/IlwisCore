@@ -138,8 +138,8 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
     _rawUrl(rawUrl),
     _urlQuery(QUrlQuery(rawUrl)),
     _size(0),
-    _ilwtype(tp),
-    _extendedType(itUNKNOWN)
+    _ilwtype(tp & itILWISOBJECT),
+    _extendedType(tp & ~( tp & itILWISOBJECT))
 {
     if ( tp == itUNKNOWN)
         return;
