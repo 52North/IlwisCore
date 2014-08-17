@@ -22,7 +22,7 @@ Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
     _attTableIndex->addColumn(FEATUREIDCOLUMN,"count");
     _attTableIndex->addColumn(TRACKINDEXCOLUMN,"count");
    IDomain dom("count");
-   indexDomain(dom);
+   indexDomain(dom, new NumericRange(0,0,1));
 }
 
 Coverage::~Coverage()
@@ -112,9 +112,9 @@ IndexDefinition &Coverage::indexDefinition()
     return _indexdefinition;
 }
 
-void Coverage::indexDomain(const IDomain& dom)
+void Coverage::indexDomain(const IDomain& dom, Range *defaultRange)
 {
-    _indexdefinition = {dom};
+    _indexdefinition = {dom,defaultRange};
     if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
         _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
     else{
