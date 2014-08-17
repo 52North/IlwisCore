@@ -66,6 +66,8 @@ public:
      * @return a string
      */
     QString toString() const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 
     /**
      * Clears all items
