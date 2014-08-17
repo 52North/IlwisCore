@@ -195,7 +195,6 @@ private:
     std::vector<DataDefinition> _datadefBands;
     IGeoReference _georef;
     Size<> _size;
-    std::mutex _mutex;
 };
 
 typedef IlwisData<RasterCoverage> IRasterCoverage;

@@ -147,7 +147,7 @@ const UPGrid &RasterCoverage::grid() const
 
 void RasterCoverage::copyTo(IlwisObject *obj)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     Coverage::copyTo(obj);
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     raster->_georef = _georef;
