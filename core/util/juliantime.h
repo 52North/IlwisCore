@@ -361,6 +361,8 @@ public:
     QVariant ensure(const QVariant& v, bool inclusive=true) const;
     IlwisTypes valueType() const;
     void add(const QVariant &time);
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 
     Range *clone() const ;
     bool isValid() const;

@@ -1011,6 +1011,21 @@ void TimeInterval::add(const QVariant &time)
     NumericRange::add((double)t);
 }
 
+void TimeInterval::store(QDataStream &stream)
+{
+    NumericRange::store(stream);
+
+    stream << (double)_step << _vt;
+}
+
+void TimeInterval::load(QDataStream &stream)
+{
+    NumericRange::load(stream);
+    double step;
+    stream >> step >> _vt;
+    _step = step;
+}
+
 Range *TimeInterval::clone() const
 {
     return new TimeInterval(min(), max(), _step, _vt);
