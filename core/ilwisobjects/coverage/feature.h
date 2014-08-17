@@ -8,6 +8,7 @@ namespace Ilwis {
 class ColumnDefinition;
 class UPFeatureI;
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
+typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 class VertexIterator;
 
 //typedef QSharedPointer<FeatureInterface> UPFeatureI;
@@ -36,6 +37,8 @@ public:
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
+    virtual void store(QDataStream& stream) = 0;
+    virtual void load(QDataStream& stream, const UPGeomFactory &factory) = 0;
 protected:
 
 
@@ -82,6 +85,8 @@ private:
     quint32 attributeColumnCount(bool coverages=true) const;
     quint32 trackIndex() const;
     void setTrackIndex(quint32 ind);
+    void store(QDataStream& stream);
+    void load(QDataStream& stream, const UPGeomFactory &factory);
 
     Feature *_feature;
     UPGeometry _geometry;
@@ -136,6 +141,8 @@ public:
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;
     virtual QVariant trackIndexValue(quint32 index = iUNDEF) const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream, const UPGeomFactory& factory);
 
 
 private:

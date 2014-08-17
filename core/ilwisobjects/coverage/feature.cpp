@@ -9,6 +9,11 @@
 #include "featurecoverage.h"
 #include "vertexiterator.h"
 #include "geometryhelper.h"
+#include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/CoordinateArraySequence.h"
 
 using namespace Ilwis;
 
@@ -159,6 +164,111 @@ void GeometryNode::setTrackIndex(quint32 ind){
     _trackIndex = ind;
 }
 
+void GeometryNode::store(QDataStream &stream)
+{
+    auto StoreSequence = [&] (geos::geom::CoordinateSequence *crds, QDataStream& stream){
+        stream << crds->size();
+        for(int i = 0; i < crds->size(); ++i)
+            stream << crds->getAt(i).x << crds->getAt(i).y << crds->getAt(i).z;
+        delete crds;
+    };
+
+    auto StorePolygon = [&] (const geos::geom::Geometry* geom,QDataStream& stream ){
+        const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon *>(geom);
+        StoreSequence(polygon->getExteriorRing()->getCoordinates(), stream);
+        stream << polygon->getNumInteriorRing();
+        for(int g = 0; g < polygon->getNumInteriorRing(); ++g){
+            StoreSequence(polygon->getInteriorRingN(g)->getCoordinates(), stream);
+        }
+    };
+
+    int gtype = _geometry->getGeometryTypeId();
+    stream << gtype;
+    if ( gtype == geos::geom::GEOS_POINT || gtype == geos::geom::GEOS_MULTIPOINT || gtype == geos::geom::GEOS_LINESTRING){
+        StoreSequence(_geometry->getCoordinates(), stream);
+    } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
+        stream << _geometry->getNumGeometries();
+        for(int g =0; g < _geometry->getNumGeometries(); ++g){
+            const geos::geom::Geometry *geom = _geometry->getGeometryN(g);
+            StoreSequence(geom->getCoordinates(), stream);
+        }
+    } else if (gtype == geos::geom::GEOS_POLYGON ) {
+        const geos::geom::Geometry *gm = _geometry.get();
+        StorePolygon(gm, stream);
+    } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
+        const geos::geom::Geometry *gm = _geometry.get();
+        stream << gm->getNumGeometries();
+        for(int g = 0; g < gm->getNumGeometries(); ++g ){
+            StorePolygon(gm->getGeometryN(g), stream);
+        }
+    }
+}
+
+void GeometryNode::load(QDataStream &stream, const UPGeomFactory &factory)
+{
+    int gtype;
+    stream >> gtype;
+
+    auto LoadSequence = [&] (QDataStream& stream)-> geos::geom::CoordinateSequence *{
+        quint32 nrOfCoords;
+        stream >> nrOfCoords;
+        std::vector<geos::geom::Coordinate> *coords = new std::vector<geos::geom::Coordinate>(nrOfCoords) ;
+        for(int i = 0; i < nrOfCoords; ++i){
+            double x,y,z;
+            stream >> x >> y >> z;
+            coords->at(i) = geos::geom::Coordinate(x,y,z);
+        }
+        geos::geom::CoordinateArraySequence *seq = new geos::geom::CoordinateArraySequence(coords);
+        return seq;
+    };
+
+    auto LoadPolygon = [&] (QDataStream& stream )-> geos::geom::Polygon * {
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        geos::geom::LinearRing *outerring = factory->createLinearRing(seq);
+        quint32 numInteriorRings;
+        stream >> numInteriorRings;
+        std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(numInteriorRings);
+        for(int g = 0; g < numInteriorRings; ++g){
+            geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+            (*inners)[g] = factory->createLinearRing(seq);
+        }
+        geos::geom::Polygon *pol = factory->createPolygon(outerring, inners);
+        return pol;
+    };
+
+    if ( gtype == geos::geom::GEOS_POINT){
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        _geometry.reset( factory->createPoint(seq));
+    }else if ( gtype == geos::geom::GEOS_MULTIPOINT){
+         geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+         _geometry.reset(factory->createMultiPoint(*seq));
+         delete seq;
+    }else if ( gtype == geos::geom::GEOS_LINESTRING){
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        _geometry.reset( factory->createLineString(seq));
+    } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
+        quint32 numSubGeoms;
+        stream >> numSubGeoms;
+        std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
+        for(int g =0; g < numSubGeoms; ++g){
+            geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+            (*subgeoms)[g] = factory->createLineString(seq);
+        }
+        _geometry.reset(factory->createMultiLineString(subgeoms));
+    } else if (gtype == geos::geom::GEOS_POLYGON ) {
+        _geometry.reset(LoadPolygon(stream));
+    } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
+        quint32 numSubGeoms;
+        stream >> numSubGeoms;
+        std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
+        for(int g = 0; g < numSubGeoms; ++g ){
+            (*subgeoms)[g] = LoadPolygon(stream);
+        }
+        _geometry.reset(factory->createMultiPolygon(subgeoms));
+    }
+
+}
+
 //--------------------------------------------
 Feature::Feature() : _featureid(i64UNDEF){
 }
@@ -295,6 +405,27 @@ QVariant Feature::trackIndexValue(quint32 index) const
     if ( index < _track.size())
         return _track[index]->cell(TRACKVALUECOLUMN);
     return QVariant();
+}
+
+void Feature::store(QDataStream &stream)
+{
+    stream << _featureid;
+    stream << _track.size();
+    for(const UPFeatureI& feature : _track){
+        feature->store(stream);
+    }
+}
+
+void Feature::load(QDataStream &stream, const UPGeomFactory &factory)
+{
+    stream >> _featureid;
+    int sz;
+    stream >> sz;
+    for(int i = 0; i < sz; ++i){
+        UPFeatureI geomnode(new GeometryNode(0,this, i));
+        geomnode->load(stream, factory);
+        _track.push_back(std::move(geomnode));
+    }
 }
 
 quint64 Feature::featureid() const{
