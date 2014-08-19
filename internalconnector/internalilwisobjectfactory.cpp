@@ -50,7 +50,6 @@
 #include "internalrastercoverageconnector.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "databasetable.h"
 #include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
@@ -271,7 +270,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
         }
         if ( dom.isValid()){
             RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
-            raster->datadef().domain(dom);
+            raster->datadefRef().domain(dom);
         }
     }
     return true;
@@ -756,10 +755,7 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, c
        return 0;
    }
     Table *tbl;
-    if ( resource.ilwisType() == itDATABASETABLE)
-        tbl = new DatabaseTable(resource);
-    else
-        tbl = new FlatTable(resource);
+    tbl = new FlatTable(resource);
     tbl->setConnector(connector, IlwisObject::cmINPUT, options);
     return tbl;
 
