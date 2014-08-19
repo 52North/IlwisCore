@@ -94,6 +94,7 @@ public:
     bool matchesParameterCount(const QString &match, bool in=true) const;
     QString toString() const;
     template<typename T> T input(quint32 ) { return T(); }
+    template<typename T> T input(quint32, bool& ok ) { return T(); }
 private:
     QString _name;
     QList<Parameter> _inParameters;
@@ -107,17 +108,31 @@ private:
     void specialExpressions(const QString &e, const SymbolTable &symtab);
 };
 
+template<> inline int OperationExpression::input<qint32>(quint32 parmIndex, bool& ok) {
+    return parm(parmIndex).value().toInt(&ok);
+}
+
 template<> inline int OperationExpression::input<qint32>(quint32 parmIndex) {
     return parm(parmIndex).value().toInt();
+}
+
+template<> inline quint32 OperationExpression::input<quint32>(quint32 parmIndex, bool& ok) {
+    return parm(parmIndex).value().toUInt(&ok);
 }
 
 template<> inline quint32 OperationExpression::input<quint32>(quint32 parmIndex) {
     return parm(parmIndex).value().toUInt();
 }
 
+template<> inline double OperationExpression::input<double>(quint32 parmIndex, bool& ok) {
+    return parm(parmIndex).value().toDouble(&ok);
+}
+
 template<> inline double OperationExpression::input<double>(quint32 parmIndex) {
     return parm(parmIndex).value().toDouble();
 }
+
+
 
 template<> inline QString OperationExpression::input<QString>(quint32 parmIndex) {
     return parm(parmIndex).value();
