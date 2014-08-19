@@ -87,9 +87,6 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
     }
     _outputFC = obj.as<FeatureCoverage>();
 
-//    DataDefinition outputDataDef = findOutputDataDef(_expression);
-//    _outputFC->datadef() = outputDataDef;
-
     return sPREPARED;
 }
 
