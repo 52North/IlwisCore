@@ -3,7 +3,7 @@
 
 #include <QSqlDatabase>
 #include <unordered_map>
-
+#include "record.h"
 #include "kernel_global.h"
 
 namespace Ilwis {
@@ -144,7 +144,7 @@ public:
      * \param n the row/record number of the record
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
-    virtual std::vector<QVariant> record(quint32 n) const = 0;
+    virtual Record record(quint32 n) const = 0;
 
     /*!
      * sets a record with values from variantlist. The list doesnt need to contain all the fields in a record but may contain a subset.<br>
