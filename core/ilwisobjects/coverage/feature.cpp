@@ -87,14 +87,14 @@ quint32 GeometryNode::trackSize() const{
     return 1;
 }
 
-std::vector<QVariant> GeometryNode::record(const QVariant &trackIndexValue) const
+Record GeometryNode::record(const QVariant &trackIndexValue) const
 {
     if ( _feature->isValid() ){
         if (trackIndexValue == QVariant())
             return _feature->_record->record(-1);
         //TODO index variant
     }
-    return std::vector<QVariant>();
+    return Record();
 }
 
 QVariant GeometryNode::cell(quint32 colIndex, const QVariant & , bool asRaw)
@@ -312,14 +312,14 @@ std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue)
     return std::pair<quint32, quint32>(recordIndex, trackIndex);
 }
 
-std::vector<QVariant> Feature::record(const QVariant &trackIndexValue) const
+Record Feature::record(const QVariant &trackIndexValue) const
 {
     if ( isValid() ){
         if (trackIndexValue == COVERAGEATRIB)
             return _record->record(-1);
         //TODO index variant
     }
-    return std::vector<QVariant>();
+    return Record();
 }
 
 void Feature::record(const std::vector<QVariant> &values, const QVariant &trackIndexValue)
