@@ -170,8 +170,8 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
      }
      IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
      if ( (copylist & itDOMAIN) == 0) {
-         outputRaster->datadef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
-                                                   : outputRaster->datadef() = inputRaster->datadef();
+         outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
+                                                   : outputRaster->datadefRef() = inputRaster->datadef();
      }
      QString outputName = _expression.parm(0,false).value();
      if ( outputName != sUNDEF)

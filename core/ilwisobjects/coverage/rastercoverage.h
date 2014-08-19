@@ -68,11 +68,9 @@ public:
      */
     virtual RasterCoverage *clone() ;
 
-    //@override
     const DataDefinition& datadef(quint32 layer=WHOLE_RASTER) const;
 
-    //@override
-    DataDefinition& datadef(quint32 layer=WHOLE_RASTER);
+    DataDefinition& datadefRef(quint32 layer=WHOLE_RASTER);
 
     /*!
      * Returns a reference to the IGeoReference of this RasterCoverage.<br>

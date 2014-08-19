@@ -37,7 +37,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
         if ( hasType(what,itDOMAIN) && hasType(tp, itRASTER) ) {
             IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
             IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
-            rasCoverageOut->datadef() = rasCoverageIn->datadef();
+            rasCoverageOut->datadefRef() = rasCoverageIn->datadef();
         }
 
         if ( hasType(what,itGEOREF) && hasType(tp, itRASTER) ) {

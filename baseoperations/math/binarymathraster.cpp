@@ -134,8 +134,8 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
 
     IDomain dom;
     dom.prepare("value");
-    _outputGC->datadef().domain(dom);
-    _outputGC->datadef().range(newRange);
+    _outputGC->datadefRef().domain(dom);
+    _outputGC->datadefRef().range(newRange);
 
     _coveragecoverage = true;
     return true;
@@ -168,8 +168,8 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
 
     IDomain dom;
     dom.prepare("value");
-    _outputGC->datadef().domain(dom);
-    _outputGC->datadef().range(newRange);
+    _outputGC->datadefRef().domain(dom);
+    _outputGC->datadefRef().range(newRange);
 
     return true;
 }

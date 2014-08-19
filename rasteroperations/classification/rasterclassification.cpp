@@ -78,7 +78,7 @@ Ilwis::OperationImplementation::State RasterClassification::prepare(ExecutionCon
        ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
        return sPREPAREFAILED;
    }
-   _outputRaster->datadef().domain(_sampleSet.thematicDomain());
+   _outputRaster->datadefRef().domain(_sampleSet.thematicDomain());
    _outputRaster->size(_sampleSet.sampleRasterSet()->size().twod());
    if ( outputName!= sUNDEF)
        _outputRaster->name(outputName);
