@@ -151,12 +151,10 @@ public:
      * setFeatureCount(type2,4);
      * sets the amount of both type 1 and type 2 to 4
      *
-     * Be careful when setting count with aggregation types like itFEATURE. The count would be set for each subtypes.
-     *
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 multicnt, int index=0);
+    void setFeatureCount(IlwisTypes typehs, quint32 geomCnt, quint32 multicnt, int index=0);
     quint32 maxIndex() const;
 
     //@override
