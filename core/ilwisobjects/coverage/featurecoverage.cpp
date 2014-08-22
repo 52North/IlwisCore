@@ -52,8 +52,6 @@ bool FeatureCoverage::prepare( ) {
             ok =  attributeTable().prepare(name());
 
     }
-    if ( ok && attributeTable()->columnIndex(FEATUREIDCOLUMN) == iUNDEF)
-        attributeTable()->addColumn(FEATUREIDCOLUMN,"count");
     return ok;
 }
 
@@ -156,15 +154,8 @@ Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     CreateFeature create = _featureFactory->getCreator("feature");
     FeatureInterface *newFeature = create(this);
 
-    qint32 colIndex = this->attributeTable()->columnIndex(FEATUREIDCOLUMN);
-    if ( colIndex == iUNDEF) {
-        ERROR1(ERR_NO_INITIALIZED_1, TR("attribute table"));
-        throw FeatureCreationError(TR("failed to create feature"));
-    }
-    newFeature->setCell(colIndex, QVariant(newFeature->featureid()));
     _features.resize(_features.size() + 1);
     _features.back().reset(newFeature);
-
 
     return _features.back();
 }
@@ -223,6 +214,20 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32
 quint32 FeatureCoverage::maxIndex() const
 {
     return _maxIndex;
+}
+
+void FeatureCoverage::attributeTable(const ITable &tbl, AttributeType attType)
+{
+    if ( featureCount() != tbl->recordCount() && attType == Coverage::atCOVERAGE){
+        ERROR2(ERR_NOT_COMPATIBLE2,TR("feature count"), TR("record count in attribute table"));
+        return;
+    }
+    Coverage::attributeTable(tbl,attType);
+}
+
+AttributeTable FeatureCoverage::attributeTable(AttributeType attType) const
+{
+    return Coverage::attributeTable(attType);
 }
 
 IlwisTypes FeatureCoverage::ilwisType() const
