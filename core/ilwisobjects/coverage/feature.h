@@ -29,7 +29,7 @@ public:
     virtual IlwisTypes geometryType(qint32 trackIndex=0) const = 0;
     virtual quint32 trackSize() const = 0;
     virtual QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true)  = 0;
-    virtual Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const = 0;
+    virtual Record& record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const = 0;
     virtual void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
     virtual void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
     virtual void record(const std::vector<QVariant>& values,const QVariant &trackIndexValue=QVariant(COVERAGEATRIB))  = 0;
@@ -75,7 +75,7 @@ private:
     FeatureInterface *clone() const;
     IlwisTypes geometryType(qint32 trackIndex=0) const ;
     quint32 trackSize() const ;
-    Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
+    Record& record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
     QVariant cell(quint32 colIndex, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
     QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
     void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
@@ -136,7 +136,7 @@ public:
     void record(const std::vector<QVariant> &values, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
     void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
     void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) ;
-    Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
+    Record& record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
 
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
