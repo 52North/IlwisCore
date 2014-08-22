@@ -87,11 +87,11 @@ quint32 GeometryNode::trackSize() const{
     return 1;
 }
 
-Record &GeometryNode::record(const QVariant &trackIndexValue) const
+Record &GeometryNode::recordRef(const QVariant &trackIndexValue) const
 {
     if ( _feature->isValid() ){
         if (trackIndexValue == QVariant())
-            return _feature->_record->record(-1);
+            return _feature->_record->recordRef(-1);
         //TODO index variant
     }
      throw ErrorObject(TR(QString("feature is not valid")));
@@ -315,11 +315,11 @@ std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue)
     return std::pair<quint32, quint32>(recordIndex, trackIndex);
 }
 
-Record &Feature::record(const QVariant &trackIndexValue) const
+Record &Feature::recordRef(const QVariant &trackIndexValue) const
 {
     if ( isValid() ){
         if (trackIndexValue == COVERAGEATRIB)
-            return _record->record(-1);
+            return _record->recordRef(-1);
         //TODO index variant
     }
     throw ErrorObject(TR(QString("feature is not valid")));

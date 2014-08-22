@@ -31,7 +31,7 @@ public:
     quint32 newRecord();
     void removeRecord(quint32 rec);
     //@override
-    Record &record(quint32 n) ;
+    Record &recordRef(quint32 n) ;
     const Record &record(quint32 rec) const;
 
     //@override

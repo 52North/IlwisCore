@@ -169,7 +169,7 @@ const Record& FlatTable::record(quint32 rec) const{
     throw ErrorObject(QString("Requested record number is not in the table").arg(rec));
 }
 
-Record& FlatTable::record(quint32 rec)
+Record& FlatTable::recordRef(quint32 rec)
 {
     if (!const_cast<FlatTable *>(this)->initLoad())
         throw ErrorObject(QString(TR("failed load of table %1")).arg(name()));

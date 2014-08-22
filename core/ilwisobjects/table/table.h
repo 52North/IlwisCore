@@ -144,7 +144,7 @@ public:
      * \param n the row/record number of the record
      * \return A filled variantlist or an empty list if an error occurred. The nature of the error can be found in the issue logger
      */
-    virtual Record& record(quint32 n) = 0;
+    virtual Record& recordRef(quint32 n) = 0;
     virtual const Record& record(quint32 n) const = 0;
 
     /*!

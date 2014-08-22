@@ -83,10 +83,10 @@ QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
     return QVariant();
 }
 
-Record& AttributeRecord::record(int index) const
+Record& AttributeRecord::recordRef(int index) const
 {
     if ( index == -1) {
-        return _coverageTable->record(_keyRecord);
+        return _coverageTable->recordRef(_keyRecord);
     } else {
         //TODO
     }
@@ -109,7 +109,7 @@ quint64 AttributeRecord::featureid() const
 
 void AttributeRecord::featureid(quint64 id)
 {
-    _coverageTable->record(_keyRecord).itemid(id);
+    _coverageTable->recordRef(_keyRecord).itemid(id);
 }
 
 AttributeRecord *AttributeRecord::clone() const

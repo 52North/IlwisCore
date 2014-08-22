@@ -48,7 +48,7 @@ bool PointRasterCrossing::execute(ExecutionContext *ctx, SymbolTable &symTable)
             continue;
 
         UPFeatureI& newFeature = _outputFeatures->newFeatureFrom(infeature);
-        auto datarecord = infeature->record();
+        auto datarecord = infeature->recordRef();
         newFeature->record(datarecord);
         const geos::geom::Coordinate *crd = newFeature->geometry()->getCoordinate();
         if (!crd)
