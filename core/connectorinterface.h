@@ -15,21 +15,8 @@ class ExecutionContext;
 class IOOptions;
 
 
-/*!
- * \brief The ConnectorInterface class all connectors are derived from this interface
- *
- *The connector interface enumerates the methods that may be implemented by a derivative. It is unlikely that a derivative will implement all methods so a default implementation is provied.
- *Usualy the MetaData methods are implemented and depending on the nature of the source also one or more of the binary (Grid/table) ones is implemented.
- */
-class KERNELSHARED_EXPORT ConnectorInterface {
+class KERNELSHARED_EXPORT DataInterface {
 public:
-    virtual ~ConnectorInterface() {}
-    /*!
-     \brief loads the metadata and non binary information into the ilwisobject. After this method it should be a valid object
-
-     \param data the ilwisobject to be initialized
-     \return bool true when succesfull. If not succesful the reason can be found in the issuelogger
-    */
     virtual bool loadMetaData(IlwisObject*, const IOOptions & ) { return false;}
 
     /*!
@@ -47,14 +34,7 @@ public:
     virtual bool dataIsLoaded() const { return false; }
     virtual bool store(IlwisObject *, int ) { return false; }
 
-    virtual bool execute(const OperationExpression& , ExecutionContext *) { return false; }
-    /*!
-     * \brief isReadOnly returns if a connector can write to a source.
-     *
-     *This return is more of the physical possibility of writing data. There is also a readonly flag at ilwisobject level but describes usualy the logical readonly status (e.g. I dont want that this will be written)
-     * \return
-     */
-    virtual bool isReadOnly() { return true; }
+
 
     /*!
      * \brief clone copies the connector for use with another object
@@ -63,6 +43,18 @@ public:
      * \return a new connector
      */
     virtual ConnectorInterface* clone() const { return 0; }
+};
+
+/*!
+ * \brief The ConnectorInterface class all connectors are derived from this interface
+ *
+ *The connector interface enumerates the methods that may be implemented by a derivative. It is unlikely that a derivative will implement all methods so a default implementation is provied.
+ *Usualy the MetaData methods are implemented and depending on the nature of the source also one or more of the binary (Grid/table) ones is implemented.
+ */
+class KERNELSHARED_EXPORT ConnectorInterface  : public DataInterface{
+public:
+    virtual ~ConnectorInterface() {}
+    virtual bool execute(const OperationExpression& , ExecutionContext *) { return false; }
     /*!
      * \brief source returns the resource location were this connector is attached to
      * \return the url of the source
@@ -73,6 +65,13 @@ public:
     virtual QString format() const { return sUNDEF; }
     virtual bool isValid() const { return true;}
     virtual bool canUse(const Resource& ) const { return true; }
+    /*!
+     * \brief isReadOnly returns if a connector can write to a source.
+     *
+     *This return is more of the physical possibility of writing data. There is also a readonly flag at ilwisobject level but describes usualy the logical readonly status (e.g. I dont want that this will be written)
+     * \return
+     */
+    virtual bool isReadOnly() { return true; }
 
 };
 

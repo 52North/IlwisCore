@@ -7,7 +7,7 @@
 
 using namespace Ilwis;
 
-const QString Ilwis::Version::IlwisVersion = QString("Ilwis-Objects 0.1");
+const QString Ilwis::Version::IlwisVersion = QString("iv40");
 
 Version::Version(){
 }
@@ -60,6 +60,8 @@ QString Version::binaryVersionNumberToString(Version::BinaryVersion v) {
         return "Foreign Format";
     case Version::bvPOLYGONFORMAT37:
         return "Polygon Format 3.7";
+    case Version::bvILWISOBJECTS1:
+        return "ilwisobjects20140811";
     default:
         return "?";
     };

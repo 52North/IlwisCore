@@ -129,6 +129,16 @@ QString ConventionalCoordinateSystem::toProj4() const
         return QString("?");
 }
 
+QString ConventionalCoordinateSystem::unit() const
+{
+    return _unit;
+}
+
+void ConventionalCoordinateSystem::unit(const QString& unit)
+{
+    _unit = unit;
+}
+
 const std::unique_ptr<GeodeticDatum>& ConventionalCoordinateSystem::datum() const
 {
     return _datum;

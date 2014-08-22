@@ -31,6 +31,8 @@ public:
 
 
 protected:
+    void storeColor(const QColor &clr, QDataStream& stream);
+    void loadColor(QColor &clr, QDataStream &stream);
 private:
     IlwisTypes _valuetype;
     ColorModel _defaultModel = cmRGBA;
@@ -52,6 +54,8 @@ public:
     static QColor valueAt(quint32& index, const Ilwis::Range *rng);
     quint32 count() const;
     void add(const QVariant& v);
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 private:
     QColor _limit1;
     QColor _limit2;
@@ -88,6 +92,8 @@ public:
 
     qint32 gotoIndex(qint32 index, qint32 step) const;
     bool alignWithParent(const IDomain &dom);
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 private:
     std::vector<SPColorItem> _colors;
 

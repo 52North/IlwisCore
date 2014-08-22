@@ -16,6 +16,7 @@ public:
     qint32 index(const Coordinate& crd) const;
     qint32 setControlPoint(const ControlPoint &pnt);
     bool compute();
+    static QString typeName();
 
 private:
     std::vector<ControlPoint> _controlPoints;

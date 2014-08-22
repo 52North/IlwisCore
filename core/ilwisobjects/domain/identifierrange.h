@@ -163,6 +163,8 @@ public:
     qint32 gotoIndex(qint32 index, qint32 step) const;
     IlwisTypes valueType() const;
     void clear();
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 
     /**
      * merges 2 IndexedIdentifierRange 's into one
@@ -297,6 +299,8 @@ public:
      * empty function
      */
     void interpolation(const QString&) {}
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 
     /**
      * calculates the next index based on the current index and the size of the step

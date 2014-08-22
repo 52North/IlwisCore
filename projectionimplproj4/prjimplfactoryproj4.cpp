@@ -43,9 +43,9 @@ ProjectionImplementation *ProjectionImplFactoryProj4::create(const Ilwis::Resour
     return new ProjectionImplementationProj4(resource);
 }
 
-ProjectionImplementation *ProjectionImplFactoryProj4::create(const QString &) const
+ProjectionImplementation *ProjectionImplFactoryProj4::create(const QString &proj4def) const
 {
-    return nullptr;
+    return new ProjectionImplementationProj4(proj4def);
 }
 
 bool ProjectionImplFactoryProj4::canUse(const Ilwis::Resource &resource) const

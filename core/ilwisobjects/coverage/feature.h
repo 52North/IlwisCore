@@ -2,12 +2,14 @@
 #define FEATURE_H
 
 #include "kernel_global.h"
+#include "record.h"
 
 namespace Ilwis {
 
 class ColumnDefinition;
 class UPFeatureI;
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
+typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 class VertexIterator;
 
 //typedef QSharedPointer<FeatureInterface> UPFeatureI;
@@ -27,7 +29,7 @@ public:
     virtual IlwisTypes geometryType(qint32 trackIndex=0) const = 0;
     virtual quint32 trackSize() const = 0;
     virtual QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true)  = 0;
-    virtual std::vector<QVariant> record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const = 0;
+    virtual Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const = 0;
     virtual void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
     virtual void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
     virtual void record(const std::vector<QVariant>& values,const QVariant &trackIndexValue=QVariant(COVERAGEATRIB))  = 0;
@@ -36,6 +38,8 @@ public:
     virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
     virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
     virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
+    virtual void store(QDataStream& stream) = 0;
+    virtual void load(QDataStream& stream, const UPGeomFactory &factory) = 0;
 protected:
 
 
@@ -71,7 +75,7 @@ private:
     FeatureInterface *clone() const;
     IlwisTypes geometryType(qint32 trackIndex=0) const ;
     quint32 trackSize() const ;
-    std::vector<QVariant> record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
+    Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
     QVariant cell(quint32 colIndex, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
     QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
     void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
@@ -82,6 +86,8 @@ private:
     quint32 attributeColumnCount(bool coverages=true) const;
     quint32 trackIndex() const;
     void setTrackIndex(quint32 ind);
+    void store(QDataStream& stream);
+    void load(QDataStream& stream, const UPGeomFactory &factory);
 
     Feature *_feature;
     UPGeometry _geometry;
@@ -130,12 +136,14 @@ public:
     void record(const std::vector<QVariant> &values, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
     void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
     void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) ;
-    std::vector<QVariant> record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
+    Record record(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
 
     ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
     ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
     quint32 attributeColumnCount(bool coverages=true) const;
     virtual QVariant trackIndexValue(quint32 index = iUNDEF) const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream, const UPGeomFactory& factory);
 
 
 private:

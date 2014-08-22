@@ -6,10 +6,12 @@
 #include <mutex>
 
 namespace Ilwis {
-class KERNELSHARED_EXPORT Locker : public std::lock_guard<std::mutex>
+template<typename MutexType=std::recursive_mutex> class KERNELSHARED_EXPORT Locker : public std::lock_guard<MutexType>
 {
 public:
-    Locker(std::mutex &mut);
+    Locker(MutexType &mut) : std::lock_guard<MutexType>(mut){
+
+    }
 };
 }
 

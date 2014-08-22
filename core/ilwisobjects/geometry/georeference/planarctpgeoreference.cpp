@@ -396,6 +396,11 @@ void PlanarCTPGeoReference::transformation(PlanarCTPGeoReference::Transformation
     _transformation = tr;
 }
 
+PlanarCTPGeoReference::Transformation PlanarCTPGeoReference::transformation() const
+{
+    return _transformation;
+}
+
 QString PlanarCTPGeoReference::typeName()
 {
     return "planartiepoints";

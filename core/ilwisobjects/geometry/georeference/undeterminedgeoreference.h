@@ -2,7 +2,7 @@
 #define UNDETERMINEDGEOREFERENCE_H
 
 namespace Ilwis {
-class UndeterminedGeoReference : public GeoRefImplementation
+class KERNELSHARED_EXPORT UndeterminedGeoReference : public GeoRefImplementation
 {
 public:
     UndeterminedGeoReference();
@@ -11,6 +11,7 @@ public:
     virtual Pixeld coord2Pixel(const Coordinate& crd) const;
     virtual double pixelSize() const;
     static GeoRefImplementation *create();
+    static QString typeName();
 };
 }
 

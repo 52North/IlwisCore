@@ -50,7 +50,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/coverage/grid.cpp \
     core/ilwisobjects/coverage/pixeliterator.cpp \
     core/ilwisobjects/table/flattable.cpp \
-    core/ilwisobjects/table/databasetable.cpp \
     core/ilwisobjects/table/columndefinition.cpp \
     core/ilwisobjects/coverage/featureiterator.cpp \
     core/ilwisobjects/table/basetable.cpp \
@@ -120,7 +119,8 @@ SOURCES += core/kernel.cpp \
     core/util/xmlstreamparser.cpp \
     core/util/ilwisconfiguration.cpp \
     core/util/supportlibraryloader.cpp \
-    core/iooptions.cpp
+    core/iooptions.cpp \
+    core/ilwisobjects/table/record.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -173,7 +173,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/coverage/grid.h \
     core/util/size.h \
     core/ilwisobjects/table/flattable.h \
-    core/ilwisobjects/table/databasetable.h \
     core/ilwisobjects/table/columndefinition.h \
     core/ilwisobjects/coverage/featureiterator.h \
     core/ilwisobjects/table/basetable.h \
@@ -256,7 +255,8 @@ HEADERS += core/kernel.h\
     core/util/ilwisconfiguration.h \
     core/util/supportlibraryloader.h \
     core/iooptions.h \
-    core/ilwisobjects/operation/operationspec.h
+    core/ilwisobjects/operation/operationspec.h \
+    core/ilwisobjects/table/record.h
 
 
 OTHER_FILES += \

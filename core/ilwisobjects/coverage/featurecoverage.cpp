@@ -89,13 +89,13 @@ UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSys
 UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 
     if ( load) {
-        Locker lock(_loadmutex);
+        Locker<std::mutex> lock(_loadmutex);
         if (!connector()->dataIsLoaded()) {
             connector()->loadData(this);
         }
     }
 
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     IlwisTypes tp = geometryType(geom);
     UPFeatureI& newfeature = createNewFeature(tp);
@@ -114,7 +114,7 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 }
 
 UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     if (!connector()->dataIsLoaded()) {
         connector()->loadData(this);
@@ -197,7 +197,7 @@ void FeatureCoverage::adaptFeatureCounts(int tp, quint32 geomCnt, quint32 subGeo
 
 void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 subGeomCnt, int index)
 {
-    Locker lock(_mutex2);
+    Locker<std::mutex> lock(_mutex2);
     if (geomCnt > 0)
         _featureTypes |= types;
     else

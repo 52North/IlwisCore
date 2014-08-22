@@ -179,6 +179,21 @@ void IndexedIdentifierRange::clear()
     //_start.reset(0);
 }
 
+void IndexedIdentifierRange::store(QDataStream &stream)
+{
+    stream << _count;
+    stream << _start->name() << _start->prefix();
+}
+
+void IndexedIdentifierRange::load(QDataStream &stream)
+{
+    stream >> _count;
+    QString name, prefix;
+    stream >> name >> prefix;
+    _start.reset(new IndexedIdentifier(name));
+    _start->setPrefix(prefix);
+}
+
 SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itINDEXEDITEM)){
         const IndexedIdentifierRange *idrange = static_cast<const IndexedIdentifierRange *>(rng);
@@ -401,6 +416,29 @@ QString NamedIdentifierRange::toString() const {
 bool NamedIdentifierRange::isContinuous() const
 {
     return false;
+}
+
+void NamedIdentifierRange::store(QDataStream &stream)
+{
+    stream << _byName.size();
+    for(const auto& item : _byRaw) {
+        if ( item == 0) // not a bug; there are always at the end undefined raws, so we can stop now
+            break;
+        stream <<  item->raw() << item->name();
+    }
+}
+
+void NamedIdentifierRange::load(QDataStream &stream)
+{
+    int numberOfItems;
+    stream >> numberOfItems;
+    for(int i=0; i < numberOfItems; ++i){
+        quint32 raw;
+        QString name;
+        stream >> raw >> name;
+        add(new NamedIdentifier(name, raw));
+    }
+
 }
 
 bool NamedIdentifierRange::alignWithParent(const IDomain &dom)

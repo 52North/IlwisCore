@@ -119,7 +119,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     resource.setExtendedType(itNAMEDITEM);
     if (!dom.prepare(resource))
         return sPREPAREFAILED;
-    outputRaster->datadef().domain(dom);
+    outputRaster->datadefRef().domain(dom);
     mastercatalog()->addItems({resource});
 
 

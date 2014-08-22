@@ -123,7 +123,7 @@ bool BinaryLogical::prepareCoverageCoverage() {
 
     IDomain dom;
     dom.prepare("bool");
-    _outputGC->datadef().domain(dom);
+    _outputGC->datadefRef().domain(dom);
     _coveragecoverage = true;
     return true;
 }
@@ -148,7 +148,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
 
      IDomain dom;
     dom.prepare("boolean");
-    _outputGC->datadef().domain(dom);
+    _outputGC->datadefRef().domain(dom);
 
     return true;
 }

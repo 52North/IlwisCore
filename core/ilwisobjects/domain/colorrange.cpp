@@ -118,6 +118,49 @@ QString ColorRangeBase::toString(const QColor &clr, ColorRangeBase::ColorModel c
     return color;
 }
 
+void ColorRangeBase::storeColor(const QColor& clr, QDataStream &stream)
+{
+    switch (defaultColorModel()){
+    case ColorRangeBase::cmRGBA:
+        stream << clr.red() << clr.green() << clr.blue() << clr.alpha();
+        break;
+    case ColorRangeBase::cmHSLA:
+        stream << clr.hue() << clr.saturation() << clr.lightness() << clr.alpha();
+        break;
+    case ColorRangeBase::cmCYMKA:
+        stream << clr.yellow() << clr.magenta() << clr.cyan() << clr.black();
+        break;
+    case ColorRangeBase::cmGREYSCALE:
+        stream << clr.red();
+    default:
+        break;
+    }
+}
+
+void ColorRangeBase::loadColor(QColor& clr, QDataStream &stream){
+    int c1, c2, c3, c4;
+
+    stream >> c1 >> c2 >> c3 >> c4;
+
+    switch (defaultColorModel()){
+    case ColorRangeBase::cmRGBA:
+        clr.setRgb(c1,c2,c3);
+        clr.setAlpha(c4);
+        break;
+    case ColorRangeBase::cmHSLA:
+        clr.setHsl(c1,c2,c3);
+        clr.setAlpha(c4);
+        break;
+    case ColorRangeBase::cmCYMKA:
+        clr.setCmyk(c1,c2,c3, c4);
+        break;
+    case ColorRangeBase::cmGREYSCALE:
+        stream << clr.red();
+    default:
+        break;
+    }
+}
+
 QColor ColorRangeBase::toColor(quint64 clrint, ColorModel clrModel)
 {
 
@@ -326,6 +369,22 @@ void ContinousColorRange::add(const QVariant &v)
 
 }
 
+void ContinousColorRange::store(QDataStream &stream)
+{
+    stream << defaultColorModel();
+    storeColor(_limit1, stream);
+    storeColor(_limit2, stream);
+}
+
+void ContinousColorRange::load(QDataStream &stream)
+{
+    int model;
+    stream >> model;
+    defaultColorModel((ColorModel) model);
+    loadColor(_limit1, stream);
+    loadColor(_limit2, stream);
+}
+
 //---------------------------------------------------------------
 ColorPalette::ColorPalette() : ColorRangeBase(itPALETTECOLOR,ColorRangeBase::cmRGBA)
 {
@@ -522,6 +581,25 @@ bool ColorPalette::isValid() const
 bool ColorPalette::alignWithParent(const IDomain &dom){
     //TODO dont think the internal structure of a palette is conductive to parent/child relations at the moment
     return false;
+}
+
+void ColorPalette::store(QDataStream &stream)
+{
+    stream << _colors.size();
+    for(const auto& clrItem : _colors)    {
+        storeColor(clrItem->color(), stream);
+    }
+}
+
+void ColorPalette::load(QDataStream &stream)
+{
+    int numberOfColor;
+    stream >> numberOfColor;
+    for(int i = 0; i < numberOfColor; ++i)    {
+        QColor clr;
+        loadColor(clr, stream);
+        add(new ColorItem(clr));
+    }
 }
 
 

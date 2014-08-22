@@ -249,6 +249,28 @@ QString IntervalRange::toString() const
     return names;
 }
 
+void IntervalRange::store(QDataStream &stream)
+{
+    stream << _items.size();
+    for(const auto& item : _items){
+        stream << item->raw() << item->name() << item->description();
+        item->range().store(stream);
+    }
+}
+
+void IntervalRange::load(QDataStream &stream)
+{
+    quint32 size;
+    stream >> size;
+    for(int i =0; i < size; ++i)    {
+        QString label;
+        double rmin, rmax, rres;
+        stream >> label;
+        stream >> rmin >> rmax >> rres;
+        add(new Interval(label, NumericRange(rmin, rmax, rres)));
+    }
+}
+
 void IntervalRange::clear()
 {
     _items.clear();

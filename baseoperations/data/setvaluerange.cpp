@@ -31,7 +31,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    DataDefinition& datadef = _table.isValid() ? _table->columndefinition(_columnName).datadef() : _raster->datadef();
+    DataDefinition& datadef = _table.isValid() ? _table->columndefinition(_columnName).datadef() : _raster->datadefRef();
     const SPNumericRange numrange = datadef.range<NumericRange>();
     const SPNumericRange rngDomain = datadef.domain()->range<NumericRange>();
     double lmin = _min == rUNDEF ? numrange->min() : std::max(_min, rngDomain->min());

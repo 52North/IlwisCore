@@ -117,7 +117,7 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
         if(!dom.prepare(_outputDomain))
             return sPREPAREFAILED;
 
-        _outputGC->datadef().domain(dom);
+        _outputGC->datadefRef().domain(dom);
         _case = otSPATIAL;
         return sPREPARED;
     } else if ( hasType(ptype, itTABLE)) {

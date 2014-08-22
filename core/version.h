@@ -10,7 +10,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT Version {
 public:
     Version();
-    enum BinaryVersion{ bvFORMAT14, bvFORMAT20, bvFORMAT30, bvFORMATFOREIGN, bvUNKNOWN, bvPOLYGONFORMAT37};
+    enum BinaryVersion{ bvFORMAT14, bvFORMAT20, bvFORMAT30, bvFORMATFOREIGN, bvUNKNOWN, bvPOLYGONFORMAT37, bvILWISOBJECTS1};
 
     bool supportsBinaryVersion(Ilwis::Version::BinaryVersion version, bool throwError = true);
     bool supportsODFVersion(const QString& version, bool throwError=true);

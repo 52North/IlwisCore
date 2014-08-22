@@ -160,7 +160,7 @@ void Catalog::addItemsPrivate(const std::vector<Resource> &itemlist, bool doclea
 }
 
 void Catalog::copyTo(IlwisObject* obj){
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     IlwisObject::copyTo(obj);
     Catalog *catalog = static_cast<Catalog *>(obj);
     catalog->_parent = _parent;

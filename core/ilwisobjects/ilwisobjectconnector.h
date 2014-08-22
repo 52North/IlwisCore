@@ -40,7 +40,7 @@ protected:
 
     Resource _resource;
     bool _binaryIsLoaded;
-    std::mutex _mutex;
+    std::recursive_mutex _mutex;
 protected:
     UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
     const UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
