@@ -83,14 +83,14 @@ QVariant AttributeRecord::cell(quint32 colIndex, int index, bool asRaw){
     return QVariant();
 }
 
-std::vector<QVariant> AttributeRecord::record(int index) const
+Record& AttributeRecord::record(int index) const
 {
     if ( index == -1) {
         return _coverageTable->record(_keyRecord);
     } else {
         //TODO
     }
-    return std::vector<QVariant>();
+    throw ErrorObject(TR(QString("Illegal record value %1").arg(index)));
 }
 
 void AttributeRecord::record(std::vector<QVariant> values, int index) const
@@ -100,6 +100,16 @@ void AttributeRecord::record(std::vector<QVariant> values, int index) const
     } else {
         //TODO
     }
+}
+
+quint64 AttributeRecord::featureid() const
+{
+    return _coverageTable->record(_keyRecord).itemid();
+}
+
+void AttributeRecord::featureid(quint64 id)
+{
+    _coverageTable->record(_keyRecord).itemid(id);
 }
 
 AttributeRecord *AttributeRecord::clone() const
