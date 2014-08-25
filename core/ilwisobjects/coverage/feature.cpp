@@ -197,9 +197,11 @@ std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue)
     //quint32 recordIndex2 = trackIndexValue == COVERAGEATRIB ? COVERAGEATRIB : _parentFCoverage->indexDefinition()(featureid(), trackIndexValue);
     ITable& indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
     quint32 trackIndex = 0;
+    //new code from here --------->
     double val = _parentFCoverage->indexDefinition().key(trackIndexValue);
     QString query = QString(QString(FEATUREIDCOLUMN) + " == %1 AND " + QString(TRACKVALUECOLUMN) + " == %2").arg(featureid()).arg(val, 0, 'f', 3);
     quint32 recordIndex = val == COVERAGEATRIB ? COVERAGEATRIB :(indexTable->select(query))[0];
+    // <--------- till here
     if ( recordIndex < indexTable->recordCount())
         trackIndex = indexTable->cell(TRACKINDEXCOLUMN,recordIndex).toUInt();
     return std::pair<quint32, quint32>(recordIndex, trackIndex);
