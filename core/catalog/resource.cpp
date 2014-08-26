@@ -263,7 +263,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
     QFileInfo inf(_normalizedUrl.toLocalFile());
     if ( urlTxt != "file://" && urlTxt != "file:///") {
         if ( !url.hasFragment()) {
-            if ( url.scheme() == "file"){
+            if ( url.scheme() == "file" && inf.isAbsolute()){
                 if ( !isRoot(inf.absolutePath())){
                     name(inf.fileName(), false);
                     addContainer(QUrl::fromLocalFile(inf.absolutePath()));

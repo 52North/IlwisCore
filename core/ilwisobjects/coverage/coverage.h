@@ -103,16 +103,7 @@ public:
      * \param attType the type of table required (atCOVERAGE or atINDEX)
      * \return an AttributeTable
      */
-    AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
-
-    /*!
-     * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter<br>
-     * atCOVERAGE as parameter also results in the attributeable
-     *
-     * \param attType the type of table required (atCOVERAGE or atINDEX)
-     * \return an AttributeTable
-     */
-    AttributeTable &attributeTable(AttributeType attType=atCOVERAGE);
+    virtual AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
 
     /**
      * Checks for a valid attributetable.<br>
@@ -133,7 +124,7 @@ public:
      * \param attType the type of the new table
      */
 
-    void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
+    virtual void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
 
     /*!
      * Query for the NumbericStatistics of this coverage

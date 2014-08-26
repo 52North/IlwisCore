@@ -87,14 +87,14 @@ quint32 GeometryNode::trackSize() const{
     return 1;
 }
 
-Record GeometryNode::record(const QVariant &trackIndexValue) const
+Record &GeometryNode::recordRef(const QVariant &trackIndexValue) const
 {
     if ( _feature->isValid() ){
         if (trackIndexValue == QVariant())
-            return _feature->_record->record(-1);
+            return _feature->_record->recordRef(-1);
         //TODO index variant
     }
-    return Record();
+     throw ErrorObject(TR(QString("feature is not valid")));
 }
 
 QVariant GeometryNode::cell(quint32 colIndex, const QVariant & , bool asRaw)
@@ -280,18 +280,21 @@ Feature::~Feature()
 Feature::Feature(FeatureCoverage* fcoverage, AttributeRecord *rec) {
     _featureid = _idbase++;
     _record.reset(rec);
+    rec->featureid(_featureid);
 }
 
 Feature::Feature(IFeatureCoverage& fcoverage, int rec){
     _featureid = _idbase++;
     _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable(),fcoverage->attributeTable(Coverage::atINDEX)));
     _parentFCoverage = fcoverage.ptr();
+    _record->featureid(_featureid);
 }
 
 Feature::Feature(FeatureCoverage* fcoverage, int rec){
     _featureid = _idbase++;
     _record.reset(new AttributeRecord(rec == iUNDEF ? fcoverage->featureCount() : rec, fcoverage->attributeTable(),fcoverage->attributeTable(Coverage::atINDEX)));
     _parentFCoverage = fcoverage;
+    _record->featureid(_featureid);
 }
 
 Feature::Feature(const Feature &f) {
@@ -305,21 +308,21 @@ Feature &Feature::operator =(const Feature &f)
 std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue) const
 {
     quint32 recordIndex = trackIndexValue == COVERAGEATRIB ? COVERAGEATRIB : _parentFCoverage->indexDefinition()(featureid(), trackIndexValue);
-    ITable& indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
+    ITable indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
     quint32 trackIndex = 0;
     if ( recordIndex < indexTable->recordCount())
         trackIndex = indexTable->cell(TRACKINDEXCOLUMN,recordIndex).toUInt();
     return std::pair<quint32, quint32>(recordIndex, trackIndex);
 }
 
-Record Feature::record(const QVariant &trackIndexValue) const
+Record &Feature::recordRef(const QVariant &trackIndexValue) const
 {
     if ( isValid() ){
         if (trackIndexValue == COVERAGEATRIB)
-            return _record->record(-1);
+            return _record->recordRef(-1);
         //TODO index variant
     }
-    return Record();
+    throw ErrorObject(TR(QString("feature is not valid")));
 }
 
 void Feature::record(const std::vector<QVariant> &values, const QVariant &trackIndexValue)
@@ -461,7 +464,7 @@ const UPGeometry &Feature::geometry(const QVariant &trackIndexValue) const{
 void Feature::add(geos::geom::Geometry *geom, const QVariant &trackIndexValue){
 
     auto createNode = [&](UPFeatureI& node, const QVariant& value){
-        ITable& indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
+        ITable indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
         indexTable->record(NEW_RECORD,{featureid(),_track.size(), value});
         node.reset( new GeometryNode(geom, this, _track.size()));
         _parentFCoverage->setFeatureCount(GeometryHelper::geometryType(geom),1,geom->getNumGeometries() );
@@ -537,8 +540,6 @@ quint32 Feature::trackSize() const
 {
     return _track.size();
 }
-
-
 
 Ilwis::FeatureInterface *createFeature(FeatureCoverage* fcoverage) {
     return new Feature(fcoverage);

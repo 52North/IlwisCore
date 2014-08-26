@@ -165,7 +165,7 @@ bool VertexIterator::operator==(const VertexIterator &iter) const
 
         ++j;
     }
-    return false;
+    return true;
 }
 
 bool VertexIterator::operator!=(const VertexIterator &iter) const
@@ -284,8 +284,13 @@ void VertexIterator::move(int n)
             _index = -1;
         }
     } else {
-        if ( _coordinates.size() <= _partIndex)
+        if ( _coordinates.size() <= _partIndex){
+            _partIndex = _coordinates.size(); // endcondition
+            _index = 0;
+            _linearPosition = _linearSize; // size is always position+1, so linearsize is one beyound the last position if used as position
             return;
+        }
+
         int sz =  _coordinates[_partIndex]._crds->size();
         if (_index >=sz){ // weird compiler bug; (mingw 4.8.2), using result directly always leads to positive test
             ++_partIndex;
@@ -294,7 +299,7 @@ void VertexIterator::move(int n)
             if ( n == ENDVERTEX){
                 _partIndex = _coordinates.size();
                 _index = 0;
-                _linearPosition = _linearSize + 1;
+                _linearPosition = _linearSize; // size is always position+1, so linearsize is one beyound the last position if used as position
             }
         } else{
             if ( _index < 0){

@@ -156,11 +156,13 @@ public:
      */
     void setFeatureCount(IlwisTypes typehs, quint32 geomCnt, quint32 multicnt, int index=0);
     quint32 maxIndex() const;
+    void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
+    AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
 
     //@override
     IlwisTypes ilwisType() const;
 
-    /**
+     /**
      * Copies all fields onto a new FeatureCoverage
      *
      * @return a New FeatureCoverage with the same values as this

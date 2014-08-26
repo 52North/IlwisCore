@@ -22,8 +22,10 @@ public:
 
     void cell(quint32 colIndex, const QVariant &var, int index=-1);
     QVariant cell(quint32 colIndex, int index, bool asRaw);
-    std::vector<QVariant> record(int index = -1) const;
+    Ilwis::Record &recordRef(int index = -1) const;
     void record(std::vector<QVariant> values, int index = -1) const;
+    quint64 featureid() const;
+    void featureid(quint64 id);
 
     AttributeRecord *clone() const;
 

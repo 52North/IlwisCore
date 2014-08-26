@@ -38,11 +38,22 @@ public:
     /**
      * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
      * iterate over all the features in the supplied coverage. <br>
-     * initialisation will fail if the supplied feature coverage is invalid.
+     * initialisation will fail if the supplied feature coverage is invalid. The iterator
+     * will be at the beginning of the set of features contained in the feature coverage
      *
      * @param fcoverage The FeatureCoverage that should be iterated over
      */
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
+
+/**
+ * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
+ * iterate over all the features in the supplied coverage. <br>
+ * initialisation will fail if the supplied feature coverage is invalid. The iterator
+ * will be at the beginning of the set of features contained in the feature coverage
+ *
+ * @param fcoverage fcoverage The FeatureCoverage that should be iterated over
+ * @param types only iterate over the types indicated by this mask. Geometry types outside the mask will not be considered
+ */
     FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types);
 
     /**
