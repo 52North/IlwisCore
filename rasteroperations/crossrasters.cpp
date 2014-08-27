@@ -40,7 +40,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     PixelIterator iterOut(_outputRaster, box);
     quint32 idcount = 0;
     std::map<quint64, Combo> combos;
-    for_each(iterIn1, iterIn1.end(), [&](double v1){
+    std::for_each(iterIn1, iterIn1.end(), [&](double v1){
         double v2 = *iterIn2;
         if ( isNumericalUndef(v1) )
             v1 = MAGIC_NUMBER;
@@ -110,7 +110,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     std::map<quint64, quint64> combos;
-    for_each(iterIn1, iterIn1.end(), [&](double& v1){
+    std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         qint32 v2 = *iterIn2;
         quint64 combo = v1 + v2 * SHIFTER;
         auto iterCombos = combos.find(combo);

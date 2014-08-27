@@ -62,7 +62,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterIn(inputRaster, inpbox);
 
         double v_in = 0;
-        for_each(iterOut, iterOut.end(), [&](double& v){
+        std::for_each(iterOut, iterOut.end(), [&](double& v){
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
                 if ( _attribColumn != "") {

@@ -114,7 +114,7 @@ void RasterCoverage::copyBinary(const IRasterCoverage& raster, quint32 inputInde
         ERROR2(ERR_ILLEGALE_OPERATION2, TR("copy"),TR("identical layers in same raster"));
         return;
     }
-    for_each(iterOut, iterOut.end(), [&](double& v){
+    std::for_each(iterOut, iterOut.end(), [&](double& v){
          v = *iterIn;
         ++iterIn;
     });

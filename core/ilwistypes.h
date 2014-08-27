@@ -58,6 +58,7 @@ const quint64 itCONTINUOUSCOLOR = 2 * itPALETTECOLOR;
 const quint64 itSAMPLESET = 2 * itCONTINUOUSCOLOR;
 const quint64 itCATALOGVIEW = 2 * itSAMPLESET;
 const quint64 itCOLLECTION = 2 * itCATALOGVIEW;
+const quint64 itBUFFER = 2 * itCOLLECTION;
 
 const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE ;
 const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE;

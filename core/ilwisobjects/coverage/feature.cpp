@@ -427,6 +427,10 @@ void Feature::load(QDataStream &stream, const UPGeomFactory &factory)
     for(int i = 0; i < sz; ++i){
         UPFeatureI geomnode(new GeometryNode(0,this, i));
         geomnode->load(stream, factory);
+        ITable indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
+        indexTable->record(NEW_RECORD,{featureid(),_track.size(), i});
+        _parentFCoverage->setFeatureCount(GeometryHelper::geometryType(geomnode->geometry().get()),1,geomnode->geometry()->getNumGeometries() );
+        _parentFCoverage->indexDefinition().addIndex(featureid(),_track.size(), 0);
         _track.push_back(std::move(geomnode));
     }
 }

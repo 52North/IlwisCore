@@ -40,7 +40,7 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
         PixelIterator iterIn(_inputGC1, box);
         PixelIterator iterOut(_outputGC, BoundingBox(box.size()));
 
-        for_each(iterOut, iterOut.end(), [&](double& v){
+        std::for_each(iterOut, iterOut.end(), [&](double& v){
 
             v = _firstorder ? calc(_number1, *iterIn) : calc(*iterIn, _number1);
             ++iterIn;
