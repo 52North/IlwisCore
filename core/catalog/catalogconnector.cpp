@@ -62,7 +62,8 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
     QUrl parentUrl(QUrl::fromLocalFile(parent));
     quint64 id = mastercatalog()->url2id(parentUrl, itCATALOG);
     if ( id == i64UNDEF)
-        return QFileInfo(parent);
+        return localFile;
+        //return QFileInfo(parent);
     Resource parentResource = mastercatalog()->id2Resource(id);
 
     QFileInfo parentPath =  containerConnector()->toLocalFile(parentResource);

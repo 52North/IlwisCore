@@ -50,7 +50,6 @@
 #include "internalrastercoverageconnector.h"
 #include "basetable.h"
 #include "flattable.h"
-#include "databasetable.h"
 #include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
@@ -77,7 +76,9 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
     }  else if ( resource.ilwisType() & itDOMAIN) {
         return createDomain(resource,options);
     } else if ( resource.ilwisType() & itCOORDSYSTEM) {
-        return createCsyFromCode(resource,options);
+        if ( resource.code() != sUNDEF)
+            return createCsyFromCode(resource,options);
+        return createCsy(resource,options);
     } else if ( resource.ilwisType() & itRASTER) {
         return createRasterCoverage(resource,options);
     } else if ( resource.ilwisType() & itTABLE) {
@@ -269,7 +270,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
         }
         if ( dom.isValid()){
             RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
-            raster->datadef().domain(dom);
+            raster->datadefRef().domain(dom);
         }
     }
     return true;
@@ -474,6 +475,27 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
     return newdomain;
 }
 
+IlwisObject *InternalIlwisObjectFactory::createCsy(const Resource& resource, const IOOptions &options) const {
+    CoordinateSystem *csy = 0;
+    if ( resource.ilwisType() == itBOUNDSONLYCSY){ // by default to csy unknow but this may be changed later
+        csy = new BoundsOnlyCoordinateSystem(resource);
+        csy->name("unknown");
+        csy->code("unknown");
+        csy->setDescription(TR("Unknown coordinate system"));
+    }else if ( resource.ilwisType() == itCONVENTIONALCOORDSYSTEM){
+        csy = new ConventionalCoordinateSystem(resource);
+        csy->name(resource.name());
+        csy->code(resource.code());
+    }
+
+    if ( csy){
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        csy->setConnector(connector, IlwisObject::cmINPUT, options);
+    }
+    return csy;
+}
+
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource, const IOOptions &options) const {
     QString code = resource.code();
     bool isUnknown = code == "unknown";
@@ -518,6 +540,9 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
 IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resource, const IOOptions &options) const {
     QString query;
     QString code = resource.code();
+
+    if ( code == sUNDEF) // meant for new projections which will be initialized later (e.g by the streaming connector)
+        return new Projection();
 
     if ( code != "") {
         QSqlQuery db(kernel()->database());
@@ -730,10 +755,7 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, c
        return 0;
    }
     Table *tbl;
-    if ( resource.ilwisType() == itDATABASETABLE)
-        tbl = new DatabaseTable(resource);
-    else
-        tbl = new FlatTable(resource);
+    tbl = new FlatTable(resource);
     tbl->setConnector(connector, IlwisObject::cmINPUT, options);
     return tbl;
 

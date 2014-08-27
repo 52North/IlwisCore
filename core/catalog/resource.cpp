@@ -138,8 +138,8 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
     _rawUrl(rawUrl),
     _urlQuery(QUrlQuery(rawUrl)),
     _size(0),
-    _ilwtype(tp),
-    _extendedType(itUNKNOWN)
+    _ilwtype(tp & itILWISOBJECT),
+    _extendedType(tp & ~( tp & itILWISOBJECT))
 {
     if ( tp == itUNKNOWN)
         return;
@@ -263,7 +263,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
     QFileInfo inf(_normalizedUrl.toLocalFile());
     if ( urlTxt != "file://" && urlTxt != "file:///") {
         if ( !url.hasFragment()) {
-            if ( url.scheme() == "file"){
+            if ( url.scheme() == "file" && inf.isAbsolute()){
                 if ( !isRoot(inf.absolutePath())){
                     name(inf.fileName(), false);
                     addContainer(QUrl::fromLocalFile(inf.absolutePath()));

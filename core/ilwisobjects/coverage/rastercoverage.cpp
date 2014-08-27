@@ -84,7 +84,7 @@ const DataDefinition &RasterCoverage::datadef(quint32 layer) const
     return _datadefBands[layer];
 }
 
-DataDefinition &RasterCoverage::datadef(quint32 layer)
+DataDefinition &RasterCoverage::datadefRef(quint32 layer)
 {
     if ( layer == WHOLE_RASTER)
         return _datadefCoverage;
@@ -147,7 +147,7 @@ const UPGrid &RasterCoverage::grid() const
 
 void RasterCoverage::copyTo(IlwisObject *obj)
 {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     Coverage::copyTo(obj);
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     raster->_georef = _georef;
@@ -227,7 +227,7 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 
         coordinateSystem(inputIter.raster()->coordinateSystem());
         georeference(inputIter.raster()->georeference());
-        datadef() = inputIter.raster()->datadef();
+        datadefRef() = inputIter.raster()->datadef();
         envelope(inputIter.raster()->envelope());
 
         size(inputIter.box().size());
@@ -261,7 +261,7 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 }
 
 void RasterCoverage::addBand(int index, const DataDefinition& def, const QVariant& trackIndexValue){
-    datadef(index) = def;
+    datadefRef(index) = def;
     indexDefinition().addIndex(0,trackIndexValue,index);
     attributeTable(Coverage::atINDEX)->record(index,{0,index, indexDefinition().domain()->impliedValue(trackIndexValue)});
 }

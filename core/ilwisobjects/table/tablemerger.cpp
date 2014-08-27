@@ -190,7 +190,7 @@ ColumnDefinition TableMerger::mergeColumnDefinitions(const ColumnDefinition &def
         rng = ThematicRange::merge(def1.datadef().range<ThematicRange>(), def1.datadef().range<ThematicRange>(), renumberer);
     }
 
-    QString colname = def1.name() == FEATUREIDCOLUMN ? FEATUREIDCOLUMN : def1.name() + "_" + def2.name();
+    QString colname = def1.name() + "_" + def2.name();
     ColumnDefinition coldef(colname, def1.datadef().domain<>());
     if ( rng)
         coldef.datadef().range(rng);

@@ -211,7 +211,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
         OperationHelperRaster helper;
         helper.initialize(_inputRaster1, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( _outputRaster.isValid()) {
-            _outputRaster->datadef().domain(_crossDomain);
+            _outputRaster->datadefRef().domain(_crossDomain);
             _outputRaster->name(outputName);
         }
 

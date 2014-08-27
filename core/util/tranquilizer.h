@@ -16,7 +16,7 @@ public:
 
     void move() {
         if ( _current % _step){
-            Locker lock(_mutex);
+            Locker<std::mutex> lock(_mutex);
             emit(doMove(_id, _current));
         }
         _current += _step;

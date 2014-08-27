@@ -48,6 +48,25 @@ public:
      * \param envelope, the coordinate string marked as POLYGON
      */
     Box(const QString& envelope) :  _min_corner(PointType(0,0)), _max_corner(PointType(0,0)){
+        fromString(envelope);
+    }
+
+    Box(const std::vector<PointType>& points){
+        for(auto point : points){
+            operator +=(point);
+        }
+    }
+
+    IlwisTypes valueType() const{
+        return max_corner().valuetype();
+    }
+
+    Range *clone() const{
+        return new Box<PointType>(*this);
+    }
+
+
+    void fromString(const QString& envelope){
         int index1 = envelope.indexOf("(");
         if ( index1 != -1) {
             int index2 = envelope.indexOf(")")    ;
@@ -82,21 +101,6 @@ public:
                 this->max_corner().z = p2[2].trimmed().toDouble();
         }
     }
-
-    Box(const std::vector<PointType>& points){
-        for(auto point : points){
-            operator +=(point);
-        }
-    }
-
-    IlwisTypes valueType() const{
-        return max_corner().valuetype();
-    }
-
-    Range *clone() const{
-        return new Box<PointType>(*this);
-    }
-
 
     PointType min_corner() const {
         return _min_corner;
@@ -192,6 +196,16 @@ public:
 
     void add(const QVariant &box){
         //TODO:
+    }
+
+    void store(QDataStream& stream){
+        stream << toString();
+    }
+
+    void load(QDataStream& stream){
+        QString env;
+        stream >> env;
+        fromString(env);
     }
 
     bool contains(const geos::geom::Geometry *geom) const{

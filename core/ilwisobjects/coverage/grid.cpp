@@ -205,7 +205,7 @@ inline double &Grid::value(quint32 block, int offset )  {
     if ( _allInMemory ) // no loads needed
         return _blocks[block]->at(offset);
 
-    Locker lock(_mutex); // slower case. must prevent other threads to messup admin
+    Locker<> lock(_mutex); // slower case. must prevent other threads to messup admin
     if ( !_blocks[block]->inMemory())
       if(!update(block))
           throw ErrorObject(TR("Grid block is out of bounds"));
@@ -221,7 +221,7 @@ inline void Grid::setValue(quint32 block, int offset, double v ) {
         return ;
     }
 
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     if ( !_blocks[block]->inMemory())
         if(!update(block))
             return ;
@@ -254,7 +254,7 @@ char *Grid::blockAsMemory(quint32 block, bool creation) {
         char * p = du->blockAsMemory();
         return p;
     }
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     if(!update(block, creation))
         return 0;
     GridBlockInternal *du = _blocks[_cache[block]];
@@ -285,7 +285,7 @@ void Grid::setBandProperties(RasterCoverage *raster, int n){
 }
 
 bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
 
     clear();
     _size = sz;
@@ -398,7 +398,7 @@ void Grid::unloadInternal(){
 
 void Grid::unload(bool uselock) {
     if ( uselock) {
-        Locker lock(_mutex);
+        Locker<> lock(_mutex);
         unloadInternal();
     }else
         unloadInternal();

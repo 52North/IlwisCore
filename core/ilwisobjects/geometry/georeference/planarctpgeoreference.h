@@ -20,6 +20,7 @@ public:
     virtual double pixelSize() const;
     virtual bool compute();
     void transformation(Transformation tr);
+    Transformation transformation() const;
     static QString typeName();
 
     static GeoRefImplementation *create();

@@ -48,7 +48,7 @@ public:
 private:
     void prepare() {
         if (!_initialized) {
-            Locker lock(_mutex);
+            Locker<> lock(_mutex);
             if ( _initialized) // may happen due to multithreading
                 return;
             try{
@@ -69,7 +69,7 @@ private:
     }
 
     void needData();
-    std::mutex _mutex;
+    std::recursive_mutex _mutex;
     std::vector<double> _data;
     double _undef;
     Size<> _size;
@@ -122,7 +122,7 @@ private:
     void unloadInternal();
 
 
-    std::mutex _mutex;
+    std::recursive_mutex _mutex;
     std::vector< GridBlockInternal *> _blocks;
     QList<quint32> _cache;
     quint32 _inMemoryIndex;

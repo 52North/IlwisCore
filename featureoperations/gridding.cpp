@@ -162,7 +162,6 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     if (!covdom.prepare("count")){
         return sPREPAREFAILED;
     }
-    _attTable->addColumn(FEATUREIDCOLUMN,covdom);
     _outfeatures.prepare();
     _outfeatures->coordinateSystem(_csy);
     _outfeatures->attributeTable(_attTable);

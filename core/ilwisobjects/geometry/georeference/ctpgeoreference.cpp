@@ -73,4 +73,9 @@ bool CTPGeoReference::compute()
     return true;
 }
 
+QString CTPGeoReference::typeName()
+{
+    return "CTPGeoReference";
+}
+
 

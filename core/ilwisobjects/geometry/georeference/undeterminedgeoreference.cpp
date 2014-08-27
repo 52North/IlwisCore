@@ -13,6 +13,11 @@ GeoRefImplementation *UndeterminedGeoReference::create()
     return new UndeterminedGeoReference();
 }
 
+QString UndeterminedGeoReference::typeName()
+{
+    return "UndeterminedGeoReference";
+}
+
 UndeterminedGeoReference::UndeterminedGeoReference() : GeoRefImplementation("undetermined")
 {
 }

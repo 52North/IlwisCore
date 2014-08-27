@@ -158,7 +158,7 @@ public:
      *
      *\return QDateTime
      */
-    QDateTime modifiedTime() const;
+    Time modifiedTime() const;
 
 
     /*!
@@ -374,7 +374,7 @@ protected:
    bool setValid(bool yesno);
    void copyTo(IlwisObject *obj);
 
-   std::mutex _mutex;
+   std::recursive_mutex _mutex;
    std::mutex _loadforstore;
 private:
 

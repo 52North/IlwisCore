@@ -1,6 +1,8 @@
 #ifndef FLATTABLE_H
 #define FLATTABLE_H
 
+#include "record.h"
+
 namespace Ilwis {
 class KERNELSHARED_EXPORT FlatTable : public BaseTable
 {
@@ -29,7 +31,8 @@ public:
     quint32 newRecord();
     void removeRecord(quint32 rec);
     //@override
-    std::vector<QVariant> record(quint32 n) const ;
+    Record &recordRef(quint32 n) ;
+    const Record &record(quint32 rec) const;
 
     //@override
     void record(quint32, const std::vector<QVariant> &vars, quint32 offset=0);
@@ -88,7 +91,7 @@ protected:
             return false;
     }
     void copyTo(IlwisObject *obj);
-    std::vector< std::vector<QVariant> > _datagrid;
+    std::vector< Record > _datagrid;
 
     bool initLoad();
 };

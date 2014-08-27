@@ -62,7 +62,7 @@ IlwisObject *IlwisObject::create(const Resource& resource, const IOOptions &opti
 }
 
 void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
-    Locker lock(_mutex);
+    Locker<> lock(_mutex);
     if (!url.isValid()){
         ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
         throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
@@ -79,6 +79,7 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
     }
     if ( url != QUrl()) {
         resource.setUrl(url);
+        resource.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
@@ -133,7 +134,7 @@ void IlwisObject::code(const QString& cd) {
         connector()->source().code(cd);
 }
 
-QDateTime IlwisObject::modifiedTime() const
+Time IlwisObject::modifiedTime() const
 {
     return _modifiedTime;
 }
@@ -354,7 +355,7 @@ bool IlwisObject::isInternalObject() const
 bool IlwisObject::store(int storemode)
 {
     if (!connector(cmOUTPUT).isNull()) {
-        Locker lock(_loadforstore);
+        Locker<std::mutex> lock(_loadforstore);
         if (connector() && !connector()->dataIsLoaded()) {
             connector()->loadData(this);
         }

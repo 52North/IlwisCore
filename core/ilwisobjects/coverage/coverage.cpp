@@ -18,11 +18,13 @@ Coverage::Coverage()
 
 Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
+    _attTable.prepare();
+    _attTable->name(name());
     _attTableIndex.prepare();
-    _attTableIndex->addColumn(FEATUREIDCOLUMN,"count");
     _attTableIndex->addColumn(TRACKINDEXCOLUMN,"count");
    IDomain dom("count");
-   indexDomain(dom);
+   indexDomain(dom, new NumericRange(0,0,1));
+
 }
 
 Coverage::~Coverage()
@@ -72,13 +74,6 @@ AttributeTable Coverage::attributeTable(AttributeType attType) const
     return _attTableIndex;
 }
 
-AttributeTable& Coverage::attributeTable(AttributeType attType)
-{
-    if ( attType == atCOVERAGE)
-        return _attTable;
-    return _attTableIndex;
-}
-
 bool Coverage::hasAttributes(Coverage::AttributeType attType) const
 {
     if ( attType == atCOVERAGE)
@@ -112,9 +107,9 @@ IndexDefinition &Coverage::indexDefinition()
     return _indexdefinition;
 }
 
-void Coverage::indexDomain(const IDomain& dom)
+void Coverage::indexDomain(const IDomain& dom, Range *defaultRange)
 {
-    _indexdefinition = {dom};
+    _indexdefinition = {dom,defaultRange};
     if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
         _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
     else{
@@ -127,18 +122,6 @@ std::vector<QVariant> Coverage::indexValues() const
 {
     return attributeTable(Ilwis::Coverage::atINDEX)->column(TRACKVALUECOLUMN);
 }
-
-//void Coverage::indexValues(const std::vector<QVariant>& values){
-//    int rec = 0;
-//    _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
-//    for(auto trackIndexValue : values){
-//        if ( indexDefinition().domain()->contains(trackIndexValue)){
-//            _attTableIndex->setCell(TRACKVALUECOLUMN, rec, trackIndexValue);
-//        }
-
-//    }
-//}
-
 
 QVariant Coverage::value(const QString &colName, quint32 itemid, qint32 index)
 {

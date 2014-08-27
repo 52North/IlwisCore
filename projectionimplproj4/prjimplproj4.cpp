@@ -71,6 +71,15 @@ ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &res
     _pjBase = pj_init_plus(_targetDef.toLatin1());
 }
 
+ProjectionImplementationProj4::ProjectionImplementationProj4(const QString &code)
+{
+    _outputIsLatLon = code.indexOf("latlong") != -1 || code.indexOf("longlat") != -1;
+    _targetDef = code;
+    _pjLatlon =  pj_init_plus("+proj=latlong +ellps=WGS84");
+    _pjBase = pj_init_plus(_targetDef.toLatin1());
+}
+
+
 ProjectionImplementationProj4::~ProjectionImplementationProj4()
 {
     pj_free(_pjLatlon);
@@ -149,7 +158,7 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 {
     if ( _pjBase == 0 || _pjLatlon == 0) {
         int *err = pj_get_errno_ref();
-        if (err != 0){
+        if (*err != 0){
             QString error(pj_strerrno(*err));
             error = "projection error:" + error;
             kernel()->issues()->log(error);

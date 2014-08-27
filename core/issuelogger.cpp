@@ -129,9 +129,12 @@ quint64 IssueLogger::log(const QString &message, int it)
     if ( _lastmessage == message && _repeatCount == 10) {
         return _issueId;
     } else {
+        // Mechanism to prevent(some) 'stuck in a loop' kind of errors.
+        // this should basically be solved at the place the loop is happening but oversights happen.
+        // This is a last fallback to break the loop without the need to stop the process
         if ( _repeatCount > 10 && _lastmessage != message ){
             _issues.enqueue(IssueObject(QString("Message repeated %1 times").arg(_repeatCount), it, _issueId));
-            throw ErrorObject("Error message cascade");
+            throw ErrorObject(QString("Error message cascade : %1").arg(message));
         }
         _repeatCount = 0;
     }

@@ -72,8 +72,9 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain)
     if(!ok)
         return false;
     if ( isDataLoaded()){
-        for(std::vector<QVariant>& row : _datagrid) {
-            row.push_back(QVariant());
+        for(Record& row : _datagrid) {
+            row.addColumn();
+            row.changed(true);
         }
         initValuesColumn(name);
     }
@@ -87,8 +88,9 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
     if(!ok)
         return false;
     if (  isDataLoaded()) {
-        for(std::vector<QVariant>& row : _datagrid) {
-            row.push_back(QVariant());
+        for(Record& row : _datagrid) {
+            row.addColumn();
+            row.changed(true);
         }
         initValuesColumn(def.name());
     }
@@ -106,7 +108,7 @@ std::vector<QVariant> FlatTable::column(quint32 index, quint32 start, quint32 st
     start = std::max((quint32)0, start);
     std::vector<QVariant> data(stop - start);
     for(quint32 i=start; i < stop; ++i) {
-        data[i - start] = _datagrid[i][index];
+        data[i - start] = _datagrid[i].cell(index);
     }
     return data;
 }
@@ -144,32 +146,38 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
     _columnDefinitionsByIndex[index].changed(true);
     for(const QVariant& var : vars) {
         if ( rec < _datagrid.size()){
-            _datagrid[rec++][index] = var;
+            _datagrid[rec].changed(true);
+            _datagrid[rec++].cell(index, var);
         }
         else {
             _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
-            _datagrid[rec++][index] = checkInput(var,index);
+            _datagrid[rec].changed(true);
+            _datagrid[rec++].cell(index,checkInput(var,index));
             recordCount(_datagrid.size());
         }
     }
 
 }
 
-
-std::vector<QVariant> FlatTable::record(quint32 rec) const
-{
+const Record& FlatTable::record(quint32 rec) const{
     if (!const_cast<FlatTable *>(this)->initLoad())
-        return std::vector<QVariant>();
-    std::vector<QVariant> data;
+        throw ErrorObject(QString(TR("failed load of table %1")).arg(name()));
 
     if ( rec < recordCount() && _datagrid.size() != 0) {
-        data.resize(columnCount());
-        int col = 0;
-        for(const QVariant& var : _datagrid[rec])
-            data[col++] = var;
-    }else
-        kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg(name()),IssueObject::itWarning);
-    return data;
+         return _datagrid[rec];
+    }
+    throw ErrorObject(QString("Requested record number is not in the table").arg(rec));
+}
+
+Record& FlatTable::recordRef(quint32 rec)
+{
+    if (!const_cast<FlatTable *>(this)->initLoad())
+        throw ErrorObject(QString(TR("failed load of table %1")).arg(name()));
+
+    if ( rec < recordCount() && _datagrid.size() != 0) {
+         return _datagrid[rec];
+    }
+    throw ErrorObject(QString("Requested record number is not in the table").arg(rec));
 }
 
 void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
@@ -183,6 +191,7 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
     changed(true);
     if ( rec >=recordCount() ) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
+        _datagrid.back().changed(true);
         recordCount(_datagrid.size());
         rec = recordCount() - 1;
     }
@@ -190,7 +199,8 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
     int cols = std::min((quint32)vars.size() - offset, columnCount());
     for(const QVariant& var : vars) {
         if ( col < cols){
-            _datagrid[rec][col] = checkInput(var, col);
+            _datagrid[rec].changed(true);
+            _datagrid[rec].cell(col, checkInput(var, col));
             ++col;
         }
     }
@@ -212,7 +222,7 @@ QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
     if ( !isColumnIndexValid(index))
         return QVariant();
     if ( rec < recordCount()) {
-        QVariant var = _datagrid[rec][index];
+        QVariant var = _datagrid[rec].cell(index);
         if ( !asRaw) {
             ColumnDefinition coldef = columndefinition(index);
             return coldef.datadef().domain<>()->impliedValue(var);
@@ -239,7 +249,8 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
     if ( rec >= recordCount()) {
         newRecord();
     }
-    _datagrid[rec][index] = checkInput(var, index);
+    _datagrid[rec].cell(index, checkInput(var, index));
+    _datagrid[rec].changed(true);
 
 }
 
@@ -267,6 +278,10 @@ IlwisObject *FlatTable::clone()
     if (initLoad()){
         FlatTable *tbl = new FlatTable();
         copyTo(tbl);
+        tbl->_datagrid = _datagrid;
+        for(auto& record : tbl->_datagrid){
+            record.changed(false);
+        }
         return tbl;
     }
     return 0;

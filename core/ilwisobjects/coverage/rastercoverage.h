@@ -68,11 +68,9 @@ public:
      */
     virtual RasterCoverage *clone() ;
 
-    //@override
     const DataDefinition& datadef(quint32 layer=WHOLE_RASTER) const;
 
-    //@override
-    DataDefinition& datadef(quint32 layer=WHOLE_RASTER);
+    DataDefinition& datadefRef(quint32 layer=WHOLE_RASTER);
 
     /*!
      * Returns a reference to the IGeoReference of this RasterCoverage.<br>
@@ -195,7 +193,6 @@ private:
     std::vector<DataDefinition> _datadefBands;
     IGeoReference _georef;
     Size<> _size;
-    std::mutex _mutex;
 };
 
 typedef IlwisData<RasterCoverage> IRasterCoverage;

@@ -39,7 +39,7 @@ public:
                 PixelIterator iter(outputRaster);
                 stats.calculate(iter, iter.end());
                 NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
-                outputRaster->datadef().range(rng);
+                outputRaster->datadefRef().range(rng);
             }
         }
         return res;
