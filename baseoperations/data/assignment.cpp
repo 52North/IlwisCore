@@ -51,7 +51,7 @@ bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
         //TODO: in principle the stl::copy should work but as yet there is no overload yet(20130621) for
         // + and - operator which is required for this
         //stl::copy(iterIn, iterIn.end(), iterOut);
-        for_each(iterOut, iterOut.end(), [&](double& v){
+        std::for_each(iterOut, iterOut.end(), [&](double& v){
             v_in = *iterIn;
             if ( v_in != rUNDEF) {
                 v = v_in;

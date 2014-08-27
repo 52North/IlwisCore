@@ -55,7 +55,7 @@ bool SetValueRange::execute(ExecutionContext *ctx, SymbolTable &symTable)
         std::function<bool(const BoundingBox)> SetValrange = [&](const BoundingBox box ) -> bool {
             PixelIterator iter(_raster, box);
 
-            for_each(iter, iter.end(), [&](double& val){
+            std::for_each(iter, iter.end(), [&](double& val){
                 val = rng->ensure(val).value<double>();
                 if (!defaultMinmaxUsed && lstep != 0){
                     val = rngDomain->min() + lstep * ((qint64)(val - rngDomain->min()) / lstep);
