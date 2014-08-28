@@ -109,6 +109,9 @@ quint64 AttributeRecord::featureid() const
 
 void AttributeRecord::featureid(quint64 id)
 {
+    if ( _keyRecord >= _coverageTable->recordCount())
+        _coverageTable->newRecord();
+
     _coverageTable->recordRef(_keyRecord).itemid(id);
 }
 
