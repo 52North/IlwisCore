@@ -61,7 +61,7 @@ void IndexDefinition::addIndex(quint64 fid, const QVariant& tvalue, quint32 rec)
     if ( value != rUNDEF){
         TrackIndex trackIndex(value, fid);
         _index[trackIndex] = rec;
-        _range->add(tvalue);;
+        _range->add(tvalue);
     }
 }
 
