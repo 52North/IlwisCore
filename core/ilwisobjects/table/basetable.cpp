@@ -48,10 +48,10 @@ bool BaseTable::createTable()
         kernel()->issues()->log(TR("Not created, Table %1 already exists").arg(name()), IssueObject::itWarning);
         return false;
     }
-    if ( _columnDefinitionsByName.size() ==  0) {
-        kernel()->issues()->log(TR("Trying to create table %1 with zero columns").arg(name()));
-        return false;
-    }
+//    if ( _columnDefinitionsByName.size() ==  0) {
+//        kernel()->issues()->log(TR("Trying to create table %1 with zero columns").arg(name()));
+//        return false;
+//    }
     return true;
 }
 

@@ -263,7 +263,7 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 void RasterCoverage::addBand(int index, const DataDefinition& def, const QVariant& trackIndexValue){
     datadefRef(index) = def;
     indexDefinition().addIndex(0,trackIndexValue,index);
-    attributeTable(Coverage::atINDEX)->record(index,{0,index, indexDefinition().domain()->impliedValue(trackIndexValue)});
+    attributeTable(Coverage::atINDEX)->record(index,{index, indexDefinition().domain()->impliedValue(trackIndexValue)});
 }
 
 void RasterCoverage::getData(quint32 blockIndex)

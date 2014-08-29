@@ -61,7 +61,7 @@ void IndexDefinition::addIndex(quint64 fid, const QVariant& tvalue, quint32 rec)
     if ( value != rUNDEF){
         TrackIndex trackIndex(value, fid);
         _index[trackIndex] = rec;
-        _range->add(tvalue);;
+        _range->add(tvalue);
     }
 }
 
@@ -91,7 +91,8 @@ void IndexDefinition::removeIndex(quint64 fid, const QVariant& tvalue)
     double value = key(tvalue);
     if ( value != rUNDEF){
         auto iter = _index.find(TrackIndex(value, fid));
-        _index.erase(iter);
+        if(iter != _index.end())
+            _index.erase(iter);
     }
 }
 quint32 IndexDefinition::indexRecord(quint64 fid, const QVariant &tvalue) const
