@@ -36,12 +36,15 @@ std::vector<quint32> TableSelector::select(const Table* table, const QString &co
         auto iter = status.begin();
         IlwisTypes vt = coldef.datadef().domain()->valueType();
         for(const QVariant& var : data) {
-            if ( hasType(vt, itNUMBER))
-                numericCase(part, var.toDouble(), iter);
+            if ( hasType(vt, itNUMBER)){
+                if ( hasType(vt, itDATETIME))
+                    numericCase(part, (double)var.value<Ilwis::Time>(), iter);
+                else
+                    numericCase(part, var.toDouble(), iter);
+            }
             else if ( hasType(vt, itSTRING )){
                 stringCase(part, coldef, var, iter);
             }
-
             ++iter;
         }
 

@@ -1,6 +1,8 @@
 #ifndef PixelIterator_H
 #define PixelIterator_H
 
+#include <iterator>
+
 namespace geos{
 namespace geom {
 class Geometery;
@@ -64,8 +66,14 @@ typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
  * Note that because the iterator ‘automatically’ moves in layer-index direction all algorithms also work on stacks of raster layers.
  *
  */
-class KERNELSHARED_EXPORT PixelIterator  : public std::iterator<std::random_access_iterator_tag, double> {
+class KERNELSHARED_EXPORT PixelIterator   {
 public:
+
+    typedef std::output_iterator_tag iterator_category;
+    typedef double value_type;
+    typedef ptrdiff_t difference_type;
+    typedef double* pointer;
+    typedef double& reference;
     /*!
      * The possible flows, not all are implemented (yet).<br>
      * atm only xyz works
@@ -479,7 +487,7 @@ protected:
     bool move(int n) {
 
         bool ok = false;
-        if (isAtEnd()) {
+        if (isAtEnd() && n >= 0) {
             _linearposition = _endposition;
             return false;
         }
@@ -537,7 +545,7 @@ private:
         _xChanged = true;
         _yChanged = _zChanged = false;
         if ( _selectionIndex < 0){
-            if ( _x > _endx || _x < _box.min_corner().x) {
+            if ( _x > _endx || _z > _endz || _x < _box.min_corner().x) {
                 return moveYZ(delta);
             }
         } else {
@@ -576,6 +584,10 @@ inline Ilwis::PixelIterator begin(const Ilwis::IRasterCoverage& raster) {
 
 inline Ilwis::PixelIterator end(const Ilwis::IRasterCoverage& raster) {
     PixelIterator iter(raster);
+    return iter.end();
+}
+
+inline Ilwis::PixelIterator end(const Ilwis::PixelIterator& iter) {
     return iter.end();
 }
 

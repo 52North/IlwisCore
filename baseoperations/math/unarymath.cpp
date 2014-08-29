@@ -39,7 +39,7 @@ bool UnaryMath::execute(ExecutionContext *ctx, SymbolTable& symTable)
             PixelIterator iterOut(_outputGC, BoundingBox(_box.size()));
 
             double v_in = 0;
-            for_each(iterOut, iterOut.end(), [&](double& v){
+            std::for_each(iterOut, iterOut.end(), [&](double& v){
                 if ( (v_in = *iterIn) != rUNDEF) {
                     v = _unaryFun(v_in);
                 }

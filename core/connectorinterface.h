@@ -13,6 +13,7 @@ class Grid;
 class OperationExpression;
 class ExecutionContext;
 class IOOptions;
+class ConnectorInterface;
 
 
 class KERNELSHARED_EXPORT DataInterface {

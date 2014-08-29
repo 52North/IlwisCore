@@ -158,7 +158,7 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 {
     if ( _pjBase == 0 || _pjLatlon == 0) {
         int *err = pj_get_errno_ref();
-        if (err != 0){
+        if (*err != 0){
             QString error(pj_strerrno(*err));
             error = "projection error:" + error;
             kernel()->issues()->log(error);

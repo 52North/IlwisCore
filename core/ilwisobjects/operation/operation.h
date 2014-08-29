@@ -80,7 +80,7 @@ public:
             expression += "=";
         expression += operation;
         expression += "(" + splitInParameters(parms...) + ")";
-        _operation.reset(commandhandler()->create(expression));
+        //_operation.reset(commandhandler()->create(expression));
 
     }
 
