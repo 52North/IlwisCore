@@ -96,6 +96,11 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( outputName != sUNDEF)
         outputRaster->name(outputName);
 
+    if ( outputRaster->coordinateSystem()->code() == "unknown" || _inputObj.as<RasterCoverage>()->coordinateSystem()->code() == "unknown"){
+        ERROR2(ERR_OPERATION_NOTSUPPORTED2,"resample","coordinatesystem unknown");
+        return sPREPAREFAILED;
+    }
+
     QString method = _expression.parm(2).value();
     if ( method.toLower() == "nearestneighbour")
         _method = RasterInterpolator::ipNEARESTNEIGHBOUR;
