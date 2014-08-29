@@ -31,7 +31,19 @@ public:
     enum OpenMode { omTEXT, omBINARY};
 
 
+/**
+ * @brief creates a CatalogConnector object.
+ *
+ * @param resource
+ * @param load
+ */
     CatalogConnector(const Resource& resource, bool load);
+    /**
+     * @brief creates a default version of the ilwisobject this connector is dedicated to, in this case a Catalog object.
+     *
+     * The returned object is just an ilwisobject with some properties set but
+     * @return pointer to a an Ilwis::IlwisObject. The ownership of the object goes to the caller
+     */
     Ilwis::IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
