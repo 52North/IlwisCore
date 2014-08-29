@@ -120,7 +120,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
 
         if ( coldef2.name() == COVERAGEKEYCOLUMN) {
             QString colName = COVERAGEKEYCOLUMN;
-            if (tbl1->columndefinition(COVERAGEKEYCOLUMN).isValid() ){
+            if (tbl1->columndefinition(colName).isValid() ){
                 colName =QString("%1_%2").arg(COVERAGEKEYCOLUMN).arg(tbl2->id());
                 _columnRenames[coldef2.name()] = colName;
             }

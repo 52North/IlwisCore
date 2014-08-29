@@ -68,7 +68,7 @@ public:
     bool isValid() const;
 
     //@override
-    bool addColumn(const QString &name, const IDomain& domain);
+    bool addColumn(const QString &name, const IDomain& domain, const bool readonly=false);
 
     //@override
     bool addColumn(const ColumnDefinition& def);
