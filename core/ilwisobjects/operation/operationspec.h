@@ -1,13 +1,6 @@
 #ifndef OPERATIONSPEC_H
 #define OPERATIONSPEC_H
 
-#include "kernel.h"
-#include "ilwisdata.h"
-#include "raster.h"
-#include "columndefinition.h"
-#include "table.h"
-#include "featurecoverage.h"
-
 #include "operation.h"
 
 namespace Ilwis {
@@ -103,6 +96,8 @@ template<> QString Operation::stringRepresentation<double>(const double& var){
 template<> QString Operation::stringRepresentation<std::string>(const std::string& var){
     return QString::fromStdString(var);
 }
+
+
 }
 
 #endif // OPERATIONSPEC_H
