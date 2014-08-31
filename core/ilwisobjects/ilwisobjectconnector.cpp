@@ -20,7 +20,13 @@ IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool
          resource.container().isValid() &&
          mastercatalog()->usesContainers(resource.url()) &&
          resource.container() != resource.url()){ // else we get infinite recursion; should not happen and is probably corrupt resource but better safe then sorry
-         _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(factory->createContainerConnector(Resource(resource.container().url(), itCATALOG))));
+        ConnectorInterface *ci = (factory->createContainerConnector(Resource(resource.container().url(), itCATALOG)));
+        if ( ci){
+            _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(ci));
+        }else {
+            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "CatalogConnector", resource.container().url())    ;
+        }
+
     }
 }
 
