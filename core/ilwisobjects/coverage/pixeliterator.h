@@ -489,6 +489,7 @@ protected:
         bool ok = false;
         if (isAtEnd() && n >= 0) {
             _linearposition = _endposition;
+            _xChanged = _yChanged = _zChanged = true;
             return false;
         }
         if ( _flow == fXYZ) {
