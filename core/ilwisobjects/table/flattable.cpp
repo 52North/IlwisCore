@@ -189,7 +189,7 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
     if ( isReadOnly())
         return ;
     changed(true);
-    if ( rec >=recordCount() ) {
+    if ( rec >= _datagrid.size() ) {
         _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
         _datagrid.back().changed(true);
         recordCount(_datagrid.size());
