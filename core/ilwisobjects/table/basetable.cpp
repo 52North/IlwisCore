@@ -154,7 +154,7 @@ bool BaseTable::prepare()
 
 bool BaseTable::isValid() const
 {
-    return _rows != 0 && _columns != 0;
+    return _columns != 0;
 }
 
 bool  BaseTable::initLoad() {

@@ -218,9 +218,11 @@ quint32 FeatureCoverage::maxIndex() const
 
 void FeatureCoverage::attributeTable(const ITable &tbl, AttributeType attType)
 {
-    if ( featureCount() != tbl->recordCount() && attType == Coverage::atCOVERAGE){
-        ERROR2(ERR_NOT_COMPATIBLE2,TR("feature count"), TR("record count in attribute table"));
-        return;
+    if ( featureCount() != 0){ // we make an exception for count == 0 as this happens during loading process before features are there
+        if ( featureCount() != tbl->recordCount() && attType == Coverage::atCOVERAGE){
+            ERROR2(ERR_NOT_COMPATIBLE2,TR("feature count"), TR("record count in attribute table"));
+            return;
+        }
     }
     Coverage::attributeTable(tbl,attType);
 }
