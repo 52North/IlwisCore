@@ -14,7 +14,7 @@
 #include "crossrasters.h"
 
 using namespace Ilwis;
-using namespace RasterOperations;\
+using namespace RasterOperations;
 
 CrossRasters::CrossRasters()
 {
