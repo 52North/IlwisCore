@@ -154,7 +154,7 @@ public:
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes typehs, quint32 geomCnt, quint32 multicnt, int index=0);
+    void setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 multicnt, int index=0);
     quint32 maxIndex() const;
     void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
     AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
