@@ -228,8 +228,7 @@ double Ellipsoid::excentricity2() const
 
 QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
     _flattening = invf == 0 ? 0 :1.0/invf; // invf = 0 for spheres
-    if(setCodeToo)
-        code(toProj4());
+
     QString newName = "User defined";
 
     QSqlQuery db(kernel()->database());
@@ -247,6 +246,9 @@ QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
     _majorAxis = a;
     _minoraxis = a * (1.0 - invf);
     _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
+
+    if(setCodeToo)
+        code(toProj4());
 
     return newName;
 }
