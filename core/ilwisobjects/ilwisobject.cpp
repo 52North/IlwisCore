@@ -352,14 +352,14 @@ bool IlwisObject::isInternalObject() const
     return false;
 }
 
-bool IlwisObject::store(int storemode)
+bool IlwisObject::store(const IOOptions &options)
 {
     if (!connector(cmOUTPUT).isNull()) {
         Locker<std::mutex> lock(_loadforstore);
         if (connector() && !connector()->dataIsLoaded()) {
             connector()->loadData(this);
         }
-        return connector(cmOUTPUT)->store(this, storemode);
+        return connector(cmOUTPUT)->store(this, options);
     }
 
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");

@@ -80,7 +80,8 @@ public:
             expression += "=";
         expression += operation;
         expression += "(" + splitInParameters(parms...) + ")";
-        //_operation.reset(commandhandler()->create(expression));
+        OperationExpression operationexpr(expression);
+        _operation.reset(commandhandler()->create(operationexpr));
 
     }
 
@@ -118,7 +119,9 @@ public:
 private:
     template<typename T, typename ...Parms> QString splitInParameters(const T& parameter, Parms ...rest){
         QString s = stringRepresentation(parameter);
-        s += splitInParameters(rest...);
+        QString nextParameters = splitInParameters(rest...);
+        if ( nextParameters != "")
+            s += "," + nextParameters;
 
         return s;
     }
@@ -129,6 +132,10 @@ private:
 
     template<typename T> QString stringRepresentation(const T& var){
         return "";
+    }
+
+    template<typename T> QString stringRepresentation(const T* var){
+        return var; // assuming char *; else the compiler will anyway generate an error and a specialization is needed
     }
 
     SPOperationImplementation _operation;
