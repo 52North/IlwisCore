@@ -51,13 +51,7 @@ signals:
 public slots:
 
 
-protected:
-    UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode= IlwisObject::cmINPUT);
-    const UPCatalogConnector& containerConnector(IlwisObject::ConnectorMode mode=IlwisObject::cmINPUT) const;
 
-private:
-    UPCatalogConnector _incontainerconnector;
-    UPCatalogConnector _outcontainerconnector;
 };
 }
 

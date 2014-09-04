@@ -498,7 +498,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsy(const Resource& resource, con
 
 IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resource, const IOOptions &options) const {
     QString code = resource.code();
-    bool isUnknown = code == "unknown";
+    bool isUnknown = code == "unknown" || code == "csy:unknown";
     QString projParms = code;
     if ( code.left(6) == "proj4:"){
         projParms = code.mid(6);
@@ -783,8 +783,7 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resourc
 
 IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString &query, const Resource& resource) const {
     if ( query == "") {
-        kernel()->issues()->log(TR("No valid ellipsoid query could be made"));
-        return 0;
+        return new Ellipsoid(resource);
     }
 
     QSqlQuery db(kernel()->database());

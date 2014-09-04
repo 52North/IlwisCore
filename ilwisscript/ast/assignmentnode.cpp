@@ -99,7 +99,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
         if ( wasAnonymous)
             mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
-        object->store(Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA);
+        object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
 
      }
 }

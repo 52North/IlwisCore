@@ -223,8 +223,8 @@ public:
     bool prepare(const Resource& resource1,const IOOptions& options=IOOptions()){
         if (resource1.isValid()) {
             quint64 id = iUNDEF;
-            if ( mastercatalog()->usesContainers(resource1.url())) // containers dont make sense for services
-                mastercatalog()->addContainer(resource1.container());
+            //if ( mastercatalog()->usesContainers(resource1.url())) // containers dont make sense for services
+            //    mastercatalog()->addContainer(resource1.container());
             id = mastercatalog()->url2id(resource1.url(), resource1.ilwisType());
             Resource resource = mastercatalog()->id2Resource(id);
             if (!resource.isValid())

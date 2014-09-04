@@ -66,7 +66,7 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
         //return QFileInfo(parent);
     Resource parentResource = mastercatalog()->id2Resource(id);
 
-    QFileInfo parentPath =  containerConnector()->toLocalFile(parentResource);
+    QFileInfo parentPath =  parentResource.toLocalFile();
     if ( parentPath.fileName() == sUNDEF)
         parentPath = parent;
     QFileInfo currentPath(parentPath.absoluteFilePath() + "/"+ ownSection);
@@ -101,7 +101,7 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
     return loadExplorers();
 }
 
-bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& options){
+bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& ){
     Catalog *cat = static_cast<Catalog *>(obj);
     for(const auto& explorer : _dataProviders){
         std::vector<Resource> items = explorer->loadItems();
@@ -122,9 +122,6 @@ bool CatalogConnector::loadExplorers()
     if ( _dataProviders.size() > 0) // already done
         return true;
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!factory) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Connector Factory",source().toLocalFile());
-    }
 
     std::vector<CatalogExplorer*> explorers = factory->explorersForResource(source());
     if ( explorers.size() == 0) {
