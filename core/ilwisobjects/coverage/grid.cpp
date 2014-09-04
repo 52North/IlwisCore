@@ -46,7 +46,7 @@ char *GridBlockInternal::blockAsMemory() {
 void GridBlockInternal::fill(const std::vector<double>& values) {
 
     if ( values.size() != _data.size())
-        prepare();
+        prepare(values.size() == 0);
     copy(values.begin(), values.end(), _data.begin());
 
 }
