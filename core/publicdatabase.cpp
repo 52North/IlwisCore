@@ -233,8 +233,15 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
         }
 
         bool ok = true;
-        if ( parts.size() <= 1) // skipping empty lines
-            continue;
+        if ( parts.size() <= 1) {
+            // skipping empty lines
+            if (parts.size() == 0) {
+                continue;
+            }
+            if (parts.size() == 1 && parts[0].isEmpty()) {
+                continue;
+            }
+        }
         if ( filename == "datums.csv")
             ok = fillDatumRecord(parts, sqlPublic);
         else if ( filename == "ellipsoids.csv")
@@ -293,7 +300,7 @@ bool PublicDatabase::fillFiltersRecord(const QStringList& parts, QSqlQuery &sqlP
 
 bool PublicDatabase::fillEpsgWithLatLonAxesOrderRecord(const QStringList &parts, QSqlQuery &sqlPublic) {
     if (parts.size() == 1) {
-        auto parms = QString("'%1'").arg(parts[0]);
+        auto parms = QString("'%1'").arg(parts[0].toLower());
         auto stmt = QString ("INSERT INTO epsgcodeswithlatlonaxesorder VALUES(%1)").arg(parms);
         return doQuery(stmt, sqlPublic);
     }
