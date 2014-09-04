@@ -286,7 +286,7 @@ public:
      * \brief target the location of the source that represents the physical write target of this object
      * \return url that is sufficient to find the target
      */
-    virtual bool store(int mode=smMETADATA | smBINARYDATA);
+    virtual bool store(const IOOptions& options = IOOptions());
 
     /*!
      connectTo allocates a connector of a certain format to the ilwisobject.

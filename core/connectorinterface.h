@@ -33,7 +33,7 @@ public:
      */
     virtual bool loadData(IlwisObject*, const IOOptions& options = IOOptions()) { return false; }
     virtual bool dataIsLoaded() const { return false; }
-    virtual bool store(IlwisObject *, int ) { return false; }
+    virtual bool store(IlwisObject *, const IOOptions& options = IOOptions() ) { return false; }
 
 
 

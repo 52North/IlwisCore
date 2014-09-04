@@ -14,20 +14,7 @@ using namespace Ilwis;
 
 IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const IOOptions &) : _resource(resource), _binaryIsLoaded(false)
 {
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ConnectorFactory",resource);
 
-    if ( factory && resource.url().isValid() &&
-         resource.container().isValid() &&
-         mastercatalog()->usesContainers(resource.url()) &&
-         resource.container() != resource.url()){ // else we get infinite recursion; should not happen and is probably corrupt resource but better safe then sorry
-        ConnectorInterface *ci = (factory->createContainerConnector(Resource(resource.container().url(), itCATALOG)));
-        if ( ci){
-            _incontainerconnector.reset(dynamic_cast<CatalogConnector *>(ci));
-        }else {
-            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "CatalogConnector", resource.container().url())    ;
-        }
-
-    }
 }
 
 IlwisObjectConnector::~IlwisObjectConnector()
@@ -54,26 +41,3 @@ bool IlwisObjectConnector::dataIsLoaded() const
     return _binaryIsLoaded;
 }
 
-UPCatalogConnector &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode)
-{
-    if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
-        return _incontainerconnector;
-    else if ( hasType(mode ,IlwisObject::cmOUTPUT) && _outcontainerconnector)
-        return _outcontainerconnector;
-    if (!_incontainerconnector)
-        throw ErrorObject(TR("Using uninitialized container"));
-
-    return _incontainerconnector;
-}
-
-const UPCatalogConnector &IlwisObjectConnector::containerConnector(IlwisObject::ConnectorMode mode) const
-{
-    if ( hasType(mode,IlwisObject::cmINPUT) && _incontainerconnector)
-        return _incontainerconnector;
-    else if ( hasType(mode,IlwisObject::cmOUTPUT) && _outcontainerconnector)
-        return _outcontainerconnector;
-    if (!_incontainerconnector)
-        throw ErrorObject(TR("Using uninitialized container"));
-
-    return _incontainerconnector;
-}
