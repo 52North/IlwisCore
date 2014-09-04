@@ -124,7 +124,7 @@ void Kernel::init() {
 
     mastercatalog()->addContainerException("http");
     mastercatalog()->addContainerException("https");
-    mastercatalog()->addContainerException("postgresql");
+    //mastercatalog()->addContainerException("postgresql");
 
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
 

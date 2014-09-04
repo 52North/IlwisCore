@@ -318,6 +318,7 @@ win32{
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 resources.files = core/resources/referencesystems.csv \
+    core/resources/codes_with_latlon_order.csv \
     core/resources/projections.csv \
     core/resources/numericdomains.csv \
     core/resources/filters.csv \
