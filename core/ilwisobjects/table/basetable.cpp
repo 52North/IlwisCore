@@ -73,17 +73,17 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
     return true;
 }
 
-bool BaseTable::addColumn(const QString &name, const IDomain& domain)
+bool BaseTable::addColumn(const QString &name, const IDomain& domain, const bool readonly)
 {
-    return addColumn(ColumnDefinition(name, domain,_columns));
+    return addColumn(ColumnDefinition(name, domain,_columns,readonly));
 }
 
-bool BaseTable::addColumn(const QString &name, const QString &domainname)
+bool BaseTable::addColumn(const QString &name, const QString &domainname, const bool readonly)
 {
     IDomain dom;
     if(!dom.prepare(domainname))
         return false;
-    return addColumn(name, dom);
+    return addColumn(name, dom, readonly);
 }
 
 IlwisTypes BaseTable::ilwisType() const
@@ -128,7 +128,7 @@ ColumnDefinition &BaseTable::columndefinitionRef(const QString &nme)
 void BaseTable::columndefinition(const ColumnDefinition &coldef)
 {
     if ( coldef.id() >=  _columnDefinitionsByIndex.size())     {
-        addColumn(coldef.name(), coldef.datadef().domain<>());
+        addColumn(coldef.name(), coldef.datadef().domain<>(), coldef.isReadOnly());
     } else {
         auto iter1 = _columnDefinitionsByName.find(coldef.name());
         if ( iter1 != _columnDefinitionsByName.end()) {

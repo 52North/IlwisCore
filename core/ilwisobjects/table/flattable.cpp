@@ -32,8 +32,10 @@ bool FlatTable::createTable()
 {
     if(!BaseTable::createTable())
         return false;
-    for(unsigned int i=0; i < recordCount(); ++i)
-        _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
+    for(unsigned int i=0; i < recordCount(); ++i) {
+        Record record(std::vector<QVariant>(_columnDefinitionsByIndex.size()), this);
+        _datagrid.push_back(record);
+    }
     return true;
 }
 
@@ -66,9 +68,9 @@ bool FlatTable::isValid() const
     return BaseTable::isValid();
 }
 
-bool FlatTable::addColumn(const QString &name, const IDomain &domain)
+bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool readonly)
 {
-    bool ok = BaseTable::addColumn(name, domain);
+    bool ok = BaseTable::addColumn(name, domain, readonly);
     if(!ok)
         return false;
     if ( isDataLoaded()){
@@ -150,7 +152,8 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
             _datagrid[rec++].cell(index, var);
         }
         else {
-            _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
+            Record record(std::vector<QVariant>(_columnDefinitionsByIndex.size()), this);
+            _datagrid.push_back(record);
             _datagrid[rec].changed(true);
             _datagrid[rec++].cell(index,checkInput(var,index));
             recordCount(_datagrid.size());
@@ -190,7 +193,8 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
         return ;
     changed(true);
     if ( rec >=recordCount() ) {
-        _datagrid.push_back(std::vector<QVariant>(_columnDefinitionsByIndex.size()));
+        Record record(std::vector<QVariant>(_columnDefinitionsByIndex.size()), this);
+        _datagrid.push_back(record);
         _datagrid.back().changed(true);
         recordCount(_datagrid.size());
         rec = recordCount() - 1;

@@ -45,10 +45,10 @@ public:
     virtual bool createTable() ;
 
     //@override
-    virtual bool addColumn(const QString &name, const IDomain &domain);
+    virtual bool addColumn(const QString &name, const IDomain &domain, const bool readonly=false);
 
     //@override
-    virtual bool addColumn(const QString &name, const QString& domainname);
+    virtual bool addColumn(const QString &name, const QString& domainname,const bool readonly=false);
 
     //@override
     virtual bool addColumn(const ColumnDefinition& def);
