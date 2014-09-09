@@ -505,8 +505,10 @@ void ColorPalette::remove(const QString &nm)
     while(iter != iter.end()){
         ColorItem *item = *iter;
         if ( item->name() == nm){
-            toBeRemoved.push_back(count++);
+            toBeRemoved.push_back(count);
         }
+        ++iter;
+        ++count;
     }
     for(int i=0; i < toBeRemoved.size(); ++i){
         _colors.erase(_colors.begin() + toBeRemoved[i] - i);
