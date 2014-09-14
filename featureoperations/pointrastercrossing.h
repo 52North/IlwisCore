@@ -27,7 +27,7 @@ private:
 
     NEW_OPERATION(PointRasterCrossing);
     QString columnName(const QVariant &trackIndexValue);
-    Ilwis::AttributeTable makeAttributeTable(const ITable &inputTable);
+    void addAttributes(const ITable &inputTable);
 };
 }
 }
