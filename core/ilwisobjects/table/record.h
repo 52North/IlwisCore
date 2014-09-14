@@ -20,19 +20,7 @@ public:
     bool isChanged() const;
     void changed(bool yesno);
     bool isValid() const;
-    /**
-     * returns the unique id associated with this record if the record is attached to either a featurecoverage or a classified rster.
-     * In other cases it will return an undefined value.
-     *
-     * @return a unique id or an undefined depending on the case.
-     */
-    quint64 itemid() const;
-    /**
-     * Sets the unique id associated with this record
-     *
-     * @param id
-     */
-    void itemid(quint64 id);
+
     operator std::vector<QVariant>() const;
 
     CRecordIter cbegin() const noexcept;

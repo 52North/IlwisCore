@@ -44,16 +44,6 @@ bool Record::isValid() const
     return _data.size() != 0;
 }
 
-quint64 Record::itemid() const
-{
-    return _itemid;
-}
-
-void Record::itemid(quint64 id)
-{
-    _itemid = id;
-}
-
 CRecordIter Record::cbegin() const noexcept
 {
     return _data.begin();
