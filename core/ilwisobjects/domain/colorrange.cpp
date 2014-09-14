@@ -322,6 +322,13 @@ QColor ContinousColorRange::valueAt(quint32& index, const Range *rng)
 
 }
 
+QString ContinousColorRange::valueAsString(quint32& index, const Range *rng)
+{
+    // TODO : indexes over the range of all possible colors
+    return sUNDEF;
+
+}
+
 quint32 ContinousColorRange::count() const
 {
     return iUNDEF;
@@ -412,13 +419,19 @@ IlwisTypes ColorPalette::valueType() const
     return itPALETTECOLOR;
 }
 
-QColor ColorPalette::valueAt(quint32 &index, const Ilwis::Range *rng)
+QColor ColorPalette::valueAt(quint32 index, const Ilwis::Range *rng)
 {
     const ColorPalette *palette = reinterpret_cast<const ColorPalette*>(rng);
     if ( index < palette->_colors.size())
         return palette->_colors.at(index)->color() ;
     index = iUNDEF;
     return QColor();
+}
+
+QString ColorPalette::valueAsString(quint32 index, const Range *rng)
+{
+    QColor color = valueAt(index, rng);
+    return ColorRangeBase::toString(color, cmRGBA);
 }
 
 SPDomainItem ColorPalette::item(quint32 raw) const
