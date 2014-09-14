@@ -4,6 +4,9 @@
 
 namespace Ilwis {
 
+class Domain;
+typedef IlwisData<Domain> IDomain;
+
 class ColorRangeBase;
 
 /*!
