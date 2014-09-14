@@ -28,7 +28,7 @@ public:
     //@override
     bool createTable();
 
-    quint32 newRecord();
+    Record& newRecord();
     void removeRecord(quint32 rec);
     //@override
     Record &recordRef(quint32 n) ;
