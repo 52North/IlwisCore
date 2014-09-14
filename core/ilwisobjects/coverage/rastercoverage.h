@@ -15,6 +15,9 @@ const quint32 WHOLE_RASTER = 200000;
 class Resource;
 class Grid;
 class PixelIterator;
+class SubFeatureDefinition;
+
+typedef SubFeatureDefinition RasterStackDefinition;
 /*!
  * \brief The RasterCoverage class
  *
@@ -59,6 +62,8 @@ public:
 
     //@override
     IlwisTypes ilwisType() const;
+    void name(const QString &nam);
+    QString name() const;
 
     /*!
      * Copies (clones) this rastercoverage to a new raster with a new unique id.<br>
@@ -69,8 +74,11 @@ public:
     virtual RasterCoverage *clone() ;
 
     const DataDefinition& datadef(quint32 layer=WHOLE_RASTER) const;
-
     DataDefinition& datadefRef(quint32 layer=WHOLE_RASTER);
+    ITable attributeTable() const;
+    bool hasAttributes() const;
+    void attributeTable(const ITable &tbl);
+
 
     /*!
      * Returns a reference to the IGeoReference of this RasterCoverage.<br>
@@ -177,12 +185,22 @@ public:
 
     PixelIterator end() ;
     PixelIterator begin() ;
-    PixelIterator band(const QVariant& trackIndex);
-    bool band(const QVariant& trackIndex, PixelIterator inputData);
-    void addBand(int index, const DataDefinition &def, const QVariant &trackIndexValue);
+
+    PixelIterator band(const QString &variantIndex) ;
+    PixelIterator band(double bandIndex) ;
+    bool band(const QString& bandIndex, PixelIterator inputData);
+    bool band(double bandIndex,  PixelIterator inputIter);
+    void setBandDefinition(QString bandIndex, const DataDefinition& def);
+    void setBandDefinition(double bandIndex, const DataDefinition &def);
+    RasterStackDefinition& stackDefinitionRef() ;
+    const RasterStackDefinition& stackDefinition() const;
+
     UPGrid& gridRef();
     const UPGrid &grid() const;
     void getData(quint32 blockIndex);
+
+
+
 protected:
 
     void copyTo(IlwisObject *obj);
@@ -191,8 +209,13 @@ private:
     std::unique_ptr<Grid> _grid;
     DataDefinition _datadefCoverage;
     std::vector<DataDefinition> _datadefBands;
+    RasterStackDefinition _bandDefinition;
     IGeoReference _georef;
     Size<> _size;
+    ITable _attributeTable;
+
+    bool bandPrivate(quint32 bandIndex,  PixelIterator inputIter) ;
+    PixelIterator bandPrivate(quint32 index);
 };
 
 typedef IlwisData<RasterCoverage> IRasterCoverage;
