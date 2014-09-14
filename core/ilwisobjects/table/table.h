@@ -134,7 +134,7 @@ public:
      * Adds a new record to this table
      * It will be filled with appropriate default values depending on the domain(s)
      */
-    virtual quint32 newRecord() = 0;
+    virtual Record& newRecord() = 0;
     virtual void removeRecord(quint32 rec) = 0;
 
     /*!
