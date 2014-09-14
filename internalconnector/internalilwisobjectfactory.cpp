@@ -7,17 +7,14 @@
 #include <QUrlQuery>
 #include <QColor>
 
-#include "kernel.h"
-#include "domainitem.h"
 #include "raster.h"
+#include "domainitem.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "juliantime.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "connectorfactory.h"
@@ -40,8 +37,6 @@
 #include "projection.h"
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
-#include "columndefinition.h"
-#include "table.h"
 #include "georefimplementation.h"
 #include "georefimplementationfactory.h"
 #include "simpelgeoreference.h"
