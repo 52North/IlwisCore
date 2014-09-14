@@ -45,7 +45,7 @@ public:
         if (!ok || _resolution == 0 || _resolution == 1)
             return ok;
         double intpart;
-        double fractpart = modf(v / _resolution,&intpart);
+        double fractpart = modf((v - _min) / _resolution,&intpart);
         if((int)(fractpart + 0.5) == 1)
             fractpart = 1 - fractpart;
         return fractpart < EPS10;
@@ -97,6 +97,7 @@ public:
 
     static double valueAt(quint32& index, const Range *rng);
 
+    static QString valueAsString(quint32 &index, const Range *rng);
 private:
 
     double _min;

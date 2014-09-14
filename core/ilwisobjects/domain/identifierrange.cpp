@@ -204,6 +204,12 @@ SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, const Range *rng){
     return SPDomainItem();
 }
 
+QString IndexedIdentifierRange::valueAsString(quint32 &index, const Range *rng)
+{
+    SPDomainItem item = IndexedIdentifierRange::valueAt(index, rng);
+    return item->name();
+}
+
 //-------------------------------------------------------------------------
 NamedIdentifierRange::NamedIdentifierRange()
 {
@@ -505,6 +511,12 @@ SPDomainItem NamedIdentifierRange::valueAt(quint32 index, const Range *rng){
     return SPDomainItem();
 }
 
+QString NamedIdentifierRange::valueAsString(quint32 &index, const Range *rng)
+{
+    SPDomainItem item = IndexedIdentifierRange::valueAt(index, rng);
+    return item->name();
+}
+
 //---------------------------------------------------------
 ThematicRange::ThematicRange()
 {
@@ -546,6 +558,13 @@ SPDomainItem ThematicRange::valueAt(quint32 index, const Range *rng){
     }
     return SPDomainItem();
 }
+
+QString ThematicRange::valueAsString(quint32 &index, const Range *rng)
+{
+    SPDomainItem item = IndexedIdentifierRange::valueAt(index, rng);
+    return item->name();
+}
+
 
 IlwisTypes ThematicRange::valueType() const
 {

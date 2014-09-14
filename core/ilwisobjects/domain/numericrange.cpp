@@ -310,7 +310,11 @@ double NumericRange::valueAt(quint32& index, const Range *rng)
     }
     index = iUNDEF;
     return rUNDEF;
+}
 
-
+QString NumericRange::valueAsString(quint32 &index, const Range *rng)
+{
+    double value = valueAt(index, rng);
+    return QString::number(value) ;
 }
 

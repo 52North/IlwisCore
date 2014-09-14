@@ -350,14 +350,20 @@ void IntervalRange::addRange(const ItemRange &range)
     _interpolation = static_cast<const IntervalRange&>(range).interpolation();
 }
 
-SPDomainItem IntervalRange::valueAt(quint32 index, Range *rng){
+SPDomainItem IntervalRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itNUMERICITEM)){
-        IntervalRange *idrange = static_cast<IntervalRange *>(rng);
+        const IntervalRange *idrange = static_cast<const IntervalRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
     }
     return SPDomainItem();
+}
+
+QString IntervalRange::valueAsString(quint32 index, const Range *rng)
+{
+    SPDomainItem item = valueAt(index, rng);
+    return item->name();
 }
 
 
