@@ -1,15 +1,12 @@
 #include <iterator>
 
-#include "kernel.h"
 #include "coverage.h"
 #include "geos/geom/Geometry.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 
 using namespace Ilwis;
@@ -95,7 +92,7 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
        return _iterFeatures != iter._iterFeatures;
 }
 
-UPFeatureI& FeatureIterator::operator *()
+SPFeatureI FeatureIterator::operator *()
 {
      init();
      return *_iterFeatures;
