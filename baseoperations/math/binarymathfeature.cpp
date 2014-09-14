@@ -1,23 +1,20 @@
 #include <functional>
 #include <future>
-#include "kernel.h"
 #include "coverage.h"
 #include "numericrange.h"
 #include "numericdomain.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
-#include "commandhandler.h"
 #include "tablemerger.h"
 #include "binarymathfeature.h"
 
@@ -42,16 +39,16 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     FeatureIterator iterIn1(_inputFeatureSet1);
-    for_each(iterIn1, iterIn1.end(), [&](UPFeatureI& feature){
+    for_each(iterIn1, iterIn1.end(), [&](SPFeatureI feature){
         _outputFeatures->newFeatureFrom(feature, _inputFeatureSet1->coordinateSystem());
     });
 
     FeatureIterator iterIn2(_inputFeatureSet2);
-    for_each(iterIn2, iterIn2.end(), [&](UPFeatureI& feature){
+    for_each(iterIn2, iterIn2.end(), [&](SPFeatureI feature){
         _outputFeatures->newFeatureFrom(feature, _inputFeatureSet2->coordinateSystem());
     });
 
-    AttributeTable attTarget = _outputFeatures->attributeTable();
+    ITable attTarget = _outputFeatures->attributeTable();
     _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget);
 
     return true;
@@ -93,7 +90,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
 
     ITable attTable = _merger.mergeMetadataTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
     attTable->recordCount(_inputFeatureSet1->featureCount() + _inputFeatureSet2->featureCount());
-    _outputFeatures->attributeTable(attTable);
+    _outputFeatures->attributesFromTable(attTable);
 
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)
