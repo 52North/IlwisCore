@@ -1,4 +1,8 @@
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
 #include "raster.h"
 #include "connectorinterface.h"
 #include "symboltable.h"
