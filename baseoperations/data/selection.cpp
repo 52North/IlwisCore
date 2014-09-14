@@ -1,4 +1,3 @@
-#include "kernel.h"
 #include "raster.h"
 #include "georefimplementation.h"
 #include "simpelgeoreference.h"
@@ -6,9 +5,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
 #include "selection.h"
 
 using namespace Ilwis;
@@ -43,7 +40,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     std::unordered_map<quint32, quint32> coverageIndex;
     if ( _attribColumn != "") {
-        AttributeTable tbl = inputRaster->attributeTable();
+        ITable tbl = inputRaster->attributeTable();
         std::vector<QVariant> values = tbl->column(COVERAGEKEYCOLUMN);
         for(const QVariant& val : values) {
             coverageIndex[val.toInt()] = rec++;
