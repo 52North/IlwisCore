@@ -64,8 +64,8 @@ public:
     virtual ColumnDefinition attributedefinition(quint32 columnIndex) const  = 0;
     virtual quint32 attributeColumnCount() const  = 0;
 
-    virtual void store(QDataStream& stream) = 0;
-    virtual void load(QDataStream& stream, const UPGeomFactory& factory) = 0;
+    virtual void store(const FeatureAttributeDefinition &columns, QDataStream &stream, const IOOptions &options) = 0;
+    virtual void load(const FeatureAttributeDefinition& columns, QDataStream& stream, const IOOptions &options) = 0;
 
 };
 
