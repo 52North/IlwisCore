@@ -110,6 +110,15 @@ ColumnDefinition AttributeDefinition::operator[](quint32 index)
     return columndefinition(index);
 }
 
+std::vector<IlwisTypes> AttributeDefinition::ilwisColumnTypes() const
+{
+    std::vector<IlwisTypes> types(_columnDefinitionsByIndex.size());
+    for(int col = 0; col < _columnDefinitionsByIndex.size(); ++col){
+        types[col] = _columnDefinitionsByIndex[col].datadef().domain()->valueType();
+    }
+    return types;
+}
+
 QVariant AttributeDefinition::checkInput(const QVariant& inputVar, quint32 columnIndex)  const{
     QVariant actualval= inputVar;
     const ColumnDefinition& coldef = columndefinitionRef(columnIndex);
@@ -162,6 +171,11 @@ QVariant AttributeDefinition::checkInput(const QVariant& inputVar, quint32 colum
 quint32 AttributeDefinition::definitionCount() const
 {
     return _columnDefinitionsByIndex.size();
+}
+
+bool AttributeDefinition::isValid() const
+{
+    return _columnDefinitionsByIndex.size() != 0;
 }
 
 
@@ -260,10 +274,13 @@ void SubFeatureDefinition::clear()
 void FeatureAttributeDefinition::featureAttributeDefinition(FeatureAttributeDefinition *fad)
 {
     _subFeatureDefinition.reset(fad);
+    _dummy.reset(new FeatureAttributeDefinition());
 }
 
 FeatureAttributeDefinition &FeatureAttributeDefinition::featureAttributeDefinitionRef(int level)
 {
+    if(!_subFeatureDefinition.get())
+        return *(_dummy.get());
     if ( level <= 0)
         return *(_subFeatureDefinition.get());
     return _subFeatureDefinition->featureAttributeDefinitionRef(level - 1);

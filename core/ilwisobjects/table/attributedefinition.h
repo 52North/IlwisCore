@@ -24,9 +24,11 @@ public:
     void columndefinition(const ColumnDefinition &coldef);
     quint32 columnIndex(const QString &nme) const;
     ColumnDefinition operator[](quint32 index);
+    std::vector<IlwisTypes> ilwisColumnTypes() const;
 
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex) const;
     quint32 definitionCount() const;
+    bool isValid() const;
 
 private:
     boost::container::flat_map<QString, quint32> _columnDefinitionsByName;
@@ -59,6 +61,7 @@ public:
     FeatureAttributeDefinition& featureAttributeDefinitionRef(int level=0);
     const FeatureAttributeDefinition& featureAttributeDefinition(int level=0) const;
 private:
+    UPFeatureAttributeDefinition _dummy;
     UPFeatureAttributeDefinition _subFeatureDefinition;
 
 
