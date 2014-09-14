@@ -219,29 +219,143 @@ SPFeatureI& Feature::subFeatureRef(const QString &subFeatureIndex)
     throw ErrorObject(TR("Illegal value for variant selection"));
 }
 
-void Feature::store(QDataStream &stream)
+void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
 {
-//    stream << _featureid;
-//    stream << _track.size();
-//    for(const UPFeatureI& feature : _track){
-//        feature->store(stream);
-//    }
+    std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
+    _attributes.storeData(types,stream,options);
+    storeGeometry(stream);
+    stream << _subFeature.size();
+    for(auto iter= _subFeature.begin(); iter != _subFeature.end(); ++iter){
+        stream << (*iter).first;
+        SPFeatureI subfeature = (*iter).second;
+        subfeature->store(columns.featureAttributeDefinition(),stream, options);
+    }
 }
 
-void Feature::load(QDataStream &stream, const UPGeomFactory &factory)
+void Feature::storeGeometry(QDataStream &stream)
 {
-//    stream >> _featureid;
-//    int sz;
-//    stream >> sz;
-//    for(int i = 0; i < sz; ++i){
-//        UPFeatureI geomnode(new GeometryNode(0,this, i));
-//        geomnode->load(stream, factory);
-//        ITable indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
-//        indexTable->record(NEW_RECORD,{featureid(),_track.size(), i});
-//        _parentFCoverage->setFeatureCount(GeometryHelper::geometryType(geomnode->geometry().get()),1,geomnode->geometry()->getNumGeometries() );
-//        _parentFCoverage->indexDefinition().addIndex(featureid(),_track.size(), 0);
-//        _track.push_back(std::move(geomnode));
-//    }
+    auto StoreSequence = [&] (geos::geom::CoordinateSequence *crds, QDataStream& stream){
+        stream << crds->size();
+        for(int i = 0; i < crds->size(); ++i)
+            stream << crds->getAt(i).x << crds->getAt(i).y << crds->getAt(i).z;
+        delete crds;
+    };
+
+    auto StorePolygon = [&] (const geos::geom::Geometry* geom,QDataStream& stream ){
+        const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon *>(geom);
+        StoreSequence(polygon->getExteriorRing()->getCoordinates(), stream);
+        stream << polygon->getNumInteriorRing();
+        for(int g = 0; g < polygon->getNumInteriorRing(); ++g){
+            StoreSequence(polygon->getInteriorRingN(g)->getCoordinates(), stream);
+        }
+    };
+
+    int gtype = _geometry->getGeometryTypeId();
+    stream << gtype;
+    if ( gtype == geos::geom::GEOS_POINT || gtype == geos::geom::GEOS_MULTIPOINT || gtype == geos::geom::GEOS_LINESTRING){
+        StoreSequence(_geometry->getCoordinates(), stream);
+    } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
+        stream << _geometry->getNumGeometries();
+        for(int g =0; g < _geometry->getNumGeometries(); ++g){
+            const geos::geom::Geometry *geom = _geometry->getGeometryN(g);
+            StoreSequence(geom->getCoordinates(), stream);
+        }
+    } else if (gtype == geos::geom::GEOS_POLYGON ) {
+        const geos::geom::Geometry *gm = _geometry.get();
+        StorePolygon(gm, stream);
+    } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
+        const geos::geom::Geometry *gm = _geometry.get();
+        stream << gm->getNumGeometries();
+        for(int g = 0; g < gm->getNumGeometries(); ++g ){
+            StorePolygon(gm->getGeometryN(g), stream);
+        }
+    }
+}
+
+void Feature::loadGeometry(QDataStream &stream)
+{
+    int gtype;
+    const UPGeomFactory &factory = _parentFCoverage->geomfactory();
+    stream >> gtype;
+
+    auto LoadSequence = [&] (QDataStream& stream)-> geos::geom::CoordinateSequence *{
+        quint32 nrOfCoords;
+        stream >> nrOfCoords;
+        std::vector<geos::geom::Coordinate> *coords = new std::vector<geos::geom::Coordinate>(nrOfCoords) ;
+        for(int i = 0; i < nrOfCoords; ++i){
+            double x,y,z;
+            stream >> x >> y >> z;
+            coords->at(i) = geos::geom::Coordinate(x,y,z);
+        }
+        geos::geom::CoordinateArraySequence *seq = new geos::geom::CoordinateArraySequence(coords);
+        return seq;
+    };
+
+    auto LoadPolygon = [&] (QDataStream& stream )-> geos::geom::Polygon * {
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        geos::geom::LinearRing *outerring = factory->createLinearRing(seq);
+        quint32 numInteriorRings;
+        stream >> numInteriorRings;
+        std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(numInteriorRings);
+        for(int g = 0; g < numInteriorRings; ++g){
+            geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+            (*inners)[g] = factory->createLinearRing(seq);
+        }
+        geos::geom::Polygon *pol = factory->createPolygon(outerring, inners);
+        return pol;
+    };
+
+    if ( gtype == geos::geom::GEOS_POINT){
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        _geometry.reset( factory->createPoint(seq));
+    }else if ( gtype == geos::geom::GEOS_MULTIPOINT){
+         geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+         _geometry.reset(factory->createMultiPoint(*seq));
+         delete seq;
+    }else if ( gtype == geos::geom::GEOS_LINESTRING){
+        geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+        _geometry.reset( factory->createLineString(seq));
+    } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
+        quint32 numSubGeoms;
+        stream >> numSubGeoms;
+        std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
+        for(int g =0; g < numSubGeoms; ++g){
+            geos::geom::CoordinateSequence *seq = LoadSequence(stream);
+            (*subgeoms)[g] = factory->createLineString(seq);
+        }
+        _geometry.reset(factory->createMultiLineString(subgeoms));
+    } else if (gtype == geos::geom::GEOS_POLYGON ) {
+        _geometry.reset(LoadPolygon(stream));
+    } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
+        quint32 numSubGeoms;
+        stream >> numSubGeoms;
+        std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
+        for(int g = 0; g < numSubGeoms; ++g ){
+            (*subgeoms)[g] = LoadPolygon(stream);
+        }
+        _geometry.reset(factory->createMultiPolygon(subgeoms));
+    }
+    _parentFCoverage->setFeatureCount( GeometryHelper::geometryType(_geometry.get()),1);
+
+}
+
+void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
+{
+
+    std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
+    size_t size;
+    _attributes.loadData(types, stream,options);
+    loadGeometry(stream);
+    stream >> size;
+    for(int i = 0; i < size; ++i){
+        quint32 index;
+        stream >> index;
+        CreateFeature create = _parentFCoverage->_featureFactory->getCreator("feature");
+        FeatureInterface *feature = create(_parentFCoverage, _level + 1);
+        feature->load(columns.featureAttributeDefinition(), stream, options);
+        _subFeature[index].reset(feature);
+
+    }
 }
 
 quint64 Feature::featureid() const{

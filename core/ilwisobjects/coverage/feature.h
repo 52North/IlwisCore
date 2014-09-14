@@ -92,9 +92,8 @@ public:
     void setSubFeature(double subFeatureIndex, SPFeatureI& feature);
     quint32 subFeatureCount() const;
 
-    void store(QDataStream& stream);
-    void load(QDataStream& stream, const UPGeomFactory& factory);
-
+    void load(const Ilwis::FeatureAttributeDefinition &columns, QDataStream& stream, const IOOptions &options);
+    void store(const FeatureAttributeDefinition &columns, QDataStream &stream, const IOOptions &options);
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
     Feature& operator=(const Feature& f) ; // no assignment , _featureid is unique
@@ -120,6 +119,8 @@ private:
         if ( index < _subFeature.size())
             _subFeature[index].reset(feature);
     }
+    void storeGeometry(QDataStream &stream);
+    void loadGeometry(QDataStream &stream);
 };
 
 
