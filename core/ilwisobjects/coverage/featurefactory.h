@@ -8,7 +8,9 @@ namespace Ilwis {
 class FeatureInterface;
 class FeatureCoverage;
 
-typedef std::function<FeatureInterface *(FeatureCoverage* fcoverage)>  CreateFeature;
+typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+
+typedef std::function<FeatureInterface *(const IFeatureCoverage& fcoverage, quint8)>  CreateFeature;
 
 class FeatureFactory : public AbstractFactory
 {
