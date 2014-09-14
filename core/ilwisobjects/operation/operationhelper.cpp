@@ -3,12 +3,14 @@
 #include <future>
 #include <memory>
 #include "kernel.h"
-#include "raster.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
+#include "attributedefinition.h"
+#include "raster.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
@@ -53,20 +55,15 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
         }
 
         if ( hasType(what,itTABLE)) {
-            if ( covInput->attributeTable().isValid())    {
-                if ( covOutput.isValid()) {
-                    if ( hasType(tp, itRASTER)) {
-                        IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
-                        IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
-                        if ( !rasCoverageIn.isValid() || !rasCoverageOut.isValid())
-                            return;
-                        if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())
-                            return;
-                    }
-                    covOutput->attributeTable(covInput->attributeTable());
-                }
+            if ( hasType(tp, itRASTER)) {
+                IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
+                IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
+                if ( !rasCoverageIn.isValid() || !rasCoverageOut.isValid())
+                    return;
+                if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())
+                    return;
+                rasCoverageOut->attributeTable(rasCoverageIn->attributeTable());
             }
-
         }
     }
 }
