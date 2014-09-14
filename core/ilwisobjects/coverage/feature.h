@@ -2,106 +2,46 @@
 #define FEATURE_H
 
 #include "kernel_global.h"
+#include "ilwisinterfaces.h"
 #include "record.h"
+
+namespace geos{
+namespace geom{
+class GeometryFactory;
+class Geometry;
+}
+}
 
 namespace Ilwis {
 
 class ColumnDefinition;
-class UPFeatureI;
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
 typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 class VertexIterator;
+class Feature;
+class FeatureCoverage;
+typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
-//typedef QSharedPointer<FeatureInterface> UPFeatureI;
 
-class KERNELSHARED_EXPORT FeatureInterface {
+class KERNELSHARED_EXPORT SPFeatureI : public std::shared_ptr<FeatureInterface> {
 public:
-    virtual ~FeatureInterface() ;
-    virtual quint64 featureid() const = 0;
-    virtual bool isValid() const = 0 ;
-    virtual const UPGeometry& geometry(const QVariant& trackIndex = QVariant()) const = 0;
-    virtual UPGeometry& geometry(const QVariant& trackIndex = QVariant()) = 0;
-    virtual void add(geos::geom::Geometry *geom,  const QVariant& trackIndex = QVariant()) = 0;
-    virtual void remove(const QVariant& trackIndex) = 0;
-    virtual void set(geos::geom::Geometry *geom,  const QVariant &trackIndexValue=QVariant()) = 0;
-    //QVariant operator()(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true);
-    virtual FeatureInterface *clone() const=0;
-    virtual IlwisTypes geometryType(qint32 trackIndex=0) const = 0;
-    virtual quint32 trackSize() const = 0;
-    virtual QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true)  = 0;
-    virtual Record& recordRef(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const = 0;
-    virtual void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
-    virtual void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) = 0;
-    virtual void record(const std::vector<QVariant>& values,const QVariant &trackIndexValue=QVariant(COVERAGEATRIB))  = 0;
-    virtual QVariant cell(quint32 colIndex, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) = 0;
-    virtual QVariant trackIndexValue(quint32 index = iUNDEF) const { return QVariant();}
-    virtual ColumnDefinition columndefinition(const QString& name, bool coverages=true) const = 0;
-    virtual ColumnDefinition columndefinition(quint32 index, bool coverages=true) const = 0;
-    virtual quint32 attributeColumnCount(bool coverages=true) const = 0;
-    virtual void store(QDataStream& stream) = 0;
-    virtual void load(QDataStream& stream, const UPGeomFactory &factory) = 0;
-protected:
-
-
-};
-
-class KERNELSHARED_EXPORT UPFeatureI : public std::unique_ptr<FeatureInterface> {
-public:
-    UPFeatureI(FeatureInterface *f=0);
-    QVariant operator ()(const QString &name, bool asRaw=true, int index = COVERAGEATRIB) const;
-    void operator ()(int trackIndex, const QString &name, const QVariant& var);
+    SPFeatureI(FeatureInterface *f=0);
+    QVariant operator ()(const QString &columnName) const;
+    void operator ()(const QString &columnName, const QVariant& var);
+    QVariant operator ()(quint32 colIndex) const;
+    void operator ()(quint32 colIndex, const QVariant& var);
+    SPFeatureI& operator[](const QString& subFeatureIndex);
+    const SPFeatureI& operator[](const QString& subFeatureIndex) const;
+    SPFeatureI& operator[](quint32 subFeatureIndex);
+    const SPFeatureI& operator[](quint32 subFeatureIndex) const;
+    //SPFeatureI& operator = (const SPFeatureI& otherFeature);
     VertexIterator begin();
     VertexIterator end();
 };
 
-class Feature;
 
-class KERNELSHARED_EXPORT GeometryNode : public FeatureInterface {
 
-    friend class Feature;
-public:
-       ~GeometryNode() {}
-private:
-    GeometryNode();
-    GeometryNode(geos::geom::Geometry *geom, Feature* feature, quint32 trackIndex );
 
-    quint64 featureid() const ;
-    bool isValid() const  ;
-    const UPGeometry& geometry(const QVariant& trackIndex = QVariant()) const;
-    UPGeometry& geometry(const QVariant& trackIndex = QVariant());
-    void add(geos::geom::Geometry *,  const QVariant& trackIndex = QVariant() ) {}
-    void remove(const QVariant& ) {}
-    void set(geos::geom::Geometry *geom, const QVariant &trackIndexValue=QVariant());
-    FeatureInterface *clone() const;
-    IlwisTypes geometryType(qint32 trackIndex=0) const ;
-    quint32 trackSize() const ;
-    Record& recordRef(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
-    QVariant cell(quint32 colIndex, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
-    QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
-    void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
-    void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
-    void record(const std::vector<QVariant>& values,const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
-    ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
-    ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
-    quint32 attributeColumnCount(bool coverages=true) const;
-    quint32 trackIndex() const;
-    void setTrackIndex(quint32 ind);
-    void store(QDataStream& stream);
-    void load(QDataStream& stream, const UPGeomFactory &factory);
-
-    Feature *_feature;
-    UPGeometry _geometry;
-    quint32 _trackIndex;
-
-};
-
-class FeatureCoverage;
-class AttributeRecord;
-
-typedef std::unique_ptr<GeometryNode> UPFeatureNode;
-typedef IlwisData<FeatureCoverage> IFeatureCoverage;
-typedef std::unique_ptr<AttributeRecord> UPAttributeRecord;
-typedef  std::pair<quint32, quint32> TrackIndexes;
 
 /*!
 The feature class represents a spatial object with a single identity and a one or more geometries. This is different from the regular
@@ -109,59 +49,82 @@ definition of a feature that has only one geometry. The reasoning for this is th
 object. Same is true for objects at different scales. To be able to represent these kind of data structures a feature can have multiple
 geometries organized in a vector. The index in the vector has meaning ( similar to z direction in gridcoverages) and uses the verticaldomain.
  */
-class KERNELSHARED_EXPORT Feature : public FeatureInterface {
+class KERNELSHARED_EXPORT Feature  : public FeatureInterface{
     friend class FeatureCoverage;
     friend class FeatureIterator;
-    friend class GeometryNode;
 
 public:
     Feature();
-    Feature(IFeatureCoverage &fcoverage, int rec=iUNDEF) ;
-    Feature(FeatureCoverage *fcoverage, int rec=iUNDEF);
+    Feature(const IFeatureCoverage &fcoverage, qint32 level=0) ;
+    Feature(FeatureCoverage *fcoverage, qint32 level=0) ;
     ~Feature();
+
+    FeatureInterface* clone() const;
+    SPFeatureI createSubFeature(const QString &subFeatureIndex, geos::geom::Geometry *geom) ;
 
     quint64 featureid() const;
     bool isValid() const ;
-    const UPGeometry& geometry(const QVariant& trackIndexValue = QVariant()) const;
-    UPGeometry& geometry(const QVariant& trackIndexValue = QVariant());
-    void add(geos::geom::Geometry *geom,  const QVariant &trackIndexValue = QVariant());
-    void remove(const QVariant& trackIndexValue);
-    void set(geos::geom::Geometry *geom, const QVariant &trackIndexValue = QVariant());
-    FeatureInterface* clone() const;
-    IlwisTypes geometryType(qint32 trackIndex=iUNDEF) const;
-    quint32 trackSize() const;
 
-    QVariant cell(quint32 colIndex, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true) ;
-    QVariant cell(const QString& name, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB), bool asRaw=true);
-    void record(const std::vector<QVariant> &values, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
-    void setCell(const QString& name, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB));
-    void setCell(quint32 colIndex, const QVariant& var, const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) ;
-    Record& recordRef(const QVariant &trackIndexValue=QVariant(COVERAGEATRIB)) const;
+    QVariant cell(quint32 colIndex, bool asRaw=true) const ;
+    QVariant cell(const QString& columnname, bool asRaw=true) const;
+    void setCell(const QString& columnname, const QVariant& var);
+    void setCell(quint32 colIndex, const QVariant& var) ;
+    void record(const std::vector<QVariant> &values, quint32 offset = 0);
+    Record& recordRef();
+    const Record& record() const;
 
-    ColumnDefinition columndefinition(const QString& name, bool coverages=true) const;
-    ColumnDefinition columndefinition(quint32 index, bool coverages=true) const;
-    quint32 attributeColumnCount(bool coverages=true) const;
-    virtual QVariant trackIndexValue(quint32 index = iUNDEF) const;
+    ColumnDefinition attributedefinition(const QString& attributeName) const;
+    ColumnDefinition attributedefinition(quint32 columnIndex) const;
+    quint32 attributeColumnCount() const;
+
+    IlwisTypes geometryType() const;
+    const UPGeometry& geometry() const;
+    UPGeometry& geometryRef();
+    void geometry(geos::geom::Geometry *geom);
+
+    SPFeatureI &subFeatureRef(double subFeatureIndex);
+    SPFeatureI &subFeatureRef(const QString &subFeatureIndex);
+    void removeSubFeature(const QString& subFeatureIndex);
+    void setSubFeature(const QString &subFeatureIndex, FeatureInterface *feature);
+    void setSubFeature(const QString &subFeatureIndex, SPFeatureI& feature);
+    void removeSubFeature(double subFeatureIndex);
+    void setSubFeature(double subFeatureIndex, FeatureInterface *feature);
+    void setSubFeature(double subFeatureIndex, SPFeatureI& feature);
+    quint32 subFeatureCount() const;
+
     void store(QDataStream& stream);
     void load(QDataStream& stream, const UPGeomFactory& factory);
 
-
 private:
     Feature(const Feature& f) ; // nocopy constructor, _featureid is unique
-    Feature(FeatureCoverage *fcoverage, AttributeRecord *rec);
     Feature& operator=(const Feature& f) ; // no assignment , _featureid is unique
-    TrackIndexes getIndexes(const QVariant &trackIndexValue) const;
 
     static quint64 _idbase;
     quint64 _featureid; // unique
-    std::vector<UPFeatureI> _track;
-    UPAttributeRecord _record;
-    FeatureCoverage *_parentFCoverage;
+    boost::container::flat_map<quint32,SPFeatureI> _subFeature;
+    Record _attributes;
+    UPGeometry _geometry;
+    IFeatureCoverage _parentFCoverage;
+    qint32 _level = 0;
+
+    template<typename T> void removeSubFeaturePrivate(const T &subFeatureIndex)
+    {
+        quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
+        if ( index < _subFeature.size())
+            _subFeature.erase(index);
+    }
+
+    template<typename T> void setSubFeaturePrivate(const T &subFeatureIndex, FeatureInterface *feature)
+    {
+        quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
+        if ( index < _subFeature.size())
+            _subFeature[index].reset(feature);
+    }
 };
 
 
 
 bool operator==(const Feature& f1, const Feature& f2) ;
 }
-Ilwis::FeatureInterface *createFeature(Ilwis::FeatureCoverage *fcoverage);
+Ilwis::FeatureInterface *createFeature(const Ilwis::IFeatureCoverage &fcoverage, qint32 level);
 #endif // FEATURE_H
