@@ -341,23 +341,6 @@ void Feature::loadGeometry(QDataStream &stream)
 
 void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
 {
-
-<<<<<<< HEAD
-std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue) const
-{
-    quint32 recordIndex2 = trackIndexValue == COVERAGEATRIB ? COVERAGEATRIB : _parentFCoverage->indexDefinition()(featureid(), trackIndexValue);
-    ITable indexTable = _parentFCoverage->attributeTable(Coverage::atINDEX);
-    quint32 trackIndex = 0;
-    //new code from here --------->
-    double val = _parentFCoverage->indexDefinition().key(trackIndexValue);
-    QString query = QString(QString(TRACKINDEXCOLUMN) + " == %1 AND " + QString(TRACKVALUECOLUMN) + " == %2").arg(featureid()).arg(val, 0, 'f', 3);
-    quint32 recordIndex = val == COVERAGEATRIB ? COVERAGEATRIB :(indexTable->select(query))[0];
-    // <--------- till here
-    if ( recordIndex < indexTable->recordCount())
-        trackIndex = indexTable->cell(TRACKINDEXCOLUMN,recordIndex).toUInt();
-    return std::pair<quint32, quint32>(recordIndex, trackIndex);
-}
-=======
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
     size_t size;
     _attributes.loadData(types, stream,options);
@@ -370,7 +353,6 @@ std::pair<quint32, quint32> Feature::getIndexes(const QVariant &trackIndexValue)
         FeatureInterface *feature = create(_parentFCoverage, _level + 1);
         feature->load(columns.featureAttributeDefinition(), stream, options);
         _subFeature[index].reset(feature);
->>>>>>> d5eb5c08d735f17255df587f0bb0bd92d181a5e0
 
     }
 }
