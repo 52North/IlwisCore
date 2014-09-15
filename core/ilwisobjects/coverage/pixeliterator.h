@@ -209,7 +209,7 @@ public:
         return this->operator *();
     }
 
-    QVariant operator()(const QString& column,Coverage::AttributeType attType=Coverage::atCOVERAGE);
+    QVariant operator()(const QString& column);
 
     /*!
      * \brief Moves the PixelIterator to the given Pixel

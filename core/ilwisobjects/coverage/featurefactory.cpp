@@ -1,7 +1,10 @@
-#include "ilwis.h"
+#include "coverage.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
+#include "numericdomain.h"
+#include "featurecoverage.h"
+#include "feature.h"
 
 using namespace Ilwis;
 

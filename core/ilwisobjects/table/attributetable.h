@@ -2,34 +2,59 @@
 #define ATTRIBUTETABLE_H
 
 namespace Ilwis {
+
+class FeatureCoverage;
+typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+
 class KERNELSHARED_EXPORT AttributeTable : public Table
 {
 public:
-    AttributeTable();
+    AttributeTable(FeatureCoverage *featureCoverage);
+    IlwisTypes ilwisType() const;
 
-    quint32 rows() const;
-    quint32 columns() const;
-    QVariantList record(quint32 n) const ;
-    void record(quint32, const QVariantList& vars, quint32 offset=0);
-    QVariantList column(const QString& nme) const;
-    void column(const QString& nme, const QVariantList& vars, quint32 offset=0);
-    QVariant cell(const QString& col, quint32 rec) const;
-    void cell(const QString& col, quint32 rec, const QVariant& var);
+    void record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset=0);
+    std::vector<QVariant> column(const QString& columnName) const;
+    QVariant cell(const QString& columnName, quint32 rec, bool asRaw=true) const;
+    QVariant cell(const quint32 index, quint32 rec, bool asRaw=true) const ;
 
-     bool createTable();
-     bool addColumn(const QString &name, const IDomain &domain);
-     bool addColumn(const ColumnDefinition& def);
-     ColumnDefinition columndefinition(const QString& nme) const;
-     quint32 columnIndex(const QString& nme) const;
+    quint32 recordCount() const;
+    quint32 columnCount() const;
+    void recordCount(quint32 r);
 
-     QVariant cellByKey(quint64 itemId, const QString &col);
-     void setTable(const ITable& tbl, const QString& keyColumn);
+    bool createTable();
+    bool addColumn(const QString &name, const IDomain &domain);
+    bool addColumn(const ColumnDefinition& def);
+    bool addColumn(const QString &name, const QString& domainname);
+    void columndefinition(const ColumnDefinition& coldef);
+    ColumnDefinition columndefinition(const QString& columnName) const;
+    ColumnDefinition columndefinition(quint32 index) const;
+    ColumnDefinition& columndefinitionRef(quint32 index);
+    ColumnDefinition &columndefinitionRef(const QString &columnName);
+    quint32 columnIndex(const QString& columnName) const;
+    std::vector<QVariant> column(const QString& nme, quint32 start=0, quint32 stop=2e9) const;
+    std::vector<QVariant> column(quint32 index, quint32 start=0, quint32 stop=2e9) const;
+    void column(const QString& nme, const std::vector<QVariant>& vars, quint32 offset=0);
+    void column(const quint32 columnIndex, const std::vector<QVariant>& vars, quint32 offset=0);
+
+    void setCell(const QString& columnName, quint32 rec, const QVariant& var);
+    void setCell(quint32 col, quint32 rec, const QVariant& var);
+    std::vector<quint32> select(const QString& conditions) const;
+
+
+    Record& recordRef(quint32 n);
+    const Record& record(quint32 n) const;
+
+
+    void dataLoaded(bool yesno);
+    virtual bool isDataLoaded() const;
+    virtual void initValuesColumn(const QString& ) {}
 private:
-    void indexKey();
+    Record _dummy;
+    Record& newRecord() { return _dummy ;}
+    void removeRecord(quint32 rec){}
 
-    ITable _tableImpl;
-    QString _keyColumn;
-    std::unordered_map<quint32, quint32> _index;
+
+    IFeatureCoverage _features;
 };
 
 typedef IlwisData<AttributeTable> IAttributeTable;

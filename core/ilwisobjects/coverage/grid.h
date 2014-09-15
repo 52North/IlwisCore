@@ -46,7 +46,7 @@ public:
     bool loadFromCache();
 
 private:
-    void prepare() {
+    void prepare(bool fetchData = true) {
         if (!_initialized) {
             Locker<> lock(_mutex);
             if ( _initialized) // may happen due to multithreading
@@ -57,7 +57,7 @@ private:
             _initialized = true;
             if (!inMemory() && _tempName != sUNDEF)
                 loadFromCache();
-            else
+            else if ( fetchData)
                 needData();
 
             } catch(const std::bad_alloc& err){

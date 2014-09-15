@@ -104,7 +104,8 @@ public:
     qint32 gotoIndex(qint32 index, qint32 step) const;
     IlwisTypes valueType() const;
 
-    static SPDomainItem valueAt(quint32 index, Range *rng);
+    static SPDomainItem valueAt(quint32 index, const Ilwis::Range *rng);
+    static QString valueAsString(quint32 index, const Range *rng);
 
 protected:
     void addRange(const ItemRange &range);

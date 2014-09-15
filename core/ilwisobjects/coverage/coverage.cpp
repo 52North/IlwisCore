@@ -1,14 +1,5 @@
-#include "kernel.h"
 #include "coverage.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "domain.h"
-#include "numericdomain.h"
-#include "domainitem.h"
-#include "itemdomain.h"
-#include "interval.h"
-#include "itemrange.h"
-#include "intervalrange.h"
 
 using namespace Ilwis;
 
@@ -18,13 +9,6 @@ Coverage::Coverage()
 
 Coverage::Coverage(const Resource &resource) : IlwisObject(resource)
 {
-    _attTable.prepare();
-    _attTable->name(name());
-    _attTableIndex.prepare();
-    _attTableIndex->addColumn(TRACKINDEXCOLUMN,"count");
-   IDomain dom("count");
-   indexDomain(dom, new NumericRange(0,0,1));
-
 }
 
 Coverage::~Coverage()
@@ -67,71 +51,10 @@ void Coverage::envelope(const Envelope &bnds)
     _envelope = bnds;
 }
 
-AttributeTable Coverage::attributeTable(AttributeType attType) const
-{
-    if ( attType == atCOVERAGE)
-        return _attTable;
-    return _attTableIndex;
-}
-
-bool Coverage::hasAttributes(Coverage::AttributeType attType) const
-{
-    if ( attType == atCOVERAGE)
-        return _attTable.isValid();
-    return _attTableIndex.isValid();
-}
-
-void Coverage::attributeTable(const ITable& tbl, AttributeType attType)
-{
-    if ( isReadOnly())
-        return;
-    changed(true);
-    if ( attType == atCOVERAGE)
-        _attTable = tbl;
-    else
-        _attTableIndex = tbl;
-}
 
 NumericStatistics &Coverage::statistics(int  )
 {
         return _statistics;
-}
-
-const IndexDefinition &Coverage::indexDefinition() const
-{
-    return _indexdefinition;
-}
-
-IndexDefinition &Coverage::indexDefinition()
-{
-    return _indexdefinition;
-}
-
-void Coverage::indexDomain(const IDomain& dom, Range *defaultRange)
-{
-    _indexdefinition = {dom,defaultRange};
-    if ( _attTableIndex->columnIndex(TRACKVALUECOLUMN) == iUNDEF)
-        _attTableIndex->addColumn(TRACKVALUECOLUMN, dom);
-    else{
-        _attTableIndex->columndefinitionRef(TRACKVALUECOLUMN).datadef().domain(dom);
-        _attTableIndex->initValuesColumn(TRACKVALUECOLUMN);
-    }
-}
-
-std::vector<QVariant> Coverage::indexValues() const
-{
-    return attributeTable(Ilwis::Coverage::atINDEX)->column(TRACKVALUECOLUMN);
-}
-
-QVariant Coverage::value(const QString &colName, quint32 itemid, qint32 index)
-{
-    AttributeTable tbl = attributeTable(index != -1 ? atINDEX : atCOVERAGE);
-    if (!tbl.isValid())
-        return QVariant();
-    ColumnDefinition coldef = tbl->columndefinition(colName);
-    if ( !coldef.isValid())
-        return QVariant();
-    return coldef.datadef().domain<>()->impliedValue(itemid);
 }
 
 Resource Coverage::source(int mode) const
@@ -146,21 +69,7 @@ Resource Coverage::source(int mode) const
 
 void Coverage::name(const QString &nam)
 {
-    if ( isReadOnly())
-        return;
-    changed(true);
-
-    IlwisObject::name(nam);
-    if ( _attTable.isValid()) {
-        if ( _attTable->isAnonymous()) {
-            _attTable->name(nam + "_attributes");
-        }
-    }
-    if ( _attTableIndex.isValid()) {
-        if (_attTableIndex->isAnonymous()) {
-            _attTableIndex->name(nam + "_indexattributes");
-        }
-    }
+    Identity::name(nam)    ;
 }
 
 void Coverage::copyTo(IlwisObject *obj)
@@ -169,10 +78,7 @@ void Coverage::copyTo(IlwisObject *obj)
     Coverage *cov = static_cast<Coverage *>(obj);
     cov->_coordinateSystem = _coordinateSystem;
     cov->_envelope = _envelope;
-    cov->_attTable = _attTable;
-    cov->_attTableIndex = _attTableIndex;
     cov->_statistics = _statistics;
-    cov->_indexdefinition = _indexdefinition;
 }
 
 

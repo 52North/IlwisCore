@@ -2,14 +2,14 @@
 #include "coverage.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
 #include "featurecoverage.h"
+#include "attributetable.h"
+#include "feature.h"
+#include "featureiterator.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
 #ifdef Q_OS_WIN
@@ -22,7 +22,7 @@
 
 using namespace Ilwis;
 
-FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
+FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
 {
     _featureInfo.resize(3);
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
@@ -30,7 +30,7 @@ FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
     delete pm;
 }
 
-FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0), _maxIndex(0)
+FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0)
 {
     _featureInfo.resize(3);
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel( geos::geom::PrecisionModel::FLOATING);
@@ -45,17 +45,10 @@ FeatureCoverage::~FeatureCoverage() {
 bool FeatureCoverage::prepare( ) {
 
     bool ok = Coverage::prepare();
-    if ( ok && !attributeTable().isValid()){
-        if ( isAnonymous())
-            ok =  attributeTable().prepare();
-        else
-            ok =  attributeTable().prepare(name());
-
-    }
     return ok;
 }
 
-Indices FeatureCoverage::select(const QString &spatialQuery) const
+std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
 {
     ExecutionContext ctx;
     QString expr = QString("script %1=indexes from \"%2\" where %3").arg(Identity::newAnonymousName()).arg(source().url().toString()).arg(spatialQuery);
@@ -64,7 +57,7 @@ Indices FeatureCoverage::select(const QString &spatialQuery) const
     if ( ctx._results.size() == 1)
         return tbl.getValue<Indices>(ctx._results[0]);
     }
-    return Indices();
+    return std::vector<quint32>();
 }
 
 IlwisTypes FeatureCoverage::featureTypes() const
@@ -77,14 +70,14 @@ void FeatureCoverage::featureTypes(IlwisTypes types)
     _featureTypes = types;
 }
 
-UPFeatureI& FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSystem& foreigncsy, bool load){
+SPFeatureI FeatureCoverage::newFeature(const QString& wkt, const ICoordinateSystem& foreigncsy, bool load){
     geos::geom::Geometry *geom = GeometryHelper::fromWKT(wkt, foreigncsy.isValid() ? foreigncsy : coordinateSystem());
     if ( !geom)
         throw FeatureCreationError(TR("failed to create feature, is the wkt valid?"));
     return newFeature(geom,load);
 }
 
-UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
+SPFeatureI FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 
     if ( load) {
         Locker<std::mutex> lock(_loadmutex);
@@ -96,7 +89,7 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
     Locker<> lock(_mutex);
 
     IlwisTypes tp = geometryType(geom);
-    UPFeatureI& newfeature = createNewFeature(tp);
+    auto *newfeature =  createNewFeature(tp);
     if (newfeature ){
         if ( geom) {
             CoordinateSystem *csy = GeometryHelper::getCoordinateSystem(geom);
@@ -105,38 +98,49 @@ UPFeatureI &FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
                 geom->apply_rw(&trans);
             }
             GeometryHelper::setCoordinateSystem(geom, coordinateSystem().ptr());
-            newfeature->add(geom);
+            newfeature->geometry(geom);
         }
     }
-    return newfeature;
+    _features.push_back(newfeature);
+    return _features.back();
 }
 
-UPFeatureI &FeatureCoverage::newFeatureFrom(const UPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
+SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker<> lock(_mutex);
 
+    auto transform = [&](const UPGeometry& geom)->geos::geom::Geometry * {
+        geos::geom::Geometry *newgeom = geom->clone();
+        if ( csySource.isValid() && !csySource->isEqual(coordinateSystem().ptr())){
+            CsyTransform trans(csySource, coordinateSystem());
+            newgeom->apply_rw(&trans);
+            newgeom->geometryChangedAction();
+        }
+        GeometryHelper::setCoordinateSystem(newgeom, coordinateSystem().ptr());
+
+        return newgeom;
+    };
     if (!connector()->dataIsLoaded()) {
         connector()->loadData(this);
     }
-    UPFeatureI& newfeature = createNewFeature(existingFeature->geometryType());
-    if (newfeature == nullptr)
-        return newfeature;
+    auto *newfeature = createNewFeature(existingFeature->geometryType());
+    const UPGeometry& geom = existingFeature->geometry();
+    newfeature->geometry(transform(geom)) ;
 
-    for(int i=0; i < existingFeature->trackSize(); ++i){
-          UPGeometry& geom = existingFeature->geometry(i);
-          geos::geom::Geometry *newgeom = geom->clone();
-          if ( csySource.isValid() && !csySource->isEqual(coordinateSystem().ptr())){
-              CsyTransform trans(csySource, coordinateSystem());
-              newgeom->apply_rw(&trans);
-              newgeom->geometryChangedAction();
-          }
-          GeometryHelper::setCoordinateSystem(newgeom, coordinateSystem().ptr());
-          newfeature->add(newgeom, existingFeature->trackIndexValue(i));
-          //setFeatureCount(newfeature->geometryType(),i, newgeom->getNumGeometries() );
+    auto variantIndexes = _attributeDefinition.indexes();
+    for(auto index : variantIndexes){
+        const auto& variant = existingFeature[index];
+        auto *variantFeature = createNewFeature(variant->geometryType());
+        const auto& geom = variant->geometry();
+        variantFeature->geometry(transform(geom)) ;
+        newfeature->setSubFeature(index, variantFeature);
+
+
     }
-    return newfeature;
+    _features.push_back(newfeature);
+    return _features.back();
 }
 
-Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
+FeatureInterface *FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( !coordinateSystem().isValid())
         throw FeatureCreationError(TR("No coordinate system set"));
 
@@ -149,87 +153,86 @@ Ilwis::UPFeatureI &FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
-    //_record.reset(new AttributeRecord(attributeTable(),FEATUREIDCOLUMN ));
-
+    setFeatureCount(tp,1);
     CreateFeature create = _featureFactory->getCreator("feature");
-    FeatureInterface *newFeature = create(this);
+    FeatureInterface *newFeature = create(this,0);
 
-    _features.resize(_features.size() + 1);
-    _features.back().reset(newFeature);
-
-    return _features.back();
+    return newFeature;
 }
 
 
-void FeatureCoverage::adaptFeatureCounts(int tp, quint32 geomCnt, quint32 subGeomCnt, int index) {
-    auto adapt = [&] () {
-        quint32 current =_featureInfo[tp]._perIndex[index];
-        qint32 delta = geomCnt - _featureInfo[tp]._geomCnt;
-        _featureInfo[tp]._perIndex[index] = current + delta;
-    };
-
-    if ( index < _featureInfo[tp]._perIndex.size()){
-        adapt();
-    } else {
-        if ( index >= _featureInfo[tp]._perIndex.size() ) {
-            _featureInfo[tp]._perIndex.resize(index + 1,0);
-            _maxIndex = index + 1;
-        }
-        adapt();
-    }
-    _featureInfo[tp]._geomCnt += geomCnt;
-    if ( geomCnt != 0)
-        _featureInfo[tp]._subGeomCnt += geomCnt > 0 ? subGeomCnt : -subGeomCnt;
-    else {
-        _featureInfo[tp]._subGeomCnt = 0;
-        _featureInfo[tp]._geomCnt = 0;
-    }
+void FeatureCoverage::adaptFeatureCounts(int tp, quint32 geomCnt) {
+    if ( geomCnt != iUNDEF)
+       _featureInfo[tp]._geomCnt += geomCnt;
+    else
+       _featureInfo[tp]._geomCnt = 0;
 }
 
-void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 subGeomCnt, int index)
+void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt)
 {
     Locker<std::mutex> lock(_mutex2);
-    if (geomCnt > 0)
-        _featureTypes |= types;
-    else
-        _featureTypes &= !types;
+
 
     switch(types){
     case itPOINT:
-        adaptFeatureCounts(0, geomCnt, subGeomCnt, index);break;
+        adaptFeatureCounts(0, geomCnt);break;
     case itLINE:
-        adaptFeatureCounts(1, geomCnt, subGeomCnt, index);break;
+        adaptFeatureCounts(1, geomCnt);break;
     case itPOLYGON:
-        adaptFeatureCounts(2, geomCnt, subGeomCnt, index);break;
+        adaptFeatureCounts(2, geomCnt);break;
     case itFEATURE:
         //usually only used for resetting the count to 0
-        adaptFeatureCounts(0, geomCnt, subGeomCnt, index);
-        adaptFeatureCounts(1, geomCnt, subGeomCnt, index);
-        adaptFeatureCounts(2, geomCnt, subGeomCnt, index);
+        adaptFeatureCounts(0, geomCnt);
+        adaptFeatureCounts(1, geomCnt);
+        adaptFeatureCounts(2, geomCnt);
         break;
 
     }
-}
-
-quint32 FeatureCoverage::maxIndex() const
-{
-    return _maxIndex;
-}
-
-void FeatureCoverage::attributeTable(const ITable &tbl, AttributeType attType)
-{
-    if ( featureCount() != 0){ // we make an exception for count == 0 as this happens during loading process before features are there
-        if ( featureCount() != tbl->recordCount() && attType == Coverage::atCOVERAGE){
-            ERROR2(ERR_NOT_COMPATIBLE2,TR("feature count"), TR("record count in attribute table"));
-            return;
-        }
+    if ( geomCnt != iUNDEF) {
+        if (geomCnt > 0 )
+            _featureTypes |= types;
+        else
+            _featureTypes &= !types;
     }
-    Coverage::attributeTable(tbl,attType);
 }
 
-AttributeTable FeatureCoverage::attributeTable(AttributeType attType) const
+
+ITable FeatureCoverage::attributeTable()
 {
-    return Coverage::attributeTable(attType);
+    IAttributeTable tbl;
+    tbl.set( new AttributeTable(this));
+    return tbl;
+}
+
+void FeatureCoverage::attributesFromTable(const ITable& otherTable)
+{
+    _attributeDefinition.clear();
+
+    for(int col =0; col < otherTable->columnCount(); ++col){
+        _attributeDefinition.addColumn(otherTable->columndefinition(col));
+    }
+
+    if (otherTable->recordCount() != _features.size())
+        return;
+
+    for(int rec =0; rec < otherTable->recordCount(); ++rec){
+        auto& feature=  _features[rec];
+        feature->record(otherTable->record(rec));
+    }
+}
+
+FeatureAttributeDefinition &FeatureCoverage::attributeDefinitionsRef(qint32 level)
+{
+    if ( level <= 0)
+        return _attributeDefinition;
+    return attributeDefinitionsRef(level - 1);
+}
+
+const FeatureAttributeDefinition& FeatureCoverage::attributeDefinitions(qint32 level) const
+{
+    if ( level <= 0)
+        return _attributeDefinition;
+    return attributeDefinitions().featureAttributeDefinition(level - 1);
 }
 
 IlwisTypes FeatureCoverage::ilwisType() const
@@ -258,25 +261,15 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     }
 }
 
-quint32 FeatureCoverage::featureCount(IlwisTypes types, bool subAsDistinct, int index) const
+quint32 FeatureCoverage::featureCount(IlwisTypes types) const
 {
-    auto countFeatures = [&] (int tp){
-        if ( index == iUNDEF){
-            if (subAsDistinct)
-                return _featureInfo[tp]._subGeomCnt;
-            return _featureInfo[tp]._geomCnt;
-        }
-        else
-            return  _featureInfo[tp]._perIndex.size() < index ? _featureInfo[tp]._perIndex[index] : 0;
-    };
-
     quint32 count=0;
     if ( hasType(types, itPOINT))
-        count += countFeatures(0);
+        count += _featureInfo[0]._geomCnt;
     if ( hasType(types, itLINE))
-        count += countFeatures(1);
+        count += _featureInfo[1]._geomCnt;
     if ( hasType(types, itPOLYGON))
-        count += countFeatures(2);
+        count += _featureInfo[2]._geomCnt;
 
     return count;
 }

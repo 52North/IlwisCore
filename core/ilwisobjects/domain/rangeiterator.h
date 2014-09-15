@@ -58,6 +58,10 @@ public:
         return  RangeType::valueAt(temp, _range);
     }
 
+    QString toString() const{
+        return RangeType::valueAsString(_current, _range);
+    }
+
     bool operator>(const RangeIterator& iter){
         if ( !isValid())
             return false;
@@ -114,6 +118,10 @@ public:
     bool isValid() const{
         return _current != iUNDEF;
     }
+    OutputType operator*() const{
+        return RangeType::valueAt(_current, _range);
+    }
+
     OutputType operator*() {
         return RangeType::valueAt(_current, _range);
     }

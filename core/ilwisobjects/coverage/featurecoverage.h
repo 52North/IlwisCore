@@ -3,17 +3,22 @@
 
 #include <memory>
 #include "kernel_global.h"
+#include "ilwisinterfaces.h"
 
 namespace geos{
 namespace geom{
 class GeometryFactory;
+class Geometry;
+
 }
 }
 namespace Ilwis {
 
 class FeatureNode;
+class SPFeatureI;
+class Feature;
 
-typedef std::vector<UPFeatureI> Features;
+typedef std::vector<SPFeatureI> Features;
 
 class FeatureIterator;
 class FeatureFactory;
@@ -21,10 +26,8 @@ class AttributeRecord;
 typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 struct FeatureInfo {
-    FeatureInfo() : _geomCnt(0), _subGeomCnt(0) {}
+    FeatureInfo() : _geomCnt(0) {}
     quint32 _geomCnt;
-    quint32 _subGeomCnt;
-    std::vector<quint32> _perIndex;
 };
 
 /**
@@ -72,11 +75,13 @@ struct FeatureInfo {
  *
  * \sa FeatureIterator
  */
-class KERNELSHARED_EXPORT FeatureCoverage : public Coverage
+class KERNELSHARED_EXPORT FeatureCoverage : public Coverage, public FeatureCoverageInterface
 {
 public:
 
     friend class FeatureIterator;
+    friend class AttributeTable;
+    friend class Feature;
 
     /**
      * Constructor for an empty FeatureCoverage
@@ -113,8 +118,8 @@ public:
      * cases were this behavior is not needed, e.g. when actually loading the features(uses this method)
      * @return returns the new feature, can be a nullptr if the geometry was invalid
      */
-    UPFeatureI& newFeature(geos::geom::Geometry *geom, bool load=true);
-    UPFeatureI& newFeature(const QString& wkt, const Ilwis::ICoordinateSystem &csy=ICoordinateSystem(), bool load=true);
+    SPFeatureI newFeature(geos::geom::Geometry *geom, bool load=true);
+    SPFeatureI newFeature(const QString& wkt, const Ilwis::ICoordinateSystem &csy=ICoordinateSystem(), bool load=true);
 
     /**
      * Creates a new Feature from an existing Feature and a coordinatesystem
@@ -130,7 +135,7 @@ public:
      * @param csySource the coordinate system that should be used must of course be compatible with the given Feature
      * @return A new feature or a nullptr if the given Feature was invalid
      */
-    UPFeatureI& newFeatureFrom(const Ilwis::UPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
+    SPFeatureI newFeatureFrom(const Ilwis::SPFeatureI &existingFeature, const Ilwis::ICoordinateSystem &csySource=ICoordinateSystem());
 
     /**
      * Counts the amount of features of a given type in this FeatureCoverage, if you use the default value all features will be counted.
@@ -141,7 +146,7 @@ public:
      * @param index specification of the third dimension, when required
      * @return the amount of features of this type
      */
-    quint32 featureCount(IlwisTypes types=itFEATURE, bool subAsDistinct=false, int index=iUNDEF) const;
+    quint32 featureCount(IlwisTypes types=itFEATURE) const;
 
     /**
      * Changes the amount of features for a certain featuretype
@@ -151,15 +156,14 @@ public:
      * setFeatureCount(type2,4);
      * sets the amount of both type 1 and type 2 to 4
      *
-     * Be careful when setting count with aggregation types like itFEATURE. The count would be set for each subtypes.
-     *
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes types, quint32 geomCnt, quint32 multicnt, int index=0);
-    quint32 maxIndex() const;
-    void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
-    AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
+    void setFeatureCount(IlwisTypes types, quint32 geomCnt);
+    ITable attributeTable() ;
+    void attributesFromTable(const ITable &otherTable);
+    FeatureAttributeDefinition& attributeDefinitionsRef(qint32 level=0) ;
+    const FeatureAttributeDefinition& attributeDefinitions(qint32 level=0) const;
 
     //@override
     IlwisTypes ilwisType() const;
@@ -174,7 +178,7 @@ public:
     static IlwisTypes geometryType(const geos::geom::Geometry *geom) ;
     const UPGeomFactory &geomfactory() const;
     bool prepare();
-    Indices select(const QString& spatialQuery) const;
+    std::vector<quint32> select(const QString& spatialQuery) const;
 protected:
     void copyTo(IlwisObject *obj);
 private:
@@ -182,14 +186,15 @@ private:
     Features _features;
     std::vector<FeatureInfo> _featureInfo;
     FeatureFactory *_featureFactory;
-    std::mutex _mutex2;
-    quint32 _maxIndex;
+    FeatureAttributeDefinition _attributeDefinition;
+
     UPGeomFactory _geomfactory;
     std::mutex _loadmutex;
+    std::mutex _mutex2;
 
 
-    Ilwis::UPFeatureI& createNewFeature(IlwisTypes tp);
-    void adaptFeatureCounts(int tp, quint32 geomCnt, quint32 subGeomCnt, int index);
+    Ilwis::FeatureInterface *createNewFeature(IlwisTypes tp);
+    void adaptFeatureCounts(int tp, quint32 geomCnt);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;

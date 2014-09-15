@@ -2,24 +2,19 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
-#include "kernel.h"
+#include "coverage.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "featureoperationsmodule.h"
-#include "ilwisdata.h"
-#include "coverage.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
+#include "featurecoverage.h"
 #include "feature.h"
-#include "domain.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "identifieritem.h"
 #include "identifierrange.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
-#include "commandhandler.h"
 #include "operation.h"
 #include "gridding.h"
 

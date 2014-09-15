@@ -2,20 +2,16 @@
 #include <functional>
 #include <future>
 #include <memory>
-#include "kernel.h"
 #include "coverage.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
 #include "operationhelper.h"
 #include "operationhelperfeatures.h"
-#include "commandhandler.h"
 #include "featureiterator.h"
 #include "selectionfeatures.h"
 
@@ -74,9 +70,9 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
     SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
 
-        for_each(iterIn, iterIn.end(), [&](UPFeatureI& feature){
+        for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
             QVariant v = feature->cell(_attribColumn);
-            UPFeatureI& newFeature = outputFC->newFeatureFrom(feature);
+            SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
             _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
 
             ++iterIn;
@@ -88,7 +84,7 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
     bool ok = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
     if ( ok && ctx != 0) {
-        outputFC->attributeTable(_attTable);
+        outputFC->attributesFromTable(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
@@ -196,7 +192,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          }
          _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
          IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-         outputFC->attributeTable(_attTable);
+         outputFC->attributesFromTable(_attTable);
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO: selections in features on bounding box

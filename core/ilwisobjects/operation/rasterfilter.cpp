@@ -1,5 +1,4 @@
 #include <QSqlQuery>
-#include "kernel.h"
 #include "raster.h"
 #include "pixeliterator.h"
 #include "blockiterator.h"

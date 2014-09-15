@@ -360,6 +360,8 @@ public:
     QVariant impliedValue(const QVariant& v) const;
     QVariant ensure(const QVariant& v, bool inclusive=true) const;
     IlwisTypes valueType() const;
+    static double valueAt(quint32& index, const Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
     void add(const QVariant &time);
     void store(QDataStream& stream);
     void load(QDataStream& stream);

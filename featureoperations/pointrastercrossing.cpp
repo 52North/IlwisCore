@@ -1,18 +1,15 @@
 #include <functional>
 #include <future>
-#include "kernel.h"
 #include "coverage.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "raster.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "operationExpression.h"
@@ -41,13 +38,12 @@ bool PointRasterCrossing::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    AttributeTable table = _outputFeatures->attributeTable();
     quint32 record = 0;
     for(const auto& infeature : _inputFeatures){
         if ( infeature->geometryType() != itPOINT)
             continue;
 
-        UPFeatureI& newFeature = _outputFeatures->newFeatureFrom(infeature);
+        SPFeatureI newFeature = _outputFeatures->newFeatureFrom(infeature);
         auto datarecord = infeature->recordRef();
         newFeature->record(datarecord);
         const geos::geom::Coordinate *crd = newFeature->geometry()->getCoordinate();
@@ -59,7 +55,7 @@ bool PointRasterCrossing::execute(ExecutionContext *ctx, SymbolTable &symTable)
         for(int z = 0; z < _inputRaster->size().zsize(); ++z){
             pix.z = z;
             double v = _inputRaster->pix2value(pix);
-            table->setCell(_startColumn + z,record,v);
+            newFeature(_startColumn + z,QVariant(v));
 
         }
         ++record;
@@ -120,10 +116,9 @@ OperationImplementation::State PointRasterCrossing::prepare(ExecutionContext *ct
     if ( _expression.parameterCount() == 3){
         _prefix = _expression.parm(2).value();
     }
-    AttributeTable attributes = makeAttributeTable(_inputFeatures->attributeTable());
 
     _outputFeatures = OperationHelperFeatures::initialize(_inputFeatures,itPOINT,itCOORDSYSTEM | itDOMAIN | itENVELOPE);
-    _outputFeatures->attributeTable(attributes);
+    addAttributes(_inputFeatures->attributeTable());
     if (outputName != sUNDEF){
         _outputFeatures->name(outputName);
         _outputFeatures->attributeTable()->name(outputName);
@@ -147,20 +142,17 @@ QString PointRasterCrossing::columnName(const QVariant& trackIndexValue)
     return columnName;
 }
 
-AttributeTable PointRasterCrossing::makeAttributeTable(const ITable& inputTable){
-    AttributeTable tbl;
-    tbl.prepare();
+void PointRasterCrossing::addAttributes(const ITable& inputTable){
     for(int col = 0; col < inputTable->columnCount(); ++col){
-        tbl->addColumn(inputTable->columndefinition(col));
+        _outputFeatures->attributeDefinitionsRef().addColumn(inputTable->columndefinition(col));
     }
-    std::vector<QVariant> index = _inputRaster->indexValues();
+    std::vector<QString> index = _inputRaster->stackDefinition().indexes();
     _startColumn = _inputFeatures->attributeTable()->columnCount();
     for(auto indexValue : index){
 
         QString colName = columnName(indexValue);
-        if ( tbl->columnIndex(colName) == iUNDEF){
-            tbl->addColumn(colName, _inputRaster->datadef().domain());
+        if ( _outputFeatures->attributeDefinitions().columnIndex(colName) == iUNDEF){
+            _outputFeatures->attributeDefinitionsRef().addColumn(ColumnDefinition(colName, _inputRaster->datadef().domain()));
         }
     }
-    return tbl;
 }

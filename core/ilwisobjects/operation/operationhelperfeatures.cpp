@@ -4,12 +4,15 @@
 #include <future>
 #include <memory>
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
 #include "coverage.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"

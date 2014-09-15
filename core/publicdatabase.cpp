@@ -99,14 +99,18 @@ void PublicDatabase::prepare() {
                 propertyname TEXT, \
                 itemid INTEGER \
             )";
-
     doQuery(stmt, sql) ;
 
     stmt = "CREATE TABLE projectedcsy ( \
         code TEXT NOT NULL PRIMARY KEY, \
         name TEXT NOT NULL, \
         proj_params TEXT NOT NULL)";
+    doQuery(stmt, sql);
 
+    stmt = "create table epsgcodeswithlatlonaxesorder \
+            (\
+                code TEXT \
+            )";
     doQuery(stmt, sql);
 
 
@@ -150,6 +154,7 @@ void PublicDatabase::loadPublicTables() {
     insertFile("projections.csv",sqlPublic);
     insertFile("numericdomains.csv",sqlPublic);
     insertFile("filters.csv",sqlPublic);
+    insertFile("codes_with_latlon_order.csv",sqlPublic);
     insertProj4Epsg(sqlPublic);
 }
 
@@ -228,8 +233,15 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
         }
 
         bool ok = true;
-        if ( parts.size() <= 1) // skipping empty lines
-            continue;
+        if ( parts.size() <= 1) {
+            // skipping empty lines
+            if (parts.size() == 0) {
+                continue;
+            }
+            if (parts.size() == 1 && parts[0].isEmpty()) {
+                continue;
+            }
+        }
         if ( filename == "datums.csv")
             ok = fillDatumRecord(parts, sqlPublic);
         else if ( filename == "ellipsoids.csv")
@@ -240,6 +252,8 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
             ok = fillValueDomainRecord(parts, sqlPublic);
         else if ( filename == "filters.csv")
             ok = fillFiltersRecord(parts, sqlPublic);
+        else if ( filename == "codes_with_latlon_order.csv")
+            ok = fillEpsgWithLatLonAxesOrderRecord(parts, sqlPublic);
         if (!ok)
             return ;
     }
@@ -282,8 +296,17 @@ bool PublicDatabase::fillFiltersRecord(const QStringList& parts, QSqlQuery &sqlP
     }
     kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("filters.csv"),IssueObject::itCritical);
     return false;
-
 }
+
+bool PublicDatabase::fillEpsgWithLatLonAxesOrderRecord(const QStringList &parts, QSqlQuery &sqlPublic) {
+    if (parts.size() == 1) {
+        auto parms = QString("'%1'").arg(parts[0].toLower());
+        auto stmt = QString ("INSERT INTO epsgcodeswithlatlonaxesorder VALUES(%1)").arg(parms);
+        return doQuery(stmt, sqlPublic);
+    }
+    kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("codes_with_latlon_order.csv"), IssueObject::itCritical);
+}
+
 bool PublicDatabase::fillProjectionRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
     if ( parts.size() == 5) {
         auto parms = QString("'%1','%2','%3','%4','%5'").arg(parts[0],parts[1],parts[2], parts[3], parts[4]);

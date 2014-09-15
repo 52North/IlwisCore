@@ -39,9 +39,9 @@
 #include "itemrange.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
+#include "attributedefinition.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "symboltable.h"
 #include "operationmetadata.h"
 #include "operationExpression.h"
@@ -124,7 +124,7 @@ void Kernel::init() {
 
     mastercatalog()->addContainerException("http");
     mastercatalog()->addContainerException("https");
-    mastercatalog()->addContainerException("postgresql");
+    //mastercatalog()->addContainerException("postgresql");
 
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
 

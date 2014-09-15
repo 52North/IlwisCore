@@ -1,10 +1,7 @@
-#include "kernel.h"
 #include "raster.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
@@ -33,7 +30,7 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
     IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
     IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
     FeatureIterator iterIn(inputFC);
-    for_each(iterIn, iterIn.end(), [&](UPFeatureI& feature){
+    for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
         outputFC->newFeatureFrom(feature);
     });
 
