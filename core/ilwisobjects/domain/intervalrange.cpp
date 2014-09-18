@@ -156,7 +156,7 @@ void IntervalRange::add(DomainItem *item)
         return;
     SPInterval nitem(static_cast<Interval *>(item));
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
-        if ( nitem->range() > (*iter)->range()) {
+        if ( nitem->range() >= (*iter)->range()) {
             if ( nitem->raw() == iUNDEF)
                 nitem->_raw = _items.size();
             _items.insert(iter.base(),1, nitem );

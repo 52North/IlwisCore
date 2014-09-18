@@ -120,6 +120,17 @@ bool NumericRange::operator>(const NumericRange &vr)
     return max() > vr.max() && min() > vr.min() && min() > vr.max();
 }
 
+bool NumericRange::operator>=(const NumericRange &vr)
+{
+    return max() >= vr.max() && min() >= vr.min() && min() >= vr.max();
+}
+
+bool NumericRange::operator<=(const NumericRange &vr)
+{
+    return max() <= vr.max() && min() <= vr.min() && max() <= vr.min();
+}
+
+
 QString NumericRange::toString() const {
     if(!isValid())
         return "? ? ?";
