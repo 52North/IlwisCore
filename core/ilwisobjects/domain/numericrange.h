@@ -71,6 +71,8 @@ public:
     bool operator==(const NumericRange& vr);
     bool operator<(const NumericRange& vr);
     bool operator>(const NumericRange& vr);
+    bool operator >=(const NumericRange &vr);
+    bool operator <=(const NumericRange &vr);
 
     QString toString() const ;
     QVariant impliedValue(const QVariant& v) const;

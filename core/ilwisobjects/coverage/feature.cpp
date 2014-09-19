@@ -341,7 +341,6 @@ void Feature::loadGeometry(QDataStream &stream)
 
 void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
 {
-
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
     size_t size;
     _attributes.loadData(types, stream,options);
