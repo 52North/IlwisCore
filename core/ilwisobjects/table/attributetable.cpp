@@ -14,6 +14,7 @@ using namespace Ilwis;
 AttributeTable::AttributeTable(FeatureCoverage *featureCoverage)
 {
     _features.set(featureCoverage);
+    setValid(_features.isValid());
 }
 
 IlwisTypes AttributeTable::ilwisType() const

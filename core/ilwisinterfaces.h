@@ -48,7 +48,7 @@ public:
     virtual quint64 featureid() const = 0;
     virtual bool isValid() const = 0 ;
 
-    virtual FeatureInterface* clone() const = 0;
+    virtual FeatureInterface* clone(FeatureCoverage *fcoverage) const = 0;
     virtual SPFeatureI createSubFeature(const QString& variantItem, geos::geom::Geometry *geom) = 0;
 
     virtual IlwisTypes geometryType() const  = 0;

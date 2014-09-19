@@ -59,7 +59,7 @@ public:
     Feature(FeatureCoverage *fcoverage, qint32 level=0) ;
     ~Feature();
 
-    FeatureInterface* clone() const;
+    FeatureInterface* clone(Ilwis::FeatureCoverage *fcoverage) const;
     SPFeatureI createSubFeature(const QString &subFeatureIndex, geos::geom::Geometry *geom) ;
 
     quint64 featureid() const;
