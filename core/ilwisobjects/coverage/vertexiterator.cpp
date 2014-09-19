@@ -179,6 +179,8 @@ bool VertexIterator::operator<(const VertexIterator &iter) const
         return false;
     if ( _partIndex > iter._partIndex)
         return false;
+    if ( _partIndex < iter._partIndex)
+        return true;
     return _index < iter._index;
 }
 
@@ -188,6 +190,8 @@ bool VertexIterator::operator>(const VertexIterator &iter) const
         return false;
     if ( _partIndex < iter._partIndex)
         return false;
+    if ( _partIndex > iter._partIndex)
+        return true;
     return _index > iter._index;
 }
 
