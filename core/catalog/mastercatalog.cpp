@@ -253,6 +253,9 @@ IlwisTypes MasterCatalog::id2type(quint64 iid) const {
 
 Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 {
+    if ( name == sUNDEF)
+        return Resource();
+
     if ( tp == itUNKNOWN) { // no definitive type given we, try to find based on name/type combination. will work mostely but not guaranteed. this is anyway a last resort method
         std::vector<IlwisTypes> types { itRASTER, itFEATURE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
         for(IlwisTypes type: types) {
