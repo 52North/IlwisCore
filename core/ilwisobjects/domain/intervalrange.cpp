@@ -263,11 +263,14 @@ void IntervalRange::load(QDataStream &stream)
     quint32 size;
     stream >> size;
     for(int i =0; i < size; ++i)    {
-        QString label;
-        double rmin, rmax, rres;
-        stream >> label;
-        stream >> rmin >> rmax >> rres;
-        add(new Interval(label, NumericRange(rmin, rmax, rres)));
+        QString label, desc;
+        quint32 raw;
+        double rmin, rmax, rres, undef;
+        stream >> raw >> label >> desc;
+        stream >> rmin >> rmax >> rres >> undef;
+        Interval *interval = new Interval(label, NumericRange(rmin, rmax, rres));
+        interval->description(desc);
+        add(interval);
     }
 }
 
