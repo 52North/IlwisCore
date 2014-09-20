@@ -254,10 +254,11 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     fcov->_featureTypes = _featureTypes;
     fcov->_featureInfo = _featureInfo;
     fcov->_features.resize(_features.size());
+   //fcov->_attributeDefinition = _attributeDefinition;
 
     for(int i=0; i < _features.size(); ++i){
         if ( _features[i])
-            fcov->_features[i].reset(_features[i]->clone());
+            fcov->_features[i].reset(_features[i]->clone(fcov));
     }
 }
 

@@ -353,7 +353,6 @@ void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &strea
         FeatureInterface *feature = create(_parentFCoverage, _level + 1);
         feature->load(columns.featureAttributeDefinition(), stream, options);
         _subFeature[index].reset(feature);
-
     }
 }
 
@@ -396,7 +395,7 @@ void Feature::setSubFeature(const QString &subFeatureIndex, FeatureInterface *fe
 
 void Feature::setSubFeature(const QString &subFeatureIndex, SPFeatureI &feature)
 {
-    setSubFeaturePrivate(subFeatureIndex, feature->clone());
+    setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage.ptr()));
 }
 
 void Feature::setSubFeature(double subFeatureIndex, FeatureInterface *feature)
@@ -406,7 +405,7 @@ void Feature::setSubFeature(double subFeatureIndex, FeatureInterface *feature)
 
 void Feature::setSubFeature(double subFeatureIndex, SPFeatureI &feature)
 {
-   setSubFeaturePrivate(subFeatureIndex, feature->clone());
+   setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage.ptr()));
 }
 
 quint32 Feature::subFeatureCount() const
@@ -419,13 +418,13 @@ bool operator==(const Feature& f1, const Feature& f2) {
     return f1.featureid() == f2.featureid();
 }
 
-FeatureInterface *Feature::clone() const
+FeatureInterface *Feature::clone(FeatureCoverage *fcoverage) const
 {
     Feature *f = new Feature(_parentFCoverage);
     for(const auto& node : _subFeature){
-        f->_subFeature[node.first].reset(node.second->clone());
+        f->_subFeature[node.first].reset(node.second->clone(fcoverage));
     }
-    f->_parentFCoverage = _parentFCoverage;
+    f->_parentFCoverage.set(fcoverage);
     if ( _geometry)
         f->_geometry.reset(_geometry->clone());
     f->_attributes = _attributes;
