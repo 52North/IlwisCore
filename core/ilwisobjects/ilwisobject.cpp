@@ -474,8 +474,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itTABLE;
     if ( name.compare( "FlatTable",Qt::CaseInsensitive) == 0)
         return  itFLATTABLE;
-    if ( name.compare( "DatabaseTable",Qt::CaseInsensitive) == 0)
-        return  itDATABASETABLE;
+    if ( name.compare( "AttributeTable",Qt::CaseInsensitive) == 0)
+        return  itATTRIBUTETABLE;
     if ( name.compare( "Projection",Qt::CaseInsensitive) == 0)
         return  itPROJECTION;
     if ( name.compare( "Ellipsoid",Qt::CaseInsensitive) == 0)

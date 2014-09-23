@@ -1,15 +1,13 @@
 #include "geos/geom/Geometry.h"
 #include "geos/geom/Coordinate.h"
-//#include "geos/geom/Coordinate.inl"
 #include "geos/geom/LineString.h"
 #include "geos/geom/Point.h"
 #include "geos/geom/Polygon.h"
 #include "geos/io/ParseException.h"
-#include "kernel.h"
-#include "errorobject.h"
 #include "coverage.h"
-#include "feature.h"
+#include "errorobject.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "vertexiterator.h"
 #include "geometryhelper.h"
 
@@ -181,6 +179,8 @@ bool VertexIterator::operator<(const VertexIterator &iter) const
         return false;
     if ( _partIndex > iter._partIndex)
         return false;
+    if ( _partIndex < iter._partIndex)
+        return true;
     return _index < iter._index;
 }
 
@@ -190,6 +190,8 @@ bool VertexIterator::operator>(const VertexIterator &iter) const
         return false;
     if ( _partIndex < iter._partIndex)
         return false;
+    if ( _partIndex > iter._partIndex)
+        return true;
     return _index > iter._index;
 }
 

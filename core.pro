@@ -53,7 +53,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/table/columndefinition.cpp \
     core/ilwisobjects/coverage/featureiterator.cpp \
     core/ilwisobjects/table/basetable.cpp \
-    core/ilwisobjects/table/attributerecord.cpp \
     core/ilwisobjects/coverage/featurefactory.cpp \
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.cpp \
     core/ilwisobjects/geometry/coordinatesystem/projection.cpp \
@@ -112,7 +111,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/domain/intervalrange.cpp \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.cpp \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.cpp \
-    core/ilwisobjects/coverage/indexdefinition.cpp \
     core/catalog/dataset.cpp \
     core/util/bresenham.cpp \
     core/util/xpathparser.cpp \
@@ -120,7 +118,9 @@ SOURCES += core/kernel.cpp \
     core/util/ilwisconfiguration.cpp \
     core/util/supportlibraryloader.cpp \
     core/iooptions.cpp \
-    core/ilwisobjects/table/record.cpp
+    core/ilwisobjects/table/record.cpp \
+    core/ilwisobjects/table/attributedefinition.cpp \
+    core/ilwisobjects/table/attributetable.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -176,7 +176,6 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/table/columndefinition.h \
     core/ilwisobjects/coverage/featureiterator.h \
     core/ilwisobjects/table/basetable.h \
-    core/ilwisobjects/table/attributerecord.h \
     core/ilwisobjects/coverage/featurefactory.h \
     core/util/errmessages.h \
     core/ilwisobjects/geometry/coordinatesystem/projectionimplementation.h \
@@ -246,7 +245,6 @@ HEADERS += core/kernel.h\
     core/kernel_global.h \
     core/ilwisobjects/geometry/georeference/undeterminedgeoreference.h \
     core/ilwisobjects/geometry/coordinatesystem/boundsonlycoordinatesystem.h \
-    core/ilwisobjects/coverage/indexdefinition.h \
     core/ilwisobjects/domain/rangeiterator.h \
     core/catalog/dataset.h \
     core/util/bresenham.h \
@@ -256,7 +254,10 @@ HEADERS += core/kernel.h\
     core/util/supportlibraryloader.h \
     core/iooptions.h \
     core/ilwisobjects/operation/operationspec.h \
-    core/ilwisobjects/table/record.h
+    core/ilwisobjects/table/record.h \
+    core/ilwisobjects/table/attributedefinition.h \
+    core/ilwisinterfaces.h \
+    core/ilwisobjects/table/attributetable.h
 
 
 OTHER_FILES += \

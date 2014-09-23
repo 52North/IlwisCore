@@ -175,8 +175,8 @@ public:
      * @return the result of the merging
      */
     static IndexedIdentifierRange *merge(const QSharedPointer<IndexedIdentifierRange>& nr1, const QSharedPointer<IndexedIdentifierRange>& nr2,RenumberMap *rnm=0);
-
     static SPDomainItem valueAt(quint32 index, const Ilwis::Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
 
 private:
    bool alignWithParent(const IDomain& dom);
@@ -332,6 +332,7 @@ public:
     static NamedIdentifierRange *merge(const QSharedPointer<NamedIdentifierRange>& nr1, const QSharedPointer<NamedIdentifierRange>& nr2,RenumberMap *rnm=0);
 
     static SPDomainItem valueAt(quint32 index, const Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
 protected:
     template<typename T> static void addItems(ItemRange *items,
                                          const QSharedPointer<NamedIdentifierRange>& nr1,
@@ -373,6 +374,7 @@ public:
     static ThematicRange *merge(const QSharedPointer<ThematicRange> &nr1, const QSharedPointer<ThematicRange> &nr2, Ilwis::RenumberMap *renumberer);
     Range *clone() const;
     static SPDomainItem valueAt(quint32 index, const Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
     IlwisTypes valueType() const;
 };
 

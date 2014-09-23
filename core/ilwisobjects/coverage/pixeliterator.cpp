@@ -1,10 +1,8 @@
-#include "kernel.h"
 #include "raster.h"
 #ifdef Q_OS_WIN
 #include "geos/geom/Envelope.inl"
 #endif
 #include "tranquilizer.h"
-#include "columndefinition.h"
 #include "table.h"
 #include "pixeliterator.h"
 #include "bresenham.h"
@@ -343,13 +341,10 @@ PixelIterator& PixelIterator::operator=(const PixelIterator&& iter) {
     return *this;
 }
 
-QVariant PixelIterator::operator()(const QString &column,Coverage::AttributeType attType)
+QVariant PixelIterator::operator()(const QString &column)
 {
-    if ( _raster->hasAttributes(attType)) {
-        quint32 raw = operator *();
-        return _raster->attributeTable(attType)->cell(column, raw);
-    }
-    return QVariant();
+    quint32 raw = operator *();
+    return _raster->attributeTable()->cell(column, raw);
 }
 
 inline PixelIterator PixelIterator::operator++(int) {

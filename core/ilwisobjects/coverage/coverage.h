@@ -1,14 +1,17 @@
 #ifndef BASELAYER_H
 #define BASELAYER_H
 
+#include "kernel.h"
 #include "kernel_global.h"
 #include "geos/geom/Geometry.h"
 #include "geometries.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "domain.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "attributedefinition.h"
 #include "coordinatesystem.h"
-#include "indexdefinition.h"
 #include "connectorinterface.h"
 #include "containerstatistics.h"
 #include "commandhandler.h"
@@ -19,7 +22,6 @@ class Table;
 class ItemRange;
 
 typedef IlwisData<Table> ITable;
-typedef ITable AttributeTable;
 /*!
  * \brief The Coverage class
  *
@@ -30,14 +32,6 @@ class KERNELSHARED_EXPORT Coverage : public IlwisObject
 {
 
 public:
-    /*!
-     * An AttributeTable can have 2 types depending on the object, it can be a coveragetable,<br>
-     * in which the features are defined at only 1 index, or it can be a indextable,<br>
-     * in which the features are defined at all known indexes.<br>
-     * the indexes can for example describe different measurements at different times
-     */
-    enum AttributeType{atCOVERAGE, atINDEX};
-
     /*!
      * The constructor for an empty coverage
      */
@@ -96,25 +90,6 @@ public:
     void envelope(const Envelope &bnds);
 
     /*!
-     *
-     * Gives the Coveragetable when called without parameter, and gives the indextable if you use atINDEX as parameter<br>
-     * atCOVERAGE as parameter also results in the attributeable
-     *
-     * \param attType the type of table required (atCOVERAGE or atINDEX)
-     * \return an AttributeTable
-     */
-    virtual AttributeTable attributeTable(AttributeType attType=atCOVERAGE) const ;
-
-    /**
-     * Checks for a valid attributetable.<br>
-     * the parameter decides between coverage and index table. anyhting different than atCOVERAGE or atINDEX is not allowed
-     *
-     * @param attType must be atCOVERAGE or atINDEX
-     * @return true if this coverage has a valid table of the chosen type
-     */
-    bool hasAttributes(AttributeType attType=atCOVERAGE) const;
-
-    /*!
      * \brief Sets a new Coveragetable or Indextable
      *
      * When called without parameter, or with atCOVERAGE as parameter you will replace the Coveragetable<br>
@@ -124,44 +99,10 @@ public:
      * \param attType the type of the new table
      */
 
-    virtual void attributeTable(const ITable& tbl, AttributeType attType=atCOVERAGE );
-
-    /*!
-     * Query for the NumbericStatistics of this coverage
-     *
-     *
-     * \return the statistics of this coverage
-     */
     virtual NumericStatistics& statistics(int mode=0);
 
-    /*!
-     * Returns the DataDefinition of this rastercoverage<br>
-     * can be null if it is not set
-     *
-     * \sa DataDefinition
-     * \return the datadefinition of this rastercoverage
-     */
-    const IndexDefinition& indexDefinition() const;
-    IndexDefinition& indexDefinition();
-    void indexDomain(const IDomain &dom, Range *defaultRange=0);
-    virtual std::vector<QVariant> indexValues() const;
 
-
-
-    /*!
-     * \brief Returns a value in the Coverage- or Index-table
-     *
-     * Using the colname and the itemid this function will return the correspondending value from the Coveragetable<br>
-     * if you add an index, the value will be retrieved from the Indextable instead.
-     *
-     * \param colName name of the required collumn, must be a valid name
-     * \param itemid id of the item in the collumn, must be a valid id
-     * \param layerIndex the index of the Indextable, default =-1 = Coveragetable any negative index other than -1, will cause errors
-     * \return the requested value, when all parameters are valid
-     */
-    QVariant value(const QString& colName, quint32 itemid, qint32 layerIndex = -1);
-
-    //@override
+      //@override
     Resource source(int mode=cmINPUT) const;
 
     /**
@@ -182,10 +123,7 @@ private:
 
     ICoordinateSystem _coordinateSystem;
     Envelope _envelope;
-    AttributeTable _attTable;
-    AttributeTable _attTableIndex;
     NumericStatistics _statistics;
-    IndexDefinition _indexdefinition;
 
 
 };

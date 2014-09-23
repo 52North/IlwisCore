@@ -174,6 +174,7 @@ public:
     static ItemRange *merge(const QSharedPointer<ItemRange>& nr1, const QSharedPointer<ItemRange>& nr2);
 
     static SPDomainItem valueAt(quint32& index, const Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
 protected:
 private:
     virtual bool alignWithParent(const IDomain& dom) = 0;

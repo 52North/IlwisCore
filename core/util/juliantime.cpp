@@ -1057,6 +1057,17 @@ void TimeInterval::end(const Time &t)
     NumericRange::max(t);
 }
 
+double TimeInterval::valueAt(quint32& index, const Range *rng)
+{
+    return NumericRange::valueAt(index, rng) ;
+}
+
+QString TimeInterval::valueAsString(quint32 &index, const Range *rng)
+{
+    double value = TimeInterval::valueAt(index, rng);
+    return Time(value).toString();
+}
+
 
 
 

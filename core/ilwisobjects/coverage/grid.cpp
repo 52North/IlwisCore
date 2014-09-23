@@ -1,8 +1,7 @@
-#include "kernel.h"
+#include "raster.h"
 #include "ilwiscontext.h"
 #include "connectorinterface.h"
 #include "geometries.h"
-#include "raster.h"
 #include "grid.h"
 
 using namespace Ilwis;

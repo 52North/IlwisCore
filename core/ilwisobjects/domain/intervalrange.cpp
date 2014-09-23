@@ -156,7 +156,7 @@ void IntervalRange::add(DomainItem *item)
         return;
     SPInterval nitem(static_cast<Interval *>(item));
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
-        if ( nitem->range() > (*iter)->range()) {
+        if ( nitem->range() >= (*iter)->range()) {
             if ( nitem->raw() == iUNDEF)
                 nitem->_raw = _items.size();
             _items.insert(iter.base(),1, nitem );
@@ -263,11 +263,14 @@ void IntervalRange::load(QDataStream &stream)
     quint32 size;
     stream >> size;
     for(int i =0; i < size; ++i)    {
-        QString label;
-        double rmin, rmax, rres;
-        stream >> label;
-        stream >> rmin >> rmax >> rres;
-        add(new Interval(label, NumericRange(rmin, rmax, rres)));
+        QString label, desc;
+        quint32 raw;
+        double rmin, rmax, rres, undef;
+        stream >> raw >> label >> desc;
+        stream >> rmin >> rmax >> rres >> undef;
+        Interval *interval = new Interval(label, NumericRange(rmin, rmax, rres));
+        interval->description(desc);
+        add(interval);
     }
 }
 
@@ -350,14 +353,20 @@ void IntervalRange::addRange(const ItemRange &range)
     _interpolation = static_cast<const IntervalRange&>(range).interpolation();
 }
 
-SPDomainItem IntervalRange::valueAt(quint32 index, Range *rng){
+SPDomainItem IntervalRange::valueAt(quint32 index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itNUMERICITEM)){
-        IntervalRange *idrange = static_cast<IntervalRange *>(rng);
+        const IntervalRange *idrange = static_cast<const IntervalRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
     }
     return SPDomainItem();
+}
+
+QString IntervalRange::valueAsString(quint32 index, const Range *rng)
+{
+    SPDomainItem item = valueAt(index, rng);
+    return item->name();
 }
 
 

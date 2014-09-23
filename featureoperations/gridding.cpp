@@ -1,27 +1,23 @@
 #include <functional>
 #include <future>
-#include "kernel.h"
 #include "coverage.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geos/geom/GeometryFactory.h"
-#include "feature.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "featurefactory.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
-//#include "commandhandler.h"
 #include "gridding.h"
 
 using namespace Ilwis;
@@ -59,6 +55,7 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
             _outfeatures->newFeature(pol);
         }
     }
+    _outfeatures->attributesFromTable(_attTable);
 
     if ( ctx != 0) {
         QVariant value;
@@ -164,7 +161,6 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     }
     _outfeatures.prepare();
     _outfeatures->coordinateSystem(_csy);
-    _outfeatures->attributeTable(_attTable);
     Envelope env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
     _outfeatures->envelope(env);
 

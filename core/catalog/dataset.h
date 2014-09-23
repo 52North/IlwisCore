@@ -15,7 +15,6 @@ protected:
     IIlwisObject createObject(const QVariant &indexValue) const;
 private:
     ITable _attributeTable;
-    IndexDefinition _index;
     bool prepare();
 };
 }

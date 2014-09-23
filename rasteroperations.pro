@@ -26,7 +26,8 @@ SOURCES += \
     rasteroperations/classification/areanumbering.cpp \
     rasteroperations/filter/rankorderrasterfilter.cpp \
     rasteroperations/filter/linearrasterfilter.cpp \
-    rasteroperations/mirrorrotateraster.cpp
+    rasteroperations/mirrorrotateraster.cpp \
+    rasteroperations/classification/clusterraster.cpp
 
 
 HEADERS += \
@@ -40,7 +41,8 @@ HEADERS += \
     rasteroperations/classification/areanumbering.h \
     rasteroperations/filter/rankorderrasterfilter.h \
     rasteroperations/filter/linearrasterfilter.h \
-    rasteroperations/mirrorrotateraster.h
+    rasteroperations/mirrorrotateraster.h \
+    rasteroperations/classification/clusterraster.h
 
 
 OTHER_FILES += \ 

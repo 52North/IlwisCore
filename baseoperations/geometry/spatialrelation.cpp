@@ -4,13 +4,10 @@
 #include <functional>
 #include "geos/geom/Geometry.h"
 #include "geos/util/GEOSException.h"
-#include "kernel.h"
 #include "coverage.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
@@ -18,7 +15,6 @@
 #include "operationhelper.h"
 #include "operationhelperfeatures.h"
 #include "geometryhelper.h"
-#include "commandhandler.h"
 #include "featureiterator.h"
 #include "spatialrelation.h"
 
@@ -63,11 +59,11 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
     geos::geom::Geometry *geomRelation = _geometry.get();
     try{
     if ( geomRelation != 0) {
-        for(auto& iter : features){
-            int geomcount = iter->trackSize();
-            for(int gindex = 0; gindex < geomcount; ++gindex){
+        for(auto iter : features){
+            int variantCount = iter->subFeatureCount();
+            for(int gindex = 0; gindex < variantCount; ++gindex){
                 for(int gi = 0; gi < geomRelation->getNumGeometries(); ++gi){
-                    const geos::geom::Geometry *geomCoverage = iter->geometry(gindex).get();
+                    const geos::geom::Geometry *geomCoverage = iter->geometry().get();
                     if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(gi) )){
                         resultset.insert(index);
                     }

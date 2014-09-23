@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "coverage.h"
 #include "errorobject.h"
 #include "astnode.h"
 #include "symboltable.h"
@@ -7,10 +7,8 @@
 #include "coordinate.h"
 #include "operationnode.h"
 #include "expressionnode.h"
-#include "ilwisdata.h"
-#include "coverage.h"
-#include "feature.h"
 #include "featurecoverage.h"
+#include "feature.h"
 #include "selectnode.h"
 
 using namespace Ilwis;

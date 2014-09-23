@@ -52,6 +52,7 @@ public:
     QVariant impliedValue(const QVariant& v) const;
     IlwisTypes valueType() const;
     static QColor valueAt(quint32& index, const Ilwis::Range *rng);
+    static QString valueAsString(quint32 &index, const Range *rng);
     quint32 count() const;
     void add(const QVariant& v);
     void store(QDataStream& stream);
@@ -86,7 +87,8 @@ public:
     QVariant ensure(const QVariant& v, bool inclusive = true) const;
     quint32 count() const;
     IlwisTypes valueType() const;
-    static QColor valueAt(quint32& index, const Ilwis::Range *rng);
+    static QColor valueAt(quint32 index, const Ilwis::Range *rng);
+    static QString valueAsString(quint32 index, const Range *rng);
 
     bool isValid() const;
 

@@ -120,6 +120,17 @@ bool NumericRange::operator>(const NumericRange &vr)
     return max() > vr.max() && min() > vr.min() && min() > vr.max();
 }
 
+bool NumericRange::operator>=(const NumericRange &vr)
+{
+    return max() >= vr.max() && min() >= vr.min() && min() >= vr.max();
+}
+
+bool NumericRange::operator<=(const NumericRange &vr)
+{
+    return max() <= vr.max() && min() <= vr.min() && max() <= vr.min();
+}
+
+
 QString NumericRange::toString() const {
     if(!isValid())
         return "? ? ?";
@@ -310,7 +321,11 @@ double NumericRange::valueAt(quint32& index, const Range *rng)
     }
     index = iUNDEF;
     return rUNDEF;
+}
 
-
+QString NumericRange::valueAsString(quint32 &index, const Range *rng)
+{
+    double value = valueAt(index, rng);
+    return QString::number(value) ;
 }
 

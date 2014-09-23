@@ -1,165 +1,233 @@
 #include "kernel.h"
-#include "ilwis.h"
-#include "ilwisobject.h"
-#include "ilwisdata.h"
-#include "domain.h"
+#include "coverage.h"
 #include "range.h"
-#include "valuedefiner.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
-#include "connectorinterface.h"
+#include "attributedefinition.h"
+#include "featurecoverage.h"
+#include "feature.h"
 #include "table.h"
 #include "attributetable.h"
 
 using namespace Ilwis;
 
-AttributeTable::AttributeTable()
+AttributeTable::AttributeTable(FeatureCoverage *featureCoverage)
 {
+    _features.set(featureCoverage);
+    setValid(_features.isValid());
 }
 
-quint32 AttributeTable::rows() const
+IlwisTypes AttributeTable::ilwisType() const
 {
-    if (!_tableImpl.isValid()) {
+    return itATTRIBUTETABLE;
+}
+
+quint32 AttributeTable::recordCount() const
+{
+    if (!_features.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return iUNDEF;
     }
-    return _tableImpl->rows();
+    return _features->featureCount();
 }
 
-quint32 AttributeTable::columns() const
+quint32 AttributeTable::columnCount() const
 {
-    if (!_tableImpl.isValid()) {
+    if (!_features.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return iUNDEF;
     }
-    return _tableImpl->columns();
+    return _features->attributeDefinitions().definitionCount();
 }
 
-QVariantList AttributeTable::record(quint32 n) const
+Record& AttributeTable::recordRef(quint32 n)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return QVariantList();
+    if (!_features.isValid() || n >= recordCount()) {
+        throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    return _tableImpl->record(n);
+    return _features->_features[n]->recordRef();
 }
 
-void AttributeTable::record(quint32 n, const QVariantList &vars, quint32 offset)
+const Record &AttributeTable::record(quint32 n) const
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return ;
+    if (!_features.isValid() || n >= recordCount()) {
+        throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    return _tableImpl->record(n, vars, offset);
+    return _features->_features[n]->record();
 }
 
-QVariantList AttributeTable::column(const QString &nme) const
+void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return QVariantList();
-    }
-    return _tableImpl->column(nme);
-}
-
-void AttributeTable::column(const QString &nme, const QVariantList &vars, quint32 offset)
-{
-    if (!_tableImpl.isValid()) {
+    if (!_features.isValid() || rec >= recordCount()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ;
     }
-    return _tableImpl->column(nme, vars, offset);
+    _features->_features[rec]->record(vars, offset);
 }
 
-QVariant AttributeTable::cell(const QString &col, quint32 rec) const
+void AttributeTable::dataLoaded(bool yesno)
 {
-    if (!_tableImpl.isValid()) {
+}
+
+bool AttributeTable::isDataLoaded() const
+{
+    return true;
+}
+
+std::vector<QVariant> AttributeTable::column(const QString &columnName) const
+{
+    if (!_features.isValid()) {
+        ERROR1(ERR_NO_INITIALIZED_1,name());
+        return std::vector<QVariant>();
+    }
+    std::vector<QVariant> values(_features->featureCount());
+    int columnIndex = _features->attributeDefinitions().columndefinition(columnName).id();
+    for(int rec = 0; rec < _features->featureCount(); ++rec){
+        values[rec] = _features->_features[rec]->recordRef().cell(columnIndex)   ;
+    }
+    return values;
+}
+
+void AttributeTable::column(const QString &columnName, const std::vector<QVariant> &vars, quint32 offset)
+{
+    quint32 colIndex = columnIndex(columnName);
+    column(colIndex,vars, offset);
+}
+
+std::vector<QVariant> AttributeTable::column(quint32 index, quint32 start, quint32 stop) const
+{
+    stop = std::min(stop, recordCount());
+    start = std::max((quint32)0, start);
+    std::vector<QVariant> data(stop - start);
+    for(quint32 i=start; i < stop; ++i) {
+        data[i - start] = _features->_features[i](index);
+    }
+    return data;
+}
+
+void AttributeTable::column(const quint32 columnIndex, const std::vector<QVariant> &vars, quint32 offset)
+{
+    if (!_features.isValid()) {
+        ERROR1(ERR_NO_INITIALIZED_1,name());
+        return ;
+    }
+    if ( !columnIndex == iUNDEF)
+        return ;
+
+    quint32 rec = offset;
+    for(const QVariant& var : vars) {
+        if ( rec < recordCount()){
+            _features->_features[rec++](columnIndex, var);
+        }
+    }
+}
+
+QVariant AttributeTable::cell(const QString &columnName, quint32 rec, bool asRaw) const
+{
+    quint32 index = columnIndex(columnName);
+    return cell(index, rec, asRaw);
+}
+
+QVariant AttributeTable::cell(const quint32 index, quint32 rec, bool asRaw) const
+{
+    if (!_features.isValid() || rec >= recordCount()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return QVariant();
     }
-    return _tableImpl->cell(col, rec);
+    return _features->_features[rec]->cell(index, asRaw);
 }
 
-void AttributeTable::cell(const QString &col, quint32 rec, const QVariant &var)
+void AttributeTable::recordCount(quint32 r)
 {
-    if (!_tableImpl.isValid()) {
+    WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
+}
+
+void AttributeTable::setCell(const QString &columnName, quint32 rec, const QVariant &var)
+{
+    quint32 index = columnIndex(columnName);
+    setCell(index, rec, var);
+}
+
+void AttributeTable::setCell(quint32 col, quint32 rec, const QVariant &var)
+{
+    if (!_features.isValid() || rec > recordCount()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ;
     }
-    return _tableImpl->cell(col, rec, var);
+    _features->_features[rec](col, var);
 }
 
 bool AttributeTable::createTable()
 {
-    return false;
+    return true;
 }
 
 
-ColumnDefinition AttributeTable::columndefinition(const QString &nme) const
+ColumnDefinition AttributeTable::columndefinition(const QString &columnName) const
 {
-    if (!_tableImpl.isValid()) {
+    if (!_features.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ColumnDefinition();
     }
-    return _tableImpl->columndefinition(nme);
+    return _features->attributeDefinitions().columndefinition(columnName);
 }
 
-quint32 AttributeTable::columnIndex(const QString &nme) const
+ColumnDefinition AttributeTable::columndefinition(quint32 index) const
+{
+    return _features->attributeDefinitions().columndefinition(index);
+}
+
+ColumnDefinition &AttributeTable::columndefinitionRef(quint32 index)
+{
+   return _features->attributeDefinitionsRef().columndefinitionRef(index);
+}
+
+ColumnDefinition &AttributeTable::columndefinitionRef(const QString &columnName)
+{
+    return _features->attributeDefinitionsRef().columndefinitionRef(columnName);
+}
+
+quint32 AttributeTable::columnIndex(const QString &columnName) const
 {
 
-    if (!_tableImpl.isValid()) {
+    if (!_features.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return iUNDEF;
     }
-    return _tableImpl->columnIndex(nme);
+    return _features->attributeDefinitions().columnIndex(columnName);
+}
+
+std::vector<QVariant> AttributeTable::column(const QString &columnName, quint32 start, quint32 stop) const
+{
+    quint32 index = columnIndex(columnName);
+    return column(index, start, stop);
+}
+
+std::vector<quint32> AttributeTable::select(const QString &conditions) const
+{
+    //TODO
 }
 
 
 bool AttributeTable::addColumn(const ColumnDefinition &def)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return false;
-    }
-    return _tableImpl->addColumn(def);
+    return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
+}
+
+bool AttributeTable::addColumn(const QString &name, const QString &domainname)
+{
+    return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }
 
 
 bool AttributeTable::addColumn(const QString &nme, const IDomain &domain)
 {
-    if (!_tableImpl.isValid()) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return false;
-    }
-    return _tableImpl->addColumn(nme, domain);
+    return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }
 
-QVariant AttributeTable::cellByKey(quint64 itemId, const QString& col) {
-    if ( _keyColumn == sUNDEF) {
-        ERROR1(ERR_NO_INITIALIZED_1,name());
-        return QVariant();
-    }
-    if ( _index.size() == 0) {
-        indexKey();
-    }
-    auto iter = _index.find(itemId);
-    if ( iter == _index.end()) {
-        return QVariant();
-    }
-    return _tableImpl->cell(col,(*iter).second);
-
-}
-
-void AttributeTable::indexKey(){
-    quint32 rec = 0;
-    QVariantList values = column(_keyColumn);
-    for(const QVariant& val : values) {
-            _index[val.toInt()] = rec++;
-    }
-}
-
-void AttributeTable::setTable(const ITable &tbl, const QString& keyColumn)
+void AttributeTable::columndefinition(const ColumnDefinition &)
 {
-    _tableImpl = tbl;
-    _keyColumn = keyColumn;
-    _index.clear();
+    WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("setting column definitions"), TR("attributes"));
 }
+
+

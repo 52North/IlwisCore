@@ -2,7 +2,6 @@
 #include <QSqlRecord>
 #include <QSqlError>
 
-#include "kernel.h"
 #include "raster.h"
 #include "symboltable.h"
 #include "astnode.h"
@@ -13,16 +12,11 @@
 #include "formatter.h"
 #include "formatters.h"
 #include "scriptnode.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "attributerecord.h"
-#include "feature.h"
 #include "featurecoverage.h"
-#include "domain.h"
+#include "feature.h"
 #include "numericrange.h"
 #include "numericdomain.h"
-#include "columndefinition.h"
-#include "table.h"
 #include "connectorinterface.h"
 #include "factory.h"
 #include "abstractfactory.h"

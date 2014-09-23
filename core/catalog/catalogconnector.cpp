@@ -13,7 +13,7 @@
 #include "catalogconnector.h"
 #include "catalogexplorer.h"
 #include "domain.h"
-#include "indexdefinition.h"
+#include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
 #include "catalog.h"

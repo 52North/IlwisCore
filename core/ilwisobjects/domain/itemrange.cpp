@@ -80,4 +80,10 @@ SPDomainItem ItemRange::valueAt(quint32& index, const Range *rng){
     return SPDomainItem();
 }
 
+QString ItemRange::valueAsString(quint32 &index, const Range *rng)
+{
+    SPDomainItem item = valueAt(index, rng);
+    return item->name();
+}
+
 

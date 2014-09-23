@@ -4,7 +4,7 @@
 #include <QSqlDatabase>
 #include <unordered_map>
 #include "boost/container/flat_map.hpp"
-
+#include "attributedefinition.h"
 #include "table.h"
 
 #include "kernel_global.h"
@@ -45,10 +45,10 @@ public:
     virtual bool createTable() ;
 
     //@override
-    virtual bool addColumn(const QString &name, const IDomain &domain, const bool readonly=false);
+    virtual bool addColumn(const QString &columnname, const IDomain &domain);
 
     //@override
-    virtual bool addColumn(const QString &name, const QString& domainname,const bool readonly=false);
+    virtual bool addColumn(const QString &columnname, const QString& domainname);
 
     //@override
     virtual bool addColumn(const ColumnDefinition& def);
@@ -57,14 +57,14 @@ public:
     IlwisTypes ilwisType() const;
 
     //@override
-    ColumnDefinition columndefinition(const QString& nme) const;
+    ColumnDefinition columndefinition(const QString& columnname) const;
 
     //@override
-    ColumnDefinition columndefinition(quint32 index) const;
+    ColumnDefinition columndefinition(quint32 columnindex) const;
 
     //@override
-    ColumnDefinition& columndefinitionRef(quint32 index);
-    ColumnDefinition &columndefinitionRef(const QString &nme);
+    ColumnDefinition& columndefinitionRef(quint32 columnindex);
+    ColumnDefinition &columndefinitionRef(const QString &columnname);
 
 
     //@override
@@ -95,13 +95,12 @@ public:
     void initValuesColumn(const QString& colname);
 
 protected:
-    boost::container::flat_map<QString, quint32> _columnDefinitionsByName;
-    std::vector<ColumnDefinition> _columnDefinitionsByIndex;
+     AttributeDefinition _attributeDefinition;
 
     virtual bool initLoad();
     virtual void adjustRange(int index);
     void copyTo(IlwisObject *obj);
-    quint32 columnIndex(const QString& nme) const;
+    quint32 columnIndex(const QString& columnname) const;
     void columnCount(int cnt);
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex);
     void initRecord(std::vector<QVariant>& values) const;

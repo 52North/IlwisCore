@@ -56,6 +56,34 @@ public:
         return rUNDEF;
     }
 
+    double operator()(PropertySets method, double limit){
+        if (_bins.size() == 0)    {
+            return rUNDEF;
+        }
+
+        limit = _markers[index(pNETTOCOUNT)] * (limit / 100.0);
+        double sum = 0;
+        if ( method == pMIN){
+            for(int i = 0 ; i < _bins.size(); ++i){
+                sum += _bins[i]._count;
+                if ( sum > limit){
+                    return ((double)i / _bins.size()) * ( _markers[index(pMAX)] - _markers[index(pMIN)]) + _markers[index(pMIN)];
+                }
+            }
+        } else if ( method == pMAX){
+            double totalSum = _markers[index(pNETTOCOUNT)];
+            sum = _markers[index(pNETTOCOUNT)];
+            for(int i = _bins.size() - 2 ; i > 0; --i){
+                sum -= _bins[i]._count;
+                if ( sum < totalSum - limit){
+                    return ((double)i / _bins.size()) * ( _markers[index(pMAX)] - _markers[index(pMIN)]) + _markers[index(pMIN)];
+                }
+            }
+        }
+        return rUNDEF;
+
+    }
+
     std::vector<HistogramBin> histogram() {
         return _bins;
     }
@@ -151,13 +179,13 @@ public:
                     }
                 }
 
-                _bins.resize(_binCount + 1);
+                _bins.resize(_binCount + 2); // last cell is for undefines
                 double delta  = prop(pDELTA);
-                for(int i=0; i <= _binCount; ++i ) {
-                    _bins[i] = HistogramBin(i * ( delta / _binCount));
+                for(int i=0; i < _binCount; ++i ) {
+                    _bins[i] = HistogramBin(prop(pMIN) + i * ( delta / _binCount));
                 }
                 std::for_each(begin, end, [&] (const DataType& sample){
-                    quint16 index = getOffsetFactorFor(sample);
+                    quint16 index = isNumericalUndef(sample) ? _bins.size() - 1 : getOffsetFactorFor(sample);
                     _bins[index]._count++;
                 });
             }
@@ -227,8 +255,6 @@ private:
 
 
     quint16 getOffsetFactorFor(const DataType& sample) const {
-        //double rmax = prop(pMAX);
-        //return _bins.size() * (double)(rmax - sample) / prop(pDELTA);
         double rmin = prop(pMIN);
         quint16 index = _bins.size() * (double)(sample - rmin) / prop(pDELTA);
         if(index == _bins.size())

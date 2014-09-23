@@ -1,15 +1,8 @@
-#include "kernel.h"
 #include "raster.h"
-#include "rastercoverage.h"
-#include "pixeliterator.h"
 #include "connectorinterface.h"
 #include "symboltable.h"
-#include "columndefinition.h"
 #include "table.h"
-#include "itemdomain.h"
-#include "interval.h"
-#include "intervalrange.h"
-#include "ilwisoperation.h"
+#include "pixeliterator.h"
 
 using namespace Ilwis;
 
@@ -155,6 +148,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     if ( _grid) {
         raster->_grid.reset(_grid->clone());
     }
+    raster->_attributeTable = _attributeTable;
     raster->_size = _size;
 
 }
@@ -203,26 +197,82 @@ PixelIterator RasterCoverage::begin()
     return PixelIterator(raster);
 }
 
-PixelIterator RasterCoverage::band(const QVariant &trackIndex)
+PixelIterator RasterCoverage::band(const QString &variantIndex)
 {
-    int index = indexDefinition()(0,trackIndex);
+    int index = _bandDefinition.index(variantIndex);
     if ( index >= size().zsize() || index < 0)
         return PixelIterator();
 
-    BoundingBox box(Pixel(0,0,index), Pixel(size().xsize()-1,size().ysize()-1, index));
+    return band(index);
+}
+
+PixelIterator RasterCoverage::band(double bandIndex)
+{
+    int index = _bandDefinition.index(bandIndex);
+    if ( index >= size().zsize() || index < 0)
+        return PixelIterator();
+
+    return bandPrivate(index);
+}
+
+PixelIterator RasterCoverage::bandPrivate(quint32 bandIndex)
+{
+    BoundingBox box(Pixel(0,0,bandIndex), Pixel(size().xsize()-1,size().ysize()-1, bandIndex));
     IRasterCoverage raster(this);
     return PixelIterator(raster,box);
 }
 
-bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
+
+bool RasterCoverage::band(const QString &bandIndex,  PixelIterator inputIter)
+{
+    if ( !_bandDefinition.domain()->contains(bandIndex))
+        return false;
+    int bndIndex = _bandDefinition.index(bandIndex);
+    return bandPrivate(bndIndex, inputIter);
+}
+
+bool RasterCoverage::band(double bandIndex,  PixelIterator inputIter)
+{
+    if ( !_bandDefinition.domain()->contains(bandIndex))
+        return false;
+    int bndIndex = _bandDefinition.index(bandIndex);
+    return bandPrivate(bndIndex, inputIter);
+}
+
+void RasterCoverage::setBandDefinition(QString bandIndex, const DataDefinition &def)
+{
+    int bndIndex = _bandDefinition.index(bandIndex);
+    if ( bndIndex != iUNDEF){
+        if ( bndIndex >= _datadefBands.size())
+            _datadefBands.resize(bndIndex + 1);
+        _datadefBands[bndIndex] = def;
+    }
+}
+
+void RasterCoverage::setBandDefinition(double bandIndex, const DataDefinition &def)
+{
+    int bndIndex = _bandDefinition.index(bandIndex);
+    if ( bndIndex != iUNDEF){
+        if ( bndIndex >= _datadefBands.size())
+            _datadefBands.resize(bndIndex + 1);
+        _datadefBands[bndIndex] = def;
+    }
+}
+
+
+bool RasterCoverage::bandPrivate(quint32 bandIndex,  PixelIterator inputIter)
 {
     if ( inputIter.box().size().zsize() != 1)
         return false;
-    if ( !indexDefinition().domain()->contains(trackIndex))
-        return false;
-
-
     bool isFirstLayer = !size().isValid() || size().isNull();
+    if (!isFirstLayer)    { // if it is not the first layer, some rules for this raster have already been defined(2dsize + domain)
+        if ( inputIter.box().xlength() != size().xsize() || inputIter.box().ylength() != size().ysize())
+            return false;
+        if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain()))
+            return false;
+    }
+
+
     if ( isFirstLayer ){ //  totally new band in new coverage, initialize everything
 
         coordinateSystem(inputIter.raster()->coordinateSystem());
@@ -230,26 +280,14 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
         datadefRef() = inputIter.raster()->datadef();
         envelope(inputIter.raster()->envelope());
 
-        size(inputIter.box().size());
-        size(inputIter.box().size().twod());
-        for(int band = 0; band  < inputIter.box().zlength(); ++band){
-            addBand(band,datadef(),trackIndex);
-            grid()->setBandProperties(this,0);
-        }
+        Size<> twodsz = inputIter.box().size().twod();
+        size(Size<>(twodsz.xsize(), twodsz.ysize() ,stackDefinition().count()));
+        _datadefBands.resize(stackDefinition().count());
     }
+    datadefRef(bandIndex) = inputIter.raster()->datadef(inputIter.box().zlength());
+//    grid()->setBandProperties(this,bandIndex);
 
-    if ( inputIter.box().xlength() != size().xsize() || inputIter.box().ylength() != size().ysize())
-        return false;
-    if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain()))
-        return false;
-
-    quint32 index = isFirstLayer ?  size().zsize() - 1 : size().zsize(); // -1 because an empty map has z == 1
-    addBand(index,datadef(),trackIndex);
-    grid()->setBandProperties(this,index);
-    if ( !isFirstLayer)
-        _size.zsize(_size.zsize() + 1);
-
-    PixelIterator iter = band(trackIndex);
+    PixelIterator iter = bandPrivate(bandIndex);
     while(iter != iter.end()){
         *iter = *inputIter;
         ++iter;
@@ -260,11 +298,6 @@ bool RasterCoverage::band(const QVariant &trackIndex,  PixelIterator inputIter)
 
 }
 
-void RasterCoverage::addBand(int index, const DataDefinition& def, const QVariant& trackIndexValue){
-    datadefRef(index) = def;
-    indexDefinition().addIndex(0,trackIndexValue,index);
-    attributeTable(Coverage::atINDEX)->record(index,{index, indexDefinition().domain()->impliedValue(trackIndexValue)});
-}
 
 void RasterCoverage::getData(quint32 blockIndex)
 {
@@ -286,8 +319,55 @@ void RasterCoverage::size(const Size<> &sz)
         if (_georef.isValid())
             _georef->size(sz);
         for(int i = 0; i < sz.zsize(); ++i)
-            addBand(i,datadef(),i);
+            datadefRef(i) = datadef();
     }
+}
+
+ITable RasterCoverage::attributeTable() const
+{
+    return _attributeTable;
+}
+
+bool RasterCoverage::hasAttributes() const
+{
+    return _attributeTable.isValid();
+}
+
+void RasterCoverage::attributeTable(const ITable& tbl)
+{
+    if ( isReadOnly())
+        return;
+    changed(true);
+    _attributeTable = tbl;
+}
+
+RasterStackDefinition &RasterCoverage::stackDefinitionRef()
+{
+    return _bandDefinition;
+}
+
+const RasterStackDefinition &RasterCoverage::stackDefinition() const
+{
+    return _bandDefinition;
+}
+
+void RasterCoverage::name(const QString &nam)
+{
+    if ( isReadOnly())
+        return;
+    changed(true);
+
+    IlwisObject::name(nam);
+    if ( _attributeTable.isValid()) {
+        if ( _attributeTable->isAnonymous()) {
+            _attributeTable->name(nam + "_attributes");
+        }
+    }
+}
+
+QString RasterCoverage::name() const
+{
+    return Identity::name();
 }
 
 

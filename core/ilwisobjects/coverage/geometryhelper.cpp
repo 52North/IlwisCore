@@ -13,17 +13,13 @@
 #endif
 #include "geos/io/WKTWriter.h"
 #include "geos/io/ParseException.h"
+#include "coverage.h"
 #include "coordinate.h"
 #include "location.h"
-
-#include "kernel.h"
-#include "ilwisdata.h"
 #include "geometries.h"
 #include "coordinatesystem.h"
-#include "feature.h"
-#include "coverage.h"
 #include "featurecoverage.h"
-
+#include "feature.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "csytransform.h"
 
