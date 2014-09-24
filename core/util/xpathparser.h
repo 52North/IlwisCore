@@ -33,7 +33,7 @@ public:
 
 
     UPXmlQuery& queryFromRoot(QString query);
-    UPXmlQuery& queryRelativeFrom(QXmlItem &item, QString query);
+    UPXmlQuery& queryRelativeFrom(const QXmlItem &item, const QString &query);
     void addNamespaceMapping(QString prefix, QString ns);
 
 private:
@@ -42,6 +42,8 @@ private:
     QMap<QString,QString> _namespaces;
 
 };
+
+typedef std::unique_ptr<XPathParser> UPXPathParser;
 
 }
 
