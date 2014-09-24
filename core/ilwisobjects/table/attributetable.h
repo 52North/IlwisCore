@@ -22,9 +22,9 @@ public:
     void recordCount(quint32 r);
 
     bool createTable();
-    bool addColumn(const QString &name, const IDomain &domain);
+    bool addColumn(const QString &name, const IDomain &domain, const bool readonly=false);
     bool addColumn(const ColumnDefinition& def);
-    bool addColumn(const QString &name, const QString& domainname);
+    bool addColumn(const QString &name, const QString& domainname,const bool readonly=false);
     void columndefinition(const ColumnDefinition& coldef);
     ColumnDefinition columndefinition(const QString& columnName) const;
     ColumnDefinition columndefinition(quint32 index) const;

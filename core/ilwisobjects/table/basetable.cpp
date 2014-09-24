@@ -64,12 +64,12 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
     return ok;
 }
 
-bool BaseTable::addColumn(const QString &columnname, const IDomain& domain)
+bool BaseTable::addColumn(const QString &columnname, const IDomain& domain, const bool readonly)
 {
     return addColumn(ColumnDefinition(columnname, domain,_columns));
 }
 
-bool BaseTable::addColumn(const QString &columnname, const QString &domainname)
+bool BaseTable::addColumn(const QString &columnname, const QString &domainname, const bool readonly)
 {
     if ( isReadOnly())
         return false;
