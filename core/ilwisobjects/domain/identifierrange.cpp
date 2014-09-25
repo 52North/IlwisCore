@@ -98,7 +98,12 @@ Range *IndexedIdentifierRange::clone() const
 SPDomainItem IndexedIdentifierRange::item(quint32 index) const{
     if ( index >= _count)
         return SPDomainItem();
-    return SPDomainItem( new IndexedIdentifier(_start->prefix(), index, _count));
+    auto iter = _existingItems.find(index);
+    if ( iter != _existingItems.end())
+        return (*iter).second;
+    SPDomainItem newItem( new IndexedIdentifier(_start->prefix(), index, _count));
+    const_cast<IndexedIdentifierRange *>(this)->_existingItems[index] = newItem;
+    return newItem;
 }
 
 void IndexedIdentifierRange::add(DomainItem *thing)
