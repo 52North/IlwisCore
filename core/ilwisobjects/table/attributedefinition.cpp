@@ -36,6 +36,12 @@ bool AttributeDefinition::addColumn(const QString &name, const QString &domainna
     return addColumn({name, dom});
 }
 
+
+bool AttributeDefinition::addColumn(const QString &name, const IDomain &domain)
+{
+    return addColumn({name, domain});
+}
+
 ColumnDefinition AttributeDefinition::columndefinition(const QString &nme) const
 {
     auto iter = _columnDefinitionsByName.find(nme);
