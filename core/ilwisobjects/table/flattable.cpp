@@ -6,12 +6,11 @@
 #include "columndefinition.h"
 #include "connectorinterface.h"
 #include "domainitem.h"
+#include "selectabletable.h"
 #include "basetable.h"
 #include "flattable.h"
 #include "tablemerger.h"
 #include "itemrange.h"
-#include "logicalexpressionparser.h"
-#include "tableselector.h"
 
 using namespace Ilwis;
 
@@ -289,11 +288,6 @@ IlwisObject *FlatTable::clone()
 
 void FlatTable::copyTo(IlwisObject *obj){
     BaseTable::copyTo(obj);
-}
-
-std::vector<quint32> FlatTable::select(const QString &conditions) const
-{
-    return TableSelector::select(this, conditions);
 }
 
 bool FlatTable::initLoad(){
