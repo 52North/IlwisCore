@@ -39,8 +39,9 @@ void NumericRange::min(double v)
 {
     if (_resolution == 1){
         _min = (qint64) v;
-    } else
-        _min = v;
+    } else{
+        _min = _resolution==0 ? v : _resolution * qint64(v / _resolution);
+    }
 }
 
 double NumericRange::distance() const
@@ -59,8 +60,8 @@ void NumericRange::add(const QVariant &number)
     double value = number.toDouble(&ok);
     if (!ok || isNumericalUndef(value))
         return;
-    _min = std::min(value, _min);
-    _max = std::max(value, _max);
+    min(std::min(value, _min));
+    max(std::max(value, _max));
 }
 
 void NumericRange::max(double v)
@@ -68,12 +69,15 @@ void NumericRange::max(double v)
     if (_resolution == 1){
         _max = (qint64) v;
     } else
-        _max = v;
+        _max = _resolution==0 ? v : _resolution * qint64(v / _resolution);
 }
 
 void NumericRange::resolution(double step) {
-    if ( step >= 0)
+    if ( step >= 0){
         _resolution = step;
+        min(_min);
+        max(_max);
+    }
 }
 
 double NumericRange::resolution() const {

@@ -203,7 +203,7 @@ PixelIterator RasterCoverage::band(const QString &variantIndex)
     if ( index >= size().zsize() || index < 0)
         return PixelIterator();
 
-    return band(index);
+    return bandPrivate(index);
 }
 
 PixelIterator RasterCoverage::band(double bandIndex)
@@ -228,6 +228,10 @@ bool RasterCoverage::band(const QString &bandIndex,  PixelIterator inputIter)
     if ( !_bandDefinition.domain()->contains(bandIndex))
         return false;
     int bndIndex = _bandDefinition.index(bandIndex);
+    if ( bndIndex >= size().zsize()){
+        _size.zsize(bndIndex + 1);
+        _grid->setBandProperties(this, 1);
+    }
     return bandPrivate(bndIndex, inputIter);
 }
 
@@ -236,6 +240,10 @@ bool RasterCoverage::band(double bandIndex,  PixelIterator inputIter)
     if ( !_bandDefinition.domain()->contains(bandIndex))
         return false;
     int bndIndex = _bandDefinition.index(bandIndex);
+    if ( bndIndex >= size().zsize()){
+        _size.zsize(bndIndex + 1);
+        _grid->setBandProperties(this, 1);
+    }
     return bandPrivate(bndIndex, inputIter);
 }
 
