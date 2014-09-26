@@ -189,8 +189,9 @@ bool AttributeDefinition::isValid() const
 void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vector<QString> &items)
 {
     for( auto item : items){
-        if ( !dom->contains(item))
+        if ( !dom->contains(item)) {
             continue;
+        }
 
         if ( hasType(dom->valueType(), itDATETIME)){
             _index2subFeature.push_back(QString::number((double)Time(item)));
@@ -209,8 +210,9 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
 {
     _subFeatureDomain = dom;
     for( auto item : items){
-        if ( !dom->contains(item))
+        if ( !dom->contains(item)) {
             continue;
+        }
 
         if ( dom->valueType() == itINTEGER){
             _index2subFeature.push_back(QString::number((qint64)item));
