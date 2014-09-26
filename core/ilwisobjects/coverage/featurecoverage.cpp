@@ -199,6 +199,9 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt)
 
 ITable FeatureCoverage::attributeTable()
 {
+
+    // TODO add level parameter to access subfeature attributes
+
     IAttributeTable tbl;
     tbl.set( new AttributeTable(this));
     return tbl;

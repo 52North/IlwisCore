@@ -3,6 +3,7 @@
 
 #include <QSqlDatabase>
 #include <unordered_map>
+
 #include "record.h"
 #include "kernel_global.h"
 

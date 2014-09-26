@@ -74,9 +74,6 @@ public:
     bool addColumn(const ColumnDefinition& def);
 
     //@override
-    std::vector<quint32> select(const QString &conditions) const;
-
-    //@override
     IlwisTypes ilwisType() const;
 
     //@override
