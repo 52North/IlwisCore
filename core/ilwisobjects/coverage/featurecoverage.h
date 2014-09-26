@@ -22,7 +22,6 @@ typedef std::vector<SPFeatureI> Features;
 
 class FeatureIterator;
 class FeatureFactory;
-class AttributeRecord;
 typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 struct FeatureInfo {

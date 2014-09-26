@@ -24,7 +24,7 @@ UPXmlQuery &XPathParser::queryFromRoot(QString query)
     return _query;
 }
 
-UPXmlQuery &XPathParser::queryRelativeFrom(QXmlItem &item, QString query)
+UPXmlQuery &XPathParser::queryRelativeFrom(const QXmlItem &item, const QString &query)
 {
     if ( !_query)
         _query.reset(new QXmlQuery);

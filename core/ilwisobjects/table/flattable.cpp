@@ -66,7 +66,7 @@ bool FlatTable::isValid() const
     return BaseTable::isValid();
 }
 
-bool FlatTable::addColumn(const QString &name, const IDomain &domain)
+bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool readonly)
 {
     bool ok = BaseTable::addColumn(name, domain);
     if(!ok)
