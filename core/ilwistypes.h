@@ -1,6 +1,8 @@
 #ifndef ILWISTYPES_H
 #define ILWISTYPES_H
 
+#include "kernel_global.h"
+
 typedef quint64 IlwisTypes;
 
 const quint64 itUNKNOWN = 0; //0
@@ -48,7 +50,7 @@ const quint64 itPIXEL = 2 *itCOORDINATE;
 const quint64 itBINARY = 2 * itPIXEL;
 const quint64 itFILE = 2 * itBINARY;
 const quint64 itURL = 2 * itFILE;
-const quint64 itTHEMATICITEM = 2 * itFILE;
+const quint64 itTHEMATICITEM = 2 * itURL;
 const quint64 itNAMEDITEM = 2 * itTHEMATICITEM;
 const quint64 itINDEXEDITEM = 2 * itNAMEDITEM;
 const quint64 itNUMERICITEM = 2 * itINDEXEDITEM;
@@ -82,5 +84,13 @@ const quint64 itCOLOR = itCONTINUOUSCOLOR | itPALETTECOLOR;
 const quint64 itANY = 0xFFFFFFFFFFFFFFFF;
 
 #define hasType(a,b) ( ((a) & (b)) != 0)
+
+namespace Ilwis {
+class KERNELSHARED_EXPORT TypeHelper {
+public:
+    static QString type2HumanReadable(IlwisTypes type);
+
+};
+}
 
 #endif // ILWISTYPES_H
