@@ -1,12 +1,14 @@
 #ifndef ATTRIBUTETABLE_H
 #define ATTRIBUTETABLE_H
 
+#include "selectabletable.h"
+
 namespace Ilwis {
 
 class FeatureCoverage;
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 
-class KERNELSHARED_EXPORT AttributeTable : public Table
+class KERNELSHARED_EXPORT AttributeTable : public SelectableTable
 {
 public:
     AttributeTable(FeatureCoverage *featureCoverage);
@@ -22,9 +24,9 @@ public:
     void recordCount(quint32 r);
 
     bool createTable();
-    bool addColumn(const QString &name, const IDomain &domain);
+    bool addColumn(const QString &name, const IDomain &domain, const bool readonly=false);
     bool addColumn(const ColumnDefinition& def);
-    bool addColumn(const QString &name, const QString& domainname);
+    bool addColumn(const QString &name, const QString& domainname,const bool readonly=false);
     void columndefinition(const ColumnDefinition& coldef);
     ColumnDefinition columndefinition(const QString& columnName) const;
     ColumnDefinition columndefinition(quint32 index) const;
@@ -38,7 +40,6 @@ public:
 
     void setCell(const QString& columnName, quint32 rec, const QVariant& var);
     void setCell(quint32 col, quint32 rec, const QVariant& var);
-    std::vector<quint32> select(const QString& conditions) const;
 
 
     Record& recordRef(quint32 n);

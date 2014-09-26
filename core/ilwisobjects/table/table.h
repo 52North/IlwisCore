@@ -3,6 +3,7 @@
 
 #include <QSqlDatabase>
 #include <unordered_map>
+
 #include "record.h"
 #include "kernel_global.h"
 
@@ -65,9 +66,10 @@ public:
      * \sa IDomain
      * \param name the name of a column must be unique among the columns
      * \param domain the domain of the new column
+     * \param readonly if the column shall be treated read only (false is default)
      * \return true if the column is succesfully added, false if some error occurred. The nature of the error can be found in the issue logger
      */
-    virtual bool addColumn(const QString &name, const IDomain &domain)=0;
+    virtual bool addColumn(const QString &name, const IDomain &domain,const bool readonly=false)=0;
 
     /*!
      * adds a column to the current set of columns of this table. <br>
@@ -77,9 +79,10 @@ public:
      *
      * \param name the name of a column must be unique among the columns
      * \param domain the domain of the new column
+     * \param readonly if the column shall be treated read only (false is default)
      * \return true if the column is succesfully added, false if some error occurred. The nature of the error can be found in the issue logger
      */
-    virtual bool addColumn(const QString &name, const QString& domainname)=0;
+    virtual bool addColumn(const QString &name, const QString& domainname,const bool readonly=false)=0;
 
     /*!
      * adds a column to the column definitions. <br>

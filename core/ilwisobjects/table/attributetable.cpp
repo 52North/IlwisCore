@@ -8,6 +8,8 @@
 #include "feature.h"
 #include "table.h"
 #include "attributetable.h"
+#include "logicalexpressionparser.h"
+#include "tableselector.h"
 
 using namespace Ilwis;
 
@@ -203,24 +205,18 @@ std::vector<QVariant> AttributeTable::column(const QString &columnName, quint32 
     return column(index, start, stop);
 }
 
-std::vector<quint32> AttributeTable::select(const QString &conditions) const
-{
-    //TODO
-}
-
-
 bool AttributeTable::addColumn(const ColumnDefinition &def)
 {
     return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }
 
-bool AttributeTable::addColumn(const QString &name, const QString &domainname)
+bool AttributeTable::addColumn(const QString &name, const QString &domainname, const bool readonly)
 {
     return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }
 
 
-bool AttributeTable::addColumn(const QString &nme, const IDomain &domain)
+bool AttributeTable::addColumn(const QString &nme, const IDomain &domain,const bool readonly)
 {
     return WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }

@@ -6,12 +6,11 @@
 #include "columndefinition.h"
 #include "connectorinterface.h"
 #include "domainitem.h"
+#include "selectabletable.h"
 #include "basetable.h"
 #include "flattable.h"
 #include "tablemerger.h"
 #include "itemrange.h"
-#include "logicalexpressionparser.h"
-#include "tableselector.h"
 
 using namespace Ilwis;
 
@@ -66,7 +65,7 @@ bool FlatTable::isValid() const
     return BaseTable::isValid();
 }
 
-bool FlatTable::addColumn(const QString &name, const IDomain &domain)
+bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool readonly)
 {
     bool ok = BaseTable::addColumn(name, domain);
     if(!ok)
@@ -189,7 +188,7 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
     if ( isReadOnly())
         return ;
     changed(true);
-    if ( rec >=recordCount() ) {
+    if ( rec >=_datagrid.size() ) {
         _datagrid.push_back(std::vector<QVariant>(_attributeDefinition.definitionCount()));
         _datagrid.back().changed(true);
         recordCount(_datagrid.size());
@@ -246,7 +245,7 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
 
     _attributeDefinition[index].changed(true);
 
-    if ( rec >= recordCount()) {
+    if ( rec >= _datagrid.size()) {
         newRecord();
     }
     _datagrid[rec].cell(index, checkInput(var, index));
@@ -289,11 +288,6 @@ IlwisObject *FlatTable::clone()
 
 void FlatTable::copyTo(IlwisObject *obj){
     BaseTable::copyTo(obj);
-}
-
-std::vector<quint32> FlatTable::select(const QString &conditions) const
-{
-    return TableSelector::select(this, conditions);
 }
 
 bool FlatTable::initLoad(){

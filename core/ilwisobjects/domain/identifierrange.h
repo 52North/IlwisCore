@@ -181,6 +181,7 @@ public:
 private:
    bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
+   std::map<quint32, SPDomainItem> _existingItems;
    quint32 _count;
 };
 
