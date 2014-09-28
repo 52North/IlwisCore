@@ -6,6 +6,8 @@
 
 namespace Ilwis {
 
+class ThematicRange;
+
 class KERNELSHARED_EXPORT ThematicItem : public NamedIdentifier
 {
 public:
@@ -65,6 +67,7 @@ public:
     //@override
     IlwisTypes valueType() const;
 
+    static ThematicRange *createRange();
 private:
     QString _description;
     QString _code;
