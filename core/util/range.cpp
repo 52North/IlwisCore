@@ -42,6 +42,8 @@ Range *Range::create(IlwisTypes types) {
     switch (types){
     case itNAMEDITEM:
         return new NamedIdentifierRange();
+    case itTHEMATICITEM:
+        return new ThematicRange();
     case itINDEXEDITEM:
         return new IndexedIdentifierRange();
     case itNUMERICITEM:
