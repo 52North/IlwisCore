@@ -57,7 +57,7 @@ public:
         return _raw;
     }
 
-    template<typename ItemType> ItemType* toType(){
+    template<typename ItemType> ItemType* as(){
         return dynamic_cast<ItemType *>(this);
     }
 
