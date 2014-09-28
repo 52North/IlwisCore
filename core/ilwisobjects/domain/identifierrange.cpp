@@ -576,3 +576,23 @@ IlwisTypes ThematicRange::valueType() const
     return itTHEMATICITEM;
 }
 
+void ThematicRange::store(QDataStream &stream)
+{
+    stream << _byName.size();
+    for(const auto& item : _byName) {
+        stream <<  item.second->raw() << item.second->name() << item.second->as<ThematicItem>()->description() << item.second->as<ThematicItem>()->code();
+    }
+}
+
+void ThematicRange::load(QDataStream &stream)
+{
+    int numberOfItems;
+    stream >> numberOfItems;
+    for(int i=0; i < numberOfItems; ++i){
+        quint32 raw;
+        QString name, description, code;
+        stream >> raw >> name >> description >> code;
+        add(new ThematicItem({name, code, description}, raw));
+    }
+}
+

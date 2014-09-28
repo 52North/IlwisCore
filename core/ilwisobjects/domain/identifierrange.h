@@ -377,6 +377,8 @@ public:
     static SPDomainItem valueAt(quint32 index, const Range *rng);
     static QString valueAsString(quint32 &index, const Range *rng);
     IlwisTypes valueType() const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 };
 
 }
