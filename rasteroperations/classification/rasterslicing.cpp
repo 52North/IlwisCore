@@ -92,7 +92,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
     _bounds.resize(_numericItems->count(), 0);
     int  i =0;
     for(auto& v : _bounds){
-        v = _numericItems->item(i++)->toType<Interval>()->range().min();
+        v = _numericItems->item(i++)->as<Interval>()->range().min();
     }
 
     IIlwisObject outputObj = OperationHelperRaster::initialize(_inputRaster,itRASTER, itCOORDSYSTEM | itGEOREF);
