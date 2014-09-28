@@ -16,7 +16,7 @@ public:
      *
      * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(bool readOnly=false);
+    explicit ColumnDefinition(bool readOnly=false);
 
     /**
      * Copy constructor. Copies the fields of the supplied ColumnDefinition onto a new one.<br>

@@ -9,14 +9,14 @@
 
 using namespace Ilwis;
 
-ColumnDefinition::ColumnDefinition(bool readOnly) : _changed(false), _readOnly(readOnly)
+ColumnDefinition::ColumnDefinition(bool readOnly) : _readOnly(readOnly), _changed(false)
 {
 }
 
 ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index, bool readOnly) :
     Identity(def.name(), index),
-    _changed(false),
-    _readOnly(readOnly)
+    _readOnly(readOnly),
+    _changed(false)
 {
     datadef().domain(def.datadef().domain<>());
     datadef().range(def.datadef().range()->clone());
@@ -26,16 +26,17 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index, b
 ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex, bool readOnly) :
     Identity(name, colindex),
     _datadef(def),
-    _changed(false),
-    _readOnly(readOnly)
+    _readOnly(readOnly),
+    _changed(false)
+
 {
 
 }
 
 ColumnDefinition::ColumnDefinition(const QString &name, const IDomain &dom, quint64 colindex, bool readOnly) :
     Identity(name, colindex),
-    _changed(false),
-    _readOnly(readOnly)
+    _readOnly(readOnly),
+    _changed(false)
 {
     datadef().domain(dom);
 }
