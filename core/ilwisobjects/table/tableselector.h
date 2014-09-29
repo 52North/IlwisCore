@@ -4,7 +4,7 @@
 namespace Ilwis {
 class TableSelector
 {
-    friend class FlatTable;
+    friend class SelectableTable;
 
     TableSelector();
     static std::vector<quint32> select(const Table *tbl, const QString &conditions) ;

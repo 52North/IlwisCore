@@ -5,13 +5,14 @@
 #include <unordered_map>
 #include "boost/container/flat_map.hpp"
 #include "attributedefinition.h"
+#include "selectabletable.h"
 #include "table.h"
 
 #include "kernel_global.h"
 
 namespace Ilwis {
 
-class KERNELSHARED_EXPORT BaseTable : public Table
+class KERNELSHARED_EXPORT BaseTable : public SelectableTable
 {
 public:
     /**
@@ -45,10 +46,10 @@ public:
     virtual bool createTable() ;
 
     //@override
-    virtual bool addColumn(const QString &columnname, const IDomain &domain);
+    virtual bool addColumn(const QString &columnname, const IDomain &domain, const bool readonly=false);
 
     //@override
-    virtual bool addColumn(const QString &columnname, const QString& domainname);
+    virtual bool addColumn(const QString &columnname, const QString& domainname, const bool readonly=false);
 
     //@override
     virtual bool addColumn(const ColumnDefinition& def);
@@ -69,7 +70,6 @@ public:
 
     //@override
     void columndefinition(const ColumnDefinition &coldef);
-
 
     //@override
     bool prepare();

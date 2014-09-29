@@ -7,6 +7,9 @@
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "thematicitem.h"
+#include "itemrange.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
 
 using namespace Ilwis;
 
@@ -70,6 +73,11 @@ IlwisTypes ThematicItem::valueTypeS()
 IlwisTypes ThematicItem::valueType() const
 {
     return valueTypeS();
+}
+
+ThematicRange *ThematicItem::createRange()
+{
+    return new ThematicRange();
 }
 
 

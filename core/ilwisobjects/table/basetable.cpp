@@ -9,18 +9,21 @@
 #include "coordinate.h"
 #include "attributedefinition.h"
 #include "table.h"
+#include "selectabletable.h"
 #include "basetable.h"
 #include "domainitem.h"
 #include "itemdomain.h"
 #include "tablemerger.h"
+#include "logicalexpressionparser.h"
+#include "tableselector.h"
 
 using namespace Ilwis;
 
-BaseTable::BaseTable() : Table(), _rows(0), _columns(0), _dataloaded(false)
+BaseTable::BaseTable() : SelectableTable(), _rows(0), _columns(0), _dataloaded(false)
 {
 }
 
-BaseTable::BaseTable(const Resource& resource) : Table(resource), _rows(0), _columns(0),_dataloaded(false) {
+BaseTable::BaseTable(const Resource& resource) : SelectableTable(resource), _rows(0), _columns(0),_dataloaded(false) {
 
 }
 
@@ -64,12 +67,12 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
     return ok;
 }
 
-bool BaseTable::addColumn(const QString &columnname, const IDomain& domain)
+bool BaseTable::addColumn(const QString &columnname, const IDomain& domain, const bool readonly)
 {
     return addColumn(ColumnDefinition(columnname, domain,_columns));
 }
 
-bool BaseTable::addColumn(const QString &columnname, const QString &domainname)
+bool BaseTable::addColumn(const QString &columnname, const QString &domainname, const bool readonly)
 {
     if ( isReadOnly())
         return false;
@@ -110,7 +113,6 @@ void BaseTable::columndefinition(const ColumnDefinition &coldef)
 {
     _attributeDefinition.columndefinition(coldef);
 }
-
 
 bool BaseTable::prepare()
 {

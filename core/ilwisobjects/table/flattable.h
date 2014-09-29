@@ -68,13 +68,10 @@ public:
     bool isValid() const;
 
     //@override
-    bool addColumn(const QString &name, const IDomain& domain);
+    bool addColumn(const QString &name, const IDomain& domain, const bool readonly=false);
 
     //@override
     bool addColumn(const ColumnDefinition& def);
-
-    //@override
-    std::vector<quint32> select(const QString &conditions) const;
 
     //@override
     IlwisTypes ilwisType() const;

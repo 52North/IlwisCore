@@ -9,12 +9,13 @@
 
 using namespace Ilwis;
 
-ColumnDefinition::ColumnDefinition() : _changed(false)
+ColumnDefinition::ColumnDefinition(bool readOnly) : _readOnly(readOnly), _changed(false)
 {
 }
 
-ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
+ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index, bool readOnly) :
     Identity(def.name(), index),
+    _readOnly(readOnly),
     _changed(false)
 {
     datadef().domain(def.datadef().domain<>());
@@ -22,16 +23,19 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index) :
 
 }
 
-ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex) :
+ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex, bool readOnly) :
     Identity(name, colindex),
     _datadef(def),
+    _readOnly(readOnly),
     _changed(false)
+
 {
 
 }
 
-ColumnDefinition::ColumnDefinition(const QString &nm, const IDomain &dom, quint64 colindex) :
-    Identity(nm, colindex),
+ColumnDefinition::ColumnDefinition(const QString &name, const IDomain &dom, quint64 colindex, bool readOnly) :
+    Identity(name, colindex),
+    _readOnly(readOnly),
     _changed(false)
 {
     datadef().domain(dom);
@@ -75,6 +79,11 @@ bool ColumnDefinition::isChanged() const
 void ColumnDefinition::changed(bool yesno)
 {
     _changed = yesno;
+}
+
+bool ColumnDefinition::isReadOnly() const
+{
+    return _readOnly;
 }
 
 

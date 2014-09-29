@@ -13,8 +13,10 @@ class KERNELSHARED_EXPORT ColumnDefinition : public Identity
 public:
     /**
      * Constructs an empty ColumnDefinition
+     *
+     * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition();
+    explicit ColumnDefinition(bool readOnly=false);
 
     /**
      * Copy constructor. Copies the fields of the supplied ColumnDefinition onto a new one.<br>
@@ -24,8 +26,9 @@ public:
      *
      * @param def the original ColumnDefinition
      * @param index the new index
+     * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(const ColumnDefinition& def, quint32 index);
+    ColumnDefinition(const ColumnDefinition& def, quint32 index, bool readOnly=false);
 
     /**
      * Constructs a new ColumnDefinition using a name, DataDefinition an index.<br>
@@ -35,18 +38,20 @@ public:
      * @param name the name of the new ColumnDefinition (recommended not to be null/ """);
      * @param def The Datadefinition of the new ColumnDefinition
      * @param colindex the index of the new ColumnDefinition
+     * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(const QString& name, const DataDefinition& def, quint64 colindex);
+    ColumnDefinition(const QString& name, const DataDefinition& def, quint64 colindex, bool readOnly=false);
 
     /**
      * Creates a new ColumnDefinition using a name, a Domain and an index. <br>
      * Because only a Domain is used the range will not be set. <br>
      * The index cannot be negative.
-     * @param nm
-     * @param dom
-     * @param colindex
+     * @param name the name of the new ColumnDefinition (recommended not to be null/ """);
+     * @param dom the domain of the new ColumnDefinition
+     * @param colindex the index of the new ColumnDefinition
+     * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(const QString& nm, const IDomain &dom, quint64 colindex=i64UNDEF);
+    ColumnDefinition(const QString& name, const IDomain &dom, quint64 colindex=i64UNDEF,bool readOnly=false);
 
     /**
      * Checks if this ColumnDefinition is valid.<br>
@@ -106,8 +111,17 @@ public:
      * @param yesno the new value of the changed flag.
      */
     void changed(bool yesno);
+
+    /**
+     * Query for the read only flag.
+     *
+     * @return if this column was defined to be read only
+     */
+    bool isReadOnly() const;
+
 private:
     DataDefinition _datadef;
+    bool _readOnly;
     bool _changed;
 
 };

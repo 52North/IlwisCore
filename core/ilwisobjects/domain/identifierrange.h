@@ -181,6 +181,7 @@ public:
 private:
    bool alignWithParent(const IDomain& dom);
    SPIndexedIdentifier _start;
+   std::map<quint32, SPDomainItem> _existingItems;
    quint32 _count;
 };
 
@@ -376,6 +377,8 @@ public:
     static SPDomainItem valueAt(quint32 index, const Range *rng);
     static QString valueAsString(quint32 &index, const Range *rng);
     IlwisTypes valueType() const;
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
 };
 
 }
