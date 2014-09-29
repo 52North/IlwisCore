@@ -159,6 +159,9 @@ QString NumericRange::toString() const {
 QVariant NumericRange::impliedValue(const QVariant &v) const
 {
     bool ok;
+    if(!v.isValid())
+        return _undefined;
+
     if ( v == sUNDEF)
         return _undefined;
 
