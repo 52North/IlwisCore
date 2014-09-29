@@ -5,6 +5,7 @@
 #include "columndefinition.h"
 #include "attributedefinition.h"
 #include "featurecoverage.h"
+#include "featureiterator.h"
 #include "feature.h"
 #include "table.h"
 #include "attributetable.h"
@@ -47,7 +48,9 @@ Record& AttributeTable::recordRef(quint32 n)
     if (!_features.isValid() || n >= recordCount()) {
         throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    return _features->_features[n]->recordRef();
+    FeatureIterator iter(_features);
+    iter = iter + n;
+    return (*iter)->recordRef();
 }
 
 const Record &AttributeTable::record(quint32 n) const
@@ -55,7 +58,9 @@ const Record &AttributeTable::record(quint32 n) const
     if (!_features.isValid() || n >= recordCount()) {
         throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    return _features->_features[n]->record();
+    FeatureIterator iter(_features);
+    iter = iter + n;
+    return (*iter)->record();
 }
 
 void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
@@ -101,8 +106,11 @@ std::vector<QVariant> AttributeTable::column(quint32 index, quint32 start, quint
     stop = std::min(stop, recordCount());
     start = std::max((quint32)0, start);
     std::vector<QVariant> data(stop - start);
+    FeatureIterator iter(_features);
+    iter = iter + start;
     for(quint32 i=start; i < stop; ++i) {
-        data[i - start] = _features->_features[i](index);
+        data[i - start] = (*iter)(index);
+        ++iter;
     }
     return data;
 }
@@ -136,7 +144,9 @@ QVariant AttributeTable::cell(const quint32 index, quint32 rec, bool asRaw) cons
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return QVariant();
     }
-    return _features->_features[rec]->cell(index, asRaw);
+    FeatureIterator iter(_features);
+    iter = iter + rec;
+    return (*iter)->cell(index, asRaw);
 }
 
 void AttributeTable::recordCount(quint32 r)
