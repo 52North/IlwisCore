@@ -22,7 +22,7 @@ class KERNELSHARED_EXPORT Table : public IlwisObject
 {
 public:
 
-    ~Table() {}
+    virtual ~Table() {}
 
     /*!
      * return the number of rows in a table.<br>

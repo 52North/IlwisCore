@@ -29,17 +29,20 @@ FlatTable::~FlatTable()
 
 bool FlatTable::createTable()
 {
-    if(!BaseTable::createTable())
+    if(!BaseTable::createTable()) {
         return false;
-    for(unsigned int i=0; i < recordCount(); ++i)
+    }
+    for(unsigned int i=0; i < recordCount(); ++i) {
         _datagrid.push_back(std::vector<QVariant>(_attributeDefinition.definitionCount()));
+    }
     return true;
 }
 
 Record& FlatTable::newRecord()
 {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         throw ErrorObject(QString(TR("could not load %1")).arg(name()));
+    }
 
     std::vector<QVariant> values;
     initRecord(values);
@@ -68,8 +71,9 @@ bool FlatTable::isValid() const
 bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool readonly)
 {
     bool ok = BaseTable::addColumn(name, domain);
-    if(!ok)
+    if(!ok) {
         return false;
+    }
     if ( isDataLoaded()){
         for(Record& row : _datagrid) {
             row.addColumn();
@@ -84,8 +88,9 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool 
 bool FlatTable::addColumn(const ColumnDefinition &def)
 {
     bool ok = BaseTable::addColumn(def);
-    if(!ok)
+    if(!ok) {
         return false;
+    }
     if (  isDataLoaded()) {
         for(Record& row : _datagrid) {
             row.addColumn();
@@ -97,11 +102,13 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
 }
 
 std::vector<QVariant> FlatTable::column(quint32 index, quint32 start, quint32 stop) const {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return std::vector<QVariant>();
+    }
 
-    if ( !isColumnIndexValid(index))
+    if ( !isColumnIndexValid(index)) {
         return std::vector<QVariant>();
+    }
 
     stop = std::min(stop, recordCount());
     start = std::max((quint32)0, start);
@@ -130,16 +137,19 @@ void FlatTable::column(quint32 index, const std::vector<QVariant> &vars, quint32
 
 void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, quint32 offset)
 {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return ;
+    }
 
-    if ( isReadOnly())
+    if ( isReadOnly()) {
         return ;
+    }
     changed(true);
 
     quint32 index = columnIndex(nme);
-    if ( !isColumnIndexValid(index))
+    if ( !isColumnIndexValid(index)) {
         return ;
+    }
 
     quint32 rec = offset;
     _attributeDefinition[index].changed(true);
@@ -159,8 +169,9 @@ void FlatTable::column(const QString &nme, const std::vector<QVariant> &vars, qu
 }
 
 const Record& FlatTable::record(quint32 rec) const{
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         throw ErrorObject(QString(TR("failed load of table %1")).arg(name()));
+    }
 
     if ( rec < recordCount() && _datagrid.size() != 0) {
          return _datagrid[rec];
@@ -170,8 +181,9 @@ const Record& FlatTable::record(quint32 rec) const{
 
 Record& FlatTable::recordRef(quint32 rec)
 {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         throw ErrorObject(QString(TR("failed load of table %1")).arg(name()));
+    }
 
     if ( rec < recordCount() && _datagrid.size() != 0) {
          return _datagrid[rec];
@@ -182,11 +194,13 @@ Record& FlatTable::recordRef(quint32 rec)
 void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
 
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return ;
+    }
 
-    if ( isReadOnly())
+    if ( isReadOnly()) {
         return ;
+    }
     changed(true);
     if ( rec >=_datagrid.size() ) {
         _datagrid.push_back(std::vector<QVariant>(_attributeDefinition.definitionCount()));
@@ -207,19 +221,22 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
 }
 
 QVariant FlatTable::cell(const QString& col, quint32 rec, bool asRaw) const {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return QVariant();
+    }
     quint32 index = columnIndex(col);
     return cell(index , rec, asRaw);
 }
 
 QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return QVariant();
+    }
 
-    if ( !isColumnIndexValid(index))
+    if ( !isColumnIndexValid(index)) {
         return QVariant();
+    }
     if ( rec < recordCount()) {
         QVariant var = _datagrid[rec].cell(index);
         if ( !asRaw) {
@@ -233,14 +250,17 @@ QVariant FlatTable::cell(const quint32 index, quint32 rec, bool asRaw) const
 }
 
 void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return ;
+    }
 
-    if ( !isColumnIndexValid(index))
+    if ( !isColumnIndexValid(index)) {
         return;
+    }
 
-    if ( isReadOnly())
+    if ( isReadOnly()) {
         return ;
+    }
     changed(true);
 
     _attributeDefinition[index].changed(true);
@@ -255,11 +275,13 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
 
 void FlatTable::setCell(const QString &col, quint32 rec, const QVariant &var)
 {
-    if (!const_cast<FlatTable *>(this)->initLoad())
+    if (!const_cast<FlatTable *>(this)->initLoad()) {
         return ;
+    }
 
-    if ( isReadOnly())
+    if ( isReadOnly()) {
         return ;
+    }
     changed(true);
 
     quint32 index = columnIndex(col);
@@ -291,8 +313,9 @@ void FlatTable::copyTo(IlwisObject *obj){
 }
 
 bool FlatTable::initLoad(){
-    if ( isDataLoaded())
+    if ( isDataLoaded()) {
         return true;
+    }
 
     bool ok = BaseTable::initLoad();
 
