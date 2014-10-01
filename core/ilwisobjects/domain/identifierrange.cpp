@@ -199,13 +199,14 @@ void IndexedIdentifierRange::load(QDataStream &stream)
     _start->setPrefix(prefix);
 }
 
-SPDomainItem IndexedIdentifierRange::valueAt(quint32 index, const Range *rng){
+SPDomainItem IndexedIdentifierRange::valueAt(quint32 &index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itINDEXEDITEM)){
         const IndexedIdentifierRange *idrange = static_cast<const IndexedIdentifierRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
     }
+    index =iUNDEF;
     return SPDomainItem();
 }
 
@@ -506,13 +507,14 @@ NamedIdentifierRange *NamedIdentifierRange::merge(const QSharedPointer<NamedIden
     return newRange;
 }
 
-SPDomainItem NamedIdentifierRange::valueAt(quint32 index, const Range *rng){
+SPDomainItem NamedIdentifierRange::valueAt(quint32& index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itNAMEDITEM)){
         const NamedIdentifierRange *idrange = static_cast<const NamedIdentifierRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
     }
+    index = iUNDEF;
     return SPDomainItem();
 }
 
@@ -554,13 +556,14 @@ Range *ThematicRange::clone() const
     return tr;
 }
 
-SPDomainItem ThematicRange::valueAt(quint32 index, const Range *rng){
+SPDomainItem ThematicRange::valueAt(quint32& index, const Range *rng){
     if ( rng && hasType(rng->valueType(), itTHEMATICITEM)){
         const ThematicRange *idrange = static_cast<const ThematicRange *>(rng);
         if ( index < idrange->count()){
             return idrange->item(index);
         }
     }
+    index = iUNDEF;
     return SPDomainItem();
 }
 

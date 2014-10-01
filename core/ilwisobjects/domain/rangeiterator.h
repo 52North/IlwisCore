@@ -23,8 +23,8 @@ public:
     }
 
     RangeIterator& operator++(){
-        if ( isValid())
-            ++_current;
+        ++_current;
+        checkRange();
         return *this;
     }
 
@@ -133,6 +133,10 @@ public:
 private:
     const Range *_range;
     quint32 _current;
+
+    void checkRange(){
+        RangeType::valueAt(_current, _range);
+    }
 };
 template<typename OutputType, typename RangeType>  RangeIterator<OutputType, RangeType> operator+(const RangeIterator<OutputType, RangeType>& iter, int n) {
     RangeIterator<OutputType, RangeType> iterTemp(iter);
