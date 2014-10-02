@@ -14,7 +14,7 @@
 
 using namespace Ilwis;
 
-AttributeTable::AttributeTable(FeatureCoverage *featureCoverage)
+AttributeTable::AttributeTable(FeatureCoverage *featureCoverage, int level) : _level(level)
 {
     _features.set(featureCoverage);
     setValid(_features.isValid());
@@ -31,7 +31,7 @@ quint32 AttributeTable::recordCount() const
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return iUNDEF;
     }
-    return _features->featureCount();
+    return _features->featureCount(itFEATURE, _level);
 }
 
 quint32 AttributeTable::columnCount() const
@@ -40,7 +40,7 @@ quint32 AttributeTable::columnCount() const
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return iUNDEF;
     }
-    return _features->attributeDefinitions().definitionCount();
+    return _features->attributeDefinitions(_level).definitionCount();
 }
 
 Record& AttributeTable::recordRef(quint32 n)
@@ -48,7 +48,7 @@ Record& AttributeTable::recordRef(quint32 n)
     if (!_features.isValid() || n >= recordCount()) {
         throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    FeatureIterator iter(_features);
+    FeatureIterator iter(_features, _level);
     iter = iter + n;
     return (*iter)->recordRef();
 }
@@ -58,7 +58,7 @@ const Record &AttributeTable::record(quint32 n) const
     if (!_features.isValid() || n >= recordCount()) {
         throw ErrorObject(TR(QString("attribute table %1 not properly initialized").arg(name())));
     }
-    FeatureIterator iter(_features);
+    FeatureIterator iter(_features, _level);
     iter = iter + n;
     return (*iter)->record();
 }
@@ -69,7 +69,8 @@ void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quin
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ;
     }
-    _features->_features[rec]->record(vars, offset);
+    FeatureIterator iter(_features, _level);
+    (*iter)->record(vars, offset);
 }
 
 void AttributeTable::dataLoaded(bool yesno)
@@ -87,10 +88,13 @@ std::vector<QVariant> AttributeTable::column(const QString &columnName) const
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return std::vector<QVariant>();
     }
-    std::vector<QVariant> values(_features->featureCount());
+    std::vector<QVariant> values(_features->featureCount(itFEATURE, _level));
     int columnIndex = _features->attributeDefinitions().columndefinition(columnName).id();
-    for(int rec = 0; rec < _features->featureCount(); ++rec){
-        values[rec] = _features->_features[rec]->recordRef().cell(columnIndex)   ;
+    int rec = 0;
+    FeatureIterator iter(_features, _level);
+    while(iter != iter.end()){
+        values[rec++] = (*iter)->recordRef().cell(columnIndex) ;
+        ++iter;
     }
     return values;
 }
@@ -106,7 +110,7 @@ std::vector<QVariant> AttributeTable::column(quint32 index, quint32 start, quint
     stop = std::min(stop, recordCount());
     start = std::max((quint32)0, start);
     std::vector<QVariant> data(stop - start);
-    FeatureIterator iter(_features);
+    FeatureIterator iter(_features, _level);
     iter = iter + start;
     for(quint32 i=start; i < stop; ++i) {
         data[i - start] = (*iter)(index);
@@ -124,10 +128,12 @@ void AttributeTable::column(const quint32 columnIndex, const std::vector<QVarian
     if ( !columnIndex == iUNDEF)
         return ;
 
-    quint32 rec = offset;
+    FeatureIterator iter(_features, _level);
+    iter = iter + offset;
     for(const QVariant& var : vars) {
-        if ( rec < recordCount()){
-            _features->_features[rec++](columnIndex, var);
+        if ( iter != iter.end()){
+            (*iter)(columnIndex, var);
+            ++iter;
         }
     }
 }
@@ -144,7 +150,7 @@ QVariant AttributeTable::cell(const quint32 index, quint32 rec, bool asRaw) cons
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return QVariant();
     }
-    FeatureIterator iter(_features);
+    FeatureIterator iter(_features, _level);
     iter = iter + rec;
     return (*iter)->cell(index, asRaw);
 }
@@ -166,7 +172,9 @@ void AttributeTable::setCell(quint32 col, quint32 rec, const QVariant &var)
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ;
     }
-    _features->_features[rec](col, var);
+    FeatureIterator iter(_features, _level);
+    iter = iter + rec;
+    (*iter)(col, var);
 }
 
 bool AttributeTable::createTable()
