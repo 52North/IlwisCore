@@ -16,24 +16,26 @@ FeatureIterator::FeatureIterator() :
 {
 }
 
-FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage) : _fcoverage(fcoverage), _isInitial(true),_types(itFEATURE)
+FeatureIterator::FeatureIterator(const IFeatureCoverage& fcoverage, quint32 level) : _fcoverage(fcoverage), _isInitial(true),_types(itFEATURE), _level(level)
 {
     init();
 }
 
-FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset) :
+FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32> &subset, quint32 level) :
     _fcoverage(fcoverage),
     _isInitial(true),
     _subset(subset),
-    _types(itFEATURE)
+    _types(itFEATURE),
+    _level(level)
 {
     init();
 }
 
-FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types) :
+FeatureIterator::FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types, quint32 level) :
     _fcoverage(fcoverage),
     _isInitial(true),
-    _types(types)
+    _types(types),
+    _level(level)
 {
 
 }
@@ -45,6 +47,8 @@ FeatureIterator::FeatureIterator(const FeatureIterator &iter)
     _subset = iter._subset;
     _iterPosition = iter._iterPosition;
     _types = iter._types;
+    _level = iter._level;
+    _flow = iter._flow;
 }
 
 FeatureIterator &FeatureIterator::operator ++()
@@ -135,7 +139,7 @@ bool FeatureIterator::init()
     return true;
 }
 
-bool FeatureIterator::move(qint32 distance) {
+bool FeatureIterator::moveFlat(qint32 distance){
     if (_useVectorIter){
         _iterFeatures += distance;
         if ( _iterFeatures == _fcoverage->_features.end()) {
@@ -162,5 +166,56 @@ bool FeatureIterator::move(qint32 distance) {
 
     }
     return true;
-
 }
+
+bool FeatureIterator::moveBreadthFirst(qint32 distance){
+//    if ( _level == 0){
+//        _iterFeatures += distance;
+//        if ( _iterFeatures == _fcoverage->_features.end()) {
+//            _iterFeatures = _fcoverage->_features.begin();
+//            _subFeatureIterator = (*_iterFeatures)._subFeatures.begin();
+//            ++_level;
+//        }
+//        if (_types != itFEATURE ){ // if we only want to include certain geometry types we need to move until we encounter one
+//            while (!hasType((*_iterFeatures)->geometryType(),_types))
+//                move(1);
+//        }
+//    } else {
+//        ++_subFeatureIterator;
+//        if ( _subFeatureIterator == (*_iterFeatures)._subFeatures.end()){ // end of
+//            _iterFeatures = ++_iterFeatures;
+//            if ( _iterFeatures == _fcoverage->_features.end()){ //  we are done
+//                return false;
+//            }
+//            _subFeatureIterator = (*_iterFeatures)._subFeatures.begin();
+//        }
+//    }
+
+    return false;
+}
+
+bool FeatureIterator::moveDepthFirst(qint32 distance){
+    return false;
+}
+
+bool FeatureIterator::move(qint32 distance) {
+    switch ( _flow){
+    case fFLAT:
+        return moveFlat(distance);
+    case fBREADTHFIRST:
+        return moveBreadthFirst(distance);
+    case fDEPTHFIRST:
+        return moveDepthFirst(distance);
+    }
+    return false;
+}
+FeatureIterator::Flow FeatureIterator::flow() const
+{
+    return _flow;
+}
+
+void FeatureIterator::flow(const Flow &flow)
+{
+    _flow = flow;
+}
+

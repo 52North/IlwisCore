@@ -2,6 +2,9 @@
 #define FEATUREITERATOR_H
 
 namespace Ilwis {
+
+typedef boost::container::flat_map<quint32,SPFeatureI>::iterator SubFeatureIterator;
+
 /**
  * FeatureIterator
  * The primary access method to the features and indexes is through the featureiterator. The <br>
@@ -30,6 +33,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT FeatureIterator  : public std::iterator<std::random_access_iterator_tag, int>
 {
 public:
+    enum Flow{fFLAT, fBREADTHFIRST, fDEPTHFIRST};
     /**
      * Constructor for an empty FeatureIterator
      */
@@ -43,7 +47,7 @@ public:
      *
      * @param fcoverage The FeatureCoverage that should be iterated over
      */
-    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage);
+    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, quint32 level=0);
 
 /**
  * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
@@ -54,7 +58,7 @@ public:
  * @param fcoverage fcoverage The FeatureCoverage that should be iterated over
  * @param types only iterate over the types indicated by this mask. Geometry types outside the mask will not be considered
  */
-    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types);
+    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, IlwisTypes types, quint32 level=0);
 
     /**
      * Creates a FeatureIterator on a FeatureCoverage, the created iterator will <br>
@@ -64,7 +68,7 @@ public:
      * @param fcoverage The FeatureCoverage that should be iterated over
      * @param subset The subset that should be iterated
      */
-    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32>& subset);
+    FeatureIterator(const Ilwis::IFeatureCoverage &fcoverage, const std::vector<quint32>& subset, quint32 level=0);
 
     /**
      * Copy constructor.<br>
@@ -153,16 +157,26 @@ public:
      */
     FeatureIterator end();
 
+    Flow flow() const;
+    void flow(const Flow &flow);
+
 private:
     bool init();
     bool move(qint32 distance=1);
     IFeatureCoverage _fcoverage;
     Features::iterator _iterFeatures;
+    SubFeatureIterator _subFeatureIterator;
     bool _isInitial;
     std::vector<quint32> _subset;
     quint32 _iterPosition = iUNDEF;
     bool _useVectorIter = true;
     IlwisTypes _types;
+    quint32 _level=0;
+    Flow _flow = fFLAT;
+
+    bool moveFlat(qint32 distance);
+    bool moveBreadthFirst(qint32 distance);
+    bool moveDepthFirst(qint32 distance);
 };
 }
 

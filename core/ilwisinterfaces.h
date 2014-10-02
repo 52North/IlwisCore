@@ -83,7 +83,7 @@ public:
     virtual quint32 featureCount(IlwisTypes types, quint32 level) const  = 0;
     virtual void setFeatureCount(IlwisTypes types, qint32 featureCnt,quint32 level)  = 0;
 
-    virtual ITable attributeTable()  = 0;
+    virtual ITable attributeTable(quint32 level)  = 0;
     virtual void attributesFromTable(const ITable &otherTable) = 0;
     virtual FeatureAttributeDefinition& attributeDefinitionsRef(qint32 level=0)  = 0 ;
     virtual const FeatureAttributeDefinition& attributeDefinitions(qint32 level = 0) const  = 0;
