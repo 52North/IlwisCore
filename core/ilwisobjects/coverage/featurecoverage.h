@@ -25,8 +25,10 @@ class FeatureFactory;
 typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 struct FeatureInfo {
-    FeatureInfo() : _geomCnt(0) {}
-    quint32 _geomCnt;
+    static const quint32 ALLFEATURES = 100000;
+    FeatureInfo() : _featureCnt(0) {}
+    qint32 _featureCnt;
+    std::vector<qint32> _featureCntPerLevel;
 };
 
 /**
@@ -145,7 +147,7 @@ public:
      * @param index specification of the third dimension, when required
      * @return the amount of features of this type
      */
-    quint32 featureCount(IlwisTypes types=itFEATURE) const;
+    quint32 featureCount(IlwisTypes types=itFEATURE, quint32 level=FeatureInfo::ALLFEATURES) const;
 
     /**
      * Changes the amount of features for a certain featuretype
@@ -158,7 +160,7 @@ public:
      * @param types the type that should be set
      * @param cnt the count that should be set
      */
-    void setFeatureCount(IlwisTypes types, quint32 geomCnt);
+    void setFeatureCount(IlwisTypes types, qint32 featureCnt, quint32 level);
     ITable attributeTable() ;
     void attributesFromTable(const ITable &otherTable);
     FeatureAttributeDefinition& attributeDefinitionsRef(qint32 level=0) ;
@@ -193,7 +195,7 @@ private:
 
 
     Ilwis::FeatureInterface *createNewFeature(IlwisTypes tp);
-    void adaptFeatureCounts(int tp, quint32 geomCnt);
+    void adaptFeatureCounts(int tp, qint32 featureCnt, quint32 level);
 };
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;

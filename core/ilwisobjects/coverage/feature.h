@@ -79,7 +79,7 @@ public:
 
     IlwisTypes geometryType() const;
     const UPGeometry& geometry() const;
-    UPGeometry& geometryRef();
+    //UPGeometry& geometryRef();
     void geometry(geos::geom::Geometry *geom);
 
     SPFeatureI &subFeatureRef(double subFeatureIndex);
@@ -109,8 +109,10 @@ private:
     template<typename T> void removeSubFeaturePrivate(const T &subFeatureIndex)
     {
         quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
-        if ( index < _subFeature.size())
+        if ( index < _subFeature.size()){
+            _parentFCoverage->setFeatureCount(geometryType(),-1, _level);
             _subFeature.erase(index);
+        }
     }
 
     template<typename T> void setSubFeaturePrivate(const T &subFeatureIndex, FeatureInterface *feature)

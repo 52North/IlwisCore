@@ -24,7 +24,7 @@ using namespace Ilwis;
 
 FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
 {
-    _featureInfo.resize(3);
+    _featureInfo.resize(4);
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
     _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
     delete pm;
@@ -32,7 +32,7 @@ FeatureCoverage::FeatureCoverage() : _featureTypes(itUNKNOWN),_featureFactory(0)
 
 FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),_featureTypes(itUNKNOWN),_featureFactory(0)
 {
-    _featureInfo.resize(3);
+    _featureInfo.resize(4);
     geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel( geos::geom::PrecisionModel::FLOATING);
     _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
     delete pm;
@@ -153,7 +153,7 @@ FeatureInterface *FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
-    setFeatureCount(tp,1);
+    setFeatureCount(tp,1,0);
     CreateFeature create = _featureFactory->getCreator("feature");
     FeatureInterface *newFeature = create(this,0);
 
@@ -161,35 +161,57 @@ FeatureInterface *FeatureCoverage::createNewFeature(IlwisTypes tp) {
 }
 
 
-void FeatureCoverage::adaptFeatureCounts(int tp, quint32 geomCnt) {
-    if ( geomCnt != iUNDEF)
-       _featureInfo[tp]._geomCnt += geomCnt;
-    else
-       _featureInfo[tp]._geomCnt = 0;
+void FeatureCoverage::adaptFeatureCounts(int tp, qint32 featureCnt, quint32 level) {
+    if ( featureCnt != iUNDEF){
+        _featureInfo[tp]._featureCnt += featureCnt;
+        _featureInfo[tp]._featureCnt = std::max(_featureInfo[tp]._featureCnt, 0);
+        if ( _featureInfo[tp]._featureCntPerLevel.size() <= level){
+            _featureInfo[tp]._featureCntPerLevel.resize(level + 1,0);
+        }
+        qint32& count = _featureInfo[tp]._featureCntPerLevel[level];
+        count += featureCnt;
+        count = std::max(count, 0);
+
+    } else{
+        if ( level == FeatureInfo::ALLFEATURES){
+            _featureInfo[tp]._featureCnt = 0;
+            _featureInfo[tp]._featureCntPerLevel.clear();
+        }else {
+            if ( _featureInfo[tp]._featureCntPerLevel.size() <= level){
+                qint32& count = _featureInfo[tp]._featureCntPerLevel[level];
+                _featureInfo[tp]._featureCnt -= count;
+                count = 0;
+
+            }
+        }
+    }
 }
 
-void FeatureCoverage::setFeatureCount(IlwisTypes types, quint32 geomCnt)
+void FeatureCoverage::setFeatureCount(IlwisTypes types, qint32 featureCnt, quint32 level)
 {
     Locker<std::mutex> lock(_mutex2);
 
 
     switch(types){
+    case itUNKNOWN:
+        adaptFeatureCounts(0, featureCnt, level);break;
     case itPOINT:
-        adaptFeatureCounts(0, geomCnt);break;
+        adaptFeatureCounts(1, featureCnt, level);break;
     case itLINE:
-        adaptFeatureCounts(1, geomCnt);break;
+        adaptFeatureCounts(2, featureCnt, level);break;
     case itPOLYGON:
-        adaptFeatureCounts(2, geomCnt);break;
+        adaptFeatureCounts(3, featureCnt, level);break;
     case itFEATURE:
         //usually only used for resetting the count to 0
-        adaptFeatureCounts(0, geomCnt);
-        adaptFeatureCounts(1, geomCnt);
-        adaptFeatureCounts(2, geomCnt);
+        adaptFeatureCounts(0, featureCnt, level);
+        adaptFeatureCounts(1, featureCnt, level);
+        adaptFeatureCounts(2, featureCnt, level);
+        adaptFeatureCounts(3, featureCnt, level);
         break;
 
     }
-    if ( geomCnt != iUNDEF) {
-        if (geomCnt > 0 )
+    if ( featureCnt != iUNDEF) {
+        if (featureCnt > 0 )
             _featureTypes |= types;
         else
             _featureTypes &= !types;
@@ -265,16 +287,37 @@ void FeatureCoverage::copyTo(IlwisObject *obj)
     }
 }
 
-quint32 FeatureCoverage::featureCount(IlwisTypes types) const
+quint32 FeatureCoverage::featureCount(IlwisTypes types, quint32 level) const
 {
     quint32 count=0;
-    if ( hasType(types, itPOINT))
-        count += _featureInfo[0]._geomCnt;
-    if ( hasType(types, itLINE))
-        count += _featureInfo[1]._geomCnt;
-    if ( hasType(types, itPOLYGON))
-        count += _featureInfo[2]._geomCnt;
+    if ( level == FeatureInfo::ALLFEATURES){
+        if ( types == itUNKNOWN)
+            count += _featureInfo[0]._featureCnt;
+        if ( hasType(types, itPOINT))
+            count += _featureInfo[1]._featureCnt;
+        if ( hasType(types, itLINE))
+            count += _featureInfo[2]._featureCnt;
+        if ( hasType(types, itPOLYGON))
+            count += _featureInfo[3]._featureCnt;
+    }else {
 
+        if ( types == itUNKNOWN){
+            if ( level < _featureInfo[0]._featureCntPerLevel.size())
+                count += _featureInfo[0]._featureCntPerLevel[level];
+        }
+        if ( hasType(types, itPOINT)){
+            if ( level < _featureInfo[1]._featureCntPerLevel.size())
+                count += _featureInfo[1]._featureCntPerLevel[level];
+        }
+        if ( hasType(types, itLINE)){
+            if ( level < _featureInfo[2]._featureCntPerLevel.size())
+                count += _featureInfo[2]._featureCntPerLevel[level];
+        }
+        if ( hasType(types, itPOLYGON)){
+            if ( level < _featureInfo[3]._featureCntPerLevel.size())
+                count += _featureInfo[3]._featureCntPerLevel[level];
+        }
+    }
     return count;
 }
 

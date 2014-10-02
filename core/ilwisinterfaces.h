@@ -54,7 +54,7 @@ public:
     virtual IlwisTypes geometryType() const  = 0;
     virtual void geometry(geos::geom::Geometry *geom)  = 0;
     virtual const UPGeometry& geometry() const = 0;
-    virtual UPGeometry& geometryRef() = 0;
+    //virtual UPGeometry& geometryRef() = 0;
 
     virtual Record& recordRef() = 0;
     virtual const Record& record() const = 0;
@@ -80,8 +80,8 @@ public:
 
     virtual IlwisTypes featureTypes() const  = 0;
     virtual void featureTypes(IlwisTypes types) = 0;
-    virtual quint32 featureCount(IlwisTypes types=itFEATURE) const  = 0;
-    virtual void setFeatureCount(IlwisTypes types, quint32 geomCnt)  = 0;
+    virtual quint32 featureCount(IlwisTypes types, quint32 level) const  = 0;
+    virtual void setFeatureCount(IlwisTypes types, qint32 featureCnt,quint32 level)  = 0;
 
     virtual ITable attributeTable()  = 0;
     virtual void attributesFromTable(const ITable &otherTable) = 0;

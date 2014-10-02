@@ -335,7 +335,7 @@ void Feature::loadGeometry(QDataStream &stream)
         }
         _geometry.reset(factory->createMultiPolygon(subgeoms));
     }
-    _parentFCoverage->setFeatureCount( GeometryHelper::geometryType(_geometry.get()),1);
+    _parentFCoverage->setFeatureCount( GeometryHelper::geometryType(_geometry.get()),1,FeatureInfo::ALLFEATURES);
 
 }
 
@@ -366,16 +366,20 @@ bool Feature::isValid() const {
     return _attributes.isValid() || _geometry;
 }
 
-UPGeometry &Feature::geometryRef(){
-    return _geometry;
-}
+//UPGeometry &Feature::geometryRef(){
+//    return _geometry;
+//}
 
 const UPGeometry &Feature::geometry() const{
     return _geometry;
 }
 
 void Feature::geometry(geos::geom::Geometry *geom){
+    IlwisTypes geomType = geometryType();
+    _parentFCoverage->setFeatureCount(geomType,-1, _level);
     _geometry.reset(geom);
+    geomType = geometryType();
+    _parentFCoverage->setFeatureCount(geomType,1, _level);
 }
 
 void Feature::removeSubFeature(const QString &subFeatureIndex)
@@ -440,8 +444,8 @@ SPFeatureI Feature::createSubFeature(const QString& subFeatureIndex, geos::geom:
     if ( index == iUNDEF)
         return SPFeatureI();
 
-    IlwisTypes tp = GeometryHelper::geometryType(geom);
-    _parentFCoverage->setFeatureCount(tp,1);
+    //IlwisTypes tp = GeometryHelper::geometryType(geom);
+    //_parentFCoverage->setFeatureCount(tp,1,_level + 1);
     CreateFeature create = _parentFCoverage->_featureFactory->getCreator("feature");
     _subFeature[index] = create(_parentFCoverage, _level + 1);
     _subFeature[index]->geometry(geom);
