@@ -161,7 +161,7 @@ public:
      * @param cnt the count that should be set
      */
     void setFeatureCount(IlwisTypes types, qint32 featureCnt, quint32 level);
-    ITable attributeTable() ;
+    ITable attributeTable(quint32 level=0) ;
     void attributesFromTable(const ITable &otherTable);
     FeatureAttributeDefinition& attributeDefinitionsRef(qint32 level=0) ;
     const FeatureAttributeDefinition& attributeDefinitions(qint32 level=0) const;

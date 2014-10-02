@@ -99,16 +99,23 @@ SPFeatureI FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
             }
             GeometryHelper::setCoordinateSystem(geom, coordinateSystem().ptr());
             newfeature->geometry(geom);
-        }
+        }else
+            setFeatureCount(itUNKNOWN,1,0);
+
+        _features.push_back(newfeature);
+        return _features.back();
     }
-    _features.push_back(newfeature);
-    return _features.back();
+    return SPFeatureI();
+
 }
 
 SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker<> lock(_mutex);
 
     auto transform = [&](const UPGeometry& geom)->geos::geom::Geometry * {
+        if ( geom.get() == 0)
+            return 0;
+
         geos::geom::Geometry *newgeom = geom->clone();
         if ( csySource.isValid() && !csySource->isEqual(coordinateSystem().ptr())){
             CsyTransform trans(csySource, coordinateSystem());
@@ -153,7 +160,6 @@ FeatureInterface *FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( _featureFactory == 0) {
         _featureFactory = kernel()->factory<FeatureFactory>("FeatureFactory","ilwis");
     }
-    setFeatureCount(tp,1,0);
     CreateFeature create = _featureFactory->getCreator("feature");
     FeatureInterface *newFeature = create(this,0);
 
@@ -219,13 +225,13 @@ void FeatureCoverage::setFeatureCount(IlwisTypes types, qint32 featureCnt, quint
 }
 
 
-ITable FeatureCoverage::attributeTable()
+ITable FeatureCoverage::attributeTable(quint32 level)
 {
 
     // TODO add level parameter to access subfeature attributes
 
     IAttributeTable tbl;
-    tbl.set( new AttributeTable(this));
+    tbl.set( new AttributeTable(this, level));
     return tbl;
 }
 
