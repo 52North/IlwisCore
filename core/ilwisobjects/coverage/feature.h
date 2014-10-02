@@ -40,7 +40,9 @@ public:
 };
 
 
-
+typedef boost::container::flat_map<quint32,SPFeatureI> SubFeatures;
+typedef boost::container::flat_map<quint32,SPFeatureI>::iterator SubFeatureIterator;
+typedef boost::container::flat_map<quint32,SPFeatureI>::const_iterator CSubFeatureIterator;
 
 
 /*!
@@ -100,7 +102,7 @@ private:
 
     static quint64 _idbase;
     quint64 _featureid; // unique
-    boost::container::flat_map<quint32,SPFeatureI> _subFeature;
+    SubFeatures _subFeatures;
     Record _attributes;
     UPGeometry _geometry;
     IFeatureCoverage _parentFCoverage;
@@ -109,17 +111,17 @@ private:
     template<typename T> void removeSubFeaturePrivate(const T &subFeatureIndex)
     {
         quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
-        if ( index < _subFeature.size()){
+        if ( index < _subFeatures.size()){
             _parentFCoverage->setFeatureCount(geometryType(),-1, _level);
-            _subFeature.erase(index);
+            _subFeatures.erase(index);
         }
     }
 
     template<typename T> void setSubFeaturePrivate(const T &subFeatureIndex, FeatureInterface *feature)
     {
         quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
-        if ( index < _subFeature.size())
-            _subFeature[index].reset(feature);
+        if ( index < _subFeatures.size())
+            _subFeatures[index].reset(feature);
     }
     void storeGeometry(QDataStream &stream);
     void loadGeometry(QDataStream &stream);

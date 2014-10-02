@@ -206,7 +206,7 @@ SPFeatureI& Feature::subFeatureRef(double subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF)
-        return _subFeature[index];
+        return _subFeatures[index];
     throw ErrorObject(TR("Illegal value for variant selection"));
 }
 
@@ -214,7 +214,7 @@ SPFeatureI& Feature::subFeatureRef(const QString &subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF){
-        return _subFeature[index];
+        return _subFeatures[index];
     }
     throw ErrorObject(TR("Illegal value for variant selection"));
 }
@@ -224,8 +224,8 @@ void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stre
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
     _attributes.storeData(types,stream,options);
     storeGeometry(stream);
-    stream << _subFeature.size();
-    for(auto iter= _subFeature.begin(); iter != _subFeature.end(); ++iter){
+    stream << _subFeatures.size();
+    for(auto iter= _subFeatures.begin(); iter != _subFeatures.end(); ++iter){
         stream << (*iter).first;
         SPFeatureI subfeature = (*iter).second;
         subfeature->store(columns.featureAttributeDefinition(),stream, options);
@@ -352,7 +352,7 @@ void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &strea
         CreateFeature create = _parentFCoverage->_featureFactory->getCreator("feature");
         FeatureInterface *feature = create(_parentFCoverage, _level + 1);
         feature->load(columns.featureAttributeDefinition(), stream, options);
-        _subFeature[index].reset(feature);
+        _subFeatures[index].reset(feature);
     }
 }
 
@@ -414,7 +414,7 @@ void Feature::setSubFeature(double subFeatureIndex, SPFeatureI &feature)
 
 quint32 Feature::subFeatureCount() const
 {
-    return _subFeature.size();
+    return _subFeatures.size();
 }
 
 
@@ -425,8 +425,8 @@ bool operator==(const Feature& f1, const Feature& f2) {
 FeatureInterface *Feature::clone(FeatureCoverage *fcoverage) const
 {
     Feature *f = new Feature(_parentFCoverage);
-    for(const auto& node : _subFeature){
-        f->_subFeature[node.first].reset(node.second->clone(fcoverage));
+    for(const auto& node : _subFeatures){
+        f->_subFeatures[node.first].reset(node.second->clone(fcoverage));
     }
     f->_parentFCoverage.set(fcoverage);
     if ( _geometry)
@@ -447,10 +447,10 @@ SPFeatureI Feature::createSubFeature(const QString& subFeatureIndex, geos::geom:
     //IlwisTypes tp = GeometryHelper::geometryType(geom);
     //_parentFCoverage->setFeatureCount(tp,1,_level + 1);
     CreateFeature create = _parentFCoverage->_featureFactory->getCreator("feature");
-    _subFeature[index] = create(_parentFCoverage, _level + 1);
-    _subFeature[index]->geometry(geom);
+    _subFeatures[index] = create(_parentFCoverage, _level + 1);
+    _subFeatures[index]->geometry(geom);
 
-    return _subFeature[index];
+    return _subFeatures[index];
 }
 
 IlwisTypes Feature::geometryType() const
