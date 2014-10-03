@@ -206,7 +206,8 @@ SPFeatureI& Feature::subFeatureRef(double subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF)
-        return _subFeatures[index];
+        if ( _subFeatures.find(index) != _subFeatures.end())
+            return _subFeatures[index];
     throw ErrorObject(TR("Illegal value for variant selection"));
 }
 
@@ -214,7 +215,8 @@ SPFeatureI& Feature::subFeatureRef(const QString &subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF){
-        return _subFeatures[index];
+        if ( _subFeatures.find(index) != _subFeatures.end())
+            return _subFeatures[index];
     }
     throw ErrorObject(TR("Illegal value for variant selection"));
 }
