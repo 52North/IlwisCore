@@ -3,8 +3,6 @@
 
 namespace Ilwis {
 
-typedef boost::container::flat_map<quint32,SPFeatureI>::iterator SubFeatureIterator;
-
 /**
  * FeatureIterator
  * The primary access method to the features and indexes is through the featureiterator. The <br>
@@ -165,13 +163,15 @@ private:
     bool move(qint32 distance=1);
     IFeatureCoverage _fcoverage;
     Features::iterator _iterFeatures;
-    SubFeatureIterator _subFeatureIterator;
+    std::vector<QString> _currentIndexes;
+    std::vector<QString>::iterator _subIterator;
     bool _isInitial;
     std::vector<quint32> _subset;
     quint32 _iterPosition = iUNDEF;
     bool _useVectorIter = true;
     IlwisTypes _types;
     quint32 _level=0;
+    quint32 _currentLevel = 0;
     Flow _flow = fFLAT;
 
     bool moveFlat(qint32 distance);
