@@ -30,10 +30,10 @@ public:
     void operator ()(const QString &columnName, const QVariant& var);
     QVariant operator ()(quint32 colIndex) const;
     void operator ()(quint32 colIndex, const QVariant& var);
-    SPFeatureI& operator[](const QString& subFeatureIndex);
-    const SPFeatureI& operator[](const QString& subFeatureIndex) const;
-    SPFeatureI& operator[](quint32 subFeatureIndex);
-    const SPFeatureI& operator[](quint32 subFeatureIndex) const;
+    SPFeatureI operator[](const QString& subFeatureIndex);
+    const SPFeatureI operator[](const QString& subFeatureIndex) const;
+    SPFeatureI operator[](quint32 subFeatureIndex);
+    const SPFeatureI operator[](quint32 subFeatureIndex) const;
     //SPFeatureI& operator = (const SPFeatureI& otherFeature);
     VertexIterator begin();
     VertexIterator end();
@@ -84,8 +84,8 @@ public:
     //UPGeometry& geometryRef();
     void geometry(geos::geom::Geometry *geom);
 
-    SPFeatureI &subFeatureRef(double subFeatureIndex);
-    SPFeatureI &subFeatureRef(const QString &subFeatureIndex);
+    SPFeatureI subFeatureRef(double subFeatureIndex);
+    SPFeatureI subFeatureRef(const QString &subFeatureIndex);
     void removeSubFeature(const QString& subFeatureIndex);
     void setSubFeature(const QString &subFeatureIndex, FeatureInterface *feature);
     void setSubFeature(const QString &subFeatureIndex, SPFeatureI& feature);

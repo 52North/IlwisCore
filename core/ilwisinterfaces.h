@@ -21,8 +21,8 @@ typedef std::unique_ptr<geos::geom::GeometryFactory> UPGeomFactory;
 
 class KERNELSHARED_EXPORT FeatureVariantInterface {
 public:
-    virtual SPFeatureI& subFeatureRef(double variantItem)  = 0;
-    virtual SPFeatureI& subFeatureRef(const QString &variantItem)  = 0;
+    virtual SPFeatureI subFeatureRef(double variantItem)  = 0;
+    virtual SPFeatureI subFeatureRef(const QString &variantItem)  = 0;
     virtual void removeSubFeature(const QString& variantItem)  = 0;
     virtual void setSubFeature(const QString &variantItem, FeatureInterface *feature)  = 0;
     virtual void setSubFeature(const QString &variantItem, SPFeatureI& feature) = 0;

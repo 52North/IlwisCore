@@ -45,29 +45,29 @@ void SPFeatureI::operator ()(quint32 colIndex, const QVariant &var) {
     return (*this)->setCell(colIndex, var);
 }
 
-SPFeatureI& SPFeatureI::operator[](const QString &subFeatureIndex)
+SPFeatureI SPFeatureI::operator[](const QString &subFeatureIndex)
 {
     if (!get())
-        throw ErrorObject(TR("Using uninitialized feature or sub feature, are the attribute names correct?"));
+        return SPFeatureI();
     return (*this)->subFeatureRef(subFeatureIndex);
 }
 
-const SPFeatureI& SPFeatureI::operator[](const QString &subFeatureIndex) const
+const SPFeatureI SPFeatureI::operator[](const QString &subFeatureIndex) const
 {
     if (!get())
-        throw ErrorObject(TR("Using uninitialized feature or sub feature, are the attribute names correct?"));
+        return SPFeatureI();
     return (*this)->subFeatureRef(subFeatureIndex);
 }
 
-SPFeatureI& SPFeatureI::operator[]( quint32 subFeatureIndex)
+SPFeatureI SPFeatureI::operator[]( quint32 subFeatureIndex)
 {
     return (*this)->subFeatureRef(subFeatureIndex);
 }
 
-const SPFeatureI& SPFeatureI::operator[]( quint32 subFeatureIndex) const
+const SPFeatureI SPFeatureI::operator[]( quint32 subFeatureIndex) const
 {
     if (!get())
-        throw ErrorObject(TR("Using uninitialized feature or sub feature, are the attribute names correct?"));
+          return SPFeatureI();
     return (*this)->subFeatureRef(subFeatureIndex);
 }
 
@@ -202,21 +202,22 @@ quint32 Feature::attributeColumnCount() const
     return _parentFCoverage->attributeDefinitions(_level).definitionCount();
 }
 
-SPFeatureI& Feature::subFeatureRef(double subFeatureIndex)
+SPFeatureI Feature::subFeatureRef(double subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF)
         return _subFeatures[index];
-    throw ErrorObject(TR("Illegal value for variant selection"));
+    return SPFeatureI();
+
 }
 
-SPFeatureI& Feature::subFeatureRef(const QString &subFeatureIndex)
+SPFeatureI Feature::subFeatureRef(const QString &subFeatureIndex)
 {
     quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
     if ( index != iUNDEF){
         return _subFeatures[index];
     }
-    throw ErrorObject(TR("Illegal value for variant selection"));
+    return SPFeatureI();
 }
 
 void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
