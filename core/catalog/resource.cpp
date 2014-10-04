@@ -399,6 +399,54 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
 
 }
 
+bool Resource::load(QDataStream &stream){
+    int sz;
+    stream >> sz;
+    for(int i = 0; i < sz; ++i){
+        QVariant value;
+        QString key;
+        stream >> key;
+        stream >> value;
+        _properties[key] = value;
+    }
+    stream >> _normalizedUrl;
+    stream >> _rawUrl;
+    QString url;
+    stream >> url;
+    if ( url != sUNDEF)
+        _container.push_back(url);
+    stream >> _size;
+    stream >> _dimensions;
+    stream >> _ilwtype;
+    stream >> _extendedType;
+
+    return true;
+}
+
+bool Resource::store(QDataStream &stream) const
+{
+    stream << _properties.size();
+    auto iter = _properties.begin();
+    while ( iter != _properties.end()){
+        stream << iter.key();
+        stream << iter.value();
+    }
+    stream << _normalizedUrl;
+    stream << _rawUrl;
+    if ( _container.size() > 0)
+        stream << _container[0].toString();
+    else
+        stream << sUNDEF;
+    stream << _size;
+    stream << _dimensions;
+    stream << _ilwtype;
+    stream << _extendedType;
+
+    return true;
+
+
+}
+
 bool Resource::isValid() const
 {
     return ( name() != sUNDEF && _ilwtype != itUNKNOWN && _normalizedUrl.isValid());

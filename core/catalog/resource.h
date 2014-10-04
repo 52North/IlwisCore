@@ -252,6 +252,8 @@ public:
      * @return true if stored succelful
      */
     bool store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const;
+    bool store(QDataStream& stream) const;
+    bool load(QDataStream &stream);
 
     /**
      * Checks if this Resource is valid
