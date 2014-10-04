@@ -121,7 +121,7 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/table/record.cpp \
     core/ilwisobjects/table/attributedefinition.cpp \
     core/ilwisobjects/table/attributetable.cpp \
-    core/ilwisobjects/table/selectabletable.cpp
+    core/ilwisobjects/table/selectabletable.cpp \
     core/ilwistypes.cpp
 
 

@@ -99,7 +99,12 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
 SPFeatureI FeatureIterator::operator *()
 {
      init();
-     return *_iterFeatures;
+     if ( _currentLevel == 0)
+        return *_iterFeatures;
+     else if ( _currentIndexes.size() > 0)
+         (*_iterFeatures)[*_subIterator];
+
+     return SPFeatureI();
 }
 
 FeatureIterator FeatureIterator::end() const
@@ -120,6 +125,9 @@ FeatureIterator FeatureIterator::end()
 bool FeatureIterator::init()
 {
     if ( _isInitial)     {
+        _currentIndexes = _fcoverage->attributeDefinitions(0).indexes();
+        _subIterator = _currentIndexes.begin();
+        _currentLevel = _level;
         _useVectorIter = _subset.size() == 0 || _subset.size() == _fcoverage->featureCount();
         _isInitial = false;
         if ( _fcoverage->_features.size() == 0) {
@@ -140,6 +148,9 @@ bool FeatureIterator::init()
 }
 
 bool FeatureIterator::moveFlat(qint32 distance){
+    if ( _currentLevel != 0)
+        return moveBreadthFirst(distance);
+
     if (_useVectorIter){
         _iterFeatures += distance;
         if ( _iterFeatures == _fcoverage->_features.end()) {
@@ -169,29 +180,21 @@ bool FeatureIterator::moveFlat(qint32 distance){
 }
 
 bool FeatureIterator::moveBreadthFirst(qint32 distance){
-//    if ( _level == 0){
-//        _iterFeatures += distance;
-//        if ( _iterFeatures == _fcoverage->_features.end()) {
-//            _iterFeatures = _fcoverage->_features.begin();
-//            _subFeatureIterator = (*_iterFeatures)._subFeatures.begin();
-//            ++_level;
-//        }
-//        if (_types != itFEATURE ){ // if we only want to include certain geometry types we need to move until we encounter one
-//            while (!hasType((*_iterFeatures)->geometryType(),_types))
-//                move(1);
-//        }
-//    } else {
-//        ++_subFeatureIterator;
-//        if ( _subFeatureIterator == (*_iterFeatures)._subFeatures.end()){ // end of
-//            _iterFeatures = ++_iterFeatures;
-//            if ( _iterFeatures == _fcoverage->_features.end()){ //  we are done
-//                return false;
-//            }
-//            _subFeatureIterator = (*_iterFeatures)._subFeatures.begin();
-//        }
-//    }
-
-    return false;
+    // TODO : only one level deep atm, is the most used case if at all. later a full breadth first
+    if ( _currentLevel == 0){
+        if (moveFlat(distance)){
+            return true;
+        }
+        ++_currentLevel;
+        _iterFeatures = _fcoverage->_features.begin();
+        _subIterator = _currentIndexes.begin();
+    }else if ( _subIterator != _currentIndexes.end())
+        ++_subIterator;
+    else {
+        ++_iterFeatures;
+        _subIterator = _currentIndexes.begin();
+    }
+    return _iterFeatures == _fcoverage->_features.end();
 }
 
 bool FeatureIterator::moveDepthFirst(qint32 distance){
