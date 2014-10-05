@@ -430,6 +430,7 @@ bool Resource::store(QDataStream &stream) const
     while ( iter != _properties.end()){
         stream << iter.key();
         stream << iter.value();
+        ++iter;
     }
     stream << _normalizedUrl;
     stream << _rawUrl;
