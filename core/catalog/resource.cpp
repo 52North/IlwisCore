@@ -593,9 +593,7 @@ Resource Resource::property2Resource(const QString& propertyName, IlwisTypes typ
     bool ok;
     quint64 id = property.toULongLong(&ok);
     if ( ok){
-        ESPIlwisObject object =  mastercatalog()->get(id);
-        if ( object)
-            return object->source();
+        return mastercatalog()->id2Resource(id);
     }
     else
         return mastercatalog()->name2Resource(property.toString(), type);
