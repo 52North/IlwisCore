@@ -60,6 +60,8 @@ public:
     void name(const QString& n);
     virtual QString description() const;
     void setDescription(const QString& desc);
+    bool store(QDataStream& stream) const;
+    bool load(QDataStream &stream);
 
     static QString newAnonymousName() ; 
 
