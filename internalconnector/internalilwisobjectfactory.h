@@ -27,7 +27,6 @@ public:
     bool canUse(const Ilwis::Resource &resource) const;
 
 private:
-    Resource property2Resource(const QVariant &property, IlwisTypes type) const;
     IlwisObject *createEllipsoid(const Resource &resource, const IOOptions &options) const;
     GeodeticDatum *createDatum(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createProjection(const Resource &resource, const Ilwis::IOOptions &options) const;

@@ -117,6 +117,7 @@ public:
      * @return the Value of the property or iUNDEF
      */
     QVariant operator[] (const QString& property) const;
+    Resource property2Resource(const QString &propertyName, IlwisTypes type) const;
 
     /**
      * Checks whether this Resource has a certain property, a resource always has a "name" and a "id"
@@ -133,6 +134,7 @@ public:
      * @param value
      */
     void addProperty(const QString& key, const QVariant& value );
+
 
     /**
      * Query for the url of this Resource, the url points to the file used to created this Resource

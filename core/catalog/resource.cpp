@@ -585,4 +585,21 @@ QString Resource::quoted2string(const QString& name){
     return name;
 }
 
+Resource Resource::property2Resource(const QString& propertyName, IlwisTypes type) const{
+    QVariant property = (*this)[propertyName];
+    if ( !property.isValid() || property.isNull() )
+        return Resource();
+    bool ok;
+    quint64 id = property.toULongLong(&ok);
+    if ( ok){
+        ESPIlwisObject object =  mastercatalog()->get(id);
+        if ( object)
+            return object->source();
+    }
+    else
+        return mastercatalog()->name2Resource(property.toString(), type);
+
+    return Resource();
+}
+
 
