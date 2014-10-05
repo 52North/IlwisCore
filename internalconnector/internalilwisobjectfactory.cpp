@@ -230,7 +230,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
         csy = resource["coordinatesystem"].value<Ilwis::ICoordinateSystem>();
     else if( typnm == "QString" &&
              resource["coordinatesystem"].toString() != sUNDEF  ) {
-        Resource newresource = property2Resource(resource["coordinatesystem"], itCOORDSYSTEM);
+        Resource newresource = resource.property2Resource("coordinatesystem", itCOORDSYSTEM);
         if ( newresource.isValid()) {
             if (!csy.prepare(newresource,options))
                 return false;
@@ -257,7 +257,7 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
             dom = resource["domain"].value<Ilwis::IDomain>();
         else if( tpname == "QString" &&
                  resource["domain"].toString() != sUNDEF  ) {
-            Resource newresource = property2Resource(resource["domain"], itDOMAIN);
+            Resource newresource = resource.property2Resource("domain", itDOMAIN);
             if ( newresource.isValid()) {
                 if (!dom.prepare(newresource, options))
                     return false;
@@ -301,7 +301,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     if (tpnam == "Ilwis::IGeoReference")
         grf = resource["georeference"].value<Ilwis::IGeoReference>();
     else if( tpnam == "QString"  && resource["georeference"].toString() != sUNDEF) {
-        Resource newresource = property2Resource(resource["georeference"], itGEOREF);
+        Resource newresource = resource.property2Resource("georeference", itGEOREF);
         if ( newresource.isValid()) {
             if (!grf.prepare(newresource))
                 return 0;
@@ -341,22 +341,6 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     //connector->loadMetaData(gcoverage, IOOptions());
 
     return gcoverage;
-}
-
-Resource InternalIlwisObjectFactory::property2Resource(const QVariant& property, IlwisTypes type) const{
-    if ( !property.isValid() || property.isNull() )
-        return Resource();
-    bool ok;
-    quint64 id = property.toULongLong(&ok);
-    if ( ok){
-        ESPIlwisObject object =  mastercatalog()->get(id);
-        if ( object)
-            return object->source();
-    }
-    else
-        return mastercatalog()->name2Resource(property.toString(), type);
-
-    return Resource();
 }
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, const IOOptions &options) const{
