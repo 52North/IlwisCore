@@ -60,6 +60,9 @@ IlwisTypes Catalog::ilwisType() const {
 
 QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
 {
+    if ( nm == sUNDEF)
+        return sUNDEF;
+
     QString name = nm;
     name = Resource::quoted2string(name);
     name = OSHelper::neutralizeFileName(name);
