@@ -400,6 +400,8 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
 }
 
 bool Resource::load(QDataStream &stream){
+
+    Identity::load(stream);
     int sz;
     stream >> sz;
     for(int i = 0; i < sz; ++i){
@@ -425,6 +427,7 @@ bool Resource::load(QDataStream &stream){
 
 bool Resource::store(QDataStream &stream) const
 {
+    Identity::store(stream);
     stream << _properties.size();
     auto iter = _properties.begin();
     while ( iter != _properties.end()){

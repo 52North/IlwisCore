@@ -44,6 +44,26 @@ void Identity::setDescription(const QString &desc)
     _description = desc;
 }
 
+bool Identity::store(QDataStream &stream) const
+{
+    stream << id();
+    stream << name();
+    stream << code();
+    stream << description();
+
+    return true;
+}
+
+bool Identity::load(QDataStream &stream)
+{
+    stream >> _id;
+    stream >> _name;
+    stream >> _code;
+    stream >> _description;
+
+    return true;
+}
+
 QString Identity::newAnonymousName()
 {
     return QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_baseId++);
