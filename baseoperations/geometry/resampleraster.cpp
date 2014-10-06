@@ -120,6 +120,7 @@ quint64 ResampleRaster::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/resample"});
+    operation.setLongName("Resample Raster");
     operation.setSyntax("resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
     operation.setDescription(TR("translates a rastercoverage from one geometry (coordinatesystem+georeference) to another"));
     operation.setInParameterCount({3});

@@ -185,10 +185,11 @@ quint64 AggregateRaster::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/aggregateraster"});
-    operation.setSyntax("aggregateraster(inputgridcoverage,{Avg|Max|Med|Min|Prd|Std|Sum}, groupsize,changegeometry[,new georefname])");
+    operation.setLongName("Spatial Aggregation of Raster coverage");
+    operation.setSyntax("aggregateraster(inputgridcoverage,Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
     operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
     operation.setInParameterCount({4,5});
-    operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with domain any domain"));
+    operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
     operation.addInParameter(1,itSTRING , TR("Aggregation Method"),TR("the method how pixels inside a group will be accumulated"));
     operation.addInParameter(2,itINTEGER | itSTRING , TR("Groupsize"),TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
     operation.addInParameter(3,itBOOL , TR("change geometry"),TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
