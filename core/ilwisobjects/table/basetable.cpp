@@ -69,7 +69,7 @@ bool BaseTable::addColumn(const ColumnDefinition& def){
 
 bool BaseTable::addColumn(const QString &columnname, const IDomain& domain, const bool readonly)
 {
-    return addColumn(ColumnDefinition(columnname, domain,_columns));
+    return addColumn(ColumnDefinition(columnname, domain,_columns, readonly));
 }
 
 bool BaseTable::addColumn(const QString &columnname, const QString &domainname, const bool readonly)

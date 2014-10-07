@@ -15,8 +15,8 @@ public:
     AttributeDefinition();
 
     bool addColumn(const ColumnDefinition &def);
-    bool addColumn(const QString &name, const QString &domainname);
-    bool addColumn(const QString &name, const IDomain &domain);
+    bool addColumn(const QString &name, const QString &domainname, bool readonly=false);
+    bool addColumn(const QString &name, const IDomain &domain, bool readonly=false);
     ColumnDefinition columndefinition(const QString &nme) const;
     ColumnDefinition columndefinition(quint32 index) const;
     ColumnDefinition &columndefinitionRef(quint32 index);
