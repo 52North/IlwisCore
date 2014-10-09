@@ -181,24 +181,27 @@ bool FeatureIterator::moveFlat(qint32 distance){
 
 bool FeatureIterator::moveBreadthFirst(qint32 distance){
     // TODO : only one level deep atm, is the most used case if at all. later a full breadth first
-    if ( _currentLevel == 0){
-        if (moveFlat(distance)){
-            return true;
-        }
+
+    ++_iterFeatures; // move the main feature, as the subiterator is constant this should access level x in the subiterator
+    if (_iterFeatures == _fcoverage->_features.end()){ // completed one level, move to next level
         ++_currentLevel;
-        _iterFeatures = _fcoverage->_features.begin();
-        _subIterator = _currentIndexes.begin();
-    }else if ( _subIterator != _currentIndexes.end())
-        ++_subIterator;
-    else {
-        ++_iterFeatures;
-        _subIterator = _currentIndexes.begin();
+        _iterFeatures = _fcoverage->_features.begin(); // main feature iterator back to beginning
+        ++_subIterator; // next level of subfeatures
     }
-    return _iterFeatures == _fcoverage->_features.end();
+    return _iterFeatures == _fcoverage->_features.end() && _subIterator == _currentIndexes.end(); // if both are at the end, we are done
 }
 
 bool FeatureIterator::moveDepthFirst(qint32 distance){
-    return false;
+
+    ++_subIterator; // try to move on the current subfeatures
+    ++_currentLevel;
+    if ( _subIterator == _currentIndexes.end()){ // if fail, move to next main feature
+        ++_iterFeatures;
+        _subIterator = _currentIndexes.begin(); // set the start of the subfeatures at 0
+        _currentLevel = 0;
+    }
+    return _iterFeatures == _fcoverage->_features.end(); // if there is no main feature any more, stop
+
 }
 
 bool FeatureIterator::move(qint32 distance) {
