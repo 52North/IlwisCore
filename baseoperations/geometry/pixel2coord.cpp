@@ -74,6 +74,7 @@ Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx
 quint64 Pixel2Coord::createMetadata()
 {
     OperationResource operation({"ilwis://operations/pixel2coord"});
+    operation.setLongName("Pixel to Coordinate");
     operation.setSyntax("pixel2coord(rastercoverage|georef,Pixel)");
     operation.setDescription(TR("translates a pixel to a coordinate location based on the supplied georeference"));
     operation.setInParameterCount({2});

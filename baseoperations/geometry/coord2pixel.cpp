@@ -74,14 +74,15 @@ Ilwis::OperationImplementation::State Coord2Pixel::prepare(ExecutionContext *ctx
 quint64 Coord2Pixel::createMetadata()
 {
     OperationResource operation({"ilwis://operations/coord2pixel"});
-    operation.setSyntax("Coord2Pixel(rastercoverage|georef,Coordinate)");
+    operation.setSyntax("coord2pixel(rastercoverage|georef,Coordinate)");
+    operation.setLongName("Coordinate to Pixel");
     operation.setDescription(TR("translates a coordinate to a pixel location based on the supplied georeference"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER | itGEOREF, TR("input rastercoverage or georeference"),TR("input rastercoverage with domain any domain or georefence"));
     operation.addInParameter(1,itCOORDINATE, TR("source coordinate"),TR("the coordinate that has to translted to a pixel location"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itPIXEL, TR("Pixel"));
-    operation.setKeywords("pixel, coordinate, geometry, transformation");
+    operation.setKeywords("pixel, coordinate, geometry,transformation");
 
     mastercatalog()->addItems({operation});
     return operation.id();

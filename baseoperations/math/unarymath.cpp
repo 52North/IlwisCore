@@ -165,22 +165,22 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
 
 Resource UnaryMath::populateMetadata(const QString& item, const QString& longname, const QString& outputDom) {
     Resource resource(QUrl(item), itOPERATIONMETADATA);
-    int index = item.lastIndexOf("/");
+    int index = item.lastIndexOf("/") + 1;
     QString name = item.mid(index);
-    resource.addProperty("syntax", QString("%1(rastercoverage|double)").arg(name));
+    resource.addProperty("syntax", QString("%1(rastercoverage|table|double[,columnname])").arg(name));
     resource.addProperty("description",TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     resource.addProperty("longname",longname);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("inparameters","1|2");
-    resource.addProperty("pin_1_type", itRASTER|itTABLE);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
+    resource.addProperty("pin_1_type", itRASTER|itNUMBER|itTABLE);
+    resource.addProperty("pin_1_name", TR("input data-source"));
     resource.addProperty("pin_1_domain","value");
     resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("column name in case of the table calculations"));
+    resource.addProperty("pin_2_name", TR("column name for tables"));
     resource.addProperty("pin_2_domain","value");
     resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER|itTABLE);
-    resource.addProperty("pout_1_name", TR("output rastercoverage"));
+    resource.addProperty("pout_1_type", itRASTER|itTABLE|itNUMBER);
+    resource.addProperty("pout_1_name", TR("output rastercoverage/table/number"));
     resource.addProperty("pout_1_domain",outputDom);
     resource.prepare();
     QString url = resource.url().toString();

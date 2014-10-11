@@ -65,7 +65,8 @@ quint64 GridSize::createMetadata()
 {
     OperationResource operation({"ilwis://operations/rastersize"});
     operation.setSyntax("gridsize(rastercoverage,xsize|ysize|zsize)");
-    operation.setDescription(TR("returns the pixel extent of a grid coverage"));
+    operation.setLongName("Raster Gridsize");
+    operation.setDescription(TR("returns the pixel extent of a grid coverage dimension"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER, TR("rastercoverage"),TR("rastercoverage from which a dimension size is retrieved"));
     operation.addInParameter(1,itSTRING, TR("dimension"));

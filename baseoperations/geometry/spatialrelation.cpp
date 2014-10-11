@@ -133,6 +133,7 @@ OperationImplementation::State Contains::prepare(ExecutionContext *ctx, const Sy
 
 quint64 Contains::createMetadata(){
     OperationResource operation({"ilwis://operations/contains"});
+    operation.setLongName("Contains Feature Geometry");
     operation.setSyntax("contains(coverage,wkt-defintion)");
     operation.setDescription(TR("returns a feature-index of all features that satisfy the contains constraint"));
 
@@ -162,6 +163,7 @@ OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const Symb
 
 quint64 Covers::createMetadata(){
     OperationResource operation({"ilwis://operations/covers"});
+    operation.setLongName("Covers Feature Geometry");
     operation.setSyntax("covers(coverage,wkt-defintion)");
     operation.setDescription(TR("returns a feature-index of all features that satisfy the covers constraint"));
 
@@ -193,6 +195,7 @@ OperationImplementation::State CoveredBy::prepare(ExecutionContext *ctx, const S
 quint64 CoveredBy::createMetadata()
 {
     OperationResource operation({"ilwis://operations/coveredby"});
+    operation.setLongName("Covered by Feature Geometry");
     operation.setSyntax("coveredby(coverage,wkt-defintion)");
     operation.setDescription(TR("returns a feature-index of all features that satisfy the CoveredBy constraint"));
 

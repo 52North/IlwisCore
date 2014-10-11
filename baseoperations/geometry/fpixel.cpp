@@ -76,7 +76,7 @@ quint64 FPixel::createMetadata()
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itPIXEL, TR("Pixel"));
-    operation.setKeywords("pixel, geometry");
+    operation.setKeywords("pixel, geometry,internal");
 
     mastercatalog()->addItems({operation});
     return operation.id();

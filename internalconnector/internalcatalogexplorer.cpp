@@ -53,8 +53,8 @@ QFileInfo InternalCatalogExplorer::toLocalFile(const QUrl& url) const {
 
 std::vector<Resource> InternalCatalogExplorer::loadItems()
 {
-    //TODO all internal objects
-    return std::vector<Resource>();
+    std::vector<Resource> items = mastercatalog()->select(source().url(),"");
+    return items;
 }
 
 bool InternalCatalogExplorer::isValid() const{

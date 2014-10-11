@@ -76,7 +76,7 @@ quint64 FCoordinate::createMetadata()
     operation.addInParameter(2,itNUMBER , TR("z"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOORDINATE, TR("coordinate"));
-    operation.setKeywords("coordinate");
+    operation.setKeywords("coordinate,internal");
 
     mastercatalog()->addItems({operation});
     return operation.id();
