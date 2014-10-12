@@ -9,6 +9,7 @@
 #include <QMutexLocker>
 #include <QStringList>
 #include <QUrl>
+#include <QNetworkAccessManager>
 #include <fstream>
 #include "boost/current_function.hpp"
 #include <time.h>
@@ -173,16 +174,19 @@ public:
         }
         return 0;
     }
+
+
     //for debugging
     void startClock();
     void endClock(const QString &label="");
-
+    QNetworkAccessManager& network();
     SPTranquilizer createTrq(const QString &title, const QString &description, qint64 end, qint32 step);
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;
     ModuleMap _modules;
     SPVersion _version;
     PublicDatabase _dbPublic;
+    QNetworkAccessManager _networkmanager;
     QScopedPointer<IssueLogger> _issues;
     QHash<QString, FactoryInterface * > _masterfactory;
     mutable clock_t _start_clock;

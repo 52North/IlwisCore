@@ -244,6 +244,11 @@ void Kernel::endClock(const QString& label){
 
 }
 
+QNetworkAccessManager &Kernel::network()
+{
+    return _networkmanager;
+}
+
 
 
 
