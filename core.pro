@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 include(global.pri)
 
-QT       += network sql xmlpatterns
+QT       += sql xmlpatterns
 
 DEFINES += CORE_LIBRARY
 
