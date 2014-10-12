@@ -35,8 +35,15 @@ IlwisContext* Ilwis::context() {
 
 IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit)
 {
+    //TODO relocate directories through configuration
     QDir localDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
     _cacheLocation = QUrl::fromLocalFile(localDir.absolutePath());
+    QString datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
+    localDir = QDir(datalocation);
+    if (!localDir.exists()){
+        localDir.mkpath(datalocation);
+    }
+    _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
     QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
@@ -125,6 +132,11 @@ void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 QUrl IlwisContext::cacheLocation() const
 {
     return _cacheLocation;
+}
+
+QUrl IlwisContext::persistentInternalCatalog() const
+{
+    return _persistentInternalCatalog;
 }
 
 quint64 IlwisContext::memoryLeft() const

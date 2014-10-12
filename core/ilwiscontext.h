@@ -31,6 +31,7 @@ public:
     Ilwis::ICatalog workingCatalog() const;
     void setWorkingCatalog(const Ilwis::ICatalog &cat);
     QUrl cacheLocation() const;
+    QUrl persistentInternalCatalog() const;
     quint64 memoryLeft() const;
     quint64 changeMemoryLeft(quint64 amount);
     IlwisConfiguration& configurationRef();
@@ -49,6 +50,7 @@ private:
     QFileInfo _ilwisDir;
     IlwisConfiguration _configuration;
     QUrl _cacheLocation;
+    QUrl _persistentInternalCatalog;
 };
 
 
