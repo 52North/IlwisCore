@@ -89,10 +89,11 @@ public:
      * \return true if there is a name
      */
     bool isValid() const;
+    bool isRemote() const;
     QUrl metaUrl(bool simple=true) const;
     void setExpression(const QString &e, const SymbolTable &symtab);
     bool matchesParameterCount(const QString &match, bool in=true) const;
-    QString toString() const;
+    QString toString(bool rightsideonly=false) const;
     template<typename T> T input(quint32 ) { return T(); }
     template<typename T> T input(quint32, bool& ok ) { return T(); }
 private:
@@ -101,6 +102,7 @@ private:
     QList<Parameter> _outParameters;
     OperationType _type;
     QString _selection;
+    bool _isRemote = false;
 
     void parseFunctionExpression(const QString &txt, const SymbolTable &symtab);
     void parseCommandExpression(const QString &expr, const SymbolTable &symtab);

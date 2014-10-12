@@ -231,6 +231,7 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
             else
                 _name = e.left(index);
         }
+        _isRemote = _name.indexOf("http://") != -1;
     }
 
     QString start = e.left(index2);
@@ -368,9 +369,16 @@ bool OperationExpression::isValid() const
     return !_name.isEmpty();
 }
 
+bool OperationExpression::isRemote() const
+{
+    return _isRemote;
+}
+
 QUrl Ilwis::OperationExpression::metaUrl(bool simple) const
 {
-    QString url = "ilwis://operations/" + _name;
+    QString url = _name;
+    if ( _name.indexOf("http://") == -1) // names that are already an url are not in the local ilwis://operations,
+        url = "ilwis://operations/" + _name;
     if ( !simple) {
         for(int i=0; i < _inParameters.size(); ++i) {
             if ( i == 0)
@@ -393,21 +401,22 @@ QUrl Ilwis::OperationExpression::metaUrl(bool simple) const
 
 }
 
-QString OperationExpression::toString() const
+QString OperationExpression::toString(bool rightsideonly) const
 {
     QString expression;
     if ( _type == otFunction) {
-        for(const Parameter& parm : _outParameters) {
+        if ( rightsideonly == false){
+            for(const Parameter& parm : _outParameters) {
+                if ( expression != "")
+                    expression += ", ";
+                if ( expression == "" )
+                    expression += "( ";
+
+                expression += parm.value();
+            }
             if ( expression != "")
-                expression += ", ";
-            if ( expression == "" )
-                expression += "( ";
-
-            expression += parm.value();
-
+                expression += " ) = ";
         }
-        if ( expression != "")
-            expression += " ) = ";
         expression += _name;
         expression += "( ";
         int count = 0;
