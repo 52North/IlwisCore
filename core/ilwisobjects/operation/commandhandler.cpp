@@ -120,13 +120,22 @@ bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, Symb
 }
 
 OperationImplementation *CommandHandler::create(const OperationExpression &expr)  {
-    quint64 id = findOperationId(expr);
-    auto iter = _commands.find(id);
-    if ( iter != _commands.end()) {
-        OperationImplementation *oper = ((*iter).second(id, expr));
-        return oper;
+    auto docommand = [&](const OperationExpression &expression)->OperationImplementation *{
+        quint64 id = findOperationId(expression);
+        auto iter = _commands.find(id);
+        if ( iter != _commands.end()) {
+            OperationImplementation *oper = ((*iter).second(id, expression));
+            return oper;
+        }
+        return 0;
+    };
+
+    if ( expr.isRemote()){
+        OperationExpression remoteexpr("remoteoperation('" + expr.toString(true) + "'')");
+        return docommand(remoteexpr);
     }
-    return 0;
+    return docommand(expr);
+
 }
 
 void CommandHandler::addOperation(quint64 id, CreateOperation op)

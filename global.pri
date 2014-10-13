@@ -35,7 +35,7 @@ unix{
 }
 EXTERNAL=../external
 
-QT += sql
+QT += sql network
 
 INCLUDEPATH += core \
                 core/ilwisobjects \
