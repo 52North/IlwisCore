@@ -30,7 +30,7 @@ CatalogView::CatalogView(const QUrl &loc) : QObject(){
 }
 
 CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resource.name(),resource.id(),resource.code()){
-    _filter = resource["filter"].toString();
+    filter(resource["filter"].toString());
     QStringList lst = resource["locations"].toStringList();
     for(auto url : lst){
         _locations.push_back(QUrl(url));
