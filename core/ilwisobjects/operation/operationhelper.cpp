@@ -40,6 +40,11 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             IRasterCoverage rasCoverageIn = inputObject.as<RasterCoverage>();
             IRasterCoverage rasCoverageOut = outputObject.as<RasterCoverage>();
             rasCoverageOut->datadefRef() = rasCoverageIn->datadef();
+            rasCoverageOut->datadefRef(0) = rasCoverageIn->datadef();
+            IDomain dom("integer");
+            std::vector<double> stack{0.0};
+            rasCoverageOut->stackDefinitionRef().setSubDefinition(dom, stack);
+
         }
 
         if ( hasType(what,itGEOREF) && hasType(tp, itRASTER) ) {
