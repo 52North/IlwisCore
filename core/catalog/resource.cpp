@@ -270,7 +270,11 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
-                int index = path.lastIndexOf("/");
+                int index = -1;
+                if ( asRaw && url.scheme() == "http"){
+                    index = path.indexOf("?");
+                }else
+                    index = path.lastIndexOf("/");
                 addContainer(path.left(index));
                 name(path.mid(index + 1),false);
             }
