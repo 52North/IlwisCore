@@ -524,6 +524,11 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
         name(txt.mid(index + 1));
+        if ( txt.indexOf("http://") == 0){
+            if ( txt.indexOf("?") != -1){
+                index = txt.indexOf("?");
+            }
+        }
         QString rest = txt.left(index); // the rest is the container
 
         // we might be at the root; no need then to add containers as there are none
