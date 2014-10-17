@@ -122,8 +122,10 @@ quint64 IssueLogger::log(const QString &message, int it)
 {
     ++_repeatCount;
     std::thread::id id = std::this_thread::get_id();
-    if ( _silentThreads.find(id)!= _silentThreads.end() && it != IssueObject::itCritical)
+    if ( _silentThreads.find(id)!= _silentThreads.end() && it != IssueObject::itCritical){
+        _repeatCount = 0;
         return i64UNDEF;
+    }
 
 
     if ( _lastmessage == message && _repeatCount == 10) {
@@ -134,6 +136,7 @@ quint64 IssueLogger::log(const QString &message, int it)
         // This is a last fallback to break the loop without the need to stop the process
         if ( _repeatCount > 10 && _lastmessage != message ){
             _issues.enqueue(IssueObject(QString("Message repeated %1 times").arg(_repeatCount), it, _issueId));
+            _repeatCount = 0;
             throw ErrorObject(QString("Error message cascade : %1").arg(message));
         }
         _repeatCount = 0;
@@ -146,7 +149,7 @@ quint64 IssueLogger::log(const QString &message, int it)
     if ( _logFileRegular.is_open()) {
         obj.stream(_logFileRegular, IssueObject::lmREGULAR);
     }
-    emit ilwiserrormessage(obj.logMessage());
+    emit updateIssues(obj);
 
     _lastmessage = message;
     return _issueId++;
@@ -214,10 +217,10 @@ IssueObject::IssueType IssueLogger::maxIssueLevel() const
     return IssueObject::itNone;
 }
 
-void IssueLogger::copy(IssueLogger &other)
+void IssueLogger::copy(QList<IssueObject> &other)
 {
   foreach(IssueObject issue, _issues) {
-      other._issues.enqueue(issue);
+      other.append(issue);
   }
 }
 
