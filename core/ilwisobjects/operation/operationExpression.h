@@ -12,6 +12,8 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT Parameter : public Identity{
 public:
 
+    enum PathType{ptNONE, ptLOCALOBJECT, ptREMOTE, ptIRRELEVANT};
+
     Parameter();
     Parameter(const QString& name, const QString& value, IlwisTypes ,const SymbolTable& );
     Parameter(const QString& value, IlwisTypes, const SymbolTable &);
@@ -22,6 +24,7 @@ public:
     IlwisTypes valuetype() const;
     bool isEqual(const Parameter& parm) const;
     bool isValid() const;
+    Parameter::PathType pathType() const;
     static IlwisTypes determineType(const QString &value, const SymbolTable& symtab) ;
 
 
