@@ -270,7 +270,11 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
-                int index = path.lastIndexOf("/");
+                int index = -1;
+                if ( asRaw && url.scheme() == "http"){
+                    index = path.indexOf("?");
+                }else
+                    index = path.lastIndexOf("/");
                 addContainer(path.left(index));
                 name(path.mid(index + 1),false);
             }
@@ -520,6 +524,11 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
         name(txt.mid(index + 1));
+        if ( txt.indexOf("http://") == 0){
+            if ( txt.indexOf("?") != -1){
+                index = txt.indexOf("?");
+            }
+        }
         QString rest = txt.left(index); // the rest is the container
 
         // we might be at the root; no need then to add containers as there are none

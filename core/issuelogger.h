@@ -79,13 +79,13 @@ public:
     QString popfirst(int tp=IssueObject::itAll);
     QString poplast(int it=IssueObject::itAll);
     IssueObject::IssueType maxIssueLevel() const;
-    void copy(IssueLogger& other);
+    void copy(QList<IssueObject>& other);
     void clear();
     bool silent() const;
     void silent(bool yesno);
 
 signals:
-    void ilwiserrormessage(const QString& message);
+    void updateIssues(const IssueObject& issue);
 
 private:
     QString _lastmessage;

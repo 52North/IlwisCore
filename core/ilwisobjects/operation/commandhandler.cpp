@@ -120,13 +120,22 @@ bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, Symb
 }
 
 OperationImplementation *CommandHandler::create(const OperationExpression &expr)  {
-    quint64 id = findOperationId(expr);
-    auto iter = _commands.find(id);
-    if ( iter != _commands.end()) {
-        OperationImplementation *oper = ((*iter).second(id, expr));
-        return oper;
+    auto docommand = [&](const OperationExpression &expression)->OperationImplementation *{
+        quint64 id = findOperationId(expression);
+        auto iter = _commands.find(id);
+        if ( iter != _commands.end()) {
+            OperationImplementation *oper = ((*iter).second(id, expression));
+            return oper;
+        }
+        return 0;
+    };
+
+    if ( expr.isRemote()){
+        OperationExpression remoteexpr("remoteoperation('" + expr.toString(true) + "'')");
+        return docommand(remoteexpr);
     }
-    return 0;
+    return docommand(expr);
+
 }
 
 void CommandHandler::addOperation(quint64 id, CreateOperation op)
@@ -175,6 +184,11 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                         if ( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))
                             continue;
                         if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
+                            if ( tpExpr == itSTRING){
+                                if (expr.parm(i).value() == ""){ // empty parameters are seen as strings and are acceptable. at operation level it should be decided what to do with it
+                                    continue;
+                                }
+                            }
                             found = false;
                             break;
                         }

@@ -398,7 +398,13 @@ bool MasterCatalog::unregister(quint64 id)
 std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
-    QString query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
+    QString query;
+    if ( selection.indexOf("catalogitemproperties.") == -1)
+        query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
+    else
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.container = '%1' and mastercatalog.itemid = catalogitemproperties.itemid %2").arg(resource.toString(), rest);
+
+   // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     QSqlQuery results = kernel()->database().exec(query);
     std::vector<Resource> items;
     while( results.next()) {

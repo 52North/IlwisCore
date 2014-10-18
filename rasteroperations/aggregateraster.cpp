@@ -186,7 +186,7 @@ quint64 AggregateRaster::createMetadata()
 
     OperationResource operation({"ilwis://operations/aggregateraster"});
     operation.setLongName("Spatial Aggregation of Raster coverage");
-    operation.setSyntax("aggregateraster(inputgridcoverage,Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
+    operation.setSyntax("aggregateraster(inputgridcoverage,!Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
     operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
     operation.setInParameterCount({4,5});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
