@@ -48,6 +48,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
     foreach(QString file, files)
         localDir.remove(file);
     _workingCatalog = new Catalog(); // empty catalog>
+
 }
 
 IlwisContext::~IlwisContext()
@@ -175,6 +176,14 @@ QFileInfo IlwisContext::resourceRoot() const
         return inf;
 
     return QFileInfo(ilwisFolder().absoluteFilePath() + "/resources");
+}
+
+QString IlwisContext::ipv4() const
+{
+    if ( _ipv4 == sUNDEF){
+        const_cast<IlwisContext *>(this)->_ipv4 = const_cast<IlwisContext *>(this)->configurationRef()("server-settings/ipv4-address", QString(""));
+    }
+    return _ipv4;
 }
 
 
