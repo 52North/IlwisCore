@@ -12,7 +12,9 @@ CatalogQuery::CatalogQuery()
     for(int i=1 ;i < bits; ++i) {
         _names[IlwisObject::type2Name(pow(2,i))] = pow(2,i);
     }
-    _names["Catalog"] = itCATALOG;
+    _names["catalog"] = itCATALOG;
+    _names["featurecoverage"] = itPOINT | itLINE | itPOLYGON;
+    _names["table"] = itFLATTABLE;
 }
 
 bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseNames, QString& side, bool left, bool uselike) const
@@ -20,7 +22,13 @@ bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseName
     bool ok;
     side = side.trimmed();
     side.toDouble(&ok);
-    bool inpropertiestable = std::find(resourceBaseNames.begin(), resourceBaseNames.end(), side) == resourceBaseNames.end();
+    bool inpropertiestable = true; //= std::find(resourceBaseNames.begin(), resourceBaseNames.end(), side) == resourceBaseNames.end();
+    for(auto iter : resourceBaseNames ){
+        if ( side.indexOf((iter)) == 0){
+            inpropertiestable = false;
+            break;
+        }
+    }
     if ( !ok && inpropertiestable){
         if ( left){
         side = QString("catalogitemproperties.propertyname='%1'").arg(side);
@@ -51,7 +59,7 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         QString findTxt = "'" + name.key().toLower() + "'";
         query.replace(findTxt, QString::number(name.value()));
     }
-    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url"};
+    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&"};
     QString specialchars{"<>=!+- "};
     QString leftside, rightside, newquery;
     QString middel;
@@ -83,8 +91,15 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
             inquotes = !inquotes;
 
         } if ( specialchars.indexOf(c) != -1 && c != ' '){
-            middel += c;
-            onleftside = false;
+            if ( c == '(' ){
+                if(onleftside)
+                    leftside = '(' + leftside;
+                else
+                    rightside += ')';
+            }else{
+                middel += c;
+                onleftside = false;
+            }
         }
 
     }
