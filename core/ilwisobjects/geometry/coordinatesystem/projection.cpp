@@ -18,8 +18,21 @@
 
 using namespace Ilwis;
 
+std::map<QString, QString> Projection::_projcode2Name;
+
+
 Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
 {
+    if ( _projcode2Name.size() == 0){
+        QSqlQuery db(kernel()->database());
+        QString query = "Select code, name from projections";
+        db.exec(query);
+        while(db.next()){
+            QString code = db.value(0).toString();
+            QString nme = db.value(1).toString();
+            _projcode2Name[code] = nme;
+        }
+    }
 }
 
 Projection::~Projection()
@@ -83,6 +96,14 @@ void Projection::setParameter(Projection::ProjectionParamValue type, const QVari
         return;
     }
     _implementation->setParameter(type, value);
+}
+
+QString Projection::projectionCode2Name(const QString &code)
+{
+    auto iter = _projcode2Name.find(code);
+    if ( iter != _projcode2Name.end())
+         return iter->second;
+    return sUNDEF;
 }
 
 QString Projection::authority() const
