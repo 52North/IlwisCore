@@ -13,8 +13,11 @@ CatalogQuery::CatalogQuery()
         _names[IlwisObject::type2Name(pow(2,i))] = pow(2,i);
     }
     _names["catalog"] = itCATALOG;
-    _names["featurecoverage"] = itPOINT | itLINE | itPOLYGON;
-    _names["table"] = itFLATTABLE;
+    _names["featurecoverage"] = itFEATURE;
+    _names["coordinatesystem"] = itCOORDSYSTEM;
+    _names["domain"] = itDOMAIN;
+    _names["table"] = itTABLE;
+    _names["coverage"] = itCOVERAGE;
 }
 
 bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseNames, QString& side, bool left, bool uselike) const
