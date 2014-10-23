@@ -220,15 +220,14 @@ bool Kernel::message(const QString &message, IssueObject::IssueType tp, const QS
     return false;
 }
 
-SPTranquilizer Kernel::createTrq(const QString& title, const QString& description, qint64 end, qint32 step) {
-    std::shared_ptr<Tranquilizer> trq (new Tranquilizer(title, description, end, step));
-    connect(trq.get(),&Tranquilizer::doMove, this, &Kernel::doProgress );
-    return trq;
+void Kernel::changeTranquilizer(quint64 id, double amount)
+{
+    emit updateTranquilizer(id, amount);
 }
 
-void Kernel::doProgress(quint64 id, qint32 amount)
+void Kernel::deleteTranquilizer(quint64 id)
 {
-
+    emit removeTranquilizer(id);
 }
 
 void Kernel::startClock(){
@@ -248,6 +247,11 @@ void Kernel::endClock(const QString& label){
 QNetworkAccessManager &Kernel::network()
 {
     return _networkmanager;
+}
+
+void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 end)
+{
+    emit createTranquilizer(id, title, description, end);;
 }
 
 

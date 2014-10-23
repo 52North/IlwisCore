@@ -180,7 +180,8 @@ public:
     void startClock();
     void endClock(const QString &label="");
     QNetworkAccessManager& network();
-    SPTranquilizer createTrq(const QString &title, const QString &description, qint64 end, qint32 step);
+    void newTranquilizer(quint64 id,const QString &title, const QString &description, qint64 end);
+
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;
     ModuleMap _modules;
@@ -194,9 +195,14 @@ private:
 
 signals:
     void doCommand(const QString& expr, ExecutionContext* ctx);
+    void updateTranquilizer(quint64 id, double amount);
+    void createTranquilizer(quint64 id,const QString &title, const QString &description, double end);
+    void removeTranquilizer(quint64 id);
 
 public slots:
-    void doProgress(quint64 id, qint32 amount);
+    void changeTranquilizer(quint64 id, double amount);
+    void deleteTranquilizer(quint64 id);
+
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
