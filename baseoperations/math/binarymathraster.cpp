@@ -36,6 +36,7 @@ bool BinaryMathRaster::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
 
 bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& symTable) {
 
+    quint64 currentCount = 0;
     auto binaryMath = [&](const BoundingBox box ) -> bool {
         PixelIterator iterIn(_inputGC1, box);
         PixelIterator iterOut(_outputGC, BoundingBox(box.size()));
@@ -44,6 +45,7 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
 
             v = _firstorder ? calc(_number1, *iterIn) : calc(*iterIn, _number1);
             ++iterIn;
+            updateTranquilizer(currentCount++, 1000);
         });
         return true;
     };
@@ -58,6 +60,7 @@ bool BinaryMathRaster::executeCoverageNumber(ExecutionContext *ctx, SymbolTable&
 }
 
 bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
+    quint64 currentCount = 0;
     std::function<bool(const BoundingBox)> binaryMath = [&](const BoundingBox box ) -> bool {
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
@@ -69,6 +72,7 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
             ++iterIn1;
             ++iterIn2;
             ++iterOut;
+            updateTranquilizer(currentCount++, 1000);
         };
         return true;
     };
@@ -192,6 +196,7 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
         if(!prepareCoverageCoverage())
             return sPREPAREFAILED;
     }
+    initialize(_outputGC->size().linearSize());
 
     return sPREPARED;
 }

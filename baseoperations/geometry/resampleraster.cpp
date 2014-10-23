@@ -34,11 +34,9 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
-    SPTranquilizer trq = kernel()->createTrq("resample", "", outputRaster->size().ysize(),1);
 
     BoxedAsyncFunc resampleFun = [&](const BoundingBox& box) -> bool {
         PixelIterator iterOut(outputRaster,box);
-        iterOut.setTranquilizer(trq);
         RasterInterpolator interpolator(inputRaster, _method);
         PixelIterator iterEnd = iterOut.end();
         bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());

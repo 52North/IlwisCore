@@ -40,6 +40,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     AreaNumberer numberer(outputRaster->size().xsize(),_connectivity);
+    quint64 currentCount = 0;
 
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //pass one
@@ -51,6 +52,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
            *iterOut = v;
             ++iterOut;
             ++iterIn;
+            updateTranquilizer(currentCount++, 1000);
         }
         //pass two
         for(auto iterPass2 : numberer.pass2Entries()) {
@@ -122,6 +124,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     outputRaster->datadefRef().domain(dom);
     mastercatalog()->addItems({resource});
 
+    initialize(outputRaster->size().linearSize());
 
     return sPREPARED;
 }
