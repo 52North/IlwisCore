@@ -80,6 +80,12 @@ public:
     explicit CheckExpressionError(const QString& message);
     const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT AbortOperation : public ErrorObject {
+public:
+    explicit AbortOperation(const QString& message);
+    virtual const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H
