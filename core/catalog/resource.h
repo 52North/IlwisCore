@@ -198,6 +198,7 @@ public:
      * @return the size of this Resource, cannot be <0
      */
     quint64 size() const;
+    void size(quint64 objectsz);
 
     /**
      * Query this Resource for its dimensions. <br>

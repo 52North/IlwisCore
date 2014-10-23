@@ -319,6 +319,11 @@ quint64 Resource::size() const
     return _size;
 }
 
+void Resource::size(quint64 objectsz)
+{
+    _size = objectsz;
+}
+
 QString Resource::dimensions() const
 {
     return _dimensions;
