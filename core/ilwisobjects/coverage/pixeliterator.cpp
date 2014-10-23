@@ -128,7 +128,6 @@ void PixelIterator::copy(const PixelIterator &iter) {
     _endposition = iter._endposition;
     _localOffset = iter._localOffset;
     _currentBlock = iter._currentBlock;
-    _trq = iter._trq;
     _selectionPixels  = iter._selectionPixels;
     _selectionIndex = iter._selectionIndex;
     _insideSelection = iter._insideSelection;
@@ -175,8 +174,6 @@ bool PixelIterator::moveXY(int delta){
     _z = _box.min_corner().z + (_z - _box.min_corner().z) % (int)_box.zlength();
     _xChanged = tempx != _x;
     std::swap(_x,tempx);
-    if (_trq)
-        _trq->move();
     if ( _x > _endx) {
         quint32 newy = _y + (_x - _box.min_corner().x) / _box.xlength();
         _yChanged = newy != _y;
@@ -216,8 +213,6 @@ bool PixelIterator::moveXZ(int delta)
 //    }
     move2NextBlock();
 
-    if (_trq)
-        _trq->move();
     if ( _x > _endx){
         quint32 newz = _z + (_x - _box.min_corner().x) / _box.xlength();
         _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
@@ -285,8 +280,6 @@ bool PixelIterator::moveYZ(int delta){
 //        _localOffset = _x;
 //    }
     move2NextBlock();
-    if (_trq)
-        _trq->move();
     if ( _y > _endy) {
         quint32 newz = _z + (_y - _box.min_corner().y) / _box.ylength();
         _currentBlock = newz * _grid->blocksPerBand() + _y / _grid->maxLines();
