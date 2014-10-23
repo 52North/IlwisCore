@@ -1,6 +1,8 @@
 #ifndef OPERATION_H
 #define OPERATION_H
 
+#include "tranquilizer.h"
+
 namespace Ilwis {
 
 class OperationExpression;
@@ -14,14 +16,23 @@ public:
     OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e);
     virtual ~OperationImplementation() {}
     const IOperationMetaData& metadata() const;
+    Tranquilizer& trq();
     virtual bool execute(ExecutionContext *ctx, SymbolTable& symTable)=0;
     virtual bool isValid() const;
     OperationExpression expression() const;
+    void updateTranquilizer(quint64 currentCount, quint32 step){
+        if ( currentCount % step){
+            trq().update(step);
+        }
+    }
+
 
 protected:
+    void initialize(quint64 totalCount);
     IOperationMetaData _metadata;
     OperationExpression _expression;
     State _prepState;
+    Tranquilizer _tranquilizer;
 
     virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
 

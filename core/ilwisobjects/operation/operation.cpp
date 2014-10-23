@@ -24,15 +24,28 @@ const IOperationMetaData &OperationImplementation::metadata() const
     return _metadata;
 }
 
+Tranquilizer &OperationImplementation::trq()
+{
+    return _tranquilizer;
+}
+
 OperationExpression OperationImplementation::expression() const
 {
     return _expression;
+}
+
+void OperationImplementation::initialize(quint64 totalCount)
+{
+    _tranquilizer.prepare(_metadata->name(), _metadata->description(), totalCount);
+    kernel()->issues()->log(_expression.toString(), IssueObject::itMessage);
 }
 
 bool OperationImplementation::isValid() const
 {
     return _expression.isValid() && _metadata.isValid();
 }
+
+
 
 //-----------------------------------------------------------------------------
 Operation::Operation(const Ilwis::OperationExpression &e)
