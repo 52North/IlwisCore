@@ -16,16 +16,38 @@ using namespace Ilwis;
 
 std::map<std::thread::id, bool> IssueLogger::_silentThreads;
 
-IssueObject::IssueObject()
+IssueObject::IssueObject(QObject* parent) : QObject(parent)
 {
 }
 
-Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id)
+Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id, QObject *parent) : QObject(parent)
 {
     _message = message;
     _itype = it;
     _itime = QDateTime::currentDateTime();
     _id = id;
+}
+
+Ilwis::IssueObject::IssueObject(const IssueObject& issueobj) {
+    _itime = issueobj._itime;
+    _message = issueobj._message;
+    _id = issueobj._id;
+    _line = issueobj._line;
+    _func = issueobj._func;
+    _file = issueobj._file;
+
+    _itype = issueobj._itype;
+}
+
+IssueObject& IssueObject::operator=(const IssueObject& issueobj) {
+    _itime = issueobj._itime;
+    _message = issueobj._message;
+    _id = issueobj._id;
+    _line = issueobj._line;
+    _func = issueobj._func;
+    _file = issueobj._file;
+
+    _itype = issueobj._itype;
 }
 
 QString Ilwis::IssueObject::message() const

@@ -21,7 +21,8 @@ namespace Ilwis {
  The philosophy of the error system is that it stays out of the way unless the client wants is.
 
 */
-class KERNELSHARED_EXPORT IssueObject {
+class KERNELSHARED_EXPORT IssueObject : public QObject {
+    Q_OBJECT
 public:
     enum LogMessageFormat{lmFULL, lmREGULAR, lmCODE};
     /*!
@@ -34,8 +35,10 @@ public:
     */
     enum IssueType{itNone=0, itCritical=1, itError=2, itWarning=4, itMessage=8, itDebug=16, itAll=255};
 
-    IssueObject();
-    IssueObject(const QString& message, int it, quint64 id);
+    IssueObject(QObject *parent = 0);
+    IssueObject(const QString& message, int it, quint64 id, QObject *parent=0);
+    IssueObject(const IssueObject &issueobj);
+    IssueObject &operator =(const IssueObject &issueobj);
 
     QString message() const;
     QDateTime time() const;
