@@ -63,7 +63,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
 
-    QString original = inlocation.toString().trimmed();
+    QString original = OSHelper::neutralizeFileName(inlocation.toString().trimmed());
     if ( Resource::isRoot(original))
         return true;
 
@@ -392,6 +392,24 @@ bool MasterCatalog::unregister(quint64 id)
     }
 
     return true;
+
+}
+
+std::vector<Resource> MasterCatalog::select(const QString &selection) const
+{
+    QString query;
+    if ( selection.indexOf("catalogitemproperties.") == -1)
+        query = QString("select * from mastercatalog where  %2").arg(selection);
+    else
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid %2").arg(selection);
+
+    QSqlQuery results = kernel()->database().exec(query);
+    std::vector<Resource> items;
+    while( results.next()) {
+        QSqlRecord rec = results.record();
+        items.push_back(Resource(rec));
+    }
+    return items;
 
 }
 
