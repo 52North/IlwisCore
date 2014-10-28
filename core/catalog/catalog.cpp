@@ -37,16 +37,26 @@ std::vector<Resource> Catalog::items() const
     return _items;
 }
 
+void Catalog::scan()
+{
+    if (! connector().isNull()){
+        if( connector()->loadData(this)){
+            setValid(true);
+            _scanned = true;
+        }
+    }
+}
+
 bool Catalog::prepare()
 {
     QString scheme =  source().url().scheme();
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    if( connector()->loadData(this))
-        return setValid(true);
+    if ( !_scanned) // no previous scan has been done
+        scan();
 
-    return false;
+    return true;
 }
 
 bool Catalog::isValid() const
