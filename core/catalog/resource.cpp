@@ -16,7 +16,7 @@
 using namespace Ilwis;
 
 uint Ilwis::qHash2(const QUrl& url, IlwisTypes tp ){
-    return (::qHash(url.toString()) + ::qHash(tp)) / 2;
+    return (::qHash(OSHelper::neutralizeFileName(url.toString())) + ::qHash(tp)) / 2;
 }
 
 uint Ilwis::qHash(const Ilwis::Resource& resource ){
