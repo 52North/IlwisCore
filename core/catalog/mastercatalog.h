@@ -58,7 +58,7 @@ public:
      * @param items The Resources that should be removed from the MasterCatalog
      * @return true if succesful
      */
-    bool removeItems(const QList<Resource> &items);
+    bool removeItems(const std::vector<Ilwis::Resource> &items);
 
     /**
      * Translates an url that is in the MasterCatalog to the correct id
@@ -174,6 +174,7 @@ public:
      * @return true when the combination is in the MasterCatalog
      */
     bool contains(const QUrl &url, IlwisTypes type) const;
+    bool knownCatalogContent(const QUrl& path) const;
 
     bool usesContainers(const QUrl &scheme) const;
     void addContainerException(const QString& scheme);

@@ -132,6 +132,11 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     return false;
 }
 
+bool MasterCatalog::knownCatalogContent(const QUrl &path) const
+{
+    return _catalogs.find(path) != _catalogs.end();
+}
+
 bool MasterCatalog::usesContainers(const QUrl &url) const
 {
     return _containerExceptions.find(url.scheme()) == _containerExceptions.end();
@@ -142,19 +147,19 @@ void MasterCatalog::addContainerException(const QString &scheme)
     _containerExceptions.insert(scheme);
 }
 
-bool MasterCatalog::removeItems(const QList<Resource> &items){
+bool MasterCatalog::removeItems(const std::vector<Resource> &items){
     for(const Resource &resource : items) {
         auto iter = _knownHashes.find(Ilwis::qHash(resource));
         if ( iter != _knownHashes.end()) {
             _knownHashes.erase(iter);
         }
-        QString stmt = QString("DELETE FROM mastercatalog WHERE resource = %1" ).arg(resource.id());
+        QString stmt = QString("DELETE FROM mastercatalog WHERE itemid = %1" ).arg(resource.id());
         QSqlQuery db(kernel()->database());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
         }
-        stmt = QString("DELETE FROM catalogitemproperties WHERE resource = %1").arg(resource.id());
+        stmt = QString("DELETE FROM catalogitemproperties WHERE itemid = %1").arg(resource.id());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
