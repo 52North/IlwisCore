@@ -129,7 +129,6 @@ private:
 
     QUrl _parent;
     std::vector<Resource> _items;
-    bool _scanned = false;
 
     
 signals:

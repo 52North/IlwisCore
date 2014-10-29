@@ -34,6 +34,9 @@ Catalog::~Catalog()
 
 std::vector<Resource> Catalog::items() const
 {
+    if  ( _items.size() == 0){
+         const_cast<Catalog *>(this)->_items = mastercatalog()->select(source().url(),"");
+    }
     return _items;
 }
 
@@ -42,7 +45,6 @@ void Catalog::scan()
     if (! connector().isNull()){
         if( connector()->loadData(this)){
             setValid(true);
-            _scanned = true;
         }
     }
 }
@@ -53,7 +55,7 @@ bool Catalog::prepare()
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    if ( !_scanned) // no previous scan has been done
+    if ( !mastercatalog()->knownCatalogContent(source().url()))
         scan();
 
     return true;
