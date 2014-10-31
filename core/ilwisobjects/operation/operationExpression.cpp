@@ -66,6 +66,23 @@ bool Parameter::isValid() const
     return !_value.isEmpty();
 }
 
+Parameter::PathType Parameter::pathType() const
+{
+    if ( _value.indexOf("http://") == 0 || _value.indexOf("https://") == 0){
+        return ptREMOTE;
+    }
+    if ( _value.indexOf("file://") == 0){
+        return ptLOCALOBJECT;
+    }
+    if ( _value.indexOf("ilwis://") == 0){
+        return ptLOCALOBJECT;
+    }
+    if ( hasType(_type, (itSTRING | itNUMBER | itBOOL)))
+        return ptIRRELEVANT;
+
+    return ptNONE;
+}
+
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
     IlwisTypes tp = IlwisObject::findType(value);
     if ( tp != itUNKNOWN)

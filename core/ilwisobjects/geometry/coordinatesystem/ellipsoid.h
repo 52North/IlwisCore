@@ -33,6 +33,7 @@ public:
     QString toWKT(quint32 spaces=0) const;
     IlwisTypes ilwisType() const;
     void setWKTName(const QString& wkt);
+    static QString ellipsoidCode2Name(const QString& code);
 
     LatLon latlon2Coord(const IEllipsoid &sourceEllipsoide, const LatLon &sourceLatLon) const;
     Coordinate latlon2Coord(const LatLon &sourceLatLon) const;
@@ -54,6 +55,8 @@ private:
     double _excentricity;
     QString _authority;
     QString _wkt;
+
+    static std::map<QString, QString> _ellcode2Name;
 };
 
 }

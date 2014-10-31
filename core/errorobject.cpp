@@ -91,3 +91,14 @@ const char *CheckExpressionError::what() const throw()
 {
     return "CheckExpressionError";
 }
+
+
+AbortOperation::AbortOperation(const QString &message) : ErrorObject(message)
+{
+
+}
+
+const char *AbortOperation::what() const throw()
+{
+    return "AbortOperation";
+}

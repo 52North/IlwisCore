@@ -180,7 +180,7 @@ Resource UnaryMath::populateMetadata(const QString& item, const QString& longnam
     resource.addProperty("pin_2_domain","value");
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_type", itRASTER|itTABLE|itNUMBER);
-    resource.addProperty("pout_1_name", TR("output rastercoverage/table/number"));
+    resource.addProperty("pout_1_name", TR("output name"));
     resource.addProperty("pout_1_domain",outputDom);
     resource.prepare();
     QString url = resource.url().toString();

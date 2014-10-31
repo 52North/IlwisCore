@@ -40,6 +40,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     AreaNumberer numberer(outputRaster->size().xsize(),_connectivity);
+    quint64 currentCount = 0;
 
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //pass one
@@ -51,6 +52,7 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
            *iterOut = v;
             ++iterOut;
             ++iterIn;
+            updateTranquilizer(currentCount++, 1000);
         }
         //pass two
         for(auto iterPass2 : numberer.pass2Entries()) {
@@ -122,6 +124,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     outputRaster->datadefRef().domain(dom);
     mastercatalog()->addItems({resource});
 
+    initialize(outputRaster->size().linearSize());
 
     return sPREPARED;
 }
@@ -130,7 +133,7 @@ quint64 AreaNumbering::createMetadata()
 {
     OperationResource operation({"ilwis://operations/areanumbering"});
     operation.setLongName("Area Numbering");
-    operation.setSyntax("areanumbering(inputgridcoverage,4|8)");
+    operation.setSyntax("areanumbering(inputgridcoverage,!4|8)");
     operation.setDescription(TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("rastercoverage with domain item, boolean or identifier domain"));

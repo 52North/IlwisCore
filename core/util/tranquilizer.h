@@ -6,34 +6,38 @@
 #include "locker.h"
 
 namespace Ilwis {
-class Tranquilizer : public QObject
+class KERNELSHARED_EXPORT Tranquilizer : public QObject
 {
     Q_OBJECT
 public:
     explicit Tranquilizer(QObject *parent = 0);
-    Tranquilizer(const QString &title, const QString &description, qint64 end, qint32 step);
-    void end(qint64 number);
+    Tranquilizer(const QString &title, const QString &description, double end);
+    void prepare(const QString &title, const QString &description, double end);
 
-    void move() {
-        if ( _current % _step){
-            Locker<std::mutex> lock(_mutex);
-            emit(doMove(_id, _current));
-        }
-        _current += _step;
+
+    void update(double step) {
+        Locker<std::mutex> lock(_mutex);
+        _current += step;
+        emit(updateTranquilizer(_id, _current));
 
     }
+
+    double current() const;
+    void current(double cur);
+    void end(double number);
+    double end() const;
 
 private:
     static quint64 _trqId;
     quint64 _id;
     QString _title;
     QString _desc;
-    qint64  _end;
-    qint64 _current;
-    qint32 _step;
+    double  _end;
+    double _current;
     std::mutex _mutex;
 signals:
-    void doMove(quint64 id, qint32 amount);
+    void updateTranquilizer(quint64 id, double current);
+    void tranquilizerCreated(quint64 id, const QString &title, const QString &description, quint64 end);
     
 public slots:
     

@@ -16,7 +16,7 @@
 using namespace Ilwis;
 
 uint Ilwis::qHash2(const QUrl& url, IlwisTypes tp ){
-    return (::qHash(url.toString()) + ::qHash(tp)) / 2;
+    return (::qHash(OSHelper::neutralizeFileName(url.toString())) + ::qHash(tp)) / 2;
 }
 
 uint Ilwis::qHash(const Ilwis::Resource& resource ){
@@ -270,7 +270,11 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
-                int index = path.lastIndexOf("/");
+                int index = -1;
+                if ( asRaw && url.scheme() == "http"){
+                    index = path.indexOf("?");
+                }else
+                    index = path.lastIndexOf("/");
                 addContainer(path.left(index));
                 name(path.mid(index + 1),false);
             }
@@ -313,6 +317,11 @@ QUrl Resource::container(int level) const
 quint64 Resource::size() const
 {
     return _size;
+}
+
+void Resource::size(quint64 objectsz)
+{
+    _size = objectsz;
 }
 
 QString Resource::dimensions() const
@@ -433,6 +442,7 @@ bool Resource::store(QDataStream &stream) const
     while ( iter != _properties.end()){
         stream << iter.key();
         stream << iter.value();
+        ++iter;
     }
     stream << _normalizedUrl;
     stream << _rawUrl;
@@ -519,6 +529,11 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
         name(txt.mid(index + 1));
+        if ( txt.indexOf("http://") == 0){
+            if ( txt.indexOf("?") != -1){
+                index = txt.indexOf("?");
+            }
+        }
         QString rest = txt.left(index); // the rest is the container
 
         // we might be at the root; no need then to add containers as there are none

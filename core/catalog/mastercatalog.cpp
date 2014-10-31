@@ -63,7 +63,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
 
-    QString original = inlocation.toString().trimmed();
+    QString original = OSHelper::neutralizeFileName(inlocation.toString().trimmed());
     if ( Resource::isRoot(original))
         return true;
 
@@ -132,6 +132,11 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     return false;
 }
 
+bool MasterCatalog::knownCatalogContent(const QUrl &path) const
+{
+    return _catalogs.find(path) != _catalogs.end();
+}
+
 bool MasterCatalog::usesContainers(const QUrl &url) const
 {
     return _containerExceptions.find(url.scheme()) == _containerExceptions.end();
@@ -142,19 +147,19 @@ void MasterCatalog::addContainerException(const QString &scheme)
     _containerExceptions.insert(scheme);
 }
 
-bool MasterCatalog::removeItems(const QList<Resource> &items){
+bool MasterCatalog::removeItems(const std::vector<Resource> &items){
     for(const Resource &resource : items) {
         auto iter = _knownHashes.find(Ilwis::qHash(resource));
         if ( iter != _knownHashes.end()) {
             _knownHashes.erase(iter);
         }
-        QString stmt = QString("DELETE FROM mastercatalog WHERE resource = %1" ).arg(resource.id());
+        QString stmt = QString("DELETE FROM mastercatalog WHERE itemid = %1" ).arg(resource.id());
         QSqlQuery db(kernel()->database());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
         }
-        stmt = QString("DELETE FROM catalogitemproperties WHERE resource = %1").arg(resource.id());
+        stmt = QString("DELETE FROM catalogitemproperties WHERE itemid = %1").arg(resource.id());
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
@@ -395,10 +400,34 @@ bool MasterCatalog::unregister(quint64 id)
 
 }
 
+std::vector<Resource> MasterCatalog::select(const QString &selection) const
+{
+    QString query;
+    if ( selection.indexOf("catalogitemproperties.") == -1)
+        query = QString("select * from mastercatalog where  %2").arg(selection);
+    else
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid %2").arg(selection);
+
+    QSqlQuery results = kernel()->database().exec(query);
+    std::vector<Resource> items;
+    while( results.next()) {
+        QSqlRecord rec = results.record();
+        items.push_back(Resource(rec));
+    }
+    return items;
+
+}
+
 std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
-    QString query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
+    QString query;
+    if ( selection.indexOf("catalogitemproperties.") == -1)
+        query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
+    else
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.container = '%1' and mastercatalog.itemid = catalogitemproperties.itemid %2").arg(resource.toString(), rest);
+
+   // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     QSqlQuery results = kernel()->database().exec(query);
     std::vector<Resource> items;
     while( results.next()) {

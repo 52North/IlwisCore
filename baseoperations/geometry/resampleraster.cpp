@@ -34,11 +34,9 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
-    SPTranquilizer trq = kernel()->createTrq("resample", "", outputRaster->size().ysize(),1);
 
     BoxedAsyncFunc resampleFun = [&](const BoundingBox& box) -> bool {
         PixelIterator iterOut(outputRaster,box);
-        iterOut.setTranquilizer(trq);
         RasterInterpolator interpolator(inputRaster, _method);
         PixelIterator iterEnd = iterOut.end();
         bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());
@@ -121,7 +119,7 @@ quint64 ResampleRaster::createMetadata()
 
     OperationResource operation({"ilwis://operations/resample"});
     operation.setLongName("Resample Raster");
-    operation.setSyntax("resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|bicubic)");
+    operation.setSyntax("resample(inputgridcoverage,targetgeoref,nearestneighbour|bilinear|!bicubic)");
     operation.setDescription(TR("translates a rastercoverage from one geometry (coordinatesystem+georeference) to another"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with domain any domain"));

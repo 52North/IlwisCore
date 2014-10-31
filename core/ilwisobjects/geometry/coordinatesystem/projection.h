@@ -41,6 +41,7 @@ public:
     QVariant parameter(Projection::ProjectionParamValue type) const;
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
     QString parameterName(Projection::ProjectionParamValue pv) const;
+    static QString projectionCode2Name(const QString& code);
 
     bool isEqual(const IlwisObject* obj) const;
     bool isValid() const;
@@ -54,6 +55,7 @@ private:
     QString _wkt;
     QString _authority;
     QScopedPointer<ProjectionImplementation> _implementation;
+    static std::map<QString, QString> _projcode2Name;
 };
 typedef Ilwis::IlwisData<Ilwis::Projection> IProjection;
 }

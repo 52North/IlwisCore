@@ -159,7 +159,7 @@ void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QS
 
 void OperationResource::setKeywords(const QString& words) {
 
-    addProperty("keywords", words.split(","));
+    addProperty("keyword", words.trimmed().toLower());
 }
 
 

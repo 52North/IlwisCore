@@ -184,6 +184,15 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                         if ( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))
                             continue;
                         if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
+                            if ( tpExpr == itSTRING){
+                                if (expr.parm(i).value() == ""){ // empty parameters are seen as strings and are acceptable. at operation level it should be decided what to do with it
+                                    continue;
+                                }else if ( expr.parm(i).pathType() == Parameter::ptREMOTE){
+                                    // we can't know what this parameter type realy is, so we accept it as valid
+                                    // if it is incorrect the prepare of the operation will fail so no harm done
+                                    continue;
+                                }
+                            }
                             found = false;
                             break;
                         }

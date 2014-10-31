@@ -34,7 +34,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
 
-
+    quint64 currentCount = 0;
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //Size sz = outputRaster->size();
         PixelIterator iterOut(outputRaster, box);
@@ -55,6 +55,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
            *iterOut = v;
             ++iterOut;
             ++blockIter;
+            updateTranquilizer(currentCount++, 1000);
         }
         return true;
     };
@@ -178,6 +179,8 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         outputRaster->size(box.size());
     }
 
+    initialize(outputRaster->size().linearSize());
+
     return sPREPARED;
 }
 
@@ -186,7 +189,7 @@ quint64 AggregateRaster::createMetadata()
 
     OperationResource operation({"ilwis://operations/aggregateraster"});
     operation.setLongName("Spatial Aggregation of Raster coverage");
-    operation.setSyntax("aggregateraster(inputgridcoverage,Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
+    operation.setSyntax("aggregateraster(inputgridcoverage,!Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
     operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
     operation.setInParameterCount({4,5});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
@@ -195,7 +198,7 @@ quint64 AggregateRaster::createMetadata()
     operation.addInParameter(3,itBOOL , TR("change geometry"),TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
     operation.addInParameter(4,itSTRING , TR("georeference name"),TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(1,itRASTER, TR("output rastercoverage with the domain of the input map"));
+    operation.addOutParameter(0,itRASTER, TR("Aggregated raster"), TR("output rastercoverage with the domain of the input map"));
     operation.setKeywords("aggregate,raster,geometry");
 
     mastercatalog()->addItems({operation});

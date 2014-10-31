@@ -352,6 +352,21 @@ bool IlwisObject::isInternalObject() const
     return false;
 }
 
+bool IlwisObject::isRemote() const
+{
+    if ( !source().isValid())
+        return false;
+
+    if (source().url().scheme() == "file" || source().url(true).scheme() == "file")
+        return false;
+    if ( source().url().scheme() == "ilwis" || source().url(true).scheme() == "ilwis")
+        return false;
+    if (source().url().scheme() == "http" || source().url().scheme() == "https" || source().url(true).scheme() == "http" || source().url(true).scheme() == "https"){
+        return true;
+    }
+    return false;
+}
+
 bool IlwisObject::store(const IOOptions &options)
 {
     if (!connector(cmOUTPUT).isNull()) {

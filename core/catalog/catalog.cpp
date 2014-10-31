@@ -34,7 +34,19 @@ Catalog::~Catalog()
 
 std::vector<Resource> Catalog::items() const
 {
+    if  ( _items.size() == 0){
+         const_cast<Catalog *>(this)->_items = mastercatalog()->select(source().url(),"");
+    }
     return _items;
+}
+
+void Catalog::scan()
+{
+    if (! connector().isNull()){
+        if( connector()->loadData(this)){
+            setValid(true);
+        }
+    }
 }
 
 bool Catalog::prepare()
@@ -43,10 +55,10 @@ bool Catalog::prepare()
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    if( connector()->loadData(this))
-        return setValid(true);
+    if ( !mastercatalog()->knownCatalogContent(source().url()))
+        scan();
 
-    return false;
+    return true;
 }
 
 bool Catalog::isValid() const
@@ -60,6 +72,9 @@ IlwisTypes Catalog::ilwisType() const {
 
 QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
 {
+    if ( nm == sUNDEF)
+        return sUNDEF;
+
     QString name = nm;
     name = Resource::quoted2string(name);
     name = OSHelper::neutralizeFileName(name);

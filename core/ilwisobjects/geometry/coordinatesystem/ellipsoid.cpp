@@ -14,11 +14,23 @@
 using namespace Ilwis;
 
 const IEllipsoid Ellipsoid::wgs84ellipsoid; //=IEllipsoid(QUrl(WGS84RESOURCE),QExplicitlySharedDataPointer<Ellipsoid>(new Ilwis::Ellipsoid(6378137.0,298.257223563)));
+std::map<QString, QString> Ellipsoid::_ellcode2Name;
+
 
 Ellipsoid::Ellipsoid() : IlwisObject()
 {
     name("Sphere");
     setEllipsoid(6371007.1809185,0);
+    if ( _ellcode2Name.size() == 0){
+        QSqlQuery db(kernel()->database());
+        QString query = "Select code, name from ellipsoid";
+        db.exec(query);
+        while(db.next()){
+            QString code = db.value(0).toString();
+            QString nme = db.value(1).toString();
+            _ellcode2Name[code] = nme;
+        }
+    }
 }
 
 Ellipsoid::Ellipsoid(const Resource& resource) : IlwisObject(resource) {
@@ -301,6 +313,14 @@ IlwisTypes Ellipsoid::ilwisType() const
 void Ellipsoid::setWKTName(const QString &wkt)
 {
     _wkt = wkt;
+}
+
+QString Ellipsoid::ellipsoidCode2Name(const QString &code)
+{
+    auto iter = _ellcode2Name.find(code);
+    if ( iter != _ellcode2Name.end())
+         return iter->second;
+    return sUNDEF;
 }
 
 

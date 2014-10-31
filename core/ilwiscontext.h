@@ -37,6 +37,7 @@ public:
     IlwisConfiguration& configurationRef();
     const IlwisConfiguration& configuration() const;
     QFileInfo resourceRoot() const;
+    QString ipv4() const;
 
 private:
     void init();
@@ -51,6 +52,7 @@ private:
     IlwisConfiguration _configuration;
     QUrl _cacheLocation;
     QUrl _persistentInternalCatalog;
+    QString _ipv4 = sUNDEF;
 };
 
 

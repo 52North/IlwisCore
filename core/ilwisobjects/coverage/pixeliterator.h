@@ -423,14 +423,6 @@ public:
         return iter;
     }
 
-    /*!
-     * \brief ProgressMeter
-     * \param trq
-     */
-    void setTranquilizer(const SPTranquilizer& trq) {
-        _trq = trq;
-    }
-
     const Ilwis::IRasterCoverage &raster() const;
 
 protected:
@@ -481,7 +473,6 @@ protected:
     std::vector<std::vector<qint32>> _selectionPixels;
     qint32 _selectionIndex = -1;
     bool _insideSelection = false;
-    SPTranquilizer _trq;
 
 
     bool move(int n) {

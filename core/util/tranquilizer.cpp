@@ -11,13 +11,38 @@ Tranquilizer::Tranquilizer(QObject *parent) :
 
 }
 
-Tranquilizer::Tranquilizer(const QString& title, const QString& description, qint64 end, qint32 step) :  QObject(0),
-    _title(title), _desc(description), _end(end), _step(step)
+Tranquilizer::Tranquilizer(const QString& title, const QString& description, double end) :  QObject(0),
+    _title(title), _desc(description), _end(end)
 {
     _id = _trqId++;
 }
 
-void Tranquilizer::end(qint64 number)
+void Tranquilizer::prepare(const QString &title, const QString &description, double end)
+{
+    _title = title;
+    _desc = description;
+    _end = end;
+    kernel()->connect(this, &Tranquilizer::updateTranquilizer, kernel(), &Kernel::changeTranquilizer,Qt::DirectConnection);
+    kernel()->newTranquilizer(_id, title, description, _end);
+
+}
+
+void Tranquilizer::end(double number)
 {
     _end = number;
+}
+
+double Tranquilizer::end() const
+{
+    return _end;
+}
+
+double Tranquilizer::current() const
+{
+    return _current;
+}
+
+void Tranquilizer::current(double cur)
+{
+    _current = cur;
 }

@@ -52,6 +52,7 @@ public:
      * @return list of resources contained in the catalog
      */
     std::vector<Resource> items() const;
+    void scan();
 
     template<typename IObjectType=IIlwisObject> IObjectType item(const QVariant& indexValue) const{
         IIlwisObject obj = createObject(indexValue)   ;
