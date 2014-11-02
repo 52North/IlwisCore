@@ -72,7 +72,7 @@ public:
      *This return is more of the physical possibility of writing data. There is also a readonly flag at ilwisobject level but describes usualy the logical readonly status (e.g. I dont want that this will be written)
      * \return
      */
-    virtual bool isReadOnly() { return true; }
+    virtual bool isReadOnly() const { return true; }
 
 };
 
