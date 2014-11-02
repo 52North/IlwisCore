@@ -103,6 +103,7 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 
 bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& ){
     Catalog *cat = static_cast<Catalog *>(obj);
+    kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
     for(const auto& explorer : _dataProviders){
         std::vector<Resource> items = explorer->loadItems();
         cat->addItemsPrivate(items);
