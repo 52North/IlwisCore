@@ -225,6 +225,7 @@ public:
      * \return readonly or not
      */
     virtual bool isReadOnly() const;
+    virtual bool outputConnectionReadonly() const;
 
     /**
      * Changes the readonly state of this object. in order to do this it will both change the connectors readonly state and the objects. If the connectors state can't be set to read/write only the state of the object will be set
@@ -369,6 +370,7 @@ public:
 
     static IlwisTypes name2ExtendedType(const QString &dname);
 
+    QString externalFormat() const;
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;

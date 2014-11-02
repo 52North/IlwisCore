@@ -192,10 +192,33 @@ bool IlwisObject::setValid(bool yesno)
 
 bool IlwisObject::isReadOnly() const
 {
-    if ( !connector(cmOUTPUT).isNull())
-        return connector(cmOUTPUT)->isReadOnly() && _readOnly;
     return _readOnly;
+}
 
+bool IlwisObject::outputConnectionReadonly() const
+{
+    if ( !connector(cmOUTPUT).isNull())
+        return connector(cmOUTPUT)->isReadOnly();
+    return true;
+}
+
+QString IlwisObject::externalFormat() const
+{
+    QString outFormat, inFormat;
+    if ( !connector(cmOUTPUT).isNull())
+        outFormat = connector(cmOUTPUT)->format();
+    if ( !connector().isNull()){
+        inFormat = connector()->format();
+    }
+    if ( outFormat == "" && inFormat == "")
+        return sUNDEF;
+    if ( outFormat == inFormat)
+        return inFormat;
+    if ( outFormat == "" && inFormat != "")
+        return inFormat;
+    if ( inFormat == "" && outFormat != "")
+        return "internal/"  + outFormat;
+    return inFormat + "/" + outFormat;
 }
 
 void IlwisObject::readOnly(bool yesno)
