@@ -90,6 +90,7 @@ class KERNELSHARED_EXPORT TypeHelper {
 public:
     static QString type2HumanReadable(IlwisTypes type);
 
+    static QString type2name(IlwisTypes t);
 };
 }
 
