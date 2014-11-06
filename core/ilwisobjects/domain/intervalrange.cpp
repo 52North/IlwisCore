@@ -243,10 +243,10 @@ QString IntervalRange::toString() const
     QString names;
     for(const SPInterval& it: _items) {
         if ( names != "")
-            names += ";";
+            names += "|";
         names += it->name();
     }
-    return names;
+    return "intervalrange:"+ names;
 }
 
 void IntervalRange::store(QDataStream &stream)

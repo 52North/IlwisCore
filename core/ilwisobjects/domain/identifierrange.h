@@ -360,6 +360,7 @@ protected:
 
 protected:
     std::map<QString, SPNamedIdentifier> _byName;
+    QString asString() const;
 
 private:
     bool alignWithParent(const IDomain& dom);
@@ -379,6 +380,7 @@ public:
     IlwisTypes valueType() const;
     void store(QDataStream& stream);
     void load(QDataStream& stream);
+    QString toString() const;
 };
 
 }

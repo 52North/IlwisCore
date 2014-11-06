@@ -202,7 +202,7 @@ QString ContinousColorRange::toString() const
     if (!isValid())
         return sUNDEF;
 
-    return ColorRangeBase::toString(_limit1, defaultColorModel()) + "," + ColorRangeBase::toString(_limit2, defaultColorModel());
+    return "continuouscolorange:"+ ColorRangeBase::toString(_limit1, defaultColorModel()) + "," + ColorRangeBase::toString(_limit2, defaultColorModel());
 }
 
 Range *ContinousColorRange::clone() const
@@ -465,11 +465,11 @@ QString ColorPalette::toString() const
     for(int index = 0; index < _colors.size();++index ){
         QString itemString = ColorRangeBase::toString(_colors[index]->color(), defaultColorModel());
         if ( result != "")
-            result += ",";
+            result += "|";
         result += QString::number(index) + "=" + itemString;
 
     }
-    return result;
+    return "colorpalette:"+ result;
 }
 
 qint32 ColorPalette::gotoIndex(qint32 index, qint32 step) const

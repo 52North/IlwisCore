@@ -927,7 +927,7 @@ QString TimeInterval::toString(bool local, IlwisTypes tp) const{
     Time end(max(), tp);
     QString sb = begin.toString(local,tp);
     QString se = end.toString(local,tp);
-    return QString("%1/%2").arg(sb ,se);
+    return QString("timeinterval:%1|%2").arg(sb ,se);
 }
 
 bool TimeInterval::contains(const QString &value, bool inclusive) const

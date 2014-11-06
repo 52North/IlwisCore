@@ -143,17 +143,18 @@ QString NumericRange::toString() const {
     long n = std::max(n1, n2);
     bool isfloat = _resolution == 0 || _resolution - (quint64)_resolution != 0;
     if (isfloat){
-        QString rng = QString::number(_min,'f',n);
+        QString rng = _min < -1e100 ? "-infinite" : QString::number(_min,'f',n);
+
         rng += ' ';
-        rng += QString::number(_max,'f',n);
+        rng += _max > -1e100 ? "+infinite": QString::number(_max,'f',n);
         if ( _resolution != 0){
             rng += ' ';
             rng += QString::number(_resolution) ;
         }
-        return rng;
+        return "numericrange:" + rng;
     }
     QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_resolution);
-    return rng;
+    return "numericrange:"+ rng;
 }
 
 QVariant NumericRange::impliedValue(const QVariant &v) const

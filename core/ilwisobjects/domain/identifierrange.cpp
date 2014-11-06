@@ -142,12 +142,12 @@ QString IndexedIdentifierRange::toString() const
     QString resource;
     for(quint32 i=0; i < _count; ++i) {
         if ( resource!= "")
-            resource = resource +  ",";
+            resource = resource +  "|";
         if ( _start->prefix() != "")
             resource += _start->prefix() + "_";
         resource += QString::number(i);
     }
-    return resource;
+    return "indexedidentifierrange:" + resource;
 }
 
 void IndexedIdentifierRange::remove(const QString& item)
@@ -416,10 +416,15 @@ NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 }
 
 QString NamedIdentifierRange::toString() const {
+    QString resource = asString();
+    return "namedidentifierrange:"+ resource;
+}
+
+QString NamedIdentifierRange::asString() const {
     QString resource;
     for(auto item :_byName) {
         if (resource!= "")
-            resource += ",";
+            resource += "|";
         resource += item.second->name();
     }
     return resource;
@@ -585,6 +590,11 @@ void ThematicRange::store(QDataStream &stream)
     for(const auto& item : _byName) {
         stream <<  item.second->raw() << item.second->name() << item.second->as<ThematicItem>()->description() << item.second->as<ThematicItem>()->code();
     }
+}
+
+QString ThematicRange::toString() const {
+    QString resource = asString();
+    return "thematicrange:"+ resource;
 }
 
 void ThematicRange::load(QDataStream &stream)
