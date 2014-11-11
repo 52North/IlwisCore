@@ -28,18 +28,18 @@ bool AttributeDefinition::addColumn(const ColumnDefinition& def){
     return true;
 }
 
-bool AttributeDefinition::addColumn(const QString &name, const QString &domainname)
+bool AttributeDefinition::addColumn(const QString &name, const QString &domainname, bool readonly)
 {
     IDomain dom;
     if(!dom.prepare(domainname))
         return false;
-    return addColumn({name, dom});
+    return addColumn({name, dom, readonly});
 }
 
 
-bool AttributeDefinition::addColumn(const QString &name, const IDomain &domain)
+bool AttributeDefinition::addColumn(const QString &name, const IDomain &domain, bool readonly)
 {
-    return addColumn({name, domain});
+    return addColumn({name, domain, readonly});
 }
 
 ColumnDefinition AttributeDefinition::columndefinition(const QString &nme) const

@@ -27,6 +27,7 @@ Record::Record(const std::vector<QVariant>& data, quint32 offset)
 Record::Record(const Record &data)
 {
     _data = std::vector<QVariant>(data.cbegin(), data.cend());
+    _changed = data._changed;
 }
 
 bool Record::isChanged() const
