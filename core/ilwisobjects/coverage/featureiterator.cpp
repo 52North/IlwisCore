@@ -101,8 +101,11 @@ SPFeatureI FeatureIterator::operator *()
      init();
      if ( _currentLevel == 0)
         return *_iterFeatures;
-     else if ( _currentIndexes.size() > 0)
-         (*_iterFeatures)[*_subIterator];
+     else if ( _currentIndexes.size() > 0) {
+         quint32 raw = (*_subIterator).first;
+         QString domvalue = _fcoverage->attributeDefinitionsRef(_currentLevel).index(raw);
+         return (*_iterFeatures)[domvalue];
+     }
 
      return SPFeatureI();
 }
@@ -126,8 +129,7 @@ bool FeatureIterator::init()
 {
     if ( _isInitial)     {
         _currentIndexes = _fcoverage->attributeDefinitions(0).indexes();
-        _subIterator = _currentIndexes.begin();
-        _currentLevel = _level;
+         _currentLevel = _level;
         _useVectorIter = _subset.size() == 0 || _subset.size() == _fcoverage->featureCount();
         _isInitial = false;
         if ( _fcoverage->_features.size() == 0) {
@@ -138,6 +140,8 @@ bool FeatureIterator::init()
         if ( _fcoverage->_features.size() > 0 ) {
             _iterPosition = 0;
             _iterFeatures = _fcoverage->_features.begin();
+             Feature *feature = static_cast<Feature *>(_fcoverage->_features[0].get());
+            _subIterator = feature->_subFeatures.begin();
             if ( _subset.size() > 0) {
                 _iterFeatures += _subset[_iterPosition];
             }
@@ -188,32 +192,39 @@ bool FeatureIterator::moveBreadthFirst(qint32 distance){
         _iterFeatures = _fcoverage->_features.begin(); // main feature iterator back to beginning
         ++_subIterator; // next level of subfeatures
     }
-    return _iterFeatures == _fcoverage->_features.end() && _subIterator == _currentIndexes.end(); // if both are at the end, we are done
+    Feature *feature = static_cast<Feature *>((*_iterFeatures).get());
+    if ( !feature)
+        return false;
+    return _iterFeatures != _fcoverage->_features.end() && _subIterator == feature->_subFeatures.end(); // if both are at the end, we are done
 }
 
 bool FeatureIterator::moveDepthFirst(qint32 distance){
 
-    ++_subIterator; // try to move on the current subfeatures
+    if ( _currentLevel != 0)
+        ++_subIterator; // try to move on the current subfeatures
     ++_currentLevel;
-    if ( _subIterator == _currentIndexes.end()){ // if fail, move to next main feature
+     Feature *feature = static_cast<Feature *>((*_iterFeatures).get());
+    if ( _subIterator == feature->_subFeatures.end()){ // if fail, move to next main feature
         ++_iterFeatures;
-        _subIterator = _currentIndexes.begin(); // set the start of the subfeatures at 0
+        _subIterator = feature->_subFeatures.begin(); // set the start of the subfeatures at 0
         _currentLevel = 0;
     }
-    return _iterFeatures == _fcoverage->_features.end(); // if there is no main feature any more, stop
+    bool ok = _iterFeatures != _fcoverage->_features.end(); // if there is no main feature any more, stop;
+    return ok;
 
 }
 
 bool FeatureIterator::move(qint32 distance) {
+    bool ok = false;
     switch ( _flow){
     case fFLAT:
-        return moveFlat(distance);
+        ok =  moveFlat(distance);
     case fBREADTHFIRST:
-        return moveBreadthFirst(distance);
+        ok = moveBreadthFirst(distance);
     case fDEPTHFIRST:
-        return moveDepthFirst(distance);
+        ok = moveDepthFirst(distance);
     }
-    return false;
+    return ok;
 }
 FeatureIterator::Flow FeatureIterator::flow() const
 {

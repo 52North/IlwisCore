@@ -164,7 +164,7 @@ private:
     IFeatureCoverage _fcoverage;
     Features::iterator _iterFeatures;
     std::vector<QString> _currentIndexes;
-    std::vector<QString>::iterator _subIterator;
+    boost::container::flat_map<quint32,SPFeatureI>::iterator _subIterator;
     bool _isInitial;
     std::vector<quint32> _subset;
     quint32 _iterPosition = iUNDEF;

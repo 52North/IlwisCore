@@ -192,12 +192,7 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
         if ( !dom->contains(item)) {
             continue;
         }
-
-        if ( hasType(dom->valueType(), itDATETIME)){
-            _index2subFeature.push_back(QString::number((double)Time(item)));
-        }else {
-            _index2subFeature.push_back(item);
-        }
+        _index2subFeature.push_back(item);
     }
 
     _subFeatureDomain = dom;
@@ -230,8 +225,7 @@ quint32 SubFeatureDefinition::index(const QString &domainItem) const
     if ( !_subFeatureDomain.isValid())
         return iUNDEF;
 
-    QString item = hasType(_subFeatureDomain->valueType(), itDATETIME) ? QString::number((double)Time(domainItem)) : domainItem;
-    auto iter = _subFeature2Index.find(item) ;
+    auto iter = _subFeature2Index.find(domainItem) ;
     if ( iter != _subFeature2Index.end())
         return iter->second;
     return iUNDEF;
