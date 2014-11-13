@@ -219,10 +219,13 @@ bool FeatureIterator::move(qint32 distance) {
     switch ( _flow){
     case fFLAT:
         ok =  moveFlat(distance);
+        break;
     case fBREADTHFIRST:
         ok = moveBreadthFirst(distance);
+        break;
     case fDEPTHFIRST:
         ok = moveDepthFirst(distance);
+        break;
     }
     return ok;
 }
