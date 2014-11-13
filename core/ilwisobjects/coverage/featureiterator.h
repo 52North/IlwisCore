@@ -177,6 +177,8 @@ private:
     bool moveFlat(qint32 distance);
     bool moveBreadthFirst(qint32 distance);
     bool moveDepthFirst(qint32 distance);
+
+    bool atEndOfFeatures();
 };
 }
 
