@@ -23,7 +23,7 @@ public:
     virtual bool canConvertToLatLon() const;
     virtual bool canConvertToCoordinate() const;
     virtual Coordinate inverseCoordinateConversion(const CoordinateSystem& cs, const Coordinate& crd) const;
-    Ilwis::Envelope envelope() const;
+    Ilwis::Envelope envelope(bool tolatlon=false) const;
     void envelope(const Envelope &env);
     virtual bool isLatLon() const = 0;
     virtual QString toWKT(quint32 spaces=0) const=0;

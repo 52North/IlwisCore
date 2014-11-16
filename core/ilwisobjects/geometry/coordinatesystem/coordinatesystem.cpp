@@ -49,8 +49,13 @@ Coordinate CoordinateSystem::inverseCoordinateConversion(const CoordinateSystem&
     return Coordinate();
 }
 
-Envelope CoordinateSystem::envelope() const
+Envelope CoordinateSystem::envelope(bool tolatlon) const
 {
+    if ( tolatlon && !isLatLon() && code() != "csy:unknown"){
+        LatLon c1 = coord2latlon(_envelope.min_corner());
+        LatLon c2 = coord2latlon(_envelope.max_corner());
+        return Envelope(c1,c2);
+    }
     return _envelope;
 }
 
