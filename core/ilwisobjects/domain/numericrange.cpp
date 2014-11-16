@@ -145,15 +145,15 @@ QString NumericRange::toString() const {
     if (isfloat){
         QString rng = _min < -1e100 ? "-infinite" : QString::number(_min,'f',n);
 
-        rng += ' ';
+        rng += '|';
         rng += _max > -1e100 ? "+infinite": QString::number(_max,'f',n);
         if ( _resolution != 0){
-            rng += ' ';
+            rng += '|';
             rng += QString::number(_resolution) ;
         }
         return "numericrange:" + rng;
     }
-    QString rng = QString("%1 %2 %3").arg(_min).arg(_max).arg(_resolution);
+    QString rng = QString("%1|%2|%3").arg(_min).arg(_max).arg(_resolution);
     return "numericrange:"+ rng;
 }
 
