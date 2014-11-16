@@ -52,7 +52,7 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     case Projection::pvELLCODE:
         _targetDef += " " + value; break;
     case Projection::pvNORTH:
-        _targetDef += value == "No" ? "+south" : ""; break;
+        _targetDef += value == "No" ? " +south" : ""; break;
     default:
         _targetDef += "";
     }
