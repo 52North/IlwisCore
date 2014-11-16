@@ -37,8 +37,19 @@ void Coverage::coordinateSystem(const ICoordinateSystem &csy)
     _coordinateSystem = csy;
 }
 
-Envelope Coverage::envelope() const
+Envelope Coverage::envelope(bool tolatlon) const
 {
+    if ( !coordinateSystem().isValid())
+        return _envelope;
+
+    if ( tolatlon && !coordinateSystem()->isLatLon() && code() != "csy:unknown"){
+        bool validbounds = _envelope.min_corner().isValid() && _envelope.max_corner().isValid();
+        if ( !validbounds)
+            return Envelope();
+        LatLon c1 = coordinateSystem()->coord2latlon(_envelope.min_corner());
+        LatLon c2 = coordinateSystem()->coord2latlon(_envelope.max_corner());
+        return Envelope(c1,c2);
+    }
     return _envelope;
 }
 

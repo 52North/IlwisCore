@@ -76,7 +76,7 @@ public:
      *
      * \return the envelope of this coverage if it has one or else null
      */
-    Envelope envelope() const;
+    Envelope envelope(bool tolatlon=false) const;
 
     /*!
      * Changes the envelope of this coverage to the one specified<br>
