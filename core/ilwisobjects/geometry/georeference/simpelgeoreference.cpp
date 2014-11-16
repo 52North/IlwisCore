@@ -53,7 +53,7 @@ double SimpelGeoReference::pixelSize() const
     if ( _det == 0)
         return rUNDEF;
 
-    return sqrt( 1/ _det);
+    return sqrt( 1/ std::abs(_det));
 }
 
 std::vector<double> SimpelGeoReference::matrix() const {
