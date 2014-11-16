@@ -134,6 +134,15 @@ public:
         return Size<T>(xlength(), ylength(), zlength());
     }
 
+    PointType center() const{
+        if (!isValid())
+            return PointType();
+
+        if ( is3D())
+            return PointType( (max_corner().x + min_corner().x) / 2.0, (max_corner().y + min_corner().y) / 2.0,(max_corner().z + min_corner().z) / 2.0);
+        return PointType( (max_corner().x + min_corner().x) / 2.0, (max_corner().y + min_corner().y) / 2.0);
+    }
+
     bool is3D() const {
         return this->min_corner().is3D() && this->max_corner().is3D();
     }
@@ -462,6 +471,9 @@ public:
 
 
     QString toString() const {
+        if (!isValid())
+            return sUNDEF;
+
         if ( is3D()) {
             if (this->min_corner().valuetype() == itDOUBLE)
                 return QString("%1 %2 %3 %4 %5 %6").
