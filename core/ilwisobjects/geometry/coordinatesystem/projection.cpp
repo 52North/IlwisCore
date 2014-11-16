@@ -25,7 +25,7 @@ Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
 {
     if ( _projcode2Name.size() == 0){
         QSqlQuery db(kernel()->database());
-        QString query = "Select code, name from projections";
+        QString query = "Select code, name from projection";
         db.exec(query);
         while(db.next()){
             QString code = db.value(0).toString();
