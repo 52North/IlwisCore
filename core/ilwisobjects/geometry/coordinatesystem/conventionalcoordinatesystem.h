@@ -5,6 +5,14 @@
 
 namespace Ilwis {
 
+class Ellipsoid;
+class Projection;
+class GeodeticDataum;
+
+typedef IlwisData<Ellipsoid> IEllipsoid;
+typedef IlwisData<Projection> IProjection;
+
+
 class KERNELSHARED_EXPORT ConventionalCoordinateSystem : public CoordinateSystem
 {
 public:
