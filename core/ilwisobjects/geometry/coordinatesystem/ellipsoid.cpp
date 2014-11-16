@@ -288,7 +288,7 @@ void Ellipsoid::setAuthority(const QString& auth){
 
 QString Ellipsoid::toProj4() const
 {
-    return QString("+a=%1 +b=%2").arg(_majorAxis).arg(_minoraxis);
+    return QString("+a=%1 +b=%2").arg(_majorAxis,0,'f').arg(_minoraxis,0,'f');
 }
 
 QString Ellipsoid::toWKT(quint32 spaces) const
