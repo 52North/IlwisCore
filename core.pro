@@ -122,7 +122,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/table/attributedefinition.cpp \
     core/ilwisobjects/table/attributetable.cpp \
     core/ilwisobjects/table/selectabletable.cpp \
-    core/ilwistypes.cpp
+    core/ilwistypes.cpp \
+    core/identityinterface.cpp
 
 
 HEADERS += core/kernel.h\
@@ -261,7 +262,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/table/attributedefinition.h \
     core/ilwisinterfaces.h \
     core/ilwisobjects/table/attributetable.h \
-    core/ilwisobjects/table/selectabletable.h
+    core/ilwisobjects/table/selectabletable.h \
+    core/identityInterface.h
 
 
 OTHER_FILES += \
