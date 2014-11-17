@@ -102,3 +102,13 @@ const char *AbortOperation::what() const throw()
 {
     return "AbortOperation";
 }
+
+
+VisualizationError::VisualizationError(const QString &message) : ErrorObject(message)
+{
+}
+
+const char *VisualizationError::what() const throw()
+{
+    return "VisualizationError";
+}

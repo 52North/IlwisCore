@@ -86,6 +86,12 @@ public:
     explicit AbortOperation(const QString& message);
     virtual const char* what() const throw();
 };
+
+class KERNELSHARED_EXPORT VisualizationError : public ErrorObject {
+public:
+    explicit VisualizationError(const QString& message);
+    virtual const char* what() const throw();
+};
 }
 
 #endif // ERROROBJECT_H
