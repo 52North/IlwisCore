@@ -174,7 +174,11 @@ public:
         return ok;
     }
 
-    bool contains(Box<PointType>& box) const{
+    bool intersects(const Box<PointType>& box){
+        return contains(box.min_corner()) || contains(box.max_corner());
+    }
+
+    bool contains(const Box<PointType>& box) const{
         return contains(box.min_corner()) && contains(box.max_corner());
     }
 
