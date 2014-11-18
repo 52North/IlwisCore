@@ -119,7 +119,23 @@ QString IlwisObjectModel::projectionInfo() const
             IConventionalCoordinateSystem csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem().as<ConventionalCoordinateSystem>()
                                                                                                : _ilwisobject.as<ConventionalCoordinateSystem>();
             QString projection = Projection::projectionCode2Name(csy->projection()->code());
+            QVariant var = csy->projection()->parameter(Projection::pvZONE);
+            if ( var.isValid() && !var.toInt() == 1){
+                projection += " zone=" + var.toString();
+            }
             QString ellipsoid = Ellipsoid::ellipsoidCode2Name(csy->ellipsoid()->name());
+            if ( ellipsoid == sUNDEF){
+                QString wkt = csy->ellipsoid()->wktShort();
+                if ( wkt != sUNDEF && wkt != "")
+                    ellipsoid = wkt;
+                else {
+                    QString authority = csy->ellipsoid()->authority();
+                    if ( wkt != sUNDEF && wkt != "")
+                        ellipsoid = authority;
+                    else
+                        ellipsoid = QString("custom(%1,%2)").arg(csy->ellipsoid()->majorAxis(),0,'f',3).arg(csy->ellipsoid()->flattening(),0,'f',6);
+                }
+            }
             return projection + "; ellipsoid=" + ellipsoid;
         }
         return "";
@@ -270,7 +286,10 @@ QString IlwisObjectModel::centerPixelLocation() const{
     QString code = QString("code=georef:type=corners,csy=epsg:4326,envelope=%1,gridsize=301 120,name=templocal").arg(envLatLon.toString());
     IGeoReference grf(code);
     if ( grf.isValid()){
-        Envelope envelope =_ilwisobject.as<Coverage>()->envelope(true);
+        Envelope envelope =hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->envelope(true) : _ilwisobject.as<CoordinateSystem>()->envelope(true);
+        if ( !envelope.isValid())
+            return "";
+
         Coordinate crdCenter = envelope.center();
         Pixel pixCenter = grf->coord2Pixel(crdCenter);
         if ( pixCenter.isValid())
