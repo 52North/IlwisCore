@@ -31,6 +31,7 @@ public:
     void setAuthority(const QString &auth);
     QString toProj4() const;
     QString toWKT(quint32 spaces=0) const;
+    QString wktShort() const;
     IlwisTypes ilwisType() const;
     void setWKTName(const QString& wkt);
     static QString ellipsoidCode2Name(const QString& code);

@@ -305,6 +305,11 @@ QString Ellipsoid::toWKT(quint32 spaces) const
     return ell;
 }
 
+QString Ellipsoid::wktShort() const
+{
+    return _wkt;
+}
+
 IlwisTypes Ellipsoid::ilwisType() const
 {
     return itELLIPSOID;
