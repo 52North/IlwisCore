@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.0
 Rectangle {
     id : container
     anchors.fill : parent
+    color : "white"
     Loader {
         anchors.fill: parent
 
@@ -19,6 +20,10 @@ Rectangle {
                 typeName == "pointcoverage" || typeName == "linecoverage" ||
                 typeName == "polygoncoverage"){
             source = "FeatureCoverageDataProperties.qml"
+        }
+        if ( typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem" ||
+                typeName == "boundsonlycoordinatesystem"){
+            source = "CoordinateSystemProperties.qml"
         }
 
     }
