@@ -1,0 +1,105 @@
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -Wno-unused-parameter
+QMAKE_CXXFLAGS += -Wno-sign-compare
+QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+
+TEMPLATE = lib
+TARGET = geodrawer
+QT += qml quick sql
+CONFIG += qt plugin
+
+CONFIG(debug, debug|release) {
+CONF=debug
+}
+
+CONFIG(release, debug|release) {
+CONF=release
+}
+
+OUTDIR = $$PWD/..output/$$CONF
+PLATFORM = generic
+win32{
+    PLATFORM = win32
+}
+
+TARGET = $$qtLibraryTarget($$TARGET)
+
+# Input
+SOURCES += \
+    geodrawer/geodrawer_plugin.cpp \
+    geodrawer/geodrawer.cpp \
+    geodrawer/rootdrawer.cpp \
+    geodrawer/simpledrawer.cpp \
+    geodrawer/complexdrawer.cpp \
+    geodrawer/basedrawer.cpp \
+    geodrawer/spatialdatadrawer.cpp \
+    geodrawer/layerdrawer.cpp \
+    geodrawer/drawingcolor.cpp \
+    geodrawer/featurelayerdrawer.cpp \
+    geodrawer/drawerfactory.cpp \
+    geodrawer/linedrawer.cpp \
+    geodrawer/drawerinterface.cpp
+
+HEADERS += \
+    geodrawer/geodrawer_plugin.h \
+    geodrawer/geodrawer.h \
+    geodrawer/rootdrawer.h \
+    geodrawer/drawerinterface.h \
+    geodrawer/simpledrawer.h \
+    geodrawer/complexdrawer.h \
+    geodrawer/basedrawer.h \
+    geodrawer/spatialdatadrawer.h \
+    geodrawer/layerdrawer.h \
+    geodrawer/drawingcolor.h \
+    geodrawer/featurelayerdrawer.h \
+    geodrawer/drawerfactory.h \
+    geodrawer/linedrawer.h
+
+OTHER_FILES = geodrawer/qmldir
+
+BOOST=../external
+ILWISCORE = ../IlwisCore
+INCLUDEPATH += $$PWD/$$ILWISCORE/core
+DEPENDPATH += $$PWD/$$ILWISCORE/core
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
+
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+
+
+INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
+                $$ILWISCORE/core/ilwisobjects/geometry \
+                $$ILWISCORE/core/util \
+                $$ILWISCORE/core/ilwisobjects/geometry/geodeticdatum \
+                $$ILWISCORE/core/ilwisobjects/geometry/projection \
+                $$ILWISCORE/core/ilwisobjects/geometry/coordinatesystem \
+                $$ILWISCORE/core/ilwisobjects/geometry/georeference \
+                $$ILWISCORE/core/ilwisobjects/coverage \
+                $$ILWISCORE/core/ilwisobjects/table \
+                $$ILWISCORE/core/ilwisobjects/operation \
+                $$ILWISCORE/core/catalog \
+                $$ILWISCORE/core/ilwisobjects/domain \
+                $$ILWISCORE \
+                $$BOOST
+
+DESTDIR = $$PWD/../libraries/win32debug/extensions/ui/GeoDrawer
+DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/GeoDrawer
+
+!equals(_PRO_FILE_PWD_, $$DLLDESTDIR) {
+    copy_qmldir.target = $$DLLDESTDIR/qmldir
+    copy_qmldir.depends = $$_PRO_FILE_PWD_/geodrawer/qmldir
+    copy_qmldir.commands = $(COPY_FILE) \"$$replace(copy_qmldir.depends, /, $$QMAKE_DIR_SEP)\" \"$$replace(copy_qmldir.target, /, $$QMAKE_DIR_SEP)\"
+    QMAKE_EXTRA_TARGETS += copy_qmldir
+    PRE_TARGETDEPS += $$copy_qmldir.target
+}
+
+qmldir.files = geodrawer/qmldir
+unix {
+    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
+    qmldir.path = $$installPath
+    target.path = $$installPath
+    INSTALLS += target qmldir
+}
+
