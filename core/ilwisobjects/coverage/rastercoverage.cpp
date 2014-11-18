@@ -326,6 +326,7 @@ void RasterCoverage::size(const Size<> &sz)
         gridRef()->prepare(this, sz);
         if (_georef.isValid())
             _georef->size(sz);
+         stackDefinitionRef().setSubDefinition(sz.zsize()); // default filling, can be overruled
         for(int i = 0; i < sz.zsize(); ++i)
             datadefRef(i) = datadef();
     }
