@@ -157,6 +157,9 @@ IEllipsoid ConventionalCoordinateSystem::ellipsoid() const
 void ConventionalCoordinateSystem::setEllipsoid(const IEllipsoid &ell)
 {
     _ellipsoid = ell;
+    if ( _projection.isValid() && ell.isValid()){
+        _projection->setParameter(Projection::pvELLCODE,ell->toProj4());
+    }
 }
 
 bool ConventionalCoordinateSystem::isLatLon() const
