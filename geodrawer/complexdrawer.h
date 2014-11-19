@@ -19,7 +19,8 @@ public:
 
 
 
-    bool draw(const IOOptions& options) const;
+    bool draw(const IOOptions& options=IOOptions()) ;
+    bool prepare(PreparationType prepType, const IOOptions& options);
     bool prepareChildDrawers(PreparationType prepType, const IOOptions& options);
 
     quint32 drawerCount(ComplexDrawer::DrawerType tpe) const;
@@ -30,11 +31,13 @@ public:
 
     bool isSimple() const;
 
-    std::vector<DrawPosition>& drawPositions();
+     void cleanUp();
+
+    std::vector<VertexPosition>& drawPositions();
     std::vector<DrawColor>& drawColors();
 
 protected:
-    ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
 
 private:
     DrawerMap _preDrawers;

@@ -14,7 +14,7 @@ public:
     bool isSimple() const ;
 
 private:
-    std::vector<DrawPosition>& drawPositions(); // never use
+    std::vector<VertexPosition>& drawPositions(); // never use
     std::vector<DrawColor> &drawColors(); // never use
 };
 }

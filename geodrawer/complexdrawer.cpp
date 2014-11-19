@@ -5,26 +5,44 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-ComplexDrawer::ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer) : BaseDrawer(name, parentDrawer, rootdrawer)
+ComplexDrawer::ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent) : BaseDrawer(name, parentDrawer, rootdrawer, parent)
 {
 
 }
 
-bool ComplexDrawer::draw(const IOOptions &options) const
+bool ComplexDrawer::draw(const IOOptions &options)
 {
     if (!isActive() || !isValid())
         return false;
 
-    drawSideDrawers(_preDrawers, options)    ;
+    bool ok = drawSideDrawers(_preDrawers, options)    ;
 
     for(const auto& drawer : _mainDrawers){
         if ( drawer){
-            drawer->draw(options);
+            ok &= drawer->draw(options);
         }
     }
-    drawSideDrawers(_postDrawers, options);
+    ok &= drawSideDrawers(_postDrawers, options);
 
+    return ok;
+}
+
+bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
+{
+    for( auto& drawer : _preDrawers)    {
+        if (!drawer.second->prepare(prepType, options))
+            return false;
+    }
+    for( auto& drawer : _mainDrawers){
+        if (!drawer->prepare(prepType, options))
+            return false;
+    }
+    for( auto& drawer : _postDrawers)    {
+        if (!drawer.second->prepare(prepType, options))
+            return false;
+    }
     return true;
+
 }
 
 bool ComplexDrawer::prepareChildDrawers(DrawerInterface::PreparationType prepType, const IOOptions &options)
@@ -118,7 +136,21 @@ bool ComplexDrawer::isSimple() const
     return false;
 }
 
-std::vector<DrawPosition> &ComplexDrawer::drawPositions()
+void ComplexDrawer::cleanUp()
+{
+    for( auto& drawer : _preDrawers)    {
+        drawer.second->cleanUp();
+    }
+    for( auto& drawer : _mainDrawers){
+        drawer->cleanUp();
+    }
+    for( auto& drawer : _postDrawers)    {
+        drawer.second->cleanUp();
+    }
+
+}
+
+std::vector<VertexPosition> &ComplexDrawer::drawPositions()
 {
     return _positions;
 }

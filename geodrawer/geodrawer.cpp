@@ -2,11 +2,19 @@
 #include <QtQuick/qquickwindow.h>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLContext>
+#include "rootdrawer.h"
+
+#include "coverage.h"
+#include "layerdrawer.h"
 
 GeoDrawer::GeoDrawer(QQuickItem *parent):
     QQuickItem(parent), _shaderprogram(0)
 {
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
+    _rootDrawer = new Ilwis::Geodrawer::RootDrawer(this);
+
+    // for testing
+    _rootDrawer->addDrawer(new Ilwis::Geodrawer::LayerDrawer("LayerDrawer",_rootDrawer,_rootDrawer));
 }
 
 GeoDrawer::~GeoDrawer()
@@ -29,6 +37,28 @@ void GeoDrawer::handleWindowChanged(QQuickWindow *win)
 
 void GeoDrawer::paint()
 {
+        if ( !_rootDrawer)
+           return;
+
+       if ( !_rootDrawer->isActive())
+           return ;
+
+       int w = width();
+       int h = height();
+       _rootDrawer->rasterSize(Ilwis::Size<>(w,h,0));
+       QPointF pnt(x(), y());
+       QPointF pnt2 =mapFromItem(window()->contentItem(),pnt);
+       glViewport(-pnt2.x(), -pnt2.y(), w, h);
+
+       _rootDrawer->draw();
+
+      glViewport(0,0,w, h);
+
+   // oldTest();
+
+}
+
+void GeoDrawer::oldTest() {
     if (!_shaderprogram) {
         _shaderprogram = new QOpenGLShaderProgram();
         _shaderprogram->addShaderFromSourceCode(QOpenGLShader::Vertex,
@@ -82,6 +112,7 @@ void GeoDrawer::paint()
 
     glDisable(GL_DEPTH_TEST);
 
+    glClearColor(0, 1, 100, 1);
     //glClear(GL_COLOR_BUFFER_BIT);
 
 //    //Here I draw 3 lines, reduce to 2 instead of 6 to draw only one.
@@ -97,6 +128,9 @@ void GeoDrawer::paint()
 
 void GeoDrawer::cleanup()
 {
+    if ( _rootDrawer){
+        _rootDrawer->cleanUp();
+    }
     if (_shaderprogram) {
         delete _shaderprogram;
         _shaderprogram = 0;

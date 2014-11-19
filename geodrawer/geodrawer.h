@@ -4,6 +4,11 @@
 #include <QtQuick/QQuickItem>
 #include <QtGui/QOpenGLShaderProgram>
 
+namespace Ilwis {
+namespace Geodrawer{
+class RootDrawer;
+}
+}
 class GeoDrawer : public QQuickItem
 {
     Q_OBJECT
@@ -22,7 +27,11 @@ private slots:
     void handleWindowChanged(QQuickWindow *win);
 
 private:
-    QOpenGLShaderProgram *_shaderprogram;
+    QOpenGLShaderProgram *_shaderprogram = 0;
+    QMatrix4x4 _view,_projection, _model, _mvp;
+    Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
+
+    void oldTest();
 };
 
 #endif // GEODRAWER_H
