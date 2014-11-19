@@ -133,7 +133,7 @@ bool FeatureIterator::init()
          _currentLevel = _level;
         _useVectorIter = _subset.size() == 0 || _subset.size() == _fcoverage->featureCount();
         _isInitial = false;
-        if ( _fcoverage->_features.size() == 0) {
+        if ( !_fcoverage->connector()->dataIsLoaded()) {
             bool ok = _fcoverage->connector()->loadData(_fcoverage.ptr());
             if (!ok)
                 return false;
