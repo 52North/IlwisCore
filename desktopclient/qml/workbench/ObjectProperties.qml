@@ -11,7 +11,7 @@ Rectangle {
 
     signal unloadcontent(string content)
 
-    color : background4
+    color : "white"
     clip : true
     state : "invisible"
     height : 500
@@ -23,13 +23,6 @@ Rectangle {
         headerText:"Object properties"
         z : 1
     }
-    Image {
-        anchors.fill: parent
-        source : "../images/back2.png"
-        opacity : 0.5
-        smooth : true
-    }
-
     ListView {
         id : props
         anchors.top: functionBar.bottom

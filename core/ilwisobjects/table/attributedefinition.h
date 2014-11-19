@@ -40,6 +40,7 @@ class KERNELSHARED_EXPORT SubFeatureDefinition  {
 public:
     void setSubDefinition(const IDomain& dom, const std::vector<QString> &items);
     void setSubDefinition(const IDomain &dom, const std::vector<double> &items);
+    void setSubDefinition(quint32 number); // default behaviour, dom = count and number items
     quint32 index(const QString& variantId) const;
     quint32 index(double domainItem) const;
     QString index(quint32 idx) const;

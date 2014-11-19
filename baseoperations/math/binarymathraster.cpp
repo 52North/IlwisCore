@@ -141,6 +141,11 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
     _outputGC->datadefRef().domain(dom);
     _outputGC->datadefRef().range(newRange);
 
+    for(quint32 i = 0; i < _outputGC->size().zsize(); ++i){
+     QString index = _outputGC->stackDefinition().index(i);
+        _outputGC->setBandDefinition(index,DataDefinition(dom,newRange->clone()));
+    }
+
     _coveragecoverage = true;
     return true;
 }
@@ -175,6 +180,11 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     _outputGC->datadefRef().domain(dom);
     _outputGC->datadefRef().range(newRange);
 
+    for(quint32 i = 0; i < _outputGC->size().zsize(); ++i){
+        QString index = _outputGC->stackDefinition().index(i);
+        _outputGC->setBandDefinition(index,DataDefinition(dom,newRange->clone()));
+    }
+
     return true;
 }
 
@@ -185,6 +195,7 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
 
     IlwisTypes ptype1 = _expression.parm(0).valuetype();
     IlwisTypes ptype2 = _expression.parm(1).valuetype();
+    QString outputName = _expression.parm(0,false).value();
 
     mathoperator(_expression.parm(2).value());
 
@@ -197,6 +208,9 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
             return sPREPAREFAILED;
     }
     initialize(_outputGC->size().linearSize());
+
+    if ( outputName != sUNDEF)
+        _outputGC->name(outputName);
 
     return sPREPARED;
 }

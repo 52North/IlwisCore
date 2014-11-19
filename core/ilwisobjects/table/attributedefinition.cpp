@@ -188,6 +188,7 @@ bool AttributeDefinition::isValid() const
 //-------------------------------------------------------------------------------------------
 void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vector<QString> &items)
 {
+    _index2subFeature.clear();
     for( auto item : items){
         if ( !dom->contains(item)) {
             continue;
@@ -203,6 +204,7 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
 
 void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vector<double> &items)
 {
+    _index2subFeature.clear();
     _subFeatureDomain = dom;
     for( auto item : items){
         if ( !dom->contains(item)) {
@@ -217,6 +219,17 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
     }
     for(auto item : _index2subFeature){
         _subFeature2Index[item] = _subFeature2Index.size() - 1;
+    }
+}
+
+void SubFeatureDefinition::setSubDefinition(quint32 number)
+{
+    _index2subFeature.clear();
+    _subFeatureDomain = IDomain("count");
+    for(quint32 i = 0; i < number; ++i){
+        QString key = QString::number(i);
+        _index2subFeature.push_back(key);
+        _subFeature2Index[key] = i;
     }
 }
 
