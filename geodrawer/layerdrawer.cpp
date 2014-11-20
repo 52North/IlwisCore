@@ -10,114 +10,114 @@ using namespace Geodrawer;
 LayerDrawer::LayerDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : SpatialDataDrawer(name, parentDrawer, rootdrawer)
 {
     valid(true); //TODO: this must move to the prepare once the correct call sequences is in place
-}
+ }
 
 bool LayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    _shaderprogram = new QOpenGLShaderProgram();
+//    _shaderprogram = new QOpenGLShaderProgram();
 
-    if(!initShaders())
-        return false;
-    if(!initGeometry())
-        return false;
+//    if(!initShaders())
+//        return false;
+//    if(!initGeometry())
+//        return false;
 
-    _shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
-    int err1 = glGetError();
-    _prepared |= DrawerInterface::ptGEOMETRY;
+//    _shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
+//    int err1 = glGetError();
+//    _prepared |= DrawerInterface::ptGEOMETRY;
     return SpatialDataDrawer::prepare(prepType, options);
 
 }
 
 bool LayerDrawer::draw(const IOOptions& options) {
-    if ( !isActive())
-        return false;
-    if (!isPrepared(DrawerInterface::ptGEOMETRY)){
-        if (!prepare(DrawerInterface::ptGEOMETRY, options)){
-            return false;
-        }
-    }
+//    if ( !isActive())
+//        return false;
+//    if (!isPrepared(DrawerInterface::ptGEOMETRY)){
+//        if (!prepare(DrawerInterface::ptGEOMETRY, options)){
+//            return false;
+//        }
+//    }
 
 
 
-    glBindBuffer(GL_ARRAY_BUFFER,_vboID[0]);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboID[1]);
+//    opengl()->glBindBuffer(GL_ARRAY_BUFFER,_vboID[0]);
+//    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboID[1]);
 
-    int vertexlocation = _shaders.attributeLocation("aVertices");
-    int err2 = glGetError();
-    _shaders.enableAttributeArray(vertexlocation);
-    int err3 = glGetError();
-    glVertexAttribPointer(vertexlocation,3, GL_FLOAT,GL_FALSE,0,0);
-    int err4 = glGetError();
-    //glDrawElements(GL_LINE,6,GL_UNSIGNED_SHORT,0);
-    glDrawArrays(GL_LINE_STRIP,0,6);
-    int err5 = glGetError();
-    _shaders.disableAttributeArray(vertexlocation);
-    glBindBuffer(GL_ARRAY_BUFFER,0);
+//    int vertexlocation = _shaders.attributeLocation("aVertices");
+//    int err2 = glGetError();
+//    _shaders.enableAttributeArray(vertexlocation);
+//    int err3 = glGetError();
+//    opengl()->glVertexAttribPointer(vertexlocation,3, GL_FLOAT,GL_FALSE,0,0);
+//    int err4 = glGetError();
+//    //glDrawElements(GL_LINE,6,GL_UNSIGNED_SHORT,0);
+//    glDrawArrays(GL_LINE_STRIP,0,6);
+//    int err5 = glGetError();
+//    _shaders.disableAttributeArray(vertexlocation);
+//    opengl()->glBindBuffer(GL_ARRAY_BUFFER,0);
 
-    int err6 = glGetError();
-    qDebug() << err2 << err3 << err4 << err5 << err6;
+//    int err6 = glGetError();
+//    qDebug() << err2 << err3 << err4 << err5 << err6;
 
-   // dummmm();
+    dummmm();
 
 
     return true;
 }
 
 bool LayerDrawer::initShaders() {
-    setlocale(LC_NUMERIC, "C");
+//    setlocale(LC_NUMERIC, "C");
 
-    _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                            "attribute highp vec4 aVertices;"
-                                            //"attribute highp vec4 aColors;"
-                                           // "varying highp vec4 vColors;"
-                                            "uniform mat4 mvp;"
-                                            "void main() {"
-                                            "    gl_Position = mvp * aVertices;"
-                                           // "    vColors= aColors;"
-                                            "}");
-    _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                            "varying highp vec4 vColors;"
-                                            "void main() {"
-                                            "    gl_FragColor = vec4(0,0,0,1.0);"
-                                            "}");
-    if (!_shaders.link()){
-        return false;
-    }
+//    _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
+//                                            "attribute highp vec4 aVertices;"
+//                                            //"attribute highp vec4 aColors;"
+//                                           // "varying highp vec4 vColors;"
+//                                            "uniform mat4 mvp;"
+//                                            "void main() {"
+//                                            "    gl_Position = mvp * aVertices;"
+//                                           // "    vColors= aColors;"
+//                                            "}");
+//    _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
+//                                            "varying highp vec4 vColors;"
+//                                            "void main() {"
+//                                            "    gl_FragColor = vec4(0,0,0,1.0);"
+//                                            "}");
+//    if (!_shaders.link()){
+//        return false;
+//    }
 
-    if (!_shaders.bind()){
-        return false;
-    }
+//    if (!_shaders.bind()){
+//        return false;
+//    }
 
-    setlocale(LC_ALL, "");
+//    setlocale(LC_ALL, "");
 
     return true;
 }
 
 bool LayerDrawer::initGeometry() {
-    initializeOpenGLFunctions();
-    glGenBuffers(2, _vboID);
+//    opengl()->initializeOpenGLFunctions();
+//    opengl()->glGenBuffers(2, _vboID);
 
-    VertexPosition vertices[] = {
-        {-200, -1}, //Diag bottom left to top right
-        {2, 1},
-        {-200, 1}, //Diag top left to bottom right
-        {2, -1},
-        {-200, 0}, //Horizontal line
-        {2, 0}
-    };
+//    VertexPosition vertices[] = {
+//        {-200, -1}, //Diag bottom left to top right
+//        {2, 1},
+//        {-200, 1}, //Diag top left to bottom right
+//        {2, -1},
+//        {-200, 0}, //Horizontal line
+//        {2, 0}
+//    };
 
-    GLushort indices[] = { 0,1,2,3,4,5,6};
-    float colors[] = {
-        1, 1, 0, 1,
-        1, 0, 1, 1,
-        0, 1, 1, 1,
-        1, 0, 0, 1,
-        0, 0, 1, 1,
-        0, 1, 0, 1
-    };
+//    GLushort indices[] = { 0,1,2,3,4,5,6};
+//    float colors[] = {
+//        1, 1, 0, 1,
+//        1, 0, 1, 1,
+//        0, 1, 1, 1,
+//        1, 0, 0, 1,
+//        0, 0, 1, 1,
+//        0, 1, 0, 1
+//    };
 
-    glBindBuffer(GL_ARRAY_BUFFER, _vboID[0]);
-    glBufferData(GL_ARRAY_BUFFER,6 * sizeof(VertexPosition), vertices, GL_STATIC_DRAW);
+//    opengl()->glBindBuffer(GL_ARRAY_BUFFER, _vboID[0]);
+//    opengl()->glBufferData(GL_ARRAY_BUFFER,6 * sizeof(VertexPosition), vertices, GL_STATIC_DRAW);
 
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboID[1]);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLushort),indices, GL_STATIC_DRAW);
@@ -152,7 +152,9 @@ void LayerDrawer::dummmm(){
 
         _shaderprogram->bindAttributeLocation("aVertices", 0);
         _shaderprogram->bindAttributeLocation("aColors", 1);
-        _shaderprogram->link();
+        if(!_shaderprogram->link()){
+           qDebug() << _shaderprogram->log();
+        }
 
     }
 

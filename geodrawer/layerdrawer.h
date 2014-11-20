@@ -27,8 +27,8 @@ public:
 
 private:
     UPDrawingColor _drawingColor;
-    QOpenGLShaderProgram *_shaderprogram;
-    QOpenGLShaderProgram _shaders;
+    QOpenGLShaderProgram *_shaderprogram = 0;
+    //QOpenGLShaderProgram _shaders;
     GLuint _vboID[2];
 
     bool draw(const IOOptions &options=IOOptions()) ;
