@@ -43,6 +43,11 @@ Rectangle {
         }
     }
 
+    function currentPane() {
+        var currentloader = infoPContent1.source.toString().indexOf(lastPage) !== -1 ? infoPContent1 : infoPContent2
+        return currentloader.item;
+    }
+
     width : defaultFunctionBarWidth
     color : background4
     Loader {

@@ -54,7 +54,8 @@ SOURCES += desktopclient/main.cpp \
     desktopclient/models/objectvisualizationmodel.cpp \
     desktopclient/models/visualizationmanager.cpp \
     desktopclient/models/ilwisobjectmodel.cpp \
-    desktopclient/models/attributemodel.cpp
+    desktopclient/models/attributemodel.cpp \
+    desktopclient/models/modellermodel.cpp
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
@@ -102,7 +103,8 @@ HEADERS += \
     desktopclient/models/objectvisualizationmodel.h \
     desktopclient/models/visualizationmanager.h \
     desktopclient/models/ilwisobjectmodel.h \
-    desktopclient/models/attributemodel.h
+    desktopclient/models/attributemodel.h \
+    desktopclient/models/modellermodel.h
 
 # Installation path
 
