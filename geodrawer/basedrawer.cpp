@@ -7,6 +7,7 @@ using namespace Geodrawer;
 
 BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent) : QObject(parent),Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
+    _opengl.reset(new QOpenGLFunctions());
 }
 
 void BaseDrawer::valid(bool yesno)
@@ -121,6 +122,11 @@ QString BaseDrawer::description() const
 void BaseDrawer::setDescription(const QString &desc)
 {
     return Identity::setDescription(desc);
+}
+
+const std::unique_ptr<QOpenGLFunctions> &BaseDrawer::opengl() const
+{
+    return _opengl;
 }
 
 

@@ -16,7 +16,7 @@ RootDrawer::RootDrawer(QObject *parent) : ComplexDrawer("RootDrawer",0,0, parent
     _model = model;
     _projection.ortho(QRect(-200,-1,202,2));
     _mvp = _model * _view * _projection;
-    initializeOpenGLFunctions();
+    opengl()->initializeOpenGLFunctions();
 }
 
 Envelope RootDrawer::viewEnvelope() const
