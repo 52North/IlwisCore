@@ -207,14 +207,15 @@ bool FeatureIterator::moveDepthFirst(qint32 distance){
         ++_subIterator; // move on subfeatures
     ++_currentLevel;
     Feature *feature = static_cast<Feature *>((*_iterFeatures).get());
-    if ( _subIterator == feature->_subFeatures.end()){ // next level 0 feature
-        ++_iterFeatures;
+    if ( _subIterator == feature->_subFeatures.end()){
+        ++_iterFeatures; // to next level 0 feature
+        _currentLevel = 0;
         if ( !atEndOfFeatures()) {
             // reset iteration state of subfeatures
             feature = static_cast<Feature *>((*_iterFeatures).get());
            _subIterator = feature->_subFeatures.begin();
         }
-        _currentLevel = 0;
+
     }
 
     // move fails if there are no more features to iterate on
