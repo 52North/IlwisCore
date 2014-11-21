@@ -67,7 +67,7 @@ ApplicationWindow {
 
     function updateSelectedItem(name) {
         var pane = workBench.currentPane()
-        if (pane.toString().indexOf("Modeller") !== -1) {
+        if (pane !== null && pane.toString().indexOf("Modeller") !== -1) {
             pane.updateSelectedItem(name)
         }
     }
