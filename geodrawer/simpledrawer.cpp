@@ -14,7 +14,7 @@ bool SimpleDrawer::isSimple() const
     return true;
 }
 
-std::vector<DrawPosition> &SimpleDrawer::drawPositions()
+std::vector<VertexPosition> &SimpleDrawer::drawPositions()
 {
     return _positions;
 }

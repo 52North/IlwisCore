@@ -1,9 +1,10 @@
 import QtQuick 2.0
 
-Item {
+Rectangle {
     width: parent.width
     height: 220
     property int lineheight : 19
+    color : "white"
 
     Text { y : 5; id : line1; text : qsTr("Coordinate system"); width: 120; font.bold: true;height : lineheight }
     Text { y : 5; text : coordinateSystemName;  height :40;width: parent.width - line1.width - 2; anchors.left: line1.right}

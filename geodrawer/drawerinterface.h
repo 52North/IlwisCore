@@ -7,13 +7,17 @@
 #include "coordinate.h"
 #include "location.h"
 #include "identityinterface.h"
+#include "iooptions.h"
 
 namespace Ilwis {
+
+class IOOptions;
+
 namespace Geodrawer{
 
-struct DrawPosition {
-    DrawPosition(float x=0, float y=0, float z=0) : _x(x), _y(y), _z(z){}
-    DrawPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
+struct VertexPosition {
+    VertexPosition(float x=0, float y=0, float z=0) : _x(x), _y(y), _z(z){}
+    VertexPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
 
     float _x=0,_y=0,_z=0;
 };
@@ -27,7 +31,6 @@ struct DrawColor {
 
 class RootDrawer;
 class DrawerInterface;
-class IOOptions;
 
 class DrawerInterface : public IdentityInterface{
 public:
@@ -38,8 +41,9 @@ public:
     DrawerInterface();
     virtual ~DrawerInterface();
 
-    virtual bool draw(const IOOptions& options) const = 0;
+    virtual bool draw(const IOOptions& options=IOOptions()) = 0;
     virtual bool prepare(PreparationType prepType, const IOOptions& options) = 0;
+    virtual bool isPrepared(quint32 type=ptALL) const = 0;
 
     virtual RootDrawer* rootDrawer() = 0;
     virtual const RootDrawer* rootDrawer() const = 0;
@@ -52,8 +56,9 @@ public:
     virtual bool isValid() const = 0;
     virtual bool isSelected() const = 0;
     virtual void selected(bool yesno) = 0;
+    virtual void cleanUp() = 0;
 
-    virtual std::vector<DrawPosition>& drawPositions() = 0;
+    virtual std::vector<VertexPosition>& drawPositions() = 0;
     virtual std::vector<DrawColor>& drawColors() = 0;
 
 

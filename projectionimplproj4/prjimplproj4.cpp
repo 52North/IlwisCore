@@ -50,7 +50,11 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     case Projection::pvK0:
         _targetDef += " +k_0=" + value; break;
     case Projection::pvELLCODE:
-        _targetDef += " " + value; break;
+        if ( value.indexOf("+a") != -1)
+            _targetDef += " " + value;
+        else
+            _targetDef += " ellps=" + value;
+        break;
     case Projection::pvNORTH:
         _targetDef += value == "No" ? " +south" : ""; break;
     default:

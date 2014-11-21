@@ -5,13 +5,24 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
+BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent) : QObject(parent),Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
+    _opengl.reset(new QOpenGLFunctions());
+}
+
+void BaseDrawer::valid(bool yesno)
+{
+    _valid = yesno;
 }
 
 bool BaseDrawer::prepare(DrawerInterface::PreparationType,  const IOOptions &)
 {
     return true;
+}
+
+bool BaseDrawer::isPrepared(quint32 type) const
+{
+    return hasType(_prepared, type);
 }
 
 bool BaseDrawer::draw(const IOOptions &) const
@@ -71,6 +82,51 @@ BaseDrawer::Containment BaseDrawer::containment() const
             return BaseDrawer::cINSIDE;
     }
     return BaseDrawer::cUNKNOWN;
+}
+
+void BaseDrawer::cleanUp()
+{
+
+}
+
+void BaseDrawer::code(const QString &code)
+{
+    Identity::code(code);
+}
+
+QString BaseDrawer::code() const
+{
+    return Identity::code();
+}
+
+quint64 BaseDrawer::id() const
+{
+    return Identity::id();
+}
+
+QString BaseDrawer::name() const
+{
+    return Identity::name();
+}
+
+void BaseDrawer::name(const QString &n)
+{
+    Identity::name(n);
+}
+
+QString BaseDrawer::description() const
+{
+    return Identity::description();
+}
+
+void BaseDrawer::setDescription(const QString &desc)
+{
+    return Identity::setDescription(desc);
+}
+
+const std::unique_ptr<QOpenGLFunctions> &BaseDrawer::opengl() const
+{
+    return _opengl;
 }
 
 
