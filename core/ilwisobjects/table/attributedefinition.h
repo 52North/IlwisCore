@@ -26,6 +26,7 @@ public:
     quint32 columnIndex(const QString &nme) const;
     ColumnDefinition operator[](quint32 index);
     std::vector<IlwisTypes> ilwisColumnTypes() const;
+    void clearAttributeDefinitions();
 
     QVariant checkInput(const QVariant &inputVar, quint32 columnIndex) const;
     quint32 definitionCount() const;
@@ -47,7 +48,7 @@ public:
     std::vector<QString> indexes() const;
     quint32 count() const;
     IDomain domain() const;
-    void clear();
+    void clearSubFeatureDefinitions();
     void store(QDataStream& stream);
 protected:
     IDomain _subFeatureDomain;

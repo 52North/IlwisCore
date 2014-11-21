@@ -125,6 +125,12 @@ std::vector<IlwisTypes> AttributeDefinition::ilwisColumnTypes() const
     return types;
 }
 
+void AttributeDefinition::clearAttributeDefinitions()
+{
+    _columnDefinitionsByIndex.clear();
+    _columnDefinitionsByName.clear();
+}
+
 QVariant AttributeDefinition::checkInput(const QVariant& inputVar, quint32 columnIndex)  const{
     QVariant actualval= inputVar;
     const ColumnDefinition& coldef = columndefinitionRef(columnIndex);
@@ -279,7 +285,7 @@ IDomain SubFeatureDefinition::domain() const
     return _subFeatureDomain;
 }
 
-void SubFeatureDefinition::clear()
+void SubFeatureDefinition::clearSubFeatureDefinitions()
 {
     _index2subFeature.clear();
     _subFeature2Index.clear();
