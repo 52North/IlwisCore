@@ -54,7 +54,8 @@ SOURCES += desktopclient/main.cpp \
     desktopclient/models/objectvisualizationmodel.cpp \
     desktopclient/models/visualizationmanager.cpp \
     desktopclient/models/ilwisobjectmodel.cpp \
-    desktopclient/models/attributemodel.cpp
+    desktopclient/models/attributemodel.cpp \
+    desktopclient/models/domainitemmodel.cpp
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
@@ -87,7 +88,8 @@ OTHER_FILES += \
     desktopclient/qml/panel/Visualize.qml \
     desktopclient/qml/Visualization.qml \
     desktopclient/qml/panel/CatalogTable.qml \
-    desktopclient/qml/panel/CatalogThumbGrid.qml
+    desktopclient/qml/panel/CatalogThumbGrid.qml \
+    desktopclient/qml/global.js
 
 HEADERS += \
     desktopclient/ilwistype.h \
@@ -102,7 +104,8 @@ HEADERS += \
     desktopclient/models/objectvisualizationmodel.h \
     desktopclient/models/visualizationmanager.h \
     desktopclient/models/ilwisobjectmodel.h \
-    desktopclient/models/attributemodel.h
+    desktopclient/models/attributemodel.h \
+    desktopclient/models/domainitemmodel.h
 
 # Installation path
 
