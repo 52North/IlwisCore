@@ -3,17 +3,16 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "../controls" as Controls
+import "../global.js" as Global
 
-Rectangle {
+Item {
     id : container
 
-    property color background1 : "#EAECEE"
-    property color background3 : "#E3E3E3"
+    property string startfolder
 
     signal unloadcontent(string content)
     signal catalogChanged()
 
-    color : background3
     clip : true
     opacity : 0
 
@@ -60,15 +59,13 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id : buttonBar
         height : 46
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
-        color : background3
-       // border.width: 1
 
         Row {
             anchors.top : parent.top
@@ -82,7 +79,7 @@ Rectangle {
                 checkable: true
                 checked : false
                 action : createCatalog
-            }
+             }
             Controls.ActionButton{
                 id : removeBookmark
                 width : 95
@@ -110,6 +107,7 @@ Rectangle {
         anchors.top: buttonBar.bottom
         anchors.margins: 5
         x : parent.x + 5
+        beginfolder: startfolder
     }
 
     Bookmarks{
@@ -120,7 +118,7 @@ Rectangle {
         anchors.top: createCatalogForm.bottom
         anchors.margins: 2
         opacity : 1
-        background: container.background1
+        background: Global.mainbackgroundcolor
         listbackground: "#FFFEF8"
         listalternate: "#FFFEF8"
 
