@@ -20,7 +20,7 @@ ApplicationWindow {
     property color background1 : "#EAECEE"
     property color background2 : "#DBDFE3"
     property color background3 : "#FFFDF4"
-    property color background4 : "#EEEEEE"
+    property color background4 : "white"
     property int defaultFunctionBarWidth : 350
     property int activeCatalog: 0
 
