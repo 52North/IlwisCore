@@ -1,5 +1,5 @@
-#include "ilwisobjectmodel.h"
 #include "coverage.h"
+#include "ilwisobjectmodel.h"
 #include "projection.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
@@ -8,7 +8,6 @@
 #include "feature.h"
 #include "table.h"
 #include "raster.h"
-
 
 using namespace Ilwis;
 
@@ -183,6 +182,24 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
     }
     return QQmlListProperty<AttributeModel>();
 
+}
+
+QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
+{
+    IlwisTypes objectype = _ilwisobject->ilwisType();
+    if ( hasType( objectype, itDOMAIN)){
+        IDomain domain = _ilwisobject.as<Domain>();
+        if ( hasType(domain->ilwisType(), itITEMDOMAIN)){
+            SPItemRange itemrange =domain->range<ItemRange>();
+            for(auto item : *(itemrange.data())) {
+                DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
+                _domainItems.push_back(domainitem);
+            }
+            if ( _domainItems.size() > 0)
+                return QQmlListProperty<DomainItemModel>(this, _domainItems) ;
+        }
+    }
+    return QQmlListProperty<DomainItemModel>();
 }
 
 QString IlwisObjectModel::valuetype() const
