@@ -23,6 +23,7 @@
 #include "models/objectvisualizationmodel.h"
 #include "models/ilwisobjectmodel.h"
 #include "models/attributemodel.h"
+#include "models/domainitemmodel.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
 
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<ObjectVisualizationModel>("ObjectVisualizationModel",1,0,"ObjectVisualizationModel");
         qmlRegisterType<IlwisObjectModel>("IlwisObjectModel",1,0,"IlwisObjectModel");
         qmlRegisterType<AttributeModel>("AttributeModel",1,0,"AttributeModel");
+        qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
