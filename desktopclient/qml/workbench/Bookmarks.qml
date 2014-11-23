@@ -5,10 +5,11 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import "../datapanel/catalog" as Catalog
+import "../global.js" as Global
 
 Item {
     id : navigationFoldercreate
-    property color background : "#FFF9E3"
+    property color background : "white"
     property color listbackground : "white"
     property color listalternate : "#9B9B9E"
     property int defaultHeight : 0
@@ -30,11 +31,9 @@ Item {
 
     opacity : 1
     height : defaultHeight
-   // color : "#C6C6C6"
     clip : true
     state : "visible"
     signal catalogChanged
-    //radius : 15
 
     BorderImage {
         width : parent.width
@@ -61,7 +60,9 @@ Item {
         anchors.bottomMargin: 5
         anchors.topMargin: 5
         width: parent.width
-        color : "white"
+        color : Global.mainbackgroundcolor
+        border.width: 1
+        border.color: Global.edgecolor
 
         ListView{
             id : currentFolders
@@ -78,7 +79,7 @@ Item {
                 id : catalogentry
                  height : 40
                 width : parent.width - 5
-                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? "#FFFBF3" : "#DCDCDC"
+                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.alternatecolor2 : Global.alternatecolor1
                 focus : true
 
                 Column {
