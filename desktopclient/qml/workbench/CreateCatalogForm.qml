@@ -12,7 +12,7 @@ Item {
     width : 0
     opacity: 0
 
-    property string startfolder: "file:///d:/Data"
+    property string beginfolder
     property string currentFolder
 
     signal bookmarkadded()
@@ -55,13 +55,6 @@ Item {
             height : 20
             text :folderid;
             verticalAlignment: Text.AlignVCenter
-            Rectangle {
-                anchors.fill: parent
-                color : "grey"
-                opacity : 0.2
-            }
-
-
         }
     }
 
@@ -92,7 +85,7 @@ Item {
                 }
                 FileSelectionPanel{
                     id : fileselection
-                    startFolder: "file:///d:/Data/ILWIS/Visualization"
+                    startFolder:  beginfolder
                 }
             }
         }
@@ -133,9 +126,10 @@ Item {
         anchors.bottomMargin: 5
         buttontext : "Add\nBookmark"
         iconsource : "../images/addbookmarkCS1.png"
-        height : 40
+        height : 0
         width :95
         action : addbookmark
+        enabled : false
         z : 1
     }
 
@@ -149,6 +143,10 @@ Item {
                 opacity : 1
 
             }
+            PropertyChanges {
+                target: addBookmarkButton
+                height : 40
+            }
         },
         State {
             name : "minimized"
@@ -156,6 +154,10 @@ Item {
                 target: createCatalogForm
                 height : 0
                 opacity : 0
+            }
+            PropertyChanges {
+                target: addBookmarkButton
+                height : 0
             }
         }
 

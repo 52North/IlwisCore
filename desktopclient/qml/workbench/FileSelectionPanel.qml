@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import Qt.labs.folderlistmodel 2.1
 import MasterCatalogModel 1.0
+import "../global.js" as Global
 
 Rectangle {
 
@@ -14,9 +15,10 @@ Rectangle {
 
     id : folderlist
     width : parent.width - 3
-    height : parent.height - 30
-    color : "white"
-    radius: 10
+    height : parent.height  -3
+    color : Global.mainbackgroundcolor
+    border.width: 1
+    border.color: Global.edgecolor
     y : 3
     x : 0
 
@@ -31,14 +33,14 @@ Rectangle {
         }
 
         var found = false
-        var i =0
+        var i = 0
         for( ; i < pathModel.count; ++i){
-            if ( pathModel.get(i).folderid === pathString)    {
+            if ( pathModel.get(i).folderid === pathString.toLowerCase())    {
                 found = true
                 break;
             }
         }
-        if (!found)
+        if (!found )
             pathModel.append({"folderid" : pathString})
         if ( privateProperty.pathCB != null){
             privateProperty.pathCB.currentIndex = i
@@ -66,16 +68,19 @@ Rectangle {
         height : 20
         model: mastercatalog.driveList()
         Layout.fillWidth: true
-        onCurrentIndexChanged: {
+        Component.onCompleted: {
+            console.debug(startFolder + "oncompleted drivelist")
+            if ( startFolder == "")
+                startFolder = mastercatalog.currentUrl
+            mastercatalog.addCatalog(startFolder) // at this place else the indexchanged will overrule any previous path setting
+            mastercatalog.setWorkingCatalog(startFolder)
+        }
+        onActivated: {
+            currentIndex = index
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
             folderModel.folder = "file:///"+ drivePath
             mastercatalog.setWorkingCatalog(folderModel.folder)
-        }
-        Component.onCompleted: {
-            mastercatalog.addCatalog(startFolder) // at this place else the indexchanged will overrule any previous path setting
-            mastercatalog.setWorkingCatalog(startFolder)
-
         }
     }
     Rectangle {
@@ -84,8 +89,7 @@ Rectangle {
         height : 20
         anchors.top : drivelist.bottom
         anchors.topMargin: 1
-        border.width: 1
-        border.color: "lightgrey"
+        color : Global.mainbackgroundcolor
 
         ComboBox {
             id : pathText
@@ -94,19 +98,20 @@ Rectangle {
             editable: true
             model: pathModel
             anchors.verticalCenter: parent.verticalCenter
-            onCurrentIndexChanged: {
-                var path = pathModel.get(currentIndex)
-                if ( path !== null && typeof path != 'undefined'){
-                    folderModel.folder = "file:///" + path.folderid
-                    mastercatalog.addCatalog(folderModel.folder)
-                    mastercatalog.setWorkingCatalog(folderModel.folder)
-                }
-            }
             Component.onCompleted: {
                 privateProperty.pathCB = pathText
                 var paths = mastercatalog.knownCatalogs(true)
                 for(var i=0; i < paths.length; ++i){
                     pathModel.append({"folderid" : paths[i].replace("file:///","")})
+                }
+            }
+            onActivated: {
+                currentIndex = index
+                var path = pathModel.get(currentIndex)
+                if ( path !== null && typeof path != 'undefined'){
+                    folderModel.folder = "file:///" + path.folderid
+                    mastercatalog.addCatalog(folderModel.folder)
+                    mastercatalog.setWorkingCatalog(folderModel.folder)
                 }
             }
         }
@@ -134,9 +139,11 @@ Rectangle {
     Rectangle {
         anchors.top : pathView.bottom
         anchors.topMargin: 3
-        width: parent.width;
-        height :parent.height - 5
+        width: parent.width - 2;
+        anchors.bottom : parent.bottom
+        anchors.bottomMargin: 3
         clip : true
+        x: 2
         ListView {
             id : fileFolders
             anchors.fill: parent
@@ -157,7 +164,7 @@ Rectangle {
 
                 Rectangle{
                     anchors.fill: parent
-                    color :  fileFolders.currentIndex == index ? "lightgrey" : "white"
+                    color :  fileFolders.currentIndex == index ? Global.alternatecolor1 : Global.alternatecolor2
                     Image{ x : 2;y:3; id : folderico; source : "../images/folder16.png"}
                     Text { id: filename; text: fileName; anchors.left : folderico.right; anchors.leftMargin: 5;anchors.verticalCenter: parent.verticalCenter }
                 }
