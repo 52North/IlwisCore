@@ -22,7 +22,6 @@ Rectangle {
     signal unloadcontent(string content)
 
     function newForm(metaid, title){
-        console.debug(metaid, title)
         var form= formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
