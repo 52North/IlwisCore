@@ -23,6 +23,7 @@ class MasterCatalogModel : public QObject
     Q_PROPERTY(QMLResourceList resources READ resources NOTIFY resourcesChanged)
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedData READ selectedData NOTIFY selectionChanged)
     Q_PROPERTY(quint32 selectedBookmark READ selectedBookmark WRITE setSelectedBookmark NOTIFY resourcesChanged)
+    Q_PROPERTY(QString currentUrl READ currentUrl NOTIFY resourcesChanged)
 
 
 public:
@@ -35,6 +36,7 @@ public:
     void setSelectedBookmark(quint32 index);
     QMLResourceList resources();
     void root(QObject *obj);
+    QString currentUrl() const;
 
     Q_INVOKABLE  void addCatalog(const QString& path);
     Q_INVOKABLE QStringList driveList() const;

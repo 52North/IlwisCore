@@ -118,6 +118,11 @@ void MasterCatalogModel::root(QObject *obj)
     _root = obj;
 }
 
+QString MasterCatalogModel::currentUrl() const
+{
+    return _currentUrl;
+}
+
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
     setSelectedIndex(url.toString());
@@ -125,6 +130,11 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 
 void MasterCatalogModel::addCatalog(const QString &inpath)
 {
+    if ( inpath == "")
+        return;
+    if  ( _currentUrl == inpath)
+        return;
+
     QString path = inpath;
     int index = inpath.indexOf("/..");
     if ( index != -1){
@@ -245,8 +255,10 @@ QStringList MasterCatalogModel::knownCatalogs(bool fileonly)
 
 void MasterCatalogModel::setWorkingCatalog(const QString &path)
 {
-    if ( path != "")
+    if ( path != ""){
         context()->setWorkingCatalog(ICatalog(path));
+        emit resourcesChanged();
+    }
 }
 
 void MasterCatalogModel::refreshWorkingCatalog()
