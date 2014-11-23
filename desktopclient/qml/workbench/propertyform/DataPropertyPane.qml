@@ -16,15 +16,17 @@ Rectangle {
         if(typeName == "rastercoverage"  ){
             source = "RasterCoverageDataProperties.qml"
         }
-        if ( typeName == "feature" || typeName == "featurecoverage" ||
+        else if ( typeName == "feature" || typeName == "featurecoverage" ||
                 typeName == "pointcoverage" || typeName == "linecoverage" ||
                 typeName == "polygoncoverage"){
             source = "FeatureCoverageDataProperties.qml"
         }
-        if ( typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem" ||
+        else if ( typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem" ||
                 typeName == "boundsonlycoordinatesystem"){
             source = "CoordinateSystemProperties.qml"
         }
+        else if ( typeName == "itemdomain" )
+            source = "ItemDomainProperties.qml"
 
     }
 }
