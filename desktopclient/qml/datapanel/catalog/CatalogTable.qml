@@ -57,7 +57,7 @@ Rectangle {
                         width : 20; height : 20
                         source : "../../images/" + styleData.value
                         fillMode: Image.PreserveAspectFit
-                        property string message :  model[styleData.row].url
+                        property string message :  model !== null ? model[styleData.row].url : ""
 
                         Drag.keys: [ model[styleData.row].iconPath ]
                         Drag.active: mouseArea.drag.active
