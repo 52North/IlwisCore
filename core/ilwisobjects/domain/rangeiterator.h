@@ -100,7 +100,7 @@ public:
 
     bool operator==(const RangeIterator& iter){
         if ( !isValid())
-            return false;
+            return true;
 
         if ( isNumericalUndef(_current) || isNumericalUndef(iter._current))
             return false;
