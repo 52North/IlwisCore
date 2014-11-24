@@ -305,6 +305,7 @@ bool PublicDatabase::fillEpsgWithLatLonAxesOrderRecord(const QStringList &parts,
         return doQuery(stmt, sqlPublic);
     }
     kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("codes_with_latlon_order.csv"), IssueObject::itCritical);
+    return false;
 }
 
 bool PublicDatabase::fillProjectionRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
