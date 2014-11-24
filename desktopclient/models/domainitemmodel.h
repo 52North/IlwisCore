@@ -16,6 +16,10 @@
 class DomainItemModel : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString code READ code CONSTANT)
+    Q_PROPERTY(QString description READ description CONSTANT)
 public:
     DomainItemModel();
     explicit DomainItemModel(Ilwis::SPItemRange _range, const QString &name, QObject *parent = 0);
