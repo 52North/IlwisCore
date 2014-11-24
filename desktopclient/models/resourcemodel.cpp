@@ -199,7 +199,7 @@ QString ResourceModel::domainType() const {
         return nme;
     quint64 tp = _item.ilwisType();
     if ( hasType(tp, itCOVERAGE))
-        return "Identifier";
+        return "IndexedIdentifier";
     return "";
 }
 
