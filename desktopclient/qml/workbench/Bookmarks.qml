@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import "../datapanel/catalog" as Catalog
-import "../global.js" as Global
+import "../Global.js" as Global
 
 Item {
     id : navigationFoldercreate

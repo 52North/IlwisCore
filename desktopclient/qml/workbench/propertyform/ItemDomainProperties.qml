@@ -6,7 +6,7 @@ import ResourceModel 1.0
 import IlwisObjectModel 1.0
 import DomainItemModel 1.0
 
-import "../../global.js" as Global
+import "../../Global.js" as Global
 
 Item {
     anchors.fill : parent

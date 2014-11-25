@@ -3,7 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "../controls" as Controls
-import "../global.js" as Global
+import "../Global.js" as Global
 
 Item {
     id : container
