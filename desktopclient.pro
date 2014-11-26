@@ -89,7 +89,8 @@ OTHER_FILES += \
     desktopclient/qml/Visualization.qml \
     desktopclient/qml/panel/CatalogTable.qml \
     desktopclient/qml/panel/CatalogThumbGrid.qml \
-    desktopclient/qml/global.js
+    desktopclient/qml/global.js \
+    desktopclient/qml/workbench/propertyform/NumericDomainProperties.qml
 
 HEADERS += \
     desktopclient/ilwistype.h \

@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import UserMessageHandler 1.0
 import MessageModel 1.0
-import "../global.js" as Global
+import "../Global.js" as Global
 
 Rectangle {
     id : messageContainer

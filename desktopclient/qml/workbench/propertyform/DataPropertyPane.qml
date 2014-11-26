@@ -25,8 +25,13 @@ Rectangle {
                 typeName == "boundsonlycoordinatesystem"){
             source = "CoordinateSystemProperties.qml"
         }
-        else if ( typeName == "itemdomain" )
-            source = "ItemDomainProperties.qml"
+        else if ( typeName == "itemdomain" ){
+            var valueType = getProperty("valuetype")
+            if ( valueType !== "" && valueType !== "indexidentifier")
+                source = "ItemDomainProperties.qml"
+        }  else if ( typeName == "numericdomain" ){
+            source = "NumericDomainProperties.qml"
+        }
 
     }
 }

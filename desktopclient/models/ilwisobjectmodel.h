@@ -48,12 +48,15 @@ public:
 
     bool isValid() const;
 
+private slots:
+    QString valueType() const;
 private:
     Ilwis::IIlwisObject _ilwisobject;
     QList<AttributeModel *> _attributes;
     QList<DomainItemModel *> _domainItems;
     QString pixSizeString() const;
     QString centerPixelLocation() const;
+    QString parentDomain() const;
 };
 
 #endif // ILWISOBJECTMODEL_H

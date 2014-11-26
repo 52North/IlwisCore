@@ -192,8 +192,10 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
         if ( hasType(domain->ilwisType(), itITEMDOMAIN)){
             SPItemRange itemrange =domain->range<ItemRange>();
             for(auto item : *(itemrange.data())) {
-                DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
-                _domainItems.push_back(domainitem);
+                if ( item){
+                    DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
+                    _domainItems.push_back(domainitem);
+                }
             }
             if ( _domainItems.size() > 0)
                 return QQmlListProperty<DomainItemModel>(this, _domainItems) ;
@@ -263,6 +265,17 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange) {
 
 }
 
+QString IlwisObjectModel::parentDomain() const {
+    if ( hasType(_ilwisobject->ilwisType(),itDOMAIN)){
+        IDomain domain = _ilwisobject.as<Domain>();
+        if ( domain.isValid()){
+            IDomain parentDomain = domain->parent();
+            if ( parentDomain.isValid())
+                return parentDomain->name();
+        }
+    }
+    return "not defined";
+}
 QString IlwisObjectModel::pixSizeString() const{
     if (hasType(_ilwisobject->ilwisType(), itRASTER | itGEOREF)){
         double pixsizex=rUNDEF, pixsizey=rUNDEF;
@@ -315,6 +328,16 @@ QString IlwisObjectModel::centerPixelLocation() const{
     return "";
 }
 
+QString IlwisObjectModel::valueType() const {
+    if ( hasType(_ilwisobject->ilwisType(),itDOMAIN)){
+        IDomain domain = _ilwisobject.as<Domain>();
+        if ( domain.isValid()){
+            IlwisTypes tp = domain->valueType();
+            return TypeHelper::type2name(tp);
+        }
+    }
+    return "";
+}
 QString IlwisObjectModel::getProperty(const QString &propertyname)
 {
     try{
@@ -335,6 +358,12 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
         }
         if ( propertyname == "centerpixelboundingbox"){
             return centerPixelLocation();
+        }
+        if ( propertyname == "parentdomain"){
+            return parentDomain();
+        }
+        if ( propertyname == "valuetype"){
+            return valueType();
         }
         return "";
     } catch(const ErrorObject& ){
