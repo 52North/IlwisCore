@@ -10,15 +10,19 @@ public:
     CatalogExplorer(const Resource& resource,const IOOptions& options=IOOptions());
     virtual ~CatalogExplorer();
 
-    virtual std::vector<Resource> loadItems() = 0;
+    virtual std::vector<Resource> loadItems(const IOOptions &options=IOOptions()) = 0;
     virtual bool canUse(const Resource& res) const = 0;
     virtual QString provider() const = 0;
     Resource source() const;
     virtual QFileInfo toLocalFile(const QUrl &datasource) const = 0;
     QFileInfo resolve2Local() const;
 
+protected:
+    IOOptions iooptions() const;
+
 private:
     Resource _resource;
+    IOOptions _options;
 
 };
 }
