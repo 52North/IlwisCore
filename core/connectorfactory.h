@@ -156,7 +156,7 @@ public:
 
     }
 
-     std::vector<CatalogExplorer*> explorersForResource(const Resource& resource, const QString &provider=sUNDEF,const IOOptions& options=IOOptions()) const;
+     std::vector<CatalogExplorer*> explorersForResource(const Resource& resource, const QString &provider=sUNDEF) const;
 
     static std::nullptr_t registerCatalogExplorer(createCatalogExplorer func);
 

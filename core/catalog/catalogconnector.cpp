@@ -21,7 +21,7 @@
 
 using namespace Ilwis;
 
-CatalogConnector::CatalogConnector(const Resource &resource, bool load ) : IlwisObjectConnector(resource, load)
+CatalogConnector::CatalogConnector(const Resource &resource, bool load , const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
 
 }
@@ -91,9 +91,9 @@ QString CatalogConnector::provider() const
     return "ilwis";
 }
 
-ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load,const IOOptions& options)
+ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bool load, const IOOptions& options)
 {
-    return new CatalogConnector(resource, load);
+    return new CatalogConnector(resource, load, options);
 }
 
 bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
@@ -101,11 +101,16 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
     return loadExplorers();
 }
 
-bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions& ){
+bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
     for(const auto& explorer : _dataProviders){
-        std::vector<Resource> items = explorer->loadItems();
+
+        // TODO clear security issues which may arise here, as
+        // all _dataProviders gets passed the ioptions probably
+        // not indendet for them
+
+        std::vector<Resource> items = explorer->loadItems(options);
         cat->addItemsPrivate(items);
     }
     return true;

@@ -88,7 +88,7 @@ QString FolderCatalogExplorer::provider() const
     return "ilwis";
 }
 
-std::vector<Resource> FolderCatalogExplorer::loadItems()
+std::vector<Resource> FolderCatalogExplorer::loadItems(const IOOptions&)
 {
     return std::vector<Resource>();
 }

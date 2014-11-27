@@ -11,7 +11,7 @@ public:
     static CatalogExplorer *create(const Resource &,const IOOptions& options=IOOptions());
 
     QFileInfo toLocalFile(const QUrl &url) const;
-    std::vector<Resource> loadItems();
+    std::vector<Resource> loadItems(const IOOptions& options=IOOptions());
 
     bool isValid() const;
     bool canUse(const Resource &resource) const;

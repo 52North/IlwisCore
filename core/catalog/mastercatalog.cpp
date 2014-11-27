@@ -1,4 +1,5 @@
 #include <QRegExp>
+#include <QUrlQuery>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -91,10 +92,21 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
          loc.isEmpty())
         return true;
     QUrl location(loc);
+    IOOptions options;
+    if (location.hasQuery()) {
+        QUrlQuery empty;
+        QUrlQuery query(location);
+        location.setQuery(empty);
+        QList<QPair<QString,QString>> items = query.queryItems();
+        std::for_each(items.begin(), items.end(), [&options](QPair<QString,QString> item) {
+            options.addOption(item);
+        });
+    }
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    ICatalog catalog(loc);
+    Resource resource(location, itCATALOG);
+    ICatalog catalog(resource, options);
     if ( !catalog.isValid()){
         return false;
     }
@@ -103,7 +115,6 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     _catalogs.insert(location);
     return true;
 }
-
 
 ESPIlwisObject MasterCatalog::get(const QUrl &resource, IlwisTypes type) const
 {

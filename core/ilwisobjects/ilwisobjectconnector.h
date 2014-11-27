@@ -42,9 +42,14 @@ protected:
         return object;
     }
 
+    IOOptions ioOptions() const;
+
     Resource _resource;
     bool _binaryIsLoaded;
     std::recursive_mutex _mutex;
+
+private:
+    IOOptions _options;
 
 signals:
     void dataAvailable(QBuffer *buf, bool lastBlock);
