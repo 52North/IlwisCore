@@ -35,7 +35,7 @@ bool InternalRasterCoverageConnector::loadMetaData(IlwisObject *data, const IOOp
     return true;
 }
 
-bool InternalRasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &options){
+bool InternalRasterCoverageConnector::loadData(IlwisObject *, const IOOptions &){
     return true;
 }
 

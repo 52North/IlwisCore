@@ -395,7 +395,7 @@ bool IlwisObject::store(const IOOptions &options)
     if (!connector(cmOUTPUT).isNull()) {
         Locker<std::mutex> lock(_loadforstore);
         if (connector() && !connector()->dataIsLoaded()) {
-            connector()->loadData(this);
+            connector()->loadData(this, options);
         }
         return connector(cmOUTPUT)->store(this, options);
     }

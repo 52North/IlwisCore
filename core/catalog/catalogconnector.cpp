@@ -110,7 +110,8 @@ bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
         // all _dataProviders gets passed the ioptions probably
         // not indendet for them
 
-        std::vector<Resource> items = explorer->loadItems(options);
+        IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
+        std::vector<Resource> items = explorer->loadItems(iooptions);
         cat->addItemsPrivate(items);
     }
     return true;

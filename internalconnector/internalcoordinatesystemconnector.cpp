@@ -35,7 +35,7 @@ IlwisObject *InternalCoordinatesystemConnector::create() const
     return 0;
 }
 
-bool InternalCoordinatesystemConnector::loadData(IlwisObject *obj, const IOOptions& options )
+bool InternalCoordinatesystemConnector::loadData(IlwisObject *, const IOOptions& )
 {
     return true;
 }
