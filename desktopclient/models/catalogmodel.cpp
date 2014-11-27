@@ -35,7 +35,7 @@ CatalogModel::CatalogModel(const CatalogView &view, int lvl, QObject *parent) : 
 
 void CatalogModel::newview(const CatalogView &view){
     _view = view;
-    mastercatalog()->addContainer(view.resource().url().toString());
+    mastercatalog()->addContainer(view.resource().url());
     _displayName = view.resource().name();
     if ( _displayName == sUNDEF)
         _displayName = view.resource().url().toString();
