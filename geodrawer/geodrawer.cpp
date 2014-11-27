@@ -15,10 +15,12 @@ GeoDrawer::GeoDrawer(QQuickItem *parent):
 
     // for testing
     _rootDrawer->addDrawer(new Ilwis::Geodrawer::LayerDrawer("LayerDrawer",_rootDrawer,_rootDrawer));
+
 }
 
 GeoDrawer::~GeoDrawer()
 {
+    cleanup();
 }
 
 void GeoDrawer::handleWindowChanged(QQuickWindow *win)
@@ -37,103 +39,29 @@ void GeoDrawer::handleWindowChanged(QQuickWindow *win)
 
 void GeoDrawer::paint()
 {
-        if ( !_rootDrawer)
-           return;
+    if ( !_rootDrawer)
+        return;
 
-       if ( !_rootDrawer->isActive())
-           return ;
-
-       int w = width();
-       int h = height();
-       _rootDrawer->rasterSize(Ilwis::Size<>(w,h,0));
-       QPointF pnt(x(), y());
-       QPointF pnt2 =mapFromItem(window()->contentItem(),pnt);
-       glViewport(-pnt2.x(), -pnt2.y(), w, h);
-
-       _rootDrawer->draw();
-
-      glViewport(0,0,w, h);
-
-   // oldTest();
-
-}
-
-void GeoDrawer::oldTest() {
-    if (!_shaderprogram) {
-        _shaderprogram = new QOpenGLShaderProgram();
-        _shaderprogram->addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                           "attribute highp vec4 aVertices;"
-                                           "attribute highp vec4 aColors;"
-                                           "varying highp vec4 vColors;"
-                                           "void main() {"
-                                           "    gl_Position = aVertices;"
-                                           "    vColors= aColors;"
-                                           "}");
-        _shaderprogram->addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                           "varying highp vec4 vColors;"
-                                           "void main() {"
-                                           "    gl_FragColor = vColors;"
-                                           "}");
-
-        _shaderprogram->bindAttributeLocation("aVertices", 0);
-        _shaderprogram->bindAttributeLocation("aColors", 1);
-        _shaderprogram->link();
-
-    }
-
-    _shaderprogram->bind();
-
-    _shaderprogram->enableAttributeArray(0);
-    _shaderprogram->enableAttributeArray(1);
-
-    float vertices[] = {
-        -1, -1, //Diag bottom left to top right
-        1, 1,
-        -1, 1, //Diag top left to bottom right
-        1, -1,
-        -1, 0, //Horizontal line
-        1, 0
-    };
-    float colors[] = {
-        1, 1, 0, 1,
-        1, 0, 1, 1,
-        0, 1, 1, 1,
-        1, 0, 0, 1,
-        0, 0, 1, 1,
-        0, 1, 0, 1
-    };
-    _shaderprogram->setAttributeArray(0, GL_FLOAT, vertices, 2); //3rd to 0, 4th to 1 by default
-    _shaderprogram->setAttributeArray(1, GL_FLOAT, colors, 4);
+    if ( !_rootDrawer->isActive())
+        return ;
 
     int w = width();
+    int h = height();
+    _rootDrawer->rasterSize(Ilwis::Size<>(w,h,0));
     QPointF pnt(x(), y());
     QPointF pnt2 =mapFromItem(window()->contentItem(),pnt);
-    glViewport(-pnt2.x(), -pnt2.y(), width(), height());
+    glViewport(-pnt2.x(), -pnt2.y(), w, h);
 
-    glDisable(GL_DEPTH_TEST);
+    _rootDrawer->draw(window()->openglContext());
 
-    glClearColor(0, 1, 100, 1);
-    //glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0,0,w, h);
 
-//    //Here I draw 3 lines, reduce to 2 instead of 6 to draw only one.
-//    //Change second param to choose which line to draw
-    glDrawArrays(GL_LINES, 0, 6);
-    w = width();
-    glViewport(0,0,w, height());
-
-    _shaderprogram->disableAttributeArray(0);
-    _shaderprogram->disableAttributeArray(1);
-    _shaderprogram->release();
 }
 
 void GeoDrawer::cleanup()
 {
     if ( _rootDrawer){
         _rootDrawer->cleanUp();
-    }
-    if (_shaderprogram) {
-        delete _shaderprogram;
-        _shaderprogram = 0;
     }
 }
 //! [6]
@@ -143,3 +71,122 @@ void GeoDrawer::sync()
 {
 }
 
+void GeoDrawer::init() {
+    _shaderprogram.addShaderFromSourceCode(QOpenGLShader::Vertex,
+                                            "attribute highp vec4 aVertices;"
+                                            "uniform mat4 mvp;"
+                                            "void main() {"
+                                            "    gl_Position =  mvp * aVertices;"
+                                            "}");
+    _shaderprogram.addShaderFromSourceCode(QOpenGLShader::Fragment,
+                                            "void main() {"
+                                            "    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);"
+                                            "}");
+
+
+
+
+
+    _shaderprogram.bindAttributeLocation("aVertices", 0);
+    if(!_shaderprogram.link()){
+        qDebug() << _shaderprogram.log();
+    }
+    if (!_shaderprogram.bind()){
+        qDebug() << _shaderprogram.log();
+    }
+
+    GLfloat triangle[] = {
+        -2.0f, -2.0f, 0.0f,
+        2.0f, -2.0f, 0.0f,
+        0.0f,  2.0f, 0.0f,
+    };
+    _projection.ortho(-2.0, 2.0,-2.0,2.0, -1, 1);
+    _mvp = _model * _view * _projection;
+    _shaderprogram.setUniformValueArray("mvp",&_mvp,16);
+
+    _shaderprogram.enableAttributeArray("mvp");
+
+    window()->openglContext()->functions()->glGenBuffers (1, &vbo);
+    window()->openglContext()->functions()->glBindBuffer (GL_ARRAY_BUFFER, vbo);
+    window()->openglContext()->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (triangle), triangle, GL_STATIC_DRAW);
+
+
+}
+
+void GeoDrawer::test1() {
+    _shaderprogram.bind();
+
+    window()->openglContext()->functions()->glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+    int vertexLocation = _shaderprogram.attributeLocation("aVertices");
+    window()->openglContext()->functions()->glVertexAttribPointer(vertexLocation,3,GL_FLOAT,FALSE,0,0);
+    window()->openglContext()->functions()->glEnableVertexAttribArray(vertexLocation);
+
+   glDrawArrays(GL_LINE_STRIP,0,3);
+
+   window()->openglContext()->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+   window()->openglContext()->functions()->glDisableVertexAttribArray(0);
+
+  _shaderprogram.release();
+}
+
+//void GeoDrawer::dummmm2(){
+//    if (!_shaderprogram) {
+
+//        _shaderprogram = new QOpenGLShaderProgram();
+//        _shaderprogram.addShaderFromSourceCode(QOpenGLShader::Vertex,
+//                                                "attribute highp vec4 aVertices;"
+//                                                "attribute highp vec4 aColors;"
+//                                                //"varying highp vec4 vColors;"
+//                                                "void main() {"
+//                                                "    gl_Position = aVertices;"
+//                                               // "    vColors= aColors;"
+//                                                "}");
+//        _shaderprogram.addShaderFromSourceCode(QOpenGLShader::Fragment,
+//                                                //"varying highp vec4 vColors;"
+//                                                "void main() {"
+//                                                "    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);"
+//                                                "}");
+
+
+
+
+
+//        _shaderprogram.bindAttributeLocation("aVertices", 0);
+//        _shaderprogram.bindAttributeLocation("aColors", 1);
+//        if(!_shaderprogram.link()){
+//           qDebug() << _shaderprogram.log();
+//        }
+//        if (!_shaderprogram.bind()){
+//           qDebug() << _shaderprogram.log();
+//        }
+
+//    }
+//    GLfloat triangle[] = {
+//        -1.0f, -1.0f, 0.0f,
+//        1.0f, -1.0f, 0.0f,
+//        0.0f,  1.0f, 0.0f,
+//    };
+
+//    GLuint vbo = 0;
+//    window()->openglContext()->functions()->glGenBuffers (1, &vbo);
+//    window()->openglContext()->functions()->glBindBuffer (GL_ARRAY_BUFFER, vbo);
+//    window()->openglContext()->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (triangle), triangle, GL_STATIC_DRAW);
+
+//    int vertexLocation = _shaderprogram.attributeLocation("aVertices");
+//    window()->openglContext()->functions()->glVertexAttribPointer(vertexLocation,3,GL_FLOAT,FALSE,0,0);
+//    window()->openglContext()->functions()->glEnableVertexAttribArray(vertexLocation);
+//    //window()->openglContext()->functions()->glBindBuffer(GL_ARRAY_BUFFER,vbo);
+
+//   glDrawArrays(GL_TRIANGLES,0,3);
+
+//   window()->openglContext()->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+//   window()->openglContext()->functions()->glDisableVertexAttribArray(0);
+//   qDebug() << glGetError();
+
+//   _shaderprogram.release();
+//   delete _shaderprogram;
+//   _shaderprogram = 0;
+
+
+//}

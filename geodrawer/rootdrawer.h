@@ -20,7 +20,7 @@ public:
     void coordBoundsView(const Envelope& viewRect, bool overrule);
     void rasterSize(const Size<> size);
     Size<> rasterSize() const;
-    const QMatrix4x4 *mvpMatrix() const;
+    const QMatrix4x4& mvpMatrix() const;
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();

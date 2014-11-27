@@ -18,7 +18,7 @@ class LayerDrawer : public SpatialDataDrawer
 public:
     LayerDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
-    bool prepare(PreparationType prepType, const IOOptions& options);
+    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
     void setCoverage(const ICoverage& coverage);
 
     UPDrawingColor& drawingColor();
@@ -27,13 +27,12 @@ public:
 
 private:
     UPDrawingColor _drawingColor;
-    QOpenGLShaderProgram *_shaderprogram = 0;
-    //QOpenGLShaderProgram _shaders;
+    QOpenGLShaderProgram _shaders;
     GLuint _vboID[2];
+    GLuint _vbo;
 
-    bool draw(const IOOptions &options=IOOptions()) ;
-    void dummmm();
-    bool initGeometry();
+    bool draw(QOpenGLContext *openglContext, const IOOptions &options=IOOptions()) ;
+    bool initGeometry(QOpenGLContext *openglContext);
     bool initShaders();
 };
 

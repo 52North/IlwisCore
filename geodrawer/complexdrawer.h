@@ -19,8 +19,8 @@ public:
 
 
 
-    bool draw(const IOOptions& options=IOOptions()) ;
-    bool prepare(PreparationType prepType, const IOOptions& options);
+    bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) ;
+    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext = 0);
     bool prepareChildDrawers(PreparationType prepType, const IOOptions& options);
 
     quint32 drawerCount(ComplexDrawer::DrawerType tpe) const;
@@ -45,7 +45,7 @@ private:
     DrawerMap _postDrawers;
 
 
-    bool drawSideDrawers(const DrawerMap& drawers,const IOOptions& options) const;
+    bool drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions& options) const;
 
 
 };
