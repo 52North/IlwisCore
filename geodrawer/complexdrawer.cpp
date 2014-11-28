@@ -10,24 +10,24 @@ ComplexDrawer::ComplexDrawer(const QString &name, DrawerInterface* parentDrawer,
 
 }
 
-bool ComplexDrawer::draw(const IOOptions &options)
+bool ComplexDrawer::draw(QOpenGLContext *openglContext, const IOOptions &options)
 {
     if (!isActive() || !isValid())
         return false;
 
-    bool ok = drawSideDrawers(_preDrawers, options)    ;
+    bool ok = drawSideDrawers(openglContext, _preDrawers, options)    ;
 
     for(const auto& drawer : _mainDrawers){
         if ( drawer){
-            ok &= drawer->draw(options);
+            ok &= drawer->draw(openglContext, options);
         }
     }
-    ok &= drawSideDrawers(_postDrawers, options);
+    ok &= drawSideDrawers(openglContext, _postDrawers, options);
 
     return ok;
 }
 
-bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
+bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
     for( auto& drawer : _preDrawers)    {
         if (!drawer.second->prepare(prepType, options))
@@ -160,7 +160,7 @@ std::vector<DrawColor> &ComplexDrawer::drawColors()
     return _colors;
 }
 
-bool ComplexDrawer::drawSideDrawers(const DrawerMap& drawers, const IOOptions &options) const
+bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
 {
     if (!isActive())
         return false;
@@ -169,7 +169,7 @@ bool ComplexDrawer::drawSideDrawers(const DrawerMap& drawers, const IOOptions &o
         for(const auto& current : drawers) {
             const auto& drw = current.second;
             if ( drw)
-                drw->draw(options);
+                drw->draw(openglContext, options);
         }
     }
     return true;

@@ -9,7 +9,7 @@ LineDrawer::LineDrawer(const QString &name, DrawerInterface *parentDrawer, RootD
 
 }
 
-bool LineDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &)
+bool LineDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &, QOpenGLContext *openglContext)
 {
     if ( prepType == DrawerInterface::ptGEOMETRY){
 

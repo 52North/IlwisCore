@@ -27,11 +27,14 @@ private slots:
     void handleWindowChanged(QQuickWindow *win);
 
 private:
-    QOpenGLShaderProgram *_shaderprogram = 0;
+    GLuint vbo = 0;
+    QOpenGLShaderProgram _shaderprogram;
     QMatrix4x4 _view,_projection, _model, _mvp;
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
 
-    void oldTest();
+    //void dummmm2();
+    void init();
+    void test1();
 };
 
 #endif // GEODRAWER_H

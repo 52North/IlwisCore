@@ -9,6 +9,8 @@
 #include "identityinterface.h"
 #include "iooptions.h"
 
+class QOpenGLContext;
+
 namespace Ilwis {
 
 class IOOptions;
@@ -41,8 +43,8 @@ public:
     DrawerInterface();
     virtual ~DrawerInterface();
 
-    virtual bool draw(const IOOptions& options=IOOptions()) = 0;
-    virtual bool prepare(PreparationType prepType, const IOOptions& options) = 0;
+    virtual bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) = 0;
+    virtual bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0) = 0;
     virtual bool isPrepared(quint32 type=ptALL) const = 0;
 
     virtual RootDrawer* rootDrawer() = 0;

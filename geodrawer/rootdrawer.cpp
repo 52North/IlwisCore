@@ -9,12 +9,7 @@ RootDrawer::RootDrawer(QObject *parent) : ComplexDrawer("RootDrawer",0,0, parent
     valid(true);
 
     // for testing
-    QMatrix4x4 model(1,0,0,0,
-                     0,1,0,0,
-                     0,0,1,0,
-                     0,0,0,1);
-    _model = model;
-    _projection.ortho(QRect(-200,-1,202,2));
+    _projection.ortho(-2.0, 2.0,-2.0,2.0, -1, 1);
     _mvp = _model * _view * _projection;
     opengl()->initializeOpenGLFunctions();
 }
@@ -74,10 +69,10 @@ Size<> RootDrawer::rasterSize() const
     return _rasterSize;
 }
 
-const QMatrix4x4 *RootDrawer::mvpMatrix() const
+const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
 
-    return &_mvp;
+    return _mvp;
 }
 
 void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){

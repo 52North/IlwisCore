@@ -11,7 +11,7 @@ class LineDrawer : public SimpleDrawer
 public:
     LineDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
-    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions&);
+    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions&, QOpenGLContext *openglContext=0);
     bool draw(const IOOptions& options) const;
 
 private:

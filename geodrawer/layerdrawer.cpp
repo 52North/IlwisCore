@@ -12,194 +12,105 @@ LayerDrawer::LayerDrawer(const QString &name, DrawerInterface *parentDrawer, Roo
     valid(true); //TODO: this must move to the prepare once the correct call sequences is in place
  }
 
-bool LayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
+bool LayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
-//    _shaderprogram = new QOpenGLShaderProgram();
 
-//    if(!initShaders())
-//        return false;
-//    if(!initGeometry())
-//        return false;
+    if(!initShaders())
+        return false;
+    if(!initGeometry(openglContext))
+        return false;
 
-//    _shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
-//    int err1 = glGetError();
-//    _prepared |= DrawerInterface::ptGEOMETRY;
+    //_shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
+    _prepared |= DrawerInterface::ptGEOMETRY;
     return SpatialDataDrawer::prepare(prepType, options);
 
 }
 
-bool LayerDrawer::draw(const IOOptions& options) {
-//    if ( !isActive())
-//        return false;
-//    if (!isPrepared(DrawerInterface::ptGEOMETRY)){
-//        if (!prepare(DrawerInterface::ptGEOMETRY, options)){
-//            return false;
-//        }
-//    }
+bool LayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& options) {
+    if ( !openglContext){
+        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
+    }
 
+    if ( !isActive())
+        return false;
+    if (!isPrepared(DrawerInterface::ptGEOMETRY)){
+        if (!prepare(DrawerInterface::ptGEOMETRY, options, openglContext)){
+            return false;
+        }
+    }
 
+    _shaders.bind();
 
-//    opengl()->glBindBuffer(GL_ARRAY_BUFFER,_vboID[0]);
-//    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboID[1]);
+    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vbo);
 
-//    int vertexlocation = _shaders.attributeLocation("aVertices");
-//    int err2 = glGetError();
-//    _shaders.enableAttributeArray(vertexlocation);
-//    int err3 = glGetError();
-//    opengl()->glVertexAttribPointer(vertexlocation,3, GL_FLOAT,GL_FALSE,0,0);
-//    int err4 = glGetError();
-//    //glDrawElements(GL_LINE,6,GL_UNSIGNED_SHORT,0);
-//    glDrawArrays(GL_LINE_STRIP,0,6);
-//    int err5 = glGetError();
-//    _shaders.disableAttributeArray(vertexlocation);
-//    opengl()->glBindBuffer(GL_ARRAY_BUFFER,0);
+    int vertexLocation = _shaders.attributeLocation("aVertices");
+    openglContext->functions()->glVertexAttribPointer(vertexLocation,3,GL_FLOAT,FALSE,0,0);
+    openglContext->functions()->glEnableVertexAttribArray(vertexLocation);
 
-//    int err6 = glGetError();
-//    qDebug() << err2 << err3 << err4 << err5 << err6;
+   glDrawArrays(GL_LINE_STRIP,0,3);
 
-    dummmm();
+   openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+   openglContext->functions()->glDisableVertexAttribArray(0);
 
+   _shaders.release();
 
-    return true;
+   return true;
 }
 
 bool LayerDrawer::initShaders() {
-//    setlocale(LC_NUMERIC, "C");
 
-//    _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
-//                                            "attribute highp vec4 aVertices;"
-//                                            //"attribute highp vec4 aColors;"
-//                                           // "varying highp vec4 vColors;"
-//                                            "uniform mat4 mvp;"
-//                                            "void main() {"
-//                                            "    gl_Position = mvp * aVertices;"
-//                                           // "    vColors= aColors;"
-//                                            "}");
-//    _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
-//                                            "varying highp vec4 vColors;"
-//                                            "void main() {"
-//                                            "    gl_FragColor = vec4(0,0,0,1.0);"
-//                                            "}");
-//    if (!_shaders.link()){
-//        return false;
-//    }
-
-//    if (!_shaders.bind()){
-//        return false;
-//    }
-
-//    setlocale(LC_ALL, "");
-
-    return true;
-}
-
-bool LayerDrawer::initGeometry() {
-//    opengl()->initializeOpenGLFunctions();
-//    opengl()->glGenBuffers(2, _vboID);
-
-//    VertexPosition vertices[] = {
-//        {-200, -1}, //Diag bottom left to top right
-//        {2, 1},
-//        {-200, 1}, //Diag top left to bottom right
-//        {2, -1},
-//        {-200, 0}, //Horizontal line
-//        {2, 0}
-//    };
-
-//    GLushort indices[] = { 0,1,2,3,4,5,6};
-//    float colors[] = {
-//        1, 1, 0, 1,
-//        1, 0, 1, 1,
-//        0, 1, 1, 1,
-//        1, 0, 0, 1,
-//        0, 0, 1, 1,
-//        0, 1, 0, 1
-//    };
-
-//    opengl()->glBindBuffer(GL_ARRAY_BUFFER, _vboID[0]);
-//    opengl()->glBufferData(GL_ARRAY_BUFFER,6 * sizeof(VertexPosition), vertices, GL_STATIC_DRAW);
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboID[1]);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLushort),indices, GL_STATIC_DRAW);
-
-    return true;
-
-
-}
-
-void LayerDrawer::dummmm(){
-    if (!_shaderprogram) {
-
-        _shaderprogram = new QOpenGLShaderProgram();
-        _shaderprogram->addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                                "attribute highp vec4 aVertices;"
-                                                "attribute highp vec4 aColors;"
-                                                "varying highp vec4 vColors;"
-                                                "uniform mat4 mvp;"
-                                                "void main() {"
-                                                "    gl_Position = mvp * aVertices;"
-                                                "    vColors= aColors;"
-                                                "}");
-        _shaderprogram->addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                                "varying highp vec4 vColors;"
-                                                "void main() {"
-                                                "    gl_FragColor = vColors;"
-                                                "}");
+    _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
+                                            "attribute highp vec4 aVertices;"
+                                            "uniform mat4 mvp;"
+                                            "void main() {"
+                                            "    gl_Position =  mvp * aVertices;"
+                                            "}");
+    _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
+                                            "void main() {"
+                                            "    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);"
+                                            "}");
 
 
 
 
 
-        _shaderprogram->bindAttributeLocation("aVertices", 0);
-        _shaderprogram->bindAttributeLocation("aColors", 1);
-        if(!_shaderprogram->link()){
-           qDebug() << _shaderprogram->log();
-        }
-
+    _shaders.bindAttributeLocation("aVertices", 0);
+    if(!_shaders.link()){
+       return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
+    }
+    if (!_shaders.bind()){
+        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
     }
 
-    _shaderprogram->bind();
-    _shaderprogram->setUniformValueArray("mvp",rootDrawer()->mvpMatrix(),16);
-
-    _shaderprogram->enableAttributeArray(0);
-    _shaderprogram->enableAttributeArray(1);
-    _shaderprogram->enableAttributeArray("mvp");
-
-    VertexPosition vertices[] = {
-        {-200, -1}, //Diag bottom left to top right
-        {2, 1},
-        {-200, 1}, //Diag top left to bottom right
-        {2, -1},
-        {-200, 0}, //Horizontal line
-        {2, 0}
-    };
-    float colors[] = {
-        1, 1, 0, 1,
-        1, 0, 1, 1,
-        0, 1, 1, 1,
-        1, 0, 0, 1,
-        0, 0, 1, 1,
-        0, 1, 0, 1
-    };
-
-
-    _shaderprogram->setAttributeArray(0, GL_FLOAT, vertices, 3); //3rd to 0, 4th to 1 by default
-    _shaderprogram->setAttributeArray(1, GL_FLOAT, colors, 4);
-
-
-    glDisable(GL_DEPTH_TEST);
-
-   // glClear(GL_COLOR_BUFFER_BIT);
-
-    //    //Here I draw 3 lines, reduce to 2 instead of 6 to draw only one.
-    //    //Change second param to choose which line to draw
-    glDrawArrays(GL_LINES, 0, 6);
-
-
-    _shaderprogram->disableAttributeArray(0);
-    _shaderprogram->disableAttributeArray(1);
-    _shaderprogram->release();
+    return true;
 }
+
+bool LayerDrawer::initGeometry(QOpenGLContext *openglContext) {
+    if ( !openglContext){
+        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
+    }
+
+    _shaders.setUniformValue("mvp",rootDrawer()->mvpMatrix());
+
+    _shaders.enableAttributeArray("mvp");
+
+    VertexPosition triangle[] = {
+        {-2.0f, -2.0f, 0.0f},
+        {2.0f, -2.0f, 0.0f},
+        {0.0f,  2.0f, 0.0f},
+    };
+
+    openglContext->functions()->glGenBuffers (1, &_vbo);
+    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vbo);
+    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * 3, triangle, GL_STATIC_DRAW);
+    GLenum err =  glGetError();
+    if ( err != 0) {
+        return ERROR1(QString(TR("Drawing failed : OpenGL returned error code %1")),QString::number(err));
+    }
+    return true;
+}
+
+
 
 void LayerDrawer::setCoverage(const ICoverage &coverage)
 {
@@ -215,10 +126,6 @@ UPDrawingColor &LayerDrawer::drawingColor()
 
 void LayerDrawer::cleanUp()
 {
-    if (_shaderprogram) {
-        delete _shaderprogram;
-        _shaderprogram = 0;
-    }
 }
 
 
