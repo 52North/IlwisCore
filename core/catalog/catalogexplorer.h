@@ -18,7 +18,7 @@ public:
     QFileInfo resolve2Local() const;
 
 protected:
-    IOOptions iooptions() const;
+    IOOptions ioOptions() const;
 
 private:
     Resource _resource;

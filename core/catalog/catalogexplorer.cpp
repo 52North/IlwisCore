@@ -22,7 +22,7 @@ Resource CatalogExplorer::source() const
     return _resource;
 }
 
-IOOptions CatalogExplorer::iooptions() const
+IOOptions CatalogExplorer::ioOptions() const
 {
     return _options;
 }
