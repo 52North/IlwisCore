@@ -28,8 +28,8 @@ public:
     QVariant operator[](const QString& option) const;
 
     IOOptions &operator<<(const Option& option);
-    IOOptions &addOption(QPair<QString,QVariant> item);
-    IOOptions &addOption(QString key, QVariant value);
+    IOOptions &addOption(const QPair<QString, QVariant> &item);
+    IOOptions &addOption(const QString& key, const QVariant& value);
 
 private:
     std::map<QString, QVariant> _values;
