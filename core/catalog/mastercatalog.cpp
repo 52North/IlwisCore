@@ -99,7 +99,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
         location.setQuery(empty);
         QList<QPair<QString,QString>> items = query.queryItems();
         std::for_each(items.begin(), items.end(), [&options](QPair<QString,QString> item) {
-            options.addOption(item);
+            options.addOption(QPair<QString, QVariant>(item.first, item.second));
         });
     }
     if ( _catalogs.find(location) != _catalogs.end())
