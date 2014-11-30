@@ -7,9 +7,13 @@ import MasterCatalogModel 1.0
 import OperationCatalogModel 1.0
 import OperationModel 1.0
 
+import "../Global.js" as Global
+
 Rectangle {
 
     signal makeForm(string objectid, string name)
+
+    property var operationsModel : operations.operations
 
     width : parent.width
     color : "white"
@@ -17,14 +21,14 @@ Rectangle {
     ListView {
         id : operationsList
         anchors.fill: parent
-        model : operations.operations
+        model : operationsModel
         delegate : Item{
             id : currentOperation
             height : 35;
             width : parent.width;
             Rectangle {
                 anchors.fill: parent
-                color: operationsList.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
+                color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
                 Text {
                     id : operationName
                     text : displayName

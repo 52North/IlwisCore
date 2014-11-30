@@ -118,9 +118,6 @@ void CatalogModel::gatherItems() {
 
         _view.prepare();
 
-        //for(ResourceModel *model : _currentItems)
-        //    delete model;
-
         _currentItems.clear();
         _refresh = false;
 

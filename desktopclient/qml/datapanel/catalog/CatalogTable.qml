@@ -1,11 +1,13 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick 2.1
+import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+
+import "../../Global.js" as Global
 
 Rectangle {
     id : tabPanel
@@ -31,6 +33,7 @@ Rectangle {
     TableView{
         id : resourcetable
         anchors.fill: parent
+        selectionMode : SelectionMode.ExtendedSelection
 
         TableViewColumn{
             id : imageColumn
@@ -88,7 +91,7 @@ Rectangle {
 
         TableViewColumn{
             role : "displayName"
-            title : "Name"
+            title : qsTr("Name")
             width : 220
             delegate : Component {
                 Text {
@@ -104,7 +107,7 @@ Rectangle {
         }
         TableViewColumn{
             role : "dimensions"
-            title : "Dimensions"
+            title : qsTr("Dimensions")
             width : 150
             delegate: Component{
                 Text {
@@ -119,7 +122,7 @@ Rectangle {
 
         TableViewColumn{
             role : "domainName"
-            title : "Domain"
+            title : qsTr("Domain")
             width : 100
             delegate: Component{
                 Text {
@@ -134,7 +137,7 @@ Rectangle {
 
         TableViewColumn{
             role : "domainType"
-            title : "Domain type"
+            title : qsTr("Domain type")
             width : 100
             delegate: Component{
                 Text {
@@ -149,7 +152,7 @@ Rectangle {
 
         TableViewColumn{
             role : "coordinateSystemName"
-            title : "Coordinate system"
+            title : qsTr("Coordinate system")
             width : 120
             delegate: Component{
                 Text {
@@ -164,7 +167,7 @@ Rectangle {
 
         TableViewColumn{
             role : "geoReferenceName"
-            title : "Georeference"
+            title : qsTr("Georeference")
             width : 120
             delegate: Component{
                 Text {
@@ -180,24 +183,22 @@ Rectangle {
         rowDelegate: Rectangle {
             id : rowdelegate
             height : 20
-            color : styleData.selected ? "#99CCFF" : (styleData.alternate? "#eee" : "#fff")
-            MouseArea{
-                anchors.fill: parent
+            color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
+        }
 
-                onClicked : {
-                    resourcetable.selection.clear()
-                    resourcetable.selection.select(styleData.row,styleData.row)
-                    var catalog = mastercatalog.selectedCatalog()
-                    if ( catalog !== null){
-                        catalog.setSelectedObjects(model[styleData.row].id)
-                    }
-                }
-
-                onDoubleClicked: {
-                     showObject(model[styleData.row].id)
-                }
+        onClicked: {
+            var ids = ""
+            resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
+            console.log(ids)
+            var catalog = mastercatalog.selectedCatalog()
+            if ( catalog !== null){
+                catalog.setSelectedObjects(ids)
             }
         }
+        onDoubleClicked: {
+          showObject(model[styleData.row].id)
+        }
+
         model : mastercatalog.resources
     }
 

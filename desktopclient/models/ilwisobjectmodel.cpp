@@ -92,18 +92,22 @@ void IlwisObjectModel::description(const QString &desc) const
 bool IlwisObjectModel::isProjectedCoordinateSystem() const
 {
     try {
+        ICoordinateSystem csy;
         if ( hasType(_ilwisobject->ilwisType(), itCOVERAGE | itCOORDSYSTEM)){
-            ICoordinateSystem csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem() : _ilwisobject.as<CoordinateSystem>();
-            if ( csy.isValid()){
-                if ( csy->isLatLon())
-                    return false;
-
-                if (csy->ilwisType() != itCONVENTIONALCOORDSYSTEM)
-                    return false;
-
-                return true;
-            }
+            csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem() : _ilwisobject.as<CoordinateSystem>();
+        } if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
+            csy = _ilwisobject.as<GeoReference>()->coordinateSystem();
         }
+        if ( csy.isValid()){
+            if ( csy->isLatLon())
+                return false;
+
+            if (csy->ilwisType() != itCONVENTIONALCOORDSYSTEM)
+                return false;
+
+            return true;
+        }
+
         return false;
     }catch(const ErrorObject& ){
         // no exceptions may escape here
@@ -293,6 +297,9 @@ QString IlwisObjectModel::pixSizeString() const{
         }
         if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
             double pixsz = _ilwisobject.as<GeoReference>()->pixelSize();
+            if ( pixsz == rUNDEF)
+                return sUNDEF;
+
             if ( _ilwisobject.as<GeoReference>()->coordinateSystem()->isLatLon()){
                 pixsz *= 360.0;
             }
@@ -305,7 +312,7 @@ QString IlwisObjectModel::pixSizeString() const{
                 return QString("%1").arg(pixsize,0,'f',1);
             }
         };
-        return pixszstring(pixsizex) + ' x ' + pixszstring(pixsizey);
+        return pixszstring(pixsizex) + " x " + pixszstring(pixsizey);
 
     }
     return "";
@@ -316,7 +323,12 @@ QString IlwisObjectModel::centerPixelLocation() const{
     QString code = QString("code=georef:type=corners,csy=epsg:4326,envelope=%1,gridsize=301 120,name=templocal").arg(envLatLon.toString());
     IGeoReference grf(code);
     if ( grf.isValid()){
-        Envelope envelope =hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->envelope(true) : _ilwisobject.as<CoordinateSystem>()->envelope(true);
+        Envelope envelope;
+        if ( hasType(_ilwisobject->ilwisType(), itCOVERAGE) )
+            envelope = _ilwisobject.as<Coverage>()->envelope(true) ;
+        else if ( hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM))
+            envelope = _ilwisobject.as<CoordinateSystem>()->envelope(true);
+
         if ( !envelope.isValid())
             return "";
 

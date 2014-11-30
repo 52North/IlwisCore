@@ -53,6 +53,11 @@ OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
 
 }
 
+QQmlListProperty<OperationsByKeyModel> OperationCatalogModel::operationKeywords()
+{
+   return  QQmlListProperty<OperationsByKeyModel>(this, _operationsByKey);
+}
+
 quint64 OperationCatalogModel::operationId(quint32 index) const{
     if ( index < _currentOperations.size()){
         return _currentOperations[index]->id().toULongLong();
@@ -87,18 +92,30 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
             if ( !_view.isValid())
                 return QMLOperationList();
 
-//            _view.prepare();
-
             gatherItems();
 
-            for(OperationModel *model : _currentOperations)
-                delete model;
+            //for(OperationModel *model : _currentOperations)
+            //    delete model;
 
             _currentOperations.clear();
 
+            std::map<QString, std::vector<OperationModel *>> operationsByKey;
             for(auto item : _currentItems){
-                _currentOperations.push_back(new OperationModel(item->resource()));
+                QString keywords = item->resource()["keyword"].toString();
+                if ( keywords.indexOf("internal") != -1)
+                    continue;
+                _currentOperations.push_back(new OperationModel(item->resource(), this));
+                if ( keywords == sUNDEF)
+                    keywords = TR("Uncatagorized");
+                QStringList parts = keywords.split(",");
+                for(auto keyword : parts){
+                    operationsByKey[keyword].push_back(new OperationModel(item->resource(), this));
+                }
             }
+            for(auto operation : operationsByKey){
+                _operationsByKey.push_back(new OperationsByKeyModel(operation.first, operation.second, this));
+            }
+
         }
 
         return  QMLOperationList(this, _currentOperations);

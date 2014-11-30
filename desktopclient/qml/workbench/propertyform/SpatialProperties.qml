@@ -10,7 +10,7 @@ Rectangle {
     Loader {
         id : rasterProps
         width : parent.width
-        source : typeName == "rastercoverage" ? "GeoreferenceProperties.qml" : ""
+        source : typeName == "rastercoverage" ? "GeoreferencePart.qml" : ""
         anchors.top : csyProps.bottom
     }
 }

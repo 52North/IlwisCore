@@ -164,6 +164,7 @@ Rectangle {
                     Connections {
                         target : operationCatagories
                         onMakeForm : {
+                            console.debug("name :", name)
                             newForm(objectid, name)
                         }
                     }

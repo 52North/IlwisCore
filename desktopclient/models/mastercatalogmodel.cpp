@@ -165,7 +165,7 @@ void MasterCatalogModel::addCatalog(const QString &inpath)
     res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
     res.addProperty("filter","");
     CatalogView cview(res);
-    _activeCatalogs[url] =new CatalogModel(cview,0);
+    _activeCatalogs[url] =new CatalogModel(cview,0, this);
     _currentUrl = url;
     emit resourcesChanged();
 

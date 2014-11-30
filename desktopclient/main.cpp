@@ -24,6 +24,7 @@
 #include "models/ilwisobjectmodel.h"
 #include "models/attributemodel.h"
 #include "models/domainitemmodel.h"
+#include "models/operationsbykeymodel.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
 
@@ -60,6 +61,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<IlwisObjectModel>("IlwisObjectModel",1,0,"IlwisObjectModel");
         qmlRegisterType<AttributeModel>("AttributeModel",1,0,"AttributeModel");
         qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
+        qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);

@@ -29,8 +29,12 @@ Rectangle {
             var valueType = getProperty("valuetype")
             if ( valueType !== "" && valueType !== "indexidentifier")
                 source = "ItemDomainProperties.qml"
-        }  else if ( typeName == "numericdomain" ){
+        }
+        else if ( typeName == "numericdomain" ){
             source = "NumericDomainProperties.qml"
+        }
+        else if ( typeName == "georeference"){
+           source = "GeoreferenceProperties.qml"
         }
 
     }

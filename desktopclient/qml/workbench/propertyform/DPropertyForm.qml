@@ -22,7 +22,7 @@ Component {
 
         y : 4
         id : propertyForm
-        height :310
+        height :410
         width : parent.width
 
         Component {
