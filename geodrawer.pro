@@ -6,7 +6,7 @@ QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 TEMPLATE = lib
 TARGET = geodrawer
-QT += qml quick sql
+QT += qml quick sql opengl
 CONFIG += qt plugin
 
 CONFIG(debug, debug|release) {

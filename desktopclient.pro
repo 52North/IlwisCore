@@ -94,6 +94,7 @@ OTHER_FILES += \
     desktopclient/qml/workbench/propertyform/NumericDomainProperties.qml \
     desktopclient/qml/workbench/propertyform/GeoreferencePart.qml
 
+
 HEADERS += \
     desktopclient/ilwistype.h \
     desktopclient/models/resourcemodel.h \

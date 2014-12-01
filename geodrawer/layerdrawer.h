@@ -30,6 +30,7 @@ private:
     QOpenGLShaderProgram _shaders;
     GLuint _vboID[2];
     GLuint _vbo;
+    GLuint _vbi;
 
     bool draw(QOpenGLContext *openglContext, const IOOptions &options=IOOptions()) ;
     bool initGeometry(QOpenGLContext *openglContext);
