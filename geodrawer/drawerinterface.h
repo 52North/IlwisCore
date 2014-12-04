@@ -31,6 +31,13 @@ struct DrawColor {
     float _red=0, _green=0, _blue=0, _alpha=1;
 };
 
+struct VertexIndex {
+    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0) : _start(start), _count(count), _geomtype(geomType){}
+    quint32 _start;
+    quint32 _count;
+    IlwisTypes _geomtype;
+};
+
 class RootDrawer;
 class DrawerInterface;
 
@@ -63,17 +70,16 @@ public:
     virtual std::vector<VertexPosition>& drawPositions() = 0;
     virtual std::vector<DrawColor>& drawColors() = 0;
 
-
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;
 
-#define NEW_DRAWER(name) \
+#define NEW_DRAWER \
     private: \
-static name *dummy_drawer;
+static DrawerInterface *dummy_drawer;
 
-#define REGISTER_DRAWER(name, classname) \
-    name *name::dummy_drawer = DrawerFactory::registerDrawer(name, classname::create);
+#define REGISTER_DRAWER(classname) \
+    DrawerInterface *classname::dummy_drawer = DrawerFactory::registerDrawer(#classname, classname::create);
 }
 
 }

@@ -2,26 +2,36 @@
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include <QtGui/QOpenGLContext>
+#include "drawerfactory.h"
 #include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-LayerDrawer::LayerDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : SpatialDataDrawer(name, parentDrawer, rootdrawer)
+LayerDrawer::LayerDrawer(const QString& name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : SpatialDataDrawer(name, parentDrawer, rootdrawer)
 {
     valid(true); //TODO: this must move to the prepare once the correct call sequences is in place
- }
+}
 
 bool LayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
 
+//    std::vector<VertexPosition> triangle = {
+//        {-2.0f, -2.0f, 0.0f},
+//        {2.0f, -2.0f, 0.0f},
+//        {0.0f,  2.0f, 0.0f},
+//        {-2.0f, 2.0f, 0.0f},
+//        {0.0f, -2.0f, 0.0f},
+//        {2.0f,  2.0f, 0.0f},
+//    };
+
     if(!initShaders())
         return false;
-    if(!initGeometry(openglContext))
-        return false;
+//    if(!initGeometry(openglContext, triangle))
+//        return false;
 
-    //_shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
-    _prepared |= DrawerInterface::ptGEOMETRY;
+//    //_shaders.setUniformValue("mvp",*(rootDrawer()->mvpMatrix()));
+//    _prepared |= DrawerInterface::ptGEOMETRY;
     return SpatialDataDrawer::prepare(prepType, options);
 
 }
@@ -48,6 +58,7 @@ bool LayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& options) 
     openglContext->functions()->glEnableVertexAttribArray(vertexLocation);
 
    glDrawArrays(GL_LINE_STRIP,0,3);
+   glDrawArrays(GL_LINE_STRIP,3,3);
 
    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
    openglContext->functions()->glDisableVertexAttribArray(0);
@@ -85,7 +96,7 @@ bool LayerDrawer::initShaders() {
     return true;
 }
 
-bool LayerDrawer::initGeometry(QOpenGLContext *openglContext) {
+bool LayerDrawer::initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices) {
     if ( !openglContext){
         return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
     }
@@ -94,15 +105,10 @@ bool LayerDrawer::initGeometry(QOpenGLContext *openglContext) {
 
     _shaders.enableAttributeArray("mvp");
 
-    VertexPosition triangle[] = {
-        {-2.0f, -2.0f, 0.0f},
-        {2.0f, -2.0f, 0.0f},
-        {0.0f,  2.0f, 0.0f},
-    };
 
     openglContext->functions()->glGenBuffers (1, &_vbo);
     openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vbo);
-    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * 3, triangle, GL_STATIC_DRAW);
+    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
     GLenum err =  glGetError();
     if ( err != 0) {
         return ERROR1(QString(TR("Drawing failed : OpenGL returned error code %1")),QString::number(err));

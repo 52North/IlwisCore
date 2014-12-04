@@ -13,7 +13,7 @@ namespace Geodrawer{
 class SpatialDataDrawer : public ComplexDrawer
 {
 public:
-    SpatialDataDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    SpatialDataDrawer(const QString& name,DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
     virtual void setCoverage(const ICoverage& coverage);
 
     std::vector<double> numericAttributeValues(const QString& attribute) const;
@@ -23,8 +23,14 @@ public:
     bool isStretched() const;
     void stretched(bool yesno);
 
+    ICoverage coverage() const;
+    void coverage(const ICoverage& cov);
+    Envelope envelope() const;
+    void envelope(const Envelope& env);
+
 private:
     ICoverage _coverage;
+    Envelope _envelope;
     NumericRange _stretchRange;
     bool _stretched = false;
 

@@ -13,6 +13,7 @@ public:
     virtual LatLon coord2latlon(const Coordinate &crdSource) const;
     virtual Coordinate latlon2coord(const LatLon& ll) const;
     virtual bool isLatLon() const;
+    virtual bool isUnknown() const;
     IlwisTypes ilwisType() const;
     QString toWKT(quint32 spaces=0) const;
 };

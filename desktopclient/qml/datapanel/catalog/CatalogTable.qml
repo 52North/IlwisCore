@@ -196,7 +196,8 @@ Rectangle {
             }
         }
         onDoubleClicked: {
-          showObject(model[styleData.row].id)
+            if ( currentRow != -1)
+                showObject(model[currentRow].id)
         }
 
         model : mastercatalog.resources

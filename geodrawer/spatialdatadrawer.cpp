@@ -59,4 +59,25 @@ void SpatialDataDrawer::stretched(bool yesno)
     _stretched = yesno;
 }
 
+ICoverage SpatialDataDrawer::coverage() const
+{
+    return _coverage;
+}
+
+void SpatialDataDrawer::coverage(const ICoverage &cov)
+{
+    _coverage = cov;
+    _envelope = cov->envelope();
+}
+
+Envelope SpatialDataDrawer::envelope() const
+{
+    return _envelope;
+}
+
+void SpatialDataDrawer::envelope(const Envelope &env)
+{
+    _envelope = env;
+}
+
 

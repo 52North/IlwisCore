@@ -69,7 +69,6 @@ Rectangle {
         model: mastercatalog.driveList()
         Layout.fillWidth: true
         Component.onCompleted: {
-            console.debug(startFolder + "oncompleted drivelist")
             if ( startFolder == "")
                 startFolder = mastercatalog.currentUrl
             mastercatalog.addCatalog(startFolder) // at this place else the indexchanged will overrule any previous path setting

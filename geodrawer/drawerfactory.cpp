@@ -20,11 +20,27 @@ DrawerInterface *DrawerFactory::registerDrawer(const QString &name, Ilwis::Geodr
     return 0;
 }
 
-DrawerInterface *DrawerFactory::create(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer)
+QString DrawerFactory::ilwisType2DrawerName(IlwisTypes tp, const QString &subType)
 {
-   auto iter = _creators.find(name);
-   if ( iter == _creators.end()){
-       return 0;
-   }
-   return (*iter).second(name, parentDrawer, rootdrawer);
+    //translates names to common drawers; note that this only will handle the translations
+    //that can be expected to be present on an ilwis system. not all names will be mapped
+    if ( subType != "Animation"){
+        if ( hasType(tp, itFEATURE))
+            return "FeatureLayerDrawer";
+        if ( hasType(tp, itRASTER)){
+            return "RasterLayerDrawer" ;
+        }
+        if ( hasType(tp, itLINE)){
+            return "FeatureLineDrawer";
+        }
+        if ( hasType(tp, itPOLYGON)){
+            return "FeaturePolygonDrawer";
+        }
+        if ( hasType(tp, itPOINT)){
+            return "FeaturePointDrawer";
+        }
+    }
+    return sUNDEF;
 }
+
+

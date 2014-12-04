@@ -1,5 +1,7 @@
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "basedrawer.h"
+#include "coordinatesystem.h"
 #include "rootdrawer.h"
 
 using namespace Ilwis;
@@ -7,7 +9,6 @@ using namespace Geodrawer;
 
 BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent) : QObject(parent),Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
-    _opengl.reset(new QOpenGLFunctions());
 }
 
 void BaseDrawer::valid(bool yesno)
@@ -25,7 +26,7 @@ bool BaseDrawer::isPrepared(quint32 type) const
     return hasType(_prepared, type);
 }
 
-bool BaseDrawer::draw(const IOOptions &) const
+bool BaseDrawer::draw(QOpenGLContext *, const IOOptions &) const
 {
     return false;
 }
@@ -124,10 +125,6 @@ void BaseDrawer::setDescription(const QString &desc)
     return Identity::setDescription(desc);
 }
 
-const std::unique_ptr<QOpenGLFunctions> &BaseDrawer::opengl() const
-{
-    return _opengl;
-}
 
 
 

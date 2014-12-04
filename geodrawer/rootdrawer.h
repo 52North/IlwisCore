@@ -4,10 +4,15 @@
 #include <memory.h>
 #include <QMatrix4x4>
 #include <QObject>
-#include "identity.h"
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "complexdrawer.h"
 
 namespace Ilwis {
+
+class CoordinateSystem;
+typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+
 namespace Geodrawer{
 
 class RootDrawer : public ComplexDrawer
@@ -16,11 +21,16 @@ class RootDrawer : public ComplexDrawer
 public:
     explicit RootDrawer(QObject *parent);
 
+    void addDrawer(DrawerInterface *newdrawer, bool overrule);
+    void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
+
     Envelope viewEnvelope() const;
-    void coordBoundsView(const Envelope& viewRect, bool overrule);
-    void rasterSize(const Size<> size);
-    Size<> rasterSize() const;
+    void envelopeView(const Envelope& viewRect, bool overrule);
+    void pixelAreaSize(const Size<> size);
+    Size<> pixelAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
+    const ICoordinateSystem& coordinateSystem() const;
+    void coordinateSystem(const ICoordinateSystem& csy);
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
@@ -30,13 +40,18 @@ public slots:
 
 private:
     QMatrix4x4 _view,_projection, _model, _mvp;
+    ICoordinateSystem _coordinateSystem;
     Envelope _zoomRect; // extent of the portion of the map now visible in the visualization
     Envelope _viewRect; // extent of the whole area that is covered by the visualization. this might be bigger than the map due to the aspect ratio of the map
     Envelope _coverageRect; // extent of coverage without any additional area
-    Size<> _rasterSize; // size of the area in the viewRect in pixels
+    Size<> _pixelAreaSize; // size of the area in the viewRect in pixels
     double _aspectRatioCoverage; //ration between width/height of the coverage. determines how sides of a map will size in reaction to size changes
     Coordinate _viewPoint;
     Coordinate _eyePoint;
+
+    bool _useGeoref = false;
+
+    Envelope envelope2RootEnvelope(const ICoordinateSystem& csSource, const Envelope& env);
 };
 
 typedef std::unique_ptr<RootDrawer> UPRootDrawer;

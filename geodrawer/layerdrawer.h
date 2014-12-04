@@ -16,7 +16,7 @@ typedef std::unique_ptr<DrawingColor> UPDrawingColor;
 class LayerDrawer : public SpatialDataDrawer
 {
 public:
-    LayerDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    LayerDrawer(const QString& name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
     void setCoverage(const ICoverage& coverage);
@@ -24,17 +24,19 @@ public:
     UPDrawingColor& drawingColor();
 
      void cleanUp();
-
-private:
-    UPDrawingColor _drawingColor;
-    QOpenGLShaderProgram _shaders;
-    GLuint _vboID[2];
+protected:
+    bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices);
     GLuint _vbo;
     GLuint _vbi;
+    QOpenGLShaderProgram _shaders;
 
     bool draw(QOpenGLContext *openglContext, const IOOptions &options=IOOptions()) ;
-    bool initGeometry(QOpenGLContext *openglContext);
+private:
+    UPDrawingColor _drawingColor;
+
+
     bool initShaders();
+
 };
 
 

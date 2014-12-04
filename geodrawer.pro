@@ -39,7 +39,8 @@ SOURCES += \
     geodrawer/featurelayerdrawer.cpp \
     geodrawer/drawerfactory.cpp \
     geodrawer/linedrawer.cpp \
-    geodrawer/drawerinterface.cpp
+    geodrawer/drawerinterface.cpp \
+    geodrawer/openglhelper.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -54,7 +55,8 @@ HEADERS += \
     geodrawer/drawingcolor.h \
     geodrawer/featurelayerdrawer.h \
     geodrawer/drawerfactory.h \
-    geodrawer/linedrawer.h
+    geodrawer/linedrawer.h \
+    geodrawer/openglhelper.h
 
 OTHER_FILES = geodrawer/qmldir
 

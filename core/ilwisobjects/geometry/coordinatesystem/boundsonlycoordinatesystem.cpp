@@ -38,6 +38,11 @@ bool BoundsOnlyCoordinateSystem::isLatLon() const
     return false;
 }
 
+bool BoundsOnlyCoordinateSystem::isUnknown() const
+{
+    return  ( code() == "csy::unknown" || code() == "unknown");
+}
+
 IlwisTypes BoundsOnlyCoordinateSystem::ilwisType() const
 {
     return itBOUNDSONLYCSY;

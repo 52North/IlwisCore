@@ -18,7 +18,7 @@ public:
 
     bool prepare(DrawerInterface::PreparationType, const IOOptions&);
     bool isPrepared(quint32 type=ptALL) const;
-    bool draw(const IOOptions&) const;
+    bool draw(QOpenGLContext *, const IOOptions&) const;
 
     RootDrawer* rootDrawer() ;
     const RootDrawer *rootDrawer() const;
@@ -40,7 +40,6 @@ public:
     void name(const QString& n);
     QString description() const;
     void setDescription(const QString& desc);
-    const std::unique_ptr<QOpenGLFunctions>& opengl() const;
 
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
@@ -49,7 +48,6 @@ protected:
     std::vector<VertexPosition> _positions;
     std::vector<DrawColor> _colors;
     quint32 _prepared = 0;
-    std::unique_ptr<QOpenGLFunctions> _opengl;
 
 private:
     bool _active = true; // unless defined otherwise, the drawer is active

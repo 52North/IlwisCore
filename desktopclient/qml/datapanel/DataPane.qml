@@ -65,7 +65,7 @@ Rectangle {
 
         id : tabs
             function showObject(objectid){
-                 var component = Qt.createComponent("visualization/Visualize.qml")
+                var component = Qt.createComponent("visualization/Visualize.qml")
                 var resource = mastercatalog.id2Resource(objectid)
                 if ( resource !== null){
                     var name = resource.displayName
@@ -76,6 +76,7 @@ Rectangle {
                         name = part1 + "..." + part2
                     }
                     var tab = addTab(name,component)
+                    var visPanel = component.createObject(tab, {"sourceUrl" : resource.url, "sourceType" : resource.typeName})
                     currentIndex++
                     transitionInfoPane("Visualization.qml")
                 }
