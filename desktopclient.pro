@@ -90,7 +90,7 @@ OTHER_FILES += \
     desktopclient/qml/Visualization.qml \
     desktopclient/qml/panel/CatalogTable.qml \
     desktopclient/qml/panel/CatalogThumbGrid.qml \
-    desktopclient/qml/global.js \
+    desktopclient/qml/Global.js \
     desktopclient/qml/workbench/propertyform/NumericDomainProperties.qml \
     desktopclient/qml/workbench/propertyform/GeoreferencePart.qml
 

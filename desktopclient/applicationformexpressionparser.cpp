@@ -95,23 +95,27 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             part += c;
             continue;
         }
-        if ( c == ',' && part != ""){
+        if ( c == ',' && !part.isEmpty()){
             part = part.trimmed();
             setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
         } else if ( c == '['){
-            part = part.trimmed();
-            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+            if ( !part.isEmpty() ) {
+                part = part.trimmed();
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+            }
             isOptional = true;
-        } else if ( c== ']'){
-            part = part.trimmed();
-            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+        } else if ( c == ']'){
+            if ( !part.isEmpty()) {
+                part = part.trimmed();
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+            }
             isOptional = false;
             ++optionGroup;
         } else if ( c == '|'){
             choices << part.trimmed();
-            part = "";
             inChoiceList = true;
         }
+        part.clear();
     }
     // last parameter
     if (part != ""){
