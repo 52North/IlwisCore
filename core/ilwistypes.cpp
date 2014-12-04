@@ -147,7 +147,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case  itPOLYGON:
         return TR("polygoncoverage");
     case  itLINE:
-        return TR("linecovergae");
+        return TR("linecoverage");
     case  itPOINT:
         return TR("pointcoverage");
     case  itPOINT+itLINE:
