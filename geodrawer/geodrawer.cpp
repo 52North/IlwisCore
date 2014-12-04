@@ -117,6 +117,7 @@ void GeoDrawer::cleanup()
 
 void GeoDrawer::sync()
 {
+    _rootDrawer->active(isVisible());
 }
 
 
