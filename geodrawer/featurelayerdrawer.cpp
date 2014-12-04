@@ -29,7 +29,6 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         return false;
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY)){
-        _prepared |= ~DrawerInterface::ptGEOMETRY;
         std::vector<VertexPosition> vertices;
         _indices = std::vector<VertexIndex>();
 
