@@ -10,7 +10,7 @@ Rectangle {
     border.width: 2
     border.color: "red"
     GeoDrawer{
-        x : 0
+        x : 25
         y : 75
         width : 400
         height : 400
