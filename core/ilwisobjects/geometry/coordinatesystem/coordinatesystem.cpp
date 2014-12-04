@@ -64,5 +64,10 @@ void CoordinateSystem::envelope(const Envelope &env)
     _envelope = env;
 }
 
+bool CoordinateSystem::isUnknown() const
+{
+    return false;
+}
+
 
 

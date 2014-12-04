@@ -86,6 +86,11 @@ bool ConventionalCoordinateSystem::isEqual(const IlwisObject *obj) const
     return false;
 }
 
+bool ConventionalCoordinateSystem::isUnknown() const
+{
+    return false;
+}
+
 QString ConventionalCoordinateSystem::toWKT(quint32 spaces) const
 {
     QString wkt = "PROJCS[\"" + name() + "\"" + ",";
