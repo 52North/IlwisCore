@@ -111,6 +111,18 @@ void CatalogModel::setSelectedObjects(const QString &objects)
     }
 }
 
+void CatalogModel::nameFilter(const QString &filter)
+{
+    _nameFilter = filter;
+    _currentItems.clear();
+    emit contentChanged();
+}
+
+QString CatalogModel::nameFilter() const
+{
+    return _nameFilter;
+}
+
 void CatalogModel::gatherItems() {
     if ( _currentItems.isEmpty() || _refresh) {
         if ( !_view.isValid())
@@ -123,6 +135,12 @@ void CatalogModel::gatherItems() {
 
         std::vector<Resource> items = _view.items();
         for(const Resource& resource : items){
+            if ( _nameFilter != ""){
+                if ( resource.name().indexOf(_nameFilter) == -1){
+                    if ( resource["longname"].toString().indexOf(_nameFilter) == -1)
+                        continue;
+                }
+            }
             _currentItems.push_back(new ResourceModel(resource));
         }
     }
