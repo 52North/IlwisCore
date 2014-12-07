@@ -55,11 +55,22 @@ OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
 
 QQmlListProperty<OperationsByKeyModel> OperationCatalogModel::operationKeywords()
 {
-   return  QQmlListProperty<OperationsByKeyModel>(this, _operationsByKey);
+    return  QQmlListProperty<OperationsByKeyModel>(this, _operationsByKey);
 }
 
-quint64 OperationCatalogModel::operationId(quint32 index) const{
-    if ( index < _currentOperations.size()){
+void OperationCatalogModel::nameFilter(const QString &filter)
+{
+    CatalogModel::nameFilter(filter);
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    emit operationsChanged();
+}
+
+quint64 OperationCatalogModel::operationId(quint32 index, bool byKey) const{
+    if ( byKey){
+
+    }
+    else if ( index < _currentOperations.size()){
         return _currentOperations[index]->id().toULongLong();
     }
     return i64UNDEF;
@@ -93,9 +104,6 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
                 return QMLOperationList();
 
             gatherItems();
-
-            //for(OperationModel *model : _currentOperations)
-            //    delete model;
 
             _currentOperations.clear();
 
@@ -197,6 +205,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
     return sUNDEF;
 
 }
+
 
 
 
