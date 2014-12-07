@@ -44,7 +44,7 @@ Item {
     }
 
     Action {
-        id : createCatalog
+        id : changeCatalogContent
         onTriggered : {
             addContainer.checked = !addContainer.checked
             createCatalogForm.state = addContainer.checked ? "maximized" : "minimized"
@@ -58,6 +58,13 @@ Item {
             navCreatePanel.deleteCurrentBookmark()
         }
     }
+    
+    Action {
+        id : createCatalog
+        onTriggered : {
+             var component = Qt.createComponent()
+        }
+    }    
 
     Item {
         id : buttonBar
@@ -78,7 +85,7 @@ Item {
                 height : 40
                 checkable: true
                 checked : false
-                action : createCatalog
+                action : changeCatalogContent
              }
             Controls.ActionButton{
                 id : removeBookmark
@@ -95,7 +102,7 @@ Item {
                 height : 40
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  "New\nCatalog"
-                //action : deleteBookmark
+                action : createCatalog
 
             }
        }
