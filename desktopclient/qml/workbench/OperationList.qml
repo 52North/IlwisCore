@@ -14,6 +14,7 @@ Rectangle {
     signal makeForm(string objectid, string name)
 
     property var operationsModel : operations.operations
+    property bool byKey : false
 
     width : parent.width
     color : "white"
@@ -22,6 +23,7 @@ Rectangle {
         id : operationsList
         anchors.fill: parent
         model : operationsModel
+        interactive : !byKey
         delegate : Item{
             id : currentOperation
             height : 35;
@@ -58,8 +60,7 @@ Rectangle {
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
-                    operationid = operations.operationId(index)
-                    makeForm(operationid, displayName);
+                    makeForm(id, displayName);
                 }
             }
 
