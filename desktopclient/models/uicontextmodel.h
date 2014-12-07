@@ -26,6 +26,6 @@ private:
 
 };
 
-};
+
 
 #endif // UICONTEXTMODEL_H
