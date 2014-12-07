@@ -25,6 +25,7 @@
 #include "models/attributemodel.h"
 #include "models/domainitemmodel.h"
 #include "models/operationsbykeymodel.h"
+#include "models/uicontextmodel.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
 
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<AttributeModel>("AttributeModel",1,0,"AttributeModel");
         qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
+        qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
         VisualizationManager visualizationManager;
+        UIContextModel uiContext;
 
         //test
         //visualizationManager.addPropertyEditor(itRASTER, "dummy","file:///h:/temp/test.qml");
@@ -85,6 +88,7 @@ int main(int argc, char *argv[])
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
         ctx->setContextProperty("visualizationmanager", &visualizationManager);
+        ctx->setContextProperty("uitcontext", &uiContext);
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );

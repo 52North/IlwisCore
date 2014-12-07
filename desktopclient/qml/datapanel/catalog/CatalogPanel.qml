@@ -196,6 +196,7 @@ Item {
 
         }
 
+
         states: [
             State {
                 name : "iconGrid"

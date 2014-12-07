@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
-import QtQuick 2.0
+import UIContextModel 1.0
 import "catalog" as Catalog
 
 
@@ -92,5 +92,11 @@ Rectangle {
             Catalog.CatalogPanel{
             }
         }
+
+    }
+    focus : true
+    Keys.onPressed: {
+        console.debug(event.key)
+        //uicontext.currentKey = event.key
     }
 }

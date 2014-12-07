@@ -189,7 +189,6 @@ Rectangle {
         onClicked: {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
-            console.log(ids)
             var catalog = mastercatalog.selectedCatalog()
             if ( catalog !== null){
                 catalog.setSelectedObjects(ids)

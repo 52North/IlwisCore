@@ -56,7 +56,8 @@ SOURCES += desktopclient/main.cpp \
     desktopclient/models/ilwisobjectmodel.cpp \
     desktopclient/models/attributemodel.cpp \
     desktopclient/models/domainitemmodel.cpp \
-    desktopclient/models/operationsbykeymodel.cpp
+    desktopclient/models/operationsbykeymodel.cpp \
+    desktopclient/models/uicontextmodel.cpp
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
@@ -110,7 +111,8 @@ HEADERS += \
     desktopclient/models/ilwisobjectmodel.h \
     desktopclient/models/attributemodel.h \
     desktopclient/models/domainitemmodel.h \
-    desktopclient/models/operationsbykeymodel.h
+    desktopclient/models/operationsbykeymodel.h \
+    desktopclient/models/uicontextmodel.h
 
 # Installation path
 
