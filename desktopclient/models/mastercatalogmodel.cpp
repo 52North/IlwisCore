@@ -130,10 +130,28 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 
 void MasterCatalogModel::addCatalog(const QString &inpath)
 {
+    QString newcatalogurl = changeCatalog(inpath);
+    if ( newcatalogurl == "")
+        return ;
+    QUrl location(newcatalogurl);
+    Resource res(location, itCATALOGVIEW ) ;
+    QStringList lst;
+    lst << ((newcatalogurl.indexOf("http://") == 0) ? res.container().toString() : newcatalogurl);
+    res.addProperty("locations", lst);
+    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+    res.addProperty("filter","");
+    CatalogView cview(res);
+    _activeCatalogs[newcatalogurl] =new CatalogModel(cview,0, this);
+    _currentUrl = newcatalogurl;
+    emit resourcesChanged();
+
+}
+
+QString MasterCatalogModel::changeCatalog(const QString &inpath){
     if ( inpath == "")
-        return;
+        return "";
     if  ( _currentUrl == inpath)
-        return;
+        return "";
 
     QString path = inpath;
     int index = inpath.indexOf("/..");
@@ -141,7 +159,7 @@ void MasterCatalogModel::addCatalog(const QString &inpath)
         path = path.left(path.size() - 3);
         index = path.lastIndexOf("/");
         if ( index == -1)
-            return;
+            return "";
         path = path.left(index);
     }
     //we are not sure here if it is a filepath or an url; we need an url though
@@ -153,22 +171,11 @@ void MasterCatalogModel::addCatalog(const QString &inpath)
         if ( item.first == url){
             _currentUrl = url;
             emit resourcesChanged();
-            return;
+            return url;
         }
 
     }
-    QUrl location(url);
-    Resource res(location, itCATALOGVIEW ) ;
-    QStringList lst;
-    lst << ((url.indexOf("http://") == 0) ? res.container().toString() : url);
-    res.addProperty("locations", lst);
-    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-    res.addProperty("filter","");
-    CatalogView cview(res);
-    _activeCatalogs[url] =new CatalogModel(cview,0, this);
-    _currentUrl = url;
-    emit resourcesChanged();
-
+    return url;
 }
 
 QString MasterCatalogModel::getDrive(quint32 index){
@@ -211,7 +218,7 @@ void MasterCatalogModel::deleteBookmark(quint32 index){
 void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QString& description){
     if ( std::find(_bookmarkedList.begin(), _bookmarkedList.end(), _currentUrl) != _bookmarkedList.end()){
         if ( _activeCatalogs.find(_currentUrl) != _activeCatalogs.end()){
-        CatalogModel *model = _activeCatalogs[_currentUrl];
+            CatalogModel *model = _activeCatalogs[_currentUrl];
             model->setDisplayName(displayName);
             model->resourceRef().setDescription(description);
         }

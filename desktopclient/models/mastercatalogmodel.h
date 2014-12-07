@@ -39,6 +39,7 @@ public:
     QString currentUrl() const;
 
     Q_INVOKABLE  void addCatalog(const QString& path);
+    Q_INVOKABLE QString changeCatalog(const QString &inpath);
     Q_INVOKABLE QStringList driveList() const;
     Q_INVOKABLE QString getDrive(quint32 index);
     Q_INVOKABLE void addBookmark(const QString &path);
