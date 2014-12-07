@@ -7,12 +7,6 @@ import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
 
-//Rectangle {
-//    width: 200
-//    height: 162
-//    color : "yellow"
-//}
-
 Rectangle {
     id : tabPanel
 

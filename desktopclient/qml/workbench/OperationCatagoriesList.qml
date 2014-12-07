@@ -34,6 +34,7 @@ Item {
                 width : parent.width
                 height : parent.height
                 parent : keylistdelegate.expandableArea
+                byKey : true
 
                 Connections{
                     target : operList
