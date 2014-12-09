@@ -91,6 +91,7 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
     if ( index < _bookmarkedList.size()){
         _currentUrl = _bookmarkedList[index];
         mastercatalog()->addContainer(QUrl(_currentUrl));
+        context()->setWorkingCatalog(ICatalog(_currentUrl));
          emit resourcesChanged();
     }
 }
@@ -101,6 +102,7 @@ void MasterCatalogModel::setSelectedIndex(const QString& path)
     if ( _root){
         _currentList = resources();
         mastercatalog()->addContainer(QUrl(_currentUrl));
+        context()->setWorkingCatalog(ICatalog(_currentUrl));
         emit resourcesChanged();
     }
 }
