@@ -25,6 +25,8 @@ private:
     static void getPolygonVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
     static void getLineVertices(const ICoordinateSystem &csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
     static void getPointVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
+
+    static IlwisTesselator _tesselator;
 };
 }
 }
