@@ -135,6 +135,10 @@ QVariant AttributeDefinition::checkInput(const QVariant& inputVar, quint32 colum
     QVariant actualval= inputVar;
     const ColumnDefinition& coldef = columndefinitionRef(columnIndex);
     QString typenm = inputVar.typeName();
+    if ( !coldef.datadef().domain<>().isValid()){
+        ERROR2(ERR_NO_INITIALIZED_2,"Domain",coldef.name());
+        return QVariant();
+    }
     IlwisTypes domtype = coldef.datadef().domain<>()->ilwisType();
     IlwisTypes valueType = coldef.datadef().domain<>()->valueType();
     IDomain dm = coldef.datadef().domain<>();
