@@ -6,6 +6,7 @@
 #include "drawerfactory.h"
 #include "rootdrawer.h"
 #include "featurelayerdrawer.h"
+#include "tesselation/ilwistesselator.h"
 #include "openglhelper.h"
 
 using namespace Ilwis;
@@ -76,6 +77,8 @@ bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& op
     for(int i =0; i < _indices.size(); ++i){
         if ( _indices[i]._geomtype == itLINE){
             glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
+        } else if ( _indices[i]._geomtype == itPOLYGON ){
+            glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
         }
     }
 
