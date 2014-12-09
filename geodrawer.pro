@@ -40,7 +40,15 @@ SOURCES += \
     geodrawer/drawerfactory.cpp \
     geodrawer/linedrawer.cpp \
     geodrawer/drawerinterface.cpp \
-    geodrawer/openglhelper.cpp
+    geodrawer/openglhelper.cpp \
+    geodrawer/tesselation/bucketalloc.c \
+    geodrawer/tesselation/dict.c \
+    geodrawer/tesselation/geom.c \
+    geodrawer/tesselation/mesh.c \
+    geodrawer/tesselation/priorityq.c \
+    geodrawer/tesselation/sweep.c \
+    geodrawer/tesselation/tess.c \
+    geodrawer/tesselation/ilwistesselator.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -56,7 +64,17 @@ HEADERS += \
     geodrawer/featurelayerdrawer.h \
     geodrawer/drawerfactory.h \
     geodrawer/linedrawer.h \
-    geodrawer/openglhelper.h
+    geodrawer/openglhelper.h \
+    geodrawer/tesselation/bucketalloc.h \
+    geodrawer/tesselation/dict.h \
+    geodrawer/tesselation/geom.h \
+    geodrawer/tesselation/glfw3.h \
+    geodrawer/tesselation/mesh.h \
+    geodrawer/tesselation/priorityq.h \
+    geodrawer/tesselation/sweep.h \
+    geodrawer/tesselation/tess.h \
+    geodrawer/tesselation/tesselator.h \
+    geodrawer/tesselation/ilwistesselator.h
 
 OTHER_FILES = geodrawer/qmldir
 
