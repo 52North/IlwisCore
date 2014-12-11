@@ -448,6 +448,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "GeodeticDatum";
     case  itCATALOG:
         return "Catalog";
+    case  itREPRESENTATION:
+        return "Representation";
     case  itOPERATIONMETADATA:
         return "OperationMetaData";
     }
@@ -528,7 +530,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itOPERATIONMETADATA;
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
-
+    if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
+        return  itREPRESENTATION;
     // standard c++ types
     if ( name.compare( "int",Qt::CaseInsensitive) == 0)
         return  itINT32;
