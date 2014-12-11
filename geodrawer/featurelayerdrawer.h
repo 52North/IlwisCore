@@ -18,6 +18,7 @@ public:
 
 private:
     std::vector<VertexIndex> _indices;
+    quint32 _boundaryIndex = iUNDEF;
 
     bool draw(QOpenGLContext *openglContext, const IOOptions &options);
 };
