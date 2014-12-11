@@ -1,0 +1,2 @@
+CODE,DOMAIN,TYPE,DEFINITION,DESCRIPTION
+grey,numeric,continuouscolor,0:255|0|0|0|1|255|255|255|1,grey representation for numerical values
