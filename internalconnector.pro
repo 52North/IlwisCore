@@ -28,7 +28,8 @@ HEADERS += \
     internalconnector/internalcatalogexplorer.h \
     internalconnector/internalgeoreferenceconnector.h \
     internalconnector/internaldomain.h \
-    internalconnector/internalcoordinatesystemconnector.h
+    internalconnector/internalcoordinatesystemconnector.h \
+    internalconnector/internalrepresentation.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -42,7 +43,8 @@ SOURCES += \
     internalconnector/internalcatalogexplorer.cpp \
     internalconnector/internalgeoreferenceconnector.cpp \
     internalconnector/internaldomain.cpp \
-    internalconnector/internalcoordinatesystemconnector.cpp
+    internalconnector/internalcoordinatesystemconnector.cpp \
+    internalconnector/internalrepresentation.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json
