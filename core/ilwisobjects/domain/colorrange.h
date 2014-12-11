@@ -6,7 +6,11 @@
 namespace Ilwis{
 
 class ColorItem;
+class DomainItem;
+class Domain;
 typedef QSharedPointer<ColorItem> SPColorItem;
+typedef QSharedPointer<DomainItem> SPDomainItem;
+typedef IlwisData<Domain> IDomain;
 
 struct KERNELSHARED_EXPORT LocalColor {
     quint8 _component1=0;
@@ -39,10 +43,10 @@ private:
 
 };
 
-class KERNELSHARED_EXPORT ContinousColorRange  : public Range, public ColorRangeBase{
+class KERNELSHARED_EXPORT ContinuousColorRange  : public Range, public ColorRangeBase{
 public:
-    ContinousColorRange();
-    ContinousColorRange(const QColor& clr1, const QColor& clr2=QColor("#FFFFFF"), ColorModel colormodel=ColorRangeBase::cmRGBA);
+    ContinuousColorRange();
+    ContinuousColorRange(const QColor& clr1, const QColor& clr2=QColor("#FFFFFF"), ColorModel colormodel=ColorRangeBase::cmRGBA);
     bool isValid() const;
     QString toString() const;
     Range *clone() const;
@@ -51,9 +55,11 @@ public:
     bool contains(const Range *v, bool inclusive = true) const;
     QVariant impliedValue(const QVariant& v) const;
     IlwisTypes valueType() const;
-    static QColor valueAt(quint32& index, const Ilwis::Range *rng);
-    static QString valueAsString(quint32 &index, const Range *rng);
+    static QColor valueAt(double &index, const Ilwis::Range *rng);
+    static QString valueAsString(double &index, const Range *rng);
     quint32 count() const;
+    QColor limitColor1() const;
+    QColor limitColor2() const;
     void add(const QVariant& v);
     void store(QDataStream& stream);
     void load(QDataStream& stream);
