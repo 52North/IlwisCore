@@ -52,6 +52,14 @@ double NumericRange::distance() const
     return std::abs(_max - _min);
 }
 
+double NumericRange::center() const
+{
+    if ( !isValid())
+        return rUNDEF;
+
+    return (_min + _max) / 2.0;
+}
+
 void NumericRange::add(const QVariant &number)
 {
     if ( contains(number))
