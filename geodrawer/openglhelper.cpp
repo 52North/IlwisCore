@@ -20,32 +20,50 @@ OpenGLHelper::OpenGLHelper()
 }
 
 
-void OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
+void OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
+                               const ICoordinateSystem& csyGeom,
+                               const Ilwis::UPGeometry &geometry,
+                               Raw objectid,
+                               std::vector<VertexPosition> &points,
+                               std::vector<VertexIndex> &indices,
+                               quint32& boundaryIndex)
 {
     IlwisTypes tp =  GeometryHelper::geometryType(geometry.get());
     switch( tp)     {
         case itPOLYGON:
-            getPolygonVertices(csyRoot, csyGeom, geometry, points, indices);break;
+            getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, indices);
+            boundaryIndex = indices.size();
+            getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itLINE:
-            getLineVertices(csyRoot, csyGeom,geometry, points, indices); break;
+            getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itPOINT:
-            getPointVertices(csyRoot, csyGeom,geometry, points, indices); break;\
+            getPointVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;\
         default:
             break;
     }
 }
 
-void OpenGLHelper::getPolygonVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom,const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices){
+void OpenGLHelper::getPolygonVertices(const ICoordinateSystem& csyRoot,
+                                      const ICoordinateSystem& csyGeom,
+                                      const Ilwis::UPGeometry &geometry,
+                                      Raw objectid,
+                                      std::vector<VertexPosition> &points,
+                                      std::vector<VertexIndex> &indices){
     int n = geometry->getNumGeometries();
     for(int  geom = 0; geom < n; ++geom ){
         const geos::geom::Geometry *subgeom = geometry->getGeometryN(geom);
         if (!subgeom)
             continue;
-        _tesselator.tesselate(csyRoot,csyGeom, subgeom,points, indices);
+        _tesselator.tesselate(csyRoot,csyGeom, subgeom,objectid, points, indices);
     }
 }
 
-void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices){
+void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot,
+                                   const ICoordinateSystem& csyGeom,
+                                   const Ilwis::UPGeometry &geometry,
+                                   Raw objectid,
+                                   std::vector<VertexPosition> &points,
+                                   std::vector<VertexIndex> &indices){
 
     int n = geometry->getNumGeometries();
     for(int  geom = 0; geom < n; ++geom ){
@@ -54,7 +72,7 @@ void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot, const ICoor
             continue;
         auto *coords = subgeom->getCoordinates();
         quint32 oldend = points.size();
-        indices.push_back(VertexIndex(oldend, coords->size(), itLINE));
+        indices.push_back(VertexIndex(oldend, coords->size(), itLINE, objectid));
         points.resize(oldend + coords->size());
         bool conversionNeeded = csyRoot != csyGeom;
         Coordinate crd;
@@ -70,6 +88,6 @@ void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot, const ICoor
 
 }
 
-void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices){
+void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices){
 
 }
