@@ -22,6 +22,12 @@ struct VertexPosition {
     VertexPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
 
     float _x=0,_y=0,_z=0;
+
+};
+
+struct VertexColor {
+    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _r(r), _g(g), _b(b), _a(a){}
+    float _r=0, _g=0, _b=0, _a=1.0;
 };
 
 struct DrawColor {
@@ -32,10 +38,11 @@ struct DrawColor {
 };
 
 struct VertexIndex {
-    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0) : _start(start), _count(count), _geomtype(geomType){}
+    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, Raw vid=iUNDEF) : _start(start), _count(count), _geomtype(geomType), _objectid(vid){}
     quint32 _start;
     quint32 _count;
     IlwisTypes _geomtype;
+    Raw _objectid = iUNDEF;
 };
 
 class RootDrawer;
