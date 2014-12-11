@@ -99,6 +99,7 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/ilwisobjects/coverage \
                 $$ILWISCORE/core/ilwisobjects/table \
                 $$ILWISCORE/core/ilwisobjects/operation \
+                $$ILWISCORE/core/ilwisobjects/representation \
                 $$ILWISCORE/core/catalog \
                 $$ILWISCORE/core/ilwisobjects/domain \
                 $$ILWISCORE \
