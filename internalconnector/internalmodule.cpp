@@ -28,6 +28,7 @@
 #include "internalgeoreferenceconnector.h"
 #include "internaldomain.h"
 #include "internalcoordinatesystemconnector.h"
+#include "internalrepresentation.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -58,6 +59,7 @@ void InternalModule::prepare()
     factory->addCreator(itGEOREF,"internal", InternalGeoReferenceConnector::create);
     factory->addCreator(itDOMAIN,"internal", InternalDomainConnector::create);
     factory->addCreator(itCOORDSYSTEM,"internal", InternalCoordinatesystemConnector::create);
+    factory->addCreator(itREPRESENTATION,"internal", InternalRepresentationConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();
@@ -69,6 +71,7 @@ void InternalModule::prepare()
     ok &= createItems(db,"ellipsoid", itELLIPSOID);
     ok &= createItems(db,"datum", itGEODETICDATUM);
     ok &= createItems(db,"numericdomain", itNUMERICDOMAIN);
+    ok &= createItems(db,"representation", itREPRESENTATION);
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
@@ -145,7 +148,7 @@ bool InternalModule::createPcs(QSqlQuery& db) {
             resource.code(code);
             resource.name(name, false);
             resource["wkt"] = name;
-            resource.addContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://internalcatalog"));
             items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
@@ -173,7 +176,7 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
             resource.code(code);
             resource.setExtendedType(extType);
             resource.setDescription(rec.value("description").toString());
-            resource.addContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://internalcatalog"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
                 resource["wkt"] = wkt;
