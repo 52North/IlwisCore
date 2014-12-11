@@ -25,12 +25,11 @@ public:
 
      void cleanUp();
 protected:
-    bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices);
-    GLuint _vbo;
-    GLuint _vbi;
+    bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices, const std::vector<VertexColor> &colors);
+    GLuint _vboPosition;
+    GLuint _vboColor;
     QOpenGLShaderProgram _shaders;
 
-    bool draw(QOpenGLContext *openglContext, const IOOptions &options=IOOptions()) ;
 private:
     UPDrawingColor _drawingColor;
 
