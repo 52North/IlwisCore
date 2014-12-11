@@ -77,6 +77,9 @@ void PublicDatabase::prepare() {
     stmt = "create table numericdomain (  code TEXT, minv REAL, maxv REAL, resolution REAL,resolution_strict INTEGER, range_strict INTEGER,unit TEXT, parent TEXT,description TEXT)";
     doQuery(stmt, sql);
 
+    stmt = "create table representation (  code TEXT, valuetype TEXT, representationtype TEXT, definition TEXT, description TEXT)";
+    doQuery(stmt, sql);
+
     stmt = "create table mastercatalog \
             (\
                 itemid INTEGER,\
@@ -155,9 +158,9 @@ void PublicDatabase::loadPublicTables() {
     insertFile("numericdomains.csv",sqlPublic);
     insertFile("filters.csv",sqlPublic);
     insertFile("codes_with_latlon_order.csv",sqlPublic);
+    insertFile("representations.csv", sqlPublic);
     insertProj4Epsg(sqlPublic);
 }
-
 void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
     auto basePath = context()->ilwisFolder().absoluteFilePath() + "/resources";
     QFileInfo info(basePath + "/epsg.pcs");
@@ -254,10 +257,26 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
             ok = fillFiltersRecord(parts, sqlPublic);
         else if ( filename == "codes_with_latlon_order.csv")
             ok = fillEpsgWithLatLonAxesOrderRecord(parts, sqlPublic);
+        else if ( filename == "representations.csv"){
+            ok = fillRepresentationRecord(parts, sqlPublic);
+        }
         if (!ok)
             return ;
     }
 
+}
+
+bool PublicDatabase::fillRepresentationRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
+    if ( parts.size() == 5) {
+        QString parms = QString("'%1','%2','%3','%4','%5'").arg(parts[0],parts[1],parts[2], parts[3],parts[4]);
+        QString stmt = QString("INSERT INTO representation VALUES(%1)").arg(parms);
+        if(!doQuery(stmt, sqlPublic))
+            return false;
+        stmt = QString("INSERT INTO codes VALUES('%1', 'representation')").arg(parts[0]);
+        return doQuery(stmt, sqlPublic);
+    }
+    kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("representations.csv"),IssueObject::itCritical);
+    return false;
 }
 
 bool PublicDatabase::fillValueDomainRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
