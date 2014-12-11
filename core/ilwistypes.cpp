@@ -47,6 +47,9 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Catalog");
     case  itOPERATIONMETADATA:
         return TR("OperationMetaData");
+    case  itREPRESENTATION:
+        return TR("Representation");
+
         // nonilwisobjects
     case itENVELOPE:
         return TR("Envelope");
