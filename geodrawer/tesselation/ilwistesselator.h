@@ -11,11 +11,11 @@ class IlwisTesselator
 public:
     IlwisTesselator();
     ~IlwisTesselator();
-    void tesselate(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom,const geos::geom::Geometry *geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
 
+    void tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
 private:
    std::vector<std::vector<float>> getContours(const geos::geom::Geometry *geometry,const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom);
-   void tesselateInternal(const std::vector<std::vector<float>>& contours,std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
+   void tesselateInternal(const std::vector<std::vector<float>>& contours, Raw objectid,std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
 
     TESStesselator *_tessaltor = 0;
     TESSalloc _ma;

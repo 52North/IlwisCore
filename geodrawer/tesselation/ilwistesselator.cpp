@@ -47,11 +47,11 @@ IlwisTesselator::~IlwisTesselator()
     tessDeleteTess(_tessaltor);
 }
 
-void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
+void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
 {
     tessReinitialize(_tessaltor);
     std::vector<std::vector<float> > contours = getContours(geometry, csyRoot, csyGeom);
-    tesselateInternal(contours,points, indices);
+    tesselateInternal(contours,objectid, points, indices);
 }
 
 std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::Geometry *geometry,const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom)
@@ -93,7 +93,7 @@ std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::
     return contours;
 }
 
-void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
+void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
 {
 
     quint32 maxVerts = 0;
@@ -115,10 +115,10 @@ void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &
         const int* p = &elems[i*maxVerts];
         quint32 oldend = points.size();
         for (int j = 0; j < maxVerts && p[j] != TESS_UNDEF; ++j){
-            VertexPosition pos(verts[p[j]*2], verts[p[j]*2+1],verts[p[j]*2+2]);
+            VertexPosition pos(verts[p[j]*2], verts[p[j]*2+1]);
             points.push_back(pos);
         }
-        indices.push_back(VertexIndex(oldend,points.size() - oldend, itPOLYGON));
+        indices.push_back(VertexIndex(oldend,points.size() - oldend, itPOLYGON, objectid));
     }
 
 }
