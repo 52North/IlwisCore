@@ -45,6 +45,8 @@
 #include "internalrastercoverageconnector.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "colorlookup.h"
+#include "representation.h"
 #include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
@@ -86,6 +88,46 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createFeatureCoverage(resource,options);
     } else if ( resource.ilwisType() & itCATALOG) {
         return createCatalog(resource,options);
+    } else if ( resource.ilwisType() & itREPRESENTATION) {
+        return createRepresentation(resource,options);
+    }
+    return 0;
+}
+
+IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& resource, const IOOptions &options) const{
+    QString code = resource.code();
+    if ( code != sUNDEF) {
+
+        QSqlQuery db(kernel()->database());
+        QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
+        if (db.exec(query)) {
+            if ( db.next()){
+                QString table = db.value(0).toString();
+                if ( table == "representation"){
+                    query = QString("Select * from representation where code='%1'").arg(code);
+                    if (db.exec(query)) {
+                        if ( db.next()){
+                            QSqlRecord rec = db.record();
+                            Representation *rpr = new Representation(resource);
+
+                            rpr->fromInternal(rec);
+                            QString valueType = rec.field("valuetype").value().toString();
+                            QString rprType = rec.field("representationtype").value().toString();
+                            QString  definition = rec.field("definition").value().toString();
+                            if ( rprType == "continuouscolor"){
+                                ContinuousLookUp *lookup = new ContinuousLookUp(definition);
+                                rpr->colors(lookup);
+                            }
+                            if ( valueType == "numeric"){
+                                rpr->domain(IDomain("value"));
+                            }
+                            rpr->readOnly(true);
+                            return rpr;
+                        }
+                    }
+                }
+            }
+        }
     }
     return 0;
 }
@@ -349,7 +391,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
 
     if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color") {
         ColorDomain *dm = new ColorDomain(resource);
-        ContinousColorRange *rng = new ContinousColorRange(QColor("#000000"), QColor("#FFFFFF"));
+        ContinuousColorRange *rng = new ContinuousColorRange(QColor("#000000"), QColor("#FFFFFF"));
         dm->range(rng);
         return dm;
     }else if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "colorpalette") {
