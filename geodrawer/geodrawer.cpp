@@ -51,6 +51,7 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
     if ( !drawer)
         return;
 
+    coverage->loadData(); // loaddata now so that all attribute info( ranges) is known; we need to load the data anyway.
     drawer->coverage(coverage);
     Size<> sz(width(), height(), 1);
     _rootDrawer->pixelAreaSize(sz);
