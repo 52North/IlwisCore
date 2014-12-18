@@ -26,8 +26,9 @@ struct VertexPosition {
 };
 
 struct VertexColor {
-    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _r(r), _g(g), _b(b), _a(a){}
-    float _r=0, _g=0, _b=0, _a=1.0;
+    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _c1(r), _c2(g), _c3(b), _c4(a){}
+    VertexColor(const QColor& clr) : _c1(clr.redF()), _c2(clr.greenF()), _c3(clr.blueF()), _c4(clr.alphaF()) {}
+    float _c1=0, _c2=0, _c3=0, _c4=1.0;
 };
 
 struct DrawColor {
