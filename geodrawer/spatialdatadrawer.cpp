@@ -2,6 +2,9 @@
 #include "table.h"
 #include "featurecoverage.h"
 #include "feature.h"
+#include "colorlookup.h"
+#include "representation.h"
+#include "attributevisualproperties.h"
 #include "spatialdatadrawer.h"
 
 using namespace Ilwis;
@@ -9,11 +12,6 @@ using namespace Geodrawer;
 
 SpatialDataDrawer::SpatialDataDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : ComplexDrawer(name, parentDrawer, rootdrawer)
 {
-}
-
-void SpatialDataDrawer::setCoverage(const ICoverage &coverage)
-{
-    _coverage = coverage;
 }
 
 std::vector<double> SpatialDataDrawer::numericAttributeValues(const QString &attribute) const
@@ -36,29 +34,6 @@ std::vector<double> SpatialDataDrawer::numericAttributeValues(const QString &att
     return std::vector<double>();
 }
 
-NumericRange SpatialDataDrawer::stretchRange()
-{
-    if ( _stretchRange.isValid()){
-        return _stretchRange;
-    }
-    return NumericRange();
-}
-
-void SpatialDataDrawer::stretchRange(const NumericRange &numrange)
-{
-    _stretchRange = numrange;
-}
-
-bool SpatialDataDrawer::isStretched() const
-{
-    return _stretched;
-}
-
-void SpatialDataDrawer::stretched(bool yesno)
-{
-    _stretched = yesno;
-}
-
 ICoverage SpatialDataDrawer::coverage() const
 {
     return _coverage;
@@ -79,5 +54,20 @@ void SpatialDataDrawer::envelope(const Envelope &env)
 {
     _envelope = env;
 }
+
+AttributeVisualProperties SpatialDataDrawer::attribute(const QString &attrName) const
+{
+    auto iter = _visualProperties.find(attrName)    ;
+    if ( iter != _visualProperties.end())
+        return iter->second;
+    return AttributeVisualProperties();
+}
+
+void SpatialDataDrawer::attribute(const QString &attrName, const AttributeVisualProperties &properties)
+{
+    _visualProperties[attrName] = properties;
+}
+
+
 
 
