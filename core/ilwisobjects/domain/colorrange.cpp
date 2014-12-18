@@ -332,14 +332,18 @@ QColor ContinuousColorRange::valueAt(double& index, const Range *rng)
     if ( !colors)
         return QColor();
 
-    int delta = std::abs(colors->limitColor1().red() - colors->limitColor2().red());
-    int red = colors->limitColor1().red() + delta * index;
-    delta = std::abs(colors->limitColor1().green() - colors->limitColor2().green());
-    int green = colors->limitColor1().green() + delta * index;
-    delta = std::abs(colors->limitColor1().blue() - colors->limitColor2().blue());
-    int blue = colors->limitColor1().blue() + delta * index;
-    delta = std::abs(colors->limitColor1().alpha() - colors->limitColor2().alpha());
-    int alpha = colors->limitColor1().alpha() + delta * index;
+    int delta = colors->limitColor1().red() - colors->limitColor2().red();
+    int red = std::max(0.0,std::min(255.0,colors->limitColor1().red() + delta * index));
+    delta = colors->limitColor1().green() - colors->limitColor2().green();
+    int green = std::max(0.0,std::min(255.0,colors->limitColor1().green() + delta * index));
+    delta = colors->limitColor1().blue() - colors->limitColor2().blue();
+    int blue = std::max(0.0,std::min(255.0,colors->limitColor1().blue() + delta * index));
+    delta = colors->limitColor1().alpha() - colors->limitColor2().alpha();
+    int alpha = std::max(0.0,std::min(255.0,colors->limitColor1().alpha() + delta * index));
+
+//    if ( red > 255 || green > 255 || blue > 255){
+//        qDebug() << "stop";
+//    }
 
     return QColor(red,green,blue, alpha);
 
