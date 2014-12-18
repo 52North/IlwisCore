@@ -1,2 +1,4 @@
-CODE,DOMAIN,TYPE,DEFINITION,DESCRIPTION
-grey,numeric,continuouscolor,0:255|0|0|0|1|255|255|255|1,grey representation for numerical values
+CODE,RELATEDDOMAIN,TYPE,DEFINITION,DESCRIPTION
+grey,value,continuouscolor,0:1|#000000|1|#FFFFFF|1,grey representation for numerical values
+monochromeblack,value,continuouscolor,0:1|#000000|1|#000000|1,monochrome black for numerical values
+pseudo,value,continuouscolor,0:0.2|#ff4040|1|#ff8000|1;0.2:0.3|#ff8000|1|#80ff00|1;0.3:0.45|#80ff00|1|#00ff80|1;0.45:0.6|#00ff80|1|#0088ff|1;0.6:0.8|#0088ff|1|#4040ff|1;0.8:1.0|#4040ff|1|#8000ff|1,Pseudo color representation for value domains
