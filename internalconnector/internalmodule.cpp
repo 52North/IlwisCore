@@ -70,7 +70,7 @@ void InternalModule::prepare()
     bool ok = createItems(db,"projection", itPROJECTION);
     ok &= createItems(db,"ellipsoid", itELLIPSOID);
     ok &= createItems(db,"datum", itGEODETICDATUM);
-    ok &= createItems(db,"numericdomain", itNUMERICDOMAIN);
+    ok &= createItems(db,"numericdomain", itNUMERICDOMAIN, "domain");
     ok &= createItems(db,"representation", itREPRESENTATION);
     ok &= createPcs(db);
     ok &= createSpecialDomains();
@@ -158,17 +158,18 @@ bool InternalModule::createPcs(QSqlQuery& db) {
     return false;
 }
 
-bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes type) {
-    QString query = QString("Select * from %1").arg(table);
+bool InternalModule::createItems(QSqlQuery& db, const QString& sqltable, IlwisTypes type, const QString internalname) {
+    QString query = QString("Select * from %1").arg(sqltable);
     if ( db.exec(query)) {
         std::vector<Resource> items;
         while (db.next()) {
             QSqlRecord rec = db.record();
             QString code = rec.value("code").toString();
             IlwisTypes extType = rec.value("extendedtype").toLongLong();
+            QString table = internalname == "" ? sqltable : internalname;
             QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
             Resource resource(url, type);
-            if ( type == itNUMERICDOMAIN) // for valuedomain name=code
+            if ( hasType(type, itNUMERICDOMAIN | itREPRESENTATION)) // for valuedomain name=code
                 resource.name(rec.value("code").toString(), false);
             else
                 resource.name(rec.value("name").toString(), false);
@@ -179,7 +180,10 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
             resource.addContainer(QUrl("ilwis://internalcatalog"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
-                resource["wkt"] = wkt;
+                resource.addProperty("wkt",wkt);
+            QString domname = rec.value("relateddomain").toString();
+            if ( domname != "" && domname != sUNDEF)
+                resource.addProperty("relateddomain", domname);
             items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
