@@ -288,6 +288,7 @@ public:
      * \return url that is sufficient to find the target
      */
     virtual bool store(const IOOptions& options = IOOptions());
+    virtual bool loadData(const IOOptions &options = IOOptions());
 
     /*!
      connectTo allocates a connector of a certain format to the ilwisobject.

@@ -223,8 +223,8 @@ QString IlwisObject::externalFormat() const
 
 void IlwisObject::readOnly(bool yesno)
 {
-
-    _readOnly = yesno;
+    if (!isSystemObject())
+        _readOnly = yesno;
 }
 
 bool IlwisObject::hasChanged() const
@@ -234,6 +234,9 @@ bool IlwisObject::hasChanged() const
 
 void IlwisObject::changed(bool yesno)
 {
+    if ( isReadOnly() || isSystemObject())
+        return;
+
     _modifiedTime = Time::now();
     _changed = yesno;
 }
@@ -401,6 +404,16 @@ bool IlwisObject::store(const IOOptions &options)
     }
 
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+}
+
+bool IlwisObject::loadData(const IOOptions& options)
+{
+    if ( connector().isNull())
+        return false;
+    if ( connector()->dataIsLoaded())
+        return false;
+    return connector()->loadData(this, options);
+
 }
 
 //------ statics ----------------------------------------------
