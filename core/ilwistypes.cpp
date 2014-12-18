@@ -185,6 +185,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("catalog");
     case  itOPERATIONMETADATA:
         return TR("operationmetatadata");
+    case itREPRESENTATION:
+        return TR("representation");
         // nonilwisobjects
     case itENVELOPE:
         return TR("envelope");
