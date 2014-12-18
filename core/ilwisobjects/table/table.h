@@ -9,6 +9,8 @@
 
 namespace Ilwis {
 
+class ColumnDefinition;
+
 static const quint32 NEW_RECORD=1e9;
 
 /*!
