@@ -12,9 +12,16 @@ class FeatureLayerDrawer : public LayerDrawer
 public:
     FeatureLayerDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+
+    void setActiveAttribute(const QString& attr);
+    void coverage(const ICoverage &cov);
+    ICoverage coverage() const;
+
     static DrawerInterface *create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer);
 
+
     NEW_DRAWER
+
 
 private:
     std::vector<VertexIndex> _indices;

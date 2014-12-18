@@ -5,13 +5,15 @@
 #include "drawingcolor.h"
 #include "drawerfactory.h"
 #include "rootdrawer.h"
-#include "featurelayerdrawer.h"
-#include "tesselation/ilwistesselator.h"
+#include "table.h"
 #include "range.h"
 #include "itemrange.h"
 #include "colorrange.h"
 #include "colorlookup.h"
 #include "representation.h"
+#include "attributevisualproperties.h"
+#include "featurelayerdrawer.h"
+#include "tesselation/ilwistesselator.h"
 #include "openglhelper.h"
 
 using namespace Ilwis;
@@ -31,8 +33,6 @@ DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootD
 
 bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
-    IRepresentation rpr("code=rpr:grey");
-
     if(!LayerDrawer::prepare(prepType, options, openglContext))
         return false;
 
@@ -47,9 +47,18 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         if ( !features.isValid()){
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
+        AttributeVisualProperties attr = attribute(activeAttribute());
+        int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
         for(const SPFeatureI& feature : features){
-            OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
-            //OpenGLHelper::getColors(feature->featureid(),_indices, colors);
+            quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
+            for(int i =0; i < noOfVertices; ++i){
+               QColor clr = attr.value2color(feature(activeAttribute()));
+            //   if ( i % 2 == 0)
+                colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+            //   else
+               // colors.push_back(VertexColor(1,0.5,0.75,1));
+            }
+
         }
 
 
@@ -62,6 +71,56 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
 
     return true;
 }
+
+void FeatureLayerDrawer::setActiveAttribute(const QString &attr)
+{
+    IFeatureCoverage features = coverage().as<FeatureCoverage>();
+    if ( features.isValid())    {
+        if ( features->attributeDefinitions().columnIndex(attr) != iUNDEF){
+
+            IRepresentation newrpr = Representation::defaultRepresentation(features->attributeDefinitions().columndefinition(attr).datadef().domain());
+            if ( newrpr.isValid()){
+                LayerDrawer::setActiveAttribute(attr);
+            }
+        }
+    }
+}
+
+void FeatureLayerDrawer::coverage(const ICoverage &cov)
+{
+    LayerDrawer::coverage(cov);
+    setActiveAttribute(sUNDEF);
+    IFeatureCoverage features = coverage().as<FeatureCoverage>();
+
+    for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
+        IlwisTypes attrType = features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType();
+        if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN)){
+            AttributeVisualProperties props(features->attributeDefinitions().columndefinition(i).datadef().domain());
+            if ( attrType == itNUMERICDOMAIN){
+                SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
+                props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
+            }
+            attribute(features->attributeDefinitions().columndefinition(i).name(), props);
+            // try to find a reasonable default for the activeattribute
+            if ( activeAttribute() == sUNDEF){
+                if ( features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF){
+                    setActiveAttribute(FEATUREVALUECOLUMN);
+                }else if ( features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN) != iUNDEF){
+                    setActiveAttribute(COVERAGEKEYCOLUMN);
+                }
+                else if ( hasType(features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType(), itNUMERICDOMAIN)){
+                    setActiveAttribute(features->attributeDefinitions().columndefinition(i).name());
+                }
+            }
+        }
+    }
+}
+
+ICoverage FeatureLayerDrawer::coverage() const
+{
+    return SpatialDataDrawer::coverage();
+}
+
 
 bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& options) {
     if ( !openglContext){
