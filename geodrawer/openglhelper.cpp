@@ -20,7 +20,7 @@ OpenGLHelper::OpenGLHelper()
 }
 
 
-void OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
+quint32 OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
                                const ICoordinateSystem& csyGeom,
                                const Ilwis::UPGeometry &geometry,
                                Raw objectid,
@@ -28,8 +28,10 @@ void OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
                                std::vector<VertexIndex> &indices,
                                quint32& boundaryIndex)
 {
+    quint32 oldNumberOfVertices = points.size();
     IlwisTypes tp =  GeometryHelper::geometryType(geometry.get());
-    switch( tp)     {
+
+       switch( tp)     {
         case itPOLYGON:
             getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, indices);
             boundaryIndex = indices.size();
@@ -41,6 +43,8 @@ void OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
         default:
             break;
     }
+    return points.size() - oldNumberOfVertices;
+
 }
 
 void OpenGLHelper::getPolygonVertices(const ICoordinateSystem& csyRoot,
