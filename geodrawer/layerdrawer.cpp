@@ -1,4 +1,10 @@
 #include "coverage.h"
+#include "range.h"
+#include "itemrange.h"
+#include "colorrange.h"
+#include "colorlookup.h"
+#include "representation.h"
+#include "attributevisualproperties.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include <QtGui/QOpenGLContext>
@@ -80,17 +86,14 @@ bool LayerDrawer::initGeometry(QOpenGLContext *openglContext, const std::vector<
     return true;
 }
 
-
-void LayerDrawer::setCoverage(const ICoverage &coverage)
+QString LayerDrawer::activeAttribute() const
 {
-    SpatialDataDrawer::setCoverage(coverage);
-    // TODO initialize drawing color here
-    _drawingColor.reset(new DrawingColor(this));
+    return _activeAttribute;
 }
 
-UPDrawingColor &LayerDrawer::drawingColor()
+void LayerDrawer::setActiveAttribute(const QString &attr)
 {
-    return _drawingColor;
+    _activeAttribute = attr;
 }
 
 void LayerDrawer::cleanUp()

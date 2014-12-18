@@ -3,6 +3,8 @@
 
 #include <QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
+#include "colorlookup.h"
+#include "representation.h"
 #include "spatialdatadrawer.h"
 
 class QOpenGLShaderProgram;
@@ -19,19 +21,19 @@ public:
     LayerDrawer(const QString& name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
-    void setCoverage(const ICoverage& coverage);
 
-    UPDrawingColor& drawingColor();
+    void cleanUp();
+    QString activeAttribute() const;
 
-     void cleanUp();
 protected:
     bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices, const std::vector<VertexColor> &colors);
+    virtual void setActiveAttribute(const QString& attr);
     GLuint _vboPosition;
     GLuint _vboColor;
     QOpenGLShaderProgram _shaders;
 
 private:
-    UPDrawingColor _drawingColor;
+    QString _activeAttribute = sUNDEF;
 
 
     bool initShaders();
