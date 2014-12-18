@@ -77,7 +77,7 @@ void PublicDatabase::prepare() {
     stmt = "create table numericdomain (  code TEXT, minv REAL, maxv REAL, resolution REAL,resolution_strict INTEGER, range_strict INTEGER,unit TEXT, parent TEXT,description TEXT)";
     doQuery(stmt, sql);
 
-    stmt = "create table representation (  code TEXT, valuetype TEXT, representationtype TEXT, definition TEXT, description TEXT)";
+    stmt = "create table representation (  code TEXT, relateddomain TEXT, representationtype TEXT, definition TEXT, description TEXT)";
     doQuery(stmt, sql);
 
     stmt = "create table mastercatalog \
