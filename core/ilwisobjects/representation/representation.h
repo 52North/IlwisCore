@@ -6,6 +6,9 @@ namespace Ilwis {
 class ColorLookup;
 typedef std::unique_ptr<ColorLookUp> UPColorLookUp;
 
+class Domain;
+typedef IlwisData<Domain> IDomain;
+
 class KERNELSHARED_EXPORT Representation : public IlwisObject
 {
 public:
@@ -17,9 +20,10 @@ public:
     IDomain domain() const;
     void domain(const IDomain& domain);
 
-
-
+    bool isCompatible(const IDomain& otherDomain);
     IlwisTypes ilwisType() const;
+
+    static IlwisData<Representation> defaultRepresentation(const Ilwis::IDomain &dom);
 
 private:
     UPColorLookUp _colors;
