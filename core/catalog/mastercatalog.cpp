@@ -365,7 +365,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
-        return QString("ilwis://internalcatalog/%1").arg(name);
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://tables/domain?code=%1").arg(shortname);
     }else if ( name.left(12) == "code=georef:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://internalcatalog/%1").arg(shortname);
@@ -374,8 +375,9 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://internalcatalog/%1").arg(shortname);
     }else if ( name.left(9) == "code=rpr:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
-        return QString("ilwis://internalcatalog/%1").arg(shortname);
+        return QString("ilwis://tables/representation?code=%1").arg(shortname);
     }
+    QString tt =  name.left(12);
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
         if ( resolvedName != sUNDEF)
