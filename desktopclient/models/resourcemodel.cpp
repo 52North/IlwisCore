@@ -161,6 +161,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "numbers20.png";
     else if ( tp & itSTRING)
         return "text20.png";
+    else if ( tp & itREPRESENTATION)
+        return "representation20.png";
     else
         return "eye.png";
 }
@@ -296,6 +298,8 @@ void ResourceModel::resource(const Ilwis::Resource& res)
                 _imagePath = "table.jpg";
             else if ( hasType(item.ilwisType(), itDOMAIN))
                 _imagePath = "domainn.png";
+            else if ( hasType(item.ilwisType(), itREPRESENTATION))
+                _imagePath = "representation20.png";
             else
                 _imagePath = "blank.png";
         }
