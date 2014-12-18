@@ -46,6 +46,8 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "colorlookup.h"
+#include "continuouscolorlookup.h"
+#include "palettecolorlookup.h"
 #include "representation.h"
 #include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
@@ -111,14 +113,14 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                             Representation *rpr = new Representation(resource);
 
                             rpr->fromInternal(rec);
-                            QString valueType = rec.field("valuetype").value().toString();
+                            QString relateddomain = rec.field("relateddomain").value().toString();
                             QString rprType = rec.field("representationtype").value().toString();
                             QString  definition = rec.field("definition").value().toString();
                             if ( rprType == "continuouscolor"){
-                                ContinuousLookUp *lookup = new ContinuousLookUp(definition);
+                                ContinuousColorLookup *lookup = new ContinuousColorLookup(definition);
                                 rpr->colors(lookup);
                             }
-                            if ( valueType == "numeric"){
+                            if ( relateddomain == "value"){
                                 rpr->domain(IDomain("value"));
                             }
                             rpr->readOnly(true);
@@ -219,6 +221,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Ellipsoid();
     case itOPERATIONMETADATA:
         return new OperationMetaData();
+    case itREPRESENTATION:
+        return new Representation();
     }
     if ( type & itFEATURE)
         return new FeatureCoverage();
@@ -251,6 +255,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itFEATURE) {
         return true;
     } else if ( resource.ilwisType() & itCATALOG) {
+        return true;
+    }  else if ( resource.ilwisType() & itREPRESENTATION) {
         return true;
     }
 
