@@ -4,7 +4,7 @@
 
 using namespace Ilwis;
 
-NumericRange::NumericRange() : _min(0), _max(-1),_resolution(0) {
+NumericRange::NumericRange() : _min(1e300), _max(-1),_resolution(0) {
 
 }
 NumericRange::NumericRange(double mi, double ma, double step) : _resolution(step), _undefined(rUNDEF) {
@@ -62,8 +62,6 @@ double NumericRange::center() const
 
 void NumericRange::add(const QVariant &number)
 {
-    if ( contains(number))
-        return;
     bool ok;
     double value = number.toDouble(&ok);
     if (!ok || isNumericalUndef(value))
