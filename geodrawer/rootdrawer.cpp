@@ -72,7 +72,7 @@ void RootDrawer::envelopeView(const Envelope &viewRect, bool overrule)
                 deltay = viewRect.ylength() * ( pixwidth / viewRect.xlength() - 1.0); // we need to reduce the ysize else the coverage goes outside the window
                 pixwidth = _pixelAreaSize.xsize(); // pixelwidth becomes the max available number of pix in x
             }
-            double fracofWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / _pixelAreaSize.xsize(); // fraction of the width of pixarea actually used
+            double fracofWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / _pixelAreaSize.xsize(); // fraction of the width of _pixelArea actually used
             double crdWidth = w / fracofWidth; // the actual width used in coordinates (x)
             double delta = (crdWidth - w) / 2.0; // the difference between the requested view width and the realized view width
             // new extent of the viewrectangle (coords)
@@ -95,19 +95,65 @@ void RootDrawer::envelopeView(const Envelope &viewRect, bool overrule)
         _zoomRect = _viewRect;
         viewPoint(_viewRect.center(), true);
 
-        _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
-        _mvp = _model * _view * _projection;
+        setMVP();
     }
+}
+
+void RootDrawer::setMVP()
+{
+    _projection.setToIdentity();
+    _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
+    _mvp = _model * _view * _projection;
 }
 
 void RootDrawer::pixelAreaSize(const Size<> size)
 {
+    _aspectRatioView = (double)size.xsize() / (double)size.ysize();
+    if ( _aspectRatioCoverage != 0 && !_viewRect.isNull() && !_zoomRect.isNull()){
+        if ( _aspectRatioCoverage <= 1.0){
+            if ( size.xsize() != _pixelAreaSize.xsize()){
+                modifyEnvelopeZoomView(_viewRect.size().xsize(), _zoomRect.size().xsize(),(double)size.xsize() / _pixelAreaSize.xsize());
+            }
+            if ( size.ysize() != _pixelAreaSize.ysize()) { // make sure the zoomsize is changed if the cols change
+                //modify_zoomRectView(_viewRect.size().xsize()(), _zoomRect.size().xsize()(),(double)_pixelAreaSize.ysize() / size.ysize());
+                modifyEnvelopeZoomView(_viewRect.size().xsize(), _zoomRect.size().xsize(), (double)_pixelAreaSize.ysize() / (double)size.ysize() );
+            }
+
+        } else { // x < y
+            if ( size.ysize() != _pixelAreaSize.ysize()){
+                modifyEnvelopeZoomView(_viewRect.size().ysize(), _zoomRect.size().ysize(),(double)size.ysize() / _pixelAreaSize.ysize() );
+
+            }
+            if ( size.xsize() != _pixelAreaSize.xsize()) {
+                modifyEnvelopeZoomView(_viewRect.size().ysize(), _zoomRect.size().ysize(),(double)_pixelAreaSize.xsize() / size.xsize() );
+            }
+        }
+
+    }
+    setMVP();
     _pixelAreaSize = size;
 }
 
 Size<> RootDrawer::pixelAreaSize() const
 {
     return _pixelAreaSize;
+}
+
+void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio) {
+    double deltaview = dview * ratio;
+    double deltazoom = dzoom * ratio;
+    Coordinate cMiddle = _zoomRect.center();
+    if ( _aspectRatioCoverage <= 1.0) {
+        _viewRect.min_corner().x = cMiddle.x - deltaview / 2.0;
+        _viewRect.max_corner().x = cMiddle.x + deltaview / 2.0;
+        _zoomRect.min_corner().x = cMiddle.x - deltazoom / 2.0;
+        _zoomRect.max_corner().x = cMiddle.x + deltazoom / 2.0;
+    } else {
+        _viewRect.min_corner().y = cMiddle.y - deltaview / 2.0;
+        _viewRect.max_corner().y = cMiddle.y + deltaview / 2.0;
+        _zoomRect.min_corner().y = cMiddle.y - deltazoom / 2.0;
+        _zoomRect.max_corner().y = cMiddle.y + deltazoom / 2.0;
+    }
 }
 
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
@@ -138,6 +184,11 @@ void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
 void RootDrawer::cleanUp()
 {
 
+}
+
+bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+{
+    ComplexDrawer::prepare(prepType, options, openglContext)    ;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)

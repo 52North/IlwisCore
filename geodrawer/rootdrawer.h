@@ -34,6 +34,8 @@ public:
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
+    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+
 signals:
 
 public slots:
@@ -45,13 +47,16 @@ private:
     Envelope _viewRect; // extent of the whole area that is covered by the visualization. this might be bigger than the map due to the aspect ratio of the map
     Envelope _coverageRect; // extent of coverage without any additional area
     Size<> _pixelAreaSize; // size of the area in the viewRect in pixels
-    double _aspectRatioCoverage; //ration between width/height of the coverage. determines how sides of a map will size in reaction to size changes
+    double _aspectRatioCoverage = 0; //ration between width/height of the coverage. determines how sides of a map will size in reaction to size changes
+    double _aspectRatioView = 0;
     Coordinate _viewPoint;
     Coordinate _eyePoint;
 
     bool _useGeoref = false;
 
     Envelope envelope2RootEnvelope(const ICoordinateSystem& csSource, const Envelope& env);
+    void modifyEnvelopeZoomView(double dv, double dz, double f);
+    void setMVP();
 };
 
 typedef std::unique_ptr<RootDrawer> UPRootDrawer;
