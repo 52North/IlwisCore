@@ -63,28 +63,35 @@ Rectangle {
         width : parent.width
         anchors.bottom: parent.bottom
 
+        onCurrentIndexChanged: {
+            console.debug(currentIndex)
+        }
+
         id : tabs
-            function showObject(objectid){
-                var component = Qt.createComponent("visualization/Visualize.qml")
-                var resource = mastercatalog.id2Resource(objectid)
-                if ( resource !== null){
-                    var name = resource.displayName
-                    var blocksize = 24 / 2;
-                    if ( name.length > 15){
-                        var part1 = name.substr(0,blocksize)
-                        var part2 = name.substr( name.length - blocksize)
-                        name = part1 + "..." + part2
-                    }
-                    var tab = addTab(name,component)
-                    var visPanel = component.createObject(tab, {"sourceUrl" : resource.url, "sourceType" : resource.typeName})
-                    currentIndex++
-                    transitionInfoPane("Visualization.qml")
+        function showObject(objectid){
+            var component = Qt.createComponent("visualization/Visualize.qml")
+            var resource = mastercatalog.id2Resource(objectid)
+            if ( resource !== null){
+                var name = resource.displayName
+                var blocksize = 24 / 2;
+                if ( name.length > 15){
+                    var part1 = name.substr(0,blocksize)
+                    var part2 = name.substr( name.length - blocksize)
+                    name = part1 + "..." + part2
                 }
+                console.debug("a")
+                var tab = addTab(name,component)
+                tab.active = true
+                tab.item.sourceType = resource.typeName
+                tab.item.sourceUrl = resource.url
+                currentIndex++
+                transitionInfoPane("Visualization.qml")
             }
+        }
 
-            function objectSelected(objectid){
+        function objectSelected(objectid){
 
-            }
+        }
 
            Tab {
             id : catalog_0
