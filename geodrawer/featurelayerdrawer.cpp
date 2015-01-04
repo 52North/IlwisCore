@@ -53,10 +53,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
             for(int i =0; i < noOfVertices; ++i){
                QColor clr = attr.value2color(feature(activeAttribute()));
-            //   if ( i % 2 == 0)
-                colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
-            //   else
-               // colors.push_back(VertexColor(1,0.5,0.75,1));
+               colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
             }
 
         }
