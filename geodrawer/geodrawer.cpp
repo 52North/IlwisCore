@@ -15,12 +15,16 @@ GeoDrawer::GeoDrawer(QQuickItem *parent):
     QQuickItem(parent)
 {
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
-    _rootDrawer = new Ilwis::Geodrawer::RootDrawer(this);
-
 }
 
 void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
 {
+    if ( url == "" || typeName == "")
+        return;
+
+    if ( !_rootDrawer)
+         _rootDrawer = new Ilwis::Geodrawer::RootDrawer(this);
+
     IlwisTypes tp = Ilwis::IlwisObject::name2Type(typeName);
     if ( tp == itUNKNOWN)
         return;
@@ -91,7 +95,7 @@ void GeoDrawer::paint()
         int heightWindow = window()->contentItem()->height();
         _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,0));
         QPointF pointInLocalCS(x(), y());
-        QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
+         QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
         int yb = heightWindow - h - pointInWindowCS.y() + pointInLocalCS.y();
         glViewport(pointInWindowCS.x() - pointInLocalCS.x(), yb, w, h);
         _rootDrawer->draw(window()->openglContext());
@@ -120,6 +124,8 @@ void GeoDrawer::sync()
 {
     _rootDrawer->active(isVisible());
 }
+
+
 
 
 
