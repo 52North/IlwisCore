@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "uicontextmodel.h"
 #include "visualizationmanager.h"
 #include "objectvisualizationmodel.h"
 
@@ -11,16 +12,14 @@ ObjectVisualizationModel::ObjectVisualizationModel(const Ilwis::Resource &resour
 
 }
 
-void ObjectVisualizationModel::setEditors(const VisualizationManager &manager)
+void ObjectVisualizationModel::setEditors()
 {
-    _propertyEditor = manager.propertyEditors(item().ilwisType());
+   std::map<QString, CreatePropertyEditor> editors = uicontext()->propertyEditors(item().ilwisType());
+   for(auto creator: editors){
+        PropertyEditor *editor = creator.second(this, IOOptions());
+        if ( editor)
+            _propertyEditors[editor->name()] = editor;
+   }
 
 }
 
-QList<QString> ObjectVisualizationModel::properties() const {
-    QList<QString> properties;
-    for(auto property : _propertyEditor)    {
-        properties.append(property.second);
-    }
-    return properties;
-}

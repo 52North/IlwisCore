@@ -3,22 +3,23 @@
 
 #include <QQmlListProperty>
 #include "resourcemodel.h"
+#include "propertyeditor.h"
 
 class VisualizationManager;
+class PropertyEditor;
 
 class ObjectVisualizationModel : public ResourceModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QList<QString> properties READ properties CONSTANT)
 public:
     ObjectVisualizationModel();
     ObjectVisualizationModel(const Ilwis::Resource& resource, QObject *obj=0);
 
-    void setEditors(const VisualizationManager& manager);
-    std::map<QString, QString> _propertyEditor;
+private:
+    void setEditors();
+    std::map<QString, PropertyEditor *> _propertyEditors;
 
-    QList<QString> properties() const;
 };
 
 typedef QQmlListProperty<ObjectVisualizationModel> QMLObjectVisualizationList;

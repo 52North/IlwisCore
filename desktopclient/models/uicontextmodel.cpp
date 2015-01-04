@@ -1,27 +1,43 @@
 #include "kernel.h"
+
 #include "uicontextmodel.h"
+
+std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
 }
 
-void UIContextModel::currentKey(int keycode)
+std::map<QString, CreatePropertyEditor> UIContextModel::propertyEditors(quint64 objecttype) const
 {
-    _currentKey = keycode;
-    if ( keycode == Qt::Key_Control || keycode == Qt::Key_Shift){
-        _activeModifierKey = keycode;
+    auto iter = _propertyEditors.find(objecttype);
+    if ( iter != _propertyEditors.end()){
+        return (*iter).second;
     }
-
+    return std::map<QString, CreatePropertyEditor>();
 }
 
-int UIContextModel::currentKey() const
+void UIContextModel::init()
 {
-    return _currentKey;
+
 }
 
-int UIContextModel::modifierKey() const
+void UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, CreatePropertyEditor createFunction)
 {
-    return _activeModifierKey;
+    auto iter = _propertyEditors.find(objecttype);
+    if ( iter == _propertyEditors.end()){
+            _propertyEditors[objecttype][propertyName] = createFunction;
+    }
 }
 
+
+
+std::unique_ptr<UIContextModel>& uicontext() {
+    if ( UIContextModel::_uicontext.get() == 0) {
+        UIContextModel::_uicontext.reset( new UIContextModel());
+        UIContextModel::_uicontext->init();
+
+    }
+    return UIContextModel::_uicontext;
+}
