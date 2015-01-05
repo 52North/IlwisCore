@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
+import ".." as Base
 import "catalog" as Catalog
 
 
@@ -68,6 +69,9 @@ Rectangle {
         }
 
         id : tabs
+
+        style: Base.TabStyle1{}
+
         function showObject(objectid){
             var component = Qt.createComponent("visualization/Visualize.qml")
             var resource = mastercatalog.id2Resource(objectid)
@@ -79,13 +83,11 @@ Rectangle {
                     var part2 = name.substr( name.length - blocksize)
                     name = part1 + "..." + part2
                 }
-                console.debug("a")
                 var tab = addTab(name,component)
                 tab.active = true
                 tab.item.sourceType = resource.typeName
                 tab.item.sourceUrl = resource.url
                 currentIndex++
-                transitionInfoPane("Visualization.qml")
             }
         }
 
