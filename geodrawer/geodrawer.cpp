@@ -5,7 +5,6 @@
 #include <QtGui/QOpenGLContext>
 #include "rootdrawer.h"
 #include "layerdrawer.h"
-#include "complexdrawer.h"
 #include "drawingcolor.h"
 #include "drawerfactory.h"
 
@@ -95,9 +94,11 @@ void GeoDrawer::paint()
         int heightWindow = window()->contentItem()->height();
         _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,0));
         QPointF pointInLocalCS(x(), y());
-         QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
+        QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
         int yb = heightWindow - h - pointInWindowCS.y() + pointInLocalCS.y();
         glViewport(pointInWindowCS.x() - pointInLocalCS.x(), yb, w, h);
+
+        _rootDrawer->prepare(Geodrawer::DrawerInterface::ptALL,IOOptions(),window()->openglContext());
         _rootDrawer->draw(window()->openglContext());
 
         glViewport(0,0,w, h);
