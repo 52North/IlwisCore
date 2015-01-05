@@ -21,6 +21,10 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType,  const IOOptions &)
     return true;
 }
 
+void BaseDrawer::unprepare(DrawerInterface::PreparationType )
+{
+}
+
 bool BaseDrawer::isPrepared(quint32 type) const
 {
     return hasType(_prepared, type);

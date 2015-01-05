@@ -60,6 +60,7 @@ public:
 
     virtual bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) = 0;
     virtual bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0) = 0;
+    virtual void unprepare(PreparationType prepType) = 0;
     virtual bool isPrepared(quint32 type=ptALL) const = 0;
 
     virtual RootDrawer* rootDrawer() = 0;

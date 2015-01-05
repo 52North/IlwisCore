@@ -17,6 +17,7 @@ public:
     enum Containment { cINSIDE, cOUTSIDE, cUNKNOWN};
 
     bool prepare(DrawerInterface::PreparationType, const IOOptions&);
+    void unprepare(PreparationType prepType);
     bool isPrepared(quint32 type=ptALL) const;
     bool draw(QOpenGLContext *, const IOOptions&) const;
 

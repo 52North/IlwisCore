@@ -30,19 +30,32 @@ bool ComplexDrawer::draw(QOpenGLContext *openglContext, const IOOptions &options
 bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
     for( auto& drawer : _preDrawers)    {
-        if (!drawer.second->prepare(prepType, options))
+        if (!drawer.second->prepare(prepType, options,openglContext))
             return false;
     }
     for( auto& drawer : _mainDrawers){
-        if (!drawer->prepare(prepType, options))
+        if (!drawer->prepare(prepType, options, openglContext))
             return false;
     }
     for( auto& drawer : _postDrawers)    {
-        if (!drawer.second->prepare(prepType, options))
+        if (!drawer.second->prepare(prepType, options, openglContext))
             return false;
     }
     return true;
 
+}
+
+void ComplexDrawer::unprepare(DrawerInterface::PreparationType prepType)
+{
+    for( auto& drawer : _preDrawers)    {
+        drawer.second->unprepare(prepType);
+    }
+    for( auto& drawer : _mainDrawers){
+        drawer->unprepare(prepType);
+    }
+    for( auto& drawer : _postDrawers)    {
+        drawer.second->unprepare(prepType);
+    }
 }
 
 bool ComplexDrawer::prepareChildDrawers(DrawerInterface::PreparationType prepType, const IOOptions &options)

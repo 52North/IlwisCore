@@ -21,6 +21,7 @@ public:
 
     bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) ;
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext = 0);
+    void unprepare(PreparationType prepType);
     bool prepareChildDrawers(PreparationType prepType, const IOOptions& options);
 
     quint32 drawerCount(ComplexDrawer::DrawerType tpe) const;
