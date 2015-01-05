@@ -64,13 +64,6 @@ Rectangle {
     }
 
     Action {
-        id :visualizerClicked
-        onTriggered: {
-            transitionInfoPane("Visualization.qml")
-        }
-    }
-
-    Action {
         id :minButtons
         onTriggered: {
             buttonB.width = 0
@@ -117,11 +110,6 @@ Rectangle {
             id : modeller
             action: modellerClicked
             iconname : "modellerCS1.png"
-        }
-        WorkBenchButton{
-            id : visualize
-            action: visualizerClicked
-            iconname : "visualizationCS1.png"
         }
         WorkBenchButton{
             id : prop
