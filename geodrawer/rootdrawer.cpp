@@ -14,9 +14,6 @@ RootDrawer::RootDrawer(QObject *parent) : ComplexDrawer("RootDrawer",0,0, parent
 {
     valid(true);
 
-    // for testing
-    //_projection.ortho(-2.0, 2.0,-2.0,2.0, -1, 1);
-    //_mvp = _model * _view * _projection;
 }
 
 void RootDrawer::addDrawer(DrawerInterface *newdrawer, bool overrule)
@@ -104,6 +101,9 @@ void RootDrawer::setMVP()
     _projection.setToIdentity();
     _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
     _mvp = _model * _view * _projection;
+    //qDebug() << _zoomRect.min_corner().x << _zoomRect.max_corner().x << _zoomRect.center().x << _coverageRect.min_corner().x << _coverageRect.max_corner().x << _coverageRect.center().x;
+
+    unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
 
 void RootDrawer::pixelAreaSize(const Size<> size)
@@ -188,7 +188,7 @@ void RootDrawer::cleanUp()
 
 bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
-    ComplexDrawer::prepare(prepType, options, openglContext)    ;
+    return ComplexDrawer::prepare(prepType, options, openglContext)    ;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)
