@@ -36,7 +36,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
     if(!LayerDrawer::prepare(prepType, options, openglContext))
         return false;
 
-    if ( hasType(prepType, DrawerInterface::ptGEOMETRY)){
+    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         std::vector<VertexPosition> vertices;
         std::vector<VertexColor> colors;
 
@@ -48,7 +48,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
         AttributeVisualProperties attr = attribute(activeAttribute());
-        int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
+        //int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
         for(const SPFeatureI& feature : features){
             quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
             for(int i =0; i < noOfVertices; ++i){
@@ -67,6 +67,15 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
     }
 
     return true;
+}
+
+void FeatureLayerDrawer::unprepare(DrawerInterface::PreparationType prepType)
+{
+    LayerDrawer::unprepare(prepType);
+
+    if ( hasType(prepType, DrawerInterface::ptGEOMETRY))    {
+        _prepared &= ~ ptGEOMETRY;
+    }
 }
 
 void FeatureLayerDrawer::setActiveAttribute(const QString &attr)
@@ -119,7 +128,7 @@ ICoverage FeatureLayerDrawer::coverage() const
 }
 
 
-bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& options) {
+bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions&) {
     if ( !openglContext){
         return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
     }
@@ -127,11 +136,10 @@ bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions& op
     if ( !isActive())
         return false;
 
-    if (!isPrepared(DrawerInterface::ptGEOMETRY)){
-        if (!prepare(DrawerInterface::ptGEOMETRY, options, openglContext)){
-            return false;
-        }
+    if (!isPrepared()){
+        return false;
     }
+
     _shaders.bind();
 
     openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboPosition);
