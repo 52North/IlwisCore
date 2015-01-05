@@ -21,41 +21,61 @@ LayerDrawer::LayerDrawer(const QString& name, DrawerInterface *parentDrawer, Roo
 
 bool LayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
-
-
     if(!initShaders())
         return false;
+
+    if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP)){
+
+        _shaders.bind();
+        _shaders.setUniformValue("mvp",rootDrawer()->mvpMatrix());
+        _shaders.enableAttributeArray("mvp");
+
+        _prepared |= DrawerInterface::ptMVP;
+        _shaders.release();
+    }
+
     return SpatialDataDrawer::prepare(prepType, options);
 
 }
 
+void LayerDrawer::unprepare(DrawerInterface::PreparationType prepType)
+{
+    SpatialDataDrawer::unprepare(prepType);
+
+    if ( hasType(prepType, DrawerInterface::ptMVP))    {
+        _prepared &= ~ ptMVP;
+    }
+}
+
 bool LayerDrawer::initShaders() {
 
-    _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                            "attribute highp vec4 position;"
-                                            "uniform mat4 mvp;"
-                                            "attribute lowp vec4 vertexColor;"
-                                            "varying lowp vec4 fragmentColor;"
-                                            "void main() {"
-                                            "    gl_Position =  mvp * position;"
-                                            "    fragmentColor = vertexColor;"
-                                            "}");
-    _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                            "varying lowp vec4 fragmentColor;"
-                                            "void main() {"
-                                            "    gl_FragColor = fragmentColor;"
-                                            "}");
+    if ( _shaders.shaders().size() == 0){
+        _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
+                                         "attribute highp vec4 position;"
+                                         "uniform mat4 mvp;"
+                                         "attribute lowp vec4 vertexColor;"
+                                         "varying lowp vec4 fragmentColor;"
+                                         "void main() {"
+                                         "    gl_Position =  mvp * position;"
+                                         "    fragmentColor = vertexColor;"
+                                         "}");
+        _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
+                                         "varying lowp vec4 fragmentColor;"
+                                         "void main() {"
+                                         "    gl_FragColor = fragmentColor;"
+                                         "}");
 
 
 
 
 
-    _shaders.bindAttributeLocation("aVertices", 0);
-    if(!_shaders.link()){
-       return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
-    }
-    if (!_shaders.bind()){
-        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
+        //_shaders.bindAttributeLocation("aVertices", 0);
+        if(!_shaders.link()){
+            return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
+        }
+        if (!_shaders.bind()){
+            return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
+        }
     }
 
     return true;
@@ -65,11 +85,6 @@ bool LayerDrawer::initGeometry(QOpenGLContext *openglContext, const std::vector<
     if ( !openglContext){
         return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
     }
-
-    _shaders.setUniformValue("mvp",rootDrawer()->mvpMatrix());
-
-    _shaders.enableAttributeArray("mvp");
-
 
     openglContext->functions()->glGenBuffers (1, &_vboPosition);
     openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboPosition);

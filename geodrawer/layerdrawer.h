@@ -21,6 +21,7 @@ public:
     LayerDrawer(const QString& name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+    void unprepare(PreparationType prepType);
 
     void cleanUp();
     QString activeAttribute() const;
