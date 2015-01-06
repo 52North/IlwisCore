@@ -28,8 +28,8 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
     if ( tp == itUNKNOWN)
         return;
 
-    for(auto resource : _datasources)    {
-        if ( resource.url().toString() == url && resource.ilwisType() == tp)
+    for(ResourceModel *resource : _datasources)    {
+        if ( resource->url() == url && resource->type() == tp)
             return;
     }
 
@@ -44,7 +44,7 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
         return ;
     }
 
-    _datasources.push_back(resource);
+    _datasources.push_back(new ResourceModel(resource,this));
     ICoverage coverage(resource);
     if ( !coverage.isValid()){
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
@@ -61,6 +61,11 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
     if ( _rootDrawer->drawerCount(Geodrawer::ComplexDrawer::dtMAIN) == 0)
         _rootDrawer->coordinateSystem(coverage->coordinateSystem());
     _rootDrawer->addDrawer(drawer,false);
+}
+
+QQmlListProperty<ResourceModel> GeoDrawer::layers()
+{
+    return QQmlListProperty<ResourceModel>(this, _datasources);
 }
 
 GeoDrawer::~GeoDrawer()
