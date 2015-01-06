@@ -41,32 +41,17 @@ QML_IMPORT_PATH =
 # MOBILITY +=
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += desktopclient/main.cpp \
-    desktopclient/ilwistype.cpp \
-    desktopclient/models/resourcemodel.cpp \
-    desktopclient/models/catalogmodel.cpp \
-    desktopclient/models/mastercatalogmodel.cpp \
-    desktopclient/models/operationcatalogmodel.cpp \
-    desktopclient/models/operationmodel.cpp \
-    desktopclient/applicationformexpressionparser.cpp \
-    desktopclient/models/usermessagehandler.cpp \
-    desktopclient/models/tranquilizerhandler.cpp \
-    desktopclient/models/objectvisualizationmodel.cpp \
-    desktopclient/models/visualizationmanager.cpp \
-    desktopclient/models/ilwisobjectmodel.cpp \
-    desktopclient/models/attributemodel.cpp \
-    desktopclient/models/domainitemmodel.cpp \
-    desktopclient/models/operationsbykeymodel.cpp \
-    desktopclient/models/uicontextmodel.cpp \
-    desktopclient/models/propertyeditor.cpp
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
 INCLUDEPATH += $$PWD/../ilwiscore/core
 DEPENDPATH += $$PWD/../ilwiscore/core
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
+INCLUDEPATH += $$PWD/../ilwiscore/core
+DEPENDPATH += $$PWD/../ilwiscore/core
+INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
+DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
 
 INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
                 ../ilwiscore/core/ilwisobjects/geometry \
@@ -80,6 +65,8 @@ INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
                 ../ilwiscore/core/ilwisobjects/operation \
                 ../ilwiscore/core/catalog \
                 ../ilwiscore/core/ilwisobjects/domain \
+                ../ilwiscore/ilwiscoreui \
+                ../ilwiscore/ilwiscoreui/models \
                 $$BOOST
 
 OTHER_FILES += \
@@ -97,30 +84,20 @@ OTHER_FILES += \
     desktopclient/qml/workbench/propertyform/GeoreferencePart.qml
 
 
-HEADERS += \
-    desktopclient/ilwistype.h \
-    desktopclient/models/resourcemodel.h \
-    desktopclient/models/catalogmodel.h \
-    desktopclient/models/mastercatalogmodel.h \
-    desktopclient/models/operationcatalogmodel.h \
-    desktopclient/models/operationmodel.h \
-    desktopclient/applicationformexpressionparser.h \
-    desktopclient/models/usermessagehandler.h \
-    desktopclient/models/tranquilizerhandler.h \
-    desktopclient/models/objectvisualizationmodel.h \
-    desktopclient/models/visualizationmanager.h \
-    desktopclient/models/ilwisobjectmodel.h \
-    desktopclient/models/attributemodel.h \
-    desktopclient/models/domainitemmodel.h \
-    desktopclient/models/operationsbykeymodel.h \
-    desktopclient/models/uicontextmodel.h \
-    desktopclient/models/propertyeditor.h
-
 # Installation path
 
 
 # Please do not modify the following two lines. Required for deployment.
 qtcAddDeployment()
+
+HEADERS += \
+    desktopclient/applicationformexpressionparser.h \
+    desktopclient/ilwistype.h
+
+SOURCES += \
+    desktopclient/applicationformexpressionparser.cpp \
+    desktopclient/ilwistype.cpp \
+    desktopclient/main.cpp
 
 
 
