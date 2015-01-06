@@ -3,6 +3,8 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
+import "../../controls" as Controls
+import "../../Global.js" as Global
 import GeoDrawer 1.0
 
 Item {
@@ -10,6 +12,7 @@ Item {
 
     function addSource(sourceUrl, sourceType){
         drawer.addDataSource(sourceUrl, sourceType)
+        layertools.model = drawer.layers
     }
 
     SplitView {
@@ -20,6 +23,23 @@ Item {
             id : layertools
             width : 170
             height : parent.height
+            delegate: Controls.CollapsiblePanel{
+                id : layersdelegate
+                width : parent.width
+                titleText: name
+                headerHeight: 20
+                panelHeight: 200
+                state : "collapsed"
+                headerColor: Global.alternatecolor1
+
+                Rectangle{
+                    width : parent.width
+                    height : parent.height
+                    color : "red"
+                    parent : layersdelegate.expandableArea
+                }
+            }
+            clip : true
 
 
         }
