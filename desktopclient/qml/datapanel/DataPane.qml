@@ -85,8 +85,7 @@ Rectangle {
                 }
                 var tab = addTab(name,component)
                 tab.active = true
-                tab.item.sourceType = resource.typeName
-                tab.item.sourceUrl = resource.url
+                tab.item.addSource(resource.url, resource.typeName)
                 currentIndex++
             }
         }
