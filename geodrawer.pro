@@ -86,9 +86,16 @@ INCLUDEPATH += $$PWD/$$ILWISCORE/core
 DEPENDPATH += $$PWD/$$ILWISCORE/core
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
+INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
+DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
+
+INCLUDEPATH +=  core/ilwisobjects/domain \
+                ilwiscoreui \
+                ilwiscoreui\models
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
 
 INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
