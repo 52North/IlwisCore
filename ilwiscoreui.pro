@@ -33,12 +33,12 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/operationcatalogmodel.h \
     ilwiscoreui/models/operationmodel.h \
     ilwiscoreui/models/operationsbykeymodel.h \
-    ilwiscoreui/models/propertyeditor.h \
     ilwiscoreui/models/resourcemodel.h \
     ilwiscoreui/models/tranquilizerhandler.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
-    ilwiscoreui/models/visualizationmanager.h
+    ilwiscoreui/models/visualizationmanager.h \
+    ilwiscoreui/models/propertyeditormetadata.h
 
 unix {
     target.path = /usr/lib
@@ -57,12 +57,12 @@ SOURCES += \
     ilwiscoreui/models/operationcatalogmodel.cpp \
     ilwiscoreui/models/operationmodel.cpp \
     ilwiscoreui/models/operationsbykeymodel.cpp \
-    ilwiscoreui/models/propertyeditor.cpp \
     ilwiscoreui/models/resourcemodel.cpp \
     ilwiscoreui/models/tranquilizerhandler.cpp \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
-    ilwiscoreui/models/visualizationmanager.cpp
+    ilwiscoreui/models/visualizationmanager.cpp \
+    ilwiscoreui/models/propertyeditormetadata.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
