@@ -2,42 +2,47 @@
 
 #include "uicontextmodel.h"
 
-std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
+quint64 UIContextModel::_objectCounter = 0;
 
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
 }
 
-std::map<QString, CreatePropertyEditor> UIContextModel::propertyEditors(quint64 objecttype) const
+VisualizationManager *UIContextModel::createVisualizationManager(const QString& objectName)
 {
+    QObject *object =_qmlcontext->findChild<QObject *>(objectName);
+    QObject *newparent = object == 0 ? this : object;
+    VisualizationManager *manager =  new VisualizationManager(newparent, this);
+
+    return manager;
+}
+
+QString UIContextModel::uniqueName()
+{
+    return "ilwis_ui_object_" + QString::number(_objectCounter++);
+}
+
+QList<PropertyEditorMetaData *> UIContextModel::propertyEditors(quint64 objecttype)
+{
+    QList<PropertyEditorMetaData *> editors;
     auto iter = _propertyEditors.find(objecttype);
     if ( iter != _propertyEditors.end()){
-        return (*iter).second;
+        for(const auto &editor : (*iter).second)    {
+            editors.append(editor.second);
+        }
     }
-    return std::map<QString, CreatePropertyEditor>();
+    return editors;
 }
 
-void UIContextModel::init()
+void UIContextModel::qmlContext(QQmlContext *ctx)
 {
-
+    _qmlcontext = ctx;
 }
 
-void UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, CreatePropertyEditor createFunction)
+void UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, const PropertyEditorMetaData& metadata)
 {
-    auto iter = _propertyEditors.find(objecttype);
-    if ( iter == _propertyEditors.end()){
-            _propertyEditors[objecttype][propertyName] = createFunction;
-    }
+    _propertyEditors[objecttype][propertyName] = new PropertyEditorMetaData(metadata, this);
 }
 
 
-
-std::unique_ptr<UIContextModel>& uicontext() {
-    if ( UIContextModel::_uicontext.get() == 0) {
-        UIContextModel::_uicontext.reset( new UIContextModel());
-        UIContextModel::_uicontext->init();
-
-    }
-    return UIContextModel::_uicontext;
-}
