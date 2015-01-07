@@ -26,6 +26,7 @@
 #include "models/domainitemmodel.h"
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
+#include "models/visualizationmanager.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
 
@@ -64,6 +65,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
+        qmlRegisterType<PropertyEditorMetaData>("PropertyEditorMetaData", 1,0, "PropertyEditorMetaData");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -72,23 +74,18 @@ int main(int argc, char *argv[])
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
-        VisualizationManager visualizationManager;
         UIContextModel uiContext;
+        uiContext.qmlContext(ctx);
 
-        //test
-        //visualizationManager.addPropertyEditor(itRASTER, "dummy","file:///h:/temp/test.qml");
-        //visualizationManager.addVisualizationModel(0,0, new ObjectVisualizationModel(Resource(TEST_WORKINGDIR + "GCL_INT__12.mpr", itRASTER)));
-       //visualizationManager.addVisualizationModel(0,1, new ObjectVisualizationModel(Resource(TEST_WORKINGDIR + "woredas.shp", itFEATURE)));
-        //visualizationManager.addVisualizationModel(0,2, new ObjectVisualizationModel(Resource(TEST_WORKINGDIR + "average_monthly_temperature_june_7.mpr", itRASTER)));
-
+        uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
+        uiContext.addPropertyEditor(itLINE,"Representation",PropertyEditorMetaData("Representation", QUrl("http://someurl22/barbar.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
-        ctx->setContextProperty("visualizationmanager", &visualizationManager);
-        ctx->setContextProperty("uitcontext", &uiContext);
+        ctx->setContextProperty("uicontext", &uiContext);
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
