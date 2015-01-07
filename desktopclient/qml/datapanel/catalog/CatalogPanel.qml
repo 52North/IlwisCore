@@ -24,6 +24,8 @@ Item {
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
             return name
+        if ( name === "")
+            name = "redbuttonr.png"
 
          var iconP = "../../images/" + name
          return iconP
