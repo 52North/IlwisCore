@@ -3,23 +3,29 @@
 
 #include <QQmlListProperty>
 #include "resourcemodel.h"
-#include "propertyeditor.h"
+#include "propertyeditormetadata.h"
 #include "ilwiscoreui_global.h"
 
 class VisualizationManager;
-class PropertyEditor;
 
 class ILWISCOREUISHARED_EXPORT ObjectVisualizationModel : public ResourceModel
 {
     Q_OBJECT
 
+    Q_PROPERTY(QQmlListProperty<PropertyEditorMetaData> propertyEditors READ propertyEditors NOTIFY propertyEditorChanged)
+
+
 public:
     ObjectVisualizationModel();
-    ObjectVisualizationModel(const Ilwis::Resource& resource, QObject *obj=0);
+    ObjectVisualizationModel(const Ilwis::Resource& resource, const QList<PropertyEditorMetaData *>& editors, QObject *obj=0);
+
 
 private:
-    void setEditors();
-    std::map<QString, PropertyEditor *> _propertyEditors;
+    QQmlListProperty<PropertyEditorMetaData> propertyEditors();
+    QList<PropertyEditorMetaData *> _propertyEditors;
+
+signals:
+    void propertyEditorChanged();
 
 };
 

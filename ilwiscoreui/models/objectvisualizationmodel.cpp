@@ -7,19 +7,14 @@ ObjectVisualizationModel::ObjectVisualizationModel()
 {
 }
 
-ObjectVisualizationModel::ObjectVisualizationModel(const Ilwis::Resource &resource, QObject *obj) : ResourceModel(resource, obj)
+ObjectVisualizationModel::ObjectVisualizationModel(const Ilwis::Resource &resource, const QList<PropertyEditorMetaData *> &editors, QObject *obj) : ResourceModel(resource, obj), _propertyEditors(editors)
 {
 
 }
 
-void ObjectVisualizationModel::setEditors()
+QQmlListProperty<PropertyEditorMetaData> ObjectVisualizationModel::propertyEditors()
 {
-   std::map<QString, CreatePropertyEditor> editors = uicontext()->propertyEditors(item().ilwisType());
-   for(auto creator: editors){
-        PropertyEditor *editor = creator.second(this, IOOptions());
-        if ( editor)
-            _propertyEditors[editor->name()] = editor;
-   }
-
+    return QQmlListProperty<PropertyEditorMetaData>(this, _propertyEditors);
 }
+
 
