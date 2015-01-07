@@ -19,13 +19,10 @@ class GeoDrawer : public QQuickItem
     Q_OBJECT
     Q_DISABLE_COPY(GeoDrawer)
 
-    Q_PROPERTY(QQmlListProperty<ResourceModel> layers READ layers NOTIFY layerChanged)
-
 public:
     GeoDrawer(QQuickItem *parent = 0);
 
     Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
-    QQmlListProperty<ResourceModel> layers();
     ~GeoDrawer();
 
 public slots:

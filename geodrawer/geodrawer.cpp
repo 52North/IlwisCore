@@ -63,11 +63,6 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
     _rootDrawer->addDrawer(drawer,false);
 }
 
-QQmlListProperty<ResourceModel> GeoDrawer::layers()
-{
-    return QQmlListProperty<ResourceModel>(this, _datasources);
-}
-
 GeoDrawer::~GeoDrawer()
 {
     cleanup();
