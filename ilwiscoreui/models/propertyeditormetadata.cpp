@@ -15,9 +15,9 @@ PropertyEditorMetaData::PropertyEditorMetaData(const PropertyEditorMetaData& met
     _qmlUrl = metadata._qmlUrl;
 }
 
-QUrl PropertyEditorMetaData::qmlUrl() const
+QString PropertyEditorMetaData::qmlUrl() const
 {
-    return _qmlUrl;
+    return _qmlUrl.toString();
 }
 
 QString PropertyEditorMetaData::editorName() const

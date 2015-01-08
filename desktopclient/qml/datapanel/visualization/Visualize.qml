@@ -54,12 +54,10 @@ Item {
                         panelHeight: 200
                         state : "collapsed"
                         headerColor: Global.alternatecolor3
-
-                        Rectangle{
-                            width : parent.width
-                            height : parent.height
-                            color : "red"
-                            parent : editorDelegate.expandableArea
+                        Component.onCompleted: {
+                            var component = Qt.createComponent("RepresentationSetter.qml");
+                            if (component.status == Component.Ready)
+                                component.createObject(editorDelegate.expandableArea);
                         }
                     }
                     clip : true
