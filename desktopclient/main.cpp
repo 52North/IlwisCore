@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
         UIContextModel uiContext;
         uiContext.qmlContext(ctx);
 
-        uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        uiContext.addPropertyEditor(itLINE,"Representation",PropertyEditorMetaData("Representation", QUrl("http://someurl22/barbar.qml")));
+        //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
+        uiContext.addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationSetter.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
