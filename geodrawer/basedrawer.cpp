@@ -1,5 +1,7 @@
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "basedrawer.h"
+#include "coordinatesystem.h"
 #include "rootdrawer.h"
 
 using namespace Ilwis;
@@ -19,12 +21,16 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType,  const IOOptions &)
     return true;
 }
 
+void BaseDrawer::unprepare(DrawerInterface::PreparationType )
+{
+}
+
 bool BaseDrawer::isPrepared(quint32 type) const
 {
     return hasType(_prepared, type);
 }
 
-bool BaseDrawer::draw(const IOOptions &) const
+bool BaseDrawer::draw(QOpenGLContext *, const IOOptions &) const
 {
     return false;
 }
@@ -122,6 +128,7 @@ void BaseDrawer::setDescription(const QString &desc)
 {
     return Identity::setDescription(desc);
 }
+
 
 
 

@@ -9,6 +9,8 @@
 #include "identityinterface.h"
 #include "iooptions.h"
 
+class QOpenGLContext;
+
 namespace Ilwis {
 
 class IOOptions;
@@ -20,6 +22,13 @@ struct VertexPosition {
     VertexPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
 
     float _x=0,_y=0,_z=0;
+
+};
+
+struct VertexColor {
+    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _c1(r), _c2(g), _c3(b), _c4(a){}
+    VertexColor(const QColor& clr) : _c1(clr.redF()), _c2(clr.greenF()), _c3(clr.blueF()), _c4(clr.alphaF()) {}
+    float _c1=0, _c2=0, _c3=0, _c4=1.0;
 };
 
 struct DrawColor {
@@ -29,6 +38,14 @@ struct DrawColor {
     float _red=0, _green=0, _blue=0, _alpha=1;
 };
 
+struct VertexIndex {
+    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, Raw vid=iUNDEF) : _start(start), _count(count), _geomtype(geomType), _objectid(vid){}
+    quint32 _start;
+    quint32 _count;
+    IlwisTypes _geomtype;
+    Raw _objectid = iUNDEF;
+};
+
 class RootDrawer;
 class DrawerInterface;
 
@@ -36,13 +53,14 @@ class DrawerInterface : public IdentityInterface{
 public:
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
-                         ptREDRAW=512,ptNEWCSY=1024,ptALL=4294967295};
+                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048, ptALL=4294967295};
 
     DrawerInterface();
     virtual ~DrawerInterface();
 
-    virtual bool draw(const IOOptions& options=IOOptions()) = 0;
-    virtual bool prepare(PreparationType prepType, const IOOptions& options) = 0;
+    virtual bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) = 0;
+    virtual bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0) = 0;
+    virtual void unprepare(PreparationType prepType) = 0;
     virtual bool isPrepared(quint32 type=ptALL) const = 0;
 
     virtual RootDrawer* rootDrawer() = 0;
@@ -61,17 +79,16 @@ public:
     virtual std::vector<VertexPosition>& drawPositions() = 0;
     virtual std::vector<DrawColor>& drawColors() = 0;
 
-
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;
 
-#define NEW_DRAWER(name) \
+#define NEW_DRAWER \
     private: \
-static name *dummy_drawer;
+static DrawerInterface *dummy_drawer;
 
-#define REGISTER_DRAWER(name, classname) \
-    name *name::dummy_drawer = DrawerFactory::registerDrawer(name, classname::create);
+#define REGISTER_DRAWER(classname) \
+    DrawerInterface *classname::dummy_drawer = DrawerFactory::registerDrawer(#classname, classname::create);
 }
 
 }

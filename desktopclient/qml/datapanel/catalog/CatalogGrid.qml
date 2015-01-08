@@ -8,6 +8,8 @@ import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
 
+import "../../Global.js" as Global
+
 Rectangle {
     anchors.fill :parent
     color : "white"
@@ -38,7 +40,7 @@ Rectangle {
             cellHeight: 25
             clip : true
             highlight: Rectangle {
-                color: "#448"
+                color: Global.selectedColor
             }
             focus : true
             cacheBuffer: 1000
@@ -49,6 +51,7 @@ Rectangle {
 
         }
     }
+
 }
 
 

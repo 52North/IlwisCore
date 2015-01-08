@@ -47,6 +47,9 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Catalog");
     case  itOPERATIONMETADATA:
         return TR("OperationMetaData");
+    case  itREPRESENTATION:
+        return TR("Representation");
+
         // nonilwisobjects
     case itENVELOPE:
         return TR("Envelope");
@@ -147,7 +150,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case  itPOLYGON:
         return TR("polygoncoverage");
     case  itLINE:
-        return TR("linecovergae");
+        return TR("linecoverage");
     case  itPOINT:
         return TR("pointcoverage");
     case  itPOINT+itLINE:
@@ -182,6 +185,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("catalog");
     case  itOPERATIONMETADATA:
         return TR("operationmetatadata");
+    case itREPRESENTATION:
+        return TR("representation");
         // nonilwisobjects
     case itENVELOPE:
         return TR("envelope");

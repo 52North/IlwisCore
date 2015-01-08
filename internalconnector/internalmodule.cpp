@@ -28,6 +28,7 @@
 #include "internalgeoreferenceconnector.h"
 #include "internaldomain.h"
 #include "internalcoordinatesystemconnector.h"
+#include "internalrepresentation.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -58,6 +59,7 @@ void InternalModule::prepare()
     factory->addCreator(itGEOREF,"internal", InternalGeoReferenceConnector::create);
     factory->addCreator(itDOMAIN,"internal", InternalDomainConnector::create);
     factory->addCreator(itCOORDSYSTEM,"internal", InternalCoordinatesystemConnector::create);
+    factory->addCreator(itREPRESENTATION,"internal", InternalRepresentationConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();
@@ -68,7 +70,8 @@ void InternalModule::prepare()
     bool ok = createItems(db,"projection", itPROJECTION);
     ok &= createItems(db,"ellipsoid", itELLIPSOID);
     ok &= createItems(db,"datum", itGEODETICDATUM);
-    ok &= createItems(db,"numericdomain", itNUMERICDOMAIN);
+    ok &= createItems(db,"numericdomain", itNUMERICDOMAIN, "domain");
+    ok &= createItems(db,"representation", itREPRESENTATION);
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
@@ -145,7 +148,7 @@ bool InternalModule::createPcs(QSqlQuery& db) {
             resource.code(code);
             resource.name(name, false);
             resource["wkt"] = name;
-            resource.addContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://internalcatalog"));
             items.push_back(resource);
         }
         return mastercatalog()->addItems(items);
@@ -155,17 +158,18 @@ bool InternalModule::createPcs(QSqlQuery& db) {
     return false;
 }
 
-bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes type) {
-    QString query = QString("Select * from %1").arg(table);
+bool InternalModule::createItems(QSqlQuery& db, const QString& sqltable, IlwisTypes type, const QString internalname) {
+    QString query = QString("Select * from %1").arg(sqltable);
     if ( db.exec(query)) {
         std::vector<Resource> items;
         while (db.next()) {
             QSqlRecord rec = db.record();
             QString code = rec.value("code").toString();
             IlwisTypes extType = rec.value("extendedtype").toLongLong();
+            QString table = internalname == "" ? sqltable : internalname;
             QString url = QString("ilwis://tables/%1?code=%2").arg(table,code);
             Resource resource(url, type);
-            if ( type == itNUMERICDOMAIN) // for valuedomain name=code
+            if ( hasType(type, itNUMERICDOMAIN | itREPRESENTATION)) // for valuedomain name=code
                 resource.name(rec.value("code").toString(), false);
             else
                 resource.name(rec.value("name").toString(), false);
@@ -173,10 +177,13 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& table, IlwisTypes
             resource.code(code);
             resource.setExtendedType(extType);
             resource.setDescription(rec.value("description").toString());
-            resource.addContainer(QUrl("ilwis://system"));
+            resource.addContainer(QUrl("ilwis://internalcatalog"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
-                resource["wkt"] = wkt;
+                resource.addProperty("wkt",wkt);
+            QString domname = rec.value("relateddomain").toString();
+            if ( domname != "" && domname != sUNDEF)
+                resource.addProperty("relateddomain", domname);
             items.push_back(resource);
         }
         return mastercatalog()->addItems(items);

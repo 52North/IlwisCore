@@ -16,7 +16,7 @@ protected:
 
     bool canUse(const Resource &resource) const;
     QString provider() const;
-    std::vector<Resource> loadItems();
+    std::vector<Resource> loadItems(const IOOptions& options=IOOptions());
 
     std::vector<QUrl> sources(const QStringList &filters, int options =CatalogConnector::foFULLPATHS) const;
 

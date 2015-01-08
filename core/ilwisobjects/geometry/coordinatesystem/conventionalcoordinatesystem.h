@@ -35,6 +35,7 @@ public:
     IlwisTypes ilwisType() const;
     bool isValid() const;
     bool isEqual(const Ilwis::IlwisObject *obj) const;
+    bool isUnknown() const;
     QString toWKT(quint32 spaces=0) const;
     QString toProj4() const;
     QString unit() const;

@@ -8,10 +8,9 @@ Rectangle {
     id : catalogProperties
     width : parent.width
     anchors.margins: 6
-    color : "#C6C6C6"
-    //border.width: 1
-    //border.color: "grey"
-    radius : 15
+    color : "white"
+    border.width: 1
+    border.color: "#E6E6E6"
     property string humannametext
     property string defintiontext
     property string descriptiontext
@@ -21,6 +20,9 @@ Rectangle {
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
             return name
+
+        if ( name === "")
+            name = "redbuttonr.png"
 
          var iconP = "../../images/" + name
          return iconP

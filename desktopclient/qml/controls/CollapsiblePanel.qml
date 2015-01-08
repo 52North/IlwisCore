@@ -1,9 +1,15 @@
 import QtQuick 2.1
 
+import "../Global.js" as Global
+
 Rectangle {
     id: contextPanel
     property int panelHeight
-    property color backgroundColor : "white"
+    property color backgroundColor : Global.mainbackgroundcolor
+    property color headerColor : Global.alternatecolor2
+    property int headerHeight : 24
+    property alias titleText: titleTxt.text
+     property var expandableArea : internealArea
 
     gradient: Gradient {
         GradientStop {
@@ -17,52 +23,41 @@ Rectangle {
     }
 
 
-    property alias titleText: titleTxt.text
-
-
     Rectangle {
         id: titleRect
         width: parent.width
-        height: 24
-        color : background2
-        BorderImage{
+        height: headerHeight
+        color : headerColor
+        Image {
+            id: titleArrow
+            width:  15
+            height:  15
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            source: "../images/arrowdown.png"
 
+        }
+        Text{
+            id: titleTxt
+            anchors.left: titleArrow.right
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 12
+            // color:  "DarkBlue"
+            font.bold: true
+        }
+        MouseArea{
             width: parent.width
-            height: 24
-            border { left: 15; top: 0; right: 15; bottom: 0 }
-            source : "../images/headerblue2CS1.png"
-            smooth : true
-            Image {
-                id: titleArrow
-                width:  15
-                height:  15
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                source: "../images/arrowdown.png"
-
-            }
-            Text{
-                id: titleTxt
-                anchors.left: titleArrow.right
-                anchors.leftMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-                // color:  "DarkBlue"
-                font.bold: true
-            }
-            MouseArea{
-                width: parent.width
-                height:  parent.height
-                onClicked: {
-                    if (contextPanel.state == "collapsed")
-                    {
-                        contextPanel.state = "open"
-                    }
-                    else
-                    {
-                        contextPanel.state = "collapsed"
-                    }
+            height:  parent.height
+            onClicked: {
+                if (contextPanel.state == "collapsed")
+                {
+                    contextPanel.state = "open"
+                }
+                else
+                {
+                    contextPanel.state = "collapsed"
                 }
             }
         }

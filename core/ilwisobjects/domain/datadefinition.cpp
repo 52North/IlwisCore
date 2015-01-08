@@ -16,7 +16,7 @@
 
 using namespace Ilwis;
 
-DataDefinition::DataDefinition() : _range(0), _stretchRange(0)
+DataDefinition::DataDefinition() : _range(0)
 {
 }
 
@@ -46,18 +46,12 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def)
     else
         _range.reset(0);
 
-    if ( !def._stretchRange.isNull())
-        _stretchRange.reset(def._stretchRange->clone());
-    else
-        _stretchRange.reset(0);
-
-
     return *this;
 }
 
 void DataDefinition::range(Range* vr)
 {
-        _range = QSharedPointer<Range>(vr);
+    _range = QSharedPointer<Range>(vr);
 }
 
 void DataDefinition::domain(const IDomain &dom)

@@ -5,29 +5,32 @@
 
 namespace Ilwis {
 
+
 class Coverage;
 typedef IlwisData<Coverage> ICoverage;
 
 namespace Geodrawer{
 
+class AttributeVisualProperties;
+
 class SpatialDataDrawer : public ComplexDrawer
 {
 public:
-    SpatialDataDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
-    virtual void setCoverage(const ICoverage& coverage);
+    SpatialDataDrawer(const QString& name,DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
     std::vector<double> numericAttributeValues(const QString& attribute) const;
-    NumericRange stretchRange();
-    void stretchRange(const NumericRange& numrange);
+    virtual ICoverage coverage() const;
+    Envelope envelope() const;
+    void envelope(const Envelope& env);
+    AttributeVisualProperties attribute(const QString& attrName) const;
+    void attribute(const QString &attrName, const AttributeVisualProperties& properties );
+    virtual void coverage(const ICoverage& cov);
 
-    bool isStretched() const;
-    void stretched(bool yesno);
-
+protected:
 private:
+    std::map<QString, AttributeVisualProperties> _visualProperties;
     ICoverage _coverage;
-    NumericRange _stretchRange;
-    bool _stretched = false;
-
+    Envelope _envelope;
 };
 }
 }

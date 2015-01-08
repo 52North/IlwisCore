@@ -1,10 +1,15 @@
 #ifndef GEODRAWER_H
 #define GEODRAWER_H
 
+#include "kernel.h"
+#include "resourcemodel.h"
 #include <QtQuick/QQuickItem>
 #include <QtGui/QOpenGLShaderProgram>
 
 namespace Ilwis {
+class Resource;
+
+
 namespace Geodrawer{
 class RootDrawer;
 }
@@ -16,6 +21,8 @@ class GeoDrawer : public QQuickItem
 
 public:
     GeoDrawer(QQuickItem *parent = 0);
+
+    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
     ~GeoDrawer();
 
 public slots:
@@ -23,15 +30,17 @@ public slots:
     void cleanup();
     void sync();
 
+signals:
+    void layerChanged();
+
 private slots:
     void handleWindowChanged(QQuickWindow *win);
 
 private:
-    QOpenGLShaderProgram *_shaderprogram = 0;
-    QMatrix4x4 _view,_projection, _model, _mvp;
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
+    QList<ResourceModel *> _datasources;
 
-    void oldTest();
+    void test1();
 };
 
 #endif // GEODRAWER_H

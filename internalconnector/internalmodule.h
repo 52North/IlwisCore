@@ -26,7 +26,7 @@ public:
 private:
     bool createSpecialDomains();
     bool createPcs(QSqlQuery &db);
-    bool createItems(QSqlQuery &db, const QString &table, IlwisTypes type);
+    bool createItems(QSqlQuery &db, const QString &sqltable, IlwisTypes type, const QString internalname="");
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.internalconnector" FILE  "internalconnector.json")
 

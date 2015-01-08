@@ -14,6 +14,10 @@ quint32 IOOptions::size() const
     return _values.size();
 }
 
+bool IOOptions::isEmpty() const
+{
+    return size() == 0;
+}
 
 QVariant IOOptions::operator[](const QString& option) const
 {
@@ -26,10 +30,20 @@ QVariant IOOptions::operator[](const QString& option) const
 
 IOOptions &IOOptions::operator<<(const IOOptions::Option &option)
 {
-    if (!option._value.isValid()){
-        _values.erase(option._key);
+    return addOption(option._key, option._value);
+}
+
+IOOptions &IOOptions::addOption(const QPair<QString, QVariant>& item)
+{
+    return addOption(item.first, item.second);
+}
+
+IOOptions &IOOptions::addOption(const QString &key, const QVariant &value)
+{
+    if (!value.isValid()){
+        _values.erase(key);
     }
-    else if ( option._key != "?")
-        _values[option._key] = option._value;
+    else if ( key != "?")
+        _values[key] = value;
     return *this;
 }

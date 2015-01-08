@@ -7,7 +7,7 @@ CatalogExplorer::CatalogExplorer()
 {
 }
 
-CatalogExplorer::CatalogExplorer(const Resource &resource, const IOOptions &) : _resource(resource)
+CatalogExplorer::CatalogExplorer(const Resource &resource, const IOOptions &options) : _resource(resource), _options(options)
 {
 
 }
@@ -22,7 +22,13 @@ Resource CatalogExplorer::source() const
     return _resource;
 }
 
+IOOptions CatalogExplorer::ioOptions() const
+{
+    return _options;
+}
+
 QFileInfo CatalogExplorer::resolve2Local() const
 {
     return _resource.toLocalFile();
 }
+

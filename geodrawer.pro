@@ -6,7 +6,7 @@ QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 TEMPLATE = lib
 TARGET = geodrawer
-QT += qml quick sql
+QT += qml quick sql opengl
 CONFIG += qt plugin
 
 CONFIG(debug, debug|release) {
@@ -39,7 +39,17 @@ SOURCES += \
     geodrawer/featurelayerdrawer.cpp \
     geodrawer/drawerfactory.cpp \
     geodrawer/linedrawer.cpp \
-    geodrawer/drawerinterface.cpp
+    geodrawer/drawerinterface.cpp \
+    geodrawer/openglhelper.cpp \
+    geodrawer/tesselation/bucketalloc.c \
+    geodrawer/tesselation/dict.c \
+    geodrawer/tesselation/geom.c \
+    geodrawer/tesselation/mesh.c \
+    geodrawer/tesselation/priorityq.c \
+    geodrawer/tesselation/sweep.c \
+    geodrawer/tesselation/tess.c \
+    geodrawer/tesselation/ilwistesselator.cpp \
+    geodrawer/attributevisualproperties.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -54,7 +64,19 @@ HEADERS += \
     geodrawer/drawingcolor.h \
     geodrawer/featurelayerdrawer.h \
     geodrawer/drawerfactory.h \
-    geodrawer/linedrawer.h
+    geodrawer/linedrawer.h \
+    geodrawer/openglhelper.h \
+    geodrawer/tesselation/bucketalloc.h \
+    geodrawer/tesselation/dict.h \
+    geodrawer/tesselation/geom.h \
+    geodrawer/tesselation/glfw3.h \
+    geodrawer/tesselation/mesh.h \
+    geodrawer/tesselation/priorityq.h \
+    geodrawer/tesselation/sweep.h \
+    geodrawer/tesselation/tess.h \
+    geodrawer/tesselation/tesselator.h \
+    geodrawer/tesselation/ilwistesselator.h \
+    geodrawer/attributevisualproperties.h
 
 OTHER_FILES = geodrawer/qmldir
 
@@ -64,9 +86,16 @@ INCLUDEPATH += $$PWD/$$ILWISCORE/core
 DEPENDPATH += $$PWD/$$ILWISCORE/core
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
+INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
+DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
+
+INCLUDEPATH +=  core/ilwisobjects/domain \
+                ilwiscoreui \
+                ilwiscoreui\models
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
 
 INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
@@ -79,6 +108,7 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/ilwisobjects/coverage \
                 $$ILWISCORE/core/ilwisobjects/table \
                 $$ILWISCORE/core/ilwisobjects/operation \
+                $$ILWISCORE/core/ilwisobjects/representation \
                 $$ILWISCORE/core/catalog \
                 $$ILWISCORE/core/ilwisobjects/domain \
                 $$ILWISCORE \

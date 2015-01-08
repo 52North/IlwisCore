@@ -237,7 +237,7 @@ ITable FeatureCoverage::attributeTable(quint32 level)
 
 void FeatureCoverage::attributesFromTable(const ITable& otherTable)
 {
-    _attributeDefinition.clear();
+    _attributeDefinition.clearAttributeDefinitions();
 
     for(int col =0; col < otherTable->columnCount(); ++col){
         _attributeDefinition.addColumn(otherTable->columndefinition(col));

@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
-import QtQuick 2.0
+import UIContextModel 1.0
+import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
@@ -119,35 +120,40 @@ Rectangle {
         width : parent.width
         anchors.bottom: parent.bottom
 
+        onCurrentIndexChanged: {
+            console.debug(currentIndex)
+            if (currentIndex > 0) {
+                var title = tabs.getTab(currentIndex).title
+                if (isModellerTitle(title))
+                    updateSelectedItem(modellerTitleRemovePrefix(title))
+            }
+        }
+
         id : tabs
-            function showObject(objectid){
-                 var component = Qt.createComponent("visualization/Visualize.qml")
-                var resource = mastercatalog.id2Resource(objectid)
-                if ( resource !== null){
-                    var name = resource.displayName
-                    var blocksize = 24 / 2;
-                    if ( name.length > 15){
-                        var part1 = name.substr(0,blocksize)
-                        var part2 = name.substr( name.length - blocksize)
-                        name = part1 + "..." + part2
-                    }
-                    var tab = addTab(name,component)
-                    currentIndex++
-                    transitionInfoPane("Visualization.qml")
+
+        style: Base.TabStyle1{}
+
+        function showObject(objectid){
+            var component = Qt.createComponent("visualization/Visualize.qml")
+            var resource = mastercatalog.id2Resource(objectid)
+            if ( resource !== null){
+                var name = resource.displayName
+                var blocksize = 24 / 2;
+                if ( name.length > 15){
+                    var part1 = name.substr(0,blocksize)
+                    var part2 = name.substr( name.length - blocksize)
+                    name = part1 + "..." + part2
                 }
+                var tab = addTab(name,component)
+                tab.active = true
+                tab.item.addSource(resource.url, resource.typeName)
+                currentIndex++
             }
+        }
 
-            function objectSelected(objectid){
+        function objectSelected(objectid){
 
-            }
-
-            onCurrentIndexChanged: {
-                if (currentIndex > 0) {
-                    var title = tabs.getTab(currentIndex).title
-                    if (isModellerTitle(title))
-                        updateSelectedItem(modellerTitleRemovePrefix(title))
-                }
-            }
+        }
 
            Tab {
             id : catalog_0
@@ -155,5 +161,11 @@ Rectangle {
             Catalog.CatalogPanel{
             }
         }
+
+    }
+    focus : true
+    Keys.onPressed: {
+        console.debug(event.key)
+        //uicontext.currentKey = event.key
     }
 }

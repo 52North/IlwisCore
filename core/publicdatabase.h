@@ -51,6 +51,7 @@ private:
     void insertProj4Epsg(QSqlQuery &sqlPublic);
     bool doQuery(QString &query, QSqlQuery &sqlPublic);
     bool fillFiltersRecord(const QStringList &parts, QSqlQuery &sqlPublic);
+    bool fillRepresentationRecord(const QStringList &parts, QSqlQuery &sqlPublic);
 };
 }
 

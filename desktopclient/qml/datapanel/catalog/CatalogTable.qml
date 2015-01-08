@@ -1,11 +1,13 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick 2.1
+import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+
+import "../../Global.js" as Global
 
 Rectangle {
     id : tabPanel
@@ -19,6 +21,8 @@ Rectangle {
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
+        if ( name === "")
+            name = "redbuttonr.png"
 
          var iconP = "../../images/" + name
          return iconP
@@ -31,6 +35,7 @@ Rectangle {
     TableView{
         id : resourcetable
         anchors.fill: parent
+        selectionMode : SelectionMode.ExtendedSelection
 
         TableViewColumn{
             id : imageColumn
@@ -57,7 +62,7 @@ Rectangle {
                         width : 20; height : 20
                         source : "../../images/" + styleData.value
                         fillMode: Image.PreserveAspectFit
-                        property string message :  model[styleData.row].url
+                        property string message :  model !== null ? model[styleData.row].url : ""
 
                         Drag.keys: [ model[styleData.row].iconPath ]
                         Drag.active: mouseArea.drag.active
@@ -88,7 +93,7 @@ Rectangle {
 
         TableViewColumn{
             role : "displayName"
-            title : "Name"
+            title : qsTr("Name")
             width : 220
             delegate : Component {
                 Text {
@@ -104,7 +109,7 @@ Rectangle {
         }
         TableViewColumn{
             role : "dimensions"
-            title : "Dimensions"
+            title : qsTr("Dimensions")
             width : 150
             delegate: Component{
                 Text {
@@ -119,7 +124,7 @@ Rectangle {
 
         TableViewColumn{
             role : "domainName"
-            title : "Domain"
+            title : qsTr("Domain")
             width : 100
             delegate: Component{
                 Text {
@@ -134,7 +139,7 @@ Rectangle {
 
         TableViewColumn{
             role : "domainType"
-            title : "Domain type"
+            title : qsTr("Domain type")
             width : 100
             delegate: Component{
                 Text {
@@ -149,7 +154,7 @@ Rectangle {
 
         TableViewColumn{
             role : "coordinateSystemName"
-            title : "Coordinate system"
+            title : qsTr("Coordinate system")
             width : 120
             delegate: Component{
                 Text {
@@ -164,7 +169,7 @@ Rectangle {
 
         TableViewColumn{
             role : "geoReferenceName"
-            title : "Georeference"
+            title : qsTr("Georeference")
             width : 120
             delegate: Component{
                 Text {
@@ -180,24 +185,22 @@ Rectangle {
         rowDelegate: Rectangle {
             id : rowdelegate
             height : 20
-            color : styleData.selected ? "#99CCFF" : (styleData.alternate? "#eee" : "#fff")
-            MouseArea{
-                anchors.fill: parent
+            color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
+        }
 
-                onClicked : {
-                    resourcetable.selection.clear()
-                    resourcetable.selection.select(styleData.row,styleData.row)
-                    var catalog = mastercatalog.selectedCatalog()
-                    if ( catalog !== null){
-                        catalog.setSelectedObjects(model[styleData.row].id)
-                    }
-                }
-
-                onDoubleClicked: {
-                     showObject(model[styleData.row].id)
-                }
+        onClicked: {
+            var ids = ""
+            resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
+            var catalog = mastercatalog.selectedCatalog()
+            if ( catalog !== null){
+                catalog.setSelectedObjects(ids)
             }
         }
+        onDoubleClicked: {
+            if ( currentRow != -1)
+                showObject(model[currentRow].id)
+        }
+
         model : mastercatalog.resources
     }
 

@@ -1,4 +1,5 @@
 #include <QRegExp>
+#include <QUrlQuery>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -91,10 +92,21 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
          loc.isEmpty())
         return true;
     QUrl location(loc);
+    IOOptions options;
+    if (location.hasQuery()) {
+        QUrlQuery empty;
+        QUrlQuery query(location);
+        location.setQuery(empty);
+        QList<QPair<QString,QString>> items = query.queryItems();
+        std::for_each(items.begin(), items.end(), [&options](QPair<QString,QString> item) {
+            options.addOption(QPair<QString, QVariant>(item.first, item.second));
+        });
+    }
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    ICatalog catalog(loc);
+    Resource resource(location, itCATALOG);
+    ICatalog catalog(resource, options);
     if ( !catalog.isValid()){
         return false;
     }
@@ -103,7 +115,6 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     _catalogs.insert(location);
     return true;
 }
-
 
 ESPIlwisObject MasterCatalog::get(const QUrl &resource, IlwisTypes type) const
 {
@@ -354,14 +365,19 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
-        return QString("ilwis://internalcatalog/%1").arg(name);
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://tables/domain?code=%1").arg(shortname);
     }else if ( name.left(12) == "code=georef:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://internalcatalog/%1").arg(shortname);
     }else if ( name.left(9) == "code=csy:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://internalcatalog/%1").arg(shortname);
+    }else if ( name.left(9) == "code=rpr:") {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://tables/representation?code=%1").arg(shortname);
     }
+    QString tt =  name.left(12);
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
         if ( resolvedName != sUNDEF)

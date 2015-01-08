@@ -7,6 +7,9 @@ namespace Ilwis {
 class Domain;
 typedef IlwisData<Domain> IDomain;
 
+class NumericRange;
+typedef QSharedPointer<NumericRange> SPNumericRange;
+
 class ColorRangeBase;
 
 /*!
@@ -79,6 +82,8 @@ public:
         return _domain.as<T>();
     }
 
+
+
     /*!
      * Sets a new domain to this DataDefinition<br>
      * Also sets the range of this domain as the new range of this DataDefinition if the domain can be converted to a range<br>
@@ -120,7 +125,6 @@ public:
 protected:
     IDomain _domain;
     SPRange _range;
-    SPRange _stretchRange;
 };
 
 

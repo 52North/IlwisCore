@@ -23,5 +23,5 @@ TabViewStyle {
             color: styleData.selected ? "white" : "black"
         }
     }
-    frame: Rectangle { color: "#C6C6C6"; radius : 10 }
+    frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }
 }

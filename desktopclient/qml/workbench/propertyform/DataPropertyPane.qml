@@ -16,14 +16,25 @@ Rectangle {
         if(typeName == "rastercoverage"  ){
             source = "RasterCoverageDataProperties.qml"
         }
-        if ( typeName == "feature" || typeName == "featurecoverage" ||
+        else if ( typeName == "feature" || typeName == "featurecoverage" ||
                 typeName == "pointcoverage" || typeName == "linecoverage" ||
                 typeName == "polygoncoverage"){
             source = "FeatureCoverageDataProperties.qml"
         }
-        if ( typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem" ||
+        else if ( typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem" ||
                 typeName == "boundsonlycoordinatesystem"){
             source = "CoordinateSystemProperties.qml"
+        }
+        else if ( typeName == "itemdomain" ){
+            var valueType = getProperty("valuetype")
+            if ( valueType !== "" && valueType !== "indexidentifier")
+                source = "ItemDomainProperties.qml"
+        }
+        else if ( typeName == "numericdomain" ){
+            source = "NumericDomainProperties.qml"
+        }
+        else if ( typeName == "georeference"){
+           source = "GeoreferenceProperties.qml"
         }
 
     }

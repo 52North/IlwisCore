@@ -77,11 +77,11 @@ void ColorDomain::range(Range *colorrange)
             if( cNONE == parent()->range<ColorPalette>()->contains(colorrange))
                 return;
         } else if ( colorrange->valueType() == itCONTINUOUSCOLOR){
-            if( cNONE == parent()->range<ContinousColorRange>()->contains(colorrange))
+            if( cNONE == parent()->range<ContinuousColorRange>()->contains(colorrange))
                 return;
         }
     }
-                    _range = QSharedPointer<Range>(colorrange);
+    _range = QSharedPointer<Range>(colorrange);
 }
 
 bool ColorDomain::isOrdered() const

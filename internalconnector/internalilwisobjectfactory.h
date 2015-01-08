@@ -42,6 +42,7 @@ private:
     IlwisObject *createCatalog(const Resource &resource, const Ilwis::IOOptions &options) const;
     GeoReference *createGrfFromCode(const Ilwis::Resource &resource) const;
     IlwisObject *createCsy(const Resource &resource, const IOOptions &options) const;
+    IlwisObject *createRepresentation(const Resource &resource, const IOOptions &options) const;
 };
 }
 }

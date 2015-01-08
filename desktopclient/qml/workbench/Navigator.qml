@@ -3,17 +3,16 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "../controls" as Controls
+import "../Global.js" as Global
 
-Rectangle {
+Item {
     id : container
 
-    property color background1 : "#EAECEE"
-    property color background3 : "#E3E3E3"
+    property string startfolder
 
     signal unloadcontent(string content)
     signal catalogChanged()
 
-    color : background3
     clip : true
     opacity : 0
 
@@ -45,7 +44,7 @@ Rectangle {
     }
 
     Action {
-        id : createCatalog
+        id : changeCatalogContent
         onTriggered : {
             addContainer.checked = !addContainer.checked
             createCatalogForm.state = addContainer.checked ? "maximized" : "minimized"
@@ -59,16 +58,21 @@ Rectangle {
             navCreatePanel.deleteCurrentBookmark()
         }
     }
+    
+    Action {
+        id : createCatalog
+        onTriggered : {
+             var component = Qt.createComponent()
+        }
+    }    
 
-    Rectangle {
+    Item {
         id : buttonBar
         height : 46
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
-        color : background3
-       // border.width: 1
 
         Row {
             anchors.top : parent.top
@@ -81,8 +85,8 @@ Rectangle {
                 height : 40
                 checkable: true
                 checked : false
-                action : createCatalog
-            }
+                action : changeCatalogContent
+             }
             Controls.ActionButton{
                 id : removeBookmark
                 width : 95
@@ -98,7 +102,7 @@ Rectangle {
                 height : 40
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  "New\nCatalog"
-                //action : deleteBookmark
+                action : createCatalog
 
             }
        }
@@ -110,6 +114,7 @@ Rectangle {
         anchors.top: buttonBar.bottom
         anchors.margins: 5
         x : parent.x + 5
+        beginfolder: startfolder
     }
 
     Bookmarks{
@@ -120,7 +125,7 @@ Rectangle {
         anchors.top: createCatalogForm.bottom
         anchors.margins: 2
         opacity : 1
-        background: container.background1
+        background: Global.mainbackgroundcolor
         listbackground: "#FFFEF8"
         listalternate: "#FFFEF8"
 

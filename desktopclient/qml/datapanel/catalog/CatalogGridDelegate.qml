@@ -14,8 +14,12 @@ Item {
     y : 3
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
+    focus: true
+
 
     function iconSource(name) {
+        if ( name === "")
+            name = "redbuttonr.png"
          var iconP = "../../images/" + name
          return iconP
 
@@ -23,8 +27,6 @@ Item {
 
     MouseArea {
         id : mouseArea
-//        x : 2
-//        y : 2
         width : 20; height : 20
         drag.target: image
         onReleased: {
@@ -55,6 +57,7 @@ Item {
         }
         z : 1
     }
+
     Image{
         id : imageBase
         x : mouseArea.x
@@ -64,6 +67,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         z : 0
     }
+
 
     Text {
         id: txt

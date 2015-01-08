@@ -55,7 +55,7 @@ Range *Range::create(IlwisTypes types) {
     case itBOUNDINGBOX:
         return new BoundingBox();
     case itCOLOR:
-        return new ContinousColorRange();
+        return new ContinuousColorRange();
     case itPALETTECOLOR:
         return new ColorPalette();
     default:

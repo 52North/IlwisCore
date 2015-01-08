@@ -31,13 +31,14 @@ public:
     enum OpenMode { omTEXT, omBINARY};
 
 
-/**
- * @brief creates a CatalogConnector object.
- *
- * @param resource
- * @param load
- */
-    CatalogConnector(const Resource& resource, bool load);
+    /**
+     * @brief creates a CatalogConnector object.
+     *
+     * @param resource
+     * @param load
+     * @param options options for loading items from the catalog
+     */
+    CatalogConnector(const Resource& resource, bool load, const IOOptions& options);
     /**
      * @brief creates a default version of the ilwisobject this connector is dedicated to, in this case a Catalog object.
      *
@@ -54,8 +55,8 @@ public:
     virtual bool canUse(const Resource& resource) const;
     bool isValid() const;
 
-    bool loadMetaData(IlwisObject *obj,const IOOptions&);
-    bool loadData(IlwisObject *obj, const Ilwis::IOOptions &options = IOOptions());
+    bool loadMetaData(IlwisObject *obj, const IOOptions &options = IOOptions());
+    bool loadData(IlwisObject *obj, const IOOptions &options = IOOptions());
 
     virtual QFileInfo toLocalFile(const Resource &datasource) const;
     virtual QFileInfo toLocalFile(const QUrl &url) const;

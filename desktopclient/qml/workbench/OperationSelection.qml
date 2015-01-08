@@ -22,7 +22,6 @@ Rectangle {
     signal unloadcontent(string content)
 
     function newForm(metaid, title){
-        console.debug(metaid, title)
         var form= formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
@@ -37,55 +36,31 @@ Rectangle {
 
     Rectangle {
         id : searchBar
-        height : 56
+        height : 24
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
         color : background2
-        Column {
-            anchors.fill: parent
-            Item{
-                height : 22
-                width : parent.width
-                Text {
-                    id : searchTextLabel
-                    height : 20
-                    text : "Filter Text"
-                    width : keywordsLabel.width
-                    y : 4
-                    x: 5
-                }
-                TextField {
-                    id : searchText
-                    anchors.left: searchTextLabel.right
-                    height : 20
-                    width : parent.width - searchTextLabel.width - 9
-                }
-            }
-            Item {
-                height : 22
-                width : parent.width
-                Text {
-                    id : keywordsLabel
-                    //anchors.top : searchTextLabel.bottom
-                    x : 5
-                    height : 20
-                    text : "Keyword search "
-                }
-                ComboBox {
-                    anchors.left: keywordsLabel.right
-                    //anchors.top : searchText.bottom
-                    height : 20
-                    width : parent.width - searchTextLabel.width  - 9
-                    editable: true
-                }
+
+        Text {
+            id : searchTextLabel
+            height : 20
+            text : qsTr("Filter Text")
+            width : 100
+            y : 4
+            x: 5
+        }
+        TextField {
+            id : searchText
+            anchors.left: searchTextLabel.right
+            height : 20
+            width : parent.width - searchTextLabel.width - 9
+            onTextChanged: {
+                operations.nameFilter = text
             }
         }
-
-
     }
-
     SplitView{
         width : parent.width
         anchors.bottom: container.bottom
@@ -160,6 +135,7 @@ Rectangle {
             }
             Tab {
                 title : qsTr("Operation Categories")
+                 signal makeForm(string objectid, string name)
                 OperationCatagoriesList{
                     id : operationCatagories
                     Connections {

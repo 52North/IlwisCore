@@ -27,7 +27,7 @@ Rectangle {
         id : props
         anchors.top: functionBar.bottom
         width : parent.width
-        height : 500
+        anchors.bottom: parent.bottom
         model : mastercatalog.selectedCatalog().selectedData
         delegate : PropertyForm.DPropertyForm{}
     }

@@ -223,8 +223,8 @@ QString IlwisObject::externalFormat() const
 
 void IlwisObject::readOnly(bool yesno)
 {
-
-    _readOnly = yesno;
+    if (!isSystemObject())
+        _readOnly = yesno;
 }
 
 bool IlwisObject::hasChanged() const
@@ -234,6 +234,9 @@ bool IlwisObject::hasChanged() const
 
 void IlwisObject::changed(bool yesno)
 {
+    if ( isReadOnly() || isSystemObject())
+        return;
+
     _modifiedTime = Time::now();
     _changed = yesno;
 }
@@ -395,12 +398,22 @@ bool IlwisObject::store(const IOOptions &options)
     if (!connector(cmOUTPUT).isNull()) {
         Locker<std::mutex> lock(_loadforstore);
         if (connector() && !connector()->dataIsLoaded()) {
-            connector()->loadData(this);
+            connector()->loadData(this, options);
         }
         return connector(cmOUTPUT)->store(this, options);
     }
 
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
+}
+
+bool IlwisObject::loadData(const IOOptions& options)
+{
+    if ( connector().isNull())
+        return false;
+    if ( connector()->dataIsLoaded())
+        return false;
+    return connector()->loadData(this, options);
+
 }
 
 //------ statics ----------------------------------------------
@@ -448,6 +461,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "GeodeticDatum";
     case  itCATALOG:
         return "Catalog";
+    case  itREPRESENTATION:
+        return "Representation";
     case  itOPERATIONMETADATA:
         return "OperationMetaData";
     }
@@ -528,7 +543,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itOPERATIONMETADATA;
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
-
+    if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
+        return  itREPRESENTATION;
     // standard c++ types
     if ( name.compare( "int",Qt::CaseInsensitive) == 0)
         return  itINT32;

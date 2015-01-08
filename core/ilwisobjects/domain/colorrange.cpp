@@ -182,22 +182,22 @@ QColor ColorRangeBase::toColor(quint64 clrint, ColorModel clrModel)
 }
 
 //----------------------------------------------------------------
-ContinousColorRange::ContinousColorRange() : ColorRangeBase(itCONTINUOUSCOLOR,ColorRangeBase::cmRGBA)
+ContinuousColorRange::ContinuousColorRange() : ColorRangeBase(itCONTINUOUSCOLOR,ColorRangeBase::cmRGBA)
 {
 
 }
 
-ContinousColorRange::ContinousColorRange(const QColor &clr1, const QColor &clr2, ColorRangeBase::ColorModel colormodel) : ColorRangeBase(itCONTINUOUSCOLOR,colormodel), _limit1(clr1), _limit2(clr2)
+ContinuousColorRange::ContinuousColorRange(const QColor &clr1, const QColor &clr2, ColorRangeBase::ColorModel colormodel) : ColorRangeBase(itCONTINUOUSCOLOR,colormodel), _limit1(clr1), _limit2(clr2)
 {
 
 }
 
-bool ContinousColorRange::isValid() const
+bool ContinuousColorRange::isValid() const
 {
     return _limit1.isValid() && _limit2.isValid();
 }
 
-QString ContinousColorRange::toString() const
+QString ContinuousColorRange::toString() const
 {
     if (!isValid())
         return sUNDEF;
@@ -205,19 +205,19 @@ QString ContinousColorRange::toString() const
     return "continuouscolorange:"+ ColorRangeBase::toString(_limit1, defaultColorModel()) + "," + ColorRangeBase::toString(_limit2, defaultColorModel());
 }
 
-Range *ContinousColorRange::clone() const
+Range *ContinuousColorRange::clone() const
 {
-    return new ContinousColorRange(_limit1, _limit2, defaultColorModel());
+    return new ContinuousColorRange(_limit1, _limit2, defaultColorModel());
 }
 
-QVariant ContinousColorRange::ensure(const QVariant &v, bool inclusive) const
+QVariant ContinuousColorRange::ensure(const QVariant &v, bool inclusive) const
 {
     if ( contains(v,inclusive))
         return v;
     return QVariant();
 }
 
-bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
+bool ContinuousColorRange::contains(const QVariant &v, bool inclusive) const
 {
     QColor clr;
     if( v.type() == QVariant::Double){
@@ -278,9 +278,9 @@ bool ContinousColorRange::contains(const QVariant &v, bool inclusive) const
 
 }
 
-bool ContinousColorRange::contains(const Range *rng,bool inclusive) const
+bool ContinuousColorRange::contains(const Range *rng,bool inclusive) const
 {
-    const ContinousColorRange *ccr = dynamic_cast< const ContinousColorRange*>(rng);
+    const ContinuousColorRange *ccr = dynamic_cast< const ContinuousColorRange*>(rng);
     if ( ccr){
         return contains(IVARIANT(ccr->_limit1), inclusive) && contains(IVARIANT(ccr->_limit2),inclusive);
     } else {
@@ -295,7 +295,7 @@ bool ContinousColorRange::contains(const Range *rng,bool inclusive) const
     return false;
 }
 
-QVariant ContinousColorRange::impliedValue(const QVariant &v) const
+QVariant ContinuousColorRange::impliedValue(const QVariant &v) const
 {
     if ( v == clrUNDEF2)
         return QColor();
@@ -310,31 +310,68 @@ QVariant ContinousColorRange::impliedValue(const QVariant &v) const
 
 }
 
-IlwisTypes ContinousColorRange::valueType() const
+IlwisTypes ContinuousColorRange::valueType() const
 {
     return itCONTINUOUSCOLOR;
 }
 
-QColor ContinousColorRange::valueAt(quint32& index, const Range *rng)
+QColor ContinuousColorRange::valueAt(double& index, const Range *rng)
 {
-    // TODO : indexes over the range of all possible colors
-    return QColor();
+    if (!rng)
+        return QColor();
+
+    if ( index < 0){
+        index = 0;
+        return QColor();
+    }
+    if ( index > 1){
+        index = 1;
+        return QColor();
+    }
+    const ContinuousColorRange *colors = rng->as<const ContinuousColorRange>();
+    if ( !colors)
+        return QColor();
+
+    int delta = colors->limitColor1().red() - colors->limitColor2().red();
+    int red = std::max(0.0,std::min(255.0,colors->limitColor1().red() + delta * index));
+    delta = colors->limitColor1().green() - colors->limitColor2().green();
+    int green = std::max(0.0,std::min(255.0,colors->limitColor1().green() + delta * index));
+    delta = colors->limitColor1().blue() - colors->limitColor2().blue();
+    int blue = std::max(0.0,std::min(255.0,colors->limitColor1().blue() + delta * index));
+    delta = colors->limitColor1().alpha() - colors->limitColor2().alpha();
+    int alpha = std::max(0.0,std::min(255.0,colors->limitColor1().alpha() + delta * index));
+
+//    if ( red > 255 || green > 255 || blue > 255){
+//        qDebug() << "stop";
+//    }
+
+    return QColor(red,green,blue, alpha);
 
 }
 
-QString ContinousColorRange::valueAsString(quint32& index, const Range *rng)
+QString ContinuousColorRange::valueAsString(double& index, const Range *rng)
 {
     // TODO : indexes over the range of all possible colors
     return sUNDEF;
 
 }
 
-quint32 ContinousColorRange::count() const
+quint32 ContinuousColorRange::count() const
 {
     return iUNDEF;
 }
 
-void ContinousColorRange::add(const QVariant &v)
+QColor ContinuousColorRange::limitColor1() const
+{
+    return _limit1;
+}
+
+QColor ContinuousColorRange::limitColor2() const
+{
+    return _limit2;
+}
+
+void ContinuousColorRange::add(const QVariant &v)
 {
     if ( contains(v))
         return;
@@ -376,14 +413,14 @@ void ContinousColorRange::add(const QVariant &v)
 
 }
 
-void ContinousColorRange::store(QDataStream &stream)
+void ContinuousColorRange::store(QDataStream &stream)
 {
     stream << defaultColorModel();
     storeColor(_limit1, stream);
     storeColor(_limit2, stream);
 }
 
-void ContinousColorRange::load(QDataStream &stream)
+void ContinuousColorRange::load(QDataStream &stream)
 {
     int model;
     stream >> model;

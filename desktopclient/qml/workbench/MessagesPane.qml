@@ -4,13 +4,14 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import UserMessageHandler 1.0
 import MessageModel 1.0
+import "../Global.js" as Global
 
 Rectangle {
     id : messageContainer
 
     signal unloadcontent(string content)
 
-    color : background4
+    color : Global.mainbackgroundcolor
     clip : true
     state : "invisible"
     height : 500
@@ -22,7 +23,7 @@ Rectangle {
         headerText:"Messages"
     }
 
-    Rectangle {
+    Item {
         id : messages
         anchors.top : functionBar.bottom;
         height : parent.height - functionBar.height

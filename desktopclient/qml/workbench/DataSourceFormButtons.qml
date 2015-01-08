@@ -34,6 +34,5 @@ Item {
         }
     }
     Component.onCompleted: {
-        console.debug(y, height)
     }
 }

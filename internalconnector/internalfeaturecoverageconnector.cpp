@@ -27,7 +27,7 @@ bool InternalFeatureCoverageConnector::loadMetaData(IlwisObject *data, const IOO
     return true;
 }
 
-bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *, const IOOptions& options)
+bool InternalFeatureCoverageConnector::loadData(Ilwis::IlwisObject *, const IOOptions & )
 {
     _binaryIsLoaded = true;
     return true;

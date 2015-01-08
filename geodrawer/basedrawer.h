@@ -11,14 +11,15 @@
 namespace Ilwis {
 namespace Geodrawer{
 
-class BaseDrawer : public QObject, public DrawerInterface, public Ilwis::Identity, protected QOpenGLFunctions
+class BaseDrawer : public QObject, public DrawerInterface, public Ilwis::Identity
 {
 public:
     enum Containment { cINSIDE, cOUTSIDE, cUNKNOWN};
 
     bool prepare(DrawerInterface::PreparationType, const IOOptions&);
+    void unprepare(PreparationType prepType);
     bool isPrepared(quint32 type=ptALL) const;
-    bool draw(const IOOptions&) const;
+    bool draw(QOpenGLContext *, const IOOptions&) const;
 
     RootDrawer* rootDrawer() ;
     const RootDrawer *rootDrawer() const;
@@ -40,6 +41,7 @@ public:
     void name(const QString& n);
     QString description() const;
     void setDescription(const QString& desc);
+
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
     void valid(bool yesno);
@@ -60,6 +62,8 @@ private:
 
 
 };
+
+typedef std::unique_ptr<QOpenGLFunctions> UPOpenGL;
 }
 }
 

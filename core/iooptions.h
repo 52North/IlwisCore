@@ -1,5 +1,5 @@
-#ifndef PREPARATIONPARAMETERS_H
-#define PREPARATIONPARAMETERS_H
+#ifndef IOOptions_H
+#define IOOptions_H
 
 #include "kernel_global.h"
 
@@ -24,9 +24,12 @@ public:
 
     bool contains(const QString& option) const;
     quint32 size() const;
+    bool isEmpty() const;
     QVariant operator[](const QString& option) const;
 
-    IOOptions& operator<<(const Option& option);
+    IOOptions &operator<<(const Option& option);
+    IOOptions &addOption(const QPair<QString, QVariant> &item);
+    IOOptions &addOption(const QString& key, const QVariant& value);
 
 private:
     std::map<QString, QVariant> _values;
@@ -41,4 +44,4 @@ const QString IMPLICITPARMATER2="_implicitparm_2";
 const QString IMPLICITPARMATER3="_implicitparm_3";
 }
 
-#endif // PREPARATIONPARAMETERS_H
+#endif // IOOptions_H

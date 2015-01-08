@@ -10,39 +10,52 @@ ComplexDrawer::ComplexDrawer(const QString &name, DrawerInterface* parentDrawer,
 
 }
 
-bool ComplexDrawer::draw(const IOOptions &options)
+bool ComplexDrawer::draw(QOpenGLContext *openglContext, const IOOptions &options)
 {
     if (!isActive() || !isValid())
         return false;
 
-    bool ok = drawSideDrawers(_preDrawers, options)    ;
+    bool ok = drawSideDrawers(openglContext, _preDrawers, options)    ;
 
     for(const auto& drawer : _mainDrawers){
         if ( drawer){
-            ok &= drawer->draw(options);
+            ok &= drawer->draw(openglContext, options);
         }
     }
-    ok &= drawSideDrawers(_postDrawers, options);
+    ok &= drawSideDrawers(openglContext, _postDrawers, options);
 
     return ok;
 }
 
-bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
+bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
     for( auto& drawer : _preDrawers)    {
-        if (!drawer.second->prepare(prepType, options))
+        if (!drawer.second->prepare(prepType, options,openglContext))
             return false;
     }
     for( auto& drawer : _mainDrawers){
-        if (!drawer->prepare(prepType, options))
+        if (!drawer->prepare(prepType, options, openglContext))
             return false;
     }
     for( auto& drawer : _postDrawers)    {
-        if (!drawer.second->prepare(prepType, options))
+        if (!drawer.second->prepare(prepType, options, openglContext))
             return false;
     }
     return true;
 
+}
+
+void ComplexDrawer::unprepare(DrawerInterface::PreparationType prepType)
+{
+    for( auto& drawer : _preDrawers)    {
+        drawer.second->unprepare(prepType);
+    }
+    for( auto& drawer : _mainDrawers){
+        drawer->unprepare(prepType);
+    }
+    for( auto& drawer : _postDrawers)    {
+        drawer.second->unprepare(prepType);
+    }
 }
 
 bool ComplexDrawer::prepareChildDrawers(DrawerInterface::PreparationType prepType, const IOOptions &options)
@@ -160,7 +173,7 @@ std::vector<DrawColor> &ComplexDrawer::drawColors()
     return _colors;
 }
 
-bool ComplexDrawer::drawSideDrawers(const DrawerMap& drawers, const IOOptions &options) const
+bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
 {
     if (!isActive())
         return false;
@@ -169,7 +182,7 @@ bool ComplexDrawer::drawSideDrawers(const DrawerMap& drawers, const IOOptions &o
         for(const auto& current : drawers) {
             const auto& drw = current.second;
             if ( drw)
-                drw->draw(options);
+                drw->draw(openglContext, options);
         }
     }
     return true;

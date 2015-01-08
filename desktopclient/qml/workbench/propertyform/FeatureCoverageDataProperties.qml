@@ -8,6 +8,7 @@ Item {
     id : container
     anchors.fill : parent
 
+
     Text {
         id : titleText
         text : qsTr("Attributes")

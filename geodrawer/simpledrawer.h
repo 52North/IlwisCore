@@ -3,7 +3,10 @@
 
 #include "basedrawer.h"
 
-namespace Ilwis {
+
+
+namespace Ilwis{
+
 namespace Geodrawer{
 
 class SimpleDrawer : public BaseDrawer

@@ -3,6 +3,8 @@
 
 #include <QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
+#include "colorlookup.h"
+#include "representation.h"
 #include "spatialdatadrawer.h"
 
 class QOpenGLShaderProgram;
@@ -16,25 +18,27 @@ typedef std::unique_ptr<DrawingColor> UPDrawingColor;
 class LayerDrawer : public SpatialDataDrawer
 {
 public:
-    LayerDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    LayerDrawer(const QString& name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
 
-    bool prepare(PreparationType prepType, const IOOptions& options);
-    void setCoverage(const ICoverage& coverage);
+    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+    void unprepare(PreparationType prepType);
 
-    UPDrawingColor& drawingColor();
+    void cleanUp();
+    QString activeAttribute() const;
 
-     void cleanUp();
+protected:
+    bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices, const std::vector<VertexColor> &colors);
+    virtual void setActiveAttribute(const QString& attr);
+    GLuint _vboPosition;
+    GLuint _vboColor;
+    QOpenGLShaderProgram _shaders;
 
 private:
-    UPDrawingColor _drawingColor;
-    QOpenGLShaderProgram *_shaderprogram;
-    QOpenGLShaderProgram _shaders;
-    GLuint _vboID[2];
+    QString _activeAttribute = sUNDEF;
 
-    bool draw(const IOOptions &options=IOOptions()) ;
-    void dummmm();
-    bool initGeometry();
+
     bool initShaders();
+
 };
 
 

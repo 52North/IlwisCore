@@ -12,7 +12,7 @@
 
 using namespace Ilwis;
 
-IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const IOOptions &) : _resource(resource), _binaryIsLoaded(false)
+IlwisObjectConnector::IlwisObjectConnector(const Ilwis::Resource &resource, bool, const IOOptions &options) : _resource(resource), _binaryIsLoaded(false), _options(options)
 {
 
 }
@@ -39,5 +39,10 @@ const Resource& IlwisObjectConnector::source() const{
 bool IlwisObjectConnector::dataIsLoaded() const
 {
     return _binaryIsLoaded;
+}
+
+IOOptions IlwisObjectConnector::ioOptions() const
+{
+    return _options;
 }
 
