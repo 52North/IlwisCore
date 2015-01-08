@@ -11,8 +11,6 @@ Item {
     width : parent.width
     height : parent.height
 
-    signal modellerChanged()
-
     ToolBar{
         id : toolbar
         anchors.top : parent.top
