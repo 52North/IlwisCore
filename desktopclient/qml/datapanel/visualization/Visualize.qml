@@ -50,12 +50,15 @@ Item {
                         id : editorDelegate
                         width : parent.width
                         titleText: editorName
-                        headerHeight: 15
-                        panelHeight: 200
+                        headerHeight: 18
+                        panelHeight: 100
                         state : "collapsed"
                         headerColor: Global.alternatecolor3
+                        arrowtype: "arrowdownlight.png"
+                        boldfont: false
+                        fontsize: 11
                         Component.onCompleted: {
-                            var component = Qt.createComponent("RepresentationSetter.qml");
+                            var component = Qt.createComponent("RepresentationProperties.qml");
                             if (component.status == Component.Ready)
                                 component.createObject(editorDelegate.expandableArea);
                         }
