@@ -3,6 +3,7 @@
 #include "uicontextmodel.h"
 
 quint64 UIContextModel::_objectCounter = 0;
+std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
@@ -44,5 +45,6 @@ void UIContextModel::addPropertyEditor(quint64 objecttype, const QString &proper
 {
     _propertyEditors[objecttype][propertyName] = new PropertyEditorMetaData(metadata, this);
 }
+
 
 
