@@ -14,13 +14,5 @@ Rectangle {
     ComboBox{
         width : parent.width
         height : Global.rowHeight
-        Component.onCompleted: {
-             model : representation.rprNames
-        }
-    }
-
-    Component.onCompleted: {
-        representation = new RepresentationSetter(parent)
-        representation.prepare()
     }
 }
