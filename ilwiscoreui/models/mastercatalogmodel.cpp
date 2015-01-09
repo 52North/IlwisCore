@@ -71,6 +71,12 @@ CatalogModel* MasterCatalogModel::selectedCatalog()
     return 0;
 }
 
+std::vector<Resource> MasterCatalogModel::select(const QString &filter)
+{
+    return mastercatalog()->select(filter);
+
+}
+
 quint32 MasterCatalogModel::selectedIndex() const
 {
     return 0;

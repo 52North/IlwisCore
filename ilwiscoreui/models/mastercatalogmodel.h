@@ -53,6 +53,7 @@ public:
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshWorkingCatalog();
     Q_INVOKABLE CatalogModel *selectedCatalog();
+    std::vector<Ilwis::Resource> select(const QString& filter);
 
     QQmlListProperty<IlwisObjectModel> selectedData();
 public slots:
