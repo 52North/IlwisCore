@@ -38,7 +38,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
     ilwiscoreui/models/visualizationmanager.h \
-    ilwiscoreui/models/propertyeditormetadata.h
+    ilwiscoreui/models/propertyeditormetadata.h \
+    ilwiscoreui/propertyeditors/propertyeditor.h \
+    ilwiscoreui/propertyeditors/representationsetter.h
 
 unix {
     target.path = /usr/lib
@@ -62,7 +64,9 @@ SOURCES += \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
     ilwiscoreui/models/visualizationmanager.cpp \
-    ilwiscoreui/models/propertyeditormetadata.cpp
+    ilwiscoreui/models/propertyeditormetadata.cpp \
+    ilwiscoreui/propertyeditors/propertyeditor.cpp \
+    ilwiscoreui/propertyeditors/representationsetter.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
