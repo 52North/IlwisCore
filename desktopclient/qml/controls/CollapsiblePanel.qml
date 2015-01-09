@@ -9,7 +9,10 @@ Rectangle {
     property color headerColor : Global.alternatecolor2
     property int headerHeight : 24
     property alias titleText: titleTxt.text
-     property var expandableArea : internealArea
+    property var expandableArea : internealArea
+    property int fontsize : 12
+    property bool boldfont : true
+    property string arrowtype : "arrowdown.png"
 
     gradient: Gradient {
         GradientStop {
@@ -35,7 +38,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            source: "../images/arrowdown.png"
+            source: "../images/" + arrowtype
 
         }
         Text{
@@ -43,9 +46,9 @@ Rectangle {
             anchors.left: titleArrow.right
             anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 12
+            font.pixelSize: fontsize;
             // color:  "DarkBlue"
-            font.bold: true
+            font.bold: boldfont
         }
         MouseArea{
             width: parent.width
