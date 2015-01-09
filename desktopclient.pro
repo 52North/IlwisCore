@@ -81,7 +81,8 @@ OTHER_FILES += \
     desktopclient/qml/panel/CatalogThumbGrid.qml \
     desktopclient/qml/Global.js \
     desktopclient/qml/workbench/propertyform/NumericDomainProperties.qml \
-    desktopclient/qml/workbench/propertyform/GeoreferencePart.qml
+    desktopclient/qml/workbench/propertyform/GeoreferencePart.qml \
+    desktopclient/qml/datapanel/visualization/RepresentationProperties.qml
 
 
 # Installation path
