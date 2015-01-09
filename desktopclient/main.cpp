@@ -79,18 +79,17 @@ int main(int argc, char *argv[])
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
-        UIContextModel uiContext;
-        uiContext.qmlContext(ctx);
+        uicontext()->qmlContext(ctx);
 
         //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        uiContext.addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationProperties.qml")));
+        uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationProperties.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
-        ctx->setContextProperty("uicontext", &uiContext);
+        ctx->setContextProperty("uicontext", uicontext().get());
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
