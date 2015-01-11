@@ -40,6 +40,9 @@ ApplicationWindow {
         }
     }
 
+    function addCatalog(){
+        mainSplit.addCatalog()
+    }
 
     function transitionInfoPane(newpagename) {
         workBench.transitionInfoPane(newpagename)
@@ -63,6 +66,10 @@ ApplicationWindow {
             anchors.top : commLine.bottom
             height : bigthing.height - commLine.height * 2
 
+            function addCatalog() {
+                dataPanel.addCatalog()
+            }
+
             WorkBench.WorkBenchButtonBar{
                 id : workBenchButtons
             }
@@ -76,8 +83,6 @@ ApplicationWindow {
                 id : dataPanel
             }
 
-            Component.onCompleted: {
-            }
         }
 
 

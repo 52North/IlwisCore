@@ -45,7 +45,8 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         res.addProperty("filter","");
         res.setDescription(descr);
         CatalogView cview(res);
-        _activeCatalogs[res.url().toString()] = new CatalogModel(cview,0,this);
+        _currentUrl = res.url().toString();
+        _activeCatalogs[_currentUrl] = new CatalogModel(cview,0,this);
         _bookmarkedList.push_back(res.url().toString());
     }
 
@@ -104,6 +105,9 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
 
 void MasterCatalogModel::setSelectedIndex(const QString& path)
 {
+    if ( path == "")
+        return;
+
     _currentUrl = path;
     if ( _root){
         _currentList = resources();
@@ -138,6 +142,9 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 
 void MasterCatalogModel::addCatalog(const QString &inpath)
 {
+    if ( inpath == "" || inpath == sUNDEF)
+        return;
+
     QString newcatalogurl = changeCatalog(inpath);
     if ( newcatalogurl == "")
         return ;
@@ -156,10 +163,10 @@ void MasterCatalogModel::addCatalog(const QString &inpath)
 }
 
 QString MasterCatalogModel::changeCatalog(const QString &inpath){
-    if ( inpath == "")
+    if ( inpath == "" || inpath == sUNDEF)
         return "";
-    if  ( _currentUrl == inpath)
-        return "";
+//    if  ( _currentUrl == inpath)
+//        return "";
 
     QString path = inpath;
     int index = inpath.indexOf("/..");

@@ -13,6 +13,7 @@ Item {
     anchors.fill: parent
     objectName: uicontext.uniqueName()
 
+
     function addSource(sourceUrl, sourceType){
         drawer.addDataSource(sourceUrl, sourceType)
         layertools.manager.addDataSource(sourceUrl, sourceType)
@@ -59,7 +60,7 @@ Item {
                         fontsize: 11
                         Component.onCompleted: {
                             var component = Qt.createComponent("RepresentationProperties.qml");
-                            if (component.status == Component.Ready)
+                            if (component.status === Component.Ready)
                                 component.createObject(editorDelegate.expandableArea);
                         }
                     }
@@ -95,7 +96,6 @@ Item {
             GeoDrawer{
                 id : drawer
                 anchors.fill: parent
-
             }
         }
     }

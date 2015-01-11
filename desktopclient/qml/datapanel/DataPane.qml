@@ -16,6 +16,7 @@ Rectangle {
     color: background4
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
+    property int activeSplit : 1
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -25,6 +26,10 @@ Rectangle {
          return iconP
 
      }
+
+    function addCatalog() {
+        mainsplit.addCatalog()
+    }
 
     ToolBar{
         id : tabtools
@@ -59,18 +64,12 @@ Rectangle {
 
     }
 
-    TabView {
+    SplitView {
+        id : mainsplit
+        orientation: Qt.Horizontal
+        anchors.bottom: parent.bottom
         anchors.top : tabtools.bottom
         width : parent.width
-        anchors.bottom: parent.bottom
-
-        onCurrentIndexChanged: {
-            console.debug(currentIndex)
-        }
-
-        id : tabs
-
-        style: Base.TabStyle1{}
 
         function showObject(objectid){
             var component = Qt.createComponent("visualization/Visualize.qml")
@@ -83,25 +82,75 @@ Rectangle {
                     var part2 = name.substr( name.length - blocksize)
                     name = part1 + "..." + part2
                 }
-                var tab = addTab(name,component)
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
+                if ( activeSplit ===1)
+                    righttab.width = parent.width / 2.0
+                else
+                    lefttab.width = parent.width / 2.0
+
                 tab.item.addSource(resource.url, resource.typeName)
-                currentIndex++
             }
         }
 
-        function objectSelected(objectid){
-
-        }
-
-           Tab {
-            id : catalog_0
-            title : "Catalog"
-            Catalog.CatalogPanel{
+        function addCatalog() {
+            var component = Qt.createComponent("catalog/CatalogPanel.qml")
+            var currentcatalog = mastercatalog.selectedCatalog()
+            if ( currentcatalog !== null){
+                mastercatalog.addCatalog(mastercatalog.currentUrl)
+                var name = currentcatalog.displayName
+                var blocksize = 24 / 2;
+                if ( name.length > 15){
+                    var part1 = name.substr(0,blocksize)
+                    var part2 = name.substr( name.length - blocksize)
+                    name = part1 + "..." + part2
+                }
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+                tab.active = true
+                if ( activeSplit ===1)
+                    righttab.width = parent.width / 2.0
+                else
+                    lefttab.width = parent.width / 2.0
             }
         }
 
+        TabView {
+            id : lefttab
+            height : parent.height
+            width: parent.width
+            Layout.fillWidth: true
+
+            style: Base.TabStyle2{
+                splitindex: 1
+                onSplitindexChanged: {
+                    activeSplit = 1
+                    uicontext.setActiveSplit(1)
+                }
+            }
+
+            Tab {
+                id : catalog_0
+                title : "Catalog"
+                Catalog.CatalogPanel{
+                }
+            }
+
+        }
+        TabView{
+            id : righttab
+            width : 0
+            height : parent.height
+
+            style: Base.TabStyle2{
+                splitindex: 2
+                onSplitindexChanged:{
+                    activeSplit = 2
+                    uicontext.setActiveSplit(2)
+                }
+            }
+        }
     }
+
     focus : true
     Keys.onPressed: {
         console.debug(event.key)

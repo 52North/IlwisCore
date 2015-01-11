@@ -14,7 +14,6 @@ id: thumbDelegate
     height :  GridView.view.cellHeight
 
     function iconSource(name) {
-        console.debug(name)
         if ( name.indexOf("/") !== -1)
             return name
         if ( !name || name === "?")

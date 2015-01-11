@@ -23,6 +23,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 
     friend std::unique_ptr<UIContextModel>& uicontext();
 
+    Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
 public:
     explicit UIContextModel(QObject *parent = 0);
 
@@ -33,7 +34,10 @@ public:
     QList<PropertyEditorMetaData *> propertyEditors(quint64 objecttype) ;
 
     void qmlContext(QQmlContext *ctx);
+    int activeSplit() const;
+    void setActiveSplit(int index);
 signals:
+    void activeSplitChanged();
 
 public slots:
 
@@ -41,6 +45,7 @@ private:
     std::map<quint64,std::map<QString, PropertyEditorMetaData *>> _propertyEditors;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
+    int _activeSplit = 1;
 
     //std::map<quint64,std::map<QString, CreatePropertyEditor>> _propertyEditors;
     static std::unique_ptr<UIContextModel>_uicontext;

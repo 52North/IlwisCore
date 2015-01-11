@@ -13,7 +13,7 @@ Item {
     signal catalogChanged()
 
     function showObject(objectid){
-        tabs.showObject(objectid)
+        mainsplit.showObject(objectid)
     }
 
     function toggleFilter(objecttype, togglestate){
