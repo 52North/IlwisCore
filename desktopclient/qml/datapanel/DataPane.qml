@@ -97,7 +97,7 @@ Rectangle {
             var component = Qt.createComponent("catalog/CatalogPanel.qml")
             var currentcatalog = mastercatalog.selectedCatalog()
             if ( currentcatalog !== null){
-                mastercatalog.addCatalog(mastercatalog.currentUrl)
+                mastercatalog.addCatalog(mastercatalog.currentUrl, mastercatalog.activeSplit === 0 ? 1 : 0)
                 var name = currentcatalog.displayName
                 var blocksize = 24 / 2;
                 if ( name.length > 15){
@@ -107,10 +107,16 @@ Rectangle {
                 }
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
-                if ( activeSplit ===1)
+                if ( activeSplit ===1){
                     righttab.width = parent.width / 2.0
-                else
+                    activeSplit = 2
+                    tab.item.tabLocation = "right"
+                }
+                else{
                     lefttab.width = parent.width / 2.0
+                    activeSplit = 1
+                    tab.item.tabLocation = "left"
+                }
             }
         }
 
@@ -120,11 +126,15 @@ Rectangle {
             width: parent.width
             Layout.fillWidth: true
 
+            onCurrentIndexChanged : {
+                console.debug(currentIndex, "left")
+            }
+
             style: Base.TabStyle2{
                 splitindex: 1
                 onSplitindexChanged: {
                     activeSplit = 1
-                    uicontext.setActiveSplit(1)
+                    mastercatalog.activeSplit = 0
                 }
             }
 
@@ -141,11 +151,15 @@ Rectangle {
             width : 0
             height : parent.height
 
+            onCurrentIndexChanged : {
+                console.debug(currentIndex,"right")
+            }
+
             style: Base.TabStyle2{
                 splitindex: 2
                 onSplitindexChanged:{
                     activeSplit = 2
-                    uicontext.setActiveSplit(2)
+                    mastercatalog.activeSplit = 1
                 }
             }
         }
