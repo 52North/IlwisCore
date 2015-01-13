@@ -201,7 +201,7 @@ Rectangle {
                 showObject(model[currentRow].id)
         }
 
-        model : mastercatalog.resources
+        model : tabLocation === "left" ? mastercatalog.leftResources : mastercatalog.rightResources
     }
 
 }
