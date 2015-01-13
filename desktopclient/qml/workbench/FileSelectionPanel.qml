@@ -71,7 +71,7 @@ Rectangle {
         Component.onCompleted: {
             if ( startFolder == "")
                 startFolder = mastercatalog.currentUrl
-            mastercatalog.addCatalog(startFolder) // at this place else the indexchanged will overrule any previous path setting
+            mastercatalog.addCatalog(startFolder,mastercatalog.activeSplit) // at this place else the indexchanged will overrule any previous path setting
             mastercatalog.setWorkingCatalog(startFolder)
         }
         onActivated: {
@@ -109,7 +109,7 @@ Rectangle {
                 var path = pathModel.get(currentIndex)
                 if ( path !== null && typeof path != 'undefined'){
                     folderModel.folder = "file:///" + path.folderid
-                    mastercatalog.addCatalog(folderModel.folder)
+                    mastercatalog.addCatalog(folderModel.folder,mastercatalog.activeSplit)
                     mastercatalog.setWorkingCatalog(folderModel.folder)
                 }
             }
@@ -129,7 +129,7 @@ Rectangle {
             onTriggered :{
                 currentFolder = "file:///"+ pathText.editText
                 folderModel.folder = currentFolder
-                mastercatalog.addCatalog(currentFolder)
+                mastercatalog.addCatalog(currentFolder,mastercatalog.activeSplit)
                 mastercatalog.setWorkingCatalog(currentFolder)
             }
         }
@@ -174,7 +174,7 @@ Rectangle {
                     onClicked: {
                         //fileFolders.currentIndex = index;
                         var path = folderModel.get(index,"filePath")
-                        mastercatalog.addCatalog(path);
+                        mastercatalog.addCatalog(path,mastercatalog.activeSplit);
                         path = path2pathView(path)
                         currentFolder = "file:///"+ path;
                         folderModel.folder = currentFolder;
