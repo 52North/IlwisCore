@@ -6,9 +6,11 @@ import MasterCatalogModel 1.0
 
 Item {
     property int heightButtons : 26
+    property string tabLocation : "left"
     id : catalogViews
     width : parent.width
     height : parent.height
+
 
     signal catalogChanged()
 
