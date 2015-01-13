@@ -66,20 +66,6 @@ Item {
             bigthing.addCatalog()
         }
 
-//            var component = Qt.createComponent("../../datapanel/catalog/CatalogPanel.qml")
-//            var currentcatalog = mastercatalog.selectedCatalog()
-//            if ( currentcatalog !== null){
-//                var name = currentcatalog.displayName
-//                var blocksize = 24 / 2;
-//                if ( name.length > 15){
-//                    var part1 = name.substr(0,blocksize)
-//                    var part2 = name.substr( name.length - blocksize)
-//                    name = part1 + "..." + part2
-//                }
-//                var tab = uicontext.activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-//                tab.active = true
-//            }
-//        }
     }
 
     Item {
