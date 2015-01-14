@@ -13,7 +13,7 @@ Item {
     anchors.margins: 2
     GridView {
         id: thumbGridView
-        model: mastercatalog.resources
+        model: tabLocation === "left" ? mastercatalog.leftResources : mastercatalog.rightResources
         delegate: DCatalogThumb{}
         cacheBuffer: 1000
         cellWidth: 150
