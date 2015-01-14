@@ -446,13 +446,13 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     QSqlQuery results = kernel()->database().exec(query);
     std::vector<Resource> items;
-    qDebug() << "loading container "<< resource.toString();
-    kernel()->startClock();
+    //qDebug() << "loading container "<< resource.toString();
+   // kernel()->startClock();
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));
     }
-    kernel()->endClock();
+    //kernel()->endClock();
     return items;
 
 }
