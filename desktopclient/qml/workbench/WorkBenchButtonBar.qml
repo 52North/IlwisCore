@@ -52,7 +52,7 @@ Rectangle {
     Action {
         id : modellerClicked
         onTriggered : {
-            transitionInfoPane("Modeller.qml")
+            transitionInfoPane("modeller/ModellerSelection.qml")
         }
 
     }
