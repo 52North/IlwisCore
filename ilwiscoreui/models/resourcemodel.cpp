@@ -159,6 +159,10 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "representation20.png";
     else if ( hasType(tp,itNUMBER))
         return "numbers20.png";
+    else if ( hasType(tp,itPROJECTION))
+        return "projection20.png";
+    else if ( hasType(tp,itELLIPSOID))
+        return "ellipsoid20.png";
     else if ( tp & itSTRING)
         return "text20.png";
     else

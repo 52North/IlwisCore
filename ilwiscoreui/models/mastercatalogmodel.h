@@ -80,6 +80,8 @@ private:
      void pushToFront(int index);
     void emitResourcesChanged();
     
+    void addCatalog(const QString &label, const QUrl &location, const QString &descr, const QString &query);
+
 signals:
     void leftResourcesChanged();
     void rightResourcesChanged();

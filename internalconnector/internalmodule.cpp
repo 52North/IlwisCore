@@ -75,19 +75,19 @@ void InternalModule::prepare()
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
-    QString url = QString("ilwis://internalcatalog/unknown");
+    QString url = QString("ilwis://system/unknown");
     Resource resource(url, itBOUNDSONLYCSY);
     resource.code("unknown");
     resource.name("unknown", false);
-    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.addContainer(QUrl("ilwis://system"));
     resource.prepare();
     mastercatalog()->addItems({resource});
 
-    url = QString("ilwis://internalcatalog/undetermined");
+    url = QString("ilwis://system/undetermined");
     resource = Resource(url, itGEOREF);
     resource.code("undetermined");
     resource.name("undetermined", false);
-    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.addContainer(QUrl("ilwis://system"));
     resource.prepare();
     mastercatalog()->addItems({resource});
 
@@ -107,27 +107,27 @@ QString InternalModule::version() const
 
 bool InternalModule::createSpecialDomains() {
     std::vector<Resource> resources;
-    QString url = QString("ilwis://internalcatalog/code=domain:text");
+    QString url = QString("ilwis://system/code=domain:text");
     Resource resource(url, itTEXTDOMAIN);
     resource.code("text");
     resource.name("Text domain", false);
-    resource.addContainer(QUrl("ilwis://internalcatalog"));
+    resource.addContainer(QUrl("ilwis://system"));
     resource.prepare();
     resources.push_back(resource);
 
-    url = QString("ilwis://internalcatalog/code=domain:color");
+    url = QString("ilwis://system/code=domain:color");
     Resource colorResource(url, itCOLORDOMAIN);
     colorResource.code("color");
     colorResource.name("Color domain", false);
-    colorResource.addContainer(QUrl("ilwis://internalcatalog"));
+    colorResource.addContainer(QUrl("ilwis://system"));
     colorResource.prepare();
     resources.push_back(colorResource);
 
-    url = QString("ilwis://internalcatalog/code=domain:colorpalette");
+    url = QString("ilwis://system/code=domain:colorpalette");
     Resource paletteResource(url, itITEMDOMAIN);
     paletteResource.code("colorpalette");
     paletteResource.name("Color Palette domain", false);
-    paletteResource.addContainer(QUrl("ilwis://internalcatalog"));
+    paletteResource.addContainer(QUrl("ilwis://system"));
     paletteResource.prepare();
     resources.push_back(paletteResource);
 
@@ -148,10 +148,12 @@ bool InternalModule::createPcs(QSqlQuery& db) {
             resource.code(code);
             resource.name(name, false);
             resource["wkt"] = name;
-            resource.addContainer(QUrl("ilwis://internalcatalog"));
+            resource.addContainer(QUrl("ilwis://system"));
             items.push_back(resource);
         }
-        return mastercatalog()->addItems(items);
+        bool ok = mastercatalog()->addItems(items);
+        return ok;
+
     } else {
         kernel()->issues()->logSql(db.lastError());
     }
@@ -177,7 +179,7 @@ bool InternalModule::createItems(QSqlQuery& db, const QString& sqltable, IlwisTy
             resource.code(code);
             resource.setExtendedType(extType);
             resource.setDescription(rec.value("description").toString());
-            resource.addContainer(QUrl("ilwis://internalcatalog"));
+            resource.addContainer(QUrl("ilwis://system"));
             QString wkt = rec.value("wkt").toString();
             if ( wkt != "" && wkt != sUNDEF)
                 resource.addProperty("wkt",wkt);

@@ -7,6 +7,7 @@
 #include <QSqlField>
 #include "identity.h"
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "oshelper.h"
 #include "connectorinterface.h"
 #include "mastercatalog.h"
@@ -84,7 +85,6 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
 
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
-         loc.indexOf("ilwis://system") == 0 ||
          loc.indexOf("ilwis://operations") == 0 ||
          loc == "file://" ||
          loc == "file:/" ||
@@ -446,10 +446,13 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     QSqlQuery results = kernel()->database().exec(query);
     std::vector<Resource> items;
+    qDebug() << "loading container "<< resource.toString();
+    kernel()->startClock();
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));
     }
+    kernel()->endClock();
     return items;
 
 }

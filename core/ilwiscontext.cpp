@@ -110,6 +110,11 @@ void IlwisContext::init()
             file.setFile(configfile);
         }
     }
+    mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
+    mastercatalog()->addContainer(persistentInternalCatalog());
+
+    _systemCatalog.prepare("ilwis://system");
+
     _configuration.prepare(file.absoluteFilePath());
 
 }
@@ -119,6 +124,11 @@ ICatalog IlwisContext::workingCatalog() const{
 //        return static_cast<Catalog *>(_workingCatalog.localData());
 
     return _workingCatalog;
+}
+
+const ICatalog &IlwisContext::systemCatalog() const
+{
+    return _systemCatalog;
 }
 
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)

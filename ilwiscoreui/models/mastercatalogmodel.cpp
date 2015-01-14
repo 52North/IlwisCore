@@ -30,9 +30,38 @@ MasterCatalogModel::MasterCatalogModel()
 
 }
 
+void MasterCatalogModel::addCatalog(const QString& label, const QUrl& location, const QString& descr, const QString& query)
+{
+    Resource res(location, itCATALOGVIEW ) ;
+    if ( label != "")
+        res.name(label,false);
+    QStringList lst;
+    lst << location.toString();
+    res.addProperty("locations", lst);
+    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+    res.addProperty("filter","");
+    res.setDescription(descr);
+    CatalogView cview(res);
+    cview.filter(query);
+    _currentUrl = res.url().toString();
+    _activeCatalogs[_currentUrl] = new CatalogModel(cview,0,this);
+    _bookmarkedList.push_back(res.url().toString());
+}
+
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
+<<<<<<< Updated upstream
     _splitCatalogs.resize(2);
+    addCatalog(TR("Internal Catalog"),
+               QUrl("ilwis://internalcatalog"),
+               TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
+               "");
+
+    addCatalog(TR("System Catalog"),
+               QUrl("ilwis://system"),
+               TR("Default objects that are always available in ilwis"),
+               "type<>" + QString::number(itGEODETICDATUM));
+
     int nrOfcatalogs = ilwisconfig("users/user-0/nr-of-data-catalogs",0);
     for(int cat = 0; cat < nrOfcatalogs; ++cat){
         QString query = QString("users/user-0/data-catalog-%1").arg(cat);
@@ -177,7 +206,7 @@ void MasterCatalogModel::emitResourcesChanged()
 
 void MasterCatalogModel::addCatalog(const QString &inpath, int splitIndex)
 {
-    if ( inpath == "" || inpath == sUNDEF)
+    if ( inpath == "" || inpath == sUNDEF || inpath.indexOf("ilwis://") == 0)
         return;
 
     _activeSplit = splitIndex;

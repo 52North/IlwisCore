@@ -28,7 +28,8 @@ public:
     void addSystemLocation(const QUrl &resource);
     void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;
-    Ilwis::ICatalog workingCatalog() const;
+    ICatalog workingCatalog() const;
+    const ICatalog& systemCatalog() const;
     void setWorkingCatalog(const Ilwis::ICatalog &cat);
     QUrl cacheLocation() const;
     QUrl persistentInternalCatalog() const;
@@ -46,6 +47,7 @@ private:
     std::vector<QUrl> _systemlocations;
     //QThreadStorage<Catalog *> _workingCatalog;
     ICatalog _workingCatalog;
+    ICatalog _systemCatalog;
     quint64 _memoryLimit;
     quint64 _memoryLeft;
     QFileInfo _ilwisDir;
