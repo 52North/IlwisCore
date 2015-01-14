@@ -13,6 +13,15 @@ Item {
     anchors.fill: parent
     objectName: uicontext.uniqueName()
 
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+        if ( name === "")
+            name = "redbuttonr.png"
+
+         var iconP = "../../images/" + name
+         return iconP
+     }
 
     function addSource(sourceUrl, sourceType){
         drawer.addDataSource(sourceUrl, sourceType)
@@ -20,9 +29,61 @@ Item {
         layertools.model = layertools.manager.layers
     }
 
+    ToolBar{
+        id : maptools
+        width : parent.width
+        height : 35
+        Button {
+            height : 25
+            width : 25
+            id : entireMap
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("entiremap20.png")
+            }
+        }
+
+        Button {
+            height : 25
+            width : 25
+            id : zoominButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :entireMap.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("zoomin20.png")
+            }
+        }
+        Button {
+            height : 25
+            width : 25
+            id : removeSplit
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :zoominButton.right
+            anchors.leftMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("zoomout20.png")
+            }
+        }
+
+
+
+    }
+
     SplitView {
 
-        anchors.fill: parent
+        anchors.top: maptools.bottom
+        width : parent.width
+        height : parent.height - maptools.height
         orientation: Qt.Horizontal
         ListView {
             id : layertools
