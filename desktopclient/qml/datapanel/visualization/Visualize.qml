@@ -50,9 +50,39 @@ Item {
         Button {
             height : 25
             width : 25
-            id : zoominButton
+            id : refreshButton
             anchors.verticalCenter: parent.verticalCenter
             anchors.left :entireMap.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("refresh20.png")
+            }
+        }
+
+
+        Button {
+            height : 25
+            width : 25
+            id : panButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :refreshButton.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("pan20.png")
+            }
+        }
+
+
+        Button {
+            height : 25
+            width : 25
+            id : zoominButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :panButton.right
             anchors.rightMargin: 2
             Image {
                 anchors.verticalCenter: parent.verticalCenter
@@ -63,7 +93,7 @@ Item {
         Button {
             height : 25
             width : 25
-            id : removeSplit
+            id : zoomoutButton
             anchors.verticalCenter: parent.verticalCenter
             anchors.left :zoominButton.right
             anchors.leftMargin: 2
