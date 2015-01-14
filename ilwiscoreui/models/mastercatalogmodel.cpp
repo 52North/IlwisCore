@@ -43,14 +43,11 @@ void MasterCatalogModel::addCatalog(const QString& label, const QUrl& location, 
     res.setDescription(descr);
     CatalogView cview(res);
     cview.filter(query);
-    _currentUrl = res.url().toString();
-    _activeCatalogs[_currentUrl] = new CatalogModel(cview,0,this);
-    _bookmarkedList.push_back(res.url().toString());
+    _bookmarks.push_back(new CatalogModel(cview,0,this));
 }
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
-<<<<<<< Updated upstream
     _splitCatalogs.resize(2);
     addCatalog(TR("Internal Catalog"),
                QUrl("ilwis://internalcatalog"),
@@ -81,7 +78,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         _bookmarks.push_back(new CatalogModel(cview,0,this));
     }
     if ( _bookmarks.size() > 0)
-        _splitCatalogs[LEFTVIEW].push_back(_bookmarks[0]);
+        _splitCatalogs[LEFTVIEW].push_back(_bookmarks.back());
 
 }
 
