@@ -104,7 +104,7 @@ void RootDrawer::setMVP()
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
 
-void RootDrawer::pixelAreaSize(const Size<> size)
+void RootDrawer::pixelAreaSize(const Size<>& size)
 {
     _aspectRatioView = (double)size.xsize() / (double)size.ysize();
     if ( _aspectRatioCoverage != 0 && !_viewRect.isNull() && !_zoomRect.isNull()){
@@ -126,10 +126,10 @@ void RootDrawer::pixelAreaSize(const Size<> size)
                 modifyEnvelopeZoomView(_viewRect.size().ysize(), _zoomRect.size().ysize(),(double)_pixelAreaSize.xsize() / size.xsize() );
             }
         }
-
     }
     setMVP();
     _pixelAreaSize = size;
+
 }
 
 Size<> RootDrawer::pixelAreaSize() const
@@ -138,20 +138,40 @@ Size<> RootDrawer::pixelAreaSize() const
 }
 
 void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio) {
-    double deltaview = dview * ratio;
-    double deltazoom = dzoom * ratio;
-    Coordinate cMiddle = _zoomRect.center();
-    if ( _aspectRatioCoverage <= 1.0) {
-        _viewRect.min_corner().x = cMiddle.x - deltaview / 2.0;
-        _viewRect.max_corner().x = cMiddle.x + deltaview / 2.0;
-        _zoomRect.min_corner().x = cMiddle.x - deltazoom / 2.0;
-        _zoomRect.max_corner().x = cMiddle.x + deltazoom / 2.0;
-    } else {
-        _viewRect.min_corner().y = cMiddle.y - deltaview / 2.0;
-        _viewRect.max_corner().y = cMiddle.y + deltaview / 2.0;
-        _zoomRect.min_corner().y = cMiddle.y - deltazoom / 2.0;
-        _zoomRect.max_corner().y = cMiddle.y + deltazoom / 2.0;
+    double deltaview = dview - dview * ratio ;
+    double deltazoom = dzoom - dzoom * ratio;
+    if ( _aspectRatioCoverage < 1.0){
+        _viewRect.min_corner().y -= deltaview / (2.0 * _aspectRatioView);
+        _viewRect.max_corner().y += deltaview/ ( 2.0 * _aspectRatioView);
+        if ( _viewRect.min_corner().y > _coverageRect.min_corner().y || _viewRect.min_corner().x < _coverageRect.min_corner().x){
+            _viewRect.min_corner().y = _coverageRect.min_corner().y;
+            _viewRect.max_corner().y = _coverageRect.max_corner().y;
+            _viewRect.min_corner().x += deltaview  / 2.0;
+            _viewRect.max_corner().x -= deltaview / 2.0;
+        }
+        _zoomRect.min_corner().y -= deltazoom/  (2.0 * _aspectRatioView);
+        _zoomRect.max_corner().y += deltazoom /  (2.0 * _aspectRatioView);
+        if ( _zoomRect.min_corner().y > _coverageRect.min_corner().y || _zoomRect.min_corner().x < _coverageRect.min_corner().x){
+            _zoomRect.min_corner().y = _coverageRect.min_corner().y;
+            _zoomRect.max_corner().y = _coverageRect.max_corner().y;
+            _zoomRect.min_corner().x +=  deltazoom    / 2.0;
+            _zoomRect.max_corner().x -= deltazoom  / 2.0;
+        }
+
+    }else {
+
     }
+//    if ( _aspectRatioCoverage <= 1.0) {
+//        _viewRect.min_corner().x = cMiddle.x - deltaview / 2.0;
+//        _viewRect.max_corner().x = cMiddle.x + deltaview / 2.0;
+//        _zoomRect.min_corner().x = cMiddle.x - deltazoom / 2.0;
+//        _zoomRect.max_corner().x = cMiddle.x + deltazoom / 2.0;
+//    } else {
+//        _viewRect.min_corner().y = cMiddle.y - deltaview / 2.0;
+//        _viewRect.max_corner().y = cMiddle.y + deltaview / 2.0;
+//        _zoomRect.min_corner().y = cMiddle.y - deltazoom / 2.0;
+//        _zoomRect.max_corner().y = cMiddle.y + deltazoom / 2.0;
+//    }
 }
 
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
