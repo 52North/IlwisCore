@@ -92,7 +92,7 @@ void GeoDrawer::paint()
         int w = width();
         int h = height();
         int heightWindow = window()->contentItem()->height();
-        _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,0));
+        _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,1));
         QPointF pointInLocalCS(x(), y());
         QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
         int yb = heightWindow - h - pointInWindowCS.y() + pointInLocalCS.y();
