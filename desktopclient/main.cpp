@@ -20,7 +20,7 @@
 #include "applicationformexpressionparser.h"
 #include "models/tranquilizerhandler.h"
 #include "models/visualizationmanager.h"
-#include "models/objectvisualizationmodel.h"
+#include "models/coveragelayermodel.h"
 #include "models/ilwisobjectmodel.h"
 #include "models/attributemodel.h"
 #include "models/domainitemmodel.h"
@@ -61,15 +61,13 @@ int main(int argc, char *argv[])
         qmlRegisterType<TranquilizerHandler>("TranquilizerHandler",1,0, "TranquilizerHandler");
         qmlRegisterType<TranquilizerModel>("TranquilizerModel",1,0, "TranquilizerModel");
         qmlRegisterType<VisualizationManager>("VisualizationManager",1,0,"VisualizationManager");
-        qmlRegisterType<ObjectVisualizationModel>("ObjectVisualizationModel",1,0,"ObjectVisualizationModel");
+        qmlRegisterType<CoverageLayerModel>("CoverageLayerModel",1,0,"CoverageLayerModel");
         qmlRegisterType<IlwisObjectModel>("IlwisObjectModel",1,0,"IlwisObjectModel");
         qmlRegisterType<AttributeModel>("AttributeModel",1,0,"AttributeModel");
         qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
-        qmlRegisterType<PropertyEditorMetaData>("PropertyEditorMetaData", 1,0, "PropertyEditorMetaData");
-
-       // qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
+        qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
         qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
 
 
@@ -82,7 +80,7 @@ int main(int argc, char *argv[])
         uicontext()->qmlContext(ctx);
 
         //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationProperties.qml")));
+        //uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditor(TR("Representation"), QUrl("RepresentationProperties.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
