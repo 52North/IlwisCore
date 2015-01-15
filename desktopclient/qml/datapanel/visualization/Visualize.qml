@@ -12,6 +12,7 @@ Item {
     id : displayOptions
     anchors.fill: parent
     objectName: uicontext.uniqueName()
+    property VisualizationManager manager
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -25,8 +26,8 @@ Item {
 
     function addSource(sourceUrl, sourceType){
         drawer.addDataSource(sourceUrl, sourceType)
-        layertools.manager.addDataSource(sourceUrl, sourceType)
-        layertools.model = layertools.manager.layers
+        manager.addDataSource(sourceUrl, sourceType)
+        layertools.model = manager.layers
     }
 
     ToolBar{
@@ -120,7 +121,7 @@ Item {
             objectName: uicontext.uniqueName()
 
             width : 170
-            property VisualizationManager manager
+
             currentIndex: 0
 
             height : parent.height
@@ -163,7 +164,7 @@ Item {
                     parent : layersdelegate.expandableArea
 
                     Component.onCompleted: {
-                        model = layertools.manager.layer(layertools.currentIndex).propertyEditors
+                        model = displayOptions.manager.layer(layertools.currentIndex).propertyEditors
                     }
 
                 }
@@ -172,7 +173,7 @@ Item {
             clip : true
 
             Component.onCompleted: {
-                 manager = uicontext.createVisualizationManager(objectName)
+                 displayOptions.manager = uicontext.createVisualizationManager(objectName)
             }
             Component.onDestruction: {
                 // TODO : remove current VisualizationManager

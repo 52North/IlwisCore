@@ -16,6 +16,6 @@ Rectangle {
         height : Global.rowHeight
     }
     Component.onCompleted: {
-        representation = layertools.manager.layer(layertools.currentIndex).propertyEditor(editorName)
+        representation = displayOptions.manager.layer(layertools.currentIndex).propertyEditor(editorName)
     }
 }
