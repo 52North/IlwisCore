@@ -135,6 +135,7 @@ Item {
 
 
                 ListView {
+                    id : propertyEditors
                     width : parent.width
                     height : 100
 
@@ -150,9 +151,11 @@ Item {
                         boldfont: false
                         fontsize: 11
                         Component.onCompleted: {
-                            var component = Qt.createComponent("RepresentationProperties.qml");
-                            if (component.status === Component.Ready)
+                            var component = Qt.createComponent(qmlUrl);
+                            if (component.status === Component.Ready){
                                 component.createObject(editorDelegate.expandableArea);
+
+                            }
                         }
                     }
                     clip : true
