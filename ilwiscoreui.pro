@@ -29,7 +29,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/domainitemmodel.h \
     ilwiscoreui/models/ilwisobjectmodel.h \
     ilwiscoreui/models/mastercatalogmodel.h \
-    ilwiscoreui/models/objectvisualizationmodel.h \
     ilwiscoreui/models/operationcatalogmodel.h \
     ilwiscoreui/models/operationmodel.h \
     ilwiscoreui/models/operationsbykeymodel.h \
@@ -38,9 +37,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
     ilwiscoreui/models/visualizationmanager.h \
-    ilwiscoreui/models/propertyeditormetadata.h \
+    ilwiscoreui/propertyeditors/representationsetter.h \
     ilwiscoreui/propertyeditors/propertyeditor.h \
-    ilwiscoreui/propertyeditors/representationsetter.h
+    ilwiscoreui/models/coveragelayermodel.h
 
 unix {
     target.path = /usr/lib
@@ -55,7 +54,6 @@ SOURCES += \
     ilwiscoreui/models/domainitemmodel.cpp \
     ilwiscoreui/models/ilwisobjectmodel.cpp \
     ilwiscoreui/models/mastercatalogmodel.cpp \
-    ilwiscoreui/models/objectvisualizationmodel.cpp \
     ilwiscoreui/models/operationcatalogmodel.cpp \
     ilwiscoreui/models/operationmodel.cpp \
     ilwiscoreui/models/operationsbykeymodel.cpp \
@@ -64,9 +62,9 @@ SOURCES += \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
     ilwiscoreui/models/visualizationmanager.cpp \
-    ilwiscoreui/models/propertyeditormetadata.cpp \
+    ilwiscoreui/propertyeditors/representationsetter.cpp \
     ilwiscoreui/propertyeditors/propertyeditor.cpp \
-    ilwiscoreui/propertyeditors/representationsetter.cpp
+    ilwiscoreui/models/coveragelayermodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
