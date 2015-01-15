@@ -3,22 +3,38 @@
 #include "representationsetter.h"
 
 using namespace Ilwis;
-RepresentationSetter::RepresentationSetter(QObject *parent) : QObject(parent)
+
+REGISTER_PROPERTYEDITOR(itCOVERAGE,"representationeditor",RepresentationSetter)
+
+RepresentationElement::RepresentationElement(QObject *parent) : QObject(parent)
 {
-    prepare();
 }
 
-void RepresentationSetter::prepare()
+QColor RepresentationElement::color() const
 {
-    QString query = "type=" + QString::number(itREPRESENTATION);
-    _representations = mastercatalog()->select(query);
+    return _color;
+}
+//-------------------------------------------------
+PropertyEditor *RepresentationSetter::create()
+{
+    return new RepresentationSetter();
 }
 
-QStringList RepresentationSetter::rprNames() const
+RepresentationSetter::RepresentationSetter(QObject *parent) : PropertyEditor("representationeditor",QUrl("RepresentationProperties.qml"), parent)
 {
-    QStringList names;
-    for(auto resource : _representations){
-        names.append(resource.name());
+}
+
+QQmlListProperty<RepresentationElement> RepresentationSetter::representationElements()
+{
+    if ( _rprElements.size() == 0){
+        if ( hasType(layer()->type(), itCOVERAGE)){
+
+        }
     }
-    return names;
+    return  QQmlListProperty<RepresentationElement>(this, _rprElements);
 }
+
+
+
+
+
