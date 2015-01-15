@@ -15,4 +15,7 @@ Rectangle {
         width : parent.width
         height : Global.rowHeight
     }
+    Component.onCompleted: {
+        representation = layertools.manager.layer(layertools.currentIndex).propertyEditor(editorName)
+    }
 }
