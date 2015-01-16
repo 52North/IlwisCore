@@ -8,7 +8,7 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 #include "geometryhelper.h"
-#include "../drawerinterface.h"
+#include "drawers/drawerinterface.h"
 #include "ilwistesselator.h"
 
 void* stdAlloc(void* userData, unsigned int size)
