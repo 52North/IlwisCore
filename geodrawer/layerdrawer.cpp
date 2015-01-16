@@ -106,7 +106,7 @@ QString LayerDrawer::activeAttribute() const
     return _activeAttribute;
 }
 
-void LayerDrawer::setActiveAttribute(const QString &attr)
+void LayerDrawer::setActiveDataAttribute(const QString &attr)
 {
     _activeAttribute = attr;
 }

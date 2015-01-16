@@ -28,7 +28,7 @@ public:
 
 protected:
     bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices, const std::vector<VertexColor> &colors);
-    virtual void setActiveAttribute(const QString& attr);
+    virtual void setActiveDataAttribute(const QString& attr);
     GLuint _vboPosition;
     GLuint _vboColor;
     QOpenGLShaderProgram _shaders;

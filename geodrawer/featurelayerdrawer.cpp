@@ -78,7 +78,7 @@ void FeatureLayerDrawer::unprepare(DrawerInterface::PreparationType prepType)
     }
 }
 
-void FeatureLayerDrawer::setActiveAttribute(const QString &attr)
+void FeatureLayerDrawer::setActiveDataAttribute(const QString &attr)
 {
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
     if ( features.isValid())    {
@@ -86,7 +86,7 @@ void FeatureLayerDrawer::setActiveAttribute(const QString &attr)
 
             IRepresentation newrpr = Representation::defaultRepresentation(features->attributeDefinitions().columndefinition(attr).datadef().domain());
             if ( newrpr.isValid()){
-                LayerDrawer::setActiveAttribute(attr);
+                LayerDrawer::setActiveDataAttribute(attr);
             }
         }
     }
@@ -95,7 +95,7 @@ void FeatureLayerDrawer::setActiveAttribute(const QString &attr)
 void FeatureLayerDrawer::coverage(const ICoverage &cov)
 {
     LayerDrawer::coverage(cov);
-    setActiveAttribute(sUNDEF);
+    setActiveDataAttribute(sUNDEF);
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
 
     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
@@ -110,12 +110,12 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
             // try to find a reasonable default for the activeattribute
             if ( activeAttribute() == sUNDEF){
                 if ( features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF){
-                    setActiveAttribute(FEATUREVALUECOLUMN);
+                    setActiveDataAttribute(FEATUREVALUECOLUMN);
                 }else if ( features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN) != iUNDEF){
-                    setActiveAttribute(COVERAGEKEYCOLUMN);
+                    setActiveDataAttribute(COVERAGEKEYCOLUMN);
                 }
                 else if ( hasType(features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType(), itNUMERICDOMAIN)){
-                    setActiveAttribute(features->attributeDefinitions().columndefinition(i).name());
+                    setActiveDataAttribute(features->attributeDefinitions().columndefinition(i).name());
                 }
             }
         }

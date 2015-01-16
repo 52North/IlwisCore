@@ -14,7 +14,7 @@ public:
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
     void unprepare(DrawerInterface::PreparationType prepType);
 
-    void setActiveAttribute(const QString& attr);
+    void setActiveDataAttribute(const QString& attr);
     void coverage(const ICoverage &cov);
     ICoverage coverage() const;
 
