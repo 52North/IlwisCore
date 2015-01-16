@@ -103,6 +103,9 @@ Rectangle {
                 source : iconSource("plus.png")
                 fillMode: Image.PreserveAspectFit
             }
+            onClicked: {
+                mainsplit.addModeller()
+            }
         }
         Button {
             height : 18
@@ -116,6 +119,9 @@ Rectangle {
                 source : iconSource("minus.png")
                 fillMode: Image.PreserveAspectFit
             }
+            onClicked: {
+                console.log("minus")
+            }
         }
 
     }
@@ -127,19 +133,6 @@ Rectangle {
         anchors.top : tabtools.bottom
         width : parent.width
 
-//        onCurrentIndexChanged: {
-//            console.debug(currentIndex)
-//            if (currentIndex > 0) {
-//                var title = tabs.getTab(currentIndex).title
-//                if (isModellerTitle(title))
-//                    updateSelectedItem(modellerTitleRemovePrefix(title))
-//            }
-//        }
-//
-//        id : tabs
-//
-//        style: Base.TabStyle1{}
-//
         function showObject(objectid){
             var component = Qt.createComponent("visualization/Visualize.qml")
             var resource = mastercatalog.id2Resource(objectid)
@@ -174,8 +167,12 @@ Rectangle {
                     var part2 = name.substr( name.length - blocksize)
                     name = part1 + "..." + part2
                 }
+                console.log(name)
+                console.log()
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
+                console.log("NAME: ", name)
+                console.log("TAB: ", tab)
                 if ( activeSplit ===1){
                     righttab.width = parent.width / 2.0
                     activeSplit = 2
@@ -188,6 +185,21 @@ Rectangle {
                 }
             }
         }
+        function addModeller() {
+            var component = Qt.createComponent("modeller/ModellerPanel.qml")
+            var tab = activeSplit ===1 ? righttab.addTab("Modeller",component) : lefttab.addTab("Modeller",component)
+            tab.active = true
+            if ( activeSplit ===1){
+                righttab.width = parent.width / 2.0
+                activeSplit = 2
+                //tab.item.tabLocation = "right"
+            }
+            else{
+                lefttab.width = parent.width / 2.0
+                activeSplit = 1
+                //tab.item.tabLocation = "left"
+            }
+       }
 
         TabView {
             id : lefttab
