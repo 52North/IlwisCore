@@ -4,6 +4,7 @@
 #include <QQmlContext>
 #include <QQmlListProperty>
 #include <QQuickItem>
+#include <deque>
 #include "resourcemodel.h"
 #include "catalogmodel.h"
 #include "catalogview.h"
@@ -21,10 +22,12 @@ class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked CONSTANT)
 
-    Q_PROPERTY(QMLResourceList resources READ resources NOTIFY resourcesChanged)
+    Q_PROPERTY(QMLResourceList leftResources READ leftResources NOTIFY leftResourcesChanged)
+    Q_PROPERTY(QMLResourceList rightResources READ rightResources NOTIFY rightResourcesChanged)
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedData READ selectedData NOTIFY selectionChanged)
-    Q_PROPERTY(quint32 selectedBookmark READ selectedBookmark WRITE setSelectedBookmark NOTIFY resourcesChanged)
-    Q_PROPERTY(QString currentUrl READ currentUrl NOTIFY resourcesChanged)
+    Q_PROPERTY(quint32 selectedBookmark READ selectedBookmark WRITE setSelectedBookmark)
+    Q_PROPERTY(QString currentUrl READ currentUrl)
+    Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
 
 
 public:
@@ -35,11 +38,14 @@ public:
     quint32 selectedBookmark() const;
     void setSelectedIndex(const QString& path);
     void setSelectedBookmark(quint32 index);
-    QMLResourceList resources();
+    QMLResourceList leftResources();
+    QMLResourceList rightResources();
     void root(QObject *obj);
     QString currentUrl() const;
+    int activeSplit() const;
+    void setActiveSplit(int index);    
 
-    Q_INVOKABLE  void addCatalog(const QString& path);
+    Q_INVOKABLE  void addCatalog(const QString& path,int splitIndex);
     Q_INVOKABLE QString changeCatalog(const QString &inpath);
     Q_INVOKABLE QStringList driveList() const;
     Q_INVOKABLE QString getDrive(quint32 index);
@@ -53,24 +59,32 @@ public:
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshWorkingCatalog();
     Q_INVOKABLE CatalogModel *selectedCatalog();
+    CatalogModel *selectedCatalog() const;
+    std::vector<Ilwis::Resource> select(const QString& filter);
 
     QQmlListProperty<IlwisObjectModel> selectedData();
+
 public slots:
     void updateCatalog(const QUrl &url);
-
+    
 private:
-    std::vector<QString> _bookmarkedList;
     QList<CatalogModel *> _bookmarks;
-    std::map<QString, CatalogModel *> _activeCatalogs;
+    std::vector<std::deque<CatalogModel *>> _splitCatalogs;
     void setIndex(const QModelIndex &index, const QVariant &value, int role);
     QQmlContext *_qmlcontext = 0;
     QObject *_root = 0;
     QMLResourceList _currentList;
-    QString _currentUrl;
+    //std::vector<QString> _currentUrl;
+    int _activeSplit = 0;
+
+     void pushToFront(int index);
+    void emitResourcesChanged();
     
 signals:
-    void resourcesChanged();
+    void leftResourcesChanged();
+    void rightResourcesChanged();
     void selectionChanged();
+    void activeSplitChanged();
 };
 //}
 //}

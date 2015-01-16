@@ -16,7 +16,7 @@ id: thumbDelegate
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
-        if ( name === "")
+        if ( !name || name === "?")
             name = "redbuttonr.png"
 
          var iconP = "../../images/" + name

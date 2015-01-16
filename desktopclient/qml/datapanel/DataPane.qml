@@ -18,6 +18,7 @@ Rectangle {
     color: background4
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
+    property int activeSplit : 1
 
     property string prefix: "Modeller for "
 
@@ -29,6 +30,10 @@ Rectangle {
          return iconP
 
      }
+
+    function addCatalog() {
+        mainsplit.addCatalog()
+    }
 
     function addNewTab(name) {
         if (!modellerPaneExists(name)) {
@@ -115,24 +120,26 @@ Rectangle {
 
     }
 
-    TabView {
+    SplitView {
+        id : mainsplit
+        orientation: Qt.Horizontal
+        anchors.bottom: parent.bottom
         anchors.top : tabtools.bottom
         width : parent.width
-        anchors.bottom: parent.bottom
 
-        onCurrentIndexChanged: {
-            console.debug(currentIndex)
-            if (currentIndex > 0) {
-                var title = tabs.getTab(currentIndex).title
-                if (isModellerTitle(title))
-                    updateSelectedItem(modellerTitleRemovePrefix(title))
-            }
-        }
-
-        id : tabs
-
-        style: Base.TabStyle1{}
-
+//        onCurrentIndexChanged: {
+//            console.debug(currentIndex)
+//            if (currentIndex > 0) {
+//                var title = tabs.getTab(currentIndex).title
+//                if (isModellerTitle(title))
+//                    updateSelectedItem(modellerTitleRemovePrefix(title))
+//            }
+//        }
+//
+//        id : tabs
+//
+//        style: Base.TabStyle1{}
+//
         function showObject(objectid){
             var component = Qt.createComponent("visualization/Visualize.qml")
             var resource = mastercatalog.id2Resource(objectid)
@@ -144,25 +151,89 @@ Rectangle {
                     var part2 = name.substr( name.length - blocksize)
                     name = part1 + "..." + part2
                 }
-                var tab = addTab(name,component)
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
+                if ( activeSplit ===1)
+                    righttab.width = parent.width / 2.0
+                else
+                    lefttab.width = parent.width / 2.0
+
                 tab.item.addSource(resource.url, resource.typeName)
-                currentIndex++
             }
         }
 
-        function objectSelected(objectid){
-
-        }
-
-           Tab {
-            id : catalog_0
-            title : "Catalog"
-            Catalog.CatalogPanel{
+        function addCatalog() {
+            var component = Qt.createComponent("catalog/CatalogPanel.qml")
+            var currentcatalog = mastercatalog.selectedCatalog()
+            if ( currentcatalog !== null){
+                mastercatalog.addCatalog(mastercatalog.currentUrl, mastercatalog.activeSplit === 0 ? 1 : 0)
+                var name = currentcatalog.displayName
+                var blocksize = 24 / 2;
+                if ( name.length > 15){
+                    var part1 = name.substr(0,blocksize)
+                    var part2 = name.substr( name.length - blocksize)
+                    name = part1 + "..." + part2
+                }
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+                tab.active = true
+                if ( activeSplit ===1){
+                    righttab.width = parent.width / 2.0
+                    activeSplit = 2
+                    tab.item.tabLocation = "right"
+                }
+                else{
+                    lefttab.width = parent.width / 2.0
+                    activeSplit = 1
+                    tab.item.tabLocation = "left"
+                }
             }
         }
 
+        TabView {
+            id : lefttab
+            height : parent.height
+            width: parent.width
+            Layout.fillWidth: true
+
+            onCurrentIndexChanged : {
+                console.debug(currentIndex, "left")
+            }
+
+            style: Base.TabStyle2{
+                splitindex: 1
+                onSplitindexChanged: {
+                    activeSplit = 1
+                    mastercatalog.activeSplit = 0
+                }
+            }
+
+            Tab {
+                id : catalog_0
+                title : "Catalog"
+                Catalog.CatalogPanel{
+                }
+            }
+
+        }
+        TabView{
+            id : righttab
+            width : 0
+            height : parent.height
+
+            onCurrentIndexChanged : {
+                console.debug(currentIndex,"right")
+            }
+
+            style: Base.TabStyle2{
+                splitindex: 2
+                onSplitindexChanged:{
+                    activeSplit = 2
+                    mastercatalog.activeSplit = 1
+                }
+            }
+        }
     }
+
     focus : true
     Keys.onPressed: {
         console.debug(event.key)

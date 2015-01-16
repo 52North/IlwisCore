@@ -3,6 +3,7 @@
 #include "uicontextmodel.h"
 
 quint64 UIContextModel::_objectCounter = 0;
+std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
@@ -40,9 +41,22 @@ void UIContextModel::qmlContext(QQmlContext *ctx)
     _qmlcontext = ctx;
 }
 
+int UIContextModel::activeSplit() const
+{
+    return _activeSplit;
+}
+
+void UIContextModel::setActiveSplit(int index)
+{
+    if ( index == 1 || index == 2){
+        _activeSplit = index;
+    }
+}
+
 void UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, const PropertyEditorMetaData& metadata)
 {
     _propertyEditors[objecttype][propertyName] = new PropertyEditorMetaData(metadata, this);
 }
+
 
 

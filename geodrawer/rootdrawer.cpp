@@ -66,7 +66,7 @@ void RootDrawer::envelopeView(const Envelope &viewRect, bool overrule)
             double pixwidth = (double)_pixelAreaSize.ysize() * _aspectRatioCoverage; // height is dominant, so width in pixels is derived from height
             double deltay = 0;
             if ( pixwidth > _pixelAreaSize.xsize()) { // if the width is bigger than the available width
-                deltay = viewRect.ylength() * ( pixwidth / viewRect.xlength() - 1.0); // we need to reduce the ysize else the coverage goes outside the window
+                deltay = viewRect.ylength() * ( pixwidth / _pixelAreaSize.xsize() - 1.0); // we need to reduce the ysize else the coverage goes outside the window
                 pixwidth = _pixelAreaSize.xsize(); // pixelwidth becomes the max available number of pix in x
             }
             double fracofWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / _pixelAreaSize.xsize(); // fraction of the width of _pixelArea actually used
@@ -101,8 +101,6 @@ void RootDrawer::setMVP()
     _projection.setToIdentity();
     _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
     _mvp = _model * _view * _projection;
-    //qDebug() << _zoomRect.min_corner().x << _zoomRect.max_corner().x << _zoomRect.center().x << _coverageRect.min_corner().x << _coverageRect.max_corner().x << _coverageRect.center().x;
-
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
 

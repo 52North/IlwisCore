@@ -27,6 +27,8 @@
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
+//#include "ilwiscoreui/propertyeditors/representationsetter.h"
+#include "ilwiscoreui/propertyeditors/representationsetter.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/dev/Ilwis/testdata")
 
@@ -67,6 +69,9 @@ int main(int argc, char *argv[])
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<PropertyEditorMetaData>("PropertyEditorMetaData", 1,0, "PropertyEditorMetaData");
 
+       // qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
+        qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
+
 
         MasterCatalogModel mastercatalogmodel(ctx);
 
@@ -74,18 +79,17 @@ int main(int argc, char *argv[])
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
-        UIContextModel uiContext;
-        uiContext.qmlContext(ctx);
+        uicontext()->qmlContext(ctx);
 
         //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        uiContext.addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationSetter.qml")));
+        uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditorMetaData(TR("Representation"), QUrl("RepresentationProperties.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
-        ctx->setContextProperty("uicontext", &uiContext);
+        ctx->setContextProperty("uicontext", uicontext().get());
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );

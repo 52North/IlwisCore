@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import UIContextModel 1.0
 import "../controls" as Controls
 import "../Global.js" as Global
 
@@ -62,9 +63,10 @@ Item {
     Action {
         id : createCatalog
         onTriggered : {
-             var component = Qt.createComponent()
+            bigthing.addCatalog()
         }
-    }    
+
+    }
 
     Item {
         id : buttonBar
