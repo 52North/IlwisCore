@@ -129,6 +129,17 @@ void BaseDrawer::setDescription(const QString &desc)
     return Identity::setDescription(desc);
 }
 
+std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
+{
+    std::vector<QVariant> result;
+    return result;
+}
+
+QVariant BaseDrawer::attribute(const QString &attrName) const
+{
+    return QVariant();
+}
+
 
 
 

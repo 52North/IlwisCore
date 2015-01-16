@@ -78,6 +78,8 @@ public:
     virtual void cleanUp() = 0;
 
     virtual std::vector<VertexPosition>& drawPositions() = 0;
+    virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;
+    virtual QVariant attribute(const QString& attrName) const = 0;
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;

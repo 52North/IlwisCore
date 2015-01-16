@@ -44,6 +44,9 @@ public:
     QString description() const;
     void setDescription(const QString& desc);
 
+    std::vector<QVariant> attributes(const QString& attrNames) const;
+    QVariant attribute(const QString& attrName) const;
+
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
     void valid(bool yesno);

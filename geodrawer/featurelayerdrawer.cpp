@@ -47,7 +47,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         if ( !features.isValid()){
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
-        AttributeVisualProperties attr = attribute(activeAttribute());
+        AttributeVisualProperties attr = dataAttribute(activeAttribute());
         //int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
         for(const SPFeatureI& feature : features){
             quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
@@ -106,7 +106,7 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
                 props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
             }
-            attribute(features->attributeDefinitions().columndefinition(i).name(), props);
+            dataAttribute(features->attributeDefinitions().columndefinition(i).name(), props);
             // try to find a reasonable default for the activeattribute
             if ( activeAttribute() == sUNDEF){
                 if ( features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF){

@@ -55,7 +55,7 @@ void SpatialDataDrawer::envelope(const Envelope &env)
     _envelope = env;
 }
 
-AttributeVisualProperties SpatialDataDrawer::attribute(const QString &attrName) const
+AttributeVisualProperties SpatialDataDrawer::dataAttribute(const QString &attrName) const
 {
     auto iter = _visualProperties.find(attrName)    ;
     if ( iter != _visualProperties.end())
@@ -63,7 +63,7 @@ AttributeVisualProperties SpatialDataDrawer::attribute(const QString &attrName) 
     return AttributeVisualProperties();
 }
 
-void SpatialDataDrawer::attribute(const QString &attrName, const AttributeVisualProperties &properties)
+void SpatialDataDrawer::dataAttribute(const QString &attrName, const AttributeVisualProperties &properties)
 {
     _visualProperties[attrName] = properties;
 }

@@ -22,8 +22,8 @@ public:
     virtual ICoverage coverage() const;
     Envelope envelope() const;
     void envelope(const Envelope& env);
-    AttributeVisualProperties attribute(const QString& attrName) const;
-    void attribute(const QString &attrName, const AttributeVisualProperties& properties );
+    AttributeVisualProperties dataAttribute(const QString& attrName) const;
+    void dataAttribute(const QString &attrName, const AttributeVisualProperties& properties );
     virtual void coverage(const ICoverage& cov);
 
 protected:

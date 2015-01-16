@@ -36,6 +36,8 @@ public:
 
     std::vector<VertexPosition>& drawPositions();
 
+    std::vector<QVariant> attributes(const QString &attrNames) const;
+    QVariant attribute(const QString &attrName) const;
 protected:
     ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
 
