@@ -27,7 +27,6 @@
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
-//#include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
