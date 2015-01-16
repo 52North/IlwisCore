@@ -48,8 +48,8 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
 INCLUDEPATH += $$PWD/../ilwiscore/core
 DEPENDPATH += $$PWD/../ilwiscore/core
-INCLUDEPATH += $$PWD/../ilwiscore/core
-DEPENDPATH += $$PWD/../ilwiscore/core
+INCLUDEPATH += $$PWD/../external/geos
+DEPENDPATH += $$PWD/../external/geos
 INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
 DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
 

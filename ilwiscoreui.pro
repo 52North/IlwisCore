@@ -39,7 +39,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/visualizationmanager.h \
     ilwiscoreui/propertyeditors/representationsetter.h \
     ilwiscoreui/propertyeditors/propertyeditor.h \
-    ilwiscoreui/models/coveragelayermodel.h
+    ilwiscoreui/models/coveragelayermodel.h \
+    ilwiscoreui/drawers/drawerinterface.h
 
 unix {
     target.path = /usr/lib
@@ -64,7 +65,8 @@ SOURCES += \
     ilwiscoreui/models/visualizationmanager.cpp \
     ilwiscoreui/propertyeditors/representationsetter.cpp \
     ilwiscoreui/propertyeditors/propertyeditor.cpp \
-    ilwiscoreui/models/coveragelayermodel.cpp
+    ilwiscoreui/models/coveragelayermodel.cpp \
+    ilwiscoreui/drawers/drawerinterface.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

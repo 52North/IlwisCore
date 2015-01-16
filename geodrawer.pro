@@ -39,7 +39,6 @@ SOURCES += \
     geodrawer/featurelayerdrawer.cpp \
     geodrawer/drawerfactory.cpp \
     geodrawer/linedrawer.cpp \
-    geodrawer/drawerinterface.cpp \
     geodrawer/openglhelper.cpp \
     geodrawer/tesselation/bucketalloc.c \
     geodrawer/tesselation/dict.c \
@@ -55,7 +54,6 @@ HEADERS += \
     geodrawer/geodrawer_plugin.h \
     geodrawer/geodrawer.h \
     geodrawer/rootdrawer.h \
-    geodrawer/drawerinterface.h \
     geodrawer/simpledrawer.h \
     geodrawer/complexdrawer.h \
     geodrawer/basedrawer.h \
