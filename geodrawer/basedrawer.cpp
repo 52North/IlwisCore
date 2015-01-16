@@ -7,7 +7,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent) : QObject(parent),Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
+BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent) : DrawerInterface(parent),Identity(nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
 }
 
