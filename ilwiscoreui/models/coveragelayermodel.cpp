@@ -7,7 +7,10 @@ CoverageLayerModel::CoverageLayerModel()
 {
 }
 
-CoverageLayerModel::CoverageLayerModel(const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, QObject *obj) : ResourceModel(resource, obj), _propertyEditors(editors)
+CoverageLayerModel::CoverageLayerModel(const Ilwis::Resource &resource,
+                                       const QList<PropertyEditor *> &editors,
+                                       Ilwis::Geodrawer::DrawerInterface *drawer,QObject *obj) :
+    ResourceModel(resource, obj), _propertyEditors(editors), _drawer(drawer)
 {
     for(auto editor : _propertyEditors){
         editor->setParent(this);

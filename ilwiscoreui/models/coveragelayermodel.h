@@ -4,6 +4,7 @@
 #include <QQmlListProperty>
 #include "resourcemodel.h"
 #include "propertyeditors/propertyeditor.h"
+#include "drawers/drawerinterface.h"
 #include "ilwiscoreui_global.h"
 
 class VisualizationManager;
@@ -18,7 +19,7 @@ class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public ResourceModel
 
 public:
     CoverageLayerModel();
-    CoverageLayerModel(const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, QObject *obj=0);
+    CoverageLayerModel(const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
     Q_INVOKABLE PropertyEditor* propertyEditor(const QString& name);
 
@@ -27,6 +28,7 @@ public:
 private:
     QQmlListProperty<PropertyEditor> propertyEditors();
     QList<PropertyEditor *> _propertyEditors;
+    Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
 
 signals:
     void propertyEditorChanged();

@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include "coveragelayermodel.h"
+#include "drawers/drawerinterface.h"
 
 class CoverageLayerModel;
 class UIContextModel;
@@ -20,7 +21,7 @@ public:
     VisualizationManager(QObject *parent, UIContextModel *context);
 
     void addVisualizationModel(CoverageLayerModel* model);
-    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
+    void addDataSource(const QString& url, const QString& typeName, Ilwis::Geodrawer::DrawerInterface *drawer);
     QQmlListProperty<CoverageLayerModel> layers();
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
 

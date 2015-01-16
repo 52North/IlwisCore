@@ -24,7 +24,7 @@ void VisualizationManager::addVisualizationModel(CoverageLayerModel *newmodel)
     _layers.append(newmodel);
 }
 
-void VisualizationManager::addDataSource(const QString &url, const QString &typeName)
+void VisualizationManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
 {
     IlwisTypes tp = IlwisObject::name2Type(typeName);
     if ( tp == itUNKNOWN)
@@ -33,7 +33,7 @@ void VisualizationManager::addDataSource(const QString &url, const QString &type
     if ( !resource.isValid())
         return;
 
-    _layers.append( new CoverageLayerModel(resource, _uicontext->propertyEditors(tp), this));
+    _layers.append( new CoverageLayerModel(resource, _uicontext->propertyEditors(tp), drawer, this));
 }
 
 QQmlListProperty<CoverageLayerModel> VisualizationManager::layers()
