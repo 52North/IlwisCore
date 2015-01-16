@@ -18,23 +18,31 @@ Item {
         //height : 35
 
         Action {
-            id :refreshCatalog
+            id :clear
             onTriggered: {
-                //canvas.clear();
+                drawing.clearModeller();
             }
         }
 
         Action {
-            id :zoomInAction
+            id :newDatasource
             onTriggered: {
-                //canvas.zoomIn();
+                drawing.addType(Qt.createComponent("DataSourceObject.qml").createObject())
             }
         }
 
         Action {
-            id :zoomOutAction
+            id :newOperation
             onTriggered: {
-               // canvas.zoomOut();
+                 drawing.addType(Qt.createComponent("OperationObject.qml").createObject())
+            }
+        }
+
+
+        Action {
+            id :newConnection
+            onTriggered: {
+                 drawing.addType(Qt.createComponent("ConnectorObject.qml").createObject())
             }
         }
 
@@ -42,36 +50,49 @@ Item {
             spacing: 1
 
             ToolButton{
-                id : zoomIn
+                id : newDatasourceButton
                 height: toolbar.height
-                //iconSource: "../../images/plus.png"
-                Image {
-                    source: "../../images/plus.png"
-                    anchors.fill: parent
-                    anchors.margins: 4
-                }
+//                //iconSource: "../../images/plus.png"
+//                Image {
+//                    source: "../../images/plus.png"
+//                    anchors.fill: parent
+//                    anchors.margins: 4
+//                }
+                text: qsTr("Datasource")
                 checkable: true
-                action: zoomInAction
+                action: newDatasource
             }
             ToolButton{
-                id : zoomOut
+                id : newOperationButton
                 height: toolbar.height
-                //iconSource: "../../images/minus.png"
-                Image {
-                    source: "../../images/minus.png"
-                    anchors.fill: parent
-                    anchors.margins: 4
-                }
+//                //iconSource: "../../images/minus.png"
+//                Image {
+//                    source: "../../images/minus.png"
+//                    anchors.fill: parent
+//                    anchors.margins: 4
+//                }
+                text: qsTr("Operation")
                 checkable: true
-                action: zoomOutAction
+                action: newOperation
             }
-
             ToolButton{
-                id : refresh
-                implicitHeight: heightButtons
-                iconSource: "../../images/refresh20.png"
-                tooltip: "Refresh"
-                action : refreshCatalog
+                id : newConnectionButton
+                height: toolbar.height
+//                //iconSource: "../../images/minus.png"
+//                Image {
+//                    source: "../../images/minus.png"
+//                    anchors.fill: parent
+//                    anchors.margins: 4
+//                }
+                text: qsTr("Connection")
+                checkable: true
+                action: newConnection
+            }
+            ToolButton{
+                id : clearButton
+                height:  toolbar.height
+                text: qsTr("Clear")
+                action : clear
             }
 
         }
@@ -89,15 +110,6 @@ Item {
         Drawing {
             id: drawing
             anchors.fill: parent
-
-            DataSource {
-                id: ds
-            }
-
-            Operation {
-                id: ops
-
-            }
 
         }
     }
