@@ -2,13 +2,20 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import "modeller.js" as Code
 
-Rectangle {
+Item {
     id : basicModellerObject
-    border.color : "black"
-    color: "#EAECEE"
     state: "inactive"
 
     property string nameText
+    property var ctx
+    property color borderColor : "black"
+    property color color: "#EAECEE"
+
+    function setCoordinates(newX, newY) {
+        console.log(newX,",",newY)
+        x = newX;
+        y = newY;
+    }
 
     Text {
         id: name

@@ -1,11 +1,12 @@
 import QtQuick 2.0
 
 BasicModellerObject {
-    x: 100
-    y: 100
-    width: 50
-    height: 50
-    rotation: 45
 
     nameText: "Operation"
+
+    function draw(ctx) {
+        console.log(nameText, " drawn")
+        ctx.rect(x, y,50,50)
+        ctx.stroke()
+    }
 }

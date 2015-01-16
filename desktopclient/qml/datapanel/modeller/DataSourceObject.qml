@@ -1,9 +1,12 @@
 import QtQuick 2.0
 
 BasicModellerObject {
-    width: 60
-    height: 80
-    radius: 10
 
     nameText: "DataSource"
+
+    function draw(ctx) {
+        console.log(nameText, " drawn")
+        ctx.rect(x, y,100,100)
+        ctx.stroke()
+    }
 }

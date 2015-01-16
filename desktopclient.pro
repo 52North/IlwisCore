@@ -85,7 +85,10 @@ OTHER_FILES += \
     desktopclient/qml/datapanel/visualization/RepresentationProperties.qml \
     desktopclient/qml/workbench/modeller/ModellerCatagoriesList.qml \
     desktopclient/qml/workbench/modeller/ModellerList.qml \
-    desktopclient/qml/workbench/modeller/ModellerSelection.qml
+    desktopclient/qml/workbench/modeller/ModellerSelection.qml \
+    desktopclient/qml/datapanel/modeller/ConnectorObject.qml \
+    desktopclient/qml/datapanel/modeller/DataSourceObject.qml \
+    desktopclient/qml/datapanel/modeller/OperationObject.qml
 
 
 # Installation path
