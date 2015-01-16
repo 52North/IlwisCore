@@ -18,7 +18,6 @@ public:
 
 private:
     std::vector<VertexPosition>& drawPositions(); // never use
-    std::vector<DrawColor> &drawColors(); // never use
 };
 }
 }

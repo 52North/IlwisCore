@@ -35,7 +35,6 @@ public:
      void cleanUp();
 
     std::vector<VertexPosition>& drawPositions();
-    std::vector<DrawColor>& drawColors();
 
 protected:
     ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);

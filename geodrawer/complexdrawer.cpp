@@ -168,11 +168,6 @@ std::vector<VertexPosition> &ComplexDrawer::drawPositions()
     return _positions;
 }
 
-std::vector<DrawColor> &ComplexDrawer::drawColors()
-{
-    return _colors;
-}
-
 bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
 {
     if (!isActive())
