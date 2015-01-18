@@ -1,4 +1,6 @@
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "domain.h"
 #include "mastercatalog.h"
 #include "representationsetter.h"
 
@@ -33,6 +35,37 @@ QQmlListProperty<RepresentationElement> RepresentationSetter::representationElem
     }
     return  QQmlListProperty<RepresentationElement>(this, _rprElements);
 }
+
+QString RepresentationSetter::activeValueType() const
+{
+    QVariant var = layer()->drawer()->attribute("activevisualattribute");
+    if ( !var.isValid())
+        return "";
+    var = layer()->drawer()->attribute("visualattribute|domain|" + var.toString());
+    Ilwis::IDomain dom = var.value<IDomain>();
+    if ( !dom.isValid())
+        return "";
+    if ( hasType(dom->valueType(), itNUMBER))
+        return "number";
+    if ( hasType(dom->valueType(), itTHEMATICITEM|itNUMERICITEM|itTIMEITEM))
+        return "item";
+    return "";
+}
+
+QColor RepresentationSetter::color(double frac)
+{
+    return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
+}
+
+void RepresentationSetter::setlayer(CoverageLayerModel *model)
+{
+    PropertyEditor::setlayer(model);
+
+    QVariant var = layer()->drawer()->attribute("representation");
+    _representation = var.value<IRepresentation>();
+}
+
+
 
 
 

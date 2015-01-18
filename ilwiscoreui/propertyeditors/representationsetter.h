@@ -5,7 +5,9 @@
 #include <QQmlListProperty>
 #include <QColor>
 #include "ilwiscoreui_global.h"
-#include "identity.h"
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "representation.h"
 #include "resource.h"
 #include "propertyeditor.h"
 
@@ -27,19 +29,23 @@ class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
 {
     Q_OBJECT
 
-
+    Q_PROPERTY(QString activeValueType READ activeValueType CONSTANT)
+    Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY rprElementsChanged)
 public:
     static PropertyEditor *create();
     Q_INVOKABLE RepresentationSetter(QObject *parent = 0);
-    Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY rprElementsChanged)
+    Q_INVOKABLE QColor color(double frac);
 
     QQmlListProperty<RepresentationElement> representationElements() ;
+    QString activeValueType() const;
+    void setlayer(CoverageLayerModel *model);
 
 signals:
     void rprElementsChanged();
 
 private:
      QList<RepresentationElement *> _rprElements;
+     IRepresentation _representation;
 
      NEW_PROPERTYEDITOR(RepresentationSetter)
 };
