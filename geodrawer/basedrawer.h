@@ -46,6 +46,9 @@ public:
 
     std::vector<QVariant> attributes(const QString& attrNames) const;
     QVariant attribute(const QString& attrName) const;
+    void attribute(const QString& attrName, const QVariant& attrib);
+
+    QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
 
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);

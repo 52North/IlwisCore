@@ -140,6 +140,16 @@ QVariant BaseDrawer::attribute(const QString &attrName) const
     return QVariant();
 }
 
+void BaseDrawer::attribute(const QString &, const QVariant &)
+{
+
+}
+
+QColor BaseDrawer::color(const IRepresentation &rpr, double , DrawerInterface::ColorValueMeaning )
+{
+    return QColor();
+}
+
 
 
 
