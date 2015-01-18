@@ -1,6 +1,8 @@
 #ifndef REPRESENTATION_H
 #define REPRESENTATION_H
 
+#include "colorlookup.h"
+
 namespace Ilwis {
 
 class ColorLookup;
@@ -32,5 +34,7 @@ private:
 
 typedef IlwisData<Representation> IRepresentation;
 }
+
+Q_DECLARE_METATYPE(Ilwis::IRepresentation)
 
 #endif // REPRESENTATION_H
