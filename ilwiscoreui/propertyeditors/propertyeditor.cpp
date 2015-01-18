@@ -25,8 +25,13 @@ QString PropertyEditor::editorName() const
     return name();
 }
 
-void PropertyEditor::layer(CoverageLayerModel *model){
+void PropertyEditor::setlayer(CoverageLayerModel *model){
     _layer = model;
+}
+
+CoverageLayerModel *PropertyEditor::layer() const
+{
+    return _layer;
 }
 
 CoverageLayerModel *PropertyEditor::layer()

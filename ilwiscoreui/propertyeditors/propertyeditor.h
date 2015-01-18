@@ -20,9 +20,11 @@ public:
     PropertyEditor(const PropertyEditor& metadata, QObject *parent);
     QString editorName() const;
 
-    void layer(CoverageLayerModel *model);
+    virtual void setlayer(CoverageLayerModel *model);
 protected:
+    CoverageLayerModel* layer() const;
     CoverageLayerModel* layer();
+
     QUrl _qmlUrl;
 private:
     CoverageLayerModel *_layer = 0;
