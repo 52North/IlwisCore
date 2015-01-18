@@ -9,13 +9,20 @@ import "../../Global.js" as Global
 
 Rectangle {
     width: parent.width
-    height: 62
+    height: 200
     property RepresentationSetter representation
-    ComboBox{
-        width : parent.width
-        height : Global.rowHeight
+    Loader{
+        id : rprNumeric
+
     }
+    Loader{
+        id : rprThematic
+    }
+
     Component.onCompleted: {
         representation = displayOptions.manager.layer(layertools.currentIndex).propertyEditor(editorName)
+        if ( representation.activeValueType === "number"){
+            rprNumeric.source = "NumericRepresentation.qml"
+        }
     }
 }
