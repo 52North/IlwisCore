@@ -47,7 +47,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         if ( !features.isValid()){
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
-        AttributeVisualProperties attr = dataAttribute(activeAttribute());
+        AttributeVisualProperties attr = visualAttribute(activeAttribute());
         //int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
         for(const SPFeatureI& feature : features){
             quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
@@ -78,7 +78,7 @@ void FeatureLayerDrawer::unprepare(DrawerInterface::PreparationType prepType)
     }
 }
 
-void FeatureLayerDrawer::setActiveDataAttribute(const QString &attr)
+void FeatureLayerDrawer::setActiveVisualAttribute(const QString &attr)
 {
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
     if ( features.isValid())    {
@@ -86,7 +86,7 @@ void FeatureLayerDrawer::setActiveDataAttribute(const QString &attr)
 
             IRepresentation newrpr = Representation::defaultRepresentation(features->attributeDefinitions().columndefinition(attr).datadef().domain());
             if ( newrpr.isValid()){
-                LayerDrawer::setActiveDataAttribute(attr);
+                LayerDrawer::setActiveVisualAttribute(attr);
             }
         }
     }
@@ -95,7 +95,7 @@ void FeatureLayerDrawer::setActiveDataAttribute(const QString &attr)
 void FeatureLayerDrawer::coverage(const ICoverage &cov)
 {
     LayerDrawer::coverage(cov);
-    setActiveDataAttribute(sUNDEF);
+    setActiveVisualAttribute(sUNDEF);
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
 
     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
@@ -106,16 +106,16 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
                 props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
             }
-            dataAttribute(features->attributeDefinitions().columndefinition(i).name(), props);
+            visualAttribute(features->attributeDefinitions().columndefinition(i).name(), props);
             // try to find a reasonable default for the activeattribute
             if ( activeAttribute() == sUNDEF){
                 if ( features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF){
-                    setActiveDataAttribute(FEATUREVALUECOLUMN);
+                    setActiveVisualAttribute(FEATUREVALUECOLUMN);
                 }else if ( features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN) != iUNDEF){
-                    setActiveDataAttribute(COVERAGEKEYCOLUMN);
+                    setActiveVisualAttribute(COVERAGEKEYCOLUMN);
                 }
                 else if ( hasType(features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType(), itNUMERICDOMAIN)){
-                    setActiveDataAttribute(features->attributeDefinitions().columndefinition(i).name());
+                    setActiveVisualAttribute(features->attributeDefinitions().columndefinition(i).name());
                 }
             }
         }
