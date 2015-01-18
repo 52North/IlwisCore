@@ -130,10 +130,9 @@ private:
 
 typedef IlwisData<Coverage> ICoverage;
 
-
 }
 
-
+Q_DECLARE_METATYPE(Ilwis::ICoverage)
 
 
 
