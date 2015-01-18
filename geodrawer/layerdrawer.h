@@ -26,9 +26,14 @@ public:
     void cleanUp();
     QString activeAttribute() const;
 
+    void attribute(const QString &attrName, const QVariant &attrib);
+    QVariant attribute(const QString &key) const;
+
+    QColor color(const IRepresentation& rpr, double value, ColorValueMeaning cvm = cvmTRUEVALUE);
+
 protected:
     bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition>& vertices, const std::vector<VertexColor> &colors);
-    virtual void setActiveDataAttribute(const QString& attr);
+    virtual void setActiveVisualAttribute(const QString& attr);
     GLuint _vboPosition;
     GLuint _vboColor;
     QOpenGLShaderProgram _shaders;
