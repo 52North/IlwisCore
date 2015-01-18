@@ -137,14 +137,14 @@ Item {
                 ListView {
                     id : propertyEditors
                     width : parent.width
-                    height : 100
+                    height : 200
 
                     delegate : Controls.CollapsiblePanel{
                         id : editorDelegate
                         width : parent.width
                         titleText: editorName
                         headerHeight: 18
-                        panelHeight: 100
+                        panelHeight: 200
                         state : "collapsed"
                         headerColor: Global.alternatecolor3
                         arrowtype: "arrowdownlight.png"
