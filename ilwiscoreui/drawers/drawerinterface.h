@@ -4,9 +4,12 @@
 #include <memory>
 #include <QColor>
 #include "ilwiscoreui_global.h"
+#include "kernel.h"
 #include "geos/geom/Coordinate.h"
 #include "coordinate.h"
 #include "location.h"
+#include "ilwisdata.h"
+#include "representation.h"
 #include "identityinterface.h"
 #include "iooptions.h"
 
@@ -55,6 +58,7 @@ public:
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
                          ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048, ptALL=4294967295};
+    enum ColorValueMeaning{cvmFRACTION, cvmTRUEVALUE};
 
     DrawerInterface(QObject * parent=0);
     virtual ~DrawerInterface();
@@ -76,10 +80,12 @@ public:
     virtual bool isSelected() const = 0;
     virtual void selected(bool yesno) = 0;
     virtual void cleanUp() = 0;
+    virtual QColor color(const IRepresentation& rpr, double value, ColorValueMeaning cvm = cvmTRUEVALUE) = 0;
 
     virtual std::vector<VertexPosition>& drawPositions() = 0;
     virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;
     virtual QVariant attribute(const QString& attrName) const = 0;
+    virtual void attribute(const QString& attrName, const QVariant& attrib)  = 0;
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;
