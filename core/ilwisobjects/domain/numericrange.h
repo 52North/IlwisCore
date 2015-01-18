@@ -129,6 +129,9 @@ inline NumericRangeIterator end(const Ilwis::NumericRange& rng) {
 
 }
 
+Q_DECLARE_METATYPE(Ilwis::NumericRange)
+Q_DECLARE_METATYPE(Ilwis::SPNumericRange)
+
 
 
 
