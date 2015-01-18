@@ -14,7 +14,7 @@ CoverageLayerModel::CoverageLayerModel(const Ilwis::Resource &resource,
 {
     for(auto editor : _propertyEditors){
         editor->setParent(this);
-        editor->layer(this);
+        editor->setlayer(this);
     }
 }
 
@@ -25,6 +25,11 @@ PropertyEditor *CoverageLayerModel::propertyEditor(const QString &name)
             return editor;
     }
     return 0;
+}
+
+Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
+{
+    return _drawer;
 }
 
 QQmlListProperty<PropertyEditor> CoverageLayerModel::propertyEditors()

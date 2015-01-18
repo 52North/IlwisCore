@@ -22,6 +22,7 @@ public:
     CoverageLayerModel(const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
     Q_INVOKABLE PropertyEditor* propertyEditor(const QString& name);
+    Ilwis::Geodrawer::DrawerInterface *drawer();
 
 
 
