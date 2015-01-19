@@ -127,8 +127,7 @@ Rectangle {
             Layout.fillWidth: true
 
             onCurrentIndexChanged : {
-                console.debug(currentIndex, "left")
-            }
+              }
 
             style: Base.TabStyle2{
                 splitindex: 1
@@ -152,7 +151,6 @@ Rectangle {
             height : parent.height
 
             onCurrentIndexChanged : {
-                console.debug(currentIndex,"right")
             }
 
             style: Base.TabStyle2{
