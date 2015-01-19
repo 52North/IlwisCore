@@ -1,27 +1,52 @@
 import QtQuick 2.0
+import "../../Global.js" as Global
 
 Rectangle {
 
-    function drawBars(ctx, h, w ){
+    function drawArea(ctx, h, w ){
         for(var j =0; j < h; j++){
             var frac = j / h
-            var color = representation.color(frac)
-            console.debug(color, j, frac)
-            ctx.strokeStyle = color
+            var color = representation.color(1.0 - frac)
             ctx.beginPath()
-            ctx.moveTo(0,j)
-            ctx.lineTo(w,j)
+            ctx.strokeStyle = color
+            ctx.moveTo(20,j)
+            ctx.lineTo(80,j)
+            ctx.stroke()
+        }
+    }
+
+    function drawBars(ctx, h, w ){
+        var step = Math.floor(h / 4)
+        for(var j =0; j < h; j = j + step){
+            var frac = j / h
+            ctx.beginPath()
+            ctx.strokeStyle =  'Black'
+            ctx.lineWidth = 1
+            ctx.moveTo(20,j)
+            ctx.lineTo(85,j)
             ctx.stroke()
         }
     }
 
     width: 200
-    height: 200
-    border.width: 1
+    height: defaultHeight
+    Text {
+        id : rprName
+        width : parent.width - 20
+        height : Global.rowHeight
+        text : representation.representationName
+        font.bold: true
+        y : 5
+        x : 20
+    }
+
     Canvas{
-        anchors.fill : parent
+        anchors.top : rprName.bottom
+        width : 100
+        height : parent.height - rprName.height
         onPaint : {
-            drawBars(getContext("2d"), height, width)
+            drawArea(getContext("2d"), height - 15, width)
+            drawBars(getContext("2d"), height - 15, width)
         }
     }
 }
