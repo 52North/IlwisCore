@@ -118,7 +118,7 @@ Item {
         ListView {
             id : layertools
             objectName: uicontext.uniqueName()
-
+            property int totalHeightLT : 0
             width : 170
 
             currentIndex: 0
@@ -129,7 +129,7 @@ Item {
                 width : parent.width
                 titleText: name
                 headerHeight: 20
-                panelHeight: 200
+                panelHeight: 0
                 state : "collapsed"
                 headerColor: Global.alternatecolor1
 
@@ -137,14 +137,15 @@ Item {
                 ListView {
                     id : propertyEditors
                     width : parent.width
-                    height : 200
+                    height : 0
+                    property int totalHeightPE : 0
 
                     delegate : Controls.CollapsiblePanel{
                         id : editorDelegate
                         width : parent.width
                         titleText: editorName
                         headerHeight: 18
-                        panelHeight: 200
+                        panelHeight: defaultHeight
                         state : "collapsed"
                         headerColor: Global.alternatecolor3
                         arrowtype: "arrowdownlight.png"
@@ -154,7 +155,7 @@ Item {
                             var component = Qt.createComponent(qmlUrl);
                             if (component.status === Component.Ready){
                                 component.createObject(editorDelegate.expandableArea);
-
+                                propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
                             }
                         }
                     }
@@ -164,6 +165,9 @@ Item {
 
                     Component.onCompleted: {
                         model = displayOptions.manager.layer(layertools.currentIndex).propertyEditors
+                        panelHeight = propertyEditors.totalHeightPE
+                        height = panelHeight
+                        layertools.totalHeightLT = layertools.totalHeightLT + panelHeight
                     }
 
                 }
@@ -173,6 +177,8 @@ Item {
 
             Component.onCompleted: {
                  displayOptions.manager = uicontext.createVisualizationManager(objectName)
+                 height = layertools.totalHeightLT
+
             }
             Component.onDestruction: {
                 // TODO : remove current VisualizationManager
