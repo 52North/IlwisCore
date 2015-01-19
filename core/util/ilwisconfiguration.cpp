@@ -18,7 +18,7 @@ bool IlwisConfiguration::prepare(const QString &configlocation)
     }
 
     boost::property_tree::json_parser::read_json(inputfile,_configuration);
-    int port = _configuration.get("server-settings.port",120);
+    _configLocation = configlocation;
 
     return true;
     } catch(const boost::property_tree::json_parser::json_parser_error& err){
@@ -27,5 +27,53 @@ bool IlwisConfiguration::prepare(const QString &configlocation)
     }
     return false;
 }
+
+void IlwisConfiguration::eraseChildren(const QString &key)
+{
+    QString tempkey = key;
+    tempkey.replace("/",".");
+    auto ptree = _configuration.get_child(tempkey.toStdString());
+    for(auto it = ptree.begin();it != ptree.end();){
+        it = ptree.erase(it);
+    }
+
+//    auto assoc_iter = _configuration.find(tempkey.toStdString());
+//    if ( assoc_iter == _configuration.not_found())
+//        return;
+//    auto iter = _configuration.to_iterator(assoc_iter);
+//    _configuration.erase(iter);
+
+    _modified = true;
+}
+
+void IlwisConfiguration::addValue(const QString &key, const QString& value){
+    QString tempkey = key;
+    tempkey.replace("/",".");
+
+    _configuration.put(tempkey.toStdString(), value.toStdString());
+    _modified = true;
+}
+
+void IlwisConfiguration::putValue(const QString &key, const QString &value)
+{
+    QString tempkey = key;
+    tempkey.replace("/",".");
+
+    //TODO bit unclear if put also replaces values
+    _configuration.put(tempkey.toStdString(), value.toStdString());
+
+    _modified = true;
+}
+
+
+
+void IlwisConfiguration::store(const QString &location)
+{
+    if ( _modified) {
+        std::string loc = location == sUNDEF ? _configLocation.toStdString() : location.toStdString();
+        boost::property_tree::json_parser::write_json(loc,_configuration);
+    }
+}
+
 
 

@@ -5,7 +5,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 namespace Ilwis {
-class IlwisConfiguration
+class KERNELSHARED_EXPORT IlwisConfiguration
 {
 public:
     IlwisConfiguration();
@@ -17,9 +17,14 @@ public:
         ValueType v = _configuration.get(tempkey.toStdString(),defaultValue);
         return v;
     }
-
+    void eraseChildren(const QString& key);
+    void store(const QString &location=sUNDEF);
+    void addValue(const QString &key, const QString &value);
+    void putValue(const QString &key, const QString &value);
 private:
    boost::property_tree::ptree _configuration;
+   QString _configLocation;
+   bool _modified = false;
 };
 
 template<> inline QString IlwisConfiguration::operator ()(const QString& key, const QString& defaultValue){
