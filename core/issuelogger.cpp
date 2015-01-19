@@ -28,7 +28,7 @@ Ilwis::IssueObject::IssueObject(const QString &message, int it, quint64 id, QObj
     _id = id;
 }
 
-Ilwis::IssueObject::IssueObject(const IssueObject& issueobj) {
+Ilwis::IssueObject::IssueObject(const IssueObject& issueobj) : QObject() {
     _itime = issueobj._itime;
     _message = issueobj._message;
     _id = issueobj._id;
@@ -48,6 +48,8 @@ IssueObject& IssueObject::operator=(const IssueObject& issueobj) {
     _file = issueobj._file;
 
     _itype = issueobj._itype;
+
+    return *this;
 }
 
 QString Ilwis::IssueObject::message() const
