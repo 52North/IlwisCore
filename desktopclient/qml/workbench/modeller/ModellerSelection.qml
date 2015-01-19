@@ -8,9 +8,13 @@ import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
 import "../.." as Base
 import "../../workbench" as Workbench
+import "../../datapanel" as DataPane
 
 Rectangle {
     id : container
+
+    property string newText : qsTr("New");
+    property string createText : qsTr("Create");
 
     property var currentAppForm : null
     property var operationid
@@ -38,16 +42,34 @@ Rectangle {
     Action {
         id : newModeller
         onTriggered : {
-            newButton.enabled = false
-             // create Modeller obeject
+            if (newButton.text == newText) {
+                newButton.text = createText
+                cancelButton.opacity = 1
+                // create temporary Modeller obeject
+                // open formular
+            } else if (newButton.text == createText) {
+                newButton.text = newText
+                cancelButton.opacity = 0
+                // create Modeller obeject from temporary object
+                // open modeller panel
+                 dataPanel.addModellerPanel()
+            }
         }
+    }
+
+    Action {
+        id: cancelModeller
+         onTriggered : {
+             cancelButton.opacity = 0
+             newButton.text = newText
+             // delete temporary Modeller obeject
+         }
     }
 
     Action {
         id : deleteModeller
         onTriggered : {
             operationTabs.activ
-            newButton.opacity = 1
         }
     }
 
@@ -101,15 +123,24 @@ Rectangle {
                         id : newButton
                         width : 45
                         height : 20
-                        text :  "New"
+                        text :  newText
                         action : newModeller
                         enabled: true
+                    }
+                    Button{
+                        id : cancelButton
+                        width : 45
+                        height : 20
+                        text :  qsTr("Cancel")
+                        action : newModeller
+                        enabled: true
+                        opacity: 0
                     }
                     Button{
                         id : deleteButton
                         width : 45
                         height : 20
-                        text :  "Delete"
+                        text :  qsTr("Delete")
                         action : deleteModeller
                         opacity: 0
                     }

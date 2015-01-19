@@ -22,6 +22,15 @@ Rectangle {
 
     property string prefix: "Modeller for "
 
+    function addModellerPanel() {
+        mainsplit.addModeller()
+    }
+
+
+    function removeModellerPanel() {
+        mainsplit.removeModeller()
+    }
+
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -103,9 +112,9 @@ Rectangle {
                 source : iconSource("plus.png")
                 fillMode: Image.PreserveAspectFit
             }
-            onClicked: {
-                mainsplit.addModeller()
-            }
+//            onClicked: {
+//                mainsplit.addModeller()
+//            }
         }
         Button {
             height : 18
