@@ -76,6 +76,10 @@ bool Ilwis::initIlwis(){
     return false;
 }
 
+void Ilwis::exitIlwis(){
+    delete kernel();
+}
+
 
 Kernel::Kernel(QObject *parent) :
     QObject(parent), _version(0)
