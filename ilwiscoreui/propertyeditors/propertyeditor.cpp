@@ -25,6 +25,11 @@ QString PropertyEditor::editorName() const
     return name();
 }
 
+int PropertyEditor::defaultHeight() const
+{
+    return 200;
+}
+
 void PropertyEditor::setlayer(CoverageLayerModel *model){
     _layer = model;
 }
