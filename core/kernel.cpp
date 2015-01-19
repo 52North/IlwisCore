@@ -131,8 +131,9 @@ void Kernel::init() {
 Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
     _dbPublic.close();
-    delete mastercatalog();
-    delete context();
+    context()->configurationRef().store();
+    //delete mastercatalog();
+    //delete context();
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{
