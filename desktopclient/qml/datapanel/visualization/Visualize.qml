@@ -12,24 +12,115 @@ Item {
     id : displayOptions
     anchors.fill: parent
     objectName: uicontext.uniqueName()
+    property VisualizationManager manager
 
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+        if ( name === "")
+            name = "redbuttonr.png"
+
+         var iconP = "../../images/" + name
+         return iconP
+     }
 
     function addSource(sourceUrl, sourceType){
-        drawer.addDataSource(sourceUrl, sourceType)
-        layertools.manager.addDataSource(sourceUrl, sourceType)
-        layertools.model = layertools.manager.layers
+        drawer.addDataSource(sourceUrl, sourceType, manager)
+        layertools.model = manager.layers
+    }
+
+    ToolBar{
+        id : maptools
+        width : parent.width
+        height : 35
+        Button {
+            height : 25
+            width : 25
+            id : entireMap
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("entiremap20.png")
+            }
+        }
+
+        Button {
+            height : 25
+            width : 25
+            id : refreshButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :entireMap.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("refresh20.png")
+            }
+        }
+
+
+        Button {
+            height : 25
+            width : 25
+            id : panButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :refreshButton.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("pan20.png")
+            }
+        }
+
+
+        Button {
+            height : 25
+            width : 25
+            id : zoominButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :panButton.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source : iconsource("zoomin20.png")
+            }
+        }
+        Button {
+            height : 25
+            width : 25
+            id : zoomoutButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left :zoominButton.right
+            anchors.leftMargin: 2
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("zoomout20.png")
+            }
+        }
+
+
+
     }
 
     SplitView {
 
-        anchors.fill: parent
+        anchors.top: maptools.bottom
+        width : parent.width
+        height : parent.height - maptools.height
         orientation: Qt.Horizontal
         ListView {
             id : layertools
             objectName: uicontext.uniqueName()
 
             width : 170
-            property VisualizationManager manager
+
             currentIndex: 0
 
             height : parent.height
@@ -44,24 +135,27 @@ Item {
 
 
                 ListView {
+                    id : propertyEditors
                     width : parent.width
-                    height : 100
+                    height : 200
 
                     delegate : Controls.CollapsiblePanel{
                         id : editorDelegate
                         width : parent.width
                         titleText: editorName
                         headerHeight: 18
-                        panelHeight: 100
+                        panelHeight: 200
                         state : "collapsed"
                         headerColor: Global.alternatecolor3
                         arrowtype: "arrowdownlight.png"
                         boldfont: false
                         fontsize: 11
                         Component.onCompleted: {
-                            var component = Qt.createComponent("RepresentationProperties.qml");
-                            if (component.status === Component.Ready)
+                            var component = Qt.createComponent(qmlUrl);
+                            if (component.status === Component.Ready){
                                 component.createObject(editorDelegate.expandableArea);
+
+                            }
                         }
                     }
                     clip : true
@@ -69,7 +163,7 @@ Item {
                     parent : layersdelegate.expandableArea
 
                     Component.onCompleted: {
-                        model = layertools.manager.layer(layertools.currentIndex).propertyEditors
+                        model = displayOptions.manager.layer(layertools.currentIndex).propertyEditors
                     }
 
                 }
@@ -78,7 +172,7 @@ Item {
             clip : true
 
             Component.onCompleted: {
-                 manager = uicontext.createVisualizationManager(objectName)
+                 displayOptions.manager = uicontext.createVisualizationManager(objectName)
             }
             Component.onDestruction: {
                 // TODO : remove current VisualizationManager

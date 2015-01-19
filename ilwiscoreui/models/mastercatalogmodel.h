@@ -74,12 +74,16 @@ private:
     QQmlContext *_qmlcontext = 0;
     QObject *_root = 0;
     QMLResourceList _currentList;
+    QString _currentbookmarkid; // from configuration
+    QStringList _bookmarkids;
     //std::vector<QString> _currentUrl;
     int _activeSplit = 0;
 
      void pushToFront(int index);
     void emitResourcesChanged();
     
+    void addCatalog(const QString &label, const QUrl &location, const QString &descr, const QString &query);
+
 signals:
     void leftResourcesChanged();
     void rightResourcesChanged();

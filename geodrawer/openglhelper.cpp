@@ -4,7 +4,7 @@
 #include "coordinatesystem.h"
 #include "geos/geom/Geometry.h"
 #include "geos/geom/CoordinateSequence.h"
-#include "drawerinterface.h"
+#include "drawers/drawerinterface.h"
 #include "geometryhelper.h"
 #include "tesselation/ilwistesselator.h"
 #include "openglhelper.h"

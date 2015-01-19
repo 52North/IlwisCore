@@ -20,9 +20,4 @@ std::vector<VertexPosition> &SimpleDrawer::drawPositions()
     return _positions;
 }
 
-std::vector<DrawColor> &SimpleDrawer::drawColors()
-{
-    return _colors;
-}
-
 

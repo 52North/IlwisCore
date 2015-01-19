@@ -11,11 +11,11 @@
 
 using namespace Ilwis;
 
-class PropertyEditorMetaData;
-class ObjectVisualizationModel;
+class PropertyEditorObjectVisualizationModel;
 class PropertyEditor;
+class VisualizationManager;
 
-typedef std::function<PropertyEditor *(ObjectVisualizationModel *vismodel, const IOOptions& options)> CreatePropertyEditor;
+typedef std::function<PropertyEditor *()> CreatePropertyEditor;
 
 class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 {
@@ -30,8 +30,8 @@ public:
     Q_INVOKABLE VisualizationManager* createVisualizationManager(const QString& objectname);
     Q_INVOKABLE QString uniqueName();
 
-    void addPropertyEditor(quint64 objecttype, const QString& propertyName, const PropertyEditorMetaData& metadata);
-    QList<PropertyEditorMetaData *> propertyEditors(quint64 objecttype) ;
+    int addPropertyEditor(quint64 objecttype, const QString& propertyName, CreatePropertyEditor func);
+    QList<PropertyEditor *> propertyEditors(quint64 objecttype) ;
 
     void qmlContext(QQmlContext *ctx);
     int activeSplit() const;
@@ -42,12 +42,11 @@ signals:
 public slots:
 
 private:
-    std::map<quint64,std::map<QString, PropertyEditorMetaData *>> _propertyEditors;
+    std::map<quint64,std::map<QString, CreatePropertyEditor>> _propertyEditors;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
     int _activeSplit = 1;
 
-    //std::map<quint64,std::map<QString, CreatePropertyEditor>> _propertyEditors;
     static std::unique_ptr<UIContextModel>_uicontext;
 
 };

@@ -7,6 +7,7 @@
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include "drawerfactory.h"
+#include "models/visualizationmanager.h"
 
 using namespace Ilwis;
 
@@ -16,7 +17,7 @@ GeoDrawer::GeoDrawer(QQuickItem *parent):
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
 
-void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
+void GeoDrawer::addDataSource(const QString &url, const QString& typeName, VisualizationManager* manager)
 {
     if ( url == "" || typeName == "")
         return;
@@ -61,6 +62,10 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName)
     if ( _rootDrawer->drawerCount(Geodrawer::ComplexDrawer::dtMAIN) == 0)
         _rootDrawer->coordinateSystem(coverage->coordinateSystem());
     _rootDrawer->addDrawer(drawer,false);
+
+    if ( manager){
+        manager->addDataSource(url, typeName, drawer);
+    }
 }
 
 GeoDrawer::~GeoDrawer()
@@ -92,7 +97,7 @@ void GeoDrawer::paint()
         int w = width();
         int h = height();
         int heightWindow = window()->contentItem()->height();
-        _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,0));
+        _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,1));
         QPointF pointInLocalCS(x(), y());
         QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
         int yb = heightWindow - h - pointInWindowCS.y() + pointInLocalCS.y();

@@ -106,13 +106,59 @@ QString LayerDrawer::activeAttribute() const
     return _activeAttribute;
 }
 
-void LayerDrawer::setActiveAttribute(const QString &attr)
+void LayerDrawer::attribute(const QString &key, const QVariant &attribValue)
 {
+    if ( key == "activevisualattribute"){
+        setActiveVisualAttribute(attribValue.toString());
+    }
+}
+
+QVariant LayerDrawer::attribute(const QString &key) const
+{
+    QVariant var = SpatialDataDrawer::attribute(key);
+    if ( var.isValid())
+        return var;
+
+    if ( key == "activevisualattribute"){
+        return _activeAttribute;
+    }
+    return QVariant();
+}
+
+QColor LayerDrawer::color(const IRepresentation &rpr, double value, DrawerInterface::ColorValueMeaning cvm)
+{
+    if ( _activeAttribute != sUNDEF){
+        AttributeVisualProperties& attr = _visualProperties[_activeAttribute];
+        if ( cvm ==DrawerInterface::cvmFRACTION){
+            NumericRange numrange = attr.stretchRange();
+            if ( !numrange.isValid()){
+                numrange = attr.actualRange();
+            }
+            if ( value > 0.44){
+                qDebug() << "stop";
+            }
+            value = numrange.min() + numrange.distance() * value;
+
+        }
+        QColor clr = attr.value2color(value);
+        qDebug() << clr.red() << clr.green() << clr.blue() << clr.alpha();
+        return clr;
+    }
+    return QColor();
+}
+
+void LayerDrawer::setActiveVisualAttribute(const QString &attr)
+{
+    if ( !isVisualAttribute(attr)){
+        return;
+    }
     _activeAttribute = attr;
 }
 
 void LayerDrawer::cleanUp()
 {
 }
+
+
 
 

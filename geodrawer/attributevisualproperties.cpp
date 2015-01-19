@@ -20,6 +20,14 @@ AttributeVisualProperties::AttributeVisualProperties(const IDomain &dom) : _doma
     _representation = Representation::defaultRepresentation(dom);
 }
 
+AttributeVisualProperties::AttributeVisualProperties(const AttributeVisualProperties &avp)
+{
+    _representation = avp._representation;
+    _actualRange = avp._actualRange;
+    _stretchRange = avp._stretchRange;
+    _domain = avp._domain;
+}
+
 IRepresentation AttributeVisualProperties::representation() const
 {
     return _representation;

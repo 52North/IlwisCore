@@ -4,14 +4,16 @@
 
 #include <QtGui/QOpenGLFunctions>
 #include "iooptions.h"
-#include "drawerinterface.h"
+#include "drawers/drawerinterface.h"
 #include "box.h"
 #include "identity.h"
 
 namespace Ilwis {
 namespace Geodrawer{
 
-class BaseDrawer : public QObject, public DrawerInterface, public Ilwis::Identity
+class RootDrawer;
+
+class BaseDrawer : public DrawerInterface, public Ilwis::Identity
 {
 public:
     enum Containment { cINSIDE, cOUTSIDE, cUNKNOWN};
@@ -42,12 +44,17 @@ public:
     QString description() const;
     void setDescription(const QString& desc);
 
+    std::vector<QVariant> attributes(const QString& attrNames) const;
+    QVariant attribute(const QString& attrName) const;
+    void attribute(const QString& attrName, const QVariant& attrib);
+
+    QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
+
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
     void valid(bool yesno);
 
     std::vector<VertexPosition> _positions;
-    std::vector<DrawColor> _colors;
     quint32 _prepared = 0;
 
 private:

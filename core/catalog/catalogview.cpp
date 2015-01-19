@@ -9,6 +9,7 @@
 #include "resource.h"
 #include "catalogview.h"
 #include "catalogquery.h"
+#include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
 
@@ -66,7 +67,12 @@ std::vector<Resource> CatalogView::items() const
 
     std::vector<Resource> results;
     for(auto location : _locations) {
-        std::vector<Resource> items =  mastercatalog()->select(location, _filter);
+        std::vector<Resource> items;
+        if ( location == QUrl("ilwis://system")){
+            items = context()->systemCatalog()->items();
+        }else {
+            items =  mastercatalog()->select(location, _filter);
+        }
         std::copy(items.begin(), items.end(),std::back_inserter(results));
     }
     std::set<Resource> uniques(results.begin(), results.end());

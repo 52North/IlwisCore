@@ -26,7 +26,7 @@ public:
 
     Envelope viewEnvelope() const;
     void envelopeView(const Envelope& viewRect, bool overrule);
-    void pixelAreaSize(const Size<> size);
+    void pixelAreaSize(const Size<> &size);
     Size<> pixelAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
     const ICoordinateSystem& coordinateSystem() const;

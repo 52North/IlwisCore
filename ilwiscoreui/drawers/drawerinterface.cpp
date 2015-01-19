@@ -1,7 +1,7 @@
 #include "drawerinterface.h"
 
 
-Ilwis::Geodrawer::DrawerInterface::DrawerInterface()
+Ilwis::Geodrawer::DrawerInterface::DrawerInterface(QObject *parent) : QObject(parent)
 {
 
 }

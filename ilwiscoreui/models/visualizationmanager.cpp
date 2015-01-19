@@ -5,7 +5,7 @@
 #include "mastercatalog.h"
 #include "iooptions.h"
 #include "uicontextmodel.h"
-#include "objectvisualizationmodel.h"
+#include "coveragelayermodel.h"
 #include "visualizationmanager.h"
 
 using namespace Ilwis;
@@ -19,12 +19,12 @@ VisualizationManager::VisualizationManager(QObject *parent, UIContextModel *cont
 {
 
 }
-void VisualizationManager::addVisualizationModel(ObjectVisualizationModel *newmodel)
+void VisualizationManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
     _layers.append(newmodel);
 }
 
-void VisualizationManager::addDataSource(const QString &url, const QString &typeName)
+void VisualizationManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
 {
     IlwisTypes tp = IlwisObject::name2Type(typeName);
     if ( tp == itUNKNOWN)
@@ -33,15 +33,15 @@ void VisualizationManager::addDataSource(const QString &url, const QString &type
     if ( !resource.isValid())
         return;
 
-    _layers.append( new ObjectVisualizationModel(resource, _uicontext->propertyEditors(tp), this));
+    _layers.append( new CoverageLayerModel(resource, _uicontext->propertyEditors(tp), drawer, this));
 }
 
-QQmlListProperty<ObjectVisualizationModel> VisualizationManager::layers()
+QQmlListProperty<CoverageLayerModel> VisualizationManager::layers()
 {
-    return QQmlListProperty<ObjectVisualizationModel>(this, _layers);
+    return QQmlListProperty<CoverageLayerModel>(this, _layers);
 }
 
-ObjectVisualizationModel *VisualizationManager::layer(quint32 layerIndex){
+CoverageLayerModel *VisualizationManager::layer(quint32 layerIndex){
     if ( layerIndex < _layers.size())
         return _layers[layerIndex];
     return 0;

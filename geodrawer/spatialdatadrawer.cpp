@@ -55,7 +55,7 @@ void SpatialDataDrawer::envelope(const Envelope &env)
     _envelope = env;
 }
 
-AttributeVisualProperties SpatialDataDrawer::attribute(const QString &attrName) const
+AttributeVisualProperties SpatialDataDrawer::visualAttribute(const QString &attrName) const
 {
     auto iter = _visualProperties.find(attrName)    ;
     if ( iter != _visualProperties.end())
@@ -63,9 +63,72 @@ AttributeVisualProperties SpatialDataDrawer::attribute(const QString &attrName) 
     return AttributeVisualProperties();
 }
 
-void SpatialDataDrawer::attribute(const QString &attrName, const AttributeVisualProperties &properties)
+void SpatialDataDrawer::visualAttribute(const QString &attrName, const AttributeVisualProperties &properties)
 {
     _visualProperties[attrName] = properties;
+}
+
+std::vector<QVariant> SpatialDataDrawer::attributes(const QString &keys) const
+{
+    std::vector<QVariant> results = ComplexDrawer::attributes(keys);
+
+    QStringList parts = keys.split("|");
+    for(QString& part : parts)
+        part.toLower();
+
+
+    for(const QString& part : parts){
+        if ( part == "visualattributenames"){
+            for(auto pair : _visualProperties){
+                results.push_back(pair.first);
+            }
+        }else {
+            results.push_back(attribute(part));
+        }
+    }
+    return results;
+}
+
+bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const
+{
+    for(auto pair : _visualProperties){
+        if ( pair.first == attName)
+            return true;
+    }
+
+    return false;
+}
+
+QVariant SpatialDataDrawer::attribute(const QString &key) const
+{
+    QVariant var = ComplexDrawer::attribute(key);
+    if ( var.isValid())
+        return var;
+
+    if ( key.indexOf("visualattribute") == 0){
+        QStringList parts = key.split("|");
+        if ( parts.size() == 3){
+            if ( parts[1] == "representation")
+                var.setValue<IRepresentation>(visualAttribute(parts[2]).representation());
+            else if ( parts[1] == "stretchrange"){
+                var.setValue<NumericRange>(visualAttribute(parts[2]).stretchRange());
+            } else if ( parts[1] == "domain"){
+                var.setValue<IDomain>(visualAttribute(parts[2]).domain());
+            }
+        }
+    }
+    else if ( key == "coverage"){
+        var.setValue<ICoverage>(coverage());
+    }
+    else if ( key == "envelope"){
+        var.setValue<Envelope>(envelope());
+    }
+    return var;
+}
+
+void SpatialDataDrawer::attribute(const QString &attrName, const QVariant &attrib)
+{
+
 }
 
 

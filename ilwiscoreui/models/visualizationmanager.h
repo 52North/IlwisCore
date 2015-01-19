@@ -4,25 +4,26 @@
 #include <memory>
 #include <QObject>
 
-#include "objectvisualizationmodel.h"
+#include "coveragelayermodel.h"
+#include "drawers/drawerinterface.h"
 
-class ObjectVisualizationModel;
+class CoverageLayerModel;
 class UIContextModel;
 
 class ILWISCOREUISHARED_EXPORT VisualizationManager : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<ObjectVisualizationModel> layers READ layers NOTIFY layerChanged)
+    Q_PROPERTY(QQmlListProperty<CoverageLayerModel> layers READ layers NOTIFY layerChanged)
 
 public:
     explicit VisualizationManager(QObject *parent = 0);
     VisualizationManager(QObject *parent, UIContextModel *context);
 
-    void addVisualizationModel(ObjectVisualizationModel *newmodel);
-    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
-    QQmlListProperty<ObjectVisualizationModel> layers();
-    Q_INVOKABLE ObjectVisualizationModel *layer(quint32 layerIndex);
+    void addVisualizationModel(CoverageLayerModel* model);
+    void addDataSource(const QString& url, const QString& typeName, Ilwis::Geodrawer::DrawerInterface *drawer);
+    QQmlListProperty<CoverageLayerModel> layers();
+    Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
 
 signals:
     void removeLayer(const Ilwis::Resource& resource);
@@ -32,7 +33,7 @@ public slots:
 
 private:
 
-    QList<ObjectVisualizationModel *> _layers;
+    QList<CoverageLayerModel *> _layers;
     UIContextModel *_uicontext;
     void init();
 

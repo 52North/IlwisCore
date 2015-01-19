@@ -30,12 +30,39 @@ MasterCatalogModel::MasterCatalogModel()
 
 }
 
+void MasterCatalogModel::addCatalog(const QString& label, const QUrl& location, const QString& descr, const QString& query)
+{
+    Resource res(location, itCATALOGVIEW ) ;
+    if ( label != "")
+        res.name(label,false);
+    QStringList lst;
+    lst << location.toString();
+    res.addProperty("locations", lst);
+    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+    res.addProperty("filter","");
+    res.setDescription(descr);
+    CatalogView cview(res);
+    cview.filter(query);
+    _bookmarks.push_back(new CatalogModel(cview,0,this));
+}
+
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
     _splitCatalogs.resize(2);
-    int nrOfcatalogs = ilwisconfig("users/user-0/nr-of-data-catalogs",0);
-    for(int cat = 0; cat < nrOfcatalogs; ++cat){
-        QString query = QString("users/user-0/data-catalog-%1").arg(cat);
+    addCatalog(TR("Internal Catalog"),
+               QUrl("ilwis://internalcatalog"),
+               TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
+               "");
+
+    addCatalog(TR("System Catalog"),
+               QUrl("ilwis://system"),
+               TR("Default objects that are always available in ilwis"),
+               "type<>" + QString::number(itGEODETICDATUM));
+
+    QString ids = ilwisconfig("users/user-0/available-catalog-ids",QString("0"));
+    _bookmarkids = ids.split("|");
+    for(auto id : _bookmarkids){
+        QString query = QString("users/user-0/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
         QUrl location(ilwisconfig(query + "/url-0", QString("")));
         QString descr = ilwisconfig(query + "/description", QString(""));
@@ -52,7 +79,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         _bookmarks.push_back(new CatalogModel(cview,0,this));
     }
     if ( _bookmarks.size() > 0)
-        _splitCatalogs[LEFTVIEW].push_back(_bookmarks[0]);
+        _splitCatalogs[LEFTVIEW].push_back(_bookmarks.back());
 
 }
 
@@ -102,6 +129,12 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
         _splitCatalogs[_activeSplit][0] = _bookmarks[index];
         mastercatalog()->addContainer(QUrl(_bookmarks[index]->url()));
         context()->setWorkingCatalog(ICatalog(_bookmarks[index]->url()));
+
+        if ( index > 1) // system and internal, not normal bookmarks
+            _currentbookmarkid = _bookmarkids[index - 2];
+        else
+            _currentbookmarkid = "";
+
          emit emitResourcesChanged();
     }
 }
@@ -177,7 +210,7 @@ void MasterCatalogModel::emitResourcesChanged()
 
 void MasterCatalogModel::addCatalog(const QString &inpath, int splitIndex)
 {
-    if ( inpath == "" || inpath == sUNDEF)
+    if ( inpath == "" || inpath == sUNDEF || inpath.indexOf("ilwis://") == 0)
         return;
 
     _activeSplit = splitIndex;
@@ -259,20 +292,48 @@ void MasterCatalogModel::addBookmark(const QString& path){
             return;
     }
     _bookmarks.push_back(selectedCatalog());
+
+
+    int catid = _bookmarkids.size() == 0 ? 0 : _bookmarkids.last().toInt() + 1;
+    QString newid = QString::number(catid);
+    _bookmarkids.push_back(newid);
+    _currentbookmarkid = newid;
+    QString basekey = "users/user-0/data-catalog-" + newid;
+
+    context()->configurationRef().addValue(basekey + "/url-0", path);
+    context()->configurationRef().addValue(basekey + "/nr-of-urls", "1");
+    int index = path.lastIndexOf("/");
+    QString label = path.mid(index + 1);
+    context()->configurationRef().addValue(basekey + "/label", label);
+    QString availableid = _bookmarkids.join("|");
+    context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
+
+
 }
 
 
 void MasterCatalogModel::deleteBookmark(quint32 index){
-    if ( index < _bookmarks.size())  {
-        _bookmarks.erase(_bookmarks.begin() + index)    ;
+    if ( index < _bookmarks.size() && index > 1)  { // can not delete internal and system catalog
+        _bookmarks.erase(_bookmarks.begin() + index);
+        QString key = "users/user-0/data-catalog-" + _bookmarkids[index - 2];
+        context()->configurationRef().eraseChildren(key);
+        _bookmarkids.erase(_bookmarkids.begin() + index - 2);
+        if ( _bookmarkids.size() > 0)
+            _currentbookmarkid = _bookmarkids[index - 3];
+
+        QString availableid = _bookmarkids.join("|");
+        context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
     }
 }
 
 void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QString& description){
     CatalogModel *model = selectedCatalog();
-    if ( model){
+    if ( model && _currentbookmarkid != ""){
         model->setDisplayName(displayName);
         model->resourceRef().setDescription(description); 
+        QString key = "users/user-0/data-catalog-" + _currentbookmarkid;
+        context()->configurationRef().putValue(key + "/label", displayName);
+        context()->configurationRef().putValue(key + "/description", description);
     }
 }
 

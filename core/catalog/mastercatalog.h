@@ -10,6 +10,7 @@ namespace Ilwis {
 
 class Resource;
 class CatalogConnector;
+class Catalog;
 
 typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 /*!
@@ -193,8 +194,6 @@ private:
     std::set<QUrl> _catalogs;
     std::set<uint> _knownHashes;
     std::set<QString> _containerExceptions; // for some schemes the mastercatelog shouldnt try to find containers as they dont make sense;
-
-
 };
 
 //typedef QHash<IlwisResource, QList<CatalogCreate>  > CatalogCollection;

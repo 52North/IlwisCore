@@ -168,11 +168,6 @@ std::vector<VertexPosition> &ComplexDrawer::drawPositions()
     return _positions;
 }
 
-std::vector<DrawColor> &ComplexDrawer::drawColors()
-{
-    return _colors;
-}
-
 bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
 {
     if (!isActive())
@@ -186,4 +181,34 @@ bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerM
         }
     }
     return true;
+}
+
+std::vector<QVariant> ComplexDrawer::attributes(const QString &attrNames) const
+{
+    std::vector<QVariant> results = BaseDrawer::attributes(attrNames);
+    QStringList parts = attrNames.split("|");
+    for(QString& part : parts)
+        part.toLower();
+
+    for(const QString& part : parts){
+        results.push_back(attribute(part));
+    }
+    return results;
+}
+
+QVariant ComplexDrawer::attribute(const QString &attrNme) const
+{
+    QString attrName = attrNme.toLower();
+    QVariant var = BaseDrawer::attribute(attrName);
+    if ( var.isValid())
+        return var;
+
+    if ( attrName == "maindrawercount")
+        return drawerCount(ComplexDrawer::dtMAIN);
+    if ( attrName == "predrawercount")
+        return drawerCount(ComplexDrawer::dtPRE);
+    if ( attrName == "postdrawercount")
+        return drawerCount(ComplexDrawer::dtPOST);
+
+    return QVariant();
 }

@@ -34,7 +34,7 @@ Rectangle {
             id : itemgrid
 
 
-            model : mastercatalog.resources
+            model : tabLocation === "left" ? mastercatalog.leftResources : mastercatalog.rightResources
             delegate: CatalogGridDelegate{}
             cellWidth: 170
             cellHeight: 25

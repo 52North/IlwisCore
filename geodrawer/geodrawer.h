@@ -3,6 +3,7 @@
 
 #include "kernel.h"
 #include "resourcemodel.h"
+//#include "models/visualizationmanager.h"
 #include <QtQuick/QQuickItem>
 #include <QtGui/QOpenGLShaderProgram>
 
@@ -14,6 +15,8 @@ namespace Geodrawer{
 class RootDrawer;
 }
 }
+class VisualizationManager;
+
 class GeoDrawer : public QQuickItem
 {
     Q_OBJECT
@@ -22,7 +25,7 @@ class GeoDrawer : public QQuickItem
 public:
     GeoDrawer(QQuickItem *parent = 0);
 
-    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
+    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName, VisualizationManager* manager);
     ~GeoDrawer();
 
 public slots:

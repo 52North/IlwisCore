@@ -53,8 +53,8 @@ QFileInfo InternalCatalogExplorer::toLocalFile(const QUrl& url) const {
 
 std::vector<Resource> InternalCatalogExplorer::loadItems(const IOOptions&)
 {
-    std::vector<Resource> items = mastercatalog()->select(source().url(),"");
-    return items;
+    std::vector<Resource> items = mastercatalog()->select(source().url(),"type<>" + QString::number(itGEODETICDATUM));
+   return items;
 }
 
 bool InternalCatalogExplorer::isValid() const{

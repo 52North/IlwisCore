@@ -35,8 +35,9 @@ public:
      void cleanUp();
 
     std::vector<VertexPosition>& drawPositions();
-    std::vector<DrawColor>& drawColors();
 
+    std::vector<QVariant> attributes(const QString &attrNames) const;
+    QVariant attribute(const QString &attrName) const;
 protected:
     ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
 

@@ -16,6 +16,7 @@ class AttributeVisualProperties
 public:
     AttributeVisualProperties();
     AttributeVisualProperties(const IDomain& dom);
+    AttributeVisualProperties(const AttributeVisualProperties& avp);
 
     IRepresentation representation() const;
     void representation(const IRepresentation& rpr);

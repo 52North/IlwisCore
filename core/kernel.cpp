@@ -126,17 +126,14 @@ void Kernel::init() {
     mastercatalog()->addContainerException("http");
     mastercatalog()->addContainerException("https");
 
-    mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
-    mastercatalog()->addContainer(context()->persistentInternalCatalog());
-
-
 }
 
 Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
     _dbPublic.close();
-    delete mastercatalog();
-    delete context();
+    context()->configurationRef().store();
+    //delete mastercatalog();
+    //delete context();
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{
@@ -238,7 +235,7 @@ void Kernel::endClock(const QString& label){
     clock_t end = clock();
     double total = (double)(end - _start_clock) / CLOCKS_PER_SEC;
     if ( label == "")
-        qDebug() << "calc old in " << total << " seconds";
+        qDebug() << "calc in " << total << " seconds";
     else
         qDebug() << label << ": "<< "calc old in " << QString::number(total,'g', 7) << " seconds";
 

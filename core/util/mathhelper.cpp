@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "angle.h"
 #include "geos/geom/Coordinate.h"
+#include "numericrange.h"
 #include "coordinate.h"
 #include <Eigen/Dense>
 #include "mathhelper.h"
@@ -169,4 +170,27 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
         coef[term]._y = D1;
     }
     return 0;
+}
+
+NumericRange MathHelper::roundRange(double rmin, double rmax, double step)
+{
+    double tickLimits []  = {0,0.1,0.2,0.25,0.5,1.0};
+    double range = rmax - rmin;
+    //long d =  abs(log10(range)) + 1;
+    long d =  log10(range) + 1;
+    step = range / pow(10.0,abs(d));
+    int i = 0;
+    while(i < 6) {
+        if ( step < tickLimits[i]) {
+            step = tickLimits[i];
+            break;
+        }
+        ++i;
+    }
+    step = step * pow(10.0,d - 1);
+    double lower = step * round(rmin / step);
+    double intpart;
+    double r = modf (rmax / step , &intpart);
+    double upper = step * round(r ==0 ? intpart : 1 + intpart );
+    return NumericRange(lower, upper, step);
 }

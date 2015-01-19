@@ -168,9 +168,14 @@ void Catalog::addItemsPrivate(const std::vector<Resource> &itemlist, bool doclea
     if ( doclear)
         _items.resize(0);
 
-    for(auto resource : itemlist){
-        if(std::find(_items.begin(), _items.end(), resource) == _items.end())
-            _items.push_back(resource);
+    if(_items.size() == 0){
+        _items = itemlist;
+    }
+    else {
+        for(auto resource : itemlist){
+            if(std::find(_items.begin(), _items.end(), resource) == _items.end())
+                _items.push_back(resource);
+        }
     }
 }
 
