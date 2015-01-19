@@ -74,6 +74,8 @@ private:
     QQmlContext *_qmlcontext = 0;
     QObject *_root = 0;
     QMLResourceList _currentList;
+    QString _currentbookmarkid; // from configuration
+    QStringList _bookmarkids;
     //std::vector<QString> _currentUrl;
     int _activeSplit = 0;
 
