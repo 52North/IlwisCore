@@ -106,7 +106,10 @@ int main(int argc, char *argv[])
         }
         mastercatalogmodel.root(window);
         window->show();
-        return app.exec();
+        int ret =  app.exec();
+        Ilwis::exitIlwis();
+
+        return ret;
     }catch (const ErrorObject& err){
         qDebug() << err.message();
     }
