@@ -1,3 +1,4 @@
+#include <QDesktopServices>
 #include "kernel.h"
 #include "errmessages.h"
 #include "ilwisconfiguration.h"
@@ -15,10 +16,10 @@ bool IlwisConfiguration::prepare(const QString &configlocation)
     inputfile.open(configlocation.toStdString().c_str(),std::ifstream::in);
     if (!inputfile.is_open()) {
         std::cerr << TR("warning : Could not load configuration file").toStdString(); // dont follow logger here as this might be before the logger is initialized
+        return false;
     }
-
-    boost::property_tree::json_parser::read_json(inputfile,_configuration);
     _configLocation = configlocation;
+    boost::property_tree::json_parser::read_json(inputfile,_configuration);
 
     return true;
     } catch(const boost::property_tree::json_parser::json_parser_error& err){
@@ -71,6 +72,10 @@ void IlwisConfiguration::store(const QString &location)
 {
     if ( _modified) {
         std::string loc = location == sUNDEF ? _configLocation.toStdString() : location.toStdString();
+        if ( loc == ""){
+            loc = QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/ilwis.config").toStdString();
+
+        }
         boost::property_tree::json_parser::write_json(loc,_configuration);
     }
 }
