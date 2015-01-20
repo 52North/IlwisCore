@@ -12,19 +12,19 @@ Rectangle {
             ctx.moveTo(20,j)
             ctx.lineTo(80,j)
             ctx.stroke()
-        }
+            ctx.closePath()
+         }
     }
 
     function drawBars(ctx, h, w ){
         var step = Math.floor(h / 4)
         for(var j =0; j < h; j = j + step){
-            var frac = j / h
             ctx.beginPath()
-            ctx.strokeStyle =  'Black'
-            ctx.lineWidth = 1
+            ctx.strokeStyle = representation.color2("#000000")
             ctx.moveTo(20,j)
             ctx.lineTo(85,j)
             ctx.stroke()
+            ctx.closePath()
         }
     }
 
