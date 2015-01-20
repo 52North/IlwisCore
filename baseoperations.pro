@@ -42,7 +42,8 @@ HEADERS += \
     baseoperations/data/selectiontable.h \
     baseoperations/math/binarymathtable.h \
     baseoperations/data/setvaluerange.h \
-    baseoperations/geometry/spatialrelation.h
+    baseoperations/geometry/spatialrelation.h \
+    baseoperations/util/workingcatalog.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -70,7 +71,8 @@ SOURCES += \
     baseoperations/data/selectiontable.cpp \
     baseoperations/math/binarymathtable.cpp \
     baseoperations/data/setvaluerange.cpp \
-    baseoperations/geometry/spatialrelation.cpp
+    baseoperations/geometry/spatialrelation.cpp \
+    baseoperations/util/workingcatalog.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
