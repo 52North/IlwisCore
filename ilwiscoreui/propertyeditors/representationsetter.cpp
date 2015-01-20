@@ -64,6 +64,12 @@ QColor RepresentationSetter::color(double frac)
     return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
 }
 
+QColor RepresentationSetter::color2(const QString &clr) const
+{
+    QColor qclr(clr);
+    return qclr;
+}
+
 void RepresentationSetter::setlayer(CoverageLayerModel *model)
 {
     PropertyEditor::setlayer(model);

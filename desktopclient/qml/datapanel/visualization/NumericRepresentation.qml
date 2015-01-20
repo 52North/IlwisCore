@@ -20,7 +20,7 @@ Rectangle {
         var step = Math.floor(h / 4)
         for(var j =0; j < h; j = j + step){
             ctx.beginPath()
-            ctx.strokeStyle = representation.color2("#000000")
+            ctx.strokeStyle = representation.name2color("#000000")
             ctx.moveTo(20,j)
             ctx.lineTo(85,j)
             ctx.stroke()
