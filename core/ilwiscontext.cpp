@@ -116,6 +116,9 @@ void IlwisContext::init()
     _systemCatalog.prepare("ilwis://system");
 
     _configuration.prepare(file.absoluteFilePath());
+    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
+    if ( loc != "")
+        _workingCatalog = ICatalog(loc);
 
 }
 
