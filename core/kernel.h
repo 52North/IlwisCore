@@ -33,6 +33,8 @@ class Tranquilizer;
 typedef QScopedPointer<Version> SPVersion;
 typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
+enum RunMode { rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
+
 /*!
  The Kernel class a singleton object that controls some essential resources in the system.
  - thread local variables. The kernel is registration place for all variables that are globally available in a thread. e.g. the workingcatalog.
@@ -208,7 +210,7 @@ public slots:
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-KERNELSHARED_EXPORT bool initIlwis();
+KERNELSHARED_EXPORT bool initIlwis(int mode);
 KERNELSHARED_EXPORT void exitIlwis();
 #define TR(s) (kernel()->translate(s))
 

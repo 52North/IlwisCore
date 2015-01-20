@@ -39,6 +39,9 @@ public:
     const IlwisConfiguration& configuration() const;
     QFileInfo resourceRoot() const;
     QString ipv4() const;
+    QString currentUser() const;
+    int runMode() const;
+    void runMode(int mode);
 
 private:
     void init();
@@ -55,6 +58,8 @@ private:
     QUrl _cacheLocation;
     QUrl _persistentInternalCatalog;
     QString _ipv4 = sUNDEF;
+    QString _currentUser;
+    int _runMode = rmDESKTOP;
 };
 
 

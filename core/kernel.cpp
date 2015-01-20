@@ -66,9 +66,10 @@ Ilwis::Kernel* Ilwis::kernel() {
     return Kernel::_kernel;
 }
 
-bool Ilwis::initIlwis(){
+bool Ilwis::initIlwis(int mode){
     try {
         context();
+        context()->runMode(mode);
         return kernel() != 0;
     } catch (const ErrorObject& err) {
         std::cout << err.message().toStdString();
