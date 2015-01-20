@@ -64,7 +64,7 @@ QColor RepresentationSetter::color(double frac)
     return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
 }
 
-QColor RepresentationSetter::color2(const QString &clr) const
+QColor RepresentationSetter::name2color(const QString &clr) const
 {
     QColor qclr(clr);
     return qclr;

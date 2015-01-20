@@ -36,7 +36,7 @@ public:
     static PropertyEditor *create();
     Q_INVOKABLE RepresentationSetter(QObject *parent = 0);
     Q_INVOKABLE QColor color(double frac);
-    Q_INVOKABLE QColor color2(const QString &clr) const;
+    Q_INVOKABLE QColor name2color(const QString &clr) const;
 
     QQmlListProperty<RepresentationElement> representationElements() ;
     QString activeValueType() const;
