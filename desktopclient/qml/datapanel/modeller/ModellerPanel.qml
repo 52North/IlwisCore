@@ -46,6 +46,12 @@ Item {
             }
         }
 
+        Action {
+            id :close
+            onTriggered: {
+
+            }
+        }
         RowLayout{
             spacing: 1
 
@@ -93,6 +99,20 @@ Item {
                 height:  toolbar.height
                 text: qsTr("Clear")
                 action : clear
+            }
+
+            Rectangle{
+                implicitHeight: heightButtons
+                width: 20
+                color : "grey"
+                opacity: 0
+            }
+
+            ToolButton{
+                id : closeButton
+                height:  toolbar.height
+                text: qsTr("Close")
+                action : close
             }
 
         }
