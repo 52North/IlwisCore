@@ -9,4 +9,9 @@ BasicModellerObject {
         ctx.rect(x, y,50,50)
         ctx.stroke()
     }
+
+    function selected(checkX, checkY) {
+
+        return false;
+    }
 }

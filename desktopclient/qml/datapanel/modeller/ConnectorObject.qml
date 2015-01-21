@@ -16,4 +16,9 @@ BasicModellerObject {
         ctx.lineTo(x + 100, y);
         ctx.stroke();
     }
+
+    function selected(checkX, checkY) {
+
+        return false;
+    }
 }

@@ -17,6 +17,11 @@ Item {
         y = newY;
     }
 
+    function selected(checkX, checkY) {
+
+        return false;
+    }
+
     Text {
         id: name
         text: qsTr(nameText)

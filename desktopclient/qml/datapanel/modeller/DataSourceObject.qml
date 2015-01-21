@@ -4,9 +4,17 @@ BasicModellerObject {
 
     nameText: "DataSource"
 
+    width: 100
+    height: 100
+
     function draw(ctx) {
         console.log(nameText, " drawn")
-        ctx.rect(x, y,100,100)
+        ctx.rect(x, y, width, height)
         ctx.stroke()
+    }
+
+    function selected(checkX, checkY) {
+
+        return false;
     }
 }
