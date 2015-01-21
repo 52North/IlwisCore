@@ -134,14 +134,10 @@ QColor LayerDrawer::color(const IRepresentation &rpr, double value, DrawerInterf
             if ( !numrange.isValid()){
                 numrange = attr.actualRange();
             }
-            if ( value > 0.44){
-                qDebug() << "stop";
-            }
             value = numrange.min() + numrange.distance() * value;
 
         }
         QColor clr = attr.value2color(value);
-        qDebug() << clr.red() << clr.green() << clr.blue() << clr.alpha();
         return clr;
     }
     return QColor();

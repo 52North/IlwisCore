@@ -33,6 +33,8 @@ class Tranquilizer;
 typedef QScopedPointer<Version> SPVersion;
 typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
+enum RunMode { rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
+
 /*!
  The Kernel class a singleton object that controls some essential resources in the system.
  - thread local variables. The kernel is registration place for all variables that are globally available in a thread. e.g. the workingcatalog.
@@ -44,6 +46,8 @@ typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 class KERNELSHARED_EXPORT Kernel : public QObject
 {
     Q_OBJECT
+
+    friend KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
 public:
     /*!
      Constructor. The kernel is constructed when the kernel() method, a global method , is called.
@@ -88,7 +92,6 @@ public:
      */
     const SPVersion &version() const;
 
-    static Kernel *_kernel;
     /*!
      *  Initializes the resources maintained by the kernel
      */
@@ -191,6 +194,7 @@ private:
     QScopedPointer<IssueLogger> _issues;
     QHash<QString, FactoryInterface * > _masterfactory;
     mutable clock_t _start_clock;
+    static Kernel *_kernel;
 
 
 signals:
@@ -206,7 +210,8 @@ public slots:
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-KERNELSHARED_EXPORT bool initIlwis();
+KERNELSHARED_EXPORT bool initIlwis(int mode);
+KERNELSHARED_EXPORT void exitIlwis();
 #define TR(s) (kernel()->translate(s))
 
 }

@@ -14,11 +14,13 @@ class ILWISCOREUISHARED_EXPORT PropertyEditor : public QObject, public Ilwis::Id
     Q_OBJECT
     Q_PROPERTY(QString editorName READ editorName CONSTANT)
     Q_PROPERTY(QString qmlUrl READ qmlUrl CONSTANT)
+    Q_PROPERTY(int defaultHeight READ defaultHeight CONSTANT)
 public:
     PropertyEditor(QObject *parent = 0);
     explicit PropertyEditor(const QString& name, const QUrl& url, QObject *parent = 0);
     PropertyEditor(const PropertyEditor& metadata, QObject *parent);
     QString editorName() const;
+    int defaultHeight() const;
 
     virtual void setlayer(CoverageLayerModel *model);
 protected:

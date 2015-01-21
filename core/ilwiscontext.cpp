@@ -116,6 +116,9 @@ void IlwisContext::init()
     _systemCatalog.prepare("ilwis://system");
 
     _configuration.prepare(file.absoluteFilePath());
+    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
+    if ( loc != "")
+        _workingCatalog = ICatalog(loc);
 
 }
 
@@ -138,6 +141,7 @@ void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 
     mastercatalog()->addContainer(cat->source().url());
     _workingCatalog = cat;
+    context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->source().url().toString());
 }
 
 QUrl IlwisContext::cacheLocation() const
@@ -194,6 +198,21 @@ QString IlwisContext::ipv4() const
         const_cast<IlwisContext *>(this)->_ipv4 = const_cast<IlwisContext *>(this)->configurationRef()("server-settings/ipv4-address", QString(""));
     }
     return _ipv4;
+}
+
+QString IlwisContext::currentUser() const
+{
+    return "user-0"; // by default atm,.
+}
+
+int IlwisContext::runMode() const
+{
+    return _runMode;
+}
+
+void IlwisContext::runMode(int mode)
+{
+    _runMode = mode;
 }
 
 

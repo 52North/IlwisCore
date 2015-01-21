@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
         QQmlApplicationEngine engine;
         QQmlContext *ctx = engine.rootContext();
-        Ilwis::initIlwis();
+        Ilwis::initIlwis(Ilwis::rmDESKTOP);
 
         QFileInfo ilwisroot = context()->ilwisFolder();
         QString qmlpluginpath = ilwisroot.absoluteFilePath() + "/extensions/ui";
@@ -106,7 +106,10 @@ int main(int argc, char *argv[])
         }
         mastercatalogmodel.root(window);
         window->show();
-        return app.exec();
+        int ret =  app.exec();
+        Ilwis::exitIlwis();
+
+        return ret;
     }catch (const ErrorObject& err){
         qDebug() << err.message();
     }

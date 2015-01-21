@@ -9,7 +9,7 @@ import "../../Global.js" as Global
 
 Rectangle {
     width: parent.width
-    height: 200
+    height: defaultHeight
     property RepresentationSetter representation
     Loader{
         id : rprNumeric

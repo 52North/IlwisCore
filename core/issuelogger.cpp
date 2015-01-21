@@ -173,6 +173,10 @@ quint64 IssueLogger::log(const QString &message, int it)
     if ( _logFileRegular.is_open()) {
         obj.stream(_logFileRegular, IssueObject::lmREGULAR);
     }
+    if ( hasType(context()->runMode(),rmCOMMANDLINE)){
+        if ( it == IssueObject::itError)
+            std::cerr << message.toStdString() << "\n";
+    }
     emit updateIssues(obj);
 
     _lastmessage = message;

@@ -52,17 +52,35 @@ QString RepresentationSetter::activeValueType() const
     return "";
 }
 
+QString RepresentationSetter::representationName() const
+{
+    if ( _representation.isValid())
+        return _representation->name();
+    return sUNDEF;
+}
+
 QColor RepresentationSetter::color(double frac)
 {
     return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
+}
+
+QColor RepresentationSetter::name2color(const QString &clr) const
+{
+    QColor qclr(clr);
+    return qclr;
 }
 
 void RepresentationSetter::setlayer(CoverageLayerModel *model)
 {
     PropertyEditor::setlayer(model);
 
-    QVariant var = layer()->drawer()->attribute("representation");
+    QVariant var = layer()->drawer()->attribute("activevisualattribute");
+    if ( !var.isValid())
+        return ;
+    var = layer()->drawer()->attribute("visualattribute|representation|" + var.toString());
     _representation = var.value<IRepresentation>();
+
+    emit rprNameChanged();
 }
 
 

@@ -31,17 +31,21 @@ class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
 
     Q_PROPERTY(QString activeValueType READ activeValueType CONSTANT)
     Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY rprElementsChanged)
+    Q_PROPERTY(QString representationName READ representationName NOTIFY rprNameChanged)
 public:
     static PropertyEditor *create();
     Q_INVOKABLE RepresentationSetter(QObject *parent = 0);
     Q_INVOKABLE QColor color(double frac);
+    Q_INVOKABLE QColor name2color(const QString &clr) const;
 
     QQmlListProperty<RepresentationElement> representationElements() ;
     QString activeValueType() const;
+    QString representationName() const;
     void setlayer(CoverageLayerModel *model);
 
 signals:
     void rprElementsChanged();
+    void rprNameChanged();
 
 private:
      QList<RepresentationElement *> _rprElements;
