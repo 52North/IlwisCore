@@ -19,7 +19,7 @@ class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public ResourceModel
 
 public:
     CoverageLayerModel();
-    CoverageLayerModel(const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
+    CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
     Q_INVOKABLE PropertyEditor* propertyEditor(const QString& name);
     Ilwis::Geodrawer::DrawerInterface *drawer();
