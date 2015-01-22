@@ -27,11 +27,17 @@ QString PropertyEditor::editorName() const
 
 int PropertyEditor::defaultHeight() const
 {
-    return 200;
+    return 0;
 }
 
-void PropertyEditor::setlayer(CoverageLayerModel *model){
+int PropertyEditor::layerIndex() const
+{
+    return _layerIndex;
+}
+
+void PropertyEditor::setlayer(quint32 index, CoverageLayerModel *model){
     _layer = model;
+    _layerIndex = index;
 }
 
 CoverageLayerModel *PropertyEditor::layer() const
