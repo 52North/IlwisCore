@@ -77,7 +77,12 @@ Canvas {
                currenElement = null;
                canvasValid = false
             } else {
-
+                var l = elements.length;
+                for (var i = l-1; i >= 0; i--) {
+                   if (elements[i].isSelected(mouseX, mouseY)) {
+                       canvasValid = false;
+                   }
+                }
             }
         }
     }
