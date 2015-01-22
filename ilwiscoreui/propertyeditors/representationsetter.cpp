@@ -38,17 +38,19 @@ QQmlListProperty<RepresentationElement> RepresentationSetter::representationElem
 
 QString RepresentationSetter::activeValueType() const
 {
-    QVariant var = layer()->drawer()->attribute("activevisualattribute");
-    if ( !var.isValid())
-        return "";
-    var = layer()->drawer()->attribute("visualattribute|domain|" + var.toString());
-    Ilwis::IDomain dom = var.value<IDomain>();
-    if ( !dom.isValid())
-        return "";
-    if ( hasType(dom->valueType(), itNUMBER))
-        return "number";
-    if ( hasType(dom->valueType(), itTHEMATICITEM|itNUMERICITEM|itTIMEITEM))
-        return "item";
+    if ( layer() && layer()->drawer()){
+        QVariant var = layer()->drawer()->attribute("activevisualattribute");
+        if ( !var.isValid())
+            return "";
+        var = layer()->drawer()->attribute("visualattribute|domain|" + var.toString());
+        Ilwis::IDomain dom = var.value<IDomain>();
+        if ( !dom.isValid())
+            return "";
+        if ( hasType(dom->valueType(), itNUMBER))
+            return "number";
+        if ( hasType(dom->valueType(), itTHEMATICITEM|itNUMERICITEM|itTIMEITEM))
+            return "item";
+    }
     return "";
 }
 
@@ -61,7 +63,10 @@ QString RepresentationSetter::representationName() const
 
 QColor RepresentationSetter::color(double frac)
 {
-    return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
+    if ( layer() && layer()->drawer()){
+        return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
+    }
+    return QColor();
 }
 
 QColor RepresentationSetter::name2color(const QString &clr) const
@@ -70,17 +75,24 @@ QColor RepresentationSetter::name2color(const QString &clr) const
     return qclr;
 }
 
-void RepresentationSetter::setlayer(CoverageLayerModel *model)
+void RepresentationSetter::setlayer(quint32 index, CoverageLayerModel *model)
 {
-    PropertyEditor::setlayer(model);
+    PropertyEditor::setlayer(index, model);
 
-    QVariant var = layer()->drawer()->attribute("activevisualattribute");
-    if ( !var.isValid())
-        return ;
-    var = layer()->drawer()->attribute("visualattribute|representation|" + var.toString());
-    _representation = var.value<IRepresentation>();
+    if ( layer() && layer()->drawer()){
+        QVariant var = layer()->drawer()->attribute("activevisualattribute");
+        if ( !var.isValid())
+            return ;
+        var = layer()->drawer()->attribute("visualattribute|representation|" + var.toString());
+        _representation = var.value<IRepresentation>();
 
-    emit rprNameChanged();
+        emit rprNameChanged();
+    }
+}
+
+int RepresentationSetter::defaultHeight() const
+{
+    return 200;
 }
 
 

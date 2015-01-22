@@ -41,7 +41,8 @@ public:
     QQmlListProperty<RepresentationElement> representationElements() ;
     QString activeValueType() const;
     QString representationName() const;
-    void setlayer(CoverageLayerModel *model);
+    void setlayer(quint32 index, CoverageLayerModel *model);
+    int defaultHeight() const;
 
 signals:
     void rprElementsChanged();
