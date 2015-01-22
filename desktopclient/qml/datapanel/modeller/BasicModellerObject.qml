@@ -10,16 +10,16 @@ Item {
     property var ctx
     property color borderColor : "black"
     property color color: "#EAECEE"
+    property bool selected
 
     function setCoordinates(newX, newY) {
-        console.log(newX,",",newY)
         x = newX;
         y = newY;
     }
 
-    function selected(checkX, checkY) {
-
-        return false;
+    function isSelected(checkX, checkY) {
+        selected = checkX > x && checkX < (x + width) && checkY > y && checkY < (y + height)
+        return selected;
     }
 
     Text {
