@@ -153,6 +153,7 @@ Item {
                         fontsize: 11
                         Component.onCompleted: {
                             var component = Qt.createComponent(qmlUrl);
+                            console.debug(editorName)
                             if (component.status === Component.Ready){
                                 component.createObject(editorDelegate.expandableArea);
                                 propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
@@ -164,7 +165,7 @@ Item {
                     parent : layersdelegate.expandableArea
 
                     Component.onCompleted: {
-                        model = displayOptions.manager.layer(layertools.currentIndex).propertyEditors
+                        model = displayOptions.manager.layer(index).propertyEditors
                         panelHeight = propertyEditors.totalHeightPE
                         height = panelHeight
                         layertools.totalHeightLT = layertools.totalHeightLT + panelHeight
