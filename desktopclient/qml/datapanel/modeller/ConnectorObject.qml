@@ -4,21 +4,40 @@ BasicModellerObject {
 
     nameText: "Connector"
 
+    property int defaultWidth : 100
+    property int defaultHeight : 5
+
+    width: defaultWidth
+    height: defaultHeight
+
     property var endX
     property var endY
 
-    function draw(ctx) {
-        console.log(nameText, " drawn")
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        endX = x + 100;
-        endY = y;
-        ctx.lineTo(x + 100, y);
-        ctx.stroke();
+    function isSelected(checkX, checkY) {
+        selected = checkX > x && checkX < (x + width) && checkY > y && checkY < (y + height)
+        return selected;
     }
 
-    function selected(checkX, checkY) {
+    function draw(ctx) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        endX = x + width;
+        endY = y;
+         if (selected) {
+             ctx.lineWidth = 2
+             ctx.strokeStyle = "red"
+             ctx.lineTo(x + width, y);
+         } else {
+             ctx.lineTo(x + width, y);
+         }
+         if (endX > x) {
+             // draw arrow to the right
+         } else {
+             // draw arrow to the left
+         }
 
-        return false;
+        ctx.stroke();
+        ctx.restore();
     }
 }
