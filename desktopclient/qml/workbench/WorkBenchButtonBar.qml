@@ -8,10 +8,10 @@ Rectangle {
     id : buttonB
     y : 0
     height : parent.height
-    width : 55
+    width : 80
     color : "#c2caca"
     border.width : 1
-    Layout.maximumWidth : 120
+    Layout.maximumWidth : 140
 
     //signal transitionInfoPane(string pagename)
 
@@ -99,49 +99,40 @@ Rectangle {
             id : nav
             action: navClicked
             iconname: "navigatorCS1.png"
+            label: qsTr("Navigator")
         }
 
         WorkBenchButton{
             id : oper
             action: operClicked
             iconname : "operationCS1.png"
+            label: qsTr("Operations")
         }
         WorkBenchButton{
             id : modeller
             action: modellerClicked
             iconname : "modellerCS1.png"
+            label: qsTr("Modeller")
         }
         WorkBenchButton{
             id : prop
             action : propertiesClicked
             iconname : "propertiesCS1.png"
+            label: qsTr("Properties")
 
         }
         WorkBenchButton{
             id : errors
             action : messagesClicked
             iconname : messagehandler.messageIcon
+            label: qsTr("Messages")
         }
         WorkBenchButton{
             id : progress
             action : progressClicked
             iconname : "progressCS1.png"
+            label: qsTr("Progress")
 
         }
-        Button{
-            id : create
-            height : buttonB.width
-            width : buttonB.width
-            Image { anchors.centerIn: parent; source: "../images/createCS3.png" }
-
-        }
-        Button{
-            id : config
-            height : buttonB.width
-            width : buttonB.width
-            Image { anchors.centerIn: parent; source: "../images/configCS3.png" }
-
-        }
-
     }
 }
