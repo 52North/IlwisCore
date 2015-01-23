@@ -17,15 +17,15 @@ BasicModellerObject {
         if (selected) {
             ctx.lineWidth = 2
             ctx.strokeStyle = "red"
-            ctx.strokeRect(x, y, width, height);
+            ctx.strokeRect(x-width/2, y-height/2, width, height);
         } else {
-            ctx.rect(x, y, width, height)
+            ctx.rect(x-width/2, y-height/2, width, height);
         }
         ctx.stroke();
         ctx.restore();
         ctx.save();
         ctx.beginPath();
-        ctx.text(nameText ,x + 20, y + height/2);
+        ctx.text(nameText,(x - width/2) + 20, y);
         ctx.stroke();
         ctx.restore();
     }
