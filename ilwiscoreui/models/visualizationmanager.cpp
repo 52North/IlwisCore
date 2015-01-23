@@ -17,7 +17,9 @@ VisualizationManager::VisualizationManager(QObject *parent) :
 
 VisualizationManager::VisualizationManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
 {
-
+    IlwisTypes metatype = itCOLLECTION | itCATALOGVIEW;
+    Resource res("Global Property Editors", metatype);
+    _layers.append(new CoverageLayerModel(_layers.size(), res, _uicontext->propertyEditors(metatype),0, this));
 }
 void VisualizationManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
@@ -33,7 +35,7 @@ void VisualizationManager::addDataSource(const QString &url, const QString &type
     if ( !resource.isValid())
         return;
 
-    _layers.append( new CoverageLayerModel(resource, _uicontext->propertyEditors(tp), drawer, this));
+    _layers.append( new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(tp), drawer, this));
 }
 
 QQmlListProperty<CoverageLayerModel> VisualizationManager::layers()

@@ -7,9 +7,29 @@ import "../controls" as Controls
 ToolButton{
     property string iconname
     id : nav
+    property string label
     height : parent.width// buttonB.width
     width : parent.width
-    Image { anchors.centerIn: parent;  source: "../images/" + iconname; fillMode: Image.PreserveAspectFit }
+    onWidthChanged: {
+        if ( width > 75){
+            textLabel.width = nav.width
+            textLabel.visible = true
+        }else
+            textLabel.visible = false
+    }
+
+    Image { id : but; anchors.centerIn: parent;  source: "../images/" + iconname; fillMode: Image.PreserveAspectFit}
+    Text {
+        id : textLabel
+        anchors.top : but.bottom
+        width : 0
+        height : 15
+        text : label
+        horizontalAlignment: Text.AlignHCenter
+        visible : true
+
+    }
+
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent

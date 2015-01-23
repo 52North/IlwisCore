@@ -15,14 +15,16 @@ class ILWISCOREUISHARED_EXPORT PropertyEditor : public QObject, public Ilwis::Id
     Q_PROPERTY(QString editorName READ editorName CONSTANT)
     Q_PROPERTY(QString qmlUrl READ qmlUrl CONSTANT)
     Q_PROPERTY(int defaultHeight READ defaultHeight CONSTANT)
+    Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
 public:
     PropertyEditor(QObject *parent = 0);
     explicit PropertyEditor(const QString& name, const QUrl& url, QObject *parent = 0);
     PropertyEditor(const PropertyEditor& metadata, QObject *parent);
     QString editorName() const;
-    int defaultHeight() const;
+    virtual int defaultHeight() const;
+    int layerIndex() const;
 
-    virtual void setlayer(CoverageLayerModel *model);
+    virtual void setlayer(quint32 index, CoverageLayerModel *model);
 protected:
     CoverageLayerModel* layer() const;
     CoverageLayerModel* layer();
@@ -30,6 +32,7 @@ protected:
     QUrl _qmlUrl;
 private:
     CoverageLayerModel *_layer = 0;
+    quint32 _layerIndex = 0;
     QString qmlUrl() const;
 signals:
 

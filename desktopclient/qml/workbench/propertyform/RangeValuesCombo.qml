@@ -48,6 +48,7 @@ Item {
                         text : modelData
                         height : 15
                         font.pointSize: 8
+                        font.italic: true
                     }
                 }
             }

@@ -204,21 +204,22 @@ bool IlwisObject::outputConnectionReadonly() const
 
 QString IlwisObject::externalFormat() const
 {
-    QString outFormat, inFormat;
+    QString outFormat, inFormat, provider;
     if ( !connector(cmOUTPUT).isNull())
         outFormat = connector(cmOUTPUT)->format();
     if ( !connector().isNull()){
         inFormat = connector()->format();
     }
+    provider = connector()->provider();
     if ( outFormat == "" && inFormat == "")
         return sUNDEF;
     if ( outFormat == inFormat)
-        return inFormat;
+        return provider + ": " + inFormat;
     if ( outFormat == "" && inFormat != "")
-        return inFormat;
+        return provider + ": " +inFormat;
     if ( inFormat == "" && outFormat != "")
         return "internal/"  + outFormat;
-    return inFormat + "/" + outFormat;
+    return provider + ": " + inFormat + "/" + outFormat;
 }
 
 void IlwisObject::readOnly(bool yesno)

@@ -20,8 +20,8 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        representation = displayOptions.manager.layer(layertools.currentIndex).propertyEditor(editorName)
-        if ( representation.activeValueType === "number"){
+        representation = displayOptions.manager.layer(layerIndex).propertyEditor(editorName)
+        if ( representation && representation.activeValueType === "number"){
             rprNumeric.source = "NumericRepresentation.qml"
         }
     }

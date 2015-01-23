@@ -7,14 +7,14 @@ CoverageLayerModel::CoverageLayerModel()
 {
 }
 
-CoverageLayerModel::CoverageLayerModel(const Ilwis::Resource &resource,
+CoverageLayerModel::CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource,
                                        const QList<PropertyEditor *> &editors,
                                        Ilwis::Geodrawer::DrawerInterface *drawer,QObject *obj) :
     ResourceModel(resource, obj), _propertyEditors(editors), _drawer(drawer)
 {
     for(auto editor : _propertyEditors){
         editor->setParent(this);
-        editor->setlayer(this);
+        editor->setlayer(layerIndex, this);
     }
 }
 
