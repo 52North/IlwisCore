@@ -12,14 +12,20 @@ Item {
     property color color: "#EAECEE"
     property bool selected
 
+     /*
+      * Coordinates represent the center of the object
+     */
     function setCoordinates(newX, newY) {
         x = newX;
         y = newY;
     }
 
     function isSelected(checkX, checkY) {
-        selected = checkX > x && checkX < (x + width) && checkY > y && checkY < (y + height)
+        selected = containsPosition(checkX, checkY);
         return selected;
+    }
+    function containsPosition(checkX, checkY) {
+        return checkX > (x - width/2) && checkX < (x + width/2) && checkY > (y - height/2) && checkY < (y + height/2);
     }
 
     Text {
