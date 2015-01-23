@@ -10,11 +10,13 @@ Canvas {
     property var ctx: getContext('2d')
     property variant elements: []
     property bool canvasValid: true
+    property bool isDrag: false
 
     property real lastX
     property real lastY
 
-    property BasicModellerObject currenElement
+    property BasicModellerObject currenCreateElement
+    property BasicModellerObject currenSelectedElement
 
     Timer {
         interval: 30;
@@ -24,7 +26,7 @@ Canvas {
     }
 
     function addType(elem) {
-        currenElement = elem
+        currenCreateElement = elem
     }
 
     function invalidate() {
@@ -52,38 +54,95 @@ Canvas {
     }
 
     function clearModeller() {
-        currenElement = null;
+        clearSelections();
         elements = [];
         clear();
         canvasValid = false;
     }
 
+    function clearSelections() {
+        currenSelectedElement = null;
+        isDrag = false;
+        canvasValid = false;
+    }
+
+    function checkForSelectedElement(mouseX, mouseY) {
+        var l = elements.length;
+        for (var i = l-1; i >= 0; i--) {
+            if (elements[i].isSelected(mouseX, mouseY)) {
+                currenSelectedElement = elements[i];
+                canvasValid = false;
+            }
+        }
+    }
+
+    onWidthChanged: {
+        canvasValid = false;
+
+    }
+
+    /*
+      * click: onPressed, onReleased, onClicked
+      * click'n'hold: onPressed, onPressAndHold, onReleased
+      * click'n'hold and move: onPressed, onPositionChanged, onPressAndHold, onPositionChanged, onReleased
+      */
+
     MouseArea {
         id: area
         anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onPressed: {
-            canvas.lastX = mouseX
-            canvas.lastY = mouseY
-        }
-//        onPositionChanged: {
-//            canvas.requestPaint()
-//        }
-        onClicked: {
-            if (currenElement !== null) {
-               currenElement.setCoordinates(mouseX, mouseY)
-               var t = elements
-               t.push(currenElement)
-               elements = t
-               currenElement = null;
-               canvasValid = false
+            console.log("onPressed")
+            if (mouse.button == Qt.RightButton) {
+                clearSelections();
             } else {
-                var l = elements.length;
-                for (var i = l-1; i >= 0; i--) {
-                   if (elements[i].isSelected(mouseX, mouseY)) {
-                       canvasValid = false;
-                   }
-                }
+                 checkForSelectedElement(mouseX, mouseY);
             }
+        }
+        onPositionChanged: {
+            console.log("onPositionChanged")
+            if (pressed && currenSelectedElement != null && isDrag) {
+                currenSelectedElement.setCoordinates(mouseX, mouseY);
+                canvasValid = false;
+            }
+        }
+        onPressAndHold: {
+            console.log("onPressAndHold")
+            if (currenSelectedElement != null && currenSelectedElement.containsPosition(mouseX, mouseY)) {
+                isDrag = true;
+            }
+        }
+
+        onClicked: {
+            console.log("onClicked")
+            if (currenCreateElement !== null) {
+                currenCreateElement.setCoordinates(mouseX, mouseY)
+                var t = elements
+                t.push(currenCreateElement)
+                elements = t
+                currenCreateElement = null;
+                canvasValid = false
+            } else {
+
+                if (currenSelectedElement != null) {
+                    currenSelectedElement == null;
+                    canvasValid = false;
+                }
+                checkForSelectedElement(mouseX, mouseY);
+            }
+        }
+        onReleased: {
+            console.log("onReleased")
+                isDrag = false;
+//            if (currenSelectedElement != null) {
+//                currenSelectedElement.selected = false;
+//                currenSelectedElement = null;
+//            }
+//            isDrag = false;
+        }
+        onDoubleClicked: {
+            console.log("onDoubleClicked")
+            // open metadata?
         }
     }
 
