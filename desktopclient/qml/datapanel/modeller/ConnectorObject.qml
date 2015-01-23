@@ -13,23 +13,23 @@ BasicModellerObject {
     property var endX
     property var endY
 
-    function isSelected(checkX, checkY) {
-        selected = checkX > x && checkX < (x + width) && checkY > y && checkY < (y + height)
-        return selected;
-    }
+//    function isSelected(checkX, checkY) {
+//        selected = checkX > (x - width) && checkX < (x + width) && checkY > (y - height) && checkY < (y + height)
+//        return selected;
+//    }
 
     function draw(ctx) {
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(x-width/2, y);
         endX = x + width;
         endY = y;
          if (selected) {
              ctx.lineWidth = 2
              ctx.strokeStyle = "red"
-             ctx.lineTo(x + width, y);
+             ctx.lineTo(x + width/2, y);
          } else {
-             ctx.lineTo(x + width, y);
+             ctx.lineTo(x + width/2, y);
          }
          if (endX > x) {
              // draw arrow to the right
