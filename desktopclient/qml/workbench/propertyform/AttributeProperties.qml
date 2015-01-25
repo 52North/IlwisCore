@@ -22,11 +22,15 @@ Rectangle {
             return "RangeValuesCombo.qml"
 
         }
+        if (rtype === "indexedidentifierrange"){
+            return "IndexItemRange.qml"
+        }
+
         return "TextRangeDefinition.qml";
     }
 
     Text { id : line1; text : qsTr("Domain"); width: 100; font.italic: true }
-    Text { text : domainUsed;  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}
+    Text { text : domainUsed == "" ? qsTr("not applicable") : domainUsed;  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}
     Text { id : line2; text : qsTr("Value type"); width: 100; font.italic: true; anchors.top : line1.bottom }
     Text { text : valueTypeUsed; width: parent.width - line2.width - 2; anchors.left: line2.right; anchors.top : line1.bottom}
     Text { id : line3; text : qsTr("Default range"); width: 100; font.italic: true; anchors.top : line2.bottom}
