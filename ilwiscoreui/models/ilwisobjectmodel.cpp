@@ -377,6 +377,16 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
         if ( propertyname == "valuetype"){
             return valueType();
         }
+        if ( propertyname == "recordcount"){
+            if ( hasType(_ilwisobject->ilwisType(), itTABLE)){
+                return QString::number(_ilwisobject.as<Table>()->recordCount());
+            }
+        }
+        if ( propertyname == "columncount"){
+            if ( hasType(_ilwisobject->ilwisType(), itTABLE)){
+                return QString::number(_ilwisobject.as<Table>()->columnCount());
+            }
+        }
         return "";
     } catch(const ErrorObject& ){
         // no exceptions may escape here
