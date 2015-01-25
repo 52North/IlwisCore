@@ -9,7 +9,7 @@ Rectangle {
     y : 0
     height : parent.height
     width : 80
-    color : "#c2caca"
+    color : "white"
     border.width : 1
     Layout.maximumWidth : 140
 
@@ -132,6 +132,13 @@ Rectangle {
             action : progressClicked
             iconname : "progressCS1.png"
             label: qsTr("Progress")
+
+        }
+        WorkBenchButton{
+            id : preferences
+            //action : progressClicked
+            iconname : "preferencesCS1.png"
+            label: qsTr("Preferences")
 
         }
     }
