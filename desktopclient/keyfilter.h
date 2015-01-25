@@ -9,6 +9,7 @@ class KeyFilter : public QObject
 public:
     explicit KeyFilter(QObject *parent = 0);
 
+    bool eventFilter(QObject *object, QEvent *event);
 signals:
 
 public slots:
