@@ -10,9 +10,20 @@ AbstractBasicModellerObject {
     property color borderColor : "black"
     property color color: "#EAECEE"
     property bool selected
+    property string imagePath
+    property string dataSource;
 
     property AbstractBasicModellerObject parentObject;
     property AbstractBasicModellerObject childObject;
+
+
+    function hasParentObject() {
+        return parentObject != null;
+    }
+
+    function hasChildObject() {
+        return childObject != null;
+    }
 
      /*
       * Coordinates represent the center of the object
@@ -20,6 +31,12 @@ AbstractBasicModellerObject {
     function setCoordinates(newX, newY) {
         x = newX;
         y = newY;
+        if (hasParentObject() && parentObject.nameText !== null && parentObject.nameText === "Connector") {
+            parentObject.setEndCoordinate(newX - width/2, newY);
+        }
+        if (hasChildObject() && childObject.nameText !== null && childObject.nameText === "Connector") {
+            childObject.setStartCoordinate(newX + width/2, newY);
+        }
     }
 
     function isSelected(checkX, checkY) {
@@ -31,11 +48,16 @@ AbstractBasicModellerObject {
         return checkX > (x - width/2) && checkX < (x + width/2) && checkY > (y - height/2) && checkY < (y + height/2);
     }
 
-    function hasParentObject() {
-        return parentObject != null;
+    function setImagePath(path) {
+        if (imagePath === "") {
+            imagePath = path;
+        }
     }
 
-    function hasChildObjtect() {
-        return childObject != null;
+    function setDataSource(source) {
+        if (dataSource === "") {
+            dataSource = source;
+        }
     }
+
 }
