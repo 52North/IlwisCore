@@ -4,7 +4,7 @@ BasicModellerObject {
 
    readonly property string nameText: "Connector";
 
-    property int defaultWidth : 100
+    property int defaultWidth : 5
     property int defaultHeight : 5
 
     width: defaultWidth
@@ -18,19 +18,28 @@ BasicModellerObject {
     function setCoordinates(newX, newY) {
         x = newX;
         y = newY;
-        // remove;
-        setStartCoordiante(x-width/2, newY);
-        setEndCoordinates(x+width/2, newY);
     }
 
-    function setStartCoordiante(newX, newY) {
+    function setStartCoordinate(newX, newY) {
         startX = newX;
         startY = newY;
+        updateXY();
     }
 
-    function setEndCoordinates(newX, newY) {
+    function setEndCoordinate(newX, newY) {
         endX = newX;
         endY = newY;
+        updateXY();
+    }
+
+    function updateXY() {
+        x = (startX + endX)/2
+        y = (startY + endY)/2
+    }
+
+    function containsPosition(checkX, checkY) {
+        var d = ((startY-endY)*checkX + (endX-startX)*checkY + (startX*endY-endX*startY))/(Math.sqrt((endX-startX)*(endX-startX)+(endY-startY)*(endY-startY)));
+        return (Math.sqrt(d*d)) <= defaultHeight;
     }
 
     function draw(ctx) {
@@ -41,24 +50,23 @@ BasicModellerObject {
              //ctx.lineWidth = 2
              ctx.strokeStyle = "red"
              ctx.fillStyle = "red"
-             ctx.lineTo(endY, endY);
+             ctx.lineTo(endX, endY);
          } else {
              ctx.lineTo(endX, endY);
          }
-
-         if (endX > x) {
-             // draw arrow to the right
-             ctx.lineTo(endX - 5, endY - 2);
-             // draw the curve of the back
-             ctx.arcTo(endX2 - 1, endY, endX2 - 5, endY + 2,8);
-             // draw the bottom of the arrow head
-             ctx.lineTo(endX, endY);
-             // and make it draw
-             ctx.stroke();
-             ctx.fill();
-         } else {
-             // draw arrow to the left
-         }
+//         if (endX > startX) {
+//             // draw arrow to the right
+//             ctx.lineTo(endX - 5, endY - 2);
+//             // draw the curve of the back
+//             ctx.arcTo(endX - 1, endY, endX - 5, endY + 2, 8);
+//             // draw the bottom of the arrow head
+//             ctx.lineTo(endX, endY);
+//             // and make it draw
+//             ctx.stroke();
+//             ctx.fill();
+//         } else {
+//             // draw arrow to the left
+//         }
          ctx.stroke();
          ctx.restore();
 
