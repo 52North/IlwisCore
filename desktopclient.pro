@@ -100,12 +100,14 @@ qtcAddDeployment()
 
 HEADERS += \
     desktopclient/applicationformexpressionparser.h \
-    desktopclient/ilwistype.h
+    desktopclient/ilwistype.h \
+    desktopclient/keyfilter.h
 
 SOURCES += \
     desktopclient/applicationformexpressionparser.cpp \
     desktopclient/ilwistype.cpp \
-    desktopclient/main.cpp
+    desktopclient/main.cpp \
+    desktopclient/keyfilter.cpp
 
 
 

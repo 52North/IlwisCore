@@ -18,7 +18,11 @@ ToolButton{
             textLabel.visible = false
     }
 
-    Image { id : but; anchors.centerIn: parent;  source: "../images/" + iconname; fillMode: Image.PreserveAspectFit}
+    Image { id : but
+        anchors.centerIn: parent
+        source: "../images/" + iconname
+        fillMode: Image.PreserveAspectFit
+    }
     Text {
         id : textLabel
         anchors.top : but.bottom
@@ -27,6 +31,7 @@ ToolButton{
         text : label
         horizontalAlignment: Text.AlignHCenter
         visible : true
+        font.weight: Font.DemiBold
 
     }
 

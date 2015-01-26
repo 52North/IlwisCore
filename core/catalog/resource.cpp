@@ -51,9 +51,9 @@ Resource::Resource(const Resource &resource) : Identity(resource)
     _extendedType = resource._extendedType;
 }
 
-Resource::Resource(const QString& name, quint64 tp, bool isNew) :
-    _normalizedUrl(QUrl(name)),
-    _urlQuery(QUrlQuery(name)),
+Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
+    _normalizedUrl(QUrl(resourceName)),
+    _urlQuery(QUrlQuery(resourceName)),
     _size(0),
     _ilwtype(tp),
     _extendedType(itUNKNOWN)
@@ -64,13 +64,13 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
     if ( isNew)
         prepare();
 
-    int index = name.indexOf(":");
+    int index = resourceName.indexOf(":");
     if ( index != -1 && index < 6) {
-        _normalizedUrl = QUrl(name);
-        stringAsUrl(name, tp, isNew);
+        _normalizedUrl = QUrl(resourceName);
+        stringAsUrl(resourceName, tp, isNew);
     } else {
         //QString url;
-        if ( name.left(4)=="code"){
+        if ( resourceName.left(4)=="code"){
             QString factoryType = sUNDEF;
             if ( tp & itCOORDSYSTEM)
                 factoryType = "coordinatesystem";
@@ -80,22 +80,23 @@ Resource::Resource(const QString& name, quint64 tp, bool isNew) :
                 factoryType = "ellipsoid";
             if ( tp & itGEOREF)
                 factoryType = "georef";
-           // QString c = QString("ilwis://factory/%1?%2").arg(factoryType).arg(name);
 
-            QString scode = name.mid(5);
-            //int index = scode.indexOf(":");
-            //scode = scode.mid(index + 1);
+            QString scode = resourceName.mid(5);
             code(scode);
             _normalizedUrl = QUrl("ilwis://internalcatalog/" + this->name());
+            if ( scode == "csy:unknown")
+                name("unknown coordinate system", false);
+            if ( scode == "grf:unspecified")
+                name("unspecified georeference", false);
         }else {
             if( isNew){
-                if(!name.contains(QRegExp("\\\\|/")) && !name.contains("code=")){
-                    QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(name));
+                if(!resourceName.contains(QRegExp("\\\\|/")) && !resourceName.contains("code=")){
+                    QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(resourceName));
                     ICatalog workingCatalog = context()->workingCatalog();
                     if ( workingCatalog.isValid()){
                         QUrl url =  workingCatalog->filesystemLocation();
                         if ( url.isValid() && url.scheme() == "file"){
-                            QString filepath = url.toLocalFile() + "/" + name;
+                            QString filepath = url.toLocalFile() + "/" + resourceName;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
                             }
@@ -557,30 +558,33 @@ void Resource::checkUrl(IlwisTypes tp) {
         setUrl(_normalizedUrl);
     }
     else if ( _normalizedUrl.scheme() == "ilwis") {
-        QString resource = _normalizedUrl.toString();
-        int index = resource.lastIndexOf("/");
-        int index2 = resource.lastIndexOf("code=");
-        if ( index2 > index)
-            index = index2 + 4;
-        QString rname = resource.right(resource.size() - index - 1);
-        QString newName = rname;
-        if ((index = resource.indexOf("proj4:"))!=-1){
-            QString proj4Part = resource.mid(index + 6);
-            Proj4Def def = Proj4Parameters::lookupDefintion(proj4Part);
-            if ( def._name != sUNDEF){
-                newName = def._name;
-                rname = def._epsg;
-            }else
-                newName = "Unknown_csy_" + QString::number(id());
-            code(rname);
-        }
-        else if ( index2 != -1){
-            if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
-                rname = rname.mid(index2 + 1);
+        if ( name().indexOf(ANONYMOUS_PREFIX) == 0 ||  name().indexOf("code=") >= 0 && name().indexOf("proj4:") >= 0 )  {// name is set, so nothing meeded
+            QString resource = _normalizedUrl.toString();
+            int index = resource.lastIndexOf("/");
+            int index2 = resource.lastIndexOf("code=");
+            if ( index2 > index)
+                index = index2 + 4;
+            QString rname = resource.right(resource.size() - index - 1);
+            QString newName = rname;
+            if ((index = resource.indexOf("proj4:"))!=-1){
+                QString proj4Part = resource.mid(index + 6);
+                Proj4Def def = Proj4Parameters::lookupDefintion(proj4Part);
+                if ( def._name != sUNDEF){
+                    newName = def._name;
+                    rname = def._epsg;
+                }else
+                    newName = "Unknown_csy_" + QString::number(id());
+                code(rname);
             }
-            code(rname);
+            else if ( index2 != -1){
+                if ( (index2 = rname.indexOf(":")) != -1){ // we dont want vestiges of the code definition in the code
+                    rname = rname.mid(index2 + 1);
+                }
+                code(rname);
+            }
+
+            name(newName, false);
         }
-        name(newName, false);
     }
 }
 

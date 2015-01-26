@@ -218,7 +218,7 @@ QString ResourceModel::proj42DisplayName(const QString& proj4Def) const{
 
 QString ResourceModel::coordinateSystemName() const {
     QString nme =  propertyName("coordinatesystem");
-    if ( nme != displayName() && nme != "")
+    if ( nme != displayName() && nme != "" && nme != sUNDEF)
         return nme;
     if ( nme == ""){
         nme = _item["coordinatesystem"].toString();

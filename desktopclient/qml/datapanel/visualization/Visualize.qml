@@ -152,11 +152,13 @@ Item {
                         boldfont: false
                         fontsize: 11
                         Component.onCompleted: {
-                            var component = Qt.createComponent(qmlUrl);
-                            console.debug(editorName)
-                            if (component.status === Component.Ready){
-                                component.createObject(editorDelegate.expandableArea);
-                                propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
+                            if ( qmlUrl !== ""){
+                                var component = Qt.createComponent(qmlUrl);
+                                console.debug(editorName)
+                                if (component.status === Component.Ready){
+                                    component.createObject(editorDelegate.expandableArea);
+                                    propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
+                                }
                             }
                         }
                     }

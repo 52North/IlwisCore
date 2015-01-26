@@ -28,11 +28,14 @@
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
+#include "keyfilter.h"
 
 #define TEST_WORKINGDIR QString("file:///d:/dev/Ilwis/testdata")
 
 using namespace Ilwis;
 //using namespace Desktopclient;
+
+
 
 int main(int argc, char *argv[])
 {
@@ -106,6 +109,8 @@ int main(int argc, char *argv[])
         }
         mastercatalogmodel.root(window);
         window->show();
+        KeyFilter keys;
+        app.installEventFilter(&keys);
         int ret =  app.exec();
         Ilwis::exitIlwis();
 

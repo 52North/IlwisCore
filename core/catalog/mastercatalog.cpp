@@ -366,6 +366,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
+        if ( shortname == "text" || shortname == "color" || shortname == "colorpalette")
+            return QString("ilwis://system/code=domain:%1").arg(shortname);
         return QString("ilwis://tables/domain?code=%1").arg(shortname);
     }else if ( name.left(12) == "code=georef:") {
         QString shortname = name.mid(name.indexOf(":") + 1);

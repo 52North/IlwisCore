@@ -8,7 +8,7 @@ TabViewStyle {
     property string nonselectColor : "lightsteelblue"
     property int tabHeight : 22
     property int splitindex  : 0
-    property int tabindex
+    property int indexTab : 0
 
 
     frameOverlap: 1
@@ -29,7 +29,7 @@ TabViewStyle {
             anchors.fill: parent
             onClicked : {
                 splitindex = -splitindex
-                tabindex = styleData.index
+                indexTab = styleData.index
 
             }
         }

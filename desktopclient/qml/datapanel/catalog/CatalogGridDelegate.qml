@@ -14,8 +14,6 @@ Item {
     y : 3
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
-    focus: true
-
 
     function iconSource(name) {
         if ( name === "")
