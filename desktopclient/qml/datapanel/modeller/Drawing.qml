@@ -15,8 +15,9 @@ Canvas {
     property real lastX
     property real lastY
 
-    property BasicModellerObject currenCreateElement
-    property BasicModellerObject currenSelectedElement
+    property BasicModellerObject currentCreateElement
+    property BasicModellerObject currentSelectedElement
+    property BasicModellerObject onPressedSelectedElement
 
     Timer {
         interval: 30;
@@ -26,15 +27,15 @@ Canvas {
     }
 
     function addType(elem) {
-        currenCreateElement = elem
+        currentCreateElement = elem
     }
 
     function invalidate() {
         validCanvas = false;
     }
 
-    function draw(){
-        if (canvasValid == false) {
+    function draw(force){
+        if (canvasValid == false || (force !== null && force)) {
             clear(ctx);
             canvasValid = true
             var l = elements.length
@@ -42,7 +43,6 @@ Canvas {
                 elements[i].draw(ctx);
             }
             canvas.requestPaint();
-
         }
     }
 
@@ -61,24 +61,51 @@ Canvas {
     }
 
     function clearSelections() {
-        currenSelectedElement = null;
+         var l = elements.length;
+         for (var i = l-1; i >= 0; i--) {
+             elements[i].selected = false;
+         }
+        currentSelectedElement = null;
         isDrag = false;
         canvasValid = false;
     }
 
     function checkForSelectedElement(mouseX, mouseY) {
         var l = elements.length;
+        var foundElement = false;
         for (var i = l-1; i >= 0; i--) {
+            elements[i].selected = false;
             if (elements[i].isSelected(mouseX, mouseY)) {
-                currenSelectedElement = elements[i];
+                currentSelectedElement = elements[i];
                 canvasValid = false;
+                foundElement = true;
             }
         }
+        return foundElement;
+    }
+
+    function createNewElement(mouseX, mouseY) {
+        currentCreateElement.setCoordinates(mouseX, mouseY);
+        if (currentSelectedElement != null){
+            currentSelectedElement.selected = false;
+        }
+        currentSelectedElement = currentCreateElement;
+        currentSelectedElement.selected = true;
+        var t = elements;
+        t.push(currentCreateElement);
+        elements = t;
+        currentCreateElement = null;
+        canvasValid = false;
     }
 
     onWidthChanged: {
+        // force re-draw if the ModellerPanel width has changed
         canvasValid = false;
+    }
 
+    onHeightChanged: {
+        // force re-draw if the ModellerPanel height has changed
+        canvas.draw(true);
     }
 
     /*
@@ -91,98 +118,55 @@ Canvas {
         id: area
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+
         onPressed: {
-            console.log("onPressed")
-            if (mouse.button == Qt.RightButton) {
-                clearSelections();
-            } else {
-                 checkForSelectedElement(mouseX, mouseY);
+            if (mouse.button == Qt.LeftButton) {
+                if (checkForSelectedElement(mouseX, mouseY)) {
+                    onPressedSelectedElement = currentSelectedElement;
+                    isDrag = true;
+                }
             }
         }
+
         onPositionChanged: {
-            console.log("onPositionChanged")
-            if (pressed && currenSelectedElement != null && isDrag) {
-                currenSelectedElement.setCoordinates(mouseX, mouseY);
-                canvasValid = false;
+            if (onPressedSelectedElement != null) {
+                if (isDrag) {
+                    currentSelectedElement.setCoordinates(mouseX, mouseY);
+                    canvasValid = false;
+                }
             }
         }
-        onPressAndHold: {
-            console.log("onPressAndHold")
-            if (currenSelectedElement != null && currenSelectedElement.containsPosition(mouseX, mouseY)) {
-                isDrag = true;
+
+        onReleased: {
+            isDrag = false;
+            onPressedSelectedElement = null;
+            if (mouse.button == Qt.LeftButton) {
+
             }
         }
 
         onClicked: {
-            console.log("onClicked")
-            if (currenCreateElement !== null) {
-                currenCreateElement.setCoordinates(mouseX, mouseY)
-                var t = elements
-                t.push(currenCreateElement)
-                elements = t
-                currenCreateElement = null;
-                canvasValid = false
-            } else {
-
-                if (currenSelectedElement != null) {
-                    currenSelectedElement == null;
-                    canvasValid = false;
+            isDrag = false;
+            if (mouse.button == Qt.LeftButton) {
+                if (currentCreateElement !== null) {
+//                    if (currentCreateElement.nameText == "Connector") {
+//                        console.log(currentCreateElement.nameText);
+//                        currentCreateElement = null;
+//                    } else {
+                        createNewElement(mouseX, mouseY);
+//                    }
                 }
-                checkForSelectedElement(mouseX, mouseY);
+            } else if (mouse.button == Qt.RightButton) {
+                if (currentSelectedElement != null) {
+                    clearSelections();
+                }
             }
         }
-        onReleased: {
-            console.log("onReleased")
-                isDrag = false;
-//            if (currenSelectedElement != null) {
-//                currenSelectedElement.selected = false;
-//                currenSelectedElement = null;
-//            }
-//            isDrag = false;
-        }
+
         onDoubleClicked: {
-            console.log("onDoubleClicked")
-            // open metadata?
+            if (mouse.button == Qt.LeftButton) {
+                // open metadata?
+            }
         }
     }
-
-    //    MouseArea {
-    //        id:mousearea
-    //        hoverEnabled:true
-    //        anchors.fill: parent
-    //////        onClicked: drawPoint();
-    //////        onPressed: drawPoint();
-    //        onPositionChanged: {
-    //            if (mousearea.pressed)
-    //                drawLineSegment(paintX, paintY, mouseX, mouseY);
-    //            paintX = mouseX;
-    //            paintY = mouseY;
-    //        }
-    //////        onReleased: drawPoint();
-    //    }
-    //    function drawLineSegment(startX, startY, endX, endY) {
-    //        ctx.beginPath();
-    //        ctx.strokeStyle = drawColor
-    //        ctx.lineWidth = lineWidth
-    //        ctx.moveTo(startX, startY);
-    //        ctx.lineTo(endX, endY);
-    //        ctx.stroke();
-    //        ctx.closePath();
-    //    }
-    //    function drawPoint() {
-    //        ctx.lineWidth = lineWidth
-    //        ctx.fillStyle = drawColor
-    //        ctx.fillRect(mousearea.mouseX-10, mousearea.mouseY-10, 20, 20);
-    //    }
-
-    //    function zoomIn() {
-    //        console.log("zoomInFunc");
-    //        ctx.scale(1.5, 1.5);
-    //    }
-
-    //    function zoomOut() {
-    //        console.log("zoomOutFunc");
-    //        ctx.scale(0.5, 0.5);
-    //    }
-
 }
