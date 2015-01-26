@@ -132,7 +132,7 @@ Rectangle {
                         width : 45
                         height : 20
                         text :  qsTr("Cancel")
-                        action : newModeller
+                        action : cancelModeller
                         enabled: true
                         opacity: 0
                     }
