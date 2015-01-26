@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 BasicModellerObject {
 
-    nameText: "DataSource"
+    readonly property string nameText: "DataSource"
 
     property int defaultWidth : 100
     property int defaultHeight : 100
