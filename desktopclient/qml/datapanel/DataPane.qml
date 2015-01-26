@@ -7,6 +7,8 @@ import ResourceModel 1.0
 import UIContextModel 1.0
 import ".." as Base
 import "catalog" as Catalog
+import "modeller" as Modeller
+import "../workbench" as Workbench
 
 
 
@@ -17,6 +19,17 @@ Rectangle {
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 1
+
+    property string prefix: "Modeller for "
+
+    function addModellerPanel() {
+        mainsplit.addModeller()
+    }
+
+
+    function removeModellerPanel() {
+        mainsplit.removeModeller()
+    }
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -120,6 +133,21 @@ Rectangle {
                     }
                 }
             }
+        function addModeller() {
+            var component = Qt.createComponent("modeller/ModellerPanel.qml")
+            var tab = activeSplit ===1 ? righttab.addTab("Modeller",component) : lefttab.addTab("Modeller",component)
+            tab.active = true
+            if ( activeSplit ===1){
+                righttab.width = parent.width / 2.0
+                activeSplit = 2
+                //tab.item.tabLocation = "right"
+            }
+            else{
+                lefttab.width = parent.width / 2.0
+                activeSplit = 1
+                //tab.item.tabLocation = "left"
+            }
+       }
 
             TabView {
                 id : lefttab

@@ -30,7 +30,7 @@
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
-#define TEST_WORKINGDIR QString("file:///d:/projects/ilwis/Ilwis4/testdata")
+#define TEST_WORKINGDIR QString("file:///d:/dev/Ilwis/testdata")
 
 using namespace Ilwis;
 //using namespace Desktopclient;

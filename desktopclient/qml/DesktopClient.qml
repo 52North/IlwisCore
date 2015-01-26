@@ -51,6 +51,30 @@ ApplicationWindow {
     function unloadcontent(newpagename) {
         workBench.unloadcontent(newpagename)
     }
+
+    function modellerPane(name) {
+        if (dataPanel.addNewTab(name)) {
+            dataPanel.showModellerPane(name)
+        } else {
+            removeModellerPane(name)
+        }
+    }
+
+    function showModellerPane(name) {
+        dataPanel.showModellerPane(name)
+    }
+
+    function removeModellerPane(name) {
+        dataPanel.removeTab(name)
+    }
+
+    function updateSelectedItem(name) {
+        var pane = workBench.currentPane()
+        if (pane !== null && pane.toString().indexOf("Modeller") !== -1) {
+            pane.updateSelectedItem(name)
+        }
+    }
+
     Rectangle {
         id : root
         anchors.fill : parent
