@@ -8,6 +8,15 @@ Item {
     id : container
     anchors.fill : parent
 
+    Text { id : line1; text : qsTr("Polygon features"); width: 100; font.italic: true }
+    Text { text : getProperty("polygoncount");  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}
+    Text { id : line2; text : qsTr("Line features"); width: 100; font.italic: true; anchors.top : line1.bottom }
+    Text { text : getProperty("linecount"); width: parent.width - line2.width - 2; anchors.left: line2.right; anchors.top : line1.bottom}
+    Text { id : line3; text : qsTr("Point features"); width: 100; font.italic: true; anchors.top : line2.bottom }
+    Text { text : getProperty("pointcount"); width: parent.width - line3.width - 2; anchors.left: line3.right; anchors.top : line2.bottom}
+    Text { id : line4; text : qsTr("Total features"); width: 100; font.italic: true; anchors.top : line3.bottom }
+    Text { text : getProperty("featurecount"); width: parent.width - line4.width - 2; anchors.left: line4.right; anchors.top : line3.bottom}
+
 
     Text {
         id : titleText
@@ -15,6 +24,8 @@ Item {
         font.bold: true
         font.pointSize: 9
         height : 25
+        anchors.top : line4.bottom
+        anchors.topMargin: 4
         verticalAlignment: Text.AlignVCenter
     }
 
