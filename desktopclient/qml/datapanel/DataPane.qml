@@ -20,15 +20,12 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 1
 
-    property string prefix: "Modeller for "
-
-    function addModellerPanel() {
-        mainsplit.addModeller()
+    function addModellerPanel(name) {
+        mainsplit.addModeller(name)
     }
 
-
-    function removeModellerPanel() {
-        mainsplit.removeModeller()
+    function removeModellerPanel(name) {
+        mainsplit.removeTabFromView(name);
     }
 
     function iconSource(name) {
@@ -133,21 +130,26 @@ Rectangle {
                     }
                 }
             }
-        function addModeller() {
-            var component = Qt.createComponent("modeller/ModellerPanel.qml")
-            var tab = activeSplit ===1 ? righttab.addTab("Modeller",component) : lefttab.addTab("Modeller",component)
-            tab.active = true
-            if ( activeSplit ===1){
-                righttab.width = parent.width / 2.0
-                activeSplit = 2
-                //tab.item.tabLocation = "right"
+
+            function addModeller(name) {
+                var component = Qt.createComponent("modeller/ModellerPanel.qml")
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+                tab.active = true
+                if ( activeSplit ===1){
+                    righttab.width = parent.width / 2.0
+                    activeSplit = 2
+                }
+                else{
+                    lefttab.width = parent.width / 2.0
+                    activeSplit = 1
+                }
+           }
+
+            function removeTabFromView(name) {
+                righttab.removeTabFor(name);
+                lefttab.removeTabFor(name);
             }
-            else{
-                lefttab.width = parent.width / 2.0
-                activeSplit = 1
-                //tab.item.tabLocation = "left"
-            }
-       }
+
 
             TabView {
                 id : lefttab
@@ -174,6 +176,23 @@ Rectangle {
                     }
                 }
 
+                function removeTabFor(name) {
+                    var remove = -1;
+                    var l = count;
+                    for (var i = l-1; i >= 0; i--) {
+                        if (getTab(i).title === name) {
+                            remove = i;
+                        }
+                    }
+                    if (remove >= 0) {
+                        removeTab(remove);
+                    }
+                    if (count === 0) {
+                        activeSplit = 2;
+                        width = 0;
+                    }
+                }
+
             }
             TabView{
                 id : righttab
@@ -183,12 +202,30 @@ Rectangle {
                 onCurrentIndexChanged : {
                 }
 
+
                 style: Base.TabStyle2{
                     splitindex: 2
                     onSplitindexChanged:{
                         activeSplit = 2
                         mastercatalog.activeSplit = 1
                         righttab.currentIndex = indexTab
+                    }
+                }
+
+                function removeTabFor(name) {
+                    var remove = -1;
+                    var l = count;
+                    for (var i = l-1; i >= 0; i--) {
+                        if (getTab(i).title === name) {
+                            remove = i;
+                        }
+                    }
+                    if (remove >= 0) {
+                        removeTab(remove);
+                    }
+                    if (count === 0) {
+                        activeSplit = 1;
+                        width = 0;
                     }
                 }
             }
