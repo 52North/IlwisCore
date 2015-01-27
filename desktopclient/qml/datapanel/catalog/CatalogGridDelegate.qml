@@ -39,6 +39,7 @@ Item {
             source : iconSource(iconPath)
             fillMode: Image.PreserveAspectFit
             property string message :  url
+            property string ilwisobjectid : id
 
             Drag.keys: [ iconPath ]
             Drag.active: mouseArea.drag.active
