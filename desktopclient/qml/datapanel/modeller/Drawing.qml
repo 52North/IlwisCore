@@ -11,6 +11,7 @@ Canvas {
     property variant elements: []
     property bool canvasValid: true
     property bool isDrag: false
+     property bool isPressAndHold: false
 
     property real lastX
     property real lastY
@@ -30,8 +31,11 @@ Canvas {
         currentCreateElement = elem
     }
 
+    /*
+     * Set canvas validation flag to false
+     */
     function invalidate() {
-        validCanvas = false;
+        canvasValid = false;
     }
 
     function draw(force){
@@ -57,50 +61,72 @@ Canvas {
         clearSelections();
         elements = [];
         clear();
-        canvasValid = false;
+        invalidate();
     }
 
     function clearSelections() {
-         var l = elements.length;
-         for (var i = l-1; i >= 0; i--) {
-             elements[i].selected = false;
-         }
+        var l = elements.length;
+        for (var i = l-1; i >= 0; i--) {
+            elements[i].selected = false;
+        }
         currentSelectedElement = null;
         isDrag = false;
-        canvasValid = false;
+        invalidate();
     }
 
     function checkForSelectedElement(mouseX, mouseY) {
         var l = elements.length;
-        var foundElement = false;
+        currentSelectedElement = checkForElementAt(mouseX, mouseY);
+        if (currentSelectedElement != null) {
+            return true;
+        }
+        return false;
+
+    }
+
+    function checkForElementAt(mouseX, mouseY) {
+        var l = elements.length;
+        var element = null;
         for (var i = l-1; i >= 0; i--) {
             elements[i].selected = false;
             if (elements[i].isSelected(mouseX, mouseY)) {
-                currentSelectedElement = elements[i];
-                canvasValid = false;
-                foundElement = true;
+                element = elements[i];
             }
         }
-        return foundElement;
+        return element;
     }
 
     function createNewElement(mouseX, mouseY) {
         currentCreateElement.setCoordinates(mouseX, mouseY);
-        if (currentSelectedElement != null){
-            currentSelectedElement.selected = false;
-        }
+        resetCurrentSelectedElement();
         currentSelectedElement = currentCreateElement;
         currentSelectedElement.selected = true;
         var t = elements;
         t.push(currentCreateElement);
         elements = t;
         currentCreateElement = null;
-        canvasValid = false;
+        invalidate();
+    }
+
+    function createNewConnector(currentCreateElement) {
+        var t = elements;
+        t.push(currentCreateElement);
+        elements = t;
+        currentCreateElement = null;
+        invalidate();
+    }
+
+    function resetCurrentSelectedElement() {
+        if (currentSelectedElement !== null) {
+            currentSelectedElement.selected = false;
+            currentSelectedElement = null;
+        }
+        invalidate();
     }
 
     onWidthChanged: {
         // force re-draw if the ModellerPanel width has changed
-        canvasValid = false;
+        invalidate();
     }
 
     onHeightChanged: {
@@ -113,6 +139,22 @@ Canvas {
       * click'n'hold: onPressed, onPressAndHold, onReleased
       * click'n'hold and move: onPressed, onPositionChanged, onPressAndHold, onPositionChanged, onReleased
       */
+
+    DropArea {
+        id: dropArea
+        anchors.fill: parent
+        onDropped: {
+            var element = checkForElementAt(drag.x, drag.y);
+            if (element !== null) {
+                if (drag.source.message !== "") {
+                    element.setDataSource(drag.source.message)
+                } else {
+                    element.setImagePath(drag.source.source);
+                }
+                invalidate();
+            }
+        }
+    }
 
     MouseArea {
         id: area
@@ -132,13 +174,20 @@ Canvas {
             if (onPressedSelectedElement != null) {
                 if (isDrag) {
                     currentSelectedElement.setCoordinates(mouseX, mouseY);
-                    canvasValid = false;
+                    invalidate();
                 }
             }
         }
 
+        onPressAndHold: {
+            isPressAndHold = true;
+        }
+
         onReleased: {
             isDrag = false;
+            if (isPressAndHold) {
+                clearSelections();
+            }
             onPressedSelectedElement = null;
             if (mouse.button == Qt.LeftButton) {
 
@@ -149,17 +198,27 @@ Canvas {
             isDrag = false;
             if (mouse.button == Qt.LeftButton) {
                 if (currentCreateElement !== null) {
-//                    if (currentCreateElement.nameText == "Connector") {
-//                        console.log(currentCreateElement.nameText);
-//                        currentCreateElement = null;
-//                    } else {
+                    resetCurrentSelectedElement();
+                    if (currentCreateElement.nameText == "Connector") {
+                        var element = checkForElementAt(mouseX, mouseY);
+                        if(element !== null) {
+                            if (!currentCreateElement.hasParentObject()) {
+                                element.childObject = currentCreateElement;
+                                currentCreateElement.parentObject = element;
+                                currentCreateElement.setStartCoordinate(element.getOutputConnector().x, element.getOutputConnector().y);
+                            } else if (currentCreateElement.hasParentObject() && !currentCreateElement.hasChildObject() && currentCreateElement.parentObject !== element) {
+                                element.parentObject = currentCreateElement;
+                                currentCreateElement.childObject = element;
+                                currentCreateElement.setEndCoordinate(element.getInputConnector().x, element.getInputConnector().y);
+                            }
+                            createNewConnector(currentCreateElement);
+                        }
+                    } else {
                         createNewElement(mouseX, mouseY);
-//                    }
+                    }
                 }
             } else if (mouse.button == Qt.RightButton) {
-                if (currentSelectedElement != null) {
-                    clearSelections();
-                }
+                clearSelections();
             }
         }
 
