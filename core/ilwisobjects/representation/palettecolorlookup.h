@@ -15,7 +15,6 @@ public:
 private:
     boost::container::flat_map<quint32, QColor> _colors;
     bool _cyclic = true;
-    int _cycleCount = 16;
 };
 }
 
