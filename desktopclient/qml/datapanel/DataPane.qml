@@ -44,38 +44,6 @@ Rectangle {
         mainsplit.addCatalog()
     }
 
-//    ToolBar{
-//        id : tabtools
-//        width : parent.width
-//        height : 22
-//        Button {
-//            height : 20
-//            width : 20
-//            id : addSplit
-//            anchors.verticalCenter: parent.verticalCenter
-//            anchors.right: parent.right
-//            anchors.rightMargin: 2
-//            Image {
-//                anchors.fill: parent
-//                source : iconSource("plus.png")
-//                fillMode: Image.PreserveAspectFit
-//            }
-//        }
-//        Button {
-//            height : 18
-//            width : 18
-//            id : removeSplit
-//            anchors.verticalCenter: parent.verticalCenter
-//            anchors.right: addSplit.left
-//            anchors.rightMargin: 4
-//            Image {
-//                anchors.fill: parent
-//                source : iconSource("minus.png")
-//                fillMode: Image.PreserveAspectFit
-//            }
-//        }
-
-//    }
     FocusScope {
         anchors.fill: parent
 
