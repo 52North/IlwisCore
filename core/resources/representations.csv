@@ -1,4 +1,5 @@
 CODE,RELATEDDOMAIN,TYPE,DEFINITION,DESCRIPTION
-grey,value,continuouscolor,0:1|#000000|1|#FFFFFF|1,grey representation for numerical values
-monochromeblack,value,continuouscolor,0:1|#000000|1|#000000|1,monochrome black for numerical values
-pseudo,value,continuouscolor,0:0.2|#8000ff|1|#4040ff|1;0.2:0.3|#4040ff|1|#88ff00|1;0.3:0.45|#88ff00|1|#80ff00|1;0.45:0.6|#80ff00|1|#ff8000|1;0.6:0.8|#ff8000|1|#ff4040|1;0.8:1.0|#ff4040|1|#ff0080|1,Pseudo color representation for value domains
+grey,value,continuouscolor,0:1|#ff000000|#ffffffff,grey representation for numerical values
+monochromeblack,value,continuouscolor,0:1|#ff000000|#ff00000,monochrome black for numerical values
+pseudo,value,continuouscolor,0:0.2|#ff8000ff|#ff4040ff;0.2:0.3|#ff4040ff|#ff88ff00;0.3:0.45|#ff88ff00|#ff80ff00;0.45:0.6|#ff80ff00|#ffff8000;0.6:0.8|#ffff8000|#ffff4040;0.8:1.0|#ffff4040|#ffff0080,Pseudo color representation for value domains
+discretegreen,item,palettecolor,0:0|#ff002800|#ffE6F0e6|1,green representation for thematic/identifier data
