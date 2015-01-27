@@ -52,7 +52,7 @@ Rectangle {
                 cancelButton.opacity = 0
                 // create Modeller obeject from temporary object
                 // open modeller panel
-                 dataPanel.addModellerPanel()
+                 dataPanel.addModellerPanel("Modeller")
             }
         }
     }

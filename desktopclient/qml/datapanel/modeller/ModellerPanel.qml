@@ -49,7 +49,8 @@ Item {
         Action {
             id :close
             onTriggered: {
-
+                drawing.clearModeller();
+                dataPanel.removeModellerPanel("Modeller");
             }
         }
         RowLayout{
