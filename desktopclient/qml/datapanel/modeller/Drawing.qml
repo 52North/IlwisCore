@@ -75,7 +75,6 @@ Canvas {
     }
 
     function checkForSelectedElement(mouseX, mouseY) {
-        var l = elements.length;
         currentSelectedElement = checkForElementAt(mouseX, mouseY);
         if (currentSelectedElement != null) {
             return true;
