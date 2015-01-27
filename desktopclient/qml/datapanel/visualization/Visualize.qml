@@ -195,10 +195,17 @@ Item {
             anchors.right : parent.right
             height : parent.height
             color : "white"
-
-            GeoDrawer{
-                id : drawer
-                anchors.fill: parent
+            DropArea {
+                anchors.fill : parent
+                onDropped: {
+                    console.log (drag.source.ilwisobjectid);
+                    var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
+                    addSource(resource.url, resource.typeName)
+                }
+                GeoDrawer{
+                    id : drawer
+                    anchors.fill: parent
+                }
             }
         }
     }
