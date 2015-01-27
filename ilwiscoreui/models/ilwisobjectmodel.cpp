@@ -387,6 +387,30 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
                 return QString::number(_ilwisobject.as<Table>()->columnCount());
             }
         }
+        if ( propertyname == "polygoncount"){
+             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                return QString::number(features->featureCount(itPOLYGON));
+             }
+        }
+        if ( propertyname == "linecount"){
+             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                return QString::number(features->featureCount(itLINE));
+             }
+        }
+        if ( propertyname == "pointcount"){
+             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                return QString::number(features->featureCount(itPOINT));
+             }
+        }
+        if ( propertyname == "featurecount"){
+             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                return QString::number(features->featureCount());
+             }
+        }
         return "";
     } catch(const ErrorObject& ){
         // no exceptions may escape here
