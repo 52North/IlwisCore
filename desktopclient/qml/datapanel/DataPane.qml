@@ -180,7 +180,8 @@ Rectangle {
                     var remove = -1;
                     var l = count;
                     for (var i = l-1; i >= 0; i--) {
-                        if (getTab(i).title === name) {
+                        var tab =  getTab(i);
+                        if (tab !== null && tab.title === name) {
                             remove = i;
                         }
                     }
@@ -216,7 +217,8 @@ Rectangle {
                     var remove = -1;
                     var l = count;
                     for (var i = l-1; i >= 0; i--) {
-                        if (getTab(i).title === name) {
+                        var tab = getTab(i);
+                        if (tab !== null && tab.title === name) {
                             remove = i;
                         }
                     }
