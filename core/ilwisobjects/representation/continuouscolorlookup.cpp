@@ -8,12 +8,14 @@
 
 using namespace Ilwis;
 
+
+
 ContinuousColorLookup::ContinuousColorLookup(const QString &definition)
 {
     QStringList parts = definition.split(";");
     for( QString group : parts){
         QStringList groupdef = group.split("|");
-        if ( groupdef.size() != 5) {
+        if ( groupdef.size() != 3) {
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
             return;
         }
@@ -28,30 +30,18 @@ ContinuousColorLookup::ContinuousColorLookup(const QString &definition)
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
             return;
         }
-        QColor color1(groupdef[1]);
+        QColor color1 = string2color(groupdef[1]);
         if ( !(color1.isValid())){
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
             return;
         }
-        double  transparency = groupdef[2].toDouble(&ok1);
-        if ( !ok1){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
-        color1.setAlphaF(transparency);
 
-        QColor color2(groupdef[3]);
+
+        QColor color2 = string2color(groupdef[2]);
         if ( !(color2.isValid())){
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
             return;
         }
-        transparency = groupdef[4].toDouble(&ok1);
-        if ( !ok1){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
-
-        color2.setAlphaF(transparency);
         ContinuousColorRange colorrange(color1, color2);
         addGroup(numrange,colorrange);
 

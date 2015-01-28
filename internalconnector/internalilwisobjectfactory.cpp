@@ -117,8 +117,9 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                             QString rprType = rec.field("representationtype").value().toString();
                             QString  definition = rec.field("definition").value().toString();
                             if ( rprType == "continuouscolor"){
-                                ContinuousColorLookup *lookup = new ContinuousColorLookup(definition);
-                                rpr->colors(lookup);
+                                rpr->colors(new ContinuousColorLookup(definition));
+                            }else if ( rprType == "palettecolor"){
+                                rpr->colors(new PaletteColorLookUp(definition));
                             }
                             if ( relateddomain == "value"){
                                 rpr->domain(IDomain("value"));

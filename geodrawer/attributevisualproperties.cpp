@@ -18,6 +18,8 @@ AttributeVisualProperties::AttributeVisualProperties()
 AttributeVisualProperties::AttributeVisualProperties(const IDomain &dom) : _domain(dom)
 {
     _representation = Representation::defaultRepresentation(dom);
+    _representation->domain(dom);
+    _domain = dom;
 }
 
 AttributeVisualProperties::AttributeVisualProperties(const AttributeVisualProperties &avp)

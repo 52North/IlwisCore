@@ -83,6 +83,8 @@ IlwisData<Representation> Representation::defaultRepresentation(const IDomain &d
             code = "code=rpr:grey";
         else
             code = "code=rpr:pseudo";
+    }else if ( hasType(dom->ilwisType(), itITEMDOMAIN)){
+        code = "code=rpr:primarycolors";
     }
 
     return IRepresentation(code);

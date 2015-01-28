@@ -1,3 +1,4 @@
+#include <sstream>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "range.h"
@@ -18,6 +19,22 @@ std::vector<QColor> ColorLookUp::values2colors(const std::vector<double> &values
         ++iter;
     }
     return colors;
+}
+
+QColor ColorLookUp::string2color(const QString& colorstring)
+{
+    QColor color;
+    if ( colorstring.size() > 7){
+        unsigned long val;
+        std::stringstream hexs;
+        hexs << std::hex << colorstring.mid(1,2).toStdString();
+        hexs >> val;
+        QString restColor = "#" + colorstring.mid(3);
+        color = QColor(restColor);
+        color.setAlpha(val);
+    }else
+        color = QColor(colorstring);
+    return color;
 }
 
 

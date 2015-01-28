@@ -105,6 +105,9 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
             if ( attrType == itNUMERICDOMAIN){
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
                 props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
+            } else if ( attrType == itITEMDOMAIN){
+                int count = features->attributeDefinitions().columndefinition(i).datadef().domain()->range<>()->count();
+                props.actualRange(NumericRange(0, count - 1,1));
             }
             visualAttribute(features->attributeDefinitions().columndefinition(i).name(), props);
             // try to find a reasonable default for the activeattribute

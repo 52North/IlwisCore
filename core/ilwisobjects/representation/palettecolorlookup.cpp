@@ -9,15 +9,36 @@
 
 using namespace Ilwis;
 
+PaletteColorLookUp::PaletteColorLookUp(const QString &definition){
+    int index = 0;
+    QStringList parts = definition.split("|");
+    for( QString part : parts){
+        if ( index == 0) {
+            _cyclic = part == "true";
+        }else {
+            QColor color = string2color(part);
+            _colors[index - 1] = color;
+        }
+        ++index;
+    }
+}
+
 PaletteColorLookUp::PaletteColorLookUp(boost::container::flat_map<quint32, QColor> &newcolors) : _colors(newcolors)
 {
 
 }
 
-QColor PaletteColorLookUp::value2color(double index, const NumericRange &actualRange, const NumericRange &stretchRange) const
+QColor PaletteColorLookUp::value2color(double index, const NumericRange &rng, const NumericRange &) const
 {
-    auto iter = _colors.find((quint32)index);
-    if ( iter != _colors.end())
-        return (*iter).second;
+    int localIndex  = index;
+    if ( _cyclic){
+        localIndex = localIndex % rng.count();
+    }
+    auto iter = _colors.find(localIndex);
+    if ( iter != _colors.end()){
+
+        QColor clr =  (*iter).second;
+        return clr;
+    }
     return QColor();
 }

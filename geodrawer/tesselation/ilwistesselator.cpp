@@ -83,7 +83,7 @@ std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::
         contours.resize(polygon->getNumInteriorRing() + 1);
         for(int i = 0; i < polygon->getNumInteriorRing(); ++i){
             const geos::geom::LineString *innerRing = polygon->getInteriorRingN(i);
-            contours[i].resize(innerRing->getNumPoints() * 2);
+            contours[i + 1].resize(innerRing->getNumPoints() * 2); // contours[0] is outer ring
             for(int j = 0 ; j < innerRing->getNumPoints(); ++j){
                 const geos::geom::Coordinate& crd = innerRing->getCoordinateN(j);
                 addCoord(crd, i+1, j * 2);

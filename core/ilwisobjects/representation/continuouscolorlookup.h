@@ -14,7 +14,7 @@ public:
         QColor value2color(double value, const Ilwis::NumericRange &actualRange = NumericRange(), const Ilwis::NumericRange &stretchRange = NumericRange()) const;
         void addGroup(const NumericRange& range, const ContinuousColorRange& colorrange);
 
-    private:
+private:
         std::vector<NumericRange> _groups;
         std::vector<ContinuousColorRange> _colorranges;
         NumericRange _numericRange;
