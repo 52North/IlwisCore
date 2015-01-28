@@ -15,11 +15,11 @@ PaletteColorLookUp::PaletteColorLookUp(const QString &definition){
     for( QString part : parts){
         if ( index == 0) {
             _cyclic = part == "true";
-            ++index;
-            continue;
+        }else {
+            QColor color = string2color(part);
+            _colors[index - 1] = color;
         }
-        QColor color = string2color(part);
-        _colors[index - 1] = color;
+        ++index;
     }
 }
 
@@ -38,7 +38,6 @@ QColor PaletteColorLookUp::value2color(double index, const NumericRange &rng, co
     if ( iter != _colors.end()){
 
         QColor clr =  (*iter).second;
-        qDebug() << clr << index << localIndex;
         return clr;
     }
     return QColor();
