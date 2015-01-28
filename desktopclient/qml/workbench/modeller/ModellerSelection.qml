@@ -19,6 +19,8 @@ Rectangle {
     property var currentAppForm : null
     property var operationid
 
+    property int modellerCount : 0;
+
     color : background4
     clip : true
     state : "invisible"
@@ -52,7 +54,7 @@ Rectangle {
                 cancelButton.opacity = 0
                 // create Modeller obeject from temporary object
                 // open modeller panel
-                 dataPanel.addModellerPanel("Modeller")
+                 dataPanel.addModellerPanel("Modeller_" + modellerCount++);
             }
         }
     }
@@ -212,8 +214,6 @@ Rectangle {
                     Connections {
                         target : operationList
                         onMakeForm : {
-                            console.log(objectid)
-                             console.log(name)
                             newForm(objectid, name)
                         }
                     }
