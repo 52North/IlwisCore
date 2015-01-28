@@ -3,7 +3,6 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MasterCatalogModel 1.0
-import "../catalog" as Parent
 
 Item {
     property int heightButtons : 26
@@ -47,10 +46,17 @@ Item {
         }
 
         Action {
+            id :save
+            onTriggered: {
+                console.log("Currently not supported!")
+            }
+        }
+
+        Action {
             id :close
             onTriggered: {
                 drawing.clearModeller();
-                dataPanel.removeModellerPanel("Modeller");
+                dataPanel.removeModellerPanel(parent.title);
             }
         }
         RowLayout{
@@ -100,6 +106,13 @@ Item {
                 height:  toolbar.height
                 text: qsTr("Clear")
                 action : clear
+            }
+
+            ToolButton{
+                id : saveButton
+                height:  toolbar.height
+                text: qsTr("Save")
+                action : save
             }
 
             Rectangle{
