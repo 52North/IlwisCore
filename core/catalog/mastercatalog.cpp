@@ -371,10 +371,10 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://tables/domain?code=%1").arg(shortname);
     }else if ( name.left(12) == "code=georef:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
-        return QString("ilwis://internalcatalog/%1").arg(shortname);
+        return QString("ilwis://system/%1").arg(shortname);
     }else if ( name.left(9) == "code=csy:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
-        return QString("ilwis://internalcatalog/%1").arg(shortname);
+        return QString("ilwis://system/%1").arg(shortname);
     }else if ( name.left(9) == "code=rpr:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://tables/representation?code=%1").arg(shortname);
