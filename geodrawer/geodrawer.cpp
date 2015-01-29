@@ -4,6 +4,7 @@
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLContext>
 #include "rootdrawer.h"
+#include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include "drawerfactory.h"

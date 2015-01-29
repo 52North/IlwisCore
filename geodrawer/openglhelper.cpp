@@ -34,8 +34,8 @@ quint32 OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
        switch( tp)     {
         case itPOLYGON:
             getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, indices);
-            boundaryIndex = indices.size();
-            getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
+            //boundaryIndex = indices.size();
+            //getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itLINE:
             getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itPOINT:

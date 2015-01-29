@@ -48,22 +48,36 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
         AttributeVisualProperties attr = visualAttribute(activeAttribute());
-        //int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
+        int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
+        if ( columnIndex == iUNDEF){ // test a number of fallbacks to be able to show at least something
+            columnIndex = features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN);
+            attr =  visualAttribute(COVERAGEKEYCOLUMN);
+            if ( columnIndex == iUNDEF){
+                columnIndex = features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN);
+                attr =  visualAttribute(FEATUREVALUECOLUMN);
+                if ( columnIndex == iUNDEF)
+                    return false;
+            }
+        }
         for(const SPFeatureI& feature : features){
-            quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
-            for(int i =0; i < noOfVertices; ++i){
-               QColor clr = attr.value2color(feature(activeAttribute()));
-               colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+            QVariant value =  feature(columnIndex);
+            if ( value.toInt() != iUNDEF) {
+                quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
+                for(int i =0; i < noOfVertices; ++i){
+                    if ( _boundaryIndex == iUNDEF || i < _boundaryIndex){
+                        QColor clr = attr.value2color(value);
+                        colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+                    }else {
+                        colors.push_back(VertexColor(128,0,128,1));
+                    }
+                }
+                if(!initGeometry(openglContext, vertices, colors))
+                    return false;
             }
 
+            _prepared |= DrawerInterface::ptGEOMETRY;
+
         }
-
-
-        if(!initGeometry(openglContext, vertices, colors))
-            return false;
-
-        _prepared |= DrawerInterface::ptGEOMETRY;
-
     }
 
     return true;

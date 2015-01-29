@@ -127,6 +127,9 @@ Item {
 
                 }
             }
+            Component.onCompleted: {
+                currentIndex = mastercatalog.selectedBookmark
+            }
         }
 
     }

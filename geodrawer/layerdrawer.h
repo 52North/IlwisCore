@@ -39,7 +39,7 @@ protected:
     QOpenGLShaderProgram _shaders;
 
 private:
-    QString _activeAttribute = sUNDEF;
+    QString _activeAttribute = COVERAGEKEYCOLUMN;
 
 
     bool initShaders();
