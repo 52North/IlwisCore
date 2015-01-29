@@ -10,8 +10,7 @@ AbstractBasicModellerObject {
     property color borderColor : "black"
     property color color: "#EAECEE"
     property bool selected
-    property string imagePath
-    property string dataSource;
+    property ModellerObjectContainer objectContainer
 
     property AbstractBasicModellerObject parentObject;
     property AbstractBasicModellerObject childObject;
@@ -46,18 +45,6 @@ AbstractBasicModellerObject {
 
     function containsPosition(checkX, checkY) {
         return checkX > (x - width/2) && checkX < (x + width/2) && checkY > (y - height/2) && checkY < (y + height/2);
-    }
-
-    function setImagePath(path) {
-        if (imagePath === "") {
-            imagePath = path;
-        }
-    }
-
-    function setDataSource(source) {
-        if (dataSource === "") {
-            dataSource = source;
-        }
     }
 
 }

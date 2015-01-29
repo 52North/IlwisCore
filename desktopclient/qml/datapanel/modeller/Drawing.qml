@@ -144,12 +144,11 @@ Canvas {
         anchors.fill: parent
         onDropped: {
             var element = checkForElementAt(drag.x, drag.y);
-            if (element !== null) {
-                if (drag.source.message !== "") {
-                    element.setDataSource(drag.source.message)
-                } else {
-                    element.setImagePath(drag.source.source);
-                }
+            if (element !== null && element.objectContainer === null) {
+                element.objectContainer = Qt.createComponent("ModellerObjectContainer.qml").createObject();
+                element.objectContainer.ilwisObjectId = drag.source.ilwisobjectid;
+                element.objectContainer.imagePath = drag.source.message
+                element.objectContainer.dataSource = drag.source.source
                 invalidate();
             }
         }

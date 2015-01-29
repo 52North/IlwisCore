@@ -25,11 +25,17 @@ BasicModellerObject {
         ctx.restore();
         ctx.save();
         ctx.beginPath();
-        if (dataSource !== "") {
-            ctx.text(dataSource,(x - width/2) + 20, y);
-        } else if (imagePath !== "") {
-            //ctx.drawImage(imagePath, x - width/2 + 1, y + height/2 - 1, x + width/2 - 1, y + height/2 - 1);
-            ctx.drawImage(imagePath, x-10, y-10);
+        if (objectContainer !== null) {
+            if (objectContainer.ilwisObjectId !== null) {
+                ctx.text(objectContainer.ilwisObjectId,(x - width/2) + 20, y);
+            } else if (objectContainer.dataSource !== "") {
+                ctx.text(objectContainer.dataSource,(x - width/2) + 20, y);
+            } else if (objectContainer.imagePath !== "") {
+                //ctx.drawImage(imagePath, x - width/2 + 1, y + height/2 - 1, x + width/2 - 1, y + height/2 - 1);
+                ctx.drawImage(objectContainer.imagePath, x-10, y-10);
+            } else {
+                ctx.text(nameText,(x - width/2) + 20, y);
+            }
         } else {
             ctx.text(nameText,(x - width/2) + 20, y);
         }
