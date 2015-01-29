@@ -5,6 +5,7 @@
 #include "colorlookup.h"
 #include "representation.h"
 #include "attributevisualproperties.h"
+#include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include <QtGui/QOpenGLContext>
