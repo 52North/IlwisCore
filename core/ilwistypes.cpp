@@ -259,7 +259,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itCOVERAGE:
         return TR("coverage");
     case itFEATURE:
-        return TR("feature");
+        return TR("featurecoverage");
     case itDOMAIN:
         return TR("domain");
     case itDATETIME:
