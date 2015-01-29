@@ -46,6 +46,9 @@ Canvas {
             for (var i = 0; i < l; i++) {
                 elements[i].draw(ctx);
             }
+            if (currentCreateElement != null && currentCreateElement.nameText == "Connector") {
+                currentCreateElement.draw(ctx);
+            }
             canvas.requestPaint();
         }
     }
@@ -107,9 +110,9 @@ Canvas {
         invalidate();
     }
 
-    function createNewConnector(currentCreateElement) {
+    function createNewConnector(createElem) {
         var t = elements;
-        t.push(currentCreateElement);
+        t.push(createElem);
         elements = t;
         currentCreateElement = null;
         invalidate();
@@ -161,18 +164,32 @@ Canvas {
 
         onPressed: {
             if (mouse.button == Qt.LeftButton) {
-                if (checkForSelectedElement(mouseX, mouseY)) {
-                    onPressedSelectedElement = currentSelectedElement;
-                    isDrag = true;
+                var element = checkForElementAt(mouseX, mouseY)
+                if(element !== null) {
+                    if (currentCreateElement != null && currentCreateElement.nameText == "Connector") {
+                        if (!currentCreateElement.hasParentObject()) {
+                            element.childObject = currentCreateElement;
+                            currentCreateElement.parentObject = element;
+                            currentCreateElement.setStartCoordinate(element.getOutputConnector().x, element.getOutputConnector().y);
+                        }
+                    } else {
+                        onPressedSelectedElement = element;
+                        isDrag = true;
+                    }
                 }
             }
         }
 
         onPositionChanged: {
-            if (onPressedSelectedElement != null) {
-                if (isDrag) {
-                    currentSelectedElement.setCoordinates(mouseX, mouseY);
-                    invalidate();
+            if (currentCreateElement != null && currentCreateElement.nameText == "Connector") {
+                currentCreateElement.setEndCoordinate(mouseX, mouseY);
+                invalidate();
+            } else {
+                if (onPressedSelectedElement != null) {
+                    if (isDrag) {
+                        onPressedSelectedElement.setCoordinates(mouseX, mouseY);
+                        invalidate();
+                    }
                 }
             }
         }
@@ -182,6 +199,18 @@ Canvas {
         }
 
         onReleased: {
+            if (currentCreateElement != null && currentCreateElement.nameText == "Connector") {
+                var element = checkForElementAt(mouseX, mouseY);
+                if(element !== null) {
+                    if (currentCreateElement.hasParentObject() && !currentCreateElement.hasChildObject() && currentCreateElement.parentObject !== element) {
+                        element.parentObject = currentCreateElement;
+                        currentCreateElement.childObject = element;
+                        currentCreateElement.setEndCoordinate(element.getInputConnector().x, element.getInputConnector().y);
+                        createNewConnector(currentCreateElement);
+                        currentCreateElement = null;
+                    }
+                }
+            }
             isDrag = false;
             if (isPressAndHold) {
                 clearSelections();
@@ -195,24 +224,29 @@ Canvas {
         onClicked: {
             isDrag = false;
             if (mouse.button == Qt.LeftButton) {
+                var element = checkForElementAt(mouseX, mouseY);
                 if (currentCreateElement !== null) {
                     resetCurrentSelectedElement();
-                    if (currentCreateElement.nameText == "Connector") {
-                        var element = checkForElementAt(mouseX, mouseY);
-                        if(element !== null) {
-                            if (!currentCreateElement.hasParentObject()) {
-                                element.childObject = currentCreateElement;
-                                currentCreateElement.parentObject = element;
-                                currentCreateElement.setStartCoordinate(element.getOutputConnector().x, element.getOutputConnector().y);
-                            } else if (currentCreateElement.hasParentObject() && !currentCreateElement.hasChildObject() && currentCreateElement.parentObject !== element) {
-                                element.parentObject = currentCreateElement;
-                                currentCreateElement.childObject = element;
-                                currentCreateElement.setEndCoordinate(element.getInputConnector().x, element.getInputConnector().y);
-                            }
-                            createNewConnector(currentCreateElement);
-                        }
-                    } else {
+//                    if (currentCreateElement.nameText == "Connector") {
+//                        if(element !== null) {
+//                            if (!currentCreateElement.hasParentObject()) {
+//                                element.childObject = currentCreateElement;
+//                                currentCreateElement.parentObject = element;
+//                                currentCreateElement.setStartCoordinate(element.getOutputConnector().x, element.getOutputConnector().y);
+//                            } else if (currentCreateElement.hasParentObject() && !currentCreateElement.hasChildObject() && currentCreateElement.parentObject !== element) {
+//                                element.parentObject = currentCreateElement;
+//                                currentCreateElement.childObject = element;
+//                                currentCreateElement.setEndCoordinate(element.getInputConnector().x, element.getInputConnector().y);
+//                            }
+//                        }
+//                    } else {
                         createNewElement(mouseX, mouseY);
+//                    }
+                } else {
+                    if (element !== null) {
+                        currentSelectedElement = element;
+                        currentSelectedElement.selected = true;
+                        invalidate();
                     }
                 }
             } else if (mouse.button == Qt.RightButton) {
