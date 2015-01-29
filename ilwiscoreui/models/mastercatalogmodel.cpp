@@ -61,6 +61,8 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 
     QString ids = ilwisconfig("users/user-0/available-catalog-ids",QString("0"));
     _bookmarkids = ids.split("|");
+    QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
+    CatalogModel *view = 0;
     for(auto id : _bookmarkids){
         QString query = QString("users/user-0/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
@@ -77,9 +79,12 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         res.setDescription(descr);
         CatalogView cview(res);
         _bookmarks.push_back(new CatalogModel(cview,0,this));
+        if ( urlWorkingCatalog == location){
+            view = _bookmarks.back();
+        }
     }
     if ( _bookmarks.size() > 0)
-        _splitCatalogs[LEFTVIEW].push_back(_bookmarks.back());
+        _splitCatalogs[LEFTVIEW].push_back(view != 0 ? view : _bookmarks.back());
 
 }
 
