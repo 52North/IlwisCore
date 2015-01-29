@@ -28,11 +28,11 @@ PaletteColorLookUp::PaletteColorLookUp(boost::container::flat_map<quint32, QColo
 
 }
 
-QColor PaletteColorLookUp::value2color(double index, const NumericRange &rng, const NumericRange &) const
+QColor PaletteColorLookUp::value2color(double index, const NumericRange &, const NumericRange &) const
 {
     int localIndex  = index;
     if ( _cyclic){
-        localIndex = localIndex % rng.count();
+        localIndex = localIndex % _colors.size();
     }
     auto iter = _colors.find(localIndex);
     if ( iter != _colors.end()){
