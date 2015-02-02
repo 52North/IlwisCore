@@ -50,34 +50,60 @@ Rectangle {
                     id : mouseArea
                     width : 20; height : 20
                     anchors.centerIn: parent
+                    property variant image
                     drag.target: image
+                    onPressed: {
+                       image = Qt.createQmlObject('import QtQuick 2.0; Image{
+                            id : image
+                            width : 20; height : 20
+                            source : "../../images/" + styleData.value
+                            fillMode: Image.PreserveAspectFit
+                            property string message :  model !== null ? model[styleData.row].url : ""
+                            property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
+
+                            Drag.keys: [ model[styleData.row].iconPath ]
+                            Drag.active: mouseArea.drag.active
+                            Drag.hotSpot.x: 10
+                            Drag.hotSpot.y: 10
+                            opacity : Drag.active / 2
+
+                            states: State {
+                                when: mouseArea.drag.active
+                                ParentChange { target: image; parent: root }
+                                AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                            }
+                        }', mouseArea, "dynamicImage");
+
+                    }
+
                     onReleased: {
                         image.Drag.drop()
                         image.parent = mouseArea
                         image.anchors.fill = mouseArea
+                        image.destroy();
                     }
 
-                    Image{
-                        id : image
-                        width : 20; height : 20
-                        source : "../../images/" + styleData.value
-                        fillMode: Image.PreserveAspectFit
-                        property string message :  model !== null ? model[styleData.row].url : ""
-                        property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
+//                    Image{
+//                        id : image
+//                        width : 20; height : 20
+//                        source : "../../images/" + styleData.value
+//                        fillMode: Image.PreserveAspectFit
+//                        property string message :  model !== null ? model[styleData.row].url : ""
+//                        property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
 
-                        Drag.keys: [ model[styleData.row].iconPath ]
-                        Drag.active: mouseArea.drag.active
-                        Drag.hotSpot.x: 10
-                        Drag.hotSpot.y: 10
-                        opacity : Drag.active / 2
+//                        Drag.keys: [ model[styleData.row].iconPath ]
+//                        Drag.active: mouseArea.drag.active
+//                        Drag.hotSpot.x: 10
+//                        Drag.hotSpot.y: 10
+//                        opacity : Drag.active / 2
 
 
-                        states: State {
-                            when: mouseArea.drag.active
-                            ParentChange { target: image; parent: root }
-                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
-                        }
-                    }
+//                        states: State {
+//                            when: mouseArea.drag.active
+//                            ParentChange { target: image; parent: root }
+//                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+//                        }
+//                    }
                     z : 1
                 }
                 Image{
