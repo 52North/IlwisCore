@@ -192,17 +192,15 @@ Rectangle {
         onClicked: {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
-            var catalog = mastercatalog.selectedCatalog()
-            if ( catalog !== null){
-                catalog.setSelectedObjects(ids)
-            }
+            mastercatalog.currentCatalog = currentCatalog
+            currentCatalog.setSelectedObjects(ids)
         }
         onDoubleClicked: {
             if ( currentRow != -1)
                 showObject(model[currentRow].id)
         }
 
-        model : tabLocation === "left" ? mastercatalog.leftResources : mastercatalog.rightResources
+        model : setResources()
     }
 
 }

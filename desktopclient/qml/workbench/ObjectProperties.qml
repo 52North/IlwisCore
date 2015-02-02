@@ -11,6 +11,12 @@ Rectangle {
 
     signal unloadcontent(string content)
 
+    function getSelectedData() {
+        if ( mastercatalog.currentCatalog){
+            return mastercatalog.currentCatalog.selectedData
+        }
+    }
+
     color : "white"
     clip : true
     state : "invisible"
@@ -28,7 +34,7 @@ Rectangle {
         anchors.top: functionBar.bottom
         width : parent.width
         anchors.bottom: parent.bottom
-        model : mastercatalog.selectedCatalog().selectedData
+        model : getSelectedData()
         delegate : PropertyForm.DPropertyForm{}
     }
 

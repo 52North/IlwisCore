@@ -19,6 +19,7 @@ Rectangle {
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 1
+    property int activeTab : 1
 
     function addModellerPanel(name) {
         mainsplit.addModeller(name)
@@ -36,9 +37,30 @@ Rectangle {
         return iconP
 
     }
+    function getCurrentCatalogTab(){
+        var tabview = activeSplit == 1 ? lefttab : righttab
+        if ( tabview) {
+            var tab = tabview.getTab(activeTab - 1)
+            if ( tab && tab.item){
+                if ( "currentCatalog" in tab.item)
+                    return tab.item
+            }
+        }
+    }
 
-    function addCatalog() {
-        mainsplit.addCatalog()
+
+    function newCatalog(url, splitside){
+        if ( url === ""){
+            var catTab = getCurrentCatalogTab()
+            url = catTab.currentCatalog.url
+            splitside = activeSplit
+        }
+
+        mainsplit.newCatalog(url,splitside)
+    }
+
+    function changeCatalog(url){
+       mainsplit.changeCatalog(url)
     }
 
     FocusScope {
@@ -48,6 +70,7 @@ Rectangle {
             id : mainsplit
             orientation: Qt.Horizontal
             anchors.fill: parent
+            property int tel: 0
 
 
             function showObject(objectid){
@@ -60,42 +83,63 @@ Rectangle {
                         var part1 = name.substr(0,blocksize)
                         var part2 = name.substr( name.length - blocksize)
                         name = part1 + "..." + part2
-                    }
-                    var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-                    tab.active = true
-                    if ( activeSplit ===1)
-                        righttab.width = parent.width / 2.0
-                    else
-                        lefttab.width = parent.width / 2.0
 
-                    tab.item.addSource(resource.url, resource.typeName)
-                }
-            }
-
-            function addCatalog() {
-                var component = Qt.createComponent("catalog/CatalogPanel.qml")
-                var currentcatalog = mastercatalog.selectedCatalog()
-                if ( currentcatalog !== null){
-                    mastercatalog.addCatalog(mastercatalog.currentUrl, mastercatalog.activeSplit === 0 ? 1 : 0)
-                    var name = currentcatalog.displayName
-                    var blocksize = 24 / 2;
-                    if ( name.length > 15){
-                        var part1 = name.substr(0,blocksize)
-                        var part2 = name.substr( name.length - blocksize)
-                        name = part1 + "..." + part2
                     }
+                    var tabCount = righttab.count
                     var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                     tab.active = true
                     if ( activeSplit ===1){
                         righttab.width = parent.width / 2.0
+                        tabCount = righttab.count - 1 // tab has already been added so -1
+                    }
+                    else {
+                        lefttab.width = parent.width / 2.0
+                        tabCount = lefttab.count - 1 // tab has already been added so -1
+                    }
+
+                    tab.item.addSource(resource.url, resource.typeName)
+                    mastercatalog.setActiveTab(activeSplit, tabCount)
+                }
+            }
+
+            function changeCatalog(url){
+                var tab = getCurrentCatalogTab()
+                if ( tab){
+                    if ( tab.currentCatalog)
+                        tab.currentCatalog.destroy(0)
+                    tab.currentCatalog = mastercatalog.newCatalog(url)
+                    tab.currentCatalog.makeParent(tab)
+                    mastercatalog.setWorkingCatalog(url);
+                    mastercatalog.currentCatalog = tab.currentCatalog
+                }
+            }
+
+            function newCatalog(url, splitside) {
+                if ( url){
+                    var component = Qt.createComponent("catalog/CatalogPanel.qml")
+                    var catalogModel = mastercatalog.newCatalog(url)
+                    var name = catalogModel.displayName
+                    var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+                    tab.active = true
+                    var tabCount = 0
+                    if ( activeSplit ===1){
+                        righttab.width = parent.width / 2.0
                         activeSplit = 2
                         tab.item.tabLocation = "right"
+                        tab.item.currentCatalog = catalogModel
+                        tabCount = righttab.count - 1 // tab has already been added so -1
+                        righttab.currentIndex = tabCount
                     }
                     else{
                         lefttab.width = parent.width / 2.0
                         activeSplit = 1
                         tab.item.tabLocation = "left"
+                        tab.item.currentCatalog = catalogModel
+                        tabCount = lefttab.count - 1
+                        lefttab.currentIndex = tabCount
                     }
+                    mastercatalog.setActiveTab(activeSplit, tabCount)
+                    mastercatalog.currentCatalog = catalogModel
                 }
             }
 
@@ -125,15 +169,17 @@ Rectangle {
                 width: parent.width
                 Layout.fillWidth: true
 
-                onCurrentIndexChanged : {
-                }
-
                 style: Base.TabStyle2{
                     splitindex: 1
                     onSplitindexChanged: {
                         activeSplit = 1
                         mastercatalog.activeSplit = 0
                         lefttab.currentIndex = indexTab
+                        var tab = getCurrentCatalogTab()
+                        if ( tab){
+                            mastercatalog.currentUrl = tab.currentCatalog.url
+                            mastercatalog.currentCatalog = tab.currentCatalog
+                        }
                     }
                 }
 
@@ -178,6 +224,10 @@ Rectangle {
                         activeSplit = 2
                         mastercatalog.activeSplit = 1
                         righttab.currentIndex = indexTab
+                        if ( tab){
+                            mastercatalog.currentUrl = tab.item.currentCatalog.url
+                            mastercatalog.currentCatalog = tab.currentCatalog
+                        }
                     }
                 }
 

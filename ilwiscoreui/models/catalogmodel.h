@@ -27,12 +27,14 @@ public:
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY contentChanged)
 
     CatalogModel() ;
+    ~CatalogModel();
     explicit CatalogModel(const Ilwis::CatalogView &view, int lvl, QObject *parent = 0);
     bool isScanned() const;
     bool initNode() const;
     int level() const;
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<IlwisObjectModel> selectedData();
+    Q_INVOKABLE void makeParent(QObject *obj);
     void filterChanged(const QString &objectType, bool state);
     void refresh(bool yesno);
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
