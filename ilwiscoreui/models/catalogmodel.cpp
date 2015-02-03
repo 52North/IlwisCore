@@ -24,6 +24,11 @@ CatalogModel::CatalogModel()
     _isScanned = false;
 }
 
+CatalogModel::~CatalogModel()
+{
+
+}
+
 CatalogModel::CatalogModel(const CatalogView &view, int lvl, QObject *parent) : ResourceModel(view.resource(), parent)
 {
     _initNode = true;
@@ -70,7 +75,12 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
 
 QQmlListProperty<IlwisObjectModel> CatalogModel::selectedData()
 {
-     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
+    return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
+}
+
+void CatalogModel::makeParent(QObject *obj)
+{
+    setParent(obj);
 }
 
 void CatalogModel::filterChanged(const QString& objectType, bool state){

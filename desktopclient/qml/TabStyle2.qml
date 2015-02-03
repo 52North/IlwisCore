@@ -24,12 +24,14 @@ TabViewStyle {
             anchors.centerIn: parent
             text: styleData.title
             color: styleData.selected ? "white" : "black"
+            elide: Text.ElideMiddle
         }
         MouseArea  {
             anchors.fill: parent
             onClicked : {
-                splitindex = -splitindex
                 indexTab = styleData.index
+                mastercatalog.setActiveTab(Math.abs(splitindex) - 1, indexTab)
+                splitindex = -splitindex
 
             }
         }

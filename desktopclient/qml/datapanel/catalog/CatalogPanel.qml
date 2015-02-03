@@ -2,11 +2,13 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import CatalogModel 1.0
 import MasterCatalogModel 1.0
 
 Item {
     property int heightButtons : 26
     property string tabLocation : "left"
+    property CatalogModel currentCatalog
     id : catalogViews
     width : parent.width
     height : parent.height
@@ -21,6 +23,11 @@ Item {
     function toggleFilter(objecttype, togglestate){
         mastercatalog.setObjectFilterCurrentCatalog(objecttype, togglestate)
         catalogChanged()
+    }
+
+    function setResources(){
+        if ( currentCatalog)
+            return currentCatalog.resources
     }
 
     function iconsource(name) {
@@ -240,5 +247,11 @@ Item {
             }
         ]
     }
+        Component.onCompleted: {
+            var url = mastercatalog.currentUrl
+            currentCatalog = mastercatalog.newCatalog(url)
+            currentCatalog.makeParent(catalogViews)
+            mastercatalog.currentCatalog = currentCatalog
+        }
 
 }

@@ -119,8 +119,8 @@ Item {
                         catalogProperties.humannametext = displayName
                         catalogProperties.defintiontext = url
                         catalogProperties.descriptiontext = description
-                        mastercatalog.selectedBookmark = index
-                        catalogChanged()
+                        mastercatalog.selectedBookmark(url)
+                        bigthing.changeCatalog(url)
 
                     }
 
@@ -128,7 +128,8 @@ Item {
                 }
             }
             Component.onCompleted: {
-                currentIndex = mastercatalog.selectedBookmark
+                var url = mastercatalog.currentUrl
+                currentIndex = mastercatalog.selectedBookmark(url)
             }
         }
 
@@ -136,7 +137,6 @@ Item {
     Catalog.CatalogProperties{
         id : catalogProperties
         anchors.bottom : parent.bottom
-        //anchors.top : listRect.bottom
         height : 200
         clip : true
     }

@@ -41,7 +41,12 @@ ApplicationWindow {
     }
 
     function addCatalog(){
-        mainSplit.addCatalog()
+
+        mainSplit.newCatalog("",-1)
+    }
+
+    function changeCatalog(url){
+        mainSplit.changeCatalog(url)
     }
 
     function transitionInfoPane(newpagename) {
@@ -92,6 +97,14 @@ ApplicationWindow {
 
             function addCatalog() {
                 dataPanel.addCatalog()
+            }
+
+            function newCatalog(url, splitside){
+                dataPanel.newCatalog(url, splitside)
+            }
+
+            function changeCatalog(url){
+                dataPanel.changeCatalog(url)
             }
 
             WorkBench.WorkBenchButtonBar{
