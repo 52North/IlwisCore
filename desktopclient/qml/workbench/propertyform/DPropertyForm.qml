@@ -32,6 +32,27 @@ Component {
             }
         }
 
+        Component {
+            id : projectionData
+            Loader{
+                source : "ProjectionPropertiesAll.qml"
+            }
+        }
+
+        Component {
+            id : generalData
+            Loader {
+                source : "GeneralPropertyPane.qml"
+            }
+        }
+
+        Component {
+            id : dataData
+            Loader {
+                source : "DataPropertyPane.qml"
+            }
+        }
+
         Rectangle {
             id : header
             width : parent.width
@@ -66,19 +87,19 @@ Component {
             width : propertyForm.width
             height : propertyForm.height - header.height
             style: Base.TabStyle1{}
-            Tab {
-                title : qsTr("General")
-                GeneralPropertyPane{}
-            }
-            Tab {
-                title : qsTr("Data")
-                DataPropertyPane{}
-            }
             Component.onCompleted: {
+                addTab(qsTr("General"), generalData )
+                addTab(qsTr("Data"), dataData)
+                console.debug(typeName)
                 if(typeName == "rastercoverage"  || typeName == "feature" ||
                         typeName == "featurecoverage" || typeName == "pointcoverage" ||
                         typeName == "linecoverage" || typeName == "polygoncoverage"){
-                    addTab("Spatial", spatialData)
+                    addTab(qsTr("Spatial"), spatialData)
+                } else if ( typeName == "projection" || typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem"){
+                    if ( isProjected){
+                        console.debug(count)
+                        addTab(qsTr("Projection"), projectionData)
+                    }
                 }
             }
         }

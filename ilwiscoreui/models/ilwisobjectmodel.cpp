@@ -411,6 +411,30 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
                 return QString::number(features->featureCount());
              }
         }
+        if ( propertyname == "majoraxis"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->majorAxis());
+             }
+        }
+        if ( propertyname == "minoraxis"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->minorAxis());
+             }
+        }
+        if ( propertyname == "flattening"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->flattening());
+             }
+        }
+        if ( propertyname == "excentricity"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->excentricity());
+             }
+        }
         return "";
     } catch(const ErrorObject& ){
         // no exceptions may escape here

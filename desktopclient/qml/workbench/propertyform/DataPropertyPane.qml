@@ -39,6 +39,8 @@ Rectangle {
            source = "GeoreferenceProperties.qml"
         } else if ( typeName == "table"){
             source = "TableProperties.qml"
+        } else if ( typeName == "ellipsoid"){
+            source = "EllipsoidProperties.qml"
         }
 
     }
