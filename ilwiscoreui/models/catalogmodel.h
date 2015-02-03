@@ -35,7 +35,7 @@ public:
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void makeParent(QObject *obj);
-    void filterChanged(const QString &objectType, bool state);
+    Q_INVOKABLE void filterChanged(const QString &objectType, bool state);
     void refresh(bool yesno);
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     virtual void nameFilter(const QString&);
