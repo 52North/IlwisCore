@@ -10,15 +10,16 @@ namespace Geodrawer{
 class FeatureLayerDrawer : public LayerDrawer
 {
 public:
-    FeatureLayerDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    FeatureLayerDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
     void unprepare(DrawerInterface::PreparationType prepType);
 
     void setActiveVisualAttribute(const QString& attr);
     void coverage(const ICoverage &cov);
     ICoverage coverage() const;
+    DrawerType drawerType()  const;
 
-    static DrawerInterface *create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer);
+    static DrawerInterface *create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
 
     NEW_DRAWER

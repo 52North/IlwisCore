@@ -21,13 +21,13 @@ using namespace Geodrawer;
 
 REGISTER_DRAWER(FeatureLayerDrawer)
 
-FeatureLayerDrawer::FeatureLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : LayerDrawer("FeatureLayerDrawer", parentDrawer, rootdrawer)
+FeatureLayerDrawer::FeatureLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : LayerDrawer("FeatureLayerDrawer", parentDrawer, rootdrawer, options)
 {
 }
 
-DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer)
+DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)
 {
-    return new FeatureLayerDrawer(parentDrawer, rootdrawer)    ;
+    return new FeatureLayerDrawer(parentDrawer, rootdrawer, options)    ;
 }
 
 
@@ -62,7 +62,13 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         for(const SPFeatureI& feature : features){
             QVariant value =  feature(columnIndex);
             if ( value.toInt() != iUNDEF) {
-                quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(), features->coordinateSystem(), feature->geometry(), feature->featureid(), vertices, _indices, _boundaryIndex);
+                quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(),
+                                                                 features->coordinateSystem(),
+                                                                 feature->geometry(),
+                                                                 feature->featureid(),
+                                                                 vertices,
+                                                                 _indices,
+                                                                 _boundaryIndex);
                 for(int i =0; i < noOfVertices; ++i){
                     if ( _boundaryIndex == iUNDEF || i < _boundaryIndex){
                         QColor clr = attr.value2color(value);
@@ -142,6 +148,11 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
 ICoverage FeatureLayerDrawer::coverage() const
 {
     return SpatialDataDrawer::coverage();
+}
+
+DrawerInterface::DrawerType FeatureLayerDrawer::drawerType() const
+{
+    return DrawerInterface::dtMAIN;
 }
 
 
