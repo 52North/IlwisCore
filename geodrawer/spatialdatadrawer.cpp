@@ -10,7 +10,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-SpatialDataDrawer::SpatialDataDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : ComplexDrawer(name, parentDrawer, rootdrawer)
+SpatialDataDrawer::SpatialDataDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : ComplexDrawer(name, parentDrawer, rootdrawer, options)
 {
 }
 
@@ -126,7 +126,7 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
     return var;
 }
 
-void SpatialDataDrawer::attribute(const QString &attrName, const QVariant &attrib)
+void SpatialDataDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
 {
 
 }
