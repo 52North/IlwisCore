@@ -23,7 +23,7 @@ VisualizationManager::VisualizationManager(QObject *parent, UIContextModel *cont
 }
 void VisualizationManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
-    _layers.append(newmodel);
+    _layers.insert(1,newmodel);
 }
 
 void VisualizationManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
@@ -35,7 +35,27 @@ void VisualizationManager::addDataSource(const QString &url, const QString &type
     if ( !resource.isValid())
         return;
 
-    _layers.append( new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(tp), drawer, this));
+    _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(tp), drawer, this));
+}
+
+bool VisualizationManager::zoomInMode() const
+{
+    return _zoomInMode;
+}
+
+void VisualizationManager::setZoomInMode(bool yesno)
+{
+    _zoomInMode = yesno;
+}
+
+bool VisualizationManager::hasSelectionDrawer() const
+{
+    return _hasSelectionDrawer;
+}
+
+void VisualizationManager::setHasSelectionDrawer(bool yesno)
+{
+    _hasSelectionDrawer = yesno;
 }
 
 QQmlListProperty<CoverageLayerModel> VisualizationManager::layers()
