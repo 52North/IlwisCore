@@ -96,12 +96,10 @@ std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::
 void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
 {
 
-    quint32 maxVerts = 0;
+    quint32 maxVerts = 50;
     for(int i = 0; i < contours.size(); ++i){
         int nverts = contours[i].size() / 2; // 2D coords
         tessAddContour(_tessaltor,2,contours[i].data(), sizeof(float) * 2, nverts);
-        maxVerts += nverts;
-
     }
     if (!tessTesselate(_tessaltor, TESS_WINDING_ODD, TESS_POLYGONS, maxVerts, 2, 0))
         return;
