@@ -29,6 +29,16 @@ Item {
         layertools.model = manager.layers
     }
 
+    Action {
+        id : zoomClicked
+        onTriggered : {
+            if ( manager){
+                manager.zoomInMode = !manager.zoomInMode
+            }
+        }
+
+    }
+
     ToolBar{
         id : maptools
         width : parent.width
@@ -84,6 +94,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left :panButton.right
             anchors.rightMargin: 2
+            action : zoomClicked
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -205,6 +216,33 @@ Item {
                 GeoDrawer{
                     id : drawer
                     anchors.fill: parent
+
+                    MouseArea {
+                        id : mapArea
+                        anchors.fill: parent
+                        onPressed: {
+                            if ( manager.zoomInMode ){
+                                if ( !manager.hasSelectionDrawer){
+                                    var position = {currentx: mouseX, currenty:mouseY}
+                                    drawer.addDrawer("SelectionDrawer", position)
+                                    manager.hasSelectionDrawer = true
+                                }
+                            }
+                        }
+                        onPositionChanged: {
+                            if ( manager.hasSelectionDrawer){
+                                var position = {currentx: mouseX, currenty:mouseY}
+                                drawer.setAttribute("SelectionDrawer", position)
+                                drawer.update()
+                            }
+                        }
+                        onReleased: {
+                            if ( manager.zoomInMode && manager.hasSelectionDrawer){
+                                drawer.removeDrawer("SelectionDrawer",true)
+                                manager.hasSelectionDrawer = false
+                            }
+                        }
+                    }
                 }
             }
         }
