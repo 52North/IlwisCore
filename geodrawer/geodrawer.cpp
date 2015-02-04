@@ -24,8 +24,10 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName, Visua
         if ( url == "" || typeName == "")
             return;
 
-        if ( !_rootDrawer)
-            _rootDrawer = new Ilwis::Geodrawer::RootDrawer(this);
+        if ( !_rootDrawer){
+            _rootDrawer = new Ilwis::Geodrawer::RootDrawer(IOOptions());
+            _rootDrawer->setParent(this);
+        }
 
         IlwisTypes tp = Ilwis::IlwisObject::name2Type(typeName);
         if ( tp == itUNKNOWN)
@@ -53,7 +55,7 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName, Visua
             ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
             return;
         }
-        Geodrawer::LayerDrawer *drawer = Geodrawer::DrawerFactory::create<Geodrawer::LayerDrawer>(coverage->ilwisType(), _rootDrawer, _rootDrawer);
+        Geodrawer::LayerDrawer *drawer = Geodrawer::DrawerFactory::create<Geodrawer::LayerDrawer>(coverage->ilwisType(), _rootDrawer, _rootDrawer, IOOptions());
         if ( !drawer)
             return;
 
@@ -63,11 +65,13 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName, Visua
         _rootDrawer->pixelAreaSize(sz);
         if ( _rootDrawer->drawerCount(Geodrawer::ComplexDrawer::dtMAIN) == 0)
             _rootDrawer->coordinateSystem(coverage->coordinateSystem());
-        _rootDrawer->addDrawer(drawer,false);
+        _rootDrawer->newDrawer(drawer,false);
 
         if ( manager){
             manager->addDataSource(url, typeName, drawer);
         }
+        setFlag(QQuickItem::ItemHasContents);
+
     } catch ( const ErrorObject& err){
 
     } catch ( const std::exception& ex){
@@ -75,9 +79,40 @@ void GeoDrawer::addDataSource(const QString &url, const QString& typeName, Visua
     }
 }
 
+void GeoDrawer::addDrawer(const QString& drawercode, const QVariantMap& properties)
+{
+    IOOptions opt;
+    for(QVariantMap::const_iterator iter = properties.begin(); iter != properties.end(); ++iter) {
+        opt << IOOptions::Option(iter.key(), iter.value());
+
+    }
+    Geodrawer::DrawerInterface *drawer = Geodrawer::DrawerFactory::create<>(drawercode, _rootDrawer, _rootDrawer, opt);
+    if ( drawer){
+        _rootDrawer->addDrawer(drawer,drawer->drawerType(),drawer->defaultOrder());
+    }
+}
+
+void GeoDrawer::setAttribute(const QString& drawercode, const QVariantMap &values)
+{
+    for(QVariantMap::const_iterator iter = values.begin(); iter != values.end(); ++iter) {
+        _rootDrawer->drawerAttribute(drawercode,iter.key(), iter.value());
+    }
+}
+
+void GeoDrawer::removeDrawer(const QString& namecode, bool ascode)
+{
+    try {
+        _rootDrawer->removeDrawer(namecode, ascode);
+    } catch ( const ErrorObject& err){
+
+    } catch ( std::exception& ex){
+        kernel()->issues()->log(ex.what(),IssueObject::itError);
+    }
+}
+
 GeoDrawer::~GeoDrawer()
 {
-    cleanup();
+    //cleanup(); must be used before the destructor; else the window is no longer valid
 }
 
 void GeoDrawer::handleWindowChanged(QQuickWindow *win)
@@ -129,7 +164,7 @@ void GeoDrawer::paint()
 void GeoDrawer::cleanup()
 {
     if ( _rootDrawer){
-        _rootDrawer->cleanUp();
+        _rootDrawer->cleanUp(window()->openglContext());
     }
 }
 

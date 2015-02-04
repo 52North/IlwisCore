@@ -7,11 +7,15 @@
 #include <QtQuick/QQuickItem>
 #include <QtGui/QOpenGLShaderProgram>
 
+
 namespace Ilwis {
 class Resource;
 
 
 namespace Geodrawer{
+
+class DrawerInterface;
+
 class RootDrawer;
 }
 }
@@ -26,6 +30,9 @@ public:
     GeoDrawer(QQuickItem *parent = 0);
 
     Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName, VisualizationManager* manager);
+    Q_INVOKABLE void addDrawer(const QString& drawercode, const QVariantMap& properties);
+    Q_INVOKABLE void setAttribute(const QString &drawercode, const QVariantMap& value);
+    Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
     ~GeoDrawer();
 
 public slots:
@@ -42,6 +49,7 @@ private slots:
 private:
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
     QList<ResourceModel *> _datasources;
+
 
     void test1();
 };
