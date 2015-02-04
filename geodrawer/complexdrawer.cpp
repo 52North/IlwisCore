@@ -5,7 +5,10 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-ComplexDrawer::ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent) : BaseDrawer(name, parentDrawer, rootdrawer, parent)
+ComplexDrawer::ComplexDrawer(const QString &name,
+                             DrawerInterface* parentDrawer,
+                             RootDrawer *rootdrawer,
+                             const IOOptions &options) : BaseDrawer(name, parentDrawer, rootdrawer, options)
 {
 
 }
@@ -29,6 +32,8 @@ bool ComplexDrawer::draw(QOpenGLContext *openglContext, const IOOptions &options
 
 bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
+    BaseDrawer::prepare(prepType, options, openglContext);
+
     for( auto& drawer : _preDrawers)    {
         if (!drawer.second->prepare(prepType, options,openglContext))
             return false;
@@ -47,6 +52,8 @@ bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOO
 
 void ComplexDrawer::unprepare(DrawerInterface::PreparationType prepType)
 {
+    BaseDrawer::unprepare(prepType);
+
     for( auto& drawer : _preDrawers)    {
         drawer.second->unprepare(prepType);
     }
@@ -67,7 +74,7 @@ bool ComplexDrawer::prepareChildDrawers(DrawerInterface::PreparationType prepTyp
     return true;
 }
 
-quint32 ComplexDrawer::drawerCount(ComplexDrawer::DrawerType tpe) const
+quint32 ComplexDrawer::drawerCount(DrawerInterface::DrawerType tpe) const
 {
     switch(tpe){
     case dtPRE:
@@ -82,7 +89,7 @@ quint32 ComplexDrawer::drawerCount(ComplexDrawer::DrawerType tpe) const
     return iUNDEF;
 }
 
-const UPDrawer &ComplexDrawer::drawer(quint32 order, ComplexDrawer::DrawerType drawerType) const
+const UPDrawer &ComplexDrawer::drawer(quint32 order, DrawerInterface::DrawerType drawerType) const
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         const DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
@@ -99,20 +106,30 @@ const UPDrawer &ComplexDrawer::drawer(quint32 order, ComplexDrawer::DrawerType d
     throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(order)));
 }
 
-void ComplexDrawer::addDrawer(DrawerInterface *drawer, ComplexDrawer::DrawerType drawerType, quint32 order)
+void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType, quint32 order,const QString &nme)
 {
+    QString drawername = nme;
     if ( drawerType == dtPOST || drawerType == dtPRE){
         if ( order != iUNDEF){
             DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
             drawers[order].reset(drawer);
+            if ( drawername == sUNDEF){
+                drawername = (drawerType == dtPOST ? "post_drawer_" : "pre_drawer_") + QString::number(drawer->id()) + "_" + QString::number(order);
+            }
+
         }
     }else if ( drawerType == dtMAIN){
         UPDrawer drawerp(drawer);
         _mainDrawers.push_back(std::move(drawerp));
+        if ( drawername == sUNDEF){
+            drawername = "drawer_layer_" + QString::number(drawer->id());
+        }
+
     }
+    drawer->name(drawername);
 }
 
-void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, ComplexDrawer::DrawerType drawerType)
+void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType drawerType)
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
@@ -128,7 +145,7 @@ void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, ComplexDra
     }
 }
 
-void ComplexDrawer::removeDrawer(quint32 order, ComplexDrawer::DrawerType drawerType)
+void ComplexDrawer::removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType)
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
@@ -144,28 +161,97 @@ void ComplexDrawer::removeDrawer(quint32 order, ComplexDrawer::DrawerType drawer
     }
 }
 
+void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
+{
+    std::vector<quint32> selectedDrawers;
+    for( auto& drawer : _preDrawers){
+        if ( ascode){
+            if (drawer.second->code() == idcode){
+                selectedDrawers.push_back(drawer.first);
+            }
+        } else {
+            if (drawer.second->name() == idcode){
+                selectedDrawers.push_back(drawer.first);
+            }
+        }
+    }
+    for(auto order : selectedDrawers)
+        removeDrawer(order, DrawerInterface::dtPRE);
+    selectedDrawers.clear();
+    int count = 0;
+    for( auto& drawer : _mainDrawers){
+        if ( ascode){
+            if (drawer->code() == idcode){
+                selectedDrawers.push_back(count);
+            }
+        } else {
+            if (drawer->name() == idcode){
+                selectedDrawers.push_back(count);
+            }
+        }
+        ++count;
+    }
+    for(auto order : selectedDrawers)
+        removeDrawer(order, DrawerInterface::dtMAIN);
+    selectedDrawers.clear();
+
+    for( auto& drawer : _postDrawers)    {
+        if ( ascode){
+            if (drawer.second->code() == idcode){
+                selectedDrawers.push_back(drawer.first);
+            }
+        } else {
+            if (drawer.second->name() == idcode){
+                selectedDrawers.push_back(drawer.first);
+            }
+        }
+    }
+    for(auto order : selectedDrawers)
+        removeDrawer(order, DrawerInterface::dtPOST);
+}
+
+bool ComplexDrawer::drawerAttribute(const QString &drawercode, const QString &key, const QVariant &value)
+{
+    if ( drawercode == code()){
+        setAttribute(key, value);
+        return true;
+    }
+
+    for( auto& drawer : _preDrawers){
+        if (drawer.second->drawerAttribute(drawercode, key, value))
+            return true;
+    }
+    for( auto& drawer : _mainDrawers){
+        if (drawer->drawerAttribute(drawercode, key, value))
+            return true;
+    }
+    for( auto& drawer : _postDrawers)    {
+        if (drawer.second->drawerAttribute(drawercode, key, value))
+            return true;
+    }
+
+    return false;
+}
+
 bool ComplexDrawer::isSimple() const
 {
     return false;
 }
 
-void ComplexDrawer::cleanUp()
+void ComplexDrawer::cleanUp(QOpenGLContext *openglContext)
 {
+    BaseDrawer::cleanUp(openglContext);
+
     for( auto& drawer : _preDrawers)    {
-        drawer.second->cleanUp();
+        drawer.second->cleanUp(openglContext);
     }
     for( auto& drawer : _mainDrawers){
-        drawer->cleanUp();
+        drawer->cleanUp(openglContext);
     }
     for( auto& drawer : _postDrawers)    {
-        drawer.second->cleanUp();
+        drawer.second->cleanUp(openglContext);
     }
 
-}
-
-std::vector<VertexPosition> &ComplexDrawer::drawPositions()
-{
-    return _positions;
 }
 
 bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
@@ -204,11 +290,11 @@ QVariant ComplexDrawer::attribute(const QString &attrNme) const
         return var;
 
     if ( attrName == "maindrawercount")
-        return drawerCount(ComplexDrawer::dtMAIN);
+        return drawerCount(DrawerInterface::dtMAIN);
     if ( attrName == "predrawercount")
-        return drawerCount(ComplexDrawer::dtPRE);
+        return drawerCount(DrawerInterface::dtPRE);
     if ( attrName == "postdrawercount")
-        return drawerCount(ComplexDrawer::dtPOST);
+        return drawerCount(DrawerInterface::dtPOST);
 
     return QVariant();
 }

@@ -2,12 +2,13 @@
 #define COMPLEXDRAWER_H
 
 #include "basedrawer.h"
+#include "boost/container/flat_map.hpp"
 
 namespace Ilwis {
 namespace Geodrawer{
 
 typedef std::map<quint32, std::unique_ptr<DrawerInterface>> DrawerMap;
-typedef std::vector<std::unique_ptr<DrawerInterface>> DrawerVector;
+typedef std::vector<std::unique_ptr<DrawerInterface>> DrawerList;
 
 class RootDrawer;
 
@@ -15,7 +16,6 @@ class RootDrawer;
 class ComplexDrawer : public BaseDrawer
 {
 public:
-    enum DrawerType{dtDONTCARE=0, dtPOST=1, dtPRE=2, dtMAIN=4, dtALL=0xFFFFFFFF};
 
 
 
@@ -25,27 +25,28 @@ public:
     bool prepareChildDrawers(PreparationType prepType, const IOOptions& options);
 
     quint32 drawerCount(ComplexDrawer::DrawerType tpe) const;
-    const UPDrawer& drawer(quint32 order, ComplexDrawer::DrawerType drawerType = dtMAIN) const;
-    void addDrawer(DrawerInterface *drawer, ComplexDrawer::DrawerType drawerType = dtMAIN, quint32 order=iUNDEF);
-    void setDrawer(quint32 order, DrawerInterface *drawer, ComplexDrawer::DrawerType tp = dtMAIN);
-    void removeDrawer(quint32 order, ComplexDrawer::DrawerType drawerType = dtMAIN);
+    const UPDrawer& drawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN) const;
+    void addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType = dtMAIN, quint32 order=iUNDEF, const QString& name=sUNDEF);
+    void setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType tp = dtMAIN);
+    void removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
+    void removeDrawer(const QString& idcode, bool ascode);
+
+    bool drawerAttribute(const QString& drawercode, const QString& key, const QVariant& value);
 
     bool isSimple() const;
 
-     void cleanUp();
+     void cleanUp(QOpenGLContext *openglContext);
 
-    std::vector<VertexPosition>& drawPositions();
 
     std::vector<QVariant> attributes(const QString &attrNames) const;
     QVariant attribute(const QString &attrName) const;
 protected:
-    ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, QObject *parent=0);
+    ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
 private:
     DrawerMap _preDrawers;
-    DrawerVector _mainDrawers;
+    DrawerList _mainDrawers;
     DrawerMap _postDrawers;
-
 
     bool drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions& options) const;
 
