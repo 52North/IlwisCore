@@ -5,10 +5,12 @@ import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
+import MasterCatalogModel 1.0
 import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
+
 
 
 
@@ -176,7 +178,7 @@ Rectangle {
                         mastercatalog.activeSplit = 0
                         lefttab.currentIndex = indexTab
                         var tab = getCurrentCatalogTab()
-                        if ( tab){
+                        if ( tab && tab.item){
                             mastercatalog.currentUrl = tab.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }
@@ -224,7 +226,7 @@ Rectangle {
                         activeSplit = 2
                         mastercatalog.activeSplit = 1
                         righttab.currentIndex = indexTab
-                        if ( tab){
+                        if ( tab && tab.item){
                             mastercatalog.currentUrl = tab.item.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }
