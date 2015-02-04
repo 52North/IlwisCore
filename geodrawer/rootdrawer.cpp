@@ -10,13 +10,13 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-RootDrawer::RootDrawer(QObject *parent) : ComplexDrawer("RootDrawer",0,0, parent)
+RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options)
 {
     valid(true);
 
 }
 
-void RootDrawer::addDrawer(DrawerInterface *newdrawer, bool overrule)
+void RootDrawer::newDrawer(DrawerInterface *newdrawer, bool overrule)
 {
     overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
     SpatialDataDrawer *datadrawer = dynamic_cast<SpatialDataDrawer *>(newdrawer);
@@ -140,25 +140,42 @@ Size<> RootDrawer::pixelAreaSize() const
 void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio) {
     double deltaview = dview - dview * ratio ;
     double deltazoom = dzoom - dzoom * ratio;
-    //if ( _aspectRatioCoverage < 1.0){
-    _viewRect.min_corner().y -= deltaview / (2.0 * _aspectRatioView);
-    _viewRect.max_corner().y += deltaview/ ( 2.0 * _aspectRatioView);
-    if ( _viewRect.min_corner().y > _coverageRect.min_corner().y || _viewRect.min_corner().x < _coverageRect.min_corner().x){
-        _viewRect.min_corner().y = _coverageRect.min_corner().y;
-        _viewRect.max_corner().y = _coverageRect.max_corner().y;
-        _viewRect.min_corner().x += deltaview  / 2.0;
-        _viewRect.max_corner().x -= deltaview / 2.0;
-    }
-    _zoomRect.min_corner().y -= deltazoom/  (2.0 * _aspectRatioView);
-    _zoomRect.max_corner().y += deltazoom /  (2.0 * _aspectRatioView);
-    if ( _zoomRect.min_corner().y > _coverageRect.min_corner().y || _zoomRect.min_corner().x < _coverageRect.min_corner().x){
-        _zoomRect.min_corner().y = _coverageRect.min_corner().y;
-        _zoomRect.max_corner().y = _coverageRect.max_corner().y;
-        _zoomRect.min_corner().x +=  deltazoom    / 2.0;
-        _zoomRect.max_corner().x -= deltazoom  / 2.0;
-    }
+    if ( _aspectRatioCoverage < 1.0){
+        _viewRect.min_corner().y -= deltaview / (2.0 * _aspectRatioView);
+        _viewRect.max_corner().y += deltaview/ ( 2.0 * _aspectRatioView);
+        if ( _viewRect.min_corner().y > _coverageRect.min_corner().y || _viewRect.min_corner().x < _coverageRect.min_corner().x){
+            _viewRect.min_corner().y = _coverageRect.min_corner().y;
+            _viewRect.max_corner().y = _coverageRect.max_corner().y;
+            _viewRect.min_corner().x += deltaview  / 2.0;
+            _viewRect.max_corner().x -= deltaview / 2.0;
+        }
+        _zoomRect.min_corner().y -= deltazoom/  (2.0 * _aspectRatioView);
+        _zoomRect.max_corner().y += deltazoom /  (2.0 * _aspectRatioView);
+        if ( _zoomRect.min_corner().y > _coverageRect.min_corner().y || _zoomRect.min_corner().x < _coverageRect.min_corner().x){
+            _zoomRect.min_corner().y = _coverageRect.min_corner().y;
+            _zoomRect.max_corner().y = _coverageRect.max_corner().y;
+            _zoomRect.min_corner().x +=  deltazoom    / 2.0;
+            _zoomRect.max_corner().x -= deltazoom  / 2.0;
+        }
+    }else {
+        _viewRect.min_corner().x -= deltaview / (2.0 * _aspectRatioView);
+        _viewRect.max_corner().x += deltaview/ ( 2.0 * _aspectRatioView);
+        if ( _viewRect.min_corner().x > _coverageRect.min_corner().x || _viewRect.min_corner().y < _coverageRect.min_corner().y){
+            _viewRect.min_corner().x = _coverageRect.min_corner().x;
+            _viewRect.max_corner().x = _coverageRect.max_corner().x;
+            _viewRect.min_corner().y += deltaview  / 2.0;
+            _viewRect.max_corner().y -= deltaview / 2.0;
+        }
+        _zoomRect.min_corner().x -= deltazoom/  (2.0 * _aspectRatioView);
+        _zoomRect.max_corner().x += deltazoom /  (2.0 * _aspectRatioView);
+        if ( _zoomRect.min_corner().x > _coverageRect.min_corner().x || _zoomRect.min_corner().y < _coverageRect.min_corner().y){
+            _zoomRect.min_corner().x = _coverageRect.min_corner().x;
+            _zoomRect.max_corner().x = _coverageRect.max_corner().x;
+            _zoomRect.min_corner().y +=  deltazoom    / 2.0;
+            _zoomRect.max_corner().y -= deltazoom  / 2.0;
+        }
 
-    // }
+    }
 
 }
 
@@ -187,9 +204,9 @@ void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
     }
 }
 
-void RootDrawer::cleanUp()
+void RootDrawer::cleanUp(QOpenGLContext *openglContext)
 {
-
+    ComplexDrawer::cleanUp(openglContext);
 }
 
 bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
@@ -207,4 +224,9 @@ Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, co
                 env : _coordinateSystem->convertEnvelope(csSource, env);
 
     return envelope;
+}
+
+DrawerInterface::DrawerType RootDrawer::drawerType() const
+{
+    return DrawerInterface::dtDONTCARE; // rootdrawer is never child of anything so it never is a pre,post, or main drawer. it is the root
 }

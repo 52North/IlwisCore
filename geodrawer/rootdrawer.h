@@ -19,9 +19,9 @@ class RootDrawer : public ComplexDrawer
 {
     Q_OBJECT
 public:
-    explicit RootDrawer(QObject *parent);
+    explicit RootDrawer(const IOOptions& options);
 
-    void addDrawer(DrawerInterface *newdrawer, bool overrule);
+    void newDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
     Envelope viewEnvelope() const;
@@ -33,9 +33,10 @@ public:
     void coordinateSystem(const ICoordinateSystem& csy);
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
-    void cleanUp();
+    void cleanUp(QOpenGLContext *openglContext);
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
 
+    DrawerInterface::DrawerType drawerType() const;
 signals:
 
 public slots:
