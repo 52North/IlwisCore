@@ -213,6 +213,7 @@ QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
     IlwisTypes objectype = _ilwisobject->ilwisType();
     if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
         IProjection proj;
+        _projectionParmItems.clear();
         if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
             IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
             if ( csyProj.isValid()){
@@ -465,6 +466,24 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
                 return QString::number(ellipsoid->excentricity());
              }
         }
+        if (propertyname == "proj4def"){
+            IlwisTypes objectype = _ilwisobject->ilwisType();
+            if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
+                IProjection proj;
+                if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
+                    IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
+                    if ( csyProj.isValid()){
+                        proj = csyProj->projection();
+                    }
+                }else
+                    proj = _ilwisobject.as<Projection>();
+                if ( proj.isValid()){
+                    return proj->toProj4();
+                }
+            }
+
+        }
+
         return "";
     } catch(const ErrorObject& ){
         // no exceptions may escape here

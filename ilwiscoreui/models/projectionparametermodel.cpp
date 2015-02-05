@@ -8,8 +8,9 @@ ProjectionParameterModel::ProjectionParameterModel()
 ProjectionParameterModel::ProjectionParameterModel(const Ilwis::IProjection& proj, Ilwis::Projection::ProjectionParamValue type, QObject *parent) :
     QObject(parent)
 {
-    if ( proj->isSet(type)){
-        _name = proj->parameterName(type);
+
+   _name = proj->parameterName(type);
+   if ( proj->isSet(type)){
         _value = proj->parameter(type).toString();
     }
 }

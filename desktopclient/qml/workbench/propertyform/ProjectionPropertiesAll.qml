@@ -16,18 +16,19 @@ Item {
     Item {
         id : otherDefs
         width : parent.width
-        height : Global.rowHeight
+        height : 100
         Text{
             id : label1
             width : 100
             height : Global.rowHeight
             text : qsTr("Proj4 defintion")
         }
-        Text{
-            anchors.left:label1.right
-            width : parent.width - label1.width
-            height :Global.rowHeight
-            text : getProperty("Proj4Def")
+        TextArea{
+            anchors.top:label1.bottom
+            width : parent.width - 10
+            height :70
+            text : getProperty("proj4def")
+            readOnly: true
         }
     }
     Item {
