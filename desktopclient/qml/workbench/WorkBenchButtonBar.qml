@@ -57,6 +57,14 @@ Rectangle {
 
     }
     Action {
+        id : workspaceClicked
+        onTriggered : {
+            transitionInfoPane("Workspaces.qml")
+        }
+
+    }
+
+    Action {
         id :maxButtons
         onTriggered: {
             buttonB.width = 55
@@ -104,7 +112,7 @@ Rectangle {
 
         WorkBenchButton{
             id : oper
-            action: operClicked
+            action: workspaceClicked
             iconname : "workspaceCS1.png"
             label: qsTr("Workspace")
         }
