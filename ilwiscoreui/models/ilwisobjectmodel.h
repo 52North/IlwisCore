@@ -7,6 +7,7 @@
 #include "resourcemodel.h"
 #include "attributemodel.h"
 #include "domainitemmodel.h"
+#include "projectionparametermodel.h"
 
 class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
 {
@@ -22,6 +23,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QString projectionInfo READ projectionInfo CONSTANT)
     Q_PROPERTY(QQmlListProperty<AttributeModel> attributes READ attributes CONSTANT)
     Q_PROPERTY(QQmlListProperty<DomainItemModel> domainitems READ domainitems CONSTANT)
+    Q_PROPERTY(QQmlListProperty<ProjectionParameterModel> projectionItems READ projectionItems CONSTANT)
 
 
 public:
@@ -42,6 +44,7 @@ public:
     QStringList test101();
     QQmlListProperty<AttributeModel> attributes();
     QQmlListProperty<DomainItemModel> domainitems();
+    QQmlListProperty<ProjectionParameterModel> projectionItems();
     QString valuetype() const;
     Q_INVOKABLE QString rangeDefinition(bool defaultRange);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
@@ -54,6 +57,7 @@ private:
     Ilwis::IIlwisObject _ilwisobject;
     QList<AttributeModel *> _attributes;
     QList<DomainItemModel *> _domainItems;
+    QList<ProjectionParameterModel *> _projectionParmItems;
     QString pixSizeString() const;
     QString centerPixelLocation() const;
     QString parentDomain() const;
