@@ -35,6 +35,7 @@ Rectangle {
         width : parent.width
         anchors.bottom: parent.bottom
         model : getSelectedData()
+        property int lastIndex : 0
         delegate : PropertyForm.DPropertyForm{}
     }
 

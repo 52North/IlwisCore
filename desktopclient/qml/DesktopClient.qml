@@ -81,6 +81,11 @@ ApplicationWindow {
         }
     }
 
+    function getWorkbenchPane(name){
+        if ( workBench.lastPage !== name)
+            workBench.transitionInfoPane(name)
+    }
+
     Rectangle {
         id : root
         anchors.fill : parent

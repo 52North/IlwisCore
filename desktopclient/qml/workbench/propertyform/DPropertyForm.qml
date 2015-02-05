@@ -82,11 +82,16 @@ Component {
         }
 
         TabView {
+            id : propertyTabs
             anchors.top : header.bottom
             anchors.topMargin: 3
             width : propertyForm.width
             height : propertyForm.height - header.height
             style: Base.TabStyle1{}
+            onCurrentIndexChanged: {
+                props.lastIndex = currentIndex
+            }
+
             Component.onCompleted: {
                 addTab(qsTr("General"), generalData )
                 addTab(qsTr("Data"), dataData)
@@ -101,6 +106,8 @@ Component {
                         addTab(qsTr("Projection"), projectionData)
                     }
                 }
+                if ( props.lastIndex < count)
+                    currentIndex = props.lastIndex
             }
         }
     }
