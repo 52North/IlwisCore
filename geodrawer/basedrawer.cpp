@@ -93,8 +93,8 @@ bool BaseDrawer::initGeometry(QOpenGLContext *openglContext, const std::vector<V
 
 void BaseDrawer::unprepare(DrawerInterface::PreparationType prepType )
 {
-    if ( hasType(prepType, DrawerInterface::ptMVP))    {
-        _prepared &= ~ ptMVP;
+    if ( hasType(_prepared, prepType))    {
+        _prepared &= ~ prepType;
     }
 }
 
@@ -244,6 +244,7 @@ quint32 BaseDrawer::defaultOrder() const
 {
     return iUNDEF;
 }
+
 
 
 

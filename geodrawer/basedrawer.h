@@ -49,6 +49,7 @@ public:
 
     QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
     quint32 defaultOrder() const;
+    virtual const QMatrix4x4 &mvpMatrix() const;
 
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
@@ -57,7 +58,6 @@ protected:
     void unprepare(PreparationType prepType);
     bool isPrepared(quint32 type=ptALL) const;
     bool draw(QOpenGLContext *, const IOOptions&) const;
-    const QMatrix4x4 &mvpMatrix() const;
     virtual bool initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices, const std::vector<VertexColor> &colors);
 
     quint32 _prepared = 0;
