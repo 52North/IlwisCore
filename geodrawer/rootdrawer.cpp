@@ -106,6 +106,9 @@ void RootDrawer::setMVP()
 
 void RootDrawer::pixelAreaSize(const Size<>& size)
 {
+    if ( size == _pixelAreaSize || size.ysize() == 0 || size.xsize() == 0)
+        return;
+
     _aspectRatioView = (double)size.xsize() / (double)size.ysize();
     if ( _aspectRatioCoverage != 0 && !_viewRect.isNull() && !_zoomRect.isNull()){
         if ( _aspectRatioCoverage <= 1.0){
