@@ -77,13 +77,12 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
                         colors.push_back(VertexColor(128,0,128,1));
                     }
                 }
-                if(!initGeometry(openglContext, vertices, colors))
-                    return false;
             }
-
-            _prepared |= DrawerInterface::ptGEOMETRY;
-
         }
+        if(!initGeometry(openglContext, vertices, colors))
+            return false;
+        _prepared |= DrawerInterface::ptGEOMETRY;
+
     }
 
     return true;
@@ -168,7 +167,9 @@ bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions&) {
         return false;
     }
 
+
     _shaders.bind();
+
 
     openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboPosition);
 
