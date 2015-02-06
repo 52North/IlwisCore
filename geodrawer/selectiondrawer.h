@@ -17,8 +17,6 @@ public:
 
     bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) ;
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
-    void unprepare(PreparationType prepType);
-    bool isPrepared(quint32 type=ptALL) const;
 
     void setAttribute(const QString& attrName, const QVariant& attrib);
     bool drawerAttribute(const QString drawername, const QString& attrName, const QVariant& attrib);
