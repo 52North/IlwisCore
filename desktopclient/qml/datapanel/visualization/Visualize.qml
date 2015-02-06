@@ -238,7 +238,7 @@ Item {
                         }
                         onReleased: {
                             if ( manager.zoomInMode && manager.hasSelectionDrawer){
-                                drawer.removeDrawer("SelectionDrawer",true)
+                                //drawer.removeDrawer("SelectionDrawer",true)
                                 manager.hasSelectionDrawer = false
                             }
                         }
