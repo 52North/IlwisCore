@@ -28,7 +28,7 @@ void RootDrawer::newDrawer(DrawerInterface *newdrawer, bool overrule)
         viewEnv += envelope;
         _coverageRect = datadrawer->envelope();
         if ( setViewEnv)
-            envelopeView(viewEnv, true);
+            applyEnvelopeView(viewEnv, true);
 
     }
     return ComplexDrawer::addDrawer(newdrawer);
@@ -40,7 +40,7 @@ void RootDrawer::addEnvelope(const ICoordinateSystem &csSource, const Envelope &
         Envelope newEnvelope = envelope2RootEnvelope(csSource, env);
         _coverageRect += newEnvelope;
     }
-    envelopeView(_coverageRect, overrule);
+    applyEnvelopeView(_coverageRect, overrule);
 }
 
 Envelope RootDrawer::viewEnvelope() const
@@ -48,7 +48,7 @@ Envelope RootDrawer::viewEnvelope() const
     return _viewRect;
 }
 
-void RootDrawer::envelopeView(const Envelope &viewRect, bool overrule)
+void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
         ERROR2(ERR_NO_INITIALIZED_2,TR("Coverage area"), TR("Visualization"));
@@ -94,6 +94,30 @@ void RootDrawer::envelopeView(const Envelope &viewRect, bool overrule)
 
         setMVP();
     }
+}
+
+void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
+{
+    Envelope envelope = zoomRect;
+    if ( _zoomRect.isValid()) {
+    // zooming never changes the shape of the mapwindow so any incomming zoom rectangle must conform to the shape of the existing mapwindow
+        double factCur = _zoomRect.xlength() / _zoomRect.ylength();
+        double factIn = zoomRect.xlength() / zoomRect.ylength();
+        if ( abs(factCur - factIn) > 0.01 ) {
+            if ( factCur < 1.0) {
+                double newHeight = zoomRect.xlength() / factCur;
+                envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.max_corner().x, zoomRect.min_corner().y + newHeight, zoomRect.max_corner().z));
+            } else {
+                double newWidth = zoomRect.ylength() * factCur;
+                envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.min_corner().x + newWidth, zoomRect.max_corner().y, zoomRect.max_corner().z));
+            }
+        }
+    }
+
+    _zoomRect = envelope;
+    viewPoint(_zoomRect.center(), true);
+    setMVP();
+
 }
 
 void RootDrawer::setMVP()
@@ -146,37 +170,38 @@ void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio
     if ( _aspectRatioCoverage < 1.0){
         _viewRect.min_corner().y -= deltaview / (2.0 * _aspectRatioView);
         _viewRect.max_corner().y += deltaview/ ( 2.0 * _aspectRatioView);
-        if ( _viewRect.min_corner().y > _coverageRect.min_corner().y || _viewRect.min_corner().x < _coverageRect.min_corner().x){
-            _viewRect.min_corner().y = _coverageRect.min_corner().y;
-            _viewRect.max_corner().y = _coverageRect.max_corner().y;
-            _viewRect.min_corner().x += deltaview  / 2.0;
-            _viewRect.max_corner().x -= deltaview / 2.0;
-        }
+//        if ( _viewRect.min_corner().y > _coverageRect.min_corner().y || _viewRect.min_corner().x < _coverageRect.min_corner().x){
+//            _viewRect.min_corner().y = _coverageRect.min_corner().y;
+//            _viewRect.max_corner().y = _coverageRect.max_corner().y;
+//            _viewRect.min_corner().x += deltaview  / 2.0;
+//            _viewRect.max_corner().x -= deltaview / 2.0;
+//        }
         _zoomRect.min_corner().y -= deltazoom/  (2.0 * _aspectRatioView);
         _zoomRect.max_corner().y += deltazoom /  (2.0 * _aspectRatioView);
-        if ( _zoomRect.min_corner().y > _coverageRect.min_corner().y || _zoomRect.min_corner().x < _coverageRect.min_corner().x){
-            _zoomRect.min_corner().y = _coverageRect.min_corner().y;
-            _zoomRect.max_corner().y = _coverageRect.max_corner().y;
-            _zoomRect.min_corner().x +=  deltazoom    / 2.0;
-            _zoomRect.max_corner().x -= deltazoom  / 2.0;
-        }
+//        if ( _zoomRect.min_corner().y > _coverageRect.min_corner().y || _zoomRect.min_corner().x < _coverageRect.min_corner().x){
+//            _zoomRect.min_corner().y = _coverageRect.min_corner().y;
+//            _zoomRect.max_corner().y = _coverageRect.max_corner().y;
+//            _zoomRect.min_corner().x +=  deltazoom    / 2.0;
+//            _zoomRect.max_corner().x -= deltazoom  / 2.0;
+//
+//        }
     }else {
         _viewRect.min_corner().x -= deltaview / (2.0 * _aspectRatioView);
         _viewRect.max_corner().x += deltaview/ ( 2.0 * _aspectRatioView);
-        if ( _viewRect.min_corner().x > _coverageRect.min_corner().x || _viewRect.min_corner().y < _coverageRect.min_corner().y){
-            _viewRect.min_corner().x = _coverageRect.min_corner().x;
-            _viewRect.max_corner().x = _coverageRect.max_corner().x;
-            _viewRect.min_corner().y += deltaview  / 2.0;
-            _viewRect.max_corner().y -= deltaview / 2.0;
-        }
+//        if ( _viewRect.min_corner().x > _coverageRect.min_corner().x || _viewRect.min_corner().y < _coverageRect.min_corner().y){
+//            _viewRect.min_corner().x = _coverageRect.min_corner().x;
+//            _viewRect.max_corner().x = _coverageRect.max_corner().x;
+//            _viewRect.min_corner().y += deltaview  / 2.0;
+//            _viewRect.max_corner().y -= deltaview / 2.0;
+//        }
         _zoomRect.min_corner().x -= deltazoom/  (2.0 * _aspectRatioView);
         _zoomRect.max_corner().x += deltazoom /  (2.0 * _aspectRatioView);
-        if ( _zoomRect.min_corner().x > _coverageRect.min_corner().x || _zoomRect.min_corner().y < _coverageRect.min_corner().y){
-            _zoomRect.min_corner().x = _coverageRect.min_corner().x;
-            _zoomRect.max_corner().x = _coverageRect.max_corner().x;
-            _zoomRect.min_corner().y +=  deltazoom    / 2.0;
-            _zoomRect.max_corner().y -= deltazoom  / 2.0;
-        }
+//        if ( _zoomRect.min_corner().x > _coverageRect.min_corner().x || _zoomRect.min_corner().y < _coverageRect.min_corner().y){
+//            _zoomRect.min_corner().x = _coverageRect.min_corner().x;
+//            _zoomRect.max_corner().x = _coverageRect.max_corner().x;
+//            _zoomRect.min_corner().y +=  deltazoom    / 2.0;
+//            _zoomRect.max_corner().y -= deltazoom  / 2.0;
+//        }
 
     }
 
@@ -215,6 +240,11 @@ void RootDrawer::cleanUp(QOpenGLContext *openglContext)
 bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
 {
     return ComplexDrawer::prepare(prepType, options, openglContext)    ;
+}
+
+double RootDrawer::aspectRatioView() const
+{
+    return _aspectRatioView;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)

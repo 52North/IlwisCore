@@ -145,23 +145,25 @@ void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, DrawerInte
     }
 }
 
-void ComplexDrawer::removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType)
+void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, quint32 order, DrawerInterface::DrawerType drawerType)
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
         auto current = drawers.find(order);
         if ( current != drawers.end()){
+            (*current).second->cleanUp(openglContext);
             drawers.erase(current)    ;
 
         }
     } else if ( drawerType == dtMAIN){
         if ( order < _mainDrawers.size()) {
+           _mainDrawers[order]->cleanUp(openglContext);
            _mainDrawers.erase(_mainDrawers.begin() + order);
         }
     }
 }
 
-void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
+void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, const QString &idcode, bool ascode)
 {
     std::vector<quint32> selectedDrawers;
     for( auto& drawer : _preDrawers){
@@ -176,7 +178,7 @@ void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
         }
     }
     for(auto order : selectedDrawers)
-        removeDrawer(order, DrawerInterface::dtPRE);
+        removeDrawer(openglContext,order, DrawerInterface::dtPRE);
     selectedDrawers.clear();
     int count = 0;
     for( auto& drawer : _mainDrawers){
@@ -192,7 +194,7 @@ void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
         ++count;
     }
     for(auto order : selectedDrawers)
-        removeDrawer(order, DrawerInterface::dtMAIN);
+        removeDrawer(openglContext, order, DrawerInterface::dtMAIN);
     selectedDrawers.clear();
 
     for( auto& drawer : _postDrawers)    {
@@ -207,7 +209,7 @@ void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
         }
     }
     for(auto order : selectedDrawers)
-        removeDrawer(order, DrawerInterface::dtPOST);
+        removeDrawer(openglContext, order, DrawerInterface::dtPOST);
 }
 
 bool ComplexDrawer::drawerAttribute(const QString &drawercode, const QString &key, const QVariant &value)

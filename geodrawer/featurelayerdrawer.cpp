@@ -79,7 +79,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
                 }
             }
         }
-        if(!initGeometry(openglContext, vertices, colors))
+        if(!moveGeometry2GPU(openglContext, vertices, colors))
             return false;
         _prepared |= DrawerInterface::ptGEOMETRY;
 

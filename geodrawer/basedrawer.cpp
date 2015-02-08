@@ -25,7 +25,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
     if ( !rootDrawer()) // rootdrawer must be set
         return false;
 
-    if ( _shaders.shaders().size() == 0){
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
                                          "attribute highp vec4 position;"
                                          "uniform mat4 mvp;"
@@ -41,33 +41,21 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                          "    gl_FragColor = fragmentColor;"
                                          "}");
 
-
-
-
-
-        //_shaders.bindAttributeLocation("aVertices", 0);
         if(!_shaders.link()){
             return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
         }
         if (!_shaders.bind()){
             return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
         }
+        _prepared |= DrawerInterface::ptSHADERS;
 
     }
 
-    if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
 
-        _shaders.bind();
-        _shaders.setUniformValue("mvp",mvpMatrix());
-        _shaders.enableAttributeArray("mvp");
-
-        _prepared |= DrawerInterface::ptMVP;
-        _shaders.release();
-    }
     return true;
 }
 
-bool BaseDrawer::initGeometry(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices,const std::vector<VertexColor>& colors) {
+bool BaseDrawer::moveGeometry2GPU(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices,const std::vector<VertexColor>& colors) {
     if ( !openglContext){
         return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
     }
@@ -106,13 +94,6 @@ bool BaseDrawer::isPrepared(quint32 type) const
 bool BaseDrawer::draw(QOpenGLContext *, const IOOptions &) const
 {
     return false;
-}
-
-const QMatrix4x4 &BaseDrawer::mvpMatrix() const
-{
-    if ( _rootDrawer)
-        return _rootDrawer->mvpMatrix();
-    throw VisualizationError(TR("drawing engine not properly initialized or used, rootdrawer not set"));
 }
 
 RootDrawer *BaseDrawer::rootDrawer()

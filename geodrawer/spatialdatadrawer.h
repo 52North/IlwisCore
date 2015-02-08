@@ -32,6 +32,7 @@ public:
 
 
 protected:
+    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
     bool isVisualAttribute(const QString& attName) const;
 
     std::map<QString, AttributeVisualProperties> _visualProperties;

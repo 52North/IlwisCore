@@ -5,6 +5,7 @@
 #include "colorlookup.h"
 #include "representation.h"
 #include "attributevisualproperties.h"
+#include "rootdrawer.h"
 #include "spatialdatadrawer.h"
 
 using namespace Ilwis;
@@ -87,6 +88,24 @@ std::vector<QVariant> SpatialDataDrawer::attributes(const QString &keys) const
         }
     }
     return results;
+}
+
+bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+{
+    if(!ComplexDrawer::prepare(prepType, options, openglContext))
+        return false;
+
+    if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
+
+        if (!_shaders.bind())
+            return false;
+        _shaders.setUniformValue("mvp",rootDrawer()->mvpMatrix());
+        _shaders.enableAttributeArray("mvp");
+
+        _prepared |= DrawerInterface::ptMVP;
+        _shaders.release();
+    }
+    return true;
 }
 
 bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const

@@ -28,8 +28,8 @@ public:
     const UPDrawer& drawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN) const;
     void addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType = dtMAIN, quint32 order=iUNDEF, const QString& name=sUNDEF);
     void setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType tp = dtMAIN);
-    void removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
-    void removeDrawer(const QString& idcode, bool ascode);
+    void removeDrawer(QOpenGLContext *openglContext, quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
+    void removeDrawer(QOpenGLContext *openglContext, const QString& idcode, bool ascode);
 
     bool drawerAttribute(const QString& drawercode, const QString& key, const QVariant& value);
 
