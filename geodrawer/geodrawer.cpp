@@ -102,7 +102,7 @@ void GeoDrawer::setAttribute(const QString& drawercode, const QVariantMap &value
 void GeoDrawer::removeDrawer(const QString& namecode, bool ascode)
 {
     try {
-        _rootDrawer->removeDrawer(namecode, ascode);
+        _rootDrawer->removeDrawer(window()->openglContext(), namecode, ascode);
     } catch ( const ErrorObject& err){
 
     } catch ( std::exception& ex){
