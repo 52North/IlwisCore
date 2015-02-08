@@ -74,6 +74,8 @@ Rectangle {
             anchors.fill: parent
             property int tel: 0
 
+            function closeTab(splitindex, tabindex){
+            }
 
             function showObject(objectid){
                 var component = Qt.createComponent("visualization/Visualize.qml")
@@ -178,7 +180,7 @@ Rectangle {
                         mastercatalog.activeSplit = 0
                         lefttab.currentIndex = indexTab
                         var tab = getCurrentCatalogTab()
-                        if ( tab && tab.item){
+                        if ( tab && tab.item && tab.item.currentCatalog){
                             mastercatalog.currentUrl = tab.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }
@@ -226,7 +228,7 @@ Rectangle {
                         activeSplit = 2
                         mastercatalog.activeSplit = 1
                         righttab.currentIndex = indexTab
-                        if ( tab && tab.item){
+                        if ( tab && tab.item && tab.item.currentCatalog){
                             mastercatalog.currentUrl = tab.item.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }
