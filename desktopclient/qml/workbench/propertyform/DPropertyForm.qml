@@ -95,14 +95,12 @@ Component {
             Component.onCompleted: {
                 addTab(qsTr("General"), generalData )
                 addTab(qsTr("Data"), dataData)
-                console.debug(typeName)
                 if(typeName == "rastercoverage"  || typeName == "feature" ||
                         typeName == "featurecoverage" || typeName == "pointcoverage" ||
                         typeName == "linecoverage" || typeName == "polygoncoverage"){
                     addTab(qsTr("Spatial"), spatialData)
                 } else if ( typeName == "projection" || typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem"){
                     if ( isProjected){
-                        console.debug(count)
                         addTab(qsTr("Projection"), projectionData)
                     }
                 }
