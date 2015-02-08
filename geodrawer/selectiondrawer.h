@@ -22,8 +22,8 @@ public:
     bool drawerAttribute(const QString drawername, const QString& attrName, const QVariant& attrib);
     DrawerInterface::DrawerType drawerType() const;
     quint32 defaultOrder() const;
-
-    const QMatrix4x4 &mvpMatrix() const;
+    Envelope  envelope() const;
+    void cleanUp(QOpenGLContext *openglContext);
 
     static DrawerInterface *create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
@@ -34,7 +34,7 @@ private:
    std::vector<VertexIndex> _indices;
    std::vector<VertexColor> _colors;
    QMatrix4x4 _view,_projection, _model, _mvp;
-   QMatrix4x4 _oldMatrix;
+   bool _preserveAspectRatio = true;
 
 };
 }
