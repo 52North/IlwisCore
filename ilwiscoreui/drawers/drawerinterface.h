@@ -57,7 +57,7 @@ class ILWISCOREUISHARED_EXPORT DrawerInterface : public QObject, public Identity
 public:
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
-                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048, ptALL=4294967295};
+                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048,ptSHADERS=4096, ptALL=4294967295};
     enum ColorValueMeaning{cvmFRACTION, cvmTRUEVALUE};
     enum DrawerType{dtDONTCARE=0, dtPOST=1, dtPRE=2, dtMAIN=4, dtALL=0xFFFFFFFF};
 
@@ -73,8 +73,6 @@ public:
     virtual const RootDrawer* rootDrawer() const = 0;
     virtual DrawerInterface *parent() = 0;
     virtual const DrawerInterface *parent() const = 0;
-
-    virtual const QMatrix4x4 &mvpMatrix() const = 0;
 
     virtual bool isActive() const = 0;
     virtual void active(bool yesno) = 0;
