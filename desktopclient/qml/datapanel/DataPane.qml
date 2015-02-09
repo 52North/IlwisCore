@@ -41,7 +41,7 @@ Rectangle {
     }
     function getCurrentCatalogTab(){
         var tabview = activeSplit == 1 ? lefttab : righttab
-        if ( tabview) {
+        if ( tabview && activeTab > 0) {
             var tab = tabview.getTab(activeTab - 1)
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
@@ -59,6 +59,16 @@ Rectangle {
         }
 
         mainsplit.newCatalog(url,splitside)
+    }
+
+    function setCatalogByIndex(currentTab, tabindex){
+        currentTab.currentIndex = tabindex - 1
+        activeTab = tabindex
+        var catalogtab = getCurrentCatalogTab()
+        if ( catalogtab.currentCatalog){
+            mastercatalog.currentUrl = catalogtab.currentCatalog.url
+            mastercatalog.currentCatalog = catalogtab.currentCatalog
+        }
     }
 
     function changeCatalog(url){
@@ -80,8 +90,13 @@ Rectangle {
                         return
                     lefttab.removeTab(tabindex1)
                     if ( lefttab.count === 0){
-                        lefttab.state = "invisible"
-                        righttab.state = "visible"
+                        lefttab.state = "zerosize"
+                        righttab.state = "fullsize"
+                        activeSplit = 2
+                        setCatalogByIndex(righttab, 1)
+
+                    }else{
+                        setCatalogByIndex(lefttab, tabindex1)
                     }
                 }
                 else if ( splitindex === 2){ // right
@@ -89,8 +104,12 @@ Rectangle {
                         return
                     righttab.removeTab(tabindex1)
                     if ( righttab.count === 0){
-                        righttab.state = "invisible"
-                        lefttab.state = "visible"
+                        righttab.state = "zerosize"
+                        lefttab.state = "fullsize"
+                        activeSplit = 1
+                        setCatalogByIndex(lefttab, 1)
+                    }else{
+                        setCatalogByIndex(righttab, tabindex1)
                     }
                 }
             }
@@ -145,7 +164,9 @@ Rectangle {
                     tab.active = true
                     var tabCount = 0
                     if ( activeSplit ===1){
-                        righttab.width = parent.width / 2.0
+                        if ( righttab.count == 1)
+                            lefttab.state = "halfsize"
+                        righttab.state = "halfsize"
                         activeSplit = 2
                         tab.item.tabLocation = "right"
                         tab.item.currentCatalog = catalogModel
@@ -153,12 +174,15 @@ Rectangle {
                         righttab.currentIndex = tabCount
                     }
                     else{
-                        lefttab.width = parent.width / 2.0
+                        if ( lefttab.count == 1)
+                            righttab.state = "halfsize"
+                        lefttab.state = "halfsize"
                         activeSplit = 1
                         tab.item.tabLocation = "left"
                         tab.item.currentCatalog = catalogModel
                         tabCount = lefttab.count - 1
                         lefttab.currentIndex = tabCount
+                        console.debug(lefttab.width, parent.width, tabCount, name)
                     }
                     mastercatalog.setActiveTab(activeSplit, tabCount)
                     mastercatalog.currentCatalog = catalogModel
@@ -230,15 +254,22 @@ Rectangle {
                     }
                 }
                 states: [
-                    State { name: "visible"
+                    State { name: "fullsize"
 
                         PropertyChanges {
                             target: lefttab
                             width : parent.width
                         }
                     },
+                    State { name: "halfsize"
+
+                        PropertyChanges {
+                            target: lefttab
+                            width : parent.width / 2
+                        }
+                    },
                     State {
-                        name : "invisible"
+                        name : "zerosize"
                         PropertyChanges {
                             target: lefttab
                             width : 0
@@ -248,7 +279,7 @@ Rectangle {
                 ]
                 transitions: [
                     Transition {
-                        NumberAnimation { properties: "width"; duration : 750 ; easing.type: Easing.InOutCubic }
+                        NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
                     }
                 ]
 
@@ -293,15 +324,22 @@ Rectangle {
                     }
                 }
                 states: [
-                    State { name: "visible"
+                    State { name: "fullsize"
 
                         PropertyChanges {
                             target: righttab
                             width : parent.width
                         }
                     },
+                    State { name: "halfsize"
+
+                        PropertyChanges {
+                            target: righttab
+                            width : parent.width / 2
+                        }
+                    },
                     State {
-                        name : "invisible"
+                        name : "zerosize"
                         PropertyChanges {
                             target: righttab
                             width : 0
@@ -311,7 +349,7 @@ Rectangle {
                 ]
                 transitions: [
                     Transition {
-                        NumberAnimation { properties: "width"; duration : 750 ; easing.type: Easing.InOutCubic }
+                        NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
                     }
                 ]
 
