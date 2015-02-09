@@ -20,7 +20,7 @@ Rectangle {
     color: background4
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
-    property int activeSplit : 1
+    property int activeSplit : 2
     property int activeTab : 1
 
     function addModellerPanel(name) {
@@ -40,8 +40,8 @@ Rectangle {
 
     }
     function getCurrentCatalogTab(){
-        var tabview = activeSplit == 1 ? lefttab : righttab
-        if ( tabview && activeTab > 0) {
+        var tabview = Math.abs(activeSplit) == 1 ? lefttab : righttab
+        if ( tabview && activeTab > 0 && tabview.count > 0) {
             var tab = tabview.getTab(activeTab - 1)
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
@@ -85,7 +85,7 @@ Rectangle {
             property int tel: 0
 
             function closeTab(splitindex, tabindex1){
-                if ( splitindex === 1){ // left
+                if ( Math.abs(splitindex) === 1){ // left
                     if ( righttab.count === 0 && lefttab.count === 1)
                         return
                     lefttab.removeTab(tabindex1)
@@ -99,7 +99,7 @@ Rectangle {
                         setCatalogByIndex(lefttab, tabindex1)
                     }
                 }
-                else if ( splitindex === 2){ // right
+                else if ( Math.abs(splitindex) === 2){ // right
                     if ( lefttab.count === 0 && righttab.count === 1)
                         return
                     righttab.removeTab(tabindex1)
@@ -174,15 +174,16 @@ Rectangle {
                         righttab.currentIndex = tabCount
                     }
                     else{
-                        if ( lefttab.count == 1)
+                        if ( splitside === -1) // start situation
+                            righttab.state = "zerosize"
+                        else if ( lefttab.count == 1)
                             righttab.state = "halfsize"
-                        lefttab.state = "halfsize"
+                        lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize"
                         activeSplit = 1
                         tab.item.tabLocation = "left"
                         tab.item.currentCatalog = catalogModel
                         tabCount = lefttab.count - 1
                         lefttab.currentIndex = tabCount
-                        console.debug(lefttab.width, parent.width, tabCount, name)
                     }
                     mastercatalog.setActiveTab(activeSplit, tabCount)
                     mastercatalog.currentCatalog = catalogModel
@@ -209,157 +210,21 @@ Rectangle {
             }
 
 
-            TabView {
+            DataTabView {
                 id : lefttab
-                height : parent.height
-                width: parent.width
+                side : 1
                 Layout.fillWidth: true
 
-                style: Base.TabStyle2{
-                    splitindex: 1
-                    onSplitindexChanged: {
-                        activeSplit = 1
-                        mastercatalog.activeSplit = 0
-                        lefttab.currentIndex = indexTab
-                        var tab = getCurrentCatalogTab()
-                        if ( tab && tab.item && tab.item.currentCatalog){
-                            mastercatalog.currentUrl = tab.currentCatalog.url
-                            mastercatalog.currentCatalog = tab.currentCatalog
-                        }
-                    }
+                Component.onCompleted: {
+                    newCatalog(mastercatalog.currentUrl,-1)
                 }
-
-                Tab {
-                    id : catalog_0
-                    title : "Catalog"
-                    Catalog.CatalogPanel{
-                    }
-                }
-
-                function removeTabFor(name) {
-                    var remove = -1;
-                    var l = count;
-                    for (var i = l-1; i >= 0; i--) {
-                        var tab =  getTab(i);
-                        if (tab !== null && tab.title === name) {
-                            remove = i;
-                        }
-                    }
-                    if (remove >= 0) {
-                        removeTab(remove);
-                    }
-                    if (count === 0) {
-                        activeSplit = 2;
-                        width = 0;
-                    }
-                }
-                states: [
-                    State { name: "fullsize"
-
-                        PropertyChanges {
-                            target: lefttab
-                            width : parent.width
-                        }
-                    },
-                    State { name: "halfsize"
-
-                        PropertyChanges {
-                            target: lefttab
-                            width : parent.width / 2
-                        }
-                    },
-                    State {
-                        name : "zerosize"
-                        PropertyChanges {
-                            target: lefttab
-                            width : 0
-                        }
-                    }
-
-                ]
-                transitions: [
-                    Transition {
-                        NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
-                    }
-                ]
-
             }
-            TabView{
+
+
+            DataTabView{
                 id : righttab
-                width : 0
-                height : parent.height
-
-                onCurrentIndexChanged : {
-                }
-
-
-                style: Base.TabStyle2{
-                    splitindex: 2
-                    onSplitindexChanged:{
-                        activeSplit = 2
-                        mastercatalog.activeSplit = 1
-                        righttab.currentIndex = indexTab
-                        if ( tab && tab.item && tab.item.currentCatalog){
-                            mastercatalog.currentUrl = tab.item.currentCatalog.url
-                            mastercatalog.currentCatalog = tab.currentCatalog
-                        }
-                    }
-                }
-
-                function removeTabFor(name) {
-                    var remove = -1;
-                    var l = count;
-                    for (var i = l-1; i >= 0; i--) {
-                        var tab = getTab(i);
-                        if (tab !== null && tab.title === name) {
-                            remove = i;
-                        }
-                    }
-                    if (remove >= 0) {
-                        removeTab(remove);
-                    }
-                    if (count === 0) {
-                        activeSplit = 1;
-                        width = 0;
-                    }
-                }
-                states: [
-                    State { name: "fullsize"
-
-                        PropertyChanges {
-                            target: righttab
-                            width : parent.width
-                        }
-                    },
-                    State { name: "halfsize"
-
-                        PropertyChanges {
-                            target: righttab
-                            width : parent.width / 2
-                        }
-                    },
-                    State {
-                        name : "zerosize"
-                        PropertyChanges {
-                            target: righttab
-                            width : 0
-                        }
-                    }
-
-                ]
-                transitions: [
-                    Transition {
-                        NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
-                    }
-                ]
-
+                side : 2
             }
-        }
-
-        focus : true
-        Keys.onPressed: {
-            console.debug(event.key)
-            //uicontext.currentKey = event.key
         }
     }
 }
