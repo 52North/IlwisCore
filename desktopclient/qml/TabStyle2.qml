@@ -11,13 +11,6 @@ TabViewStyle {
     property int indexTab : 0
 
 
-    Action {
-        id : closeStuff
-        onTriggered: {
-            mainsplit.closeTab(splitindex, indexTab)
-        }
-    }
-
     frameOverlap: 1
     tab: Rectangle {
         color: styleData.selected && activeSplit === Math.abs(splitindex) ? selectColor : nonselectColor
@@ -52,7 +45,11 @@ TabViewStyle {
             width : 18
             height : 18
             opacity : 0.5
-            action : closeStuff
+            onClicked: {
+               mainsplit.closeTab(splitindex, styleData.index)
+
+            }
+
             Image {
                 y : 2
                 x : 1

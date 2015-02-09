@@ -74,7 +74,25 @@ Rectangle {
             anchors.fill: parent
             property int tel: 0
 
-            function closeTab(splitindex, tabindex){
+            function closeTab(splitindex, tabindex1){
+                if ( splitindex === 1){ // left
+                    if ( righttab.count === 0 && lefttab.count === 1)
+                        return
+                    lefttab.removeTab(tabindex1)
+                    if ( lefttab.count === 0){
+                        lefttab.state = "invisible"
+                        righttab.state = "visible"
+                    }
+                }
+                else if ( splitindex === 2){ // right
+                    if ( lefttab.count === 0 && righttab.count === 1)
+                        return
+                    righttab.removeTab(tabindex1)
+                    if ( righttab.count === 0){
+                        righttab.state = "invisible"
+                        lefttab.state = "visible"
+                    }
+                }
             }
 
             function showObject(objectid){
@@ -211,6 +229,28 @@ Rectangle {
                         width = 0;
                     }
                 }
+                states: [
+                    State { name: "visible"
+
+                        PropertyChanges {
+                            target: lefttab
+                            width : parent.width
+                        }
+                    },
+                    State {
+                        name : "invisible"
+                        PropertyChanges {
+                            target: lefttab
+                            width : 0
+                        }
+                    }
+
+                ]
+                transitions: [
+                    Transition {
+                        NumberAnimation { properties: "width"; duration : 750 ; easing.type: Easing.InOutCubic }
+                    }
+                ]
 
             }
             TabView{
@@ -252,6 +292,29 @@ Rectangle {
                         width = 0;
                     }
                 }
+                states: [
+                    State { name: "visible"
+
+                        PropertyChanges {
+                            target: righttab
+                            width : parent.width
+                        }
+                    },
+                    State {
+                        name : "invisible"
+                        PropertyChanges {
+                            target: righttab
+                            width : 0
+                        }
+                    }
+
+                ]
+                transitions: [
+                    Transition {
+                        NumberAnimation { properties: "width"; duration : 750 ; easing.type: Easing.InOutCubic }
+                    }
+                ]
+
             }
         }
 

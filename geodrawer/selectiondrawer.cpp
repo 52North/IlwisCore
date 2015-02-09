@@ -33,7 +33,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(0.05);
     }
     _colors[9] = _colors[10] = _colors[11] = _colors[12] = clr;
-    clr.setAlphaF(0.2);
+    clr.setAlphaF(0.1);
     _colors[5] = _colors[6] = _colors[7] = _colors[8] = clr;
 
     if ( options.contains("bordercolor")){
