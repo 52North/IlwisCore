@@ -19,13 +19,14 @@ class RootDrawer : public ComplexDrawer
 {
     Q_OBJECT
 public:
-    explicit RootDrawer(QObject *parent);
+    explicit RootDrawer(const IOOptions& options);
 
-    void addDrawer(DrawerInterface *newdrawer, bool overrule);
+    void newDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
     Envelope viewEnvelope() const;
-    void envelopeView(const Envelope& viewRect, bool overrule);
+    void applyEnvelopeView(const Envelope& viewRect, bool overrule);
+    void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
     Size<> pixelAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
@@ -33,9 +34,12 @@ public:
     void coordinateSystem(const ICoordinateSystem& csy);
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
-    void cleanUp();
+    void cleanUp(QOpenGLContext *openglContext);
     bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
 
+    double aspectRatioView() const;
+
+    DrawerInterface::DrawerType drawerType() const;
 signals:
 
 public slots:

@@ -7,6 +7,7 @@ import "datapanel" as DataPanel
 import "controls" as Control
 import MessageModel 1.0
 import ResourceModel 1.0
+import "Global.js" as Global
 
 ApplicationWindow {
     id : bigthing
@@ -80,12 +81,54 @@ ApplicationWindow {
         }
     }
 
+    function getWorkbenchPane(name){
+        if ( workBench.lastPage !== name)
+            workBench.transitionInfoPane(name)
+    }
+
     Rectangle {
         id : root
         anchors.fill : parent
+        color : "#DDDDDD"
 
-        Control.CommandLine{
+        Rectangle {
             id : commLine
+            height : 35
+            width : parent.width - 10
+            color : "#DDDDDD"
+            Row {
+                id : workspace
+                height : parent.height
+                width : 250
+                spacing: 10
+                x : 5
+                Text {
+                    text : qsTr("Current Workspace")
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                TextField{
+                    width : 150
+                    text : "default"
+                    readOnly: true
+                    height : 25
+                    style: TextFieldStyle {
+                        textColor: "black"
+                        background: Rectangle {
+                            anchors.fill: parent
+                            color: Global.alternatecolor3
+                        }
+                    }
+                    anchors.verticalCenter: parent.verticalCenter
+
+                }
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Control.CommandLine{
+                anchors.left : workspace.right
+                anchors.leftMargin: 10
+                anchors.right: parent.right
+                anchors.verticalCenter: workspace.verticalCenter
+            }
         }
 
         SplitView {
@@ -122,8 +165,8 @@ ApplicationWindow {
 
         }
 
-
     }
+
 
     statusBar: StatusBar {
         id : statusB

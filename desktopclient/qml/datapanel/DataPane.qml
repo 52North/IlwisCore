@@ -5,10 +5,12 @@ import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
+import MasterCatalogModel 1.0
 import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
+
 
 
 
@@ -72,6 +74,8 @@ Rectangle {
             anchors.fill: parent
             property int tel: 0
 
+            function closeTab(splitindex, tabindex){
+            }
 
             function showObject(objectid){
                 var component = Qt.createComponent("visualization/Visualize.qml")
@@ -176,7 +180,7 @@ Rectangle {
                         mastercatalog.activeSplit = 0
                         lefttab.currentIndex = indexTab
                         var tab = getCurrentCatalogTab()
-                        if ( tab){
+                        if ( tab && tab.item && tab.item.currentCatalog){
                             mastercatalog.currentUrl = tab.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }
@@ -224,7 +228,7 @@ Rectangle {
                         activeSplit = 2
                         mastercatalog.activeSplit = 1
                         righttab.currentIndex = indexTab
-                        if ( tab){
+                        if ( tab && tab.item && tab.item.currentCatalog){
                             mastercatalog.currentUrl = tab.item.currentCatalog.url
                             mastercatalog.currentCatalog = tab.currentCatalog
                         }

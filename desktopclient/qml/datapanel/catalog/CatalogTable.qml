@@ -220,6 +220,7 @@ Rectangle {
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
             mastercatalog.currentCatalog = currentCatalog
             currentCatalog.setSelectedObjects(ids)
+            //bigthing.getWorkbenchPane("ObjectProperties.qml");
         }
         onDoubleClicked: {
             if ( currentRow != -1)

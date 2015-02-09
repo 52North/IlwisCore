@@ -98,6 +98,34 @@ void Projection::setParameter(Projection::ProjectionParamValue type, const QVari
     _implementation->setParameter(type, value);
 }
 
+QString Projection::parameterName(Projection::ProjectionParamValue pv) const
+{
+    switch (pv){
+    case pvX0:
+        return "false easting";
+    case pvY0:
+        return "false northing";
+    case pvLAT0:
+        return "latitude of origin";
+    case pvLAT1:
+        return "standard parallel 1";
+    case pvLAT2:
+        return "standard parallel 2";
+    case pvLATTS:
+        return "latitude of true scale";
+    case pvLON0:
+        return "central meridian";
+    case pvK0:
+        return "scale factor";
+    case pvZONE:
+        return "zone";
+
+     default:
+        break;
+    }
+    return "";
+}
+
 QString Projection::projectionCode2Name(const QString &code)
 {
     auto iter = _projcode2Name.find(code);

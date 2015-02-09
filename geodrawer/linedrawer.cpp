@@ -4,7 +4,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-LineDrawer::LineDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : SimpleDrawer(name, parentDrawer, rootdrawer)
+LineDrawer::LineDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : SimpleDrawer(name, parentDrawer, rootdrawer, IOOptions())
 {
 
 }

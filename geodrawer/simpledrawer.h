@@ -12,12 +12,11 @@ namespace Geodrawer{
 class SimpleDrawer : public BaseDrawer
 {
 public:
-    SimpleDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer);
+    SimpleDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
     bool isSimple() const ;
 
 private:
-    std::vector<VertexPosition>& drawPositions(); // never use
 };
 }
 }

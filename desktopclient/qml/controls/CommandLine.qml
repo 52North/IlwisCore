@@ -5,17 +5,15 @@ import QtQuick.Controls.Styles 1.0
 
 Rectangle {
     id : commLine;
-    width : parent.width
-    height : 32
+    height : 35
     color : "#DDDDDD"
     TextField {
         id: t3
-        anchors.fill: parent
         anchors.leftMargin: 5
-        anchors.topMargin: 5
-        anchors.bottomMargin: 5
-        anchors.rightMargin: 40
-        placeholderText: "This is a placeholder for a TextField"
-        width: 200
+        placeholderText: "place holder script command"
+        anchors.right: parent.right
+        width : parent.width
+        height : 25
+        anchors.verticalCenter: parent.verticalCenter
     }
 }

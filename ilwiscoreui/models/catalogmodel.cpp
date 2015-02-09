@@ -95,6 +95,7 @@ void CatalogModel::filterChanged(const QString& objectType, bool state){
     }
     _refresh = true;
     _view.filter(filterString);
+    contentChanged();
 }
 
 void CatalogModel::refresh(bool yesno)

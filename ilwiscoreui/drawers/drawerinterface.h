@@ -57,8 +57,9 @@ class ILWISCOREUISHARED_EXPORT DrawerInterface : public QObject, public Identity
 public:
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
-                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048, ptALL=4294967295};
+                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048,ptSHADERS=4096, ptALL=4294967295};
     enum ColorValueMeaning{cvmFRACTION, cvmTRUEVALUE};
+    enum DrawerType{dtDONTCARE=0, dtPOST=1, dtPRE=2, dtMAIN=4, dtALL=0xFFFFFFFF};
 
     DrawerInterface(QObject * parent=0);
     virtual ~DrawerInterface();
@@ -79,13 +80,16 @@ public:
     virtual bool isValid() const = 0;
     virtual bool isSelected() const = 0;
     virtual void selected(bool yesno) = 0;
-    virtual void cleanUp() = 0;
+    virtual void cleanUp(QOpenGLContext *openglContext) = 0;
     virtual QColor color(const IRepresentation& rpr, double value, ColorValueMeaning cvm = cvmTRUEVALUE) = 0;
 
-    virtual std::vector<VertexPosition>& drawPositions() = 0;
     virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;
     virtual QVariant attribute(const QString& attrName) const = 0;
-    virtual void attribute(const QString& attrName, const QVariant& attrib)  = 0;
+    virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
+    virtual bool drawerAttribute(const QString drawercode, const QString& attrName, const QVariant& attrib)  = 0;
+
+    virtual quint32 defaultOrder() const = 0;
+    virtual DrawerType drawerType()  const = 0;
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;

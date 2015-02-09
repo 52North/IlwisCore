@@ -48,7 +48,8 @@ SOURCES += \
     geodrawer/tesselation/sweep.c \
     geodrawer/tesselation/tess.c \
     geodrawer/tesselation/ilwistesselator.cpp \
-    geodrawer/attributevisualproperties.cpp
+    geodrawer/attributevisualproperties.cpp \
+    geodrawer/selectiondrawer.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -74,7 +75,8 @@ HEADERS += \
     geodrawer/tesselation/tess.h \
     geodrawer/tesselation/tesselator.h \
     geodrawer/tesselation/ilwistesselator.h \
-    geodrawer/attributevisualproperties.h
+    geodrawer/attributevisualproperties.h \
+    geodrawer/selectiondrawer.h
 
 OTHER_FILES = geodrawer/qmldir
 

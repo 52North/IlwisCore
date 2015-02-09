@@ -29,6 +29,18 @@ Item {
         layertools.model = manager.layers
     }
 
+    Action {
+        id : zoomClicked
+        onTriggered : {
+            if ( manager){
+                manager.zoomInMode = !manager.zoomInMode
+                zoominButton.imageSource = iconsource(manager.zoomInMode ? "zoomin20A.png" : "zoomin20.png")
+                zoominButton.checked = !zoominButton.checked
+            }
+        }
+
+    }
+
     ToolBar{
         id : maptools
         width : parent.width
@@ -84,10 +96,15 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left :panButton.right
             anchors.rightMargin: 2
+            action : zoomClicked
+            checkable: true
+            checked: false
+            property string imageSource :  "zoomin20.png"
             Image {
+                id : zoomimage
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource("zoomin20.png")
+                source : iconsource(zoominButton.imageSource)
             }
         }
         Button {
@@ -97,6 +114,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left :zoominButton.right
             anchors.leftMargin: 2
+            checkable: true
+            checked: false
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -154,7 +173,6 @@ Item {
                         Component.onCompleted: {
                             if ( qmlUrl !== ""){
                                 var component = Qt.createComponent(qmlUrl);
-                                console.debug(editorName)
                                 if (component.status === Component.Ready){
                                     component.createObject(editorDelegate.expandableArea);
                                     propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
@@ -205,6 +223,34 @@ Item {
                 GeoDrawer{
                     id : drawer
                     anchors.fill: parent
+
+                    MouseArea {
+                        id : mapArea
+                        anchors.fill: parent
+                        onPressed: {
+                            if ( manager.zoomInMode ){
+                                if ( !manager.hasSelectionDrawer){
+                                    var position = {currentx: mouseX, currenty:mouseY}
+                                    drawer.addDrawer("SelectionDrawer", position)
+                                    manager.hasSelectionDrawer = true
+                                }
+                            }
+                        }
+                        onPositionChanged: {
+                            if ( manager.hasSelectionDrawer){
+                                var position = {currentx: mouseX, currenty:mouseY}
+                                drawer.setAttribute("SelectionDrawer", position)
+                                drawer.update()
+                            }
+                        }
+                        onReleased: {
+                            if ( manager.zoomInMode && manager.hasSelectionDrawer){
+                                drawer.removeDrawer("SelectionDrawer",true)
+                                manager.hasSelectionDrawer = false
+                                drawer.update()
+                            }
+                        }
+                    }
                 }
             }
         }

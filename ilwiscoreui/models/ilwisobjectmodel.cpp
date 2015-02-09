@@ -208,6 +208,37 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
     return QQmlListProperty<DomainItemModel>();
 }
 
+QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
+{
+    IlwisTypes objectype = _ilwisobject->ilwisType();
+    if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
+        IProjection proj;
+        _projectionParmItems.clear();
+        if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
+            IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
+            if ( csyProj.isValid()){
+                proj = csyProj->projection();
+            }
+        }else
+            proj = _ilwisobject.as<Projection>();
+
+        if ( proj.isValid()){
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvX0, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvY0, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLON0, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT0, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT1, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT2, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLATTS, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvK0, this));
+            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvZONE, this));
+        }
+        return QQmlListProperty<ProjectionParameterModel>(this, _projectionParmItems);
+    }
+
+    return QQmlListProperty<ProjectionParameterModel>();
+}
+
 QString IlwisObjectModel::valuetype() const
 {
     try{
@@ -411,6 +442,48 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
                 return QString::number(features->featureCount());
              }
         }
+        if ( propertyname == "majoraxis"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->majorAxis());
+             }
+        }
+        if ( propertyname == "minoraxis"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->minorAxis());
+             }
+        }
+        if ( propertyname == "flattening"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->flattening());
+             }
+        }
+        if ( propertyname == "excentricity"){
+             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+                return QString::number(ellipsoid->excentricity());
+             }
+        }
+        if (propertyname == "proj4def"){
+            IlwisTypes objectype = _ilwisobject->ilwisType();
+            if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
+                IProjection proj;
+                if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
+                    IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
+                    if ( csyProj.isValid()){
+                        proj = csyProj->projection();
+                    }
+                }else
+                    proj = _ilwisobject.as<Projection>();
+                if ( proj.isValid()){
+                    return proj->toProj4();
+                }
+            }
+
+        }
+
         return "";
     } catch(const ErrorObject& ){
         // no exceptions may escape here

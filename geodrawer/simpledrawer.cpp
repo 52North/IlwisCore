@@ -6,7 +6,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-SimpleDrawer::SimpleDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : BaseDrawer(nme, parentDrawer, rootdrawer)
+SimpleDrawer::SimpleDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : BaseDrawer(nme, parentDrawer, rootdrawer, options)
 {
 }
 
@@ -15,9 +15,6 @@ bool SimpleDrawer::isSimple() const
     return true;
 }
 
-std::vector<VertexPosition> &SimpleDrawer::drawPositions()
-{
-    return _positions;
-}
+
 
 

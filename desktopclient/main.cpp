@@ -27,6 +27,7 @@
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
+#include "models/projectionparametermodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
         qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
+        qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);

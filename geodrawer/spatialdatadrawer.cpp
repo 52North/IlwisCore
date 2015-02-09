@@ -5,12 +5,13 @@
 #include "colorlookup.h"
 #include "representation.h"
 #include "attributevisualproperties.h"
+#include "rootdrawer.h"
 #include "spatialdatadrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-SpatialDataDrawer::SpatialDataDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer) : ComplexDrawer(name, parentDrawer, rootdrawer)
+SpatialDataDrawer::SpatialDataDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : ComplexDrawer(name, parentDrawer, rootdrawer, options)
 {
 }
 
@@ -89,6 +90,24 @@ std::vector<QVariant> SpatialDataDrawer::attributes(const QString &keys) const
     return results;
 }
 
+bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+{
+    if(!ComplexDrawer::prepare(prepType, options, openglContext))
+        return false;
+
+    if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
+
+        if (!_shaders.bind())
+            return false;
+        _shaders.setUniformValue("mvp",rootDrawer()->mvpMatrix());
+        _shaders.enableAttributeArray("mvp");
+
+        _prepared |= DrawerInterface::ptMVP;
+        _shaders.release();
+    }
+    return true;
+}
+
 bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const
 {
     for(auto pair : _visualProperties){
@@ -126,7 +145,7 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
     return var;
 }
 
-void SpatialDataDrawer::attribute(const QString &attrName, const QVariant &attrib)
+void SpatialDataDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
 {
 
 }

@@ -21,7 +21,7 @@ Item {
     }
 
     function toggleFilter(objecttype, togglestate){
-        mastercatalog.setObjectFilterCurrentCatalog(objecttype, togglestate)
+        currentCatalog.filterChanged(objecttype, togglestate)
         catalogChanged()
     }
 

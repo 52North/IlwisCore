@@ -210,6 +210,9 @@ QString IlwisObject::externalFormat() const
     if ( !connector().isNull()){
         inFormat = connector()->format();
     }
+    if ( connector().isNull())
+        return "";
+
     provider = connector()->provider();
     if ( outFormat == "" && inFormat == "")
         return sUNDEF;

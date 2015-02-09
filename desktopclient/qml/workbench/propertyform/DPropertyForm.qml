@@ -32,6 +32,27 @@ Component {
             }
         }
 
+        Component {
+            id : projectionData
+            Loader{
+                source : "ProjectionPropertiesAll.qml"
+            }
+        }
+
+        Component {
+            id : generalData
+            Loader {
+                source : "GeneralPropertyPane.qml"
+            }
+        }
+
+        Component {
+            id : dataData
+            Loader {
+                source : "DataPropertyPane.qml"
+            }
+        }
+
         Rectangle {
             id : header
             width : parent.width
@@ -61,25 +82,30 @@ Component {
         }
 
         TabView {
+            id : propertyTabs
             anchors.top : header.bottom
             anchors.topMargin: 3
             width : propertyForm.width
             height : propertyForm.height - header.height
             style: Base.TabStyle1{}
-            Tab {
-                title : qsTr("General")
-                GeneralPropertyPane{}
+            onCurrentIndexChanged: {
+                props.lastIndex = currentIndex
             }
-            Tab {
-                title : qsTr("Data")
-                DataPropertyPane{}
-            }
+
             Component.onCompleted: {
+                addTab(qsTr("General"), generalData )
+                addTab(qsTr("Data"), dataData)
                 if(typeName == "rastercoverage"  || typeName == "feature" ||
                         typeName == "featurecoverage" || typeName == "pointcoverage" ||
                         typeName == "linecoverage" || typeName == "polygoncoverage"){
-                    addTab("Spatial", spatialData)
+                    addTab(qsTr("Spatial"), spatialData)
+                } else if ( typeName == "projection" || typeName == "coordinatesystem" || typeName == "conventionalcoordinatesystem"){
+                    if ( isProjected){
+                        addTab(qsTr("Projection"), projectionData)
+                    }
                 }
+                if ( props.lastIndex < count)
+                    currentIndex = props.lastIndex
             }
         }
     }
