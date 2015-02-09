@@ -146,6 +146,8 @@ Canvas {
         id: dropArea
         anchors.fill: parent
         onDropped: {
+            console.log("this: ", drag.source);
+            console.log(parent);
             var element = checkForElementAt(drag.x, drag.y);
             if (element !== null && element.objectContainer === null) {
                 element.objectContainer = Qt.createComponent("ModellerObjectContainer.qml").createObject();
