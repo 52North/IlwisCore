@@ -4,6 +4,7 @@
 #include <memory>
 #include <QColor>
 #include "ilwiscoreui_global.h"
+#include <math.h>
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
 #include "coordinate.h"
@@ -22,7 +23,7 @@ class IOOptions;
 namespace Geodrawer{
 
 struct ILWISCOREUISHARED_EXPORT VertexPosition {
-    VertexPosition(float x=0, float y=0, float z=0) : _x(x), _y(y), _z(z){}
+    VertexPosition(float x=0, float y=0, float z=0) : _x(x), _y(y), _z((std::isnan(z) || isNumericalUndef(z)) ? 0 : z){}
     VertexPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
 
     float _x=0,_y=0,_z=0;
