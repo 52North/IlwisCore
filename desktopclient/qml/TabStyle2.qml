@@ -7,20 +7,11 @@ TabViewStyle {
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
     property int tabHeight : 22
-    property int splitindex  : 0
-    property int indexTab : 0
-
-
-    Action {
-        id : closeStuff
-        onTriggered: {
-            mainsplit.closeTab(splitindex, indexTab)
-        }
-    }
 
     frameOverlap: 1
     tab: Rectangle {
-        color: styleData.selected && activeSplit === Math.abs(splitindex) ? selectColor : nonselectColor
+        id : selectRect
+        color: indexTab === styleData.index && activeSplit === side ? selectColor : nonselectColor
         border.color:  color
 
         implicitWidth: Math.max(label.width + 4, 140)
@@ -39,9 +30,8 @@ TabViewStyle {
             height : parent.height
             onClicked : {
                 indexTab = styleData.index
-                mastercatalog.setActiveTab(Math.abs(splitindex) - 1, indexTab)
-                splitindex = -splitindex
-
+                mastercatalog.setActiveTab(Math.abs(side) - 1, indexTab)
+                side = -side
             }
         }
 
@@ -52,7 +42,11 @@ TabViewStyle {
             width : 18
             height : 18
             opacity : 0.5
-            action : closeStuff
+            onClicked: {
+               mainsplit.closeTab(side, styleData.index)
+
+            }
+
             Image {
                 y : 2
                 x : 1
