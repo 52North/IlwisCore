@@ -110,6 +110,22 @@ void GeoDrawer::removeDrawer(const QString& namecode, bool ascode)
     }
 }
 
+double GeoDrawer::viewWidth() const
+{
+    if ( _rootDrawer){
+        return _rootDrawer->viewEnvelope().xlength();
+    }
+    return 0;
+}
+
+double GeoDrawer::viewHeight() const
+{
+    if ( _rootDrawer){
+        return _rootDrawer->viewEnvelope().ylength();
+    }
+    return 0;
+}
+
 GeoDrawer::~GeoDrawer()
 {
     //cleanup(); must be used before the destructor; else the window is no longer valid
@@ -127,6 +143,11 @@ void GeoDrawer::handleWindowChanged(QQuickWindow *win)
     }
 }
 
+//QSGNode *GeoDrawer::updatePaintNode(QSGNode *node, UpdatePaintNodeData *)
+//{
+//    return node;
+//}
+
 void GeoDrawer::paint()
 {
     try {
@@ -139,20 +160,31 @@ void GeoDrawer::paint()
         int w = width();
         int h = height();
         int heightWindow = window()->contentItem()->height();
-        _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,1));
+         _rootDrawer->pixelAreaSize(Ilwis::Size<>(w,h,1));
+
         QPointF pointInLocalCS(x(), y());
         QPointF pointInWindowCS = window()->contentItem()->mapFromItem(this, pointInLocalCS);
         int yb = heightWindow - h - pointInWindowCS.y() + pointInLocalCS.y();
         glViewport(pointInWindowCS.x() - pointInLocalCS.x(), yb, w, h);
+        glScissor(pointInWindowCS.x() - pointInLocalCS.x(), yb, w, h);
+        glEnable(GL_SCISSOR_TEST);
+
 
         _rootDrawer->prepare(Geodrawer::DrawerInterface::ptALL,IOOptions(),window()->openglContext());
-        _rootDrawer->draw(window()->openglContext());
 
+        QVariant var = QVariant::fromValue(_rootDrawer->zoomEnvelope());
+        IOOptions options("zoomenvelope",var);
+
+        _rootDrawer->draw(window()->openglContext(),options);
+
+        glDisable(GL_SCISSOR_TEST);
         glViewport(0,0,w, h);
     }
     catch (const ErrorObject&){
+        glDisable(GL_SCISSOR_TEST);
     }
     catch ( const std::exception& ex){
+        glDisable(GL_SCISSOR_TEST);
         kernel()->issues()->log(ex.what());
     }
     catch( ...){

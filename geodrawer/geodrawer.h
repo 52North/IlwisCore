@@ -33,8 +33,11 @@ public:
     Q_INVOKABLE void addDrawer(const QString& drawercode, const QVariantMap& properties);
     Q_INVOKABLE void setAttribute(const QString &drawercode, const QVariantMap& value);
     Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
+    Q_INVOKABLE double viewWidth() const;
+    Q_INVOKABLE double viewHeight() const;
     ~GeoDrawer();
 
+    //QSGNode *updatePaintNode(QSGNode *node, UpdatePaintNodeData *);
 public slots:
     void paint();
     void cleanup();
