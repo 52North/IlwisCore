@@ -54,8 +54,13 @@ Rectangle {
     function newCatalog(url, splitside){
         if ( url === ""){
             var catTab = getCurrentCatalogTab()
-            url = catTab.currentCatalog.url
-            splitside = activeSplit
+            if ( catTab) {
+                url = catTab.currentCatalog.url
+                splitside = activeSplit
+            }
+            else{
+                newCatalog(mastercatalog.currentUrl,0)
+            }
         }
 
         mainsplit.newCatalog(url,splitside)
@@ -65,7 +70,7 @@ Rectangle {
         currentTab.currentIndex = tabindex - 1
         activeTab = tabindex
         var catalogtab = getCurrentCatalogTab()
-        if ( catalogtab.currentCatalog){
+        if ( catalogtab && catalogtab.currentCatalog){
             mastercatalog.currentUrl = catalogtab.currentCatalog.url
             mastercatalog.currentCatalog = catalogtab.currentCatalog
         }
@@ -88,29 +93,30 @@ Rectangle {
                 if ( Math.abs(splitindex) === 1){ // left
                     if ( righttab.count === 0 && lefttab.count === 1)
                         return
-                    lefttab.removeTab(tabindex1)
-                    if ( lefttab.count === 0){
+
+                    if ( lefttab.count === 1){ // last tab will be removed
                         lefttab.state = "zerosize"
                         righttab.state = "fullsize"
                         activeSplit = 2
                         setCatalogByIndex(righttab, 1)
 
                     }else{
-                        setCatalogByIndex(lefttab, tabindex1)
+                        setCatalogByIndex(lefttab, tabindex1 - 1)
                     }
+                    lefttab.removeTab(tabindex1)
                 }
                 else if ( Math.abs(splitindex) === 2){ // right
                     if ( lefttab.count === 0 && righttab.count === 1)
                         return
-                    righttab.removeTab(tabindex1)
-                    if ( righttab.count === 0){
+                    if ( righttab.count === 1){
                         righttab.state = "zerosize"
                         lefttab.state = "fullsize"
                         activeSplit = 1
                         setCatalogByIndex(lefttab, 1)
                     }else{
-                        setCatalogByIndex(righttab, tabindex1)
+                        setCatalogByIndex(righttab, tabindex1 - 1)
                     }
+                    righttab.removeTab(tabindex1)
                 }
             }
 
@@ -157,6 +163,7 @@ Rectangle {
 
             function newCatalog(url, splitside) {
                 if ( url){
+                    console.debug("nc", url, activeSplit, splitside)
                     var component = Qt.createComponent("catalog/CatalogPanel.qml")
                     var catalogModel = mastercatalog.newCatalog(url)
                     var name = catalogModel.displayName
@@ -209,8 +216,7 @@ Rectangle {
                 lefttab.removeTabFor(name);
             }
 
-
-            DataTabView {
+            DataTabView2 {
                 id : lefttab
                 side : 1
                 Layout.fillWidth: true
@@ -221,7 +227,7 @@ Rectangle {
             }
 
 
-            DataTabView{
+            DataTabView2{
                 id : righttab
                 side : 2
             }
