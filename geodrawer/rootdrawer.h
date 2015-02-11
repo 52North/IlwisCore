@@ -25,6 +25,7 @@ public:
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
     Envelope viewEnvelope() const;
+    Envelope zoomEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
