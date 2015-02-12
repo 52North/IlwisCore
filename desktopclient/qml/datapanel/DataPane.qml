@@ -144,7 +144,8 @@ Rectangle {
 
         function changeCatalog(url){
             var catalogpanel = getCurrentCatalogTab()
-            if ( catalogpanel){
+            if ( catalogpanel)
+            {
                 if ( catalogpanel.currentCatalog)
                     catalogpanel.currentCatalog.destroy(0)
                 catalogpanel.currentCatalog = mastercatalog.newCatalog(url)
