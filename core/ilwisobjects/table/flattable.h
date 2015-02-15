@@ -79,6 +79,8 @@ public:
     //@override
     IlwisObject *clone() ;
 
+    bool canUse(const IlwisObject *obj, bool strict=false) const ;
+
 protected:
     bool isColumnIndexValid(quint32 index) const{
         bool ok =  index != iUNDEF ;

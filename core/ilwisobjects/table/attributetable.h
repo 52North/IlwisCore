@@ -49,6 +49,8 @@ public:
     void dataLoaded(bool yesno);
     virtual bool isDataLoaded() const;
     virtual void initValuesColumn(const QString& ) {}
+
+    bool canUse(const IlwisObject *obj, bool strict=false) const ;
 private:
     Record _dummy;
     Record& newRecord() { return _dummy ;}

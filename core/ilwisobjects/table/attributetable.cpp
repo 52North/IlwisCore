@@ -82,6 +82,11 @@ bool AttributeTable::isDataLoaded() const
     return true;
 }
 
+bool AttributeTable::canUse(const IlwisObject *obj, bool strict) const
+{
+    return true;
+}
+
 std::vector<QVariant> AttributeTable::column(const QString &columnName) const
 {
     if (!_features.isValid()) {

@@ -303,6 +303,7 @@ public:
     //TODO. Puzzeld, this method is not allowed as duplicate copies are illegal
     virtual IlwisObject *clone() ;
 
+
     /**
      * Tries to merge 2 IlwisObjects together, template function does not work for standard IlwisObject, see the correspondending subclass for details
      *
@@ -314,6 +315,8 @@ public:
     bool isSystemObject() const;
     bool isInternalObject() const;
     bool isRemote() const;
+    virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
+    virtual bool isCompatible( const IlwisObject* obj) const;
 
     template<typename T> static T create(const QString& def){
         T object;
