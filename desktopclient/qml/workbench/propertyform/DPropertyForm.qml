@@ -12,6 +12,9 @@ Component {
 
 
     Item {
+        id : propertyForm
+        property var editValues : []
+        property bool editable : false
         function iconsource(name) {
             if ( name.indexOf("/") !== -1)
                 return name
@@ -20,9 +23,20 @@ Component {
             return iconP
         }
 
+
+        function storeData() {
+            if ( editable){
+                for(var i = 0; i < propertyTabs.count; i = i + 1){
+                    var tab = propertyTabs.getTab(i)
+                    if ( tab.item){
+                        tab.item.item.storeData()
+                    }
+                }
+            }
+        }
+
         y : 4
-        id : propertyForm
-        height :410
+        height :350
         width : parent.width
 
         Component {
@@ -107,6 +121,13 @@ Component {
                 if ( props.lastIndex < count)
                     currentIndex = props.lastIndex
             }
+        }
+        Loader {
+            anchors.top : propertyTabs.bottom
+            anchors.right : parent.right
+            anchors.rightMargin: 5
+            anchors.topMargin: 5
+            source : isSystemObject ?  "" : "PropertyEditButtons.qml"
         }
     }
 }
