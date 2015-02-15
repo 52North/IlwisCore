@@ -115,6 +115,14 @@ bool IlwisObjectModel::isProjectedCoordinateSystem() const
     return "";
 }
 
+bool IlwisObjectModel::isSystemObject() const
+{
+    if ( _ilwisobject.isValid()){
+        return _ilwisobject->isSystemObject();
+    }
+    return true; // just block
+}
+
 QString IlwisObjectModel::projectionInfo() const
 {
     try {
