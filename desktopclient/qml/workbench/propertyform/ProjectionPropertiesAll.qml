@@ -11,6 +11,11 @@ import ProjectionParameterModel 1.0
 import "../../Global.js" as Global
 
 Item {
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     width : parent.width
     height : 200
     Item {

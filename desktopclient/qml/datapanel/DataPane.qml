@@ -224,7 +224,7 @@ Rectangle {
             Layout.fillWidth: true
 
             Component.onCompleted: {
-                newCatalog(mastercatalog.currentUrl,-1)
+                 newCatalog(mastercatalog.currentUrl,-1)
             }
         }
 

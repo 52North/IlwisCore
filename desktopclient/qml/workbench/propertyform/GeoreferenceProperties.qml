@@ -1,6 +1,11 @@
 import QtQuick 2.0
 
 Item {
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     property int lineheight : 19
 
     Text { id : line1; text : qsTr("Raster Size"); width: 120; font.bold: true ; height : lineheight}
