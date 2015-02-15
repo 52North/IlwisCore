@@ -193,7 +193,13 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
 
 void Resource::name(const QString &nm, bool adaptNormalizedUrl)
 {
+    if ( name() == nm)
+        return;
+
     Identity::name(nm);
+    if ( id() != iUNDEF){
+        mastercatalog()->changeResource(id(), "name",nm);
+    }
     if ( !adaptNormalizedUrl || nm == sUNDEF)
         return;
 
