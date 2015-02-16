@@ -26,8 +26,10 @@ Item {
     DropArea{
         anchors.fill: parent
         onDropped : {
-            currentText = drag.source.message
-            textid.text = shortName(currentText)
+            if ( canUse(drag.source.ilwisobjectid)){
+                currentText = drag.source.message
+                textid.text = shortName(currentText)
+            }
         }
         TextField{ id : textid;
             text : currentText;
