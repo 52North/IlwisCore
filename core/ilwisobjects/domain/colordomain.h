@@ -14,7 +14,7 @@ public:
     IlwisTypes ilwisType() const;
     QVariant impliedValue(const QVariant& value) const    ;
     Containement contains(const QVariant& value) const;
-    bool isCompatibleWith(const IDomain& dom) const;
+    bool isCompatibleWith(const Ilwis::IlwisObject *dom, bool strict=false) const;
     void range(Range *colorrange);
     bool isOrdered() const;
     void setParent(const IDomain& dm);

@@ -499,6 +499,21 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
     return "";
 }
 
+bool IlwisObjectModel::canUse(const QString &id)
+{
+    if ( _ilwisobject.isValid()){
+        bool ok;
+        quint64 myid = id.toULongLong(&ok);
+            if ( ok){
+                IIlwisObject obj;
+                obj.prepare(myid);
+                if ( obj.isValid())
+                    return _ilwisobject->canUse(obj.ptr());
+            }
+    }
+    return false;
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();

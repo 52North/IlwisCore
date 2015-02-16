@@ -50,6 +50,7 @@ public:
     QString valuetype() const;
     Q_INVOKABLE QString rangeDefinition(bool defaultRange);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
+    Q_INVOKABLE bool canUse(const QString& id);
 
 
     bool isValid() const;

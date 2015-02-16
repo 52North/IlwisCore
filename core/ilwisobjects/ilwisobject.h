@@ -316,7 +316,7 @@ public:
     bool isInternalObject() const;
     bool isRemote() const;
     virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
-    virtual bool isCompatible( const IlwisObject* obj) const;
+    virtual bool isCompatibleWith( const IlwisObject* obj, bool strict=false) const;
 
     template<typename T> static T create(const QString& def){
         T object;

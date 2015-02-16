@@ -30,10 +30,10 @@ Domain::Containement TextDomain::contains(const QVariant &) const
     return Domain::cSELF;
 }
 
-bool TextDomain::isCompatibleWith(const IDomain& dom) const {
-    if ( !dom->isValid())
+bool TextDomain::isCompatibleWith(const IlwisObject *obj, bool strict) const {
+    if ( !obj->isValid())
         return false;
-    if(dom->ilwisType() != itTEXTDOMAIN)
+    if(obj->ilwisType() != itTEXTDOMAIN)
         return false;
     return true;
 }

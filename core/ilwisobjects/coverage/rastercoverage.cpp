@@ -276,7 +276,7 @@ bool RasterCoverage::bandPrivate(quint32 bandIndex,  PixelIterator inputIter)
     if (!isFirstLayer)    { // if it is not the first layer, some rules for this raster have already been defined(2dsize + domain)
         if ( inputIter.box().xlength() != size().xsize() || inputIter.box().ylength() != size().ysize())
             return false;
-        if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain()))
+        if (!inputIter.raster()->datadef().domain()->isCompatibleWith(datadef().domain().ptr()))
             return false;
     }
 
@@ -316,7 +316,25 @@ void RasterCoverage::getData(quint32 blockIndex)
 
 bool RasterCoverage::canUse(const IlwisObject *obj, bool strict) const
 {
-    return true;
+    if ( Coverage::canUse(obj, strict))
+        return true;
+
+    if ( hasType(obj->ilwisType(),itDOMAIN)){
+        IDomain dom(obj->id());
+        if ( dom.isValid()){
+            if (strict){
+
+            }else {
+                if ( hasType(dom->valueType(), itNUMBER) && hasType( datadef().domain()->valueType(), itNUMBER)){
+                    return true;
+                }
+                if ( hasType(dom->ilwisType(), itITEMDOMAIN) && hasType( datadef().domain()->valueType(), itITEMDOMAIN)){
+                    return datadef().domain()->isCompatibleWith(obj);
+                }
+            }
+        }
+    }
+    return false;
 }
 
 void RasterCoverage::size(const Size<> &sz)

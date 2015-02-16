@@ -93,11 +93,16 @@ public:
      * \param dom the domain to be tested
      * \return true when compatible
      */
-    bool isCompatibleWith(const IDomain& dom) const {
-        if ( !dom->isValid())
+    bool isCompatibleWith(const IlwisObject* obj, bool strict=false) const {
+        if ( !obj || !obj->isValid())
             return false;
-        if(dom->ilwisType() != itITEMDOMAIN)
+        if(obj->ilwisType() != itITEMDOMAIN)
             return false;
+        IDomain dom;
+        dom.prepare(obj->id());
+        if (!dom.isValid())
+            return false;
+
         IlwisTypes tp2 = dom->valueType();
         IlwisTypes tp1 = valueType();
         if ( tp1 != tp2)
