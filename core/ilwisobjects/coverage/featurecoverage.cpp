@@ -48,6 +48,14 @@ bool FeatureCoverage::prepare( ) {
     return ok;
 }
 
+bool FeatureCoverage::canUse(const IlwisObject *obj, bool strict) const
+{
+    if ( Coverage::canUse(obj, strict)){
+        return true;
+    }
+    return true;
+}
+
 std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
 {
     ExecutionContext ctx;

@@ -120,6 +120,7 @@ QString ResourceModel::displayName() const
 void ResourceModel::setDisplayName(const QString &name)
 {
     _displayName = name;
+    _item.name(name, false);
 }
 
 QString ResourceModel::url() const

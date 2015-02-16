@@ -199,7 +199,7 @@ public:
     const UPGrid &grid() const;
     void getData(quint32 blockIndex);
 
-
+    bool canUse(const IlwisObject *obj, bool strict=false) const ;
 
 protected:
 

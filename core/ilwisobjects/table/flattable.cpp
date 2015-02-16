@@ -308,6 +308,11 @@ IlwisObject *FlatTable::clone()
     return 0;
 }
 
+bool FlatTable::canUse(const IlwisObject *obj, bool strict) const
+{
+    return true;
+}
+
 void FlatTable::copyTo(IlwisObject *obj){
     BaseTable::copyTo(obj);
 }

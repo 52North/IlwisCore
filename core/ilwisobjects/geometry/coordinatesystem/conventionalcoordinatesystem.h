@@ -40,6 +40,7 @@ public:
     QString toProj4() const;
     QString unit() const;
     void unit(const QString &unit);
+    bool isCompatible(const IlwisObject *obj) const;
 private:
     IEllipsoid _ellipsoid;
     IProjection _projection;

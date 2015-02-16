@@ -7,11 +7,20 @@ import QtQuick.Dialogs 1.0
 Rectangle {
     id : container
     anchors.fill : parent
+    function storeData() {
+        if ( propertyForm.editable){
+            displayName = objectDisplayName.text
+            isReadonly = readOnlyStatus.checked
+        }
+    }
+
     GridLayout{
         id : grid
-        height : 144
+        height : 164
         width : parent.width
         columns : 2
+        Text { text : qsTr("Name"); font.bold: true }
+        TextField { id : objectDisplayName; text : displayName; readOnly : !propertyForm.editable; Layout.fillWidth: true }
         Text { text : qsTr("Location"); font.bold: true }
         TextField { text : url; readOnly : true; Layout.fillWidth: true }
         Text { text :  qsTr("External format"); font.bold: true }
@@ -21,7 +30,7 @@ Rectangle {
         Text { text : qsTr("Modified date"); font.bold: true}
         Text { text : modifiedDate }
         Text { text : qsTr("Read-only"); font.bold: true}
-        CheckBox { checked: isReadonly}
+        CheckBox { id : readOnlyStatus; checked: isReadonly; enabled: propertyForm.editable}
         Text { text : qsTr("Target read-only"); font.bold: true}
         CheckBox { checked: externalReadOnly; enabled : false}
         Text { text : qsTr("Size in bytes"); font.bold: true}

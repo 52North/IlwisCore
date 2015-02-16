@@ -314,6 +314,11 @@ void RasterCoverage::getData(quint32 blockIndex)
     }
 }
 
+bool RasterCoverage::canUse(const IlwisObject *obj, bool strict) const
+{
+    return true;
+}
+
 void RasterCoverage::size(const Size<> &sz)
 {
     if ( isReadOnly())

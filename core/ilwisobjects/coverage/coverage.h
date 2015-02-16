@@ -104,6 +104,7 @@ public:
 
       //@override
     Resource source(int mode=cmINPUT) const;
+    bool canUse(const IlwisObject *obj, bool strict=false) const override;
 
     /**
      * Changes the name of this coverage<br>

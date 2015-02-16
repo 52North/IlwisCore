@@ -8,6 +8,11 @@ Item {
     id : container
     anchors.fill : parent
 
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     Text { id : line1; text : qsTr("Polygon features"); width: 100; font.italic: true }
     Text { text : getProperty("polygoncount");  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}
     Text { id : line2; text : qsTr("Line features"); width: 100; font.italic: true; anchors.top : line1.bottom }

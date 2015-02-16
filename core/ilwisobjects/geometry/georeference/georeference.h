@@ -45,6 +45,7 @@ public:
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool isCompatible(const IlwisData<GeoReference>& georefOther) const;
+    bool canUse(const IlwisObject *obj, bool strict=false) const ;
     void adapter(GeoRefAdapter* adapt);
     bool isValid() const;
     void impl(GeoRefImplementation *impl);

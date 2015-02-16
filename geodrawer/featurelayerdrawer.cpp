@@ -8,8 +8,11 @@
 #include "table.h"
 #include "range.h"
 #include "itemrange.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
 #include "colorrange.h"
 #include "colorlookup.h"
+#include "itemdomain.h"
 #include "representation.h"
 #include "attributevisualproperties.h"
 #include "featurelayerdrawer.h"
@@ -55,13 +58,19 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             if ( columnIndex == iUNDEF){
                 columnIndex = features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN);
                 attr =  visualAttribute(FEATUREVALUECOLUMN);
-                if ( columnIndex == iUNDEF)
-                    return false;
+                if ( columnIndex == iUNDEF){ // default to a indexeditemdomain
+                    IIndexedIdDomain itemdom;
+                    itemdom.prepare();
+                    IndexedIdentifierRange *rng = new IndexedIdentifierRange("feature", features->featureCount());
+                    itemdom->range(rng);
+                    attr = AttributeVisualProperties(itemdom);
+                }
             }
         }
+        Raw raw = 0;
         for(const SPFeatureI& feature : features){
-            QVariant value =  feature(columnIndex);
-            if ( value.toInt() != iUNDEF) {
+            QVariant value =  columnIndex != iUNDEF ? feature(columnIndex) : raw++;
+            if ( value.isValid() && value.toInt() != iUNDEF) {
                 quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(),
                                                                  features->coordinateSystem(),
                                                                  feature->geometry(),

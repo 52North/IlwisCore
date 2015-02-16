@@ -8,6 +8,11 @@ Rectangle {
     id : container
     anchors.fill : parent
 
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     AttributeProperties{
         domainUsed: domainName
         valueTypeUsed: valuetype

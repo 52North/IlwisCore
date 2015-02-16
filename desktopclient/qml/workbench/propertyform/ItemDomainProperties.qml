@@ -9,6 +9,11 @@ import DomainItemModel 1.0
 import "../../Global.js" as Global
 
 Item {
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     anchors.fill : parent
     Item {
         id : parentDomainItem
