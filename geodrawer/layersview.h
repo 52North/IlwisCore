@@ -62,6 +62,7 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
 {
     Q_OBJECT
 
+    Q_PROPERTY(string viewerId READ viewerId CONSTANT)
 public:
 friend class LayersRenderer;
 
@@ -77,7 +78,9 @@ friend class LayersRenderer;
     Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
     Q_INVOKABLE void addDrawer(const QString &drawercode, const QVariantMap &properties);
 
+
 private:
+    QString viewerId() const;
     std::vector<DrawerIdTag> _datasources;
     std::map<QString, Ilwis::IOOptions> _specialdrawers;
     std::deque<DrawerIdTag> _removedDrawers;

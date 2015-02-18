@@ -136,4 +136,9 @@ void LayersView::addDrawer(const QString& drawercode, const QVariantMap& propert
     _specialdrawers[drawercode] = opt;
 }
 
+QString LayersView::viewerId() const
+{
+    return QString::number(_viewerId);
+}
+
 
