@@ -98,7 +98,7 @@ public:
      */
     quint64 name2id(const QString& name, IlwisTypes tp= itUNKNOWN) const;
 
-    bool changeResource(quint64 objectid, const QString& attribute, const QVariant& var);
+    bool changeResource(quint64 objectid, const QString& attribute, const QVariant& var, bool extended=false);
     /**
      * Translates an id from the MasterCatalog to the correct IlwisType
      * @param id the id that needs translation
