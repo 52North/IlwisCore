@@ -15,20 +15,20 @@ Item {
         return currentText
     }
 
-    function shortName(name){
-        var index = name.indexOf("/")
-        if ( index === -1)
-            return name
-        var parts = name.split("/");
-        return parts[parts.length - 1];
-    }
+//    function shortName(name){
+//        var index = name.indexOf("/")
+//        if ( index === -1)
+//            return name
+//        var parts = name.split("/");
+//        return parts[parts.length - 1];
+//    }
 
     DropArea{
         anchors.fill: parent
         onDropped : {
             if ( canUse(drag.source.ilwisobjectid)){
                 currentText = drag.source.message
-                textid.text = shortName(currentText)
+                textid.text = mastercatalog.getName(drag.source.ilwisobjectid)
             }
         }
         TextField{ id : textid;
