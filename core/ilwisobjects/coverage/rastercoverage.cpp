@@ -320,7 +320,8 @@ bool RasterCoverage::canUse(const IlwisObject *obj, bool strict) const
         return true;
 
     if ( hasType(obj->ilwisType(),itDOMAIN)){
-        IDomain dom(obj->id());
+        IDomain dom;
+        dom.prepare(obj->id());
         if ( dom.isValid()){
             if (strict){
 
