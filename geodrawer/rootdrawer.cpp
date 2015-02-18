@@ -48,6 +48,11 @@ Envelope RootDrawer::viewEnvelope() const
     return _viewRect;
 }
 
+Envelope RootDrawer::zoomEnvelope() const
+{
+    return _zoomRect;
+}
+
 void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
@@ -123,7 +128,8 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 void RootDrawer::setMVP()
 {
     _projection.setToIdentity();
-    _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
+    QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength(),_zoomRect.ylength());
+    _projection.ortho(rct);
     _mvp = _model * _view * _projection;
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
@@ -232,14 +238,14 @@ void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
     }
 }
 
-void RootDrawer::cleanUp(QOpenGLContext *openglContext)
+void RootDrawer::cleanUp()
 {
-    ComplexDrawer::cleanUp(openglContext);
+    ComplexDrawer::cleanUp();
 }
 
-bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    return ComplexDrawer::prepare(prepType, options, openglContext)    ;
+    return ComplexDrawer::prepare(prepType, options)    ;
 }
 
 double RootDrawer::aspectRatioView() const
@@ -263,3 +269,81 @@ DrawerInterface::DrawerType RootDrawer::drawerType() const
 {
     return DrawerInterface::dtDONTCARE; // rootdrawer is never child of anything so it never is a pre,post, or main drawer. it is the root
 }
+
+//----------------------------------------------------------------
+//bool RootDrawer::draw(const IOOptions& )
+//{
+//    glDepthMask(true);
+
+//    glClearColor(0.5f, 0.5f, 0.7f, 1.0f);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    QMatrix4x4 modelview;
+
+
+//    modelview.ortho(QRect(500,400,1000,1300));
+//    program1.bind();
+//    program1.setUniformValue(matrixUniform1, modelview);
+//    program1.enableAttributeArray(normalAttr1);
+//    program1.enableAttributeArray(vertexAttr1);
+//    program1.setAttributeArray(vertexAttr1, vertices.constData());
+//    program1.setAttributeArray(normalAttr1, normals.constData());
+//    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+//    program1.disableAttributeArray(normalAttr1);
+//    program1.disableAttributeArray(vertexAttr1);
+//    program1.release();
+
+//    return true;
+//}
+
+//void RootDrawer::createGeometry2(){
+//    vertices << QVector3D(600, 600, 0);
+//    vertices << QVector3D(600, 1200, 0);
+//    vertices << QVector3D(900, 1200, 0);
+//    vertices << QVector3D(600, 600, 0);
+
+
+//}
+
+//void RootDrawer::initialize()
+//{
+//    glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+
+//    QOpenGLShader *vshader1 = new QOpenGLShader(QOpenGLShader::Vertex, &program1);
+//    const char *vsrc1 =
+//        "attribute highp vec4 vertex;\n"
+//        "attribute mediump vec3 normal;\n"
+//        "uniform mediump mat4 matrix;\n"
+//        "varying mediump vec4 color;\n"
+//        "void main(void)\n"
+//        "{\n"
+//        "    vec3 toLight = normalize(vec3(0.0, 0.3, 1.0));\n"
+//        "    float angle = max(dot(normal, toLight), 0.0);\n"
+//        "    vec3 col = vec3(0.40, 1.0, 0.0);\n"
+//        "    color = vec4(col * 0.2 + col * 0.8 * angle, 1.0);\n"
+//        "    color = clamp(color, 0.0, 1.0);\n"
+//        "    gl_Position = matrix * vertex;\n"
+//        "}\n";
+//    vshader1->compileSourceCode(vsrc1);
+
+//    QOpenGLShader *fshader1 = new QOpenGLShader(QOpenGLShader::Fragment, &program1);
+//    const char *fsrc1 =
+//        "varying mediump vec4 color;\n"
+//        "void main(void)\n"
+//        "{\n"
+//        "    gl_FragColor = color;\n"
+//        "}\n";
+//    fshader1->compileSourceCode(fsrc1);
+
+//    program1.addShader(vshader1);
+//    program1.addShader(fshader1);
+//    program1.link();
+
+//    vertexAttr1 = program1.attributeLocation("vertex");
+//    normalAttr1 = program1.attributeLocation("normal");
+//    matrixUniform1 = program1.uniformLocation("matrix");
+
+
+//    createGeometry2();
+
+//}
