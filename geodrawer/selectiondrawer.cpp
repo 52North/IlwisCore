@@ -23,6 +23,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         y = options["currenty"].toFloat(&ok);
         if (!ok)
             y = flUNDEF;
+        y = rootDrawer()->pixelAreaSize().ysize() - y;
     }
     QColor clr;
     _colors.resize(13);
@@ -45,7 +46,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
 
     if ( x != rUNDEF && y !=  rUNDEF){
-        VertexPosition pos(x,y);
+        QVector3D pos(x,y,0);
         _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
     }
     _indices.push_back(VertexIndex(0, 5, itLINE, iUNDEF));
@@ -59,12 +60,8 @@ SelectionDrawer::~SelectionDrawer()
 
 }
 
-bool SelectionDrawer::draw(QOpenGLContext *openglContext, const IOOptions &)
+bool SelectionDrawer::draw(const IOOptions &)
 {
-
-    if ( !openglContext){
-        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
-    }
 
     if ( !isActive())
         return false;
@@ -75,47 +72,34 @@ bool SelectionDrawer::draw(QOpenGLContext *openglContext, const IOOptions &)
 
     if (!_shaders.bind())
         return false;
+     _shaders.setUniformValue(_modelview,_mvp);
 
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboPosition);
+    _shaders.enableAttributeArray(_vboPosition);
+    _shaders.enableAttributeArray(_vboNormal);
+    _shaders.enableAttributeArray(_vboColor);
 
-    int vertexLocation = _shaders.attributeLocation("position");
-    openglContext->functions()->glVertexAttribPointer(vertexLocation,3,GL_FLOAT,FALSE,0,0);
-    openglContext->functions()->glEnableVertexAttribArray(vertexLocation);
-
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboColor);
-
-    int colorLocation = _shaders.attributeLocation("vertexColor");
-    openglContext->functions()->glVertexAttribPointer(colorLocation,4,GL_FLOAT,FALSE,0, 0);
-    openglContext->functions()->glEnableVertexAttribArray(colorLocation);
-
-
+    _shaders.setAttributeArray(_vboPosition,_vertices.constData());
+    _shaders.setAttributeArray(_vboNormal, _normals.constData());
+    _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
 
     glDrawArrays(GL_LINE_STRIP,_indices[0]._start,_indices[0]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[1]._start,_indices[1]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[2]._start,_indices[2]._count);
     glDrawArrays(GL_TRIANGLE_FAN,_indices[3]._start,_indices[3]._count);
 
-
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    openglContext->functions()->glDisableVertexAttribArray(colorLocation);
-    openglContext->functions()->glDisableVertexAttribArray(vertexLocation);
+    _shaders.disableAttributeArray(_vboPosition);
+    _shaders.disableAttributeArray(_vboNormal);
+    _shaders.disableAttributeArray(_vboColor);
 
     _shaders.release();
-
 
      return true;
 }
 
-bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    if (!SimpleDrawer::prepare(prepType, options, openglContext)){
+    if (!SimpleDrawer::prepare(prepType, options)){
         return false;
-    }
-
-    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
-        if(!moveGeometry2GPU(openglContext, _vertices, _colors))
-            return false;
-        _prepared |= ptGEOMETRY;
     }
 
     if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
@@ -128,8 +112,7 @@ bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const I
         _projection.ortho(QRect(0,0,sz.xsize(), sz.ysize()));
         _mvp = _model * _view * _projection;
 
-        _shaders.setUniformValue("mvp",_mvp);
-        _shaders.enableAttributeArray("mvp");
+
 
         _prepared |= DrawerInterface::ptMVP;
         _shaders.release();
@@ -146,36 +129,45 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
 
     if ( attrName == "currentx"){
         float value = attrib.toFloat();
-        _vertices[1]._x = value;
-        _vertices[2]._x = value;
-        _vertices[10]._x = value;
-        _vertices[11]._x = value;
+        _vertices[1].setX(value);
+        _vertices[2].setX(value);
+        _vertices[10].setX(value);
+        _vertices[11].setX(value);
 
 
     }
     if ( attrName == "currenty"){
         float value = attrib.toFloat();
-        _vertices[2]._y = value;
-        _vertices[3]._y = value;
-        _vertices[11]._y = value;
-        _vertices[12]._y = value;
+        value = rootDrawer()->pixelAreaSize().ysize() - value;
+        _vertices[2].setY(value);
+        _vertices[3].setY(value);
+        _vertices[11].setY(value);
+        _vertices[12].setY(value);
 
     }
     if ( _preserveAspectRatio){
         double aspectRatioView = rootDrawer()->aspectRatioView();
-        double dx = _vertices[1]._x - _vertices[0]._x;
-        double dy = _vertices[3]._y - _vertices[0]._y;
+        double dx = _vertices[1].x() - _vertices[0].x();
+        double dy = _vertices[3].y() - _vertices[0].y();
         if ( aspectRatioView <= 1){
-            _vertices[11]._y = _vertices[12]._y = _vertices[2]._y = _vertices[3]._y = _vertices[0]._y + boost::math::sign(dy) * dx/ aspectRatioView;
+             _vertices[3].setY(_vertices[0].y() + boost::math::sign(dy) * dx/ aspectRatioView);
+             _vertices[11].setY(_vertices[3].y());
+             _vertices[12].setY(_vertices[3].y());
+             _vertices[2].setY(_vertices[3].y());
 
         }else {
-            _vertices[10]._x = _vertices[11]._x = _vertices[1]._x = _vertices[2]._x = _vertices[0]._x + boost::math::sign(dx) * dy * aspectRatioView;
+            _vertices[1].setX(_vertices[0].x() + boost::math::sign(dx) * dy * aspectRatioView);
+            _vertices[11].setX(_vertices[1].x());
+            _vertices[10].setX(_vertices[1].x());
+            _vertices[2].setX(_vertices[1].x());
         }
     }
-    _vertices[7]._y = _vertices[8]._y = (_vertices[0]._y + _vertices[2]._y) /2;
-    _vertices[6]._y = _vertices[2]._y;
-    _vertices[5]._x = _vertices[6]._x = (_vertices[0]._x + _vertices[1]._x) /2;
-    _vertices[8]._x = _vertices[1]._x;
+    _vertices[8].setY((_vertices[0].y() + _vertices[2].y()) /2);
+    _vertices[7].setY(_vertices[8].y());
+    _vertices[6].setY(_vertices[2].y());
+    _vertices[6].setX((_vertices[0].x() + _vertices[1].x()) /2);
+    _vertices[5].setX(_vertices[6].x());
+    _vertices[8].setX(_vertices[1].x());
     unprepare(ptGEOMETRY);
 }
 
@@ -205,8 +197,8 @@ quint32 SelectionDrawer::defaultOrder() const
 
 Envelope SelectionDrawer::envelope() const
 {
-    QVector3D v1( _vertices[0]._x, _vertices[0]._y, _vertices[0]._z);
-    QVector3D v2( _vertices[2]._x, _vertices[2]._y, _vertices[2]._z);
+    QVector3D v1( _vertices[0].x(), _vertices[0].y(), _vertices[0].z());
+    QVector3D v2( _vertices[2].x(), _vertices[2].y(), _vertices[2].z());
     auto v1normalized = _mvp * v1;
     auto v2normalized = _mvp * v2;
     const auto& globalMvp = rootDrawer()->mvpMatrix();
@@ -220,9 +212,9 @@ Envelope SelectionDrawer::envelope() const
     return Envelope(crd1, crd2);
 }
 
-void SelectionDrawer::cleanUp(QOpenGLContext *openglContext)
+void SelectionDrawer::cleanUp()
 {
-    SimpleDrawer::cleanUp(openglContext);
+    SimpleDrawer::cleanUp();
     rootDrawer()->applyEnvelopeZoom(envelope());
 }
 
