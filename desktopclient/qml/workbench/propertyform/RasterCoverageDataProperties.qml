@@ -10,10 +10,12 @@ Rectangle {
 
     function storeData() {
         if ( propertyForm.editable){
+            attributes.storeData()
         }
     }
 
     AttributeProperties{
+        id : attributes
         domainUsed: domainName
         valueTypeUsed: valuetype
     }

@@ -29,9 +29,14 @@ Rectangle {
 
         return "TextRangeDefinition.qml";
     }
+    function storeData() {
+        if ( propertyForm.editable){
+            setAttribute("domain", domainField.getText())
+        }
+    }
 
     Text { id : line1; text : qsTr("Domain"); width: 96; height : Global.rowHeight; font.italic: true }
-    TextFieldDropArea { currentText: domainUsed == "" ? qsTr("not applicable") : domainUsed;  height : Global.rowHeight;width: 200; anchors.left: line1.right}
+    TextFieldDropArea { id: domainField; currentText: domainUsed == "" ? qsTr("not applicable") : domainUsed;  height : Global.rowHeight;width: 200; anchors.left: line1.right}
     Text { id : line2; text : qsTr("Value type"); width: 100; height : Global.rowHeight; font.italic: true; anchors.top : line1.bottom }
     Text { text : valueTypeUsed; width: parent.width - line2.width - 2; height : Global.rowHeight; anchors.left: line2.right; anchors.top : line1.bottom}
     Text { id : line3; text : qsTr("Default range"); width: 100; height : Global.rowHeight; font.italic: true; anchors.top : line2.bottom}

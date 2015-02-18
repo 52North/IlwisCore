@@ -28,7 +28,7 @@ Component {
             if ( editable){
                 for(var i = 0; i < propertyTabs.count; i = i + 1){
                     var tab = propertyTabs.getTab(i)
-                    if ( tab.item){
+                    if ( tab && tab.item && tab.item.item){
                         tab.item.item.storeData()
                     }
                 }
