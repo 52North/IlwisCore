@@ -19,8 +19,8 @@ public:
 
 
 
-    bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) ;
-    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext = 0);
+    bool draw(const IOOptions& options=IOOptions()) ;
+    bool prepare(PreparationType prepType, const IOOptions& options);
     void unprepare(PreparationType prepType);
     bool prepareChildDrawers(PreparationType prepType, const IOOptions& options);
 
@@ -28,14 +28,14 @@ public:
     const UPDrawer& drawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN) const;
     void addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType = dtMAIN, quint32 order=iUNDEF, const QString& name=sUNDEF);
     void setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType tp = dtMAIN);
-    void removeDrawer(QOpenGLContext *openglContext, quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
-    void removeDrawer(QOpenGLContext *openglContext, const QString& idcode, bool ascode);
+    void removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
+    void removeDrawer(const QString& idcode, bool ascode);
 
     bool drawerAttribute(const QString& drawercode, const QString& key, const QVariant& value);
 
     bool isSimple() const;
 
-     void cleanUp(QOpenGLContext *openglContext);
+     void cleanUp();
 
 
     std::vector<QVariant> attributes(const QString &attrNames) const;
@@ -48,7 +48,7 @@ private:
     DrawerList _mainDrawers;
     DrawerMap _postDrawers;
 
-    bool drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions& options) const;
+    bool drawSideDrawers(const DrawerMap& drawers, const IOOptions& options) const;
 
 
 };

@@ -22,33 +22,18 @@ class IOOptions;
 
 namespace Geodrawer{
 
-struct ILWISCOREUISHARED_EXPORT VertexPosition {
-    VertexPosition(float x=0, float y=0, float z=0) : _x(x), _y(y), _z((std::isnan(z) || isNumericalUndef(z)) ? 0 : z){}
-    VertexPosition(const Coordinate& crd) : _x(crd.x), _y(crd.y), _z(crd.z) {}
-
-    float _x=0,_y=0,_z=0;
-
-};
-
-struct ILWISCOREUISHARED_EXPORT VertexColor {
-    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _c1(r), _c2(g), _c3(b), _c4(a){}
-    VertexColor(const QColor& clr) : _c1(clr.redF()), _c2(clr.greenF()), _c3(clr.blueF()), _c4(clr.alphaF()) {}
-    float _c1=0, _c2=0, _c3=0, _c4=1.0;
-};
-
-struct ILWISCOREUISHARED_EXPORT DrawColor {
-    DrawColor(float red=0, float green=0, float blue=0, float alpha=1) : _red(red), _green(green), _blue(blue), _alpha(alpha) {}
-    DrawColor(const QColor& clr) : _red(clr.redF()), _green(clr.greenF()), _blue(clr.blueF()),_alpha(clr.alphaF()) {}
-
-    float _red=0, _green=0, _blue=0, _alpha=1;
-};
-
 struct ILWISCOREUISHARED_EXPORT VertexIndex {
     VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, Raw vid=iUNDEF) : _start(start), _count(count), _geomtype(geomType), _objectid(vid){}
     quint32 _start;
     quint32 _count;
     IlwisTypes _geomtype;
     Raw _objectid = iUNDEF;
+};
+
+struct ILWISCOREUISHARED_EXPORT VertexColor {
+    VertexColor(float r=0, float g=0, float b = 0, float a = 1.0) : _c1(r), _c2(g), _c3(b), _c4(a){}
+    VertexColor(const QColor& clr) : _c1(clr.redF()), _c2(clr.greenF()), _c3(clr.blueF()), _c4(clr.alphaF()) {}
+    float _c1=0, _c2=0, _c3=0, _c4=1.0;
 };
 
 class RootDrawer;
@@ -65,8 +50,8 @@ public:
     DrawerInterface(QObject * parent=0);
     virtual ~DrawerInterface();
 
-    virtual bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) = 0;
-    virtual bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0) = 0;
+    virtual bool draw(const IOOptions& options=IOOptions()) = 0;
+    virtual bool prepare(PreparationType prepType, const IOOptions& options) = 0;
     virtual void unprepare(PreparationType prepType) = 0;
     virtual bool isPrepared(quint32 type=ptALL) const = 0;
 
@@ -81,7 +66,7 @@ public:
     virtual bool isValid() const = 0;
     virtual bool isSelected() const = 0;
     virtual void selected(bool yesno) = 0;
-    virtual void cleanUp(QOpenGLContext *openglContext) = 0;
+    virtual void cleanUp() = 0;
     virtual QColor color(const IRepresentation& rpr, double value, ColorValueMeaning cvm = cvmTRUEVALUE) = 0;
 
     virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;

@@ -20,11 +20,34 @@ class OpenGLHelper
 public:
     OpenGLHelper();
 
-    static quint32 getVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const UPGeometry& geometry, Raw objectid, std::vector<VertexPosition>& points,  std::vector<VertexIndex>& indices, quint32 &boundaryIndex);
+    static quint32 getVertices(const ICoordinateSystem& csyRoot,
+                               const ICoordinateSystem& csyGeom,
+                               const UPGeometry& geometry,
+                               Raw objectid,
+                               QVector<QVector3D> &points,
+                               QVector<QVector3D> &normals,
+                               std::vector<VertexIndex>& indices,
+                               quint32 &boundaryIndex);
 private:
-    static void getPolygonVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
-    static void getLineVertices(const ICoordinateSystem &csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
-    static void getPointVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const UPGeometry &geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices);
+    static void getPolygonVertices(const ICoordinateSystem& csyRoot,
+                                   const ICoordinateSystem& csyGeom,
+                                   const Ilwis::UPGeometry &geometry,
+                                   Raw objectid,
+                                   QVector<QVector3D> &points,
+                                   QVector<QVector3D>& normals,
+                                   std::vector<VertexIndex> &indices);
+    static void getLineVertices(const ICoordinateSystem &csyRoot, const ICoordinateSystem& csyGeom,
+                                const Ilwis::UPGeometry &geometry,
+                                Raw objectid, QVector<QVector3D> &points,
+                                QVector<QVector3D>& normals,
+                                std::vector<VertexIndex> &indices);
+    static void getPointVertices(const ICoordinateSystem& csyRoot,
+                                 const ICoordinateSystem& csyGeom,
+                                 const UPGeometry &geometry,
+                                 Raw objectid,
+                                 QVector<QVector3D> &points,
+                                 QVector<QVector3D>& normals,
+                                 std::vector<VertexIndex> &indices);
 
     static IlwisTesselator _tesselator;
 };

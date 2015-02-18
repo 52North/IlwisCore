@@ -1,3 +1,4 @@
+#include <QVector3D>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
@@ -24,7 +25,8 @@ quint32 OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
                                const ICoordinateSystem& csyGeom,
                                const Ilwis::UPGeometry &geometry,
                                Raw objectid,
-                               std::vector<VertexPosition> &points,
+                               QVector<QVector3D> &points,
+                               QVector<QVector3D>& normals,
                                std::vector<VertexIndex> &indices,
                                quint32& boundaryIndex)
 {
@@ -33,13 +35,13 @@ quint32 OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
 
        switch( tp)     {
         case itPOLYGON:
-            getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, indices);
+            getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, normals, indices);
             //boundaryIndex = indices.size();
             //getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itLINE:
-            getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
+            getLineVertices(csyRoot, csyGeom,geometry, objectid, points, normals, indices); break;
         case itPOINT:
-            getPointVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;\
+            getPointVertices(csyRoot, csyGeom,geometry, objectid, points, normals, indices); break;\
         default:
             break;
     }
@@ -51,7 +53,8 @@ void OpenGLHelper::getPolygonVertices(const ICoordinateSystem& csyRoot,
                                       const ICoordinateSystem& csyGeom,
                                       const Ilwis::UPGeometry &geometry,
                                       Raw objectid,
-                                      std::vector<VertexPosition> &points,
+                                      QVector<QVector3D> &points,
+                                      QVector<QVector3D>& normals,
                                       std::vector<VertexIndex> &indices){
     int n = geometry->getNumGeometries();
     for(int  geom = 0; geom < n; ++geom ){
@@ -66,7 +69,8 @@ void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot,
                                    const ICoordinateSystem& csyGeom,
                                    const Ilwis::UPGeometry &geometry,
                                    Raw objectid,
-                                   std::vector<VertexPosition> &points,
+                                   QVector<QVector3D> &points,
+                                   QVector<QVector3D> &normals,
                                    std::vector<VertexIndex> &indices){
 
     int n = geometry->getNumGeometries();
@@ -85,13 +89,18 @@ void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot,
             if ( conversionNeeded){
                 crd = csyRoot->coord2coord(csyGeom, crd);
             }
-            points[oldend + i] = VertexPosition(crd.x, crd.y, crd.z);
+            points[oldend + i] = QVector3D(crd.x, crd.y, crd.z);
         }
         delete coords;
     }
 
 }
 
-void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot, const ICoordinateSystem& csyGeom, const Ilwis::UPGeometry &geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices){
+void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot,
+                                    const ICoordinateSystem& csyGeom,
+                                    const Ilwis::UPGeometry &geometry,
+                                    Raw objectid, QVector<QVector3D> &points,
+                                    QVector<QVector3D> &normals,
+                                    std::vector<VertexIndex> &indices){
 
 }

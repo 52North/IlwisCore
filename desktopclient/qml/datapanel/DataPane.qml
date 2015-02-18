@@ -218,7 +218,7 @@ Rectangle {
         }
 
 
-        DataTabView {
+        DataTabView2 {
             id : lefttab
             side : 1
             Layout.fillWidth: true
@@ -229,7 +229,7 @@ Rectangle {
         }
 
 
-        DataTabView{
+        DataTabView2{
             id : righttab
             side : 2
         }

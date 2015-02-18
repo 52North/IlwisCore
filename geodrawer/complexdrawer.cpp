@@ -13,37 +13,37 @@ ComplexDrawer::ComplexDrawer(const QString &name,
 
 }
 
-bool ComplexDrawer::draw(QOpenGLContext *openglContext, const IOOptions &options)
+bool ComplexDrawer::draw(const IOOptions &options)
 {
     if (!isActive() || !isValid())
         return false;
 
-    bool ok = drawSideDrawers(openglContext, _preDrawers, options)    ;
+    bool ok = drawSideDrawers( _preDrawers, options)    ;
 
     for(const auto& drawer : _mainDrawers){
         if ( drawer){
-            ok &= drawer->draw(openglContext, options);
+            ok &= drawer->draw( options);
         }
     }
-    ok &= drawSideDrawers(openglContext, _postDrawers, options);
+    ok &= drawSideDrawers(_postDrawers, options);
 
     return ok;
 }
 
-bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool ComplexDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    BaseDrawer::prepare(prepType, options, openglContext);
+    BaseDrawer::prepare(prepType, options);
 
     for( auto& drawer : _preDrawers)    {
-        if (!drawer.second->prepare(prepType, options,openglContext))
+        if (!drawer.second->prepare(prepType, options))
             return false;
     }
     for( auto& drawer : _mainDrawers){
-        if (!drawer->prepare(prepType, options, openglContext))
+        if (!drawer->prepare(prepType, options))
             return false;
     }
     for( auto& drawer : _postDrawers)    {
-        if (!drawer.second->prepare(prepType, options, openglContext))
+        if (!drawer.second->prepare(prepType, options))
             return false;
     }
     return true;
@@ -145,25 +145,25 @@ void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, DrawerInte
     }
 }
 
-void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, quint32 order, DrawerInterface::DrawerType drawerType)
+void ComplexDrawer::removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType)
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
         auto current = drawers.find(order);
         if ( current != drawers.end()){
-            (*current).second->cleanUp(openglContext);
+            (*current).second->cleanUp();
             drawers.erase(current)    ;
 
         }
     } else if ( drawerType == dtMAIN){
         if ( order < _mainDrawers.size()) {
-           _mainDrawers[order]->cleanUp(openglContext);
+           _mainDrawers[order]->cleanUp();
            _mainDrawers.erase(_mainDrawers.begin() + order);
         }
     }
 }
 
-void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, const QString &idcode, bool ascode)
+void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
 {
     std::vector<quint32> selectedDrawers;
     for( auto& drawer : _preDrawers){
@@ -178,7 +178,7 @@ void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, const QString &i
         }
     }
     for(auto order : selectedDrawers)
-        removeDrawer(openglContext,order, DrawerInterface::dtPRE);
+        removeDrawer(order, DrawerInterface::dtPRE);
     selectedDrawers.clear();
     int count = 0;
     for( auto& drawer : _mainDrawers){
@@ -194,7 +194,7 @@ void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, const QString &i
         ++count;
     }
     for(auto order : selectedDrawers)
-        removeDrawer(openglContext, order, DrawerInterface::dtMAIN);
+        removeDrawer(order, DrawerInterface::dtMAIN);
     selectedDrawers.clear();
 
     for( auto& drawer : _postDrawers)    {
@@ -209,7 +209,7 @@ void ComplexDrawer::removeDrawer(QOpenGLContext *openglContext, const QString &i
         }
     }
     for(auto order : selectedDrawers)
-        removeDrawer(openglContext, order, DrawerInterface::dtPOST);
+        removeDrawer(order, DrawerInterface::dtPOST);
 }
 
 bool ComplexDrawer::drawerAttribute(const QString &drawercode, const QString &key, const QVariant &value)
@@ -240,23 +240,23 @@ bool ComplexDrawer::isSimple() const
     return false;
 }
 
-void ComplexDrawer::cleanUp(QOpenGLContext *openglContext)
+void ComplexDrawer::cleanUp()
 {
-    BaseDrawer::cleanUp(openglContext);
+    BaseDrawer::cleanUp();
 
     for( auto& drawer : _preDrawers)    {
-        drawer.second->cleanUp(openglContext);
+        drawer.second->cleanUp();
     }
     for( auto& drawer : _mainDrawers){
-        drawer->cleanUp(openglContext);
+        drawer->cleanUp();
     }
     for( auto& drawer : _postDrawers)    {
-        drawer.second->cleanUp(openglContext);
+        drawer.second->cleanUp();
     }
 
 }
 
-bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerMap& drawers, const IOOptions &options) const
+bool ComplexDrawer::drawSideDrawers(const DrawerMap& drawers, const IOOptions &options) const
 {
     if (!isActive())
         return false;
@@ -265,7 +265,7 @@ bool ComplexDrawer::drawSideDrawers(QOpenGLContext *openglContext, const DrawerM
         for(const auto& current : drawers) {
             const auto& drw = current.second;
             if ( drw)
-                drw->draw(openglContext, options);
+                drw->draw(options);
         }
     }
     return true;

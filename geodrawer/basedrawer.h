@@ -32,7 +32,7 @@ public:
     void selected(bool yesno);
     bool isSelected() const;
     Containment containment() const;
-    void cleanUp(QOpenGLContext *openglContext);
+    void cleanUp();
 
     void code(const QString& code);
     QString code() const;
@@ -53,16 +53,18 @@ public:
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
     void valid(bool yesno);
-    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& opt, QOpenGLContext * ctx=0);
+    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& opt);
     void unprepare(PreparationType prepType);
     bool isPrepared(quint32 type=ptALL) const;
-    bool draw(QOpenGLContext *, const IOOptions&) const;
-    bool moveGeometry2GPU(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices, const std::vector<VertexColor> &colors);
+    bool draw(const IOOptions&) const;
+    //bool moveGeometry2GPU(const std::vector<VertexPosition> &vertices, const std::vector<VertexColor> &colors);
 
     quint32 _prepared = 0;
 
     GLuint _vboPosition = iUNDEF;
+    GLuint _vboNormal = iUNDEF;
     GLuint _vboColor = iUNDEF;
+    GLuint _modelview = iUNDEF;
     QOpenGLShaderProgram _shaders;
 
 private:

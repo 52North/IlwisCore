@@ -25,8 +25,9 @@ Item {
      }
 
     function addSource(sourceUrl, sourceType){
-        drawer.addDataSource(sourceUrl, sourceType, manager)
-        layertools.model = manager.layers
+        drawer.addDataSource(sourceUrl, sourceType)
+        drawer.update()
+        //layertools.model = manager.layers
     }
 
     Action {

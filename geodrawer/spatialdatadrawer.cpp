@@ -90,9 +90,9 @@ std::vector<QVariant> SpatialDataDrawer::attributes(const QString &keys) const
     return results;
 }
 
-bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    if(!ComplexDrawer::prepare(prepType, options, openglContext))
+    if(!ComplexDrawer::prepare(prepType, options))
         return false;
 
     if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
