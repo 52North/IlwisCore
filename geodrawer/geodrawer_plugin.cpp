@@ -1,5 +1,6 @@
 #include "geodrawer_plugin.h"
-#include "geodrawer.h"
+#include "visualizationmanager.h"
+//#include "geodrawer.h"
 
 #include <qqml.h>
 
@@ -7,11 +8,12 @@
 #include "iooptions.h"
 #include "drawerfactory.h"
 #include "selectiondrawer.h"
+#include "layersview.h"
 
 void GeodrawerPlugin::registerTypes(const char *uri)
 {
     // @uri n52.org.ilwisobjects
-    qmlRegisterType<GeoDrawer>(uri, 1, 0, "GeoDrawer");
+    qmlRegisterType<LayersView>(uri, 1, 0, "LayersView");
 
     Ilwis::Geodrawer::DrawerFactory::registerDrawer("SelectionDrawer", Ilwis::Geodrawer::SelectionDrawer::create);
 
