@@ -34,22 +34,24 @@ DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootD
 }
 
 
-bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    if(!LayerDrawer::prepare(prepType, options, openglContext))
+    if(!LayerDrawer::prepare(prepType, options))
         return false;
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
-        std::vector<VertexPosition> vertices;
-        std::vector<VertexColor> colors;
 
-        _indices = std::vector<VertexIndex>();
 
 
         IFeatureCoverage features = coverage().as<FeatureCoverage>();
         if ( !features.isValid()){
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
+        // set all to 0
+        _indices = std::vector<VertexIndex>();
+        _vertices = QVector<QVector3D>();
+        _normals = QVector<QVector3D>();
+        // get a description of how to render
         AttributeVisualProperties attr = visualAttribute(activeAttribute());
         int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
         if ( columnIndex == iUNDEF){ // test a number of fallbacks to be able to show at least something
@@ -75,25 +77,25 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
                                                                  features->coordinateSystem(),
                                                                  feature->geometry(),
                                                                  feature->featureid(),
-                                                                 vertices,
+                                                                 _vertices,
+                                                                 _normals,
                                                                  _indices,
                                                                  _boundaryIndex);
                 for(int i =0; i < noOfVertices; ++i){
                     if ( _boundaryIndex == iUNDEF || i < _boundaryIndex){
                         QColor clr = attr.value2color(value);
-                        colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+                        _colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
                     }else {
-                        colors.push_back(VertexColor(128,0,128,1));
+                        _colors.push_back(VertexColor(128,0,128,1));
                     }
                 }
             }
         }
-        if(!moveGeometry2GPU(openglContext, vertices, colors))
-            return false;
         _prepared |= DrawerInterface::ptGEOMETRY;
 
     }
 
+    //initialize();
     return true;
 }
 
@@ -164,11 +166,8 @@ DrawerInterface::DrawerType FeatureLayerDrawer::drawerType() const
 }
 
 
-bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions&) {
-    if ( !openglContext){
-        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
-    }
-
+bool FeatureLayerDrawer::draw(const IOOptions& )
+{
     if ( !isActive())
         return false;
 
@@ -176,37 +175,29 @@ bool FeatureLayerDrawer::draw(QOpenGLContext *openglContext, const IOOptions&) {
         return false;
     }
 
+    if(!_shaders.bind())
+        return false;
 
-    _shaders.bind();
-
-
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboPosition);
-
-    int vertexLocation = _shaders.attributeLocation("position");
-    openglContext->functions()->glVertexAttribPointer(vertexLocation,3,GL_FLOAT,FALSE,0,0);
-    openglContext->functions()->glEnableVertexAttribArray(vertexLocation);
-
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER,_vboColor);
-
-    int colorLocation = _shaders.attributeLocation("vertexColor");
-    openglContext->functions()->glVertexAttribPointer(colorLocation,4,GL_FLOAT,FALSE,0, 0);
-    openglContext->functions()->glEnableVertexAttribArray(colorLocation);
-
-
-
+    _shaders.setUniformValue(_modelview, rootDrawer()->mvpMatrix());
+    _shaders.enableAttributeArray(_vboNormal);
+    _shaders.enableAttributeArray(_vboPosition);
+    _shaders.enableAttributeArray(_vboColor);
+    _shaders.setAttributeArray(_vboPosition, _vertices.constData());
+    _shaders.setAttributeArray(_vboNormal, _normals.constData());
+    _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
     for(int i =0; i < _indices.size(); ++i){
-        if ( _indices[i]._geomtype == itLINE){
-            glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
-        } else if ( _indices[i]._geomtype == itPOLYGON ){
-            glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
-        }
-    }
-
-    openglContext->functions()->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    openglContext->functions()->glDisableVertexAttribArray(colorLocation);
-    openglContext->functions()->glDisableVertexAttribArray(vertexLocation);
-
+       if ( _indices[i]._geomtype == itLINE){
+           glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
+       } else if ( _indices[i]._geomtype == itPOLYGON ){
+           glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
+       }
+   }
+    _shaders.disableAttributeArray(_vboNormal);
+    _shaders.disableAttributeArray(_vboPosition);
+    _shaders.disableAttributeArray(_vboColor);
     _shaders.release();
 
     return true;
 }
+
+
