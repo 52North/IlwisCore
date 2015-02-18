@@ -137,7 +137,7 @@ Rectangle {
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                 }
 
-                tab.item.addSource(resource.url, resource.typeName)
+                tab.item.addDataSource(resource.url, resource.typeName)
                 mastercatalog.setActiveTab(activeSplit, tabCount)
             }
         }
