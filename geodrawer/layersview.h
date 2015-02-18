@@ -62,7 +62,7 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
 {
     Q_OBJECT
 
-    Q_PROPERTY(string viewerId READ viewerId CONSTANT)
+    Q_PROPERTY(QString viewerId READ viewerId CONSTANT)
 public:
 friend class LayersRenderer;
 
