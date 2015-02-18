@@ -51,6 +51,7 @@ public:
     Q_INVOKABLE QString rangeDefinition(bool defaultRange);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
     Q_INVOKABLE bool canUse(const QString& id);
+    Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
 
 
     bool isValid() const;

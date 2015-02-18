@@ -514,6 +514,23 @@ bool IlwisObjectModel::canUse(const QString &id)
     return false;
 }
 
+void IlwisObjectModel::setAttribute(const QString &attrname, const QString &value, const QString &extra)
+{
+    if ( _ilwisobject.isValid()){
+        if ( attrname == "domain"){
+            IDomain dom(value);
+            if ( _ilwisobject->ilwisType() == itRASTER){
+                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                if ( dom->id() != raster->datadefRef().domain()->id()){
+                    raster->datadefRef().domain(dom);
+                    raster->changed(true);
+                    mastercatalog()->changeResource(raster->id(),"domain",dom->id(), true);
+                }
+            }
+        }
+    }
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
