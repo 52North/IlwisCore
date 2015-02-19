@@ -281,14 +281,22 @@ QString IlwisObjectModel::valuetype() const
     return "";
 }
 
-QString IlwisObjectModel::rangeDefinition(bool defaultRange) {
+QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc) {
     try {
         IlwisTypes objectype = _ilwisobject->ilwisType();
         QString rangeString;
         if ( hasType( objectype, itCOVERAGE|itDOMAIN)){
             if ( objectype == itRASTER){
                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-                rangeString = defaultRange ? raster->datadef().domain()->range()->toString() : raster->datadef().range()->toString();
+                if ( defaultRange){
+                  rangeString = raster->datadef().domain()->range()->toString();
+                }else{
+                    if ( calc){
+                        raster->loadData();
+                        raster->statistics(NumericStatistics::pBASIC);
+                    }
+                  rangeString = raster->datadef().range()->toString();
+                }
             } else if ( hasType( objectype , itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
