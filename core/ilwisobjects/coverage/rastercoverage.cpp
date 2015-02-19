@@ -120,7 +120,9 @@ NumericStatistics &RasterCoverage::statistics(int mode, int bins)
     IRasterCoverage raster(this);
     PixelIterator iter(raster);
     statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode, bins);
-
+    auto rng = raster->datadefRef().range<NumericRange>();
+    rng->min(statistics().prop(NumericStatistics::pMIN));
+    rng->max(statistics().prop(NumericStatistics::pMAX));
     return Coverage::statistics(mode);
 }
 
