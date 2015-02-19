@@ -149,10 +149,10 @@ QString NumericRange::toString() const {
     long n = std::max(n1, n2);
     bool isfloat = _resolution == 0 || _resolution - (quint64)_resolution != 0;
     if (isfloat){
-        QString rng = _min < -1e100 ? "-infinite" : QString::number(_min,'f',n);
+        QString rng = (_min < -1e100 || std::abs(_min) == 4294967295) ? "-infinite" : QString::number(_min,'f',n);
 
         rng += '|';
-        rng += _max > -1e100 ? "+infinite": QString::number(_max,'f',n);
+        rng += (_max > 1e100 || std::abs(_max) == 4294967295) ? "+infinite": QString::number(_max,'f',n);
         if ( _resolution != 0){
             rng += '|';
             rng += QString::number(_resolution) ;
