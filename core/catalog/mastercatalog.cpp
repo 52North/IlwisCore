@@ -265,7 +265,7 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
         if ( res.isValid() && res.hasProperty(attribute))
             statement = QString("update catalogitemproperties set propertyname='%1', propertyvalue='%2'' where itemid=%3").arg(attribute).arg(var.toString()).arg(objectid);
         else
-            statement = QString("insert into catalogitemproperties ('%1','%2',%3)").arg(var.toString()).arg(attribute).arg(objectid);
+            statement = QString("insert into catalogitemproperties (propertyvalue,propertyname,itemid) values('%1','%2',%3)").arg(var.toString()).arg(attribute).arg(objectid);
         return statement;
 
     };
