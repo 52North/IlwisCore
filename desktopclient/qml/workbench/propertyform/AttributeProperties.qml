@@ -10,7 +10,7 @@ Rectangle {
     id : container
 
 
-    height : 50
+    height : 70
     property string domainUsed
     property string valueTypeUsed
     color : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
@@ -45,7 +45,27 @@ Rectangle {
         anchors.left: line3.right
         anchors.top : line2.bottom
         height:Global.rowHeight
-        Component.onCompleted:{ defaultRangeLoader.setSource(rangeFieldType(rangeDefinition(true)),{"useDefaultRange":true})}
+        Component.onCompleted:{ defaultRangeLoader.setSource(rangeFieldType(rangeDefinition(true,false)),{"useDefaultRange":true})}
+    }
+    Text { id : line4; text : qsTr("Actual range"); width: 100; height : Global.rowHeight; font.italic: true; anchors.top : line3.bottom}
+    Loader { id: actualRangeLoader
+        width: 164
+        anchors.left: line4.right
+        anchors.top : line3.bottom
+        height:Global.rowHeight
+        Component.onCompleted:{ actualRangeLoader.setSource(rangeFieldType(rangeDefinition(false,false)),{"useDefaultRange":false})}
+    }
+    Button {
+        anchors.left: actualRangeLoader.right
+        anchors.leftMargin: 4
+        anchors.top : line3.bottom
+        width : 60
+        height : 20
+        text : qsTr("Calculate")
+        onClicked: {
+            actualRangeLoader.source = ""
+            actualRangeLoader.setSource(rangeFieldType(rangeDefinition(false,true)),{"useDefaultRange":false})
+        }
     }
 }
 
