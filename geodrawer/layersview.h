@@ -43,20 +43,12 @@
 
 #include <QtQuick/QQuickFramebufferObject>
 #include "kernel.h"
+#include "symboltable.h"
+#include "operationExpression.h"
 #include "drawers/layersviewcommandinterface.h"
 #include <deque>
 
 class LayersRenderer;
-
-struct DrawerIdTag {
-    DrawerIdTag(const Ilwis::Resource& resource) : _resource(resource){}
-    DrawerIdTag(const QString& name, bool ascode) : _drawerName(name),_asCode(ascode){}
-    Ilwis::Resource _resource;
-    quint64 _drawerid = Ilwis::iUNDEF;
-    QString _drawerName;
-    QString _drawerCode;
-    bool _asCode;
-};
 
 class LayersView : public QQuickFramebufferObject, public LayersViewCommandInterface
 {
@@ -77,15 +69,15 @@ friend class LayersRenderer;
     Q_INVOKABLE void setAttribute(const QString &drawercode, const QVariantMap& value);
     Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
     Q_INVOKABLE void addDrawer(const QString &drawercode, const QVariantMap &properties);
+    Q_INVOKABLE void addCommand(const QString& expression);
 
 
 private:
     QString viewerId() const;
-    std::vector<DrawerIdTag> _datasources;
-    std::map<QString, Ilwis::IOOptions> _specialdrawers;
-    std::deque<DrawerIdTag> _removedDrawers;
+    std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     quint64 _viewerId;
+
 
     static quint64 _baseViewerId;
 };
