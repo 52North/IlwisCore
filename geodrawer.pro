@@ -50,7 +50,9 @@ SOURCES += \
     geodrawer/attributevisualproperties.cpp \
     geodrawer/selectiondrawer.cpp \
     geodrawer/layersview.cpp \
-    geodrawer/layersrenderer.cpp
+    geodrawer/layersrenderer.cpp \
+    geodrawer/operations/adddrawer.cpp \
+    geodrawer/operations/setviewextents.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -78,7 +80,9 @@ HEADERS += \
     geodrawer/attributevisualproperties.h \
     geodrawer/selectiondrawer.h \
     geodrawer/layersview.h \
-    geodrawer/layersrenderer.h
+    geodrawer/layersrenderer.h \
+    geodrawer/operations/adddrawer.h \
+    geodrawer/operations/setviewextents.h
 
 
 OTHER_FILES = geodrawer/qmldir
