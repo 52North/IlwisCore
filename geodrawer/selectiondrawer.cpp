@@ -12,19 +12,6 @@ using namespace Geodrawer;
 
 SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : SimpleDrawer("SelectionDrawer", parentDrawer,rootdrawer, options)
 {
-    float x=flUNDEF,y = flUNDEF;
-    bool ok;
-    if ( options.contains("currentx")){
-        x = options["currentx"].toFloat(&ok);
-        if ( !ok)
-            x = flUNDEF;
-    }
-    if ( options.contains("currenty")){
-        y = options["currenty"].toFloat(&ok);
-        if (!ok)
-            y = flUNDEF;
-        y = rootDrawer()->pixelAreaSize().ysize() - y;
-    }
     QColor clr;
     _colors.resize(13);
     if ( options.contains("areacolor")){
@@ -44,11 +31,9 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(1);
     }
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
+    QVector3D pos(0,0,0);
+    _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
 
-    if ( x != rUNDEF && y !=  rUNDEF){
-        QVector3D pos(x,y,0);
-        _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
-    }
     _indices.push_back(VertexIndex(0, 5, itLINE, iUNDEF));
     _indices.push_back(VertexIndex(5, 2, itLINE, iUNDEF));
     _indices.push_back(VertexIndex(7, 2, itLINE, iUNDEF));
@@ -161,6 +146,21 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
             _vertices[10].setX(_vertices[1].x());
             _vertices[2].setX(_vertices[1].x());
         }
+    }
+    if ( attrName == "initialx"){
+        bool ok;
+        double x = attrib.toFloat(&ok);
+        if (!ok)
+            x = flUNDEF;
+        _vertices[0][0] = x;
+    }
+    if ( attrName == "initialy"){
+        bool ok;
+        double y = attrib.toFloat(&ok);
+        if (!ok)
+            y = flUNDEF;
+        y = rootDrawer()->pixelAreaSize().ysize() - y;
+        _vertices[0][1] = y;
     }
     _vertices[8].setY((_vertices[0].y() + _vertices[2].y()) /2);
     _vertices[7].setY(_vertices[8].y());

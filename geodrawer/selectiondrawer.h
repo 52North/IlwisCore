@@ -36,7 +36,6 @@ private:
     std::vector<VertexColor> _colors;
     QMatrix4x4 _view,_projection, _model, _mvp;
     bool _preserveAspectRatio = true;
-
 };
 }
 }
