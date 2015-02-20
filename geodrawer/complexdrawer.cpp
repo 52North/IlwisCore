@@ -108,6 +108,9 @@ const UPDrawer &ComplexDrawer::drawer(quint32 order, DrawerInterface::DrawerType
 
 void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType, quint32 order,const QString &nme)
 {
+    if ( !drawer)
+        return;
+
     QString drawername = nme;
     if ( drawerType == dtPOST || drawerType == dtPRE){
         if ( order != iUNDEF){
