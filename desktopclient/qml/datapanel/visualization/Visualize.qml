@@ -25,8 +25,8 @@ Item {
         return iconP
     }
 
-    function addDataSource(sourceUrl, sourceType){
-        layers.addDataSource(sourceUrl, sourceType)
+    function addDataSource(sourceUrl, sourceName, sourceType){
+        layers.addDataSource(sourceUrl, sourceName, sourceType)
         //layertools.model = manager.layers
     }
 
