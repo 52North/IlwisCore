@@ -44,8 +44,8 @@ import LayersView 1.0
 
 Item {
 
-  function addDataSource(sourceUrl, sourceType){
-      renderer.addDataSource(sourceUrl, sourceType)
+  function addDataSource(sourceUrl, sourceName, sourceType){
+      renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
       renderer.update()
       //layertools.model = manager.layers
   }
@@ -61,7 +61,7 @@ Item {
       onDropped: {
           console.log (drag.source.ilwisobjectid);
           var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
-          addDataSource(resource.url, resource.typeName)
+          addDataSource(resource.url, resource.name, resource.typeName)
       }
       LayersView {
           id: renderer
@@ -74,9 +74,11 @@ Item {
               onPressed: {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
-                          var position = {currentx: mouseX, currenty:mouseY}
+                          var position = {initialx: mouseX, initialy:mouseY}
                           renderer.addDrawer("SelectionDrawer", position)
                           manager.hasSelectionDrawer = true
+                          renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer)")
+                          renderer.setAttribute()
                           renderer.update()
                       }
                   }
