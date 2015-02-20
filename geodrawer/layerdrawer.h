@@ -32,7 +32,7 @@ protected:
 
 
 private:
-    QString _activeAttribute = COVERAGEKEYCOLUMN;
+    QString _activeAttribute;
 
 
     bool initShaders();
