@@ -76,27 +76,27 @@ void LayersView::addCommand(const QString &command, const QVariantMap &params)
 void LayersView::addDataSource(const QString &url, const QString &typeName)
 {
     try {
-        if ( url == "" || typeName == "")
-            return;
+//        if ( url == "" || typeName == "")
+//            return;
 
 
-        IlwisTypes tp = Ilwis::IlwisObject::name2Type(typeName);
-        if ( tp == itUNKNOWN)
-            return;
+//        IlwisTypes tp = Ilwis::IlwisObject::name2Type(typeName);
+//        if ( tp == itUNKNOWN)
+//            return;
 
 
-        quint64 id = mastercatalog()->url2id(QUrl(url),tp);
-        if ( id == i64UNDEF){
-            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
-            return ;
-        }
-        Resource resource = mastercatalog()->id2Resource(id);
-        if (! resource.isValid()){
-            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
-            return ;
-        }
-        DrawerIdTag tag(resource);
-        _datasources.push_back(tag);
+//        quint64 id = mastercatalog()->url2id(QUrl(url),tp);
+//        if ( id == i64UNDEF){
+//            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
+//            return ;
+//        }
+//        Resource resource = mastercatalog()->id2Resource(id);
+//        if (! resource.isValid()){
+//            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
+//            return ;
+//        }
+//        DrawerIdTag tag(resource);
+//        _datasources.push_back(tag);
 
     } catch ( const ErrorObject& err){
 
@@ -113,27 +113,35 @@ void LayersView::setAttribute(const QString &drawercode, const QVariantMap &valu
 
 void LayersView::removeDrawer(const QString &namecode, bool ascode)
 {
-    _removedDrawers.push_back({namecode, ascode});
-    for(auto iter = _datasources.begin(); iter != _datasources.end(); ++iter){
-        if ( ascode){
-            if ( (*iter)._drawerCode == namecode){
-                _datasources.erase(iter);
-                break;
-            }
-        }else if ((*iter)._drawerName == namecode) {
-            _datasources.erase(iter);
-        }
-    }
+//    _removedDrawers.push_back({namecode, ascode});
+//    for(auto iter = _datasources.begin(); iter != _datasources.end(); ++iter){
+//        if ( ascode){
+//            if ( (*iter)._drawerCode == namecode){
+//                _datasources.erase(iter);
+//                break;
+//            }
+//        }else if ((*iter)._drawerName == namecode) {
+//            _datasources.erase(iter);
+//        }
+//    }
 }
 
 void LayersView::addDrawer(const QString& drawercode, const QVariantMap& properties)
 {
-    IOOptions opt;
-    for(QVariantMap::const_iterator iter = properties.begin(); iter != properties.end(); ++iter) {
-        opt << IOOptions::Option(iter.key(), iter.value());
+//    IOOptions opt;
+//    for(QVariantMap::const_iterator iter = properties.begin(); iter != properties.end(); ++iter) {
+//        opt << IOOptions::Option(iter.key(), iter.value());
 
+//    }
+//    _specialdrawers[drawercode] = opt;
+}
+
+void LayersView::addCommand(const QString &expression)
+{
+    OperationExpression expr(expression);
+    if ( expr.isValid()){
+        _commands.push_front(expr);
     }
-    _specialdrawers[drawercode] = opt;
 }
 
 QString LayersView::viewerId() const
