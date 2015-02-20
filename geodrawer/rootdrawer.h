@@ -21,7 +21,7 @@ class RootDrawer : public ComplexDrawer
 public:
     explicit RootDrawer(const IOOptions& options);
 
-    void newDrawer(DrawerInterface *newdrawer, bool overrule);
+    void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
     Envelope viewEnvelope() const;

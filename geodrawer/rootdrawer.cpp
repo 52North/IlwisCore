@@ -16,7 +16,7 @@ RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,
 
 }
 
-void RootDrawer::newDrawer(DrawerInterface *newdrawer, bool overrule)
+void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
 {
     overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
     SpatialDataDrawer *datadrawer = dynamic_cast<SpatialDataDrawer *>(newdrawer);
