@@ -166,20 +166,20 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
-                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this);
+                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
                             _attributes.push_back(attribute);
                         }
                     }
                 } else if ( hasType(objecttype,itFEATURE)){
                     IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this);
+                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this, _ilwisobject);
                         _attributes.push_back(attribute);
                     }
                 } else if ( hasType(objecttype,itTABLE)){
                     ITable tbl = _ilwisobject.as<Table>();
                     for(int i = 0; i < tbl->columnCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this);
+                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this, _ilwisobject);
                         _attributes.push_back(attribute);
                     }
                 }
@@ -281,7 +281,7 @@ QString IlwisObjectModel::valuetype() const
     return "";
 }
 
-QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc) {
+QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QString& columnName) {
     try {
         IlwisTypes objectype = _ilwisobject->ilwisType();
         QString rangeString;
@@ -301,7 +301,25 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc) {
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
                 if ( coldef.isValid()){
-                    rangeString = defaultRange ? coldef.datadef().domain()->range()->toString() : coldef.datadef().range()->toString();
+                    if ( defaultRange)
+                      rangeString =  coldef.datadef().domain()->range()->toString();
+                    else{
+                        if ( calc){
+                            features->loadData();
+                            std::vector<QVariant> data = features->attributeTable()->column(columnName);
+                            if ( data.size() != 0){
+                                std::vector<double> values(data.size());
+                                int  i=0;
+                                for(auto v : data)
+                                    values[i++] = v.toDouble();
+                                NumericStatistics stats; // realy like to do this with a template specialization of the proper calculate function, but the syntax was unclear to me
+                                stats.calculate(values.begin(), values.end());
+                                NumericRange *rng = new NumericRange(stats.prop(NumericStatistics::pMIN),stats.prop(NumericStatistics::pMAX));
+                                features->attributeDefinitionsRef().columndefinitionRef(columnName).datadef().range(rng);
+                            }
+                        }
+                        rangeString = coldef.datadef().range()->toString();
+                    }
                 }
 
             } else if ( hasType( objectype , itDOMAIN)){

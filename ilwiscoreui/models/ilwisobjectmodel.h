@@ -48,7 +48,7 @@ public:
     QQmlListProperty<DomainItemModel> domainitems();
     QQmlListProperty<ProjectionParameterModel> projectionItems();
     QString valuetype() const;
-    Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc);
+    Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString &columnName);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
     Q_INVOKABLE bool canUse(const QString& id);
     Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
