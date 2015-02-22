@@ -78,7 +78,7 @@ Item {
                           renderer.addDrawer("SelectionDrawer", position)
                           manager.hasSelectionDrawer = true
                           renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer)")
-                          renderer.setAttribute()
+                          renderer.setAttribute("SelectionDrawer", position)
                           renderer.update()
                       }
                   }
