@@ -43,6 +43,7 @@ Item {
                     height: parent.height
                     border.color: "#333"
                     border.width: textid.readOnly ? 0: 1
+                    color : "transparent"
                 }
             }
         }
