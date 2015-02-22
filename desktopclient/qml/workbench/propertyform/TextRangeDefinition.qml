@@ -22,6 +22,6 @@ Text {
 
     }
     height: 20
-   text : fromRange(rangeDefinition(useDefaultRange, false))
+   text : fromRange(rangeDefinition(useDefaultRange, false,""))
     Layout.minimumWidth: 150
 }
