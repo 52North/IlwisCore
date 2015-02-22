@@ -152,7 +152,8 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
         double x = attrib.toFloat(&ok);
         if (!ok)
             x = flUNDEF;
-        _vertices[0][0] = x;
+        for(int i = 0; i < 13; ++i)
+            _vertices[i][0] = x;
     }
     if ( attrName == "initialy"){
         bool ok;
@@ -160,7 +161,8 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
         if (!ok)
             y = flUNDEF;
         y = rootDrawer()->pixelAreaSize().ysize() - y;
-        _vertices[0][1] = y;
+        for(int i = 0; i < 13; ++i)
+            _vertices[i][1] = y;
     }
     _vertices[8].setY((_vertices[0].y() + _vertices[2].y()) /2);
     _vertices[7].setY(_vertices[8].y());
