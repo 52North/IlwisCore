@@ -33,5 +33,6 @@ Item {
         width : parent.width
         domainUsed: domainName
         valueTypeUsed: getProperty("valuetype")
+        domainTypeUsed: "ValueDomain"
     }
 }
