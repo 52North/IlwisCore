@@ -42,7 +42,7 @@ Item {
                 cellWidth: 70
                 cellHeight: 15
                 width : parent.width
-                model : fromRange(rangeDefinition(useDefaultRange, false))
+                model : fromRange(rangeDefinition(useDefaultRange, false,""))
                 delegate : Component {
                     Text {
                         text : modelData
