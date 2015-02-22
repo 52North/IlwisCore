@@ -189,9 +189,14 @@ void FeatureCoverage::adaptFeatureCounts(int tp, qint32 featureCnt, quint32 leve
     } else{
         if ( level == FeatureInfo::ALLFEATURES){
             _featureInfo[tp]._featureCnt = 0;
-            _featureInfo[tp]._featureCntPerLevel.clear();
+            _featureInfo[tp]._featureCntPerLevel.resize(1);
+            _featureInfo[tp]._featureCntPerLevel[0] = 0;
         }else {
             if ( _featureInfo[tp]._featureCntPerLevel.size() <= level){
+                if ( _featureInfo[tp]._featureCntPerLevel.size() == 0){
+                    _featureInfo[tp]._featureCntPerLevel.resize(1);
+                    _featureInfo[tp]._featureCntPerLevel[0] = 0;
+                }
                 qint32& count = _featureInfo[tp]._featureCntPerLevel[level];
                 _featureInfo[tp]._featureCnt -= count;
                 count = 0;
