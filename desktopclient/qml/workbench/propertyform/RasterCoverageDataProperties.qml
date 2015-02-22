@@ -16,7 +16,9 @@ Rectangle {
 
     AttributeProperties{
         id : attributes
+        width : parent.width
         domainUsed: domainName
         valueTypeUsed: valuetype
+        domainTypeUsed: domainType
     }
 }
