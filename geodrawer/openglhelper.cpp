@@ -78,7 +78,7 @@ void OpenGLHelper::getLineVertices(const ICoordinateSystem& csyRoot,
             continue;
         auto *coords = subgeom->getCoordinates();
         quint32 oldend = points.size();
-        indices.push_back(VertexIndex(oldend, coords->size(), itLINE, objectid));
+        indices.push_back(VertexIndex(oldend, coords->size(), itLINE, GL_LINE_STRIP, objectid));
         points.resize(oldend + coords->size());
         bool conversionNeeded = csyRoot != csyGeom;
         Coordinate crd;
@@ -107,7 +107,7 @@ void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot,
         if (!subgeom)
             continue;
         const geos::geom::Coordinate *crd = subgeom->getCoordinate();
-        indices.push_back(VertexIndex(points.size(),1,itPOINT,objectid));
+        indices.push_back(VertexIndex(points.size(),1,itPOINT,GL_POINTS,objectid));
         bool conversionNeeded = csyRoot != csyGeom;
         Coordinate coord = *crd;
         if ( conversionNeeded){

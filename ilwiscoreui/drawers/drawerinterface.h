@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QColor>
+#include <GL/gl.h>
 #include "ilwiscoreui_global.h"
 #include <math.h>
 #include "kernel.h"
@@ -23,10 +24,17 @@ class IOOptions;
 namespace Geodrawer{
 
 struct ILWISCOREUISHARED_EXPORT VertexIndex {
-    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, Raw vid=iUNDEF) : _start(start), _count(count), _geomtype(geomType), _objectid(vid){}
+    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, quint32 oglType=GL_LINE_STRIP, Raw vid=iUNDEF) :
+        _start(start),
+        _count(count),
+        _geomtype(geomType),
+        _oglType(oglType),
+        _objectid(vid){}
+
     quint32 _start;
     quint32 _count;
     IlwisTypes _geomtype;
+    quint32 _oglType;
     Raw _objectid = iUNDEF;
 };
 

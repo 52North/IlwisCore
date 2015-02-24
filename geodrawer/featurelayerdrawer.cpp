@@ -185,13 +185,16 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     _shaders.setAttributeArray(_vboPosition, _vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
+//    for(int i =0; i < _indices.size(); ++i){
+//       if ( _indices[i]._geomtype == itLINE){
+//           glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
+//       } else if ( _indices[i]._geomtype == itPOLYGON ){
+//           glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
+//       }
+//   }
     for(int i =0; i < _indices.size(); ++i){
-       if ( _indices[i]._geomtype == itLINE){
-           glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
-       } else if ( _indices[i]._geomtype == itPOLYGON ){
-           glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
-       }
-   }
+        glDrawArrays(_indices[i]._oglType,_indices[i]._start,_indices[i]._count);
+     }
     _shaders.disableAttributeArray(_vboNormal);
     _shaders.disableAttributeArray(_vboPosition);
     _shaders.disableAttributeArray(_vboColor);
