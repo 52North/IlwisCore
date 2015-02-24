@@ -44,6 +44,7 @@ public:
 
     std::vector<QVariant> attributes(const QString& attrNames) const;
     QVariant attribute(const QString& attrName) const;
+    QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const;
     virtual void setAttribute(const QString&, const QVariant&);
     virtual bool drawerAttribute(const QString layername, const QString& attrName, const QVariant& attrib);
 

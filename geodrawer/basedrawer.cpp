@@ -7,7 +7,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &) : DrawerInterface(0),Identity(nme,i64UNDEF,nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
+BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &) : DrawerInterface(0),Identity(nme,i64UNDEF,nme.toLower()), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
     Identity::prepare();
 }
@@ -205,6 +205,11 @@ std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
 }
 
 QVariant BaseDrawer::attribute(const QString &attrName) const
+{
+    return QVariant();
+}
+
+QVariant BaseDrawer::attributeOfDrawer(const QString &, const QString &) const
 {
     return QVariant();
 }
