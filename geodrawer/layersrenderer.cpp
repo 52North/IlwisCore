@@ -63,6 +63,13 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
         _windowSize = gdrawer->window()->size();
         _rootDrawer->pixelAreaSize(_viewPortSize);
 
+        while(gdrawer->_attributerequests.size() > 0){
+            auto pair = gdrawer->_attributerequests.front();
+            gdrawer->_attributerequests.pop_front();
+            QVariant var = _rootDrawer->attributeOfDrawer(pair.first, pair.second);
+            gdrawer->_copiedAttributes[pair.first.toLower() + "|" + pair.second.toLower()] = var;
+        }
+
         for(const Ilwis::OperationExpression& expr : gdrawer->_commands){
             quint64 id = commandhandler()->findOperationId(expr);
             if ( id != i64UNDEF) {
@@ -78,11 +85,12 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
         }
         gdrawer->_commands = std::deque<OperationExpression>();
 
+
         while( gdrawer->_attributeQueue.size() > 0){
             auto pair = gdrawer->_attributeQueue.front();
             gdrawer->_attributeQueue.pop_front();
             for(QVariantMap::const_iterator iter = pair.second.begin(); iter != pair.second.end(); ++iter) {
-                _rootDrawer->drawerAttribute(pair.first,iter.key(), iter.value());
+                _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
             }
         }
         _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
