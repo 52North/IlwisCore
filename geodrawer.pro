@@ -52,7 +52,8 @@ SOURCES += \
     geodrawer/layersview.cpp \
     geodrawer/layersrenderer.cpp \
     geodrawer/operations/adddrawer.cpp \
-    geodrawer/operations/setviewextents.cpp
+    geodrawer/operations/setviewextents.cpp \
+    geodrawer/operations/removedrawer.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -82,7 +83,8 @@ HEADERS += \
     geodrawer/layersview.h \
     geodrawer/layersrenderer.h \
     geodrawer/operations/adddrawer.h \
-    geodrawer/operations/setviewextents.h
+    geodrawer/operations/setviewextents.h \
+    geodrawer/operations/removedrawer.h
 
 
 OTHER_FILES = geodrawer/qmldir
