@@ -53,10 +53,9 @@ Item {
         }
 
         Action {
-            id :close
+            id :run
             onTriggered: {
-                drawing.clearModeller();
-                dataPanel.removeModellerPanel(parent.title);
+                console.log("Currently not supported!")
             }
         }
         RowLayout{
@@ -123,10 +122,10 @@ Item {
             }
 
             ToolButton{
-                id : closeButton
+                id : runButton
                 height:  toolbar.height
-                text: qsTr("Close")
-                action : close
+                text: qsTr("Run")
+                action : run
             }
 
         }
