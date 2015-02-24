@@ -13,7 +13,8 @@ public:
 
     DrawerOperation(quint64 metaid, const Ilwis::OperationExpression &expr);
 protected:
-    DrawerInterface *_rootDrawer;
+    DrawerInterface *_rootDrawer = 0;
+    quint64 _viewid = i64UNDEF;
 };
 }
 }
