@@ -75,7 +75,6 @@ Item {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
                           var position = {initialx: mouseX, initialy:mouseY}
-                          renderer.addDrawer("SelectionDrawer", position)
                           manager.hasSelectionDrawer = true
                           renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer)")
                           renderer.setAttribute("SelectionDrawer", position)
@@ -87,12 +86,17 @@ Item {
                   if ( manager.hasSelectionDrawer){
                       var position = {currentx: mouseX, currenty:mouseY}
                       renderer.setAttribute("SelectionDrawer", position)
+                      renderer.copyAttribute("SelectionDrawer","envelope");
                       renderer.update()
                   }
               }
               onReleased: {
                   if ( manager.zoomInMode && manager.hasSelectionDrawer){
-                      renderer.removeDrawer("SelectionDrawer",true)
+                      var envelope = renderer.attributeOfDrawer("SelectionDrawer","envelope");
+                      renderer.addCommand("removedrawer(" + renderer.viewerId + ",selectiondrawer,post)");
+                      if ( envelope !== ""){
+                          renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
+                      }
                       manager.hasSelectionDrawer = false
                       renderer.update()
                   }
