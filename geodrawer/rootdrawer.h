@@ -65,14 +65,6 @@ private:
     void setMVP();
 
 
-//    QVector<QVector3D> vertices;
-//    QVector<QVector3D> normals;
-//    QOpenGLShaderProgram program1;
-//    int vertexAttr1;
-//    int normalAttr1;
-//    int matrixUniform1;
-//    void createGeometry2();
-//    void initialize();
 };
 
 typedef std::unique_ptr<RootDrawer> UPRootDrawer;
