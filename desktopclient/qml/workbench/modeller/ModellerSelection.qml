@@ -35,6 +35,12 @@ Rectangle {
         appFrame.opacity = 1
     }
 
+    function newFormUrl(url, title){
+        appFrame.formComponent = url
+        appFrame.formTitle = title
+        appFrame.opacity = 1
+    }
+
     Workbench.FunctionBarHeader{
         id : functionBarHeader
         headerImage: "../images/modellerCS1.png"
@@ -47,6 +53,8 @@ Rectangle {
             if (newButton.text == newText) {
                 newButton.text = createText
                 cancelButton.opacity = 1
+                applicationForm.state = "maximized";
+                newFormUrl("modeller/ModellerMetadataForm.qml", "New Modeller");
                 // create temporary Modeller obeject
                 // open formular
             } else if (newButton.text == createText) {
@@ -54,7 +62,8 @@ Rectangle {
                 cancelButton.opacity = 0
                 // create Modeller obeject from temporary object
                 // open modeller panel
-                 dataPanel.addModellerPanel("Modeller_" + modellerCount++);
+                dataPanel.addModellerPanel("Modeller_" + modellerCount++);
+                applicationForm.state = "minimized";
             }
         }
     }
@@ -64,6 +73,7 @@ Rectangle {
          onTriggered : {
              cancelButton.opacity = 0
              newButton.text = newText
+             applicationForm.state = "minimized";
              // delete temporary Modeller obeject
          }
     }
