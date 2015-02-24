@@ -24,11 +24,7 @@ Rectangle {
     property int activeTab : 1
 
     function addModellerPanel(name) {
-        mainsplit.addModeller(name)
-    }
-
-    function removeModellerPanel(name) {
-        mainsplit.removeTabFromView(name);
+        mainsplit.newModeller(name, -1)
     }
 
     function iconSource(name) {
@@ -190,24 +186,31 @@ Rectangle {
                 }
             }
 
-            function addModeller(name) {
-                var component = Qt.createComponent("modeller/ModellerPanel.qml")
-                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-                tab.active = true
+            function newModeller(name, splitside) {
+                var component = Qt.createComponent("modeller/ModellerPanel.qml");
+                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
+                tab.active = true;
+                 var tabCount = 0;
                 if ( activeSplit ===1){
-                    righttab.width = parent.width / 2.0
-                    activeSplit = 2
+                    if ( righttab.count == 1);
+                        lefttab.state = "halfsize";
+                    righttab.state = "halfsize";
+                    activeSplit = 2;
+                    tabCount = righttab.count - 1; // tab has already been added so -1
+                    righttab.currentIndex = tabCount;
                 }
                 else{
-                    lefttab.width = parent.width / 2.0
-                    activeSplit = 1
+                    if ( splitside === -1) { // start situation
+                        righttab.state = "zerosize";
+                    }else if ( lefttab.count == 1){
+                        righttab.state = "halfsize"
+                    }
+                    lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
+                    activeSplit = 1;
+                    tabCount = lefttab.count - 1;
+                    lefttab.currentIndex = tabCount;
                 }
            }
-
-            function removeTabFromView(name) {
-                righttab.removeTabFor(name);
-                lefttab.removeTabFor(name);
-            }
 
 
             DataTabView {
