@@ -59,6 +59,7 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
     if ( iter == ctx->_additionalInfo.end())
         return sPREPAREFAILED;
 
+    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     auto checkCoords =[](const OperationExpression& expr, int index)->double{
         bool ok;
         double value = expr.parm(index).value().toDouble(&ok);
@@ -68,13 +69,26 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
         }
         return value;
     };
-    double xmin = checkCoords(_expression,1);
-    double ymin = checkCoords(_expression,2);
-    double xmax = checkCoords(_expression,3);
-    double ymax = checkCoords(_expression,4);
+    double xmin, ymin, xmax, ymax;
+    if ( _expression.parameterCount() == 5){
+        xmin = checkCoords(_expression,1);
+        ymin = checkCoords(_expression,2);
+        xmax = checkCoords(_expression,3);
+        ymax = checkCoords(_expression,4);
+    }else {
+        QStringList parts = _expression.input<QString>(1).split(" ");
+        if ( parts.size() != 4){
+            ERROR3(ERR_ILLEGAL_PARM_3,"coordinate list", _expression.parm(1).value(), _expression.toString());
+            return sPREPAREFAILED;
+        }
+        xmin = parts[0].toDouble();
+        ymin = parts[1].toDouble();
+        xmax = parts[2].toDouble();
+        ymax = parts[3].toDouble();
+    }
 
     _newExtents = Envelope(Coordinate(xmin, ymin), Coordinate(xmax, ymax));
-    if ( _newExtents.isValid())
+    if ( !_newExtents.isValid())
         return sPREPAREFAILED;
 
     return sPREPARED;
@@ -85,9 +99,9 @@ quint64 SetViewExtent::createMetadata()
     OperationResource operation({"ilwis://operations/setviewextent"});
     operation.setSyntax("setviewextent(viewid, xmin, ymin, xmax, ymax)");
     operation.setDescription(TR("changes the view extent"));
-    operation.setInParameterCount({5});
+    operation.setInParameterCount({2,5});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
-    operation.addInParameter(1,itDOUBLE , TR("minimum x coordinate"));
+    operation.addInParameter(1,itDOUBLE|itSTRING , TR("minimum x coordinate or (int the two parameter version) and ogc compatible coordinate string"));
     operation.addInParameter(2,itDOUBLE , TR("minimum y coordinate"));
     operation.addInParameter(3,itDOUBLE , TR("maximum x coordinate"));
     operation.addInParameter(4,itDOUBLE , TR("maximum y coordinate"));
