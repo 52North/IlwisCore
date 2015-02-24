@@ -71,6 +71,7 @@ public:
 
     virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;
     virtual QVariant attribute(const QString& attrName) const = 0;
+    virtual QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const = 0;
     virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
     virtual bool drawerAttribute(const QString drawercode, const QString& attrName, const QVariant& attrib)  = 0;
 
