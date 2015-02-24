@@ -182,6 +182,17 @@ bool SelectionDrawer::drawerAttribute(const QString drawercode, const QString &a
     return true;
 }
 
+QVariant SelectionDrawer::attribute(const QString &attrName) const
+{
+    if ( attrName == "boundingbox"){
+        return qVariantFromValue(BoundingBox(Pixel(_vertices[0].x(),_vertices[0].y()),Pixel(_vertices[2].x(),_vertices[2].y())));
+    }
+    if ( attrName == "envelope"){
+        return qVariantFromValue(envelope());
+    }
+    return QVariant();
+}
+
 DrawerInterface *SelectionDrawer::create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)
 {
        return new SelectionDrawer(parentDrawer, rootdrawer, options)    ;
