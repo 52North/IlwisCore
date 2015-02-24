@@ -303,3 +303,28 @@ QVariant ComplexDrawer::attribute(const QString &attrNme) const
 
     return QVariant();
 }
+
+QVariant ComplexDrawer::attributeOfDrawer(const QString &drawercode, const QString &attrName) const
+{
+    if ( code() == drawercode)
+        return attribute(attrName);
+
+    QVariant var;
+    for( auto& drawer : _preDrawers){
+        var = drawer.second->attributeOfDrawer(drawercode, attrName);
+        if ( var.isValid())
+            return var;
+
+    }
+    for( auto& drawer : _mainDrawers){
+        var = drawer->attributeOfDrawer(drawercode, attrName);
+        if ( var.isValid())
+            return var;
+    }
+    for( auto& drawer : _postDrawers)    {
+        var = drawer.second->attributeOfDrawer(drawercode, attrName);
+        if ( var.isValid())
+            return var;
+    }
+    return var;
+}
