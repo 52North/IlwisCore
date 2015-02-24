@@ -10,6 +10,14 @@ SimpleDrawer::SimpleDrawer(const QString& nme, DrawerInterface *parentDrawer, Ro
 {
 }
 
+QVariant SimpleDrawer::attributeOfDrawer(const QString &drawercode, const QString &attrName) const
+{
+    if ( code() == drawercode){
+        return attribute(attrName);
+    }
+    return QVariant();
+}
+
 bool SimpleDrawer::isSimple() const
 {
     return true;
