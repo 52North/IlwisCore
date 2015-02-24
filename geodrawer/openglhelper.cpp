@@ -36,8 +36,6 @@ quint32 OpenGLHelper::getVertices(const ICoordinateSystem& csyRoot,
        switch( tp)     {
         case itPOLYGON:
             getPolygonVertices(csyRoot, csyGeom, geometry, objectid, points, normals, indices);
-            //boundaryIndex = indices.size();
-            //getLineVertices(csyRoot, csyGeom,geometry, objectid, points, indices); break;
         case itLINE:
             getLineVertices(csyRoot, csyGeom,geometry, objectid, points, normals, indices); break;
         case itPOINT:
@@ -103,4 +101,18 @@ void OpenGLHelper::getPointVertices(const ICoordinateSystem& csyRoot,
                                     QVector<QVector3D> &normals,
                                     std::vector<VertexIndex> &indices){
 
+    int n = geometry->getNumGeometries();
+    for(int  geom = 0; geom < n; ++geom ){
+        const geos::geom::Geometry *subgeom = geometry->getGeometryN(geom);
+        if (!subgeom)
+            continue;
+        const geos::geom::Coordinate *crd = subgeom->getCoordinate();
+        indices.push_back(VertexIndex(points.size(),1,itPOINT,objectid));
+        bool conversionNeeded = csyRoot != csyGeom;
+        Coordinate coord = *crd;
+        if ( conversionNeeded){
+            coord = csyRoot->coord2coord(csyGeom, *crd);
+        }
+        points.push_back(QVector3D(coord.x, coord.y, coord.z));
+    }
 }
