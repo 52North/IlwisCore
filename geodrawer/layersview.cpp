@@ -73,67 +73,37 @@ void LayersView::addCommand(const QString &command, const QVariantMap &params)
 
 }
 
-void LayersView::addDataSource(const QString &url, const QString &typeName)
-{
-    try {
-//        if ( url == "" || typeName == "")
-//            return;
-
-
-//        IlwisTypes tp = Ilwis::IlwisObject::name2Type(typeName);
-//        if ( tp == itUNKNOWN)
-//            return;
-
-
-//        quint64 id = mastercatalog()->url2id(QUrl(url),tp);
-//        if ( id == i64UNDEF){
-//            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
-//            return ;
-//        }
-//        Resource resource = mastercatalog()->id2Resource(id);
-//        if (! resource.isValid()){
-//            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, TR("Visualization"), url);
-//            return ;
-//        }
-//        DrawerIdTag tag(resource);
-//        _datasources.push_back(tag);
-
-    } catch ( const ErrorObject& err){
-
-    } catch ( const std::exception& ex){
-        kernel()->issues()->log(ex.what());
-    }
-}
-
 void LayersView::setAttribute(const QString &drawercode, const QVariantMap &values)
 {
     _attributeQueue.push_back(std::pair<QString, QVariantMap>(drawercode, values));
 
 }
 
-void LayersView::removeDrawer(const QString &namecode, bool ascode)
+void LayersView::copyAttribute(const QString &drawercode, const QString &attrName)
 {
-//    _removedDrawers.push_back({namecode, ascode});
-//    for(auto iter = _datasources.begin(); iter != _datasources.end(); ++iter){
-//        if ( ascode){
-//            if ( (*iter)._drawerCode == namecode){
-//                _datasources.erase(iter);
-//                break;
-//            }
-//        }else if ((*iter)._drawerName == namecode) {
-//            _datasources.erase(iter);
-//        }
-//    }
+    _attributerequests.push_back(std::pair<QString, QString>(drawercode, attrName));
 }
 
-void LayersView::addDrawer(const QString& drawercode, const QVariantMap& properties)
+QString LayersView::attributeOfDrawer(const QString &drawercode, const QString &attrName)
 {
-//    IOOptions opt;
-//    for(QVariantMap::const_iterator iter = properties.begin(); iter != properties.end(); ++iter) {
-//        opt << IOOptions::Option(iter.key(), iter.value());
+    QVariant var = _copiedAttributes.take(drawercode.toLower() + "|" + attrName.toLower());
+    if ( !var.isValid())
+        return "";
+    QString result = var.toString();
+    if ( result != "")
+        return result;
+    QString tpName = var.typeName();
+    if ( tpName == "Ilwis::Envelope"){
+        Envelope env = var.value<Envelope>();
+        QString result = env.toString();
+        return result;
+    }
+    if ( tpName == "Ilwis::BoubdingBox"){
+        auto bb = var.value<BoundingBox>();
+        return bb.toString();
+    }
 
-//    }
-//    _specialdrawers[drawercode] = opt;
+    return "";
 }
 
 void LayersView::addCommand(const QString &expression)

@@ -65,10 +65,9 @@ friend class LayersRenderer;
     Renderer *createRenderer() const;
     void addCommand(const QString& command, const QVariantMap& params);
 
-    Q_INVOKABLE void addDataSource(const QString &url, const QString &typeName);
     Q_INVOKABLE void setAttribute(const QString &drawercode, const QVariantMap& value);
-    Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
-    Q_INVOKABLE void addDrawer(const QString &drawercode, const QVariantMap &properties);
+    Q_INVOKABLE void copyAttribute(const QString& drawercode, const QString& attrName);
+    Q_INVOKABLE QString attributeOfDrawer(const QString& drawercode, const QString& attrName);
     Q_INVOKABLE void addCommand(const QString& expression);
 
 
@@ -76,6 +75,8 @@ private:
     QString viewerId() const;
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
+    std::deque<std::pair<QString, QString>> _attributerequests;
+    QVariantMap _copiedAttributes;
     quint64 _viewerId;
 
 
