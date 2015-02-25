@@ -75,8 +75,9 @@ SOURCES += \
     ilwiscoreui/propertyeditors/linestylesetter.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
-    ilwiscoreui/drawers/draweroperation.cpp
+    ilwiscoreui/drawers/draweroperation.cpp \
     ilwiscoreui/models/workflowmodel.cpp
+
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
