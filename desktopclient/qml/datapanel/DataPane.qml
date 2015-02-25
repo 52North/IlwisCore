@@ -129,12 +129,16 @@ Rectangle {
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
                 if ( activeSplit ===1){
-                    righttab.width = parent.width / 2.0
+                    righttab.state = "halfsize"
                     tabCount = righttab.count - 1 // tab has already been added so -1
+                    righttab.currentIndex = tabCount
+                    righttab.indexTab = tabCount
                 }
                 else {
-                    lefttab.width = parent.width / 2.0
+                    lefttab.state = "halfsize"
                     tabCount = lefttab.count - 1 // tab has already been added so -1
+                    lefttab.currentIndex = tabCount
+                    lefttab.indexTab = tabCount
                 }
 
                 tab.item.addDataSource(resource.url, resource.name, resource.typeName)
@@ -180,6 +184,7 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
+                    righttab.indexTab = tabCount
                 }
                 else{
                     if ( splitside === -1) // start situation
@@ -192,6 +197,7 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = lefttab.count - 1
                     lefttab.currentIndex = tabCount
+                    lefttab.indexTab = tabCount
                 }
                 mastercatalog.setActiveTab(activeSplit, tabCount)
                 mastercatalog.currentCatalog = catalogModel
