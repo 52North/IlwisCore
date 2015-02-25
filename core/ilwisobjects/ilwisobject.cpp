@@ -104,7 +104,7 @@ bool IlwisObject::canUse(const IlwisObject *, bool ) const
     return false;
 }
 
-bool IlwisObject::isCompatible(const IlwisObject*) const
+bool IlwisObject::isCompatibleWith(const IlwisObject*, bool strict) const
 {
     return false;
 }

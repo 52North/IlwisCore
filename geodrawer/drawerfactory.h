@@ -24,7 +24,7 @@ public:
 
     template<class T=DrawerInterface> static T *create(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)
     {
-       auto iter = _creators.find(name);
+       auto iter = _creators.find(name.toLower());
        if ( iter == _creators.end()){
            return 0;
        }

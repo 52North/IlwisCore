@@ -7,7 +7,7 @@
 #include "drawers/drawerinterface.h"
 #include "ilwiscoreui_global.h"
 
-class VisualizationManager;
+class LayerManager;
 class PropertyEditor;
 
 class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public ResourceModel

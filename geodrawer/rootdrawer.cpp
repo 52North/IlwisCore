@@ -16,7 +16,7 @@ RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,
 
 }
 
-void RootDrawer::newDrawer(DrawerInterface *newdrawer, bool overrule)
+void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
 {
     overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
     SpatialDataDrawer *datadrawer = dynamic_cast<SpatialDataDrawer *>(newdrawer);
@@ -46,6 +46,11 @@ void RootDrawer::addEnvelope(const ICoordinateSystem &csSource, const Envelope &
 Envelope RootDrawer::viewEnvelope() const
 {
     return _viewRect;
+}
+
+Envelope RootDrawer::zoomEnvelope() const
+{
+    return _zoomRect;
 }
 
 void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
@@ -123,7 +128,8 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 void RootDrawer::setMVP()
 {
     _projection.setToIdentity();
-    _projection.ortho(_zoomRect.min_corner().x, _zoomRect.max_corner().x,_zoomRect.min_corner().y,_zoomRect.max_corner().y, -1, 1);
+    QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength(),_zoomRect.ylength());
+    _projection.ortho(rct);
     _mvp = _model * _view * _projection;
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
@@ -232,14 +238,14 @@ void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
     }
 }
 
-void RootDrawer::cleanUp(QOpenGLContext *openglContext)
+void RootDrawer::cleanUp()
 {
-    ComplexDrawer::cleanUp(openglContext);
+    ComplexDrawer::cleanUp();
 }
 
-bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options, QOpenGLContext *openglContext)
+bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    return ComplexDrawer::prepare(prepType, options, openglContext)    ;
+    return ComplexDrawer::prepare(prepType, options)    ;
 }
 
 double RootDrawer::aspectRatioView() const
@@ -263,3 +269,4 @@ DrawerInterface::DrawerType RootDrawer::drawerType() const
 {
     return DrawerInterface::dtDONTCARE; // rootdrawer is never child of anything so it never is a pre,post, or main drawer. it is the root
 }
+

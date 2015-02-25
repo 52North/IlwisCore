@@ -43,6 +43,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/drawers/drawerinterface.h \
     ilwiscoreui/propertyeditors/linestylesetter.h \
     ilwiscoreui/models/projectionparametermodel.h \
+    ilwiscoreui/drawers/layersviewcommandinterface.h \
+    ilwiscoreui/drawers/draweroperation.h \
     ilwiscoreui/models/workflowmodel.h
 
 unix {
@@ -71,9 +73,10 @@ SOURCES += \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
     ilwiscoreui/propertyeditors/linestylesetter.cpp \
-    ilwiscoreui/models/projectionparametermodel.cpp \
+    ilwiscoreui/models/projectionparametermodel.cpp
+    ilwiscoreui/drawers/layersviewcommandinterface.cpp \
+    ilwiscoreui/drawers/draweroperation.cpp
     ilwiscoreui/models/workflowmodel.cpp
-
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{

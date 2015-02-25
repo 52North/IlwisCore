@@ -43,13 +43,16 @@ Domain::Containement CoordinateDomain::contains(const QVariant &value) const
     return Domain::cNONE;
 }
 
-bool CoordinateDomain::isCompatibleWith(const IDomain& dom) const {
-    if ( !dom->isValid())
+bool CoordinateDomain::isCompatibleWith(const IlwisObject *dom, bool strict) const {
+    if ( !dom || !dom->isValid())
         return false;
     if(dom->ilwisType() != itCOORDDOMAIN)
         return false;
-    ICoordinateDomain crddom = dom.as<CoordinateDomain>();
-    return  coordinateSystem() == crddom->coordinateSystem();
+    ICoordinateDomain crddom;
+    crddom.prepare(dom->id());
+    if ( crddom.isValid())
+        return  coordinateSystem() == crddom->coordinateSystem();
+    return false;
 }
 
 

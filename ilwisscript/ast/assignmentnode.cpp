@@ -131,7 +131,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     if (!selector.isNull()){
                         QString varName = selector->variable();
                         ITable source =  sym._var.value<ITable>();
-                        QString oldColName = ctx->_additionalInfo[source->name()];
+                        QString oldColName = ctx->_additionalInfo[source->name()].toString();
                         QVariant newT= symbols.getValue(result);
                         ITable newTable = newT.value<ITable>();
                         ColumnDefinition coldef = newTable->columndefinition(oldColName);

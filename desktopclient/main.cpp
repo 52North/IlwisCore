@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<MessageModel>("MessageModel",1,0,"MessageModel");
         qmlRegisterType<TranquilizerHandler>("TranquilizerHandler",1,0, "TranquilizerHandler");
         qmlRegisterType<TranquilizerModel>("TranquilizerModel",1,0, "TranquilizerModel");
-        qmlRegisterType<VisualizationManager>("VisualizationManager",1,0,"VisualizationManager");
+        qmlRegisterType<LayerManager>("LayerManager",1,0,"LayerManager");
         qmlRegisterType<CoverageLayerModel>("CoverageLayerModel",1,0,"CoverageLayerModel");
         qmlRegisterType<IlwisObjectModel>("IlwisObjectModel",1,0,"IlwisObjectModel");
         qmlRegisterType<AttributeModel>("AttributeModel",1,0,"AttributeModel");

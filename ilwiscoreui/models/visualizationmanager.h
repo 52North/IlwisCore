@@ -10,7 +10,7 @@
 class CoverageLayerModel;
 class UIContextModel;
 
-class ILWISCOREUISHARED_EXPORT VisualizationManager : public QObject
+class ILWISCOREUISHARED_EXPORT LayerManager : public QObject
 {
     Q_OBJECT
 
@@ -19,8 +19,8 @@ class ILWISCOREUISHARED_EXPORT VisualizationManager : public QObject
     Q_PROPERTY(bool hasSelectionDrawer READ hasSelectionDrawer WRITE setHasSelectionDrawer NOTIFY hasSelectionDrawerChanged)
 
 public:
-    explicit VisualizationManager(QObject *parent = 0);
-    VisualizationManager(QObject *parent, UIContextModel *context);
+    explicit LayerManager(QObject *parent = 0);
+    LayerManager(QObject *parent, UIContextModel *context);
 
     void addVisualizationModel(CoverageLayerModel* model);
     void addDataSource(const QString& url, const QString& typeName, Ilwis::Geodrawer::DrawerInterface *drawer);

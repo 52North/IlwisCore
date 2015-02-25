@@ -137,7 +137,7 @@ Rectangle {
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                 }
 
-                tab.item.addSource(resource.url, resource.typeName)
+                tab.item.addDataSource(resource.url, resource.name, resource.typeName)
                 mastercatalog.setActiveTab(activeSplit, tabCount)
             }
         }
@@ -218,7 +218,7 @@ Rectangle {
         }
 
 
-        DataTabView {
+        DataTabView2 {
             id : lefttab
             side : 1
             Layout.fillWidth: true
@@ -229,7 +229,7 @@ Rectangle {
         }
 
 
-        DataTabView{
+        DataTabView2{
             id : righttab
             side : 2
         }

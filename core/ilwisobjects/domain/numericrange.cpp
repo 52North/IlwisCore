@@ -144,15 +144,22 @@ bool NumericRange::operator<=(const NumericRange &vr)
 QString NumericRange::toString() const {
     if(!isValid())
         return "? ? ?";
-    long n1 = significantDigits(_min);
-    long n2 = significantDigits(_max);
-    long n = std::max(n1, n2);
+    int n1 = significantDigits(_min);
+    int n2 = significantDigits(_max);
+    int n = std::max(n1, n2);
     bool isfloat = _resolution == 0 || _resolution - (quint64)_resolution != 0;
     if (isfloat){
-        QString rng = _min < -1e100 ? "-infinite" : QString::number(_min,'f',n);
+
+        int ln1 = std::log10(std::abs(_min));
+        int ln2 = std::log10(std::abs(_max));
+        int ln = std::max(ln1, ln2);
+        ln = ln >= 0 ? ln : 1;
+        n = std::max(0,std::min(6 - ln, n));
+
+        QString rng = (_min < -1e100 || std::abs(_min) == 4294967295) ? "-infinite" : QString::number(_min,'f',n);
 
         rng += '|';
-        rng += _max > -1e100 ? "+infinite": QString::number(_max,'f',n);
+        rng += (_max > 1e100 || std::abs(_max) == 4294967295) ? "+infinite": QString::number(_max,'f',n);
         if ( _resolution != 0){
             rng += '|';
             rng += QString::number(_resolution) ;
@@ -243,17 +250,25 @@ bool NumericRange::contains(NumericRange *rng, bool inclusive) const
 long NumericRange::significantDigits(double m1) const{
     if ( fabs(m1) > 1e30)
         return 100;
+   QString s = QString::number(m1,'f',6);
+    int index = s.indexOf('.');
+    if ( index == -1)
+        return 0;
 
-    QString s = QString::number(m1);
+    int mod = index != -1 ? index : 0;
+    bool tail9 = true;
     for(int i=s.size() - 1; i != 0; --i ) {
         QChar c = s[i];
         if ( c != '0') {
-            if ( s.indexOf(".") > 0) // '.' is not counted for significant numbers
-                return i;
-            return i -1;
+            return i +1 - mod;
         }
+        if ( c == '9' && tail9){
+            ++mod;
+        }else
+            tail9 = false;
+
     }
-    return s.size();
+    return s.size() - mod;
 }
 
 IlwisTypes NumericRange::determineType(bool redo) {

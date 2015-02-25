@@ -28,7 +28,7 @@ Component {
             if ( editable){
                 for(var i = 0; i < propertyTabs.count; i = i + 1){
                     var tab = propertyTabs.getTab(i)
-                    if ( tab.item){
+                    if ( tab && tab.item && tab.item.item){
                         tab.item.item.storeData()
                     }
                 }
@@ -36,7 +36,7 @@ Component {
         }
 
         y : 4
-        height :350
+        height :340
         width : parent.width
 
         Component {
@@ -100,7 +100,7 @@ Component {
             anchors.top : header.bottom
             anchors.topMargin: 3
             width : propertyForm.width
-            height : propertyForm.height - header.height
+            height : propertyForm.height - header.height - 35
             style: Base.TabStyle1{}
             onCurrentIndexChanged: {
                 props.lastIndex = currentIndex

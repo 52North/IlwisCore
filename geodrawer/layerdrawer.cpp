@@ -15,7 +15,9 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-LayerDrawer::LayerDrawer(const QString& name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : SpatialDataDrawer(name, parentDrawer, rootdrawer, options)
+LayerDrawer::LayerDrawer(const QString& name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) :
+    SpatialDataDrawer(name, parentDrawer, rootdrawer, options),
+    _activeAttribute(COVERAGEKEYCOLUMN)
 {
     valid(true); //TODO: this must move to the prepare once the correct call sequences is in place
 }

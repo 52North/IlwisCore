@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 TEMPLATE = lib
-TARGET = geodrawer
+TARGET = layersview
 QT += qml quick sql opengl
 CONFIG += qt plugin
 
@@ -28,7 +28,6 @@ TARGET = $$qtLibraryTarget($$TARGET)
 # Input
 SOURCES += \
     geodrawer/geodrawer_plugin.cpp \
-    geodrawer/geodrawer.cpp \
     geodrawer/rootdrawer.cpp \
     geodrawer/simpledrawer.cpp \
     geodrawer/complexdrawer.cpp \
@@ -49,11 +48,15 @@ SOURCES += \
     geodrawer/tesselation/tess.c \
     geodrawer/tesselation/ilwistesselator.cpp \
     geodrawer/attributevisualproperties.cpp \
-    geodrawer/selectiondrawer.cpp
+    geodrawer/selectiondrawer.cpp \
+    geodrawer/layersview.cpp \
+    geodrawer/layersrenderer.cpp \
+    geodrawer/operations/adddrawer.cpp \
+    geodrawer/operations/setviewextents.cpp \
+    geodrawer/operations/removedrawer.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
-    geodrawer/geodrawer.h \
     geodrawer/rootdrawer.h \
     geodrawer/simpledrawer.h \
     geodrawer/complexdrawer.h \
@@ -76,7 +79,13 @@ HEADERS += \
     geodrawer/tesselation/tesselator.h \
     geodrawer/tesselation/ilwistesselator.h \
     geodrawer/attributevisualproperties.h \
-    geodrawer/selectiondrawer.h
+    geodrawer/selectiondrawer.h \
+    geodrawer/layersview.h \
+    geodrawer/layersrenderer.h \
+    geodrawer/operations/adddrawer.h \
+    geodrawer/operations/setviewextents.h \
+    geodrawer/operations/removedrawer.h
+
 
 OTHER_FILES = geodrawer/qmldir
 
@@ -114,8 +123,8 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE \
                 $$BOOST
 
-DESTDIR = $$PWD/../libraries/win32debug/extensions/ui/GeoDrawer
-DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/GeoDrawer
+DESTDIR = $$PWD/../libraries/win32debug/extensions/ui/LayersView
+DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/LayersView
 
 !equals(_PRO_FILE_PWD_, $$DLLDESTDIR) {
     copy_qmldir.target = $$DLLDESTDIR/qmldir

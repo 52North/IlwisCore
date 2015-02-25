@@ -1,57 +1,44 @@
 #ifndef GEODRAWER_H
 #define GEODRAWER_H
 
+#include <QtQuick/QQuickFramebufferObject>
 #include "kernel.h"
-#include "resourcemodel.h"
-//#include "models/visualizationmanager.h"
-#include <QtQuick/QQuickItem>
-#include <QtGui/QOpenGLShaderProgram>
+#include <deque>
+#include "visualizationmanager.h"
 
+struct DrawerIdTag {
+    DrawerIdTag(const Resource& resource) : _resource(resource){}
+    DrawerIdTag(const QString& name, bool ascode) : _drawerName(name),_asCode(ascode){}
+    Resource _resource;
+    quint64 _drawerid = iUNDEF;
+    QString _drawerName;
+    QString _drawerCode;
+    bool _asCode;
+};
 
-namespace Ilwis {
-class Resource;
+class GeoRenderer;
 
-
-namespace Geodrawer{
-
-class DrawerInterface;
-
-class RootDrawer;
-}
-}
-class VisualizationManager;
-
-class GeoDrawer : public QQuickItem
+class GeoDrawer : public QQuickFramebufferObject
 {
+
     Q_OBJECT
-    Q_DISABLE_COPY(GeoDrawer)
-
 public:
-    GeoDrawer(QQuickItem *parent = 0);
+    friend class GeoRenderer;
 
-    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName, VisualizationManager* manager);
-    Q_INVOKABLE void addDrawer(const QString& drawercode, const QVariantMap& properties);
+    Q_INVOKABLE void addDataSource(const QString& url, const QString& typeName);
+    //Q_INVOKABLE void addDrawer(const QString& drawercode, const QVariantMap& properties);
     Q_INVOKABLE void setAttribute(const QString &drawercode, const QVariantMap& value);
     Q_INVOKABLE void removeDrawer(const QString& namecode, bool ascode);
-    ~GeoDrawer();
 
-public slots:
-    void paint();
-    void cleanup();
-    void sync();
 
-signals:
-    void layerChanged();
 
-private slots:
-    void handleWindowChanged(QQuickWindow *win);
+
+    Renderer *createRenderer() const;
 
 private:
-    Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
-    QList<ResourceModel *> _datasources;
-
-
-    void test1();
+    std::vector<DrawerIdTag> _datasources;
+    std::deque<DrawerIdTag> _removedDrawers;
+    std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
 };
 
 #endif // GEODRAWER_H

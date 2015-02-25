@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE void refreshWorkingCatalog();
     Q_INVOKABLE int activeTab() const;
     Q_INVOKABLE void setActiveTab(int value);
+    Q_INVOKABLE QString getName(const QString& id);
     std::vector<Ilwis::Resource> select(const QString& filter);
 
 public slots:

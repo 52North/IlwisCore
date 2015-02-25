@@ -50,6 +50,7 @@ Item {
                             width : parent.width
                             domainUsed: attributeDomain
                             valueTypeUsed: attributeValueType
+                            columnName : attributename
                         }
                     }
                 }

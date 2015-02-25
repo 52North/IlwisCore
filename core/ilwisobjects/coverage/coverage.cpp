@@ -85,7 +85,7 @@ bool Coverage::canUse(const IlwisObject *obj, bool strict) const
 
     if ( hasType(obj->ilwisType(), itCOORDSYSTEM )){
         if ( strict ){
-            if ( coordinateSystem()->isCompatible(obj))
+            if ( coordinateSystem()->isCompatibleWith(obj))
                 return true;
         }else
             return true;

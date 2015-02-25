@@ -8,12 +8,13 @@
 #include "iooptions.h"
 #include "ilwiscoreui_global.h"
 #include "visualizationmanager.h"
+#include "drawers/layersviewcommandinterface.h"
 
 using namespace Ilwis;
 
 class PropertyEditorObjectVisualizationModel;
 class PropertyEditor;
-class VisualizationManager;
+class LayerManager;
 
 typedef std::function<PropertyEditor *()> CreatePropertyEditor;
 
@@ -27,7 +28,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 public:
     explicit UIContextModel(QObject *parent = 0);
 
-    Q_INVOKABLE VisualizationManager* createVisualizationManager(const QString& objectname);
+    Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
     Q_INVOKABLE QString uniqueName();
 
     int addPropertyEditor(quint64 objecttype, const QString& propertyName, CreatePropertyEditor func);
@@ -36,6 +37,9 @@ public:
     void qmlContext(QQmlContext *ctx);
     int activeSplit() const;
     void setActiveSplit(int index);
+    void addViewer(LayersViewCommandInterface *viewer, quint64 vid);
+    void removeViewer(quint64 viewerid);
+
 signals:
     void activeSplitChanged();
 
@@ -43,6 +47,7 @@ public slots:
 
 private:
     std::map<quint64,std::map<QString, CreatePropertyEditor>> _propertyEditors;
+    std::map<quint64, LayersViewCommandInterface *> _viewers;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
     int _activeSplit = 1;

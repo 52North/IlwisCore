@@ -109,5 +109,8 @@ SOURCES += \
     desktopclient/main.cpp \
     desktopclient/keyfilter.cpp
 
+DISTFILES += \
+    desktopclient/qml/datapanel/visualization/Layers.qml
+
 
 

@@ -1,3 +1,4 @@
+#include <QVector3D>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geometries.h"
@@ -47,7 +48,7 @@ IlwisTesselator::~IlwisTesselator()
     tessDeleteTess(_tessaltor);
 }
 
-void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
+void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, Raw objectid, QVector<QVector3D> &points, std::vector<VertexIndex> &indices)
 {
     tessReinitialize(_tessaltor);
     std::vector<std::vector<float> > contours = getContours(geometry, csyRoot, csyGeom);
@@ -93,7 +94,7 @@ std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::
     return contours;
 }
 
-void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, Raw objectid, std::vector<VertexPosition> &points, std::vector<VertexIndex> &indices)
+void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, Raw objectid, QVector<QVector3D> &points, std::vector<VertexIndex> &indices)
 {
 
     quint32 maxVerts = 50;
@@ -113,10 +114,10 @@ void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &
         const int* p = &elems[i*maxVerts];
         quint32 oldend = points.size();
         for (int j = 0; j < maxVerts && p[j] != TESS_UNDEF; ++j){
-            VertexPosition pos(verts[p[j]*2], verts[p[j]*2+1]);
+            QVector3D pos(verts[p[j]*2], verts[p[j]*2+1],0);
             points.push_back(pos);
         }
-        indices.push_back(VertexIndex(oldend,points.size() - oldend, itPOLYGON, objectid));
+        indices.push_back(VertexIndex(oldend,points.size() - oldend, itPOLYGON, GL_TRIANGLE_FAN, objectid));
     }
 
 }
