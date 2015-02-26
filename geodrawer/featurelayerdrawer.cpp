@@ -74,7 +74,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         _featureDrawings.resize(features->featureCount());
         int featureIndex = 0;
         for(const SPFeatureI& feature : features){
-            QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex++;
+            QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
             _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
             for(int i =0; i < _featureDrawings[featureIndex].size(); ++i)
