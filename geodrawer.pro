@@ -36,7 +36,6 @@ SOURCES += \
     geodrawer/layerdrawer.cpp \
     geodrawer/drawingcolor.cpp \
     geodrawer/featurelayerdrawer.cpp \
-    geodrawer/drawerfactory.cpp \
     geodrawer/linedrawer.cpp \
     geodrawer/openglhelper.cpp \
     geodrawer/tesselation/bucketalloc.c \
@@ -47,13 +46,15 @@ SOURCES += \
     geodrawer/tesselation/sweep.c \
     geodrawer/tesselation/tess.c \
     geodrawer/tesselation/ilwistesselator.cpp \
-    geodrawer/attributevisualproperties.cpp \
     geodrawer/selectiondrawer.cpp \
     geodrawer/layersview.cpp \
     geodrawer/layersrenderer.cpp \
     geodrawer/operations/adddrawer.cpp \
     geodrawer/operations/setviewextents.cpp \
-    geodrawer/operations/removedrawer.cpp
+    geodrawer/operations/removedrawer.cpp \
+    geodrawer/drawerattributesetters/simplelinesetter.cpp \
+    geodrawer/drawerattributesetters/basespatialattributesetter.cpp \
+    geodrawer/drawerattributesetters/simplepolygonsetter.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -65,7 +66,6 @@ HEADERS += \
     geodrawer/layerdrawer.h \
     geodrawer/drawingcolor.h \
     geodrawer/featurelayerdrawer.h \
-    geodrawer/drawerfactory.h \
     geodrawer/linedrawer.h \
     geodrawer/openglhelper.h \
     geodrawer/tesselation/bucketalloc.h \
@@ -78,13 +78,15 @@ HEADERS += \
     geodrawer/tesselation/tess.h \
     geodrawer/tesselation/tesselator.h \
     geodrawer/tesselation/ilwistesselator.h \
-    geodrawer/attributevisualproperties.h \
     geodrawer/selectiondrawer.h \
     geodrawer/layersview.h \
     geodrawer/layersrenderer.h \
     geodrawer/operations/adddrawer.h \
     geodrawer/operations/setviewextents.h \
-    geodrawer/operations/removedrawer.h
+    geodrawer/operations/removedrawer.h \
+    geodrawer/drawerattributesetters/simplelinesetter.h \
+    geodrawer/drawerattributesetters/basespatialattributesetter.h \
+    geodrawer/drawerattributesetters/simplepolygonsetter.h
 
 
 OTHER_FILES = geodrawer/qmldir

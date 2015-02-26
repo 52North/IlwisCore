@@ -95,6 +95,14 @@ static DrawerInterface *dummy_drawer;
 
 #define REGISTER_DRAWER(classname) \
     DrawerInterface *classname::dummy_drawer = DrawerFactory::registerDrawer(#classname, classname::create);
+
+#define NEW_DRAWER_ATTRIBUTE_SETTER \
+    private: \
+        static DrawerAttributeSetter *dummy_attribute_setter;
+
+#define REGISTER_DRAWER_ATTRIBUTE_SETTER(classname) \
+    DrawerAttributeSetter *classname::dummy_attribute_setter=DrawerAttributeSetterFactory::registerDrawerAttributeSetter(#classname, classname::create);
+
 }
 
 }

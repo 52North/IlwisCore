@@ -9,7 +9,7 @@
 #include "mastercatalog.h"
 #include "uicontextmodel.h"
 #include "drawers/draweroperation.h"
-#include "../drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "models/visualizationmanager.h"
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"

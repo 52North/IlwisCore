@@ -6,7 +6,7 @@
 #include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "models/visualizationmanager.h"
 #include "layersrenderer.h"
 #include "drawers/drawerinterface.h"

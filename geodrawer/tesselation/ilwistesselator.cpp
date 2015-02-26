@@ -48,7 +48,11 @@ IlwisTesselator::~IlwisTesselator()
     tessDeleteTess(_tessaltor);
 }
 
-void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot, const ICoordinateSystem &csyGeom, const geos::geom::Geometry *geometry, Raw objectid, QVector<QVector3D> &points, std::vector<VertexIndex> &indices)
+void IlwisTesselator::tesselate(const ICoordinateSystem &csyRoot,
+                                const ICoordinateSystem &csyGeom,
+                                const geos::geom::Geometry *geometry,
+                                Raw objectid, QVector<QVector3D> &points,
+                                std::vector<VertexIndex> &indices)
 {
     tessReinitialize(_tessaltor);
     std::vector<std::vector<float> > contours = getContours(geometry, csyRoot, csyGeom);

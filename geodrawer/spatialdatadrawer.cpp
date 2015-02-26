@@ -2,9 +2,14 @@
 #include "table.h"
 #include "featurecoverage.h"
 #include "feature.h"
+#include "range.h"
+#include "itemrange.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
+#include "itemdomain.h"
 #include "colorlookup.h"
 #include "representation.h"
-#include "attributevisualproperties.h"
+#include "drawers/attributevisualproperties.h"
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
 
@@ -61,7 +66,32 @@ AttributeVisualProperties SpatialDataDrawer::visualAttribute(const QString &attr
     auto iter = _visualProperties.find(attrName)    ;
     if ( iter != _visualProperties.end())
         return iter->second;
-    return AttributeVisualProperties();
+    AttributeVisualProperties attr;
+    IFeatureCoverage features = coverage().as<FeatureCoverage>();
+    if ( !features.isValid()){
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
+    }else {
+        int columnIndex = features->attributeDefinitions().columnIndex(attrName);
+        if ( columnIndex == iUNDEF){ // test a number of fallbacks to be able to show at least something
+            columnIndex = features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN);
+            if ( columnIndex == iUNDEF){
+                columnIndex = features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN);
+                if ( columnIndex == iUNDEF){ // default to a indexeditemdomain
+                    IIndexedIdDomain itemdom;
+                    itemdom.prepare();
+                    IndexedIdentifierRange *rng = new IndexedIdentifierRange("feature", features->featureCount());
+                    itemdom->range(rng);
+                    attr = AttributeVisualProperties(itemdom);
+                }else {
+                    attr =  visualAttribute(FEATUREVALUECOLUMN);
+                }
+            }else {
+                attr =  visualAttribute(COVERAGEKEYCOLUMN);
+            }
+        }
+        attr.setColumnIndex(columnIndex);
+    }
+    return attr;
 }
 
 void SpatialDataDrawer::visualAttribute(const QString &attrName, const AttributeVisualProperties &properties)

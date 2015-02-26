@@ -1,6 +1,6 @@
 #include "geometries.h"
 #include "iooptions.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 #include "selectiondrawer.h"
 #include "boost/math/special_functions/sign.hpp"

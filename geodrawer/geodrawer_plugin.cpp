@@ -6,7 +6,7 @@
 
 #include "geometries.h"
 #include "iooptions.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "selectiondrawer.h"
 #include "layersview.h"
 
