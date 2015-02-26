@@ -45,7 +45,7 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
     ilwiscoreui/drawers/draweroperation.h \
-    ilwiscoreui/models/workflowmodel.h
+    ilwiscoreui/models/workflowmodel.h \
     ilwiscoreui/drawers/drawerattributesetter.h \
     ilwiscoreui/drawers/drawerattributesetterfactory.h \
     ilwiscoreui/drawers/drawerfactory.h \
@@ -80,7 +80,7 @@ SOURCES += \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
     ilwiscoreui/drawers/draweroperation.cpp \
-    ilwiscoreui/models/workflowmodel.cpp
+    ilwiscoreui/models/workflowmodel.cpp \
     ilwiscoreui/drawers/drawerattributesetter.cpp \
     ilwiscoreui/drawers/drawerattributesetterfactory.cpp \
     ilwiscoreui/drawers/drawerfactory.cpp \
