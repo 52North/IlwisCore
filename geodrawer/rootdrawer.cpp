@@ -270,3 +270,16 @@ DrawerInterface::DrawerType RootDrawer::drawerType() const
     return DrawerInterface::dtDONTCARE; // rootdrawer is never child of anything so it never is a pre,post, or main drawer. it is the root
 }
 
+QVariant RootDrawer::attribute(const QString &attrNme) const
+{
+    QString attrName = attrNme.toLower();
+    QVariant var = ComplexDrawer::attribute(attrName);
+    if ( var.isValid())
+        return var;
+
+    if ( attrName == "coordinatesystem"){
+        QVariant var = qVariantFromValue(coordinateSystem());
+        return var;
+    }
+    return QVariant();
+}
