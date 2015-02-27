@@ -129,13 +129,13 @@ Rectangle {
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
                 if ( activeSplit ===1){
-                    righttab.state = "halfsize"
+                    righttab.width = parent.width / 2.0;
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
                     righttab.indexTab = tabCount
                 }
                 else {
-                    lefttab.state = "halfsize"
+                    lefttab.width = parent.width / 2.0;
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                     lefttab.currentIndex = tabCount
                     lefttab.indexTab = tabCount
