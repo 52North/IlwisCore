@@ -281,5 +281,9 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
         QVariant var = qVariantFromValue(coordinateSystem());
         return var;
     }
+    if ( attrName == "coverageenvelope"){
+        QVariant var = qVariantFromValue(_coverageRect);
+        return var;
+    }
     return QVariant();
 }
