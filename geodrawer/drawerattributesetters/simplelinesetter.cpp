@@ -33,7 +33,6 @@ std::vector<VertexIndex> SimpleLineSetter::setSpatialAttributes(const Ilwis::SPF
                                                QVector<QVector3D> &) const
 {
     const UPGeometry& geometry = feature->geometry();
-    bool conversionNeeded = _targetSystem != _sourceSystem;
     std::vector<VertexIndex> indices;
     int n = geometry->getNumGeometries();
     for(int  geom = 0; geom < n; ++geom ){
@@ -48,7 +47,7 @@ std::vector<VertexIndex> SimpleLineSetter::setSpatialAttributes(const Ilwis::SPF
         Coordinate crd;
         for(int i = 0; i < coords->size(); ++i){
             coords->getAt(i, crd);
-            if ( conversionNeeded){
+            if ( coordinateConversionNeeded()){
                 crd = _targetSystem->coord2coord(_sourceSystem, crd);
             }
             vertices[oldend + i] = QVector3D(crd.x, crd.y, crd.z);
