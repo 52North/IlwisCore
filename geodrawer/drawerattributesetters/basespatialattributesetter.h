@@ -13,12 +13,16 @@ public:
     BaseSpatialAttributeSetter(const Ilwis::IOOptions &options);
     ~BaseSpatialAttributeSetter();
 
-    void sourceCsySystem(const ICoordinateSystem& source);
-    void targetCsySystem(const ICoordinateSystem& target);
+    bool isValid() const;
+    bool coordinateConversionNeeded() const;
 
+    void sourceCsySystem(const ICoordinateSystem &source);
 protected:
     ICoordinateSystem _sourceSystem;
     ICoordinateSystem _targetSystem;
+    DrawerInterface *_rootDrawer = 0;
+    bool _conversionNeeded = false;
+    Envelope _zoomRect;
 };
 }
 }
