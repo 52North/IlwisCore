@@ -54,7 +54,8 @@ SOURCES += \
     geodrawer/operations/removedrawer.cpp \
     geodrawer/drawerattributesetters/simplelinesetter.cpp \
     geodrawer/drawerattributesetters/basespatialattributesetter.cpp \
-    geodrawer/drawerattributesetters/simplepolygonsetter.cpp
+    geodrawer/drawerattributesetters/simplepolygonsetter.cpp \
+    geodrawer/drawerattributesetters/simplepointsetter.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -86,7 +87,8 @@ HEADERS += \
     geodrawer/operations/removedrawer.h \
     geodrawer/drawerattributesetters/simplelinesetter.h \
     geodrawer/drawerattributesetters/basespatialattributesetter.h \
-    geodrawer/drawerattributesetters/simplepolygonsetter.h
+    geodrawer/drawerattributesetters/simplepolygonsetter.h \
+    geodrawer/drawerattributesetters/simplepointsetter.h
 
 
 OTHER_FILES = geodrawer/qmldir
