@@ -132,130 +132,6 @@ Item {
             }
         }
 
-
-
-        //    }
-
-        //    SplitView {
-
-        //        anchors.top: maptools.bottom
-        //        width : parent.width
-        //        height : parent.height - maptools.height
-        //        orientation: Qt.Horizontal
-        //        ListView {
-        //            id : layertools
-        //            objectName: uicontext.uniqueName()
-        //            property int totalHeightLT : 0
-        //            width : 170
-
-        //            currentIndex: 0
-
-        //            height : parent.height
-        //            delegate: Controls.CollapsiblePanel{
-        //                id : layersdelegate
-        //                width : parent.width
-        //                titleText: name
-        //                headerHeight: 20
-        //                panelHeight: 0
-        //                state : "collapsed"
-        //                headerColor: Global.alternatecolor1
-
-
-        //                ListView {
-        //                    id : propertyEditors
-        //                    width : parent.width
-        //                    height : 0
-        //                    property int totalHeightPE : 0
-
-        //                    delegate : Controls.CollapsiblePanel{
-        //                        id : editorDelegate
-        //                        width : parent.width
-        //                        titleText: editorName
-        //                        headerHeight: 18
-        //                        panelHeight: defaultHeight
-        //                        state : "collapsed"
-        //                        headerColor: Global.alternatecolor3
-        //                        arrowtype: "arrowdownlight.png"
-        //                        boldfont: false
-        //                        fontsize: 11
-        //                        Component.onCompleted: {
-        //                            if ( qmlUrl !== ""){
-        //                                var component = Qt.createComponent(qmlUrl);
-        //                                if (component.status === Component.Ready){
-        //                                    component.createObject(editorDelegate.expandableArea);
-        //                                    propertyEditors.totalHeightPE = propertyEditors.totalHeightPE + defaultHeight
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                    clip : true
-
-        //                    parent : layersdelegate.expandableArea
-
-        //                    Component.onCompleted: {
-        //                        model = displayOptions.manager.layer(index).propertyEditors
-        //                        panelHeight = propertyEditors.totalHeightPE
-        //                        height = panelHeight
-        //                        layertools.totalHeightLT = layertools.totalHeightLT + panelHeight
-        //                    }
-
-        //                }
-
-        //            }
-        //            clip : true
-
-
-
-        //        }
-
-        //        Rectangle {
-        //            anchors.left : layertools.right
-        //            anchors.right : parent.right
-        //            height : parent.height
-        //            color : "white"
-        //            DropArea {
-        //                anchors.fill : parent
-        //                onDropped: {
-        //                    console.log (drag.source.ilwisobjectid);
-        //                    var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
-        //                    addSource(resource.url, resource.typeName)
-        //                }
-        //                GeoDrawer{
-        //                    id : drawer
-        //                    anchors.fill: parent
-
-        //                    MouseArea {
-        //                        id : mapArea
-        //                        anchors.fill: parent
-        //                        onPressed: {
-        //                            if ( manager.zoomInMode ){
-        //                                if ( !manager.hasSelectionDrawer){
-        //                                    var position = {currentx: mouseX, currenty:mouseY}
-        //                                    drawer.addDrawer("SelectionDrawer", position)
-        //                                    manager.hasSelectionDrawer = true
-        //                                }
-        //                            }
-        //                        }
-        //                        onPositionChanged: {
-        //                            if ( manager.hasSelectionDrawer){
-        //                                var position = {currentx: mouseX, currenty:mouseY}
-        //                                drawer.setAttribute("SelectionDrawer", position)
-        //                                drawer.update()
-        //                            }
-        //                        }
-        //                        onReleased: {
-        //                            if ( manager.zoomInMode && manager.hasSelectionDrawer){
-        //                                drawer.removeDrawer("SelectionDrawer",true)
-        //                                manager.hasSelectionDrawer = false
-        //                                drawer.update()
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
     }
     Layers{
         anchors.top : maptools.bottom
@@ -264,6 +140,7 @@ Item {
         id : layers
     }
     Component.onCompleted: {
+        console.debug(width)
          manager = uicontext.createLayerManager(objectName)
 
     }
