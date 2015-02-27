@@ -61,13 +61,14 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
 
         std::vector<std::shared_ptr<BaseSpatialAttributeSetter>> setters(5); // types are 1 2 4, for performance a vector is used thoug not all elements are used
         // for the moment I use the simple setters, in the future this will be representation dependent
-        setters[itPOINT].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepointsetter", IOOptions()));
-        setters[itLINE].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplelinesetter", IOOptions()));
-        setters[itPOLYGON].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepolygonsetter", IOOptions()));
+        QVariant v = qVariantFromValue((void *) rootDrawer());
+        IOOptions opt("rootdrawer", v);
+        setters[itPOINT].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepointsetter",opt));
+        setters[itLINE].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplelinesetter",  opt));
+        setters[itPOLYGON].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepolygonsetter", opt));
         for(int i=0; i < setters.size(); ++i){
             if(setters[i]){
                 setters[i]->sourceCsySystem(features->coordinateSystem());
-                setters[i]->targetCsySystem(rootDrawer()->coordinateSystem());
             }
         }
 
