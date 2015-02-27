@@ -28,7 +28,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
                                          "attribute highp vec4 position;"
-        //                                 "attribute mediump vec3 normal;"
+                                         "attribute mediump vec3 normal;"
                                          "uniform mat4 mvp;"
                                          "attribute lowp vec4 vertexColor;"
                                          "varying lowp vec4 fragmentColor;"
@@ -52,7 +52,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         _prepared |= DrawerInterface::ptSHADERS;
 
         _vboPosition = _shaders.attributeLocation("position");
-        //_vboNormal = _shaders.attributeLocation("normal");
+        _vboNormal = _shaders.attributeLocation("normal");
         _vboColor = _shaders.attributeLocation("vertexColor");
         _modelview = _shaders.uniformLocation("mvp");
 
