@@ -12,8 +12,6 @@ import "../../Global.js" as Global
 Rectangle {
     id : tabPanel
 
-    property color background1 : "#EAECEE"
-    property color background2 : "#FFF9E3"
     property int buttonSize : 55
 
     signal showObject(string objectid )
@@ -30,7 +28,7 @@ Rectangle {
 
     width : parent.width
     anchors.margins: 2
-    color : "#EAECEE"
+    color : Global.alternatecolor5
     border.width: 1
     TableView{
         id : resourcetable
