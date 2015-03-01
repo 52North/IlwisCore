@@ -17,6 +17,7 @@ TabView {
     width: parent.width
     property int side : 1
     property int indexTab : 0
+    property string dataType : ""
 
     onSideChanged: {
         centerItem.activeSplit = side

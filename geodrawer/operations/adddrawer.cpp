@@ -51,6 +51,8 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( rootdrawer->drawerCount(Geodrawer::ComplexDrawer::dtMAIN) == 0)
             rootdrawer->coordinateSystem(_coverage->coordinateSystem());
         rootdrawer->addSpatialDrawer(ldrawer,false);
+        QVariant var = qVariantFromValue((void *)ldrawer);
+        ctx->addOutput(symTable,var,"layerdrawer",_coverage->ilwisType(), Resource());
     }else if ( _drawerCode != ""){
         drawer = Geodrawer::DrawerFactory::create<>(_drawerCode, rootdrawer, rootdrawer, IOOptions());
         rootdrawer->addDrawer(drawer,drawer->drawerType(),drawer->defaultOrder());

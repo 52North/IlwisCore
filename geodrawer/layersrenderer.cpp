@@ -79,7 +79,16 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
                     SymbolTable symTable;
                     QVariant v = qVariantFromValue((void *) _rootDrawer);
                     ctx._additionalInfo["rootdrawer"] = v;
-                    oper->execute(&ctx, symTable);
+                    if ( oper->execute(&ctx, symTable)){
+                        Symbol sym = symTable.getSymbol("layerdrawer");
+                        if ( sym.isValid()){
+                            Ilwis::Geodrawer::DrawerInterface *drawer = static_cast<Ilwis::Geodrawer::DrawerInterface *>(sym._var.value<void *>());
+                            if ( drawer){
+                                ICoverage cov = drawer->attribute("coverage").value<ICoverage>();
+                                gdrawer->_manager->addDataSource(cov->source().url(),cov->ilwisType(),drawer);
+                            }
+                        }
+                    }
                 }
             }
         }

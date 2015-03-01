@@ -49,6 +49,7 @@
 #include <deque>
 
 class LayersRenderer;
+class LayerManager;
 
 class LayersView : public QQuickFramebufferObject, public LayersViewCommandInterface
 {
@@ -69,6 +70,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void copyAttribute(const QString& drawercode, const QString& attrName);
     Q_INVOKABLE QString attributeOfDrawer(const QString& drawercode, const QString& attrName);
     Q_INVOKABLE void addCommand(const QString& expression);
+    Q_INVOKABLE void setManager(LayerManager *manager);
 
 
 private:
@@ -78,6 +80,7 @@ private:
     std::deque<std::pair<QString, QString>> _attributerequests;
     QVariantMap _copiedAttributes;
     quint64 _viewerId;
+    LayerManager *_manager;
 
 
     static quint64 _baseViewerId;

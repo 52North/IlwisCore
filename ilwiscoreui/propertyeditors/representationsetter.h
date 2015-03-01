@@ -15,7 +15,7 @@ class ILWISCOREUISHARED_EXPORT RepresentationElement : public QObject, public Il
     Q_OBJECT
 
 public:
-    explicit RepresentationElement(QObject *parent);
+    explicit RepresentationElement(QObject *parent=0);
     Q_PROPERTY(QColor color READ color CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
 

@@ -75,7 +75,11 @@ Rectangle {
         mainsplit.changeCatalog(url)
     }
 
-
+    Loader {
+        width : 200
+        height : 200
+        id : mapWindow
+    }
 
     SplitView {
         id : mainsplit
@@ -112,6 +116,18 @@ Rectangle {
                 }
             }
         }
+        function showMapWindow(objectid){
+            mapWindow.source = "visualization/MapWindow.qml"
+            var tabview = activeSplit ===1 ? lefttab : righttab
+            mapWindow.item.width = tabview.width
+            mapWindow.item.height = tabview.height
+            var tab = tabview.getTab(tabview.currentIndex)
+            if ( tab && tab.item.manager){
+                mapWindow.item.transferLayers(tab.item.manager)
+                mapWindow.item.show()
+                closeTab(activeSplit,tabview.currentIndex)
+            }
+        }
 
         function showObject(objectid){
             var component = Qt.createComponent("visualization/Visualize.qml")
@@ -130,15 +146,21 @@ Rectangle {
                 tab.active = true
                 if ( activeSplit ===1){
                     righttab.width = parent.width / 2.0;
+                    righttab.state = "halfsize"
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
                     righttab.indexTab = tabCount
+                    activeSplit = 2
+                    righttab.dataType = "spatial"
                 }
                 else {
                     lefttab.width = parent.width / 2.0;
+                    lefttab.state = "halfsize"
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                     lefttab.currentIndex = tabCount
                     lefttab.indexTab = tabCount
+                    activeSplit = 1
+                    lefttab.dataType = "spatial"
                 }
 
                 tab.item.addDataSource(resource.url, resource.name, resource.typeName)

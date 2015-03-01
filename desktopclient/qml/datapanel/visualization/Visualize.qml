@@ -11,7 +11,8 @@ import "../../Global.js" as Global
 
 Item {
     id : displayOptions
-    anchors.fill: parent
+    width: parent.width
+    height : parent.height
     objectName: uicontext.uniqueName()
     property LayerManager manager
 
@@ -28,6 +29,10 @@ Item {
     function addDataSource(sourceUrl, sourceName, sourceType){
         layers.addDataSource(sourceUrl, sourceName, sourceType)
         //layertools.model = manager.layers
+    }
+
+    function transferLayers(layermanager){
+        layers.transferLayers(layermanager)
     }
 
     Action {
@@ -140,8 +145,8 @@ Item {
         id : layers
     }
     Component.onCompleted: {
-        console.debug(width)
          manager = uicontext.createLayerManager(objectName)
+        layers.setManager(manager)
 
     }
     Component.onDestruction: {

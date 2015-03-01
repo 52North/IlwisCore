@@ -23,7 +23,7 @@ public:
     LayerManager(QObject *parent, UIContextModel *context);
 
     void addVisualizationModel(CoverageLayerModel* model);
-    void addDataSource(const QString& url, const QString& typeName, Ilwis::Geodrawer::DrawerInterface *drawer);
+    void addDataSource(const QUrl& url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer);
     bool zoomInMode() const;
     void setZoomInMode(bool yesno) ;
     bool hasSelectionDrawer() const;
