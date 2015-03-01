@@ -149,7 +149,6 @@ Rectangle {
                     righttab.state = "halfsize"
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
-                    righttab.indexTab = tabCount
                     activeSplit = 2
                     righttab.dataType = "spatial"
                 }
@@ -158,7 +157,6 @@ Rectangle {
                     lefttab.state = "halfsize"
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                     lefttab.currentIndex = tabCount
-                    lefttab.indexTab = tabCount
                     activeSplit = 1
                     lefttab.dataType = "spatial"
                 }
@@ -206,7 +204,6 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
-                    righttab.indexTab = tabCount
                 }
                 else{
                     if ( splitside === -1) // start situation
@@ -219,7 +216,6 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = lefttab.count - 1
                     lefttab.currentIndex = tabCount
-                    lefttab.indexTab = tabCount
                 }
                 mastercatalog.setActiveTab(activeSplit, tabCount)
                 mastercatalog.currentCatalog = catalogModel

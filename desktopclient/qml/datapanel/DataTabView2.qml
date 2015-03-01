@@ -11,18 +11,17 @@ import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
 
-TabView {
-    id : datatab
-    height : parent.height
-    width: parent.width
+Item{
+    id : datatabview
     property int side : 1
-    property int indexTab : 0
+    property int currentIndex : 0
     property string dataType : ""
+    property int count : datatab.count
+
 
     onSideChanged: {
         centerItem.activeSplit = side
         mastercatalog.activeSplit = Math.abs(side) - 1
-        datatab.currentIndex = indexTab
         var tab = centerItem.getCurrentCatalogTab()
         if ( tab && tab.item && tab.item.currentCatalog){
             mastercatalog.currentUrl = tab.currentCatalog.url
@@ -30,32 +29,64 @@ TabView {
         }
     }
 
-    onIndexTabChanged: {
-        currentIndex = indexTab
+
+    function addTab(name, component){
+        return datatab.addTab(name, component)
     }
 
-    style: Base.TabStyle2{
+    function getTab(index){
+        return datatab.getTab(index)
     }
 
+    function removeTab(index){
+        datatab.removeTab(index)
+    }
+
+    onCurrentIndexChanged: {
+        datatab.currentIndex = currentIndex
+    }
+
+    Button{
+        id : szbut
+        width : datatab.count > 0 ? 13 : 0
+        height : parent.height
+        x : side == 1 ? 0 : parent.width - width
+        Image {
+            anchors.verticalCenter: szbut.verticalCenter
+            width : 12
+            height : 80
+            source : side == 1 && width > 0 ? "../images/arrowleftlight.png" : "../images/arrowrightlight.png"
+        }
+    }
+
+    TabView {
+        id : datatab
+        anchors.left: side == 1 ? szbut.right : parent.left
+        height : parent.height
+        width: parent.width - szbut.width
+
+        style: Base.TabStyle2{
+        }
+    }
     states: [
         State { name: "fullsize"
 
             PropertyChanges {
-                target: datatab
+                target: datatabview
                 width : parent.width
             }
         },
         State { name: "halfsize"
 
             PropertyChanges {
-                target: datatab
+                target: datatabview
                 width : parent.width / 2
             }
         },
         State {
             name : "zerosize"
             PropertyChanges {
-                target: datatab
+                target: datatabview
                 width : 0
             }
         }
@@ -66,7 +97,6 @@ TabView {
             NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
         }
     ]
-
 
 
 }

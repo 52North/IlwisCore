@@ -46,6 +46,7 @@ ResourceModel::ResourceModel(const ResourceModel &model) : QObject(model.parent(
     _imagePath = model._imagePath;
     _type = model._type;
     _isRoot = model._isRoot;
+    _selected = model._selected;
 }
 
 ResourceModel &ResourceModel::operator=(const ResourceModel &model)
@@ -56,6 +57,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
     _imagePath = model._imagePath;
     _type = model._type;
     _isRoot = model._isRoot;
+   _selected = model._selected;
 
     return *this;
 }
@@ -318,6 +320,16 @@ Ilwis::Resource ResourceModel::resource() const
 Ilwis::Resource& ResourceModel::resourceRef()
 {
     return _item;
+}
+
+bool ResourceModel::isSelected() const
+{
+    return _selected;
+}
+
+void ResourceModel::setIsSelected(bool yesno)
+{
+    _selected = yesno;
 }
 
 QString ResourceModel::propertyName( const QString& property) const{
