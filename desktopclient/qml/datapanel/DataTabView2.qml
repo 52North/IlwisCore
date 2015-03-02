@@ -48,7 +48,7 @@ Item{
 
     Button{
         id : szbut
-        width : datatab.count > 0 ? 13 : 0
+        width : datatab.count > 0 ? 0 : 0
         height : parent.height
         x : side == 1 ? 0 : parent.width - width
         Image {
