@@ -66,6 +66,7 @@ bool SelectionDrawer::draw(const IOOptions &)
     _shaders.setAttributeArray(_vboPosition,_vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
+    _shaders.setUniformValue(_scaleFactor, 1.0f);
 
     glDrawArrays(GL_LINE_STRIP,_indices[0]._start,_indices[0]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[1]._start,_indices[1]._count);
