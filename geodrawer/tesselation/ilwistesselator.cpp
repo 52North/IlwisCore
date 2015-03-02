@@ -121,7 +121,7 @@ void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &
             QVector3D pos(verts[p[j]*2], verts[p[j]*2+1],0);
             points.push_back(pos);
         }
-        indices.push_back(VertexIndex(oldend,points.size() - oldend, itPOLYGON, GL_TRIANGLE_FAN, objectid));
+        indices.push_back(VertexIndex(oldend,points.size() - oldend, GL_TRIANGLE_FAN, objectid));
     }
 
 }
