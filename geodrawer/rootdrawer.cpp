@@ -131,6 +131,14 @@ void RootDrawer::setMVP()
     QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength(),_zoomRect.ylength());
     _projection.ortho(rct);
     _mvp = _model * _view * _projection;
+
+    if ( _coverageRect.xlength() > 0 && _coverageRect.ylength() > 0) {
+        double xscale =  _zoomRect.xlength() / _coverageRect.xlength();
+        double yscale = _zoomRect.ylength() /_coverageRect.ylength();
+
+        _zoomScale =  std::min(xscale, yscale);
+    }
+
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
 
@@ -215,7 +223,6 @@ void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio
 
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
-
     return _mvp;
 }
 
@@ -251,6 +258,11 @@ bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOpti
 double RootDrawer::aspectRatioView() const
 {
     return _aspectRatioView;
+}
+
+double RootDrawer::zoomScale() const
+{
+    return _zoomScale;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)

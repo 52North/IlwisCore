@@ -39,6 +39,7 @@ public:
     bool prepare(PreparationType prepType, const IOOptions& options);
 
     double aspectRatioView() const;
+    double zoomScale() const;
 
     DrawerInterface::DrawerType drawerType() const;
 
@@ -58,6 +59,7 @@ private:
     double _aspectRatioView = 0;
     Coordinate _viewPoint;
     Coordinate _eyePoint;
+    double _zoomScale=1;
 
     bool _useGeoref = false;
 
