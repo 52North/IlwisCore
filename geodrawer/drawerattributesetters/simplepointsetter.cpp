@@ -28,13 +28,13 @@ DrawerAttributeSetter *SimplePointSetter::create(const IOOptions &options)
     return new SimplePointSetter(options)  ;
 }
 
-std::vector<VertexIndex> SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature, QVector<QVector3D> &vertices, QVector<QVector3D> &) const
+FeatureDrawing SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature, QVector<QVector3D> &vertices, QVector<QVector3D> &) const
 {
     Envelope env = _rootDrawer->attribute("coverageenvelope").value<Envelope>();
-    double size = env.xlength() / 50.0;
+    double size = env.xlength() / 150.0;
     const UPGeometry& geometry = feature->geometry();
     int n = geometry->getNumGeometries();
-    std::vector<VertexIndex> indices;
+    FeatureDrawing drawing(itPOINT);
     for(int  geom = 0; geom < n; ++geom ){
         const geos::geom::Geometry *subgeom = geometry->getGeometryN(geom);
         if (!subgeom)
@@ -45,14 +45,16 @@ std::vector<VertexIndex> SimplePointSetter::setSpatialAttributes(const SPFeature
             coord = _targetSystem->coord2coord(_sourceSystem, *crd);
         }
 
-        indices.push_back(VertexIndex(vertices.size(),5,itPOINT,GL_LINE_STRIP,feature->featureid()));
-        vertices.push_back(QVector3D(coord.x + size, coord.y + size, coord.z));
-        vertices.push_back(QVector3D(coord.x - size, coord.y + size, coord.z));
-        vertices.push_back(QVector3D(coord.x - size, coord.y - size, coord.z));
-        vertices.push_back(QVector3D(coord.x + size, coord.y - size, coord.z));
-        vertices.push_back(QVector3D(coord.x + size, coord.y + size, coord.z));
+        drawing._indices.push_back(VertexIndex(vertices.size(),5,GL_LINE_STRIP,feature->featureid()));
+        double z = coord.z == rUNDEF ? 0 : coord.z;
+        vertices.push_back(QVector3D(coord.x + size, coord.y + size, z));
+        vertices.push_back(QVector3D(coord.x - size, coord.y + size, z));
+        vertices.push_back(QVector3D(coord.x - size, coord.y - size, z));
+        vertices.push_back(QVector3D(coord.x + size, coord.y - size, z));
+        vertices.push_back(QVector3D(coord.x + size, coord.y + size, z));
+        drawing._center = QVector3D(coord.x, coord.y, coord.z);
     }
-    return indices;
+    return drawing;
 
 }
 
