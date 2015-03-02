@@ -18,9 +18,9 @@ DrawerAttributeSetter::~DrawerAttributeSetter()
 
 }
 
-std::vector<VertexIndex> DrawerAttributeSetter::setSpatialAttributes(const SPFeatureI &, QVector<QVector3D> &, QVector<QVector3D> &) const
+FeatureDrawing DrawerAttributeSetter::setSpatialAttributes(const SPFeatureI &, QVector<QVector3D> &, QVector<QVector3D> &) const
 {
-    return  std::vector<VertexIndex>();
+    return  FeatureDrawing(itUNKNOWN);
 }
 
 void DrawerAttributeSetter::setColorAttributes(const AttributeVisualProperties &,
