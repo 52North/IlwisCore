@@ -30,9 +30,19 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                          "attribute highp vec4 position;"
                                          "attribute mediump vec3 normal;"
                                          "uniform mat4 mvp;"
+                                         "uniform vec3 scalecenter;"
+                                         "uniform float scalefactor;"
                                          "attribute lowp vec4 vertexColor;"
                                          "varying lowp vec4 fragmentColor;"
                                          "void main() {"
+                                         "    if ( scalefactor != 1) {"
+                                             "    float x = scalecenter[0] + (scalecenter[0] - position[0]) * scalefactor;"
+                                             "    float y = scalecenter[1] + (scalecenter[1] - position[1]) * scalefactor;"
+                                             "    float z = scalecenter[2] + (scalecenter[2] - position[2]) * scalefactor;"
+                                         "    position[0] = x;"
+                                         "    position[1] = y;"
+                                         "    position[2] = z;"
+                                         "    }"
                                          "    gl_Position =  mvp * position;"
                                          "    fragmentColor = vertexColor;"
                                          "}");
@@ -55,6 +65,8 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         _vboNormal = _shaders.attributeLocation("normal");
         _vboColor = _shaders.attributeLocation("vertexColor");
         _modelview = _shaders.uniformLocation("mvp");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
 
     }
 
