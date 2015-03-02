@@ -78,7 +78,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
             _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
-            for(int i =0; i < _featureDrawings[featureIndex].size(); ++i)
+            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
                 setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
             ++featureIndex;
         }
@@ -168,8 +168,9 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
 
     if(!_shaders.bind())
         return false;
+    QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
 
-    _shaders.setUniformValue(_modelview, rootDrawer()->mvpMatrix());
+    _shaders.setUniformValue(_modelview, mvp);
     _shaders.enableAttributeArray(_vboNormal);
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboColor);
@@ -177,9 +178,18 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
     for(const auto& featureDrawing : _featureDrawings){
-        for( const VertexIndex& featurePart : featureDrawing)
+        if ( featureDrawing._geomtype == itPOINT){
+            _shaders.setUniformValue(_scaleCenter, featureDrawing._center);
+            _shaders.setUniformValue(_scaleFactor, (float)rootDrawer()->zoomScale());
+            if ( rootDrawer()->zoomScale() != 1.0){
+                qDebug() << rootDrawer()->zoomScale();
+            }
+        }else{
+            _shaders.setUniformValue(_scaleFactor, 1.0f);
+        }
+         for( const VertexIndex& featurePart : featureDrawing._indices)
             glDrawArrays(featurePart._oglType,featurePart._start,featurePart._count);
-     }
+    }
     _shaders.disableAttributeArray(_vboNormal);
     _shaders.disableAttributeArray(_vboPosition);
     _shaders.disableAttributeArray(_vboColor);

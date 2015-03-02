@@ -31,7 +31,7 @@ private:
     std::vector<VertexIndex> _indices;
     std::vector<VertexColor> _colors;
 
-    std::vector<std::vector<VertexIndex>> _featureDrawings;
+    std::vector<FeatureDrawing> _featureDrawings;
 
     bool draw(const IOOptions &options);
 
