@@ -38,7 +38,7 @@ FocusScope {
                 model : setResources()
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170
-                cellHeight: 25
+                cellHeight: 18
                 clip : true
                 highlight: Rectangle {
                     color: Global.selectedColor

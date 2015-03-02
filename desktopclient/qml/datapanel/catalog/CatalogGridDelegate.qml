@@ -25,7 +25,7 @@ Item {
 
     MouseArea {
         id : mouseArea
-        width : 20; height : 20
+        width : 20; height : parent.height
         drag.target: image
         onReleased: {
             image.Drag.drop()
@@ -35,7 +35,7 @@ Item {
 
         Image{
             id : image
-            width : 20; height : 20
+            width : 18; height : parent.height - 2
             source : iconSource(iconPath)
             fillMode: Image.PreserveAspectFit
             property string message :  url
@@ -61,7 +61,7 @@ Item {
         id : imageBase
         x : mouseArea.x
         y : mouseArea.y
-        width : 20; height : 20
+        width :18; height : parent.height - 2
         source : iconSource(iconPath)
         fillMode: Image.PreserveAspectFit
         z : 0
@@ -77,6 +77,7 @@ Item {
         anchors.leftMargin: 6
         width : 130
         y : 4
+        font.pointSize: 8
         verticalAlignment: Text.AlignVCenter
     }
     MouseArea{
