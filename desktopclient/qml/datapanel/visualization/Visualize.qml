@@ -69,6 +69,9 @@ Item {
 
                 source : iconsource("entiremap20.png")
             }
+            onClicked: {
+                layers.entireMap()
+            }
         }
 
         Button {
