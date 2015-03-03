@@ -20,6 +20,7 @@ class RootDrawer : public ComplexDrawer
     Q_OBJECT
 public:
     explicit RootDrawer(const IOOptions& options);
+    ~RootDrawer();
 
     void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);

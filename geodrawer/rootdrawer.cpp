@@ -16,6 +16,11 @@ RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,
 
 }
 
+RootDrawer::~RootDrawer()
+{
+    cleanUp();
+}
+
 void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
 {
     overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
@@ -295,6 +300,11 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
     }
     if ( attrName == "coverageenvelope"){
         QVariant var = qVariantFromValue(_coverageRect);
+        return var;
+    }
+
+    if ( attrName == "viewenvelope"){
+        QVariant var = qVariantFromValue(_viewRect);
         return var;
     }
     return QVariant();
