@@ -8,6 +8,8 @@ import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
 
+import "../../Global.js" as Global
+
 Item {
     id: iconDelegate
     x: 2
@@ -67,23 +69,36 @@ Item {
         z : 0
     }
 
-
-    Text {
-        id: txt
-        text: displayName
-        elide: Text.ElideMiddle
-        color: itemgrid.currentIndex === index ? "white": "black"
+    Rectangle{
+        width : 130
+        height : iconDelegate.height
+        color : isSelected ? Global.selectedColor : "transparent"
         anchors.left : mouseArea.right
         anchors.leftMargin: 6
-        width : 130
-        y : 4
-        font.pointSize: 8
-        verticalAlignment: Text.AlignVCenter
+        z : 0
+
+        Text {
+            id: txt
+            text: displayName
+            elide: Text.ElideMiddle
+            color: itemgrid.currentIndex === index ? "white": "black"
+            width : parent.width
+
+            y : 4
+            font.pointSize: 8
+            verticalAlignment: Text.AlignVCenter
+            z : 1
+
+        }
     }
     MouseArea{
         anchors.fill: parent
         onClicked: {
             itemgrid.currentIndex = index;
+            isSelected = !isSelected
+            itemgrid.setSelected(id)
+
+            mastercatalog.currentCatalog.setSelectedObjects(id)
          }
         onDoubleClicked: {
              showObject(id)

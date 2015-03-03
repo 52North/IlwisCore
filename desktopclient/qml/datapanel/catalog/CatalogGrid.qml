@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+import UIContextModel 1.0
 
 import "../../Global.js" as Global
 
@@ -34,17 +35,22 @@ FocusScope {
             GridView {
                 id : itemgrid
 
+                function setSelected(objectid){
+                    if ( uicontext.currentKey === 0)    {
+                        console.debug(currentCatalog.resources.length)
+                        for(var i = 0; i < currentCatalog.resources.length; ++i){
+                            if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
+                                currentCatalog.resources[i].isSelected=false
+                        }
+                    }
+                }
 
                 model : setResources()
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170
                 cellHeight: 18
                 clip : true
-                highlight: Rectangle {
-                    color: Global.selectedColor
-                }
                 cacheBuffer: 1000
-                highlightFollowsCurrentItem: true
             }
         }
     }

@@ -330,6 +330,7 @@ bool ResourceModel::isSelected() const
 void ResourceModel::setIsSelected(bool yesno)
 {
     _selected = yesno;
+    emit isSelectedChanged();
 }
 
 QString ResourceModel::propertyName( const QString& property) const{
