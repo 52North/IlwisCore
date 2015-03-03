@@ -51,8 +51,10 @@ Item {
   }
 
   function entireMap() {
-      var command = { expression : "entiremap"}
-      renderer.setAttribute("command", command)
+      var envelope = renderer.attributeOfDrawer("rootdrawer","viewenvelope");
+      if ( envelope !== ""){
+          renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
+      }
       renderer.update()
   }
 
