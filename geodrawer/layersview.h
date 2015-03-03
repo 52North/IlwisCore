@@ -50,6 +50,11 @@
 
 class LayersRenderer;
 class LayerManager;
+namespace Ilwis{
+namespace Geodrawer{
+class RootDrawer;
+}
+}
 
 class LayersView : public QQuickFramebufferObject, public LayersViewCommandInterface
 {
@@ -80,7 +85,8 @@ private:
     std::deque<std::pair<QString, QString>> _attributerequests;
     QVariantMap _copiedAttributes;
     quint64 _viewerId;
-    LayerManager *_manager;
+    LayerManager *_manager = 0;
+    Ilwis::Geodrawer::RootDrawer *rootDrawer();
 
 
     static quint64 _baseViewerId;
