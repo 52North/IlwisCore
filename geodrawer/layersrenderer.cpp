@@ -21,10 +21,14 @@
 
 LayersRenderer::LayersRenderer()
 {
+    if ( !_rootDrawer){
+        _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
+    }
 }
 
 LayersRenderer::~LayersRenderer()
 {
+    delete _rootDrawer;
 }
 
 
@@ -54,9 +58,7 @@ void LayersRenderer::cleanup()
 void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 {
     try {
-        if ( !_rootDrawer){
-            _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
-        }
+
 
         LayersView *gdrawer = static_cast<LayersView *>(item);
         _viewPortSize =  QSize(gdrawer->width(), gdrawer->height());
