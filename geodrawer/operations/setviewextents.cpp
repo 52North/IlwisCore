@@ -77,14 +77,21 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
         ymax = checkCoords(_expression,4);
     }else {
         QStringList parts = _expression.input<QString>(1).split(" ");
-        if ( parts.size() != 4){
+        if ( !(parts.size() == 4 || parts.size() == 6)){
             ERROR3(ERR_ILLEGAL_PARM_3,"coordinate list", _expression.parm(1).value(), _expression.toString());
             return sPREPAREFAILED;
         }
-        xmin = parts[0].toDouble();
-        ymin = parts[1].toDouble();
-        xmax = parts[2].toDouble();
-        ymax = parts[3].toDouble();
+        if ( parts.size() == 4){
+            xmin = parts[0].toDouble();
+            ymin = parts[1].toDouble();
+            xmax = parts[2].toDouble();
+            ymax = parts[3].toDouble();
+        } else{
+            xmin = parts[0].toDouble();
+            ymin = parts[1].toDouble();
+            xmax = parts[3].toDouble();
+            ymax = parts[4].toDouble();
+        }
     }
 
     _newExtents = Envelope(Coordinate(xmin, ymin), Coordinate(xmax, ymax));
