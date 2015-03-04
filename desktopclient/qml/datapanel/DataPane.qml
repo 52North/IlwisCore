@@ -150,7 +150,6 @@ Rectangle {
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
                     activeSplit = 2
-                    righttab.dataType = "spatial"
                 }
                 else {
                     lefttab.width = parent.width / 2.0;
@@ -158,8 +157,7 @@ Rectangle {
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                     lefttab.currentIndex = tabCount
                     activeSplit = 1
-                    lefttab.dataType = "spatial"
-                }
+                 }
 
                 tab.item.addDataSource(resource.url, resource.name, resource.typeName)
                 mastercatalog.setActiveTab(activeSplit, tabCount)

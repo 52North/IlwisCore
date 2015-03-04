@@ -9,6 +9,7 @@ Item {
     property int heightButtons : 26
     property string tabLocation : "left"
     property CatalogModel currentCatalog
+    property bool canSeparate : false
     id : catalogViews
     width : parent.width
     height : parent.height

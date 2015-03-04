@@ -15,7 +15,6 @@ Item{
     id : datatabview
     property int side : 1
     property int currentIndex : 0
-    property string dataType : ""
     property int count : datatab.count
 
 
@@ -29,6 +28,15 @@ Item{
         }
     }
 
+    function canSeparate(index){
+        console.debug(datatab.count, side, index)
+        if ( index < datatab.count && index >= 0) {
+            var tab = datatab.getTab(index)
+            if ( tab && tab.item.canSeparate)
+                return true;
+        }
+        return false;
+    }
 
     function addTab(name, component){
         return datatab.addTab(name, component)

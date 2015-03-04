@@ -67,8 +67,8 @@ TabViewStyle {
             anchors.leftMargin: 2
             width : 18
             height : 18
-            opacity : dataType == "spatial" ? 0.7 : 0;
-            enabled : dataType == "spatial"
+            opacity : canSeparate(index) ? 0.7 : 0;
+            enabled : canSeparate(index)
             onClicked: {
                 mainsplit.showMapWindow(0)
 

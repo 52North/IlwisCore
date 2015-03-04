@@ -15,6 +15,7 @@ Item {
     height : parent.height
     objectName: uicontext.uniqueName()
     property LayerManager manager
+    property bool canSeparate : true
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
