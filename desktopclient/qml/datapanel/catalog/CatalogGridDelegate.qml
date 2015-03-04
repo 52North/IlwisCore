@@ -98,10 +98,13 @@ Item {
             isSelected = !isSelected
             itemgrid.setSelected(id)
 
-            mastercatalog.currentCatalog.setSelectedObjects(id)
+
          }
+
         onDoubleClicked: {
-             showObject(id)
+            showObject(id)
+            isSelected = true
+            itemgrid.setSelected(id)
         }
     }
 

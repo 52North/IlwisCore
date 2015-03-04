@@ -36,13 +36,37 @@ FocusScope {
                 id : itemgrid
 
                 function setSelected(objectid){
-                    if ( uicontext.currentKey === 0)    {
-                        console.debug(currentCatalog.resources.length)
+                    var ids = ""
+                    if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
+                        ids = objectid
                         for(var i = 0; i < currentCatalog.resources.length; ++i){
                             if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
                                 currentCatalog.resources[i].isSelected=false
                         }
+                    }else if ( uicontext.currentKey === Qt.Key_Shift){
+                        var startRange = false
+                        for(var j = 0; j < currentCatalog.resources.length; ++j){
+                            if ( currentCatalog.resources[j].isSelected){
+                                startRange = !startRange;
+                                ids = ids == "" ? currentCatalog.resources[j].id : ids + "|" +currentCatalog.resources[j].id
+                            }else {
+                                if ( startRange){
+                                    ids = ids + "|" +currentCatalog.resources[j].id
+                                    currentCatalog.resources[j].isSelected = true
+                                }
+                                else {
+                                    currentCatalog.resources[j].isSelected=false
+                                }
+                            }
+                        }
+                    } else if ( uicontext.currentKey === Qt.Key_Control){
+                      for(var k = 0; k < currentCatalog.resources.length; ++k){
+                          if ( currentCatalog.resources[k].isSelected){
+                            ids = ids == "" ? currentCatalog.resources[k].id : ids + "|" +currentCatalog.resources[k].id
+                          }
+                      }
                     }
+                    currentCatalog.setSelectedObjects(ids)
                 }
 
                 model : setResources()
@@ -51,6 +75,7 @@ FocusScope {
                 cellHeight: 18
                 clip : true
                 cacheBuffer: 1000
+                flow: GridView.FlowTopToBottom
             }
         }
     }
