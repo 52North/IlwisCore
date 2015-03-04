@@ -75,12 +75,12 @@ Item {
                 id : showList
                 iconSource: iconsource("listCS1.png")
                 exclusiveGroup: catalogViewStatus
-                checked : true
+                checked : false
             }
             ToolBarButton{
                 id : showGrid
                 iconSource: iconsource("gridCS1.png")
-                checked : false
+                checked : true
                 exclusiveGroup: catalogViewStatus
             }
             ToolBarButton{
@@ -191,13 +191,14 @@ Item {
 
         CatalogGrid{
             id : iconGridView
-            height : 0
-            enabled : false
-            opacity : 0
+            height : parent.height
+            opacity : 1
         }
         CatalogTable{
             id : iconListView
-            height : parent.height
+            opacity : 0
+            height : 0
+            enabled : false
         }
         CatalogThumbGrid{
             id : thumbListView
@@ -247,11 +248,11 @@ Item {
             }
         ]
     }
-        Component.onCompleted: {
-            var url = mastercatalog.currentUrl
-            currentCatalog = mastercatalog.newCatalog(url)
-            currentCatalog.makeParent(catalogViews)
-            mastercatalog.currentCatalog = currentCatalog
-        }
+    Component.onCompleted: {
+        var url = mastercatalog.currentUrl
+        currentCatalog = mastercatalog.newCatalog(url)
+        currentCatalog.makeParent(catalogViews)
+        mastercatalog.currentCatalog = currentCatalog
+    }
 
 }
