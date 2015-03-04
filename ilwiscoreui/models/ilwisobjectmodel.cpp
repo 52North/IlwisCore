@@ -17,7 +17,13 @@ IlwisObjectModel::IlwisObjectModel()
 
 IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *parent) : ResourceModel(source, parent)
 {
+    try{
     _ilwisobject.prepare(resource());
+    } catch (const ErrorObject& ){
+
+    } catch ( std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
 }
 
 QString IlwisObjectModel::creationDate() const
