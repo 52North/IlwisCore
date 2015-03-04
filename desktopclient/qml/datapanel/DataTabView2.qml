@@ -29,7 +29,6 @@ Item{
     }
 
     function canSeparate(index){
-        console.debug(datatab.count, side, index)
         if ( index < datatab.count && index >= 0) {
             var tab = datatab.getTab(index)
             if ( tab && tab.item.canSeparate)
