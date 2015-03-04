@@ -47,6 +47,9 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
     Geodrawer::DrawerInterface *drawer;
     if ( _coverage.isValid())    {
         LayerDrawer *ldrawer = DrawerFactory::create<LayerDrawer>(_coverage->ilwisType(), rootdrawer, rootdrawer, IOOptions());
+        if ( !ldrawer){
+            return ERROR2(ERR_NO_INITIALIZED_2,"Drawer",_coverage->name());
+        }
         ldrawer->coverage(_coverage);
         if ( rootdrawer->drawerCount(Geodrawer::ComplexDrawer::dtMAIN) == 0)
             rootdrawer->coordinateSystem(_coverage->coordinateSystem());
@@ -75,11 +78,16 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
         QString url = _expression.input<QString>(2);
         QString tpname = _expression.input<QString>(3);
         IlwisTypes tp = IlwisObject::name2Type(tpname);
-        _coverage.prepare(url, tp);
-        if ( !_coverage.isValid())
+        if ( !hasType(tp , itCOVERAGE)){
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("dataype for layer drawer"), tpname)    ;
             return sPREPAREFAILED;
-        _coverage->loadData(); // loaddata now so that all attribute info( ranges) is known; we need to load the data anyway.
-
+        }
+        _coverage.prepare(url, tp);
+        if ( !_coverage.isValid()){
+            kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
+            return sPREPAREFAILED;
+        }
+        _coverage->loadData();
     }else {
         _drawerCode = _expression.input<QString>(1);
     }
