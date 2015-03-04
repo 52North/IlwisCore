@@ -441,6 +441,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "PolygonCoverage";
     case  itLINE:
         return "LineCoverage";
+    case itCOVERAGE:
+        return "Coverage";
     case  itPOINT:
         return "PointCoverage";
     case  itPOINT+itLINE:
@@ -509,6 +511,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         name = dname.right(name.size() - index - 2);
     }
 
+    if ( name.compare("IlwisObject",Qt::CaseInsensitive) == 0)
+        return  itILWISOBJECT;
     if ( name.compare("RasterCoverage",Qt::CaseInsensitive) == 0)
         return  itRASTER;
     if ( name.compare( "PolygonCoverage",Qt::CaseInsensitive) == 0)
@@ -519,6 +523,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itPOINT;
     if ( name.compare( "FeatureCoverage",Qt::CaseInsensitive) == 0)
         return  itFEATURE;
+    if ( name.compare( "Coverage",Qt::CaseInsensitive) == 0)
+        return  itCOVERAGE;
     if ( name.mid(0,10) == "ItemDomain") // contains template construct, so different comparison
         return  itITEMDOMAIN;
     if ( name == "NumericDomain") // contains template construct, so different comparison

@@ -185,9 +185,16 @@ public:
                 }
 
         }
+        auto type = kernel()->demangle(typeid(T).name());
+        IlwisTypes objecttp = IlwisObject::name2Type(type);
         if ( tp == itANY) {
-            auto type = kernel()->demangle(typeid(T).name());
-            tp = IlwisObject::name2Type(type);
+            tp = objecttp;
+        }else {
+            if (!hasType(tp,objecttp)){
+                QString message = QString("Could not create object. type %1 is not compatible with %2").arg(IlwisObject::type2Name(tp)).arg(IlwisObject::type2Name(objecttp));
+                kernel()->issues()->log(message);
+                return false;
+            }
         }
         auto resource = mastercatalog()->name2Resource(name,tp );
         if (resource.isValid()) {
