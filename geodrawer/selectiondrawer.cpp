@@ -31,7 +31,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(1);
     }
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
-    QVector3D pos(0,0,0);
+    QVector3D pos(0,0,0.1);
     _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
 
     _indices.push_back(VertexIndex(0, 5, itLINE, iUNDEF));
