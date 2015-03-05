@@ -140,7 +140,7 @@ bool BaseDrawer::isSelected() const
 BaseDrawer::Containment BaseDrawer::containment() const
 {
     if ( _envelope.isValid()){
-        if ( rootDrawer()->viewEnvelope().intersects(_envelope))
+        if ( rootDrawer()->zoomEnvelope().intersects(_envelope))
             return BaseDrawer::cINSIDE;
     }
     return BaseDrawer::cUNKNOWN;
