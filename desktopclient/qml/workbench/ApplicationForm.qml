@@ -41,7 +41,7 @@ Rectangle {
 
         if ( formComponent !== null) {
             var component = Qt.createComponent(formComponent)
-            currentAppForm = component.createObject(applicationArea, {"x": 100, "y": 100});
+            currentAppForm = component.createObject(applicationArea, {"x": 0, "y": 0});
         }
     }
 

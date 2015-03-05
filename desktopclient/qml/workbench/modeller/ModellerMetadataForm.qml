@@ -15,8 +15,10 @@ Column {
 //    }
     Rectangle {
         id: nameItem
+        x : 5
+        y : 5
         height : 22
-        width : parent.width
+        width : parent.width - 5;
         color : background1;
         Text {
             id : modelNameLabel
@@ -34,8 +36,9 @@ Column {
     }
     Rectangle {
         id: descriptionItem
+        x : 5
         height : 22
-        width : parent.width
+        width : parent.width - 5;
         color : background1;
         Text {
             id : modelDescriptionLabel
