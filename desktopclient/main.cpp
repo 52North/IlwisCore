@@ -28,10 +28,11 @@
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
+#include "models/workflowmodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
-#define TEST_WORKINGDIR QString("file:///d:/dev/Ilwis/testdata")
+#define TEST_WORKINGDIR QString("file:///s:/data/coding/ilwis/2014-03-18_testdata")
 
 using namespace Ilwis;
 //using namespace Desktopclient;
@@ -72,7 +73,9 @@ int main(int argc, char *argv[])
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
         qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
+        qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
+        qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);

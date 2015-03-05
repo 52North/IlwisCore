@@ -26,11 +26,12 @@ public:
 
 
 private:
-    std::vector<VertexIndex> _indices;
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
+    std::vector<VertexIndex> _indices;
     std::vector<VertexColor> _colors;
-    quint32 _boundaryIndex = iUNDEF;
+
+    std::vector<FeatureDrawing> _featureDrawings;
 
     bool draw(const IOOptions &options);
 

@@ -132,7 +132,7 @@ Rectangle {
             id : prop
             action : propertiesClicked
             iconname : "propertiesCS1.png"
-            label: qsTr("Properties")
+            label: qsTr("Metadata")
 
         }
         WorkBenchButton{

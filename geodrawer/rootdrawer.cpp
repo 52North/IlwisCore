@@ -16,6 +16,11 @@ RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,
 
 }
 
+RootDrawer::~RootDrawer()
+{
+    cleanUp();
+}
+
 void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
 {
     overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
@@ -131,6 +136,14 @@ void RootDrawer::setMVP()
     QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength(),_zoomRect.ylength());
     _projection.ortho(rct);
     _mvp = _model * _view * _projection;
+
+    if ( _coverageRect.xlength() > 0 && _coverageRect.ylength() > 0) {
+        double xscale =  _zoomRect.xlength() / _coverageRect.xlength();
+        double yscale = _zoomRect.ylength() /_coverageRect.ylength();
+
+        _zoomScale =  std::min(xscale, yscale);
+    }
+
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
 
@@ -215,7 +228,6 @@ void RootDrawer::modifyEnvelopeZoomView(double dview, double dzoom, double ratio
 
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
-
     return _mvp;
 }
 
@@ -253,6 +265,11 @@ double RootDrawer::aspectRatioView() const
     return _aspectRatioView;
 }
 
+double RootDrawer::zoomScale() const
+{
+    return _zoomScale;
+}
+
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)
 {
     Envelope envelope = (!_coordinateSystem.isValid() ||
@@ -270,3 +287,25 @@ DrawerInterface::DrawerType RootDrawer::drawerType() const
     return DrawerInterface::dtDONTCARE; // rootdrawer is never child of anything so it never is a pre,post, or main drawer. it is the root
 }
 
+QVariant RootDrawer::attribute(const QString &attrNme) const
+{
+    QString attrName = attrNme.toLower();
+    QVariant var = ComplexDrawer::attribute(attrName);
+    if ( var.isValid())
+        return var;
+
+    if ( attrName == "coordinatesystem"){
+        QVariant var = qVariantFromValue(coordinateSystem());
+        return var;
+    }
+    if ( attrName == "coverageenvelope"){
+        QVariant var = qVariantFromValue(_coverageRect);
+        return var;
+    }
+
+    if ( attrName == "viewenvelope"){
+        QVariant var = qVariantFromValue(_viewRect);
+        return var;
+    }
+    return QVariant();
+}

@@ -67,6 +67,16 @@ void UIContextModel::removeViewer(quint64 viewerid)
     }
 }
 
+void UIContextModel::currentKey(int ev)
+{
+    _currentKey = ev;
+}
+
+int UIContextModel::currentKey() const
+{
+    return _currentKey;
+}
+
 int UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, CreatePropertyEditor func)
 {
     _propertyEditors[objecttype][propertyName] = func;

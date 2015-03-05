@@ -1,6 +1,6 @@
 #include "geometries.h"
 #include "iooptions.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 #include "selectiondrawer.h"
 #include "boost/math/special_functions/sign.hpp"
@@ -31,7 +31,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(1);
     }
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
-    QVector3D pos(0,0,0);
+    QVector3D pos(0,0,0.1);
     _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
 
     _indices.push_back(VertexIndex(0, 5, itLINE, iUNDEF));
@@ -66,6 +66,7 @@ bool SelectionDrawer::draw(const IOOptions &)
     _shaders.setAttributeArray(_vboPosition,_vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
+    _shaders.setUniformValue(_scaleFactor, 1.0f);
 
     glDrawArrays(GL_LINE_STRIP,_indices[0]._start,_indices[0]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[1]._start,_indices[1]._count);

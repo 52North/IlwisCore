@@ -44,7 +44,12 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/linestylesetter.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
-    ilwiscoreui/drawers/draweroperation.h
+    ilwiscoreui/drawers/draweroperation.h \
+    ilwiscoreui/models/workflowmodel.h \
+    ilwiscoreui/drawers/drawerattributesetter.h \
+    ilwiscoreui/drawers/drawerattributesetterfactory.h \
+    ilwiscoreui/drawers/drawerfactory.h \
+    ilwiscoreui/drawers/attributevisualproperties.h
 
 unix {
     target.path = /usr/lib
@@ -74,7 +79,12 @@ SOURCES += \
     ilwiscoreui/propertyeditors/linestylesetter.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
-    ilwiscoreui/drawers/draweroperation.cpp
+    ilwiscoreui/drawers/draweroperation.cpp \
+    ilwiscoreui/models/workflowmodel.cpp \
+    ilwiscoreui/drawers/drawerattributesetter.cpp \
+    ilwiscoreui/drawers/drawerattributesetterfactory.cpp \
+    ilwiscoreui/drawers/drawerfactory.cpp \
+    ilwiscoreui/drawers/attributevisualproperties.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+import UIContextModel 1.0
 
 import "../../Global.js" as Global
 
@@ -34,17 +35,47 @@ FocusScope {
             GridView {
                 id : itemgrid
 
+                function setSelected(objectid){
+                    var ids = ""
+                    if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
+                        ids = objectid
+                        for(var i = 0; i < currentCatalog.resources.length; ++i){
+                            if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
+                                currentCatalog.resources[i].isSelected=false
+                        }
+                    }else if ( uicontext.currentKey === Qt.Key_Shift){
+                        var startRange = false
+                        for(var j = 0; j < currentCatalog.resources.length; ++j){
+                            if ( currentCatalog.resources[j].isSelected){
+                                startRange = !startRange;
+                                ids = ids == "" ? currentCatalog.resources[j].id : ids + "|" +currentCatalog.resources[j].id
+                            }else {
+                                if ( startRange){
+                                    ids = ids + "|" +currentCatalog.resources[j].id
+                                    currentCatalog.resources[j].isSelected = true
+                                }
+                                else {
+                                    currentCatalog.resources[j].isSelected=false
+                                }
+                            }
+                        }
+                    } else if ( uicontext.currentKey === Qt.Key_Control){
+                      for(var k = 0; k < currentCatalog.resources.length; ++k){
+                          if ( currentCatalog.resources[k].isSelected){
+                            ids = ids == "" ? currentCatalog.resources[k].id : ids + "|" +currentCatalog.resources[k].id
+                          }
+                      }
+                    }
+                    currentCatalog.setSelectedObjects(ids)
+                }
 
                 model : setResources()
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170
-                cellHeight: 25
+                cellHeight: 18
                 clip : true
-                highlight: Rectangle {
-                    color: Global.selectedColor
-                }
                 cacheBuffer: 1000
-                highlightFollowsCurrentItem: true
+                flow: GridView.FlowTopToBottom
             }
         }
     }

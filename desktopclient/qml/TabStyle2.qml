@@ -1,7 +1,8 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+
 
 TabViewStyle {
     property string selectColor : "steelblue"
@@ -11,10 +12,10 @@ TabViewStyle {
     frameOverlap: 1
     tab: Rectangle {
         id : selectRect
-        color: indexTab === styleData.index && activeSplit === side ? selectColor : nonselectColor
+        color: currentIndex === styleData.index && activeSplit === side ? selectColor : nonselectColor
         border.color:  color
 
-        implicitWidth: Math.max(label.width + 4, 140)
+        implicitWidth: Math.max(label.width + 4, 170)
         implicitHeight: tabHeight
         radius: 2
         Text {
@@ -29,13 +30,14 @@ TabViewStyle {
             width : label.width
             height : parent.height
             onClicked : {
-                indexTab = styleData.index
-                mastercatalog.setActiveTab(Math.abs(side) - 1, indexTab)
+                currentIndex = styleData.index
+                mastercatalog.setActiveTab(Math.abs(side) - 1, currentIndex)
                 side = -side
             }
         }
 
         Button {
+            id : closeButton
             y : 2
             anchors.right : parent.right
             anchors.rightMargin: 2
@@ -53,6 +55,31 @@ TabViewStyle {
                 width : 15
                 height : 15
                 source : "images/close20.png"
+
+
+            }
+        }
+
+        Button {
+            id : expandButton
+            y : 2
+            anchors.right : closeButton.left
+            anchors.leftMargin: 2
+            width : 18
+            height : 18
+            opacity : canSeparate(index) ? 0.7 : 0;
+            enabled : canSeparate(index)
+            onClicked: {
+                mainsplit.showMapWindow(0)
+
+            }
+
+            Image {
+                y : 2
+                x : 1
+                width : 15
+                height : 15
+                source : "images/expand20.png"
 
 
             }

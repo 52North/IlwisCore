@@ -3,7 +3,7 @@
 #include "feature.h"
 #include "featureiterator.h"
 #include "drawingcolor.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 #include "table.h"
 #include "range.h"
@@ -14,7 +14,10 @@
 #include "colorlookup.h"
 #include "itemdomain.h"
 #include "representation.h"
-#include "attributevisualproperties.h"
+#include "drawers/attributevisualproperties.h"
+#include "drawers/drawerattributesetter.h"
+#include "drawers/drawerattributesetterfactory.h"
+#include "drawerattributesetters/basespatialattributesetter.h"
 #include "featurelayerdrawer.h"
 #include "tesselation/ilwistesselator.h"
 #include "openglhelper.h"
@@ -51,45 +54,33 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         _indices = std::vector<VertexIndex>();
         _vertices = QVector<QVector3D>();
         _normals = QVector<QVector3D>();
+        _colors = std::vector<VertexColor>();
         // get a description of how to render
         AttributeVisualProperties attr = visualAttribute(activeAttribute());
-        int columnIndex = features->attributeDefinitions().columnIndex(activeAttribute());
-        if ( columnIndex == iUNDEF){ // test a number of fallbacks to be able to show at least something
-            columnIndex = features->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN);
-            attr =  visualAttribute(COVERAGEKEYCOLUMN);
-            if ( columnIndex == iUNDEF){
-                columnIndex = features->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN);
-                attr =  visualAttribute(FEATUREVALUECOLUMN);
-                if ( columnIndex == iUNDEF){ // default to a indexeditemdomain
-                    IIndexedIdDomain itemdom;
-                    itemdom.prepare();
-                    IndexedIdentifierRange *rng = new IndexedIdentifierRange("feature", features->featureCount());
-                    itemdom->range(rng);
-                    attr = AttributeVisualProperties(itemdom);
-                }
+
+
+        std::vector<std::shared_ptr<BaseSpatialAttributeSetter>> setters(5); // types are 1 2 4, for performance a vector is used thoug not all elements are used
+        // for the moment I use the simple setters, in the future this will be representation dependent
+        QVariant v = qVariantFromValue((void *) rootDrawer());
+        IOOptions opt("rootdrawer", v);
+        setters[itPOINT].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepointsetter",opt));
+        setters[itLINE].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplelinesetter",  opt));
+        setters[itPOLYGON].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepolygonsetter", opt));
+        for(int i=0; i < setters.size(); ++i){
+            if(setters[i]){
+                setters[i]->sourceCsySystem(features->coordinateSystem());
             }
         }
-        Raw raw = 0;
+
+        _featureDrawings.resize(features->featureCount());
+        int featureIndex = 0;
         for(const SPFeatureI& feature : features){
-            QVariant value =  columnIndex != iUNDEF ? feature(columnIndex) : raw++;
-            if ( value.isValid() && value.toInt() != iUNDEF) {
-                quint32 noOfVertices = OpenGLHelper::getVertices(rootDrawer()->coordinateSystem(),
-                                                                 features->coordinateSystem(),
-                                                                 feature->geometry(),
-                                                                 feature->featureid(),
-                                                                 _vertices,
-                                                                 _normals,
-                                                                 _indices,
-                                                                 _boundaryIndex);
-                for(int i =0; i < noOfVertices; ++i){
-                    if ( _boundaryIndex == iUNDEF || i < _boundaryIndex){
-                        QColor clr = attr.value2color(value);
-                        _colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
-                    }else {
-                        _colors.push_back(VertexColor(128,0,128,1));
-                    }
-                }
-            }
+            QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
+            IlwisTypes geomtype = feature->geometryType();
+            _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
+            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
+                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+            ++featureIndex;
         }
         _prepared |= DrawerInterface::ptGEOMETRY;
 
@@ -177,24 +168,28 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
 
     if(!_shaders.bind())
         return false;
+    QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
 
-    _shaders.setUniformValue(_modelview, rootDrawer()->mvpMatrix());
+    _shaders.setUniformValue(_modelview, mvp);
     _shaders.enableAttributeArray(_vboNormal);
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboColor);
     _shaders.setAttributeArray(_vboPosition, _vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
-//    for(int i =0; i < _indices.size(); ++i){
-//       if ( _indices[i]._geomtype == itLINE){
-//           glDrawArrays(GL_LINE_STRIP,_indices[i]._start,_indices[i]._count);
-//       } else if ( _indices[i]._geomtype == itPOLYGON ){
-//           glDrawArrays(GL_TRIANGLE_FAN,_indices[i]._start,_indices[i]._count);
-//       }
-//   }
-    for(int i =0; i < _indices.size(); ++i){
-        glDrawArrays(_indices[i]._oglType,_indices[i]._start,_indices[i]._count);
-     }
+    for(const auto& featureDrawing : _featureDrawings){
+        if ( featureDrawing._geomtype == itPOINT){
+            _shaders.setUniformValue(_scaleCenter, featureDrawing._center);
+            _shaders.setUniformValue(_scaleFactor, (float)rootDrawer()->zoomScale());
+            if ( rootDrawer()->zoomScale() != 1.0){
+                qDebug() << rootDrawer()->zoomScale();
+            }
+        }else{
+            _shaders.setUniformValue(_scaleFactor, 1.0f);
+        }
+         for( const VertexIndex& featurePart : featureDrawing._indices)
+            glDrawArrays(featurePart._oglType,featurePart._start,featurePart._count);
+    }
     _shaders.disableAttributeArray(_vboNormal);
     _shaders.disableAttributeArray(_vboPosition);
     _shaders.disableAttributeArray(_vboColor);

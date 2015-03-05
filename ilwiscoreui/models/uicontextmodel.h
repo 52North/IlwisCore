@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QQmlContext>
+#include <Qt>
 #include "iooptions.h"
 #include "ilwiscoreui_global.h"
 #include "visualizationmanager.h"
@@ -25,6 +26,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     friend std::unique_ptr<UIContextModel>& uicontext();
 
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
+    Q_PROPERTY(int currentKey READ currentKey CONSTANT)
 public:
     explicit UIContextModel(QObject *parent = 0);
 
@@ -39,6 +41,8 @@ public:
     void setActiveSplit(int index);
     void addViewer(LayersViewCommandInterface *viewer, quint64 vid);
     void removeViewer(quint64 viewerid);
+    void currentKey(int ev);
+    int currentKey() const;
 
 signals:
     void activeSplitChanged();
@@ -51,6 +55,7 @@ private:
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
     int _activeSplit = 1;
+    int _currentKey = 0;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

@@ -28,6 +28,7 @@ AttributeVisualProperties::AttributeVisualProperties(const AttributeVisualProper
     _actualRange = avp._actualRange;
     _stretchRange = avp._stretchRange;
     _domain = avp._domain;
+    _columnIndex = avp._columnIndex;
 }
 
 IRepresentation AttributeVisualProperties::representation() const
@@ -67,7 +68,7 @@ void AttributeVisualProperties::stretchRange(const NumericRange &rng)
     _stretchRange = rng;
 }
 
-QColor AttributeVisualProperties::value2color(const QVariant &var)
+QColor AttributeVisualProperties::value2color(const QVariant &var) const
 {
     return _representation->colors()->value2color(var.toDouble(), _actualRange, _stretchRange) ;
 }
@@ -80,6 +81,16 @@ NumericRange AttributeVisualProperties::actualRange() const
 void AttributeVisualProperties::actualRange(const NumericRange &rng)
 {
     _actualRange = rng;
+}
+
+quint32 AttributeVisualProperties::columnIndex() const
+{
+    return _columnIndex;
+}
+
+void AttributeVisualProperties::setColumnIndex(quint32 index)
+{
+    _columnIndex = index;
 }
 
 

@@ -66,6 +66,8 @@ protected:
     GLuint _vboNormal = iUNDEF;
     GLuint _vboColor = iUNDEF;
     GLuint _modelview = iUNDEF;
+    GLuint _scaleCenter = iUNDEF;
+    GLuint _scaleFactor = iUNDEF;
     QOpenGLShaderProgram _shaders;
 
 private:

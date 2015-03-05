@@ -26,12 +26,11 @@ void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
     _layers.insert(1,newmodel);
 }
 
-void LayerManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
+void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer)
 {
-    IlwisTypes tp = IlwisObject::name2Type(typeName);
     if ( tp == itUNKNOWN)
         return;
-    Resource resource = mastercatalog()->name2Resource(url,tp);
+    Resource resource = mastercatalog()->name2Resource(url.toString(),tp);
     if ( !resource.isValid())
         return;
 

@@ -20,6 +20,7 @@ class RootDrawer : public ComplexDrawer
     Q_OBJECT
 public:
     explicit RootDrawer(const IOOptions& options);
+    ~RootDrawer();
 
     void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
@@ -39,9 +40,11 @@ public:
     bool prepare(PreparationType prepType, const IOOptions& options);
 
     double aspectRatioView() const;
+    double zoomScale() const;
 
     DrawerInterface::DrawerType drawerType() const;
 
+    QVariant attribute(const QString &attrNme) const;
 signals:
 
 public slots:
@@ -57,6 +60,7 @@ private:
     double _aspectRatioView = 0;
     Coordinate _viewPoint;
     Coordinate _eyePoint;
+    double _zoomScale=1;
 
     bool _useGeoref = false;
 
