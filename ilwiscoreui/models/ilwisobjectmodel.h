@@ -15,7 +15,8 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QString isValid READ isValid CONSTANT)
     Q_PROPERTY(QString creationDate READ creationDate CONSTANT)
     Q_PROPERTY(QString modifiedDate READ modifiedDate CONSTANT)
-    Q_PROPERTY(bool isReadonly READ readonly CONSTANT)
+    Q_PROPERTY(bool isReadonly READ readonly WRITE readonly NOTIFY readOnlyChanged)
+    Q_PROPERTY(bool isSystemObject READ isSystemObject CONSTANT)
     Q_PROPERTY(QString externalFormat READ externalFormat CONSTANT)
     Q_PROPERTY(bool externalReadOnly READ externalReadOnly CONSTANT)
     Q_PROPERTY(QString valuetype READ valuetype CONSTANT)
@@ -39,6 +40,7 @@ public:
     bool externalReadOnly() const;
     void description(const QString& desc) const;
     bool isProjectedCoordinateSystem() const;
+    bool isSystemObject() const;
     QString projectionInfo() const;
 
     QStringList test101();
@@ -46,11 +48,16 @@ public:
     QQmlListProperty<DomainItemModel> domainitems();
     QQmlListProperty<ProjectionParameterModel> projectionItems();
     QString valuetype() const;
-    Q_INVOKABLE QString rangeDefinition(bool defaultRange);
+    Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString &columnName);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
+    Q_INVOKABLE bool canUse(const QString& id);
+    Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
+
 
     bool isValid() const;
 
+signals:
+    void readOnlyChanged();
 private slots:
     QString valueType() const;
 private:

@@ -10,11 +10,11 @@ UIContextModel::UIContextModel(QObject *parent) :
 {
 }
 
-VisualizationManager *UIContextModel::createVisualizationManager(const QString& objectName)
+LayerManager *UIContextModel::createLayerManager(const QString& objectName)
 {
     QObject *object =_qmlcontext->findChild<QObject *>(objectName);
     QObject *newparent = object == 0 ? this : object;
-    VisualizationManager *manager =  new VisualizationManager(newparent, this);
+    LayerManager *manager =  new LayerManager(newparent, this);
 
     return manager;
 }
@@ -51,6 +51,19 @@ void UIContextModel::setActiveSplit(int index)
 {
     if ( index == 1 || index == 2){
         _activeSplit = index;
+    }
+}
+
+void UIContextModel::addViewer(LayersViewCommandInterface *viewer, quint64 vid)
+{
+    _viewers[vid] = viewer;
+}
+
+void UIContextModel::removeViewer(quint64 viewerid)
+{
+    auto iter= _viewers.find(viewerid)    ;
+    if ( iter != _viewers.end()){
+        _viewers.erase(iter);
     }
 }
 

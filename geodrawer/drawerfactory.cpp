@@ -13,9 +13,9 @@ DrawerFactory::DrawerFactory() : AbstractFactory("DrawerFactory","ilwis","Create
 
 DrawerInterface *DrawerFactory::registerDrawer(const QString &name, Ilwis::Geodrawer::CreateDrawer createFunc)
 {
-    auto iter = _creators.find(name);
+    auto iter = _creators.find(name.toLower());
     if ( iter == _creators.end()){
-        _creators[name] = createFunc;
+        _creators[name.toLower()] = createFunc;
     }
     return 0;
 }

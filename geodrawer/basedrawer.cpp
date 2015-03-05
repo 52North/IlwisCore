@@ -7,7 +7,7 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
-BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &) : DrawerInterface(0),Identity(nme,i64UNDEF,nme), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
+BaseDrawer::BaseDrawer(const QString& nme, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &) : DrawerInterface(0),Identity(nme,i64UNDEF,nme.toLower()), _rootDrawer(rootdrawer), _parentDrawer(parentDrawer)
 {
     Identity::prepare();
 }
@@ -17,7 +17,7 @@ void BaseDrawer::valid(bool yesno)
     _valid = yesno;
 }
 
-bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOptions &, QOpenGLContext *)
+bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOptions &)
 {
     if ( code() == "RootDrawer") // rootdrawer for the moment has no need of shaders
         return true;
@@ -28,6 +28,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
                                          "attribute highp vec4 position;"
+        //                                 "attribute mediump vec3 normal;"
                                          "uniform mat4 mvp;"
                                          "attribute lowp vec4 vertexColor;"
                                          "varying lowp vec4 fragmentColor;"
@@ -41,6 +42,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                          "    gl_FragColor = fragmentColor;"
                                          "}");
 
+
         if(!_shaders.link()){
             return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
         }
@@ -49,35 +51,40 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         }
         _prepared |= DrawerInterface::ptSHADERS;
 
+        _vboPosition = _shaders.attributeLocation("position");
+        //_vboNormal = _shaders.attributeLocation("normal");
+        _vboColor = _shaders.attributeLocation("vertexColor");
+        _modelview = _shaders.uniformLocation("mvp");
+
     }
 
 
     return true;
 }
 
-bool BaseDrawer::moveGeometry2GPU(QOpenGLContext *openglContext, const std::vector<VertexPosition> &vertices,const std::vector<VertexColor>& colors) {
-    if ( !openglContext){
-        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
-    }
-    if ( _vboPosition != iUNDEF)
-        openglContext->functions()->glDeleteBuffers(1,&_vboPosition);
-    if ( _vboColor != iUNDEF)
-        openglContext->functions()->glDeleteBuffers(1,&_vboColor);
+//bool BaseDrawer::moveGeometry2GPU(const std::vector<VertexPosition> &vertices, const std::vector<VertexColor>& colors) {
+//    if ( !openglContext){
+//        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
+//    }
+//    if ( _vboPosition != iUNDEF)
+//        openglContext->functions()->glDeleteBuffers(1,&_vboPosition);
+//    if ( _vboColor != iUNDEF)
+//        openglContext->functions()->glDeleteBuffers(1,&_vboColor);
 
-    openglContext->functions()->glGenBuffers (1, &_vboPosition);
-    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboPosition);
-    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+//    openglContext->functions()->glGenBuffers (1, &_vboPosition);
+//    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboPosition);
+//    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-    openglContext->functions()->glGenBuffers (1, &_vboColor);
-    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboColor);
-    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexColor) * colors.size(), &colors[0], GL_STATIC_DRAW);
+//    openglContext->functions()->glGenBuffers (1, &_vboColor);
+//    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboColor);
+//    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexColor) * colors.size(), &colors[0], GL_STATIC_DRAW);
 
-    GLenum err =  glGetError();
-    if ( err != 0) {
-        return ERROR1(QString(TR("Drawing failed : OpenGL returned error code %1")),QString::number(err));
-    }
-    return true;
-}
+//    GLenum err =  glGetError();
+//    if ( err != 0) {
+//        return ERROR1(QString(TR("Drawing failed : OpenGL returned error code %1")),QString::number(err));
+//    }
+//    return true;
+//}
 
 void BaseDrawer::unprepare(DrawerInterface::PreparationType prepType )
 {
@@ -91,7 +98,7 @@ bool BaseDrawer::isPrepared(quint32 type) const
     return hasType(_prepared, type);
 }
 
-bool BaseDrawer::draw(QOpenGLContext *, const IOOptions &) const
+bool BaseDrawer::draw(const IOOptions &) const
 {
     return false;
 }
@@ -150,14 +157,10 @@ BaseDrawer::Containment BaseDrawer::containment() const
     return BaseDrawer::cUNKNOWN;
 }
 
-void BaseDrawer::cleanUp(QOpenGLContext *openglContext)
+void BaseDrawer::cleanUp()
 {
-    if ( _vboPosition != iUNDEF)
-        openglContext->functions()->glDeleteBuffers(1,&_vboPosition);
-    if ( _vboColor != iUNDEF)
-        openglContext->functions()->glDeleteBuffers(1,&_vboColor);
-
-    _vboPosition = _vboColor = iUNDEF;
+    _shaders.removeAllShaders();
+    unprepare(ptSHADERS);
 }
 
 void BaseDrawer::code(const QString &code)
@@ -202,6 +205,11 @@ std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
 }
 
 QVariant BaseDrawer::attribute(const QString &attrName) const
+{
+    return QVariant();
+}
+
+QVariant BaseDrawer::attributeOfDrawer(const QString &, const QString &) const
 {
     return QVariant();
 }

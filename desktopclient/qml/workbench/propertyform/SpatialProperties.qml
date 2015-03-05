@@ -4,9 +4,14 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 
 Rectangle {
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
     CoordinateSystemProperties{
         id : csyProps
     }
+
     Loader {
         id : rasterProps
         width : parent.width

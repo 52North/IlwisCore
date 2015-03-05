@@ -102,7 +102,7 @@ public:
      * \param dom another domain
      * \return true if the Domains are compatible
      */
-    virtual bool isCompatibleWith(const IDomain& dom) const = 0;
+    virtual bool isCompatibleWith(const IlwisObject* dom, bool strict=false) const = 0;
     virtual bool isOrdered() const = 0;
 
     template<typename T=Range> QSharedPointer<T> range() const{

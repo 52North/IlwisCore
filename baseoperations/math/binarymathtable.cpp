@@ -103,7 +103,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 
     NumericRange *newRange = 0;
     if ( def1.isValid() && def2.isValid())  {
-        if (!def1.datadef().domain<>()->isCompatibleWith(def2.datadef().domain<>())){
+        if (!def1.datadef().domain<>()->isCompatibleWith(def2.datadef().domain<>().ptr())){
             ERROR2(ERR_NOT_COMPATIBLE2,_column1, _column2);
             return sPREPAREFAILED;
         }

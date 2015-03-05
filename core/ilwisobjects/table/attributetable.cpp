@@ -70,6 +70,7 @@ void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quin
         return ;
     }
     FeatureIterator iter(_features, _level);
+    iter = iter + rec;
     (*iter)->record(vars, offset);
 }
 
@@ -78,6 +79,11 @@ void AttributeTable::dataLoaded(bool yesno)
 }
 
 bool AttributeTable::isDataLoaded() const
+{
+    return true;
+}
+
+bool AttributeTable::canUse(const IlwisObject *obj, bool strict) const
 {
     return true;
 }
@@ -113,7 +119,8 @@ std::vector<QVariant> AttributeTable::column(quint32 index, quint32 start, quint
     FeatureIterator iter(_features, _level);
     iter = iter + start;
     for(quint32 i=start; i < stop; ++i) {
-        data[i - start] = (*iter)(index);
+        QVariant v = (*iter)(index);;
+        data[i - start] = v;
         ++iter;
     }
     return data;

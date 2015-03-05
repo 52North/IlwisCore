@@ -65,7 +65,7 @@ public:
      * \param dom the domain to be tested
      * \return true when compatible
      */
-    bool isCompatibleWith(const IDomain &dom) const;
+    bool isCompatibleWith(const Ilwis::IlwisObject *obj, bool strict=false) const;
     bool isOrdered() const;
 
     //@override

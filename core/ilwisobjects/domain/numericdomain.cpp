@@ -119,10 +119,10 @@ Domain::Containement NumericDomain::contains(const QVariant &value) const
     return Domain::cNONE;
 }
 
-bool NumericDomain::isCompatibleWith(const IDomain& dom) const {
-    if ( !dom->isValid())
+bool NumericDomain::isCompatibleWith(const IlwisObject *obj, bool strict) const {
+    if ( !obj || !obj->isValid())
         return false;
-    if(dom->ilwisType() != itNUMERICDOMAIN)
+    if(obj->ilwisType() != itNUMERICDOMAIN)
         return false;
     return true;
 }

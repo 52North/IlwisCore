@@ -112,6 +112,18 @@ void MasterCatalogModel::setActiveTab(int value)
     _activeTab = value;
 }
 
+QString MasterCatalogModel::getName(const QString &id)
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    if ( ok){
+        Resource res = mastercatalog()->id2Resource(objid);
+        if ( res.isValid())
+            return res.name();
+    }
+    return "";
+}
+
 std::vector<Resource> MasterCatalogModel::select(const QString &filter)
 {
     return mastercatalog()->select(filter);

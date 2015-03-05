@@ -120,7 +120,7 @@ bool TermNode::doMethodStatement(SymbolTable &symbols, int scope, ExecutionConte
         if ( iter != ctx->_additionalInfo.end()){
             if ( parms.size() > 1)
                 parms += ",";
-            parms += (*iter).second;
+            parms += (*iter).second.toString();
         }
     }
     for(int i=0; i < _parameters->noOfChilderen(); ++i) {
@@ -147,7 +147,7 @@ bool TermNode::doMethodStatement(SymbolTable &symbols, int scope, ExecutionConte
 QString TermNode::buildStatementSelection(ExecutionContext *ctx) {
     QString selectordef = "\"attribute=" + _id->id() + "\"";
     QString outname = ANONYMOUS_PREFIX;
-    QString expression = QString("%1=selection(%2,%3,asIndex)").arg(outname).arg(ctx->_additionalInfo[IMPLICITPARMATER0]).arg(selectordef);
+    QString expression = QString("%1=selection(%2,%3,asIndex)").arg(outname).arg(ctx->_additionalInfo[IMPLICITPARMATER0].toString()).arg(selectordef);
     return expression;
 }
 

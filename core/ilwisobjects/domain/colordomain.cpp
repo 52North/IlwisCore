@@ -53,11 +53,13 @@ Domain::Containement ColorDomain::contains(const QVariant &value) const
     return Domain::cNONE;
 }
 
-bool ColorDomain::isCompatibleWith(const IDomain &dom) const
+bool ColorDomain::isCompatibleWith(const IlwisObject* obj, bool strict) const
 {
-    if ( !dom.isValid())
+    if ( !obj || !obj->isValid())
         return false;
-    return dom->valueType() == valueType() && dom->ilwisType() == ilwisType();
+    if ( obj->ilwisType() != itCOLORDOMAIN)
+        return false;
+    return true;
 }
 
 IlwisTypes ColorDomain::ilwisType() const

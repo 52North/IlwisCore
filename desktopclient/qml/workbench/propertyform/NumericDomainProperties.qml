@@ -5,6 +5,11 @@ import QtQuick.Controls.Styles 1.0
 import "../../Global.js" as Global
 
 Item {
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     anchors.fill : parent
     Item {
         id : parentDomainItem
@@ -28,5 +33,6 @@ Item {
         width : parent.width
         domainUsed: domainName
         valueTypeUsed: getProperty("valuetype")
+        domainTypeUsed: "ValueDomain"
     }
 }

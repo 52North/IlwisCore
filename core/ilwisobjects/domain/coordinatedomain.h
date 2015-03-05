@@ -53,7 +53,7 @@ public:
      * \param dom The other domain
      * \return True when compatible
      */
-    bool isCompatibleWith(const IDomain &dom) const;
+    bool isCompatibleWith(const Ilwis::IlwisObject *dom, bool strict=false) const;
 
     /*!
      * Query to the value of this coordinate variant to a string<br>

@@ -5,10 +5,19 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 
 Rectangle {
+    function storeData() {
+        if ( propertyForm.editable){
+            if ( dataTab.item)    {
+                dataTab.item.storeData()
+            }
+        }
+    }
+
     id : container
     anchors.fill : parent
     color : "white"
     Loader {
+        id : dataTab
         anchors.fill: parent
 
     }

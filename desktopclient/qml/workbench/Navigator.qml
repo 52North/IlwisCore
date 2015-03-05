@@ -82,7 +82,7 @@ Item {
             Controls.ActionButton{
                 id : addContainer
                 iconsource : "../images/openCS1.png"
-                buttontext : qsTr("Open")
+                buttontext : qsTr("Add\nBookmark")
                 width : 95
                 height : 40
                 checkable: true

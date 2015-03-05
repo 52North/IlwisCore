@@ -77,7 +77,7 @@ bool DataDefinition::isCompatibleWith(const DataDefinition &def) const
     if (!isValid())
         return false;
 
-    return _domain->isCompatibleWith(def.domain<>());
+    return _domain->isCompatibleWith(def.domain<>().ptr());
 
 }
 

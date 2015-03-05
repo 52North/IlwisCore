@@ -109,6 +109,11 @@ void GeoReference::centerOfPixel(bool yesno)
         _georefImpl->centerOfPixel(yesno);
 }
 
+bool GeoReference::canUse(const IlwisObject *obj, bool strict) const
+{
+    return true;
+}
+
 bool GeoReference::isCompatible(const IGeoReference &georefOther) const
 {
     if (!georefOther.isValid())

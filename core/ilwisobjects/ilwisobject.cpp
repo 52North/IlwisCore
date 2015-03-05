@@ -99,6 +99,16 @@ IlwisObject *IlwisObject::clone()
     return 0;
 }
 
+bool IlwisObject::canUse(const IlwisObject *, bool ) const
+{
+    return false;
+}
+
+bool IlwisObject::isCompatibleWith(const IlwisObject*, bool strict) const
+{
+    return false;
+}
+
 bool IlwisObject::merge(const IlwisObject *, int )
 {
     return false;

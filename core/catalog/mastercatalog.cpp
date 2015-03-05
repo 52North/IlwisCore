@@ -257,6 +257,39 @@ quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
     return id;
 }
 
+bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, const QVariant &var, bool extended)
+{
+    auto setExtended = [](quint64 objectid, const QString &attribute, const QVariant &var)->QString{
+        QString statement;
+        Resource res = mastercatalog()->id2Resource(var.toLongLong());
+        if ( res.isValid() && res.hasProperty(attribute))
+            statement = QString("update catalogitemproperties set propertyname='%1', propertyvalue='%2'' where itemid=%3").arg(attribute).arg(var.toString()).arg(objectid);
+        else
+            statement = QString("insert into catalogitemproperties (propertyvalue,propertyname,itemid) values('%1','%2',%3)").arg(var.toString()).arg(attribute).arg(objectid);
+        return statement;
+
+    };
+    if ( objectid == iUNDEF || !var.isValid())
+        return false;
+
+    QString statement;
+    if ( attribute == "name"){
+        QString newname = var.toString();
+        newname.replace("'","''");
+        statement = QString("update mastercatalog set name= '%1' where itemid=%2").arg(newname).arg(objectid) ;
+    }
+    if ( extended){
+        statement = setExtended(objectid, attribute,var);
+    }
+    QSqlQuery sqlPublic(kernel()->database());
+    bool ok = sqlPublic.exec(statement);
+    if (!ok) {
+        kernel()->issues()->logSql(sqlPublic.lastError());
+        return false;
+    }
+    return true;
+}
+
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
     QString query = QString("select type from mastercatalog where itemid = %1").arg(iid);
     QSqlQuery results = kernel()->database().exec(query);

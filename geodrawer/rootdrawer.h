@@ -21,10 +21,11 @@ class RootDrawer : public ComplexDrawer
 public:
     explicit RootDrawer(const IOOptions& options);
 
-    void newDrawer(DrawerInterface *newdrawer, bool overrule);
+    void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
     Envelope viewEnvelope() const;
+    Envelope zoomEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
@@ -34,12 +35,13 @@ public:
     void coordinateSystem(const ICoordinateSystem& csy);
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
-    void cleanUp(QOpenGLContext *openglContext);
-    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+    void cleanUp();
+    bool prepare(PreparationType prepType, const IOOptions& options);
 
     double aspectRatioView() const;
 
     DrawerInterface::DrawerType drawerType() const;
+
 signals:
 
 public slots:
@@ -61,6 +63,8 @@ private:
     Envelope envelope2RootEnvelope(const ICoordinateSystem& csSource, const Envelope& env);
     void modifyEnvelopeZoomView(double dv, double dz, double f);
     void setMVP();
+
+
 };
 
 typedef std::unique_ptr<RootDrawer> UPRootDrawer;

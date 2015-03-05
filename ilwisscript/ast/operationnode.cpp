@@ -104,7 +104,7 @@ QString OperationNode::additionalInfo(ExecutionContext *ctx, const QString& key 
     const auto& iter = ctx->_additionalInfo.find(key);
     if ( iter == ctx->_additionalInfo.end())
         return sUNDEF;
-    return (*iter).second;
+    return (*iter).second.toString();
 }
 
 

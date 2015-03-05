@@ -144,6 +144,13 @@ void ConventionalCoordinateSystem::unit(const QString& unit)
     _unit = unit;
 }
 
+bool ConventionalCoordinateSystem::isCompatibleWith(const IlwisObject *obj) const
+{
+    if ( projection().isValid() && obj->isValid())
+        return projection()->code() == obj->code();
+    return false;
+}
+
 const std::unique_ptr<GeodeticDatum>& ConventionalCoordinateSystem::datum() const
 {
     return _datum;

@@ -6,6 +6,11 @@ Rectangle {
     property int lineheight : 19
     color : "white"
 
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     Text { y : 5; id : line1; text : qsTr("Coordinate system"); width: 120; font.bold: true;height : lineheight }
     Text { y : 5; text : coordinateSystemName;  height :40;width: parent.width - line1.width - 2; anchors.left: line1.right}
     Text { id : line2; text : qsTr("Is Projected"); width: 120; font.bold: true ;anchors.top : line1.bottom; height : lineheight}

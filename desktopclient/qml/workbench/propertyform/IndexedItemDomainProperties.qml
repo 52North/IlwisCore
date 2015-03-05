@@ -6,6 +6,12 @@ import "../../Global.js" as Global
 
 Item {
     anchors.fill : parent
+
+    function storeData() {
+        if ( propertyForm.editable){
+        }
+    }
+
     Item {
         id : parentDomainItem
         width : parent.width
@@ -28,5 +34,6 @@ Item {
         width : parent.width
         domainUsed: domainName
         valueTypeUsed: getProperty("valuetype")
+        domainTypeUsed: "IndexedItemDomain"
     }
 }

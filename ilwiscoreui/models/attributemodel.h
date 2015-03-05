@@ -19,18 +19,20 @@ class ILWISCOREUISHARED_EXPORT AttributeModel : public QObject
     Q_PROPERTY(QString actualRangeDefintion READ actualRangeDefintion CONSTANT)
     Q_PROPERTY(QString attributeDomain READ attributeDomain CONSTANT)
     Q_PROPERTY(QString attributeValueType READ attributeValueType CONSTANT)
+    Q_PROPERTY(QString attributeDomainType READ attributeDomainType CONSTANT)
 
 public:
     AttributeModel();
-    explicit AttributeModel(const Ilwis::ColumnDefinition& def, QObject *parent);
+    explicit AttributeModel(const Ilwis::ColumnDefinition& def, QObject *parent, const Ilwis::IIlwisObject& obj);
 
     QString defaultRangeDefinition() const;
-    QString actualRangeDefintion() const;
+    QString actualRangeDefintion(bool calc=false) const;
     QString attributename() const;
     QString attributeDomain() const;
     QString attributeValueType() const;
+    QString attributeDomainType() const;
     Q_INVOKABLE QStringList attributeValues(bool defaultRange) const;
-    Q_INVOKABLE QString rangeDefinition(bool defaultRange) const;
+    Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString&) const;
 
 
 
@@ -42,6 +44,7 @@ private:
     Ilwis::ColumnDefinition _coldefinition;
     QStringList _attributeValuesDefaultRange;
     QStringList _attributeValuesActualRange;
+    Ilwis::IIlwisObject _owner;
 
 };
 

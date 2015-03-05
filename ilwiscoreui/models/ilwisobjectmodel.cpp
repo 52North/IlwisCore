@@ -115,6 +115,14 @@ bool IlwisObjectModel::isProjectedCoordinateSystem() const
     return "";
 }
 
+bool IlwisObjectModel::isSystemObject() const
+{
+    if ( _ilwisobject.isValid()){
+        return _ilwisobject->isSystemObject();
+    }
+    return true; // just block
+}
+
 QString IlwisObjectModel::projectionInfo() const
 {
     try {
@@ -158,20 +166,20 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
-                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this);
+                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
                             _attributes.push_back(attribute);
                         }
                     }
                 } else if ( hasType(objecttype,itFEATURE)){
                     IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this);
+                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this, _ilwisobject);
                         _attributes.push_back(attribute);
                     }
                 } else if ( hasType(objecttype,itTABLE)){
                     ITable tbl = _ilwisobject.as<Table>();
                     for(int i = 0; i < tbl->columnCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this);
+                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this, _ilwisobject);
                         _attributes.push_back(attribute);
                     }
                 }
@@ -273,19 +281,45 @@ QString IlwisObjectModel::valuetype() const
     return "";
 }
 
-QString IlwisObjectModel::rangeDefinition(bool defaultRange) {
+QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QString& columnName) {
     try {
         IlwisTypes objectype = _ilwisobject->ilwisType();
         QString rangeString;
         if ( hasType( objectype, itCOVERAGE|itDOMAIN)){
             if ( objectype == itRASTER){
                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-                rangeString = defaultRange ? raster->datadef().domain()->range()->toString() : raster->datadef().range()->toString();
+                if ( defaultRange){
+                  rangeString = raster->datadef().domain()->range()->toString();
+                }else{
+                    if ( calc){
+                        raster->loadData();
+                        raster->statistics(NumericStatistics::pBASIC);
+                    }
+                  rangeString = raster->datadef().range()->toString();
+                }
             } else if ( hasType( objectype , itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
                 if ( coldef.isValid()){
-                    rangeString = defaultRange ? coldef.datadef().domain()->range()->toString() : coldef.datadef().range()->toString();
+                    if ( defaultRange)
+                      rangeString =  coldef.datadef().domain()->range()->toString();
+                    else{
+                        if ( calc){
+                            features->loadData();
+                            std::vector<QVariant> data = features->attributeTable()->column(columnName);
+                            if ( data.size() != 0){
+                                std::vector<double> values(data.size());
+                                int  i=0;
+                                for(auto v : data)
+                                    values[i++] = v.toDouble();
+                                NumericStatistics stats; // realy like to do this with a template specialization of the proper calculate function, but the syntax was unclear to me
+                                stats.calculate(values.begin(), values.end());
+                                NumericRange *rng = new NumericRange(stats.prop(NumericStatistics::pMIN),stats.prop(NumericStatistics::pMAX));
+                                features->attributeDefinitionsRef().columndefinitionRef(columnName).datadef().range(rng);
+                            }
+                        }
+                        rangeString = coldef.datadef().range()->toString();
+                    }
                 }
 
             } else if ( hasType( objectype , itDOMAIN)){
@@ -489,6 +523,38 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
         // no exceptions may escape here
     }
     return "";
+}
+
+bool IlwisObjectModel::canUse(const QString &id)
+{
+    if ( _ilwisobject.isValid()){
+        bool ok;
+        quint64 myid = id.toULongLong(&ok);
+            if ( ok){
+                IIlwisObject obj;
+                obj.prepare(myid);
+                if ( obj.isValid())
+                    return _ilwisobject->canUse(obj.ptr());
+            }
+    }
+    return false;
+}
+
+void IlwisObjectModel::setAttribute(const QString &attrname, const QString &value, const QString &extra)
+{
+    if ( _ilwisobject.isValid()){
+        if ( attrname == "domain"){
+            IDomain dom(value);
+            if ( _ilwisobject->ilwisType() == itRASTER){
+                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                if ( dom->id() != raster->datadefRef().domain()->id()){
+                    raster->datadefRef().domain(dom);
+                    raster->changed(true);
+                    mastercatalog()->changeResource(raster->id(),"domain",dom->id(), true);
+                }
+            }
+        }
+    }
 }
 
 bool IlwisObjectModel::isValid() const

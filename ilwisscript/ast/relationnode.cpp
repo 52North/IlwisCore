@@ -137,7 +137,7 @@ bool RelationNode::handleLESSEQ(int index,const NodeValue& vright,SymbolTable &s
 }
 
 bool RelationNode::handleImplicitCase(const QVariant& var1, const QVariant& var2,  ExecutionContext *ctx, const QString& oper){
-    QString inname = ctx->_additionalInfo[IMPLICITPARMATER0];
+    QString inname = ctx->_additionalInfo[IMPLICITPARMATER0].toString();
     QString outname = ANONYMOUS_PREFIX;
     QString expression = QString("%1=select(%2,\"attribute=%3%4%5\",asIndex)").arg(outname).arg(inname).arg(var1.toString()).arg(oper).arg(var2.toString());
     SymbolTable symbols;

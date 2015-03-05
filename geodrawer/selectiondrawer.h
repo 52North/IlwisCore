@@ -15,27 +15,28 @@ public:
     SelectionDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
     ~SelectionDrawer();
 
-    bool draw(QOpenGLContext *openglContext, const IOOptions& options=IOOptions()) ;
-    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+    bool draw(const IOOptions& options=IOOptions()) ;
+    bool prepare(PreparationType prepType, const IOOptions& options);
 
     void setAttribute(const QString& attrName, const QVariant& attrib);
     bool drawerAttribute(const QString drawername, const QString& attrName, const QVariant& attrib);
+    QVariant attribute(const QString &attrName) const;
     DrawerInterface::DrawerType drawerType() const;
     quint32 defaultOrder() const;
     Envelope  envelope() const;
-    void cleanUp(QOpenGLContext *openglContext);
+    void cleanUp();
 
     static DrawerInterface *create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
     NEW_DRAWER
 
 private:
-   std::vector<VertexPosition> _vertices;
-   std::vector<VertexIndex> _indices;
-   std::vector<VertexColor> _colors;
-   QMatrix4x4 _view,_projection, _model, _mvp;
-   bool _preserveAspectRatio = true;
-
+    QVector<QVector3D> _vertices;
+    QVector<QVector3D> _normals;
+    std::vector<VertexIndex> _indices;
+    std::vector<VertexColor> _colors;
+    QMatrix4x4 _view,_projection, _model, _mvp;
+    bool _preserveAspectRatio = true;
 };
 }
 }

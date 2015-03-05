@@ -10,23 +10,23 @@
 
 using namespace Ilwis;
 
-VisualizationManager::VisualizationManager(QObject *parent) :
+LayerManager::LayerManager(QObject *parent) :
     QObject(parent)
 {
 }
 
-VisualizationManager::VisualizationManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
+LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
 {
     IlwisTypes metatype = itCOLLECTION | itCATALOGVIEW;
     Resource res("Global Property Editors", metatype);
     _layers.append(new CoverageLayerModel(_layers.size(), res, _uicontext->propertyEditors(metatype),0, this));
 }
-void VisualizationManager::addVisualizationModel(CoverageLayerModel *newmodel)
+void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
     _layers.insert(1,newmodel);
 }
 
-void VisualizationManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
+void LayerManager::addDataSource(const QString &url, const QString &typeName, Ilwis::Geodrawer::DrawerInterface *drawer)
 {
     IlwisTypes tp = IlwisObject::name2Type(typeName);
     if ( tp == itUNKNOWN)
@@ -38,38 +38,38 @@ void VisualizationManager::addDataSource(const QString &url, const QString &type
     _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(tp), drawer, this));
 }
 
-bool VisualizationManager::zoomInMode() const
+bool LayerManager::zoomInMode() const
 {
     return _zoomInMode;
 }
 
-void VisualizationManager::setZoomInMode(bool yesno)
+void LayerManager::setZoomInMode(bool yesno)
 {
     _zoomInMode = yesno;
 }
 
-bool VisualizationManager::hasSelectionDrawer() const
+bool LayerManager::hasSelectionDrawer() const
 {
     return _hasSelectionDrawer;
 }
 
-void VisualizationManager::setHasSelectionDrawer(bool yesno)
+void LayerManager::setHasSelectionDrawer(bool yesno)
 {
     _hasSelectionDrawer = yesno;
 }
 
-QQmlListProperty<CoverageLayerModel> VisualizationManager::layers()
+QQmlListProperty<CoverageLayerModel> LayerManager::layers()
 {
     return QQmlListProperty<CoverageLayerModel>(this, _layers);
 }
 
-CoverageLayerModel *VisualizationManager::layer(quint32 layerIndex){
+CoverageLayerModel *LayerManager::layer(quint32 layerIndex){
     if ( layerIndex < _layers.size())
         return _layers[layerIndex];
     return 0;
 }
 
-void VisualizationManager::init()
+void LayerManager::init()
 {
 
 }

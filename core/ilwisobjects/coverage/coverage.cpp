@@ -78,6 +78,21 @@ Resource Coverage::source(int mode) const
     return resource;
 }
 
+bool Coverage::canUse(const IlwisObject *obj, bool strict) const
+{
+    if ( IlwisObject::canUse(obj, strict))
+        return true;
+
+    if ( hasType(obj->ilwisType(), itCOORDSYSTEM )){
+        if ( strict ){
+            if ( coordinateSystem()->isCompatibleWith(obj))
+                return true;
+        }else
+            return true;
+    }
+    return false;
+}
+
 void Coverage::name(const QString &nam)
 {
     Identity::name(nam)    ;

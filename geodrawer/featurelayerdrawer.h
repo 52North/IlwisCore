@@ -11,7 +11,7 @@ class FeatureLayerDrawer : public LayerDrawer
 {
 public:
     FeatureLayerDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
-    bool prepare(PreparationType prepType, const IOOptions& options,QOpenGLContext *openglContext=0);
+    bool prepare(PreparationType prepType, const IOOptions& options);
     void unprepare(DrawerInterface::PreparationType prepType);
 
     void setActiveVisualAttribute(const QString& attr);
@@ -27,9 +27,14 @@ public:
 
 private:
     std::vector<VertexIndex> _indices;
+    QVector<QVector3D> _vertices;
+    QVector<QVector3D> _normals;
+    std::vector<VertexColor> _colors;
     quint32 _boundaryIndex = iUNDEF;
 
-    bool draw(QOpenGLContext *openglContext, const IOOptions &options);
+    bool draw(const IOOptions &options);
+
+
 };
 }
 }

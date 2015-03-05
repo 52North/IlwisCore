@@ -9,9 +9,11 @@ Rectangle {
     id : container
 
 
-    height : 50
+    height : 70
     property string domainUsed
     property string valueTypeUsed
+    property string domainTypeUsed
+    property string columnName
     color : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
 
     function rangeFieldType(rdef) {
@@ -39,7 +41,13 @@ Rectangle {
         anchors.left: line3.right
         anchors.top : line2.bottom
         height: 20
-        Component.onCompleted:{ defaultRangeLoader.setSource(rangeFieldType(rangeDefinition(true)),{"useDefaultRange":true})}
+        Component.onCompleted:{ defaultRangeLoader.setSource(rangeFieldType(rangeDefinition(true, false, columnName)),{"useDefaultRange":true})}
+    }
+    Loader {
+         id : actualLoader
+         anchors.top : line3.bottom
+         width : parent.width
+         source : domainTypeUsed == "ValueDomain" ? "ActualNumericRange.qml" : ""
     }
 }
 
