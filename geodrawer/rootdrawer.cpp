@@ -162,7 +162,7 @@ void RootDrawer::pixelAreaSize(const Size<>& size)
 
             }
             if ( size.xsize() != _pixelAreaSize.xsize()) {
-                modifyEnvelopeZoomView(_zoomRect.size().xsize(),(double)(double)_pixelAreaSize.xsize()/ size.xsize(),true );
+                modifyEnvelopeZoomView(_zoomRect.size().xsize(),size.xsize() / (double) _pixelAreaSize.xsize()  ,false );
             }
         }
     }
