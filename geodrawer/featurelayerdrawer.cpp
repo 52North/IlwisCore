@@ -181,9 +181,6 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
         if ( featureDrawing._geomtype == itPOINT){
             _shaders.setUniformValue(_scaleCenter, featureDrawing._center);
             _shaders.setUniformValue(_scaleFactor, (float)rootDrawer()->zoomScale());
-            if ( rootDrawer()->zoomScale() != 1.0){
-                qDebug() << rootDrawer()->zoomScale();
-            }
         }else{
             _shaders.setUniformValue(_scaleFactor, 1.0f);
         }
