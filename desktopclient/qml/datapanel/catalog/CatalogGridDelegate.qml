@@ -27,35 +27,37 @@ Item {
 
     MouseArea {
         id : mouseArea
+        property variant image
         width : 20; height : parent.height
         drag.target: image
         onReleased: {
             image.Drag.drop()
             image.parent = mouseArea
             image.anchors.fill = mouseArea
+            image.destroy();
         }
+        onPressed: {
+           image = Qt.createQmlObject('import QtQuick 2.0; Image{
+                id : image
+                width : 20; height : 20
+                source : iconSource(iconPath)
+                fillMode: Image.PreserveAspectFit
+                property string message :  model !== null ? url : ""
+                property string ilwisobjectid : model !== null ? id : ""
 
-        Image{
-            id : image
-            width : 18; height : parent.height - 2
-            source : iconSource(iconPath)
-            fillMode: Image.PreserveAspectFit
-            property string message :  url
-            property string ilwisobjectid : id
+                Drag.keys: iconPath
+                Drag.active: mouseArea.drag.active
+                Drag.hotSpot.x: 10
+                Drag.hotSpot.y: 10
+                opacity : Drag.active / 2
 
-            Drag.keys: [ iconPath ]
-            Drag.active: mouseArea.drag.active
-            Drag.hotSpot.x: 10
-            Drag.hotSpot.y: 10
-            opacity : Drag.active / 2
-
-
-            states: State {
-                when: mouseArea.drag.active
-                ParentChange { target: image; parent: root }
-                AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
-            }
-        }
+                states: State {
+                    when: mouseArea.drag.active
+                    ParentChange { target: image; parent: root }
+                    AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                }
+            }', mouseArea, "dynamicImage");
+          }
         z : 1
     }
 
