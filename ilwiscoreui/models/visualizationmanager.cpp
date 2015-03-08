@@ -19,7 +19,9 @@ LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(p
 {
     IlwisTypes metatype = itCOLLECTION | itCATALOGVIEW;
     Resource res("Global Property Editors", metatype);
-    _layers.append(new CoverageLayerModel(_layers.size(), res, _uicontext->propertyEditors(metatype),0, this));
+    CoverageLayerModel * model = new CoverageLayerModel(_layers.size(), res, _uicontext->propertyEditors(IIlwisObject()),0, this);
+    model->iconPath("layers.png");
+    _layers.append(model);
 }
 void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
@@ -33,8 +35,9 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
     Resource resource = mastercatalog()->name2Resource(url.toString(),tp);
     if ( !resource.isValid())
         return;
-
-    _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(tp), drawer, this));
+    IIlwisObject obj(resource);
+    _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, _uicontext->propertyEditors(obj), drawer, this));
+    emit layerChanged();
 }
 
 bool LayerManager::zoomInMode() const
