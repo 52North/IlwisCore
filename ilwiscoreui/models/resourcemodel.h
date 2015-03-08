@@ -64,6 +64,7 @@ public:
     void setDisplayName(const QString& name);
     QString url() const;
     QString iconPath() const;
+    void iconPath(const QString& name);
     bool isRoot() const;
     QString id() const;
 
@@ -82,6 +83,7 @@ private:
 
     Ilwis::Resource _item;
     QString _imagePath;
+    QString _iconPath;
     quint64 _type;
     bool _isRoot;
     bool _selected = false;

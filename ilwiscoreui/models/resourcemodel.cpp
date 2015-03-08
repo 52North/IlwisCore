@@ -132,8 +132,16 @@ QString ResourceModel::url() const
 
 QString ResourceModel::iconPath() const
 {
+    if ( _iconPath != "")
+        return _iconPath;
+
     quint64 tp = _item.ilwisType();
     return iconPath(tp);
+}
+
+void ResourceModel::iconPath(const QString &name)
+{
+    _iconPath = name;
 }
 
 QString ResourceModel::iconPath(IlwisTypes tp)
