@@ -10,7 +10,7 @@ import "../../Global.js" as Global
 
 
 Item {
-    id : displayOptions
+    id : layerview
     width: parent.width
     height : parent.height
     objectName: uicontext.uniqueName()
@@ -143,63 +143,25 @@ Item {
         }
 
     }
-    Layers{
+    SplitView {
         anchors.top : maptools.bottom
         width : parent.width
-        height : parent.height - maptools.height - 10
-        id : layers
+        orientation: Qt.Vertical
+        height : parent.height - maptools.height
+        Layers{
+            width : parent.width
+            height : parent.height - maptools.height - 150
+            id : layers
+            Layout.fillWidth: true
 
-    }
-    Rectangle{
-        id : propertyEditors
-        width : parent.width - 50
-        height : 10
-        color : Global.alternatecolor1
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        opacity : 0.6
-
-
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                propertyEditors.state = propertyEditors.state == "maximized" ? "minimized" : "maximized"
-            }
         }
-        states: [
-            State { name: "maximized"
-
-                PropertyChanges {
-                    target: propertyEditors
-                    height : 50
-                    opacity : 0.5
-                }
-            },
-             State {
-                name : "minimized"
-                PropertyChanges {
-                    target: propertyEditors
-                    height : 10
-                    opacity : 0.8
-                }
-            }
-
-        ]
-        transitions: [
-            Transition {
-                NumberAnimation { properties: "height"; duration : 500 ; easing.type: Easing.InOutCubic }
-                NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
-            }
-        ]
+        LayerPropertyManagement{
+            height : 150
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
     }
-    Image {
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: propertyEditors.top
-      width : 50
-      height : 8
-      source : propertyEditors.height == 10 ? iconsource("arrowuplight.png") : iconsource("arrowdownlight.png")
 
-  }
     Component.onCompleted: {
          manager = uicontext.createLayerManager(objectName)
         layers.setManager(manager)
