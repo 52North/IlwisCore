@@ -41,7 +41,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/propertyeditor.h \
     ilwiscoreui/models/coveragelayermodel.h \
     ilwiscoreui/drawers/drawerinterface.h \
-    ilwiscoreui/propertyeditors/linestylesetter.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
     ilwiscoreui/drawers/draweroperation.h \
@@ -49,7 +48,11 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/drawers/drawerattributesetter.h \
     ilwiscoreui/drawers/drawerattributesetterfactory.h \
     ilwiscoreui/drawers/drawerfactory.h \
-    ilwiscoreui/drawers/attributevisualproperties.h
+    ilwiscoreui/drawers/attributevisualproperties.h \
+    ilwiscoreui/propertyeditors/attributesetter.h \
+    ilwiscoreui/propertyeditors/mapinformationpropertysetter.h \
+    ilwiscoreui/propertyeditors/polygonpropertysetter.h \
+    ilwiscoreui/propertyeditors/linepropertysetter.h
 
 unix {
     target.path = /usr/lib
@@ -76,7 +79,6 @@ SOURCES += \
     ilwiscoreui/propertyeditors/propertyeditor.cpp \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
-    ilwiscoreui/propertyeditors/linestylesetter.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
     ilwiscoreui/drawers/draweroperation.cpp \
@@ -84,7 +86,11 @@ SOURCES += \
     ilwiscoreui/drawers/drawerattributesetter.cpp \
     ilwiscoreui/drawers/drawerattributesetterfactory.cpp \
     ilwiscoreui/drawers/drawerfactory.cpp \
-    ilwiscoreui/drawers/attributevisualproperties.cpp
+    ilwiscoreui/drawers/attributevisualproperties.cpp \
+    ilwiscoreui/propertyeditors/attributesetter.cpp \
+    ilwiscoreui/propertyeditors/mapinformationpropertysetter.cpp \
+    ilwiscoreui/propertyeditors/polygonpropertysetter.cpp \
+    ilwiscoreui/propertyeditors/linepropertysetter.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
