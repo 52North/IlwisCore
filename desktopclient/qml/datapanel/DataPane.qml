@@ -76,8 +76,6 @@ Rectangle {
     }
 
     Loader {
-        width : 200
-        height : 200
         id : mapWindow
     }
 
@@ -117,10 +115,9 @@ Rectangle {
             }
         }
         function showMapWindow(objectid){
-            mapWindow.source = "visualization/MapWindow.qml"
             var tabview = activeSplit ===1 ? lefttab : righttab
-            mapWindow.item.width = tabview.width
-            mapWindow.item.height = tabview.height
+            mapWindow.setSource("visualization/MapWindow.qml",{"width" : tabview.width, "height" : tabview.height})
+
             var tab = tabview.getTab(tabview.currentIndex)
             if ( tab && tab.item.manager){
                 mapWindow.item.transferLayers(tab.item.manager)
