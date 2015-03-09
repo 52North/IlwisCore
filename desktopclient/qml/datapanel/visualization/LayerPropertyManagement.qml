@@ -87,6 +87,7 @@ Rectangle {
                 delegate: LayerDelegate{}
                 highlight: highlight
                 focus: true
+                clip : true
 
             }
         }
@@ -96,6 +97,8 @@ Rectangle {
         id : deleteButton
         height : 14
         width: 80
+        opacity : layersList.height > 5 ? 14 : 0
+        enabled : layersList.height > 5
         text: "remove layer"
         anchors.top : firstColumn.bottom
         x : 5
