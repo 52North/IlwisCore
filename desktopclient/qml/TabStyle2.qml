@@ -12,7 +12,7 @@ TabViewStyle {
     frameOverlap: 1
     tab: Rectangle {
         id : selectRect
-        color: currentIndex === styleData.index && activeSplit === side ? selectColor : nonselectColor
+        color: currentIndex === styleData.index && activeSplit === Math.abs(side) ? selectColor : nonselectColor
         border.color:  color
 
         implicitWidth: Math.max(label.width + 4, 170)

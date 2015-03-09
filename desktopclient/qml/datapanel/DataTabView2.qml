@@ -19,7 +19,7 @@ Item{
 
 
     onSideChanged: {
-        centerItem.activeSplit = side
+        centerItem.activeSplit = Math.abs(side)
         mastercatalog.activeSplit = Math.abs(side) - 1
         var tab = centerItem.getCurrentCatalogTab()
         if ( tab && tab.item && tab.item.currentCatalog){
