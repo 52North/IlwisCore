@@ -27,6 +27,7 @@ Rectangle {
     ListView {
         id : editorList
         anchors.fill: parent
+        clip : true
         delegate: Component {
             Loader {
                 sourceComponent: Component {
