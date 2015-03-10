@@ -10,7 +10,7 @@ import "../../Global.js" as Global
 
 
 Item {
-    id : displayOptions
+    id : layerview
     width: parent.width
     height : parent.height
     objectName: uicontext.uniqueName()
@@ -64,6 +64,7 @@ Item {
             id : entireMap
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 2
+            tooltip: "EntireMap"
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -142,12 +143,25 @@ Item {
         }
 
     }
-    Layers{
+    SplitView {
         anchors.top : maptools.bottom
         width : parent.width
+        orientation: Qt.Vertical
         height : parent.height - maptools.height
-        id : layers
+        Layers{
+            width : parent.width
+            height : parent.height - maptools.height - 150
+            id : layers
+            Layout.fillWidth: true
+
+        }
+        LayerPropertyManagement{
+            height : 150
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
     }
+
     Component.onCompleted: {
          manager = uicontext.createLayerManager(objectName)
         layers.setManager(manager)

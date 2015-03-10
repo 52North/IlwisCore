@@ -51,7 +51,7 @@ Item {
   }
 
   function entireMap() {
-      var envelope = renderer.attributeOfDrawer("rootdrawer","viewenvelope");
+      var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");
       if ( envelope !== ""){
           renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
       }

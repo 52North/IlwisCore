@@ -2,7 +2,7 @@
 #define COVERAGELAYERMODEL_H
 
 #include <QQmlListProperty>
-#include "resourcemodel.h"
+#include "ilwisobjectmodel.h"
 #include "propertyeditors/propertyeditor.h"
 #include "drawers/drawerinterface.h"
 #include "ilwiscoreui_global.h"
@@ -10,7 +10,7 @@
 class LayerManager;
 class PropertyEditor;
 
-class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public ResourceModel
+class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public IlwisObjectModel
 {
     Q_OBJECT
 

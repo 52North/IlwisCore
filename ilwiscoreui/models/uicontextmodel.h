@@ -33,8 +33,8 @@ public:
     Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
     Q_INVOKABLE QString uniqueName();
 
-    int addPropertyEditor(quint64 objecttype, const QString& propertyName, CreatePropertyEditor func);
-    QList<PropertyEditor *> propertyEditors(quint64 objecttype) ;
+    int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
+    QList<PropertyEditor *> propertyEditors(const IIlwisObject &obj) ;
 
     void qmlContext(QQmlContext *ctx);
     int activeSplit() const;
@@ -50,7 +50,7 @@ signals:
 public slots:
 
 private:
-    std::map<quint64,std::map<QString, CreatePropertyEditor>> _propertyEditors;
+    std::map<QString, CreatePropertyEditor> _propertyEditors;
     std::map<quint64, LayersViewCommandInterface *> _viewers;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;

@@ -44,6 +44,7 @@ public:
     void setlayer(quint32 index, CoverageLayerModel *model);
     int defaultHeight() const;
 
+    bool canUse(const Ilwis::IIlwisObject &obj) const;
 signals:
     void rprElementsChanged();
     void rprNameChanged();
@@ -52,7 +53,7 @@ private:
      QList<RepresentationElement *> _rprElements;
      IRepresentation _representation;
 
-     NEW_PROPERTYEDITOR(RepresentationSetter)
+     //NEW_PROPERTYEDITOR(RepresentationSetter)
 };
 
 #endif // REPRESENTATIONSETTER_H

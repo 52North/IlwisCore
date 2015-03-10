@@ -5,7 +5,10 @@ PropertyEditor::PropertyEditor(QObject *parent) : QObject(parent)
 
 }
 
-PropertyEditor::PropertyEditor(const QString& name, const QUrl &url, QObject *parent) : QObject(parent), Ilwis::Identity(name), _qmlUrl(url)
+PropertyEditor::PropertyEditor(const QString& name, const QString& displayNm, const QUrl &url, QObject *parent) :
+    QObject(parent), Ilwis::Identity(name),
+    _qmlUrl(url),
+    _displayName(displayNm)
 {
 
 }
@@ -30,9 +33,24 @@ int PropertyEditor::defaultHeight() const
     return 0;
 }
 
+bool PropertyEditor::canUse(const IIlwisObject &) const
+{
+    return false;
+}
+
+void PropertyEditor::prepare(const IIlwisObject &)
+{
+
+}
+
 int PropertyEditor::layerIndex() const
 {
     return _layerIndex;
+}
+
+QString PropertyEditor::displayName() const
+{
+    return _displayName;
 }
 
 void PropertyEditor::setlayer(quint32 index, CoverageLayerModel *model){

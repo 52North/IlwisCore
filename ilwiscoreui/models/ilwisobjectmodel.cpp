@@ -18,7 +18,9 @@ IlwisObjectModel::IlwisObjectModel()
 IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *parent) : ResourceModel(source, parent)
 {
     try{
-    _ilwisobject.prepare(resource());
+        if ( source.name() != "Global Property Editors"){ // special case for the dummy object of the global layer
+            _ilwisobject.prepare(resource());
+        }
     } catch (const ErrorObject& ){
 
     } catch ( std::exception& ex){
