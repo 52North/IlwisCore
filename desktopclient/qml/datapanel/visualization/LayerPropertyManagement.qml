@@ -19,6 +19,13 @@ Rectangle {
          var iconP = "../../images/" + name
          return iconP
      }
+
+    function setEditor(propindex){
+        var coverage = manager.layer(layersList.currentIndex)
+        var editor = coverage.propertyEditors[propindex]
+        propertyEditor.setSource(editor.qmlUrl,{"editor" : editor})
+    }
+
     Layout.minimumHeight: 16
 
     color : Global.alternatecolor2
@@ -75,7 +82,7 @@ Rectangle {
                 function setEditors(){
                     var coverage = manager.layer(currentIndex)
                     if ( coverage){
-                        editorsList.setSource("PropertyEditorsList.qml",{"editors" :coverage.propertyEditors })
+                        editorsListLoader.setSource("PropertyEditorsList.qml",{"editors" :coverage.propertyEditors })
                     }
 
                 }
@@ -96,7 +103,7 @@ Rectangle {
     Button{
         id : deleteButton
         height : 14
-        width: 80
+        width: firstColumn.width
         opacity : layersList.height > 5 ? 14 : 0
         enabled : layersList.height > 5
         text: "remove layer"
@@ -104,7 +111,7 @@ Rectangle {
         x : 5
     }
     Item {
-        id : editorsColumn
+        id : displaypropertiesColumn
         width : 150
         height : propertyEditorBar.height - header.height - 18
         anchors.top : header.bottom
@@ -112,17 +119,52 @@ Rectangle {
         anchors.leftMargin: 10
 
         Text{
-            id : editorsLabel
-            text : qsTr("Option Editors")
+            id : propertiesLabel
+            text : qsTr("Display Properties")
             font.weight: Font.DemiBold
-            opacity : editorsList.item ? 1 : 0
         }
-        Loader {
+        Rectangle {
+            color : Global.alternatecolor2
+            border.color: "lightgrey"
+            border.width: 1
+            width : parent.width
+            anchors.top: propertiesLabel.bottom
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            Loader {
+                anchors.fill : parent
+                id : editorsListLoader
+            }
+        }
+    }
+    Item {
+        id : displayEditorColumn
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        height : propertyEditorBar.height - header.height - 18
+        anchors.top : header.bottom
+        anchors.left : displaypropertiesColumn.right
+        anchors.leftMargin: 10
+
+        Text{
+            id : editorsLabel
+            text : qsTr("Property Editor")
+            font.weight: Font.DemiBold
+        }
+
+        Rectangle {
+            color : Global.alternatecolor2
+            border.color: "lightgrey"
+            border.width: 1
             width : parent.width
             anchors.top: editorsLabel.bottom
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
-            id : editorsList
+            Loader {
+                id : propertyEditor
+                anchors.fill : parent
+
+            }
         }
     }
 
