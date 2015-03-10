@@ -29,6 +29,7 @@ QString LayerDrawer::activeAttribute() const
 
 void LayerDrawer::setAttribute(const QString &key, const QVariant &attribValue)
 {
+    SpatialDataDrawer::setAttribute(key, attribValue);
     if ( key == "activevisualattribute"){
         setActiveVisualAttribute(attribValue.toString());
     }
