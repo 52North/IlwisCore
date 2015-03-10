@@ -45,7 +45,8 @@ public:
     DrawerInterface::DrawerType drawerType() const;
 
     QVariant attribute(const QString &attrNme) const;
-signals:
+
+    void redraw();
 
 public slots:
 

@@ -275,3 +275,8 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
     }
     return QVariant();
 }
+
+void RootDrawer::redraw()
+{
+    emit updateRenderer();
+}
