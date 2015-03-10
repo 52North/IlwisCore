@@ -58,6 +58,7 @@ bool SelectionDrawer::draw(const IOOptions &)
     if (!_shaders.bind())
         return false;
      _shaders.setUniformValue(_modelview,_mvp);
+     _shaders.setUniformValue(_vboAlpha, alpha());
 
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboNormal);
