@@ -23,6 +23,7 @@ LayersRenderer::LayersRenderer()
 {
     if ( !_rootDrawer){
         _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
+        connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
     }
 }
 
@@ -53,6 +54,9 @@ void LayersRenderer::cleanup()
     if ( _rootDrawer){
         _rootDrawer->cleanUp();
     }
+}
+void LayersRenderer::updateRenderer() {
+    emit update();
 }
 
 void LayersRenderer::synchronize(QQuickFramebufferObject *item)
