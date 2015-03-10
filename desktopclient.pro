@@ -110,7 +110,8 @@ SOURCES += \
     desktopclient/keyfilter.cpp
 
 DISTFILES += \
-    desktopclient/qml/datapanel/visualization/Layers.qml
+    desktopclient/qml/datapanel/visualization/Layers.qml \
+    desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml
 
 
 
