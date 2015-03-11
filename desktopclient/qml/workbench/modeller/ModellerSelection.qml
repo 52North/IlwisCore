@@ -58,11 +58,15 @@ Rectangle {
                 // create temporary Modeller obeject
                 // open formular
             } else if (newButton.text == createText) {
+                var modeller = "Modeller_" + modellerCount++;
+//                if (nameItem != null && modelNameLabel != null) {
+//                    modeller = modelNameLabel;
+//                }
                 newButton.text = newText
                 cancelButton.opacity = 0
                 // create Modeller obeject from temporary object
                 // open modeller panel
-                dataPanel.addModellerPanel("Modeller_" + modellerCount++);
+                dataPanel.addModellerPanel(modeller);
                 applicationForm.state = "minimized";
             }
         }
@@ -179,14 +183,14 @@ Rectangle {
                 opacity : 0
 
             }
-            Button{
-                y : parent.height - 25
-                width : 50
-                text : "execute"
-                height : 22
-                x : parent.width - 60
-                onClicked: appFrame.doExecute(operationid)
-            }
+            //            Button{
+            //                y : parent.height - 25
+            //                width : 50
+            //                text : "execute"
+            //                height : 22
+            //                x : parent.width - 60
+            //                onClicked: appFrame.doExecute(operationid)
+            //            }
             states: [
                 State { name: "maximized"
 
