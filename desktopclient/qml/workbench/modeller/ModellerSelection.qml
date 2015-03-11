@@ -58,16 +58,29 @@ Rectangle {
                 // create temporary Modeller obeject
                 // open formular
             } else if (newButton.text == createText) {
-                var modeller = "Modeller_" + modellerCount++;
-//                if (nameItem != null && modelNameLabel != null) {
-//                    modeller = modelNameLabel;
-//                }
-                newButton.text = newText
-                cancelButton.opacity = 0
-                // create Modeller obeject from temporary object
-                // open modeller panel
-                dataPanel.addModellerPanel(modeller);
-                applicationForm.state = "minimized";
+                var modeller = "Wokflow-";
+                if (appFrame.currentAppForm != null && appFrame.currentAppForm.getName() !== null && appFrame.currentAppForm.getName().length > 0) {
+                    modeller += appFrame.currentAppForm.getName();
+                    newButton.text = newText
+                    cancelButton.opacity = 0
+                    // create Modeller obeject from temporary object
+                    // open modeller panel
+                    dataPanel.addModellerPanel(modeller);
+                    applicationForm.state = "minimized";
+                } else {
+                    var message = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Dialogs 1.1; MessageDialog {
+                         id: messageDialog
+                         title: "Error!";
+                         text: "Missing workflow name! Please enter a workflow name!";
+                         icon: StandardIcon.Warning;
+                         modality: Qt.ApplicationModal
+                         onAccepted: {
+                            messageDialog.close();
+                            messageDialog.destroy();
+                         }
+                         Component.onCompleted: visible = true
+                     }', newModeller, "dynamicMessage");
+                }
             }
         }
     }
@@ -88,7 +101,6 @@ Rectangle {
             operationTabs.activ
         }
     }
-
 
     Rectangle {
         id : searchBar
