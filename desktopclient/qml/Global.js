@@ -8,3 +8,7 @@ var alternatecolor4 = "#eee"
 var alternatecolor5 = "#EAECEE"
 var selectedColor = "#99CCFF"
 var rowHeight = 20
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

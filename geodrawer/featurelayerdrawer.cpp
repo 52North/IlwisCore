@@ -171,6 +171,7 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
 
     _shaders.setUniformValue(_modelview, mvp);
+    _shaders.setUniformValue(_vboAlpha, alpha());
     _shaders.enableAttributeArray(_vboNormal);
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboColor);

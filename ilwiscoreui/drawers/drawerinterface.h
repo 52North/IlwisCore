@@ -102,6 +102,8 @@ public:
 
     virtual quint32 defaultOrder() const = 0;
     virtual DrawerType drawerType()  const = 0;
+
+    virtual void redraw() = 0;
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;

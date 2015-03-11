@@ -1,11 +1,9 @@
 import QtQuick 2.0
 import "../../Global.js" as Global
 
-Rectangle {
+Item {
 
-    color : Global.alternatecolor2
-    border.color: "lightgrey"
-    border.width: 1
+
     property var editors
     height : 18
 
@@ -35,10 +33,12 @@ Rectangle {
                         text: displayName
                         width : 100
                         height : 18
+                        x : 5
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
                                 editorList.currentIndex = index
+                                propertyEditorBar.setEditor(index)
                             }
                         }
                     }

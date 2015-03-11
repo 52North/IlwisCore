@@ -22,6 +22,16 @@ Item {
     }
 
     function toggleFilter(objecttype, togglestate){
+        if ( objecttype === "all"){
+            showRasters.checked = showAll.checked;
+            showFeatures.checked = showAll.checked;
+            showCoverages.checked = showAll.checked;
+            showCsys.checked = showAll.checked;
+            showGrfs.checked = showAll.checked;
+            showTables.checked = showAll.checked;
+            showDomains.checked = showAll.checked;
+        }
+
         currentCatalog.filterChanged(objecttype, togglestate)
         catalogChanged()
     }
@@ -72,52 +82,15 @@ Item {
                 }
             }
 
+
+
             ToolBarButton{
-                id : showList
-                iconSource: iconsource("listCS1.png")
-                exclusiveGroup: catalogViewStatus
-                checked : false
-            }
-            ToolBarButton{
-                id : showGrid
-                iconSource: iconsource("gridCS1.png")
-                checked : true
-                exclusiveGroup: catalogViewStatus
-            }
-            ToolBarButton{
-                id : showThumbs
+                id : showAll
                 implicitHeight: heightButtons
-                iconSource: iconsource("thumblistCS1.png")
+                iconSource: iconsource("all20.png")
                 checkable: true
-                checked: false
-                exclusiveGroup: catalogViewStatus
-            }
-
-            Rectangle{
-                implicitHeight: heightButtons
-                width: 10
-                color : "grey"
-                opacity: 0
-            }
-
-            ToolBarButton{
-                id : refresh
-                implicitHeight: heightButtons
-                iconSource: iconsource("refreshCS1.png")
-                action : refreshCatalog
-            }
-
-            Rectangle{
-                implicitHeight: heightButtons
-                width: 20
-                color : "grey"
-                opacity: 0
-            }
-
-            CheckBox{
-                id : allSelected
-                checkedState: Qt.Checked
-                implicitHeight: heightButtons
+                checked: true
+                onClicked: toggleFilter("all", checked);
             }
 
             ToolBarButton{
@@ -176,6 +149,49 @@ Item {
                 checked: true
                 onClicked: toggleFilter("domain", checked);
             }
+
+            Rectangle{
+                implicitHeight: heightButtons
+                width: 10
+                color : "grey"
+                opacity: 0
+            }
+
+            ToolBarButton{
+                id : refresh
+                implicitHeight: heightButtons
+                iconSource: iconsource("refreshCS1.png")
+                action : refreshCatalog
+            }
+
+            Rectangle{
+                implicitHeight: heightButtons
+                width: 20
+                color : "grey"
+                opacity: 0
+            }
+
+            ToolBarButton{
+                id : showList
+                iconSource: iconsource("listCS1.png")
+                exclusiveGroup: catalogViewStatus
+                checked : false
+            }
+            ToolBarButton{
+                id : showGrid
+                iconSource: iconsource("gridCS1.png")
+                checked : true
+                exclusiveGroup: catalogViewStatus
+            }
+            ToolBarButton{
+                id : showThumbs
+                implicitHeight: heightButtons
+                iconSource: iconsource("thumblistCS1.png")
+                checkable: true
+                checked: false
+                exclusiveGroup: catalogViewStatus
+            }
+
         }
 
 

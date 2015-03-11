@@ -52,7 +52,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/attributesetter.h \
     ilwiscoreui/propertyeditors/mapinformationpropertysetter.h \
     ilwiscoreui/propertyeditors/polygonpropertysetter.h \
-    ilwiscoreui/propertyeditors/linepropertysetter.h
+    ilwiscoreui/propertyeditors/linepropertysetter.h \
+    ilwiscoreui/propertyeditors/layertransparencysetter.h
 
 unix {
     target.path = /usr/lib
@@ -90,7 +91,8 @@ SOURCES += \
     ilwiscoreui/propertyeditors/attributesetter.cpp \
     ilwiscoreui/propertyeditors/mapinformationpropertysetter.cpp \
     ilwiscoreui/propertyeditors/polygonpropertysetter.cpp \
-    ilwiscoreui/propertyeditors/linepropertysetter.cpp
+    ilwiscoreui/propertyeditors/linepropertysetter.cpp \
+    ilwiscoreui/propertyeditors/layertransparencysetter.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

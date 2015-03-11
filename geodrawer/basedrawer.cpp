@@ -32,6 +32,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                          "uniform mat4 mvp;"
                                          "uniform vec3 scalecenter;"
                                          "uniform float scalefactor;"
+                                         "uniform float alpha;"
                                          "attribute lowp vec4 vertexColor;"
                                          "varying lowp vec4 fragmentColor;"
                                          "void main() {"
@@ -44,6 +45,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                             "    position[2] = z;"
                                             "    position[3] = 1;"
                                          "    }"
+                                         "    vertexColor[3] = alpha * vertexColor[3];"
                                          "    gl_Position =  mvp * position;"
                                          "    fragmentColor = vertexColor;"
                                          "}");
@@ -68,6 +70,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         _modelview = _shaders.uniformLocation("mvp");
         _scaleCenter = _shaders.uniformLocation("scalecenter");
         _scaleFactor = _shaders.uniformLocation("scalefactor");
+        _vboAlpha = _shaders.uniformLocation("alpha");
 
     }
 
@@ -195,6 +198,9 @@ std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
 
 QVariant BaseDrawer::attribute(const QString &attrName) const
 {
+    if ( attrName == "alphachannel")
+        return _alpha;
+
     return QVariant();
 }
 
@@ -203,9 +209,10 @@ QVariant BaseDrawer::attributeOfDrawer(const QString &, const QString &) const
     return QVariant();
 }
 
-void BaseDrawer::setAttribute(const QString &, const QVariant &)
+void BaseDrawer::setAttribute(const QString &attrName, const QVariant &value)
 {
-
+    if ( attrName == "alphachannel")
+        _alpha = value.toFloat();
 }
 
 bool BaseDrawer::drawerAttribute(const QString , const QString &, const QVariant &)
@@ -221,6 +228,22 @@ QColor BaseDrawer::color(const IRepresentation &rpr, double , DrawerInterface::C
 quint32 BaseDrawer::defaultOrder() const
 {
     return iUNDEF;
+}
+
+float BaseDrawer::alpha() const
+{
+    return _alpha;
+}
+
+void BaseDrawer::alpha(float alp)
+{
+    if ( alp >= 0 && alp <= 1.0)
+        _alpha = alp;
+}
+
+void BaseDrawer::redraw()
+{
+    rootDrawer()->redraw();
 }
 
 

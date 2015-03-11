@@ -8,7 +8,7 @@
 REGISTER_PROPERTYEDITOR("linepropertysetter",LinePropertySetter)
 
 LinePropertySetter::LinePropertySetter(QObject *parent) :
-    PropertyEditor("linepropertysetter",TR("Line properties"),QUrl("LineProperties.qml"), parent)
+    PropertyEditor("linepropertysetter",TR("Line properties"),QUrl("propertyeditors/LineStyleSetter.qml"), parent)
 {
 
 }
