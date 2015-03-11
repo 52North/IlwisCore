@@ -86,7 +86,7 @@ Rectangle {
                             ParentChange { target: operationNameDrag; parent: root }
                             AnchorChanges { target: operationNameDrag; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                         }
-                    }', mouseAreaOpsList, "dynamicImage");
+                    }', mouseAreaOpsList, "dynamicOperationLabel");
 
                 }
 

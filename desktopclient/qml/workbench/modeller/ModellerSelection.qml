@@ -54,11 +54,11 @@ Rectangle {
                 newButton.text = createText
                 cancelButton.opacity = 1
                 applicationForm.state = "maximized";
-                newFormUrl("modeller/ModellerMetadataForm.qml", "New Modeller");
+                newFormUrl("modeller/ModellerMetadataForm.qml", "New Workflow");
                 // create temporary Modeller obeject
                 // open formular
             } else if (newButton.text == createText) {
-                var modeller = "Wokflow-";
+                var modeller = "Wokflow - ";
                 if (appFrame.currentAppForm != null && appFrame.currentAppForm.getName() !== null && appFrame.currentAppForm.getName().length > 0) {
                     modeller += appFrame.currentAppForm.getName();
                     newButton.text = newText
