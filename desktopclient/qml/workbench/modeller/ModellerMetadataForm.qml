@@ -13,6 +13,15 @@ Column {
 //        id : sourceFilterGroup;
 //        onCurrentChanged: {}
 //    }
+
+    function getName() {
+        return modelNameText.text
+    }
+
+    function getDescription() {
+        return modelDescriptionText.text
+    }
+
     Rectangle {
         id: nameItem
         x : 5
