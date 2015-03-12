@@ -45,7 +45,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
                                             "    position[2] = z;"
                                             "    position[3] = 1;"
                                          "    }"
-                                         "    vertexColor[3] = alpha * vertexColor[3];"
+                                         "    vertexColor.a = alpha * vertexColor.a;"
                                          "    gl_Position =  mvp * position;"
                                          "    fragmentColor = vertexColor;"
                                          "}");
