@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<DomainItemModel>("DomainItemModel",1,0,"DomainItemModel");
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
-        qmlRegisterType<PropertyEditor>("PropertyEditor", 1,0, "PropertyEditor");
+        qmlRegisterType<VisualAttributeEditor>("VisualAttributeEditor", 1,0, "VisualAttributeEditor");
         qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
