@@ -10,7 +10,7 @@ REGISTER_PROPERTYEDITOR("linepropertysetter",LinePropertySetter)
 LinePropertySetter::LinePropertySetter(QObject *parent) :
     VisualAttributeEditor("linepropertysetter",TR("Line properties"),QUrl("propertyeditors/LineStyleSetter.qml"), parent)
 {
-
+    setAttributeDependent(true);
 }
 
 LinePropertySetter::~LinePropertySetter()

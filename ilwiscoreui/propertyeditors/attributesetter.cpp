@@ -4,8 +4,6 @@
 #include "feature.h"
 #include "table.h"
 
-REGISTER_PROPERTYEDITOR("attributeeditor",AttributeSetter)
-
 AttributeSetter::AttributeSetter(QObject *parent) : VisualAttributeEditor("attributeeditor",TR("Attributes"), QUrl("AttributeProperties.qml"), parent)
 {
 

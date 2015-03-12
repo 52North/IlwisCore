@@ -27,8 +27,27 @@ Rectangle {
     function setEditor(propindex){
         var coverage = manager.layer(layersList.currentIndex)
         var editor = coverage.propertyEditors[propindex]
-        if ( editor)
-            propertyEditor.setSource(editor.qmlUrl,{"editor" : editor})
+        if ( editor){
+            var res = editor.isAttributeDependent;
+            if ( res)
+                attributesList.model = editor.attributes
+
+            if ( editorColumn2.state == "minimized"){
+                editorColumn1.state = "minimized"
+                editorColumn2.state = "maximized"
+                propertyEditor2.setSource(editor.qmlUrl,{"editor" : editor})
+
+            }else {
+                editorColumn2.state = "minimized"
+                editorColumn1.state = "maximized"
+                propertyEditor1.setSource(editor.qmlUrl,{"editor" : editor})
+            }
+            if ( editor.isAttributeDependent){
+                attributeListColumn.state = "maximized"
+            }else{
+               attributeListColumn.state = "minimized"
+            }
+        }
     }
 
     Layout.minimumHeight: 16
@@ -51,7 +70,7 @@ Rectangle {
 
     Item {
         id : firstColumn
-        width : 220
+        width : 180
         anchors.top : header.bottom
         height : propertyEditorBar.height - header.height - 18
         x : 5
@@ -137,7 +156,7 @@ Rectangle {
     }
     Item {
         id : displaypropertiesColumn
-        width : 150
+        width : 130
         height : propertyEditorBar.height - header.height - 18
         anchors.top : header.bottom
         anchors.left : firstColumn.right
@@ -184,26 +203,165 @@ Rectangle {
             height : 18
             color : Global.headerlight
             Text{
+                id : attributesLabel
+                text : qsTr("Attributes")
+                font.weight: Font.DemiBold
+                anchors.verticalCenter: parent.verticalCenter
+                width : 0
+                opacity: 0
+            }
+            Text{
                 text : qsTr("Property Editor")
                 font.weight: Font.DemiBold
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.left : attributesLabel.right
             }
         }
 
         Rectangle {
+            id : attributeListColumn
             color : Global.alternatecolor2
             border.color: "lightgrey"
             border.width: 1
-            width : parent.width
+            width : 0
             anchors.top: editorsLabel.bottom
             anchors.topMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
+
+            ListView {
+
+                id : attributesList
+                Component {
+                    id: attributeHighlight
+
+                    Rectangle {
+                        width: attributesList.width; height: 18
+                        color: Global.selectedColor; radius: 2
+                        y: (attributesList && attributesList.currentItem) ? attributesList.currentItem.y : 0
+                        Behavior on y {
+                            SpringAnimation {
+                                spring: 3
+                                damping: 0.2
+                            }
+                        }
+                    }
+                }
+                anchors.fill: parent
+                highlight: attributeHighlight
+                delegate: Component {
+                    Loader {
+                        sourceComponent: Component {
+                            Text {
+                                x : 4
+                                text: modelData
+                                width : 100
+                                height : Global.rowHeight
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        attributesList.currentIndex = index
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            states: [
+                State { name: "maximized"
+                    PropertyChanges { target: attributeListColumn; width : 100 }
+                    PropertyChanges { target: attributesLabel; width : 100 }
+                    PropertyChanges { target: attributesLabel; opacity : 1 }
+                },
+                State {
+                    name : "minimized"
+                    PropertyChanges {target: attributeListColumn; width : 0}
+                    PropertyChanges { target: attributesLabel; width : 0 }
+                    PropertyChanges { target: attributesLabel; opacity : 0 }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+                    NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
+                }
+            ]
+        }
+
+        Rectangle {
+            id : editorColumn1
+            color : Global.alternatecolor2
+            border.color: "lightgrey"
+            border.width: 1
+            anchors.right: parent.right
+            anchors.top: editorsLabel.bottom
+            anchors.topMargin: 2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            anchors.left: attributeListColumn.right
+            anchors.leftMargin: 3
+            state : "maximized"
             Loader {
-                id : propertyEditor
+                id : propertyEditor1
                 anchors.fill : parent
 
+
             }
+            states: [
+                State { name: "maximized"
+                        PropertyChanges { target: editorColumn1; opacity : 1 }
+                },
+                State {
+                    name : "minimized"
+                        PropertyChanges { target: editorColumn1; opacity : 0 }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
+                }
+            ]
+
+        }
+
+        Rectangle {
+            id : editorColumn2
+            color : Global.alternatecolor2
+            border.color: "lightgrey"
+            border.width: 1
+            anchors.right: parent.right
+            anchors.top: editorsLabel.bottom
+            anchors.topMargin: 2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            anchors.left: attributeListColumn.right
+            anchors.leftMargin: 3
+            Loader {
+                id : propertyEditor2
+                anchors.fill : parent
+
+
+            }
+            states: [
+                State { name: "maximized"
+                        PropertyChanges { target: editorColumn2; opacity : 1 }
+                },
+                State {
+                    name : "minimized"
+                        PropertyChanges { target: editorColumn2; opacity : 0 }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
+                }
+            ]
+
         }
     }
 
