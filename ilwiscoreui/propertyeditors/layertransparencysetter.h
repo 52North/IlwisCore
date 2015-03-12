@@ -3,9 +3,9 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "propertyeditors/propertyeditor.h"
+#include "propertyeditors/attributeeditor.h"
 
-class LayerTransparencySetter : public PropertyEditor
+class LayerTransparencySetter : public VisualAttributeEditor
 {
     Q_OBJECT
 
@@ -15,7 +15,7 @@ public:
     ~LayerTransparencySetter();
 
     bool canUse(const IIlwisObject &obj) const;
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
 
     float transparency() const;
     void transparency(float tr);
