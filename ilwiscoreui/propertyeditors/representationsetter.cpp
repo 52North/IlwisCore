@@ -18,12 +18,12 @@ QColor RepresentationElement::color() const
     return _color;
 }
 //-------------------------------------------------
-PropertyEditor *RepresentationSetter::create()
+VisualAttributeEditor *RepresentationSetter::create()
 {
     return new RepresentationSetter();
 }
 
-RepresentationSetter::RepresentationSetter(QObject *parent) : PropertyEditor("representationeditor","dummy", QUrl("RepresentationProperties.qml"), parent)
+RepresentationSetter::RepresentationSetter(QObject *parent) : VisualAttributeEditor("representationeditor","dummy", QUrl("RepresentationProperties.qml"), parent)
 {
 }
 
@@ -78,7 +78,7 @@ QColor RepresentationSetter::name2color(const QString &clr) const
 
 void RepresentationSetter::setlayer(quint32 index, CoverageLayerModel *model)
 {
-    PropertyEditor::setlayer(index, model);
+    VisualAttributeEditor::setlayer(index, model);
 
     if ( layer() && layer()->drawer()){
         QVariant var = layer()->drawer()->attribute("activevisualattribute");
