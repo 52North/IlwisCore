@@ -1,9 +1,9 @@
-#include "mapinformationpropertysetter.h"
+#include "mapinformationattributesetter.h"
 
 REGISTER_PROPERTYEDITOR("mapinfopropertyeditor",MapInformationPropertySetter)
 
 MapInformationPropertySetter::MapInformationPropertySetter(QObject *parent) :
-    PropertyEditor("mapinfopropertyeditor",TR("Map Information"),QUrl("MapinfoProperties.qml"), parent)
+    VisualAttributeEditor("mapinfopropertyeditor",TR("Map Information"),QUrl("MapinfoProperties.qml"), parent)
 {
 
 }
@@ -21,7 +21,7 @@ bool MapInformationPropertySetter::canUse(const IIlwisObject &obj) const
     return hasType(obj->ilwisType(), itCOVERAGE)    ;
 }
 
-PropertyEditor *MapInformationPropertySetter::create()
+VisualAttributeEditor *MapInformationPropertySetter::create()
 {
     return new MapInformationPropertySetter();
 }

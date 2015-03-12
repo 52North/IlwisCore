@@ -9,6 +9,10 @@ import "../../Global.js" as Global
 
 Rectangle {
     id : propertyEditorBar
+
+    property var renderer
+    property int layerIndex : 0
+
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -23,7 +27,8 @@ Rectangle {
     function setEditor(propindex){
         var coverage = manager.layer(layersList.currentIndex)
         var editor = coverage.propertyEditors[propindex]
-        propertyEditor.setSource(editor.qmlUrl,{"editor" : editor})
+        if ( editor)
+            propertyEditor.setSource(editor.qmlUrl,{"editor" : editor})
     }
 
     Layout.minimumHeight: 16
@@ -33,13 +38,14 @@ Rectangle {
         id : header
         width : parent.width
         height : 18
-        color : Global.alternatecolor4
+        color : Global.headerdark
         Text {
             text : "Display Options"
             font.bold: true
             font.pointSize: 8
             anchors.left : parent.left
             anchors.leftMargin: 5
+            color : "white"
         }
     }
 
@@ -49,14 +55,22 @@ Rectangle {
         anchors.top : header.bottom
         height : propertyEditorBar.height - header.height - 18
         x : 5
-        Text{
+        Rectangle {
             id : layersLabel
-            text : qsTr("Layers")
-            font.weight: Font.DemiBold
+            width : parent.width + 10
+            height : 18
+            color : Global.headerlight
+            Text{
+                text : qsTr("Layers")
+                font.weight: Font.DemiBold
+                x : 5
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
         Rectangle {
             width : parent.width
             anchors.top: layersLabel.bottom
+            anchors.topMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             color : Global.alternatecolor2
@@ -82,9 +96,20 @@ Rectangle {
                 function setEditors(){
                     var coverage = manager.layer(currentIndex)
                     if ( coverage){
+                        var attributeIndex = 0
+                        if ( editorsListLoader.item){
+                            attributeIndex = editorsListLoader.item.getAttributeIndex()
+                        }
+
                         editorsListLoader.setSource("PropertyEditorsList.qml",{"editors" :coverage.propertyEditors })
+                        editorsListLoader.item.attributeIndex = attributeIndex
+                        setEditor(attributeIndex)
                     }
 
+                }
+                onCountChanged: {
+                    currentIndex = layerIndex + 1 ; // the new layer will be on top, so the last index has shifted one up
+                    setEditors()
                 }
 
                 id : layersList
@@ -118,10 +143,16 @@ Rectangle {
         anchors.left : firstColumn.right
         anchors.leftMargin: 10
 
-        Text{
+        Rectangle {
             id : propertiesLabel
-            text : qsTr("Display Properties")
-            font.weight: Font.DemiBold
+            width : 160
+            height : 18
+            color : Global.headerlight
+            Text{
+                text : qsTr("Display Properties")
+                font.weight: Font.DemiBold
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
         Rectangle {
             color : Global.alternatecolor2
@@ -129,6 +160,7 @@ Rectangle {
             border.width: 1
             width : parent.width
             anchors.top: propertiesLabel.bottom
+            anchors.topMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             Loader {
@@ -146,10 +178,16 @@ Rectangle {
         anchors.left : displaypropertiesColumn.right
         anchors.leftMargin: 10
 
-        Text{
+        Rectangle {
             id : editorsLabel
-            text : qsTr("Property Editor")
-            font.weight: Font.DemiBold
+            width : parent.width
+            height : 18
+            color : Global.headerlight
+            Text{
+                text : qsTr("Property Editor")
+                font.weight: Font.DemiBold
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
 
         Rectangle {
@@ -158,6 +196,7 @@ Rectangle {
             border.width: 1
             width : parent.width
             anchors.top: editorsLabel.bottom
+            anchors.topMargin: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             Loader {

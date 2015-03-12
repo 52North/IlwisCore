@@ -18,6 +18,7 @@ Rectangle {
 
     width : parent.width
     color : "white"
+    opacity: width > 4 ? 1 : 0
     clip : true
     ListView {
         id : operationsList

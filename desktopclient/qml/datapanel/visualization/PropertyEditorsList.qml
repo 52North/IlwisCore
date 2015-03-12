@@ -2,10 +2,11 @@ import QtQuick 2.0
 import "../../Global.js" as Global
 
 Item {
-
-
     property var editors
+    function getAttributeIndex() { return editorList.currentIndex}
+    property int attributeIndex : 0
     height : 18
+
 
     Component {
         id: highlight2
@@ -47,6 +48,7 @@ Item {
         }
          highlight: highlight2
          model : editors
+         currentIndex: attributeIndex
     }
 }
 

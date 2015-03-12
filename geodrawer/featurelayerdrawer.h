@@ -23,6 +23,8 @@ public:
 
 
     NEW_DRAWER
+    void setAttribute(const QString &attrName, const QVariant &value);
+    QVariant attribute(const QString &attrName) const;
 
 
 private:
@@ -32,6 +34,8 @@ private:
     std::vector<VertexColor> _colors;
 
     std::vector<FeatureDrawing> _featureDrawings;
+    float _lineWidth = 1.0;
+    float _boundarywidth = 1.0;
 
     bool draw(const IOOptions &options);
 

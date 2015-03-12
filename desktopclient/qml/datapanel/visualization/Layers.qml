@@ -44,6 +44,7 @@ import LayersView 1.0
 
 Item {
 
+
   function addDataSource(sourceUrl, sourceName, sourceType){
       renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
       renderer.update()
@@ -68,6 +69,10 @@ Item {
 
   function setManager(layermanager){
       renderer.setManager(layermanager)
+  }
+
+  function drawer(){
+      return renderer
   }
 
   DropArea {

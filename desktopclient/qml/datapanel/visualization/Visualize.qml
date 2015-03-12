@@ -29,7 +29,6 @@ Item {
 
     function addDataSource(sourceUrl, sourceName, sourceType){
         layers.addDataSource(sourceUrl, sourceName, sourceType)
-        //layertools.model = manager.layers
     }
 
     function transferLayers(layermanager){
@@ -159,6 +158,7 @@ Item {
             height : 150
             anchors.left: parent.left
             anchors.right: parent.right
+            renderer: layers.drawer()
         }
     }
 

@@ -9,7 +9,7 @@
 
 class CoverageLayerModel;
 
-class ILWISCOREUISHARED_EXPORT PropertyEditor : public QObject, public Ilwis::Identity
+class ILWISCOREUISHARED_EXPORT VisualAttributeEditor : public QObject, public Ilwis::Identity
 {
     Q_OBJECT
     Q_PROPERTY(QString editorName READ editorName CONSTANT)
@@ -18,9 +18,9 @@ class ILWISCOREUISHARED_EXPORT PropertyEditor : public QObject, public Ilwis::Id
     Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
     Q_PROPERTY(QString displayName READ displayName CONSTANT)
 public:
-    PropertyEditor(QObject *parent = 0);
-    explicit PropertyEditor(const QString& name, const QString& displayName, const QUrl& url, QObject *parent = 0);
-    PropertyEditor(const PropertyEditor& metadata, QObject *parent);
+    VisualAttributeEditor(QObject *parent = 0);
+    explicit VisualAttributeEditor(const QString& name, const QString& displayName, const QUrl& url, QObject *parent = 0);
+    VisualAttributeEditor(const VisualAttributeEditor& metadata, QObject *parent);
     QString editorName() const;
     virtual int defaultHeight() const;
     virtual bool canUse(const Ilwis::IIlwisObject& obj) const;

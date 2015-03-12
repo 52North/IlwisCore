@@ -4,7 +4,7 @@
 REGISTER_PROPERTYEDITOR("layertransparencysetter",LayerTransparencySetter)
 
 LayerTransparencySetter::LayerTransparencySetter(QObject *parent) :
-    PropertyEditor("layertransparencysetter",TR("Layer Transparency"),QUrl("propertyeditors/LayerTransparency.qml"), parent)
+    VisualAttributeEditor("layertransparencysetter",TR("Layer Transparency"),QUrl("propertyeditors/LayerTransparency.qml"), parent)
 {
 
 }
@@ -21,7 +21,7 @@ bool LayerTransparencySetter::canUse(const IIlwisObject &obj) const
     return hasType(obj->ilwisType(), itCOVERAGE);
 }
 
-PropertyEditor *LayerTransparencySetter::create()
+VisualAttributeEditor *LayerTransparencySetter::create()
 {
     return new LayerTransparencySetter();
 }

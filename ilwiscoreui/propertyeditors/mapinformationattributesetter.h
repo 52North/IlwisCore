@@ -2,16 +2,16 @@
 #define MAPINFORMATIONPROPERTYSETTER_H
 #include <QObject>
 #include <QQmlListProperty>
-#include "propertyeditors/propertyeditor.h"
+#include "propertyeditors/attributeeditor.h"
 
-class MapInformationPropertySetter : public PropertyEditor
+class MapInformationPropertySetter : public VisualAttributeEditor
 {
 public:
     MapInformationPropertySetter(QObject *parent = 0);
     ~MapInformationPropertySetter();
 
     bool canUse(const Ilwis::IIlwisObject& obj) const;
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
 
     NEW_PROPERTYEDITOR(MapInformationPropertySetter)
 };

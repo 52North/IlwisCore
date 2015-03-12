@@ -3,12 +3,12 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "table.h"
-#include "polygonpropertysetter.h"
+#include "polygonattributesetter.h"
 
 REGISTER_PROPERTYEDITOR("polygonpropertysetter",PolygonPropertySetter)
 
 PolygonPropertySetter::PolygonPropertySetter(QObject *parent) :
-    PropertyEditor("polygonpropertysetter",TR("Polygon properties"),QUrl("PolygonProperties.qml"), parent)
+    VisualAttributeEditor("polygonpropertysetter",TR("Polygon properties"),QUrl("PolygonProperties.qml"), parent)
 {
 
 }
@@ -30,7 +30,7 @@ bool PolygonPropertySetter::canUse(const IIlwisObject &obj) const
     return false;
 }
 
-PropertyEditor *PolygonPropertySetter::create()
+VisualAttributeEditor *PolygonPropertySetter::create()
 {
     return new PolygonPropertySetter();
 }

@@ -184,8 +184,12 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
             _shaders.setUniformValue(_scaleFactor, (float)rootDrawer()->zoomScale());
         }else{
             _shaders.setUniformValue(_scaleFactor, 1.0f);
+            if ( featureDrawing._geomtype == itLINE){
+                glLineWidth(_lineWidth);
+            }
         }
-         for( const VertexIndex& featurePart : featureDrawing._indices)
+
+        for( const VertexIndex& featurePart : featureDrawing._indices)
             glDrawArrays(featurePart._oglType,featurePart._start,featurePart._count);
     }
     _shaders.disableAttributeArray(_vboNormal);
@@ -195,5 +199,26 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
 
     return true;
 }
+
+QVariant FeatureLayerDrawer::attribute(const QString &attrName) const
+{
+    QVariant var = LayerDrawer::attribute(attrName);
+    if ( var.isValid())
+        return var;
+
+    if ( attrName == "linewidth")
+        return _lineWidth;
+
+    return QVariant();
+}
+
+void FeatureLayerDrawer::setAttribute(const QString &attrName, const QVariant &value)
+{
+    LayerDrawer::setAttribute(attrName, value);
+
+    if ( attrName == "linewidth")
+        _lineWidth = value.toFloat();
+}
+
 
 
