@@ -14,10 +14,10 @@
 using namespace Ilwis;
 
 class PropertyEditorObjectVisualizationModel;
-class PropertyEditor;
+class VisualAttributeEditor;
 class LayerManager;
 
-typedef std::function<PropertyEditor *()> CreatePropertyEditor;
+typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
 
 class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 {
@@ -34,12 +34,13 @@ public:
     Q_INVOKABLE QString uniqueName();
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
-    QList<PropertyEditor *> propertyEditors(const IIlwisObject &obj) ;
+    QList<VisualAttributeEditor *> propertyEditors(const IIlwisObject &obj) ;
 
     void qmlContext(QQmlContext *ctx);
     int activeSplit() const;
     void setActiveSplit(int index);
     void addViewer(LayersViewCommandInterface *viewer, quint64 vid);
+    LayersViewCommandInterface *viewer(quint64 viewerid);
     void removeViewer(quint64 viewerid);
     void currentKey(int ev);
     int currentKey() const;
