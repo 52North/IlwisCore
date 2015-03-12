@@ -66,6 +66,7 @@ Component{
                     anchors.fill: parent
                     onClicked: {
                         layersList.currentIndex = index
+                        layerIndex = index;
                         layersList.setEditors()
                     }
                 }
