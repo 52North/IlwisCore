@@ -41,6 +41,8 @@ public:
 
     double aspectRatioView() const;
     double zoomScale() const;
+    bool is3D() const;
+    void set3D(bool yesno);
 
     DrawerInterface::DrawerType drawerType() const;
 
@@ -61,6 +63,7 @@ private:
     Coordinate _viewPoint;
     Coordinate _eyePoint;
     double _zoomScale=1;
+    bool _is3D = false;
 
     bool _useGeoref = false;
 

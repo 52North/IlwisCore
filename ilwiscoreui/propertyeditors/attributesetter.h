@@ -3,9 +3,9 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "propertyeditors/propertyeditor.h"
+#include "propertyeditors/attributeeditor.h"
 
-class AttributeSetter : public PropertyEditor
+class AttributeSetter : public VisualAttributeEditor
 {
     Q_OBJECT
     Q_PROPERTY(QStringList attributes READ attributes NOTIFY attributesChanged)
@@ -20,12 +20,12 @@ public:
 
     NEW_PROPERTYEDITOR(AttributeSetter)
 
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
 signals:
     void attributesChanged();
 
 private:
-     QList<PropertyEditor *> _propertyEditors;
+     QList<VisualAttributeEditor *> _propertyEditors;
      QStringList _attributes;
 };
 

@@ -2,10 +2,11 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import "Global.js" as Global
 
 TabViewStyle {
-    property string selectColor : "steelblue"
-    property string nonselectColor : "lightsteelblue"
+    property string selectColor : Global.headerdark
+    property string nonselectColor : Global.headerlight
     property int tabHeight : 22
 
     frameOverlap: 1

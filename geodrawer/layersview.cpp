@@ -92,6 +92,11 @@ void LayersView::setManager(LayerManager *manager)
     _manager = manager;
 }
 
+LayerManager *LayersView::layerManager()
+{
+    return _manager;
+}
+
 QString LayersView::viewerId() const
 {
     return QString::number(_viewerId);

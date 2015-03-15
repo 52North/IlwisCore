@@ -11,6 +11,8 @@ Item {
     y : 10
     x : 10
 
+    opacity: width > 120 ? 1 : 0
+
     Column {
 
         spacing : 5
@@ -56,21 +58,21 @@ Item {
             }
 
         }
-        Row {
+        Item {
             height: Global.rowHeight
             width : parent.width - 10
             Text {
                 id : style
                 text : qsTr("Style")
                 width : 50
+                height: Global.rowHeight
             }
             ComboBox{
-                width : 150
-                height : Global.rowHeight
+                anchors.right: parent.right
                 id : stylesCombo
+                height: Global.rowHeight
+                width : parent.width - 60
             }
-
-
         }
     }
 }

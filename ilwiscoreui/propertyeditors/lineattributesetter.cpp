@@ -3,14 +3,14 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "table.h"
-#include "linepropertysetter.h"
+#include "lineattributesetter.h"
 
 REGISTER_PROPERTYEDITOR("linepropertysetter",LinePropertySetter)
 
 LinePropertySetter::LinePropertySetter(QObject *parent) :
-    PropertyEditor("linepropertysetter",TR("Line properties"),QUrl("propertyeditors/LineStyleSetter.qml"), parent)
+    VisualAttributeEditor("linepropertysetter",TR("Line properties"),QUrl("propertyeditors/LineStyleSetter.qml"), parent)
 {
-
+    setAttributeDependent(true);
 }
 
 LinePropertySetter::~LinePropertySetter()
@@ -30,7 +30,7 @@ bool LinePropertySetter::canUse(const IIlwisObject &obj) const
     return false;
 }
 
-PropertyEditor *LinePropertySetter::create()
+VisualAttributeEditor *LinePropertySetter::create()
 {
     return new LinePropertySetter();
 }

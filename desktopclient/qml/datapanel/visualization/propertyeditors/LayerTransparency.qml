@@ -20,6 +20,12 @@ Item {
             width : 30
             height : Global.rowHeight
             text : editor.transparency
+            onTextChanged: {
+                if ( transparencySlider.value !== text && Global.isNumber(text)){
+                    transparencySlider.value = text
+                    editor.transparency = text
+                }
+            }
         }
 
         Slider {
@@ -29,8 +35,10 @@ Item {
             implicitWidth: parent.width - 40
             style: SliderStyle { }
             onValueChanged: {
-                transparencyValue.text = value.toFixed(2)
-                editor.transparency = value
+                if ( transparencyValue.text !== value){
+                    transparencyValue.text = value.toFixed(2)
+                    editor.transparency = value
+                }
             }
         }
     }

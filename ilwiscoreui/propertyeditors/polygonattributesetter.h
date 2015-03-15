@@ -3,15 +3,15 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "propertyeditors/propertyeditor.h"
+#include "propertyeditors/attributeeditor.h"
 
-class PolygonPropertySetter : public PropertyEditor
+class PolygonPropertySetter : public VisualAttributeEditor
 {
 public:
     ~PolygonPropertySetter();
     PolygonPropertySetter(QObject *parent=0);
     bool canUse(const IIlwisObject &obj) const;
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
 
   NEW_PROPERTYEDITOR(PolygonPropertySetter)
 };

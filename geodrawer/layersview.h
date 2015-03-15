@@ -77,8 +77,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
 
-
-
+    LayerManager *layerManager();
 private:
     QString viewerId() const;
     std::deque<Ilwis::OperationExpression> _commands;

@@ -62,10 +62,12 @@ Component{
                 text : name
                 width : parent.width - visibilityCheck.width - image.width
                 font.pointSize: 8
+                elide: Text.ElideMiddle
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
                         layersList.currentIndex = index
+                        layerIndex = index;
                         layersList.setEditors()
                     }
                 }

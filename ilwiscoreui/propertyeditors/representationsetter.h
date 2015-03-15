@@ -9,7 +9,7 @@
 #include "ilwisdata.h"
 #include "representation.h"
 #include "resource.h"
-#include "propertyeditor.h"
+#include "attributeeditor.h"
 
 class ILWISCOREUISHARED_EXPORT RepresentationElement : public QObject, public Ilwis::Identity{
     Q_OBJECT
@@ -25,7 +25,7 @@ private:
     QColor _color;
 };
 
-class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
+class ILWISCOREUISHARED_EXPORT RepresentationSetter : public VisualAttributeEditor
 {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
     Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY rprElementsChanged)
     Q_PROPERTY(QString representationName READ representationName NOTIFY rprNameChanged)
 public:
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
     Q_INVOKABLE RepresentationSetter(QObject *parent = 0);
     Q_INVOKABLE QColor color(double frac);
     Q_INVOKABLE QColor name2color(const QString &clr) const;

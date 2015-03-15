@@ -236,6 +236,16 @@ double RootDrawer::zoomScale() const
     return _zoomScale;
 }
 
+bool RootDrawer::is3D() const
+{
+    return _is3D;
+}
+
+void RootDrawer::set3D(bool yesno)
+{
+    _is3D = yesno;
+}
+
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)
 {
     Envelope envelope = (!_coordinateSystem.isValid() ||

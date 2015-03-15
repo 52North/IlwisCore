@@ -4,15 +4,15 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "propertyeditors/propertyeditor.h"
+#include "propertyeditors/attributeeditor.h"
 
-class LinePropertySetter : public PropertyEditor
+class LinePropertySetter : public VisualAttributeEditor
 {
 public:
     ~LinePropertySetter();
     LinePropertySetter(QObject *parent=0);
     bool canUse(const IIlwisObject &obj) const;
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
 
  NEW_PROPERTYEDITOR(LinePropertySetter)
 };

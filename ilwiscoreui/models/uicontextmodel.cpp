@@ -24,9 +24,9 @@ QString UIContextModel::uniqueName()
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
 }
 
-QList<PropertyEditor *> UIContextModel::propertyEditors(const Ilwis::IIlwisObject& obj)
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(const Ilwis::IIlwisObject& obj)
 {
-    QList<PropertyEditor *> editors;
+    QList<VisualAttributeEditor *> editors;
     for ( const auto& editorItem : _propertyEditors){
         auto *editor = editorItem.second();
         if ( editor && editor->canUse(obj)){
@@ -58,6 +58,15 @@ void UIContextModel::setActiveSplit(int index)
 void UIContextModel::addViewer(LayersViewCommandInterface *viewer, quint64 vid)
 {
     _viewers[vid] = viewer;
+}
+
+LayersViewCommandInterface *UIContextModel::viewer(quint64 viewerid)
+{
+    auto iter = _viewers.find(viewerid);
+    if ( iter != _viewers.end()){
+        return (*iter).second;
+    }
+    return 0;
 }
 
 void UIContextModel::removeViewer(quint64 viewerid)
