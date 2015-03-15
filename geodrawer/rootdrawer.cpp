@@ -63,41 +63,22 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
         ERROR2(ERR_NO_INITIALIZED_2,TR("Pixel area"), TR("Visualization"));
         return;
     }
-    if ( overrule || !_zoomRect.isValid()) {
-        _aspectRatioCoverage = _coverageRect.xlength() / _coverageRect.ylength();
-        double w = viewRect.xlength();
-        double h = viewRect.ylength();
-        if ( _aspectRatioCoverage <= 1.0) { // coverage is higher than it is wide
-            double pixwidth = (double)_pixelAreaSize.ysize() * _aspectRatioCoverage; // height is dominant, so width in pixels is derived from height
-            double deltay = 0;
-            if ( pixwidth > _pixelAreaSize.xsize()) { // if the width is bigger than the available width
-                deltay = viewRect.ylength() * ( pixwidth / _pixelAreaSize.xsize() - 1.0); // we need to reduce the ysize else the coverage goes outside the window
-                pixwidth = _pixelAreaSize.xsize(); // pixelwidth becomes the max available number of pix in x
-            }
-            double fracofWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / _pixelAreaSize.xsize(); // fraction of the width of _pixelArea actually used
-            double crdWidth = w / fracofWidth; // the actual width used in coordinates (x)
-            double delta = (crdWidth - w) / 2.0; // the difference between the requested view width and the realized view width
-            // new extent of the zoomrectangle (coords)
-            _zoomRect =  Envelope(Coordinate(viewRect.min_corner().x - delta, viewRect.min_corner().y - deltay /2.0,0),
-                                  Coordinate(viewRect.max_corner().x + delta,viewRect.max_corner().y + deltay/ 2.0,0));
-        } else {
-            double pixheight = (double)_pixelAreaSize.xsize() / _aspectRatioCoverage; // width is dominant, so height in pixels is derived from width
-            double deltax = 0;
-            if ( pixheight > _pixelAreaSize.ysize()) {
-                deltax = viewRect.xlength() * ( pixheight / _pixelAreaSize.ysize() - 1.0);
-                pixheight = _pixelAreaSize.ysize();
-            }
-            double fracofHeight = 1.0 - abs(_pixelAreaSize.ysize() - pixheight) / (double)_pixelAreaSize.ysize();
-            double crdHeight = h / fracofHeight;
-            double delta = (crdHeight - h) / 2.0;
-            _zoomRect =  Envelope(Coordinate(viewRect.min_corner().x - deltax /2.0,viewRect.min_corner().y  - delta,0),
-                                  Coordinate(viewRect.max_corner().x + deltax /2.0,viewRect.max_corner().y  + delta,0));
-
-        }
-        viewPoint(_zoomRect.center(), true);
-
-        setMVP();
+    double w = viewRect.xlength() - 1;
+    double h = viewRect.ylength() - 1;
+    _aspectRatioCoverage = w / h;
+    Coordinate center = _coverageRect.center();
+    if ( _aspectRatioCoverage <= 1.0) { // coverage is higher than it is wide)
+        double dx = _aspectRatioView * h / 2.0;
+        _zoomRect = Envelope(Coordinate(center.x - dx, center.y -  h / 2.0),Coordinate(center.x + dx, center.y +  h / 2.0));
+    } else {
+        double dy = _aspectRatioView * w / 2.0;
+        _zoomRect = Envelope(Coordinate(center.x - w / 2.0, center.y - dy),Coordinate(center.x + w / 2.0, center.y + dy));
     }
+
+    viewPoint(_zoomRect.center(), true);
+
+    setMVP();
+
 }
 
 void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
@@ -105,20 +86,21 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
     Envelope envelope = zoomRect;
     if ( _zoomRect.isValid()) {
     // zooming never changes the shape of the mapwindow so any incomming zoom rectangle must conform to the shape of the existing mapwindow
-        double factCur = _zoomRect.xlength() / _zoomRect.ylength();
-        double factIn = zoomRect.xlength() / zoomRect.ylength();
+
+        double factCur = (_zoomRect.xlength() - 1.0) / (_zoomRect.ylength() - 1.0);
+        double factIn = (zoomRect.xlength() - 1.0) / (zoomRect.ylength() - 1.0);
         if ( abs(factCur - factIn) > 0.01 ) {
             if ( factCur < 1.0) {
-                double newHeight = zoomRect.xlength() / factCur;
+                double newHeight = (zoomRect.xlength() - 1) / factCur;
                 envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.max_corner().x, zoomRect.min_corner().y + newHeight, zoomRect.max_corner().z));
             } else {
-                double newWidth = zoomRect.ylength() * factCur;
+                double newWidth = (zoomRect.ylength() - 1) * factCur;
                 envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.min_corner().x + newWidth, zoomRect.max_corner().y, zoomRect.max_corner().z));
             }
         }
     }
-
     _zoomRect = envelope;
+    qDebug() << _zoomRect.xlength() - 1 << _zoomRect.ylength() - 1;
     viewPoint(_zoomRect.center(), true);
     setMVP();
 
@@ -148,25 +130,27 @@ void RootDrawer::pixelAreaSize(const Size<>& size)
 
     _aspectRatioView = (double)size.xsize() / (double)size.ysize();
     if ( _aspectRatioCoverage != 0 && !_zoomRect.isNull()){
-        if ( _aspectRatioCoverage <= 1.0){
-            if ( size.xsize() != _pixelAreaSize.xsize()){
-                modifyEnvelopeZoomView( _zoomRect.size().xsize(),(double)size.xsize() / _pixelAreaSize.xsize(),true);
-            }
-            if ( size.ysize() != _pixelAreaSize.ysize()) { // make sure the zoomsize is changed if the cols change
-                modifyEnvelopeZoomView(_zoomRect.size().ysize(), (double)size.ysize() /  (double)_pixelAreaSize.ysize(),false );
-            }
-
-        } else { // x < y
-            if ( size.ysize() != _pixelAreaSize.ysize()){
-                modifyEnvelopeZoomView( _zoomRect.size().ysize(),(double)size.ysize() / _pixelAreaSize.ysize(),false );
-
-            }
-            if ( size.xsize() != _pixelAreaSize.xsize()) {
-                modifyEnvelopeZoomView(_zoomRect.size().xsize(),size.xsize() / (double) _pixelAreaSize.xsize()  ,false );
-            }
+        double fx = (double)size.xsize() / _pixelAreaSize.xsize();
+        double fy = (double)size.ysize() / _pixelAreaSize.ysize();
+        double w = _zoomRect.xlength() - 1;
+        double h = _zoomRect.ylength() - 1;
+        Coordinate center = _zoomRect.center();
+        if ( size.xsize() != _pixelAreaSize.xsize())    {
+            double dx = (_zoomRect.xlength() - 1) * fx;
+            _zoomRect = Envelope(Coordinate(center.x - dx / 2.0, center.y - h / 2.0), Coordinate(center.x + dx / 2.0, center.y + h / 2.0));
+        }
+        if ( size.ysize() != _pixelAreaSize.ysize())    {
+            double dy = (_zoomRect.ylength() - 1) * fy;
+            _zoomRect = Envelope(Coordinate(center.x - w / 2.0, center.y - dy / 2.0), Coordinate(center.x + w / 2.0, center.y + dy / 2.0));
         }
     }
     setMVP();
+//    auto env = normalizedEnveope(_zoomRect);
+//   // qDebug() << "zoom" << env.toString() << env.xlength() * _pixelAreaSize.xsize() << env.ylength() * _pixelAreaSize.ysize();
+//    env = normalizedEnveope(_coverageRect);
+//    //qDebug() << "cov" << env.toString() << ((env.xlength() - 1) / 2.0) * _pixelAreaSize.xsize() << env.ylength() * _pixelAreaSize.ysize();
+//    qDebug() << "cov" << ((env.xlength() - 1) / 2.0) * _pixelAreaSize.xsize() ;
+
     _pixelAreaSize = size;
 
 }
@@ -174,22 +158,6 @@ void RootDrawer::pixelAreaSize(const Size<>& size)
 Size<> RootDrawer::pixelAreaSize() const
 {
     return _pixelAreaSize;
-}
-
-void RootDrawer::modifyEnvelopeZoomView(double dzoom, double ratio,bool xdirected) {
-   // double deltaview = dview * ratio;
-    double deltazoom = dzoom * ratio;
-    Coordinate center = _zoomRect.center();
-    if ( xdirected){
-        _zoomRect.min_corner().x = center.x - deltazoom / 2.0;
-        _zoomRect.max_corner().x = center.x + deltazoom / 2.0;
-
-    }else {
-        _zoomRect.min_corner().y = center.y - deltazoom / 2.0;
-        _zoomRect.max_corner().y = center.y + deltazoom / 2.0;
-
-    }
-
 }
 
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
@@ -290,3 +258,18 @@ void RootDrawer::redraw()
 {
     emit updateRenderer();
 }
+
+Ilwis::Coordinate RootDrawer::normalizedCoord(const Coordinate& crd) const{
+    QVector3D v1( crd.x,crd.y, crd.is3D()? crd.z : 0);
+    QVector3D a1 = _mvp * v1;
+    return Ilwis::Coordinate(a1);
+}
+
+Envelope RootDrawer::normalizedEnveope(const Envelope& env) const
+{
+    Ilwis::Coordinate v1normalized =normalizedCoord(env.min_corner());
+    Ilwis::Coordinate v2normalized = normalizedCoord(env.max_corner());
+    return Envelope(v1normalized, v2normalized);
+
+}
+

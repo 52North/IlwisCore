@@ -50,6 +50,8 @@ public:
 
     void redraw();
 
+    Ilwis::Coordinate normalizedCoord(const Coordinate &crd) const;
+    Envelope normalizedEnveope(const Envelope &env) const;
 public slots:
 
 private:
@@ -68,7 +70,6 @@ private:
     bool _useGeoref = false;
 
     Envelope envelope2RootEnvelope(const ICoordinateSystem& csSource, const Envelope& env);
-    void modifyEnvelopeZoomView(double dz, double f, bool xdirected);
     void setMVP();
 
 
