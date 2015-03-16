@@ -2,29 +2,28 @@
 #include "uicontextmodel.h"
 #include "visualizationmanager.h"
 #include "coveragelayermodel.h"
+#include "visualattributemodel.h"
+
 
 CoverageLayerModel::CoverageLayerModel()
 {
 }
 
-CoverageLayerModel::CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource,
-                                       const QList<VisualAttributeEditor *> &editors,
-                                       Ilwis::Geodrawer::DrawerInterface *drawer,QObject *obj) :
-    IlwisObjectModel(resource, obj), _propertyEditors(editors), _drawer(drawer)
+CoverageLayerModel::CoverageLayerModel(quint32 layerInd, const Ilwis::Resource &resource,
+                                       Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj) :
+    IlwisObjectModel(resource, obj), _drawer(drawer), _layerIndex(layerInd)
 {
-    for(auto editor : _propertyEditors){
-        editor->setParent(this);
-        editor->setlayer(layerIndex, this);
+    if ( object().isValid()){
+        _visualAttributes.push_back(new LayerAttributeModel(this,object()));
+        auto attrList = attributes();
+        for(int i=0; i < attrList.count(&attrList); ++i){
+            auto *attr = attrList.at(&attrList, i);
+            IlwisTypes valueType =  attr->columnDef().datadef().domain()->valueType();
+            if ( hasType(valueType, itNUMBER|itDOMAINITEM)){
+                _visualAttributes.push_back(new VisualAttributeModel(attr->columnDef(),this,object()));
+            }
+        }
     }
-}
-
-VisualAttributeEditor *CoverageLayerModel::propertyEditor(const QString &name)
-{
-    for(auto editor : _propertyEditors){
-        if ( editor->editorName() == name)
-            return editor;
-    }
-    return 0;
 }
 
 Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
@@ -32,9 +31,25 @@ Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
     return _drawer;
 }
 
-QQmlListProperty<VisualAttributeEditor> CoverageLayerModel::propertyEditors()
+quint32 CoverageLayerModel::layerIndex() const
 {
-    return QQmlListProperty<VisualAttributeEditor>(this, _propertyEditors);
+    return _layerIndex;
 }
+
+VisualAttributeModel *CoverageLayerModel::visualAttribute(const QString &name)
+{
+    for(auto attr : _visualAttributes){
+        if ( attr->attributename() == name)
+            return attr;
+    }
+    return 0;
+}
+
+QQmlListProperty<VisualAttributeModel> CoverageLayerModel::visualAttributes()
+{
+    return QQmlListProperty<VisualAttributeModel>(this, _visualAttributes) ;
+}
+
+
 
 
