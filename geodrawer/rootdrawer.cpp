@@ -135,13 +135,20 @@ void RootDrawer::pixelAreaSize(const Size<>& size)
         double w = _zoomRect.xlength() - 1;
         double h = _zoomRect.ylength() - 1;
         Coordinate center = _zoomRect.center();
-        if ( size.xsize() != _pixelAreaSize.xsize())    {
-            double dx = (_zoomRect.xlength() - 1) * fx;
-            _zoomRect = Envelope(Coordinate(center.x - dx / 2.0, center.y - h / 2.0), Coordinate(center.x + dx / 2.0, center.y + h / 2.0));
-        }
-        if ( size.ysize() != _pixelAreaSize.ysize())    {
-            double dy = (_zoomRect.ylength() - 1) * fy;
-            _zoomRect = Envelope(Coordinate(center.x - w / 2.0, center.y - dy / 2.0), Coordinate(center.x + w / 2.0, center.y + dy / 2.0));
+        if (  size.xsize() != _pixelAreaSize.xsize() && size.ysize() != _pixelAreaSize.ysize()){
+            double dx = w * fx;
+            double dy = h * fy;
+            _zoomRect = Envelope(Coordinate(center.x - dx / 2.0, center.y - dy / 2.0), Coordinate(center.x + dx / 2.0, center.y + dy / 2.0));
+
+        }else {
+            if ( size.xsize() != _pixelAreaSize.xsize())    {
+                double dx = w * fx;
+                _zoomRect = Envelope(Coordinate(center.x - dx / 2.0, center.y - h / 2.0), Coordinate(center.x + dx / 2.0, center.y + h / 2.0));
+            }
+            if ( size.ysize() != _pixelAreaSize.ysize())    {
+                double dy = h * fy;
+                _zoomRect = Envelope(Coordinate(center.x - w / 2.0, center.y - dy / 2.0), Coordinate(center.x + w / 2.0, center.y + dy / 2.0));
+            }
         }
     }
     setMVP();
