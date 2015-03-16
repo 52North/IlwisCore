@@ -28,7 +28,7 @@
 #include "models/uicontextmodel.h"
 #include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
-#include "models/workflowmodel.h"
+#include "models/workflow/workflowmodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
