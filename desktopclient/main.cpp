@@ -29,6 +29,7 @@
 #include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
 #include "models/workflowmodel.h"
+#include "models/visualattributemodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
+        qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -108,6 +110,7 @@ int main(int argc, char *argv[])
 
         QObject *topLevel = engine.rootObjects().value(0);
         QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+        window->setIcon(QIcon("./qml/images/ilwis.ico"));
         if ( !window ) {
             qWarning("Error: Your root item has to be a Window.");
             return -1;
