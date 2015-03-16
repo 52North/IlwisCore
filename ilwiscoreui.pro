@@ -45,7 +45,7 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
     ilwiscoreui/drawers/draweroperation.h \
-    ilwiscoreui/models/workflowmodel.h
+    ilwiscoreui/models/workflow/workflowmodel.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -75,7 +75,7 @@ SOURCES += \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
     ilwiscoreui/drawers/draweroperation.cpp \
-    ilwiscoreui/models/workflowmodel.cpp
+    ilwiscoreui/models/workflow/workflowmodel.cpp
 
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
