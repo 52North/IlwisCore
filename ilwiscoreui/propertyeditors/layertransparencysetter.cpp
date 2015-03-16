@@ -1,10 +1,12 @@
 #include "coverage.h"
 #include "layertransparencysetter.h"
+#include "visualattributemodel.h"
+
 
 REGISTER_PROPERTYEDITOR("layertransparencysetter",LayerTransparencySetter)
 
 LayerTransparencySetter::LayerTransparencySetter(QObject *parent) :
-    VisualAttributeEditor("layertransparencysetter",TR("Layer Transparency"),QUrl("propertyeditors/LayerTransparency.qml"), parent)
+    VisualAttributeEditor("layertransparencysetter",TR("Layer Transparency"),QUrl("LayerTransparency.qml"), parent)
 {
 
 }
@@ -14,11 +16,14 @@ LayerTransparencySetter::~LayerTransparencySetter()
 
 }
 
-bool LayerTransparencySetter::canUse(const IIlwisObject &obj) const
+bool LayerTransparencySetter::canUse(const IIlwisObject& obj, const QString& name ) const
 {
     if (!obj.isValid())
         return false;
-    return hasType(obj->ilwisType(), itCOVERAGE);
+    if(!hasType(obj->ilwisType(), itCOVERAGE))
+        return false;
+    return name == VisualAttributeModel::LAYER_ONLY;
+
 }
 
 VisualAttributeEditor *LayerTransparencySetter::create()

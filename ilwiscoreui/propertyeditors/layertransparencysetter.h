@@ -14,7 +14,7 @@ public:
     LayerTransparencySetter(QObject *parent = 0);
     ~LayerTransparencySetter();
 
-    bool canUse(const IIlwisObject &obj) const;
+    bool canUse(const IIlwisObject &obj, const QString &name) const;
     static VisualAttributeEditor *create();
 
     float transparency() const;
