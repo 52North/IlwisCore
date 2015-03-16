@@ -1,4 +1,5 @@
 #include <QStringList>
+#include <QVector3D>
 #include "kernel_global.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
@@ -38,7 +39,14 @@ Ilwis::Coordinate::Coordinate(const std::vector<double>& v)  {
     if ( v.size() >= 3)
         this->z = v[2];
 
- }
+}
+
+Coordinate::Coordinate(const QVector3D &crd)
+{
+    x = crd.x();
+    y = crd.y();
+    z = crd.z();
+}
 
 Ilwis::Coordinate::~Coordinate() {
 }
@@ -221,6 +229,15 @@ Coordinate& Coordinate::operator =(const geos::geom::Coordinate& crd){
         this->z = rUNDEF;
     else
         this->z = crd.z;
+    return *this;
+}
+
+Coordinate &Coordinate::operator =(const QVector3D &p2)
+{
+    this->x = p2.x();
+    this->y = p2.y();
+    this->z = p2.z();
+
     return *this;
 }
 

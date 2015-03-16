@@ -1,6 +1,8 @@
 #ifndef ATTRIBUTEVISUALPROPERTIES_H
 #define ATTRIBUTEVISUALPROPERTIES_H
 
+#include "ilwiscoreui_global.h"
+
 namespace Ilwis {
 
 class Representation;
@@ -11,7 +13,7 @@ typedef IlwisData<Domain> IDomain;
 
 namespace Geodrawer{
 
-class AttributeVisualProperties
+class ILWISCOREUISHARED_EXPORT AttributeVisualProperties
 {
 public:
     AttributeVisualProperties();
@@ -24,9 +26,11 @@ public:
     void domain(const IDomain& dom);
     NumericRange stretchRange() const;
     void stretchRange(const NumericRange& rng);
-    QColor value2color(const QVariant& var);
+    QColor value2color(const QVariant& var) const;
     NumericRange actualRange() const;
     void actualRange(const NumericRange& rng);
+    quint32 columnIndex() const;
+    void setColumnIndex(quint32 index);
 
 
 private:
@@ -34,6 +38,7 @@ private:
     NumericRange _stretchRange;
     NumericRange _actualRange;
     IDomain _domain;
+    quint32 _columnIndex=iUNDEF; //optional indicator which column/attribute is used for these properties
 };
 }
 }

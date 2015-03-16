@@ -28,11 +28,24 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
                                          "attribute highp vec4 position;"
-        //                                 "attribute mediump vec3 normal;"
+                                         "attribute mediump vec3 normal;"
                                          "uniform mat4 mvp;"
+                                         "uniform vec3 scalecenter;"
+                                         "uniform float scalefactor;"
+                                         "uniform float alpha;"
                                          "attribute lowp vec4 vertexColor;"
                                          "varying lowp vec4 fragmentColor;"
                                          "void main() {"
+                                         "    if ( scalefactor != 1) {"
+                                             "    float x = scalecenter[0] + (position[0] - scalecenter[0]) * scalefactor;"
+                                             "    float y = scalecenter[1] + (position[1] - scalecenter[1]) * scalefactor;"
+                                             "    float z = position[2];"
+                                            "    position[0] = x;"
+                                            "    position[1] = y;"
+                                            "    position[2] = z;"
+                                            "    position[3] = 1;"
+                                         "    }"
+                                         "    vertexColor.a = alpha * vertexColor.a;"
                                          "    gl_Position =  mvp * position;"
                                          "    fragmentColor = vertexColor;"
                                          "}");
@@ -52,39 +65,18 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         _prepared |= DrawerInterface::ptSHADERS;
 
         _vboPosition = _shaders.attributeLocation("position");
-        //_vboNormal = _shaders.attributeLocation("normal");
+        _vboNormal = _shaders.attributeLocation("normal");
         _vboColor = _shaders.attributeLocation("vertexColor");
         _modelview = _shaders.uniformLocation("mvp");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
+        _vboAlpha = _shaders.uniformLocation("alpha");
 
     }
 
 
     return true;
 }
-
-//bool BaseDrawer::moveGeometry2GPU(const std::vector<VertexPosition> &vertices, const std::vector<VertexColor>& colors) {
-//    if ( !openglContext){
-//        return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR("Invalid OpenGL context passed"));
-//    }
-//    if ( _vboPosition != iUNDEF)
-//        openglContext->functions()->glDeleteBuffers(1,&_vboPosition);
-//    if ( _vboColor != iUNDEF)
-//        openglContext->functions()->glDeleteBuffers(1,&_vboColor);
-
-//    openglContext->functions()->glGenBuffers (1, &_vboPosition);
-//    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboPosition);
-//    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexPosition) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-
-//    openglContext->functions()->glGenBuffers (1, &_vboColor);
-//    openglContext->functions()->glBindBuffer (GL_ARRAY_BUFFER, _vboColor);
-//    openglContext->functions()->glBufferData (GL_ARRAY_BUFFER, sizeof (VertexColor) * colors.size(), &colors[0], GL_STATIC_DRAW);
-
-//    GLenum err =  glGetError();
-//    if ( err != 0) {
-//        return ERROR1(QString(TR("Drawing failed : OpenGL returned error code %1")),QString::number(err));
-//    }
-//    return true;
-//}
 
 void BaseDrawer::unprepare(DrawerInterface::PreparationType prepType )
 {
@@ -151,7 +143,7 @@ bool BaseDrawer::isSelected() const
 BaseDrawer::Containment BaseDrawer::containment() const
 {
     if ( _envelope.isValid()){
-        if ( rootDrawer()->viewEnvelope().intersects(_envelope))
+        if ( rootDrawer()->zoomEnvelope().intersects(_envelope))
             return BaseDrawer::cINSIDE;
     }
     return BaseDrawer::cUNKNOWN;
@@ -206,6 +198,9 @@ std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
 
 QVariant BaseDrawer::attribute(const QString &attrName) const
 {
+    if ( attrName == "alphachannel")
+        return _alpha;
+
     return QVariant();
 }
 
@@ -214,9 +209,10 @@ QVariant BaseDrawer::attributeOfDrawer(const QString &, const QString &) const
     return QVariant();
 }
 
-void BaseDrawer::setAttribute(const QString &, const QVariant &)
+void BaseDrawer::setAttribute(const QString &attrName, const QVariant &value)
 {
-
+    if ( attrName == "alphachannel")
+        _alpha = value.toFloat();
 }
 
 bool BaseDrawer::drawerAttribute(const QString , const QString &, const QVariant &)
@@ -232,6 +228,22 @@ QColor BaseDrawer::color(const IRepresentation &rpr, double , DrawerInterface::C
 quint32 BaseDrawer::defaultOrder() const
 {
     return iUNDEF;
+}
+
+float BaseDrawer::alpha() const
+{
+    return _alpha;
+}
+
+void BaseDrawer::alpha(float alp)
+{
+    if ( alp >= 0 && alp <= 1.0)
+        _alpha = alp;
+}
+
+void BaseDrawer::redraw()
+{
+    rootDrawer()->redraw();
 }
 
 

@@ -256,6 +256,10 @@ void ComplexDrawer::cleanUp()
     for( auto& drawer : _postDrawers)    {
         drawer.second->cleanUp();
     }
+    _preDrawers.clear();
+    _mainDrawers.clear();
+    _postDrawers.clear();
+    unprepare(ptALL);
 
 }
 

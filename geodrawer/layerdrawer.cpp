@@ -4,12 +4,12 @@
 #include "colorrange.h"
 #include "colorlookup.h"
 #include "representation.h"
-#include "attributevisualproperties.h"
+#include "drawers/attributevisualproperties.h"
 #include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include <QtGui/QOpenGLContext>
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 
 using namespace Ilwis;
@@ -29,6 +29,7 @@ QString LayerDrawer::activeAttribute() const
 
 void LayerDrawer::setAttribute(const QString &key, const QVariant &attribValue)
 {
+    SpatialDataDrawer::setAttribute(key, attribValue);
     if ( key == "activevisualattribute"){
         setActiveVisualAttribute(attribValue.toString());
     }

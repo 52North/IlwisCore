@@ -4,6 +4,7 @@
 #include <functional>
 #include "factory.h"
 #include "abstractfactory.h"
+#include "ilwiscoreui_global.h"
 
 namespace Ilwis {
 namespace Geodrawer{
@@ -15,7 +16,7 @@ typedef std::unique_ptr<DrawerInterface> UPDrawer;
 
 typedef std::function<DrawerInterface *(DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)> CreateDrawer;
 
-class DrawerFactory : public AbstractFactory
+class ILWISCOREUISHARED_EXPORT DrawerFactory : public AbstractFactory
 {
 public:
     DrawerFactory();

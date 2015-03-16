@@ -23,14 +23,19 @@ public:
 
 
     NEW_DRAWER
+    void setAttribute(const QString &attrName, const QVariant &value);
+    QVariant attribute(const QString &attrName) const;
 
 
 private:
-    std::vector<VertexIndex> _indices;
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
+    std::vector<VertexIndex> _indices;
     std::vector<VertexColor> _colors;
-    quint32 _boundaryIndex = iUNDEF;
+
+    std::vector<FeatureDrawing> _featureDrawings;
+    float _lineWidth = 1.0;
+    float _boundarywidth = 1.0;
 
     bool draw(const IOOptions &options);
 

@@ -2,33 +2,33 @@
 #define COVERAGELAYERMODEL_H
 
 #include <QQmlListProperty>
-#include "resourcemodel.h"
-#include "propertyeditors/propertyeditor.h"
+#include "ilwisobjectmodel.h"
+#include "propertyeditors/attributeeditor.h"
 #include "drawers/drawerinterface.h"
 #include "ilwiscoreui_global.h"
 
 class LayerManager;
-class PropertyEditor;
+class VisualAttributeEditor;
 
-class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public ResourceModel
+class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public IlwisObjectModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<PropertyEditor> propertyEditors READ propertyEditors NOTIFY propertyEditorChanged)
+    Q_PROPERTY(QQmlListProperty<VisualAttributeEditor> propertyEditors READ propertyEditors NOTIFY propertyEditorChanged)
 
 
 public:
     CoverageLayerModel();
-    CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, const QList<PropertyEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
+    CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, const QList<VisualAttributeEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
-    Q_INVOKABLE PropertyEditor* propertyEditor(const QString& name);
+    Q_INVOKABLE VisualAttributeEditor* propertyEditor(const QString& name);
     Ilwis::Geodrawer::DrawerInterface *drawer();
 
 
 
 private:
-    QQmlListProperty<PropertyEditor> propertyEditors();
-    QList<PropertyEditor *> _propertyEditors;
+    QQmlListProperty<VisualAttributeEditor> propertyEditors();
+    QList<VisualAttributeEditor *> _propertyEditors;
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
 
 signals:

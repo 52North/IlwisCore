@@ -9,13 +9,13 @@
 #include "ilwisdata.h"
 #include "representation.h"
 #include "resource.h"
-#include "propertyeditor.h"
+#include "attributeeditor.h"
 
 class ILWISCOREUISHARED_EXPORT RepresentationElement : public QObject, public Ilwis::Identity{
     Q_OBJECT
 
 public:
-    explicit RepresentationElement(QObject *parent);
+    explicit RepresentationElement(QObject *parent=0);
     Q_PROPERTY(QColor color READ color CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
 
@@ -25,7 +25,7 @@ private:
     QColor _color;
 };
 
-class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
+class ILWISCOREUISHARED_EXPORT RepresentationSetter : public VisualAttributeEditor
 {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ class ILWISCOREUISHARED_EXPORT RepresentationSetter : public PropertyEditor
     Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY rprElementsChanged)
     Q_PROPERTY(QString representationName READ representationName NOTIFY rprNameChanged)
 public:
-    static PropertyEditor *create();
+    static VisualAttributeEditor *create();
     Q_INVOKABLE RepresentationSetter(QObject *parent = 0);
     Q_INVOKABLE QColor color(double frac);
     Q_INVOKABLE QColor name2color(const QString &clr) const;
@@ -44,6 +44,7 @@ public:
     void setlayer(quint32 index, CoverageLayerModel *model);
     int defaultHeight() const;
 
+    bool canUse(const Ilwis::IIlwisObject &obj) const;
 signals:
     void rprElementsChanged();
     void rprNameChanged();
@@ -52,7 +53,7 @@ private:
      QList<RepresentationElement *> _rprElements;
      IRepresentation _representation;
 
-     NEW_PROPERTYEDITOR(RepresentationSetter)
+     //NEW_PROPERTYEDITOR(RepresentationSetter)
 };
 
 #endif // REPRESENTATIONSETTER_H

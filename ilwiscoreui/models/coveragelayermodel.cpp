@@ -8,9 +8,9 @@ CoverageLayerModel::CoverageLayerModel()
 }
 
 CoverageLayerModel::CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource,
-                                       const QList<PropertyEditor *> &editors,
+                                       const QList<VisualAttributeEditor *> &editors,
                                        Ilwis::Geodrawer::DrawerInterface *drawer,QObject *obj) :
-    ResourceModel(resource, obj), _propertyEditors(editors), _drawer(drawer)
+    IlwisObjectModel(resource, obj), _propertyEditors(editors), _drawer(drawer)
 {
     for(auto editor : _propertyEditors){
         editor->setParent(this);
@@ -18,7 +18,7 @@ CoverageLayerModel::CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource
     }
 }
 
-PropertyEditor *CoverageLayerModel::propertyEditor(const QString &name)
+VisualAttributeEditor *CoverageLayerModel::propertyEditor(const QString &name)
 {
     for(auto editor : _propertyEditors){
         if ( editor->editorName() == name)
@@ -32,9 +32,9 @@ Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
     return _drawer;
 }
 
-QQmlListProperty<PropertyEditor> CoverageLayerModel::propertyEditors()
+QQmlListProperty<VisualAttributeEditor> CoverageLayerModel::propertyEditors()
 {
-    return QQmlListProperty<PropertyEditor>(this, _propertyEditors);
+    return QQmlListProperty<VisualAttributeEditor>(this, _propertyEditors);
 }
 
 

@@ -9,6 +9,7 @@ Item {
     id : modellerViews
     width : parent.width
     height : parent.height
+    property bool canSeparate : false
 
     ToolBar{
         id : toolbar

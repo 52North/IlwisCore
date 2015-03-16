@@ -21,6 +21,7 @@ Rectangle {
     border.color: Global.edgecolor
     y : 3
     x : 0
+    opacity : width > 4 ? 1 : 0
 
     function path2pathView(pathString){
         var index =  pathString.lastIndexOf("/..")
@@ -98,6 +99,7 @@ Rectangle {
             editable: true
             model: pathModel
             anchors.verticalCenter: parent.verticalCenter
+            clip : true
             Component.onCompleted: {
                 privateProperty.pathCB = pathText
                 var paths = mastercatalog.knownCatalogs(true)

@@ -21,7 +21,6 @@ Rectangle {
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
-    property int activeTab : 1
 
     function addModellerPanel(name) {
         mainsplit.addModeller(name)
@@ -41,8 +40,8 @@ Rectangle {
     }
     function getCurrentCatalogTab(){
         var tabview = Math.abs(activeSplit) == 1 ? lefttab : righttab
-        if ( tabview && activeTab > 0 && tabview.count > 0) {
-            var tab = tabview.getTab(activeTab - 1)
+        if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+            var tab = tabview.getTab(tabview.currentIndex)
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
                     return tab.item
@@ -52,18 +51,19 @@ Rectangle {
 
 
     function newCatalog(url, splitside){
-        if ( url === ""){
+        if ( splitside !== -100){ // -100 is the magic number when starting the app for the first catalog when nothing has been set yet
             var catTab = getCurrentCatalogTab()
-            url = catTab.currentCatalog.url
-            splitside = activeSplit
+            if ( catTab){
+                url = catTab.currentCatalog.url
+                console.debug("url", url)
+                splitside = activeSplit
+            }
         }
-
         mainsplit.newCatalog(url,splitside)
     }
 
     function setCatalogByIndex(currentTab, tabindex){
-        currentTab.currentIndex = tabindex - 1
-        activeTab = tabindex
+        currentTab.currentIndex = tabindex
         var catalogtab = getCurrentCatalogTab()
         if ( catalogtab && catalogtab.currentCatalog){
             mastercatalog.currentUrl = catalogtab.currentCatalog.url
@@ -75,7 +75,9 @@ Rectangle {
         mainsplit.changeCatalog(url)
     }
 
-
+    Loader {
+        id : mapWindow
+    }
 
     SplitView {
         id : mainsplit
@@ -92,7 +94,7 @@ Rectangle {
                     lefttab.state = "zerosize"
                     righttab.state = "fullsize"
                     activeSplit = 2
-                    setCatalogByIndex(righttab, 1)
+                    setCatalogByIndex(righttab, 0)
 
                 }else{
                     setCatalogByIndex(lefttab, tabindex1)
@@ -106,10 +108,21 @@ Rectangle {
                     righttab.state = "zerosize"
                     lefttab.state = "fullsize"
                     activeSplit = 1
-                    setCatalogByIndex(lefttab, 1)
+                    setCatalogByIndex(lefttab, 0)
                 }else{
                     setCatalogByIndex(righttab, tabindex1)
                 }
+            }
+        }
+        function showMapWindow(objectid){
+            var tabview = activeSplit ===1 ? lefttab : righttab
+            mapWindow.setSource("visualization/MapWindow.qml",{"width" : tabview.width, "height" : tabview.height})
+
+            var tab = tabview.getTab(tabview.currentIndex)
+            if ( tab && tab.item.manager){
+                mapWindow.item.transferLayers(tab.item.manager)
+                mapWindow.item.show()
+                closeTab(activeSplit,tabview.currentIndex)
             }
         }
 
@@ -129,17 +142,19 @@ Rectangle {
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
                 if ( activeSplit ===1){
+                    righttab.width = parent.width / 2.0;
                     righttab.state = "halfsize"
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
-                    righttab.indexTab = tabCount
+                    activeSplit = 2
                 }
                 else {
+                    lefttab.width = parent.width / 2.0;
                     lefttab.state = "halfsize"
                     tabCount = lefttab.count - 1 // tab has already been added so -1
                     lefttab.currentIndex = tabCount
-                    lefttab.indexTab = tabCount
-                }
+                    activeSplit = 1
+                 }
 
                 tab.item.addDataSource(resource.url, resource.name, resource.typeName)
                 mastercatalog.setActiveTab(activeSplit, tabCount)
@@ -156,8 +171,8 @@ Rectangle {
                 catalogpanel.currentCatalog.makeParent(catalogpanel)
                 var name = catalogpanel.currentCatalog.displayName
                 var  tabview = activeSplit ===1 ? lefttab : righttab
-                if ( (activeTab - 1) < tabview.count){
-                    var tab = tabview.getTab(activeTab - 1)
+                if ( tabview.currentIndex < tabview.count){
+                    var tab = tabview.getTab(tabview.currentIndex)
                     if ( tab){
                         tab.title = name
                     }
@@ -168,10 +183,12 @@ Rectangle {
         }
 
         function newCatalog(url, splitside) {
+
             if ( url){
                 var component = Qt.createComponent("catalog/CatalogPanel.qml")
                 var catalogModel = mastercatalog.newCatalog(url)
                 var name = catalogModel.displayName
+                var tabview = activeSplit ===1 ? lefttab : righttab
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
                 tab.active = true
                 var tabCount = 0
@@ -184,10 +201,9 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = righttab.count - 1 // tab has already been added so -1
                     righttab.currentIndex = tabCount
-                    righttab.indexTab = tabCount
                 }
                 else{
-                    if ( splitside === -1) // start situation
+                    if ( splitside === -100) // start situation
                         righttab.state = "zerosize"
                     else if ( lefttab.count == 1)
                         righttab.state = "halfsize"
@@ -197,8 +213,8 @@ Rectangle {
                     tab.item.currentCatalog = catalogModel
                     tabCount = lefttab.count - 1
                     lefttab.currentIndex = tabCount
-                    lefttab.indexTab = tabCount
                 }
+                tabview = activeSplit ===1 ? lefttab : righttab
                 mastercatalog.setActiveTab(activeSplit, tabCount)
                 mastercatalog.currentCatalog = catalogModel
             }
@@ -230,7 +246,7 @@ Rectangle {
             Layout.fillWidth: true
 
             Component.onCompleted: {
-                 newCatalog(mastercatalog.currentUrl,-1)
+                 newCatalog(mastercatalog.currentUrl,-100)
             }
         }
 

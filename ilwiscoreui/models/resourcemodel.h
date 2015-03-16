@@ -30,6 +30,7 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(quint64 type READ type CONSTANT)
     Q_PROPERTY(QString typeName READ typeName CONSTANT)
     Q_PROPERTY(QString url READ url CONSTANT)
+    Q_PROPERTY(bool isSelected READ isSelected WRITE setIsSelected NOTIFY isSelectedChanged)
 
 
 
@@ -46,6 +47,8 @@ public:
     void resource(const Ilwis::Resource &res);
     Ilwis::Resource resource() const;
     Ilwis::Resource &resourceRef();
+    bool isSelected() const;
+    void setIsSelected(bool yesno);
 
 
     QString domainName() const;
@@ -61,6 +64,7 @@ public:
     void setDisplayName(const QString& name);
     QString url() const;
     QString iconPath() const;
+    void iconPath(const QString& name);
     bool isRoot() const;
     QString id() const;
 
@@ -79,13 +83,16 @@ private:
 
     Ilwis::Resource _item;
     QString _imagePath;
+    QString _iconPath;
     quint64 _type;
     bool _isRoot;
+    bool _selected = false;
 
 
 
 signals:
     void displayNameChanged();
+    void isSelectedChanged();
 public slots:
 
 };

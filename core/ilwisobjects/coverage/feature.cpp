@@ -141,7 +141,7 @@ const Record &Feature::record() const
 
 void Feature::record(const std::vector<QVariant> &values, quint32 offset)
 {
-    if ( isValid() && (values.size() + offset) < _parentFCoverage->attributeDefinitions(_level).definitionCount()){
+    if ( isValid() && (values.size() + offset) <= _parentFCoverage->attributeDefinitions(_level).definitionCount()){
         for(int i = offset; i < values.size(); ++i) {
             QVariant value = _parentFCoverage->attributeDefinitions(_level).checkInput(values[i],i);
             _attributes.cell(i, value);

@@ -38,15 +38,22 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/usermessagehandler.h \
     ilwiscoreui/models/visualizationmanager.h \
     ilwiscoreui/propertyeditors/representationsetter.h \
-    ilwiscoreui/propertyeditors/propertyeditor.h \
     ilwiscoreui/models/coveragelayermodel.h \
     ilwiscoreui/drawers/drawerinterface.h \
-    ilwiscoreui/propertyeditors/linestylesetter.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
     ilwiscoreui/drawers/draweroperation.h \
-    ilwiscoreui/models/workflow/workflowmodel.h
-unix {
+    ilwiscoreui/models/workflow/workflowmodel.h \
+    ilwiscoreui/drawers/drawerattributesetter.h \
+    ilwiscoreui/drawers/drawerattributesetterfactory.h \
+    ilwiscoreui/drawers/drawerfactory.h \
+    ilwiscoreui/drawers/attributevisualproperties.h \
+    ilwiscoreui/propertyeditors/attributesetter.h \
+    ilwiscoreui/propertyeditors/layertransparencysetter.h \
+    ilwiscoreui/propertyeditors/mapinformationattributesetter.h \
+    ilwiscoreui/propertyeditors/polygonattributesetter.h \
+    ilwiscoreui/propertyeditors/attributeeditor.h \
+    ilwiscoreui/propertyeditors/lineattributesetter.hunix {
     target.path = /usr/lib
     INSTALLS += target
 }
@@ -68,15 +75,24 @@ SOURCES += \
     ilwiscoreui/models/usermessagehandler.cpp \
     ilwiscoreui/models/visualizationmanager.cpp \
     ilwiscoreui/propertyeditors/representationsetter.cpp \
-    ilwiscoreui/propertyeditors/propertyeditor.cpp \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
-    ilwiscoreui/propertyeditors/linestylesetter.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
     ilwiscoreui/drawers/draweroperation.cpp \
-    ilwiscoreui/models/workflow/workflowmodel.cpp
 
+    ilwiscoreui/models/workflow/workflowmodel.cpp \
+    ilwiscoreui/models/workflowmodel.cpp \
+    ilwiscoreui/drawers/drawerattributesetter.cpp \
+    ilwiscoreui/drawers/drawerattributesetterfactory.cpp \
+    ilwiscoreui/drawers/drawerfactory.cpp \
+    ilwiscoreui/drawers/attributevisualproperties.cpp \
+    ilwiscoreui/propertyeditors/attributesetter.cpp \
+    ilwiscoreui/propertyeditors/layertransparencysetter.cpp \
+    ilwiscoreui/propertyeditors/lineattributesetter.cpp \
+    ilwiscoreui/propertyeditors/mapinformationattributesetter.cpp \
+    ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
+    ilwiscoreui/propertyeditors/attributeeditor.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

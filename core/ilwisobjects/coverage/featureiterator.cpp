@@ -99,8 +99,11 @@ bool FeatureIterator::operator !=(const FeatureIterator &iter)
 SPFeatureI FeatureIterator::operator *()
 {
      init();
-     if ( _currentLevel == 0)
+     if ( _currentLevel == 0){
+         if (_iterFeatures == _fcoverage->_features.end())
+             return SPFeatureI();
         return *_iterFeatures;
+     }
      else if ( _currentIndexes.size() > 0) {
          quint32 raw = (*_subIterator).first; // index of domain value for subfeature
          QString domvalue = _fcoverage->attributeDefinitionsRef(_currentLevel).index(raw);

@@ -16,6 +16,7 @@ class RootDrawer;
 
 class BaseDrawer : public DrawerInterface, public Ilwis::Identity
 {
+       Q_OBJECT
 public:
     enum Containment { cINSIDE, cOUTSIDE, cUNKNOWN};
 
@@ -50,6 +51,13 @@ public:
 
     QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
     quint32 defaultOrder() const;
+    float alpha() const;
+    void alpha(float alp);
+
+    void redraw();
+
+signals:
+    void updateRenderer();
 
 protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
@@ -66,6 +74,9 @@ protected:
     GLuint _vboNormal = iUNDEF;
     GLuint _vboColor = iUNDEF;
     GLuint _modelview = iUNDEF;
+    GLuint _scaleCenter = iUNDEF;
+    GLuint _scaleFactor = iUNDEF;
+    GLuint _vboAlpha = iUNDEF;
     QOpenGLShaderProgram _shaders;
 
 private:
@@ -73,6 +84,7 @@ private:
     bool _valid = false;
     bool _selected = false;
     RootDrawer* _rootDrawer = 0;
+    float _alpha = 1.0;
     DrawerInterface* _parentDrawer = 0;
     Envelope _envelope;
 

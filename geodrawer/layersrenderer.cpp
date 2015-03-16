@@ -6,7 +6,7 @@
 #include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
-#include "drawerfactory.h"
+#include "drawers/drawerfactory.h"
 #include "models/visualizationmanager.h"
 #include "layersrenderer.h"
 #include "drawers/drawerinterface.h"
@@ -21,10 +21,15 @@
 
 LayersRenderer::LayersRenderer()
 {
+    if ( !_rootDrawer){
+        _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
+        connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
+    }
 }
 
 LayersRenderer::~LayersRenderer()
 {
+    delete _rootDrawer;
 }
 
 
@@ -36,7 +41,12 @@ void LayersRenderer::render()
     if ( !_rootDrawer->isActive())
         return ;
 
-    glDepthMask(true);
+    if ( _rootDrawer->is3D()){
+        glEnable( GL_DEPTH_TEST);
+        glDepthMask(true);
+    }else
+        glDisable( GL_DEPTH_TEST);
+
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -50,13 +60,14 @@ void LayersRenderer::cleanup()
         _rootDrawer->cleanUp();
     }
 }
+void LayersRenderer::updateRenderer() {
+    emit update();
+}
 
 void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 {
     try {
-        if ( !_rootDrawer){
-            _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
-        }
+
 
         LayersView *gdrawer = static_cast<LayersView *>(item);
         _viewPortSize =  QSize(gdrawer->width(), gdrawer->height());
@@ -79,7 +90,16 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
                     SymbolTable symTable;
                     QVariant v = qVariantFromValue((void *) _rootDrawer);
                     ctx._additionalInfo["rootdrawer"] = v;
-                    oper->execute(&ctx, symTable);
+                    if ( oper->execute(&ctx, symTable)){
+                        Symbol sym = symTable.getSymbol("layerdrawer");
+                        if ( sym.isValid()){
+                            Ilwis::Geodrawer::DrawerInterface *drawer = static_cast<Ilwis::Geodrawer::DrawerInterface *>(sym._var.value<void *>());
+                            if ( drawer){
+                                ICoverage cov = drawer->attribute("coverage").value<ICoverage>();
+                                gdrawer->_manager->addDataSource(cov->source().url(),cov->ilwisType(),drawer);
+                            }
+                        }
+                    }
                 }
             }
         }

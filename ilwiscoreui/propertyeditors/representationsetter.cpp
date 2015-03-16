@@ -1,12 +1,13 @@
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "raster.h"
 #include "domain.h"
 #include "mastercatalog.h"
 #include "representationsetter.h"
 
 using namespace Ilwis;
 
-REGISTER_PROPERTYEDITOR(itCOVERAGE,"representationeditor",RepresentationSetter)
+//REGISTER_PROPERTYEDITOR("representationeditor",RepresentationSetter)
 
 RepresentationElement::RepresentationElement(QObject *parent) : QObject(parent)
 {
@@ -17,12 +18,12 @@ QColor RepresentationElement::color() const
     return _color;
 }
 //-------------------------------------------------
-PropertyEditor *RepresentationSetter::create()
+VisualAttributeEditor *RepresentationSetter::create()
 {
     return new RepresentationSetter();
 }
 
-RepresentationSetter::RepresentationSetter(QObject *parent) : PropertyEditor("representationeditor",QUrl("RepresentationProperties.qml"), parent)
+RepresentationSetter::RepresentationSetter(QObject *parent) : VisualAttributeEditor("representationeditor","dummy", QUrl("RepresentationProperties.qml"), parent)
 {
 }
 
@@ -77,7 +78,7 @@ QColor RepresentationSetter::name2color(const QString &clr) const
 
 void RepresentationSetter::setlayer(quint32 index, CoverageLayerModel *model)
 {
-    PropertyEditor::setlayer(index, model);
+    VisualAttributeEditor::setlayer(index, model);
 
     if ( layer() && layer()->drawer()){
         QVariant var = layer()->drawer()->attribute("activevisualattribute");
@@ -93,6 +94,13 @@ void RepresentationSetter::setlayer(quint32 index, CoverageLayerModel *model)
 int RepresentationSetter::defaultHeight() const
 {
     return 200;
+}
+
+bool RepresentationSetter::canUse(const Ilwis::IIlwisObject& obj) const{
+    if ( obj->ilwisType() != itRASTER)
+        return false;
+    return true;
+
 }
 
 
