@@ -17,27 +17,23 @@ class ILWISCOREUISHARED_EXPORT VisualAttributeEditor : public QObject, public Il
     Q_PROPERTY(int defaultHeight READ defaultHeight CONSTANT)
     Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
     Q_PROPERTY(QString displayName READ displayName CONSTANT)
-    Q_PROPERTY(QStringList attributes READ attributes NOTIFY attributesChanged)
-    Q_PROPERTY(bool isAttributeDependent READ attributeDependent CONSTANT)
+
 public:
     VisualAttributeEditor(QObject *parent = 0);
     explicit VisualAttributeEditor(const QString& name, const QString& displayName, const QUrl& url, QObject *parent = 0);
     VisualAttributeEditor(const VisualAttributeEditor& metadata, QObject *parent);
     QString editorName() const;
     virtual int defaultHeight() const;
-    virtual bool canUse(const Ilwis::IIlwisObject& obj) const;
-    virtual void prepare(const Ilwis::IIlwisObject& bj);
+    virtual bool canUse(const Ilwis::IIlwisObject &obj, const Ilwis::DataDefinition &datadef = Ilwis::DataDefinition()) const;
+    virtual bool canUse(const Ilwis::IIlwisObject &obj, const QString &name) const;
+    virtual void prepare(CoverageLayerModel *parentLayer,const Ilwis::IIlwisObject& bj, const Ilwis::DataDefinition &datadef = Ilwis::DataDefinition());
     int layerIndex() const;
     QString displayName() const;
-    QStringList attributes() const;
-    bool attributeDependent() const;
 
     virtual void setlayer(quint32 index, CoverageLayerModel *model);
 protected:
     CoverageLayerModel* layer() const;
     CoverageLayerModel* layer();
-
-    void setAttributeDependent(bool yesno);
 
     QUrl _qmlUrl;
 private:
@@ -45,8 +41,7 @@ private:
     quint32 _layerIndex = 0;
     QString _displayName;
     QString qmlUrl() const;
-    bool _attributeDependent = false;
-    QStringList _attributes;
+
 signals:
     void attributesChanged();
 
