@@ -16,6 +16,7 @@ using namespace Ilwis;
 class PropertyEditorObjectVisualizationModel;
 class VisualAttributeEditor;
 class LayerManager;
+class CoverageLayerModel;
 
 typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
 
@@ -34,7 +35,8 @@ public:
     Q_INVOKABLE QString uniqueName();
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
-    QList<VisualAttributeEditor *> propertyEditors(const IIlwisObject &obj) ;
+    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::DataDefinition& datadef) ;
+    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name) ;
 
     void qmlContext(QQmlContext *ctx);
     int activeSplit() const;
