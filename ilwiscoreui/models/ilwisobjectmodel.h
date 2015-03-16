@@ -55,7 +55,8 @@ public:
 
 
     bool isValid() const;
-
+protected:
+    Ilwis::IIlwisObject object() const;
 signals:
     void readOnlyChanged();
 private slots:

@@ -569,3 +569,8 @@ bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
 }
+
+IIlwisObject IlwisObjectModel::object() const
+{
+    return _ilwisobject;
+}
