@@ -18,7 +18,7 @@ PolygonPropertySetter::~PolygonPropertySetter()
 
 }
 
-bool PolygonPropertySetter::canUse(const IIlwisObject &obj) const
+bool PolygonPropertySetter::canUse(const IIlwisObject &obj, const DataDefinition& ) const
 {
     if ( !obj.isValid())
         return false;
