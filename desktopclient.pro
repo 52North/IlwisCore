@@ -89,7 +89,9 @@ OTHER_FILES += \
     desktopclient/qml/workbench/modeller/ModellerSelection.qml \
     desktopclient/qml/datapanel/modeller/ConnectorObject.qml \
     desktopclient/qml/datapanel/modeller/DataSourceObject.qml \
-    desktopclient/qml/datapanel/modeller/OperationObject.qml
+    desktopclient/qml/datapanel/modeller/OperationObject.qml \
+    desktopclient/qml/datapanel/modeller/Canvas.qml \
+    desktopclient/qml/workbench/workflow/WorkflowBench.qml
 
 
 # Installation path
