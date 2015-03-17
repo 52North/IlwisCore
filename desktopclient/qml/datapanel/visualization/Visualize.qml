@@ -155,9 +155,10 @@ Item {
             Layout.fillWidth: true
 
         }
-        LayerManagement.LayerPropertyManagement{
+        ViewManager{
             height : 150
             anchors.left: parent.left
+            anchors.leftMargin: 5
             anchors.right: parent.right
             renderer: layers.drawer()
         }
