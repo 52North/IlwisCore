@@ -43,6 +43,7 @@
 
 #include <QtQuick/QQuickFramebufferObject>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "drawers/layersviewcommandinterface.h"
@@ -78,6 +79,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void setManager(LayerManager *manager);
 
     LayerManager *layerManager();
+    Ilwis::ICoordinateSystem rootCoordinateSystem() ;
 private:
     QString viewerId() const;
     std::deque<Ilwis::OperationExpression> _commands;

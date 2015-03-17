@@ -112,4 +112,11 @@ Geodrawer::RootDrawer *LayersView::rootDrawer()
     return layer->drawer()->rootDrawer();
 }
 
+Ilwis::ICoordinateSystem LayersView::rootCoordinateSystem() {
+    if ( rootDrawer()){
+        return rootDrawer()->coordinateSystem();
+    }
+    return Ilwis::ICoordinateSystem();
+}
+
 
