@@ -222,6 +222,14 @@ bool Ilwis::Coordinate::operator!=(const Ilwis::Coordinate& pnt){
     return !(operator==(pnt));
 }
 
+QString Coordinate::toString(bool use3D) const
+{
+    if( use3D)   {
+        return QString("%1 %2").arg(x,0,'f', 2).arg(y,0,'f', 2).arg(z,0,'f', 2);
+    }
+    return QString("%1 %2").arg(x,0,'f', 2).arg(y,0,'f', 2);
+}
+
 Coordinate& Coordinate::operator =(const geos::geom::Coordinate& crd){
     this->x = crd.x;
     this->y = crd.y;
@@ -358,4 +366,20 @@ void LatLon::lat(const Angle& val){
 
 void LatLon::lon(const Angle& val){
     x = val.degrees();
+}
+
+QString LatLon::toString(bool ) const
+{
+    auto ll = [&](double loc) -> QString {
+        QChar chardgr('°');
+        int dgr = loc / 180.0;
+        int dmin = (loc - 180 * dgr) / 60;
+        double dsec = (loc - 180 * dgr - 60 * dmin)/60;
+
+        QString result = QString("%1%2%3\'%4\'\'").arg(dgr).arg(chardgr).arg(dmin).arg(dsec,0,'f', 2);
+        return result;
+    };
+    QString llstring = QString("%1 %2").arg(ll(x)).arg(ll(y));
+
+    return llstring;
 }
