@@ -18,7 +18,7 @@ LayerManager::LayerManager(QObject *parent) :
 LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
 {
     IlwisTypes metatype = itCOLLECTION | itCATALOGVIEW;
-    Resource res("Global Property Editors", metatype);
+    Resource res("Global Layer", metatype);
     CoverageLayerModel * model = new CoverageLayerModel(_layers.size(), res,0, this);
     model->iconPath("layers.png");
     _layers.append(model);
@@ -69,6 +69,32 @@ bool LayerManager::hasSelectionDrawer() const
 void LayerManager::setHasSelectionDrawer(bool yesno)
 {
     _hasSelectionDrawer = yesno;
+}
+
+QString LayerManager::currentCoordinate() const
+{
+    return _currentCoordinate.toString();
+}
+
+void LayerManager::setCurrentCoordinate(const QString &var)
+{
+    if ( var != ""){
+        QStringList parts = var.split("|");
+        if ( parts.size() == 2){
+            _currentCoordinate = Ilwis::Coordinate(parts[0].toDouble(), parts[1].toDouble());
+            emit currentCoordinateHasChanged();
+        }
+    }
+}
+
+QString LayerManager::currentLatLon() const
+{
+    return "a";
+}
+
+void LayerManager::layersView(LayersViewCommandInterface *view)
+{
+    _layersView = view;
 }
 
 QQmlListProperty<CoverageLayerModel> LayerManager::layers()
