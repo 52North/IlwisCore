@@ -14,7 +14,7 @@ Item {
     Item {
         id : layersContainer
         width : parent.width
-        height : parent.height - deleteButton.height - 6
+        height : parent.height - deleteButton.height - 14
         Rectangle {
             id : layersLabel
             width : parent.width + 10

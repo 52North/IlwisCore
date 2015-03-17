@@ -7,7 +7,8 @@ Item {
     property var currentVisualAttribute
 
     onCurrentVisualAttributeChanged: {
-        editorList.model =  currentVisualAttribute.propertyEditors
+        if ( currentVisualAttribute.propertyEditors )
+            editorList.model =  currentVisualAttribute.propertyEditors
     }
 
     Rectangle {
