@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 
         QObject *topLevel = engine.rootObjects().value(0);
         QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
-        window->setIcon(QIcon("./qml/images/ilwis.ico"));
+        window->setIcon(QIcon("./qml/images/ilwis4.bmp"));
         if ( !window ) {
             qWarning("Error: Your root item has to be a Window.");
             return -1;
