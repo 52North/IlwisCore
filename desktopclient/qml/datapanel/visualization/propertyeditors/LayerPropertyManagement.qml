@@ -24,28 +24,11 @@ Rectangle {
          return iconP
      }
 
-    Layout.minimumHeight: 16
-
-    Rectangle {
-        id : header
-        width : parent.width
-        height : 18
-        color : Global.headerdark
-        Text {
-            text : "Display Options"
-            font.bold: true
-            font.pointSize: 8
-            anchors.left : parent.left
-            anchors.leftMargin: 5
-            color : "white"
-        }
-    }
 
     Item {
-        anchors.top : header.bottom
         width : parent.width - 5
-        height : parent.height - 18
-        x : 5
+        height : parent.height
+        y : 2
 
         VisualAttributeEditorLayers{
             id : layerColumn
@@ -60,21 +43,21 @@ Rectangle {
             id : attributeListColumn
             anchors.left : layerColumn.right
             anchors.leftMargin: 3
-            height : parent.height - 16
+            height : parent.height - 3
         }
 
         VisualAttributeEditorList{
             id : editorListColumn
             anchors.left : attributeListColumn.right
             anchors.leftMargin: 3
-            height : parent.height - 16
+            height : parent.height - 3
         }
         VisualAttributeEditor{
             anchors.left : editorListColumn.right
             anchors.leftMargin: 3
             anchors.right: parent.right
             anchors.rightMargin: 5
-            height : parent.height - 16
+            height : parent.height - 3
             id : editorColumn
         }
     }
