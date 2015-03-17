@@ -90,6 +90,18 @@ Item {
           MouseArea {
               id : mapArea
               anchors.fill: parent
+              hoverEnabled: true
+
+              onMouseXChanged: {
+                  var mposition = mouseX + "|" + mouseY
+                  manager.currentCoordinate = mposition
+              }
+
+              onMouseYChanged: {
+                  var mposition = mouseX + "|" + mouseY
+                  manager.currentCoordinate = mposition
+              }
+
               onPressed: {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
@@ -99,7 +111,9 @@ Item {
                           renderer.setAttribute("SelectionDrawer", position)
                           renderer.update()
                       }
+
                   }
+
               }
               onPositionChanged: {
                   if ( manager.hasSelectionDrawer){
