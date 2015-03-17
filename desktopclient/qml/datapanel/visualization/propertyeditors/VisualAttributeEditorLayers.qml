@@ -19,7 +19,7 @@ Item {
             id : layersLabel
             width : parent.width + 10
             height : 18
-            color : Global.headerlight
+            color : Global.alternatecolor3
             Text{
                 text : qsTr("Layers")
                 font.weight: Font.DemiBold

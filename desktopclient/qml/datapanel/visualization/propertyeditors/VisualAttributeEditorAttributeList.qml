@@ -21,7 +21,7 @@ Item {
         id : attributesLabel
         width : parent.width + 10
         height : 18
-        color : Global.headerlight
+        color : Global.alternatecolor3
         Text{
             text : qsTr("Attributes")
             font.weight: Font.DemiBold

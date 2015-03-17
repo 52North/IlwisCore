@@ -24,7 +24,7 @@ Item {
         id : editorsLabel
         width : parent.width
         height : 18
-        color : Global.headerlight
+        color : Global.alternatecolor3
         Text{
             text : qsTr("Property Editor")
             font.weight: Font.DemiBold

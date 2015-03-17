@@ -15,7 +15,7 @@ Item {
         id : propertiesLabel
         width : 160
         height : 18
-        color : Global.headerlight
+        color : Global.alternatecolor3
         Text{
             text : qsTr("Display Properties")
             font.weight: Font.DemiBold
