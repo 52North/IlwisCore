@@ -96,6 +96,19 @@ void GeoReference::size(const Size<> &sz)
         _georefImpl->size(sz);
 }
 
+Envelope GeoReference::envelope() const
+{
+    if ( isValid())
+        return _georefImpl->envelope();
+    return Envelope();
+}
+
+void GeoReference::envelope(const Envelope &env)
+{
+    if ( isValid())
+        _georefImpl->envelope(env);
+}
+
 bool GeoReference::centerOfPixel() const
 {
     if ( isValid())

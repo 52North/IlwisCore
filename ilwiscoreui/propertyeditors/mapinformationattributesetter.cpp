@@ -1,3 +1,4 @@
+#include "visualattributemodel.h"
 #include "mapinformationattributesetter.h"
 
 REGISTER_PROPERTYEDITOR("mapinfopropertyeditor",MapInformationPropertySetter)
@@ -13,7 +14,7 @@ MapInformationPropertySetter::~MapInformationPropertySetter()
 
 }
 
-bool MapInformationPropertySetter::canUse(const IIlwisObject &obj) const
+bool MapInformationPropertySetter::canUse(const Ilwis::IIlwisObject &obj, const Ilwis::DataDefinition& ) const
 {
     if ( !obj.isValid())
         return false;

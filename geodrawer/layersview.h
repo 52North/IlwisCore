@@ -43,6 +43,9 @@
 
 #include <QtQuick/QQuickFramebufferObject>
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "geos/geom/Coordinate.h"
+#include "coordinate.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "drawers/layersviewcommandinterface.h"
@@ -61,6 +64,9 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_OBJECT
 
     Q_PROPERTY(QString viewerId READ viewerId CONSTANT)
+    Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
+    Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
+
 public:
 friend class LayersRenderer;
 
@@ -78,15 +84,25 @@ friend class LayersRenderer;
     Q_INVOKABLE void setManager(LayerManager *manager);
 
     LayerManager *layerManager();
+
+
+signals:
+    void currentCoordinateHasChanged();
+
 private:
+    QString currentCoordinate() const;
+    void setCurrentCoordinate(const QString &var);
+    QString currentLatLon() const;
     QString viewerId() const;
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
+
     QVariantMap _copiedAttributes;
     quint64 _viewerId;
+    Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
-    Ilwis::Geodrawer::RootDrawer *rootDrawer();
+    Ilwis::Geodrawer::RootDrawer *rootDrawer() const;
 
 
     static quint64 _baseViewerId;

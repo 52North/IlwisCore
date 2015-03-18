@@ -11,6 +11,8 @@ public:
     void coordinateSystem(const ICoordinateSystem& csy);
     Size<> size() const;
     void size(const Size<>& sz);
+    virtual Envelope envelope() const;
+    virtual void envelope(const Envelope&);
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool compute();

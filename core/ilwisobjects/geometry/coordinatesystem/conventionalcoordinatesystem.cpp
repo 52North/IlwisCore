@@ -91,6 +91,22 @@ bool ConventionalCoordinateSystem::isUnknown() const
     return false;
 }
 
+bool ConventionalCoordinateSystem::canConvertToLatLon() const
+{
+    if ( _projection.isValid())    {
+        return _projection->canConvertToLatLon();
+    }
+    return false;
+}
+
+bool ConventionalCoordinateSystem::canConvertToCoordinate() const
+{
+    if ( _projection.isValid())    {
+        return _projection->canConvertToCoordinate();
+    }
+    return false;
+}
+
 QString ConventionalCoordinateSystem::toWKT(quint32 spaces) const
 {
     QString wkt = "PROJCS[\"" + name() + "\"" + ",";

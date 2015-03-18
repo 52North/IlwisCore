@@ -8,31 +8,33 @@
 #include "ilwiscoreui_global.h"
 
 class LayerManager;
-class VisualAttributeEditor;
+class VisualAttributeModelEditor;
+class VisualAttributeModel;
 
 class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public IlwisObjectModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<VisualAttributeEditor> propertyEditors READ propertyEditors NOTIFY propertyEditorChanged)
-
+    Q_PROPERTY(QQmlListProperty<VisualAttributeModel> visualAttributes READ visualAttributes NOTIFY visualAttributesChanged)
+    Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
 
 public:
     CoverageLayerModel();
-    CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, const QList<VisualAttributeEditor *> &editors, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
+    CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
-    Q_INVOKABLE VisualAttributeEditor* propertyEditor(const QString& name);
     Ilwis::Geodrawer::DrawerInterface *drawer();
-
-
+signals:
+    void visualAttributesChanged();
 
 private:
-    QQmlListProperty<VisualAttributeEditor> propertyEditors();
-    QList<VisualAttributeEditor *> _propertyEditors;
+    quint32 layerIndex() const;
+    VisualAttributeModel *visualAttribute(const QString& name);
+    QQmlListProperty<VisualAttributeModel> visualAttributes();
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
+    QList<VisualAttributeModel *> _visualAttributes;
+    quint32 _layerIndex;
 
-signals:
-    void propertyEditorChanged();
+
 
 };
 

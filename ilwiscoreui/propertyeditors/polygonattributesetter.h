@@ -10,7 +10,7 @@ class PolygonPropertySetter : public VisualAttributeEditor
 public:
     ~PolygonPropertySetter();
     PolygonPropertySetter(QObject *parent=0);
-    bool canUse(const IIlwisObject &obj) const;
+    bool canUse(const IIlwisObject &obj, const DataDefinition &) const;
     static VisualAttributeEditor *create();
 
   NEW_PROPERTYEDITOR(PolygonPropertySetter)

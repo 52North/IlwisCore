@@ -37,30 +37,19 @@ int VisualAttributeEditor::defaultHeight() const
     return 0;
 }
 
-bool VisualAttributeEditor::canUse(const IIlwisObject &) const
+bool VisualAttributeEditor::canUse(const IIlwisObject &obj, const DataDefinition &datadef) const
 {
     return false;
 }
 
-void VisualAttributeEditor::prepare(const IIlwisObject &obj)
+bool VisualAttributeEditor::canUse(const Ilwis::IIlwisObject &obj, const QString &name) const
 {
-    if ( !hasType(obj->ilwisType(), itCOVERAGE)){
-        return ;
-    }
-    if ( hasType(obj->ilwisType(), itFEATURE)){
-        IFeatureCoverage features = obj.as<FeatureCoverage>();
-        for(int i =0; i < features->attributeDefinitions().definitionCount(); ++i){
-            _attributes.push_back(features->attributeDefinitions().columndefinition(i).name());
-        }
-    }
-    if ( hasType(obj->ilwisType(), itRASTER)){
-        IRasterCoverage raster = obj.as<RasterCoverage>();
-        if ( raster->hasAttributes()){
-            for(int i=0; i < raster->attributeTable()->columnCount(); ++i){
-                _attributes.push_back(raster->attributeTable()->columndefinition(i).name());
-            }
-        }
-    }
+    return false;
+}
+
+void VisualAttributeEditor::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &, const DataDefinition &)
+{
+    _layer = parentLayer;
 }
 
 int VisualAttributeEditor::layerIndex() const
@@ -71,12 +60,6 @@ int VisualAttributeEditor::layerIndex() const
 QString VisualAttributeEditor::displayName() const
 {
     return _displayName;
-}
-
-bool VisualAttributeEditor::attributeDependent() const
-{
-    bool res = _attributeDependent && _attributes.size() > 0;
-    return res;
 }
 
 void VisualAttributeEditor::setlayer(quint32 index, CoverageLayerModel *model){
@@ -94,15 +77,6 @@ CoverageLayerModel *VisualAttributeEditor::layer()
     return _layer;
 }
 
-void VisualAttributeEditor::setAttributeDependent(bool yesno)
-{
-    _attributeDependent = yesno;
-}
-
-QStringList VisualAttributeEditor::attributes() const
-{
-    return _attributes;
-}
 
 
 

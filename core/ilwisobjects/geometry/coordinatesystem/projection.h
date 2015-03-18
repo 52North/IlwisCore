@@ -45,6 +45,8 @@ public:
 
     bool isEqual(const IlwisObject* obj) const;
     bool isValid() const;
+    bool canConvertToLatLon() const;
+    bool canConvertToCoordinate() const;
 
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);
     bool isSet(Projection::ProjectionParamValue type) const;

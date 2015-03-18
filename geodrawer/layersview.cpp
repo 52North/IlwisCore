@@ -102,7 +102,7 @@ QString LayersView::viewerId() const
     return QString::number(_viewerId);
 }
 
-Geodrawer::RootDrawer *LayersView::rootDrawer()
+Geodrawer::RootDrawer *LayersView::rootDrawer() const
 {
     if ( !_manager)
         return 0;
@@ -110,6 +110,31 @@ Geodrawer::RootDrawer *LayersView::rootDrawer()
     if ( !layer)
         return 0;
     return layer->drawer()->rootDrawer();
+}
+
+QString LayersView::currentCoordinate() const
+{
+    return _currentCoordinate.toString();
+}
+
+void LayersView::setCurrentCoordinate(const QString &var)
+{
+    if ( var != ""){
+        QStringList parts = var.split("|");
+        if ( parts.size() == 2){
+            _currentCoordinate = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
+            emit currentCoordinateHasChanged();
+        }
+    }
+}
+
+QString LayersView::currentLatLon() const
+{
+    if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
+        if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
+            return rootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
+    }
+    return "";
 }
 
 

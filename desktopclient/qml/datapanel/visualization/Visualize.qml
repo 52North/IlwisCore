@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import "./propertyeditors" as LayerManagement
 import "../../controls" as Controls
 import "../../Global.js" as Global
 //import GeoDrawer 1.0
@@ -154,9 +155,10 @@ Item {
             Layout.fillWidth: true
 
         }
-        LayerPropertyManagement{
+        ViewManager{
             height : 150
             anchors.left: parent.left
+            anchors.leftMargin: 5
             anchors.right: parent.right
             renderer: layers.drawer()
         }

@@ -4,6 +4,11 @@
 #include "ilwiscoreui_global.h"
 #include <QVariantMap>
 
+namespace Ilwis {
+class CoordinateSystem;
+typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+
+}
 class LayerManager;
 
 class ILWISCOREUISHARED_EXPORT LayersViewCommandInterface {

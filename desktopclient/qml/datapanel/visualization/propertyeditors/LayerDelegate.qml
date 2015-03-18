@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import UIContextModel 1.0
 import LayerManager 1.0
-import "../../controls" as Controls
-import "../../Global.js" as Global
+import "../../../controls" as Controls
+import "../../../Global.js" as Global
 
 Component{
     id : layerDelegate
@@ -14,7 +14,7 @@ Component{
         function iconSource(name) {
             if ( name === "")
                 name = "redbuttonr.png"
-             var iconP = "../../images/" + name
+             var iconP = "../../../images/" + name
              return iconP
 
          }
@@ -67,8 +67,8 @@ Component{
                     anchors.fill: parent
                     onClicked: {
                         layersList.currentIndex = index
-                        layerIndex = index;
-                        layersList.setEditors()
+                        attributeListColumn.currentCoverage = manager.layer(index)
+
                     }
                 }
             }

@@ -12,6 +12,8 @@ namespace Ilwis {
 
 class CoordinateSystem;
 typedef IlwisData<CoordinateSystem> ICoordinateSystem;
+class GeoReference;
+typedef IlwisData<GeoReference> IGeoReference;
 
 namespace Geodrawer{
 
@@ -52,6 +54,7 @@ public:
 
     Ilwis::Coordinate normalizedCoord(const Coordinate &crd) const;
     Envelope normalizedEnveope(const Envelope &env) const;
+    Ilwis::Coordinate pixel2Coord(const Ilwis::Pixel &pix);
 public slots:
 
 private:
@@ -64,6 +67,7 @@ private:
     double _aspectRatioView = 0;
     Coordinate _viewPoint;
     Coordinate _eyePoint;
+    IGeoReference _screenGrf;
     double _zoomScale=1;
     bool _is3D = false;
 

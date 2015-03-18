@@ -9,7 +9,7 @@ class KERNELSHARED_EXPORT CornersGeoReference : public SimpelGeoReference
 public:
     CornersGeoReference();
     CornersGeoReference(const Resource& resource);
-    void setEnvelope(const Envelope& env);
+    void envelope(const Envelope& env);
     bool compute();
     QSize computeGridSize() const;
     bool isCornersOfCorners() const;

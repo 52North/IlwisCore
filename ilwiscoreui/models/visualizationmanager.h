@@ -6,6 +6,7 @@
 
 #include "coveragelayermodel.h"
 #include "drawers/drawerinterface.h"
+#include "drawers/layersviewcommandinterface.h"
 
 class CoverageLayerModel;
 class UIContextModel;
@@ -28,6 +29,10 @@ public:
     void setZoomInMode(bool yesno) ;
     bool hasSelectionDrawer() const;
     void setHasSelectionDrawer(bool yesno);
+    QString currentCoordinate() const;
+    void setCurrentCoordinate(const QString& var);
+    QString currentLatLon() const;
+    void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
 
@@ -45,6 +50,7 @@ private:
     UIContextModel *_uicontext;
     bool _zoomInMode = false;
     bool _hasSelectionDrawer = false;
+    LayersViewCommandInterface *_layersView = 0;
     void init();
 
 };

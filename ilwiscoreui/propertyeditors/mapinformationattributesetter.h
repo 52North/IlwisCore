@@ -10,7 +10,7 @@ public:
     MapInformationPropertySetter(QObject *parent = 0);
     ~MapInformationPropertySetter();
 
-    bool canUse(const Ilwis::IIlwisObject& obj) const;
+    bool canUse(const Ilwis::IIlwisObject& obj, const Ilwis::DataDefinition&) const;
     static VisualAttributeEditor *create();
 
     NEW_PROPERTYEDITOR(MapInformationPropertySetter)

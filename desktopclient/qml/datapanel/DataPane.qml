@@ -55,7 +55,6 @@ Rectangle {
             var catTab = getCurrentCatalogTab()
             if ( catTab){
                 url = catTab.currentCatalog.url
-                console.debug("url", url)
                 splitside = activeSplit
             }
         }

@@ -54,7 +54,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/attributeeditor.h \
     ilwiscoreui/propertyeditors/lineattributesetter.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
-    ilwiscoreui/models/workflow/workflowmodel.h
+    ilwiscoreui/models/workflow/workflowmodel.h \
+    ilwiscoreui/models/visualattributemodel.h
 
 unix {
     target.path = /usr/lib
@@ -94,8 +95,8 @@ SOURCES += \
     ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
     ilwiscoreui/propertyeditors/attributeeditor.cpp \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
-    ilwiscoreui/models/workflow/workflowmodel.cpp
-
+    ilwiscoreui/models/workflow/workflowmodel.cpp \
+    ilwiscoreui/models/visualattributemodel.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
