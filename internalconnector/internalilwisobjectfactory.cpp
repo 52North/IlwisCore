@@ -361,7 +361,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
             grf = GeoReference::create("corners");
             grf->name("subset_" + gcoverage->name());
             grf->coordinateSystem(gcoverage->coordinateSystem());
-            grf->impl<CornersGeoReference>()->setEnvelope(bounds);
+            grf->envelope(bounds);
             grf->size(sz);
             if (!grf->compute()){
                 ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "Georeference");
@@ -711,7 +711,7 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
         cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     if ( csy.isValid() && env.isValid() && sz.isValid()){
         cgrf->coordinateSystem(csy);
-        cgrf->impl<CornersGeoReference>()->setEnvelope(env);
+        cgrf->envelope(env);
         cgrf->size(sz);
         cgrf->compute();
         return cgrf;
@@ -749,7 +749,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         }
 
         if ( resource.hasProperty("envelope"))
-            cgrf->impl<CornersGeoReference>()->setEnvelope(resource["envelope"].value<Envelope>());
+            cgrf->envelope(resource["envelope"].value<Envelope>());
         if ( resource.hasProperty("size"))
             cgrf->size(resource["size"].value<Size<>>());
         if ( resource.hasProperty("centerofpixel"))
