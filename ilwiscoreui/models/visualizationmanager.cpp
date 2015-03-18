@@ -71,27 +71,6 @@ void LayerManager::setHasSelectionDrawer(bool yesno)
     _hasSelectionDrawer = yesno;
 }
 
-QString LayerManager::currentCoordinate() const
-{
-    return _currentCoordinate.toString();
-}
-
-void LayerManager::setCurrentCoordinate(const QString &var)
-{
-    if ( var != ""){
-        QStringList parts = var.split("|");
-        if ( parts.size() == 2){
-            _currentCoordinate = Ilwis::Coordinate(parts[0].toDouble(), parts[1].toDouble());
-            emit currentCoordinateHasChanged();
-        }
-    }
-}
-
-QString LayerManager::currentLatLon() const
-{
-    return "a";
-}
-
 void LayerManager::layersView(LayersViewCommandInterface *view)
 {
     _layersView = view;
