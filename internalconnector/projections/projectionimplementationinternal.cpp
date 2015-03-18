@@ -91,3 +91,13 @@ QString ProjectionImplementationInternal::toProj4() const
     return sUNDEF; // TODO:
 
 }
+
+bool ProjectionImplementationInternal::canConvertToLatLon() const
+{
+    return true;
+}
+
+bool ProjectionImplementationInternal::canConvertToCoordinate() const
+{
+    return true;
+}

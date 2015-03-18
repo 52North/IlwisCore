@@ -214,6 +214,22 @@ bool Projection::isValid() const
     return !_implementation.isNull();
 }
 
+bool Projection::canConvertToLatLon() const
+{
+    if ( isValid())    {
+        return _implementation->canConvertToLatLon();
+    }
+    return false;
+}
+
+bool Projection::canConvertToCoordinate() const
+{
+    if ( isValid())    {
+        return _implementation->canConvertToCoordinate();
+    }
+    return false;
+}
+
 
 
 

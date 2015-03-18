@@ -17,6 +17,8 @@ public:
      void setEllipsoid(const Ilwis::IEllipsoid &ell);
      bool prepare(const QString& parms="");
      QString toProj4() const;
+     bool canConvertToLatLon() const;
+     bool canConvertToCoordinate() const;
 private:
     QString _targetDef;
     projPJ  _pjLatlon;

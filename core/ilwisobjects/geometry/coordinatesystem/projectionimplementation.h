@@ -32,6 +32,8 @@ public:
     virtual void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
     QString parameterName(Projection::ProjectionParamValue pv) const;
     virtual QString toProj4() const = 0;
+    virtual bool canConvertToLatLon() const = 0;
+    virtual bool canConvertToCoordinate() const = 0;
 
 
     bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
