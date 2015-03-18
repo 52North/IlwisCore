@@ -25,14 +25,14 @@ QString UIContextModel::uniqueName()
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
 }
 
-QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const DataDefinition &datadef)
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
 {
     QList<VisualAttributeEditor *> editors;
     for ( const auto& editorItem : _propertyEditors){
         auto *editor = editorItem.second();
         if ( editor){
-            if ( editor->canUse(obj, datadef)){
-                editor->prepare(parentLayer, obj, datadef);
+            if ( editor->canUse(obj, coldef)){
+                editor->prepare(parentLayer, obj, coldef);
                 editors.append(editor);
             }
             else

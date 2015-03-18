@@ -11,7 +11,7 @@ class LinePropertySetter : public VisualAttributeEditor
 public:
     ~LinePropertySetter();
     LinePropertySetter(QObject *parent=0);
-    bool canUse(const IIlwisObject &obj, const DataDefinition &) const;
+    bool canUse(const IIlwisObject &obj, const ColumnDefinition &) const;
     static VisualAttributeEditor *create();
 
  NEW_PROPERTYEDITOR(LinePropertySetter)

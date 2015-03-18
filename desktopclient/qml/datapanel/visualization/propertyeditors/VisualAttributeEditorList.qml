@@ -57,7 +57,7 @@ Item {
                     sourceComponent: Component {
                         Text {
                             x : 4
-                            text: editorName
+                            text: displayName
                             width : displayEditors.width
                             height : 14
                             MouseArea{

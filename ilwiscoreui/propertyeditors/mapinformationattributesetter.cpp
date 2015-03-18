@@ -4,7 +4,7 @@
 REGISTER_PROPERTYEDITOR("mapinfopropertyeditor",MapInformationPropertySetter)
 
 MapInformationPropertySetter::MapInformationPropertySetter(QObject *parent) :
-    VisualAttributeEditor("mapinfopropertyeditor",TR("Map Information"),QUrl("MapinfoProperties.qml"), parent)
+    VisualAttributeEditor("mapinfopropertyeditor",TR("Layer Information"),QUrl("MapinfoProperties.qml"), parent)
 {
 
 }
@@ -14,7 +14,7 @@ MapInformationPropertySetter::~MapInformationPropertySetter()
 
 }
 
-bool MapInformationPropertySetter::canUse(const Ilwis::IIlwisObject &obj, const Ilwis::DataDefinition& ) const
+bool MapInformationPropertySetter::canUse(const Ilwis::IIlwisObject &obj, const Ilwis::ColumnDefinition& ) const
 {
     if ( !obj.isValid())
         return false;
@@ -35,5 +35,10 @@ bool MapInformationPropertySetter::canUse(const IIlwisObject& obj, const QString
 VisualAttributeEditor *MapInformationPropertySetter::create()
 {
     return new MapInformationPropertySetter();
+}
+
+void MapInformationPropertySetter::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &bj, const ColumnDefinition &datadef)
+{
+
 }
 

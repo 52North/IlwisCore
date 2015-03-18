@@ -37,17 +37,17 @@ int VisualAttributeEditor::defaultHeight() const
     return 0;
 }
 
-bool VisualAttributeEditor::canUse(const IIlwisObject &obj, const DataDefinition &datadef) const
+bool VisualAttributeEditor::canUse(const IIlwisObject &, const ColumnDefinition &) const
 {
     return false;
 }
 
-bool VisualAttributeEditor::canUse(const Ilwis::IIlwisObject &obj, const QString &name) const
+bool VisualAttributeEditor::canUse(const Ilwis::IIlwisObject &, const QString &) const
 {
     return false;
 }
 
-void VisualAttributeEditor::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &, const DataDefinition &)
+void VisualAttributeEditor::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &, const ColumnDefinition &)
 {
     _layer = parentLayer;
 }
