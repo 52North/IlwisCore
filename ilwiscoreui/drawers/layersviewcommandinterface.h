@@ -17,7 +17,6 @@ public:
     virtual ~LayersViewCommandInterface();
     virtual void addCommand(const QString& command, const QVariantMap& params) = 0;
     virtual LayerManager *layerManager() = 0;
-    virtual Ilwis::ICoordinateSystem rootCoordinateSystem()  = 0;
 };
 
 #endif // LAYERSVIEWCOMMANDINTERFACE
