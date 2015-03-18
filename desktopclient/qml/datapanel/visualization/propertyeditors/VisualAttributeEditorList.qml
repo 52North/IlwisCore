@@ -63,6 +63,7 @@ Item {
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked: {
+                                    editorList.currentIndex = index
                                     editorColumn.currentEditor = editorList.model[index]
                                 }
                             }
