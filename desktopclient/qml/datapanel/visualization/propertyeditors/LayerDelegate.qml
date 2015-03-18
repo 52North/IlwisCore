@@ -6,6 +6,7 @@ import UIContextModel 1.0
 import LayerManager 1.0
 import "../../../controls" as Controls
 import "../../../Global.js" as Global
+import "../../.." as Base
 
 Component{
     id : layerDelegate
@@ -31,23 +32,8 @@ Component{
                 height: 17
                 checked : true
 
-                style: CheckBoxStyle {
-                    indicator: Rectangle {
-                            implicitWidth: 14
-                            implicitHeight: 14
-                            radius: 1
-                            border.color: control.activeFocus ? "darkblue" : "gray"
-                            border.width: 1
-                            Rectangle {
-                                visible: control.checked
-                                color: "#3333A2"
-                                border.color: "#333"
-                                radius: 1
-                                anchors.margins: 3
-                                anchors.fill: parent
-                            }
-                    }
-                }
+                style: Base.CheckBoxStyle1{}
+
                 opacity : index == 0 ? 0 : 1
                 enabled : index == 0 ? false : true
             }
