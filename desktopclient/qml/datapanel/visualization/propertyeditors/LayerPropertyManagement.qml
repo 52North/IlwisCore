@@ -33,7 +33,7 @@ Rectangle {
         VisualAttributeEditorLayers{
             id : layerColumn
             height : parent.height
-            width : 180
+            width : parent.width / 4
             anchors.left: parent.left
 
 
@@ -44,6 +44,7 @@ Rectangle {
             anchors.left : layerColumn.right
             anchors.leftMargin: 3
             height : parent.height - 3
+            width : 140
         }
 
         VisualAttributeEditorList{
@@ -51,6 +52,7 @@ Rectangle {
             anchors.left : attributeListColumn.right
             anchors.leftMargin: 3
             height : parent.height - 3
+            width : 140
         }
         VisualAttributeEditor{
             anchors.left : editorListColumn.right
