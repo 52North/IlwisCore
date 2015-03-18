@@ -114,6 +114,11 @@ Geodrawer::RootDrawer *LayersView::rootDrawer() const
 
 QString LayersView::currentCoordinate() const
 {
+    if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
+        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+            return _currentCoordinate.toString(6);
+        }
+    }
     return _currentCoordinate.toString();
 }
 
@@ -131,7 +136,11 @@ void LayersView::setCurrentCoordinate(const QString &var)
 QString LayersView::currentLatLon() const
 {
     if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
-        if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
+        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+            LatLon ll(_currentCoordinate.y, _currentCoordinate.x);
+            return ll.toString();
+        }
+        else if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
             return rootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
     }
     return "";
