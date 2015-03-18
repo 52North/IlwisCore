@@ -8,7 +8,6 @@ import "../../../controls" as Controls
 import "../../../Global.js" as Global
 
 Item {
-    width : 100
     property var currentCoverage
 
     onCurrentCoverageChanged: {

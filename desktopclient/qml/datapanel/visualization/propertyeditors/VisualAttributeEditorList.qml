@@ -3,12 +3,13 @@ import "../../../Global.js" as Global
 
 Item {
     id : displaypropertiesColumn
-    width : 130
     property var currentVisualAttribute
 
     onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute.propertyEditors )
+        if ( currentVisualAttribute.propertyEditors ){
             editorList.model =  currentVisualAttribute.propertyEditors
+            editorColumn.currentEditor = editorList.model[0]
+        }
     }
 
     Rectangle {
