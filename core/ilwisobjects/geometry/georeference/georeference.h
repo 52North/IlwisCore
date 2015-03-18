@@ -42,6 +42,8 @@ public:
     void coordinateSystem(const ICoordinateSystem& csy);
     Size<> size() const;
     void size(const Size<>& sz);
+    Envelope envelope() const;
+    void envelope(const Envelope& env);
     bool centerOfPixel() const;
     void centerOfPixel(bool yesno);
     bool isCompatible(const IlwisData<GeoReference>& georefOther) const;
@@ -49,7 +51,7 @@ public:
     void adapter(GeoRefAdapter* adapt);
     bool isValid() const;
     void impl(GeoRefImplementation *impl);
-    template<typename GrfT> QSharedPointer<GrfT> impl(){
+    template<typename GrfT> QSharedPointer<GrfT> as(){
         QSharedPointer<GrfT> sptr = _georefImpl.dynamicCast<GrfT>();
         if ( sptr.isNull())
             throw ErrorObject(TR(ERR_COULD_NOT_CONVERT_2).arg("georef").arg(GrfT::typeName()));

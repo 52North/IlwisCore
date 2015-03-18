@@ -39,7 +39,17 @@ void GeoRefImplementation::size(const Size<> &sz)
 {
     // size must always be positive or undefined
     if (sz.xsize() > 0 && sz.ysize() > 0)
-         _size = sz.toQSize();
+        _size = sz.toQSize();
+}
+
+Envelope GeoRefImplementation::envelope() const
+{
+    return Envelope();
+}
+
+void GeoRefImplementation::envelope(const Envelope &)
+{
+
 }
 
 bool GeoRefImplementation::centerOfPixel() const
