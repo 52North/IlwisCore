@@ -77,6 +77,7 @@ Item {
 
   Item {
       id: floatrect
+      property alias text: toolTip.text
       z: 1000
       width: content.width + (2*toolTipShadow.radius)
       height: content.height + (2*toolTipShadow.radius)
@@ -93,7 +94,6 @@ Item {
               id: toolTip
               wrapMode: Text.WordWrap
               x : 4
-              text : "aap"
               anchors.verticalCenter: parent.verticalCenter
           }
       }
