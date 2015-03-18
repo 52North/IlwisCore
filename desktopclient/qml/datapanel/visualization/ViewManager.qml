@@ -41,24 +41,24 @@ Item {
         color : Global.alternatecolor3
         TextField{
             id : nativeCoords
-            width : 145;
+            width : 155;
             height : 18
             anchors.right: parent.right
             anchors.rightMargin: 4
             readOnly: true
             anchors.verticalCenter: parent.verticalCenter
-            text : manager.currentLatLon
+            text : renderer.currentLatLon
         }
 
         TextField{
             id : otherCoords
-            width : nativeCoords.width;
+            width : nativeCoords.width - 14;
             height : 18
             anchors.right: nativeCoords.left
             anchors.rightMargin: 4
             readOnly: true
             anchors.verticalCenter: parent.verticalCenter
-            text : manager.currentCoordinate
+            text : renderer.currentCoordinate
         }
     }
 
