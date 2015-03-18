@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-
+import QtQuick 2.1
+import QtGraphicalEffects 1.0
 import LayersView 1.0
 
 Item {
@@ -75,6 +75,48 @@ Item {
       return renderer
   }
 
+  Item {
+      id: floatrect
+      z: 1000
+      width: content.width + (2*toolTipShadow.radius)
+      height: content.height + (2*toolTipShadow.radius)
+
+      Rectangle {
+          id: content
+          anchors.centerIn: parent
+          width: toolTip.contentWidth + 8
+          height: toolTip.contentHeight + 4
+          radius: 3
+          color : "cornsilk"
+
+          Text {
+              id: toolTip
+              wrapMode: Text.WordWrap
+              x : 4
+              text : "aap"
+              anchors.verticalCenter: parent.verticalCenter
+          }
+      }
+      opacity : 0
+      enabled : false
+
+  }
+
+  DropShadow {
+      id: toolTipShadow
+      z: 1000
+      anchors.fill: source
+      cached: true
+      horizontalOffset: 2
+      verticalOffset: 2
+      radius: 8.0
+      samples: 16
+      color: "#80000000"
+      smooth: true
+      source: floatrect
+      opacity : floatrect.opacity
+  }
+
   DropArea {
       anchors.fill : parent
       onDropped: {
@@ -92,16 +134,6 @@ Item {
               anchors.fill: parent
               hoverEnabled: true
 
-              onMouseXChanged: {
-                  var mposition = mouseX + "|" + mouseY
-                  renderer.currentCoordinate = mposition
-              }
-
-              onMouseYChanged: {
-                  var mposition = mouseX + "|" + mouseY
-                  renderer.currentCoordinate = mposition
-              }
-
               onPressed: {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
@@ -113,14 +145,24 @@ Item {
                       }
 
                   }
+                  floatrect.enabled = true
+                  floatrect.opacity = 1
+                  floatrect.x = mouseX + 10
+                  floatrect.y = mouseY  - 5
 
               }
               onPositionChanged: {
+                  var mposition = mouseX + "|" + mouseY
+                  renderer.currentCoordinate = mposition
                   if ( manager.hasSelectionDrawer){
                       var position = {currentx: mouseX, currenty:mouseY}
                       renderer.setAttribute("SelectionDrawer", position)
                       renderer.copyAttribute("SelectionDrawer","envelope");
                       renderer.update()
+                  }
+                  if ( floatrect.opacity > 0){
+                      floatrect.x = mouseX + 10
+                      floatrect.y = mouseY - 5
                   }
               }
               onReleased: {
@@ -133,6 +175,10 @@ Item {
                       manager.hasSelectionDrawer = false
                       renderer.update()
                   }
+                  floatrect.enabled = false
+                  floatrect.opacity = 0
+                  floatrect.x = 0
+                  floatrect.y = 0
               }
           }
       }
