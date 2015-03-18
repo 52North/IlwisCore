@@ -4,6 +4,8 @@
 #include "coordinate.h"
 #include "box.h"
 #include "coordinatesystem.h"
+#include "georeference.h"
+//#include "cornersgeoreference.h"
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
 
@@ -13,7 +15,7 @@ using namespace Geodrawer;
 RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options)
 {
     valid(true);
-
+    _screenGrf = GeoReference::create("corners");
 }
 
 RootDrawer::~RootDrawer()
@@ -119,6 +121,9 @@ void RootDrawer::setMVP()
 
         _zoomScale =  std::min(xscale, yscale);
     }
+    _screenGrf->envelope(_zoomRect);
+    _screenGrf->size(_pixelAreaSize);
+    _screenGrf->compute();
 
     unprepare(DrawerInterface::ptMVP); // we reset the mvp so for all drawers a new value has to be set to the graphics card
 }
@@ -277,6 +282,11 @@ Envelope RootDrawer::normalizedEnveope(const Envelope& env) const
     Ilwis::Coordinate v1normalized =normalizedCoord(env.min_corner());
     Ilwis::Coordinate v2normalized = normalizedCoord(env.max_corner());
     return Envelope(v1normalized, v2normalized);
+}
 
+Ilwis::Coordinate RootDrawer::pixel2Coord(const Ilwis::Pixel& pix){
+    if ( _screenGrf.isValid())
+        return _screenGrf->pixel2Coord(pix);
+    return Ilwis::Coordinate();
 }
 
