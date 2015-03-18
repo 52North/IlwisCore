@@ -94,12 +94,12 @@ Item {
 
               onMouseXChanged: {
                   var mposition = mouseX + "|" + mouseY
-                  manager.currentCoordinate = mposition
+                  renderer.currentCoordinate = mposition
               }
 
               onMouseYChanged: {
                   var mposition = mouseX + "|" + mouseY
-                  manager.currentCoordinate = mposition
+                  renderer.currentCoordinate = mposition
               }
 
               onPressed: {
