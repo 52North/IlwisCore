@@ -43,6 +43,10 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/projectionparametermodel.h \
     ilwiscoreui/drawers/layersviewcommandinterface.h \
     ilwiscoreui/drawers/draweroperation.h \
+<<<<<<< HEAD
+    ilwiscoreui/models/workflow/workflowmodel.h
+=======
+    ilwiscoreui/models/workflowmodel.h \
     ilwiscoreui/drawers/drawerattributesetter.h \
     ilwiscoreui/drawers/drawerattributesetterfactory.h \
     ilwiscoreui/drawers/drawerfactory.h \
@@ -52,10 +56,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/mapinformationattributesetter.h \
     ilwiscoreui/propertyeditors/polygonattributesetter.h \
     ilwiscoreui/propertyeditors/attributeeditor.h \
-    ilwiscoreui/propertyeditors/lineattributesetter.h \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.h \
-    ilwiscoreui/models/workflow/workflowmodel.h
+    ilwiscoreui/propertyeditors/lineattributesetter.h
 
+>>>>>>> 52n/master
 unix {
     target.path = /usr/lib
     INSTALLS += target
@@ -83,6 +86,11 @@ SOURCES += \
     ilwiscoreui/models/projectionparametermodel.cpp \
     ilwiscoreui/drawers/layersviewcommandinterface.cpp \
     ilwiscoreui/drawers/draweroperation.cpp \
+<<<<<<< HEAD
+    ilwiscoreui/models/workflow/workflowmodel.cpp
+
+=======
+    ilwiscoreui/models/workflowmodel.cpp \
     ilwiscoreui/drawers/drawerattributesetter.cpp \
     ilwiscoreui/drawers/drawerattributesetterfactory.cpp \
     ilwiscoreui/drawers/drawerfactory.cpp \
@@ -92,9 +100,8 @@ SOURCES += \
     ilwiscoreui/propertyeditors/lineattributesetter.cpp \
     ilwiscoreui/propertyeditors/mapinformationattributesetter.cpp \
     ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
-    ilwiscoreui/propertyeditors/attributeeditor.cpp \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
-    ilwiscoreui/models/workflow/workflowmodel.cpp
+    ilwiscoreui/propertyeditors/attributeeditor.cpp
+>>>>>>> 52n/master
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

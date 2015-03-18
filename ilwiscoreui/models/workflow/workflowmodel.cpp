@@ -1,33 +1,10 @@
-
-#include "kernel.h"
 #include "workflowmodel.h"
 
-using namespace Ilwis;
-using namespace boost;
-
-
-
-WorkflowModel::WorkflowModel(QObject *parent) :
-    QObject(parent)
+WorkflowModel::WorkflowModel()
 {
-
 }
 
-WorkflowModelList WorkflowModel::workflows()
-{
-
-}
-
-void WorkflowModel::workflowsChanged()
-{
-    MESSAGE0("workflows changed");
-}
-
-
-
-
-
-WorkflowOperation::WorkflowOperation(const OperationModel &op, QObject *parent)
+WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent)
 {
 
 }

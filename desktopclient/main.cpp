@@ -29,6 +29,7 @@
 #include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
 #include "models/workflow/workflowmodel.h"
+#include "models/workflow/workflowcatalogmodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
@@ -75,6 +76,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
+        qmlRegisterType<WorkflowCatalogModel>("WorkflowCatalogModel", 1,0, "WorkflowCatalogModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
 
 

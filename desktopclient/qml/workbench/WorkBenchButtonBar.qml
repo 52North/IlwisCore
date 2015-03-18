@@ -59,7 +59,7 @@ Rectangle {
     Action {
         id : workflowsClicked
         onTriggered : {
-            transitionInfoPane("workflow/WorkflowBench.qml")
+            transitionInfoPane("workflow/WorkflowSelection.qml")
         }
 
     }

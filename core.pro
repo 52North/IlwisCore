@@ -127,7 +127,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/representation.cpp \
     core/ilwisobjects/representation/colorlookup.cpp \
     core/ilwisobjects/representation/continuouscolorlookup.cpp \
-    core/ilwisobjects/representation/palettecolorlookup.cpp
+    core/ilwisobjects/representation/palettecolorlookup.cpp \
+    core/ilwisobjects/workflow/workflow.cpp
 
 
 HEADERS += core/kernel.h\
@@ -271,7 +272,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/representation.h \
     core/ilwisobjects/representation/colorlookup.h \
     core/ilwisobjects/representation/continuouscolorlookup.h \
-    core/ilwisobjects/representation/palettecolorlookup.h
+    core/ilwisobjects/representation/palettecolorlookup.h \
+    core/ilwisobjects/workflow/workflow.h
 
 
 OTHER_FILES += \

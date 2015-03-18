@@ -1,80 +1,25 @@
 #ifndef WORKFLOWMODEL_H
 #define WORKFLOWMODEL_H
 
-#include <QObject>
-#include <QQmlListProperty>
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/adjacency_list.hpp"
-
 #include "operationmodel.h"
-#include "ilwiscoreui_global.h"
+#include <QQmlListProperty>
 
-using namespace boost;
-
-typedef adjacency_list<vecS, vecS, directedS> ExecutionBranch;
-
-class ILWISCOREUISHARED_EXPORT WorkflowModel : public QObject
+/**
+ * Adds workflow specific accessors to an OperationModel.
+ *
+ * @brief The WorkflowModel class
+ */
+class ILWISCOREUISHARED_EXPORT WorkflowModel: public OperationModel
 {
-    Q_OBJECT
-    Q_PROPERTY(WorkflowModelList workflows READ workflows NOTIFY workflowsChanged)
-
+     Q_OBJECT
 public:
-
-    explicit WorkflowModel(QObject *parent = 0);
-    WorkflowModelList workflows();
-
-
-signals:
-    void workflowsChanged();
-
-public slots:
-
+    WorkflowModel();
+    explicit WorkflowModel(const Ilwis::Resource &source, QObject *parent=0);
 };
 
 
+typedef QQmlListProperty<WorkflowModel> QMLWorkflowList;
 
-
-class ILWISCOREUISHARED_EXPORT Breakpoint : public QObject
-{
-    Q_OBJECT
-
-public:
-    bool _active;
-    //BreakpointProperties
-    // OperationModel action(s)
-
-    explicit Breakpoint(QObject *parent = 0);
-
-signals:
-
-public slots:
-
-};
-
-
-
-class ILWISCOREUISHARED_EXPORT WorkflowOperation : public QObject
-{
-    Q_OBJECT
-
-
-public:
-    Breakpoint _breakpoint;
-    OperationModel _operation;
-
-    explicit WorkflowOperation(const OperationModel &op , QObject *parent = 0);
-
-signals:
-
-public slots:
-
-};
-
-
-
-
-typedef QQmlListProperty<WorkflowModel> WorkflowModelList;
-Q_DECLARE_METATYPE(WorkflowModelList)
-
+Q_DECLARE_METATYPE(QMLWorkflowList)
 
 #endif // WORKFLOWMODEL_H

@@ -68,6 +68,7 @@ INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
                 ../ilwiscore/core/ilwisobjects/domain \
                 ../ilwiscore/ilwiscoreui \
                 ../ilwiscore/ilwiscoreui/models \
+                ../ilwiscore/ilwiscoreui/models/workflow \
                 $$BOOST
 
 OTHER_FILES += \
@@ -91,6 +92,7 @@ OTHER_FILES += \
     desktopclient/qml/datapanel/modeller/DataSourceObject.qml \
     desktopclient/qml/datapanel/modeller/OperationObject.qml \
     desktopclient/qml/datapanel/modeller/Canvas.qml \
+    desktopclient/qml/workbench/workflow/WorkflowSelection.qml \
     desktopclient/qml/workbench/workflow/WorkflowBench.qml
 
 
