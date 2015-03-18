@@ -22,6 +22,16 @@ bool MapInformationPropertySetter::canUse(const Ilwis::IIlwisObject &obj, const 
     return hasType(obj->ilwisType(), itCOVERAGE)    ;
 }
 
+bool MapInformationPropertySetter::canUse(const IIlwisObject& obj, const QString& name ) const
+{
+    if (!obj.isValid())
+        return false;
+    if(!hasType(obj->ilwisType(), itCOVERAGE))
+        return false;
+    return name == VisualAttributeModel::LAYER_ONLY;
+
+}
+
 VisualAttributeEditor *MapInformationPropertySetter::create()
 {
     return new MapInformationPropertySetter();
