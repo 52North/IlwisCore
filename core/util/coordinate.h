@@ -40,7 +40,7 @@ public:
     bool operator ==(const Ilwis::Coordinate &pnt) const;
     bool operator ==(const geos::geom::Coordinate &pnt) const;
     bool operator !=(const Ilwis::Coordinate &pnt);
-    virtual QString toString(bool use3D = false) const;
+    virtual QString toString(int decimals=2, bool use3D = false) const;
 };
 
 class KERNELSHARED_EXPORT LatLon : public Ilwis::Coordinate {
@@ -54,7 +54,7 @@ public:
     void lat(const Angle& lat);
     void lon(const Angle& lon);
 
-    virtual QString toString(bool use3D = false) const;
+    virtual QString toString(int decimals=2, bool use3D = false) const;
 };
 
 #define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)

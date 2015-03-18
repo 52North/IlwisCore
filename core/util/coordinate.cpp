@@ -222,15 +222,15 @@ bool Ilwis::Coordinate::operator!=(const Ilwis::Coordinate& pnt){
     return !(operator==(pnt));
 }
 
-QString Coordinate::toString(bool use3D) const
+QString Coordinate::toString(int decimals, bool use3D) const
 {
     if ( !isValid())
         return "";
 
     if( use3D)   {
-        return QString("%1 %2").arg(x,0,'f', 2).arg(y,0,'f', 2).arg(z,0,'f', 2);
+        return QString("%1 %2").arg(x,0,'f', decimals).arg(y,0,'f', decimals).arg(z,0,'f', decimals);
     }
-    return QString("%1 %2").arg(x,0,'f', 2).arg(y,0,'f', 2);
+    return QString("%1 %2").arg(x,0,'f', decimals).arg(y,0,'f', decimals);
 }
 
 Coordinate& Coordinate::operator =(const geos::geom::Coordinate& crd){
@@ -371,18 +371,19 @@ void LatLon::lon(const Angle& val){
     x = val.degrees();
 }
 
-QString LatLon::toString(bool ) const
+QString LatLon::toString(int decimals, bool ) const
 {
     if ( !isValid())
         return "";
 
     auto ll = [&](double loc) -> QString {
         const QChar chardgr(0260);
-        int dgr = (int)loc;
-        int dmin = (loc - dgr) * 60;
-        double dsec = (loc -  dgr - dmin/60.0) * 60.0;
+        int dgr = std::abs((int)loc);
+        int dmin = (std::abs(loc) - dgr) * 60;
+        double dsec = (std::abs(loc) -  dgr - dmin/60.0) * 60.0;
+        dgr = loc < 0 ? -dgr : dgr;
 
-        QString result = QString("%1%2%3\'%4\'\'").arg(dgr).arg(chardgr).arg(dmin).arg(dsec,0,'f', 2);
+        QString result = QString("%1%2 %3\' %4\'\'").arg(dgr).arg(chardgr).arg(dmin).arg(dsec,0,'f', decimals);
         return result;
     };
     QString llstring = QString("%1 %2").arg(ll(x)).arg(ll(y));
