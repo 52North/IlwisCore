@@ -18,20 +18,16 @@ bool ComplexDrawer::draw(const IOOptions &options)
     if (!isActive() || !isValid())
         return false;
 
-
     bool ok = drawSideDrawers( _preDrawers, options)    ;
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
 
     for(const auto& drawer : _mainDrawers){
         if ( drawer){
             ok &= drawer->draw( options);
         }
     }
-    glDisable(GL_BLEND);
 
     ok &= drawSideDrawers(_postDrawers, options);
+
 
     return ok;
 }
