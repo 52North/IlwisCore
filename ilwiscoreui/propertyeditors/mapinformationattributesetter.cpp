@@ -4,7 +4,7 @@
 REGISTER_PROPERTYEDITOR("mapinfopropertyeditor",MapInformationPropertySetter)
 
 MapInformationPropertySetter::MapInformationPropertySetter(QObject *parent) :
-    VisualAttributeEditor("mapinfopropertyeditor",TR("Layer Information"),QUrl("MapinfoProperties.qml"), parent)
+    VisualAttributeEditor("mapinfopropertyeditor",TR("Mouse over Info"),QUrl("MapinfoProperties.qml"), parent)
 {
 
 }
