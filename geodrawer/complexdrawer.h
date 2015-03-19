@@ -26,6 +26,8 @@ public:
 
     quint32 drawerCount(ComplexDrawer::DrawerType tpe) const;
     const UPDrawer& drawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN) const;
+    UPDrawer& drawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN) ;
+    UPDrawer& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) ;
     void addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType = dtMAIN, quint32 order=iUNDEF, const QString& name=sUNDEF);
     void setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType tp = dtMAIN);
     void removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);

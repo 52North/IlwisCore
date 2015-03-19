@@ -108,6 +108,42 @@ const UPDrawer &ComplexDrawer::drawer(quint32 order, DrawerInterface::DrawerType
     throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(order)));
 }
 
+UPDrawer &ComplexDrawer::drawer(quint32 index, DrawerInterface::DrawerType drawerType)
+{
+    if ( drawerType == dtPOST || drawerType == dtPRE){
+        DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
+        auto current = drawers.find(index);
+        if ( current == drawers.end())
+            throw VisualizationError(TR("Invalid drawer number used while drawing"));
+
+        return current->second;
+    } else if ( drawerType == dtMAIN){
+        if ( index < _mainDrawers.size()){
+            return _mainDrawers[index];
+        }
+    }
+    throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(index)));
+}
+
+UPDrawer &ComplexDrawer::drawer(const QString &code, DrawerInterface::DrawerType drawerType)
+{
+    if ( drawerType == dtPOST || drawerType == dtPRE){
+        DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
+        for(auto& drawer : drawers){
+            if ( drawer.second->code() == code)
+                return drawer.second;
+        }
+        throw VisualizationError(TR("Invalid drawer number used while drawing"));
+
+    } else if ( drawerType == dtMAIN){
+        for(auto& drawer : _mainDrawers){
+            if ( drawer->code() == code)
+                return drawer;
+        }
+    }
+    throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(code)));
+}
+
 void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType, quint32 order,const QString &nme)
 {
     if ( !drawer)
