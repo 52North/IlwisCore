@@ -1,3 +1,5 @@
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "layersviewcommandinterface.h"
 
 

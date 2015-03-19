@@ -1,5 +1,6 @@
 #include "kernel.h"
-
+#include "ilwisdata.h"
+#include "datadefinition.h"
 #include "uicontextmodel.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -24,14 +25,34 @@ QString UIContextModel::uniqueName()
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
 }
 
-QList<PropertyEditor *> UIContextModel::propertyEditors(quint64 objecttype)
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
 {
-    QList<PropertyEditor *> editors;
-    for ( const auto& ilwtype : _propertyEditors){
-        if ( hasType(ilwtype.first, objecttype)){
-            for(auto editor : _propertyEditors[ilwtype.first]) {
-                editors.append(editor.second());
+    QList<VisualAttributeEditor *> editors;
+    for ( const auto& editorItem : _propertyEditors){
+        auto *editor = editorItem.second();
+        if ( editor){
+            if ( editor->canUse(obj, coldef)){
+                editor->prepare(parentLayer, obj, coldef);
+                editors.append(editor);
             }
+            else
+                delete editor;
+        }
+    }
+    return editors;
+}
+
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name){
+    QList<VisualAttributeEditor *> editors;
+    for ( const auto& editorItem : _propertyEditors){
+        auto *editor = editorItem.second();
+        if ( editor){
+            if ( editor->canUse(obj, name)){
+                editor->prepare(parentLayer, obj);
+                editors.append(editor);
+            }
+            else
+                delete editor;
         }
     }
     return editors;
@@ -59,6 +80,15 @@ void UIContextModel::addViewer(LayersViewCommandInterface *viewer, quint64 vid)
     _viewers[vid] = viewer;
 }
 
+LayersViewCommandInterface *UIContextModel::viewer(quint64 viewerid)
+{
+    auto iter = _viewers.find(viewerid);
+    if ( iter != _viewers.end()){
+        return (*iter).second;
+    }
+    return 0;
+}
+
 void UIContextModel::removeViewer(quint64 viewerid)
 {
     auto iter= _viewers.find(viewerid)    ;
@@ -67,9 +97,19 @@ void UIContextModel::removeViewer(quint64 viewerid)
     }
 }
 
-int UIContextModel::addPropertyEditor(quint64 objecttype, const QString &propertyName, CreatePropertyEditor func)
+void UIContextModel::currentKey(int ev)
 {
-    _propertyEditors[objecttype][propertyName] = func;
+    _currentKey = ev;
+}
+
+int UIContextModel::currentKey() const
+{
+    return _currentKey;
+}
+
+int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)
+{
+    _propertyEditors[propertyName] = func;
 
     return 0;
 }

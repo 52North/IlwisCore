@@ -46,6 +46,7 @@ ResourceModel::ResourceModel(const ResourceModel &model) : QObject(model.parent(
     _imagePath = model._imagePath;
     _type = model._type;
     _isRoot = model._isRoot;
+    _selected = model._selected;
 }
 
 ResourceModel &ResourceModel::operator=(const ResourceModel &model)
@@ -56,6 +57,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
     _imagePath = model._imagePath;
     _type = model._type;
     _isRoot = model._isRoot;
+   _selected = model._selected;
 
     return *this;
 }
@@ -130,8 +132,16 @@ QString ResourceModel::url() const
 
 QString ResourceModel::iconPath() const
 {
+    if ( _iconPath != "")
+        return _iconPath;
+
     quint64 tp = _item.ilwisType();
     return iconPath(tp);
+}
+
+void ResourceModel::iconPath(const QString &name)
+{
+    _iconPath = name;
 }
 
 QString ResourceModel::iconPath(IlwisTypes tp)
@@ -318,6 +328,17 @@ Ilwis::Resource ResourceModel::resource() const
 Ilwis::Resource& ResourceModel::resourceRef()
 {
     return _item;
+}
+
+bool ResourceModel::isSelected() const
+{
+    return _selected;
+}
+
+void ResourceModel::setIsSelected(bool yesno)
+{
+    _selected = yesno;
+    emit isSelectedChanged();
 }
 
 QString ResourceModel::propertyName( const QString& property) const{

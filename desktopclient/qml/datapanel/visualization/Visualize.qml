@@ -4,16 +4,19 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import "./propertyeditors" as LayerManagement
 import "../../controls" as Controls
 import "../../Global.js" as Global
 //import GeoDrawer 1.0
 
 
 Item {
-    id : displayOptions
-    anchors.fill: parent
+    id : layerview
+    width: parent.width
+    height : parent.height
     objectName: uicontext.uniqueName()
     property LayerManager manager
+    property bool canSeparate : true
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -27,7 +30,10 @@ Item {
 
     function addDataSource(sourceUrl, sourceName, sourceType){
         layers.addDataSource(sourceUrl, sourceName, sourceType)
-        //layertools.model = manager.layers
+    }
+
+    function transferLayers(layermanager){
+        layers.transferLayers(layermanager)
     }
 
     Action {
@@ -58,11 +64,15 @@ Item {
             id : entireMap
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 2
+            tooltip: "EntireMap"
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 source : iconsource("entiremap20.png")
+            }
+            onClicked: {
+                layers.entireMap()
             }
         }
 
@@ -133,15 +143,30 @@ Item {
         }
 
     }
-    Layers{
+    SplitView {
         anchors.top : maptools.bottom
         width : parent.width
+        orientation: Qt.Vertical
         height : parent.height - maptools.height
-        id : layers
+        Layers{
+            width : parent.width
+            height : parent.height - maptools.height - 150
+            id : layers
+            Layout.fillWidth: true
+
+        }
+        ViewManager{
+            height : 150
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.right: parent.right
+            renderer: layers.drawer()
+        }
     }
+
     Component.onCompleted: {
-        console.debug(width)
          manager = uicontext.createLayerManager(objectName)
+        layers.setManager(manager)
 
     }
     Component.onDestruction: {

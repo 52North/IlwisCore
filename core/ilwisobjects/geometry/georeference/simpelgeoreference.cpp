@@ -74,7 +74,7 @@ bool SimpelGeoReference::isCompatible(const IGeoReference &georefOther) const
 
     if ( !georefOther->grfType<SimpelGeoReference>())
         return false;
-    QSharedPointer<SimpelGeoReference> grfsmpl = georefOther->impl<SimpelGeoReference>();
+    QSharedPointer<SimpelGeoReference> grfsmpl = georefOther->as<SimpelGeoReference>();
     double delta = EPS6;
     const std::vector<double>& mat = grfsmpl->matrix();
     bool ok = std::abs(mat[0] - _a11) < delta && std::abs(mat[1] - _a21) < delta &&

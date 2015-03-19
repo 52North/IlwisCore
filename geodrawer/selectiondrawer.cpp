@@ -21,7 +21,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(0.05);
     }
     _colors[9] = _colors[10] = _colors[11] = _colors[12] = clr;
-    clr.setAlphaF(0.1);
+    clr.setAlphaF(0.5);
     _colors[5] = _colors[6] = _colors[7] = _colors[8] = clr;
 
     if ( options.contains("bordercolor")){
@@ -58,6 +58,7 @@ bool SelectionDrawer::draw(const IOOptions &)
     if (!_shaders.bind())
         return false;
      _shaders.setUniformValue(_modelview,_mvp);
+     _shaders.setUniformValue(_vboAlpha, alpha());
 
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboNormal);
@@ -66,6 +67,7 @@ bool SelectionDrawer::draw(const IOOptions &)
     _shaders.setAttributeArray(_vboPosition,_vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
+    _shaders.setUniformValue(_scaleFactor, 1.0f);
 
     glDrawArrays(GL_LINE_STRIP,_indices[0]._start,_indices[0]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[1]._start,_indices[1]._count);
@@ -210,17 +212,26 @@ quint32 SelectionDrawer::defaultOrder() const
 
 Envelope SelectionDrawer::envelope() const
 {
-    QVector3D v1( _vertices[0].x(), _vertices[0].y(), _vertices[0].z());
-    QVector3D v2( _vertices[2].x(), _vertices[2].y(), _vertices[2].z());
+    QVector3D v1( _vertices[0].x(), _vertices[0].y(), 0);
+    QVector3D v2( _vertices[2].x(), _vertices[2].y(), 0);
     auto v1normalized = _mvp * v1;
     auto v2normalized = _mvp * v2;
+//    Envelope zoomRect = rootDrawer()->zoomEnvelope();
+//    double w = zoomRect.xlength() - 1;
+//    double h = zoomRect.ylength() - 1;
+//    Coordinate center = zoomRect.center();
+//    double x1 = center.x + w * v1normalized.x() / 2.0;
+//    double x2 = center.x + w * v2normalized.x() / 2.0;
+//    double y1 = center.y + h * v1normalized.y() / 2.0;
+//    double y2 = center.y + h * v2normalized.y() / 2.0;
     const auto& globalMvp = rootDrawer()->mvpMatrix();
     double a11 = globalMvp.row(0).x();
     double a14 = globalMvp.row(0).w();
     double a22 = globalMvp.row(1).y();
     double a24 = globalMvp.row(1).w();
-    Coordinate crd1((v1normalized.x() - a14) / a11, (v1normalized.y() - a24)/ a22);
-    Coordinate crd2((v2normalized.x() - a14) / a11, (v2normalized.y() - a24)/ a22);
+    Coordinate crd1((v1normalized.x() - a14) / a11, -1.0 + (v1normalized.y() - a24)/ a22);
+    Coordinate crd2(-1.0 + (v2normalized.x() - a14) / a11, (v2normalized.y() - a24)/ a22);
+
 
     return Envelope(crd1, crd2);
 }

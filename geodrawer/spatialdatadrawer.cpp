@@ -177,7 +177,7 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
 
 void SpatialDataDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
 {
-
+    ComplexDrawer::setAttribute(attrName, attrib);
 }
 
 

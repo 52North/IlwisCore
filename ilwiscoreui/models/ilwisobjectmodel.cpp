@@ -17,7 +17,15 @@ IlwisObjectModel::IlwisObjectModel()
 
 IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *parent) : ResourceModel(source, parent)
 {
-    _ilwisobject.prepare(resource());
+    try{
+        if ( source.name() != "Global Layer"){ // special case for the dummy object of the global layer
+            _ilwisobject.prepare(resource());
+        }
+    } catch (const ErrorObject& ){
+
+    } catch ( std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
 }
 
 QString IlwisObjectModel::creationDate() const
@@ -560,4 +568,9 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
+}
+
+IIlwisObject IlwisObjectModel::object() const
+{
+    return _ilwisobject;
 }

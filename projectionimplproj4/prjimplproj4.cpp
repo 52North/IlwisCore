@@ -158,6 +158,16 @@ QString ProjectionImplementationProj4::toProj4() const
     return _targetDef;
 }
 
+bool ProjectionImplementationProj4::canConvertToLatLon() const
+{
+    return true;
+}
+
+bool ProjectionImplementationProj4::canConvertToCoordinate() const
+{
+    return true;
+}
+
 Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 {
     if ( _pjBase == 0 || _pjLatlon == 0) {

@@ -4,6 +4,7 @@
 #include <memory>
 #include <QColor>
 #include <GL/gl.h>
+#include <QVector3D>
 #include "ilwiscoreui_global.h"
 #include <math.h>
 #include "kernel.h"
@@ -24,18 +25,34 @@ class IOOptions;
 namespace Geodrawer{
 
 struct ILWISCOREUISHARED_EXPORT VertexIndex {
-    VertexIndex(quint32 start=0, quint32 count=0, IlwisTypes geomType=0, quint32 oglType=GL_LINE_STRIP, Raw vid=iUNDEF) :
+    VertexIndex(quint32 start=0, quint32 count=0, quint32 oglType=GL_LINE_STRIP, Raw vid=iUNDEF) :
         _start(start),
         _count(count),
-        _geomtype(geomType),
         _oglType(oglType),
         _objectid(vid){}
 
     quint32 _start;
     quint32 _count;
-    IlwisTypes _geomtype;
     quint32 _oglType;
     Raw _objectid = iUNDEF;
+};
+
+struct FeatureDrawing{
+        FeatureDrawing(IlwisTypes ilwtype=itUNKNOWN) : _geomtype(ilwtype) {}
+        IlwisTypes _geomtype;
+        QVector3D _center;
+        std::vector<VertexIndex> _indices;
+        VertexIndex operator[](quint32 index) const{
+            if ( index < _indices.size())
+                return _indices[index];
+            return VertexIndex();
+        }
+        VertexIndex& operator[](quint32 index) {
+            if ( index < _indices.size())
+                return _indices[index];
+            throw ErrorObject(TR("Requested illegal vertex index fro drawing feature"));
+        }
+
 };
 
 struct ILWISCOREUISHARED_EXPORT VertexColor {
@@ -85,6 +102,8 @@ public:
 
     virtual quint32 defaultOrder() const = 0;
     virtual DrawerType drawerType()  const = 0;
+
+    virtual void redraw() = 0;
 };
 
 typedef std::unique_ptr<DrawerInterface> UPDrawer;

@@ -30,19 +30,19 @@ DrawerAttributeSetter *SimplePolygonSetter::create(const Ilwis::IOOptions &optio
     return new SimplePolygonSetter(options)    ;
 }
 
-std::vector<VertexIndex> SimplePolygonSetter::setSpatialAttributes(const SPFeatureI &feature, QVector<QVector3D> &vertices, QVector<QVector3D> &normals) const
+FeatureDrawing SimplePolygonSetter::setSpatialAttributes(const SPFeatureI &feature, QVector<QVector3D> &vertices, QVector<QVector3D> &normals) const
 {
     IlwisTesselator tesselator;
     const UPGeometry& geometry = feature->geometry();
     int n = geometry->getNumGeometries();
-    std::vector<VertexIndex> indices;
+    FeatureDrawing drawing(itPOLYGON);
     for(int  geom = 0; geom < n; ++geom ){
         const geos::geom::Geometry *subgeom = geometry->getGeometryN(geom);
         if (!subgeom)
             continue;
-        tesselator.tesselate(_targetSystem,_sourceSystem, subgeom,feature->featureid(), vertices, indices);
+        tesselator.tesselate(_targetSystem,_sourceSystem, subgeom,feature->featureid(), vertices, drawing._indices);
     }
-    return indices;
+    return drawing;
 }
 
 void SimplePolygonSetter::setColorAttributes(const Ilwis::Geodrawer::AttributeVisualProperties &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<Ilwis::Geodrawer::VertexColor> &colors) const

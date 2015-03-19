@@ -25,7 +25,9 @@ bool ComplexDrawer::draw(const IOOptions &options)
             ok &= drawer->draw( options);
         }
     }
+
     ok &= drawSideDrawers(_postDrawers, options);
+
 
     return ok;
 }
@@ -256,6 +258,10 @@ void ComplexDrawer::cleanUp()
     for( auto& drawer : _postDrawers)    {
         drawer.second->cleanUp();
     }
+    _preDrawers.clear();
+    _mainDrawers.clear();
+    _postDrawers.clear();
+    unprepare(ptALL);
 
 }
 

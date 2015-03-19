@@ -12,6 +12,8 @@
 #include "featureiterator.h"
 #include "geos/geom/CoordinateFilter.h"
 #include "geos/geom/PrecisionModel.h"
+#include "geos/algorithm/locate/SimplePointInAreaLocator.h"
+#include "geos/geom/Point.h"
 #ifdef Q_OS_WIN
 #include "geos/geom/PrecisionModel.inl"
 #endif
@@ -66,6 +68,32 @@ std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
         return tbl.getValue<Indices>(ctx._results[0]);
     }
     return std::vector<quint32>();
+}
+
+QVariant FeatureCoverage::coord2value(const Coordinate &crd, const QString &attrname)
+{
+    IFeatureCoverage fc(this);
+    double boundsDelta = std::min(envelope().xlength() + 1, envelope().ylength() + 1);
+    boundsDelta *= 0.01;
+    QVariant var;
+    geos::geom::Point *pnt = geomfactory()->createPoint(crd);
+    for(auto feature : fc){
+        bool ok = false;
+        if ( feature->geometryType() == itPOLYGON ){
+            ok = feature->geometry()->contains(pnt);
+        } else if ( hasType(feature->geometryType(),itPOINT | itLINE)){
+            double d = feature->geometry()->distance(pnt);
+            ok = d <= boundsDelta;
+        }
+
+        if ( ok){
+            QVariant var = feature(0);
+            return var;
+            break;
+        }
+    }
+    delete pnt;
+    return var;
 }
 
 IlwisTypes FeatureCoverage::featureTypes() const

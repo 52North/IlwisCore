@@ -17,7 +17,7 @@ public:
     DrawerAttributeSetter(const IOOptions &options=IOOptions());
     ~DrawerAttributeSetter();
 
-    virtual std::vector<VertexIndex> setSpatialAttributes(const SPFeatureI& feature, QVector<QVector3D>& vertices, QVector<QVector3D>& normals) const;
+    virtual FeatureDrawing setSpatialAttributes(const SPFeatureI& feature, QVector<QVector3D>& vertices, QVector<QVector3D>& normals) const;
     virtual void setColorAttributes(const AttributeVisualProperties& attr,
                             const QVariant& value,
                             quint32 startIndex,

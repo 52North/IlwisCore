@@ -11,12 +11,16 @@ AttributeModel::AttributeModel()
 
 }
 
+AttributeModel::~AttributeModel()
+{
+}
+
 AttributeModel::AttributeModel(const Ilwis::ColumnDefinition& def, QObject *parent, const Ilwis::IIlwisObject& obj) :
     QObject(parent),
     _coldefinition(def),
     _owner(obj)
 {
-    if ( def.datadef().domain()->ilwisType() == itITEMDOMAIN && def.datadef().domain()->valueType() != itINDEXEDITEM){
+    if ( def.isValid() && def.datadef().domain()->ilwisType() == itITEMDOMAIN && def.datadef().domain()->valueType() != itINDEXEDITEM){
         if (!def.datadef().domain()->range().isNull()){
             QString defset = def.datadef().domain()->range()->toString();
             defset = defset.mid(defset.indexOf(":") + 1);
@@ -116,3 +120,15 @@ QString AttributeModel::rangeDefinition(bool defaultRange, bool calc, const QStr
         return defaultRangeDefinition();
     return actualRangeDefintion(calc);
 }
+
+const Ilwis::ColumnDefinition &AttributeModel::columnDef() const
+{
+    return _coldefinition;
+}
+
+void AttributeModel::setObject(const Ilwis::IIlwisObject &obj)
+{
+    _owner = obj;
+}
+
+

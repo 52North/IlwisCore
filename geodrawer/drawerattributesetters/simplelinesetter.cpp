@@ -28,12 +28,12 @@ DrawerAttributeSetter *SimpleLineSetter::create(const IOOptions &options)
 
 }
 
-std::vector<VertexIndex> SimpleLineSetter::setSpatialAttributes(const Ilwis::SPFeatureI &feature,
+FeatureDrawing SimpleLineSetter::setSpatialAttributes(const Ilwis::SPFeatureI &feature,
                                                QVector<QVector3D> &vertices,
                                                QVector<QVector3D> &) const
 {
     const UPGeometry& geometry = feature->geometry();
-    std::vector<VertexIndex> indices;
+    FeatureDrawing drawing(itLINE);
     int n = geometry->getNumGeometries();
     for(int  geom = 0; geom < n; ++geom ){
         const geos::geom::Geometry *subgeom = geometry->getGeometryN(geom);
@@ -41,7 +41,7 @@ std::vector<VertexIndex> SimpleLineSetter::setSpatialAttributes(const Ilwis::SPF
             continue;
         auto *coords = subgeom->getCoordinates();
         quint32 oldend = vertices.size();
-        indices.push_back(VertexIndex(oldend, coords->size(), itLINE, GL_LINE_STRIP, feature->featureid()));
+        drawing._indices.push_back(VertexIndex(oldend, coords->size(), GL_LINE_STRIP, feature->featureid()));
         vertices.resize(oldend + coords->size());
 
         Coordinate crd;
@@ -54,7 +54,7 @@ std::vector<VertexIndex> SimpleLineSetter::setSpatialAttributes(const Ilwis::SPF
         }
         delete coords;
     }
-    return indices;
+    return drawing;
 }
 
 void SimpleLineSetter::setColorAttributes(const AttributeVisualProperties &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<VertexColor> &colors) const

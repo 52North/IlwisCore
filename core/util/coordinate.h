@@ -18,6 +18,7 @@ public:
     Coordinate(const geos::geom::Coordinate& crd);
     Coordinate(const Ilwis::Coordinate& crd);
     Coordinate(const std::vector<double> &v);
+    Coordinate(const QVector3D& crd);
     virtual ~Coordinate();
 
     double undefined() const { return  rUNDEF; }
@@ -29,6 +30,7 @@ public:
     operator std::vector<double>();
     Ilwis::Coordinate &operator =(const Ilwis::Coordinate &p2);
     Ilwis::Coordinate &operator =(const Ilwis::Coordinate&& p2);
+    Ilwis::Coordinate &operator =(const QVector3D& p2);
     Coordinate &operator +=(const std::vector<double> &vec);
     Coordinate &operator -=(const std::vector<double> &vec);
     double distance(const Coordinate &crd);
@@ -38,6 +40,7 @@ public:
     bool operator ==(const Ilwis::Coordinate &pnt) const;
     bool operator ==(const geos::geom::Coordinate &pnt) const;
     bool operator !=(const Ilwis::Coordinate &pnt);
+    virtual QString toString(int decimals=2, bool use3D = false) const;
 };
 
 class KERNELSHARED_EXPORT LatLon : public Ilwis::Coordinate {
@@ -50,6 +53,8 @@ public:
 
     void lat(const Angle& lat);
     void lon(const Angle& lon);
+
+    virtual QString toString(int decimals=2, bool use3D = false) const;
 };
 
 #define llUNDEF  Ilwis::LatLon(rUNDEF, rUNDEF)

@@ -23,19 +23,22 @@ class ILWISCOREUISHARED_EXPORT AttributeModel : public QObject
 
 public:
     AttributeModel();
+    virtual ~AttributeModel();
     explicit AttributeModel(const Ilwis::ColumnDefinition& def, QObject *parent, const Ilwis::IIlwisObject& obj);
 
     QString defaultRangeDefinition() const;
     QString actualRangeDefintion(bool calc=false) const;
-    QString attributename() const;
+    virtual QString attributename() const;
     QString attributeDomain() const;
     QString attributeValueType() const;
     QString attributeDomainType() const;
     Q_INVOKABLE QStringList attributeValues(bool defaultRange) const;
     Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString&) const;
 
+   const Ilwis::ColumnDefinition& columnDef() const;
 
-
+protected:
+    void setObject(const Ilwis::IIlwisObject& obj);
 signals:
 
 public slots:

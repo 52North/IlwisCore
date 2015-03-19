@@ -84,7 +84,16 @@ void CatalogModel::makeParent(QObject *obj)
 }
 
 void CatalogModel::filterChanged(const QString& objectType, bool state){
-    _filterState[objectType] = state;
+    if ( objectType == "all"){
+        _filterState["rastercoverage"] = state;
+        _filterState["featurecoverage"] = state;
+        _filterState["table"] = state;
+        _filterState["coordinatesystem"] = state;
+        _filterState["georeference"] = state;
+        _filterState["domain"] = state;
+
+    }else
+        _filterState[objectType] = state;
     QString filterString;
     for(auto iter : _filterState){
         if ( !iter.second){

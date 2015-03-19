@@ -38,11 +38,13 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-
+import QtQuick 2.1
+import QtGraphicalEffects 1.0
+import "../../controls" as Controls
 import LayersView 1.0
 
 Item {
+
 
   function addDataSource(sourceUrl, sourceName, sourceType){
       renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
@@ -51,10 +53,32 @@ Item {
   }
 
   function entireMap() {
-      var command = { expression : "entiremap"}
-      renderer.setAttribute("command", command)
+      var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");
+      if ( envelope !== ""){
+          renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
+      }
       renderer.update()
   }
+
+  function transferLayers(layermanager){
+      var layers = layermanager.layers;
+      for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
+          renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ layers[i].name + "," + layers[i].url + "," + layers[i].typeName + ")")
+      }
+      renderer.update()
+  }
+
+  function setManager(layermanager){
+      renderer.setManager(layermanager)
+  }
+
+  function drawer(){
+      return renderer
+  }
+
+ Controls.FloatingRectangle{
+     id : floatrect
+ }
 
   DropArea {
       anchors.fill : parent
@@ -71,6 +95,8 @@ Item {
           MouseArea {
               id : mapArea
               anchors.fill: parent
+              hoverEnabled: true
+
               onPressed: {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
@@ -80,14 +106,32 @@ Item {
                           renderer.setAttribute("SelectionDrawer", position)
                           renderer.update()
                       }
+
                   }
+                  if ( renderer.showLayerInfo){
+                    floatrect.enabled = true
+                    floatrect.opacity = 1
+                    floatrect.x = mouseX
+                    floatrect.y = mouseY
+                    var mposition = mouseX + "|" + mouseY
+                    floatrect.text = renderer.layerInfo(mposition)
+                  }
+
               }
               onPositionChanged: {
+                  var mposition = mouseX + "|" + mouseY
+                  renderer.currentCoordinate = mposition
                   if ( manager.hasSelectionDrawer){
                       var position = {currentx: mouseX, currenty:mouseY}
                       renderer.setAttribute("SelectionDrawer", position)
                       renderer.copyAttribute("SelectionDrawer","envelope");
                       renderer.update()
+                  }
+                  if ( floatrect.opacity > 0){
+                      floatrect.x = mouseX
+                      floatrect.y = mouseY
+                      mposition = mouseX + "|" + mouseY
+                      floatrect.text = renderer.layerInfo(mposition)
                   }
               }
               onReleased: {
@@ -100,6 +144,10 @@ Item {
                       manager.hasSelectionDrawer = false
                       renderer.update()
                   }
+                  floatrect.enabled = false
+                  floatrect.opacity = 0
+                  floatrect.x = 0
+                  floatrect.y = 0
               }
           }
       }

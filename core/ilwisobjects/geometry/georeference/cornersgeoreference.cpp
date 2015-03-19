@@ -20,7 +20,7 @@ GeoRefImplementation *CornersGeoReference::create()
     return new CornersGeoReference();
 }
 
-void CornersGeoReference::setEnvelope(const Envelope &env)
+void CornersGeoReference::envelope(const Envelope &env)
 {
     _envelope = env;
 }

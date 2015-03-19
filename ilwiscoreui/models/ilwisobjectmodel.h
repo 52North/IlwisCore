@@ -55,6 +55,9 @@ public:
 
 
     bool isValid() const;
+    Ilwis::IIlwisObject object() const;
+
+protected:
 
 signals:
     void readOnlyChanged();

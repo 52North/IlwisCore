@@ -16,7 +16,7 @@ public:
 
     static DrawerAttributeSetter *create(const IOOptions& options);
 
-    std::vector<VertexIndex> setSpatialAttributes(const SPFeatureI& feature,
+    FeatureDrawing setSpatialAttributes(const SPFeatureI& feature,
                                  QVector<QVector3D>& vertices,
                                  QVector<QVector3D>& normals) const;
 

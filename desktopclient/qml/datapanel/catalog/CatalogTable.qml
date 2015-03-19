@@ -12,8 +12,6 @@ import "../../Global.js" as Global
 Rectangle {
     id : tabPanel
 
-    property color background1 : "#EAECEE"
-    property color background2 : "#FFF9E3"
     property int buttonSize : 55
 
     signal showObject(string objectid )
@@ -30,7 +28,7 @@ Rectangle {
 
     width : parent.width
     anchors.margins: 2
-    color : "#EAECEE"
+    color : Global.alternatecolor5
     border.width: 1
     TableView{
         id : resourcetable
@@ -83,27 +81,6 @@ Rectangle {
                         image.destroy();
                     }
 
-//                    Image{
-//                        id : image
-//                        width : 20; height : 20
-//                        source : "../../images/" + styleData.value
-//                        fillMode: Image.PreserveAspectFit
-//                        property string message :  model !== null ? model[styleData.row].url : ""
-//                        property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
-
-//                        Drag.keys: [ model[styleData.row].iconPath ]
-//                        Drag.active: mouseArea.drag.active
-//                        Drag.hotSpot.x: 10
-//                        Drag.hotSpot.y: 10
-//                        opacity : Drag.active / 2
-
-
-//                        states: State {
-//                            when: mouseArea.drag.active
-//                            ParentChange { target: image; parent: root }
-//                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
-//                        }
-//                    }
                     z : 1
                 }
                 Image{

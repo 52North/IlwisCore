@@ -62,8 +62,9 @@ class RootDrawer;
 }
 }
 
-class LayersRenderer : public QQuickFramebufferObject::Renderer{
+class LayersRenderer : public QObject, public QQuickFramebufferObject::Renderer {
 
+    Q_OBJECT
 public:
     LayersRenderer();
     ~LayersRenderer();
@@ -80,6 +81,7 @@ public:
     void synchronize(QQuickFramebufferObject *item);
 
     void cleanup();
+
 private:
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
     QSize _viewPortSize;
@@ -88,5 +90,7 @@ private:
     QPointF _originInWindowCS;
     Ilwis::Envelope _zoomEnvelope;
 
+private slots:
+    void updateRenderer();
 };
 #endif
