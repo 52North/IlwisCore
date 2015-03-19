@@ -116,6 +116,7 @@ public:
      */
     void name(const QString &nam);
     QString name() const { return IlwisObject::name(); }
+    virtual QVariant coord2value(const Coordinate& crd, const QString& attrname="") = 0;
 
     bool prepare();
 protected:
