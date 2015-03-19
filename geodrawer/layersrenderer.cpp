@@ -35,23 +35,34 @@ LayersRenderer::~LayersRenderer()
 
 void LayersRenderer::render()
 {
-    if ( !_rootDrawer)
-        return;
+    try {
+        if ( !_rootDrawer)
+            return;
 
-    if ( !_rootDrawer->isActive())
-        return ;
+        if ( !_rootDrawer->isActive())
+            return ;
 
-    if ( _rootDrawer->is3D()){
-        glEnable( GL_DEPTH_TEST);
-        glDepthMask(true);
-    }else
-        glDisable( GL_DEPTH_TEST);
+        if ( _rootDrawer->is3D()){
+            glEnable( GL_DEPTH_TEST);
+            glDepthMask(true);
+        }else
+            glDisable( GL_DEPTH_TEST);
 
 
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    _rootDrawer->draw();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
+        _rootDrawer->draw( );
+
+        glDisable(GL_BLEND);
+    }
+    catch(const ErrorObject& ){}
+    catch(const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
 }
 
 void LayersRenderer::cleanup()
