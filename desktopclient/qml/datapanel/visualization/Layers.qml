@@ -40,6 +40,7 @@
 
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
+import "../../controls" as Controls
 import LayersView 1.0
 
 Item {
@@ -75,47 +76,9 @@ Item {
       return renderer
   }
 
-  Item {
-      id: floatrect
-      property alias text: toolTip.text
-      z: 1000
-      width: content.width + (2*toolTipShadow.radius)
-      height: content.height + (2*toolTipShadow.radius)
-
-      Rectangle {
-          id: content
-          anchors.centerIn: parent
-          width: toolTip.contentWidth + 8
-          height: toolTip.contentHeight + 4
-          radius: 3
-          color : "cornsilk"
-
-          Text {
-              id: toolTip
-              wrapMode: Text.WordWrap
-              x : 4
-              anchors.verticalCenter: parent.verticalCenter
-          }
-      }
-      opacity : 0
-      enabled : false
-
-  }
-
-  DropShadow {
-      id: toolTipShadow
-      z: 1000
-      anchors.fill: source
-      cached: true
-      horizontalOffset: 2
-      verticalOffset: 2
-      radius: 8.0
-      samples: 16
-      color: "#80000000"
-      smooth: true
-      source: floatrect
-      opacity : floatrect.opacity
-  }
+ Controls.FloatingRectangle{
+     id : floatrect
+ }
 
   DropArea {
       anchors.fill : parent
@@ -145,10 +108,14 @@ Item {
                       }
 
                   }
-                  floatrect.enabled = true
-                  floatrect.opacity = 1
-                  floatrect.x = mouseX + 10
-                  floatrect.y = mouseY  - 5
+                  if ( renderer.showLayerInfo){
+                    floatrect.enabled = true
+                    floatrect.opacity = 1
+                    floatrect.x = mouseX
+                    floatrect.y = mouseY
+                    var mposition = mouseX + "|" + mouseY
+                    floatrect.text = renderer.layerInfo(mposition)
+                  }
 
               }
               onPositionChanged: {
@@ -161,8 +128,10 @@ Item {
                       renderer.update()
                   }
                   if ( floatrect.opacity > 0){
-                      floatrect.x = mouseX + 10
-                      floatrect.y = mouseY - 5
+                      floatrect.x = mouseX
+                      floatrect.y = mouseY
+                      mposition = mouseX + "|" + mouseY
+                      floatrect.text = renderer.layerInfo(mposition)
                   }
               }
               onReleased: {
