@@ -31,6 +31,23 @@ Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
     return _drawer;
 }
 
+bool CoverageLayerModel::active() const
+{
+    if ( _drawer){
+        return _drawer->isActive();
+    }
+    return false;
+}
+
+void CoverageLayerModel::setActive(bool yesno)
+{
+    if ( _drawer){
+        _drawer->active(yesno);
+        _drawer->redraw();
+        emit onActiveChanged();
+    }
+}
+
 quint32 CoverageLayerModel::layerIndex() const
 {
     return _layerIndex;

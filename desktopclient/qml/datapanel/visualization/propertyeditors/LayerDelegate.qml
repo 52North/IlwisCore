@@ -30,12 +30,16 @@ Component{
                 id : visibilityCheck
                 width : 17
                 height: 17
-                checked : true
+                checked : manager.layer(index).active
 
                 style: Base.CheckBoxStyle1{}
 
                 opacity : index == 0 ? 0 : 1
                 enabled : index == 0 ? false : true
+
+                onCheckedChanged: {
+                    manager.layer(index).active = checked
+                }
             }
 
             Image {
