@@ -181,6 +181,7 @@ public:
     bool prepare();
     bool canUse(const IlwisObject *obj, bool strict=false) const ;
     std::vector<quint32> select(const QString& spatialQuery) const;
+    QVariant coord2value(const Coordinate& crd, const QString& attrname="");
 protected:
     void copyTo(IlwisObject *obj);
 private:
