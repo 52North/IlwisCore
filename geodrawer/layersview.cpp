@@ -92,9 +92,39 @@ void LayersView::setManager(LayerManager *manager)
     _manager = manager;
 }
 
+QString LayersView::layerInfo(const QString& pixelpair) const
+{
+    try {
+        if ( _manager){
+            QStringList parts = pixelpair.split("|");
+            if ( parts.size() == 2){
+                Ilwis::Coordinate crd = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
+                return _manager->layerInfo(crd);
+            }
+        }
+        return "";
+    }
+    catch(const ErrorObject& ){}
+    catch(const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+    return "";
+}
+
 LayerManager *LayersView::layerManager()
 {
     return _manager;
+}
+
+bool LayersView::showLayerInfo() const
+{
+    return _showLayerInfo;
+}
+
+void LayersView::setShowLayerInfo(bool yesno)
+{
+    _showLayerInfo = yesno;
+    emit showLayerInfoChanged();
 }
 
 QString LayersView::viewerId() const

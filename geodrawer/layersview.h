@@ -66,6 +66,7 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(QString viewerId READ viewerId CONSTANT)
     Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
+    Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
 
 public:
 friend class LayersRenderer;
@@ -82,18 +83,24 @@ friend class LayersRenderer;
     Q_INVOKABLE QString attributeOfDrawer(const QString& drawercode, const QString& attrName);
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
+    Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
 
     LayerManager *layerManager();
+    bool showLayerInfo() const;
+    void setShowLayerInfo(bool yesno);
 
 
 signals:
     void currentCoordinateHasChanged();
+    void showLayerInfoChanged();
+
 
 private:
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
     QString viewerId() const;
+
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
@@ -103,6 +110,7 @@ private:
     Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
     Ilwis::Geodrawer::RootDrawer *rootDrawer() const;
+    bool _showLayerInfo = true;
 
 
     static quint64 _baseViewerId;
