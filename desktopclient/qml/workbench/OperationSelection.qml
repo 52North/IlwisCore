@@ -120,14 +120,7 @@ Rectangle {
             width : parent.width
             Tab {
                 title : qsTr("Operation List")
-                signal makeForm(string objectid, string name)
                 OperationList{
-                    Connections {
-                        target : operationList
-                        onMakeForm : {
-                            newForm(objectid, name)
-                        }
-                    }
                     id : operationList
                 }
 
@@ -135,15 +128,8 @@ Rectangle {
             }
             Tab {
                 title : qsTr("Operation Categories")
-                 signal makeForm(string objectid, string name)
                 OperationCatagoriesList{
                     id : operationCatagories
-                    Connections {
-                        target : operationCatagories
-                        onMakeForm : {
-                            newForm(objectid, name)
-                        }
-                    }
                 }
 
             }
