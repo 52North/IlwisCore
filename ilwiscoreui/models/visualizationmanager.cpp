@@ -6,6 +6,7 @@
 #include "iooptions.h"
 #include "uicontextmodel.h"
 #include "coveragelayermodel.h"
+#include "coverage.h"
 #include "visualizationmanager.h"
 
 using namespace Ilwis;
@@ -85,6 +86,30 @@ CoverageLayerModel *LayerManager::layer(quint32 layerIndex){
     if ( layerIndex < _layers.size())
         return _layers[layerIndex];
     return 0;
+}
+
+QString LayerManager::layerInfo(const Coordinate &crd, const QString& attrName) const
+{
+    std::vector<QString> texts;
+    for(CoverageLayerModel *layer : _layers){
+        if ( layer->object().isValid() && hasType(layer->object()->ilwisType(), itCOVERAGE)){
+            ICoverage cov = layer->object().as<Coverage>();
+            QVariant value = cov->coord2value(crd);
+            if ( value.isValid()){
+                texts.push_back(value.toString());
+            }
+        }
+
+    }
+    QString outtext;
+    for(auto txt : texts){
+        if ( outtext.size() != 0)
+            outtext += "; ";
+        outtext += txt;
+    }
+    if ( outtext == "")
+        outtext = "?";
+    return outtext;
 }
 
 void LayerManager::init()
