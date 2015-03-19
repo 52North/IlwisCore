@@ -8,19 +8,32 @@ Rectangle {
 
     signal unloadcontent(string content)
 
-    Workbench.FunctionBarHeader{
+    Workbench.FunctionBarHeader {
         id : functionBarHeader
-        width: workflowcontainer.width
+        width: parent.width
         headerImage: "../images/modellerCS1.png"
         headerText:qsTr("Workflows")
     }
 
-    WorkflowBench {
-        x: parent.x
-        width : functionBarHeader.width
+
+    // ###########################  CONTENT LOADER
+
+    Loader {
+        id : workflowbenchContentLoader
+        width : parent.width
         anchors.top : functionBarHeader.bottom
+        anchors.bottom: parent.bottom
+        Component.onCompleted : {
+            workflowbenchContentLoader.setSource("WorkflowBench.qml")
+        }
 
     }
+
+
+
+
+
+
 
 
 }
