@@ -18,7 +18,7 @@ Item {
         height : 18
         color : Global.alternatecolor3
         Text{
-            text : qsTr("Display Properties")
+            text : qsTr("Visual properties")
             font.weight: Font.DemiBold
             anchors.verticalCenter: parent.verticalCenter
         }

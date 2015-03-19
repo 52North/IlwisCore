@@ -22,7 +22,7 @@ Item {
         height : 18
         color : Global.alternatecolor3
         Text{
-            text : qsTr("Attributes")
+            text : qsTr("Data Attributes")
             font.weight: Font.DemiBold
             x : 5
             anchors.verticalCenter: parent.verticalCenter
