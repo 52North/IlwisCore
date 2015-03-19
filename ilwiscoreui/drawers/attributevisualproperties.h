@@ -13,12 +13,12 @@ typedef IlwisData<Domain> IDomain;
 
 namespace Geodrawer{
 
-class ILWISCOREUISHARED_EXPORT AttributeVisualProperties
+class ILWISCOREUISHARED_EXPORT VisualAttribute
 {
 public:
-    AttributeVisualProperties();
-    AttributeVisualProperties(const IDomain& dom);
-    AttributeVisualProperties(const AttributeVisualProperties& avp);
+    VisualAttribute();
+    VisualAttribute(const IDomain& dom);
+    VisualAttribute(const VisualAttribute& avp);
 
     IRepresentation representation() const;
     void representation(const IRepresentation& rpr);

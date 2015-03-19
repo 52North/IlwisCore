@@ -45,7 +45,7 @@ FeatureDrawing SimplePolygonSetter::setSpatialAttributes(const SPFeatureI &featu
     return drawing;
 }
 
-void SimplePolygonSetter::setColorAttributes(const Ilwis::Geodrawer::AttributeVisualProperties &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<Ilwis::Geodrawer::VertexColor> &colors) const
+void SimplePolygonSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<Ilwis::Geodrawer::VertexColor> &colors) const
 {
     if ( value.isValid() && value.toInt() != iUNDEF) {
         for(int i =startIndex; i < startIndex + count; ++i){

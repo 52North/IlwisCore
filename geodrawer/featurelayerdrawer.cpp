@@ -56,7 +56,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         _normals = QVector<QVector3D>();
         _colors = std::vector<VertexColor>();
         // get a description of how to render
-        AttributeVisualProperties attr = visualAttribute(activeAttribute());
+        VisualAttribute attr = visualAttribute(activeAttribute());
 
 
         std::vector<std::shared_ptr<BaseSpatialAttributeSetter>> setters(5); // types are 1 2 4, for performance a vector is used thoug not all elements are used
@@ -122,7 +122,7 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
         IlwisTypes attrType = features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType();
         if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN)){
-            AttributeVisualProperties props(features->attributeDefinitions().columndefinition(i).datadef().domain());
+            VisualAttribute props(features->attributeDefinitions().columndefinition(i).datadef().domain());
             if ( attrType == itNUMERICDOMAIN){
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
                 props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
