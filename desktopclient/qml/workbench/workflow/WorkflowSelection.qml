@@ -20,20 +20,21 @@ Rectangle {
 
     Loader {
         id : workflowbenchContentLoader
+
+        property bool activeEditSession : false
+        property string editSession
+
         width : parent.width
         anchors.top : functionBarHeader.bottom
         anchors.bottom: parent.bottom
         Component.onCompleted : {
-            workflowbenchContentLoader.setSource("WorkflowBench.qml")
+            if ( !activeEditSession) {
+                workflowbenchContentLoader.setSource("WorkflowBench.qml")
+            } else {
+                workflowbenchContentLoader.setSource("WorkflowEdit.qml")
+            }
         }
 
     }
-
-
-
-
-
-
-
 
 }
