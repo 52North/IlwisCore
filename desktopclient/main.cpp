@@ -18,6 +18,7 @@
 #include "models/operationcatalogmodel.h"
 #include "models/usermessagehandler.h"
 #include "applicationformexpressionparser.h"
+#include "workflowmetadataformbuilder.h"
 #include "models/tranquilizerhandler.h"
 #include "models/visualizationmanager.h"
 #include "models/coveragelayermodel.h"
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<OperationCatalogModel>("OperationCatalogModel",1,0,"OperationCatalogModel");
         qmlRegisterType<OperationModel>("OperationModel",1,0,"OperationModel");
         qmlRegisterType<ApplicationFormExpressionParser>("ApplicationFormExpressionParser",1,0,"FormBuilder");
+        qmlRegisterType<WorkflowMetadataFormBuilder>("WorkflowMetadataFormBuilder",1,0,"WorkflowMetadataFormBuilder");
         qmlRegisterType<UserMessageHandler>("UserMessageHandler",1,0,"UserMessageHandler");
         qmlRegisterType<MessageModel>("MessageModel",1,0,"MessageModel");
         qmlRegisterType<TranquilizerHandler>("TranquilizerHandler",1,0, "TranquilizerHandler");
@@ -85,6 +87,7 @@ int main(int argc, char *argv[])
         MasterCatalogModel mastercatalogmodel(ctx);
 
         ApplicationFormExpressionParser formbuilder;
+        WorkflowMetadataFormBuilder workflowmetadataformbuilder;
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
@@ -95,6 +98,7 @@ int main(int argc, char *argv[])
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
+        ctx->setContextProperty("workflowmetadataformbuilder", &workflowmetadataformbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
