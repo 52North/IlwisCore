@@ -11,7 +11,7 @@ import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
 
-Item{
+Item {
     id : datatabview
     property int side : 1
     property int currentIndex : 0
@@ -31,7 +31,7 @@ Item{
     function canSeparate(index){
         if ( index < datatab.count && index >= 0) {
             var tab = datatab.getTab(index)
-            if ( tab && tab.item.canSeparate)
+            if ( tab && tab.item && tab.item.canSeparate)
                 return true;
         }
         return false;
@@ -72,7 +72,14 @@ Item{
         height : parent.height
         width: parent.width - szbut.width
 
-        style: Base.TabStyle2{
+        style: Base.TabStyle2 {
+            id : tabstyle
+            Connections {
+                target: tabstyle
+                onExpandToWindow: {
+                    action : datapanesplit.showTabInFloatingWindow(tabindex)
+                }
+            }
         }
     }
     states: [
