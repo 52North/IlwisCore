@@ -8,7 +8,6 @@ import "../../../controls" as Controls
 import "../../../Global.js" as Global
 
 Item {
-    width : 100
     property var currentCoverage
 
     onCurrentCoverageChanged: {
@@ -23,7 +22,7 @@ Item {
         height : 18
         color : Global.alternatecolor3
         Text{
-            text : qsTr("Attributes")
+            text : qsTr("Data Attributes")
             font.weight: Font.DemiBold
             x : 5
             anchors.verticalCenter: parent.verticalCenter
@@ -75,6 +74,7 @@ Item {
                                 anchors.fill: parent
                                 onClicked: {
                                     attributesList.currentIndex = index
+                                    currentCoverage.activeAttribute = index;
                                     editorListColumn.currentVisualAttribute = attributesList.model[index]
                                 }
                             }

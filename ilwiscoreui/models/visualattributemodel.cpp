@@ -18,7 +18,7 @@ VisualAttributeModel::VisualAttributeModel(const Ilwis::ColumnDefinition &def, C
     AttributeModel( def,parentLayer,obj)
 {
     if ( def.isValid())
-        _propertyEditors = uicontext()->propertyEditors(parentLayer, obj, def.datadef());
+        _propertyEditors = uicontext()->propertyEditors(parentLayer, obj, def);
 }
 
 QQmlListProperty<VisualAttributeEditor> VisualAttributeModel::propertyEditors()

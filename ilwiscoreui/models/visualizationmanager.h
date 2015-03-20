@@ -35,6 +35,7 @@ public:
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
+    QString layerInfo(const Ilwis::Coordinate& crd, const QString &attrName="") const;
 
 signals:
     void removeLayer(const Ilwis::Resource& resource);

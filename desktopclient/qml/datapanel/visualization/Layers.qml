@@ -38,8 +38,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-
+import QtQuick 2.1
+import QtGraphicalEffects 1.0
+import "../../controls" as Controls
 import LayersView 1.0
 
 Item {
@@ -75,6 +76,10 @@ Item {
       return renderer
   }
 
+ Controls.FloatingRectangle{
+     id : floatrect
+ }
+
   DropArea {
       anchors.fill : parent
       onDropped: {
@@ -92,16 +97,6 @@ Item {
               anchors.fill: parent
               hoverEnabled: true
 
-              onMouseXChanged: {
-                  var mposition = mouseX + "|" + mouseY
-                  renderer.currentCoordinate = mposition
-              }
-
-              onMouseYChanged: {
-                  var mposition = mouseX + "|" + mouseY
-                  renderer.currentCoordinate = mposition
-              }
-
               onPressed: {
                   if ( manager.zoomInMode ){
                       if ( !manager.hasSelectionDrawer){
@@ -113,14 +108,30 @@ Item {
                       }
 
                   }
+                  if ( renderer.showLayerInfo){
+                    floatrect.enabled = true
+                    floatrect.opacity = 1
+                    floatrect.x = mouseX
+                    floatrect.y = mouseY
+                    var mposition = mouseX + "|" + mouseY
+                    floatrect.text = renderer.layerInfo(mposition)
+                  }
 
               }
               onPositionChanged: {
+                  var mposition = mouseX + "|" + mouseY
+                  renderer.currentCoordinate = mposition
                   if ( manager.hasSelectionDrawer){
                       var position = {currentx: mouseX, currenty:mouseY}
                       renderer.setAttribute("SelectionDrawer", position)
                       renderer.copyAttribute("SelectionDrawer","envelope");
                       renderer.update()
+                  }
+                  if ( floatrect.opacity > 0){
+                      floatrect.x = mouseX
+                      floatrect.y = mouseY
+                      mposition = mouseX + "|" + mouseY
+                      floatrect.text = renderer.layerInfo(mposition)
                   }
               }
               onReleased: {
@@ -133,6 +144,10 @@ Item {
                       manager.hasSelectionDrawer = false
                       renderer.update()
                   }
+                  floatrect.enabled = false
+                  floatrect.opacity = 0
+                  floatrect.x = 0
+                  floatrect.y = 0
               }
           }
       }

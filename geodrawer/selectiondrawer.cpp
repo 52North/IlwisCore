@@ -21,7 +21,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(0.05);
     }
     _colors[9] = _colors[10] = _colors[11] = _colors[12] = clr;
-    clr.setAlphaF(0.1);
+    clr.setAlphaF(0.5);
     _colors[5] = _colors[6] = _colors[7] = _colors[8] = clr;
 
     if ( options.contains("bordercolor")){
@@ -31,7 +31,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
         clr.setAlphaF(1);
     }
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
-    QVector3D pos(0,0,0.1);
+    QVector3D pos(0,0,0);
     _vertices = { pos,pos,pos,pos,pos, pos,pos,pos,pos, pos,pos,pos,pos};
 
     _indices.push_back(VertexIndex(0, 5, itLINE, iUNDEF));

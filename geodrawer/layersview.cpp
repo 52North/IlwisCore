@@ -92,9 +92,39 @@ void LayersView::setManager(LayerManager *manager)
     _manager = manager;
 }
 
+QString LayersView::layerInfo(const QString& pixelpair) const
+{
+    try {
+        if ( _manager){
+            QStringList parts = pixelpair.split("|");
+            if ( parts.size() == 2){
+                Ilwis::Coordinate crd = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
+                return _manager->layerInfo(crd);
+            }
+        }
+        return "";
+    }
+    catch(const ErrorObject& ){}
+    catch(const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+    return "";
+}
+
 LayerManager *LayersView::layerManager()
 {
     return _manager;
+}
+
+bool LayersView::showLayerInfo() const
+{
+    return _showLayerInfo;
+}
+
+void LayersView::setShowLayerInfo(bool yesno)
+{
+    _showLayerInfo = yesno;
+    emit showLayerInfoChanged();
 }
 
 QString LayersView::viewerId() const
@@ -114,6 +144,11 @@ Geodrawer::RootDrawer *LayersView::rootDrawer() const
 
 QString LayersView::currentCoordinate() const
 {
+    if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
+        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+            return _currentCoordinate.toString(6);
+        }
+    }
     return _currentCoordinate.toString();
 }
 
@@ -131,7 +166,11 @@ void LayersView::setCurrentCoordinate(const QString &var)
 QString LayersView::currentLatLon() const
 {
     if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
-        if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
+        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+            LatLon ll(_currentCoordinate.y, _currentCoordinate.x);
+            return ll.toString();
+        }
+        else if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
             return rootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
     }
     return "";

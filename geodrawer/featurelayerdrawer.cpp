@@ -37,6 +37,20 @@ DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootD
 }
 
 
+void createAttributeSetter(const IFeatureCoverage& features, std::vector<std::shared_ptr<BaseSpatialAttributeSetter>>& setters, RootDrawer *rootdrawer)
+{
+    QVariant v = qVariantFromValue((void *) rootdrawer);
+    IOOptions opt("rootdrawer", v);
+    setters[itPOINT].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepointsetter",opt));
+    setters[itLINE].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplelinesetter",  opt));
+    setters[itPOLYGON].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepolygonsetter", opt));
+    for(int i=0; i < setters.size(); ++i){
+        if(setters[i]){
+            setters[i]->sourceCsySystem(features->coordinateSystem());
+        }
+    }
+}
+
 bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
     if(!LayerDrawer::prepare(prepType, options))
@@ -56,34 +70,45 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         _normals = QVector<QVector3D>();
         _colors = std::vector<VertexColor>();
         // get a description of how to render
-        AttributeVisualProperties attr = visualAttribute(activeAttribute());
+        VisualAttribute attr = visualAttribute(activeAttribute());
 
 
         std::vector<std::shared_ptr<BaseSpatialAttributeSetter>> setters(5); // types are 1 2 4, for performance a vector is used thoug not all elements are used
         // for the moment I use the simple setters, in the future this will be representation dependent
-        QVariant v = qVariantFromValue((void *) rootDrawer());
-        IOOptions opt("rootdrawer", v);
-        setters[itPOINT].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepointsetter",opt));
-        setters[itLINE].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplelinesetter",  opt));
-        setters[itPOLYGON].reset( DrawerAttributeSetterFactory::create<BaseSpatialAttributeSetter>("simplepolygonsetter", opt));
-        for(int i=0; i < setters.size(); ++i){
-            if(setters[i]){
-                setters[i]->sourceCsySystem(features->coordinateSystem());
-            }
-        }
+        createAttributeSetter(features, setters, rootDrawer());
 
         _featureDrawings.resize(features->featureCount());
         int featureIndex = 0;
         for(const SPFeatureI& feature : features){
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
-            _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
+             _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
             for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
                 setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
             ++featureIndex;
         }
-        _prepared |= DrawerInterface::ptGEOMETRY;
+        // implicity the redoing of the geometry is also redoing the representation stuff(a.o. colors)
+        _prepared |= ( DrawerInterface::ptGEOMETRY | DrawerInterface::ptRENDER);
 
+    }
+    if ( hasType(prepType, DrawerInterface::ptRENDER) && !isPrepared(DrawerInterface::ptRENDER)){
+        IFeatureCoverage features = coverage().as<FeatureCoverage>();
+        int featureIndex = 0;
+        std::vector<std::shared_ptr<BaseSpatialAttributeSetter>> setters(5); // types are 1 2 4, for performance a vector is used thoug not all elements are used
+        // for the moment I use the simple setters, in the future this will be representation dependent
+        createAttributeSetter(features, setters, rootDrawer());
+        VisualAttribute attr = visualAttribute(activeAttribute());
+        if ( !features.isValid()){
+            return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
+        }
+        _colors.resize(0);
+        for(const SPFeatureI& feature : features){
+            QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
+            IlwisTypes geomtype = feature->geometryType();
+            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
+                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+            ++featureIndex;
+        }
     }
 
     //initialize();
@@ -122,7 +147,7 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
         IlwisTypes attrType = features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType();
         if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN)){
-            AttributeVisualProperties props(features->attributeDefinitions().columndefinition(i).datadef().domain());
+            VisualAttribute props(features->attributeDefinitions().columndefinition(i).datadef().domain(),i);
             if ( attrType == itNUMERICDOMAIN){
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();
                 props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));

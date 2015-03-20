@@ -50,7 +50,7 @@ QVariant LayerDrawer::attribute(const QString &key) const
 QColor LayerDrawer::color(const IRepresentation &rpr, double value, DrawerInterface::ColorValueMeaning cvm)
 {
     if ( _activeAttribute != sUNDEF){
-        AttributeVisualProperties& attr = _visualProperties[_activeAttribute];
+        VisualAttribute& attr = _visualProperties[_activeAttribute];
         if ( cvm ==DrawerInterface::cvmFRACTION){
             NumericRange numrange = attr.stretchRange();
             if ( !numrange.isValid()){

@@ -3,12 +3,13 @@ import "../../../Global.js" as Global
 
 Item {
     id : displaypropertiesColumn
-    width : 130
     property var currentVisualAttribute
 
     onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute.propertyEditors )
+        if ( currentVisualAttribute.propertyEditors ){
             editorList.model =  currentVisualAttribute.propertyEditors
+            editorColumn.currentEditor = editorList.model[0]
+        }
     }
 
     Rectangle {
@@ -17,7 +18,7 @@ Item {
         height : 18
         color : Global.alternatecolor3
         Text{
-            text : qsTr("Display Properties")
+            text : qsTr("Visual properties")
             font.weight: Font.DemiBold
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -57,12 +58,13 @@ Item {
                     sourceComponent: Component {
                         Text {
                             x : 4
-                            text: editorName
+                            text: displayName
                             width : displayEditors.width
                             height : 14
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked: {
+                                    editorList.currentIndex = index
                                     editorColumn.currentEditor = editorList.model[index]
                                 }
                             }

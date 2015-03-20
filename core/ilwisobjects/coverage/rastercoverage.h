@@ -144,7 +144,7 @@ public:
      * \param c the coordinate
      * \return the value at the coordinates or undefined
      */
-    double coord2value(const Coordinate &c){
+    QVariant coord2value(const Coordinate &c, const QString& attrname=""){
         if ( _georef->isValid() && c.isValid()) {
             Pixeld pix = _georef->coord2Pixel(c);
             return pix2value(pix);

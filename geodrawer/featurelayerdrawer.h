@@ -28,6 +28,7 @@ public:
 
 
 private:
+
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
     std::vector<VertexIndex> _indices;

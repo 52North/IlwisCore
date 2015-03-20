@@ -30,20 +30,21 @@ Rectangle {
         height : parent.height
         y : 2
 
-        VisualAttributeEditorLayers{
+        LayersList{
             id : layerColumn
             height : parent.height
-            width : 180
+            width : parent.width / 4
             anchors.left: parent.left
 
 
         }
 
-        VisualAttributeEditorAttributeList{
+        VisualAttributeList{
             id : attributeListColumn
             anchors.left : layerColumn.right
             anchors.leftMargin: 3
             height : parent.height - 3
+            width : 140
         }
 
         VisualAttributeEditorList{
@@ -51,6 +52,7 @@ Rectangle {
             anchors.left : attributeListColumn.right
             anchors.leftMargin: 3
             height : parent.height - 3
+            width : 140
         }
         VisualAttributeEditor{
             anchors.left : editorListColumn.right

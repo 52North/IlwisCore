@@ -35,7 +35,7 @@ public:
     Q_INVOKABLE QString uniqueName();
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
-    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::DataDefinition& datadef) ;
+    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
     QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name) ;
 
     void qmlContext(QQmlContext *ctx);

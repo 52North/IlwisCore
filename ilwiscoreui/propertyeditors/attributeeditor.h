@@ -7,6 +7,10 @@
 #include "uicontextmodel.h"
 #include "ilwiscoreui_global.h"
 
+namespace Ilwis {
+class ColumnDefintion;
+
+}
 class CoverageLayerModel;
 
 class ILWISCOREUISHARED_EXPORT VisualAttributeEditor : public QObject, public Ilwis::Identity
@@ -24,9 +28,9 @@ public:
     VisualAttributeEditor(const VisualAttributeEditor& metadata, QObject *parent);
     QString editorName() const;
     virtual int defaultHeight() const;
-    virtual bool canUse(const Ilwis::IIlwisObject &obj, const Ilwis::DataDefinition &datadef = Ilwis::DataDefinition()) const;
+    virtual bool canUse(const Ilwis::IIlwisObject &obj, const Ilwis::ColumnDefinition &datadef = Ilwis::ColumnDefinition()) const;
     virtual bool canUse(const Ilwis::IIlwisObject &obj, const QString &name) const;
-    virtual void prepare(CoverageLayerModel *parentLayer,const Ilwis::IIlwisObject& bj, const Ilwis::DataDefinition &datadef = Ilwis::DataDefinition());
+    virtual void prepare(CoverageLayerModel *parentLayer, const Ilwis::IIlwisObject& bj, const Ilwis::ColumnDefinition &datadef = Ilwis::ColumnDefinition());
     int layerIndex() const;
     QString displayName() const;
 

@@ -61,12 +61,12 @@ void SpatialDataDrawer::envelope(const Envelope &env)
     _envelope = env;
 }
 
-AttributeVisualProperties SpatialDataDrawer::visualAttribute(const QString &attrName) const
+VisualAttribute SpatialDataDrawer::visualAttribute(const QString &attrName) const
 {
     auto iter = _visualProperties.find(attrName)    ;
     if ( iter != _visualProperties.end())
         return iter->second;
-    AttributeVisualProperties attr;
+    VisualAttribute attr;
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
     if ( !features.isValid()){
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
@@ -81,7 +81,7 @@ AttributeVisualProperties SpatialDataDrawer::visualAttribute(const QString &attr
                     itemdom.prepare();
                     IndexedIdentifierRange *rng = new IndexedIdentifierRange("feature", features->featureCount());
                     itemdom->range(rng);
-                    attr = AttributeVisualProperties(itemdom);
+                    attr = VisualAttribute(itemdom);
                 }else {
                     attr =  visualAttribute(FEATUREVALUECOLUMN);
                 }
@@ -94,7 +94,7 @@ AttributeVisualProperties SpatialDataDrawer::visualAttribute(const QString &attr
     return attr;
 }
 
-void SpatialDataDrawer::visualAttribute(const QString &attrName, const AttributeVisualProperties &properties)
+void SpatialDataDrawer::visualAttribute(const QString &attrName, const VisualAttribute &properties)
 {
     _visualProperties[attrName] = properties;
 }

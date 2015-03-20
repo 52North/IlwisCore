@@ -6,7 +6,7 @@
 REGISTER_PROPERTYEDITOR("layertransparencysetter",LayerTransparencySetter)
 
 LayerTransparencySetter::LayerTransparencySetter(QObject *parent) :
-    VisualAttributeEditor("layertransparencysetter",TR("Layer Transparency"),QUrl("LayerTransparency.qml"), parent)
+    VisualAttributeEditor("layertransparencysetter",TR("Transparency"),QUrl("LayerTransparency.qml"), parent)
 {
 
 }

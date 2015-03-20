@@ -10,7 +10,9 @@ typedef IlwisData<FeatureCoverage> IFeatureCoverage;
 class SPFeatureI;
 
 namespace Geodrawer {
-class AttributeVisualProperties;
+
+class VisualAttribute;
+
 class ILWISCOREUISHARED_EXPORT DrawerAttributeSetter
 {
 public:
@@ -18,11 +20,10 @@ public:
     ~DrawerAttributeSetter();
 
     virtual FeatureDrawing setSpatialAttributes(const SPFeatureI& feature, QVector<QVector3D>& vertices, QVector<QVector3D>& normals) const;
-    virtual void setColorAttributes(const AttributeVisualProperties& attr,
-                            const QVariant& value,
+    virtual void setColorAttributes(const VisualAttribute&,
+                            const QVariant &value,
                             quint32 startIndex,
-                            quint32 count,
-                            std::vector<VertexColor>& colors) const;
+                            quint32 count, std::vector<VertexColor> &colors) const;
 
 };
 }

@@ -31,6 +31,43 @@ Geodrawer::DrawerInterface *CoverageLayerModel::drawer()
     return _drawer;
 }
 
+bool CoverageLayerModel::active() const
+{
+    if ( _drawer){
+        return _drawer->isActive();
+    }
+    return false;
+}
+
+void CoverageLayerModel::setActive(bool yesno)
+{
+    if ( _drawer){
+        _drawer->active(yesno);
+        _drawer->redraw();
+        emit onActiveChanged();
+    }
+}
+
+int CoverageLayerModel::activeAttribute() const
+{
+    return _activeAttribute;
+}
+
+void CoverageLayerModel::setActiveAttribute(int index)
+{
+    if ( index == _activeAttribute)
+        return;
+
+    _activeAttribute = index;
+    if ( index < _visualAttributes.size()){
+        _drawer->setAttribute("activevisualattribute", _visualAttributes[index]->attributename());
+        _drawer->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+        _drawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions());
+        _drawer->redraw();
+        emit onActiveAttributeChanged();
+    }
+}
+
 quint32 CoverageLayerModel::layerIndex() const
 {
     return _layerIndex;

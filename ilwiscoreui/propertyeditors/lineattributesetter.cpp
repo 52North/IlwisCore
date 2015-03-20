@@ -17,7 +17,7 @@ LinePropertySetter::~LinePropertySetter()
 
 }
 
-bool LinePropertySetter::canUse(const IIlwisObject &obj, const DataDefinition& ) const
+bool LinePropertySetter::canUse(const IIlwisObject &obj, const ColumnDefinition& ) const
 {
     if ( !obj.isValid())
         return false;
