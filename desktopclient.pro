@@ -105,13 +105,15 @@ qtcAddDeployment()
 HEADERS += \
     desktopclient/applicationformexpressionparser.h \
     desktopclient/ilwistype.h \
-    desktopclient/keyfilter.h
+    desktopclient/keyfilter.h \
+    desktopclient/workflowmetadataformbuilder.h
 
 SOURCES += \
     desktopclient/applicationformexpressionparser.cpp \
     desktopclient/ilwistype.cpp \
     desktopclient/main.cpp \
-    desktopclient/keyfilter.cpp
+    desktopclient/keyfilter.cpp \
+    desktopclient/workflowmetadataformbuilder.cpp
 
 DISTFILES += \
     desktopclient/qml/datapanel/visualization/Layers.qml \
