@@ -18,6 +18,7 @@ class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public IlwisObjectModel
     Q_PROPERTY(QQmlListProperty<VisualAttributeModel> visualAttributes READ visualAttributes NOTIFY visualAttributesChanged)
     Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY onActiveChanged)
+    Q_PROPERTY(int activeAttribute READ activeAttribute WRITE setActiveAttribute NOTIFY onActiveAttributeChanged)
 
 public:
     CoverageLayerModel();
@@ -26,9 +27,12 @@ public:
     Ilwis::Geodrawer::DrawerInterface *drawer();
     bool active() const;
     void setActive(bool yesno);
+    int activeAttribute() const;
+    void setActiveAttribute(int index);
 signals:
     void visualAttributesChanged();
     void onActiveChanged();
+    void onActiveAttributeChanged();
 
 private:
     quint32 layerIndex() const;
@@ -37,6 +41,7 @@ private:
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
     QList<VisualAttributeModel *> _visualAttributes;
     quint32 _layerIndex;
+    int _activeAttribute = 0;
 
 
 
