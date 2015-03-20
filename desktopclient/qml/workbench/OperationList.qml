@@ -11,6 +11,8 @@ import "../Global.js" as Global
 
 Rectangle {
 
+    signal makeForm(string objectid, string name)
+
     property var operationsModel : operations.operations
     property bool byKey : false
 
@@ -59,7 +61,7 @@ Rectangle {
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
-                    newForm(id, displayName)
+                    makeForm(id, displayName)
                 }
             }
 
