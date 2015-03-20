@@ -354,6 +354,8 @@ QString ApplicationFormExpressionParser::createWorkflowForm(quint64 metaid) cons
     //QString seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
 
     QString component = columnStart + inputpart + "}";
+
+    MESSAGE1("new dynamic qml component: %1", component);
     return component;
 }
 
