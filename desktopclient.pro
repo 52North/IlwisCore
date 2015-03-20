@@ -111,7 +111,9 @@ SOURCES += \
 
 DISTFILES += \
     desktopclient/qml/datapanel/visualization/Layers.qml \
-    desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml
+    desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/LayersList.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml
 
 
 
