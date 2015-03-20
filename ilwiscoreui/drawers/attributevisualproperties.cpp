@@ -15,11 +15,12 @@ VisualAttribute::VisualAttribute()
 {
 }
 
-VisualAttribute::VisualAttribute(const IDomain &dom) : _domain(dom)
+VisualAttribute::VisualAttribute(const IDomain &dom, int colindex) : _domain(dom)
 {
     _representation = Representation::defaultRepresentation(dom);
     _representation->domain(dom);
     _domain = dom;
+    _columnIndex = colindex;
 }
 
 VisualAttribute::VisualAttribute(const VisualAttribute &avp)

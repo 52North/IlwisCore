@@ -17,7 +17,7 @@ class ILWISCOREUISHARED_EXPORT VisualAttribute
 {
 public:
     VisualAttribute();
-    VisualAttribute(const IDomain& dom);
+    VisualAttribute(const IDomain& dom, int colindex = iUNDEF);
     VisualAttribute(const VisualAttribute& avp);
 
     IRepresentation representation() const;
