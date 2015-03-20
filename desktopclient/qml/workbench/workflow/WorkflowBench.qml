@@ -1,9 +1,10 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
 
-import WorkflowModel 1.0
+import WorkflowMetadataFormBuilder 1.0
 
 import ".." as Workbench
+import "../../datapanel" as DataPane
 
 Rectangle {
 
@@ -12,8 +13,10 @@ Rectangle {
 
     // ###########################  TITLE
 
-    WorkflowBenchTitle {
+    WorkflowBenchHeader {
+        id: workflowbenchtitle
         titleText: qsTr("Workflow Bench")
+        shortDescriptionText: qsTr("To edit an workflow, select an existing or create a new one.")
     }
 
 
@@ -21,6 +24,7 @@ Rectangle {
 
     Rectangle {
         id: workflowBenchButtons
+        anchors.top : workflowbenchtitle.bottom
         anchors.margins: 5
         width: parent.width
         height : 24
@@ -40,99 +44,83 @@ Rectangle {
 
     // ###########################  Workflow Metadata
 
-    function createWorkflowMetadataForm(metaid, title){
-        var form = formbuilder.createWorkflowForm(metaid)
+    function createWorkflowMetadataForm(metaid, title) {
+        //var form = formbuilder.createWorkflowForm(metaid)
+        var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
         appFrame.opacity = 1
     }
 
+    function createWorkflowEditSession(workflowName) {
+        dataPanel.addWorkflowCanvas(workflowName + " [Workflow Builder]" );
+        workflowbenchContentLoader.setSource("WorkflowEdit.qml");
+        workflowbenchContentLoader.editSession = workflowName;
+    }
+
     SplitView {
-        x : parent.x
-        anchors.top : workflowBenchButtons.bottom
-        anchors.bottom: workflowbench.bottom
-        anchors.margins: 5
-        width : workflowbench.width
+        width : parent.width
         orientation: Qt.Vertical
+        anchors.bottom: parent.bottom
+        anchors.top : workflowBenchButtons.bottom
+        anchors.margins: 5
         resizing: false
 
         Rectangle {
             id : applicationForm
-            height : 0
+            anchors.top : parent.top
             x : parent.x + 5
+            height : 0
+
+            property string workflowname
 
             // ###########################  CONTROL BUTTONS
 
             Rectangle {
                 id: workflowButtons
-                anchors.top : applicationForm.top
+                anchors.top : parent.top
                 anchors.margins: 5
-                width: parent.width
-                height : 24
-                x : parent.x
+                height : 20
 
                 Button {
-                    id : openWorkflowButton
-                    text :  qsTr("Open Workflow")
-                    x : parent.x
+                    id : editWorkflowButton
+                    text :  qsTr("Edit Workflow")
+                    onClicked: createWorkflowEditSession(applicationForm.workflowname)
+                    tooltip: qsTr("Edit selected workflow")
                     anchors.margins: 5
-                    onClicked: workflowbenchContentLoader.setSource("WorkflowEdit.qml")
                     enabled: true
+                }
+                Button {
+                    id : saveButton
+                    text :  qsTr("Save Metadata")
+                    anchors.left: deleteButton.right
+                    onClicked: console.log("TODO save metadata")
+                    tooltip: qsTr("Saves workflow's metadata. TODO becomes enabled when something changes")
+                    anchors.margins: 5
+                    enabled: false
                 }
                 Button {
                     id : deleteButton
                     text :  qsTr("Delete")
-                    anchors.left: openWorkflowButton.right
+                    anchors.left: editWorkflowButton.right
+                    tooltip: qsTr("TODO delete workflow and close appFrame")
                     anchors.margins: 5
-                    onClicked: console.log("TODO delete workflow and close appFrame")
-                    enabled: true
-                }
-                Button {
-                    id : cancelButton
-                    text :  qsTr("Cancel")
-                    anchors.left: deleteButton.right
-                    anchors.margins: 5
-                    onClicked: console.log("TODO close appFrame")
                     enabled: true
                 }
 
                 WorkflowSeparator {}
             }
 
+
+            // ###########################  DYNAMIC I/O FORM
+
             Workbench.ApplicationForm {
                 id : appFrame
-                anchors.top : workflowButtons.bottom;
-                anchors.margins: 5;
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
-                opacity : 0
-
-
+                anchors.top : workflowButtons.bottom;
+                opacity: 0
             }
-
-            /* TODO make this an + model item which is editable (let user customize metadata)
-
-            Text {
-                id : workflowNameLabel
-                height : 20
-                width: 50
-                text : qsTr("Name")
-                verticalAlignment: Text.AlignVCenter
-                clip: false
-                y : 4
-            }
-            TextField {
-                id : workflowNameText
-                y: 4
-                height: 20
-                anchors.leftMargin: 5
-                anchors.left: workflowNameLabel.right
-                anchors.right: parent.right
-                onFocusChanged: {
-                    console.log("workflow name: " + workflowNameText.text)
-                }
-            }
-            */
             states: [
                 State {
                     name: "maximized"
@@ -159,60 +147,35 @@ Rectangle {
                     NumberAnimation { properties: "opacity"; duration : 750 ; easing.type: Easing.InOutCubic }
                 }
             ]
+
+            WorkflowSeparator {}
         }
 
 
-        WorkflowSeparator {}
-
         // ###########################  FILTER
 
-        Rectangle {
-            id : workflowFilterBox
-            x : parent.x
-            width : parent.width
-            height : 28
-            anchors.margins : 5
+        FilterTextField {
+            id: filterBox
             anchors.top : applicationForm.bottom
-            color : background2
-
-            Text {
-                id : searchTextLabel
-                height : 20
-                width: 50
-                text : qsTr("Filter Text")
-                verticalAlignment: Text.AlignVCenter
-                clip: false
-                y : 4
-            }
-            TextField {
-                id : searchText
-                y: 4
-                height: 20
-                anchors.leftMargin: 5
-                anchors.left: searchTextLabel.right
-                anchors.right: parent.right
-                onTextChanged: {
+            Connections {
+                target: filterBox
+                onFilterChanged : {
                     workflows.nameFilter = text
                 }
             }
         }
 
-        WorkflowSeparator {}
 
         // ###########################  WORKFLOWS
 
         TabView {
             id : workflows
-            anchors.margins: 5;
-            anchors.bottom: parent.bottom
-            width : workflowbench.width
+
             Tab {
                 title : qsTr("Workflow/Operation List")
                 WorkflowList {
                     id : workflowList
-                    Connections {
-                        target : workflowList
-                    }
+
                 }
             }
         }
