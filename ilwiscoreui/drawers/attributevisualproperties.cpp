@@ -69,9 +69,18 @@ void VisualAttribute::stretchRange(const NumericRange &rng)
     _stretchRange = rng;
 }
 
+byte tovalue(const QString& name){
+    char byte = 0;
+    for(auto c : name){
+        byte += c.unicode();
+    }
+    return byte;
+}
+
 QColor VisualAttribute::value2color(const QVariant &var) const
 {
-    return _representation->colors()->value2color(var.toDouble(), _actualRange, _stretchRange) ;
+    double v = hasType(_domain->ilwisType(), itNUMERICDOMAIN | itITEMDOMAIN) ? var.toDouble() : tovalue(var.toString());
+    return _representation->colors()->value2color(v, _actualRange, _stretchRange) ;
 }
 
 NumericRange VisualAttribute::actualRange() const
