@@ -94,7 +94,7 @@ QString LayerManager::layerInfo(const Coordinate &crd, const QString& attrName) 
     for(CoverageLayerModel *layer : _layers){
         if ( layer->object().isValid() && hasType(layer->object()->ilwisType(), itCOVERAGE)){
             ICoverage cov = layer->object().as<Coverage>();
-            QVariant value = cov->coord2value(crd);
+            QVariant value = cov->coord2value(crd,layer->activeAttribute());
             if ( value.isValid()){
                 texts.push_back(value.toString());
             }
