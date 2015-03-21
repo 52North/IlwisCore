@@ -16,6 +16,14 @@ Item {
             editorListColumn.currentVisualAttribute = attributesList.model[attributesList.currentIndex]
     }
 
+    function iconSource(name) {
+        if ( name === "")
+            return ""
+         var iconP = "../../../images/" + name
+         return iconP
+
+     }
+
     Rectangle {
         id : attributesLabel
         width : parent.width + 10
@@ -65,17 +73,30 @@ Item {
             delegate: Component {
                 Loader {
                     sourceComponent: Component {
-                        Text {
-                            x : 4
-                            text: attributename
+                        Item{
                             width : 100
-                            height : 14
-                            MouseArea{
-                                anchors.fill: parent
-                                onClicked: {
-                                    attributesList.currentIndex = index
-                                    currentCoverage.activeAttributeIndex = index;
-                                    editorListColumn.currentVisualAttribute = attributesList.model[index]
+                            height : 16
+                            Image{
+                                id : domicon
+                                source : iconSource(icon)
+                                width : 16
+                                height : 16
+                            }
+
+                            Text {
+                                x : 4
+                                text: attributename
+                                anchors.left : domicon.right
+                                anchors.leftMargin: 2
+                                width : 100
+                                height : 14
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        attributesList.currentIndex = index
+                                        currentCoverage.activeAttributeIndex = index;
+                                        editorListColumn.currentVisualAttribute = attributesList.model[index]
+                                    }
                                 }
                             }
                         }

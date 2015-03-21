@@ -13,6 +13,7 @@ class ILWISCOREUISHARED_EXPORT VisualAttributeModel : public AttributeModel
     Q_OBJECT
 
     Q_PROPERTY(QQmlListProperty<VisualAttributeEditor> propertyEditors READ propertyEditors NOTIFY propertyEditorChanged)
+    Q_PROPERTY(QString icon READ icon CONSTANT)
 public:
     VisualAttributeModel();
     ~VisualAttributeModel();
@@ -31,6 +32,7 @@ protected:
 
 private:
     QQmlListProperty<VisualAttributeEditor> propertyEditors();
+    QString icon();
 
 };
 
