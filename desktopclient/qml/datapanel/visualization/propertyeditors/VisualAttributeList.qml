@@ -74,7 +74,7 @@ Item {
                                 anchors.fill: parent
                                 onClicked: {
                                     attributesList.currentIndex = index
-                                    currentCoverage.activeAttribute = index;
+                                    currentCoverage.activeAttributeIndex = index;
                                     editorListColumn.currentVisualAttribute = attributesList.model[index]
                                 }
                             }
