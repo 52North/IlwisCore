@@ -108,7 +108,7 @@ Item {
                       }
 
                   }
-                  if ( renderer.showLayerInfo){
+                  if ( renderer.showLayerInfo && !manager.hasSelectionDrawer){
                     floatrect.enabled = true
                     floatrect.opacity = 1
                     floatrect.x = mouseX
