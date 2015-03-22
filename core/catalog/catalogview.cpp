@@ -66,13 +66,15 @@ std::vector<Resource> CatalogView::items() const
         return std::vector<Resource>();
 
     std::vector<Resource> results;
+    QString filter = _filter;
     for(auto location : _locations) {
         std::vector<Resource> items;
         if ( location == QUrl("ilwis://system")){
-            items = context()->systemCatalog()->items();
-        }else {
-            items =  mastercatalog()->select(location, _filter);
+            if ( filter != "")
+                filter += " and ";
+            filter += QString("type<>%1").arg(QString::number(itGEODETICDATUM)); // datums are not visible in the catalogs
         }
+        items =  mastercatalog()->select(location, filter);
         std::copy(items.begin(), items.end(),std::back_inserter(results));
     }
     std::set<Resource> uniques(results.begin(), results.end());
