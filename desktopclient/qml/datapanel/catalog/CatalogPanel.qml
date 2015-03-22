@@ -4,9 +4,10 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import CatalogModel 1.0
 import MasterCatalogModel 1.0
+import "../../Global.js" as Global
 
 Item {
-    property int heightButtons : 26
+    property int heightButtons : 22
     property string tabLocation : "left"
     property CatalogModel currentCatalog
     property bool canSeparate : false
@@ -30,6 +31,9 @@ Item {
             showGrfs.checked = showAll.checked;
             showTables.checked = showAll.checked;
             showDomains.checked = showAll.checked;
+            showRpr.checked = showAll.checked
+            showProj.checked = showAll.checked
+            showEll.checked = showAll.checked
         }
 
         currentCatalog.filterChanged(objecttype, togglestate)
@@ -52,14 +56,12 @@ Item {
      }
 
 
-
-
     Rectangle{
         id : toolbar
         anchors.top : parent.top
         width : parent.width
-        height : 35
-        color : "white"
+        height : 52
+        color : Global.alternatecolor5
 
         Action {
             id :refreshCatalog
@@ -69,7 +71,7 @@ Item {
         }
 
         RowLayout{
-            spacing: 1
+            spacing: 8
             anchors.verticalCenter: parent.verticalCenter
             ExclusiveGroup { id : catalogViewStatus
                 onCurrentChanged: {
@@ -79,84 +81,109 @@ Item {
                         catalogView.state = "iconGrid"
                     if ( showThumbs.checked)
                         catalogView.state = "thumbList"
+                    if ( showByLoc.checked)
+                        catalogView.state = "bylocation"
                 }
             }
+            Grid {
+                width : 180
+                height : 46
+                columns : 6
+                spacing: 2
 
 
+                ToolBarButton{
+                    id : showAll
+                    iconSource: iconsource("all20.png")
+                    onClicked: toggleFilter("all", checked);
+                }
 
-            ToolBarButton{
-                id : showAll
-                implicitHeight: heightButtons
-                iconSource: iconsource("all20.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("all", checked);
-            }
+                ToolBarButton{
+                    id : showRasters
+                    iconSource: iconsource("raster20CS1.png")
+                    onClicked: toggleFilter("rastercoverage", checked);
+                }
+                ToolBarButton{
+                    id : showFeatures
+                    iconSource: iconsource("feature20CS1.png")
+                    onClicked: toggleFilter("featurecoverage", checked);
+                }
+                ToolBarButton{
+                    id : showCoverages
+                    iconSource: iconsource("coverage20.png")
+                    onClicked: toggleFilter("coverage", checked);
+                }
+                ToolBarButton{
+                    id : showTables
+                    iconSource: iconsource("table20CS1.png")
+                    onClicked: toggleFilter("table", checked);
+                }
+                ToolBarButton{
+                    id : showCsys
+                    iconSource: iconsource("csy20.png")
+                    onClicked: toggleFilter("coordinatesystem", checked);
+                }
 
-            ToolBarButton{
-                id : showRasters
-                implicitHeight: heightButtons
-                iconSource: iconsource("raster20CS1.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("rastercoverage", checked);
-            }
-            ToolBarButton{
-                id : showFeatures
-                implicitHeight: heightButtons
-                iconSource: iconsource("feature20CS1.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("featurecoverage", checked);
-            }
-            ToolBarButton{
-                id : showCoverages
-                implicitHeight: heightButtons
-                iconSource: iconsource("coverage20.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("coverage", checked);
-            }
-            ToolBarButton{
-                id : showTables
-                implicitHeight: heightButtons
-                iconSource: iconsource("table20CS1.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("table", checked);
-            }
-            ToolBarButton{
-                id : showCsys
-                implicitHeight: heightButtons
-                iconSource: iconsource("csy20.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("coordinatesystem", checked);
-            }
-            ToolBarButton{
-                id : showGrfs
-                implicitHeight: heightButtons
-                iconSource: iconsource("georeference20.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("georeference", checked);
-            }
-            ToolBarButton{
-                id : showDomains
-                implicitHeight: heightButtons
-                iconSource: iconsource("domain.png")
-                checkable: true
-                checked: true
-                onClicked: toggleFilter("domain", checked);
+                ToolBarButton{
+                    id : showGrfs
+                    iconSource: iconsource("georeference20.png")
+                    onClicked: toggleFilter("georeference", checked);
+                }
+                ToolBarButton{
+                    id : showDomains
+                    iconSource: iconsource("domain.png")
+                    onClicked: toggleFilter("domain", checked);
+                }
+                ToolBarButton{
+                    id : showRpr
+                    iconSource: iconsource("representation20.png")
+                    onClicked: toggleFilter("representation", checked);
+                }
+                ToolBarButton{
+                    id : showProj
+                    iconSource: iconsource("projection20.png")
+                    onClicked: toggleFilter("projection", checked);
+                }
+
+                ToolBarButton{
+                    id : showEll
+                    iconSource: iconsource("ellipsoid20.png")
+                    onClicked: toggleFilter("ellipsoid", checked);
+                }
+
             }
 
-            Rectangle{
-                implicitHeight: heightButtons
-                width: 10
-                color : "grey"
-                opacity: 0
-            }
 
+            Grid {
+                width : 46
+                height : 46
+                columns : 2
+                rows : 2
+                ToolBarButton{
+                    id : showList
+                    iconSource: iconsource("listCS1.png")
+                    exclusiveGroup: catalogViewStatus
+                    checked : false
+                }
+                ToolBarButton{
+                    id : showGrid
+                    iconSource: iconsource("gridCS1.png")
+                    checked : true
+                    exclusiveGroup: catalogViewStatus
+                }
+                ToolBarButton{
+                    id : showThumbs
+                    iconSource: iconsource("thumblistCS1.png")
+                    exclusiveGroup: catalogViewStatus
+                    checked: false
+                }
+                ToolBarButton{
+                    id : showByLoc
+                    iconSource: iconsource("location20.png")
+                    exclusiveGroup: catalogViewStatus
+                    checked : false
+                }
+            }
             ToolBarButton{
                 id : refresh
                 implicitHeight: heightButtons
@@ -164,33 +191,6 @@ Item {
                 action : refreshCatalog
             }
 
-            Rectangle{
-                implicitHeight: heightButtons
-                width: 20
-                color : "grey"
-                opacity: 0
-            }
-
-            ToolBarButton{
-                id : showList
-                iconSource: iconsource("listCS1.png")
-                exclusiveGroup: catalogViewStatus
-                checked : false
-            }
-            ToolBarButton{
-                id : showGrid
-                iconSource: iconsource("gridCS1.png")
-                checked : true
-                exclusiveGroup: catalogViewStatus
-            }
-            ToolBarButton{
-                id : showThumbs
-                implicitHeight: heightButtons
-                iconSource: iconsource("thumblistCS1.png")
-                checkable: true
-                checked: false
-                exclusiveGroup: catalogViewStatus
-            }
 
         }
 
@@ -241,6 +241,12 @@ Item {
             },
             State {
                 name : "iconList"
+                PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
+                PropertyChanges { target: iconListView; height : parent.height;opacity : 1; enabled : true}
+                PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+            },
+            State {
+                name : "bylocation"
                 PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconListView; height : parent.height;opacity : 1; enabled : true}
                 PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
