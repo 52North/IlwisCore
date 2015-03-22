@@ -91,6 +91,9 @@ void CatalogModel::filterChanged(const QString& objectType, bool state){
         _filterState["coordinatesystem"] = state;
         _filterState["georeference"] = state;
         _filterState["domain"] = state;
+        _filterState["representation"] = state;
+        _filterState["projection"] = state;
+        _filterState["ellipsoid"] = state;
 
     }else
         _filterState[objectType] = state;
