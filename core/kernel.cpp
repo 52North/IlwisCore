@@ -256,6 +256,15 @@ void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &de
     emit createTranquilizer(id, title, description, end);;
 }
 
+const Module *Kernel::module(const QString &name) const
+{
+    const auto iter = _modules.find(name);
+    if ( iter != _modules.end()){
+        return iter.value();
+    }
+    return 0;
+}
+
 
 
 
