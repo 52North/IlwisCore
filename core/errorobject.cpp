@@ -1,9 +1,12 @@
+#include "kernel.h"
 #include "errorobject.h"
+
 
 using namespace Ilwis;
 
 ErrorObject::ErrorObject(const QString &message): _message(message)
 {
+    kernel()->issues()->log(message);
 }
 
 ErrorObject::~ErrorObject() throw()
