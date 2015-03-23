@@ -22,8 +22,7 @@ public:
 
     void setColorAttributes(const VisualAttribute& attr,
                             const QVariant& value,
-                            quint32 startIndex,
-                            quint32 count,
+                            const FeatureDrawing& drawing,
                             std::vector<VertexColor>& colors) const;
 
     NEW_DRAWER_ATTRIBUTE_SETTER
