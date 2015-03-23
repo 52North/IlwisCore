@@ -18,7 +18,7 @@ Item {
     signal catalogChanged()
 
     function showObject(objectid){
-        mainsplit.showObject(objectid)
+        datapanesplit.showObject(objectid)
     }
 
     function toggleFilter(objecttype, togglestate){
