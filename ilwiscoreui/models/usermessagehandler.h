@@ -30,8 +30,11 @@ public:
     quint64 id();
     QColor color() const;
     QString messageIcon() const;
+    void resetColor();
+
 private:
     Ilwis::IssueObject _message;
+    bool _isReset = false;
 };
 
 typedef QQmlListProperty<MessageModel> QMLMessageList;
@@ -48,6 +51,7 @@ public:
 
     QMLMessageList messages();
     QString messageIcon() const;
+    Q_INVOKABLE void resetColor(int index);
 
 signals:
     void messageChanged();

@@ -31,6 +31,15 @@ QString UserMessageHandler::messageIcon() const{
     return "message40.png";
 }
 
+void UserMessageHandler::resetColor(int index)
+{
+    if ( index < _messages.size()){
+        _messages[index]->resetColor();
+        emit messageChanged();
+        emit messageIconChanged();
+    }
+}
+
 //---------------------------------------------------
 MessageModel::MessageModel()
 {
@@ -82,6 +91,9 @@ quint64 MessageModel::id()
 
 QColor MessageModel::color() const
 {
+    if ( _isReset)
+        return "green";
+
     switch(_message.type()){
     case IssueObject::itWarning:
         return QColor("orange");
@@ -100,6 +112,8 @@ QColor MessageModel::color() const
 
 QString MessageModel::messageIcon() const
 {
+    if ( _isReset)
+        return "messageCS1.png";
     switch(_message.type()){
     case IssueObject::itWarning:
         return "messageorangeCS1.png";
@@ -111,4 +125,9 @@ QString MessageModel::messageIcon() const
         return "messageCS1.png";
 
     }
+}
+
+void MessageModel::resetColor()
+{
+    _isReset = true;
 }
