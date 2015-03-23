@@ -146,7 +146,7 @@ void FeatureLayerDrawer::coverage(const ICoverage &cov)
 
     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
         IlwisTypes attrType = features->attributeDefinitions().columndefinition(i).datadef().domain()->ilwisType();
-        if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN)){
+        if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN | itTEXTDOMAIN)){
             VisualAttribute props(features->attributeDefinitions().columndefinition(i).datadef().domain(),i);
             if ( attrType == itNUMERICDOMAIN){
                 SPNumericRange numrange = features->attributeDefinitions().columndefinition(i).datadef().range<NumericRange>();

@@ -48,6 +48,7 @@ public:
     QQmlListProperty<DomainItemModel> domainitems();
     QQmlListProperty<ProjectionParameterModel> projectionItems();
     QString valuetype() const;
+    QString value2string(const QVariant& value, const QString& attrName="");
     Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString &columnName);
     Q_INVOKABLE QString getProperty(const QString& propertyname);
     Q_INVOKABLE bool canUse(const QString& id);
@@ -58,7 +59,6 @@ public:
     Ilwis::IIlwisObject object() const;
 
 protected:
-
 signals:
     void readOnlyChanged();
 private slots:

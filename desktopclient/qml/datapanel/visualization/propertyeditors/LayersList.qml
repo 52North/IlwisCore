@@ -11,6 +11,8 @@ import "../../../Global.js" as Global
 Item {
     id : firstColumn
     width : 180
+
+
     Item {
         id : layersContainer
         width : parent.width

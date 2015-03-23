@@ -19,7 +19,7 @@ CoverageLayerModel::CoverageLayerModel(quint32 layerInd, const Ilwis::Resource &
         for(int i=0; i < attrList.count(&attrList); ++i){
             auto *attr = attrList.at(&attrList, i);
             IlwisTypes valueType =  attr->columnDef().datadef().domain()->valueType();
-            if ( hasType(valueType, itNUMBER|itDOMAINITEM)){
+            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING)){
                 _visualAttributes.push_back(new VisualAttributeModel(attr->columnDef(),this,object()));
             }
         }
@@ -48,12 +48,12 @@ void CoverageLayerModel::setActive(bool yesno)
     }
 }
 
-int CoverageLayerModel::activeAttribute() const
+int CoverageLayerModel::getActiveAttributeIndex() const
 {
     return _activeAttribute;
 }
 
-void CoverageLayerModel::setActiveAttribute(int index)
+void CoverageLayerModel::setActiveAttributeIndex(int index)
 {
     if ( index == _activeAttribute)
         return;
@@ -64,8 +64,16 @@ void CoverageLayerModel::setActiveAttribute(int index)
         _drawer->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
         _drawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions());
         _drawer->redraw();
-        emit onActiveAttributeChanged();
+        emit onActiveAttributeIndexChanged();
     }
+}
+
+QString CoverageLayerModel::activeAttribute() const
+{
+    if ( _activeAttribute < _visualAttributes.size()){
+       return _visualAttributes[_activeAttribute]->attributename();
+    }
+    return sUNDEF;
 }
 
 quint32 CoverageLayerModel::layerIndex() const

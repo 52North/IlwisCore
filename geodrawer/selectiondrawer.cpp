@@ -229,8 +229,8 @@ Envelope SelectionDrawer::envelope() const
     double a14 = globalMvp.row(0).w();
     double a22 = globalMvp.row(1).y();
     double a24 = globalMvp.row(1).w();
-    Coordinate crd1((v1normalized.x() - a14) / a11, -1.0 + (v1normalized.y() - a24)/ a22);
-    Coordinate crd2(-1.0 + (v2normalized.x() - a14) / a11, (v2normalized.y() - a24)/ a22);
+    Coordinate crd1((v1normalized.x() - a14) / a11, (v1normalized.y() - a24)/ a22);
+    Coordinate crd2((v2normalized.x() - a14) / a11, (v2normalized.y() - a24)/ a22);
 
 
     return Envelope(crd1, crd2);

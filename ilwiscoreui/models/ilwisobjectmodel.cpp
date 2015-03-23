@@ -574,3 +574,32 @@ IIlwisObject IlwisObjectModel::object() const
 {
     return _ilwisobject;
 }
+
+QString IlwisObjectModel::value2string(const QVariant &value, const QString &attrName)
+{
+    auto v2s = [](const ColumnDefinition& coldef, const QVariant& value)->QString {
+            if ( coldef.isValid()){
+                if ( coldef.datadef().domain()->ilwisType() == itTEXTDOMAIN)
+                    return value.toString();
+                return coldef.datadef().domain()->impliedValue(value).toString();
+            }
+            return value.toString();
+    };
+    if ( attrName != "") {
+        IlwisTypes objectype = _ilwisobject->ilwisType();
+        if ( hasType(objectype, itFEATURE)){
+            IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+            ColumnDefinition coldef = features->attributeDefinitions().columndefinition(attrName);
+            return v2s(coldef, value);
+
+        }else if (hasType(objectype, itRASTER)){
+             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+             if ( raster->hasAttributes()){
+                ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
+                return v2s(coldef, value);
+             }
+        }
+    }
+    return value.toString();
+
+}
