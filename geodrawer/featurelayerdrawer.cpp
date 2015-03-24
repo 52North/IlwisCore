@@ -20,7 +20,7 @@
 #include "drawerattributesetters/basespatialattributesetter.h"
 #include "featurelayerdrawer.h"
 #include "tesselation/ilwistesselator.h"
-#include "openglhelper.h"
+//#include "openglhelper.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -83,8 +83,8 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
              _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
-            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
-                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+
+            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
         // implicity the redoing of the geometry is also redoing the representation stuff(a.o. colors)
@@ -105,8 +105,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         for(const SPFeatureI& feature : features){
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
-            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
-                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
     }
