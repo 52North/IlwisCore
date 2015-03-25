@@ -89,7 +89,6 @@ friend class LayersRenderer;
     bool showLayerInfo() const;
     void setShowLayerInfo(bool yesno);
 
-
 signals:
     void currentCoordinateHasChanged();
     void showLayerInfoChanged();

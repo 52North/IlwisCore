@@ -8,11 +8,12 @@
 //#include "cornersgeoreference.h"
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
+#include "layersrenderer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options)
+RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options), _frameBufferObject(fbo)
 {
     valid(true);
     _screenGrf = GeoReference::create("corners");
@@ -246,6 +247,11 @@ bool RootDrawer::is3D() const
 void RootDrawer::set3D(bool yesno)
 {
     _is3D = yesno;
+}
+
+const QQuickFramebufferObject *RootDrawer::fbo() const
+{
+    return _frameBufferObject;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)

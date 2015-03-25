@@ -27,7 +27,7 @@ LayersView::~LayersView()
 
 QQuickFramebufferObject::Renderer *LayersView::createRenderer() const
 {
-    return new LayersRenderer();
+    return new LayersRenderer(this);
 }
 
 void LayersView::addCommand(const QString &command, const QVariantMap &params)
@@ -156,7 +156,7 @@ void LayersView::setCurrentCoordinate(const QString &var)
 {
     if ( var != ""){
         QStringList parts = var.split("|");
-        if ( parts.size() == 2){
+        if ( rootDrawer() && parts.size() == 2){
             _currentCoordinate = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
             emit currentCoordinateHasChanged();
         }
