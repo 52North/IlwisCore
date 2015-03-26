@@ -4,6 +4,10 @@
 
 #include <QObject>
 
+namespace Ilwis {
+class Resource;
+}
+
 class WorkflowMetadataFormBuilder: public QObject
 {
     Q_OBJECT

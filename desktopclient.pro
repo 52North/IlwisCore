@@ -63,6 +63,7 @@ INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
                 ../ilwiscore/core/ilwisobjects/coverage \
                 ../ilwiscore/core/ilwisobjects/table \
                 ../ilwiscore/core/ilwisobjects/operation \
+                ../ilwiscore/core/ilwisobjects/workflow \
                 ../ilwiscore/core/ilwisobjects/representation \
                 ../ilwiscore/core/catalog \
                 ../ilwiscore/core/ilwisobjects/domain \

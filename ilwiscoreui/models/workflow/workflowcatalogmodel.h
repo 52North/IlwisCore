@@ -3,16 +3,10 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/adjacency_list.hpp"
 
-#include "catalogmodel.h"
-#include "operationmodel.h"
+#include "operationcatalogmodel.h"
 #include "workflowmodel.h"
 #include "ilwiscoreui_global.h"
-
-using namespace boost;
-typedef adjacency_list<vecS, vecS, directedS> ExecutionBranch;
 
 class WorkflowModel;
 
@@ -28,12 +22,19 @@ public:
     QMLWorkflowList workflows();
     void nameFilter(const QString&);
 
+    Q_INVOKABLE quint64 workflowId(quint32 index) const;
+    Q_INVOKABLE QString executeworkflow(quint64 workflowid, const QString &parameters);
+
+    Q_INVOKABLE  WorkflowModel *newWorkflow(const QString &name);
+    Q_INVOKABLE  bool deleteWorkflow(quint32 index);
+    Q_INVOKABLE  WorkflowModel *saveWorkflow(quint32 index);
+
 private:
     QList<WorkflowModel *> _currentWorkflows;
 
-    void gatherDummyItems();
-
 signals:
+    void error(const QString& err);
+    void updateCatalog(const QUrl& url);
     void workflowsChanged();
 
 public slots:

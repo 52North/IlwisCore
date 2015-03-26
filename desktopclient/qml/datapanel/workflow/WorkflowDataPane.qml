@@ -2,14 +2,13 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 
-Window {
+import "../modeller" as Modeler
 
-    x : 100
-    y : 100
+Window {
 
     property bool canSeparate : true
 
-    Canvas {
+    Modeler.Canvas {
         id: canvas
         anchors.fill: parent
 

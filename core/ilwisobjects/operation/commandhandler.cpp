@@ -131,7 +131,7 @@ OperationImplementation *CommandHandler::create(const OperationExpression &expr)
     };
 
     if ( expr.isRemote()){
-        OperationExpression remoteexpr("remoteoperation('" + expr.toString(true) + "'')");
+        OperationExpression remoteexpr("remoteoperation('" + expr.toString(true) + "')");
         return docommand(remoteexpr);
     }
     return docommand(expr);
