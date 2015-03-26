@@ -22,8 +22,7 @@ public:
     virtual FeatureDrawing setSpatialAttributes(const SPFeatureI& feature, QVector<QVector3D>& vertices, QVector<QVector3D>& normals) const;
     virtual void setColorAttributes(const VisualAttribute&,
                             const QVariant &value,
-                            quint32 startIndex,
-                            quint32 count, std::vector<VertexColor> &colors) const;
+                            const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const;
 
 };
 }

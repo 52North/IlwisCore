@@ -386,7 +386,7 @@ QString LatLon::toString(int decimals, bool ) const
         QString result = QString("%1%2 %3\' %4\'\'").arg(dgr).arg(chardgr).arg(dmin).arg(dsec,0,'f', decimals);
         return result;
     };
-    QString llstring = QString("%1 %2").arg(ll(x)).arg(ll(y));
+    QString llstring = QString("%1 %2").arg(ll(y)).arg(ll(x));
 
     return llstring;
 }

@@ -342,7 +342,10 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
-    core/resources/ilwis.config
+    core/resources/ilwis.config \
+    core/resources/featurefragmentshader_nvdia.glsl \
+    core/resources/featurevertexshader_nvdia.glsl \
+    core/resources/representations.csv
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin

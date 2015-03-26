@@ -23,10 +23,29 @@ Rectangle {
         headerText:"Messages"
     }
 
+    Item{
+        id : clearArea
+        width : parent.width
+        height : 24
+        anchors.top : functionBar.bottom
+        Button{
+            id : clearButton
+            text : "Clear error/warning status"
+            anchors.verticalCenter: parent.verticalCenter
+            height : 20
+            width: parent.width - 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: {
+                messagehandler.resetColor(0)
+            }
+
+        }
+    }
+
     Item {
         id : messages
-        anchors.top : functionBar.bottom;
-        height : parent.height - functionBar.height
+        anchors.top : clearArea.bottom;
+        height : parent.height - functionBar.height - clearArea.height - 10
         width : parent.width
         TableView {
             id : messageTable

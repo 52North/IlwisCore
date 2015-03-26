@@ -123,5 +123,13 @@ void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &
         }
         indices.push_back(VertexIndex(oldend,points.size() - oldend, GL_TRIANGLE_FAN, objectid));
     }
+    for(int  i = 0; i < contours.size(); ++i){
+        quint32 oldend = points.size();
+        points.resize(oldend + contours[i].size()/2);
+        for(int j = 0; j < contours[i].size(); j+=2){
+            points[oldend + j/2] = QVector3D(QPointF(contours[i][j], contours[i][j+1]));
+        }
+        indices.push_back(VertexIndex(oldend,points.size() - oldend, GL_LINE_STRIP, objectid));
+    }
 
 }

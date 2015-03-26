@@ -3,6 +3,7 @@
 #include "basedrawer.h"
 #include "coordinatesystem.h"
 #include "rootdrawer.h"
+#include "ilwiscontext.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -26,35 +27,11 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         return false;
 
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
-        _shaders.addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                         "attribute highp vec4 position;"
-                                         "attribute mediump vec3 normal;"
-                                         "uniform mat4 mvp;"
-                                         "uniform vec3 scalecenter;"
-                                         "uniform float scalefactor;"
-                                         "uniform float alpha;"
-                                         "attribute lowp vec4 vertexColor;"
-                                         "varying lowp vec4 fragmentColor;"
-                                         "void main() {"
-                                         "    if ( scalefactor != 1) {"
-                                             "    float x = scalecenter[0] + (position[0] - scalecenter[0]) * scalefactor;"
-                                             "    float y = scalecenter[1] + (position[1] - scalecenter[1]) * scalefactor;"
-                                             "    float z = position[2];"
-                                            "    position[0] = x;"
-                                            "    position[1] = y;"
-                                            "    position[2] = z;"
-                                            "    position[3] = 1;"
-                                         "    }"
-                                         "    vertexColor.a = alpha * vertexColor.a;"
-                                         "    gl_Position =  mvp * position;"
-                                         "    fragmentColor = vertexColor;"
-                                         "}");
-        _shaders.addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                         "varying lowp vec4 fragmentColor;"
-                                         "void main() {"
-                                         "    gl_FragColor = fragmentColor;"
-                                         "}");
-
+        QString ilwisloc = context()->ilwisFolder().absoluteFilePath();
+        QString vertexglsllocation = ilwisloc + "/resources/" + _vertexShader;
+        _shaders.addShaderFromSourceFile(QOpenGLShader::Vertex,vertexglsllocation);
+        QString fragmentgslslocation = ilwisloc + "/resources/" + _fragmentShader;
+        _shaders.addShaderFromSourceFile(QOpenGLShader::Fragment,fragmentgslslocation);
 
         if(!_shaders.link()){
             return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
@@ -62,14 +39,10 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         if (!_shaders.bind()){
             return ERROR2(QString("%1 : %2"),TR("Drawing failed"),TR(_shaders.log()));
         }
-        _prepared |= DrawerInterface::ptSHADERS;
 
         _vboPosition = _shaders.attributeLocation("position");
         _vboNormal = _shaders.attributeLocation("normal");
-        _vboColor = _shaders.attributeLocation("vertexColor");
         _modelview = _shaders.uniformLocation("mvp");
-        _scaleCenter = _shaders.uniformLocation("scalecenter");
-        _scaleFactor = _shaders.uniformLocation("scalefactor");
         _vboAlpha = _shaders.uniformLocation("alpha");
 
     }

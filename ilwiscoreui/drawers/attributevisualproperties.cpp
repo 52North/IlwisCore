@@ -11,6 +11,8 @@
 using namespace Ilwis;
 using namespace Geodrawer;
 
+const QString VisualAttribute::LAYERATTRIBUTE="ILWIS_SINGLE_VALUE_LAYER_ATTRIBUTE";
+
 VisualAttribute::VisualAttribute()
 {
 }

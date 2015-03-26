@@ -32,6 +32,7 @@ public:
     quint32 columnIndex() const;
     void setColumnIndex(quint32 index);
 
+    const static QString LAYERATTRIBUTE;
 
 private:
     IRepresentation _representation;

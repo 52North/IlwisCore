@@ -20,7 +20,7 @@
 #include "drawerattributesetters/basespatialattributesetter.h"
 #include "featurelayerdrawer.h"
 #include "tesselation/ilwistesselator.h"
-#include "openglhelper.h"
+//#include "openglhelper.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -29,6 +29,8 @@ REGISTER_DRAWER(FeatureLayerDrawer)
 
 FeatureLayerDrawer::FeatureLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : LayerDrawer("FeatureLayerDrawer", parentDrawer, rootdrawer, options)
 {
+    _vertexShader = "featurevertexshader_nvdia.glsl";
+    _fragmentShader = "featurefragmentshader_nvdia.glsl";
 }
 
 DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)
@@ -56,6 +58,13 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
     if(!LayerDrawer::prepare(prepType, options))
         return false;
 
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _vboColor = _shaders.attributeLocation("vertexColor");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
+
+        _prepared |= DrawerInterface::ptSHADERS;
+    }
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
 
 
@@ -83,8 +92,8 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
              _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
-            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
-                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+
+            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
         // implicity the redoing of the geometry is also redoing the representation stuff(a.o. colors)
@@ -105,8 +114,7 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         for(const SPFeatureI& feature : features){
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
-            for(int i =0; i < _featureDrawings[featureIndex]._indices.size(); ++i)
-                setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex][i]._start,_featureDrawings[featureIndex][i]._count,_colors) ;
+            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
     }

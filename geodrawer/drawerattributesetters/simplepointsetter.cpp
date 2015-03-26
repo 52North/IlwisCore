@@ -58,12 +58,15 @@ FeatureDrawing SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature
 
 }
 
-void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<VertexColor> &colors) const
+void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
 {
-    if ( value.isValid() && value.toInt() != iUNDEF) {
-        for(int i =startIndex; i < startIndex + count; ++i){
-            QColor clr = attr.value2color(value);
-            colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+    for(int j =0; j < drawing._indices.size(); ++j){
+        if ( value.isValid() && value.toInt() != iUNDEF) {
+            const auto& indices = drawing[j];
+            for(int i =indices._start; i < indices._start + indices._count; ++i){
+                QColor clr = attr.value2color(value);
+                colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+            }
         }
     }
 }
