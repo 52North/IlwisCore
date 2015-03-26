@@ -35,16 +35,30 @@ WorkflowCatalogModel::WorkflowCatalogModel(QObject *parent): CatalogModel()
 
 WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name)
 {
-    QString url("ilwis://operations/workflow_%1");
-    url.arg(name);
+    QUrl url(QString("ilwis://operations/workflow_%1").arg(name));
+    OperationResource opResource( url );
+    opResource.setIlwisType(itWORKFLOW);
 
-    qDebug() << "newWorkflow() ... new temporary workflow -> " << url;
+    // copied from rasterstretchoperation
+    opResource.setLongName("rescale input values to an output map");
+    opResource.setSyntax("linearstretch(raster");
+    opResource.setDescription(TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
+    opResource.setInParameterCount({2,3});
+    opResource.addInParameter(0, itRASTER, TR("rastercoverage to stretch"), TR("input rastercoverage with domain item or numeric"));
+    opResource.addInParameter(1, itNUMERIC, TR("percentage|number"));
+    opResource.addInParameter(2, itNUMERIC, TR("number"));
+    opResource.setOutParameterCount({1});
+    opResource.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("output rastercoverage stretched"));
+    mastercatalog()->addItems({opResource});
+
 
     IWorkflow flow;
-    if (!flow.prepare(url, itOPERATIONMETADATA)) {
+    if (!flow.prepare(opResource)) {
         ERROR1("Could not initialize workflow with name '%1'", name);
+        return new WorkflowModel();
     }
-    Resource resource = flow.ptr()->source();
+
+    Resource resource = mastercatalog()->id2Resource(opResource.id());
 
     WorkflowModel *model = new WorkflowModel(resource);
     return model; // temporary until it is saved
