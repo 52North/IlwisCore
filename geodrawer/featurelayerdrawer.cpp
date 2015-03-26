@@ -29,6 +29,8 @@ REGISTER_DRAWER(FeatureLayerDrawer)
 
 FeatureLayerDrawer::FeatureLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : LayerDrawer("FeatureLayerDrawer", parentDrawer, rootdrawer, options)
 {
+    _vertexShader = "featurevertexshader_nvdia.glsl";
+    _fragmentShader = "featurefragmentshader_nvdia.glsl";
 }
 
 DrawerInterface *FeatureLayerDrawer::create(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options)
@@ -56,6 +58,13 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
     if(!LayerDrawer::prepare(prepType, options))
         return false;
 
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _vboColor = _shaders.attributeLocation("vertexColor");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
+
+        _prepared |= DrawerInterface::ptSHADERS;
+    }
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
 
 
