@@ -78,6 +78,8 @@ protected:
     GLuint _scaleFactor = iUNDEF;
     GLuint _vboAlpha = iUNDEF;
     QOpenGLShaderProgram _shaders;
+    QString _vertexShader;
+    QString _fragmentShader;
 
 private:
     bool _active = true; // unless defined otherwise, the drawer is active
