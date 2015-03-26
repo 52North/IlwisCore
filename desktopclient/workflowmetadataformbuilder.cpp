@@ -1,5 +1,11 @@
+#include "kernel.h"
+#include "mastercatalog.h"
+#include "models/resourcemodel.h"
+
 #include "workflowmetadataformbuilder.h"
 
+
+using namespace Ilwis;
 
 WorkflowMetadataFormBuilder::WorkflowMetadataFormBuilder()
 {
@@ -9,6 +15,10 @@ QString WorkflowMetadataFormBuilder::createWorkflowForm(quint64 metaid) const
 {
 
     // TODO auto create from workflow resource parameters
+
+
+    Resource resource = mastercatalog()->id2Resource(metaid);
+
 
     QString form;
     form = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;\

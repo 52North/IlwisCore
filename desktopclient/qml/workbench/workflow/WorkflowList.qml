@@ -18,7 +18,7 @@ Rectangle {
     ListView {
         id: listview
         anchors.fill: parent
-        model : operationModel
+        model : workflowModel
 
         delegate : Item {
             id : currentWorkflow
@@ -42,7 +42,6 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.ArrowCursor
                     onClicked: {
-                        applicationForm.state = listview.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                         listview.currentIndex = index;
                         createWorkflowMetadataForm(id, displayName);
                     }

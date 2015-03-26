@@ -234,7 +234,7 @@ Rectangle {
                 var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
                 qml += "Window { id: floatingWindow } ";
                 var window = Qt.createQmlObject(qml, datapanesplit)
-                tab.parent = window.contentItem;
+                tab.item.parent = window.contentItem;
                 window.show();
 
                 closeTab(activeSplit, tabIndex);

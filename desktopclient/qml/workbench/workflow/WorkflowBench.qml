@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 
 import WorkflowMetadataFormBuilder 1.0
+import WorkflowCatalogModel 1.0
 
 import ".." as Workbench
 import "../../datapanel" as DataPane
@@ -22,6 +23,17 @@ Rectangle {
 
     // ###########################  CONTROL BUTTONS
 
+    Action {
+        id: createNewWorkflow
+        onTriggered: {
+            console.log("Creating new workflow ...");
+            var workflow = workflows.newWorkflow("workflow");
+            console.log("id: " + workflow.id);
+            console.log("displayName: " + workflow.displayName);
+            createWorkflowMetadataForm(workflow.id, workflow.displayName);
+        }
+    }
+
     Rectangle {
         id: workflowBenchButtons
         anchors.top : workflowbenchtitle.bottom
@@ -32,9 +44,9 @@ Rectangle {
 
         Button {
             id : newWorkflow
-            text :  qsTr("New Workflow")
             anchors.margins: 5
-            onClicked : console.log("TODO new workflow")
+            action : createNewWorkflow
+            text :  qsTr("New Workflow")
             enabled: true
         }
 
@@ -45,11 +57,13 @@ Rectangle {
     // ###########################  Workflow Metadata
 
     function createWorkflowMetadataForm(metaid, title) {
-        //var form = formbuilder.createWorkflowForm(metaid)
-        var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
-        appFrame.formQML = form
-        appFrame.formTitle = title
+        var form = formbuilder.index2Form(metaid);
+
+        //var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
+        appFrame.formQML = form;
+        appFrame.formTitle = title;
         appFrame.opacity = 1
+        applicationForm.state = "maximized";
     }
 
     function createWorkflowEditSession(workflowName) {
@@ -88,7 +102,6 @@ Rectangle {
                     onClicked: createWorkflowEditSession(applicationForm.workflowname)
                     tooltip: qsTr("Edit selected workflow")
                     anchors.margins: 5
-                    enabled: true
                 }
                 Button {
                     id : saveButton
@@ -119,6 +132,7 @@ Rectangle {
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 anchors.top : workflowButtons.bottom;
+                enabled: false;
                 opacity: 0
             }
             states: [
@@ -128,7 +142,6 @@ Rectangle {
                         target: applicationForm
                         height : 200
                         opacity : 1
-
                     }
                 },
                 State {
@@ -169,7 +182,7 @@ Rectangle {
         // ###########################  WORKFLOWS
 
         TabView {
-            id : workflows
+            id : workflowView
 
             Tab {
                 title : qsTr("Workflow/Operation List")

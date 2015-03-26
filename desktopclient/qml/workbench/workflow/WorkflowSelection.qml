@@ -6,6 +6,8 @@ import ".." as Workbench
 Rectangle {
     id: workflowcontainer
 
+    property bool activeEditSession : false
+
     signal unloadcontent(string content)
 
     Workbench.FunctionBarHeader {
@@ -21,16 +23,17 @@ Rectangle {
     Loader {
         id : workflowbenchContentLoader
 
-        property bool activeEditSession : false
         property string editSession
 
         width : parent.width
-        anchors.top : functionBarHeader.bottom
         anchors.bottom: parent.bottom
+        anchors.top : functionBarHeader.bottom
         Component.onCompleted : {
             if ( !activeEditSession) {
+                console.log("new workflow bench")
                 workflowbenchContentLoader.setSource("WorkflowBench.qml")
             } else {
+                console.log("existing edit session: " + editSession)
                 workflowbenchContentLoader.setSource("WorkflowEdit.qml")
             }
         }
