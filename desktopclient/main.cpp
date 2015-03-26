@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
+        WorkflowCatalogModel workflows;
         uicontext()->qmlContext(ctx);
 
         //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
@@ -102,10 +103,12 @@ int main(int argc, char *argv[])
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
+        ctx->setContextProperty("workflows", &workflows);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
+        mastercatalogmodel.connect(&workflows, &WorkflowCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         messageHandler.connect(kernel()->issues().data(), &IssueLogger::updateIssues,&messageHandler, &UserMessageHandler::addMessage );
         tranquilizers.connect(kernel(), &Kernel::updateTranquilizer, &tranquilizers, &TranquilizerHandler::updateTranquilizer,Qt::DirectConnection);
         tranquilizers.connect(kernel(), &Kernel::createTranquilizer, &tranquilizers, &TranquilizerHandler::createTranquilizer,Qt::DirectConnection);
