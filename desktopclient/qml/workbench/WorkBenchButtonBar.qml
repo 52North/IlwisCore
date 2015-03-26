@@ -57,6 +57,13 @@ Rectangle {
 
     }
     Action {
+        id : workflowsClicked
+        onTriggered : {
+            transitionInfoPane("workflow/WorkflowSelection.qml")
+        }
+
+    }
+    Action {
         id : workspaceClicked
         onTriggered : {
             transitionInfoPane("Workspaces.qml")
@@ -127,6 +134,12 @@ Rectangle {
             action: modellerClicked
             iconname : "modellerCS1.png"
             label: qsTr("Modeller")
+        }
+        WorkBenchButton{
+            id : workflow
+            action: workflowsClicked
+            iconname : "modellerCS1.png"
+            label: qsTr("Workflows")
         }
         WorkBenchButton{
             id : prop

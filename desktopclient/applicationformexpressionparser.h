@@ -17,6 +17,7 @@ public:
     ApplicationFormExpressionParser();
 
     Q_INVOKABLE QString index2Form(quint64 metaid) const;
+    Q_INVOKABLE QString createWorkflowForm(quint64) const;
 private:
     struct FormParameter {
         int _fieldType;
@@ -38,6 +39,8 @@ private:
     QString makeFormPart(int width, const std::vector<FormParameter> &parameters, bool input, QString &results) const;
     QString iconName(IlwisTypes dataType) const;
     QString keys(IlwisTypes type) const;
+
+    std::vector<FormParameter> createWorkflowMetadata(quint64 metaid) const;
 };
 
 #endif // APPLICATIONFORMEXPRESSIONPARSER_H

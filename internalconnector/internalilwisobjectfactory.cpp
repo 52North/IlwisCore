@@ -54,6 +54,7 @@
 #include "operationmetadata.h"
 #include "epsg.h"
 #include "catalog.h"
+#include "workflow.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -84,6 +85,8 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createTable(resource,options);
     } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
         return createOperationMetaData(resource);
+    } else if ( resource.ilwisType() & itWORKFLOW) {
+        return createWorkflow(resource, options);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
     } else if ( resource.ilwisType() & itFEATURE) {
@@ -185,6 +188,31 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
     return new OperationMetaData(resource);
 }
 
+IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource, const IOOptions &options) const {
+    if (!hasType(resource.ilwisType(), itWORKFLOW)){
+        return nullptr;
+    }
+    Workflow *workflow = new Workflow(resource);
+
+    /*##########
+     * copied from createCatalog: TODO discuss
+
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    if (!factory) {
+        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
+        return 0;
+    }
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "ilwis");
+    if ( !connector) {
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
+        return 0;
+    }
+    workflow->setConnector(connector, IlwisObject::cmINPUT, options);
+    */
+    //#########
+    return workflow;
+}
+
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
 {
     switch(type) {
@@ -222,6 +250,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Ellipsoid();
     case itOPERATIONMETADATA:
         return new OperationMetaData();
+    case itWORKFLOW:
+        return new Workflow();
     case itREPRESENTATION:
         return new Representation();
     }
@@ -250,6 +280,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itTABLE) {
         return true;
     }else if ( resource.ilwisType() & itOPERATIONMETADATA) {
+        return true;
+    } else if ( resource.ilwisType() & itWORKFLOW) {
         return true;
     } else if ( resource.ilwisType() & itGEOREF) {
         return true;

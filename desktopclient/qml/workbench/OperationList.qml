@@ -61,7 +61,7 @@ Rectangle {
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
-                    makeForm(id, displayName);
+                    makeForm(id, displayName)
                 }
             }
 

@@ -115,27 +115,27 @@ Rectangle {
                 }
             ]
         }
-        TabView{
+        TabView {
+
             id : operationTabs
             width : parent.width
+
             Tab {
                 title : qsTr("Operation List")
-                signal makeForm(string objectid, string name)
-                OperationList{
+                OperationList {
+                    id : operationList
                     Connections {
                         target : operationList
                         onMakeForm : {
                             newForm(objectid, name)
                         }
                     }
-                    id : operationList
                 }
 
 
             }
             Tab {
                 title : qsTr("Operation Categories")
-                 signal makeForm(string objectid, string name)
                 OperationCatagoriesList{
                     id : operationCatagories
                     Connections {

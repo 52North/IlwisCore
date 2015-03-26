@@ -20,21 +20,21 @@ Item {
         Action {
             id :clear
             onTriggered: {
-                drawing.clearModeller();
+                canvas.clearModeller();
             }
         }
 
         Action {
             id :newDatasource
             onTriggered: {
-                drawing.addType(Qt.createComponent("DataSourceObject.qml").createObject())
+                canvas.addType(Qt.createComponent("DataSourceObject.qml").createObject())
             }
         }
 
         Action {
             id :newOperation
             onTriggered: {
-                 drawing.addType(Qt.createComponent("OperationObject.qml").createObject())
+                 canvas.addType(Qt.createComponent("OperationObject.qml").createObject())
             }
         }
 
@@ -42,7 +42,7 @@ Item {
         Action {
             id :newConnection
             onTriggered: {
-                 drawing.addType(Qt.createComponent("ConnectorObject.qml").createObject())
+                 canvas.addType(Qt.createComponent("ConnectorObject.qml").createObject())
             }
         }
 
@@ -56,7 +56,7 @@ Item {
         Action {
             id :close
             onTriggered: {
-                drawing.clearModeller();
+                canvas.clearModeller();
                 dataPanel.removeModellerPanel(parent.title);
             }
         }
@@ -142,8 +142,8 @@ Item {
         property int paintX
         property int paintY
 
-        Drawing {
-            id: drawing
+        Canvas {
+            id: canvas
             anchors.fill: parent
 
         }

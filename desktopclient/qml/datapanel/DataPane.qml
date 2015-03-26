@@ -22,12 +22,16 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
+    function addWorkflowCanvas(name) {
+        datapanesplit.addWorkflowCanvas(name)
+    }
+
     function addModellerPanel(name) {
-        mainsplit.addModeller(name)
+        datapanesplit.addModeller(name)
     }
 
     function removeModellerPanel(name) {
-        mainsplit.removeTabFromView(name);
+        datapanesplit.removeTabFromView(name);
     }
 
     function iconSource(name) {
@@ -58,7 +62,7 @@ Rectangle {
                 splitside = activeSplit
             }
         }
-        mainsplit.newCatalog(url,splitside)
+        datapanesplit.newCatalog(url,splitside)
     }
 
     function setCatalogByIndex(currentTab, tabindex){
@@ -71,7 +75,7 @@ Rectangle {
     }
 
     function changeCatalog(url){
-        mainsplit.changeCatalog(url)
+        datapanesplit.changeCatalog(url)
     }
 
     Loader {
@@ -79,7 +83,7 @@ Rectangle {
     }
 
     SplitView {
-        id : mainsplit
+        id : datapanesplit
         orientation: Qt.Horizontal
         anchors.fill: parent
         property int tel: 0
@@ -113,6 +117,7 @@ Rectangle {
                 }
             }
         }
+
         function showMapWindow(objectid){
             var tabview = activeSplit ===1 ? lefttab : righttab
             mapWindow.setSource("visualization/MapWindow.qml",{"width" : tabview.width, "height" : tabview.height})
@@ -219,6 +224,33 @@ Rectangle {
             }
         }
 
+        function showTabInFloatingWindow(tabIndex) {
+            var tabview = activeSplit === 1 ? lefttab : righttab
+            var tab = tabview.getTab(tabIndex)
+
+            if (tab && tab.item) {
+                console.log("tab " + tabIndex + " to floating window")
+
+                var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
+                qml += "Window { id: floatingWindow } ";
+                var window = Qt.createQmlObject(qml, datapanesplit)
+                tab.item.parent = window.contentItem;
+                window.show();
+
+                closeTab(activeSplit, tabIndex);
+                getCurrentCatalogTab().show();
+
+            }
+        }
+
+        function addWorkflowCanvas(name) {
+            console.log("creating new workflow canvas")
+            var tabview = activeSplit === 1 ? lefttab : righttab
+            var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
+            var tab = tabview.addTab(name, component)
+            tab.active = true
+        }
+
         function addModeller(name) {
             var component = Qt.createComponent("modeller/ModellerPanel.qml")
             var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
@@ -250,7 +282,7 @@ Rectangle {
         }
 
 
-        DataTabView2{
+        DataTabView2 {
             id : righttab
             side : 2
         }
