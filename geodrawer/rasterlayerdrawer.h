@@ -26,7 +26,9 @@ public:
 
 private:
     bool draw(const IOOptions &options);
-    QImage _image;
+    GLuint _texcoord;
+    GLuint _textureid;
+    std::unique_ptr<QOpenGLTexture> _texture;
 };
 }
 }

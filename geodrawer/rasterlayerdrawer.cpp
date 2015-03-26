@@ -2,6 +2,7 @@
 #include <QQuickFramebufferObject>
 #include <QSGTexture>
 #include <QQuickWindow>
+#include <QOpenGLTexture>
 #include "raster.h"
 #include "drawers/attributevisualproperties.h"
 #include "drawers/drawerfactory.h"
@@ -23,13 +24,24 @@ RasterLayerDrawer::~RasterLayerDrawer()
 Ilwis::Geodrawer::RasterLayerDrawer::RasterLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) :
     LayerDrawer("RasterLayerDrawer", parentDrawer, rootdrawer, options)
 {
-
+    _fragmentShader = "rasterfragmentshader_nvdia.glsl";
+    _vertexShader = "rastervertexshader_nvdia.glsl";
 }
 
 bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
     if(!LayerDrawer::prepare(prepType, options))
         return false;
+
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _texcoord = _shaders.attributeLocation("texCoord");
+        _textureid = _shaders.uniformLocation( "texture" );
+
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+        _prepared |= DrawerInterface::ptSHADERS;
+    }
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         IRasterCoverage raster = coverage().as<RasterCoverage>();
@@ -41,7 +53,8 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         int maxpow2 = needed - (int)needed == 0 ? needed : needed + 1;
         int maxsizeneeded = std::pow(2,maxpow2);
 
-
+        QImage img("d:/data/pictures/0040.jpg")  ;
+        _texture.reset( new QOpenGLTexture(img));
 
     }
     return true;
@@ -107,9 +120,15 @@ bool RasterLayerDrawer::draw(const IOOptions &options)
         return false;
     }
 
-//    if(!_shaders.bind())
-//        return false;
-    //QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
+    if(!_shaders.bind())
+        return false;
+    QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
+
+   _shaders.setUniformValue(_modelview, mvp);
+
+
+
+    _shaders.release();
 
     return true;
 }
