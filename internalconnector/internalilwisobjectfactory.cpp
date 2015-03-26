@@ -54,6 +54,7 @@
 #include "operationmetadata.h"
 #include "epsg.h"
 #include "catalog.h"
+#include "workflow.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -84,6 +85,8 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createTable(resource,options);
     } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
         return createOperationMetaData(resource);
+    } else if ( resource.ilwisType() & itWORKFLOW) {
+        return createWorkflow(resource);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
     } else if ( resource.ilwisType() & itFEATURE) {
@@ -185,6 +188,10 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
     return new OperationMetaData(resource);
 }
 
+IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource) const {
+    return new Workflow(resource);
+}
+
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
 {
     switch(type) {
@@ -222,6 +229,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Ellipsoid();
     case itOPERATIONMETADATA:
         return new OperationMetaData();
+    case itWORKFLOW:
+        return new Workflow();
     case itREPRESENTATION:
         return new Representation();
     }
@@ -250,6 +259,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itTABLE) {
         return true;
     }else if ( resource.ilwisType() & itOPERATIONMETADATA) {
+        return true;
+    } else if ( resource.ilwisType() & itWORKFLOW) {
         return true;
     } else if ( resource.ilwisType() & itGEOREF) {
         return true;
