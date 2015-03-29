@@ -16,10 +16,10 @@ Rectangle {
 
     Rectangle {
         id:chosenItem
-        radius:10;
+        radius:2;
         width:parent.width;
         height:comboBox.height;
-        color: "#DADADD"
+        color: "lightgrey"
         border.width: 1
         border.color: "#9494B8"
         smooth:true;
@@ -61,7 +61,7 @@ Rectangle {
         radius:4;
         anchors.top: chosenItem.bottom;
         anchors.margins: 1;
-        color: "#F2F2F2"
+        color: "lightgrey"
         border.width: 1
         border.color: "#B0B0B0"
 
