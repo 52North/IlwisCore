@@ -12,6 +12,9 @@
 #include "mastercatalog.h"
 #include "catalogview.h"
 #include "ilwiscontext.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "models/catalogfiltermodel.h"
 #include "models/mastercatalogmodel.h"
 #include "models/operationmodel.h"
@@ -30,6 +33,7 @@
 #include "models/projectionparametermodel.h"
 #include "models/workflowmodel.h"
 #include "models/visualattributemodel.h"
+#include "models/tablemodel.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
@@ -78,6 +82,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
+        qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);

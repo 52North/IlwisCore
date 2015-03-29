@@ -54,7 +54,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/polygonattributesetter.h \
     ilwiscoreui/propertyeditors/attributeeditor.h \
     ilwiscoreui/propertyeditors/lineattributesetter.h \
-    ilwiscoreui/models/visualattributemodel.h
+    ilwiscoreui/models/visualattributemodel.h \
+    ilwiscoreui/models/tablemodel.h
 
 unix {
     target.path = /usr/lib
@@ -94,7 +95,8 @@ SOURCES += \
     ilwiscoreui/propertyeditors/mapinformationattributesetter.cpp \
     ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
     ilwiscoreui/propertyeditors/attributeeditor.cpp \
-    ilwiscoreui/models/visualattributemodel.cpp
+    ilwiscoreui/models/visualattributemodel.cpp \
+    ilwiscoreui/models/tablemodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

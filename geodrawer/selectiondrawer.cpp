@@ -12,6 +12,9 @@ using namespace Geodrawer;
 
 SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : SimpleDrawer("SelectionDrawer", parentDrawer,rootdrawer, options)
 {
+    _vertexShader = "featurevertexshader_nvdia.glsl";
+    _fragmentShader = "featurefragmentshader_nvdia.glsl";
+
     QColor clr;
     _colors.resize(13);
     if ( options.contains("areacolor")){
@@ -87,6 +90,13 @@ bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const I
 {
     if (!SimpleDrawer::prepare(prepType, options)){
         return false;
+    }
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _vboColor = _shaders.attributeLocation("vertexColor");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
+
+        _prepared |= DrawerInterface::ptSHADERS;
     }
 
     if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){

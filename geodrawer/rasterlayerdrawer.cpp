@@ -3,6 +3,7 @@
 #include <QSGTexture>
 #include <QQuickWindow>
 #include <QOpenGLTexture>
+#include <QOpenGLShaderProgram>
 #include "raster.h"
 #include "drawers/attributevisualproperties.h"
 #include "drawers/drawerfactory.h"
@@ -34,8 +35,8 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         return false;
 
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
-        _texcoord = _shaders.attributeLocation("texCoord");
-        _textureid = _shaders.uniformLocation( "texture" );
+        _texcoordid = _shaders.attributeLocation("texCoord");
+        _textureid = _shaders.uniformLocation( "tex" );
 
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -53,8 +54,26 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         int maxpow2 = needed - (int)needed == 0 ? needed : needed + 1;
         int maxsizeneeded = std::pow(2,maxpow2);
 
-        QImage img("d:/data/pictures/0040.jpg")  ;
+        QImage img("h:/temp/af_dem_cor.bmp")  ;
         _texture.reset( new QOpenGLTexture(img));
+        Envelope env = rootDrawer()->zoomEnvelope();
+        _vertices.resize(4);
+        _vertices[0] = QVector3D(env.min_corner().x, env.min_corner().y, 0);
+        _vertices[1] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
+        _vertices[2] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
+        _vertices[3] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
+       // _vertices[4] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
+       // _vertices[5] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
+
+        _texcoords.resize(4);
+        _texcoords = {{0,0},
+                       {1,0},
+                       {1,1},
+                      {0,1}
+                     };
+
+
+
 
     }
     return true;
@@ -127,6 +146,22 @@ bool RasterLayerDrawer::draw(const IOOptions &options)
    _shaders.setUniformValue(_modelview, mvp);
 
 
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+   _texture->bind();
+
+   _shaders.setAttributeArray( _vboPosition, _vertices.constData(), 3 );
+   _shaders.setAttributeArray( _texcoordid, _texcoords.constData(), 2 );
+   _shaders.setUniformValue( _textureid, 0 );
+
+   _shaders.enableAttributeArray( _vboPosition );
+   _shaders.enableAttributeArray( _texcoordid );
+
+   glDrawArrays( GL_QUADS, 0, 4 );
+
+   _shaders.disableAttributeArray( _vboPosition );
+   _shaders.disableAttributeArray( _texcoordid );
 
     _shaders.release();
 

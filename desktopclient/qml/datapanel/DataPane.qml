@@ -125,8 +125,16 @@ Rectangle {
             }
         }
 
-        function showObject(objectid){
-            var component = Qt.createComponent("visualization/Visualize.qml")
+        function showObject(objectid, subtype){
+            var type = mastercatalog.id2type(objectid)
+            if ( !type)
+                return
+            var qmlUrl;
+            if ( type === "rastercoverage" || type === "featurecoverage" || type === "linecoverage" || type === "pointcoverage" || type === "polygoncoverage")
+                qmlUrl = "visualization/Visualize.qml"
+            if ( type === "table" || type === "flattable")
+                qmlUrl = "table/TablePane.qml"
+            var component = Qt.createComponent(qmlUrl)
             var resource = mastercatalog.id2Resource(objectid)
             if ( resource !== null){
                 var name = resource.displayName

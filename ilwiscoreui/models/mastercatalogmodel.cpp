@@ -124,6 +124,17 @@ QString MasterCatalogModel::getName(const QString &id)
     return "";
 }
 
+QString MasterCatalogModel::id2type(const QString &id) const
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    if ( ok){
+        IlwisTypes tp = mastercatalog()->id2type(objid);
+        return TypeHelper::type2name(tp);
+    }
+    return "";
+}
+
 std::vector<Resource> MasterCatalogModel::select(const QString &filter)
 {
     return mastercatalog()->select(filter);
