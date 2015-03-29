@@ -11,8 +11,8 @@ import "Global.js" as Global
 
 ApplicationWindow {
     id : bigthing
-    width: 1300
-    height : 900
+    width: 1400
+    height : 1000
     color : "light grey"
 
     property int maxPull : 500
