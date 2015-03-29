@@ -211,7 +211,7 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     _shaders.setAttributeArray(_vboPosition, _vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);
-    for(const auto& featureDrawing : _featureDrawings){
+    for(const FeatureDrawing& featureDrawing : _featureDrawings){
         if ( featureDrawing._geomtype == itPOINT){
             _shaders.setUniformValue(_scaleCenter, featureDrawing._center);
             _shaders.setUniformValue(_scaleFactor, (float)rootDrawer()->zoomScale());
@@ -222,8 +222,18 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
             }
         }
 
-        for( const VertexIndex& featurePart : featureDrawing._indices)
-            glDrawArrays(featurePart._oglType,featurePart._start,featurePart._count);
+        for( const VertexIndex& featurePart : featureDrawing._indices){
+            bool ok = true;
+            if (featureDrawing._geomtype == itPOLYGON ){
+                if (featurePart._oglType == GL_LINE_STRIP)
+                    ok = _showBoundaries;
+                else if (featurePart._oglType == GL_TRIANGLE_FAN){
+                    ok = _showAreas;
+                }
+            }
+            if ( ok)
+                glDrawArrays(featurePart._oglType,featurePart._start,featurePart._count);
+        }
     }
     _shaders.disableAttributeArray(_vboNormal);
     _shaders.disableAttributeArray(_vboPosition);
@@ -241,6 +251,13 @@ QVariant FeatureLayerDrawer::attribute(const QString &attrName) const
 
     if ( attrName == "linewidth")
         return _lineWidth;
+    if ( attrName == "polygonboundaries")
+        return _showBoundaries;
+    if ( attrName == "polygonareas"){
+        return _showAreas;
+    }
+    if ( attrName == "areatransparency")
+        return _areaTransparency;
 
     return QVariant();
 }
@@ -251,6 +268,12 @@ void FeatureLayerDrawer::setAttribute(const QString &attrName, const QVariant &v
 
     if ( attrName == "linewidth")
         _lineWidth = value.toFloat();
+    if ( attrName == "polygonboundaries")
+        _showBoundaries = value.toBool();
+    if ( attrName == "polygonareas")
+        _showAreas = value.toBool();
+    if ( attrName == "areatransparency")
+        _areaTransparency = value.toFloat();
 }
 
 
