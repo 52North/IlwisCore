@@ -330,7 +330,53 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
 
     return component;
 
+}
 
+QString ApplicationFormExpressionParser::createWorkflowForm(quint64 metaid) const {
+    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
+    QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
+    columnStart += exclusiveGroup;
+
+    std::vector<FormParameter> parameters = createWorkflowMetadata(metaid);
+
+    int width = 0;
+    for(int i = 0; i < parameters.size(); ++i){
+        width = std::max(parameters[i]._label.size(), width);
+    }
+    width *= 10;
+    width = std::min(100, width);
+
+    QString results;
+    QString inputpart = makeFormPart(width, parameters, true, results);
+    results = "property string formresult : " + results + ";property string outputfield_0;";
+    columnStart = QString(columnStart).arg(results);
+
+    //QString seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
+
+    QString component = columnStart + inputpart + "}";
+
+    MESSAGE1("new dynamic qml component: %1", component);
+    return component;
+}
+
+
+std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::createWorkflowMetadata(quint64 metaid) const
+{
+    std::vector<FormParameter> parameters;
+
+    FormParameter metadataname;
+    metadataname._label = "Name";
+    metadataname._dataType = itTEXTDOMAIN;
+    metadataname._fieldType = ftTEXTEDIT;
+    parameters.push_back(metadataname);
+
+    FormParameter metadatadescription;
+    metadatadescription._label = "Description";
+    metadatadescription._dataType = itTEXTDOMAIN;
+    metadatadescription._fieldType = ftTEXTAREA;
+    parameters.push_back(metadatadescription);
+
+    return parameters;
 }
 
 

@@ -559,8 +559,10 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCATALOG;
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
         return  itOPERATIONMETADATA;
-    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
+    if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
         return  itOPERATIONMETADATA;
+        //return  itWORKFLOW;
+    }
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
     if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
