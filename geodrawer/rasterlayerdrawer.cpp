@@ -54,22 +54,20 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         int maxpow2 = needed - (int)needed == 0 ? needed : needed + 1;
         int maxsizeneeded = std::pow(2,maxpow2);
 
-        QImage img("h:/temp/af_dem_cor.bmp")  ;
+        QImage img("d:/temp/blog1.png")  ;
         _texture.reset( new QOpenGLTexture(img));
         Envelope env = rootDrawer()->zoomEnvelope();
-        _vertices.resize(4);
+        _vertices.resize(6);
         _vertices[0] = QVector3D(env.min_corner().x, env.min_corner().y, 0);
         _vertices[1] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
-        _vertices[2] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
-        _vertices[3] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
-       // _vertices[4] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
-       // _vertices[5] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
+        _vertices[2] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
+        _vertices[3] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
+        _vertices[4] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
+        _vertices[5] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
 
-        _texcoords.resize(4);
-        _texcoords = {{0,0},
-                       {1,0},
-                       {1,1},
-                      {0,1}
+        _texcoords.resize(6);
+        _texcoords = {{0,0},{1,0},{0,1},
+                      {1,0},{1,1},{0,1}
                      };
 
 
@@ -151,14 +149,14 @@ bool RasterLayerDrawer::draw(const IOOptions &options)
 
    _texture->bind();
 
-   _shaders.setAttributeArray( _vboPosition, _vertices.constData(), 3 );
-   _shaders.setAttributeArray( _texcoordid, _texcoords.constData(), 2 );
+   _shaders.setAttributeArray( _vboPosition, _vertices.constData() );
+   _shaders.setAttributeArray( _texcoordid, _texcoords.constData() );
    _shaders.setUniformValue( _textureid, 0 );
 
    _shaders.enableAttributeArray( _vboPosition );
    _shaders.enableAttributeArray( _texcoordid );
 
-   glDrawArrays( GL_QUADS, 0, 4 );
+   glDrawArrays( GL_TRIANGLES, 0, 6 );
 
    _shaders.disableAttributeArray( _vboPosition );
    _shaders.disableAttributeArray( _texcoordid );
