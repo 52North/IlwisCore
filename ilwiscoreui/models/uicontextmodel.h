@@ -29,6 +29,8 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(int currentKey READ currentKey CONSTANT)
+    Q_PROPERTY(QStringList colorNames READ colorNames CONSTANT)
+
 public:
     explicit UIContextModel(QObject *parent = 0);
 
@@ -48,6 +50,8 @@ public:
     void removeViewer(quint64 viewerid);
     void currentKey(int ev);
     int currentKey() const;
+    QStringList colorNames() const;
+    void prepare();
 
 signals:
     void activeSplitChanged();
@@ -55,12 +59,16 @@ signals:
 public slots:
 
 private:
+
+
+
     std::map<QString, CreatePropertyEditor> _propertyEditors;
     std::map<quint64, LayersViewCommandInterface *> _viewers;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
     int _activeSplit = 1;
     int _currentKey = 0;
+    QStringList _colorNames;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

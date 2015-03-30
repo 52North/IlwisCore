@@ -4,6 +4,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "uicontextmodel.h"
+#include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
 std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
@@ -11,6 +12,8 @@ std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
+
+
 }
 
 LayerManager *UIContextModel::createLayerManager(const QString& objectName)
@@ -118,6 +121,25 @@ void UIContextModel::currentKey(int ev)
 int UIContextModel::currentKey() const
 {
     return _currentKey;
+}
+
+QStringList UIContextModel::colorNames() const
+{
+    return _colorNames;
+}
+
+void UIContextModel::prepare()
+{
+    QString ilwisloc = context()->ilwisFolder().absoluteFilePath();
+    QString colornames = ilwisloc + "/resources/svgcolornames.txt";
+    std::ifstream fstream;
+    fstream.open(colornames.toStdString());
+    if ( fstream.is_open()){
+        char txt[100];
+        while (fstream.getline(txt,100)){
+            _colorNames.push_back(txt);
+        }
+    }
 }
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)
