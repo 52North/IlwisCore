@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
+import UIContextModel 1.0
 import "../Global.js" as Global
 
 
@@ -9,10 +10,11 @@ Rectangle {
     id:comboBox
     property variant items: ["a","b","c","de", "f","ff"];
     property alias selectedItem: chosenItemText.text;
-    property string lefttopColor : "blue"
-    property string leftbottomColor : "green"
-    property string righttopColor : "red"
-    property string rightbottomColor : "white"
+    property color lefttopColor : "blue"
+    property color leftbottomColor : "green"
+    property color righttopColor : "red"
+    property color rightbottomColor : "white"
+    property int baseSize : 10
     signal comboClicked;
     //            width: 100;
     //            height: 30;
@@ -71,21 +73,61 @@ Rectangle {
         border.width: 1
         border.color: "#B0B0B0"
 
+        property int currentButton : 0
+
         Rectangle {
             id:listView
-            height:240
+            height:180
             width : parent.width
             color : Global.alternatecolor1
             Button{
                 id : lefttopButton
                 width : 25
                 height : 14
+                onClicked: {
+                    dropDown.currentButton = 0
+                   if (leftColorList.enabled){
+                       leftColorList.state = "invisible"
+                   }else
+                       leftColorList.state = "visible"
+                }
+
                 Rectangle{
                     anchors.fill: parent
                     anchors.margins: 3
                     color : lefttopColor
                 }
             }
+            Connections {
+                 target: leftColorList
+                 onColorChanged: {
+                     if ( dropDown.currentButton == 0)
+                        lefttopColor = leftColorList.model[leftColorList.currentColor]
+                     if ( dropDown.currentButton == 2)
+                        leftbottomColor = leftColorList.model[leftColorList.currentColor]
+                 }
+             }
+            Connections {
+                 target: rightColorList
+                 onColorChanged: {
+                     if ( dropDown.currentButton == 1)
+                        righttopColor = rightColorList.model[rightColorList.currentColor]
+                     if ( dropDown.currentButton == 3)
+                        rightbottomColor = rightColorList.model[rightColorList.currentColor]
+                 }
+             }
+
+            ColorList{
+                id : leftColorList
+                anchors.top: lefttopButton.bottom
+                anchors.bottom : leftbottomButton.top
+                anchors.left : parent.left
+                anchors.margins: 2
+                width : lefttopButton.width
+                model : uicontext.colorNames
+                state : "invisible"
+            }
+
 
             Column{
                 id : grid
@@ -95,24 +137,35 @@ Rectangle {
                 x : 30
                 Repeater{
                     id : columns
-                    model : 10
+                    model : baseSize
 
                     Row {
                         id : rowDelegate
                         property int currentCol : index
                         Repeater{
                             id : rows
-                            model : 10
+                            model : baseSize
                             Rectangle{
                                 height : 14
                                 width : 14
                                 border.width: 1
-                                color : Qt.rgba(index/10,rowDelegate.currentCol/10,0,1)
+                                color : calcColor(index, currentCol)
                                 border.color: dropDown.color
                             }
                         }
                     }
                 }
+            }
+
+            ColorList{
+                id : rightColorList
+                anchors.top: righttopButton.bottom
+                anchors.bottom : rightbottomButton.top
+                anchors.left : grid.right
+                anchors.margins: 2
+                width : righttopButton.width
+                model : uicontext.colorNames
+                state : "invisible"
             }
             Button{
                 id : righttopButton
@@ -125,6 +178,14 @@ Rectangle {
                     anchors.margins: 3
                     color : righttopColor
                 }
+                onClicked: {
+                    dropDown.currentButton = 1
+                   if (rightColorList.enabled){
+                       rightColorList.state = "invisible"
+                   }else
+                       rightColorList.state = "visible"
+                }
+
             }
             Button{
                 id : leftbottomButton
@@ -136,6 +197,13 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 3
                     color : leftbottomColor
+                }
+                onClicked: {
+                    dropDown.currentButton = 2
+                   if (leftColorList.enabled){
+                       leftColorList.state = "invisible"
+                   }else
+                       leftColorList.state = "visible"
                 }
             }
             Button{
@@ -149,12 +217,51 @@ Rectangle {
                     anchors.margins: 3
                     color : rightbottomColor
                 }
+                onClicked: {
+                    dropDown.currentButton = 3
+                   if (rightColorList.enabled){
+                       rightColorList.state = "invisible"
+                   }else
+                       rightColorList.state = "visible"
+                }
             }
 
 
             border.color: Global.edgecolor
 
         }
+    }
+
+    function calcColor(x, y){
+        var rD1 = Math.min(x, y ) + Math.abs(x - y);
+        var rD2 = Math.min(baseSize - x - 1, y ) + Math.abs( baseSize - x - 1 - y);
+        var rD3 = Math.min(baseSize - x - 1, baseSize - y - 1 ) + Math.abs( y - x );
+        var rD4 = Math.min(baseSize - y - 1, x ) + Math.abs( baseSize - y - 1 - x);
+        var rLeftUpFrac = (1.0 -  rD1 / ( baseSize - 1.0));
+        var rRightUpFrac = ( 1.0 -  rD2 / ( baseSize - 1.0)) ;
+        var rRightDownFrac =  ( 1.0 -  rD3 / ( baseSize - 1.0)) ;
+        var rLeftDownFrac = ( 1.0 -  rD4 / ( baseSize - 1.0)) ;
+
+
+        var iC1 = lefttopColor.b
+        var iC2 = righttopColor.b
+        var iC3 = rightbottomColor.b
+        var iC4 = leftbottomColor.b
+        var iBlue = iC1 * rLeftUpFrac + iC2 * rRightUpFrac + iC3 * rRightDownFrac + iC4 * rLeftDownFrac;
+
+        iC1 = lefttopColor.g
+        iC2 = righttopColor.g
+        iC3 = rightbottomColor.g
+        iC4 = leftbottomColor.g
+        var iGreen = iC1 * rLeftUpFrac + iC2 * rRightUpFrac + iC3 * rRightDownFrac + iC4 * rLeftDownFrac;
+
+        iC1 = lefttopColor.r
+        iC2 = righttopColor.r
+        iC3 = rightbottomColor.r
+        iC4 = leftbottomColor.r
+        var iRed = iC1 * rLeftUpFrac + iC2 * rRightUpFrac + iC3 * rRightDownFrac + iC4 * rLeftDownFrac;
+
+        return Qt.rgba(iRed,iGreen,iBlue,1)
     }
 
     Component {
