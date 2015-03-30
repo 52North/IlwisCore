@@ -84,10 +84,17 @@ Item {
             }
 
         }
-
-        Controls.ColorPicker{
-            width : 250
-            height : 20
+        Row {
+            height : Global.rowHeight
+            width : parent.width - 10
+            Text {
+                id : label2
+                text : qsTr("Boundary Color")
+                width : 100
+            }
+            Controls.ColorPicker{
+            }
+            z : 1
         }
 
 

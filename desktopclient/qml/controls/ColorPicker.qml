@@ -8,18 +8,21 @@ import "../Global.js" as Global
 
 Rectangle {
     id:comboBox
-    property variant items: ["a","b","c","de", "f","ff"];
     property alias selectedItem: chosenItemText.text;
+    property color selectedColor : calcColor(ys,xs)
     property color lefttopColor : "blue"
-    property color leftbottomColor : "green"
+    property color leftbottomColor : "yellow"
     property color righttopColor : "red"
-    property color rightbottomColor : "white"
-    property int baseSize : 10
+    property color rightbottomColor : "black"
+    property int numberOfCells : 10
+    property int xs : -1
+    property int ys : -1
     signal comboClicked;
-    //            width: 100;
-    //            height: 30;
+    width : 195
+    height : Global.rowHeight
     z: 100;
     smooth:true;
+    Layout.minimumWidth: 195
     color : "transparent"
 
     Rectangle {
@@ -27,18 +30,27 @@ Rectangle {
         radius:2;
         width:parent.width;
         height:comboBox.height;
-        color: "lightgrey"
+        color: Global.alternatecolor3
         border.width: 1
         border.color: "#9494B8"
         smooth:true;
+        Rectangle {
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            height: parent.height - 4
+            width : 16
+            color : selectedColor
+            y : 2
+        }
+
         Text {
             width: parent.width-50; height: parent.height
-            anchors.left: parent.left; anchors.leftMargin: 10;
+            anchors.left: parent.left; anchors.leftMargin: 25;
             verticalAlignment: Text.AlignVCenter
             id:chosenItemText
-            text:comboBox.items[0];
             font.family: "Arial"
             font.pixelSize: 12;
+            text : selectedColor
             smooth:true
         }
 
@@ -69,7 +81,7 @@ Rectangle {
         radius:4;
         anchors.top: chosenItem.bottom;
         anchors.margins: 1;
-        color: "lightgrey"
+        color: Global.alternatecolor2
         border.width: 1
         border.color: "#B0B0B0"
 
@@ -77,9 +89,9 @@ Rectangle {
 
         Rectangle {
             id:listView
-            height:180
+            height:160
             width : parent.width
-            color : Global.alternatecolor1
+            color : Global.alternatecolor3
             Button{
                 id : lefttopButton
                 width : 25
@@ -133,24 +145,33 @@ Rectangle {
                 id : grid
                 anchors.left: lefttopButton.right
                 anchors.top : lefttopButton.top
+
                 y : 30
                 x : 30
                 Repeater{
                     id : columns
-                    model : baseSize
+                    model : numberOfCells
 
                     Row {
                         id : rowDelegate
                         property int currentCol : index
                         Repeater{
                             id : rows
-                            model : baseSize
+                            model : numberOfCells
                             Rectangle{
                                 height : 14
                                 width : 14
-                                border.width: 1
+                                border.width: (xs === currentCol && ys === index) ? 2 : 1
                                 color : calcColor(index, currentCol)
-                                border.color: dropDown.color
+                                border.color: (xs === currentCol && ys === index) ?  "black" : dropDown.color
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        xs = currentCol
+                                        ys = index
+                                        comboBox.state = ""
+                                    }
+                                }
                             }
                         }
                     }
@@ -233,14 +254,17 @@ Rectangle {
     }
 
     function calcColor(x, y){
+        if ( x === -1 || y === -1)
+            return "transparent"
+
         var rD1 = Math.min(x, y ) + Math.abs(x - y);
-        var rD2 = Math.min(baseSize - x - 1, y ) + Math.abs( baseSize - x - 1 - y);
-        var rD3 = Math.min(baseSize - x - 1, baseSize - y - 1 ) + Math.abs( y - x );
-        var rD4 = Math.min(baseSize - y - 1, x ) + Math.abs( baseSize - y - 1 - x);
-        var rLeftUpFrac = (1.0 -  rD1 / ( baseSize - 1.0));
-        var rRightUpFrac = ( 1.0 -  rD2 / ( baseSize - 1.0)) ;
-        var rRightDownFrac =  ( 1.0 -  rD3 / ( baseSize - 1.0)) ;
-        var rLeftDownFrac = ( 1.0 -  rD4 / ( baseSize - 1.0)) ;
+        var rD2 = Math.min(numberOfCells - x - 1, y ) + Math.abs( numberOfCells - x - 1 - y);
+        var rD3 = Math.min(numberOfCells - x - 1, numberOfCells - y - 1 ) + Math.abs( y - x );
+        var rD4 = Math.min(numberOfCells - y - 1, x ) + Math.abs( numberOfCells - y - 1 - x);
+        var rLeftUpFrac = (1.0 -  rD1 / ( numberOfCells - 1.0));
+        var rRightUpFrac = ( 1.0 -  rD2 / ( numberOfCells - 1.0)) ;
+        var rRightDownFrac =  ( 1.0 -  rD3 / ( numberOfCells - 1.0)) ;
+        var rLeftDownFrac = ( 1.0 -  rD4 / ( numberOfCells - 1.0)) ;
 
 
         var iC1 = lefttopColor.b
@@ -283,7 +307,7 @@ Rectangle {
 
     states: State {
         name: "dropDown";
-        PropertyChanges { target: dropDown; height:240 }
+        PropertyChanges { target: dropDown; height:160 }
     }
 
     transitions: Transition {
