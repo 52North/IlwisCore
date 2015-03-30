@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
         WorkflowCatalogModel workflows;
+        uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
         //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
