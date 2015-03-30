@@ -234,12 +234,11 @@ Rectangle {
                 var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
                 qml += "Window { id: floatingWindow } ";
                 var window = Qt.createQmlObject(qml, datapanesplit)
-                tab.item.parent = window.contentItem;
                 window.show();
 
-                closeTab(activeSplit, tabIndex);
-                getCurrentCatalogTab().show();
-
+                tab.item.parent = window.contentItem;
+                //closeTab(activeSplit, tabIndex); --> undefined error
+                //getCurrentCatalogTab().show(); --> undefined error
             }
         }
 

@@ -5,6 +5,8 @@ import WorkflowMetadataFormBuilder 1.0
 import WorkflowCatalogModel 1.0
 
 import ".." as Workbench
+
+import "../../datapanel/workflow" as WorkflowDataTest
 import "../../datapanel" as DataPane
 
 Rectangle {
@@ -26,10 +28,7 @@ Rectangle {
     Action {
         id: createNewWorkflow
         onTriggered: {
-            console.log("Creating new workflow ...");
             var workflow = workflows.newWorkflow("workflow");
-            console.log("id: " + workflow.id);
-            console.log("displayName: " + workflow.displayName);
             createWorkflowMetadataForm(workflow.id, workflow.displayName);
         }
     }
@@ -57,19 +56,20 @@ Rectangle {
     // ###########################  Workflow Metadata
 
     function createWorkflowMetadataForm(metaid, title) {
-        var form = formbuilder.index2Form(metaid);
-
-        //var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
+        //var form = formbuilder.index2Form(metaid);
+        var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
         appFrame.formQML = form;
         appFrame.formTitle = title;
         appFrame.opacity = 1
-        applicationForm.state = "maximized";
+        applicationForm.state = applicationForm.state != "minimized" ? "minimized" : "maximized"
     }
 
     function createWorkflowEditSession(workflowName) {
         dataPanel.addWorkflowCanvas(workflowName + " [Workflow Builder]" );
         workflowbenchContentLoader.setSource("WorkflowEdit.qml");
-        workflowbenchContentLoader.editSession = workflowName;
+
+        // GUI state is not available right now --> use model instead
+        workflows.currentWorkflow = workflowName
     }
 
     SplitView {
@@ -87,6 +87,7 @@ Rectangle {
             height : 0
 
             property string workflowname
+            property string workflowdescription
 
             // ###########################  CONTROL BUTTONS
 
@@ -132,8 +133,19 @@ Rectangle {
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 anchors.top : workflowButtons.bottom;
-                enabled: false;
                 opacity: 0
+            }
+
+            Button{
+                y : parent.height - 25
+                text : "Create Workflow"
+                height : 22
+                x : parent.width - width
+                onClicked: {
+                    workflows.newWorkflow(applicationForm.workflowname,
+                                          applicationForm.workflowdescription)
+                    createWorkflowEditSession(applicationForm.workflowname);
+                }
             }
             states: [
                 State {

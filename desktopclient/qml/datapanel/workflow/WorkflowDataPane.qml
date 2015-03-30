@@ -4,12 +4,14 @@ import QtQuick.Window 2.1
 
 import "../modeller" as Modeler
 
-Window {
+Item {
 
     property bool canSeparate : true
 
-    Modeler.Canvas {
-        id: canvas
+    // TODO react on signals, e.g. when edit session is cancelled
+
+    Modeler.ModellerPanel {
+        id: modelerPanel
         anchors.fill: parent
 
     }

@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 
 import ApplicationFormExpressionParser 1.0
+import WorkflowCatalogModel 1.0
 
 import ".." as Workbench
 import "../.." as Base
@@ -30,11 +31,9 @@ Rectangle {
     Action {
         id: cancelEditing
         onTriggered: {
-            console.log("Edit cancelled by user")
-
-            // TODO restore selection status when getting back?
-
-            workflowbenchContentLoader.setSource("WorkflowBench.qml")
+            console.log("Edit cancelled by user");
+            workflows.currentWorkflow = "";
+            workflowbenchContentLoader.setSource("WorkflowBench.qml");
         }
     }
 
@@ -50,7 +49,7 @@ Rectangle {
             id : saveWorkflow
             text :  qsTr("Save Workflow")
             anchors.margins: 5
-            onClicked : console.log("TODO save workflow")
+            onClicked : console.log("TODO save workflow: " + workflows.currentWorkflow)
             enabled: true
         }
 
