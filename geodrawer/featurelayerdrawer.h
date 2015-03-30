@@ -37,6 +37,9 @@ private:
     std::vector<FeatureDrawing> _featureDrawings;
     float _lineWidth = 1.0;
     float _boundarywidth = 1.0;
+    bool _showBoundaries = true;
+    bool _showAreas = true;
+    float _areaTransparency = 0;
 
     bool draw(const IOOptions &options);
 

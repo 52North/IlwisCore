@@ -9,6 +9,7 @@
 #include "iooptions.h"
 #include "ilwiscoreui_global.h"
 #include "visualizationmanager.h"
+#include "tablemodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
 using namespace Ilwis;
@@ -32,6 +33,7 @@ public:
     explicit UIContextModel(QObject *parent = 0);
 
     Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
+    Q_INVOKABLE TableModel *createTableModel(QObject *parent,const QString& url, const QString& type);
     Q_INVOKABLE QString uniqueName();
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);

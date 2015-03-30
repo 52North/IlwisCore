@@ -14,7 +14,7 @@ Rectangle {
 
     property int buttonSize : 55
 
-    signal showObject(string objectid )
+    signal showObject(string objectid, string subtype )
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -201,7 +201,7 @@ Rectangle {
         }
         onDoubleClicked: {
             if ( currentRow != -1)
-                showObject(model[currentRow].id)
+                showObject(model[currentRow].id,"")
         }
 
         model : setResources()

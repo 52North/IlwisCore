@@ -26,9 +26,11 @@ public:
 
 private:
     bool draw(const IOOptions &options);
-    GLuint _texcoord;
-    GLuint _textureid;
+    GLuint _texcoordid = iUNDEF;
+    GLuint _textureid = iUNDEF;
     std::unique_ptr<QOpenGLTexture> _texture;
+    QVector<QVector3D> _vertices;
+    QVector<QVector2D> _texcoords;
 };
 }
 }
