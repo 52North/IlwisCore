@@ -1,3 +1,8 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "visualattributemodel.h"
 #include "mapinformationattributesetter.h"
 

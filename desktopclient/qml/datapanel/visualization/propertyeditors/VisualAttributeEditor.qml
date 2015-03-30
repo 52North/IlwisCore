@@ -54,10 +54,12 @@ Item {
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn1; opacity : 1 }
+                    PropertyChanges { target: editorColumn1; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn1; opacity : 0 }
+                    PropertyChanges { target: editorColumn1; enabled : false }
             }
 
         ]
@@ -90,10 +92,12 @@ Item {
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn2; opacity : 1 }
+                    PropertyChanges { target: editorColumn2; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn2; opacity : 0 }
+                    PropertyChanges { target: editorColumn2; enabled : false }
             }
 
         ]

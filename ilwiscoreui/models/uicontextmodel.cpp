@@ -1,6 +1,8 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "uicontextmodel.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -18,6 +20,17 @@ LayerManager *UIContextModel::createLayerManager(const QString& objectName)
     LayerManager *manager =  new LayerManager(newparent, this);
 
     return manager;
+}
+
+TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url, const QString& type)
+{
+
+    IlwisTypes tp = IlwisObject::name2Type(type);
+    Resource resource = mastercatalog()->name2Resource(url,tp);
+    if ( resource.isValid()){
+        return new TableModel(resource, parent);
+    }
+    return 0;
 }
 
 QString UIContextModel::uniqueName()

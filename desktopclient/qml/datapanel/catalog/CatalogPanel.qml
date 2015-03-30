@@ -203,7 +203,7 @@ Item {
         anchors.bottom: parent.bottom
         Connections{
             target : iconListView
-            onShowObject : { showObject(objectid)}
+            onShowObject : { showObject(objectid,"")}
         }
 
         CatalogGrid{
