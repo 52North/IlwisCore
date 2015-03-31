@@ -58,7 +58,7 @@ FeatureDrawing SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature
 
 }
 
-void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
+void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const QColor &defaultColor, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
 {
     for(int j =0; j < drawing._indices.size(); ++j){
         if ( value.isValid() && value.toInt() != iUNDEF) {
