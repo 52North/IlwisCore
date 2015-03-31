@@ -5,6 +5,7 @@
 #include <QOpenGLTexture>
 #include <QOpenGLShaderProgram>
 #include "raster.h"
+#include "pixeliterator.h"
 #include "drawers/attributevisualproperties.h"
 #include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
@@ -47,14 +48,20 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         IRasterCoverage raster = coverage().as<RasterCoverage>();
         Size<> rastersize = raster->size();
-        GLint texSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
-        texSize = texSize == 0 ? 256 : texSize;
-        double needed = std::log10(std::max(rastersize.xsize(), rastersize.ysize())) / std::log10(2);
-        int maxpow2 = needed - (int)needed == 0 ? needed : needed + 1;
-        int maxsizeneeded = std::pow(2,maxpow2);
+        Size<> pixelArea = rootDrawer()->pixelAreaSize();
+        std::vector<VertexColorI> pixels(pixelArea.linearSize());
+        double dx = rastersize.xsize() / pixelArea.xsize() ;
+        double dy =  rastersize.ysize() /pixelArea.ysize();
+        PixelIterator pixIter(raster);
+        auto end = pixIter.end();
+        while(pixIter != end){
 
-        QImage img("d:/temp/blog1.png")  ;
+        }
+
+
+
+
+        QImage img("d:/temp/blog1.png");
         _texture.reset( new QOpenGLTexture(img));
         Envelope env = rootDrawer()->zoomEnvelope();
         _vertices.resize(6);

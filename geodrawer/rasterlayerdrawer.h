@@ -31,6 +31,7 @@ private:
     std::unique_ptr<QOpenGLTexture> _texture;
     QVector<QVector3D> _vertices;
     QVector<QVector2D> _texcoords;
+    QImage _layerImage;
 };
 }
 }
