@@ -93,6 +93,9 @@ Item {
                 width : 100
             }
             Controls.ColorPicker{
+                onSelectedColorChanged: {
+                    editor.boundaryColor = selectedColor
+                }
             }
             z : 1
         }
