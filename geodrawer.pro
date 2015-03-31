@@ -61,7 +61,8 @@ SOURCES += \
     geodrawer/rasterlayerdrawer.cpp \
     geodrawer/texturemanager.cpp \
     geodrawer/operations/showpolygonboundaries.cpp \
-    geodrawer/operations/showpolygonareas.cpp
+    geodrawer/operations/showpolygonareas.cpp \
+    geodrawer/operations/setpolygonboundarycolor.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -100,7 +101,8 @@ HEADERS += \
     geodrawer/rasterlayerdrawer.h \
     geodrawer/texturemanager.h \
     geodrawer/operations/showpolygonboundaries.h \
-    geodrawer/operations/showpolygonareas.h
+    geodrawer/operations/showpolygonareas.h \
+    geodrawer/operations/setpolygonboundarycolor.h
 
 
 OTHER_FILES = geodrawer/qmldir
