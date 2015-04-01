@@ -174,7 +174,8 @@ Rectangle {
 
                                     }
                                     onEntered: {
-                                        colorLabel.text = "Color : " + calcColor(index,currentCol)
+                                        var color = calcColor(index,currentCol)
+                                        colorLabel.text = "Color : " + color + "/ " + color.r.toFixed(2) + ", " + color.g.toFixed(2) + ", " + color.b.toFixed(2)
                                     }
                                 }
                             }
@@ -254,7 +255,8 @@ Rectangle {
             Text{
                 id : colorLabel
                 anchors.top : grid.bottom
-                anchors.left : grid.left
+                anchors.left : leftbottomButton.left
+                anchors.leftMargin: 3
             }
 
 
