@@ -71,10 +71,10 @@ TabViewStyle {
             height : 18
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
-            //onClicked: {
-            //    mainsplit.showMapWindow(0)
-            //}
-            onClicked: expandToWindow(index)
+            onClicked: {
+                datapanesplit.showMapWindow(0)
+            }
+            //onClicked: expandToWindow(index)
 
             Image {
                 y : 2
