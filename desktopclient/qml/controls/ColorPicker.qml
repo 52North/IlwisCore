@@ -18,11 +18,11 @@ Rectangle {
     property int xs : -1
     property int ys : -1
     signal comboClicked;
-    width : 195
+    width : numberOfCells * 18 + 5
     height : Global.rowHeight
     z: 100;
     smooth:true;
-    Layout.minimumWidth: 195
+    Layout.minimumWidth: numberOfCells * 18 + 5
     color : "transparent"
 
     Rectangle {
@@ -89,13 +89,13 @@ Rectangle {
 
         Rectangle {
             id:listView
-            height:160
+            height:150
             width : parent.width
             color : Global.alternatecolor3
             Button{
                 id : lefttopButton
                 width : 25
-                height : 14
+                height : 13
                 onClicked: {
                     dropDown.currentButton = 0
                    if (leftColorList.enabled){
@@ -159,17 +159,22 @@ Rectangle {
                             id : rows
                             model : numberOfCells
                             Rectangle{
-                                height : 14
-                                width : 14
+                                height : 13
+                                width : 13
                                 border.width: (xs === currentCol && ys === index) ? 2 : 1
                                 color : calcColor(index, currentCol)
                                 border.color: (xs === currentCol && ys === index) ?  "black" : dropDown.color
                                 MouseArea{
+                                    hoverEnabled: true
                                     anchors.fill: parent
                                     onClicked: {
                                         xs = currentCol
                                         ys = index
                                         comboBox.state = ""
+
+                                    }
+                                    onEntered: {
+                                        colorLabel.text = "Color : " + calcColor(index,currentCol)
                                     }
                                 }
                             }
@@ -191,7 +196,7 @@ Rectangle {
             Button{
                 id : righttopButton
                 width : 25
-                height : 14
+                height : 13
                 anchors.left : grid.right
                 anchors.top : lefttopButton.top
                 Rectangle{
@@ -211,7 +216,7 @@ Rectangle {
             Button{
                 id : leftbottomButton
                 width : 25
-                height : 14
+                height : 13
                 anchors.left : lefttopButton.left
                 anchors.bottom: grid.bottom
                 Rectangle{
@@ -230,7 +235,7 @@ Rectangle {
             Button{
                 id : rightbottomButton
                 width : 25
-                height : 14
+                height : 13
                 anchors.left : grid.right
                 anchors.bottom: grid.bottom
                 Rectangle{
@@ -245,6 +250,11 @@ Rectangle {
                    }else
                        rightColorList.state = "visible"
                 }
+            }
+            Text{
+                id : colorLabel
+                anchors.top : grid.bottom
+                anchors.left : grid.left
             }
 
 
@@ -288,26 +298,12 @@ Rectangle {
         return Qt.rgba(iRed,iGreen,iBlue,1)
     }
 
-    Component {
-        id: highlightBar
-        Rectangle {
-            width:comboBox.width;
-            height:comboBox.height;
-            color: "lightsteelblue"; radius: 5
-            y: listView.currentItem.y
-            Behavior on y {
-                SpringAnimation {
-                    spring: 3
-                    damping: 0.2
-                }
-            }
-        }
-    }
+
 
 
     states: State {
         name: "dropDown";
-        PropertyChanges { target: dropDown; height:160 }
+        PropertyChanges { target: dropDown; height:150 }
     }
 
     transitions: Transition {

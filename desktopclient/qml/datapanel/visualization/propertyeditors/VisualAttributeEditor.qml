@@ -47,7 +47,8 @@ Item {
         state : "maximized"
         Loader {
             id : propertyEditor1
-            anchors.fill : parent
+            width : 160
+            height : parent.height
 
 
         }
@@ -85,7 +86,8 @@ Item {
         anchors.leftMargin: 3
         Loader {
             id : propertyEditor2
-            anchors.fill : parent
+            width : 160
+            height : parent.height
 
 
         }

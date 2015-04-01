@@ -13,7 +13,7 @@
 REGISTER_PROPERTYEDITOR("polygonpropertysetter",PolygonPropertySetter)
 
 PolygonPropertySetter::PolygonPropertySetter(QObject *parent) :
-    VisualAttributeEditor("polygonpropertysetter",TR("Boundariees & Areas"),QUrl("PolygonProperties.qml"), parent)
+    VisualAttributeEditor("polygonpropertysetter",TR("Boundaries & Areas"),QUrl("PolygonProperties.qml"), parent)
 {
 
 }
