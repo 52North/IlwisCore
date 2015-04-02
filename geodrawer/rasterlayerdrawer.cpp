@@ -5,12 +5,14 @@
 #include <QOpenGLTexture>
 #include <QOpenGLShaderProgram>
 #include "raster.h"
+#include "table.h"
 #include "pixeliterator.h"
 #include "drawers/attributevisualproperties.h"
 #include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 #include "layersrenderer.h"
 #include "rasterlayerdrawer.h"
+#include "rasterimage.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -47,16 +49,9 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         IRasterCoverage raster = coverage().as<RasterCoverage>();
-        Size<> rastersize = raster->size();
-        Size<> pixelArea = rootDrawer()->pixelAreaSize();
-        std::vector<VertexColorI> pixels(pixelArea.linearSize());
-        double dx = rastersize.xsize() / pixelArea.xsize() ;
-        double dy =  rastersize.ysize() /pixelArea.ysize();
-        PixelIterator pixIter(raster);
-        auto end = pixIter.end();
-        while(pixIter != end){
-
-        }
+        setActiveVisualAttribute(VisualAttribute::LAYERATTRIBUTE);
+        RasterImage im(rootDrawer(),raster, visualAttribute(activeAttribute()));
+        im.makeImage();
 
 
 
@@ -86,7 +81,21 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
 void RasterLayerDrawer::setActiveVisualAttribute(const QString &attr)
 {
+    IRasterCoverage raster = coverage().as<RasterCoverage>();
+    if ( attr == VisualAttribute::LAYERATTRIBUTE){
+        LayerDrawer::setActiveVisualAttribute(attr);
+    }
+    else if ( raster.isValid() ) {
+        if(raster->hasAttributes()) {
+            if ( raster->attributeTable()->columnIndex(attr) != iUNDEF){
 
+                IRepresentation newrpr = Representation::defaultRepresentation(raster->attributeTable()->columndefinition(attr).datadef().domain());
+                if ( newrpr.isValid()){
+                    LayerDrawer::setActiveVisualAttribute(attr);
+                }
+            }
+        }
+    }
 }
 
 void RasterLayerDrawer::coverage(const ICoverage &cov)
@@ -102,7 +111,10 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
     if ( !hasType(attrType, itNUMBER))
         return;
 
-    visualAttribute(VisualAttribute::LAYERATTRIBUTE, VisualAttribute(raster->datadef().domain()));
+    VisualAttribute attr(raster->datadef().domain());
+    auto numrange = raster->datadef().range<NumericRange>();
+    attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
+    visualAttribute(VisualAttribute::LAYERATTRIBUTE, attr);
 }
 
 
