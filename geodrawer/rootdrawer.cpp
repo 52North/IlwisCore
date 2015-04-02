@@ -210,6 +210,11 @@ void RootDrawer::coordinateSystem(const ICoordinateSystem &csy)
     _coordinateSystem = csy;
 }
 
+const IGeoReference &RootDrawer::screenGrf() const
+{
+    return _screenGrf;
+}
+
 void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
     _viewPoint = viewCenter;
     if ( setEyePoint){

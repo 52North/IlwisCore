@@ -38,6 +38,7 @@ public:
     const QMatrix4x4& mvpMatrix() const;
     const ICoordinateSystem& coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
+    const IGeoReference& screenGrf() const;
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
