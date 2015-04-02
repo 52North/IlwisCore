@@ -40,6 +40,8 @@ private:
 
     ICoverage _coverage;
     Envelope _envelope;
+    VisualAttribute vattributeRasterCoverage(const QString &attrName) const;
+    VisualAttribute vattributeFeatureCoverage(const QString &attrName) const;
 };
 }
 }
