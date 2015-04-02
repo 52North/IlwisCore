@@ -137,6 +137,14 @@ public:
      * \return this, with the modified values
      */
     PixelIterator& operator=(const PixelIterator& iter);
+    PixelIterator& operator=(const Pixel &pix){
+        _x = pix.x;
+        _y = pix.y;
+        _z = pix.z;
+        _yChanged = _xChanged = _zChanged = true;
+        initPosition();
+        return *this;
+    }
 
     /*!
      * override of the operator=<br>
@@ -372,6 +380,9 @@ public:
      * \return true if the z has changed
      */
     bool zchanged() const;
+    quint32 x() const { return _x;}
+    quint32 y() const { return _y;}
+    quint32 z() const { return _z;}
 
     /*!
      * \brief Checks if this PixelIterator is at its endpoint
@@ -476,6 +487,8 @@ protected:
 
 
     bool move(int n) {
+        if ( n == 0)
+            return true;
 
         bool ok = false;
         if (isAtEnd() && n >= 0) {
