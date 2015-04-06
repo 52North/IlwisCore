@@ -52,6 +52,9 @@ ContinuousColorLookup::ContinuousColorLookup(const QString &definition)
 
 QColor ContinuousColorLookup::value2color(double value, const NumericRange& actualRange, const NumericRange& stretchRange) const
 {
+    if ( value == rUNDEF)
+        return QColor("transparent");
+
     if ( stretchRange.isValid())  {
         if ( _linear){
             if ( value < stretchRange.center()){
@@ -66,7 +69,6 @@ QColor ContinuousColorLookup::value2color(double value, const NumericRange& actu
         }
     }
     value = (value - actualRange.min()) / actualRange.distance(); // scale it between 0..1
-
     for(int i = 0; i < _groups.size(); ++i){
         if ( value <= _groups[i].max()){
             double delta = _groups[i].distance();
