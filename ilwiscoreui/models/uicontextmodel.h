@@ -8,7 +8,7 @@
 #include <Qt>
 #include "iooptions.h"
 #include "ilwiscoreui_global.h"
-#include "visualizationmanager.h"
+#include "layermanager.h"
 #include "tablemodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
