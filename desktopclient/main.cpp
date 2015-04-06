@@ -23,19 +23,20 @@
 #include "applicationformexpressionparser.h"
 #include "workflowmetadataformbuilder.h"
 #include "models/tranquilizerhandler.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "models/coveragelayermodel.h"
 #include "models/ilwisobjectmodel.h"
 #include "models/attributemodel.h"
 #include "models/domainitemmodel.h"
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
-#include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
 #include "models/workflow/workflowmodel.h"
 #include "models/workflow/workflowcatalogmodel.h"
 #include "models/visualattributemodel.h"
 #include "models/tablemodel.h"
+#include "models/layerinfoitem.h"
+#include "models/catalogmapitem.h"
 #include "ilwiscoreui/propertyeditors/representationsetter.h"
 #include "keyfilter.h"
 
@@ -87,6 +88,8 @@ int main(int argc, char *argv[])
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
         qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
+        qmlRegisterType<LayerInfoItem>("LayerInfoItem", 1,0,"LayerInfoItem");
+        qmlRegisterType<CatalogMapItem>("CatalogMapItem", 1,0,"CatalogMapItem");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -100,8 +103,6 @@ int main(int argc, char *argv[])
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
-        //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        //uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditor(TR("Representation"), QUrl("RepresentationProperties.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
