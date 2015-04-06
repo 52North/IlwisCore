@@ -7,7 +7,7 @@
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "layersrenderer.h"
 #include "drawers/drawerinterface.h"
 #include "layersview.h"
