@@ -6,7 +6,7 @@ Item {
     property var currentVisualAttribute
 
     onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute.propertyEditors ){
+        if ( currentVisualAttribute && currentVisualAttribute.propertyEditors ){
             editorList.model =  currentVisualAttribute.propertyEditors
             editorColumn.currentEditor = editorList.model[0]
         }
