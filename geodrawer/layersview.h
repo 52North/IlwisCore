@@ -84,6 +84,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
+    Q_INVOKABLE QVariantMap envelope();
 
     LayerManager *layerManager();
     bool showLayerInfo() const;
@@ -103,6 +104,7 @@ private:
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
+
 
     QVariantMap _copiedAttributes;
     quint64 _viewerId;
