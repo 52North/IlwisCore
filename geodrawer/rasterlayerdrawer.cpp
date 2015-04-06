@@ -41,25 +41,21 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         _texcoordid = _shaders.attributeLocation("texCoord");
         _textureid = _shaders.uniformLocation( "tex" );
 
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
         _prepared |= DrawerInterface::ptSHADERS;
     }
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         IRasterCoverage raster = coverage().as<RasterCoverage>();
-        setActiveVisualAttribute(VisualAttribute::LAYERATTRIBUTE);
+        setActiveVisualAttribute(PIXELVALUE);
         RasterImage im(rootDrawer(),raster, visualAttribute(activeAttribute()));
         im.makeImage();
 
 
-
-
-        QImage img("d:/temp/blog1.png");
-        _texture.reset( new QOpenGLTexture(img));
-        Envelope env = rootDrawer()->zoomEnvelope();
+        _texture.reset( new QOpenGLTexture(*(im.image().get())));
+        _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
+        Envelope env = raster->envelope();
         _vertices.resize(6);
+
         _vertices[0] = QVector3D(env.min_corner().x, env.min_corner().y, 0);
         _vertices[1] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
         _vertices[2] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
@@ -68,13 +64,11 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         _vertices[5] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
 
         _texcoords.resize(6);
-        _texcoords = {{0,0},{1,0},{0,1},
-                      {1,0},{1,1},{0,1}
+        _texcoords = {{0,1},{1,1},{0,0},
+                      {1,1},{1,0},{0,0}
                      };
 
-
-
-
+        _prepared |= ( DrawerInterface::ptGEOMETRY | DrawerInterface::ptRENDER);
     }
     return true;
 }
@@ -82,7 +76,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 void RasterLayerDrawer::setActiveVisualAttribute(const QString &attr)
 {
     IRasterCoverage raster = coverage().as<RasterCoverage>();
-    if ( attr == VisualAttribute::LAYERATTRIBUTE){
+    if ( attr == PIXELVALUE){
         LayerDrawer::setActiveVisualAttribute(attr);
     }
     else if ( raster.isValid() ) {
@@ -101,7 +95,7 @@ void RasterLayerDrawer::setActiveVisualAttribute(const QString &attr)
 void RasterLayerDrawer::coverage(const ICoverage &cov)
 {
     LayerDrawer::coverage(cov);
-    setActiveVisualAttribute(sUNDEF);
+    setActiveVisualAttribute(PIXELVALUE);
 
     IRasterCoverage raster = cov.as<RasterCoverage>();
     if (!raster.isValid())
@@ -114,7 +108,7 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
     VisualAttribute attr(raster->datadef().domain());
     auto numrange = raster->datadef().range<NumericRange>();
     attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
-    visualAttribute(VisualAttribute::LAYERATTRIBUTE, attr);
+    visualAttribute(PIXELVALUE, attr);
 }
 
 
@@ -135,7 +129,7 @@ DrawerInterface *RasterLayerDrawer::create(DrawerInterface *parentDrawer, RootDr
 
 void RasterLayerDrawer::setAttribute(const QString &attrName, const QVariant &value)
 {
-
+    LayerDrawer::setAttribute(attrName, value);
 }
 
 QVariant RasterLayerDrawer::attribute(const QString &attrName) const
@@ -158,16 +152,17 @@ bool RasterLayerDrawer::draw(const IOOptions &options)
 
     if(!_shaders.bind())
         return false;
+
+    if ( !_texture)
+        return false;
     QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
 
    _shaders.setUniformValue(_modelview, mvp);
 
 
-   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+  _texture->bind();
 
-   _texture->bind();
-
+   _shaders.setUniformValue(_vboAlpha, alpha());
    _shaders.setAttributeArray( _vboPosition, _vertices.constData() );
    _shaders.setAttributeArray( _texcoordid, _texcoords.constData() );
    _shaders.setUniformValue( _textureid, 0 );
