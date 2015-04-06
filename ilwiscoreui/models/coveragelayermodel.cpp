@@ -4,7 +4,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "uicontextmodel.h"
-#include "visualizationmanager.h"
+#include "layermanager.h"
 #include "coveragelayermodel.h"
 #include "visualattributemodel.h"
 
@@ -76,6 +76,14 @@ QString CoverageLayerModel::activeAttribute() const
 {
     if ( _activeAttribute < _visualAttributes.size()){
        return _visualAttributes[_activeAttribute]->attributename();
+    }
+    return sUNDEF;
+}
+
+QString CoverageLayerModel::visualAttributeByIndex(int index) const
+{
+    if ( index < _visualAttributes.size()){
+       return _visualAttributes[index]->attributename();
     }
     return sUNDEF;
 }
