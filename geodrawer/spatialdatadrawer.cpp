@@ -165,7 +165,7 @@ bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const
 bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const
 {
     if ( coverage()->ilwisType() == itRASTER){
-        if ( attName == VisualAttribute::LAYERATTRIBUTE)
+        if ( attName == PIXELVALUE)
             return true;
     }
     for(auto pair : _visualProperties){
