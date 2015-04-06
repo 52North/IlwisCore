@@ -3,6 +3,8 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "geometries.h"
+#include "georeference.h"
 #include "uicontextmodel.h"
 #include "ilwiscontext.h"
 
