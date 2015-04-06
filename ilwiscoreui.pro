@@ -36,7 +36,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tranquilizerhandler.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
-    ilwiscoreui/models/visualizationmanager.h \
     ilwiscoreui/propertyeditors/representationsetter.h \
     ilwiscoreui/models/coveragelayermodel.h \
     ilwiscoreui/drawers/drawerinterface.h \
@@ -56,7 +55,10 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tablemodel.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
     ilwiscoreui/models/workflow/workflowmodel.h \
-    ilwiscoreui/models/visualattributemodel.h
+    ilwiscoreui/models/visualattributemodel.h \
+    ilwiscoreui/models/layerinfoitem.h \
+    ilwiscoreui/models/layermanager.h \
+    ilwiscoreui/models/catalogmapitem.h
 
 unix {
     target.path = /usr/lib
@@ -78,7 +80,6 @@ SOURCES += \
     ilwiscoreui/models/tranquilizerhandler.cpp \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
-    ilwiscoreui/models/visualizationmanager.cpp \
     ilwiscoreui/propertyeditors/representationsetter.cpp \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
@@ -98,7 +99,10 @@ SOURCES += \
     ilwiscoreui/models/tablemodel.cpp \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
     ilwiscoreui/models/workflow/workflowmodel.cpp \
-    ilwiscoreui/models/visualattributemodel.cpp
+    ilwiscoreui/models/visualattributemodel.cpp \
+    ilwiscoreui/models/layerinfoitem.cpp \
+    ilwiscoreui/models/layermanager.cpp \
+    ilwiscoreui/models/catalogmapitem.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
