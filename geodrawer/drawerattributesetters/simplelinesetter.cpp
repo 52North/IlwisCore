@@ -64,7 +64,10 @@ void SimpleLineSetter::setColorAttributes(const VisualAttribute &attr, const QVa
             const auto& indices = drawing[j];
             for(int i =indices._start; i < indices._start + indices._count; ++i){
                 QColor clr = attr.value2color(value);
-                colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+                if ( defaultColor.isValid()){
+                   colors.push_back(VertexColor(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF(), 1.0));
+                }else
+                    colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
             }
         }
     }
