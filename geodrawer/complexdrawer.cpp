@@ -1,6 +1,6 @@
 #include "kernel.h"
 #include "errorobject.h"
-#include "complexdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -350,6 +350,9 @@ QVariant ComplexDrawer::attributeOfDrawer(const QString &drawercode, const QStri
 {
     if ( code() == drawercode)
         return attribute(attrName);
+    if ( drawercode ==  "rootdrawer"){ // special case
+        return rootDrawer()->attributeOfDrawer(drawercode, attrName);
+    }
 
     QVariant var;
     for( auto& drawer : _preDrawers){
