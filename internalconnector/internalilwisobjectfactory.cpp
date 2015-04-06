@@ -65,7 +65,7 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 
 Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const IOOptions &options) const
 {
-    if ( resource.url().scheme()!="ilwis")
+    if ( resource.url(true).scheme()!="ilwis")
         return 0;
 
 
@@ -262,7 +262,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
 
 bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 {
-    if ( resource.url().scheme()!="ilwis")
+    if ( resource.url(true).scheme()!="ilwis")
         return false;
 
     if ( resource.ilwisType() & itELLIPSOID) {
