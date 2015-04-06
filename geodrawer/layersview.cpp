@@ -1,6 +1,6 @@
 #include <QtGui/QOpenGLFramebufferObject>
 #include <QtQuick/QQuickWindow>
-#include "visualizationmanager.h"
+#include "layermanager.h"
 #include "coverage.h"
 #include "layersview.h"
 #include "layersrenderer.h"
@@ -83,7 +83,7 @@ void LayersView::addCommand(const QString &expression)
 {
     OperationExpression expr(expression);
     if ( expr.isValid()){
-        _commands.push_front(expr);
+        _commands.push_back(expr);
     }
 }
 
@@ -97,7 +97,7 @@ QString LayersView::layerInfo(const QString& pixelpair) const
     try {
         if ( _manager){
             QStringList parts = pixelpair.split("|");
-            if ( parts.size() == 2){
+            if ( parts.size() == 2 && rootDrawer()){
                 Ilwis::Coordinate crd = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
                 return _manager->layerInfo(crd);
             }
@@ -109,6 +109,22 @@ QString LayersView::layerInfo(const QString& pixelpair) const
         kernel()->issues()->log(ex.what());
     }
     return "";
+}
+
+QVariantMap LayersView::envelope()
+{
+    QVariantMap vmap;
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( root){
+        _manager->setScreenGeoReference(root->screenGrf());
+        Envelope zoomenv = root->zoomEnvelope();
+        vmap["minx"] = zoomenv.min_corner().x;
+        vmap["miny"] = zoomenv.min_corner().y;
+        vmap["maxx"] = zoomenv.max_corner().x;
+        vmap["maxy"] = zoomenv.max_corner().y;
+    }
+
+    return vmap;
 }
 
 LayerManager *LayersView::layerManager()
