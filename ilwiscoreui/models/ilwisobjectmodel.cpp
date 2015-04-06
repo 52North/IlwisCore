@@ -172,6 +172,8 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                 IlwisTypes objecttype = _ilwisobject->ilwisType();
                 if ( objecttype == itRASTER){
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                    AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
+                    _attributes.push_back(attribute);
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
                             AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
