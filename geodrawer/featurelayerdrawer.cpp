@@ -92,8 +92,8 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
              _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
-
-            setters[geomtype]->setColorAttributes(attr,value,_boundaryColor,_featureDrawings[featureIndex],_colors) ;
+            const QColor& clr = geomtype == itPOLYGON ? _boundaryColor : _lineColor;
+            setters[geomtype]->setColorAttributes(attr,value,clr,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
         // implicity the redoing of the geometry is also redoing the representation stuff(a.o. colors)
@@ -122,9 +122,11 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             }
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
-            setters[geomtype]->setColorAttributes(attr,value,_boundaryColor,_featureDrawings[featureIndex],_colors) ;
+            const QColor& clr = geomtype == itPOLYGON ? _boundaryColor : _lineColor;
+            setters[geomtype]->setColorAttributes(attr,value,clr,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
+        _prepared |= DrawerInterface::ptRENDER;
     }
 
     //initialize();
@@ -268,6 +270,8 @@ QVariant FeatureLayerDrawer::attribute(const QString &attrName) const
         return _areaTransparency;
     if ( attrName == "boundarycolor")
         return _boundaryColor;
+    if ( attrName == "linecolor")
+        return _lineColor;
 
     return QVariant();
 }
@@ -286,6 +290,8 @@ void FeatureLayerDrawer::setAttribute(const QString &attrName, const QVariant &v
         _areaTransparency = value.toFloat();
     if ( attrName == "boundarycolor")
         _boundaryColor = value.value<QColor>();
+    if ( attrName == "linecolor")
+        _lineColor = value.value<QColor>();
 }
 
 
