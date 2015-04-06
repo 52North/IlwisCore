@@ -221,9 +221,9 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
 quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive) const
 {
-    QString query = QString("select itemid,type from mastercatalog where resource = '%1'").arg(url.toString());
+    QString query = QString("select itemid,type from mastercatalog where (resource = '%1' or rawresource = '%1')").arg(url.toString());
     if (!casesensitive)
-       query = QString("select itemid,type from mastercatalog where lower(resource) = '%1'").arg(url.toString().toLower()) ;
+       query = QString("select itemid,type from mastercatalog where lower(resource) = '%1' or lower(rawresource) = '%1'").arg(url.toString().toLower()) ;
     auto results = kernel()->database().exec(query);
     while ( results.next()) {
         auto rec = results.record();
@@ -320,7 +320,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
         return Resource();
 
     resolvedName = OSHelper::neutralizeFileName(resolvedName.toString());
-    auto query = QString("select * from mastercatalog where resource = '%1' and (type & %2) != 0").arg(resolvedName.toString()).arg(tp);
+    auto query = QString("select * from mastercatalog where (resource = '%1' or rawresource = '%1') and (type & %2) != 0").arg(resolvedName.toString()).arg(tp);
     auto results = kernel()->database().exec(query);
     if ( results.next()) {
         auto rec = results.record();
@@ -328,7 +328,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 
     } else {
         query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
-                        where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
+                        where ( mastercatalog.resource='%1' or mastercatalog.rawresource='%1') and mastercatalog.itemid=catalogitemproperties.itemid\
                 and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName.toString()).arg(tp);
         auto viaExtType = kernel()->database().exec(query);
         bool isExternalRef = true;
