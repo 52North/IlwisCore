@@ -62,6 +62,20 @@ void Coverage::envelope(const Envelope &bnds)
     _envelope = bnds;
 }
 
+Envelope Coverage::latlonEnvelope() const
+{
+    if ( _coordinateSystem.isValid()){
+        if ( _coordinateSystem->isLatLon())
+            return _envelope;
+        else if (_coordinateSystem->canConvertToLatLon()){
+            auto env = Envelope(_coordinateSystem->coord2latlon(_envelope.min_corner()),
+                                _coordinateSystem->coord2latlon(_envelope.max_corner()));
+            return env;
+        }
+    }
+    return Envelope();
+}
+
 
 NumericStatistics &Coverage::statistics(int  )
 {

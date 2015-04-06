@@ -21,6 +21,7 @@ namespace Ilwis {
 class Table;
 class ItemRange;
 
+
 typedef IlwisData<Table> ITable;
 /*!
  * \brief The Coverage class
@@ -88,6 +89,7 @@ public:
      * \param the new envelope
      */
     void envelope(const Envelope &bnds);
+    Envelope latlonEnvelope() const;
 
     /*!
      * \brief Sets a new Coveragetable or Indextable
