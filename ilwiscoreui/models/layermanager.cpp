@@ -147,7 +147,8 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
                     txt = layer->value2string(activeAttr, layer->visualAttributeByIndex(activeAttIndex));
                     auto end = vmap.end();
                     for(auto item = vmap.begin(); item != end; ++item){
-                        _layerInfoItems.push_back(new LayerInfoItem(item.key(), item.value().toString(), this));
+                        QString attTxt = layer->value2string(item.value(), item.key());
+                        _layerInfoItems.push_back(new LayerInfoItem(item.key(), attTxt, this));
                     }
                     emit layerInfoItemsChanged();
                 }
