@@ -23,7 +23,7 @@ CoverageLayerModel::CoverageLayerModel(quint32 layerInd, const Ilwis::Resource &
         for(int i=0; attrList.count != 0  && i < attrList.count(&attrList); ++i){
             auto *attr = attrList.at(&attrList, i);
             IlwisTypes valueType =  attr->columnDef().datadef().domain()->valueType();
-            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING)){
+            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING|itCOLOR)){
                 _visualAttributes.push_back(new VisualAttributeModel(attr->columnDef(),this,object()));
             }
         }
