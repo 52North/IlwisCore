@@ -140,7 +140,7 @@ public:
     PixelIterator& operator=(const Pixel &pix){
         _x = pix.x;
         _y = pix.y;
-        _z = pix.z;
+        _z = pix.z == iUNDEF ? 0 : pix.z;
         _yChanged = _xChanged = _zChanged = true;
         initPosition();
         return *this;
