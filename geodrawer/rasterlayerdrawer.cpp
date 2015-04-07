@@ -10,6 +10,8 @@
 #include "drawers/attributevisualproperties.h"
 #include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "layersrenderer.h"
 #include "rasterlayerdrawer.h"
 #include "rasterimage.h"
@@ -102,13 +104,18 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
         return;
     // fot the moment test only single band value maps with no attribute table; will extend when this works
     IlwisTypes attrType = raster->datadef().domain()->valueType();
-    if ( !hasType(attrType, itNUMBER))
-        return;
-
     VisualAttribute attr(raster->datadef().domain());
-    auto numrange = raster->datadef().range<NumericRange>();
-    attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
-    visualAttribute(PIXELVALUE, attr);
+    if ( hasType(attrType, itNUMBER)){
+        auto numrange = raster->datadef().range<NumericRange>();
+        attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
+        visualAttribute(PIXELVALUE, attr);
+    } else if ( hasType(attrType, itCONTINUOUSCOLOR)){
+         visualAttribute(PIXELVALUE, attr);
+
+    }else if ( hasType(attrType, itPALETTECOLOR)){
+        auto colorrange = raster->datadef().range<ColorPalette>();
+
+   }
 }
 
 
