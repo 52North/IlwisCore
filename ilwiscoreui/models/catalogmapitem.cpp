@@ -17,7 +17,7 @@ CatalogMapItem::~CatalogMapItem()
 
 QString CatalogMapItem::latLonEnvelope() const
 {
-    return _coverage->latlonEnvelope().toString();
+    return _coverage->envelope(true).toString();
 }
 
 QString CatalogMapItem::catalogItemType()
@@ -28,7 +28,7 @@ QString CatalogMapItem::catalogItemType()
 QVariantMap CatalogMapItem::drawEnvelope() const{
     QVariantMap vmap;
     try {
-    Ilwis::Envelope llenv = _coverage->latlonEnvelope();
+    Ilwis::Envelope llenv = _coverage->envelope(true);
 
     if ( llenv.isValid() && !llenv.isNull())    {
 
