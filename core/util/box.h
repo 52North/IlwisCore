@@ -169,7 +169,7 @@ public:
         bool ok = p.x >= pmin.x && p.x <= pmax.x &&
                 p.y >= pmin.y && p.y <= pmax.y;
         if ( is3D() && p.is3D()) {
-            ok = p.z >= pmin.z && p.z <= pmax.z;
+            ok &= p.z >= pmin.z && p.z <= pmax.z;
         }
         return ok;
     }
