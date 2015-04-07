@@ -53,7 +53,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
         _texture.reset( new QOpenGLTexture(*(im.image().get())));
         _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
-        Envelope env = raster->envelope();
+        Envelope env = rootDrawer()->coordinateSystem()->convertEnvelope(raster->coordinateSystem(), raster->envelope());
         _vertices.resize(6);
 
         _vertices[0] = QVector3D(env.min_corner().x, env.min_corner().y, 0);
