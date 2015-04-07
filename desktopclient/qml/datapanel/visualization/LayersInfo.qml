@@ -44,11 +44,16 @@ Item {
                         text : name
                         width : 100
                         font.bold : true
+                        color: layerHeader ? "darkblue" : "black"
+                        elide: Text.ElideMiddle
                     }
                     Text {
                         text : value
                         width : 140
                         clip : true
+                        color: layerHeader ? "darkblue" : "black"
+                        font.bold : layerHeader ? true : false
+                        elide: Text.ElideMiddle
 
                     }
                 }
