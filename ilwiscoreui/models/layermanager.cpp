@@ -130,6 +130,7 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
             }
             auto item = new LayerInfoItem("Layer",cov->name(), this);
             item->icon(layer->iconPath());
+            item->layerHeader(true);
             _layerInfoItems.push_back(item);
             QVariant value = cov->coord2value(crd,attrName);
             if ( value.isValid()){
