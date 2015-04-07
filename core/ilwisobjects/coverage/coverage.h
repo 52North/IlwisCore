@@ -89,7 +89,6 @@ public:
      * \param the new envelope
      */
     void envelope(const Envelope &bnds);
-    Envelope latlonEnvelope() const;
 
     /*!
      * \brief Sets a new Coveragetable or Indextable
