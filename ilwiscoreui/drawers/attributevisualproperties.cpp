@@ -4,8 +4,11 @@
 #include "domain.h"
 #include "colorlookup.h"
 #include "range.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "numericrange.h"
 #include "representation.h"
+#include "raster.h"
 #include "attributevisualproperties.h"
 
 using namespace Ilwis;
@@ -71,17 +74,25 @@ void VisualAttribute::stretchRange(const NumericRange &rng)
     _stretchRange = rng;
 }
 
-byte tovalue(const QString& name){
-    char byte = 0;
+quint32 tovalue(const QString& name){
+    short asnum = 0;
     for(auto c : name){
-        byte += c.unicode();
+        asnum += c.unicode();
     }
-    return byte;
+    return asnum * name.size();
 }
 
 QColor VisualAttribute::value2color(const QVariant &var) const
 {
-    double v = hasType(_domain->ilwisType(), itNUMERICDOMAIN | itITEMDOMAIN) ? var.toDouble() : tovalue(var.toString());
+    double v;
+    if ( hasType(_domain->valueType(), itCONTINUOUSCOLOR)){
+        return ColorRangeBase::toColor(var.toULongLong(), ColorRangeBase::cmRGBA);
+    }else if ( hasType(_domain->ilwisType(), itNUMERICDOMAIN | itITEMDOMAIN)){
+        v  =  var.toDouble();
+    }else{
+        v = tovalue(var.toString());
+    }
+
     return _representation->colors()->value2color(v, _actualRange, _stretchRange) ;
 }
 

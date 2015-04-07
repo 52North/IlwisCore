@@ -7,9 +7,11 @@ namespace Ilwis {
 
 class Representation;
 class Domain;
+class RasterCoverage;
 
 typedef IlwisData<Representation> IRepresentation;
 typedef IlwisData<Domain> IDomain;
+typedef IlwisData<RasterCoverage> IRasterCoverage;
 
 namespace Geodrawer{
 
@@ -39,6 +41,7 @@ private:
     NumericRange _stretchRange;
     NumericRange _actualRange;
     IDomain _domain;
+    IRasterCoverage _raster;
     quint32 _columnIndex=iUNDEF; //optional indicator which column/attribute is used for these properties
 };
 }
