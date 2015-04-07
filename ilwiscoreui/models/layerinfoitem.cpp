@@ -38,3 +38,13 @@ void LayerInfoItem::icon(const QString &ic)
     _icon = ic;
 }
 
+bool LayerInfoItem::layerHeader() const
+{
+    return _layerHeader;
+}
+
+void LayerInfoItem::layerHeader(bool yesno)
+{
+    _layerHeader = yesno;
+}
+
