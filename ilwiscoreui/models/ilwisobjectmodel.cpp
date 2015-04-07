@@ -7,6 +7,8 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "table.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "raster.h"
 
 using namespace Ilwis;
@@ -585,6 +587,8 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                     return value.toString();
                 return coldef.datadef().domain()->impliedValue(value).toString();
             }
+            if ( value.toDouble() == rUNDEF)
+                return sUNDEF;
             return value.toString();
     };
     if ( attrName != "") {
@@ -600,8 +604,14 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                 ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
                 return v2s(coldef, value);
              }
+             if ( raster->datadef().domain()->ilwisType() == itCOLORDOMAIN){
+                 auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
+                return ColorRangeBase::toString(clr,ColorRangeBase::cmRGBA)    ;
+             }
         }
     }
+    if ( value.toDouble() == rUNDEF)
+        return sUNDEF;
     return value.toString();
 
 }
