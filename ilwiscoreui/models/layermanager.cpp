@@ -152,7 +152,8 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
                     }
                     emit layerInfoItemsChanged();
                 }
-                texts.push_back(txt);
+                if ( layer->showInfo())
+                    texts.push_back(txt);
 
             }
         }

@@ -31,6 +31,8 @@ public:
     void setActiveAttributeIndex(int index);
     QString activeAttribute() const;
     QString visualAttributeByIndex(int index) const;
+    bool showInfo() const;
+    void showInfo(bool yesno)    ;
 
 signals:
     void visualAttributesChanged();
@@ -47,6 +49,7 @@ private:
     QList<VisualAttributeModel *> _visualAttributes;
     quint32 _layerIndex;
     int _activeAttribute = 0;
+    bool _showInfo = true;
 
 
 

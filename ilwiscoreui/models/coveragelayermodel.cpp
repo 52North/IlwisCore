@@ -88,6 +88,16 @@ QString CoverageLayerModel::visualAttributeByIndex(int index) const
     return sUNDEF;
 }
 
+bool CoverageLayerModel::showInfo() const
+{
+    return _showInfo;
+}
+
+void CoverageLayerModel::showInfo(bool yesno)
+{
+    _showInfo = yesno;
+}
+
 quint32 CoverageLayerModel::layerIndex() const
 {
     return _layerIndex;
