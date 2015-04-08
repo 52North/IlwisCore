@@ -162,10 +162,10 @@ QString LayersView::currentCoordinate() const
 {
     if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
         if ( rootDrawer()->coordinateSystem()->isLatLon()){
-            return _currentCoordinate.toString(2);
+            return _currentCoordinate.toString(6);
         }
     }
-    return _currentCoordinate.toString();
+    return _currentCoordinate.toString(2);
 }
 
 void LayersView::setCurrentCoordinate(const QString &var)
