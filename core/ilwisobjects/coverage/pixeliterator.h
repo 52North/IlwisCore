@@ -487,8 +487,10 @@ protected:
 
 
     bool move(int n) {
-        if ( n == 0)
+        if ( n == 0){
+            _xChanged = _yChanged = _zChanged = false;
             return true;
+        }
 
         bool ok = false;
         if (isAtEnd() && n >= 0) {
