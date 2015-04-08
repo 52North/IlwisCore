@@ -102,6 +102,28 @@ void PolygonPropertySetter::setBoundaryColor(const QColor &clr)
     layer()->drawer()->redraw();
 }
 
+float PolygonPropertySetter::boundarywidth() const
+{
+    if ( !layer())
+        return 1.0;
+    QVariant var = layer()->drawer()->attribute("boundarywidth");
+    if ( var.isValid())
+        return var.toInt();
+    return 1.0;
+
+}
+
+void PolygonPropertySetter::setBoundarywidth(float w)
+{
+    if ( !layer())
+        return ;
+
+    layer()->drawer()->setAttribute("boundarywidth", w);
+    layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+    layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions("polygononly",true));
+    layer()->drawer()->redraw();
+}
+
 VisualAttributeEditor *PolygonPropertySetter::create()
 {
     return new PolygonPropertySetter();

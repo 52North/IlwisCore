@@ -71,6 +71,8 @@ Item {
                         onTextChanged: {
                             if ( thicknessSlider.value !== text && Global.isNumber(text)){
                                 thicknessSlider.value = text
+                                if ( editor)
+                                    editor.boundarywidth = text
                             }
                         }
                     }

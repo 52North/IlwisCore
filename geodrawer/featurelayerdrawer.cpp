@@ -229,6 +229,8 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
             _shaders.setUniformValue(_scaleFactor, 1.0f);
             if ( featureDrawing._geomtype == itLINE){
                 glLineWidth(_lineWidth);
+            }else if (featureDrawing._geomtype == itPOLYGON){
+                glLineWidth(_boundarywidth);
             }
         }
 
@@ -272,6 +274,8 @@ QVariant FeatureLayerDrawer::attribute(const QString &attrName) const
         return _boundaryColor;
     if ( attrName == "linecolor")
         return _lineColor;
+    if ( attrName == "boundarywidth")
+        return _boundarywidth;
 
     return QVariant();
 }
@@ -282,6 +286,8 @@ void FeatureLayerDrawer::setAttribute(const QString &attrName, const QVariant &v
 
     if ( attrName == "linewidth")
         _lineWidth = value.toFloat();
+    if ( attrName == "boundarywidth")
+        _boundarywidth = value.toFloat();
     if ( attrName == "polygonboundaries")
         _showBoundaries = value.toBool();
     if ( attrName == "polygonareas")
