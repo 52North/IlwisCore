@@ -14,6 +14,7 @@ class ILWISCOREUISHARED_EXPORT CatalogMapItem : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString name READ name CONSTANT)
 public:
     CatalogMapItem();
     CatalogMapItem(const Ilwis::ICoverage& cov, const Ilwis::IGeoReference &grf, QObject* parent);
@@ -21,6 +22,7 @@ public:
 
     QString latLonEnvelope() const;
     QString catalogItemType();
+    QString name() const;
 
     Q_INVOKABLE QVariantMap drawEnvelope() const;
 private:
