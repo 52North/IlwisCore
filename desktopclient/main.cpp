@@ -37,7 +37,7 @@
 #include "models/tablemodel.h"
 #include "models/layerinfoitem.h"
 #include "models/catalogmapitem.h"
-#include "ilwiscoreui/propertyeditors/representationsetter.h"
+#include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "keyfilter.h"
 
 #define TEST_WORKINGDIR QString("file:///s:/data/coding/ilwis/2014-03-18_testdata")
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<VisualAttributeEditor>("VisualAttributeEditor", 1,0, "VisualAttributeEditor");
-        qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
+        qmlRegisterType<NumericRepresentationSetter>("NumericRepresentationSetter", 1,0, "NumericRepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
         qmlRegisterType<WorkflowCatalogModel>("WorkflowCatalogModel", 1,0, "WorkflowCatalogModel");
