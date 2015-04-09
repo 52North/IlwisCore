@@ -31,6 +31,16 @@ Rectangle {
         }
     }
 
+    Action {
+        id : refreshClicked
+        onTriggered: {
+            renderer.envelope()
+            currentCatalog.prepareMapItems(renderer.manager)
+            mapItems.items = currentCatalog.mapItems
+            mapItems.canvasDirty = true
+        }
+    }
+
     MapTools.LayerExtentsToolbar{
         id : maptools
     }
@@ -42,12 +52,6 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.margins: 5
 
-        Connections {
-            target: mouseActions
-            onZoomEnded :{
-                mapItems.markDirty(Qt.rect(0, 0, mapItems.width, mapItems.height))
-            }
-        }
 
         MapTools.LayerExtentMouseActions{
             id : mouseActions
@@ -68,28 +72,53 @@ Rectangle {
         anchors.top : maptools.bottom
         anchors.bottom: parent.bottom
         anchors.margins: 5
+        property bool canvasDirty: false
+        property var items : []
+        property var ctx
 
-        onPaint: {
-//            var llenv = renderer.envelope();
-//            if ( typeof llenv.minx !== 'undefined' ){
-//                var context = getContext("2d");
-//                context.clearRect(0,0,width, height)
-//                currentCatalog.prepareMapItems(renderer.manager)
-//                var items = currentCatalog.mapItems
-//                for(var i =0; i < items.length; ++i){
-//                    var envelope = items[i].drawEnvelope()
-//                    if ( typeof llenv.minx !== 'undefined'){
-//                        if ( envelope.width > 5 && envelope.height > 5){
-//                            context.beginPath();
-//                            context.lineWidth = 2;
-//                            context.strokeStyle = "red"
-//                            context.strokeRect(envelope.minx, envelope.miny, envelope.width, envelope.height)
-//                        }
-//                    }
-//                }
-//            }
+        Timer {
+            interval: 30;
+            running: true;
+            repeat: true
+
+
+            onTriggered: {
+                if (!mapItems.ctx && mapItems.available){
+                    mapItems.ctx = mapItems.getContext('2d')
+                }
+                mapItems.requestPaint()
+            }
         }
 
+        function clear() {
+            ctx.reset();
+            ctx.clearRect(0, 0, width, height);
+            ctx.stroke();
+            mapItems.requestPaint();
+        }
+
+        onPaint: {
+            if (ctx  ) {
+                clear(ctx);
+                canvasDirty = false
+                var l = items.length
+                for (var i = 0; i < l; i++) {
+                    ctx.save()
+                    var envelope = items[i].drawEnvelope()
+                    if ( envelope.width > 5 && envelope.height > 5){
+                        ctx.beginPath();
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "red"
+                        ctx.strokeRect(envelope.minx, envelope.miny, envelope.width, envelope.height)
+                        ctx.text(items[i].name,envelope.minx + 5, envelope.miny + 10)
+                        ctx.stroke()
+                    }
+                    ctx.restore()
+
+                }
+            }
+        }
     }
+
 }
 
