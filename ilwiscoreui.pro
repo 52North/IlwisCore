@@ -36,7 +36,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tranquilizerhandler.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
-    ilwiscoreui/propertyeditors/representationsetter.h \
     ilwiscoreui/models/coveragelayermodel.h \
     ilwiscoreui/drawers/drawerinterface.h \
     ilwiscoreui/models/projectionparametermodel.h \
@@ -58,7 +57,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/visualattributemodel.h \
     ilwiscoreui/models/layerinfoitem.h \
     ilwiscoreui/models/layermanager.h \
-    ilwiscoreui/models/catalogmapitem.h
+    ilwiscoreui/models/catalogmapitem.h \
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.h
 
 unix {
     target.path = /usr/lib
@@ -80,7 +80,6 @@ SOURCES += \
     ilwiscoreui/models/tranquilizerhandler.cpp \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
-    ilwiscoreui/propertyeditors/representationsetter.cpp \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp \
@@ -102,7 +101,8 @@ SOURCES += \
     ilwiscoreui/models/visualattributemodel.cpp \
     ilwiscoreui/models/layerinfoitem.cpp \
     ilwiscoreui/models/layermanager.cpp \
-    ilwiscoreui/models/catalogmapitem.cpp
+    ilwiscoreui/models/catalogmapitem.cpp \
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
