@@ -180,17 +180,19 @@ Rectangle {
                 if ( catalogpanel.currentCatalog)
                     catalogpanel.currentCatalog.destroy(0)
                 catalogpanel.currentCatalog = mastercatalog.newCatalog(url)
-                catalogpanel.currentCatalog.makeParent(catalogpanel)
-                var name = catalogpanel.currentCatalog.displayName
-                var  tabview = activeSplit ===1 ? lefttab : righttab
-                if ( tabview.currentIndex < tabview.count){
-                    var tab = tabview.getTab(tabview.currentIndex)
-                    if ( tab){
-                        tab.title = name
+                if ( catalogpanel.currentCatalog){
+                    catalogpanel.currentCatalog.makeParent(catalogpanel)
+                    var name = catalogpanel.currentCatalog.displayName
+                    var  tabview = activeSplit ===1 ? lefttab : righttab
+                    if ( tabview.currentIndex < tabview.count){
+                        var tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab){
+                            tab.title = name
+                        }
                     }
+                    mastercatalog.setWorkingCatalog(url);
+                    mastercatalog.currentCatalog = catalogpanel.currentCatalog
                 }
-                mastercatalog.setWorkingCatalog(url);
-                mastercatalog.currentCatalog = catalogpanel.currentCatalog
             }
         }
 
