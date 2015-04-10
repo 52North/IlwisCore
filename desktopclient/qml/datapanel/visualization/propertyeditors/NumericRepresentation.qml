@@ -1,5 +1,7 @@
 import QtQuick 2.1
+import RepresentationElement 1.0
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 Rectangle {
     width : displayEditorColumn.width - 20
@@ -10,9 +12,11 @@ Rectangle {
     function drawArea(ctx, w, h ){
         ctx.save();
         for(var j =0; j < w; j++){
-            var frac = j / w
-            var color = editor.color(1.0 - frac)
             ctx.beginPath()
+            var frac = j / w
+            var color = editor.color(frac)
+            ctx.beginPath()
+            ctx.lineWidth = 1
             ctx.strokeStyle = color
             ctx.moveTo(j ,20)
             ctx.lineTo(j, 40)
@@ -22,47 +26,67 @@ Rectangle {
         ctx.restore()
     }
 
+    function setText(ctx, label, x){
+        ctx.lineWidth = 0.4
+        var textW = ctx.measureText(label)
+        ctx.font = "9px sans-serif normal";
+        ctx.text(label, Math.max(0,x - textW.width / 2), 14)
+        ctx.stroke()
+    }
+
     function drawBars(ctx, w, h ){
         ctx.save()
         var color = Qt.rgba(0,0,0,1)
         ctx.strokeStyle = color
-        var step = Math.floor(w / 4)
-        for(var j =0; j < w; j = j + step){
+        var items = editor.representationElements
+        if ( items.length === 0)
+            return
+
+        var step = Math.floor(w / (items.length - 1))
+        var x = 0
+        for(var j =0; j < items.length - 1; ++j){
             ctx.beginPath()
-            ctx.moveTo(j,20)
-            ctx.lineTo(j,45)
+            ctx.moveTo(x,20)
+            ctx.lineTo(x,45)
             ctx.stroke()
-            ctx.beginPath()
-            ctx.text("100", j, 10)
-            ctx.stroke()
+            setText(ctx,items[j].label, x)
+            x = x + step
         }
         ctx.beginPath()
         ctx.moveTo(w,20)
         ctx.lineTo(w,45)
         ctx.stroke()
+        setText(ctx, items[items.length - 1].label,w)
 
         ctx.restore()
     }
 
-    Text {
+    function clear(ctx) {
+        ctx.reset();
+        ctx.clearRect(0, 0, width, height);
+        ctx.stroke();
+    }
+
+    Controls.TextFieldDropArea {
         id : rprName
         width : parent.width - 20
         height : Global.rowHeight
-        text : editor.representationName
-        font.bold: true
-        x : 2
+        currentText : editor.representationName
+        x : 10
     }
 
     Canvas{
         id : rprCanvas
         anchors.top : rprName.bottom
         width : editorColumn1.width - 20
-        x : 20
+        property bool isDirty : true
+        renderTarget:  Canvas.FramebufferObject
+        x : 10
         height : 50
         onPaint : {
-           // drawArea(getContext("2d"), width - 15, height)
-            drawBars(getContext("2d"), width - 15, height)
-
+            var ctx = getContext("2d")
+            drawArea(ctx, width - 15, height)
+            drawBars(ctx, width - 15, height)
         }
     }
 }
