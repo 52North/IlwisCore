@@ -66,7 +66,9 @@ void VisualAttribute::domain(const IDomain &dom)
 
 NumericRange VisualAttribute::stretchRange() const
 {
-    return _stretchRange;
+    if ( _stretchRange.isValid())
+        return _stretchRange;
+    return _actualRange;
 }
 
 void VisualAttribute::stretchRange(const NumericRange &rng)
