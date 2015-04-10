@@ -3,10 +3,16 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "numericrepresentationsetter.h"
+#include "mathhelper.h"
 
 
 RepresentationElement::RepresentationElement(QObject *parent) : QObject(parent)
 {
+}
+
+RepresentationElement::RepresentationElement(QString label, QObject *parent) : QObject(parent), Identity(label)
+{
+
 }
 
 QColor RepresentationElement::color() const
@@ -46,11 +52,23 @@ void NumericRepresentationSetter::prepare(CoverageLayerModel *parentLayer, const
     VisualAttributeEditor::prepare(parentLayer, obj, cdef);
 
     if ( layer() && layer()->drawer()){
-        QVariant var = layer()->drawer()->attribute("activevisualattribute");
-        if ( !var.isValid())
+        QVariant actAttribute = layer()->drawer()->attribute("activevisualattribute");
+        if ( !actAttribute.isValid())
             return ;
-        var = layer()->drawer()->attribute("visualattribute|representation|" + var.toString());
+        QVariant var = layer()->drawer()->attribute("visualattribute|representation|" + actAttribute.toString());
         _representation = var.value<IRepresentation>();
+        var = layer()->drawer()->attribute("visualattribute|stretchrange|" + actAttribute.toString());
+        NumericRange numrange = var.value<NumericRange>();
+        if ( !numrange.isValid())
+            return;
+
+        NumericRange roundedRange = MathHelper::roundRange(numrange.min(), numrange.max());
+        double tickValue = roundedRange.min();
+        while(tickValue <= numrange.max()){
+            _rprElements.push_back(new RepresentationElement(QString::number(tickValue),this));
+            tickValue += roundedRange.resolution();
+        }
+        _rprElements.push_back(new RepresentationElement(QString::number(tickValue),this));
 
         emit rprNameChanged();
     }

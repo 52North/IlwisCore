@@ -10,8 +10,9 @@ class ILWISCOREUISHARED_EXPORT RepresentationElement : public QObject, public Il
 
 public:
     explicit RepresentationElement(QObject *parent=0);
+    RepresentationElement(QString label, QObject *parent=0);
     Q_PROPERTY(QColor color READ color CONSTANT)
-    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString label READ name CONSTANT)
 
     QColor color() const;
 
@@ -25,6 +26,7 @@ class ILWISCOREUISHARED_EXPORT NumericRepresentationSetter : public VisualAttrib
     Q_OBJECT
 
     Q_PROPERTY(QString representationName READ representationName NOTIFY rprNameChanged)
+    Q_PROPERTY(QQmlListProperty<RepresentationElement> representationElements READ representationElements NOTIFY itemsChanged)
 public:
     NumericRepresentationSetter(QObject *parent = 0);
     ~NumericRepresentationSetter();
@@ -41,6 +43,7 @@ public:
     NEW_PROPERTYEDITOR(NumericRepresentationSetter)
 signals:
     void rprNameChanged();
+    void itemsChanged();
 
 private:
     QList<RepresentationElement *> _rprElements;
