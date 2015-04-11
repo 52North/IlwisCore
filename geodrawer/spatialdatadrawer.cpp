@@ -203,9 +203,24 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
     return var;
 }
 
-void SpatialDataDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
+void SpatialDataDrawer::setAttribute(const QString &key, const QVariant &attrib)
 {
-    ComplexDrawer::setAttribute(attrName, attrib);
+    ComplexDrawer::setAttribute(key, attrib);
+
+    if ( key.indexOf("visualattribute") == 0){
+        QStringList parts = key.split("|");
+        auto iter = _visualProperties.find(parts[2]);
+        if (iter == _visualProperties.end())
+            return;
+        if ( parts.size() == 3){
+            if ( parts[1] == "representation"){
+                IRepresentation rpr = attrib.value<IRepresentation>();
+                VisualAttribute& attr = _visualProperties[parts[2]];
+                attr.representation(rpr);
+            }
+
+        }
+    }
 }
 
 
