@@ -68,11 +68,21 @@ Rectangle {
     }
 
     Controls.TextFieldDropArea {
+        function check(id){
+            return editor.canUse(id)
+        }
+
         id : rprName
         width : parent.width - 20
         height : Global.rowHeight
         currentText : editor.representationName
         x : 10
+        canUse: check
+
+        onCurrentTextChanged: {
+            editor.setRepresentation(currentText)
+            rprCanvas.requestPaint()
+        }
     }
 
     Canvas{
@@ -83,10 +93,20 @@ Rectangle {
         renderTarget:  Canvas.FramebufferObject
         x : 10
         height : 50
+        Rectangle{
+            x : 0
+            y : 19
+            width: parent.width - 14
+            height : 22
+            color : "transparent"
+            border.color: "black"
+        }
+
         onPaint : {
             var ctx = getContext("2d")
             drawArea(ctx, width - 15, height)
             drawBars(ctx, width - 15, height)
-        }
+
+       }
     }
 }
