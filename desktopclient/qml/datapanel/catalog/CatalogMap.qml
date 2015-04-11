@@ -76,19 +76,19 @@ Rectangle {
         property var items : []
         property var ctx
 
-        Timer {
-            interval: 30;
-            running: true;
-            repeat: true
+//        Timer {
+//            interval: 30;
+//            running: true;
+//            repeat: true
 
 
-            onTriggered: {
-                if (!mapItems.ctx && mapItems.available){
-                    mapItems.ctx = mapItems.getContext('2d')
-                }
-                mapItems.requestPaint()
-            }
-        }
+//            onTriggered: {
+//                if (!mapItems.ctx && mapItems.available){
+//                    mapItems.ctx = mapItems.getContext('2d')
+//                }
+//                mapItems.requestPaint()
+//            }
+//        }
 
         function clear() {
             ctx.reset();
