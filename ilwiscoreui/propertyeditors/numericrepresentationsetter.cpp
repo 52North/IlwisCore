@@ -2,8 +2,10 @@
 #include "ilwisdata.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "representation.h"
 #include "numericrepresentationsetter.h"
 #include "mathhelper.h"
+#include "drawers/drawerinterface.h"
 
 
 RepresentationElement::RepresentationElement(QObject *parent) : QObject(parent)
@@ -87,6 +89,46 @@ QColor NumericRepresentationSetter::color(double frac)
         return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
     }
     return QColor();
+}
+
+bool NumericRepresentationSetter::canUse(const QString &id) const
+{
+    try {
+        bool ok;
+        quint64 objid = id.toULongLong(&ok);
+        if ( !ok)
+            return false;
+        Resource resource = mastercatalog()->id2Resource(objid);
+        if ( !resource.isValid())
+            return false;
+        if ( resource.ilwisType() != itREPRESENTATION)
+            return false;
+        IRepresentation representation(resource);
+        return hasType(representation->domain()->ilwisType(), itNUMERICDOMAIN);
+
+    } catch(const ErrorObject& err){
+
+    }
+    return false;
+
+}
+
+void NumericRepresentationSetter::setRepresentation(const QString &name)
+{
+    Resource resource = mastercatalog()->name2Resource(name, itREPRESENTATION)    ;
+    if ( !resource.isValid())
+        return;
+    IRepresentation rpr(resource);
+    QVariant actAttribute = layer()->drawer()->attribute("activevisualattribute");
+    if ( !actAttribute.isValid())
+        return ;
+    QVariant var;
+    var.setValue<IRepresentation>(rpr);
+    layer()->drawer()->setAttribute("visualattribute|representation|" + actAttribute.toString(),var);
+    layer()->drawer()->unprepare(Geodrawer::DrawerInterface::ptGEOMETRY);
+    layer()->drawer()->prepare(Geodrawer::DrawerInterface::ptGEOMETRY, IOOptions());
+    layer()->drawer()->redraw();
+
 }
 
 QQmlListProperty<RepresentationElement> NumericRepresentationSetter::representationElements()

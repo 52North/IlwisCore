@@ -38,6 +38,8 @@ public:
     QString representationName() const;
 
     Q_INVOKABLE QColor color(double frac);
+    Q_INVOKABLE bool canUse(const QString& id) const;
+    Q_INVOKABLE void setRepresentation(const QString& name)    ;
     QQmlListProperty<RepresentationElement> representationElements();
 
     NEW_PROPERTYEDITOR(NumericRepresentationSetter)
