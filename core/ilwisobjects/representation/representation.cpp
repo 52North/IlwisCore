@@ -60,7 +60,7 @@ bool Representation::isCompatible(const IDomain &otherDomain)
         if ( otherDomain == domain())
             return true;
 
-        if ( hasType(domain()->ilwisType(), itNUMBER) && hasType(otherDomain->ilwisType(), itNUMBER)){
+        if ( hasType(domain()->valueType(), itNUMBER) && hasType(otherDomain->valueType(), itNUMBER)){
             return true;
         }
         //TODO other cases
