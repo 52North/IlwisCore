@@ -13,8 +13,10 @@
 #include "itemrange.h"
 #include "colorrange.h"
 #include "layersrenderer.h"
-#include "rasterlayerdrawer.h"
 #include "rasterimage.h"
+#include "rastervalueimage.h"
+#include "rasterlayerdrawer.h"
+
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -39,6 +41,12 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     if(!LayerDrawer::prepare(prepType, options))
         return false;
 
+    IRasterCoverage raster = coverage().as<RasterCoverage>();
+    if ( !_rasterImage){
+        setActiveVisualAttribute(PIXELVALUE);
+       _visualAttribute = visualAttribute(activeAttribute());
+       _rasterImage.reset(new RasterValueImage(rootDrawer(),raster,_visualAttribute));
+    }
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _texcoordid = _shaders.attributeLocation("texCoord");
         _textureid = _shaders.uniformLocation( "tex" );
@@ -47,14 +55,6 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     }
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
-        IRasterCoverage raster = coverage().as<RasterCoverage>();
-        setActiveVisualAttribute(PIXELVALUE);
-        RasterImage im(rootDrawer(),raster, visualAttribute(activeAttribute()));
-        im.makeImage();
-
-
-        _texture.reset( new QOpenGLTexture(*(im.image().get())));
-        _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
         Envelope env = rootDrawer()->coordinateSystem()->convertEnvelope(raster->coordinateSystem(), raster->envelope());
         _vertices.resize(6);
 
@@ -70,9 +70,19 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
                       {1,1},{1,0},{0,0}
                      };
 
-        _prepared |= ( DrawerInterface::ptGEOMETRY | DrawerInterface::ptRENDER);
+        _prepared |= ( DrawerInterface::ptGEOMETRY);
     }
-    return true;
+   if ( hasType(prepType, DrawerInterface::ptRENDER) && !isPrepared(DrawerInterface::ptRENDER)){
+        setActiveVisualAttribute(PIXELVALUE);
+       _visualAttribute = visualAttribute(activeAttribute());
+       _rasterImage->visualAttribute(_visualAttribute);
+       _prepared |= ( DrawerInterface::ptRENDER);
+   }
+   if (_rasterImage->prepare((int)prepType)){
+       _texture.reset( new QOpenGLTexture(*(_rasterImage->image().get())));
+       _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
+   }
+   return true;
 }
 
 void RasterLayerDrawer::setActiveVisualAttribute(const QString &attr)
