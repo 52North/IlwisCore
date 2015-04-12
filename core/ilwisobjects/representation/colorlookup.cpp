@@ -10,13 +10,13 @@
 
 using namespace Ilwis;
 
-std::vector<QColor> ColorLookUp::values2colors(const std::vector<double> &values, const NumericRange &actualRange, const NumericRange &stretchRange) const
+std::vector<QColor> ColorLookUp::values2colors(const NumericRange &actualRange, const NumericRange &stretchRange, int paletteSize) const
 {
-    std::vector<QColor> colors(values.size());
-    auto iter = colors.begin();
-    for(auto value : values){
-        *iter = value2color(value, actualRange, stretchRange);
-        ++iter;
+    std::vector<QColor> colors(paletteSize);
+    colors[0] = QColor("transparent");
+    for(int i=1; i < paletteSize; ++i){
+        double value = actualRange.min() + actualRange.distance() * ((double) (i-1)/ (paletteSize - 1));
+        colors[i] = value2color(value, actualRange, stretchRange);
     }
     return colors;
 }
