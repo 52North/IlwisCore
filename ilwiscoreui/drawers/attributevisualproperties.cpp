@@ -84,6 +84,12 @@ quint32 tovalue(const QString& name){
     return asnum * name.size();
 }
 
+std::vector<QColor> VisualAttribute::colors(int size) const{
+    if ( _representation.isValid() &&  _representation->colors())
+        return _representation->colors()->values2colors(_actualRange, _stretchRange,size) ;
+    return std::vector<QColor>();
+}
+
 QColor VisualAttribute::value2color(const QVariant &var) const
 {
     double v;
