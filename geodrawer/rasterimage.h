@@ -10,16 +10,18 @@ class RasterImage
 {
 public:
     RasterImage(RootDrawer *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute);
-    ~RasterImage();
+    virtual ~RasterImage();
 
     const std::unique_ptr<QImage>& image();
-    void makeImage();
-private:
+    virtual bool prepare(int prepareType) = 0;
+    void visualAttribute(const VisualAttribute &vattribute);
+protected:
     IRasterCoverage _raster;
     RootDrawer *_rootDrawer;
-    VisualAttribute _visualAttribute;
     std::unique_ptr<QImage> _image;
-    std::vector<VertexColorI> _pixels;
+    VisualAttribute _visualAttribute;
+
+
 
 
 };
