@@ -125,8 +125,8 @@ void NumericRepresentationSetter::setRepresentation(const QString &name)
     QVariant var;
     var.setValue<IRepresentation>(rpr);
     layer()->drawer()->setAttribute("visualattribute|representation|" + actAttribute.toString(),var);
-    layer()->drawer()->unprepare(Geodrawer::DrawerInterface::ptGEOMETRY);
-    layer()->drawer()->prepare(Geodrawer::DrawerInterface::ptGEOMETRY, IOOptions());
+    layer()->drawer()->unprepare(Geodrawer::DrawerInterface::ptRENDER);
+    layer()->drawer()->prepare(Geodrawer::DrawerInterface::ptRENDER, IOOptions());
     layer()->drawer()->redraw();
 
 }
