@@ -102,28 +102,20 @@ void Kernel::init() {
     _version->addBinaryVersion(Ilwis::Version::bvPOLYGONFORMAT37);
     _version->addODFVersion("3.1");
 
-
-
     _dbPublic = QSqlDatabase::addDatabase("QSQLITE");
     _dbPublic.setHostName("localhost");
-   //QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/ilwis.sqlite";
-   // QFileInfo inf(loc);
-   // bool exists = inf.exists();
     _dbPublic.setDatabaseName(":memory:");
-    //_dbPublic.setDatabaseName(loc);
     _dbPublic.open();
 
     QSqlQuery stmt(_dbPublic);
-    bool ok =stmt.exec("PRAGMA page_size = 4096");
-    ok = stmt.exec("PRAGMA cache_size = 16384");
-    ok = stmt.exec("PRAGMA temp_store = MEMORY");
-    ok = stmt.exec("PRAGMA journal_mode = OFF");
-    ok = stmt.exec("PRAGMA locking_mode = EXCLUSIVE");
-    ok = stmt.exec("PRAGMA synchronous = OFF");
+    stmt.exec("PRAGMA page_size = 4096");
+    stmt.exec("PRAGMA cache_size = 16384");
+    stmt.exec("PRAGMA temp_store = MEMORY");
+    stmt.exec("PRAGMA journal_mode = OFF");
+    stmt.exec("PRAGMA locking_mode = EXCLUSIVE");
+    stmt.exec("PRAGMA synchronous = OFF");
 
-
-    //if (!exists)
-        _dbPublic.prepare();
+     _dbPublic.prepare();
 
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
