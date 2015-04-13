@@ -2,14 +2,19 @@
 #include "raster.h"
 #include "pixeliterator.h"
 #include "rootdrawer.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "drawers/rasterimagefactory.h"
 #include "drawers/attributevisualproperties.h"
 #include "rastercolorimage.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-RasterColorImage::RasterColorImage(RootDrawer *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute) :
-    RasterImage(rootDrawer,raster,vattribute)
+REGISTER_RASTERIMAGETYPE(RasterColorImage,itCOLORDOMAIN)
+
+RasterColorImage::RasterColorImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options) :
+    RasterImage(rootDrawer,raster,vattribute, options)
 {
 
 }
@@ -17,6 +22,11 @@ RasterColorImage::RasterColorImage(RootDrawer *rootDrawer, const IRasterCoverage
 RasterColorImage::~RasterColorImage()
 {
 
+}
+
+RasterImage *RasterColorImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options)
+{
+    return new RasterColorImage(rootDrawer, raster, vattribute, options)    ;
 }
 
 bool RasterColorImage::prepare(int prepareType)

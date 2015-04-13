@@ -2,20 +2,31 @@
 #include "raster.h"
 #include "pixeliterator.h"
 #include "rootdrawer.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "drawers/rasterimagefactory.h"
 #include "drawers/attributevisualproperties.h"
+
 #include "rastervalueimage.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-RasterValueImage::RasterValueImage(RootDrawer *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute) :
-    RasterImage(rootDrawer,raster,vattribute)
+REGISTER_RASTERIMAGETYPE(RasterValueImage,itNUMERICDOMAIN);
+
+RasterValueImage::RasterValueImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options) :
+    RasterImage(rootDrawer,raster,vattribute, options)
 {
 }
 
 RasterValueImage::~RasterValueImage()
 {
 
+}
+
+RasterImage *RasterValueImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options)
+{
+    return new RasterValueImage(rootDrawer, raster, vattribute, options)    ;
 }
 
 bool RasterValueImage::prepare(int prepareType)

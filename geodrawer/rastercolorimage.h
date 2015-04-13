@@ -1,7 +1,7 @@
 #ifndef RASTERCOLORIMAGE_H
 #define RASTERCOLORIMAGE_H
 
-#include "rasterimage.h"
+#include "drawers/rasterimage.h"
 
 
 namespace Ilwis{
@@ -9,12 +9,16 @@ namespace Geodrawer {
 class RasterColorImage : public RasterImage
 {
 public:
-    RasterColorImage(RootDrawer *rootDrawer, const IRasterCoverage &raster, const VisualAttribute &vattribute);
+    RasterColorImage(DrawerInterface *rootDrawer, const IRasterCoverage &raster, const VisualAttribute &vattribute,const IOOptions &options);
     ~RasterColorImage();
     bool prepare(int prepareType);
 
 private:
+    static     RasterImage *create(DrawerInterface *rootDrawer, const IRasterCoverage &raster, const VisualAttribute &vattribute, const IOOptions &options);
+
     std::vector<VertexColorI> _pixels;
+
+    NEW_RASTERIMAGETYPE
 };
 }
 }

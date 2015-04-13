@@ -1,7 +1,7 @@
 #ifndef RASTERVALUEIMAGE_H
 #define RASTERVALUEIMAGE_H
 
-#include "rasterimage.h"
+#include "drawers/rasterimage.h"
 
 namespace Ilwis{
 namespace Geodrawer {
@@ -9,13 +9,18 @@ namespace Geodrawer {
 class RasterValueImage : public RasterImage
 {
 public:
-    RasterValueImage(Ilwis::Geodrawer::RootDrawer *rootDrawer, const Ilwis::IRasterCoverage &raster, const Ilwis::Geodrawer::VisualAttribute &vattribute);
+    RasterValueImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options=IOOptions());
     ~RasterValueImage();
 
     bool prepare(int prepareType);
+
 private:
     QVector<QRgb> _colorTable;
     std::vector<quint8> _pixels;
+
+    static RasterImage *create(DrawerInterface *rootDrawer, const IRasterCoverage &raster, const VisualAttribute &vattribute, const IOOptions &options);
+
+NEW_RASTERIMAGETYPE
 };
 }
 }
