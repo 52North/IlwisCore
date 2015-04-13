@@ -49,6 +49,18 @@ Rectangle {
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
                     return tab.item
+                else{ // apparently the tab has no catalog so we look at the other side
+                    tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
+                    if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+                        tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab && tab.item){
+                            if ( "currentCatalog" in tab.item){
+                                activeSplit = Math.abs(activeSplit) == 2 ? 1 : 2
+                                return tab.item
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -130,47 +142,27 @@ Rectangle {
             }
         }
 
-        function showObject(objectid, subtype){
-            var type = mastercatalog.id2type(objectid)
-            if ( !type)
-                return
-            var qmlUrl;
-            if ( type === "rastercoverage" || type === "featurecoverage" || type === "linecoverage" || type === "pointcoverage" || type === "polygoncoverage")
-                qmlUrl = "visualization/Visualize.qml"
-            if ( type === "table" || type === "flattable")
-                qmlUrl = "table/TablePane.qml"
-            var component = Qt.createComponent(qmlUrl)
-            var resource = mastercatalog.id2Resource(objectid)
-            if ( resource !== null){
-                var name = resource.displayName
-                var blocksize = 24 / 2;
-                if ( name.length > 15){
-                    var part1 = name.substr(0,blocksize)
-                    var part2 = name.substr( name.length - blocksize)
-                    name = part1 + "..." + part2
-
-                }
-                var tabCount = righttab.count
-                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-                tab.active = true
-                if ( activeSplit ===1){
-                    righttab.width = parent.width / 2.0;
-                    righttab.state = "halfsize"
-                    tabCount = righttab.count - 1 // tab has already been added so -1
-                    righttab.currentIndex = tabCount
-                    activeSplit = 2
-                }
-                else {
-                    lefttab.width = parent.width / 2.0;
-                    lefttab.state = "halfsize"
-                    tabCount = lefttab.count - 1 // tab has already been added so -1
-                    lefttab.currentIndex = tabCount
-                    activeSplit = 1
-                 }
-
-                tab.item.addDataSource(resource.url, resource.name, resource.typeName)
-                mastercatalog.setActiveTab(activeSplit, tabCount)
+        function showObject(side,name, component, resource){
+            var tabCount = righttab.count
+            var tab = side === "left" ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+            tab.active = true
+            if ( side === "left"){
+                righttab.width = parent.width / 2.0;
+                righttab.state = "halfsize"
+                tabCount = righttab.count - 1 // tab has already been added so -1
+                righttab.currentIndex = tabCount
+                activeSplit = 2
             }
+            else {
+                lefttab.width = parent.width / 2.0;
+                lefttab.state = "halfsize"
+                tabCount = lefttab.count - 1 // tab has already been added so -1
+                lefttab.currentIndex = tabCount
+                activeSplit = 1
+            }
+
+            tab.item.addDataSource(resource.url, resource.name, resource.typeName)
+            mastercatalog.setActiveTab(activeSplit, tabCount)
         }
 
         function changeCatalog(url){
@@ -193,6 +185,8 @@ Rectangle {
                     mastercatalog.setWorkingCatalog(url);
                     mastercatalog.currentCatalog = catalogpanel.currentCatalog
                 }
+            }else {
+                newCatalog(url,1)
             }
         }
 
