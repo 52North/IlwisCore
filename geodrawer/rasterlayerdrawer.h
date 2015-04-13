@@ -34,7 +34,6 @@ private:
     QVector<QVector3D> _vertices;
     QVector<QVector2D> _texcoords;
     std::unique_ptr<RasterImage> _rasterImage;
-    std::vector<QRgb> _colorTable;
     VisualAttribute _visualAttribute;
 
 };
