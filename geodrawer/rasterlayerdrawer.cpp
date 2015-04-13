@@ -13,8 +13,10 @@
 #include "itemrange.h"
 #include "colorrange.h"
 #include "layersrenderer.h"
-#include "rasterimage.h"
-#include "rastervalueimage.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "drawers/rasterimagefactory.h"
+#include "drawers/rasterimage.h"
 #include "rasterlayerdrawer.h"
 
 
@@ -45,7 +47,12 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     if ( !_rasterImage){
         setActiveVisualAttribute(PIXELVALUE);
        _visualAttribute = visualAttribute(activeAttribute());
-       _rasterImage.reset(new RasterValueImage(rootDrawer(),raster,_visualAttribute));
+       _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(),raster,_visualAttribute,IOOptions()));
+       if (!_rasterImage){
+           ERROR2(ERR_NO_INITIALIZED_2,"RasterImage",raster->name());
+           return false;
+       }
+
     }
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _texcoordid = _shaders.attributeLocation("texCoord");
