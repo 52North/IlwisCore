@@ -18,9 +18,30 @@ Item {
 
     signal catalogChanged()
 
-    function showObject(objectid){
-        datapanesplit.showObject(objectid)
+    function showObject(objectid, subtype){
+        var type = mastercatalog.id2type(objectid)
+        if ( !type)
+            return
+        var qmlUrl;
+        if ( type === "rastercoverage" || type === "featurecoverage" || type === "linecoverage" || type === "pointcoverage" || type === "polygoncoverage")
+            qmlUrl = "../visualization/Visualize.qml"
+        if ( type === "table" || type === "flattable")
+            qmlUrl = "../table/TablePane.qml"
+        var component = Qt.createComponent(qmlUrl)
+        var resource = mastercatalog.id2Resource(objectid)
+        if ( resource !== null){
+            var name = resource.displayName
+            var blocksize = 24 / 2;
+            if ( name.length > 15){
+                var part1 = name.substr(0,blocksize)
+                var part2 = name.substr( name.length - blocksize)
+                name = part1 + "..." + part2
+
+            }
+            datapanesplit.showObject(tabLocation,name,component,resource)
+        }
     }
+
 
     function toggleFilter(objecttype, togglestate){
         if ( objecttype === "all"){

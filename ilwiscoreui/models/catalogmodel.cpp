@@ -156,6 +156,7 @@ void CatalogModel::prepareMapItems(LayerManager *manager)
 {
     try{
         if ( _catalogMapItems.size() == 0){
+            kernel()->issues()->silent(true);
             for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
                 if(hasType((*iter)->type(), itCOVERAGE)){
                     Ilwis::ICoverage cov(((*iter)->resource()));
@@ -166,12 +167,14 @@ void CatalogModel::prepareMapItems(LayerManager *manager)
                     }
                 }
             }
+            kernel()->issues()->silent(false);
         }
     } catch (const Ilwis::ErrorObject& ){
 
     } catch (std::exception& ex){
         Ilwis::kernel()->issues()->log(ex.what());
     }
+    kernel()->issues()->silent(false);
 }
 
 void CatalogModel::gatherItems() {

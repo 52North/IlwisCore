@@ -66,7 +66,9 @@ void VisualAttribute::domain(const IDomain &dom)
 
 NumericRange VisualAttribute::stretchRange() const
 {
-    return _stretchRange;
+    if ( _stretchRange.isValid())
+        return _stretchRange;
+    return _actualRange;
 }
 
 void VisualAttribute::stretchRange(const NumericRange &rng)
@@ -80,6 +82,12 @@ quint32 tovalue(const QString& name){
         asnum += c.unicode();
     }
     return asnum * name.size();
+}
+
+std::vector<QColor> VisualAttribute::colors(int size) const{
+    if ( _representation.isValid() &&  _representation->colors())
+        return _representation->colors()->values2colors(_actualRange, _stretchRange,size) ;
+    return std::vector<QColor>();
 }
 
 QColor VisualAttribute::value2color(const QVariant &var) const

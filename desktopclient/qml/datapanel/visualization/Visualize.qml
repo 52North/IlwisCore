@@ -52,6 +52,12 @@ Item {
             layers.entireMap()
         }
     }
+    Action {
+        id : refreshClicked
+        onTriggered: {
+
+        }
+    }
 
     LayerExtentsToolbar{
         id : maptools

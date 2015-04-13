@@ -34,7 +34,7 @@ ToolBar{
         id : refreshButton
         anchors.verticalCenter: parent.verticalCenter
         anchors.left :entireMap.right
-        action : entireClicked
+        action : refreshClicked
         anchors.rightMargin: 2
         Image {
             anchors.verticalCenter: parent.verticalCenter

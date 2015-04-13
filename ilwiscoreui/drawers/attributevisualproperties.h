@@ -36,6 +36,7 @@ public:
 
     const static QString LAYERATTRIBUTE;
 
+    std::vector<QColor> colors(int size=256) const;
 private:
     IRepresentation _representation;
     NumericRange _stretchRange;
