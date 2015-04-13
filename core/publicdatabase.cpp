@@ -96,6 +96,10 @@ void PublicDatabase::prepare() {
                )";
     doQuery(stmt, sql);
 
+    doQuery("CREATE INDEX mastercat_id ON mastercatalog(itemid)", sql);
+    doQuery("CREATE INDEX mastercay_urltp ON mastercatalog(rawresource,type)", sql);
+    doQuery("CREATE INDEX mastercay_rurltp ON mastercatalog(resource,type)", sql);
+
     stmt = "create table catalogitemproperties \
             (\
                 propertyvalue TEXT, \
@@ -361,7 +365,7 @@ bool PublicDatabase::fillDatumRecord(const QStringList& parts, QSqlQuery &sqlPub
 
 
 
-bool PublicDatabase::doQuery(QString& query, QSqlQuery &sqlPublic)
+bool PublicDatabase::doQuery(const QString& query, QSqlQuery &sqlPublic)
 {
     bool ok = sqlPublic.exec(query);
     if (!ok) {

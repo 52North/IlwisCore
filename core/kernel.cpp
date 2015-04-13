@@ -11,6 +11,7 @@
 #include <cxxabi.h>
 #include <iostream>
 #include <QException>
+#include <QDesktopServices>
 #include "kernel.h"
 #include "factory.h"
 #include "geometries.h"
@@ -105,10 +106,24 @@ void Kernel::init() {
 
     _dbPublic = QSqlDatabase::addDatabase("QSQLITE");
     _dbPublic.setHostName("localhost");
+   //QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/ilwis.sqlite";
+   // QFileInfo inf(loc);
+   // bool exists = inf.exists();
     _dbPublic.setDatabaseName(":memory:");
+    //_dbPublic.setDatabaseName(loc);
     _dbPublic.open();
 
-    _dbPublic.prepare();
+    QSqlQuery stmt(_dbPublic);
+    bool ok =stmt.exec("PRAGMA page_size = 4096");
+    ok = stmt.exec("PRAGMA cache_size = 16384");
+    ok = stmt.exec("PRAGMA temp_store = MEMORY");
+    ok = stmt.exec("PRAGMA journal_mode = OFF");
+    ok = stmt.exec("PRAGMA locking_mode = EXCLUSIVE");
+    ok = stmt.exec("PRAGMA synchronous = OFF");
+
+
+    //if (!exists)
+        _dbPublic.prepare();
 
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
