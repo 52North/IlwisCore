@@ -62,10 +62,10 @@ SOURCES += \
     geodrawer/operations/showpolygonboundaries.cpp \
     geodrawer/operations/showpolygonareas.cpp \
     geodrawer/operations/setpolygonboundarycolor.cpp \
-    geodrawer/rasterimage.cpp \
     geodrawer/operations/setlinecolor.cpp \
     geodrawer/operations/setpolygonboundarywidth.cpp \
-    geodrawer/rastervalueimage.cpp
+    geodrawer/rastervalueimage.cpp \
+    geodrawer/rastercolorimage.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -105,10 +105,10 @@ HEADERS += \
     geodrawer/operations/showpolygonboundaries.h \
     geodrawer/operations/showpolygonareas.h \
     geodrawer/operations/setpolygonboundarycolor.h \
-    geodrawer/rasterimage.h \
     geodrawer/operations/setlinecolor.h \
     geodrawer/operations/setpolygonboundarywidth.h \
-    geodrawer/rastervalueimage.h
+    geodrawer/rastervalueimage.h \
+    geodrawer/rastercolorimage.h
 
 
 OTHER_FILES = geodrawer/qmldir

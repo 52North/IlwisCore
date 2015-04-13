@@ -58,7 +58,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/layerinfoitem.h \
     ilwiscoreui/models/layermanager.h \
     ilwiscoreui/models/catalogmapitem.h \
-    ilwiscoreui/propertyeditors/numericrepresentationsetter.h
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.h \
+    ilwiscoreui/drawers/rasterimage.h \
+    ilwiscoreui/drawers/rasterimagefactory.h
 
 unix {
     target.path = /usr/lib
@@ -102,7 +104,9 @@ SOURCES += \
     ilwiscoreui/models/layerinfoitem.cpp \
     ilwiscoreui/models/layermanager.cpp \
     ilwiscoreui/models/catalogmapitem.cpp \
-    ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp \
+    ilwiscoreui/drawers/rasterimage.cpp \
+    ilwiscoreui/drawers/rasterimagefactory.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
