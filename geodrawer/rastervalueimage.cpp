@@ -33,6 +33,8 @@ bool RasterValueImage::prepare(int prepareType)
 {
     bool resetImage = false;
     BoundingBox bb(_raster->size());
+    int xl = (quint32)bb.xlength() % 4 == 0 ? bb.xlength() : (((quint32)bb.xlength() / 4) + 1) * 4;
+    int rest = xl - bb.xlength();
     if ( hasType(prepareType, DrawerInterface::ptRENDER)){
         std::vector<QColor> colors = _visualAttribute.colors();
         _colorTable = QVector<QRgb>(colors.size()) ;
@@ -43,8 +45,7 @@ bool RasterValueImage::prepare(int prepareType)
     }
 
     if ( hasType(prepareType, DrawerInterface::ptGEOMETRY)){
-        BoundingBox bb(_raster->size());
-        quint32 size = bb.xlength() * bb.ylength();
+        quint32 size = xl * bb.ylength();
         _pixels.resize(size);
         PixelIterator pixIter(_raster);
 
@@ -53,18 +54,23 @@ bool RasterValueImage::prepare(int prepareType)
 
         SPNumericRange numrange =  _raster->datadef().range<NumericRange>();
         auto end = pixIter.end();
+        quint32 position = 0;
         while(pixIter != end){
             double value = *pixIter;
             int index = value == rUNDEF ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
-            _pixels[pixIter.linearPosition()] = index;
+            _pixels[position] = index;
             ++pixIter;
+            if ( pixIter.ychanged()){
+                position += rest;
+            }
+            ++position;
         }
         resetImage = true;
     }
 
     if ( resetImage)   {
         const uchar *datablock = (const uchar *)_pixels.data();
-        _image.reset(new QImage(datablock,bb.xlength(), bb.ylength(),QImage::Format_Indexed8));
+        _image.reset(new QImage(datablock,xl, bb.ylength(),QImage::Format_Indexed8));
         _image->setColorTable(_colorTable);
     }
     return resetImage;
