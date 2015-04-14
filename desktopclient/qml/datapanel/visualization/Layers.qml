@@ -1,5 +1,8 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.0
+import QtQuick.Controls.Styles 1.0
 import "../../controls" as Controls
 import LayersView 1.0
 
@@ -45,14 +48,19 @@ Item {
           var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
           addDataSource(resource.url, resource.name, resource.typeName)
       }
+
       LayersView {
           id: renderer
           anchors.fill: parent
           anchors.margins: 5
 
+
+
           LayerExtentMouseActions{
-             layerManager: manager
+              layerManager: manager
           }
       }
+
+
   }
 }
