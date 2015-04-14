@@ -33,6 +33,7 @@ bool RasterValueImage::prepare(int prepareType)
 {
     bool resetImage = false;
     BoundingBox bb(_raster->size());
+    // lines must be 32 bit alligned. an entry pixel is a byte, so everything must be 4 alligned (32 bit is 4 bytes)
     int xl = (quint32)bb.xlength() % 4 == 0 ? bb.xlength() : (((quint32)bb.xlength() / 4) + 1) * 4;
     int rest = xl - bb.xlength();
     if ( hasType(prepareType, DrawerInterface::ptRENDER)){
