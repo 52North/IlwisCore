@@ -81,6 +81,8 @@ public:
     void synchronize(QQuickFramebufferObject *item);
 
     void cleanup();
+signals:
+    void synchronizeDone();
 
 private:
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
