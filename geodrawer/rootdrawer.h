@@ -35,6 +35,7 @@ public:
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
     Size<> pixelAreaSize() const;
+    Size<> coverageAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
     const ICoordinateSystem& coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);

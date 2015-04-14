@@ -195,6 +195,14 @@ Size<> RootDrawer::pixelAreaSize() const
     return _pixelAreaSize;
 }
 
+Size<> RootDrawer::coverageAreaSize() const
+{
+    if ( !_screenGrf.isValid())
+        return Size<>();
+    auto bb = _screenGrf->coord2Pixel(_coverageRect);
+    return bb.size();
+}
+
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
     return _mvp;

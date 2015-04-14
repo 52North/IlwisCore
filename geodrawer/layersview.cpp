@@ -156,7 +156,7 @@ int LayersView::xsize() const
     Geodrawer::RootDrawer *root = rootDrawer();
     if ( !root)
         return 0;
-    return root->fullPixelSize().xsize();
+    return root->coverageAreaSize().xsize();
 }
 
 int LayersView::ysize() const
@@ -164,7 +164,7 @@ int LayersView::ysize() const
     Geodrawer::RootDrawer *root = rootDrawer();
     if ( !root)
         return 0;
-    return root->fullPixelSize().ysize();
+    return root->coverageAreaSize().ysize();
 }
 
 QString LayersView::viewerId() const
