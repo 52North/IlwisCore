@@ -27,7 +27,9 @@ LayersView::~LayersView()
 
 QQuickFramebufferObject::Renderer *LayersView::createRenderer() const
 {
-    return new LayersRenderer(this);
+    LayersRenderer *renderer = new LayersRenderer(this);
+    connect(renderer,&LayersRenderer::synchronizeDone,this,&LayersView::synchronizeEnded);
+    return renderer;
 }
 
 void LayersView::addCommand(const QString &command, const QVariantMap &params)
@@ -141,6 +143,28 @@ void LayersView::setShowLayerInfo(bool yesno)
 {
     _showLayerInfo = yesno;
     emit showLayerInfoChanged();
+}
+
+void LayersView::synchronizeEnded()
+{
+   emit xsizeChanged();
+
+}
+
+int LayersView::xsize() const
+{
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( !root)
+        return 0;
+    return root->fullPixelSize().xsize();
+}
+
+int LayersView::ysize() const
+{
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( !root)
+        return 0;
+    return root->fullPixelSize().ysize();
 }
 
 QString LayersView::viewerId() const

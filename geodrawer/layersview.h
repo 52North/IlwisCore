@@ -67,6 +67,8 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
+    Q_PROPERTY(int xsize READ xsize NOTIFY xsizeChanged)
+    Q_PROPERTY(int ysize READ ysize NOTIFY ysizeChanged)
 
 public:
 friend class LayersRenderer;
@@ -93,9 +95,15 @@ friend class LayersRenderer;
 signals:
     void currentCoordinateHasChanged();
     void showLayerInfoChanged();
+    void xsizeChanged();
+    void ysizeChanged();
 
+public slots:
+    void synchronizeEnded();
 
 private:
+    int xsize() const;
+    int ysize() const;
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
