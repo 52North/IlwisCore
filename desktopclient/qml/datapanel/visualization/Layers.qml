@@ -44,7 +44,6 @@ Item {
   DropArea {
       anchors.fill : parent
       onDropped: {
-          console.log (drag.source.ilwisobjectid);
           var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
           addDataSource(resource.url, resource.name, resource.typeName)
       }
