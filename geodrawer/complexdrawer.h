@@ -33,16 +33,15 @@ public:
     void removeDrawer(quint32 order, DrawerInterface::DrawerType drawerType = dtMAIN);
     void removeDrawer(const QString& idcode, bool ascode);
 
-    bool drawerAttribute(const QString& drawercode, const QString& key, const QVariant& value);
-
     bool isSimple() const;
 
      void cleanUp();
 
-
+    bool drawerAttribute(const QString& drawercode, const QString& key, const QVariant& value);
     std::vector<QVariant> attributes(const QString &attrNames) const;
     QVariant attribute(const QString &attrName) const;
     QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const;
+    QVariant execute(const QString &operationName, const QVariantMap &parameters);
 protected:
     ComplexDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
 
