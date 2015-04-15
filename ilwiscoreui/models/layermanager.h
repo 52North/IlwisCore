@@ -27,6 +27,8 @@ class ILWISCOREUISHARED_EXPORT LayerManager : public QObject
     Q_PROPERTY(bool hasSelectionDrawer READ hasSelectionDrawer WRITE setHasSelectionDrawer NOTIFY hasSelectionDrawerChanged)
 
 public:
+    enum LayerMovement{lmUP, lmDOWN, lmREMOVE};
+
     explicit LayerManager(QObject *parent = 0);
     LayerManager(QObject *parent, UIContextModel *context);
 
@@ -37,14 +39,19 @@ public:
     bool hasSelectionDrawer() const;
     void setHasSelectionDrawer(bool yesno);
     void setScreenGeoReference(const Ilwis::IGeoReference& grf);
+    void moveLayer(int index, LayerMovement type);
     Ilwis::IGeoReference screenGrf() const;
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString& var);
     QString currentLatLon() const;
+    Q_INVOKABLE void setLayerListName(const QString name);
+    QString layerListName() const;
+
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
     QString layerInfo(const Ilwis::Coordinate& crd, const QString &attrName="");
+    Q_INVOKABLE void refresh();
 
 signals:
     void removeLayer(const Ilwis::Resource& resource);
@@ -63,6 +70,7 @@ private:
     Ilwis::IGeoReference _screenGrf;
     bool _zoomInMode = false;
     bool _hasSelectionDrawer = false;
+    QString _layerListName;
     LayersViewCommandInterface *_layersView = 0;
     void init();
 
