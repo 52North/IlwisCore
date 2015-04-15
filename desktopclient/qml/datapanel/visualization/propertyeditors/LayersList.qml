@@ -80,14 +80,17 @@ Item {
         width : firstColumn.width
         anchors.top : layersContainer.bottom
         anchors.topMargin: 4
+        opacity : layersList.model.length > 2 ? 1 : 0
+        enabled : layersList.model.length > 2 ? 1 : 0
         Text {
             text : qsTr("Layer")
-            width : 40
+            width : 31
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Button{
             //text :qsTr("up")
-            width : 30
+            width : 35
             height : 18
             Image{
                 source : "../../../images/arrowdown.png"
@@ -99,7 +102,6 @@ Item {
             }
             onClicked: {
                 var index = layersList.currentIndex
-                console.log(layersList.objectName)
                 if ( index >= 1){
                     index = index - 1
                     renderer.addCommand("layermanagement("+ renderer.viewerId + "," + index + ",layerup)")
@@ -112,7 +114,7 @@ Item {
 
         Button{
             height : 18
-            width : 30
+            width : 35
             Image{
                 source : "../../../images/arrowdown.png"
                 width : 12
@@ -132,7 +134,7 @@ Item {
         Button{
             id : deleteButton
             height : 18
-            width: 30
+            width: 35
             opacity : layersList.height > 5 ? 14 : 0
             enabled : layersList.height > 5
             Image{
