@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
         engine.load("qml/DesktopClient.qml");
 
         QObject *topLevel = engine.rootObjects().value(0);
+        uicontext()->rootObject(topLevel);
         QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
         window->setIcon(QIcon("./qml/images/ilwis4.bmp"));
         if ( !window ) {
