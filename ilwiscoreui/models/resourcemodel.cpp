@@ -176,6 +176,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "ellipsoid20.png";
     else if ( tp & itSTRING)
         return "text20.png";
+    else if ( tp & itOPERATIONMETADATA)
+        return "operation20.png";
     else
         return "eye.png";
 }

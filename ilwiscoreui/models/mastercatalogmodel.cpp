@@ -57,11 +57,15 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
                QUrl("ilwis://system"),
                TR("Default objects that are always available in ilwis"),
                "type<>" + QString::number(itGEODETICDATUM)));
+     _bookmarks.push_back(addBookmark(TR("Operations"),
+               QUrl("ilwis://operations"),
+               TR("All operations available in Ilwis"),
+               "type=" + QString::number(itOPERATIONMETADATA)));
 
     QString ids = ilwisconfig("users/user-0/available-catalog-ids",QString("0"));
     _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
-    int count = 2;
+    int count = 3;
     for(auto id : _bookmarkids){
         QString query = QString("users/user-0/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
@@ -85,8 +89,8 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         ++count;
     }
     if ( _currentUrl == ""){
-        if ( _bookmarks.size() > 2){
-            _selectedBookmarkIndex = 2;
+        if ( _bookmarks.size() > 3){
+            _selectedBookmarkIndex = 3;
             _currentUrl = _bookmarks[_selectedBookmarkIndex]->url();
         }else {
             QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
