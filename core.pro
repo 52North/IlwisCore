@@ -302,7 +302,7 @@ win32{
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
-                      "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libstdc++-6.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \

@@ -290,7 +290,8 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
     }
 
     Envelope bounds;
-    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box<double>") {
+    QString envType = resource["envelope"].typeName();
+    if ( envType == "Ilwis::Box<double>" || envType == "Ilwis::Envelope") {
         bounds = resource["envelope"].value<Envelope>();
     }else if (QString(resource["envelope"].typeName()) == "QString" &&
               resource["envelope"].toString() != sUNDEF) {
