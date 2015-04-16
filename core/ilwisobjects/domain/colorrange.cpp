@@ -101,16 +101,16 @@ QString ColorRangeBase::toString(const QColor &clr, ColorRangeBase::ColorModel c
     QString color;
     switch(clrModel){
     case ColorRangeBase::cmRGBA:
-        color += QString("RGBA(%1 %2 %3 %4)").arg(clr.redF()).arg(clr.greenF()).arg(clr.blueF()).arg(clr.alphaF());
+        color += QString("RGBA(%1 %2 %3 %4)").arg(clr.redF(),0,'f',2).arg(clr.greenF(),0,'f',2).arg(clr.blueF(),0,'f',2).arg(clr.alphaF(),0,'f',2);
         break;
     case ColorRangeBase::cmHSLA:
-        color += QString("HSLA(%1 %2 %3 %4)").arg(clr.hueF()).arg(clr.saturationF()).arg(clr.lightnessF()).arg(clr.alphaF());
+        color += QString("HSLA(%1 %2 %3 %4)").arg(clr.hueF(),0,'f',2).arg(clr.saturationF(),0,'f',2).arg(clr.lightnessF(),0,'f',2).arg(clr.alphaF(),0,'f',2);
         break;
     case ColorRangeBase::cmCYMKA:
-        color += QString("CMYKA(%1 %2 %3 %4 %5)").arg(clr.cyanF()).arg(clr.magentaF()).arg(clr.yellowF()).arg(clr.blackF()).arg(clr.alphaF());
+        color += QString("CMYKA(%1 %2 %3 %4 %5)").arg(clr.cyanF(),0,'f',2).arg(clr.magentaF(),0,'f',2).arg(clr.yellowF(),0,'f',2).arg(clr.blackF(),0,'f',2).arg(clr.alphaF(),0,'f',2);
         break;
     case ColorRangeBase::cmGREYSCALE:
-        color += QString("GREY(%1)").arg(clr.red());
+        color += QString("GREY(%1)").arg(clr.redF(),0,'f',2);
         break;
     default:
         break;
@@ -168,7 +168,7 @@ QColor ColorRangeBase::toColor(quint64 clrint, ColorModel clrModel)
 
     QColor clr;
     if ( clrModel == ColorRangeBase::cmRGBA){
-        clr = QColor(localcolor->_component1,localcolor->_component2, localcolor->_component3);
+        clr = QColor(localcolor->_component3, localcolor->_component2,localcolor->_component1);
         clr.setAlpha(localcolor->_component4);
     }
     else if ( clrModel ==  ColorRangeBase::cmHSLA){

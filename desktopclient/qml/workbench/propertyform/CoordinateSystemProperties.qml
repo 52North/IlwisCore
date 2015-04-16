@@ -31,7 +31,7 @@ Rectangle {
         anchors.top : line4.bottom
         anchors.topMargin: 5
         x : 10
-        Rectangle{ // should be canvas but couldnt get it working
+        Rectangle{
             id : horLine
             x : 0
             y : 0
@@ -39,7 +39,7 @@ Rectangle {
             height : 1
             color : "red"
         }
-        Rectangle{ // should be canvas but couldnt get it working
+        Rectangle{
             id : vertLine
             x : 0
             y : 0

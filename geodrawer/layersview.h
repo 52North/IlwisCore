@@ -67,6 +67,8 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
+    Q_PROPERTY(int xsize READ xsize NOTIFY xsizeChanged)
+    Q_PROPERTY(int ysize READ ysize NOTIFY ysizeChanged)
 
 public:
 friend class LayersRenderer;
@@ -84,18 +86,24 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
+    Q_INVOKABLE QVariantMap envelope();
 
     LayerManager *layerManager();
     bool showLayerInfo() const;
     void setShowLayerInfo(bool yesno);
 
-
 signals:
     void currentCoordinateHasChanged();
     void showLayerInfoChanged();
+    void xsizeChanged();
+    void ysizeChanged();
 
+public slots:
+    void synchronizeEnded();
 
 private:
+    int xsize() const;
+    int ysize() const;
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
@@ -104,6 +112,7 @@ private:
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
+
 
     QVariantMap _copiedAttributes;
     quint64 _viewerId;

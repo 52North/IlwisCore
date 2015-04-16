@@ -10,7 +10,7 @@
 #include "uicontextmodel.h"
 #include "drawers/draweroperation.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
 #include "setviewextents.h"
@@ -43,7 +43,7 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     RootDrawer *rootdrawer = static_cast<RootDrawer *>(_rootDrawer);
 
-    rootdrawer->applyEnvelopeZoom(_newExtents);
+    rootdrawer->applyEnvelopeView(_newExtents, true);
 
     return true;
 }

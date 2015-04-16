@@ -168,7 +168,7 @@ public:
                 if ( options.contains(key)){ // have we specified a specific connector>?
                     if ( slist.size() > 1){ // are there enough items in the key
                         if ( options[key] != slist[0]) // if the item in the key doesnt match the requested connector we pass it.
-                            return 0;
+                            continue;
                     }
                 }
                 if ( iter.value()->canUse(resource))
@@ -184,6 +184,7 @@ public:
     void endClock(const QString &label="");
     QNetworkAccessManager& network();
     void newTranquilizer(quint64 id,const QString &title, const QString &description, qint64 end);
+    const Module* module(const QString& name) const;
 
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;

@@ -4,25 +4,31 @@
 #include "domain.h"
 #include "colorlookup.h"
 #include "range.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "numericrange.h"
 #include "representation.h"
+#include "raster.h"
 #include "attributevisualproperties.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-AttributeVisualProperties::AttributeVisualProperties()
+const QString VisualAttribute::LAYERATTRIBUTE="ILWIS_SINGLE_VALUE_LAYER_ATTRIBUTE";
+
+VisualAttribute::VisualAttribute()
 {
 }
 
-AttributeVisualProperties::AttributeVisualProperties(const IDomain &dom) : _domain(dom)
+VisualAttribute::VisualAttribute(const IDomain &dom, int colindex) : _domain(dom)
 {
     _representation = Representation::defaultRepresentation(dom);
     _representation->domain(dom);
     _domain = dom;
+    _columnIndex = colindex;
 }
 
-AttributeVisualProperties::AttributeVisualProperties(const AttributeVisualProperties &avp)
+VisualAttribute::VisualAttribute(const VisualAttribute &avp)
 {
     _representation = avp._representation;
     _actualRange = avp._actualRange;
@@ -31,12 +37,12 @@ AttributeVisualProperties::AttributeVisualProperties(const AttributeVisualProper
     _columnIndex = avp._columnIndex;
 }
 
-IRepresentation AttributeVisualProperties::representation() const
+IRepresentation VisualAttribute::representation() const
 {
     return _representation;
 }
 
-void AttributeVisualProperties::representation(const IRepresentation &rpr)
+void VisualAttribute::representation(const IRepresentation &rpr)
 {
     if ( !_domain.isValid() || !rpr.isValid())
         return;
@@ -45,12 +51,12 @@ void AttributeVisualProperties::representation(const IRepresentation &rpr)
     }
 }
 
-IDomain AttributeVisualProperties::domain() const
+IDomain VisualAttribute::domain() const
 {
     return _domain;
 }
 
-void AttributeVisualProperties::domain(const IDomain &dom)
+void VisualAttribute::domain(const IDomain &dom)
 {
     if ( _representation.isValid() && !_representation->isCompatible(dom)){
         _representation = IRepresentation();
@@ -58,37 +64,62 @@ void AttributeVisualProperties::domain(const IDomain &dom)
     _domain = dom;
 }
 
-NumericRange AttributeVisualProperties::stretchRange() const
+NumericRange VisualAttribute::stretchRange() const
 {
-    return _stretchRange;
+    if ( _stretchRange.isValid())
+        return _stretchRange;
+    return _actualRange;
 }
 
-void AttributeVisualProperties::stretchRange(const NumericRange &rng)
+void VisualAttribute::stretchRange(const NumericRange &rng)
 {
     _stretchRange = rng;
 }
 
-QColor AttributeVisualProperties::value2color(const QVariant &var) const
-{
-    return _representation->colors()->value2color(var.toDouble(), _actualRange, _stretchRange) ;
+quint32 tovalue(const QString& name){
+    short asnum = 0;
+    for(auto c : name){
+        asnum += c.unicode();
+    }
+    return asnum * name.size();
 }
 
-NumericRange AttributeVisualProperties::actualRange() const
+std::vector<QColor> VisualAttribute::colors(int size) const{
+    if ( _representation.isValid() &&  _representation->colors())
+        return _representation->colors()->values2colors(_actualRange, _stretchRange,size) ;
+    return std::vector<QColor>();
+}
+
+QColor VisualAttribute::value2color(const QVariant &var) const
+{
+    double v;
+    if ( hasType(_domain->valueType(), itCONTINUOUSCOLOR)){
+        return ColorRangeBase::toColor(var.toULongLong(), ColorRangeBase::cmRGBA);
+    }else if ( hasType(_domain->ilwisType(), itNUMERICDOMAIN | itITEMDOMAIN)){
+        v  =  var.toDouble();
+    }else{
+        v = tovalue(var.toString());
+    }
+
+    return _representation->colors()->value2color(v, _actualRange, _stretchRange) ;
+}
+
+NumericRange VisualAttribute::actualRange() const
 {
     return _actualRange;
 }
 
-void AttributeVisualProperties::actualRange(const NumericRange &rng)
+void VisualAttribute::actualRange(const NumericRange &rng)
 {
     _actualRange = rng;
 }
 
-quint32 AttributeVisualProperties::columnIndex() const
+quint32 VisualAttribute::columnIndex() const
 {
     return _columnIndex;
 }
 
-void AttributeVisualProperties::setColumnIndex(quint32 index)
+void VisualAttribute::setColumnIndex(quint32 index)
 {
     _columnIndex = index;
 }

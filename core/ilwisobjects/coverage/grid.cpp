@@ -55,6 +55,8 @@ quint32 GridBlockInternal::blockSize() {
 }
 
 inline bool GridBlockInternal::save2Cache() {
+    if ( !_inMemory) // nothing to do here
+        return true;
     _inMemory = false;
     if ( _tempName == sUNDEF) {
         QString name = QString("gridblock_%1").arg(_id);
@@ -66,11 +68,11 @@ inline bool GridBlockInternal::save2Cache() {
     }
     if ( _swapFile.isNull()) {
         _swapFile.reset(new QTemporaryFile(_tempName));
-
     }
     if(!_swapFile->open() ){
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,_tempName);
     }
+    _tempName = _swapFile->fileName();
     quint64 bytesNeeded = _data.size() * sizeof(double);
     quint64 total =_swapFile->write((char *)&_data[0], bytesNeeded);
     _swapFile->close();

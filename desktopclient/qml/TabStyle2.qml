@@ -5,6 +5,9 @@ import QtQuick.Controls.Styles 1.0
 
 
 TabViewStyle {
+
+    signal expandToWindow(int tabindex);
+
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
     property int tabHeight : 22
@@ -45,8 +48,7 @@ TabViewStyle {
             height : 18
             opacity : 0.5
             onClicked: {
-               mainsplit.closeTab(side, styleData.index)
-
+               datapanesplit.closeTab(side, styleData.index)
             }
 
             Image {
@@ -70,9 +72,9 @@ TabViewStyle {
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
             onClicked: {
-                mainsplit.showMapWindow(0)
-
+                datapanesplit.showMapWindow(0)
             }
+            //onClicked: expandToWindow(index)
 
             Image {
                 y : 2
@@ -80,8 +82,6 @@ TabViewStyle {
                 width : 15
                 height : 15
                 source : "images/expand20.png"
-
-
             }
         }
 

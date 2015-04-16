@@ -60,7 +60,7 @@ bool Representation::isCompatible(const IDomain &otherDomain)
         if ( otherDomain == domain())
             return true;
 
-        if ( hasType(domain()->ilwisType(), itNUMBER) && hasType(otherDomain->ilwisType(), itNUMBER)){
+        if ( hasType(domain()->valueType(), itNUMBER) && hasType(otherDomain->valueType(), itNUMBER)){
             return true;
         }
         //TODO other cases
@@ -83,7 +83,7 @@ IlwisData<Representation> Representation::defaultRepresentation(const IDomain &d
             code = "code=rpr:grey";
         else
             code = "code=rpr:pseudo";
-    }else if ( hasType(dom->ilwisType(), itITEMDOMAIN)){
+    }else if ( hasType(dom->ilwisType(), itITEMDOMAIN | itTEXTDOMAIN)){
         code = "code=rpr:primarycolors";
     }
 

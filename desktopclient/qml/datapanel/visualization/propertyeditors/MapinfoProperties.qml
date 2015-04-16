@@ -18,8 +18,10 @@ Item {
 
         style: Base.CheckBoxStyle1{}
 
-        onCheckedChanged: {
+        checked : editor.showInfo
 
+        onCheckedChanged: {
+            editor.showInfo = checked
         }
     }
 

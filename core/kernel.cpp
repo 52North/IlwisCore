@@ -11,6 +11,7 @@
 #include <cxxabi.h>
 #include <iostream>
 #include <QException>
+#include <QDesktopServices>
 #include "kernel.h"
 #include "factory.h"
 #include "geometries.h"
@@ -101,14 +102,20 @@ void Kernel::init() {
     _version->addBinaryVersion(Ilwis::Version::bvPOLYGONFORMAT37);
     _version->addODFVersion("3.1");
 
-
-
     _dbPublic = QSqlDatabase::addDatabase("QSQLITE");
     _dbPublic.setHostName("localhost");
     _dbPublic.setDatabaseName(":memory:");
     _dbPublic.open();
 
-    _dbPublic.prepare();
+    QSqlQuery stmt(_dbPublic);
+    stmt.exec("PRAGMA page_size = 4096");
+    stmt.exec("PRAGMA cache_size = 16384");
+    stmt.exec("PRAGMA temp_store = MEMORY");
+    stmt.exec("PRAGMA journal_mode = OFF");
+    stmt.exec("PRAGMA locking_mode = EXCLUSIVE");
+    stmt.exec("PRAGMA synchronous = OFF");
+
+     _dbPublic.prepare();
 
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
@@ -254,6 +261,15 @@ QNetworkAccessManager &Kernel::network()
 void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 end)
 {
     emit createTranquilizer(id, title, description, end);;
+}
+
+const Module *Kernel::module(const QString &name) const
+{
+    const auto iter = _modules.find(name);
+    if ( iter != _modules.end()){
+        return iter.value();
+    }
+    return 0;
 }
 
 

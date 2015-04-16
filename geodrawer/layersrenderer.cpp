@@ -7,7 +7,7 @@
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "layersrenderer.h"
 #include "drawers/drawerinterface.h"
 #include "layersview.h"
@@ -19,10 +19,10 @@
 
 
 
-LayersRenderer::LayersRenderer()
+LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo)
 {
     if ( !_rootDrawer){
-        _rootDrawer = new Ilwis::Geodrawer::RootDrawer(Ilwis::IOOptions());
+        _rootDrawer = new Ilwis::Geodrawer::RootDrawer(fbo, Ilwis::IOOptions());
         connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
     }
 }
@@ -79,7 +79,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 {
     try {
 
-
+        bool needPrepare = false;
         LayersView *gdrawer = static_cast<LayersView *>(item);
         _viewPortSize =  QSize(gdrawer->width(), gdrawer->height());
         _windowSize = gdrawer->window()->size();
@@ -90,6 +90,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             gdrawer->_attributerequests.pop_front();
             QVariant var = _rootDrawer->attributeOfDrawer(pair.first, pair.second);
             gdrawer->_copiedAttributes[pair.first.toLower() + "|" + pair.second.toLower()] = var;
+            needPrepare = true;
         }
 
         for(const Ilwis::OperationExpression& expr : gdrawer->_commands){
@@ -112,6 +113,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
                         }
                     }
                 }
+                needPrepare = true;
             }
         }
         gdrawer->_commands = std::deque<OperationExpression>();
@@ -123,8 +125,13 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             for(QVariantMap::const_iterator iter = pair.second.begin(); iter != pair.second.end(); ++iter) {
                 _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
             }
+            needPrepare = true;
         }
-        _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
+        if ( needPrepare){
+            _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
+           emit synchronizeDone();
+        }
+
 
     } catch ( const ErrorObject& ){
 

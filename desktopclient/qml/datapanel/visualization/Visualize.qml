@@ -41,8 +41,7 @@ Item {
         onTriggered : {
             if ( manager){
                 manager.zoomInMode = !manager.zoomInMode
-                zoominButton.imageSource = iconsource(manager.zoomInMode ? "zoomin20A.png" : "zoomin20.png")
-                zoominButton.checked = !zoominButton.checked
+
             }
         }
     }
@@ -53,96 +52,17 @@ Item {
             layers.entireMap()
         }
     }
+    Action {
+        id : refreshClicked
+        onTriggered: {
 
-    ToolBar{
-        id : maptools
-        width : parent.width
-        height : 35
-        Button {
-            height : 25
-            width : 25
-            id : entireMap
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 2
-            tooltip: "EntireMap"
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                source : iconsource("entiremap20.png")
-            }
-            onClicked: {
-                layers.entireMap()
-            }
         }
-
-        Button {
-            height : 25
-            width : 25
-            id : refreshButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :entireMap.right
-            action : entireClicked
-            anchors.rightMargin: 2
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource("refresh20.png")
-            }
-        }
-
-
-        Button {
-            height : 25
-            width : 25
-            id : panButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :refreshButton.right
-            anchors.rightMargin: 2
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource("pan20.png")
-            }
-        }
-
-
-        Button {
-            height : 25
-            width : 25
-            id : zoominButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :panButton.right
-            anchors.rightMargin: 2
-            action : zoomClicked
-            checkable: true
-            checked: false
-            property string imageSource :  "zoomin20.png"
-            Image {
-                id : zoomimage
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource(zoominButton.imageSource)
-            }
-        }
-        Button {
-            height : 25
-            width : 25
-            id : zoomoutButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :zoominButton.right
-            anchors.leftMargin: 2
-            checkable: true
-            checked: false
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                source : iconsource("zoomout20.png")
-            }
-        }
-
     }
+
+    LayerExtentsToolbar{
+        id : maptools
+    }
+
     SplitView {
         anchors.top : maptools.bottom
         width : parent.width

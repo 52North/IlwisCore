@@ -22,12 +22,16 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
+    function addWorkflowCanvas(name) {
+        datapanesplit.addWorkflowCanvas(name)
+    }
+
     function addModellerPanel(name) {
-        mainsplit.addModeller(name)
+        datapanesplit.addModeller(name)
     }
 
     function removeModellerPanel(name) {
-        mainsplit.removeTabFromView(name);
+        datapanesplit.removeTabFromView(name);
     }
 
     function iconSource(name) {
@@ -45,6 +49,18 @@ Rectangle {
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
                     return tab.item
+                else{ // apparently the tab has no catalog so we look at the other side
+                    tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
+                    if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+                        tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab && tab.item){
+                            if ( "currentCatalog" in tab.item){
+                                activeSplit = Math.abs(activeSplit) == 2 ? 1 : 2
+                                return tab.item
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -58,7 +74,7 @@ Rectangle {
                 splitside = activeSplit
             }
         }
-        mainsplit.newCatalog(url,splitside)
+        datapanesplit.newCatalog(url,splitside)
     }
 
     function setCatalogByIndex(currentTab, tabindex){
@@ -71,7 +87,7 @@ Rectangle {
     }
 
     function changeCatalog(url){
-        mainsplit.changeCatalog(url)
+        datapanesplit.changeCatalog(url)
     }
 
     Loader {
@@ -79,7 +95,7 @@ Rectangle {
     }
 
     SplitView {
-        id : mainsplit
+        id : datapanesplit
         orientation: Qt.Horizontal
         anchors.fill: parent
         property int tel: 0
@@ -113,6 +129,7 @@ Rectangle {
                 }
             }
         }
+
         function showMapWindow(objectid){
             var tabview = activeSplit ===1 ? lefttab : righttab
             mapWindow.setSource("visualization/MapWindow.qml",{"width" : tabview.width, "height" : tabview.height})
@@ -125,39 +142,27 @@ Rectangle {
             }
         }
 
-        function showObject(objectid){
-            var component = Qt.createComponent("visualization/Visualize.qml")
-            var resource = mastercatalog.id2Resource(objectid)
-            if ( resource !== null){
-                var name = resource.displayName
-                var blocksize = 24 / 2;
-                if ( name.length > 15){
-                    var part1 = name.substr(0,blocksize)
-                    var part2 = name.substr( name.length - blocksize)
-                    name = part1 + "..." + part2
-
-                }
-                var tabCount = righttab.count
-                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-                tab.active = true
-                if ( activeSplit ===1){
-                    righttab.width = parent.width / 2.0;
-                    righttab.state = "halfsize"
-                    tabCount = righttab.count - 1 // tab has already been added so -1
-                    righttab.currentIndex = tabCount
-                    activeSplit = 2
-                }
-                else {
-                    lefttab.width = parent.width / 2.0;
-                    lefttab.state = "halfsize"
-                    tabCount = lefttab.count - 1 // tab has already been added so -1
-                    lefttab.currentIndex = tabCount
-                    activeSplit = 1
-                 }
-
-                tab.item.addDataSource(resource.url, resource.name, resource.typeName)
-                mastercatalog.setActiveTab(activeSplit, tabCount)
+        function showObject(side,name, component, resource){
+            var tabCount = righttab.count
+            var tab = side === "left" ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+            tab.active = true
+            if ( side === "left"){
+                righttab.width = parent.width / 2.0;
+                righttab.state = "halfsize"
+                tabCount = righttab.count - 1 // tab has already been added so -1
+                righttab.currentIndex = tabCount
+                activeSplit = 2
             }
+            else {
+                lefttab.width = parent.width / 2.0;
+                lefttab.state = "halfsize"
+                tabCount = lefttab.count - 1 // tab has already been added so -1
+                lefttab.currentIndex = tabCount
+                activeSplit = 1
+            }
+
+            tab.item.addDataSource(resource.url, resource.name, resource.typeName)
+            mastercatalog.setActiveTab(activeSplit, tabCount)
         }
 
         function changeCatalog(url){
@@ -167,17 +172,21 @@ Rectangle {
                 if ( catalogpanel.currentCatalog)
                     catalogpanel.currentCatalog.destroy(0)
                 catalogpanel.currentCatalog = mastercatalog.newCatalog(url)
-                catalogpanel.currentCatalog.makeParent(catalogpanel)
-                var name = catalogpanel.currentCatalog.displayName
-                var  tabview = activeSplit ===1 ? lefttab : righttab
-                if ( tabview.currentIndex < tabview.count){
-                    var tab = tabview.getTab(tabview.currentIndex)
-                    if ( tab){
-                        tab.title = name
+                if ( catalogpanel.currentCatalog){
+                    catalogpanel.currentCatalog.makeParent(catalogpanel)
+                    var name = catalogpanel.currentCatalog.displayName
+                    var  tabview = activeSplit ===1 ? lefttab : righttab
+                    if ( tabview.currentIndex < tabview.count){
+                        var tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab){
+                            tab.title = name
+                        }
                     }
+                    mastercatalog.setWorkingCatalog(url);
+                    mastercatalog.currentCatalog = catalogpanel.currentCatalog
                 }
-                mastercatalog.setWorkingCatalog(url);
-                mastercatalog.currentCatalog = catalogpanel.currentCatalog
+            }else {
+                newCatalog(url,1)
             }
         }
 
@@ -219,6 +228,33 @@ Rectangle {
             }
         }
 
+        function showTabInFloatingWindow(tabIndex) {
+            var tabview = activeSplit === 1 ? lefttab : righttab
+            var tab = tabview.getTab(tabIndex)
+
+            if (tab && tab.item) {
+                console.log("tab " + tabIndex + " to floating window")
+
+                var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
+                qml += "Window { id: floatingWindow } ";
+                var window = Qt.createQmlObject(qml, datapanesplit)
+                tab.item.parent = window.contentItem;
+                window.show();
+
+                closeTab(activeSplit, tabIndex);
+                getCurrentCatalogTab().show();
+
+            }
+        }
+
+        function addWorkflowCanvas(name) {
+            console.log("creating new workflow canvas")
+            var tabview = activeSplit === 1 ? lefttab : righttab
+            var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
+            var tab = tabview.addTab(name, component)
+            tab.active = true
+        }
+
         function addModeller(name) {
             var component = Qt.createComponent("modeller/ModellerPanel.qml")
             var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
@@ -250,7 +286,7 @@ Rectangle {
         }
 
 
-        DataTabView2{
+        DataTabView2 {
             id : righttab
             side : 2
         }

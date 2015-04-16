@@ -2,8 +2,9 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "drawerinterface.h"
-#include "drawerattributesetter.h"
 #include "attributevisualproperties.h"
+#include "drawerattributesetter.h"
+
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -23,10 +24,9 @@ FeatureDrawing DrawerAttributeSetter::setSpatialAttributes(const SPFeatureI &, Q
     return  FeatureDrawing(itUNKNOWN);
 }
 
-void DrawerAttributeSetter::setColorAttributes(const AttributeVisualProperties &,
-                                               const QVariant &,
-                                               quint32 ,
-                                               quint32 ,
+void DrawerAttributeSetter::setColorAttributes(const VisualAttribute &,
+                                               const QVariant &, const QColor& ,
+                                               const FeatureDrawing &,
                                                std::vector<VertexColor> &) const
 {
 

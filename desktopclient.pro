@@ -63,11 +63,13 @@ INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
                 ../ilwiscore/core/ilwisobjects/coverage \
                 ../ilwiscore/core/ilwisobjects/table \
                 ../ilwiscore/core/ilwisobjects/operation \
+                ../ilwiscore/core/ilwisobjects/workflow \
                 ../ilwiscore/core/ilwisobjects/representation \
                 ../ilwiscore/core/catalog \
                 ../ilwiscore/core/ilwisobjects/domain \
                 ../ilwiscore/ilwiscoreui \
                 ../ilwiscore/ilwiscoreui/models \
+                ../ilwiscore/ilwiscoreui/models/workflow \
                 $$BOOST
 
 OTHER_FILES += \
@@ -89,7 +91,10 @@ OTHER_FILES += \
     desktopclient/qml/workbench/modeller/ModellerSelection.qml \
     desktopclient/qml/datapanel/modeller/ConnectorObject.qml \
     desktopclient/qml/datapanel/modeller/DataSourceObject.qml \
-    desktopclient/qml/datapanel/modeller/OperationObject.qml
+    desktopclient/qml/datapanel/modeller/OperationObject.qml \
+    desktopclient/qml/datapanel/modeller/Canvas.qml \
+    desktopclient/qml/workbench/workflow/WorkflowSelection.qml \
+    desktopclient/qml/workbench/workflow/WorkflowBench.qml
 
 
 # Installation path
@@ -101,17 +106,21 @@ qtcAddDeployment()
 HEADERS += \
     desktopclient/applicationformexpressionparser.h \
     desktopclient/ilwistype.h \
-    desktopclient/keyfilter.h
+    desktopclient/keyfilter.h \
+    desktopclient/workflowmetadataformbuilder.h
 
 SOURCES += \
     desktopclient/applicationformexpressionparser.cpp \
     desktopclient/ilwistype.cpp \
     desktopclient/main.cpp \
-    desktopclient/keyfilter.cpp
+    desktopclient/keyfilter.cpp \
+    desktopclient/workflowmetadataformbuilder.cpp
 
 DISTFILES += \
     desktopclient/qml/datapanel/visualization/Layers.qml \
-    desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml
+    desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/LayersList.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml
 
 
 

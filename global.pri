@@ -48,6 +48,7 @@ INCLUDEPATH += core \
                 core/ilwisobjects/coverage \
                 core/ilwisobjects/table \
                 core/ilwisobjects/operation \
+                core/ilwisobjects/workflow \
                 core/ilwisobjects/representation \
                 core/catalog \
                 core/ilwisobjects/domain \

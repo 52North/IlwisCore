@@ -12,25 +12,32 @@
 #include "mastercatalog.h"
 #include "catalogview.h"
 #include "ilwiscontext.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "models/catalogfiltermodel.h"
 #include "models/mastercatalogmodel.h"
 #include "models/operationmodel.h"
 #include "models/operationcatalogmodel.h"
 #include "models/usermessagehandler.h"
 #include "applicationformexpressionparser.h"
+#include "workflowmetadataformbuilder.h"
 #include "models/tranquilizerhandler.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "models/coveragelayermodel.h"
 #include "models/ilwisobjectmodel.h"
 #include "models/attributemodel.h"
 #include "models/domainitemmodel.h"
 #include "models/operationsbykeymodel.h"
 #include "models/uicontextmodel.h"
-#include "models/visualizationmanager.h"
 #include "models/projectionparametermodel.h"
-#include "models/workflowmodel.h"
+#include "models/workflow/workflowmodel.h"
+#include "models/workflow/workflowcatalogmodel.h"
 #include "models/visualattributemodel.h"
-#include "ilwiscoreui/propertyeditors/representationsetter.h"
+#include "models/tablemodel.h"
+#include "models/layerinfoitem.h"
+#include "models/catalogmapitem.h"
+#include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "keyfilter.h"
 
 #define TEST_WORKINGDIR QString("file:///s:/data/coding/ilwis/2014-03-18_testdata")
@@ -61,6 +68,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<OperationCatalogModel>("OperationCatalogModel",1,0,"OperationCatalogModel");
         qmlRegisterType<OperationModel>("OperationModel",1,0,"OperationModel");
         qmlRegisterType<ApplicationFormExpressionParser>("ApplicationFormExpressionParser",1,0,"FormBuilder");
+        qmlRegisterType<WorkflowMetadataFormBuilder>("WorkflowMetadataFormBuilder",1,0,"WorkflowMetadataFormBuilder");
         qmlRegisterType<UserMessageHandler>("UserMessageHandler",1,0,"UserMessageHandler");
         qmlRegisterType<MessageModel>("MessageModel",1,0,"MessageModel");
         qmlRegisterType<TranquilizerHandler>("TranquilizerHandler",1,0, "TranquilizerHandler");
@@ -73,33 +81,41 @@ int main(int argc, char *argv[])
         qmlRegisterType<OperationsByKeyModel>("OperationsByKeyModel",1,0,"OperationsByKeyModel");
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<VisualAttributeEditor>("VisualAttributeEditor", 1,0, "VisualAttributeEditor");
-        qmlRegisterType<RepresentationSetter>("RepresentationSetter", 1,0, "RepresentationSetter");
+        qmlRegisterType<NumericRepresentationSetter>("NumericRepresentationSetter", 1,0, "NumericRepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
+        qmlRegisterType<WorkflowCatalogModel>("WorkflowCatalogModel", 1,0, "WorkflowCatalogModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
+        qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
+        qmlRegisterType<LayerInfoItem>("LayerInfoItem", 1,0,"LayerInfoItem");
+        qmlRegisterType<CatalogMapItem>("CatalogMapItem", 1,0,"CatalogMapItem");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
 
         ApplicationFormExpressionParser formbuilder;
+        WorkflowMetadataFormBuilder workflowmetadataformbuilder;
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler tranquilizers;
+        WorkflowCatalogModel workflows;
+        uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
-        //uiContext.addPropertyEditor(itLINE,"Style",PropertyEditorMetaData("Style", QUrl("http://someurl/bla.qml")));
-        //uicontext()->addPropertyEditor(itLINE,TR("Representation"),PropertyEditor(TR("Representation"), QUrl("RepresentationProperties.qml")));
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
+        ctx->setContextProperty("workflowmetadataformbuilder", &workflowmetadataformbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
         ctx->setContextProperty("operations", &operations);
+        ctx->setContextProperty("workflows", &workflows);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
+        mastercatalogmodel.connect(&workflows, &WorkflowCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         messageHandler.connect(kernel()->issues().data(), &IssueLogger::updateIssues,&messageHandler, &UserMessageHandler::addMessage );
         tranquilizers.connect(kernel(), &Kernel::updateTranquilizer, &tranquilizers, &TranquilizerHandler::updateTranquilizer,Qt::DirectConnection);
         tranquilizers.connect(kernel(), &Kernel::createTranquilizer, &tranquilizers, &TranquilizerHandler::createTranquilizer,Qt::DirectConnection);
@@ -109,6 +125,7 @@ int main(int argc, char *argv[])
         engine.load("qml/DesktopClient.qml");
 
         QObject *topLevel = engine.rootObjects().value(0);
+        uicontext()->rootObject(topLevel);
         QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
         window->setIcon(QIcon("./qml/images/ilwis4.bmp"));
         if ( !window ) {

@@ -3,14 +3,15 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QQmlContext>
-#include "kernel.h"
+#include "coverage.h"
 #include "connectorinterface.h"
 #include "resource.h"
-#include "ilwisobject.h"
+#include "georeference.h"
 #include "mastercatalog.h"
 #include "catalogview.h"
 #include "resourcemodel.h"
 #include "catalogmodel.h"
+#include "layermanager.h"
 
 
 using namespace Ilwis;
@@ -78,6 +79,11 @@ QQmlListProperty<IlwisObjectModel> CatalogModel::selectedData()
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
 }
 
+QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
+{
+   return  QQmlListProperty<CatalogMapItem>(this, _catalogMapItems);
+}
+
 void CatalogModel::makeParent(QObject *obj)
 {
     setParent(obj);
@@ -91,6 +97,9 @@ void CatalogModel::filterChanged(const QString& objectType, bool state){
         _filterState["coordinatesystem"] = state;
         _filterState["georeference"] = state;
         _filterState["domain"] = state;
+        _filterState["representation"] = state;
+        _filterState["projection"] = state;
+        _filterState["ellipsoid"] = state;
 
     }else
         _filterState[objectType] = state;
@@ -143,6 +152,31 @@ QString CatalogModel::nameFilter() const
     return _nameFilter;
 }
 
+void CatalogModel::prepareMapItems(LayerManager *manager)
+{
+    try{
+        if ( _catalogMapItems.size() == 0){
+            kernel()->issues()->silent(true);
+            for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
+                if(hasType((*iter)->type(), itCOVERAGE)){
+                    Ilwis::ICoverage cov(((*iter)->resource()));
+                    if ( cov.isValid() && cov->coordinateSystem().isValid())    {
+                        if ( cov->coordinateSystem()->isLatLon() || cov->coordinateSystem()->canConvertToLatLon()){
+                            _catalogMapItems.push_back(new CatalogMapItem(cov,manager->screenGrf(),this));
+                        }
+                    }
+                }
+            }
+            kernel()->issues()->silent(false);
+        }
+    } catch (const Ilwis::ErrorObject& ){
+
+    } catch (std::exception& ex){
+        Ilwis::kernel()->issues()->log(ex.what());
+    }
+    kernel()->issues()->silent(false);
+}
+
 void CatalogModel::gatherItems() {
     if ( _currentItems.isEmpty() || _refresh) {
         if ( !_view.isValid())
@@ -162,6 +196,7 @@ void CatalogModel::gatherItems() {
                 }
             }
             _currentItems.push_back(new ResourceModel(resource));
+
         }
     }
 }

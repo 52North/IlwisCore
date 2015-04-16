@@ -1,3 +1,8 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "visualattributemodel.h"
 #include "coveragelayermodel.h"
 #include "uicontextmodel.h"
@@ -24,6 +29,24 @@ VisualAttributeModel::VisualAttributeModel(const Ilwis::ColumnDefinition &def, C
 QQmlListProperty<VisualAttributeEditor> VisualAttributeModel::propertyEditors()
 {
     return QQmlListProperty<VisualAttributeEditor>(this, _propertyEditors);
+}
+
+QString VisualAttributeModel::icon()
+{
+    if ( !_coldefinition.isValid())
+        return "";
+    IlwisTypes tp = _coldefinition.datadef().domain()->valueType();
+    if ( hasType(tp,itNUMBER)){
+        return "valuedom20.png";
+    }
+    if ( hasType(itDOMAINITEM, tp)){
+        return "itemdom20.png";
+    }
+    if ( hasType(itSTRING, tp)){
+        return "textdom20.png";
+    }
+    return "";
+
 }
 
 VisualAttributeEditor *VisualAttributeModel::propertyEditor(const QString &name)

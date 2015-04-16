@@ -28,6 +28,7 @@ public:
 
 
 private:
+
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
     std::vector<VertexIndex> _indices;
@@ -36,6 +37,11 @@ private:
     std::vector<FeatureDrawing> _featureDrawings;
     float _lineWidth = 1.0;
     float _boundarywidth = 1.0;
+    bool _showBoundaries = true;
+    bool _showAreas = true;
+    float _areaTransparency = 0;
+    QColor _boundaryColor = QColor("black");
+    QColor _lineColor;
 
     bool draw(const IOOptions &options);
 

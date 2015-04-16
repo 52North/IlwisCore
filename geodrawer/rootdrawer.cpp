@@ -8,11 +8,12 @@
 //#include "cornersgeoreference.h"
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
+#include "layersrenderer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-RootDrawer::RootDrawer(const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options)
+RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options), _frameBufferObject(fbo)
 {
     valid(true);
     _screenGrf = GeoReference::create("corners");
@@ -68,13 +69,32 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
     double w = viewRect.xlength() - 1;
     double h = viewRect.ylength() - 1;
     _aspectRatioCoverage = w / h;
-    Coordinate center = _coverageRect.center();
+    double deltax = 0, deltay = 0;
+    Envelope env;
     if ( _aspectRatioCoverage <= 1.0) { // coverage is higher than it is wide)
-        double dx = _aspectRatioView * h / 2.0;
-        _zoomRect = Envelope(Coordinate(center.x - dx, center.y -  h / 2.0),Coordinate(center.x + dx, center.y +  h / 2.0));
+        double pixwidth = (double)_pixelAreaSize.ysize() * _aspectRatioCoverage;
+        if ( pixwidth > _pixelAreaSize.xsize()) {
+            deltay = (_coverageRect.ylength() - 1) * ( pixwidth / _pixelAreaSize.xsize() - 1.0);
+            pixwidth = _pixelAreaSize.xsize();
+        }
+        double fractioOffWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / (double)_pixelAreaSize.xsize();
+        double crdWidth = w / fractioOffWidth;
+        deltax = (crdWidth - w) / 2.0;
+
+        _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax,viewRect.min_corner().y  - deltay/2.0,0),
+                             Coordinate(viewRect.max_corner().x + deltax,viewRect.max_corner().y  + deltay/2.0,0));
+
     } else {
-        double dy = _aspectRatioView * w / 2.0;
-        _zoomRect = Envelope(Coordinate(center.x - w / 2.0, center.y - dy),Coordinate(center.x + w / 2.0, center.y + dy));
+        double pixheight = _pixelAreaSize.xsize() / _aspectRatioCoverage;
+        if ( pixheight > _pixelAreaSize.ysize()){
+            deltax = (_coverageRect.xlength() - 1) / _aspectRatioCoverage;
+            pixheight = _pixelAreaSize.ysize();
+        }
+        double fractionOfHeight = 1.0 - std::abs(_pixelAreaSize.ysize() - pixheight)/(double)_pixelAreaSize.ysize();
+        double crdHeight = h / fractionOfHeight;
+        deltay = (crdHeight - h)/ 2.0;
+        _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax /2.0,viewRect.min_corner().y  - deltay,0),
+                             Coordinate(viewRect.max_corner().x + deltax /2.0,viewRect.max_corner().y  + deltay,0));
     }
 
     viewPoint(_zoomRect.center(), true);
@@ -91,13 +111,16 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 
         double factCur = (_zoomRect.xlength() - 1.0) / (_zoomRect.ylength() - 1.0);
         double factIn = (zoomRect.xlength() - 1.0) / (zoomRect.ylength() - 1.0);
-        if ( abs(factCur - factIn) > 0.01 ) {
+        double delta = std::abs(factCur - factIn);
+        if (  delta > 0.01 ) {
             if ( factCur < 1.0) {
-                double newHeight = (zoomRect.xlength() - 1) / factCur;
-                envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.max_corner().x, zoomRect.min_corner().y + newHeight, zoomRect.max_corner().z));
+                double newHeight = (zoomRect.xlength() - 1) / ( factCur * 2.0);
+                Coordinate center = zoomRect.center();
+                envelope = Envelope(Coordinate(zoomRect.min_corner().x, center.y - newHeight), Coordinate(zoomRect.max_corner().x, center.y - newHeight));
             } else {
-                double newWidth = (zoomRect.ylength() - 1) * factCur;
-                envelope = Envelope(zoomRect.min_corner(), Coordinate(zoomRect.min_corner().x + newWidth, zoomRect.max_corner().y, zoomRect.max_corner().z));
+                double newWidth = (zoomRect.ylength() - 1) * factCur / 2.0;
+                Coordinate center = zoomRect.center();
+                envelope = Envelope(Coordinate(center.x - newWidth, zoomRect.min_corner().y), Coordinate(center.x + newWidth, zoomRect.max_corner().y));
             }
         }
     }
@@ -111,13 +134,13 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 void RootDrawer::setMVP()
 {
     _projection.setToIdentity();
-    QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength(),_zoomRect.ylength());
+    QRectF rct(_zoomRect.min_corner().x, _zoomRect.min_corner().y,_zoomRect.xlength() -1,_zoomRect.ylength() - 1);
     _projection.ortho(rct);
     _mvp = _model * _view * _projection;
 
     if ( _coverageRect.xlength() > 0 && _coverageRect.ylength() > 0) {
-        double xscale =  _zoomRect.xlength() / _coverageRect.xlength();
-        double yscale = _zoomRect.ylength() /_coverageRect.ylength();
+        double xscale =  (_zoomRect.xlength() - 1) / (_coverageRect.xlength() - 1);
+        double yscale = (_zoomRect.ylength() - 1) /(_coverageRect.ylength() - 1);
 
         _zoomScale =  std::min(xscale, yscale);
     }
@@ -172,6 +195,14 @@ Size<> RootDrawer::pixelAreaSize() const
     return _pixelAreaSize;
 }
 
+Size<> RootDrawer::coverageAreaSize() const
+{
+    if ( !_screenGrf.isValid())
+        return Size<>();
+    auto bb = _screenGrf->coord2Pixel(_coverageRect);
+    return bb.size();
+}
+
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
     return _mvp;
@@ -185,6 +216,11 @@ const ICoordinateSystem &RootDrawer::coordinateSystem() const
 void RootDrawer::coordinateSystem(const ICoordinateSystem &csy)
 {
     _coordinateSystem = csy;
+}
+
+const IGeoReference &RootDrawer::screenGrf() const
+{
+    return _screenGrf;
 }
 
 void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
@@ -224,6 +260,11 @@ bool RootDrawer::is3D() const
 void RootDrawer::set3D(bool yesno)
 {
     _is3D = yesno;
+}
+
+const QQuickFramebufferObject *RootDrawer::fbo() const
+{
+    return _frameBufferObject;
 }
 
 Envelope RootDrawer::envelope2RootEnvelope(const ICoordinateSystem &csSource, const Envelope &env)

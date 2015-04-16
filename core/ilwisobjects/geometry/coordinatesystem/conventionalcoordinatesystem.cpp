@@ -41,7 +41,7 @@ LatLon ConventionalCoordinateSystem::coord2latlon(const Coordinate &crdSource) c
     LatLon pl = _projection->coord2latlon(crdSource);
     if (!pl.isValid())
         return llUNDEF;
-    if (abs(pl.lon()) > 90)
+    if (abs(pl.lon()) > 180)
         return llUNDEF;
     return pl;
 }

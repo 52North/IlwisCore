@@ -57,12 +57,18 @@ FeatureDrawing SimpleLineSetter::setSpatialAttributes(const Ilwis::SPFeatureI &f
     return drawing;
 }
 
-void SimpleLineSetter::setColorAttributes(const AttributeVisualProperties &attr, const QVariant &value, quint32 startIndex, quint32 count, std::vector<VertexColor> &colors) const
+void SimpleLineSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const QColor &defaultColor, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
 {
-    if ( value.isValid() && value.toInt() != iUNDEF) {
-        for(int i =startIndex; i < startIndex + count; ++i){
-            QColor clr = attr.value2color(value);
-            colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+    for(int j =0; j < drawing._indices.size(); ++j){
+        if ( value.isValid() && value.toInt() != iUNDEF) {
+            const auto& indices = drawing[j];
+            for(int i =indices._start; i < indices._start + indices._count; ++i){
+                QColor clr = attr.value2color(value);
+                if ( defaultColor.isValid()){
+                   colors.push_back(VertexColor(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF(), 1.0));
+                }else
+                    colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+            }
         }
     }
 }

@@ -8,6 +8,8 @@
 #include "ilwisdata.h"
 #include "complexdrawer.h"
 
+class QQuickFramebufferObject;
+
 namespace Ilwis {
 
 class CoordinateSystem;
@@ -21,7 +23,7 @@ class RootDrawer : public ComplexDrawer
 {
     Q_OBJECT
 public:
-    explicit RootDrawer(const IOOptions& options);
+    explicit RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options);
     ~RootDrawer();
 
     void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
@@ -33,9 +35,11 @@ public:
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
     Size<> pixelAreaSize() const;
+    Size<> coverageAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
     const ICoordinateSystem& coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
+    const IGeoReference& screenGrf() const;
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
@@ -45,6 +49,7 @@ public:
     double zoomScale() const;
     bool is3D() const;
     void set3D(bool yesno);
+    const QQuickFramebufferObject *fbo() const;
 
     DrawerInterface::DrawerType drawerType() const;
 
@@ -70,6 +75,7 @@ private:
     IGeoReference _screenGrf;
     double _zoomScale=1;
     bool _is3D = false;
+    const QQuickFramebufferObject *_frameBufferObject;
 
     bool _useGeoref = false;
 

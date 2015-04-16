@@ -7,18 +7,20 @@ namespace Ilwis {
 
 class Representation;
 class Domain;
+class RasterCoverage;
 
 typedef IlwisData<Representation> IRepresentation;
 typedef IlwisData<Domain> IDomain;
+typedef IlwisData<RasterCoverage> IRasterCoverage;
 
 namespace Geodrawer{
 
-class ILWISCOREUISHARED_EXPORT AttributeVisualProperties
+class ILWISCOREUISHARED_EXPORT VisualAttribute
 {
 public:
-    AttributeVisualProperties();
-    AttributeVisualProperties(const IDomain& dom);
-    AttributeVisualProperties(const AttributeVisualProperties& avp);
+    VisualAttribute();
+    VisualAttribute(const IDomain& dom, int colindex = iUNDEF);
+    VisualAttribute(const VisualAttribute& avp);
 
     IRepresentation representation() const;
     void representation(const IRepresentation& rpr);
@@ -32,12 +34,15 @@ public:
     quint32 columnIndex() const;
     void setColumnIndex(quint32 index);
 
+    const static QString LAYERATTRIBUTE;
 
+    std::vector<QColor> colors(int size=256) const;
 private:
     IRepresentation _representation;
     NumericRange _stretchRange;
     NumericRange _actualRange;
     IDomain _domain;
+    IRasterCoverage _raster;
     quint32 _columnIndex=iUNDEF; //optional indicator which column/attribute is used for these properties
 };
 }

@@ -37,7 +37,7 @@ public:
         box._min_corner = box._max_corner = PointType();
     }
 
-    Box(const QSize& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.width()-1, sz.height()-1),0){
+    Box(const QSize& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.width()-1, sz.height()-1,0)){
     }
 
     template<typename T> Box(const Size<T>& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.xsize()-1, sz.ysize()-1,sz.zsize()-1)){
@@ -169,7 +169,7 @@ public:
         bool ok = p.x >= pmin.x && p.x <= pmax.x &&
                 p.y >= pmin.y && p.y <= pmax.y;
         if ( is3D() && p.is3D()) {
-            ok = p.z >= pmin.z && p.z <= pmax.z;
+            ok &= p.z >= pmin.z && p.z <= pmax.z;
         }
         return ok;
     }

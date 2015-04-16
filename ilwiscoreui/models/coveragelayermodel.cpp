@@ -1,6 +1,10 @@
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "uicontextmodel.h"
-#include "visualizationmanager.h"
+#include "layermanager.h"
 #include "coveragelayermodel.h"
 #include "visualattributemodel.h"
 
@@ -16,10 +20,10 @@ CoverageLayerModel::CoverageLayerModel(quint32 layerInd, const Ilwis::Resource &
     if ( object().isValid()){
         _visualAttributes.push_back(new LayerAttributeModel(this,object()));
         auto attrList = attributes();
-        for(int i=0; i < attrList.count(&attrList); ++i){
+        for(int i=0; attrList.count != 0  && i < attrList.count(&attrList); ++i){
             auto *attr = attrList.at(&attrList, i);
             IlwisTypes valueType =  attr->columnDef().datadef().domain()->valueType();
-            if ( hasType(valueType, itNUMBER|itDOMAINITEM)){
+            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING|itCOLOR)){
                 _visualAttributes.push_back(new VisualAttributeModel(attr->columnDef(),this,object()));
             }
         }
@@ -46,6 +50,52 @@ void CoverageLayerModel::setActive(bool yesno)
         _drawer->redraw();
         emit onActiveChanged();
     }
+}
+
+int CoverageLayerModel::getActiveAttributeIndex() const
+{
+    return _activeAttribute;
+}
+
+void CoverageLayerModel::setActiveAttributeIndex(int index)
+{
+    if ( index == _activeAttribute)
+        return;
+
+    _activeAttribute = index;
+    if ( index < _visualAttributes.size()){
+        _drawer->setAttribute("activevisualattribute", _visualAttributes[index]->attributename());
+        _drawer->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+        _drawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions());
+        _drawer->redraw();
+        emit onActiveAttributeIndexChanged();
+    }
+}
+
+QString CoverageLayerModel::activeAttribute() const
+{
+    if ( _activeAttribute < _visualAttributes.size()){
+       return _visualAttributes[_activeAttribute]->attributename();
+    }
+    return sUNDEF;
+}
+
+QString CoverageLayerModel::visualAttributeByIndex(int index) const
+{
+    if ( index < _visualAttributes.size()){
+       return _visualAttributes[index]->attributename();
+    }
+    return sUNDEF;
+}
+
+bool CoverageLayerModel::showInfo() const
+{
+    return _showInfo;
+}
+
+void CoverageLayerModel::showInfo(bool yesno)
+{
+    _showInfo = yesno;
 }
 
 quint32 CoverageLayerModel::layerIndex() const

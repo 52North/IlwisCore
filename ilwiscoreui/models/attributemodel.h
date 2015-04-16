@@ -39,15 +39,17 @@ public:
 
 protected:
     void setObject(const Ilwis::IIlwisObject& obj);
-signals:
 
-public slots:
-
-private:
     Ilwis::ColumnDefinition _coldefinition;
     QStringList _attributeValuesDefaultRange;
     QStringList _attributeValuesActualRange;
     Ilwis::IIlwisObject _owner;
+
+signals:
+
+public slots:
+
+
 
 };
 

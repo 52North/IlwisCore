@@ -25,7 +25,9 @@ Item {
     Component {
         id : layersinfo
 
-        LayersInfo{}
+        LayersInfo{
+
+        }
     }
 
     Component{

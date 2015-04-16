@@ -7,13 +7,12 @@
 #include "ilwisobjectmodel.h"
 #include "resourcemodel.h"
 #include "catalogview.h"
+#include "catalogmapitem.h"
 #include "ilwiscoreui_global.h"
 
-namespace Ilwis {
 
-}
 //namespace Desktopclient {
-
+class LayerManager;
 
 class ILWISCOREUISHARED_EXPORT CatalogModel : public ResourceModel
 {
@@ -21,6 +20,7 @@ class ILWISCOREUISHARED_EXPORT CatalogModel : public ResourceModel
 public:
     Q_PROPERTY(QQmlListProperty<ResourceModel> resources READ resources NOTIFY contentChanged)
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedData READ selectedData NOTIFY selectionChanged)
+    Q_PROPERTY(QQmlListProperty<CatalogMapItem> mapItems READ mapItems NOTIFY mapItemsChanged)
     Q_PROPERTY(bool initNode READ initNode CONSTANT)
     Q_PROPERTY(int level READ level CONSTANT)
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
@@ -34,18 +34,22 @@ public:
     int level() const;
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<IlwisObjectModel> selectedData();
+    QQmlListProperty<CatalogMapItem> mapItems();
     Q_INVOKABLE void makeParent(QObject *obj);
     Q_INVOKABLE void filterChanged(const QString &objectType, bool state);
     void refresh(bool yesno);
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     virtual void nameFilter(const QString&);
     QString nameFilter() const;
+     Q_INVOKABLE void prepareMapItems(LayerManager *manager);
+
 protected:
     Ilwis::CatalogView _view;
     void newview(const Ilwis::CatalogView &view);
     virtual void gatherItems();
    QList<ResourceModel *> _currentItems;
    QList<IlwisObjectModel *> _selectedObjects;
+   QList<CatalogMapItem *> _catalogMapItems;
 
 
 private:
@@ -56,11 +60,13 @@ private:
     std::map<QString, bool> _filterState;
     QString _nameFilter;
 
+
     bool _refresh = false;
 
 signals:
     void selectionChanged();
     void contentChanged();
+    void mapItemsChanged();
 
 
 };

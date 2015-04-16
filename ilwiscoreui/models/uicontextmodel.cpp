@@ -1,7 +1,12 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "geometries.h"
+#include "georeference.h"
 #include "uicontextmodel.h"
+#include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
 std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
@@ -9,6 +14,8 @@ std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
+
+
 }
 
 LayerManager *UIContextModel::createLayerManager(const QString& objectName)
@@ -18,6 +25,17 @@ LayerManager *UIContextModel::createLayerManager(const QString& objectName)
     LayerManager *manager =  new LayerManager(newparent, this);
 
     return manager;
+}
+
+TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url, const QString& type)
+{
+
+    IlwisTypes tp = IlwisObject::name2Type(type);
+    Resource resource = mastercatalog()->name2Resource(url,tp);
+    if ( resource.isValid()){
+        return new TableModel(resource, parent);
+    }
+    return 0;
 }
 
 QString UIContextModel::uniqueName()
@@ -63,6 +81,16 @@ void UIContextModel::qmlContext(QQmlContext *ctx)
     _qmlcontext = ctx;
 }
 
+void UIContextModel::rootObject(QObject *root)
+{
+    _rootObject = root;
+}
+
+QObject *UIContextModel::rootObject() const
+{
+    return _rootObject;
+}
+
 int UIContextModel::activeSplit() const
 {
     return _activeSplit;
@@ -105,6 +133,25 @@ void UIContextModel::currentKey(int ev)
 int UIContextModel::currentKey() const
 {
     return _currentKey;
+}
+
+QStringList UIContextModel::colorNames() const
+{
+    return _colorNames;
+}
+
+void UIContextModel::prepare()
+{
+    QString ilwisloc = context()->ilwisFolder().absoluteFilePath();
+    QString colornames = ilwisloc + "/resources/svgcolornames.txt";
+    std::ifstream fstream;
+    fstream.open(colornames.toStdString());
+    if ( fstream.is_open()){
+        char txt[100];
+        while (fstream.getline(txt,100)){
+            _colorNames.push_back(txt);
+        }
+    }
 }
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)

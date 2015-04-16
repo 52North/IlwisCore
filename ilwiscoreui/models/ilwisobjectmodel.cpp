@@ -7,6 +7,8 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "table.h"
+#include "itemrange.h"
+#include "colorrange.h"
 #include "raster.h"
 
 using namespace Ilwis;
@@ -172,6 +174,8 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                 IlwisTypes objecttype = _ilwisobject->ilwisType();
                 if ( objecttype == itRASTER){
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                    AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
+                    _attributes.push_back(attribute);
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
                             AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
@@ -573,4 +577,41 @@ bool IlwisObjectModel::isValid() const
 IIlwisObject IlwisObjectModel::object() const
 {
     return _ilwisobject;
+}
+
+QString IlwisObjectModel::value2string(const QVariant &value, const QString &attrName)
+{
+    auto v2s = [](const ColumnDefinition& coldef, const QVariant& value)->QString {
+            if ( coldef.isValid()){
+                if ( coldef.datadef().domain()->ilwisType() == itTEXTDOMAIN)
+                    return value.toString();
+                return coldef.datadef().domain()->impliedValue(value).toString();
+            }
+            if ( value.toDouble() == rUNDEF)
+                return sUNDEF;
+            return value.toString();
+    };
+    if ( attrName != "") {
+        IlwisTypes objectype = _ilwisobject->ilwisType();
+        if ( hasType(objectype, itFEATURE)){
+            IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+            ColumnDefinition coldef = features->attributeDefinitions().columndefinition(attrName);
+            return v2s(coldef, value);
+
+        }else if (hasType(objectype, itRASTER)){
+             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+             if ( raster->hasAttributes()){
+                ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
+                return v2s(coldef, value);
+             }
+             if ( raster->datadef().domain()->ilwisType() == itCOLORDOMAIN){
+                 auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
+                return ColorRangeBase::toString(clr,ColorRangeBase::cmRGBA)    ;
+             }
+        }
+    }
+    if ( value.toDouble() == rUNDEF)
+        return sUNDEF;
+    return value.toString();
+
 }

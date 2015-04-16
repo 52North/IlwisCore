@@ -11,7 +11,7 @@ typedef IlwisData<Coverage> ICoverage;
 
 namespace Geodrawer{
 
-class AttributeVisualProperties;
+class VisualAttribute;
 
 class SpatialDataDrawer : public ComplexDrawer
 {
@@ -22,11 +22,11 @@ public:
     virtual ICoverage coverage() const;
     Envelope envelope() const;
     void envelope(const Envelope& env);
-    AttributeVisualProperties visualAttribute(const QString& attrName) const;
-    void visualAttribute(const QString &attrName, const AttributeVisualProperties& properties );
+    VisualAttribute visualAttribute(const QString& attrName) const;
+    void visualAttribute(const QString &attrName, const VisualAttribute& properties );
     virtual void coverage(const ICoverage& cov);
 
-    void setAttribute(const QString &attrName, const QVariant &attrib);
+    void setAttribute(const QString &key, const QVariant &attrib);
     QVariant attribute(const QString &key) const;
     std::vector<QVariant> attributes(const QString &keys) const;
 
@@ -35,11 +35,13 @@ protected:
     bool prepare(PreparationType prepType, const IOOptions& options);
     bool isVisualAttribute(const QString& attName) const;
 
-    std::map<QString, AttributeVisualProperties> _visualProperties;
+    std::map<QString, VisualAttribute> _visualProperties;
 private:
 
     ICoverage _coverage;
     Envelope _envelope;
+    VisualAttribute vattributeRasterCoverage(const QString &attrName) const;
+    VisualAttribute vattributeFeatureCoverage(const QString &attrName) const;
 };
 }
 }

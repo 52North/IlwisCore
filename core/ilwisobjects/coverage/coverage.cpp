@@ -40,15 +40,18 @@ void Coverage::coordinateSystem(const ICoordinateSystem &csy)
 Envelope Coverage::envelope(bool tolatlon) const
 {
     if ( !coordinateSystem().isValid())
-        return _envelope;
+        return Envelope();
 
-    if ( tolatlon && !coordinateSystem()->isLatLon() && code() != "csy:unknown"){
-        bool validbounds = _envelope.min_corner().isValid() && _envelope.max_corner().isValid();
-        if ( !validbounds)
+    if ( tolatlon){
+        if ( _coordinateSystem->isLatLon())
+            return _envelope;
+        else if (_coordinateSystem->canConvertToLatLon()){
+            auto env = Envelope(_coordinateSystem->coord2latlon(_envelope.min_corner()),
+                                _coordinateSystem->coord2latlon(_envelope.max_corner()));
+            return env;
+        }else{
             return Envelope();
-        LatLon c1 = coordinateSystem()->coord2latlon(_envelope.min_corner());
-        LatLon c2 = coordinateSystem()->coord2latlon(_envelope.max_corner());
-        return Envelope(c1,c2);
+        }
     }
     return _envelope;
 }
@@ -61,7 +64,6 @@ void Coverage::envelope(const Envelope &bnds)
 
     _envelope = bnds;
 }
-
 
 NumericStatistics &Coverage::statistics(int  )
 {

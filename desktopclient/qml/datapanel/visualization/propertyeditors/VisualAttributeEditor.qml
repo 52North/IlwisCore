@@ -47,17 +47,20 @@ Item {
         state : "maximized"
         Loader {
             id : propertyEditor1
-            anchors.fill : parent
+            width : 160
+            height : parent.height
 
 
         }
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn1; opacity : 1 }
+                    PropertyChanges { target: editorColumn1; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn1; opacity : 0 }
+                    PropertyChanges { target: editorColumn1; enabled : false }
             }
 
         ]
@@ -83,17 +86,20 @@ Item {
         anchors.leftMargin: 3
         Loader {
             id : propertyEditor2
-            anchors.fill : parent
+            width : 160
+            height : parent.height
 
 
         }
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn2; opacity : 1 }
+                    PropertyChanges { target: editorColumn2; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn2; opacity : 0 }
+                    PropertyChanges { target: editorColumn2; enabled : false }
             }
 
         ]

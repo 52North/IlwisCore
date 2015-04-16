@@ -21,6 +21,7 @@ namespace Ilwis {
 class Table;
 class ItemRange;
 
+
 typedef IlwisData<Table> ITable;
 /*!
  * \brief The Coverage class
