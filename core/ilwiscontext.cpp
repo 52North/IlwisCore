@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <QSettings>
 #include <QDir>
 #include <QDesktopServices>
 #include <QJsonDocument>
@@ -17,15 +16,12 @@
 
 Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
-
-
 using namespace Ilwis;
 
-
-IlwisContext* Ilwis::context() {
+IlwisContext* Ilwis::context(const QString & ilwisDir) {
     if (Ilwis::IlwisContext::_context == 0) {
         Ilwis::IlwisContext::_context = new Ilwis::IlwisContext();
-        Ilwis::IlwisContext::_context->init();
+        Ilwis::IlwisContext::_context->init(ilwisDir);
 
     }
     return Ilwis::IlwisContext::_context;
@@ -68,28 +64,20 @@ void IlwisContext::removeSystemLocation(const QUrl &)
     //TODO:
 }
 
-void IlwisContext::loadIlwisLocationFile(QFileInfo configFile){
-    if (configFile.exists()){
-        QSettings settings(configFile.filePath(), QSettings::IniFormat);
-        this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
-        if (!this->_ilwisDir.isDir()){
-            printf("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
-            this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
-        }
-    }else{
-        this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
-    }
-}
-
 QFileInfo IlwisContext::ilwisFolder() const {
     return this->_ilwisDir;
 }
 
-void IlwisContext::init()
+void IlwisContext::init(const QString &ilwisDir)
 {
-
-    QFileInfo inf(qApp->applicationDirPath() + "/ilwislocation.config");
-    loadIlwisLocationFile(inf)   ;
+    if (ilwisDir.length() > 0) {
+        this->_ilwisDir = QFileInfo(ilwisDir);
+        if (!this->_ilwisDir.isDir()) {
+            printf("User-supplied Ilwis directory '%s' not found\n",this->_ilwisDir.filePath().toStdString().c_str());
+            this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
+        }
+    } else
+        this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
 
     QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
 

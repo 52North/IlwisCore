@@ -67,9 +67,9 @@ Ilwis::Kernel* Ilwis::kernel() {
     return Kernel::_kernel;
 }
 
-bool Ilwis::initIlwis(int mode){
+bool Ilwis::initIlwis(int mode, const QString & ilwisDir){
     try {
-        context();
+        context(ilwisDir);
         context()->runMode(mode);
         return kernel() != 0;
     } catch (const ErrorObject& err) {
