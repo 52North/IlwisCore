@@ -92,9 +92,33 @@ void LayerManager::setScreenGeoReference(const IGeoReference &grf)
     _screenGrf = grf;
 }
 
+void LayerManager::moveLayer(int index, LayerManager::LayerMovement type)
+{
+    if ( type == lmDOWN){
+        if ( index + 1 < _layers.size())
+            _layers.swap(index + 1, index + 2); // layer 0 is a placeholder layer, so + 1
+    }else if ( type == lmUP ){
+        if ( index > 0  && index + 1 < _layers.size())
+            _layers.swap(index + 1, index);
+    } else if ( type == lmREMOVE){
+        if ( index >= 0 && index + 1 < _layers.size())
+        _layers.removeAt(index + 1);
+    }
+}
+
 IGeoReference LayerManager::screenGrf() const
 {
     return _screenGrf;
+}
+
+void LayerManager::setLayerListName(const QString name)
+{
+    _layerListName = name;
+}
+
+QString LayerManager::layerListName() const
+{
+    return _layerListName;
 }
 
 void LayerManager::layersView(LayersViewCommandInterface *view)
@@ -168,6 +192,11 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
     if ( outtext == "")
         outtext = "?";
     return outtext;
+}
+
+void LayerManager::refresh()
+{
+    emit layerChanged();
 }
 
 void LayerManager::init()

@@ -12,7 +12,6 @@ Item {
   function addDataSource(sourceUrl, sourceName, sourceType){
       renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
       renderer.update()
-      //layertools.model = manager.layers
   }
 
   function entireMap() {
@@ -44,23 +43,33 @@ Item {
   DropArea {
       anchors.fill : parent
       onDropped: {
-          console.log (drag.source.ilwisobjectid);
           var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
           addDataSource(resource.url, resource.name, resource.typeName)
       }
 
-      LayersView {
-          id: renderer
+      Item {
           anchors.fill: parent
-          anchors.margins: 5
+          LayersView {
+              id: renderer
+              anchors.top: parent.top
+              height : parent.height - hscroller.height
+              width : parent.width
+              anchors.margins: 1
 
+              LayerExtentMouseActions{
+                  layerManager: manager
+              }
 
-
-          LayerExtentMouseActions{
-              layerManager: manager
           }
+          Controls.HScrollBar{
+              anchors.top : renderer.bottom
+
+              id :hscroller
+
+          }
+
       }
-
-
   }
+
+
 }

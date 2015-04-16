@@ -35,7 +35,9 @@ bool CornersGeoReference::compute()
     _a12 = _a21 = 0;
     std::vector<double> vec = _envelope.max_corner() - _envelope.min_corner();
 
-    if (abs(vec[0]) < 1e-6 || abs(vec[1]) < 1e-6) {
+    bool deltaxSmall = (std::abs(vec[0]) < 0.0000001);
+    bool deltaySmall = (std::abs(vec[1]) < 0.0000001);
+    if ( deltaxSmall || deltaySmall) {
         return false;
     }
     if (!_centerOfPixel) { // corners of corner pixels

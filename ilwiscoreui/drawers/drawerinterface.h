@@ -106,6 +106,8 @@ public:
     virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
     virtual bool drawerAttribute(const QString drawercode, const QString& attrName, const QVariant& attrib)  = 0;
 
+    virtual QVariant execute(const QString& operationName, const QVariantMap& parameters) = 0;
+
     virtual quint32 defaultOrder() const = 0;
     virtual DrawerType drawerType()  const = 0;
 

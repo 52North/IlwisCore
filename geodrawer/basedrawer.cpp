@@ -193,6 +193,11 @@ bool BaseDrawer::drawerAttribute(const QString , const QString &, const QVariant
     return false;
 }
 
+QVariant BaseDrawer::execute(const QString &operationName, const QVariantMap &parameters)
+{
+    return false;
+}
+
 QColor BaseDrawer::color(const IRepresentation &rpr, double , DrawerInterface::ColorValueMeaning )
 {
     return QColor();
