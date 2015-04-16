@@ -271,7 +271,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/representation.h \
     core/ilwisobjects/representation/colorlookup.h \
     core/ilwisobjects/representation/continuouscolorlookup.h \
-    core/ilwisobjects/representation/palettecolorlookup.h
+    core/ilwisobjects/representation/palettecolorlookup.h \
+    core/kernel_global.h
 
 
 OTHER_FILES += \
