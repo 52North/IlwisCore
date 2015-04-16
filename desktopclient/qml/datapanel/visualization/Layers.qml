@@ -47,18 +47,29 @@ Item {
           addDataSource(resource.url, resource.name, resource.typeName)
       }
 
-      LayersView {
-          id: renderer
+      Item {
           anchors.fill: parent
-          anchors.margins: 5
+          LayersView {
+              id: renderer
+              anchors.top: parent.top
+              height : parent.height - hscroller.height
+              width : parent.width
+              anchors.margins: 1
 
+              LayerExtentMouseActions{
+                  layerManager: manager
+              }
 
-
-          LayerExtentMouseActions{
-              layerManager: manager
           }
+          Controls.HScrollBar{
+              anchors.top : renderer.bottom
+
+              id :hscroller
+
+          }
+
       }
-
-
   }
+
+
 }
