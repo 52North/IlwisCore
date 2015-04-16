@@ -521,7 +521,7 @@ private:
         _xChanged = _yChanged = false;
         _currentBlock  = _z * _grid->blocksPerBand() + _y / _grid->maxLines();
         if (_selectionIndex < 0){
-            if ( _z > _endz){
+            if ( _z > _endz || _z < _box.min_corner().z){
                 return moveXY(delta);
             }
         }
