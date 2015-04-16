@@ -12,7 +12,6 @@ Item {
   function addDataSource(sourceUrl, sourceName, sourceType){
       renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
       renderer.update()
-      //layertools.model = manager.layers
   }
 
   function entireMap() {
