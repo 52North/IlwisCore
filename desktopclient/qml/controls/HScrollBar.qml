@@ -7,10 +7,10 @@ import QtQuick 2.0
 Rectangle {
     id : scroller
     property double maxSize : 100
-    property double currentSize : 20
-    property double currentPosition : 20
+    property double currentSize : 100
+    property double currentPosition : -1
 
-    signal scrolled(int position)
+    signal scrolled(double position)
 
     width: parent.width
     height: 16
@@ -84,8 +84,8 @@ Rectangle {
                         var oldRelx = oldpos / marea.width
                         var difrelx = relx - oldRelx;
                         currentPosition = currentPosition + maxSize * difrelx
-                        if ( currentPosition > maxSize - currentSize - 0.8)
-                            currentPosition = maxSize - currentSize - 0.8
+                        if ( currentPosition > maxSize - currentSize)
+                            currentPosition = maxSize - currentSize
                         if ( (currentPosition) < 0)
                             currentPosition = 0
                         scrolled(currentPosition)
