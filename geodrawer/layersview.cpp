@@ -113,7 +113,7 @@ QString LayersView::layerInfo(const QString& pixelpair) const
     return "";
 }
 
-QVariantMap LayersView::envelope()
+QVariantMap LayersView::zoomEnvelope() const
 {
     QVariantMap vmap;
     Geodrawer::RootDrawer *root = rootDrawer();
@@ -127,6 +127,93 @@ QVariantMap LayersView::envelope()
     }
 
     return vmap;
+}
+
+QVariantMap LayersView::viewEnvelope() const
+{
+    QVariantMap vmap;
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( root){
+        _manager->setScreenGeoReference(root->screenGrf());
+        Envelope viewenv = root->viewEnvelope();
+        vmap["minx"] = viewenv.min_corner().x;
+        vmap["miny"] = viewenv.min_corner().y;
+        vmap["maxx"] = viewenv.max_corner().x;
+        vmap["maxy"] = viewenv.max_corner().y;
+    }
+
+    return vmap;
+}
+
+void LayersView::setViewEnvelope(const QVariantMap &var)
+{
+    bool ok;
+    double minx = var["minx"].toDouble(&ok);
+    if (!ok)
+        return;
+    double miny = var["miny"].toDouble(&ok);
+    if (!ok)
+        return;
+    double maxx = var["maxx"].toDouble(&ok);
+    if (!ok)
+        return;
+    double maxy = var["maxy"].toDouble(&ok);
+    if (!ok)
+        return;
+
+    Envelope env(Coordinate(minx,miny), Coordinate(maxx, maxy));
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( root){
+        root->applyEnvelopeView(env,true);
+    }
+    emit viewEnvelopeChanged();
+
+}
+
+void LayersView::setZoomEnvelope(const QVariantMap &var)
+{
+    bool ok;
+    double minx = var["minx"].toDouble(&ok);
+    if (!ok)
+        return;
+    double miny = var["miny"].toDouble(&ok);
+    if (!ok)
+        return;
+    double maxx = var["maxx"].toDouble(&ok);
+    if (!ok)
+        return;
+    double maxy = var["maxy"].toDouble(&ok);
+    if (!ok)
+        return;
+
+    Envelope env(Coordinate(minx,miny), Coordinate(maxx, maxy));
+    Geodrawer::RootDrawer *root = rootDrawer();
+    if ( root){
+        root->applyEnvelopeZoom(env);
+        root->redraw();
+    }
+    emit zoomEnvelopeChanged();
+
+}
+
+
+
+void LayersView::associate(const QString &name, bool permanent)
+{
+    for(const auto& association : _associates){
+        if ( association.first == name)
+            return;
+    }
+    _associates.push_back(std::pair<QString, bool>(name, permanent));
+}
+
+void LayersView::removeAssociate(const QString &name)
+{
+    auto iter = std::find_if(_associates.begin(), _associates.end(),[&name](const std::pair<QString, bool>& assoc)->bool{
+        return name == assoc.first;
+    });
+    if ( iter != _associates.end())
+        _associates.erase(iter);
 }
 
 LayerManager *LayersView::layerManager()
@@ -147,24 +234,15 @@ void LayersView::setShowLayerInfo(bool yesno)
 
 void LayersView::synchronizeEnded()
 {
-   emit xsizeChanged();
+    for(const auto& iter : _associates) {
+        QString name = iter.first;
+        QObject *obj = uicontext()->rootObject()->findChild<QObject *>(name);
+        if (obj){
+            QVariant returnedValue;
+            QMetaObject::invokeMethod(obj,"updateItem",Q_RETURN_ARG(QVariant, returnedValue));
+        }
+    }
 
-}
-
-int LayersView::xsize() const
-{
-    Geodrawer::RootDrawer *root = rootDrawer();
-    if ( !root)
-        return 0;
-    return root->coverageAreaSize().xsize();
-}
-
-int LayersView::ysize() const
-{
-    Geodrawer::RootDrawer *root = rootDrawer();
-    if ( !root)
-        return 0;
-    return root->coverageAreaSize().ysize();
 }
 
 QString LayersView::viewerId() const

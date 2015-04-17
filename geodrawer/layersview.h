@@ -67,8 +67,8 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
-    Q_PROPERTY(int xsize READ xsize NOTIFY xsizeChanged)
-    Q_PROPERTY(int ysize READ ysize NOTIFY ysizeChanged)
+    Q_PROPERTY(QVariantMap zoomEnvelope READ zoomEnvelope WRITE setZoomEnvelope NOTIFY zoomEnvelopeChanged)
+    Q_PROPERTY(QVariantMap viewEnvelope READ viewEnvelope WRITE setViewEnvelope NOTIFY viewEnvelopeChanged)
 
 public:
 friend class LayersRenderer;
@@ -86,7 +86,8 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
-    Q_INVOKABLE QVariantMap envelope();
+    Q_INVOKABLE void associate(const QString& name, bool permanent = true);
+    Q_INVOKABLE void removeAssociate(const QString& name);
 
     LayerManager *layerManager();
     bool showLayerInfo() const;
@@ -95,15 +96,17 @@ friend class LayersRenderer;
 signals:
     void currentCoordinateHasChanged();
     void showLayerInfoChanged();
-    void xsizeChanged();
-    void ysizeChanged();
+    void zoomEnvelopeChanged();
+    void viewEnvelopeChanged();
 
 public slots:
     void synchronizeEnded();
 
 private:
-    int xsize() const;
-    int ysize() const;
+    QVariantMap zoomEnvelope() const;
+    QVariantMap viewEnvelope() const;
+    void setViewEnvelope(const QVariantMap& var);
+    void setZoomEnvelope(const QVariantMap& var);
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
@@ -112,6 +115,7 @@ private:
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
+    std::vector<std::pair<QString, bool>> _associates;
 
 
     QVariantMap _copiedAttributes;
