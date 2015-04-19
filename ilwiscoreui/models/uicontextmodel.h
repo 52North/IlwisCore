@@ -45,6 +45,7 @@ public:
     void qmlContext(QQmlContext *ctx);
     void rootObject(QObject *root);
     QObject* rootObject() const;
+    QQmlContext *rootContext() const;
     int activeSplit() const;
     void setActiveSplit(int index);
     void addViewer(LayersViewCommandInterface *viewer, quint64 vid);

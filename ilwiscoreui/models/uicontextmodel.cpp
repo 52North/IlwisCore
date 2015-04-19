@@ -91,6 +91,11 @@ QObject *UIContextModel::rootObject() const
     return _rootObject;
 }
 
+QQmlContext* UIContextModel::rootContext() const
+{
+    return _qmlcontext;
+}
+
 int UIContextModel::activeSplit() const
 {
     return _activeSplit;
