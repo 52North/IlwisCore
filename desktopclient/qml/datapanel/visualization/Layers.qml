@@ -118,9 +118,8 @@ Item {
               onScrolled: {
                   var envZoom = renderer.zoomEnvelope
                   var envView = renderer.viewEnvelope
-                  var newPos1 = envView.miny + position
-                  var newPos2 = newPos1 + envZoom.maxy - envZoom.miny
-                  console.debug(envView.miny, position, newPos1, newPos2)
+                  var newPos1 = envView.maxy - position
+                  var newPos2 = newPos1 - (envZoom.maxy - envZoom.miny)
                   envZoom.miny = newPos1
                   envZoom.maxy = newPos2
                   renderer.zoomEnvelope = envZoom
