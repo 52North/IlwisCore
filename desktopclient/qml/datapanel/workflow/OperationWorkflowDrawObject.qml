@@ -101,7 +101,9 @@ BasicWorkflowDrawObject {
     }
 
     onFrameChanged: {
-        frame.formResultChanged.connect(updateParentChilds);
+        if (frame !== null && frame.formResultChanged !== null) {
+            frame.formResultChanged.connect(updateParentChilds);
+        }
     }
 }
 
