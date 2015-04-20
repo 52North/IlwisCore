@@ -49,6 +49,24 @@ Item {
         datatab.removeTab(index)
     }
 
+    function removeTabFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return removeTab(i);
+                 break;
+            }
+        }
+    }
+
+    function getTabIndexFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return i;
+            }
+        }
+        return -1;
+    }
+
     onCurrentIndexChanged: {
         datatab.currentIndex = currentIndex
     }
