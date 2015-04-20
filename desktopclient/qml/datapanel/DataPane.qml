@@ -22,6 +22,8 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
+    signal closedTab(string title)
+
     function addWorkflowCanvas(id, name) {
         datapanesplit.addWorkflowCanvas(id, name)
     }
@@ -112,6 +114,9 @@ Rectangle {
                 if ( lefttab.count === 0){
                     lefttab.state = "zerosize"
                     righttab.state = "fullsize"
+                    // simple state change does not work
+                    lefttab.width = 0
+                    righttab.width = width
                     activeSplit = 2
                     setCatalogByIndex(righttab, 0)
 
@@ -122,10 +127,14 @@ Rectangle {
             else if ( Math.abs(splitindex) === 2){ // right
                 if ( lefttab.count === 0 && righttab.count === 1)
                     return
+                closedTab(righttab.getTab(tabindex1).title);
                 righttab.removeTab(tabindex1)
                 if ( righttab.count === 0){
                     righttab.state = "zerosize"
                     lefttab.state = "fullsize"
+                    // simple state change does not work
+                    righttab.width = 0
+                    lefttab.width = width
                     activeSplit = 1
                     setCatalogByIndex(lefttab, 0)
                 }else{

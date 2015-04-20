@@ -68,6 +68,15 @@ Rectangle {
         }
 
         WorkflowSeparator { }
+
+        Connections {
+            target: dataPanel
+            onClosedTab: {
+                if (title === workflowbenchContentLoader.editSession + " [Workflow Builder]") {
+                    workflowbenchContentLoader.setSource("WorkflowBench.qml")
+                }
+            }
+        }
     }
 
     // ###########################  WORKFLOW'S IO SECTION
