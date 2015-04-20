@@ -1,12 +1,13 @@
 #ifndef IOOptions_H
 #define IOOptions_H
 
+#include <QVariantMap>
 #include "kernel_global.h"
 
 namespace Ilwis {
 
 // optional parameter for the creation process
-class KERNELSHARED_EXPORT IOOptions {
+class KERNELSHARED_EXPORT IOOptions  : public QVariantMap{
 public:
     class Option{
         friend class IOOptions;
@@ -20,19 +21,14 @@ public:
     };
 
     IOOptions()  {}
-    IOOptions(const QString& key, const QVariant& value) { _values[key] = value; }
+    IOOptions(const QString& key, const QVariant& value) { (*this)[key] = value; }
 
-    bool contains(const QString& option) const;
-    quint32 size() const;
     bool isEmpty() const;
-    QVariant operator[](const QString& option) const;
 
     IOOptions &operator<<(const Option& option);
     IOOptions &addOption(const QPair<QString, QVariant> &item);
     IOOptions &addOption(const QString& key, const QVariant& value);
 
-private:
-    std::map<QString, QVariant> _values;
 };
 
 

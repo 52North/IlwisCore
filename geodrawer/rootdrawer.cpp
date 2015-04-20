@@ -51,6 +51,11 @@ void RootDrawer::addEnvelope(const ICoordinateSystem &csSource, const Envelope &
     applyEnvelopeView(_coverageRect, overrule);
 }
 
+Envelope RootDrawer::viewEnvelope() const
+{
+    return _viewEnvelope;
+}
+
 Envelope RootDrawer::zoomEnvelope() const
 {
     return _zoomRect;
@@ -66,6 +71,9 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
         ERROR2(ERR_NO_INITIALIZED_2,TR("Pixel area"), TR("Visualization"));
         return;
     }
+    if ( overrule)
+        _viewEnvelope = Envelope();
+
     double w = viewRect.xlength() - 1;
     double h = viewRect.ylength() - 1;
     _aspectRatioCoverage = w / h;
@@ -125,7 +133,6 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
         }
     }
     _zoomRect = envelope;
-    qDebug() << _zoomRect.xlength() - 1 << _zoomRect.ylength() - 1;
     viewPoint(_zoomRect.center(), true);
     setMVP();
 
@@ -144,6 +151,9 @@ void RootDrawer::setMVP()
 
         _zoomScale =  std::min(xscale, yscale);
     }
+    if ( _viewEnvelope.isNull() && _zoomRect.isValid() && !_zoomRect.isNull())
+        _viewEnvelope = _zoomRect;
+
     _screenGrf->envelope(_zoomRect);
     _screenGrf->size(_pixelAreaSize);
     _screenGrf->compute();

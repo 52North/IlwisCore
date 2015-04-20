@@ -11,6 +11,7 @@ Rectangle {
 
     id : workflowbench
 
+   property string workflowTitle
 
     // ###########################  TITLE
 
@@ -31,6 +32,7 @@ Rectangle {
             console.log("id: " + workflow.id);
             console.log("displayName: " + workflow.displayName);
             createWorkflowMetadataForm(workflow.id, workflow.displayName);
+            newWorkflow.visible = false;
         }
     }
 
@@ -58,7 +60,8 @@ Rectangle {
 
     function createWorkflowMetadataForm(metaid, title) {
         var form = formbuilder.index2Form(metaid);
-
+        applicationForm.workflowId = metaid;
+        applicationForm.workflowname = title;
         //var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
         appFrame.formQML = form;
         appFrame.formTitle = title;
@@ -66,8 +69,9 @@ Rectangle {
         applicationForm.state = "maximized";
     }
 
-    function createWorkflowEditSession(workflowName) {
-        dataPanel.addWorkflowCanvas(workflowName + " [Workflow Builder]" );
+    function createWorkflowEditSession(workflowId, workflowName) {
+        workflowTitle = workflowName + " [Workflow Builder]"
+        dataPanel.addWorkflowCanvas(workflowId, workflowTitle);
         workflowbenchContentLoader.setSource("WorkflowEdit.qml");
         workflowbenchContentLoader.editSession = workflowName;
     }
@@ -87,6 +91,7 @@ Rectangle {
             height : 0
 
             property string workflowname
+            property string workflowId
 
             // ###########################  CONTROL BUTTONS
 
@@ -99,7 +104,7 @@ Rectangle {
                 Button {
                     id : editWorkflowButton
                     text :  qsTr("Edit Workflow")
-                    onClicked: createWorkflowEditSession(applicationForm.workflowname)
+                    onClicked: createWorkflowEditSession(applicationForm.workflowId, applicationForm.workflowname)
                     tooltip: qsTr("Edit selected workflow")
                     anchors.margins: 5
                 }

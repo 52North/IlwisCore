@@ -9,6 +9,10 @@ Rectangle {
     property string formQML : ""
     property var currentAppForm : null
     property string formTitle : "est"
+    property string operationId : "id"
+    property string operationUrl : "url"
+
+    signal formResultChanged();
 
     id : applicationFormFrame
     width : parent.width
@@ -54,6 +58,13 @@ Rectangle {
             property string exprparameters
             width : parent.width
             height : parent.height - applicationFormFrame.height - 20
+        }
+    }
+
+    Connections {
+        target: currentAppForm
+        onFormresultChanged: {
+            formResultChanged();
         }
     }
 }

@@ -22,8 +22,23 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
-    function addWorkflowCanvas(name) {
-        datapanesplit.addWorkflowCanvas(name)
+    /*
+     * Signal, thrown if a tab is closed
+     */
+    signal closedTab(string title)
+
+    /*
+     * Add a new WorkflowCanavas
+     */
+    function addWorkflowCanvas(id, name) {
+        datapanesplit.addWorkflowCanvas(id, name)
+    }
+
+    /*
+     * Remove WorkflowCanvas by  name
+     */
+    function removeWorkflowCanvas(name) {
+        datapanesplit.removeTabFromView(name);
     }
 
     function addModellerPanel(name) {
@@ -102,12 +117,16 @@ Rectangle {
 
         function closeTab(splitindex, tabindex1){
             if ( Math.abs(splitindex) === 1){ // left
+                closedTab(left.getTab(tabindex1).title);
                 if ( righttab.count === 0 && lefttab.count === 1)
                     return
                 lefttab.removeTab(tabindex1)
                 if ( lefttab.count === 0){
                     lefttab.state = "zerosize"
                     righttab.state = "fullsize"
+                    // simple state change does not work
+                    lefttab.width = 0
+                    righttab.width = width
                     activeSplit = 2
                     setCatalogByIndex(righttab, 0)
 
@@ -116,12 +135,16 @@ Rectangle {
                 }
             }
             else if ( Math.abs(splitindex) === 2){ // right
+                closedTab(righttab.getTab(tabindex1).title);
                 if ( lefttab.count === 0 && righttab.count === 1)
                     return
                 righttab.removeTab(tabindex1)
                 if ( righttab.count === 0){
                     righttab.state = "zerosize"
                     lefttab.state = "fullsize"
+                    // simple state change does not work
+                    righttab.width = 0
+                    lefttab.width = width
                     activeSplit = 1
                     setCatalogByIndex(lefttab, 0)
                 }else{
@@ -229,6 +252,7 @@ Rectangle {
         }
 
         function showTabInFloatingWindow(tabIndex) {
+            console.log("showTabInFloatingWindow")
             var tabview = activeSplit === 1 ? lefttab : righttab
             var tab = tabview.getTab(tabIndex)
 
@@ -247,12 +271,26 @@ Rectangle {
             }
         }
 
-        function addWorkflowCanvas(name) {
+        /*
+         * Adds a new WorkflowCanvas to the right tab view
+         */
+        function addWorkflowCanvas(id, name) {
             console.log("creating new workflow canvas")
-            var tabview = activeSplit === 1 ? lefttab : righttab
             var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
-            var tab = tabview.addTab(name, component)
+//            var tabview = activeSplit === 1 ? righttab : lefttab
+//            var tab = tabview.addTab(name, component)
+//            tab.active = true
+            var tab = righttab.addTab(name,component)
             tab.active = true
+            if ( activeSplit ===1){
+                righttab.width = parent.width / 2.0
+                activeSplit = 2
+            }
+            else{
+                lefttab.width = parent.width / 2.0
+                activeSplit = 1
+            }
+            tab.item.workflow = id;
         }
 
         function addModeller(name) {
@@ -269,9 +307,18 @@ Rectangle {
             }
         }
 
+        /*
+         * Remove a tab by name from TabView
+         */
         function removeTabFromView(name) {
-            righttab.removeTabFor(name);
-            lefttab.removeTabFor(name);
+            var ri = righttab.getTabIndexFor(name);
+            if (ri !== -1) {
+                closeTab(righttab.side, ri)
+            }
+            var li = lefttab.getTabIndexFor(name);
+            if (li !== -1) {
+                closeTab(lefttab.side, ri)
+            }
         }
 
 

@@ -412,7 +412,7 @@ QVariant ComplexDrawer::attributeOfDrawer(const QString &drawercode, const QStri
     if ( code() == drawercode)
         return attribute(attrName);
     if ( drawercode ==  "rootdrawer"){ // special case
-        return rootDrawer()->attributeOfDrawer(drawercode, attrName);
+        return rootDrawer()->attribute(attrName);
     }
 
     QVariant var;

@@ -10,10 +10,12 @@ Rectangle {
 
     id : workflowedit
 
-    function newForm(metaid, title){
+    function newForm(metaid, title, url){
         var form = formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
+        appFrame.operationId = metaid
+        appFrame.operationUrl = url
         appFrame.opacity = 1
     }
 
@@ -33,10 +35,12 @@ Rectangle {
             console.log("Edit cancelled by user")
 
             // TODO restore selection status when getting back?
+            dataPanel.removeWorkflowCanvas(workflowbenchContentLoader.editSession + " [Workflow Builder]")
 
             workflowbenchContentLoader.setSource("WorkflowBench.qml")
         }
     }
+
 
     Rectangle {
         id: workflowEditButtons
@@ -64,6 +68,18 @@ Rectangle {
         }
 
         WorkflowSeparator { }
+
+        Connections {
+            target: dataPanel
+            onClosedTab: {
+                /*
+                 * Close edit session if title == edit session
+                 */
+                if (title === workflowbenchContentLoader.editSession + " [Workflow Builder]") {
+                    workflowbenchContentLoader.setSource("WorkflowBench.qml")
+                }
+            }
+        }
     }
 
     // ###########################  WORKFLOW'S IO SECTION
@@ -100,8 +116,62 @@ Rectangle {
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 opacity : 0
-
+                z:1
             }
+            MouseArea {
+                id: appFrameMouseArea
+                hoverEnabled: true
+                anchors.fill: appFrame
+                cursorShape: Qt.ArrowCursor
+                property variant operationNameDrag
+                drag.target: operationNameDrag
+                /*
+                 * Create object for Drag'N'Drop
+                 */
+                onPressed: {
+                    operationNameDrag = Qt.createQmlObject('import QtQuick 2.0; Text {
+                        id : operationNameDrag
+                        text : appFrame.formTitle
+                        width : appFrame.width
+                        height : appFrame.height
+                        x : appFrame.x
+                        y : appFrame.y
+                        font.pointSize: 12
+                        property string name :  appFrame.formTitle !== null ? appFrame.formTitle : ""
+                        property string ilwisobjectid : appFrame.operationId !== null ? appFrame.operationId : ""
+                        property string url : appFrame.operationUrl !== null ? appFrame.operationUrl : ""
+                        property var frame : appFrame
+                        property string type : "operation"
+
+                        Drag.keys: [ appFrame.operationId ]
+                        Drag.active: appFrameMouseArea.drag.active
+                        Drag.hotSpot.x: x + width/2
+                        Drag.hotSpot.y: y + height/2
+                        opacity : Drag.active / 2
+
+                        states: State {
+                            when: appFrameMouseArea.drag.active
+                            ParentChange { target: operationNameDrag; parent: root }
+                            AnchorChanges { target: operationNameDrag; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                        }
+                    }', appFrameMouseArea, "dynamicOperationName");
+
+                }
+
+                onReleased: {
+                    /*
+                     * Destroy object created for Drag'N'Drop
+                     */
+                    if (operationNameDrag !== null) {
+                        operationNameDrag.Drag.drop()
+                        operationNameDrag.parent = appFrameMouseArea
+                        operationNameDrag.anchors.fill = appFrameMouseArea
+                        operationNameDrag.destroy();
+                    }
+                }
+                z:0
+            }
+
             states: [
                 State { name: "maximized"
 
@@ -133,6 +203,7 @@ Rectangle {
         }
 
 
+
         // ###########################  FILTER
 
         FilterTextField {
@@ -158,7 +229,7 @@ Rectangle {
                     Connections {
                         target : operationList
                         onMakeForm : {
-                            newForm(objectid, name)
+                            newForm(objectid, name, url)
                         }
                     }
                 }
@@ -172,7 +243,7 @@ Rectangle {
                     Connections {
                         target : operationCatagories
                         onMakeForm : {
-                            newForm(objectid, name)
+                            newForm(objectid, name, url)
                         }
                     }
                 }
@@ -181,5 +252,6 @@ Rectangle {
             style: Base.TabStyle1{}
         }
     }
+
 
 }

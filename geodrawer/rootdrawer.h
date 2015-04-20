@@ -29,7 +29,7 @@ public:
     void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
-    //Envelope viewEnvelope() const;
+    Envelope viewEnvelope() const;
     Envelope zoomEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
@@ -67,6 +67,7 @@ private:
     ICoordinateSystem _coordinateSystem;
     Envelope _zoomRect; // extent of the portion of the map now visible in the visualization
     Envelope _coverageRect; // extent of coverage without any additional area
+    Envelope _viewEnvelope; // original zoomrect; calculated only once and gives the size of the entiremap view
     Size<> _pixelAreaSize; // size of the area in the viewRect in pixels
     double _aspectRatioCoverage = 0; //ration between width/height of the coverage. determines how sides of a map will size in reaction to size changes
     double _aspectRatioView = 0;
