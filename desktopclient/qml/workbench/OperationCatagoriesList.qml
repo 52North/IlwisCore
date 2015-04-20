@@ -12,6 +12,8 @@ Item {
     id : operationCatTab
     anchors.fill: parent
 
+    signal makeForm(string objectid, string name)
+
     ListView{
         id : operationsByKey
         anchors.fill: parent

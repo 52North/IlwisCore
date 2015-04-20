@@ -11,7 +11,7 @@ import "../Global.js" as Global
 
 Rectangle {
 
-    signal makeForm(string objectid, string name)
+    signal makeForm(string objectid, string name, string url)
 
     property var operationsModel : operations.operations
     property bool byKey : false
