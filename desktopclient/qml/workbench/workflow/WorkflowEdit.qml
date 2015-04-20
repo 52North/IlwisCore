@@ -72,6 +72,9 @@ Rectangle {
         Connections {
             target: dataPanel
             onClosedTab: {
+                /*
+                 * Close edit session if title == edit session
+                 */
                 if (title === workflowbenchContentLoader.editSession + " [Workflow Builder]") {
                     workflowbenchContentLoader.setSource("WorkflowBench.qml")
                 }
@@ -122,7 +125,9 @@ Rectangle {
                 cursorShape: Qt.ArrowCursor
                 property variant operationNameDrag
                 drag.target: operationNameDrag
-
+                /*
+                 * Create object for Drag'N'Drop
+                 */
                 onPressed: {
                     operationNameDrag = Qt.createQmlObject('import QtQuick 2.0; Text {
                         id : operationNameDrag
@@ -154,6 +159,9 @@ Rectangle {
                 }
 
                 onReleased: {
+                    /*
+                     * Destroy object created for Drag'N'Drop
+                     */
                     if (operationNameDrag !== null) {
                         operationNameDrag.Drag.drop()
                         operationNameDrag.parent = appFrameMouseArea

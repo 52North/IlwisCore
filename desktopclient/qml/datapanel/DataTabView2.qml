@@ -45,10 +45,16 @@ Item {
         return datatab.getTab(index)
     }
 
+    /*
+     * Remove tab by index
+     */
     function removeTab(index){
         datatab.removeTab(index)
     }
 
+    /*
+     * Remove tab by name
+     */
     function removeTabFor(name){
         for (var i = 0; i <  datatab.count; i++) {
             if (getTab(i).title === name) {
@@ -58,6 +64,9 @@ Item {
         }
     }
 
+    /*
+     * Get tab by name
+     */
     function getTabIndexFor(name){
         for (var i = 0; i <  datatab.count; i++) {
             if (getTab(i).title === name) {

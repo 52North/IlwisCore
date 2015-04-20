@@ -11,7 +11,10 @@ BasicWorkflowDrawObject {
     width: defaultWidth
     height: defaultHeight
 
-
+    /*
+     * Draw method to draw this object in the Canvas of ctx
+     * Draws a rectangle
+     */
     function draw(ctx) {
         ctx.save();
         ctx.beginPath();
@@ -49,10 +52,16 @@ BasicWorkflowDrawObject {
         ctx.restore();
     }
 
+    /*
+     * Get connection point for Inputs
+     */
     function getInputConnector() {
         return Qt.point(x, y - height/2);
     }
 
+    /*
+     * Get connection point for Outputs
+     */
     function getOutputConnector() {
         return Qt.point(x, y + height/2);
     }

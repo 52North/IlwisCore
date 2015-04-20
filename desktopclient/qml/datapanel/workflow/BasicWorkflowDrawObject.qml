@@ -1,5 +1,8 @@
 import QtQuick 2.0
 
+/*
+ * Basic object for Workflow that can be drawn with further functionality
+ */
 AbstractBasicWorkflowDrawObject {
     id : basicWorkflowDrawObject
 
@@ -7,23 +10,33 @@ AbstractBasicWorkflowDrawObject {
     property string nameText
     property string name
     property string title
+    // Context2D toi draw this object
     property var ctx
     property color borderColor : "black"
     property color color: "#EAECEE"
+    // Indocator if selected
     property bool selected
-
+    // multiple parent objects
     property variant parentObjects : []
     property AbstractBasicWorkflowDrawObject childObject;
 
-
+    /*
+     * Has parent objects
+     */
     function hasParentObjects() {
         return parentObjects !== null && parentObjects.length > 0;
     }
 
+    /*
+     * Has child object
+     */
     function hasChildObject() {
         return childObject != null;
     }
 
+    /*
+     * Add a parent object
+     */
     function addParentObject(parent) {
         var t = parentObjects;
         t.push(parent);
@@ -48,23 +61,24 @@ AbstractBasicWorkflowDrawObject {
         }
     }
 
+    /*
+     * Check if the object is selected
+     */
     function isSelected(checkX, checkY) {
         selected = containsPosition(checkX, checkY);
         return selected;
     }
 
+    /*
+     * Check if the coordinates are inside the objecs borders/buffer
+     */
     function containsPosition(checkX, checkY) {
         return checkX > (x - width/2) && checkX < (x + width/2) && checkY > (y - height/2) && checkY < (y + height/2);
     }
 
-    function getInputConnector() {
-        return Qt.point(x, y);
-    }
-
-    function getOutputConnector() {
-        return Qt.point(x, y);
-    }
-
+    /*
+     * Get the object name or 'not set'
+     */
     function getName() {
         if (name !== null && name !== "") {
             if (name.indexOf("/") !== -1) {

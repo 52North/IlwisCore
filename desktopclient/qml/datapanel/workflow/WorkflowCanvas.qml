@@ -10,17 +10,25 @@ Canvas {
     property int lineWidth: 2
     property string drawColor: "black"
     property var ctx: getContext('2d')
+    // indicator whether the Canvas sould be re-drawn
     property bool canvasValid: true
-    // elements
+    // elements to be drawn
     property variant elements: []
+    // current operation frame
     property var frame
+    // current workflow
     property string workflow;
 
+    // indiocator whether the object should be dragged
     property bool isDrag: false
+    // indicator whether PressAndHold is active
     property bool isPressAndHold: false
     property BasicWorkflowDrawObject onPressedSelectedElement
     property BasicWorkflowDrawObject currentSelectedElement
 
+    /*
+     * Timer for periodical redrawing of Canvas
+     */
     Timer {
         interval: 30;
         running: true;
@@ -28,6 +36,9 @@ Canvas {
         onTriggered: workflowDrawingCanvas.draw()
     }
 
+    /*
+     * Add the elem to the drawable elements
+     */
     function addElement(elem) {
         var count = containsOperationWorkflowDrawObject();
         var y = 300*count + 300;
@@ -48,16 +59,22 @@ Canvas {
         return count;
     }
 
+    /*
+     * Get the resource by id from MasterCatalog
+     */
     function getResource(id) {
         return mastercatalog.id2Resource(id);
     }
 
+    /*
+     * Add operation parameter (Input/Output)
+     */
     function addOperationParameter(element){
         var operation = getResource(element.resourceId);
-        // TODO
-        // get operation parameter/linked sources and draw
-
-        // currently adds dummy input/output
+        /*
+         * Currently the patameter values are queried from formresult
+         * of the element.frame.currentAppForm
+         */
         var result = element.frame.currentAppForm.formresult;
         var resultArray = result.split("|");
         var l = resultArray.length
@@ -67,6 +84,9 @@ Canvas {
         createOutput(element);
     }
 
+    /*
+     * create operation Input connections and datasource objects
+     */
      function createInput(element, value, index, size) {
          var input = Qt.createComponent("DatasourceWorkflowDrawObject.qml").createObject();
          var inputConnector = Qt.createComponent("ConnectorWorkflowDrawObject.qml").createObject();
@@ -88,6 +108,9 @@ Canvas {
          return 100 + (workflowDrawingCanvas.width/size * index);
      }
 
+     /*
+      * create operation Output connections and datasource objects
+      */
     function createOutput(element) {
         var output = Qt.createComponent("DatasourceWorkflowDrawObject.qml").createObject();
         var outputConnector = Qt.createComponent("ConnectorWorkflowDrawObject.qml").createObject();
@@ -133,6 +156,9 @@ Canvas {
         }
     }
 
+    /*
+     * Clear the Canvas
+     */
     function clear() {
         ctx.reset();
         ctx.clearRect(0, 0, width, height);
@@ -140,6 +166,10 @@ Canvas {
         workflowDrawingCanvas.requestPaint();
     }
 
+    /*
+     * Check if an element is located at the mouse position
+     * Calls isSelected in all drawable elements
+     */
     function checkForElementAt(mouseX, mouseY) {
         var l = elements.length;
         var element = null;
@@ -152,6 +182,9 @@ Canvas {
         return element;
     }
 
+    /*
+     * Clear the current selection
+     */
     function clearSelections() {
         var l = elements.length;
         for (var i = l-1; i >= 0; i--) {
@@ -170,6 +203,9 @@ Canvas {
         invalidate();
     }
 
+    /*
+     * Currently used to allow only one operation in the Canvas
+     */
     function isFirstOperation() {
         var l = elements.length
         for (var i = 0; i < l; i++) {
@@ -203,6 +239,7 @@ Canvas {
 //            console.log(drag.source.type);
 //            console.log("------------------");
             if (drag.source.type === "operation") {
+                // Check if dropped object is the first operation, currently only one supported
                 if (isFirstOperation()) {
                     var element = Qt.createComponent("OperationWorkflowDrawObject.qml").createObject();
                     addElement(element);
@@ -217,7 +254,6 @@ Canvas {
                     console.log("Currently only one operation can be added to the workflow!")
                 }
             }
-
             var workflowModel = getResource(workflow);
 
         }
@@ -230,8 +266,11 @@ Canvas {
     onWorkflowChanged: {
         console.log("Worklfow changed")
         var workflowModel = getResource(workflow);
-        // TODO get workflow (Datasource -> Operations -> ... )  from WorkflowModel, if exist and create drawable elements
-
+        /*
+         * TODO get workflow (Datasource -> Operations -> ... )  from WorkflowModel, if exist and create drawable elements
+         * Store states in the WorkflowModel object
+         *
+         */
         invalidate();
     }
 
@@ -291,4 +330,3 @@ Canvas {
     }
 
 }
-

@@ -26,6 +26,10 @@ BasicWorkflowDrawObject {
 //        icon.height = operationWorkflowDrawObject.height * factor
 //    }
 
+    /*
+     * Draw method to draw this object in the Canvas of ctx
+     * Draws a ring
+     */
     function draw(ctx) {
 //        ctx.save();
 //        ctx.beginPath();
@@ -72,14 +76,24 @@ BasicWorkflowDrawObject {
         ctx.restore();
     }
 
+    /*
+     * Get connection point for Inputs
+     */
     function getInputConnector() {
         return Qt.point(x, y - height/2);
     }
 
+    /*
+     * Get connection point for Outputs
+     */
     function getOutputConnector() {
         return Qt.point(x, y + height/2);
     }
 
+    /*
+     * Update the parents/child objects.
+     * Called by onFrameChanged
+     */
     function updateParentChilds() {
         if (name === frame.formTitle) {
             var result = frame.currentAppForm.formresult;
@@ -100,6 +114,9 @@ BasicWorkflowDrawObject {
         }
     }
 
+    /*
+     * Calls the parents/child update function if changed
+     */
     onFrameChanged: {
         if (frame !== null && frame.formResultChanged !== null) {
             frame.formResultChanged.connect(updateParentChilds);

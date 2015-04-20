@@ -22,12 +22,21 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
+    /*
+     * Signal, thrown if a tab is closed
+     */
     signal closedTab(string title)
 
+    /*
+     * Add a new WorkflowCanavas
+     */
     function addWorkflowCanvas(id, name) {
         datapanesplit.addWorkflowCanvas(id, name)
     }
 
+    /*
+     * Remove WorkflowCanvas by  name
+     */
     function removeWorkflowCanvas(name) {
         datapanesplit.removeTabFromView(name);
     }
@@ -262,6 +271,9 @@ Rectangle {
             }
         }
 
+        /*
+         * Adds a new WorkflowCanvas to the right tab view
+         */
         function addWorkflowCanvas(id, name) {
             console.log("creating new workflow canvas")
             var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
@@ -295,6 +307,9 @@ Rectangle {
             }
         }
 
+        /*
+         * Remove a tab by name from TabView
+         */
         function removeTabFromView(name) {
             var ri = righttab.getTabIndexFor(name);
             if (ri !== -1) {
