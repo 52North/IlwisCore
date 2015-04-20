@@ -104,8 +104,57 @@ Rectangle {
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 opacity : 0
-
+                z:1
             }
+            MouseArea {
+                id: appFrameMouseArea
+                hoverEnabled: true
+                anchors.fill: appFrame
+                cursorShape: Qt.ArrowCursor
+                property variant operationNameDrag
+                drag.target: operationNameDrag
+
+                onPressed: {
+                    operationNameDrag = Qt.createQmlObject('import QtQuick 2.0; Text {
+                        id : operationNameDrag
+                        text : appFrame.formTitle
+                        width : appFrame.width
+                        height : appFrame.height
+                        x : appFrame.x
+                        y : appFrame.y
+                        font.pointSize: 12
+                        property string name :  appFrame.formTitle !== null ? appFrame.formTitle : ""
+                        property string ilwisobjectid : appFrame.operationId !== null ? appFrame.operationId : ""
+                        property string url : appFrame.operationUrl !== null ? appFrame.operationUrl : ""
+                        property var frame : appFrame
+                        property string type : "operation"
+
+                        Drag.keys: [ appFrame.operationId ]
+                        Drag.active: appFrameMouseArea.drag.active
+                        Drag.hotSpot.x: x + width/2
+                        Drag.hotSpot.y: y + height/2
+                        opacity : Drag.active / 2
+
+                        states: State {
+                            when: appFrameMouseArea.drag.active
+                            ParentChange { target: operationNameDrag; parent: root }
+                            AnchorChanges { target: operationNameDrag; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                        }
+                    }', appFrameMouseArea, "dynamicOperationName");
+
+                }
+
+                onReleased: {
+                    if (operationNameDrag !== null) {
+                        operationNameDrag.Drag.drop()
+                        operationNameDrag.parent = appFrameMouseArea
+                        operationNameDrag.anchors.fill = appFrameMouseArea
+                        operationNameDrag.destroy();
+                    }
+                }
+                z:0
+            }
+
             states: [
                 State { name: "maximized"
 
