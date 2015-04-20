@@ -108,6 +108,7 @@ Rectangle {
 
         function closeTab(splitindex, tabindex1){
             if ( Math.abs(splitindex) === 1){ // left
+                closedTab(left.getTab(tabindex1).title);
                 if ( righttab.count === 0 && lefttab.count === 1)
                     return
                 lefttab.removeTab(tabindex1)
@@ -125,9 +126,9 @@ Rectangle {
                 }
             }
             else if ( Math.abs(splitindex) === 2){ // right
+                closedTab(righttab.getTab(tabindex1).title);
                 if ( lefttab.count === 0 && righttab.count === 1)
                     return
-                closedTab(righttab.getTab(tabindex1).title);
                 righttab.removeTab(tabindex1)
                 if ( righttab.count === 0){
                     righttab.state = "zerosize"
