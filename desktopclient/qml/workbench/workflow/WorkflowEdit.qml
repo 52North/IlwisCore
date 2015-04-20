@@ -35,10 +35,12 @@ Rectangle {
             console.log("Edit cancelled by user")
 
             // TODO restore selection status when getting back?
+            dataPanel.removeWorkflowCanvas(workflowbenchContentLoader.editSession + " [Workflow Builder]")
 
             workflowbenchContentLoader.setSource("WorkflowBench.qml")
         }
     }
+
 
     Rectangle {
         id: workflowEditButtons
