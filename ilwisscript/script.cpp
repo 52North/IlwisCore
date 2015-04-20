@@ -51,6 +51,10 @@ bool Script::detectKey(const std::string& line, const std::string& key) {
 
 OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolTable&) {
     QString txt = _expression.parm(0).value();
+    if ( txt == "") {
+        ERROR2(ERR_NOT_FOUND2, TR("valid expression"), _expression.toString());
+        return sPREPAREFAILED;
+    }
     QUrl url(txt);
     if ( url.isValid() && url.scheme() == "file") {
         QFileInfo inf( url.toLocalFile());
