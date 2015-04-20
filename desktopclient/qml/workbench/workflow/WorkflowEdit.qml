@@ -135,6 +135,7 @@ Rectangle {
         }
 
 
+
         // ###########################  FILTER
 
         FilterTextField {
@@ -160,7 +161,7 @@ Rectangle {
                     Connections {
                         target : operationList
                         onMakeForm : {
-                            newForm(objectid, name)
+                            newForm(objectid, name, url)
                         }
                     }
                 }
@@ -174,7 +175,7 @@ Rectangle {
                     Connections {
                         target : operationCatagories
                         onMakeForm : {
-                            newForm(objectid, name)
+                            newForm(objectid, name, url)
                         }
                     }
                 }
@@ -183,5 +184,6 @@ Rectangle {
             style: Base.TabStyle1{}
         }
     }
+
 
 }
