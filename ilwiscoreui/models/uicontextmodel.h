@@ -43,6 +43,9 @@ public:
     QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name) ;
 
     void qmlContext(QQmlContext *ctx);
+    void rootObject(QObject *root);
+    QObject* rootObject() const;
+    QQmlContext *rootContext() const;
     int activeSplit() const;
     void setActiveSplit(int index);
     void addViewer(LayersViewCommandInterface *viewer, quint64 vid);
@@ -66,6 +69,7 @@ private:
     std::map<quint64, LayersViewCommandInterface *> _viewers;
     static quint64 _objectCounter;
     QQmlContext *_qmlcontext;
+    QObject *_rootObject = 0;
     int _activeSplit = 1;
     int _currentKey = 0;
     QStringList _colorNames;

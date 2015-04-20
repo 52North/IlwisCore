@@ -28,6 +28,8 @@ protected:
 
 
 
+private:
+    void makeImageTemp();
 };
 #define NEW_RASTERIMAGETYPE \
     private:\

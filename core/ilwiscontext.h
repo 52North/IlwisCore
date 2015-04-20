@@ -19,12 +19,11 @@ typedef Ilwis::IlwisData<Ilwis::Catalog> ICatalog;
 class KERNELSHARED_EXPORT IlwisContext
 {
 public:
-    friend KERNELSHARED_EXPORT IlwisContext* context();
+    friend KERNELSHARED_EXPORT IlwisContext* context(const QString & ilwisDir);
 
     IlwisContext();
     ~IlwisContext();
 
-    void loadIlwisLocationFile(QFileInfo configFile);
     void addSystemLocation(const QUrl &resource);
     void removeSystemLocation(const QUrl &resource);
     QFileInfo ilwisFolder() const;
@@ -44,7 +43,7 @@ public:
     void runMode(int mode);
 
 private:
-    void init();
+    void init(const QString & ilwisDir);
     static IlwisContext *_context;
 
     std::vector<QUrl> _systemlocations;
@@ -62,8 +61,12 @@ private:
     int _runMode = rmDESKTOP;
 };
 
-
-KERNELSHARED_EXPORT IlwisContext* context();
+/**
+ * @brief Ilwis::context returns the context object which contains the global context elements
+ * @param ilwisDir: location of ilwiscore.dll. This is used to locate the extensions, plugins and resources folders. Leave this parameter empty if the ilwiscore.dll is in the same folder as the .exe that loaded it (because then ilwisDir is correctly auto-computed)
+ * @return the context; at first call, a new context object is created
+ */
+KERNELSHARED_EXPORT IlwisContext* context(const QString & ilwisDir = "");
 
 template<typename ValueType> ValueType ilwisconfig(const QString& key, const ValueType& defaultValue){
     return context()->configurationRef()(key, defaultValue);

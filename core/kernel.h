@@ -211,7 +211,7 @@ public slots:
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-KERNELSHARED_EXPORT bool initIlwis(int mode);
+KERNELSHARED_EXPORT bool initIlwis(int mode, const QString & ilwisDir = "");
 KERNELSHARED_EXPORT void exitIlwis();
 #define TR(s) (kernel()->translate(s))
 

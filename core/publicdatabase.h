@@ -49,7 +49,7 @@ private:
     bool fillValueDomainRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillEpsgWithLatLonAxesOrderRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     void insertProj4Epsg(QSqlQuery &sqlPublic);
-    bool doQuery(QString &query, QSqlQuery &sqlPublic);
+    bool doQuery(const QString &query, QSqlQuery &sqlPublic);
     bool fillFiltersRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillRepresentationRecord(const QStringList &parts, QSqlQuery &sqlPublic);
 };

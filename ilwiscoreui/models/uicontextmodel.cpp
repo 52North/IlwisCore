@@ -81,6 +81,21 @@ void UIContextModel::qmlContext(QQmlContext *ctx)
     _qmlcontext = ctx;
 }
 
+void UIContextModel::rootObject(QObject *root)
+{
+    _rootObject = root;
+}
+
+QObject *UIContextModel::rootObject() const
+{
+    return _rootObject;
+}
+
+QQmlContext* UIContextModel::rootContext() const
+{
+    return _qmlcontext;
+}
+
 int UIContextModel::activeSplit() const
 {
     return _activeSplit;

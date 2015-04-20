@@ -128,7 +128,6 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/colorlookup.cpp \
     core/ilwisobjects/representation/continuouscolorlookup.cpp \
     core/ilwisobjects/representation/palettecolorlookup.cpp \
-    core/ilwisobjects/operation/workflowexecutionengine.cpp \
     core/ilwisobjects/workflow/workflow.cpp
 
 
@@ -274,7 +273,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/colorlookup.h \
     core/ilwisobjects/representation/continuouscolorlookup.h \
     core/ilwisobjects/representation/palettecolorlookup.h \
-    core/ilwisobjects/operation/workflowexecutionengine.h \
+    core/kernel_global.h \
     core/ilwisobjects/workflow/workflow.h
 
 
@@ -306,7 +305,7 @@ win32{
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
-                      "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libstdc++-6.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \
@@ -344,10 +343,7 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
-    core/resources/ilwis.config \
-    core/resources/featurefragmentshader_nvdia.glsl \
-    core/resources/featurevertexshader_nvdia.glsl \
-    core/resources/representations.csv
+    core/resources/ilwis.config
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin

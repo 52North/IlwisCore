@@ -68,8 +68,9 @@ Item {
                         id : thicknessValue
                         width : 30
                         height : Global.rowHeight
+                        text : "1"
                         onTextChanged: {
-                            if ( thicknessSlider && thicknessSlider.value !== text && Global.isNumber(text)){
+                            if ( thicknessSlider.value !== text && Global.isNumber(text)){
                                 thicknessSlider.value = text
                                 if ( editor)
                                     editor.boundarywidth = text
@@ -90,7 +91,6 @@ Item {
                             if ( thicknessValue.text !== value){
                                 thicknessValue.text = value.toFixed(1)
                             }
-
                         }
                     }
 

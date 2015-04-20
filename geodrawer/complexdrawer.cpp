@@ -343,6 +343,67 @@ QVariant ComplexDrawer::attribute(const QString &attrNme) const
     if ( attrName == "postdrawercount")
         return drawerCount(DrawerInterface::dtPOST);
 
+
+    return QVariant();
+}
+
+QVariant ComplexDrawer::execute(const QString &operationName, const QVariantMap &parameters)
+{
+    if ( operationName.toLower() == "layerremove"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok){
+                removeDrawer(layer);
+                return QVariant(true);
+            }
+        }
+    }
+    if ( operationName.toLower() == "layerdown"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok && layer <_mainDrawers.size() && _mainDrawers.size() >= 2){
+                _mainDrawers[layer].swap(_mainDrawers[layer - 1]);
+                return QVariant(true);
+            }
+        }
+    }
+
+    if ( operationName.toLower() == "layerup"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok && layer <_mainDrawers.size() - 1 && _mainDrawers.size() >= 2){
+                _mainDrawers[layer].swap(_mainDrawers[layer + 1]);
+                return QVariant(true);
+            }
+        }
+    }
+    if ( operationName == "code2index" ){
+        if ( parameters.size() == 1){
+            int index = 0;
+            QString cod = parameters["code"].toString();
+            for( auto& drawer : _mainDrawers){
+                if ( drawer->code() == cod){
+                    return QVariant(index);
+                }
+                ++index;
+            }
+        }
+    }
+    if ( operationName == "index2code" ){
+        if ( parameters.size() == 1){
+            bool ok;
+            int index = parameters["index"].toUInt(&ok);
+            if ( index < _mainDrawers.size()){
+                return QVariant ( _mainDrawers[index]->code());
+            }
+        }
+    }
     return QVariant();
 }
 
@@ -351,7 +412,7 @@ QVariant ComplexDrawer::attributeOfDrawer(const QString &drawercode, const QStri
     if ( code() == drawercode)
         return attribute(attrName);
     if ( drawercode ==  "rootdrawer"){ // special case
-        return rootDrawer()->attributeOfDrawer(drawercode, attrName);
+        return rootDrawer()->attribute(attrName);
     }
 
     QVariant var;

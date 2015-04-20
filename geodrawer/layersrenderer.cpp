@@ -127,8 +127,11 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             }
             needPrepare = true;
         }
-        if ( needPrepare)
+        if ( needPrepare){
             _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
+           emit synchronizeDone();
+        }
+
 
     } catch ( const ErrorObject& ){
 
