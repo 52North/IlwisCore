@@ -22,8 +22,12 @@ Rectangle {
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
 
-    function addWorkflowCanvas(name) {
-        datapanesplit.addWorkflowCanvas(name)
+    function addWorkflowCanvas(id, name) {
+        datapanesplit.addWorkflowCanvas(id, name)
+    }
+
+    function removeWorkflowCanvas(name) {
+        datapanesplit.removeTabFromView(name);
     }
 
     function addModellerPanel(name) {
@@ -235,6 +239,7 @@ Rectangle {
         }
 
         function showTabInFloatingWindow(tabIndex) {
+            console.log("showTabInFloatingWindow")
             var tabview = activeSplit === 1 ? lefttab : righttab
             var tab = tabview.getTab(tabIndex)
 
@@ -253,12 +258,23 @@ Rectangle {
             }
         }
 
-        function addWorkflowCanvas(name) {
+        function addWorkflowCanvas(id, name) {
             console.log("creating new workflow canvas")
-            var tabview = activeSplit === 1 ? lefttab : righttab
             var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
-            var tab = tabview.addTab(name, component)
+//            var tabview = activeSplit === 1 ? righttab : lefttab
+//            var tab = tabview.addTab(name, component)
+//            tab.active = true
+            var tab = righttab.addTab(name,component)
             tab.active = true
+            if ( activeSplit ===1){
+                righttab.width = parent.width / 2.0
+                activeSplit = 2
+            }
+            else{
+                lefttab.width = parent.width / 2.0
+                activeSplit = 1
+            }
+            tab.item.workflow = id;
         }
 
         function addModeller(name) {
@@ -276,8 +292,14 @@ Rectangle {
         }
 
         function removeTabFromView(name) {
-            righttab.removeTabFor(name);
-            lefttab.removeTabFor(name);
+            var ri = righttab.getTabIndexFor(name);
+            if (ri !== -1) {
+                closeTab(righttab.side, ri)
+            }
+            var li = lefttab.getTabIndexFor(name);
+            if (li !== -1) {
+                closeTab(lefttab.side, ri)
+            }
         }
 
 
