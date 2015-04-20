@@ -10,10 +10,12 @@ Rectangle {
 
     id : workflowedit
 
-    function newForm(metaid, title){
+    function newForm(metaid, title, url){
         var form = formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
+        appFrame.operationId = metaid
+        appFrame.operationUrl = url
         appFrame.opacity = 1
     }
 
