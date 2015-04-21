@@ -16,7 +16,8 @@ using namespace Geodrawer;
 RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options), _frameBufferObject(fbo)
 {
     valid(true);
-    _screenGrf = GeoReference::create("corners");
+    _screenGrf = new GeoReference();
+    _screenGrf->create("corners");
 }
 
 RootDrawer::~RootDrawer()
