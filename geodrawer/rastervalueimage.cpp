@@ -78,4 +78,49 @@ bool RasterValueImage::prepare(int prepareType)
 
 }
 
+void RasterImage::makeImageTemp()
+{
+    // doesnt work, but i keep it around for later checking, should be more efficient version of makeImage()
+//    BoundingBox bb(_raster->size()); // = _rootDrawer->screenGrf()->coord2Pixel(_raster->envelope());
+//    Size<> pixArea = _rootDrawer->pixelAreaSize();
+//    double dx = std::max(1.0,(double)bb.xlength() / pixArea.xsize());
+//    double dy = std::max(1.0,(double)bb.ylength() / pixArea.ysize());
+//    std::vector<double> xsteps(pixArea.xsize(),0);
+//    std::vector<double> ysteps(pixArea.ysize(),0);
+
+//    for(int x = 1; x < xsteps.size(); ++x){
+//        xsteps[x] = xsteps[x-1] + dx;
+//    }
+//    for(int x = 1; x < xsteps.size(); ++x){
+//        xsteps[x] = (int)(xsteps[x] - (int)((x - 1) * dx));
+
+//    }
+//    for(int y = 1; y < ysteps.size(); ++y){
+//        ysteps[y] = ysteps[y-1] + dy;
+//    }
+//    for(int y = 1; y < ysteps.size(); ++y){
+//        ysteps[y] = (int)(ysteps[y] - (int)((y - 1) * dy));
+//    }
+
+//     _pixels.resize(pixArea.linearSize());
+//    PixelIterator pixIter(_raster);
+//    int xindex = 1;
+//    int yindex = 1;
+
+//    while(yindex != ysteps.size()){
+//        double value = *pixIter;
+//        auto color = _visualAttribute.value2color(value);
+//        _pixels[yindex * pixArea.xsize() + xindex] = color;
+//        pixIter += xsteps[xindex++];
+//        if ( pixIter.ychanged()){
+//            pixIter = Pixel(0,pixIter.y() + ysteps[yindex++]);
+//            xindex = 0;
+//        }
+
+//    }
+
+//    const uchar *datablock = (const uchar *)_pixels.data();
+//    _image.reset(new QImage(datablock,pixArea.xsize(), pixArea.ysize(),QImage::Format_RGBA8888));
+}
+
 

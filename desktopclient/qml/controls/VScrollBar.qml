@@ -12,8 +12,8 @@ Rectangle {
 
     signal scrolled(double position)
 
-    width: parent.width
-    height: 16
+    width: 16
+    height: parent.height
     border.width: 1
     border.color: "#CBCBCB"
     color : "#E5E5E5"
@@ -21,8 +21,8 @@ Rectangle {
     opacity : currentSize < maxSize ? 1 : 0
 
     function calcThumbPostion(){
-        var pos = marea.width * scroller.currentPosition / maxSize
-        var maxPos = marea.width * (maxSize - currentSize)/maxSize
+        var pos = marea.height * scroller.currentPosition / maxSize
+        var maxPos = marea.height * (maxSize - currentSize)/maxSize
         if ( pos > maxPos){
             return maxPos
         }
@@ -31,29 +31,29 @@ Rectangle {
         return pos;
     }
     Button{
-        id : leftMarker
-        height : parent.height - 2
-        width : 14
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left : parent.left
+        id : topMarker
+        height : 14
+        width : parent.width - 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top : parent.top
         Image {
             source : "../images/darkbluearrow.png"
-            width : 8
-            height : 6
+            width : 6
+            height : 8
             anchors.centerIn: parent
             rotation: 90
         }
     }
     Button{
-        id : rightMarker
-        height : parent.height - 2
-        width : 14
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right : parent.right
+        id : bottomMarker
+        height : 14
+        width : parent.width - 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom : parent.bottom
         Image {
             source : "../images/darkbluearrow.png"
-            width : 8
-            height : 6
+            width : 6
+            height : 8
             anchors.centerIn: parent
             rotation: -90
         }
@@ -61,36 +61,36 @@ Rectangle {
 
     Button {
         id : scrollerThumb
-        width : Math.max(10,parent.width * currentSize / maxSize)
-        height : parent.height - 2
-        x : leftMarker.width + calcThumbPostion()
-        anchors.verticalCenter: parent.verticalCenter
+        height : Math.max(10,parent.height * currentSize / maxSize)
+        width : parent.width - 2
+        y : topMarker.height + calcThumbPostion()
+        anchors.horizontalCenter: parent.horizontalCenter
     }
     MouseArea {
         id :marea
-        anchors.left : leftMarker.right
-        anchors.right: rightMarker.left
-        height : parent.height
+        anchors.top : topMarker.bottom
+        anchors.bottom: bottomMarker.top
+        width : parent.width
         hoverEnabled: true
         property int oldpos: -10000
 
         onPositionChanged: {
             if ( pressed){
-                var scrollerLeftThumbPos =  marea.width * currentPosition / maxSize
-                var scrollerRightThumbPos = marea.width * ( currentPosition + currentSize) / maxSize
-                if ( mouse.x > scrollerLeftThumbPos && mouse.x < scrollerRightThumbPos){
+                var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
+                var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
+                if ( mouse.y > scrollerTopThumbPos && mouse.y < scrollerBottomThumbPos){
                     if ( oldpos != -10000){
-                        var relx = mouse.x / marea.width
-                        var oldRelx = oldpos / marea.width
-                        var difrelx = relx - oldRelx;
-                        currentPosition = currentPosition + maxSize * difrelx
+                        var rely = mouse.y / marea.height
+                        var oldRely = oldpos / marea.height
+                        var difrely = rely - oldRely;
+                        currentPosition = currentPosition + maxSize * difrely
                         if ( currentPosition > maxSize - currentSize)
                             currentPosition = maxSize - currentSize
                         if ( (currentPosition) < 0)
                             currentPosition = 0
                         scrolled(currentPosition)
                     }
-                    oldpos = mouse.x
+                    oldpos = mouse.y
 
                 }
             }

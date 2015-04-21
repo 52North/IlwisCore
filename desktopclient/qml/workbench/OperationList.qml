@@ -11,7 +11,7 @@ import "../Global.js" as Global
 
 Rectangle {
 
-    signal makeForm(string objectid, string name)
+    signal makeForm(string objectid, string name, string url)
 
     property var operationsModel : operations.operations
     property bool byKey : false
@@ -55,13 +55,57 @@ Rectangle {
 
             focus : true
             MouseArea {
+                id: mouseArea
                 hoverEnabled: true
                 anchors.fill: parent
                 cursorShape: Qt.ArrowCursor
+//                property variant operationNameDrag
+//                drag.target: operationNameDrag
+
+//                onPressed: {
+
+//                    operationNameDrag = Qt.createQmlObject('import QtQuick 2.0; Text {
+//                        id : operationNameDrag
+//                        text : displayName
+//                        width : operationName.width
+//                        height : operationName.height
+//                        x : operationName.x
+//                        y : operationName.y
+//                        font.pointSize: 12
+//                        property string name :  displayName !== null ? displayName : ""
+//                        property string ilwisobjectid : id !== null ? id : ""
+//                        property string type : "operation"
+
+//                        Drag.keys: [ id ]
+//                        Drag.active: mouseArea.drag.active
+//                        Drag.hotSpot.x: x + width/2
+//                        Drag.hotSpot.y: y + height/2
+//                        opacity : Drag.active / 2
+
+//                        states: State {
+//                            when: mouseArea.drag.active
+//                            ParentChange { target: operationNameDrag; parent: root }
+//                            AnchorChanges { target: operationNameDrag; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+//                        }
+//                    }', mouseArea, "dynamicName");
+
+//                }
+
+//                onReleased: {
+//                    operationNameDrag.Drag.drop()
+//                    operationNameDrag.parent = mouseArea
+//                    operationNameDrag.anchors.fill = mouseArea
+//                    operationNameDrag.destroy();
+//                    // open formular
+//                    applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
+//                    operationsList.currentIndex = index;
+//                    makeForm(id, displayName, url)
+//                }
+
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
-                    makeForm(id, displayName)
+                    makeForm(id, displayName, url)
                 }
             }
 

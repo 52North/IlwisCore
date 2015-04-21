@@ -53,23 +53,79 @@ Item {
               id: renderer
               anchors.top: parent.top
               height : parent.height - hscroller.height
-              width : parent.width
+              width : parent.width - vscroller.width
               anchors.margins: 1
 
               LayerExtentMouseActions{
                   layerManager: manager
               }
-
+              Component.onCompleted: {
+                  renderer.associate(hscroller.objectName)
+                  renderer.associate(vscroller.objectName)
+              }
           }
           Controls.HScrollBar{
               anchors.top : renderer.bottom
-
               id :hscroller
+              objectName: uicontext.uniqueName()
 
+              function updateItem(){
+                  var envView = renderer.viewEnvelope
+                  maxSize = envView.maxx - envView.minx
+                  var envZoom = renderer.zoomEnvelope
+                  currentSize = envZoom.maxx - envZoom.minx
+                  if ( currentPosition === -1)
+                    currentPosition = 0
+                  else{
+                      currentPosition = envZoom.minx - envView.minx
+
+                  }
+
+                  return 0
+              }
+
+              onScrolled: {
+                  var envZoom = renderer.zoomEnvelope
+                  var envView = renderer.viewEnvelope
+                  var newPos1 = envView.minx + position
+                  var newPos2 = newPos1 + envZoom.maxx - envZoom.minx
+                  envZoom.minx = newPos1
+                  envZoom.maxx = newPos2
+                  renderer.zoomEnvelope = envZoom
+
+              }
           }
+          Controls.VScrollBar{
+              anchors.left : renderer.right
+              id :vscroller
+              objectName: uicontext.uniqueName()
 
+              function updateItem(){
+                  var envView = renderer.viewEnvelope
+                  maxSize = envView.maxy - envView.miny
+                  var envZoom = renderer.zoomEnvelope
+                  currentSize = envZoom.maxy - envZoom.miny
+                  if ( currentPosition === -1)
+                    currentPosition = 0
+                  else{
+                      currentPosition = envZoom.miny - envView.miny
+
+                  }
+
+                  return 0
+              }
+
+              onScrolled: {
+                  var envZoom = renderer.zoomEnvelope
+                  var envView = renderer.viewEnvelope
+                  var newPos1 = envView.maxy - position
+                  var newPos2 = newPos1 - (envZoom.maxy - envZoom.miny)
+                  envZoom.miny = newPos1
+                  envZoom.maxy = newPos2
+                  renderer.zoomEnvelope = envZoom
+
+              }
+          }
       }
   }
-
-
 }

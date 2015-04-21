@@ -21,7 +21,7 @@ Rectangle {
 
     signal unloadcontent(string content)
 
-    function newForm(metaid, title){
+    function newForm(metaid, title, url){
         var form= formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
