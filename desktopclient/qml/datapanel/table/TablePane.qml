@@ -21,14 +21,25 @@ Item {
         }
     }
 
+    function defaultWidth(index){
+        if (!table)
+            return 60
+
+        return table.defaultWidth(index)
+    }
+
     function addDataSource(sourceUrl, sourceName, sourceType){
         table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
         tableView.model = table
-        tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : 25}))
+
         for(var i =0; i < table.columnCount; ++i){
-            var roleName = table.roleName(i)
-            var defaultWidth = table.defaultWidth(i)
-            tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : defaultWidth}))
+            if ( i == 0)
+                tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : defaultWidth(i)}))
+            else {
+                var roleName = table.roleName(i)
+                var dw = table.defaultWidth(i)
+                tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
+            }
         }
     }
 
