@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE QString roleName(int index) const;
     Q_INVOKABLE int defaultWidth(int index) const;
     Q_INVOKABLE bool isColumnSelected(quint32 index) const;
-    Q_INVOKABLE void selectColumn(quint32 index);
+    Q_INVOKABLE void selectColumn(quint32 index, bool yesno);
 
     ~TableModel();
 signals:
@@ -41,7 +41,7 @@ signals:
   void recordCountChanged();
 private:
     Ilwis::ITable _table;
-    std::vector<quint32> _selectedColumns;
+    std::vector<bool> _columns;
 };
 
 #endif // TABLEMODEL_H
