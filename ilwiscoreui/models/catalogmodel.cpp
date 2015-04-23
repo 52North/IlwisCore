@@ -17,30 +17,21 @@
 using namespace Ilwis;
 //using namespace Desktopclient;
 
-CatalogModel::CatalogModel()
-{
-    //_hasChilderen = false;
-    _initNode = false;
-    _level = 0;
-    _isScanned = false;
-}
-
 CatalogModel::~CatalogModel()
 {
 
 }
 
-CatalogModel::CatalogModel(const CatalogView &view, int lvl, QObject *parent) : ResourceModel(view.resource(), parent)
+CatalogModel::CatalogModel(QObject *parent) : ResourceModel(Resource(), parent)
 {
     _initNode = true;
-    _level = lvl;
-    _isScanned = true;
-    newview(view);
-
+    _isScanned = false;
+    _level = 0;
 }
 
-void CatalogModel::newview(const CatalogView &view){
+void CatalogModel::setView(const CatalogView &view){
     _view = view;
+    resource(view.resource());
     mastercatalog()->addContainer(view.resource().url());
     _displayName = view.resource().name();
     if ( _displayName == sUNDEF)
