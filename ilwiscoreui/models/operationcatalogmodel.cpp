@@ -34,7 +34,7 @@ OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
     res.addProperty("type", "operation" );
     res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
     res.setDescription(descr);
-    newview(CatalogView(res));
+    setView(CatalogView(res));
 
     location = QUrl("ilwis://operations");
     descr ="main catalog for ilwis services";
