@@ -98,17 +98,18 @@ int main(int argc, char *argv[])
         WorkflowMetadataFormBuilder workflowmetadataformbuilder;
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
-        TranquilizerHandler tranquilizers;
+        TranquilizerHandler *tranquilizers = new TranquilizerHandler();
         WorkflowCatalogModel workflows;
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
+        QThread *trqthread = new QThread;
 
         ctx->setContextProperty("mastercatalog", &mastercatalogmodel);
         ctx->setContextProperty("formbuilder", &formbuilder);
         ctx->setContextProperty("workflowmetadataformbuilder", &workflowmetadataformbuilder);
         ctx->setContextProperty("messagehandler", &messageHandler);
-        ctx->setContextProperty("tranquilizerHandler", &tranquilizers);
+        ctx->setContextProperty("tranquilizerHandler", tranquilizers);
         ctx->setContextProperty("operations", &operations);
         ctx->setContextProperty("workflows", &workflows);
         ctx->setContextProperty("uicontext", uicontext().get());
@@ -117,10 +118,16 @@ int main(int argc, char *argv[])
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         mastercatalogmodel.connect(&workflows, &WorkflowCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         messageHandler.connect(kernel()->issues().data(), &IssueLogger::updateIssues,&messageHandler, &UserMessageHandler::addMessage );
-        tranquilizers.connect(kernel(), &Kernel::updateTranquilizer, &tranquilizers, &TranquilizerHandler::updateTranquilizer,Qt::DirectConnection);
-        tranquilizers.connect(kernel(), &Kernel::createTranquilizer, &tranquilizers, &TranquilizerHandler::createTranquilizer,Qt::DirectConnection);
-        tranquilizers.connect(kernel(), &Kernel::removeTranquilizer, &tranquilizers, &TranquilizerHandler::removeTranquilizer);
 
+
+        TranquilizerWorker *trw = new TranquilizerWorker;
+        trw->moveToThread(trqthread);
+        trqthread->connect(kernel(), &Kernel::updateTranquilizer, trw, &TranquilizerWorker::updateTranquilizer);
+        trqthread->connect(kernel(), &Kernel::createTranquilizer, trw, &TranquilizerWorker::createTranquilizer);
+        trqthread->connect(kernel(), &Kernel::removeTranquilizer, trw, &TranquilizerWorker::removeTranquilizer);
+        trqthread->connect(trw, &TranquilizerWorker::sendUpdateTranquilizer, tranquilizers, &TranquilizerHandler::updateTranquilizer);
+        trqthread->connect(trw, &TranquilizerWorker::sendCreateTranquilizer, tranquilizers, &TranquilizerHandler::createTranquilizer);
+        trqthread->connect(trw, &TranquilizerWorker::sendRemoveTranquilizer, tranquilizers, &TranquilizerHandler::removeTranquilizer);
 
         engine.load("qml/DesktopClient.qml");
 
@@ -136,6 +143,8 @@ int main(int argc, char *argv[])
         window->show();
         KeyFilter keys;
         app.installEventFilter(&keys);
+
+        trqthread->start();
         int ret =  app.exec();
         Ilwis::exitIlwis();
 
