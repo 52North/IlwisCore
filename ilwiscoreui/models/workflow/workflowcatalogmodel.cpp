@@ -30,7 +30,7 @@ WorkflowCatalogModel::WorkflowCatalogModel(QObject *parent): CatalogModel()
     res.addProperty("type", "operation" );
     res.addProperty("filter",QString("type=%1 and keyword='workflow'").arg(itOPERATIONMETADATA));
     res.setDescription(descr);
-    newview(CatalogView(res));
+    setView(CatalogView(res));
 }
 
 WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name)
