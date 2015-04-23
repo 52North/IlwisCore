@@ -8,6 +8,7 @@
 #include "resourcemodel.h"
 #include "catalogmodel.h"
 #include "catalogview.h"
+#include "tranquilizer.h"
 #include "ilwiscoreui_global.h"
 
 namespace Ilwis {
@@ -20,7 +21,7 @@ typedef QQmlListProperty<ResourceModel> QMLResourceList;
 class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked CONSTANT)
+    Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked NOTIFY bookmarksChanged)
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
     Q_PROPERTY(CatalogModel* currentCatalog READ currentCatalog WRITE setCurrentCatalog NOTIFY currentCatalogChanged)
@@ -54,10 +55,13 @@ public:
     Q_INVOKABLE void setActiveTab(int value);
     Q_INVOKABLE QString getName(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
+    // for trq test
+    Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
 
 public slots:
     void updateCatalog(const QUrl &url);
+    void updateBookmarks() ;
     
 private:
     QList<CatalogModel *> _bookmarks;
@@ -78,6 +82,38 @@ signals:
     void activeSplitChanged();
     void currentUrlChanged();
     void currentCatalogChanged();
+    void bookmarksChanged();
+};
+
+class worker : public QObject{
+    Q_OBJECT
+public:
+    worker() {
+
+    }
+
+    void process();
+
+};
+
+class CatalogWorker : public QObject {
+    Q_OBJECT
+
+public:
+    CatalogWorker(QList<std::pair<CatalogModel *, Ilwis::CatalogView>>&models);
+    ~CatalogWorker();
+
+public slots:
+    void process();
+
+
+signals:
+    void finished();
+    void updateBookmarks();
+
+
+private:
+    QList<std::pair<CatalogModel *, Ilwis::CatalogView>> _models;
 };
 //}
 //}

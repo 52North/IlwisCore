@@ -7,6 +7,8 @@
 #include <QQmlContext>
 #include <QSqlQuery>
 #include <QQuickItem>
+#include <QApplication>
+#include <qtconcurrentmap.h>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
@@ -17,6 +19,8 @@
 #include "catalogmodel.h"
 #include "ilwiscontext.h"
 #include "ilwisconfiguration.h"
+#include "tranquilizer.h"
+#include "oshelper.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -42,8 +46,14 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     res.setDescription(descr);
     CatalogView cview(res);
     cview.filter(query);
-    return new CatalogModel(cview,0,this);
+    auto cm = new CatalogModel(this);
+    cm->setView(cview);
+    return cm;
 }
+
+
+
+
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
@@ -66,6 +76,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
     _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
     int count = 3;
+    std::vector<Resource> catalogResources;
     for(auto id : _bookmarkids){
         QString query = QString("users/user-0/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
@@ -80,14 +91,39 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
         res.addProperty("filter","");
         res.setDescription(descr);
-        CatalogView cview(res);
-        _bookmarks.push_back(new CatalogModel(cview,0,this));
-        if ( urlWorkingCatalog == location){
+
+        if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
+            CatalogView cview(res);
+            _bookmarks.push_back(new CatalogModel(this));
+            _bookmarks.back()->setView(cview);
             _selectedBookmarkIndex = count;
             _currentUrl = urlWorkingCatalog.toString();
+        }else{
+            catalogResources.push_back(res);
         }
         ++count;
     }
+    QList<std::pair<CatalogModel *, CatalogView>> models;
+    for(Resource resource : catalogResources){
+        CatalogView view(resource);
+        CatalogModel *cm = new CatalogModel(this);
+        models.push_back(std::pair<CatalogModel *, CatalogView>(cm, view));
+    }
+
+    QThread* thread = new QThread;
+    CatalogWorker* worker = new CatalogWorker(models);
+    worker->moveToThread(thread);
+    thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
+    thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
+    thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
+    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->connect(worker, &CatalogWorker::updateBookmarks, this, &MasterCatalogModel::updateBookmarks);
+    thread->start();
+
+    for(auto iter = models.begin(); iter != models.end(); ++iter){
+        _bookmarks.push_back((*iter).first);
+    }
+
     if ( _currentUrl == ""){
         if ( _bookmarks.size() > 3){
             _selectedBookmarkIndex = 3;
@@ -138,11 +174,27 @@ QString MasterCatalogModel::id2type(const QString &id) const
     }
     return "";
 }
+void MasterCatalogModel::longAction()
+{
+
+    QThread *thr = new QThread;
+
+    worker *w = new worker;
+
+    w->moveToThread(thr);
+    thr->connect(thr, &QThread::started, w, &worker::process);
+    thr->start();
+}
 
 std::vector<Resource> MasterCatalogModel::select(const QString &filter)
 {
     return mastercatalog()->select(filter);
 
+}
+
+void MasterCatalogModel::updateBookmarks()
+{
+    emit bookmarksChanged();
 }
 
 quint32 MasterCatalogModel::selectedBookmark(const QString& url)
@@ -185,7 +237,8 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath)
     res.addProperty("filter","");
     _currentUrl = inpath;
     CatalogView cview(res);
-    auto model = new CatalogModel(cview,0, this);
+    auto model = new CatalogModel(this);
+    model->setView(cview);
     return model;
 }
 
@@ -342,4 +395,28 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
 
+}
+//--------------------
+CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
+{
+}
+
+CatalogWorker::~CatalogWorker(){
+}
+
+void CatalogWorker::process(){
+    for(auto iter = _models.begin(); iter != _models.end(); ++iter){
+        (*iter).first->setView((*iter).second);
+    }
+    emit updateBookmarks();
+    emit finished();
+}
+//---------------------
+void worker::process(){
+    Ilwis::Tranquilizer trq;
+    trq.prepare("test operation","bbb", 10000);
+    for(int i = 0; i < 10000; ++i){
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            trq.update(100);
+    }
 }
