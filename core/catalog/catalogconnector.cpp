@@ -3,6 +3,8 @@
 #include <QVector>
 #include <QUrl>
 #include <QFileInfo>
+#include <qtconcurrentmap.h>
+#include <QCoreApplication>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "abstractfactory.h"
@@ -102,8 +104,18 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 }
 
 bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
+    //outside the mainthread we already run things multithreaded. we are not going to put threads in threads as this only
+    // gives problems with trhead affinity
+   // if ( QCoreApplication::instance()->thread() == QThread::currentThread()){
+        return loadDataThreaded(obj,options);
+  //  }
+  //  return loadDataSingleThread(obj,options);
+}
+
+bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
+    QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
     for(const auto& explorer : _dataProviders){
 
         // TODO clear security issues which may arise here, as
@@ -113,7 +125,39 @@ bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
         IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
         std::vector<Resource> items = explorer->loadItems(iooptions);
         cat->addItemsPrivate(items);
+        mastercatalog()->addItems(items);
+
+
     }
+    return true;
+}
+
+std::vector<Resource> loadExplorerData(const std::pair<CatalogExplorer *, IOOptions>& expl){
+    try {
+        std::vector<Resource> items = expl.first->loadItems(expl.second);
+
+        return items;
+    } catch (const ErrorObject& err){
+
+    }
+    return std::vector<Resource>();
+}
+
+void gatherData(std::vector<Resource>& outputItems, const std::vector<Resource>& inputItems){
+    std::copy(inputItems.begin(), inputItems.end(), std::back_inserter(outputItems));
+}
+
+bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &options){
+    Catalog *cat = static_cast<Catalog *>(obj);
+    kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
+    QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
+    for(const auto& explorer : _dataProviders){
+       explorers.push_back({explorer.get(), options});
+    }
+    QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
+    res.waitForFinished();
+    cat->addItemsPrivate(res.result());
+    mastercatalog()->addItems(res.result());
     return true;
 }
 
