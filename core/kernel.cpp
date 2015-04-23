@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QSqlRecord>
 #include <QUrl>
+#include <QThread>
 #include <QDir>
 #include <cxxabi.h>
 #include <iostream>
@@ -258,9 +259,9 @@ QNetworkAccessManager &Kernel::network()
     return _networkmanager;
 }
 
-void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 end)
+void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end)
 {
-    emit createTranquilizer(id, title, description, end);;
+    emit createTranquilizer(id, title, description, start, end);;
 }
 
 const Module *Kernel::module(const QString &name) const

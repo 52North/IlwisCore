@@ -183,7 +183,7 @@ public:
     void startClock();
     void endClock(const QString &label="");
     QNetworkAccessManager& network();
-    void newTranquilizer(quint64 id,const QString &title, const QString &description, qint64 end);
+    void newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end);
     const Module* module(const QString& name) const;
 
 private:
@@ -201,7 +201,7 @@ private:
 signals:
     void doCommand(const QString& expr, ExecutionContext* ctx);
     void updateTranquilizer(quint64 id, double amount);
-    void createTranquilizer(quint64 id,const QString &title, const QString &description, double end);
+    void createTranquilizer(quint64 id,const QString &title, const QString &description, double start, double end);
     void removeTranquilizer(quint64 id);
 
 public slots:
