@@ -50,6 +50,7 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "tranquilizer.h"
+#include "tranquilizerfactory.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
@@ -131,6 +132,10 @@ void Kernel::init() {
     GeoRefImplementationFactory *georefFac = new GeoRefImplementationFactory();
     georefFac->prepare();
     addFactory(georefFac);
+
+    TranquilizerFactory *trqFactory = new TranquilizerFactory();
+    trqFactory->prepare();
+    addFactory(trqFactory);
 
 
     _modules.addModules();

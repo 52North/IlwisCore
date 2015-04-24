@@ -33,7 +33,7 @@ class Tranquilizer;
 typedef QScopedPointer<Version> SPVersion;
 typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
-enum RunMode { rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
+enum RunMode {rmEMPTY=0, rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
 
 /*!
  The Kernel class a singleton object that controls some essential resources in the system.
