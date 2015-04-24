@@ -60,7 +60,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/catalogmapitem.h \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.h \
     ilwiscoreui/drawers/rasterimage.h \
-    ilwiscoreui/drawers/rasterimagefactory.h
+    ilwiscoreui/drawers/rasterimagefactory.h \
+    ilwiscoreui/desktoptranquilizer.h
 
 unix {
     target.path = /usr/lib
@@ -106,7 +107,8 @@ SOURCES += \
     ilwiscoreui/models/catalogmapitem.cpp \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp \
     ilwiscoreui/drawers/rasterimage.cpp \
-    ilwiscoreui/drawers/rasterimagefactory.cpp
+    ilwiscoreui/drawers/rasterimagefactory.cpp \
+    ilwiscoreui/desktoptranquilizer.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
