@@ -20,7 +20,11 @@
 #include "ilwiscontext.h"
 #include "ilwisconfiguration.h"
 #include "tranquilizer.h"
+#include "desktoptranquilizer.h"
 #include "oshelper.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -57,6 +61,9 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
+    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("TranquilizerFactory");
+    factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
+
     _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
                QUrl("ilwis://internalcatalog"),
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
@@ -407,16 +414,16 @@ CatalogWorker::~CatalogWorker(){
 void CatalogWorker::process(){
     for(auto iter = _models.begin(); iter != _models.end(); ++iter){
         (*iter).first->setView((*iter).second);
+        emit updateBookmarks();
     }
-    emit updateBookmarks();
     emit finished();
 }
 //---------------------
 void worker::process(){
-    Ilwis::Tranquilizer trq;
-    trq.prepare("test operation","bbb", 10000);
+    Ilwis::UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("test operation","bbb", 10000);
     for(int i = 0; i < 10000; ++i){
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
-            trq.update(100);
+            trq->update(100);
     }
 }
