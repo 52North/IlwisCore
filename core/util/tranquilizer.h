@@ -4,6 +4,7 @@
 #include <QObject>
 #include <memory>
 #include "locker.h"
+#include "iooptions.h"
 
 namespace Ilwis {
 
@@ -24,24 +25,37 @@ signals:
     //void sendtranquilizersChanged();
 };
 
+class KERNELSHARED_EXPORT Tranquilizer : public QObject{
+public:
+    explicit Tranquilizer(QObject *parent = 0);
+    ~Tranquilizer();
+    virtual double current() const = 0;
+    virtual void current(double cur) =0;
+    virtual void end(double number) = 0;
+    virtual double end() const = 0;
+    virtual void prepare(const QString &title, const QString &description, double end, double start=0) = 0;
 
-class KERNELSHARED_EXPORT Tranquilizer : public QObject
+    virtual void update(double step) = 0;
+    virtual void stop() = 0;
+
+    static Tranquilizer *create(int mode, const Ilwis::IOOptions &options = IOOptions());
+};
+
+class KERNELSHARED_EXPORT BaseTranquilizer : public Tranquilizer
 {
     Q_OBJECT
 public:
-    explicit Tranquilizer(QObject *parent = 0);
-    Tranquilizer(const QString &title, const QString &description, double end,double start=0);
-    void prepare(const QString &title, const QString &description, double end, double start=0);
+    explicit BaseTranquilizer(const IOOptions &, QObject *parent = 0);
+    ~BaseTranquilizer();
 
-
-    void update(double step);
     double current() const;
     void current(double cur);
     void end(double number);
     double end() const;
-    void stop();
 
-private:
+protected:
+    void prepare(const QString &title, const QString &description, double end, double start=0);
+
     static quint64 _trqId;
     quint64 _id;
     QString _title;
@@ -50,6 +64,7 @@ private:
     double  _end;
     double _current;
     std::mutex _mutex;
+    std::unique_ptr<Tranquilizer> _tranquilizer;
 signals:
     void updateTranquilizer(quint64 id, double current);
     void removeTranquilizer(quint64 id);
@@ -59,6 +74,19 @@ public slots:
     
 };
 
+class EmptyTranquilizer : public BaseTranquilizer{
+    Q_OBJECT
+public:
+    EmptyTranquilizer(const IOOptions &opt, QObject* parent);
+    void prepare(const QString &title, const QString &description, double end, double start=0);
+
+    void update(double step);
+    void stop();
+
+    static Tranquilizer *create(const IOOptions& opt);
+};
+
+typedef std::unique_ptr<Tranquilizer> UPTranquilizer;
 }
 
 #endif // TRANQUILIZER_H
