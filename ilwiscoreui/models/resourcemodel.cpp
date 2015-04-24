@@ -230,12 +230,16 @@ QString ResourceModel::proj42DisplayName(const QString& proj4Def) const{
 }
 
 QString ResourceModel::coordinateSystemName() const {
+    QString proj = _item["projectionname"].toString();
+    if ( proj != sUNDEF)
+        return proj;
+
     QString nme =  propertyName("coordinatesystem");
     if ( nme != displayName() && nme != "" && nme != sUNDEF)
         return nme;
     if ( nme == ""){
         nme = _item["coordinatesystem"].toString();
-        if ( nme != ""){
+        if ( nme != sUNDEF){
             int index = nme.toLower().indexOf("code=");
             if ( index == -1){
                 nme = _item.code();

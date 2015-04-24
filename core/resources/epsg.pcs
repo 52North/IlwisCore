@@ -490,11 +490,11 @@
 <4318> +proj=longlat +ellps=WGS84 +towgs84=-3.2,-5.7,2.8,0,0,0,0 +no_defs  <>
 # KUDAMS
 <4319> +proj=longlat +ellps=GRS80 +towgs84=-20.8,11.3,2.4,0,0,0,0 +no_defs  <>
-# WGS 72
+# LatLon WGS 72
 <4322> +proj=longlat +ellps=WGS72 +towgs84=0,0,4.5,0,0,0.554,0.2263 +no_defs  <>
-# WGS 72BE
+# LatLon WGS 72BE
 <4324> +proj=longlat +ellps=WGS72 +towgs84=0,0,1.9,0,0,0.814,-0.38 +no_defs  <>
-# WGS 84
+# LatLon WGS 84
 <4326> +proj=longlat +datum=WGS84 +no_defs  <>
 # RGSPM06
 <4463> +proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs  <>
@@ -810,7 +810,7 @@
 <4758> +proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs  <>
 # NAD83(NSRS2007)
 <4759> +proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs  <>
-# WGS 66
+# LatLon WGS 66
 <4760> +proj=longlat +ellps=WGS66 +no_defs  <>
 # HTRS96
 <4761> +proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs  <>
