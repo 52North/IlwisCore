@@ -61,7 +61,11 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.h \
     ilwiscoreui/drawers/rasterimage.h \
     ilwiscoreui/drawers/rasterimagefactory.h \
-    ilwiscoreui/desktoptranquilizer.h
+    ilwiscoreui/desktoptranquilizer.h \
+    ilwiscoreui/models/columnmodel.h \
+    ilwiscoreui/tableoperations/tableoperation.h \
+    ilwiscoreui/tableoperations/tableoperationfactory.h \
+    ilwiscoreui/tableoperations/sortcolumn.h
 
 unix {
     target.path = /usr/lib
@@ -108,7 +112,11 @@ SOURCES += \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp \
     ilwiscoreui/drawers/rasterimage.cpp \
     ilwiscoreui/drawers/rasterimagefactory.cpp \
-    ilwiscoreui/desktoptranquilizer.cpp
+    ilwiscoreui/desktoptranquilizer.cpp \
+    ilwiscoreui/models/columnmodel.cpp \
+    ilwiscoreui/tableoperations/tableoperation.cpp \
+    ilwiscoreui/tableoperations/tableoperationfactory.cpp \
+    ilwiscoreui/tableoperations/sortcolumn.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
