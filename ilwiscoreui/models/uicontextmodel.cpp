@@ -6,6 +6,11 @@
 #include "geometries.h"
 #include "georeference.h"
 #include "uicontextmodel.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tableoperations/tableoperation.h"
+#include "tableoperations/sortcolumn.h"
+#include "tableoperations/tableoperationfactory.h"
 #include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -157,6 +162,10 @@ void UIContextModel::prepare()
             _colorNames.push_back(txt);
         }
     }
+    Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
+    factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
+    Ilwis::kernel()->addFactory(factory);
+
 }
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)
