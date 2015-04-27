@@ -37,7 +37,9 @@
 #include "models/tablemodel.h"
 #include "models/layerinfoitem.h"
 #include "models/catalogmapitem.h"
+#include "models/columnmodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
+#include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
 
 #define TEST_WORKINGDIR QString("file:///s:/data/coding/ilwis/2014-03-18_testdata")
@@ -88,6 +90,8 @@ int main(int argc, char *argv[])
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
         qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
+        qmlRegisterType<Ilwis::Desktop::TableOperation>("TableOperation",1,0,"TableOperation");
+        qmlRegisterType<ColumnModel>("ColumnModel", 1,0,"ColumnModel");
         qmlRegisterType<LayerInfoItem>("LayerInfoItem", 1,0,"LayerInfoItem");
         qmlRegisterType<CatalogMapItem>("CatalogMapItem", 1,0,"CatalogMapItem");
 
