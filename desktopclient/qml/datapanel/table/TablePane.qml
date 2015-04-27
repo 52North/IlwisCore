@@ -24,13 +24,13 @@ Item {
     function defaultWidth(index){
         if (!table)
             return 60
-
         return table.defaultWidth(index)
     }
 
     function addDataSource(sourceUrl, sourceName, sourceType){
         table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
         tableView.model = table
+        columnManagement.setColumnModel(table.columns)
 
         for(var i =0; i < table.columnCount; ++i){
             if ( i == 0)
@@ -42,22 +42,29 @@ Item {
             }
         }
     }
+    SplitView {
+        anchors.fill: parent
+        orientation: Qt.Vertical
+        TableView {
+            id : tableView
+            width : parent.width
+            Layout.fillHeight: true
+            selectionMode : SelectionMode.ExtendedSelection
 
-    TableView {
-        id : tableView
-        anchors.fill : parent
-        selectionMode : SelectionMode.ExtendedSelection
+            headerDelegate : ColumnHeader{
+            }
 
-        headerDelegate : ColumnHeader{
+
+            rowDelegate: Rectangle {
+                id : rowdelegate
+                height : 20
+                color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#eee" : "#fff")
+            }
+
         }
-
-        
-        rowDelegate: Rectangle {
-            id : rowdelegate
-            height : 20
-            color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#eee" : "#fff")
+        ColumnManagement{
+            id : columnManagement
         }
-
     }
 }
 
