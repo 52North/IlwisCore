@@ -59,12 +59,6 @@ Item {
                     x : 3
                     color: Global.selectedColor; radius: 2
                     y: (attributesList && attributesList.currentItem) ? attributesList.currentItem.y : 0
-                    Behavior on y {
-                        SpringAnimation {
-                            spring: 3
-                            damping: 0.2
-                        }
-                    }
                 }
             }
             anchors.fill: parent
