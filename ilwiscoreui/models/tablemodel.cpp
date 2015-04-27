@@ -4,8 +4,10 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "tablemodel.h"
+#include "columnmodel.h"
 #include "mastercatalog.h"
 
+using namespace Ilwis;
 TableModel::TableModel()
 {
 
@@ -15,7 +17,14 @@ TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstr
 {
     if ( resource.isValid()){
         _table = Ilwis::ITable(resource);
-        _columns.resize(_table->columnCount() + 1, false);
+        _columns.push_back(new ColumnModel(this, TR("nr"),"first"));
+        _order.resize(_table->recordCount());
+        for(int i =0; i < _order.size(); ++i)
+            _order[i] = i;
+        for(int i=0; i < _table->columnCount(); ++i){
+            _columns.push_back(new ColumnModel(this, i));
+        }
+
     }
 }
 
@@ -38,7 +47,7 @@ int TableModel::recordCount() const
 int TableModel::columnCount(const QModelIndex &) const
 {
     if ( _table.isValid())    {
-        return _table->columnCount() + 1; // add one for the column with the record nr
+        return _columns.size();
     }
     return 0;
 }
@@ -46,6 +55,22 @@ int TableModel::columnCount(const QModelIndex &) const
 int TableModel::getColumnCount() const
 {
     return columnCount(QModelIndex()); //  the "real" column count
+}
+
+void TableModel::order(const std::vector<quint32> &neworder)
+{
+    if ( neworder.size() != _table->recordCount())
+        return;
+    for(quint32 index : neworder){
+        if ( index >= _table->recordCount())
+            return;
+    }
+    _order = neworder;
+}
+
+const std::vector<quint32> &TableModel::order() const
+{
+    return _order;
 }
 
 QVariant TableModel::data(const QModelIndex &index, int role) const
@@ -57,21 +82,37 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
             v = index.row();
         }
         else if ( index.row() < _table->recordCount()) {
-
-            v = _table->cell(role - baseRole - 1 , index.row(), false);
+            quint32 ind = _order[ index.row()];
+            v = _table->cell(role - baseRole - 1 ,ind, false);
         }else{
             return "test";
         }
-        qDebug() << index.row() << role - baseRole << role << v.toString();
     }
 
     return v;
 }
 
+bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    QVariant v;
+    if ( _table.isValid()){
+        quint32 baseRole = Qt::UserRole + 1;
+        if ( role - baseRole == 0){
+            return true;
+        }
+        else if ( index.row() < _table->recordCount()) {
+            quint32 ind = _order[ index.row()];
+            _table->setCell(role - baseRole - 1 ,ind, value);
+        }
+    }
+
+    return true;
+}
+
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if ( _table.isValid()){
-        return  _table->columndefinition(section).name();
+    if ( _table.isValid() && section < _columns.size()){
+        return  _columns[section]->attributename();
     }
     return QVariant();
 }
@@ -80,69 +121,54 @@ QHash<int, QByteArray> TableModel::roleNames() const
 {
     QHash<int, QByteArray> rolename;
     quint32 baseRole = Qt::UserRole + 1;
-    rolename[baseRole] = "first";
-    for(int i = 0; i < _table->columnCount(); ++i)    {
-        rolename[i + baseRole + 1] = _table->columndefinition(i).name().toLocal8Bit();
+    for(int i = 0; i < _columns.size(); ++i)    {
+        rolename[i + baseRole] = _columns[i]->role().toLocal8Bit();
     }
     return rolename;
 
 }
 
+ITable TableModel::table() const
+{
+    return _table;
+}
+
 QString TableModel::roleName(int index) const
 {
-    if ( index == 0)
-        return "first";
-    if ( _table.isValid())    {
-        return _table->columndefinition(index - 1).name();
-    }
+    if ( index >= 0 && index < _columns.size())
+        return _columns[index]->role();
     return "";
 }
 
 int TableModel::defaultWidth(int index) const
 {
-    try {
-        if ( _table.isValid() && index >= 0 && index < _table->columnCount()){
-
-            if ( index == 0){
-                int rc = _table->recordCount();
-                if ( rc < 100)
-                    return 30;
-                if ( rc < 1000)
-                    return 45;
-                if ( rc < 10000)
-                    return 55;
-                return 65;
-            }
-            IlwisTypes tp = _table->columndefinition(index).datadef().domain()->valueType();
-            if ( hasType(tp, itSTRING))
-                return 100;
-            if ( hasType(tp, itINTEGER))
-                return 30;
-            if ( hasType(tp, itFLOAT | itDOUBLE))
-                return 70;
-            return 80;
-        }
-        return 40;
-    }
-    catch ( Ilwis::ErrorObject& err){
-
-    }
+    if ( index >= 0 && index < _columns.size())
+        return _columns[index]->defaultWidth();
     return 0;
 }
 
 bool TableModel::isColumnSelected(quint32 index) const
 {
-     if ( index < _table->columnCount())    {
-         return _columns[index];
-     }
-     return false;
+    if ( index < _columns.size())    {
+        return _columns[index]->isSelected();
+    }
+    return false;
 }
 
 void TableModel::selectColumn(quint32 index, bool yesno)
 {
-    if ( index < _table->columnCount())    {
-        _columns[index] = yesno;
+    if ( index < _columns.size())    {
+        _columns[index]->selected(yesno);
     }
+}
+
+void TableModel::update()
+{
+    QModelIndex topLeft = index(0, 0);
+    QModelIndex bottomRight = index(600, 4);
+
+    emit dataChanged(topLeft, bottomRight);
+    emit layoutChanged();
 }
 
 TableModel::~TableModel()
@@ -150,3 +176,7 @@ TableModel::~TableModel()
 
 }
 
+QQmlListProperty<ColumnModel> TableModel::columns()
+{
+    return QQmlListProperty<ColumnModel>(this, _columns) ;
+}
