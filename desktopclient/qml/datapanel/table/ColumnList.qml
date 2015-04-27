@@ -1,5 +1,9 @@
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
 import "../../Global.js" as Global
+import "../.." as Base
 
 Item {
     id : inner
@@ -45,9 +49,26 @@ Item {
             }
         }
         delegate : Component {
-            Item {
-                width : 100
+            Row {
+                width : 130
                 height : 18
+                spacing : 3
+                CheckBox{
+                    id : visibilityCheck
+                    width : 17
+                    height: 17
+                    checked : true
+
+                    style: Base.CheckBoxStyle1{}
+
+                    opacity : index == 0 ? 0 : 1
+                    enabled : index == 0 ? false : true
+
+                    onCheckedChanged: {
+                        var col = tableView.getColumn(index)
+                        col.visible = checked
+                    }
+                }
                 Image{
                     id : domicon
                     source : iconsource(icon)
@@ -56,9 +77,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    anchors.left: domicon.right
                     text : attributename
-                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
                     MouseArea{
                         anchors.fill: parent
