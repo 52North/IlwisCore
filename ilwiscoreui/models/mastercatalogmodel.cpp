@@ -61,7 +61,7 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
-    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("TranquilizerFactory");
+    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
     factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
 
     _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
