@@ -10,6 +10,7 @@ Rectangle {
     id : columnManagement
     width: parent.width
     height: 250
+    Layout.minimumHeight: 22
     function setColumnModel(columnmodel){
         var tab = tabletabs.getTab(0)
         tab.item.cmodel = columnmodel
