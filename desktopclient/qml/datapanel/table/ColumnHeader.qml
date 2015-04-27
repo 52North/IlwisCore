@@ -29,6 +29,7 @@ Rectangle {
                 selected = !selected
                 table.selectColumn(styleData.column, selected)
                 header.color = table.isColumnSelected(styleData.column) ? "#4668F6" : "#C1D5F8"
+                table.update()
              }
         }
 
