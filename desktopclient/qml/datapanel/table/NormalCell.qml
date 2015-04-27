@@ -1,11 +1,17 @@
 import QtQuick 2.2
+import "../../Global.js" as Global
 
-Text {
+Rectangle {
     width : defaultWidth(styleData.column)
-    text: styleData.value
-    color : ( styleData.selected || table.isColumnSelected(styleData.column)) ? "#2121A3" : "black"
-    elide: Text.ElideMiddle
-    x : 2
+    height : 18
+    color : ( styleData.selected || table.isColumnSelected(styleData.column)) ? Global.selectedColor : ((( styleData.row % 10) > 4)? "#eee" : "#fff")
+
+    Text {
+        text: styleData.value
+        color : ( styleData.selected || table.isColumnSelected(styleData.column)) ? "#2121A3" : "black"
+        elide: Text.ElideMiddle
+        x : 2
+    }
 }
 
 
