@@ -229,6 +229,55 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
 }
 
+bool MasterCatalog::updateItems(const std::vector<Resource>& items)
+{
+    Locker<std::recursive_mutex> lock(_guard);
+
+    if( items.size() == 0) // nothing to do; not wrong perse
+            return true;
+
+    QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
+
+    bool ok = queryItem.prepare("UPDATE mastercatalog set name=:name, "
+                                "code=:code, "
+                                "container=:container, "
+                                "resource=:resource, "
+                                "rawresource=:rawresource, "
+                                "urlquery=:urlquery, "
+                                "type=:type, "
+                                "extendedtype=:extendedtype, "
+                                "size=:size, "
+                                "dimensions=:dimensions "
+                                "WHERE itemid=:itemid");
+    if (!ok) {
+        kernel()->issues()->logSql(queryItem.lastError());
+        return false;
+
+    }
+
+
+    ok = queryProperties.prepare("INSERT INTO catalogitemproperties VALUES(\
+                   :propertyvalue,:propertyname,:itemid\
+                 )" );
+    if (!ok) {
+        kernel()->issues()->logSql(queryItem.lastError());
+        return false;
+    }
+
+    for(const Resource &resource : items) {
+        if (!resource.isValid())
+           continue;
+
+        QSqlQuery deleteQuery(kernel()->database());
+        deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
+        resource.store(queryItem, queryProperties);
+    }
+
+
+    return true;
+
+}
+
 quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive) const
 {
     Locker<std::recursive_mutex> lock(_guard);

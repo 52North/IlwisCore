@@ -52,6 +52,7 @@ public:
      * @return true when succesful
      */
     bool addItems(const std::vector<Ilwis::Resource> &items);
+    bool updateItems(const std::vector<Resource> &items);
 
 
     /**
