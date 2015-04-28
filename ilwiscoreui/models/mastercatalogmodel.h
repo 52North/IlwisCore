@@ -59,6 +59,8 @@ public:
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
 
+    QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
+    void scanBookmarks();
 public slots:
     void updateCatalog(const QUrl &url);
     void updateBookmarks() ;
@@ -114,6 +116,8 @@ signals:
 
 private:
     QList<std::pair<CatalogModel *, Ilwis::CatalogView>> _models;
+    void calculatelatLonEnvelopes();
+    void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
 };
 //}
 //}
