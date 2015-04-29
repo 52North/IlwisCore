@@ -1,4 +1,5 @@
 #include "tranquilizerhandler.h"
+#include "uicontextmodel.h"
 
 
 TranquilizerModel::TranquilizerModel()
@@ -45,6 +46,7 @@ void TranquilizerHandler::createTranquilizer(quint64 id, const QString &title, c
     TranquilizerModel *trq = new TranquilizerModel(id, title, description,start, end,this);
 
     _tranquilizers.push_back(trq);
+    uicontext()->updateThreadCount(1);
 
     //emit createTranquilizerUI(id, title, description, start, end);
     emit tranquilizersChanged();
@@ -58,6 +60,7 @@ void TranquilizerHandler::removeTranquilizer(quint64 id)
             emit tranquilizersChanged();
             emit aggregateValueChanged();
             (*trq)->deleteLater();
+            uicontext()->updateThreadCount(-1);
             return;
         }
     }

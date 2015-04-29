@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include "kernel.h"
 #include "tranquilizer.h"
+#include "uicontextmodel.h"
 #include "desktoptranquilizer.h"
 
 using namespace Ilwis;
@@ -17,8 +18,11 @@ DesktopTranquilizer::~DesktopTranquilizer()
     emit removeTranquilizer(_id);
 }
 
-void DesktopTranquilizer::update(double step) {
+bool DesktopTranquilizer::update(double step) {
     Locker<std::mutex> lock(_mutex);
+    if ( uicontext()->abort()){
+        return false;
+    }
     _current += step;
     if ( _current >= _end || _current < _start){
         emit(updateTranquilizer(_id, _current));
@@ -26,6 +30,8 @@ void DesktopTranquilizer::update(double step) {
         emit(removeTranquilizer(_id));
     }else
         emit(updateTranquilizer(_id, _current));
+
+    return true;
 
 }
 
@@ -48,4 +54,6 @@ Tranquilizer *DesktopTranquilizer::create(const IOOptions &opt)
 {
     return new DesktopTranquilizer(opt,0);
 }
+
+
 

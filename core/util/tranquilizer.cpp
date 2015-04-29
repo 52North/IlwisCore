@@ -31,6 +31,13 @@ void BaseTranquilizer::prepare(const QString &title, const QString &description,
     _id = _trqId++;
 }
 
+void BaseTranquilizer::stopTranquilizer()
+{
+    if ( QThread::currentThread() != QCoreApplication::instance()->thread()){
+
+    }
+}
+
 void BaseTranquilizer::end(double number)
 {
     _end = number;
@@ -103,9 +110,9 @@ void EmptyTranquilizer::prepare(const QString &title, const QString &description
     BaseTranquilizer::prepare(title, description, end, start);
 }
 
-void EmptyTranquilizer::update(double )
+bool EmptyTranquilizer::update(double )
 {
-
+    return true;
 }
 
 void EmptyTranquilizer::stop()

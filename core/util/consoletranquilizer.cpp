@@ -24,9 +24,9 @@ void ConsoleTranquilizer::prepare(const QString &title, const QString &descripti
     BaseTranquilizer::prepare(title, description, end, start);
 }
 
-void ConsoleTranquilizer::update(double step)
+bool ConsoleTranquilizer::update(double step)
 {
-
+    return true;
 }
 
 void ConsoleTranquilizer::stop()

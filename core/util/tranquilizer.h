@@ -35,7 +35,7 @@ public:
     virtual double end() const = 0;
     virtual void prepare(const QString &title, const QString &description, double end, double start=0) = 0;
 
-    virtual void update(double step) = 0;
+    virtual bool update(double step) = 0;
     virtual void stop() = 0;
 
     static Tranquilizer *create(int mode, const Ilwis::IOOptions &options = IOOptions());
@@ -71,6 +71,7 @@ signals:
     void tranquilizerCreated(quint64 id, const QString &title, const QString &description, quint64 end);
     
 public slots:
+    void stopTranquilizer();
     
 };
 
@@ -80,7 +81,7 @@ public:
     EmptyTranquilizer(const IOOptions &opt, QObject* parent);
     void prepare(const QString &title, const QString &description, double end, double start=0);
 
-    void update(double step);
+    bool update(double step);
     void stop();
 
     static Tranquilizer *create(const IOOptions& opt);

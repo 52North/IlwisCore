@@ -13,7 +13,7 @@ public:
     ConsoleTranquilizer(const IOOptions &opt, QObject* parent);
     void prepare(const QString &title, const QString &description, double end, double start=0);
 
-    void update(double step);
+    bool update(double step);
     void stop();
 
     static Tranquilizer *create(const IOOptions& opt);

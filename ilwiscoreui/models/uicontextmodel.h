@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QQmlContext>
 #include <Qt>
+#include <atomic>
 #include "iooptions.h"
 #include "ilwiscoreui_global.h"
 #include "layermanager.h"
@@ -37,6 +38,7 @@ public:
     Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
     Q_INVOKABLE TableModel *createTableModel(QObject *parent,const QString& url, const QString& type);
     Q_INVOKABLE QString uniqueName();
+    Q_INVOKABLE void exitUI();
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -55,15 +57,20 @@ public:
     int currentKey() const;
     QStringList colorNames() const;
     void prepare();
+    bool abort() const;
+    void updateThreadCount(int change);
+    int threadCount() const;
 
 signals:
     void activeSplitChanged();
 
+
 public slots:
 
 private:
-
-
+    std::atomic<bool> _abort;
+    std::mutex _lock;
+    int _threadCount = 0;
 
     std::map<QString, CreatePropertyEditor> _propertyEditors;
     std::map<quint64, LayersViewCommandInterface *> _viewers;
