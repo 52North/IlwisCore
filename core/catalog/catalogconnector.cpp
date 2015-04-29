@@ -17,6 +17,7 @@
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "ilwiscontext.h"
 #include "table.h"
 #include "catalog.h"
 #include "dataset.h"
@@ -74,6 +75,7 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
     QFileInfo currentPath(parentPath.absoluteFilePath() + "/"+ ownSection);
     return currentPath;
 }
+
 QFileInfo CatalogConnector::toLocalFile(const Resource &resource) const
 {
     QFileInfo currentPath =  toLocalFile(resource.url());
@@ -104,12 +106,11 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 }
 
 bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
-    //outside the mainthread we already run things multithreaded. we are not going to put threads in threads as this only
-    // gives problems with trhead affinity
-   // if ( QCoreApplication::instance()->thread() == QThread::currentThread()){
+
+    if ( context()->runMode() == rmDESKTOP){
         return loadDataThreaded(obj,options);
-  //  }
-  //  return loadDataSingleThread(obj,options);
+    }
+    return loadDataSingleThread(obj,options);
 }
 
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
