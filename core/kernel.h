@@ -203,6 +203,7 @@ signals:
     void updateTranquilizer(quint64 id, double amount);
     void createTranquilizer(quint64 id,const QString &title, const QString &description, double start, double end);
     void removeTranquilizer(quint64 id);
+    void stopAllThreads();
 
 public slots:
     void changeTranquilizer(quint64 id, double amount);
