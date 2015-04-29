@@ -472,7 +472,8 @@ void CatalogWorker::calculatelatLonEnvelopes(){
     std::vector<Resource> updatedResources;
     for(Resource& resource : resources){
         calcLatLon(csyWgs84, resource, updatedResources);
-        trq->update(1);
+        if(!trq->update(1))
+            return;
 
     }
     kernel()->issues()->silent(false);
