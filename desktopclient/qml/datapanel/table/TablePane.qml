@@ -30,7 +30,7 @@ Item {
     function addDataSource(sourceUrl, sourceName, sourceType){
         table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
         tableView.model = table
-        columnManagement.setColumnModel(table.columns)
+        columnManagement.setColumnModel1(table.columns)
 
         for(var i =0; i < table.columnCount; ++i){
             if ( i == 0)
