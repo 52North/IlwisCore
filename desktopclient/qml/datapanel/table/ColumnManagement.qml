@@ -11,10 +11,16 @@ Rectangle {
     width: parent.width
     height: 250
     Layout.minimumHeight: 22
-    function setColumnModel(columnmodel){
+    function setColumnModel1(columnmodel){
         var tab = tabletabs.getTab(0)
-        tab.item.cmodel = columnmodel
+        tab.item.setModel(columnmodel)
+        tab = tabletabs.getTab(1)
+        tab.active = true
+        if ( tab)
+            tab.item.columnmodel = columnmodel
     }
+
+
 
     TabView{
         anchors.fill: parent
@@ -23,10 +29,8 @@ Rectangle {
             title : qsTr("Operations")
             SplitView{
                 id : columnview
-                property var cmodel
-
-                onCmodelChanged: {
-                    columnlist.columnmodel = cmodel
+                function setModel(cm){
+                    columnlist.columnmodel = cm
                 }
 
                 ColumnList {
@@ -44,23 +48,12 @@ Rectangle {
         }
 
         Tab {
-            title : qsTr("Metadata")
-//            SplitView{
-//                id : columnmetadatview
-//                property var cmodel2
+            title : qsTr("Statistics")
+            id : columnmetadatview
 
-//                onCmodel2Changed: {
-//                    columnnamelist.columnmodel = cmodel2
-//                }
-
-//                ColumnList {
-//                    id : columnnamelist
-//                }
-//                MetaDataPane{
-//                    id : columnmetadata
-//                    Layout.fillWidth: true
-//                }
-//            }
+            ColumnMetadataList {
+                id : columnmetadatalist
+            }
         }
         Tab {
             title : qsTr("Charts")
