@@ -103,8 +103,10 @@ QString AttributeModel::attributeValueType() const
 
 QString AttributeModel::attributeDomainType() const
 {
+    if ( !_coldefinition.isValid())
+        return "";
     quint64 tp = _coldefinition.datadef().domain()->ilwisType();
-    return Ilwis::IlwisObject::type2Name(tp);
+    return Ilwis::TypeHelper::type2HumanReadable(tp);
 }
 
 QStringList AttributeModel::attributeValues(bool defaultRange) const
