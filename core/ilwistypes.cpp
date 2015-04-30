@@ -23,6 +23,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Feature Coverage");
     case  itNUMERICDOMAIN:
         return TR("Value Domain");
+    case itTEXTDOMAIN:
+        return TR("Text Domain");
     case  itITEMDOMAIN:
         return TR("Item Domain");
     case  itCOLORDOMAIN:
@@ -165,6 +167,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("itemdomain");
     case  itCOLORDOMAIN:
         return TR("colordomain");
+    case  itTEXTDOMAIN:
+        return TR("textdomain");
     case  itCOORDSYSTEM:
         return TR("coordinatesystem");
     case  itCONVENTIONALCOORDSYSTEM:
