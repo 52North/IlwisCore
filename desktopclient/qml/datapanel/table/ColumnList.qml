@@ -11,7 +11,7 @@ Item {
     x : 5
     y : 5
     height: parent.height -10
-    property alias columnmodel : columnlist.model
+    property var columnmodel
 
     Text {
         id : title
@@ -23,6 +23,7 @@ Item {
 
     ListView {
         id : columnlist
+        model : columnmodel
         width : parent.width - 3
         height :    parent.height - title.height
         anchors.top : title.bottom
@@ -77,7 +78,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
-                    text : attributename
+                    text :  index == 0 ? qsTr("Table") : attributename
                     anchors.verticalCenter: parent.verticalCenter
                     MouseArea{
                         anchors.fill: parent
