@@ -38,6 +38,16 @@ ColumnModel::ColumnModel(TableModel *tblModel, quint32 index) : AttributeModel(t
              (*iter)->setParent(this);
      }
      _columnIndex = index;
+
+     if ( hasType(tp,itNUMBER)){
+         auto values = tblModel->table()->column(_columnIndex);
+         std::vector<double> dvalues(values.size(), 0);
+         int count = 0;
+         for(auto value : values)
+             dvalues[count++] = value.toDouble();
+         _stats.calculate(dvalues.begin(), dvalues.end(), Ilwis::NumericStatistics::pNUMERICS );
+     }
+
 }
 
 
@@ -97,6 +107,77 @@ quint32 ColumnModel::columnIndex() const
 {
     return _columnIndex;
 }
+
+QString ColumnModel::min() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pMIN]);
+}
+
+QString ColumnModel::max() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pMAX]);
+}
+
+QString ColumnModel::median() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pMEDIAN]);
+}
+
+QString ColumnModel::average() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pMEAN]);
+}
+
+QString ColumnModel::distance() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pDISTANCE]);
+}
+
+QString ColumnModel::sum() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pSUM]);
+}
+
+QString ColumnModel::stdev() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pSTDEV]);
+}
+
+QString ColumnModel::variance() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pVARIANCE]);
+}
+
+QString ColumnModel::skew() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pSKEW]);
+}
+
+QString ColumnModel::kurtosis() const
+{
+    if ( !_stats.isValid())
+        return "";
+    return QString::number(_stats[Ilwis::NumericStatistics::pKURTOSIS]);
+}
+
 
 QQmlListProperty<Ilwis::Desktop::TableOperation> ColumnModel::operations()
 {
