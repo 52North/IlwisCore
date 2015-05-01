@@ -44,6 +44,7 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 property string message :  model !== null ? url : ""
                 property string ilwisobjectid : model !== null ? id : ""
+                property string ids : model !== null ? currentCatalog.selectedIds() : ""
 
                 Drag.keys: iconPath
                 Drag.active: mouseArea.drag.active
