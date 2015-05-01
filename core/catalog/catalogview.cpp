@@ -34,18 +34,22 @@ CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resourc
     filter(resource["filter"].toString());
     QStringList lst = resource["locations"].toStringList();
     for(auto url : lst){
-        _locations.push_back(QUrl(url));
+        if ( url != sUNDEF)
+            _locations.push_back(QUrl(url));
     }
     _resource = resource;
 }
 
 CatalogView::CatalogView(const CatalogView &cat) : QObject(),
-    Identity(cat.name(),cat.id(),cat.code(),cat.description()),
+    Identity(sUNDEF,i64UNDEF,cat.code(),cat.description()),
     _filter(cat._filter),
     _locations(cat._locations),
+    _fixedItems(cat._fixedItems),
     _parent(cat._parent),
     _resource(cat.resource())
 {
+    prepare(); // bit inconveniet but the id must be set. this overrules the name so we set it again
+    name(cat.name());
 }
 
 void CatalogView::addLocation(const QUrl& loc){
@@ -66,6 +70,9 @@ std::vector<Resource> CatalogView::items() const
         return std::vector<Resource>();
 
     std::vector<Resource> results;
+    for(auto& item : _fixedItems){
+        results.push_back(item.second);
+    }
     QString filter = _filter;
     for(auto location : _locations) {
         std::vector<Resource> items;
@@ -82,6 +89,21 @@ std::vector<Resource> CatalogView::items() const
     std::copy(uniques.begin(), uniques.end(), results.begin());
     return results;
 
+}
+
+void CatalogView::addFixedItem(quint64 id)
+{
+    Resource resource = mastercatalog()->id2Resource(id);
+    if ( resource.isValid()){
+        _fixedItems[id] = resource;
+    }
+}
+
+void CatalogView::removeFixedItem(quint64 id)
+{
+    auto iter = _fixedItems.find(id);
+    if ( iter != _fixedItems.end())
+        _fixedItems.erase(iter);
 }
 
 QString CatalogView::filter() const
@@ -117,12 +139,14 @@ bool CatalogView::prepare()
 
 CatalogView &CatalogView::operator=(const CatalogView &view)
 {
+    prepare();
     name(view.name());
     setDescription(view.description());
     code(view.code());
     _filter = view._filter;
     _locations = view._locations;
     _resource = view._resource;
+    _fixedItems = view._fixedItems;
 
     return *this;
 
@@ -136,7 +160,7 @@ QString CatalogView::type() const
 
 bool CatalogView::isValid() const
 {
-    return _locations.size() > 0; // && _filter != "";
+    return _locations.size() > 0 || _fixedItems.size() > 0; // && _filter != "";
 }
 
 QUrl CatalogView::parentCatalogView() const

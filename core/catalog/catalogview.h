@@ -49,6 +49,8 @@ public:
     QString type() const;
     bool isValid() const ;
     std::vector<Resource> items() const;
+    void addFixedItem(quint64 id);
+    void removeFixedItem(quint64 id);
     QString filter() const;
     void filter(const QString& filter);
     Resource resource() const;
@@ -70,6 +72,7 @@ protected:
 
     QString _filter;
     std::vector<QUrl> _locations;
+    std::map<quint64, Resource> _fixedItems;
     QUrl _parent;
     Resource _resource;
 
