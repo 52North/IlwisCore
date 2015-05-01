@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 
         qmlRegisterType<MasterCatalogModel>("MasterCatalogModel",1,0,"MasterCatalogModel");
         qmlRegisterType<CatalogModel>("CatalogModel",1,0,"CatalogModel");
+        qmlRegisterType<WorkSpaceModel>("WorkSpaceModel",1,0,"WorkSpaceModel");
         qmlRegisterType<ResourceModel>("ResourceModel",1,0,"ResourceModel");
         qmlRegisterType<OperationCatalogModel>("OperationCatalogModel",1,0,"OperationCatalogModel");
         qmlRegisterType<OperationModel>("OperationModel",1,0,"OperationModel");
