@@ -52,7 +52,7 @@ QString UIContextModel::uniqueName()
 void UIContextModel::exitUI()
 {
     _abort.store(true);
-    if ( _threadCount > 0) { // wait until the threads have aborted
+    if ( _threadCount > 0) {  // wait until the threads have aborted
         std::this_thread::sleep_for (std::chrono::seconds(3));
     }
 }
