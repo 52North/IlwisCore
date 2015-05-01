@@ -91,7 +91,7 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
     QString outputName = _expression.parm(0,false).value();
 
     // if the input feature coverage is not valid, we abort. No operation possible
-    if (!_inputfeatures.prepare(features, itRASTER)) {
+    if (!_inputfeatures.prepare(features, itFEATURE)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,features,"");
         return sPREPAREFAILED;
     }
