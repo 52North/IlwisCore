@@ -17,7 +17,6 @@ Item {
             height : 20
             width : 100
             onClicked: {
-                console.debug(operation, columnIndex)
                 var paramaters = {columnindex: columnIndex,order:"ascending"}
                 operation.execute(paramaters)
             }
