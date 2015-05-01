@@ -42,13 +42,16 @@ public:
     QString nameFilter() const;
     Q_INVOKABLE void prepareMapItems(LayerManager *manager);
     void setView(const Ilwis::CatalogView &view);
+    Ilwis::CatalogView view() const;
 
+    Q_INVOKABLE QString selectedIds() const;
 protected:
     Ilwis::CatalogView _view;
     virtual void gatherItems();
    QList<ResourceModel *> _currentItems;
    QList<IlwisObjectModel *> _selectedObjects;
    QList<CatalogMapItem *> _catalogMapItems;
+   bool _refresh = false;
 
 
 private:
@@ -59,8 +62,6 @@ private:
     std::map<QString, bool> _filterState;
     QString _nameFilter;
 
-
-    bool _refresh = false;
 
 signals:
     void selectionChanged();
