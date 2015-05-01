@@ -7,6 +7,7 @@
 #include <deque>
 #include "resourcemodel.h"
 #include "catalogmodel.h"
+#include "workspacemodel.h"
 #include "catalogview.h"
 #include "tranquilizer.h"
 #include "ilwiscoreui_global.h"
@@ -22,15 +23,18 @@ class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked NOTIFY bookmarksChanged)
+    Q_PROPERTY(QQmlListProperty<WorkSpaceModel> workspaces READ workspaces NOTIFY workspacesChanged)
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
     Q_PROPERTY(CatalogModel* currentCatalog READ currentCatalog WRITE setCurrentCatalog NOTIFY currentCatalogChanged)
+    Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
 
 
 public:
     MasterCatalogModel();
     MasterCatalogModel(QQmlContext *qmlcontext);
     QQmlListProperty<CatalogModel> bookmarked();
+    QQmlListProperty<WorkSpaceModel> workspaces();
     void setSelectedBookmark(quint32 index);
     int activeSplit() const;
     void setActiveSplit(int index);
@@ -38,6 +42,8 @@ public:
     void setCurrentUrl(const QString& url);
     CatalogModel *currentCatalog() const;
     void setCurrentCatalog(CatalogModel * cat);
+    WorkSpaceModel *currentWorkSpace() const;
+    void setCurrentWorkSpace(WorkSpaceModel* cws);
 
 
     Q_INVOKABLE quint32 selectedBookmark(const QString &url);
@@ -45,6 +51,9 @@ public:
     Q_INVOKABLE QStringList driveList() const;
     Q_INVOKABLE QString getDrive(quint32 index);
     Q_INVOKABLE void addBookmark(const QString &path);
+    Q_INVOKABLE void addWorkSpace(const QString& name);
+    Q_INVOKABLE void removeWorkSpace(const QString& name);
+    Q_INVOKABLE WorkSpaceModel *workspace(const QString& name);
     Q_INVOKABLE void deleteBookmark(quint32 index);
     Q_INVOKABLE void setCatalogMetadata(const QString &displayName, const QString &description);
     Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid);
@@ -67,6 +76,7 @@ public slots:
     
 private:
     QList<CatalogModel *> _bookmarks;
+    QList<WorkSpaceModel *> _workspaces;
     QQmlContext *_qmlcontext = 0;
     QMLResourceList _currentList;
     int _selectedBookmarkIndex = 2; // from configuration
@@ -75,6 +85,7 @@ private:
     int _activeTab = 0;
     QString _currentUrl;
     CatalogModel *_currentCatalog = 0;
+    WorkSpaceModel *_currentWorkSpace = 0;
 
     
     CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query);
@@ -85,6 +96,8 @@ signals:
     void currentUrlChanged();
     void currentCatalogChanged();
     void bookmarksChanged();
+    void workspacesChanged();
+    void currentWorkSpaceChanged();
 };
 
 class worker : public QObject{

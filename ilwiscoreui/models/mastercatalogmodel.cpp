@@ -25,6 +25,7 @@
 #include "factory.h"
 #include "abstractfactory.h"
 #include "tranquilizerfactory.h"
+#include "uicontextmodel.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -75,8 +76,10 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
                TR("All operations available in Ilwis"),
                "type=" + QString::number(itOPERATIONMETADATA)));
 
-    scanBookmarks();
+     scanBookmarks();
 }
+
+
 
 
 
@@ -155,6 +158,11 @@ void MasterCatalogModel::scanBookmarks()
 QQmlListProperty<CatalogModel> MasterCatalogModel::bookmarked()
 {
    return  QQmlListProperty<CatalogModel>(this, _bookmarks);
+}
+
+QQmlListProperty<WorkSpaceModel> MasterCatalogModel::workspaces()
+{
+    return QQmlListProperty<WorkSpaceModel>(this, _workspaces);
 }
 
 int MasterCatalogModel::activeTab() const
@@ -243,18 +251,32 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath)
     if ( inpath == "" || inpath == sUNDEF)
         return 0;
 
+    CatalogView cview;
     QUrl location(inpath);
-    Resource res(location, itCATALOGVIEW ) ;
-    QStringList lst;
-    lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
-    res.addProperty("locations", lst);
-    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-    res.addProperty("filter","");
-    _currentUrl = inpath;
-    CatalogView cview(res);
-    auto model = new CatalogModel(this);
-    model->setView(cview);
-    return model;
+    if ( inpath.indexOf("ilwis://internalcatalog/workspaces") == 0){
+        for(auto workspace : _workspaces){
+            if ( workspace->url() == inpath){
+                cview = workspace->view();
+            }
+        }
+    }else {
+        Resource res(location, itCATALOGVIEW ) ;
+        QStringList lst;
+        lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
+        res.addProperty("locations", lst);
+        res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+        res.addProperty("filter","");
+        cview = CatalogView(res);
+
+    }
+    if ( cview.isValid()){
+        _currentUrl = inpath;
+        auto model = new CatalogModel(this);
+        model->setView(cview);
+        return model;
+
+    }
+    return 0;
 }
 
 QString MasterCatalogModel::getDrive(quint32 index){
@@ -306,6 +328,41 @@ void MasterCatalogModel::addBookmark(const QString& path){
     context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
 
 
+}
+
+void MasterCatalogModel::addWorkSpace(const QString &name)
+{
+    if ( name == "")
+        return;
+
+    for(auto cat : _bookmarks){
+        if ( cat->name() == name)
+            return;
+    }
+    WorkSpaceModel *wmodel = new WorkSpaceModel(name, this);
+    QString path = "ilwis://internalcatalog/workspaces/" + name;
+    Resource resource(path,itWORKSPACE);
+    CatalogView view(resource);
+    wmodel->setView(view);
+    _bookmarks.push_back(wmodel);
+    _workspaces.push_back(wmodel);
+    _currentWorkSpace = wmodel;
+
+    emit workspacesChanged();
+}
+
+void MasterCatalogModel::removeWorkSpace(const QString &name)
+{
+    //TODO
+}
+
+WorkSpaceModel *MasterCatalogModel::workspace(const QString &name)
+{
+    for(auto ws : _workspaces){
+        if ( ws->name() == name)
+            return ws;
+    }
+    return 0;
 }
 
 
@@ -407,6 +464,17 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
     _currentCatalog = cat;
 }
 
+WorkSpaceModel *MasterCatalogModel::currentWorkSpace() const
+{
+    return _currentWorkSpace;
+}
+
+void MasterCatalogModel::setCurrentWorkSpace(WorkSpaceModel *cws)
+{
+    _currentWorkSpace = cws;
+    emit currentWorkSpaceChanged();
+}
+
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
 
@@ -425,8 +493,10 @@ void CatalogWorker::process(){
             (*iter).first->setView((*iter).second);
             emit updateBookmarks();
         }
-        calculatelatLonEnvelopes();
-        emit finished();
+        if (!uicontext()->abort()){
+            calculatelatLonEnvelopes();
+            emit finished();
+        }
     } catch(const ErrorObject& err){
 
     } catch ( const std::exception& ex){
