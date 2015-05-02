@@ -42,14 +42,14 @@ CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resourc
 
 CatalogView::CatalogView(const CatalogView &cat) : QObject(),
     Identity(sUNDEF,i64UNDEF,cat.code(),cat.description()),
-    _filter(cat._filter),
-    _locations(cat._locations),
-    _fixedItems(cat._fixedItems),
-    _parent(cat._parent),
-    _resource(cat.resource())
-{
-    prepare(); // bit inconveniet but the id must be set. this overrules the name so we set it again
-    name(cat.name());
+     _filter(cat._filter),
+     _locations(cat._locations),
+     _fixedItems(cat._fixedItems),
+     _parent(cat._parent),
+     _resource(cat.resource())
+ {
+     Identity::prepare(); // bit inconveniet but the id must be set. this overrules the name so we set it again
+     name(cat.name());
 }
 
 void CatalogView::addLocation(const QUrl& loc){
@@ -139,7 +139,7 @@ bool CatalogView::prepare()
 
 CatalogView &CatalogView::operator=(const CatalogView &view)
 {
-    prepare();
+    Identity::prepare();
     name(view.name());
     setDescription(view.description());
     code(view.code());
