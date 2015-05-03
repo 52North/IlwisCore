@@ -66,7 +66,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/tableoperations/tableoperation.h \
     ilwiscoreui/tableoperations/tableoperationfactory.h \
     ilwiscoreui/tableoperations/sortcolumn.h \
-    ilwiscoreui/models/workspacemodel.h
+    ilwiscoreui/models/workspacemodel.h \
+    ilwiscoreui/models/graphmodel.h \
+    ilwiscoreui/models/chartmodel.h
 
 unix {
     target.path = /usr/lib
@@ -118,7 +120,9 @@ SOURCES += \
     ilwiscoreui/tableoperations/tableoperation.cpp \
     ilwiscoreui/tableoperations/tableoperationfactory.cpp \
     ilwiscoreui/tableoperations/sortcolumn.cpp \
-    ilwiscoreui/models/workspacemodel.cpp
+    ilwiscoreui/models/workspacemodel.cpp \
+    ilwiscoreui/models/graphmodel.cpp \
+    ilwiscoreui/models/chartmodel.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
