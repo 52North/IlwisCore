@@ -38,6 +38,8 @@
 #include "models/layerinfoitem.h"
 #include "models/catalogmapitem.h"
 #include "models/columnmodel.h"
+#include "models/graphmodel.h"
+#include "models/chartmodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
@@ -95,6 +97,8 @@ int main(int argc, char *argv[])
         qmlRegisterType<ColumnModel>("ColumnModel", 1,0,"ColumnModel");
         qmlRegisterType<LayerInfoItem>("LayerInfoItem", 1,0,"LayerInfoItem");
         qmlRegisterType<CatalogMapItem>("CatalogMapItem", 1,0,"CatalogMapItem");
+        qmlRegisterType<ChartModel>("ChartModel", 1,0,"ChartModel");
+        qmlRegisterType<GraphModel>("GraphModel", 1,0,"GraphModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
