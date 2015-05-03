@@ -57,6 +57,10 @@ Rectangle {
         }
         Tab {
             title : qsTr("Charts")
+            id : graphpanel
+            ChartsPanel{
+
+            }
         }
 
         style: Base.TabStyle1{
