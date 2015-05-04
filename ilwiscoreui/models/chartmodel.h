@@ -33,6 +33,7 @@ signals:
     void xvaluesChanged();
     void datasetChanged();
     void graphsChanged();
+    void xAxisChanged();
 
 private:
     QList<QString> _xvalues;
