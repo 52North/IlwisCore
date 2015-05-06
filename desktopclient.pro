@@ -125,7 +125,8 @@ DISTFILES += \
     desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml \
     desktopclient/qml/datapanel/visualization/propertyeditors/LayersList.qml \
     desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml \
-    desktopclient/qml/controls/HScrollBar.qml
+    desktopclient/qml/controls/HScrollBar.qml \
+    desktopclient/qml/workbench/WorkSpaceDataGrid.qml
 
 
 

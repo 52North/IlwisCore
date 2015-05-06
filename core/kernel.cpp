@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QSqlRecord>
 #include <QUrl>
+#include <QThread>
 #include <QDir>
 #include <cxxabi.h>
 #include <iostream>
@@ -49,6 +50,7 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "tranquilizer.h"
+#include "tranquilizerfactory.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
@@ -131,6 +133,10 @@ void Kernel::init() {
     georefFac->prepare();
     addFactory(georefFac);
 
+    TranquilizerFactory *trqFactory = new TranquilizerFactory();
+    trqFactory->prepare();
+    addFactory(trqFactory);
+
 
     _modules.addModules();
 
@@ -144,8 +150,6 @@ Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
     _dbPublic.close();
     context()->configurationRef().store();
-    //delete mastercatalog();
-    //delete context();
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{
@@ -258,9 +262,9 @@ QNetworkAccessManager &Kernel::network()
     return _networkmanager;
 }
 
-void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 end)
+void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end)
 {
-    emit createTranquilizer(id, title, description, end);;
+    emit createTranquilizer(id, title, description, start, end);;
 }
 
 const Module *Kernel::module(const QString &name) const

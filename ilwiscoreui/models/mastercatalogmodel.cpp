@@ -7,6 +7,8 @@
 #include <QQmlContext>
 #include <QSqlQuery>
 #include <QQuickItem>
+#include <QApplication>
+#include <qtconcurrentmap.h>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
@@ -17,6 +19,13 @@
 #include "catalogmodel.h"
 #include "ilwiscontext.h"
 #include "ilwisconfiguration.h"
+#include "tranquilizer.h"
+#include "desktoptranquilizer.h"
+#include "oshelper.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
+#include "uicontextmodel.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -42,11 +51,16 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     res.setDescription(descr);
     CatalogView cview(res);
     cview.filter(query);
-    return new CatalogModel(cview,0,this);
+    auto cm = new CatalogModel(this);
+    cm->setView(cview);
+    return cm;
 }
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
+    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
+    factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
+
     _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
                QUrl("ilwis://internalcatalog"),
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
@@ -62,10 +76,42 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
                TR("All operations available in Ilwis"),
                "type=" + QString::number(itOPERATIONMETADATA)));
 
+     scanBookmarks();
+}
+
+
+
+
+
+QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources)
+{
+    QList<std::pair<CatalogModel *, CatalogView>> models;
+    for(Resource resource : catalogResources){
+        CatalogView view(resource);
+        CatalogModel *cm = new CatalogModel(this);
+        models.push_back(std::pair<CatalogModel *, CatalogView>(cm, view));
+    }
+
+    QThread* thread = new QThread;
+    CatalogWorker* worker = new CatalogWorker(models);
+    worker->moveToThread(thread);
+    thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
+    thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
+    thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
+    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->connect(worker, &CatalogWorker::updateBookmarks, this, &MasterCatalogModel::updateBookmarks);
+    thread->start();
+
+    return models;
+}
+
+void MasterCatalogModel::scanBookmarks()
+{
     QString ids = ilwisconfig("users/user-0/available-catalog-ids",QString("0"));
     _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
     int count = 3;
+    std::vector<Resource> catalogResources;
     for(auto id : _bookmarkids){
         QString query = QString("users/user-0/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
@@ -80,14 +126,24 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
         res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
         res.addProperty("filter","");
         res.setDescription(descr);
-        CatalogView cview(res);
-        _bookmarks.push_back(new CatalogModel(cview,0,this));
-        if ( urlWorkingCatalog == location){
+
+        if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
+            CatalogView cview(res);
+            _bookmarks.push_back(new CatalogModel(this));
+            _bookmarks.back()->setView(cview);
             _selectedBookmarkIndex = count;
             _currentUrl = urlWorkingCatalog.toString();
+        }else{
+            catalogResources.push_back(res);
         }
         ++count;
     }
+    QList<std::pair<CatalogModel *, CatalogView>> models = startBackgroundScans(catalogResources);
+
+    for(auto iter = models.begin(); iter != models.end(); ++iter){
+        _bookmarks.push_back((*iter).first);
+    }
+
     if ( _currentUrl == ""){
         if ( _bookmarks.size() > 3){
             _selectedBookmarkIndex = 3;
@@ -97,13 +153,16 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
             _currentUrl = "file:///" + loc;
         }
     }
-
-
 }
 
 QQmlListProperty<CatalogModel> MasterCatalogModel::bookmarked()
 {
    return  QQmlListProperty<CatalogModel>(this, _bookmarks);
+}
+
+QQmlListProperty<WorkSpaceModel> MasterCatalogModel::workspaces()
+{
+    return QQmlListProperty<WorkSpaceModel>(this, _workspaces);
 }
 
 int MasterCatalogModel::activeTab() const
@@ -138,11 +197,27 @@ QString MasterCatalogModel::id2type(const QString &id) const
     }
     return "";
 }
+void MasterCatalogModel::longAction()
+{
+
+    QThread *thr = new QThread;
+
+    worker *w = new worker;
+
+    w->moveToThread(thr);
+    thr->connect(thr, &QThread::started, w, &worker::process);
+    thr->start();
+}
 
 std::vector<Resource> MasterCatalogModel::select(const QString &filter)
 {
     return mastercatalog()->select(filter);
 
+}
+
+void MasterCatalogModel::updateBookmarks()
+{
+    emit bookmarksChanged();
 }
 
 quint32 MasterCatalogModel::selectedBookmark(const QString& url)
@@ -176,17 +251,32 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath)
     if ( inpath == "" || inpath == sUNDEF)
         return 0;
 
+    CatalogView cview;
     QUrl location(inpath);
-    Resource res(location, itCATALOGVIEW ) ;
-    QStringList lst;
-    lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
-    res.addProperty("locations", lst);
-    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-    res.addProperty("filter","");
-    _currentUrl = inpath;
-    CatalogView cview(res);
-    auto model = new CatalogModel(cview,0, this);
-    return model;
+    if ( inpath.indexOf("ilwis://internalcatalog/workspaces") == 0){
+        for(auto workspace : _workspaces){
+            if ( workspace->url() == inpath){
+                cview = workspace->view();
+            }
+        }
+    }else {
+        Resource res(location, itCATALOGVIEW ) ;
+        QStringList lst;
+        lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
+        res.addProperty("locations", lst);
+        res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+        res.addProperty("filter","");
+        cview = CatalogView(res);
+
+    }
+    if ( cview.isValid()){
+        _currentUrl = inpath;
+        auto model = new CatalogModel(this);
+        model->setView(cview);
+        return model;
+
+    }
+    return 0;
 }
 
 QString MasterCatalogModel::getDrive(quint32 index){
@@ -238,6 +328,41 @@ void MasterCatalogModel::addBookmark(const QString& path){
     context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
 
 
+}
+
+void MasterCatalogModel::addWorkSpace(const QString &name)
+{
+    if ( name == "")
+        return;
+
+    for(auto cat : _bookmarks){
+        if ( cat->name() == name)
+            return;
+    }
+    WorkSpaceModel *wmodel = new WorkSpaceModel(name, this);
+    QString path = "ilwis://internalcatalog/workspaces/" + name;
+    Resource resource(path,itWORKSPACE);
+    CatalogView view(resource);
+    wmodel->setView(view);
+    _bookmarks.push_back(wmodel);
+    _workspaces.push_back(wmodel);
+    _currentWorkSpace = wmodel;
+
+    emit workspacesChanged();
+}
+
+void MasterCatalogModel::removeWorkSpace(const QString &name)
+{
+    //TODO
+}
+
+WorkSpaceModel *MasterCatalogModel::workspace(const QString &name)
+{
+    for(auto ws : _workspaces){
+        if ( ws->name() == name)
+            return ws;
+    }
+    return 0;
 }
 
 
@@ -339,7 +464,99 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
     _currentCatalog = cat;
 }
 
+WorkSpaceModel *MasterCatalogModel::currentWorkSpace() const
+{
+    return _currentWorkSpace;
+}
+
+void MasterCatalogModel::setCurrentWorkSpace(WorkSpaceModel *cws)
+{
+    _currentWorkSpace = cws;
+    emit currentWorkSpaceChanged();
+}
+
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
 
+}
+//--------------------
+CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
+{
+}
+
+CatalogWorker::~CatalogWorker(){
+}
+
+void CatalogWorker::process(){
+    try {
+        for(auto iter = _models.begin(); iter != _models.end(); ++iter){
+            (*iter).first->setView((*iter).second);
+            emit updateBookmarks();
+        }
+        if (!uicontext()->abort()){
+            calculatelatLonEnvelopes();
+            emit finished();
+        }
+    } catch(const ErrorObject& err){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
+}
+
+void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
+    try{
+        if ( !resource.hasProperty("latlonenvelope")){
+            ICoverage cov(resource);
+            if ( cov.isValid()){
+                if ( cov->coordinateSystem()->isLatLon()){
+                    QString envelope = cov->envelope().toString();
+                    resource.addProperty("latlonenvelope",envelope);
+                }else {
+                    Envelope env = cov->envelope();
+                    if ( env.isNull() || !env.isValid())
+                        return;
+                    Envelope llEnvelope = csyWgs84->convertEnvelope(cov->coordinateSystem(), env);
+                    if ( llEnvelope.isNull() || !llEnvelope.isValid())
+                        return;
+
+                    resource.addProperty("latlonenvelope",llEnvelope.toString());
+                }
+                updatedResources.push_back(resource);
+            }
+        }
+    } catch(const ErrorObject&){
+    } catch( std::exception& ){
+    }
+}
+
+void CatalogWorker::calculatelatLonEnvelopes(){
+    kernel()->issues()->silent(true);
+    QString query = QString("(type & %1) != 0").arg(QString::number(itCOVERAGE));
+    std::vector<Resource> resources =mastercatalog()->select(query);
+    UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
+    ICoordinateSystem csyWgs84("code=epsg:4326");
+    std::vector<Resource> updatedResources;
+    for(Resource& resource : resources){
+        calcLatLon(csyWgs84, resource, updatedResources);
+        if(!trq->update(1))
+            return;
+
+    }
+    kernel()->issues()->silent(false);
+    mastercatalog()->updateItems(updatedResources);
+
+}
+
+//---------------------
+void worker::process(){
+    Ilwis::UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("test operation","bbb", 10000);
+    for(int i = 0; i < 10000; ++i){
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            trq->update(100);
+    }
 }

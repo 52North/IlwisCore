@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import UIContextModel 1.0
 import "workbench" as WorkBench
 import "datapanel" as DataPanel
 import "controls" as Control
@@ -14,6 +15,10 @@ ApplicationWindow {
     width: 1400
     height : 1000
     color : "light grey"
+
+    onClosing: {
+        uicontext.exitUI()
+    }
 
     property int maxPull : 500
 

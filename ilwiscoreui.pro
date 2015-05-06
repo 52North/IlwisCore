@@ -60,7 +60,15 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/catalogmapitem.h \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.h \
     ilwiscoreui/drawers/rasterimage.h \
-    ilwiscoreui/drawers/rasterimagefactory.h
+    ilwiscoreui/drawers/rasterimagefactory.h \
+    ilwiscoreui/desktoptranquilizer.h \
+    ilwiscoreui/models/columnmodel.h \
+    ilwiscoreui/tableoperations/tableoperation.h \
+    ilwiscoreui/tableoperations/tableoperationfactory.h \
+    ilwiscoreui/tableoperations/sortcolumn.h \
+    ilwiscoreui/models/workspacemodel.h \
+    ilwiscoreui/models/graphmodel.h \
+    ilwiscoreui/models/chartmodel.h
 
 unix {
     target.path = /usr/lib
@@ -106,7 +114,15 @@ SOURCES += \
     ilwiscoreui/models/catalogmapitem.cpp \
     ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp \
     ilwiscoreui/drawers/rasterimage.cpp \
-    ilwiscoreui/drawers/rasterimagefactory.cpp
+    ilwiscoreui/drawers/rasterimagefactory.cpp \
+    ilwiscoreui/desktoptranquilizer.cpp \
+    ilwiscoreui/models/columnmodel.cpp \
+    ilwiscoreui/tableoperations/tableoperation.cpp \
+    ilwiscoreui/tableoperations/tableoperationfactory.cpp \
+    ilwiscoreui/tableoperations/sortcolumn.cpp \
+    ilwiscoreui/models/workspacemodel.cpp \
+    ilwiscoreui/models/graphmodel.cpp \
+    ilwiscoreui/models/chartmodel.cpp
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{

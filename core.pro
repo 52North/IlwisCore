@@ -128,7 +128,9 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/colorlookup.cpp \
     core/ilwisobjects/representation/continuouscolorlookup.cpp \
     core/ilwisobjects/representation/palettecolorlookup.cpp \
-    core/ilwisobjects/workflow/workflow.cpp
+    core/ilwisobjects/workflow/workflow.cpp \
+    core/util/tranquilizerfactory.cpp \
+    core/util/consoletranquilizer.cpp
 
 
 HEADERS += core/kernel.h\
@@ -274,7 +276,9 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/continuouscolorlookup.h \
     core/ilwisobjects/representation/palettecolorlookup.h \
     core/kernel_global.h \
-    core/ilwisobjects/workflow/workflow.h
+    core/ilwisobjects/workflow/workflow.h \
+    core/util/tranquilizerfactory.h \
+    core/util/consoletranquilizer.h
 
 
 OTHER_FILES += \

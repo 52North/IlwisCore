@@ -11,40 +11,38 @@
 #include "catalogview.h"
 #include "resourcemodel.h"
 #include "catalogmodel.h"
+#include "tranquilizer.h"
 #include "layermanager.h"
+#include "ilwiscontext.h"
 
 
 using namespace Ilwis;
 //using namespace Desktopclient;
-
-CatalogModel::CatalogModel()
-{
-    //_hasChilderen = false;
-    _initNode = false;
-    _level = 0;
-    _isScanned = false;
-}
 
 CatalogModel::~CatalogModel()
 {
 
 }
 
-CatalogModel::CatalogModel(const CatalogView &view, int lvl, QObject *parent) : ResourceModel(view.resource(), parent)
+CatalogModel::CatalogModel(QObject *parent) : ResourceModel(Resource(), parent)
 {
     _initNode = true;
-    _level = lvl;
-    _isScanned = true;
-    newview(view);
-
+    _isScanned = false;
+    _level = 0;
 }
 
-void CatalogModel::newview(const CatalogView &view){
+void CatalogModel::setView(const CatalogView &view){
     _view = view;
+    resource(view.resource());
     mastercatalog()->addContainer(view.resource().url());
     _displayName = view.resource().name();
     if ( _displayName == sUNDEF)
         _displayName = view.resource().url().toString();
+}
+
+CatalogView CatalogModel::view() const
+{
+    return _view;
 }
 
 bool CatalogModel::isScanned() const
@@ -124,20 +122,44 @@ void CatalogModel::refresh(bool yesno)
 void CatalogModel::setSelectedObjects(const QString &objects)
 {
     try {
-    QStringList parts = objects.split("|");
-    _selectedObjects.clear();
-    for(auto objectid : parts){
-        Resource resource = mastercatalog()->id2Resource(objectid.toULongLong());
-        IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-        if ( ioModel->isValid()){
-            _selectedObjects.append(ioModel);
-            emit selectionChanged();
-        }else
-            delete ioModel;
+        if ( objects == ""){
+            _selectedObjects.clear();
+            return;
+        }
+        QStringList parts = objects.split("|");
+        _selectedObjects.clear();
+        kernel()->issues()->silent(true);
+        for(auto objectid : parts){
+            bool ok;
+            Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
+            if (!ok)
+                continue;
+
+            IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
+            if ( ioModel->isValid()){
+                _selectedObjects.append(ioModel);
+                emit selectionChanged();
+            }else
+                delete ioModel;
+        }
+        kernel()->issues()->silent(false);
+    }catch(const ErrorObject& ){
+    }catch (std::exception& ex){
+        Ilwis::kernel()->issues()->log(ex.what());
     }
-    }catch(const ErrorObject& err){
+    kernel()->issues()->silent(false);
+}
+
+QString CatalogModel::selectedIds() const
+{
+    QString selected;
+    for(auto obj : _selectedObjects ){
+        if ( selected != "")
+            selected += "|";
+        selected += obj->id();
 
     }
+    return selected;
 }
 
 void CatalogModel::nameFilter(const QString &filter)
@@ -195,7 +217,7 @@ void CatalogModel::gatherItems() {
                         continue;
                 }
             }
-            _currentItems.push_back(new ResourceModel(resource));
+            _currentItems.push_back(new ResourceModel(resource, this));
 
         }
     }

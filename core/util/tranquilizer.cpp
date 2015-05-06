@@ -1,48 +1,126 @@
+#include <QThread>
+#include <QCoreApplication>
 #include "kernel.h"
+#include "errorobject.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
 #include "tranquilizer.h"
 
 using namespace Ilwis;
 
-quint64 Tranquilizer::_trqId = 0;
+quint64 BaseTranquilizer::_trqId = 0;
 
-Tranquilizer::Tranquilizer(QObject *parent) :
-    QObject(parent)
+BaseTranquilizer::BaseTranquilizer(const IOOptions &,QObject *parent) : Tranquilizer(parent),
+ _id(i64UNDEF),_start(0),_end(0), _current(0)
 {
 
 }
 
-Tranquilizer::Tranquilizer(const QString& title, const QString& description, double end) :  QObject(0),
-    _title(title), _desc(description), _end(end)
+BaseTranquilizer::~BaseTranquilizer()
 {
-    _id = _trqId++;
 }
 
-void Tranquilizer::prepare(const QString &title, const QString &description, double end)
+void BaseTranquilizer::prepare(const QString &title, const QString &description, double end, double start)
 {
     _title = title;
     _desc = description;
     _end = end;
-    kernel()->connect(this, &Tranquilizer::updateTranquilizer, kernel(), &Kernel::changeTranquilizer,Qt::DirectConnection);
-    kernel()->newTranquilizer(_id, title, description, _end);
-
+    _start = start;
+    _current = _start;
+    _id = _trqId++;
 }
 
-void Tranquilizer::end(double number)
+void BaseTranquilizer::stopTranquilizer()
+{
+    if ( QThread::currentThread() != QCoreApplication::instance()->thread()){
+
+    }
+}
+
+void BaseTranquilizer::end(double number)
 {
     _end = number;
 }
 
-double Tranquilizer::end() const
+double BaseTranquilizer::end() const
 {
     return _end;
 }
 
-double Tranquilizer::current() const
+double BaseTranquilizer::current() const
 {
     return _current;
 }
 
-void Tranquilizer::current(double cur)
+void BaseTranquilizer::current(double cur)
 {
     _current = cur;
+}
+
+//-------------------------------------------------------------
+TranquilizerWorker::TranquilizerWorker()
+{
+
+}
+
+void TranquilizerWorker::updateTranquilizer(quint64 id, double amount)
+{
+    emit sendUpdateTranquilizer(id, amount);
+}
+
+void TranquilizerWorker::createTranquilizer(quint64 id, const QString &title, const QString &description, double start, double end)
+{
+    emit sendCreateTranquilizer(id, title, description, start, end);
+}
+
+void TranquilizerWorker::removeTranquilizer(quint64 id)
+{
+    emit sendRemoveTranquilizer(id);
+}
+
+//-------------------------------------
+Tranquilizer::Tranquilizer(QObject *parent) : QObject(parent)
+{
+
+}
+
+Tranquilizer::~Tranquilizer()
+{
+
+}
+
+Tranquilizer *Tranquilizer::create(int mode, const IOOptions& options)
+{
+    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
+    if (!factory){
+        return 0;
+    }
+    return factory->create<>(mode, options);
+}
+
+//------------------------------------------------------
+EmptyTranquilizer::EmptyTranquilizer(const IOOptions &opt, QObject *parent) : BaseTranquilizer(opt, parent)
+{
+
+}
+
+void EmptyTranquilizer::prepare(const QString &title, const QString &description, double end, double start)
+{
+    BaseTranquilizer::prepare(title, description, end, start);
+}
+
+bool EmptyTranquilizer::update(double )
+{
+    return true;
+}
+
+void EmptyTranquilizer::stop()
+{
+
+}
+
+Tranquilizer *EmptyTranquilizer::create(const IOOptions &opt)
+{
+    return new EmptyTranquilizer(opt,0);
 }

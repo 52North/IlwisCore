@@ -18,14 +18,16 @@ class ILWISCOREUISHARED_EXPORT TranquilizerModel : public QObject{
     Q_PROPERTY(QString title READ title CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
     Q_PROPERTY(double endValue READ endValue CONSTANT)
-    Q_PROPERTY(double currentValue READ currentValue CONSTANT)
-    Q_PROPERTY(double currentValueP READ currentValueP CONSTANT)
+    Q_PROPERTY(double startValue READ startValue CONSTANT)
+    Q_PROPERTY(double currentValue READ currentValue NOTIFY currentValueChanged)
+    Q_PROPERTY(double currentValueP READ currentValueP NOTIFY currentValueChanged)
 
 public:
     TranquilizerModel();
-    TranquilizerModel(quint64 id, const QString& title, const QString& description, double endval, QObject *obj);
+    TranquilizerModel(quint64 id, const QString& title, const QString& description, double start, double endval, QObject *obj);
     QString title() const;
     QString description() const;
+    double startValue() const;
     double endValue() const;
     double currentValue() const;
     void currentValue(double v);
@@ -39,6 +41,9 @@ private:
     double _beginValue = 0;
     double _endValue;
     double _currentValue;
+
+signals:
+    void currentValueChanged();
 };
 
 typedef QQmlListProperty<TranquilizerModel> TranquilizerList;
@@ -47,6 +52,7 @@ class ILWISCOREUISHARED_EXPORT TranquilizerHandler : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(TranquilizerList tranquilizers READ tranquilizers NOTIFY tranquilizersChanged)
+    Q_PROPERTY(int aggregateValue READ aggregateValue NOTIFY aggregateValueChanged)
 public:
     explicit TranquilizerHandler(QObject *parent = 0);
 
@@ -55,17 +61,18 @@ public:
 
 signals:
     void updateTranquilizerUI(quint64 id, double amount);
-    void createTranquilizerUI(quint64 id,const QString &title, const QString &description, double end);
+    void createTranquilizerUI(quint64 id,const QString &title, const QString &description, double start,double end);
     void removeTranquilizerUI(quint64 id);
     void tranquilizersChanged();
+    void aggregateValueChanged();
 
 public slots:
     void updateTranquilizer(quint64 id, double amount);
-    void createTranquilizer(quint64 id, const QString &title, const QString &description, double end);
+    void createTranquilizer(quint64 id, const QString &title, const QString &description, double start,double end);
     void removeTranquilizer(quint64 id);
 
 private:
-
+    int aggregateValue() const;
     QList<TranquilizerModel *> _tranquilizers;
 
 };

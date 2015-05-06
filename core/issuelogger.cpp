@@ -144,6 +144,7 @@ IssueLogger::~IssueLogger()
 
 quint64 IssueLogger::log(const QString &message, int it)
 {
+    Locker<std::recursive_mutex> lock(_guard);
     ++_repeatCount;
     std::thread::id id = std::this_thread::get_id();
     if ( _silentThreads.find(id)!= _silentThreads.end() && it != IssueObject::itCritical){
@@ -185,6 +186,7 @@ quint64 IssueLogger::log(const QString &message, int it)
 
 quint64 IssueLogger::log(const QString& objectName, const QString &message, int it)
 {
+    Locker<std::recursive_mutex> lock(_guard);
     QString newmessage = objectName + ":" + message;
     return log(newmessage, it);
 }
@@ -205,6 +207,7 @@ void IssueLogger::addCodeInfo(quint64 issueid, int line, const QString &func, co
 
 bool IssueLogger::silent() const
 {
+    Locker<std::recursive_mutex> lock(_guard);
     std::thread::id id = std::this_thread::get_id();
     auto iter = _silentThreads.find(id);
     if ( iter != _silentThreads.end())
@@ -225,6 +228,7 @@ void IssueLogger::silent(bool yesno)
 
 quint64 IssueLogger::logSql(const QSqlError &err)
 {
+   Locker<std::recursive_mutex> lock(_guard);
    return log(err.text(), IssueObject::itError);
 }
 
@@ -253,6 +257,7 @@ void IssueLogger::copy(QList<IssueObject> &other)
 }
 
 QString IssueLogger::popfirst(int tp) {
+    Locker<std::recursive_mutex> lock(_guard);
     if ( tp != IssueObject::itAll){
         for(auto iter= --_issues.end(); iter != _issues.begin(); --iter ){
             if (hasType((*iter).type(), tp)){
@@ -268,6 +273,8 @@ QString IssueLogger::popfirst(int tp) {
 }
 
 QString IssueLogger::poplast(int tp) {
+    Locker<std::recursive_mutex> lock(_guard);
+
     if ( tp != IssueObject::itAll){
         for(auto iter= _issues.begin(); iter != _issues.end(); ++iter ){
             if (hasType((*iter).type(), tp)){
@@ -283,6 +290,7 @@ QString IssueLogger::poplast(int tp) {
 }
 
 void IssueLogger::clear() {
+     Locker<std::recursive_mutex> lock(_guard);
     _issues.clear();
 }
 

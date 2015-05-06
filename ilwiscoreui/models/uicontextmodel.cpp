@@ -1,3 +1,4 @@
+#include <QThread>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "datadefinition.h"
@@ -6,6 +7,11 @@
 #include "geometries.h"
 #include "georeference.h"
 #include "uicontextmodel.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tableoperations/tableoperation.h"
+#include "tableoperations/sortcolumn.h"
+#include "tableoperations/tableoperationfactory.h"
 #include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -14,7 +20,7 @@ std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
-
+    _abort.store(false);
 
 }
 
@@ -41,6 +47,14 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url,
 QString UIContextModel::uniqueName()
 {
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
+}
+
+void UIContextModel::exitUI()
+{
+    _abort.store(true);
+    if ( _threadCount > 0) {  // wait until the threads have aborted
+        std::this_thread::sleep_for (std::chrono::seconds(3));
+    }
 }
 
 QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
@@ -157,6 +171,26 @@ void UIContextModel::prepare()
             _colorNames.push_back(txt);
         }
     }
+    Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
+    factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
+    Ilwis::kernel()->addFactory(factory);
+
+}
+
+bool UIContextModel::abort() const
+{
+    return _abort;
+}
+
+void UIContextModel::updateThreadCount(int change)
+{
+    Ilwis::Locker<std::mutex> lock(_lock);
+    _threadCount += change;
+}
+
+int UIContextModel::threadCount() const
+{
+    return _threadCount;
 }
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)

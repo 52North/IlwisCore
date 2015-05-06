@@ -80,7 +80,7 @@ QString ProjectionImplementation::toWKT(quint32 spaces)
     QString indent = QString(" ").repeated(spaces);
     QString ending = spaces == 0 ? "" : "\n";
 
-    bool isUTM = _coordinateSystem->projection()->code() == "utm";
+    bool isUTM = (_coordinateSystem != 0) ? _coordinateSystem->projection()->code() == "utm" : false;
     for(auto parm : _parameters){
         if ( parm.second._isSet){
             if ( parm.first == Projection::pvZONE){

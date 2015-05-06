@@ -103,8 +103,10 @@ QString AttributeModel::attributeValueType() const
 
 QString AttributeModel::attributeDomainType() const
 {
+    if ( !_coldefinition.isValid())
+        return "";
     quint64 tp = _coldefinition.datadef().domain()->ilwisType();
-    return Ilwis::IlwisObject::type2Name(tp);
+    return Ilwis::TypeHelper::type2HumanReadable(tp);
 }
 
 QStringList AttributeModel::attributeValues(bool defaultRange) const
@@ -131,4 +133,20 @@ void AttributeModel::setObject(const Ilwis::IIlwisObject &obj)
     _owner = obj;
 }
 
+QString AttributeModel::icon()
+{
+    if ( !_coldefinition.isValid())
+        return "";
+    IlwisTypes tp = _coldefinition.datadef().domain()->valueType();
+    if ( hasType(tp,itNUMBER)){
+        return "valuedom20.png";
+    }
+    if ( hasType(itDOMAINITEM, tp)){
+        return "itemdom20.png";
+    }
+    if ( hasType(itSTRING, tp)){
+        return "textdom20.png";
+    }
+    return "";
 
+}

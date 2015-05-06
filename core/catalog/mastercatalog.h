@@ -52,6 +52,7 @@ public:
      * @return true when succesful
      */
     bool addItems(const std::vector<Ilwis::Resource> &items);
+    bool updateItems(const std::vector<Resource> &items);
 
 
     /**
@@ -195,6 +196,7 @@ private:
     std::set<QUrl> _catalogs;
     std::set<uint> _knownHashes;
     std::set<QString> _containerExceptions; // for some schemes the mastercatelog shouldnt try to find containers as they dont make sense;
+    mutable std::recursive_mutex _guard;
 };
 
 //typedef QHash<IlwisResource, QList<CatalogCreate>  > CatalogCollection;

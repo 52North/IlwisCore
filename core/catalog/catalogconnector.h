@@ -69,6 +69,8 @@ protected:
 
 private:
     std::vector<UPCatalogExplorer> _dataProviders;
+    bool loadDataThreaded(IlwisObject *obj, const IOOptions &options);
+    bool loadDataSingleThread(IlwisObject *obj, const IOOptions &options);
 };
 
 }
