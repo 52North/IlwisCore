@@ -4,9 +4,13 @@
 #include <cmath>
 #include <vector>
 #include "kernel.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "ilwiscontext.h"
 #include "rasterinterpolator.h"
 #include "Eigen/LU"
 #include "Eigen/Dense"
@@ -248,19 +252,11 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
     std::vector<double> slice(_nb);
     std::vector<double> fitted(_nb);
     // timeseries are assumed to be 10 day periods.
+    Tranquilizer *trq = TranquilizerFactory::create(context()->runMode(), IOOptions() );
+    trq->prepare("Timesat", "Filter timeseries", rows * cols);
     int pixCount = 0;
-    int pixPerc = 0;
-    int pixStep = std::max(1, rows * cols / 30);
     while (iterIn != inEnd) {
-        // pixPerc can grow > 100 for small pixel counts, don't output anything in that case
-        if ((pixCount % pixStep == 0) && (pixPerc < 30)) {
-            if (pixPerc % 3 == 0)
-                std::cerr << pixPerc * 10 / 3;
-            else
-                std::cerr << ".";
-            pixPerc++;
-        }
-        pixCount++;
+        trq->update(pixCount++);
 
         std::copy(iterIn, iterIn + _nb, slice.begin());
         std::vector<bool> valid(_nb);
@@ -287,8 +283,8 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
         iterIn += _nb;
         iterOut += _nb;
     }
-    std::cerr << "100" << std::endl;
-    std::cerr << "Writing..." << std::endl;
+    trq->update(rows * cols);
+    trq->inform("Writing..." + std::endl);
 
     bool resource = true;
     if ( resource && ctx != 0) {
