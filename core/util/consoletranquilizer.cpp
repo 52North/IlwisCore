@@ -1,5 +1,6 @@
 #include <QThread>
 #include <QCoreApplication>
+#include <iostream>
 #include "kernel.h"
 #include "errorobject.h"
 #include "factory.h"
@@ -22,21 +23,45 @@ ConsoleTranquilizer::ConsoleTranquilizer(const IOOptions &opt, QObject *parent) 
 void ConsoleTranquilizer::prepare(const QString &title, const QString &description, double end, double start)
 {
     BaseTranquilizer::prepare(title, description, end, start);
+
+    _inc = (end - start) / 30;
+    _next = 0.0;
+    _count = 0;
 }
 
-bool ConsoleTranquilizer::update(double step)
+bool ConsoleTranquilizer::update(double howfar)
 {
+    _current = howfar;
+    if (_current >= _next) {
+        if (_count % 3 == 0)
+            std::cerr << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10
+        else
+            std::cerr << ".";
+        _count++;
+        _next += _inc;
+    }
+    return true;
+}
+
+bool ConsoleTranquilizer::inform(QString msg)
+{
+    std::cerr << msg.toStdString();
     return true;
 }
 
 void ConsoleTranquilizer::stop()
 {
-
+    _inc = 0.0;
+    _next = 0.0;
+    _count = 0;
+    _start = 0.0;
+    _end = 0.0;
+    std::cerr << std::endl;
 }
 
 Tranquilizer *ConsoleTranquilizer::create(const IOOptions &opt)
 {
-    return new ConsoleTranquilizer(opt,0);
+    return new ConsoleTranquilizer(opt, 0);
 }
 
 

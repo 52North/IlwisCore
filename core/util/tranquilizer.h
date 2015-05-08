@@ -36,6 +36,7 @@ public:
     virtual void prepare(const QString &title, const QString &description, double end, double start=0) = 0;
 
     virtual bool update(double step) = 0;
+    virtual bool inform(QString msg) { return true; }
     virtual void stop() = 0;
 
     static Tranquilizer *create(int mode, const Ilwis::IOOptions &options = IOOptions());
