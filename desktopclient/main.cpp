@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         mastercatalogmodel.connect(&workflows, &WorkflowCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
+        operations.connect(uicontext().get(),&UIContextModel::currentWorkSpaceChanged, &operations, &OperationCatalogModel::workSpaceChanged);
         messageHandler.connect(kernel()->issues().data(), &IssueLogger::updateIssues,&messageHandler, &UserMessageHandler::addMessage );
 
 
