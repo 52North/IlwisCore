@@ -51,6 +51,7 @@ public:
     std::vector<Resource> items() const;
     void addFixedItem(quint64 id);
     void removeFixedItem(quint64 id);
+    quint32 fixedItemCount() const;
     QString filter() const;
     void filter(const QString& filter);
     Resource resource() const;
