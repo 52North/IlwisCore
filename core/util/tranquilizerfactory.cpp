@@ -28,6 +28,7 @@ bool TranquilizerFactory::prepare()
 {
     registerTranquilizerType(rmEMPTY, EmptyTranquilizer::create);
     registerTranquilizerType(rmCOMMANDLINE,ConsoleTranquilizer::create);
+    registerTranquilizerType(rmCOMMANDLINE | rmNOUI,ConsoleTranquilizer::create);
 
     return true;
 }

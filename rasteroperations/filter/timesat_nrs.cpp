@@ -54,6 +54,10 @@ Ilwis::OperationImplementation::State Timesat::prepare(ExecutionContext *, const
     _lastIterationLikeTIMESATfit = _expression.parm(3).value().endsWith("true", Qt::CaseInsensitive);
     _extendWindow = _expression.parm(4).value().endsWith("true", Qt::CaseInsensitive);
 
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
+    // initialize tranquilizer
+    initialize(inputRaster->size().xsize() * inputRaster->size().ysize());
+
     return sPREPARED;
 }
 
@@ -252,11 +256,9 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
     std::vector<double> slice(_nb);
     std::vector<double> fitted(_nb);
     // timeseries are assumed to be 10 day periods.
-    Tranquilizer *trq = TranquilizerFactory::create(context()->runMode(), IOOptions() );
-    trq->prepare("Timesat", "Filter timeseries", rows * cols);
     int pixCount = 0;
     while (iterIn != inEnd) {
-        trq->update(pixCount++);
+        trq()->update(pixCount++);
 
         std::copy(iterIn, iterIn + _nb, slice.begin());
         std::vector<bool> valid(_nb);
@@ -283,8 +285,9 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
         iterIn += _nb;
         iterOut += _nb;
     }
-    trq->update(rows * cols);
-    trq->inform("Writing..." + std::endl);
+    trq()->update(rows * cols);
+    trq()->inform("\nWriting...\n");
+    trq()->stop();
 
     bool resource = true;
     if ( resource && ctx != 0) {
@@ -299,11 +302,11 @@ quint64 Timesat::createMetadata()
 {
     OperationResource operation({"ilwis://operations/timesat"});
     operation.setLongName("Timesat filtering");
-    operation.setSyntax("timesat(inputgridcoverage,windowlist,upperenvelop,fitlastiteration,extendwindow");
+    operation.setSyntax("timesat(inputgridcoverage,iterationcount,upperenvelop,fitlastiteration,extendwindow");
     operation.setDescription(TR("iteratively filters a rastercoverage with a Savitzky-Golay moving filter"));
     operation.setInParameterCount({5});
-    operation.addInParameter(0,itRASTER, TR("Input rastercoverage"),TR("input rastercoverage with value domain"));
-    operation.addInParameter(1,itSTRING, TR("Target windowlist"),TR("a list of sizes for the moving window"));
+    operation.addInParameter(0,itRASTER, TR("Input rastercoverage"),TR("Input rastercoverage with value domain"));
+    operation.addInParameter(1,itSTRING, TR("Iteration count"),TR("Number of iterations with increasing moving window size"));
     operation.addInParameter(2,itBOOL, TR("Upper envelop"),TR("Force to original value when fitted value is lower") );
     operation.addInParameter(3,itBOOL, TR("Fit last iteration"),TR("Force upper envelop except last") );
     operation.addInParameter(4,itBOOL, TR("Extend moving window"),TR("Add values around the data to handle edge values") );

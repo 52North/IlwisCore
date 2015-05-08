@@ -15,6 +15,10 @@ ConsoleTranquilizer::~ConsoleTranquilizer()
 
 }
 
+// This tranquilizer will generate a progress indicator in a terminal window
+// When fully processed it will write:
+// 0..10..20..30..40..50..60..70..80..90..100
+// The output is streamed to the stderr channel
 ConsoleTranquilizer::ConsoleTranquilizer(const IOOptions &opt, QObject *parent) : BaseTranquilizer(opt, parent)
 {
 
