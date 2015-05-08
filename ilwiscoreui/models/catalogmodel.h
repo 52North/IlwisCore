@@ -28,6 +28,7 @@ public:
 
     ~CatalogModel();
     explicit CatalogModel(QObject *parent = 0);
+    CatalogModel(const Ilwis::Resource& res, QObject *parent);
     bool isScanned() const;
     bool initNode() const;
     int level() const;

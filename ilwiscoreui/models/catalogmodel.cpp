@@ -31,6 +31,21 @@ CatalogModel::CatalogModel(QObject *parent) : ResourceModel(Resource(), parent)
     _level = 0;
 }
 
+CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel(res,parent)
+{
+    _initNode = true;
+    _isScanned = false;
+    _level = 0;
+    if ( res.url().toString() == Catalog::DEFAULT_WORKSPACE){
+        _view = CatalogView(context()->workingCatalog()->source());
+        _view.addLocation(_view.resource().url());
+        _view.name("default");
+        setDisplayName("default");
+    }else
+        _view = CatalogView(res);
+    _displayName = _view.name();
+}
+
 void CatalogModel::setView(const CatalogView &view){
     _view = view;
     resource(view.resource());
