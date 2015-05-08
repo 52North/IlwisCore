@@ -76,12 +76,53 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
                TR("All operations available in Ilwis"),
                "type=" + QString::number(itOPERATIONMETADATA)));
 
+     _workspaces.push_back(new WorkSpaceModel("default", this));
+     QString availableWorkspaces = Ilwis::ilwisconfig("users/" + Ilwis::context()->currentUser() + "/workspaces",QString(""));
+     if ( availableWorkspaces != ""){
+         loadWorkSpaces(availableWorkspaces);
+     }
+     uicontext()->setCurrentWorkSpace(_workspaces.back());
+
      scanBookmarks();
 }
 
+void MasterCatalogModel::loadWorkSpaces(const QString workspaceList){
+    QStringList parts = workspaceList.split("|");
+    for(const QString& workspaceName : parts){
+        QString basekey = "users/" + Ilwis::context()->currentUser() + "/workspace-" + workspaceName;
+        addWorkSpace(workspaceName);
+        WorkSpaceModel *wmodel = _workspaces.back();
+        int operationCount = Ilwis::ilwisconfig(basekey + "/operation-count",0);
+        int dataCount = Ilwis::ilwisconfig(basekey + "/data-count",0);
+        QString ids;
+        for(int i = 0; i < operationCount; ++i){
+            QString key = basekey + "/url-operation-" + QString::number(i);
+            QString name = Ilwis::ilwisconfig(key,QString(""));
+            if ( name != sUNDEF){
+                quint64 id = Ilwis::mastercatalog()->name2id(name,itOPERATIONMETADATA);
+                if ( id == i64UNDEF)
+                    continue;
+                if ( ids != "")
+                    ids += "|";
+                ids += QString::number(id);
+            }
 
-
-
+        }
+        for(int i = 0; i < dataCount; ++i){
+            QString key = basekey + "/url-data-" + QString::number(i);
+            QString name = Ilwis::ilwisconfig(key,QString(""));
+            if ( name != sUNDEF){
+                quint64 id = Ilwis::mastercatalog()->name2id(name,itILWISOBJECT);
+                if ( id == i64UNDEF)
+                    continue;
+                if ( ids != "")
+                    ids += "|";
+                ids += QString::number(id);
+            }
+        }
+        wmodel->addItems(ids);
+    }
+}
 
 QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources)
 {
@@ -107,13 +148,13 @@ QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startB
 
 void MasterCatalogModel::scanBookmarks()
 {
-    QString ids = ilwisconfig("users/user-0/available-catalog-ids",QString("0"));
+    QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString("0"));
     _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
     int count = 3;
     std::vector<Resource> catalogResources;
     for(auto id : _bookmarkids){
-        QString query = QString("users/user-0/data-catalog-%1").arg(id);
+        QString query = QString("users/" + Ilwis::context()->currentUser() + "/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
         QUrl location(ilwisconfig(query + "/url-0", QString("")));
         QString descr = ilwisconfig(query + "/description", QString(""));
@@ -273,6 +314,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath)
         _currentUrl = inpath;
         auto model = new CatalogModel(this);
         model->setView(cview);
+        emit currentCatalogChanged();
         return model;
 
     }
@@ -317,7 +359,7 @@ void MasterCatalogModel::addBookmark(const QString& path){
     _bookmarkids.push_back(newid);
     _currentUrl = path;
 
-    QString basekey = "users/user-0/data-catalog-" + newid;
+    QString basekey = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + newid;
 
     context()->configurationRef().addValue(basekey + "/url-0", path);
     context()->configurationRef().addValue(basekey + "/nr-of-urls", "1");
@@ -325,18 +367,18 @@ void MasterCatalogModel::addBookmark(const QString& path){
     QString label = path.mid(index + 1);
     context()->configurationRef().addValue(basekey + "/label", label);
     QString availableid = _bookmarkids.join("|");
-    context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
+    context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids", availableid);
 
 
 }
 
 void MasterCatalogModel::addWorkSpace(const QString &name)
 {
-    if ( name == "")
+    if ( name == "" || name.toLower() == "default")
         return;
 
-    for(auto cat : _bookmarks){
-        if ( cat->name() == name)
+    for(auto ws : _workspaces){
+        if ( ws->name() == name)
             return;
     }
     WorkSpaceModel *wmodel = new WorkSpaceModel(name, this);
@@ -344,10 +386,8 @@ void MasterCatalogModel::addWorkSpace(const QString &name)
     Resource resource(path,itWORKSPACE);
     CatalogView view(resource);
     wmodel->setView(view);
-    _bookmarks.push_back(wmodel);
     _workspaces.push_back(wmodel);
-    _currentWorkSpace = wmodel;
-
+    uicontext()->setCurrentWorkSpace(wmodel);
     emit workspacesChanged();
 }
 
@@ -369,14 +409,14 @@ WorkSpaceModel *MasterCatalogModel::workspace(const QString &name)
 void MasterCatalogModel::deleteBookmark(quint32 index){
     if ( index < _bookmarks.size() && index > 1)  { // can not delete internal and system catalog
         _bookmarks.erase(_bookmarks.begin() + index);
-        QString key = "users/user-0/data-catalog-" + _bookmarkids[index - 2];
+        QString key = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + _bookmarkids[index - 2];
         context()->configurationRef().eraseChildren(key);
         _bookmarkids.erase(_bookmarkids.begin() + index - 2);
         if ( _bookmarkids.size() > 0)
             _selectedBookmarkIndex = 2;
 
         QString availableid = _bookmarkids.join("|");
-        context()->configurationRef().addValue("users/user-0/available-catalog-ids", availableid);
+        context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids", availableid);
     }
 }
 
@@ -461,19 +501,35 @@ CatalogModel *MasterCatalogModel::currentCatalog() const
 
 void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
 {
-    _currentCatalog = cat;
+    if ( cat->url() == Catalog::DEFAULT_WORKSPACE){
+        _currentCatalog = new CatalogModel(Ilwis::Resource(context()->workingCatalog()->source().url().toString(), itCATALOG), this);
+    } else
+        _currentCatalog = cat;
 }
 
-WorkSpaceModel *MasterCatalogModel::currentWorkSpace() const
+
+
+WorkSpaceModel *MasterCatalogModel::workspace(quint64 id)
 {
-    return _currentWorkSpace;
+    for(auto workspace : _workspaces){
+        if ( workspace->id().toULongLong() == id)
+            return workspace;
+    }
+    return 0;
 }
 
-void MasterCatalogModel::setCurrentWorkSpace(WorkSpaceModel *cws)
+quint32 MasterCatalogModel::workspaceIndex(const QString &name)
 {
-    _currentWorkSpace = cws;
-    emit currentWorkSpaceChanged();
+    quint32 index = 0;
+    for(auto workspace : _workspaces){
+        if ( name == workspace->name())
+            return index;
+        ++index;
+    }
+    return iUNDEF;
 }
+
+
 
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
