@@ -11,6 +11,7 @@
 #include "ilwiscoreui_global.h"
 #include "layermanager.h"
 #include "tablemodel.h"
+#include "workspacemodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
 using namespace Ilwis;
@@ -31,6 +32,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(int currentKey READ currentKey CONSTANT)
     Q_PROPERTY(QStringList colorNames READ colorNames CONSTANT)
+    Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
 
 public:
     explicit UIContextModel(QObject *parent = 0);
@@ -60,9 +62,12 @@ public:
     bool abort() const;
     void updateThreadCount(int change);
     int threadCount() const;
+    WorkSpaceModel *currentWorkSpace() const;
+    void setCurrentWorkSpace(WorkSpaceModel* cws);
 
 signals:
     void activeSplitChanged();
+    void currentWorkSpaceChanged();
 
 
 public slots:
@@ -75,11 +80,12 @@ private:
     std::map<QString, CreatePropertyEditor> _propertyEditors;
     std::map<quint64, LayersViewCommandInterface *> _viewers;
     static quint64 _objectCounter;
-    QQmlContext *_qmlcontext;
+    QQmlContext *_qmlcontext = 0;
     QObject *_rootObject = 0;
     int _activeSplit = 1;
     int _currentKey = 0;
     QStringList _colorNames;
+    WorkSpaceModel *_currentWorkSpace = 0;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

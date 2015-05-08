@@ -27,7 +27,7 @@ class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
     Q_PROPERTY(CatalogModel* currentCatalog READ currentCatalog WRITE setCurrentCatalog NOTIFY currentCatalogChanged)
-    Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
+
 
 
 public:
@@ -42,9 +42,8 @@ public:
     void setCurrentUrl(const QString& url);
     CatalogModel *currentCatalog() const;
     void setCurrentCatalog(CatalogModel * cat);
-    WorkSpaceModel *currentWorkSpace() const;
-    void setCurrentWorkSpace(WorkSpaceModel* cws);
-
+    WorkSpaceModel *workspace(quint64 id);
+    quint32 workspaceIndex(const QString& name);
 
     Q_INVOKABLE quint32 selectedBookmark(const QString &url);
     Q_INVOKABLE  CatalogModel *newCatalog(const QString& inpath);
@@ -85,11 +84,11 @@ private:
     int _activeTab = 0;
     QString _currentUrl;
     CatalogModel *_currentCatalog = 0;
-    WorkSpaceModel *_currentWorkSpace = 0;
 
     
     CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query);
 
+    void loadWorkSpaces(const QString workspaceList);
 signals:
     void selectionChanged();
     void activeSplitChanged();
@@ -97,7 +96,6 @@ signals:
     void currentCatalogChanged();
     void bookmarksChanged();
     void workspacesChanged();
-    void currentWorkSpaceChanged();
 };
 
 class worker : public QObject{

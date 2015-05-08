@@ -9,6 +9,7 @@
 #include "uicontextmodel.h"
 #include "factory.h"
 #include "abstractfactory.h"
+#include "mastercatalogmodel.h"
 #include "tableoperations/tableoperation.h"
 #include "tableoperations/sortcolumn.h"
 #include "tableoperations/tableoperationfactory.h"
@@ -200,6 +201,33 @@ int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropert
     return 0;
 }
 
+WorkSpaceModel *UIContextModel::currentWorkSpace() const
+{
+    return _currentWorkSpace;
+}
+
+void UIContextModel::setCurrentWorkSpace(WorkSpaceModel *cws)
+{
+    if ( !_qmlcontext)
+        return;
+    if ( _currentWorkSpace && _currentWorkSpace->name() == cws->name())
+        return;
+    _currentWorkSpace = cws;
+    QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
+        if (mcmodel){
+            quint32 index = mcmodel->workspaceIndex(cws->name());
+            if ( index != iUNDEF){
+                QObject *wscombo = rootObject()->findChild<QObject*>("workspace_combobox_mainui");
+                if ( wscombo){
+                    wscombo->setProperty("currentIndex",index);
+                }
+                emit currentWorkSpaceChanged();
+            }
+        }
+    }
+}
 
 
 

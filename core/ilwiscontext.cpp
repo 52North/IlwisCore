@@ -33,6 +33,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
 {
     //TODO relocate directories through configuration
     QDir localDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
     _cacheLocation = QUrl::fromLocalFile(localDir.absolutePath());
     QString datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
     localDir = QDir(datalocation);
@@ -40,7 +41,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
         localDir.mkpath(datalocation);
     }
     _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
-    QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
+    files << localDir.entryList(QStringList() << "*.*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
     _workingCatalog = new Catalog(); // empty catalog>
@@ -124,7 +125,8 @@ const ICatalog &IlwisContext::systemCatalog() const
 
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
-    if ( !cat.isValid())
+    // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
+    if ( !cat.isValid() || cat->source().url().toString() == Catalog::DEFAULT_WORKSPACE)
         return;
 
     mastercatalog()->addContainer(cat->source().url());

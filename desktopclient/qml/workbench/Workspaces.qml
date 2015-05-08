@@ -15,7 +15,7 @@ Item {
     opacity : 0
 
     signal unloadcontent(string content)
-    property WorkSpaceModel workspace : mastercatalog.currentWorkSpace
+    property WorkSpaceModel workspace : uicontext.currentWorkSpace
 
     FunctionBarHeader{
         id : functionBarHeader
@@ -39,27 +39,6 @@ Item {
             id : workspaceinfo
             anchors.top: creation.bottom
         }
-    }
-    Action {
-        id :addbookmark
-        onTriggered: {
-            if ( workspace)
-                mastercatalog.addBookmark(workspace.url)
-        }
-    }
-
-    Controls.ActionButton{
-        id : addBookmarkButton
-        anchors.right : parent.right
-        anchors.bottom: parent.bottom
-        anchors.rightMargin: 5
-        anchors.bottomMargin: 10
-        buttontext : "Add\nBookmark"
-        iconsource : "../images/addbookmarkCS1.png"
-        height : 40
-        width :95
-        action : addbookmark
-        z : 1
     }
 
     states: [
@@ -97,7 +76,7 @@ Item {
       Component.onCompleted: {
           state : "visible"
           opacity : 1
-          workspaceinfo.state = workspace ? "fullsize" : "zerosize"
+          workspaceinfo.state = workspace && !workspace.isDefault ? "fullsize" : "zerosize"
       }
 }
 

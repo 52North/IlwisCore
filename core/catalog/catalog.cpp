@@ -19,6 +19,8 @@
 
 using namespace Ilwis;
 
+const QString Catalog::DEFAULT_WORKSPACE = "ilwis://internalcatalog/workspaces/default";
+
 Catalog::Catalog()
 {
 }

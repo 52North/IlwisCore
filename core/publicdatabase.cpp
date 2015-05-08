@@ -31,6 +31,12 @@ void PublicDatabase::prepare() {
     stmt = "create table aliasses (alias TEXT, code TEXT, type TEXT, source TEXT)";
     sql.exec(stmt);
 
+    stmt = "create table workspaces (workspaceid INTEGER, description TEXT)";
+    sql.exec(stmt);
+
+    stmt = "create table workspace (workspaceid INTEGER, itemid INTEGER)";
+    sql.exec(stmt);
+
     stmt = "create table datum \
             (\
                 code TEXT,\

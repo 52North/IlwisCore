@@ -106,6 +106,11 @@ void CatalogView::removeFixedItem(quint64 id)
         _fixedItems.erase(iter);
 }
 
+quint32 CatalogView::fixedItemCount() const
+{
+    return _fixedItems.size();
+}
+
 QString CatalogView::filter() const
 {
     return _filter;
@@ -160,7 +165,7 @@ QString CatalogView::type() const
 
 bool CatalogView::isValid() const
 {
-    return _locations.size() > 0 || _fixedItems.size() > 0; // && _filter != "";
+    return _locations.size() > 0 || _fixedItems.size() > 0 ;
 }
 
 QUrl CatalogView::parentCatalogView() const
