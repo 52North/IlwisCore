@@ -28,10 +28,14 @@ public:
    Q_INVOKABLE QStringList serviceNames() const;
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
 
+   void gatherItems();
 private:
     QList<OperationModel *> _currentOperations;
     QList<OperationsByKeyModel *> _operationsByKey;
     std::vector<Ilwis::Resource> _services;
+
+public slots:
+    void workSpaceChanged();
 
 signals:
     void updateCatalog(const QUrl& url);
