@@ -54,7 +54,7 @@ bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseName
 }
 
 QString CatalogQuery::transformQuery(const QString& baseQuery) const{
-    if ( baseQuery == "")
+    if ( baseQuery == "" || baseQuery == sUNDEF)
         return "";
 
     QString query = baseQuery.toLower();
