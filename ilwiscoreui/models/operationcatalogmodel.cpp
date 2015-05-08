@@ -18,38 +18,15 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "operationmodel.h"
+#include "workspacemodel.h"
+#include "uicontextmodel.h"
 #include "operationcatalogmodel.h"
 
 using namespace Ilwis;
 
 OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
 {
-    QUrl location("ilwis://operations");
-    QString descr ="main catalog for ilwis operations";
-    Resource res(location, itCATALOGVIEW ) ;
-    res.name("ilwis-operations",false);
-    QStringList lst;
-    lst << location.toString();
-    res.addProperty("locations", lst);
-    res.addProperty("type", "operation" );
-    res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
-    res.setDescription(descr);
-    setView(CatalogView(res));
 
-    location = QUrl("ilwis://operations");
-    descr ="main catalog for ilwis services";
-    res = Resource(location, itCATALOGVIEW ) ;
-    res.name("ilwis-services",false);
-    lst.clear();
-    lst << location.toString();
-    res.addProperty("locations", lst);
-    res.addProperty("type", "operation" );
-    res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
-    res.setDescription(descr);
-    CatalogView view(res);
-    view.prepare();
-
-    _services = view.items();
 
 }
 
@@ -100,16 +77,17 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 {
     try{
         if ( _currentOperations.isEmpty()) {
-            if ( !_view.isValid())
-                return QMLOperationList();
 
             gatherItems();
 
             _currentOperations.clear();
 
             std::map<QString, std::vector<OperationModel *>> operationsByKey;
+
             for(auto item : _currentItems){
                 QString keywords = item->resource()["keyword"].toString();
+                if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+                    continue;
                 if ( keywords.indexOf("internal") != -1)
                     continue;
                 _currentOperations.push_back(new OperationModel(item->resource(), this));
@@ -132,6 +110,53 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 
     }
     return  QMLOperationList();
+}
+
+void OperationCatalogModel::gatherItems() {
+    WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
+    auto n = currentModel->name();
+    bool isDefault = n == "default";
+    if ( currentModel == 0 || isDefault){
+        QUrl location("ilwis://operations");
+        QString descr ="main catalog for ilwis operations";
+        Resource res(location, itCATALOGVIEW ) ;
+        res.name("ilwis-operations",false);
+        QStringList lst;
+        lst << location.toString();
+        res.addProperty("locations", lst);
+        res.addProperty("type", "operation" );
+        res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
+        res.setDescription(descr);
+        setView(CatalogView(res));
+
+        location = QUrl("ilwis://operations");
+        descr ="main catalog for ilwis services";
+        res = Resource(location, itCATALOGVIEW ) ;
+        res.name("ilwis-services",false);
+        lst.clear();
+        lst << location.toString();
+        res.addProperty("locations", lst);
+        res.addProperty("type", "operation" );
+        res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
+        res.setDescription(descr);
+        CatalogView view(res);
+        view.prepare();
+
+        _services = view.items();
+    }else {
+        setView(currentModel->view());
+    }
+    CatalogModel::gatherItems();
+}
+
+void OperationCatalogModel::workSpaceChanged()
+{
+    _currentItems.clear();
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    _services.clear();
+
+    emit operationsChanged();
 }
 
 bool runApplication( OperationExpression opExpr, QString *result){
