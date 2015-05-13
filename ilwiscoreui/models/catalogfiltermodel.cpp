@@ -12,8 +12,8 @@ CatalogFilterModel::CatalogFilterModel(QObject *parent) :
 {
 }
 
-CatalogFilterModel::CatalogFilterModel(const QString& query, const QString& name, const QString& icon, bool state) :
-    QObject(0),
+CatalogFilterModel::CatalogFilterModel(QObject *parent,const QString& query, const QString& name, const QString& icon, bool state) :
+    QObject(parent),
     _selectionState(state),
     _query(query),
     _name(name),
