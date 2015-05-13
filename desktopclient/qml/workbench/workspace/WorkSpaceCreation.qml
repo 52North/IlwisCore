@@ -32,6 +32,8 @@ Row {
                 workspace = names.model[currentIndex]
                 if ( currentIndex > 0) // we dont do anything on 0 as that is default workspace
                     workspaceinfo.state = "fullsize"
+                else
+                    workspaceinfo.state = "zerosize"
         }
 
     }

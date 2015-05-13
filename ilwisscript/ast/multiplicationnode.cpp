@@ -76,7 +76,7 @@ bool MultiplicationNode::handleDiv(int index, const NodeValue& vright, SymbolTab
 bool MultiplicationNode::handleMod(int index, const NodeValue& vright,SymbolTable &symbols, ExecutionContext *ctx) {
     QVariant var = resolveValue(index, _value, symbols);
     if ( SymbolTable::isIntegerNumerical(vright[index]) && SymbolTable::isIntegerNumerical(var)) {
-        bool ok1, ok2;
+        bool ok1=false, ok2=false;
        _value = {var.toInt(&ok1) %  vright.toInt(index, &ok2), NodeValue::ctNumerical};
        return ok1 && ok2;
     }

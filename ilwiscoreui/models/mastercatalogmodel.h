@@ -17,12 +17,15 @@ class CatalogView;
 }
 //namespace Desktopclient{
 
+class CatalogFilterModel;
+
 typedef QQmlListProperty<ResourceModel> QMLResourceList;
 
 class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked NOTIFY bookmarksChanged)
+    Q_PROPERTY(QQmlListProperty<CatalogFilterModel> defaultFilters READ defaultFilters CONSTANT)
     Q_PROPERTY(QQmlListProperty<WorkSpaceModel> workspaces READ workspaces NOTIFY workspacesChanged)
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
@@ -46,7 +49,7 @@ public:
     quint32 workspaceIndex(const QString& name);
 
     Q_INVOKABLE quint32 selectedBookmark(const QString &url);
-    Q_INVOKABLE  CatalogModel *newCatalog(const QString& inpath);
+    Q_INVOKABLE  CatalogModel *newCatalog(const QString& inpath, const QString &filter="");
     Q_INVOKABLE QStringList driveList() const;
     Q_INVOKABLE QString getDrive(quint32 index);
     Q_INVOKABLE void addBookmark(const QString &path);
@@ -67,8 +70,7 @@ public:
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
 
-    QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
-    void scanBookmarks();
+
 public slots:
     void updateCatalog(const QUrl &url);
     void updateBookmarks() ;
@@ -76,6 +78,7 @@ public slots:
 private:
     QList<CatalogModel *> _bookmarks;
     QList<WorkSpaceModel *> _workspaces;
+    QList<CatalogFilterModel *> _defaultFilters;
     QQmlContext *_qmlcontext = 0;
     QMLResourceList _currentList;
     int _selectedBookmarkIndex = 2; // from configuration
@@ -87,8 +90,14 @@ private:
 
     
     CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query);
+    QString determineIdList(int dataCount, int operationCount, const QString &basekey);
+    QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
+    void scanBookmarks();
+    QQmlListProperty<CatalogFilterModel> defaultFilters();
 
     void loadWorkSpaces(const QString workspaceList);
+    void setDefaultView();
+    void addDefaultFilters();
 signals:
     void selectionChanged();
     void activeSplitChanged();

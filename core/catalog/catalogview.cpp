@@ -81,7 +81,11 @@ std::vector<Resource> CatalogView::items() const
                 filter += " and ";
             filter += QString("type<>%1").arg(QString::number(itGEODETICDATUM)); // datums are not visible in the catalogs
         }
-        items =  mastercatalog()->select(location, filter);
+        if ( location != MasterCatalog::MASTERCATALOG){
+            items =  mastercatalog()->select(location, filter);
+        }else
+            items =  mastercatalog()->select(filter);
+
         std::copy(items.begin(), items.end(),std::back_inserter(results));
     }
     std::set<Resource> uniques(results.begin(), results.end());

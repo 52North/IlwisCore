@@ -188,10 +188,10 @@ public:
     quint32 usecount(quint64 id);
 
 #endif
+    static const QString MASTERCATALOG;
 
 private:
     static MasterCatalog *_masterCatalog;
-    quint64 _baseid;
     QHash<quint64, ESPIlwisObject> _lookup;
     std::set<QUrl> _catalogs;
     std::set<uint> _knownHashes;

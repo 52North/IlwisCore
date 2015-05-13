@@ -52,8 +52,8 @@ ApplicationWindow {
         mainSplit.newCatalog("",-1)
     }
 
-    function changeCatalog(url){
-        mainSplit.changeCatalog(url)
+    function changeCatalog(url, filter){
+        mainSplit.changeCatalog(url, filter)
     }
 
     function transitionInfoPane(newpagename) {
@@ -124,7 +124,7 @@ ApplicationWindow {
                             var wmodel =model[currentIndex]
                             console.debug(wmodel.name)
                             if ( wmodel){
-                                dataPanel.changeCatalog(wmodel.url)
+                                dataPanel.changeCatalog(wmodel.url,"")
                                 uicontext.currentWorkSpace = wmodel
                             }
                         }
@@ -156,8 +156,8 @@ ApplicationWindow {
                 dataPanel.newCatalog(url, splitside)
             }
 
-            function changeCatalog(url){
-                dataPanel.changeCatalog(url)
+            function changeCatalog(url, filter){
+                dataPanel.changeCatalog(url, filter)
             }
 
             WorkBench.WorkBenchButtonBar{

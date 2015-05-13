@@ -12,6 +12,7 @@ Item {
     signal exit;
 
     property bool canSeparate : true
+    property QString panelType : "workflow"
 
     property string workflow;
 

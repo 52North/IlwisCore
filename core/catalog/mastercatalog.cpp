@@ -24,6 +24,7 @@
 
 
 Ilwis::MasterCatalog *Ilwis::MasterCatalog::_masterCatalog = 0;
+const QString Ilwis::MasterCatalog::MASTERCATALOG = "ilwis://mastercatalog";
 
 using namespace Ilwis;
 
@@ -90,6 +91,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
          loc == "file://" ||
          loc == "file:/" ||
          loc == "ilwis:/" ||
+         loc == MASTERCATALOG ||
          loc.isEmpty())
         return true;
     QUrl location(loc);
@@ -544,7 +546,8 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
 {
     Locker<std::recursive_mutex> lock(_guard);
 
-
+    if ( resource == MASTERCATALOG)
+        return select(selection);
 
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query;

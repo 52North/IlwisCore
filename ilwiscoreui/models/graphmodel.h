@@ -17,7 +17,7 @@ class ILWISCOREUISHARED_EXPORT GraphModel : public QObject
 
 public:
     GraphModel();
-    GraphModel(const QString& yAxis, const std::vector<QVariant>& yvalues, QObject *parent);
+    GraphModel(const QString& yAxis, QObject *parent);
 
     QColor fillColor() const;
     void fillColor(const QColor &fillcolor);
@@ -33,6 +33,7 @@ public:
 
     QList<QVariant> yvalues() const;
     void yvalues(const QList<QVariant> &yvalues);
+    void yvalues(const std::vector<QVariant> &yvalues);
 
     QString yAxis() const;
 

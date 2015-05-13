@@ -5,11 +5,15 @@ GraphModel::GraphModel()
 
 }
 
-GraphModel::GraphModel(const QString &yAxis, const std::vector<QVariant> &yvalues, QObject *parent) : QObject(parent), _yAxis(yAxis)
+GraphModel::GraphModel(const QString &yAxis, QObject *parent) :
+    QObject(parent),
+    _fillcolor("transparent"),
+    _strokeColor("#009092"),
+    _pointColor("DarkBlue"),
+    _pointStrokeColor("DarkSlateBlue"),
+    _yAxis(yAxis)
 {
-    for(auto val : yvalues){
-        _yvalues.push_back(val);
-    }
+
 }
 QColor GraphModel::fillColor() const
 {
@@ -56,6 +60,15 @@ void GraphModel::yvalues(const QList<QVariant> &data)
 {
     _yvalues = data;
 }
+
+void GraphModel::yvalues(const std::vector<QVariant> &yvalues)
+{
+    _yvalues.clear();
+    for(auto v : yvalues)    {
+        _yvalues.push_back(v.toString());
+    }
+}
+
 QString GraphModel::yAxis() const
 {
     return _yAxis;

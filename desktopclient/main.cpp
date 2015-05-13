@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<CatalogMapItem>("CatalogMapItem", 1,0,"CatalogMapItem");
         qmlRegisterType<ChartModel>("ChartModel", 1,0,"ChartModel");
         qmlRegisterType<GraphModel>("GraphModel", 1,0,"GraphModel");
+        qmlRegisterType<CatalogFilterModel>("CatalogFilterModel", 1,0,"CatalogFilterModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -111,6 +112,8 @@ int main(int argc, char *argv[])
         WorkflowCatalogModel workflows;
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
+
+        operations.prepare();
 
         QThread *trqthread = new QThread;
 

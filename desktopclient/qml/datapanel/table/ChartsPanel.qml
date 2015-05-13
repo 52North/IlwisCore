@@ -9,13 +9,21 @@ import GraphModel 1.0
 SplitView {
     anchors.fill : parent
     anchors.topMargin: 4
+    objectName:  uicontext.uniqueName()
+    property ChartModel chart
+
     Charts.ChartsProperties {
+        id : propertiespanel
         width : 240
         height : parent.height
     }
     Charts.GraphPanel{
+        id : chartpanel
         height : parent.height
         Layout.fillWidth: true
+    }
+    Component.onCompleted: {
+        chart = uicontext.chartModel(objectName)
     }
 
 }

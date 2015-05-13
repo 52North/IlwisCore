@@ -14,8 +14,12 @@ Rectangle {
     color: "#ffffff";
     width : parent.width
     height : parent.height
-        property variant xvalues :  ["January","February","March","April","May","June","July"]
-    property var datasets : [{fillColor : "transparent",strokeColor :"#009092",pointColor : "DarkBlue",pointStrokeColor :"DarkSlateBlue",data : [65,59,90,81,56,55,40]}]
+    //property variant xvalues :  ["January","February","March","April","May","June","July"]
+   // property var datasets : [{fillColor : "transparent",strokeColor :"#009092",pointColor : "DarkBlue",pointStrokeColor :"DarkSlateBlue",data : [65,59,90,81,56,55,40]}]
+
+    property var xvalues :  chart ? chart.xvalues : null
+    property var datasets : chart ? chart.datasets : null
+
 
 
     Graph.Chart {

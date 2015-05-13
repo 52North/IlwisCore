@@ -12,6 +12,7 @@
 #include "layermanager.h"
 #include "tablemodel.h"
 #include "workspacemodel.h"
+#include "chartmodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
 using namespace Ilwis;
@@ -39,6 +40,7 @@ public:
 
     Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
     Q_INVOKABLE TableModel *createTableModel(QObject *parent,const QString& url, const QString& type);
+    Q_INVOKABLE ChartModel *chartModel(const QString& objectname);
     Q_INVOKABLE QString uniqueName();
     Q_INVOKABLE void exitUI();
 

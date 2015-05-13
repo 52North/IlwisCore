@@ -84,7 +84,7 @@ Item {
             id: txt
             text: displayName
             elide: Text.ElideMiddle
-            color: itemgrid.currentIndex === index ? "white": "black"
+            color: itemgrid.currentIndex === index ? "blue": "black"
             width : parent.width
 
             y : 4

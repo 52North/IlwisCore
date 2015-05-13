@@ -13,6 +13,11 @@ IlwisObjectFactory::IlwisObjectFactory(const QString &ty, const QString &sub, co
 {
 }
 
+std::vector<Resource> IlwisObjectFactory::loadResource(const QUrl &url, IlwisTypes types) const
+{
+    return std::vector<Resource>();
+}
+
 IlwisObject *IlwisObjectFactory::createObject(IlwisObjectConnector* connector, const IOOptions &options) const {
     IlwisObject *object = connector->create();
     if ( object) {

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MasterCatalogModel 1.0
 import TranquilizerHandler 1.0
+import UIContextModel 1.0
 
 
 Rectangle {
@@ -122,6 +123,7 @@ Rectangle {
 
         WorkBenchButton{
             id : nav
+            objectName : "workbench_navbutton_mainui"
             action: navClicked
             iconname: "navigatorCS1.png"
             label: qsTr("Navigator")

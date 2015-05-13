@@ -111,11 +111,17 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
     }
     return  QMLOperationList();
 }
+void OperationCatalogModel::prepare(){
+    gatherItems();
+}
 
 void OperationCatalogModel::gatherItems() {
     WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
-    auto n = currentModel->name();
-    bool isDefault = n == "default";
+    bool isDefault = false;
+    if (currentModel){
+        auto n = currentModel->name();
+        isDefault = n == "default";
+    }
     if ( currentModel == 0 || isDefault){
         QUrl location("ilwis://operations");
         QString descr ="main catalog for ilwis operations";
@@ -147,6 +153,30 @@ void OperationCatalogModel::gatherItems() {
         setView(currentModel->view());
     }
     CatalogModel::gatherItems();
+    std::set<QString> keywordset;
+    for(auto item : _currentItems){
+        QString keywords = item->resource()["keyword"].toString();
+        if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+            continue;
+        if ( keywords.indexOf("internal") != -1)
+            continue;
+        _currentOperations.push_back(new OperationModel(item->resource(), this));
+        if ( keywords == sUNDEF)
+            keywords = TR("Uncatagorized");
+        QStringList parts = keywords.split(",");
+        for(auto keyword : parts){
+            keywordset.insert(keyword);
+        }
+    }
+    for(auto keyword : keywordset)
+        _keywords.push_back(keyword);
+
+    qSort(_keywords.begin(), _keywords.end());
+}
+
+QStringList OperationCatalogModel::keywords() const
+{
+    return _keywords;
 }
 
 void OperationCatalogModel::workSpaceChanged()

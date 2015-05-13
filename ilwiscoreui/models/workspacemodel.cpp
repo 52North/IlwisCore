@@ -24,14 +24,15 @@ void WorkSpaceModel::addItems(const QString& ids)
         if ( res.isValid()){
             QString key;
             if ( res.ilwisType() == itOPERATIONMETADATA){
-                key = QString("%1/url-operation-%2").arg(basekey).arg(count);
-                Ilwis::context()->configurationRef().addValue(QString("%1/operation-count").arg(basekey),QString::number(count));
+                key = QString("%1/operation-%2").arg(basekey).arg(count);
+                Ilwis::context()->configurationRef().addValue(QString("%1/operation-count").arg(basekey),QString::number(count + 1));
             }
             else{
-                key = QString("%1/url-data-%2").arg(basekey).arg(count);
-                Ilwis::context()->configurationRef().addValue(QString("%1/data-count").arg(basekey),QString::number(count));
+                key = QString("%1/data-%2").arg(basekey).arg(count);
+                Ilwis::context()->configurationRef().addValue(QString("%1/data-count").arg(basekey),QString::number(count + 1));
             }
-            Ilwis::context()->configurationRef().addValue(key, res.url().toString());
+            Ilwis::context()->configurationRef().addValue(key + "/url", res.url().toString());
+            Ilwis::context()->configurationRef().addValue(key + "/type", QString::number(res.ilwisType()));
         }
     };
 
@@ -104,12 +105,13 @@ void WorkSpaceModel::gatherItems() {
     if ( needRefresh){
         _operations.clear();
         _data.clear();
-    }
-    for(auto iter=_currentItems.begin(); iter != _currentItems.end(); ++iter){
-        if ( (*iter)->type() == itOPERATIONMETADATA){
-            _operations.push_back(new OperationModel((*iter)->resource(),this));
-        }else if ( hasType((*iter)->type(), itILWISOBJECT)){
-            _data.push_back(*iter);
+
+        for(auto iter=_currentItems.begin(); iter != _currentItems.end(); ++iter){
+            if ( (*iter)->type() == itOPERATIONMETADATA){
+                _operations.push_back(new OperationModel((*iter)->resource(),this));
+            }else if ( hasType((*iter)->type(), itILWISOBJECT)){
+                _data.push_back(*iter);
+            }
         }
     }
     refresh(false);

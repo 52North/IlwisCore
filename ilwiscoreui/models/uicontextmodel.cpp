@@ -45,6 +45,15 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url,
     return 0;
 }
 
+ChartModel *UIContextModel::chartModel(const QString &objectname)
+{
+    QObject *object =_qmlcontext->findChild<QObject *>(objectname);
+    QObject *newparent = object == 0 ? this : object;
+    ChartModel *chart =  new ChartModel(newparent);
+
+    return chart;
+}
+
 QString UIContextModel::uniqueName()
 {
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
@@ -222,6 +231,12 @@ void UIContextModel::setCurrentWorkSpace(WorkSpaceModel *cws)
                 QObject *wscombo = rootObject()->findChild<QObject*>("workspace_combobox_mainui");
                 if ( wscombo){
                     wscombo->setProperty("currentIndex",index);
+                }
+                QQuickItem *navbutton = rootObject()->findChild<QQuickItem*>("workbench_navbutton_mainui");
+                if ( navbutton){
+                    QString wcUrl = context()->workingCatalog()->source().url().toString();
+                    bool isWorkspace = wcUrl.indexOf("ilwis://internalcatalog/workspaces") == 0;
+                    navbutton->setProperty("state" , isWorkspace ? "zerosize" : "fullsize");
                 }
                 emit currentWorkSpaceChanged();
             }
