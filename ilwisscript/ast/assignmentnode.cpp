@@ -123,9 +123,9 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 if ( hasType(tp, itRASTER)) {
                     ok = copyObject<RasterCoverage>(sym, result,symbols);
                 }
-                else if hasType(tp, itFEATURE)
+                else if (hasType(tp, itFEATURE))
                         ok = copyObject<FeatureCoverage>(sym, result,symbols);
-                else if hasType(tp, itTABLE){
+                else if (hasType(tp, itTABLE)){
                     ok = copyObject<Table>(sym, result,symbols,true);
                     QSharedPointer<Selector> selector = _outParms->selector(result);
                     if (!selector.isNull()){
