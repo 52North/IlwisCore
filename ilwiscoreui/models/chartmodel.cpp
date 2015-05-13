@@ -1,14 +1,16 @@
+#include "kernel.h"
 #include "graphmodel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
+#include "tablemodel.h"
 #include "chartmodel.h"
 
-ChartModel::ChartModel(const QString& xAxisName, const std::vector<QVariant> &xvals, QObject *parent) : QObject(parent), _xAxis(xAxisName)
-{
-    xvalues(xvals);
-}
+using namespace Ilwis;
 
-ChartModel::ChartModel()
+ChartModel::ChartModel(QObject *parent) : QObject(parent)
 {
-
 }
 
 QStringList ChartModel::xvalues() const
@@ -32,6 +34,28 @@ void ChartModel::xvalues(const QStringList &xvalues)
     emit xvaluesChanged();
 }
 
+void ChartModel::setGraphs(TableModel *tblModel, int type)
+{
+    _graphs.clear();
+    if ( hasType(_valueType, itSTRING)) {
+        GraphModel *graph = new GraphModel(TR("Histogram"),this);
+        std::vector<QVariant> values = tblModel->table()->column(_columnIndex);
+        std::map<QString, quint32> counts;
+        for(auto v : values){
+            counts[v.toString()] += 1;
+        }
+        QList<QVariant> yvalues;
+        for(auto p : counts){
+            yvalues.push_back(p.second);
+        }
+        graph->yvalues(yvalues);
+        _graphs.push_back(graph);
+    }
+    emit graphsChanged();
+    emit datasetChanged();
+
+}
+
 void ChartModel::addGraph(GraphModel *graph)
 {
     _graphs.push_back(graph);
@@ -42,11 +66,9 @@ void ChartModel::clearGraphs()
     _graphs.clear();
 }
 
-QVariantMap ChartModel::dataset() const
+QList<QVariantMap> ChartModel::datasets() const
 {
-    QVariantMap chart;
 
-    chart["labels"] = QVariant::fromValue<QStringList>(_xvalues);
     QList<QVariantMap> graphs;
     for(auto graph : _graphs){
        QVariantMap graphData;
@@ -58,9 +80,7 @@ QVariantMap ChartModel::dataset() const
        graphs.push_back(graphData);
 
     }
-    chart["datasets"] = QVariant::fromValue<QList<QVariantMap>>(graphs);
-
-    return chart;
+    return graphs;
 }
 
 QQmlListProperty<GraphModel> ChartModel::graphs()
@@ -71,5 +91,26 @@ QQmlListProperty<GraphModel> ChartModel::graphs()
 QString ChartModel::xAxis() const
 {
     return _xAxis;
+}
+
+void ChartModel::xAxis(const QString &name)
+{
+    _xAxis = name;
+}
+
+void ChartModel::setXAxis(TableModel *tbl, int columnIndex)
+{
+    if ( columnIndex >= tbl->table()->columnCount())
+        return;
+    std::vector<QVariant> values = tbl->table()->column(columnIndex);
+    Ilwis::IDomain dom = tbl->table()->columndefinition(columnIndex).datadef().domain();
+    for(auto value : values){
+        _xvalues.push_back(dom->impliedValue(value).toString());
+    }
+    std::sort(_xvalues.begin(), _xvalues.end());
+    _columnIndex = columnIndex;
+    _xAxis = tbl->table()->columndefinition(columnIndex).name();
+    _valueType = dom->valueType();
+
 }
 
