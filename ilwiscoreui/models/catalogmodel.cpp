@@ -38,12 +38,11 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
     _level = 0;
     if ( res.url().toString() == Catalog::DEFAULT_WORKSPACE){
         _view = CatalogView(context()->workingCatalog()->source());
-        _view.addLocation(_view.resource().url());
-        _view.name("default");
         setDisplayName("default");
-    }else
+    }else{
         _view = CatalogView(res);
-    _displayName = _view.name();
+        _displayName = _view.name();
+    }
 }
 
 void CatalogModel::setView(const CatalogView &view){
@@ -124,6 +123,11 @@ void CatalogModel::filterChanged(const QString& objectType, bool state){
             filterString += QString("type") + "& '" + iter.first + "' =0";
         }
     }
+    filter(filterString);
+}
+
+void CatalogModel::filter(const QString &filterString)
+{
     _refresh = true;
     _view.filter(filterString);
     contentChanged();

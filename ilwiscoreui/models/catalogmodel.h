@@ -37,6 +37,7 @@ public:
     QQmlListProperty<CatalogMapItem> mapItems();
     Q_INVOKABLE void makeParent(QObject *obj);
     Q_INVOKABLE void filterChanged(const QString &objectType, bool state);
+    Q_INVOKABLE void filter(const QString& filterString);
     void refresh(bool yesno);
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     virtual void nameFilter(const QString&);
