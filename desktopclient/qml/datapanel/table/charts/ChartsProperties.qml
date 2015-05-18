@@ -12,6 +12,12 @@ Item {
     width : 240
     height : parent.height - 10
 
+    function makechart(table, xchoice, typechoice){
+        chart.setXAxis(xchoice)
+        chart.setGraphs(typechoice)
+        chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+        chartpanel.update()
+    }
 
     Column{
         id : ychoices
@@ -28,13 +34,15 @@ Item {
             }
 
             ComboBox{
+                id : xaxis
                 model : table.columns
                 width : 150
                 textRole: "attributename"
                 height : 16
                 onCurrentIndexChanged: {
-                    if ( chart)
-                        chart.setXAxis(table, currentIndex)
+                    if ( chart){
+                           makechart(table,xaxis.currentIndex, charttype.currentIndex)
+                    }
                 }
             }
         }
@@ -46,13 +54,14 @@ Item {
             }
 
             ComboBox{
+                id : charttype
                 width : 150
                 model : ["Line", "Bar","Pie","Polar","Radar","Doughnut"]
                 height : 16
                 onCurrentIndexChanged: {
                     if ( chart && currentIndex == 0){
                         specificProperties.source = "LineChartProperties.qml"
-                        chart.setGraphs(table, currentIndex)
+                        makechart(table, xaxis.currentIndex,charttype.currentIndex)
                     }
                 }
             }

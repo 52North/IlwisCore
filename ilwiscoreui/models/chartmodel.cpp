@@ -13,8 +13,14 @@ ChartModel::ChartModel(QObject *parent) : QObject(parent)
 {
 }
 
-QStringList ChartModel::xvalues() const
+ChartModel::ChartModel(TableModel *tbl, QObject *p) : QObject(p), _table(tbl)
 {
+
+}
+
+QList<QVariant> ChartModel::xvalues()
+{
+   // _xvalues = {"January","February","March","April","May","June","July"};
     return _xvalues;
 }
 
@@ -26,7 +32,7 @@ void ChartModel::xvalues(const std::vector<QVariant> &xvalues)
     emit xvaluesChanged();
 }
 
-void ChartModel::xvalues(const QStringList &xvalues)
+void ChartModel::xvalues(const QList<QVariant> &xvalues)
 {
     _xvalues.clear();
     for(auto val : xvalues)
@@ -34,15 +40,18 @@ void ChartModel::xvalues(const QStringList &xvalues)
     emit xvaluesChanged();
 }
 
-void ChartModel::setGraphs(TableModel *tblModel, int type)
+void ChartModel::setGraphs(int type)
 {
+    if ( _columnIndex == iUNDEF)
+        return;
+
     _graphs.clear();
-    if ( hasType(_valueType, itSTRING)) {
+    if ( hasType(_valueTypeXaxis, itSTRING)) {
         GraphModel *graph = new GraphModel(TR("Histogram"),this);
-        std::vector<QVariant> values = tblModel->table()->column(_columnIndex);
-        std::map<QString, quint32> counts;
+        std::vector<QVariant> values = _table->table()->column(_columnIndex);
+        std::map<QVariant, quint32> counts;
         for(auto v : values){
-            counts[v.toString()] += 1;
+            counts[v] += 1;
         }
         QList<QVariant> yvalues;
         for(auto p : counts){
@@ -52,7 +61,8 @@ void ChartModel::setGraphs(TableModel *tblModel, int type)
         _graphs.push_back(graph);
     }
     emit graphsChanged();
-    emit datasetChanged();
+    emit datasetsChanged();
+    emit yAttributesChanged();
 
 }
 
@@ -66,10 +76,10 @@ void ChartModel::clearGraphs()
     _graphs.clear();
 }
 
-QList<QVariantMap> ChartModel::datasets() const
+QList<QVariant> ChartModel::datasets() const
 {
 
-    QList<QVariantMap> graphs;
+    QList<QVariant> graphs;
     for(auto graph : _graphs){
        QVariantMap graphData;
        graphData["fillColor"] = graph->fillColor();
@@ -80,6 +90,7 @@ QList<QVariantMap> ChartModel::datasets() const
        graphs.push_back(graphData);
 
     }
+
     return graphs;
 }
 
@@ -98,19 +109,71 @@ void ChartModel::xAxis(const QString &name)
     _xAxis = name;
 }
 
-void ChartModel::setXAxis(TableModel *tbl, int columnIndex)
+int ChartModel::columnIndex()
 {
-    if ( columnIndex >= tbl->table()->columnCount())
-        return;
-    std::vector<QVariant> values = tbl->table()->column(columnIndex);
-    Ilwis::IDomain dom = tbl->table()->columndefinition(columnIndex).datadef().domain();
-    for(auto value : values){
-        _xvalues.push_back(dom->impliedValue(value).toString());
+    return _columnIndex;
+}
+
+void ChartModel::setColumnIndex(int ind)
+{
+    if ( ind  >= 0)
+        _columnIndex = ind;
+}
+
+QStringList ChartModel::yAttributes() const
+{
+    QStringList lst;
+
+    if ( hasType(_valueTypeXaxis, itSTRING | itITEMDOMAIN) && _hasXAggregation){
+        lst.push_back(TR("Histogram"));
+    } else {
+        for(int i = 0 ; i < _table->table()->columnCount(); ++i){
+            const ColumnDefinition &coldef = _table->table()->columndefinitionRef(i);
+            IlwisTypes yValueType = coldef.datadef().domain()->valueType();
+            if ( hasType(_valueTypeXaxis, itSTRING | itITEMDOMAIN | itNUMBER) &&
+                 hasType(yValueType, itSTRING | itITEMDOMAIN | itNUMBER)){
+                lst.push_back(coldef.name());
+            }
+        }
     }
-    std::sort(_xvalues.begin(), _xvalues.end());
+    return lst;
+}
+
+void ChartModel::setXAxis(int columnIndex)
+{
+    if ( columnIndex >= _table->table()->columnCount())
+        return;
+    _xvalues.clear();
+    if ( columnIndex <= 0){
+        _valueTypeXaxis = itINT32;
+        for(int i =0; i < _table->table()->recordCount(); ++i)
+            _xvalues.push_back(i);
+    }else {
+        columnIndex--; // columnIndex == 0 is the record counter
+        std::vector<QVariant> values = _table->table()->column(columnIndex);
+        Ilwis::IDomain dom = _table->table()->columndefinition(columnIndex).datadef().domain();
+        _valueTypeXaxis = dom->valueType();
+        if ( hasType(_valueTypeXaxis, itSTRING)){
+            std::set<QString> strings;
+            for(auto value : values){
+                strings.insert(value.toString());
+            }
+            _hasXAggregation = values.size() != strings.size();
+            for(auto str : strings){
+                _xvalues.push_back(QVariant(str));
+            }
+        }else {
+            for(auto value : values){
+                _xvalues.push_back(dom->impliedValue(value));
+            }
+        }
+        std::sort(_xvalues.begin(), _xvalues.end());
+
+    }
     _columnIndex = columnIndex;
-    _xAxis = tbl->table()->columndefinition(columnIndex).name();
-    _valueType = dom->valueType();
+    _xAxis = _table->table()->columndefinition(columnIndex).name();
+    emit yAttributesChanged();
+
 
 }
 

@@ -13,24 +13,30 @@ class ILWISCOREUISHARED_EXPORT ChartModel : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QStringList xvalues READ xvalues WRITE xvalues NOTIFY xvaluesChanged)
-    Q_PROPERTY(QList<QVariantMap> datasets READ datasets NOTIFY datasetsChanged)
+    Q_PROPERTY(QList<QVariant> xvalues READ xvalues WRITE xvalues NOTIFY xvaluesChanged)
+    Q_PROPERTY(QList<QVariant> datasets READ datasets NOTIFY datasetsChanged)
+    Q_PROPERTY(QStringList yAttributes READ yAttributes NOTIFY yAttributesChanged)
     Q_PROPERTY(QString xAxis READ xAxis NOTIFY xAxisChanged)
+    Q_PROPERTY(int columnIndex READ columnIndex WRITE setColumnIndex NOTIFY columnIndexChanged)
     Q_PROPERTY(QQmlListProperty<GraphModel> graphs READ graphs NOTIFY graphsChanged)
 public:
     ChartModel(QObject *parent = 0);
+    ChartModel(TableModel *tbl, QObject *p);
 
-    QStringList xvalues() const;
+    QList<QVariant> xvalues();
     void xvalues(const std::vector<QVariant>& xvalues);
-    void xvalues(const QStringList& xvalues);
-    Q_INVOKABLE void setGraphs(TableModel *tblModel, int type);
+    void xvalues(const QList<QVariant>& xvalues);
+    Q_INVOKABLE void setGraphs(int type);
     void addGraph(GraphModel * graph);
     void clearGraphs();
-    QList<QVariantMap> datasets() const;
+    QList<QVariant> datasets() const;
     QQmlListProperty<GraphModel> graphs();
     QString xAxis() const;
     void xAxis(const QString& name);
-    Q_INVOKABLE void setXAxis(TableModel *tbl, int columnIndex);
+    int columnIndex();
+    void setColumnIndex(int ind);
+    QStringList yAttributes() const;
+    Q_INVOKABLE void setXAxis(int columnIndex);
 
 
 signals:
@@ -38,13 +44,18 @@ signals:
     void datasetsChanged();
     void graphsChanged();
     void xAxisChanged();
+    void columnIndexChanged();
+    void yAttributesChanged();
 
 private:
-    QList<QString> _xvalues;
+    QList<QVariant> _xvalues;
     QList<GraphModel *> _graphs;
     QString _xAxis;
-    int _columnIndex;
-    IlwisTypes _valueType = itNUMBER;
+    int _columnIndex = Ilwis::iUNDEF;
+    IlwisTypes _valueTypeXaxis = itNUMBER;
+    TableModel *_table;
+    bool _xAxisIsRecordNr = false;
+    bool _hasXAggregation = false;
 
 
 };

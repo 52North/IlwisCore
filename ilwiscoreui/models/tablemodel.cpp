@@ -17,7 +17,7 @@ TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstr
 {
     if ( resource.isValid()){
         _table = Ilwis::ITable(resource);
-        _columns.push_back(new ColumnModel(this, TR("nr"),"first"));
+        _columns.push_back(new ColumnModel(this, TR("record"),"first"));
         _order.resize(_table->recordCount());
         for(int i =0; i < _order.size(); ++i)
             _order[i] = i;

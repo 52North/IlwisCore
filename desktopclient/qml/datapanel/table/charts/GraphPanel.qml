@@ -14,13 +14,10 @@ Rectangle {
     color: "#ffffff";
     width : parent.width
     height : parent.height
-    //property variant xvalues :  ["January","February","March","April","May","June","July"]
-   // property var datasets : [{fillColor : "transparent",strokeColor :"#009092",pointColor : "DarkBlue",pointStrokeColor :"DarkSlateBlue",data : [65,59,90,81,56,55,40]}]
-
-    property var xvalues :  chart ? chart.xvalues : null
-    property var datasets : chart ? chart.datasets : null
-
-
+    property alias chartData : chart_line.chartData
+    function update(){
+        chart_line.requestPaint()
+    }
 
     Graph.Chart {
         id: chart_line;
@@ -32,9 +29,7 @@ Rectangle {
         chartType: Charts.ChartType.LINE;
 
         Component.onCompleted: {
-            chartData = { labels: container.xvalues,
-                datasets: container.datasets
-            }
+
         }
     }
 }

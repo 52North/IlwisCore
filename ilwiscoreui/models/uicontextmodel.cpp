@@ -45,11 +45,11 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url,
     return 0;
 }
 
-ChartModel *UIContextModel::chartModel(const QString &objectname)
+ChartModel *UIContextModel::chartModel(const QString &objectname, TableModel *tbl)
 {
     QObject *object =_qmlcontext->findChild<QObject *>(objectname);
     QObject *newparent = object == 0 ? this : object;
-    ChartModel *chart =  new ChartModel(newparent);
+    ChartModel *chart =  new ChartModel(tbl,newparent);
 
     return chart;
 }

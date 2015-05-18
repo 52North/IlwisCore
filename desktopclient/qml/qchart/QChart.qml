@@ -36,6 +36,9 @@ Canvas {
 // /////////////////////////////////////////////////////////////////
 
   onPaint: {
+      if (!chartData)
+          return
+
       var ctx = canvas.getContext("2d");
       /* Reset the canvas context to allow resize events to properly redraw
          the surface with an updated window size */
