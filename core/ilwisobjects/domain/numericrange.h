@@ -42,13 +42,12 @@ public:
             return false;
 
         bool ok = inclusive ? v >= _min && v <= _max : v > _min && v < _max;
-        if (!ok || _resolution == 0 || _resolution == 1)
+        if (!ok || _resolution < 0.01 || _resolution == 1)
             return ok;
-        double intpart;
-        double fractpart = modf((v - _min) / _resolution,&intpart);
-        if((int)(fractpart + 0.5) == 1)
-            fractpart = 1 - fractpart;
-        return fractpart < EPS10;
+        double floattest = (v - _min) / _resolution;
+        double inttest = round(floattest);
+        double delta = fabs(floattest - inttest);
+        return delta < EPS7; // EPS10 is too much to ask; the computed values aren't that accurate
     }
 
 

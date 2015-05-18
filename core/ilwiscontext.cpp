@@ -76,7 +76,8 @@ void IlwisContext::init(const QString &ilwisDir)
         if (!this->_ilwisDir.isDir()) {
             printf("User-supplied Ilwis directory '%s' not found\n",this->_ilwisDir.filePath().toStdString().c_str());
             this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
-        }
+        } else
+            qApp->addLibraryPath(this->_ilwisDir.absolutePath() + "/plugins"); // also inform Qt where its "plugins" folder is installed, so that it doesn't use the hardcoded qt_plugpath inside Qt5Core.dll
     } else
         this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
 
