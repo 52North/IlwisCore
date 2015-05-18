@@ -9,7 +9,7 @@ import "../.." as Base
 Rectangle {
     id : columnManagement
     width: parent.width
-    height: 250
+    height: 270
     Layout.minimumHeight: 22
     function setColumnModel1(columnmodel){
         var tab = tabletabs.getTab(0)
