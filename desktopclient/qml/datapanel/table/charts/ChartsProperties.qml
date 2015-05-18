@@ -9,14 +9,15 @@ import "../../../Global.js" as Global
 import "../../../controls" as Controls
 
 Item {
-    width : 240
+    width : 270
     height : parent.height - 10
 
     function makechart(table, xchoice, typechoice){
         chart.setXAxis(xchoice)
-        chart.setGraphs(typechoice)
+        var graph = chart.setGraphs(typechoice)
         chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
         chartpanel.update()
+        return graph
     }
 
     Column{
@@ -60,8 +61,8 @@ Item {
                 height : 16
                 onCurrentIndexChanged: {
                     if ( chart && currentIndex == 0){
-                        specificProperties.source = "LineChartProperties.qml"
-                        makechart(table, xaxis.currentIndex,charttype.currentIndex)
+                        var graph = makechart(table, xaxis.currentIndex,charttype.currentIndex)
+                        specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
                     }
                 }
             }
@@ -71,9 +72,11 @@ Item {
     Loader {
         anchors.top: ychoices.bottom
         anchors.topMargin: 4
+        anchors.leftMargin: 4
         id : specificProperties
 
     }
+
 
 
 }

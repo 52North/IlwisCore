@@ -19,7 +19,7 @@ SplitView {
 
     Charts.ChartsProperties {
         id : propertiespanel
-        width : 240
+        width : 270
         height : parent.height
     }
     Charts.GraphPanel{
@@ -29,6 +29,7 @@ SplitView {
     }
     Component.onCompleted: {
         chart = uicontext.chartModel(objectName,table)
+        propertiespanel.makechart(table,0,0)
     }
 
 }
