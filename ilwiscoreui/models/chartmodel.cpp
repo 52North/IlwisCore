@@ -40,10 +40,10 @@ void ChartModel::xvalues(const QList<QVariant> &xvalues)
     emit xvaluesChanged();
 }
 
-void ChartModel::setGraphs(int type)
+GraphModel* ChartModel::setGraphs(int type)
 {
     if ( _columnIndex == iUNDEF)
-        return;
+        return 0;
 
     _graphs.clear();
     if ( hasType(_valueTypeXaxis, itSTRING)) {
@@ -59,10 +59,25 @@ void ChartModel::setGraphs(int type)
         }
         graph->yvalues(yvalues);
         _graphs.push_back(graph);
+        return graph;
+    }
+    if ( hasType(_valueTypeXaxis,itINTEGER) &&_xAxisIsRecordNr){
+        GraphModel *graph = new GraphModel("test" ,this);
+        std::vector<QVariant> values = _table->table()->column(_columnIndex);
+        QList<QVariant> yvalues;
+        for(auto v : values){
+            yvalues.push_back(v);
+        }
+        graph->yvalues(yvalues);
+        _graphs.push_back(graph);
+        return graph;
+
     }
     emit graphsChanged();
     emit datasetsChanged();
     emit yAttributesChanged();
+
+    return 0;
 
 }
 
@@ -146,6 +161,7 @@ void ChartModel::setXAxis(int columnIndex)
     _xvalues.clear();
     if ( columnIndex <= 0){
         _valueTypeXaxis = itINT32;
+        _xAxisIsRecordNr = true;
         for(int i =0; i < _table->table()->recordCount(); ++i)
             _xvalues.push_back(i);
     }else {

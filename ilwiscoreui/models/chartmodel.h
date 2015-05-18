@@ -26,7 +26,7 @@ public:
     QList<QVariant> xvalues();
     void xvalues(const std::vector<QVariant>& xvalues);
     void xvalues(const QList<QVariant>& xvalues);
-    Q_INVOKABLE void setGraphs(int type);
+    Q_INVOKABLE GraphModel *setGraphs(int type);
     void addGraph(GraphModel * graph);
     void clearGraphs();
     QList<QVariant> datasets() const;
