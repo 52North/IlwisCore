@@ -7,6 +7,7 @@ Rectangle {
     property variant items: ["a","b","c","de", "f","ff"];
     property alias selectedItem: chosenItemText.text;
     property alias selectedIndex: listView.currentIndex;
+    property Component dropDelegate : defaultDelegate
     signal comboClicked;
     //            width: 100;
     //            height: 30;
@@ -19,7 +20,7 @@ Rectangle {
         radius:2;
         width:parent.width;
         height:comboBox.height;
-        color: "lightgrey"
+        color: "#eee"
         border.width: 1
         border.color: "#9494B8"
         smooth:true;
@@ -53,6 +54,49 @@ Rectangle {
         }
     }
 
+    Component{
+        id : defaultDelegate
+        Item{
+            width:comboBox.width;
+            height: comboBox.height;
+
+            Text {
+                text: modelData
+                z : 1
+                anchors.top: parent.top; anchors.topMargin: 5
+                anchors.left: parent.left; anchors.leftMargin: 10
+                font.pixelSize: 12
+                //                            anchors.margins: 5;
+
+            }
+            Rectangle {
+                id : selection
+                width:comboBox.width;
+                height:comboBox.height;
+                color: "green"; radius: 5
+                opacity : 0
+            }
+            MouseArea {
+                anchors.fill: parent;
+                hoverEnabled: true
+                onClicked: {
+                    comboBox.state = ""
+                    var prevSelection = chosenItemText.text
+                    chosenItemText.text = modelData
+                    if(chosenItemText.text != prevSelection){
+                        comboBox.comboClicked();
+                    }
+                    listView.currentIndex = index;
+                }
+                onEntered: {
+                    selection.opacity = 0.2
+                }
+                onExited:
+                    selection.opacity = 0
+            }
+        }
+    }
+
     Rectangle {
         id:dropDown
         width:comboBox.width;
@@ -61,7 +105,7 @@ Rectangle {
         radius:4;
         anchors.top: chosenItem.bottom;
         anchors.margins: 1;
-        color: "lightgrey"
+        color: "#eee"
         border.width: 1
         border.color: "#B0B0B0"
 
@@ -72,45 +116,7 @@ Rectangle {
             currentIndex: 0
             highlight: highlightBar
             highlightFollowsCurrentItem: false
-            delegate: Item{
-                width:comboBox.width;
-                height: comboBox.height;
-
-                Text {
-                    text: modelData
-                    z : 1
-                    anchors.top: parent.top; anchors.topMargin: 5
-                    anchors.left: parent.left; anchors.leftMargin: 10
-                    font.pixelSize: 12
-                    //                            anchors.margins: 5;
-
-                }
-                Rectangle {
-                    id : selection
-                    width:comboBox.width;
-                    height:comboBox.height;
-                    color: "green"; radius: 5
-                    opacity : 0
-                }
-                MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true
-                    onClicked: {
-                        comboBox.state = ""
-                        var prevSelection = chosenItemText.text
-                        chosenItemText.text = modelData
-                        if(chosenItemText.text != prevSelection){
-                            comboBox.comboClicked();
-                        }
-                        listView.currentIndex = index;
-                    }
-                    onEntered: {
-                        selection.opacity = 0.2
-                    }
-                    onExited:
-                        selection.opacity = 0
-                }
-            }
+            delegate: dropDelegate
         }
     }
 

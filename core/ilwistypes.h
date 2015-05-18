@@ -62,6 +62,7 @@ const quint64 itCATALOGVIEW = 2 * itSAMPLESET;         //4503599627370496
 const quint64 itCOLLECTION = 2 * itCATALOGVIEW;        //9007199254740992
 const quint64 itBUFFER = 2 * itCOLLECTION;             //18014398509481984
 const quint64 itWORKFLOW = 2 * itBUFFER;               //36028797018963968
+const quint64 itWORKSPACE = 2 * itWORKFLOW;            //72057594037927936
 
 const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE ; //15
 const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE; //7

@@ -3,11 +3,11 @@
 
 namespace Ilwis {
 namespace BaseOperations {
-class Timesat_nrs : public OperationImplementation
+class Timesat : public OperationImplementation
 {
 public:
-    Timesat_nrs();
-    Timesat_nrs(quint64 metaid, const Ilwis::OperationExpression &expr);
+    Timesat();
+    Timesat(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx,SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
@@ -26,19 +26,17 @@ private:
     double _spikecutoff = 0.5;  // cutoff for spike detection
     bool _forceUpperEnvelope;
     bool _lastIterationLikeTIMESATfit;
-
-    // state variables for fitting one time series
-    NumericStatistics _stats;
-
-    double _win_thresh;
+    bool _extendWindow;
 
     bool calcFitWindow(const int i, const int ienvi,
                        const std::vector<double> yfit, const std::vector<bool> wfit,
+                       double win_thresh,
+                       int org_offset,
                        int& m1, int& m2);
     std::vector<bool> detectSpikes(const std::vector<double> y, std::vector<bool> valid);
     std::vector<double> savgol(std::vector<double> y, std::vector<bool> w);
 
-    NEW_OPERATION(Timesat_nrs);
+    NEW_OPERATION(Timesat);
 };
 }
 }

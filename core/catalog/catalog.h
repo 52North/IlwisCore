@@ -117,6 +117,7 @@ public:
 
     IlwisObject *clone();
 
+    static const QString DEFAULT_WORKSPACE;
 
 protected:
     virtual IIlwisObject createObject(const QVariant& indexValue) const;

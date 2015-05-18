@@ -2,11 +2,13 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import UIContextModel 1.0
 import "workbench" as WorkBench
 import "datapanel" as DataPanel
 import "controls" as Control
 import MessageModel 1.0
 import ResourceModel 1.0
+import MasterCatalogModel 1.0
 import "Global.js" as Global
 
 ApplicationWindow {
@@ -14,6 +16,10 @@ ApplicationWindow {
     width: 1400
     height : 1000
     color : "light grey"
+
+    onClosing: {
+        uicontext.exitUI()
+    }
 
     property int maxPull : 500
 
@@ -46,8 +52,8 @@ ApplicationWindow {
         mainSplit.newCatalog("",-1)
     }
 
-    function changeCatalog(url){
-        mainSplit.changeCatalog(url)
+    function changeCatalog(url, filter){
+        mainSplit.changeCatalog(url, filter)
     }
 
     function transitionInfoPane(newpagename) {
@@ -106,19 +112,23 @@ ApplicationWindow {
                     text : qsTr("Current Workspace")
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                TextField{
+                ComboBox{
                     width : 150
-                    text : "default"
-                    readOnly: true
                     height : 25
-                    style: TextFieldStyle {
-                        textColor: "black"
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: Global.alternatecolor3
+                    objectName: "workspace_combobox_mainui"
+                    model : mastercatalog.workspaces
+                    textRole: "displayName"
+                    anchors.verticalCenter: parent.verticalCenter
+                    onCurrentIndexChanged: {
+                        if ( currentIndex >= 0){
+                            var wmodel =model[currentIndex]
+                            console.debug(wmodel.name)
+                            if ( wmodel){
+                                dataPanel.changeCatalog(wmodel.url,"")
+                                uicontext.currentWorkSpace = wmodel
+                            }
                         }
                     }
-                    anchors.verticalCenter: parent.verticalCenter
 
                 }
                 anchors.verticalCenter: parent.verticalCenter
@@ -146,8 +156,8 @@ ApplicationWindow {
                 dataPanel.newCatalog(url, splitside)
             }
 
-            function changeCatalog(url){
-                dataPanel.changeCatalog(url)
+            function changeCatalog(url, filter){
+                dataPanel.changeCatalog(url, filter)
             }
 
             WorkBench.WorkBenchButtonBar{

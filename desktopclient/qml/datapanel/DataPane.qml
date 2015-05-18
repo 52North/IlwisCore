@@ -101,8 +101,8 @@ Rectangle {
         }
     }
 
-    function changeCatalog(url){
-        datapanesplit.changeCatalog(url)
+    function changeCatalog(url, filter){
+        datapanesplit.changeCatalog(url, filter)
     }
 
     Loader {
@@ -117,7 +117,7 @@ Rectangle {
 
         function closeTab(splitindex, tabindex1){
             if ( Math.abs(splitindex) === 1){ // left
-                closedTab(left.getTab(tabindex1).title);
+                closedTab(lefttab.getTab(tabindex1).title);
                 if ( righttab.count === 0 && lefttab.count === 1)
                     return
                 lefttab.removeTab(tabindex1)
@@ -188,13 +188,17 @@ Rectangle {
             mastercatalog.setActiveTab(activeSplit, tabCount)
         }
 
-        function changeCatalog(url){
+        function changeCatalog(url, filter){
             var catalogpanel = getCurrentCatalogTab()
             if ( catalogpanel)
             {
-                if ( catalogpanel.currentCatalog)
+                if ( catalogpanel.currentCatalog){
+                    if ( url === catalogpanel.currentCatalog.url)
+                        return
+
                     catalogpanel.currentCatalog.destroy(0)
-                catalogpanel.currentCatalog = mastercatalog.newCatalog(url)
+                }
+                catalogpanel.currentCatalog = mastercatalog.newCatalog(url,filter)
                 if ( catalogpanel.currentCatalog){
                     catalogpanel.currentCatalog.makeParent(catalogpanel)
                     var name = catalogpanel.currentCatalog.displayName
@@ -214,10 +218,18 @@ Rectangle {
         }
 
         function newCatalog(url, splitside) {
-
+            console.debug(splitside, activeSplit)
             if ( url){
-                var component = Qt.createComponent("catalog/CatalogPanel.qml")
+                var component
+                if ( url==="ilwis://operations")
+                    component = Qt.createComponent("catalog/OperationPanel.qml")
+                else
+                    component = Qt.createComponent("catalog/CatalogPanel.qml")
+
                 var catalogModel = mastercatalog.newCatalog(url)
+                if ( !catalogModel)
+                    return
+
                 var name = catalogModel.displayName
                 var tabview = activeSplit ===1 ? lefttab : righttab
                 var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
@@ -321,7 +333,11 @@ Rectangle {
             }
         }
 
-
+        handleDelegate: Rectangle {
+                width: righttab.width == 0 ? 1 : 3
+                height: 1
+                color: "grey"
+            }
         DataTabView2 {
             id : lefttab
             side : 1

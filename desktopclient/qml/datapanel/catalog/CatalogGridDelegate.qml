@@ -44,6 +44,7 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 property string message :  model !== null ? url : ""
                 property string ilwisobjectid : model !== null ? id : ""
+                property string ids : model !== null ? currentCatalog.selectedIds() : ""
 
                 Drag.keys: iconPath
                 Drag.active: mouseArea.drag.active
@@ -83,7 +84,7 @@ Item {
             id: txt
             text: displayName
             elide: Text.ElideMiddle
-            color: itemgrid.currentIndex === index ? "white": "black"
+            color: itemgrid.currentIndex === index ? "blue": "black"
             width : parent.width
 
             y : 4

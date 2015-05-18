@@ -1,3 +1,4 @@
+#include <QThread>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "datadefinition.h"
@@ -6,6 +7,12 @@
 #include "geometries.h"
 #include "georeference.h"
 #include "uicontextmodel.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "mastercatalogmodel.h"
+#include "tableoperations/tableoperation.h"
+#include "tableoperations/sortcolumn.h"
+#include "tableoperations/tableoperationfactory.h"
 #include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -14,7 +21,7 @@ std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
 UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
-
+    _abort.store(false);
 
 }
 
@@ -38,9 +45,26 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url,
     return 0;
 }
 
+ChartModel *UIContextModel::chartModel(const QString &objectname, TableModel *tbl)
+{
+    QObject *object =_qmlcontext->findChild<QObject *>(objectname);
+    QObject *newparent = object == 0 ? this : object;
+    ChartModel *chart =  new ChartModel(tbl,newparent);
+
+    return chart;
+}
+
 QString UIContextModel::uniqueName()
 {
     return "ilwis_ui_object_" + QString::number(_objectCounter++);
+}
+
+void UIContextModel::exitUI()
+{
+    _abort.store(true);
+    if ( _threadCount > 0) {  // wait until the threads have aborted
+        std::this_thread::sleep_for (std::chrono::seconds(3));
+    }
 }
 
 QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
@@ -157,6 +181,26 @@ void UIContextModel::prepare()
             _colorNames.push_back(txt);
         }
     }
+    Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
+    factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
+    Ilwis::kernel()->addFactory(factory);
+
+}
+
+bool UIContextModel::abort() const
+{
+    return _abort;
+}
+
+void UIContextModel::updateThreadCount(int change)
+{
+    Ilwis::Locker<std::mutex> lock(_lock);
+    _threadCount += change;
+}
+
+int UIContextModel::threadCount() const
+{
+    return _threadCount;
 }
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)
@@ -166,6 +210,39 @@ int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropert
     return 0;
 }
 
+WorkSpaceModel *UIContextModel::currentWorkSpace() const
+{
+    return _currentWorkSpace;
+}
+
+void UIContextModel::setCurrentWorkSpace(WorkSpaceModel *cws)
+{
+    if ( !_qmlcontext)
+        return;
+    if ( _currentWorkSpace && _currentWorkSpace->name() == cws->name())
+        return;
+    _currentWorkSpace = cws;
+    QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
+        if (mcmodel){
+            quint32 index = mcmodel->workspaceIndex(cws->name());
+            if ( index != iUNDEF){
+                QObject *wscombo = rootObject()->findChild<QObject*>("workspace_combobox_mainui");
+                if ( wscombo){
+                    wscombo->setProperty("currentIndex",index);
+                }
+                QQuickItem *navbutton = rootObject()->findChild<QQuickItem*>("workbench_navbutton_mainui");
+                if ( navbutton){
+                    QString wcUrl = context()->workingCatalog()->source().url().toString();
+                    bool isWorkspace = wcUrl.indexOf("ilwis://internalcatalog/workspaces") == 0;
+                    navbutton->setProperty("state" , isWorkspace ? "zerosize" : "fullsize");
+                }
+                emit currentWorkSpaceChanged();
+            }
+        }
+    }
+}
 
 
 

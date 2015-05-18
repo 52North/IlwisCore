@@ -34,18 +34,22 @@ CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resourc
     filter(resource["filter"].toString());
     QStringList lst = resource["locations"].toStringList();
     for(auto url : lst){
-        _locations.push_back(QUrl(url));
+        if ( url != sUNDEF)
+            _locations.push_back(QUrl(url));
     }
     _resource = resource;
 }
 
 CatalogView::CatalogView(const CatalogView &cat) : QObject(),
-    Identity(cat.name(),cat.id(),cat.code(),cat.description()),
-    _filter(cat._filter),
-    _locations(cat._locations),
-    _parent(cat._parent),
-    _resource(cat.resource())
-{
+    Identity(sUNDEF,i64UNDEF,cat.code(),cat.description()),
+     _filter(cat._filter),
+     _locations(cat._locations),
+     _fixedItems(cat._fixedItems),
+     _parent(cat._parent),
+     _resource(cat.resource())
+ {
+     Identity::prepare(); // bit inconveniet but the id must be set. this overrules the name so we set it again
+     name(cat.name());
 }
 
 void CatalogView::addLocation(const QUrl& loc){
@@ -66,6 +70,9 @@ std::vector<Resource> CatalogView::items() const
         return std::vector<Resource>();
 
     std::vector<Resource> results;
+    for(auto& item : _fixedItems){
+        results.push_back(item.second);
+    }
     QString filter = _filter;
     for(auto location : _locations) {
         std::vector<Resource> items;
@@ -74,7 +81,11 @@ std::vector<Resource> CatalogView::items() const
                 filter += " and ";
             filter += QString("type<>%1").arg(QString::number(itGEODETICDATUM)); // datums are not visible in the catalogs
         }
-        items =  mastercatalog()->select(location, filter);
+        if ( location != MasterCatalog::MASTERCATALOG){
+            items =  mastercatalog()->select(location, filter);
+        }else
+            items =  mastercatalog()->select(filter);
+
         std::copy(items.begin(), items.end(),std::back_inserter(results));
     }
     std::set<Resource> uniques(results.begin(), results.end());
@@ -82,6 +93,26 @@ std::vector<Resource> CatalogView::items() const
     std::copy(uniques.begin(), uniques.end(), results.begin());
     return results;
 
+}
+
+void CatalogView::addFixedItem(quint64 id)
+{
+    Resource resource = mastercatalog()->id2Resource(id);
+    if ( resource.isValid()){
+        _fixedItems[id] = resource;
+    }
+}
+
+void CatalogView::removeFixedItem(quint64 id)
+{
+    auto iter = _fixedItems.find(id);
+    if ( iter != _fixedItems.end())
+        _fixedItems.erase(iter);
+}
+
+quint32 CatalogView::fixedItemCount() const
+{
+    return _fixedItems.size();
 }
 
 QString CatalogView::filter() const
@@ -117,12 +148,14 @@ bool CatalogView::prepare()
 
 CatalogView &CatalogView::operator=(const CatalogView &view)
 {
+    Identity::prepare();
     name(view.name());
     setDescription(view.description());
     code(view.code());
     _filter = view._filter;
     _locations = view._locations;
     _resource = view._resource;
+    _fixedItems = view._fixedItems;
 
     return *this;
 
@@ -136,7 +169,7 @@ QString CatalogView::type() const
 
 bool CatalogView::isValid() const
 {
-    return _locations.size() > 0; // && _filter != "";
+    return _locations.size() > 0 || _fixedItems.size() > 0 ;
 }
 
 QUrl CatalogView::parentCatalogView() const

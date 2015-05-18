@@ -26,9 +26,9 @@ public:
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY contentChanged)
 
-    CatalogModel() ;
     ~CatalogModel();
-    explicit CatalogModel(const Ilwis::CatalogView &view, int lvl, QObject *parent = 0);
+    explicit CatalogModel(QObject *parent = 0);
+    CatalogModel(const Ilwis::Resource& res, QObject *parent);
     bool isScanned() const;
     bool initNode() const;
     int level() const;
@@ -37,19 +37,23 @@ public:
     QQmlListProperty<CatalogMapItem> mapItems();
     Q_INVOKABLE void makeParent(QObject *obj);
     Q_INVOKABLE void filterChanged(const QString &objectType, bool state);
+    Q_INVOKABLE void filter(const QString& filterString);
     void refresh(bool yesno);
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     virtual void nameFilter(const QString&);
     QString nameFilter() const;
-     Q_INVOKABLE void prepareMapItems(LayerManager *manager);
+    Q_INVOKABLE void prepareMapItems(LayerManager *manager);
+    void setView(const Ilwis::CatalogView &view);
+    Ilwis::CatalogView view() const;
 
+    Q_INVOKABLE QString selectedIds() const;
 protected:
     Ilwis::CatalogView _view;
-    void newview(const Ilwis::CatalogView &view);
     virtual void gatherItems();
    QList<ResourceModel *> _currentItems;
    QList<IlwisObjectModel *> _selectedObjects;
    QList<CatalogMapItem *> _catalogMapItems;
+   bool _refresh = false;
 
 
 private:
@@ -60,8 +64,6 @@ private:
     std::map<QString, bool> _filterState;
     QString _nameFilter;
 
-
-    bool _refresh = false;
 
 signals:
     void selectionChanged();

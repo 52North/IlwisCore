@@ -4,9 +4,13 @@
 #include <cmath>
 #include <vector>
 #include "kernel.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
 #include "raster.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "ilwiscontext.h"
 #include "rasterinterpolator.h"
 #include "Eigen/LU"
 #include "Eigen/Dense"
@@ -15,18 +19,18 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
-REGISTER_OPERATION(Timesat_nrs)
+REGISTER_OPERATION(Timesat)
 
-Ilwis::OperationImplementation *Timesat_nrs::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+Ilwis::OperationImplementation *Timesat::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-    return new Timesat_nrs(metaid, expr);
+    return new Timesat(metaid, expr);
 }
 
-Timesat_nrs::Timesat_nrs()
+Timesat::Timesat()
 {
 }
 
-Ilwis::OperationImplementation::State Timesat_nrs::prepare(ExecutionContext *, const SymbolTable & )
+Ilwis::OperationImplementation::State Timesat::prepare(ExecutionContext *, const SymbolTable & )
 {
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
@@ -48,30 +52,35 @@ Ilwis::OperationImplementation::State Timesat_nrs::prepare(ExecutionContext *, c
 
     _forceUpperEnvelope = _expression.parm(2).value().endsWith("true", Qt::CaseInsensitive);
     _lastIterationLikeTIMESATfit = _expression.parm(3).value().endsWith("true", Qt::CaseInsensitive);
+    _extendWindow = _expression.parm(4).value().endsWith("true", Qt::CaseInsensitive);
+
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
+    // initialize tranquilizer
+    initialize(inputRaster->size().xsize() * inputRaster->size().ysize());
 
     return sPREPARED;
 }
 
-Timesat_nrs::Timesat_nrs(quint64 metaid, const Ilwis::OperationExpression &expr) :
+Timesat::Timesat(quint64 metaid, const Ilwis::OperationExpression &expr) :
     OperationImplementation(metaid, expr)
 {
 }
 
-bool Timesat_nrs::calcFitWindow(const int i, const int ienvi,
+bool Timesat::calcFitWindow(const int i, const int ienvi,
                                 const std::vector<double> yfit, const std::vector<bool> wfit,
+                                double win_thresh,
+                                int org_offset,
                                 int& m1, int& m2)
 {
     m1 = i - _win[ienvi];
     m2 = i + _win[ienvi] + 1;
-    auto wm = std::max_element(_win.begin(), _win.end());
-    int winmax = *wm;
 
     //  Adapting fitting interval. Large variation use a smaller window.
     auto xymax = std::minmax_element(yfit.begin() + m1, yfit.begin() + m2);
     double ymin = *xymax.first;
     double ymax = *xymax.second;
 
-    if ( (ymax - ymin) > _win_thresh) {
+    if ( (ymax - ymin) > win_thresh) {
         m1 += std::floor(_win[ienvi] / 3); // adjusting the left side with views of m1
         m2 -= std::floor(_win[ienvi] / 3); // adjusting the right side with views of m2
     }
@@ -83,37 +92,44 @@ bool Timesat_nrs::calcFitWindow(const int i, const int ienvi,
     std::vector<bool>::const_reverse_iterator itr;
     for (itr = wfit.rbegin() + offset; (itr != wfit.rend()) && (cnt < 3); ++itr)
         if (*itr) cnt++;
-    bool leftFail = itr == wfit.rend();
-    m1 = wfit.rend() - itr;
+    m1 = std::min(m1, wfit.rend() - itr);
+    bool leftFail = cnt < 3;
     if (leftFail) ++m1;
 
     cnt = 0;
     std::vector<bool>::const_iterator it;
     for (it = wfit.begin() + i; (it != wfit.end()) && (cnt < 3); ++it)
          if (*it) cnt++;
-    bool rightFail = it == wfit.end();
-    m2 = it - wfit.begin();
-    if (rightFail) m2 = _nb + 2 * winmax;
+    m2 = std::max(m2, it - wfit.begin());
+    bool rightFail = cnt < 3;
+    if (rightFail) m2 = _nb + 2 * org_offset;
 
     return !(leftFail || rightFail);
 }
 
-std::vector<bool> Timesat_nrs::detectSpikes(const std::vector<double> y, std::vector<bool> valid) {
+std::vector<bool> Timesat::detectSpikes(const std::vector<double> y, std::vector<bool> valid) {
     std::vector<double> y_c;
     copy_if(y.begin(), y.end(), back_inserter(y_c),
             [] (const double d) { return d > 2.0; });
 
     double N = y_c.size();
-    _stats.calculate(y_c.begin(), y_c.end(), NumericStatistics::pSTDEV);
-    double ystd = _stats[NumericStatistics::pSTDEV] * std::sqrt((N - 1) / N); // biased stdev
+    NumericStatistics stats;
+    stats.calculate(y_c.begin(), y_c.end(), NumericStatistics::pSTDEV);
+    double ystd = stats[NumericStatistics::pSTDEV] * std::sqrt((N - 1) / N); // biased stdev
     double distance = _spikecutoff * ystd;
 
-    // Add values around series to handle window effects
-    int swinmax = std::floor(_nptperyear / 7); // unsure which value to use: maybe 5 or 7 or 10
-    std::vector<double> yext(_nb + swinmax * 2);
-    copy(y.begin() + _nb - swinmax, y.end(), yext.begin()); // copy end of series to begin of extension
-    copy(y.begin(), y.end(), yext.begin() + swinmax);      // copy series to middle of extension
-    copy(y.begin(), y.begin() + swinmax, yext.begin() + _nb + swinmax); // copy begin of series to end of extension
+    int swinmax = 0;
+    std::vector<double> yext(_nb);
+    if (_extendWindow) {
+        // Add values around series to handle window effects
+        swinmax = std::floor(_nptperyear / 7); // unsure which value to use: maybe 5 or 7 or 10
+        yext.resize(_nb + swinmax * 2);
+        copy(y.begin() + _nb - swinmax, y.end(), yext.begin()); // copy end of series to begin of extension
+        copy(y.begin(), y.end(), yext.begin() + swinmax);      // copy series to middle of extension
+        copy(y.begin(), y.begin() + swinmax, yext.begin() + _nb + swinmax); // copy begin of series to end of extension
+    }
+    else
+        copy(y.begin(), y.end(), yext.begin());
 
     // find single spikes and set weights to zero
     std::vector<double> dut;
@@ -143,21 +159,34 @@ std::vector<bool> Timesat_nrs::detectSpikes(const std::vector<double> y, std::ve
     return valid;
 }
 
-std::vector<double> Timesat_nrs::savgol(std::vector<double> y, std::vector<bool> w)
+std::vector<double> Timesat::savgol(std::vector<double> y, std::vector<bool> w)
 {
     // Adapted code from TIMESAT
     int winmax = *std::max_element(_win.begin(), _win.end());
 
-    // Extend data circularity to improve fitting near the boundary of original data
-    std::vector<double> yfit(_nb + winmax * 2);
-    std::copy(y.begin() + _nb - winmax, y.end(), yfit.begin()); // copy end of series to begin of extension
-    std::copy(y.begin(), y.end(), yfit.begin() + winmax);      // copy series to middle of extension
-    std::copy(y.begin(), y.begin() + winmax, yfit.begin() + _nb + winmax); // copy begin of series to end of extension
-    std::vector<bool> wfit(_nb + winmax * 2);
-    std::copy(w.begin() + _nb - winmax, w.end(), wfit.begin()); // copy end of series to begin of extension
-    std::copy(w.begin(), w.end(), wfit.begin() + winmax);      // copy series to middle of extension
-    std::copy(w.begin(), w.begin() + winmax, wfit.begin() + _nb + winmax); // copy begin of series to end of extension
-    std::vector<int> t(_nb + 2 * winmax);
+    int nb = _nb;
+    std::vector<double> yfit(_nb);
+    std::vector<bool> wfit(_nb);
+    std::vector<int> t(_nb);
+    int org_offset = 0;
+    if (_extendWindow) {
+        // Extend data circularity to improve fitting near the boundary of original data
+        org_offset = winmax;
+        yfit.resize(_nb + winmax * 2);
+        std::copy(y.begin() + _nb - winmax, y.end(), yfit.begin()); // copy end of series to begin of extension
+        std::copy(y.begin(), y.end(), yfit.begin() + winmax);      // copy series to middle of extension
+        std::copy(y.begin(), y.begin() + winmax, yfit.begin() + _nb + winmax); // copy begin of series to end of extension
+        wfit.resize(_nb + winmax * 2);
+        std::copy(w.begin() + _nb - winmax, w.end(), wfit.begin()); // copy end of series to begin of extension
+        std::copy(w.begin(), w.end(), wfit.begin() + winmax);      // copy series to middle of extension
+        std::copy(w.begin(), w.begin() + winmax, wfit.begin() + _nb + winmax); // copy begin of series to end of extension
+        t.resize(_nb + 2 * winmax);
+    }
+    else {
+        nb -= winmax * 2;
+        std::copy(y.begin(), y.end(), yfit.begin());
+        std::copy(w.begin(), w.end(), wfit.begin());
+    }
     int n(-winmax + 1);
     std::generate(t.begin(), t.end(), [&]{ return n++; });
 
@@ -166,12 +195,14 @@ std::vector<double> Timesat_nrs::savgol(std::vector<double> y, std::vector<bool>
     double N = yfit.size();
     int m1, m2;
     std::vector<double> dut;
+    NumericStatistics stats;
     for (int ienvi = 0; ienvi < nenvi; ++ienvi) {
-        _stats.calculate(yfit.begin(), yfit.end(), NumericStatistics::pSTDEV);
-        double ystd = _stats[NumericStatistics::pSTDEV] * std::sqrt((N - 1) / N); // biased stdev
-        _win_thresh = 1.2 * 2 * ystd; // threshold to adjust the window
-        for (int i = winmax; i < _nb + winmax; ++i) {
-            if (calcFitWindow(i, ienvi, yfit, wfit, m1, m2)) {
+        stats.calculate(yfit.begin(), yfit.end(), NumericStatistics::pSTDEV);
+        double ystd = stats[NumericStatistics::pSTDEV] * std::sqrt((N - 1) / N); // biased stdev
+        double win_thresh = 1.2 * 2 * ystd; // threshold to adjust the window
+        int last = _lastIterationLikeTIMESATfit ? nenvi - 1 : nenvi;
+        for (int i = winmax; i < nb + winmax; ++i) {
+            if (calcFitWindow(i, ienvi, yfit, wfit, win_thresh, org_offset, m1, m2)) {
                 Eigen::MatrixXd A(3, m2 - m1);
                 Eigen::VectorXd b(m2 - m1);
                 // preparing data slices as to construct the design matrix
@@ -196,18 +227,17 @@ std::vector<double> Timesat_nrs::savgol(std::vector<double> y, std::vector<bool>
                 yfit[i] = dut[dut.size() / 2];
             }
             if (_forceUpperEnvelope) {
-                int last = _lastIterationLikeTIMESATfit ? nenvi - 1 : nenvi;
-                if ( (yfit[i] < y[i - winmax]) && wfit[i] && (ienvi < last))
-                    yfit[i] = y[i - winmax];
+                if ( (yfit[i] < y[i - org_offset]) && wfit[i] && (ienvi < last))
+                    yfit[i] = y[i - org_offset];
             }
         }
     }
-    std::copy(yfit.begin() + winmax, yfit.begin() + _nb + winmax, y.begin());
+    std::copy(yfit.begin() + org_offset, yfit.begin() + _nb + org_offset, y.begin());
     return y;
 }
 
 
-bool Timesat_nrs::execute(ExecutionContext *ctx, SymbolTable& symTable)
+bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
@@ -227,17 +257,8 @@ bool Timesat_nrs::execute(ExecutionContext *ctx, SymbolTable& symTable)
     std::vector<double> fitted(_nb);
     // timeseries are assumed to be 10 day periods.
     int pixCount = 0;
-    int pixPerc = 0;
-    int pixStep = rows * cols / 30;
     while (iterIn != inEnd) {
-        if (pixCount % pixStep == 0) {
-            if (pixPerc % 3 == 0)
-                std::cerr << pixPerc * 10 / 3;
-            else
-                std::cerr << ".";
-            pixPerc++;
-        }
-        pixCount++;
+        trq()->update(pixCount++);
 
         std::copy(iterIn, iterIn + _nb, slice.begin());
         std::vector<bool> valid(_nb);
@@ -252,16 +273,22 @@ bool Timesat_nrs::execute(ExecutionContext *ctx, SymbolTable& symTable)
                 valid = detectSpikes(slice, valid);
                 fitted = savgol(slice, valid);
             }
+            else
+                std::fill(fitted.begin(), fitted.end(), 0.0);
         }
         else
             std::fill(fitted.begin(), fitted.end(), 0.0);
 
-        std::copy(fitted.begin(), fitted.end(), iterOut);
+        // make sure output stays in byte range (needed?)
+        std::transform(fitted.begin(), fitted.end(), iterOut, [] (const double d) { return std::min(255.0, d); });
 
         iterIn += _nb;
         iterOut += _nb;
     }
-    std::cerr << "100" << std::endl;
+    trq()->update(rows * cols);
+    trq()->inform("\nWriting...\n");
+    trq()->stop();
+
 
     bool resource = true;
     if ( resource && ctx != 0) {
@@ -272,17 +299,18 @@ bool Timesat_nrs::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return resource;
 }
 
-quint64 Timesat_nrs::createMetadata()
+quint64 Timesat::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/timesat_nrs"});
+    OperationResource operation({"ilwis://operations/timesat"});
     operation.setLongName("Timesat filtering");
-    operation.setSyntax("timesat_nrs(inputgridcoverage,windowlist,upperenvelop,fitlastiteration");
+    operation.setSyntax("timesat(inputgridcoverage,iterationcount,upperenvelop,fitlastiteration,extendwindow");
     operation.setDescription(TR("iteratively filters a rastercoverage with a Savitzky-Golay moving filter"));
-    operation.setInParameterCount({4});
-    operation.addInParameter(0,itRASTER, TR("Input rastercoverage"),TR("input rastercoverage with value domain"));
-    operation.addInParameter(1,itSTRING, TR("Target windowlist"),TR("a list of sizes for the moving window"));
+    operation.setInParameterCount({5});
+    operation.addInParameter(0,itRASTER, TR("Input rastercoverage"),TR("Input rastercoverage with value domain"));
+    operation.addInParameter(1,itSTRING, TR("Iteration count"),TR("Number of iterations with increasing moving window size"));
     operation.addInParameter(2,itBOOL, TR("Upper envelop"),TR("Force to original value when fitted value is lower") );
     operation.addInParameter(3,itBOOL, TR("Fit last iteration"),TR("Force upper envelop except last") );
+    operation.addInParameter(4,itBOOL, TR("Extend moving window"),TR("Add values around the data to handle edge values") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
     operation.setKeywords("raster, filter, Savitzky-Golay");

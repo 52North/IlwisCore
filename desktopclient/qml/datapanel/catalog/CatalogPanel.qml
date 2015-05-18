@@ -4,13 +4,16 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import CatalogModel 1.0
 import MasterCatalogModel 1.0
+import CatalogFilterModel 1.0
 import "../../Global.js" as Global
+import "../../controls" as Controls
 
 Item {
-    property int heightButtons : 22
+    property int heightButtons :22
     property string tabLocation : "left"
     property CatalogModel currentCatalog
     property bool canSeparate : false
+    property string panelType : "spatial-data"
     id : catalogViews
     width : parent.width
     height : parent.height
@@ -47,7 +50,6 @@ Item {
         if ( objecttype === "all"){
             showRasters.checked = showAll.checked;
             showFeatures.checked = showAll.checked;
-            showCoverages.checked = showAll.checked;
             showCsys.checked = showAll.checked;
             showGrfs.checked = showAll.checked;
             showTables.checked = showAll.checked;
@@ -72,9 +74,9 @@ Item {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../../images/" + name
-         return iconP
-     }
+        var iconP = "../../images/" + name
+        return iconP
+    }
 
 
     Rectangle{
@@ -82,7 +84,10 @@ Item {
         anchors.top : parent.top
         width : parent.width
         height : 52
+        border.width: 1
+        border.color: "grey"
         color : Global.alternatecolor5
+        z : 1
 
         Action {
             id :refreshCatalog
@@ -91,9 +96,102 @@ Item {
             }
         }
 
-        RowLayout{
-            spacing: 8
-            anchors.verticalCenter: parent.verticalCenter
+
+
+        Row {
+            id : objectfilters
+            width : 295
+            height : 22
+            spacing: 1
+            anchors.top: parent.top
+            anchors.topMargin: 2
+
+
+            ToolBarButton{
+                id : showAll
+                iconSource: iconsource("all20.png")
+                onClicked: toggleFilter("all", checked);
+            }
+
+            ToolBarButton{
+                id : showRasters
+                iconSource: iconsource("raster20CS1.png")
+                onClicked: toggleFilter("rastercoverage", checked);
+            }
+            ToolBarButton{
+                id : showFeatures
+                iconSource: iconsource("feature20CS1.png")
+                onClicked: toggleFilter("featurecoverage", checked);
+            }
+            ToolBarButton{
+                id : showTables
+                iconSource: iconsource("table20CS1.png")
+                onClicked: toggleFilter("table", checked);
+            }
+            ToolBarButton{
+                id : showCsys
+                iconSource: iconsource("csy20.png")
+                onClicked: toggleFilter("coordinatesystem", checked);
+            }
+
+            ToolBarButton{
+                id : showGrfs
+                iconSource: iconsource("georeference20.png")
+                onClicked: toggleFilter("georeference", checked);
+            }
+            ToolBarButton{
+                id : showDomains
+                iconSource: iconsource("domain.png")
+                onClicked: toggleFilter("domain", checked);
+            }
+            ToolBarButton{
+                id : showRpr
+                iconSource: iconsource("representation20.png")
+                onClicked: toggleFilter("representation", checked);
+            }
+            ToolBarButton{
+                id : showProj
+                iconSource: iconsource("projection20.png")
+                onClicked: toggleFilter("projection", checked);
+            }
+
+            ToolBarButton{
+                id : showEll
+                iconSource: iconsource("ellipsoid20.png")
+                onClicked: toggleFilter("ellipsoid", checked);
+            }
+
+        }
+        ComboBox{
+            id : catalogfilters
+            anchors.top : objectfilters.bottom
+            anchors.left : objectfilters.left
+            anchors.leftMargin: 2
+            anchors.topMargin: 2
+            width : 201
+            height : 22
+            model : mastercatalog.defaultFilters
+            textRole: "name"
+            onCurrentIndexChanged: {
+                if ( currentIndex > 0){ // first entry is a default empty one
+                    var filter = model[currentIndex].catalogQuery
+                    var url = "ilwis://mastercatalog"
+                    mastercatalog.selectedBookmark(url)
+                    bigthing.changeCatalog(url, filter)
+                }
+
+            }
+        }
+
+        Row {
+            id : layoutfilter
+            width : 95
+            height : 22
+            anchors.top : objectfilters.bottom
+            anchors.topMargin: 2
+            anchors.left : catalogfilters.right
+            anchors.leftMargin: 4
+
             ExclusiveGroup { id : catalogViewStatus
                 onCurrentChanged: {
                     if( showList.checked)
@@ -106,113 +204,40 @@ Item {
                         catalogView.state = "bylocation"
                 }
             }
-            Grid {
-                width : 180
-                height : 46
-                columns : 6
-                spacing: 2
-
-
-                ToolBarButton{
-                    id : showAll
-                    iconSource: iconsource("all20.png")
-                    onClicked: toggleFilter("all", checked);
-                }
-
-                ToolBarButton{
-                    id : showRasters
-                    iconSource: iconsource("raster20CS1.png")
-                    onClicked: toggleFilter("rastercoverage", checked);
-                }
-                ToolBarButton{
-                    id : showFeatures
-                    iconSource: iconsource("feature20CS1.png")
-                    onClicked: toggleFilter("featurecoverage", checked);
-                }
-                ToolBarButton{
-                    id : showCoverages
-                    iconSource: iconsource("coverage20.png")
-                    onClicked: toggleFilter("coverage", checked);
-                }
-                ToolBarButton{
-                    id : showTables
-                    iconSource: iconsource("table20CS1.png")
-                    onClicked: toggleFilter("table", checked);
-                }
-                ToolBarButton{
-                    id : showCsys
-                    iconSource: iconsource("csy20.png")
-                    onClicked: toggleFilter("coordinatesystem", checked);
-                }
-
-                ToolBarButton{
-                    id : showGrfs
-                    iconSource: iconsource("georeference20.png")
-                    onClicked: toggleFilter("georeference", checked);
-                }
-                ToolBarButton{
-                    id : showDomains
-                    iconSource: iconsource("domain.png")
-                    onClicked: toggleFilter("domain", checked);
-                }
-                ToolBarButton{
-                    id : showRpr
-                    iconSource: iconsource("representation20.png")
-                    onClicked: toggleFilter("representation", checked);
-                }
-                ToolBarButton{
-                    id : showProj
-                    iconSource: iconsource("projection20.png")
-                    onClicked: toggleFilter("projection", checked);
-                }
-
-                ToolBarButton{
-                    id : showEll
-                    iconSource: iconsource("ellipsoid20.png")
-                    onClicked: toggleFilter("ellipsoid", checked);
-                }
-
-            }
-
-
-            Grid {
-                width : 46
-                height : 46
-                columns : 2
-                rows : 2
-                ToolBarButton{
-                    id : showList
-                    iconSource: iconsource("listCS1.png")
-                    exclusiveGroup: catalogViewStatus
-                    checked : false
-                }
-                ToolBarButton{
-                    id : showGrid
-                    iconSource: iconsource("gridCS1.png")
-                    checked : true
-                    exclusiveGroup: catalogViewStatus
-                }
-                ToolBarButton{
-                    id : showThumbs
-                    iconSource: iconsource("thumblistCS1.png")
-                    exclusiveGroup: catalogViewStatus
-                    checked: false
-                }
-                ToolBarButton{
-                    id : showByLoc
-                    iconSource: iconsource("location20.png")
-                    exclusiveGroup: catalogViewStatus
-                    checked : false
-                }
+            ToolBarButton{
+                id : showList
+                iconSource: iconsource("listCS1.png")
+                exclusiveGroup: catalogViewStatus
+                checked : false
             }
             ToolBarButton{
-                id : refresh
-                implicitHeight: heightButtons
-                iconSource: iconsource("refreshCS1.png")
-                action : refreshCatalog
+                id : showGrid
+                iconSource: iconsource("gridCS1.png")
+                checked : true
+                exclusiveGroup: catalogViewStatus
             }
-
-
+            ToolBarButton{
+                id : showThumbs
+                iconSource: iconsource("thumblistCS1.png")
+                exclusiveGroup: catalogViewStatus
+                checked: false
+            }
+            ToolBarButton{
+                id : showByLoc
+                iconSource: iconsource("location20.png")
+                exclusiveGroup: catalogViewStatus
+                checked : false
+            }
+        }
+        ToolBarButton{
+            id : refresh
+            implicitHeight: heightButtons
+            iconSource: iconsource("refresh20.png")
+            action : refreshCatalog
+            anchors.left : objectfilters.right
+            anchors.leftMargin: 1
+            anchors.top: parent.top
+            anchors.topMargin: 2
         }
 
 
@@ -304,9 +329,11 @@ Item {
     }
     Component.onCompleted: {
         var url = mastercatalog.currentUrl
-        currentCatalog = mastercatalog.newCatalog(url)
-        currentCatalog.makeParent(catalogViews)
-        mastercatalog.currentCatalog = currentCatalog
+        var currentCatalog = mastercatalog.newCatalog(url)
+        if ( currentCatalog){
+            currentCatalog.makeParent(catalogViews)
+            mastercatalog.currentCatalog = currentCatalog
+        }
     }
 
 }
