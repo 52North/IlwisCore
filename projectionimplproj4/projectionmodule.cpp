@@ -36,6 +36,8 @@ void Ilwis::ProjectionModule::prepare()
     FactoryInterface *factory = new ProjectionImplFactoryProj4();
     factory->prepare();
     kernel()->addFactory(factory );
+
+    kernel()->issues()->log("Loaded Proj4 module",IssueObject::itMessage);
 }
 
 QString ProjectionModule::name() const
