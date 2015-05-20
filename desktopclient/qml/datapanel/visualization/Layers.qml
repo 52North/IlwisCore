@@ -60,8 +60,8 @@ Item {
                   layerManager: manager
               }
               Component.onCompleted: {
-                  renderer.associate(hscroller.objectName)
-                  renderer.associate(vscroller.objectName)
+                  renderer.associate(hscroller.objectName,"synchronizeEnded")
+                  renderer.associate(vscroller.objectName,"synchronizeEnded")
               }
           }
           Controls.HScrollBar{
