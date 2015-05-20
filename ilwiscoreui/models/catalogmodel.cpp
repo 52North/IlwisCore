@@ -193,9 +193,11 @@ QString CatalogModel::nameFilter() const
     return _nameFilter;
 }
 
-void CatalogModel::prepareMapItems(LayerManager *manager)
+void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
 {
     try{
+        if ( force)
+            _catalogMapItems.clear();
         if ( _catalogMapItems.size() == 0){
             kernel()->issues()->silent(true);
             for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
