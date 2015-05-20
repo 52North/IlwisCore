@@ -58,6 +58,8 @@ void LayersRenderer::render()
         _rootDrawer->draw( );
 
         glDisable(GL_BLEND);
+
+        emit drawDone();
     }
     catch(const ErrorObject& ){}
     catch(const std::exception& ex){
