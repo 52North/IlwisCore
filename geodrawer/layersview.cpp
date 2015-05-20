@@ -29,6 +29,7 @@ QQuickFramebufferObject::Renderer *LayersView::createRenderer() const
 {
     LayersRenderer *renderer = new LayersRenderer(this);
     connect(renderer,&LayersRenderer::synchronizeDone,this,&LayersView::synchronizeEnded);
+    connect(renderer,&LayersRenderer::drawDone,this,&LayersView::drawDone);
     return renderer;
 }
 
@@ -198,18 +199,18 @@ void LayersView::setZoomEnvelope(const QVariantMap &var)
 
 
 
-void LayersView::associate(const QString &name, bool permanent)
+void LayersView::associate(const QString &name, const QString& event)
 {
     for(const auto& association : _associates){
         if ( association.first == name)
             return;
     }
-    _associates.push_back(std::pair<QString, bool>(name, permanent));
+    _associates.push_back(std::pair<QString, QString>(name, event));
 }
 
 void LayersView::removeAssociate(const QString &name)
 {
-    auto iter = std::find_if(_associates.begin(), _associates.end(),[&name](const std::pair<QString, bool>& assoc)->bool{
+    auto iter = std::find_if(_associates.begin(), _associates.end(),[&name](const std::pair<QString, QString>& assoc)->bool{
         return name == assoc.first;
     });
     if ( iter != _associates.end())
@@ -235,14 +236,30 @@ void LayersView::setShowLayerInfo(bool yesno)
 void LayersView::synchronizeEnded()
 {
     for(const auto& iter : _associates) {
-        QString name = iter.first;
-        QObject *obj = uicontext()->rootObject()->findChild<QObject *>(name);
-        if (obj){
-            QVariant returnedValue;
-            QMetaObject::invokeMethod(obj,"updateItem",Q_RETURN_ARG(QVariant, returnedValue));
+        if ( iter.second == "synchronizeEnded"){
+            QString name = iter.first;
+            QObject *obj = uicontext()->rootObject()->findChild<QObject *>(name);
+            if (obj){
+                QVariant returnedValue;
+                QMetaObject::invokeMethod(obj,"updateItem",Q_RETURN_ARG(QVariant, returnedValue));
+            }
         }
     }
 
+}
+
+void LayersView::drawDone()
+{
+    for(const auto& iter : _associates) {
+        if ( iter.second == "drawEnded"){
+            QString name = iter.first;
+            QObject *obj = uicontext()->rootObject()->findChild<QObject *>(name);
+            if (obj){
+                QVariant returnedValue;
+                QMetaObject::invokeMethod(obj,"finalizeDraw",Q_RETURN_ARG(QVariant, returnedValue));
+            }
+        }
+    }
 }
 
 QString LayersView::viewerId() const
