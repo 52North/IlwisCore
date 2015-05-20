@@ -86,7 +86,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
-    Q_INVOKABLE void associate(const QString& name, bool permanent = true);
+    Q_INVOKABLE void associate(const QString& name, const QString& event);
     Q_INVOKABLE void removeAssociate(const QString& name);
 
     LayerManager *layerManager();
@@ -101,6 +101,7 @@ signals:
 
 public slots:
     void synchronizeEnded();
+    void drawDone();
 
 private:
     QVariantMap zoomEnvelope() const;
@@ -115,7 +116,7 @@ private:
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
-    std::vector<std::pair<QString, bool>> _associates;
+    std::vector<std::pair<QString, QString>> _associates;
 
 
     QVariantMap _copiedAttributes;
