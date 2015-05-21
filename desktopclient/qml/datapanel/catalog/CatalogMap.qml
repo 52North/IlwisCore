@@ -72,7 +72,6 @@ Rectangle {
         }
 
         function finalizeDraw(){
-            console.debug("dddd")
             mapItems.canvasDirty = true
             mapItems.requestPaint()
         }
