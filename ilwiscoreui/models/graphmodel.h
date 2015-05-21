@@ -36,7 +36,7 @@ public:
     void yvalues(const QList<QVariant> &yvalues);
     void yvalues(const std::vector<QVariant> &yvalues);
     QList<QVariant> yfraction() const;
-    QList<QVariant> ycolors() const;
+    QList<QColor> ycolors() const;
     Q_INVOKABLE QColor ycolor(int index) const;
 
     bool enabled() const;
@@ -62,7 +62,7 @@ private:
     QColor _pointStrokeColor;
     QList<QVariant> _yvalues;
     QList<QVariant> _yfraction; // for piecharts,
-    QList<QVariant> _ycolors; // where needed e.g. bar or pie
+    QList<QColor> _ycolors; // where needed e.g. bar or pie
     QString _yAxis;
     bool _enabled = false;
 

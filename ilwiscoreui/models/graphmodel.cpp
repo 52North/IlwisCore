@@ -69,11 +69,12 @@ void GraphModel::yvalues(const QList<QVariant> &data)
         _yfraction.push_back(sum + v.toDouble());
         sum += v.toDouble();
     }
-    Ilwis::Geodrawer::VisualAttribute va(Ilwis::IDomain("value"));
-    va.actualRange({0,100});
+    Ilwis::Geodrawer::VisualAttribute va(Ilwis::NumericRange(0,_yfraction.size()));
+    int index = 0;
     for(QVariant& v : _yfraction){
         v = 100.0 * v.toDouble() / sum;
-        _ycolors.push_back(va.value2color(v));
+        _ycolors.push_back(va.value2color(index));
+        ++index;
     }
     _yvalues = data;
 }
@@ -91,15 +92,17 @@ QList<QVariant> GraphModel::yfraction() const
     return _yfraction;
 }
 
-QList<QVariant> GraphModel::ycolors() const
+QList<QColor> GraphModel::ycolors() const
 {
     return _ycolors;
 }
 
 QColor GraphModel::ycolor(int index) const
 {
-    if ( index < _ycolors.size())
-        return _ycolors[index].value<QColor>();
+    if ( index < _ycolors.size()){
+        QColor clr(_ycolors[index]);
+        return clr;
+    }
     return QColor("grey");
 }
 
