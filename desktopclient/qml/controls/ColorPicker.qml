@@ -17,7 +17,6 @@ Rectangle {
     property int numberOfCells : 10
     property int xs : -1
     property int ys : -1
-    signal comboClicked;
     width : numberOfCells * 18 + 5
     height : Global.rowHeight
     z: 100;
@@ -171,6 +170,7 @@ Rectangle {
                                         xs = currentCol
                                         ys = index
                                         comboBox.state = ""
+                                        selectedColor = calcColor(index,currentCol)
 
                                     }
                                     onEntered: {
