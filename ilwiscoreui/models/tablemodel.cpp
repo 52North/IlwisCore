@@ -31,7 +31,7 @@ TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstr
 int TableModel::rowCount(const QModelIndex &parent) const
 {
     if ( _table.isValid())    {
-        return _table->recordCount() + 5;
+        return _table->recordCount();
     }
     return 0;
 }
@@ -84,8 +84,6 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
         else if ( index.row() < _table->recordCount()) {
             quint32 ind = _order[ index.row()];
             v = _table->cell(role - baseRole - 1 ,ind, false);
-        }else{
-            return "test";
         }
     }
 
