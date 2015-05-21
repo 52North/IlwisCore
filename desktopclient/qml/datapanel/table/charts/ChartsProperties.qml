@@ -7,17 +7,33 @@ import GraphModel 1.0
 import UIContextModel 1.0
 import "../../../Global.js" as Global
 import "../../../controls" as Controls
+import "../../../qchart/QChart.js" as Charts
 
 Item {
     width : 270
     height : parent.height - 10
 
+    function init(){
+        makechart(table,1,0)
+        var graph = chart.graph(0) // by default we choose the first one
+        specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
+    }
+
     function makechart(table, xchoice, typechoice){
         chart.setXAxis(xchoice)
-        var graph = chart.setGraphs(typechoice)
-        chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+        chart.setGraphs(typechoice)
+        if ( typechoice === 0){
+            chartpanel.chartType = Charts.ChartType.LINE
+            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+        }else if ( typechoice === 1){
+            chartpanel.chartType = Charts.ChartType.BAR
+            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+        }else if ( typechoice === 2){
+            chartpanel.chartType = Charts.ChartType.PIE
+            chartpanel.chartData = chart.piechartdata
+        }
+
         chartpanel.update()
-        return graph
     }
 
     Column{
@@ -42,7 +58,10 @@ Item {
                 height : 16
                 onCurrentIndexChanged: {
                     if ( chart){
-                           makechart(table,xaxis.currentIndex, charttype.currentIndex)
+                        makechart(table,xaxis.currentIndex, charttype.currentIndex)
+                        var graph = chart.graph(0) // by default we choose the first one
+                        specificProperties.sourceComponent = null
+                        specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
                     }
                 }
             }
@@ -60,9 +79,16 @@ Item {
                 model : ["Line", "Bar","Pie","Polar","Radar","Doughnut"]
                 height : 16
                 onCurrentIndexChanged: {
-                    if ( chart && currentIndex == 0){
-                        var graph = makechart(table, xaxis.currentIndex,charttype.currentIndex)
-                        specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
+                    if (chart){
+                        makechart(table, xaxis.currentIndex,charttype.currentIndex)
+                        var graph = chart.graph(0) // by default we choose the first one
+                        if ( currentIndex == 0){
+                            specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
+                        } else if (currentIndex == 1){
+                            specificProperties.setSource("BarChartProperties.qml",{ "graph": graph })
+                        } else if (currentIndex == 2){
+                            specificProperties.setSource("PieChartProperties.qml",{ "graph": graph })
+                        }
                     }
                 }
             }
@@ -70,6 +96,8 @@ Item {
 
     }
     Loader {
+        width : parent.width
+        height : parent.height - ychoices.height - 4
         anchors.top: ychoices.bottom
         anchors.topMargin: 4
         anchors.leftMargin: 4

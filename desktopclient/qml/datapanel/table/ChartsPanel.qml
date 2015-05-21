@@ -29,7 +29,7 @@ SplitView {
     }
     Component.onCompleted: {
         chart = uicontext.chartModel(objectName,table)
-        propertiespanel.makechart(table,0,0)
+        propertiespanel.init()
     }
 
 }
