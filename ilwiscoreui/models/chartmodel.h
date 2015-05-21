@@ -15,6 +15,7 @@ class ILWISCOREUISHARED_EXPORT ChartModel : public QObject
 
     Q_PROPERTY(QList<QVariant> xvalues READ xvalues WRITE xvalues NOTIFY xvaluesChanged)
     Q_PROPERTY(QList<QVariant> datasets READ datasets NOTIFY datasetsChanged)
+    Q_PROPERTY(QList<QVariant> piechartdata READ piechartdata NOTIFY piechartdataChanged)
     Q_PROPERTY(QStringList yAttributes READ yAttributes NOTIFY yAttributesChanged)
     Q_PROPERTY(QString xAxis READ xAxis NOTIFY xAxisChanged)
     Q_PROPERTY(int columnIndex READ columnIndex WRITE setColumnIndex NOTIFY columnIndexChanged)
@@ -26,10 +27,12 @@ public:
     QList<QVariant> xvalues();
     void xvalues(const std::vector<QVariant>& xvalues);
     void xvalues(const QList<QVariant>& xvalues);
-    Q_INVOKABLE GraphModel *setGraphs(int type);
+    Q_INVOKABLE void setGraphs(int type);
+    Q_INVOKABLE GraphModel * graph(int index);
     void addGraph(GraphModel * graph);
     void clearGraphs();
     QList<QVariant> datasets() const;
+    QList<QVariant> piechartdata() const;
     QQmlListProperty<GraphModel> graphs();
     QString xAxis() const;
     void xAxis(const QString& name);
@@ -46,6 +49,7 @@ signals:
     void xAxisChanged();
     void columnIndexChanged();
     void yAttributesChanged();
+    void piechartdataChanged();
 
 private:
     QList<QVariant> _xvalues;
