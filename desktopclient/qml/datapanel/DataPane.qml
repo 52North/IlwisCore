@@ -218,7 +218,6 @@ Rectangle {
         }
 
         function newCatalog(url, splitside) {
-            console.debug(splitside, activeSplit)
             if ( url){
                 var component
                 if ( url==="ilwis://operations")
