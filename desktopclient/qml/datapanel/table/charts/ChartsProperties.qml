@@ -24,13 +24,16 @@ Item {
         chart.setGraphs(typechoice)
         if ( typechoice === 0){
             chartpanel.chartType = Charts.ChartType.LINE
-            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(typechoice)}
         }else if ( typechoice === 1){
             chartpanel.chartType = Charts.ChartType.BAR
-            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(typechoice)}
         }else if ( typechoice === 2){
             chartpanel.chartType = Charts.ChartType.PIE
-            chartpanel.chartData = chart.piechartdata
+            chartpanel.chartData = chart.datasets(typechoice)
+        }else if ( typechoice === 3){
+            chartpanel.chartType = Charts.ChartType.POLAR
+            chartpanel.chartData = chart.datasets(typechoice)
         }
 
         chartpanel.update()
@@ -82,12 +85,16 @@ Item {
                     if (chart){
                         makechart(table, xaxis.currentIndex,charttype.currentIndex)
                         var graph = chart.graph(0) // by default we choose the first one
-                        if ( currentIndex == 0){
-                            specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
-                        } else if (currentIndex == 1){
-                            specificProperties.setSource("BarChartProperties.qml",{ "graph": graph })
-                        } else if (currentIndex == 2){
-                            specificProperties.setSource("PieChartProperties.qml",{ "graph": graph })
+                        if ( graph){
+                            if ( currentIndex == 0){
+                                specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
+                            } else if (currentIndex == 1){
+                                specificProperties.setSource("BarChartProperties.qml",{ "graph": graph })
+                            } else if (currentIndex == 2){
+                                specificProperties.setSource("PieChartProperties.qml",{ "graph": graph })
+                            } else if (currentIndex == 3){
+                                specificProperties.setSource("PolarChartProperties.qml",{ "graph": graph })
+                            }
                         }
                     }
                 }

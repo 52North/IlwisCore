@@ -15,7 +15,7 @@ Rectangle {
     width : parent ? parent.width : 0
     x : 4
     function redraw() {
-        chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+        chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(1)}
         chartpanel.update()
     }
 

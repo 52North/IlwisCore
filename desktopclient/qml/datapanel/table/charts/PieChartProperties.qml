@@ -15,7 +15,7 @@ Rectangle {
     width : parent ? parent.width : 0
     x : 4
     function redraw() {
-        chartpanel.chartData =chart.piechartdata
+        chartpanel.chartData =chart.datasets(2)
         chartpanel.update()
     }
 
@@ -47,13 +47,13 @@ Rectangle {
                     anchors.left : colorrect.right
                     anchors.leftMargin: 3
                     text : modelData
-                    MouseArea{
-                        anchors.fill : parent
-                        onClicked: {
-                            colorpicker.enabled = true;
-                            colorpicker.opacity = 1
-                        }
-                    }
+//                    MouseArea{
+//                        anchors.fill : parent
+//                        onClicked: {
+//                            colorpicker.enabled = true;
+//                            colorpicker.opacity = 1
+//                        }
+//                    }
                 }
 
 
@@ -63,32 +63,32 @@ Rectangle {
         }
     }
 
-    Row {
-        id : colorpicker
-        height : Global.rowHeight
-        width : parent.width - 10
-        anchors.top : items.bottom
-        anchors.topMargin: 4
-        enabled: false
-        opacity : 0
-        Text {
-            id : label2
-            text : qsTr("Fill")
-            width : 70
-        }
-        Controls.ColorPicker{
-            id : fillcolor
+//    Row {
+//        id : colorpicker
+//        height : Global.rowHeight
+//        width : parent.width - 10
+//        anchors.top : items.bottom
+//        anchors.topMargin: 4
+//        enabled: false
+//        opacity : 0
+//        Text {
+//            id : label2
+//            text : qsTr("Fill")
+//            width : 70
+//        }
+//        Controls.ColorPicker{
+//            id : fillcolor
 
-            onSelectedColorChanged: {
-                if ( graph ){
-                    graph.fillColor = selectedColor
-                    redraw()
-                }
-            }
-        }
-        z : 4
+//            onSelectedColorChanged: {
+//                if ( graph ){
+//                    graph.fillColor = selectedColor
+//                    redraw()
+//                }
+//            }
+//        }
+//        z : 4
 
-    }
+//    }
 
 }
 

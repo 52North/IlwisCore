@@ -14,7 +14,7 @@ SplitView {
     property ChartModel chart
 
     onChartChanged: {
-         chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
+         chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(0)}
     }
 
     Charts.ChartsProperties {
