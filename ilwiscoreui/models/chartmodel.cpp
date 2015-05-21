@@ -39,6 +39,44 @@ void ChartModel::xvalues(const QList<QVariant> &xvalues)
         _xvalues.push_back(val);
     emit xvaluesChanged();
 }
+void ChartModel::setXAxis(int columnIndex)
+{
+    if ( columnIndex >= _table->table()->columnCount())
+        return;
+    _xvalues.clear();
+    if ( columnIndex <= 0){
+        _valueTypeXaxis = itINT32;
+        _xAxisIsRecordNr = true;
+        for(int i =0; i < _table->table()->recordCount(); ++i)
+            _xvalues.push_back(i);
+    }else {
+        columnIndex--; // columnIndex == 0 is the record counter
+        std::vector<QVariant> values = _table->table()->column(columnIndex);
+        Ilwis::IDomain dom = _table->table()->columndefinition(columnIndex).datadef().domain();
+        _valueTypeXaxis = dom->valueType();
+        if ( hasType(_valueTypeXaxis, itSTRING)){
+            std::set<QString> strings;
+            for(auto value : values){
+                strings.insert(value.toString());
+            }
+            _hasXAggregation = values.size() != strings.size();
+            for(auto str : strings){
+                _xvalues.push_back(QVariant(str));
+            }
+        }else {
+            for(auto v : values){
+                _xvalues.push_back(dom->impliedValue(v));
+            }
+        }
+    }
+    std::sort(_xvalues.begin(), _xvalues.end());
+
+    _columnIndex = columnIndex;
+    _xAxis = _table->table()->columndefinition(columnIndex).name();
+    emit yAttributesChanged();
+
+
+}
 
 void ChartModel::setGraphs(int type)
 {
@@ -88,7 +126,6 @@ void ChartModel::setGraphs(int type)
         }
     }
     emit graphsChanged();
-    emit datasetsChanged();
     emit yAttributesChanged();
 
 }
@@ -111,44 +148,39 @@ void ChartModel::clearGraphs()
     _graphs.clear();
 }
 
-QList<QVariant> ChartModel::datasets() const
+QList<QVariant> ChartModel::datasets(int graphType) const
 {
 
     QList<QVariant> graphs;
-    for(auto graph : _graphs){
-        if ( graph->enabled()){
-            QVariantMap graphData;
-            graphData["fillColor"] = graph->fillColor();
-            graphData["strokeColor"] = graph->strokeColor();
-            graphData["pointColor"] = graph->pointColor();
-            graphData["pointStrokeColor"] = graph->pointStrokeColor();
-            graphData["data"] = graph->yvalues();
-            graphs.push_back(graphData);
+    if ( graphType == 0 || graphType == 1){
+        for(auto graph : _graphs){
+            if ( graph->enabled()){
+                QVariantMap graphData;
+                graphData["fillColor"] = graph->fillColor();
+                graphData["strokeColor"] = graph->strokeColor();
+                graphData["pointColor"] = graph->pointColor();
+                graphData["pointStrokeColor"] = graph->pointStrokeColor();
+                graphData["data"] = graph->yvalues();
+                graphs.push_back(graphData);
+            }
+        }
+    }else if ( graphType == 2 || graphType == 3){
+        if ( _graphs.size() == 0)
+            return QList<QVariant>();
+
+        auto graph = _graphs[0];
+        QList<QVariant> yvalues = graphType == 2 ? graph->yfraction() : graph->yvalues();
+        QList<QColor> colors = graph->ycolors();
+        for(int index = 0; index < graph->yvalues().size(); ++index){
+                QVariantMap graphData;
+                graphData["color"] = QVariant(colors[index]);
+                graphData["value"] = yvalues[index];
+                graphs.push_back(graphData);
         }
     }
 
     return graphs;
 }
-
-QList<QVariant> ChartModel::piechartdata() const
-{
-    if ( _graphs.size() == 0)
-        return QList<QVariant>();
-
-    QList<QVariant> graphs;
-    auto graph = _graphs[0];
-    QList<QVariant> fractions = graph->yfraction();
-    QList<QVariant> colors = graph->ycolors();
-    for(int index = 0; index < graph->yvalues().size(); ++index){
-            QVariantMap graphData;
-            graphData["color"] = colors[index];
-            graphData["value"] = fractions[index];
-            graphs.push_back(graphData);
-    }
-
-    return graphs;
-}
-
 
 QQmlListProperty<GraphModel> ChartModel::graphs()
 {
@@ -195,42 +227,5 @@ QStringList ChartModel::yAttributes() const
     return lst;
 }
 
-void ChartModel::setXAxis(int columnIndex)
-{
-    if ( columnIndex >= _table->table()->columnCount())
-        return;
-    _xvalues.clear();
-    if ( columnIndex <= 0){
-        _valueTypeXaxis = itINT32;
-        _xAxisIsRecordNr = true;
-        for(int i =0; i < _table->table()->recordCount(); ++i)
-            _xvalues.push_back(i);
-    }else {
-        columnIndex--; // columnIndex == 0 is the record counter
-        std::vector<QVariant> values = _table->table()->column(columnIndex);
-        Ilwis::IDomain dom = _table->table()->columndefinition(columnIndex).datadef().domain();
-        _valueTypeXaxis = dom->valueType();
-        if ( hasType(_valueTypeXaxis, itSTRING)){
-            std::set<QString> strings;
-            for(auto value : values){
-                strings.insert(value.toString());
-            }
-            _hasXAggregation = values.size() != strings.size();
-            for(auto str : strings){
-                _xvalues.push_back(QVariant(str));
-            }
-        }else {
-            for(auto v : values){
-                _xvalues.push_back(dom->impliedValue(v));
-            }
-        }
-    }
-    std::sort(_xvalues.begin(), _xvalues.end());
 
-    _columnIndex = columnIndex;
-    _xAxis = _table->table()->columndefinition(columnIndex).name();
-    emit yAttributesChanged();
-
-
-}
 
