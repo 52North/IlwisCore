@@ -7,11 +7,12 @@ import GraphModel 1.0
 import UIContextModel 1.0
 import "../../../Global.js" as Global
 import "../../../controls" as Controls
+import "../../.." as Base
 
 Rectangle {
     property GraphModel graph
 
-    width : parent.width
+    width : parent ? parent.width : 0
     x : 4
     function redraw() {
         chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets}
@@ -19,11 +20,9 @@ Rectangle {
     }
 
     Column{
-        spacing : 3
-        //        CheckBox{
-        //            text : qsTr("Selection only")
-        //        }
-
+        id : propertiescol
+        spacing : 6
+        property int activeGraph : 0
         Row {
             Text{
                 id : chartTypeLabel
@@ -35,13 +34,64 @@ Rectangle {
             ComboBox{
                 id : charttype
                 width : 150
-                model : chart.yAttributes
+                model : chart.graphs
                 height : 16
+                textRole: "yAxis"
                 onCurrentIndexChanged: {
+                    propertiescol.activeGraph = currentIndex
+                    var g1 = chart.graph(currentIndex)
+                    if ( g1){
+                        graph = g1
+                        enabledcheck.checked = true
+                    }
+                }
+            }
+
+        }
+        CheckBox{
+            id :enabledcheck
+            text : qsTr("Enabled")
+            checked : graph ? graph.enabled : false
+            style : Base.CheckBoxStyle1{}
+            onCheckedChanged: {
+                if ( graph){
+                    graph.enabled = checked
+                    redraw()
                 }
             }
         }
-
+        Row {
+            height : Global.rowHeight
+            width : parent.width - 10
+            spacing : 2
+            Text {
+                id : label6
+                text : qsTr("Replace Undefined value")
+                font.pointSize: 8
+                width : 110
+                wrapMode: Text.WordWrap
+            }
+            TextField{
+                id : currentUndef
+                width : 40
+                height : 18
+                text : "?"
+            }
+            TextField{
+                id : newUndef
+                width : 40
+                height : 18
+                text : ""
+            }
+            Button{
+                text : "Apply"
+                height : 18
+                onClicked: {
+                    graph.replaceUndefs(currentUndef.text, newUndef.text)
+                    redraw()
+                }
+            }
+        }
         GroupBox{
             id : colorgroup
             width : 266
@@ -59,6 +109,8 @@ Rectangle {
                         width : 70
                     }
                     Controls.ColorPicker{
+                        id : fillcolor
+
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
                                 graph.fillColor = selectedColor
@@ -77,6 +129,7 @@ Rectangle {
                         width : 70
                     }
                     Controls.ColorPicker{
+                        id : strokecolor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
                                 graph.strokeColor = selectedColor
@@ -95,6 +148,7 @@ Rectangle {
                         width : 70
                     }
                     Controls.ColorPicker{
+                        id : pointcolor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
                                 graph.pointColor = selectedColor
@@ -113,6 +167,7 @@ Rectangle {
                         width : 70
                     }
                     Controls.ColorPicker{
+                        id : pointstrokeColor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
                                 graph.pointStrokeColor = selectedColor
@@ -122,8 +177,16 @@ Rectangle {
                     }
                     z : 1
                 }
+
+
             }
             Component.onCompleted: {
+                if ( graph){
+                    pointstrokeColor.selectedColor = graph.pointStrokeColor
+                    pointcolor.selectedColor = graph.pointColor
+                    strokecolor.selectedColor = graph.strokeColor
+                    fillcolor.selectedColor = graph.fillColor
+                }
                 initial = false
             }
         }
