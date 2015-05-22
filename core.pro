@@ -130,7 +130,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/palettecolorlookup.cpp \
     core/ilwisobjects/workflow/workflow.cpp \
     core/util/tranquilizerfactory.cpp \
-    core/util/consoletranquilizer.cpp
+    core/util/consoletranquilizer.cpp \
+    core/ilwisobjects/representation/shapelookup.cpp
 
 
 HEADERS += core/kernel.h\
@@ -278,7 +279,8 @@ HEADERS += core/kernel.h\
     core/kernel_global.h \
     core/ilwisobjects/workflow/workflow.h \
     core/util/tranquilizerfactory.h \
-    core/util/consoletranquilizer.h
+    core/util/consoletranquilizer.h \
+    core/ilwisobjects/representation/shapelookup.h
 
 
 OTHER_FILES += \
