@@ -2,11 +2,13 @@
 #define REPRESENTATION_H
 
 #include "colorlookup.h"
+#include "shapelookup.h"
 
 namespace Ilwis {
 
-class ColorLookup;
+class ShapeLookup;
 typedef std::unique_ptr<ColorLookUp> UPColorLookUp;
+typedef std::unique_ptr<ShapeLookUp> UPShapeLookUp;
 
 class Domain;
 typedef IlwisData<Domain> IDomain;
@@ -18,6 +20,8 @@ public:
     Representation(const Resource& resource);
     const UPColorLookUp& colors() const;
     void colors(ColorLookUp *lookup);
+    void shapes(ShapeLookUp* lookup);
+    const UPShapeLookUp& shapes() const;
 
     IDomain domain() const;
     void domain(const IDomain& domain);
@@ -29,6 +33,7 @@ public:
 
 private:
     UPColorLookUp _colors;
+    UPShapeLookUp _shapes;
     IDomain _domain;
 };
 
