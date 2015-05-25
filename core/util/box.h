@@ -99,6 +99,21 @@ public:
             this->max_corner().y = p2[1].trimmed().toDouble();
             if ( p2.size() == 3)
                 this->max_corner().z = p2[2].trimmed().toDouble();
+        }else { // we assume it is a space seperated list
+            QStringList p1 = envelope.split(" ");
+            if ( p1.size() == 4){ // 2d case
+                this->min_corner().x = p1[0].trimmed().toDouble();
+                this->min_corner().y = p1[1].trimmed().toDouble();
+                this->max_corner().x = p1[2].trimmed().toDouble();
+                this->max_corner().y = p1[3].trimmed().toDouble();
+            }else if ( p1.size() == 6){
+                this->min_corner().x = p1[0].trimmed().toDouble();
+                this->min_corner().y = p1[1].trimmed().toDouble();
+                this->min_corner().z = p1[2].trimmed().toDouble();
+                this->max_corner().x = p1[3].trimmed().toDouble();
+                this->max_corner().y = p1[4].trimmed().toDouble();
+                this->max_corner().z = p1[5].trimmed().toDouble();
+            }
         }
     }
 
