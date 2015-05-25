@@ -6,6 +6,7 @@
 #include "coverage.h"
 #include "connectorinterface.h"
 #include "resource.h"
+#include "geometries.h"
 #include "georeference.h"
 #include "mastercatalog.h"
 #include "catalogview.h"
@@ -196,19 +197,29 @@ QString CatalogModel::nameFilter() const
 void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
 {
     try{
-        if ( force)
+        if ( force){
             _catalogMapItems.clear();
+            _refresh = true;
+            gatherItems();
+        }
+        std::map<qint64, std::vector<Resource>> hashes;
         if ( _catalogMapItems.size() == 0){
             kernel()->issues()->silent(true);
             for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
                 if(hasType((*iter)->type(), itCOVERAGE)){
-                    Ilwis::ICoverage cov(((*iter)->resource()));
-                    if ( cov.isValid() && cov->coordinateSystem().isValid())    {
-                        if ( cov->coordinateSystem()->isLatLon() || cov->coordinateSystem()->canConvertToLatLon()){
-                            _catalogMapItems.push_back(new CatalogMapItem(cov,manager->screenGrf(),this));
-                        }
+                    Ilwis::Resource res =(*iter)->resource();
+                    if ( res.isValid() && res.hasProperty("latlonenvelope"))    {
+                        Envelope env = res["latlonenvelope"].toString();
+                        double hash = env.min_corner().x + env.max_corner().x + env.min_corner().y + env.max_corner().y + env.area();
+                        hash = hash * 1e9;
+                        hashes[(qint64)hash].push_back(res);
+                       //
+
                     }
                 }
+            }
+            for(auto& lst : hashes ){
+                    _catalogMapItems.push_back(new CatalogMapItem({lst.second},manager->screenGrf(),this));
             }
             kernel()->issues()->silent(false);
         }
