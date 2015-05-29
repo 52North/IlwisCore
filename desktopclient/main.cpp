@@ -40,6 +40,7 @@
 #include "models/columnmodel.h"
 #include "models/graphmodel.h"
 #include "models/chartmodel.h"
+#include "models/consolescriptmodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
@@ -100,7 +101,8 @@ int main(int argc, char *argv[])
         qmlRegisterType<ChartModel>("ChartModel", 1,0,"ChartModel");
         qmlRegisterType<GraphModel>("GraphModel", 1,0,"GraphModel");
         qmlRegisterType<CatalogFilterModel>("CatalogFilterModel", 1,0,"CatalogFilterModel");
-
+        qmlRegisterType<ConsoleLineModel>("ConsoleLineModel", 1,0,"ConsoleLineModel");
+        qmlRegisterType<ConsoleScriptModel>("ConsoleScriptModel", 1,0,"ConsoleScriptModel");
 
         MasterCatalogModel mastercatalogmodel(ctx);
 
