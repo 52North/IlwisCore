@@ -22,30 +22,8 @@ ApplicationWindow {
     }
 
     property int maxPull : 500
-
-
-    property color background1 : "#EAECEE"
-    property color background2 : "#DBDFE3"
-    property color background3 : "#FFFDF4"
-    property color background4 : "white"
     property int defaultFunctionBarWidth : 350
     property int activeCatalog: 0
-
-    menuBar : MenuBar {
-        id : mainMenu
-        Menu {
-            title: "Dummy 2"
-            MenuItem { text: "Open..." }
-            MenuItem { text: "Close" }
-        }
-
-        Menu {
-            title: "Dummy 1"
-            MenuItem { text: "Cut" }
-            MenuItem { text: "Copy" }
-            MenuItem { text: "Paste" }
-        }
-    }
 
     function addCatalog(){
 
@@ -94,14 +72,16 @@ ApplicationWindow {
 
     Rectangle {
         id : root
-        anchors.fill : parent
-        color : "#DDDDDD"
+        y : 0
+        height : parent.height
+        width : parent.width
+        color : Global.alternatecolor5
 
         Rectangle {
             id : commLine
-            height : 35
+            height : textArea.height
             width : parent.width - 10
-            color : "#DDDDDD"
+            color : Global.alternatecolor5
             Row {
                 id : workspace
                 height : parent.height
@@ -109,8 +89,8 @@ ApplicationWindow {
                 spacing: 10
                 x : 5
                 Text {
+                    y : 6
                     text : qsTr("Current Workspace")
-                    anchors.verticalCenter: parent.verticalCenter
                 }
                 ComboBox{
                     width : 150
@@ -118,7 +98,7 @@ ApplicationWindow {
                     objectName: "workspace_combobox_mainui"
                     model : mastercatalog.workspaces
                     textRole: "displayName"
-                    anchors.verticalCenter: parent.verticalCenter
+                    y : 2
                     onCurrentIndexChanged: {
                         if ( currentIndex >= 0){
                             var wmodel =model[currentIndex]
@@ -131,13 +111,13 @@ ApplicationWindow {
                     }
 
                 }
-                anchors.verticalCenter: parent.verticalCenter
             }
             Control.CommandLine{
+                id : textArea
+                y : 2
                 anchors.left : workspace.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: 2
                 anchors.right: parent.right
-                anchors.verticalCenter: workspace.verticalCenter
             }
         }
 
@@ -146,7 +126,7 @@ ApplicationWindow {
             orientation: Qt.Horizontal
             width: parent.width
             anchors.top : commLine.bottom
-            height : bigthing.height - commLine.height * 2
+            anchors.bottom : parent.bottom
 
             function addCatalog() {
                 dataPanel.addCatalog()

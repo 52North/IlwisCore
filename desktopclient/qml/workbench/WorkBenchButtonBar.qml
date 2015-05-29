@@ -5,14 +5,14 @@ import QtQuick.Controls.Styles 1.0
 import MasterCatalogModel 1.0
 import TranquilizerHandler 1.0
 import UIContextModel 1.0
-
+import "../Global.js" as Global
 
 Rectangle {
     id : buttonB
     y : 0
     height : parent.height
     width : 80
-    color : "white"
+    color : Global.alternatecolor1
     border.width : 1
     Layout.maximumWidth : 140
 
@@ -101,7 +101,7 @@ Rectangle {
         Rectangle {
             height : 21
             width : buttonB.width
-            color : background4
+            color : Global.alternatecolor1
             Row {
                 anchors.fill: parent
                 Button{
