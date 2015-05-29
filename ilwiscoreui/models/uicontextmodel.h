@@ -21,6 +21,7 @@ class PropertyEditorObjectVisualizationModel;
 class VisualAttributeEditor;
 class LayerManager;
 class CoverageLayerModel;
+class ConsoleScriptModel;
 
 typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
 
@@ -43,6 +44,7 @@ public:
     Q_INVOKABLE ChartModel *chartModel(const QString& objectname, TableModel *tbl);
     Q_INVOKABLE QString uniqueName();
     Q_INVOKABLE void exitUI();
+    Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -88,6 +90,7 @@ private:
     int _currentKey = 0;
     QStringList _colorNames;
     WorkSpaceModel *_currentWorkSpace = 0;
+    std::vector<ConsoleScriptModel *> _consoles;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

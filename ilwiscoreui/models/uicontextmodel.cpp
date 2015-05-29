@@ -13,6 +13,7 @@
 #include "tableoperations/tableoperation.h"
 #include "tableoperations/sortcolumn.h"
 #include "tableoperations/tableoperationfactory.h"
+#include "consolescriptmodel.h"
 #include "ilwiscontext.h"
 
 quint64 UIContextModel::_objectCounter = 0;
@@ -22,6 +23,8 @@ UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
     _abort.store(false);
+
+    _consoles.push_back(new ConsoleScriptModel(this)); // console of mainwindow
 
 }
 
@@ -65,6 +68,14 @@ void UIContextModel::exitUI()
     if ( _threadCount > 0) {  // wait until the threads have aborted
         std::this_thread::sleep_for (std::chrono::seconds(3));
     }
+}
+
+ConsoleScriptModel *UIContextModel::consoleScript(int type)
+{
+    if ( type < _consoles.size()){
+        return _consoles[type];
+    }
+    return 0;
 }
 
 QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
