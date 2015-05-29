@@ -10,6 +10,7 @@ import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
+import "../Global.js" as Global
 
 
 
@@ -17,7 +18,7 @@ import "../workbench" as Workbench
 Rectangle {
 
     id: centerItem
-    color: background4
+    color: Global.alternatecolor5
     height : parent.height - 16
     width : bigthing.width - buttonB.width - infoP.width - 5
     property int activeSplit : 2
