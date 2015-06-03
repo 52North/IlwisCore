@@ -7,6 +7,7 @@
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "ilwiscontext.h"
 #include "runpython.h"
 
 using namespace Ilwis;
@@ -33,7 +34,36 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
+    QString tempPath = context()->cacheLocation().toLocalFile();
+    tempPath += "/python.stdout";
+    QString cmd = QString("f = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPath);
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("import io");
+    PyRun_SimpleString("stdout = sys.stdout");
+    PyRun_SimpleString("stderr = sys.stderr");
+    PyRun_SimpleString(cmd.toStdString().c_str());
+    PyRun_SimpleString("sys.stdout = f");
     PyRun_SimpleString(_statements.toStdString().c_str());
+    PyRun_SimpleString("\n");
+    PyRun_SimpleString("sys.stdout.flush()");
+    PyRun_SimpleString("sys.stdout = stdout");
+    PyRun_SimpleString("sys.stderr = stderr");
+    PyRun_SimpleString("f.close()");
+
+
+
+    QFile inputFile(tempPath);
+    if ( inputFile.exists()){
+        if ( inputFile.open(QIODevice::ReadOnly)){
+            QString result(inputFile.readAll());
+            result.remove("\r\n");
+            ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
+            inputFile.close();
+        }
+    }
+    inputFile.remove();
+
+
     return true;
 }
 
@@ -61,7 +91,11 @@ quint64 RunPython::createMetadata()
 
 OperationImplementation::State RunPython::prepare(ExecutionContext *, const SymbolTable &)
 {
-    _statements = _expression.input<QString>(0)    ;
+    QString exp(_expression.input<QString>(0));
+    if ( exp[0] == '\"' && exp[exp.size() - 1] == '\"'){
+        exp = exp.mid(1,exp.size() - 2);
+    }
+    _statements = exp;
 
     return sPREPARED;
 }
