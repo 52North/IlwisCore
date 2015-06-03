@@ -38,12 +38,12 @@ Item {
         }
         Rectangle{
             id : marker
-            width : 12
+            width : 24
             height : parent.height
             color : Global.alternatecolor3
             Text {
 
-                text : ">"
+                text : ">>>"
                 y: 4
             }
         }

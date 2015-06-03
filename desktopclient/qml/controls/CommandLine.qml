@@ -36,12 +36,15 @@ Rectangle {
     function executeLine(lineIndex, txt){
         if ( lineIndex === -1 || lineIndex === uicontext.consoleScript(0).lines.length - 1){
             var result = uicontext.consoleScript(0).run(txt)
-            uicontext.consoleScript(0).addLine(result)
+            if ( result !== ""){
+                uicontext.consoleScript(0).addLine(result, true)
+            }
+            firstLine.consoletext = lastLine()
+            uicontext.consoleScript(0).addLine("", false)
             consolearea.model =uicontext.consoleScript(0).lines
             consolearea.currentIndex = uicontext.consoleScript(0).lines.length - 1
-            consolearea.positionViewAtEnd()
-            firstLine.consoletext = lastLine()
             consolearea.currentItem.editFocus = true
+            consolearea.positionViewAtEnd()
         }
     }
 
@@ -78,6 +81,7 @@ Rectangle {
                 clip : true
                 model : uicontext.consoleScript(0).lines
                 delegate : ConsoleLineDelegate{
+                    height : 20
                     onRunLine: {
                         executeLine(lineIndex, txt)
                     }
