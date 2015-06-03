@@ -50,7 +50,7 @@ void PythonScriptModule::prepare()
         QString checkhome = home + "/DLLs/python3.dll";
         QFileInfo inf(checkhome);
         if ( !inf.exists()){
-            ERROR2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
+            WARN2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
             return;
         }
         wchar_t data[400];
@@ -59,7 +59,7 @@ void PythonScriptModule::prepare()
             Py_SetPythonHome(data);
             Py_Initialize();
         }else {
-            ERROR2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
+            WARN2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
             return;
         }
           commandhandler()->addOperation(RunPython::createMetadata(), RunPython::create);
