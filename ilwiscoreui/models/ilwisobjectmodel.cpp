@@ -9,6 +9,7 @@
 #include "table.h"
 #include "itemrange.h"
 #include "colorrange.h"
+#include "operationmodel.h"
 #include "raster.h"
 
 using namespace Ilwis;
@@ -567,6 +568,15 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
             }
         }
     }
+}
+
+OperationModel *IlwisObjectModel::operation(const QString &id)
+{
+    bool ok;
+    quint64 lid = id.toULongLong(&ok);
+    if (!ok)
+        return 0;
+    return new OperationModel(lid, this);
 }
 
 bool IlwisObjectModel::isValid() const

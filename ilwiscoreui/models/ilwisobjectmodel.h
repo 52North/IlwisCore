@@ -9,6 +9,8 @@
 #include "domainitemmodel.h"
 #include "projectionparametermodel.h"
 
+class OperationModel;
+
 class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
 {
     Q_OBJECT
@@ -53,6 +55,7 @@ public:
     Q_INVOKABLE QString getProperty(const QString& propertyname);
     Q_INVOKABLE bool canUse(const QString& id);
     Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
+    Q_INVOKABLE OperationModel *operation(const QString& id);
 
 
     bool isValid() const;

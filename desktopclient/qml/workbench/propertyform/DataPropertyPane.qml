@@ -50,6 +50,8 @@ Rectangle {
             source = "TableProperties.qml"
         } else if ( typeName == "ellipsoid"){
             source = "EllipsoidProperties.qml"
+        } else if ( typeName == "operationmetatadata"){
+            source = "OperationProperties.qml"
         }
 
     }

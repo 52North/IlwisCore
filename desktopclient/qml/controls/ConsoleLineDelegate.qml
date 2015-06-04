@@ -31,7 +31,7 @@ Item {
             width : 30
             Text {
                 text : line
-
+                color : "darkgrey"
                 x : 3
                 y : 4
             }
@@ -42,9 +42,9 @@ Item {
             height : parent.height
             color : Global.alternatecolor3
             Text {
-
                 text : ">>>"
                 y: 4
+                color : "darkgrey"
             }
         }
 
