@@ -249,7 +249,7 @@ Envelope SelectionDrawer::envelope() const
 void SelectionDrawer::cleanUp()
 {
     SimpleDrawer::cleanUp();
-    rootDrawer()->applyEnvelopeZoom(envelope());
+   // rootDrawer()->applyEnvelopeZoom(envelope());
 }
 
 
