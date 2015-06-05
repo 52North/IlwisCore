@@ -54,7 +54,7 @@ MouseArea {
     }
     onReleased: {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
-            var envelope = renderer.attributeOfDrawer("SelectionDrawer","envelope");
+            var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope");
             renderer.addCommand("removedrawer(" + renderer.viewerId + ",selectiondrawer,post)");
             if ( envelope !== ""){
                 renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
