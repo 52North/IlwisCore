@@ -17,6 +17,15 @@ Item {
 
     Layout.minimumHeight: 22
 
+    function addDataSource(sourceUrl, sourceName, sourceType){
+        var tab = layersmeta.getTab(2)
+
+        if ( tab && tab.item && tab.item.coverage){
+            tab.item.coverage.addCommand("adddrawer(" + tab.item.coverage.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
+            tab.item.coverage.update()
+        }
+    }
+
     Component {
         id : displayOptions
         DisplayOptions.LayerPropertyManagement{}
@@ -65,6 +74,7 @@ Item {
     }
 
     TabView{
+        id : layersmeta
         anchors.fill: parent
 
         Component.onCompleted: {
@@ -73,7 +83,8 @@ Item {
             tab.item.renderer = renderer
 
             addTab(qsTr("Layers Info"), layersinfo)
-            addTab(qsTr("Metadata"), metadata)
+            tab = addTab(qsTr("Metadata"), metadata)
+            tab.active = true // we need to be active as layers maybe added to it
         }
 
         style: Base.TabStyle1{
