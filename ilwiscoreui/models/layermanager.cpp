@@ -139,7 +139,12 @@ CoverageLayerModel *LayerManager::layer(quint32 layerIndex){
 
 QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName)
 {
+    if ( _zoomInMode) // when zooming we dont don' give info. costs too much performance
+        return "";
+
     std::vector<QString> texts;
+
+
     _layerInfoItems.clear();
     for(CoverageLayerModel *layer : _layers){
         if ( layer->object().isValid() && hasType(layer->object()->ilwisType(), itCOVERAGE)){
