@@ -30,6 +30,7 @@ Item {
 
     function addDataSource(sourceUrl, sourceName, sourceType){
         layers.addDataSource(sourceUrl, sourceName, sourceType)
+        viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
     }
 
     function transferLayers(layermanager){
@@ -76,6 +77,7 @@ Item {
 
         }
         ViewManager{
+            id : viewmanager
             height : 150
             anchors.left: parent.left
             anchors.leftMargin: 5
