@@ -43,7 +43,9 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     RootDrawer *rootdrawer = static_cast<RootDrawer *>(_rootDrawer);
 
-    rootdrawer->applyEnvelopeView(_newExtents, true);
+    double area = _newExtents.area();
+    if ( area > 1)
+        rootdrawer->applyEnvelopeView(_newExtents, true);
 
     return true;
 }
