@@ -114,6 +114,9 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 
 void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 {
+    if ( zoomRect.area() == 1) // we dont zoom in on pointsize area
+        return;
+
     Envelope envelope = zoomRect;
     if ( _zoomRect.isValid()) {
     // zooming never changes the shape of the mapwindow so any incomming zoom rectangle must conform to the shape of the existing mapwindow
