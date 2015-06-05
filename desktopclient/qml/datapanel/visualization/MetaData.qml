@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import UIContextModel 1.0
 import LayerManager 1.0
+import LayersView 1.0
 import "../../workbench/propertyform" as MetaData
 import "../../controls" as Controls
 import "../../Global.js" as Global
@@ -13,6 +14,8 @@ Item {
     id : metatdata
     width : 210
     height : parent.height
+    property alias coverage : overview
+    property LayerManager manager
 
     function iconSource(name) {
         if ( name === "")
@@ -57,12 +60,6 @@ Item {
                     width: layersList.width; height: 18
                     color: Global.selectedColor; radius: 2
                     y: (layersList && layersList.currentItem) ? layersList.currentItem.y : 0
-                    Behavior on y {
-                        SpringAnimation {
-                            spring: 3
-                            damping: 0.2
-                        }
-                    }
                 }
             }
             ListView {
@@ -111,13 +108,44 @@ Item {
         Rectangle{
             width : parent.width - layerContainer.width - 8
             height : layerContainer.height
-            ScrollView{
-                anchors.fill: parent
-                ListView{
-                    id : metatdatalist
+
+            Rectangle{
+                width :parent.width / 2
+                height : parent.height - 4
+                border.width: 1
+                border.color: "lightgrey"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: 3
+
+                function entireMap() {
+                    var envelope = overview.attributeOfDrawer("rootdrawer","coverageenvelope");
+                    if ( envelope !== ""){
+                        overview.addCommand("setviewextent("+ overview.viewerId + "," + envelope + ")");
+                    }
+                    overview.update()
                 }
 
+                onWidthChanged: {
+                    entireMap()
+                }
+                onHeightChanged: {
+                    entireMap()
+                }
+
+                LayersView {
+                    id: overview
+                    objectName : "overview_mainui"
+                    anchors.fill: parent
+                    anchors.margins: 2
+
+                    Component.onCompleted: {
+                        manager = uicontext.createLayerManager(objectName)
+                        overview.setManager(manager)
+                    }
+                }
             }
+
             border.color: "lightgrey"
             border.width: 1
 
