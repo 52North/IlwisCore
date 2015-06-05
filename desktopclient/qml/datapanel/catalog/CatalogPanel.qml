@@ -21,7 +21,7 @@ Item {
 
     signal catalogChanged()
 
-    function showObject(objectid, subtype){
+    function showObject(objectid){
         var type = mastercatalog.id2type(objectid)
         if ( !type)
             return
