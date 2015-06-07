@@ -10,6 +10,9 @@ Item {
 
 
   function addDataSource(filter, sourceName, sourceType){
+      if ( filter.indexOf("=") !== -1){
+          filter = "\"" + filter + "\""
+      }
       renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
       renderer.update()
   }

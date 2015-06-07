@@ -107,7 +107,7 @@ Item {
             Connections {
                 target: tabstyle
                 onExpandToWindow: {
-                    action : datapanesplit.showTabInFloatingWindow(tabindex)
+                    action : datapanesplit.showTabInFloatingWindow(panelside,tabindex)
                 }
             }
         }

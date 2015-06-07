@@ -69,7 +69,7 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workspacemodel.h \
     ilwiscoreui/models/graphmodel.h \
     ilwiscoreui/models/chartmodel.h \
-    ilwiscoreui/models/consolescriptmodel.h
+    ilwiscoreui/models/consolescriptmodel.h \
     ilwiscoreui/models/datapanemodel.h \
     ilwiscoreui/models/tabmodel.h
 
@@ -126,8 +126,9 @@ SOURCES += \
     ilwiscoreui/models/workspacemodel.cpp \
     ilwiscoreui/models/graphmodel.cpp \
     ilwiscoreui/models/chartmodel.cpp \
-    ilwiscoreui/models/consolescriptmodel.cpp
+    ilwiscoreui/models/consolescriptmodel.cpp \
     ilwiscoreui/models/datapanemodel.cpp \
+   ilwiscoreui/models/tabmodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

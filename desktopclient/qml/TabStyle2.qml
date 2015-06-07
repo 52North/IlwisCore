@@ -8,7 +8,7 @@ import TabModel 1.0
 
 TabViewStyle {
 
-    signal expandToWindow(int tabindex);
+    signal expandToWindow(int panelside, int tabindex);
 
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
@@ -76,10 +76,10 @@ TabViewStyle {
             height : 18
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
-            onClicked: {
-                datapanesplit.showMapWindow(0)
-            }
-            //onClicked: expandToWindow(index)
+//            onClicked: {
+//                datapanesplit.showMapWindow(0)
+//            }
+            onClicked: expandToWindow(side,index)
 
             Image {
                 y : 2

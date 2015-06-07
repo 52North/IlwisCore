@@ -37,11 +37,18 @@ LayerManager *UIContextModel::createLayerManager(const QString& objectName)
     return manager;
 }
 
-TableModel *UIContextModel::createTableModel(QObject *parent,const QString& url, const QString& type)
+TableModel *UIContextModel::createTableModel(QObject *parent,const QString& filter, const QString& type)
 {
 
     IlwisTypes tp = IlwisObject::name2Type(type);
-    Resource resource = mastercatalog()->name2Resource(url,tp);
+    Resource resource;
+    if ( filter.indexOf("itemid=") != -1){
+        std::vector<Resource> res = mastercatalog()->select(filter);
+        if ( res.size() != 1)
+            return 0;
+        resource = res[0];
+    } else
+        resource = mastercatalog()->name2Resource(filter,tp);
     if ( resource.isValid()){
         return new TableModel(resource, parent);
     }
