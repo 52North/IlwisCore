@@ -76,14 +76,28 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
 
      _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     if ( _expression.parameterCount() == 4){
-        QString url = _expression.input<QString>(2);
+        QString url = _expression.input<QString>(1);
+        QString filter = _expression.input<QString>(2);
         QString tpname = _expression.input<QString>(3);
         IlwisTypes tp = IlwisObject::name2Type(tpname);
         if ( !hasType(tp , itCOVERAGE)){
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("dataype for layer drawer"), tpname)    ;
             return sPREPAREFAILED;
         }
-        _coverage.prepare(url, tp);
+        if ( filter.indexOf("itemid=") != -1){
+            if ( filter[0] == '\"')
+                filter = filter.mid(1, filter.size() - 2);
+            std::vector<Resource> res = mastercatalog()->select(filter);
+            if ( res.size() != 1){
+                kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
+                return sPREPAREFAILED;
+            }
+            _coverage.prepare(res[0]);
+        }else{
+           _coverage.prepare(filter, tp);
+        }
+
+
         if ( !_coverage.isValid()){
             kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
             return sPREPAREFAILED;
