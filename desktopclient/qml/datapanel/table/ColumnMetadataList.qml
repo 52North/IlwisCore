@@ -28,7 +28,7 @@ Item {
                     spacing : 3
                     Image{
                         id : domicon
-                        source : iconsource(styleData.value)
+                        source : styleData.value ? ("../../images/" + styleData.value) : ""
                         width : 16
                         height : 16
                         anchors.verticalCenter: parent.verticalCenter
