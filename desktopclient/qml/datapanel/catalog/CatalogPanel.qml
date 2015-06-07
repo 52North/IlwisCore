@@ -10,10 +10,7 @@ import "../../controls" as Controls
 
 Item {
     property int heightButtons :22
-    property string tabLocation : "left"
     property CatalogModel currentCatalog
-    property bool canSeparate : false
-    property string panelType : "spatial-data"
     id : catalogViews
     width : parent.width
     height : parent.height
@@ -25,26 +22,19 @@ Item {
         var type = mastercatalog.id2type(objectid)
         if ( !type)
             return
-        var qmlUrl;
-        if ( type === "rastercoverage" || type === "featurecoverage" || type === "linecoverage" || type === "pointcoverage" || type === "polygoncoverage")
-            qmlUrl = "../visualization/Visualize.qml"
-        if ( type === "table" || type === "flattable")
-            qmlUrl = "../table/TablePane.qml"
-        var component = Qt.createComponent(qmlUrl)
         var resource = mastercatalog.id2Resource(objectid)
-        if ( resource !== null){
-            var name = resource.displayName
-            var blocksize = 24 / 2;
-            if ( name.length > 15){
-                var part1 = name.substr(0,blocksize)
-                var part2 = name.substr( name.length - blocksize)
-                name = part1 + "..." + part2
-
-            }
-            datapanesplit.showObject(tabLocation,name,component,resource)
-        }
+        var filter = "itemid=" + resource.id
+        datapanesplit.newPanel(filter, resource.typeName,resource.url)
     }
 
+    function addDataSource(filter, sourceName, sourceType){
+        var url = mastercatalog.currentUrl
+        currentCatalog = mastercatalog.newCatalog(url,filter)
+        if ( currentCatalog){
+            currentCatalog.makeParent(catalogViews)
+            mastercatalog.currentCatalog = currentCatalog
+        }
+    }
 
     function toggleFilter(objecttype, togglestate){
         if ( objecttype === "all"){
@@ -177,7 +167,8 @@ Item {
                     var filter = model[currentIndex].catalogQuery
                     var url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
-                    bigthing.changeCatalog(url, filter)
+                    bigthing.changeCatalog(filter,"catalog", url)
+                    currentCatalog.filter(filter)
                 }
 
             }
@@ -328,12 +319,6 @@ Item {
         ]
     }
     Component.onCompleted: {
-        var url = mastercatalog.currentUrl
-        var currentCatalog = mastercatalog.newCatalog(url)
-        if ( currentCatalog){
-            currentCatalog.makeParent(catalogViews)
-            mastercatalog.currentCatalog = currentCatalog
-        }
     }
 
 }
