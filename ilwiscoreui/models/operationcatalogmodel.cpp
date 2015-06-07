@@ -112,10 +112,14 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
     return  QMLOperationList();
 }
 void OperationCatalogModel::prepare(){
+    _refresh  = true;
     gatherItems();
 }
 
 void OperationCatalogModel::gatherItems() {
+    if (!_refresh)
+        return;
+
     WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
     bool isDefault = false;
     if (currentModel){
@@ -123,32 +127,34 @@ void OperationCatalogModel::gatherItems() {
         isDefault = n == "default";
     }
     if ( currentModel == 0 || isDefault){
-        QUrl location("ilwis://operations");
-        QString descr ="main catalog for ilwis operations";
-        Resource res(location, itCATALOGVIEW ) ;
-        res.name("ilwis-operations",false);
-        QStringList lst;
-        lst << location.toString();
-        res.addProperty("locations", lst);
-        res.addProperty("type", "operation" );
-        res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
-        res.setDescription(descr);
-        setView(CatalogView(res));
+        if ( !_view.isValid()){
+            QUrl location("ilwis://operations");
+            QString descr ="main catalog for ilwis operations";
+            Resource res(location, itCATALOGVIEW ) ;
+            res.name("ilwis-operations",false);
+            QStringList lst;
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", "operation" );
+            res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
+            res.setDescription(descr);
+            setView(CatalogView(res));
 
-        location = QUrl("ilwis://operations");
-        descr ="main catalog for ilwis services";
-        res = Resource(location, itCATALOGVIEW ) ;
-        res.name("ilwis-services",false);
-        lst.clear();
-        lst << location.toString();
-        res.addProperty("locations", lst);
-        res.addProperty("type", "operation" );
-        res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
-        res.setDescription(descr);
-        CatalogView view(res);
-        view.prepare();
+            location = QUrl("ilwis://operations");
+            descr ="main catalog for ilwis services";
+            res = Resource(location, itCATALOGVIEW ) ;
+            res.name("ilwis-services",false);
+            lst.clear();
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", "operation" );
+            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
+            res.setDescription(descr);
+            CatalogView view(res);
+            view.prepare();
 
-        _services = view.items();
+            _services = view.items();
+        }
     }else {
         setView(currentModel->view());
     }
@@ -172,6 +178,8 @@ void OperationCatalogModel::gatherItems() {
         _keywords.push_back(keyword);
 
     qSort(_keywords.begin(), _keywords.end());
+
+    _keywords.push_front(""); // all
 }
 
 QStringList OperationCatalogModel::keywords() const

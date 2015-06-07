@@ -6,6 +6,7 @@ import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
 import MasterCatalogModel 1.0
+import DataPaneModel 1.0
 import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
@@ -16,7 +17,6 @@ Item {
     property int side : 1
     property int currentIndex : 0
     property int count : datatab.count
-
 
     onSideChanged: {
         centerItem.activeSplit = Math.abs(side)
@@ -45,6 +45,10 @@ Item {
         return datatab.getTab(index)
     }
 
+    function insertTab(index, title, comp){
+        return datatab.insertTab(index, title, comp)
+    }
+
     /*
      * Remove tab by index
      */
@@ -59,7 +63,6 @@ Item {
         for (var i = 0; i <  datatab.count; i++) {
             if (getTab(i).title === name) {
                  return removeTab(i);
-                 break;
             }
         }
     }

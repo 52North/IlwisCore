@@ -9,8 +9,8 @@ import LayersView 1.0
 Item {
 
 
-  function addDataSource(sourceUrl, sourceName, sourceType){
-      renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
+  function addDataSource(filter, sourceName, sourceType){
+      renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
       renderer.update()
   }
 

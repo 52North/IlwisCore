@@ -87,7 +87,6 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
 
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
-         loc.indexOf("ilwis://operations") == 0 ||
          loc == "file://" ||
          loc == "file:/" ||
          loc == "ilwis:/" ||

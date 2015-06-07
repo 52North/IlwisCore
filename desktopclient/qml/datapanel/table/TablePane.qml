@@ -12,7 +12,6 @@ Item {
     width: parent.width
     height : parent.height
 
-    property bool canSeparate : true
     property TableModel table
 
     Component{

@@ -25,38 +25,39 @@ ApplicationWindow {
     property int defaultFunctionBarWidth : 350
     property int activeCatalog: 0
 
-    function addCatalog(){
+    function newCatalog(filter, outputtype, url){
 
-        mainSplit.newCatalog("",-1)
-    }
+         mainSplit.newCatalog(filter, outputtype, url)
+     }
 
-    function changeCatalog(url, filter){
-        mainSplit.changeCatalog(url, filter)
-    }
+     function changeCatalog(filter, outputtype, url){
+         mainSplit.changeCatalog(filter, outputtype, url)
+     }
 
-    function transitionInfoPane(newpagename) {
-        workBench.transitionInfoPane(newpagename)
-    }
+     function transitionInfoPane(newpagename) {
+         workBench.transitionInfoPane(newpagename)
+     }
 
-    function unloadcontent(newpagename) {
-        workBench.unloadcontent(newpagename)
-    }
+     function unloadcontent(newpagename) {
+         workBench.unloadcontent(newpagename)
+     }
 
-    function modellerPane(name) {
-        if (dataPanel.addNewTab(name)) {
-            dataPanel.showModellerPane(name)
-        } else {
-            removeModellerPane(name)
-        }
-    }
+     function modellerPane(name) {
+         if (dataPanel.addNewTab(name)) {
+             dataPanel.showModellerPane(name)
+         } else {
+             removeModellerPane(name)
+         }
+     }
 
-    function showModellerPane(name) {
-        dataPanel.showModellerPane(name)
-    }
+     function showModellerPane(name) {
+         dataPanel.showModellerPane(name)
+     }
 
-    function removeModellerPane(name) {
-        dataPanel.removeTab(name)
-    }
+     function removeModellerPane(name) {
+         dataPanel.removeTab(name)
+     }
+
 
     function updateSelectedItem(name) {
         var pane = workBench.currentPane()
@@ -72,14 +73,12 @@ ApplicationWindow {
 
     Rectangle {
         id : root
-        y : 0
-        height : parent.height
-        width : parent.width
+      anchors.fill : parentt
         color : Global.alternatecolor5
 
         Rectangle {
             id : commLine
-            height : textArea.height
+            height : 35
             width : parent.width - 10
             color : Global.alternatecolor5
             Row {
@@ -102,9 +101,9 @@ ApplicationWindow {
                     onCurrentIndexChanged: {
                         if ( currentIndex >= 0){
                             var wmodel =model[currentIndex]
-                            console.debug(wmodel.name)
                             if ( wmodel){
-                                dataPanel.changeCatalog(wmodel.url,"")
+                                var filter = "resource='" + wmodel.url + "'"
+                                dataPanel.changeCatalog(filter,"catalog",wmodel.url)
                                 uicontext.currentWorkSpace = wmodel
                             }
                         }
@@ -113,11 +112,10 @@ ApplicationWindow {
                 }
             }
             Control.CommandLine{
-                id : textArea
-                y : 2
                 anchors.left : workspace.right
-                anchors.leftMargin: 2
+                anchors.leftMargin: 10
                 anchors.right: parent.right
+                anchors.verticalCenter: workspace.verticalCenter
             }
         }
 
@@ -126,18 +124,14 @@ ApplicationWindow {
             orientation: Qt.Horizontal
             width: parent.width
             anchors.top : commLine.bottom
-            anchors.bottom : parent.bottom
+            height : bigthing.height - commLine.height * 2
 
-            function addCatalog() {
-                dataPanel.addCatalog()
+            function newCatalog(filter, outputtype, url){
+                dataPanel.newCatalog(filter, outputtype, url)
             }
 
-            function newCatalog(url, splitside){
-                dataPanel.newCatalog(url, splitside)
-            }
-
-            function changeCatalog(url, filter){
-                dataPanel.changeCatalog(url, filter)
+            function changeCatalog(filter, outputtype, url){
+                dataPanel.changeCatalog(filter, outputtype, url)
             }
 
             WorkBench.WorkBenchButtonBar{

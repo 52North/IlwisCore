@@ -28,6 +28,7 @@
 #include "ilwisobjectfactory.h"
 #include "uicontextmodel.h"
 #include "catalogfiltermodel.h"
+#include "operationcatalogmodel.h"
 #include "oshelper.h"
 #include "mastercatalogmodel.h"
 
@@ -216,7 +217,12 @@ void MasterCatalogModel::scanBookmarks()
 
         if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
             CatalogView cview(res);
-            _bookmarks.push_back(new CatalogModel(this));
+            CatalogModel *model = 0;
+            if ( location.toString().indexOf("ilwis://operations") == 0){
+                model = new OperationCatalogModel(this);
+            }else
+                model = new CatalogModel(this);
+            _bookmarks.push_back(model);
             _bookmarks.back()->setView(cview);
 
         }else{
@@ -362,14 +368,6 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
     if ( inpath == "" || inpath == sUNDEF )
         return 0;
 
-//    if ( inpath == _currentUrl){
-//        if(_currentCatalog && _currentCatalog->view().filter() == filter){
-//            auto *c =  new CatalogModel(this);
-//            *c = *_currentCatalog;
-//            return c;
-//        }
-//    }
-
     CatalogView cview;
     QUrl location(inpath);
     _currentUrl = inpath;
@@ -393,9 +391,14 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("type", "remote");
         if ( scheme == "ilwis")
             res.addProperty("type", "internal");
-        res.addProperty("filter",filter);
+        if ( filter != "container=ilwis://mastercatalog")
+            res.addProperty("filter",filter);
         cview = CatalogView(res);
-        CatalogModel *model = new CatalogModel(this);
+        CatalogModel *model = 0;
+        if ( inpath.indexOf("ilwis://operations") == 0){
+            model = new OperationCatalogModel(this);
+        }else
+            model = new CatalogModel(this);
         model->setView(cview);
         emit currentCatalogChanged();
         return model;

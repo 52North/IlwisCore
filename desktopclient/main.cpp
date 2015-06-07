@@ -41,6 +41,8 @@
 #include "models/graphmodel.h"
 #include "models/chartmodel.h"
 #include "models/consolescriptmodel.h"
+#include "models/tabmodel.h"
+#include "models/datapanemodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
@@ -103,6 +105,10 @@ int main(int argc, char *argv[])
         qmlRegisterType<CatalogFilterModel>("CatalogFilterModel", 1,0,"CatalogFilterModel");
         qmlRegisterType<ConsoleLineModel>("ConsoleLineModel", 1,0,"ConsoleLineModel");
         qmlRegisterType<ConsoleScriptModel>("ConsoleScriptModel", 1,0,"ConsoleScriptModel");
+        qmlRegisterType<DataPaneModel>("DataPaneModel", 1,0,"DataPaneModel");
+        qmlRegisterType<TabModel>("TabModel", 1,0,"TabModel");
+        qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
+
 
         MasterCatalogModel mastercatalogmodel(ctx);
 
@@ -112,6 +118,7 @@ int main(int argc, char *argv[])
         OperationCatalogModel operations;
         TranquilizerHandler *tranquilizers = new TranquilizerHandler();
         WorkflowCatalogModel workflows;
+        DataPaneModel datapane;
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
@@ -126,6 +133,7 @@ int main(int argc, char *argv[])
         ctx->setContextProperty("tranquilizerHandler", tranquilizers);
         ctx->setContextProperty("operations", &operations);
         ctx->setContextProperty("workflows", &workflows);
+        ctx->setContextProperty("datapane", &datapane);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 
@@ -160,6 +168,7 @@ int main(int argc, char *argv[])
         app.installEventFilter(&keys);
 
         trqthread->start();
+        uicontext()->initializeDataPane();
         int ret =  app.exec();
         Ilwis::exitIlwis();
 

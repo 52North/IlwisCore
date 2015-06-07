@@ -63,7 +63,7 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         QString findTxt = "'" + name.key().toLower() + "'";
         query.replace(findTxt, QString::number(name.value()));
     }
-    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&"};
+    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&","container"};
     QString specialchars{"<>=!+- "};
     QString leftside, rightside, newquery;
     QString middel;
@@ -109,8 +109,10 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
     }
     bool likecases = leftside == "keyword";
     if ( checkForProperty(resourceBaseNames, leftside, true, false))
-         middel = "";
-    checkForProperty(resourceBaseNames, rightside, false, likecases);
+        middel = "";
+    if ( leftside.indexOf("mastercatalog.") != 0)
+        checkForProperty(resourceBaseNames, rightside, false, likecases);
+
     newquery += leftside + middel + rightside;
 
     return newquery;

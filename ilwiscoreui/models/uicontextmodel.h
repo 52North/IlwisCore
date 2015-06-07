@@ -68,6 +68,7 @@ public:
     int threadCount() const;
     WorkSpaceModel *currentWorkSpace() const;
     void setCurrentWorkSpace(WorkSpaceModel* cws);
+    void initializeDataPane();
 
 signals:
     void activeSplitChanged();

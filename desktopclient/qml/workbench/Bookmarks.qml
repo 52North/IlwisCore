@@ -120,7 +120,8 @@ Item {
                         catalogProperties.defintiontext = url
                         catalogProperties.descriptiontext = description
                         mastercatalog.selectedBookmark(url)
-                        bigthing.changeCatalog(url)
+                        var filter = "container='" + url + "'"
+                        bigthing.changeCatalog(filter,"catalog", url)
 
                     }
 
