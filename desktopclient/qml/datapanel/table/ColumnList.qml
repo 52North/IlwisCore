@@ -72,7 +72,7 @@ Item {
                 }
                 Image{
                     id : domicon
-                    source : iconsource(icon)
+                    source : columnlist.iconsource(icon)
                     width : 16
                     height : 16
                     anchors.verticalCenter: parent.verticalCenter
