@@ -17,11 +17,14 @@ Item {
 
     Layout.minimumHeight: 22
 
-    function addDataSource(sourceUrl, sourceName, sourceType){
+    function addDataSource(filter, sourceName, sourceType){
+        if ( filter.indexOf("=") !== -1){
+            filter = "\"" + filter + "\""
+        }
         var tab = layersmeta.getTab(2)
 
         if ( tab && tab.item && tab.item.coverage){
-            tab.item.coverage.addCommand("adddrawer(" + tab.item.coverage.viewerId + ","+ sourceName + "," + sourceUrl + "," + sourceType + ")")
+            tab.item.coverage.addCommand("adddrawer(" + tab.item.coverage.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
             tab.item.coverage.update()
         }
     }
