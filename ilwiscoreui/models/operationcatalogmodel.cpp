@@ -193,6 +193,7 @@ void OperationCatalogModel::workSpaceChanged()
     _currentOperations.clear();
     _operationsByKey.clear();
     _services.clear();
+    _refresh = true;
 
     emit operationsChanged();
 }
