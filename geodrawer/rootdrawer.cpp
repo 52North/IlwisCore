@@ -96,7 +96,7 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
     } else {
         double pixheight = _pixelAreaSize.xsize() / _aspectRatioCoverage;
         if ( pixheight > _pixelAreaSize.ysize()){
-            deltax = (_coverageRect.xlength() - 1) / _aspectRatioCoverage;
+            deltax = (_coverageRect.xlength() - 1) * ( pixheight / _pixelAreaSize.ysize() - 1.0);; //_aspectRatioCoverage;
             pixheight = _pixelAreaSize.ysize();
         }
         double fractionOfHeight = 1.0 - std::abs(_pixelAreaSize.ysize() - pixheight)/(double)_pixelAreaSize.ysize();
@@ -318,6 +318,10 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
         QVariant var = qVariantFromValue(_zoomRect);
         return var;
     }
+    if ( attrName == "pixelarea"){
+        QVariant var = qVariantFromValue(_pixelAreaSize);
+        return var;
+    }
     return QVariant();
 }
 
@@ -343,5 +347,11 @@ Ilwis::Coordinate RootDrawer::pixel2Coord(const Ilwis::Pixel& pix){
     if ( _screenGrf.isValid())
         return _screenGrf->pixel2Coord(pix);
     return Ilwis::Coordinate();
+}
+
+Ilwis::Pixel RootDrawer::coord2Pixel(const Ilwis::Coordinate& crd){
+    if ( _screenGrf.isValid())
+        return _screenGrf->coord2Pixel(crd);
+    return Ilwis::Pixel();
 }
 

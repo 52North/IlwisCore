@@ -60,6 +60,7 @@ public:
     Ilwis::Coordinate normalizedCoord(const Coordinate &crd) const;
     Envelope normalizedEnveope(const Envelope &env) const;
     Ilwis::Coordinate pixel2Coord(const Ilwis::Pixel &pix);
+    Ilwis::Pixel coord2Pixel(const Ilwis::Coordinate &crd);
 public slots:
 
 private:
