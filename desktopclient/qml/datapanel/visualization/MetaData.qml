@@ -25,6 +25,15 @@ Item {
 
      }
 
+    function entireMap() {
+        if ( metatdata.manager && layerview.manager){
+            var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
+            var env = {envelope : envelope, preserveaspectration : false}
+            overview.setAttribute("selectiondrawer", env )
+            overview.update()
+        }
+    }
+
 
     Rectangle {
         id : layersLabel
@@ -46,64 +55,17 @@ Item {
         spacing : 3
         Rectangle {
             id : layerContainer
-            width : 210
+            width : 180
             height : parent.height
             color : Global.alternatecolor2
             border.color: "lightgrey"
             border.width: 1
 
 
-            Component {
-                id: highlight
 
-                Rectangle {
-                    width: layersList.width; height: 18
-                    color: Global.selectedColor; radius: 2
-                    y: (layersList && layersList.currentItem) ? layersList.currentItem.y : 0
-                }
+            MetaDataLayerList{
             }
-            ListView {
-                id : layersList
-                model : manager.layers
-                anchors.fill: parent
-                anchors.margins: 4
-                delegate: Component{
-                    Item {
-                        id : layerRow
-                        width: parent.width
-                        height: 18
 
-                        Row {
-                            spacing: 2
-                            width : parent.width
-                            Image {
-                                id : image
-                                width : 16; height :16
-                                source : iconSource(iconPath)
-                                fillMode: Image.PreserveAspectFit
-                            }
-                            Text{
-                                text : name
-                                width : parent.width - image.width
-                                font.pointSize: 8
-                                elide: Text.ElideMiddle
-                                MouseArea{
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        layersList.currentIndex = index
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-                highlight: highlight
-                focus: true
-                clip : true
-
-            }
         }
         Rectangle{
             width : parent.width - layerContainer.width - 8
@@ -133,18 +95,21 @@ Item {
                     entireMap()
                 }
 
-                LayersView {
-                    id: overview
-                    objectName : "overview_mainui"
-                    anchors.fill: parent
-                    anchors.margins: 2
 
-                    Component.onCompleted: {
-                        manager = uicontext.createLayerManager(objectName)
-                        overview.setManager(manager)
-                    }
+                OverviewExtentToolbar{
+                    id : buttons
                 }
+
+                OverViewDrawer{
+                    id: overview
+                    height : parent.height
+                    width : parent.width - buttons.width
+                    anchors.left : buttons.right
+                    anchors.margins: 2
+                }
+
             }
+
 
             border.color: "lightgrey"
             border.width: 1
