@@ -68,6 +68,10 @@ QString LayersView::attributeOfDrawer(const QString &drawercode, const QString &
             QString result = env.toString();
             return result;
         }
+        if ( tpName.indexOf("Ilwis::Size") == 0){
+            auto sz = var.value<Size<>>();
+            return sz.toString();
+        }
         if ( tpName == "Ilwis::BoundingBox"){
             auto bb = var.value<BoundingBox>();
             return bb.toString();
