@@ -12,87 +12,40 @@ ToolBar{
     id : maptools
     width : parent.width
     height : 35
-    Button {
-        height : 25
-        width : 25
-        id : entireMap
+    Row {
+        anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: 2
-        tooltip: "EntireMap"
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            source : iconsource("entiremap20.png")
+        spacing : 2
+        MapExtentButton{
+            icon  :"entiremap20.png"
+            id : entireMap
+            action : entireClicked
         }
-        action : entireClicked
-    }
 
-    Button {
-        height : 25
-        width : 25
-        id : refreshButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left :entireMap.right
-        action : refreshClicked
-        anchors.rightMargin: 2
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            source : iconsource("refresh20.png")
+        MapExtentButton{
+            id : refreshButton
+            icon : "refresh20.png"
+            action : refreshClicked
         }
-    }
 
-
-    Button {
-        height : 25
-        width : 25
-        id : panButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left :refreshButton.right
-        anchors.rightMargin: 2
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            source : iconsource("pan20.png")
+        MapExtentButton{
+            id : panButton
+            icon : "pan20.png"
         }
-    }
 
-
-    Button {
-        height : 25
-        width : 25
-        id : zoominButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left :panButton.right
-        anchors.rightMargin: 2
-        action : zoomClicked
-        checkable: true
-        checked: false
-        Image {
-            id : zoomimage
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            source : iconsource(zoominButton.checked ? "zoomin20A.png" : "zoomin20.png")
+        MapExtentButton{
+            id : zoominButton
+            icon : zoominButton.checked ? "zoomin20A.png" : "zoomin20.png"
+            action : zoomClicked
+            checkable: true
+            checked: false
+            onClicked: {
+                checked = !checked
+            }
         }
-        onClicked: {
-            checked = !checked
-        }
-    }
-    Button {
-        height : 25
-        width : 25
-        id : zoomoutButton
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left :zoominButton.right
-        anchors.leftMargin: 2
-        checkable: true
-        checked: false
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            source : iconsource("zoomout20.png")
+        MapExtentButton{
+            id : zoomoutButton
+            icon :"zoomout20.png"
         }
     }
 }
