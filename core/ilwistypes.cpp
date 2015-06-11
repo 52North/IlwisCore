@@ -119,8 +119,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("CatalogView");
     case itCOLLECTION:
         return TR("Collection");
-    case itBUFFER:
-        return TR("Buffer");
+    case itARRAY:
+        return TR("Array");
     case itCOVERAGE:
         return TR("Coverage");
     case itFEATURE:
@@ -258,8 +258,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("catalogview");
     case itCOLLECTION:
         return TR("collection");
-    case itBUFFER:
-        return TR("buffer");
+    case itARRAY:
+        return TR("array");
     case itCOVERAGE:
         return TR("coverage");
     case itFEATURE:
