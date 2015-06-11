@@ -31,7 +31,7 @@ Item {
     function addDataSource(sourceUrl, sourceName, sourceType){
         if ( sourceUrl !== ""){
             layers.addDataSource(sourceUrl, sourceName, sourceType)
-			viewmanager.addDataSource(sourceUrl, sourceName, sourceType)            
+            viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
          }
     }
 
@@ -53,6 +53,7 @@ Item {
         id : entireClicked
         onTriggered : {
             layers.entireMap()
+            viewmanager.entireMap()
         }
     }
     Action {
