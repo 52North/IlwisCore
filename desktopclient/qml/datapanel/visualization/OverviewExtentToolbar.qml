@@ -34,8 +34,11 @@ Rectangle {
             onClicked: {
                 checked = !checked
                 if ( metatdata.manager){
-
+                    // remove any "old" selection drawer. it will be recreated anyway
+                   overview.addCommand("removedrawer(" + overview.viewerId + ",selectiondrawer,post)");
+                   metatdata.manager.hasSelectionDrawer = false
                    metatdata.manager.zoomInMode = !metatdata.manager.zoomInMode
+                    overview.update()
                 }
             }
         }
