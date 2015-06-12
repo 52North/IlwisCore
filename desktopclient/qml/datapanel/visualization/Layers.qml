@@ -61,6 +61,9 @@ Item {
 
               LayerExtentMouseActions{
                   layerManager: manager
+                  drawer : renderer
+                  linkedDrawer: renderer
+                  showInfo: true
               }
               Component.onCompleted: {
                   renderer.associate(hscroller.objectName,"synchronizeEnded")
