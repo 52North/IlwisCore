@@ -22,6 +22,10 @@ LayersView {
     }
 
     function finalizeDraw(){
+        if (metatdata.manager && !metatdata.manager.hasSelectionDrawer){
+            coverage.addCommand("adddrawer(" + coverage.viewerId + ",selectiondrawer)")
+            metatdata.manager.hasSelectionDrawer = true
+        }
         if ( metatdata.manager && layerview.manager){
             var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope")
             var env = {envelope : envelope, preserveaspectration : false}
