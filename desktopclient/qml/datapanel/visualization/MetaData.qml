@@ -60,26 +60,35 @@ Item {
             color : Global.alternatecolor2
             border.color: "lightgrey"
             border.width: 1
-
-
-
             MetaDataLayerList{
             }
+
 
         }
         Rectangle{
             width : parent.width - layerContainer.width - 8
             height : layerContainer.height
+            MetaDataSpatialInfo{
+                anchors.topMargin: 4
+                anchors.leftMargin: 2
+                anchors.left : parent.left
+                anchors.right: buttons.left
+                height : parent.height
+            }
 
+            OverviewExtentToolbar{
+                id : buttons
+                anchors.right: viewcontainer.left
+            }
             Rectangle{
-                width :parent.width / 2
+                id : viewcontainer
+                width :parent.width / 2 - buttons.width
                 height : parent.height - 4
                 border.width: 1
                 border.color: "lightgrey"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: 3
-
                 function entireMap() {
                     var envelope = overview.attributeOfDrawer("rootdrawer","coverageenvelope");
                     if ( envelope !== ""){
@@ -95,21 +104,17 @@ Item {
                     entireMap()
                 }
 
-
-                OverviewExtentToolbar{
-                    id : buttons
-                }
-
                 OverViewDrawer{
                     id: overview
-                    height : parent.height
-                    width : parent.width - buttons.width
-                    anchors.left : buttons.right
-                    anchors.margins: 2
+                    anchors.fill: parent
+                }
+                LayerExtentMouseActions{
+                    layerManager: manager
+                    drawer : overview
+                    linkedDrawer: renderer
                 }
 
             }
-
 
             border.color: "lightgrey"
             border.width: 1
