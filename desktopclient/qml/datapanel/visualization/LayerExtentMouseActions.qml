@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtGraphicalEffects 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import LayersView 1.0
 import "../../controls" as Controls
 
 MouseArea {
@@ -9,6 +10,9 @@ MouseArea {
     anchors.fill: parent
     hoverEnabled: true
     property LayerManager layerManager
+    property LayersView drawer
+    property LayersView linkedDrawer
+    property bool showInfo : false
     signal zoomEnded()
 
     Controls.FloatingRectangle{
@@ -20,49 +24,49 @@ MouseArea {
             if ( !layerManager.hasSelectionDrawer){
                 var position = {initialx: mouseX, initialy:mouseY}
                 layerManager.hasSelectionDrawer = true
-                renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer)")
-                renderer.setAttribute("SelectionDrawer", position)
-                renderer.update()
+                drawer.addCommand("adddrawer(" + drawer.viewerId + ",selectiondrawer)")
+                drawer.setAttribute("SelectionDrawer", position)
+                drawer.update()
             }
 
         }
-        if ( renderer.showLayerInfo && !layerManager.hasSelectionDrawer){
+        if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
           floatrect.enabled = true
           floatrect.opacity = 1
           floatrect.x = mouseX
           floatrect.y = mouseY
           var mposition = mouseX + "|" + mouseY
-          floatrect.text = renderer.layerInfo(mposition)
+          floatrect.text = drawer.layerInfo(mposition)
         }
 
     }
     onPositionChanged: {
         var mposition = mouseX + "|" + mouseY
-        renderer.currentCoordinate = mposition
+        drawer.currentCoordinate = mposition
         if ( layerManager.hasSelectionDrawer){
             var position = {currentx: mouseX, currenty:mouseY}
-            renderer.setAttribute("SelectionDrawer", position)
-            renderer.copyAttribute("SelectionDrawer","envelope");
-            renderer.update()
+            drawer.setAttribute("SelectionDrawer", position)
+            drawer.copyAttribute("SelectionDrawer","envelope");
+            drawer.update()
         }
-        if ( floatrect.opacity > 0){
+        if ( showInfo && floatrect.opacity > 0){
             floatrect.x = mouseX
             floatrect.y = mouseY
             mposition = mouseX + "|" + mouseY
-            floatrect.text = renderer.layerInfo(mposition)
+            floatrect.text = drawer.layerInfo(mposition)
         }
     }
     onReleased: {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
-            var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope");
-            renderer.addCommand("removedrawer(" + renderer.viewerId + ",selectiondrawer,post)");
+            var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
+            drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
             if ( envelope !== ""){
-                renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
+                linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
 
             }
             zoomEnded()
             layerManager.hasSelectionDrawer = false
-            renderer.update()
+            linkedDrawer.update()
         }
         floatrect.enabled = false
         floatrect.opacity = 0
