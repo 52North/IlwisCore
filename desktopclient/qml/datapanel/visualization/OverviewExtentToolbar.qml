@@ -11,26 +11,32 @@ import "../.." as Base
 
 Rectangle {
     height : parent.height
-    width : 30
+    width : 27
     color : Global.alternatecolor1
     Column{
         spacing : 2
-        anchors.horizontalCenter: parent.horizontalCenter
         width : parent.width
         height : parent.height
+        anchors.horizontalCenter: parent.horizontalCenter
         MapExtentButton{
             id : panButton1
             icon : "pan20.png"
+            onClicked: {
+                console.debug("todo")
+            }
         }
 
         MapExtentButton{
             id : zoominButton1
             icon : zoominButton1.checked ? "zoomin20A.png" : "zoomin20.png"
-           // action : zoomClicked
             checkable: true
             checked: false
             onClicked: {
                 checked = !checked
+                if ( metatdata.manager){
+
+                   metatdata.manager.zoomInMode = !metatdata.manager.zoomInMode
+                }
             }
         }
         MapExtentButton{
