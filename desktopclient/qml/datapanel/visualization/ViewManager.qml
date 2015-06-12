@@ -23,13 +23,8 @@ Item {
         }
         var tab = layersmeta.getTab(2)
 
-        if ( tab && tab.item && tab.item.coverage){
-            tab.item.coverage.addCommand("adddrawer(" + tab.item.coverage.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
-            if (!tab.item.manager.hasSelectionDrawer){
-                tab.item.coverage.addCommand("adddrawer(" + tab.item.coverage.viewerId + ",selectiondrawer)")
-                tab.item.manager.hasSelectionDrawer = true
-            }
-            tab.item.coverage.update()
+        if ( tab && tab.item ){
+            tab.item.addDataSource(filter, sourceName, sourceType)
         }
     }
 
