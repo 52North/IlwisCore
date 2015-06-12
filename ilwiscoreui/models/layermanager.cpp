@@ -43,8 +43,9 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         Resource resource = mastercatalog()->name2Resource(url.toString(),tp);
         if ( !resource.isValid())
             return;
+        ICoverage coverage(resource);
         if ( _layers.size() > 0){
-            ICoverage coverage(resource);
+
             if ( !coverage.isValid())
                 return;
             if ( coverage->coordinateSystem()->isUnknown()) {// after the first layer, nothing with unknown can be added
@@ -52,6 +53,12 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
                 kernel()->issues()->log(mes, IssueObject::itWarning);
                 return;
             }
+        }
+
+        if ( _masterCsy == 0) {// first real layer sets the csy
+            _masterCsy = new ResourceModel(coverage->coordinateSystem()->source(), this);
+            _viewEnvelope = coverage->envelope();
+            emit coordinateSystemChanged();
         }
         auto layer = new CoverageLayerModel(_layers.size(), resource, drawer, this);
         if  ( _layers.size() == 1)
@@ -119,6 +126,11 @@ void LayerManager::setLayerListName(const QString name)
 QString LayerManager::layerListName() const
 {
     return _layerListName;
+}
+
+ResourceModel *LayerManager::coordinateSystem() const
+{
+    return _masterCsy;
 }
 
 void LayerManager::layersView(LayersViewCommandInterface *view)
@@ -207,6 +219,17 @@ void LayerManager::refresh()
 void LayerManager::init()
 {
 
+}
+
+QVariantMap LayerManager::viewEnvelope() const
+{
+    QVariantMap vmap;
+    vmap["minx"] = _viewEnvelope.min_corner().x;
+    vmap["miny"] = _viewEnvelope.min_corner().y;
+    vmap["maxx"] = _viewEnvelope.max_corner().x;
+    vmap["maxy"] = _viewEnvelope.max_corner().y;
+
+    return vmap;
 }
 
 

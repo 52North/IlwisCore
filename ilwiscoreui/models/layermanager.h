@@ -25,6 +25,8 @@ class ILWISCOREUISHARED_EXPORT LayerManager : public QObject
     Q_PROPERTY(QQmlListProperty<LayerInfoItem> layerInfoItems READ layerInfoItems NOTIFY layerInfoItemsChanged)
     Q_PROPERTY(bool zoomInMode READ zoomInMode WRITE setZoomInMode NOTIFY zoomInModeChanged)
     Q_PROPERTY(bool hasSelectionDrawer READ hasSelectionDrawer WRITE setHasSelectionDrawer NOTIFY hasSelectionDrawerChanged)
+    Q_PROPERTY(ResourceModel * coordinateSystem READ coordinateSystem NOTIFY coordinateSystemChanged)
+    Q_PROPERTY(QVariantMap viewEnvelope READ viewEnvelope NOTIFY viewEnvelopeChanged)
 
 public:
     enum LayerMovement{lmUP, lmDOWN, lmREMOVE};
@@ -46,6 +48,7 @@ public:
     QString currentLatLon() const;
     Q_INVOKABLE void setLayerListName(const QString name);
     QString layerListName() const;
+    ResourceModel *coordinateSystem() const;
 
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
@@ -59,6 +62,8 @@ signals:
     void zoomInModeChanged();
     void hasSelectionDrawerChanged();
     void layerInfoItemsChanged();
+    void coordinateSystemChanged();
+    void viewEnvelopeChanged();
 
 public slots:
 
@@ -72,7 +77,10 @@ private:
     bool _hasSelectionDrawer = false;
     QString _layerListName;
     LayersViewCommandInterface *_layersView = 0;
+    ResourceModel *_masterCsy = 0;
     void init();
+    Ilwis::Envelope _viewEnvelope;
+    QVariantMap viewEnvelope() const;
 
 };
 
