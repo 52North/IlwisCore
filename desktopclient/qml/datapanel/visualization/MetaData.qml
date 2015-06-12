@@ -25,6 +25,13 @@ Item {
 
      }
 
+    function addDataSource(filter, sourceName, sourceType){
+        if ( coverage){
+            coverage.addCommand("adddrawer(" + coverage.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
+            coverage.update()
+        }
+    }
+
     function entireMap() {
         if ( metatdata.manager && layerview.manager){
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
