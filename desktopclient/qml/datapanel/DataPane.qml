@@ -185,10 +185,9 @@ Rectangle {
                 window.datapanel =  tabData.componentUrl
                 window.height = tab.item.height
                 window.width = tab.item.width
-                window.transfer(tab.item)
-
-
                 window.show();
+
+                window.transfer(tab.item)
 
                 closeTab(sidePanel.isLeft, tabIndex);
             }

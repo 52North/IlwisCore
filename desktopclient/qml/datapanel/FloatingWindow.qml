@@ -16,6 +16,8 @@ Window {
 
     Loader {
         id : content
+        width : parent.width
+        height : parent.height
         source : datapanel
     }
 }

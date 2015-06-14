@@ -27,10 +27,8 @@ Item {
 
   function transfer(datapanel){
       var layers = datapanel.manager.layers;
-      console.debug(layers.length)
       for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
-          var expr = "adddrawer(" + renderer.viewerId + ","+ layers[i].name + ",\"resource=" + layers[i].url + "\"," + layers[i].typeName + ")"
-          console.debug(expr)
+          var expr = "adddrawer(" + renderer.viewerId + ","+ layers[i].name + ",\"itemid=" + layers[i].id + "\"," + layers[i].typeName + ")"
           renderer.addCommand(expr)
       }
       renderer.update()
@@ -61,6 +59,7 @@ Item {
               height : parent.height - hscroller.height
               width : parent.width - vscroller.width
               anchors.margins: 1
+              objectName : "layers_" + uicontext.uniqueName()
 
               LayerExtentMouseActions{
                   layerManager: manager
