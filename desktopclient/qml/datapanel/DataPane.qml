@@ -173,18 +173,24 @@ Rectangle {
         }
 
         function showTabInFloatingWindow(panelside, tabIndex) {
-            var sidePanel = datapane.activeSide
+            var sidePanel = panelside === 1 ? datapane.leftSide : datapane.rightSide
             var tabview = sidePanel.tabview
-            var tab = tabview.getTab(tabview.currentIndex)
+            var tab = tabview.getTab(tabIndex)
+            var tabData = sidePanel.tab(tabIndex)
 
             if (tab && tab.item) {
                 var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
-                qml += "Window { id: floatingWindow } ";
+                qml += "FloatingWindow { id: floatingWindow } ";
                 var window = Qt.createQmlObject(qml, datapanesplit)
+                window.datapanel =  tabData.componentUrl
+                window.height = tab.item.height
+                window.width = tab.item.width
+                window.transfer(tab.item)
+
 
                 window.show();
 
-                closeTab(sidePanel.isLeft, tabview.currentIndex);
+                closeTab(sidePanel.isLeft, tabIndex);
             }
         }
 

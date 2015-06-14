@@ -202,6 +202,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 
     if ( resources.size() > 0){
         if ( outputtype == "catalog"){
+
             if ( filter == "container='ilwis://operations'")
                  tab = new TabModel(url,"catalog/OperationPanel.qml", this);
             else

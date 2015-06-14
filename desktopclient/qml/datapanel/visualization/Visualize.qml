@@ -35,8 +35,8 @@ Item {
          }
     }
 
-    function transferLayers(layermanager){
-        layers.transferLayers(layermanager)
+    function transfer(datapanel){
+        layers.transfer(datapanel)
     }
 
     Action {
