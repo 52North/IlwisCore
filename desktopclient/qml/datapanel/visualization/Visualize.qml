@@ -76,13 +76,12 @@ Item {
                 var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
                 if ( envelope !== ""){
                     var parts = envelope.split(" ")
-                    console.debug(envelope)
                     var x1 = parseFloat(parts[0])
                     var y1 = parseFloat(parts[1])
                     var x2 = parseFloat(parts[3])
                     var y2 = parseFloat(parts[4])
-                    var dx = 1.414 * Math.abs(x1 - x2)
-                    var dy = 1.414 * Math.abs(y1 - y2)
+                    var dx = 0.707 * Math.abs(x1 - x2)
+                    var dy = 0.707 * Math.abs(y1 - y2)
                     var nx1 = (x2 + x1) / 2.0 - dx
                     var nx2 = (x2 + x1) / 2.0 + dx
                     var ny1 = (y2 + y1) / 2.0 - dy
