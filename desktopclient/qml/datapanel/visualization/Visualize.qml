@@ -15,11 +15,6 @@ Item {
     width: parent.width
     height : parent.height
 
-    onWidthChanged: {
-        console.debug(height, width)
-
-    }
-
     objectName: uicontext.uniqueName()
     property LayerManager manager
     property bool canSeparate : true
@@ -108,10 +103,6 @@ Item {
             height : parent.height - maptools.height - 150
             id : layers
             Layout.fillWidth: true
-
-            Component.onCompleted: {
-                console.debug("layers", width, parent.height, maptools.height, height)
-            }
 
         }
         ViewManager{
