@@ -43,6 +43,7 @@ Item {
 
     function transfer(datapanel){
         layers.transfer(datapanel)
+        viewmanager.transfer(datapanel)
     }
 
     Action {

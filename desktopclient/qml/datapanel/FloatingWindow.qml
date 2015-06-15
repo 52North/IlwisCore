@@ -8,9 +8,9 @@ import QtQuick.Window 2.1
 Window {
     property string datapanel
 
-    function transfer(datapanel){
+    function transfer(datap){
         if ( content.item){
-            content.item.transfer(datapanel)
+            content.item.transfer(datap)
         }
     }
 

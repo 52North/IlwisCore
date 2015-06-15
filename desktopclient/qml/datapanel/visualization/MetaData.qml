@@ -34,6 +34,15 @@ Item {
         }
     }
 
+    function transfer(datapanel){
+        var layers = datapanel.manager.layers;
+        for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
+            var expr = "adddrawer(" + coverage.viewerId + ","+ layers[i].name + ",\"itemid=" + layers[i].id + "\"," + layers[i].typeName + ")"
+            coverage.addCommand(expr)
+        }
+        coverage.update()
+    }
+
     function newZoomExtent(newenvelope){
         var env = {envelope : newenvelope, preserveaspectration : false}
         overview.setAttribute("selectiondrawer", env )

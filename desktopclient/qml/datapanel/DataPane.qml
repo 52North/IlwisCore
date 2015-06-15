@@ -182,10 +182,12 @@ Rectangle {
                 var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
                 qml += "FloatingWindow { id: floatingWindow } ";
                 var window = Qt.createQmlObject(qml, datapanesplit)
-                window.datapanel =  tabData.componentUrl
                 window.height = tab.item.height
                 window.width = tab.item.width
                 window.show();
+                window.datapanel =  tabData.componentUrl
+
+
 
                 window.transfer(tab.item)
 

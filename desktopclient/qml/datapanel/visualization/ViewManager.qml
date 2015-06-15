@@ -30,6 +30,13 @@ Item {
         }
     }
 
+    function transfer(datapanel){
+        var tab = layersmeta.getTab(2)
+        if ( tab){
+            tab.item.transfer(datapanel)
+        }
+    }
+
     function entireMap() {
         var tab = layersmeta.getTab(2)
         if ( tab){
