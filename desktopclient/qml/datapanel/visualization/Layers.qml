@@ -8,6 +8,7 @@ import LayersView 1.0
 
 Item {
 
+  signal zoomEnded(string envelope)
 
   function addDataSource(filter, sourceName, sourceType){
       if ( filter.indexOf("=") !== -1){
@@ -56,6 +57,13 @@ Item {
           addDataSource(resource.url, resource.name, resource.typeName)
       }
 
+      Connections {
+          target: mouseActions
+          onZoomEnded :{
+              zoomEnded(envelope)
+          }
+      }
+
       Item {
           anchors.fill: parent
           LayersView {
@@ -67,6 +75,7 @@ Item {
               objectName : "layers_" + uicontext.uniqueName()
 
               LayerExtentMouseActions{
+                  id : mouseActions
                   layerManager: manager
                   drawer : renderer
                   linkedDrawer: renderer

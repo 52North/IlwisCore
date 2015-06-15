@@ -17,6 +17,8 @@ Item {
     property alias coverage : overview
     property LayerManager manager
 
+    signal zoomEnded(string envelope)
+
     function iconSource(name) {
         if ( name === "")
             name = "redbuttonr.png"
@@ -35,6 +37,7 @@ Item {
     function newZoomExtent(newenvelope){
         var env = {envelope : newenvelope, preserveaspectration : false}
         overview.setAttribute("selectiondrawer", env )
+        mdspatialinfo.zoomEnvelope(newenvelope)
         overview.update()
     }
 
@@ -43,10 +46,17 @@ Item {
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
             var env = {envelope : envelope, preserveaspectration : false}
             overview.setAttribute("selectiondrawer", env )
+            mdspatialinfo.zoomEnvelope(envelope)
             overview.update()
         }
     }
 
+    Connections {
+        target: mouseActions
+        onZoomEnded :{
+            layersmeta.endZoom(envelope)
+        }
+    }
 
     Rectangle {
         id : layersLabel
@@ -82,6 +92,7 @@ Item {
             width : parent.width - layerContainer.width - 8
             height : layerContainer.height
             MetaDataSpatialInfo{
+                id : mdspatialinfo
                 anchors.topMargin: 4
                 anchors.leftMargin: 2
                 anchors.left : parent.left
@@ -121,7 +132,10 @@ Item {
                     id: overview
                     anchors.fill: parent
                 }
+
+
                 LayerExtentMouseActions{
+                    id : mouseActions
                     layerManager: manager
                     drawer : overview
                     linkedDrawer: renderer

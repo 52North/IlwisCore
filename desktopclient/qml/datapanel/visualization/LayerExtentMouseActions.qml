@@ -15,7 +15,7 @@ MouseArea {
     property bool showInfo : false
     property bool hasPermanence : false
     property bool zoomStarted : false
-    signal zoomEnded()
+    signal zoomEnded(string envelope)
 
     Controls.FloatingRectangle{
         id : floatrect
@@ -80,8 +80,7 @@ MouseArea {
                 drawer.setAttribute("SelectionDrawer", parm)
                 drawer.update()
             }
-
-            zoomEnded()
+            zoomEnded(envelope)
             zoomStarted = false
             linkedDrawer.update()
         }

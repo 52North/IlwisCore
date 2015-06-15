@@ -15,6 +15,8 @@ Item {
 
     property var renderer
 
+    signal zoomEnded(string envelope)
+
     Layout.minimumHeight: 22
 
     function addDataSource(filter, sourceName, sourceType){
@@ -56,6 +58,8 @@ Item {
         }
     }
 
+
+
     Component{
         id : metadata
         MetaData{}
@@ -93,6 +97,10 @@ Item {
     TabView{
         id : layersmeta
         anchors.fill: parent
+
+        function endZoom(envelope) {
+            zoomEnded(envelope)
+        }
 
         Component.onCompleted: {
             var tab =addTab(qsTr("Display Options"), displayOptions)
