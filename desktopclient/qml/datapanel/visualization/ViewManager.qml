@@ -35,6 +35,13 @@ Item {
         }
     }
 
+     function newZoomExtent(newenvelope){
+         var tab = layersmeta.getTab(2)
+         if ( tab){
+             tab.item.newZoomExtent(newenvelope)
+         }
+     }
+
 
     Component {
         id : displayOptions

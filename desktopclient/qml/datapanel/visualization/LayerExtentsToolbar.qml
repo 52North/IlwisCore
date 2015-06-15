@@ -46,6 +46,7 @@ ToolBar{
         MapExtentButton{
             id : zoomoutButton
             icon :"zoomout20.png"
+            action : zoomOutClicked
         }
     }
 }

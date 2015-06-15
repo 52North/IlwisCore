@@ -13,14 +13,23 @@ MouseArea {
     property LayersView drawer
     property LayersView linkedDrawer
     property bool showInfo : false
+    property bool hasPermanence : false
+    property bool zoomStarted : false
     signal zoomEnded()
 
     Controls.FloatingRectangle{
         id : floatrect
     }
 
-    onPressed: {
+    onPressed:  {
         if ( layerManager.zoomInMode ){
+            if ( !zoomStarted){
+                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
+                if (drawer.viewerId !== linkedDrawer.viewerId)
+                    linkedDrawer.addCommand("removedrawer(" + linkedDrawer.viewerId + ",selectiondrawer,post)");
+                layerManager.hasSelectionDrawer = false
+            }
+
             if ( !layerManager.hasSelectionDrawer){
                 var position = {initialx: mouseX, initialy:mouseY}
                 layerManager.hasSelectionDrawer = true
@@ -28,6 +37,7 @@ MouseArea {
                 drawer.setAttribute("SelectionDrawer", position)
                 drawer.update()
             }
+            zoomStarted = true
 
         }
         if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
@@ -43,7 +53,7 @@ MouseArea {
     onPositionChanged: {
         var mposition = mouseX + "|" + mouseY
         drawer.currentCoordinate = mposition
-        if ( layerManager.hasSelectionDrawer){
+        if ( zoomStarted && layerManager.hasSelectionDrawer){
             var position = {currentx: mouseX, currenty:mouseY}
             drawer.setAttribute("SelectionDrawer", position)
             drawer.copyAttribute("SelectionDrawer","envelope");
@@ -59,13 +69,20 @@ MouseArea {
     onReleased: {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
             var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
-            drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
-            if ( envelope !== ""){
-                linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
+            linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
+            if ( envelope !== "" && !hasPermanence){
+                layerManager.hasSelectionDrawer = false
+                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
 
             }
+            if ( hasPermanence){
+                var parm = {envelope : envelope}
+                drawer.setAttribute("SelectionDrawer", parm)
+                drawer.update()
+            }
+
             zoomEnded()
-            layerManager.hasSelectionDrawer = false
+            zoomStarted = false
             linkedDrawer.update()
         }
         floatrect.enabled = false

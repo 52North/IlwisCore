@@ -11,7 +11,7 @@ Rectangle {
 
     signal unloadcontent(string content)
 
-    color : background4
+    color : Global.alternatecolor1
     clip : true
     width : defaultWidth
     state : "invisible"

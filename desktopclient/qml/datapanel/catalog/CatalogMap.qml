@@ -21,6 +21,10 @@ Rectangle {
     }
 
     Action {
+        id : zoomOutClicked
+    }
+
+    Action {
         id : entireClicked
         onTriggered : {
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");

@@ -25,6 +25,11 @@ Item {
       renderer.update()
   }
 
+  function newExtent(ext){
+      renderer.addCommand("setviewextent("+ renderer.viewerId + "," + ext + ")");
+      renderer.update()
+  }
+
   function transfer(datapanel){
       var layers = datapanel.manager.layers;
       for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it

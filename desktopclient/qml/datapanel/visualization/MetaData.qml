@@ -32,6 +32,12 @@ Item {
         }
     }
 
+    function newZoomExtent(newenvelope){
+        var env = {envelope : newenvelope, preserveaspectration : false}
+        overview.setAttribute("selectiondrawer", env )
+        overview.update()
+    }
+
     function entireMap() {
         if ( metatdata.manager && layerview.manager){
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
@@ -119,6 +125,7 @@ Item {
                     layerManager: manager
                     drawer : overview
                     linkedDrawer: renderer
+                    hasPermanence: true
                 }
 
             }

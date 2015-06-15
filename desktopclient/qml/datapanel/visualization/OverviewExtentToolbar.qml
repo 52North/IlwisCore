@@ -13,6 +13,21 @@ Rectangle {
     height : parent.height
     width : 27
     color : Global.alternatecolor1
+
+    Action {
+        id : zoomClicked
+        onTriggered : {
+            if ( metatdata.manager){
+                if (!zoominButton1.checked ){
+                    overview.addCommand("removedrawer(" + overview.viewerId + ",selectiondrawer,post)");
+                    overview.update()
+                }
+
+                zoominButton1.checked = zoominButton1.checked ? false : true
+                metatdata.manager.zoomInMode = zoominButton1.checked
+            }
+        }
+    }
     Column{
         spacing : 2
         width : parent.width
@@ -28,19 +43,10 @@ Rectangle {
 
         MapExtentButton{
             id : zoominButton1
-            icon : zoominButton1.checked ? "zoomin20A.png" : "zoomin20.png"
+            icon : checked ? "zoomin20A.png" : "zoomin20.png"
             checkable: true
             checked: false
-            onClicked: {
-                checked = !checked
-                if ( metatdata.manager){
-                    // remove any "old" selection drawer. it will be recreated anyway
-                   overview.addCommand("removedrawer(" + overview.viewerId + ",selectiondrawer,post)");
-                   metatdata.manager.hasSelectionDrawer = false
-                   metatdata.manager.zoomInMode = !metatdata.manager.zoomInMode
-                    overview.update()
-                }
-            }
+            action : zoomClicked
         }
         MapExtentButton{
             id : zoomoutButton1
