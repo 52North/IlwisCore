@@ -11,6 +11,7 @@ class ILWISCOREUISHARED_EXPORT TabModel : public QObject{
     Q_PROPERTY(QString displayName READ displayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(bool canSeparate READ canSeparate CONSTANT)
     Q_PROPERTY(bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
+    Q_PROPERTY(QString side READ side CONSTANT)
 public:
     TabModel(QObject* parent=0);
     TabModel(const QString& url, const QString& componentUrl, QObject* parent);
@@ -20,6 +21,8 @@ public:
     bool canSeparate() const;
     void setSelected(bool yesno);
     bool selected() const;
+    QString side() const;
+    Q_INVOKABLE void selectTab();
 signals:
    void displayNameChanged();
    void selectedChanged();
