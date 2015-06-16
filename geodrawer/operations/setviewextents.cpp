@@ -45,7 +45,7 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     if ( _entiremap){
-        rootdrawer->applyEnvelopeView(rootdrawer->viewEnvelope(), true);
+        rootdrawer->applyEnvelopeView(rootdrawer->coverageEnvelope(), true);
     }else{
         double area = _newExtents.area();
         if ( area > 1){
