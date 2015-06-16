@@ -12,6 +12,8 @@ Item {
     id : tablePane
     width: parent.width
     height : parent.height
+    property bool canSeparate : true
+
     property TabModel tabmodel
 
     property TableModel table
@@ -28,18 +30,26 @@ Item {
         return table.defaultWidth(index)
     }
 
-    function addDataSource(sourceUrl, sourceName, sourceType){
-        table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
-        tableView.model = table
-        columnManagement.setColumnModel1(table.columns)
+    function transfer(datapanel){
+        if ( datapanel.table)    {
+            addDataSource(datapanel.table.url, "", "table")
+        }
+    }
 
-        for(var i =0; i < table.columnCount; ++i){
-            if ( i == 0)
-                tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : defaultWidth(i)}))
-            else {
-                var roleName = table.roleName(i)
-                var dw = table.defaultWidth(i)
-                tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
+    function addDataSource(sourceUrl, filter, sourceType){
+        table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
+        if ( table){
+            tableView.model = table
+            columnManagement.setColumnModel1(table.columns)
+
+            for(var i =0; i < table.columnCount; ++i){
+                if ( i == 0)
+                    tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : defaultWidth(i)}))
+                else {
+                    var roleName = table.roleName(i)
+                    var dw = table.defaultWidth(i)
+                    tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
+                }
             }
         }
     }

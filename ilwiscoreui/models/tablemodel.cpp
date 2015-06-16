@@ -131,6 +131,13 @@ ITable TableModel::table() const
     return _table;
 }
 
+QString TableModel::url() const
+{
+    if ( _table.isValid())
+        return _table->source().url().toString();
+    return "";
+}
+
 QString TableModel::roleName(int index) const
 {
     if ( index >= 0 && index < _columns.size())
