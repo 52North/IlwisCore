@@ -5,12 +5,14 @@ import QtQuick.Controls.Styles 1.0
 import CatalogModel 1.0
 import MasterCatalogModel 1.0
 import CatalogFilterModel 1.0
+import TabModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Item {
     property int heightButtons :22
     property CatalogModel currentCatalog
+    property TabModel tabmodel
     id : catalogViews
     width : parent.width
     height : parent.height

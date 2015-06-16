@@ -199,11 +199,14 @@ Rectangle {
             mastercatalog.currentCatalog = currentCatalog
             mastercatalog.setSelectedObjects("")
             currentCatalog.setSelectedObjects(ids)
-            //bigthing.getWorkbenchPane("ObjectProperties.qml");
+            if (!catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
         onDoubleClicked: {
-            if ( currentRow != -1)
+            if ( currentRow != -1){
                 showObject(model[currentRow].id)
+
+            }
         }
 
         model : setResources()

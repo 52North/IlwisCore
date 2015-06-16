@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import TableModel 1.0
+import TabModel 1.0
 import "../../controls" as Controls
 import "../../Global.js" as Global
 
@@ -11,6 +12,7 @@ Item {
     id : tablePane
     width: parent.width
     height : parent.height
+    property TabModel tabmodel
 
     property TableModel table
 

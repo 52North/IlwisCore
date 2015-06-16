@@ -6,6 +6,7 @@ import CatalogModel 1.0
 import MasterCatalogModel 1.0
 import CatalogFilterModel 1.0
 import OperationCatalogModel 1.0
+import TabModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
@@ -14,6 +15,7 @@ Item {
     id : operationViews
     width : parent.width
     height : parent.height
+    property TabModel tabmodel
 
     signal catalogChanged()
 
