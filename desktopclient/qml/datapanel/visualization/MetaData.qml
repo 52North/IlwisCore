@@ -123,10 +123,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: 3
                 function entireMap() {
-                    var envelope = overview.attributeOfDrawer("rootdrawer","coverageenvelope");
-                    if ( envelope !== ""){
-                        overview.addCommand("setviewextent("+ overview.viewerId + "," + envelope + ")");
-                    }
+                    overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
                     overview.update()
                 }
 
