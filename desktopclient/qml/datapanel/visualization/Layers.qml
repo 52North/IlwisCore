@@ -19,10 +19,7 @@ Item {
   }
 
   function entireMap() {
-      var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");
-      if ( envelope !== ""){
-          renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
-      }
+      renderer.addCommand("setviewextent("+ renderer.viewerId + ",entiremap)");
       renderer.update()
   }
 
@@ -96,6 +93,7 @@ Item {
                   maxSize = envView.maxx - envView.minx
                   var envZoom = renderer.zoomEnvelope
                   currentSize = envZoom.maxx - envZoom.minx
+                  //console.debug(envView.maxx, envView.minx, envZoom.maxx, envZoom.minx)
                   if ( currentPosition === -1)
                     currentPosition = 0
                   else{
