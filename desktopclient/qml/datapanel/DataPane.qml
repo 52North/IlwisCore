@@ -139,9 +139,12 @@ Rectangle {
                     mastercatalog.currentUrl = url
                     var data= newPanel.displayName
                     var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
-                    insertetTab.item.addDataSource(filter, url, outputtype)
-                    tabview.removeTab(removeIndex)
-                    datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                    if ( insertetTab){
+                        insertetTab.item.addDataSource(filter, url, outputtype)
+                        insertetTab.item.tabmodel = newPanel
+                        tabview.removeTab(removeIndex)
+                        datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                    }
                 }
             }
         }
@@ -157,6 +160,7 @@ Rectangle {
                 var tab = tabview.addTab(data, component)
                 tab.active = true
                 tab.item.addDataSource(filter, url, outputtype)
+                tab.item.tabmodel = newPanel
             }
             if ( allNew){
                 lefttab.state = "fullsize"
