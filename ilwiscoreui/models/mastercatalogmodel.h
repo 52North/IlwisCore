@@ -27,6 +27,7 @@ class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
     Q_PROPERTY(QQmlListProperty<CatalogModel> bookmarked READ bookmarked NOTIFY bookmarksChanged)
     Q_PROPERTY(QQmlListProperty<CatalogFilterModel> defaultFilters READ defaultFilters CONSTANT)
     Q_PROPERTY(QQmlListProperty<WorkSpaceModel> workspaces READ workspaces NOTIFY workspacesChanged)
+    Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedData READ selectedData NOTIFY selectionChanged)
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
     Q_PROPERTY(CatalogModel* currentCatalog READ currentCatalog WRITE setCurrentCatalog NOTIFY currentCatalogChanged)
@@ -66,6 +67,9 @@ public:
     Q_INVOKABLE void setActiveTab(int value);
     Q_INVOKABLE QString getName(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
+    QQmlListProperty<IlwisObjectModel> selectedData();
+    Q_INVOKABLE void setSelectedObjects(const QString& objects);
+    Q_INVOKABLE bool hasSelectedObjects() const;
     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
@@ -79,6 +83,7 @@ private:
     QList<CatalogModel *> _bookmarks;
     QList<WorkSpaceModel *> _workspaces;
     QList<CatalogFilterModel *> _defaultFilters;
+    QList<IlwisObjectModel *> _selectedObjects;
     QQmlContext *_qmlcontext = 0;
     QMLResourceList _currentList;
     int _selectedBookmarkIndex = 2; // from configuration
