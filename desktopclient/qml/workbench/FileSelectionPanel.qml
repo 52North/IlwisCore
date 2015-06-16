@@ -181,7 +181,7 @@ Rectangle {
                         path = path2pathView(path)
                         currentFolder = "file:///"+ path;
                         folderModel.folder = currentFolder;
-                        var filter = "resource='" + folderModel.folder + "'"
+                        var filter = "container='" + folderModel.folder + "'"
                         mainSplit.changeCatalog(filter,"catalog", currentFolder)
                     }
 
