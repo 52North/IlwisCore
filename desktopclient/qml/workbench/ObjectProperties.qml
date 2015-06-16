@@ -12,7 +12,9 @@ Rectangle {
     signal unloadcontent(string content)
 
     function getSelectedData() {
-        if ( mastercatalog.currentCatalog){
+        if ( mastercatalog.hasSelectedObjects()){
+           return mastercatalog.selectedData
+        }  else if ( mastercatalog.currentCatalog){
             return mastercatalog.currentCatalog.selectedData
         }
     }
@@ -31,6 +33,7 @@ Rectangle {
     }
     ListView {
         id : props
+        objectName: "object_properties_list_mainui"
         anchors.top: functionBar.bottom
         width : parent.width
         anchors.bottom: parent.bottom

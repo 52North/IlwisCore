@@ -41,6 +41,8 @@ ListView {
                         anchors.fill: parent
                         onClicked: {
                             layersList.currentIndex = index
+                            mastercatalog.setSelectedObjects(id)
+                            bigthing.getWorkbenchPane("ObjectProperties.qml");
                         }
                     }
                 }
