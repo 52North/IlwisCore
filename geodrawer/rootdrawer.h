@@ -31,6 +31,7 @@ public:
 
     Envelope viewEnvelope() const;
     Envelope zoomEnvelope() const;
+    Envelope coverageEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);

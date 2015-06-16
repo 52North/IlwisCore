@@ -62,6 +62,11 @@ Envelope RootDrawer::zoomEnvelope() const
     return _zoomRect;
 }
 
+Envelope RootDrawer::coverageEnvelope() const
+{
+    return _coverageRect;
+}
+
 void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
