@@ -173,7 +173,7 @@ void SidePanelModel::select(int index, bool yesno)
 {
     for(int i=0; i < _tabs.size(); ++i)
         _tabs[i]->setSelected(false);
-    if ( index < _tabs.size())
+    if ( index < _tabs.size() && index >= 0)
         _tabs[index]->setSelected(yesno);
 }
 
@@ -198,6 +198,8 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 {
     TabModel *tab = 0;
 
+    if ( filter.indexOf("container=") == 0)
+        mastercatalog()->addContainer(url);
     std::vector<Ilwis::Resource> resources = Ilwis::mastercatalog()->select(Ilwis::OSHelper::neutralizeFileName(filter));
 
     if ( resources.size() > 0){
