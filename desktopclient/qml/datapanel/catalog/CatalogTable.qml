@@ -197,6 +197,7 @@ Rectangle {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
             mastercatalog.currentCatalog = currentCatalog
+            mastercatalog.setSelectedObjects("")
             currentCatalog.setSelectedObjects(ids)
             //bigthing.getWorkbenchPane("ObjectProperties.qml");
         }

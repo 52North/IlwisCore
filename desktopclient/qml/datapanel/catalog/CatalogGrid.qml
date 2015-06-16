@@ -36,6 +36,7 @@ FocusScope {
                 id : itemgrid
 
                 function setSelected(objectid){
+                    mastercatalog.setSelectedObjects("")
                     var selectedIds
                     if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
                         selectedIds = objectid
