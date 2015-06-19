@@ -152,9 +152,9 @@ quint64 IlwisContext::memoryLeft() const
 {
     return _memoryLeft;
 }
-quint64 IlwisContext::changeMemoryLeft(quint64 amount)
+quint64 IlwisContext::changeMemoryLeft(qint64 amount)
 {
-    if ( _memoryLeft + std::abs(amount) > 0) {
+    if ( (_memoryLeft + amount) > 0) {
         _memoryLeft += amount;
     }
     else

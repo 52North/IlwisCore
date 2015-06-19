@@ -33,7 +33,7 @@ public:
     QUrl cacheLocation() const;
     QUrl persistentInternalCatalog() const;
     quint64 memoryLeft() const;
-    quint64 changeMemoryLeft(quint64 amount);
+    quint64 changeMemoryLeft(qint64 amount);
     IlwisConfiguration& configurationRef();
     const IlwisConfiguration& configuration() const;
     QFileInfo resourceRoot() const;
