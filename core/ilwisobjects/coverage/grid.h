@@ -112,6 +112,7 @@ public:
     void unload(bool uselock=true);
     std::map<quint32, std::vector<quint32> > calcBlockLimits(const IOOptions &options);
     bool isValid() const;
+    qint64 memUsed() const;
 protected:
 
 private:
