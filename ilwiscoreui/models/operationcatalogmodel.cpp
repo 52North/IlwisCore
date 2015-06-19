@@ -20,6 +20,7 @@
 #include "operationmodel.h"
 #include "workspacemodel.h"
 #include "uicontextmodel.h"
+#include "ilwiscontext.h"
 #include "operationcatalogmodel.h"
 
 using namespace Ilwis;
@@ -214,7 +215,13 @@ bool runApplication( OperationExpression opExpr, QString *result){
                 }else if ( hasType(symbol._type, (itCOVERAGE | itTABLE))){
                     if ( symbol._type == itRASTER){
                         IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
-                        QUrl url = raster->source().container();
+                        QString path = context()->persistentInternalCatalog().toString() + "/" + raster->name() + ".ilwis";
+                        raster->connectTo(path,
+                                          "rastercoverage",
+                                          "stream",
+                                          IlwisObject::cmOUTPUT);
+                        raster->store();
+                        *result = raster->source(IlwisObject::cmOUTPUT).url().toString();
                     }
                 }
             }
@@ -260,7 +267,10 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
     try {
 
-    std::async(std::launch::async, startApplication, opExpr, this);
+    //std::async(std::launch::async, startApplication, opExpr, this);
+        QString result;
+        runApplication(opExpr,&result);
+        emit updateCatalog(QUrl("ilwis://internalcatalog")); // TODO
 
     return "TODO";
     } catch (const ErrorObject& err){
