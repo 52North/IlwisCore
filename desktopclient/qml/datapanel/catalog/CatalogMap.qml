@@ -66,12 +66,12 @@ Rectangle {
 
         Component.onCompleted: {
             manager = uicontext.createLayerManager(objectName)
-            renderer.setManager(manager)
-            renderer.addCommand("adddrawer(" + renderer.viewerId + ",country_boundaries,ilwis://system/country_boundaries.ilwis,linecoverage)")
-            renderer.addCommand("setlinecolor(" + renderer.viewerId + ", 0,darkblue)");
-            renderer.associate(objectName,"drawEnded")
-            renderer.associate(objectName,"drawEnded")
-            renderer.update()
+//            renderer.setManager(manager)
+//            renderer.addCommand("adddrawer(" + renderer.viewerId + ",country_boundaries,ilwis://system/country_boundaries.ilwis,linecoverage)")
+//            renderer.addCommand("setlinecolor(" + renderer.viewerId + ", 0,darkblue)");
+//            renderer.associate(objectName,"drawEnded")
+//            renderer.associate(objectName,"drawEnded")
+//            renderer.update()
 
         }
 
