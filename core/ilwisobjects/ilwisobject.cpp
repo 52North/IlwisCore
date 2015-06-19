@@ -126,12 +126,20 @@ void IlwisObject::name(const QString &nam)
     if ( isReadOnly())
         return;
 
+    bool wasAnonymous = isAnonymous();
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     Identity::name(nm);
-    if ( !connector().isNull())
+    if ( !connector().isNull()){
         connector()->source().name(nm);
+        if ( isInternalObject()){
+            QString path = context()->persistentInternalCatalog().toString() + "/" + nam + ".ilwis";
+            connector()->source().setUrl(path,true);
+        }
+    }
+    if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
+        mastercatalog()->addItems({source()});
 }
 
 void IlwisObject::code(const QString& cd) {
