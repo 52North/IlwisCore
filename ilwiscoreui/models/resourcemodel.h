@@ -87,6 +87,7 @@ private:
     quint64 _type;
     bool _isRoot;
     bool _selected = false;
+    bool _is3d = false;
 
 
 
