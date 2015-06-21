@@ -12,9 +12,7 @@ import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
 import "../Global.js" as Global
-
-
-
+import "../controls" as Controls
 
 Rectangle {
 
@@ -101,16 +99,17 @@ Rectangle {
         datapanesplit.changePanel(filter,outputtype, url)
     }
 
-    Loader {
-        id : mapWindow
-    }
+//    Loader {
+//        id : mapWindow
+//    }
 
     SplitView {
         id : datapanesplit
         objectName : "datapane_mainui"
         orientation: Qt.Horizontal
         anchors.fill: parent
-        property int tel: 0
+        anchors.leftMargin: 3
+//        property int tel: 0
 
         function closeTab(isleft, tabindex){
             var ok = datapane.removeTab(isleft, tabindex)
@@ -152,6 +151,8 @@ Rectangle {
         function newPanel(filter,outputtype, url) {
             var allNew = datapane.leftSide.tabCount === 0 && datapane.rightSide.tabCount === 0
             var newPanel = datapane.createPanel(filter,outputtype, url)
+            if ( !newPanel)
+                return
             var component = Qt.createComponent(newPanel.componentUrl)
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
@@ -246,11 +247,11 @@ Rectangle {
 //            }
 //        }
 
-        handleDelegate: Rectangle {
-                width: righttab.width == 0 ? 1 : 3
-                height: 1
-                color: "grey"
+
+        handleDelegate: Controls.SplitHandle{
+            imageHeight: 20
         }
+
         DataTabView2 {
             id : lefttab
             side : 1
