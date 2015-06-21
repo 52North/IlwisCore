@@ -20,7 +20,7 @@ Rectangle {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../../images/" + name
+         var iconP = "../../../images/" + name
          return iconP
      }
 
@@ -29,6 +29,9 @@ Rectangle {
         width : parent.width - 5
         height : parent.height
         y : 2
+        handleDelegate: Controls.SplitHandle{
+            imageHeight: 15
+        }
 
         LayersList{
             id : layerColumn
@@ -49,6 +52,7 @@ Rectangle {
             id : editorListColumn
             height : parent.height - 3
             width : 120
+            x: 4
         }
         VisualAttributeEditor{
             height : parent.height - 3
