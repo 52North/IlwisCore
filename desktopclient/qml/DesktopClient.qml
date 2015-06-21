@@ -10,6 +10,7 @@ import MessageModel 1.0
 import ResourceModel 1.0
 import MasterCatalogModel 1.0
 import "Global.js" as Global
+import "controls" as Controls
 
 ApplicationWindow {
     id : bigthing
@@ -128,6 +129,10 @@ ApplicationWindow {
             width: parent.width
             anchors.top : commLine.bottom
             anchors.bottom : parent.bottom
+
+            handleDelegate: Controls.SplitHandle{
+                imageHeight: 20
+            }
 
             function newCatalog(filter, outputtype, url){
                 dataPanel.newCatalog(filter, outputtype, url)
