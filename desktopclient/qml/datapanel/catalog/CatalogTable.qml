@@ -15,6 +15,7 @@ Rectangle {
     property int buttonSize : 55
 
     signal showObject(string objectid)
+    color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -28,7 +29,6 @@ Rectangle {
 
     width : parent.width
     anchors.margins: 2
-    color : Global.alternatecolor5
     border.width: 1
     TableView{
         id : resourcetable

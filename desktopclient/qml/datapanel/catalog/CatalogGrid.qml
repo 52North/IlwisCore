@@ -14,7 +14,7 @@ FocusScope {
     anchors.fill: parent
     Rectangle {
         anchors.fill :parent
-        color : "white"
+        color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
         Image {
             anchors.fill: parent

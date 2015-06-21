@@ -7,9 +7,12 @@ import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
 
-Item {
+import "../../Global.js" as Global
+
+Rectangle {
     width : parent.width
     anchors.margins: 2
+    color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
     GridView {
         id: thumbGridView
         model: setResources()
