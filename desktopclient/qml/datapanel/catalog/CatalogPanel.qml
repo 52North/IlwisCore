@@ -25,12 +25,18 @@ Item {
         if ( !type)
             return
         var resource = mastercatalog.id2Resource(objectid)
-        var filter = "itemid=" + resource.id
+        var filter;
+        if ( resource.typeName === "catalog"){
+            filter = "container='" + resource.url + "'"
+        }else {
+            filter = "itemid=" + resource.id
+        }
         datapanesplit.newPanel(filter, resource.typeName,resource.url)
     }
 
     function addDataSource(filter, sourceName, sourceType){
-        var url = mastercatalog.currentUrl
+        var url = sourceName
+        //console.debug(filter, sourceName, url)
         currentCatalog = mastercatalog.newCatalog(url,filter)
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
