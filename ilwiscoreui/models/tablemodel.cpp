@@ -82,6 +82,14 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
             v = index.row();
         }
         else if ( index.row() < _table->recordCount()) {
+            if ( _order.size() != _table->recordCount() ){
+                 // not all tables might have set their record count correct at creation time. some
+                // system don't have this metadata available. If not correct we must initialize the order now
+                std::vector<quint32> order(_table->recordCount());
+                for(int i =0; i < order.size(); ++i)
+                    order[i] = i;
+                const_cast<TableModel *>(this)->order(order);
+            }
             quint32 ind = _order[ index.row()];
             v = _table->cell(role - baseRole - 1 ,ind, false);
         }
