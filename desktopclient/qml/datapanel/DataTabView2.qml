@@ -18,6 +18,8 @@ Item {
     property int currentIndex : 0
     property int count : datatab.count
 
+
+
     onSideChanged: {
         centerItem.activeSplit = Math.abs(side)
         mastercatalog.activeSplit = Math.abs(side) - 1
@@ -99,8 +101,9 @@ Item {
     TabView {
         id : datatab
         anchors.left: side == 1 ? szbut.right : parent.left
+        anchors.leftMargin: 5
         height : parent.height
-        width: parent.width - szbut.width
+        width: parent.width - szbut.width - 5
 
         style: Base.TabStyle2 {
             id : tabstyle
@@ -138,6 +141,7 @@ Item {
     ]
     transitions: [
         Transition {
+            id : widthTransition
             NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
         }
     ]
