@@ -5,8 +5,7 @@ Rectangle {
     id : displayEditorColumn
 
     property var currentEditor
-    color : Global.altbackground
-
+    color : Global.alternatecolor3
     onCurrentEditorChanged: {
          if ( currentEditor){
              if ( editorColumn2.state == "minimized"){
