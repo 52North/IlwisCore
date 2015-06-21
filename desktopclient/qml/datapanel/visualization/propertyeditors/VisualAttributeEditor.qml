@@ -1,10 +1,11 @@
 import QtQuick 2.1
 import "../../../Global.js" as Global
 
-Item {
+Rectangle {
     id : displayEditorColumn
 
     property var currentEditor
+    color : Global.altbackground
 
     onCurrentEditorChanged: {
          if ( currentEditor){
@@ -34,7 +35,7 @@ Item {
 
     Rectangle {
         id : editorColumn1
-        color : Global.alternatecolor2
+        color : "transparent"
         border.color: "lightgrey"
         border.width: 1
         anchors.right: parent.right
@@ -74,9 +75,7 @@ Item {
 
     Rectangle {
         id : editorColumn2
-        color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
+        color : "transparent"
         anchors.right: parent.right
         anchors.top: editorsLabel.bottom
         anchors.topMargin: 2

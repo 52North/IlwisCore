@@ -7,7 +7,7 @@ import LayerManager 1.0
 import "../../../controls" as Controls
 import "../../../Global.js" as Global
 
-Item {
+Rectangle {
     property var currentCoverage
 
     onCurrentCoverageChanged: {
@@ -23,6 +23,7 @@ Item {
          return iconP
 
      }
+    color : Global.alternatecolor3
 
     Rectangle {
         id : attributesLabel
@@ -39,14 +40,14 @@ Item {
 
     Rectangle {
         id : attributeListColumn
-        color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
         anchors.top: attributesLabel.bottom
         anchors.topMargin: 2
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 5
-        width: parent.width
+        width: parent.width - 8
+        radius : 4
+        color : "transparent"
+        x : 8
 
         ListView {
 
