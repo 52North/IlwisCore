@@ -100,6 +100,8 @@ Item {
         Rectangle{
             width : parent.width - layerContainer.width - 8
             height : layerContainer.height
+            color : Global.alternatecolor3
+
             MetaDataSpatialInfo{
                 id : mdspatialinfo
                 anchors.topMargin: 4
@@ -149,9 +151,6 @@ Item {
                 }
 
             }
-
-            border.color: "lightgrey"
-            border.width: 1
 
         }
     }
