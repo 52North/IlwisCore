@@ -1,5 +1,7 @@
 #include <functional>
 #include <future>
+#include <QThread>
+#include <QCoreApplication>
 #include "kernel.h"
 #include "raster.h"
 #include "symboltable.h"
@@ -65,6 +67,7 @@ bool BinaryMathRaster::executeCoverageCoverage(ExecutionContext *ctx, SymbolTabl
         PixelIterator iterIn1(_inputGC1, box);
         PixelIterator iterIn2(_inputGC2, box);
         PixelIterator iterOut(_outputGC, box);
+       // trq()->prepare(TR("BinaryMathRaster"),"Executes a binary operation on rasters", _inputGC1->size().linearSize());
 
         PixelIterator iterEnd = end(iterOut);
         while(iterOut != iterEnd) {
