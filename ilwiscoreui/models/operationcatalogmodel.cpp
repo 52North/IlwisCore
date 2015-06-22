@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QQmlContext>
+#include <QThread>
 #include "kernel.h"
 #include "connectorinterface.h"
 #include "resource.h"
@@ -21,6 +22,7 @@
 #include "workspacemodel.h"
 #include "uicontextmodel.h"
 #include "ilwiscontext.h"
+#include "operationworker.h"
 #include "operationcatalogmodel.h"
 
 using namespace Ilwis;
@@ -199,49 +201,6 @@ void OperationCatalogModel::workSpaceChanged()
     emit operationsChanged();
 }
 
-bool runApplication( OperationExpression opExpr, QString *result){
-    Operation op(opExpr);
-    SymbolTable tbl;
-    ExecutionContext ctx;
-
-    if(op->execute(&ctx, tbl)){
-        if ( ctx._results.size() > 0){
-            for(auto resultName : ctx._results){
-                Symbol symbol = tbl.getSymbol(resultName);
-                if ( hasType(symbol._type, itNUMBER)){
-                    *result += symbol._var.toDouble();
-                }else if ( hasType(symbol._type, itSTRING)){
-                    *result += symbol._var.toString();
-                }else if ( hasType(symbol._type, (itCOVERAGE | itTABLE))){
-                    if ( symbol._type == itRASTER){
-                        IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
-                        QString path = context()->persistentInternalCatalog().toString() + "/" + raster->name() + ".ilwis";
-                        raster->connectTo(path,
-                                          "rastercoverage",
-                                          "stream",
-                                          IlwisObject::cmOUTPUT);
-                        raster->store();
-                        *result = raster->source(IlwisObject::cmOUTPUT).url().toString();
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    return false;
-}
-
-void startApplication( OperationExpression opExpr, OperationCatalogModel *operationCatalogModel){
-
-    QString result;
-    std::future<bool> resultApplication = std::async(runApplication, opExpr,&result) ;
-
-    if(!resultApplication.get()) {
-        throw ErrorObject(TR("running %1 failed").arg(opExpr.name()));
-    }
-    emit operationCatalogModel->updateCatalog(QUrl("ilwis://internalcatalog")); // TODO
-}
-
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters) {
     if ( operationid == 0 || parameters == "")
         return sUNDEF;
@@ -266,11 +225,15 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
 
     try {
+        QThread* thread = new QThread;
+        OperationWorker* worker = new OperationWorker(opExpr);
+        worker->moveToThread(thread);
+        thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
+        thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
+        thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
+        thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        thread->start();
 
-    //std::async(std::launch::async, startApplication, opExpr, this);
-        QString result;
-        runApplication(opExpr,&result);
-        emit updateCatalog(QUrl("ilwis://internalcatalog")); // TODO
 
     return "TODO";
     } catch (const ErrorObject& err){
