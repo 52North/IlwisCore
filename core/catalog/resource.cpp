@@ -162,7 +162,8 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
 
 Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(),
                                                            rec.value("itemid").toLongLong(),
-                                                           rec.value("code").toString())
+                                                           rec.value("code").toString(),
+                                                           rec.value("description").toString())
 {
     _normalizedUrl = rec.value("resource").toString();
     _rawUrl = rec.value("rawresource").toString();
@@ -391,6 +392,7 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
+    queryItem.bindValue(":description", description());
     queryItem.bindValue(":container", OSHelper::neutralizeFileName(container().toString()));
     queryItem.bindValue(":rawcontainer", OSHelper::neutralizeFileName(container(true).toString()));
     queryItem.bindValue(":resource", OSHelper::neutralizeFileName(url().toString()));
