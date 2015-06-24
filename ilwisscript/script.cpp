@@ -56,36 +56,34 @@ OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolT
         return sPREPAREFAILED;
     }
     QUrl url(txt);
-    if ( url.isValid() && url.scheme() == "file") {
-        QFileInfo inf( url.toLocalFile());
-        bool exists = inf.exists();
-        if (exists && inf.suffix() == "isf") {
-            std::string text;
-            std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
-            int ignorenCount=0;
-            if(in.is_open() && in.good()) {
-                while(!in.eof()) {
-                    std::string line;
-                    std::getline(in, line);
-                    if ( line == "") // skip empty lines
-                        continue;
-                    if (detectKey(line, "if") || detectKey(line, "while") ){
-                        ignorenCount++;
-                    }
-                    if (detectKey(line, "endif") || detectKey(line, "endwhile")) {
-                        ignorenCount--;
-                    }
-                    text += line + (ignorenCount != 0 ? " " : ";");
+    QFileInfo inf( url.toLocalFile());
+    bool exists = inf.exists();
+    if (  exists) {
+
+        std::string text;
+        std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
+        int ignorenCount=0;
+        if(in.is_open() && in.good()) {
+            while(!in.eof()) {
+                std::string line;
+                std::getline(in, line);
+                if ( line == "") // skip empty lines
+                    continue;
+                if (detectKey(line, "if") || detectKey(line, "while") ){
+                    ignorenCount++;
                 }
-                char *buf = new char[text.size()];
-                memcpy(buf,text.c_str(), text.size());
-                _buffer.reset( buf );
-                _bufferSize = text.size();
-                return sPREPARED;
+                if (detectKey(line, "endif") || detectKey(line, "endwhile")) {
+                    ignorenCount--;
+                }
+                text += line + (ignorenCount != 0 ? " " : ";");
             }
-        } else {
-            return sPREPAREFAILED;
+            char *buf = new char[text.size()];
+            memcpy(buf,text.c_str(), text.size());
+            _buffer.reset( buf );
+            _bufferSize = text.size();
+            return sPREPARED;
         }
+
     } else {
         QString text = txt.trimmed();
         if ( text[text.size() - 1] != ';')
