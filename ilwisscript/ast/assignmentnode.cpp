@@ -86,8 +86,16 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
         bool wasAnonymous = object->isAnonymous();
-        QUrl url = context()->workingCatalog()->source().url().toString() + "/" + result;
-        object->name(result);
+        QString name = result;
+         QUrl url;
+        if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url
+            url = result;
+            name = result.mid(result.lastIndexOf("/") + 1);
+        }
+        else
+            if ( fnamespace != "stream") // stream goes to the internal if nothing has ben defined and that is default.
+                url = context()->workingCatalog()->source().url().toString() + "/" + result;
+        object->name(name);
         object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
         object->createTime(Ilwis::Time::now());
         if ( wasAnonymous)
