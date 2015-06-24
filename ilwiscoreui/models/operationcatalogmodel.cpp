@@ -23,6 +23,7 @@
 #include "uicontextmodel.h"
 #include "ilwiscontext.h"
 #include "operationworker.h"
+#include "dataformat.h"
 #include "operationcatalogmodel.h"
 
 using namespace Ilwis;
@@ -218,7 +219,34 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         expression += parms[i];
     }
     QString output = parms[parms.size() - 1];
-    expression = QString("%1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
+    QString format="{format(ilwis,\"stream\")}";
+    if ( output.indexOf("@@") != -1 ){
+        QStringList parts = output.split("@@");
+        output = parts[0];
+        QString formatName = parts[1];
+        if ( formatName != "Memory"){ // special case
+            QString query = "name='" + formatName + "'";
+            std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+            if ( formats.size() == 1){
+                format = "{format(" + (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString() + ",\"" +
+                        (*formats.begin()).second.property(DataFormat::fpCODE).toString() + "\")}";
+            }
+            output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
+        }else{
+            IlwisTypes outputtype = operationresource["pout_1_type"].toULongLong();
+            if ( outputtype == itRASTER)
+                format = "{format(stream,\"rastercoverage\")}";
+            else if (hasType(outputtype, itFEATURE))
+                format = "{format(stream,\"featurecoverage\")}";
+            else if (hasType(outputtype, itTABLE))
+                format = "{format(stream,\"table\")}";
+            output = output + format;
+        }
+    }else {
+        output = output + format;
+    }
+    expression = QString("script %1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
+    qDebug() << expression;
 
     OperationExpression opExpr(expression);
 
