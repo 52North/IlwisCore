@@ -61,6 +61,9 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     Resource resource = mastercatalog()->id2Resource(metaid);
     QString outparms = resource["outparameters"].toString();
     bool isService = resource["keyword"].toString().indexOf("service") != -1;
+    if ( outparms == "0")
+        return parameters;
+
     QStringList parms = outparms.split(",");
     if ( parms.size() == 0)
         return parameters;
@@ -343,7 +346,8 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
 
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
-   // kernel()->issues()->log(component);
+    // for debugging, check if the qml is ok; can be retrieved from teh log file
+//   kernel()->issues()->log(component);
 
     return component;
 
