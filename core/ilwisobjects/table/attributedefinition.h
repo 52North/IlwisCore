@@ -48,6 +48,8 @@ public:
     std::vector<QString> indexes() const;
     quint32 count() const;
     IDomain domain() const;
+    void insert(const QString& domainItem);
+    void insert(double domainItem);
     void clearSubFeatureDefinitions();
     void store(QDataStream& stream);
 protected:
