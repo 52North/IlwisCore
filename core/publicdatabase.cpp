@@ -91,7 +91,9 @@ void PublicDatabase::prepare() {
                 itemid INTEGER,\
                 name TEXT collate nocase,\
                 code TEXT ,\
+                description TEXT ,\
                 container TEXT collate nocase,\
+                rawcontainer TEXT collate nocase,\
                 resource TEXT collate nocase, \
                 rawresource TEXT collate nocase, \
                 urlquery TEXT collate nocase, \

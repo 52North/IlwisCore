@@ -28,6 +28,7 @@
 #include "ilwisobjectfactory.h"
 #include "uicontextmodel.h"
 #include "catalogfiltermodel.h"
+#include "operationcatalogmodel.h"
 #include "oshelper.h"
 #include "mastercatalogmodel.h"
 
@@ -216,7 +217,12 @@ void MasterCatalogModel::scanBookmarks()
 
         if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
             CatalogView cview(res);
-            _bookmarks.push_back(new CatalogModel(this));
+            CatalogModel *model = 0;
+            if ( location.toString().indexOf("ilwis://operations") == 0){
+                model = new OperationCatalogModel(this);
+            }else
+                model = new CatalogModel(this);
+            _bookmarks.push_back(model);
             _bookmarks.back()->setView(cview);
 
         }else{
@@ -357,18 +363,57 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
     }
 }
 
+QQmlListProperty<IlwisObjectModel> MasterCatalogModel::selectedData()
+{
+    return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
+}
+
+void MasterCatalogModel::setSelectedObjects(const QString &objects)
+{
+    try {
+        if ( objects == ""){
+            _selectedObjects.clear();
+            emit selectionChanged();
+            return;
+        }
+        QStringList parts = objects.split("|");
+        _selectedObjects.clear();
+        kernel()->issues()->silent(true);
+        for(auto objectid : parts){
+            bool ok;
+            Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
+            if (!ok)
+                continue;
+
+            IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
+            if ( ioModel->isValid()){
+                _selectedObjects.append(ioModel);
+                QObject *obj = uicontext()->rootObject()->findChild<QObject *>("object_properties_list_mainui");
+                if ( obj){
+                    // TODO update model here
+                    qDebug() << "TODO update models in the property list, unsure how to do that yet";
+                }
+                emit selectionChanged();
+            }else
+                delete ioModel;
+        }
+        kernel()->issues()->silent(false);
+    }catch(const ErrorObject& ){
+    }catch (std::exception& ex){
+        Ilwis::kernel()->issues()->log(ex.what());
+    }
+    kernel()->issues()->silent(false);
+}
+
+bool MasterCatalogModel::hasSelectedObjects() const
+{
+    return _selectedObjects.size() != 0;
+}
+
 CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QString& filter)
 {
     if ( inpath == "" || inpath == sUNDEF )
         return 0;
-
-//    if ( inpath == _currentUrl){
-//        if(_currentCatalog && _currentCatalog->view().filter() == filter){
-//            auto *c =  new CatalogModel(this);
-//            *c = *_currentCatalog;
-//            return c;
-//        }
-//    }
 
     CatalogView cview;
     QUrl location(inpath);
@@ -393,9 +438,14 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("type", "remote");
         if ( scheme == "ilwis")
             res.addProperty("type", "internal");
-        res.addProperty("filter",filter);
+        if ( filter != "container=ilwis://mastercatalog")
+            res.addProperty("filter",filter);
         cview = CatalogView(res);
-        CatalogModel *model = new CatalogModel(this);
+        CatalogModel *model = 0;
+        if ( inpath.indexOf("ilwis://operations") == 0){
+            model = new OperationCatalogModel(this);
+        }else
+            model = new CatalogModel(this);
         model->setView(cview);
         emit currentCatalogChanged();
         return model;

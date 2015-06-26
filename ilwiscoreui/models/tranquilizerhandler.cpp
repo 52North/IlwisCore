@@ -43,12 +43,25 @@ void TranquilizerHandler::updateTranquilizer(quint64 id, double amount)
 
 void TranquilizerHandler::createTranquilizer(quint64 id, const QString &title, const QString &description, double start, double end)
 {
+    for(TranquilizerModel *trq : _tranquilizers){
+        if ( id == trq->id()){
+            if ( title != sUNDEF)
+                trq->title(title) ;
+            if ( description != sUNDEF)
+                trq->description(description);
+            if ( start != rUNDEF)
+                trq->startValue(start);
+            if ( end != rUNDEF)
+                trq->endValue(end);
+            emit tranquilizersChanged();
+            return ;
+        }
+    }
     TranquilizerModel *trq = new TranquilizerModel(id, title, description,start, end,this);
 
     _tranquilizers.push_back(trq);
     uicontext()->updateThreadCount(1);
 
-    //emit createTranquilizerUI(id, title, description, start, end);
     emit tranquilizersChanged();
 }
 
@@ -114,6 +127,26 @@ double TranquilizerModel::currentValueP() const
         return 0;
 
     return (_currentValue - _beginValue) / (_endValue - _beginValue);
+}
+
+void TranquilizerModel::title(const QString &t)
+{
+    _title = t;
+}
+
+void TranquilizerModel::description(const QString &d)
+{
+    _description = d;
+}
+
+void TranquilizerModel::startValue(double d)
+{
+    _beginValue = d;
+}
+
+void TranquilizerModel::endValue(double d)
+{
+    _endValue = d;
 }
 
 quint64 TranquilizerModel::id() const

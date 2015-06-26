@@ -47,6 +47,7 @@ ResourceModel::ResourceModel(const ResourceModel &model) : QObject(model.parent(
     _type = model._type;
     _isRoot = model._isRoot;
     _selected = model._selected;
+    _is3d = model._is3d;
 }
 
 ResourceModel &ResourceModel::operator=(const ResourceModel &model)
@@ -58,6 +59,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
     _type = model._type;
     _isRoot = model._isRoot;
    _selected = model._selected;
+      _is3d = model._is3d;
 
     return *this;
 }
@@ -136,6 +138,13 @@ QString ResourceModel::iconPath() const
         return _iconPath;
 
     quint64 tp = _item.ilwisType();
+    if ( hasType(_item.extendedType(), itCATALOG)){
+        return iconPath(tp | itCATALOG);
+    }
+    if ( hasType(_item.extendedType(), itFILE) && tp == itCATALOG)
+        return iconPath(tp | itCOVERAGE);
+    if ( hasType(_item.extendedType(), itTABLE) && tp == itCATALOG)
+        return iconPath(tp | itTABLE);
     return iconPath(tp);
 }
 
@@ -146,6 +155,12 @@ void ResourceModel::iconPath(const QString &name)
 
 QString ResourceModel::iconPath(IlwisTypes tp)
 {
+    if ( tp == (itRASTER|itCATALOG))
+        return "raster203d.png";
+    if ( tp == (itTABLE|itCATALOG))
+        return "catalogTable20.png";
+    if ( tp == (itCOVERAGE|itCATALOG))
+        return "catalogSpatial20.png";
     if ( tp & itRASTER)
         return "raster20CS1.png";
     else if ( tp == itPOLYGON)
@@ -163,7 +178,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itGEOREF)
         return "georeference20.png";
     else if ( tp == itCATALOG)
-        return "folder.png";
+        return "folder20.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp & itREPRESENTATION)
@@ -288,6 +303,10 @@ void ResourceModel::resource(const Ilwis::Resource& res)
 
     _type = item.ilwisType();
     _item = item;
+    if ( hasType(item.ilwisType(), itCOVERAGE)){
+        QString dim = _item.dimensions();
+        _is3d = dim.split(" ").size() == 3;
+    }
 
     if ( item.url().toString() == "file://"){
         _displayName = "root";

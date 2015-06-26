@@ -107,6 +107,8 @@ void InternalModule::prepare()
 
     IlwisObject::addTypeFunction(InternalModule::ilwisType);
 
+    kernel()->issues()->log("Loaded internal objects module",IssueObject::itMessage);
+
 }
 
 QString InternalModule::name() const

@@ -36,7 +36,7 @@ Item {
         id : domainItems
         anchors.top: parentDomainItem.bottom
         width : parent.width
-        height : parent.height
+        height : parent.height - 20
         TableView {
             anchors.fill: parent
             model : domainitems

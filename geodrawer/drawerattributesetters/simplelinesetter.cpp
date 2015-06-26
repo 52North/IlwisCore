@@ -50,7 +50,7 @@ FeatureDrawing SimpleLineSetter::setSpatialAttributes(const Ilwis::SPFeatureI &f
             if ( coordinateConversionNeeded()){
                 crd = _targetSystem->coord2coord(_sourceSystem, crd);
             }
-            vertices[oldend + i] = QVector3D(crd.x, crd.y, crd.z);
+            vertices[oldend + i] = QVector3D(crd.x, crd.y, std::isnan(crd.z) || crd.z == rUNDEF? 0 :  crd.z);
         }
         delete coords;
     }

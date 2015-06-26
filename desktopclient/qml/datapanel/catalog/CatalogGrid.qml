@@ -14,7 +14,7 @@ FocusScope {
     anchors.fill: parent
     Rectangle {
         anchors.fill :parent
-        color : "white"
+        color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
         Image {
             anchors.fill: parent
@@ -36,6 +36,7 @@ FocusScope {
                 id : itemgrid
 
                 function setSelected(objectid){
+                    mastercatalog.setSelectedObjects("")
                     var selectedIds
                     if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
                         selectedIds = objectid

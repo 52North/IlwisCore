@@ -30,13 +30,14 @@ Item {
             }
         }
         Rectangle {
-            width : parent.width
+            width : parent.width - 8
             anchors.top: layersLabel.bottom
             anchors.topMargin: 2
             height : parent.height - layersLabel.height - 3
             color : Global.alternatecolor2
-            border.color: "lightgrey"
-            border.width: 1
+//            border.color: "lightgrey"
+            radius : 4
+//            border.width: 1
 
             Component {
                 id: highlight

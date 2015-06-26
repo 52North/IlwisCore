@@ -21,6 +21,10 @@ Rectangle {
     }
 
     Action {
+        id : zoomOutClicked
+    }
+
+    Action {
         id : entireClicked
         onTriggered : {
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");
@@ -34,10 +38,11 @@ Rectangle {
     Action {
         id : refreshClicked
         onTriggered: {
-            renderer.envelope()
-            currentCatalog.prepareMapItems(renderer.manager)
+            renderer.viewEnvelope
+            currentCatalog.prepareMapItems(renderer.manager, true)
             mapItems.items = currentCatalog.mapItems
             mapItems.canvasDirty = true
+            mapItems.requestPaint()
         }
     }
 
@@ -46,6 +51,7 @@ Rectangle {
     }
     LayersView {
         id: renderer
+        objectName : "mapcatalog_mainui"
         property LayerManager manager
         width : parent.width
         anchors.top : maptools.bottom
@@ -60,11 +66,20 @@ Rectangle {
 
         Component.onCompleted: {
             manager = uicontext.createLayerManager(objectName)
-            renderer.setManager(manager)
-            renderer.addCommand("adddrawer(" + renderer.viewerId + ",country_boundaries,ilwis://system/country_boundaries.ilwis,linecoverage)")
-            renderer.addCommand("setlinecolor(" + renderer.viewerId + ", 0,darkblue)");
-            renderer.update()
+//            renderer.setManager(manager)
+//            renderer.addCommand("adddrawer(" + renderer.viewerId + ",country_boundaries,ilwis://system/country_boundaries.ilwis,linecoverage)")
+//            renderer.addCommand("setlinecolor(" + renderer.viewerId + ", 0,darkblue)");
+//            renderer.associate(objectName,"drawEnded")
+//            renderer.associate(objectName,"drawEnded")
+//            renderer.update()
+
         }
+
+        function finalizeDraw(){
+            mapItems.canvasDirty = true
+            mapItems.requestPaint()
+        }
+
     }
     Canvas{
         id : mapItems
@@ -76,20 +91,6 @@ Rectangle {
         property var items : []
         property var ctx
 
-//        Timer {
-//            interval: 30;
-//            running: true;
-//            repeat: true
-
-
-//            onTriggered: {
-//                if (!mapItems.ctx && mapItems.available){
-//                    mapItems.ctx = mapItems.getContext('2d')
-//                }
-//                mapItems.requestPaint()
-//            }
-//        }
-
         function clear() {
             ctx.reset();
             ctx.clearRect(0, 0, width, height);
@@ -98,6 +99,9 @@ Rectangle {
         }
 
         onPaint: {
+            if (!mapItems.ctx && mapItems.available){
+                mapItems.ctx = mapItems.getContext('2d')
+            }
             if (ctx  ) {
                 clear(ctx);
                 canvasDirty = false

@@ -2,20 +2,25 @@ import QtQuick 2.2
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import DataPaneModel 1.0
+import TabModel 1.0
 
 
 TabViewStyle {
 
-    signal expandToWindow(int tabindex);
+    signal expandToWindow(int panelside, int tabindex);
 
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
     property int tabHeight : 22
 
+
     frameOverlap: 1
     tab: Rectangle {
         id : selectRect
-        color: currentIndex === styleData.index && activeSplit === Math.abs(side) ? selectColor : nonselectColor
+        property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
+
+        color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
         border.color:  color
 
         implicitWidth: Math.max(label.width + 4, 170)
@@ -28,16 +33,16 @@ TabViewStyle {
             text: styleData.title
             color: styleData.selected ? "white" : "black"
             elide: Text.ElideMiddle
-        }
-        MouseArea  {
-            width : label.width
-            height : parent.height
-            onClicked : {
-                currentIndex = styleData.index
-                mastercatalog.setActiveTab(Math.abs(side) - 1, currentIndex)
-                side = -side
+
+            MouseArea  {
+                anchors.fill : parent
+                onClicked : {
+                    currentIndex = styleData.index
+                    datapane.select(side == 1, currentIndex, true)
+                }
             }
         }
+
 
         Button {
             id : closeButton
@@ -48,7 +53,7 @@ TabViewStyle {
             height : 18
             opacity : 0.5
             onClicked: {
-               datapanesplit.closeTab(side, styleData.index)
+               datapanesplit.closeTab(side == 1, styleData.index)
             }
 
             Image {
@@ -71,10 +76,10 @@ TabViewStyle {
             height : 18
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
-            onClicked: {
-                datapanesplit.showMapWindow(0)
-            }
-            //onClicked: expandToWindow(index)
+//            onClicked: {
+//                datapanesplit.showMapWindow(0)
+//            }
+            onClicked: expandToWindow(side,index)
 
             Image {
                 y : 2

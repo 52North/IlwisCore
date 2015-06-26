@@ -21,7 +21,7 @@ public:
     virtual bool isValid() const;
     OperationExpression expression() const;
     void updateTranquilizer(quint64 currentCount, quint32 step){
-        if ( currentCount % step){
+        if ( (currentCount % step) == 0){
             trq()->update(step);
         }
     }

@@ -30,6 +30,8 @@ void IlwisScriptModule::prepare()
 {
     commandhandler()->addOperation(Script::createMetadata(), Script::create);
 
+    kernel()->issues()->log("Loaded module Internal Script module",IssueObject::itMessage);
+
 }
 
 QString IlwisScriptModule::name() const

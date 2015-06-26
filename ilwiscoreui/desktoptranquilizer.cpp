@@ -15,6 +15,9 @@ DesktopTranquilizer::DesktopTranquilizer(const IOOptions& opt, QObject *parent) 
 
 DesktopTranquilizer::~DesktopTranquilizer()
 {
+    if ( _runsInMainThread) //  we do not update in main thread else everything is waiting
+        return ;
+
     emit removeTranquilizer(_id);
 }
 
@@ -23,6 +26,8 @@ bool DesktopTranquilizer::update(double step) {
     if ( uicontext()->abort()){
         return false;
     }
+    if ( _runsInMainThread) //  we do not update in main thread else everything is waiting
+        return true;
     _current += step;
     if ( _current >= _end || _current < _start){
         emit(updateTranquilizer(_id, _current));
@@ -37,12 +42,16 @@ bool DesktopTranquilizer::update(double step) {
 
 void DesktopTranquilizer::stop()
 {
+    if ( _runsInMainThread) //  we do not update in main thread else everything is waiting
+        return ;
+
     Locker<std::mutex> lock(_mutex);
     emit(removeTranquilizer(_id));
 }
 
 void DesktopTranquilizer::prepare(const QString &title, const QString &description, double end, double start)
 {
+    _runsInMainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     BaseTranquilizer::prepare(title, description,end, start);
     kernel()->connect(this, &BaseTranquilizer::updateTranquilizer, kernel(), &Kernel::changeTranquilizer);
     kernel()->connect(this, &BaseTranquilizer::removeTranquilizer, kernel(), &Kernel::removeTranquilizer);

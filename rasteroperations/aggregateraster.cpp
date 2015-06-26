@@ -45,11 +45,13 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                                              (box.max_corner().y + 1) * groupSize(1) - 1,
                                              (box.max_corner().z + 1) * groupSize(2) - 1) );
 
+        // TODO blockiterator is too slow.
         BlockIterator blockIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
         NumericStatistics stats;
         PixelIterator iterEnd = iterOut.end();
         while(iterOut != iterEnd) {
             GridBlock& block = *blockIter;
+            // TODO using the big statistics class maybe a bit overdone here as this has some overhead (for each pixel)
             stats.calculate(block.begin(), block.end(), _method);
             double v = stats[_method];
            *iterOut = v;
@@ -162,9 +164,9 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         box = BoundingBox(Size<>(newxs, newys, newzs));
 
     }
-    if ( _expression.parameterCount() == 5 || _grouped) {
+    if ( _grouped) {
         Envelope envlope = inputRaster->envelope();
-        Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
+        Resource resource(QUrl("ilwis://internalcatalog/georeference" + _outputObj->name()),itGEOREF);
         resource.addProperty("size", IVARIANT(box.size()));
         resource.addProperty("envelope", IVARIANT(envlope));
         resource.addProperty("coordinatesystem", inputRaster->coordinateSystem()->id());
@@ -189,14 +191,13 @@ quint64 AggregateRaster::createMetadata()
 
     OperationResource operation({"ilwis://operations/aggregateraster"});
     operation.setLongName("Spatial Aggregation of Raster coverage");
-    operation.setSyntax("aggregateraster(inputgridcoverage,!Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry[,new georefname])");
+    operation.setSyntax("aggregateraster(inputgridcoverage,!Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry)");
     operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
-    operation.setInParameterCount({4,5});
+    operation.setInParameterCount({4});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
     operation.addInParameter(1,itSTRING , TR("Aggregation Method"),TR("the method how pixels inside a group will be accumulated"));
     operation.addInParameter(2,itINTEGER | itSTRING , TR("Groupsize"),TR("The size of the block used to aggregate. In the case of integer it is a square 2D block; in the case of string it is of the list format (2 or 3 dimensions). eg {3 4}"));
     operation.addInParameter(3,itBOOL , TR("change geometry"),TR("The aggregation can either create a map with a reduced size proportional to de block size or use the same geometry size but fill all pixels in the block with the aggregate"));
-    operation.addInParameter(4,itSTRING , TR("georeference name"),TR("optional parameter indicating a name for the new geometry, else the name will come from the output grid"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("Aggregated raster"), TR("output rastercoverage with the domain of the input map"));
     operation.setKeywords("aggregate,raster,geometry");

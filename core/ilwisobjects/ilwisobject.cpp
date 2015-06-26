@@ -61,15 +61,22 @@ IlwisObject *IlwisObject::create(const Resource& resource, const IOOptions &opti
     return 0;
 }
 
-void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
-    Locker<> lock(_mutex);
-    if (!url.isValid()){
-        ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
-        throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
-    }
+void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
 
+    Locker<> lock(_mutex);
     if ( isReadOnly())
         return throw ErrorObject(TR(QString("format %1 or data object is readonly").arg(format)));
+
+    QUrl url(outurl);
+    if (!url.isValid()){
+        url = source(cmode).url(true);
+        if ( !url.isValid()){
+            ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
+            throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
+        }
+    }
+
+
 
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
@@ -78,7 +85,10 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         resource.setId(id());
     }
     if ( url != QUrl()) {
-        resource.setUrl(url);
+        QString currenturl = resource.url().toString();
+        // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
+        if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
+            resource.setUrl(url);
         resource.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
@@ -126,12 +136,20 @@ void IlwisObject::name(const QString &nam)
     if ( isReadOnly())
         return;
 
+    bool wasAnonymous = isAnonymous();
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     Identity::name(nm);
-    if ( !connector().isNull())
+    if ( !connector().isNull()){
         connector()->source().name(nm);
+        if ( isInternalObject()){
+            QString path = context()->persistentInternalCatalog().toString() + "/" + nam + ".ilwis";
+            connector()->source().setUrl(path,true);
+        }
+    }
+    if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
+        mastercatalog()->addItems({source()});
 }
 
 void IlwisObject::code(const QString& cd) {

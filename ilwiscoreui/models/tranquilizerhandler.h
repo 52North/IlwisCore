@@ -32,6 +32,10 @@ public:
     double currentValue() const;
     void currentValue(double v);
     double currentValueP() const;
+    void title(const QString& t);
+    void description(const QString& d);
+    void startValue(double d);
+    void endValue(double d);
 
     quint64 id() const;
 private:

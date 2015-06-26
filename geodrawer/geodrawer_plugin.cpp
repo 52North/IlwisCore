@@ -17,7 +17,7 @@ void GeodrawerPlugin::registerTypes(const char *uri)
 
     Ilwis::Geodrawer::DrawerFactory::registerDrawer("SelectionDrawer", Ilwis::Geodrawer::SelectionDrawer::create);
 
-
+    kernel()->issues()->log("Loaded module GeoDrawer",IssueObject::itMessage);
 }
 
 

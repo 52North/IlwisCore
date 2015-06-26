@@ -40,6 +40,23 @@ void Representation::colors(ColorLookUp *lookup)
     _colors.reset(lookup);
 }
 
+void Representation::shapes(ShapeLookUp *lookup)
+{
+    if (isReadOnly())
+        return;
+    changed(true);
+
+    _shapes.reset(lookup);
+}
+
+const UPShapeLookUp &Representation::shapes() const
+{
+    if ( _shapes){
+        return _shapes;
+    }
+    throw ErrorObject(TR("Using uninitialized representation"));
+}
+
 IDomain Representation::domain() const
 {
     return _domain;

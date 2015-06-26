@@ -304,6 +304,8 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
 
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
+    if ( _memUsed != 0) // reszing a grid may reuse an older grid; in this case the memory has to be correctly given back
+        context()->changeMemoryLeft(_memUsed);
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
@@ -434,6 +436,11 @@ std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const IOOptions& 
 bool Grid::isValid() const
 {
     return !(_size.isNull() || _size.isValid() || _inMemoryIndex == iUNDEF);
+}
+
+qint64 Grid::memUsed() const
+{
+    return _memUsed;
 }
 
 

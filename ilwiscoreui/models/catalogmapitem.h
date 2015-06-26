@@ -17,7 +17,7 @@ class ILWISCOREUISHARED_EXPORT CatalogMapItem : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
 public:
     CatalogMapItem();
-    CatalogMapItem(const Ilwis::ICoverage& cov, const Ilwis::IGeoReference &grf, QObject* parent);
+    CatalogMapItem(const std::vector<Ilwis::Resource>& res, const Ilwis::IGeoReference &grf, QObject* parent);
     ~CatalogMapItem();
 
     QString latLonEnvelope() const;
@@ -27,7 +27,7 @@ public:
     Q_INVOKABLE QVariantMap drawEnvelope() const;
 private:
     Ilwis::BoundingBox _boundingBox;
-    Ilwis::ICoverage _coverage;
+    std::vector<Ilwis::Resource> _resources;
     Ilwis::IGeoReference _screenGrf;
 
 

@@ -58,10 +58,10 @@ Ilwis::OperationImplementation *RemoveDrawer::create(quint64 metaid, const Ilwis
 
 Ilwis::OperationImplementation::State RemoveDrawer::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
+    }
+
     bool ok;
     _viewid = _expression.parm(0).value().toULongLong(&ok);
     if ( !ok){

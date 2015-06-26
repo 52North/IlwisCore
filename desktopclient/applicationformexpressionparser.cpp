@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "mastercatalog.h"
 #include "models/resourcemodel.h"
+#include "dataformat.h"
 #include "applicationformexpressionparser.h"
 
 using namespace Ilwis;
@@ -60,6 +61,9 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     Resource resource = mastercatalog()->id2Resource(metaid);
     QString outparms = resource["outparameters"].toString();
     bool isService = resource["keyword"].toString().indexOf("service") != -1;
+    if ( outparms == "0")
+        return parameters;
+
     QStringList parms = outparms.split(",");
     if ( parms.size() == 0)
         return parameters;
@@ -224,7 +228,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
     QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : true;exclusiveGroup:sourceFilterGroup; \
             Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString iconField2 = "Image{width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}";
-    QString comboField = "ComboBox{id : pin_%1; x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4}";
+    QString comboField = "ComboBox{id : pin_%1; x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4}";
     QString formRows;
@@ -257,6 +261,14 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
             if ( results != "")
                 results += "+ \"|\" +";
             results += QString(input ? "pin_%1.text" : "pout_%1.text").arg(i);
+            if ( !input){
+                QString query = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(parameters[i]._dataType);
+                QString formatList = formats(query);
+                QString formatLabel = QString("Row{height:20;width:parent.width;Text { x:5;text: qsTr(\"Output format\"); id:label_pout_format_%2; width :%1;}").arg(width).arg(i);
+                QString formatCombo = QString("ComboBox{id : pout_format_%1; height:20; width : parent.width - label_pout_format_%1.width - 5;model : %2}").arg(i).arg(formatList);
+                results += "+\"@@\"+"  + QString("pout_format_%1.currentText").arg(i);
+                formRows +=formatLabel + formatCombo + "}";
+            }
 
         }
         if ( parameters[i]._fieldType == ftRADIOBUTTON){
@@ -287,7 +299,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
                 choices += "\"" + choiceString + "\"";
             }
             choices += "]";
-            QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices);
+            QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices) + "}";
             QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift);
             formRows += parameterRow;
             if ( results != "")
@@ -320,20 +332,29 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
 
     QString inputpart = makeFormPart(width, parameters, true, results);
     QString outputPart = makeFormPart(width, outparameters, false, results);
-    results = "property string formresult : " + results + ";property string outputfield_0;";
+    results = "property var outputFormats;property string formresult : " + results;
+    for(int i = 0; i < outparameters.size(); ++i){
+        results += QString(";property string outputfield_%1").arg(i);
+        if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE)){
+            results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+        }
+    }
+    results += ";";
     columnStart = QString(columnStart).arg(results);
 
     QString seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
 
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
+    // for debugging, check if the qml is ok; can be retrieved from teh log file
+//   kernel()->issues()->log(component);
 
     return component;
 
 }
 
 QString ApplicationFormExpressionParser::createWorkflowForm(quint64 metaid) const {
-    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
+    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
     QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
     columnStart += exclusiveGroup;
 
@@ -379,4 +400,17 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     return parameters;
 }
 
-
+QString ApplicationFormExpressionParser::formats(const QString& query) const
+{
+    std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+    QString formatList;
+    for(auto &format : formats)    {
+        if ( formatList != ""){
+            formatList += ",";
+        }
+        formatList += "'"+ format.second.property(Ilwis::DataFormat::fpNAME).toString() + "'";
+    }
+    if ( formatList != "")
+       formatList = "[ 'Memory'," + formatList + "]";
+    return formatList;
+}

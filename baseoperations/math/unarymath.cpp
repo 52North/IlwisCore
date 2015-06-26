@@ -137,17 +137,10 @@ OperationImplementation::State UnaryMath::prepare(ExecutionContext *,const Symbo
             return sPREPAREFAILED;
         }
         QString outName = _expression.parm(0, false).value();
-        if ( table != outName) {
-            if ( table != outName) {
-                if (outName == sUNDEF){
-                    IFlatTable  ftable;
-                    ftable.prepare();
-                    _outputTable = ftable;
-                }
-            } else if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
+        if ( outName != sUNDEF) {
+            if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
                 _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
                 _outputTable->name(outName);
-
             }
         } else
             _outputTable = _inputTable;

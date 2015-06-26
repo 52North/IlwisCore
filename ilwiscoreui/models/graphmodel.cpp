@@ -1,3 +1,7 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "domain.h"
+#include "drawers/attributevisualproperties.h"
 #include "graphmodel.h"
 
 GraphModel::GraphModel()
@@ -9,8 +13,8 @@ GraphModel::GraphModel(const QString &yAxis, QObject *parent) :
     QObject(parent),
     _fillcolor("transparent"),
     _strokeColor("#009092"),
-    _pointColor("DarkBlue"),
-    _pointStrokeColor("DarkSlateBlue"),
+    _pointColor("transparent"),
+    _pointStrokeColor("transparent"),
     _yAxis(yAxis)
 {
 
@@ -58,6 +62,20 @@ QList<QVariant> GraphModel::yvalues() const
 
 void GraphModel::yvalues(const QList<QVariant> &data)
 {
+    double sum = 0;
+    _yfraction.clear();
+    _ycolors.clear();
+    for(auto v : data){
+        _yfraction.push_back(sum + v.toDouble());
+        sum += v.toDouble();
+    }
+    Ilwis::Geodrawer::VisualAttribute va(Ilwis::NumericRange(0,_yfraction.size()));
+    int index = 0;
+    for(QVariant& v : _yfraction){
+        v = 100.0 * v.toDouble() / sum;
+        _ycolors.push_back(va.value2color(index));
+        ++index;
+    }
     _yvalues = data;
 }
 
@@ -69,9 +87,67 @@ void GraphModel::yvalues(const std::vector<QVariant> &yvalues)
     }
 }
 
+QList<QVariant> GraphModel::yfraction() const
+{
+    return _yfraction;
+}
+
+QList<QColor> GraphModel::ycolors() const
+{
+    return _ycolors;
+}
+
+QColor GraphModel::ycolor(int index) const
+{
+    if ( index < _ycolors.size()){
+        QColor clr(_ycolors[index]);
+        return clr;
+    }
+    return QColor("grey");
+}
+
+bool GraphModel::enabled() const
+{
+    return _enabled;
+}
+
+void GraphModel::enabled(bool yesno)
+{
+    _enabled = yesno;
+    emit enabledChanged();
+    emit yAxisChanged();
+}
+
+void GraphModel::replaceUndefs(const QString &currentUndef, const QString &newUndef)
+{
+    double oldUndef, nextUndef;
+    if ( currentUndef == "?"){
+        oldUndef = Ilwis::rUNDEF;
+    }else{
+        bool ok;
+        oldUndef = currentUndef.toDouble(&ok);
+        if ( !ok)
+            return;
+    }
+    bool ok;
+    nextUndef = newUndef.toDouble(&ok);
+
+    if (!ok)
+        return;
+    for(QVariant& value : _yvalues){
+        if ( value == oldUndef)
+            value = nextUndef;
+    }
+    emit yAxisChanged();
+
+}
+
 QString GraphModel::yAxis() const
 {
-    return _yAxis;
+    if ( _enabled)
+        return _yAxis + " *";
+    else
+        return _yAxis;
 }
 
 

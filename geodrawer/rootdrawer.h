@@ -31,6 +31,7 @@ public:
 
     Envelope viewEnvelope() const;
     Envelope zoomEnvelope() const;
+    Envelope coverageEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
@@ -60,6 +61,7 @@ public:
     Ilwis::Coordinate normalizedCoord(const Coordinate &crd) const;
     Envelope normalizedEnveope(const Envelope &env) const;
     Ilwis::Coordinate pixel2Coord(const Ilwis::Pixel &pix);
+    Ilwis::Pixel coord2Pixel(const Ilwis::Coordinate &crd);
 public slots:
 
 private:

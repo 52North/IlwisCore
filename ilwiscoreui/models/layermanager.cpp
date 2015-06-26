@@ -43,8 +43,9 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         Resource resource = mastercatalog()->name2Resource(url.toString(),tp);
         if ( !resource.isValid())
             return;
+        ICoverage coverage(resource);
         if ( _layers.size() > 0){
-            ICoverage coverage(resource);
+
             if ( !coverage.isValid())
                 return;
             if ( coverage->coordinateSystem()->isUnknown()) {// after the first layer, nothing with unknown can be added
@@ -53,12 +54,19 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
                 return;
             }
         }
+
+        if ( _masterCsy == 0) {// first real layer sets the csy
+            _masterCsy = new ResourceModel(coverage->coordinateSystem()->source(), this);
+            _viewEnvelope = coverage->envelope();
+            emit coordinateSystemChanged();
+        }
         auto layer = new CoverageLayerModel(_layers.size(), resource, drawer, this);
         if  ( _layers.size() == 1)
             _layers.push_back(layer);
         else
             _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, drawer, this));
         emit layerChanged();
+        emit latlonEnvelopeChanged();
     }
     catch(const ErrorObject& ){
     }
@@ -121,6 +129,11 @@ QString LayerManager::layerListName() const
     return _layerListName;
 }
 
+ResourceModel *LayerManager::coordinateSystem() const
+{
+    return _masterCsy;
+}
+
 void LayerManager::layersView(LayersViewCommandInterface *view)
 {
     _layersView = view;
@@ -139,7 +152,12 @@ CoverageLayerModel *LayerManager::layer(quint32 layerIndex){
 
 QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName)
 {
+    if ( _zoomInMode) // when zooming we dont don' give info. costs too much performance
+        return "";
+
     std::vector<QString> texts;
+
+
     _layerInfoItems.clear();
     for(CoverageLayerModel *layer : _layers){
         if ( layer->object().isValid() && hasType(layer->object()->ilwisType(), itCOVERAGE)){
@@ -202,6 +220,34 @@ void LayerManager::refresh()
 void LayerManager::init()
 {
 
+}
+
+QVariantMap LayerManager::viewEnvelope() const
+{
+    QVariantMap vmap;
+    vmap["minx"] = _viewEnvelope.min_corner().x;
+    vmap["miny"] = _viewEnvelope.min_corner().y;
+    vmap["maxx"] = _viewEnvelope.max_corner().x;
+    vmap["maxy"] = _viewEnvelope.max_corner().y;
+
+    return vmap;
+}
+
+QVariantMap LayerManager::latlonEnvelope() const
+{
+    if ( _layers.size() > 1){ // layer one is a bogus layer
+        QVariant var = _layers[1]->drawer()->attributeOfDrawer("rootdrawer", "latlonenvelope");
+        Envelope env = var.value<Envelope>();
+        if ( env.isValid()){
+            QVariantMap vmap;
+            vmap["minx"] = env.min_corner().x;
+            vmap["miny"] = env.min_corner().y;
+            vmap["maxx"] = env.max_corner().x;
+            vmap["maxy"] = env.max_corner().y;
+            return vmap;
+        }
+    }
+    return QVariantMap();
 }
 
 

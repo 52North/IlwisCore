@@ -11,7 +11,7 @@ Rectangle {
 
     signal unloadcontent(string content)
 
-    color : background4
+    color : Global.alternatecolor1
     clip : true
     width : defaultWidth
     state : "invisible"
@@ -54,23 +54,13 @@ Rectangle {
                         anchors.leftMargin: 5
                         text : title
                         width : 150
-                        y : description !== "" ? 0 : 2
+                        y : 2
                         elide: Text.ElideMiddle
                     }
-                    Text {
-                        id : descText
-                        anchors.left: titleText.left
-                        anchors.leftMargin: 5
-                        anchors.top : titleText.bottom
-                        text : description
-                        width : 150
-                        elide: Text.ElideMiddle
-                        font.pointSize: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+
                 }
                 Item {
-                    height : 20
+                    height : 10
                     width : parent.width
                     Text{
                         x : progressbar.x - contentWidth / 2
@@ -82,6 +72,14 @@ Rectangle {
                         text : endValue
                         font.pointSize: 6
                     }
+                }
+                Text {
+                    id : descText
+                    x : 10
+                    text : description
+                    width : parent.width  -15
+                    elide: Text.ElideMiddle
+                    font.pointSize: 6
                 }
             }
         }

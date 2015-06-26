@@ -19,6 +19,9 @@ public:
 
     static Tranquilizer *create(const IOOptions &opt);
 
+private:
+    bool _runsInMainThread = true;
+
 };
 }
 }

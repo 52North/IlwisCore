@@ -14,6 +14,7 @@ class ILWISCOREUISHARED_EXPORT GraphModel : public QObject
     Q_PROPERTY(QColor pointColor READ pointColor WRITE pointColor NOTIFY pointColorChanged)
     Q_PROPERTY(QColor pointStrokeColor READ pointStrokeColor WRITE pointStrokeColor NOTIFY pointStrokeColorChanged)
     Q_PROPERTY(QString yAxis READ yAxis NOTIFY yAxisChanged)
+    Q_PROPERTY(bool enabled READ enabled WRITE enabled NOTIFY enabledChanged)
 
 public:
     GraphModel();
@@ -34,6 +35,14 @@ public:
     QList<QVariant> yvalues() const;
     void yvalues(const QList<QVariant> &yvalues);
     void yvalues(const std::vector<QVariant> &yvalues);
+    QList<QVariant> yfraction() const;
+    QList<QColor> ycolors() const;
+    Q_INVOKABLE QColor ycolor(int index) const;
+
+    bool enabled() const;
+    void enabled(bool yesno);
+
+    Q_INVOKABLE void replaceUndefs(const QString& currentUndef, const QString& newUndef);
 
     QString yAxis() const;
 
@@ -43,6 +52,7 @@ signals:
     void pointColorChanged();
     void pointStrokeColorChanged();
     void yAxisChanged();
+    void enabledChanged();
 
 
 private:
@@ -51,7 +61,10 @@ private:
     QColor _pointColor;
     QColor _pointStrokeColor;
     QList<QVariant> _yvalues;
+    QList<QVariant> _yfraction; // for piecharts,
+    QList<QColor> _ycolors; // where needed e.g. bar or pie
     QString _yAxis;
+    bool _enabled = false;
 
 };
 

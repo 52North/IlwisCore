@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MessageModel 1.0
 import ResourceModel 1.0
+import "../Global.js" as Global
 
 Rectangle {
     id : workbench
@@ -49,7 +50,7 @@ Rectangle {
     }
 
     width : defaultFunctionBarWidth
-    color : background4
+    color :  Global.alternatecolor2
     Loader {
         id : infoPContent1
         y : 5

@@ -42,7 +42,7 @@ public:
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     virtual void nameFilter(const QString&);
     QString nameFilter() const;
-    Q_INVOKABLE void prepareMapItems(LayerManager *manager);
+    Q_INVOKABLE void prepareMapItems(LayerManager *manager, bool force=false);
     void setView(const Ilwis::CatalogView &view);
     Ilwis::CatalogView view() const;
 

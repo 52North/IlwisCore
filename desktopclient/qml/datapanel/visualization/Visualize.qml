@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import TabModel 1.0
 import "./propertyeditors" as LayerManagement
 import "../../controls" as Controls
 import "../../Global.js" as Global
@@ -14,6 +15,8 @@ Item {
     id : layerview
     width: parent.width
     height : parent.height
+    property TabModel tabmodel
+
     objectName: uicontext.uniqueName()
     property LayerManager manager
     property bool canSeparate : true
@@ -29,11 +32,15 @@ Item {
     }
 
     function addDataSource(sourceUrl, sourceName, sourceType){
-        layers.addDataSource(sourceUrl, sourceName, sourceType)
+        if ( sourceUrl !== ""){
+            layers.addDataSource(sourceUrl, sourceName, sourceType)
+            viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
+         }
     }
 
-    function transferLayers(layermanager){
-        layers.transferLayers(layermanager)
+    function transfer(datapanel){
+        layers.transfer(datapanel)
+        viewmanager.transfer(datapanel)
     }
 
     Action {
@@ -50,6 +57,7 @@ Item {
         id : entireClicked
         onTriggered : {
             layers.entireMap()
+            viewmanager.entireMap()
         }
     }
     Action {
@@ -58,6 +66,17 @@ Item {
 
         }
     }
+    Action {
+        id : zoomOutClicked
+        onTriggered : {
+            if ( manager){
+                var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
+                Global.calcZoomOutEnvelope(envelope, layers, viewmanager)
+            }
+        }
+    }
+
+
 
     LayerExtentsToolbar{
         id : maptools
@@ -68,6 +87,19 @@ Item {
         width : parent.width
         orientation: Qt.Vertical
         height : parent.height - maptools.height
+
+        Connections {
+            target: layers
+            onZoomEnded :{
+                viewmanager.newZoomExtent(envelope)
+            }
+        }
+        Connections {
+            target: viewmanager
+            onZoomEnded :{
+                viewmanager.newZoomExtent(envelope)
+            }
+        }
         Layers{
             width : parent.width
             height : parent.height - maptools.height - 150
@@ -76,6 +108,7 @@ Item {
 
         }
         ViewManager{
+            id : viewmanager
             height : 150
             anchors.left: parent.left
             anchors.leftMargin: 5

@@ -24,30 +24,26 @@ QString FunctionStatementNode::nodeType() const
 
 bool FunctionStatementNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    QString parm;
+    QString parms;
     if ( !_parameters.isNull()){
-        _parameters->evaluate(symbols, scope, ctx);
-        auto val = _parameters->value();
-        auto values = val[0].value<QVariantList>();
-        for(const auto& var : values) {
-            NodeValue nvalue = var.value<NodeValue>();
-            if ( parm != "")
-                parm += ",";
-            if ( nvalue.content() == NodeValue::ctString){
-                parm += nvalue[0].value<QString>();
-            }
-            if ( nvalue.content() == NodeValue::ctID) {
-                QString val = nvalue[0].toString();
-//                QString val2 = symbols.getValue(val).toString();
-//                if ( val2 != "")
-//                    parm += val2;
-//                else
-                    parm += val;
-            }
+        for(int i=0; i < _parameters->noOfChilderen(); ++i) {
+            bool ok = _parameters->child(i)->evaluate(symbols, scope, ctx);
+
+            if (!ok)
+                return false;
+            auto node = _parameters->child(i)->value();
+            QString name = node.toString();
+            if ( name == sUNDEF)
+                name = node.id();
+            //QString name = getName(_parameters->child(i)->value());
+            if ( parms.size() != 0)
+                parms += ",";
+            parms += name;
+
         }
 
 
     }
-    QString exp = QString("%1(%2)").arg(id()).arg(parm);
+    QString exp = QString("%1(%2)").arg(id()).arg(parms);
     return commandhandler()->execute(exp,ctx, symbols);
 }

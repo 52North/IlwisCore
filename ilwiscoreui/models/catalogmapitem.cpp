@@ -5,7 +5,7 @@ CatalogMapItem::CatalogMapItem()
 
 }
 
-CatalogMapItem::CatalogMapItem(const Ilwis::ICoverage &cov, const Ilwis::IGeoReference& grf, QObject *parent) : QObject(parent), _coverage(cov), _screenGrf(grf)
+CatalogMapItem::CatalogMapItem(const std::vector<Ilwis::Resource> &res, const Ilwis::IGeoReference& grf, QObject *parent) : QObject(parent), _resources(res), _screenGrf(grf)
 {
 
 }
@@ -17,18 +17,18 @@ CatalogMapItem::~CatalogMapItem()
 
 QString CatalogMapItem::latLonEnvelope() const
 {
-    return _coverage->envelope(true).toString();
+    return _resources[0]["latlonenvelope"].toString();
 }
 
 QString CatalogMapItem::catalogItemType()
 {
-    return Ilwis::IlwisObject::type2Name(_coverage->ilwisType());
+    return Ilwis::IlwisObject::type2Name(_resources[0].ilwisType());
 }
 
 QString CatalogMapItem::name() const
 {
-    if ( _coverage.isValid()){
-        return _coverage->name();
+    if ( _resources[0].isValid()){
+        return _resources[0].name();
     }
     return "";
 }
@@ -36,10 +36,11 @@ QString CatalogMapItem::name() const
 QVariantMap CatalogMapItem::drawEnvelope() const{
     QVariantMap vmap;
     try {
-        if ( !_coverage.isValid())
+        if ( !_resources[0].isValid())
             return QVariantMap();
 
-        Ilwis::Envelope llenv = _coverage->envelope(true);
+        QString env= _resources[0]["latlonenvelope"].toString();
+        Ilwis::Envelope llenv(env);
 
         if ( llenv.isValid() && !llenv.isNull() && _screenGrf.isValid())    {
 

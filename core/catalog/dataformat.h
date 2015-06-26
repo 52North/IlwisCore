@@ -1,5 +1,8 @@
 #ifndef DATAFORMAT_H
 #define DATAFORMAT_H
+#include "kernel_global.h"
+
+class QSqlQuery;
 
 namespace Ilwis {
 class KERNELSHARED_EXPORT DataFormat

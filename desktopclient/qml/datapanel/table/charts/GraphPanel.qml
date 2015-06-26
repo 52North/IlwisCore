@@ -14,19 +14,20 @@ Rectangle {
     color: "#ffffff";
     width : parent.width
     height : parent.height
-    property alias chartData : chart_line.chartData
+    property alias chartData : chart_drawing.chartData
+    property alias chartType : chart_drawing.chartType
     function update(){
-        chart_line.requestPaint()
+        chart_drawing.requestPaint()
     }
 
     Graph.Chart {
-        id: chart_line;
+        id: chart_drawing;
         width: parent.width
         height: parent.height
         chartAnimated: true;
         chartAnimationEasing: Easing.InOutElastic;
         chartAnimationDuration: 1000;
-        chartType: Charts.ChartType.LINE;
+        //chartType: Charts.ChartType.LINE;
 
         Component.onCompleted: {
 

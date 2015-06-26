@@ -15,7 +15,42 @@ Item {
 
     property var renderer
 
+    signal zoomEnded(string envelope)
+
     Layout.minimumHeight: 22
+
+    function addDataSource(filter, sourceName, sourceType){
+        if ( filter.indexOf("=") !== -1){
+            filter = "\"" + filter + "\""
+        }
+        var tab = layersmeta.getTab(2)
+
+        if ( tab && tab.item ){
+            tab.item.addDataSource(filter, sourceName, sourceType)
+        }
+    }
+
+    function transfer(datapanel){
+        var tab = layersmeta.getTab(2)
+        if ( tab){
+            tab.item.transfer(datapanel)
+        }
+    }
+
+    function entireMap() {
+        var tab = layersmeta.getTab(2)
+        if ( tab){
+            tab.item.entireMap()
+        }
+    }
+
+     function newZoomExtent(newenvelope){
+         var tab = layersmeta.getTab(2)
+         if ( tab){
+             tab.item.newZoomExtent(newenvelope)
+         }
+     }
+
 
     Component {
         id : displayOptions
@@ -29,6 +64,8 @@ Item {
 
         }
     }
+
+
 
     Component{
         id : metadata
@@ -65,7 +102,12 @@ Item {
     }
 
     TabView{
+        id : layersmeta
         anchors.fill: parent
+
+        function endZoom(envelope) {
+            zoomEnded(envelope)
+        }
 
         Component.onCompleted: {
             var tab =addTab(qsTr("Display Options"), displayOptions)
@@ -73,7 +115,8 @@ Item {
             tab.item.renderer = renderer
 
             addTab(qsTr("Layers Info"), layersinfo)
-            addTab(qsTr("Metadata"), metadata)
+            tab = addTab(qsTr("Metadata"), metadata)
+            tab.active = true // we need to be active as layers maybe added to it
         }
 
         style: Base.TabStyle1{

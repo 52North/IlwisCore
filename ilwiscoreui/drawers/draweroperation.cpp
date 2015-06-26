@@ -5,6 +5,7 @@
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "uicontextmodel.h"
 #include "drawerinterface.h"
 #include "draweroperation.h"
 
@@ -24,5 +25,19 @@ DrawerOperation::DrawerOperation(quint64 metaid, const Ilwis::OperationExpressio
 DrawerOperation::~DrawerOperation()
 {
 
+}
+DrawerInterface *DrawerOperation::getRootDrawer(){
+    bool ok;
+    quint64 viewerId = _expression.input<QString>(0).toULongLong(&ok);
+    if (!ok){
+        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
+        return 0;
+    }
+    auto *viewer = uicontext()->viewer(viewerId);
+    if (!viewer){
+        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
+        return 0;
+    }
+    return viewer->rootDrawer();
 }
 

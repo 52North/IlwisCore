@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtGraphicalEffects 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import LayersView 1.0
 import "../../controls" as Controls
 
 MouseArea {
@@ -9,60 +10,82 @@ MouseArea {
     anchors.fill: parent
     hoverEnabled: true
     property LayerManager layerManager
-    signal zoomEnded()
+    property LayersView drawer
+    property LayersView linkedDrawer
+    property bool showInfo : false
+    property bool hasPermanence : false
+    property bool zoomStarted : false
+    signal zoomEnded(string envelope)
 
     Controls.FloatingRectangle{
         id : floatrect
     }
 
-    onPressed: {
+    onPressed:  {
+        if (!layerview.tabmodel.selected)
+            layerview.tabmodel.selectTab()
+
         if ( layerManager.zoomInMode ){
+            if ( !zoomStarted){
+                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
+                if (drawer.viewerId !== linkedDrawer.viewerId)
+                    linkedDrawer.addCommand("removedrawer(" + linkedDrawer.viewerId + ",selectiondrawer,post)");
+                layerManager.hasSelectionDrawer = false
+            }
+
             if ( !layerManager.hasSelectionDrawer){
                 var position = {initialx: mouseX, initialy:mouseY}
                 layerManager.hasSelectionDrawer = true
-                renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer)")
-                renderer.setAttribute("SelectionDrawer", position)
-                renderer.update()
+                drawer.addCommand("adddrawer(" + drawer.viewerId + ",selectiondrawer)")
+                drawer.setAttribute("SelectionDrawer", position)
+                drawer.update()
             }
+            zoomStarted = true
 
         }
-        if ( renderer.showLayerInfo && !layerManager.hasSelectionDrawer){
+        if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
           floatrect.enabled = true
           floatrect.opacity = 1
           floatrect.x = mouseX
           floatrect.y = mouseY
           var mposition = mouseX + "|" + mouseY
-          floatrect.text = renderer.layerInfo(mposition)
+          floatrect.text = drawer.layerInfo(mposition)
         }
 
     }
     onPositionChanged: {
         var mposition = mouseX + "|" + mouseY
-        renderer.currentCoordinate = mposition
-        if ( layerManager.hasSelectionDrawer){
+        drawer.currentCoordinate = mposition
+        if ( zoomStarted && layerManager.hasSelectionDrawer){
             var position = {currentx: mouseX, currenty:mouseY}
-            renderer.setAttribute("SelectionDrawer", position)
-            renderer.copyAttribute("SelectionDrawer","envelope");
-            renderer.update()
+            drawer.setAttribute("SelectionDrawer", position)
+            drawer.copyAttribute("SelectionDrawer","envelope");
+            drawer.update()
         }
-        if ( floatrect.opacity > 0){
+        if ( showInfo && floatrect.opacity > 0){
             floatrect.x = mouseX
             floatrect.y = mouseY
             mposition = mouseX + "|" + mouseY
-            floatrect.text = renderer.layerInfo(mposition)
+            floatrect.text = drawer.layerInfo(mposition)
         }
     }
     onReleased: {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
-            var envelope = renderer.attributeOfDrawer("SelectionDrawer","envelope");
-            renderer.addCommand("removedrawer(" + renderer.viewerId + ",selectiondrawer,post)");
-            if ( envelope !== ""){
-                renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
+            var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
+            linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
+            if ( envelope !== "" && !hasPermanence){
+                layerManager.hasSelectionDrawer = false
+                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
 
             }
-            zoomEnded()
-            layerManager.hasSelectionDrawer = false
-            renderer.update()
+            if ( hasPermanence){
+                var parm = {envelope : envelope}
+                drawer.setAttribute("SelectionDrawer", parm)
+                drawer.update()
+            }
+            zoomEnded(envelope)
+            zoomStarted = false
+            linkedDrawer.update()
         }
         floatrect.enabled = false
         floatrect.opacity = 0

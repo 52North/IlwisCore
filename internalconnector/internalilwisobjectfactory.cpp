@@ -316,6 +316,9 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
             if (!csy.prepare(newresource,options))
                 return false;
         }
+    } else if ( typnm == "qulonglong"){
+        if(!csy.prepare(resource["coordinatesystem"].value<quint64>()))
+            return 0;
     }
     if ( csy.isValid()){
         coverage->coordinateSystem(csy);
@@ -364,11 +367,11 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 
     Size<> sz;
     QString typenm = resource["size"].typeName();
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
+    if ( typenm == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
-    } else if (QString(resource["size"].typeName()) == "QSize") {
+    } else if (typenm == "QSize") {
         sz = resource["size"].toSize();
-    } else if (QString(resource["size"].typeName()) == "QString") {
+    } else if (typenm == "QString") {
         QStringList parts = resource["size"].toString().split(" ");
         if ( parts.size() >= 2)
             sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
@@ -388,6 +391,10 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
             if (!grf.prepare(newresource))
                 return 0;
         }
+    } else if ( tpnam == "qulonglong"){
+        if(!grf.prepare(resource["georeference"].value<quint64>()))
+                return 0;
+
     } else{
         Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){

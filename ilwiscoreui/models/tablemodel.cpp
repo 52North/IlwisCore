@@ -31,7 +31,7 @@ TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstr
 int TableModel::rowCount(const QModelIndex &parent) const
 {
     if ( _table.isValid())    {
-        return _table->recordCount() + 5;
+        return _table->recordCount();
     }
     return 0;
 }
@@ -82,10 +82,16 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
             v = index.row();
         }
         else if ( index.row() < _table->recordCount()) {
+            if ( _order.size() != _table->recordCount() ){
+                 // not all tables might have set their record count correct at creation time. some
+                // system don't have this metadata available. If not correct we must initialize the order now
+                std::vector<quint32> order(_table->recordCount());
+                for(int i =0; i < order.size(); ++i)
+                    order[i] = i;
+                const_cast<TableModel *>(this)->order(order);
+            }
             quint32 ind = _order[ index.row()];
             v = _table->cell(role - baseRole - 1 ,ind, false);
-        }else{
-            return "test";
         }
     }
 
@@ -131,6 +137,13 @@ QHash<int, QByteArray> TableModel::roleNames() const
 ITable TableModel::table() const
 {
     return _table;
+}
+
+QString TableModel::url() const
+{
+    if ( _table.isValid())
+        return _table->source().url().toString();
+    return "";
 }
 
 QString TableModel::roleName(int index) const

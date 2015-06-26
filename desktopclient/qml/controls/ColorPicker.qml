@@ -17,7 +17,6 @@ Rectangle {
     property int numberOfCells : 10
     property int xs : -1
     property int ys : -1
-    signal comboClicked;
     width : numberOfCells * 18 + 5
     height : Global.rowHeight
     z: 100;
@@ -171,11 +170,12 @@ Rectangle {
                                         xs = currentCol
                                         ys = index
                                         comboBox.state = ""
+                                        selectedColor = calcColor(index,currentCol)
 
                                     }
                                     onEntered: {
                                         var color = calcColor(index,currentCol)
-                                        colorLabel.text = "Color : " + color + "/ " + color.r.toFixed(2) + ", " + color.g.toFixed(2) + ", " + color.b.toFixed(2)
+                                        colorLabel.text = "Color: " + color + "/" + color.r.toFixed(2) + "," + color.g.toFixed(2) + "," + color.b.toFixed(2) +"," + color.a.toFixed(1)
                                     }
                                 }
                             }
@@ -297,7 +297,14 @@ Rectangle {
         iC4 = leftbottomColor.r
         var iRed = iC1 * rLeftUpFrac + iC2 * rRightUpFrac + iC3 * rRightDownFrac + iC4 * rLeftDownFrac;
 
-        return Qt.rgba(iRed,iGreen,iBlue,1)
+        iC1 = lefttopColor.a
+        iC2 = righttopColor.a
+        iC3 = rightbottomColor.a
+        iC4 = leftbottomColor.a
+        var iTransparent = iC1 * rLeftUpFrac + iC2 * rRightUpFrac + iC3 * rRightDownFrac + iC4 * rLeftDownFrac;
+
+
+        return Qt.rgba(iRed,iGreen,iBlue,iTransparent)
     }
 
 

@@ -23,6 +23,11 @@ OperationModel::OperationModel(const Ilwis::Resource& source, QObject *parent) :
         _displayName = item().name();
 }
 
+OperationModel::OperationModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
+{
+
+}
+
 
 QString OperationModel::inputparameterName(quint32 index) const
 {
@@ -34,7 +39,18 @@ QString OperationModel::inputparameterType(quint32 index) const
 {
     QVariant var = property("pin_" + QString::number(index + 1) + "_type");
     quint64 ilwtype = var.toULongLong();
-    return TypeHelper::type2HumanReadable(ilwtype);
+    QString type;
+    for(quint64 i =0; i < 64; ++i){
+       quint64 result = 1 << i;
+        if ( hasType(ilwtype, result)) {
+            if ( type != "")
+                type += ",";
+            type += TypeHelper::type2HumanReadable(result);
+        }
+        if ( result > ilwtype)
+            break;
+    }
+    return type;
 }
 
 QString OperationModel::inputparameterDescription(quint32 index) const
@@ -66,7 +82,38 @@ QString OperationModel::syntax() const
 
 QString OperationModel::keywords() const
 {
-    return  property("keywords").toString();
+    return  property("keyword").toString();
+}
+
+int OperationModel::maxParameterCount(bool inputCount) const
+{
+    QString inParams = property(inputCount ? "inparameters" : "outparameters").toString();
+    QStringList parts = inParams.split("|");
+    int maxp = 0;
+    for(QString p : parts){
+        maxp = std::max(maxp , p.toInt());
+    }
+    return maxp;
+}
+
+QStringList OperationModel::inParamNames() const
+{
+    int maxp = maxParameterCount(true);
+    QStringList names;
+    for(int i = 0; i < maxp; ++i){
+        names.append(inputparameterName(i));
+    }
+    return names;
+}
+
+QStringList OperationModel::outParamNames() const
+{
+    int maxp = maxParameterCount(false);
+    QStringList names;
+    for(int i = 0; i < maxp; ++i){
+        names.append(outputparameterName(i));
+    }
+    return names;
 }
 
 QVariant OperationModel::property(const QString &name) const

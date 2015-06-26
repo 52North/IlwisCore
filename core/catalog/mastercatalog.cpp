@@ -87,7 +87,6 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
 
     if ( loc.indexOf("ilwis://tables") == 0||
          loc.indexOf("ilwis://factory") == 0 ||
-         loc.indexOf("ilwis://operations") == 0 ||
          loc == "file://" ||
          loc == "file:/" ||
          loc == "ilwis:/" ||
@@ -200,7 +199,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
-                  :itemid,:name,:code,:container,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions \
+                  :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions \
                   )" );
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
@@ -243,6 +242,8 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
     bool ok = queryItem.prepare("UPDATE mastercatalog set name=:name, "
                                 "code=:code, "
                                 "container=:container, "
+                                "description=:description, "
+                                "rawcontainer=:rawcontainer,"
                                 "resource=:resource, "
                                 "rawresource=:rawresource, "
                                 "urlquery=:urlquery, "

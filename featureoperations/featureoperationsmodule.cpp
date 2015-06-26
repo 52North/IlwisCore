@@ -37,6 +37,8 @@ void FeatureOperationsModule::prepare()
 {
    commandhandler()->addOperation(Gridding::createMetadata(), Gridding::create);
 
+   kernel()->issues()->log("Loaded module FeatureOperations",IssueObject::itMessage);
+
 }
 
 QString FeatureOperationsModule::name() const

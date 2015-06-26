@@ -14,7 +14,8 @@ Rectangle {
 
     property int buttonSize : 55
 
-    signal showObject(string objectid, string subtype )
+    signal showObject(string objectid)
+    color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -28,7 +29,6 @@ Rectangle {
 
     width : parent.width
     anchors.margins: 2
-    color : Global.alternatecolor5
     border.width: 1
     TableView{
         id : resourcetable
@@ -197,12 +197,16 @@ Rectangle {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
             mastercatalog.currentCatalog = currentCatalog
+            mastercatalog.setSelectedObjects("")
             currentCatalog.setSelectedObjects(ids)
-            //bigthing.getWorkbenchPane("ObjectProperties.qml");
+            if (!catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
         onDoubleClicked: {
-            if ( currentRow != -1)
-                showObject(model[currentRow].id,"")
+            if ( currentRow != -1){
+                showObject(model[currentRow].id)
+
+            }
         }
 
         model : setResources()

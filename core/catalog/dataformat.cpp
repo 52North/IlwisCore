@@ -70,8 +70,6 @@ std::multimap<QString, DataFormat> DataFormat::getSelectedBy(FormatProperties pr
                 criterium = db.value("extension").toString(); break;
             case fpCONNECTOR:
                 criterium = db.value("connector").toString(); break;
-//            case fpCONTAINER:
-//                criterium = db.value("container").toString(); break;
             default:
                 ERROR2(ERR_OPERATION_NOTSUPPORTED2,"Property", "format selection");
                 return std::multimap<QString, DataFormat>();

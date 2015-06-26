@@ -28,7 +28,8 @@ void BaseTranquilizer::prepare(const QString &title, const QString &description,
     _end = end;
     _start = start;
     _current = _start;
-    _id = _trqId++;
+    if ( _id == i64UNDEF)
+        _id = _trqId++;
 }
 
 void BaseTranquilizer::stopTranquilizer()
