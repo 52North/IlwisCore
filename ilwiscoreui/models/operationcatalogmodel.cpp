@@ -219,8 +219,8 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         expression += parms[i];
     }
     QString output = parms[parms.size() - 1];
-    QString format="{format(ilwis,\"stream\")}";
     if ( output.indexOf("@@") != -1 ){
+        QString format;
         QStringList parts = output.split("@@");
         output = parts[0];
         QString formatName = parts[1];
@@ -242,10 +242,11 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 format = "{format(stream,\"table\")}";
             output = output + format;
         }
-    }else {
-        output = output + format;
     }
-    expression = QString("script %1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
+    if ( output == "")
+        expression = QString("script %1(%2)").arg(operationresource.name()).arg(expression);
+    else
+        expression = QString("script %1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
     qDebug() << expression;
 
     OperationExpression opExpr(expression);
