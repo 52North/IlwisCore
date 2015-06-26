@@ -66,6 +66,7 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         else
             _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, drawer, this));
         emit layerChanged();
+        emit latlonEnvelopeChanged();
     }
     catch(const ErrorObject& ){
     }
@@ -230,6 +231,23 @@ QVariantMap LayerManager::viewEnvelope() const
     vmap["maxy"] = _viewEnvelope.max_corner().y;
 
     return vmap;
+}
+
+QVariantMap LayerManager::latlonEnvelope() const
+{
+    if ( _layers.size() > 1){ // layer one is a bogus layer
+        QVariant var = _layers[1]->drawer()->attributeOfDrawer("rootdrawer", "latlonenvelope");
+        Envelope env = var.value<Envelope>();
+        if ( env.isValid()){
+            QVariantMap vmap;
+            vmap["minx"] = env.min_corner().x;
+            vmap["miny"] = env.min_corner().y;
+            vmap["maxx"] = env.max_corner().x;
+            vmap["maxy"] = env.max_corner().y;
+            return vmap;
+        }
+    }
+    return QVariantMap();
 }
 
 
