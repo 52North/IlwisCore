@@ -248,15 +248,31 @@ Rectangle {
 //        }
 
 
+        function changeWidth(pside, partside){
+            console.debug(pside, partside)
+            if ( partside === 0){
+                lefttab.fillWidth = false
+                lefttab.state = "zerosize"
+            }else {
+                lefttab.fillWidth = true
+                righttab.state = "zerosize"
+
+            }
+        }
+
         handleDelegate: Controls.SplitHandle{
-            imageHeight: 20
+            imageHeight: 22
+            offset : 25
+            handlePic: "splithandledark.png"
+            func : datapanesplit.changeWidth
         }
 
         DataTabView2 {
             id : lefttab
+            property bool fillWidth : true
             side : 1
             objectName: "datapane_lefttab_mainui"
-            Layout.fillWidth: true
+            Layout.fillWidth: fillWidth
 
             Component.onCompleted: {
                 datapane.leftSide.setTabview(lefttab.objectName)

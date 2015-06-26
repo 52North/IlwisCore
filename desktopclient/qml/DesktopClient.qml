@@ -131,7 +131,7 @@ ApplicationWindow {
             anchors.bottom : parent.bottom
 
             handleDelegate: Controls.SplitHandle{
-                imageHeight: 20
+                imageHeight: 22
             }
 
             function newCatalog(filter, outputtype, url){
