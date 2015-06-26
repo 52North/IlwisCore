@@ -70,7 +70,6 @@ Envelope RootDrawer::coverageEnvelope() const
 void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
-        ERROR2(ERR_NO_INITIALIZED_2,TR("Coverage area"), TR("Visualization"));
         return;
     }
     if ( !_pixelAreaSize.isValid()) {
@@ -312,6 +311,17 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
 
     if ( attrName == "coordinatesystem"){
         QVariant var = qVariantFromValue(coordinateSystem());
+        return var;
+    }
+    if ( attrName == "latlonenvelope"){
+        QVariant var;
+        if ( coordinateSystem()->isLatLon())
+            var = qVariantFromValue(_coverageRect);
+        else {
+            ICoordinateSystem csyWgs84("code=epsg:4326");
+            Envelope llEnvelope = csyWgs84->convertEnvelope(coordinateSystem(), _coverageRect);
+            var = qVariantFromValue(llEnvelope);
+        }
         return var;
     }
     if ( attrName == "coverageenvelope"){
