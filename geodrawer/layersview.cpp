@@ -52,11 +52,11 @@ void LayersView::copyAttribute(const QString &drawercode, const QString &attrNam
 QString LayersView::attributeOfDrawer(const QString &drawercode, const QString &attrName)
 {
     try {
-        Ilwis::Geodrawer::RootDrawer *rootdrawer = rootDrawer();
-        if ( !rootdrawer)
+        Ilwis::Geodrawer::RootDrawer *rootDrawer = privateRootDrawer();
+        if ( !rootDrawer)
             return "";
 
-        QVariant var = rootdrawer->attributeOfDrawer(drawercode, attrName);
+        QVariant var = rootDrawer->attributeOfDrawer(drawercode, attrName);
         if ( !var.isValid())
             return "";
         QString result = var.toString();
@@ -104,8 +104,8 @@ QString LayersView::layerInfo(const QString& pixelpair) const
     try {
         if ( _manager){
             QStringList parts = pixelpair.split("|");
-            if ( parts.size() == 2 && rootDrawer()){
-                Ilwis::Coordinate crd = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
+            if ( parts.size() == 2 && privateRootDrawer()){
+                Ilwis::Coordinate crd = privateRootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
                 return _manager->layerInfo(crd);
             }
         }
@@ -121,7 +121,7 @@ QString LayersView::layerInfo(const QString& pixelpair) const
 QVariantMap LayersView::zoomEnvelope() const
 {
     QVariantMap vmap;
-    Geodrawer::RootDrawer *root = rootDrawer();
+    auto *root = privateRootDrawer();
     if ( root){
         _manager->setScreenGeoReference(root->screenGrf());
         Envelope zoomenv = root->zoomEnvelope();
@@ -137,7 +137,7 @@ QVariantMap LayersView::zoomEnvelope() const
 QVariantMap LayersView::viewEnvelope() const
 {
     QVariantMap vmap;
-    Geodrawer::RootDrawer *root = rootDrawer();
+    auto *root = privateRootDrawer();
     if ( root){
         _manager->setScreenGeoReference(root->screenGrf());
         Envelope viewenv = root->viewEnvelope();
@@ -167,7 +167,7 @@ void LayersView::setViewEnvelope(const QVariantMap &var)
         return;
 
     Envelope env(Coordinate(minx,miny), Coordinate(maxx, maxy));
-    Geodrawer::RootDrawer *root = rootDrawer();
+    auto *root = privateRootDrawer();
     if ( root){
         root->applyEnvelopeView(env,true);
     }
@@ -192,7 +192,7 @@ void LayersView::setZoomEnvelope(const QVariantMap &var)
         return;
 
     Envelope env(Coordinate(minx,miny), Coordinate(maxx, maxy));
-    Geodrawer::RootDrawer *root = rootDrawer();
+    auto *root = privateRootDrawer();
     if ( root){
         root->applyEnvelopeZoom(env);
         root->redraw();
@@ -271,7 +271,12 @@ QString LayersView::viewerId() const
     return QString::number(_viewerId);
 }
 
-Geodrawer::RootDrawer *LayersView::rootDrawer() const
+Ilwis::Geodrawer::RootDrawer *LayersView::privateRootDrawer() const
+{
+    return static_cast<Ilwis::Geodrawer::RootDrawer *>(rootDrawer());
+}
+
+Ilwis::Geodrawer::DrawerInterface *LayersView::rootDrawer() const
 {
     if ( !_manager)
         return 0;
@@ -283,8 +288,8 @@ Geodrawer::RootDrawer *LayersView::rootDrawer() const
 
 QString LayersView::currentCoordinate() const
 {
-    if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
-        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+    if ( privateRootDrawer() && privateRootDrawer()->coordinateSystem().isValid()){
+        if ( privateRootDrawer()->coordinateSystem()->isLatLon()){
             return _currentCoordinate.toString(6);
         }
     }
@@ -295,8 +300,8 @@ void LayersView::setCurrentCoordinate(const QString &var)
 {
     if ( var != ""){
         QStringList parts = var.split("|");
-        if ( rootDrawer() && parts.size() == 2){
-            _currentCoordinate = rootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
+        if ( privateRootDrawer() && parts.size() == 2){
+            _currentCoordinate = privateRootDrawer()->pixel2Coord(Ilwis::Pixel(parts[0].toDouble(), parts[1].toDouble()));
             emit currentCoordinateHasChanged();
         }
     }
@@ -304,13 +309,13 @@ void LayersView::setCurrentCoordinate(const QString &var)
 
 QString LayersView::currentLatLon() const
 {
-    if ( rootDrawer() && rootDrawer()->coordinateSystem().isValid()){
-        if ( rootDrawer()->coordinateSystem()->isLatLon()){
+    if ( privateRootDrawer() && privateRootDrawer()->coordinateSystem().isValid()){
+        if ( privateRootDrawer()->coordinateSystem()->isLatLon()){
             LatLon ll(_currentCoordinate.y, _currentCoordinate.x);
             return ll.toString();
         }
-        else if ( rootDrawer()->coordinateSystem()->canConvertToLatLon())
-            return rootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
+        else if ( privateRootDrawer()->coordinateSystem()->canConvertToLatLon())
+            return privateRootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
     }
     return "";
 }

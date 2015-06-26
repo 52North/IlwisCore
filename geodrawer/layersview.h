@@ -90,6 +90,7 @@ friend class LayersRenderer;
     Q_INVOKABLE void removeAssociate(const QString& name);
 
     LayerManager *layerManager();
+    Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
     bool showLayerInfo() const;
     void setShowLayerInfo(bool yesno);
 
@@ -123,8 +124,8 @@ private:
     quint64 _viewerId;
     Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
-    Ilwis::Geodrawer::RootDrawer *rootDrawer() const;
     bool _showLayerInfo = true;
+    Ilwis::Geodrawer::RootDrawer *privateRootDrawer() const;
 
 
     static quint64 _baseViewerId;
