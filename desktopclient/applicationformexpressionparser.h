@@ -26,14 +26,15 @@ private:
         IlwisTypes _dataType;
         quint32 _isOptional;
         int _optionGroup;
+        QString _defValue;
 
     };
 
 
 
-    FormParameter addParameter(const Ilwis::Resource &resource, quint32 index, const QStringList &choices, bool optional, int optionGroup) const;
+    FormParameter addParameter(const Ilwis::Resource &resource, quint32 index, const QStringList &choices, bool optional, int optionGroup, const QString &defstate) const;
     std::vector<FormParameter> getParameters(quint64 metaid) const;
-    void setParameter(const Ilwis::Resource &resource, bool &inChoiceList, std::vector<FormParameter> &parameters, QString &part, QStringList &choices, int &parmCount, bool isOptional, int optionGroup) const;
+    void setParameter(const Ilwis::Resource &resource, bool &inChoiceList, std::vector<FormParameter> &parameters, QString &part, QStringList &choices, int &parmCount, bool isOptional, int optionGroup, const QString &defvalue) const;
     QString setInputIcons(const QString& iconField, const QString& iconField2, const std::vector<FormParameter>& parameters, int i, int& imagewidth) const;
     std::vector<ApplicationFormExpressionParser::FormParameter> getOutputParameters(quint64 metaid) const;
     QString makeFormPart(int width, const std::vector<FormParameter> &parameters, bool input, QString &results) const;

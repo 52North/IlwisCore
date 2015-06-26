@@ -13,7 +13,7 @@ ApplicationFormExpressionParser::ApplicationFormExpressionParser()
 ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::addParameter(const Resource& resource,
                                                                                              quint32 index,
                                                                                              const QStringList& choices,
-                                                                                             bool optional, int optionGroup) const{
+                                                                                             bool optional, int optionGroup, const QString& defvalue) const{
     FormParameter parm;
     QString prefix = QString("pin_%1_").arg(index + 1);
     parm._label = resource[prefix + "name"].toString();
@@ -21,6 +21,7 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     parm._isOptional = optional;
     parm._optionGroup = optionGroup;
     parm._choiceList = choices;
+    parm._defValue = defvalue;
     if ( choices.size() > 4){
         parm._fieldType = ftCOMBOBOX;
     }
@@ -45,11 +46,13 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
 
 void ApplicationFormExpressionParser::setParameter(const Resource& resource, bool& inChoiceList,
                                                    std::vector<FormParameter>& parameters, QString& part,
-                                                   QStringList& choices, int& parmCount, bool isOptional, int optionGroup) const
+                                                   QStringList& choices, int& parmCount,
+                                                   bool isOptional, int optionGroup,
+                                                   const QString& defvalue = "") const
 {
     if ( inChoiceList)
         choices << part;
-    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup));
+    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup, defvalue));
     choices.clear();
     part = "";
     inChoiceList = false;
@@ -91,6 +94,7 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     int parmCount = 0;
     bool inChoiceList = false;
     bool isOptional = false;
+    bool checkGroup;
     int optionGroup = 0;
     QString specials = "[]|,";
     QStringList choices;
@@ -101,18 +105,22 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
         }
         if ( c == ',' && !part.isEmpty()){
             part = part.trimmed();
-            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+            QString defvalue =  part[0]=='!' ? "true" : "";
+            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
         } else if ( c == '['){
             if ( !part.isEmpty() ) {
                 part = part.trimmed();
                 setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+                checkGroup = true;
             }
             isOptional = true;
         } else if ( c == ']'){
             if ( !part.isEmpty()) {
                 part = part.trimmed();
-                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+                QString defvalue =  part[0]=='!' ? "true" : "";
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
             }
+            checkGroup = false;
             isOptional = false;
             ++optionGroup;
         } else if ( c == '|'){
@@ -219,10 +227,10 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
     QString rowBodyText = "Rectangle{height : 20;width : parent.width;color : background1;%1Text { x:%5 + %6;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap }";
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message }\
-            TextField{ id : pin_%1; anchors.fill : parent optionalOutputMarker}}";
+            TextField{ id : pin_%1; anchors.fill : parent optionalOutputMarker %7}}";
     QString textArea = "DropArea{ x : %2; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
            onDropped : { pin_%1.text = drag.source.message }\
-        TextArea{ id : pin_%1; anchors.fill : parent optionalOutputMarker}}";
+        TextArea{ id : pin_%1; anchors.fill : parent optionalOutputMarker %7}}";
 
    // QString textArea = "TextArea{ id : pin_%1; x : %2 + %5; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5 optionalOutputMarker}";
     QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : true;exclusiveGroup:sourceFilterGroup; \
@@ -238,7 +246,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
         QString check;
         if ( parameters[i]._isOptional){
             if ( oldOptionGroup != parameters[i]._optionGroup){
-                check = QString("CheckBox{id:check_pin_%1; checked:false;width:20}").arg(i);
+                check = QString("CheckBox{id:check_pin_%1; checked:%2;width:20}").arg(i).arg(parameters[i]._defValue == "" ? "false" : "true");
                 oldOptionGroup = parameters[i]._optionGroup;
             } else
                xshift = 22;
@@ -250,12 +258,19 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
         int imagewidth = 0;
         if ( (hasType(parameters[i]._fieldType,ftTEXTEDIT | ftTEXTAREA)) || (parameters[i]._fieldType == (ftTEXTEDIT | ftRADIOBUTTON))){
             QString imagePart = setInputIcons(iconField1, iconField2, parameters, i,imagewidth);
+            QString checkEffects;
+            if ( check != ""){
+                checkEffects=QString(";enabled: check_pin_%1.checked;opacity:check_pin_%1.checked?1 :0.25").arg(i);
+            }
+
             QString textFieldPart = QString(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? textField : textArea).arg(i).
                     arg(width).
                     arg(checkWidth).
                     arg(imagewidth).
                     arg(xshift).
-                    arg(input ? keys(parameters[i]._dataType) : "\"?\"");
+                    arg(input ? keys(parameters[i]._dataType) : "\"?\"").
+                    arg(checkEffects);
+
             QString parameterRow = QString(rowBodyText + textFieldPart + imagePart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift);
             formRows += parameterRow;
             if ( results != "")
