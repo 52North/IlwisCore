@@ -59,10 +59,10 @@ Ilwis::OperationImplementation *SetLayerVisibility::create(quint64 metaid, const
 
 Ilwis::OperationImplementation::State SetLayerVisibility::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
+    }
+
     QString type = _expression.parameterCount() == 3 ? "main" : _expression.input<QString>(3);
     bool ok;
     int index = _expression.parm(1).value().toInt(&ok);

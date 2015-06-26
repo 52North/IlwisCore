@@ -7,7 +7,6 @@
 #include "operation.h"
 #include "drawers/drawerinterface.h"
 #include "drawers/draweroperation.h"
-#include "uicontextmodel.h"
 #include "../rootdrawer.h"
 #include "../layersview.h"
 #include "showpolygonareas.h"
@@ -61,23 +60,13 @@ Ilwis::OperationImplementation *ShowPolygonAreas::create(quint64 metaid, const I
 
 Ilwis::OperationImplementation::State ShowPolygonAreas::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    bool ok;
-    quint64 viewerId = _expression.input<QString>(0).toULongLong(&ok);
-    if (!ok){
-        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }
-    auto *viewer = uicontext()->viewer(viewerId);
-    if (!viewer){
-        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
-        return sPREPAREFAILED;
-    }
-    _rootDrawer = viewer->rootDrawer();
-
-
 
     QString type = _expression.parameterCount() == 3 ? "main" : _expression.input<QString>(3);
 
+    bool ok;
     int index = _expression.parm(1).value().toInt(&ok);
     if ( ok){
         if ( type == "main" && _index >= 0 && _index < _rootDrawer->attribute("maindrawercount").toInt()){

@@ -63,11 +63,10 @@ Ilwis::OperationImplementation *SetViewExtent::create(quint64 metaid, const Ilwi
 
 Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
+    }
 
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     auto checkCoords =[](const OperationExpression& expr, int index)->double{
         bool ok;
         double value = expr.parm(index).value().toDouble(&ok);
