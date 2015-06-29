@@ -131,6 +131,13 @@ Resource CatalogView::resource() const
     return _resource;
 }
 
+bool CatalogView::hasParent() const
+{
+    if ( _locations.size() != 1)
+        return false;
+    return _locations[0].scheme() == "file";
+}
+
 
 
 bool CatalogView::prepare()
