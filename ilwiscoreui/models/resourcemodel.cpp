@@ -132,6 +132,11 @@ QString ResourceModel::url() const
     return _item.url().toString();
 }
 
+QString ResourceModel::container() const
+{
+   return _item.container().toString();
+}
+
 QString ResourceModel::iconPath() const
 {
     if ( _iconPath != "")
