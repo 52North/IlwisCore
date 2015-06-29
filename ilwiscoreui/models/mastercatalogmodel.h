@@ -70,6 +70,7 @@ public:
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     Q_INVOKABLE bool hasSelectedObjects() const;
+    Q_INVOKABLE QString selectedIds() const;
     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
