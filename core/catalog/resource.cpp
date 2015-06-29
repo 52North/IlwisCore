@@ -116,6 +116,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
 
 Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     _normalizedUrl(url),
+    _rawUrl(url),
     _urlQuery(QUrlQuery(url)),
     _size(0),
     _ilwtype(tp),
