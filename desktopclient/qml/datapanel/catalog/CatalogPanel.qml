@@ -21,6 +21,10 @@ Item {
     signal catalogChanged()
 
     function showObject(objectid){
+        if ( objectid === -1){
+
+        }
+
         var type = mastercatalog.id2type(objectid)
         if ( !type)
             return
@@ -28,10 +32,11 @@ Item {
         var filter;
         if ( resource.typeName === "catalog"){
             filter = "container='" + resource.url + "'"
+            datapanesplit.changePanel(filter, resource.typeName,resource.url)
         }else {
             filter = "itemid=" + resource.id
+             datapanesplit.newPanel(filter, resource.typeName,resource.url)
         }
-        datapanesplit.newPanel(filter, resource.typeName,resource.url)
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -91,6 +96,12 @@ Item {
             id :refreshCatalog
             onTriggered: {
                 mastercatalog.refreshWorkingCatalog()
+            }
+        }
+        Action {
+            id : showProps
+            onTriggered :{
+               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
             }
         }
 
@@ -238,6 +249,18 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 2
         }
+//        Button{
+//            id : metadata
+//            implicitHeight: heightButtons
+//            width : heightButtons + 4
+//            iconSource: iconsource("metadata20.png")
+//            anchors.left : refresh.right
+//            anchors.leftMargin: 1
+//            anchors.top: parent.top
+//            anchors.topMargin: 2
+//            checkable: false
+//            action : showProps
+//        }
 
 
     }
