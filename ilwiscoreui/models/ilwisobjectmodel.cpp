@@ -82,7 +82,18 @@ QString IlwisObjectModel::description() const
 QString IlwisObjectModel::externalFormat() const
 {
     if ( _ilwisobject.isValid()){
-        return _ilwisobject->externalFormat();
+        QString inFormat = _ilwisobject->formatCode();
+        QString outFormat = _ilwisobject->formatCode(false);
+        QString provider = _ilwisobject->provider();
+        if ( outFormat == "" && inFormat == "")
+            return sUNDEF;
+        if ( outFormat == inFormat)
+            return provider + ": " + inFormat;
+        if ( outFormat == "" && inFormat != "")
+            return provider + ": " +inFormat;
+        if ( inFormat == "" && outFormat != "")
+            return "internal/"  + outFormat;
+        return provider + ": " + inFormat + "/" + outFormat;
     }
     return "";
 }
