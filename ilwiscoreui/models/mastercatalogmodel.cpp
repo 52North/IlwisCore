@@ -388,11 +388,6 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
             IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
             if ( ioModel->isValid()){
                 _selectedObjects.append(ioModel);
-                QObject *obj = uicontext()->rootObject()->findChild<QObject *>("object_properties_list_mainui");
-                if ( obj){
-                    // TODO update model here
-                    qDebug() << "TODO update models in the property list, unsure how to do that yet";
-                }
                 emit selectionChanged();
             }else
                 delete ioModel;
@@ -668,6 +663,18 @@ quint32 MasterCatalogModel::workspaceIndex(const QString &name)
 void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
 
+}
+
+QString MasterCatalogModel::selectedIds() const
+{
+    QString selected;
+    for(auto obj : _selectedObjects ){
+        if ( selected != "")
+            selected += "|";
+        selected += obj->id();
+
+    }
+    return selected;
 }
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)

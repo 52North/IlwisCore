@@ -58,7 +58,7 @@ Rectangle {
                             fillMode: Image.PreserveAspectFit
                             property string message :  model !== null ? model[styleData.row].url : ""
                             property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
-                            property string ids : model !== null ? currentCatalog.selectedIds() : ""
+                            property string ids : model !== null ?  mastercatalog.selectedIds() : ""
 
                             Drag.keys: [ model[styleData.row].iconPath ]
                             Drag.active: mouseArea.drag.active
@@ -197,8 +197,7 @@ Rectangle {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
             mastercatalog.currentCatalog = currentCatalog
-            mastercatalog.setSelectedObjects("")
-            currentCatalog.setSelectedObjects(ids)
+            mastercatalog.setSelectedObjects(ids)
             if (!catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
         }

@@ -37,7 +37,7 @@ Rectangle {
         anchors.top: functionBar.bottom
         width : parent.width
         anchors.bottom: parent.bottom
-        model : getSelectedData()
+        model : mastercatalog.selectedData
         property int lastIndex : 0
         delegate : PropertyForm.DPropertyForm{}
     }

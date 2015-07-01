@@ -46,6 +46,20 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
     }
 }
 
+CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
+{
+    _initNode = true;
+    _isScanned = false;
+    _level = 0;
+    if ( item().url().toString() == Catalog::DEFAULT_WORKSPACE){
+        _view = CatalogView(context()->workingCatalog()->source());
+        setDisplayName("default");
+    }else{
+        _view = CatalogView(item());
+        _displayName = _view.name();
+    }
+}
+
 void CatalogModel::setView(const CatalogView &view){
     _view = view;
     resource(view.resource());
@@ -79,17 +93,18 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
     try{
         gatherItems();
 
+        _objectCounts.clear();
+        for(auto *resource : _currentItems){
+            _objectCounts[resource->type()]+= 1;
+        }
+
+
         return  QQmlListProperty<ResourceModel>(this, _currentItems);
     }
     catch(const ErrorObject& err){
 
     }
     return  QQmlListProperty<ResourceModel>();
-}
-
-QQmlListProperty<IlwisObjectModel> CatalogModel::selectedData()
-{
-    return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
 }
 
 QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
@@ -139,47 +154,38 @@ void CatalogModel::refresh(bool yesno)
     _refresh = yesno;
 }
 
-void CatalogModel::setSelectedObjects(const QString &objects)
+//QString CatalogModel::selectedIds() const
+//{
+//    QString selected;
+//    for(auto obj : _selectedObjects ){
+//        if ( selected != "")
+//            selected += "|";
+//        selected += obj->id();
+
+//    }
+//    return selected;
+//}
+
+QStringList CatalogModel::objectCounts()
 {
-    try {
-        if ( objects == ""){
-            _selectedObjects.clear();
-            return;
+    try{
+        gatherItems();
+
+        _objectCounts.clear();
+        for(auto *resource : _currentItems){
+            _objectCounts[resource->type()]+= 1;
         }
-        QStringList parts = objects.split("|");
-        _selectedObjects.clear();
-        kernel()->issues()->silent(true);
-        for(auto objectid : parts){
-            bool ok;
-            Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
-            if (!ok)
-                continue;
-
-            IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-            if ( ioModel->isValid()){
-                _selectedObjects.append(ioModel);
-                emit selectionChanged();
-            }else
-                delete ioModel;
+        QStringList counts;
+        for(auto item : _objectCounts)    {
+            QString txt = Ilwis::TypeHelper::type2HumanReadable(item.first) + "|" + QString::number(item.second);
+            counts.push_back(txt);
         }
-        kernel()->issues()->silent(false);
-    }catch(const ErrorObject& ){
-    }catch (std::exception& ex){
-        Ilwis::kernel()->issues()->log(ex.what());
+        return counts;
     }
-    kernel()->issues()->silent(false);
-}
-
-QString CatalogModel::selectedIds() const
-{
-    QString selected;
-    for(auto obj : _selectedObjects ){
-        if ( selected != "")
-            selected += "|";
-        selected += obj->id();
-
+    catch(const Ilwis::ErrorObject& err){
     }
-    return selected;
+
+    return QStringList();
 }
 
 void CatalogModel::nameFilter(const QString &filter)
@@ -251,6 +257,9 @@ void CatalogModel::gatherItems() {
             }
             _currentItems.push_back(new ResourceModel(resource, this));
 
+        }
+        if ( _view.hasParent()){
+            _currentItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
         }
     }
 }
