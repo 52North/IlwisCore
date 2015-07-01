@@ -42,7 +42,7 @@ private:
     QString keys(IlwisTypes type) const;
 
     std::vector<FormParameter> createWorkflowMetadata(quint64 metaid) const;
-    QString formats(const QString &query) const;
+    QString formats(const QString &query, quint64 ilwtype) const;
 };
 
 #endif // APPLICATIONFORMEXPRESSIONPARSER_H

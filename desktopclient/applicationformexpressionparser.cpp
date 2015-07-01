@@ -278,7 +278,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
             results += QString(input ? "pin_%1.text" : "pout_%1.text").arg(i);
             if ( !input){
                 QString query = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(parameters[i]._dataType);
-                QString formatList = formats(query);
+                QString formatList = formats(query, parameters[i]._dataType);
                 QString formatLabel = QString("Row{height:20;width:parent.width;Text { x:5;text: qsTr(\"Output format\"); id:label_pout_format_%2; width :%1;}").arg(width).arg(i);
                 QString formatCombo = QString("ComboBox{id : pout_format_%1; height:20; width : parent.width - label_pout_format_%1.width - 5;model : %2}").arg(i).arg(formatList);
                 results += "+\"@@\"+"  + QString("pout_format_%1.currentText").arg(i);
@@ -415,7 +415,7 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     return parameters;
 }
 
-QString ApplicationFormExpressionParser::formats(const QString& query) const
+QString ApplicationFormExpressionParser::formats(const QString& query, quint64 ilwtype) const
 {
     std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
     QString formatList;
@@ -426,6 +426,11 @@ QString ApplicationFormExpressionParser::formats(const QString& query) const
         formatList += "'"+ format.second.property(Ilwis::DataFormat::fpNAME).toString() + "'";
     }
     if ( formatList != "")
-       formatList = "[ 'Memory'," + formatList + "]";
+       formatList = "'Memory'," + formatList;
+    if ( hasType(ilwtype, itTABLE)){
+        formatList = "'Keep original'," + formatList;
+    }
+    if ( formatList != "")
+        formatList = "[" + formatList + "]";
     return formatList;
 }
