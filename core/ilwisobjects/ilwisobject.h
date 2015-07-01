@@ -374,7 +374,8 @@ public:
 
     static IlwisTypes name2ExtendedType(const QString &dname);
 
-    QString externalFormat() const;
+    QString formatCode(bool input=true) const;
+    QString provider(bool input=true) const;
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
