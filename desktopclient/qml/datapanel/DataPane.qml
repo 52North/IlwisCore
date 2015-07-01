@@ -249,7 +249,6 @@ Rectangle {
 
 
         function changeWidth(pside, partside){
-            console.debug(pside, partside)
             if ( partside === 0){
                 lefttab.fillWidth = false
                 lefttab.state = "zerosize"
