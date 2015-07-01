@@ -183,6 +183,9 @@ bool BaseTable::merge(const IlwisObject *obj, int options)
     if (obj == 0 || ! hasType(obj->ilwisType(), itTABLE))
         return false;
 
+    if ( id() == obj->id())
+        return true;
+
     if ( isReadOnly())
         return false ;
     changed(true);
