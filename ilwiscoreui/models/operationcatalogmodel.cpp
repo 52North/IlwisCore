@@ -219,27 +219,42 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         expression += parms[i];
     }
     QString output = parms[parms.size() - 1];
+    IlwisTypes outputtype = operationresource["pout_1_type"].toULongLong();
     if ( output.indexOf("@@") != -1 ){
         QString format;
         QStringList parts = output.split("@@");
         output = parts[0];
         QString formatName = parts[1];
+        if ( hasType(outputtype, itTABLE))
+            output = parms[0] + "[" + output + "]";
+        if ( formatName == "Keep original"){
+            IIlwisObject obj;
+            obj.prepare(parms[0], operationresource["pin_1_type"].toULongLong());
+            if ( obj.isValid())
+                format = "{format(" + obj->provider() + ",\"" + obj->formatCode() + "\")}";
+        }
         if ( formatName != "Memory"){ // special case
-            QString query = "name='" + formatName + "'";
-            std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
-            if ( formats.size() == 1){
-                format = "{format(" + (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString() + ",\"" +
-                        (*formats.begin()).second.property(DataFormat::fpCODE).toString() + "\")}";
+            if ( format == "") {
+                QString query = "name='" + formatName + "'";
+                std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+                if ( formats.size() == 1){
+                    format = "{format(" + (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString() + ",\"" +
+                            (*formats.begin()).second.property(DataFormat::fpCODE).toString() + "\")}";
+                }
             }
-            output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
+            if ( output.indexOf("://") == -1)
+                output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
+            else
+                output = output + format;
         }else{
-            IlwisTypes outputtype = operationresource["pout_1_type"].toULongLong();
+
             if ( outputtype == itRASTER)
                 format = "{format(stream,\"rastercoverage\")}";
             else if (hasType(outputtype, itFEATURE))
                 format = "{format(stream,\"featurecoverage\")}";
-            else if (hasType(outputtype, itTABLE))
+            else if (hasType(outputtype, itTABLE)){
                 format = "{format(stream,\"table\")}";
+            }
             output = output + format;
         }
     }
