@@ -17,8 +17,14 @@ Item {
     property int side : 1
     property int currentIndex : 0
     property int count : datatab.count
+    property bool stateDone : true
 
-
+    onWidthChanged: {
+        if ( !stateDone)    {
+            datatabview.state = ""
+            stateDone = true
+        }
+    }
 
     onSideChanged: {
         centerItem.activeSplit = Math.abs(side)
@@ -143,6 +149,9 @@ Item {
         Transition {
             id : widthTransition
             NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+            onRunningChanged: {
+                stateDone = widthTransition.running
+            }
         }
     ]
 
