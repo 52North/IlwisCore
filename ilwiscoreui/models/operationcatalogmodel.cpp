@@ -202,6 +202,24 @@ void OperationCatalogModel::workSpaceChanged()
     emit operationsChanged();
 }
 
+QString OperationCatalogModel::modifyTableOutputUrl(const QString& output, const QStringList& parms)
+{
+    QString columnName = output;
+    QString firstTable = parms[0];
+    if ( firstTable.indexOf("://") != -1){
+        int index = firstTable.lastIndexOf("/");
+        firstTable = firstTable.mid(index + 1);
+        index =  firstTable.indexOf(".");
+        if ( index != -1)
+            firstTable = firstTable.left(index) + ".ilwis";
+    }
+    QString internalPath = context()->persistentInternalCatalog().toString();
+    QString outpath = internalPath + "/" + firstTable + "[" + columnName + "]";
+
+    return outpath;
+
+}
+
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters) {
     if ( operationid == 0 || parameters == "")
         return sUNDEF;
@@ -225,8 +243,12 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         QStringList parts = output.split("@@");
         output = parts[0];
         QString formatName = parts[1];
-        if ( hasType(outputtype, itTABLE))
-            output = parms[0] + "[" + output + "]";
+        if ( hasType(outputtype, itTABLE)){
+            if ( formatName == "Memory"){
+                output = modifyTableOutputUrl(output, parms);
+            }else
+                output = parms[0] + "[" + output + "]";
+        }
         if ( formatName == "Keep original"){
             IIlwisObject obj;
             obj.prepare(parms[0], operationresource["pin_1_type"].toULongLong());

@@ -31,6 +31,7 @@ public:
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
 
    void gatherItems();
+
 private:
     QList<OperationModel *> _currentOperations;
     QList<OperationsByKeyModel *> _operationsByKey;
@@ -38,6 +39,7 @@ private:
     QStringList _keywords;
 
     QStringList keywords() const;
+    QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
 
 public slots:
     void workSpaceChanged();
