@@ -691,7 +691,7 @@ void CatalogWorker::process(){
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){
-            calculatelatLonEnvelopes();
+            //calculatelatLonEnvelopes();
             emit finished();
         }
     } catch(const ErrorObject& err){
