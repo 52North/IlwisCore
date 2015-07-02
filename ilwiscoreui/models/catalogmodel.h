@@ -31,7 +31,7 @@ public:
     CatalogModel(quint64 id, QObject *parent);
 
     Q_INVOKABLE void makeParent(QObject *obj);
-    Q_INVOKABLE void filterChanged(const QString &objectType, bool state);
+    Q_INVOKABLE void filterChanged(const QString &typeIndication, bool state);
     Q_INVOKABLE void filter(const QString& filterString);
     Q_INVOKABLE void prepareMapItems(LayerManager *manager, bool force=false);
     Q_INVOKABLE QStringList objectCounts();

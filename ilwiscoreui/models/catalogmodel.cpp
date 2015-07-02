@@ -117,26 +117,35 @@ void CatalogModel::makeParent(QObject *obj)
     setParent(obj);
 }
 
-void CatalogModel::filterChanged(const QString& objectType, bool state){
-    if ( objectType == "all"){
-        _filterState["rastercoverage"] = state;
-        _filterState["featurecoverage"] = state;
-        _filterState["table"] = state;
-        _filterState["coordinatesystem"] = state;
-        _filterState["georeference"] = state;
-        _filterState["domain"] = state;
-        _filterState["representation"] = state;
-        _filterState["projection"] = state;
-        _filterState["ellipsoid"] = state;
-
+void CatalogModel::filterChanged(const QString& typeIndication, bool state){
+    QString objectType = typeIndication;
+    bool exclusive = objectType.indexOf("|exclusive") != -1;
+    if ( exclusive)
+        objectType = objectType.split("|")[0];
+    if ( objectType == "all" || exclusive){
+        _filterState["rastercoverage"] = exclusive ? false : state;
+        _filterState["featurecoverage"] = exclusive ? false :state;
+        _filterState["table"] = exclusive ? false :state;
+        _filterState["coordinatesystem"] = exclusive ? false :state;
+        _filterState["georeference"] = exclusive ? false :state;
+        _filterState["domain"] = exclusive ? false :state;
+        _filterState["representation"] = exclusive ? false :state;
+        _filterState["projection"] = exclusive ? false :state;
+        _filterState["ellipsoid"] = exclusive ? false :state;
     }else
         _filterState[objectType] = state;
+
     QString filterString;
-    for(auto iter : _filterState){
-        if ( !iter.second){
-            if ( filterString != "")
-                filterString += " and ";
-            filterString += QString("type") + "& '" + iter.first + "' =0";
+    if ( exclusive){
+        if ( state)
+            filterString = QString("type") + "& '" + objectType.toLower() + "' !=0";
+    } else {
+        for(auto iter : _filterState){
+            if ( !iter.second){
+                if ( filterString != "")
+                    filterString += " and ";
+                filterString += QString("type") + "& '" + iter.first + "' =0";
+            }
         }
     }
     filter(filterString);
