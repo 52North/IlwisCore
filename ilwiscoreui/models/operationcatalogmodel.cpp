@@ -28,7 +28,7 @@
 
 using namespace Ilwis;
 
-OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
+OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel(p)
 {
 
 
@@ -44,6 +44,7 @@ void OperationCatalogModel::nameFilter(const QString &filter)
     CatalogModel::nameFilter(filter);
     _currentOperations.clear();
     _operationsByKey.clear();
+    _refresh = true;
     emit operationsChanged();
 }
 
