@@ -55,7 +55,7 @@ protected:
    QList<ResourceModel *> _currentItems;
    QList<CatalogMapItem *> _catalogMapItems;
    std::map<quint64, int> _objectCounts;
-   bool _refresh = false;
+   bool _refresh = true;
 
 
 private:
