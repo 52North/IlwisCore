@@ -12,7 +12,7 @@ import "../../controls" as Controls
 
 Item {
     property CatalogModel currentCatalog
-    id : operationViews
+    id :    catalogViews
     width : parent.width
     height : parent.height
     property TabModel tabmodel
@@ -32,6 +32,16 @@ Item {
         // if the stuff from onCompleted happens here
     }
 
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+        if ( name === "")
+            name = "redbuttonr.png"
+
+        var iconP = "../../images/" + name
+        return iconP
+    }
+
     Rectangle{
         id : toolbar
         anchors.top : parent.top
@@ -42,6 +52,7 @@ Item {
         color : Global.alternatecolor5
 
         ComboBox {
+            id : keywordselection
             height : 22
             width : 200
             anchors.verticalCenter: parent.verticalCenter
@@ -55,6 +66,12 @@ Item {
                 }
             }
         }
+        OperationLayoutButtonBar{
+            anchors.left: keywordselection.right
+            anchors.leftMargin: 4
+            width : 100
+            height : 20
+        }
     }
 
     Item {
@@ -67,18 +84,59 @@ Item {
             height : parent.height
             opacity : 1
         }
-        CatalogTable{
+        OperationTable{
             id : iconListView
             opacity : 0
             height : 0
             enabled : false
         }
+        states: [
+            State {
+                name : "iconGrid"
+                //PropertyChanges { target: thumbListView; height : 0; opacity : 0; enabled : false}
+                PropertyChanges { target: iconListView; height : 0; opacity : 0;enabled : false}
+                PropertyChanges { target: iconGridView; height : parent.height; opacity : 1;enabled : true}
+            },
+    //        State {
+    //            name : "thumbList"
+    //            PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
+    //            PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
+    //            PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+    //            PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
+    //        },
+            State {
+                name : "iconList"
+                //PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
+                PropertyChanges { target: iconListView; height : parent.height;opacity : 1; enabled : true}
+                PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+            }
+        ]
+
+        transitions: [
+            Transition {
+                ParallelAnimation{
+                    //NumberAnimation { target: thumbListView; properties: "height"; duration: 400; easing.type: Easing.InOutQuad }
+                    //NumberAnimation { target: thumbListView; properties: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
+                }
+                ParallelAnimation{
+                    NumberAnimation { target: iconListView; property: "height"; duration: 400; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: iconListView; property: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
+                }
+                ParallelAnimation{
+                    NumberAnimation { target: iconGridView; property: "height"; duration: 400; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: iconGridView; property: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
+                }
+            }
+        ]
     }
+
+
+
     Component.onCompleted: {
         var url = mastercatalog.currentUrl
         currentCatalog = mastercatalog.newCatalog(url,"type='OperationMetaData'")
         if ( currentCatalog){
-            currentCatalog.makeParent(operationViews)
+            currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
         }
     }
