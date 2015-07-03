@@ -20,7 +20,7 @@
 using namespace Ilwis;
 //using namespace Desktopclient;
 
-QString ResourceModel::getProperty(const QString &propertyname)
+QString ResourceModel::getProperty(const QString &propertyname) const
 {
     if(_item.hasProperty(propertyname))
         return _item[propertyname].toString();
@@ -346,8 +346,12 @@ void ResourceModel::resource(const Ilwis::Resource& res)
             else
                 _imagePath = "blank.png";
         }
-    }else
-       _displayName = item.name();
+    }else{
+        if ( item.hasProperty("longname"))
+            _displayName =  item["longname"].toString();
+        else
+            _displayName = item.name();
+    }
 }
 
 Ilwis::Resource ResourceModel::resource() const

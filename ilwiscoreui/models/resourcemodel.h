@@ -73,7 +73,7 @@ public:
 
     Ilwis::Resource item() const;
 
-    Q_INVOKABLE QString virtual getProperty(const QString& propertyname);
+    Q_INVOKABLE QString virtual getProperty(const QString& propertyname) const;
 
     static QString iconPath(IlwisTypes tp) ;
 protected:
