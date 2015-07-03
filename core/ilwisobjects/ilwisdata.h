@@ -243,7 +243,7 @@ public:
                     removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
-                bool ok = data->prepare();
+                bool ok = data->prepare(options);
                 if ( !ok){
                     delete data;
                     return false;

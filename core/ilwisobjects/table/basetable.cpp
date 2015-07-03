@@ -114,9 +114,9 @@ void BaseTable::columndefinition(const ColumnDefinition &coldef)
     _attributeDefinition.columndefinition(coldef);
 }
 
-bool BaseTable::prepare()
+bool BaseTable::prepare(const IOOptions &options)
 {
-    if (!IlwisObject::prepare())
+    if (!IlwisObject::prepare(options))
         return false;
 
     return true;

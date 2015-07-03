@@ -63,6 +63,7 @@ bool MasterCatalog::prepare()
 
 bool MasterCatalog::addContainer(const QUrl &inlocation)
 {
+    qDebug() << "add container" << inlocation.toString();
     //Locker<std::recursive_mutex> lock(_guard);
     if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
         return true;
@@ -114,7 +115,11 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     }
 
     addItems({catalog->source()});
-    _catalogs.insert(location);
+    qDebug() << "item count " << resource.url().toString() << catalog->itemCount();
+    if ( catalog->itemCount() > 0){
+        qDebug() << "adding " << resource.url().toString();
+        _catalogs.insert(location);
+    }
     return true;
 }
 

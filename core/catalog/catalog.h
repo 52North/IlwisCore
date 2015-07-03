@@ -52,6 +52,7 @@ public:
      * @return list of resources contained in the catalog
      */
     std::vector<Resource> items() const;
+    quint32 itemCount() const;
     void scan();
 
     template<typename IObjectType=IIlwisObject> IObjectType item(const QVariant& indexValue) const{
@@ -67,7 +68,7 @@ public:
      *
      * @return bool
      */
-    virtual bool prepare();
+    virtual bool prepare(const IOOptions& options=IOOptions());
     /**
      * @brief Indicates if a Catalog is in a valid state
      *

@@ -127,7 +127,7 @@ bool IlwisObject::merge(const IlwisObject *, int )
 }
 
 
-bool IlwisObject::prepare( ) {
+bool IlwisObject::prepare(const Ilwis::IOOptions &) {
     _valid = true;
 
     return true;

@@ -133,7 +133,7 @@ public:
      * tries to Prepares this ilwisobject for use
      * @return true when the prepare succeeded
      */
-    virtual bool prepare();
+    virtual bool prepare(const IOOptions& options=IOOptions());
 
     /**
      * Changes the name of this object, new name cannot be null.

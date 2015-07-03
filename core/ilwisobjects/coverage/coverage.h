@@ -119,7 +119,7 @@ public:
     QString name() const { return IlwisObject::name(); }
     virtual QVariant coord2value(const Coordinate& crd, const QString& attrname="") = 0;
 
-    bool prepare();
+    bool prepare(const IOOptions& options=IOOptions());
 protected:
     void copyTo(IlwisObject *obj) ;
 private:
