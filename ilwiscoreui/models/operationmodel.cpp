@@ -31,14 +31,13 @@ OperationModel::OperationModel(quint64 id, QObject *parent) : ResourceModel(mast
 
 QString OperationModel::inputparameterName(quint32 index) const
 {
-    return property("pin_" + QString::number(index + 1) + "_name").toString();
+    return getProperty("pin_" + QString::number(index + 1) + "_name");
 
 }
 
 QString OperationModel::inputparameterType(quint32 index) const
 {
-    QVariant var = property("pin_" + QString::number(index + 1) + "_type");
-    quint64 ilwtype = var.toULongLong();
+    quint64 ilwtype = getProperty("pin_" + QString::number(index + 1) + "_type").toULongLong();
     QString type;
     for(quint64 i =0; i < 64; ++i){
        quint64 result = 1 << i;
@@ -55,39 +54,38 @@ QString OperationModel::inputparameterType(quint32 index) const
 
 QString OperationModel::inputparameterDescription(quint32 index) const
 {
-    return property("pin_" + QString::number(index + 1) + "_desc").toString();
+    return getProperty("pin_" + QString::number(index + 1) + "_desc");
 }
 
 QString OperationModel::outputparameterName(quint32 index) const
 {
-    return property("pout_" + QString::number(index + 1) + "_name").toString();
+    return getProperty("pout_" + QString::number(index + 1) + "_name");
 }
 
 QString OperationModel::outputparameterType(quint32 index) const
 {
-    QVariant var = property("pout_" + QString::number(index + 1) + "_type");
-    quint64 ilwtype = var.toULongLong();
+    quint64 ilwtype = getProperty("pout_" + QString::number(index + 1) + "_type").toULongLong();
     return TypeHelper::type2HumanReadable(ilwtype);
 }
 
 QString OperationModel::outputparameterDescription(quint32 index) const
 {
-    return property("pout_" + QString::number(index + 1) + "_desc").toString();
+    return getProperty("pout_" + QString::number(index + 1) + "_desc");
 }
 
 QString OperationModel::syntax() const
 {
-    return property("syntax").toString();
+    return getProperty("syntax");
 }
 
 QString OperationModel::keywords() const
 {
-    return  property("keyword").toString();
+    return  getProperty("keyword");
 }
 
 int OperationModel::maxParameterCount(bool inputCount) const
 {
-    QString inParams = property(inputCount ? "inparameters" : "outparameters").toString();
+    QString inParams = getProperty(inputCount ? "inparameters" : "outparameters");
     QStringList parts = inParams.split("|");
     int maxp = 0;
     for(QString p : parts){
@@ -116,10 +114,11 @@ QStringList OperationModel::outParamNames() const
     return names;
 }
 
-QVariant OperationModel::property(const QString &name) const
+QString OperationModel::getProperty(const QString &name) const
 {
     if ( item().hasProperty(name))
-        return item()[name];
+        return item()[name].toString();
     return sUNDEF;
 }
+
 

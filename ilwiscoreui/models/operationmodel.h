@@ -27,12 +27,13 @@ public:
     Q_INVOKABLE QString keywords() const;
 
     Q_INVOKABLE int maxParameterCount(bool inputCount) const;
+    Q_INVOKABLE QString getProperty(const QString& propertyname) const;
+
     QStringList inParamNames() const;
     QStringList outParamNames() const;
 
 
 private:
-    QVariant property(const QString& name) const;
 
 };
 
