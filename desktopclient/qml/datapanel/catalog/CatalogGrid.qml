@@ -67,7 +67,6 @@ FocusScope {
                           }
                       }
                     }
-                    console.debug("selected")
                     mastercatalog.setSelectedObjects(selectedIds)
                 }
 
