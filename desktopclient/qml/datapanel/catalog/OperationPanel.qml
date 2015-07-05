@@ -11,7 +11,7 @@ import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Item {
-    property CatalogModel currentCatalog
+    property OperationCatalogModel currentCatalog
     id :    catalogViews
     width : parent.width
     height : parent.height
@@ -21,7 +21,7 @@ Item {
 
     function setResources(){
         if ( currentCatalog)
-            return currentCatalog.resources
+            return currentCatalog.operations
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -62,6 +62,7 @@ Item {
                     var filterString = "type='OperationMetaData'"
                     if (currentIndex != 0)
                         filterString += " and keyword='" + model[currentIndex] + "'"
+                    console.debug(filterString)
                     currentCatalog.filter(filterString)
                 }
             }
