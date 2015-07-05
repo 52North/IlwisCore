@@ -1,7 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
-import QtQuick.Controls.Styles 1.0
+import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
@@ -37,9 +37,9 @@ Rectangle {
 
         TableViewColumn{
             id : imageColumn
-            role : "iconPath"
+            role : "outParameterIconList"
             title : ""
-            width : 25
+            width : 20
             delegate :
                 Item {
                 id : imageItem
@@ -54,7 +54,7 @@ Rectangle {
                        image = Qt.createQmlObject('import QtQuick 2.0; Image{
                             id : image
                             width : 20; height : 20
-                            source : "../../images/" + styleData.value
+                            source : "../../images/operation20.png"
                             fillMode: Image.PreserveAspectFit
                             property string message :  model !== null ? model[styleData.row].url : ""
                             property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
@@ -84,16 +84,20 @@ Rectangle {
 
                     z : 1
                 }
-                Image{
-                    id : imageBase
-                    x : mouseArea.x
-                    y : mouseArea.y
-                    width : 20; height : 20
-                    source : iconSource(styleData.value)
-                    fillMode: Image.PreserveAspectFit
-                    z : 0
+                ListView {
+                    model : styleData.value
+                    //anchors.fill: parent
+                    y : 10
+                    orientation : ListView.Horizontal
+                    delegate: Component{
+                        Image{
+                            width : 15
+                            height : 15
+                            source : iconSource(modelData)
+                        }
+                    }
                 }
-            }
+             }
         }
 
         TableViewColumn{
@@ -112,20 +116,125 @@ Rectangle {
             }
 
         }
+        TableViewColumn{
+            role : "provider"
+            title : qsTr("Provider")
+            width : 50
+            delegate : Component {
+                Text {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    color : styleData.selected ? "white" : "black"
+                    font.pixelSize: 10
+                    elide: Text.ElideMiddle
+                }
+            }
+
+        }
+        TableViewColumn{
+            role : "inParameterIconList"
+            title : qsTr("Input Parameters")
+            width : 90
+            delegate : Component {
+                ListView {
+                    model : styleData.value
+                    //anchors.fill: parent
+                    y : 5
+                    orientation : ListView.Horizontal
+                    delegate: Component{
+                        Image{
+                            width : 15
+                            height : 15
+                            source : iconSource(modelData)
+                        }
+                    }
+                }
+            }
+
+        }
+//        TableViewColumn{
+//            role : "outParameterCount"
+//            title : qsTr("Output Parameters")
+//            width : 40
+//            delegate : Component {
+//                Text {
+//                    text: styleData.value
+//                    verticalAlignment:Text.AlignVCenter
+//                    color : styleData.selected ? "white" : "black"
+//                    font.pixelSize: 10
+//                    elide: Text.ElideMiddle
+//                }
+//            }
+
+//        }
+        TableViewColumn{
+            role : "keywords"
+            title : qsTr("Keywords")
+            width : 180
+            delegate : Component {
+                TextArea {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    font.pixelSize: 10
+                    frameVisible: false
+                    style:TextAreaStyle {
+                         backgroundColor: styleData.row % 2 == 0? "#fff" : "#eee"
+                     }
+                }
+            }
+
+        }
+
+        TableViewColumn{
+            role : "syntax"
+            title : qsTr("Syntax")
+            width : 250
+            delegate : Component {
+                TextArea {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    font.pixelSize: 10
+                    frameVisible: false
+                    style:TextAreaStyle {
+                         backgroundColor: styleData.row % 2 == 0? "#fff" : "#eee"
+                     }
+                }
+            }
+
+        }
+
+        TableViewColumn{
+            role : "description"
+            title : qsTr("Description")
+            width : 800
+            delegate : Component {
+                TextArea {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    font.pixelSize: 10
+                    frameVisible: false
+                    style:TextAreaStyle {
+                         backgroundColor: styleData.row % 2 == 0? "#fff" : "#eee"
+                     }
+                }
+            }
+
+        }
+
 
         rowDelegate: Rectangle {
             id : rowdelegate
-            height : 20
+            height : 35
             color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
         }
 
         onClicked: {
-//            var ids = ""
-//            resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
-//            mastercatalog.currentCatalog = currentCatalog
-//            mastercatalog.setSelectedObjects(ids)
-//            if (!catalogViews.tabmodel.selected)
-//                catalogViews.tabmodel.selectTab()
+            var ids = ""
+            resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
+            mastercatalog.currentCatalog = currentCatalog
+            mastercatalog.setSelectedObjects(ids)
+            if (!catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
         onDoubleClicked: {
             if ( currentRow != -1){
