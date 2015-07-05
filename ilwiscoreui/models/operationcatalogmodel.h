@@ -23,6 +23,7 @@ public:
    QMLOperationList operations();
    QQmlListProperty<OperationsByKeyModel> operationKeywords();
    void nameFilter(const QString&);
+   Q_INVOKABLE void filter(const QString& filterString);
    void prepare();
 
    Q_INVOKABLE quint64 operationId(quint32 index, bool byKey) const;
