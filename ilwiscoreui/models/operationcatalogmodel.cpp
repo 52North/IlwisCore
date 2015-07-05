@@ -48,6 +48,13 @@ void OperationCatalogModel::nameFilter(const QString &filter)
     emit operationsChanged();
 }
 
+void OperationCatalogModel::filter(const QString &filterString)
+{
+    CatalogModel::filter(filterString);
+    emit operationsChanged();
+
+}
+
 quint64 OperationCatalogModel::operationId(quint32 index, bool byKey) const{
     if ( byKey){
 
@@ -179,6 +186,7 @@ void OperationCatalogModel::gatherItems() {
             keywordset.insert(keyword);
         }
     }
+    _keywords.clear();
     for(auto keyword : keywordset)
         _keywords.push_back(keyword);
 
