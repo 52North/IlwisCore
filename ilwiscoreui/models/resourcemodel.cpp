@@ -190,6 +190,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "representation20.png";
     else if ( hasType(tp,itNUMBER))
         return "numbers20.png";
+    else if ( hasType(tp,itBOOL))
+        return "bool20.png";
     else if ( hasType(tp,itPROJECTION))
         return "projection20.png";
     else if ( hasType(tp,itELLIPSOID))
