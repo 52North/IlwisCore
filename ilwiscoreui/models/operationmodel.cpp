@@ -75,12 +75,27 @@ QString OperationModel::outputparameterDescription(quint32 index) const
 
 QString OperationModel::syntax() const
 {
-    return getProperty("syntax");
+    QString syn = getProperty("syntax");
+    if ( syn.indexOf("ilwis://")!= -1){
+        syn = syn.mid(QString("ilwis://operations/").size());
+    }
+    return syn;
 }
 
 QString OperationModel::keywords() const
 {
-    return  getProperty("keyword");
+    QString kw =   getProperty("keyword");
+    if ( kw == sUNDEF)
+        return "";
+    return kw;
+}
+
+QString OperationModel::provider() const
+{
+    QString kw =   getProperty("namespace");
+    if ( kw == sUNDEF)
+        return "";
+    return kw;
 }
 
 int OperationModel::maxParameterCount(bool inputCount) const
@@ -112,6 +127,56 @@ QStringList OperationModel::outParamNames() const
         names.append(outputparameterName(i));
     }
     return names;
+}
+
+QString OperationModel::inParameterCount() const
+{
+    QString inParams = getProperty("inparameters");
+    if ( inParams != sUNDEF){
+        inParams.replace("|"," or ");
+    }else
+        inParams = "";
+    return inParams;
+}
+
+QString OperationModel::outParameterCount() const
+{
+    QString outParams = getProperty("outparameters");
+    if ( outParams != sUNDEF){
+        outParams.replace("|"," or ");
+    }else
+        outParams = "";
+    return outParams;
+}
+
+QStringList OperationModel::inParameterIconList() const
+{
+    int mx = maxParameterCount(true);
+    QStringList icons;
+    for(int i = 0; i < mx; ++i){
+        QString p = "pin_" + QString::number(i+1) + "_type";
+        IlwisTypes type = item()[p].toULongLong();
+        if ( type == iUNDEF)
+            continue;
+        icons.append(iconPath(type));
+
+    }
+    return icons;
+}
+
+QStringList OperationModel::outParameterIconList() const
+{
+    int mx = maxParameterCount(false);
+    QStringList icons;
+    for(int i = 0; i < mx; ++i){
+        QString p = "pin_" + QString::number(i+1) + "_type";
+        IlwisTypes type = item()[p].toULongLong();
+        if ( type == iUNDEF)
+            continue;
+        icons.append(iconPath(type));
+
+    }
+    return icons;
 }
 
 QString OperationModel::getProperty(const QString &name) const
