@@ -94,20 +94,11 @@ Item {
         states: [
             State {
                 name : "iconGrid"
-                //PropertyChanges { target: thumbListView; height : 0; opacity : 0; enabled : false}
                 PropertyChanges { target: iconListView; height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconGridView; height : parent.height; opacity : 1;enabled : true}
             },
-    //        State {
-    //            name : "thumbList"
-    //            PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
-    //            PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
-    //            PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
-    //            PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
-    //        },
             State {
                 name : "iconList"
-                //PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconListView; height : parent.height;opacity : 1; enabled : true}
                 PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
             }
@@ -115,10 +106,6 @@ Item {
 
         transitions: [
             Transition {
-                ParallelAnimation{
-                    //NumberAnimation { target: thumbListView; properties: "height"; duration: 400; easing.type: Easing.InOutQuad }
-                    //NumberAnimation { target: thumbListView; properties: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
-                }
                 ParallelAnimation{
                     NumberAnimation { target: iconListView; property: "height"; duration: 400; easing.type: Easing.InOutQuad }
                     NumberAnimation { target: iconListView; property: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
