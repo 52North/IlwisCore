@@ -16,17 +16,12 @@ Item {
         width : 95
         height : 22
 
-
         ExclusiveGroup { id : operationViewStatus
             onCurrentChanged: {
                 if( showList.checked)
                     catalogView.state = "iconList"
                 if ( showGrid.checked)
                     catalogView.state = "iconGrid"
-//                if ( showThumbs.checked)
-//                    catalogView.state = "thumbList"
-//                if ( showByLoc.checked)
-//                    catalogView.state = "bylocation"
                 console.debug(showList.checked)
             }
         }
@@ -41,12 +36,6 @@ Item {
             iconSource: iconsource("gridCS1.png")
             checked : true
             exclusiveGroup: operationViewStatus
-        }
-        ToolBarButton{
-            id : showThumbs
-            iconSource: iconsource("thumblistCS1.png")
-            exclusiveGroup: operationViewStatus
-            checked: false
         }
     }
     //        Button{
