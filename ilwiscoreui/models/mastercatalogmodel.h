@@ -95,7 +95,7 @@ private:
     CatalogModel *_currentCatalog = 0;
 
     
-    CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query);
+    CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query, bool threading = true);
     QString determineIdList(int dataCount, int operationCount, const QString &basekey);
     QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
     void scanBookmarks();
