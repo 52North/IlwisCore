@@ -46,7 +46,7 @@ public:
     virtual void nameFilter(const QString&);
     QString nameFilter() const;
 
-    void setView(const Ilwis::CatalogView &view);
+    void setView(const Ilwis::CatalogView &view, bool threading = false);
     Ilwis::CatalogView view() const;
 
 protected:
@@ -65,7 +65,8 @@ private:
     std::map<QString, bool> _filterState;
     QString _nameFilter;
 
-
+private slots:
+    void updateContainer();
 signals:
     void selectionChanged();
     void contentChanged();
@@ -84,6 +85,25 @@ struct CatLess // public std::binary_function<bool, const T*, const T*>
 
       return static_cast<T *>(a)->displayName().toLower() < static_cast<T *>(b)->displayName().toLower();
   }
+};
+
+class CatalogWorker2 : public QObject {
+    Q_OBJECT
+
+public:
+    CatalogWorker2(const QUrl& url);
+
+public slots:
+    void process();
+
+
+signals:
+    void finished();
+    void updateContainer();
+
+
+private:
+    QUrl _container;
 };
 //}
 //}
