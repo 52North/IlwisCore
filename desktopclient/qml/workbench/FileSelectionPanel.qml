@@ -81,7 +81,8 @@ Rectangle {
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
             folderModel.folder = "file:///"+ drivePath
-            mainSplit.changeCatalog(folderModel.foldert)
+            var filter = "resource='" + folderModel.folder + "'"
+            mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
         }
     }
     Rectangle {
@@ -112,7 +113,8 @@ Rectangle {
                 var path = pathModel.get(currentIndex)
                 if ( path !== null && typeof path != 'undefined'){
                     folderModel.folder = "file:///" + path.folderid
-                    mainSplit.changeCatalog(folderModel.folder)
+                    var filter = "resource='" + folderModel.folder + "'"
+                    mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
                 }
             }
         }
@@ -131,7 +133,8 @@ Rectangle {
             onTriggered :{
                 currentFolder = "file:///"+ pathText.editText
                 folderModel.folder = currentFolder
-                mainSplit.changeCatalog(folderModel.folder)
+                var filter = "resource='" + folderModel.folder + "'"
+                mainSplit.changeCatalog(filter,"catalog", currentFolder)
             }
         }
 
@@ -178,7 +181,8 @@ Rectangle {
                         path = path2pathView(path)
                         currentFolder = "file:///"+ path;
                         folderModel.folder = currentFolder;
-                        mainSplit.changeCatalog(folderModel.folder)
+                        var filter = "container='" + folderModel.folder + "'"
+                        mainSplit.changeCatalog(filter,"catalog", currentFolder)
                     }
 
                 }

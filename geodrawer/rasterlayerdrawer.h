@@ -3,6 +3,8 @@
 
 #include "layerdrawer.h"
 
+class RasterImage;
+
 namespace Ilwis {
 namespace Geodrawer{
 class RasterLayerDrawer : public LayerDrawer
@@ -31,6 +33,9 @@ private:
     std::unique_ptr<QOpenGLTexture> _texture;
     QVector<QVector3D> _vertices;
     QVector<QVector2D> _texcoords;
+    std::unique_ptr<RasterImage> _rasterImage;
+    VisualAttribute _visualAttribute;
+
 };
 }
 }

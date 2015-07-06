@@ -40,6 +40,23 @@ void Representation::colors(ColorLookUp *lookup)
     _colors.reset(lookup);
 }
 
+void Representation::shapes(ShapeLookUp *lookup)
+{
+    if (isReadOnly())
+        return;
+    changed(true);
+
+    _shapes.reset(lookup);
+}
+
+const UPShapeLookUp &Representation::shapes() const
+{
+    if ( _shapes){
+        return _shapes;
+    }
+    throw ErrorObject(TR("Using uninitialized representation"));
+}
+
 IDomain Representation::domain() const
 {
     return _domain;
@@ -60,7 +77,7 @@ bool Representation::isCompatible(const IDomain &otherDomain)
         if ( otherDomain == domain())
             return true;
 
-        if ( hasType(domain()->ilwisType(), itNUMBER) && hasType(otherDomain->ilwisType(), itNUMBER)){
+        if ( hasType(domain()->valueType(), itNUMBER) && hasType(otherDomain->valueType(), itNUMBER)){
             return true;
         }
         //TODO other cases

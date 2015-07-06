@@ -12,6 +12,8 @@ Item {
     id : operationCatTab
     anchors.fill: parent
 
+    signal makeForm(string objectid, string name, string url)
+
     ListView{
         id : operationsByKey
         anchors.fill: parent
@@ -37,7 +39,7 @@ Item {
                 Connections{
                     target : operList
                     onMakeForm :{
-                        makeForm(objectid,name)
+                        makeForm(objectid,name, url)
                     }
                 }
             }

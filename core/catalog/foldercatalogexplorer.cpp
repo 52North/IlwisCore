@@ -52,6 +52,7 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
          QDir folder(p);
          p = folder.absolutePath();
          folder.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+         QStringList dirlist = folder.entryList();
          if (!folder.exists()) {
              return  std::vector<QUrl>();
          }
@@ -61,8 +62,10 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
 //         for(QString& file : fileList) {
 //             file = source.url().toString() + slash + file;
 //         }
-         folder.setFilter(QDir::Files);
+         folder.setFilter(QDir::Files | QDir::Dirs);
+
          QStringList files = folder.entryList(namefilter);
+         files.append(dirlist);
          for(QString file : files) {
              QString fullfile = source.url().toString() + slash +  file;
              fileList.push_back(fullfile);

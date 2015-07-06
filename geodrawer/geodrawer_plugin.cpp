@@ -1,5 +1,5 @@
 #include "geodrawer_plugin.h"
-#include "visualizationmanager.h"
+#include "layermanager.h"
 //#include "geodrawer.h"
 
 #include <qqml.h>
@@ -17,7 +17,7 @@ void GeodrawerPlugin::registerTypes(const char *uri)
 
     Ilwis::Geodrawer::DrawerFactory::registerDrawer("SelectionDrawer", Ilwis::Geodrawer::SelectionDrawer::create);
 
-
+    kernel()->issues()->log("Loaded module GeoDrawer",IssueObject::itMessage);
 }
 
 

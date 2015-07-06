@@ -17,7 +17,7 @@ Item {
 
     Column {
 
-        spacing : 5
+        spacing : 3
         width : parent.width
         height : parent.height - 10
 
@@ -32,79 +32,101 @@ Item {
                 editor.showAreas = showAreas.checked
             }
         }
-        CheckBox{
-            id : showBoundaries
-            text: qsTr("Show Boundaries")
 
-            style: Base.CheckBoxStyle1{}
-            checked : editor.showBoundaries
 
-            onCheckedChanged: {
-                editor.showBoundaries = showBoundaries.checked
-            }
-        }
+        GroupBox {
+            title : qsTr("Boundary")
+            width : 270
+            height : 110
+            Column {
+                spacing : 3
+                width : parent.width
+                height : parent.height
+                CheckBox{
+                    id : showBoundaries
+                    text: qsTr("Show")
 
-        Row {
-            height : Global.rowHeight
-            width : parent.width - 10
+                    style: Base.CheckBoxStyle1{}
+                    checked : editor.showBoundaries
 
-            spacing : 5
-            Text {
-                id : label
-                text : qsTr("Boundary Thickness")
-                width : 100
-            }
-
-            TextField{
-                id : thicknessValue
-                width : 30
-                height : Global.rowHeight
-                onTextChanged: {
-                    if ( thicknessSlider.value !== text && Global.isNumber(text)){
-                        thicknessSlider.value = text
+                    onCheckedChanged: {
+                        editor.showBoundaries = showBoundaries.checked
                     }
                 }
-            }
+                Row {
+                    height : Global.rowHeight
+                    width : parent.width - 10
 
-            Slider {
-                id: thicknessSlider
-                Layout.row: 2
-                minimumValue: 0
-                maximumValue: 10
-                stepSize: 0.5
-                value:1
-                width: parent.width - 50 - label.contentWidth
-                style: SliderStyle { }
-                onValueChanged: {
-                    if ( thicknessValue.text !== value){
-                        thicknessValue.text = value.toFixed(1)
+                    spacing : 5
+                    Text {
+                        id : label
+                        text : qsTr("Thickness")
+                        width : 50
+                    }
+
+                    TextField{
+                        id : thicknessValue
+                        width : 30
+                        height : Global.rowHeight
+                        text : "1"
+                        onTextChanged: {
+                            if ( thicknessSlider.value !== text && Global.isNumber(text)){
+                                thicknessSlider.value = text
+                                if ( editor)
+                                    editor.boundarywidth = text
+                            }
+                        }
+                    }
+
+                    Slider {
+                        id: thicknessSlider
+                        Layout.row: 2
+                        minimumValue: 0
+                        maximumValue: 10
+                        stepSize: 0.5
+                        value:1
+                        width: parent.width - 50 - label.contentWidth
+                        style: SliderStyle { }
+                        onValueChanged: {
+                            if ( thicknessValue.text !== value){
+                                thicknessValue.text = value.toFixed(1)
+                            }
+                        }
                     }
 
                 }
-            }
+                Row {
+                    height : Global.rowHeight
+                    width : parent.width - 10
+                    Text {
+                        id : label2
+                        text : qsTr("Color")
+                        width : 50
+                    }
+                    Controls.ColorPicker{
+                        onSelectedColorChanged: {
+                            editor.boundaryColor = selectedColor
+                        }
+                    }
+                    z : 1
+                }
 
-        }
 
-        Controls.ColorPicker{
-            width : 250
-            height : 20
-        }
-
-
-        Item {
-            height: Global.rowHeight
-            width : parent.width - 10
-            Text {
-                id : style
-                text : qsTr("Style")
-                width : 100
-                height: Global.rowHeight
-            }
-            ComboBox{
-                anchors.right: parent.right
-                id : stylesCombo
-                height: Global.rowHeight
-                width : parent.width - 60
+                Row {
+                    height: Global.rowHeight
+                    width : parent.width - 10
+                    Text {
+                        id : style
+                        text : qsTr("Style")
+                        width : 50
+                        height: Global.rowHeight
+                    }
+                    ComboBox{
+                        id : stylesCombo
+                        height: Global.rowHeight
+                        width : 184
+                    }
+                }
             }
         }
     }

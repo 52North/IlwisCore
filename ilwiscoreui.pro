@@ -36,8 +36,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tranquilizerhandler.h \
     ilwiscoreui/models/uicontextmodel.h \
     ilwiscoreui/models/usermessagehandler.h \
-    ilwiscoreui/models/visualizationmanager.h \
-    ilwiscoreui/propertyeditors/representationsetter.h \
     ilwiscoreui/models/coveragelayermodel.h \
     ilwiscoreui/drawers/drawerinterface.h \
     ilwiscoreui/models/projectionparametermodel.h \
@@ -56,7 +54,25 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tablemodel.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
     ilwiscoreui/models/workflow/workflowmodel.h \
-    ilwiscoreui/models/visualattributemodel.h
+    ilwiscoreui/models/visualattributemodel.h \
+    ilwiscoreui/models/layerinfoitem.h \
+    ilwiscoreui/models/layermanager.h \
+    ilwiscoreui/models/catalogmapitem.h \
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.h \
+    ilwiscoreui/drawers/rasterimage.h \
+    ilwiscoreui/drawers/rasterimagefactory.h \
+    ilwiscoreui/desktoptranquilizer.h \
+    ilwiscoreui/models/columnmodel.h \
+    ilwiscoreui/tableoperations/tableoperation.h \
+    ilwiscoreui/tableoperations/tableoperationfactory.h \
+    ilwiscoreui/tableoperations/sortcolumn.h \
+    ilwiscoreui/models/workspacemodel.h \
+    ilwiscoreui/models/graphmodel.h \
+    ilwiscoreui/models/chartmodel.h \
+    ilwiscoreui/models/consolescriptmodel.h \
+    ilwiscoreui/models/datapanemodel.h \
+    ilwiscoreui/models/tabmodel.h \
+    ilwiscoreui/models/operationworker.h
 
 unix {
     target.path = /usr/lib
@@ -78,8 +94,6 @@ SOURCES += \
     ilwiscoreui/models/tranquilizerhandler.cpp \
     ilwiscoreui/models/uicontextmodel.cpp \
     ilwiscoreui/models/usermessagehandler.cpp \
-    ilwiscoreui/models/visualizationmanager.cpp \
-    ilwiscoreui/propertyeditors/representationsetter.cpp \
     ilwiscoreui/models/coveragelayermodel.cpp \
     ilwiscoreui/drawers/drawerinterface.cpp \
     ilwiscoreui/models/projectionparametermodel.cpp \
@@ -98,7 +112,26 @@ SOURCES += \
     ilwiscoreui/models/tablemodel.cpp \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
     ilwiscoreui/models/workflow/workflowmodel.cpp \
-    ilwiscoreui/models/visualattributemodel.cpp
+    ilwiscoreui/models/visualattributemodel.cpp \
+    ilwiscoreui/models/layerinfoitem.cpp \
+    ilwiscoreui/models/layermanager.cpp \
+    ilwiscoreui/models/catalogmapitem.cpp \
+    ilwiscoreui/propertyeditors/numericrepresentationsetter.cpp \
+    ilwiscoreui/drawers/rasterimage.cpp \
+    ilwiscoreui/drawers/rasterimagefactory.cpp \
+    ilwiscoreui/desktoptranquilizer.cpp \
+    ilwiscoreui/models/columnmodel.cpp \
+    ilwiscoreui/tableoperations/tableoperation.cpp \
+    ilwiscoreui/tableoperations/tableoperationfactory.cpp \
+    ilwiscoreui/tableoperations/sortcolumn.cpp \
+    ilwiscoreui/models/workspacemodel.cpp \
+    ilwiscoreui/models/graphmodel.cpp \
+    ilwiscoreui/models/chartmodel.cpp \
+    ilwiscoreui/models/consolescriptmodel.cpp \
+    ilwiscoreui/models/datapanemodel.cpp \
+   ilwiscoreui/models/tabmodel.cpp \
+    ilwiscoreui/models/operationworker.cpp
+
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{

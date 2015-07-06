@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import TableModel 1.0
+import TabModel 1.0
 import "../../controls" as Controls
 import "../../Global.js" as Global
 
@@ -11,8 +12,10 @@ Item {
     id : tablePane
     width: parent.width
     height : parent.height
-
     property bool canSeparate : true
+
+    property TabModel tabmodel
+
     property TableModel table
 
     Component{
@@ -21,32 +24,58 @@ Item {
         }
     }
 
-    function addDataSource(sourceUrl, sourceName, sourceType){
-        table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
-        tableView.model = table
-        tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : 25}))
-        for(var i =0; i < table.columnCount; ++i){
-            var roleName = table.roleName(i)
-            var defaultWidth = table.defaultWidth(i)
-            tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : defaultWidth}))
+    function defaultWidth(index){
+        if (!table)
+            return 60
+        return table.defaultWidth(index)
+    }
+
+    function transfer(datapanel){
+        if ( datapanel.table)    {
+            addDataSource(datapanel.table.url, "", "table")
         }
     }
 
-    TableView {
-        id : tableView
-        anchors.fill : parent
-        selectionMode : SelectionMode.ExtendedSelection
+    function addDataSource(sourceUrl, filter, sourceType){
+        table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
+        if ( table){
+            tableView.model = table
+            columnManagement.setColumnModel1(table.columns)
 
-        headerDelegate : ColumnHeader{
+            for(var i =0; i < table.columnCount; ++i){
+                if ( i == 0)
+                    tableView.addColumn(column.createObject(tableView,{"role" : "first", "title" : "nr", "width" : defaultWidth(i)}))
+                else {
+                    var roleName = table.roleName(i)
+                    var dw = table.defaultWidth(i)
+                    tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
+                }
+            }
         }
+    }
+    SplitView {
+        anchors.fill: parent
+        orientation: Qt.Vertical
+        TableView {
+            id : tableView
+            width : parent.width
+            Layout.fillHeight: true
+            selectionMode : SelectionMode.ExtendedSelection
 
-        
-        rowDelegate: Rectangle {
-            id : rowdelegate
-            height : 20
-            color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#eee" : "#fff")
+            headerDelegate : ColumnHeader{
+            }
+
+
+            rowDelegate: Rectangle {
+                id : rowdelegate
+                height : 20
+                color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#eee" : "#fff")
+            }
+
         }
-
+        ColumnManagement{
+            id : columnManagement
+        }
     }
 }
 

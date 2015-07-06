@@ -8,14 +8,15 @@ import "../../controls" as Controls
 import "../../Global.js" as Global
 
 Rectangle {
-    width : childrenRect.width
-    height : childrenRect.height
+    width : defaultWidth(styleData.column)
+    height : 20
     color : "lightgrey"
     Text {
         text: styleData.value
-        verticalAlignment:Text.AlignVCenter
+        anchors.verticalCenter: parent.verticalCenter
         color : styleData.selected ? "#2121A3" : "black"
         horizontalAlignment: Text.AlignLeft
+        x : 2
     }
 }
 

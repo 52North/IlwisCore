@@ -14,7 +14,7 @@ FocusScope {
     anchors.fill: parent
     Rectangle {
         anchors.fill :parent
-        color : "white"
+        color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
         Image {
             anchors.fill: parent
@@ -36,9 +36,10 @@ FocusScope {
                 id : itemgrid
 
                 function setSelected(objectid){
-                    var ids = ""
+                    mastercatalog.setSelectedObjects("")
+                    var selectedIds
                     if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
-                        ids = objectid
+                        selectedIds = objectid
                         for(var i = 0; i < currentCatalog.resources.length; ++i){
                             if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
                                 currentCatalog.resources[i].isSelected=false
@@ -48,10 +49,10 @@ FocusScope {
                         for(var j = 0; j < currentCatalog.resources.length; ++j){
                             if ( currentCatalog.resources[j].isSelected){
                                 startRange = !startRange;
-                                ids = ids == "" ? currentCatalog.resources[j].id : ids + "|" +currentCatalog.resources[j].id
+                                selectedIds = selectedIds == "" ? currentCatalog.resources[j].id : selectedIds + "|" +currentCatalog.resources[j].id
                             }else {
                                 if ( startRange){
-                                    ids = ids + "|" +currentCatalog.resources[j].id
+                                    selectedIds = selectedIds + "|" +currentCatalog.resources[j].id
                                     currentCatalog.resources[j].isSelected = true
                                 }
                                 else {
@@ -62,11 +63,11 @@ FocusScope {
                     } else if ( uicontext.currentKey === Qt.Key_Control){
                       for(var k = 0; k < currentCatalog.resources.length; ++k){
                           if ( currentCatalog.resources[k].isSelected){
-                            ids = ids == "" ? currentCatalog.resources[k].id : ids + "|" +currentCatalog.resources[k].id
+                            selectedIds = selectedIds == "" ? currentCatalog.resources[k].id : selectedIds + "|" +currentCatalog.resources[k].id
                           }
                       }
                     }
-                    currentCatalog.setSelectedObjects(ids)
+                    mastercatalog.setSelectedObjects(selectedIds)
                 }
 
                 model : setResources()

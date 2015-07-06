@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
+import TabModel 1.0
 import "./propertyeditors" as LayerManagement
 import "../../controls" as Controls
 import "../../Global.js" as Global
@@ -14,6 +15,8 @@ Item {
     id : layerview
     width: parent.width
     height : parent.height
+    property TabModel tabmodel
+
     objectName: uicontext.uniqueName()
     property LayerManager manager
     property bool canSeparate : true
@@ -29,11 +32,15 @@ Item {
     }
 
     function addDataSource(sourceUrl, sourceName, sourceType){
-        layers.addDataSource(sourceUrl, sourceName, sourceType)
+        if ( sourceUrl !== ""){
+            layers.addDataSource(sourceUrl, sourceName, sourceType)
+            viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
+         }
     }
 
-    function transferLayers(layermanager){
-        layers.transferLayers(layermanager)
+    function transfer(datapanel){
+        layers.transfer(datapanel)
+        viewmanager.transfer(datapanel)
     }
 
     Action {
@@ -41,8 +48,7 @@ Item {
         onTriggered : {
             if ( manager){
                 manager.zoomInMode = !manager.zoomInMode
-                zoominButton.imageSource = iconsource(manager.zoomInMode ? "zoomin20A.png" : "zoomin20.png")
-                zoominButton.checked = !zoominButton.checked
+
             }
         }
     }
@@ -51,103 +57,49 @@ Item {
         id : entireClicked
         onTriggered : {
             layers.entireMap()
+            viewmanager.entireMap()
+        }
+    }
+    Action {
+        id : refreshClicked
+        onTriggered: {
+
+        }
+    }
+    Action {
+        id : zoomOutClicked
+        onTriggered : {
+            if ( manager){
+                var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
+                Global.calcZoomOutEnvelope(envelope, layers, viewmanager)
+            }
         }
     }
 
-    ToolBar{
+
+
+    LayerExtentsToolbar{
         id : maptools
-        width : parent.width
-        height : 35
-        Button {
-            height : 25
-            width : 25
-            id : entireMap
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 2
-            tooltip: "EntireMap"
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                source : iconsource("entiremap20.png")
-            }
-            onClicked: {
-                layers.entireMap()
-            }
-        }
-
-        Button {
-            height : 25
-            width : 25
-            id : refreshButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :entireMap.right
-            action : entireClicked
-            anchors.rightMargin: 2
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource("refresh20.png")
-            }
-        }
-
-
-        Button {
-            height : 25
-            width : 25
-            id : panButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :refreshButton.right
-            anchors.rightMargin: 2
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource("pan20.png")
-            }
-        }
-
-
-        Button {
-            height : 25
-            width : 25
-            id : zoominButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :panButton.right
-            anchors.rightMargin: 2
-            action : zoomClicked
-            checkable: true
-            checked: false
-            property string imageSource :  "zoomin20.png"
-            Image {
-                id : zoomimage
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source : iconsource(zoominButton.imageSource)
-            }
-        }
-        Button {
-            height : 25
-            width : 25
-            id : zoomoutButton
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left :zoominButton.right
-            anchors.leftMargin: 2
-            checkable: true
-            checked: false
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                source : iconsource("zoomout20.png")
-            }
-        }
-
     }
+
     SplitView {
         anchors.top : maptools.bottom
         width : parent.width
         orientation: Qt.Vertical
         height : parent.height - maptools.height
+
+        Connections {
+            target: layers
+            onZoomEnded :{
+                viewmanager.newZoomExtent(envelope)
+            }
+        }
+        Connections {
+            target: viewmanager
+            onZoomEnded :{
+                viewmanager.newZoomExtent(envelope)
+            }
+        }
         Layers{
             width : parent.width
             height : parent.height - maptools.height - 150
@@ -156,6 +108,7 @@ Item {
 
         }
         ViewManager{
+            id : viewmanager
             height : 150
             anchors.left: parent.left
             anchors.leftMargin: 5

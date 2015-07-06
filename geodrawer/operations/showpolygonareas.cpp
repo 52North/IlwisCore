@@ -8,6 +8,7 @@
 #include "drawers/drawerinterface.h"
 #include "drawers/draweroperation.h"
 #include "../rootdrawer.h"
+#include "../layersview.h"
 #include "showpolygonareas.h"
 
 using namespace Ilwis;
@@ -45,6 +46,7 @@ bool ShowPolygonAreas::execute(ExecutionContext *ctx, SymbolTable &symTable)
             UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
             drawer->setAttribute("polygonareas", _areaVisibility);
         }
+        rootdrawer->redraw();
         return true;
     }catch(const VisualizationError& err){
     }
@@ -58,12 +60,12 @@ Ilwis::OperationImplementation *ShowPolygonAreas::create(quint64 metaid, const I
 
 Ilwis::OperationImplementation::State ShowPolygonAreas::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
+    }
 
     QString type = _expression.parameterCount() == 3 ? "main" : _expression.input<QString>(3);
+
     bool ok;
     int index = _expression.parm(1).value().toInt(&ok);
     if ( ok){
@@ -101,7 +103,7 @@ quint64 ShowPolygonAreas::createMetadata()
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
     operation.addInParameter(1,itSTRING|itINTEGER , TR("layer index/code"), TR("location of the layer to be used. In the case of pre or post drawers the index is the order number"));
     operation.addInParameter(2,itBOOL , TR("visibility"));
-    operation.addInParameter(3,itBOOL , TR("drawer type"), TR("the type fo drawer, pre, main, or post. The default is main"));
+    operation.addInParameter(3,itSTRING , TR("drawer type"), TR("the type fo drawer, pre, main, or post. The default is main"));
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 

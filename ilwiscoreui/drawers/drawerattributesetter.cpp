@@ -25,7 +25,7 @@ FeatureDrawing DrawerAttributeSetter::setSpatialAttributes(const SPFeatureI &, Q
 }
 
 void DrawerAttributeSetter::setColorAttributes(const VisualAttribute &,
-                                               const QVariant &,
+                                               const QVariant &, const QColor& ,
                                                const FeatureDrawing &,
                                                std::vector<VertexColor> &) const
 {

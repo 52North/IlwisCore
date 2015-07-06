@@ -8,24 +8,31 @@ import "../../controls" as Controls
 import "../../Global.js" as Global
 
 Rectangle {
-    color: styleData.selected ? "#4668A6" : "#C1D5F8"
+    id : header
+    color:  "#C1D5F8"
+    objectName: uicontext.uniqueName()
     border.color:  Global.headerdark
-    implicitWidth: Math.max(text.width + 4, 100)
-    implicitHeight: Global.rowHeight
+    width: defaultWidth(styleData.column)
+    height: Global.rowHeight
+    property bool selected : false
     Text {
         id: text
-        anchors.centerIn: parent
+        property int count : 0
         text: styleData.value
         font.weight: Font.DemiBold
-        color: styleData.selected ? "white" : "black"
+        color: styleData.pressed ? "white" : "black"
+        x : 2
 
-//        MouseArea{
-//            anchors.fill: parent
-//            onEntered: {
-//                console.debug("aaaaa")
-//                table.selectColumn(styleData.column)
-//            }
-//        }
+        onColorChanged: {
+            count += 1
+            if ( count  % 2 == 0){
+                selected = !selected
+                table.selectColumn(styleData.column, selected)
+                header.color = table.isColumnSelected(styleData.column) ? "#4668F6" : "#C1D5F8"
+                table.update()
+             }
+        }
+
     }
 
 }

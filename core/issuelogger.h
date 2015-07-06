@@ -6,6 +6,7 @@
 #include <fstream>
 #include <thread>
 #include <map>
+#include <mutex>
 #include "kernel_global.h"
 
 class QSqlError;
@@ -98,8 +99,12 @@ private:
     std::ofstream _logFileRegular;
     std::ofstream _logFileCode;
     static std::map<std::thread::id, bool> _silentThreads;
+    mutable std::recursive_mutex _guard;
+
 
 };
 }
+
+Q_DECLARE_METATYPE( Ilwis::IssueObject)
 
 #endif // ERRORHANDLING_H

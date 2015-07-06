@@ -30,19 +30,26 @@ public:
     int getActiveAttributeIndex() const;
     void setActiveAttributeIndex(int index);
     QString activeAttribute() const;
+    QString visualAttributeByIndex(int index) const;
+    bool showInfo() const;
+    void showInfo(bool yesno)    ;
+
 signals:
     void visualAttributesChanged();
     void onActiveChanged();
     void onActiveAttributeIndexChanged();
 
+
 private:
     quint32 layerIndex() const;
     VisualAttributeModel *visualAttribute(const QString& name);
     QQmlListProperty<VisualAttributeModel> visualAttributes();
+
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
     QList<VisualAttributeModel *> _visualAttributes;
     quint32 _layerIndex;
     int _activeAttribute = 0;
+    bool _showInfo = true;
 
 
 

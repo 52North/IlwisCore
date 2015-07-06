@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QQmlContext>
+#include <QThread>
 #include "kernel.h"
 #include "connectorinterface.h"
 #include "resource.h"
@@ -18,38 +19,18 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "operationmodel.h"
+#include "workspacemodel.h"
+#include "uicontextmodel.h"
+#include "ilwiscontext.h"
+#include "operationworker.h"
+#include "dataformat.h"
 #include "operationcatalogmodel.h"
 
 using namespace Ilwis;
 
-OperationCatalogModel::OperationCatalogModel(QObject *) : CatalogModel()
+OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel(p)
 {
-    QUrl location("ilwis://operations");
-    QString descr ="main catalog for ilwis operations";
-    Resource res(location, itCATALOGVIEW ) ;
-    res.name("ilwis-operations",false);
-    QStringList lst;
-    lst << location.toString();
-    res.addProperty("locations", lst);
-    res.addProperty("type", "operation" );
-    res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
-    res.setDescription(descr);
-    newview(CatalogView(res));
 
-    location = QUrl("ilwis://operations");
-    descr ="main catalog for ilwis services";
-    res = Resource(location, itCATALOGVIEW ) ;
-    res.name("ilwis-services",false);
-    lst.clear();
-    lst << location.toString();
-    res.addProperty("locations", lst);
-    res.addProperty("type", "operation" );
-    res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
-    res.setDescription(descr);
-    CatalogView view(res);
-    view.prepare();
-
-    _services = view.items();
 
 }
 
@@ -63,7 +44,15 @@ void OperationCatalogModel::nameFilter(const QString &filter)
     CatalogModel::nameFilter(filter);
     _currentOperations.clear();
     _operationsByKey.clear();
+    _refresh = true;
     emit operationsChanged();
+}
+
+void OperationCatalogModel::filter(const QString &filterString)
+{
+    CatalogModel::filter(filterString);
+    emit operationsChanged();
+
 }
 
 quint64 OperationCatalogModel::operationId(quint32 index, bool byKey) const{
@@ -100,16 +89,17 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 {
     try{
         if ( _currentOperations.isEmpty()) {
-            if ( !_view.isValid())
-                return QMLOperationList();
 
             gatherItems();
 
             _currentOperations.clear();
 
             std::map<QString, std::vector<OperationModel *>> operationsByKey;
+
             for(auto item : _currentItems){
                 QString keywords = item->resource()["keyword"].toString();
+                if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+                    continue;
                 if ( keywords.indexOf("internal") != -1)
                     continue;
                 _currentOperations.push_back(new OperationModel(item->resource(), this));
@@ -133,42 +123,110 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
     }
     return  QMLOperationList();
 }
-
-bool runApplication( OperationExpression opExpr, QString *result){
-    Operation op(opExpr);
-    SymbolTable tbl;
-    ExecutionContext ctx;
-
-    if(op->execute(&ctx, tbl)){
-        if ( ctx._results.size() > 0){
-            for(auto resultName : ctx._results){
-                Symbol symbol = tbl.getSymbol(resultName);
-                if ( hasType(symbol._type, itNUMBER)){
-                    *result += symbol._var.toDouble();
-                }else if ( hasType(symbol._type, itSTRING)){
-                    *result += symbol._var.toString();
-                }else if ( hasType(symbol._type, (itCOVERAGE | itTABLE))){
-                    if ( symbol._type == itRASTER){
-                        IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
-                        QUrl url = raster->source().container();
-                    }
-                }
-            }
-        }
-        return true;
-    }
-    return false;
+void OperationCatalogModel::prepare(){
+    _refresh  = true;
+    gatherItems();
 }
 
-void startApplication( OperationExpression opExpr, OperationCatalogModel *operationCatalogModel){
+void OperationCatalogModel::gatherItems() {
+    if (!_refresh)
+        return;
 
-    QString result;
-    std::future<bool> resultApplication = std::async(runApplication, opExpr,&result) ;
-
-    if(!resultApplication.get()) {
-        throw ErrorObject(TR("running %1 failed").arg(opExpr.name()));
+    WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
+    bool isDefault = false;
+    if (currentModel){
+        auto n = currentModel->name();
+        isDefault = n == "default";
     }
-    emit operationCatalogModel->updateCatalog(QUrl("ilwis://internalcatalog")); // TODO
+    if ( currentModel == 0 || isDefault){
+        if ( !_view.isValid()){
+            QUrl location("ilwis://operations");
+            QString descr ="main catalog for ilwis operations";
+            Resource res(location, itCATALOGVIEW ) ;
+            res.name("ilwis-operations",false);
+            QStringList lst;
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", "operation" );
+            res.addProperty("filter",QString("type=%1").arg(itOPERATIONMETADATA));
+            res.setDescription(descr);
+            setView(CatalogView(res));
+
+            location = QUrl("ilwis://operations");
+            descr ="main catalog for ilwis services";
+            res = Resource(location, itCATALOGVIEW ) ;
+            res.name("ilwis-services",false);
+            lst.clear();
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", "operation" );
+            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
+            res.setDescription(descr);
+            CatalogView view(res);
+            view.prepare();
+
+            _services = view.items();
+        }
+    }else {
+        setView(currentModel->view());
+    }
+    CatalogModel::gatherItems();
+    std::set<QString> keywordset;
+    for(auto item : _currentItems){
+        QString keywords = item->resource()["keyword"].toString();
+        if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+            continue;
+        if ( keywords.indexOf("internal") != -1)
+            continue;
+        _currentOperations.push_back(new OperationModel(item->resource(), this));
+        if ( keywords == sUNDEF)
+            keywords = TR("Uncatagorized");
+        QStringList parts = keywords.split(",");
+        for(auto keyword : parts){
+            keywordset.insert(keyword);
+        }
+    }
+    _keywords.clear();
+    for(auto keyword : keywordset)
+        _keywords.push_back(keyword);
+
+    qSort(_keywords.begin(), _keywords.end());
+
+    _keywords.push_front(""); // all
+}
+
+QStringList OperationCatalogModel::keywords() const
+{
+    return _keywords;
+}
+
+void OperationCatalogModel::workSpaceChanged()
+{
+    _currentItems.clear();
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    _services.clear();
+    _refresh = true;
+
+    emit operationsChanged();
+}
+
+QString OperationCatalogModel::modifyTableOutputUrl(const QString& output, const QStringList& parms)
+{
+    QString columnName = output;
+    QString firstTable = parms[0];
+    if ( firstTable.indexOf("://") != -1){
+        int index = firstTable.lastIndexOf("/");
+        firstTable = firstTable.mid(index + 1);
+        index =  firstTable.indexOf(".");
+        if ( index != -1)
+            firstTable = firstTable.left(index) + ".ilwis";
+    }
+    QString internalPath = context()->persistentInternalCatalog().toString();
+    QString outpath = internalPath + "/" + firstTable + "[" + columnName + "]";
+
+    return outpath;
+
 }
 
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters) {
@@ -188,15 +246,69 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         expression += parms[i];
     }
     QString output = parms[parms.size() - 1];
-    expression = QString("%1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
+    IlwisTypes outputtype = operationresource["pout_1_type"].toULongLong();
+    if ( output.indexOf("@@") != -1 ){
+        QString format;
+        QStringList parts = output.split("@@");
+        output = parts[0];
+        QString formatName = parts[1];
+        if ( hasType(outputtype, itTABLE)){
+            if ( formatName == "Memory"){
+                output = modifyTableOutputUrl(output, parms);
+            }else
+                output = parms[0] + "[" + output + "]";
+        }
+        if ( formatName == "Keep original"){
+            IIlwisObject obj;
+            obj.prepare(parms[0], operationresource["pin_1_type"].toULongLong());
+            if ( obj.isValid())
+                format = "{format(" + obj->provider() + ",\"" + obj->formatCode() + "\")}";
+        }
+        if ( formatName != "Memory"){ // special case
+            if ( format == "") {
+                QString query = "name='" + formatName + "'";
+                std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+                if ( formats.size() == 1){
+                    format = "{format(" + (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString() + ",\"" +
+                            (*formats.begin()).second.property(DataFormat::fpCODE).toString() + "\")}";
+                }
+            }
+            if ( output.indexOf("://") == -1)
+                output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
+            else
+                output = output + format;
+        }else{
+
+            if ( outputtype == itRASTER)
+                format = "{format(stream,\"rastercoverage\")}";
+            else if (hasType(outputtype, itFEATURE))
+                format = "{format(stream,\"featurecoverage\")}";
+            else if (hasType(outputtype, itTABLE)){
+                format = "{format(stream,\"table\")}";
+            }
+            output = output + format;
+        }
+    }
+    if ( output == "")
+        expression = QString("script %1(%2)").arg(operationresource.name()).arg(expression);
+    else
+        expression = QString("script %1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
+    qDebug() << expression;
 
     OperationExpression opExpr(expression);
 
 
 
     try {
+        QThread* thread = new QThread;
+        OperationWorker* worker = new OperationWorker(opExpr);
+        worker->moveToThread(thread);
+        thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
+        thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
+        thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
+        thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        thread->start();
 
-    std::async(std::launch::async, startApplication, opExpr, this);
 
     return "TODO";
     } catch (const ErrorObject& err){

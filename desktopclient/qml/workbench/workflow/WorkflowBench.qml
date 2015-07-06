@@ -5,14 +5,13 @@ import WorkflowMetadataFormBuilder 1.0
 import WorkflowCatalogModel 1.0
 
 import ".." as Workbench
-
-import "../../datapanel/workflow" as WorkflowDataTest
 import "../../datapanel" as DataPane
 
 Rectangle {
 
     id : workflowbench
 
+   property string workflowTitle
 
     // ###########################  TITLE
 
@@ -28,8 +27,12 @@ Rectangle {
     Action {
         id: createNewWorkflow
         onTriggered: {
+            console.log("Creating new workflow ...");
             var workflow = workflows.newWorkflow("workflow");
+            console.log("id: " + workflow.id);
+            console.log("displayName: " + workflow.displayName);
             createWorkflowMetadataForm(workflow.id, workflow.displayName);
+            newWorkflow.visible = false;
         }
     }
 
@@ -56,20 +59,21 @@ Rectangle {
     // ###########################  Workflow Metadata
 
     function createWorkflowMetadataForm(metaid, title) {
-        //var form = formbuilder.index2Form(metaid);
-        var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
+        var form = formbuilder.index2Form(metaid);
+        applicationForm.workflowId = metaid;
+        applicationForm.workflowname = title;
+        //var form = workflowmetadataformbuilder.createWorkflowForm(metaid)
         appFrame.formQML = form;
         appFrame.formTitle = title;
         appFrame.opacity = 1
-        applicationForm.state = applicationForm.state != "minimized" ? "minimized" : "maximized"
+        applicationForm.state = "maximized";
     }
 
-    function createWorkflowEditSession(workflowName) {
-        dataPanel.addWorkflowCanvas(workflowName + " [Workflow Builder]" );
+    function createWorkflowEditSession(workflowId, workflowName) {
+        workflowTitle = workflowName + " [Workflow Builder]"
+        dataPanel.addWorkflowCanvas(workflowId, workflowTitle);
         workflowbenchContentLoader.setSource("WorkflowEdit.qml");
-
-        // GUI state is not available right now --> use model instead
-        workflows.currentWorkflow = workflowName
+        workflowbenchContentLoader.editSession = workflowName;
     }
 
     SplitView {
@@ -87,7 +91,7 @@ Rectangle {
             height : 0
 
             property string workflowname
-            property string workflowdescription
+            property string workflowId
 
             // ###########################  CONTROL BUTTONS
 
@@ -100,7 +104,7 @@ Rectangle {
                 Button {
                     id : editWorkflowButton
                     text :  qsTr("Edit Workflow")
-                    onClicked: createWorkflowEditSession(applicationForm.workflowname)
+                    onClicked: createWorkflowEditSession(applicationForm.workflowId, applicationForm.workflowname)
                     tooltip: qsTr("Edit selected workflow")
                     anchors.margins: 5
                 }
@@ -133,19 +137,8 @@ Rectangle {
                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 anchors.top : workflowButtons.bottom;
+                enabled: false;
                 opacity: 0
-            }
-
-            Button{
-                y : parent.height - 25
-                text : "Create Workflow"
-                height : 22
-                x : parent.width - width
-                onClicked: {
-                    workflows.newWorkflow(applicationForm.workflowname,
-                                          applicationForm.workflowdescription)
-                    createWorkflowEditSession(applicationForm.workflowname);
-                }
             }
             states: [
                 State {

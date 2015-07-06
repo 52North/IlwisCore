@@ -6,7 +6,7 @@ Item {
     property var currentVisualAttribute
 
     onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute.propertyEditors ){
+        if ( currentVisualAttribute && currentVisualAttribute.propertyEditors ){
             editorList.model =  currentVisualAttribute.propertyEditors
             editorColumn.currentEditor = editorList.model[0]
         }
@@ -26,8 +26,6 @@ Item {
     Rectangle {
         id : displayEditors
         color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
         width : parent.width
         anchors.top: propertiesLabel.bottom
         anchors.topMargin: 2

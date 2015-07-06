@@ -7,7 +7,7 @@
 #include "operation.h"
 #include "drawers/drawerinterface.h"
 #include "drawers/draweroperation.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "setlayertransparency.h"
 #include "uicontextmodel.h"
 
@@ -48,11 +48,10 @@ Ilwis::OperationImplementation *SetLayerTransparency::create(quint64 metaid, con
 
 Ilwis::OperationImplementation::State SetLayerTransparency::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
+    }
 
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     quint64 viewerid = _expression.input<quint32>(0);
     LayersViewCommandInterface *viewer = uicontext()->viewer(viewerid);
     if (!viewer)

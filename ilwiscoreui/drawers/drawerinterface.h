@@ -64,7 +64,7 @@ struct ILWISCOREUISHARED_EXPORT VertexColor {
 struct ILWISCOREUISHARED_EXPORT VertexColorI {
     VertexColorI(byte r=0, byte g=0, byte b = 0, byte a = 1.0) : _c1(r), _c2(g), _c3(b), _c4(a){}
     VertexColorI(const QColor& clr) : _c1(clr.red()), _c2(clr.green()), _c3(clr.blue()), _c4(clr.alpha()) {}
-    byte _c1=0, _c2=0, _c3=0, _c4=1.0;
+    byte _c1=0, _c2=0, _c3=0, _c4=255;
 };
 
 class RootDrawer;
@@ -105,6 +105,8 @@ public:
     virtual QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const = 0;
     virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
     virtual bool drawerAttribute(const QString drawercode, const QString& attrName, const QVariant& attrib)  = 0;
+
+    virtual QVariant execute(const QString& operationName, const QVariantMap& parameters) = 0;
 
     virtual quint32 defaultOrder() const = 0;
     virtual DrawerType drawerType()  const = 0;

@@ -92,8 +92,8 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
              _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
-
-            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
+            const QColor& clr = geomtype == itPOLYGON ? _boundaryColor : _lineColor;
+            setters[geomtype]->setColorAttributes(attr,value,clr,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
         // implicity the redoing of the geometry is also redoing the representation stuff(a.o. colors)
@@ -111,12 +111,22 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
             return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
         }
         _colors.resize(0);
+        bool polygononly = false;
+        if ( options.contains("polygononly"))
+            polygononly = options["polygononly"].toBool();
+
         for(const SPFeatureI& feature : features){
+            if ( polygononly && feature->geometryType() != itPOLYGON){
+                ++featureIndex;
+                continue;
+            }
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
-            setters[geomtype]->setColorAttributes(attr,value,_featureDrawings[featureIndex],_colors) ;
+            const QColor& clr = geomtype == itPOLYGON ? _boundaryColor : _lineColor;
+            setters[geomtype]->setColorAttributes(attr,value,clr,_featureDrawings[featureIndex],_colors) ;
             ++featureIndex;
         }
+        _prepared |= DrawerInterface::ptRENDER;
     }
 
     //initialize();
@@ -219,6 +229,8 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
             _shaders.setUniformValue(_scaleFactor, 1.0f);
             if ( featureDrawing._geomtype == itLINE){
                 glLineWidth(_lineWidth);
+            }else if (featureDrawing._geomtype == itPOLYGON){
+                glLineWidth(_boundarywidth);
             }
         }
 
@@ -258,6 +270,12 @@ QVariant FeatureLayerDrawer::attribute(const QString &attrName) const
     }
     if ( attrName == "areatransparency")
         return _areaTransparency;
+    if ( attrName == "boundarycolor")
+        return _boundaryColor;
+    if ( attrName == "linecolor")
+        return _lineColor;
+    if ( attrName == "boundarywidth")
+        return _boundarywidth;
 
     return QVariant();
 }
@@ -268,12 +286,18 @@ void FeatureLayerDrawer::setAttribute(const QString &attrName, const QVariant &v
 
     if ( attrName == "linewidth")
         _lineWidth = value.toFloat();
+    if ( attrName == "boundarywidth")
+        _boundarywidth = value.toFloat();
     if ( attrName == "polygonboundaries")
         _showBoundaries = value.toBool();
     if ( attrName == "polygonareas")
         _showAreas = value.toBool();
     if ( attrName == "areatransparency")
         _areaTransparency = value.toFloat();
+    if ( attrName == "boundarycolor")
+        _boundaryColor = value.value<QColor>();
+    if ( attrName == "linecolor")
+        _lineColor = value.value<QColor>();
 }
 
 

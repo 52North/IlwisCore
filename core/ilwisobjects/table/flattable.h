@@ -62,7 +62,7 @@ public:
     void setCell(quint32, quint32 rec, const QVariant& var);
 
     //@override
-    bool prepare();
+    bool prepare(const IOOptions& options=IOOptions());
 
     //@override
     bool isValid() const;

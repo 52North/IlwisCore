@@ -294,7 +294,7 @@ bool RasterCoverage::bandPrivate(quint32 bandIndex,  PixelIterator inputIter)
         size(Size<>(twodsz.xsize(), twodsz.ysize() ,stackDefinition().count()));
         _datadefBands.resize(stackDefinition().count());
     }
-    datadefRef(bandIndex) = inputIter.raster()->datadef(inputIter.box().zlength());
+    datadefRef(bandIndex) = inputIter.raster()->datadef();
 //    grid()->setBandProperties(this,bandIndex);
 
     PixelIterator iter = bandPrivate(bandIndex);

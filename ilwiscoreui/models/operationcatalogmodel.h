@@ -13,6 +13,7 @@ class ILWISCOREUISHARED_EXPORT OperationCatalogModel : public CatalogModel
 {
     Q_OBJECT
     Q_PROPERTY(QMLOperationList operations READ operations NOTIFY operationsChanged)
+    Q_PROPERTY(QStringList keywords READ keywords NOTIFY operationsChanged)
     Q_PROPERTY(QQmlListProperty<OperationsByKeyModel> operationKeywords READ operationKeywords CONSTANT)
 public:
 
@@ -22,16 +23,27 @@ public:
    QMLOperationList operations();
    QQmlListProperty<OperationsByKeyModel> operationKeywords();
    void nameFilter(const QString&);
+   Q_INVOKABLE void filter(const QString& filterString);
+   void prepare();
 
    Q_INVOKABLE quint64 operationId(quint32 index, bool byKey) const;
    Q_INVOKABLE quint64 serviceId(quint32 index) const;
    Q_INVOKABLE QStringList serviceNames() const;
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
 
+   void gatherItems();
+
 private:
     QList<OperationModel *> _currentOperations;
     QList<OperationsByKeyModel *> _operationsByKey;
     std::vector<Ilwis::Resource> _services;
+    QStringList _keywords;
+
+    QStringList keywords() const;
+    QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
+
+public slots:
+    void workSpaceChanged();
 
 signals:
     void updateCatalog(const QUrl& url);
@@ -39,6 +51,8 @@ signals:
     void error(const QString& err);
 
 };
+
+
 
 
 #endif // OPERATIONSMODEL_H

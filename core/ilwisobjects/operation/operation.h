@@ -16,13 +16,13 @@ public:
     OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e);
     virtual ~OperationImplementation() {}
     const IOperationMetaData& metadata() const;
-    Tranquilizer& trq();
+    UPTranquilizer& trq();
     virtual bool execute(ExecutionContext *ctx, SymbolTable& symTable)=0;
     virtual bool isValid() const;
     OperationExpression expression() const;
     void updateTranquilizer(quint64 currentCount, quint32 step){
-        if ( currentCount % step){
-            trq().update(step);
+        if ( (currentCount % step) == 0){
+            trq()->update(step);
         }
     }
 
@@ -32,7 +32,7 @@ protected:
     IOperationMetaData _metadata;
     OperationExpression _expression;
     State _prepState;
-    Tranquilizer _tranquilizer;
+    std::unique_ptr<Tranquilizer> _tranquilizer;
 
     virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
 

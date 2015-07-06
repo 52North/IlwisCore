@@ -33,7 +33,7 @@ class Tranquilizer;
 typedef QScopedPointer<Version> SPVersion;
 typedef std::shared_ptr<Tranquilizer> SPTranquilizer;
 
-enum RunMode { rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
+enum RunMode {rmEMPTY=0, rmDESKTOP=1, rmAPPLICATIONSERVER=2, rmCOMMANDLINE=4, rmNOUI=8, rmTEST = 16};
 
 /*!
  The Kernel class a singleton object that controls some essential resources in the system.
@@ -183,7 +183,7 @@ public:
     void startClock();
     void endClock(const QString &label="");
     QNetworkAccessManager& network();
-    void newTranquilizer(quint64 id,const QString &title, const QString &description, qint64 end);
+    void newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end);
     const Module* module(const QString& name) const;
 
 private:
@@ -201,8 +201,9 @@ private:
 signals:
     void doCommand(const QString& expr, ExecutionContext* ctx);
     void updateTranquilizer(quint64 id, double amount);
-    void createTranquilizer(quint64 id,const QString &title, const QString &description, double end);
+    void createTranquilizer(quint64 id,const QString &title, const QString &description, double start, double end);
     void removeTranquilizer(quint64 id);
+    void stopAllThreads();
 
 public slots:
     void changeTranquilizer(quint64 id, double amount);
@@ -211,7 +212,7 @@ public slots:
 
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
-KERNELSHARED_EXPORT bool initIlwis(int mode);
+KERNELSHARED_EXPORT bool initIlwis(int mode, const QString & ilwisDir = "");
 KERNELSHARED_EXPORT void exitIlwis();
 #define TR(s) (kernel()->translate(s))
 

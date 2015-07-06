@@ -382,7 +382,7 @@ bool PixelIterator::operator>=(const PixelIterator &iter) const
 
 PixelIterator PixelIterator::end() const {
     PixelIterator iter(*this);
-    iter += _endposition;
+    iter += _endposition - _linearposition;
     return iter;
 }
 
@@ -421,12 +421,12 @@ bool PixelIterator::zchanged() const {
 void PixelIterator::initPosition() {
     const Size<>& sz = _raster->size();
     quint64 linpos = _y * sz.xsize() + _x;
+    quint64 endpos = _endy * sz.xsize() + _endx;
     _currentBlock = _y / _grid->maxLines();
     _localOffset = linpos - _currentBlock * _grid->maxLines() * sz.xsize();
     _currentBlock += _z * _grid->blocksPerBand();
     _linearposition = sz.xsize() * sz.ysize() * _z + linpos;
-    _endposition = sz.xsize() * sz.ysize() * sz.zsize();
-
+    _endposition = sz.xsize() * sz.ysize() * _endz + endpos + 1; // one past the last valid position
 }
 
 int PixelIterator:: operator-(const PixelIterator& iter) {

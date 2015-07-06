@@ -2,6 +2,7 @@
 #include "table.h"
 #include "featurecoverage.h"
 #include "feature.h"
+#include "raster.h"
 #include "range.h"
 #include "itemrange.h"
 #include "identifieritem.h"
@@ -61,11 +62,8 @@ void SpatialDataDrawer::envelope(const Envelope &env)
     _envelope = env;
 }
 
-VisualAttribute SpatialDataDrawer::visualAttribute(const QString &attrName) const
+VisualAttribute SpatialDataDrawer::vattributeFeatureCoverage(const QString &attrName) const
 {
-    auto iter = _visualProperties.find(attrName)    ;
-    if ( iter != _visualProperties.end())
-        return iter->second;
     VisualAttribute attr;
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
     if ( !features.isValid()){
@@ -92,6 +90,32 @@ VisualAttribute SpatialDataDrawer::visualAttribute(const QString &attrName) cons
         attr.setColumnIndex(columnIndex);
     }
     return attr;
+}
+
+VisualAttribute SpatialDataDrawer::vattributeRasterCoverage(const QString &attrName) const
+{
+    //TODO later when displaying rasters with attributes
+    VisualAttribute attr;
+    IRasterCoverage features = coverage().as<RasterCoverage>();
+    if ( !features.isValid()){
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
+    }else {
+
+    }
+    return attr;
+}
+
+VisualAttribute SpatialDataDrawer::visualAttribute(const QString &attrName) const
+{
+    auto iter = _visualProperties.find(attrName)    ;
+    if ( iter != _visualProperties.end())
+        return iter->second;
+    if ( hasType(coverage()->ilwisType(), itFEATURE)){
+        return vattributeFeatureCoverage(attrName);
+    } else if ( hasType(coverage()->ilwisType(), itRASTER)){
+        return vattributeRasterCoverage(attrName);
+    }
+    return VisualAttribute();
 }
 
 void SpatialDataDrawer::visualAttribute(const QString &attrName, const VisualAttribute &properties)
@@ -140,6 +164,10 @@ bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
 bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const
 {
+    if ( coverage()->ilwisType() == itRASTER){
+        if ( attName == PIXELVALUE)
+            return true;
+    }
     for(auto pair : _visualProperties){
         if ( pair.first == attName)
             return true;
@@ -175,9 +203,24 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
     return var;
 }
 
-void SpatialDataDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
+void SpatialDataDrawer::setAttribute(const QString &key, const QVariant &attrib)
 {
-    ComplexDrawer::setAttribute(attrName, attrib);
+    ComplexDrawer::setAttribute(key, attrib);
+
+    if ( key.indexOf("visualattribute") == 0){
+        QStringList parts = key.split("|");
+        auto iter = _visualProperties.find(parts[2]);
+        if (iter == _visualProperties.end())
+            return;
+        if ( parts.size() == 3){
+            if ( parts[1] == "representation"){
+                IRepresentation rpr = attrib.value<IRepresentation>();
+                VisualAttribute& attr = _visualProperties[parts[2]];
+                attr.representation(rpr);
+            }
+
+        }
+    }
 }
 
 

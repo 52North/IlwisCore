@@ -26,7 +26,7 @@ public:
     void visualAttribute(const QString &attrName, const VisualAttribute& properties );
     virtual void coverage(const ICoverage& cov);
 
-    void setAttribute(const QString &attrName, const QVariant &attrib);
+    void setAttribute(const QString &key, const QVariant &attrib);
     QVariant attribute(const QString &key) const;
     std::vector<QVariant> attributes(const QString &keys) const;
 
@@ -40,6 +40,8 @@ private:
 
     ICoverage _coverage;
     Envelope _envelope;
+    VisualAttribute vattributeRasterCoverage(const QString &attrName) const;
+    VisualAttribute vattributeFeatureCoverage(const QString &attrName) const;
 };
 }
 }

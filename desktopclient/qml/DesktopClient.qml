@@ -2,12 +2,15 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import UIContextModel 1.0
 import "workbench" as WorkBench
 import "datapanel" as DataPanel
 import "controls" as Control
 import MessageModel 1.0
 import ResourceModel 1.0
+import MasterCatalogModel 1.0
 import "Global.js" as Global
+import "controls" as Controls
 
 ApplicationWindow {
     id : bigthing
@@ -15,64 +18,47 @@ ApplicationWindow {
     height : 1000
     color : "light grey"
 
+    onClosing: {
+        uicontext.exitUI()
+    }
+
     property int maxPull : 500
-
-
-    property color background1 : "#EAECEE"
-    property color background2 : "#DBDFE3"
-    property color background3 : "#FFFDF4"
-    property color background4 : "white"
     property int defaultFunctionBarWidth : 350
     property int activeCatalog: 0
 
-    menuBar : MenuBar {
-        id : mainMenu
-        Menu {
-            title: "Dummy 2"
-            MenuItem { text: "Open..." }
-            MenuItem { text: "Close" }
-        }
+    function newCatalog(filter, outputtype, url){
 
-        Menu {
-            title: "Dummy 1"
-            MenuItem { text: "Cut" }
-            MenuItem { text: "Copy" }
-            MenuItem { text: "Paste" }
-        }
-    }
+         mainSplit.newCatalog(filter, outputtype, url)
+     }
 
-    function addCatalog(){
+     function changeCatalog(filter, outputtype, url){
+         mainSplit.changeCatalog(filter, outputtype, url)
+     }
 
-        mainSplit.newCatalog("",-1)
-    }
+     function transitionInfoPane(newpagename) {
+         workBench.transitionInfoPane(newpagename)
+     }
 
-    function changeCatalog(url){
-        mainSplit.changeCatalog(url)
-    }
+     function unloadcontent(newpagename) {
+         workBench.unloadcontent(newpagename)
+     }
 
-    function transitionInfoPane(newpagename) {
-        workBench.transitionInfoPane(newpagename)
-    }
+     function modellerPane(name) {
+         if (dataPanel.addNewTab(name)) {
+             dataPanel.showModellerPane(name)
+         } else {
+             removeModellerPane(name)
+         }
+     }
 
-    function unloadcontent(newpagename) {
-        workBench.unloadcontent(newpagename)
-    }
+     function showModellerPane(name) {
+         dataPanel.showModellerPane(name)
+     }
 
-    function modellerPane(name) {
-        if (dataPanel.addNewTab(name)) {
-            dataPanel.showModellerPane(name)
-        } else {
-            removeModellerPane(name)
-        }
-    }
+     function removeModellerPane(name) {
+         dataPanel.removeTab(name)
+     }
 
-    function showModellerPane(name) {
-        dataPanel.showModellerPane(name)
-    }
-
-    function removeModellerPane(name) {
-        dataPanel.removeTab(name)
-    }
 
     function updateSelectedItem(name) {
         var pane = workBench.currentPane()
@@ -88,14 +74,16 @@ ApplicationWindow {
 
     Rectangle {
         id : root
-        anchors.fill : parent
-        color : "#DDDDDD"
+        y : 0
+        height : parent.height
+        width : parent.width
+        color : Global.alternatecolor5
 
         Rectangle {
             id : commLine
-            height : 35
+            height : textArea.height
             width : parent.width - 10
-            color : "#DDDDDD"
+            color : Global.alternatecolor5
             Row {
                 id : workspace
                 height : parent.height
@@ -103,31 +91,35 @@ ApplicationWindow {
                 spacing: 10
                 x : 5
                 Text {
+                    y : 6
                     text : qsTr("Current Workspace")
-                    anchors.verticalCenter: parent.verticalCenter
                 }
-                TextField{
+                ComboBox{
                     width : 150
-                    text : "default"
-                    readOnly: true
                     height : 25
-                    style: TextFieldStyle {
-                        textColor: "black"
-                        background: Rectangle {
-                            anchors.fill: parent
-                            color: Global.alternatecolor3
+                    objectName: "workspace_combobox_mainui"
+                    model : mastercatalog.workspaces
+                    textRole: "displayName"
+                    y : 2
+                    onCurrentIndexChanged: {
+                        if ( currentIndex >= 0){
+                            var wmodel =model[currentIndex]
+                            if ( wmodel){
+                                var filter = "resource='" + wmodel.url + "'"
+                                dataPanel.changeCatalog(filter,"catalog",wmodel.url)
+                                uicontext.currentWorkSpace = wmodel
+                            }
                         }
                     }
-                    anchors.verticalCenter: parent.verticalCenter
 
                 }
-                anchors.verticalCenter: parent.verticalCenter
             }
             Control.CommandLine{
+                id : textArea
+                y : 2
                 anchors.left : workspace.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: 2
                 anchors.right: parent.right
-                anchors.verticalCenter: workspace.verticalCenter
             }
         }
 
@@ -136,18 +128,18 @@ ApplicationWindow {
             orientation: Qt.Horizontal
             width: parent.width
             anchors.top : commLine.bottom
-            height : bigthing.height - commLine.height * 2
+            anchors.bottom : parent.bottom
 
-            function addCatalog() {
-                dataPanel.addCatalog()
+            handleDelegate: Controls.SplitHandle{
+                imageHeight: 22
             }
 
-            function newCatalog(url, splitside){
-                dataPanel.newCatalog(url, splitside)
+            function newCatalog(filter, outputtype, url){
+                dataPanel.newCatalog(filter, outputtype, url)
             }
 
-            function changeCatalog(url){
-                dataPanel.changeCatalog(url)
+            function changeCatalog(filter, outputtype, url){
+                dataPanel.changeCatalog(filter, outputtype, url)
             }
 
             WorkBench.WorkBenchButtonBar{

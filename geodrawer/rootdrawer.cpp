@@ -16,7 +16,8 @@ using namespace Geodrawer;
 RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options), _frameBufferObject(fbo)
 {
     valid(true);
-    _screenGrf = GeoReference::create("corners");
+    _screenGrf = new GeoReference();
+    _screenGrf->create("corners");
 }
 
 RootDrawer::~RootDrawer()
@@ -51,21 +52,33 @@ void RootDrawer::addEnvelope(const ICoordinateSystem &csSource, const Envelope &
     applyEnvelopeView(_coverageRect, overrule);
 }
 
+Envelope RootDrawer::viewEnvelope() const
+{
+    return _viewEnvelope;
+}
+
 Envelope RootDrawer::zoomEnvelope() const
 {
     return _zoomRect;
 }
 
+Envelope RootDrawer::coverageEnvelope() const
+{
+    return _coverageRect;
+}
+
 void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
-        ERROR2(ERR_NO_INITIALIZED_2,TR("Coverage area"), TR("Visualization"));
         return;
     }
     if ( !_pixelAreaSize.isValid()) {
         ERROR2(ERR_NO_INITIALIZED_2,TR("Pixel area"), TR("Visualization"));
         return;
     }
+    if ( overrule)
+        _viewEnvelope = Envelope();
+
     double w = viewRect.xlength() - 1;
     double h = viewRect.ylength() - 1;
     _aspectRatioCoverage = w / h;
@@ -87,7 +100,7 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
     } else {
         double pixheight = _pixelAreaSize.xsize() / _aspectRatioCoverage;
         if ( pixheight > _pixelAreaSize.ysize()){
-            deltax = (_coverageRect.xlength() - 1) / _aspectRatioCoverage;
+            deltax = (_coverageRect.xlength() - 1) * ( pixheight / _pixelAreaSize.ysize() - 1.0);; //_aspectRatioCoverage;
             pixheight = _pixelAreaSize.ysize();
         }
         double fractionOfHeight = 1.0 - std::abs(_pixelAreaSize.ysize() - pixheight)/(double)_pixelAreaSize.ysize();
@@ -105,6 +118,9 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
 
 void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
 {
+    if ( zoomRect.area() == 1) // we dont zoom in on pointsize area
+        return;
+
     Envelope envelope = zoomRect;
     if ( _zoomRect.isValid()) {
     // zooming never changes the shape of the mapwindow so any incomming zoom rectangle must conform to the shape of the existing mapwindow
@@ -125,7 +141,6 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
         }
     }
     _zoomRect = envelope;
-    qDebug() << _zoomRect.xlength() - 1 << _zoomRect.ylength() - 1;
     viewPoint(_zoomRect.center(), true);
     setMVP();
 
@@ -144,6 +159,9 @@ void RootDrawer::setMVP()
 
         _zoomScale =  std::min(xscale, yscale);
     }
+    if ( _viewEnvelope.isNull() && _zoomRect.isValid() && !_zoomRect.isNull())
+        _viewEnvelope = _zoomRect;
+
     _screenGrf->envelope(_zoomRect);
     _screenGrf->size(_pixelAreaSize);
     _screenGrf->compute();
@@ -195,6 +213,14 @@ Size<> RootDrawer::pixelAreaSize() const
     return _pixelAreaSize;
 }
 
+Size<> RootDrawer::coverageAreaSize() const
+{
+    if ( !_screenGrf.isValid())
+        return Size<>();
+    auto bb = _screenGrf->coord2Pixel(_coverageRect);
+    return bb.size();
+}
+
 const QMatrix4x4 &RootDrawer::mvpMatrix() const
 {
     return _mvp;
@@ -208,6 +234,11 @@ const ICoordinateSystem &RootDrawer::coordinateSystem() const
 void RootDrawer::coordinateSystem(const ICoordinateSystem &csy)
 {
     _coordinateSystem = csy;
+}
+
+const IGeoReference &RootDrawer::screenGrf() const
+{
+    return _screenGrf;
 }
 
 void RootDrawer::viewPoint(const Coordinate& viewCenter, bool setEyePoint){
@@ -282,6 +313,17 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
         QVariant var = qVariantFromValue(coordinateSystem());
         return var;
     }
+    if ( attrName == "latlonenvelope"){
+        QVariant var;
+        if ( coordinateSystem()->isLatLon())
+            var = qVariantFromValue(_coverageRect);
+        else {
+            ICoordinateSystem csyWgs84("code=epsg:4326");
+            Envelope llEnvelope = csyWgs84->convertEnvelope(coordinateSystem(), _coverageRect);
+            var = qVariantFromValue(llEnvelope);
+        }
+        return var;
+    }
     if ( attrName == "coverageenvelope"){
         QVariant var = qVariantFromValue(_coverageRect);
         return var;
@@ -289,6 +331,10 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
 
     if ( attrName == "zoomenvelope"){
         QVariant var = qVariantFromValue(_zoomRect);
+        return var;
+    }
+    if ( attrName == "pixelarea"){
+        QVariant var = qVariantFromValue(_pixelAreaSize);
         return var;
     }
     return QVariant();
@@ -316,5 +362,11 @@ Ilwis::Coordinate RootDrawer::pixel2Coord(const Ilwis::Pixel& pix){
     if ( _screenGrf.isValid())
         return _screenGrf->pixel2Coord(pix);
     return Ilwis::Coordinate();
+}
+
+Ilwis::Pixel RootDrawer::coord2Pixel(const Ilwis::Coordinate& crd){
+    if ( _screenGrf.isValid())
+        return _screenGrf->coord2Pixel(crd);
+    return Ilwis::Pixel();
 }
 

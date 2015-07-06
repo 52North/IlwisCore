@@ -44,9 +44,9 @@ FeatureCoverage::~FeatureCoverage() {
 
 }
 
-bool FeatureCoverage::prepare( ) {
+bool FeatureCoverage::prepare(const IOOptions &options) {
 
-    bool ok = Coverage::prepare();
+    bool ok = Coverage::prepare(options);
     return ok;
 }
 
@@ -87,7 +87,17 @@ QVariant FeatureCoverage::coord2value(const Coordinate &crd, const QString &attr
         }
 
         if ( ok){
-            QVariant var = feature(attrname);
+             QVariant var;
+            if ( attrname != "")
+                var = feature(attrname);
+            else {
+                QVariantMap vmap;
+                for(int i=0; i <feature->attributeColumnCount(); ++i){
+                    QString attr = feature->attributedefinition(i).name();
+                    vmap[attr] = feature(attr);
+                }
+                var = vmap;
+            }
             return var;
             break;
         }

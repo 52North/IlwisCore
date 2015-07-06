@@ -60,9 +60,10 @@ bool Projection::prepare(const QString &parms)
     return _implementation->prepare(parms);
 }
 
-bool Projection::prepare()
+// TODO: this method should be merged with the method above
+bool Projection::prepare(const IOOptions& options)
 {
-    return IlwisObject::prepare();
+    return IlwisObject::prepare(options);
 }
 
 void Projection::setImplementation(ProjectionImplementation *impl)

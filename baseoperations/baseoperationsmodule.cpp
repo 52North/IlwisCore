@@ -19,6 +19,7 @@ QString BaseOperationsModule::getInterfaceVersion() const
 
 void BaseOperationsModule::prepare()
 {
+    kernel()->issues()->log("Loaded module BaseOperations",IssueObject::itMessage);
 }
 
 QString BaseOperationsModule::name() const

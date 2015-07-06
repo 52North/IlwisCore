@@ -8,7 +8,7 @@ import "../../controls" as Controls
 import "../../Global.js" as Global
 
 TableViewColumn{
-    width : 70
+    width : table.defaultWidth(styleData.column)
     delegate : Component {
         Loader{
             source: styleData.row < table.recordCount  ?  (styleData.column >=1 ? "NormalCell.qml" : "FirstColumn.qml"): "AggregateCell.qml"

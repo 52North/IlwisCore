@@ -63,7 +63,7 @@ Item {
     Action {
         id : createCatalog
         onTriggered : {
-            bigthing.addCatalog()
+            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl)
         }
 
     }

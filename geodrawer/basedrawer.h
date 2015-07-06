@@ -48,6 +48,7 @@ public:
     QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const;
     virtual void setAttribute(const QString&, const QVariant&);
     virtual bool drawerAttribute(const QString layername, const QString& attrName, const QVariant& attrib);
+    QVariant execute(const QString& operationName, const QVariantMap& parameters);
 
     QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
     quint32 defaultOrder() const;

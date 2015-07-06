@@ -20,7 +20,7 @@
 using namespace Ilwis;
 //using namespace Desktopclient;
 
-QString ResourceModel::getProperty(const QString &propertyname)
+QString ResourceModel::getProperty(const QString &propertyname) const
 {
     if(_item.hasProperty(propertyname))
         return _item[propertyname].toString();
@@ -47,6 +47,7 @@ ResourceModel::ResourceModel(const ResourceModel &model) : QObject(model.parent(
     _type = model._type;
     _isRoot = model._isRoot;
     _selected = model._selected;
+    _is3d = model._is3d;
 }
 
 ResourceModel &ResourceModel::operator=(const ResourceModel &model)
@@ -58,6 +59,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
     _type = model._type;
     _isRoot = model._isRoot;
    _selected = model._selected;
+      _is3d = model._is3d;
 
     return *this;
 }
@@ -130,12 +132,24 @@ QString ResourceModel::url() const
     return _item.url().toString();
 }
 
+QString ResourceModel::container() const
+{
+   return _item.container().toString();
+}
+
 QString ResourceModel::iconPath() const
 {
     if ( _iconPath != "")
         return _iconPath;
 
     quint64 tp = _item.ilwisType();
+    if ( hasType(_item.extendedType(), itCATALOG)){
+        return iconPath(tp | itCATALOG);
+    }
+    if ( hasType(_item.extendedType(), itFILE) && tp == itCATALOG)
+        return iconPath(tp | itCOVERAGE);
+    if ( hasType(_item.extendedType(), itTABLE) && tp == itCATALOG)
+        return iconPath(tp | itTABLE);
     return iconPath(tp);
 }
 
@@ -146,6 +160,12 @@ void ResourceModel::iconPath(const QString &name)
 
 QString ResourceModel::iconPath(IlwisTypes tp)
 {
+    if ( tp == (itRASTER|itCATALOG))
+        return "raster203d.png";
+    if ( tp == (itTABLE|itCATALOG))
+        return "catalogTable20.png";
+    if ( tp == (itCOVERAGE|itCATALOG))
+        return "catalogSpatial20.png";
     if ( tp & itRASTER)
         return "raster20CS1.png";
     else if ( tp == itPOLYGON)
@@ -163,19 +183,23 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itGEOREF)
         return "georeference20.png";
     else if ( tp == itCATALOG)
-        return "folder.png";
+        return "folder20.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp & itREPRESENTATION)
         return "representation20.png";
     else if ( hasType(tp,itNUMBER))
         return "numbers20.png";
+    else if ( hasType(tp,itBOOL))
+        return "bool20.png";
     else if ( hasType(tp,itPROJECTION))
         return "projection20.png";
     else if ( hasType(tp,itELLIPSOID))
         return "ellipsoid20.png";
     else if ( tp & itSTRING)
         return "text20.png";
+    else if ( tp & itOPERATIONMETADATA)
+        return "operation20.png";
     else
         return "eye.png";
 }
@@ -228,12 +252,16 @@ QString ResourceModel::proj42DisplayName(const QString& proj4Def) const{
 }
 
 QString ResourceModel::coordinateSystemName() const {
+    QString proj = _item["projectionname"].toString();
+    if ( proj != sUNDEF)
+        return proj;
+
     QString nme =  propertyName("coordinatesystem");
     if ( nme != displayName() && nme != "" && nme != sUNDEF)
         return nme;
     if ( nme == ""){
         nme = _item["coordinatesystem"].toString();
-        if ( nme != ""){
+        if ( nme != sUNDEF){
             int index = nme.toLower().indexOf("code=");
             if ( index == -1){
                 nme = _item.code();
@@ -282,6 +310,10 @@ void ResourceModel::resource(const Ilwis::Resource& res)
 
     _type = item.ilwisType();
     _item = item;
+    if ( hasType(item.ilwisType(), itCOVERAGE)){
+        QString dim = _item.dimensions();
+        _is3d = dim.split(" ").size() == 3;
+    }
 
     if ( item.url().toString() == "file://"){
         _displayName = "root";
@@ -316,8 +348,12 @@ void ResourceModel::resource(const Ilwis::Resource& res)
             else
                 _imagePath = "blank.png";
         }
-    }else
-       _displayName = item.name();
+    }else{
+        if ( item.hasProperty("longname"))
+            _displayName =  item["longname"].toString();
+        else
+            _displayName = item.name();
+    }
 }
 
 Ilwis::Resource ResourceModel::resource() const

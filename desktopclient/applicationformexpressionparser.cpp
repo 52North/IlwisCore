@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "mastercatalog.h"
 #include "models/resourcemodel.h"
+#include "dataformat.h"
 #include "applicationformexpressionparser.h"
 
 using namespace Ilwis;
@@ -12,7 +13,7 @@ ApplicationFormExpressionParser::ApplicationFormExpressionParser()
 ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::addParameter(const Resource& resource,
                                                                                              quint32 index,
                                                                                              const QStringList& choices,
-                                                                                             bool optional, int optionGroup) const{
+                                                                                             bool optional, int optionGroup, const QString& defvalue) const{
     FormParameter parm;
     QString prefix = QString("pin_%1_").arg(index + 1);
     parm._label = resource[prefix + "name"].toString();
@@ -20,6 +21,7 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     parm._isOptional = optional;
     parm._optionGroup = optionGroup;
     parm._choiceList = choices;
+    parm._defValue = defvalue;
     if ( choices.size() > 4){
         parm._fieldType = ftCOMBOBOX;
     }
@@ -44,11 +46,13 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
 
 void ApplicationFormExpressionParser::setParameter(const Resource& resource, bool& inChoiceList,
                                                    std::vector<FormParameter>& parameters, QString& part,
-                                                   QStringList& choices, int& parmCount, bool isOptional, int optionGroup) const
+                                                   QStringList& choices, int& parmCount,
+                                                   bool isOptional, int optionGroup,
+                                                   const QString& defvalue = "") const
 {
     if ( inChoiceList)
         choices << part;
-    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup));
+    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup, defvalue));
     choices.clear();
     part = "";
     inChoiceList = false;
@@ -60,6 +64,9 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     Resource resource = mastercatalog()->id2Resource(metaid);
     QString outparms = resource["outparameters"].toString();
     bool isService = resource["keyword"].toString().indexOf("service") != -1;
+    if ( outparms == "0")
+        return parameters;
+
     QStringList parms = outparms.split(",");
     if ( parms.size() == 0)
         return parameters;
@@ -87,6 +94,7 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     int parmCount = 0;
     bool inChoiceList = false;
     bool isOptional = false;
+    bool checkGroup;
     int optionGroup = 0;
     QString specials = "[]|,";
     QStringList choices;
@@ -97,18 +105,22 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
         }
         if ( c == ',' && !part.isEmpty()){
             part = part.trimmed();
-            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+            QString defvalue =  part[0]=='!' ? "true" : "";
+            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
         } else if ( c == '['){
             if ( !part.isEmpty() ) {
                 part = part.trimmed();
                 setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+                checkGroup = true;
             }
             isOptional = true;
         } else if ( c == ']'){
             if ( !part.isEmpty()) {
                 part = part.trimmed();
-                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup);
+                QString defvalue =  part[0]=='!' ? "true" : "";
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
             }
+            checkGroup = false;
             isOptional = false;
             ++optionGroup;
         } else if ( c == '|'){
@@ -182,19 +194,19 @@ QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1
     QString imagePart;
     imagewidth = 4;
     if ( hasType(parameters[i]._dataType, itRASTER)){
-        imagePart += QString(iconField1).arg(iconName(itRASTER));
+        imagePart += QString(iconField1).arg(iconName(itRASTER)).arg(IlwisObject::type2Name(itRASTER));
         imagewidth += iconsize;
     }
     if ( hasType(parameters[i]._dataType,  itTABLE)){
-        imagePart += QString(iconField1).arg(iconName(itTABLE));
+        imagePart += QString(iconField1).arg(iconName(itTABLE)).arg(IlwisObject::type2Name(itTABLE));
         imagewidth += iconsize;
     }
     if ( hasType(parameters[i]._dataType, itFEATURE)){
-        imagePart += QString(iconField1).arg(iconName(itFEATURE));
+        imagePart += QString(iconField1).arg(iconName(itFEATURE)).arg(IlwisObject::type2Name(itFEATURE));
         imagewidth += iconsize;
     }
     if ( hasType(parameters[i]._dataType, itDOMAIN)){
-        imagePart += QString(iconField1).arg(iconName(itDOMAIN));
+        imagePart += QString(iconField1).arg(iconName(itDOMAIN)).arg(IlwisObject::type2Name(itDOMAIN));
         imagewidth += iconsize;
     }
     if ( hasType(parameters[i]._dataType, itNUMBER)){
@@ -215,16 +227,17 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
     QString rowBodyText = "Rectangle{height : 20;width : parent.width;color : background1;%1Text { x:%5 + %6;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap }";
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message }\
-            TextField{ id : pin_%1; anchors.fill : parent optionalOutputMarker}}";
+            TextField{ id : pin_%1; anchors.fill : parent optionalOutputMarker %7}}";
     QString textArea = "DropArea{ x : %2; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
            onDropped : { pin_%1.text = drag.source.message }\
-        TextArea{ id : pin_%1; anchors.fill : parent optionalOutputMarker}}";
+        TextArea{ id : pin_%1; anchors.fill : parent optionalOutputMarker %7}}";
 
    // QString textArea = "TextArea{ id : pin_%1; x : %2 + %5; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5 optionalOutputMarker}";
-    QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : true;exclusiveGroup:sourceFilterGroup; \
-            Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
+    QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : false;"
+            "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
+            "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString iconField2 = "Image{width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}";
-    QString comboField = "ComboBox{id : pin_%1; x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4}";
+    QString comboField = "ComboBox{id : pin_%1; x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4}";
     QString formRows;
@@ -234,7 +247,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
         QString check;
         if ( parameters[i]._isOptional){
             if ( oldOptionGroup != parameters[i]._optionGroup){
-                check = QString("CheckBox{id:check_pin_%1; checked:false;width:20}").arg(i);
+                check = QString("CheckBox{id:check_pin_%1; checked:%2;width:20}").arg(i).arg(parameters[i]._defValue == "" ? "false" : "true");
                 oldOptionGroup = parameters[i]._optionGroup;
             } else
                xshift = 22;
@@ -246,17 +259,34 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
         int imagewidth = 0;
         if ( (hasType(parameters[i]._fieldType,ftTEXTEDIT | ftTEXTAREA)) || (parameters[i]._fieldType == (ftTEXTEDIT | ftRADIOBUTTON))){
             QString imagePart = setInputIcons(iconField1, iconField2, parameters, i,imagewidth);
+            QString checkEffects;
+            if ( check != ""){
+                checkEffects=QString(";enabled: check_pin_%1.checked;opacity:check_pin_%1.checked?1 :0.25").arg(i);
+            }
+
             QString textFieldPart = QString(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? textField : textArea).arg(i).
                     arg(width).
                     arg(checkWidth).
                     arg(imagewidth).
                     arg(xshift).
-                    arg(input ? keys(parameters[i]._dataType) : "\"?\"");
+                    arg(input ? keys(parameters[i]._dataType) : "\"?\"").
+                    arg(checkEffects);
+
             QString parameterRow = QString(rowBodyText + textFieldPart + imagePart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift);
             formRows += parameterRow;
             if ( results != "")
                 results += "+ \"|\" +";
             results += QString(input ? "pin_%1.text" : "pout_%1.text").arg(i);
+            if ( !input){
+                QString query = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(parameters[i]._dataType);
+                QString formatList = formats(query, parameters[i]._dataType);
+                if ( formatList != ""){
+                    QString formatLabel = QString("Row{height:20;width:parent.width;Text { x:5;text: qsTr(\"Output format\"); id:label_pout_format_%2; width :%1;}").arg(width).arg(i);
+                    QString formatCombo = QString("ComboBox{id : pout_format_%1; height:20; width : parent.width - label_pout_format_%1.width - 5;model : %2}").arg(i).arg(formatList);
+                    results += "+\"@@\"+"  + QString("pout_format_%1.currentText").arg(i);
+                    formRows +=formatLabel + formatCombo + "}";
+                }
+            }
 
         }
         if ( parameters[i]._fieldType == ftRADIOBUTTON){
@@ -287,7 +317,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
                 choices += "\"" + choiceString + "\"";
             }
             choices += "]";
-            QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices);
+            QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices) + "}";
             QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift);
             formRows += parameterRow;
             if ( results != "")
@@ -308,7 +338,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
     std::vector<FormParameter> parameters = getParameters(metaid);
     std::vector<FormParameter> outparameters = getOutputParameters(metaid);
     QString results;
-    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
+    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
     QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
     columnStart += exclusiveGroup;
     int width = 0;
@@ -320,20 +350,29 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
 
     QString inputpart = makeFormPart(width, parameters, true, results);
     QString outputPart = makeFormPart(width, outparameters, false, results);
-    results = "property string formresult : " + results + ";property string outputfield_0;";
+    results = "property var outputFormats;property string formresult : " + results;
+    for(int i = 0; i < outparameters.size(); ++i){
+        results += QString(";property string outputfield_%1").arg(i);
+        if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE)){
+            results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+        }
+    }
+    results += ";";
     columnStart = QString(columnStart).arg(results);
 
     QString seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
 
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
+    // for debugging, check if the qml is ok; can be retrieved from teh log file
+   //kernel()->issues()->log(component);
 
     return component;
 
 }
 
 QString ApplicationFormExpressionParser::createWorkflowForm(quint64 metaid) const {
-    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
+    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
     QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
     columnStart += exclusiveGroup;
 
@@ -379,4 +418,26 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     return parameters;
 }
 
+QString ApplicationFormExpressionParser::formats(const QString& query, quint64 ilwtype) const
+{
+    if ( hasType(ilwtype,itFEATURE )){
+        ilwtype = itFEATURE;
+    }
 
+    std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+    QString formatList;
+    for(auto &format : formats)    {
+        if ( formatList != ""){
+            formatList += ",";
+        }
+        formatList += "'"+ format.second.property(Ilwis::DataFormat::fpNAME).toString() + "'";
+    }
+    if ( formatList != "")
+       formatList = "'Memory'," + formatList;
+    if ( hasType(ilwtype, itTABLE)){
+        formatList = "'Keep original'," + formatList;
+    }
+    if ( formatList != "")
+        formatList = "[" + formatList + "]";
+    return formatList;
+}

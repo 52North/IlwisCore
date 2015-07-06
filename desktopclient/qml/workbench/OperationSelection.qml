@@ -7,6 +7,7 @@ import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
 import ".." as Base
+import "../Global.js" as Global
 
 Rectangle {
     id : container
@@ -14,14 +15,15 @@ Rectangle {
     property var currentAppForm : null
     property var operationid
 
-    color : background4
+    color : Global.alternatecolor5
     clip : true
     state : "invisible"
     opacity : 0
 
     signal unloadcontent(string content)
 
-    function newForm(metaid, title){
+    function newForm(metaid, title, url){
+        operationid = metaid
         var form= formbuilder.index2Form(metaid)
         appFrame.formQML = form
         appFrame.formTitle = title
@@ -41,7 +43,7 @@ Rectangle {
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
-        color : background2
+        color : Global.alternatecolor1
 
         Text {
             id : searchTextLabel

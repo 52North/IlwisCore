@@ -10,7 +10,7 @@
 #include "uicontextmodel.h"
 #include "drawers/draweroperation.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
 #include "adddrawer.h"
@@ -74,24 +74,45 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
     if ( iter == ctx->_additionalInfo.end())
         return sPREPAREFAILED;
 
+     _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     if ( _expression.parameterCount() == 4){
-        QString url = _expression.input<QString>(2);
+        QString url = _expression.input<QString>(1);
+        QString filter = _expression.input<QString>(2);
         QString tpname = _expression.input<QString>(3);
         IlwisTypes tp = IlwisObject::name2Type(tpname);
         if ( !hasType(tp , itCOVERAGE)){
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("dataype for layer drawer"), tpname)    ;
             return sPREPAREFAILED;
         }
-        _coverage.prepare(url, tp);
+        if ( filter.indexOf("itemid=") != -1){
+            if ( filter[0] == '\"')
+                filter = filter.mid(1, filter.size() - 2);
+            std::vector<Resource> res = mastercatalog()->select(filter);
+            if ( res.size() != 1){
+                kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
+                return sPREPAREFAILED;
+            }
+            _coverage.prepare(res[0]);
+        }else{
+           _coverage.prepare(filter, tp);
+        }
+
+
         if ( !_coverage.isValid()){
             kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
             return sPREPAREFAILED;
         }
+         QVariant var = _rootDrawer->attribute("maindrawercount");
+         if ( _coverage->coordinateSystem()->isUnknown() && var.toInt() > 0){
+             QString mes = QString("coordinate system 'unknown' not compatible with coordinate system of the layerview");
+             kernel()->issues()->log(mes, IssueObject::itWarning);
+             return sPREPAREFAILED;
+         }
         _coverage->loadData();
     }else {
         _drawerCode = _expression.input<QString>(1);
     }
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
+
 
 
     return sPREPARED;
@@ -100,7 +121,7 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
 quint64 AddDrawer::createMetadata()
 {
     OperationResource operation({"ilwis://operations/adddrawer"});
-    operation.setSyntax("adddrawer(viewid, drawername[,datasource, typename])");
+    operation.setSyntax("adddrawer(viewid, drawername[,!datasource,!typename])");
     operation.setDescription(TR("adds a new drawer to the layerview identified by viewid"));
     operation.setInParameterCount({2,4});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));

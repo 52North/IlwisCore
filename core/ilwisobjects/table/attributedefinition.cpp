@@ -274,6 +274,43 @@ QString SubFeatureDefinition::index(quint32 idx) const
     return sUNDEF;
 }
 
+void SubFeatureDefinition::insert(const QString& domainItem)
+{
+    if (!_subFeatureDomain.isValid()) {
+        kernel()->issues()->log(TR("No valid stack domain; Please set the stack domain before adding bands!"),IssueObject::itWarning);
+        return;
+    }
+    if (!_subFeatureDomain->contains(domainItem))
+        return;
+    auto iter = _subFeature2Index.find(domainItem) ;
+    if ( iter == _subFeature2Index.end()) { // insert one item
+        _index2subFeature.push_back(domainItem);
+        _subFeature2Index[domainItem] = _subFeature2Index.size() - 1;
+    }
+}
+
+void SubFeatureDefinition::insert(double domainItem)
+{
+    if (!_subFeatureDomain.isValid()) {
+        _index2subFeature.clear();
+        _subFeatureDomain = IDomain("count");
+        _subFeature2Index.clear();
+    }
+    if (!_subFeatureDomain->contains(domainItem))
+        return;
+    double value = _subFeatureDomain->valueType() == itINTEGER ? (qint64)domainItem : domainItem;
+    auto iter = _subFeature2Index.find(QString::number(value));
+    if ( iter == _subFeature2Index.end()) { // insert one item
+        if ( _subFeatureDomain->valueType() == itINTEGER){
+            _index2subFeature.push_back(QString::number((qint64)domainItem));
+            _subFeature2Index[QString::number((qint64)domainItem)] = _subFeature2Index.size() - 1;
+        }else {
+            _index2subFeature.push_back(QString::number(domainItem));
+            _subFeature2Index[QString::number(domainItem)] = _subFeature2Index.size() - 1;
+        }
+    }
+}
+
 std::vector<QString> SubFeatureDefinition::indexes() const
 {
     return _index2subFeature;

@@ -4,7 +4,7 @@
 #include "columndefinition.h"
 #include "table.h"
 #include "uicontextmodel.h"
-#include "visualizationmanager.h"
+#include "layermanager.h"
 #include "coveragelayermodel.h"
 #include "visualattributemodel.h"
 
@@ -23,7 +23,7 @@ CoverageLayerModel::CoverageLayerModel(quint32 layerInd, const Ilwis::Resource &
         for(int i=0; attrList.count != 0  && i < attrList.count(&attrList); ++i){
             auto *attr = attrList.at(&attrList, i);
             IlwisTypes valueType =  attr->columnDef().datadef().domain()->valueType();
-            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING)){
+            if ( hasType(valueType, itNUMBER|itDOMAINITEM|itSTRING|itCOLOR)){
                 _visualAttributes.push_back(new VisualAttributeModel(attr->columnDef(),this,object()));
             }
         }
@@ -78,6 +78,24 @@ QString CoverageLayerModel::activeAttribute() const
        return _visualAttributes[_activeAttribute]->attributename();
     }
     return sUNDEF;
+}
+
+QString CoverageLayerModel::visualAttributeByIndex(int index) const
+{
+    if ( index < _visualAttributes.size()){
+       return _visualAttributes[index]->attributename();
+    }
+    return sUNDEF;
+}
+
+bool CoverageLayerModel::showInfo() const
+{
+    return _showInfo;
+}
+
+void CoverageLayerModel::showInfo(bool yesno)
+{
+    _showInfo = yesno;
 }
 
 quint32 CoverageLayerModel::layerIndex() const

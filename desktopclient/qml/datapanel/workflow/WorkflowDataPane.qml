@@ -2,17 +2,27 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 
-import "../modeller" as Modeler
-
+// Window does not work!
+//Window {
 Item {
+    id: workflowDataPane
+    width : parent.width
+    height : parent.height
+
+    signal exit;
 
     property bool canSeparate : true
+    property QString panelType : "workflow"
 
-    // TODO react on signals, e.g. when edit session is cancelled
+    property string workflow;
 
-    Modeler.ModellerPanel {
-        id: modelerPanel
-        anchors.fill: parent
+    WorkflowCanvas {
+        id: canvas
+        anchors.fill: workflowDataPane
+        workflow:  workflowDataPane.workflow;
+    }
 
+    Component.onDestruction: {
+        exit();
     }
 }

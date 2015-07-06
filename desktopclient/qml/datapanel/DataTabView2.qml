@@ -6,6 +6,7 @@ import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
 import MasterCatalogModel 1.0
+import DataPaneModel 1.0
 import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
@@ -16,7 +17,14 @@ Item {
     property int side : 1
     property int currentIndex : 0
     property int count : datatab.count
+    property bool stateDone : true
 
+    onWidthChanged: {
+        if ( !stateDone)    {
+            datatabview.state = ""
+            stateDone = true
+        }
+    }
 
     onSideChanged: {
         centerItem.activeSplit = Math.abs(side)
@@ -45,8 +53,38 @@ Item {
         return datatab.getTab(index)
     }
 
+    function insertTab(index, title, comp){
+        return datatab.insertTab(index, title, comp)
+    }
+
+    /*
+     * Remove tab by index
+     */
     function removeTab(index){
         datatab.removeTab(index)
+    }
+
+    /*
+     * Remove tab by name
+     */
+    function removeTabFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return removeTab(i);
+            }
+        }
+    }
+
+    /*
+     * Get tab by name
+     */
+    function getTabIndexFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return i;
+            }
+        }
+        return -1;
     }
 
     onCurrentIndexChanged: {
@@ -69,15 +107,16 @@ Item {
     TabView {
         id : datatab
         anchors.left: side == 1 ? szbut.right : parent.left
+        anchors.leftMargin: 5
         height : parent.height
-        width: parent.width - szbut.width
+        width: parent.width - szbut.width - 5
 
         style: Base.TabStyle2 {
             id : tabstyle
             Connections {
                 target: tabstyle
                 onExpandToWindow: {
-                    action : datapanesplit.showTabInFloatingWindow(tabindex)
+                    action : datapanesplit.showTabInFloatingWindow(panelside,tabindex)
                 }
             }
         }
@@ -108,7 +147,11 @@ Item {
     ]
     transitions: [
         Transition {
+            id : widthTransition
             NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+            onRunningChanged: {
+                stateDone = widthTransition.running
+            }
         }
     ]
 

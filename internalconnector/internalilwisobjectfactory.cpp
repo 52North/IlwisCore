@@ -65,7 +65,7 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 
 Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const IOOptions &options) const
 {
-    if ( resource.url().scheme()!="ilwis")
+    if ( resource.url(true).scheme()!="ilwis")
         return 0;
 
 
@@ -262,7 +262,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
 
 bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 {
-    if ( resource.url().scheme()!="ilwis")
+    if ( resource.url(true).scheme()!="ilwis")
         return false;
 
     if ( resource.ilwisType() & itELLIPSOID) {
@@ -316,13 +316,17 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
             if (!csy.prepare(newresource,options))
                 return false;
         }
+    } else if ( typnm == "qulonglong"){
+        if(!csy.prepare(resource["coordinatesystem"].value<quint64>()))
+            return 0;
     }
     if ( csy.isValid()){
         coverage->coordinateSystem(csy);
     }
 
     Envelope bounds;
-    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box<double>") {
+    QString envType = resource["envelope"].typeName();
+    if ( envType == "Ilwis::Box<double>" || envType == "Ilwis::Envelope") {
         bounds = resource["envelope"].value<Envelope>();
     }else if (QString(resource["envelope"].typeName()) == "QString" &&
               resource["envelope"].toString() != sUNDEF) {
@@ -363,11 +367,11 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 
     Size<> sz;
     QString typenm = resource["size"].typeName();
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
+    if ( typenm == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
-    } else if (QString(resource["size"].typeName()) == "QSize") {
+    } else if (typenm == "QSize") {
         sz = resource["size"].toSize();
-    } else if (QString(resource["size"].typeName()) == "QString") {
+    } else if (typenm == "QString") {
         QStringList parts = resource["size"].toString().split(" ");
         if ( parts.size() >= 2)
             sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
@@ -387,10 +391,15 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
             if (!grf.prepare(newresource))
                 return 0;
         }
+    } else if ( tpnam == "qulonglong"){
+        if(!grf.prepare(resource["georeference"].value<quint64>()))
+                return 0;
+
     } else{
         Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
-            grf = GeoReference::create("corners");
+            grf = new GeoReference();
+            grf->create("corners");
             grf->name("subset_" + gcoverage->name());
             grf->coordinateSystem(gcoverage->coordinateSystem());
             grf->envelope(bounds);
@@ -694,7 +703,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     Envelope env;
     Size<> sz;
     if ( isCorners){
-       cgrf = GeoReference::create("corners", resource);
+       cgrf = new GeoReference(resource);
+       cgrf->create("corners");
        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     }
     if ( cgrf == 0)
@@ -757,14 +767,16 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         Resource resnew = resource;
         resnew.name(sUNDEF); // this will force a new object with a new id
         resnew.setId(i64UNDEF);
-        cgrf = GeoReference::create("undetermined", resnew);
+        cgrf = new GeoReference(resnew);
+        cgrf->create("undetermined");
     } else if ( resource.code().indexOf("georef:") == 0){
         cgrf = createGrfFromCode(resource);
         if (cgrf == 0)
             ERROR2(ERR_ILLEGAL_VALUE_2,"georef code", resource.code());
 
     }else {
-        cgrf = GeoReference::create("corners", resource);
+        cgrf = new GeoReference(resource);
+        cgrf->create("corners");
         cgrf->name( resource["name"].toString());
 
 

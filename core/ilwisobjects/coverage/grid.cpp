@@ -55,6 +55,8 @@ quint32 GridBlockInternal::blockSize() {
 }
 
 inline bool GridBlockInternal::save2Cache() {
+    if ( !_inMemory) // nothing to do here
+        return true;
     _inMemory = false;
     if ( _tempName == sUNDEF) {
         QString name = QString("gridblock_%1").arg(_id);
@@ -66,11 +68,11 @@ inline bool GridBlockInternal::save2Cache() {
     }
     if ( _swapFile.isNull()) {
         _swapFile.reset(new QTemporaryFile(_tempName));
-
     }
     if(!_swapFile->open() ){
         return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,_tempName);
     }
+    _tempName = _swapFile->fileName();
     quint64 bytesNeeded = _data.size() * sizeof(double);
     quint64 total =_swapFile->write((char *)&_data[0], bytesNeeded);
     _swapFile->close();
@@ -302,6 +304,8 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
 
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
     quint64 mleft = context()->memoryLeft();
+    if ( _memUsed != 0) // reszing a grid may reuse an older grid; in this case the memory has to be correctly given back
+        context()->changeMemoryLeft(_memUsed);
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
@@ -432,6 +436,11 @@ std::map<quint32, std::vector<quint32> > Grid::calcBlockLimits(const IOOptions& 
 bool Grid::isValid() const
 {
     return !(_size.isNull() || _size.isValid() || _inMemoryIndex == iUNDEF);
+}
+
+qint64 Grid::memUsed() const
+{
+    return _memUsed;
 }
 
 

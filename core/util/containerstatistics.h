@@ -14,6 +14,8 @@
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/count.hpp>
 #include <boost/accumulators/statistics/sum.hpp>
+#include <boost/accumulators/statistics/moment.hpp>
+#include <boost/accumulators/statistics/kurtosis.hpp>
 
 using namespace boost::accumulators;
 
@@ -24,6 +26,9 @@ template<typename DataType> class KERNELSHARED_EXPORT ContainerStatistics
 public:
     typedef accumulator_set<DataType, stats<tag::mean,tag::min, tag::max, tag::count>> Basic;
     typedef accumulator_set<DataType, stats<tag::median>> Median;
+    typedef accumulator_set<double, stats<tag::mean, tag::moment<2> > > Variance;
+    typedef accumulator_set<double, stats<tag::mean, tag::moment<3> > > Skew;
+    typedef accumulator_set<int, stats<tag::kurtosis > > Kurtosis;
 
     struct HistogramBin{
         HistogramBin(DataType limit=0, quint64 count=0) : _limit(limit), _count(count) {}
@@ -33,7 +38,9 @@ public:
     };
 
     enum PropertySets{pNONE = 0, pBASIC=1, pMIN=2, pMAX=4, pDISTANCE=8, pDELTA=16,pNETTOCOUNT=32, pCOUNT=64, pSUM=128,
-                      pMEAN=256, pMEDIAN=512, pPREDOMINANT=1024, pSTDEV=2048, pHISTOGRAM=4096, pLAST=8192, pALL=4294967296};
+                      pMEAN=256, pMEDIAN=512, pPREDOMINANT=1024, pSTDEV=2048, pHISTOGRAM=4096, pVARIANCE=8192, pSKEW=16384,pKURTOSIS=32768,
+                      pLAST=65536,pALL=4294967296};
+    static const quint32 pNUMERICS = pMIN | pMAX | pDISTANCE | pDELTA | pNETTOCOUNT | pCOUNT | pSUM | pMEAN | pMEDIAN | pPREDOMINANT | pVARIANCE | pSKEW | pKURTOSIS;
 
     ContainerStatistics(){
         _sigDigits = shUNDEF;
@@ -126,9 +133,12 @@ public:
 
 
 
-    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, PropertySets mode=pBASIC, int bins = 0){
+    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, int mode=pBASIC, int bins = 0){
         Basic basicMarkers;
         Median median;
+        Variance var;
+        Skew skew;
+        Kurtosis kurt;
         quint64 count = 0;
         DataType undefined = undef<DataType>();
         double sigDigits = 0;
@@ -136,78 +146,88 @@ public:
         std::for_each(begin, end, [&] (const DataType& sample){
             count++;
             if ( sample != undefined) {
-                 rest = fabs(sample - (qint64)sample);
-                 sigDigits = std::max(sigDigits, rest - sigDigits);
-                 basicMarkers(sample);
-                 if ( hasType(mode, pMEDIAN)) {
-                     median(sample);
-                 }
-            }
+                rest = fabs(sample - (qint64)sample);
+                sigDigits = std::max(sigDigits, rest - sigDigits);
+                basicMarkers(sample);
+                if ( hasType(mode, pVARIANCE))
+                    var(sample);
+                if ( hasType(mode, pMEDIAN)) {
+                    median(sample);
+                }
+                if ( hasType(mode, pSKEW)) {
+                    skew(sample);
+                }
+                if ( hasType(mode, pKURTOSIS)) {
+                    kurt(sample);
+                }
 
-        });
-        bool isUndefined = boost::accumulators::count(basicMarkers) == 0;
-        std::fill(_markers.begin(), _markers.end(), rUNDEF);
-        if( !isUndefined) {
-            _markers[index(pMIN)] = boost::accumulators::min(basicMarkers);
-            _markers[index(pMAX)] = boost::accumulators::max(basicMarkers);
-            _markers[index(pDISTANCE)] = std::abs(prop(pMAX) - prop(pMIN));
-            _markers[index(pDELTA)] = prop(pMAX) - prop(pMIN);
-            _markers[index(pNETTOCOUNT)] = boost::accumulators::count(basicMarkers);
-            _markers[index(pCOUNT)] = count;
-            _markers[index(pSUM)] = boost::accumulators::sum(basicMarkers);
-            _markers[index(pMEAN)] = boost::accumulators::mean(basicMarkers);
-            _markers[index(pMEDIAN)] = boost::accumulators::median(median);
-            findSignificantDigits(sigDigits);
+            }});
+            bool isUndefined = boost::accumulators::count(basicMarkers) == 0;
+            std::fill(_markers.begin(), _markers.end(), rUNDEF);
+            if( !isUndefined) {
+                _markers[index(pMIN)] = boost::accumulators::min(basicMarkers);
+                _markers[index(pMAX)] = boost::accumulators::max(basicMarkers);
+                _markers[index(pDISTANCE)] = std::abs(prop(pMAX) - prop(pMIN));
+                _markers[index(pDELTA)] = prop(pMAX) - prop(pMIN);
+                _markers[index(pNETTOCOUNT)] = boost::accumulators::count(basicMarkers);
+                _markers[index(pCOUNT)] = count;
+                _markers[index(pSUM)] = boost::accumulators::sum(basicMarkers);
+                _markers[index(pMEAN)] = boost::accumulators::mean(basicMarkers);
+                _markers[index(pMEDIAN)] = boost::accumulators::median(median);
+                _markers[index(pVARIANCE)] = boost::accumulators::moment<2>(var);
+                _markers[index(pSKEW)] = boost::accumulators::moment<3>(skew);
+                _markers[index(pKURTOSIS)] = boost::accumulators::kurtosis(kurt);
+                findSignificantDigits(sigDigits);
 
-            if ( mode & pSTDEV) {
-                _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
-            }
-            if ( mode & pHISTOGRAM) {
+                if ( mode & pSTDEV) {
+                    _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
+                }
+                if ( mode & pHISTOGRAM) {
 
-                double ncount = prop(pNETTOCOUNT);
-                if ( ncount > 1) {
-                    if (bins == 0 && _binCount == iUNDEF ){
-                        if ( prop(pSTDEV) == rUNDEF) {
-                            _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
+                    double ncount = prop(pNETTOCOUNT);
+                    if ( ncount > 1) {
+                        if (bins == 0 && _binCount == iUNDEF ){
+                            if ( prop(pSTDEV) == rUNDEF) {
+                                _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
+                            }
+                            if ( _markers[index(pSTDEV)] != rUNDEF ) {
+                                double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
+                                _binCount = prop(pDISTANCE) / h;
+                            }
+                        } else if(bins != 0){
+                            _binCount = bins-1;
                         }
-                        if ( _markers[index(pSTDEV)] != rUNDEF ) {
-                            double h = 3.5 * _markers[index(pSTDEV)] / pow(ncount, 0.3333);
-                            _binCount = prop(pDISTANCE) / h;
-                        }
-                    } else if(bins != 0){
-                        _binCount = bins-1;
                     }
-                }
 
-                _bins.resize(_binCount + 2); // last cell is for undefines
-                double delta  = prop(pDELTA);
-                for(int i=0; i < _binCount; ++i ) {
-                    _bins[i] = HistogramBin(prop(pMIN) + i * ( delta / _binCount));
+                    _bins.resize(_binCount + 2); // last cell is for undefines
+                    double delta  = prop(pDELTA);
+                    for(int i=0; i < _binCount; ++i ) {
+                        _bins[i] = HistogramBin(prop(pMIN) + i * ( delta / _binCount));
+                    }
+                    std::for_each(begin, end, [&] (const DataType& sample){
+                        quint16 index = isNumericalUndef(sample) ? _bins.size() - 1 : getOffsetFactorFor(sample);
+                        _bins[index]._count++;
+                    });
                 }
-                std::for_each(begin, end, [&] (const DataType& sample){
-                    quint16 index = isNumericalUndef(sample) ? _bins.size() - 1 : getOffsetFactorFor(sample);
-                    _bins[index]._count++;
-                });
             }
+
+            return true;
         }
 
-        return true;
-    }
+        bool isValid() const {
+            return prop(pMAX) != rUNDEF;
+        }
 
-    bool isValid() const {
-        return prop(pMAX) != rUNDEF;
-    }
-
-    double stretchLinear(double input, int stretchRange) const {
-        if ( input == rUNDEF)
+        double stretchLinear(double input, int stretchRange) const {
+            if ( input == rUNDEF)
             return rUNDEF;
 
-        double stretchFactor = stretchRange / prop(pDELTA);
-        quint16 index = getOffsetFactorFor(input);
-        return _bins[index]._limit * stretchFactor;
-    }
+            double stretchFactor = stretchRange / prop(pDELTA);
+            quint16 index = getOffsetFactorFor(input);
+            return _bins[index]._limit * stretchFactor;
+        }
 
-    /**
+        /**
      * Stretches the value range by percent. Lower and upper limits are stretched equally.
      * If stretch value is undefined, the limits of the current value range are returned.
      *
@@ -215,63 +235,60 @@ public:
      * @param percent how much the limits shall be stretched.
      * @return stretched limits of the value range.
      */
-    std::pair<double,double> stretchLimits(double percent) const {
-        if (percent == rUNDEF) {
-            return std::pair<double,double>(prop(pMIN),prop(pMAX));
+        std::pair<double,double> stretchLimits(double percent) const {
+            if (percent == rUNDEF) {
+                return std::pair<double,double>(prop(pMIN),prop(pMAX));
+            }
+            double delta = prop(pDELTA);
+            double downsizeBy = percent * delta / 100;
+            double newLower = prop(pMIN) + downsizeBy;
+            double newUpper = prop(pMAX) - downsizeBy;
+            return std::pair<double,double>(newLower,newUpper);
         }
-        double delta = prop(pDELTA);
-        double downsizeBy = percent * delta / 100;
-        double newLower = prop(pMIN) + downsizeBy;
-        double newUpper = prop(pMAX) - downsizeBy;
-        return std::pair<double,double>(newLower,newUpper);
-    }
 
-private:
-    std::vector<double> _markers;
+        private:
+        std::vector<double> _markers;
 
-    quint32 _sigDigits;
-    std::vector<HistogramBin> _bins;
-    quint32 _binCount=iUNDEF;
+                quint32 _sigDigits;
+        std::vector<HistogramBin> _bins;
+        quint32 _binCount=iUNDEF;
 
-    quint32 index(PropertySets method) const {
-        if ( method == 0)
-            return 0;
-        return (quint32)(log(method) / log(2) + 0.2);
-    }
-
-    template<typename IterType> double calcStdDev(const IterType& begin,  const IterType& end, DataType undefined) {
-        double ncount = prop(pNETTOCOUNT);
-        if ( ncount < 2)
-            return rUNDEF;
-        double acc = 0;
-        double mean = prop(pMEAN);
-        std::for_each(begin, end, [&] (const DataType& sample){
-            if ( sample != undefined)
-                acc += (sample - mean) * (sample - mean);
-        });
-        return sqrt(acc / (ncount-1));
-
-    }
-
-
-    quint16 getOffsetFactorFor(const DataType& sample) const {
-        double rmin = prop(pMIN);
-        quint16 index = _bins.size() * (double)(sample - rmin) / prop(pDELTA);
-        if(index == _bins.size())
-            return index - 1;
-        else
-            return index;
-    }
-
-    double getBinWidth() const {
-        if (_bins.size() > 1) {
-            return _bins[1]._limit;
-        } else {
-            return _bins[0]._limit;
+        quint32 index(PropertySets method) const {
+            if ( method == 0)
+                return 0;
+            return (quint32)(log(method) / log(2) + 0.2);
         }
-    }
 
+        template<typename IterType> double calcStdDev(const IterType& begin,  const IterType& end, DataType undefined) {
+            double ncount = prop(pNETTOCOUNT);
+            if ( ncount < 2)
+                return rUNDEF;
+            double acc = 0;
+            double mean = prop(pMEAN);
+            std::for_each(begin, end, [&] (const DataType& sample){
+                if ( sample != undefined)
+                    acc += (sample - mean) * (sample - mean);
+            });
+            return sqrt(acc / (ncount-1));
 
+        }
+
+        quint16 getOffsetFactorFor(const DataType& sample) const {
+            double rmin = prop(pMIN);
+            quint16 index = _bins.size() * (double)(sample - rmin) / prop(pDELTA);
+            if(index == _bins.size())
+                return index - 1;
+            else
+                return index;
+        }
+
+        double getBinWidth() const {
+            if (_bins.size() > 1) {
+                return _bins[1]._limit;
+            } else {
+                return _bins[0]._limit;
+            }
+        }
 };
 typedef ContainerStatistics<double> NumericStatistics;
 }

@@ -61,7 +61,7 @@ public:
         return dynamic_cast<GrfT *>(_georefImpl.data()) != 0;
     }
 
-    static GeoReference *create(const QString& type, const Ilwis::Resource &resource=Resource());
+    void create(const QString& type);
 
     IlwisTypes ilwisType() const;
 

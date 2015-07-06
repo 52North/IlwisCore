@@ -18,6 +18,7 @@ CatalogQuery::CatalogQuery()
     _names["domain"] = itDOMAIN;
     _names["table"] = itTABLE;
     _names["coverage"] = itCOVERAGE;
+   _names["representation"] = itREPRESENTATION;
 }
 
 bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseNames, QString& side, bool left, bool uselike) const
@@ -54,7 +55,7 @@ bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseName
 }
 
 QString CatalogQuery::transformQuery(const QString& baseQuery) const{
-    if ( baseQuery == "")
+    if ( baseQuery == "" || baseQuery == sUNDEF)
         return "";
 
     QString query = baseQuery.toLower();
@@ -62,7 +63,7 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         QString findTxt = "'" + name.key().toLower() + "'";
         query.replace(findTxt, QString::number(name.value()));
     }
-    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&"};
+    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&","container","itemid"};
     QString specialchars{"<>=!+- "};
     QString leftside, rightside, newquery;
     QString middel;
@@ -108,8 +109,10 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
     }
     bool likecases = leftside == "keyword";
     if ( checkForProperty(resourceBaseNames, leftside, true, false))
-         middel = "";
-    checkForProperty(resourceBaseNames, rightside, false, likecases);
+        middel = "";
+    if ( leftside.indexOf("mastercatalog.") != 0)
+        checkForProperty(resourceBaseNames, rightside, false, likecases);
+
     newquery += leftside + middel + rightside;
 
     return newquery;

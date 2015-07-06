@@ -2,14 +2,17 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
-
+import MasterCatalogModel 1.0
+import TranquilizerHandler 1.0
+import UIContextModel 1.0
+import "../Global.js" as Global
 
 Rectangle {
     id : buttonB
     y : 0
     height : parent.height
     width : 80
-    color : "white"
+    color : Global.alternatecolor1
     border.width : 1
     Layout.maximumWidth : 140
 
@@ -72,6 +75,14 @@ Rectangle {
     }
 
     Action {
+        id : prefClicked
+        onTriggered : {
+            mastercatalog.longAction()
+        }
+
+    }
+
+    Action {
         id :maxButtons
         onTriggered: {
             buttonB.width = 55
@@ -90,7 +101,7 @@ Rectangle {
         Rectangle {
             height : 21
             width : buttonB.width
-            color : background4
+            color : Global.alternatecolor1
             Row {
                 anchors.fill: parent
                 Button{
@@ -112,6 +123,7 @@ Rectangle {
 
         WorkBenchButton{
             id : nav
+            objectName : "workbench_navbutton_mainui"
             action: navClicked
             iconname: "navigatorCS1.png"
             label: qsTr("Navigator")
@@ -156,6 +168,19 @@ Rectangle {
         }
         WorkBenchButton{
             id : progress
+            ProgressBar {
+                anchors.top: progress.top
+                anchors.topMargin: 5
+                width : parent.width - 10
+                x : 5
+                height : 12
+                maximumValue: 100
+                minimumValue: 0
+                value : tranquilizerHandler.aggregateValue
+                opacity: value > 0 ? 0.35 : 0
+
+            }
+
             action : progressClicked
             iconname : "progressCS1.png"
             label: qsTr("Progress")
@@ -163,7 +188,7 @@ Rectangle {
         }
         WorkBenchButton{
             id : preferences
-            //action : progressClicked
+            action : prefClicked
             iconname : "preferencesCS1.png"
             label: qsTr("Preferences")
 

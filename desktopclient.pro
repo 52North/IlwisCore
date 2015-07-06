@@ -95,6 +95,10 @@ OTHER_FILES += \
     desktopclient/qml/datapanel/modeller/Canvas.qml \
     desktopclient/qml/workbench/workflow/WorkflowSelection.qml \
     desktopclient/qml/workbench/workflow/WorkflowBench.qml \
+    desktopclient/qml/datapanel/workflow/WorkflowCanvas.qml \
+    desktopclient/qml/datapanel/workflow/BasicWorkflowDrawObject.qml \
+    desktopclient/qml/datapanel/workflow/AbstractBasicWorkflowDrawObjectqml \
+    desktopclient/qml/datapanel/workflow/OperationWorkflowDrawObject.qml \
     desktopclient/qml/datapanel/workflow/Test.qml
 
 
@@ -121,7 +125,9 @@ DISTFILES += \
     desktopclient/qml/datapanel/visualization/Layers.qml \
     desktopclient/qml/datapanel/visualization/PropertyEditorsList.qml \
     desktopclient/qml/datapanel/visualization/propertyeditors/LayersList.qml \
-    desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml
+    desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml \
+    desktopclient/qml/controls/HScrollBar.qml \
+    desktopclient/qml/workbench/WorkSpaceDataGrid.qml
 
 
 

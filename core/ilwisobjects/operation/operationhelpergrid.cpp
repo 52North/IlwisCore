@@ -22,7 +22,7 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
     BoundingBox box(sz);
 
     if ( what & itRASTERSIZE) {
-        resource.addProperty("size", IVARIANT(sz));
+        resource.addProperty("size", IVARIANT(sz.toString()));
     }
     if ( what & itENVELOPE) {
         if ( box.isNull() || !box.isValid()) {
@@ -30,10 +30,10 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
             box  = BoundingBox(sz);
         }
         Envelope bounds = inputRaster->georeference()->pixel2Coord(box);
-        resource.addProperty("envelope", IVARIANT(bounds));
+        resource.addProperty("envelope", IVARIANT(bounds.toString()));
     }
     if ( what & itCOORDSYSTEM) {
-        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
+        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()->id()));
     }
 
     if ( what & itGEOREF) {
@@ -42,10 +42,10 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
             box  = BoundingBox(sz);
         }
         if ( sz.xsize() == box.xlength() && sz.ysize() == box.ylength())
-            resource.addProperty("georeference", IVARIANT(inputRaster->georeference()));
+            resource.addProperty("georeference", IVARIANT(inputRaster->georeference()->id()));
     }
     if ( what & itDOMAIN) {
-        resource.addProperty("domain", IVARIANT(inputRaster->datadef().domain<>()));
+        resource.addProperty("domain", IVARIANT(inputRaster->datadef().domain<>()->id()));
     }
     resource.prepare();
 
@@ -66,6 +66,7 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
 {
     Resource resource(tp);
     if (inputObject->ilwisType() & itCOVERAGE) {
+        ICoverage cov = inputObject.as<Coverage>();
         if (inputObject->ilwisType() == itRASTER) {
             IRasterCoverage gcInput = inputObject.as<RasterCoverage>();
             if ( what & itRASTERSIZE) {
@@ -76,7 +77,14 @@ IIlwisObject OperationHelperRaster::initialize(const IIlwisObject &inputObject, 
             if ( what & itGEOREF) {
                 resource.addProperty("georeference", IVARIANT(gcInput->georeference()));
             }
+            if ( what & itDOMAIN) {
+                resource.addProperty("domain", IVARIANT(gcInput->datadef().domain()));
+            }
         }
+        if ( what & itCOORDSYSTEM) {
+            resource.addProperty("coordinatesystem", IVARIANT(cov->coordinateSystem()));
+        }
+
      }
 
     resource.prepare();

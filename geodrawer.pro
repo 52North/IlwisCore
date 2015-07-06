@@ -59,9 +59,14 @@ SOURCES += \
     geodrawer/operations/setlayertransparency.cpp \
     geodrawer/operations/setlayervisibility.cpp \
     geodrawer/rasterlayerdrawer.cpp \
-    geodrawer/texturemanager.cpp \
     geodrawer/operations/showpolygonboundaries.cpp \
-    geodrawer/operations/showpolygonareas.cpp
+    geodrawer/operations/showpolygonareas.cpp \
+    geodrawer/operations/setpolygonboundarycolor.cpp \
+    geodrawer/operations/setlinecolor.cpp \
+    geodrawer/operations/setpolygonboundarywidth.cpp \
+    geodrawer/rastervalueimage.cpp \
+    geodrawer/rastercolorimage.cpp \
+    geodrawer/operations/layermanagement.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -98,9 +103,14 @@ HEADERS += \
     geodrawer/operations/setlayertransparency.h \
     geodrawer/operations/setlayervisibility.h \
     geodrawer/rasterlayerdrawer.h \
-    geodrawer/texturemanager.h \
     geodrawer/operations/showpolygonboundaries.h \
-    geodrawer/operations/showpolygonareas.h
+    geodrawer/operations/showpolygonareas.h \
+    geodrawer/operations/setpolygonboundarycolor.h \
+    geodrawer/operations/setlinecolor.h \
+    geodrawer/operations/setpolygonboundarywidth.h \
+    geodrawer/rastervalueimage.h \
+    geodrawer/rastercolorimage.h \
+    geodrawer/operations/layermanagement.h
 
 
 OTHER_FILES = geodrawer/qmldir

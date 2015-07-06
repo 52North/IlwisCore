@@ -45,6 +45,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
     _rawUrl = resource._rawUrl;
     _urlQuery = resource._urlQuery;
     _container = resource._container;
+    _rawContainer = resource._rawContainer;
     _size = resource._size;
     _dimensions = resource._dimensions;
     _ilwtype = resource._ilwtype;
@@ -115,6 +116,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
 
 Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
     _normalizedUrl(url),
+    _rawUrl(url),
     _urlQuery(QUrlQuery(url)),
     _size(0),
     _ilwtype(tp),
@@ -161,12 +163,14 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
 
 Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(),
                                                            rec.value("itemid").toLongLong(),
-                                                           rec.value("code").toString())
+                                                           rec.value("code").toString(),
+                                                           rec.value("description").toString())
 {
     _normalizedUrl = rec.value("resource").toString();
     _rawUrl = rec.value("rawresource").toString();
     _urlQuery = QUrlQuery(rec.value("urlquery").toString());
     addContainer(rec.value("container").toString());
+    addContainer(rec.value("rawcontainer").toString(), true);
     _size = rec.value("size").toLongLong();
     _dimensions = rec.value("dimensions").toString();
     _ilwtype = rec.value("type").toLongLong();
@@ -249,7 +253,6 @@ QUrl Resource::url(bool asRaw) const
 
 void Resource::setUrl(const QUrl &url, bool asRaw)
 {
-    _container.clear();
     if ( asRaw) {
         _rawUrl = url;
         _urlQuery = QUrlQuery(url);
@@ -273,7 +276,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             if ( url.scheme() == "file" && inf.isAbsolute()){
                 if ( !isRoot(inf.absolutePath())){
                     name(inf.fileName(), false);
-                    addContainer(QUrl::fromLocalFile(inf.absolutePath()));
+                    addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
@@ -282,7 +285,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
                     index = path.indexOf("?");
                 }else
                     index = path.lastIndexOf("/");
-                addContainer(path.left(index));
+                addContainer(path.left(index),asRaw);
                 name(path.mid(index + 1),false);
             }
         } else {
@@ -293,7 +296,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
                 QString rname = QString("%1_%2").arg(inf.fileName()).arg(index);
                 name(rname, false);
-                addContainer(QUrl(url.toString(QUrl::RemoveFragment)));
+                addContainer(QUrl(url.toString(QUrl::RemoveFragment)), asRaw);
             }
 
         }
@@ -313,12 +316,12 @@ bool Resource::hasUrlQuery() const
     return !_urlQuery.isEmpty();
 }
 
-QUrl Resource::container(int level) const
+QUrl Resource::container(bool asRaw) const
 {
-    if ( level < _container.size()){
-            return _container[level];
+    if ( asRaw) {
+        return _rawContainer;
     }
-    return QUrl();
+    return _container;
 }
 
 quint64 Resource::size() const
@@ -341,11 +344,18 @@ void Resource::dimensions(const QString &dim)
     _dimensions = dim;
 }
 
-void Resource::addContainer(const QUrl& url, int level) {
-    if ( level < _container.size())
-        _container[0] = url;
-    else
-        _container.push_back(url);
+void Resource::addContainer(const QUrl& url, bool asRaw) {
+    if ( asRaw ){
+        _rawContainer = url;
+        if ( !_container.isValid())
+            _container = url;
+    }
+    else{
+        _container = url;
+        if ( !_rawContainer.isValid()){
+            _rawContainer = url;
+        }
+    }
 }
 
 IlwisTypes Resource::ilwisType() const
@@ -383,7 +393,9 @@ bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
     queryItem.bindValue(":code", code());
+    queryItem.bindValue(":description", description());
     queryItem.bindValue(":container", OSHelper::neutralizeFileName(container().toString()));
+    queryItem.bindValue(":rawcontainer", OSHelper::neutralizeFileName(container(true).toString()));
     queryItem.bindValue(":resource", OSHelper::neutralizeFileName(url().toString()));
     queryItem.bindValue(":rawresource", OSHelper::neutralizeFileName(url(true).toString()));
     queryItem.bindValue(":urlquery", urlQuery().toString());
@@ -431,8 +443,9 @@ bool Resource::load(QDataStream &stream){
     stream >> _rawUrl;
     QString url;
     stream >> url;
-    if ( url != sUNDEF)
-        _container.push_back(url);
+    _container = url;
+    stream >> url;
+    _rawContainer = url;
     stream >> _size;
     stream >> _dimensions;
     stream >> _ilwtype;
@@ -453,10 +466,8 @@ bool Resource::store(QDataStream &stream) const
     }
     stream << _normalizedUrl;
     stream << _rawUrl;
-    if ( _container.size() > 0)
-        stream << _container[0].toString();
-    else
-        stream << sUNDEF;
+    stream << _container.toString();
+    stream << _rawContainer.toString();
     stream << _size;
     stream << _dimensions;
     stream << _ilwtype;

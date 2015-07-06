@@ -40,6 +40,8 @@ private:
     bool _showBoundaries = true;
     bool _showAreas = true;
     float _areaTransparency = 0;
+    QColor _boundaryColor = QColor("black");
+    QColor _lineColor;
 
     bool draw(const IOOptions &options);
 

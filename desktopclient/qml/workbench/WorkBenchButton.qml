@@ -6,13 +6,13 @@ import "../controls" as Controls
 
 ToolButton{
     property string iconname
-    id : nav
+    id : button
     property string label
     height : parent.width// buttonB.width
     width : parent.width
     onWidthChanged: {
         if ( width > 75){
-            textLabel.width = nav.width
+            textLabel.width = button.width
             textLabel.visible = true
         }else
             textLabel.visible = false
@@ -43,4 +43,36 @@ ToolButton{
             border.color: "lightgrey"
         }
     }
+    states: [
+        State { name: "fullsize"
+
+            PropertyChanges {
+                target: button
+                height : (parent.height - 21) / 9
+                opacity : 1
+                enabled : true
+            }
+        },
+        State {
+            name : "zerosize"
+            PropertyChanges {
+                target: button
+                height : 0
+                opacity : 0
+                enabled : false
+            }
+        }
+
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "height"; duration : 500 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
+        }
+    ]
+
+    Component.onCompleted: {
+        button.state = "fullsize"
+    }
+
 }

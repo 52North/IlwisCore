@@ -31,6 +31,12 @@ void PublicDatabase::prepare() {
     stmt = "create table aliasses (alias TEXT, code TEXT, type TEXT, source TEXT)";
     sql.exec(stmt);
 
+    stmt = "create table workspaces (workspaceid INTEGER, description TEXT)";
+    sql.exec(stmt);
+
+    stmt = "create table workspace (workspaceid INTEGER, itemid INTEGER)";
+    sql.exec(stmt);
+
     stmt = "create table datum \
             (\
                 code TEXT,\
@@ -85,7 +91,9 @@ void PublicDatabase::prepare() {
                 itemid INTEGER,\
                 name TEXT collate nocase,\
                 code TEXT ,\
+                description TEXT ,\
                 container TEXT collate nocase,\
+                rawcontainer TEXT collate nocase,\
                 resource TEXT collate nocase, \
                 rawresource TEXT collate nocase, \
                 urlquery TEXT collate nocase, \
@@ -95,6 +103,10 @@ void PublicDatabase::prepare() {
                 dimensions TEXT \
                )";
     doQuery(stmt, sql);
+
+    doQuery("CREATE INDEX mastercat_id ON mastercatalog(itemid)", sql);
+    doQuery("CREATE INDEX mastercay_urltp ON mastercatalog(rawresource,type)", sql);
+    doQuery("CREATE INDEX mastercay_rurltp ON mastercatalog(resource,type)", sql);
 
     stmt = "create table catalogitemproperties \
             (\
@@ -361,7 +373,7 @@ bool PublicDatabase::fillDatumRecord(const QStringList& parts, QSqlQuery &sqlPub
 
 
 
-bool PublicDatabase::doQuery(QString& query, QSqlQuery &sqlPublic)
+bool PublicDatabase::doQuery(const QString& query, QSqlQuery &sqlPublic)
 {
     bool ok = sqlPublic.exec(query);
     if (!ok) {

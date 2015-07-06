@@ -63,6 +63,7 @@ Item {
         color : Global.mainbackgroundcolor
         border.width: 1
         border.color: Global.edgecolor
+        radius: 5
 
         ListView{
             id : currentFolders
@@ -120,7 +121,8 @@ Item {
                         catalogProperties.defintiontext = url
                         catalogProperties.descriptiontext = description
                         mastercatalog.selectedBookmark(url)
-                        bigthing.changeCatalog(url)
+                        var filter = "container='" + url + "'"
+                        bigthing.changeCatalog(filter,"catalog", url)
 
                     }
 

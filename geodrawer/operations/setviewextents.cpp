@@ -10,7 +10,7 @@
 #include "uicontextmodel.h"
 #include "drawers/draweroperation.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
 #include "setviewextents.h"
@@ -43,7 +43,15 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     RootDrawer *rootdrawer = static_cast<RootDrawer *>(_rootDrawer);
 
-    rootdrawer->applyEnvelopeView(_newExtents, true);
+
+    if ( _entiremap){
+        rootdrawer->applyEnvelopeView(rootdrawer->coverageEnvelope(), true);
+    }else{
+        double area = _newExtents.area();
+        if ( area > 1){
+            rootdrawer->applyEnvelopeZoom(_newExtents);
+        }
+    }
 
     return true;
 }
@@ -55,11 +63,10 @@ Ilwis::OperationImplementation *SetViewExtent::create(quint64 metaid, const Ilwi
 
 Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    auto iter = ctx->_additionalInfo.find("rootdrawer");
-    if ( iter == ctx->_additionalInfo.end())
+    if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
+    }
 
-    _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
     auto checkCoords =[](const OperationExpression& expr, int index)->double{
         bool ok;
         double value = expr.parm(index).value().toDouble(&ok);
@@ -69,7 +76,7 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
         }
         return value;
     };
-    double xmin, ymin, xmax, ymax;
+    double xmin=rUNDEF, ymin=rUNDEF, xmax=rUNDEF, ymax=rUNDEF;
     if ( _expression.parameterCount() == 5){
         xmin = checkCoords(_expression,1);
         ymin = checkCoords(_expression,2);
@@ -77,7 +84,12 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
         ymax = checkCoords(_expression,4);
     }else {
         QStringList parts = _expression.input<QString>(1).split(" ");
-        if ( !(parts.size() == 4 || parts.size() == 6)){
+        if ( parts.size() == 1){
+            if ( parts[0].toLower() == "entiremap"){
+                _entiremap = true;
+            }
+        }
+        else if ( !(parts.size() == 4 || parts.size() == 6)){
             ERROR3(ERR_ILLEGAL_PARM_3,"coordinate list", _expression.parm(1).value(), _expression.toString());
             return sPREPAREFAILED;
         }
@@ -86,7 +98,7 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
             ymin = parts[1].toDouble();
             xmax = parts[2].toDouble();
             ymax = parts[3].toDouble();
-        } else{
+        } else if(parts.size() == 6){
             xmin = parts[0].toDouble();
             ymin = parts[1].toDouble();
             xmax = parts[3].toDouble();
@@ -95,7 +107,7 @@ Ilwis::OperationImplementation::State SetViewExtent::prepare(ExecutionContext *c
     }
 
     _newExtents = Envelope(Coordinate(xmin, ymin), Coordinate(xmax, ymax));
-    if ( !_newExtents.isValid())
+    if ( !_newExtents.isValid() && _entiremap != true)
         return sPREPAREFAILED;
 
     return sPREPARED;
@@ -108,7 +120,7 @@ quint64 SetViewExtent::createMetadata()
     operation.setDescription(TR("changes the view extent"));
     operation.setInParameterCount({2,5});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
-    operation.addInParameter(1,itDOUBLE|itSTRING , TR("minimum x coordinate or (int the two parameter version) and ogc compatible coordinate string"));
+    operation.addInParameter(1,itDOUBLE|itSTRING , TR("minimum x coordinate or (in the two parameter version) ogc compatible coordinate string or size-directive"));
     operation.addInParameter(2,itDOUBLE , TR("minimum y coordinate"));
     operation.addInParameter(3,itDOUBLE , TR("maximum x coordinate"));
     operation.addInParameter(4,itDOUBLE , TR("maximum y coordinate"));
