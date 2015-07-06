@@ -142,9 +142,9 @@ bool CatalogView::hasParent() const
 
 bool CatalogView::prepare()
 {
-    for(auto resource : _locations)
-        if(!mastercatalog()->addContainer(resource))
-            return false;
+//    for(auto resource : _locations)
+//        if(!mastercatalog()->addContainer(resource))
+//            return false;
 
     Identity::prepare();
 
