@@ -112,6 +112,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( !catalog.isValid()){
         return false;
     }
+    catalog->scan();
 
     addItems({catalog->source()});
     if ( catalog->itemCount() > 0){
