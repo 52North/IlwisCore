@@ -22,9 +22,10 @@ MouseArea {
     }
 
     onPressed:  {
-        if (!layerview.tabmodel.selected)
-            layerview.tabmodel.selectTab()
-
+        if ( layerview.tabmodel){
+            if (!layerview.tabmodel.selected)
+                layerview.tabmodel.selectTab()
+        }
         if ( layerManager.zoomInMode ){
             if ( !zoomStarted){
                 drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");

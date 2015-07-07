@@ -62,9 +62,9 @@ bool Catalog::prepare(const IOOptions &options)
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    if ( !mastercatalog()->knownCatalogContent(source().url())){
-            scan();
-    }
+//    if ( !mastercatalog()->knownCatalogContent(source().url())){
+//            scan();
+//    }
 
     return true;
 }

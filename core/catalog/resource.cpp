@@ -276,7 +276,10 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             if ( url.scheme() == "file" && inf.isAbsolute()){
                 if ( !isRoot(inf.absolutePath())){
                     name(inf.fileName(), false);
-                    addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
+                    if ( !inf.isRoot())
+                        addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
+                    else
+                        addContainer(QUrl("file:///"),asRaw);
                 }
             } else {
                 QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
@@ -553,6 +556,10 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
             }
         }
         QString rest = txt.left(index); // the rest is the container
+        if ( rest.right(1) == "/")
+            rest = txt.left(index + 1);
+        else if ( rest.right(1) == ":")
+            rest = rest + "/";
 
         // we might be at the root; no need then to add containers as there are none
         if ( isRoot(txt))

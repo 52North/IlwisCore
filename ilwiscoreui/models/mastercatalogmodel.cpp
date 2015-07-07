@@ -42,7 +42,7 @@ MasterCatalogModel::MasterCatalogModel()
 {
 }
 
-CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& location, const QString& descr, const QString& query)
+CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& location, const QString& descr, const QString& query, bool threading)
 {
     Resource res(location, itCATALOGVIEW ) ;
     if ( label != "")
@@ -56,7 +56,7 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     CatalogView cview(res);
     cview.filter(query);
     auto cm = new CatalogModel(this);
-    cm->setView(cview);
+    cm->setView(cview, threading);
     return cm;
 }
 
@@ -68,15 +68,15 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
     _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
                QUrl("ilwis://internalcatalog"),
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
-               ""));
+               "",false));
      _bookmarks.push_back(addBookmark(TR("System Catalog"),
                QUrl("ilwis://system"),
                TR("Default objects that are always available in ilwis"),
-               "type<>" + QString::number(itGEODETICDATUM)));
+               "type<>" + QString::number(itGEODETICDATUM),false));
      _bookmarks.push_back(addBookmark(TR("Operations"),
                QUrl("ilwis://operations"),
                TR("All operations available in Ilwis"),
-               "type=" + QString::number(itOPERATIONMETADATA)));
+               "type=" + QString::number(itOPERATIONMETADATA), false));
 
      addDefaultFilters();
      scanBookmarks();
@@ -441,7 +441,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             model = new OperationCatalogModel(this);
         }else
             model = new CatalogModel(this);
-        model->setView(cview);
+        model->setView(cview, true);
         emit currentCatalogChanged();
         return model;
 

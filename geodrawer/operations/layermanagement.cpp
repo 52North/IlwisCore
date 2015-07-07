@@ -120,7 +120,7 @@ quint64 LayerManagement::createMetadata()
     OperationResource operation({"ilwis://operations/layermanagement"});
     operation.setSyntax("layermanagement(viewid, drawername-index, up | !down|remove)");
     operation.setDescription(TR("changes the position of a layer within the layerview"));
-    operation.setInParameterCount({3,4});
+    operation.setInParameterCount({3});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
     operation.addInParameter(1,itSTRING|itINTEGER , TR("layer index/code"), TR("location of the layer to be used. In the case of pre or post drawers the index is the order number"));
     operation.addInParameter(2,itSTRING , TR("action"));

@@ -3,6 +3,8 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QQmlContext>
+#include <QThread>
+#include <QCoreApplication>
 #include "coverage.h"
 #include "connectorinterface.h"
 #include "resource.h"
@@ -15,6 +17,7 @@
 #include "tranquilizer.h"
 #include "layermanager.h"
 #include "ilwiscontext.h"
+#include "oshelper.h"
 
 
 using namespace Ilwis;
@@ -60,10 +63,25 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
     }
 }
 
-void CatalogModel::setView(const CatalogView &view){
+void CatalogModel::setView(const CatalogView &view, bool threading){
     _view = view;
     resource(view.resource());
-    mastercatalog()->addContainer(view.resource().url());
+    bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
+    bool useThread = threading && inmainThread;
+    if ( useThread){
+        if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
+            QThread* thread = new QThread;
+            CatalogWorker2* worker = new CatalogWorker2(view.resource().url());
+            worker->moveToThread(thread);
+            thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
+            thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
+            thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
+            thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
+            thread->start();
+        }
+    }else
+        mastercatalog()->addContainer(view.resource().url());
     _displayName = view.resource().name();
     if ( _displayName == sUNDEF)
         _displayName = view.resource().url().toString();
@@ -163,17 +181,6 @@ void CatalogModel::refresh(bool yesno)
     _refresh = yesno;
 }
 
-//QString CatalogModel::selectedIds() const
-//{
-//    QString selected;
-//    for(auto obj : _selectedObjects ){
-//        if ( selected != "")
-//            selected += "|";
-//        selected += obj->id();
-
-//    }
-//    return selected;
-//}
 
 QStringList CatalogModel::objectCounts()
 {
@@ -272,6 +279,31 @@ void CatalogModel::gatherItems() {
         }
     }
 }
+
+void CatalogModel::updateContainer()
+{
+    _refresh = true;
+    emit contentChanged();
+}
+ //-------------------------------------------------
+CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
+{
+}
+
+void CatalogWorker2::process(){
+    try {
+            mastercatalog()->addContainer(_container);
+            emit updateContainer();
+            emit finished();
+    } catch(const ErrorObject& ){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
+}
+
 
 
 

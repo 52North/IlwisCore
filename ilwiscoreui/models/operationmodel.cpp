@@ -54,7 +54,10 @@ QString OperationModel::inputparameterType(quint32 index) const
 
 QString OperationModel::inputparameterDescription(quint32 index) const
 {
-    return getProperty("pin_" + QString::number(index + 1) + "_desc");
+    QString ret = getProperty("pin_" + QString::number(index + 1) + "_desc");
+    if ( ret == sUNDEF)
+        return "";
+    return ret;
 }
 
 QString OperationModel::outputparameterName(quint32 index) const
@@ -70,7 +73,10 @@ QString OperationModel::outputparameterType(quint32 index) const
 
 QString OperationModel::outputparameterDescription(quint32 index) const
 {
-    return getProperty("pout_" + QString::number(index + 1) + "_desc");
+    QString ret = getProperty("pout_" + QString::number(index + 1) + "_desc");
+    if ( ret == sUNDEF)
+        return "";
+    return ret;
 }
 
 QString OperationModel::syntax() const

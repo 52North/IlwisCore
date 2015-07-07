@@ -21,21 +21,23 @@ Item {
     signal catalogChanged()
 
     function showObject(objectid){
+        var filter
         if ( objectid === -1){
-
-        }
-
-        var type = mastercatalog.id2type(objectid)
-        if ( !type)
-            return
-        var resource = mastercatalog.id2Resource(objectid)
-        var filter;
-        if ( resource.typeName === "catalog"){
-            filter = "container='" + resource.url + "'"
-            datapanesplit.changePanel(filter, resource.typeName,resource.url)
+            var container = currentCatalog.container
+            filter = "container='" + container + "'"
+            datapanesplit.changePanel(filter, "catalog", container)
         }else {
-            filter = "itemid=" + resource.id
-             datapanesplit.newPanel(filter, resource.typeName,resource.url)
+            var type = mastercatalog.id2type(objectid)
+            if ( !type)
+                return
+            var resource = mastercatalog.id2Resource(objectid)
+            if ( resource.typeName === "catalog"){
+                filter = "container='" + resource.url + "'"
+                datapanesplit.changePanel(filter, "catalog",resource.url)
+            }else {
+                filter = "itemid=" + resource.id
+                datapanesplit.newPanel(filter, resource.typeName,resource.url)
+            }
         }
     }
 
