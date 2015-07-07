@@ -82,44 +82,8 @@ Rectangle {
 
     }
 
-    Action {
-        id :maxButtons
-        onTriggered: {
-            buttonB.width = 55
-        }
-    }
-
-    Action {
-        id :minButtons
-        onTriggered: {
-            buttonB.width = 0
-        }
-    }
-
     Column {
         anchors.fill: parent
-        Rectangle {
-            height : 21
-            width : buttonB.width
-            color : Global.alternatecolor1
-            Row {
-                anchors.fill: parent
-                Button{
-                    id : full
-                    height : 20
-                    width :20
-                    action : maxButtons
-                    Image { anchors.centerIn : parent; source: "../images/max1.png" }
-                }
-                Button{
-                    id : close
-                    height : 20
-                    width :20
-                    action : minButtons
-                    Image { anchors.centerIn : parent; source: "../images/min1.png" }
-                }
-            }
-        }
 
         WorkBenchButton{
             id : nav
@@ -194,4 +158,26 @@ Rectangle {
 
         }
     }
+    states: [
+        State { name: "visible"
+
+            PropertyChanges {
+                target: buttonB
+                width : 80
+            }
+        },
+        State {
+            name : "invisible"
+            PropertyChanges {
+                target: buttonB
+                width : 0
+            }
+        }
+
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+        }
+    ]
 }

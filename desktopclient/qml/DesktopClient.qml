@@ -130,8 +130,24 @@ ApplicationWindow {
             anchors.top : commLine.bottom
             anchors.bottom : parent.bottom
 
+            function changeWidthSplitter(pside, partside){
+                if ( pside === 1 && partside === 0){
+                    workBench.state = "invisible"
+                }
+                if ( pside === 1 && partside === 1){
+                    workBench.state = "visible"
+                }
+                if ( pside === 0 && partside === 0){
+                    workBenchButtons.state = "invisible"
+                }
+                if ( pside === 0 && partside === 1){
+                    workBenchButtons.state = "visible"
+                }
+            }
+
             handleDelegate: Controls.SplitHandle{
                 imageHeight: 22
+                func : mainSplit.changeWidthSplitter
             }
 
             function newCatalog(filter, outputtype, url){
