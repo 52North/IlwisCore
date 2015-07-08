@@ -48,7 +48,7 @@ ToolButton{
 
             PropertyChanges {
                 target: button
-                height : (parent.height - 21) / 9
+                height : (parent.height) / 9
                 opacity : 1
                 enabled : true
             }
