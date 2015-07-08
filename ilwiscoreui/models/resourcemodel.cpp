@@ -150,6 +150,9 @@ QString ResourceModel::iconPath() const
         return iconPath(tp | itCOVERAGE);
     if ( hasType(_item.extendedType(), itTABLE) && tp == itCATALOG)
         return iconPath(tp | itTABLE);
+    if ( hasType(tp ,itCOORDSYSTEM)){
+        return iconPath(itCOORDSYSTEM);
+    }
     return iconPath(tp);
 }
 
@@ -178,16 +181,44 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "feature20CS1.png";
     else if ( tp & itTABLE)
         return "table20CS1.png";
+    else if ( tp == (itCONVENTIONALCOORDSYSTEM|itLOCATION))
+        return "latloncsy20.png";
+    else if ( tp == itCONVENTIONALCOORDSYSTEM)
+        return "projectedcsy20.png";
+    else if ( tp == itBOUNDSONLYCSY)
+        return "boundsonlycsy20.png";
     else if ( tp & itCOORDSYSTEM)
         return "csy20.png";
+    else if ( tp  == (itGEOREF | itLOCATION))
+        return "georeftiepoints20.png";
     else if ( tp & itGEOREF)
         return "georeference20.png";
     else if ( tp == itCATALOG)
         return "folder20.png";
+    else if ( tp == (itTHEMATICITEM | itITEMDOMAIN))
+        return "thematicdom.png";
+    else if ( tp == (itIDENTIFIERITEM | itITEMDOMAIN))
+        return "iddom20.png";
+    else if ( tp == (itNUMERICITEM | itITEMDOMAIN))
+        return "intervaldom20.png";
+    else if ( tp == (itINDEXEDITEM | itITEMDOMAIN))
+        return "indexeddom20.png";
+    else if ( tp == (itTIMEITEM | itITEMDOMAIN))
+        return "timeintervaldom20.png";
+    else if ( tp == (itTIME | itDOMAIN))
+        return "timedom20.png";
+    else if ( tp == (itCOLORDOMAIN))
+        return "colordom20.png";
+    else if ( tp == (itPALETTECOLOR | itITEMDOMAIN))
+        return "colorpalette20.png";
+    else if ( tp == (itNUMERICDOMAIN))
+        return "valuedom20.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp & itREPRESENTATION)
         return "representation20.png";
+    else if ( hasType(tp,itNUMERICDOMAIN))
+        return "valuedom20.png";
     else if ( hasType(tp,itNUMBER))
         return "numbers20.png";
     else if ( hasType(tp,itBOOL))
