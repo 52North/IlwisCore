@@ -154,6 +154,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
             QJsonObject obj = doc.object();
             QJsonValue formats = obj.value("Formats");
             if ( formats.isArray()){
+                kernel()->database().exec("BEGIN TRANSACTION");
                 QJsonArray arrFormats = formats.toArray();
                 for(auto iter = arrFormats.begin(); iter != arrFormats.end(); ++iter) {
                     auto jsonValue  = *iter;
@@ -185,6 +186,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                     }
 
                 }
+                kernel()->database().exec("COMMIT TRANSACTION");
                 return true;
             }
         }
