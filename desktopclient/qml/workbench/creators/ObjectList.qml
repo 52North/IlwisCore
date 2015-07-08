@@ -25,9 +25,10 @@ Item {
         anchors.topMargin: 3
         height : parent.height - label.height - 3
         width : parent.width
-        color : Global.alternatecolor4
+        color : Global.alternatecolor2
         border.width: 1
         border.color: Global.edgecolor
+        radius : 5
         ScrollView {
             anchors.fill: parent
 

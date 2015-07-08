@@ -18,7 +18,8 @@ Rectangle {
     height : parent.height  -3
     color : Global.mainbackgroundcolor
     border.width: 1
-    border.color: Global.edgecolor
+    border.color: "green"//Global.edgecolor
+    radius : 5
     y : 3
     x : 0
     opacity : width > 4 ? 1 : 0
@@ -92,7 +93,6 @@ Rectangle {
         anchors.top : drivelist.bottom
         anchors.topMargin: 1
         color : Global.mainbackgroundcolor
-
         ComboBox {
             id : pathText
             width : parent.width - 26
@@ -147,6 +147,8 @@ Rectangle {
         anchors.bottomMargin: 3
         clip : true
         x: 2
+        color : "red"
+        radius : 5
         ListView {
             id : fileFolders
             anchors.fill: parent
