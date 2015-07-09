@@ -27,10 +27,17 @@ Rectangle {
     }
 
     Create.ObjectList{
+        id : createableObjects
         width : parent.width
         height : 200
         anchors.top : functionBar.bottom
         anchors.topMargin: 5
+    }
+    Create.CreatorList{
+        anchors.top : createableObjects.bottom
+        anchors.topMargin: 5
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 5
     }
 
     states: [
