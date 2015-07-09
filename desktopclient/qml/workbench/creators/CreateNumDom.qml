@@ -8,7 +8,7 @@ import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Rectangle {
-    height: 100
+    height: 150
     border.width : 1
     border.color : Global.edgecolor
     radius: 5
@@ -41,6 +41,12 @@ Rectangle {
             labelText: qsTr("Resolution")
             labelWidth: 100
             width : parent.width
+        }
+        Controls.TextAreaLabelPair{
+            labelText: qsTr("Description")
+            width : parent.width
+            height : 40
+            labelWidth: 100
         }
     }
 }
