@@ -44,6 +44,7 @@
 #include "models/tabmodel.h"
 #include "models/datapanemodel.h"
 #include "models/objectcreator.h"
+#include "models/ilwisobjectcreatormodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
@@ -110,6 +111,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<TabModel>("TabModel", 1,0,"TabModel");
         qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
         qmlRegisterType<ObjectCreator>("ObjectCreator", 1,0,"ObjectCreator");
+        qmlRegisterType<IlwisObjectCreatorModel>("IlwisObjectCreatorModel", 1,0,"IlwisObjectCreatorModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
