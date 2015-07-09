@@ -29,6 +29,7 @@ Item {
         border.width: 1
         border.color: Global.edgecolor
         radius : 5
+
         ScrollView {
             anchors.fill: parent
 
@@ -40,11 +41,17 @@ Item {
                     Rectangle {
                         width: objectlist.width; height: 23
                         color: Global.selectedColor; radius: 2
-                        y: (objectlist && objectlist.currentItem) ? objectlist.currentItem.y : 0
+                        y: (objectlist && objectlist.currentItem) ? objectlist.currentItem.y : -100
                     }
                 }
+                onCurrentIndexChanged: {
+                    objectcreator.setActiveCreator(currentIndex)
+                }
+                Component.objectName: {
+                    objectlist.currentIndex = -1
+                }
 
-                model : objectcreator.createableObjects()
+                model : objectcreator.createableObjects
                 delegate : Component {
                     Item {
                         width: objectlist.width
