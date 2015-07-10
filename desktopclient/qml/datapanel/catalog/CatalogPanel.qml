@@ -17,6 +17,11 @@ Item {
     width : parent.width
     height : parent.height
 
+    onTabmodelChanged: {
+        if ( cbuttonBar && tabmodel)
+            cbuttonBar.side = tabmodel.side
+    }
+
 
     signal catalogChanged()
 
@@ -270,7 +275,7 @@ Item {
         id : catalogView
         width : parent.width
         anchors.top: toolbar.bottom
-        anchors.bottom: parent.bottom
+        anchors.bottom: cbuttonBar.top
         Connections{
             target : iconListView
             onShowObject : { showObject(objectid,"")}
@@ -312,7 +317,7 @@ Item {
             },
             State {
                 name : "thumbList"
-                PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
+                PropertyChanges { target: thumbListView; height : parent.height.height;opacity : 1; enabled : true}
                 PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
@@ -350,6 +355,11 @@ Item {
                 }
             }
         ]
+    }
+    CatalogButtonBar{
+        id : cbuttonBar
+        anchors.bottom: parent.bottom
+        width : parent.width
     }
     Component.onCompleted: {
     }

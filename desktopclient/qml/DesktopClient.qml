@@ -174,13 +174,4 @@ ApplicationWindow {
         }
 
     }
-
-
-    statusBar: StatusBar {
-        id : statusB
-        RowLayout {
-            Label { text: "Read Only" }
-            Label { text: "More text" }
-        }
-    }
 }
