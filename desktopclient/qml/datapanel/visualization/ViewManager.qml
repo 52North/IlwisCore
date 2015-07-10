@@ -104,6 +104,11 @@ Item {
     TabView{
         id : layersmeta
         anchors.fill: parent
+        onCurrentIndexChanged: {
+            var tab= getTab(2)
+            tab.item.drawerActive = currentIndex == 2
+
+        }
 
         function endZoom(envelope) {
             zoomEnded(envelope)

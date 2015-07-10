@@ -16,6 +16,11 @@ Item {
     height : parent.height
     property alias coverage : overview
     property LayerManager manager
+    property bool drawerActive : false
+
+    onDrawerActiveChanged: {
+        overview.active = drawerActive
+    }
 
     signal zoomEnded(string envelope)
 
@@ -44,6 +49,7 @@ Item {
     }
 
     function newZoomExtent(newenvelope){
+        console.debug("b")
         var env = {envelope : newenvelope, preserveaspectration : false}
         overview.setAttribute("selectiondrawer", env )
         mdspatialinfo.zoomEnvelope(newenvelope)
@@ -52,6 +58,7 @@ Item {
 
     function entireMap() {
         if ( metatdata.manager && layerview.manager){
+            console.debug("a")
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
             var env = {envelope : envelope, preserveaspectration : false}
             overview.setAttribute("selectiondrawer", env )
@@ -125,8 +132,10 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: 3
                 function entireMap() {
-                    overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
-                    overview.update()
+                    if ( layersmeta.currentIndex == 2){
+                        overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
+                        overview.update()
+                    }
                 }
 
                 onWidthChanged: {
