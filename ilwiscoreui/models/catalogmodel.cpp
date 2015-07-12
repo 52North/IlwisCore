@@ -171,6 +171,9 @@ void CatalogModel::filterChanged(const QString& typeIndication, bool state){
 
 void CatalogModel::filter(const QString &filterString)
 {
+    if ( _view.filter() == filterString)
+        return;
+
     _refresh = true;
     _view.filter(filterString);
     contentChanged();
@@ -206,6 +209,9 @@ QStringList CatalogModel::objectCounts()
 
 void CatalogModel::nameFilter(const QString &filter)
 {
+    if ( _nameFilter == filter)
+        return;
+
     _nameFilter = filter;
     _currentItems.clear();
     emit contentChanged();
