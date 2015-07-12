@@ -209,7 +209,7 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
         return false;
     }
 
-    qDebug() << id();
+    //qDebug() << id();
     if(!_shaders.bind())
         return false;
     QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
