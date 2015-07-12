@@ -189,12 +189,14 @@ Item {
             model : mastercatalog.defaultFilters
             textRole: "name"
             onCurrentIndexChanged: {
+                if ( tabmodel)
+                    tabmodel.selectTab()
                 if ( currentIndex > 0){ // first entry is a default empty one
                     var filter = model[currentIndex].catalogQuery
                     var url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
                     bigthing.changeCatalog(filter,"catalog", url)
-                    currentCatalog.filter(filter)
+                    //currentCatalog.filter(filter)
                 }
 
             }
