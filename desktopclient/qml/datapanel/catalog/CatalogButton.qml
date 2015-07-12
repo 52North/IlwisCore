@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../../controls" as Controls
+import "../../Global.js" as Global
 
 ToolButton{
     id : button
@@ -28,40 +29,8 @@ ToolButton{
             anchors.fill: parent
             color : control.pressed ? "#B0C4DE" : (side == "left") ? "white" : "#F6F6F6"
             border.width: 1
-            border.color: "lightgrey"
+            border.color: Global.edgecolor
         }
     }
-    states: [
-        State { name: "fullsize"
-
-            PropertyChanges {
-                target: button
-                width : (parent.width) / 5
-                opacity : 1
-                enabled : true
-            }
-        },
-        State {
-            name : "zerosize"
-            PropertyChanges {
-                target: button
-                height : 0
-                opacity : 0
-                enabled : false
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
-            NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.InOutCubic }
-        }
-    ]
-
-    Component.onCompleted: {
-        button.state = "fullsize"
-    }
-
 }
 
