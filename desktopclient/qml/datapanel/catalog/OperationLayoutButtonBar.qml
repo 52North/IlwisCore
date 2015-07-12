@@ -22,7 +22,6 @@ Item {
                     catalogView.state = "iconList"
                 if ( showGrid.checked)
                     catalogView.state = "iconGrid"
-                console.debug(showList.checked)
             }
         }
         ToolBarButton{
