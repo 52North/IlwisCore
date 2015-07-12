@@ -49,7 +49,6 @@ Item {
     }
 
     function newZoomExtent(newenvelope){
-        console.debug("b")
         var env = {envelope : newenvelope, preserveaspectration : false}
         overview.setAttribute("selectiondrawer", env )
         mdspatialinfo.zoomEnvelope(newenvelope)
@@ -58,7 +57,6 @@ Item {
 
     function entireMap() {
         if ( metatdata.manager && layerview.manager){
-            console.debug("a")
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope")
             var env = {envelope : envelope, preserveaspectration : false}
             overview.setAttribute("selectiondrawer", env )
