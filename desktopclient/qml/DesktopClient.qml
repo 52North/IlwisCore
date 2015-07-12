@@ -132,10 +132,16 @@ ApplicationWindow {
 
             function changeWidthSplitter(pside, partside){
                 if ( pside === 1 && partside === 0){
-                    workBench.state = "invisible"
+                    if ( workBench.width === 0){
+                        workBenchButtons.state = "invisible"
+                    }else
+                        workBench.state = "invisible"
                 }
                 if ( pside === 1 && partside === 1){
-                    workBench.state = "visible"
+                    if ( workBenchButtons.width === 0 && workBench.width == 0){
+                        workBenchButtons.state = "visible"
+                    } else
+                        workBench.state = "visible"
                 }
                 if ( pside === 0 && partside === 0){
                     workBenchButtons.state = "invisible"
