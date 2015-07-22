@@ -44,9 +44,9 @@ FeatureCoverage::~FeatureCoverage() {
 
 }
 
-bool FeatureCoverage::prepare( ) {
+bool FeatureCoverage::prepare(const IOOptions &options) {
 
-    bool ok = Coverage::prepare();
+    bool ok = Coverage::prepare(options);
     return ok;
 }
 

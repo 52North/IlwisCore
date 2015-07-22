@@ -222,11 +222,12 @@ IProjection ConventionalCoordinateSystem::projection() const
     return _projection;
 }
 
-bool ConventionalCoordinateSystem::prepare()
+bool ConventionalCoordinateSystem::prepare(const IOOptions& options)
 {
-    return CoordinateSystem::prepare();
+    return CoordinateSystem::prepare(options);
 }
 
+// TODO: this method should be merged with the prepare above
 bool ConventionalCoordinateSystem::prepare(const QString &parms)
 {
     Proj4Parameters proj4(parms);

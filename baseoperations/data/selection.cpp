@@ -198,7 +198,7 @@ quint64 Selection::createMetadata()
     QString url = QString("ilwis://operations/selection");
     Resource resource(QUrl(url), itOPERATIONMETADATA);
     resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","selection");
+    resource.addProperty("longname","Sub raster");
     resource.addProperty("syntax","selection(coverage,selection-definition)");
     resource.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
     resource.addProperty("inparameters","2");

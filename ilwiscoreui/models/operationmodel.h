@@ -7,9 +7,18 @@
 class ILWISCOREUISHARED_EXPORT OperationModel : public ResourceModel
 {
     Q_OBJECT
+
 public:
     Q_PROPERTY(QStringList inParamNames READ inParamNames CONSTANT)
     Q_PROPERTY(QStringList outParamNames READ outParamNames CONSTANT)
+    Q_PROPERTY(QString keywords READ keywords CONSTANT)
+    Q_PROPERTY(QString syntax READ syntax CONSTANT)
+    Q_PROPERTY(QString inParameterCount READ inParameterCount CONSTANT)
+    Q_PROPERTY(QString outParameterCount READ outParameterCount CONSTANT)
+    Q_PROPERTY(QStringList inParameterIconList READ inParameterIconList CONSTANT)
+    Q_PROPERTY(QStringList outParameterIconList READ outParameterIconList CONSTANT)
+    Q_PROPERTY(QString provider READ provider CONSTANT)
+
 
     OperationModel();
     explicit OperationModel(const Ilwis::Resource &source, QObject *parent=0);
@@ -23,16 +32,23 @@ public:
     Q_INVOKABLE QString outputparameterType(quint32 index) const;
     Q_INVOKABLE QString outputparameterDescription(quint32 index) const;
 
-    Q_INVOKABLE QString syntax() const;
-    Q_INVOKABLE QString keywords() const;
+    QString syntax() const;
+    QString keywords() const;
+    QString provider() const;
 
     Q_INVOKABLE int maxParameterCount(bool inputCount) const;
+
+    Q_INVOKABLE QString getProperty(const QString& propertyname) const;
+
     QStringList inParamNames() const;
     QStringList outParamNames() const;
+    QString inParameterCount() const;
+    QString outParameterCount() const;
+    QStringList inParameterIconList() const;
+    QStringList outParameterIconList() const;
 
 
 private:
-    QVariant property(const QString& name) const;
 
 };
 

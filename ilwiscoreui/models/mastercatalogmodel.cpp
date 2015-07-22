@@ -42,7 +42,7 @@ MasterCatalogModel::MasterCatalogModel()
 {
 }
 
-CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& location, const QString& descr, const QString& query)
+CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& location, const QString& descr, const QString& query, bool threading)
 {
     Resource res(location, itCATALOGVIEW ) ;
     if ( label != "")
@@ -56,7 +56,7 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     CatalogView cview(res);
     cview.filter(query);
     auto cm = new CatalogModel(this);
-    cm->setView(cview);
+    cm->setView(cview, threading);
     return cm;
 }
 
@@ -68,15 +68,15 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
     _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
                QUrl("ilwis://internalcatalog"),
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
-               ""));
+               "",false));
      _bookmarks.push_back(addBookmark(TR("System Catalog"),
                QUrl("ilwis://system"),
                TR("Default objects that are always available in ilwis"),
-               "type<>" + QString::number(itGEODETICDATUM)));
+               "type<>" + QString::number(itGEODETICDATUM),false));
      _bookmarks.push_back(addBookmark(TR("Operations"),
                QUrl("ilwis://operations"),
                TR("All operations available in Ilwis"),
-               "type=" + QString::number(itOPERATIONMETADATA)));
+               "type=" + QString::number(itOPERATIONMETADATA), false));
 
      addDefaultFilters();
      scanBookmarks();
@@ -85,7 +85,11 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 void MasterCatalogModel::addDefaultFilters(){
     //QString filter = QString("type=%1");
     QString filter = QString("type&%1!=0");
+    QString filter2 = QString("container='%1' and type<>" + QString::number(itGEODETICDATUM));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itUNKNOWN)),"",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system"),"System Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://internalcatalog"),"Internal Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"","-------------------------------------",""));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itRASTER)),"Master Catalog Rasters","raster20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itTABLE)),"Master Catalog Tables","table20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itDOMAIN)),"Master Catalog Domains","domain20.png"));
@@ -388,11 +392,6 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
             IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
             if ( ioModel->isValid()){
                 _selectedObjects.append(ioModel);
-                QObject *obj = uicontext()->rootObject()->findChild<QObject *>("object_properties_list_mainui");
-                if ( obj){
-                    // TODO update model here
-                    qDebug() << "TODO update models in the property list, unsure how to do that yet";
-                }
                 emit selectionChanged();
             }else
                 delete ioModel;
@@ -446,7 +445,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             model = new OperationCatalogModel(this);
         }else
             model = new CatalogModel(this);
-        model->setView(cview);
+        model->setView(cview, true);
         emit currentCatalogChanged();
         return model;
 
@@ -669,6 +668,18 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 {
 
 }
+
+QString MasterCatalogModel::selectedIds() const
+{
+    QString selected;
+    for(auto obj : _selectedObjects ){
+        if ( selected != "")
+            selected += "|";
+        selected += obj->id();
+
+    }
+    return selected;
+}
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
 {
@@ -684,7 +695,7 @@ void CatalogWorker::process(){
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){
-            calculatelatLonEnvelopes();
+            //calculatelatLonEnvelopes();
             emit finished();
         }
     } catch(const ErrorObject& err){

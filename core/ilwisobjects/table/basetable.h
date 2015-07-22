@@ -72,7 +72,7 @@ public:
     void columndefinition(const ColumnDefinition &coldef);
 
     //@override
-    bool prepare();
+    bool prepare(const IOOptions& options=IOOptions());
 
     /*!
      * a BaseTable is valid if it has rows and columns

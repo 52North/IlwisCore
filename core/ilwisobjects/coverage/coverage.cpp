@@ -16,9 +16,9 @@ Coverage::~Coverage()
     _coordinateSystem.set(0);
 }
 
-bool Coverage::prepare( ) {
+bool Coverage::prepare(const IOOptions &options) {
 
-    bool ok = IlwisObject::prepare();
+    bool ok = IlwisObject::prepare(options);
 
     return ok;
 }

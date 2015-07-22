@@ -42,6 +42,11 @@ std::vector<Resource> Catalog::items() const
     return _items;
 }
 
+quint32 Catalog::itemCount() const
+{
+    return _items.size();
+}
+
 void Catalog::scan()
 {
     if (! connector().isNull()){
@@ -51,14 +56,15 @@ void Catalog::scan()
     }
 }
 
-bool Catalog::prepare()
+bool Catalog::prepare(const IOOptions &options)
 {
     QString scheme =  source().url().scheme();
     if ( !source().isValid() || scheme.size() <= 1)
         return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
 
-    if ( !mastercatalog()->knownCatalogContent(source().url()))
-        scan();
+//    if ( !mastercatalog()->knownCatalogContent(source().url())){
+//            scan();
+//    }
 
     return true;
 }

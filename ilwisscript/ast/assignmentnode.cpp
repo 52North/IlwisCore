@@ -59,9 +59,11 @@ QString AssignmentNode::nodeType() const
 IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
     IlwisTypes tp = sym._type;
     if ( tp & itRASTER)
-            return sym._var.value<Ilwis::IRasterCoverage>().as<IlwisObject>();
+        return sym._var.value<Ilwis::IRasterCoverage>().as<IlwisObject>();
     if ( tp & itFEATURE)
-            return sym._var.value<Ilwis::IFeatureCoverage>().as<IlwisObject>();
+        return sym._var.value<Ilwis::IFeatureCoverage>().as<IlwisObject>();
+    if ( hasType(tp , itTABLE))
+        return sym._var.value<Ilwis::ITable>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -87,14 +89,15 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
         Ilwis::IIlwisObject object = getObject(sym);
         bool wasAnonymous = object->isAnonymous();
         QString name = result;
-         QUrl url;
+        QUrl url;
         if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url
             url = result;
             name = result.mid(result.lastIndexOf("/") + 1);
         }
         else
-            if ( fnamespace != "stream") // stream goes to the internal if nothing has ben defined and that is default.
+            if ( fnamespace != "stream"){ // stream goes to the internal if nothing has ben defined and that is default.
                 url = context()->workingCatalog()->source().url().toString() + "/" + result;
+            }
         object->name(name);
         object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
         object->createTime(Ilwis::Time::now());
@@ -103,7 +106,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
 
         object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
 
-     }
+    }
 }
 
 bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx)
@@ -111,66 +114,70 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
     if ( _expression.isNull())
         return false;
 
+    try{
+        bool res = _expression->evaluate(symbols, scope, ctx);
+        if ( res) {
+            NodeValue val = _expression->value();
+            for(int i = 0; i < val.size(); ++i) {
+                Symbol sym = symbols.getSymbol(val.id(i),SymbolTable::gaREMOVEIFANON);
+                IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
+                QString result = _outParms->id(i);
 
-    bool res = _expression->evaluate(symbols, scope, ctx);
-    if ( res) {
-        NodeValue val = _expression->value();
-        for(int i = 0; i < val.size(); ++i) {
-            Symbol sym = symbols.getSymbol(val.id(i),SymbolTable::gaREMOVEIFANON);
-            IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
-            QString result = _outParms->id(i);
-            QSharedPointer<ASTNode> specifier = _outParms->specifier(result);
-            if ( !specifier.isNull()) {
-                if ( specifier->noOfChilderen()!= 1)
-                    return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");
-                store2Format(specifier, sym, result);
-
-            }
-            if (  hasType(tp, itILWISOBJECT)) {
-                bool ok;
-                if ( hasType(tp, itRASTER)) {
-                    ok = copyObject<RasterCoverage>(sym, result,symbols);
-                }
-                else if (hasType(tp, itFEATURE))
+                if (  hasType(tp, itILWISOBJECT)) {
+                    bool ok;
+                    if ( hasType(tp, itRASTER)) {
+                        ok = copyObject<RasterCoverage>(sym, result,symbols);
+                    }
+                    else if (hasType(tp, itFEATURE))
                         ok = copyObject<FeatureCoverage>(sym, result,symbols);
-                else if (hasType(tp, itTABLE)){
-                    ok = copyObject<Table>(sym, result,symbols,true);
-                    QSharedPointer<Selector> selector = _outParms->selector(result);
-                    if (!selector.isNull()){
-                        QString varName = selector->variable();
-                        ITable source =  sym._var.value<ITable>();
-                        QString oldColName = ctx->_additionalInfo[source->name()].toString();
-                        QVariant newT= symbols.getValue(result);
-                        ITable newTable = newT.value<ITable>();
-                        ColumnDefinition coldef = newTable->columndefinition(oldColName);
-                        if ( coldef.isValid()){
-                            coldef.name(varName);
-                            newTable->columndefinition(coldef);
+                    else if (hasType(tp, itTABLE)){
+                        ok = copyObject<Table>(sym, result,symbols,true);
+                        QSharedPointer<Selector> selector = _outParms->selector(result);
+                        if (!selector.isNull()){
+                            QString varName = selector->variable();
+                            ITable source =  sym._var.value<ITable>();
+                            QString oldColName = ctx->_additionalInfo[source->name()].toString();
+                            QVariant newT= symbols.getValue(result);
+                            ITable newTable = newT.value<ITable>();
+                            ColumnDefinition& coldef = newTable->columndefinitionRef(oldColName);
+                            if ( coldef.isValid()){
+                                coldef.name(varName);
+                            }
                         }
                     }
-                }
 
-                if(!ok) {
-                    throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
-                }
-                ctx->clear(true);
-                ctx->_results.push_back(result);
-                return ok;
+                    if(!ok) {
+                        throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
+                    }
+                    QSharedPointer<ASTNode> specifier = _outParms->specifier(_outParms->id(i));
+                    if ( !specifier.isNull()) {
+                        if ( specifier->noOfChilderen()!= 1)
+                            return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");
+                        store2Format(specifier, sym, result);
 
-            } else {
-                sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
-                tp = sym.isValid() ? sym._type : itUNKNOWN;
-                if ( tp == itUNKNOWN) {
-                    tp = Domain::ilwType(val);
+                    }
+                    ctx->clear(true);
+                    ctx->_results.push_back(result);
+                    return ok;
+
+                } else {
+                    sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
+                    tp = sym.isValid() ? sym._type : itUNKNOWN;
+                    if ( tp == itUNKNOWN) {
+                        tp = Domain::ilwType(val);
+                    }
                 }
+                ctx->clear();
+                // symbols.addSymbol(result, scope, tp, _expression->value());
+                ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
+
+                return true;
             }
-            ctx->clear();
-           // symbols.addSymbol(result, scope, tp, _expression->value());
-            ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
-
-            return true;
         }
+    } catch(const ErrorObject&){
+
     }
+
     return false;
 }
 

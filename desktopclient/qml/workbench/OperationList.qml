@@ -43,7 +43,7 @@ Rectangle {
                 }
                 Text {
                     id : operationSyntax
-                    text : syntax()
+                    text : syntax
                     anchors.top : operationName.bottom
                     width : parent.width
                     height : 12

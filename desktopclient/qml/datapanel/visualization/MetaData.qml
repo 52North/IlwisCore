@@ -16,6 +16,11 @@ Item {
     height : parent.height
     property alias coverage : overview
     property LayerManager manager
+    property bool drawerActive : false
+
+    onDrawerActiveChanged: {
+        overview.active = drawerActive
+    }
 
     signal zoomEnded(string envelope)
 
@@ -125,8 +130,10 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: 3
                 function entireMap() {
-                    overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
-                    overview.update()
+                    if ( layersmeta.currentIndex == 2){
+                        overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
+                        overview.update()
+                    }
                 }
 
                 onWidthChanged: {

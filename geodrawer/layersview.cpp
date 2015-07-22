@@ -27,7 +27,7 @@ LayersView::~LayersView()
 
 QQuickFramebufferObject::Renderer *LayersView::createRenderer() const
 {
-    LayersRenderer *renderer = new LayersRenderer(this);
+    LayersRenderer *renderer = new LayersRenderer(this, _active);
     connect(renderer,&LayersRenderer::synchronizeDone,this,&LayersView::synchronizeEnded);
     connect(renderer,&LayersRenderer::drawDone,this,&LayersView::drawDone);
     return renderer;
@@ -229,6 +229,26 @@ LayerManager *LayersView::layerManager()
 bool LayersView::showLayerInfo() const
 {
     return _showLayerInfo;
+}
+
+bool LayersView::active() const
+{
+    Ilwis::Geodrawer::RootDrawer *rootdrw = privateRootDrawer();
+    if ( rootdrw){
+        return rootdrw->isActive();
+    }
+    return _active;
+}
+
+void LayersView::setActive(bool yesno)
+{
+    _active = yesno;
+    Ilwis::Geodrawer::RootDrawer *rootdrw = privateRootDrawer();
+    if ( rootdrw){
+        rootdrw->active(yesno);
+        rootdrw->redraw();
+        emit activeChanged();
+    }
 }
 
 void LayersView::setShowLayerInfo(bool yesno)

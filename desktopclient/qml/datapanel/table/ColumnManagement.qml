@@ -6,12 +6,12 @@ import QtQuick 2.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 import "../.." as Base
+import ".." as DataPanel
 
 Rectangle {
     id : columnManagement
     width: parent.width
-    height: 270
-    Layout.minimumHeight: 22
+    Layout.minimumHeight: 24
     function setColumnModel1(columnmodel){
         var tab = tabletabs.getTab(0)
         tab.active = true
@@ -27,6 +27,21 @@ Rectangle {
     TabView{
         anchors.fill: parent
         id : tabletabs
+        tabPosition: Qt.BottomEdge
+
+        function tabClicked(index){
+            if ( currentIndex === index){
+                if ( columnManagement.height <= 60){
+                    tableView.state = "visible"
+                }
+                else{
+                    tableView.state = ""
+                    tableView.state = "invisible"
+                }
+            }
+
+            currentIndex = index
+        }
         Tab {
             title : qsTr("Operations")
             SplitView{
@@ -68,8 +83,7 @@ Rectangle {
             }
         }
 
-        style: Base.TabStyle1{
-        }
+     style: DataPanel.ButtonBarTabViewStyle{}
     }
 }
 

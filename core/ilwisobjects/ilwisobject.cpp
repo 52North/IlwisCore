@@ -94,7 +94,9 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
-    Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
+    IOOptions opt = options;
+    opt.addOption("format", format);
+    Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace,opt);
     if (!conn){
         throw ErrorObject(TR(QString("couldnt connect to %1 datasource for %2").arg(format).arg(url.toString())));
     }
@@ -125,7 +127,7 @@ bool IlwisObject::merge(const IlwisObject *, int )
 }
 
 
-bool IlwisObject::prepare( ) {
+bool IlwisObject::prepare(const Ilwis::IOOptions &) {
     _valid = true;
 
     return true;
@@ -230,27 +232,38 @@ bool IlwisObject::outputConnectionReadonly() const
     return true;
 }
 
-QString IlwisObject::externalFormat() const
+QString IlwisObject::formatCode(bool input) const
 {
-    QString outFormat, inFormat, provider;
-    if ( !connector(cmOUTPUT).isNull())
-        outFormat = connector(cmOUTPUT)->format();
-    if ( !connector().isNull()){
-        inFormat = connector()->format();
+    if ( input){
+        if ( !connector().isNull()){
+            return connector()->format();
+        }
+    }else {
+        if(!connector(cmOUTPUT).isNull())
+           return connector(cmOUTPUT)->format();
+        else {
+            return formatCode();
+        }
     }
-    if ( connector().isNull())
-        return "";
 
-    provider = connector()->provider();
-    if ( outFormat == "" && inFormat == "")
-        return sUNDEF;
-    if ( outFormat == inFormat)
-        return provider + ": " + inFormat;
-    if ( outFormat == "" && inFormat != "")
-        return provider + ": " +inFormat;
-    if ( inFormat == "" && outFormat != "")
-        return "internal/"  + outFormat;
-    return provider + ": " + inFormat + "/" + outFormat;
+    return sUNDEF;
+}
+
+QString IlwisObject::provider(bool input) const
+{
+    if ( input){
+        if ( !connector().isNull()){
+            return connector()->provider();
+        }
+    }else {
+        if(!connector(cmOUTPUT).isNull())
+           return connector(cmOUTPUT)->provider();
+        else {
+            return provider()    ;
+        }
+    }
+
+    return sUNDEF;
 }
 
 void IlwisObject::readOnly(bool yesno)

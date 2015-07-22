@@ -112,9 +112,12 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( !catalog.isValid()){
         return false;
     }
+    catalog->scan();
 
     addItems({catalog->source()});
-    _catalogs.insert(location);
+    if ( catalog->itemCount() > 0){
+        _catalogs.insert(location);
+    }
     return true;
 }
 
@@ -195,7 +198,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
-
+    kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
     QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
@@ -224,6 +227,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
     }
+    kernel()->database().exec("COMMIT TRANSACTION");
 
 
     return true;
@@ -233,7 +237,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 bool MasterCatalog::updateItems(const std::vector<Resource>& items)
 {
     Locker<std::recursive_mutex> lock(_guard);
-
+    kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
 
@@ -275,6 +279,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
         deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
         resource.store(queryItem, queryProperties);
     }
+    kernel()->database().exec("COMMIT TRANSACTION");
 
 
     return true;

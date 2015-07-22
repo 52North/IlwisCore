@@ -198,11 +198,11 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 {
     TabModel *tab = 0;
 
-    if ( filter.indexOf("container=") == 0)
-        mastercatalog()->addContainer(url);
+  //  if ( filter.indexOf("container=") == 0)
+  //      mastercatalog()->addContainer(url);
     std::vector<Ilwis::Resource> resources = Ilwis::mastercatalog()->select(Ilwis::OSHelper::neutralizeFileName(filter));
 
-    if ( resources.size() > 0){
+    //if ( resources.size() > 0){
         if ( outputtype == "catalog"){
 
             if ( filter == "container='ilwis://operations'")
@@ -212,7 +212,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 
         }else {
             if (hasType(resources[0].ilwisType(), itCOVERAGE)) {
-                tab = new TabModel(url,"visualization/Visualize.qml", this);
+                tab = new TabModel(url,"visualization/MapPanel.qml", this);
             }
             else if (hasType(resources[0].ilwisType(), itTABLE)) {
                 tab = new TabModel(url,"table/TablePane.qml", this);
@@ -226,7 +226,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
             else
                 _tabs[index] = tab;
         }
-    }
+    //}
     return tab;
 }
 

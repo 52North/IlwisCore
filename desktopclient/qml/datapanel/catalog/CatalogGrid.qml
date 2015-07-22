@@ -67,7 +67,7 @@ FocusScope {
                           }
                       }
                     }
-                    currentCatalog.setSelectedObjects(selectedIds)
+                    mastercatalog.setSelectedObjects(selectedIds)
                 }
 
                 model : setResources()

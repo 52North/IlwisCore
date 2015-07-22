@@ -126,7 +126,11 @@ DISTFILES += \
     desktopclient/qml/datapanel/visualization/propertyeditors/LayersList.qml \
     desktopclient/qml/datapanel/visualization/propertyeditors/VisualAttributeList.qml \
     desktopclient/qml/controls/HScrollBar.qml \
-    desktopclient/qml/workbench/WorkSpaceDataGrid.qml
+    desktopclient/qml/workbench/WorkSpaceDataGrid.qml \
+    desktopclient/qml/datapanel/visualization/MapPanel.qml \
+    desktopclient/qml/datapanel/visualization/MapPanelButton.qml \
+    desktopclient/qml/datapanel/visualization/MapPanelButtonBar.qml \
+    desktopclient/qml/datapanel/ButtonBarTabViewStyle.qml
 
 
 

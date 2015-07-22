@@ -58,9 +58,9 @@ void FlatTable::removeRecord(quint32 rec)
     }
 }
 
-bool FlatTable::prepare()
+bool FlatTable::prepare(const IOOptions& options)
 {
-    return Table::prepare();
+    return Table::prepare(options);
 }
 
 bool FlatTable::isValid() const

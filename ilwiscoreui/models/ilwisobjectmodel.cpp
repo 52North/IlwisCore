@@ -10,6 +10,7 @@
 #include "itemrange.h"
 #include "colorrange.h"
 #include "operationmodel.h"
+#include "catalogmodel.h"
 #include "raster.h"
 
 using namespace Ilwis;
@@ -81,7 +82,18 @@ QString IlwisObjectModel::description() const
 QString IlwisObjectModel::externalFormat() const
 {
     if ( _ilwisobject.isValid()){
-        return _ilwisobject->externalFormat();
+        QString inFormat = _ilwisobject->formatCode();
+        QString outFormat = _ilwisobject->formatCode(false);
+        QString provider = _ilwisobject->provider();
+        if ( outFormat == "" && inFormat == "")
+            return sUNDEF;
+        if ( outFormat == inFormat)
+            return provider + ": " + inFormat;
+        if ( outFormat == "" && inFormat != "")
+            return provider + ": " +inFormat;
+        if ( inFormat == "" && outFormat != "")
+            return "internal/"  + outFormat;
+        return provider + ": " + inFormat + "/" + outFormat;
     }
     return "";
 }
@@ -577,6 +589,18 @@ OperationModel *IlwisObjectModel::operation(const QString &id)
     if (!ok)
         return 0;
     return new OperationModel(lid, this);
+}
+
+CatalogModel *IlwisObjectModel::catalog(const QString &id)
+{
+    bool ok;
+    quint64 lid = id.toULongLong(&ok);
+    if (!ok)
+        return 0;
+    Resource res = mastercatalog()->id2Resource(lid);
+    //res.addProperty("filter","container=" + res.url().toString());
+    res.addProperty("locations", res.url().toString());
+    return new CatalogModel(res, this);
 }
 
 bool IlwisObjectModel::isValid() const

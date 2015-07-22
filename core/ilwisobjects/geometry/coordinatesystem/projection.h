@@ -26,7 +26,7 @@ public:
     virtual LatLon coord2latlon(const Coordinate&) const;
 
     bool prepare(const QString& parms);
-    bool prepare();
+    bool prepare(const IOOptions& options=IOOptions());
     void setImplementation(ProjectionImplementation *impl);
 
     QString authority() const;

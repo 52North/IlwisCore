@@ -122,8 +122,8 @@ Item {
         operationmd = operation(id)
         if ( operationmd){
             desc.text = operationmd.description
-            syntax.text = operationmd.syntax()
-            keywords.text = operationmd.keywords();
+            syntax.text = operationmd.syntax
+            keywords.text = operationmd.keywords;
             inputList.model = operationmd.inParamNames
             outputList.model = operationmd.outParamNames
         }

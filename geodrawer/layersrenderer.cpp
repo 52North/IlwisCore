@@ -19,12 +19,13 @@
 
 
 
-LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo)
+LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo, bool active)
 {
     if ( !_rootDrawer){
         _rootDrawer = new Ilwis::Geodrawer::RootDrawer(fbo, Ilwis::IOOptions());
         connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
     }
+    _rootDrawer->active(active);
 }
 
 LayersRenderer::~LayersRenderer()

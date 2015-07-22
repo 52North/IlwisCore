@@ -75,11 +75,12 @@ Item {
             }
         }
     }
-
-
-
     LayerExtentsToolbar{
         id : maptools
+
+        LocationBar{
+            renderer: layers.drawer()
+        }
     }
 
     SplitView {
@@ -101,10 +102,32 @@ Item {
             }
         }
         Layers{
+
             width : parent.width
-            height : parent.height - maptools.height - 150
+            height : parent.height - maptools.height - 170
             id : layers
-            Layout.fillWidth: true
+            states: [
+                State { name: "visible"
+
+                    PropertyChanges {
+                        target: layers
+                        height : parent.height - maptools.height - 170
+                    }
+                },
+                State {
+                    name : "invisible"
+                    PropertyChanges {
+                        target: layers
+                        height : parent.height - maptools.height + 10
+                    }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                }
+            ]
 
         }
         ViewManager{

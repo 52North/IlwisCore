@@ -17,21 +17,33 @@ Item {
     width : parent.width
     height : parent.height
 
+    onTabmodelChanged: {
+        if ( cbuttonBar && tabmodel)
+            cbuttonBar.side = tabmodel.side
+    }
+
 
     signal catalogChanged()
 
     function showObject(objectid){
-        var type = mastercatalog.id2type(objectid)
-        if ( !type)
-            return
-        var resource = mastercatalog.id2Resource(objectid)
-        var filter;
-        if ( resource.typeName === "catalog"){
-            filter = "container='" + resource.url + "'"
+        var filter
+        if ( objectid === -1){
+            var container = currentCatalog.container
+            filter = "container='" + container + "'"
+            datapanesplit.changePanel(filter, "catalog", container)
         }else {
-            filter = "itemid=" + resource.id
+            var type = mastercatalog.id2type(objectid)
+            if ( !type)
+                return
+            var resource = mastercatalog.id2Resource(objectid)
+            if ( resource.typeName === "catalog"){
+                filter = "container='" + resource.url + "'"
+                datapanesplit.changePanel(filter, "catalog",resource.url)
+            }else {
+                filter = "itemid=" + resource.id
+                datapanesplit.newPanel(filter, resource.typeName,resource.url)
+            }
         }
-        datapanesplit.newPanel(filter, resource.typeName,resource.url)
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -91,6 +103,12 @@ Item {
             id :refreshCatalog
             onTriggered: {
                 mastercatalog.refreshWorkingCatalog()
+            }
+        }
+        Action {
+            id : showProps
+            onTriggered :{
+               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
             }
         }
 
@@ -171,12 +189,14 @@ Item {
             model : mastercatalog.defaultFilters
             textRole: "name"
             onCurrentIndexChanged: {
+                if ( tabmodel)
+                    tabmodel.selectTab()
                 if ( currentIndex > 0){ // first entry is a default empty one
                     var filter = model[currentIndex].catalogQuery
                     var url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
                     bigthing.changeCatalog(filter,"catalog", url)
-                    currentCatalog.filter(filter)
+                    //currentCatalog.filter(filter)
                 }
 
             }
@@ -238,6 +258,18 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 2
         }
+//        Button{
+//            id : metadata
+//            implicitHeight: heightButtons
+//            width : heightButtons + 4
+//            iconSource: iconsource("metadata20.png")
+//            anchors.left : refresh.right
+//            anchors.leftMargin: 1
+//            anchors.top: parent.top
+//            anchors.topMargin: 2
+//            checkable: false
+//            action : showProps
+//        }
 
 
     }
@@ -245,7 +277,7 @@ Item {
         id : catalogView
         width : parent.width
         anchors.top: toolbar.bottom
-        anchors.bottom: parent.bottom
+        anchors.bottom: cbuttonBar.top
         Connections{
             target : iconListView
             onShowObject : { showObject(objectid,"")}
@@ -287,7 +319,7 @@ Item {
             },
             State {
                 name : "thumbList"
-                PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
+                PropertyChanges { target: thumbListView; height : parent.height.height;opacity : 1; enabled : true}
                 PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
@@ -325,6 +357,11 @@ Item {
                 }
             }
         ]
+    }
+    CatalogButtonBar{
+        id : cbuttonBar
+        anchors.bottom: parent.bottom
+        width : parent.width
     }
     Component.onCompleted: {
     }

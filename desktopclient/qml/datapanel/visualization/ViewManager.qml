@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.1
 import "./propertyeditors" as DisplayOptions
 import UIContextModel 1.0
 import LayerManager 1.0
+import ".." as DataPanel
 import "../../controls" as Controls
 import "../../Global.js" as Global
 import "../.." as Base
@@ -59,51 +60,41 @@ Item {
 
     Component {
         id : layersinfo
-
         LayersInfo{
-
         }
     }
-
-
 
     Component{
         id : metadata
-        MetaData{}
-    }
-
-    Rectangle {
-        id : header
-        width : parent.width
-        height : 24
-        anchors.top : parent.top
-        color : Global.alternatecolor3
-        TextField{
-            id : nativeCoords
-            width : 155;
-            height : 18
-            anchors.right: parent.right
-            anchors.rightMargin: 4
-            readOnly: true
-            anchors.verticalCenter: parent.verticalCenter
-            text : renderer.currentLatLon
-        }
-
-        TextField{
-            id : otherCoords
-            width : nativeCoords.width - 14;
-            height : 18
-            anchors.right: nativeCoords.left
-            anchors.rightMargin: 4
-            readOnly: true
-            anchors.verticalCenter: parent.verticalCenter
-            text : renderer.currentCoordinate
+        MetaData{
         }
     }
+
+
 
     TabView{
         id : layersmeta
         anchors.fill: parent
+        tabPosition: Qt.BottomEdge
+        onCurrentIndexChanged: {
+            var tab= getTab(2)
+            tab.item.drawerActive = currentIndex == 2
+
+        }
+
+        function tabClicked(index){
+            if ( currentIndex === index){
+                if ( viewmanager.height <= 60){
+                    layers.state = "visible"
+                }
+                else{
+                    layers.state = ""
+                    layers.state = "invisible"
+                }
+            }
+
+            currentIndex = index
+        }
 
         function endZoom(envelope) {
             zoomEnded(envelope)
@@ -119,8 +110,7 @@ Item {
             tab.active = true // we need to be active as layers maybe added to it
         }
 
-        style: Base.TabStyle1{
-        }
+        style: DataPanel.ButtonBarTabViewStyle{}
     }
 
 

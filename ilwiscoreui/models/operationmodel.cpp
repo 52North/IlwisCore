@@ -31,14 +31,13 @@ OperationModel::OperationModel(quint64 id, QObject *parent) : ResourceModel(mast
 
 QString OperationModel::inputparameterName(quint32 index) const
 {
-    return property("pin_" + QString::number(index + 1) + "_name").toString();
+    return getProperty("pin_" + QString::number(index + 1) + "_name");
 
 }
 
 QString OperationModel::inputparameterType(quint32 index) const
 {
-    QVariant var = property("pin_" + QString::number(index + 1) + "_type");
-    quint64 ilwtype = var.toULongLong();
+    quint64 ilwtype = getProperty("pin_" + QString::number(index + 1) + "_type").toULongLong();
     QString type;
     for(quint64 i =0; i < 64; ++i){
        quint64 result = 1 << i;
@@ -55,39 +54,59 @@ QString OperationModel::inputparameterType(quint32 index) const
 
 QString OperationModel::inputparameterDescription(quint32 index) const
 {
-    return property("pin_" + QString::number(index + 1) + "_desc").toString();
+    QString ret = getProperty("pin_" + QString::number(index + 1) + "_desc");
+    if ( ret == sUNDEF)
+        return "";
+    return ret;
 }
 
 QString OperationModel::outputparameterName(quint32 index) const
 {
-    return property("pout_" + QString::number(index + 1) + "_name").toString();
+    return getProperty("pout_" + QString::number(index + 1) + "_name");
 }
 
 QString OperationModel::outputparameterType(quint32 index) const
 {
-    QVariant var = property("pout_" + QString::number(index + 1) + "_type");
-    quint64 ilwtype = var.toULongLong();
+    quint64 ilwtype = getProperty("pout_" + QString::number(index + 1) + "_type").toULongLong();
     return TypeHelper::type2HumanReadable(ilwtype);
 }
 
 QString OperationModel::outputparameterDescription(quint32 index) const
 {
-    return property("pout_" + QString::number(index + 1) + "_desc").toString();
+    QString ret = getProperty("pout_" + QString::number(index + 1) + "_desc");
+    if ( ret == sUNDEF)
+        return "";
+    return ret;
 }
 
 QString OperationModel::syntax() const
 {
-    return property("syntax").toString();
+    QString syn = getProperty("syntax");
+    if ( syn.indexOf("ilwis://")!= -1){
+        syn = syn.mid(QString("ilwis://operations/").size());
+    }
+    return syn;
 }
 
 QString OperationModel::keywords() const
 {
-    return  property("keyword").toString();
+    QString kw =   getProperty("keyword");
+    if ( kw == sUNDEF)
+        return "";
+    return kw;
+}
+
+QString OperationModel::provider() const
+{
+    QString kw =   getProperty("namespace");
+    if ( kw == sUNDEF)
+        return "";
+    return kw;
 }
 
 int OperationModel::maxParameterCount(bool inputCount) const
 {
-    QString inParams = property(inputCount ? "inparameters" : "outparameters").toString();
+    QString inParams = getProperty(inputCount ? "inparameters" : "outparameters");
     QStringList parts = inParams.split("|");
     int maxp = 0;
     for(QString p : parts){
@@ -116,10 +135,61 @@ QStringList OperationModel::outParamNames() const
     return names;
 }
 
-QVariant OperationModel::property(const QString &name) const
+QString OperationModel::inParameterCount() const
+{
+    QString inParams = getProperty("inparameters");
+    if ( inParams != sUNDEF){
+        inParams.replace("|"," or ");
+    }else
+        inParams = "";
+    return inParams;
+}
+
+QString OperationModel::outParameterCount() const
+{
+    QString outParams = getProperty("outparameters");
+    if ( outParams != sUNDEF){
+        outParams.replace("|"," or ");
+    }else
+        outParams = "";
+    return outParams;
+}
+
+QStringList OperationModel::inParameterIconList() const
+{
+    int mx = maxParameterCount(true);
+    QStringList icons;
+    for(int i = 0; i < mx; ++i){
+        QString p = "pin_" + QString::number(i+1) + "_type";
+        IlwisTypes type = item()[p].toULongLong();
+        if ( type == iUNDEF)
+            continue;
+        icons.append(iconPath(type));
+
+    }
+    return icons;
+}
+
+QStringList OperationModel::outParameterIconList() const
+{
+    int mx = maxParameterCount(false);
+    QStringList icons;
+    for(int i = 0; i < mx; ++i){
+        QString p = "pin_" + QString::number(i+1) + "_type";
+        IlwisTypes type = item()[p].toULongLong();
+        if ( type == iUNDEF)
+            continue;
+        icons.append(iconPath(type));
+
+    }
+    return icons;
+}
+
+QString OperationModel::getProperty(const QString &name) const
 {
     if ( item().hasProperty(name))
-        return item()[name];
+        return item()[name].toString();
     return sUNDEF;
 }
+
 

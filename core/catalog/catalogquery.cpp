@@ -33,6 +33,9 @@ bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseName
             break;
         }
     }
+    if ( side[0] == '\'' && side[side.size()-1] == '\''){ // just a string
+        return false;
+    }
     if ( !ok && inpropertiestable){
         if ( left){
         side = QString("catalogitemproperties.propertyname='%1'").arg(side);

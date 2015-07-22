@@ -121,7 +121,7 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
 quint64 AddDrawer::createMetadata()
 {
     OperationResource operation({"ilwis://operations/adddrawer"});
-    operation.setSyntax("adddrawer(viewid, drawername[,datasource, typename])");
+    operation.setSyntax("adddrawer(viewid, drawername[,!datasource,!typename])");
     operation.setDescription(TR("adds a new drawer to the layerview identified by viewid"));
     operation.setInParameterCount({2,4});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));

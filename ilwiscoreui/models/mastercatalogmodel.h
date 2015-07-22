@@ -70,6 +70,7 @@ public:
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     Q_INVOKABLE bool hasSelectedObjects() const;
+    Q_INVOKABLE QString selectedIds() const;
     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
@@ -94,7 +95,7 @@ private:
     CatalogModel *_currentCatalog = 0;
 
     
-    CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query);
+    CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query, bool threading = true);
     QString determineIdList(int dataCount, int operationCount, const QString &basekey);
     QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
     void scanBookmarks();

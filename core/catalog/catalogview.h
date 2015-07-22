@@ -55,6 +55,7 @@ public:
     QString filter() const;
     void filter(const QString& filter);
     Resource resource() const;
+    bool hasParent() const;
 
      /*!
     Convenience method to retrieve the location the catalog is currently attached to.

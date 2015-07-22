@@ -3,6 +3,8 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QQmlContext>
+#include <QThread>
+#include <QCoreApplication>
 #include "coverage.h"
 #include "connectorinterface.h"
 #include "resource.h"
@@ -15,6 +17,7 @@
 #include "tranquilizer.h"
 #include "layermanager.h"
 #include "ilwiscontext.h"
+#include "oshelper.h"
 
 
 using namespace Ilwis;
@@ -46,10 +49,39 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
     }
 }
 
-void CatalogModel::setView(const CatalogView &view){
+CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
+{
+    _initNode = true;
+    _isScanned = false;
+    _level = 0;
+    if ( item().url().toString() == Catalog::DEFAULT_WORKSPACE){
+        _view = CatalogView(context()->workingCatalog()->source());
+        setDisplayName("default");
+    }else{
+        _view = CatalogView(item());
+        _displayName = _view.name();
+    }
+}
+
+void CatalogModel::setView(const CatalogView &view, bool threading){
     _view = view;
     resource(view.resource());
-    mastercatalog()->addContainer(view.resource().url());
+    bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
+    bool useThread = threading && inmainThread;
+    if ( useThread){
+        if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
+            QThread* thread = new QThread;
+            CatalogWorker2* worker = new CatalogWorker2(view.resource().url());
+            worker->moveToThread(thread);
+            thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
+            thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
+            thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
+            thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
+            thread->start();
+        }
+    }else
+        mastercatalog()->addContainer(view.resource().url());
     _displayName = view.resource().name();
     if ( _displayName == sUNDEF)
         _displayName = view.resource().url().toString();
@@ -79,17 +111,18 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
     try{
         gatherItems();
 
+        _objectCounts.clear();
+        for(auto *resource : _currentItems){
+            _objectCounts[resource->type()]+= 1;
+        }
+
+
         return  QQmlListProperty<ResourceModel>(this, _currentItems);
     }
     catch(const ErrorObject& err){
 
     }
     return  QQmlListProperty<ResourceModel>();
-}
-
-QQmlListProperty<IlwisObjectModel> CatalogModel::selectedData()
-{
-    return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
 }
 
 QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
@@ -102,26 +135,35 @@ void CatalogModel::makeParent(QObject *obj)
     setParent(obj);
 }
 
-void CatalogModel::filterChanged(const QString& objectType, bool state){
-    if ( objectType == "all"){
-        _filterState["rastercoverage"] = state;
-        _filterState["featurecoverage"] = state;
-        _filterState["table"] = state;
-        _filterState["coordinatesystem"] = state;
-        _filterState["georeference"] = state;
-        _filterState["domain"] = state;
-        _filterState["representation"] = state;
-        _filterState["projection"] = state;
-        _filterState["ellipsoid"] = state;
-
+void CatalogModel::filterChanged(const QString& typeIndication, bool state){
+    QString objectType = typeIndication;
+    bool exclusive = objectType.indexOf("|exclusive") != -1;
+    if ( exclusive)
+        objectType = objectType.split("|")[0];
+    if ( objectType == "all" || exclusive){
+        _filterState["rastercoverage"] = exclusive ? false : state;
+        _filterState["featurecoverage"] = exclusive ? false :state;
+        _filterState["table"] = exclusive ? false :state;
+        _filterState["coordinatesystem"] = exclusive ? false :state;
+        _filterState["georeference"] = exclusive ? false :state;
+        _filterState["domain"] = exclusive ? false :state;
+        _filterState["representation"] = exclusive ? false :state;
+        _filterState["projection"] = exclusive ? false :state;
+        _filterState["ellipsoid"] = exclusive ? false :state;
     }else
         _filterState[objectType] = state;
+
     QString filterString;
-    for(auto iter : _filterState){
-        if ( !iter.second){
-            if ( filterString != "")
-                filterString += " and ";
-            filterString += QString("type") + "& '" + iter.first + "' =0";
+    if ( exclusive){
+        if ( state)
+            filterString = QString("type") + "& '" + objectType.toLower() + "' !=0";
+    } else {
+        for(auto iter : _filterState){
+            if ( !iter.second){
+                if ( filterString != "")
+                    filterString += " and ";
+                filterString += QString("type") + "& '" + iter.first + "' =0";
+            }
         }
     }
     filter(filterString);
@@ -129,6 +171,9 @@ void CatalogModel::filterChanged(const QString& objectType, bool state){
 
 void CatalogModel::filter(const QString &filterString)
 {
+    if ( _view.filter() == filterString)
+        return;
+
     _refresh = true;
     _view.filter(filterString);
     contentChanged();
@@ -139,51 +184,34 @@ void CatalogModel::refresh(bool yesno)
     _refresh = yesno;
 }
 
-void CatalogModel::setSelectedObjects(const QString &objects)
+
+QStringList CatalogModel::objectCounts()
 {
-    try {
-        if ( objects == ""){
-            _selectedObjects.clear();
-            return;
+    try{
+        gatherItems();
+
+        _objectCounts.clear();
+        for(auto *resource : _currentItems){
+            _objectCounts[resource->type()]+= 1;
         }
-        QStringList parts = objects.split("|");
-        _selectedObjects.clear();
-        kernel()->issues()->silent(true);
-        for(auto objectid : parts){
-            bool ok;
-            Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
-            if (!ok)
-                continue;
-
-            IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-            if ( ioModel->isValid()){
-                _selectedObjects.append(ioModel);
-                emit selectionChanged();
-            }else
-                delete ioModel;
+        QStringList counts;
+        for(auto item : _objectCounts)    {
+            QString txt = Ilwis::TypeHelper::type2HumanReadable(item.first) + "|" + QString::number(item.second);
+            counts.push_back(txt);
         }
-        kernel()->issues()->silent(false);
-    }catch(const ErrorObject& ){
-    }catch (std::exception& ex){
-        Ilwis::kernel()->issues()->log(ex.what());
+        return counts;
     }
-    kernel()->issues()->silent(false);
-}
-
-QString CatalogModel::selectedIds() const
-{
-    QString selected;
-    for(auto obj : _selectedObjects ){
-        if ( selected != "")
-            selected += "|";
-        selected += obj->id();
-
+    catch(const Ilwis::ErrorObject& err){
     }
-    return selected;
+
+    return QStringList();
 }
 
 void CatalogModel::nameFilter(const QString &filter)
 {
+    if ( _nameFilter == filter)
+        return;
+
     _nameFilter = filter;
     _currentItems.clear();
     emit contentChanged();
@@ -252,8 +280,36 @@ void CatalogModel::gatherItems() {
             _currentItems.push_back(new ResourceModel(resource, this));
 
         }
+        if ( _view.hasParent()){
+            _currentItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
+        }
     }
 }
+
+void CatalogModel::updateContainer()
+{
+    _refresh = true;
+    emit contentChanged();
+}
+ //-------------------------------------------------
+CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
+{
+}
+
+void CatalogWorker2::process(){
+    try {
+            mastercatalog()->addContainer(_container);
+            emit updateContainer();
+            emit finished();
+    } catch(const ErrorObject& ){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
+}
+
 
 
 

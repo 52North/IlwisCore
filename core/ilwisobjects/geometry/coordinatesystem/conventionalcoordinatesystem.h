@@ -31,7 +31,7 @@ public:
     IProjection projection() const;
     virtual bool isLatLon() const;
     bool prepare(const QString& parms);
-    bool prepare();
+    bool prepare(const IOOptions& options=IOOptions());
     IlwisTypes ilwisType() const;
     bool isValid() const;
     bool isEqual(const Ilwis::IlwisObject *obj) const;

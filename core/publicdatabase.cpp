@@ -19,6 +19,7 @@ PublicDatabase::PublicDatabase(const QSqlDatabase &db) : QSqlDatabase(db)
 }
 
 void PublicDatabase::prepare() {
+    exec("BEGIN IMMEDIATE TRANSACTION");
     QSqlQuery sql(*this);
 
     QString stmt = "create table operationMetadata (operationId TEXT, name TEXT, description TEXT,icon TEXT, grouping TEXT)";
@@ -132,7 +133,10 @@ void PublicDatabase::prepare() {
 
     loadPublicTables();
 
+    exec("COMMIT TRANSACTION");
+
     if ( kernel()->issues()->maxIssueLevel() == IssueObject::itCritical) {
+        exec("ROLLBACK TRANSACTION");
         throw ErrorObject(TR("Critical errors found when initialzing Public database"));
     }
 
