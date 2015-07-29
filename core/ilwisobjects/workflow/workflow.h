@@ -15,19 +15,10 @@ class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
 public:
     Workflow();
-
     Workflow(const Resource &resource);
-
     ~Workflow();
 
-    /**
-     * @brief init initializes the workflow by generating OperationResource (incl. registering to the mastercatalog) and
-     * adding the workflow as operation to the commandhandler.
-     * @return the id of the registered operation.
-     */
-    quint64 init();
-
-    IlwisTypes ilwisType() const;
+    static quint64 createMetadata();
 };
 
 typedef IlwisData<Workflow> IWorkflow;

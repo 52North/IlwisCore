@@ -21,10 +21,6 @@ Workflow::~Workflow()
 
 }
 
-quint64 Workflow::init()
-{
-
-}
 
 IlwisTypes Workflow::ilwisType() const
 {
