@@ -28,28 +28,6 @@ Rectangle {
      */
     signal closedTab(string title)
 
-    /*
-     * Add a new WorkflowCanavas
-     */
-    function addWorkflowCanvas(id, name) {
-        datapanesplit.addWorkflowCanvas(id, name)
-    }
-
-    /*
-     * Remove WorkflowCanvas by  name
-     */
-    function removeWorkflowCanvas(name) {
-        datapanesplit.removeTabFromView(name);
-    }
-
-    function addModellerPanel(name) {
-        datapanesplit.addModeller(name)
-    }
-
-    function removeModellerPanel(name) {
-        datapanesplit.removeTabFromView(name);
-    }
-
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -80,7 +58,6 @@ Rectangle {
             }
         }
     }
-
 
     function newCatalog(filter,outputtype, url){
         datapanesplit.newPanel(filter, outputtype, url)

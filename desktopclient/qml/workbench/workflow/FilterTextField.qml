@@ -1,10 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
+import "../../Global.js" as Global
 
 Rectangle {
 
     anchors.margins : 5
-    color : background2
+    color : Global.alternatecolor1
     height: 28
 
     // define onFilterChanged Connection element

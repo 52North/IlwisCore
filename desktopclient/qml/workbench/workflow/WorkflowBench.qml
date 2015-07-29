@@ -71,6 +71,10 @@ Rectangle {
 
     function createWorkflowEditSession(workflowId, workflowName) {
         workflowTitle = workflowName + " [Workflow Builder]"
+
+        datapane.Panel('type=workflow')
+
+
         dataPanel.addWorkflowCanvas(workflowId, workflowTitle);
         workflowbenchContentLoader.setSource("WorkflowEdit.qml");
         workflowbenchContentLoader.editSession = workflowName;
