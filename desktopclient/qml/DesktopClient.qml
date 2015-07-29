@@ -130,8 +130,30 @@ ApplicationWindow {
             anchors.top : commLine.bottom
             anchors.bottom : parent.bottom
 
+            function changeWidthSplitter(pside, partside){
+                if ( pside === 1 && partside === 0){
+                    if ( workBench.width === 0){
+                        workBenchButtons.state = "invisible"
+                    }else
+                        workBench.state = "invisible"
+                }
+                if ( pside === 1 && partside === 1){
+                    if ( workBenchButtons.width === 0 && workBench.width == 0){
+                        workBenchButtons.state = "visible"
+                    } else
+                        workBench.state = "visible"
+                }
+                if ( pside === 0 && partside === 0){
+                    workBenchButtons.state = "invisible"
+                }
+                if ( pside === 0 && partside === 1){
+                    workBenchButtons.state = "visible"
+                }
+            }
+
             handleDelegate: Controls.SplitHandle{
                 imageHeight: 22
+                func : mainSplit.changeWidthSplitter
             }
 
             function newCatalog(filter, outputtype, url){
@@ -157,14 +179,5 @@ ApplicationWindow {
 
         }
 
-    }
-
-
-    statusBar: StatusBar {
-        id : statusB
-        RowLayout {
-            Label { text: "Read Only" }
-            Label { text: "More text" }
-        }
     }
 }

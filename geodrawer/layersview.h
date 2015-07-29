@@ -69,6 +69,7 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
     Q_PROPERTY(QVariantMap zoomEnvelope READ zoomEnvelope WRITE setZoomEnvelope NOTIFY zoomEnvelopeChanged)
     Q_PROPERTY(QVariantMap viewEnvelope READ viewEnvelope WRITE setViewEnvelope NOTIFY viewEnvelopeChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
 friend class LayersRenderer;
@@ -92,6 +93,8 @@ friend class LayersRenderer;
     LayerManager *layerManager();
     Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
     bool showLayerInfo() const;
+    bool active() const;
+    void setActive(bool yesno);
     void setShowLayerInfo(bool yesno);
 
 signals:
@@ -99,6 +102,7 @@ signals:
     void showLayerInfoChanged();
     void zoomEnvelopeChanged();
     void viewEnvelopeChanged();
+    void activeChanged();
 
 public slots:
     void synchronizeEnded();
@@ -125,6 +129,7 @@ private:
     Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
     bool _showLayerInfo = true;
+    bool _active = true;
     Ilwis::Geodrawer::RootDrawer *privateRootDrawer() const;
 
 

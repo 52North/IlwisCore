@@ -212,7 +212,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 
         }else {
             if (hasType(resources[0].ilwisType(), itCOVERAGE)) {
-                tab = new TabModel(url,"visualization/Visualize.qml", this);
+                tab = new TabModel(url,"visualization/MapPanel.qml", this);
             }
             else if (hasType(resources[0].ilwisType(), itTABLE)) {
                 tab = new TabModel(url,"table/TablePane.qml", this);

@@ -12,8 +12,7 @@ Rectangle {
     y : 0
     height : parent.height
     width : 80
-    color : Global.alternatecolor1
-    border.width : 1
+    color : Global.alternatecolor2
     Layout.maximumWidth : 140
 
     //signal transitionInfoPane(string pagename)
@@ -60,9 +59,9 @@ Rectangle {
 
     }
     Action {
-        id : workflowsClicked
+        id : createClicked
         onTriggered : {
-            transitionInfoPane("workflow/WorkflowSelection.qml")
+           transitionInfoPane("ObjectCreation.qml")
         }
 
     }
@@ -82,44 +81,8 @@ Rectangle {
 
     }
 
-    Action {
-        id :maxButtons
-        onTriggered: {
-            buttonB.width = 55
-        }
-    }
-
-    Action {
-        id :minButtons
-        onTriggered: {
-            buttonB.width = 0
-        }
-    }
-
     Column {
         anchors.fill: parent
-        Rectangle {
-            height : 21
-            width : buttonB.width
-            color : Global.alternatecolor1
-            Row {
-                anchors.fill: parent
-                Button{
-                    id : full
-                    height : 20
-                    width :20
-                    action : maxButtons
-                    Image { anchors.centerIn : parent; source: "../images/max1.png" }
-                }
-                Button{
-                    id : close
-                    height : 20
-                    width :20
-                    action : minButtons
-                    Image { anchors.centerIn : parent; source: "../images/min1.png" }
-                }
-            }
-        }
 
         WorkBenchButton{
             id : nav
@@ -130,13 +93,13 @@ Rectangle {
         }
 
         WorkBenchButton{
-            id : oper
+            id : workspace
             action: workspaceClicked
             iconname : "workspaceCS1.png"
             label: qsTr("Workspace")
         }
         WorkBenchButton{
-            id : workspace
+            id : oper
             action: operClicked
             iconname : "operationCS1.png"
             label: qsTr("Operations")
@@ -147,18 +110,19 @@ Rectangle {
             iconname : "modellerCS1.png"
             label: qsTr("Modeller")
         }
-        WorkBenchButton{
-            id : workflow
-            action: workflowsClicked
-            iconname : "modellerCS1.png"
-            label: qsTr("Workflows")
-        }
+
         WorkBenchButton{
             id : prop
             action : propertiesClicked
             iconname : "propertiesCS1.png"
             label: qsTr("Metadata")
 
+        }
+        WorkBenchButton{
+            id : create
+            action: createClicked
+            iconname : "createCS.png"
+            label: qsTr("Create")
         }
         WorkBenchButton{
             id : errors
@@ -194,4 +158,26 @@ Rectangle {
 
         }
     }
+    states: [
+        State { name: "visible"
+
+            PropertyChanges {
+                target: buttonB
+                width : 80
+            }
+        },
+        State {
+            name : "invisible"
+            PropertyChanges {
+                target: buttonB
+                width : 0
+            }
+        }
+
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+        }
+    ]
 }

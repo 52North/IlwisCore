@@ -66,7 +66,7 @@ class LayersRenderer : public QObject, public QQuickFramebufferObject::Renderer 
 
     Q_OBJECT
 public:
-    LayersRenderer(const QQuickFramebufferObject *fbo);
+    LayersRenderer(const QQuickFramebufferObject *fbo, bool active);
     ~LayersRenderer();
 
     void render();

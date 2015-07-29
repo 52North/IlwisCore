@@ -85,7 +85,11 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 void MasterCatalogModel::addDefaultFilters(){
     //QString filter = QString("type=%1");
     QString filter = QString("type&%1!=0");
+    QString filter2 = QString("container='%1' and type<>" + QString::number(itGEODETICDATUM));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itUNKNOWN)),"",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system"),"System Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://internalcatalog"),"Internal Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"","-------------------------------------",""));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itRASTER)),"Master Catalog Rasters","raster20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itTABLE)),"Master Catalog Tables","table20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itDOMAIN)),"Master Catalog Domains","domain20.png"));

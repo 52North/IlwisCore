@@ -13,7 +13,7 @@ import "../.." as Base
 LayersView {
 
     objectName : "overview_mainui"
-
+    active : false
 
     Component.onCompleted: {
         manager = uicontext.createLayerManager(objectName)
@@ -22,15 +22,17 @@ LayersView {
     }
 
     function finalizeDraw(){
-        if (metatdata.manager && !metatdata.manager.hasSelectionDrawer){
-            coverage.addCommand("adddrawer(" + coverage.viewerId + ",selectiondrawer)")
-            metatdata.manager.hasSelectionDrawer = true
-        }
-        if ( metatdata.manager && layerview.manager){
-            var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope")
-            var env = {envelope : envelope, preserveaspectration : false}
-            overview.setAttribute("selectiondrawer", env )
-            overview.update()
+        if ( layersmeta.currentIndex == 2){
+            if (metatdata.manager && !metatdata.manager.hasSelectionDrawer){
+                coverage.addCommand("adddrawer(" + coverage.viewerId + ",selectiondrawer)")
+                metatdata.manager.hasSelectionDrawer = true
+            }
+            if ( metatdata.manager && layerview.manager){
+                var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope")
+                var env = {envelope : envelope, preserveaspectration : false}
+                overview.setAttribute("selectiondrawer", env )
+                overview.update()
+            }
         }
 
     }
