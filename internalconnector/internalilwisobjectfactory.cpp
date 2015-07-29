@@ -194,22 +194,18 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
     }
     Workflow *workflow = new Workflow(resource);
 
-    /*##########
-     * copied from createCatalog: TODO discuss
-
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory) {
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
         return 0;
     }
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "ilwis");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
     if ( !connector) {
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
         return 0;
     }
     workflow->setConnector(connector, IlwisObject::cmINPUT, options);
-    */
-    //#########
+
     return workflow;
 }
 
