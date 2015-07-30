@@ -5,15 +5,15 @@ namespace Ilwis {
 class WorkflowOperationImplementation: public OperationImplementation
 {
 public:
-    WorkflowOperationImplementation();
-    ~WorkflowOperationImplementation();
+    WorkflowOperationImplementation(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx,SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
+    //NEW_OPERATION(WorkflowOperationImplementation);
+
 protected:
-    WorkflowOperationImplementation(quint64 metaid, const Ilwis::OperationExpression &expr);
 
 
 

@@ -18,7 +18,11 @@ public:
     Workflow(const Resource &resource);
     ~Workflow();
 
+    IlwisTypes ilwisType() const;
     static quint64 createMetadata();
+
+private:
+    QList<OperationMetaData> _operationNodes;
 };
 
 typedef IlwisData<Workflow> IWorkflow;

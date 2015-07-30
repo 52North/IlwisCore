@@ -24,5 +24,5 @@ Workflow::~Workflow()
 
 IlwisTypes Workflow::ilwisType() const
 {
-    return itWORKFLOW;
+    return itOPERATIONMETADATA | itWORKFLOW;
 }
