@@ -14,6 +14,7 @@
 #include "coverage.h"
 #include "layerinfoitem.h"
 #include "layermanager.h"
+#include "globallayermodel.h"
 
 using namespace Ilwis;
 
@@ -24,11 +25,7 @@ LayerManager::LayerManager(QObject *parent) :
 
 LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
 {
-    IlwisTypes metatype = itCOLLECTION | itCATALOGVIEW;
-    Resource res("Global Layer", metatype);
-    CoverageLayerModel * model = new CoverageLayerModel(_layers.size(), res,0, this);
-    model->iconPath("layers.png");
-    _layers.append(model);
+    _layers.append(new GlobalLayerModel(this));
 }
 void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
@@ -134,9 +131,27 @@ ResourceModel *LayerManager::coordinateSystem() const
     return _masterCsy;
 }
 
+Ilwis::Geodrawer::DrawerInterface *LayerManager::rootDrawer()
+{
+    if ( _layers.size() > 1){
+        return (Geodrawer::DrawerInterface *)(_layers[1]->drawer()->rootDrawer());
+    }
+    return 0;
+}
+
+const Geodrawer::DrawerInterface *LayerManager::rootDrawer() const
+{
+    if ( _layers.size() > 1){
+        return (Geodrawer::DrawerInterface *)(_layers[1]->drawer()->rootDrawer());
+    }
+    return 0;
+}
+
 void LayerManager::layersView(LayersViewCommandInterface *view)
 {
     _layersView = view;
+    if ( _layers.size() > 0)
+        _layers[0]->drawer(view->rootDrawer());
 }
 
 QQmlListProperty<CoverageLayerModel> LayerManager::layers()

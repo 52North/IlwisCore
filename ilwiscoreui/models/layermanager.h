@@ -53,6 +53,8 @@ public:
     QString currentLatLon() const;
     QString layerListName() const;
     ResourceModel *coordinateSystem() const;
+    Ilwis::Geodrawer::DrawerInterface *rootDrawer();
+    const Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
 
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
