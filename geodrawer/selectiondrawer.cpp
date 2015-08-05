@@ -239,9 +239,9 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
     unprepare(ptGEOMETRY);
 }
 
-bool SelectionDrawer::drawerAttribute(const QString drawercode, const QString &attrName, const QVariant &attrib)
+bool SelectionDrawer::drawerAttribute(const QString& drawercode, const QString &attrName, const QVariant &attrib)
 {
-    if (drawercode != code())
+    if (drawercode != code() || name() == drawercode)
         return false;
     setAttribute(attrName, attrib);
 
