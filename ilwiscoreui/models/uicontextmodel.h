@@ -22,6 +22,7 @@ class VisualAttributeEditor;
 class LayerManager;
 class CoverageLayerModel;
 class ConsoleScriptModel;
+class VisualAttributeModel;
 
 typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
 
@@ -47,8 +48,8 @@ public:
     Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
-    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
-    QList<VisualAttributeEditor *> propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name) ;
+    QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
+    QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const QString& name) ;
 
     void qmlContext(QQmlContext *ctx);
     void rootObject(QObject *root);

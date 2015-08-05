@@ -29,6 +29,11 @@ Shape ShapeLookUp::shape(Raw raw)
     return Shape();
 }
 
+ShapeLookUp *ShapeLookUp::clone() const
+{
+    return 0;
+}
+
 
 
 

@@ -56,14 +56,14 @@ Item {
     SplitView {
         anchors.fill: parent
         orientation: Qt.Vertical
+        height : parent.height
         TableView {
             id : tableView
             width : parent.width
-            Layout.fillHeight: true
+            height : parent.height - 270
             selectionMode : SelectionMode.ExtendedSelection
 
-            headerDelegate : ColumnHeader{
-            }
+            headerDelegate : ColumnHeader{}
 
 
             rowDelegate: Rectangle {
@@ -72,9 +72,33 @@ Item {
                 color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#eee" : "#fff")
             }
 
+            states: [
+                State { name: "visible"
+
+                    PropertyChanges {
+                        target: tableView
+                        height : parent.height - 270
+                    }
+                },
+                State {
+                    name : "invisible"
+                    PropertyChanges {
+                        target: tableView
+                        height : parent.height  - 24
+                    }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                }
+            ]
+
         }
         ColumnManagement{
             id : columnManagement
+            height : 270
         }
     }
 }

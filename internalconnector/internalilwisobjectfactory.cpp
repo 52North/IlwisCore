@@ -101,6 +101,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
 
 IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& resource, const IOOptions &options) const{
     QString code = resource.code();
+    Representation *rpr = new Representation(resource);
     if ( code != sUNDEF) {
 
         QSqlQuery db(kernel()->database());
@@ -113,8 +114,6 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                     if (db.exec(query)) {
                         if ( db.next()){
                             QSqlRecord rec = db.record();
-                            Representation *rpr = new Representation(resource);
-
                             rpr->fromInternal(rec);
                             QString relateddomain = rec.field("relateddomain").value().toString();
                             QString rprType = rec.field("representationtype").value().toString();
@@ -128,14 +127,22 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                                 rpr->domain(IDomain("value"));
                             }
                             rpr->readOnly(true);
-                            return rpr;
-                        }
-                    }
-                }
-            }
-        }
+                        }else
+                            return 0;
+                    }else
+                        return 0;
+                }else
+                    return 0;
+            }else
+                return 0;
+        }else
+            return 0;
     }
-    return 0;
+
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    rpr->setConnector(connector,IlwisObject::cmINPUT, options);
+    return rpr;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource, const IOOptions &options) const{

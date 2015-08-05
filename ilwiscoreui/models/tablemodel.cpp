@@ -13,17 +13,23 @@ TableModel::TableModel()
 
 }
 
+void TableModel::setColumns()
+{
+    _columns = QList<ColumnModel *>();
+    _columns.push_back(new ColumnModel(this, TR("record"),"first"));
+    _order.resize(_table->recordCount());
+    for(int i =0; i < _order.size(); ++i)
+        _order[i] = i;
+    for(int i=0; i < _table->columnCount(); ++i){
+        _columns.push_back(new ColumnModel(this, i));
+    }
+}
+
 TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstractTableModel(parent)
 {
     if ( resource.isValid()){
         _table = Ilwis::ITable(resource);
-        _columns.push_back(new ColumnModel(this, TR("record"),"first"));
-        _order.resize(_table->recordCount());
-        for(int i =0; i < _order.size(); ++i)
-            _order[i] = i;
-        for(int i=0; i < _table->columnCount(); ++i){
-            _columns.push_back(new ColumnModel(this, i));
-        }
+        setColumns();
 
     }
 }
@@ -92,6 +98,8 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
             }
             quint32 ind = _order[ index.row()];
             v = _table->cell(role - baseRole - 1 ,ind, false);
+            if ( v.toDouble() == rUNDEF || v.toDouble() == iUNDEF)
+                v = sUNDEF;
         }
     }
 
@@ -182,6 +190,13 @@ void TableModel::update()
 
     emit dataChanged(topLeft, bottomRight);
     emit layoutChanged();
+}
+
+void TableModel::updateColumns()
+{
+    setColumns();
+    emit columnsChanged();
+    update();
 }
 
 TableModel::~TableModel()

@@ -9,7 +9,7 @@ import "../Global.js" as Global
 Rectangle {
     id:comboBox
     property alias selectedItem: chosenItemText.text;
-    property color selectedColor : calcColor(ys,xs)
+    property color selectedColor //: calcColor(ys,xs)
     property color lefttopColor : "blue"
     property color leftbottomColor : "yellow"
     property color righttopColor : "red"

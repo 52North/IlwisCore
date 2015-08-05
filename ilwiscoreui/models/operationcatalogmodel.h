@@ -26,6 +26,7 @@ public:
    Q_INVOKABLE void filter(const QString& filterString);
    void prepare();
 
+   Q_INVOKABLE quint64 operationId(const QString& name);
    Q_INVOKABLE quint64 operationId(quint32 index, bool byKey) const;
    Q_INVOKABLE quint64 serviceId(quint32 index) const;
    Q_INVOKABLE QStringList serviceNames() const;

@@ -13,10 +13,20 @@ Item {
     height: parent.height -10
     property var currentColumn
 
+    function setOperation(newindex){
+        operationlist.currentIndex = newindex
+        columnOperation.columnIndex = currentColumn.columnIndex
+        if ( operationlist.model && newindex < operationlist.model.length )
+            columnOperation.currentOperation = operationlist.model[newindex]
+    }
+
     onCurrentColumnChanged: {
         if ( currentColumn)
             operationlist.model = currentColumn.operations
-
+        else{
+            operationlist.model = null
+            columnOperation.currentOperation = null
+        }
     }
 
     Text {
@@ -55,9 +65,7 @@ Item {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-                                operationlist.currentIndex = index
-                                columnOperation.columnIndex = currentColumn.columnIndex
-                                columnOperation.currentOperation = operationlist.model[index]
+                                setOperation(index)
                             }
                         }
                     }

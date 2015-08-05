@@ -50,7 +50,7 @@ Rectangle {
             anchors.left : sclabel2.right
             onCurrentIndexChanged: {
                 operationid = operations.serviceId(currentIndex)
-                formQML = formbuilder.index2Form(operationid)
+                formQML = formbuilder.index2Form(operationid, true)
             }
         }
     }

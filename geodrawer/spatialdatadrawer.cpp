@@ -62,7 +62,7 @@ void SpatialDataDrawer::envelope(const Envelope &env)
     _envelope = env;
 }
 
-VisualAttribute SpatialDataDrawer::vattributeFeatureCoverage(const QString &attrName) const
+VisualAttribute SpatialDataDrawer::vPropertyFeatureCoverage(const QString &attrName) const
 {
     VisualAttribute attr;
     IFeatureCoverage features = coverage().as<FeatureCoverage>();
@@ -81,10 +81,10 @@ VisualAttribute SpatialDataDrawer::vattributeFeatureCoverage(const QString &attr
                     itemdom->range(rng);
                     attr = VisualAttribute(itemdom);
                 }else {
-                    attr =  visualAttribute(FEATUREVALUECOLUMN);
+                    attr =  visualProperty(FEATUREVALUECOLUMN);
                 }
             }else {
-                attr =  visualAttribute(COVERAGEKEYCOLUMN);
+                attr =  visualProperty(COVERAGEKEYCOLUMN);
             }
         }
         attr.setColumnIndex(columnIndex);
@@ -92,7 +92,7 @@ VisualAttribute SpatialDataDrawer::vattributeFeatureCoverage(const QString &attr
     return attr;
 }
 
-VisualAttribute SpatialDataDrawer::vattributeRasterCoverage(const QString &attrName) const
+VisualAttribute SpatialDataDrawer::vPropertyRasterCoverage(const QString &attrName) const
 {
     //TODO later when displaying rasters with attributes
     VisualAttribute attr;
@@ -105,20 +105,37 @@ VisualAttribute SpatialDataDrawer::vattributeRasterCoverage(const QString &attrN
     return attr;
 }
 
-VisualAttribute SpatialDataDrawer::visualAttribute(const QString &attrName) const
+VisualAttribute SpatialDataDrawer::createVisualProperty(const ColumnDefinition& coldef, int index, const IRepresentation &rpr)
+{
+    IlwisTypes attrType = coldef.datadef().domain()->ilwisType();
+    VisualAttribute props(coldef.datadef().domain(),index, rpr);
+    if ( attrType == itNUMERICDOMAIN){
+        SPNumericRange numrange = coldef.datadef().range<NumericRange>();
+        props.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
+    } else if ( attrType == itITEMDOMAIN){
+        int count = coldef.datadef().domain()->range<>()->count();
+        props.actualRange(NumericRange(0, count - 1,1));
+    }
+
+    return props;
+}
+
+
+
+VisualAttribute SpatialDataDrawer::visualProperty(const QString &attrName) const
 {
     auto iter = _visualProperties.find(attrName)    ;
     if ( iter != _visualProperties.end())
         return iter->second;
     if ( hasType(coverage()->ilwisType(), itFEATURE)){
-        return vattributeFeatureCoverage(attrName);
+        return vPropertyFeatureCoverage(attrName);
     } else if ( hasType(coverage()->ilwisType(), itRASTER)){
-        return vattributeRasterCoverage(attrName);
+        return vPropertyRasterCoverage(attrName);
     }
     return VisualAttribute();
 }
 
-void SpatialDataDrawer::visualAttribute(const QString &attrName, const VisualAttribute &properties)
+void SpatialDataDrawer::visualProperty(const QString &attrName, const VisualAttribute &properties)
 {
     _visualProperties[attrName] = properties;
 }
@@ -162,7 +179,7 @@ bool SpatialDataDrawer::prepare(DrawerInterface::PreparationType prepType, const
     return true;
 }
 
-bool SpatialDataDrawer::isVisualAttribute(const QString &attName) const
+bool SpatialDataDrawer::isVisualProperty(const QString &attName) const
 {
     if ( coverage()->ilwisType() == itRASTER){
         if ( attName == PIXELVALUE)
@@ -186,11 +203,11 @@ QVariant SpatialDataDrawer::attribute(const QString &key) const
         QStringList parts = key.split("|");
         if ( parts.size() == 3){
             if ( parts[1] == "representation")
-                var.setValue<IRepresentation>(visualAttribute(parts[2]).representation());
+                var.setValue<IRepresentation>(visualProperty(parts[2]).representation());
             else if ( parts[1] == "stretchrange"){
-                var.setValue<NumericRange>(visualAttribute(parts[2]).stretchRange());
+                var.setValue<NumericRange>(visualProperty(parts[2]).stretchRange());
             } else if ( parts[1] == "domain"){
-                var.setValue<IDomain>(visualAttribute(parts[2]).domain());
+                var.setValue<IDomain>(visualProperty(parts[2]).domain());
             }
         }
     }
@@ -215,9 +232,19 @@ void SpatialDataDrawer::setAttribute(const QString &key, const QVariant &attrib)
         if ( parts.size() == 3){
             if ( parts[1] == "representation"){
                 IRepresentation rpr = attrib.value<IRepresentation>();
-                VisualAttribute& attr = _visualProperties[parts[2]];
-                attr.representation(rpr);
+                if ( rpr.isValid()){
+                    VisualAttribute& attr = _visualProperties[parts[2]];
+                    attr.representation(rpr);
+                }
+            }else if( parts[1] == "domain"){
+                IDomain dom = attrib.value<IDomain>();
+                if ( dom.isValid()){
+                    VisualAttribute& attr = _visualProperties[parts[2]];
+                    attr.domain(dom);
+                }
+
             }
+
 
         }
     }

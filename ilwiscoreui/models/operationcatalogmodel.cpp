@@ -51,6 +51,9 @@ void OperationCatalogModel::nameFilter(const QString &filter)
 void OperationCatalogModel::filter(const QString &filterString)
 {
     CatalogModel::filter(filterString);
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    _refresh = true;
     emit operationsChanged();
 
 }
@@ -126,6 +129,14 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 void OperationCatalogModel::prepare(){
     _refresh  = true;
     gatherItems();
+}
+
+quint64 OperationCatalogModel::operationId(const QString &name)
+{
+    std::vector<Resource> items = mastercatalog()->select(QString("type=%1 and name='%2'").arg(itOPERATIONMETADATA).arg(name));
+    if ( items.size() == 0)
+        return i64UNDEF;
+    return items[0].id();
 }
 
 void OperationCatalogModel::gatherItems() {

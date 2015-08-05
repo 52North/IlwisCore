@@ -62,7 +62,6 @@ Item {
                     var filterString = "type='OperationMetaData'"
                     if (currentIndex != 0)
                         filterString += " and keyword='" + model[currentIndex] + "'"
-                    console.debug(filterString)
                     currentCatalog.filter(filterString)
                 }
             }

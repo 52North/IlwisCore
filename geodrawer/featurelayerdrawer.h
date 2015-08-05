@@ -23,6 +23,7 @@ public:
 
 
     NEW_DRAWER
+    void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr);
     void setAttribute(const QString &attrName, const QVariant &value);
     QVariant attribute(const QString &attrName) const;
 
@@ -31,7 +32,7 @@ private:
 
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
-    std::vector<VertexIndex> _indices;
+    //std::vector<VertexIndex> _indices;
     std::vector<VertexColor> _colors;
 
     std::vector<FeatureDrawing> _featureDrawings;

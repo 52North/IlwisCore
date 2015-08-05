@@ -47,7 +47,7 @@ Rectangle {
         state : "maximized"
         Loader {
             id : propertyEditor1
-            width : 160
+            width : parent.width
             height : parent.height
 
 
@@ -84,7 +84,7 @@ Rectangle {
         anchors.leftMargin: 3
         Loader {
             id : propertyEditor2
-            width : 160
+            width : parent.width
             height : parent.height
 
 

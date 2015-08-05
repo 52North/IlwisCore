@@ -11,7 +11,9 @@
 #include "abstractfactory.h"
 #include "mastercatalogmodel.h"
 #include "tableoperations/tableoperation.h"
+#include "visualattributemodel.h"
 #include "tableoperations/sortcolumn.h"
+#include "tableoperations/convertcolumndomain.h"
 #include "tableoperations/tableoperationfactory.h"
 #include "consolescriptmodel.h"
 #include "ilwiscontext.h"
@@ -85,14 +87,14 @@ ConsoleScriptModel *UIContextModel::consoleScript(int type)
     return 0;
 }
 
-QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &coldef)
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const ColumnDefinition &coldef)
 {
     QList<VisualAttributeEditor *> editors;
     for ( const auto& editorItem : _propertyEditors){
         auto *editor = editorItem.second();
         if ( editor){
             if ( editor->canUse(obj, coldef)){
-                editor->prepare(parentLayer, obj, coldef);
+                editor->prepare(vattrib, obj, coldef);
                 editors.append(editor);
             }
             else
@@ -102,13 +104,13 @@ QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerMode
     return editors;
 }
 
-QList<VisualAttributeEditor *> UIContextModel::propertyEditors(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const QString& name){
+QList<VisualAttributeEditor *> UIContextModel::propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const QString& name){
     QList<VisualAttributeEditor *> editors;
     for ( const auto& editorItem : _propertyEditors){
         auto *editor = editorItem.second();
         if ( editor){
             if ( editor->canUse(obj, name)){
-                editor->prepare(parentLayer, obj);
+                editor->prepare(vattrib,  obj);
                 editors.append(editor);
             }
             else
@@ -201,6 +203,7 @@ void UIContextModel::prepare()
     }
     Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
+    factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
     Ilwis::kernel()->addFactory(factory);
 
 }
@@ -223,7 +226,9 @@ int UIContextModel::threadCount() const
 
 int UIContextModel::addPropertyEditor(const QString &propertyName, CreatePropertyEditor func)
 {
-    _propertyEditors[propertyName] = func;
+    QStringList parts = propertyName.split("|");
+    for(auto part : parts)
+        _propertyEditors[part] = func;
 
     return 0;
 }

@@ -18,6 +18,8 @@ class KERNELSHARED_EXPORT Representation : public IlwisObject
 public:
     Representation();
     Representation(const Resource& resource);
+
+    IlwisData<Representation> copyWith(const IDomain& dom) const;
     const UPColorLookUp& colors() const;
     void colors(ColorLookUp *lookup);
     void shapes(ShapeLookUp* lookup);

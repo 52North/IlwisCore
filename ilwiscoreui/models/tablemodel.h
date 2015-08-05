@@ -43,8 +43,10 @@ public:
     Q_INVOKABLE bool isColumnSelected(quint32 index) const;
     Q_INVOKABLE void selectColumn(quint32 index, bool yesno);
     Q_INVOKABLE void update();
+    void updateColumns();
 
     ~TableModel();
+
 signals:
   void columnCountChanged();
   void recordCountChanged();
@@ -52,6 +54,7 @@ signals:
 
 private:
     QQmlListProperty<ColumnModel> columns();
+    void setColumns();
     Ilwis::ITable _table;
     QList<ColumnModel *> _columns;
     std::vector<quint32> _order;

@@ -23,7 +23,10 @@ Item {
                  operationColumn1.state = "maximized"
                  operation1.setSource(currentOperation.qmlUrl,{"operation" : currentOperation, "columnIndex" : columnIndex})
              }
-          }
+          }else {
+             operation1.source = ""
+             operation2.source = ""
+         }
      }
     Rectangle {
         id : operationLabel

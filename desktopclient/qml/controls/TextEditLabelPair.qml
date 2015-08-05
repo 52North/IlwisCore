@@ -10,6 +10,7 @@ Item {
     property int labelWidth
     property bool textCanBeCopied : false
     property int fontSize : 8
+    property bool readOnly : false;
     height : 20
 
     Text {
@@ -19,6 +20,7 @@ Item {
         text : labelText
         font.bold: true
         font.pointSize: fontSize
+        y :3
     }
     TextField{
         id : textid
@@ -27,12 +29,13 @@ Item {
         width : parent.width - label.width
         text : content
         font.pointSize: fontSize
+        readOnly : parent.readOnly
         style: TextFieldStyle {
             background: Rectangle {
                 radius: 2
                 width : parent.width
                 height: parent.height
-                border.color: Global.edgecolor
+                border.color: parent.enabled ? "black" : "transparent"
                 border.width: textid.readOnly ? 0: 1
                 color : "transparent"
             }
