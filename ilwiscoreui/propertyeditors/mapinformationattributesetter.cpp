@@ -34,24 +34,19 @@ VisualAttributeEditor *MapInformationPropertySetter::create()
     return new MapInformationPropertySetter();
 }
 
-void MapInformationPropertySetter::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &bj, const ColumnDefinition &datadef)
-{
-    VisualAttributeEditor::prepare(parentLayer,bj,datadef);
-}
-
 bool MapInformationPropertySetter::showInfo() const
 {
-    if ( layer())
-        return layer()->showInfo();
+    if ( attribute()->layer())
+        return attribute()->layer()->showInfo();
     return true;
 }
 
 void MapInformationPropertySetter::setShowInfo(bool yesno)
 {
-    if (!layer())
+    if (!attribute()->layer())
         return;
 
-    layer()->showInfo(yesno);
+    attribute()->layer()->showInfo(yesno);
 
 }
 
