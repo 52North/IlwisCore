@@ -13,9 +13,8 @@ import "../../Global.js" as Global
 
 Item {
     id : layerview
-    property int borderwidth : 3
-    anchors.fill : parent
-    anchors.margins: borderwidth
+    width: parent.width
+    height : parent.height
     property TabModel tabmodel
 
     objectName: uicontext.uniqueName()
@@ -36,7 +35,7 @@ Item {
         if ( sourceUrl !== ""){
             layers.addDataSource(sourceUrl, sourceName, sourceType)
             viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
-        }
+         }
     }
 
     function transfer(datapanel){
@@ -121,20 +120,12 @@ Item {
                         target: layers
                         height : parent.height - maptools.height + 10
                     }
-                },
-                State {
-                    name : "bigger"
-                    PropertyChanges {
-                        target: layers
-                        height : parent.height - maptools.height - 350
-                    }
                 }
-
 
             ]
             transitions: [
                 Transition {
-                    NumberAnimation { properties: "height"; duration : 700 ; easing.type: Easing.InOutCubic }
+                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
                 }
             ]
 
