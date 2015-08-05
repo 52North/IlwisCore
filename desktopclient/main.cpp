@@ -46,6 +46,7 @@
 #include "models/objectcreator.h"
 #include "models/ilwisobjectcreatormodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
+#include "ilwiscoreui/propertyeditors/itemrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
 
@@ -92,6 +93,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<UIContextModel>("UIContextModel", 1,0, "UIContextModel");
         qmlRegisterType<VisualAttributeEditor>("VisualAttributeEditor", 1,0, "VisualAttributeEditor");
         qmlRegisterType<NumericRepresentationSetter>("NumericRepresentationSetter", 1,0, "NumericRepresentationSetter");
+        qmlRegisterType<ItemRepresentationSetter>("ItemRepresentationSetter", 1,0, "ItemRepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
         qmlRegisterType<WorkflowCatalogModel>("WorkflowCatalogModel", 1,0, "WorkflowCatalogModel");
