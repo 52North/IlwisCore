@@ -32,14 +32,18 @@ public:
     static QColor toColor(quint64 clrint, ColorModel clrModel) ;
     static QColor toColor(const QVariant &v, ColorModel colormodel);
     static QString toString(const QColor& clr, ColorModel clrModel);
-
+    static const QStringList& defaultColorNames() ;
+    static QColor defaultColor(const QString& name) ;
+    static QColor defaultColor(int index) ;
 
 protected:
     void storeColor(const QColor &clr, QDataStream& stream);
     void loadColor(QColor &clr, QDataStream &stream);
 private:
+    static void init();
     IlwisTypes _valuetype;
     ColorModel _defaultModel = cmRGBA;
+    static QStringList _defaultColorNames;
 
 };
 

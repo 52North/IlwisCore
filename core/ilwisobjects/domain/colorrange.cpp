@@ -19,10 +19,60 @@ using namespace Ilwis;
 //const quint64 colormask3 = 0xF0000000;
 //const quint64 colormask4 = 0xF000;
 
-
+QStringList ColorRangeBase::_defaultColorNames;
 
 ColorRangeBase::ColorRangeBase(IlwisTypes tp, ColorModel clrmodel) : _valuetype(tp), _defaultModel(clrmodel)
 {
+    init();
+}
+
+void ColorRangeBase::init() {
+    if ( _defaultColorNames.size() == 0){
+        _defaultColorNames.push_back("aquamarine");
+        _defaultColorNames.push_back("blue");
+        _defaultColorNames.push_back("bisque");
+        _defaultColorNames.push_back("blueviolet");
+        _defaultColorNames.push_back("brown");
+        _defaultColorNames.push_back("cadetblue");
+        _defaultColorNames.push_back("chartreuse");
+        _defaultColorNames.push_back("chocolate");
+        _defaultColorNames.push_back("cornflowerblue");
+        _defaultColorNames.push_back("crimson");
+        _defaultColorNames.push_back("cyan");
+        _defaultColorNames.push_back("darkblue");
+        _defaultColorNames.push_back("burlywood");
+        _defaultColorNames.push_back("darkcyan");
+        _defaultColorNames.push_back("dodgerblue");
+        _defaultColorNames.push_back("darkgray");
+        _defaultColorNames.push_back("darkgreen");
+        _defaultColorNames.push_back("darkslateblue");
+        _defaultColorNames.push_back("gold");
+        _defaultColorNames.push_back("green");
+        _defaultColorNames.push_back("indigo");
+        _defaultColorNames.push_back("funchsia");
+        _defaultColorNames.push_back("lightgreen");
+        _defaultColorNames.push_back("lightslategray");
+        _defaultColorNames.push_back("maroon");
+        _defaultColorNames.push_back("midnightblue");
+        _defaultColorNames.push_back("mediumvioletred");
+        _defaultColorNames.push_back("olive");
+        _defaultColorNames.push_back("orange");
+        _defaultColorNames.push_back("orchid");
+        _defaultColorNames.push_back("purple");
+        _defaultColorNames.push_back("red");
+        _defaultColorNames.push_back("seagreen");
+        _defaultColorNames.push_back("royalblue");
+        _defaultColorNames.push_back("tomato");
+        _defaultColorNames.push_back("yellow");
+        _defaultColorNames.push_back("slateblue");
+        _defaultColorNames.push_back("orangered");
+        _defaultColorNames.push_back("mediumseagreen");
+        _defaultColorNames.push_back("magenta");
+        _defaultColorNames.push_back("lightcoral");
+        _defaultColorNames.push_back("lime");
+        _defaultColorNames.push_back("goldenrod");
+        _defaultColorNames.push_back("forestgreen");
+    }
 }
 
 ColorRangeBase::ColorModel ColorRangeBase::defaultColorModel() const
@@ -33,6 +83,32 @@ ColorRangeBase::ColorModel ColorRangeBase::defaultColorModel() const
 void ColorRangeBase::defaultColorModel(ColorRangeBase::ColorModel m)
 {
     _defaultModel = m;
+}
+
+const QStringList& ColorRangeBase::defaultColorNames() {
+    if ( _defaultColorNames.size() == 0)
+        init();
+    return _defaultColorNames;
+}
+
+QColor ColorRangeBase::defaultColor(const QString &name)
+{
+    int index;
+    if ( _defaultColorNames.size() == 0)
+        init();
+    if ((index = _defaultColorNames.indexOf(name)) != -1){
+        return _defaultColorNames.at(index)                                          ;
+    }
+    return QColor();
+}
+
+QColor ColorRangeBase::defaultColor(int index)
+{
+    if ( _defaultColorNames.size() == 0)
+        init();
+    if ( index < _defaultColorNames.size()){
+        return _defaultColorNames.at(index);
+    }
 }
 
 QColor ColorRangeBase::toColor(const QVariant &v, ColorRangeBase::ColorModel colormodel)
@@ -117,6 +193,7 @@ QString ColorRangeBase::toString(const QColor &clr, ColorRangeBase::ColorModel c
     }
     return color;
 }
+
 
 void ColorRangeBase::storeColor(const QColor& clr, QDataStream &stream)
 {
