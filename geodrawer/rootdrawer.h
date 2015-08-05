@@ -55,6 +55,7 @@ public:
     DrawerInterface::DrawerType drawerType() const;
 
     QVariant attribute(const QString &attrNme) const;
+    void setAttribute(const QString &key, const QVariant &attribValue);
 
     void redraw();
 
@@ -62,6 +63,7 @@ public:
     Envelope normalizedEnveope(const Envelope &env) const;
     Ilwis::Coordinate pixel2Coord(const Ilwis::Pixel &pix);
     Ilwis::Pixel coord2Pixel(const Ilwis::Coordinate &crd);
+
 public slots:
 
 private:
@@ -76,6 +78,7 @@ private:
     Coordinate _viewPoint;
     Coordinate _eyePoint;
     IGeoReference _screenGrf;
+    QColor _backgroundColor;
     double _zoomScale=1;
     bool _is3D = false;
     const QQuickFramebufferObject *_frameBufferObject;

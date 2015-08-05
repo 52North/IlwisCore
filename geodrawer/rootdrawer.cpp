@@ -8,6 +8,7 @@
 //#include "cornersgeoreference.h"
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
+#include "griddrawer.h"
 #include "layersrenderer.h"
 
 using namespace Ilwis;
@@ -18,6 +19,7 @@ RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& opti
     valid(true);
     _screenGrf = new GeoReference();
     _screenGrf->create("corners");
+    _backgroundColor = "white";
 }
 
 RootDrawer::~RootDrawer()
@@ -198,12 +200,6 @@ void RootDrawer::pixelAreaSize(const Size<>& size)
         }
     }
     setMVP();
-//    auto env = normalizedEnveope(_zoomRect);
-//   // qDebug() << "zoom" << env.toString() << env.xlength() * _pixelAreaSize.xsize() << env.ylength() * _pixelAreaSize.ysize();
-//    env = normalizedEnveope(_coverageRect);
-//    //qDebug() << "cov" << env.toString() << ((env.xlength() - 1) / 2.0) * _pixelAreaSize.xsize() << env.ylength() * _pixelAreaSize.ysize();
-//    qDebug() << "cov" << ((env.xlength() - 1) / 2.0) * _pixelAreaSize.xsize() ;
-
     _pixelAreaSize = size;
 
 }
@@ -257,7 +253,17 @@ void RootDrawer::cleanUp()
 
 bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    return ComplexDrawer::prepare(prepType, options)    ;
+    if(!ComplexDrawer::prepare(prepType, options))
+        return false;
+
+    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
+        if (!hasDrawer("GridDrawer", DrawerInterface::dtPOST)){
+            GridDrawer *griddrawer = new GridDrawer(this,this,options);
+            griddrawer->prepare(DrawerInterface::ptALL, options);
+            addDrawer(griddrawer,DrawerInterface::dtPOST,iUNDEF,"GridDrawer");
+        }
+    }
+    return true;
 }
 
 double RootDrawer::aspectRatioView() const
@@ -337,7 +343,19 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
         QVariant var = qVariantFromValue(_pixelAreaSize);
         return var;
     }
+    if ( attrName == "backgroundcolor"){
+        QVariant var = qVariantFromValue(_backgroundColor);
+        return var;
+    }
     return QVariant();
+}
+
+void RootDrawer::setAttribute(const QString &key, const QVariant &attribValue)
+{
+    ComplexDrawer::setAttribute(key, attribValue);
+    if ( key == "backgroundcolor"){
+        _backgroundColor = attribValue.value<QColor>();
+    }
 }
 
 void RootDrawer::redraw()
