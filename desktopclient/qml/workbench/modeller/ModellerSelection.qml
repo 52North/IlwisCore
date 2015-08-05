@@ -29,7 +29,7 @@ Rectangle {
     signal unloadcontent(string content)
 
     function newForm(metaid, title){
-        var form= formbuilder.index2Form(metaid)
+        var form= formbuilder.index2Form(metaid, true)
         appFrame.formQML = form
         appFrame.formTitle = title
         appFrame.opacity = 1
