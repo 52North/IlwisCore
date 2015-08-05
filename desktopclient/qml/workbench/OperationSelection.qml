@@ -24,7 +24,7 @@ Rectangle {
 
     function newForm(metaid, title, url){
         operationid = metaid
-        var form= formbuilder.index2Form(metaid)
+        var form= formbuilder.index2Form(metaid, true)
         appFrame.formQML = form
         appFrame.formTitle = title
         appFrame.opacity = 1
