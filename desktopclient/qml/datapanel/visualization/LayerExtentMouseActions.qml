@@ -38,7 +38,7 @@ MouseArea {
                 var position = {initialx: mouseX, initialy:mouseY}
                 layerManager.hasSelectionDrawer = true
                 drawer.addCommand("adddrawer(" + drawer.viewerId + ",selectiondrawer)")
-                drawer.setAttribute("SelectionDrawer", position)
+                drawer.setAttribute("selectiondrawer", position)
                 drawer.update()
             }
             zoomStarted = true
@@ -59,8 +59,8 @@ MouseArea {
         drawer.currentCoordinate = mposition
         if ( zoomStarted && layerManager.hasSelectionDrawer){
             var position = {currentx: mouseX, currenty:mouseY}
-            drawer.setAttribute("SelectionDrawer", position)
-            drawer.copyAttribute("SelectionDrawer","envelope");
+            drawer.setAttribute("selectiondrawer", position)
+            drawer.copyAttribute("selectiondrawer","envelope");
             drawer.update()
         }
         if ( showInfo && floatrect.opacity > 0){
@@ -81,7 +81,7 @@ MouseArea {
             }
             if ( hasPermanence){
                 var parm = {envelope : envelope}
-                drawer.setAttribute("SelectionDrawer", parm)
+                drawer.setAttribute("selectiondrawer", parm)
                 drawer.update()
             }
             zoomEnded(envelope)
