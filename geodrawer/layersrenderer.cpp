@@ -19,12 +19,13 @@
 
 
 
-LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo)
+LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo, bool active)
 {
     if ( !_rootDrawer){
         _rootDrawer = new Ilwis::Geodrawer::RootDrawer(fbo, Ilwis::IOOptions());
         connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
     }
+    _rootDrawer->active(active);
 }
 
 LayersRenderer::~LayersRenderer()
@@ -48,8 +49,8 @@ void LayersRenderer::render()
         }else
             glDisable( GL_DEPTH_TEST);
 
-
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        QColor backgroundColor = _rootDrawer->attribute("backgroundcolor").value<QColor>();
+        glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
