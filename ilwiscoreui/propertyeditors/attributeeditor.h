@@ -9,9 +9,13 @@
 
 namespace Ilwis {
 class ColumnDefintion;
-
+class Representation;
+typedef IlwisData<Representation> IRepresentation;
 }
 class CoverageLayerModel;
+class RepresentationElement;
+class VisualAttributeModel;
+
 
 class ILWISCOREUISHARED_EXPORT VisualAttributeEditor : public QObject, public Ilwis::Identity
 {
@@ -21,35 +25,47 @@ class ILWISCOREUISHARED_EXPORT VisualAttributeEditor : public QObject, public Il
     Q_PROPERTY(int defaultHeight READ defaultHeight CONSTANT)
     Q_PROPERTY(int layerIndex READ layerIndex CONSTANT)
     Q_PROPERTY(QString displayName READ displayName CONSTANT)
+    Q_PROPERTY(QString attributeName READ attributeName CONSTANT)
+    Q_PROPERTY(QString representationName READ representationName NOTIFY rprNameChanged)
 
 public:
     VisualAttributeEditor(QObject *parent = 0);
     explicit VisualAttributeEditor(const QString& name, const QString& displayName, const QUrl& url, QObject *parent = 0);
     VisualAttributeEditor(const VisualAttributeEditor& metadata, QObject *parent);
     QString editorName() const;
+    QString attributeName() const;
     virtual int defaultHeight() const;
     virtual bool canUse(const Ilwis::IIlwisObject &obj, const Ilwis::ColumnDefinition &datadef = Ilwis::ColumnDefinition()) const;
     virtual bool canUse(const Ilwis::IIlwisObject &obj, const QString &name) const;
-    virtual void prepare(CoverageLayerModel *parentLayer, const Ilwis::IIlwisObject& bj, const Ilwis::ColumnDefinition &datadef = Ilwis::ColumnDefinition());
+    virtual void prepare(VisualAttributeModel *vattrib, const Ilwis::IIlwisObject& bj, const Ilwis::ColumnDefinition &datadef = Ilwis::ColumnDefinition());
     int layerIndex() const;
     QString displayName() const;
+    QString representationName() const;
+    virtual void representationChanged(const Ilwis::IRepresentation& rpr);
 
-    virtual void setlayer(quint32 index, CoverageLayerModel *model);
+    virtual void setlayer(quint32 index);
 protected:
-    CoverageLayerModel* layer() const;
-    CoverageLayerModel* layer();
+    VisualAttributeModel *attribute() const;
+    VisualAttributeModel *attribute() ;
 
     QUrl _qmlUrl;
+
+signals:
+    void rprNameChanged();
 private:
-    CoverageLayerModel *_layer = 0;
+
     quint32 _layerIndex = 0;
     QString _displayName;
     QString qmlUrl() const;
 
-signals:
-    void attributesChanged();
-
 public slots:
+    virtual void attributesChanged(Raw index, const QVariantMap &values);
+
+protected:
+    void displayName(const QString& newname);
+    QList<RepresentationElement *> _rprElements;
+    VisualAttributeModel *_visualAttribute = 0;
+
 };
 
 #define NEW_PROPERTYEDITOR(name) \

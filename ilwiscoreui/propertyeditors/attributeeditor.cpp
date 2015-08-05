@@ -1,7 +1,8 @@
-#include "raster.h"
-#include "featurecoverage.h"
-#include "feature.h"
-#include "table.h"
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "representation.h"
+#include "representationelement.h"
+#include "visualattributemodel.h"
 #include "attributeeditor.h"
 
 VisualAttributeEditor::VisualAttributeEditor(QObject *parent) : QObject(parent)
@@ -32,6 +33,14 @@ QString VisualAttributeEditor::editorName() const
     return name();
 }
 
+QString VisualAttributeEditor::attributeName() const
+{
+    if ( attribute()){
+        return attribute()->attributename();
+    }
+    return sUNDEF;
+}
+
 int VisualAttributeEditor::defaultHeight() const
 {
     return 0;
@@ -47,9 +56,10 @@ bool VisualAttributeEditor::canUse(const Ilwis::IIlwisObject &, const QString &)
     return false;
 }
 
-void VisualAttributeEditor::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &, const ColumnDefinition &)
+void VisualAttributeEditor::prepare( VisualAttributeModel *vattrib, const IIlwisObject &, const ColumnDefinition &)
 {
-    _layer = parentLayer;
+    _visualAttribute = vattrib;
+    setParent(vattrib);
 }
 
 int VisualAttributeEditor::layerIndex() const
@@ -62,19 +72,42 @@ QString VisualAttributeEditor::displayName() const
     return _displayName;
 }
 
-void VisualAttributeEditor::setlayer(quint32 index, CoverageLayerModel *model){
-    _layer = model;
+void VisualAttributeEditor::setlayer(quint32 index){
     _layerIndex = index;
 }
 
-CoverageLayerModel *VisualAttributeEditor::layer() const
+VisualAttributeModel *VisualAttributeEditor::attribute() const
 {
-    return _layer;
+    return _visualAttribute;
 }
 
-CoverageLayerModel *VisualAttributeEditor::layer()
+VisualAttributeModel *VisualAttributeEditor::attribute()
 {
-    return _layer;
+    return _visualAttribute;
+}
+
+void VisualAttributeEditor::attributesChanged(Raw , const QVariantMap& ){
+    if ( _visualAttribute->layer()){
+        _visualAttribute->layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+        _visualAttribute->layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, IOOptions());
+        _visualAttribute->layer()->drawer()->redraw();
+    }
+}
+
+QString VisualAttributeEditor::representationName() const
+{
+    if ( attribute()->representation().isValid())
+        return attribute()->representation()->name();
+    return "";
+}
+
+void VisualAttributeEditor::representationChanged(const IRepresentation &rpr)
+{
+    // empty implementation
+}
+
+void VisualAttributeEditor::displayName(const QString& newname){
+    _displayName = newname;
 }
 
 
