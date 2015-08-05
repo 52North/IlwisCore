@@ -104,7 +104,10 @@ public:
     virtual QVariant attribute(const QString& attrName) const = 0;
     virtual QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const = 0;
     virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
-    virtual bool drawerAttribute(const QString drawercode, const QString& attrName, const QVariant& attrib)  = 0;
+    virtual bool drawerAttribute(const QString& drawercode, const QString& attrName, const QVariant& attrib)  = 0;
+    virtual void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr) = 0;
+    virtual std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) = 0;
+    virtual const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) const = 0;
 
     virtual QVariant execute(const QString& operationName, const QVariantMap& parameters) = 0;
 
