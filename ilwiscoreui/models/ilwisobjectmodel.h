@@ -64,13 +64,14 @@ public:
     Ilwis::IIlwisObject object() const;
 
 protected:
+    QList<AttributeModel *> _attributes;
+    void resetAttributeModel(const QString &attributeName);
 signals:
     void readOnlyChanged();
 private slots:
     QString valueType() const;
 private:
     Ilwis::IIlwisObject _ilwisobject;
-    QList<AttributeModel *> _attributes;
     QList<DomainItemModel *> _domainItems;
     QList<ProjectionParameterModel *> _projectionParmItems;
     QString pixSizeString() const;
