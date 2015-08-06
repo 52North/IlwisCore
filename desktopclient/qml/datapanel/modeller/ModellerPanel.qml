@@ -54,11 +54,10 @@ Item {
         }
 
         Action {
-            id :close
+            id :run
             onTriggered: {
                 canvas.clearModeller();
-                dataPanel.removeModellerPanel(parent.title);
-            }
+                dataPanel.removeModellerPanel(parent.title);            }
         }
         RowLayout{
             spacing: 1
@@ -124,10 +123,10 @@ Item {
             }
 
             ToolButton{
-                id : closeButton
+                id : runButton
                 height:  toolbar.height
-                text: qsTr("Close")
-                action : close
+                text: qsTr("Run")
+                action : run
             }
 
         }

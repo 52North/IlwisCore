@@ -7,6 +7,7 @@ import QtQuick 2.0
 Rectangle {
     property color background1 : "#EAECEE"
     property string formQML : ""
+    property var formComponent : null
     property var currentAppForm : null
     property string formTitle
     property string operationId : "id"
@@ -35,6 +36,17 @@ Rectangle {
             background1 = formTitle == "" ? "transparent" : "#EAECEE"
             currentAppForm = Qt.createQmlObject(formQML,
                 applicationArea, "autoform1");
+        }
+    }
+
+    onFormComponentChanged: {
+        if ( currentAppForm != null){
+            currentAppForm.destroy(0)
+        }
+
+        if ( formComponent !== null) {
+            var component = Qt.createComponent(formComponent)
+            currentAppForm = component.createObject(applicationArea, {"x": 0, "y": 0});
         }
     }
 

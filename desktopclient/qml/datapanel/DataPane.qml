@@ -27,7 +27,6 @@ Rectangle {
      * Signal, thrown if a tab is closed
      */
     signal closedTab(string title)
-
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -237,17 +236,31 @@ Rectangle {
                 lefttab.fillWidth = true
                 righttab.state = "zerosize"
 
+                activeSplit = 2            }
+                activeSplit = 1
             }
         }
+        function newModeller(name, splitside) {
+            var component = Qt.createComponent("modeller/ModellerPanel.qml");
+//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
+            var tab = righttab.addTab(name,component);
+            tab.active = true;
+             var tabCount = 0;
+                if ( lefttab.count == 1){
+                    righttab.state = "halfsize"
+                }
+                lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
+                activeSplit = 1;
+                tabCount = lefttab.count - 1;
+                lefttab.currentIndex = tabCount;
+       }
 
         handleDelegate: Controls.SplitHandle{
             imageHeight: 22
             offset : 25
             handlePic: "splithandledark.png"
             func : datapanesplit.changeWidth
-        }
-
-        DataTabView2 {
+        }        DataTabView2 {
             id : lefttab
             property bool fillWidth : true
             side : 1
