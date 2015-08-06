@@ -282,7 +282,6 @@ HEADERS += core/kernel.h\
     core/util/tranquilizerfactory.h \
     core/util/consoletranquilizer.h \
     core/ilwisobjects/representation/shapelookup.h \
-    core/ilwisobjects/operation/workflowoperationimplementation.h \
     core/ilwisobjects/workflow/workflowoperationimplementation.h
 
 
