@@ -194,3 +194,23 @@ NumericRange MathHelper::roundRange(double rmin, double rmax)
     double upper = step * round(r ==0 ? intpart : 1 + intpart );
     return NumericRange(lower, upper, step);
 }
+
+double MathHelper::round(double r)
+{
+    if (r < 7)
+      if (r < 1e-10)
+        return 1e-10;
+      else
+        return round(r*10)/10;
+    else if (r > 70)
+      if (r > 1e30)
+        return 1e30;
+      else
+        return round(r/10)*10;
+    else if (r < 17)
+      return 10;
+    else if (r <= 25)
+      return 20;
+    else
+      return 50;
+}

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import DataPaneModel 1.0
 import TabModel 1.0
+import "Global.js" as Global
 
 
 TabViewStyle {
@@ -15,23 +16,22 @@ TabViewStyle {
     property int tabHeight : 22
 
 
-    frameOverlap: 1
     tab: Rectangle {
         id : selectRect
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
         color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
-        border.color:  color
+        border.color:  Global.edgecolor
 
         implicitWidth: Math.max(label.width + 4, 170)
         implicitHeight: tabHeight
-        radius: 2
+        radius: 5
         Text {
             id: label
-            width : 100
+            width : parent.width - closeButton.width - expandButton.width
             anchors.centerIn: parent
             text: styleData.title
-            color: styleData.selected ? "white" : "black"
+            color: tabmodel && tabmodel.selected ? "white" : "black"
             elide: Text.ElideMiddle
 
             MouseArea  {
@@ -76,9 +76,6 @@ TabViewStyle {
             height : 18
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
-//            onClicked: {
-//                datapanesplit.showMapWindow(0)
-//            }
             onClicked: expandToWindow(side,index)
 
             Image {

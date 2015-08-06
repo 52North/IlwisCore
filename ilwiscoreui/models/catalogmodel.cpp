@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QCoreApplication>
 #include "coverage.h"
+#include "representation.h"
 #include "connectorinterface.h"
 #include "resource.h"
 #include "geometries.h"

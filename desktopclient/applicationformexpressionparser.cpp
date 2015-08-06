@@ -334,7 +334,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
     return formRows;
 }
 
-QString ApplicationFormExpressionParser::index2Form(quint64 metaid) const {
+QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool useBackground) const {
     std::vector<FormParameter> parameters = getParameters(metaid);
     std::vector<FormParameter> outparameters = getOutputParameters(metaid);
     QString results;

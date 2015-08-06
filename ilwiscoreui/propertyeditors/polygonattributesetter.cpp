@@ -38,10 +38,10 @@ bool PolygonPropertySetter::canUse(const IIlwisObject& obj, const QString& name 
 
 bool PolygonPropertySetter::showBoundaries() const
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return false;
 
-    QVariant var = layer()->drawer()->attribute("polygonboundaries");
+    QVariant var = attribute()->layer()->drawer()->attribute("polygonboundaries");
     if ( var.isValid())
         return var.toBool();
     return false;
@@ -50,20 +50,20 @@ bool PolygonPropertySetter::showBoundaries() const
 
 void PolygonPropertySetter::setShowBoundaries(bool yesno)
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return ;
 
-    layer()->drawer()->setAttribute("polygonboundaries", yesno);
-    layer()->drawer()->redraw();
+    attribute()->layer()->drawer()->setAttribute("polygonboundaries", yesno);
+    attribute()->layer()->drawer()->redraw();
 
 }
 
 bool PolygonPropertySetter::showAreas() const
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return false;
 
-    QVariant var = layer()->drawer()->attribute("polygonareas");
+    QVariant var = attribute()->layer()->drawer()->attribute("polygonareas");
     if ( var.isValid())
         return var.toBool();
     return false;
@@ -72,18 +72,18 @@ bool PolygonPropertySetter::showAreas() const
 
 void PolygonPropertySetter::setShowAreas(bool yesno)
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return ;
 
-    layer()->drawer()->setAttribute("polygonareas", yesno);
-    layer()->drawer()->redraw();
+    attribute()->layer()->drawer()->setAttribute("polygonareas", yesno);
+    attribute()->layer()->drawer()->redraw();
 
 }
 
 QColor PolygonPropertySetter::boundaryColor() const
 {
-    if ( layer()){
-        QVariant var = layer()->drawer()->attribute("boundarycolor");
+    if ( attribute()->layer()){
+        QVariant var = attribute()->layer()->drawer()->attribute("boundarycolor");
         if ( var.isValid())
             return var.value<QColor>();
     }
@@ -93,20 +93,20 @@ QColor PolygonPropertySetter::boundaryColor() const
 
 void PolygonPropertySetter::setBoundaryColor(const QColor &clr)
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return ;
 
-    layer()->drawer()->setAttribute("boundarycolor", clr);
-    layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
-    layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions("polygononly",true));
-    layer()->drawer()->redraw();
+    attribute()->layer()->drawer()->setAttribute("boundarycolor", clr);
+    attribute()->layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+    attribute()->layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions("polygononly",true));
+    attribute()->layer()->drawer()->redraw();
 }
 
 float PolygonPropertySetter::boundarywidth() const
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return 1.0;
-    QVariant var = layer()->drawer()->attribute("boundarywidth");
+    QVariant var = attribute()->layer()->drawer()->attribute("boundarywidth");
     if ( var.isValid())
         return var.toInt();
     return 1.0;
@@ -115,13 +115,13 @@ float PolygonPropertySetter::boundarywidth() const
 
 void PolygonPropertySetter::setBoundarywidth(float w)
 {
-    if ( !layer())
+    if ( !attribute()->layer())
         return ;
 
-    layer()->drawer()->setAttribute("boundarywidth", w);
-    layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
-    layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions("polygononly",true));
-    layer()->drawer()->redraw();
+    attribute()->layer()->drawer()->setAttribute("boundarywidth", w);
+    attribute()->layer()->drawer()->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
+    attribute()->layer()->drawer()->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, Ilwis::IOOptions("polygononly",true));
+    attribute()->layer()->drawer()->redraw();
 }
 
 VisualAttributeEditor *PolygonPropertySetter::create()

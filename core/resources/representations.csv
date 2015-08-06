@@ -1,5 +1,12 @@
 CODE,RELATEDDOMAIN,TYPE,DEFINITION,DESCRIPTION
-grey,value,continuouscolor,0:1|#ff000000|#ffffffff,grey representation for numerical values
+greyscale,value,continuouscolor,0:1|#ff000000|#ffffffff,grey representation for numerical values
 monochromeblack,value,continuouscolor,0:1|#ff000000|#ff00000,monochrome black for numerical values
 pseudo,value,continuouscolor,0:0.2|#ff8000ff|#ff4040ff;0.2:0.3|#ff4040ff|#ff88ff00;0.3:0.45|#ff88ff00|#ff80ff00;0.45:0.6|#ff80ff00|#ffff8000;0.6:0.8|#ffff8000|#ffff4040;0.8:1.0|#ffff4040|#ffff0080,Pseudo color representation for value domains
-primarycolors,item,palettecolor,true|#ffff0000|#ff00ff00|#ff0000ff|#ffff00ff|#ff00ffff|#ffffff00|#ff808080|#ffe0e0e0|#ff800000|#ff808000|#ff000080|#ff800080|#ff008080|#ff008000|#ffff8000|#ffbf0000|#ffbfbf00|#ff0000bf|#ffbf00bf|#ff00bfbf|#ff00bf00|#ffbfbfbf|#ffbfe0bf|#ff3f0000|#ff3f3f00|#ff00003f|#ff3f003f|#ff003f3f|#ff003f00|#ff3f3f3f|#ff803f00,default color scheme for item domains
+primarycolors,item,palettecolor,#ffaf0000|#ff00ff00|#ff0000ff|#ffff00ff|#ff00ffff|#ffffff00|#ff808080|#ffe0e0e0|#ff800000|#ff808000|#ff000080|#ff800080|#ff008080|#ff008000|#ffff8000|#ffbf0000|#ffbfbf00|#ff0000bf|#ffbf00bf|#ff00bfbf|#ff00bf00|#ffbfbfbf|#ffbfe0bf|#ff3f0000|#ff3f3f00|#ff00003f|#ff3f003f|#ff003f3f|#ff003f00|#ff3f3f3f|#ff803f00,default color scheme for item domains
+red,item,palettecolor,#ffff0000|#ffff8080|#ffffc0b0|#fff9967a|#ffc73838|#fffa143c|#ffcd5c5c|#ffb22222|#ff8b0000|#ff6b0303|#fffa0404|#ff880000, red color scheme for item domains
+green,item,palettecolor,#ff00ff00|#ffadff2f|#ff32cd32|#ff98fb98|#ff00aa00|#ff00fa9a|#ff3cb371|#ff2e8b57|#ff008000|#ff006400|#ff9acd32|#ff6b8e23|#ff808000|#ff556b2f,green color scheme for item domains
+blue,item,palettecolor,#ff00bfff|#ff00ffff|#ffe0ffff|#ffafeeee|#ff7fffd4|#ff48d1cc|#ff5f9ea0|#ff4682b4|#ffb0c4de|#ffadd8e6|#ff00bfff|#ff1e90ff|#ff6495ed|#ff4169e1|#ff0000ff|#ff00008b|#ff191970,blue color scheme for item domains
+brown,item,palettecolor,#ffa0522d|#fffff8dc|#ffd2b48c|#ff8b4513|#ffbc8f8f|#ff800000|#ffffe4c4|#ffa52a2a|#ffdeb887|#ffffdead|#fff5deb3|#ffd2691e|#ffcd853f|#ffdaa520|#ffb8860b,brown color scheme for item domains
+grey,item,palettecolor,#dcdcdc|#2f4f4f|#d3d3d3|#708090|#040404|#ddeeff|#dddddd|#aabbc0|#c0c0c0|#778899|#404040|#a9a9a9|#696969|#808080|#000000,grey color scheme for item domains
+fire,item,palettecolor,#ffff0000|#ffff7f50|#ffffd700|#ffffa500|#ffdc143c|#fffffacd|#ffff4500|#ffffff00|#ffcd5c5c|#ffffb6c1|#ffffffe0|#ffff8c00|#ff8b0000|#ffff6347|#ffffffff,red/yellow color scheme for item domains
+earth,item,palettecolor,#ff8b4513|#ff0000cd|#ff006400|#ff40e0d0|#fff5deb3|#ff000080|#ff3cb371|#ff5f9ea0|#ffdeb887|#ffb0c4de|#ff32cd32|#ffb0e0e6|#ffffebcd|#ff0808aff|#ffadff2f,colors of earh scheme for item domains

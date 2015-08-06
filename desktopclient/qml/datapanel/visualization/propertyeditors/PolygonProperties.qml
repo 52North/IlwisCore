@@ -70,10 +70,12 @@ Item {
                         height : Global.rowHeight
                         text : "1"
                         onTextChanged: {
-                            if ( thicknessSlider.value !== text && Global.isNumber(text)){
-                                thicknessSlider.value = text
-                                if ( editor)
-                                    editor.boundarywidth = text
+                            if ( thicknessSlider){
+                                if ( thicknessSlider.value !== text && Global.isNumber(text)){
+                                    thicknessSlider.value = text
+                                    if ( editor)
+                                        editor.boundarywidth = text
+                                }
                             }
                         }
                     }

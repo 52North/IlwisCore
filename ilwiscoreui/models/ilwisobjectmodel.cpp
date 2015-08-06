@@ -179,6 +179,37 @@ QString IlwisObjectModel::projectionInfo() const
     return "";
 }
 
+void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
+
+    auto setAttributeModel = [&](int i, const ColumnDefinition& coldef, const QString& attributeName){
+        if ( coldef.name() == attributeName){
+            AttributeModel *attribute = new AttributeModel(coldef, this, _ilwisobject);
+            _attributes[i] = attribute;
+        }
+    };
+
+    IlwisTypes objecttype = _ilwisobject->ilwisType();
+    if ( objecttype == itRASTER){
+        IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+        if ( raster->hasAttributes()){
+            for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
+                setAttributeModel(i,raster->attributeTable()->columndefinition(i), attributeName);
+            }
+        }
+    } else if ( hasType(objecttype,itFEATURE)){
+        IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+        for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
+            setAttributeModel(i,features->attributeTable()->columndefinition(i), attributeName);
+        }
+    } else if ( hasType(objecttype,itTABLE)){
+        ITable tbl = _ilwisobject.as<Table>();
+        for(int i = 0; i < tbl->columnCount(); ++i){
+            setAttributeModel(i,tbl->columndefinition(i),attributeName);
+        }
+    }
+
+}
+
 QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
 {
     try {
@@ -209,9 +240,9 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                     }
                 }
             }
-            if ( _attributes.size() > 0){
-                return QQmlListProperty<AttributeModel>(this, _attributes) ;
-            }
+        }
+        if ( _attributes.size() > 0){
+            return QQmlListProperty<AttributeModel>(this, _attributes) ;
         }
     }
     catch(const ErrorObject& ){

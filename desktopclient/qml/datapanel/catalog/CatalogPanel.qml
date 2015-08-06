@@ -196,7 +196,6 @@ Item {
                     var url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
                     bigthing.changeCatalog(filter,"catalog", url)
-                    //currentCatalog.filter(filter)
                 }
 
             }
@@ -319,7 +318,7 @@ Item {
             },
             State {
                 name : "thumbList"
-                PropertyChanges { target: thumbListView; height : parent.height.height;opacity : 1; enabled : true}
+                PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
                 PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
                 PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
                 PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}

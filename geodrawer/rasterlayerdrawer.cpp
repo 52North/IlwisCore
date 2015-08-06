@@ -46,7 +46,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     IRasterCoverage raster = coverage().as<RasterCoverage>();
     if ( !_rasterImage){
         setActiveVisualAttribute(PIXELVALUE);
-       _visualAttribute = visualAttribute(activeAttribute());
+       _visualAttribute = visualProperty(activeAttribute());
        _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(),raster,_visualAttribute,IOOptions()));
        if (!_rasterImage){
            ERROR2(ERR_NO_INITIALIZED_2,"RasterImage",raster->name());
@@ -81,7 +81,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     }
    if ( hasType(prepType, DrawerInterface::ptRENDER) && !isPrepared(DrawerInterface::ptRENDER)){
         setActiveVisualAttribute(PIXELVALUE);
-       _visualAttribute = visualAttribute(activeAttribute());
+       _visualAttribute = visualProperty(activeAttribute());
        _rasterImage->visualAttribute(_visualAttribute);
        _prepared |= ( DrawerInterface::ptRENDER);
    }
@@ -125,9 +125,9 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
     if ( hasType(attrType, itNUMBER)){
         auto numrange = raster->datadef().range<NumericRange>();
         attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
-        visualAttribute(PIXELVALUE, attr);
+        visualProperty(PIXELVALUE, attr);
     } else if ( hasType(attrType, itCONTINUOUSCOLOR)){
-         visualAttribute(PIXELVALUE, attr);
+         visualProperty(PIXELVALUE, attr);
 
     }else if ( hasType(attrType, itPALETTECOLOR)){
         auto colorrange = raster->datadef().range<ColorPalette>();

@@ -1,3 +1,6 @@
+#include <QSqlRecord>
+#include <QSqlQuery>
+#include <QSqlField>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "range.h"
@@ -10,41 +13,26 @@ using namespace Ilwis;
 
 
 
+ContinuousColorLookup::ContinuousColorLookup()
+{
+
+}
+
 ContinuousColorLookup::ContinuousColorLookup(const QString &definition)
 {
-    QStringList parts = definition.split(";");
-    for( QString group : parts){
-        QStringList groupdef = group.split("|");
-        if ( groupdef.size() != 3) {
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
-        QStringList limits = groupdef[0].split(":");
-        if ( limits.size() != 2){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
-        bool ok1, ok2;
-        NumericRange numrange(limits[0].toDouble(&ok1), limits[1].toDouble(&ok2));
-        if ( !(ok1 && ok2)){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
-        QColor color1 = string2color(groupdef[1]);
-        if ( !(color1.isValid())){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
-        }
+    fromDefinition(definition);
+}
 
-
-        QColor color2 = string2color(groupdef[2]);
-        if ( !(color2.isValid())){
-            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
-            return;
+ContinuousColorLookup::ContinuousColorLookup(const IDomain &, const QString& rprCode)
+{
+    QSqlQuery db(kernel()->database());
+    QString query = QString("Select * from representation where code='%1'").arg(rprCode != "" ? rprCode : "pseudo");
+    if (db.exec(query)) {
+        if ( db.next()){
+            QSqlRecord rec = db.record();
+            QString  definition = rec.field("definition").value().toString();
+            fromDefinition(definition);
         }
-        ContinuousColorRange colorrange(color1, color2);
-        addGroup(numrange,colorrange);
-
     }
 
 
@@ -98,4 +86,60 @@ void ContinuousColorLookup::addGroup(const NumericRange &range, const Continuous
     }
     _colorranges.push_back(colorrange);
     _groups.push_back(range);
+}
+
+void ContinuousColorLookup::setColor(double value, const QColor &clr)
+{
+    // TODO:
+}
+
+ColorLookUp *ContinuousColorLookup::clone() const
+{
+    ContinuousColorLookup *newlookup = new ContinuousColorLookup();
+    newlookup->_colorranges = _colorranges;
+    newlookup->_groups = _groups;
+    newlookup->_linear = _linear;
+    newlookup->_numericRange = _numericRange;
+    newlookup->_step = _step;
+
+    return newlookup;
+}
+
+void ContinuousColorLookup::fromDefinition(const QString &definition)
+{
+    QStringList parts = definition.split(";");
+    for( QString group : parts){
+        QStringList groupdef = group.split("|");
+        if ( groupdef.size() != 3) {
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
+            return;
+        }
+        QStringList limits = groupdef[0].split(":");
+        if ( limits.size() != 2){
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
+            return;
+        }
+        bool ok1, ok2;
+        NumericRange numrange(limits[0].toDouble(&ok1), limits[1].toDouble(&ok2));
+        if ( !(ok1 && ok2)){
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
+            return;
+        }
+        QColor color1 = string2color(groupdef[1]);
+        if ( !(color1.isValid())){
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
+            return;
+        }
+
+
+        QColor color2 = string2color(groupdef[2]);
+        if ( !(color2.isValid())){
+            ERROR2(ERR_ILLEGAL_VALUE_2,TR("Representation definition"), definition);
+            return;
+        }
+        ContinuousColorRange colorrange(color1, color2);
+        addGroup(numrange,colorrange);
+
+    }
+
 }

@@ -422,6 +422,7 @@ typedef ItemDomain<ThematicItem>  ThematicDomain ;
 typedef ItemDomain<IndexedIdentifier>  IndexedIdDomain ;
 typedef ItemDomain<NamedIdentifier>  NamedIdDomain ;
 typedef ItemDomain<Interval>  IntervalDomain ;
+typedef IlwisData<ItemDomain<DomainItem>> IItemDomain;
 
 }
 

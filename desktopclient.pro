@@ -131,7 +131,9 @@ DISTFILES += \
     desktopclient/qml/datapanel/visualization/MapPanel.qml \
     desktopclient/qml/datapanel/visualization/MapPanelButton.qml \
     desktopclient/qml/datapanel/visualization/MapPanelButtonBar.qml \
-    desktopclient/qml/datapanel/ButtonBarTabViewStyle.qml
+    desktopclient/qml/datapanel/ButtonBarTabViewStyle.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/ConvertAttributeDomain.qml \
+    desktopclient/qml/datapanel/visualization/propertyeditors/LayerOpacity.qml
 
 
 

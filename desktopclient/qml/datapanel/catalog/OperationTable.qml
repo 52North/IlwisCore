@@ -243,7 +243,7 @@ Rectangle {
             }
         }
 
-        model : setResources()
+        model : currentCatalog.operations
     }
 
 }

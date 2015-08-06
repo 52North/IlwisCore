@@ -20,7 +20,7 @@ class ILWISCOREUISHARED_EXPORT VisualAttribute
 public:
     VisualAttribute();
     VisualAttribute(const NumericRange& rng);
-    VisualAttribute(const IDomain& dom, int colindex = iUNDEF);
+    VisualAttribute(const IDomain& dom, int colindex = iUNDEF, const Ilwis::IRepresentation &rpr = IRepresentation());
     VisualAttribute(const VisualAttribute& avp);
 
     IRepresentation representation() const;
@@ -45,7 +45,6 @@ private:
     IDomain _domain;
     IRasterCoverage _raster;
     quint32 _columnIndex=iUNDEF; //optional indicator which column/attribute is used for these properties
-    QStringList _colors;
 };
 }
 }

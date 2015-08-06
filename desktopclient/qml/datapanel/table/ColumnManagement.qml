@@ -47,7 +47,7 @@ Rectangle {
             SplitView{
                 id : columnview
                 function setModel(cm){
-                    columnlist.columnmodel = cm
+                    //columnlist.columnmodel = cm
                 }
                 handleDelegate: Controls.SplitHandle{
                     imageHeight: 15

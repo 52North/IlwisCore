@@ -67,7 +67,7 @@ QColor LayerDrawer::color(const IRepresentation &rpr, double value, DrawerInterf
 
 void LayerDrawer::setActiveVisualAttribute(const QString &attr)
 {
-    if ( !isVisualAttribute(attr)){
+    if ( !isVisualProperty(attr)){
         return;
     }
     _activeAttribute = attr;

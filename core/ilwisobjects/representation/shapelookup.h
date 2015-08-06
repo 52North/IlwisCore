@@ -22,6 +22,8 @@ public:
 
     Shape shape(Raw raw);
 
+    ShapeLookUp* clone() const;
+
 private:
     boost::container::flat_map<Raw, Shape> _shapes;
 };

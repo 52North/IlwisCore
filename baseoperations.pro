@@ -45,7 +45,8 @@ HEADERS += \
     baseoperations/geometry/spatialrelation.h \
     baseoperations/util/workingcatalog.h \
     baseoperations/math/unarymathtable.h \
-    baseoperations/math/unarymathrasterandnumber.h
+    baseoperations/math/unarymathrasterandnumber.h \
+    baseoperations/data/convertcolumndomain.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -76,7 +77,8 @@ SOURCES += \
     baseoperations/geometry/spatialrelation.cpp \
     baseoperations/util/workingcatalog.cpp \
     baseoperations/math/unarymathtable.cpp \
-    baseoperations/math/unarymathrasterandnumber.cpp
+    baseoperations/math/unarymathrasterandnumber.cpp \
+    baseoperations/data/convertcolumndomain.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

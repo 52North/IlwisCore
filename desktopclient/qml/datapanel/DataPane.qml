@@ -117,9 +117,13 @@ Rectangle {
                     var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
                     if ( insertetTab){
                         insertetTab.item.addDataSource(filter, url, outputtype)
+                        //console.debug("1")
                         insertetTab.item.tabmodel = newPanel
+                        //console.debug("2")
                         tabview.removeTab(removeIndex)
+                        //console.debug("3")
                         datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                        //console.debug("4")
                     }
                 }
             }

@@ -19,7 +19,7 @@ public:
     bool prepare(PreparationType prepType, const IOOptions& options);
 
     void setAttribute(const QString& attrName, const QVariant& attrib);
-    bool drawerAttribute(const QString drawername, const QString& attrName, const QVariant& attrib);
+    bool drawerAttribute(const QString &drawername, const QString& attrName, const QVariant& attrib);
     QVariant attribute(const QString &attrName) const;
     DrawerInterface::DrawerType drawerType() const;
     quint32 defaultOrder() const;

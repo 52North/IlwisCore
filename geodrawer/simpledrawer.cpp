@@ -12,10 +12,19 @@ SimpleDrawer::SimpleDrawer(const QString& nme, DrawerInterface *parentDrawer, Ro
 
 QVariant SimpleDrawer::attributeOfDrawer(const QString &drawercode, const QString &attrName) const
 {
-    if ( code() == drawercode){
+    if ( name() == drawercode || code() == drawercode){
         return attribute(attrName);
     }
     return QVariant();
+}
+
+bool SimpleDrawer::drawerAttribute(const QString &drawercode, const QString &attrName, const QVariant &value)
+{
+    if ( name() == drawercode || code() == drawercode){
+        setAttribute(attrName, value);
+        return true;
+    }
+    return false;
 }
 
 bool SimpleDrawer::isSimple() const

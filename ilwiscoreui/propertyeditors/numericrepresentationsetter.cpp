@@ -5,22 +5,9 @@
 #include "representation.h"
 #include "numericrepresentationsetter.h"
 #include "mathhelper.h"
+#include "visualattributemodel.h"
 #include "drawers/drawerinterface.h"
 
-
-RepresentationElement::RepresentationElement(QObject *parent) : QObject(parent)
-{
-}
-
-RepresentationElement::RepresentationElement(QString label, QObject *parent) : QObject(parent), Identity(label)
-{
-
-}
-
-QColor RepresentationElement::color() const
-{
-    return _color;
-}
 
 //-----------------------------------------
 REGISTER_PROPERTYEDITOR("numericrepresentationsetter",NumericRepresentationSetter)
@@ -49,17 +36,15 @@ VisualAttributeEditor *NumericRepresentationSetter::create()
     return new NumericRepresentationSetter();
 }
 
-void NumericRepresentationSetter::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &obj, const ColumnDefinition &cdef)
+void NumericRepresentationSetter::prepare(VisualAttributeModel *vattrib, const IIlwisObject &obj, const ColumnDefinition &cdef)
 {
-    VisualAttributeEditor::prepare(parentLayer, obj, cdef);
+    VisualAttributeEditor::prepare(vattrib, obj, cdef);
 
-    if ( layer() && layer()->drawer()){
-        QVariant actAttribute = layer()->drawer()->attribute("activevisualattribute");
-        if ( !actAttribute.isValid())
-            return ;
-        QVariant var = layer()->drawer()->attribute("visualattribute|representation|" + actAttribute.toString());
-        _representation = var.value<IRepresentation>();
-        var = layer()->drawer()->attribute("visualattribute|stretchrange|" + actAttribute.toString());
+    if ( attribute()->layer() && attribute()->layer()->drawer()){
+        QVariant actAttribute = attribute()->layer()->drawer()->attribute("activevisualattribute");
+           if ( !actAttribute.isValid())
+               return ;
+        auto var = attribute()->layer()->drawer()->attribute("visualattribute|stretchrange|" + actAttribute.toString());
         NumericRange numrange = var.value<NumericRange>();
         if ( !numrange.isValid())
             return;
@@ -76,17 +61,10 @@ void NumericRepresentationSetter::prepare(CoverageLayerModel *parentLayer, const
     }
 }
 
-QString NumericRepresentationSetter::representationName() const
-{
-    if ( _representation.isValid())
-        return _representation->name();
-    return "";
-}
-
 QColor NumericRepresentationSetter::color(double frac)
 {
-    if ( layer() && layer()->drawer()){
-        return layer()->drawer()->color(_representation, frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
+    if ( attribute()->layer() && attribute()->layer()->drawer()){
+        return attribute()->layer()->drawer()->color(attribute()->representation(), frac, Ilwis::Geodrawer::DrawerInterface::cvmFRACTION) ;
     }
     return QColor();
 }
@@ -115,19 +93,19 @@ bool NumericRepresentationSetter::canUse(const QString &id) const
 
 void NumericRepresentationSetter::setRepresentation(const QString &name)
 {
-    Resource resource = mastercatalog()->name2Resource(name, itREPRESENTATION)    ;
-    if ( !resource.isValid())
-        return;
-    IRepresentation rpr(resource);
-    QVariant actAttribute = layer()->drawer()->attribute("activevisualattribute");
-    if ( !actAttribute.isValid())
-        return ;
-    QVariant var;
-    var.setValue<IRepresentation>(rpr);
-    layer()->drawer()->setAttribute("visualattribute|representation|" + actAttribute.toString(),var);
-    layer()->drawer()->unprepare(Geodrawer::DrawerInterface::ptRENDER);
-    layer()->drawer()->prepare(Geodrawer::DrawerInterface::ptRENDER, IOOptions());
-    layer()->drawer()->redraw();
+//    Resource resource = mastercatalog()->name2Resource(name, itREPRESENTATION)    ;
+//    if ( !resource.isValid())
+//        return;
+//    IRepresentation rpr(resource);
+//    QVariant actAttribute = layer()->drawer()->attribute("activevisualattribute");
+//    if ( !actAttribute.isValid())
+//        return ;
+//    QVariant var;
+//    var.setValue<IRepresentation>(rpr);
+//    layer()->drawer()->setAttribute("visualattribute|representation|" + actAttribute.toString(),var);
+//    layer()->drawer()->unprepare(Geodrawer::DrawerInterface::ptRENDER);
+//    layer()->drawer()->prepare(Geodrawer::DrawerInterface::ptRENDER, IOOptions());
+//    layer()->drawer()->redraw();
 
 }
 

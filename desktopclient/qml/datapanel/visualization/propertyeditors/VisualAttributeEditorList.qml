@@ -3,14 +3,8 @@ import "../../../Global.js" as Global
 
 Item {
     id : displaypropertiesColumn
-    property var currentVisualAttribute
 
-    onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute && currentVisualAttribute.propertyEditors ){
-            editorList.model =  currentVisualAttribute.propertyEditors
-            editorColumn.currentEditor = editorList.model[0]
-        }
-    }
+    property var displayEditorModel
 
     Rectangle {
         id : propertiesLabel
@@ -34,6 +28,7 @@ Item {
         ListView{
             id : editorList
             anchors.fill: parent
+            model : displayEditorModel
             Component {
                 id: editorHighlight
 

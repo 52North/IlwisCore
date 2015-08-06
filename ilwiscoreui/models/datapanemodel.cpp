@@ -15,31 +15,34 @@ DataPaneModel::DataPaneModel(QObject *parent) :
 
 bool DataPaneModel::removeTab(bool lftside, int tabIndex)
 {
-    bool ok = false;
-    if ( lftside){
-        if ( _rightside->tabCount() > 0 || _leftside->tabCount() > 1) { // you can not remove the last tab
-            ok  = _leftside->removeTab(tabIndex);
-        }
-    }else {
-        if ( _leftside->tabCount() > 0 || _rightside->tabCount() > 1) {
-            ok = _rightside->removeTab(tabIndex);
-        }
-    }
-    if ( ok){
-        if ( lftside ){
-            if ( _leftside->tabCount() > 0)
-                _leftside->select(std::max(0,tabIndex - 1), true);
-            else
-                _rightside->select(0, true);
+    try{
+        bool ok = false;
+        if ( lftside){
+            if ( _rightside->tabCount() > 0 || _leftside->tabCount() > 1) { // you can not remove the last tab
+                ok  = _leftside->removeTab(tabIndex);
+            }
         }else {
-            if ( _rightside->tabCount() > 0)
-                _rightside->select(std::max(0,tabIndex - 1), true);
-            else
-                _leftside->select(0, true);
+            if ( _leftside->tabCount() > 0 || _rightside->tabCount() > 1) {
+                ok = _rightside->removeTab(tabIndex);
+            }
         }
+        if ( ok){
+            if ( lftside ){
+                if ( _leftside->tabCount() > 0)
+                    _leftside->select(std::max(0,tabIndex - 1), true);
+                else
+                    _rightside->select(0, true);
+            }else {
+                if ( _rightside->tabCount() > 0)
+                    _rightside->select(std::max(0,tabIndex - 1), true);
+                else
+                    _leftside->select(0, true);
+            }
 
-    }
-    return ok;
+        }
+        return ok;
+    } catch(const ErrorObject& ){}
+    return false;
 }
 
 TabModel *DataPaneModel::tab(bool lftside, int index)
@@ -51,12 +54,16 @@ TabModel *DataPaneModel::tab(bool lftside, int index)
 
 void DataPaneModel::select(bool lftside, int index, bool yesno)
 {
-    if ( lftside){
-        _rightside->select(100000, false);
-        _leftside->select(index, yesno);
-    } else {
-        _leftside->select(100000, false);
-        _rightside->select(index, yesno);
+    try{
+        if ( lftside){
+            _rightside->select(100000, false);
+            _leftside->select(index, yesno);
+        } else {
+            _leftside->select(100000, false);
+            _rightside->select(index, yesno);
+        }
+    } catch (const ErrorObject& err){
+
     }
 }
 

@@ -8,7 +8,7 @@ Rectangle {
     property color background1 : "#EAECEE"
     property string formQML : ""
     property var currentAppForm : null
-    property string formTitle : "est"
+    property string formTitle
     property string operationId : "id"
     property string operationUrl : "url"
 
@@ -32,6 +32,7 @@ Rectangle {
         }
 
         if ( formQML.length !== 0) {
+            background1 = formTitle == "" ? "transparent" : "#EAECEE"
             currentAppForm = Qt.createQmlObject(formQML,
                 applicationArea, "autoform1");
         }
@@ -43,7 +44,8 @@ Rectangle {
         BorderImage {
             id : title
             width: parent.width
-            height : 25
+            height : formTitle != "" ? 25 : 0
+            opacity : formTitle != "" ? 1 : 0
             source : "../images/headerblue2CS1.png"
             border { left: 15; top: 0; right: 15; bottom: 0 }
             smooth : true

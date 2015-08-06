@@ -68,6 +68,16 @@ bool BaseDrawer::draw(const IOOptions &) const
     return false;
 }
 
+std::unique_ptr<DrawerInterface> &BaseDrawer::drawer(const QString &, DrawerInterface::DrawerType )
+{
+    return _dummy;
+}
+
+const std::unique_ptr<DrawerInterface> &BaseDrawer::drawer(const QString &, DrawerInterface::DrawerType ) const
+{
+    return _dummy;
+}
+
 RootDrawer *BaseDrawer::rootDrawer()
 {
     return _rootDrawer;
@@ -75,6 +85,8 @@ RootDrawer *BaseDrawer::rootDrawer()
 
 const RootDrawer *BaseDrawer::rootDrawer() const
 {
+    if (!_rootDrawer) // this is the rootdrawer
+        return static_cast<const RootDrawer *>(this);
     return _rootDrawer;
 }
 
@@ -171,8 +183,10 @@ std::vector<QVariant> BaseDrawer::attributes(const QString &attrNames) const
 
 QVariant BaseDrawer::attribute(const QString &attrName) const
 {
-    if ( attrName == "alphachannel")
+    if ( attrName == "opacity")
         return _alpha;
+    if ( attrName == "active")
+        return _active;
 
     return QVariant();
 }
@@ -184,13 +198,20 @@ QVariant BaseDrawer::attributeOfDrawer(const QString &, const QString &) const
 
 void BaseDrawer::setAttribute(const QString &attrName, const QVariant &value)
 {
-    if ( attrName == "alphachannel")
+    if ( attrName == "opacity")
         _alpha = value.toFloat();
+    if ( attrName == "active")
+        _active= value.toBool();
 }
 
-bool BaseDrawer::drawerAttribute(const QString , const QString &, const QVariant &)
+bool BaseDrawer::drawerAttribute(const QString& , const QString &, const QVariant &)
 {
     return false;
+}
+
+void BaseDrawer::resetVisualProperty(const QString &propertyName, const IRepresentation &rpr)
+{
+
 }
 
 QVariant BaseDrawer::execute(const QString &operationName, const QVariantMap &parameters)

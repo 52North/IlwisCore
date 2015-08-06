@@ -16,7 +16,6 @@ public:
     bool canUse(const IIlwisObject &obj, const QString &name) const;
     static VisualAttributeEditor *create();
 
-    void prepare(CoverageLayerModel *parentLayer, const Ilwis::IIlwisObject& bj, const ColumnDefinition &datadef = Ilwis::ColumnDefinition());
     bool showInfo() const;
     void setShowInfo(bool yesno);
 

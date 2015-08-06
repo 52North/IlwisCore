@@ -46,7 +46,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/drawers/drawerfactory.h \
     ilwiscoreui/drawers/attributevisualproperties.h \
     ilwiscoreui/propertyeditors/attributesetter.h \
-    ilwiscoreui/propertyeditors/layertransparencysetter.h \
     ilwiscoreui/propertyeditors/mapinformationattributesetter.h \
     ilwiscoreui/propertyeditors/polygonattributesetter.h \
     ilwiscoreui/propertyeditors/attributeeditor.h \
@@ -74,7 +73,15 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/tabmodel.h \
     ilwiscoreui/models/operationworker.h \
     ilwiscoreui/models/objectcreator.h \
-    ilwiscoreui/models/ilwisobjectcreatormodel.h
+    ilwiscoreui/models/ilwisobjectcreatormodel.h \
+    ilwiscoreui/tableoperations/convertcolumndomain.h \
+    ilwiscoreui/propertyeditors/convertattributedomain.h \
+    ilwiscoreui/propertyeditors/itemrepresentationsetter.h \
+    ilwiscoreui/propertyeditors/representationelement.h \
+    ilwiscoreui/propertyeditors/backgroundlayereditor.h \
+    ilwiscoreui/models/globallayermodel.h \
+    ilwiscoreui/propertyeditors/gridpropertyeditor.h \
+    ilwiscoreui/propertyeditors/layeropacitysetter.h
 
 unix {
     target.path = /usr/lib
@@ -106,7 +113,6 @@ SOURCES += \
     ilwiscoreui/drawers/drawerfactory.cpp \
     ilwiscoreui/drawers/attributevisualproperties.cpp \
     ilwiscoreui/propertyeditors/attributesetter.cpp \
-    ilwiscoreui/propertyeditors/layertransparencysetter.cpp \
     ilwiscoreui/propertyeditors/lineattributesetter.cpp \
     ilwiscoreui/propertyeditors/mapinformationattributesetter.cpp \
     ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
@@ -134,7 +140,15 @@ SOURCES += \
    ilwiscoreui/models/tabmodel.cpp \
     ilwiscoreui/models/operationworker.cpp \
     ilwiscoreui/models/objectcreator.cpp \
-    ilwiscoreui/models/ilwisobjectcreatormodel.cpp
+    ilwiscoreui/models/ilwisobjectcreatormodel.cpp \
+    ilwiscoreui/tableoperations/convertcolumndomain.cpp \
+    ilwiscoreui/propertyeditors/convertattributedomain.cpp \
+    ilwiscoreui/propertyeditors/itemrepresentationsetter.cpp \
+    ilwiscoreui/propertyeditors/representationelement.cpp \
+    ilwiscoreui/propertyeditors/backgroundlayereditor.cpp \
+    ilwiscoreui/models/globallayermodel.cpp \
+    ilwiscoreui/propertyeditors/gridpropertyeditor.cpp \
+    ilwiscoreui/propertyeditors/layeropacitysetter.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

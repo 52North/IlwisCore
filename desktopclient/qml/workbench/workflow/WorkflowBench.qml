@@ -59,7 +59,7 @@ Rectangle {
     // ###########################  Workflow Metadata
 
     function createWorkflowMetadataForm(metaid, title) {
-        var form = formbuilder.index2Form(metaid);
+        var form = formbuilder.index2Form(metaid, true);
         applicationForm.workflowId = metaid;
         applicationForm.workflowname = title;
         //var form = workflowmetadataformbuilder.createWorkflowForm(metaid)

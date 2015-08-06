@@ -69,7 +69,7 @@ Ilwis::OperationImplementation::State ShowPolygonAreas::prepare(ExecutionContext
     bool ok;
     int index = _expression.parm(1).value().toInt(&ok);
     if ( ok){
-        if ( type == "main" && _index >= 0 && _index < _rootDrawer->attribute("maindrawercount").toInt()){
+        if ( type == "main" && index >= 0 && index < _rootDrawer->attribute("maindrawercount").toInt()){
             _index = index;
         }else {
             _index = index;

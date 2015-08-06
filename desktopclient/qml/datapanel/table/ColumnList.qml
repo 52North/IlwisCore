@@ -11,7 +11,16 @@ Item {
     x : 5
     y : 5
     height: parent.height -10
-    property var columnmodel
+    property var columnmodel : table ? table.columns : null
+    property alias currentIndex : columnlist.currentIndex
+
+    function setCurrentIndex(newindex){
+        if ( newindex){
+            columnlist.currentIndex = newindex
+            columnOperationList.currentColumn =columnlist.model[newindex]
+            columnOperationList.setOperation(0)
+        }
+    }
 
     Text {
         id : title
@@ -23,10 +32,14 @@ Item {
 
     ListView {
         id : columnlist
-        model : columnmodel
         width : parent.width - 3
         height :    parent.height - title.height
         anchors.top : title.bottom
+        model : columnmodel
+        onModelChanged: {
+            columnOperationList.currentColumn = null
+        }
+
         anchors.topMargin: 4
         x : 3
         clip : true
@@ -40,6 +53,7 @@ Item {
             var iconP = "../../images/" + name
             return iconP
         }
+
         Component {
             id: attributeHighlight
 
@@ -83,8 +97,7 @@ Item {
                     MouseArea{
                         anchors.fill: parent
                         onClicked: {
-                            columnlist.currentIndex = index
-                            columnOperationList.currentColumn =columnlist.model[index]
+                            setCurrentIndex(index)
                         }
                     }
                 }
