@@ -99,6 +99,17 @@ quint64 IlwisType::operationmetadata() const
     return itOPERATIONMETADATA;
 }
 
+
+quint64 IlwisType::singleoperation() const
+{
+    return itSINGLEOPERATION;
+}
+
+quint64 IlwisType::workflow() const
+{
+    return itWORKFLOW;
+}
+
 quint64 IlwisType::gridsize() const
 {
     return itRASTERSIZE;

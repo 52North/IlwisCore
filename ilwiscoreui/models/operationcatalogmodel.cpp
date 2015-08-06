@@ -101,7 +101,7 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 
             for(auto item : _currentItems){
                 QString keywords = item->resource()["keyword"].toString();
-                if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+                if ( !( item->resource().ilwisType() & itOPERATIONMETADATA) )
                     continue;
                 if ( keywords.indexOf("internal") != -1)
                     continue;
@@ -133,7 +133,9 @@ void OperationCatalogModel::prepare(){
 
 quint64 OperationCatalogModel::operationId(const QString &name)
 {
-    std::vector<Resource> items = mastercatalog()->select(QString("type=%1 and name='%2'").arg(itOPERATIONMETADATA).arg(name));
+    // query for operations and workflows
+    QString query = QString("type=%1 and name='%2'").arg(itOPERATIONMETADATA).arg(name);
+    std::vector<Resource> items = mastercatalog()->select(query);
     if ( items.size() == 0)
         return i64UNDEF;
     return items[0].id();
@@ -185,7 +187,7 @@ void OperationCatalogModel::gatherItems() {
     std::set<QString> keywordset;
     for(auto item : _currentItems){
         QString keywords = item->resource()["keyword"].toString();
-        if ( item->resource().ilwisType() != itOPERATIONMETADATA)
+        if ( !(item->resource().ilwisType() & itOPERATIONMETADATA))
             continue;
         if ( keywords.indexOf("internal") != -1)
             continue;

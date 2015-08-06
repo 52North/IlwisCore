@@ -61,10 +61,10 @@ WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name, const QStr
     }
 
     // TODO no workflow connector available (yet?) which could store the resource
-    //Resource resource = mastercatalog()->id2Resource(opResource.id());
-    //WorkflowModel *model = new WorkflowModel(resource);
+    Resource resource = mastercatalog()->id2Resource(opResource.id());
+    WorkflowModel *model = new WorkflowModel(resource);
 
-    WorkflowModel *model = new WorkflowModel(opResource);
+    //WorkflowModel *model = new WorkflowModel(opResource);
     return model; // temporary until it is saved
 }
 

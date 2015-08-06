@@ -89,7 +89,7 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
 quint64 IfFeature::createMetadata()
 {
     QString url = QString("ilwis://operations/iff");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","iff");
     resource.addProperty("syntax","iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)");

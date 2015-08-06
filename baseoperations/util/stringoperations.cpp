@@ -57,7 +57,7 @@ Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx,
 quint64 StringFind::createMetadata()
 {
     QString url = QString("ilwis://operations/stringfind");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","stringfind");
     resource.addProperty("syntax","stringfind(source,searchtext,[,begin])");
@@ -137,7 +137,7 @@ Ilwis::OperationImplementation::State StringSub::prepare(ExecutionContext *ctx, 
 quint64 StringSub::createMetadata()
 {
     QString url = QString("ilwis://operations/stringsub");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","stringsub");
     resource.addProperty("syntax","stringsub(source,begin,[,end])");
@@ -202,7 +202,7 @@ Ilwis::OperationImplementation::State StringReplace::prepare(ExecutionContext *c
 quint64 StringReplace::createMetadata()
 {
     QString url = QString("ilwis://operations/stringreplace");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","stringreplace");
     resource.addProperty("syntax","StringReplace(source,searchtext,replacetext)");

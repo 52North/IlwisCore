@@ -147,7 +147,7 @@ Ilwis::OperationImplementation::State SetValueRange::prepare(ExecutionContext *,
 quint64 SetValueRange::createMetadata()
 {
     QString url = QString("ilwis://operations/setvaluerange");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","setvaluerange");
     resource.addProperty("syntax","setvaluerange(objectname,min,max(,resolution))");

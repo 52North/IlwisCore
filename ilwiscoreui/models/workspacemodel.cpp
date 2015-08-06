@@ -23,7 +23,7 @@ void WorkSpaceModel::addItems(const QString& ids)
         Ilwis::Resource res = Ilwis::mastercatalog()->id2Resource(id);
         if ( res.isValid()){
             QString key;
-            if ( res.ilwisType() == itOPERATIONMETADATA){
+            if ( res.ilwisType() & itOPERATIONMETADATA){
                 key = QString("%1/operation-%2").arg(basekey).arg(count);
                 Ilwis::context()->configurationRef().addValue(QString("%1/operation-count").arg(basekey),QString::number(count + 1));
             }
@@ -107,7 +107,7 @@ void WorkSpaceModel::gatherItems() {
         _data.clear();
 
         for(auto iter=_currentItems.begin(); iter != _currentItems.end(); ++iter){
-            if ( (*iter)->type() == itOPERATIONMETADATA){
+            if ( (*iter)->type() & itOPERATIONMETADATA){
                 _operations.push_back(new OperationModel((*iter)->resource(),this));
             }else if ( hasType((*iter)->type(), itILWISOBJECT)){
                 _data.push_back(*iter);

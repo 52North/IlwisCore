@@ -142,7 +142,7 @@ quint64 Script::createMetadata()
 {
     QString urlTxt = QString("ilwis://operations/script");
     QUrl url(urlTxt);
-    Resource resource(url, itOPERATIONMETADATA);
+    Resource resource(url, itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","ilwisscript");
     resource.addProperty("syntax","script file|script scriptline(,scriptline)*");

@@ -510,8 +510,10 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "Catalog";
     case  itREPRESENTATION:
         return "Representation";
-    case  itOPERATIONMETADATA:
-        return "OperationMetaData";
+    case  itWORKFLOW:
+        return "Workflow";
+    case  itSINGLEOPERATION:
+        return "SingeOperation";
     }
     return sUNDEF;
 
@@ -588,11 +590,10 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itGEODETICDATUM;
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
-    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
-        return  itOPERATIONMETADATA;
+    if ( name.compare( "SingleOperation",Qt::CaseInsensitive) == 0)
+        return  itSINGLEOPERATION;
     if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
-        return  itOPERATIONMETADATA;
-        //return  itWORKFLOW;
+        return  itWORKFLOW;
     }
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;

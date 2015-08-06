@@ -60,7 +60,7 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
 quint64 RasValue::createMetadata()
 {
     QString url = QString("ilwis://operations/rastervalue");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","rastervalue");
     resource.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");

@@ -106,7 +106,7 @@ OperationImplementation::State IffRaster::prepare(ExecutionContext *, const Symb
 quint64 IffRaster::createMetadata()
 {
     QString url = QString("ilwis://operations/iff");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","iff");
     resource.addProperty("syntax","iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)");

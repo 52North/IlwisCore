@@ -196,7 +196,7 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
 quint64 Selection::createMetadata()
 {
     QString url = QString("ilwis://operations/selection");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","Sub raster");
     resource.addProperty("syntax","selection(coverage,selection-definition)");
