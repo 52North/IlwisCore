@@ -11,6 +11,7 @@ Item {
     property bool textCanBeCopied : false
     property int fontSize : 8
     property bool readOnly : false;
+    property var regexvalidator
     height : 20
 
     Text {
@@ -30,14 +31,26 @@ Item {
         text : content
         font.pointSize: fontSize
         readOnly : parent.readOnly
+
+        property string oldText
+
         style: TextFieldStyle {
             background: Rectangle {
-                radius: 2
+                radius: 3
                 width : parent.width
                 height: parent.height
-                border.color: parent.enabled ? "black" : "transparent"
+                border.color: parent.enabled ? Global.edgecolor : "transparent"
                 border.width: textid.readOnly ? 0: 1
                 color : "transparent"
+            }
+        }
+        onTextChanged: {
+            if ( regexvalidator){
+                var regex = regexvalidator
+                if (!regex.test(textid.text)){
+                    textid.text = textid.oldText
+                }
+                oldText = textid.text
             }
         }
     }

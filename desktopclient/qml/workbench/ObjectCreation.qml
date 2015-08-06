@@ -34,6 +34,7 @@ Rectangle {
         anchors.topMargin: 5
     }
     Create.CreatorList{
+        id : editorList
         anchors.top : createableObjects.bottom
         anchors.topMargin: 5
         anchors.bottom: parent.bottom

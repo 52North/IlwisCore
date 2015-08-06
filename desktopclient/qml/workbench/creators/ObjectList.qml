@@ -74,7 +74,10 @@ Item {
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
-                                objectlist.currentIndex = index
+                                if ( index != objectlist.currentIndex)
+                                    objectlist.currentIndex = index
+                                else
+                                    objectlist.currentIndex = -1
                             }
                         }
                     }
