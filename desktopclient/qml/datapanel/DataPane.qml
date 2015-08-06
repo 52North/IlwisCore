@@ -236,7 +236,7 @@ Rectangle {
                 lefttab.fillWidth = true
                 righttab.state = "zerosize"
 
-                activeSplit = 2            }
+                activeSplit = 2
                 activeSplit = 1
             }
         }
@@ -245,14 +245,14 @@ Rectangle {
 //            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
             var tab = righttab.addTab(name,component);
             tab.active = true;
-             var tabCount = 0;
-                if ( lefttab.count == 1){
-                    righttab.state = "halfsize"
-                }
-                lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
-                activeSplit = 1;
-                tabCount = lefttab.count - 1;
-                lefttab.currentIndex = tabCount;
+            var tabCount = 0;
+            if ( lefttab.count == 1){
+                righttab.state = "halfsize"
+            }
+            lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
+            activeSplit = 1;
+            tabCount = lefttab.count - 1;
+            lefttab.currentIndex = tabCount;
        }
 
         handleDelegate: Controls.SplitHandle{
@@ -260,7 +260,9 @@ Rectangle {
             offset : 25
             handlePic: "splithandledark.png"
             func : datapanesplit.changeWidth
-        }        DataTabView2 {
+        }
+
+        DataTabView2 {
             id : lefttab
             property bool fillWidth : true
             side : 1
