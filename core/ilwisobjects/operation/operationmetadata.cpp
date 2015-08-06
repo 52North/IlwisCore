@@ -101,7 +101,7 @@ OperationParameter::OperationParameter(quint16 index, OperationParameter::Parame
 }
 
 //-------------------------------------------------------------------------------
-OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) : Resource(inurl,itOPERATIONMETADATA)
+OperationResource::OperationResource(const QUrl &inurl, const IlwisTypes &type, const QString &nmspace) : Resource(inurl,type)
 {
     prepare();
     QString urls = url().toString() + "=" + QString::number(id());

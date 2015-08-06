@@ -83,10 +83,10 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createRasterCoverage(resource,options);
     } else if ( resource.ilwisType() & itTABLE) {
         return createTable(resource,options);
-    } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
-        return createOperationMetaData(resource);
     } else if ( resource.ilwisType() & itWORKFLOW) {
         return createWorkflow(resource, options);
+    } else if ( resource.ilwisType() & itSINGLEOPERATION) {
+        return createOperationMetaData(resource);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
     } else if ( resource.ilwisType() & itFEATURE) {
@@ -251,7 +251,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Projection();
     case itELLIPSOID:
         return new Ellipsoid();
-    case itOPERATIONMETADATA:
+    case itSINGLEOPERATION:
         return new OperationMetaData();
     case itWORKFLOW:
         return new Workflow();
@@ -283,8 +283,6 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itTABLE) {
         return true;
     }else if ( resource.ilwisType() & itOPERATIONMETADATA) {
-        return true;
-    } else if ( resource.ilwisType() & itWORKFLOW) {
         return true;
     } else if ( resource.ilwisType() & itGEOREF) {
         return true;

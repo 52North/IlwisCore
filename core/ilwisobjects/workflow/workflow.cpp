@@ -36,7 +36,7 @@ OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const Edg
 
 IlwisTypes Workflow::ilwisType() const
 {
-    return itOPERATIONMETADATA | itWORKFLOW;
+    return itWORKFLOW;
 }
 
 quint64 Workflow::createMetadata()
