@@ -1,7 +1,7 @@
 #ifndef WORKFLOW_H
 #define WORKFLOW_H
 
-#include <QObject>
+#include <QPoint>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -12,16 +12,16 @@
 
 namespace Ilwis {
 
-struct OperationProperties {
+struct NodeProperties {
     quint64 ilwisId;
 };
 
-struct FlowProperties {
+struct EdgeProperties {
     QString foo = "bar";
 };
 
-typedef boost::property<boost::vertex_index1_t, OperationProperties> NodeProperty;
-typedef boost::property<boost::edge_index_t, FlowProperties> FlowProperty;
+typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
+typedef boost::property<boost::edge_index_t, EdgeProperties> FlowProperty;
 typedef boost::adjacency_list<boost::vecS, boost::vecS,
                               boost::bidirectionalS,
                               NodeProperty, FlowProperty> WorkflowGraph;
@@ -42,17 +42,27 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    OVertex addOperation(OperationProperties opProperties);
+    OVertex addOperation(const NodeProperties &opProperties);
+    OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &flowProperties);
     void removeOperation(OVertex vertex);
-    OEdge addOperationFlow(OVertex v1, OVertex v2, FlowProperties flowProperties);
     void removeOperationFlow(OEdge edge);
 
     // ------ operation metadata functions
     IlwisTypes ilwisType() const;
     quint64 createMetadata();
 
+    NodePropertyMap nodeIndex();
+    EdgePropertyMap edgeIndex();
+
+    void debugPrintGraph();
+    void debugPrintVertices();
+    void debugPrintEdges();
+
 private:
     WorkflowGraph _wfGraph;
+    //QList<NodeRenderingProperties> _nodeRenderingProperties;
+    //QList<EdgeRenderingProperties> _edgeRenderingProperties;
+
 };
 
 typedef IlwisData<Workflow> IWorkflow;

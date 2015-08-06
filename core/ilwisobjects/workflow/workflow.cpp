@@ -18,7 +18,7 @@ Workflow::~Workflow() {
 
 }
 
-OVertex Workflow::addOperation(OperationProperties properties)
+OVertex Workflow::addOperation(const NodeProperties &properties)
 {
     return boost::add_vertex(properties, _wfGraph);
 }
@@ -29,7 +29,7 @@ void Workflow::removeOperation(OVertex vertex)
     boost::remove_vertex(vertex, _wfGraph);
 }
 
-OEdge Workflow::addOperationFlow(OVertex v1, OVertex v2, FlowProperties properties)
+OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties)
 {
     return (boost::add_edge(v1, v2, properties, _wfGraph)).first;
 }
@@ -81,4 +81,44 @@ quint64 Workflow::createMetadata()
     operation.addOutParameter(0,itRASTER, TR("Aggregated raster"), TR("output rastercoverage with the domain of the input map"));
     operation.setKeywords("aggregate,raster,geometry");
      */
+}
+
+NodePropertyMap Workflow::nodeIndex()
+{
+    return get(boost::vertex_index1, _wfGraph);
+}
+
+EdgePropertyMap Workflow::edgeIndex()
+{
+    return get(boost::edge_index, _wfGraph);
+}
+
+void Workflow::debugPrintGraph()
+{
+    debugPrintVertices();
+    debugPrintEdges();
+}
+
+void Workflow::debugPrintVertices()
+{
+    qDebug() << "vertices(g) = ";
+    boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
+    for (boost::tie(vi, vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
+        OVertex v = *vi;
+        NodeProperties p = nodeIndex()[v];
+        qDebug() << p.ilwisId /*<< " ";//*/ << " (id=" << v << ") ";
+    }
+    //qDebug() << std::endl;
+}
+
+void Workflow::debugPrintEdges()
+{
+    qDebug() << "edges(g) = ";
+    boost::graph_traits<WorkflowGraph>::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = boost::edges(_wfGraph); ei != ei_end; ++ei)
+        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)].ilwisId
+                  << "," << nodeIndex()[boost::target(*ei, _wfGraph)].ilwisId
+                  << " [foo='" << edgeIndex()[*ei].foo//.toStdString()
+                  << "']) ";
+    //qDebug() << std::endl;
 }
