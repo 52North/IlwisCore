@@ -36,10 +36,8 @@ typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
 
-private:
-    Workflow();
-
 public:
+    Workflow();
     Workflow(const Resource &resource);
     ~Workflow();
 
