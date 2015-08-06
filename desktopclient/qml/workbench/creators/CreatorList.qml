@@ -11,35 +11,27 @@ ListView {
     width: parent.width
     model : objectcreator.activeCreators
     orientation : ListView.Horizontal
-    delegate: Component {
+
+      delegate: Component {
+
         Rectangle {
             width : creatorList.width
             height : creatorList.height
 
-
-            Rectangle{
-                id : labelrect
-                width : parent.width
-                height : 22
-                color : Global.headerdark
-                Text{
-                    text : label
-                    color: "white"
-                    x : 4
-                    font.pointSize: 9
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-            }
             Loader {
-                anchors.top : labelrect.bottom
+                id : loader1
                 anchors.topMargin: 3
                 width : parent.width
-                source : componentUrl
+                source :componentUrl
+                onStatusChanged:{
+                    if (loader1.status == Loader.Ready) {
+                        item.maxHeight = itemHeight
+                        item.state = "visible"
+                    }
+                }
             }
-
         }
     }
+
 }
 
