@@ -1,12 +1,12 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
 
+import WorkflowCatalogModel 1.0
+
 import ".." as Workbench
 
 Rectangle {
     id: workflowcontainer
-
-    property bool activeEditSession : false
 
     signal unloadcontent(string content)
 
@@ -23,18 +23,16 @@ Rectangle {
     Loader {
         id : workflowbenchContentLoader
 
-        property string editSession
-
         width : parent.width
         anchors.bottom: parent.bottom
         anchors.top : functionBarHeader.bottom
         Component.onCompleted : {
-            if ( !activeEditSession) {
+            if (workflows.hasActiveEditSession) {
+                console.log("existing edit session: " + workflows.currentWorkflow)
+                workflowbenchContentLoader.setSource("WorkflowEdit.qml")
+            } else {
                 console.log("new workflow bench")
                 workflowbenchContentLoader.setSource("WorkflowBench.qml")
-            } else {
-                console.log("existing edit session: " + editSession)
-                workflowbenchContentLoader.setSource("WorkflowEdit.qml")
             }
         }
 

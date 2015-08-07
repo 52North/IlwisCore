@@ -20,6 +20,11 @@ using namespace Ilwis;
 
 WorkflowCatalogModel::WorkflowCatalogModel(QObject *parent): CatalogModel()
 {
+
+    // TODO create a dummy list
+    newWorkflow("workflow_dummy1", "super artificial description text");
+
+    // creates workflow catalog
     QUrl location("ilwis://operations");
     QString descr ="main catalog for ilwis workflows";
     Resource res(location, itCATALOGVIEW ) ;
@@ -27,34 +32,31 @@ WorkflowCatalogModel::WorkflowCatalogModel(QObject *parent): CatalogModel()
     QStringList lst;
     lst << location.toString();
     res.addProperty("locations", lst);
-    res.addProperty("type", "operation" );
-    res.addProperty("filter",QString("type=%1 and keyword='workflow'").arg(itOPERATIONMETADATA));
+    res.addProperty("type", "workflow" );
+    res.addProperty("filter",QString("type=%1").arg(itWORKFLOW));
     res.setDescription(descr);
     setView(CatalogView(res));
 }
 
-WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name)
+WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name, const QString &description)
 {
     QUrl url(QString("ilwis://operations/workflow_%1").arg(name));
     OperationResource opResource( url );
     opResource.setIlwisType(itWORKFLOW);
 
-    // copied from rasterstretchoperation
-    opResource.setLongName("rescale input values to an output map");
-    opResource.setSyntax("linearstretch(raster");
-    opResource.setDescription(TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
-    opResource.setInParameterCount({2,3});
-    opResource.addInParameter(0, itRASTER, TR("rastercoverage to stretch"), TR("input rastercoverage with domain item or numeric"));
-    opResource.addInParameter(1, itNUMERIC, TR("percentage|number"));
-    opResource.addInParameter(2, itNUMERIC, TR("number"));
-    opResource.setOutParameterCount({1});
-    opResource.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("output rastercoverage stretched"));
-    mastercatalog()->addItems({opResource});
+    if (mastercatalog()->contains(url, itWORKFLOW)) {
+        error("Workflow with name " + name + " already exists.");
+        return new WorkflowModel();
+    }
 
+    opResource.setLongName(name);
+    opResource.setDescription(description);
+    mastercatalog()->addItems({opResource});
 
     IWorkflow flow;
     if (!flow.prepare(opResource)) {
         ERROR1("Could not initialize workflow with name '%1'", name);
+        error("Could not initialize workflow.");
         return new WorkflowModel();
     }
 
@@ -64,7 +66,6 @@ WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name)
 
     WorkflowModel *model = new WorkflowModel(opResource);
     return model; // temporary until it is saved
-
 }
 
 bool WorkflowCatalogModel::deleteWorkflow(quint32 index)
@@ -118,7 +119,7 @@ QString WorkflowCatalogModel::executeworkflow(quint64 workflowid, const QString 
 
 QMLWorkflowList WorkflowCatalogModel::workflows()
 {
-    try{
+    try {
         if ( _currentWorkflows.isEmpty()) {
             if ( !_view.isValid()) {
                 qDebug() << "invalid catalog view. return empty list";
@@ -152,6 +153,22 @@ void WorkflowCatalogModel::nameFilter(const QString &filter)
     CatalogModel::nameFilter(workflowFilter);
     _currentWorkflows.clear();
     emit workflowsChanged();
+}
+
+QString WorkflowCatalogModel::currentWorkflow() const
+{
+    return _currentWorkflow;
+}
+
+void WorkflowCatalogModel::setCurrentWorkflow(const QString &workflowName)
+{
+    _currentWorkflow = workflowName;
+    currentWorkflowChanged();
+}
+
+bool WorkflowCatalogModel::hasActiveEditSession() const
+{
+    return !_currentWorkflow.isEmpty();
 }
 
 quint64 WorkflowCatalogModel::workflowId(quint32 index) const

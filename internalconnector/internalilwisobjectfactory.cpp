@@ -83,10 +83,10 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createRasterCoverage(resource,options);
     } else if ( resource.ilwisType() & itTABLE) {
         return createTable(resource,options);
-    } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
-        return createOperationMetaData(resource);
     } else if ( resource.ilwisType() & itWORKFLOW) {
         return createWorkflow(resource, options);
+    } else if ( resource.ilwisType() & itSINGLEOPERATION) {
+        return createOperationMetaData(resource);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
     } else if ( resource.ilwisType() & itFEATURE) {
@@ -201,22 +201,18 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
     }
     Workflow *workflow = new Workflow(resource);
 
-    /*##########
-     * copied from createCatalog: TODO discuss
-
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory) {
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
         return 0;
     }
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "ilwis");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
     if ( !connector) {
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
         return 0;
     }
     workflow->setConnector(connector, IlwisObject::cmINPUT, options);
-    */
-    //#########
+
     return workflow;
 }
 
@@ -255,7 +251,7 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Projection();
     case itELLIPSOID:
         return new Ellipsoid();
-    case itOPERATIONMETADATA:
+    case itSINGLEOPERATION:
         return new OperationMetaData();
     case itWORKFLOW:
         return new Workflow();
@@ -287,8 +283,6 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itTABLE) {
         return true;
     }else if ( resource.ilwisType() & itOPERATIONMETADATA) {
-        return true;
-    } else if ( resource.ilwisType() & itWORKFLOW) {
         return true;
     } else if ( resource.ilwisType() & itGEOREF) {
         return true;

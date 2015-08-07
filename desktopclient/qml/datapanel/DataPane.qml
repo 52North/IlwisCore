@@ -27,29 +27,6 @@ Rectangle {
      * Signal, thrown if a tab is closed
      */
     signal closedTab(string title)
-
-    /*
-     * Add a new WorkflowCanavas
-     */
-    function addWorkflowCanvas(id, name) {
-        datapanesplit.addWorkflowCanvas(id, name)
-    }
-
-    /*
-     * Remove WorkflowCanvas by  name
-     */
-    function removeWorkflowCanvas(name) {
-        datapanesplit.removeTabFromView(name);
-    }
-
-    function addModellerPanel(name) {
-        datapanesplit.addModeller(name)
-    }
-
-    function removeModellerPanel(name) {
-        datapanesplit.removeTabFromView(name);
-    }
-
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -80,7 +57,6 @@ Rectangle {
             }
         }
     }
-
 
     function newCatalog(filter,outputtype, url){
         datapanesplit.newPanel(filter, outputtype, url)
@@ -260,8 +236,24 @@ Rectangle {
                 lefttab.fillWidth = true
                 righttab.state = "zerosize"
 
+                activeSplit = 2
+                activeSplit = 1
             }
         }
+        function newModeller(name, splitside) {
+            var component = Qt.createComponent("modeller/ModellerPanel.qml");
+//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
+            var tab = righttab.addTab(name,component);
+            tab.active = true;
+            var tabCount = 0;
+            if ( lefttab.count == 1){
+                righttab.state = "halfsize"
+            }
+            lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
+            activeSplit = 1;
+            tabCount = lefttab.count - 1;
+            lefttab.currentIndex = tabCount;
+       }
 
         handleDelegate: Controls.SplitHandle{
             imageHeight: 22

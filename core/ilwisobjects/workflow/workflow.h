@@ -1,33 +1,68 @@
 #ifndef WORKFLOW_H
 #define WORKFLOW_H
 
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/adjacency_list.hpp"
+#include <QPoint>
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include "kernel_global.h"
-
-using namespace boost;
-typedef adjacency_list<vecS, vecS, directedS> ExecutionBranch;
+#include "operationmetadata.h"
 
 namespace Ilwis {
 
+struct NodeProperties {
+    quint64 ilwisId;
+};
+
+struct EdgeProperties {
+    QString foo = "bar";
+};
+
+typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
+typedef boost::property<boost::edge_index_t, EdgeProperties> FlowProperty;
+typedef boost::adjacency_list<boost::vecS, boost::vecS,
+                              boost::bidirectionalS,
+                              NodeProperty, FlowProperty> WorkflowGraph;
+
+typedef boost::property_map<WorkflowGraph, boost::vertex_index1_t>::type NodePropertyMap;
+typedef boost::property_map<WorkflowGraph, boost::edge_index_t>::type EdgePropertyMap;
+
+typedef boost::graph_traits<WorkflowGraph>::vertex_descriptor OVertex;
+typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
+
+
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
+
 public:
     Workflow();
-
     Workflow(const Resource &resource);
-
     ~Workflow();
 
-    /**
-     * @brief init initializes the workflow by generating OperationResource (incl. registering to the mastercatalog) and
-     * adding the workflow as operation to the commandhandler.
-     * @return the id of the registered operation.
-     */
-    quint64 init();
+    // ------ workflow API functions
+    OVertex addOperation(const NodeProperties &opProperties);
+    OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &flowProperties);
+    void removeOperation(OVertex vertex);
+    void removeOperationFlow(OEdge edge);
 
+    // ------ operation metadata functions
     IlwisTypes ilwisType() const;
+    quint64 createMetadata();
+
+    NodePropertyMap nodeIndex();
+    EdgePropertyMap edgeIndex();
+
+    void debugPrintGraph();
+    void debugPrintVertices();
+    void debugPrintEdges();
+
+private:
+    WorkflowGraph _wfGraph;
+    //QList<NodeRenderingProperties> _nodeRenderingProperties;
+    //QList<EdgeRenderingProperties> _edgeRenderingProperties;
+
 };
 
 typedef IlwisData<Workflow> IWorkflow;

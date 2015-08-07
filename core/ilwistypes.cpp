@@ -47,6 +47,10 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Geodetic Datum");
     case  itCATALOG:
         return TR("Catalog");
+    case  itWORKFLOW:
+        return TR("Workflow Operation");
+    case  itSINGLEOPERATION:
+        return TR("Single Operation");
     case  itOPERATIONMETADATA:
         return TR("OperationMetaData");
     case  itREPRESENTATION:
@@ -187,6 +191,10 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("geodeticdatum");
     case  itCATALOG:
         return TR("catalog");
+    case  itWORKFLOW:
+        return TR("workflow");
+    case  itSINGLEOPERATION:
+        return TR("singleoperation");
     case  itOPERATIONMETADATA:
         return TR("operationmetatadata");
     case itREPRESENTATION:

@@ -19,6 +19,7 @@ CatalogQuery::CatalogQuery()
     _names["table"] = itTABLE;
     _names["coverage"] = itCOVERAGE;
    _names["representation"] = itREPRESENTATION;
+   _names["workflow"] = itWORKFLOW;
 }
 
 bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseNames, QString& side, bool left, bool uselike) const
