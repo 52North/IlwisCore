@@ -290,7 +290,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 output = output + format;
         }else{
 
-            if ( outputtype == itRASTER)
+            if ( hasType(outputtype,itRASTER))
                 format = "{format(stream,\"rastercoverage\")}";
             else if (hasType(outputtype, itFEATURE))
                 format = "{format(stream,\"featurecoverage\")}";
@@ -304,7 +304,6 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         expression = QString("script %1(%2)").arg(operationresource.name()).arg(expression);
     else
         expression = QString("script %1=%2(%3)").arg(output).arg(operationresource.name()).arg(expression);
-    qDebug() << expression;
 
     OperationExpression opExpr(expression);
 
