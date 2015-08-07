@@ -163,27 +163,27 @@ QString ApplicationFormExpressionParser::iconName(IlwisTypes dataType) const{
 QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
     QString keypart;
     if ( hasType(type, itRASTER)){
-        keypart += "\""+ iconName(itRASTER) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itRASTER) + "\"";
     }
     if ( hasType(type, itTABLE)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ iconName(itTABLE) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itTABLE) + "\"";
     }
     if ( hasType(type, itFEATURE)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ iconName(itFEATURE) + "\",\"line20.png\",\"point20.png\",\"polygon20.png\"";
+        keypart += "\""+ TypeHelper::type2name(itFEATURE);
     }
     if ( hasType(type, itDOMAIN)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ iconName(itDOMAIN) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itDOMAIN) + "\"";
     }
     if ( hasType(type, itNUMBER)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ iconName(itNUMBER) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itNUMBER) + "\"";
     }
     if ( hasType(type, itSTRING)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ iconName(itSTRING) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itSTRING) + "\"";
     }
     return keypart;
 }

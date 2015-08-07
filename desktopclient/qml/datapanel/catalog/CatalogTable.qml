@@ -60,7 +60,7 @@ Rectangle {
                             property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
                             property string ids : model !== null ?  mastercatalog.selectedIds() : ""
 
-                            Drag.keys: [ model[styleData.row].iconPath ]
+                            Drag.keys: [ model[styleData.row].typeName ]
                             Drag.active: mouseArea.drag.active
                             Drag.hotSpot.x: 10
                             Drag.hotSpot.y: 10
