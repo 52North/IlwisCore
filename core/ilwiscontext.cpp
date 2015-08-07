@@ -41,7 +41,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
         localDir.mkpath(datalocation);
     }
     _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
-    files << localDir.entryList(QStringList() << "*.*", QDir::Files);
+    files << localDir.entryList(QStringList() << "*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
     _workingCatalog = new Catalog(); // empty catalog>
