@@ -146,7 +146,7 @@ void IlwisObject::name(const QString &nam)
     if ( !connector().isNull()){
         connector()->source().name(nm);
         if ( isInternalObject()){
-            QString path = context()->persistentInternalCatalog().toString() + "/" + nam + ".ilwis";
+            QString path = context()->persistentInternalCatalog().toString() + "/" + nam;
             connector()->source().setUrl(path,true);
         }
     }

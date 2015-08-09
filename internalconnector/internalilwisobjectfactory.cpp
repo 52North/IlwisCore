@@ -65,8 +65,15 @@ InternalIlwisObjectFactory::InternalIlwisObjectFactory() : IlwisObjectFactory("I
 
 Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource, const IOOptions &options) const
 {
-    if ( resource.url(true).scheme()!="ilwis")
+    if ( resource.url().scheme()!="ilwis")
         return 0;
+
+    if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+        QString filename = resource.url(true).toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.exists()) // internal objects never exist on disk,
+            return 0;
+    }
 
 
     if ( resource.ilwisType() & itELLIPSOID) {
@@ -267,8 +274,15 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
 
 bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 {
-    if ( resource.url(true).scheme()!="ilwis")
+    if ( resource.url().scheme()!="ilwis"){
         return false;
+    }
+    if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+        QString filename = resource.url(true).toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.exists()) // internal objects never exist on disk,
+            return false;
+    }
 
     if ( resource.ilwisType() & itELLIPSOID) {
         return true;

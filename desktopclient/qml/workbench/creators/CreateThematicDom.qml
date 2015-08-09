@@ -31,7 +31,6 @@ Controls.DropableItem{
 
             EditorHeader{}
 
-
             Controls.TextEditLabelPair{
                 labelText: qsTr("Name")
                 labelWidth: 100

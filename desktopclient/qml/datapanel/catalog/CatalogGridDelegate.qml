@@ -46,7 +46,7 @@ Item {
                 property string ilwisobjectid : model !== null ? id : ""
                 property string ids : model !== null ? mastercatalog.selectedIds() : ""
 
-                Drag.keys: iconPath
+                Drag.keys: typeName
                 Drag.active: mouseArea.drag.active
                 Drag.hotSpot.x: 10
                 Drag.hotSpot.y: 10
