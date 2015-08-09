@@ -13,17 +13,17 @@
 namespace Ilwis {
 
 struct NodeProperties {
-    quint64 ilwisId;
+    QUrl url;
 };
 
 struct EdgeProperties {
-    QString foo = "bar";
+    QString pin;
+    QString pout;
 };
 
 typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
 typedef boost::property<boost::edge_index_t, EdgeProperties> FlowProperty;
-typedef boost::adjacency_list<boost::vecS, boost::vecS,
-                              boost::bidirectionalS,
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
                               NodeProperty, FlowProperty> WorkflowGraph;
 
 typedef boost::property_map<WorkflowGraph, boost::vertex_index1_t>::type NodePropertyMap;
@@ -42,18 +42,23 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    OVertex addOperation(const NodeProperties &opProperties);
-    OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &flowProperties);
+    OVertex addOperation(const NodeProperties &properties);
+    OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties);
     void removeOperation(OVertex vertex);
     void removeOperationFlow(OEdge edge);
+
+    QList<OVertex> getRoots();
+    QList<OVertex> getLeafs();
+    NodeProperties operationProperties(const OVertex &v);
+
+    void updateNodeProperties(OVertex v, const NodeProperties &properties);
+    void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
 
     // ------ operation metadata functions
     IlwisTypes ilwisType() const;
     quint64 createMetadata();
 
-    NodePropertyMap nodeIndex();
-    EdgePropertyMap edgeIndex();
-
+    // for debugging
     void debugPrintGraph();
     void debugPrintVertices();
     void debugPrintEdges();
@@ -62,6 +67,12 @@ private:
     WorkflowGraph _wfGraph;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;
+
+    NodePropertyMap nodeIndex();
+    EdgePropertyMap edgeIndex();
+
+    void parseInputParameters();
+    void parseOutputParameters();
 
 };
 

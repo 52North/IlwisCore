@@ -135,6 +135,11 @@ public:
      */
     void addProperty(const QString& key, const QVariant& value );
 
+    /**
+     * Removes a property and its value from this resource.
+     * @param key the property key.
+     */
+    void removeProperty(const QString& key);
 
     /**
      * Query for the url of this Resource, the url points to the file used to created this Resource

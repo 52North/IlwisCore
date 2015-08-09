@@ -244,6 +244,11 @@ void Resource::addProperty(const QString &key, const QVariant &value)
     _properties[key.toLower()] = value;
 }
 
+void Resource::removeProperty(const QString &key)
+{
+    _properties.remove(key);
+}
+
 QUrl Resource::url(bool asRaw) const
 {
     if ( asRaw && _rawUrl.isValid())
