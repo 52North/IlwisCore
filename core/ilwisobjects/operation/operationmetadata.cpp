@@ -174,6 +174,14 @@ OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, c
 }
 
 //-------------------------------------------------------------------------------
+OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) :  Resource(inurl,itSINGLEOPERATION)
+{
+    prepare();
+    QString urls = url().toString() + "=" + QString::number(id());
+    setUrl(urls);
+    addProperty("namespace",nmspace);
+}
+
 OperationResource::OperationResource(const QUrl &inurl, const IlwisTypes &type, const QString &nmspace) : Resource(inurl,type)
 {
     prepare();

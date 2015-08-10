@@ -9,7 +9,8 @@ namespace Ilwis {
 
 class KERNELSHARED_EXPORT OperationResource : public Resource{
 public:
-    OperationResource(const QUrl& url, const IlwisTypes &type=itSINGLEOPERATION, const QString& nmspace="ilwis");
+    OperationResource(const QUrl& url, const QString& nmspace="ilwis");
+    OperationResource(const QUrl& url, const IlwisTypes &type, const QString& nmspace="ilwis");
     void setLongName(const QString& longname);
     void setSyntax(const QString& syntax);
     void setInParameterCount(const std::vector<quint32>& counts);
