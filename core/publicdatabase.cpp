@@ -2,6 +2,10 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <functional>
 #include "kernel.h"
 #include "ilwiscontext.h"
@@ -26,8 +30,8 @@ void PublicDatabase::prepare() {
     sql.exec(stmt);
 
     stmt = "create table parameterMetadata (operationId TEXT,parameterName TEXT,parmorder INTEGER, isinput INTEGER,type INTEGER, \
-           cardinalty INTEGER,flagged INTEGER,description TEXT,icon TEXT)";
-    sql.exec(stmt);
+            cardinalty INTEGER,flagged INTEGER,description TEXT,icon TEXT)";
+            sql.exec(stmt);
 
     stmt = "create table aliasses (alias TEXT, code TEXT, type TEXT, source TEXT)";
     sql.exec(stmt);
@@ -64,7 +68,7 @@ void PublicDatabase::prepare() {
                 description TEXT \
                 )";
 
-    doQuery(stmt, sql);
+            doQuery(stmt, sql);
 
     stmt = "create table ellipsoid (  code TEXT, name TEXT, wkt TEXT, authority TEXT, majoraxis REAL, invflattening REAL, source TEXT, description TEXT)";
     doQuery(stmt, sql);
@@ -87,6 +91,13 @@ void PublicDatabase::prepare() {
     stmt = "create table representation (  code TEXT, relateddomain TEXT, representationtype TEXT, definition TEXT, description TEXT)";
     doQuery(stmt, sql);
 
+    stmt = "create table itemdomain (  code TEXT, name TEXT,theme TEXT, domaintype TEXT, description TEXT)";
+    doQuery(stmt, sql);
+
+    stmt = "create table domainitems (  code TEXT, itemcode TEXT, itemname TEXT, itemdescription TEXT)";
+    doQuery(stmt, sql);
+
+
     stmt = "create table mastercatalog \
             (\
                 itemid INTEGER,\
@@ -102,8 +113,8 @@ void PublicDatabase::prepare() {
                 extendedtype INTEGER, \
                 size INTEGER, \
                 dimensions TEXT \
-               )";
-    doQuery(stmt, sql);
+                )";
+            doQuery(stmt, sql);
 
     doQuery("CREATE INDEX mastercat_id ON mastercatalog(itemid)", sql);
     doQuery("CREATE INDEX mastercay_urltp ON mastercatalog(rawresource,type)", sql);
@@ -114,20 +125,20 @@ void PublicDatabase::prepare() {
                 propertyvalue TEXT, \
                 propertyname TEXT, \
                 itemid INTEGER \
-            )";
-    doQuery(stmt, sql) ;
+                )";
+            doQuery(stmt, sql) ;
 
     stmt = "CREATE TABLE projectedcsy ( \
-        code TEXT NOT NULL PRIMARY KEY, \
-        name TEXT NOT NULL, \
-        proj_params TEXT NOT NULL)";
-    doQuery(stmt, sql);
+            code TEXT NOT NULL PRIMARY KEY, \
+            name TEXT NOT NULL, \
+            proj_params TEXT NOT NULL)";
+            doQuery(stmt, sql);
 
     stmt = "create table epsgcodeswithlatlonaxesorder \
             (\
                 code TEXT \
-            )";
-    doQuery(stmt, sql);
+                )";
+            doQuery(stmt, sql);
 
 
 
@@ -176,7 +187,71 @@ void PublicDatabase::loadPublicTables() {
     insertFile("codes_with_latlon_order.csv",sqlPublic);
     insertFile("representations.csv", sqlPublic);
     insertProj4Epsg(sqlPublic);
+    insertItemDomains(sqlPublic);
 }
+
+void PublicDatabase::insertItemDomains(QSqlQuery& itemdomaintable) {
+    auto path = context()->ilwisFolder().absoluteFilePath() + "/resources/classifications";
+    QStringList exts;
+    exts << "*.json" << "*.JSON";
+    QDir classificationdir(path);
+    QFileInfoList files = classificationdir.entryInfoList(exts, QDir::Files);
+    bool ok = itemdomaintable.prepare("INSERT INTO itemdomain VALUES(\
+                                      :code,:name,:theme,:domaintype,:description )" );
+    QSqlQuery domainitemstable(*this);
+    QSqlQuery codetable(*this);
+    ok = domainitemstable.prepare("INSERT INTO domainitems VALUES(:code,:itemcode,:itemname,:itemdescription)");
+    for( auto file : files){
+        QFile jsonfile;
+        jsonfile.setFileName(file.absoluteFilePath());
+        if (jsonfile.open(QIODevice::ReadOnly)) {
+            QString classification = jsonfile.readAll();
+            QJsonDocument doc = QJsonDocument::fromJson(classification.toUtf8());
+            if ( !doc.isNull()){
+                QJsonObject obj = doc.object();
+                QString name = obj["name"].toString();
+                QString code = obj["code"].toString();
+                QString theme = obj["theme"].toString();
+                QString descr = obj["description"].toString();
+                QString dtype = obj["type"].toString();
+                itemdomaintable.bindValue(":name", name);
+                itemdomaintable.bindValue(":theme", theme);
+                itemdomaintable.bindValue(":code", code);
+                itemdomaintable.bindValue(":domaintype", dtype);
+                itemdomaintable.bindValue(":description", descr);
+                ok = itemdomaintable.exec();
+                if (!ok) {
+                    kernel()->issues()->logSql(itemdomaintable.lastError());
+                    return;
+                }
+                QString stmt = QString("INSERT INTO codes VALUES('%1', 'itemdomain')").arg(code);
+                doQuery(stmt, codetable);
+                QJsonValue items = obj.value("items");
+                if ( items.isArray()){
+                    QJsonArray itemarray = items.toArray();
+                    for(auto jvalue : itemarray) {
+                        QJsonObject item = jvalue.toObject();
+                        QString itemcode = item["code"].toString();
+                        QString itemname = item["name"].toString();
+                        QString itemdescription = item["description"].toString();
+                        domainitemstable.bindValue(":itemcode", itemcode);
+                        domainitemstable.bindValue(":itemname", itemname);
+                        domainitemstable.bindValue(":itemdescription", itemdescription);
+                        domainitemstable.bindValue(":code", code);
+                        ok = domainitemstable.exec();
+                        if (!ok) {
+                            kernel()->issues()->logSql(domainitemstable.lastError());
+                            return;
+                        }
+                    }
+                }
+            }else{
+                kernel()->issues()->log(QString(TR("Invalid json item domain definition in file %1").arg(file.absoluteFilePath())),IssueObject::itWarning);
+            }
+        }
+    }
+}
+
 void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
     auto basePath = context()->ilwisFolder().absoluteFilePath() + "/resources";
     QFileInfo info(basePath + "/epsg.pcs");
@@ -191,8 +266,8 @@ void PublicDatabase::insertProj4Epsg(QSqlQuery& sqlPublic) {
 
     QStringList lines = text.split("\n");
     bool ok = sqlPublic.prepare("INSERT INTO projectedcsy VALUES(\
-                  :code,:name,:proj_params )" );
-    QString line, name;
+                                :code,:name,:proj_params )" );
+            QString line, name;
     int i = 0;
     while( i < lines.size()) {
         line = lines[i];
