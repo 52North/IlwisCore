@@ -49,7 +49,7 @@ public:
 
     QList<OVertex> getRoots();
     QList<OVertex> getLeafs();
-    NodeProperties operationProperties(const OVertex &v);
+    NodeProperties nodeProperties(const OVertex &v);
 
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
