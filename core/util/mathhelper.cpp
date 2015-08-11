@@ -3,7 +3,7 @@
 #include "geos/geom/Coordinate.h"
 #include "numericrange.h"
 #include "coordinate.h"
-#include <Eigen/Dense>
+#include "eigen3/Eigen/Dense"
 #include "mathhelper.h"
 
 using namespace Ilwis;

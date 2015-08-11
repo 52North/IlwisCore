@@ -9,7 +9,7 @@
 #include "georeference.h"
 #include "georefimplementation.h"
 #include "ctpgeoreference.h"
-#include "Eigen/LU"
+#include "eigen3/Eigen/LU"
 #include "mathhelper.h"
 #include "planarctpgeoreference.h"
 

@@ -637,7 +637,8 @@ bool ColorPalette::alignWithParent(const IDomain &dom){
 
 void ColorPalette::store(QDataStream &stream)
 {
-    stream << _colors.size();
+    quint64 size = _colors.size();
+    stream << size;
     for(const auto& clrItem : _colors)    {
         storeColor(clrItem->color(), stream);
     }

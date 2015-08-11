@@ -226,7 +226,8 @@ void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stre
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
     _attributes.storeData(types,stream,options);
     storeGeometry(stream);
-    stream << _subFeatures.size();
+    quint64 size = _subFeatures.size();
+    stream << size;
     for(auto iter= _subFeatures.begin(); iter != _subFeatures.end(); ++iter){
         stream << (*iter).first;
         SPFeatureI subfeature = (*iter).second;
@@ -237,7 +238,7 @@ void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stre
 void Feature::storeGeometry(QDataStream &stream)
 {
     auto StoreSequence = [&] (geos::geom::CoordinateSequence *crds, QDataStream& stream){
-        stream << crds->size();
+        stream << (quint64) crds->size();
         for(int i = 0; i < crds->size(); ++i)
             stream << crds->getAt(i).x << crds->getAt(i).y << crds->getAt(i).z;
         delete crds;
@@ -246,7 +247,7 @@ void Feature::storeGeometry(QDataStream &stream)
     auto StorePolygon = [&] (const geos::geom::Geometry* geom,QDataStream& stream ){
         const geos::geom::Polygon* polygon = dynamic_cast<const geos::geom::Polygon *>(geom);
         StoreSequence(polygon->getExteriorRing()->getCoordinates(), stream);
-        stream << polygon->getNumInteriorRing();
+        stream << (quint64) polygon->getNumInteriorRing();
         for(int g = 0; g < polygon->getNumInteriorRing(); ++g){
             StoreSequence(polygon->getInteriorRingN(g)->getCoordinates(), stream);
         }
@@ -257,7 +258,7 @@ void Feature::storeGeometry(QDataStream &stream)
     if ( gtype == geos::geom::GEOS_POINT || gtype == geos::geom::GEOS_MULTIPOINT || gtype == geos::geom::GEOS_LINESTRING){
         StoreSequence(_geometry->getCoordinates(), stream);
     } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
-        stream << _geometry->getNumGeometries();
+        stream << (quint64) _geometry->getNumGeometries();
         for(int g =0; g < _geometry->getNumGeometries(); ++g){
             const geos::geom::Geometry *geom = _geometry->getGeometryN(g);
             StoreSequence(geom->getCoordinates(), stream);
@@ -267,7 +268,7 @@ void Feature::storeGeometry(QDataStream &stream)
         StorePolygon(gm, stream);
     } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
         const geos::geom::Geometry *gm = _geometry.get();
-        stream << gm->getNumGeometries();
+        stream << (quint64) gm->getNumGeometries();
         for(int g = 0; g < gm->getNumGeometries(); ++g ){
             StorePolygon(gm->getGeometryN(g), stream);
         }
@@ -344,7 +345,7 @@ void Feature::loadGeometry(QDataStream &stream)
 void Feature::load(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
 {
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
-    size_t size;
+    quint64 size;
     _attributes.loadData(types, stream,options);
     loadGeometry(stream);
     stream >> size;

@@ -20,6 +20,10 @@ DEFINES += PROJECTIONIMPLPROJ4_LIBRARY
 SOURCES += \
     projectionimplproj4/prjimplproj4.cpp \
     projectionimplproj4/prjimplfactoryproj4.cpp \
+    projectionimplproj4/projectionmodule.cpp
+
+win32 {
+    SOURCES +=  \
     ../external/proj4/vector1.c \
     ../external/proj4/rtodms.c \
     ../external/proj4/proj_rouss.c \
@@ -172,19 +176,23 @@ SOURCES += \
     ../external/proj4/bchgen.c \
     ../external/proj4/bch2bps.c \
     ../external/proj4/adjlon.c \
-    ../external/proj4/aasincos.c \
-    projectionimplproj4/projectionmodule.cpp
+    ../external/proj4/aasincos.c
+}
 
 HEADERS +=\
     projectionimplproj4/projectionmodule.h \
     projectionimplproj4/prjimplproj4.h \
-    projectionimplproj4/prjmplfactoryproj4.h \
+    projectionimplproj4/prjmplfactoryproj4.h
+
+win32 {
+    HEADERS += \
     ../external/proj4/projects.h \
     ../external/proj4/proj_api.h \
     ../external/proj4/pj_list.h \
     ../external/proj4/geodesic.h \
     ../external/proj4/geocent.h \
     ../external/proj4/emess.h
+}
 
 OTHER_FILES += \
     sources/projectionimplproj4/proj4/proj_config.h.in \

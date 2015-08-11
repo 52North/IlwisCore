@@ -4,7 +4,7 @@
 #include "itemrange.h"
 #include "colorrange.h"
 #include "numericrange.h"
-#include "continuouscolorLookup.h"
+#include "continuouscolorlookup.h"
 
 using namespace Ilwis;
 

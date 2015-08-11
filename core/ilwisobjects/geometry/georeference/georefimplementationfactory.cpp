@@ -13,7 +13,7 @@
 #include "cornersgeoreference.h"
 #include "controlpoint.h"
 #include "ctpgeoreference.h"
-#include "Eigen/LU"
+#include "eigen3/Eigen/LU"
 #include "mathhelper.h"
 #include "planarctpgeoreference.h"
 #include "undeterminedgeoreference.h"
