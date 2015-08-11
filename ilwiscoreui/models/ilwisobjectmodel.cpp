@@ -7,6 +7,10 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "table.h"
+#include "itemrange.h"
+#include "colorrange.h"
+#include "operationmodel.h"
+#include "catalogmodel.h"
 #include "raster.h"
 
 using namespace Ilwis;
@@ -78,7 +82,18 @@ QString IlwisObjectModel::description() const
 QString IlwisObjectModel::externalFormat() const
 {
     if ( _ilwisobject.isValid()){
-        return _ilwisobject->externalFormat();
+        QString inFormat = _ilwisobject->formatCode();
+        QString outFormat = _ilwisobject->formatCode(false);
+        QString provider = _ilwisobject->provider();
+        if ( outFormat == "" && inFormat == "")
+            return sUNDEF;
+        if ( outFormat == inFormat)
+            return provider + ": " + inFormat;
+        if ( outFormat == "" && inFormat != "")
+            return provider + ": " +inFormat;
+        if ( inFormat == "" && outFormat != "")
+            return "internal/"  + outFormat;
+        return provider + ": " + inFormat + "/" + outFormat;
     }
     return "";
 }
@@ -164,6 +179,37 @@ QString IlwisObjectModel::projectionInfo() const
     return "";
 }
 
+void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
+
+    auto setAttributeModel = [&](int i, const ColumnDefinition& coldef, const QString& attributeName){
+        if ( coldef.name() == attributeName){
+            AttributeModel *attribute = new AttributeModel(coldef, this, _ilwisobject);
+            _attributes[i] = attribute;
+        }
+    };
+
+    IlwisTypes objecttype = _ilwisobject->ilwisType();
+    if ( objecttype == itRASTER){
+        IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+        if ( raster->hasAttributes()){
+            for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
+                setAttributeModel(i,raster->attributeTable()->columndefinition(i), attributeName);
+            }
+        }
+    } else if ( hasType(objecttype,itFEATURE)){
+        IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+        for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
+            setAttributeModel(i,features->attributeTable()->columndefinition(i), attributeName);
+        }
+    } else if ( hasType(objecttype,itTABLE)){
+        ITable tbl = _ilwisobject.as<Table>();
+        for(int i = 0; i < tbl->columnCount(); ++i){
+            setAttributeModel(i,tbl->columndefinition(i),attributeName);
+        }
+    }
+
+}
+
 QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
 {
     try {
@@ -172,6 +218,8 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                 IlwisTypes objecttype = _ilwisobject->ilwisType();
                 if ( objecttype == itRASTER){
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                    AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
+                    _attributes.push_back(attribute);
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
                             AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
@@ -192,9 +240,9 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                     }
                 }
             }
-            if ( _attributes.size() > 0){
-                return QQmlListProperty<AttributeModel>(this, _attributes) ;
-            }
+        }
+        if ( _attributes.size() > 0){
+            return QQmlListProperty<AttributeModel>(this, _attributes) ;
         }
     }
     catch(const ErrorObject& ){
@@ -565,6 +613,27 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
     }
 }
 
+OperationModel *IlwisObjectModel::operation(const QString &id)
+{
+    bool ok;
+    quint64 lid = id.toULongLong(&ok);
+    if (!ok)
+        return 0;
+    return new OperationModel(lid, this);
+}
+
+CatalogModel *IlwisObjectModel::catalog(const QString &id)
+{
+    bool ok;
+    quint64 lid = id.toULongLong(&ok);
+    if (!ok)
+        return 0;
+    Resource res = mastercatalog()->id2Resource(lid);
+    //res.addProperty("filter","container=" + res.url().toString());
+    res.addProperty("locations", res.url().toString());
+    return new CatalogModel(res, this);
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
@@ -583,6 +652,8 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                     return value.toString();
                 return coldef.datadef().domain()->impliedValue(value).toString();
             }
+            if ( value.toDouble() == rUNDEF)
+                return sUNDEF;
             return value.toString();
     };
     if ( attrName != "") {
@@ -598,8 +669,14 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                 ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
                 return v2s(coldef, value);
              }
+             if ( raster->datadef().domain()->ilwisType() == itCOLORDOMAIN){
+                 auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
+                return ColorRangeBase::toString(clr,ColorRangeBase::cmRGBA)    ;
+             }
         }
     }
+    if ( value.toDouble() == rUNDEF)
+        return sUNDEF;
     return value.toString();
 
 }

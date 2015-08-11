@@ -196,6 +196,9 @@ public:
                 return false;
             }
         }
+        bool mustExist = false;
+        if ( options.contains("mustexist"))
+            mustExist = options["mustexist"].toBool();
         auto resource = mastercatalog()->name2Resource(name,tp );
         if (resource.isValid()) {
             if (!mastercatalog()->isRegistered(resource.id())) {
@@ -220,6 +223,9 @@ public:
             }
             return true;
         } else {
+            if ( mustExist)
+                return false;
+
             if(tp != itUNKNOWN && prepare(Resource(name, tp), options))
                 return true;
         }
@@ -243,7 +249,7 @@ public:
                     removeCurrent();
                     return ERROR1("Couldnt create ilwisobject %1",resource.name());
                 }
-                bool ok = data->prepare();
+                bool ok = data->prepare(options);
                 if ( !ok){
                     delete data;
                     return false;

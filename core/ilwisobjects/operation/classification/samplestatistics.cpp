@@ -149,7 +149,7 @@ void SampleSum::mergeClass(Raw key1, Raw key2)
 {
     if ( key1 == key2)
         return;
-    for(int band ; band < _sums[key1].size(); ++band){
+    for(int band=0 ; band < _sums[key1].size(); ++band){
         quint32& other = at(key2, band);
         at(key1, band) += other;
         other = 0;

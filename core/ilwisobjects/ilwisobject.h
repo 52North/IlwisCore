@@ -133,7 +133,7 @@ public:
      * tries to Prepares this ilwisobject for use
      * @return true when the prepare succeeded
      */
-    virtual bool prepare();
+    virtual bool prepare(const IOOptions& options=IOOptions());
 
     /**
      * Changes the name of this object, new name cannot be null.
@@ -374,7 +374,8 @@ public:
 
     static IlwisTypes name2ExtendedType(const QString &dname);
 
-    QString externalFormat() const;
+    QString formatCode(bool input=true) const;
+    QString provider(bool input=true) const;
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;

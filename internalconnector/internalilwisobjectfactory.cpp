@@ -54,6 +54,7 @@
 #include "operationmetadata.h"
 #include "epsg.h"
 #include "catalog.h"
+#include "workflow.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -66,6 +67,13 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
 {
     if ( resource.url().scheme()!="ilwis")
         return 0;
+
+    if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+        QString filename = resource.url(true).toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.exists()) // internal objects never exist on disk,
+            return 0;
+    }
 
 
     if ( resource.ilwisType() & itELLIPSOID) {
@@ -82,7 +90,9 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createRasterCoverage(resource,options);
     } else if ( resource.ilwisType() & itTABLE) {
         return createTable(resource,options);
-    } else if ( resource.ilwisType() & itOPERATIONMETADATA) {
+    } else if ( resource.ilwisType() & itWORKFLOW) {
+        return createWorkflow(resource, options);
+    } else if ( resource.ilwisType() & itSINGLEOPERATION) {
         return createOperationMetaData(resource);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
@@ -98,6 +108,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
 
 IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& resource, const IOOptions &options) const{
     QString code = resource.code();
+    Representation *rpr = new Representation(resource);
     if ( code != sUNDEF) {
 
         QSqlQuery db(kernel()->database());
@@ -110,8 +121,6 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                     if (db.exec(query)) {
                         if ( db.next()){
                             QSqlRecord rec = db.record();
-                            Representation *rpr = new Representation(resource);
-
                             rpr->fromInternal(rec);
                             QString relateddomain = rec.field("relateddomain").value().toString();
                             QString rprType = rec.field("representationtype").value().toString();
@@ -125,14 +134,22 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
                                 rpr->domain(IDomain("value"));
                             }
                             rpr->readOnly(true);
-                            return rpr;
-                        }
-                    }
-                }
-            }
-        }
+                        }else
+                            return 0;
+                    }else
+                        return 0;
+                }else
+                    return 0;
+            }else
+                return 0;
+        }else
+            return 0;
     }
-    return 0;
+
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    rpr->setConnector(connector,IlwisObject::cmINPUT, options);
+    return rpr;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource, const IOOptions &options) const{
@@ -185,6 +202,29 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
     return new OperationMetaData(resource);
 }
 
+IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource, const IOOptions &options) const {
+    if (!hasType(resource.ilwisType(), itWORKFLOW)){
+        return nullptr;
+    }
+    Workflow *workflow = new Workflow(resource);
+
+    /*
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    if (!factory) {
+        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
+        return 0;
+    }
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    if ( !connector) {
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
+        return 0;
+    }
+    workflow->setConnector(connector, IlwisObject::cmINPUT, options);
+    */
+
+    return workflow;
+}
+
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
 {
     switch(type) {
@@ -220,8 +260,10 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Projection();
     case itELLIPSOID:
         return new Ellipsoid();
-    case itOPERATIONMETADATA:
+    case itSINGLEOPERATION:
         return new OperationMetaData();
+    case itWORKFLOW:
+        return new Workflow();
     case itREPRESENTATION:
         return new Representation();
     }
@@ -232,8 +274,15 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
 
 bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
 {
-    if ( resource.url().scheme()!="ilwis")
+    if ( resource.url().scheme()!="ilwis"){
         return false;
+    }
+    if ( resource.url(true).scheme() == "file") { // we might have a streamed object
+        QString filename = resource.url(true).toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.exists()) // internal objects never exist on disk,
+            return false;
+    }
 
     if ( resource.ilwisType() & itELLIPSOID) {
         return true;
@@ -284,13 +333,17 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
             if (!csy.prepare(newresource,options))
                 return false;
         }
+    } else if ( typnm == "qulonglong"){
+        if(!csy.prepare(resource["coordinatesystem"].value<quint64>()))
+            return 0;
     }
     if ( csy.isValid()){
         coverage->coordinateSystem(csy);
     }
 
     Envelope bounds;
-    if ( QString(resource["envelope"].typeName()) == "Ilwis::Box<double>") {
+    QString envType = resource["envelope"].typeName();
+    if ( envType == "Ilwis::Box<double>" || envType == "Ilwis::Envelope") {
         bounds = resource["envelope"].value<Envelope>();
     }else if (QString(resource["envelope"].typeName()) == "QString" &&
               resource["envelope"].toString() != sUNDEF) {
@@ -331,11 +384,11 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 
     Size<> sz;
     QString typenm = resource["size"].typeName();
-    if ( QString(resource["size"].typeName()) == "Ilwis::Size<quint32>"){
+    if ( typenm == "Ilwis::Size<quint32>"){
         sz = resource["size"].value<Size<>>();
-    } else if (QString(resource["size"].typeName()) == "QSize") {
+    } else if (typenm == "QSize") {
         sz = resource["size"].toSize();
-    } else if (QString(resource["size"].typeName()) == "QString") {
+    } else if (typenm == "QString") {
         QStringList parts = resource["size"].toString().split(" ");
         if ( parts.size() >= 2)
             sz = Size<>(parts[0].toInt(), parts[1].toInt(), 1);
@@ -355,10 +408,15 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
             if (!grf.prepare(newresource))
                 return 0;
         }
+    } else if ( tpnam == "qulonglong"){
+        if(!grf.prepare(resource["georeference"].value<quint64>()))
+                return 0;
+
     } else{
         Envelope bounds = gcoverage->envelope();
         if ( bounds.isValid() && !bounds.isNull()){
-            grf = GeoReference::create("corners");
+            grf = new GeoReference();
+            grf->create("corners");
             grf->name("subset_" + gcoverage->name());
             grf->coordinateSystem(gcoverage->coordinateSystem());
             grf->envelope(bounds);
@@ -662,7 +720,8 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     Envelope env;
     Size<> sz;
     if ( isCorners){
-       cgrf = GeoReference::create("corners", resource);
+       cgrf = new GeoReference(resource);
+       cgrf->create("corners");
        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     }
     if ( cgrf == 0)
@@ -725,14 +784,16 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         Resource resnew = resource;
         resnew.name(sUNDEF); // this will force a new object with a new id
         resnew.setId(i64UNDEF);
-        cgrf = GeoReference::create("undetermined", resnew);
+        cgrf = new GeoReference(resnew);
+        cgrf->create("undetermined");
     } else if ( resource.code().indexOf("georef:") == 0){
         cgrf = createGrfFromCode(resource);
         if (cgrf == 0)
             ERROR2(ERR_ILLEGAL_VALUE_2,"georef code", resource.code());
 
     }else {
-        cgrf = GeoReference::create("corners", resource);
+        cgrf = new GeoReference(resource);
+        cgrf->create("corners");
         cgrf->name( resource["name"].toString());
 
 

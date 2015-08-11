@@ -240,7 +240,11 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
     if ( index == -1)
         specialExpressions(txt,symtab);
 
+    int startQuote = e.indexOf("\"");
+    int endQuote = e.indexOf("\"", startQuote+1 );
     int index2 = e.indexOf("=");
+    if ( index2 > startQuote && index2 < endQuote)
+        index2 = -1;
     if ( index != -1) {
         if ( _name == "") {
             if ( index2 != -1)

@@ -20,6 +20,8 @@ public:
     RangeIterator& operator=(const RangeIterator& iter){
         _range = iter._range;
         _current = iter._current;
+		
+		return *this;
     }
 
     RangeIterator& operator++(){

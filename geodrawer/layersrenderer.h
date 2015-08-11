@@ -66,7 +66,7 @@ class LayersRenderer : public QObject, public QQuickFramebufferObject::Renderer 
 
     Q_OBJECT
 public:
-    LayersRenderer(const QQuickFramebufferObject *fbo);
+    LayersRenderer(const QQuickFramebufferObject *fbo, bool active);
     ~LayersRenderer();
 
     void render();
@@ -81,6 +81,9 @@ public:
     void synchronize(QQuickFramebufferObject *item);
 
     void cleanup();
+signals:
+    void synchronizeDone();
+    void drawDone();
 
 private:
     Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;

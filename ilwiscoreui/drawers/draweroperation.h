@@ -15,6 +15,7 @@ public:
 protected:
     DrawerInterface *_rootDrawer = 0;
     quint64 _viewid = i64UNDEF;
+    DrawerInterface * getRootDrawer();
 };
 }
 }

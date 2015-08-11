@@ -12,6 +12,7 @@ namespace Ilwis {
 
 const quint32 WHOLE_RASTER = 200000;
 
+
 class Resource;
 class Grid;
 class PixelIterator;
@@ -147,7 +148,13 @@ public:
     QVariant coord2value(const Coordinate &c, const QString& attrname=""){
         if ( _georef->isValid() && c.isValid()) {
             Pixeld pix = _georef->coord2Pixel(c);
-            return pix2value(pix);
+            if ( attrname != "")
+                return pix2value(pix);
+            else{
+                QVariantMap vmap;
+                vmap[PIXELVALUE] = pix2value(pix);
+                return QVariant(vmap);
+            }
         }
         return rUNDEF;
     }

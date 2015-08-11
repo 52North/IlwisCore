@@ -24,25 +24,39 @@ public:
     CoverageLayerModel();
     CoverageLayerModel(quint32 layerIndex, const Ilwis::Resource &resource, Ilwis::Geodrawer::DrawerInterface *drawer, QObject *obj=0);
 
-    Ilwis::Geodrawer::DrawerInterface *drawer();
+    virtual Ilwis::Geodrawer::DrawerInterface *drawer();
+    virtual const Ilwis::Geodrawer::DrawerInterface *drawer() const;
     bool active() const;
     void setActive(bool yesno);
     int getActiveAttributeIndex() const;
     void setActiveAttributeIndex(int index);
     QString activeAttribute() const;
+    QString visualAttributeByIndex(int index) const;
+    bool showInfo() const;
+    void showInfo(bool yesno);
+    void updateAttribute(const QString& attrName, const QString& rprTxt);
+    void drawer(Ilwis::Geodrawer::DrawerInterface *drw);
+
 signals:
     void visualAttributesChanged();
     void onActiveChanged();
     void onActiveAttributeIndexChanged();
 
+protected:
+    void addVisualAttribute(VisualAttributeModel *attr);
 private:
     quint32 layerIndex() const;
     VisualAttributeModel *visualAttribute(const QString& name);
     QQmlListProperty<VisualAttributeModel> visualAttributes();
+    void fillAttributes();
+    void resetVisualAttributeModel(const QString &attributeName);
+
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
     QList<VisualAttributeModel *> _visualAttributes;
     quint32 _layerIndex;
     int _activeAttribute = 0;
+    bool _showInfo = true;
+
 
 
 

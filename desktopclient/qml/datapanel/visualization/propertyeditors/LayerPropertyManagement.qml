@@ -20,20 +20,23 @@ Rectangle {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../../images/" + name
+         var iconP = "../../../images/" + name
          return iconP
      }
 
 
-    Item {
+    SplitView {
         width : parent.width - 5
         height : parent.height
         y : 2
+        handleDelegate: Controls.SplitHandle{
+            imageHeight: 15
+        }
 
         LayersList{
             id : layerColumn
             height : parent.height
-            width : parent.width / 4
+            width : 140
             anchors.left: parent.left
 
 
@@ -41,25 +44,19 @@ Rectangle {
 
         VisualAttributeList{
             id : attributeListColumn
-            anchors.left : layerColumn.right
-            anchors.leftMargin: 3
             height : parent.height - 3
-            width : 140
+            width : 120
         }
 
         VisualAttributeEditorList{
             id : editorListColumn
-            anchors.left : attributeListColumn.right
-            anchors.leftMargin: 3
             height : parent.height - 3
-            width : 140
+            width : 120
+            x: 4
         }
         VisualAttributeEditor{
-            anchors.left : editorListColumn.right
-            anchors.leftMargin: 3
-            anchors.right: parent.right
-            anchors.rightMargin: 5
             height : parent.height - 3
+            Layout.fillWidth: true
             id : editorColumn
         }
     }

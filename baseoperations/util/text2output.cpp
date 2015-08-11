@@ -72,7 +72,7 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, c
 quint64 Text2Output::createMetadata()
 {
     QString url = QString("ilwis://operations/text2output");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","text2output");
     resource.addProperty("syntax","text2output(text,[text]+)");

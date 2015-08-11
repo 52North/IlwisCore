@@ -6,19 +6,21 @@
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "unarymath.h"
+#include "unarymathrasterandnumber.h"
+#include "unarymathtable.h"
 #include "unarymathoperations.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
 
-REGISTER_OPERATION(Sine)
+REGISTER_OPERATION(SineCoverage)
 
-Sine::Sine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", sin)
+SineCoverage::SineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", sin)
 {}
-OperationImplementation *Sine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sine(metaid,expr);}
+OperationImplementation *SineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineCoverage(metaid,expr);}
 
-quint64 Sine::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sin"), "sine", "min1to1");
+quint64 SineCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/sin"), "Sine for rasters");
     resource.addProperty("pin_1_desc", QString("input data source with a numerical domain; values are considered to be radians"));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
@@ -26,13 +28,13 @@ quint64 Sine::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
-REGISTER_OPERATION(Cosine)
-Cosine::Cosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "min1to1", cos)
+REGISTER_OPERATION(CosineCoverage)
+CosineCoverage::CosineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", cos)
 {}
-OperationImplementation *Cosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Cosine(metaid,expr);}
+OperationImplementation *CosineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineCoverage(metaid,expr);}
 
-quint64 Cosine::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cos"), "cosine", "min1to1");
+quint64 CosineCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/cos"), "Cosine  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
@@ -47,13 +49,13 @@ double tangent(double v){
     return tan(v);
 }
 
-REGISTER_OPERATION(Tangent)
-Tangent::Tangent(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", tangent)
+REGISTER_OPERATION(TangentCoverage)
+TangentCoverage::TangentCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value",tangent)
 {}
-OperationImplementation *Tangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Tangent(metaid,expr);}
+OperationImplementation *TangentCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new TangentCoverage(metaid,expr);}
 
-quint64 Tangent::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/tan"), "Tangent", "value");
+quint64 TangentCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/tan"), "Tangent  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; "));
 
@@ -68,14 +70,14 @@ double arcsine(double v){
     return asin(v);
 }
 
-REGISTER_OPERATION(Arcsine)
+REGISTER_OPERATION(ArcsineCoverage)
 
-Arcsine::Arcsine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", arcsine)
+ArcsineCoverage::ArcsineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", arcsine)
 {}
-OperationImplementation *Arcsine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arcsine(metaid,expr);}
+OperationImplementation *ArcsineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcsineCoverage(metaid,expr);}
 
-quint64 Arcsine::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/asin"), "Arcsine", "value");
+quint64 ArcsineCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/asin"), "Arcsine  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -1 and 1 "));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between pi/2 and -pi/2"));
 
@@ -90,13 +92,13 @@ double arccosine(double v){
     return asin(v);
 }
 
-REGISTER_OPERATION(Arccosine)
-Arccosine::Arccosine(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", arccosine)
+REGISTER_OPERATION(ArccosineCoverage)
+ArccosineCoverage::ArccosineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", arccosine)
 {}
-OperationImplementation *Arccosine::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Arccosine(metaid,expr);}
+OperationImplementation *ArccosineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArccosineCoverage(metaid,expr);}
 
-quint64 Arccosine::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/acos"), "Arccosine", "value");
+quint64 ArccosineCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/acos"), "Arccosine  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain with value between -1 and 1; "));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between 0 and pi"));
 
@@ -105,13 +107,13 @@ quint64 Arccosine::createMetadata() {
 }
 
 //----------------------------------------------------------
-REGISTER_OPERATION(ArcTangent)
-ArcTangent::ArcTangent(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", atan)
+REGISTER_OPERATION(ArcTangentCoverage)
+ArcTangentCoverage::ArcTangentCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", atan)
 {}
-OperationImplementation *ArcTangent::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcTangent(metaid,expr);}
+OperationImplementation *ArcTangentCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcTangentCoverage(metaid,expr);}
 
-quint64 ArcTangent::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent", "value");
+quint64 ArcTangentCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -pi/2 and pi/2 "));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
 
@@ -124,13 +126,13 @@ double logten(double v){
         return log10(v);
     return rUNDEF;
 }
-REGISTER_OPERATION(Log10)
-Log10::Log10(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", logten)
+REGISTER_OPERATION(Log10Coverage)
+Log10Coverage::Log10Coverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", logten)
 {}
-OperationImplementation *Log10::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Log10(metaid,expr);}
+OperationImplementation *Log10Coverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Log10Coverage(metaid,expr);}
 
-quint64 Log10::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/log10"), "Log10", "value");
+quint64 Log10Coverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/log10"), "Log10 for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
@@ -144,13 +146,13 @@ double naturallog(double v){
     return rUNDEF;
 }
 
-REGISTER_OPERATION(NaturalLogarithm)
-NaturalLogarithm::NaturalLogarithm(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", naturallog)
+REGISTER_OPERATION(NaturalLogarithmCoverage)
+NaturalLogarithmCoverage::NaturalLogarithmCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", naturallog)
 {}
-OperationImplementation *NaturalLogarithm::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new NaturalLogarithm(metaid,expr);}
+OperationImplementation *NaturalLogarithmCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new NaturalLogarithmCoverage(metaid,expr);}
 
-quint64 NaturalLogarithm::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm", "value");
+quint64 NaturalLogarithmCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
@@ -164,13 +166,13 @@ double abs2(double v){
         return rUNDEF;
     return v;
 }
-REGISTER_OPERATION(Abs)
-Abs::Abs(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", abs2)
+REGISTER_OPERATION(AbsCoverage)
+AbsCoverage::AbsCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", abs2)
 {}
-OperationImplementation *Abs::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Abs(metaid,expr);}
+OperationImplementation *AbsCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new AbsCoverage(metaid,expr);}
 
-quint64 Abs::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/abs"), "Absolute value", "value");
+quint64 AbsCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/abs"), "Absolute value  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
     resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
 
@@ -185,13 +187,13 @@ double sqrt2(double v){
         return rUNDEF;
     return std::sqrt(v);
 }
-REGISTER_OPERATION(Sqrt)
-Sqrt::Sqrt(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sqrt2)
+REGISTER_OPERATION(SqrtCoverage)
+SqrtCoverage::SqrtCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", sqrt2)
 {}
-OperationImplementation *Sqrt::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Sqrt(metaid,expr);}
+OperationImplementation *SqrtCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SqrtCoverage(metaid,expr);}
 
-quint64 Sqrt::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sqrt"), "Absolute value", "value");
+quint64 SqrtCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/sqrt"), "Square root value for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a positive numerical domain (or 0)"));
     resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
 
@@ -199,13 +201,13 @@ quint64 Sqrt::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
-REGISTER_OPERATION(Ceil)
-Ceil::Ceil(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::ceil<int>)
+REGISTER_OPERATION(CeilCoverage)
+CeilCoverage::CeilCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", std::ceil<int>)
 {}
-OperationImplementation *Ceil::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Ceil(metaid,expr);}
+OperationImplementation *CeilCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CeilCoverage(metaid,expr);}
 
-quint64 Ceil::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value", "integer");
+quint64 CeilCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
     resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
 
@@ -213,13 +215,13 @@ quint64 Ceil::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
-REGISTER_OPERATION(Floor)
-Floor::Floor(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", std::floor<int>)
+REGISTER_OPERATION(FloorCoverage)
+FloorCoverage::FloorCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", std::floor<int>)
 {}
-OperationImplementation *Floor::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
+OperationImplementation *FloorCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorCoverage(metaid,expr);}
 
-quint64 Floor::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/floor"), "Floor value", "integer");
+quint64 FloorCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/floor"), "Floor value for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
     resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
 
@@ -235,13 +237,13 @@ double sign(double v) {
     return 0;
 }
 
-REGISTER_OPERATION(Sign)
-Sign::Sign(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "integer", sign)
+REGISTER_OPERATION(SignCoverage)
+SignCoverage::SignCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", sign)
 {}
-OperationImplementation *Sign::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Floor(metaid,expr);}
+OperationImplementation *SignCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorCoverage(metaid,expr);}
 
-quint64 Sign::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sgn"), "Sign", "integer");
+quint64 SignCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/sgn"), "Sign for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
     resource.addProperty("pout_1_desc",QString("output data source with values -1,0,1 depending on the sign of the input value"));
 
@@ -249,13 +251,13 @@ quint64 Sign::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
-REGISTER_OPERATION(CosineH)
-CosineH::CosineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", cosh)
+REGISTER_OPERATION(CosineHCoverage)
+CosineHCoverage::CosineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", cosh)
 {}
-OperationImplementation *CosineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineH(metaid,expr);}
+OperationImplementation *CosineHCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineHCoverage(metaid,expr);}
 
-quint64 CosineH::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine", "value");
+quint64 CosineHCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
@@ -263,13 +265,13 @@ quint64 CosineH::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
-REGISTER_OPERATION(SineH)
-SineH::SineH(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMath(metaid, expr, "value", sinh)
+REGISTER_OPERATION(SineHCoverage)
+SineHCoverage::SineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", sinh)
 {}
-OperationImplementation *SineH::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineH(metaid,expr);}
+OperationImplementation *SineHCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineHCoverage(metaid,expr);}
 
-quint64 SineH::createMetadata() {
-    Resource resource = UnaryMath::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine", "value");
+quint64 SineHCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine  for rasters");
     resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
     resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
 
@@ -277,3 +279,220 @@ quint64 SineH::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(SineTable)
+
+SineTable::SineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", sin)
+{}
+OperationImplementation *SineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineTable(metaid,expr);}
+
+quint64 SineTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sin"), "Sine for Columns");
+    resource.addProperty("pin_1_desc", QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(CosineTable)
+CosineTable::CosineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", cos)
+{}
+OperationImplementation *CosineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineTable(metaid,expr);}
+
+quint64 CosineTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/cos"), "Cosine  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+//----------------------------------------------------------
+REGISTER_OPERATION(TangentTable)
+TangentTable::TangentTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value",tangent)
+{}
+OperationImplementation *TangentTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new TangentTable(metaid,expr);}
+
+quint64 TangentTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/tan"), "Tangent  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; "));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+//----------------------------------------------------------
+REGISTER_OPERATION(ArcsineTable)
+
+ArcsineTable::ArcsineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", arcsine)
+{}
+OperationImplementation *ArcsineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcsineTable(metaid,expr);}
+
+quint64 ArcsineTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/asin"), "Arcsine  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -1 and 1 "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between pi/2 and -pi/2"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+//----------------------------------------------------------
+REGISTER_OPERATION(ArccosineTable)
+ArccosineTable::ArccosineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", arccosine)
+{}
+OperationImplementation *ArccosineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArccosineTable(metaid,expr);}
+
+quint64 ArccosineTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/acos"), "Arccosine  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain with value between -1 and 1; "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between 0 and pi"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+//----------------------------------------------------------
+REGISTER_OPERATION(ArcTangentTable)
+ArcTangentTable::ArcTangentTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", atan)
+{}
+OperationImplementation *ArcTangentTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new ArcTangentTable(metaid,expr);}
+
+quint64 ArcTangentTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/atan"), "ArcTangent  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value between -pi/2 and pi/2 "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain; values are between -1 and 1"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(Log10Table)
+Log10Table::Log10Table(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", logten)
+{}
+OperationImplementation *Log10Table::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new Log10Table(metaid,expr);}
+
+quint64 Log10Table::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/log10"), "Log10  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(NaturalLogarithmTable)
+NaturalLogarithmTable::NaturalLogarithmTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", naturallog)
+{}
+OperationImplementation *NaturalLogarithmTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new NaturalLogarithmTable(metaid,expr);}
+
+quint64 NaturalLogarithmTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/ln"), "Natural Logarithm  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain;with value larger than zero "));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+
+REGISTER_OPERATION(AbsTable)
+AbsTable::AbsTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", abs2)
+{}
+OperationImplementation *AbsTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new AbsTable(metaid,expr);}
+
+quint64 AbsTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/abs"), "Absolute value for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+//---------------------------------------------------------
+REGISTER_OPERATION(SqrtTable)
+SqrtTable::SqrtTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", sqrt2)
+{}
+OperationImplementation *SqrtTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SqrtTable(metaid,expr);}
+
+quint64 SqrtTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sqrt"), "Absolute value  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a positive numerical domain (or 0)"));
+    resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(CeilTable)
+CeilTable::CeilTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", std::ceil<int>)
+{}
+OperationImplementation *CeilTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CeilTable(metaid,expr);}
+
+quint64 CeilTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/ceil"), "Ceiling value  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(FloorTable)
+FloorTable::FloorTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", std::floor<int>)
+{}
+OperationImplementation *FloorTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorTable(metaid,expr);}
+
+quint64 FloorTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/floor"), "Floor value  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a integer numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(SignTable)
+SignTable::SignTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", sign)
+{}
+OperationImplementation *SignTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorTable(metaid,expr);}
+
+quint64 SignTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sgn"), "Sign  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with values -1,0,1 depending on the sign of the input value"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(CosineHTable)
+CosineHTable::CosineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", cosh)
+{}
+OperationImplementation *CosineHTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineHTable(metaid,expr);}
+
+quint64 CosineHTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/cosh"), "Hyperbolic cosine  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
+REGISTER_OPERATION(SineHTable)
+SineHTable::SineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", sinh)
+{}
+OperationImplementation *SineHTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineHTable(metaid,expr);}
+
+quint64 SineHTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sinh"), "Hyperbolic sine  for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain; values are considered to be radians"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}

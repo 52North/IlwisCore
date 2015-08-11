@@ -14,7 +14,8 @@ Rectangle {
 
     property int buttonSize : 55
 
-    signal showObject(string objectid )
+    signal showObject(string objectid)
+    color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -28,7 +29,6 @@ Rectangle {
 
     width : parent.width
     anchors.margins: 2
-    color : Global.alternatecolor5
     border.width: 1
     TableView{
         id : resourcetable
@@ -58,8 +58,9 @@ Rectangle {
                             fillMode: Image.PreserveAspectFit
                             property string message :  model !== null ? model[styleData.row].url : ""
                             property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
+                            property string ids : model !== null ?  mastercatalog.selectedIds() : ""
 
-                            Drag.keys: [ model[styleData.row].iconPath ]
+                            Drag.keys: [ model[styleData.row].typeName ]
                             Drag.active: mouseArea.drag.active
                             Drag.hotSpot.x: 10
                             Drag.hotSpot.y: 10
@@ -196,12 +197,15 @@ Rectangle {
             var ids = ""
             resourcetable.selection.forEach( function(rowIndex) {if ( ids !== "") ids = ids + "|" ;ids = ids + (model[rowIndex].id).toString()} )
             mastercatalog.currentCatalog = currentCatalog
-            currentCatalog.setSelectedObjects(ids)
-            //bigthing.getWorkbenchPane("ObjectProperties.qml");
+            mastercatalog.setSelectedObjects(ids)
+            if (!catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
         onDoubleClicked: {
-            if ( currentRow != -1)
+            if ( currentRow != -1){
                 showObject(model[currentRow].id)
+
+            }
         }
 
         model : setResources()

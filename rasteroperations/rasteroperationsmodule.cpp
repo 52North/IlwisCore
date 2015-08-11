@@ -47,6 +47,8 @@ void RasterOperationsModule::prepare()
    commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
    commandhandler()->addOperation(LinearStretchOperation::createMetadata(), LinearStretchOperation::create);
 
+  kernel()->issues()->log("Loaded raster operations module",IssueObject::itMessage);
+
 }
 
 QString RasterOperationsModule::name() const

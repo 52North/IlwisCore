@@ -3,14 +3,8 @@ import "../../../Global.js" as Global
 
 Item {
     id : displaypropertiesColumn
-    property var currentVisualAttribute
 
-    onCurrentVisualAttributeChanged: {
-        if ( currentVisualAttribute.propertyEditors ){
-            editorList.model =  currentVisualAttribute.propertyEditors
-            editorColumn.currentEditor = editorList.model[0]
-        }
-    }
+    property var displayEditorModel
 
     Rectangle {
         id : propertiesLabel
@@ -26,8 +20,6 @@ Item {
     Rectangle {
         id : displayEditors
         color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
         width : parent.width
         anchors.top: propertiesLabel.bottom
         anchors.topMargin: 2
@@ -36,6 +28,7 @@ Item {
         ListView{
             id : editorList
             anchors.fill: parent
+            model : displayEditorModel
             Component {
                 id: editorHighlight
 

@@ -29,8 +29,14 @@ Rectangle {
     signal unloadcontent(string content)
 
     function newForm(metaid, title){
-        var form= formbuilder.index2Form(metaid)
+        var form= formbuilder.index2Form(metaid, true)
         appFrame.formQML = form
+        appFrame.formTitle = title
+        appFrame.opacity = 1
+    }
+
+    function newFormUrl(url, title){
+        appFrame.formComponent = url
         appFrame.formTitle = title
         appFrame.opacity = 1
     }
@@ -47,14 +53,34 @@ Rectangle {
             if (newButton.text == newText) {
                 newButton.text = createText
                 cancelButton.opacity = 1
+                applicationForm.state = "maximized";
+                newFormUrl("modeller/ModellerMetadataForm.qml", "New Workflow");
                 // create temporary Modeller obeject
                 // open formular
             } else if (newButton.text == createText) {
-                newButton.text = newText
-                cancelButton.opacity = 0
-                // create Modeller obeject from temporary object
-                // open modeller panel
-                 dataPanel.addModellerPanel("Modeller_" + modellerCount++);
+                var modeller = "Wokflow - ";
+                if (appFrame.currentAppForm != null && appFrame.currentAppForm.getName() !== null && appFrame.currentAppForm.getName().length > 0) {
+                    modeller += appFrame.currentAppForm.getName();
+                    newButton.text = newText
+                    cancelButton.opacity = 0
+                    // create Modeller obeject from temporary object
+                    // open modeller panel
+                    dataPanel.addModellerPanel(modeller);
+                    applicationForm.state = "minimized";
+                } else {
+                    var message = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Dialogs 1.1; MessageDialog {
+                         id: messageDialog
+                         title: "Error!";
+                         text: "Missing workflow name! Please enter a workflow name!";
+                         icon: StandardIcon.Warning;
+                         modality: Qt.ApplicationModal
+                         onAccepted: {
+                            messageDialog.close();
+                            messageDialog.destroy();
+                         }
+                         Component.onCompleted: visible = true
+                     }', newModeller, "dynamicMessage");
+                }
             }
         }
     }
@@ -64,6 +90,7 @@ Rectangle {
          onTriggered : {
              cancelButton.opacity = 0
              newButton.text = newText
+             applicationForm.state = "minimized";
              // delete temporary Modeller obeject
          }
     }
@@ -74,7 +101,6 @@ Rectangle {
             operationTabs.activ
         }
     }
-
 
     Rectangle {
         id : searchBar
@@ -169,14 +195,14 @@ Rectangle {
                 opacity : 0
 
             }
-            Button{
-                y : parent.height - 25
-                width : 50
-                text : "execute"
-                height : 22
-                x : parent.width - 60
-                onClicked: appFrame.doExecute(operationid)
-            }
+            //            Button{
+            //                y : parent.height - 25
+            //                width : 50
+            //                text : "execute"
+            //                height : 22
+            //                x : parent.width - 60
+            //                onClicked: appFrame.doExecute(operationid)
+            //            }
             states: [
                 State { name: "maximized"
 

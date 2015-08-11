@@ -7,7 +7,7 @@
 #include "layerdrawer.h"
 #include "drawingcolor.h"
 #include "drawers/drawerfactory.h"
-#include "models/visualizationmanager.h"
+#include "models/layermanager.h"
 #include "layersrenderer.h"
 #include "drawers/drawerinterface.h"
 #include "layersview.h"
@@ -19,12 +19,13 @@
 
 
 
-LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo)
+LayersRenderer::LayersRenderer(const QQuickFramebufferObject *fbo, bool active)
 {
     if ( !_rootDrawer){
         _rootDrawer = new Ilwis::Geodrawer::RootDrawer(fbo, Ilwis::IOOptions());
         connect(_rootDrawer, &Ilwis::Geodrawer::BaseDrawer::updateRenderer,this, &LayersRenderer::updateRenderer );
     }
+    _rootDrawer->active(active);
 }
 
 LayersRenderer::~LayersRenderer()
@@ -48,8 +49,8 @@ void LayersRenderer::render()
         }else
             glDisable( GL_DEPTH_TEST);
 
-
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        QColor backgroundColor = _rootDrawer->attribute("backgroundcolor").value<QColor>();
+        glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -58,6 +59,8 @@ void LayersRenderer::render()
         _rootDrawer->draw( );
 
         glDisable(GL_BLEND);
+
+        emit drawDone();
     }
     catch(const ErrorObject& ){}
     catch(const std::exception& ex){
@@ -79,7 +82,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 {
     try {
 
-
+        bool needPrepare = false;
         LayersView *gdrawer = static_cast<LayersView *>(item);
         _viewPortSize =  QSize(gdrawer->width(), gdrawer->height());
         _windowSize = gdrawer->window()->size();
@@ -90,6 +93,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             gdrawer->_attributerequests.pop_front();
             QVariant var = _rootDrawer->attributeOfDrawer(pair.first, pair.second);
             gdrawer->_copiedAttributes[pair.first.toLower() + "|" + pair.second.toLower()] = var;
+            needPrepare = true;
         }
 
         for(const Ilwis::OperationExpression& expr : gdrawer->_commands){
@@ -107,11 +111,13 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
                             Ilwis::Geodrawer::DrawerInterface *drawer = static_cast<Ilwis::Geodrawer::DrawerInterface *>(sym._var.value<void *>());
                             if ( drawer){
                                 ICoverage cov = drawer->attribute("coverage").value<ICoverage>();
-                                gdrawer->_manager->addDataSource(cov->source().url(),cov->ilwisType(),drawer);
+                                if ( gdrawer->_manager)
+                                    gdrawer->_manager->addDataSource(cov->source().url(),cov->ilwisType(),drawer);
                             }
                         }
                     }
                 }
+                needPrepare = true;
             }
         }
         gdrawer->_commands = std::deque<OperationExpression>();
@@ -123,8 +129,13 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             for(QVariantMap::const_iterator iter = pair.second.begin(); iter != pair.second.end(); ++iter) {
                 _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
             }
+            needPrepare = true;
         }
-        _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
+        if ( needPrepare){
+            _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
+           emit synchronizeDone();
+        }
+
 
     } catch ( const ErrorObject& ){
 

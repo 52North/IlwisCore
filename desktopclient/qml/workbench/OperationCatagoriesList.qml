@@ -9,10 +9,10 @@ import "../controls" as Controls
 import "../Global.js" as Global
 
 Item {
-    signal makeForm(string objectid, string name)
-
     id : operationCatTab
     anchors.fill: parent
+
+    signal makeForm(string objectid, string name, string url)
 
     ListView{
         id : operationsByKey
@@ -39,7 +39,7 @@ Item {
                 Connections{
                     target : operList
                     onMakeForm :{
-                        makeForm(objectid,name)
+                        makeForm(objectid,name, url)
                     }
                 }
             }

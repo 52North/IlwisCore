@@ -20,6 +20,7 @@ class ILWISCOREUISHARED_EXPORT AttributeModel : public QObject
     Q_PROPERTY(QString attributeDomain READ attributeDomain CONSTANT)
     Q_PROPERTY(QString attributeValueType READ attributeValueType CONSTANT)
     Q_PROPERTY(QString attributeDomainType READ attributeDomainType CONSTANT)
+    Q_PROPERTY(QString icon READ icon CONSTANT)
 
 public:
     AttributeModel();
@@ -39,6 +40,7 @@ public:
 
 protected:
     void setObject(const Ilwis::IIlwisObject& obj);
+    QString icon();
 
     Ilwis::ColumnDefinition _coldefinition;
     QStringList _attributeValuesDefaultRange;

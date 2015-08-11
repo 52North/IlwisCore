@@ -172,13 +172,13 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
     return 0;
 }
 
-NumericRange MathHelper::roundRange(double rmin, double rmax, double step)
+NumericRange MathHelper::roundRange(double rmin, double rmax)
 {
     double tickLimits []  = {0,0.1,0.2,0.25,0.5,1.0};
     double range = rmax - rmin;
     //long d =  abs(log10(range)) + 1;
     long d =  log10(range) + 1;
-    step = range / pow(10.0,abs(d));
+    double step = range / pow(10.0,abs(d));
     int i = 0;
     while(i < 6) {
         if ( step < tickLimits[i]) {
@@ -193,4 +193,24 @@ NumericRange MathHelper::roundRange(double rmin, double rmax, double step)
     double r = modf (rmax / step , &intpart);
     double upper = step * round(r ==0 ? intpart : 1 + intpart );
     return NumericRange(lower, upper, step);
+}
+
+double MathHelper::round(double r)
+{
+    if (r < 7)
+      if (r < 1e-10)
+        return 1e-10;
+      else
+        return round(r*10)/10;
+    else if (r > 70)
+      if (r > 1e30)
+        return 1e30;
+      else
+        return round(r/10)*10;
+    else if (r < 17)
+      return 10;
+    else if (r <= 25)
+      return 20;
+    else
+      return 50;
 }

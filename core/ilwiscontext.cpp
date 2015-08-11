@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <QSettings>
 #include <QDir>
 #include <QDesktopServices>
 #include <QJsonDocument>
@@ -17,15 +16,12 @@
 
 Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
-
-
 using namespace Ilwis;
 
-
-IlwisContext* Ilwis::context() {
+IlwisContext* Ilwis::context(const QString & ilwisDir) {
     if (Ilwis::IlwisContext::_context == 0) {
         Ilwis::IlwisContext::_context = new Ilwis::IlwisContext();
-        Ilwis::IlwisContext::_context->init();
+        Ilwis::IlwisContext::_context->init(ilwisDir);
 
     }
     return Ilwis::IlwisContext::_context;
@@ -37,6 +33,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
 {
     //TODO relocate directories through configuration
     QDir localDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
     _cacheLocation = QUrl::fromLocalFile(localDir.absolutePath());
     QString datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
     localDir = QDir(datalocation);
@@ -44,7 +41,7 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
         localDir.mkpath(datalocation);
     }
     _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
-    QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
+    files << localDir.entryList(QStringList() << "*", QDir::Files);
     foreach(QString file, files)
         localDir.remove(file);
     _workingCatalog = new Catalog(); // empty catalog>
@@ -68,28 +65,21 @@ void IlwisContext::removeSystemLocation(const QUrl &)
     //TODO:
 }
 
-void IlwisContext::loadIlwisLocationFile(QFileInfo configFile){
-    if (configFile.exists()){
-        QSettings settings(configFile.filePath(), QSettings::IniFormat);
-        this->_ilwisDir = QFileInfo(settings.value("Paths/ilwisDir").toString());
-        if (!this->_ilwisDir.isDir()){
-            printf("Ilwis directory %s from config file not found\n",this->_ilwisDir.filePath().toStdString().c_str());
-            this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
-        }
-    }else{
-        this->_ilwisDir = QFileInfo( qApp->applicationDirPath());
-    }
-}
-
 QFileInfo IlwisContext::ilwisFolder() const {
     return this->_ilwisDir;
 }
 
-void IlwisContext::init()
+void IlwisContext::init(const QString &ilwisDir)
 {
-
-    QFileInfo inf(qApp->applicationDirPath() + "/ilwislocation.config");
-    loadIlwisLocationFile(inf)   ;
+    if (ilwisDir.length() > 0) {
+        this->_ilwisDir = QFileInfo(ilwisDir);
+        if (!this->_ilwisDir.isDir()) {
+            printf("User-supplied Ilwis directory '%s' not found\n",this->_ilwisDir.filePath().toStdString().c_str());
+            this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
+        } else
+            qApp->addLibraryPath(this->_ilwisDir.absolutePath() + "/plugins"); // also inform Qt where its "plugins" folder is installed, so that it doesn't use the hardcoded qt_plugpath inside Qt5Core.dll
+    } else
+        this->_ilwisDir = QFileInfo(qApp->applicationDirPath());
 
     QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
 
@@ -110,12 +100,15 @@ void IlwisContext::init()
             file.setFile(configfile);
         }
     }
+    _configuration.prepare(file.absoluteFilePath());
+
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
     mastercatalog()->addContainer(persistentInternalCatalog());
+    mastercatalog()->addContainer(QUrl("ilwis://operations"));
 
     _systemCatalog.prepare("ilwis://system");
 
-    _configuration.prepare(file.absoluteFilePath());
+
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
     if ( loc != "")
         _workingCatalog = ICatalog(loc);
@@ -136,7 +129,8 @@ const ICatalog &IlwisContext::systemCatalog() const
 
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
-    if ( !cat.isValid())
+    // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
+    if ( !cat.isValid() || cat->source().url().toString() == Catalog::DEFAULT_WORKSPACE)
         return;
 
     mastercatalog()->addContainer(cat->source().url());
@@ -158,9 +152,9 @@ quint64 IlwisContext::memoryLeft() const
 {
     return _memoryLeft;
 }
-quint64 IlwisContext::changeMemoryLeft(quint64 amount)
+quint64 IlwisContext::changeMemoryLeft(qint64 amount)
 {
-    if ( _memoryLeft + std::abs(amount) > 0) {
+    if ( (_memoryLeft + amount) > 0) {
         _memoryLeft += amount;
     }
     else

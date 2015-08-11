@@ -7,14 +7,10 @@ import LayerManager 1.0
 import "../../../controls" as Controls
 import "../../../Global.js" as Global
 
-Item {
+Rectangle {
     property var currentCoverage
-
-    onCurrentCoverageChanged: {
-        attributesList.model = currentCoverage.visualAttributes
-        if ( attributesList.model)
-            editorListColumn.currentVisualAttribute = attributesList.model[attributesList.currentIndex]
-    }
+    property var attributeListModel : currentCoverage ? currentCoverage.visualAttributes : null
+    property alias currentIndex: attributesList.currentIndex
 
     function iconSource(name) {
         if ( name === "")
@@ -23,6 +19,7 @@ Item {
          return iconP
 
      }
+    color : Global.alternatecolor3
 
     Rectangle {
         id : attributesLabel
@@ -39,18 +36,29 @@ Item {
 
     Rectangle {
         id : attributeListColumn
-        color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
         anchors.top: attributesLabel.bottom
         anchors.topMargin: 2
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 5
-        width: parent.width
+        width: parent.width - 8
+        radius : 4
+        color : "transparent"
+        x : 8
 
         ListView {
 
             id : attributesList
+            model : attributeListModel
+
+            onCurrentIndexChanged: {
+                currentCoverage.activeAttributeIndex = currentIndex;
+                editorListColumn.displayEditorModel = attributesList.model[currentIndex].propertyEditors
+                if ( editorListColumn.displayEditorModel.length > 0)
+                    editorColumn.currentEditor = editorListColumn.displayEditorModel[0]
+                else
+                   editorColumn.currentEditor = null
+            }
+
             Component {
                 id: attributeHighlight
 
@@ -59,12 +67,6 @@ Item {
                     x : 3
                     color: Global.selectedColor; radius: 2
                     y: (attributesList && attributesList.currentItem) ? attributesList.currentItem.y : 0
-                    Behavior on y {
-                        SpringAnimation {
-                            spring: 3
-                            damping: 0.2
-                        }
-                    }
                 }
             }
             anchors.fill: parent
@@ -94,8 +96,6 @@ Item {
                                     anchors.fill: parent
                                     onClicked: {
                                         attributesList.currentIndex = index
-                                        currentCoverage.activeAttributeIndex = index;
-                                        editorListColumn.currentVisualAttribute = attributesList.model[index]
                                     }
                                 }
                             }

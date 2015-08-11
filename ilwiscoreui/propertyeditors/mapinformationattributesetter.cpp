@@ -1,3 +1,8 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "datadefinition.h"
+#include "columndefinition.h"
+#include "table.h"
 #include "visualattributemodel.h"
 #include "mapinformationattributesetter.h"
 
@@ -12,14 +17,6 @@ MapInformationPropertySetter::MapInformationPropertySetter(QObject *parent) :
 MapInformationPropertySetter::~MapInformationPropertySetter()
 {
 
-}
-
-bool MapInformationPropertySetter::canUse(const Ilwis::IIlwisObject &obj, const Ilwis::ColumnDefinition& ) const
-{
-    if ( !obj.isValid())
-        return false;
-
-    return hasType(obj->ilwisType(), itCOVERAGE)    ;
 }
 
 bool MapInformationPropertySetter::canUse(const IIlwisObject& obj, const QString& name ) const
@@ -37,8 +34,19 @@ VisualAttributeEditor *MapInformationPropertySetter::create()
     return new MapInformationPropertySetter();
 }
 
-void MapInformationPropertySetter::prepare(CoverageLayerModel *parentLayer, const IIlwisObject &bj, const ColumnDefinition &datadef)
+bool MapInformationPropertySetter::showInfo() const
 {
+    if ( attribute()->layer())
+        return attribute()->layer()->showInfo();
+    return true;
+}
+
+void MapInformationPropertySetter::setShowInfo(bool yesno)
+{
+    if (!attribute()->layer())
+        return;
+
+    attribute()->layer()->showInfo(yesno);
 
 }
 

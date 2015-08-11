@@ -137,6 +137,14 @@ public:
      * \return this, with the modified values
      */
     PixelIterator& operator=(const PixelIterator& iter);
+    PixelIterator& operator=(const Pixel &pix){
+        _x = pix.x;
+        _y = pix.y;
+        _z = pix.z == iUNDEF ? 0 : pix.z;
+        _yChanged = _xChanged = _zChanged = true;
+        initPosition();
+        return *this;
+    }
 
     /*!
      * override of the operator=<br>
@@ -372,6 +380,9 @@ public:
      * \return true if the z has changed
      */
     bool zchanged() const;
+    quint32 x() const { return _x;}
+    quint32 y() const { return _y;}
+    quint32 z() const { return _z;}
 
     /*!
      * \brief Checks if this PixelIterator is at its endpoint
@@ -476,6 +487,10 @@ protected:
 
 
     bool move(int n) {
+        if ( n == 0){
+            _xChanged = _yChanged = _zChanged = false;
+            return true;
+        }
 
         bool ok = false;
         if (isAtEnd() && n >= 0) {
@@ -506,7 +521,7 @@ private:
         _xChanged = _yChanged = false;
         _currentBlock  = _z * _grid->blocksPerBand() + _y / _grid->maxLines();
         if (_selectionIndex < 0){
-            if ( _z > _endz){
+            if ( _z > _endz || _z < _box.min_corner().z){
                 return moveXY(delta);
             }
         }

@@ -6,6 +6,7 @@ import MasterCatalogModel 1.0
 import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
+import "../Global.js" as Global
 
 Rectangle {
     id : serviceConnectionArea
@@ -27,7 +28,7 @@ Rectangle {
     }
 
     anchors.fill: parent
-    color : background1
+    color : Global.alternatecolor1
     Item {
         id : protocol
         width : parent.width
@@ -49,7 +50,7 @@ Rectangle {
             anchors.left : sclabel2.right
             onCurrentIndexChanged: {
                 operationid = operations.serviceId(currentIndex)
-                formQML = formbuilder.index2Form(operationid)
+                formQML = formbuilder.index2Form(operationid, true)
             }
         }
     }

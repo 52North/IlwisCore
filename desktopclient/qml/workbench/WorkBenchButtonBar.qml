@@ -2,15 +2,17 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
-
+import MasterCatalogModel 1.0
+import TranquilizerHandler 1.0
+import UIContextModel 1.0
+import "../Global.js" as Global
 
 Rectangle {
     id : buttonB
     y : 0
     height : parent.height
     width : 80
-    color : "white"
-    border.width : 1
+    color : Global.alternatecolor2
     Layout.maximumWidth : 140
 
     //signal transitionInfoPane(string pagename)
@@ -57,6 +59,13 @@ Rectangle {
 
     }
     Action {
+        id : createClicked
+        onTriggered : {
+           transitionInfoPane("ObjectCreation.qml")
+        }
+
+    }
+    Action {
         id : workspaceClicked
         onTriggered : {
             transitionInfoPane("Workspaces.qml")
@@ -65,59 +74,32 @@ Rectangle {
     }
 
     Action {
-        id :maxButtons
-        onTriggered: {
-            buttonB.width = 55
+        id : prefClicked
+        onTriggered : {
+            mastercatalog.longAction()
         }
-    }
 
-    Action {
-        id :minButtons
-        onTriggered: {
-            buttonB.width = 0
-        }
     }
 
     Column {
         anchors.fill: parent
-        Rectangle {
-            height : 21
-            width : buttonB.width
-            color : background4
-            Row {
-                anchors.fill: parent
-                Button{
-                    id : full
-                    height : 20
-                    width :20
-                    action : maxButtons
-                    Image { anchors.centerIn : parent; source: "../images/max1.png" }
-                }
-                Button{
-                    id : close
-                    height : 20
-                    width :20
-                    action : minButtons
-                    Image { anchors.centerIn : parent; source: "../images/min1.png" }
-                }
-            }
-        }
 
         WorkBenchButton{
             id : nav
+            objectName : "workbench_navbutton_mainui"
             action: navClicked
             iconname: "navigatorCS1.png"
             label: qsTr("Navigator")
         }
 
         WorkBenchButton{
-            id : oper
+            id : workspace
             action: workspaceClicked
             iconname : "workspaceCS1.png"
             label: qsTr("Workspace")
         }
         WorkBenchButton{
-            id : workspace
+            id : oper
             action: operClicked
             iconname : "operationCS1.png"
             label: qsTr("Operations")
@@ -128,12 +110,19 @@ Rectangle {
             iconname : "modellerCS1.png"
             label: qsTr("Modeller")
         }
+
         WorkBenchButton{
             id : prop
             action : propertiesClicked
             iconname : "propertiesCS1.png"
             label: qsTr("Metadata")
 
+        }
+        WorkBenchButton{
+            id : create
+            action: createClicked
+            iconname : "createCS.png"
+            label: qsTr("Create")
         }
         WorkBenchButton{
             id : errors
@@ -143,6 +132,19 @@ Rectangle {
         }
         WorkBenchButton{
             id : progress
+            ProgressBar {
+                anchors.top: progress.top
+                anchors.topMargin: 5
+                width : parent.width - 10
+                x : 5
+                height : 12
+                maximumValue: 100
+                minimumValue: 0
+                value : tranquilizerHandler.aggregateValue
+                opacity: value > 0 ? 0.35 : 0
+
+            }
+
             action : progressClicked
             iconname : "progressCS1.png"
             label: qsTr("Progress")
@@ -150,10 +152,32 @@ Rectangle {
         }
         WorkBenchButton{
             id : preferences
-            //action : progressClicked
+            action : prefClicked
             iconname : "preferencesCS1.png"
             label: qsTr("Preferences")
 
         }
     }
+    states: [
+        State { name: "visible"
+
+            PropertyChanges {
+                target: buttonB
+                width : 80
+            }
+        },
+        State {
+            name : "invisible"
+            PropertyChanges {
+                target: buttonB
+                width : 0
+            }
+        }
+
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
+        }
+    ]
 }

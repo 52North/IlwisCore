@@ -19,7 +19,7 @@ public:
     bool prepare(PreparationType prepType, const IOOptions& options);
 
     void setAttribute(const QString& attrName, const QVariant& attrib);
-    bool drawerAttribute(const QString drawername, const QString& attrName, const QVariant& attrib);
+    bool drawerAttribute(const QString &drawername, const QString& attrName, const QVariant& attrib);
     QVariant attribute(const QString &attrName) const;
     DrawerInterface::DrawerType drawerType() const;
     quint32 defaultOrder() const;
@@ -37,6 +37,8 @@ private:
     std::vector<VertexColor> _colors;
     QMatrix4x4 _view,_projection, _model, _mvp;
     bool _preserveAspectRatio = true;
+
+    void setVertices(float x1, float y1, float x2, float y2);
 };
 }
 }

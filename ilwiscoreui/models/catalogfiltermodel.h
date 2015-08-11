@@ -21,7 +21,7 @@ class ILWISCOREUISHARED_EXPORT CatalogFilterModel : public QObject
 
 public:
     explicit CatalogFilterModel(QObject *parent = 0);
-    explicit CatalogFilterModel(const QString &query, const QString &name, const QString &icon, bool state=true);
+    explicit CatalogFilterModel(QObject *parent, const QString &query, const QString &name, const QString &icon, bool state=true);
 
     bool selectionState() const;
     void setSelectionState(bool yesno);

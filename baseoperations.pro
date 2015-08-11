@@ -43,7 +43,10 @@ HEADERS += \
     baseoperations/math/binarymathtable.h \
     baseoperations/data/setvaluerange.h \
     baseoperations/geometry/spatialrelation.h \
-    baseoperations/util/workingcatalog.h
+    baseoperations/util/workingcatalog.h \
+    baseoperations/math/unarymathtable.h \
+    baseoperations/math/unarymathrasterandnumber.h \
+    baseoperations/data/convertcolumndomain.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -72,7 +75,10 @@ SOURCES += \
     baseoperations/math/binarymathtable.cpp \
     baseoperations/data/setvaluerange.cpp \
     baseoperations/geometry/spatialrelation.cpp \
-    baseoperations/util/workingcatalog.cpp
+    baseoperations/util/workingcatalog.cpp \
+    baseoperations/math/unarymathtable.cpp \
+    baseoperations/math/unarymathrasterandnumber.cpp \
+    baseoperations/data/convertcolumndomain.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

@@ -14,7 +14,8 @@ public:
     MathHelper();
     static bool findOblique(int iPoints, const std::vector<Coordinate>& independent, const std::vector<Coordinate>& dependent, std::vector<Coefficient>& coef, bool useCols);
     static bool findPolynom(int iTerms, int iPoints, const std::vector<Coordinate>& independent, const std::vector<Coordinate>& dependent, std::vector<Coefficient>& coef);
-    static NumericRange roundRange(double rmin, double rmax, double step);
+    static NumericRange roundRange(double rmin, double rmax);
+    static double round(double r);
 };
 }
 #endif // MATHHELPER_H

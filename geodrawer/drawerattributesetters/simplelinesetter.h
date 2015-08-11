@@ -20,7 +20,7 @@ public:
                                  QVector<QVector3D>& normals) const;
 
     void setColorAttributes(const VisualAttribute& attr,
-                            const QVariant& value,
+                            const QVariant& value,const QColor& defaultColor,
                             const FeatureDrawing& drawing,
                             std::vector<VertexColor>& colors) const;
 

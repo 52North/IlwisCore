@@ -46,7 +46,7 @@ FeatureDrawing SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature
         }
 
         drawing._indices.push_back(VertexIndex(vertices.size(),5,GL_LINE_STRIP,feature->featureid()));
-        double z = coord.z == rUNDEF ? 0 : coord.z;
+        double z = coord.z == rUNDEF || std::isnan(coord.z)? 0 : coord.z;
         vertices.push_back(QVector3D(coord.x + size, coord.y + size, z));
         vertices.push_back(QVector3D(coord.x - size, coord.y + size, z));
         vertices.push_back(QVector3D(coord.x - size, coord.y - size, z));
@@ -58,7 +58,7 @@ FeatureDrawing SimplePointSetter::setSpatialAttributes(const SPFeatureI &feature
 
 }
 
-void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
+void SimplePointSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const QColor &defaultColor, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
 {
     for(int j =0; j < drawing._indices.size(); ++j){
         if ( value.isValid() && value.toInt() != iUNDEF) {

@@ -117,9 +117,9 @@ Ilwis::OperationImplementation::State SelectionTable::prepare(ExecutionContext *
 quint64 SelectionTable::createMetadata()
 {
     QString url = QString("ilwis://operations/selection");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","selection");
+    resource.addProperty("longname","Column selection");
     resource.addProperty("syntax","selection(table,selection-definition)");
     resource.addProperty("description",TR("the operation select one or more column and puts them in smaller table"));
     resource.addProperty("inparameters","2");

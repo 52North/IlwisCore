@@ -23,6 +23,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Feature Coverage");
     case  itNUMERICDOMAIN:
         return TR("Value Domain");
+    case itTEXTDOMAIN:
+        return TR("Text Domain");
     case  itITEMDOMAIN:
         return TR("Item Domain");
     case  itCOLORDOMAIN:
@@ -45,6 +47,10 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Geodetic Datum");
     case  itCATALOG:
         return TR("Catalog");
+    case  itWORKFLOW:
+        return TR("Workflow Operation");
+    case  itSINGLEOPERATION:
+        return TR("Single Operation");
     case  itOPERATIONMETADATA:
         return TR("OperationMetaData");
     case  itREPRESENTATION:
@@ -117,8 +123,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("CatalogView");
     case itCOLLECTION:
         return TR("Collection");
-    case itBUFFER:
-        return TR("Buffer");
+    case itARRAY:
+        return TR("Array");
     case itCOVERAGE:
         return TR("Coverage");
     case itFEATURE:
@@ -165,6 +171,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("itemdomain");
     case  itCOLORDOMAIN:
         return TR("colordomain");
+    case  itTEXTDOMAIN:
+        return TR("textdomain");
     case  itCOORDSYSTEM:
         return TR("coordinatesystem");
     case  itCONVENTIONALCOORDSYSTEM:
@@ -183,6 +191,10 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("geodeticdatum");
     case  itCATALOG:
         return TR("catalog");
+    case  itWORKFLOW:
+        return TR("workflow");
+    case  itSINGLEOPERATION:
+        return TR("singleoperation");
     case  itOPERATIONMETADATA:
         return TR("operationmetatadata");
     case itREPRESENTATION:
@@ -254,8 +266,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return TR("catalogview");
     case itCOLLECTION:
         return TR("collection");
-    case itBUFFER:
-        return TR("buffer");
+    case itARRAY:
+        return TR("array");
     case itCOVERAGE:
         return TR("coverage");
     case itFEATURE:

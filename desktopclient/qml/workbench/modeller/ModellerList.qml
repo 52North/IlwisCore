@@ -42,7 +42,7 @@ Rectangle {
                 }
                 Text {
                     id : operationSyntax
-                    text : syntax()
+                    text : syntax
                     anchors.top : operationName.bottom
                     width : parent.width
                     height : 12
@@ -86,7 +86,7 @@ Rectangle {
                             ParentChange { target: operationNameDrag; parent: root }
                             AnchorChanges { target: operationNameDrag; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                         }
-                    }', mouseAreaOpsList, "dynamicImage");
+                    }', mouseAreaOpsList, "dynamicOperationLabel");
 
                 }
 

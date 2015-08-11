@@ -7,6 +7,7 @@ import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
 import ".." as Base
+import "../Global.js" as Global
 
 Rectangle {
     id : container
@@ -14,15 +15,16 @@ Rectangle {
     property var currentAppForm : null
     property var operationid
 
-    color : background4
+    color : Global.alternatecolor5
     clip : true
     state : "invisible"
     opacity : 0
 
     signal unloadcontent(string content)
 
-    function newForm(metaid, title){
-        var form= formbuilder.index2Form(metaid)
+    function newForm(metaid, title, url){
+        operationid = metaid
+        var form= formbuilder.index2Form(metaid, true)
         appFrame.formQML = form
         appFrame.formTitle = title
         appFrame.opacity = 1
@@ -41,7 +43,7 @@ Rectangle {
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
-        color : background2
+        color : Global.alternatecolor1
 
         Text {
             id : searchTextLabel
@@ -115,27 +117,27 @@ Rectangle {
                 }
             ]
         }
-        TabView{
+        TabView {
+
             id : operationTabs
             width : parent.width
+
             Tab {
                 title : qsTr("Operation List")
-                signal makeForm(string objectid, string name)
-                OperationList{
+                OperationList {
+                    id : operationList
                     Connections {
                         target : operationList
                         onMakeForm : {
                             newForm(objectid, name)
                         }
                     }
-                    id : operationList
                 }
 
 
             }
             Tab {
                 title : qsTr("Operation Categories")
-                 signal makeForm(string objectid, string name)
                 OperationCatagoriesList{
                     id : operationCatagories
                     Connections {

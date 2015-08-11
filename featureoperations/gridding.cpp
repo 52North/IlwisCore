@@ -73,7 +73,7 @@ OperationImplementation *Gridding::create(quint64 metaid, const Ilwis::Operation
 quint64 Gridding::createMetadata()
 {
     QString url = QString("ilwis://operations/gridding");
-    Resource resource(QUrl(url), itOPERATIONMETADATA);
+    Resource resource(QUrl(url), itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","gridding");
     resource.addProperty("syntax","gridding(coordinatesyste,top-coordinate,x-cell-size, y-cell-size, horizontal-cells, vertical-cells)");

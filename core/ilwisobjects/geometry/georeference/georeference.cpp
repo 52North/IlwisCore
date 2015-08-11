@@ -30,16 +30,13 @@ GeoReference::~GeoReference()
 
 }
 
-GeoReference  *GeoReference::create(const QString& type,const Resource& resource) {
-    GeoReference *georef = new GeoReference(resource);
+void GeoReference::create(const QString& type) {
     GeoRefImplementationFactory *grfFac = kernel()->factory<GeoRefImplementationFactory>("ilwis::georefimplementationfactory");
-    GeoRefImplementation *impl = grfFac->create(type);
-    if ( !impl) {
+    GeoRefImplementation *implementation = grfFac->create(type);
+    if ( !implementation) {
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,type);
-        return 0;
     }
-    georef->impl(impl);
-    return georef;
+    impl(implementation);
 }
 
 Coordinate GeoReference::pixel2Coord(const Pixeld &pixel) const

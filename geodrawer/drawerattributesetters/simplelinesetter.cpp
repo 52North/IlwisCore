@@ -50,21 +50,24 @@ FeatureDrawing SimpleLineSetter::setSpatialAttributes(const Ilwis::SPFeatureI &f
             if ( coordinateConversionNeeded()){
                 crd = _targetSystem->coord2coord(_sourceSystem, crd);
             }
-            vertices[oldend + i] = QVector3D(crd.x, crd.y, crd.z);
+            vertices[oldend + i] = QVector3D(crd.x, crd.y, std::isnan(crd.z) || crd.z == rUNDEF? 0 :  crd.z);
         }
         delete coords;
     }
     return drawing;
 }
 
-void SimpleLineSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
+void SimpleLineSetter::setColorAttributes(const VisualAttribute &attr, const QVariant &value, const QColor &defaultColor, const FeatureDrawing& drawing, std::vector<VertexColor> &colors) const
 {
     for(int j =0; j < drawing._indices.size(); ++j){
         if ( value.isValid() && value.toInt() != iUNDEF) {
             const auto& indices = drawing[j];
             for(int i =indices._start; i < indices._start + indices._count; ++i){
                 QColor clr = attr.value2color(value);
-                colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
+                if ( defaultColor.isValid()){
+                   colors.push_back(VertexColor(defaultColor.redF(), defaultColor.greenF(), defaultColor.blueF(), 1.0));
+                }else
+                    colors.push_back(VertexColor(clr.redF(), clr.greenF(), clr.blueF(), 1.0));
             }
         }
     }

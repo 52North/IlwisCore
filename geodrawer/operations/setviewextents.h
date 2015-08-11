@@ -21,6 +21,7 @@ public:
 private:
    NEW_OPERATION(SetViewExtent);
    Envelope _newExtents;
+   bool _entiremap = false;
 };
 }
 }

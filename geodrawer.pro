@@ -56,10 +56,22 @@ SOURCES += \
     geodrawer/drawerattributesetters/basespatialattributesetter.cpp \
     geodrawer/drawerattributesetters/simplepolygonsetter.cpp \
     geodrawer/drawerattributesetters/simplepointsetter.cpp \
-    geodrawer/operations/setlayertransparency.cpp \
     geodrawer/operations/setlayervisibility.cpp \
     geodrawer/rasterlayerdrawer.cpp \
-    geodrawer/texturemanager.cpp
+    geodrawer/operations/showpolygonboundaries.cpp \
+    geodrawer/operations/showpolygonareas.cpp \
+    geodrawer/operations/setpolygonboundarycolor.cpp \
+    geodrawer/operations/setlinecolor.cpp \
+    geodrawer/operations/setpolygonboundarywidth.cpp \
+    geodrawer/rastervalueimage.cpp \
+    geodrawer/rastercolorimage.cpp \
+    geodrawer/operations/layermanagement.cpp \
+    geodrawer/operations/representationattributefillcolor.cpp \
+    geodrawer/operations/setrepresentation.cpp \
+    geodrawer/operations/setbackgroundcolor.cpp \
+    geodrawer/griddrawer.cpp \
+    geodrawer/operations/setgridproperties.cpp \
+    geodrawer/operations/setlayeropacity.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -93,10 +105,22 @@ HEADERS += \
     geodrawer/drawerattributesetters/basespatialattributesetter.h \
     geodrawer/drawerattributesetters/simplepolygonsetter.h \
     geodrawer/drawerattributesetters/simplepointsetter.h \
-    geodrawer/operations/setlayertransparency.h \
     geodrawer/operations/setlayervisibility.h \
     geodrawer/rasterlayerdrawer.h \
-    geodrawer/texturemanager.h
+    geodrawer/operations/showpolygonboundaries.h \
+    geodrawer/operations/showpolygonareas.h \
+    geodrawer/operations/setpolygonboundarycolor.h \
+    geodrawer/operations/setlinecolor.h \
+    geodrawer/operations/setpolygonboundarywidth.h \
+    geodrawer/rastervalueimage.h \
+    geodrawer/rastercolorimage.h \
+    geodrawer/operations/layermanagement.h \
+    geodrawer/operations/representationattributefillcolor.h \
+    geodrawer/operations/setrepresentation.h \
+    geodrawer/operations/setbackgroundcolor.h \
+    geodrawer/griddrawer.h \
+    geodrawer/operations/setgridproperties.h \
+    geodrawer/operations/setlayeropacity.h
 
 
 OTHER_FILES = geodrawer/qmldir

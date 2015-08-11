@@ -27,6 +27,8 @@ class IlwisType : public QObject{
     Q_PROPERTY( quint64 itGeoref READ georef CONSTANT)
     Q_PROPERTY( quint64 itEnvelope READ envelope CONSTANT)
     Q_PROPERTY( quint64 itOperationMetadata READ operationmetadata CONSTANT)
+    Q_PROPERTY( quint64 itSingleOperation READ singleoperation CONSTANT)
+    Q_PROPERTY( quint64 itWorkflow READ workflow CONSTANT)
     Q_PROPERTY( quint64 itGridSize READ gridsize CONSTANT)
     Q_PROPERTY( quint64 itCatalog READ catalog CONSTANT)
     Q_PROPERTY( quint64 itGeodeticDatum READ geodeticdatum CONSTANT)
@@ -75,6 +77,8 @@ public:
     quint64 georef() const;
     quint64 envelope() const;
     quint64 operationmetadata() const;
+    quint64 singleoperation() const;
+    quint64 workflow() const;
     quint64 gridsize() const;
     quint64 catalog() const;
     quint64 geodeticdatum() const;

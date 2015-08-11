@@ -20,21 +20,21 @@ Item {
         Action {
             id :clear
             onTriggered: {
-                drawing.clearModeller();
+                canvas.clearModeller();
             }
         }
 
         Action {
             id :newDatasource
             onTriggered: {
-                drawing.addType(Qt.createComponent("DataSourceObject.qml").createObject())
+                canvas.addType(Qt.createComponent("DataSourceObject.qml").createObject())
             }
         }
 
         Action {
             id :newOperation
             onTriggered: {
-                 drawing.addType(Qt.createComponent("OperationObject.qml").createObject())
+                 canvas.addType(Qt.createComponent("OperationObject.qml").createObject())
             }
         }
 
@@ -42,7 +42,7 @@ Item {
         Action {
             id :newConnection
             onTriggered: {
-                 drawing.addType(Qt.createComponent("ConnectorObject.qml").createObject())
+                 canvas.addType(Qt.createComponent("ConnectorObject.qml").createObject())
             }
         }
 
@@ -54,11 +54,10 @@ Item {
         }
 
         Action {
-            id :close
+            id :run
             onTriggered: {
-                drawing.clearModeller();
-                dataPanel.removeModellerPanel(parent.title);
-            }
+                canvas.clearModeller();
+                dataPanel.removeModellerPanel(parent.title);            }
         }
         RowLayout{
             spacing: 1
@@ -124,10 +123,10 @@ Item {
             }
 
             ToolButton{
-                id : closeButton
+                id : runButton
                 height:  toolbar.height
-                text: qsTr("Close")
-                action : close
+                text: qsTr("Run")
+                action : run
             }
 
         }
@@ -142,8 +141,8 @@ Item {
         property int paintX
         property int paintY
 
-        Drawing {
-            id: drawing
+        Canvas {
+            id: canvas
             anchors.fill: parent
 
         }

@@ -7,6 +7,8 @@ namespace Ilwis {
 
 
 class Coverage;
+class ColumnDefinition;
+
 typedef IlwisData<Coverage> ICoverage;
 
 namespace Geodrawer{
@@ -22,24 +24,26 @@ public:
     virtual ICoverage coverage() const;
     Envelope envelope() const;
     void envelope(const Envelope& env);
-    VisualAttribute visualAttribute(const QString& attrName) const;
-    void visualAttribute(const QString &attrName, const VisualAttribute& properties );
+    VisualAttribute visualProperty(const QString& attrName) const;
+    void visualProperty(const QString &attrName, const VisualAttribute& properties );
     virtual void coverage(const ICoverage& cov);
 
-    void setAttribute(const QString &attrName, const QVariant &attrib);
+    void setAttribute(const QString &key, const QVariant &attrib);
+    VisualAttribute createVisualProperty(const Ilwis::ColumnDefinition &coldef, int index, const IRepresentation &rpr = IRepresentation());
     QVariant attribute(const QString &key) const;
     std::vector<QVariant> attributes(const QString &keys) const;
 
-
 protected:
     bool prepare(PreparationType prepType, const IOOptions& options);
-    bool isVisualAttribute(const QString& attName) const;
+    bool isVisualProperty(const QString& attName) const;
 
     std::map<QString, VisualAttribute> _visualProperties;
 private:
 
     ICoverage _coverage;
     Envelope _envelope;
+    VisualAttribute vPropertyRasterCoverage(const QString &attrName) const;
+    VisualAttribute vPropertyFeatureCoverage(const QString &attrName) const;
 };
 }
 }

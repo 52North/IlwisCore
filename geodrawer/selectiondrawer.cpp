@@ -12,13 +12,16 @@ using namespace Geodrawer;
 
 SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) : SimpleDrawer("SelectionDrawer", parentDrawer,rootdrawer, options)
 {
+    _vertexShader = "featurevertexshader_nvdia.glsl";
+    _fragmentShader = "featurefragmentshader_nvdia.glsl";
+
     QColor clr;
     _colors.resize(13);
     if ( options.contains("areacolor")){
         clr = options["areacolor"].value<QColor>();
     }else {
-        clr = QColor(0,0,128);
-        clr.setAlphaF(0.05);
+        clr = QColor(80,80,0);
+        clr.setAlphaF(0.15);
     }
     _colors[9] = _colors[10] = _colors[11] = _colors[12] = clr;
     clr.setAlphaF(0.5);
@@ -27,7 +30,7 @@ SelectionDrawer::SelectionDrawer(DrawerInterface *parentDrawer, RootDrawer *root
     if ( options.contains("bordercolor")){
         clr = options["bordercolor"].value<QColor>();
     }else {
-        clr = QColor(0,0,255);
+        clr = QColor(0,0,0);
         clr.setAlphaF(1);
     }
     _colors[0] = _colors[1] = _colors[2] = _colors[3] = _colors[4] = clr;
@@ -72,13 +75,17 @@ bool SelectionDrawer::draw(const IOOptions &)
     glDrawArrays(GL_LINE_STRIP,_indices[0]._start,_indices[0]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[1]._start,_indices[1]._count);
     glDrawArrays(GL_LINE_STRIP,_indices[2]._start,_indices[2]._count);
+    glEnable(GL_COLOR_LOGIC_OP);
+    glLogicOp(GL_XOR);
     glDrawArrays(GL_TRIANGLE_FAN,_indices[3]._start,_indices[3]._count);
+    glDisable(GL_COLOR_LOGIC_OP);
 
     _shaders.disableAttributeArray(_vboPosition);
     _shaders.disableAttributeArray(_vboNormal);
     _shaders.disableAttributeArray(_vboColor);
 
     _shaders.release();
+
 
      return true;
 }
@@ -87,6 +94,13 @@ bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const I
 {
     if (!SimpleDrawer::prepare(prepType, options)){
         return false;
+    }
+    if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _vboColor = _shaders.attributeLocation("vertexColor");
+        _scaleCenter = _shaders.uniformLocation("scalecenter");
+        _scaleFactor = _shaders.uniformLocation("scalefactor");
+
+        _prepared |= DrawerInterface::ptSHADERS;
     }
 
     if ( hasType(prepType, DrawerInterface::ptMVP) && !isPrepared(DrawerInterface::ptMVP) ){
@@ -108,10 +122,60 @@ bool SelectionDrawer::prepare(DrawerInterface::PreparationType prepType, const I
     return true;
 }
 
+void SelectionDrawer::setVertices(float x1, float y1, float x2, float y2)
+{
+    _vertices[0] = {x1,y1,0};
+    _vertices[1] = {x2,y1,0};
+    _vertices[2] = {x2,y2,0};
+    _vertices[3] = {x1,y2,0};
+    _vertices[4] = {x1,y1,0};
+    _vertices[9] = {x1,y1,0};
+    _vertices[10] = {x2,y1,0};
+    _vertices[11] = {x2,y2,0};
+    _vertices[12] = {x1,y2,0};
+}
+
 void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attrib)
 {
     if ( attrName == "preserveaspectration"){
         _preserveAspectRatio = attrib.toBool();
+    }
+    if ( attrName == "boundingbox"){
+        QStringList parts = attrib.toString().split(" ");
+        bool ok1, ok2, ok3, ok4;
+        float x1,x2,y1,y2;
+        if ( parts.size() == 4){
+            x1 = parts[0].toFloat(&ok1);
+            y1 = parts[1].toFloat(&ok2);
+            x2 = parts[2].toFloat(&ok3);
+            y2 = parts[3].toFloat(&ok4);
+        }else if ( parts.size() == 6){
+            x1 = parts[0].toFloat(&ok1);
+            y1 = parts[1].toFloat(&ok2);
+            x2 = parts[3].toFloat(&ok3);
+            y2 = parts[4].toFloat(&ok4);
+        }
+        if ( ok1 && ok2 && ok3 && ok4){
+            setVertices(y1, x1, y2, x2);
+        }
+    }
+    if ( attrName == "envelope"){
+        QStringList parts = attrib.toString().split(" ");
+        Coordinate crd1, crd2;
+        bool ok1 = false, ok2=false, ok3 = false, ok4 = false;
+        if ( parts.size() == 4){
+            crd1 = Coordinate(parts[0].toFloat(&ok1), parts[1].toFloat(&ok2));
+            crd2 = Coordinate(parts[2].toFloat(&ok3), parts[3].toFloat(&ok4));
+        }else   if ( parts.size() == 6){
+            crd1 = Coordinate(parts[0].toFloat(&ok1), parts[1].toFloat(&ok2));
+            crd2 = Coordinate(parts[3].toFloat(&ok3), parts[4].toFloat(&ok4));
+        }
+        if (ok1 && ok2 && ok3 && ok4){
+            Size<> sz = rootDrawer()->pixelAreaSize();
+            Pixel pix1 = rootDrawer()->coord2Pixel(crd1);
+            Pixel pix2 = rootDrawer()->coord2Pixel(crd2);
+            setVertices(pix1.x,sz.ysize() -pix1.y, pix2.x, sz.ysize() - pix2.y);
+        }
     }
 
     if ( attrName == "currentx"){
@@ -175,9 +239,9 @@ void SelectionDrawer::setAttribute(const QString &attrName, const QVariant &attr
     unprepare(ptGEOMETRY);
 }
 
-bool SelectionDrawer::drawerAttribute(const QString drawercode, const QString &attrName, const QVariant &attrib)
+bool SelectionDrawer::drawerAttribute(const QString& drawercode, const QString &attrName, const QVariant &attrib)
 {
-    if (drawercode != code())
+    if (drawercode != code() || name() == drawercode)
         return false;
     setAttribute(attrName, attrib);
 
@@ -216,14 +280,6 @@ Envelope SelectionDrawer::envelope() const
     QVector3D v2( _vertices[2].x(), _vertices[2].y(), 0);
     auto v1normalized = _mvp * v1;
     auto v2normalized = _mvp * v2;
-//    Envelope zoomRect = rootDrawer()->zoomEnvelope();
-//    double w = zoomRect.xlength() - 1;
-//    double h = zoomRect.ylength() - 1;
-//    Coordinate center = zoomRect.center();
-//    double x1 = center.x + w * v1normalized.x() / 2.0;
-//    double x2 = center.x + w * v2normalized.x() / 2.0;
-//    double y1 = center.y + h * v1normalized.y() / 2.0;
-//    double y2 = center.y + h * v2normalized.y() / 2.0;
     const auto& globalMvp = rootDrawer()->mvpMatrix();
     double a11 = globalMvp.row(0).x();
     double a14 = globalMvp.row(0).w();
@@ -239,7 +295,7 @@ Envelope SelectionDrawer::envelope() const
 void SelectionDrawer::cleanUp()
 {
     SimpleDrawer::cleanUp();
-    rootDrawer()->applyEnvelopeZoom(envelope());
+   // rootDrawer()->applyEnvelopeZoom(envelope());
 }
 
 

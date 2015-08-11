@@ -19,6 +19,7 @@ Rectangle {
     color : Global.mainbackgroundcolor
     border.width: 1
     border.color: Global.edgecolor
+    radius : 5
     y : 3
     x : 0
     opacity : width > 4 ? 1 : 0
@@ -81,7 +82,8 @@ Rectangle {
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
             folderModel.folder = "file:///"+ drivePath
-            mainSplit.changeCatalog(folderModel.foldert)
+            var filter = "resource='" + folderModel.folder + "'"
+            mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
         }
     }
     Rectangle {
@@ -91,7 +93,6 @@ Rectangle {
         anchors.top : drivelist.bottom
         anchors.topMargin: 1
         color : Global.mainbackgroundcolor
-
         ComboBox {
             id : pathText
             width : parent.width - 26
@@ -112,7 +113,8 @@ Rectangle {
                 var path = pathModel.get(currentIndex)
                 if ( path !== null && typeof path != 'undefined'){
                     folderModel.folder = "file:///" + path.folderid
-                    mainSplit.changeCatalog(folderModel.folder)
+                    var filter = "resource='" + folderModel.folder + "'"
+                    mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
                 }
             }
         }
@@ -131,7 +133,8 @@ Rectangle {
             onTriggered :{
                 currentFolder = "file:///"+ pathText.editText
                 folderModel.folder = currentFolder
-                mainSplit.changeCatalog(folderModel.folder)
+                var filter = "resource='" + folderModel.folder + "'"
+                mainSplit.changeCatalog(filter,"catalog", currentFolder)
             }
         }
 
@@ -144,6 +147,7 @@ Rectangle {
         anchors.bottomMargin: 3
         clip : true
         x: 2
+          radius : 5
         ListView {
             id : fileFolders
             anchors.fill: parent
@@ -178,7 +182,8 @@ Rectangle {
                         path = path2pathView(path)
                         currentFolder = "file:///"+ path;
                         folderModel.folder = currentFolder;
-                        mainSplit.changeCatalog(folderModel.folder)
+                        var filter = "container='" + folderModel.folder + "'"
+                        mainSplit.changeCatalog(filter,"catalog", currentFolder)
                     }
 
                 }

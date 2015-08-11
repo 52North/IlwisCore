@@ -70,8 +70,6 @@ std::multimap<QString, DataFormat> DataFormat::getSelectedBy(FormatProperties pr
                 criterium = db.value("extension").toString(); break;
             case fpCONNECTOR:
                 criterium = db.value("connector").toString(); break;
-//            case fpCONTAINER:
-//                criterium = db.value("container").toString(); break;
             default:
                 ERROR2(ERR_OPERATION_NOTSUPPORTED2,"Property", "format selection");
                 return std::multimap<QString, DataFormat>();
@@ -156,6 +154,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
             QJsonObject obj = doc.object();
             QJsonValue formats = obj.value("Formats");
             if ( formats.isArray()){
+                kernel()->database().exec("BEGIN TRANSACTION");
                 QJsonArray arrFormats = formats.toArray();
                 for(auto iter = arrFormats.begin(); iter != arrFormats.end(); ++iter) {
                     auto jsonValue  = *iter;
@@ -187,6 +186,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                     }
 
                 }
+                kernel()->database().exec("COMMIT TRANSACTION");
                 return true;
             }
         }

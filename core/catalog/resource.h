@@ -135,6 +135,11 @@ public:
      */
     void addProperty(const QString& key, const QVariant& value );
 
+    /**
+     * Removes a property and its value from this resource.
+     * @param key the property key.
+     */
+    void removeProperty(const QString& key);
 
     /**
      * Query for the url of this Resource, the url points to the file used to created this Resource
@@ -182,7 +187,7 @@ public:
      * @param level the amount of levels above the file
      * @return the url of the container specified
      */
-    QUrl container(int level=0) const;
+    QUrl container(bool asRaw=false) const;
 
     /**
      * adds a container to this resource, defines the container this resource is in inside ilwis
@@ -190,7 +195,7 @@ public:
      * @param url The container that has to be set
      * @param level The level of the new container
      */
-    void addContainer(const QUrl &url, int level=0);
+    void addContainer(const QUrl &url, bool asRaw=false);
 
     /**
      * Query for the size of this Resource
@@ -311,7 +316,8 @@ protected:
     QUrl _normalizedUrl;
     QUrl _rawUrl;
     QUrlQuery _urlQuery;
-    std::vector<QUrl> _container;
+    QUrl _container;
+    QUrl _rawContainer;
     quint64 _size;
     QString _dimensions;
     IlwisTypes _ilwtype;

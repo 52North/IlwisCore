@@ -29,15 +29,18 @@ public:
     void addSpatialDrawer(DrawerInterface *newdrawer, bool overrule);
     void addEnvelope(const ICoordinateSystem& csSource, const Envelope& env, bool overrule);
 
-    //Envelope viewEnvelope() const;
+    Envelope viewEnvelope() const;
     Envelope zoomEnvelope() const;
+    Envelope coverageEnvelope() const;
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
     Size<> pixelAreaSize() const;
+    Size<> coverageAreaSize() const;
     const QMatrix4x4& mvpMatrix() const;
     const ICoordinateSystem& coordinateSystem() const;
     void coordinateSystem(const ICoordinateSystem& csy);
+    const IGeoReference& screenGrf() const;
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
@@ -52,12 +55,15 @@ public:
     DrawerInterface::DrawerType drawerType() const;
 
     QVariant attribute(const QString &attrNme) const;
+    void setAttribute(const QString &key, const QVariant &attribValue);
 
     void redraw();
 
     Ilwis::Coordinate normalizedCoord(const Coordinate &crd) const;
     Envelope normalizedEnveope(const Envelope &env) const;
     Ilwis::Coordinate pixel2Coord(const Ilwis::Pixel &pix);
+    Ilwis::Pixel coord2Pixel(const Ilwis::Coordinate &crd);
+
 public slots:
 
 private:
@@ -65,12 +71,14 @@ private:
     ICoordinateSystem _coordinateSystem;
     Envelope _zoomRect; // extent of the portion of the map now visible in the visualization
     Envelope _coverageRect; // extent of coverage without any additional area
+    Envelope _viewEnvelope; // original zoomrect; calculated only once and gives the size of the entiremap view
     Size<> _pixelAreaSize; // size of the area in the viewRect in pixels
     double _aspectRatioCoverage = 0; //ration between width/height of the coverage. determines how sides of a map will size in reaction to size changes
     double _aspectRatioView = 0;
     Coordinate _viewPoint;
     Coordinate _eyePoint;
     IGeoReference _screenGrf;
+    QColor _backgroundColor;
     double _zoomScale=1;
     bool _is3D = false;
     const QQuickFramebufferObject *_frameBufferObject;

@@ -6,6 +6,7 @@
 #include "operationExpression.h"
 #include "connectorinterface.h"
 #include "commandhandler.h"
+#include "ilwiscontext.h"
 #include "operation.h"
 
 using namespace Ilwis;
@@ -24,7 +25,7 @@ const IOperationMetaData &OperationImplementation::metadata() const
     return _metadata;
 }
 
-Tranquilizer &OperationImplementation::trq()
+UPTranquilizer &OperationImplementation::trq()
 {
     return _tranquilizer;
 }
@@ -36,7 +37,10 @@ OperationExpression OperationImplementation::expression() const
 
 void OperationImplementation::initialize(quint64 totalCount)
 {
-    _tranquilizer.prepare(_metadata->name(), _metadata->description(), totalCount);
+    if (!_tranquilizer){
+        _tranquilizer.reset(Tranquilizer::create(context()->runMode()));
+    }
+    _tranquilizer->prepare(_metadata->name(), _metadata->description(), totalCount);
     kernel()->issues()->log(_expression.toString(), IssueObject::itMessage);
 }
 

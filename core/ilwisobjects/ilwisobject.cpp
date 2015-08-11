@@ -61,15 +61,22 @@ IlwisObject *IlwisObject::create(const Resource& resource, const IOOptions &opti
     return 0;
 }
 
-void IlwisObject::connectTo(const QUrl& url, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
-    Locker<> lock(_mutex);
-    if (!url.isValid()){
-        ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
-        throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
-    }
+void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QString& fnamespace, ConnectorMode cmode, const IOOptions& options) {
 
+    Locker<> lock(_mutex);
     if ( isReadOnly())
         return throw ErrorObject(TR(QString("format %1 or data object is readonly").arg(format)));
+
+    QUrl url(outurl);
+    if (!url.isValid()){
+        url = source(cmode).url(true);
+        if ( !url.isValid()){
+            ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
+            throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
+        }
+    }
+
+
 
     Resource resource;
     resource = mastercatalog()->id2Resource(id());
@@ -78,13 +85,18 @@ void IlwisObject::connectTo(const QUrl& url, const QString& format, const QStrin
         resource.setId(id());
     }
     if ( url != QUrl()) {
-        resource.setUrl(url);
+        QString currenturl = resource.url().toString();
+        // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
+        if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
+            resource.setUrl(url);
         resource.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
-    Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace);
+    IOOptions opt = options;
+    opt.addOption("format", format);
+    Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace,opt);
     if (!conn){
         throw ErrorObject(TR(QString("couldnt connect to %1 datasource for %2").arg(format).arg(url.toString())));
     }
@@ -115,7 +127,7 @@ bool IlwisObject::merge(const IlwisObject *, int )
 }
 
 
-bool IlwisObject::prepare( ) {
+bool IlwisObject::prepare(const Ilwis::IOOptions &) {
     _valid = true;
 
     return true;
@@ -126,12 +138,20 @@ void IlwisObject::name(const QString &nam)
     if ( isReadOnly())
         return;
 
+    bool wasAnonymous = isAnonymous();
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     Identity::name(nm);
-    if ( !connector().isNull())
+    if ( !connector().isNull()){
         connector()->source().name(nm);
+        if ( isInternalObject()){
+            QString path = context()->persistentInternalCatalog().toString() + "/" + nam;
+            connector()->source().setUrl(path,true);
+        }
+    }
+    if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
+        mastercatalog()->addItems({source()});
 }
 
 void IlwisObject::code(const QString& cd) {
@@ -212,27 +232,38 @@ bool IlwisObject::outputConnectionReadonly() const
     return true;
 }
 
-QString IlwisObject::externalFormat() const
+QString IlwisObject::formatCode(bool input) const
 {
-    QString outFormat, inFormat, provider;
-    if ( !connector(cmOUTPUT).isNull())
-        outFormat = connector(cmOUTPUT)->format();
-    if ( !connector().isNull()){
-        inFormat = connector()->format();
+    if ( input){
+        if ( !connector().isNull()){
+            return connector()->format();
+        }
+    }else {
+        if(!connector(cmOUTPUT).isNull())
+           return connector(cmOUTPUT)->format();
+        else {
+            return formatCode();
+        }
     }
-    if ( connector().isNull())
-        return "";
 
-    provider = connector()->provider();
-    if ( outFormat == "" && inFormat == "")
-        return sUNDEF;
-    if ( outFormat == inFormat)
-        return provider + ": " + inFormat;
-    if ( outFormat == "" && inFormat != "")
-        return provider + ": " +inFormat;
-    if ( inFormat == "" && outFormat != "")
-        return "internal/"  + outFormat;
-    return provider + ": " + inFormat + "/" + outFormat;
+    return sUNDEF;
+}
+
+QString IlwisObject::provider(bool input) const
+{
+    if ( input){
+        if ( !connector().isNull()){
+            return connector()->provider();
+        }
+    }else {
+        if(!connector(cmOUTPUT).isNull())
+           return connector(cmOUTPUT)->provider();
+        else {
+            return provider()    ;
+        }
+    }
+
+    return sUNDEF;
 }
 
 void IlwisObject::readOnly(bool yesno)
@@ -479,8 +510,10 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "Catalog";
     case  itREPRESENTATION:
         return "Representation";
-    case  itOPERATIONMETADATA:
-        return "OperationMetaData";
+    case  itWORKFLOW:
+        return "Workflow";
+    case  itSINGLEOPERATION:
+        return "SingeOperation";
     }
     return sUNDEF;
 
@@ -557,10 +590,11 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itGEODETICDATUM;
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
-    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
-        return  itOPERATIONMETADATA;
-    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0)
-        return  itOPERATIONMETADATA;
+    if ( name.compare( "SingleOperation",Qt::CaseInsensitive) == 0)
+        return  itSINGLEOPERATION;
+    if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
+        return  itWORKFLOW;
+    }
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
     if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)

@@ -1,6 +1,6 @@
 #include "kernel.h"
 #include "errorobject.h"
-#include "complexdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -125,23 +125,42 @@ UPDrawer &ComplexDrawer::drawer(quint32 index, DrawerInterface::DrawerType drawe
     throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(index)));
 }
 
-UPDrawer &ComplexDrawer::drawer(const QString &code, DrawerInterface::DrawerType drawerType)
+UPDrawer &ComplexDrawer::drawer(const QString &namecode, DrawerInterface::DrawerType drawerType)
 {
     if ( drawerType == dtPOST || drawerType == dtPRE){
         DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
         for(auto& drawer : drawers){
-            if ( drawer.second->code() == code)
+            if ( drawer.second->name() == namecode || namecode == drawer.second->code())
                 return drawer.second;
         }
         throw VisualizationError(TR("Invalid drawer number used while drawing"));
 
     } else if ( drawerType == dtMAIN){
         for(auto& drawer : _mainDrawers){
-            if ( drawer->code() == code)
+            if ( drawer->name() == namecode  ||  namecode == drawer->code())
                 return drawer;
         }
     }
-    throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(code)));
+    throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(namecode)));
+}
+
+const UPDrawer &ComplexDrawer::drawer(const QString &namecode, DrawerInterface::DrawerType drawerType) const
+{
+    if ( drawerType == dtPOST || drawerType == dtPRE){
+        const DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
+        for(auto& drawer : drawers){
+            if ( drawer.second->name() == namecode || namecode == drawer.second->code())
+                return drawer.second;
+        }
+        throw VisualizationError(TR("Invalid drawer number used while drawing"));
+
+    } else if ( drawerType == dtMAIN){
+        for(auto& drawer : _mainDrawers){
+            if ( drawer->name() == namecode  ||  namecode == drawer->code())
+                return drawer;
+        }
+    }
+    throw VisualizationError(TR(QString("Drawer number %1 is not valid").arg(namecode)));
 }
 
 void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerType drawerType, quint32 order,const QString &nme)
@@ -151,12 +170,12 @@ void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerTy
 
     QString drawername = nme;
     if ( drawerType == dtPOST || drawerType == dtPRE){
-        if ( order != iUNDEF){
-            DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
-            drawers[order].reset(drawer);
-            if ( drawername == sUNDEF){
-                drawername = (drawerType == dtPOST ? "post_drawer_" : "pre_drawer_") + QString::number(drawer->id()) + "_" + QString::number(order);
-            }
+        if ( order == iUNDEF)
+            order = drawer->defaultOrder();
+        DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
+        drawers[order].reset(drawer);
+        if ( drawername == sUNDEF){
+            drawername = (drawerType == dtPOST ? "post_drawer_" : "pre_drawer_") + QString::number(drawer->id()) + "_" + QString::number(order);
 
         }
     }else if ( drawerType == dtMAIN){
@@ -168,6 +187,8 @@ void ComplexDrawer::addDrawer(DrawerInterface *drawer, DrawerInterface::DrawerTy
 
     }
     drawer->name(drawername);
+    if ( drawerType == DrawerInterface::dtMAIN)
+        drawer->code(drawername);
 }
 
 void ComplexDrawer::setDrawer(quint32 order, DrawerInterface *drawer, DrawerInterface::DrawerType drawerType)
@@ -255,7 +276,7 @@ void ComplexDrawer::removeDrawer(const QString &idcode, bool ascode)
 
 bool ComplexDrawer::drawerAttribute(const QString &drawercode, const QString &key, const QVariant &value)
 {
-    if ( drawercode == code()){
+    if ( drawercode == code() || name() == drawercode){
         setAttribute(key, value);
         return true;
     }
@@ -278,6 +299,24 @@ bool ComplexDrawer::drawerAttribute(const QString &drawercode, const QString &ke
 
 bool ComplexDrawer::isSimple() const
 {
+    return false;
+}
+
+bool ComplexDrawer::hasDrawer(const QString &namecode, DrawerInterface::DrawerType drawerType) const
+{
+    if ( drawerType == dtPOST || drawerType == dtPRE || drawerType == dtALL){
+        const DrawerMap& drawers = drawerType == dtPRE ? _preDrawers : _postDrawers;
+        for(auto& drawer : drawers){
+            if ( drawer.second->name() == namecode || namecode == drawer.second->code())
+                return true;
+        }
+
+    } else if ( drawerType == dtMAIN || drawerType == dtALL){
+        for(auto& drawer : _mainDrawers){
+            if ( drawer->name() == namecode  ||  namecode == drawer->code())
+                return true;
+        }
+    }
     return false;
 }
 
@@ -343,13 +382,77 @@ QVariant ComplexDrawer::attribute(const QString &attrNme) const
     if ( attrName == "postdrawercount")
         return drawerCount(DrawerInterface::dtPOST);
 
+
+    return QVariant();
+}
+
+QVariant ComplexDrawer::execute(const QString &operationName, const QVariantMap &parameters)
+{
+    if ( operationName.toLower() == "layerremove"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok){
+                removeDrawer(layer);
+                return QVariant(true);
+            }
+        }
+    }
+    if ( operationName.toLower() == "layerdown"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok && layer <_mainDrawers.size() && _mainDrawers.size() >= 2){
+                _mainDrawers[layer].swap(_mainDrawers[layer - 1]);
+                return QVariant(true);
+            }
+        }
+    }
+
+    if ( operationName.toLower() == "layerup"){
+        if ( parameters.size() == 1) {
+            QVariant var = parameters.begin().value();
+            bool ok;
+            quint32 layer = var.toUInt(&ok);
+            if ( ok && layer <_mainDrawers.size() - 1 && _mainDrawers.size() >= 2){
+                _mainDrawers[layer].swap(_mainDrawers[layer + 1]);
+                return QVariant(true);
+            }
+        }
+    }
+    if ( operationName == "code2index" ){
+        if ( parameters.size() == 1){
+            int index = 0;
+            QString cod = parameters["code"].toString();
+            for( auto& drawer : _mainDrawers){
+                if ( drawer->code() == cod){
+                    return QVariant(index);
+                }
+                ++index;
+            }
+        }
+    }
+    if ( operationName == "index2code" ){
+        if ( parameters.size() == 1){
+            bool ok;
+            int index = parameters["index"].toUInt(&ok);
+            if ( index < _mainDrawers.size()){
+                return QVariant ( _mainDrawers[index]->code());
+            }
+        }
+    }
     return QVariant();
 }
 
 QVariant ComplexDrawer::attributeOfDrawer(const QString &drawercode, const QString &attrName) const
 {
-    if ( code() == drawercode)
+    if ( name() == drawercode ||  code() == drawercode)
         return attribute(attrName);
+    if ( drawercode ==  "rootdrawer"){ // special case
+        return rootDrawer()->attribute(attrName);
+    }
 
     QVariant var;
     for( auto& drawer : _preDrawers){

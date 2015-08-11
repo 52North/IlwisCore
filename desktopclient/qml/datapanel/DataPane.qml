@@ -6,30 +6,27 @@ import MessageModel 1.0
 import ResourceModel 1.0
 import UIContextModel 1.0
 import MasterCatalogModel 1.0
+import DataPaneModel 1.0
 import ".." as Base
 import "catalog" as Catalog
 import "modeller" as Modeller
 import "../workbench" as Workbench
-
-
-
+import "../Global.js" as Global
+import "../controls" as Controls
 
 Rectangle {
 
     id: centerItem
-    color: background4
+    color: Global.alternatecolor5
+    objectName : "datapane_container_mainui"
     height : parent.height - 16
-    width : bigthing.width - buttonB.width - infoP.width - 5
+    width : bigthing.width - workBenchButtons.width - workBench.width - 5
     property int activeSplit : 2
 
-    function addModellerPanel(name) {
-        mainsplit.addModeller(name)
-    }
-
-    function removeModellerPanel(name) {
-        mainsplit.removeTabFromView(name);
-    }
-
+    /*
+     * Signal, thrown if a tab is closed
+     */
+    signal closedTab(string title)
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -45,20 +42,24 @@ Rectangle {
             if ( tab && tab.item){
                 if ( "currentCatalog" in tab.item)
                     return tab.item
+                else{ // apparently the tab has no catalog so we look at the other side
+                    tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
+                    if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+                        tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab && tab.item){
+                            if ( "currentCatalog" in tab.item){
+                                activeSplit = Math.abs(activeSplit) == 2 ? 1 : 2
+                                return tab.item
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-
-    function newCatalog(url, splitside){
-        if ( splitside !== -100){ // -100 is the magic number when starting the app for the first catalog when nothing has been set yet
-            var catTab = getCurrentCatalogTab()
-            if ( catTab){
-                url = catTab.currentCatalog.url
-                splitside = activeSplit
-            }
-        }
-        mainsplit.newCatalog(url,splitside)
+    function newCatalog(filter,outputtype, url){
+        datapanesplit.newPanel(filter, outputtype, url)
     }
 
     function setCatalogByIndex(currentTab, tabindex){
@@ -70,190 +71,219 @@ Rectangle {
         }
     }
 
-    function changeCatalog(url){
-        mainsplit.changeCatalog(url)
+    function changeCatalog(filter, outputtype, url){
+        datapanesplit.changePanel(filter,outputtype, url)
     }
 
-    Loader {
-        id : mapWindow
-    }
+//    Loader {
+//        id : mapWindow
+//    }
 
     SplitView {
-        id : mainsplit
+        id : datapanesplit
+        objectName : "datapane_mainui"
         orientation: Qt.Horizontal
         anchors.fill: parent
-        property int tel: 0
+        anchors.leftMargin: 3
+//        property int tel: 0
 
-        function closeTab(splitindex, tabindex1){
-            if ( Math.abs(splitindex) === 1){ // left
-                if ( righttab.count === 0 && lefttab.count === 1)
-                    return
-                lefttab.removeTab(tabindex1)
-                if ( lefttab.count === 0){
+        function closeTab(isleft, tabindex){
+            var ok = datapane.removeTab(isleft, tabindex)
+            if ( ok){
+                var tabview = isleft ? lefttab : righttab
+                tabview.removeTab(tabindex)
+
+                if ( datapane.leftSide.tabCount === 0){
                     lefttab.state = "zerosize"
                     righttab.state = "fullsize"
-                    activeSplit = 2
-                    setCatalogByIndex(righttab, 0)
-
-                }else{
-                    setCatalogByIndex(lefttab, tabindex1)
-                }
-            }
-            else if ( Math.abs(splitindex) === 2){ // right
-                if ( lefttab.count === 0 && righttab.count === 1)
-                    return
-                righttab.removeTab(tabindex1)
-                if ( righttab.count === 0){
-                    righttab.state = "zerosize"
+                }else if(datapane.rightSide.tabCount === 0){
                     lefttab.state = "fullsize"
-                    activeSplit = 1
-                    setCatalogByIndex(lefttab, 0)
-                }else{
-                    setCatalogByIndex(righttab, tabindex1)
+                    righttab.state = "zerosize"
                 }
             }
         }
-        function showMapWindow(objectid){
-            var tabview = activeSplit ===1 ? lefttab : righttab
-            mapWindow.setSource("visualization/MapWindow.qml",{"width" : tabview.width, "height" : tabview.height})
 
-            var tab = tabview.getTab(tabview.currentIndex)
-            if ( tab && tab.item.manager){
-                mapWindow.item.transferLayers(tab.item.manager)
-                mapWindow.item.show()
-                closeTab(activeSplit,tabview.currentIndex)
-            }
-        }
-
-        function showObject(objectid){
-            var component = Qt.createComponent("visualization/Visualize.qml")
-            var resource = mastercatalog.id2Resource(objectid)
-            if ( resource !== null){
-                var name = resource.displayName
-                var blocksize = 24 / 2;
-                if ( name.length > 15){
-                    var part1 = name.substr(0,blocksize)
-                    var part2 = name.substr( name.length - blocksize)
-                    name = part1 + "..." + part2
-
-                }
-                var tabCount = righttab.count
-                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-                tab.active = true
-                if ( activeSplit ===1){
-                    righttab.width = parent.width / 2.0;
-                    righttab.state = "halfsize"
-                    tabCount = righttab.count - 1 // tab has already been added so -1
-                    righttab.currentIndex = tabCount
-                    activeSplit = 2
-                }
-                else {
-                    lefttab.width = parent.width / 2.0;
-                    lefttab.state = "halfsize"
-                    tabCount = lefttab.count - 1 // tab has already been added so -1
-                    lefttab.currentIndex = tabCount
-                    activeSplit = 1
-                 }
-
-                tab.item.addDataSource(resource.url, resource.name, resource.typeName)
-                mastercatalog.setActiveTab(activeSplit, tabCount)
-            }
-        }
-
-        function changeCatalog(url){
-            var catalogpanel = getCurrentCatalogTab()
-            if ( catalogpanel)
-            {
-                if ( catalogpanel.currentCatalog)
-                    catalogpanel.currentCatalog.destroy(0)
-                catalogpanel.currentCatalog = mastercatalog.newCatalog(url)
-                catalogpanel.currentCatalog.makeParent(catalogpanel)
-                var name = catalogpanel.currentCatalog.displayName
-                var  tabview = activeSplit ===1 ? lefttab : righttab
-                if ( tabview.currentIndex < tabview.count){
-                    var tab = tabview.getTab(tabview.currentIndex)
-                    if ( tab){
-                        tab.title = name
+        function changePanel(filter, outputtype, url){
+            var sidePanel = datapane.activeSide
+            var tabview = sidePanel.tabview
+            if ( tabview){
+                var removeIndex = tabview.currentIndex + 1
+                var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
+                if ( newPanel){
+                    var component = Qt.createComponent(newPanel.componentUrl)
+                    mastercatalog.currentUrl = url
+                    var data= newPanel.displayName
+                    var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
+                    if ( insertetTab){
+                        insertetTab.item.addDataSource(filter, url, outputtype)
+                        //console.debug("1")
+                        insertetTab.item.tabmodel = newPanel
+                        //console.debug("2")
+                        tabview.removeTab(removeIndex)
+                        //console.debug("3")
+                        datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                        //console.debug("4")
                     }
                 }
-                mastercatalog.setWorkingCatalog(url);
-                mastercatalog.currentCatalog = catalogpanel.currentCatalog
             }
         }
 
-        function newCatalog(url, splitside) {
-
-            if ( url){
-                var component = Qt.createComponent("catalog/CatalogPanel.qml")
-                var catalogModel = mastercatalog.newCatalog(url)
-                var name = catalogModel.displayName
-                var tabview = activeSplit ===1 ? lefttab : righttab
-                var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+        function newPanel(filter,outputtype, url) {
+            var allNew = datapane.leftSide.tabCount === 0 && datapane.rightSide.tabCount === 0
+            var newPanel = datapane.createPanel(filter,outputtype, url)
+            if ( !newPanel)
+                return
+            var component = Qt.createComponent(newPanel.componentUrl)
+            var sidePanel = datapane.activeSide
+            var tabview = sidePanel.tabview
+            if ( tabview){
+                var data= newPanel.displayName
+                var tab = tabview.addTab(data, component)
                 tab.active = true
-                var tabCount = 0
-                if ( activeSplit ===1){
-                    if ( righttab.count == 1)
-                        lefttab.state = "halfsize"
-                    righttab.state = "halfsize"
-                    activeSplit = 2
-                    tab.item.tabLocation = "right"
-                    tab.item.currentCatalog = catalogModel
-                    tabCount = righttab.count - 1 // tab has already been added so -1
-                    righttab.currentIndex = tabCount
-                }
-                else{
-                    if ( splitside === -100) // start situation
-                        righttab.state = "zerosize"
-                    else if ( lefttab.count == 1)
-                        righttab.state = "halfsize"
-                    lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize"
-                    activeSplit = 1
-                    tab.item.tabLocation = "left"
-                    tab.item.currentCatalog = catalogModel
-                    tabCount = lefttab.count - 1
-                    lefttab.currentIndex = tabCount
-                }
-                tabview = activeSplit ===1 ? lefttab : righttab
-                mastercatalog.setActiveTab(activeSplit, tabCount)
-                mastercatalog.currentCatalog = catalogModel
+                tab.item.addDataSource(filter, url, outputtype)
+                tab.item.tabmodel = newPanel
+            }
+            if ( allNew){
+                lefttab.state = "fullsize"
+            }else if ( datapane.leftSide.tabCount === 1 && datapane.rightSide.tabCount === 1){ // one of them was new, so halfsize
+                lefttab.state = "halfsize"
+                righttab.state = "halfsize"
+            } //else we dont do anything, leave it as it is
+            if ( sidePanel.side == "left"){
+                lefttab.currentIndex = sidePanel.tabCount - 1
+            }else{
+                righttab.currentIndex = sidePanel.tabCount - 1
+            }
+
+        }
+
+        function showTabInFloatingWindow(panelside, tabIndex) {
+            var sidePanel = panelside === 1 ? datapane.leftSide : datapane.rightSide
+            var tabview = sidePanel.tabview
+            var tab = tabview.getTab(tabIndex)
+            var tabData = sidePanel.tab(tabIndex)
+
+            if (tab && tab.item) {
+                var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;"
+                qml += "FloatingWindow { id: floatingWindow } ";
+                var window = Qt.createQmlObject(qml, datapanesplit)
+                window.height = tab.item.height
+                window.width = tab.item.width
+                window.show();
+                window.datapanel =  tabData.componentUrl
+
+
+
+                window.transfer(tab.item)
+
+                closeTab(sidePanel.isLeft, tabIndex);
             }
         }
 
-        function addModeller(name) {
-            var component = Qt.createComponent("modeller/ModellerPanel.qml")
-            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-            tab.active = true
-            if ( activeSplit ===1){
-                righttab.width = parent.width / 2.0
+//        function addWorkflowCanvas(id, name) {
+//            console.log("creating new workflow canvas")
+//            var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
+////            var tabview = activeSplit === 1 ? righttab : lefttab
+////            var tab = tabview.addTab(name, component)
+////            tab.active = true
+//            var tab = righttab.addTab(name,component)
+//            tab.active = true
+//            if ( activeSplit ===1){
+//                righttab.width = parent.width / 2.0
+//                activeSplit = 2
+//            }
+//            else{
+//                lefttab.width = parent.width / 2.0
+//                activeSplit = 1
+//            }
+//            tab.item.workflow = id;
+//        }
+
+//        function addModeller(name) {
+//            var component = Qt.createComponent("modeller/ModellerPanel.qml")
+//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
+//            tab.active = true
+//            if ( activeSplit ===1){
+//                righttab.width = parent.width / 2.0
+//                activeSplit = 2
+//            }
+//            else{
+//                lefttab.width = parent.width / 2.0
+//                activeSplit = 1
+//            }
+//        }
+
+        /*
+         * Remove a tab by name from TabView
+         */
+//        function removeTabFromView(name) {
+//            var ri = righttab.getTabIndexFor(name);
+//            if (ri !== -1) {
+//                closeTab(righttab.side, ri)
+//            }
+//            var li = lefttab.getTabIndexFor(name);
+//            if (li !== -1) {
+//                closeTab(lefttab.side, ri)
+//            }
+//        }
+
+
+        function changeWidth(pside, partside){
+            if ( partside === 0){
+                lefttab.fillWidth = false
+                lefttab.state = "zerosize"
+            }else {
+                lefttab.fillWidth = true
+                righttab.state = "zerosize"
+
                 activeSplit = 2
-            }
-            else{
-                lefttab.width = parent.width / 2.0
                 activeSplit = 1
             }
         }
+        function newModeller(name, splitside) {
+            var component = Qt.createComponent("modeller/ModellerPanel.qml");
+//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
+            var tab = righttab.addTab(name,component);
+            tab.active = true;
+            var tabCount = 0;
+            if ( lefttab.count == 1){
+                righttab.state = "halfsize"
+            }
+            lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
+            activeSplit = 1;
+            tabCount = lefttab.count - 1;
+            lefttab.currentIndex = tabCount;
+       }
 
-        function removeTabFromView(name) {
-            righttab.removeTabFor(name);
-            lefttab.removeTabFor(name);
+        handleDelegate: Controls.SplitHandle{
+            imageHeight: 22
+            offset : 25
+            handlePic: "splithandledark.png"
+            func : datapanesplit.changeWidth
+        }
+
+        DataTabView2 {
+            id : lefttab
+            property bool fillWidth : true
+            side : 1
+            objectName: "datapane_lefttab_mainui"
+            Layout.fillWidth: fillWidth
+
+            Component.onCompleted: {
+                datapane.leftSide.setTabview(lefttab.objectName)
+            }
         }
 
 
         DataTabView2 {
-            id : lefttab
-            side : 1
-            Layout.fillWidth: true
-
+            id : righttab
+            side : 2
+            objectName: "datapane_righttab_mainui"
             Component.onCompleted: {
-                 newCatalog(mastercatalog.currentUrl,-100)
+                datapane.rightSide.setTabview(righttab.objectName)
             }
         }
 
-
-        DataTabView2{
-            id : righttab
-            side : 2
-        }
     }
 
 }

@@ -96,7 +96,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
         _number2 = parm2.value().toDouble(&ok);
     } else{
         _column2 = parm2.value();
-        def2 = _inputTable->columndefinition(_column1);
+        def2 = _inputTable->columndefinition(_column2);
     }
 
     mathoperator(_expression.parm(3).value());
@@ -132,16 +132,13 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 
     QString outName = _expression.parm(0, false).value();
     if ( table != outName) {
-        if ( table != outName) {
-            if (outName == sUNDEF){
-                IFlatTable  ftable;
-                ftable.prepare();
-                _outputTable = ftable;
-            }
+        if (outName == sUNDEF){
+            IFlatTable  ftable;
+            ftable.prepare();
+            _outputTable = ftable;
         } else if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
             _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
             _outputTable->name(outName);
-
         }
     } else
         _outputTable = _inputTable;

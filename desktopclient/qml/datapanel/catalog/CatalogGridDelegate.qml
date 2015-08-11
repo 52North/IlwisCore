@@ -44,8 +44,9 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 property string message :  model !== null ? url : ""
                 property string ilwisobjectid : model !== null ? id : ""
+                property string ids : model !== null ? mastercatalog.selectedIds() : ""
 
-                Drag.keys: iconPath
+                Drag.keys: typeName
                 Drag.active: mouseArea.drag.active
                 Drag.hotSpot.x: 10
                 Drag.hotSpot.y: 10
@@ -83,7 +84,7 @@ Item {
             id: txt
             text: displayName
             elide: Text.ElideMiddle
-            color: itemgrid.currentIndex === index ? "white": "black"
+            color: itemgrid.currentIndex === index ? "blue": "black"
             width : parent.width
 
             y : 4
@@ -99,14 +100,20 @@ Item {
             itemgrid.currentIndex = index;
             isSelected = !isSelected
             itemgrid.setSelected(id)
+            if (catalogViews && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
 
 
          }
 
         onDoubleClicked: {
-            showObject(id)
-            isSelected = true
-            itemgrid.setSelected(id)
+            if ( name == "..")
+                showObject(-1)
+            else {
+                showObject(id)
+                isSelected = true
+                itemgrid.setSelected(id)
+            }
         }
     }
 

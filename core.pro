@@ -127,7 +127,12 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/representation.cpp \
     core/ilwisobjects/representation/colorlookup.cpp \
     core/ilwisobjects/representation/continuouscolorlookup.cpp \
-    core/ilwisobjects/representation/palettecolorlookup.cpp
+    core/ilwisobjects/representation/palettecolorlookup.cpp \
+    core/ilwisobjects/workflow/workflow.cpp \
+    core/util/tranquilizerfactory.cpp \
+    core/util/consoletranquilizer.cpp \
+    core/ilwisobjects/representation/shapelookup.cpp \
+    core/ilwisobjects/workflow/workflowoperationimplementation.cpp
 
 
 HEADERS += core/kernel.h\
@@ -271,7 +276,13 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/representation.h \
     core/ilwisobjects/representation/colorlookup.h \
     core/ilwisobjects/representation/continuouscolorlookup.h \
-    core/ilwisobjects/representation/palettecolorlookup.h
+    core/ilwisobjects/representation/palettecolorlookup.h \
+    core/kernel_global.h \
+    core/ilwisobjects/workflow/workflow.h \
+    core/util/tranquilizerfactory.h \
+    core/util/consoletranquilizer.h \
+    core/ilwisobjects/representation/shapelookup.h \
+    core/ilwisobjects/workflow/workflowoperationimplementation.h
 
 
 OTHER_FILES += \
@@ -302,7 +313,7 @@ win32{
                        "$$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll"
     }
     qtdlls.files +=   "$$[QT_INSTALL_PREFIX]/bin/libgcc_s_dw2-1.dll" \
-                      "$$[QT_INSTALL_PREFIX]/bin/libstdc~1.dll" \
+                      "$$[QT_INSTALL_PREFIX]/bin/libstdc++-6.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/libwinpthread-1.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icudt51.dll" \
                       "$$[QT_INSTALL_PREFIX]/bin/icuin51.dll" \

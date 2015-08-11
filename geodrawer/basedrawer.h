@@ -47,7 +47,9 @@ public:
     QVariant attribute(const QString& attrName) const;
     QVariant attributeOfDrawer(const QString& drawercode, const QString& attrName) const;
     virtual void setAttribute(const QString&, const QVariant&);
-    virtual bool drawerAttribute(const QString layername, const QString& attrName, const QVariant& attrib);
+    virtual bool drawerAttribute(const QString &layername, const QString& attrName, const QVariant& attrib);
+    void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr);
+    QVariant execute(const QString& operationName, const QVariantMap& parameters);
 
     QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
     quint32 defaultOrder() const;
@@ -78,8 +80,13 @@ protected:
     GLuint _scaleFactor = iUNDEF;
     GLuint _vboAlpha = iUNDEF;
     QOpenGLShaderProgram _shaders;
+    QString _vertexShader;
+    QString _fragmentShader;
 
 private:
+    std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN);
+    const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) const;
+
     bool _active = true; // unless defined otherwise, the drawer is active
     bool _valid = false;
     bool _selected = false;
@@ -88,7 +95,7 @@ private:
     DrawerInterface* _parentDrawer = 0;
     Envelope _envelope;
 
-
+    std::unique_ptr<DrawerInterface> _dummy;
 
 
 

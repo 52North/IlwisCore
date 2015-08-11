@@ -11,7 +11,7 @@ import "../Global.js" as Global
 
 Rectangle {
 
-    signal makeForm(string objectid, string name)
+    signal makeForm(string objectid, string name, string url)
 
     property var operationsModel : operations.operations
     property bool byKey : false
@@ -43,7 +43,7 @@ Rectangle {
                 }
                 Text {
                     id : operationSyntax
-                    text : syntax()
+                    text : syntax
                     anchors.top : operationName.bottom
                     width : parent.width
                     height : 12
@@ -55,13 +55,15 @@ Rectangle {
 
             focus : true
             MouseArea {
+                id: mouseArea
                 hoverEnabled: true
                 anchors.fill: parent
                 cursorShape: Qt.ArrowCursor
+
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
-                    makeForm(id, displayName);
+                    makeForm(id, displayName, url)
                 }
             }
 

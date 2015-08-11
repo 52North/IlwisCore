@@ -41,6 +41,7 @@ public:
 
     virtual IlwisObject *create(const Resource &resource,const IOOptions& options=IOOptions()) const = 0;
     virtual IlwisObject *create(IlwisTypes, const QString& sub = sUNDEF ) const { return (sub == sUNDEF ? nullptr: nullptr); }
+    virtual std::vector<Resource> loadResource(const QUrl& url, IlwisTypes types) const;
 
 protected:
      IlwisObject *createObject(IlwisObjectConnector *connector,const IOOptions& options=IOOptions()) const;

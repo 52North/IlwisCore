@@ -41,7 +41,7 @@ LatLon ConventionalCoordinateSystem::coord2latlon(const Coordinate &crdSource) c
     LatLon pl = _projection->coord2latlon(crdSource);
     if (!pl.isValid())
         return llUNDEF;
-    if (abs(pl.lon()) > 90)
+    if (abs(pl.lon()) > 180)
         return llUNDEF;
     return pl;
 }
@@ -222,11 +222,12 @@ IProjection ConventionalCoordinateSystem::projection() const
     return _projection;
 }
 
-bool ConventionalCoordinateSystem::prepare()
+bool ConventionalCoordinateSystem::prepare(const IOOptions& options)
 {
-    return CoordinateSystem::prepare();
+    return CoordinateSystem::prepare(options);
 }
 
+// TODO: this method should be merged with the prepare above
 bool ConventionalCoordinateSystem::prepare(const QString &parms)
 {
     Proj4Parameters proj4(parms);

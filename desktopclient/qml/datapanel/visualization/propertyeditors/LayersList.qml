@@ -16,7 +16,7 @@ Item {
     Item {
         id : layersContainer
         width : parent.width
-        height : parent.height - deleteButton.height - 14
+        height : parent.height - buttonbar.height - 14
         Rectangle {
             id : layersLabel
             width : parent.width + 10
@@ -30,13 +30,14 @@ Item {
             }
         }
         Rectangle {
-            width : parent.width
+            width : parent.width - 8
             anchors.top: layersLabel.bottom
             anchors.topMargin: 2
             height : parent.height - layersLabel.height - 3
             color : Global.alternatecolor2
-            border.color: "lightgrey"
-            border.width: 1
+//            border.color: "lightgrey"
+            radius : 4
+//            border.width: 1
 
             Component {
                 id: highlight
@@ -45,12 +46,6 @@ Item {
                     width: layersList.width; height: 18
                     color: Global.selectedColor; radius: 2
                     y: (layersList && layersList.currentItem) ? layersList.currentItem.y : 0
-                    Behavior on y {
-                        SpringAnimation {
-                            spring: 3
-                            damping: 0.2
-                        }
-                    }
                 }
             }
             ListView {
@@ -63,6 +58,7 @@ Item {
                 }
 
                 id : layersList
+                objectName: uicontext.uniqueName()
                 model : manager.layers
                 anchors.fill: parent
                 anchors.margins: 4
@@ -71,19 +67,93 @@ Item {
                 focus: true
                 clip : true
 
+                Component.onCompleted: {
+                    manager.setLayerListName(layersList.objectName)
+                }
+
             }
         }
 
     }
-    Button{
-        id : deleteButton
-        height : 14
-        width: firstColumn.width
-        opacity : layersList.height > 5 ? 14 : 0
-        enabled : layersList.height > 5
-        text: qsTr("remove layer")
+    Row {
+        id : buttonbar
+        height : 18
+        width : firstColumn.width
         anchors.top : layersContainer.bottom
         anchors.topMargin: 4
+        opacity : layersList.model.length > 2 ? 1 : 0
+        enabled : layersList.model.length > 2 ? 1 : 0
+        Text {
+            text : qsTr("Layer")
+            width : 31
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Button{
+            //text :qsTr("up")
+            width : 35
+            height : 18
+            Image{
+                source : "../../../images/arrowdown.png"
+                rotation: 180
+                width : 12
+                height : 12
+                anchors.centerIn: parent
+
+            }
+            onClicked: {
+                var index = layersList.currentIndex
+                if ( index >= 1){
+                    index = index - 1
+                    renderer.addCommand("layermanagement("+ renderer.viewerId + "," + index + ",layerup)")
+                    renderer.update()
+                }
+
+            }
+        }
+
+
+        Button{
+            height : 18
+            width : 35
+            Image{
+                source : "../../../images/arrowdown.png"
+                width : 12
+                height : 12
+                anchors.centerIn: parent
+            }
+            onClicked: {
+                var index = layersList.currentIndex
+                if ( index >= 1){
+                    index = index - 1
+                    var command = "layermanagement("+ renderer.viewerId + "," + index + ",layerdown)"
+                    renderer.addCommand(command)
+                    renderer.update()
+                }
+            }
+        }
+        Button{
+            id : deleteButton
+            height : 18
+            width: 35
+            opacity : layersList.height > 5 ? 14 : 0
+            enabled : layersList.height > 5
+            Image{
+                source : "../../../images/minus.png"
+                width : 14
+                height : 14
+                anchors.centerIn: parent
+            }
+            onClicked: {
+                var index = layersList.currentIndex
+                if ( index >= 1){
+                    index = index - 1
+                    renderer.addCommand("layermanagement("+ renderer.viewerId + "," + index + ",layerremove)")
+                    renderer.update()
+                }
+            }
+
+        }
     }
 
 }

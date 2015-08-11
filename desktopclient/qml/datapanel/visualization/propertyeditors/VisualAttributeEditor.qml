@@ -1,11 +1,11 @@
 import QtQuick 2.1
 import "../../../Global.js" as Global
 
-Item {
+Rectangle {
     id : displayEditorColumn
 
     property var currentEditor
-
+    color : Global.alternatecolor3
     onCurrentEditorChanged: {
          if ( currentEditor){
              if ( editorColumn2.state == "minimized"){
@@ -34,7 +34,7 @@ Item {
 
     Rectangle {
         id : editorColumn1
-        color : Global.alternatecolor2
+        color : "transparent"
         border.color: "lightgrey"
         border.width: 1
         anchors.right: parent.right
@@ -47,17 +47,20 @@ Item {
         state : "maximized"
         Loader {
             id : propertyEditor1
-            anchors.fill : parent
+            width : parent.width
+            height : parent.height
 
 
         }
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn1; opacity : 1 }
+                    PropertyChanges { target: editorColumn1; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn1; opacity : 0 }
+                    PropertyChanges { target: editorColumn1; enabled : false }
             }
 
         ]
@@ -71,9 +74,7 @@ Item {
 
     Rectangle {
         id : editorColumn2
-        color : Global.alternatecolor2
-        border.color: "lightgrey"
-        border.width: 1
+        color : "transparent"
         anchors.right: parent.right
         anchors.top: editorsLabel.bottom
         anchors.topMargin: 2
@@ -83,17 +84,20 @@ Item {
         anchors.leftMargin: 3
         Loader {
             id : propertyEditor2
-            anchors.fill : parent
+            width : parent.width
+            height : parent.height
 
 
         }
         states: [
             State { name: "maximized"
                     PropertyChanges { target: editorColumn2; opacity : 1 }
+                    PropertyChanges { target: editorColumn2; enabled : true }
             },
             State {
                 name : "minimized"
                     PropertyChanges { target: editorColumn2; opacity : 0 }
+                    PropertyChanges { target: editorColumn2; enabled : false }
             }
 
         ]

@@ -7,10 +7,12 @@
 #include <QStringList>
 #include <QSqlRecord>
 #include <QUrl>
+#include <QThread>
 #include <QDir>
 #include <cxxabi.h>
 #include <iostream>
 #include <QException>
+#include <QDesktopServices>
 #include "kernel.h"
 #include "factory.h"
 #include "geometries.h"
@@ -48,6 +50,7 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "tranquilizer.h"
+#include "tranquilizerfactory.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
@@ -66,9 +69,9 @@ Ilwis::Kernel* Ilwis::kernel() {
     return Kernel::_kernel;
 }
 
-bool Ilwis::initIlwis(int mode){
+bool Ilwis::initIlwis(int mode, const QString & ilwisDir){
     try {
-        context();
+        context(ilwisDir);
         context()->runMode(mode);
         return kernel() != 0;
     } catch (const ErrorObject& err) {
@@ -101,14 +104,20 @@ void Kernel::init() {
     _version->addBinaryVersion(Ilwis::Version::bvPOLYGONFORMAT37);
     _version->addODFVersion("3.1");
 
-
-
     _dbPublic = QSqlDatabase::addDatabase("QSQLITE");
     _dbPublic.setHostName("localhost");
     _dbPublic.setDatabaseName(":memory:");
     _dbPublic.open();
 
-    _dbPublic.prepare();
+    QSqlQuery stmt(_dbPublic);
+    stmt.exec("PRAGMA page_size = 4096");
+    stmt.exec("PRAGMA cache_size = 16384");
+    stmt.exec("PRAGMA temp_store = MEMORY");
+    stmt.exec("PRAGMA journal_mode = OFF");
+    stmt.exec("PRAGMA locking_mode = EXCLUSIVE");
+    stmt.exec("PRAGMA synchronous = OFF");
+
+     _dbPublic.prepare();
 
     ConnectorFactory *confac = new ConnectorFactory();
     addFactory(confac);
@@ -124,6 +133,10 @@ void Kernel::init() {
     georefFac->prepare();
     addFactory(georefFac);
 
+    TranquilizerFactory *trqFactory = new TranquilizerFactory();
+    trqFactory->prepare();
+    addFactory(trqFactory);
+
 
     _modules.addModules();
 
@@ -137,8 +150,6 @@ Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
     _dbPublic.close();
     context()->configurationRef().store();
-    //delete mastercatalog();
-    //delete context();
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{
@@ -251,9 +262,9 @@ QNetworkAccessManager &Kernel::network()
     return _networkmanager;
 }
 
-void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 end)
+void Kernel::newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end)
 {
-    emit createTranquilizer(id, title, description, end);;
+    emit createTranquilizer(id, title, description, start, end);;
 }
 
 const Module *Kernel::module(const QString &name) const

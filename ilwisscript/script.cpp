@@ -51,37 +51,39 @@ bool Script::detectKey(const std::string& line, const std::string& key) {
 
 OperationImplementation::State Script::prepare(ExecutionContext *, const SymbolTable&) {
     QString txt = _expression.parm(0).value();
+    if ( txt == "") {
+        ERROR2(ERR_NOT_FOUND2, TR("valid expression"), _expression.toString());
+        return sPREPAREFAILED;
+    }
     QUrl url(txt);
-    if ( url.isValid() && url.scheme() == "file") {
-        QFileInfo inf( url.toLocalFile());
-        bool exists = inf.exists();
-        if (exists && inf.suffix() == "isf") {
-            std::string text;
-            std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
-            int ignorenCount=0;
-            if(in.is_open() && in.good()) {
-                while(!in.eof()) {
-                    std::string line;
-                    std::getline(in, line);
-                    if ( line == "") // skip empty lines
-                        continue;
-                    if (detectKey(line, "if") || detectKey(line, "while") ){
-                        ignorenCount++;
-                    }
-                    if (detectKey(line, "endif") || detectKey(line, "endwhile")) {
-                        ignorenCount--;
-                    }
-                    text += line + (ignorenCount != 0 ? " " : ";");
+    QFileInfo inf( url.toLocalFile());
+    bool exists = inf.exists();
+    if (  exists) {
+
+        std::string text;
+        std::ifstream in(inf.absoluteFilePath().toLatin1(), std::ios_base::in);
+        int ignorenCount=0;
+        if(in.is_open() && in.good()) {
+            while(!in.eof()) {
+                std::string line;
+                std::getline(in, line);
+                if ( line == "") // skip empty lines
+                    continue;
+                if (detectKey(line, "if") || detectKey(line, "while") ){
+                    ignorenCount++;
                 }
-                char *buf = new char[text.size()];
-                memcpy(buf,text.c_str(), text.size());
-                _buffer.reset( buf );
-                _bufferSize = text.size();
-                return sPREPARED;
+                if (detectKey(line, "endif") || detectKey(line, "endwhile")) {
+                    ignorenCount--;
+                }
+                text += line + (ignorenCount != 0 ? " " : ";");
             }
-        } else {
-            return sPREPAREFAILED;
+            char *buf = new char[text.size()];
+            memcpy(buf,text.c_str(), text.size());
+            _buffer.reset( buf );
+            _bufferSize = text.size();
+            return sPREPARED;
         }
+
     } else {
         QString text = txt.trimmed();
         if ( text[text.size() - 1] != ';')
@@ -140,7 +142,7 @@ quint64 Script::createMetadata()
 {
     QString urlTxt = QString("ilwis://operations/script");
     QUrl url(urlTxt);
-    Resource resource(url, itOPERATIONMETADATA);
+    Resource resource(url, itSINGLEOPERATION);
     resource.addProperty("namespace","ilwis");
     resource.addProperty("longname","ilwisscript");
     resource.addProperty("syntax","script file|script scriptline(,scriptline)*");

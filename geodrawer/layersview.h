@@ -67,6 +67,9 @@ class LayersView : public QQuickFramebufferObject, public LayersViewCommandInter
     Q_PROPERTY(QString currentCoordinate READ currentCoordinate WRITE setCurrentCoordinate NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(QString currentLatLon READ currentLatLon NOTIFY currentCoordinateHasChanged)
     Q_PROPERTY(bool showLayerInfo READ showLayerInfo WRITE setShowLayerInfo NOTIFY showLayerInfoChanged)
+    Q_PROPERTY(QVariantMap zoomEnvelope READ zoomEnvelope WRITE setZoomEnvelope NOTIFY zoomEnvelopeChanged)
+    Q_PROPERTY(QVariantMap viewEnvelope READ viewEnvelope WRITE setViewEnvelope NOTIFY viewEnvelopeChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
 friend class LayersRenderer;
@@ -84,17 +87,32 @@ friend class LayersRenderer;
     Q_INVOKABLE void addCommand(const QString& expression);
     Q_INVOKABLE void setManager(LayerManager *manager);
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
+    Q_INVOKABLE void associate(const QString& name, const QString& event);
+    Q_INVOKABLE void removeAssociate(const QString& name);
 
     LayerManager *layerManager();
+    Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
     bool showLayerInfo() const;
+    bool active() const;
+    void setActive(bool yesno);
     void setShowLayerInfo(bool yesno);
 
 signals:
     void currentCoordinateHasChanged();
     void showLayerInfoChanged();
+    void zoomEnvelopeChanged();
+    void viewEnvelopeChanged();
+    void activeChanged();
 
+public slots:
+    void synchronizeEnded();
+    void drawDone();
 
 private:
+    QVariantMap zoomEnvelope() const;
+    QVariantMap viewEnvelope() const;
+    void setViewEnvelope(const QVariantMap& var);
+    void setZoomEnvelope(const QVariantMap& var);
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
@@ -103,13 +121,16 @@ private:
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
     std::deque<std::pair<QString, QString>> _attributerequests;
+    std::vector<std::pair<QString, QString>> _associates;
+
 
     QVariantMap _copiedAttributes;
     quint64 _viewerId;
     Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
-    Ilwis::Geodrawer::RootDrawer *rootDrawer() const;
     bool _showLayerInfo = true;
+    bool _active = true;
+    Ilwis::Geodrawer::RootDrawer *privateRootDrawer() const;
 
 
     static quint64 _baseViewerId;

@@ -1,176 +1,344 @@
-#ifndef UNARYMATHOPERATIONS_H
-#define UNARYMATHOPERATIONS_H
+#ifndef UnaryMathRasterAndNumberOPERATIONS_H
+#define UnaryMathRasterAndNumberOPERATIONS_H
 
 namespace Ilwis {
 namespace BaseOperations{
-class Sine : public UnaryMath
+class SineCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Sine() {}
-    Sine(quint64 metaid, const Ilwis::OperationExpression &expr);
+    SineCoverage() {}
+    SineCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Sine);
+    NEW_OPERATION(SineCoverage);
 };
 
-class Cosine : public UnaryMath
+class CosineCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Cosine() {}
-    Cosine(quint64 metaid, const Ilwis::OperationExpression &expr);
+    CosineCoverage() {}
+    CosineCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Cosine);
+    NEW_OPERATION(CosineCoverage);
 };
 
-class Tangent : public UnaryMath
+class TangentCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Tangent() {}
-    Tangent(quint64 metaid, const Ilwis::OperationExpression &expr);
+    TangentCoverage() {}
+    TangentCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Tangent);
+    NEW_OPERATION(TangentCoverage);
 };
 
-class Arcsine : public UnaryMath
+class ArcsineCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Arcsine() {}
-    Arcsine(quint64 metaid, const Ilwis::OperationExpression &expr);
+    ArcsineCoverage() {}
+    ArcsineCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Arcsine);
+    NEW_OPERATION(ArcsineCoverage);
 };
 
-class Arccosine : public UnaryMath
+class ArccosineCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Arccosine() {}
-    Arccosine(quint64 metaid, const Ilwis::OperationExpression &expr);
+    ArccosineCoverage() {}
+    ArccosineCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
 
-    NEW_OPERATION(Arccosine);
+    NEW_OPERATION(ArccosineCoverage);
 };
 
-class ArcTangent : public UnaryMath
+class ArcTangentCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    ArcTangent() {}
-    ArcTangent(quint64 metaid, const Ilwis::OperationExpression &expr);
+    ArcTangentCoverage() {}
+    ArcTangentCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(ArcTangent);
+    NEW_OPERATION(ArcTangentCoverage);
 };
 
-class Log10 : public UnaryMath
+class Log10Coverage : public UnaryMathRasterAndNumber
 {
 public:
-    Log10() {}
-    Log10(quint64 metaid, const Ilwis::OperationExpression &expr);
+    Log10Coverage() {}
+    Log10Coverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Log10);
+    NEW_OPERATION(Log10Coverage);
 };
 
-class Sqrt : public UnaryMath
+class SqrtCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Sqrt() {}
-    Sqrt(quint64 metaid, const Ilwis::OperationExpression &expr);
+    SqrtCoverage() {}
+    SqrtCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Sqrt);
+    NEW_OPERATION(SqrtCoverage);
 };
 
-class NaturalLogarithm : public UnaryMath
+class NaturalLogarithmCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    NaturalLogarithm() {}
-    NaturalLogarithm(quint64 metaid, const Ilwis::OperationExpression &expr);
+    NaturalLogarithmCoverage() {}
+    NaturalLogarithmCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
 
-    NEW_OPERATION(NaturalLogarithm);
+    NEW_OPERATION(NaturalLogarithmCoverage);
 };
 
-class Abs : public UnaryMath
+class AbsCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Abs() {}
-    Abs(quint64 metaid, const Ilwis::OperationExpression &expr);
+    AbsCoverage() {}
+    AbsCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
 
-    NEW_OPERATION(Abs);
+    NEW_OPERATION(AbsCoverage);
 };
 
-class Ceil : public UnaryMath
+class CeilCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Ceil() {}
-    Ceil(quint64 metaid, const Ilwis::OperationExpression &expr);
+    CeilCoverage() {}
+    CeilCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Ceil);
+    NEW_OPERATION(CeilCoverage);
 };
 
-class Floor : public UnaryMath
+class FloorCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Floor() {}
-    Floor(quint64 metaid, const Ilwis::OperationExpression &expr);
+    FloorCoverage() {}
+    FloorCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Floor);
+    NEW_OPERATION(FloorCoverage);
 };
 
-class Sign : public UnaryMath
+class SignCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    Sign() {}
-    Sign(quint64 metaid, const Ilwis::OperationExpression &expr);
+    SignCoverage() {}
+    SignCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(Sign);
+    NEW_OPERATION(SignCoverage);
 };
 
-class CosineH : public UnaryMath
+class CosineHCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    CosineH() {}
-    CosineH(quint64 metaid, const Ilwis::OperationExpression &expr);
+    CosineHCoverage() {}
+    CosineHCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(CosineH);
+    NEW_OPERATION(CosineHCoverage);
 };
 
-class SineH : public UnaryMath
+class SineHCoverage : public UnaryMathRasterAndNumber
 {
 public:
-    SineH() {}
-    SineH(quint64 metaid, const Ilwis::OperationExpression &expr);
+    SineHCoverage() {}
+    SineHCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-    NEW_OPERATION(SineH);
+    NEW_OPERATION(SineHCoverage);
+};
+
+class SineTable : public UnaryMathTable
+{
+public:
+    SineTable() {}
+    SineTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(SineTable);
+};
+
+class CosineTable : public UnaryMathTable
+{
+public:
+    CosineTable() {}
+    CosineTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(CosineTable);
+};
+
+class TangentTable : public UnaryMathTable
+{
+public:
+    TangentTable() {}
+    TangentTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(TangentTable);
+};
+
+class ArcsineTable : public UnaryMathTable
+{
+public:
+    ArcsineTable() {}
+    ArcsineTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(ArcsineTable);
+};
+
+class ArccosineTable : public UnaryMathTable
+{
+public:
+    ArccosineTable() {}
+    ArccosineTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+
+    NEW_OPERATION(ArccosineTable);
+};
+
+class ArcTangentTable : public UnaryMathTable
+{
+public:
+    ArcTangentTable() {}
+    ArcTangentTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(ArcTangentTable);
+};
+
+class Log10Table : public UnaryMathTable
+{
+public:
+    Log10Table() {}
+    Log10Table(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(Log10Table);
+};
+
+class SqrtTable : public UnaryMathTable
+{
+public:
+    SqrtTable() {}
+    SqrtTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(SqrtTable);
+};
+
+class NaturalLogarithmTable : public UnaryMathTable
+{
+public:
+    NaturalLogarithmTable() {}
+    NaturalLogarithmTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+
+    NEW_OPERATION(NaturalLogarithmTable);
+};
+
+class AbsTable : public UnaryMathTable
+{
+public:
+    AbsTable() {}
+    AbsTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+
+    NEW_OPERATION(AbsTable);
+};
+
+class CeilTable : public UnaryMathTable
+{
+public:
+    CeilTable() {}
+    CeilTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(CeilTable);
+};
+
+class FloorTable : public UnaryMathTable
+{
+public:
+    FloorTable() {}
+    FloorTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(FloorTable);
+};
+
+class SignTable : public UnaryMathTable
+{
+public:
+    SignTable() {}
+    SignTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(SignTable);
+};
+
+class CosineHTable : public UnaryMathTable
+{
+public:
+    CosineHTable() {}
+    CosineHTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(CosineHTable);
+};
+
+class SineHTable : public UnaryMathTable
+{
+public:
+    SineHTable() {}
+    SineHTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(SineHTable);
 };
 }
 }
 
-#endif // UNARYMATHOPERATIONS_H
+#endif // UnaryMathTableOPERATIONS_H
