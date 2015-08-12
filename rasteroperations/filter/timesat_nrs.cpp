@@ -12,8 +12,8 @@
 #include "ilwisoperation.h"
 #include "ilwiscontext.h"
 #include "rasterinterpolator.h"
-#include "Eigen/LU"
-#include "Eigen/Dense"
+#include "eigen3/Eigen/LU"
+#include "eigen3/Eigen/Dense"
 #include "timesat_nrs.h"
 
 using namespace Ilwis;
@@ -92,7 +92,8 @@ bool Timesat::calcFitWindow(const int i, const int ienvi,
     std::vector<bool>::const_reverse_iterator itr;
     for (itr = wfit.rbegin() + offset; (itr != wfit.rend()) && (cnt < 3); ++itr)
         if (*itr) cnt++;
-    m1 = std::min(m1, wfit.rend() - itr);
+    int tmp1 = wfit.rend() - itr;
+    m1 = std::min(m1, tmp1);
     bool leftFail = cnt < 3;
     if (leftFail) ++m1;
 
@@ -100,7 +101,8 @@ bool Timesat::calcFitWindow(const int i, const int ienvi,
     std::vector<bool>::const_iterator it;
     for (it = wfit.begin() + i; (it != wfit.end()) && (cnt < 3); ++it)
          if (*it) cnt++;
-    m2 = std::max(m2, it - wfit.begin());
+    int tmp2 = it - wfit.begin();
+    m2 = std::max(m2, tmp2);
     bool rightFail = cnt < 3;
     if (rightFail) m2 = _nb + 2 * org_offset;
 

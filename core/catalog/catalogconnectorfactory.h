@@ -1,7 +1,7 @@
 #ifndef CATALOGCONNECTORFACTORY_H
 #define CATALOGCONNECTORFACTORY_H
 
-#include "Kernel_global.h"
+#include "kernel_global.h"
 
 namespace Ilwis {
 
