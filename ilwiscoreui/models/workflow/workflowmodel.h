@@ -1,7 +1,7 @@
 #ifndef WORKFLOWMODEL_H
 #define WORKFLOWMODEL_H
 
-#include "operationmodel.h"
+#include "models/operationmodel.h"
 #include <QQmlListProperty>
 
 /**

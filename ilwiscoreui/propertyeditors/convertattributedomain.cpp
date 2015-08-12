@@ -9,7 +9,7 @@
 #include "operationExpression.h"
 #include "operation.h"
 #include "table.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 #include "convertattributedomain.h"
 
 REGISTER_PROPERTYEDITOR("convertattributedomain",ConvertAttributeDomain)

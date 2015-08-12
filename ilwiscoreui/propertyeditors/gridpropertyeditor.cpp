@@ -1,6 +1,6 @@
 #include "kernel.h"
-#include "visualattributemodel.h"
-#include "globallayermodel.h"
+#include "models/visualattributemodel.h"
+#include "models/globallayermodel.h"
 #include "gridpropertyeditor.h"
 
 REGISTER_PROPERTYEDITOR("primarygridpropertyeditor",PrimaryGridEditor)

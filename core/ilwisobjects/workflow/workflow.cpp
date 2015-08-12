@@ -114,7 +114,7 @@ void Workflow::parseInputParameters()
     int inCount = 0;
     for (OVertex root : getRoots()) {
         NodeProperties properties = nodeProperties(root);
-        IOperationMetaData rootMeta = commandhandler()->get(properties.id);
+        IOperationMetaData rootMeta = mastercatalog()->id2Resource(properties.id);
         rootMeta->prepare();
         if ( !rootMeta.isValid()) {
             qDebug() << properties.id << "is not known IlwisObject!";
@@ -146,7 +146,8 @@ void Workflow::parseOutputParameters()
     int outCount = 0;
     for (OVertex leaf : getLeafs()) {
         NodeProperties properties = nodeProperties(leaf);
-        IOperationMetaData leafMeta = commandhandler()->get(properties.id);
+        IOperationMetaData leafMeta = mastercatalog()->d2Resource(properties.id);
+        rootMeta->prepare();
         if ( !leafMeta.isValid()) {
             qDebug() << properties.id << "is not known IlwisObject!";
         }

@@ -272,7 +272,6 @@ HEADERS += core/kernel.h\
     core/ilwisinterfaces.h \
     core/ilwisobjects/table/attributetable.h \
     core/ilwisobjects/table/selectabletable.h \
-    core/identityInterface.h \
     core/ilwisobjects/representation/representation.h \
     core/ilwisobjects/representation/colorlookup.h \
     core/ilwisobjects/representation/continuouscolorlookup.h \
@@ -282,7 +281,8 @@ HEADERS += core/kernel.h\
     core/util/tranquilizerfactory.h \
     core/util/consoletranquilizer.h \
     core/ilwisobjects/representation/shapelookup.h \
-    core/ilwisobjects/workflow/workflowoperationimplementation.h
+    core/ilwisobjects/workflow/workflowoperationimplementation.h \
+    core/identityinterface.h
 
 
 OTHER_FILES += \

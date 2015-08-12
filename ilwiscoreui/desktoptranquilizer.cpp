@@ -2,7 +2,7 @@
 #include <QCoreApplication>
 #include "kernel.h"
 #include "tranquilizer.h"
-#include "uicontextmodel.h"
+#include "models/uicontextmodel.h"
 #include "desktoptranquilizer.h"
 
 using namespace Ilwis;

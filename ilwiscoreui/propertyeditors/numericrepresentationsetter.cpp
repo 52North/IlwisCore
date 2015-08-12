@@ -5,7 +5,7 @@
 #include "representation.h"
 #include "numericrepresentationsetter.h"
 #include "mathhelper.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 #include "drawers/drawerinterface.h"
 
 

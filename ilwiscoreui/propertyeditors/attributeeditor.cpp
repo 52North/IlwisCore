@@ -2,7 +2,7 @@
 #include "ilwisdata.h"
 #include "representation.h"
 #include "representationelement.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 #include "attributeeditor.h"
 
 VisualAttributeEditor::VisualAttributeEditor(QObject *parent) : QObject(parent)

@@ -3,7 +3,7 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 #include "mapinformationattributesetter.h"
 
 REGISTER_PROPERTYEDITOR("mapinfopropertyeditor",MapInformationPropertySetter)

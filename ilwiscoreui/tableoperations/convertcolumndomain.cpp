@@ -3,7 +3,7 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
-#include "tablemodel.h"
+#include "models/tablemodel.h"
 #include "tableoperation.h"
 #include "symboltable.h"
 #include "operationmetadata.h"

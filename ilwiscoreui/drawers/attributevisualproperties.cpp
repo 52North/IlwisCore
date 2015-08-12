@@ -9,7 +9,7 @@
 #include "numericrange.h"
 #include "representation.h"
 #include "raster.h"
-#include "uicontextmodel.h"
+#include "models/uicontextmodel.h"
 #include "attributevisualproperties.h"
 
 using namespace Ilwis;

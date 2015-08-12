@@ -5,7 +5,7 @@
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
-#include "uicontextmodel.h"
+#include "models/uicontextmodel.h"
 #include "drawerinterface.h"
 #include "draweroperation.h"
 

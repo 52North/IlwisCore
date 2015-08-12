@@ -1,6 +1,6 @@
 #include "coverage.h"
 #include "layeropacitysetter.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 
 
 REGISTER_PROPERTYEDITOR("layeropacitysetter",LayerOpacitySetter)

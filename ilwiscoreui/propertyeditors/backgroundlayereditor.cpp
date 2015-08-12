@@ -1,5 +1,5 @@
 #include "backgroundlayereditor.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 
 
 REGISTER_PROPERTYEDITOR("backgroundlayereditor",BackgroundLayerEditor)

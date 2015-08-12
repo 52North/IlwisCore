@@ -8,7 +8,7 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "polygonattributesetter.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 
 REGISTER_PROPERTYEDITOR("polygonpropertysetter",PolygonPropertySetter)
 

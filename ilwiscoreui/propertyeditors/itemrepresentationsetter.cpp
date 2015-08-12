@@ -6,7 +6,7 @@
 #include "representationelement.h"
 #include "colorlookup.h"
 #include "palettecolorlookup.h"
-#include "visualattributemodel.h"
+#include "models/visualattributemodel.h"
 #include "itemrepresentationsetter.h"
 
 REGISTER_PROPERTYEDITOR("itemrepresentationsetter",ItemRepresentationSetter)
