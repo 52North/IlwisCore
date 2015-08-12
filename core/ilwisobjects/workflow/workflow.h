@@ -13,7 +13,7 @@
 namespace Ilwis {
 
 struct NodeProperties {
-    QUrl url;
+    quint64 id;
 };
 
 struct EdgeProperties {

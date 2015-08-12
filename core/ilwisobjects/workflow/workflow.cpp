@@ -43,7 +43,7 @@ QList<OVertex> Workflow::getRoots()
     for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         if (boost::in_edges(v, _wfGraph).first == boost::in_edges(v, _wfGraph).second) {
-            qDebug() << "in[" << nodeProperties(v).url << "] ";
+            qDebug() << "in[" << nodeProperties(v).id << "] ";
             roots.push_back(v);
         }
     }
@@ -58,7 +58,7 @@ QList<OVertex> Workflow::getLeafs()
     for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         if (boost::out_edges(v, _wfGraph).first == boost::out_edges(v, _wfGraph).second) {
-            qDebug() << "out[" << nodeProperties(v).url << "] ";
+            qDebug() << "out[" << nodeProperties(v).id << "] ";
             leafs.push_back(v);
         }
     }
@@ -114,10 +114,10 @@ void Workflow::parseInputParameters()
     int inCount = 0;
     for (OVertex root : getRoots()) {
         NodeProperties properties = nodeProperties(root);
-        IOperationMetaData rootMeta = mastercatalog()->get(properties.url, itSINGLEOPERATION);
+        IOperationMetaData rootMeta = commandhandler()->get(properties.id);
         rootMeta->prepare();
         if ( !rootMeta.isValid()) {
-            qDebug() << properties.url << "is not valid!";
+            qDebug() << properties.id << "is not known IlwisObject!";
         }
 
         /*
@@ -146,9 +146,9 @@ void Workflow::parseOutputParameters()
     int outCount = 0;
     for (OVertex leaf : getLeafs()) {
         NodeProperties properties = nodeProperties(leaf);
-        IOperationMetaData leafMeta = mastercatalog()->get(properties.url, itOPERATIONMETADATA);
+        IOperationMetaData leafMeta = commandhandler()->get(properties.id);
         if ( !leafMeta.isValid()) {
-            qDebug() << properties.url << "is not valid!";
+            qDebug() << properties.id << "is not known IlwisObject!";
         }
         /*
             // TODO parse optional parameters
@@ -182,7 +182,7 @@ void Workflow::debugPrintVertices()
     for (boost::tie(vi, vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         NodeProperties p = nodeIndex()[v];
-        qDebug() << p.url;// /*<< " ";//*/ << " (id=" << v << ") ";
+        qDebug() << p.id;// /*<< " ";//*/ << " (id=" << v << ") ";
     }
 }
 
@@ -191,8 +191,8 @@ void Workflow::debugPrintEdges()
     qDebug() << "edges(g) = ";
     boost::graph_traits<WorkflowGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(_wfGraph); ei != ei_end; ++ei)
-        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)].url
-                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)].url
+        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)].id
+                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)].id
                   //<< "[foo='" << edgeIndex()[*ei].foo
                   << "']) ";
 }
