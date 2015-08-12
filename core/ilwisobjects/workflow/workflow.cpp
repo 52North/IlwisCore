@@ -114,8 +114,8 @@ void Workflow::parseInputParameters()
     int inCount = 0;
     for (OVertex root : getRoots()) {
         NodeProperties properties = nodeProperties(root);
-        IOperationMetaData rootMeta = mastercatalog()->id2Resource(properties.id);
-        rootMeta->prepare();
+        IOperationMetaData rootMeta;
+        rootMeta.prepare(mastercatalog()->id2Resource(properties.id));
         if ( !rootMeta.isValid()) {
             qDebug() << properties.id << "is not known IlwisObject!";
         }
@@ -146,8 +146,8 @@ void Workflow::parseOutputParameters()
     int outCount = 0;
     for (OVertex leaf : getLeafs()) {
         NodeProperties properties = nodeProperties(leaf);
-        IOperationMetaData leafMeta = mastercatalog()->d2Resource(properties.id);
-        rootMeta->prepare();
+        IOperationMetaData leafMeta;
+        leafMeta.prepare(mastercatalog()->id2Resource(properties.id));
         if ( !leafMeta.isValid()) {
             qDebug() << properties.id << "is not known IlwisObject!";
         }
@@ -194,6 +194,6 @@ void Workflow::debugPrintEdges()
     for (boost::tie(ei, ei_end) = boost::edges(_wfGraph); ei != ei_end; ++ei)
         qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)].id
                   << "->" << nodeIndex()[boost::target(*ei, _wfGraph)].id
-                  //<< "[foo='" << edgeIndex()[*ei].foo
-                  << "']) ";
+                  //<< "[foo='" << edgeIndex()[*ei].foo << "']"
+                  << ") ";
 }

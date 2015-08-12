@@ -38,7 +38,10 @@ void OperationMetaData::parmfromResource(const Resource &resource, int n, const 
         QString name = resource[parmBase + "name"].toString();
         QString domainName = resource[parmBase + "domain"].toString();
         QString description = resource[parmBase + "desc"].toString();
-        newParameter(OperationParameter::ptINPUT,name,tp,domainName);
+        OperationParameter::ParameterKind kind = base == "pin"
+                ? OperationParameter::ptINPUT
+                : OperationParameter::ptOUTPUT;
+        SPOperationParameter parameter = newParameter(kind,name,tp,domainName);
     }
 }
 
