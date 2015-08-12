@@ -30,9 +30,9 @@ void Workflow::removeOperation(OVertex vertex)
     boost::remove_vertex(vertex, _wfGraph);
 }
 
-NodeProperties Workflow::operationProperties(const OVertex &v)
+NodeProperties Workflow::nodeProperties(const OVertex &v)
 {
-    return boost::get(nodeIndex(), v);
+    return nodeIndex()[v];
 }
 
 QList<OVertex> Workflow::getRoots()
@@ -43,7 +43,7 @@ QList<OVertex> Workflow::getRoots()
     for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         if (boost::in_edges(v, _wfGraph).first == boost::in_edges(v, _wfGraph).second) {
-            qDebug() << "in[" << nodeIndex()[v].url << "] ";
+            qDebug() << "in[" << nodeProperties(v).url << "] ";
             roots.push_back(v);
         }
     }
@@ -58,7 +58,7 @@ QList<OVertex> Workflow::getLeafs()
     for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         if (boost::out_edges(v, _wfGraph).first == boost::out_edges(v, _wfGraph).second) {
-            qDebug() << "out[" << nodeIndex()[v].url << "] ";
+            qDebug() << "out[" << nodeProperties(v).url << "] ";
             leafs.push_back(v);
         }
     }
@@ -113,8 +113,12 @@ void Workflow::parseInputParameters()
     clearInputs();
     int inCount = 0;
     for (OVertex root : getRoots()) {
-        NodeProperties properties = operationProperties(root);
-        IOperationMetaData rootMeta = mastercatalog()->get(properties.url, itOPERATIONMETADATA);
+        NodeProperties properties = nodeProperties(root);
+        IOperationMetaData rootMeta = mastercatalog()->get(properties.url, itSINGLEOPERATION);
+        rootMeta->prepare();
+        if ( !rootMeta.isValid()) {
+            qDebug() << properties.url << "is not valid!";
+        }
 
         /*
             // TODO parse optional parameters
@@ -141,9 +145,11 @@ void Workflow::parseOutputParameters()
     clearOutputs();
     int outCount = 0;
     for (OVertex leaf : getLeafs()) {
-        NodeProperties properties = operationProperties(leaf);
+        NodeProperties properties = nodeProperties(leaf);
         IOperationMetaData leafMeta = mastercatalog()->get(properties.url, itOPERATIONMETADATA);
-
+        if ( !leafMeta.isValid()) {
+            qDebug() << properties.url << "is not valid!";
+        }
         /*
             // TODO parse optional parameters
             // TODO let the user edit parameter names and optionalities

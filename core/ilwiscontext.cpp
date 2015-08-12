@@ -107,6 +107,11 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://operations"));
 
     _systemCatalog.prepare("ilwis://system");
+    mastercatalog()->addContainer(QUrl("ilwis://system/domains"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/coordinatesystems"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/representations"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/ellipsoids"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
 
 
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
