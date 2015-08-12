@@ -144,7 +144,7 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
 win32{
     PLATFORM = win32
-    BOOST=../../external
+    BOOST=../external
     SHAREDEXT=dll
     PREFIXSHARED=
     LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
