@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include "identity.h"
-#include "uicontextmodel.h"
+#include "models/uicontextmodel.h"
 #include "ilwiscoreui_global.h"
 
 namespace Ilwis {
