@@ -208,7 +208,6 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
     }
     Workflow *workflow = new Workflow(resource);
 
-    /*
     const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
     if (!factory) {
         ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
@@ -220,7 +219,6 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
         return 0;
     }
     workflow->setConnector(connector, IlwisObject::cmINPUT, options);
-    */
 
     return workflow;
 }
