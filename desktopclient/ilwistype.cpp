@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "IlwisType.h"
+#include "ilwistype.h"
 
 using namespace Ilwis;
 using namespace Desktopclient;

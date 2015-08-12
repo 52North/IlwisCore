@@ -1,5 +1,5 @@
 #include "geodrawer_plugin.h"
-#include "layermanager.h"
+#include "models/layermanager.h"
 //#include "geodrawer.h"
 
 #include <qqml.h>

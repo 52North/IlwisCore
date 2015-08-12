@@ -131,16 +131,36 @@ INCLUDEPATH += $$PWD/$$ILWISCORE/core
 DEPENDPATH += $$PWD/$$ILWISCORE/core
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
-INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
-DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
+INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
+DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
 
 INCLUDEPATH +=  core/ilwisobjects/domain \
                 ilwiscoreui \
                 ilwiscoreui\models
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
+
+
+win32{
+    PLATFORM = win32
+    BOOST=../../external
+    SHAREDEXT=dll
+    PREFIXSHARED=
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+    INCLUDEPATH += $$PWD/../external/geos
+    DEPENDPATH += $$PWD/../external/geos
+}
+linux{
+    BOOST=/usr/include
+    GEOSINCL=/usr/include
+    GEOSLIB=/usr/lib
+    SHAREDEXT=so
+    PREFIXSHARED=lib
+    INCLUDEPATH += $$GEOSINCL
+    DEPENDPATH += $$GEOSINCL
+    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+}
 
 
 INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
@@ -156,6 +176,7 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/ilwisobjects/representation \
                 $$ILWISCORE/core/catalog \
                 $$ILWISCORE/core/ilwisobjects/domain \
+                $$ILWISCORE/ilwiscoreui/models \
                 $$ILWISCORE \
                 $$BOOST
 

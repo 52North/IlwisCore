@@ -43,33 +43,53 @@ QML_IMPORT_PATH =
 # The .cpp file which was generated for your project. Feel free to hack it.
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
 
-INCLUDEPATH += $$PWD/../ilwiscore/core
-DEPENDPATH += $$PWD/../ilwiscore/core
+win32{
+    PLATFORM = win32
+    BOOST=../../external
+    SHAREDEXT=dll
+    PREFIXSHARED=
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+    INCLUDEPATH += $$PWD/../external/geos
+    DEPENDPATH += $$PWD/../external/geos
+}
+linux{
+    BOOST=/usr/include
+    GEOSINCL=/usr/include
+    GEOSLIB=/usr/lib
+    SHAREDEXT=so
+    PREFIXSHARED=lib
+    INCLUDEPATH += $$GEOSINCL
+    DEPENDPATH += $$GEOSINCL
+    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+}
+
+
+INCLUDEPATH += $$PWD/../IlwisCore/core
+DEPENDPATH += $$PWD/../IlwisCore/core
 INCLUDEPATH += $$PWD/../external/geos
 DEPENDPATH += $$PWD/../external/geos
-INCLUDEPATH += $$PWD/../ilwiscore/ilwiscoreui
-DEPENDPATH += $$PWD/../ilwiscore/ilwiscoreui
+INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
+DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
 
-INCLUDEPATH +=  ../ilwiscore/core/ilwisobjects \
-                ../ilwiscore/core/ilwisobjects/geometry \
-                ../ilwiscore/core/util \
-                ../ilwiscore/core/ilwisobjects/geometry/geodeticdatum \
-                ../ilwiscore/core/ilwisobjects/geometry/projection \
-                ../ilwiscore/core/ilwisobjects/geometry/coordinatesystem \
-                ../ilwiscore/core/ilwisobjects/geometry/georeference \
-                ../ilwiscore/core/ilwisobjects/coverage \
-                ../ilwiscore/core/ilwisobjects/table \
-                ../ilwiscore/core/ilwisobjects/operation \
-                ../ilwiscore/core/ilwisobjects/workflow \
-                ../ilwiscore/core/ilwisobjects/representation \
-                ../ilwiscore/core/catalog \
-                ../ilwiscore/core/ilwisobjects/domain \
-                ../ilwiscore/ilwiscoreui \
-                ../ilwiscore/ilwiscoreui/models \
-                ../ilwiscore/ilwiscoreui/models/workflow \
+INCLUDEPATH +=  ../IlwisCore/core/ilwisobjects \
+                ../IlwisCore/core/ilwisobjects/geometry \
+                ../IlwisCore/core/util \
+                ../IlwisCore/core/ilwisobjects/geometry/geodeticdatum \
+                ../IlwisCore/core/ilwisobjects/geometry/projection \
+                ../IlwisCore/core/ilwisobjects/geometry/coordinatesystem \
+                ../IlwisCore/core/ilwisobjects/geometry/georeference \
+                ../IlwisCore/core/ilwisobjects/coverage \
+                ../IlwisCore/core/ilwisobjects/table \
+                ../IlwisCore/core/ilwisobjects/operation \
+                ../IlwisCore/core/ilwisobjects/workflow \
+                ../IlwisCore/core/ilwisobjects/representation \
+                ../IlwisCore/core/catalog \
+                ../IlwisCore/core/ilwisobjects/domain \
+                ../IlwisCore/ilwiscoreui \
+                ../IlwisCore/ilwiscoreui/models \
+                ../IlwisCore/ilwiscoreui/models/workflow \
                 $$BOOST
 
 OTHER_FILES += \
