@@ -16,7 +16,7 @@ namespace Ilwis {
 
 struct DataProperties {
     DataProperties() {}
-    bool optional;
+    bool treatOptionalAsRequired;
     quint16 assignedParameterIndex;
     SPOperationParameter parameter;
 };
@@ -42,7 +42,6 @@ typedef boost::property_map<WorkflowGraph, boost::edge_index_t>::type EdgeProper
 
 typedef boost::graph_traits<WorkflowGraph>::vertex_descriptor OVertex;
 typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
-
 
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
@@ -85,6 +84,7 @@ private:
 
     QMap<OVertex, QList<SPDataProperties>> _inputProperties;
     QMap<OVertex, QList<SPDataProperties>> _outputProperties;
+    //QMap<OVertex, QList<OperationParameter>> _ioProperties;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;
 

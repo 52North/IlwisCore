@@ -1,3 +1,5 @@
+#include <QRegExp>
+
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "ilwisobject.h"
@@ -31,8 +33,14 @@ OperationMetaData::~OperationMetaData()
 {
 }
 
-void OperationMetaData::parmfromResource(const Resource &resource, int n, const QString& base) {
-    for(int i=0; i < n; ++i)    {
+void OperationMetaData::parmfromResource(const Resource &resource, int n, const QString& base)
+{
+    QStringList required;
+    QStringList optional;
+    parseSyntaxParameters(resource, required, optional);
+
+    for(int i=0; i < n; ++i) {
+        bool optional = required.size() < i+1;
         QString parmBase = base + QString("_%1_").arg(i+1);
 
         bool ok;
@@ -46,7 +54,27 @@ void OperationMetaData::parmfromResource(const Resource &resource, int n, const 
                 ? OperationParameter::ptINPUT
                 : OperationParameter::ptOUTPUT;
         SPOperationParameter parameter = newParameter(kind,name,tp,domainName);
+        //parameter-> // TODO set if parameter is optionsl
     }
+}
+
+void OperationMetaData::parseSyntaxParameters(const Resource &resource, QStringList &required, QStringList &optional)
+{
+    QRegExp argumentsrx("^.*\\((.*)\\)\\s+$");
+    int argIdx = argumentsrx.indexIn(resource["syntax"].toString());
+    QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
+
+    QRegExp requiredrx("^(.*)\\[");
+    int reqIdx = requiredrx.indexIn(arguments);
+    QString requireds = reqIdx != -1 ? requiredrx.cap(1) : "";
+
+    QRegExp optionalsrx("^.*\\[(.*)\\]\\s+$");
+    int optIdx = optionalsrx.indexIn(arguments);
+    QString optionals = optIdx != -1 ? optionalsrx.cap(1) : "";
+
+    QRegExp commaWithWhiteSpaces("\\s*,\\s*");
+    required = requireds.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
+    optional = optionals.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
 }
 
 IlwisTypes OperationMetaData::ilwisType() const
@@ -142,7 +170,8 @@ OperationParameter::OperationParameter(const OperationParameter &operationParame
     _index(operationParameter._index),
     _kind(operationParameter._kind),
     _type(operationParameter._type),
-    _domainName(operationParameter._domainName)
+    _domainName(operationParameter._domainName),
+    _optional(operationParameter._optional)
 {
     setDescription(operationParameter.description());
 }
@@ -167,9 +196,19 @@ QString OperationParameter::domainName() const
     return _domainName;
 }
 
+bool OperationParameter::isOptional() const
+{
+    return _optional;
+}
+
 void OperationParameter::index(quint16 index)
 {
     _index = index;
+}
+
+void OperationParameter::optional(bool optional)
+{
+    _optional = optional;
 }
 
 void OperationParameter::addToResource(Resource resource) const

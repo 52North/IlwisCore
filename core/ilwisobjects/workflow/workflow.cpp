@@ -182,14 +182,9 @@ IlwisTypes Workflow::ilwisType() const
 
 quint64 Workflow::createMetadata()
 {
-    //mastercatalog()->removeItems({ source() });
-
     parseInputParameters();
     parseOutputParameters();
-
-    //mastercatalog()->addItems( { source() });
     return source().id();
-
 }
 
 NodePropertyMap Workflow::nodeIndex()
@@ -213,11 +208,17 @@ IOperationMetaData Workflow::getOperationMetadata(quint64 id) const
     return metadata;
 }
 
+void Workflow::parseInputParameters()
+{
+    qDebug() << "parse workflow input parameters";
     clearInputs();
     int inCount = 0;
+
+    QStringList mandatoryInputs;
+    QStringList optionalInputs;
     for (OVertex inputNode : getNodesWithExternalInput()) {
         NodeProperties properties = nodeProperties(inputNode);
-        IOperationMetaData inputNodeMeta = getOperationMetadata(properties.id);
+        IOperationMetaData meta = getOperationMetadata(properties.id);
 
         /*
             // TODO parse optional parameters
@@ -226,15 +227,21 @@ IOperationMetaData Workflow::getOperationMetadata(quint64 id) const
             QString inParameters = opResource["inparameters"];
         */
         // add all inparameters for now
-        inCount += inputNodeMeta->getInputParameters().size();
+        inCount += meta->getInputParameters().size();
 
-        for (SPOperationParameter input : inputNodeMeta->getInputParameters()) {
-            SPOperationParameter parameter = newParameter(input.get());
+        for (SPOperationParameter input : meta->getInputParameters()) {
+            SPOperationParameter parameter = newParameter(input.get()); // TODO check copy
             parameter->addToResource(source());
         }
     }
     // TODO replace max number of args with parsed inParameters
     setProperty("inparameters", inCount);
+
+    QString opts = !optionalInputs.isEmpty()
+            ? ",[" + optionalInputs.join(",") + "]"
+            : "";
+    QString workflowSyntax = QString("%1( %2 %3 )").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
+    source().addProperty("syntax", workflowSyntax);
 
 }
 
@@ -263,7 +270,6 @@ void Workflow::parseOutputParameters()
     // TODO replace max number of args with parsed outParameters
     setProperty("outparameters", outCount);
 }
-
 
 void Workflow::debugPrintGraph()
 {

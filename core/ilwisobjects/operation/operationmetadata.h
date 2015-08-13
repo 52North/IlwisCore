@@ -30,7 +30,7 @@ public:
     OperationParameter::ParameterKind kind() const;
     quint16 index() const;
     QString domainName() const;
-    void index(quint16 index);
+    bool isOptional() const;
     void addToResource(Resource resource) const;
 
 private:
@@ -40,6 +40,10 @@ private:
     ParameterKind _kind;
     IlwisTypes _type;
     QString _domainName;
+    bool _optional;
+
+    void optional(bool optional);
+    void index(quint16 index);
 };
 
 typedef std::shared_ptr<OperationParameter> SPOperationParameter;
@@ -79,6 +83,7 @@ private:
     std::vector<SPOperationParameter> _outputParameters;
 
     void parmfromResource(const Resource &resource, int n, const QString &base);
+    void parseSyntaxParameters(const Resource &resource, QStringList &required, QStringList &optional);
 
 };
 
