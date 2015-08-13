@@ -1,0 +1,230 @@
+{
+	"name" : "CORINE level 3",
+	"code" : "corinelvl3",
+	"long name" : "CORINE Land Cover level 3",
+	"theme" : "land cover",
+	"type" : "thematic",
+	"description" : "the Corine programme was initiated in the European Union. Corine means 'coordination of information on the environment' and it was a prototype project working on many different environmental issues. The Corine databases and several of its programmes have been taken over by the EEA. One of these is an inventory of land cover in 44 classes, and presented as a cartographic product",
+	"items" : [{
+			"code" : "1.1.1",
+			"name" : "Continuous urban fabric",
+			"description" : "Most of the land is covered by . Buildings, roads and artificially surfaced area cover almost all the ground. Non-linear areas of vegetation and bare soil are exceptional",
+			"color" : "DarkRed"
+		}, {
+			"code" : "1.1.2",
+			"name" : "Discontinuous urban fabric",
+			"description" : "Most of the land is covered by structures. Buildings, roads and artificially surfaced areas associated with vegetated areas and bare soil, which occupy discontinuous but significant surfaces",
+			"color" : "Red"
+		}, {
+			"code" : "1.2.1",
+			"name" : " Road and rail networks and associated land",
+			"description" : "Motorways, railways, including associated installations (stations, platforms, embankments). Minimum width to include: I 00 m",
+			"color" : "#BA55D3"
+		}, {
+			"code" : "1.2.2",
+			"name" : "Industrial or commercial units",
+			"description" : "Artificially surfaced areas (with concrete, asphalt, tamacadam, or stabilised, e.g. beaten earth) devoid of vegetation, occupy most of the area in question, which also contains buildings and/or vegetated areas",
+			"color" : "Maroon"
+		}, {
+			"code" : "1.2.3",
+			"name" : "Port areas",
+			"description" : "Infrastructure of port areas, including quays, dockyards and marinas.",
+			"color" : "#F19BF1"
+		}, {
+			"code" : "1.2.4",
+			"name" : "Airports",
+			"description" : "Areas with open-pit extraction of industrial minerals (sandpits, quarries) or other minerals (opencast mines).Includes flooded gravel pits, except for river-bed extraction",
+			"color" : "Magenta"
+		}, {
+			"code" : "1.3.1",
+			"name" : "Mineral extraction sites",
+			"description" : "Airport installations: runways, buildings and associated land.",
+			"color" : "DarkOrchid"
+		}, {
+			"code" : "1.3.2",
+			"name" : "Dump sites",
+			"description" : "Landfill or mine dump sites, industrial or public.",
+			"color" : "#A6A6A6"
+		}, {
+			"code" : "1.3.3",
+			"name" : "Construction sites",
+			"description" : "Camping grounds, sports grounds, leisure parks, golf courses, racecourses, etc. Includes formal parks not surrounded by urban zones.",
+			"color" : "Silver"
+		}, {
+			"code" : "1.4.1",
+			"name" : "Green urban areas",
+			"description" : "Areas with vegetation within urban fabric. Includes parks and cemeteries with vegetation.",
+			"color" : "LightCoral"
+		}, {
+			"code" : "1.4.2",
+			"name" : "Sport and leisure facilities",
+			"description" : "Camping grounds, sports grounds, leisure parks, golf courses, racecourses, etc. Includes formal parks not surrounded by urban zones.",
+			"color" : "Tomato"
+		}, {
+			"code" : "2.1.1",
+			"name" : "Non-irrigated arable land",
+			"description" : "Cereals, legumes, fodder crops, root crops and fallow land. Includes flower and tree (nurseries) cultivation and vegetables, whether open field, under plastic or glass (includes market gardening). Includes aromatic, medicinal and culinary plants. Excludes permanent pastures.",
+			"color" : "Yellow"
+		}, {
+			"code" : "2.1.2",
+			"name" : "Permanently irrigated land",
+			"description" : "Cereals, legumes, fodder crops, root crops and fallow land. Includes flower and tree (nurseries) cultivation and vegetables, whether open field, under plastic or glass (includes market gardening). Includes aromatic, medicinal and culinary plants. Excludes permanent pastures.",
+			"color" : "#CCCC00"
+		}, {
+			"code" : "2.1.3",
+			"name" : "Rice fields",
+			"description" : "Land developed for rice cultivation. Flat surfaces with irrigation channels. Surfaces regularly flooded.",
+			"color" : "#B8DC70"
+		}, {
+			"code" : "2.2.1",
+			"name" : "Vineyards",
+			"description" : "Areas planted with vines",
+			"color" : "Tan"
+		}, {
+			"code" : "2.2.2",
+			"name" : "Fruit trees and berry plantations",
+			"description" : "Parcels planted with fruit trees or shrubs: single or mixed fruit species, fruit trees associated with permanently grassed surfaces. Includes chestnut and walnut groves.",
+			"color" : "#F0B6A2"
+		}, {
+			"code" : "2.2.3",
+			"name" : "Olive Groves",
+			"description" : "Areas planted with olive trees, including mixed occurrence of olive trees and vines on the same parce",
+			"color" : "GoldenRod"
+		}, {
+			"code" : "2.3.1",
+			"name" : "Pastures",
+			"description" : "Dense, predominantly graminoid grass cover, of floral composition, not under a rotation system. Mainly used for grazing, but the fodder may be harvested mechanically. Includes areas with hedges (bocage)e",
+			"color" : "#B3B366"
+		}, {
+			"code" : "2.4.1",
+			"name" : "Annual crops associated with permanent crops",
+			"description" : "Non-permanent crops (arable lands or pasture) associated with permanent crops on the same parcel",
+			"color" : "#F5DEB3"
+		}, {
+			"code" : "2.4.2",
+			"name" : "Complex cultivation",
+			"description" : "Juxtaposition of small parcels of diverse annual crops, pasture and/or permanent crops.",
+			"color" : "#EEE8AA"
+		}, {
+			"code" : "2.4.3",
+			"name" : "Mixed agriculure and natural vegetation",
+			"description" : "Areas principally occupied by agriculture, interspersed with significant natural areas",
+			"color" : "#CD853F"
+		}, {
+			"code" : "2.4.4",
+			"name" : "Agro-forestry areas",
+			"description" : "Annual crops or grazing land under the wooded cover of forestry species",
+			"color" : "Chocolate"
+		}, {
+			"code" : "3.1.1",
+			"name" : "Broad-leaved forest",
+			"description" : "Vegetation formation composed principally of trees, including shrub and bush understories, where broadleaved species predominate",
+			"color" : "#66CC00"
+		}, {
+			"code" : "3.1.2",
+			"name" : "Coniferous forest",
+			"description" : "Vegetation formation composed principally of trees, including shrub and bush understories, where coniferous species predominate",
+			"color" : "#186118"
+		}, {
+			"code" : "3.1.3",
+			"name" : "Mixed forest",
+			"description" : "Vegetation formation composed principally of trees, including shrub and bush understories, where broadleaved and coniferous species co~dominate",
+			"color" : "ForestGreen"
+		}, {
+			"code" : "3.2.1",
+			"name" : "Natural grassland",
+			"description" : "Low productivity grassland. Often situated in areas of rough uneven ground. Frequently includes rocky areas, briars, and heathland.",
+			"color" : "#9ACD32"
+		}, {
+			"code" : "3.2.2",
+			"name" : "Moors and heathland",
+			"description" : "Vegetation with low and closed cover, dominated by bushes, shrubs and herbaceous plants (heath, briars,broom, gorse, laburnum, etc.)",
+			"color" : "PaleGreen"
+		}, {
+			"code" : "3.2.3",
+			"name" : "Sclerophyllous vegetation",
+			"description" : "Bushy sclerophyllous vegetation. Includes maquis and garrige.",
+			"color" : "Olive"
+		}, {
+			"code" : "3.2.4",
+			"name" : "Transitional woodland/shrub",
+			"description" : "Bushy or herbaceous vegetation with scattered trees. Can represent either woodland degradation or forest regeneration/colonisation",
+			"color" : "LimeGreen"
+		}, {
+			"code" : "3.3.1",
+			"name" : "Beaches, dunes, and sand plains",
+			"description" : "Beaches, dunes and expanses of sand or pebbles in coastal or continental , including beds of stream channels with torrential regime",
+			"color" : "#ADADAD"
+		}, {
+			"code" : "3.3.2",
+			"name" : "Bare rock",
+			"description" : "Scree, cliffs, rocks and outcrops",
+			"color" : "#CDCDCD"
+		}, {
+			"code" : "3.3.3",
+			"name" : "Sparsely vegetated areas",
+			"description" : "Includes steppes, tundra and badlands. Scattered high-attitude vegetation",
+			"color" : "#C8F6C8"
+		}, {
+			"code" : "3.3.4",
+			"name" : "Burnt areas",
+			"description" : "Areas affected by recent fires, still mainly black",
+			"color" : "DarkGray"
+		}, {
+			"code" : "3.3.5",
+			"name" : "Glaciers and perpetual snow",
+			"description" : "Land covered by glaciers or permanent snowfields",
+			"color" : "#9ED6D6"
+		}, {
+			"code" : "4.1.1",
+			"name" : "Inland marshes",
+			"description" : "Low-lying land usually flooded in winter, and more or less saturated by water all year round",
+			"color" : "#BEA9E9"
+		}, {
+			"code" : "4.1.2",
+			"name" : "Peatbogs",
+			"description" : "Peatland consisting mainly of decomposed moss and vegetable matter. May or may not be exploited",
+			"color" : "#5548A4"
+		}, {
+			"code" : "4.2.1",
+			"name" : "Salt marshes",
+			"description" : "Vegetated low-lying areas, above the high-tide line, susceptible to flooding by sea water. Often in the process of filling in, gradually being colonised by halophilic plants",
+			"color" : "#D4C6F1"
+		}, {
+			"code" : "4.2.2",
+			"name" : "Salines",
+			"description" : "Salt-pans, active or in process of . Sections of salt marsh exploited for the production of salt by evaporation. They are clearly distinguishable from the rest of the marsh by their segmentation and embankment systems",
+			"color" : "#8465C5"
+		}, {
+			"code" : "4.2.3",
+			"name" : "Water courses",
+			"description" : "Natural or artificial water-courses serving as water drainage channels. Includes canals. Minimum width to include: 100 m",
+			"color" : "#F4F1FB"
+		}, {
+			"code" : "5.1.1",
+			"name" : "Intertidal flats",
+			"description" : "Generally unvegetated expanses of mud, sand or rock lying between high and low water-marks. On contour on map",
+			"color" : "DodgerBlue"
+		}, {
+			"code" : "5.1.2",
+			"name" : "Water bodies",
+			"description" : "Natural or artificial stretches of water",
+			"color" : "DeepSkyBlue"
+		}, {
+			"code" : "5.2.1",
+			"name" : "Coastal lagoons",
+			"description" : "Unvegetated stretches of salt or brackish waters separated from the sea by a tongue of land or other similar topography. These water bodies can be connected with the sea at limited points, either permanently or for parts of the year only",
+			"color" : "CornflowerBlue"
+		}, {
+			"code" : "5.2.2",
+			"name" : "Estuaries",
+			"description" : "The mouth of a river within which the tide ebbs and flows",
+			"color" : "LightBlue"
+		}, {
+			"code" : "5.2.3",
+			"name" : "Sea and ocean",
+			"description" : "Zone seaward of the lowest tide limit",
+			"color" : "#3A5ECA"
+		}
+	]
+}

@@ -1,0 +1,155 @@
+{
+	"name" : "Köppen",
+	"code" : "koeppen",
+	"type" : "thematic",
+	"theme" : "climate",
+	"long name" : "Köppen climate classification scheme",
+	"description" : "The system is based on the concept that native vegetation is the best expression of climate. Thus, climate zone boundaries have been selected with vegetation distribution in mind. It combines average annual and monthly temperatures and precipitation, and the seasonality of precipitation",
+	"items" : [{
+			"code" : "Af",
+			"name" : "Tropical rainforest climate",
+			"description" : "All 12 months have average precipitation of at least 60 mm (2.4 in). These climates usually occur within 5–10° latitude of the equator. In some eastern-coast areas, they may extend to as much as 25° away from the equator. This climate is dominated by the doldrums low-pressure system all year round, so has no natural seasons",
+			"color" : "Blue"
+		}, {
+			"code" : "Am",
+			"name" : "Short dry season; heavy monsoonal rains in other month",
+			"description" : "This type of climate, most common in South America, results from the monsoon winds which change direction according to the seasons. This climate has a driest month (which nearly always occurs at or soon after the winter solstice for that side of the equator) with rainfall less than 60 mm, but more than 1/25 the total annual precipitation.",
+			"color" : "#1873CC"
+		}, {
+			"code" : "Aw",
+			"name" : "Summer wet, winter dry season",
+			"description" : "These climates have a pronounced dry season, with the driest month having precipitation less than 60 mm and less than 1/25 of the total annual precipitation",
+			"color" : "DodgerBlue"
+		}, {
+			"code" : "BWh",
+			"name" : "Sub tropic dry arid climate",
+			"description" : "true desert climate in the sub tropics. It covers 12% of the Earth's land surface and is dominated by xerophytic vegetation. ",
+			"color" : "#FF6347"
+		}, {
+			"code" : "BWk",
+			"name" : "Mid latitudes dry arid climate",
+			"description" : "true desert climate in the mid latitudes. It covers 12% of the Earth's land surface and is dominated by xerophytic vegetation. ",
+			"color" : "#FFC0CB"
+		}, {
+			"code" : "BSh",
+			"name" : "Sub tropic dry semiarid climate",
+			"description" : "Is a grassland climate that covers 14% of the Earth's land surface. It receives more precipitation than the BW either from the intertropical convergence zone or from mid-latitude cyclones.",
+			"color" : "Khaki"
+		}, {
+			"code" : "BSk",
+			"name" : "Mid latitudes dry semiarid climate",
+			"description" : "Is a grassland climate that covers 14% of the Earth's land surface. It receives more precipitation than the BW either from the intertropical convergence zone or from mid-latitude cyclones.",
+			"color" : "Orange"
+		}, {
+			"code" : "Csa",
+			"name" : "humid moderate climate with hot dry summer",
+			"description" : "",
+			"color" : "Yellow"
+		}, {
+			"code" : "Csb",
+			"name" : "humid moderate climate with warm dry summer",
+			"description" : "",
+			"color" : "#BDB76B"
+		}, {
+			"code" : "Cwa",
+			"name" : "Dry winter, hot summer",
+			"description" : "",
+			"color" : "LightGreen"
+		}, {
+			"code" : "Cwb",
+			"name" : "humid warm summer with dry winter",
+			"description" : "",
+			"color" : "#4EA24E"
+		}, {
+			"code" : "Cwc",
+			"name" : "humid short cold summer with dry winter",
+			"description" : "",
+			"color" : "#4EA24E"
+		}, {
+			"code" : "Cfa",
+			"name" : "humid subtropical climate",
+			"description" : "Has hot muggy summers and frequent thunderstorms. Winters are mild and precipitation during this season comes from mid-latitude cyclones",
+			"color" : "#C2E184"
+		}, {
+			"code" : "Cfb",
+			"name" : "humid marine climate",
+			"description" : "marine climates are found on the western coasts of continents. They have a humid climate with short dry summer. Heavy precipitation occurs during the mild winters because of the continuous presence of mid-latitude cyclones",
+			"color" : "#9ACD32"
+		}, {
+			"code" : "Cfc",
+			"name" : "humid mediterranean climate",
+			"description" : "receive rain primarily during winter season from the mid-latitude cyclone. Extreme summer aridity is caused by the sinking air of the subtropical highs and may exist for up to 5 months",
+			"color" : "LimeGreen"
+		}, {
+			"code" : "Dsa",
+			"name" : "Hot dry summer continental climate",
+			"description" : "",
+			"color" : "Magenta"
+		}, {
+			"code" : "Dsb",
+			"name" : "warm dry summer continental climate",
+			"description" : "",
+			"color" : "#7A28A3"
+		}, {
+			"code" : "Dsc",
+			"name" : "cold dry summer continental climate",
+			"description" : "",
+			"color" : "Purple"
+		}, {
+			"code" : "Dsd",
+			"name" : "very cold dry summer continental climate",
+			"description" : "",
+			"color" : "#663399"
+		}, {
+			"code" : "Dwa",
+			"name" : "Humid with severe, dry winter, hot summer",
+			"description" : "",
+			"color" : "#A69CE1"
+		}, {
+			"code" : "Dwb",
+			"name" : "Humid with severe, dry winter, warm summer",
+			"description" : "",
+			"color" : "#4169E1"
+		}, {
+			"code" : "Dwc",
+			"name" : "Severe, dry winter, cool summer",
+			"description" : "",
+			"color" : "DarkSlateBlue"
+		}, {
+			"code" : "Dwd",
+			"name" : "Severe, very cold and dry winter, cool summer",
+			"description" : "",
+			"color" : "MidnightBlue"
+		}, {
+			"code" : "Dfa",
+			"name" : "Humid with severe winter, no dry season, hot summer",
+			"description" : "",
+			"color" : "Cyan"
+		}, {
+			"code" : "Dfb",
+			"name" : "Humid with severe winter, no dry season, warm summer",
+			"description" : "",
+			"color" : "DeepSkyBlue"
+		}, {
+			"code" : "Dfc",
+			"name" : "Severe winter, no dry season, cool summer",
+			"description" : "",
+			"color" : "Teal"
+		}, {
+			"code" : "Dfd",
+			"name" : "Severe, very cold winter, no dry season, cool summer",
+			"description" : "",
+			"color" : "#004040"
+		}, {
+			"code" : "ET",
+			"name" : "Polar tundra, no true summer",
+			"description" : "",
+			"color" : "Silver"
+		}, {
+			"code" : "EF",
+			"name" : "Perennial ice",
+			"description" : "",
+			"color" : "Grey"
+		}
+	]
+}

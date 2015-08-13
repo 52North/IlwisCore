@@ -1,0 +1,110 @@
+{
+	"name" : "FAO Global Ecological Zones",
+	"code" : "fao_ecological_zone",
+	"long name" : "FAO Global Ecological Zones",
+	"type" : "thematic",
+	"theme" : "land cover",
+	"description" : "",
+	"items" : [{
+			"code" : "TAr",
+			"name" : "Tropical rain forest",
+			"description" : "",
+			"color" : "#8A2BE2"
+		}, {
+			"code" : "TAwa",
+			"name" : "Tropical moist deciduous forest",
+			"description" : "",
+			"color" : "#FF00FF"
+		}, {
+			"code" : "TAwb",
+			"name" : "Tropical dry forest",
+			"description" : "",
+			"color" : "#9370DB"
+		}, {
+			"code" : "TBSh",
+			"name" : "Tropical shrubland",
+			"description" : "",
+			"color" : "#A98181"
+		}, {
+			"code" : "TBWh",
+			"name" : "Tropical desert",
+			"description" : "",
+			"color" : "#E6ADB7"
+		}, {
+			"code" : "TM",
+			"name" : "Tropical mountain systems",
+			"description" : "",
+			"color" : "#7B68EE"
+		}, {
+			"code" : "SCf",
+			"name" : "Subtropical humid forest",
+			"description" : "",
+			"color" : "Lime"
+		}, {
+			"code" : "SCs",
+			"name" : "Subtropical dry forest",
+			"description" : "",
+			"color" : "Khaki"
+		}, {
+			"code" : "SBSh",
+			"name" : "Subtropical steppe",
+			"description" : "",
+			"color" : "PaleGoldenRod"
+		}, {
+			"code" : "SBWh",
+			"name" : "Subtropical desert",
+			"description" : "",
+			"color" : "#FFDAB9"
+		}, {
+			"code" : "SM",
+			"name" : "Subtropical mountain systems",
+			"description" : "",
+			"color" : "#BC8F8F"
+		}, {
+			"code" : "TeDo",
+			"name" : "Temperate oceanic forest",
+			"description" : "",
+			"color" : "DarkGreen"
+		}, {
+			"code" : "TeDc",
+			"name" : "Temperate continental forest",
+			"description" : "",
+			"color" : "#66CDAA"
+		}, {
+			"code" : "TeBSk",
+			"name" : "Temperate steppe",
+			"description" : "",
+			"color" : "Gold"
+		}, {
+			"code" : "TeBWk",
+			"name" : "Temperate desert",
+			"description" : "",
+			"color" : "#FFA500"
+		}, {
+			"code" : "TeBWk",
+			"name" : "Temperate mountain systems",
+			"description" : "",
+			"color" : "#F0FFF0"
+		}, {
+			"code" : "Ba",
+			"name" : "Boreal coniferous forest",
+			"description" : "",
+			"color" : "#007D7D"
+		}, {
+			"code" : "Bb",
+			"name" : "Boreal tundra woodland",
+			"description" : "",
+			"color" : "#1E90FF"
+		}, {
+			"code" : "BM",
+			"name" : "Boreal mountain systems",
+			"description" : "",
+			"color" : "#5F9EA0"
+		}, {
+			"code" : "P",
+			"name" : "Polar",
+			"description" : "",
+			"color" : "Grey"
+		}
+	]
+}

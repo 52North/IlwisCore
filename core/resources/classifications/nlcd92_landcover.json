@@ -1,0 +1,115 @@
+{
+	"name" : "NLCD 92 Land Cover Classification",
+	"long name" : "NLCD 92 Land Cover Classification",
+	"code" : "landcover_nlcd92",
+	"type" : "thematic",
+	"theme" : "land cover",
+	"description" : "modified from the Anderson land-use and land-cover classification system",
+	"items" : [{
+			"code" : "11",
+			"name" : "Open Water",
+			"description" : "all areas of open water, generally with less than 25% cover of vegetation/land cover",
+			"color" : "#5077BE"
+		}, {
+			"code" : "12",
+			"name" : "Perennial Ice/Snow",
+			"description" : "all areas characterized by year-long surface cover of ice and/or snow",
+			"color" : "white"
+		}, {
+			"code" : "21",
+			"name" : "Low Intensity Residential",
+			"description" : "Includes areas with a mixture of constructed materials and vegetation. Constructed materials account for 30-80 percent of the cover. Vegetation may account for 20 to 70 percent of the cover. These areas most commonly include single-family housing units. Population densities will be lower than in high intensity residential areas",
+			"color" : "#E6A4AE"
+		}, {
+			"code" : "22",
+			"name" : "High Intensity Residential",
+			"description" : "Includes highly developed areas where people reside in high numbers. Examples include apartment complexes and row houses. Vegetation accounts for less than 20 percent of the cover. Constructed materials account for 80 to100 percent of the cover",
+			"color" : "red"
+		}, {
+			"code" : "23",
+			"name" : "Commercial/Industrial/Transportation",
+			"description" : "Includes infrastructure (e.g. roads, railroads, etc.) and all highly developed areas not classified as High Intensity Residential",
+			"color" : "#B22222"
+		}, {
+			"code" : "31",
+			"name" : "Bare Rock/Sand/Clay",
+			"description" : "Perennially barren areas of bedrock, desert pavement, scarps, talus, slides, volcanic material, glacial debris, beaches, and other accumulations of earthen material",
+			"color" : "LightGray"
+		}, {
+			"code" : "32",
+			"name" : "Quarries/Strip Mines/Gravel Pits",
+			"description" : "Areas of extractive mining activities with significant surface expression",
+			"color" : "Gray"
+		}, {
+			"code" : "33",
+			"name" : "Transitional Barren",
+			"description" : "Areas of sparse vegetative cover (less than 25 percent of cover) that are dynamically changing from one land cover to another, often because of land use activities. Examples include forest clearcuts, a transition phase between forest and agricultural land, the temporary clearing of vegetation, and changes due to natural causes (e.g. fire, flood, etc.)",
+			"color" : "DarkSlateBlue"
+		}, {
+			"code" : "41",
+			"name" : "Deciduous Forest",
+			"description" : "Areas dominated by trees where 75 percent or more of the tree species shed foliage simultaneously in response to seasonal change",
+			"color" : "#50BB7F"
+		}, {
+			"code" : "42",
+			"name" : "Evergreen Forest",
+			"description" : "Areas dominated by trees where 75 percent or more of the tree species `maintain their leaves all year. Canopy is never without green foliage",
+			"color" : "ForestGreen"
+		}, {
+			"code" : "43",
+			"name" : "Mixed Forest",
+			"description" : "Areas dominated by trees where neither deciduous nor evergreen species represent more than 75 percent of the cover present",
+			"color" : "#C4D2A7"
+		}, {
+			"code" : "51",
+			"name" : "Shrubland",
+			"description" : "Areas dominated by shrubs; shrub canopy accounts for 25-100 percent of the cover. Shrub cover is generally greater than 25 percent when tree cover is less than 25 percent. Shrub cover may be less than 25 percent in cases when the cover of other life forms (e.g. herbaceous or tree) is less than 25 percent and shrubs cover exceeds the cover of the other life forms",
+			"color" : "Tan"
+		}, {
+			"code" : "61",
+			"name" : "Orchards/Vineyards/Other",
+			"description" : "Orchards, vineyards, and other areas planted or maintained for the production of fruits, nuts, berries, or ornamentals",
+			"color" : "#4C602A"
+		}, {
+			"code" : "71",
+			"name" : "Grasslands/Herbaceous",
+			"description" : "Areas dominated by upland grasses and forbs. In rare cases, herbaceous cover is less than 25 percent, but exceeds the combined cover of the woody species present. These areas are not subject to intensive management, but they are often utilized for grazing",
+			"color" : "#E1D8CF"
+		}, {
+			"code" : "81",
+			"name" : "Pasture/Hay",
+			"description" : "Areas of grasses, legumes, or grass-legume mixtures planted for livestock grazing or the production of seed or hay crops",
+			"color" : "#D8CF7E"
+		}, {
+			"code" : "82",
+			"name" : "Row Crops",
+			"description" : "Areas used for the production of crops, such as corn, soybeans, vegetables, tobacco, and cotton",
+			"color" : "#B87839"
+		}, {
+			"code" : "83",
+			"name" : "Small Grains",
+			"description" : "Areas used for the production of graminoid crops such as wheat, barley, oats, and rice",
+			"color" : "#E6C29F"
+		}, {
+			"code" : "84",
+			"name" : "Fallow",
+			"description" : "Areas used for the production of crops that do not exhibit visable vegetation as a result of being tilled in a management practice that incorporates prescribed alternation between cropping and tillage",
+			"color" : "Silver"
+		}, {
+			"code" : "85",
+			"name" : "Urban/Recreational Grasses",
+			"description" : "Vegetation (primarily grasses) planted in developed settings for recreation, erosion control, or aesthetic purposes. Examples include parks, lawns, golf courses, airport grasses, and industrial site grasses",
+			"color" : "#F4A460"
+		}, {
+			"code" : "91",
+			"name" : "Woody Wetlands",
+			"description" : "Areas where forest or shrubland vegetation accounts for 25-100 percent of the cover and the soil or substrate is periodically saturated with or covered with water",
+			"color" : "#B0E0E6"
+		}, {
+			"code" : "92",
+			"name" : "Emergent Herbaceous Wetlands",
+			"description" : "Areas where perennial herbaceous vegetation accounts for 75-100 percent of the cover and the soil or substrate is periodically saturated with or covered with water",
+			"color" : "#6CA5C8"
+		}
+	]
+}

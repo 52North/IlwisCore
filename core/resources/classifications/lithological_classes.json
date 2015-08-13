@@ -1,0 +1,95 @@
+{
+	"name" : "Lithological Classes",
+	"long name" : "Lithological Classes",
+	"code" : "lithology",
+	"type" : "thematic",
+	"theme" : "geology",
+	"description" : "",
+	"items" : [{
+			"code" : "ev",
+			"name" : "Evaporites",
+			"description" : "a water-soluble mineral sediment that results from concentration and crystallization by evaporation from an aqueous solution.",
+			"color" : "LightGreen"
+		}, {
+			"code" : "ig",
+			"name" : "Ice and Glaciers",
+			"description" : "",
+			"color" : "LightCyan"
+		}, {
+			"code" : "mt",
+			"name" : "Metamorphics",
+			"description" : "Transformated existing rock types, in a process called metamorphism, which means 'change in form'. The original rock (protolith) is subjected to heat (temperatures greater than 150 to 200 °C) and pressure (1500 bars),[2] causing profound physical and/or chemical change",
+			"color" : "#4EA24E"
+		}, {
+			"code" : "nd",
+			"name" : "No Data",
+			"description" : "",
+			"color" : "DarkGrey"
+		}, {
+			"code" : "pa",
+			"name" : "Acid plutonic rocks",
+			"description" : "formed through the cooling and solidification of silica rich magma or lava. Igneous rock may form with or without crystallization, either below the surface as intrusive (plutonic) silica oversaturated rocks or on the surface as extrusive (volcanic) rocks",
+			"color" : "Crimson"
+		}, {
+			"code" : "pb",
+			"name" : "Basic plutonic rocks",
+			"description" : "formed through the cooling and solidification of magma or lava. Igneous rock may form with or without crystallization, either below the surface as intrusive (plutonic) rocks or on the surface as extrusive (volcanic) rocks",
+			"color" : "RebeccaPurple"
+		}, {
+			"code" : "pi",
+			"name" : "Intermediate plutonic rocks",
+			"description" : "",
+			"color" : "Purple"
+		}, {
+			"code" : "py",
+			"name" : "Pyroclastics",
+			"description" : "clastic rocks composed solely or primarily of volcanic materials",
+			"color" : "#61300D"
+		}, {
+			"code" : "sc",
+			"name" : "Carbonate sedimentary rocks",
+			"description" : "sedimentary rocks composed primarily of carbonate minerals. The two major types are limestone, which is composed of calcite or aragonite (different crystal forms of CaCO3) and dolostone, which is composed of the mineral dolomite (CaMg(CO3)2).",
+			"color" : "DodgerBlue"
+		}, {
+			"code" : "sm",
+			"name" : "Mixed sedimentary rocks",
+			"description" : "a sedimentary rock consisting of several components differing either in particle size or chemical and mineralogical composition or origin. Mixed clastic rocks include clayey sands, sandy clays, and aleurite clays",
+			"color" : "#997316"
+		}, {
+			"code" : "ss",
+			"name" : "Siliciclastic sedimentary rocks",
+			"description" : "clastic noncarbonate sedimentary rocks that are almost exclusively silica-bearing, either as forms of quartz or other silicate minerals",
+			"color" : "GoldenRod"
+		}, {
+			"code" : "su",
+			"name" : "Unconsolidated sediments",
+			"description" : "loose materials, ranging from clay to sand to gravel. Ground water flows through spaces between the grains",
+			"color" : "#FFDEAD"
+		}, {
+			"code" : "va",
+			"name" : "Acid volcanic rocks",
+			"description" : "The acidic igneous rocks comprise those rocks, whatever their origin and whatever level of the crust in which they crystallize, that are sufficiently silica-rich to contain modal (actual) or normative (theoretical) quartz in quantities of about 10% or more",
+			"color" : "LightPink"
+		}, {
+			"code" : "vb",
+			"name" : "Basic volcanic rocks",
+			"description" : "",
+			"color" : "DarkOrchid"
+		}, {
+			"code" : "vi",
+			"name" : "Intermediate volcanic rocks",
+			"description" : "",
+			"color" : "Orchid"
+		}, {
+			"code" : "wb",
+			"name" : "Water Bodies",
+			"description" : "",
+			"color" : "DarkTurquoise"
+		}, {
+			"code" : "pr",
+			"name" : "Precambrian rocks",
+			"description" : "Precambrian rocks are mostly covered by rock systems of more recent origin, but where visible they commonly display evidence of having been altered by intense metamorphism. Precambrian rocks often occur in shields, which are large areas of relatively low elevation that form parts of continental masses",
+			"color" : "#8B4513"
+		}
+	]
+}

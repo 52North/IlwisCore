@@ -22,8 +22,12 @@
 #include "textdomain.h"
 #include "numericrange.h"
 #include "numericdomain.h"
+#include "domainitem.h"
 #include "itemdomain.h"
 #include "itemrange.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
+#include "identifierrange.h"
 #include "colorrange.h"
 #include "colordomain.h"
 #include "identifieritem.h"
@@ -55,6 +59,7 @@
 #include "epsg.h"
 #include "catalog.h"
 #include "workflow.h"
+
 
 using namespace Ilwis;
 using namespace Internal;
@@ -447,6 +452,80 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 
     return gcoverage;
 }
+template<class DomainItemType, class RangeType> Domain* createItemDomain2(const QSqlRecord& rec, const Resource& resource){
+    ItemDomain<DomainItemType> *itemdom = new ItemDomain<DomainItemType>(resource);
+    itemdom->fromInternal(rec);
+    itemdom->name(resource.name());
+    RangeType range ;
+    QSqlQuery itemstable(kernel()->database());
+    QString query = "Select * from domainitems where code='" + resource.code() + "'";
+    if (itemstable.exec(query) ) {
+        while ( itemstable.next()){
+            QSqlRecord rec = itemstable.record();
+            range << rec.value("itemname").toString() + "|" + rec.value("itemcode").toString() + "|" + rec.value("itemdescription").toString();
+        }
+        itemdom->range(range.clone());
+    }
+    return itemdom;
+}
+
+Domain* InternalIlwisObjectFactory::createItemDomain(QSqlQuery& db, const IOOptions &options, const Resource& resource) const{
+    QString query = QString("Select * from itemdomain where code='%1'").arg(resource.code());
+    if (db.exec(query) && db.next()) {
+        QSqlRecord rec = db.record();
+        QString dt = rec.value("domaintype").toString();
+        if (  dt == "thematic"){
+            return createItemDomain2<ThematicItem, ThematicRange>(rec,resource);
+        }
+    }
+    return 0;
+}
+
+NumericDomain* InternalIlwisObjectFactory::createNumericDomain(const QString& code, QSqlQuery& db, const IOOptions &options, const Resource& resource) const
+{
+    QString query = QString("Select * from numericdomain where code='%1'").arg(code);
+    if (db.exec(query)) {
+        if ( db.next()){
+            QSqlRecord rec = db.record();
+            NumericDomain *dv = new NumericDomain(resource);
+
+            dv->fromInternal(rec);
+            double vmin = rec.field("minv").value().toDouble();
+            double vmax = rec.field("maxv").value().toDouble();
+            double step = rec.field("resolution").value().toDouble();
+            int range_strict = rec.field("range_strict").value().toInt();
+            // TODO:, implement unit stuff
+            QString unit = rec.field("unit").value().toString();
+            if (unit == "Days"){
+                if ( fmod(step,1.0) == 0 && step != 0)
+                    dv->range(new TimeInterval(Time(vmin), Time(vmax)));
+                else
+                    dv->range(new TimeInterval(Time(vmin), Time(vmax),Duration(QString("%1D").arg(step))));
+            }else {
+                if ( fmod(step,1.0) == 0 && step != 0)
+                    dv->range(new NumericRange(vmin, vmax,1));
+                else
+                    dv->range(new NumericRange(vmin, vmax));
+            }
+
+            dv->setStrict(range_strict ? true : false);
+            QString parent = rec.field("parent").value().toString();
+            if ( parent != "" && parent !=  code) { // no parenting to itself
+                IDomain dom;
+                dom.prepare(parent, options);
+                if ( dom.isValid()) {
+                    dv->setParent(dom);
+                }
+            }
+            return dv;
+
+        }else {
+            kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
+        }
+    }
+    return 0;
+}
+
 
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, const IOOptions &options) const{
     if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
@@ -474,47 +553,12 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
             if ( db.next()){
                 QString table = db.value(0).toString();
                 if ( table == "numericdomain"){
-                    query = QString("Select * from numericdomain where code='%1'").arg(code);
-                    if (db.exec(query)) {
-                        if ( db.next()){
-                            QSqlRecord rec = db.record();
-                            NumericDomain *dv = new NumericDomain(resource);
+                    newdomain = createNumericDomain(code, db, options, resource);
 
-                            dv->fromInternal(rec);
-                            double vmin = rec.field("minv").value().toDouble();
-                            double vmax = rec.field("maxv").value().toDouble();
-                            double step = rec.field("resolution").value().toDouble();
-                            int range_strict = rec.field("range_strict").value().toInt();
-                            // TODO:, implement unit stuff
-                            QString unit = rec.field("unit").value().toString();
-                            if (unit == "Days"){
-                                if ( fmod(step,1.0) == 0 && step != 0)
-                                    dv->range(new TimeInterval(Time(vmin), Time(vmax)));
-                                else
-                                    dv->range(new TimeInterval(Time(vmin), Time(vmax),Duration(QString("%1D").arg(step))));
-                            }else {
-                                if ( fmod(step,1.0) == 0 && step != 0)
-                                    dv->range(new NumericRange(vmin, vmax,1));
-                                else
-                                    dv->range(new NumericRange(vmin, vmax));
-                            }
-
-                            dv->setStrict(range_strict ? true : false);
-                            QString parent = rec.field("parent").value().toString();
-                            if ( parent != "" && parent !=  code) { // no parenting to itself
-                                IDomain dom;
-                                dom.prepare(parent, options);
-                                if ( dom.isValid()) {
-                                    dv->setParent(dom);
-                                }
-                            }
-                            newdomain = dv;
-                            readonlyState = true;
-                        }else {
-                            kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
-                        }
-                    }
+                }else if ( table == "itemdomain"){
+                    newdomain = createItemDomain(db, options, resource);
                 }
+                readonlyState = true;
             }
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(code));
