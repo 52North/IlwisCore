@@ -30,7 +30,7 @@ public:
     OperationParameter::ParameterKind kind() const;
     quint16 index() const;
     QString domainName() const;
-    void index(quint16 index);
+    bool isOptional() const;
     void addToResource(Resource resource) const;
 
 private:
@@ -40,6 +40,10 @@ private:
     ParameterKind _kind;
     IlwisTypes _type;
     QString _domainName;
+    bool _optional;
+
+    void optional(bool optional);
+    void index(quint16 index);
 };
 
 typedef std::shared_ptr<OperationParameter> SPOperationParameter;
@@ -53,9 +57,11 @@ public:
     IlwisTypes ilwisType() const;
 
     SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF);
-    SPOperationParameter newParameter(SPOperationParameter parameter);
+    SPOperationParameter newParameter(OperationParameter *parameter);
+    SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
+
     QString getNamespace() const;
     QString getLongName() const;
     QStringList getKeywords() const;
@@ -67,12 +73,17 @@ public:
 protected:
     void clearInputs();
     void clearOutputs();
+    quint16 minInputCountParameters();
+    quint16 minOutputCountParameters();
 
 private:
+    quint16 _minInputCountParameters;
+    quint16 _minOutputCountParameters;
     std::vector<SPOperationParameter> _inputParameters;
     std::vector<SPOperationParameter> _outputParameters;
 
     void parmfromResource(const Resource &resource, int n, const QString &base);
+    void parseSyntaxParameters(const Resource &resource, QStringList &required, QStringList &optional);
 
 };
 
