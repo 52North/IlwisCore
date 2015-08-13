@@ -2,23 +2,34 @@
 #define WORKFLOW_H
 
 #include <QPoint>
+#include <QMap>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include "kernel_global.h"
+#include "ilwistypes.h"
 #include "operationmetadata.h"
 
 namespace Ilwis {
+
+struct DataProperties {
+    DataProperties() {}
+    bool optional;
+    quint16 assignedParameterIndex;
+    SPOperationParameter parameter;
+};
+
+typedef std::shared_ptr<DataProperties> SPDataProperties;
 
 struct NodeProperties {
     quint64 id;
 };
 
 struct EdgeProperties {
-    QString pin;
-    QString pout;
+    quint16 outputIndexLastStep;
+    quint16 inputIndexNextStep;
 };
 
 typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
@@ -42,14 +53,20 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
+    SPDataProperties addInputDataProperties(const OVertex v);
+    SPDataProperties addOutputDataProperties(const OVertex &v);
+    void removeInputDataProperties(const OVertex &v, quint16 index);
+    void removeOutputDataProperties(const OVertex &v, quint16 index);
+
     OVertex addOperation(const NodeProperties &properties);
     OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties);
     void removeOperation(OVertex vertex);
     void removeOperationFlow(OEdge edge);
 
-    QList<OVertex> getRoots();
-    QList<OVertex> getLeafs();
+    QList<OVertex> getNodesWithExternalInput();
+    QList<OVertex> getNodesWithExternalOutputs();
     NodeProperties nodeProperties(const OVertex &v);
+    EdgeProperties edgeProperties(const OEdge &e);
 
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);

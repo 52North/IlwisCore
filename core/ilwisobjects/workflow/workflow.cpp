@@ -19,6 +19,43 @@ Workflow::~Workflow() {
 
 }
 
+SPDataProperties Workflow::addInputDataProperties(const OVertex v)
+{
+    if ( !_inputProperties.contains(v)) {
+        QList<SPDataProperties> list;
+        _inputProperties.insert(v, list);
+    }
+    SPDataProperties properties = SPDataProperties(new DataProperties());
+    _inputProperties[v].push_back(properties);
+    return SPDataProperties(properties);
+}
+
+
+SPDataProperties Workflow::addOutputDataProperties(const OVertex &v)
+{
+    if ( !_outputProperties.contains(v)) {
+        QList<SPDataProperties> list;
+        _outputProperties.insert(v, list);
+    }
+    SPDataProperties properties = SPDataProperties(new DataProperties());
+    _outputProperties[v].push_back(properties);
+    return SPDataProperties(properties);
+}
+
+void Workflow::removeInputDataProperties(const OVertex &v, quint16 index)
+{
+    if (_inputProperties.contains(v) && _inputProperties[v].size() > index) {
+        _inputProperties[v].removeAt(index);
+    }
+}
+
+void Workflow::removeOutputDataProperties(const OVertex &v, quint16 index)
+{
+    if (_outputProperties.contains(v) && _outputProperties[v].size() > index) {
+        _outputProperties[v].removeAt(index);
+    }
+}
+
 OVertex Workflow::addOperation(const NodeProperties &properties)
 {
     return boost::add_vertex(properties, _wfGraph);
