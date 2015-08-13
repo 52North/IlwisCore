@@ -14,12 +14,16 @@ OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(res
     QString pcount = resource["inparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        parmfromResource(resource,parts.back().toInt(),"pin");
+        _minCountParameters = parts.first().toInt();
+        quint16 maxCountParameters = parts.back().toInt();
+        parmfromResource(resource,maxCountParameters,"pin");
     }
     pcount = resource["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        parmfromResource(resource,parts.back().toInt(),"pout");
+        _minCountParameters = parts.first().toInt();
+        quint16 maxCountParameters = parts.back().toInt();
+        parmfromResource(resource,maxCountParameters,"pout");
     }
 }
 
@@ -102,10 +106,15 @@ void OperationMetaData::clearOutputs()
 
 SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description)
 {
-    return newParameter(SPOperationParameter(new OperationParameter(kind, name, type, domain, description)));
+    return newParameter(new OperationParameter(kind, name, type, domain, description));
 }
 
-SPOperationParameter OperationMetaData::newParameter(SPOperationParameter parameter)
+SPOperationParameter OperationMetaData::newParameter(OperationParameter *parameter)
+{
+    return addParameter(SPOperationParameter(parameter));
+}
+
+SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)
 {
     bool input = parameter->kind() == OperationParameter::ptINPUT;
     if (input) {

@@ -53,7 +53,8 @@ public:
     IlwisTypes ilwisType() const;
 
     SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF);
-    SPOperationParameter newParameter(SPOperationParameter parameter);
+    SPOperationParameter newParameter(OperationParameter *parameter);
+    SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
     QString getNamespace() const;
@@ -69,6 +70,7 @@ protected:
     void clearOutputs();
 
 private:
+    quint16 _minCountParameters;
     std::vector<SPOperationParameter> _inputParameters;
     std::vector<SPOperationParameter> _outputParameters;
 
