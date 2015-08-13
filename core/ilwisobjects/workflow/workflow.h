@@ -82,6 +82,9 @@ public:
 
 private:
     WorkflowGraph _wfGraph;
+
+    QMap<OVertex, QList<SPDataProperties>> _inputProperties;
+    QMap<OVertex, QList<SPDataProperties>> _outputProperties;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;
 
@@ -90,6 +93,9 @@ private:
 
     void parseInputParameters();
     void parseOutputParameters();
+    IOperationMetaData getOperationMetadata(quint64 id) const;
+    std::vector<quint16> getAssignedPins(const OVertex &v);
+    std::vector<quint16> getAssignedPouts(const OVertex &v);
 
 };
 
