@@ -57,6 +57,7 @@ public:
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
+
     QString getNamespace() const;
     QString getLongName() const;
     QStringList getKeywords() const;
@@ -68,9 +69,12 @@ public:
 protected:
     void clearInputs();
     void clearOutputs();
+    quint16 minInputCountParameters();
+    quint16 minOutputCountParameters();
 
 private:
-    quint16 _minCountParameters;
+    quint16 _minInputCountParameters;
+    quint16 _minOutputCountParameters;
     std::vector<SPOperationParameter> _inputParameters;
     std::vector<SPOperationParameter> _outputParameters;
 

@@ -14,14 +14,14 @@ OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(res
     QString pcount = resource["inparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        _minCountParameters = parts.first().toInt();
+        _minInputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
         parmfromResource(resource,maxCountParameters,"pin");
     }
     pcount = resource["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
-        _minCountParameters = parts.first().toInt();
+        _minOutputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
         parmfromResource(resource,maxCountParameters,"pout");
     }
@@ -102,6 +102,16 @@ void OperationMetaData::clearInputs()
 void OperationMetaData::clearOutputs()
 {
     _outputParameters.clear();
+}
+
+quint16 OperationMetaData::minInputCountParameters()
+{
+    return _minInputCountParameters;
+}
+
+quint16 OperationMetaData::minOutputCountParameters()
+{
+    return _minOutputCountParameters;
 }
 
 SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description)
