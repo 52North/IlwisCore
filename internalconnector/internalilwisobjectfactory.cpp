@@ -221,6 +221,7 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
         return 0;
     }
     metadata->setConnector(connector, IlwisObject::cmINPUT, options);
+    metadata->init();
 
     return metadata;
 }
