@@ -111,18 +111,16 @@ Rectangle {
                 var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
                 if ( newPanel){
                     var component = Qt.createComponent(newPanel.componentUrl)
-                    mastercatalog.currentUrl = url
-                    var data= newPanel.displayName
-                    var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
-                    if ( insertetTab){
-                        insertetTab.item.addDataSource(filter, url, outputtype)
-                        //console.debug("1")
-                        insertetTab.item.tabmodel = newPanel
-                        //console.debug("2")
-                        tabview.removeTab(removeIndex)
-                        //console.debug("3")
-                        datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
-                        //console.debug("4")
+                    if (component.status === Component.Ready){
+                        mastercatalog.currentUrl = url
+                        var data= newPanel.displayName
+                        var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
+                        if ( insertetTab){
+                            insertetTab.item.addDataSource(filter, url, outputtype)
+                            insertetTab.item.tabmodel = newPanel
+                            tabview.removeTab(removeIndex)
+                            datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                        }
                     }
                 }
             }
@@ -134,6 +132,8 @@ Rectangle {
             if ( !newPanel)
                 return
             var component = Qt.createComponent(newPanel.componentUrl)
+            if (component.status === Component.Error)
+                console.log("Error loading component:", component.errorString());
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
             if ( tabview){
