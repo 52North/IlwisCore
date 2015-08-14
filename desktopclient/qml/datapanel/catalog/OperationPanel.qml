@@ -59,7 +59,7 @@ Item {
             model : operations.keywords
             onCurrentIndexChanged: {
                 if ( currentCatalog){
-                    var filterString = "type='OperationMetaData'"
+                    var filterString = "type='SingleOperation'"
                     if (currentIndex != 0)
                         filterString += " and keyword='" + model[currentIndex] + "'"
                     currentCatalog.filter(filterString)
@@ -121,7 +121,7 @@ Item {
 
     Component.onCompleted: {
         var url = mastercatalog.currentUrl
-        currentCatalog = mastercatalog.newCatalog(url,"type='OperationMetaData'")
+        currentCatalog = mastercatalog.newCatalog(url,"type='SingleOperation'")
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
