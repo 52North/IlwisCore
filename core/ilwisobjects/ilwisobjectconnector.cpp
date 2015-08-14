@@ -32,6 +32,21 @@ Resource &IlwisObjectConnector::source()
     return _resource;
 }
 
+void IlwisObjectConnector::setProperty(const QString &key, const QVariant &value)
+{
+    _resource.addProperty(key, value);
+}
+
+void IlwisObjectConnector::removeProperty(const QString &key)
+{
+    _resource.removeProperty(key);
+}
+
+bool IlwisObjectConnector::hasProperty(const QString &key)
+{
+    _resource.hasProperty(key);
+}
+
 const Resource& IlwisObjectConnector::source() const{
     return _resource;
 }

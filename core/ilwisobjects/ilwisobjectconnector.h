@@ -22,6 +22,9 @@ public:
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
     Resource& source() ;
+    void setProperty(const QString &key, const QVariant &value);
+    void removeProperty(const QString &key);
+    bool hasProperty(const QString &key);
     const Resource &source() const;
     bool dataIsLoaded() const;
 

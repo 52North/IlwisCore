@@ -73,6 +73,9 @@ public:
      * \return
      */
     virtual bool isReadOnly() const { return true; }
+    virtual void setProperty(const QString &, const QVariant &) {}
+    virtual void removeProperty(const QString &) {}
+    virtual bool hasProperty(const QString &) { return false; }
 
 };
 
