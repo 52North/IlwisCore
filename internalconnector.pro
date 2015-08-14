@@ -30,7 +30,8 @@ HEADERS += \
     internalconnector/internaldomain.h \
     internalconnector/internalcoordinatesystemconnector.h \
     internalconnector/internalrepresentation.h \
-    internalconnector/workflowconnector.h
+    internalconnector/workflowconnector.h \
+    internalconnector/operationmetadataconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -46,7 +47,8 @@ SOURCES += \
     internalconnector/internaldomain.cpp \
     internalconnector/internalcoordinatesystemconnector.cpp \
     internalconnector/internalrepresentation.cpp \
-    internalconnector/workflowconnector.cpp
+    internalconnector/workflowconnector.cpp \
+    internalconnector/operationmetadataconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

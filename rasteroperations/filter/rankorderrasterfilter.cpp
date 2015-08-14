@@ -118,9 +118,9 @@ quint64 RankOrderRasterFilter::createMetadata()
     operation.setInParameterCount({2,4,5});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage with numeric domain"));
     operation.addInParameter(1,itSTRING , TR("filter name"),TR("Definition of the filter. This can be a predefined filter name"));
-    operation.addInParameter(2,itUINT32 , TR("number of columns"),TR("Number of columns in the user defined matrix, only for user defined rank order filter"));
-    operation.addInParameter(3,itUINT32 , TR("number of rows"),TR("Number of rows in the user defined matrix, only for user defined rank order filter"));
-    operation.addInParameter(4,itUINT32 , TR("index"),TR("Pixel position to be used, only for the rankXxY user defined rank order filter"));
+    operation.addOptionalInParameter(2,itUINT32 , TR("number of columns"),TR("Number of columns in the user defined matrix, only for user defined rank order filter"));
+    operation.addOptionalInParameter(3,itUINT32 , TR("number of rows"),TR("Number of rows in the user defined matrix, only for user defined rank order filter"));
+    operation.addOptionalInParameter(4,itUINT32 , TR("index"),TR("Pixel position to be used, only for the rankXxY user defined rank order filter"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with a numeric domain"));
     operation.setKeywords("filter,raster,numeric");
