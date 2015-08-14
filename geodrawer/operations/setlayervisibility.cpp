@@ -102,7 +102,7 @@ quint64 SetLayerVisibility::createMetadata()
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
     operation.addInParameter(1,itSTRING|itINTEGER , TR("layer index/code"), TR("location of the layer to be used. In the case of pre or post drawers the index is the order number"));
     operation.addInParameter(2,itBOOL , TR("visibility"));
-    operation.addInParameter(3,itSTRING , TR("drawer type"), TR("the type fo drawer, pre, main, or post. The default is main"));
+    operation.addOptionalInParameter(3,itSTRING , TR("drawer type"), TR("the type fo drawer, pre, main, or post. The default is main"));
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 

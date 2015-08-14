@@ -126,8 +126,8 @@ quint64 AddDrawer::createMetadata()
     operation.setInParameterCount({2,4});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
     operation.addInParameter(1,itSTRING , TR("Drawer name/code"),TR("The name of the drawer or the type of drawer will be selected based on this parameter"));
-    operation.addInParameter(2,itSTRING , TR("Data source"),TR("The url that is used to retrieve the data for this layer"));
-    operation.addInParameter(3,itSTRING , TR("Data source typename"),TR("which data type is represented by this url"));
+    operation.addOptionalInParameter(2,itSTRING , TR("Data source"),TR("The url that is used to retrieve the data for this layer"));
+    operation.addOptionalInParameter(3,itSTRING , TR("Data source typename"),TR("which data type is represented by this url"));
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 
