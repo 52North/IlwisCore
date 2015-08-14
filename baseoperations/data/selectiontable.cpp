@@ -116,28 +116,18 @@ Ilwis::OperationImplementation::State SelectionTable::prepare(ExecutionContext *
 
 quint64 SelectionTable::createMetadata()
 {
-    QString url = QString("ilwis://operations/selection");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","Column selection");
-    resource.addProperty("syntax","selection(table,selection-definition)");
-    resource.addProperty("description",TR("the operation select one or more column and puts them in smaller table"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itTABLE);
-    resource.addProperty("pin_1_name", TR("input table"));
-    resource.addProperty("pin_1_desc",TR("input table with a domain as specified by the selection"));
-    resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("selection-definition"));
-    resource.addProperty("pin_2_desc",TR("Selection can either be an (set of)attribute(s) or record definition"));
-    resource.addProperty("pout_1_type", itTABLE);
-    resource.addProperty("pout_1_name", TR("Selection"));
-    resource.addProperty("pout_1_desc",TR("table were the selection has been applied"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/selection"});
+    operation.setSyntax("selection(table,selection-definition)");
+    operation.setDescription(TR("the operation select one or more column and puts them in smaller table"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itTABLE , TR("input table"),TR("input table with a domain as specified by the selection"));
+    operation.addInParameter(1,itSTRING, TR("selection-definition"), TR("Selection can either be an (set of)attribute(s) or record definition"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itTABLE , TR("Selection"),TR("table were the selection has been applied"));
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
+
 }
 
 

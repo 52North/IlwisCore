@@ -208,8 +208,8 @@ quint64 SelectionFeatures::createMetadata()
     operation.setDescription(TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
     operation.setInParameterCount({2,3});
     operation.addInParameter(0,itFEATURE, TR("input feature coverage"),TR("input feature rcoverage with a domain as specified by the selection"));
-    operation.addInParameter(1,itSTRING, TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    operation.addInParameter(2,itSTRING, TR("alternate return type"),TR("optional, if asIndex is used the result will be a selection of feature indexes in the coverage"));
+    operation.addOptionalInParameter(1,itSTRING, TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    operation.addOptionalInParameter(2,itSTRING, TR("alternate return type"),TR("optional, if asIndex is used the result will be a selection of feature indexes in the coverage"));
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE | itCOLLECTION, TR("Selection"),TR("coverage or index were the selection has been applied") );

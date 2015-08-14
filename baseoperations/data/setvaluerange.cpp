@@ -146,31 +146,17 @@ Ilwis::OperationImplementation::State SetValueRange::prepare(ExecutionContext *,
 
 quint64 SetValueRange::createMetadata()
 {
-    QString url = QString("ilwis://operations/setvaluerange");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","setvaluerange");
-    resource.addProperty("syntax","setvaluerange(objectname,min,max(,resolution))");
-    resource.addProperty("description",TR("sets the value range of a coverage or column to a new value; all value outside the range will become undefined"));
-    resource.addProperty("inparameters","3|4");
-    resource.addProperty("pin_1_type", itSTRING);
-    resource.addProperty("pin_1_name", TR("input object"));
-    resource.addProperty("pin_1_desc",TR("input object. If the syntax uses the [] notation it points to a column of a table"));
-    resource.addProperty("pin_2_type", itNUMBER);
-    resource.addProperty("pin_2_name", TR("minimum"));
-    resource.addProperty("pin_2_desc",TR("minimum of the new value range. If the value is undefined it will be ignored"));
-    resource.addProperty("pin_3_type", itNUMBER);
-    resource.addProperty("pin_3_name", TR("maximum"));
-    resource.addProperty("pin_3_desc",TR("maximum of the new value range. If the value is undefined it will be ignored"));
-    resource.addProperty("pin_4_type", itNUMBER);
-    resource.addProperty("pin_4_name", TR("resolution"));
-    resource.addProperty("pin_4_desc",TR("optional resolution of the new value range. If the value is undefined it will be ignored"));
-    resource.addProperty("outparameters",0);
 
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/setvaluerange"});
+    operation.setSyntax("setvaluerange(objectname,min,max[,resolution])");
+    operation.setDescription(TR("sets the value range of a coverage or column to a new value; all value outside the range will become undefined"));
+    operation.setInParameterCount({3,4});
+    operation.addInParameter(0,itSTRING , TR("input object"),TR("input object. If the syntax uses the [] notation it points to a column of a table"));
+    operation.addInParameter(1,itNUMBER, TR("minimum"), TR("Color in which the grid lines are drawn, a question mark if this parameter is not used"));
+    operation.addInParameter(2,itNUMBER , TR("maximum"), TR("maximum of the new value range. If the value is undefined it will be ignored"));
+    operation.addOptionalInParameter(3,itNUMBER , TR("resolution"), TR("The distance between the gridlines or (for the secondary grid) the number of cells in a primary cell. -1 if this parameter is not used"));
+    operation.setOutParameterCount({0});
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

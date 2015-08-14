@@ -104,7 +104,7 @@ quint64 SetLineColor::createMetadata()
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view in which the layer resides which color has to be changed"));
     operation.addInParameter(1,itSTRING|itINTEGER , TR("layer index/code"), TR("location of the layer to be used. In the case of pre or post drawers the index is the order number"));
     operation.addInParameter(2,itSTRING , TR("color name"), TR("either an svg color name or a hex based color code (e.g #ff1145)"));
-    operation.addInParameter(3,itSTRING , TR("drawer type"), TR("optional,the type fo drawer, pre, main, or post. The default is main"));
+    operation.addOptionalInParameter(3,itSTRING , TR("drawer type"), TR("optional,the type fo drawer, pre, main, or post. The default is main"));
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 
