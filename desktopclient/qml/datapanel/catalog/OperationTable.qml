@@ -58,6 +58,7 @@ Rectangle {
                             fillMode: Image.PreserveAspectFit
                             property string message :  model !== null ? model[styleData.row].url : ""
                             property string ilwisobjectid : model !== null ? model[styleData.row].id : ""
+                            property string type : model !== null ? typeName : ""
                             property string ids : model !== null ?  mastercatalog.selectedIds() : ""
 
                             Drag.keys: [ model[styleData.row].typeName ]
