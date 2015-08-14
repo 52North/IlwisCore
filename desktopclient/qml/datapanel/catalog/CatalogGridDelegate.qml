@@ -44,6 +44,7 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 property string message :  model !== null ? url : ""
                 property string ilwisobjectid : model !== null ? id : ""
+                property string type : model !== null ? typeName : ""
                 property string ids : model !== null ? mastercatalog.selectedIds() : ""
 
                 Drag.keys: typeName
