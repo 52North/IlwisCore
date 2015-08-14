@@ -154,8 +154,9 @@ Canvas {
                     workflowDrawingCanvas.oldx = mouseX
                     workflowDrawingCanvas.oldy = mouseY
                     workflowDrawingCanvas.currentIndex = i;
-                    break
-                }
+                    item.isSelected = true
+                }else
+                    item.isSelected = false
             }
         }
 
