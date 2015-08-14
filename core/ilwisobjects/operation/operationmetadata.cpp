@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "ilwisobject.h"
+#include "connectorinterface.h"
 #include "operationmetadata.h"
 
 using namespace Ilwis;
@@ -13,14 +14,22 @@ OperationMetaData::OperationMetaData()
 
 OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(resource)
 {
-    QString pcount = resource["inparameters"].toString();
+}
+
+OperationMetaData::~OperationMetaData()
+{
+}
+
+void OperationMetaData::init()
+{
+    QString pcount = source()["inparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
         _minInputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
         parmfromResource(maxCountParameters,"pin");
     }
-    pcount = resource["outparameters"].toString();
+    pcount = source()["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
         _minOutputCountParameters = parts.first().toInt();
@@ -29,15 +38,17 @@ OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(res
     }
 }
 
-OperationMetaData::~OperationMetaData()
-{
-}
-
 void OperationMetaData::parmfromResource(int n, const QString& base)
 {
-    //QStringList required;
-    //QStringList optional;
-    //parametersFromSyntax(required, optional);
+    QStringList required;
+    QStringList optional;
+    QStringList allParameterNames;
+    parametersFromSyntax(required, optional);
+    allParameterNames << required << optional;
+    if (allParameterNames.isEmpty()) {
+        WARN1("syntax parsing did not result in any parameters: %1", source()["syntax"].toString());
+        return;
+    }
 
     for(int i=0; i < n; ++i) {
         //bool isOptional = required.size() < i+1;
@@ -45,16 +56,19 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
 
         bool ok;
         quint64 tp = source()[parmBase + "type"].toLongLong(&ok);
-        if (!ok)
+        if (!ok) {
             tp = i64UNDEF;
+        }
+        QString term = allParameterNames.at(i);
         QString name = source()[parmBase + "name"].toString();
         QString domainName = source()[parmBase + "domain"].toString();
         QString description = source()[parmBase + "desc"].toString();
+        bool optional = source()[parmBase + "optional"].toBool();
         OperationParameter::ParameterKind kind = base == "pin"
                 ? OperationParameter::ptINPUT
                 : OperationParameter::ptOUTPUT;
-        SPOperationParameter parameter = newParameter(kind,name,tp,domainName);
-        //parameter->optional(isOptional);
+        connector()->setProperty(base + "term", term);
+        addParameter(newParameter(kind,term,name,tp,domainName,description,optional));
     }
 }
 
@@ -124,27 +138,30 @@ void OperationMetaData::setKeywords(const QStringList &keywords)
 
 void OperationMetaData::clearInputs()
 {
+    removeParameterProperties("pin_%1_", _outputParameters.size());
     _inputParameters.clear();
 }
 
 void OperationMetaData::clearOutputs()
 {
+    removeParameterProperties("pout_%1_", _outputParameters.size());
     _outputParameters.clear();
 }
 
-quint16 OperationMetaData::minInputCountParameters()
+void OperationMetaData::removeParameterProperties(const QString &base, quint16 size)
 {
-    return _minInputCountParameters;
+    for (int i = 1 ; i <= size ; i++) {
+        connector()->removeProperty(base.arg(QString::number(i) + "term"));
+        connector()->removeProperty(base.arg(QString::number(i) + "name"));
+        connector()->removeProperty(base.arg(QString::number(i) + "type"));
+        connector()->removeProperty(base.arg(QString::number(i) + "desc"));
+        connector()->removeProperty(base.arg(QString::number(i) + "optional"));
+    }
 }
 
-quint16 OperationMetaData::minOutputCountParameters()
+SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional)
 {
-    return _minOutputCountParameters;
-}
-
-SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional)
-{
-    return addParameter(SPOperationParameter(new OperationParameter(kind, name, type, domain, description, optional)));
+    return SPOperationParameter(new OperationParameter(kind, term, name, type, domain, description, optional));
 }
 
 SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)
@@ -163,6 +180,7 @@ SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parame
 OperationParameter::OperationParameter(const OperationParameter &operationParameter):
     Identity(name()),
     _index(operationParameter._index),
+    _term(operationParameter._term),
     _kind(operationParameter._kind),
     _type(operationParameter._type),
     _domainName(operationParameter._domainName),
@@ -186,6 +204,11 @@ quint16 OperationParameter::index() const
     return _index;
 }
 
+QString OperationParameter::term() const
+{
+    return _term;
+}
+
 QString OperationParameter::domainName() const
 {
     return _domainName;
@@ -206,23 +229,26 @@ void OperationParameter::optional(bool optional)
     _optional = optional;
 }
 
-void OperationParameter::addToResource(Resource resource) const
+void OperationParameter::addToResourceOf(QScopedPointer<ConnectorInterface> &otherconnector, quint16 index)
 {
     QString prefix;
     bool input = kind() == OperationParameter::ptINPUT;
     if (input) {
-        prefix = "pin_" + QString::number(index()+1) + "_";
+        prefix = "pin_" + QString::number(index) + "_";
     } else {
-        prefix = "pout_" + QString::number(index()+1) + "_";
+        prefix = "pout_" + QString::number(index) + "_";
     }
-    resource.addProperty(prefix + "type", _type);
-    resource.addProperty(prefix + "name", name());
-    resource.addProperty(prefix + "desc", description());
+    otherconnector->setProperty(prefix + "type", _type);
+    otherconnector->setProperty(prefix + "term", _term);
+    otherconnector->setProperty(prefix + "name", name());
+    otherconnector->setProperty(prefix + "desc", description());
+    otherconnector->setProperty(prefix + "optional", _optional);
 }
 
-OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional) :
+OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional) :
     Identity(name),
     _kind(kind),
+    _term(term),
     _type(type),
     _domainName(domain),
     _optional(optional)

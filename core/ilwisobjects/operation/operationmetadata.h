@@ -31,14 +31,16 @@ public:
     IlwisTypes type() const;
     OperationParameter::ParameterKind kind() const;
     quint16 index() const;
+    QString term() const;
     QString domainName() const;
     bool isOptional() const;
-    void addToResource(Resource resource) const;
+    void addToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index);
 
 private:
-    OperationParameter(ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
+    OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
 
     quint16 _index;
+    QString _term;
     ParameterKind _kind;
     IlwisTypes _type;
     QString _domainName;
@@ -56,9 +58,10 @@ public:
     OperationMetaData();
     OperationMetaData(const Resource& resource);
     ~OperationMetaData();
+    void init();
     IlwisTypes ilwisType() const;
 
-    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF,bool optional=false);
+    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false);
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
@@ -75,8 +78,7 @@ public:
 protected:
     void clearInputs();
     void clearOutputs();
-    quint16 minInputCountParameters();
-    quint16 minOutputCountParameters();
+    void removeParameterProperties(const QString &base, quint16 size);
 
 private:
     quint16 _minInputCountParameters;
