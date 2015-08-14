@@ -248,7 +248,7 @@ quint64 CrossRasters::createMetadata()
     operation.addInParameter(2,itSTRING , TR("undef handling"),TR("how undefs are handled can be defined per input raster"));
     operation.setOutParameterCount({1,2});
     operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
-    operation.addOutParameter(1,itRASTER, TR("output raster"),TR("optional output raster with the results of the cross operation"));
+    operation.addOptionalOutParameter(1,itRASTER, TR("output raster"),TR("optional output raster with the results of the cross operation"));
     operation.setKeywords("cross,raster,table");
 
     mastercatalog()->addItems({operation});

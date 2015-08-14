@@ -336,7 +336,7 @@ quint64 ClusterRaster::createMetadata()
     operation.setInParameterCount({2,3});
     operation.addInParameter(0,itRASTER,  TR("input raster"),TR("ratser to be classified; must be 8-bit images"));
     operation.addInParameter(1,itPOSITIVEINTEGER, TR("number of clusters"),TR("number of thematic items in the output"));
-    operation.addInParameter(2,itBOOL, TR("create attribute table"),TR("create an attribute table with statistical information about the thematic items"));
+    operation.addOptionalInParameter(2,itBOOL, TR("create attribute table"),TR("create an attribute table with statistical information about the thematic items"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("classified raster"), TR("output raster were all the pixels have been classified"));
     operation.setKeywords("raster, classification");
