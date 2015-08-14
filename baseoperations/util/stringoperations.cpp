@@ -71,6 +71,7 @@ quint64 StringFind::createMetadata()
     resource.addProperty("pin_3_type", itINT32);
     resource.addProperty("pin_3_name", TR("start_index"));
     resource.addProperty("pin_3_desc",TR("optional index from where to begin the search"));
+    resource.addProperty("pin_3_optional", true);
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_name", TR("output index"));
     resource.addProperty("pout_1_type", itINT32);
@@ -151,6 +152,7 @@ quint64 StringSub::createMetadata()
     resource.addProperty("pin_3_type", itINT32);
     resource.addProperty("pin_3_name", TR("end"));
     resource.addProperty("pin_3_desc",TR("optional index from where to end the substring, if not present the string will go until the end"));
+    resource.addProperty("pin_3_optional", true);
     resource.addProperty("outparameters",1);
     resource.addProperty("pout_1_name", TR("sub string"));
     resource.addProperty("pout_1_type", itSTRING);

@@ -83,6 +83,7 @@ quint64 Text2Output::createMetadata()
     resource.addProperty("pin_2_type", itANY);
     resource.addProperty("pin_2_name", TR("filename or path"));
     resource.addProperty("pin_2_desc",TR("optional file were strings will be written; if no path is provided, current working folder will be used"));
+    resource.addProperty("pin_2_optional", true);
     resource.addProperty("outparameters",0);
     resource.prepare();
     url += "=" + QString::number(resource.id());
