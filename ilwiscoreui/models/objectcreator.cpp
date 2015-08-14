@@ -1,11 +1,13 @@
 #include "resourcemodel.h"
 #include "ilwisobjectcreatormodel.h"
+#include "ilwiscontext.h"
 #include "objectcreator.h"
 
 using namespace Ilwis;
 
 ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
+    _creators.append(new IlwisObjectCreatorModel("Workflow",itWORKFLOW,"CreateWorkflow.qml", 400, this));
     _creators.append(new IlwisObjectCreatorModel("Numeric Domain",itNUMERICDOMAIN,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Thematic Domain",itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 400, this));
     _creators.append(new IlwisObjectCreatorModel("Identifier Domain",itITEMDOMAIN | itIDENTIFIERITEM,"CreateNumDom.qml", 200, this));
@@ -23,7 +25,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Feature Coverage",itFEATURE,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Table",itTABLE,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Representation",itREPRESENTATION,"CreateNumDom.qml", 200, this));
+    _creators.append(new IlwisObjectCreatorModel("Representation",itREPRESENTATION,"CreateNumDom.qml", 250, this));
 }
 
 ObjectCreator::~ObjectCreator()
@@ -51,6 +53,19 @@ void ObjectCreator::setActiveCreator(qint32 index)
         emit activeCreatorsChanged();
 
     }
+}
+
+QString ObjectCreator::createObject(const QVariantMap &parms)
+{
+    //QString url = context()->workingCatalog()->source().url().toString() ;
+    QString name = parms["name"].toString();
+    Resource res(QUrl("ilwis://internalcatalog/" + name), itWORKFLOW);
+    res.setDescription(parms["decription"].toString());
+    res.prepare();
+    IIlwisObject obj;
+    obj.prepare(res);
+
+    return QString::number(obj->id());
 }
 
 QQmlListProperty<IlwisObjectCreatorModel> ObjectCreator::activeCreators()
