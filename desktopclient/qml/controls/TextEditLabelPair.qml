@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.1
 import "../Global.js" as Global
 
 Item {
-    property string content
+    property alias content : textid.text
     property string labelText
     property int labelWidth
     property bool textCanBeCopied : false
