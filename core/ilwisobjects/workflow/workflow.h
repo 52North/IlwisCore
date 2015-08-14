@@ -78,6 +78,7 @@ public:
     void debugPrintGraph();
     void debugPrintVertices();
     void debugPrintEdges();
+    void debugWorkflowMetadata();
 
 private:
     WorkflowGraph _wfGraph;

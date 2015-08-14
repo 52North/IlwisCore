@@ -5,6 +5,7 @@
 
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "connectorinterface.h"
 
 #include "workflow.h"
 
@@ -247,13 +248,14 @@ void Workflow::parseInputParameters()
 
     QStringList mandatoryInputs;
     QStringList optionalInputs;
+    quint16 parameterIndex = 1;
     for (OVertex inputNode : getNodesWithExternalInput()) {
         NodeProperties properties = nodeProperties(inputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
         meta->parametersFromSyntax(mandatoryInputs, optionalInputs);
         for (SPOperationParameter input : meta->getInputParameters()) {
             SPOperationParameter parameter = addParameter(input);
-            parameter->addToResource(source());
+            parameter->addToResourceOf(connector(), parameterIndex++);
         }
     }
     quint16 inCount = mandatoryInputs.size();
@@ -264,13 +266,13 @@ void Workflow::parseInputParameters()
         }
         inparameters.append(QString::number(inCount + i));
     }
-    source().addProperty("inparameters", inparameters);
+    connector()->setProperty("inparameters", inparameters);
 
     QString opts = !optionalInputs.isEmpty()
             ? "[," + optionalInputs.join(",") + "]"
             : "";
     QString workflowSyntax = QString("%1( %2 %3 )").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
-    source().addProperty("syntax", workflowSyntax);
+    connector()->setProperty("syntax", workflowSyntax);
 }
 
 void Workflow::parseOutputParameters()
@@ -278,6 +280,7 @@ void Workflow::parseOutputParameters()
     qDebug() << "parse workflow output parameters";
     clearOutputs();
     int outCount = 0;
+    quint16 parameterIndex = 1;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
         NodeProperties properties = nodeProperties(outputNode);
         IOperationMetaData outputNodeMeta = getOperationMetadata(properties.id);
@@ -292,11 +295,11 @@ void Workflow::parseOutputParameters()
 
         for (SPOperationParameter output : outputNodeMeta->getOutputParameters()) {
             SPOperationParameter parameter = addParameter(output);
-            parameter->addToResource(source());
+            parameter->addToResourceOf(connector(), parameterIndex++);
         }
     }
     // TODO replace max number of args with parsed outParameters
-    source().addProperty("outparameters", outCount);
+    connector()->setProperty("outparameters", outCount);
 }
 
 void Workflow::debugPrintGraph()
@@ -325,4 +328,25 @@ void Workflow::debugPrintEdges()
                   << "->" << nodeIndex()[boost::target(*ei, _wfGraph)].id
                   //<< "[foo='" << edgeIndex()[*ei].foo << "']"
                   << ") ";
+}
+
+void Workflow::debugWorkflowMetadata()
+{
+    qDebug() << "syntax: " << source()["syntax"].toString();
+    qDebug() << "inparameters: " << source()["inparameters"].toString();
+    qDebug() << "outparameters: " << source()["outparameters"].toString();
+    qDebug() << "pins:";
+    for (SPOperationParameter parameter : getInputParameters()) {
+        qDebug() << "\tterm: " << parameter->term();
+        qDebug() << "\tname: " << parameter->name();
+        qDebug() << "\tdesc: " << parameter->description();
+        qDebug() << "\toptional: " << parameter->isOptional();
+    }
+    qDebug() << "pouts:";
+    for (SPOperationParameter parameter : getOutputParameters()) {
+        qDebug() << "\tterm: " << parameter->term();
+        qDebug() << "\tname: " << parameter->name();
+        qDebug() << "\tdesc: " << parameter->description();
+        qDebug() << "\toptional: " << parameter->isOptional();
+    }
 }
