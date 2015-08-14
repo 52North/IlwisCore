@@ -1,0 +1,130 @@
+{
+	"name" : "Land Use/Land Cover (USGS)",
+	"long name" : "Land Use/Land Cover (USGS)",
+	"code" : "landcover_usgs",
+	"description" : "",
+	"type" : "thematic",
+	"theme" : "land cover",
+	"items" : [{
+			"code" : "1",
+			"name" : "Urban and Built-Up Land",
+			"description" : "Land areas of intensive use with much of the land covered by structures. Included in this category are cities, towns, villages, strip developments along highways, transportation, power, and communications facilities, and areas such as those occupied by mills, shopping centers, industrial and commercial complexes, andinstitutions that may, in some instances, be isolated from urban areas",
+			"color" : "Crimson"
+		}, {
+			"code" : "2",
+			"name" : "Dryland Cropland and Pasture",
+			"description" : "The several components of Cropland and Pasture now used for agricultural statistics include: cropland harvested, including bush fruits; cultivated summer fallow and idle cropland; land on which crop failure occurs; cropland in soil-improvement grasses and legumes; cropland used only for pasture in rotation with crops; and pasture on land more or less permanently used for that purpose",
+			"color" : "LemonChiffon"
+		}, {
+			"code" : "3",
+			"name" : "Irrigated Cropland and Pasture",
+			"description" : "The several components of Cropland and Pasture now used for agricultural statistics include: cropland harvested, including bush fruits; cultivated summer fallow and idle cropland; land on which crop failure occurs; cropland in soil-improvement grasses and legumes; cropland used only for pasture in rotation with crops; and pasture on land more or less permanently used for that purpose",
+			"color" : "Yellow"
+		}, {
+			"code" : "4",
+			"name" : "Mixed Dryland/Irrigated Cropland and Pasture",
+			"description" : " Land areas consisting of a mixture or mosaic of Dryland and Irrigated Cropland and Pasture",
+			"color" : "YellowGreen"
+		}, {
+			"code" : "5",
+			"name" : "Cropland/Grassland Mosaic",
+			"description" : "Land areas consisting of a mixture or mosaic of Croplands and Grasslands",
+			"color" : "Chartreuse"
+		}, {
+			"code" : "6",
+			"name" : "Cropland/Woodland Mosaic",
+			"description" : "Land areas consisting of a mixture or mosaic of Croplands and Woodlands",
+			"color" : "LimeGreen"
+		}, {
+			"code" : "7",
+			"name" : "Grassland",
+			"description" : "Lands dominated by naturally occurring grasses and forbs as well as those areas of actual rangeland which have been modified to include grasses and forbs as their principal cover, when the land is managed for rangeland purposes and not managed using practices typical of pastureland",
+			"color" : "PaleGreen"
+		}, {
+			"code" : "8",
+			"name" : "CShrubland",
+			"description" : "Lands characterized by such xerophytic vegetative types with woody stems as big sagebrush, shadscale, greasewood, or creosotebush and also by the typical desert succulent xerophytes, such as the various forms of Cactus",
+			"color" : "NavajoWhite"
+		}, {
+			"code" : "9",
+			"name" : "Mixed Shrubland/Grassland",
+			"description" : "Areas with more than one-third intermixture of either herbaceous or shrub and brush rangeland species",
+			"color" : "#81A981"
+		}, {
+			"code" : "10",
+			"name" : "Savanna",
+			"description" : "",
+			"color" : "#97B065"
+		}, {
+			"code" : "11",
+			"name" : "Deciduous Broadleaf Forest",
+			"description" : "Forested areas that have a predominance of deciduous broadleaf trees",
+			"color" : "#4DA64D"
+		}, {
+			"code" : "12",
+			"name" : "Deciduous Needleleaf Forest",
+			"description" : "Forested areas that have a predominance of deciduous needleleaf trees",
+			"color" : "#36A166"
+		}, {
+			"code" : "13",
+			"name" : "Evergreen Broadleaf Forest",
+			"description" : "Forested areas that have a predominance of broadleaved evergreens",
+			"color" : "#58A279"
+		}, {
+			"code" : "14",
+			"name" : "Evergreen Needleleaf Forest",
+			"description" : "Forested areas that have a predominance of needleleaf evergreens",
+			"color" : "#297D4E"
+		}, {
+			"code" : "15",
+			"name" : "Mixed Forest",
+			"description" : "Forested areas where both evergreen and deciduous trees are growing and neither predominates",
+			"color" : "#00A300"
+		}, {
+			"code" : "16",
+			"name" : "Water Bodies",
+			"description" : "Areas within the land mass that are persistently water covered, provided that, if linear, they are at least 1/8 mile (200m) wide and, if extended, cover at least 40 acres (16 hectares) including streams and canals, lakes, reservoirs, bays, and estuaries",
+			"color" : "#0033CC"
+		}, {
+			"code" : "17",
+			"name" : "Herbaceous Wetland",
+			"description" : "Lands that are dominated by wetland herbaceous vegetation or are non-vegetated. These wetlands include tidal and nontidal fresh, brackish, and salt marshes and non-vegetated flats and also freshwater meadows, wet prairies, and open bogs",
+			"color" : "Olive"
+		}, {
+			"code" : "18",
+			"name" : "Wooded Wetland",
+			"description" : "Lands dominated by woody vegetation; seasonally flooded bottomland hardwoods, mangrove swamps, shrub swamps, and wooded swamps including those around bogs",
+			"color" : "LightSteelBlue"
+		}, {
+			"code" : "19",
+			"name" : "Barren or Sparsely Vegetated",
+			"description" : "Land with limited ability to support life",
+			"color" : "Grey"
+		}, {
+			"code" : "20",
+			"name" : "Herbaceous Tundra",
+			"description" : "Lands composed of various sedges, grasses, forbs, lichens, and mosses, all of which lack woody stems",
+			"color" : "#58A279"
+		}, {
+			"code" : "21",
+			"name" : "Wooded Tundra",
+			"description" : "Lands consisting of the various woody shrubs and brushy thickets found in the tundra environments",
+			"color" : "#85ADAD"
+		}, {
+			"code" : "22",
+			"name" : "Mixed Tundra",
+			"description" : "Lands where a mixture of the Level II Tundra occurrences exist where any particular type occupies less than two-thirds of the area of the mapping unit",
+			"color" : "#97A7A7"
+		}, {
+			"code" : "23",
+			"name" : "Bare Ground Tundra",
+			"description" : "The Bare Ground Tundra category is intended for those Tundra occurrences which are less than one third vegetated. It usually consists of sites visually dominated by considerable areas of exposed bare rock, sand, or gravel interspersed with low herbaceous and shrubby plants",
+			"color" : "#D5DCDC"
+		}, {
+			"code" : "24",
+			"name" : "Snow or Ice",
+			"description" : "Lands with a perennial cover of either snow or ice, because of a combination of environmental factors that cause these features to survive the summer melting season. Includes Perennial Snowfields and Glaciers",
+			"color" : "Gainsboro"
+		}
+	]
+}

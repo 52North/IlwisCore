@@ -6,6 +6,8 @@ namespace Ilwis {
 class Coverage;
 class GeodeticDatum;
 class GeoReference;
+class Domain;
+class NumericDomain;
 
 namespace Internal {
 /*!
@@ -44,6 +46,8 @@ private:
     GeoReference *createGrfFromCode(const Ilwis::Resource &resource) const;
     IlwisObject *createCsy(const Resource &resource, const IOOptions &options) const;
     IlwisObject *createRepresentation(const Resource &resource, const IOOptions &options) const;
+    Domain *createItemDomain(QSqlQuery &db, const IOOptions &options, const Resource &resource) const;
+    NumericDomain *createNumericDomain(const QString &code, QSqlQuery &db, const IOOptions &options, const Resource &resource) const;
 };
 }
 }

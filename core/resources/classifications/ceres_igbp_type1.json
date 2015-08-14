@@ -1,0 +1,95 @@
+{
+	"name" : "CERES",
+	"code" : "ceres_igbp",
+	"long name" : "CERES Geosphere Biosphere Program (IGBP) (Type 1) classification system",
+	"description" : "",
+	"type" : "thematic",
+	"theme" : "land cover",
+	"items" : [{
+			"code" : "1",
+			"name" : "Evergreen Needleleaf Forrest",
+			"description" : "Lands dominated by trees with a percent canopy cover >60% and height exceeding 2 meters. Almost all trees remain green all year. Canopy isnever without green foliage",
+			"color" : "DarkSlateGray"
+		}, {
+			"code" : "2",
+			"name" : "Evergreen Broadleaf Forrest",
+			"description" : "Lands dominated by trees with a percent canopy cover >60% and height exceeding 2 meters. Almost all trees remain green all year. Canopy is never without green foliage",
+			"color" : "DarkGreen"
+		}, {
+			"code" : "3",
+			"name" : "Decidious Needleleaf Forrest",
+			"description" : "Lands dominated by trees with a percent canopy cover >60% and height exceeding 2 meters. Consists of seasonal needleleaf tree communities with an annual cycle of leaf-on and leaf-off periods",
+			"color" : "Green"
+		}, {
+			"code" : "4",
+			"name" : "Decidious Broadleaf Forrest",
+			"description" : "Lands dominated by trees with a percent canopy cover >60% and height exceeding 2 meters. Consists of seasonal broadleaf tree communities with an annual cycle of leaf-on and leaf-off periods",
+			"color" : "LimeGreen"
+		}, {
+			"code" : "5",
+			"name" : "Mixed Forest",
+			"description" : " Lands dominated by trees with a percent canopy cover >60% and height exceeding 2 meters. Consists of tree communities with interspersed mixtures or mosaics of the other four forest cover types. None of the forest types exceeds 60% of landscape.",
+			"color" : "SeaGreen"
+		}, {
+			"code" : "6",
+			"name" : "Closed Shrubland",
+			"description" : "Lands with woody vegetation less than 2 meters tall and with shrub canopy cover >60%. The shrub foliage can be either evergreen or deciduous.",
+			"color" : "Sienna"
+		}, {
+			"code" : "7",
+			"name" : "Open Shrubland",
+			"description" : "Lands with woody vegetation less than 2 meters tall and with shrub canopy cover between 10-60%. The shrub foliage can be either evergreen or deciduous.",
+			"color" : "Tan"
+		}, {
+			"code" : "8",
+			"name" : "Woody Savannas",
+			"description" : " Lands with herbaceous and other understory systems, and with forest canopy cover between 30-60%. The forest cover height exceeds 2 meters",
+			"color" : "Chocolate"
+		}, {
+			"code" : "9",
+			"name" : "Savanna",
+			"description" : "Lands with herbaceous and other understory systems, and with forest canopy cover between 10-30%. The forest cover height exceeds 2 meters.",
+			"color" : "Peru"
+		}, {
+			"code" : "10",
+			"name" : "Grassland",
+			"description" : " Lands with herbaceous types of cover. Tree and shrub cover is less than10%.",
+			"color" : "DarkSeaGreen"
+		}, {
+			"code" : "11",
+			"name" : "Wetlands",
+			"description" : "Lands with a permanent mixture of water and herbaceous or woody vegetation that cover extensive areas. The vegetation can be present in salt,brackish, or fresh water",
+			"color" : "DarkSlateBlue"
+		}, {
+			"code" : "12",
+			"name" : "Cropland",
+			"description" : "Lands covered with temporary crops followed by harvest and a bare soil period (e.g., single and multiple cropping systems). Note that perennial woody crops will be classified as the appropriate forest or shrub land cover type",
+			"color" : "GoldenRod"
+		}, {
+			"code" : "13",
+			"name" : "Urban",
+			"description" : "Land covered by buildings and other man-made structures",
+			"color" : "Crimson"
+		}, {
+			"code" : "14",
+			"name" : "Crop/Natural Vegetation Mosaic",
+			"description" : "Lands with a mosaic of croplands, forests,shrublands, and grasslands in which no one component comprises more than 60% of the landscape",
+			"color" : "SaddleBrown"
+		}, {
+			"code" : "15",
+			"name" : "Snow/Ice",
+			"description" : "Lands under snow and/or ice cover throughout the year",
+			"color" : "Silver"
+		}, {
+			"code" : "16",
+			"name" : "Barren Desert",
+			"description" : "Lands with exposed soil, sand, rocks, or snow and never more than 10% vegetated cover during any time of the year",
+			"color" : "Khaki"
+		}, {
+			"code" : "17",
+			"name" : "Water",
+			"description" : "Oceans, seas, lakes, reservoirs, and rivers, either fresh or saltwater",
+			"color" : "LightBlue"
+		}
+	]
+}
