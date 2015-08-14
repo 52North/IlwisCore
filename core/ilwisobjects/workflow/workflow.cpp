@@ -258,20 +258,19 @@ void Workflow::parseInputParameters()
     }
     quint16 inCount = mandatoryInputs.size();
     QString inparameters = QString::number(inCount);
-    for (int i = 0; i < optionalInputs.size() ; ++i) {
+    for (int i = 1; i < optionalInputs.size() ; ++i) {
         if ( !inparameters.startsWith("|")) {
             inparameters += "|";
         }
         inparameters.append(QString::number(inCount + i));
     }
-    setProperty("inparameters", inparameters);
+    source().addProperty("inparameters", inparameters);
 
     QString opts = !optionalInputs.isEmpty()
-            ? ",[" + optionalInputs.join(",") + "]"
+            ? "[," + optionalInputs.join(",") + "]"
             : "";
     QString workflowSyntax = QString("%1( %2 %3 )").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
     source().addProperty("syntax", workflowSyntax);
-
 }
 
 void Workflow::parseOutputParameters()
@@ -297,7 +296,7 @@ void Workflow::parseOutputParameters()
         }
     }
     // TODO replace max number of args with parsed outParameters
-    setProperty("outparameters", outCount);
+    source().addProperty("outparameters", outCount);
 }
 
 void Workflow::debugPrintGraph()

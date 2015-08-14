@@ -36,7 +36,7 @@ public:
     void addToResource(Resource resource) const;
 
 private:
-    OperationParameter(ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF);
+    OperationParameter(ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
 
     quint16 _index;
     ParameterKind _kind;
@@ -58,7 +58,7 @@ public:
     ~OperationMetaData();
     IlwisTypes ilwisType() const;
 
-    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF);
+    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF,bool optional=false);
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;

@@ -35,12 +35,12 @@ OperationMetaData::~OperationMetaData()
 
 void OperationMetaData::parmfromResource(int n, const QString& base)
 {
-    QStringList required;
-    QStringList optional;
-    parametersFromSyntax(required, optional);
+    //QStringList required;
+    //QStringList optional;
+    //parametersFromSyntax(required, optional);
 
     for(int i=0; i < n; ++i) {
-        bool isOptional = required.size() < i+1;
+        //bool isOptional = required.size() < i+1;
         QString parmBase = base + QString("_%1_").arg(i+1);
 
         bool ok;
@@ -54,7 +54,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
                 ? OperationParameter::ptINPUT
                 : OperationParameter::ptOUTPUT;
         SPOperationParameter parameter = newParameter(kind,name,tp,domainName);
-        parameter->optional(isOptional);
+        //parameter->optional(isOptional);
     }
 }
 
@@ -142,9 +142,9 @@ quint16 OperationMetaData::minOutputCountParameters()
     return _minOutputCountParameters;
 }
 
-SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description)
+SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional)
 {
-    return addParameter(SPOperationParameter(new OperationParameter(kind, name, type, domain, description)));
+    return addParameter(SPOperationParameter(new OperationParameter(kind, name, type, domain, description, optional)));
 }
 
 SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)
@@ -220,11 +220,12 @@ void OperationParameter::addToResource(Resource resource) const
     resource.addProperty(prefix + "desc", description());
 }
 
-OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description) :
+OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional) :
     Identity(name),
     _kind(kind),
     _type(type),
-    _domainName(domain)
+    _domainName(domain),
+    _optional(optional)
 {
     setDescription(description);
 }
