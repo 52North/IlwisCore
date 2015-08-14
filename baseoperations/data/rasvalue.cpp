@@ -59,33 +59,19 @@ Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, cons
 
 quint64 RasValue::createMetadata()
 {
-    QString url = QString("ilwis://operations/rastervalue");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","rastervalue");
-    resource.addProperty("syntax","rasvalue(inputgridcoverage,x,y,[,z])");
-    resource.addProperty("description",TR("returns the value at pixel location x,y (optional z)"));
-    resource.addProperty("inparameters","3|4");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with any domain"));
-    resource.addProperty("pin_2_type", itINTEGER);
-    resource.addProperty("pin_2_name", TR("column"));
-    resource.addProperty("pin_2_desc",TR("column number in the grid"));
-    resource.addProperty("pin_3_type", itINTEGER);
-    resource.addProperty("pin_3_name", TR("row"));
-    resource.addProperty("pin_3_desc",TR("row number in the grid"));
-    resource.addProperty("pin_4_type", itINTEGER);
-    resource.addProperty("pin_4_name", TR("band number"));
-    resource.addProperty("pin_4_desc",TR("band number in the grid, optional"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itDOUBLE);
-    resource.addProperty("pout_1_name", TR("value at the indicated location"));
-    resource.addProperty("pout_1_desc",TR(""));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    OperationResource operation({"ilwis://operations/rastervalue"});
+    operation.setSyntax("rasvalue(inputgridcoverage,x,y,[,z])");
+    operation.setDescription(TR("returns the value at pixel location x,y (optional z)"));
+    operation.setInParameterCount({3|4});
+    operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
+    operation.addInParameter(1,itINTEGER, TR("column"), TR("column number in the grid"));
+    operation.addInParameter(2,itINTEGER, TR("row"), TR("row number in the grid"));
+    operation.addOptionalInParameter(1,itINTEGER, TR("band number"), TR("band number in the grid"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itDOUBLE , TR("value"),TR("value at the indicated location"));
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
+
 }

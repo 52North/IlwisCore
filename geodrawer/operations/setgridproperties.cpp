@@ -99,7 +99,7 @@ quint64 SetGridProperties::createMetadata()
     operation.addInParameter(1,itSTRING, TR("Grid line color"), TR("Color in which the grid lines are drawn, a question mark if this parameter is not used"));
     operation.addInParameter(2,itDOUBLE , TR("opacity"), TR("The opacity of the grid lines. A -1 if this parameter is not used"));
     operation.addInParameter(3,itDOUBLE , TR("distance/number"), TR("The distance between the gridlines or (for the secondary grid) the number of cells in a primary cell. -1 if this parameter is not used"));
-    operation.addInParameter(4,itSTRING, TR("Grid"), TR("which grid is addressed. primary or secondary. The default is primary"));
+    operation.addOptionalInParameter(4,itSTRING, TR("Grid"), TR("which grid is addressed. primary or secondary. The default is primary"));
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 

@@ -73,7 +73,7 @@ quint64 FCoordinate::createMetadata()
     operation.setInParameterCount({2,3});
     operation.addInParameter(0,itNUMBER, TR("x"));
     operation.addInParameter(1,itNUMBER, TR("y"));
-    operation.addInParameter(2,itNUMBER , TR("z"));
+    operation.addOptionalInParameter(2,itNUMBER , TR("z"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOORDINATE, TR("coordinate"));
     operation.setKeywords("coordinate,internal");
