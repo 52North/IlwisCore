@@ -22,6 +22,7 @@ public:
 
 
     Q_INVOKABLE void setActiveCreator(qint32 index);
+    Q_INVOKABLE QString createObject(const QVariantMap& parms);
 
     QStringList createableObjects() const;
     QQmlListProperty<IlwisObjectCreatorModel> activeCreators() ;
