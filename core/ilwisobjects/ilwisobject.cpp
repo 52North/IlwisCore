@@ -513,7 +513,7 @@ QString IlwisObject::type2Name(IlwisTypes t)
     case  itWORKFLOW:
         return "Workflow";
     case  itSINGLEOPERATION:
-        return "SingeOperation";
+        return "SingleOperation";
     }
     return sUNDEF;
 
