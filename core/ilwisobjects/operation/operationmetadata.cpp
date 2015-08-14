@@ -284,6 +284,16 @@ void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QSt
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
+    addProperty(prefix + "optional", false);
+}
+
+void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description)
+{
+    QString prefix = "pin_" + QString::number(order + 1) + "_";
+    addProperty(prefix + "type", type);
+    addProperty(prefix + "name", name);
+    addProperty(prefix + "desc", description);
+    addProperty(prefix + "optional", true);
 }
 
 void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
@@ -291,7 +301,16 @@ void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QS
     QString prefix = "pout_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
+    addProperty(prefix + "optional", false);
+}
+
+void OperationResource::addOptionalOutParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description)
+{
+    QString prefix = "pout_" + QString::number(order + 1) + "_";
+    addProperty(prefix + "type", type);
+    addProperty(prefix + "name", name);
     addProperty(prefix + "desc", description);
+    addProperty(prefix + "optional", true);
 }
 
 void OperationResource::setKeywords(const QString& words) {
