@@ -3,6 +3,8 @@
 
 
 namespace Ilwis {
+class NumericRange;
+
 namespace BaseOperations{
 
 typedef std::function<double(double)> UnaryFunction;
@@ -17,6 +19,7 @@ protected:
     static Resource populateMetadata(const QString &item, const QString &longnamem);
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *, const Ilwis::SymbolTable &);
     bool execute( ExecutionContext *ctx, SymbolTable& symTable);
+    NumericRange *constructRangeFrom(const SPNumericRange &range);
 
     IRasterCoverage _inputGC;
     IRasterCoverage _outputGC;

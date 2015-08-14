@@ -64,6 +64,11 @@ bool UnaryMathRasterAndNumber::execute(ExecutionContext *ctx, SymbolTable& symTa
     return true;
 }
 
+NumericRange *UnaryMathRasterAndNumber::constructRangeFrom(const SPNumericRange &range)
+{
+    return static_cast<NumericRange *>(range->clone());
+}
+
 OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContext *,const SymbolTable&)
 {
     IlwisTypes ptype = _expression.parm(0).valuetype();
@@ -96,11 +101,23 @@ OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContex
         QString outputName = _expression.parm(0,false).value();
         if ( outputName != sUNDEF)
             _outputGC->name(outputName);
+
+        auto nrange = _inputGC->datadef().range<NumericRange>();
+        if (nrange.isNull())
+            return sPREPAREFAILED;
+
+        NumericRange *newRange = constructRangeFrom(nrange);
+
         IDomain dom;
          if(!dom.prepare(_outputDomain))
              return sPREPAREFAILED;
 
          _outputGC->datadefRef().domain(dom);
+         _outputGC->datadefRef().range(newRange);
+         for(quint32 i=0; i<_outputGC->size().zsize(); ++i){
+                QString index = _outputGC->stackDefinition().index(i);
+             _outputGC->setBandDefinition(index,{dom, newRange});
+         }
         _case = otSPATIAL;
         return sPREPARED;
     }
