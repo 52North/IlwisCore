@@ -37,7 +37,7 @@ private:
     IlwisObject *createCsyFromCode(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createRasterCoverage(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createTable(const Resource &resource, const IOOptions &options) const;
-    IlwisObject *createOperationMetaData(const Resource &resource) const;
+    IlwisObject *createOperationMetaData(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createWorkflow(const Resource &resource, const IOOptions &options) const;
     IlwisObject *createGeoreference(const Resource &resource, const Ilwis::IOOptions &options) const;
     bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage, const Ilwis::IOOptions &options) const;

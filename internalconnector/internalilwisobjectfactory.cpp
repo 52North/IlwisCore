@@ -98,7 +98,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
     } else if ( resource.ilwisType() & itWORKFLOW) {
         return createWorkflow(resource, options);
     } else if ( resource.ilwisType() & itSINGLEOPERATION) {
-        return createOperationMetaData(resource);
+        return createOperationMetaData(resource, options);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
     } else if ( resource.ilwisType() & itFEATURE) {
@@ -203,8 +203,26 @@ IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& r
 
 }
 
-IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource& resource) const{
-    return new OperationMetaData(resource);
+IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource& resource, const IOOptions &options) const{
+    //return new OperationMetaData(resource);
+    if (!hasType(resource.ilwisType(), itSINGLEOPERATION)){
+        return nullptr;
+    }
+    OperationMetaData *metadata = new OperationMetaData(resource);
+
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    if (!factory) {
+        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
+        return 0;
+    }
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    if ( !connector) {
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
+        return 0;
+    }
+    metadata->setConnector(connector, IlwisObject::cmINPUT, options);
+
+    return metadata;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource, const IOOptions &options) const {
