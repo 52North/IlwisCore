@@ -18,14 +18,14 @@ OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(res
         QStringList parts = pcount.split("|");
         _minInputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
-        parmfromResource(resource,maxCountParameters,"pin");
+        parmfromResource(maxCountParameters,"pin");
     }
     pcount = resource["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
         _minOutputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
-        parmfromResource(resource,maxCountParameters,"pout");
+        parmfromResource(maxCountParameters,"pout");
     }
 }
 
@@ -33,48 +33,48 @@ OperationMetaData::~OperationMetaData()
 {
 }
 
-void OperationMetaData::parmfromResource(const Resource &resource, int n, const QString& base)
+void OperationMetaData::parmfromResource(int n, const QString& base)
 {
     QStringList required;
     QStringList optional;
-    parseSyntaxParameters(resource, required, optional);
+    parametersFromSyntax(required, optional);
 
     for(int i=0; i < n; ++i) {
-        bool optional = required.size() < i+1;
+        bool isOptional = required.size() < i+1;
         QString parmBase = base + QString("_%1_").arg(i+1);
 
         bool ok;
-        quint64 tp = resource[parmBase + "type"].toLongLong(&ok);
+        quint64 tp = source()[parmBase + "type"].toLongLong(&ok);
         if (!ok)
             tp = i64UNDEF;
-        QString name = resource[parmBase + "name"].toString();
-        QString domainName = resource[parmBase + "domain"].toString();
-        QString description = resource[parmBase + "desc"].toString();
+        QString name = source()[parmBase + "name"].toString();
+        QString domainName = source()[parmBase + "domain"].toString();
+        QString description = source()[parmBase + "desc"].toString();
         OperationParameter::ParameterKind kind = base == "pin"
                 ? OperationParameter::ptINPUT
                 : OperationParameter::ptOUTPUT;
         SPOperationParameter parameter = newParameter(kind,name,tp,domainName);
-        //parameter-> // TODO set if parameter is optionsl
+        parameter->optional(isOptional);
     }
 }
 
-void OperationMetaData::parseSyntaxParameters(const Resource &resource, QStringList &required, QStringList &optional)
+void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList &optional)
 {
-    QRegExp argumentsrx("^.*\\((.*)\\)\\s+$");
-    int argIdx = argumentsrx.indexIn(resource["syntax"].toString());
+    QRegExp argumentsrx("^.*\\((.*)\\)(\\s+)?$");
+    int argIdx = argumentsrx.indexIn(source()["syntax"].toString());
     QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
 
     QRegExp requiredrx("^(.*)\\[");
     int reqIdx = requiredrx.indexIn(arguments);
     QString requireds = reqIdx != -1 ? requiredrx.cap(1) : "";
 
-    QRegExp optionalsrx("^.*\\[(.*)\\]\\s+$");
+    QRegExp optionalsrx("^.*\\[(.*)\\](\\s+)?$");
     int optIdx = optionalsrx.indexIn(arguments);
     QString optionals = optIdx != -1 ? optionalsrx.cap(1) : "";
 
     QRegExp commaWithWhiteSpaces("\\s*,\\s*");
-    required = requireds.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
-    optional = optionals.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
+    required << requireds.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
+    optional << optionals.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
 }
 
 IlwisTypes OperationMetaData::ilwisType() const
@@ -144,12 +144,7 @@ quint16 OperationMetaData::minOutputCountParameters()
 
 SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &name, IlwisTypes type, const QString &domain, const QString &description)
 {
-    return newParameter(new OperationParameter(kind, name, type, domain, description));
-}
-
-SPOperationParameter OperationMetaData::newParameter(OperationParameter *parameter)
-{
-    return addParameter(SPOperationParameter(parameter));
+    return addParameter(SPOperationParameter(new OperationParameter(kind, name, type, domain, description)));
 }
 
 SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)

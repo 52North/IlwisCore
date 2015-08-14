@@ -57,10 +57,10 @@ public:
     IlwisTypes ilwisType() const;
 
     SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF);
-    SPOperationParameter newParameter(OperationParameter *parameter);
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
+    void parametersFromSyntax(QStringList &required, QStringList &optional);
 
     QString getNamespace() const;
     QString getLongName() const;
@@ -82,8 +82,7 @@ private:
     std::vector<SPOperationParameter> _inputParameters;
     std::vector<SPOperationParameter> _outputParameters;
 
-    void parmfromResource(const Resource &resource, int n, const QString &base);
-    void parseSyntaxParameters(const Resource &resource, QStringList &required, QStringList &optional);
+    void parmfromResource(int n, const QString &base);
 
 };
 

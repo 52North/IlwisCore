@@ -16,7 +16,7 @@ namespace Ilwis {
 
 struct DataProperties {
     DataProperties() {}
-    bool treatOptionalAsRequired;
+    //bool treatOptionalAsRequired; // TODO
     quint16 assignedParameterIndex;
     SPOperationParameter parameter;
 };

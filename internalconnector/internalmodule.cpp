@@ -21,6 +21,7 @@
 #include "internalrastercoverageconnector.h"
 #include "internalfeaturecoverageconnector.h"
 #include "internaltableconnector.h"
+#include "workflowconnector.h"
 #include "projection.h"
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
@@ -65,6 +66,7 @@ void InternalModule::prepare()
     factory->addCreator(itDOMAIN,"internal", InternalDomainConnector::create);
     factory->addCreator(itCOORDSYSTEM,"internal", InternalCoordinatesystemConnector::create);
     factory->addCreator(itREPRESENTATION,"internal", InternalRepresentationConnector::create);
+    factory->addCreator(itWORKFLOW,"internal", WorkflowConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();

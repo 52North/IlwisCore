@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 
 #include <QUrl>
@@ -172,6 +173,37 @@ void Workflow::updateEdgeProperties(OEdge e, const EdgeProperties &properties)
 
 OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties)
 {
+    // TODO allow multiple edges between v1 and v2?
+    /*
+    QString out = properties.outputNameLastStep;
+    QString in = properties.inputNameNextStep;
+
+    QList<DataProperties> ioProperties;
+    if ( !_ioProperties.contains(v1)) {
+        qDebug() << "create new io data properties for node " << v1;
+        _ioProperties[v1] = ioProperties;
+    } else {
+        ioProperties = _ioProperties[v1];
+    }
+
+
+    //DataProperties outputProperties;
+    //outputProperties.input = false;
+    //outputProperties.name = properties.outputNameLastStep;
+    IOperationMetaData v1OpMeta = getOperationMetadata(nodeProperties(v1).id);
+    for (SPOperationParameter parameter : v1OpMeta->getOutputParameters()) {
+        if (parameter->name() == properties.outputNameLastStep) {
+            ioProperties.push_back(parameter);
+        }
+    }
+
+    //DataProperties inputProperties;
+    //inputProperties.input = true;
+    //inputProperties.name = properties.inputNameNextStep;
+    IOperationMetaData v2OpMeta = getOperationMetadata(nodeProperties(v2).id);
+
+    //ioProperties.push_back(inputProperties);
+    */
     return (boost::add_edge(v1, v2, properties, _wfGraph)).first;
 }
 
@@ -212,30 +244,27 @@ void Workflow::parseInputParameters()
 {
     qDebug() << "parse workflow input parameters";
     clearInputs();
-    int inCount = 0;
 
     QStringList mandatoryInputs;
     QStringList optionalInputs;
     for (OVertex inputNode : getNodesWithExternalInput()) {
         NodeProperties properties = nodeProperties(inputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
-
-        /*
-            // TODO parse optional parameters
-            // TODO let the user edit parameter names and optionalities
-            Resource opResource = rootMeta->source();
-            QString inParameters = opResource["inparameters"];
-        */
-        // add all inparameters for now
-        inCount += meta->getInputParameters().size();
-
+        meta->parametersFromSyntax(mandatoryInputs, optionalInputs);
         for (SPOperationParameter input : meta->getInputParameters()) {
-            SPOperationParameter parameter = newParameter(input.get()); // TODO check copy
+            SPOperationParameter parameter = addParameter(input);
             parameter->addToResource(source());
         }
     }
-    // TODO replace max number of args with parsed inParameters
-    setProperty("inparameters", inCount);
+    quint16 inCount = mandatoryInputs.size();
+    QString inparameters = QString::number(inCount);
+    for (int i = 0; i < optionalInputs.size() ; ++i) {
+        if ( !inparameters.startsWith("|")) {
+            inparameters += "|";
+        }
+        inparameters.append(QString::number(inCount + i));
+    }
+    setProperty("inparameters", inparameters);
 
     QString opts = !optionalInputs.isEmpty()
             ? ",[" + optionalInputs.join(",") + "]"
@@ -263,7 +292,7 @@ void Workflow::parseOutputParameters()
         outCount += outputNodeMeta->getOutputParameters().size();
 
         for (SPOperationParameter output : outputNodeMeta->getOutputParameters()) {
-            SPOperationParameter parameter = newParameter(output.get());
+            SPOperationParameter parameter = addParameter(output);
             parameter->addToResource(source());
         }
     }
