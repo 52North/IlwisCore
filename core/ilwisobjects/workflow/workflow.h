@@ -78,7 +78,8 @@ public:
     void debugPrintGraph();
     void debugPrintVertices();
     void debugPrintEdges();
-    void debugWorkflowMetadata();
+    void debugWorkflowMetadata() const;
+    void debugOperationParameter(const SPOperationParameter parameter) const;
 
 private:
     WorkflowGraph _wfGraph;

@@ -59,34 +59,40 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
         if (!ok) {
             tp = i64UNDEF;
         }
-        QString term = allParameterNames.at(i);
         QString name = source()[parmBase + "name"].toString();
         QString domainName = source()[parmBase + "domain"].toString();
         QString description = source()[parmBase + "desc"].toString();
         bool optional = source()[parmBase + "optional"].toBool();
-        OperationParameter::ParameterKind kind = base == "pin"
-                ? OperationParameter::ptINPUT
-                : OperationParameter::ptOUTPUT;
-        connector()->setProperty(base + "term", term);
+
+        QString term;
+        OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
+        if (base == "pin") {
+            kind = OperationParameter::ptINPUT;
+            term = allParameterNames.at(i);
+            connector()->setProperty(base + "term", term);
+        } else {
+            term = ""; // formal output term not part of syntax
+        }
+
         addParameter(newParameter(kind,term,name,tp,domainName,description,optional));
     }
 }
 
 void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList &optional)
 {
-    QRegExp argumentsrx("^.*\\((.*)\\)(\\s+)?$");
+    QRegExp argumentsrx("^.*\\((.*)\\)(\\s*)?$");
     int argIdx = argumentsrx.indexIn(source()["syntax"].toString());
     QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
 
-    QRegExp requiredrx("^(.*)\\[");
+    QRegExp requiredrx("^(.*)\\[?");
     int reqIdx = requiredrx.indexIn(arguments);
     QString requireds = reqIdx != -1 ? requiredrx.cap(1) : "";
 
-    QRegExp optionalsrx("^.*\\[(.*)\\](\\s+)?$");
+    QRegExp optionalsrx("^.*\\[(.*)\\](\\s*)?$");
     int optIdx = optionalsrx.indexIn(arguments);
     QString optionals = optIdx != -1 ? optionalsrx.cap(1) : "";
 
-    QRegExp commaWithWhiteSpaces("\\s*,\\s*");
+    QRegExp commaWithWhiteSpaces("(\\s*,\\s*|\\s*$)");
     required << requireds.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
     optional << optionals.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
 }
@@ -151,11 +157,11 @@ void OperationMetaData::clearOutputs()
 void OperationMetaData::removeParameterProperties(const QString &base, quint16 size)
 {
     for (int i = 1 ; i <= size ; i++) {
-        connector()->removeProperty(base.arg(QString::number(i) + "term"));
-        connector()->removeProperty(base.arg(QString::number(i) + "name"));
-        connector()->removeProperty(base.arg(QString::number(i) + "type"));
-        connector()->removeProperty(base.arg(QString::number(i) + "desc"));
-        connector()->removeProperty(base.arg(QString::number(i) + "optional"));
+        connector()->removeProperty(base.arg(QString::number(i)) + "term");
+        connector()->removeProperty(base.arg(QString::number(i)) + "name");
+        connector()->removeProperty(base.arg(QString::number(i)) + "type");
+        connector()->removeProperty(base.arg(QString::number(i)) + "desc");
+        connector()->removeProperty(base.arg(QString::number(i)) + "optional");
     }
 }
 

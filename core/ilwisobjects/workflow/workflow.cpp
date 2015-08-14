@@ -138,13 +138,11 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
 QList<OVertex> Workflow::getNodesWithExternalOutputs()
 {
     QList<OVertex> outputNodes;
-    qDebug() << "outputs(" << name() << ")=";
     boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
     for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         quint64 operationId = nodeProperties(v).id;
         if (boost::out_edges(v, _wfGraph).first == boost::out_edges(v, _wfGraph).second) {
-            qDebug() << "out[" << nodeProperties(v).id << "] ";
             outputNodes.push_back(v);
         } else {
             // some pouts may be unassigned
@@ -248,14 +246,26 @@ void Workflow::parseInputParameters()
 
     QStringList mandatoryInputs;
     QStringList optionalInputs;
-    quint16 parameterIndex = 1;
+    quint16 parameterIndex = 0;
     for (OVertex inputNode : getNodesWithExternalInput()) {
         NodeProperties properties = nodeProperties(inputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
-        meta->parametersFromSyntax(mandatoryInputs, optionalInputs);
+        std::vector<quint16> assignedPins = getAssignedPins(inputNode);
         for (SPOperationParameter input : meta->getInputParameters()) {
-            SPOperationParameter parameter = addParameter(input);
-            parameter->addToResourceOf(connector(), parameterIndex++);
+            auto iter = std::find(assignedPins.begin(), assignedPins.end(), input->index() + 1);
+            if (iter == assignedPins.end()) {
+                // only add if pin is unassigned
+                SPOperationParameter parameter = addParameter(input);
+                parameter->addToResourceOf(connector(), ++parameterIndex);
+                if (parameter->isOptional()) {
+                    optionalInputs << parameter->term();
+                } else {
+                    mandatoryInputs << parameter->term();
+                }
+
+                qDebug() << "added input parameter: ";
+                debugOperationParameter(parameter);
+            }
         }
     }
     quint16 inCount = mandatoryInputs.size();
@@ -279,6 +289,8 @@ void Workflow::parseOutputParameters()
 {
     qDebug() << "parse workflow output parameters";
     clearOutputs();
+    QStringList mandatoryOutputs;
+    QStringList optionalOutputs;
     int outCount = 0;
     quint16 parameterIndex = 1;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
@@ -292,10 +304,22 @@ void Workflow::parseOutputParameters()
         */
         // add all outparameters for now
         outCount += outputNodeMeta->getOutputParameters().size();
-
+        std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);
         for (SPOperationParameter output : outputNodeMeta->getOutputParameters()) {
-            SPOperationParameter parameter = addParameter(output);
-            parameter->addToResourceOf(connector(), parameterIndex++);
+            auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), output->index() + 1);
+            if (iter == assignedPouts.end()) {
+                // only add if pout is unassigned
+                SPOperationParameter parameter = addParameter(output);
+                parameter->addToResourceOf(connector(), parameterIndex++);
+                if (parameter->isOptional()) {
+                    optionalOutputs << parameter->term();
+                } else {
+                    mandatoryOutputs << parameter->term();
+                }
+
+                qDebug() << "added output parameter: ";
+                debugOperationParameter(parameter);
+            }
         }
     }
     // TODO replace max number of args with parsed outParameters
@@ -330,23 +354,22 @@ void Workflow::debugPrintEdges()
                   << ") ";
 }
 
-void Workflow::debugWorkflowMetadata()
+void Workflow::debugWorkflowMetadata() const
 {
     qDebug() << "syntax: " << source()["syntax"].toString();
     qDebug() << "inparameters: " << source()["inparameters"].toString();
     qDebug() << "outparameters: " << source()["outparameters"].toString();
     qDebug() << "pins:";
     for (SPOperationParameter parameter : getInputParameters()) {
-        qDebug() << "\tterm: " << parameter->term();
-        qDebug() << "\tname: " << parameter->name();
-        qDebug() << "\tdesc: " << parameter->description();
-        qDebug() << "\toptional: " << parameter->isOptional();
+        debugOperationParameter(parameter);
     }
     qDebug() << "pouts:";
     for (SPOperationParameter parameter : getOutputParameters()) {
-        qDebug() << "\tterm: " << parameter->term();
-        qDebug() << "\tname: " << parameter->name();
-        qDebug() << "\tdesc: " << parameter->description();
-        qDebug() << "\toptional: " << parameter->isOptional();
+        debugOperationParameter(parameter);
     }
+}
+
+void Workflow::debugOperationParameter(const SPOperationParameter parameter) const
+{
+    qDebug() << "\tterm: " << parameter->term() << ", " << "(name: " << parameter->name() << ", optional: " << parameter->isOptional() << ")";
 }
