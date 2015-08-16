@@ -21,7 +21,7 @@ Rectangle {
 
     }
     function deselectAll(){
-        at1.isSelected = at2.isSelected = at3.isSelected = at4.isSelected = at5.isSelected = at6.isSelected = at7.isSelected = at8.isSelected = false
+        att1.isSelected = att2.isSelected = att3.isSelected = att4.isSelected = att5.isSelected = att6.isSelected = att7.isSelected = att8.isSelected = false
     }
 
     AttachmentRectangle{
