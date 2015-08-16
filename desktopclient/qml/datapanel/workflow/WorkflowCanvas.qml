@@ -4,7 +4,7 @@ import MasterCatalogModel 1.0
 ModellerWorkArea {
 Canvas {
 
-    id : workflowDrawingCanvas
+    id : wfCanvas
     anchors.fill: parent
 
     //anchors.fill: parent
@@ -21,12 +21,12 @@ Canvas {
 
     // indiocator whether the object should be dragged
     property bool isDrag: false
-    // indicator whether PressAndHold is active
-    property bool isPressAndHold: false
     property BasicWorkflowDrawObject onPressedSelectedElement
     property BasicWorkflowDrawObject currentSelectedElement
     property double oldx : -1.0
     property double oldy : -1.0
+    property point workingLineBegin : Qt.point(-1,-1)
+    property point workingLineEnd : Qt.point(-1,-1)
     property int currentIndex : 0
 
     /*
@@ -36,7 +36,7 @@ Canvas {
         interval: 30;
         running: true;
         repeat: true
-        onTriggered: workflowDrawingCanvas.draw()
+        onTriggered: wfCanvas.draw()
     }
 
 
@@ -62,7 +62,15 @@ Canvas {
                 for (var i = 0; i < l; i++) {
                     elements[i].draw(ctx);
                 }
-                workflowDrawingCanvas.requestPaint();
+                wfCanvas.requestPaint();
+            }
+            if ( workingLineBegin.x !== -1 && workingLineEnd.x !== -1){
+                     ctx.beginPath();
+                     ctx.lineWidth = 2;
+                     ctx.moveTo(workingLineBegin.x, workingLineBegin.y);
+                     ctx.strokeStyle = "red"
+                     ctx.lineTo(workingLineEnd.x, workingLineEnd.y);
+                     ctx.stroke();
             }
         }
     }
@@ -81,7 +89,7 @@ Canvas {
 
     function finishCreation(x,y,name) {
         if (component.status == Component.Ready) {
-            currentItem = component.createObject(workflowDrawingCanvas, {"x": x, "y": y, "name" : name});
+            currentItem = component.createObject(wfCanvas, {"x": x, "y": y, "name" : name});
             if (currentItem == null) {
                 // Error Handling
                 console.log("Error creating object");
@@ -102,7 +110,7 @@ Canvas {
             ctx.reset();
             ctx.clearRect(0, 0, width, height);
             ctx.stroke();
-            workflowDrawingCanvas.requestPaint();
+            wfCanvas.requestPaint();
         }
     }
 
@@ -113,16 +121,16 @@ Canvas {
 
     onHeightChanged: {
         // force re-draw if the ModellerPanel height has changed
-        workflowDrawingCanvas.draw(true);
+        wfCanvas.draw(true);
     }
 
     DropArea {
         id: canvasDropArea
-        anchors.fill: workflowDrawingCanvas
+        anchors.fill: wfCanvas
         onDropped: {
             if (drag.source.type === "singleoperation") {
-                var oper = workflowDrawingCanvas.getResource(drag.source.ilwisobjectid)
-                workflowDrawingCanvas.createItem(drag.x - 50, drag.y - 30,oper.displayName)
+                var oper = wfCanvas.getResource(drag.source.ilwisobjectid)
+                wfCanvas.createItem(drag.x - 50, drag.y - 30,oper.displayName)
             }
            // var workflowModel = getResource(workflow);
 
@@ -145,15 +153,16 @@ Canvas {
         id: area
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        hoverEnabled: wfCanvas.workingLineBegin.x !== -1
 
         onPressed: {
-            for(var i=0; i < workflowDrawingCanvas.operations.length; ++i){
-                 var item = workflowDrawingCanvas.operations[i]
+            for(var i=0; i < wfCanvas.operations.length; ++i){
+                 var item = wfCanvas.operations[i]
                 var isContained = mouseX >= item.x && mouseY >= item.y && mouseX <= (item.x + item.width) && mouseY <= (item.y + item.height)
                 if ( isContained) {
-                    workflowDrawingCanvas.oldx = mouseX
-                    workflowDrawingCanvas.oldy = mouseY
-                    workflowDrawingCanvas.currentIndex = i;
+                    wfCanvas.oldx = mouseX
+                    wfCanvas.oldy = mouseY
+                    wfCanvas.currentIndex = i;
                     item.isSelected = true
                 }else
                     item.isSelected = false
@@ -161,34 +170,30 @@ Canvas {
         }
 
         onPositionChanged: {
-            if ( workflowDrawingCanvas.isPressAndHold){
-                if ( workflowDrawingCanvas.oldx >= 0 && workflowDrawingCanvas.oldy >= 0 && workflowDrawingCanvas.currentIndex >= 0)    {
-                    var item = workflowDrawingCanvas.operations[workflowDrawingCanvas.currentIndex]
-                    if ( item){
-                        item.x += ( mouseX - workflowDrawingCanvas.oldx)
-                        item.y += (mouseY - workflowDrawingCanvas.oldy)
-                        workflowDrawingCanvas.oldx = mouseX
-                        workflowDrawingCanvas.oldy = mouseY
-                    }
+            if ( wfCanvas.workingLineBegin.x !== -1){
+                wfCanvas.workingLineEnd = Qt.point( mouseX, mouseY)
+                wfCanvas.canvasValid = false
+            }
+            if ( wfCanvas.oldx >= 0 && wfCanvas.oldy >= 0 && wfCanvas.currentIndex >= 0)    {
+
+                var item = wfCanvas.operations[wfCanvas.currentIndex]
+                if ( item){
+                    item.x += ( mouseX - wfCanvas.oldx)
+                    item.y += (mouseY - wfCanvas.oldy)
+                    wfCanvas.oldx = mouseX
+                    wfCanvas.oldy = mouseY
                 }
             }
         }
 
-        onPressAndHold: {
-            workflowDrawingCanvas.isPressAndHold = true;
-        }
-
         onReleased: {
-            workflowDrawingCanvas.oldx = -1.0
-            workflowDrawingCanvas.oldy = -1.0
-            workflowDrawingCanvas.currentIndex = -1
-            if (workflowDrawingCanvas.isPressAndHold) {
-                //clearSelections();
-            }
-            workflowDrawingCanvas.onPressedSelectedElement = null;
-            if (mouse.button == Qt.LeftButton) {
-
-            }
+            wfCanvas.oldx = -1.0
+            wfCanvas.oldy = -1.0
+            wfCanvas.currentIndex = -1
+            wfCanvas.onPressedSelectedElement = null;
+            wfCanvas.workingLineBegin = Qt.point(-1,-1)
+            wfCanvas.workingLineEnd = Qt.point(-1,-1)
+            wfCanvas.canvasValid = true
         }
     }
 
