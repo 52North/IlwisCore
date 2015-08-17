@@ -18,7 +18,6 @@ WorkflowOperationImplementation::WorkflowOperationImplementation(quint64 metaid,
 Ilwis::OperationImplementation *WorkflowOperationImplementation::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
     return new WorkflowOperationImplementation(metaid, expr);
-
 }
 
 Ilwis::OperationImplementation::State WorkflowOperationImplementation::prepare(ExecutionContext *ctx, const SymbolTable &)

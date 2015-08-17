@@ -241,7 +241,7 @@ IOperationMetaData Workflow::getOperationMetadata(quint64 id) const
 
 void Workflow::parseInputParameters()
 {
-    qDebug() << "parse workflow input parameters";
+    //qDebug() << "parse workflow input parameters";
     clearInputs();
 
     QStringList mandatoryInputs;
@@ -252,9 +252,11 @@ void Workflow::parseInputParameters()
         IOperationMetaData meta = getOperationMetadata(properties.id);
         std::vector<quint16> assignedPins = getAssignedPins(inputNode);
 
-        QString opQualifier = meta->name() + "_" + QString::number(inputNode) + "_%1";
-        for (SPOperationParameter input : meta->getInputParameters()) {
-            auto iter = std::find(assignedPins.begin(), assignedPins.end(), input->index() + 1);
+        // TODO more readable syntax terms
+        QString opQualifier = QString::number(properties.id) + "_pin_%1";
+        for (int i = 0; i < meta->getInputParameters().size() ; i++) {
+            SPOperationParameter input = meta->getInputParameters().at(i);
+            auto iter = std::find(assignedPins.begin(), assignedPins.end(), i + 1);
             if (iter == assignedPins.end()) {
                 // only add if pin is unassigned
                 SPOperationParameter parameter = addParameter(input);
@@ -284,7 +286,7 @@ void Workflow::parseInputParameters()
 
 void Workflow::parseOutputParameters()
 {
-    qDebug() << "parse workflow output parameters";
+    //qDebug() << "parse workflow output parameters";
     clearOutputs();
     QStringList mandatoryOutputs;
     QStringList optionalOutputs;
@@ -293,11 +295,12 @@ void Workflow::parseOutputParameters()
         NodeProperties properties = nodeProperties(outputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
 
-        QString opQualifier = meta->name() + "_" + QString::number(outputNode) + "_%1";
+        // TODO more readable syntax terms
+        QString opQualifier = QString::number(properties.id) + "_pout_%1";
         std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);
         for (int i = 0 ; i < meta->getOutputParameters().size() ; i++) {
             SPOperationParameter output = meta->getOutputParameters().at(i);
-            auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), output->index() + 1);
+            auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), i + 1);
             if (iter == assignedPouts.end()) {
                 // only add if pout is unassigned
                 SPOperationParameter parameter = addParameter(output);
@@ -306,6 +309,7 @@ void Workflow::parseOutputParameters()
                         ? parameter->term()
                         : QString::number(i);
                 term = QString(opQualifier).arg(term);
+
                 if (parameter->isOptional()) {
                     optionalOutputs << term;
                 } else {

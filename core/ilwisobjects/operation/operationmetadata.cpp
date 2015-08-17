@@ -174,10 +174,8 @@ SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parame
 {
     bool input = parameter->kind() == OperationParameter::ptINPUT;
     if (input) {
-        parameter->index(_inputParameters.size());
         _inputParameters.push_back(parameter);
     } else {
-        parameter->index(_outputParameters.size());
         _outputParameters.push_back(parameter);
     }
     return parameter;
@@ -185,7 +183,6 @@ SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parame
 
 OperationParameter::OperationParameter(const OperationParameter &operationParameter):
     Identity(name()),
-    _index(operationParameter._index),
     _term(operationParameter._term),
     _kind(operationParameter._kind),
     _type(operationParameter._type),
@@ -205,11 +202,6 @@ OperationParameter::ParameterKind OperationParameter::kind() const
     return _kind;
 }
 
-quint16 OperationParameter::index() const
-{
-    return _index;
-}
-
 QString OperationParameter::term() const
 {
     return _term;
@@ -223,11 +215,6 @@ QString OperationParameter::domainName() const
 bool OperationParameter::isOptional() const
 {
     return _optional;
-}
-
-void OperationParameter::index(quint16 index)
-{
-    _index = index;
 }
 
 void OperationParameter::optional(bool optional)

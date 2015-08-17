@@ -30,7 +30,6 @@ public:
     OperationParameter(const OperationParameter &operationParameter);
     IlwisTypes type() const;
     OperationParameter::ParameterKind kind() const;
-    quint16 index() const;
     QString term() const;
     QString domainName() const;
     bool isOptional() const;
@@ -39,7 +38,6 @@ public:
 private:
     OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
 
-    quint16 _index;
     QString _term;
     ParameterKind _kind;
     IlwisTypes _type;
@@ -47,7 +45,6 @@ private:
     bool _optional;
 
     void optional(bool optional);
-    void index(quint16 index);
 };
 
 typedef std::shared_ptr<OperationParameter> SPOperationParameter;
