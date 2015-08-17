@@ -259,25 +259,19 @@ void Workflow::parseInputParameters()
                 // only add if pin is unassigned
                 SPOperationParameter parameter = addParameter(input);
                 parameter->addToResourceOf(connector(), ++parameterIndex);
+                QString term = QString(opQualifier).arg(parameter->term());
                 if (parameter->isOptional()) {
-                    optionalInputs << QString(opQualifier).arg(parameter->term());
+                    optionalInputs << term;
                 } else {
-                    mandatoryInputs << QString(opQualifier).arg(parameter->term());
+                    mandatoryInputs << term;
                 }
 
-                qDebug() << "added input parameter: ";
-                debugOperationParameter(parameter);
+                //qDebug() << "added input parameter: ";
+                //debugOperationParameter(parameter);
             }
         }
     }
-    quint16 inCount = mandatoryInputs.size();
-    QString inparameters = QString::number(inCount);
-    for (int i = 1; i < optionalInputs.size() ; ++i) {
-        if ( !inparameters.startsWith("|")) {
-            inparameters += "|";
-        }
-        inparameters.append(QString::number(inCount + i));
-    }
+    QString inparameters = createParametersCountString(mandatoryInputs, optionalInputs);
     connector()->setProperty("inparameters", inparameters);
 
     QString bracketOpen = mandatoryInputs.isEmpty() ? "[" : "[,";
@@ -294,39 +288,49 @@ void Workflow::parseOutputParameters()
     clearOutputs();
     QStringList mandatoryOutputs;
     QStringList optionalOutputs;
-    int outCount = 0;
     quint16 parameterIndex = 1;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
         NodeProperties properties = nodeProperties(outputNode);
-        IOperationMetaData outputNodeMeta = getOperationMetadata(properties.id);
-        /*
-            // TODO parse optional parameters
-            // TODO let the user edit parameter names and optionalities
-            Resource opResource = rootMeta->source();
-            QString outParameters = opResource["outparameters"];
-        */
-        // add all outparameters for now
-        outCount += outputNodeMeta->getOutputParameters().size();
+        IOperationMetaData meta = getOperationMetadata(properties.id);
+
+        QString opQualifier = meta->name() + "_" + QString::number(outputNode) + "_%1";
         std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);
-        for (SPOperationParameter output : outputNodeMeta->getOutputParameters()) {
+        for (int i = 0 ; i < meta->getOutputParameters().size() ; i++) {
+            SPOperationParameter output = meta->getOutputParameters().at(i);
             auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), output->index() + 1);
             if (iter == assignedPouts.end()) {
                 // only add if pout is unassigned
                 SPOperationParameter parameter = addParameter(output);
                 parameter->addToResourceOf(connector(), parameterIndex++);
+                QString term = !parameter->term().isEmpty()
+                        ? parameter->term()
+                        : QString::number(i);
+                term = QString(opQualifier).arg(term);
                 if (parameter->isOptional()) {
-                    optionalOutputs << parameter->term();
+                    optionalOutputs << term;
                 } else {
-                    mandatoryOutputs << parameter->term();
+                    mandatoryOutputs << term;
                 }
 
-                qDebug() << "added output parameter: ";
-                debugOperationParameter(parameter);
+                //qDebug() << "added output parameter: ";
+                //debugOperationParameter(parameter);
             }
         }
     }
-    // TODO replace max number of args with parsed outParameters
-    connector()->setProperty("outparameters", outCount);
+    QString outparameters = createParametersCountString(mandatoryOutputs, optionalOutputs);
+    connector()->setProperty("outparameters", outparameters);
+}
+
+QString Workflow::createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const {
+    quint16 minCount = mandatory.size();
+    QString parametersCount = QString::number(minCount);
+    for (int i = 1; i <= optionals.size() ; ++i) {
+        if ( !parametersCount.startsWith("|")) {
+            parametersCount += "|";
+        }
+        parametersCount.append(QString::number(minCount + i));
+    }
+    return parametersCount;
 }
 
 void Workflow::debugPrintGraph()

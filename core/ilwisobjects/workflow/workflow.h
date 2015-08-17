@@ -95,6 +95,7 @@ private:
 
     void parseInputParameters();
     void parseOutputParameters();
+    QString createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const;
     IOperationMetaData getOperationMetadata(quint64 id) const;
     std::vector<quint16> getAssignedPins(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
