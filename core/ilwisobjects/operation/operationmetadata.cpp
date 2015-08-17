@@ -156,7 +156,7 @@ void OperationMetaData::clearOutputs()
 
 void OperationMetaData::removeParameterProperties(const QString &base, quint16 size)
 {
-    for (int i = 1 ; i <= size ; i++) {
+    for (int i = 1 ; i <= size ; i++) { // correct index here
         connector()->removeProperty(base.arg(QString::number(i)) + "term");
         connector()->removeProperty(base.arg(QString::number(i)) + "name");
         connector()->removeProperty(base.arg(QString::number(i)) + "type");
@@ -240,9 +240,9 @@ void OperationParameter::addToResourceOf(QScopedPointer<ConnectorInterface> &oth
     QString prefix;
     bool input = kind() == OperationParameter::ptINPUT;
     if (input) {
-        prefix = "pin_" + QString::number(index) + "_";
+        prefix = "pin_" + QString::number(index + 1) + "_";
     } else {
-        prefix = "pout_" + QString::number(index) + "_";
+        prefix = "pout_" + QString::number(index + 1) + "_";
     }
     otherconnector->setProperty(prefix + "type", _type);
     otherconnector->setProperty(prefix + "term", _term);
