@@ -129,17 +129,17 @@ QStringList OperationMetaData::getKeywords() const
 
 void OperationMetaData::setNamespace(const QString &nspace)
 {
-    source().addProperty("namespace", nspace);
+    connector()->setProperty("namespace", nspace);
 }
 
 void OperationMetaData::setLongName(const QString &longName)
 {
-    source().addProperty("longname", longName);
+    connector()->setProperty("longname", longName);
 }
 
 void OperationMetaData::setKeywords(const QStringList &keywords)
 {
-    source().addProperty("keywords", keywords);
+    connector()->setProperty("keywords", keywords);
 }
 
 void OperationMetaData::clearInputs()
