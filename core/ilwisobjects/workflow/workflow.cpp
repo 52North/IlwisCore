@@ -261,22 +261,21 @@ void Workflow::parseInputParameters()
     for (OVertex inputNode : getNodesWithExternalInput()) {
         NodeProperties properties = nodeProperties(inputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
-        std::vector<quint16> assignedPins = getAssignedPins(inputNode);
 
-        // TODO more readable syntax terms
-        QString opQualifier = QString::number(properties.id) + "_pin_%1";
+        std::vector<quint16> assignedPins = getAssignedPins(inputNode);
+        QStringList inputTerms = getInputTerms(inputNode, meta);
+
+        // iterate over operation's pouts
         for (int i = 0; i < meta->getInputParameters().size() ; i++) {
             SPOperationParameter input = meta->getInputParameters().at(i);
             auto iter = std::find(assignedPins.begin(), assignedPins.end(), i + 1);
             if (iter == assignedPins.end()) {
-                // only add if pin is unassigned
-                SPOperationParameter parameter = addParameter(input);
-                parameter->addToResourceOf(connector(), parameterIndex++);
-                QString term = QString(opQualifier).arg(parameter->term());
-                if (parameter->isOptional()) {
-                    optionalInputs << term;
+                addParameter(input); // not yet assigned
+                input->copyMetaToResourceOf(connector(), parameterIndex++);
+                if (input->isOptional()) {
+                    optionalInputs << inputTerms.at(i);
                 } else {
-                    mandatoryInputs << term;
+                    mandatoryInputs << inputTerms.at(i);
                 }
 
                 //qDebug() << "added input parameter: ";
@@ -307,24 +306,20 @@ void Workflow::parseOutputParameters()
         IOperationMetaData meta = getOperationMetadata(properties.id);
 
         // TODO more readable syntax terms
-        QString opQualifier = QString::number(properties.id) + "_pout_%1";
         std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);
+        QStringList outputTerms = getOutputTerms(outputNode, meta);
+
+        // iterate over operation's pouts
         for (int i = 0 ; i < meta->getOutputParameters().size() ; i++) {
             SPOperationParameter output = meta->getOutputParameters().at(i);
             auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), i + 1);
             if (iter == assignedPouts.end()) {
-                // only add if pout is unassigned
-                SPOperationParameter parameter = addParameter(output);
-                parameter->addToResourceOf(connector(), parameterIndex++);
-                QString term = !parameter->term().isEmpty()
-                        ? parameter->term()
-                        : QString::number(i);
-                term = QString(opQualifier).arg(term);
-
-                if (parameter->isOptional()) {
-                    optionalOutputs << term;
+                addParameter(output); // not yet assigned
+                output->copyMetaToResourceOf(connector(), parameterIndex++);
+                if (output->isOptional()) {
+                    optionalOutputs << outputTerms.at(i);
                 } else {
-                    mandatoryOutputs << term;
+                    mandatoryOutputs << outputTerms.at(i);
                 }
 
                 //qDebug() << "added output parameter: ";
@@ -336,7 +331,33 @@ void Workflow::parseOutputParameters()
     connector()->setProperty("outparameters", outparameters);
 }
 
-QString Workflow::createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const {
+QStringList Workflow::getInputTerms(const OVertex &v, const IOperationMetaData &meta)
+{
+    return createSyntaxTerms(v, meta->getInputParameters(), "_pin_%1");
+}
+
+QStringList Workflow::getOutputTerms(const OVertex &v, const IOperationMetaData &meta)
+{
+    return createSyntaxTerms(v, meta->getOutputParameters(), "_pout_%1");
+}
+
+QStringList Workflow::createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutTemplate)
+{
+    QStringList list;
+    NodeProperties properties = nodeProperties(v);
+    QString opQualifier = QString::number(properties.id) + inoutTemplate;
+    for (int i = 0 ; i < parameters.size() ; i++) {
+        SPOperationParameter parameter = parameters.at(i);
+        QString term = !parameter->term().isEmpty()
+                ? parameter->term()
+                : QString::number(i);
+        list << QString(opQualifier).arg(term);
+    }
+    return list;
+}
+
+QString Workflow::createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const
+{
     quint16 minCount = mandatory.size();
     QString parametersCount = QString::number(minCount);
     for (int i = 1; i <= optionals.size() ; ++i) {

@@ -70,6 +70,9 @@ public:
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
 
+    QStringList getInputTerms(const OVertex &v, const IOperationMetaData &meta);
+    QStringList getOutputTerms(const OVertex &v, const IOperationMetaData &meta);
+
     // ------ operation metadata functions
     IlwisTypes ilwisType() const;
     quint64 createMetadata();
@@ -95,6 +98,7 @@ private:
 
     void parseInputParameters();
     void parseOutputParameters();
+    QStringList createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutPart);
     QString createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const;
     IOperationMetaData getOperationMetadata(quint64 id) const;
     std::vector<quint16> getAssignedPins(const OVertex &v);
