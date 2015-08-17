@@ -84,9 +84,9 @@ void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList 
     int argIdx = argumentsrx.indexIn(source()["syntax"].toString());
     QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
 
-    QRegExp requiredrx("^(.*)\\[?");
+    QRegExp requiredrx("(.*)\\[");
     int reqIdx = requiredrx.indexIn(arguments);
-    QString requireds = reqIdx != -1 ? requiredrx.cap(1) : "";
+    QString requireds = reqIdx != -1 ? requiredrx.cap(1) : arguments;
 
     QRegExp optionalsrx("^.*\\[(.*)\\](\\s*)?$");
     int optIdx = optionalsrx.indexIn(arguments);
