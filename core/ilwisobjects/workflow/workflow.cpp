@@ -251,6 +251,8 @@ void Workflow::parseInputParameters()
         NodeProperties properties = nodeProperties(inputNode);
         IOperationMetaData meta = getOperationMetadata(properties.id);
         std::vector<quint16> assignedPins = getAssignedPins(inputNode);
+
+        QString opQualifier = meta->name() + "_" + QString::number(inputNode) + "_%1";
         for (SPOperationParameter input : meta->getInputParameters()) {
             auto iter = std::find(assignedPins.begin(), assignedPins.end(), input->index() + 1);
             if (iter == assignedPins.end()) {
@@ -258,9 +260,9 @@ void Workflow::parseInputParameters()
                 SPOperationParameter parameter = addParameter(input);
                 parameter->addToResourceOf(connector(), ++parameterIndex);
                 if (parameter->isOptional()) {
-                    optionalInputs << parameter->term();
+                    optionalInputs << QString(opQualifier).arg(parameter->term());
                 } else {
-                    mandatoryInputs << parameter->term();
+                    mandatoryInputs << QString(opQualifier).arg(parameter->term());
                 }
 
                 qDebug() << "added input parameter: ";
@@ -278,8 +280,9 @@ void Workflow::parseInputParameters()
     }
     connector()->setProperty("inparameters", inparameters);
 
+    QString bracketOpen = mandatoryInputs.isEmpty() ? "[" : "[,";
     QString opts = !optionalInputs.isEmpty()
-            ? "[," + optionalInputs.join(",") + "]"
+            ? bracketOpen + optionalInputs.join(",") + "]"
             : "";
     QString workflowSyntax = QString("%1( %2 %3 )").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
     connector()->setProperty("syntax", workflowSyntax);
