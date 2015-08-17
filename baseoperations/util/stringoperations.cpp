@@ -61,7 +61,7 @@ quint64 StringFind::createMetadata()
     resource.setSyntax("stringfind(source,searchtext,[,begin])");
     resource.setInParameterCount({2,3});
     resource.addInParameter(0, itANY,TR("input string"), TR("input string"));
-    resource.addOptionalInParameter(1, itANY, TR("search string"), TR("string to be found in in the input string"));
+    resource.addInParameter(1, itANY, TR("search string"), TR("string to be found in in the input string"));
     resource.addOptionalInParameter(2, itINT32, TR("start_index"), TR("optional index from where to begin the search"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itINT32, TR("output index"), TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
