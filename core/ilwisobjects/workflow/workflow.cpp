@@ -6,8 +6,13 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "connectorinterface.h"
+#include "commandhandler.h"
+#include "operationmetadata.h"
+#include "operationExpression.h"
+#include "operation.h"
 
 #include "workflow.h"
+#include "workflowoperationimplementation.h"
 
 using namespace Ilwis;
 
@@ -213,9 +218,15 @@ IlwisTypes Workflow::ilwisType() const
 
 quint64 Workflow::createMetadata()
 {
+    mastercatalog()->removeItems({source()});
+
     parseInputParameters();
     parseOutputParameters();
-    return source().id();
+    quint64 id = source().id();
+
+    mastercatalog()->addItems({source()});
+    commandhandler()->addOperation(id, WorkflowOperationImplementation::create);
+    return id;
 }
 
 NodePropertyMap Workflow::nodeIndex()
@@ -260,7 +271,7 @@ void Workflow::parseInputParameters()
             if (iter == assignedPins.end()) {
                 // only add if pin is unassigned
                 SPOperationParameter parameter = addParameter(input);
-                parameter->addToResourceOf(connector(), ++parameterIndex);
+                parameter->addToResourceOf(connector(), parameterIndex++);
                 QString term = QString(opQualifier).arg(parameter->term());
                 if (parameter->isOptional()) {
                     optionalInputs << term;

@@ -27,5 +27,6 @@ Ilwis::OperationImplementation::State WorkflowOperationImplementation::prepare(E
 
 bool WorkflowOperationImplementation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
-
+    // TODO
+    return true;
 }

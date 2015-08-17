@@ -11,8 +11,6 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
-    //NEW_OPERATION(WorkflowOperationImplementation);
-
 protected:
 
 
