@@ -222,7 +222,7 @@ void OperationParameter::optional(bool optional)
     _optional = optional;
 }
 
-void OperationParameter::addToResourceOf(QScopedPointer<ConnectorInterface> &otherconnector, quint16 index)
+void OperationParameter::copyMetaToResourceOf(QScopedPointer<ConnectorInterface> &otherconnector, quint16 index) const
 {
     QString prefix;
     bool input = kind() == OperationParameter::ptINPUT;

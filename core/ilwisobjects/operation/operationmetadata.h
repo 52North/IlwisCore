@@ -33,7 +33,7 @@ public:
     QString term() const;
     QString domainName() const;
     bool isOptional() const;
-    void addToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index);
+    void copyMetaToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index) const;
 
 private:
     OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
