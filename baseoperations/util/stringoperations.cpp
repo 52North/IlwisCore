@@ -40,6 +40,9 @@ Ilwis::OperationImplementation *StringFind::create(quint64 metaid, const Ilwis::
 
 Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
 {
+    if (_expression.parameterCount() < 2) {
+        return sPREPAREFAILED;
+    }
     _text = _expression.parm(0).value();
     _searchText = _expression.parm(1).value();
     if ( _expression.parameterCount() == 3) {
@@ -51,7 +54,7 @@ Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx,
         }
         _start = std::max(0, _start);
     }
-    return sPREPAREFAILED;
+    return sPREPARED;
 }
 
 quint64 StringFind::createMetadata()
@@ -175,10 +178,13 @@ Ilwis::OperationImplementation *StringReplace::create(quint64 metaid, const Ilwi
 
 Ilwis::OperationImplementation::State StringReplace::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
 {
+    if (_expression.parameterCount() < 3) {
+        return sPREPAREFAILED;
+    }
     _text = _expression.parm(0).value();
     _searchText = _expression.parm(1).value();
     _replaceText = _expression.parm(2).value();
-    return sPREPAREFAILED;
+    return sPREPARED;
 }
 
 quint64 StringReplace::createMetadata()
