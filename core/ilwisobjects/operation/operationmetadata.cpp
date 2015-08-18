@@ -130,16 +130,19 @@ QStringList OperationMetaData::getKeywords() const
 void OperationMetaData::setNamespace(const QString &nspace)
 {
     connector()->setProperty("namespace", nspace);
+    mastercatalog()->updateItems({source()});
 }
 
 void OperationMetaData::setLongName(const QString &longName)
 {
     connector()->setProperty("longname", longName);
+    mastercatalog()->updateItems({source()});
 }
 
 void OperationMetaData::setKeywords(const QStringList &keywords)
 {
     connector()->setProperty("keywords", keywords);
+    mastercatalog()->updateItems({source()});
 }
 
 void OperationMetaData::clearInputs()

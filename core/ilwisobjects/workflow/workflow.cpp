@@ -218,13 +218,11 @@ IlwisTypes Workflow::ilwisType() const
 
 quint64 Workflow::createMetadata()
 {
-    mastercatalog()->removeItems({source()});
-
     parseInputParameters();
     parseOutputParameters();
     quint64 id = source().id();
 
-    mastercatalog()->addItems({source()});
+    mastercatalog()->updateItems({source()});
     commandhandler()->addOperation(id, WorkflowOperationImplementation::create);
     return id;
 }
