@@ -73,8 +73,8 @@ public:
     void setKeywords(const QStringList &keywords);
 
 protected:
-    void clearInputs();
-    void clearOutputs();
+    void clearInputParameters();
+    void clearOutputParameters();
     void removeParameterProperties(const QString &base, quint16 size);
 
 private:

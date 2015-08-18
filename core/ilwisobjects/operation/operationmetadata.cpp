@@ -145,15 +145,17 @@ void OperationMetaData::setKeywords(const QStringList &keywords)
     mastercatalog()->updateItems({source()});
 }
 
-void OperationMetaData::clearInputs()
+void OperationMetaData::clearInputParameters()
 {
     removeParameterProperties("pin_%1_", _outputParameters.size());
+    mastercatalog()->updateItems({source()});
     _inputParameters.clear();
 }
 
-void OperationMetaData::clearOutputs()
+void OperationMetaData::clearOutputParameters()
 {
     removeParameterProperties("pout_%1_", _outputParameters.size());
+    mastercatalog()->updateItems({source()});
     _outputParameters.clear();
 }
 
