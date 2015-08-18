@@ -28,7 +28,7 @@ Workflow::~Workflow() {
 
 }
 
-SPDataProperties Workflow::addInputDataProperties(const OVertex v)
+SPDataProperties Workflow::addInputDataProperties(const OVertex &v)
 {
     if ( !_inputProperties.contains(v)) {
         QList<SPDataProperties> list;
@@ -49,6 +49,26 @@ SPDataProperties Workflow::addOutputDataProperties(const OVertex &v)
     SPDataProperties properties = SPDataProperties(new DataProperties());
     _outputProperties[v].push_back(properties);
     return SPDataProperties(properties);
+}
+
+QList<SPDataProperties> Workflow::getInputDataProperties(const OVertex &v) const
+{
+    if (_inputProperties.contains(v)) {
+        return _inputProperties[v];
+    } else {
+        QList<SPDataProperties> emptyList;
+        return emptyList;
+    }
+}
+
+QList<SPDataProperties> Workflow::getOutputDataProperties(const OVertex &v) const
+{
+    if (_outputProperties.contains(v)) {
+        return _outputProperties[v];
+    } else {
+        QList<SPDataProperties> emptyList;
+        return emptyList;
+    }
 }
 
 void Workflow::removeInputDataProperties(const OVertex &v, quint16 index)
@@ -89,27 +109,27 @@ EdgeProperties Workflow::edgeProperties(const OEdge &e)
 // nodes where (some) pins do not match an in_edge
 QList<OVertex> Workflow::getNodesWithExternalInput()
 {
-    QList<OVertex> inputNodes;
-    boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
-    for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
-        OVertex v = *vi;
-        quint64 operationId = nodeProperties(v).id;
-        if (boost::in_edges(v, _wfGraph).first == boost::in_edges(v, _wfGraph).second) {
-            inputNodes.push_back(v); // all pins unassigned
-        } else {
-            // some pins may be unassigned
-            std::vector<quint16> assignedPins = getAssignedPins(v);
-            quint16 assignedInputSize = assignedPins.size();
+    if (_inputNodes.isEmpty()) {
+        boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
+        for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
+            OVertex v = *vi;
+            if (boost::in_edges(v, _wfGraph).first == boost::in_edges(v, _wfGraph).second) {
+                _inputNodes.push_back(v); // all pins unassigned
+            } else {
+                // some pins may be unassigned
+                std::vector<quint16> assignedPins = getAssignedPins(v);
+                quint16 assignedInputSize = assignedPins.size();
 
-            IOperationMetaData meta = getOperationMetadata(operationId);
-            quint16 possibleInputSize = meta->getInputParameters().size();
+                IOperationMetaData meta = getOperationMetadata(v);
+                quint16 possibleInputSize = meta->getInputParameters().size();
 
-            if (possibleInputSize > assignedInputSize) {
-                inputNodes.push_back(v); // further parameter assignment possible
+                if (possibleInputSize > assignedInputSize) {
+                    _inputNodes.push_back(v); // further parameter assignment possible
+                }
             }
         }
     }
-    return inputNodes;
+    return _inputNodes;
 }
 
 std::vector<quint16> Workflow::getAssignedPins(const OVertex &v)
@@ -117,12 +137,40 @@ std::vector<quint16> Workflow::getAssignedPins(const OVertex &v)
     std::vector<quint16> assignedPins;
     boost::graph_traits<WorkflowGraph>::in_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = boost::in_edges(v, _wfGraph); ei != ei_end; ++ei) {
+        // implicitly assigned pins via edges
         assignedPins.push_back(edgeProperties(*ei).inputIndexNextStep);
     }
     for (SPDataProperties input : _inputProperties[v]) {
+        // explicitly assigned pins
         assignedPins.push_back(input->assignedParameterIndex);
     }
     return assignedPins;
+}
+
+// nodes where (some) pouts do not match an out_edge
+QList<OVertex> Workflow::getNodesWithExternalOutputs()
+{
+    if (_outputNodes.isEmpty()) {
+        boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
+        for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
+            OVertex v = *vi;
+            if (boost::out_edges(v, _wfGraph).first == boost::out_edges(v, _wfGraph).second) {
+                _outputNodes.push_back(v);
+            } else {
+                // some pouts may be unassigned
+                std::vector<quint16> assignedPouts = getAssignedPouts(v);
+                quint16 assignedOutputSize = assignedPouts.size();
+
+                IOperationMetaData meta = getOperationMetadata(v);
+                quint16 possibleOutputSize = meta->getOutputParameters().size();
+
+                if (possibleOutputSize > assignedOutputSize) {
+                    _outputNodes.push_back(v); // further parameter assignment possible
+                }
+            }
+        }
+    }
+    return _outputNodes;
 }
 
 std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
@@ -130,39 +178,14 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
     std::vector<quint16> assignedPouts;
     boost::graph_traits<WorkflowGraph>::out_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = boost::out_edges(v, _wfGraph); ei != ei_end; ++ei) {
+        // implicitly assigned pins via edges
         assignedPouts.push_back(edgeProperties(*ei).outputIndexLastStep);
     }
     for (SPDataProperties output : _outputProperties[v]) {
+        // explicitly assigned pins via edges
         assignedPouts.push_back(output->assignedParameterIndex);
     }
     return assignedPouts;
-}
-
-
-// nodes where (some) pouts do not match an out_edge
-QList<OVertex> Workflow::getNodesWithExternalOutputs()
-{
-    QList<OVertex> outputNodes;
-    boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
-    for (boost::tie(vi,vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
-        OVertex v = *vi;
-        quint64 operationId = nodeProperties(v).id;
-        if (boost::out_edges(v, _wfGraph).first == boost::out_edges(v, _wfGraph).second) {
-            outputNodes.push_back(v);
-        } else {
-            // some pouts may be unassigned
-            std::vector<quint16> assignedPouts = getAssignedPouts(v);
-            quint16 assignedOutputSize = assignedPouts.size();
-
-            IOperationMetaData meta = getOperationMetadata(operationId);
-            quint16 possibleOutputSize = meta->getOutputParameters().size();
-
-            if (possibleOutputSize > assignedOutputSize) {
-                outputNodes.push_back(v); // further parameter assignment possible
-            }
-        }
-    }
-    return outputNodes;
 }
 
 void Workflow::updateNodeProperties(OVertex v, const NodeProperties &properties)
@@ -178,36 +201,7 @@ void Workflow::updateEdgeProperties(OEdge e, const EdgeProperties &properties)
 OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties)
 {
     // TODO allow multiple edges between v1 and v2?
-    /*
-    QString out = properties.outputNameLastStep;
-    QString in = properties.inputNameNextStep;
 
-    QList<DataProperties> ioProperties;
-    if ( !_ioProperties.contains(v1)) {
-        qDebug() << "create new io data properties for node " << v1;
-        _ioProperties[v1] = ioProperties;
-    } else {
-        ioProperties = _ioProperties[v1];
-    }
-
-
-    //DataProperties outputProperties;
-    //outputProperties.input = false;
-    //outputProperties.name = properties.outputNameLastStep;
-    IOperationMetaData v1OpMeta = getOperationMetadata(nodeProperties(v1).id);
-    for (SPOperationParameter parameter : v1OpMeta->getOutputParameters()) {
-        if (parameter->name() == properties.outputNameLastStep) {
-            ioProperties.push_back(parameter);
-        }
-    }
-
-    //DataProperties inputProperties;
-    //inputProperties.input = true;
-    //inputProperties.name = properties.inputNameNextStep;
-    IOperationMetaData v2OpMeta = getOperationMetadata(nodeProperties(v2).id);
-
-    //ioProperties.push_back(inputProperties);
-    */
     return (boost::add_edge(v1, v2, properties, _wfGraph)).first;
 }
 
@@ -237,9 +231,10 @@ EdgePropertyMap Workflow::edgeIndex()
     return get(boost::edge_index, _wfGraph);
 }
 
-IOperationMetaData Workflow::getOperationMetadata(quint64 id) const
+IOperationMetaData Workflow::getOperationMetadata(const OVertex &v)
 {
     IOperationMetaData metadata;
+    quint64 id = nodeProperties(v).id;
     metadata.prepare(mastercatalog()->id2Resource(id));
     if ( !metadata.isValid()) {
         qDebug() << "operation with id" << id << " is unknown!";
@@ -250,15 +245,14 @@ IOperationMetaData Workflow::getOperationMetadata(quint64 id) const
 
 void Workflow::parseInputParameters()
 {
-    //qDebug() << "parse workflow input parameters";
-    clearInputs();
+    clearInputParameters();
+    _inputNodes.clear();
 
     QStringList mandatoryInputs;
     QStringList optionalInputs;
     quint16 parameterIndex = 0;
     for (OVertex inputNode : getNodesWithExternalInput()) {
-        NodeProperties properties = nodeProperties(inputNode);
-        IOperationMetaData meta = getOperationMetadata(properties.id);
+        IOperationMetaData meta = getOperationMetadata(inputNode);
 
         std::vector<quint16> assignedPins = getAssignedPins(inputNode);
         QStringList inputTerms = getInputTerms(inputNode, meta);
@@ -294,14 +288,14 @@ void Workflow::parseInputParameters()
 
 void Workflow::parseOutputParameters()
 {
-    //qDebug() << "parse workflow output parameters";
-    clearOutputs();
+    clearOutputParameters();
+    _outputNodes.clear();
+
     QStringList mandatoryOutputs;
     QStringList optionalOutputs;
     quint16 parameterIndex = 1;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
-        NodeProperties properties = nodeProperties(outputNode);
-        IOperationMetaData meta = getOperationMetadata(properties.id);
+        IOperationMetaData meta = getOperationMetadata(outputNode);
 
         // TODO more readable syntax terms
         std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);

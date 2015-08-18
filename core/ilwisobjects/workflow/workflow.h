@@ -52,8 +52,10 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    SPDataProperties addInputDataProperties(const OVertex v);
+    SPDataProperties addInputDataProperties(const OVertex &v);
     SPDataProperties addOutputDataProperties(const OVertex &v);
+    QList<SPDataProperties> getInputDataProperties(const OVertex &v) const;
+    QList<SPDataProperties> getOutputDataProperties(const OVertex &v) const;
     void removeInputDataProperties(const OVertex &v, quint16 index);
     void removeOutputDataProperties(const OVertex &v, quint16 index);
 
@@ -74,10 +76,11 @@ public:
     QStringList getOutputTerms(const OVertex &v, const IOperationMetaData &meta);
 
     // ------ operation metadata functions
+    IOperationMetaData getOperationMetadata(const OVertex &v);
     IlwisTypes ilwisType() const;
     quint64 createMetadata();
 
-    // for debugging
+    // ------ for debugging
     void debugPrintGraph();
     void debugPrintVertices();
     void debugPrintEdges();
@@ -86,6 +89,8 @@ public:
 
 private:
     WorkflowGraph _wfGraph;
+    QList<OVertex> _inputNodes;
+    QList<OVertex> _outputNodes;
 
     QMap<OVertex, QList<SPDataProperties>> _inputProperties;
     QMap<OVertex, QList<SPDataProperties>> _outputProperties;
@@ -100,7 +105,6 @@ private:
     void parseOutputParameters();
     QStringList createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutPart);
     QString createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const;
-    IOperationMetaData getOperationMetadata(quint64 id) const;
     std::vector<quint16> getAssignedPins(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
 
