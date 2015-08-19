@@ -96,7 +96,11 @@ bool StringSub::execute(ExecutionContext *ctx, SymbolTable &symTable)
     QString sub = _text.mid(_start,_end);
 
     QVariant value = sub;
-    ctx->setOutput(symTable, value, sUNDEF, itSTRING, Resource());
+    QString name = _expression.parameterCount(false) > 0
+            ? _expression.parm(0, false).value()
+            : sUNDEF;
+
+    ctx->setOutput(symTable, value, name, itSTRING, Resource());
 
     return true;
 }
@@ -135,7 +139,7 @@ quint64 StringSub::createMetadata()
     resource.setSyntax("stringsub(source,begin,[,end])");
     resource.setInParameterCount({2,3});
     resource.addInParameter(0, itANY, TR("input string"),TR("input string"));
-    resource.addOptionalInParameter(1, itINT32, TR("begin"),TR("start index of the substring in the input string"));
+    resource.addInParameter(1, itINT32, TR("begin"),TR("start index of the substring in the input string"));
     resource.addOptionalInParameter(2, itINT32, TR("end"),TR("optional index from where to end the substring, if not present the string will go until the end"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0,itSTRING,TR("sub string"),TR("a sub string from the input string"));
