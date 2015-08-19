@@ -14,22 +14,30 @@
 
 namespace Ilwis {
 
-struct DataProperties {
-    DataProperties() {}
-    //bool treatOptionalAsRequired; // TODO
+struct InputDataProperties {
+    InputDataProperties() {}
     quint16 assignedParameterIndex;
-    SPOperationParameter parameter;
+    QVariant value;
 };
 
-typedef std::shared_ptr<DataProperties> SPDataProperties;
+struct OutputDataProperties {
+    OutputDataProperties() {}
+    quint16 assignedParameterIndex;
+    QString outputName;
+};
+
+typedef std::shared_ptr<InputDataProperties> SPInputDataProperties;
+typedef std::shared_ptr<OutputDataProperties> SPOutputDataProperties;
 
 struct NodeProperties {
     quint64 id;
 };
 
 struct EdgeProperties {
-    quint16 outputIndexLastStep;
-    quint16 inputIndexNextStep;
+    QString outputName;
+    bool temporary = true;
+    quint16 outputIndexLastOperation;
+    quint16 inputIndexNextOperation;
 };
 
 typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
@@ -43,8 +51,13 @@ typedef boost::property_map<WorkflowGraph, boost::edge_index_t>::type EdgeProper
 typedef boost::graph_traits<WorkflowGraph>::vertex_descriptor OVertex;
 typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
 
+typedef boost::graph_traits<WorkflowGraph>::in_edge_iterator InEdgeIterator;
+typedef boost::graph_traits<WorkflowGraph>::out_edge_iterator OutEdgeIterator;
+
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
+
+    friend class WorkflowOperationImplementation;
 
 public:
     Workflow();
@@ -52,10 +65,10 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    SPDataProperties addInputDataProperties(const OVertex &v);
-    SPDataProperties addOutputDataProperties(const OVertex &v);
-    QList<SPDataProperties> getInputDataProperties(const OVertex &v) const;
-    QList<SPDataProperties> getOutputDataProperties(const OVertex &v) const;
+    SPInputDataProperties addInputDataProperties(const OVertex &v);
+    SPOutputDataProperties addOutputDataProperties(const OVertex &v);
+    QList<SPInputDataProperties> getInputDataProperties(const OVertex &v) const;
+    QList<SPOutputDataProperties> getOutputDataProperties(const OVertex &v) const;
     void removeInputDataProperties(const OVertex &v, quint16 index);
     void removeOutputDataProperties(const OVertex &v, quint16 index);
 
@@ -66,14 +79,12 @@ public:
 
     QList<OVertex> getNodesWithExternalInput();
     QList<OVertex> getNodesWithExternalOutputs();
+
     NodeProperties nodeProperties(const OVertex &v);
     EdgeProperties edgeProperties(const OEdge &e);
 
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
-
-    QStringList getInputTerms(const OVertex &v, const IOperationMetaData &meta);
-    QStringList getOutputTerms(const OVertex &v, const IOperationMetaData &meta);
 
     // ------ operation metadata functions
     IOperationMetaData getOperationMetadata(const OVertex &v);
@@ -92,9 +103,8 @@ private:
     QList<OVertex> _inputNodes;
     QList<OVertex> _outputNodes;
 
-    QMap<OVertex, QList<SPDataProperties>> _inputProperties;
-    QMap<OVertex, QList<SPDataProperties>> _outputProperties;
-    //QMap<OVertex, QList<OperationParameter>> _ioProperties;
+    QMap<OVertex, QList<SPInputDataProperties>> _inputProperties;
+    QMap<OVertex, QList<SPOutputDataProperties>> _outputProperties;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;
 
@@ -105,9 +115,16 @@ private:
     void parseOutputParameters();
     QStringList createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutPart);
     QString createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const;
+
+    QStringList getInputTerms(const OVertex &v);
+    QStringList getOutputTerms(const OVertex &v);
     std::vector<quint16> getAssignedPins(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
 
+    OVertex getPreviousOperationNode(const OEdge &e);
+    OVertex getNextOperationNode(const OEdge &e);
+    std::pair<InEdgeIterator, InEdgeIterator> getInEdges(const OVertex &v);
+    std::pair<OutEdgeIterator, OutEdgeIterator> getOutEdges(const OVertex &v);
 };
 
 typedef IlwisData<Workflow> IWorkflow;

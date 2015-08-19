@@ -6,10 +6,11 @@
 namespace Ilwis {
 class WorkflowOperationImplementation: public OperationImplementation
 {
+
 public:
     WorkflowOperationImplementation(quint64 metaid, const Ilwis::OperationExpression &expr);
 
-    bool execute(ExecutionContext *ctx,SymbolTable& symTable);
+    bool execute(ExecutionContext *globalCtx, SymbolTable& globalSymTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const SymbolTable &);
 
@@ -17,7 +18,10 @@ protected:
 
 private:
     QMap<OVertex, QStringList> _inputArgs;
-    bool executeFromInputNode(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
+    void parseInputNodeArguments(const QList<OVertex> &inputNodes, const IWorkflow &workflow);
+    bool executeInputNode(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
+
+    bool reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
 
 
 };

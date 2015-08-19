@@ -28,45 +28,45 @@ Workflow::~Workflow() {
 
 }
 
-SPDataProperties Workflow::addInputDataProperties(const OVertex &v)
+SPInputDataProperties Workflow::addInputDataProperties(const OVertex &v)
 {
     if ( !_inputProperties.contains(v)) {
-        QList<SPDataProperties> list;
+        QList<SPInputDataProperties> list;
         _inputProperties.insert(v, list);
     }
-    SPDataProperties properties = SPDataProperties(new DataProperties());
+    SPInputDataProperties properties = SPInputDataProperties(new InputDataProperties());
     _inputProperties[v].push_back(properties);
-    return SPDataProperties(properties);
+    return properties;
 }
 
 
-SPDataProperties Workflow::addOutputDataProperties(const OVertex &v)
+SPOutputDataProperties Workflow::addOutputDataProperties(const OVertex &v)
 {
     if ( !_outputProperties.contains(v)) {
-        QList<SPDataProperties> list;
+        QList<SPOutputDataProperties> list;
         _outputProperties.insert(v, list);
     }
-    SPDataProperties properties = SPDataProperties(new DataProperties());
+    SPOutputDataProperties properties = SPOutputDataProperties(new OutputDataProperties());
     _outputProperties[v].push_back(properties);
-    return SPDataProperties(properties);
+    return properties;
 }
 
-QList<SPDataProperties> Workflow::getInputDataProperties(const OVertex &v) const
+QList<SPInputDataProperties> Workflow::getInputDataProperties(const OVertex &v) const
 {
     if (_inputProperties.contains(v)) {
         return _inputProperties[v];
     } else {
-        QList<SPDataProperties> emptyList;
+        QList<SPInputDataProperties> emptyList;
         return emptyList;
     }
 }
 
-QList<SPDataProperties> Workflow::getOutputDataProperties(const OVertex &v) const
+QList<SPOutputDataProperties> Workflow::getOutputDataProperties(const OVertex &v) const
 {
     if (_outputProperties.contains(v)) {
         return _outputProperties[v];
     } else {
-        QList<SPDataProperties> emptyList;
+        QList<SPOutputDataProperties> emptyList;
         return emptyList;
     }
 }
@@ -123,7 +123,7 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
                 IOperationMetaData meta = getOperationMetadata(v);
                 quint16 possibleInputSize = meta->getInputParameters().size();
 
-                if (possibleInputSize > assignedInputSize) {
+                if (assignedInputSize < possibleInputSize) {
                     _inputNodes.push_back(v); // further parameter assignment possible
                 }
             }
@@ -136,15 +136,20 @@ std::vector<quint16> Workflow::getAssignedPins(const OVertex &v)
 {
     std::vector<quint16> assignedPins;
     boost::graph_traits<WorkflowGraph>::in_edge_iterator ei, ei_end;
-    for (boost::tie(ei,ei_end) = boost::in_edges(v, _wfGraph); ei != ei_end; ++ei) {
+    for (boost::tie(ei,ei_end) = getInEdges(v); ei != ei_end; ++ei) {
         // implicitly assigned pins via edges
-        assignedPins.push_back(edgeProperties(*ei).inputIndexNextStep);
+        assignedPins.push_back(edgeProperties(*ei).inputIndexNextOperation);
     }
-    for (SPDataProperties input : _inputProperties[v]) {
+    for (SPInputDataProperties input : _inputProperties[v]) {
         // explicitly assigned pins
         assignedPins.push_back(input->assignedParameterIndex);
     }
     return assignedPins;
+}
+
+std::pair<InEdgeIterator,InEdgeIterator> Workflow::getInEdges(const OVertex &v)
+{
+    return boost::in_edges(v, _wfGraph);
 }
 
 // nodes where (some) pouts do not match an out_edge
@@ -177,15 +182,30 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
 {
     std::vector<quint16> assignedPouts;
     boost::graph_traits<WorkflowGraph>::out_edge_iterator ei, ei_end;
-    for (boost::tie(ei,ei_end) = boost::out_edges(v, _wfGraph); ei != ei_end; ++ei) {
+    for (boost::tie(ei,ei_end) = getOutEdges(v); ei != ei_end; ++ei) {
         // implicitly assigned pins via edges
-        assignedPouts.push_back(edgeProperties(*ei).outputIndexLastStep);
+        assignedPouts.push_back(edgeProperties(*ei).outputIndexLastOperation);
     }
-    for (SPDataProperties output : _outputProperties[v]) {
+    for (SPOutputDataProperties output : _outputProperties[v]) {
         // explicitly assigned pins via edges
         assignedPouts.push_back(output->assignedParameterIndex);
     }
     return assignedPouts;
+}
+
+OVertex Workflow::getPreviousOperationNode(const OEdge &e)
+{
+    return boost::source(e, _wfGraph);
+}
+
+OVertex Workflow::getNextOperationNode(const OEdge &e)
+{
+    return boost::target(e, _wfGraph);
+}
+
+std::pair<OutEdgeIterator,OutEdgeIterator> Workflow::getOutEdges(const OVertex &v)
+{
+    return boost::out_edges(v, _wfGraph);
 }
 
 void Workflow::updateNodeProperties(OVertex v, const NodeProperties &properties)
@@ -252,15 +272,15 @@ void Workflow::parseInputParameters()
     QStringList optionalInputs;
     quint16 parameterIndex = 0;
     for (OVertex inputNode : getNodesWithExternalInput()) {
-        IOperationMetaData meta = getOperationMetadata(inputNode);
 
         std::vector<quint16> assignedPins = getAssignedPins(inputNode);
-        QStringList inputTerms = getInputTerms(inputNode, meta);
+        QStringList inputTerms = getInputTerms(inputNode);
 
         // iterate over operation's pouts
+        IOperationMetaData meta = getOperationMetadata(inputNode);
         for (int i = 0; i < meta->getInputParameters().size() ; i++) {
             SPOperationParameter input = meta->getInputParameters().at(i);
-            auto iter = std::find(assignedPins.begin(), assignedPins.end(), i + 1);
+            auto iter = std::find(assignedPins.begin(), assignedPins.end(), i);
             if (iter == assignedPins.end()) {
                 addParameter(input); // not yet assigned
                 input->copyMetaToResourceOf(connector(), parameterIndex++);
@@ -282,7 +302,7 @@ void Workflow::parseInputParameters()
     QString opts = !optionalInputs.isEmpty()
             ? bracketOpen + optionalInputs.join(",") + "]"
             : "";
-    QString workflowSyntax = QString("%1( %2 %3 )").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
+    QString workflowSyntax = QString("%1(%2%3)").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
     connector()->setProperty("syntax", workflowSyntax);
 }
 
@@ -295,16 +315,16 @@ void Workflow::parseOutputParameters()
     QStringList optionalOutputs;
     quint16 parameterIndex = 1;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
-        IOperationMetaData meta = getOperationMetadata(outputNode);
 
         // TODO more readable syntax terms
         std::vector<quint16> assignedPouts = getAssignedPouts(outputNode);
-        QStringList outputTerms = getOutputTerms(outputNode, meta);
+        QStringList outputTerms = getOutputTerms(outputNode);
 
         // iterate over operation's pouts
+        IOperationMetaData meta = getOperationMetadata(outputNode);
         for (int i = 0 ; i < meta->getOutputParameters().size() ; i++) {
             SPOperationParameter output = meta->getOutputParameters().at(i);
-            auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), i + 1);
+            auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), i);
             if (iter == assignedPouts.end()) {
                 addParameter(output); // not yet assigned
                 output->copyMetaToResourceOf(connector(), parameterIndex++);
@@ -323,14 +343,16 @@ void Workflow::parseOutputParameters()
     connector()->setProperty("outparameters", outparameters);
 }
 
-QStringList Workflow::getInputTerms(const OVertex &v, const IOperationMetaData &meta)
+QStringList Workflow::getInputTerms(const OVertex &v)
 {
-    return createSyntaxTerms(v, meta->getInputParameters(), "_pin_%1");
+    IOperationMetaData meta = getOperationMetadata(v);
+    return createSyntaxTerms(v, meta->getInputParameters(), "_input_%1");
 }
 
-QStringList Workflow::getOutputTerms(const OVertex &v, const IOperationMetaData &meta)
+QStringList Workflow::getOutputTerms(const OVertex &v)
 {
-    return createSyntaxTerms(v, meta->getOutputParameters(), "_pout_%1");
+    IOperationMetaData meta = getOperationMetadata(v);
+    return createSyntaxTerms(v, meta->getOutputParameters(), "_output_%1");
 }
 
 QStringList Workflow::createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutTemplate)
