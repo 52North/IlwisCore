@@ -31,9 +31,9 @@ SOURCES += \
     projectionimplproj4/proj4/src/emess.c \
     projectionimplproj4/proj4/src/gen_cheb.c \
     projectionimplproj4/proj4/src/geocent.c \
-    projectionimplproj4/proj4/src/geod_interface.c \
+    projectionimplproj4/proj4/src/geod_for.c \
+    projectionimplproj4/proj4/src/geod_inv.c \
     projectionimplproj4/proj4/src/geod_set.c \
-    projectionimplproj4/proj4/src/geodesic.c \
     projectionimplproj4/proj4/src/hypot.c \
     projectionimplproj4/proj4/src/mk_cheby.c \
     projectionimplproj4/proj4/src/nad_cvt.c \
@@ -52,7 +52,6 @@ SOURCES += \
     projectionimplproj4/proj4/src/PJ_bipc.c \
     projectionimplproj4/proj4/src/PJ_boggs.c \
     projectionimplproj4/proj4/src/PJ_bonne.c \
-    projectionimplproj4/proj4/src/PJ_calcofi.c \
     projectionimplproj4/proj4/src/PJ_cass.c \
     projectionimplproj4/proj4/src/PJ_cc.c \
     projectionimplproj4/proj4/src/PJ_cea.c \
@@ -76,19 +75,16 @@ SOURCES += \
     projectionimplproj4/proj4/src/pj_errno.c \
     projectionimplproj4/proj4/src/pj_factors.c \
     projectionimplproj4/proj4/src/PJ_fahey.c \
-    projectionimplproj4/proj4/src/pj_fileapi.c \
     projectionimplproj4/proj4/src/PJ_fouc_s.c \
     projectionimplproj4/proj4/src/pj_fwd.c \
     projectionimplproj4/proj4/src/PJ_gall.c \
     projectionimplproj4/proj4/src/pj_gauss.c \
-    projectionimplproj4/proj4/src/pj_gc_reader.c \
     projectionimplproj4/proj4/src/pj_geocent.c \
     projectionimplproj4/proj4/src/PJ_geos.c \
     projectionimplproj4/proj4/src/PJ_gins8.c \
     projectionimplproj4/proj4/src/PJ_gn_sinu.c \
     projectionimplproj4/proj4/src/PJ_gnom.c \
     projectionimplproj4/proj4/src/PJ_goode.c \
-    projectionimplproj4/proj4/src/pj_gridcatalog.c \
     projectionimplproj4/proj4/src/pj_gridinfo.c \
     projectionimplproj4/proj4/src/pj_gridlist.c \
     projectionimplproj4/proj4/src/PJ_gstmerc.c \
@@ -146,7 +142,6 @@ SOURCES += \
     projectionimplproj4/proj4/src/PJ_putp4p.c \
     projectionimplproj4/proj4/src/PJ_putp5.c \
     projectionimplproj4/proj4/src/PJ_putp6.c \
-    projectionimplproj4/proj4/src/PJ_qsc.c \
     projectionimplproj4/proj4/src/pj_qsfn.c \
     projectionimplproj4/proj4/src/pj_release.c \
     projectionimplproj4/proj4/src/PJ_robin.c \
@@ -182,23 +177,6 @@ SOURCES += \
     projectionimplproj4/proj4/src/rtodms.c \
     projectionimplproj4/proj4/src/vector1.c
 
-
-HEADERS +=\
-    projectionimplproj4/projectionmodule.h \
-    projectionimplproj4/prjimplproj4.h \
-    projectionimplproj4/prjmplfactoryproj4.h \
-    projectionimplproj4/proj4/src/emess.h \
-    projectionimplproj4/proj4/src/geocent.h \
-    projectionimplproj4/proj4/src/geod_interface.h \
-    projectionimplproj4/proj4/src/geodesic.h \
-    projectionimplproj4/proj4/src/nad_list.h \
-    projectionimplproj4/proj4/src/org_proj4_PJ.h \
-    projectionimplproj4/proj4/src/org_proj4_Projections.h \
-    projectionimplproj4/proj4/src/pj_list.h \
-    projectionimplproj4/proj4/src/proj_api.h \
-    projectionimplproj4/proj4/src/projects.h \
-    projectionimplproj4/projectionImplProj4_global.h
-
 OTHER_FILES += \
     projectionimplproj4/proj4/src/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
@@ -210,7 +188,20 @@ win32{
 }
 
 INCLUDEPATH +=  $$PWD/projectionimplproj4 \
+    $$PWD/projectionimplproj4/proj4 \
     $$PWD/projectionimplproj4/proj4/src
 DEPENDPATH +=   $$PWD/projectionimplproj4
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+HEADERS += \
+    projectionimplproj4/proj4/src/emess.h \
+    projectionimplproj4/proj4/src/geocent.h \
+    projectionimplproj4/proj4/src/geod_interface.h \
+    projectionimplproj4/proj4/src/geodesic.h \
+    projectionimplproj4/proj4/src/nad_list.h \
+    projectionimplproj4/proj4/src/org_proj4_PJ.h \
+    projectionimplproj4/proj4/src/org_proj4_Projections.h \
+    projectionimplproj4/proj4/src/pj_list.h \
+    projectionimplproj4/proj4/src/proj_api.h \
+    projectionimplproj4/proj4/src/projects.h
