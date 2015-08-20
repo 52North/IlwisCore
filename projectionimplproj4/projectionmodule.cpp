@@ -25,12 +25,6 @@ ProjectionModule::ProjectionModule(QObject *parent) :
 {
 }
 
-QString ProjectionModule::getInterfaceVersion() const
-{
-    return "iv40";
-
-}
-
 void Ilwis::ProjectionModule::prepare()
 {
     FactoryInterface *factory = new ProjectionImplFactoryProj4();
@@ -38,16 +32,6 @@ void Ilwis::ProjectionModule::prepare()
     kernel()->addFactory(factory );
 
     kernel()->issues()->log("Loaded Proj4 module",IssueObject::itMessage);
-}
-
-QString ProjectionModule::name() const
-{
-    return "Projection connector plugin (Proj4)";
-}
-
-QString ProjectionModule::version() const
-{
-    return "1.0";
 }
 
 

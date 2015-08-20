@@ -6,8 +6,6 @@
 
 CONFIG += plugin
 
-QT       -= gui
-
 TARGET = proj4impl
 TEMPLATE = lib
 
@@ -181,23 +179,28 @@ OTHER_FILES += \
     projectionimplproj4/proj4/src/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
-INCLUDEPATH +=  $$PWD/projectionimplproj4 \
-    $$PWD/projectionimplproj4/proj4 \
-    $$PWD/projectionimplproj4/proj4/src
-DEPENDPATH +=   $$PWD/projectionimplproj4
+INCLUDEPATH +=  $$PWD/../external/geos \
+                $$PWD/projectionimplproj4 \
+                $$PWD/projectionimplproj4/proj4/src
+DEPENDPATH +=   $$PWD/../external/geos \
+                $$PWD/projectionimplproj4
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 HEADERS += \
+    projectionimplproj4/projectionmodule.h \
+    projectionimplproj4/prjimplproj4.h \
+    projectionimplproj4/prjmplfactoryproj4.h \
     projectionimplproj4/proj4/src/emess.h \
     projectionimplproj4/proj4/src/geocent.h \
-    projectionimplproj4/proj4/src/geod_interface.h \
+#    projectionimplproj4/proj4/src/geod_interface.h \
     projectionimplproj4/proj4/src/geodesic.h \
     projectionimplproj4/proj4/src/nad_list.h \
     projectionimplproj4/proj4/src/org_proj4_PJ.h \

@@ -32,7 +32,7 @@
 #include "models/uicontextmodel.h"
 #include "models/projectionparametermodel.h"
 #include "models/workflow/workflowmodel.h"
-#include "models/workflow/workflowcatalogmodel.h"
+#include "models/workflow/scenariobuildermodel.h"
 #include "models/visualattributemodel.h"
 #include "models/tablemodel.h"
 #include "models/layerinfoitem.h"
@@ -45,6 +45,7 @@
 #include "models/datapanemodel.h"
 #include "models/objectcreator.h"
 #include "models/ilwisobjectcreatormodel.h"
+#include "models/workflow/scenariodesignermodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/propertyeditors/itemrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<ItemRepresentationSetter>("ItemRepresentationSetter", 1,0, "ItemRepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
-        qmlRegisterType<WorkflowCatalogModel>("WorkflowCatalogModel", 1,0, "WorkflowCatalogModel");
+        qmlRegisterType<ScenarioBuilderModel>("ScenarioBuilderModel", 1,0, "ScenarioBuilderModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
         qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
@@ -114,6 +115,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
         qmlRegisterType<ObjectCreator>("ObjectCreator", 1,0,"ObjectCreator");
         qmlRegisterType<IlwisObjectCreatorModel>("IlwisObjectCreatorModel", 1,0,"IlwisObjectCreatorModel");
+        qmlRegisterType<ScenarioDesignerModel>("ScenarioDesignerModel", 1,0,"ScenarioDesignerModel");
 
 
         MasterCatalogModel mastercatalogmodel(ctx);
@@ -123,13 +125,13 @@ int main(int argc, char *argv[])
         UserMessageHandler messageHandler;
         OperationCatalogModel operations;
         TranquilizerHandler *tranquilizers = new TranquilizerHandler();
-        WorkflowCatalogModel workflows;
+        ScenarioBuilderModel scenarios;
         DataPaneModel datapane;
         ObjectCreator objcreator;
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
-        operations.prepare();
+        operations.prepare({"globaloperationscatalog", true});
 
         QThread *trqthread = new QThread;
 
@@ -139,14 +141,13 @@ int main(int argc, char *argv[])
         ctx->setContextProperty("messagehandler", &messageHandler);
         ctx->setContextProperty("tranquilizerHandler", tranquilizers);
         ctx->setContextProperty("operations", &operations);
-        ctx->setContextProperty("workflows", &workflows);
+        ctx->setContextProperty("scenarios", &scenarios);
         ctx->setContextProperty("datapane", &datapane);
         ctx->setContextProperty("objectcreator", &objcreator);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 
         mastercatalogmodel.connect(&operations, &OperationCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
-        mastercatalogmodel.connect(&workflows, &WorkflowCatalogModel::updateCatalog,&mastercatalogmodel, &MasterCatalogModel::updateCatalog );
         operations.connect(uicontext().get(),&UIContextModel::currentWorkSpaceChanged, &operations, &OperationCatalogModel::workSpaceChanged);
         messageHandler.connect(kernel()->issues().data(), &IssueLogger::updateIssues,&messageHandler, &UserMessageHandler::addMessage );
 

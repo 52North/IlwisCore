@@ -1,4 +1,11 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "mastercatalog.h"
+#include "workflow.h"
+#include "operationmetadata.h"
 #include "workflowmodel.h"
+
+using namespace Ilwis;
 
 WorkflowModel::WorkflowModel()
 {
@@ -7,4 +14,61 @@ WorkflowModel::WorkflowModel()
 WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent) : OperationModel(source, parent)
 {
 
+}
+
+void WorkflowModel::addOperation(int index, const QString &id)
+{
+    quint64 ilwisid = id.toULongLong();
+    Resource res = mastercatalog()->id2Resource(ilwisid);
+    if ( res.isValid()){
+        IOperationMetaData operation(res);
+        if ( index < _operations.size()) {
+            _operations[index] = operation;
+        }else
+            _operations.push_back(operation);
+    }
+}
+
+void WorkflowModel::addFlow(int operationIndex1, int operationIndex2, int outParameterIndex, int inParameterIndex)
+{
+    if ( operationIndex1 > 0 && operationIndex2 > 0) {
+        if ( operationIndex1 < _operations.size() && operationIndex2 < _operations.size()){
+            if ( outParameterIndex >= 0 && outParameterIndex < _operations[operationIndex1]->outputParameterCount() &&
+                 inParameterIndex >= 0 && inParameterIndex < _operations[operationIndex2]->inputParameterCount() ){
+                _flows.push_back(Flow(operationIndex1, operationIndex2, outParameterIndex, inParameterIndex));
+            }
+
+        }
+    }
+}
+
+void WorkflowModel::deleteOperation(int index)
+{
+    if ( index < _operations.size()){
+        _operations.erase(_operations.begin() + index);
+        bool again = true;
+        while(again){
+            for(auto iter = _flows.begin(); iter != _flows.end(); ++iter){
+                again = false;
+                if ( (*iter)._beginOperation == index || (*iter)._endOperation == index){
+                    _flows.erase(iter);
+                    again = true;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void WorkflowModel::deleteFlow(int operationIndex1, int operationIndex2, int indexStart, int indexEnd)
+{
+     for(auto iter = _flows.begin(); iter != _flows.end(); ++iter){
+         if ( (*iter)._beginOperation == operationIndex1 && (*iter)._endOperation == operationIndex2){
+             if ( (*iter)._inParam == indexStart && (*iter)._outParam == indexEnd){
+                _flows.erase(iter);
+                return;
+             }
+         }
+
+     }
 }
