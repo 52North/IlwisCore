@@ -209,7 +209,8 @@ win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 }
 
-INCLUDEPATH +=  $$PWD/projectionimplproj4
+INCLUDEPATH +=  $$PWD/projectionimplproj4 \
+    $$PWD/projectionimplproj4/proj4/src
 DEPENDPATH +=   $$PWD/projectionimplproj4
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
