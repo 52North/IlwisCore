@@ -25,6 +25,7 @@
 #include "operationworker.h"
 #include "dataformat.h"
 #include "operationcatalogmodel.h"
+#include "workflow/workflowmodel.h"
 
 using namespace Ilwis;
 
@@ -126,7 +127,10 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
     }
     return  QMLOperationList();
 }
-void OperationCatalogModel::prepare(){
+void OperationCatalogModel::prepare(const IOOptions& opt){
+    if ( opt.contains("globaloperationscatalog")){
+        _isGlobalOperationsCatalog = opt["globaloperationscatalog"].toBool();
+    }
     _refresh  = true;
     gatherItems();
 }
@@ -215,13 +219,15 @@ QStringList OperationCatalogModel::keywords() const
 
 void OperationCatalogModel::workSpaceChanged()
 {
-    _currentItems.clear();
-    _currentOperations.clear();
-    _operationsByKey.clear();
-    _services.clear();
-    _refresh = true;
+    if ( !_isGlobalOperationsCatalog){
+        _currentItems.clear();
+        _currentOperations.clear();
+        _operationsByKey.clear();
+        _services.clear();
+        _refresh = true;
 
-    emit operationsChanged();
+        emit operationsChanged();
+    }
 }
 
 QString OperationCatalogModel::modifyTableOutputUrl(const QString& output, const QStringList& parms)
@@ -328,6 +334,20 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
     }
     return sUNDEF;
 
+}
+
+OperationModel *OperationCatalogModel::operation(const QString &id)
+{
+    for(auto *operation : _currentOperations)    {
+        if ( operation->id() == id)
+            return operation;
+    }
+    return 0;
+}
+
+WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
+{
+    return 0;
 }
 
 

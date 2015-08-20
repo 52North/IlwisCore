@@ -8,6 +8,10 @@
 
 class OperationModel;
 class OperationsByKeyModel;
+class WorkflowModel;
+namespace Ilwis {
+class IOOptions;
+}
 
 class ILWISCOREUISHARED_EXPORT OperationCatalogModel : public CatalogModel
 {
@@ -24,13 +28,15 @@ public:
    QQmlListProperty<OperationsByKeyModel> operationKeywords();
    void nameFilter(const QString&);
    Q_INVOKABLE void filter(const QString& filterString);
-   void prepare();
+   void prepare(const Ilwis::IOOptions& options=Ilwis::IOOptions());
 
    Q_INVOKABLE quint64 operationId(const QString& name);
    Q_INVOKABLE quint64 operationId(quint32 index, bool byKey) const;
    Q_INVOKABLE quint64 serviceId(quint32 index) const;
    Q_INVOKABLE QStringList serviceNames() const;
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
+   Q_INVOKABLE OperationModel *operation(const QString& id);
+   Q_INVOKABLE WorkflowModel *createWorkFlow(const QString& filter);
 
    void gatherItems();
 
@@ -39,6 +45,7 @@ private:
     QList<OperationsByKeyModel *> _operationsByKey;
     std::vector<Ilwis::Resource> _services;
     QStringList _keywords;
+    bool _isGlobalOperationsCatalog = false;
 
     QStringList keywords() const;
     QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
