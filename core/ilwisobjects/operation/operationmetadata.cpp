@@ -112,6 +112,16 @@ std::vector<SPOperationParameter> OperationMetaData::getOutputParameters() const
     return _outputParameters;
 }
 
+quint32 OperationMetaData::inputParameterCount() const
+{
+    return _inputParameters.size();
+}
+
+quint32 OperationMetaData::outputParameterCount() const
+{
+    return _outputParameters.size();
+}
+
 QString OperationMetaData::getNamespace() const
 {
     return source()["namespace"].toString();

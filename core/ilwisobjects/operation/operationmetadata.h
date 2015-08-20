@@ -62,6 +62,8 @@ public:
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;
+    quint32 inputParameterCount() const;
+    quint32 outputParameterCount() const;
     void parametersFromSyntax(QStringList &required, QStringList &optional);
 
     QString getNamespace() const;
