@@ -51,7 +51,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/attributeeditor.h \
     ilwiscoreui/propertyeditors/lineattributesetter.h \
     ilwiscoreui/models/tablemodel.h \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.h \
     ilwiscoreui/models/workflow/workflowmodel.h \
     ilwiscoreui/models/visualattributemodel.h \
     ilwiscoreui/models/layerinfoitem.h \
@@ -81,7 +80,9 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/backgroundlayereditor.h \
     ilwiscoreui/models/globallayermodel.h \
     ilwiscoreui/propertyeditors/gridpropertyeditor.h \
-    ilwiscoreui/propertyeditors/layeropacitysetter.h
+    ilwiscoreui/propertyeditors/layeropacitysetter.h \
+    ilwiscoreui/models/workflow/scenariodesignermodel.h \
+    ilwiscoreui/models/workflow/scenariobuildermodel.h
 
 unix {
     target.path = /usr/lib
@@ -118,7 +119,6 @@ SOURCES += \
     ilwiscoreui/propertyeditors/polygonattributesetter.cpp \
     ilwiscoreui/propertyeditors/attributeeditor.cpp \
     ilwiscoreui/models/tablemodel.cpp \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
     ilwiscoreui/models/workflow/workflowmodel.cpp \
     ilwiscoreui/models/visualattributemodel.cpp \
     ilwiscoreui/models/layerinfoitem.cpp \
@@ -148,7 +148,9 @@ SOURCES += \
     ilwiscoreui/propertyeditors/backgroundlayereditor.cpp \
     ilwiscoreui/models/globallayermodel.cpp \
     ilwiscoreui/propertyeditors/gridpropertyeditor.cpp \
-    ilwiscoreui/propertyeditors/layeropacitysetter.cpp
+    ilwiscoreui/propertyeditors/layeropacitysetter.cpp \
+    ilwiscoreui/models/workflow/scenariodesignermodel.cpp \
+    ilwiscoreui/models/workflow/scenariobuildermodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
