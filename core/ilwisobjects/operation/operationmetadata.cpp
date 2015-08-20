@@ -124,7 +124,9 @@ QString OperationMetaData::getLongName() const
 
 QStringList OperationMetaData::getKeywords() const
 {
-    return source()["keywords"].toStringList();
+    QRegExp commaWithWhiteSpaces("(\\s*,\\s*)");
+    QString keywords = source()["keywords"].toString();
+    return keywords.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
 }
 
 void OperationMetaData::setNamespace(const QString &nspace)
