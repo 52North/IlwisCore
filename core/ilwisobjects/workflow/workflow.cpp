@@ -28,15 +28,42 @@ Workflow::~Workflow() {
 
 }
 
-SPInputDataProperties Workflow::addInputDataProperties(const OVertex &v)
+SPInputDataProperties Workflow::addInputDataProperties(const OVertex &v, quint16 index)
+{
+    SPInputDataProperties properties = SPInputDataProperties(new InputDataProperties());
+    assignInputData(v, properties, index);
+    return properties;
+}
+
+void Workflow::assignInputData(const OVertex &v, const SPInputDataProperties &properties, quint16 index)
 {
     if ( !_inputProperties.contains(v)) {
         QList<SPInputDataProperties> list;
         _inputProperties.insert(v, list);
     }
-    SPInputDataProperties properties = SPInputDataProperties(new InputDataProperties());
     _inputProperties[v].push_back(properties);
-    return properties;
+
+    if ( !_assignedParameterIndexes.contains(properties)) {
+        QList<InputAssignment> list;
+        _assignedParameterIndexes.insert(properties, list);
+    }
+    _assignedParameterIndexes[properties].push_back(std::make_pair(v, index));
+}
+
+quint16 Workflow::getInputDataAssignment(const SPInputDataProperties &properties, const OVertex &v)
+{
+    if (_assignedParameterIndexes.contains(properties)) {
+        QList<InputAssignment> list = _assignedParameterIndexes[properties];
+        auto iter = std::find_if(list.begin(), list.end(), [v](InputAssignment &ia) {
+            return ia.first == v;
+        });
+        if (iter != list.end()) {
+            return (*iter).second;
+        } else {
+            qDebug() << "no input assignment exist for node " << v;
+            return -1;
+        }
+    }
 }
 
 
@@ -141,8 +168,10 @@ std::vector<quint16> Workflow::getAssignedPins(const OVertex &v)
         assignedPins.push_back(edgeProperties(*ei).inputIndexNextOperation);
     }
     for (SPInputDataProperties input : _inputProperties[v]) {
-        // explicitly assigned pins
-        assignedPins.push_back(input->assignedParameterIndex);
+        if (input->value.isValid()) {
+            // explicitly assigned pins
+            assignedPins.push_back(getInputDataAssignment(input, v));
+        }
     }
     return assignedPins;
 }
@@ -272,7 +301,6 @@ void Workflow::parseInputParameters()
     QStringList optionalInputs;
     quint16 parameterIndex = 0;
     for (OVertex inputNode : getNodesWithExternalInput()) {
-
         std::vector<quint16> assignedPins = getAssignedPins(inputNode);
         QStringList inputTerms = getInputTerms(inputNode);
 
@@ -282,6 +310,9 @@ void Workflow::parseInputParameters()
             SPOperationParameter input = meta->getInputParameters().at(i);
             auto iter = std::find(assignedPins.begin(), assignedPins.end(), i);
             if (iter == assignedPins.end()) {
+
+                // TODO also do not add if shared input
+
                 addParameter(input); // not yet assigned
                 input->copyMetaToResourceOf(connector(), parameterIndex++);
                 if (input->isOptional()) {
@@ -359,7 +390,7 @@ QStringList Workflow::createSyntaxTerms(const OVertex &v, const std::vector<SPOp
 {
     QStringList list;
     NodeProperties properties = nodeProperties(v);
-    QString opQualifier = QString::number(properties.id) + inoutTemplate;
+    QString opQualifier = QString::number(v) + "_" + QString::number(properties.id) + inoutTemplate;
     for (int i = 0 ; i < parameters.size() ; i++) {
         SPOperationParameter parameter = parameters.at(i);
         QString term = !parameter->term().isEmpty()

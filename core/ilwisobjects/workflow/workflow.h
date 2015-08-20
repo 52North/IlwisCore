@@ -16,7 +16,6 @@ namespace Ilwis {
 
 struct InputDataProperties {
     InputDataProperties() {}
-    quint16 assignedParameterIndex;
     QVariant value;
 };
 
@@ -54,6 +53,8 @@ typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
 typedef boost::graph_traits<WorkflowGraph>::in_edge_iterator InEdgeIterator;
 typedef boost::graph_traits<WorkflowGraph>::out_edge_iterator OutEdgeIterator;
 
+typedef std::pair<OVertex, quint16> InputAssignment;
+
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
 
@@ -65,7 +66,10 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    SPInputDataProperties addInputDataProperties(const OVertex &v);
+    SPInputDataProperties addInputDataProperties(const OVertex &v, quint16 index);
+    void assignInputData(const OVertex &v, const SPInputDataProperties &properties, quint16 index);
+    quint16 getInputDataAssignment(const SPInputDataProperties &properties, const OVertex &v);
+
     SPOutputDataProperties addOutputDataProperties(const OVertex &v);
     QList<SPInputDataProperties> getInputDataProperties(const OVertex &v) const;
     QList<SPOutputDataProperties> getOutputDataProperties(const OVertex &v) const;
@@ -104,6 +108,7 @@ private:
     QList<OVertex> _outputNodes;
 
     QMap<OVertex, QList<SPInputDataProperties>> _inputProperties;
+    QMap<SPInputDataProperties, QList<InputAssignment>> _assignedParameterIndexes;
     QMap<OVertex, QList<SPOutputDataProperties>> _outputProperties;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;

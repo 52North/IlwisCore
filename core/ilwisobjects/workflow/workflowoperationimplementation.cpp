@@ -90,6 +90,8 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
 
         QStringList arguments;
         for (int i = 0 ; i < requireds.size() ; i++) {
+
+            // TODO add shared inputs only once
             arguments << _expression.parm(inputParamIndex).value();
             inputParamIndex++;
         }
@@ -103,6 +105,8 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
 
                 // TODO named optionals
                 // arguments << namedOptional;
+
+                // TODO add shared inputs only once
                 arguments << arg;
                 inputParamIndex++;
             }
@@ -176,7 +180,8 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     QStringList arguments;
 
     for (SPInputDataProperties input : workflow->getInputDataProperties(v)) {
-        arguments.insert(input->assignedParameterIndex, input->value.toString());
+        quint16 assignedParameterIndex = workflow->getInputDataAssignment(input, v);
+        arguments.insert(assignedParameterIndex, input->value.toString());
     }
 
     ExecutionContext localCtx;
