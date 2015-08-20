@@ -2,19 +2,25 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Window 2.1
 import TabModel 1.0
+import WorkflowModel 1.0
+import ScenarioBuilderModel 1.0
+import ScenarioDesignerModel 1.0
 
-// Window does not work!
-//Window {
 Item {
-    id: workflowDataPane
+    id: modellerDataPane
     width : parent.width
     height : parent.height
     property TabModel tabmodel
+    property ScenarioDesignerModel scenario
 
-    function addDataSource(sourceUrl, sourceName, sourceType){
-        if ( sourceUrl !== ""){
-            //TODO line the workflow to the workflow model
-         }
+    function addDataSource(filter, sourceName, sourceType){
+        if ( filter !== "" ){
+            if ( sourceType === "workflow")            {
+                scenario = scenarios.create()
+                var wf = scenario.addWorkflow(filter)
+                canvas.workflow = wf;
+            }
+        }
     }
 
     function iconsource(name) {
@@ -56,9 +62,6 @@ Item {
 
     property bool canSeparate : true
     property string panelType : "workflow"
-
-    property string workflow;
-
 
 
     ModellerTools{
