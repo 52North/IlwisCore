@@ -59,9 +59,15 @@ void SupportLibraryLoader::loadLibraries() const{
     QLibrary lib;
     bool ok = order.size() > 0;
     for(auto name : _order){
-        QString path = _configLocation.absolutePath() + "/..";
-        QFileInfo inf(path);
-        path = inf.absoluteFilePath() + "/" + name.second;
+        QString path;
+        if (QFileInfo(name.second).exists()) {
+            path = name.second;
+        } else {
+            QFileInfo inf(_configLocation.absolutePath() + "/..");
+            path = inf.absoluteFilePath() + "/" + name.second;
+        }
+        qDebug() << "loading " << path;
+        qDebug() << "loading " << path;
         lib.setFileName(path);
         ok = lib.load();
         if ( !ok){
