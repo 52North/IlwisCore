@@ -179,11 +179,11 @@ OTHER_FILES += \
     projectionimplproj4/proj4/src/proj_config.h.in \
     projectionimplproj4/projectionImplProj4.json
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
 }
 
 INCLUDEPATH +=  $$PWD/../external/geos \
