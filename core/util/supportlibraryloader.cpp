@@ -66,7 +66,7 @@ void SupportLibraryLoader::loadLibraries() const{
             file = QFileInfo(_configLocation.absolutePath() + "/../" + name.second);
         }
         QString path = file.canonicalFilePath();
-        //qDebug() << "loading lib from (canonical) path: " << path;
+        qDebug() << "loading lib from (canonical) path: " << path;
         lib.setFileName(path);
         ok = lib.load();
         if ( !ok){
