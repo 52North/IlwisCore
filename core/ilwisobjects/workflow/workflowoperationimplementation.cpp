@@ -75,9 +75,8 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
             Resource resource = workflow->source();
             Parameter parameter = _expression.parm(i, false);
             QString name = parameter.value();
-            IlwisTypes types = parameter.valuetype();
-            QVariant value = symTable.getValue(ctx._results[i]);
-            globalCtx->addOutput(globalSymTable, value, name, types, resource);
+            Symbol symbol = symTable.getSymbol(ctx._results[i]);
+            globalCtx->addOutput(globalSymTable, symbol._var, name, symbol._type, resource);
         }
     }
 
@@ -171,7 +170,7 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
     qDebug() << "executing " << execString;
     bool ok = commandhandler()->execute(execString, ctx, symTable);
     if ( !ok) {
-        ERROR1("workflow execution failed when executing: ", execString);
+        ERROR1("workflow execution failed when executing: %1", execString);
     }
     return ok;
 }
@@ -216,7 +215,7 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
 
             // TODO named optionals
             // arguments << namedOptional;
-            arguments.insert(inIdx, result.toString()); // type does not matter
+            arguments.insert(inIdx, resultName); // type does not matter
 
             if ( !edgeProperties.temporary) {
                 QString outputName = edgeProperties.outputName.isEmpty()
