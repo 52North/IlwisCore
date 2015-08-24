@@ -50,6 +50,10 @@ IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLef
 
 IlwisContext::~IlwisContext()
 {
+    if ( _workingCatalog.isValid()){
+        _configuration.putValue("users/" + currentUser() + "/workingcatalog",_workingCatalog->source().url().toString());
+        _configuration.store();
+    }
 }
 
 void IlwisContext::addSystemLocation(const QUrl &resource)
