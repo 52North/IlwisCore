@@ -51,30 +51,32 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
     }
 
     for(int i=0; i < n; ++i) {
-        //bool isOptional = required.size() < i+1;
-        QString parmBase = base + QString("_%1_").arg(i+1);
+        if ( i < allParameterNames.size()){
+            //bool isOptional = required.size() < i+1;
+            QString parmBase = base + QString("_%1_").arg(i+1);
 
-        bool ok;
-        quint64 tp = source()[parmBase + "type"].toLongLong(&ok);
-        if (!ok) {
-            tp = i64UNDEF;
+            bool ok;
+            quint64 tp = source()[parmBase + "type"].toLongLong(&ok);
+            if (!ok) {
+                tp = i64UNDEF;
+            }
+            QString name = source()[parmBase + "name"].toString();
+            QString domainName = source()[parmBase + "domain"].toString();
+            QString description = source()[parmBase + "desc"].toString();
+            bool optional = source()[parmBase + "optional"].toBool();
+
+            QString term;
+            OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
+            if (base == "pin") {
+                kind = OperationParameter::ptINPUT;
+                term = allParameterNames.at(i);
+                connector()->setProperty(base + "term", term);
+            } else {
+                term = ""; // formal output term not part of syntax
+            }
+
+            addParameter(newParameter(kind,term,name,tp,domainName,description,optional));
         }
-        QString name = source()[parmBase + "name"].toString();
-        QString domainName = source()[parmBase + "domain"].toString();
-        QString description = source()[parmBase + "desc"].toString();
-        bool optional = source()[parmBase + "optional"].toBool();
-
-        QString term;
-        OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
-        if (base == "pin") {
-            kind = OperationParameter::ptINPUT;
-            term = allParameterNames.at(i);
-            connector()->setProperty(base + "term", term);
-        } else {
-            term = ""; // formal output term not part of syntax
-        }
-
-        addParameter(newParameter(kind,term,name,tp,domainName,description,optional));
     }
 }
 
