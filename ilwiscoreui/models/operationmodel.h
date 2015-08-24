@@ -39,6 +39,9 @@ public:
     Q_INVOKABLE int maxParameterCount(bool inputCount) const;
 
     Q_INVOKABLE QString getProperty(const QString& propertyname) const;
+    Q_INVOKABLE bool needChoice(OperationModel *other) const;
+    Q_INVOKABLE bool isLegalFlow(OperationModel * other, const QVariantMap& flow) const;
+
 
     QStringList inParamNames() const;
     QStringList outParamNames() const;

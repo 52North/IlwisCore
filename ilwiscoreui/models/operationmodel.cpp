@@ -192,4 +192,40 @@ QString OperationModel::getProperty(const QString &name) const
     return sUNDEF;
 }
 
+bool OperationModel::needChoice(OperationModel *other) const
+{
+    const auto check = [](const QString& type, const OperationModel *operation) ->bool const {
+        bool ok = false;
+        QString parms = operation->getProperty(type);
+        QStringList parts = parms.split("|");
+        for(const auto& part : parts){
+            if ( part.toInt() > 1) {
+                ok = true;
+                break;
+            }
+        }
+        return ok;
+    };
+
+    if (!other)
+        return false;
+    if ( check("inparameters", other))
+        return true;
+    return check("outparameters",this);
+}
+
+bool OperationModel::isLegalFlow(OperationModel *other, const QVariantMap &flow) const
+{
+    if ( flow.size() == 0)    { // case were there is one output and one input but still they have to match
+        quint64 tp1 = getProperty("pin_" + QString::number(1) + "_type").toULongLong();
+        quint64 tp2 = other->getProperty("pout_" + QString::number(1) + "_type").toULongLong();
+        return hasType(tp1, tp2);
+    }else {
+        quint64 tp1 = getProperty("pin_" + QString::number(flow["toParameterIndex"].toInt() + 1) + "_type").toULongLong();
+        quint64 tp2 = other->getProperty("pout_" + QString::number(flow["fromParameterIndex"].toInt() + 1) + "_type").toULongLong();
+        return hasType(tp1, tp2);
+    }
+    return false;
+}
+
 
