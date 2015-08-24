@@ -75,9 +75,8 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
             Resource resource = workflow->source();
             Parameter parameter = _expression.parm(i, false);
             QString name = parameter.value();
-            IlwisTypes types = parameter.valuetype();
-            QVariant value = symTable.getValue(ctx._results[i]);
-            globalCtx->addOutput(globalSymTable, value, name, types, resource);
+            Symbol symbol = symTable.getSymbol(ctx._results[i]);
+            globalCtx->addOutput(globalSymTable, symbol._var, name, symbol._type, resource);
         }
     }
 
