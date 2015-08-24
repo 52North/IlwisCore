@@ -134,7 +134,7 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
             if ( factCur < 1.0) {
                 double newHeight = (zoomRect.xlength() - 1) / ( factCur * 2.0);
                 Coordinate center = zoomRect.center();
-                envelope = Envelope(Coordinate(zoomRect.min_corner().x, center.y - newHeight), Coordinate(zoomRect.max_corner().x, center.y - newHeight));
+                envelope = Envelope(Coordinate(zoomRect.min_corner().x, center.y - newHeight), Coordinate(zoomRect.max_corner().x, center.y + newHeight));
             } else {
                 double newWidth = (zoomRect.ylength() - 1) * factCur / 2.0;
                 Coordinate center = zoomRect.center();
