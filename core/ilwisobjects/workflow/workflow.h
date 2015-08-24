@@ -14,19 +14,20 @@
 
 namespace Ilwis {
 
-struct InputDataProperties {
-    InputDataProperties() {}
+struct AssignedInputData {
+    AssignedInputData() {}
+    QString inputName;
     QVariant value;
 };
 
-struct OutputDataProperties {
-    OutputDataProperties() {}
+struct AssignedOutputData {
+    AssignedOutputData() {}
     quint16 assignedParameterIndex;
     QString outputName;
 };
 
-typedef std::shared_ptr<InputDataProperties> SPInputDataProperties;
-typedef std::shared_ptr<OutputDataProperties> SPOutputDataProperties;
+typedef std::shared_ptr<AssignedInputData> SPAssignedInputData;
+typedef std::shared_ptr<AssignedOutputData> SPAssignedOutputData;
 
 struct NodeProperties {
     quint64 id;
@@ -66,14 +67,17 @@ public:
     ~Workflow();
 
     // ------ workflow API functions
-    SPInputDataProperties addInputDataProperties(const OVertex &v, quint16 index);
-    void assignInputData(const OVertex &v, const SPInputDataProperties &properties, quint16 index);
-    quint16 getInputDataAssignment(const SPInputDataProperties &properties, const OVertex &v);
+    bool hasInputAssignments(const OVertex &v) const;
+    bool hasInputAssignment(const OVertex &v, quint16 index) const;
+    SPAssignedInputData getAssignedInputData(const InputAssignment &assignment) const;
+    SPAssignedInputData assignInputData(const OVertex &v, quint16 index);
+    void assignInputData(const InputAssignment &assignment, const SPAssignedInputData &properties);
 
-    SPOutputDataProperties addOutputDataProperties(const OVertex &v);
-    QList<SPInputDataProperties> getInputDataProperties(const OVertex &v) const;
-    QList<SPOutputDataProperties> getOutputDataProperties(const OVertex &v) const;
-    void removeInputDataProperties(const OVertex &v, quint16 index);
+    SPAssignedOutputData addOutputDataProperties(const OVertex &v);
+    QList<SPAssignedInputData> getAssignedInputData(const OVertex &v) const;
+    QList<SPAssignedOutputData> getOutputDataProperties(const OVertex &v) const;
+    void removeInputAssignment(const OVertex &v, quint16 index);
+    void removeAllInputAssignments(const OVertex &v);
     void removeOutputDataProperties(const OVertex &v, quint16 index);
 
     OVertex addOperation(const NodeProperties &properties);
@@ -107,9 +111,8 @@ private:
     QList<OVertex> _inputNodes;
     QList<OVertex> _outputNodes;
 
-    QMap<OVertex, QList<SPInputDataProperties>> _inputProperties;
-    QMap<SPInputDataProperties, QList<InputAssignment>> _assignedParameterIndexes;
-    QMap<OVertex, QList<SPOutputDataProperties>> _outputProperties;
+    QMap<InputAssignment, SPAssignedInputData> _inputAssignments;
+    QMap<OVertex, QList<SPAssignedOutputData>> _outputProperties;
     //QList<NodeRenderingProperties> _nodeRenderingProperties;
     //QList<EdgeRenderingProperties> _edgeRenderingProperties;
 
@@ -123,7 +126,8 @@ private:
 
     QStringList getInputTerms(const OVertex &v);
     QStringList getOutputTerms(const OVertex &v);
-    std::vector<quint16> getAssignedPins(const OVertex &v);
+    QList<InputAssignment> getExplicitInputAssignments(const OVertex &v) const;
+    QList<InputAssignment> getImplicitInputAssignments(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
 
     OVertex getPreviousOperationNode(const OEdge &e);

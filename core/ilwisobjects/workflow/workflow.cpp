@@ -28,80 +28,88 @@ Workflow::~Workflow() {
 
 }
 
-SPInputDataProperties Workflow::addInputDataProperties(const OVertex &v, quint16 index)
+
+
+bool Workflow::hasInputAssignments(const OVertex &v) const
 {
-    SPInputDataProperties properties = SPInputDataProperties(new InputDataProperties());
-    assignInputData(v, properties, index);
+    for (InputAssignment assignment : _inputAssignments.keys()) {
+        if (assignment.first == v) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Workflow::hasInputAssignment(const OVertex &v, quint16 index) const
+{
+    return _inputAssignments.contains(std::make_pair(v, index));
+}
+
+SPAssignedInputData Workflow::getAssignedInputData(const InputAssignment &assignment) const
+{
+    return _inputAssignments.value(assignment);
+}
+
+SPAssignedInputData Workflow::assignInputData(const OVertex &v, quint16 index)
+{
+    SPAssignedInputData properties = SPAssignedInputData(new AssignedInputData());
+    assignInputData({v, index}, properties);
     return properties;
 }
 
-void Workflow::assignInputData(const OVertex &v, const SPInputDataProperties &properties, quint16 index)
+void Workflow::assignInputData(const InputAssignment &assignment, const SPAssignedInputData &properties)
 {
-    if ( !_inputProperties.contains(v)) {
-        QList<SPInputDataProperties> list;
-        _inputProperties.insert(v, list);
-    }
-    _inputProperties[v].push_back(properties);
-
-    if ( !_assignedParameterIndexes.contains(properties)) {
-        QList<InputAssignment> list;
-        _assignedParameterIndexes.insert(properties, list);
-    }
-    _assignedParameterIndexes[properties].push_back(std::make_pair(v, index));
+    _inputAssignments.insert(assignment, properties);
 }
 
-quint16 Workflow::getInputDataAssignment(const SPInputDataProperties &properties, const OVertex &v)
-{
-    if (_assignedParameterIndexes.contains(properties)) {
-        QList<InputAssignment> list = _assignedParameterIndexes[properties];
-        auto iter = std::find_if(list.begin(), list.end(), [v](InputAssignment &ia) {
-            return ia.first == v;
-        });
-        if (iter != list.end()) {
-            return (*iter).second;
-        } else {
-            qDebug() << "no input assignment exist for node " << v;
-            return -1;
-        }
-    }
-}
-
-
-SPOutputDataProperties Workflow::addOutputDataProperties(const OVertex &v)
+SPAssignedOutputData Workflow::addOutputDataProperties(const OVertex &v)
 {
     if ( !_outputProperties.contains(v)) {
-        QList<SPOutputDataProperties> list;
-        _outputProperties.insert(v, list);
+        QList<SPAssignedOutputData> set;
+        _outputProperties.insert(v, set);
     }
-    SPOutputDataProperties properties = SPOutputDataProperties(new OutputDataProperties());
+    SPAssignedOutputData properties = SPAssignedOutputData(new AssignedOutputData());
     _outputProperties[v].push_back(properties);
     return properties;
 }
 
-QList<SPInputDataProperties> Workflow::getInputDataProperties(const OVertex &v) const
+QList<SPAssignedInputData> Workflow::getAssignedInputData(const OVertex &v) const
 {
-    if (_inputProperties.contains(v)) {
-        return _inputProperties[v];
+    if (hasInputAssignments(v)) {
+        QList<SPAssignedInputData> list;
+        for (InputAssignment assignment : _inputAssignments.keys()) {
+            if (assignment.first == v) {
+                list.push_back(_inputAssignments.value(assignment));
+            }
+        }
+        return list;
     } else {
-        QList<SPInputDataProperties> emptyList;
+        QList<SPAssignedInputData> emptyList;
         return emptyList;
     }
 }
 
-QList<SPOutputDataProperties> Workflow::getOutputDataProperties(const OVertex &v) const
+QList<SPAssignedOutputData> Workflow::getOutputDataProperties(const OVertex &v) const
 {
     if (_outputProperties.contains(v)) {
         return _outputProperties[v];
     } else {
-        QList<SPOutputDataProperties> emptyList;
-        return emptyList;
+        QList<SPAssignedOutputData> emptySet;
+        return emptySet;
     }
 }
 
-void Workflow::removeInputDataProperties(const OVertex &v, quint16 index)
+void Workflow::removeInputAssignment(const OVertex &v, quint16 index)
 {
-    if (_inputProperties.contains(v) && _inputProperties[v].size() > index) {
-        _inputProperties[v].removeAt(index);
+    _inputAssignments.remove(std::make_pair(v, index));
+}
+
+void Workflow::removeAllInputAssignments(const OVertex &v)
+{
+    for (InputAssignment assignment : _inputAssignments.keys()) {
+        if (assignment.first == v) {
+            _inputAssignments.remove(assignment);
+        }
     }
 }
 
@@ -114,13 +122,23 @@ void Workflow::removeOutputDataProperties(const OVertex &v, quint16 index)
 
 OVertex Workflow::addOperation(const NodeProperties &properties)
 {
-    return boost::add_vertex(properties, _wfGraph);
+    OVertex v = boost::add_vertex(properties, _wfGraph);
+    IOperationMetaData meta = getOperationMetadata(v);
+    std::vector<SPOperationParameter> inputs = meta->getInputParameters();
+    for (int i = 0 ; i < inputs.size() ; i++) {
+        if ( !inputs.at(i)->isOptional()) {
+            // ensure required parameters has input assignment
+            assignInputData(v, i);
+        }
+    }
+    return v;
 }
 
 void Workflow::removeOperation(OVertex vertex)
 {
     boost::clear_vertex(vertex, _wfGraph);
     boost::remove_vertex(vertex, _wfGraph);
+    removeAllInputAssignments(vertex);
 }
 
 NodeProperties Workflow::nodeProperties(const OVertex &v)
@@ -144,8 +162,7 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
                 _inputNodes.push_back(v); // all pins unassigned
             } else {
                 // some pins may be unassigned
-                std::vector<quint16> assignedPins = getAssignedPins(v);
-                quint16 assignedInputSize = assignedPins.size();
+                int assignedInputSize = getImplicitInputAssignments(v).size() + getExplicitInputAssignments(v).size();
 
                 IOperationMetaData meta = getOperationMetadata(v);
                 quint16 possibleInputSize = meta->getInputParameters().size();
@@ -159,19 +176,27 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
     return _inputNodes;
 }
 
-std::vector<quint16> Workflow::getAssignedPins(const OVertex &v)
+QList<InputAssignment> Workflow::getExplicitInputAssignments(const OVertex &v) const
 {
-    std::vector<quint16> assignedPins;
+    QList<InputAssignment> assignedPins;
+    for (InputAssignment assignment : _inputAssignments.keys()) {
+        if (assignment.first == v) {
+            if (_inputAssignments.value(assignment)->value.isValid()) {
+                assignedPins.push_back(assignment);
+            }
+        }
+    }
+    return assignedPins;
+}
+
+QList<InputAssignment> Workflow::getImplicitInputAssignments(const OVertex &v)
+{
+    QList<InputAssignment> assignedPins;
     boost::graph_traits<WorkflowGraph>::in_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = getInEdges(v); ei != ei_end; ++ei) {
-        // implicitly assigned pins via edges
-        assignedPins.push_back(edgeProperties(*ei).inputIndexNextOperation);
-    }
-    for (SPInputDataProperties input : _inputProperties[v]) {
-        if (input->value.isValid()) {
-            // explicitly assigned pins
-            assignedPins.push_back(getInputDataAssignment(input, v));
-        }
+        // internal pins
+        InputAssignment assignment = std::make_pair(v, edgeProperties(*ei).inputIndexNextOperation);
+        assignedPins.push_back(assignment);
     }
     return assignedPins;
 }
@@ -215,7 +240,7 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
         // implicitly assigned pins via edges
         assignedPouts.push_back(edgeProperties(*ei).outputIndexLastOperation);
     }
-    for (SPOutputDataProperties output : _outputProperties[v]) {
+    for (SPAssignedOutputData output : _outputProperties[v]) {
         // explicitly assigned pins via edges
         assignedPouts.push_back(output->assignedParameterIndex);
     }
@@ -251,6 +276,7 @@ OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const Edg
 {
     // TODO allow multiple edges between v1 and v2?
 
+    removeInputAssignment(v2, properties.inputIndexNextOperation);
     return (boost::add_edge(v1, v2, properties, _wfGraph)).first;
 }
 
@@ -300,25 +326,48 @@ void Workflow::parseInputParameters()
     QStringList mandatoryInputs;
     QStringList optionalInputs;
     quint16 parameterIndex = 0;
+
+    QList<SPAssignedInputData> sharedInputs;
     for (OVertex inputNode : getNodesWithExternalInput()) {
-        std::vector<quint16> assignedPins = getAssignedPins(inputNode);
+        QList<InputAssignment> implicitAssignments = getImplicitInputAssignments(inputNode);
+        QList<InputAssignment> explicitAssignments = getExplicitInputAssignments(inputNode);
         QStringList inputTerms = getInputTerms(inputNode);
 
-        // iterate over operation's pouts
+        // iterate over operation's pins
         IOperationMetaData meta = getOperationMetadata(inputNode);
         for (int i = 0; i < meta->getInputParameters().size() ; i++) {
-            SPOperationParameter input = meta->getInputParameters().at(i);
-            auto iter = std::find(assignedPins.begin(), assignedPins.end(), i);
-            if (iter == assignedPins.end()) {
+            InputAssignment candidate = std::make_pair(inputNode, i);
 
-                // TODO also do not add if shared input
+            if ( !implicitAssignments.contains(candidate)) {
+                SPOperationParameter input = meta->getInputParameters().at(i);
+
+                QString term;
+                if (explicitAssignments.contains(candidate)) {
+                    continue;
+                } else {
+                    if ( !hasInputAssignment(inputNode, i)) {
+                        term = inputTerms.at(i);
+                    } else {
+                        SPAssignedInputData inputData = getAssignedInputData({inputNode, i});
+                        if (sharedInputs.contains(inputData)) {
+                            continue;
+                        } else {
+                            inputData->inputName = inputData->inputName.isEmpty()
+                                    ? inputTerms.at(i) :
+                                    inputData->inputName;
+                            term = inputData->inputName;
+                            sharedInputs.push_back(inputData);
+                        }
+                    }
+                }
 
                 addParameter(input); // not yet assigned
                 input->copyMetaToResourceOf(connector(), parameterIndex++);
+
                 if (input->isOptional()) {
-                    optionalInputs << inputTerms.at(i);
+                    optionalInputs << term;
                 } else {
-                    mandatoryInputs << inputTerms.at(i);
+                    mandatoryInputs << term;
                 }
 
                 //qDebug() << "added input parameter: ";
