@@ -5,13 +5,14 @@ import QtQuick.Controls.Styles 1.0
 import IlwisObjectModel 1.0
 import QtQuick 2.0
 import "../.." as Base
+import "../../Global.js" as Global
 
 
 Component {
     id : propertyFormDelegate
 
 
-    Item {
+    Rectangle {
         id : propertyForm
         property var editValues : []
         property bool editable : false
@@ -22,7 +23,7 @@ Component {
             var iconP = "../../images/" + name
             return iconP
         }
-
+        color : propertyForm.editable ? "#DCDCDC" : Global.altFormBackGround
 
         function storeData() {
             if ( editable){
