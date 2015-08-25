@@ -227,10 +227,6 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
         SPAssignedInputData input = workflow->getAssignedInputData(assignment);
         arguments.insert(assignment.second, input->value.toString());
     }
-    for (InputAssignment assignment : workflow->getOpenInputAssignments(v)) {
-
-        SPAssignedInputData input = workflow->getAssignedInputData(assignment);
-    }
 
     ExecutionContext localCtx;
     SymbolTable localSymTable;
