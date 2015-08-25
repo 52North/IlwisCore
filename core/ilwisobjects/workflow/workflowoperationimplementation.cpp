@@ -75,33 +75,34 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
         }
 
         for (int i = 0 ; i < _expression.parameterCount(false) ; i++) {
-            Resource resource;
             Parameter parameter = _expression.parm(i, false);
-            QString name = parameter.value();
             Symbol symbol = symTable.getSymbol(ctx._results[i]);
-
-            IlwisTypes tp = symbol._type;
-            if ( tp & itRASTER) {
-                IIlwisObject o = symbol._var.value<IRasterCoverage>();
-                resource = o->source();
-                o->name(name);
-            }
-            if ( tp & itFEATURE) {
-                IIlwisObject o = symbol._var.value<IFeatureCoverage>();
-                resource = o->source();
-                o->name(name);
-            }
-            if ( hasType(tp , itTABLE)) {
-                IIlwisObject o = symbol._var.value<ITable>();
-                resource = o->source();
-                o->name(name);
-            }
-            globalCtx->addOutput(globalSymTable, symbol._var, name, symbol._type, resource);
+            copyToContext(symbol, parameter.value(), globalCtx, globalSymTable);
         }
-
     }
-
     return true;
+}
+
+void WorkflowOperationImplementation::copyToContext(const Symbol &symbol, const QString &name, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    Resource resource;
+    IlwisTypes tp = symbol._type;
+    if ( tp & itRASTER) {
+        IIlwisObject o = symbol._var.value<IRasterCoverage>();
+        resource = o->source();
+        o->name(name);
+    }
+    if ( tp & itFEATURE) {
+        IIlwisObject o = symbol._var.value<IFeatureCoverage>();
+        resource = o->source();
+        o->name(name);
+    }
+    if ( hasType(tp , itTABLE)) {
+        IIlwisObject o = symbol._var.value<ITable>();
+        resource = o->source();
+        o->name(name);
+    }
+    ctx->addOutput(symTable, symbol._var, name, symbol._type, resource);
 }
 
 void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVertex> &inputNodes, const IWorkflow &workflow)
@@ -232,25 +233,28 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             quint16 inIdx = edgeProperties.inputIndexNextOperation;
             quint16 outIdx = edgeProperties.outputIndexLastOperation;
             QString resultName = localCtx._results[outIdx];
-            QVariant result = localSymTable.getValue(resultName);
+            Symbol tmpResult = localSymTable.getSymbol(resultName);
+            //copyToContext(tmpResult, resultName, ctx, symTable);
 
-            // TODO named optionals
-            // arguments << namedOptional;
-            arguments.insert(inIdx, resultName); // type does not matter
+            if (hasType(itILWISOBJECT, tmpResult._type)) {
+                // anonymous objects have to be resolved
+                arguments.insert(inIdx, resultName);
+            } else {
+                // simple types can be passed in directly
+                arguments.insert(inIdx, tmpResult._var.toString());
+            }
 
             if ( !edgeProperties.temporary) {
                 QString outputName = edgeProperties.outputName.isEmpty()
                         ? QString("%1_node%2_pout%3").arg(workflow->name()).arg(v).arg(outIdx)
                         : edgeProperties.outputName;
 
-                if (symTable.getSymbol(outputName).isValid()) {
+                Symbol symbol = symTable.getSymbol(outputName);
+                if (symbol.isValid()) {
                     // make unique in shared execution context/symbol table
                     outputName = QString("%1_node%2_pout%3_%4").arg(workflow->name()).arg(v).arg(outIdx).arg(outputName);
                 }
-
-                Resource resource; // TODO handle correctly?!
-                SPOperationParameter parameter = outputs.at(outIdx);
-                ctx->addOutput(symTable, result, outputName, parameter->type(), resource);
+                copyToContext(symbol, outputName, ctx, symTable);
             }
         }
     }
