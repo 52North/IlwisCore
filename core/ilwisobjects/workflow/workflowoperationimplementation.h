@@ -18,6 +18,7 @@ protected:
 
 private:
     QMap<OVertex, QStringList> _inputArgs;
+    QMap<OVertex, QStringList> _inputOptionalArgs;
     void copyToContext(const Symbol &symbol, const QString &name, ExecutionContext *ctx, SymbolTable &symTable);
     void parseInputNodeArguments(const QList<OVertex> &inputNodes, const IWorkflow &workflow);
     bool executeInputNode(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);

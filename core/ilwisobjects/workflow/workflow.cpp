@@ -28,8 +28,6 @@ Workflow::~Workflow() {
 
 }
 
-
-
 bool Workflow::hasInputAssignments(const OVertex &v) const
 {
     for (InputAssignment assignment : _inputAssignments.keys()) {
@@ -162,7 +160,7 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
                 _inputNodes.push_back(v); // all pins unassigned
             } else {
                 // some pins may be unassigned
-                int assignedInputSize = getImplicitInputAssignments(v).size() + getExplicitInputAssignments(v).size();
+                int assignedInputSize = getImplicitInputAssignments(v).size() + getConstantInputAssignments(v).size();
 
                 IOperationMetaData meta = getOperationMetadata(v);
                 quint16 possibleInputSize = meta->getInputParameters().size();
@@ -176,7 +174,7 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
     return _inputNodes;
 }
 
-QList<InputAssignment> Workflow::getExplicitInputAssignments(const OVertex &v) const
+QList<InputAssignment> Workflow::getConstantInputAssignments(const OVertex &v) const
 {
     QList<InputAssignment> assignedPins;
     for (InputAssignment assignment : _inputAssignments.keys()) {
@@ -187,6 +185,17 @@ QList<InputAssignment> Workflow::getExplicitInputAssignments(const OVertex &v) c
         }
     }
     return assignedPins;
+}
+
+QList<InputAssignment> Workflow::getOpenInputAssignments(const OVertex &v) const
+{
+    QList<InputAssignment> assigned;
+    for (InputAssignment assignment : _inputAssignments.keys()) {
+        if (assignment.first == v) {
+            assigned.push_back(assignment);
+        }
+    }
+    return assigned;
 }
 
 QList<InputAssignment> Workflow::getImplicitInputAssignments(const OVertex &v)
@@ -330,7 +339,7 @@ void Workflow::parseInputParameters()
     QList<SPAssignedInputData> sharedInputs;
     for (OVertex inputNode : getNodesWithExternalInput()) {
         QList<InputAssignment> implicitAssignments = getImplicitInputAssignments(inputNode);
-        QList<InputAssignment> explicitAssignments = getExplicitInputAssignments(inputNode);
+        QList<InputAssignment> explicitAssignments = getConstantInputAssignments(inputNode);
         QStringList inputTerms = getInputTerms(inputNode);
 
         // iterate over operation's pins

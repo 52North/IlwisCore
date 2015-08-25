@@ -117,6 +117,9 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
         IOperationMetaData meta = workflow->getOperationMetadata(inputNode);
         meta->parametersFromSyntax(requireds,optionals);
         QStringList arguments;
+        for (int i = 0 ; i < meta->inputParameterCount() ; i++) {
+            arguments.push_back(""); // initialize empty arguments
+        }
 
         // ------------ parse required arguments
 
@@ -148,7 +151,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
         std::vector<SPOperationParameter> parameters = meta->getInputParameters();
         if (inputParamIndex < _expression.parameterCount()) {
             for (int i = 0 ; i < optionals.size() ; i++) {
-                quint16 optionalIndex = requireds.size() + 1;
+                quint16 optionalIndex = requireds.size();
                 if ( !workflow->hasInputAssignment(inputNode, optionalIndex)) {
                     continue; // implicit or non-existent input
                 } else {
@@ -157,7 +160,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                     QString namedOptional = "%1";/*parameter->term() + "=%1"*/ // TODO named optionals
                     if (inputs.contains(inputData)) {
                         // shared over multiple operations
-                        arguments.insert(i, namedOptional.arg(inputs.value(inputData)));
+                        arguments.insert(optionalIndex, namedOptional.arg(inputs.value(inputData)));
                     } else {
                         QString argument;
                         if (inputData->value.isValid()) {
@@ -168,7 +171,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                             inputParamIndex++;
                         }
                         inputs.insert(inputData, argument);
-                        arguments.insert(i, namedOptional.arg(argument));
+                        arguments.insert(optionalIndex, namedOptional.arg(argument));
                     }
                 }
             }
@@ -188,8 +191,9 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
 
     QString execString = QString("%1(%2)");
     execString = execString.arg(meta->name());
-    execString = execString.arg(_inputArgs[v].join(","));
-    qDebug() << "executing " << execString;
+    QString argumentlist = _inputArgs[v].join(",").remove(QRegExp(",+$"));
+    execString = execString.arg(argumentlist);
+    qDebug() << "executing input node" << execString;
     bool ok = commandhandler()->execute(execString, ctx, symTable);
     if ( !ok) {
         ERROR1("workflow execution failed when executing: %1", execString);
@@ -213,9 +217,13 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     IOperationMetaData meta = workflow->getOperationMetadata(v);
     QStringList arguments;
 
-    for (InputAssignment assignment : workflow->getExplicitInputAssignments(v)) {
+    for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
         SPAssignedInputData input = workflow->getAssignedInputData(assignment);
         arguments.insert(assignment.second, input->value.toString());
+    }
+    for (InputAssignment assignment : workflow->getOpenInputAssignments(v)) {
+
+        SPAssignedInputData input = workflow->getAssignedInputData(assignment);
     }
 
     ExecutionContext localCtx;
@@ -266,7 +274,9 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             arguments.insert(i, externalInput);
         }
     }
-    QString execString = QString("%1(%2)").arg(meta->name()).arg(arguments.join(","));
+
+    QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
+    QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
     qDebug() << "executing " << execString;
     return commandhandler()->execute(execString, ctx, symTable);
 
