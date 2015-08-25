@@ -5,6 +5,9 @@
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
+#include "raster.h"
+#include "featurecoverage.h"
+#include "table.h"
 
 #include "workflowoperationimplementation.h"
 
@@ -72,12 +75,30 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
         }
 
         for (int i = 0 ; i < _expression.parameterCount(false) ; i++) {
-            Resource resource = workflow->source();
+            Resource resource;
             Parameter parameter = _expression.parm(i, false);
             QString name = parameter.value();
             Symbol symbol = symTable.getSymbol(ctx._results[i]);
+
+            IlwisTypes tp = symbol._type;
+            if ( tp & itRASTER) {
+                IIlwisObject o = symbol._var.value<IRasterCoverage>();
+                resource = o->source();
+                o->name(name);
+            }
+            if ( tp & itFEATURE) {
+                IIlwisObject o = symbol._var.value<IFeatureCoverage>();
+                resource = o->source();
+                o->name(name);
+            }
+            if ( hasType(tp , itTABLE)) {
+                IIlwisObject o = symbol._var.value<ITable>();
+                resource = o->source();
+                o->name(name);
+            }
             globalCtx->addOutput(globalSymTable, symbol._var, name, symbol._type, resource);
         }
+
     }
 
     return true;
