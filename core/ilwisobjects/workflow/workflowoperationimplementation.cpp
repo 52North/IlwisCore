@@ -69,7 +69,8 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
     for (OVertex outputNode : outputNodes) {
         ExecutionContext ctx;
         SymbolTable symTable;
-        if ( !reverseFollowExecutionPath(outputNode, &ctx, symTable)) {
+        bool ok = reverseFollowExecutionPath(outputNode, &ctx, symTable);
+        if ( !ok) {
             ERROR0("workflow execution failed when executing!");
             return false;
         }
@@ -197,12 +198,17 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
     bool ok = commandhandler()->execute(execString, ctx, symTable);
     if ( !ok) {
         ERROR1("workflow execution failed when executing: %1", execString);
+    } else {
+        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
     }
     return ok;
 }
 
 bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if (_nodeExecutionContext.contains(v)) {
+        return true;
+    }
     IWorkflow workflow = (IWorkflow)_metadata;
 
     InEdgeIterator ei, ei_end;
@@ -278,7 +284,13 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
     QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
     qDebug() << "executing " << execString;
-    return commandhandler()->execute(execString, ctx, symTable);
+    bool success = commandhandler()->execute(execString, ctx, symTable);
+    if ( !success) {
+        ERROR1("workflow execution failed when executing: %1", execString);
+    } else {
+        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
+    }
+    return success;
 
 }
 
