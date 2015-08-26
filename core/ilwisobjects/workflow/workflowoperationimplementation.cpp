@@ -5,6 +5,9 @@
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
+#include "raster.h"
+#include "featurecoverage.h"
+#include "table.h"
 
 #include "workflowoperationimplementation.h"
 
@@ -66,21 +69,41 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
     for (OVertex outputNode : outputNodes) {
         ExecutionContext ctx;
         SymbolTable symTable;
-        if ( !reverseFollowExecutionPath(outputNode, &ctx, symTable)) {
+        bool ok = reverseFollowExecutionPath(outputNode, &ctx, symTable);
+        if ( !ok) {
             ERROR0("workflow execution failed when executing!");
             return false;
         }
 
         for (int i = 0 ; i < _expression.parameterCount(false) ; i++) {
-            Resource resource = workflow->source();
             Parameter parameter = _expression.parm(i, false);
-            QString name = parameter.value();
             Symbol symbol = symTable.getSymbol(ctx._results[i]);
-            globalCtx->addOutput(globalSymTable, symbol._var, name, symbol._type, resource);
+            copyToContext(symbol, parameter.value(), globalCtx, globalSymTable);
         }
     }
-
     return true;
+}
+
+void WorkflowOperationImplementation::copyToContext(const Symbol &symbol, const QString &name, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    Resource resource;
+    IlwisTypes tp = symbol._type;
+    if ( tp & itRASTER) {
+        IIlwisObject o = symbol._var.value<IRasterCoverage>();
+        resource = o->source();
+        o->name(name);
+    }
+    if ( tp & itFEATURE) {
+        IIlwisObject o = symbol._var.value<IFeatureCoverage>();
+        resource = o->source();
+        o->name(name);
+    }
+    if ( hasType(tp , itTABLE)) {
+        IIlwisObject o = symbol._var.value<ITable>();
+        resource = o->source();
+        o->name(name);
+    }
+    ctx->addOutput(symTable, symbol._var, name, symbol._type, resource);
 }
 
 void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVertex> &inputNodes, const IWorkflow &workflow)
@@ -95,6 +118,9 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
         IOperationMetaData meta = workflow->getOperationMetadata(inputNode);
         meta->parametersFromSyntax(requireds,optionals);
         QStringList arguments;
+        for (int i = 0 ; i < meta->inputParameterCount() ; i++) {
+            arguments.push_back(""); // initialize empty arguments
+        }
 
         // ------------ parse required arguments
 
@@ -126,7 +152,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
         std::vector<SPOperationParameter> parameters = meta->getInputParameters();
         if (inputParamIndex < _expression.parameterCount()) {
             for (int i = 0 ; i < optionals.size() ; i++) {
-                quint16 optionalIndex = requireds.size() + 1;
+                quint16 optionalIndex = requireds.size();
                 if ( !workflow->hasInputAssignment(inputNode, optionalIndex)) {
                     continue; // implicit or non-existent input
                 } else {
@@ -135,7 +161,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                     QString namedOptional = "%1";/*parameter->term() + "=%1"*/ // TODO named optionals
                     if (inputs.contains(inputData)) {
                         // shared over multiple operations
-                        arguments.insert(i, namedOptional.arg(inputs.value(inputData)));
+                        arguments.insert(optionalIndex, namedOptional.arg(inputs.value(inputData)));
                     } else {
                         QString argument;
                         if (inputData->value.isValid()) {
@@ -146,7 +172,7 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                             inputParamIndex++;
                         }
                         inputs.insert(inputData, argument);
-                        arguments.insert(i, namedOptional.arg(argument));
+                        arguments.insert(optionalIndex, namedOptional.arg(argument));
                     }
                 }
             }
@@ -166,17 +192,23 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
 
     QString execString = QString("%1(%2)");
     execString = execString.arg(meta->name());
-    execString = execString.arg(_inputArgs[v].join(","));
-    qDebug() << "executing " << execString;
+    QString argumentlist = _inputArgs[v].join(",").remove(QRegExp(",+$"));
+    execString = execString.arg(argumentlist);
+    qDebug() << "executing input node" << execString;
     bool ok = commandhandler()->execute(execString, ctx, symTable);
     if ( !ok) {
         ERROR1("workflow execution failed when executing: %1", execString);
+    } else {
+        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
     }
     return ok;
 }
 
 bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
 {
+    if (_nodeExecutionContext.contains(v)) {
+        return true;
+    }
     IWorkflow workflow = (IWorkflow)_metadata;
 
     InEdgeIterator ei, ei_end;
@@ -191,7 +223,7 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     IOperationMetaData meta = workflow->getOperationMetadata(v);
     QStringList arguments;
 
-    for (InputAssignment assignment : workflow->getExplicitInputAssignments(v)) {
+    for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
         SPAssignedInputData input = workflow->getAssignedInputData(assignment);
         arguments.insert(assignment.second, input->value.toString());
     }
@@ -211,25 +243,28 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             quint16 inIdx = edgeProperties.inputIndexNextOperation;
             quint16 outIdx = edgeProperties.outputIndexLastOperation;
             QString resultName = localCtx._results[outIdx];
-            QVariant result = localSymTable.getValue(resultName);
+            Symbol tmpResult = localSymTable.getSymbol(resultName);
+            //copyToContext(tmpResult, resultName, ctx, symTable);
 
-            // TODO named optionals
-            // arguments << namedOptional;
-            arguments.insert(inIdx, resultName); // type does not matter
+            if (hasType(itILWISOBJECT, tmpResult._type)) {
+                // anonymous objects have to be resolved
+                arguments.insert(inIdx, resultName);
+            } else {
+                // simple types can be passed in directly
+                arguments.insert(inIdx, tmpResult._var.toString());
+            }
 
             if ( !edgeProperties.temporary) {
                 QString outputName = edgeProperties.outputName.isEmpty()
                         ? QString("%1_node%2_pout%3").arg(workflow->name()).arg(v).arg(outIdx)
                         : edgeProperties.outputName;
 
-                if (symTable.getSymbol(outputName).isValid()) {
+                Symbol symbol = symTable.getSymbol(outputName);
+                if (symbol.isValid()) {
                     // make unique in shared execution context/symbol table
                     outputName = QString("%1_node%2_pout%3_%4").arg(workflow->name()).arg(v).arg(outIdx).arg(outputName);
                 }
-
-                Resource resource; // TODO handle correctly?!
-                SPOperationParameter parameter = outputs.at(outIdx);
-                ctx->addOutput(symTable, result, outputName, parameter->type(), resource);
+                copyToContext(symbol, outputName, ctx, symTable);
             }
         }
     }
@@ -241,9 +276,17 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             arguments.insert(i, externalInput);
         }
     }
-    QString execString = QString("%1(%2)").arg(meta->name()).arg(arguments.join(","));
+
+    QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
+    QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
     qDebug() << "executing " << execString;
-    return commandhandler()->execute(execString, ctx, symTable);
+    bool success = commandhandler()->execute(execString, ctx, symTable);
+    if ( !success) {
+        ERROR1("workflow execution failed when executing: %1", execString);
+    } else {
+        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
+    }
+    return success;
 
 }
 

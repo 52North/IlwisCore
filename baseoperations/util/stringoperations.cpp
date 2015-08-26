@@ -127,7 +127,7 @@ Ilwis::OperationImplementation::State StringSub::prepare(ExecutionContext *ctx, 
             return sPREPAREFAILED;
         }
         _start = std::max(0, _start);
-        _end = _end < 0 ?  _text.size() : std::max (_end, _text.size());
+        _end = _end < 0 ?  _text.size() : std::min(_end, _text.size());
     }
     return sPREPARED;
 }
@@ -140,7 +140,7 @@ quint64 StringSub::createMetadata()
     resource.setInParameterCount({2,3});
     resource.addInParameter(0, itANY, TR("input string"),TR("input string"));
     resource.addInParameter(1, itINT32, TR("begin"),TR("start index of the substring in the input string"));
-    resource.addOptionalInParameter(2, itINT32, TR("end"),TR("optional index from where to end the substring, if not present the string will go until the end"));
+    resource.addOptionalInParameter(2, itINT32, TR("end"),TR("optional count of characters to end the substring, if not present the string will go until the end"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0,itSTRING,TR("sub string"),TR("a sub string from the input string"));
 

@@ -126,7 +126,8 @@ private:
 
     QStringList getInputTerms(const OVertex &v);
     QStringList getOutputTerms(const OVertex &v);
-    QList<InputAssignment> getExplicitInputAssignments(const OVertex &v) const;
+    QList<InputAssignment> getConstantInputAssignments(const OVertex &v) const;
+    QList<InputAssignment> getOpenInputAssignments(const OVertex &v) const;
     QList<InputAssignment> getImplicitInputAssignments(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
 

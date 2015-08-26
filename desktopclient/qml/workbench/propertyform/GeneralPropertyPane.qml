@@ -3,21 +3,26 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
+import "../../Global.js" as Global
 
 Rectangle {
     id : container
-    anchors.fill : parent
+    width : parent.width - 2
+    height : parent.height -2
+    anchors.margins: 1
     function storeData() {
         if ( propertyForm.editable){
             displayName = objectDisplayName.text
             isReadonly = readOnlyStatus.checked
         }
     }
+    color : Global.formBackGround
 
     GridLayout{
         id : grid
+        x : 2
         height : 164
-        width : parent.width
+        width : parent.width - 2
         columns : 2
         Text { text : qsTr("Name"); font.bold: true }
         TextField { id : objectDisplayName; text : displayName; readOnly : !propertyForm.editable; Layout.fillWidth: true }
