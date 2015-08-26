@@ -1,4 +1,8 @@
 import QtQuick 2.2
+import QtQuick.Controls 1.0
+import QtQuick.Layouts 1.0
+import QtQuick.Controls.Styles 1.0
+import QtQuick.Dialogs 1.0
 import OperationModel 1.0
 
 Rectangle {
@@ -44,22 +48,26 @@ Rectangle {
         x : 15
         model : operation ? operation.inParamNames : null
         delegate:
-            Row {
+            Item {
             width : box.width
-            height : 10
-            Text{
-                text : index
-                width : 20
+            height: 10
+            Row {
+                spacing : 4
+                width : box.width - 15
                 height : 10
-                font.pixelSize: 9
-            }
+                Text{
+                    text : index
+                    width : 20
+                    height : 10
+                    font.pixelSize: 9
+                }
 
-            Text {
-                text : modelData
-                height : 10
-                font.pixelSize: 9
+                Text {
+                    text : modelData
+                    height : 10
+                    font.pixelSize: 9
+                }
             }
-
         }
     }
 
@@ -80,26 +88,32 @@ Rectangle {
         anchors.bottomMargin: 2
         width : box.width
         clip : true
+
         x : 15
         model : operation ? operation.outParamNames : null
         delegate:
-            Row {
+            Item {
             width : box.width
-            height : 10
-            Text{
-                text : index
-                width : 20
+            height: 10
+            Row {
+                spacing : 4
+                width : box.width - 15
                 height : 10
-                font.pixelSize: 9
-            }
+                Text{
+                    text : index
+                    width : 20
+                    height : 10
+                    font.pixelSize: 9
+                }
 
-            Text {
-                text : modelData
-                height : 10
-                font.pixelSize: 9
+                Text {
+                    text : modelData
+                    height : 10
+                    font.pixelSize: 9
+                }
             }
-
         }
+
     }
 
 
@@ -115,6 +129,7 @@ Rectangle {
     }
 
     function drawFlows(ctx){
+        ctx.strokeStyle = "blue"
         for(var i =0; i < flowConnections.length; ++i){
             var item = flowConnections[i]
             var startPoint = item.attachsource.center()
@@ -130,24 +145,45 @@ Rectangle {
             ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
             ctx.moveTo(tox, toy);
             ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
-            ctx.stroke();
+
+
+            if ( flowConnections[i].flowPoints){
+                var p1 = item.flowPoints.fromParameterIndex
+                var p2 = item.flowPoints.toParameterIndex
+                var xcenter = (fromx + tox) / 2
+                var ycenter = (fromy + toy) / 2
+                var label = p1 + " > "+  p2
+                ctx.fillStyle="#D8F6CE";
+                ctx.fillRect(xcenter - 15 ,ycenter - 10,35,15);
+                ctx.fillStyle = "#000";
+                ctx.fillText(label, xcenter-10, ycenter + 2);
+
+            }
+            ctx.stroke()
         }
     }
 
-    function setFlow(target, attachRect){
+    function setFlow(target, attachRect, flowPoints){
         for(var i =0; i < flowConnections.length; ++i){
             if ( flowConnections[i].target == target && flowConnections[i].attachement == attachRect)
                 return // dont add duplicates
         }
-
-        flowConnections.push({"target" : target, "attachtarget": attachRect, "attachsource" : selectedAttach})
+        flowConnections.push({"target" : target, "attachtarget": attachRect, "attachsource" : selectedAttach, "flowPoints" : flowPoints})
         wfCanvas.stopWorkingLine()
     }
 
     function attachFlow(target, attachRect){
         if ( wfCanvas.operationsList[wfCanvas.currentIndex] !== target){
-            wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect)
-            wfCanvas.showAttachementForm(true)
+            var flowPoints
+            if ( operation.needChoice(target.operation)){
+                 wfCanvas.showAttachementForm(true, target,attachRect)
+
+            }
+            else if ( operation.isLegalFlow(operation, target.operation, flowPoints)){
+                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect, null)
+            } else
+               wfCanvas.stopWorkingLine()
+
             wfCanvas.canvasValid = false
         }
     }
