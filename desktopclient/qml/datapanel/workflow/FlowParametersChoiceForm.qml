@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import Qt.labs.folderlistmodel 2.1
 import "../../Global.js" as Global
 import "../../controls" as Controls
+import OperationModel 1.0
 
 Rectangle {
     id : flowParameterForm
@@ -16,9 +17,23 @@ Rectangle {
     state : "invisible"
     border.width: 1
     border.color: Global.edgecolor
+    property OperationModel operationFrom
+    property OperationModel operationTo
+    property var attachRect
+    property var target
     radius : 4
     z : 1
     clip : true
+
+    onOperationToChanged: {
+        if ( operationFrom && operationTo){
+            textid.model = operationFrom.parameterIndexes("",true)
+            if ( textid.model.length === 1){
+                var fromType = operationFrom.outputparameterType(0)
+                textid2.model = operationTo.parameterIndexes(fromType, false)
+            }
+        }
+    }
 
     Rectangle {
         id : header
@@ -31,7 +46,7 @@ Rectangle {
             y : 3
             width : 100
             height : 18
-            text : qsTr("Connect parameters")
+            text : qsTr("Connect parameters Indexes")
             font.bold: true
         }
         radius : 3
@@ -47,8 +62,8 @@ Rectangle {
         Text {
             id : label
             height : 20
-            width : 120
-            text : qsTr("Outgoing parameters")
+            width : 150
+            text : qsTr("Outgoing parameters index")
             font.pointSize: 8
             y :3
         }
@@ -58,6 +73,10 @@ Rectangle {
             anchors.left : label.right
             height : 20
             width : parent.width - label.width -10
+            onCurrentIndexChanged: {
+                if ( operationFrom)
+                    textid2.model = operationTo.parameterIndexes(operationFrom.inputparameterType(currentIndex),false)
+            }
         }
     }
     Item {
@@ -70,8 +89,8 @@ Rectangle {
         Text {
             id : labelOut
             height : 20
-            width : 120
-            text : qsTr("Input parameters")
+            width : 150
+            text : qsTr("Input parameters index")
             font.pointSize: 8
             y :3
         }
@@ -92,7 +111,20 @@ Rectangle {
         anchors.top : outParams.bottom
         anchors.topMargin: 5
         onClicked: {
+            function getIndex(txt){
+                var parts = txt.split(":")
+                return parts[0]
+            }
+
+            var fromIndex = getIndex(textid.currentText)
+            var toIndex = getIndex(textid2.currentText)
+            var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
+            if (wfCanvas.currentItem.operation.isLegalFlow(operationFrom, operationTo, flowPoints)){
+                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect, flowPoints)
+            }
             flowParameterForm.state = "invisible"
+            wfCanvas.canvasValid = false
+
         }
     }
 
