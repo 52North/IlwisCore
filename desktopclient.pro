@@ -115,11 +115,8 @@ OTHER_FILES += \
     desktopclient/qml/datapanel/modeller/Canvas.qml \
     desktopclient/qml/workbench/workflow/WorkflowSelection.qml \
     desktopclient/qml/workbench/workflow/WorkflowBench.qml \
-    desktopclient/qml/datapanel/workflow/WorkflowCanvas.qml \
-    desktopclient/qml/datapanel/workflow/BasicWorkflowDrawObject.qml \
     desktopclient/qml/datapanel/workflow/AbstractBasicWorkflowDrawObjectqml \
-    desktopclient/qml/datapanel/workflow/OperationWorkflowDrawObject.qml \
-    desktopclient/qml/datapanel/workflow/Test.qml
+    desktopclient/qml/datapanel/workflow/OperationWorkflowDrawObject.qml
 
 
 # Installation path
