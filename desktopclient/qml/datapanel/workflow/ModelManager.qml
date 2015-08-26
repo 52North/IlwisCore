@@ -27,6 +27,9 @@ Rectangle {
         }
     }
 
+    function showOperationForm(operationid){
+       console. debug(operationid)
+    }
 
 
     TabView{
