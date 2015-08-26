@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../controls" as Controls
+import "../Global.js" as Global
 
 ToolButton{
     property string iconname
@@ -10,6 +11,8 @@ ToolButton{
     property string label
     height : parent.width// buttonB.width
     width : parent.width
+    checkable: true
+    checked: false
     onWidthChanged: {
         if ( width > 75){
             textLabel.width = button.width
@@ -38,7 +41,7 @@ ToolButton{
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : control.pressed ? "#B0C4DE" : "white"
+            color : (control.pressed || checked) ? Global.selectedColor : "white"
             border.width: 1
             border.color: "lightgrey"
         }

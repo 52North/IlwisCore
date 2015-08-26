@@ -17,69 +17,83 @@ Rectangle {
 
     //signal transitionInfoPane(string pagename)
 
-    Action {
-        id : navClicked
-        onTriggered : {
-            transitionInfoPane("Navigator.qml")
-        }
-
+    function toggle(button) {
+        var currentValue = button.checked
+        prop.checked = nav.checked = workspace.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = workspace.checked = false
+        button.checked = !currentValue
     }
 
-    Action {
-        id : operClicked
-        onTriggered : {
-            transitionInfoPane("OperationSelection.qml")
+        Action {
+            id : navClicked
+            onTriggered : {
+               toggle(nav)
+                transitionInfoPane("Navigator.qml")
+            }
+
         }
 
-    }
-    Action {
-        id : propertiesClicked
-        onTriggered : {
-            transitionInfoPane("ObjectProperties.qml")
+        Action {
+            id : operClicked
+            onTriggered : {
+                toggle(oper)
+                transitionInfoPane("OperationSelection.qml")
+            }
+
         }
-    }
-    Action {
-        id : messagesClicked
-        onTriggered : {
-            transitionInfoPane("MessagesPane.qml")
+        Action {
+            id : propertiesClicked
+            onTriggered : {
+                toggle(prop)
+                transitionInfoPane("ObjectProperties.qml")
+            }
         }
-    }
-    Action {
-        id : progressClicked
-        onTriggered : {
-            transitionInfoPane("Tranquilizers.qml")
+        Action {
+            id : messagesClicked
+            onTriggered : {
+                toggle(errors)
+                transitionInfoPane("MessagesPane.qml")
+            }
+        }
+        Action {
+            id : progressClicked
+            onTriggered : {
+                toggle(progress)
+                transitionInfoPane("Tranquilizers.qml")
+            }
+
+        }
+        Action {
+            id : modellerClicked
+            onTriggered : {
+                transitionInfoPane("modeller/ModellerSelection.qml")
+            }
+
+        }
+        Action {
+            id : createClicked
+            onTriggered : {
+                toggle(create)
+                transitionInfoPane("ObjectCreation.qml")
+            }
+
+        }
+        Action {
+            id : workspaceClicked
+            onTriggered : {
+                toggle(workspace)
+                transitionInfoPane("Workspaces.qml")
+            }
+
         }
 
-    }
-    Action {
-        id : modellerClicked
-        onTriggered : {
-            transitionInfoPane("modeller/ModellerSelection.qml")
+        Action {
+            id : prefClicked
+            onTriggered : {
+                toggle(preferences)
+                mastercatalog.longAction()
+            }
+
         }
-
-    }
-    Action {
-        id : createClicked
-        onTriggered : {
-           transitionInfoPane("ObjectCreation.qml")
-        }
-
-    }
-    Action {
-        id : workspaceClicked
-        onTriggered : {
-            transitionInfoPane("Workspaces.qml")
-        }
-
-    }
-
-    Action {
-        id : prefClicked
-        onTriggered : {
-            mastercatalog.longAction()
-        }
-
-    }
 
     Column {
         anchors.fill: parent
