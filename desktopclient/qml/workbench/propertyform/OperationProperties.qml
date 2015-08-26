@@ -84,7 +84,7 @@ Item {
                 clip : true
                 delegate : ParameterDelegate{
                     parmnam: operationmd ? operationmd.inputparameterName(index) : ""
-                    parmtype: operationmd ? operationmd.inputparameterType(index) : ""
+                    parmtype: operationmd ? operationmd.inputparameterTypeNames(index) : ""
                     parmdesc: operationmd ? operationmd.inputparameterDescription(index) : ""
                 }
             }
@@ -111,7 +111,7 @@ Item {
                 clip : true
                 delegate : ParameterDelegate{
                     parmnam: operationmd ? operationmd.outputparameterName(index) : ""
-                    parmtype: operationmd ? operationmd.outputparameterType(index) : ""
+                    parmtype: operationmd ? operationmd.outputparameterTypeNames(index) : ""
                     parmdesc: operationmd ? operationmd.outputparameterDescription(index) : ""
                 }
             }
