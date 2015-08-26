@@ -33,6 +33,8 @@ Item {
         return iconP
     }
 
+
+
     function datapaneChanged(index){
         if ( index == 0) {
             defview.state = "visible"
@@ -86,6 +88,7 @@ Item {
             ModellerOperationalView{ id : operview}
         }
         ModelManager{
+            id : manager
             height : 170
         }
 
