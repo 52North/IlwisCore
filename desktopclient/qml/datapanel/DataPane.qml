@@ -180,52 +180,6 @@ Rectangle {
             }
         }
 
-//        function addWorkflowCanvas(id, name) {
-//            console.log("creating new workflow canvas")
-//            var component = Qt.createComponent("workflow/WorkflowDataPane.qml")
-////            var tabview = activeSplit === 1 ? righttab : lefttab
-////            var tab = tabview.addTab(name, component)
-////            tab.active = true
-//            var tab = righttab.addTab(name,component)
-//            tab.active = true
-//            if ( activeSplit ===1){
-//                righttab.width = parent.width / 2.0
-//                activeSplit = 2
-//            }
-//            else{
-//                lefttab.width = parent.width / 2.0
-//                activeSplit = 1
-//            }
-//            tab.item.workflow = id;
-//        }
-
-//        function addModeller(name) {
-//            var component = Qt.createComponent("modeller/ModellerPanel.qml")
-//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component)
-//            tab.active = true
-//            if ( activeSplit ===1){
-//                righttab.width = parent.width / 2.0
-//                activeSplit = 2
-//            }
-//            else{
-//                lefttab.width = parent.width / 2.0
-//                activeSplit = 1
-//            }
-//        }
-
-        /*
-         * Remove a tab by name from TabView
-         */
-//        function removeTabFromView(name) {
-//            var ri = righttab.getTabIndexFor(name);
-//            if (ri !== -1) {
-//                closeTab(righttab.side, ri)
-//            }
-//            var li = lefttab.getTabIndexFor(name);
-//            if (li !== -1) {
-//                closeTab(lefttab.side, ri)
-//            }
-//        }
 
 
         function changeWidth(pside, partside){
