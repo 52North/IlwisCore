@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
+import "../../Global.js" as Global
 
 Rectangle {
     function storeData() {
@@ -15,7 +16,7 @@ Rectangle {
 
     id : container
     anchors.fill : parent
-    color : "white"
+         color : Global.formBackGround
     Loader {
         id : dataTab
         anchors.fill: parent

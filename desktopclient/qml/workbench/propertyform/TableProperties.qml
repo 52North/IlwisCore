@@ -1,10 +1,12 @@
 import QtQuick 2.0
+import "../../Global.js" as Global
 
-Item {
+Rectangle {
     function storeData() {
         if ( propertyForm.editable){
         }
     }
+      color : Global.formBackGround
 
     Text { id : line1; text : qsTr("Record count"); width: 100; font.italic: true }
     Text { text : getProperty("recordcount");  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}

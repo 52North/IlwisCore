@@ -10,11 +10,12 @@ import ProjectionParameterModel 1.0
 
 import "../../Global.js" as Global
 
-Item {
+Rectangle {
     function storeData() {
         if ( propertyForm.editable){
         }
     }
+    color : Global.formBackGround
 
     width : parent.width
     height : 200

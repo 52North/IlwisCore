@@ -1,10 +1,12 @@
 import QtQuick 2.2
 import CatalogModel 1.0
+import "../../Global.js" as Global
 
 Rectangle {
     id : catalogProps
     property CatalogModel catalogmd
     anchors.fill: parent
+        color : Global.formBackGround
 
     ListView {
         id : objectlist

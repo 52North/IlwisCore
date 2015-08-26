@@ -8,6 +8,8 @@ var alternatecolor4 = "#eee"
 var alternatecolor5 = "#EAECEE"
 var headerdark = "steelblue"
 var headerlight = "lightsteelblue"
+var formBackGround = "#F9F9F9"
+var altFormBackGround = "#E6E6E6"
 var selectedColor = "#99CCFF"
 var rowHeight = 20
 

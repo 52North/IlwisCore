@@ -1,10 +1,11 @@
 import QtQuick 2.0
+import "../../Global.js" as Global
 
 Rectangle {
     width: parent.width
     height: 220
     property int lineheight : 19
-    color : "white"
+     color : Global.formBackGround
 
     function storeData() {
         if ( propertyForm.editable){

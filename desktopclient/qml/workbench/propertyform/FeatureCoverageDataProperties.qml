@@ -2,11 +2,13 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import "../../Global.js" as Global
 
 
-Item {
+Rectangle {
     id : container
     anchors.fill : parent
+    color : Global.formBackGround
 
     function storeData() {
         if ( propertyForm.editable){
@@ -25,7 +27,7 @@ Item {
 
     Text {
         id : titleText
-        text : qsTr("Attributes")
+        text : qsTr("Attributes22")
         font.bold: true
         font.pointSize: 9
         height : 25
@@ -39,9 +41,12 @@ Item {
         anchors.bottom : parent.bottom
         width:parent.width
         clip : true
+        border.width: 1
+        border.color : Global.edgecolor
         ListView {
             id : attributeList
             anchors.fill: parent
+            anchors.margins: 2
             model : attributes
             delegate {
                 Rectangle {
@@ -57,7 +62,7 @@ Item {
                     }
                     Item {
                         anchors.left: attName.right
-                        width : parent.width * 0.74
+                        width : parent.width * 0.749
                         AttributeProperties{
                             id : attProperties
                             width : parent.width

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import "../../controls" as Controls
+import "../../Global.js" as Global
 
 Rectangle {
     id : container
@@ -14,7 +15,8 @@ Rectangle {
     property string valueTypeUsed
     property string domainTypeUsed
     property string columnName
-    color : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
+    //color : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
+    color : Global.formBackGround
 
     function rangeFieldType(rdef) {
         var index = rdef.indexOf(":")

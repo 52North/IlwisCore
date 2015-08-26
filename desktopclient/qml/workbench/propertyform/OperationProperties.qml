@@ -7,10 +7,11 @@ import OperationModel 1.0
 import MasterCatalogModel 1.0
 import "../../Global.js" as Global
 
-Item {
+
+Rectangle {
     id : operationProps
     property OperationModel operationmd
-
+    color : Global.formBackGround
     Column {
         id : simpleProps
         width : parent.width

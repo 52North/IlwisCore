@@ -1,9 +1,11 @@
 import QtQuick 2.0
+import "../../Global.js" as Global
 
-Item {
+Rectangle {
     width: parent.width
     height: 150
     property int lineheight : 19
+    color : Global.formBackGround
 
     Text { y : 5; id : line1; text : qsTr("Georeference"); width: 120; font.bold: true;height : lineheight }
     Text { y : 5; text : geoReferenceName;  height :40;width: parent.width - line1.width - 2; anchors.left: line1.right}

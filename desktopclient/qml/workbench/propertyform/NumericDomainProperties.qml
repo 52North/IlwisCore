@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "../../Global.js" as Global
 
-Item {
+Rectangle {
+      color : Global.formBackGround
     function storeData() {
         if ( propertyForm.editable){
         }

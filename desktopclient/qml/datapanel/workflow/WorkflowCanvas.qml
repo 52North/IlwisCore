@@ -130,7 +130,6 @@ ModellerWorkArea {
 
         function showAttachementForm(yesno, target, attachRect){
             var fromOperation = operationsList[wfCanvas.currentIndex].operation
-            console.debug(target.operation.name, fromOperation.name)
             attachementForm.operationFrom = fromOperation
             attachementForm.operationTo = target.operation
             attachementForm.attachRect = attachRect
@@ -179,6 +178,7 @@ ModellerWorkArea {
                         wfCanvas.oldy = mouseY
                         wfCanvas.currentIndex = i;
                         item.isSelected = true
+                        manager.showOperationForm(item.operation.id)
                     }else
                         item.isSelected = false
                 }
