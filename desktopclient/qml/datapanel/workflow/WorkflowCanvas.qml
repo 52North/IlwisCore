@@ -128,7 +128,13 @@ ModellerWorkArea {
             wfCanvas.canvasValid = true
         }
 
-        function showAttachementForm(yesno){
+        function showAttachementForm(yesno, target, attachRect){
+            var fromOperation = operationsList[wfCanvas.currentIndex].operation
+            console.debug(target.operation.name, fromOperation.name)
+            attachementForm.operationFrom = fromOperation
+            attachementForm.operationTo = target.operation
+            attachementForm.attachRect = attachRect
+            attachementForm.target = target
             attachementForm.state = yesno ? "visible" : "visible"
         }
 
@@ -179,18 +185,20 @@ ModellerWorkArea {
             }
 
             onPositionChanged: {
-                if ( wfCanvas.workingLineBegin.x !== -1){
-                    wfCanvas.workingLineEnd = Qt.point( mouseX, mouseY)
-                    wfCanvas.canvasValid = false
-                }
-                if ( wfCanvas.oldx >= 0 && wfCanvas.oldy >= 0 && wfCanvas.currentIndex >= 0)    {
+                if ( attachementForm.state == "invisible"){
+                    if ( wfCanvas.workingLineBegin.x !== -1){
+                        wfCanvas.workingLineEnd = Qt.point( mouseX, mouseY)
+                        wfCanvas.canvasValid = false
+                    }
+                    if ( wfCanvas.oldx >= 0 && wfCanvas.oldy >= 0 && wfCanvas.currentIndex >= 0)    {
 
-                    var item = wfCanvas.operationsList[wfCanvas.currentIndex]
-                    if ( item){
-                        item.x += ( mouseX - wfCanvas.oldx)
-                        item.y += (mouseY - wfCanvas.oldy)
-                        wfCanvas.oldx = mouseX
-                        wfCanvas.oldy = mouseY
+                        var item = wfCanvas.operationsList[wfCanvas.currentIndex]
+                        if ( item){
+                            item.x += ( mouseX - wfCanvas.oldx)
+                            item.y += (mouseY - wfCanvas.oldy)
+                            wfCanvas.oldx = mouseX
+                            wfCanvas.oldy = mouseY
+                        }
                     }
                 }
             }
