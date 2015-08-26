@@ -35,7 +35,7 @@ QString OperationModel::inputparameterName(quint32 index) const
 
 }
 
-QString OperationModel::inputparameterType(quint32 index) const
+QString OperationModel::inputparameterTypeNames(quint32 index) const
 {
     quint64 ilwtype = getProperty("pin_" + QString::number(index + 1) + "_type").toULongLong();
     QString type;
@@ -52,6 +52,11 @@ QString OperationModel::inputparameterType(quint32 index) const
     return type;
 }
 
+QString OperationModel::inputparameterType(quint32 index) const
+{
+    return getProperty("pin_" + QString::number(index + 1) + "_type");
+}
+
 QString OperationModel::inputparameterDescription(quint32 index) const
 {
     QString ret = getProperty("pin_" + QString::number(index + 1) + "_desc");
@@ -65,10 +70,15 @@ QString OperationModel::outputparameterName(quint32 index) const
     return getProperty("pout_" + QString::number(index + 1) + "_name");
 }
 
-QString OperationModel::outputparameterType(quint32 index) const
+QString OperationModel::outputparameterTypeNames(quint32 index) const
 {
     quint64 ilwtype = getProperty("pout_" + QString::number(index + 1) + "_type").toULongLong();
     return TypeHelper::type2HumanReadable(ilwtype);
+}
+
+QString OperationModel::outputparameterType(quint32 index) const
+{
+    return getProperty("pout_" + QString::number(index + 1) + "_type");
 }
 
 QString OperationModel::outputparameterDescription(quint32 index) const
@@ -214,18 +224,45 @@ bool OperationModel::needChoice(OperationModel *other) const
     return check("outparameters",this);
 }
 
-bool OperationModel::isLegalFlow(OperationModel *other, const QVariantMap &flow) const
+bool OperationModel::isLegalFlow(OperationModel *from, OperationModel *to, const QVariantMap &flow) const
 {
+    if ( !to || !from)
+        return false;
+
     if ( flow.size() == 0)    { // case were there is one output and one input but still they have to match
-        quint64 tp1 = getProperty("pin_" + QString::number(1) + "_type").toULongLong();
-        quint64 tp2 = other->getProperty("pout_" + QString::number(1) + "_type").toULongLong();
+        quint64 tp1 = to->getProperty("pin_" + QString::number(1) + "_type").toULongLong();
+        quint64 tp2 = from->getProperty("pout_" + QString::number(1) + "_type").toULongLong();
         return hasType(tp1, tp2);
     }else {
-        quint64 tp1 = getProperty("pin_" + QString::number(flow["toParameterIndex"].toInt() + 1) + "_type").toULongLong();
-        quint64 tp2 = other->getProperty("pout_" + QString::number(flow["fromParameterIndex"].toInt() + 1) + "_type").toULongLong();
+        quint64 tp1 = to->getProperty("pin_" + QString::number(flow["toParameterIndex"].toInt() + 1) + "_type").toULongLong();
+        quint64 tp2 = from->getProperty("pout_" + QString::number(flow["fromParameterIndex"].toInt() + 1) + "_type").toULongLong();
         return hasType(tp1, tp2);
     }
     return false;
+}
+
+QStringList OperationModel::parameterIndexes(const QString &typefilter, bool fromOperation)
+{
+    QStringList indexes;
+    IlwisTypes tp1 = typefilter.toULongLong();
+
+    bool found = true;
+    for(int i = 0; i < maxParameterCount(!fromOperation); ++i){
+        if ( typefilter != ""){
+            found = false;
+            if ( typefilter != ""){
+                quint64 tp2 = getProperty((fromOperation ? "pout_" : "pin_") + QString::number(i + 1) + "_type").toULongLong();
+                if ( hasType(tp1, tp2)){
+                    found = true;
+                }
+            }
+        }
+        if ( found)
+            // for from flow you want to get the output names of the from operation and vice versa for the other case
+            indexes.push_back(QString::number(i) + ": " + (fromOperation ? outputparameterName(i) : inputparameterName(i)));
+    }
+    return indexes;
+
 }
 
 

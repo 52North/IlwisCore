@@ -25,10 +25,12 @@ public:
     Q_INVOKABLE explicit OperationModel(quint64 id, QObject *parent=0);
 
     Q_INVOKABLE QString inputparameterName(quint32 index) const;
+    Q_INVOKABLE QString inputparameterTypeNames(quint32 index) const;
     Q_INVOKABLE QString inputparameterType(quint32 index) const;
     Q_INVOKABLE QString inputparameterDescription(quint32 index) const;
 
     Q_INVOKABLE QString outputparameterName(quint32 index) const;
+    Q_INVOKABLE QString outputparameterTypeNames(quint32 index) const;
     Q_INVOKABLE QString outputparameterType(quint32 index) const;
     Q_INVOKABLE QString outputparameterDescription(quint32 index) const;
 
@@ -40,7 +42,8 @@ public:
 
     Q_INVOKABLE QString getProperty(const QString& propertyname) const;
     Q_INVOKABLE bool needChoice(OperationModel *other) const;
-    Q_INVOKABLE bool isLegalFlow(OperationModel * other, const QVariantMap& flow) const;
+    Q_INVOKABLE bool isLegalFlow(OperationModel * from, OperationModel *to, const QVariantMap& flow) const;
+    Q_INVOKABLE QStringList parameterIndexes(const QString &typefilter, bool fromOperation);
 
 
     QStringList inParamNames() const;
