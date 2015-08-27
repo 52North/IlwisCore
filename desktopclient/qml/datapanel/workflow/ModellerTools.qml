@@ -6,64 +6,111 @@ import QtQuick.Controls.Styles 1.0
 ToolBar{
     id : modellertools
     width : parent.width
-    height : 35
-    Row {
+    height : 55
+    Column {
         anchors.fill: parent
-        anchors.verticalCenter: parent.verticalCenter
-        spacing : 2
-        Button {
-            id : conbut
+        Row {
+            width : parent.width
             height : 25
-            width : 25
-            checkable: true
-            checked: false
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+            spacing : 2
+            id : editingtools
 
-                source : iconsource(conbut.checked ? "connectionselect20.png" : "connection20.png")
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("choice20.png")
+                }
+            }
+
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("deleteoperation20.png")
+                }
+            }
+            Button {
+                id : conbut
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("deleteconnection20.png")
+                }
+            }
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("zoomin20.png")
+                }
+            }
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("zoomout20.png")
+                }
             }
         }
-
-        Button {
+        Row {
+            width : parent.width
             height : 25
-            width : 25
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+            spacing : 2
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                source : iconsource("choice20.png")
+                    source : iconsource("run20.png")
+                }
             }
-        }
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-        Button {
-            height : 25
-            width : 25
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                source : iconsource("deleteoperation20.png")
+                    source : iconsource("step20.png")
+                }
             }
-        }
-        Button {
-            height : 25
-            width : 25
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                source : iconsource("zoomin20.png")
+                    source : iconsource("pause20.png")
+                }
             }
-        }
-        Button {
-            height : 25
-            width : 25
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                source : iconsource("zoomout20.png")
+                    source : iconsource("stop20.png")
+                }
             }
         }
     }
