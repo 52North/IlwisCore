@@ -77,6 +77,7 @@ Item {
         height : parent.height - modellertools.height
 
         Item {
+            id : datapane
             width : parent.width
             height : parent.height - modellertools.height - 170
             WorkflowCanvas {
@@ -86,10 +87,36 @@ Item {
             ModellerDefinitionView{ id : defview}
             ModellerTemplateBuilder{ id : templateBuilder}
             ModellerOperationalView{ id : operview}
+
+            states: [
+                State { name: "smaller"
+
+                    PropertyChanges {
+                        target: datapane
+                        height : parent.height - modellertools.height - 170
+                    }
+                },
+                State {
+                    name : "bigger"
+                    PropertyChanges {
+                        target: datapane
+                        height : parent.height - modellertools.height + 10
+                    }
+                }
+
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                }
+            ]
         }
         ModelManager{
             id : manager
             height : 170
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.right: parent.right
         }
 
 
