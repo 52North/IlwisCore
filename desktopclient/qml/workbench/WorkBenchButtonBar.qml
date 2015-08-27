@@ -63,9 +63,9 @@ Rectangle {
 
         }
         Action {
-            id : modellerClicked
+            id : infoClicked
             onTriggered : {
-                transitionInfoPane("modeller/ModellerSelection.qml")
+                transitionInfoPane("Info.qml")
             }
 
         }
@@ -118,12 +118,6 @@ Rectangle {
             iconname : "operationCS1.png"
             label: qsTr("Operations")
         }
-        WorkBenchButton{
-            id : modeller
-            action: modellerClicked
-            iconname : "modellerCS1.png"
-            label: qsTr("Modeller")
-        }
 
         WorkBenchButton{
             id : prop
@@ -171,6 +165,13 @@ Rectangle {
             label: qsTr("Preferences")
 
         }
+        WorkBenchButton{
+            id : info
+            action: infoClicked
+            iconname : "helpCS1.png"
+            label: qsTr("Info")
+        }
+
     }
     states: [
         State { name: "visible"

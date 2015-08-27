@@ -66,7 +66,7 @@ Item {
               onRunningChanged :
               {
                   if ( opacity == 0) {
-                    unloadcontent("Navigator.qml")
+                    unloadcontent("Info.qml")
                   }
               }
 
