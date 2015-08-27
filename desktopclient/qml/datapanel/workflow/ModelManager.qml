@@ -28,7 +28,12 @@ Rectangle {
     }
 
     function showOperationForm(operationid){
-       console. debug(operationid)
+        if ( operationid){
+            datapane.state = "smaller"
+            modellerProperties.currentIndex = 1
+            var tab= modellerProperties.getTab(1)
+            tab.item.newForm(operationid,"test")
+        }
     }
 
 
@@ -36,18 +41,15 @@ Rectangle {
         id : modellerProperties
         anchors.fill: parent
         tabPosition: Qt.BottomEdge
-        onCurrentIndexChanged: {
-            var tab= getTab(2)
-        }
 
         function tabClicked(index){
             if ( currentIndex === index){
                 if ( modelmanager.height <= 60){
-                    canvas.state = "visible"
+                    datapane.state = "smaller"
                 }
                 else{
-                    canvas.state = ""
-                    canvas.state = "invisible"
+                    datapane.state = ""
+                    datapane.state = "bigger"
                 }
             }
 
