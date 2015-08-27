@@ -30,7 +30,7 @@ typedef std::shared_ptr<AssignedInputData> SPAssignedInputData;
 typedef std::shared_ptr<AssignedOutputData> SPAssignedOutputData;
 
 struct NodeProperties {
-    quint64 id;
+    quint64 _operationid;
 };
 
 struct EdgeProperties {

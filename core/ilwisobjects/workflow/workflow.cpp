@@ -318,7 +318,7 @@ EdgePropertyMap Workflow::edgeIndex()
 IOperationMetaData Workflow::getOperationMetadata(const OVertex &v)
 {
     IOperationMetaData metadata;
-    quint64 id = nodeProperties(v).id;
+    quint64 id = nodeProperties(v)._operationid;
     metadata.prepare(mastercatalog()->id2Resource(id));
     if ( !metadata.isValid()) {
         qDebug() << "operation with id" << id << " is unknown!";
@@ -448,7 +448,7 @@ QStringList Workflow::createSyntaxTerms(const OVertex &v, const std::vector<SPOp
 {
     QStringList list;
     NodeProperties properties = nodeProperties(v);
-    QString opQualifier = QString::number(v) + "_" + QString::number(properties.id) + inoutTemplate;
+    QString opQualifier = QString::number(v) + "_" + QString::number(properties._operationid) + inoutTemplate;
     for (int i = 0 ; i < parameters.size() ; i++) {
         SPOperationParameter parameter = parameters.at(i);
         QString term = !parameter->term().isEmpty()
@@ -485,7 +485,7 @@ void Workflow::debugPrintVertices()
     for (boost::tie(vi, vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         NodeProperties p = nodeIndex()[v];
-        qDebug() << p.id;// /*<< " ";//*/ << " (id=" << v << ") ";
+        qDebug() << p._operationid;// /*<< " ";//*/ << " (id=" << v << ") ";
     }
 }
 
