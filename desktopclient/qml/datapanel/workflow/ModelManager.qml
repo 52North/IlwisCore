@@ -32,7 +32,7 @@ Rectangle {
             datapane.state = "smaller"
             modellerProperties.currentIndex = 1
             var tab= modellerProperties.getTab(1)
-            tab.item.newForm(operationid,"test")
+            tab.item.newForm(operationid, qsTr("Set default values"))
         }
     }
 
