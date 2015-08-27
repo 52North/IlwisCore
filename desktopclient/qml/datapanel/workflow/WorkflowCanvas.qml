@@ -12,17 +12,10 @@ ModellerWorkArea {
         id : wfCanvas
         anchors.fill: parent
 
-        //anchors.fill: parent
-        // context related values
-        property int lineWidth: 2
         property string drawColor: "black"
         property var ctx: getContext('2d')
         // indicator whether the Canvas sould be re-drawn
         property bool canvasValid: true
-        // elements to be drawn
-        property variant elements: []
-        // current workflow
-
 
         // indiocator whether the object should be dragged
         property bool isDrag: false
