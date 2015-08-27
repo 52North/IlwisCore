@@ -2,6 +2,17 @@
 #define WORKFLOWMODEL_H
 
 #include "models/operationmodel.h"
+#include <QPoint>
+#include <QMap>
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+
+#include "kernel_global.h"
+#include "ilwistypes.h"
+#include "operationmetadata.h"
+#include "workflow.h"
 #include <QQmlListProperty>
 
 namespace Ilwis {
@@ -26,16 +37,8 @@ public:
     Q_INVOKABLE void deleteFlow(int operationIndex1, int operationIndex2, int indexStart, int indexEnd);
 
 private:
-    struct Flow{
-        Flow(int b, int e, int out, int in) : _beginOperation(b), _endOperation(e), _outParam(out), _inParam(in){}
-        int _beginOperation;
-        int _endOperation;
-        int _outParam;
-        int _inParam;
-    };
-
-    std::vector<Ilwis::IOperationMetaData> _operations;
-    std::vector<Flow> _flows;
+    std::unique_ptr<Ilwis::Workflow> _workflow;
+    std::map<quint32, Ilwis::OVertex> _operationNodes;
 };
 
 
