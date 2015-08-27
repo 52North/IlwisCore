@@ -334,7 +334,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
     return formRows;
 }
 
-QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool useBackground) const {
+QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat) const {
     std::vector<FormParameter> parameters = getParameters(metaid);
     std::vector<FormParameter> outparameters = getOutputParameters(metaid);
     QString results;
@@ -349,19 +349,22 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool useBack
     width = std::min(100, width);
 
     QString inputpart = makeFormPart(width, parameters, true, results);
-    QString outputPart = makeFormPart(width, outparameters, false, results);
-    results = "property var outputFormats;property string formresult : " + results;
-    for(int i = 0; i < outparameters.size(); ++i){
-        results += QString(";property string outputfield_%1").arg(i);
-        if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE)){
-            results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+    QString outputPart;
+    QString seperator;
+    if ( showoutputformat){
+        outputPart = makeFormPart(width, outparameters, false, results);
+        results = "property var outputFormats;property string formresult : " + results;
+        for(int i = 0; i < outparameters.size(); ++i){
+            results += QString(";property string outputfield_%1").arg(i);
+            if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE)){
+                results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+            }
         }
-    }
-    results += ";";
+        results += ";";
+        seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
+    }else
+        results = "property string formresult : " + results + ";";
     columnStart = QString(columnStart).arg(results);
-
-    QString seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
-
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
     // for debugging, check if the qml is ok; can be retrieved from teh log file
