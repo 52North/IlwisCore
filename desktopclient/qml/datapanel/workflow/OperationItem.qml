@@ -22,8 +22,10 @@ Rectangle {
     Text{
         id : operationName
         anchors.top : box.top
-        anchors.topMargin: 7
-        width : box.width
+        anchors.topMargin: 4
+        width : box.width -10
+        elide: Text.ElideMiddle
+
         x : 15
         text : operation ? operation.name : "?"
         font.bold : true
@@ -42,6 +44,7 @@ Rectangle {
     ListView{
         id : operationInParameters
         anchors.top : labelInput.bottom
+        anchors.topMargin: 3
         height : 30
         width : box.width
         clip : true
@@ -64,8 +67,10 @@ Rectangle {
 
                 Text {
                     text : modelData
+                    width : parent.width - 22
                     height : 10
                     font.pixelSize: 9
+                    elide: Text.ElideMiddle
                 }
             }
         }
@@ -110,6 +115,8 @@ Rectangle {
                     text : modelData
                     height : 10
                     font.pixelSize: 9
+                    elide: Text.ElideMiddle
+                    width : parent.width - 22
                 }
             }
         }
