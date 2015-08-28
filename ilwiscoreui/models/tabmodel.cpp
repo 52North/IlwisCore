@@ -8,10 +8,11 @@ TabModel::TabModel(QObject *parent) : QObject(parent)
 
 TabModel::TabModel(const QString &url, const QString &componentUrl, QObject *parent) :
     QObject(parent),
-    _componentUrl(componentUrl),
-    _displayName(url)
+    _componentUrl(componentUrl)
 {
-
+    QString path = QUrl(url).path();
+    QStringList parts = path == "" ?  url.split("/") : path.split("/");
+    _displayName = parts[parts.size() - 1];
 }
 
 QString TabModel::componentUrl() const
