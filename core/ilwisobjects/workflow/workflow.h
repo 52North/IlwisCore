@@ -30,14 +30,17 @@ typedef std::shared_ptr<AssignedInputData> SPAssignedInputData;
 typedef std::shared_ptr<AssignedOutputData> SPAssignedOutputData;
 
 struct NodeProperties {
-    quint64 _operationid;
+    NodeProperties(){}
+    NodeProperties(quint64 opid) : _operationid(opid){}
+    quint64 _operationid = i64UNDEF;
 };
 
 struct EdgeProperties {
+    EdgeProperties(int out, int in) : _outputIndexLastOperation(out), _inputIndexNextOperation(in){}
     QString outputName;
     bool temporary = true;
-    quint16 outputIndexLastOperation;
-    quint16 inputIndexNextOperation;
+    int _outputIndexLastOperation;
+    int _inputIndexNextOperation;
 };
 
 typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
@@ -54,7 +57,7 @@ typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
 typedef boost::graph_traits<WorkflowGraph>::in_edge_iterator InEdgeIterator;
 typedef boost::graph_traits<WorkflowGraph>::out_edge_iterator OutEdgeIterator;
 
-typedef std::pair<OVertex, quint16> InputAssignment;
+typedef std::pair<OVertex, int> InputAssignment;
 
 class KERNELSHARED_EXPORT Workflow: public OperationMetaData
 {
@@ -68,7 +71,7 @@ public:
 
     // ------ workflow API functions
     bool hasInputAssignments(const OVertex &v) const;
-    bool hasInputAssignment(const OVertex &v, quint16 index) const;
+    bool hasInputAssignment(const OVertex &v, int index) const;
     SPAssignedInputData getAssignedInputData(const InputAssignment &assignment) const;
     SPAssignedInputData assignInputData(const OVertex &v, quint16 index);
     void assignInputData(const InputAssignment &assignment, const SPAssignedInputData &properties);
@@ -81,7 +84,7 @@ public:
     void removeOutputDataProperties(const OVertex &v, quint16 index);
 
     OVertex addOperation(const NodeProperties &properties);
-    OEdge addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties);
+    OEdge addOperationFlow(const OVertex &from, const OVertex &to, const EdgeProperties &properties);
     void removeOperation(OVertex vertex);
     void removeOperationFlow(OEdge edge);
 

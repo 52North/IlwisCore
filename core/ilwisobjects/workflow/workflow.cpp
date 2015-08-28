@@ -38,7 +38,7 @@ bool Workflow::hasInputAssignments(const OVertex &v) const
     return false;
 }
 
-bool Workflow::hasInputAssignment(const OVertex &v, quint16 index) const
+bool Workflow::hasInputAssignment(const OVertex &v, int index) const
 {
     return _inputAssignments.contains(std::make_pair(v, index));
 }
@@ -204,7 +204,7 @@ QList<InputAssignment> Workflow::getImplicitInputAssignments(const OVertex &v)
     boost::graph_traits<WorkflowGraph>::in_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = getInEdges(v); ei != ei_end; ++ei) {
         // internal pins
-        InputAssignment assignment = std::make_pair(v, edgeProperties(*ei).inputIndexNextOperation);
+        InputAssignment assignment = std::make_pair(v, edgeProperties(*ei)._inputIndexNextOperation);
         assignedPins.push_back(assignment);
     }
     return assignedPins;
@@ -247,7 +247,7 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
     boost::graph_traits<WorkflowGraph>::out_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = getOutEdges(v); ei != ei_end; ++ei) {
         // implicitly assigned pins via edges
-        assignedPouts.push_back(edgeProperties(*ei).outputIndexLastOperation);
+        assignedPouts.push_back(edgeProperties(*ei)._outputIndexLastOperation);
     }
     for (SPAssignedOutputData output : _outputProperties[v]) {
         // explicitly assigned pins via edges
@@ -281,12 +281,12 @@ void Workflow::updateEdgeProperties(OEdge e, const EdgeProperties &properties)
     boost::put(edgeIndex(), e, properties);
 }
 
-OEdge Workflow::addOperationFlow(const OVertex &v1, const OVertex &v2, const EdgeProperties &properties)
+OEdge Workflow::addOperationFlow(const OVertex &from, const OVertex &to, const EdgeProperties &properties)
 {
     // TODO allow multiple edges between v1 and v2?
 
-    removeInputAssignment(v2, properties.inputIndexNextOperation);
-    return (boost::add_edge(v1, v2, properties, _wfGraph)).first;
+    removeInputAssignment(to, properties._inputIndexNextOperation);
+    return (boost::add_edge(from, to, properties, _wfGraph)).first;
 }
 
 IlwisTypes Workflow::ilwisType() const
@@ -494,8 +494,8 @@ void Workflow::debugPrintEdges()
     qDebug() << "edges(g) = ";
     boost::graph_traits<WorkflowGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(_wfGraph); ei != ei_end; ++ei)
-        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)].id
-                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)].id
+        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)]._operationid
+                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)]._operationid
                   //<< "[foo='" << edgeIndex()[*ei].foo << "']"
                   << ") ";
 }
