@@ -26,7 +26,7 @@ Rectangle {
 
     Bench.ApplicationForm{
         id : appFrame
-        width : Math.max(150,parent.width)
+        width : parent.width / 2
         height : parent.height - 30 < 0 ?  0 : parent.height - 30
         opacity : 0
 
