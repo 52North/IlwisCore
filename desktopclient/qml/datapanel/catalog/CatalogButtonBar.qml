@@ -40,7 +40,7 @@ Rectangle {
         CatalogButton{
             id : newcat
             //action : propertiesClicked
-            label: qsTr("New Catalog")
+            label: qsTr("Refresh")
 
         }
     }
