@@ -30,7 +30,7 @@ TabViewStyle {
             id: label
             width : parent.width - closeButton.width - expandButton.width
             anchors.centerIn: parent
-            text: styleData.title
+            text: tabmodel ? tabmodel.displayName : "?"
             color: tabmodel && tabmodel.selected ? "white" : "black"
             elide: Text.ElideMiddle
 
