@@ -176,6 +176,7 @@ Rectangle {
                 return // dont add duplicates
         }
         flowConnections.push({"target" : target, "attachtarget": attachRect, "attachsource" : selectedAttach, "flowPoints" : flowPoints})
+        workflow.addFlow(itemid, target.itemid, flowPoints)
         wfCanvas.stopWorkingLine()
     }
 
