@@ -32,12 +32,12 @@ public:
     explicit WorkflowModel(const Ilwis::Resource &source, QObject *parent=0);
 
     Q_INVOKABLE void addOperation(int index, const QString& id);
-    Q_INVOKABLE void addFlow(int indexStart, int operationIndex2, int outParameterIndex, int intParameterIndex);
+    Q_INVOKABLE void addFlow(int indexStart, int operationIndex2, const QVariantMap &flowpoints);
     Q_INVOKABLE void deleteOperation(int index);
     Q_INVOKABLE void deleteFlow(int operationIndex1, int operationIndex2, int indexStart, int indexEnd);
 
 private:
-    std::unique_ptr<Ilwis::Workflow> _workflow;
+    Ilwis::Workflow _workflow;
     std::map<quint32, Ilwis::OVertex> _operationNodes;
 };
 

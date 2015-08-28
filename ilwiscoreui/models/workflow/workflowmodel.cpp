@@ -18,20 +18,32 @@ WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent) : O
 
 void WorkflowModel::addOperation(int index, const QString &id)
 {
+    bool ok;
+    quint64 opid = id.toULongLong(&ok);
+    if (!ok){
+        kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
+        return ;
+    }
+    auto vertex = _workflow.addOperation({opid});
+    _operationNodes[index] = vertex;
 
 }
 
-void WorkflowModel::addFlow(int operationIndex1, int operationIndex2, int outParameterIndex, int inParameterIndex)
+void WorkflowModel::addFlow(int operationIndex1, int operationIndex2, const QVariantMap& flowpoints)
 {
-//    if ( operationIndex1 > 0 && operationIndex2 > 0) {
-//        if ( operationIndex1 < _operations.size() && operationIndex2 < _operations.size()){
-//            if ( outParameterIndex >= 0 && outParameterIndex < _operations[operationIndex1]->outputParameterCount() &&
-//                 inParameterIndex >= 0 && inParameterIndex < _operations[operationIndex2]->inputParameterCount() ){
-//                _flows.push_back(Flow(operationIndex1, operationIndex2, outParameterIndex, inParameterIndex));
-//            }
+    if ( operationIndex1 >= 0 && operationIndex2 >= 0 && flowpoints.size() == 2) {
+        auto fromVertexIter = _operationNodes.find(operationIndex1);
+        auto toVertexIter  = _operationNodes.find(operationIndex2);
+        if ( fromVertexIter != _operationNodes.end() && toVertexIter != _operationNodes.end()){
+            const OVertex& fromOperationVertex = (*fromVertexIter).second;
+            const OVertex& toOperationVertex = (*toVertexIter).second;
+            int outParamIndex = flowpoints["fromParameterIndex"].toInt();
+            int inParamIndex = flowpoints["toParameterIndex"].toInt();
+            EdgeProperties flowPoperties{outParamIndex, inParamIndex};
+            _workflow.addOperationFlow(fromOperationVertex,toOperationVertex,flowPoperties);
 
-//        }
-//    }
+        }
+    }
 }
 
 void WorkflowModel::deleteOperation(int index)
