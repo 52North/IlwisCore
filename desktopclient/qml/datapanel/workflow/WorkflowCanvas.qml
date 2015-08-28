@@ -92,6 +92,7 @@ ModellerWorkArea {
                     console.log("Error creating object");
                 }
                 operationsList.push(currentItem)
+                workflow.addOperation(count, resource.id)
                 ++count
 
             } else if (component.status == Component.Error) {
@@ -147,6 +148,7 @@ ModellerWorkArea {
                 if (drag.source.type === "singleoperation") {
                     var oper = wfCanvas.getOperation(drag.source.ilwisobjectid)
                     wfCanvas.createItem(drag.x - 50, drag.y - 30,oper)
+                    workflow.addOperation(wfCanvas.count, drag.source.ilwisobjectid)
 
                 }
 
