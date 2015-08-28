@@ -240,8 +240,8 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             std::vector<SPOperationParameter> outputs = meta->getOutputParameters();
             EdgeProperties edgeProperties = workflow->edgeProperties(*ei);
 
-            quint16 inIdx = edgeProperties.inputIndexNextOperation;
-            quint16 outIdx = edgeProperties.outputIndexLastOperation;
+            quint16 inIdx = edgeProperties._inputIndexNextOperation;
+            quint16 outIdx = edgeProperties._outputIndexLastOperation;
             QString resultName = localCtx._results[outIdx];
             Symbol tmpResult = localSymTable.getSymbol(resultName);
             //copyToContext(tmpResult, resultName, ctx, symTable);
