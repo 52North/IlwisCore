@@ -30,8 +30,8 @@ Rectangle {
     function showOperationForm(operationid){
         if ( operationid){
             datapane.state = "smaller"
-            modellerProperties.currentIndex = 1
             var tab= modellerProperties.getTab(1)
+            tab.active=true
             tab.item.newForm(operationid, qsTr("Set default values"))
         }
     }
