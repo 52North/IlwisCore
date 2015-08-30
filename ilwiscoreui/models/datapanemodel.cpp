@@ -224,7 +224,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
             else if (hasType(resources[0].ilwisType(), itTABLE)) {
                 tab = new TabModel(url,"table/TablePane.qml", this);
             } else if (hasType(resources[0].ilwisType(), itWORKFLOW)){
-                tab = new TabModel(url,"workflow/ModellerDataPane.qml", this);
+                tab = new TabModel(url,"modeller/ModellerDataPane.qml", this);
             }
         }
         if ( tab){
