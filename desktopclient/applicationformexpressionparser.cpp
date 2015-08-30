@@ -59,9 +59,8 @@ void ApplicationFormExpressionParser::setParameter(const Resource& resource, boo
     ++parmCount;
 }
 
-std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getOutputParameters(quint64 metaid) const{
+std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getOutputParameters(const Ilwis::Resource &resource) const{
     std::vector<FormParameter> parameters;
-    Resource resource = mastercatalog()->id2Resource(metaid);
     QString outparms = resource["outparameters"].toString();
     bool isService = resource["keyword"].toString().indexOf("service") != -1;
     if ( outparms == "0")
@@ -83,10 +82,9 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
 
     return parameters;
 }
-std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getParameters(quint64 metaid) const
+std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getParameters(const Resource& resource) const
 {
     std::vector<FormParameter> parameters;
-    Resource resource = mastercatalog()->id2Resource(metaid);
     QString expression = resource["syntax"].toString();
     qint32 index = expression.indexOf("(");
     expression = expression.mid(index + 1, expression.size() - index - 2);
@@ -335,8 +333,9 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
 }
 
 QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat) const {
-    std::vector<FormParameter> parameters = getParameters(metaid);
-    std::vector<FormParameter> outparameters = getOutputParameters(metaid);
+    Resource resource = mastercatalog()->id2Resource(metaid);
+    std::vector<FormParameter> parameters = getParameters(resource);
+    std::vector<FormParameter> outparameters = getOutputParameters(resource);
     QString results;
     QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
     QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
