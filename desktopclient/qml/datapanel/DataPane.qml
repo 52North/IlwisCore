@@ -171,9 +171,6 @@ Rectangle {
                 window.width = tab.item.width
                 window.show();
                 window.datapanel =  tabData.componentUrl
-
-
-
                 window.transfer(tab.item)
 
                 closeTab(sidePanel.isLeft, tabIndex);
@@ -194,21 +191,6 @@ Rectangle {
                 activeSplit = 1
             }
         }
-        function newModeller(name, splitside) {
-            var component = Qt.createComponent("modeller/ModellerPanel.qml");
-//            var tab = activeSplit ===1 ? righttab.addTab(name,component) : lefttab.addTab(name,component);
-            var tab = righttab.addTab(name,component);
-            tab.active = true;
-            var tabCount = 0;
-            if ( lefttab.count == 1){
-                righttab.state = "halfsize"
-            }
-            lefttab.state = righttab.count == 0 ? "fullsize" : "halfsize";
-            activeSplit = 1;
-            tabCount = lefttab.count - 1;
-            lefttab.currentIndex = tabCount;
-       }
-
         handleDelegate: Controls.SplitHandle{
             imageHeight: 22
             offset : 25
