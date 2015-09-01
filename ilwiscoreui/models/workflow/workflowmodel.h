@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE void deleteOperation(int index);
     Q_INVOKABLE void deleteFlow(int operationIndex1, int operationIndex2, int indexStart, int indexEnd);
 
+    Q_INVOKABLE bool hasValueDefined(int operationindex, int parameterindex);
 private:
     Ilwis::Workflow _workflow;
     std::map<quint32, Ilwis::OVertex> _operationNodes;

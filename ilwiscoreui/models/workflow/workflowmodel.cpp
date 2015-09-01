@@ -46,6 +46,15 @@ void WorkflowModel::addFlow(int operationIndex1, int operationIndex2, const QVar
     }
 }
 
+bool WorkflowModel::hasValueDefined(int operationindex, int parameterindex){
+    auto vertexIter = _operationNodes.find(operationindex);
+    if ( vertexIter != _operationNodes.end()){
+        const OVertex& operationVertex = (*vertexIter).second;
+        return _workflow.hasValueDefined(operationVertex, parameterindex);
+    }
+    return false;
+}
+
 void WorkflowModel::deleteOperation(int index)
 {
 //    if ( index < _operations.size()){
