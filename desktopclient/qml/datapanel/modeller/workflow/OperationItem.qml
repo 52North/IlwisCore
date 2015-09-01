@@ -25,20 +25,6 @@ Rectangle {
         return iconP
     }
 
-    function isConnected(parmIndex){
-        console.debug("parameter", itemid, parmIndex)
-        for(var i=0; i < wfCanvas.operationsList.length; ++i){
-            var oper = wfCanvas.operationsList[i]
-            console.debug("flows", i, itemid, oper.itemid, oper.flowConnections.length)
-            for( var j=0; j < oper.flowConnections.length; ++j){
-                var flow = oper.flowConnections[j]
-                console.debug("target & current id", flow.target.itemid, itemid,flow.flowPoints.toParameterIndex)
-                if ( flow.target.itemid === itemid && flow.toParameterIndex === parmIndex)
-                    return true
-            }
-        }
-        return false;
-    }
 
     function resetInputModel(){
         operationInParameters.model = null
@@ -101,7 +87,7 @@ Rectangle {
                     width : parent.width - 30
                     height : 10
                     font.pixelSize: 9
-                    color: isConnected(index) ? "green" : "red"
+                    color: workflow.hasValueDefined(itemid, index) ? "green" : "red"
                     elide: Text.ElideMiddle
                 }
             }
