@@ -97,6 +97,9 @@ public:
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
 
+    //------- Queries
+    bool hasValueDefined(const OVertex& operationVertex, int parameterIndex);
+
     // ------ operation metadata functions
     IOperationMetaData getOperationMetadata(const OVertex &v);
     IlwisTypes ilwisType() const;

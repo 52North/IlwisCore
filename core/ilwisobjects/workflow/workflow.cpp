@@ -281,6 +281,17 @@ void Workflow::updateEdgeProperties(OEdge e, const EdgeProperties &properties)
     boost::put(edgeIndex(), e, properties);
 }
 
+bool Workflow::hasValueDefined(const OVertex &operationVertex, int parameterIndex)
+{
+    for (const InputAssignment& assignment : _inputAssignments.keys()) {
+        if (assignment.first == operationVertex && assignment.second == parameterIndex) {
+           auto s  =getImplicitInputAssignments(operationVertex);
+           return s.size() > 0;
+        }
+    }
+    return false;
+}
+
 OEdge Workflow::addOperationFlow(const OVertex &from, const OVertex &to, const EdgeProperties &properties)
 {
     // TODO allow multiple edges between v1 and v2?
