@@ -31,12 +31,13 @@ Item {
             title : qsTr("About")
             Item {
                 anchors.fill: parent
+
                 Column {
                     anchors.fill: parent
                     anchors.margins: 5
                     spacing : 10
                     Item {
-                        x : parent.width / 4
+                        x : 0
                         width : 180
                         height:  90
                         Row{
@@ -51,6 +52,10 @@ Item {
                                 source : "../images/ilwislogobig.png"
                                 smooth : false
                             }
+                            Image {
+                                source : "../images/52nlogobig.png"
+                                smooth : false
+                            }
                         }
                     }
                     Text {
@@ -59,6 +64,10 @@ Item {
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.pointSize: 14
                         font.bold : true
+                        width : parent.width
+                        opacity: width < 10 ? 0 : 1
+
+                        clip : true
                     }
 
                     Controls.TextAreaLabelPair{
@@ -80,7 +89,7 @@ Item {
                         height: 100
                         labelText: qsTr("Developers")
                         labelWidth: 100
-                        content: "Me,\n myself\n and I"
+                        content: "Martin Schouwenburg,\nHenning Bredel,\nBas Retsios,\nHeinrich Kiessling,\nJohannes Kolbe"
                     }
                 }
             }
