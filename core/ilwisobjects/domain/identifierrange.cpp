@@ -410,7 +410,8 @@ Range *NamedIdentifierRange::clone() const
 
 NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 {
-    this->add(new NamedIdentifier(itemdef));
+    if (!contains(itemdef))
+        this->add(new NamedIdentifier(itemdef));
 
     return *this;
 }
