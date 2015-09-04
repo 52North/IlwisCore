@@ -11,12 +11,20 @@
 #include "attributetable.h"
 #include "logicalexpressionparser.h"
 #include "tableselector.h"
+#include "mastercatalog.h"
 
 using namespace Ilwis;
 
 AttributeTable::AttributeTable(FeatureCoverage *featureCoverage, int level) : _level(level)
 {
     _features.set(featureCoverage);
+    setValid(_features.isValid());
+}
+
+AttributeTable::AttributeTable(const Resource &res)
+{
+    quint64 id = mastercatalog()->name2id(res.url().toString(), itFEATURE);
+    _features.prepare(id);
     setValid(_features.isValid());
 }
 

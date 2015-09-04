@@ -12,6 +12,7 @@ class KERNELSHARED_EXPORT AttributeTable : public SelectableTable
 {
 public:
     AttributeTable(FeatureCoverage *featureCoverage, int level);
+    AttributeTable(const Resource& res);
     IlwisTypes ilwisType() const;
 
     void record(quint32 rec, const std::vector<QVariant> &vars, quint32 offset=0);
@@ -58,7 +59,7 @@ private:
 
 
     IFeatureCoverage _features;
-    quint32 _level;
+    quint32 _level = 0;
 };
 
 typedef IlwisData<AttributeTable> IAttributeTable;
