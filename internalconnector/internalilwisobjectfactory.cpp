@@ -697,11 +697,14 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
         if ( db.exec(query)) {
             if (db.next()) {
                 QSqlRecord rec = db.record();
-                //if ( code == "longlat") // special case
-                //    return new NullProjection(resource);
+
                 const ProjectionFactory *factory =  kernel()->factory<ProjectionFactory>("ProjectionFactory",resource);
                 if ( factory) {
-                    ProjectionImplementation *projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
+                    ProjectionImplementation *projimpl = 0;
+                    if ( options.contains("proj4"))
+                        projimpl = static_cast<ProjectionImplementation *>(factory->create(options["proj4"].toString()));
+                    else
+                        projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
                     if (!projimpl) {
                         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("projection", resource.name()));
                         return 0;
