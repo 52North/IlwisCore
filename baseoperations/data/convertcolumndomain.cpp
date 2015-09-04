@@ -38,12 +38,13 @@ ConvertColumnDomain::ConvertColumnDomain(quint64 metaid, const Ilwis::OperationE
 {
 }
 
-template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& oldvalues){
+template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values){
 
-    std::vector<QVariant> values = oldvalues;
-    std::set<QString> items;
+    //std::vector<QVariant> values = oldvalues;
+    RangeType range;
     IlwisTypes orgValueType = inputTable->columndefinitionRef(colName).datadef().domain()->valueType();
     if ( hasType(orgValueType, itDOMAINITEM )){
+        std::set<QString> items;
         IItemDomain itemdom = inputTable->columndefinitionRef(colName).datadef().domain().as<ItemDomain<DomainItem>>();
         for(auto& v : values){
             auto item = itemdom->item(v.toUInt());
@@ -53,18 +54,17 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
             }else
                 v = QVariant();
         }
+        for(const auto& v : items){
+            range << v;
+        }
     }else{
 
         for(const auto& v : values){
-            items.insert(v.toString());
+           range << v.toString();
         }
     }
     DomainType domain;
-    RangeType range;
 
-    for(const auto& v : items){
-        range << v;
-    }
     domain.prepare();
     domain->range(new RangeType(range));
     inputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
@@ -77,7 +77,7 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
             return false;
         }
     }
-    inputTable->column(colName, values);
+    //inputTable->column(colName, values);
     return true;
 }
 
@@ -148,8 +148,14 @@ bool ConvertColumnDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
         ok = translate2colorColumn(_inputTable, _columnName, values);
     }
     if (ok){
-        _inputTable->column(_columnName, values);
-        _inputTable->columndefinitionRef(_columnName).datadef().domain()->name(_domainName);
+       _inputTable->column(_columnName, values);
+       _inputTable->columndefinitionRef(_columnName).datadef().domain()->name(_domainName);
+
+        if ( ctx != 0) {
+            QVariant value;
+            value.setValue<ITable>(_inputTable);
+            ctx->setOutput(symTable, value, _inputTable->name(), itTABLE,_inputTable->source());
+        }
     }
 
 
