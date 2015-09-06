@@ -84,7 +84,7 @@ Ilwis::OperationImplementation::State RankOrderRasterFilter::prepare(ExecutionCo
          return sPREPAREFAILED;
 
     QString query = QString("select rows,columns from filters where code='%1'").arg(name.toLower());
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     if (stmt.exec(query)) {
         if ( stmt.next()) {
             quint32 rows = stmt.value(0).toInt();

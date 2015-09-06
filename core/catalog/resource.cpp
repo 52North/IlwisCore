@@ -100,7 +100,8 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                             QString filepath = url.toLocalFile() + "/" + resourceName;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
-                            }
+                            }else
+                                name(resourceName);
                         }
                     }
                     _normalizedUrl = urltxt;
@@ -177,7 +178,7 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     _extendedType = rec.value("extendedtype").toLongLong();
 
     QString query = QString("Select * from catalogitemproperties where itemid=%1").arg(id());
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     if (!db.exec(query)) {
             kernel()->issues()->logSql(db.lastError());
     }
@@ -394,7 +395,7 @@ void Resource::prepare()
     Identity::prepare();
 }
 
-bool Resource::store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const
+bool Resource::store(InternalDatabaseConnection &queryItem, InternalDatabaseConnection &queryProperties) const
 {
     bool ok = true;
 
@@ -587,7 +588,7 @@ void Resource::checkUrl(IlwisTypes tp) {
         setUrl(_normalizedUrl);
     }
     else if ( _normalizedUrl.scheme() == "ilwis") {
-        if ( name().indexOf(ANONYMOUS_PREFIX) == 0 ||  name().indexOf("code=") >= 0 && name().indexOf("proj4:") >= 0 )  {// name is set, so nothing meeded
+        if ( (name().indexOf(ANONYMOUS_PREFIX) == 0 ||  name().indexOf("code=") >= 0) && name().indexOf("proj4:") >= 0 )  {// name is set, so nothing meeded
             QString resource = _normalizedUrl.toString();
             int index = resource.lastIndexOf("/");
             int index2 = resource.lastIndexOf("code=");

@@ -18,7 +18,7 @@
 #include "iooptions.h"
 #include "issuelogger.h"
 #include "module.h"
-#include "publicdatabase.h"
+#include "internaldatabaseconnection.h"
 #include "ilwisobject.h"
 #include "factory.h"
 

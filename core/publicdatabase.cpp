@@ -168,7 +168,7 @@ bool PublicDatabase::code2Record(const QString &code, const QString &table, QSql
 
 QString PublicDatabase::findAlias(const QString &name, const QString &type, const QString &nspace)
 {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select code from aliasses where alias='%1' and type='%2' and source='%3'").arg(name).arg(type).arg(nspace);
     if ( db.exec(query)) {
         if ( db.next())

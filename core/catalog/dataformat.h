@@ -27,7 +27,7 @@ private:
     std::map<FormatProperties, QVariant> _properties;
     bool _isValid = false;
 
-    void setProps(QSqlQuery &db, const QString &code);
+    void setProps(Ilwis::InternalDatabaseConnection &db, const QString &code);
 };
 }
 

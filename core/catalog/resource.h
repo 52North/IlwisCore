@@ -12,6 +12,9 @@ class QSqlQuery;
 
 
 namespace Ilwis {
+
+class InternalDatabaseConnection;
+
 /**
  * Design In Ilwis a Resource is a unique definition of data or processing that can be translated <br>
  * into a single IlwisObject or Catalog. For example the location to a shape file or a query <br>
@@ -259,7 +262,7 @@ public:
      * @param queryProperties The properties of the item that should be stored
      * @return true if stored succelful
      */
-    bool store(QSqlQuery &queryItem, QSqlQuery &queryProperties) const;
+    bool store(Ilwis::InternalDatabaseConnection &queryItem, Ilwis::InternalDatabaseConnection &queryProperties) const;
     bool store(QDataStream& stream) const;
     bool load(QDataStream &stream);
 

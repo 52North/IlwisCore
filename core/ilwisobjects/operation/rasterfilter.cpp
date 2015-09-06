@@ -24,7 +24,7 @@ LinearGridFilter::LinearGridFilter(const QString &name)
 bool LinearGridFilter::definition(const QString &name)
 {
     QString query = QString("select * from filters where code='%1'").arg(name.toLower());
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     if (stmt.exec(query)) {
         if ( stmt.next()) {
             bool ok1,ok2,ok3;
@@ -81,7 +81,7 @@ QSize LinearGridFilter::size() const
 RankOrderGridFilter::RankOrderGridFilter(const QString &name)
 {
     QString query = QString("select * from filters where code='%1'").arg(name.toLower());
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     if (stmt.exec(query)) {
         if ( stmt.next()) {
             bool ok1,ok2;

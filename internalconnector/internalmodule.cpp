@@ -74,7 +74,7 @@ void InternalModule::prepare()
     projfactory->prepare();
     kernel()->addFactory(projfactory );
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
 
     bool ok = createItems(db,"projection", "projections",itPROJECTION);
     ok &= createItems(db,"ellipsoid", "ellipsoids",itELLIPSOID);
@@ -151,7 +151,7 @@ bool InternalModule::createSpecialDomains() {
     paletteResource.prepare();
     resources.push_back(paletteResource);
 
-    QSqlQuery itemdomainTable(kernel()->database());
+    InternalDatabaseConnection itemdomainTable;
     QString query = "Select * from itemdomain";
     if (itemdomainTable.exec(query)){
         while (itemdomainTable.next()) {
@@ -170,7 +170,7 @@ bool InternalModule::createSpecialDomains() {
     return mastercatalog()->addItems(resources);
 }
 
-bool InternalModule::createPcs(QSqlQuery& db) {
+bool InternalModule::createPcs(InternalDatabaseConnection &db) {
     QString query = QString("Select * from projectedcsy");
     if ( db.exec(query)) {
         std::vector<Resource> items;
@@ -195,7 +195,7 @@ bool InternalModule::createPcs(QSqlQuery& db) {
     return false;
 }
 
-bool InternalModule::createItems(QSqlQuery& db, const QString& sqltable, const QString& folder, IlwisTypes type, const QString internalname) {
+bool InternalModule::createItems(InternalDatabaseConnection &db, const QString& sqltable, const QString& folder, IlwisTypes type, const QString internalname) {
     QString query = QString("Select * from %1").arg(sqltable);
     if ( db.exec(query)) {
         std::vector<Resource> items;

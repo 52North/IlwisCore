@@ -24,7 +24,7 @@ std::map<QString, QString> Projection::_projcode2Name;
 Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
 {
     if ( _projcode2Name.size() == 0){
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         QString query = "Select code, name from projection";
         db.exec(query);
         while(db.next()){

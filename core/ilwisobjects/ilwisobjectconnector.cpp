@@ -44,7 +44,7 @@ void IlwisObjectConnector::removeProperty(const QString &key)
 
 bool IlwisObjectConnector::hasProperty(const QString &key)
 {
-    _resource.hasProperty(key);
+    return _resource.hasProperty(key);
 }
 
 const Resource& IlwisObjectConnector::source() const{
