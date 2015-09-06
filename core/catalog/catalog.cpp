@@ -88,14 +88,14 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
     name = OSHelper::neutralizeFileName(name);
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; check if it is the catalog
         QString query = QString("select resource from mastercatalog where resource = '%2'").arg(name);
-        QSqlQuery results = kernel()->database().exec(query);
+        InternalDatabaseConnection results(query);
         if ( results.next()) {
             return name;
         }
         // might have been a fragment
         QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
         query = QString("select resource from mastercatalog where resource = '%2'").arg(resolvedName);
-        results = kernel()->database().exec(query);
+        results.exec(query);
         if ( results.next()) {
             return resolvedName;
         }
@@ -104,7 +104,8 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
     QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(source().url().toString());
     if ( tp == itUNKNOWN) // incomplete info, we hope that the name will be unique. wrong selection must be handled at the caller side
         query = QString("select resource from mastercatalog where name = '%1' and container='%2'").arg(name, source().url().toString());
-    QSqlQuery results = kernel()->database().exec(query);
+    InternalDatabaseConnection results;
+    results.exec(query);
     if ( results.next()) {
         QSqlRecord rec = results.record();
         return rec.value(0).toString();
