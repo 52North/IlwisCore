@@ -8,21 +8,18 @@ Button{
     property string buttontext;
 
     id : addContainer
-    width : 40
-    height : 40
+//    width : 40
+//    height : 80
     Image {
         id : buttonIcon
-        anchors.verticalCenter:  parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
         source: iconsource
-        y : 5 ;width : 30; height : 30
+        y : 5 ;width : 25; height : 25
         fillMode: Image.PreserveAspectFit
     }
     Text {
-        anchors.left: buttonIcon.right
-        anchors.leftMargin: 3
-        anchors.verticalCenter:  parent.verticalCenter
+        anchors.top: buttonIcon.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
         text : buttontext
     }
 

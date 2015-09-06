@@ -42,7 +42,7 @@ Item {
                 datapanesplit.changePanel(filter, "catalog",resource.url)
             }else {
                 filter = "itemid=" + resource.id
-                datapanesplit.newPanel(filter, resource.typeName,resource.url)
+                datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
             }
         }
     }
