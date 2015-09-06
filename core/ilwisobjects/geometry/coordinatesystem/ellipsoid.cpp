@@ -22,7 +22,7 @@ Ellipsoid::Ellipsoid() : IlwisObject()
     name("Sphere");
     setEllipsoid(6371007.1809185,0);
     if ( _ellcode2Name.size() == 0){
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         QString query = "Select code, name from ellipsoid";
         db.exec(query);
         while(db.next()){
@@ -243,7 +243,7 @@ QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
 
     QString newName = "User defined";
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = "Select * from ellipsoid";
     if ( db.exec(query) ){
         while( db.next()){
