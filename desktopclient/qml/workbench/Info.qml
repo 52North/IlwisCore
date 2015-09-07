@@ -82,6 +82,7 @@ Item {
                         height: 100
                         labelText: qsTr("Loaded modules")
                         labelWidth: 100
+                        content : uicontext.moduleData()
                     }
 
                     Controls.TextAreaLabelPair{

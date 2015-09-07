@@ -276,6 +276,11 @@ const Module *Kernel::module(const QString &name) const
     return 0;
 }
 
+const ModuleMap &Kernel::modules() const
+{
+    return _modules;
+}
+
 
 
 

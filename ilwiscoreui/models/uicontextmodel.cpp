@@ -280,5 +280,13 @@ void UIContextModel::initializeDataPane()
 
 }
 
+QString UIContextModel::moduleData() const{
+    QString modules;
+    for(auto module : Ilwis::kernel()->modules()){
+        modules+=module->getNameAndVersion() + "\n";
+    }
+    return modules;
+}
+
 
 
