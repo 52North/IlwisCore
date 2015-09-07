@@ -177,7 +177,7 @@ void OperationCatalogModel::gatherItems() {
             lst << location.toString();
             res.addProperty("locations", lst);
             res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
+            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itSINGLEOPERATION));
             res.setDescription(descr);
             CatalogView view(res);
             view.prepare();
