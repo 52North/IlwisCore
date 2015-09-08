@@ -46,7 +46,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
     parametersFromSyntax(required, optional);
     allParameterNames << required << optional;
     if (allParameterNames.isEmpty()) {
-        WARN1("syntax parsing did not result in any parameters: %1", source()["syntax"].toString());
+        //WARN1("syntax parsing did not result in any parameters: %1", source()["syntax"].toString());
         return;
     }
 
@@ -82,6 +82,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
 
 void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList &optional)
 {
+
     QRegExp argumentsrx("^.*\\((.*)\\)(\\s*)?$");
     int argIdx = argumentsrx.indexIn(source()["syntax"].toString());
     QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
