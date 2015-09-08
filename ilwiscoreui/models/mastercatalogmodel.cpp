@@ -308,6 +308,18 @@ QString MasterCatalogModel::getName(const QString &id)
     return "";
 }
 
+QString MasterCatalogModel::getUrl(const QString &id)
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    if ( ok){
+        Resource res = mastercatalog()->id2Resource(objid);
+        if ( res.isValid())
+            return res.url().toString();
+    }
+    return "";
+}
+
 QString MasterCatalogModel::id2type(const QString &id) const
 {
     bool ok;
