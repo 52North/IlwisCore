@@ -69,6 +69,19 @@ void NumericDomain::setParent(const IDomain &dm)
     Domain::setParent(dm);
 }
 
+IlwisObject *NumericDomain::clone()
+{
+    NumericDomain * numdom = new NumericDomain();
+    copyTo(numdom);
+    return numdom;
+}
+
+void NumericDomain::copyTo(IlwisObject *obj){
+    Domain::copyTo(obj);
+    NumericDomain *numdom = static_cast<NumericDomain *>(obj);
+    numdom->_range.reset(static_cast<NumericRange *>(_range->clone()));
+}
+
 QString NumericDomain::standardNumericDomainName(double vmin, double vmax, double step)
 {
     QString domName="value";
