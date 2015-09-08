@@ -8,14 +8,15 @@ import "../Global.js" as Global
 Item {
     id : tfdaContainer
     property string filterkeys
-    property string currentText
+    property string content
     property bool readOnly : true
     property var canUse
+    property bool asName : true
     function getText() {
         var temptxt = textid.text
         if ( temptxt.indexOf("/") != -1) // already full path, so we take this
             return temptxt;
-        return currentText
+        return content
     }
 
 
@@ -24,16 +25,16 @@ Item {
         onDropped : {
             if ( canUse){
                 if ( canUse(drag.source.ilwisobjectid)){
-                    currentText = drag.source.message
-                    textid.text = mastercatalog.getName(drag.source.ilwisobjectid)
+                    content = drag.source.message
+                    textid.text = asName ? mastercatalog.getName(drag.source.ilwisobjectid) : mastercatalog.getUrl(drag.source.ilwisobjectid)
                 }
             }else {
-                currentText = drag.source.message
-                textid.text = mastercatalog.getName(drag.source.ilwisobjectid)
+                content = drag.source.message
+                textid.text = asName ? mastercatalog.getName(drag.source.ilwisobjectid) : mastercatalog.getUrl(drag.source.ilwisobjectid)
             }
         }
         TextField{ id : textid;
-            text : currentText;
+            text : content;
             readOnly : readOnly
             width : parent.width
             height : parent.height
@@ -42,7 +43,7 @@ Item {
                     radius: 2
                     width : parent.width
                     height: parent.height
-                    border.color: "#333"
+                    border.color: Global.edgecolor
                     border.width: textid.readOnly ? 0: 1
                     color : "transparent"
                 }
