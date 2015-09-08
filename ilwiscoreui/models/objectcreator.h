@@ -5,8 +5,15 @@
 #include <QStringList>
 #include <QQmlListProperty>
 #include <vector>
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "ilwiscoreui_global.h"
 
+namespace Ilwis {
+class Resource;
+class IlwisObject;
+typedef IlwisData<IlwisObject> IIlwisObject;
+}
 class IlwisObjectCreatorModel;
 
 class ILWISCOREUISHARED_EXPORT ObjectCreator : public QObject
@@ -37,6 +44,7 @@ private:
     QList<IlwisObjectCreatorModel *> _creators;
 
 
+    QString createNumericDomain(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

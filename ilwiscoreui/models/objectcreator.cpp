@@ -1,6 +1,10 @@
 #include "resourcemodel.h"
 #include "ilwisobjectcreatormodel.h"
 #include "ilwiscontext.h"
+#include "domain.h"
+#include "numericdomain.h"
+#include "symboltable.h"
+#include "commandhandler.h"
 #include "objectcreator.h"
 
 using namespace Ilwis;
@@ -8,7 +12,7 @@ using namespace Ilwis;
 ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators.append(new IlwisObjectCreatorModel("Workflow",itWORKFLOW,"CreateWorkflow.qml", 400, this));
-    _creators.append(new IlwisObjectCreatorModel("Numeric Domain",itNUMERICDOMAIN,"CreateNumDom.qml", 200, this));
+    _creators.append(new IlwisObjectCreatorModel("Numeric Domain",itNUMERICDOMAIN,"CreateNumDom.qml", 250, this));
     _creators.append(new IlwisObjectCreatorModel("Thematic Domain",itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 400, this));
     _creators.append(new IlwisObjectCreatorModel("Identifier Domain",itITEMDOMAIN | itIDENTIFIERITEM,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Indexed Domain",itITEMDOMAIN | itINDEXEDITEM,"CreateNumDom.qml", 200, this));
@@ -55,15 +59,46 @@ void ObjectCreator::setActiveCreator(qint32 index)
     }
 }
 
+QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
+{
+
+    QString expression = QString("script %1{format(stream,\"domain\")}=createnumericdomain(%2,%3,%4,%5,%6")
+            .arg(parms["name"].toString())
+            .arg(parms["minvalue"].toDouble())
+            .arg(parms["maxvalue"].toDouble())
+            .arg(parms["resolutionvalue"].toDouble())
+            .arg(parms["strict"].toBool() ? "yes" : "no")
+            .arg(parms["description"].toString());
+    if ( parms["parentdomain"].toString() != "")
+            expression += ","+ parms["parentdomain"].toString();
+    expression += ")";
+
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
+        IDomain obj = syms.getSymbol(ctx._results[0])._var.value<IDomain>();
+        return QString::number(obj->id());
+    }
+    return QString::number(i64UNDEF);
+}
+
 QString ObjectCreator::createObject(const QVariantMap &parms)
 {
-    //QString url = context()->workingCatalog()->source().url().toString() ;
-    QString name = parms["name"].toString();
-    Resource res(QUrl("ilwis://internalcatalog/" + name), itWORKFLOW);
+    Resource res;
     res.setDescription(parms["decription"].toString());
-    res.prepare();
     IIlwisObject obj;
-    obj.prepare(res);
+    QString name = parms["name"].toString();
+    QString type = parms["type"].toString();
+    if (  type == "workflow" ){
+        res = Resource(QUrl("ilwis://internalcatalog/" + name), itWORKFLOW);
+        res.prepare();
+        obj.prepare(res);
+    } else     if ( type == "numericdomain"){
+        return createNumericDomain(parms);
+    }
+
+
+
 
     return QString::number(obj->id());
 }
