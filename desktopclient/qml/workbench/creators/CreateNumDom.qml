@@ -6,6 +6,7 @@ import ObjectCreator 1.0
 import IlwisObjectCreatorModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
+import "../.." as Base
 
 Controls.DropableItem{
     id : dropItem
@@ -102,6 +103,8 @@ Controls.DropableItem{
                 id : cbstrict
                 text: qsTr("Strict")
                 checked: true
+                enabled : parentdomtxt.content != ""
+                style : Base.CheckBoxStyle1{}
             }
 
             Item {
