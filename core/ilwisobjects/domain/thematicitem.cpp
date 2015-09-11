@@ -36,6 +36,12 @@ ThematicItem::ThematicItem(const QStringList& parts, quint32 rawvalue) : NamedId
     }
 }
 
+ThematicItem::ThematicItem(const QString itemname, const QString& itemcode, const QString& itemdesc){
+    setName(itemname);
+    code(itemcode);
+    description(itemdesc);
+}
+
 QString ThematicItem::description() const
 {
     return _description;
@@ -59,7 +65,7 @@ void ThematicItem::code(const QString &code)
 DomainItem *ThematicItem::clone() const
 {
 
-    ThematicItem *item = new ThematicItem({name(), _code, _description});
+    ThematicItem *item = new ThematicItem(name(), _code, _description);
     item->_raw = _raw;
 
     return item;
@@ -75,7 +81,7 @@ IlwisTypes ThematicItem::valueType() const
     return valueTypeS();
 }
 
-ThematicRange *ThematicItem::createRange()
+ItemRange *ThematicItem::createRange()
 {
     return new ThematicRange();
 }
