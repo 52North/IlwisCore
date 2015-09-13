@@ -9,12 +9,10 @@ import "../Global.js" as Global
 import "./workspace" as WorkSpace
 import QtQuick 2.0
 
-Item {
-    id : container
+WorkBenchShifter {
     clip : true
-    opacity : 0
+    state : "invisble"
 
-    signal unloadcontent(string content)
     property WorkSpaceModel workspace : uicontext.currentWorkSpace
 
     FunctionBarHeader{
@@ -41,42 +39,10 @@ Item {
         }
     }
 
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: container
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: container
-                opacity : 0
-            }
-        }
-
-    ]
-      transitions: [
-          Transition {
-              NumberAnimation {
-                  properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-              }
-              onRunningChanged :
-              {
-                  if ( opacity == 0) {
-                    unloadcontent("Info.qml")
-                  }
-              }
-
-          }
-      ]
-
-      Component.onCompleted: {
-          state : "visible"
-          opacity : 1
-          workspaceinfo.state = workspace && !workspace.isDefault ? "fullsize" : "zerosize"
+       Component.onCompleted: {
+//          state : "visible"
+//          opacity : 1
+           workspaceinfo.state = workspace && !workspace.isDefault ? "fullsize" : "zerosize"
       }
 }
 

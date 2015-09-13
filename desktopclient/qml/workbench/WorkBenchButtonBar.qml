@@ -27,7 +27,7 @@ Rectangle {
             id : navClicked
             onTriggered : {
                toggle(nav)
-                transitionInfoPane("Navigator.qml")
+                transitionInfoPane("navigator")
             }
 
         }
@@ -36,7 +36,7 @@ Rectangle {
             id : operClicked
             onTriggered : {
                 toggle(oper)
-                transitionInfoPane("OperationSelection.qml")
+                transitionInfoPane("operationselection")
             }
 
         }
@@ -44,28 +44,28 @@ Rectangle {
             id : propertiesClicked
             onTriggered : {
                 toggle(prop)
-                transitionInfoPane("ObjectProperties.qml")
+                transitionInfoPane("objectproperties")
             }
         }
         Action {
             id : messagesClicked
             onTriggered : {
                 toggle(errors)
-                transitionInfoPane("MessagesPane.qml")
+                transitionInfoPane("messages")
             }
         }
         Action {
             id : progressClicked
             onTriggered : {
                 toggle(progress)
-                transitionInfoPane("Tranquilizers.qml")
+                transitionInfoPane("tranquilizer")
             }
 
         }
         Action {
             id : infoClicked
             onTriggered : {
-                transitionInfoPane("Info.qml")
+                transitionInfoPane("info")
             }
 
         }
@@ -73,7 +73,7 @@ Rectangle {
             id : createClicked
             onTriggered : {
                 toggle(create)
-                transitionInfoPane("ObjectCreation.qml")
+                transitionInfoPane("objectcreation")
             }
 
         }
@@ -81,7 +81,7 @@ Rectangle {
             id : workspaceClicked
             onTriggered : {
                 toggle(workspace)
-                transitionInfoPane("Workspaces.qml")
+                transitionInfoPane("workspaces")
             }
 
         }

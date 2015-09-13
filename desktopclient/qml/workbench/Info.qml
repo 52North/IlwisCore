@@ -9,12 +9,10 @@ import "../Global.js" as Global
 import ".." as Base
 
 
-Item {
-    id : container
+WorkBenchShifter {
+    id : infoContainer
     clip : true
-    opacity : 0
-
-    signal unloadcontent(string content)
+    state : "invisble"
 
     FunctionBarHeader{
         id : functionBarHeader
@@ -103,37 +101,4 @@ Item {
             id : tabstyle
         }
     }
-
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: container
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: container
-                opacity : 0
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation {
-                properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-            }
-            onRunningChanged :
-            {
-                if ( opacity == 0) {
-                    unloadcontent("Info.qml")
-                }
-            }
-
-        }
-    ]
-
 }

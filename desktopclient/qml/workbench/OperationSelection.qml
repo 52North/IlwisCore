@@ -9,18 +9,14 @@ import ApplicationFormExpressionParser 1.0
 import ".." as Base
 import "../Global.js" as Global
 
-Rectangle {
-    id : container
+WorkBenchShifter {
+    id : operationSelectionContainer
 
     property var currentAppForm : null
     property var operationid
 
-    color : Global.alternatecolor5
     clip : true
     state : "invisible"
-    opacity : 0
-
-    signal unloadcontent(string content)
 
     function newForm(metaid, title, url){
         operationid = metaid
@@ -65,7 +61,7 @@ Rectangle {
     }
     SplitView{
         width : parent.width
-        anchors.bottom: container.bottom
+        anchors.bottom: operationSelectionContainer.bottom
         anchors.top : searchBar.bottom;
         anchors.topMargin: 5
         orientation: Qt.Vertical
@@ -152,38 +148,5 @@ Rectangle {
             style: Base.TabStyle1{}
         }
     }
-
-    states: [
-        // This adds a second state to the container where the rectangle is farther to the right
-
-        State { name: "visible"
-
-            PropertyChanges {
-                target: container
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: container
-                opacity : 0
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation { properties: "opacity"; duration : 500 ; easing.type: Easing.Linear }
-            onRunningChanged :
-            {
-                if ( opacity == 0) {
-                    unloadcontent("OperationSelection.qml")
-                }
-            }
-        }
-
-
-    ]
 
 }
