@@ -61,9 +61,9 @@ void ObjectCreator::setActiveCreator(qint32 index)
 
 QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     if( parms["valuetype"].toString() == "thematic"){
-        QString expression = QString("script %1{format(stream,\"domain\")}=createthematicdomain(%2,%3,%4")
+        QString expression = QString("script %1{format(stream,\"domain\")}=createthematicdomain(\"%2\",%3,%4")
                 .arg(parms["name"].toString())
-                .arg(parms["items"].toDouble())
+                .arg(parms["items"].toString())
                 .arg(parms["strict"].toBool() ? "yes" : "no")
                 .arg(parms["description"].toString());
         if ( parms["parentdomain"].toString() != "")
