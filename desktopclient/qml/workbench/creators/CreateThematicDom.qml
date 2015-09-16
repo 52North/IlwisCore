@@ -36,7 +36,7 @@ Controls.DropableItem{
         Column {
 
             width : parent.width - 7
-            height : 440
+            height : 420
             y : 5
             spacing : 4
             x : 3
@@ -88,11 +88,13 @@ Controls.DropableItem{
                 }
             }
             Controls.TextEditLabelPair{
+                id : namevalue
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
             }
             Controls.TextAreaLabelPair{
+                id : descvalue
                 labelText: qsTr("Description")
                 width : parent.width
                 height : 40
@@ -112,7 +114,7 @@ Controls.DropableItem{
             Rectangle {
                 id : itemList
                 width : parent.width
-                height : 110
+                height : 90
                 border.width: 1
                 border.color : Global.edgecolor
                 radius : 3
@@ -143,27 +145,29 @@ Controls.DropableItem{
         }
         Item {
             width : parent.width
-            height : 30
+            height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
             Button {
                 id : applybutton
                 anchors.right: parent.right
                 anchors.rightMargin: 3
+                anchors.bottom: parent.bottom
                 width : 70
                 text : qsTr("Apply")
-                y : 10
                 onClicked: {
                     dropItem.state = "invisible"
-                    var itemstring
-                    for(var i = 0; i < domainitems.model; ++i){
-                        if (itemstring !== null)
-                            itemstring += "|"
-                        itemstring += domainitems.model[i];
-                    }
+                    var itemstring = ""
+                    if ( domainitems.model){
+                        for(var i = 0; i < domainitems.model.length; ++i){
+                            if (itemstring !== "")
+                                itemstring += "|"
+                            itemstring += domainitems.model[i];
+                        }
 
-                    var createInfo = {parentdomain : parentdomtxt.content, type : "itemdomain", valuetype : "thematic", name :  namevalue.content, items : itemstring, description : descvalue.content,strict : cbstrict.checked}
-                    var ilwisid = objectcreator.createObject(createInfo)
+                        var createInfo = {parentdomain : parentdomtxt.content, type : "itemdomain", valuetype : "thematic", name :  namevalue.content, items : itemstring, description : descvalue.content,strict : cbstrict.checked}
+                        var ilwisid = objectcreator.createObject(createInfo)
+                    }
                 }
 
             }
@@ -171,10 +175,10 @@ Controls.DropableItem{
                 id : closebutton
                 anchors.right: applybutton.left
                 anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
                 width : 70
                 text : qsTr("Close")
-                y : 10
-                onClicked: {
+                   onClicked: {
                     dropItem.state = "invisible"
                 }
             }
