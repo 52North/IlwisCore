@@ -328,6 +328,9 @@ public:
             Domain::setParent(dm);
             return ;
         }
+        if ( _range.isNull()) {
+            _range.reset(D::createRange());
+        }
         if ( !hasType(dm->ilwisType(), itITEMDOMAIN) ) {
             return;
         }
@@ -385,6 +388,19 @@ public:
 
     bool isOrdered() const{
         return false;
+    }
+
+    IlwisObject *clone() const{
+        auto *itemdom = new ItemDomain<D>();
+        copyTo(itemdom);
+        return itemdom;
+    }
+
+    void copyTo(IlwisObject *obj){
+        Domain::copyTo(obj);
+        ItemDomain<D> *itemdom = static_cast<ItemDomain<D> *>(obj);
+        itemdom->_range.reset( _range->clone());
+        itemdom->_theme = _theme;
     }
 
 protected:
