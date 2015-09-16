@@ -67,7 +67,18 @@ Ilwis::OperationImplementation::State CreateThematicDomain::prepare(ExecutionCon
             return sPREPAREFAILED;
         }
     }
-    _items = _expression.input<QString>(0).split("|");
+    QString items = _expression.input<QString>(0);
+    items.remove("\"");
+    if ( !_parentdomain.isValid()) // each item must contain name/code/description in the case of non parented domains
+        _items = items.split("|");
+    else { // in the case there is a parent domain only item names are expected as the rest of the info is already in the parent. still the list must be complete as the execute expects it; empty code/description are sufficient though
+        QStringList shortlist = items.split("|");
+        for(auto item : shortlist){
+            _items.push_back(item);
+            _items.push_back("");
+            _items.push_back("");
+        }
+    }
     if (_items.size() % 3 != 0) {
         kernel()->issues()->log(QString(TR("%1 item definition is not correct; do all items have name, code(may be empty), description (may be empty)?")).arg(_expression.input<QString>(3)));
         return sPREPAREFAILED;
