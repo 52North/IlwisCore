@@ -87,7 +87,6 @@ QVariant FeatureCoverage::coord2value(const Coordinate &crd, const QString &attr
         }
 
         if ( ok){
-             QVariant var;
             if ( attrname != "")
                 var = feature(attrname);
             else {
@@ -98,7 +97,6 @@ QVariant FeatureCoverage::coord2value(const Coordinate &crd, const QString &attr
                 }
                 var = vmap;
             }
-            return var;
             break;
         }
     }
