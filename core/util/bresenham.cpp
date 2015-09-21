@@ -24,6 +24,7 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
     std::vector<Pixel> result;
     Coordinate crd1 = *iter, crd2 ;
     quint32 subcount = 0;
+    const Size<> sz (_targetGrf->size());
     while( (++iter) != iterEnd ){
         if ( iter.nextSubGeometry()){
             crd1 = *iter;
@@ -31,7 +32,7 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
             ++subcount;
         }
         crd2 = *iter;
-        std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid, subcount);
+        std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid, sz, subcount);
         if (!_valid)
             return std::vector<Pixel>();
         std::copy(line.begin(), line.end(), std::back_inserter(result));
@@ -43,7 +44,11 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
     return result;
 }
 
-std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Coordinate& crdEnd, bool& valid, quint32 subcount) const
+bool Bresenham::inBounds(Pixel cur, const Size<> &sz) const {
+  return !( cur.x < 0 || cur.y < 0 || cur.x >= sz.xsize() || cur.y >= sz.ysize());
+}
+
+std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Coordinate& crdEnd, bool& valid, const Size <> & sz, quint32 subcount) const
 {
     valid = false;
     std::vector<Pixel> result;
@@ -52,44 +57,62 @@ std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Co
         return result;
     }
 
-    Pixeld pixStart = _targetGrf->coord2Pixel(crdStart);
-    Pixeld pixEnd = _targetGrf->coord2Pixel(crdEnd);
-    if ( !pixStart.isValid() || !pixEnd.isValid()){
+    Pixel begin = _targetGrf->coord2Pixel(crdStart);
+    Pixel end = _targetGrf->coord2Pixel(crdEnd);
+    if ( !begin.isValid() || !end.isValid()){
         ERROR2(ERR_INVALID_INIT_FOR_2, TR("coordinates"), "bresenham algorithm");
         return result;
     }
+
     valid = true;
-    bool steep = (fabs(pixEnd.y - pixStart.y) > fabs(pixEnd.x - pixStart.x));
-    if(steep)
-    {
-        std::swap(pixStart.x, pixStart.y);
-        std::swap(pixEnd.x, pixEnd.y);
-    }
 
-    if(pixStart.x > pixEnd.x)
-    {
-        std::swap(pixStart.x, pixEnd.x);
-        std::swap(pixStart.y, pixEnd.y);
-    }
+    if ( (begin.x - end.x) == 0) {   // angle = 90
+        if ( end.y < begin.y) {
+            Pixel temp = end;
+            end = begin;
+            begin = temp;
+        }
+        for(double y=0; y < end.y - begin.y; ++y) {
+            Pixel cur = Pixel( (long)floor((double)begin.x), (long)floor((double)begin.y + y), subcount);
 
-    double dx = pixEnd.x - pixStart.x;
-    double dy = fabs(pixEnd.y - pixStart.y);
-
-    double error = dx / 2.0;
-    int ystep = (pixStart.y < pixEnd.y) ? 1 : -1;
-    int y = (int)pixStart.y;
-
-    int maxX = (int)pixEnd.x;
-
-    for(int x=(int)pixStart.x; x<maxX; x++)
-    {
-        result.push_back(steep ? Pixel(y,x, subcount) : Pixel(x,y, subcount));
-        error -= dy;
-        if(error < 0)
-        {
-            y += ystep;
-            error += dx;
+            if ( inBounds(cur, sz))
+                result.push_back(cur);
         }
     }
+    else {
+        double tan = (double)(begin.y - end.y) / ( begin.x - end.x);
+        bool dir = end.y < begin.y;
+        if  (dir){
+            Pixel temp = end;
+            end = begin;
+            begin = temp;
+        }
+
+        Pixel prev;
+        Pixel cur;
+        if ( fabs(tan) <= 1) {
+            double xdir = end.x - begin.x > 0 ? 1 : -1;
+            for(double x=0; x <= fabs(end.x - begin.x); ++x) {
+                cur = Pixel( (long)floor((double)begin.x + xdir * x ), (long)floor((double)begin.y + tan * x  * xdir), subcount);\
+                if ( cur == prev)
+                    continue;
+                if ( inBounds(cur, sz))
+                    result.push_back(cur);
+                prev= cur;
+            }
+
+        } else {
+            double ydir = end.y - begin.y > 0 ? 1 : -1;
+            for(double y=0; y <= fabs(end.y - begin.y); ++y) {
+                cur = Pixel( (long)floor((double)begin.x + 1.0/tan * ydir * y), (long)floor((double)begin.y + y), subcount);
+                if ( cur == prev)
+                    continue;
+                if ( inBounds(cur, sz))
+                    result.push_back(cur);
+                prev = cur;
+            }
+        }
+    }
+
     return result;
 }
