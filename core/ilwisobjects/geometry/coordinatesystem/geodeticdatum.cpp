@@ -69,7 +69,7 @@ bool GeodeticDatum::isValid() const
 
 void GeodeticDatum::fromCode(const QString &gcode)
 {
-    QSqlQuery stmt(kernel()->database());
+    InternalDatabaseConnection stmt;
     QString query = QString("Select * from datum where code='%1'").arg(gcode);
 
     if (stmt.exec(query)) {

@@ -308,6 +308,18 @@ QString MasterCatalogModel::getName(const QString &id)
     return "";
 }
 
+QString MasterCatalogModel::getUrl(const QString &id)
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    if ( ok){
+        Resource res = mastercatalog()->id2Resource(objid);
+        if ( res.isValid())
+            return res.url().toString();
+    }
+    return "";
+}
+
 QString MasterCatalogModel::id2type(const QString &id) const
 {
     bool ok;
@@ -370,6 +382,20 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
 QQmlListProperty<IlwisObjectModel> MasterCatalogModel::selectedData()
 {
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
+}
+
+IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickItem *parent)
+{
+    bool ok;
+    Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
+    if (!ok)
+        return 0;
+
+    IlwisObjectModel *ioModel = new IlwisObjectModel(resource, parent);
+    if ( ioModel->isValid()){
+        return ioModel;
+    }
+    return 0;
 }
 
 void MasterCatalogModel::setSelectedObjects(const QString &objects)

@@ -148,8 +148,8 @@ void CommandHandler::addOperation(quint64 id, CreateOperation op)
 
 quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
 
-    QSqlQuery db(kernel()->database());
-    QSqlQuery db2(kernel()->database());
+    InternalDatabaseConnection db;
+    InternalDatabaseConnection db2;
     QString query = QString("select * from mastercatalog where resource like '%1%' ").arg(expr.metaUrl().toString());
     if (db.exec(query)) {
         while ( db.next()){

@@ -46,6 +46,7 @@ public:
     Q_INVOKABLE QString uniqueName();
     Q_INVOKABLE void exitUI();
     Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
+    Q_INVOKABLE QString moduleData() const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -70,6 +71,7 @@ public:
     WorkSpaceModel *currentWorkSpace() const;
     void setCurrentWorkSpace(WorkSpaceModel* cws);
     void initializeDataPane();
+
 
 signals:
     void activeSplitChanged();

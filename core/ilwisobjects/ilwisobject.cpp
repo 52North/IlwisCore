@@ -408,7 +408,7 @@ void IlwisObject::copyTo(IlwisObject *obj)
 }
 
 bool IlwisObject::isSystemObject() const {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select linkedtable from codes where code = '%1'").arg(code());
     return db.exec(query) &&  db.next();
 }

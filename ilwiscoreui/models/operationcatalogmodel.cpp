@@ -177,7 +177,7 @@ void OperationCatalogModel::gatherItems() {
             lst << location.toString();
             res.addProperty("locations", lst);
             res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itOPERATIONMETADATA));
+            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itSINGLEOPERATION));
             res.setDescription(descr);
             CatalogView view(res);
             view.prepare();
@@ -189,6 +189,7 @@ void OperationCatalogModel::gatherItems() {
     }
     CatalogModel::gatherItems();
     std::set<QString> keywordset;
+    std::map<QString, std::vector<OperationModel *>> operationsByKey;
     for(auto item : _currentItems){
         QString keywords = item->resource()["keyword"].toString();
         if ( !(item->resource().ilwisType() & itOPERATIONMETADATA))
@@ -202,14 +203,22 @@ void OperationCatalogModel::gatherItems() {
         for(auto keyword : parts){
             keywordset.insert(keyword);
         }
+        for(auto keyword : parts){
+            operationsByKey[keyword].push_back(new OperationModel(item->resource(), this));
+        }
     }
     _keywords.clear();
     for(auto keyword : keywordset)
         _keywords.push_back(keyword);
 
+
     qSort(_keywords.begin(), _keywords.end());
 
     _keywords.push_front(""); // all
+
+    for(auto operation : operationsByKey){
+        _operationsByKey.push_back(new OperationsByKeyModel(operation.first, operation.second, this));
+    }
 }
 
 QStringList OperationCatalogModel::keywords() const

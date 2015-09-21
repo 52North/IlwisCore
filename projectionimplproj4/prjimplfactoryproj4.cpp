@@ -25,7 +25,7 @@ using namespace Ilwis;
 
 ProjectionImplFactoryProj4::ProjectionImplFactoryProj4() : ProjectionFactory("ProjectionFactory","proj4")
 {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select * from projection");
     if ( db.exec(query)) {
         while ( db.next()) {

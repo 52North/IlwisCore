@@ -35,6 +35,7 @@
 #include "interval.h"
 #include "coloritem.h"
 #include "resource.h"
+#include "intervalrange.h"
 #include "geodeticdatum.h"
 #include "internalilwisobjectfactory.h"
 #include "ellipsoid.h"
@@ -116,7 +117,7 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
     Representation *rpr = new Representation(resource);
     if ( code != sUNDEF) {
 
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
         if (db.exec(query)) {
             if ( db.next()){
@@ -476,7 +477,7 @@ template<class DomainItemType, class RangeType> Domain* createItemDomain2(const 
     itemdom->fromInternal(rec);
     itemdom->name(resource.name());
     RangeType range ;
-    QSqlQuery itemstable(kernel()->database());
+    InternalDatabaseConnection itemstable;
     QString query = "Select * from domainitems where code='" + resource.code() + "'";
     if (itemstable.exec(query) ) {
         while ( itemstable.next()){
@@ -488,7 +489,7 @@ template<class DomainItemType, class RangeType> Domain* createItemDomain2(const 
     return itemdom;
 }
 
-Domain* InternalIlwisObjectFactory::createItemDomain(QSqlQuery& db, const IOOptions &options, const Resource& resource) const{
+Domain* InternalIlwisObjectFactory::createItemDomain(Ilwis::InternalDatabaseConnection &db, const IOOptions &options, const Resource& resource) const{
     QString query = QString("Select * from itemdomain where code='%1'").arg(resource.code());
     if (db.exec(query) && db.next()) {
         QSqlRecord rec = db.record();
@@ -500,7 +501,7 @@ Domain* InternalIlwisObjectFactory::createItemDomain(QSqlQuery& db, const IOOpti
     return 0;
 }
 
-NumericDomain* InternalIlwisObjectFactory::createNumericDomain(const QString& code, QSqlQuery& db, const IOOptions &options, const Resource& resource) const
+NumericDomain* InternalIlwisObjectFactory::createNumericDomain(const QString& code, InternalDatabaseConnection& db, const IOOptions &options, const Resource& resource) const
 {
     QString query = QString("Select * from numericdomain where code='%1'").arg(code);
     if (db.exec(query)) {
@@ -566,7 +567,7 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
     bool readonlyState = false;
     if ( code != sUNDEF) {
 
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         QString query = QString("Select linkedtable from codes where code = '%1'").arg(code);
         if (db.exec(query)) {
             if ( db.next()){
@@ -651,7 +652,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
         projParms = code.mid(6);
     }else if(!isUnknown){
         QString query = QString("select * from projectedcsy where code='%1'").arg(code);
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         if ( db.exec(query)) {
             if (db.next()) {
                 QSqlRecord rec = db.record();
@@ -692,16 +693,19 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
         return new Projection();
 
     if ( code != "") {
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         query = QString("Select * from projection where code = '%1'").arg(code);
         if ( db.exec(query)) {
             if (db.next()) {
                 QSqlRecord rec = db.record();
-                //if ( code == "longlat") // special case
-                //    return new NullProjection(resource);
+
                 const ProjectionFactory *factory =  kernel()->factory<ProjectionFactory>("ProjectionFactory",resource);
                 if ( factory) {
-                    ProjectionImplementation *projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
+                    ProjectionImplementation *projimpl = 0;
+                    if ( options.contains("proj4"))
+                        projimpl = static_cast<ProjectionImplementation *>(factory->create(options["proj4"].toString()));
+                    else
+                        projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
                     if (!projimpl) {
                         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("projection", resource.name()));
                         return 0;
@@ -744,7 +748,7 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource,
     if ( query == "")
         return 0;
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     if (db.exec(query) && db.next()) {
         GeodeticDatum *datum = new GeodeticDatum();
         QSqlRecord rec = db.record();
@@ -936,7 +940,7 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString 
         return new Ellipsoid(resource);
     }
 
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     if (db.exec(query) && db.next()) {
         Ellipsoid *ellipsoid = new Ellipsoid(resource);
         ellipsoid->fromInternal(db.record());

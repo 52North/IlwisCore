@@ -14,7 +14,7 @@ DataFormat::DataFormat()
 
 DataFormat::DataFormat(const QString &code, const QString connector)
 {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString stmt = QString("select %1 from dataformats where code='" + code + "'").arg(code);
     if ( connector != sUNDEF)
         stmt += " and connector='" + connector + "'";
@@ -41,7 +41,7 @@ DataFormat::DataFormat(const QString& connector, const QString &code, const QStr
 
 }
 
-void DataFormat::setProps(QSqlQuery& db, const QString &code){
+void DataFormat::setProps(InternalDatabaseConnection& db, const QString &code){
     _properties[fpCODE] = code;
     _properties[fpNAME] = set(db.value("name").toString());
     _properties[fpDESCRIPTION] = set(db.value("description").toString());
@@ -55,7 +55,7 @@ void DataFormat::setProps(QSqlQuery& db, const QString &code){
 
 std::multimap<QString, DataFormat> DataFormat::getSelectedBy(FormatProperties prop, const QString& selection){
     QString criterium;
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString stmt = QString("select * from dataformats where %1").arg(selection);
     std::multimap<QString, DataFormat> formats;
     if (db.exec(stmt)) {
@@ -88,7 +88,7 @@ std::multimap<QString, DataFormat> DataFormat::getSelectedBy(FormatProperties pr
 
 QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes types, QString connector, QString code){
     QVariantList result;
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString field= "";
     switch( prop){
         case fpCODE:
@@ -150,7 +150,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
         QString settings = file.readAll();
         QJsonDocument doc = QJsonDocument::fromJson(settings.toUtf8());
         if ( !doc.isNull()){
-            QSqlQuery sqlPublic(kernel()->database());
+            InternalDatabaseConnection sqlPublic;
             QJsonObject obj = doc.object();
             QJsonValue formats = obj.value("Formats");
             if ( formats.isArray()){
@@ -210,7 +210,7 @@ bool DataFormat::isValid() const
 
 bool DataFormat::store()
 {
-    QSqlQuery sqlPublic(kernel()->database());
+    InternalDatabaseConnection sqlPublic;
     IlwisTypes extTypes = _properties[fpDATATYPE].toULongLong() == itRASTER ? itCOORDSYSTEM | itGEOREF | itDOMAIN : itUNKNOWN;
     QString parms = QString("'%1','%2','%3','%4','file',%5,'%6','%7',%8").arg(_properties[fpCODE].toString(),
                                                                             _properties[fpNAME].toString(),

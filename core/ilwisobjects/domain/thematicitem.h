@@ -29,7 +29,7 @@ public:
      * @param parts the list of strings or the parts
      */
     ThematicItem(const QStringList &parts, quint32 rawvalue=iUNDEF);
-
+    ThematicItem(const QString itemname, const QString &itemcode, const QString &itemdesc);
     /**
      * Query for the description of this ThematicItem
      *
@@ -67,7 +67,7 @@ public:
     //@override
     IlwisTypes valueType() const;
 
-    static ThematicRange *createRange();
+    static ItemRange *createRange();
 private:
     QString _description;
     QString _code;

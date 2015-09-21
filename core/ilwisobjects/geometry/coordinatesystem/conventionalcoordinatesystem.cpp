@@ -274,7 +274,9 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
     if ( !prj.isValid()) {
          return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,"projection " + code );
     }
-    bool ok =_projection.prepare(prj.id());
+    IOOptions opt;
+    opt << IOOptions::Option("proj4",parms.mid(6));
+    bool ok =_projection.prepare(prj.id(),opt);
     _projection->setCoordinateSystem(this);
     if ( _projection.isValid())  {
         ok = _projection->prepare(parms);

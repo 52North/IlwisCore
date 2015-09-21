@@ -18,7 +18,7 @@
 #include "iooptions.h"
 #include "issuelogger.h"
 #include "module.h"
-#include "publicdatabase.h"
+#include "internaldatabaseconnection.h"
 #include "ilwisobject.h"
 #include "factory.h"
 
@@ -185,6 +185,7 @@ public:
     QNetworkAccessManager& network();
     void newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end);
     const Module* module(const QString& name) const;
+    const ModuleMap& modules() const;
 
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;

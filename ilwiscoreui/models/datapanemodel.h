@@ -65,7 +65,7 @@ public:
 
     SidePanelModel* rightSide() const;
     SidePanelModel* leftSide() const;
-    Q_INVOKABLE TabModel *createPanel(const QString &filter, const QString &outputtype, const QString &url);
+    Q_INVOKABLE TabModel *createPanel(const QString &filter, const QString &outputtype, const QString &url, const QString &side);
 
 signals:
     void onActiveSideChanged();

@@ -6,6 +6,7 @@ import ObjectCreator 1.0
 import IlwisObjectCreatorModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
+import "../.." as Base
 
 Controls.DropableItem{
     id : dropItem
@@ -22,68 +23,121 @@ Controls.DropableItem{
         width : parent.width
 
         Column {
+            id : maincolumn
             width : parent.width - 7
-            height : 210
+            height : 240
             y : 5
             spacing : 2
-            x : 3
+            x : 4
 
             EditorHeader{}
 
+            Item {
+                id : parentdom
+                width : parent.width
+                height : 20
+                Text{
+                    id : parentLabel
+                    width : 100
+                    height : 20
+                    text : qsTr("Parent domain")
+                }
+                function isNumericDomain(objid){
+                    var tp = mastercatalog.id2type(objid)
+                    return tp === "numericdomain";
+                }
+
+                Controls.TextFieldDropArea{
+                    id : parentdomtxt
+                    anchors.left : parentLabel.right
+                    anchors.right: parent.right
+                    anchors.rightMargin: 4
+                    height: 20
+
+                    canUse: parentdom.isNumericDomain
+                    readOnly: false
+                    asName: false
+                }
+            }
+
             Controls.TextEditLabelPair{
+                id : namevalue
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
             }
 
             Controls.TextEditLabelPair{
+                id : minvalue
                 labelText: qsTr("Minimum value")
                 labelWidth: 100
                 width : parent.width
                 regexvalidator: /^\d*(\.\d*)?$/
+                content : "0"
             }
 
             Controls.TextEditLabelPair{
+                id : maxvalue
                 labelText: qsTr("Maximum value")
                 labelWidth: 100
                 width : parent.width
                 regexvalidator: /^\d*(\.\d*)?$/
+                content : "100"
             }
 
             Controls.TextEditLabelPair{
+                id : resvalue
                 labelText: qsTr("Resolution")
                 labelWidth: 100
                 width : parent.width
                 regexvalidator: /^\d*(\.\d*)?$/
+                content : "1"
             }
             Controls.TextAreaLabelPair{
+                id : descvalue
                 labelText: qsTr("Description")
                 width : parent.width
                 height : 40
                 labelWidth: 100
             }
-            Item {
-                width : parent.width
-                height : 30
-                Button {
-                    id : applybutton
-                    anchors.right: parent.right
-                    width : 70
-                    text : qsTr("Apply")
-                    y : 10
+            CheckBox{
+                id : cbstrict
+                text: qsTr("Strict")
+                checked: true
+                enabled : parentdomtxt.content != ""
+                style : Base.CheckBoxStyle1{}
+            }
 
+        }
+        Item {
+            width : parent.width
+            height : 30
+            anchors.bottom : parent.bottom
+            anchors.bottomMargin: 8
+            anchors.rightMargin: 3
+            Button {
+                id : applybutton
+                anchors.right: parent.right
+                width : 70
+                text : qsTr("Apply")
+                y : 10
+                onClicked: {
+                    dropItem.state = "invisible"
+                    var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
+                    var ilwisid = objectcreator.createObject(createInfo)
                 }
-                Button {
-                    id : closebutton
-                    anchors.right: applybutton.left
-                    anchors.rightMargin: 5
-                    width : 70
-                    text : qsTr("Close")
-                    y : 10
 
-                    onClicked: {
-                        dropItem.state = "invisible"
-                    }
+            }
+            Button {
+                id : closebutton
+                anchors.right: applybutton.left
+                anchors.rightMargin: 5
+                width : 70
+                text : qsTr("Close")
+                y : 10
+
+                onClicked: {
+                    dropItem.state = "invisible"
                 }
             }
         }

@@ -8,8 +8,10 @@ NumericRange::NumericRange() : _min(1e300), _max(-1),_resolution(0) {
 
 }
 NumericRange::NumericRange(double mi, double ma, double step) : _resolution(step), _undefined(rUNDEF) {
-    min(mi);
-    max(ma);
+    if ( mi < ma){
+        _min = mi;
+        _max = ma;
+    }
 }
 NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
 {

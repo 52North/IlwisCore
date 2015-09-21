@@ -177,7 +177,7 @@ bool MasterCatalog::removeItems(const std::vector<Resource> &items){
             _knownHashes.erase(iter);
         }
         QString stmt = QString("DELETE FROM mastercatalog WHERE itemid = %1" ).arg(resource.id());
-        QSqlQuery db(kernel()->database());
+        InternalDatabaseConnection db;
         if(!db.exec(stmt)) {
             kernel()->issues()->logSql(db.lastError());
             return false;
@@ -199,7 +199,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
     kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
-    QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
+    InternalDatabaseConnection queryItem, queryProperties;
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
                   :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions \
@@ -241,7 +241,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
 
-    QSqlQuery queryItem(kernel()->database()), queryProperties(kernel()->database());
+    InternalDatabaseConnection queryItem, queryProperties;
 
     bool ok = queryItem.prepare("UPDATE mastercatalog set name=:name, "
                                 "code=:code, "
@@ -275,7 +275,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
         if (!resource.isValid())
            continue;
 
-        QSqlQuery deleteQuery(kernel()->database());
+        InternalDatabaseConnection deleteQuery;
         deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
         resource.store(queryItem, queryProperties);
     }
@@ -352,7 +352,7 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
     if ( extended){
         statement = setExtended(objectid, attribute,var);
     }
-    QSqlQuery sqlPublic(kernel()->database());
+    InternalDatabaseConnection sqlPublic;
     bool ok = sqlPublic.exec(statement);
     if (!ok) {
         kernel()->issues()->logSql(sqlPublic.lastError());
@@ -364,7 +364,7 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
    Locker<std::recursive_mutex> lock(_guard);
     QString query = QString("select type from mastercatalog where itemid = %1").arg(iid);
-    QSqlQuery results = kernel()->database().exec(query);
+    InternalDatabaseConnection results(query);
     if ( results.next()) {
         return results.value(0).toLongLong();
     }
@@ -538,7 +538,7 @@ std::vector<Resource> MasterCatalog::select(const QString &selection) const
     else
         query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid %2").arg(selection);
 
-    QSqlQuery results = kernel()->database().exec(query);
+    InternalDatabaseConnection results(query);
     std::vector<Resource> items;
     while( results.next()) {
         QSqlRecord rec = results.record();
@@ -563,7 +563,7 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
         query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.container = '%1' and mastercatalog.itemid = catalogitemproperties.itemid %2").arg(resource.toString(), rest);
 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
-    QSqlQuery results = kernel()->database().exec(query);
+    InternalDatabaseConnection results(query);
     std::vector<Resource> items;
     //qDebug() << "loading container "<< resource.toString();
    // kernel()->startClock();

@@ -234,6 +234,7 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     _shaders.enableAttributeArray(_vboNormal);
     _shaders.enableAttributeArray(_vboPosition);
     _shaders.enableAttributeArray(_vboColor);
+    //TODO: does setAttributeArray  have to be done each draw?
     _shaders.setAttributeArray(_vboPosition, _vertices.constData());
     _shaders.setAttributeArray(_vboNormal, _normals.constData());
     _shaders.setAttributeArray(_vboColor, GL_FLOAT, (void *)_colors.data(),4);

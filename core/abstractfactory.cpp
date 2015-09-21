@@ -1,6 +1,6 @@
 #include <QString>
 #include <QUrl>
-#include "ilwis.h"
+#include "kernel.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "identity.h"

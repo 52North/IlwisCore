@@ -25,7 +25,7 @@ ContinuousColorLookup::ContinuousColorLookup(const QString &definition)
 
 ContinuousColorLookup::ContinuousColorLookup(const IDomain &, const QString& rprCode)
 {
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select * from representation where code='%1'").arg(rprCode != "" ? rprCode : "pseudo");
     if (db.exec(query)) {
         if ( db.next()){

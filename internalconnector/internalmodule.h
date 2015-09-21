@@ -8,6 +8,8 @@
 #include "abstractfactory.h"
 
 namespace Ilwis {
+class InternalDatabaseConnectionQSqlQuery;
+
 namespace Internal {
 
 class InternalModule : public Module
@@ -25,8 +27,8 @@ public:
 
 private:
     bool createSpecialDomains();
-    bool createPcs(QSqlQuery &db);
-    bool createItems(QSqlQuery &db, const QString &sqltable, const QString &folder, IlwisTypes type, const QString internalname="");
+    bool createPcs(InternalDatabaseConnection &db);
+    bool createItems(InternalDatabaseConnection &db, const QString &sqltable, const QString &folder, IlwisTypes type, const QString internalname="");
 
     Q_PLUGIN_METADATA(IID "n52.ilwis.internalconnector" FILE  "internalconnector.json")
 

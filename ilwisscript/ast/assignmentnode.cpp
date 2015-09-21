@@ -64,6 +64,8 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::IFeatureCoverage>().as<IlwisObject>();
     if ( hasType(tp , itTABLE))
         return sym._var.value<Ilwis::ITable>().as<IlwisObject>();
+    if ( hasType(tp , itDOMAIN))
+        return sym._var.value<Ilwis::IDomain>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -144,6 +146,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                                 coldef.name(varName);
                             }
                         }
+                    } else if ( hasType(tp, itDOMAIN)){
+                        ok = copyObject<Domain>(sym, result,symbols);
                     }
 
                     if(!ok) {

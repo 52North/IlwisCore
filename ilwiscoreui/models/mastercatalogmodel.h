@@ -66,7 +66,9 @@ public:
     Q_INVOKABLE int activeTab() const;
     Q_INVOKABLE void setActiveTab(int value);
     Q_INVOKABLE QString getName(const QString& id);
+    Q_INVOKABLE QString getUrl(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
+    Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QQuickItem *parent);
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     Q_INVOKABLE bool hasSelectedObjects() const;

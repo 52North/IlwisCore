@@ -49,7 +49,7 @@ bool ConvertAttributeDomain::execute(const QString &targetDomainType, const QStr
 
 QStringList ConvertAttributeDomain::colorSchemes() const{
     QStringList names;
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select code from representation where representationtype = 'palettecolor'");
     if (db.exec(query)) {
         while ( db.next()){

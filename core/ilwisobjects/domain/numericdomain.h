@@ -80,6 +80,8 @@ public:
      * \param dm the new parentdomain
      */
     void setParent(const IDomain &dm);
+    IlwisObject *clone() ;
+    void copyTo(IlwisObject *obj);
 
     /*!
      * Determines the Standard name for this NumericDomain with the given parameters
@@ -113,5 +115,7 @@ private:
 typedef IlwisData<NumericDomain> INumericDomain;
 typedef IlwisData<NumericDomain> ITimeDomain;
 }
+
+Q_DECLARE_METATYPE(Ilwis::INumericDomain)
 
 #endif // VALUEDOMAINDATA_H

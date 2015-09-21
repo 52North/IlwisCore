@@ -274,7 +274,7 @@ void NamedIdentifierRange::add(DomainItem *thing)
 
 void NamedIdentifierRange::add(SPDomainItem item)
 {
-    if (item.isNull() || !item->isValid() || !hasType(item->valueType(),itNAMEDITEM)) {
+    if (item.isNull() || !item->isValid() || !hasType(item->valueType(),itTHEMATICITEM | itNAMEDITEM )) {
         return;
     }
 
@@ -410,7 +410,8 @@ Range *NamedIdentifierRange::clone() const
 
 NamedIdentifierRange &NamedIdentifierRange::operator <<(const QString &itemdef)
 {
-    this->add(new NamedIdentifier(itemdef));
+    if (!contains(itemdef))
+        this->add(new NamedIdentifier(itemdef));
 
     return *this;
 }

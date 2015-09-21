@@ -6,35 +6,34 @@ import UIContextModel 1.0
 import "../controls" as Controls
 import "../Global.js" as Global
 
-Item {
-    id : container
+WorkBenchShifter {
+    id : navigatorContainer
 
     property string startfolder
+    state : "invisble"
 
-    signal unloadcontent(string content)
     signal catalogChanged()
 
     clip : true
-    opacity : 0
 
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
     }
 
     Connections {
-         target: navCreatePanel
-         onCatalogChanged: { catalogChanged()}
-     }
+        target: navCreatePanel
+        onCatalogChanged: { catalogChanged()}
+    }
 
     Connections {
-         target: createCatalogForm
-         onBookmarkadded: { refreshBookmarks()}
-     }
+        target: createCatalogForm
+        onBookmarkadded: { refreshBookmarks()}
+    }
 
     Connections {
-         target: navCreatePanel
-         onBookmarksChanged: { refreshBookmarks()}
-     }
+        target: navCreatePanel
+        onBookmarksChanged: { refreshBookmarks()}
+    }
 
 
 
@@ -61,16 +60,24 @@ Item {
     }
     
     Action {
-        id : createCatalog
+        id : createCatalogLeft
         onTriggered : {
-            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl)
+            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "left")
+        }
+
+    }
+
+    Action {
+        id : createCatalogRight
+        onTriggered : {
+            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
         }
 
     }
 
     Item {
         id : buttonBar
-        height : 46
+        height : 65
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
@@ -82,32 +89,41 @@ Item {
             Controls.ActionButton{
                 id : addContainer
                 iconsource : "../images/openCS1.png"
-                buttontext : qsTr("Add\nBookmark")
-                width : 95
-                height : 40
+                buttontext : qsTr("     Add\n Bookmark")
+                width : 82
+                height : buttonBar.height - 3
                 checkable: true
                 checked : false
                 action : changeCatalogContent
-             }
+            }
             Controls.ActionButton{
                 id : removeBookmark
-                width : 95
-                height : 40
+                width : 82
+                height : buttonBar.height - 3
                 iconsource: "../images/deletebookmarkCS1.png"
-                buttontext :  "Delete\nBookmark"
+                buttontext :  qsTr("     Drop\n Bookmark");
                 action : deleteBookmark
 
             }
             Controls.ActionButton{
                 id : addCatalog
-                width : 95
-                height : 40
+                width : 82
+                height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
-                buttontext :  "New\nCatalog"
-                action : createCatalog
+                buttontext :  qsTr("New Catalog \n     Left")
+                action : createCatalogLeft
 
             }
-       }
+            Controls.ActionButton{
+                id : addCatalog2
+                width : 82
+                height : buttonBar.height - 3
+                iconsource: "../images/newcatalogCS1.png"
+                buttontext :  qsTr("New Catalog \n     Right")
+                action : createCatalogRight
+
+            }
+        }
     }
     CreateCatalogForm{
         id : createCatalogForm
@@ -132,42 +148,4 @@ Item {
         listalternate: "#FFFEF8"
 
     }
-
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: container
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: container
-                opacity : 0
-            }
-        }
-
-    ]
-      transitions: [
-          Transition {
-              NumberAnimation {
-                  properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-              }
-              onRunningChanged :
-              {
-                  if ( opacity == 0) {
-                    unloadcontent("Navigator.qml")
-                  }
-              }
-
-          }
-      ]
-
-      Component.onCompleted: {
-          state : "visible"
-          opacity : 1
-      }
-
 }

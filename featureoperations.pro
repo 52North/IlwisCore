@@ -18,12 +18,14 @@ DEFINES += FEATUREOPERATIONS_LIBRARY
 HEADERS += \
     featureoperations/featureoperationsmodule.h \
     featureoperations/gridding.h \
-    featureoperations/pointrastercrossing.h
+    featureoperations/pointrastercrossing.h \
+    featureoperations/transformcoordinates.h
 
 SOURCES += \
     featureoperations/featureoperationsmodule.cpp \
     featureoperations/gridding.cpp \
-    featureoperations/pointrastercrossing.cpp
+    featureoperations/pointrastercrossing.cpp \
+    featureoperations/transformcoordinates.cpp
 
 OTHER_FILES += \ 
     featureoperations/featureoperations.json

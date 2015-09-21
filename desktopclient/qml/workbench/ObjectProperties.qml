@@ -6,10 +6,8 @@ import IlwisObjectModel 1.0
 import CatalogModel 1.0
 import "propertyform" as PropertyForm
 
-Rectangle {
+WorkBenchShifter {
     id : propertyFormContainer
-
-    signal unloadcontent(string content)
 
     function getSelectedData() {
         if ( mastercatalog.hasSelectedObjects()){
@@ -19,11 +17,9 @@ Rectangle {
         }
     }
 
-    color : "white"
     clip : true
     state : "invisible"
     height : 500
-    opacity : 1
 
     FunctionBarHeader{
         id : functionBar

@@ -11,38 +11,37 @@ Rectangle {
 
     property string lastPage
     property int rightMargin : 18 // creates space for potential scrollbars
+    property var currentpage : null
 
-     function transitionInfoPane(newpagename) {
-          if ( newpagename !== lastPage) {
-            if ( lastPage == "")
-                workbench.state = "visible"
-            else if ( workbench.state == "invisible")
-                workbench.state = "visible"
+     function transitionInfoPane(newpage) {
+         var oldpage = currentpage
+         if ( newpage === "navigator")
+             currentpage = navigator
+         if ( newpage === "workspaces")
+             currentpage = workspaces
+         if ( newpage === "tranquilizers")
+             currentpage = tranquilizers
+         if ( newpage === "operationselection")
+             currentpage = operationselection
+         if ( newpage === "objectcreation")
+             currentpage = objectcreation
+         if ( newpage === "messages")
+             currentpage = messages
+         if ( newpage === "info")
+             currentpage = info
+         if ( newpage === "objectproperties")
+             currentpage = objectproperties
+         if ( currentpage === oldpage ){
+             oldpage.state = oldpage.state === "invisible" ? "visible" : "invisible"
+         }
+         if ( currentpage !== oldpage){
+             currentpage.state = "visible"
+             if ( oldpage)
+                oldpage.state = "invisible"
+         }
+         workBench.state = currentpage.state
+     }
 
-            var currentloader = infoPContent1.source.toString().indexOf(lastPage) !== -1 ? infoPContent1 : infoPContent2;
-            var newloader = infoPContent2.source.toString().indexOf(lastPage) !== -1 ? infoPContent2 : infoPContent1;
-
-            currentloader.item.state = "invisible"
-
-            newloader.source = newpagename
-            newloader.item.state = "visible"
-            newloader.enabled = true
-            lastPage = newpagename;
-            currentloader.z = 0
-            newloader.z = 1
-        }else {
-            workbench.state = workbench.state === "visible" ? "invisible" : "visible"
-        }
-
-    }
-
-    function unloadcontent(pagename) {
-        if (infoPContent1.source.toString().indexOf(pagename) != -1) {
-            infoPContent1.enabled = false
-        } else  if (infoPContent2.source.toString().indexOf(pagename) != -1) {
-            infoPContent2.enabled = false
-        }
-    }
 
     function currentPane() {
         var currentloader = infoPContent1.source.toString().indexOf(lastPage) !== -1 ? infoPContent1 : infoPContent2
@@ -51,32 +50,16 @@ Rectangle {
 
     width : defaultFunctionBarWidth
     color :  Global.alternatecolor2
-    Loader {
-        id : infoPContent1
-        y : 5
-        x : 5
-        width: workbench.width - rightMargin
-        height : parent.height - 15
-    }
 
-    Loader {
-        id : infoPContent2
-        y : 5
-        x : 5
-        width: workbench.width - rightMargin
-        height : parent.height - 15
+    Navigator{ id : navigator}
+    Workspaces{ id : workspaces }
+    Tranquilizers{ id : tranquilizers}
+    OperationSelection{ id : operationselection}
+    ObjectCreation{ id : objectcreation}
+    MessagesPane{ id : messages}
+    Info{id : info}
+    ObjectProperties{ id : objectproperties}
 
-    }
-
-    Connections {
-         target: infoPContent1.item
-         onUnloadcontent: unloadcontent(content)
-     }
-
-    Connections {
-         target: infoPContent2.item
-         onUnloadcontent: unloadcontent(content)
-     }
 
     states: [
         State { name: "visible"
@@ -97,12 +80,7 @@ Rectangle {
     ]
     transitions: [
         Transition {
-            NumberAnimation { properties: "width"; duration : 750 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "width"; duration : 500 ; easing.type: Easing.InOutCubic }
         }
     ]
-    Component.onCompleted: {
-        infoPContent1.source = "Navigator.qml"
-    }
-
-
 }

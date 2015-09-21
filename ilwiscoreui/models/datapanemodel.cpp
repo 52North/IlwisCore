@@ -89,19 +89,25 @@ SidePanelModel *DataPaneModel::leftSide() const
     return _leftside;
 }
 
-TabModel *DataPaneModel::createPanel(const QString &filter, const QString &outputtype, const QString& url)
+TabModel *DataPaneModel::createPanel(const QString &filter, const QString &outputtype, const QString& url, const QString& side)
 {
-    bool allNew = _leftside->tabCount() == 0 && _rightside->tabCount() == 0;
-    SidePanelModel *side = leftActive() && !allNew ? _rightside : _leftside; // in the inital situation the leftpane is always choosen
+    SidePanelModel *sidepanel;
+    if ( side == "other"){
+        sidepanel = leftActive() ? _rightside : _leftside;
+    }else
+        sidepanel = (side == "right") ? _rightside : _leftside; // in the inital situation the leftpane is always choosen
 
-    TabModel *tab =side->createPanel(10000,filter,outputtype, url);
+    TabModel *tab =sidepanel->createPanel(10000,filter,outputtype, url);
     QObject *pane = uicontext()->rootObject()->findChild<QObject *>("datapane_mainui");
     if (tab && pane){
         QVariant w = pane->property("width");
-        if ( side->width() < w.toInt()){
-            side->width(w.toInt()/2);
+        if ( sidepanel->width() < w.toInt()){
+            sidepanel->width(w.toInt()/2);
         }
-        select(!leftActive() || allNew,side->tabCount() - 1, true); //in the initial situation always the left pane will be choosen else it will flip to the other pane
+        if ( side == "other"){
+            select(!leftActive(),sidepanel->tabCount() - 1, true);
+        }else
+            select(side == "left",sidepanel->tabCount() - 1, true); //in the initial situation always the left pane will be choosen else it will flip to the other pane
     }
 
     return tab;

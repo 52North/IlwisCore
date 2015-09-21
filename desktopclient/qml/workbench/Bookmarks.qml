@@ -47,7 +47,7 @@ Item {
             y : 5
             font.bold : true
 
-            text : "Bookmarked Catalogs"
+            text : qsTr("Bookmarked Catalogs")
         }
     }
 

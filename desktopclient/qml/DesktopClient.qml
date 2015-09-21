@@ -26,9 +26,9 @@ ApplicationWindow {
     property int defaultFunctionBarWidth : 350
     property int activeCatalog: 0
 
-    function newCatalog(filter, outputtype, url){
+    function newCatalog(filter, outputtype, url, side){
 
-         mainSplit.newCatalog(filter, outputtype, url)
+         mainSplit.newCatalog(filter, outputtype, url, side)
      }
 
      function changeCatalog(filter, outputtype, url){
@@ -156,8 +156,8 @@ ApplicationWindow {
                 func : mainSplit.changeWidthSplitter
             }
 
-            function newCatalog(filter, outputtype, url){
-                dataPanel.newCatalog(filter, outputtype, url)
+            function newCatalog(filter, outputtype, url,side){
+                dataPanel.newCatalog(filter, outputtype, url,side)
             }
 
             function changeCatalog(filter, outputtype, url){

@@ -273,11 +273,19 @@ void UIContextModel::initializeDataPane()
      if ( datapane ){
          QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
          QString filter="container='" + urlWorkingCatalog.toString() + "'";
-         bool ok = QMetaObject::invokeMethod(datapane,"newCatalog",Q_ARG(QVariant, filter),Q_ARG(QVariant,"catalog"),Q_ARG(QVariant,urlWorkingCatalog.toString()));
+         bool ok = QMetaObject::invokeMethod(datapane,"newCatalog",Q_ARG(QVariant, filter),Q_ARG(QVariant,"catalog"),Q_ARG(QVariant,urlWorkingCatalog.toString()),Q_ARG(QVariant,"left"));
          if ( !ok)
              qDebug() << "failed";
      }
 
+}
+
+QString UIContextModel::moduleData() const{
+    QString modules;
+    for(auto module : Ilwis::kernel()->modules()){
+        modules+=module->getNameAndVersion() + "\n";
+    }
+    return modules;
 }
 
 

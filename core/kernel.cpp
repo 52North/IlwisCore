@@ -109,7 +109,7 @@ void Kernel::init() {
     _dbPublic.setDatabaseName(":memory:");
     _dbPublic.open();
 
-    QSqlQuery stmt(_dbPublic);
+    InternalDatabaseConnection stmt;
     stmt.exec("PRAGMA page_size = 4096");
     stmt.exec("PRAGMA cache_size = 16384");
     stmt.exec("PRAGMA temp_store = MEMORY");
@@ -274,6 +274,11 @@ const Module *Kernel::module(const QString &name) const
         return iter.value();
     }
     return 0;
+}
+
+const ModuleMap &Kernel::modules() const
+{
+    return _modules;
 }
 
 

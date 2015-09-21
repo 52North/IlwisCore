@@ -6,6 +6,7 @@
 #include "ilwisoperation.h"
 #include "itemdomain.h"
 #include "interval.h"
+#include "intervalrange.h"
 #include "rasterslicing.h"
 
 using namespace Ilwis;

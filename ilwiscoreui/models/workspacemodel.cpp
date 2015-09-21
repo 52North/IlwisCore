@@ -37,7 +37,7 @@ void WorkSpaceModel::addItems(const QString& ids)
     };
 
 
-    QSqlQuery stmt(Ilwis::kernel()->database());
+    Ilwis::InternalDatabaseConnection stmt;
     int count = 0;
     if (_view.fixedItemCount() == 0) {
         QString query = QString("Insert into workspaces (workspaceid) values(%1)").arg(_view.id());

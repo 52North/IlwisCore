@@ -24,7 +24,7 @@ PaletteColorLookUp::PaletteColorLookUp(const QString &definition){
 PaletteColorLookUp::PaletteColorLookUp(const IDomain &dom, const QString &rprCode)
 {
     _cyclic = hasType(dom->valueType(), itINDEXEDITEM | itNAMEDITEM | itSTRING);
-    QSqlQuery db(kernel()->database());
+    InternalDatabaseConnection db;
     QString query = QString("Select * from representation where code='%1'").arg(rprCode != "" ? rprCode : "primarycolors" );
     if (db.exec(query)) {
         if ( db.next()){

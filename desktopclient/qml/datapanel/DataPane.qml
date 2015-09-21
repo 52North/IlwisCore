@@ -58,9 +58,11 @@ Rectangle {
         }
     }
 
-    function newCatalog(filter,outputtype, url){
-        datapanesplit.newPanel(filter, outputtype, url)
+    function newCatalog(filter,outputtype, url,side){
+        datapanesplit.newPanel(filter, outputtype, url,side)
     }
+
+
 
     function setCatalogByIndex(currentTab, tabindex){
         currentTab.currentIndex = tabindex
@@ -74,10 +76,6 @@ Rectangle {
     function changeCatalog(filter, outputtype, url){
         datapanesplit.changePanel(filter,outputtype, url)
     }
-
-//    Loader {
-//        id : mapWindow
-//    }
 
     SplitView {
         id : datapanesplit
@@ -107,7 +105,7 @@ Rectangle {
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
             if ( tabview){
-                var removeIndex = tabview.currentIndex + 1
+                tabview.removeTab(tabview.currentIndex)
                 var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
                 if ( newPanel){
                     var component = Qt.createComponent(newPanel.componentUrl)
@@ -115,10 +113,13 @@ Rectangle {
                         mastercatalog.currentUrl = url
                         var data= newPanel.displayName
                         var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
-                        if ( insertetTab){
+                        insertetTab.active = true
+                        if ( insertetTab && insertetTab.item){
+                            var ind = tabview.currentIndex
+                            tabview.currentIndex = -1;
+                            tabview.currentIndex = ind; // forces a reset of the index and thus a redraw
                             insertetTab.item.addDataSource(filter, url, outputtype)
                             insertetTab.item.tabmodel = newPanel
-                            tabview.removeTab(removeIndex)
                             datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
                         }
                     }
@@ -126,9 +127,9 @@ Rectangle {
             }
         }
 
-        function newPanel(filter,outputtype, url) {
+        function newPanel(filter,outputtype, url,side) {
             var allNew = datapane.leftSide.tabCount === 0 && datapane.rightSide.tabCount === 0
-            var newPanel = datapane.createPanel(filter,outputtype, url)
+            var newPanel = datapane.createPanel(filter,outputtype, url, side)
             if ( !newPanel)
                 return
             var component = Qt.createComponent(newPanel.componentUrl)
