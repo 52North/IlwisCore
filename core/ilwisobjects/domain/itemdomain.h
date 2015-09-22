@@ -390,7 +390,7 @@ public:
         return false;
     }
 
-    IlwisObject *clone() const{
+    IlwisObject *clone(){
         auto *itemdom = new ItemDomain<D>();
         copyTo(itemdom);
         return itemdom;
@@ -399,7 +399,7 @@ public:
     void copyTo(IlwisObject *obj){
         Domain::copyTo(obj);
         ItemDomain<D> *itemdom = static_cast<ItemDomain<D> *>(obj);
-        itemdom->_range.reset( _range->clone());
+        itemdom->_range.reset( static_cast<ItemRange *>(_range->clone()));
         itemdom->_theme = _theme;
     }
 
