@@ -13,7 +13,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators.append(new IlwisObjectCreatorModel("Workflow",itWORKFLOW,"CreateWorkflow.qml", 400, this));
     _creators.append(new IlwisObjectCreatorModel("Numeric Domain",itNUMERICDOMAIN,"CreateNumDom.qml", 250, this));
-    _creators.append(new IlwisObjectCreatorModel("Thematic Domain",itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 480, this));
+    _creators.append(new IlwisObjectCreatorModel("Thematic Domain",itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this));
     _creators.append(new IlwisObjectCreatorModel("Identifier Domain",itITEMDOMAIN | itIDENTIFIERITEM,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Indexed Domain",itITEMDOMAIN | itINDEXEDITEM,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Interval Domain",itITEMDOMAIN | itNUMERICITEM,"CreateNumDom.qml", 200, this));
@@ -61,6 +61,10 @@ void ObjectCreator::setActiveCreator(qint32 index)
 
 QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     if( parms["valuetype"].toString() == "thematic"){
+        if ( parms["name"].toString() == ""){
+            kernel()->issues()->log(TR("Domain must have a valid name"));
+            return QString::number(i64UNDEF);
+        }
         QString expression = QString("script %1{format(stream,\"domain\")}=createthematicdomain(\"%2\",%3,%4")
                 .arg(parms["name"].toString())
                 .arg(parms["items"].toString())
@@ -82,6 +86,10 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
 
 QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
 {
+    if ( parms["name"].toString() == ""){
+        kernel()->issues()->log(TR("Domain must have a valid name"));
+        return QString::number(i64UNDEF);
+    }
 
     QString expression = QString("script %1{format(stream,\"domain\")}=createnumericdomain(%2,%3,%4,%5,%6")
             .arg(parms["name"].toString())
