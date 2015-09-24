@@ -25,7 +25,7 @@ WorkBenchShifter {
     Create.ObjectList{
         id : createableObjects
         width : parent.width
-        height : 200
+        height : 150
         anchors.top : functionBar.bottom
         anchors.topMargin: 5
     }
