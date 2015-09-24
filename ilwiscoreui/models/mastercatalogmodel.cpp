@@ -209,31 +209,33 @@ void MasterCatalogModel::scanBookmarks()
         QString query = QString("users/" + Ilwis::context()->currentUser() + "/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
         QUrl location(ilwisconfig(query + "/url-0", QString("")));
-        QString descr = ilwisconfig(query + "/description", QString(""));
-        Resource res(location, itCATALOGVIEW ) ;
-        if ( label != "")
-            res.name(label,false);
-        QStringList lst;
-        lst << location.toString();
-        res.addProperty("locations", lst);
-        res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-        res.addProperty("filter","");
-        res.setDescription(descr);
+        if ( location.isValid()) {
+            QString descr = ilwisconfig(query + "/description", QString(""));
+            Resource res(location, itCATALOGVIEW ) ;
+            if ( label != "")
+                res.name(label,false);
+            QStringList lst;
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+            res.addProperty("filter","");
+            res.setDescription(descr);
 
-        if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
-            CatalogView cview(res);
-            CatalogModel *model = 0;
-            if ( location.toString().indexOf("ilwis://operations") == 0){
-                model = new OperationCatalogModel(this);
-            }else
-                model = new CatalogModel(this);
-            _bookmarks.push_back(model);
-            _bookmarks.back()->setView(cview);
+            if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
+                CatalogView cview(res);
+                CatalogModel *model = 0;
+                if ( location.toString().indexOf("ilwis://operations") == 0){
+                    model = new OperationCatalogModel(this);
+                }else
+                    model = new CatalogModel(this);
+                _bookmarks.push_back(model);
+                _bookmarks.back()->setView(cview);
 
-        }else{
-            catalogResources.push_back(res);
+            }else{
+                catalogResources.push_back(res);
+            }
+            ++count;
         }
-        ++count;
     }
     count = 0;
     for(auto bookmark : _bookmarks){
