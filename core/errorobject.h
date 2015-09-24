@@ -20,7 +20,7 @@ public:
      * \brief ErrorObject constructor
      * \param message A string message describing the error that occured
      */
-    ErrorObject(const QString& message);
+    ErrorObject(const QString& message, bool log = true);
     ~ErrorObject() throw();
     /*!
      * \brief message
@@ -71,7 +71,7 @@ public:
 
 class KERNELSHARED_EXPORT OutOfMemoryError : public ErrorObject {
 public:
-    explicit OutOfMemoryError(const QString& message);
+    explicit OutOfMemoryError(const QString& message, bool log = true);
     const char* what() const throw();
 };
 
