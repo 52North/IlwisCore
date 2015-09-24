@@ -113,7 +113,7 @@ Rectangle {
                 var path = pathModel.get(currentIndex)
                 if ( path !== null && typeof path != 'undefined'){
                     folderModel.folder = "file:///" + path.folderid
-                    var filter = "resource='" + folderModel.folder + "'"
+                    var filter = "container='" + folderModel.folder + "'"
                     mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
                 }
             }
@@ -133,7 +133,7 @@ Rectangle {
             onTriggered :{
                 currentFolder = "file:///"+ pathText.editText
                 folderModel.folder = currentFolder
-                var filter = "resource='" + folderModel.folder + "'"
+                var filter = "container='" + folderModel.folder + "'"
                 mainSplit.changeCatalog(filter,"catalog", currentFolder)
             }
         }
