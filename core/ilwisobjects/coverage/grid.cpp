@@ -123,8 +123,8 @@ Grid::Grid(int maxlines) : _inMemoryIndex(iUNDEF), _memUsed(0),_blocksPerBand(0)
 
     if ( _maxLines == iUNDEF){
          _maxLines = context()->configurationRef()("system-settings/grid-blocksize",500);
-         if ( _maxLines * size().xsize() * 8 > 1e8){
-             _maxLines = 1e8 / (size().xsize() * 8);
+         if ( _maxLines > 1 && (_maxLines * size().xsize() * 8 > 1e7)) {
+             _maxLines = max(1, 1e7 / (size().xsize() * 8));
          }
     }
 }
@@ -298,8 +298,8 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
     if ( _size.zsize() == 0)
         _size.zsize(1);
 
-    if ( _maxLines * sz.xsize() * 8 > 1e8){
-        _maxLines = 1e8 / (sz.xsize() * 8);
+    if ( _maxLines > 1 && (_maxLines * sz.xsize() * 8 > 1e7)) {
+        _maxLines = max(1, 1e7 / (sz.xsize() * 8));
     }
 
     quint64 bytesNeeded = _size.linearSize() * sizeof(double);
@@ -360,10 +360,13 @@ inline bool Grid::update(quint32 block, bool creation) {
         }
         } catch (const OutOfMemoryError& err){ // probably exceeded memory cappacity, unload the blocks and try again.
             unload(false);
-            if(!_blocks[block]->loadFromCache()){
-                return false;
+            try {
+                if(!_blocks[block]->loadFromCache()){
+                    return false;
+                }
+            } catch (const OutOfMemoryError& err){
+                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), true); // extreme memory-stress condition; this should never happen; the purpose of this catch-inside-catch and re-throw is to log the error in the issuelogger, so that we notice if it ever occurs
             }
-
         }
     }
     if ( creation || _cache.size() == 0) { // at create time we want to preserver the original order in memory
