@@ -12,12 +12,30 @@ Controls.DropableItem{
     id : dropItem
     width : 250
     height : 0
+
     clip:true
 
-    function addDomainItems(items){
-        console.debug(items.length)
+    function addDomainItems(items,clear){
+        if ( clear)
+           container.itemArray = []
         for(var i = 0; i < items.length; ++i){
-            container.itemArray.push(items[i])
+            if ( items[i].name === "")
+                continue;
+            var duplicate = false
+            for ( var j = 0; j < container.itemArray.length; ++j){
+                // double names allowed
+                if( items[i].name === container.itemArray[j].name){
+                    duplicate = true
+                }
+                // no double codes allowed unless its empty
+                if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
+                    duplicate = true
+                }
+                if ( duplicate)
+                    break
+            }
+            if ( !duplicate)
+                container.itemArray.push(items[i])
         }
         domainitems.model = container.itemArray
     }
@@ -25,7 +43,7 @@ Controls.DropableItem{
 
     Rectangle {
         id : container
-        height: parent.height
+        height: 520
         width : parent.width
         border.width : 1
         border.color : Global.edgecolor
@@ -36,7 +54,7 @@ Controls.DropableItem{
         Column {
 
             width : parent.width - 7
-            height : 420
+            height : parent.height
             y : 5
             spacing : 4
             x : 3
@@ -114,27 +132,22 @@ Controls.DropableItem{
             Rectangle {
                 id : itemList
                 width : parent.width
-                height : 90
+                height : 120
                 border.width: 1
                 border.color : Global.edgecolor
                 radius : 3
-                ScrollView{
-                    anchors.fill : parent
-                    ListView {
-                        id : domainitems
-                        anchors.fill : parent
-                        delegate: Component {
-                            Text{
-                                x : 4
-                                text : modelData
-                            }
-                        }
-                    }
+
+                ItemTable {
+                    id : domainitems
+                    width : parent.width
+                    height : parent.height
                 }
+
             }
             Loader {
                 id : itemloader
                 width : parent.width
+                source : "AddNewThematicItem.qml"
                 height : 170
                 onSourceChanged: {
                     if ( item && container.parentDomain !== undefined){
@@ -162,7 +175,11 @@ Controls.DropableItem{
                         for(var i = 0; i < domainitems.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += domainitems.model[i];
+                            itemstring += domainitems.model[i].name;
+                            if (  parentdomtxt.content == ""){
+                                itemstring += "|"+ domainitems.model[i].code;
+                                itemstring += "|"+ domainitems.model[i].description;
+                            }
                         }
 
                         var createInfo = {parentdomain : parentdomtxt.content, type : "itemdomain", valuetype : "thematic", name :  namevalue.content, items : itemstring, description : descvalue.content,strict : cbstrict.checked}
