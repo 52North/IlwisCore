@@ -82,7 +82,7 @@ Rectangle {
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
             folderModel.folder = "file:///"+ drivePath
-            var filter = "resource='" + folderModel.folder + "'"
+            var filter = "container='" + folderModel.folder + "'"
             mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
         }
     }
@@ -176,7 +176,7 @@ Rectangle {
                 MouseArea{
                     anchors.fill:  parent
                     hoverEnabled: true
-                    onClicked: {
+                    onDoubleClicked: {
                         //fileFolders.currentIndex = index;
                         var path = folderModel.get(index,"filePath")
                         path = path2pathView(path)
