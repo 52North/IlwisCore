@@ -199,8 +199,9 @@ void MasterCatalogModel::setDefaultView()
 
 void MasterCatalogModel::scanBookmarks()
 {
-    QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString("0"));
-    _bookmarkids = ids.split("|");
+    QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString(sUNDEF));
+    if ( ids != sUNDEF)
+        _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
     _currentUrl = urlWorkingCatalog.toString();
     int count = 3;
@@ -569,11 +570,11 @@ WorkSpaceModel *MasterCatalogModel::workspace(const QString &name)
 
 
 void MasterCatalogModel::deleteBookmark(quint32 index){
-    if ( index < _bookmarks.size() && index > 1)  { // can not delete internal and system catalog
+    if ( index < _bookmarks.size() && index > 1)  { // can not delete internal , system catalog, operations
         _bookmarks.erase(_bookmarks.begin() + index);
-        QString key = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + _bookmarkids[index - 2];
+        QString key = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + _bookmarkids[index - 3];
         context()->configurationRef().eraseChildren(key);
-        _bookmarkids.erase(_bookmarkids.begin() + index - 2);
+        _bookmarkids.erase(_bookmarkids.begin() + index - 3);
         if ( _bookmarkids.size() > 0)
             _selectedBookmarkIndex = 2;
 
@@ -583,13 +584,17 @@ void MasterCatalogModel::deleteBookmark(quint32 index){
 }
 
 void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QString& description){
+    if ( _selectedBookmarkIndex < 3)
+        return;
+
     CatalogModel *model = _bookmarks[_selectedBookmarkIndex];
     if ( model ){
         model->setDisplayName(displayName);
         model->resourceRef().setDescription(description); 
-        QString key = "users/user-0/data-catalog-" + _bookmarkids[_selectedBookmarkIndex];
+        QString key = "users/user-0/data-catalog-" + _bookmarkids[_selectedBookmarkIndex - 3];
         context()->configurationRef().putValue(key + "/label", displayName);
         context()->configurationRef().putValue(key + "/description", description);
+        emit bookmarksChanged();
     }
 }
 
