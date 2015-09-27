@@ -10,6 +10,7 @@ import "Global.js" as Global
 TabViewStyle {
 
     signal expandToWindow(int panelside, int tabindex);
+    signal fullSize()
 
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
@@ -39,6 +40,9 @@ TabViewStyle {
                 onClicked : {
                     currentIndex = styleData.index
                     datapane.select(side == 1, currentIndex, true)
+                }
+                onDoubleClicked: {
+                    fullSize()
                 }
             }
         }
