@@ -48,7 +48,8 @@ HEADERS += \
     baseoperations/math/unarymathrasterandnumber.h \
     baseoperations/data/convertcolumndomain.h \
     baseoperations/creators/createnumericdomain.h \
-    baseoperations/creators/createthematicdomain.h
+    baseoperations/creators/createthematicdomain.h \
+    baseoperations/creators/createidentifierdomain.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -82,7 +83,8 @@ SOURCES += \
     baseoperations/math/unarymathrasterandnumber.cpp \
     baseoperations/data/convertcolumndomain.cpp \
     baseoperations/creators/createnumericdomain.cpp \
-    baseoperations/creators/createthematicdomain.cpp
+    baseoperations/creators/createthematicdomain.cpp \
+    baseoperations/creators/createidentifierdomain.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
