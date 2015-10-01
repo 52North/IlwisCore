@@ -50,7 +50,8 @@ HEADERS += \
     baseoperations/creators/createnumericdomain.h \
     baseoperations/creators/createthematicdomain.h \
     baseoperations/creators/createidentifierdomain.h \
-    baseoperations/creators/createintervaldomain.h
+    baseoperations/creators/createintervaldomain.h \
+    baseoperations/creators/createpalettedomain.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -86,7 +87,8 @@ SOURCES += \
     baseoperations/creators/createnumericdomain.cpp \
     baseoperations/creators/createthematicdomain.cpp \
     baseoperations/creators/createidentifierdomain.cpp \
-    baseoperations/creators/createintervaldomain.cpp
+    baseoperations/creators/createintervaldomain.cpp \
+    baseoperations/creators/createpalettedomain.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

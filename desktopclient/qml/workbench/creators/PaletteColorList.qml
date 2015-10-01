@@ -6,46 +6,35 @@ import "../../Global.js" as Global
 import "../../controls" as Controls
 import "../.." as Base
 
-TableView {
+GridView {
     id : itemtable
     width : parent.width
-    height : parent.height - 45
-    selectionMode : SelectionMode.ExtendedSelection
+    height : 100
+    cellHeight : 16
+    cellWidth : 55
+    flow : GridView.FlowTopToBottom
 
-    TableViewColumn{
-        title : qsTr("Item color");
-        role : "color"
-        width : 80
-        delegate: Component{
-            Rectangle {
-                width : 30
-                height : 14
-                color : styleData.value
-            }
-        }
-
-    }
-
-    TableViewColumn{
-        title : qsTr("Item name");
-        role : "name"
-        width : 150
-        delegate: Component{
+    delegate: Component{
+        Row {
+            width : 55
+            height : 16
             Text {
-                text: styleData.value
-                verticalAlignment:Text.AlignVCenter
-                font.pixelSize: 10
-                elide: Text.ElideMiddle
-                x : 4
+                x : 2
+                text : index + " :"
+                width : 20
+            }
+
+            Rectangle {
+                y : 2
+                width : 25
+                height : 12
+                color : paletteColor
+                border.width: 1
             }
         }
     }
 
-    rowDelegate: Rectangle {
-        id : rowdelegate
-        height : 15
-        color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
-    }
+
 
 }
 

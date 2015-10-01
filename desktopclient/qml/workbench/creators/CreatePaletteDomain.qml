@@ -17,24 +17,11 @@ Controls.DropableItem{
 
     function addDomainItems(items,clear){
         if ( clear)
-           container.itemArray = []
+            container.itemArray = []
         for(var i = 0; i < items.length; ++i){
-            if ( items[i].name === "")
-                continue;
 
-            var duplicate = false
-            for ( var j = 0; j < container.itemArray.length; ++j){
-                // no double names allowed
-                if( items[i].name === container.itemArray[j].name){
-                    duplicate = true
-                    break
-                }
-            }
-            if ( !duplicate){
-                container.itemArray.push(items[i])
-            }
+            container.itemArray.append({paletteColor : items[i].paletteColor})
         }
-        console.debug("rtr")
         commonpart.domitems.item.model = container.itemArray
     }
 
@@ -47,7 +34,7 @@ Controls.DropableItem{
         border.color : Global.edgecolor
         radius: 5
         property var parentDomain
-        property var itemArray : []
+        property ListModel itemArray : ListModel{}
 
         ItemDomainCommonPart{
             id : commonpart
@@ -77,8 +64,7 @@ Controls.DropableItem{
                         for(var i = 0; i < domainitems.item.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += commonpart.domitems.item.model[i].name;
-                            itemstring += "|" + commonpart.domitems.item.model[i].color;
+                            itemstring += commonpart.domitems.item.model[i].paletteColor;
                         }
 
                         var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}

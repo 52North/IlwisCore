@@ -28,7 +28,7 @@ Rectangle {
             height : 20
         }
 
-        ItemList{
+        PaletteColorList{
             id : itemtable
         }
 
