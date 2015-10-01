@@ -33,7 +33,7 @@ Controls.DropableItem{
             if ( !duplicate)
                 container.itemArray.push(items[i])
         }
-        domainitems.model = container.itemArray
+        commonpart.domitems.item.model = container.itemArray
     }
 
 
@@ -47,112 +47,16 @@ Controls.DropableItem{
         property var parentDomain
         property var itemArray : []
 
-        Column {
-
-            width : parent.width - 7
-            height : parent.height
-            y : 5
-            spacing : 4
-            x : 3
-
-            EditorHeader{}
-
-            Item {
-                id : parentdom
-                width : parent.width
-                height : 20
-                Text{
-                    id : parentLabel
-                    width : 100
-                    height : 20
-                    text : qsTr("Parent domain")
-                }
-                function isThematicDomain(objid){
-                    var tp = mastercatalog.id2type(objid)
-                    container.parentDomain = mastercatalog.id2object(objid, parentdom)
-                    if ( container.parentDomain && tp === "itemdomain"){
-                        return container.parentDomain.valuetype === "Named Identifier"
-                    }else{
-                        container.parentDomain = null
-                        parentdomtxt.content = ""
-
-                    }
-                    return false
-                }
-
-                Controls.TextFieldDropArea{
-                    id : parentdomtxt
-                    anchors.left : parentLabel.right
-                    anchors.right: parent.right
-                    anchors.rightMargin: 4
-                    height: 20
-
-                    canUse: parentdom.isThematicDomain
-                    readOnly: false
-                    asName: false
-
-                    onContentChanged: {
-                        if ( content != ""){
-                            itemloader.source = ""
-                            itemloader.source = "SelectIdentifierItem.qml"
-                        }
-                        else
-                            dropItem.state = "invisible"
-                    }
-                }
-            }
-            Controls.TextEditLabelPair{
-                id : namevalue
-                labelText: qsTr("Name")
-                labelWidth: 100
-                width : parent.width
-            }
-            Controls.TextAreaLabelPair{
-                id : descvalue
-                labelText: qsTr("Description")
-                width : parent.width
-                height : 40
-                labelWidth: 100
-            }
-            CheckBox{
-                id : cbstrict
-                text: qsTr("Strict")
-                checked: true
-                enabled : parentdomtxt.content != ""
-                style : Base.CheckBoxStyle1{}
-            }
-            Text {
-                text : qsTr("Current items")
-                font.bold: true
-            }
-            Rectangle {
-                id : itemList
-                width : parent.width
-                height : 120
-                border.width: 1
-                border.color : Global.edgecolor
-                radius : 3
-
-                ItemList {
-                    id : domainitems
-                    width : parent.width
-                    height : parent.height
-                }
-
-            }
-            Loader {
-                id : itemloader
-                width : parent.width
-                source : "AddNewIdentifierItem.qml"
-                height : 170
-                onSourceChanged: {
-                    if ( item && container.parentDomain !== undefined){
-                        item.itemdomain = container.parentDomain
-                    }
-                }
-            }
+        ItemDomainCommonPart{
+            id : commonpart
+            domaintype: "itemdomain"
+            valuetype: "Named Identifier"
+            parentItemList : "SelectIdentifierItem.qml"
+            newItemEditor: "AddNewIdentifierItem.qml"
+            domitems.source : "ItemList.qml"
         }
-        Item {
+
+         Item {
             width : parent.width
             height : 60
             anchors.bottom: parent.bottom
@@ -167,14 +71,14 @@ Controls.DropableItem{
                 onClicked: {
                     dropItem.state = "invisible"
                     var itemstring = ""
-                    if ( domainitems.model){
-                        for(var i = 0; i < domainitems.model.length; ++i){
+                    if ( commonpart.domitems.item.model){
+                        for(var i = 0; i < domainitems.item.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += domainitems.model[i].name;
+                            itemstring += commonpart.domitems.item.model[i].name;
                         }
 
-                        var createInfo = {parentdomain : parentdomtxt.content, type : "itemdomain", valuetype : "identifier", name :  namevalue.content, items : itemstring, description : descvalue.content,strict : cbstrict.checked}
+                        var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "identifier", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                         var ilwisid = objectcreator.createObject(createInfo)
                     }
                 }
