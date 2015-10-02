@@ -90,6 +90,20 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
             expression += ","+ parms["parentdomain"].toString();
         expression += ")";
     }
+    if( parms["valuetype"].toString() == "palette"){
+        if ( parms["name"].toString() == ""){
+            kernel()->issues()->log(TR("Domain must have a valid name"));
+            return QString::number(i64UNDEF);
+        }
+        expression = QString("script %1{format(stream,\"domain\")}=createpalettedomain(\"%2\",%3,%4")
+                .arg(parms["name"].toString())
+                .arg(parms["items"].toString())
+                .arg(parms["strict"].toBool() ? "yes" : "no")
+                .arg(parms["description"].toString());
+        if ( parms["parentdomain"].toString() != "")
+            expression += ","+ parms["parentdomain"].toString();
+        expression += ")";
+    }
     if( parms["valuetype"].toString() == "interval"){
         if ( parms["name"].toString() == ""){
             kernel()->issues()->log(TR("Domain must have a valid name"));
