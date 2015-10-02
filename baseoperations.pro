@@ -6,7 +6,6 @@
 CONFIG += plugin
 
 QT       += sql
-QT       -= gui
 
 TARGET = baseoperations
 TEMPLATE = lib
