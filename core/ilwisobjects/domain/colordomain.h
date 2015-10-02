@@ -19,12 +19,14 @@ public:
     bool isOrdered() const;
     void setParent(const IDomain& dm);
 
+    IlwisObject *clone();
 protected:
     QSharedPointer<Range> getRange() const;
 
 private:
 
     QSharedPointer<Range> _range;
+    void copyTo(IlwisObject *obj);
 };
 
 typedef IlwisData<ColorDomain> IColorDomain;
