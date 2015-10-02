@@ -61,11 +61,13 @@ Controls.DropableItem{
                     dropItem.state = "invisible"
                     var itemstring = ""
                     if ( commonpart.domitems.item.model){
-                        for(var i = 0; i < domainitems.item.model.length; ++i){
+
+                        for(var i = 0; i < commonpart.domitems.item.model.count; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += commonpart.domitems.item.model[i].paletteColor;
+                            itemstring += commonpart.domitems.item.model.get(i).paletteColor;
                         }
+                        console.debug(commonpart.domitems.item.model.count,"ss",itemstring)
 
                         var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                         var ilwisid = objectcreator.createObject(createInfo)
