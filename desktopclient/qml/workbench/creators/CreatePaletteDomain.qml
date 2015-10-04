@@ -67,8 +67,6 @@ Controls.DropableItem{
                                 itemstring += "|"
                             itemstring += commonpart.domitems.item.model.get(i).paletteColor;
                         }
-                        console.debug(commonpart.domitems.item.model.count,"ss",itemstring)
-
                         var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                         var ilwisid = objectcreator.createObject(createInfo)
                     }

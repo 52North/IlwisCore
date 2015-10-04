@@ -76,17 +76,17 @@ Controls.DropableItem{
                 onClicked: {
                     dropItem.state = "invisible"
                     var itemstring = ""
-                    if ( commonpart.domitems.model){
-                        for(var i = 0; i < commonpart.domitems.model.length; ++i){
+                    console.debug("a", commonpart.domitems.item.model, commonpart.domitems.item.model.length,commonpart.parentdomain)
+                    if ( commonpart.domitems.item.model){
+                        for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += commonpart.domitems.model[i].name;
+                            itemstring += commonpart.domitems.item.model[i].name;
                             if (  commonpart.parentdomain == ""){
-                                itemstring += "|"+ commonpart.domitems.model[i].code;
-                                itemstring += "|"+ commonpart.domitems.model[i].description;
+                                itemstring += "|"+ commonpart.domitems.item.model[i].code;
+                                itemstring += "|"+ commonpart.domitems.item.model[i].description;
                             }
                         }
-
                         var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                         var ilwisid = objectcreator.createObject(createInfo)
                     }
