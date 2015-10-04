@@ -438,7 +438,7 @@ bool NamedIdentifierRange::isContinuous() const
 
 void NamedIdentifierRange::store(QDataStream &stream)
 {
-    quint64 size = _byName.size();
+    int size = _byName.size();
     stream << size;
     for(const auto& item : _byRaw) {
         if ( item == 0) // not a bug; there are always at the end undefined raws, so we can stop now
@@ -588,7 +588,7 @@ IlwisTypes ThematicRange::valueType() const
 
 void ThematicRange::store(QDataStream &stream)
 {
-    quint64 size = _byName.size();
+    int size = _byName.size();
     stream << size;
     for(const auto& item : _byName) {
         stream <<  item.second->raw() << item.second->name() << item.second->as<ThematicItem>()->description() << item.second->as<ThematicItem>()->code();
