@@ -28,6 +28,9 @@ SOURCES += \
     rasteroperations/filter/linearrasterfilter.cpp \
     rasteroperations/mirrorrotateraster.cpp \
     rasteroperations/classification/clusterraster.cpp \
+    rasteroperations/pointtoraster.cpp\
+    rasteroperations/movingaverage.cpp\
+    rasteroperations/polygontoraster.cpp\
     rasteroperations/filter/timesat_nrs.cpp
 
 
@@ -44,6 +47,9 @@ HEADERS += \
     rasteroperations/filter/linearrasterfilter.h \
     rasteroperations/mirrorrotateraster.h \
     rasteroperations/classification/clusterraster.h \
+    rasteroperations/pointtoraster.h\
+    rasteroperations/movingaverage.h\
+    rasteroperations/polygontoraster.h\
     rasteroperations/filter/timesat_nrs.h
 
 

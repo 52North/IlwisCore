@@ -155,7 +155,7 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
 quint64 PointToRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/point2raster"});
-    operation.setLongName("Transform a pointmap to a rastermap");
+    operation.setLongName("Point to raster map");
     operation.setKeywords("raster,pointmap");
     /*
      * the expression can use a pointmap as input and either a georeference or a x/y extent. In the first case the georeference has to be defined
@@ -164,7 +164,7 @@ quint64 PointToRaster::createMetadata()
      * coordinate system as the input featurecoverage and an x and y size (in pixels) as defined by the parameters. In effect a new Corners georeference
      * will be created on the fly
     */
-    operation.setSyntax("point2raster(inputpointmap,targetgeoref | [xsize,ysize])");
+    operation.setSyntax("point2raster(inputpointmap,targetgeoref | xsize[,ysize])");
     operation.setDescription(TR("translates a the points of a featurecoverage to pixels in a rastermap"));
     /*
      * so the expression has either 2 input parameters. A featurecoverage and georeference. Or 3 parameters, a featurecoverage, x extent (in pixels) and y extent (in pixels)
