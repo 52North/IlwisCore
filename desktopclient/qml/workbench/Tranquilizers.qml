@@ -5,18 +5,14 @@ import QtQuick.Controls.Styles 1.0
 import TranquilizerHandler 1.0
 import "../Global.js" as Global
 
-Rectangle {
+WorkBenchShifter {
     id : tranquilizerContainer
     property int defaultWidth: defaultFunctionBarWidth
 
-    signal unloadcontent(string content)
-
-    color : Global.alternatecolor1
     clip : true
     width : defaultWidth
     state : "invisible"
     height : 500
-    opacity : 1
 
     FunctionBarHeader{
         id : functionBarHeader
@@ -95,39 +91,4 @@ Rectangle {
         delegate: tranquilizerDelegate
     }
 
-
-
-
-
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: tranquilizerContainer
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: tranquilizerContainer
-                opacity : 0
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation {
-                properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-            }
-            onRunningChanged :
-            {
-                if ( opacity == 0) {
-                    unloadcontent("Tranquilizers.qml")
-                }
-            }
-
-        }
-    ]
 }

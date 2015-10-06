@@ -45,6 +45,7 @@ private:
 
 
     QString createNumericDomain(const QVariantMap &parms);
+    QString createItemDomain(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

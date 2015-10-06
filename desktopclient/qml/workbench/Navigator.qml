@@ -6,35 +6,34 @@ import UIContextModel 1.0
 import "../controls" as Controls
 import "../Global.js" as Global
 
-Item {
-    id : container
+WorkBenchShifter {
+    id : navigatorContainer
 
     property string startfolder
+    state : "invisble"
 
-    signal unloadcontent(string content)
     signal catalogChanged()
 
     clip : true
-    opacity : 0
 
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
     }
 
     Connections {
-         target: navCreatePanel
-         onCatalogChanged: { catalogChanged()}
-     }
+        target: navCreatePanel
+        onCatalogChanged: { catalogChanged()}
+    }
 
     Connections {
-         target: createCatalogForm
-         onBookmarkadded: { refreshBookmarks()}
-     }
+        target: createCatalogForm
+        onBookmarkadded: { refreshBookmarks()}
+    }
 
     Connections {
-         target: navCreatePanel
-         onBookmarksChanged: { refreshBookmarks()}
-     }
+        target: navCreatePanel
+        onBookmarksChanged: { refreshBookmarks()}
+    }
 
 
 
@@ -90,19 +89,19 @@ Item {
             Controls.ActionButton{
                 id : addContainer
                 iconsource : "../images/openCS1.png"
-                buttontext : qsTr("Add Bookmark")
+                buttontext : qsTr("     Add\n Bookmark")
                 width : 82
                 height : buttonBar.height - 3
                 checkable: true
                 checked : false
                 action : changeCatalogContent
-             }
+            }
             Controls.ActionButton{
                 id : removeBookmark
                 width : 82
                 height : buttonBar.height - 3
                 iconsource: "../images/deletebookmarkCS1.png"
-                buttontext :  "Drop Bookmark"
+                buttontext :  qsTr("     Drop\n Bookmark");
                 action : deleteBookmark
 
             }
@@ -111,7 +110,7 @@ Item {
                 width : 82
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
-                buttontext :  "New Catalog \n     Left"
+                buttontext :  qsTr("New Catalog \n     Left")
                 action : createCatalogLeft
 
             }
@@ -120,11 +119,11 @@ Item {
                 width : 82
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
-                buttontext :  "New Catalog \n     Right"
+                buttontext :  qsTr("New Catalog \n     Right")
                 action : createCatalogRight
 
             }
-       }
+        }
     }
     CreateCatalogForm{
         id : createCatalogForm
@@ -149,42 +148,4 @@ Item {
         listalternate: "#FFFEF8"
 
     }
-
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: container
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: container
-                opacity : 0
-            }
-        }
-
-    ]
-      transitions: [
-          Transition {
-              NumberAnimation {
-                  properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-              }
-              onRunningChanged :
-              {
-                  if ( opacity == 0) {
-                    unloadcontent("Navigator.qml")
-                  }
-              }
-
-          }
-      ]
-
-      Component.onCompleted: {
-          state : "visible"
-          opacity : 1
-      }
-
 }

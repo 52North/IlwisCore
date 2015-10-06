@@ -38,12 +38,6 @@ void IlwisConfiguration::eraseChildren(const QString &key)
         it = ptree.erase(it);
     }
 
-//    auto assoc_iter = _configuration.find(tempkey.toStdString());
-//    if ( assoc_iter == _configuration.not_found())
-//        return;
-//    auto iter = _configuration.to_iterator(assoc_iter);
-//    _configuration.erase(iter);
-
     _modified = true;
 }
 
@@ -71,8 +65,8 @@ void IlwisConfiguration::putValue(const QString &key, const QString &value)
 void IlwisConfiguration::store(const QString &location)
 {
     if ( _modified) {
-        std::string loc = location == sUNDEF ? _configLocation.toStdString() : location.toStdString();
-        if ( loc == ""){
+        std::string loc = location.toStdString() ; //== sUNDEF ? _configLocation.toStdString() : location.toStdString();
+        if ( loc == sUNDEF){
             loc = QString(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/ilwis.config").toStdString();
 
         }

@@ -89,7 +89,7 @@ quint64 CreateNumericDomain::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createnumericdomain"});
     resource.setLongName("Create Numeric Domain");
-    resource.setSyntax("createnumericdomain(name,min,max,resolution, strict,description[,parentdomain]))");
+    resource.setSyntax("createnumericdomain(min,max,resolution, strict,description[,parentdomain]))");
     resource.setInParameterCount({5,6});
     resource.addInParameter(0, itDOUBLE,TR("Minimum value"), TR("Lowest values in the numeric range"));
     resource.addInParameter(1, itDOUBLE,TR("Maximum value"), TR("Highest values in the numeric range"));
@@ -99,6 +99,7 @@ quint64 CreateNumericDomain::createMetadata()
     resource.addOptionalInParameter(5, itSTRING, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itNUMERICDOMAIN, TR("output domain"), TR("The newly created domain"));
+    resource.setKeywords("domain, create, numeric");
 
     mastercatalog()->addItems({resource});
     return resource.id();

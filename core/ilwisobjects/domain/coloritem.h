@@ -26,6 +26,7 @@ public:
     void color(const QColor clr);
 
     static IlwisTypes valueTypeS();
+    static ItemRange *createRange();
 
 private:
     QColor _color;

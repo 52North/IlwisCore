@@ -6,120 +6,106 @@ import ObjectCreator 1.0
 import IlwisObjectCreatorModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
+import "../.." as Base
 
 Controls.DropableItem{
+    id : dropItem
     width : 250
     height : 0
+
     clip:true
+
+    function addDomainItems(items,clear){
+        if ( clear)
+           container.itemArray = []
+        for(var i = 0; i < items.length; ++i){
+            if ( items[i].name === "")
+                continue;
+            var duplicate = false
+            for ( var j = 0; j < container.itemArray.length; ++j){
+                // double names allowed
+                if( items[i].name === container.itemArray[j].name){
+                    duplicate = true
+                }
+                // no double codes allowed unless its empty
+                if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
+                    duplicate = true
+                }
+                if ( duplicate)
+                    break
+            }
+            if ( !duplicate)
+                container.itemArray.push(items[i])
+        }
+        commonpart.domitems.item.model = container.itemArray
+    }
+
 
     Rectangle {
         id : container
-        height: parent.height
+        height: 520
         width : parent.width
         border.width : 1
         border.color : Global.edgecolor
         radius: 5
-        property var itemArray : ["aap","noot","mies"]
+        property var parentDomain
+        property var itemArray : []
 
-        Column {
+        ItemDomainCommonPart{
+            id : commonpart
+            domaintype: "itemdomain"
+            valuetype: "Thematic class"
+            parentItemList : "SelectThematicItem.qml"
+            newItemEditor: "AddNewThematicItem.qml"
+            domitems.source : "ItemTable.qml"
+        }
 
-            width : parent.width - 7
-            height : 70
-            y : 5
-            spacing : 4
-            x : 3
 
-            EditorHeader{}
-
-            Controls.TextEditLabelPair{
-                labelText: qsTr("Name")
-                labelWidth: 100
-                width : parent.width
-            }
-            Controls.TextAreaLabelPair{
-                labelText: qsTr("Description")
-                width : parent.width
-                height : 40
-                labelWidth: 100
-            }
-            Text {
-                text : qsTr("Current items")
-                font.bold: true
-            }
-            Rectangle {
-                id : itemList
-                width : parent.width
-                height : 120
-                border.width: 1
-                border.color : Global.edgecolor
-                radius : 3
-                ScrollView{
-                    anchors.fill : parent
-                    ListView {
-                        anchors.fill : parent
-                        model : container.itemArray
-                        delegate: Component {
-                            Text{
-                                x : 4
-                                text : modelData
+        Item {
+            width : parent.width
+            height : 60
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8
+            Button {
+                id : applybutton
+                anchors.right: parent.right
+                anchors.rightMargin: 3
+                anchors.bottom: parent.bottom
+                width : 70
+                text : qsTr("Apply")
+                onClicked: {
+                    dropItem.state = "invisible"
+                    var itemstring = ""
+                    console.debug("a", commonpart.domitems.item.model, commonpart.domitems.item.model.length,commonpart.parentdomain)
+                    if ( commonpart.domitems.item.model){
+                        for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
+                            if (itemstring !== "")
+                                itemstring += "|"
+                            itemstring += commonpart.domitems.item.model[i].name;
+                            if (  commonpart.parentdomain == ""){
+                                itemstring += "|"+ commonpart.domitems.item.model[i].code;
+                                itemstring += "|"+ commonpart.domitems.item.model[i].description;
                             }
                         }
+                        var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                        var ilwisid = objectcreator.createObject(createInfo)
                     }
                 }
-            }
-            Button{
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                width : 80
-                height : 22
-                text : "New Item"
-                onClicked: {
-                    newItem.enabled = true
-                }
-            }
-            Text {
-                width : parent.width
-                height : 20
-                text : "Thematic Item"
-                opacity : newItem.enabled ? 1 : 0
-            }
 
-            Column {
-                id :newItem
-                width : parent.width
-                height : 100
-                enabled : false
-                opacity : enabled ? 1.0 : 0
-                spacing: 3
-                Controls.TextEditLabelPair{
-                    labelText: qsTr("Name")
-                    labelWidth: 100
-                    width : parent.width
-                }
-
-                Controls.TextEditLabelPair{
-                    labelText: qsTr("Code")
-                    labelWidth: 100
-                    width : parent.width
-                }
-
-                Controls.TextEditLabelPair{
-                    labelText: qsTr("Description")
-                    labelWidth: 100
-                    width : parent.width
-                }
-                Button{
-                    anchors.right: parent.right
-                    anchors.rightMargin: 2
-                    width : 80
-                    height : 22
-                    text : "Add Item"
-                    onClicked: {
-                        newItem.enabled = false
-                    }
+            }
+            Button {
+                id : closebutton
+                anchors.right: applybutton.left
+                anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
+                width : 70
+                text : qsTr("Close")
+                   onClicked: {
+                    dropItem.state = "invisible"
                 }
             }
         }
+
     }
 
 }

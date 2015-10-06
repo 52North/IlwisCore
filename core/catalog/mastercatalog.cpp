@@ -411,7 +411,7 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
             bool ok;
             auto propertyid = viaExtType.value(0).toLongLong(&ok);
             if (!ok) {
-                kernel()->issues()->log(TR("Invalid catalog property, mastercatalog corrupted?"),IssueObject::itWarning);
+                kernel()->issues()->log(QString(TR("Invalid catalog property, mastercatalog corrupted : %1?").arg(name)),IssueObject::itWarning);
             }
             auto type = id2type(propertyid);
             if ( type & tp)

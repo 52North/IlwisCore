@@ -85,11 +85,15 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 void MasterCatalogModel::addDefaultFilters(){
     //QString filter = QString("type=%1");
     QString filter = QString("type&%1!=0");
-    QString filter2 = QString("container='%1' and type<>" + QString::number(itGEODETICDATUM));
+    QString filter2 = QString("container='%1'");
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itUNKNOWN)),"",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system"),"System Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"","-- System Catalog -----------------------------",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/domains"),"System Domains",""));
+    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/representations"),"System Representations",""));
     _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://internalcatalog"),"Internal Catalog",""));
-    _defaultFilters.append(new CatalogFilterModel(this,"","-------------------------------------",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"","-- Most recently used --------------------------",""));
+
+    _defaultFilters.append(new CatalogFilterModel(this,"","-- Master Catalog-------------------------------",""));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itRASTER)),"Master Catalog Rasters","raster20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itTABLE)),"Master Catalog Tables","table20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itDOMAIN)),"Master Catalog Domains","domain20.png"));
@@ -198,8 +202,9 @@ void MasterCatalogModel::setDefaultView()
 
 void MasterCatalogModel::scanBookmarks()
 {
-    QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString("0"));
-    _bookmarkids = ids.split("|");
+    QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString(sUNDEF));
+    if ( ids != sUNDEF)
+        _bookmarkids = ids.split("|");
     QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
     _currentUrl = urlWorkingCatalog.toString();
     int count = 3;
@@ -208,31 +213,33 @@ void MasterCatalogModel::scanBookmarks()
         QString query = QString("users/" + Ilwis::context()->currentUser() + "/data-catalog-%1").arg(id);
         QString label = ilwisconfig(query + "/label", QString(""));
         QUrl location(ilwisconfig(query + "/url-0", QString("")));
-        QString descr = ilwisconfig(query + "/description", QString(""));
-        Resource res(location, itCATALOGVIEW ) ;
-        if ( label != "")
-            res.name(label,false);
-        QStringList lst;
-        lst << location.toString();
-        res.addProperty("locations", lst);
-        res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-        res.addProperty("filter","");
-        res.setDescription(descr);
+        if ( location.isValid()) {
+            QString descr = ilwisconfig(query + "/description", QString(""));
+            Resource res(location, itCATALOGVIEW ) ;
+            if ( label != "")
+                res.name(label,false);
+            QStringList lst;
+            lst << location.toString();
+            res.addProperty("locations", lst);
+            res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
+            res.addProperty("filter","");
+            res.setDescription(descr);
 
-        if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
-            CatalogView cview(res);
-            CatalogModel *model = 0;
-            if ( location.toString().indexOf("ilwis://operations") == 0){
-                model = new OperationCatalogModel(this);
-            }else
-                model = new CatalogModel(this);
-            _bookmarks.push_back(model);
-            _bookmarks.back()->setView(cview);
+            if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
+                CatalogView cview(res);
+                CatalogModel *model = 0;
+                if ( location.toString().indexOf("ilwis://operations") == 0){
+                    model = new OperationCatalogModel(this);
+                }else
+                    model = new CatalogModel(this);
+                _bookmarks.push_back(model);
+                _bookmarks.back()->setView(cview);
 
-        }else{
-            catalogResources.push_back(res);
+            }else{
+                catalogResources.push_back(res);
+            }
+            ++count;
         }
-        ++count;
     }
     count = 0;
     for(auto bookmark : _bookmarks){
@@ -382,6 +389,20 @@ void MasterCatalogModel::setSelectedBookmark(quint32 index)
 QQmlListProperty<IlwisObjectModel> MasterCatalogModel::selectedData()
 {
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
+}
+
+IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickItem *parent)
+{
+    bool ok;
+    Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
+    if (!ok)
+        return 0;
+
+    IlwisObjectModel *ioModel = new IlwisObjectModel(resource, parent);
+    if ( ioModel->isValid()){
+        return ioModel;
+    }
+    return 0;
 }
 
 void MasterCatalogModel::setSelectedObjects(const QString &objects)
@@ -552,11 +573,11 @@ WorkSpaceModel *MasterCatalogModel::workspace(const QString &name)
 
 
 void MasterCatalogModel::deleteBookmark(quint32 index){
-    if ( index < _bookmarks.size() && index > 1)  { // can not delete internal and system catalog
+    if ( index < _bookmarks.size() && index > 1)  { // can not delete internal , system catalog, operations
         _bookmarks.erase(_bookmarks.begin() + index);
-        QString key = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + _bookmarkids[index - 2];
+        QString key = "users/" + Ilwis::context()->currentUser() + "/data-catalog-" + _bookmarkids[index - 3];
         context()->configurationRef().eraseChildren(key);
-        _bookmarkids.erase(_bookmarkids.begin() + index - 2);
+        _bookmarkids.erase(_bookmarkids.begin() + index - 3);
         if ( _bookmarkids.size() > 0)
             _selectedBookmarkIndex = 2;
 
@@ -566,13 +587,17 @@ void MasterCatalogModel::deleteBookmark(quint32 index){
 }
 
 void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QString& description){
+    if ( _selectedBookmarkIndex < 3)
+        return;
+
     CatalogModel *model = _bookmarks[_selectedBookmarkIndex];
     if ( model ){
         model->setDisplayName(displayName);
         model->resourceRef().setDescription(description); 
-        QString key = "users/user-0/data-catalog-" + _bookmarkids[_selectedBookmarkIndex];
+        QString key = "users/user-0/data-catalog-" + _bookmarkids[_selectedBookmarkIndex - 3];
         context()->configurationRef().putValue(key + "/label", displayName);
         context()->configurationRef().putValue(key + "/description", description);
+        emit bookmarksChanged();
     }
 }
 

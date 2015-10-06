@@ -35,6 +35,7 @@
 #include "interval.h"
 #include "coloritem.h"
 #include "resource.h"
+#include "intervalrange.h"
 #include "geodeticdatum.h"
 #include "internalilwisobjectfactory.h"
 #include "ellipsoid.h"

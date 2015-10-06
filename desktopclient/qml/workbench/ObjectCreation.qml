@@ -9,16 +9,12 @@ import MessageModel 1.0
 import "./creators" as Create
 import "../Global.js" as Global
 
-Rectangle {
+WorkBenchShifter {
     id : creationContainer
 
-    signal unloadcontent(string content)
-
-    color : Global.mainbackgroundcolor
     clip : true
     state : "invisible"
-    height : 500
-    opacity : 1
+    height : 850
 
     FunctionBarHeader{
         id : functionBar
@@ -29,7 +25,7 @@ Rectangle {
     Create.ObjectList{
         id : createableObjects
         width : parent.width
-        height : 200
+        height : 150
         anchors.top : functionBar.bottom
         anchors.topMargin: 5
     }
@@ -41,36 +37,5 @@ Rectangle {
         anchors.bottomMargin: 5
     }
 
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: creationContainer
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: creationContainer
-                opacity : 0
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation {
-                properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-            }
-            onRunningChanged :
-            {
-                if ( opacity == 0) {
-                    unloadcontent("ObjectCreation.qml")
-                }
-            }
-
-        }
-    ]
 }
 

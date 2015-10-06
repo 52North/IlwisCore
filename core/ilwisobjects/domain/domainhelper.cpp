@@ -9,6 +9,7 @@
 #include "thematicitem.h"
 #include "numericdomain.h"
 #include "numericrange.h"
+#include "identifierrange.h"
 #include "juliantime.h"
 #include "domainhelper.h"
 

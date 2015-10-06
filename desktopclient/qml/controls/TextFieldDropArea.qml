@@ -19,7 +19,6 @@ Item {
         return content
     }
 
-
     DropArea{
         anchors.fill: parent
         onDropped : {

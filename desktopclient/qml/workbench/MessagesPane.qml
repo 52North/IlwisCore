@@ -6,16 +6,12 @@ import UserMessageHandler 1.0
 import MessageModel 1.0
 import "../Global.js" as Global
 
-Rectangle {
+WorkBenchShifter {
     id : messageContainer
 
-    signal unloadcontent(string content)
-
-    color : Global.mainbackgroundcolor
     clip : true
     state : "invisible"
     height : 500
-    opacity : 1
 
     FunctionBarHeader{
         id : functionBar
@@ -92,38 +88,4 @@ Rectangle {
             }
         }
     }
-
-
-
-    states: [
-        State { name: "visible"
-
-            PropertyChanges {
-                target: messageContainer
-                opacity : 1
-            }
-        },
-        State {
-            name : "invisible"
-            PropertyChanges {
-                target: messageContainer
-                opacity : 0
-            }
-        }
-
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation {
-                properties: "opacity"; duration : 500 ; easing.type: Easing.Linear
-            }
-            onRunningChanged :
-            {
-                if ( opacity == 0) {
-                    unloadcontent("MessagesPane.qml")
-                }
-            }
-
-        }
-    ]
 }

@@ -222,7 +222,7 @@ QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1
 }
 
 QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vector<FormParameter>& parameters, bool input, QString& results) const{
-    QString rowBodyText = "Rectangle{height : 20;width : parent.width;color : \"lightgrey\";%1Text { x:%5 + %6;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap }";
+    QString rowBodyText = "Rectangle{height : 20;width : parent.width;color : \"white\";%1Text { x:%5 + %6;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap }";
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message }\
             TextField{ id : pin_%1; anchors.fill : parent optionalOutputMarker %7}}";

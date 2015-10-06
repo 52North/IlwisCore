@@ -4,7 +4,6 @@
 namespace Ilwis {
 namespace FeatureOperations {
 
-
 class TransformCoordinates : public OperationImplementation
 {
 public:
@@ -19,12 +18,6 @@ public:
     State prepare(ExecutionContext *ctx, const SymbolTable& sym);
 
     NEW_OPERATION(TransformCoordinates);
-
-private:
-    IFeatureCoverage _inputFeatures;
-    IFeatureCoverage _outputFeatures;
-    ICoordinateSystem _targetCsy;
-
 
 };
 }

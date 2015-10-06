@@ -100,4 +100,17 @@ void ColorDomain::setParent(const IDomain& dm){
 
 }
 
+IlwisObject *ColorDomain::clone()
+{
+    auto *colordom = new ColorDomain();
+    copyTo(colordom);
+    return colordom;
+}
+
+void ColorDomain::copyTo(IlwisObject *obj){
+    Domain::copyTo(obj);
+    ColorDomain *colordom = static_cast<ColorDomain *>(obj);
+    colordom->_range.reset( _range->clone());
+}
+
 

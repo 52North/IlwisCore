@@ -119,6 +119,13 @@ Item {
                     action : datapanesplit.showTabInFloatingWindow(panelside,tabindex)
                 }
             }
+            Connections {
+                target: tabstyle
+                onFullSize: {
+                    action : datatabview.state = datatabview.state == "fullsize" ? "halfsize" : "fullsize"
+
+                }
+            }
         }
     }
     states: [

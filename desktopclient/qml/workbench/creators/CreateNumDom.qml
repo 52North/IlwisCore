@@ -23,11 +23,12 @@ Controls.DropableItem{
         width : parent.width
 
         Column {
+            id : maincolumn
             width : parent.width - 7
             height : 240
             y : 5
             spacing : 2
-            x : 3
+            x : 4
 
             EditorHeader{}
 
@@ -107,35 +108,36 @@ Controls.DropableItem{
                 style : Base.CheckBoxStyle1{}
             }
 
-            Item {
-                width : parent.width
-                height : 30
-                Button {
-                    id : applybutton
-                    anchors.right: parent.right
-                    width : 70
-                    text : qsTr("Apply")
-                    y : 10
-                    onClicked: {
-                        dropItem.state = "invisible"
-                        var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
-                        var ilwisid = objectcreator.createObject(createInfo)
-                        console.debug(ilwisid)
-
-                    }
-
+        }
+        Item {
+            width : parent.width
+            height : 30
+            anchors.bottom : parent.bottom
+            anchors.bottomMargin: 8
+            anchors.rightMargin: 3
+            Button {
+                id : applybutton
+                anchors.right: parent.right
+                width : 70
+                text : qsTr("Apply")
+                y : 10
+                onClicked: {
+                    dropItem.state = "invisible"
+                    var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
+                    var ilwisid = objectcreator.createObject(createInfo)
                 }
-                Button {
-                    id : closebutton
-                    anchors.right: applybutton.left
-                    anchors.rightMargin: 5
-                    width : 70
-                    text : qsTr("Close")
-                    y : 10
 
-                    onClicked: {
-                        dropItem.state = "invisible"
-                    }
+            }
+            Button {
+                id : closebutton
+                anchors.right: applybutton.left
+                anchors.rightMargin: 5
+                width : 70
+                text : qsTr("Close")
+                y : 10
+
+                onClicked: {
+                    dropItem.state = "invisible"
                 }
             }
         }

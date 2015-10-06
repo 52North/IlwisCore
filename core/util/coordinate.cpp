@@ -376,17 +376,29 @@ QString LatLon::toString(int decimals, bool ) const
     if ( !isValid())
         return "";
 
-    auto ll = [&](double loc) -> QString {
+    auto toDMS = [&](double rDegree) -> QString {
         const QChar chardgr(0260);
-        int dgr = std::abs((int)loc);
-        int dmin = (std::abs(loc) - dgr) * 60;
-        double dsec = (std::abs(loc) -  dgr - dmin/60.0) * 60.0;
-        dgr = loc < 0 ? -dgr : dgr;
 
-        QString result = QString("%1%2 %3\' %4\'\'").arg(dgr).arg(chardgr).arg(dmin).arg(dsec,0,'f', decimals);
+        double rDeg = std::abs(rDegree);
+        int iDeg = (int)floor(rDeg);
+        rDeg -= iDeg;
+        rDeg *= 60;
+        int iMin = (int)floor(rDeg);
+        rDeg -= iMin;
+        rDeg *= 60;
+        if (rDeg > 59.99) {
+          iMin += 1;
+          rDeg = 0;
+        }
+        if (iMin > 59) {
+          iDeg += 1;
+          iMin -= 60;
+        }
+
+        QString result = QString("%1%2%3\'%4\'\'").arg(iDeg, 3, 10).arg(chardgr).arg(iMin, 2, 10, QLatin1Char('0')).arg(rDeg, 3 + decimals, 'f', decimals, QLatin1Char('0'));
         return result;
     };
-    QString llstring = QString("%1 %2").arg(ll(y)).arg(ll(x));
+    QString llstring = QString("%1%2,%3%4").arg(toDMS(y)).arg(y>=0?'N':'S').arg(toDMS(x)).arg(x>=0?'E':'W');
 
     return llstring;
 }

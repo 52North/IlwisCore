@@ -323,14 +323,12 @@ quint32 NumericRange::count() const
 
 void NumericRange::store(QDataStream &stream)
 {
-    _valuetype = itUNKNOWN;
-    stream << _min << _max << _resolution << _undefined;
+    stream << _min << _max << _resolution << _undefined << _valuetype;
 }
 
 void NumericRange::load(QDataStream &stream)
 {
-    _valuetype = itUNKNOWN;
-    stream >> _min >> _max >> _resolution >> _undefined;
+    stream >> _min >> _max >> _resolution >> _undefined >> _valuetype;
 }
 
 NumericRange *NumericRange::merge(const QSharedPointer<NumericRange> &nr1, const QSharedPointer<NumericRange> &nr2, RenumberMap *rnm)

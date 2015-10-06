@@ -3,6 +3,7 @@
 #include "mastercatalog.h"
 #include "oshelper.h"
 #include "datapanemodel.h"
+#include "ilwiscontext.h"
 
 
 DataPaneModel::DataPaneModel(QObject *parent) :
@@ -217,7 +218,7 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 
     //if ( resources.size() > 0){
         if ( outputtype == "catalog"){
-
+           context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() +"/workingcatalog",url);
             if ( filter == "container='ilwis://operations'")
                  tab = new TabModel(url,"catalog/OperationPanel.qml", this);
             else

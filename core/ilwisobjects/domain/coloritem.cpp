@@ -36,6 +36,11 @@ IlwisTypes ColorItem::valueTypeS()
     return itPALETTECOLOR;
 }
 
+ItemRange *ColorItem::createRange()
+{
+    return new ColorPalette();
+}
+
 DomainItem *ColorItem::clone() const
 {
     return new ColorItem(_color);
