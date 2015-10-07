@@ -146,7 +146,8 @@ DISTFILES += \
     desktopclient/qml/datapanel/visualization/propertyeditors/ConvertAttributeDomain.qml \
     desktopclient/qml/datapanel/visualization/propertyeditors/LayerOpacity.qml \
     desktopclient/qml/datapanel/workflow/AttachmentRectangle.qml \
-    desktopclient/qml/workbench/creators/PaletteColorList.qml
+    desktopclient/qml/workbench/creators/PaletteColorList.qml \
+    desktopclient/qml/workbench/creators/CreateGeorefCorners.qml
 
 
 
