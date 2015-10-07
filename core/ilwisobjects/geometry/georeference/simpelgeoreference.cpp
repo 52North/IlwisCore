@@ -26,6 +26,11 @@ GeoRefImplementation *SimpelGeoReference::create()
     return new SimpelGeoReference();
 }
 
+GeoRefImplementation *SimpelGeoReference::clone()
+{
+    return create();
+}
+
 void SimpelGeoReference::clear() {
     _a11 = _a12 = _a22 = _a21 = rUNDEF;
     _b1 = _b2 = rUNDEF;
@@ -67,6 +72,19 @@ std::vector<double> SimpelGeoReference::support() const {
 QString SimpelGeoReference::typeName()
 {
     return "simple";
+}
+
+void SimpelGeoReference::copyTo(GeoRefImplementation *impl)
+{
+    GeoRefImplementation::copyTo(impl);
+    SimpelGeoReference *smplgrf = static_cast<SimpelGeoReference *>(impl);
+    smplgrf->_a11 = _a11;
+    smplgrf->_a12 = _a12;
+    smplgrf->_a22 = _a22;
+    smplgrf->_a21 = _a21;
+    smplgrf->_b1 = _b1;
+    smplgrf->_b2 = _b2;
+    smplgrf->_det = _det;
 }
 
 bool SimpelGeoReference::isCompatible(const IGeoReference &georefOther) const

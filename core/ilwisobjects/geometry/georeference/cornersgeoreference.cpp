@@ -20,6 +20,12 @@ GeoRefImplementation *CornersGeoReference::create()
     return new CornersGeoReference();
 }
 
+void CornersGeoReference::copyTo(GeoRefImplementation *impl)
+{
+    SimpelGeoReference::copyTo(impl);
+    static_cast<CornersGeoReference *>(impl)->_envelope = _envelope;
+}
+
 void CornersGeoReference::envelope(const Envelope &env)
 {
     _envelope = env;
@@ -65,6 +71,13 @@ bool CornersGeoReference::compute()
 Envelope CornersGeoReference::envelope() const
 {
     return _envelope;
+}
+
+GeoRefImplementation *CornersGeoReference::clone()
+{
+    GeoRefImplementation *impl = new CornersGeoReference();
+    copyTo(impl);
+    return impl;
 }
 
 QString CornersGeoReference::typeName()

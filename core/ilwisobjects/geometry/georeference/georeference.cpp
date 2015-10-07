@@ -183,6 +183,24 @@ void GeoReference::impl(GeoRefImplementation *impl)
     _georefImpl.reset(impl);
 }
 
+IlwisObject *GeoReference::clone()
+{
+    if ( !_georefImpl.isNull()) {
+        GeoReference *grf = new GeoReference();
+        copyTo(grf);
+        return grf;
+    }
+    return 0;
+}
+
+void GeoReference::copyTo(IlwisObject *obj)
+{
+    IlwisObject::copyTo(obj);
+    GeoReference *grf = static_cast<GeoReference *>(obj);
+    auto * imp = _georefImpl->clone();
+    grf->_georefImpl.reset(imp);
+}
+
 IlwisTypes GeoReference::ilwisType() const
 {
     return itGEOREF;

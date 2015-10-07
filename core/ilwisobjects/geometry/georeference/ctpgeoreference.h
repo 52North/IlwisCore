@@ -18,6 +18,8 @@ public:
     bool compute();
     static QString typeName();
 
+protected slots:
+    void copyTo(GeoRefImplementation *impl);
 private:
     std::vector<ControlPoint> _controlPoints;
     ControlPoint _invalidCP;

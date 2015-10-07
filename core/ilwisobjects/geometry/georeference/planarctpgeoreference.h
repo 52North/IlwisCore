@@ -21,6 +21,7 @@ public:
     virtual bool compute();
     void transformation(Transformation tr);
     Transformation transformation() const;
+    GeoRefImplementation *clone();
     static QString typeName();
 
     static GeoRefImplementation *create();
@@ -38,6 +39,7 @@ private:
     Coordinate crdInverseOfHigherOrder(const Pixeld &pix);
     void makeJacobianMatrix(const Coordinate &crdIn, Eigen::Matrix2d &rmJ);
     quint32 minnr() const;
+    void copyTo(GeoRefImplementation *impl);
 
 
 };
