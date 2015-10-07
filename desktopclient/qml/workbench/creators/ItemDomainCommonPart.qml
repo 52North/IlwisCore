@@ -21,8 +21,8 @@ Column {
     property alias parentdomain : parentdomtxt.content
     property alias domitems : domainitems
     property alias additionalFields : extraitems
-    property alias name : namevalue.content
-    property alias description : descvalue.content
+    property alias name : objectcommon.itemname
+    property alias description : objectcommon.description
     property alias strict : cbstrict.checked
 
     EditorHeader{}
@@ -33,7 +33,7 @@ Column {
         height : 20
         Text{
             id : parentLabel
-            width : 100
+            width : 120
             height : 20
             text : qsTr("Parent domain")
         }
@@ -71,19 +71,10 @@ Column {
             }
         }
     }
-    Controls.TextEditLabelPair{
-        id : namevalue
-        labelText: qsTr("Name")
-        labelWidth: 100
-        width : parent.width
+    IlwisObjectCommon{
+        id : objectcommon
     }
-    Controls.TextAreaLabelPair{
-        id : descvalue
-        labelText: qsTr("Description")
-        width : parent.width
-        height : 40
-        labelWidth: 100
-    }
+
     Loader {
         id : extraitems
         width : parent.width
