@@ -48,6 +48,17 @@ Controls.DropableItem{
                 canUse: dataarea.isCsy
                 readOnly: false
                 asName: false
+                onObjectidChanged: {
+                    csyBounds.opacity = content != ""
+                    var model = mastercatalog.id2object(csypart.objectid, csypart)
+                    if ( model){
+                        csyBounds.islatlon = !model.isProjected
+                        var bb = model.getProperty(model.isProjected ? "envelope" : "latlonenvelope")
+                        console.debug("bb", bb)
+                        csyBounds.setBoundingBox(bb)
+
+                    }
+                }
 
             }
             Button {
@@ -77,8 +88,10 @@ Controls.DropableItem{
 
         Controls.CoordinateSystemBounds{
             id : csyBounds
-            height : Global.rowHeight * 2
+            height : Global.rowHeight * 4
             width : parent.width
+            opacity: 0
+            enabled : opacity != 0
         }
 
     }
