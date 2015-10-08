@@ -116,7 +116,7 @@ quint64 CreateCornersGeoreference::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createcornersgeoreference"});
     resource.setLongName("Create Corners Georeference");
-    resource.setSyntax("createcornersgeoreference(minx, miny, maxx, maxy, pixelsize,coordinatesystem,centerofpixels,description))");
+    resource.setSyntax("createcornersgeoreference(minx, miny, maxx, maxy, pixelsize,coordinatesystem,centerofpixels,description)");
     resource.setInParameterCount({8});
     resource.addInParameter(0, itDOUBLE,TR("Min x"), TR("Minimum X coordinate of the corner of the boundign box"));
     resource.addInParameter(1, itDOUBLE,TR("Min y"), TR("Minimum Y coordinate of the corner of the boundign box"));

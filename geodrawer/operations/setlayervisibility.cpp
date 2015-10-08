@@ -96,7 +96,7 @@ Ilwis::OperationImplementation::State SetLayerVisibility::prepare(ExecutionConte
 quint64 SetLayerVisibility::createMetadata()
 {
     OperationResource operation({"ilwis://operations/setdrawervisibility"});
-    operation.setSyntax("setdrawervisibility(viewid, drawername-index, true | !false[,type])");
+    operation.setSyntax("setdrawervisibility(viewid, drawername-index, visibility=true | !false[,type])");
     operation.setDescription(TR("sets or resets the visibility of a layer"));
     operation.setInParameterCount({3,4});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));

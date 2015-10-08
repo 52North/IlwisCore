@@ -197,7 +197,7 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
 quint64 BinaryLogical::createMetadata()
 {
     OperationResource operation({"ilwis://operations/binarylogicalraster"});
-    operation.setSyntax("binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
+    operation.setSyntax("binarylogicalraster(gridcoverage1,gridcoverage2|number|boolean,logicaloperation=and|or|xor|less|lesseq|neq|eq|greater|greatereq)");
     operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER | itNUMBER, TR("input rastercoverage or number/boolean"),TR("input rastercoverage with a numerical/boolean domain or number"));

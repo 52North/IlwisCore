@@ -101,12 +101,12 @@ quint64 CreateThematicDomain::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createthematicdomain"});
     resource.setLongName("Create Thematic Domain");
-    resource.setSyntax("createthematicdomain(itemdefintion, strict,description[,parentdomain]))");
+    resource.setSyntax("createthematicdomain(itemdefintion, strict,description[,parentdomain])");
     resource.setInParameterCount({3,4});
     resource.addInParameter(0, itSTRING,TR("Item defintion"), TR("A '|' seperate list of item definition for the items of the domain, each item consist always of 3 parts, the last 2 parts maybe empty"));
     resource.addInParameter(1, itBOOL,TR("Strictness"), TR("Indicates how strict the realtion between domain and parent is; true for all domains without parents"));
     resource.addInParameter(2, itSTRING,TR("Description"), TR("Extra information about the new domain"));
-    resource.addOptionalInParameter(3, itSTRING, TR("Parent domain"), TR("optional indication of a parent domain"));
+    resource.addOptionalInParameter(3, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itITEMDOMAIN, TR("output domain"), TR("The newly created domain"));
     resource.setKeywords("domain, create, thematic, itemdomain");

@@ -122,7 +122,10 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             isOptional = false;
             ++optionGroup;
         } else if ( c == '|'){
-            choices << part.trimmed();
+            if ( part.indexOf("=") !=-1){
+                choices << part.split("=")[1];
+            }else
+                choices << part.trimmed();
             inChoiceList = true;
         }
         part.clear();

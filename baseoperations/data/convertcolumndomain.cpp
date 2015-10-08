@@ -209,7 +209,7 @@ quint64 ConvertColumnDomain::createMetadata()
 {
     OperationResource operation({"ilwis://operations/convertcolumndomain"});
     operation.setLongName("convert column to other domain");
-    operation.setSyntax("convertcolumndomain(inputtable,columnname,!identifier|thematic|time|float|integer|color[, domain-name])");
+    operation.setSyntax("convertcolumndomain(inputtable,columnname,targetdomaintype=!identifier|thematic|time|float|integer|color[, domain-name])");
     operation.setDescription(TR("translates the values of a string column in a table to a regular domain"));
     operation.setInParameterCount({3,4});
     operation.addInParameter(0,itTABLE|itFEATURE, TR("input table/coverage"),TR("input table/coverage with a to be translated string/numeric or id domain column"));
