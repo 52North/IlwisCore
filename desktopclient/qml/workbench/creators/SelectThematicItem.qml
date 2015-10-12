@@ -27,59 +27,11 @@ Rectangle {
             font.bold: true
             height : 20
         }
-        TableView {
+
+        ItemTable{
             id : itemtable
-            width : parent.width
-            height : parent.height - 45
-            selectionMode : SelectionMode.ExtendedSelection
-
-            TableViewColumn{
-                title : qsTr("Item name");
-                role : "name"
-                width : 150
-                delegate: Component{
-                    Text {
-                        text: styleData.value
-                        verticalAlignment:Text.AlignVCenter
-                        font.pixelSize: 10
-                        elide: Text.ElideMiddle
-                        x : 4
-                    }
-                }
-            }
-            TableViewColumn{
-                title : qsTr("Code");
-                role : "code"
-                width : 30
-                delegate: Component{
-                    Text {
-                        text: styleData.value
-                        verticalAlignment:Text.AlignVCenter
-                        font.pixelSize: 10
-                        elide: Text.ElideMiddle
-                    }
-                }
-            }
-            TableViewColumn{
-                title : qsTr("Description");
-                role : "description"
-                width : parent ? parent.width - 140 : 0
-                delegate: Component{
-                    Text {
-                        text: styleData.value
-                        verticalAlignment:Text.AlignVCenter
-                        font.pixelSize: 10
-                        elide: Text.ElideMiddle
-                    }
-                }
-            }
-            rowDelegate: Rectangle {
-                id : rowdelegate
-                height : 15
-                color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
-            }
-
         }
+
         Button{
             text : qsTr("Add items")
             anchors.right : parent.right
@@ -90,9 +42,9 @@ Rectangle {
                 var items = []
                 itemtable.selection.forEach( function(rowIndex) {
                     var item = itemtable.model[rowIndex].name
-                    items.push(item)
+                    items.push({name: item, code: itemtable.model[rowIndex].code, description : itemtable.model[rowIndex].description})
                 })
-                addDomainItems(items)
+                addDomainItems(items, true)
             }
         }
     }

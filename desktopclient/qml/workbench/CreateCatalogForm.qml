@@ -124,10 +124,10 @@ Item {
         anchors.bottom: createCatalogForm.bottom
         anchors.rightMargin: 5
         anchors.bottomMargin: 5
-        buttontext : "Add\nBookmark"
+        buttontext : "Add Bookmark"
         iconsource : "../images/addbookmarkCS1.png"
         height : 0
-        width :95
+        width :115
         action : addbookmark
         enabled : false
         z : 1

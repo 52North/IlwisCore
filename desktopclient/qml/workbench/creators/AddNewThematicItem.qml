@@ -37,18 +37,21 @@ Column {
         opacity : enabled ? 1.0 : 0
         spacing: 3
         Controls.TextEditLabelPair{
+            id : itemname
             labelText: qsTr("Name")
             labelWidth: 100
             width : parent.width
         }
 
         Controls.TextEditLabelPair{
+            id : itemcode
             labelText: qsTr("Code")
             labelWidth: 100
             width : parent.width
         }
 
         Controls.TextEditLabelPair{
+            id : itemdesc
             labelText: qsTr("Description")
             labelWidth: 100
             width : parent.width
@@ -61,6 +64,9 @@ Column {
             text : "Add Item"
             onClicked: {
                 newItem.enabled = false
+                var items = []
+                items.push({name: itemname.content, code: itemcode.content, description : itemdesc.content})
+                addDomainItems(items, false)
             }
         }
     }

@@ -45,4 +45,9 @@ double UndeterminedGeoReference::pixelSize() const
     return rUNDEF;
 }
 
+GeoRefImplementation *UndeterminedGeoReference::clone()
+{
+    return new UndeterminedGeoReference();
+}
+
 

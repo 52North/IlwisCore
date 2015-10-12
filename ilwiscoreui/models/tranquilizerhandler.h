@@ -45,6 +45,7 @@ private:
     double _beginValue = 0;
     double _endValue;
     double _currentValue;
+    mutable std::recursive_mutex _mutex;
 
 signals:
     void currentValueChanged();
@@ -76,6 +77,7 @@ public slots:
     void removeTranquilizer(quint64 id);
 
 private:
+    mutable std::recursive_mutex _mutex;
     int aggregateValue() const;
     QList<TranquilizerModel *> _tranquilizers;
 

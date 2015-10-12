@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick 2.0
 
 Rectangle {
-    property color background1 : "#EAECEE"
+    property color background1 : "white"
     property string formQML : ""
     property var formComponent : null
     property var currentAppForm : null
@@ -33,7 +33,7 @@ Rectangle {
         }
 
         if ( formQML.length !== 0) {
-            background1 = formTitle == "" ? "transparent" : "#EAECEE"
+            background1 = formTitle == "" ? "transparent" : "white"
             currentAppForm = Qt.createQmlObject(formQML,
                 applicationArea, "autoform1");
         }

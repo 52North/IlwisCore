@@ -12,20 +12,38 @@ Controls.DropableItem{
     id : dropItem
     width : 250
     height : 0
+
     clip:true
 
-    function addDomainItems(items){
-        console.debug(items.length)
+    function addDomainItems(items,clear){
+        if ( clear)
+           container.itemArray = []
         for(var i = 0; i < items.length; ++i){
-            container.itemArray.push(items[i])
+            if ( items[i].name === "")
+                continue;
+            var duplicate = false
+            for ( var j = 0; j < container.itemArray.length; ++j){
+                // double names allowed
+                if( items[i].name === container.itemArray[j].name){
+                    duplicate = true
+                }
+                // no double codes allowed unless its empty
+                if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
+                    duplicate = true
+                }
+                if ( duplicate)
+                    break
+            }
+            if ( !duplicate)
+                container.itemArray.push(items[i])
         }
-        domainitems.model = container.itemArray
+        commonpart.domitems.item.model = container.itemArray
     }
 
 
     Rectangle {
         id : container
-        height: parent.height
+        height: 520
         width : parent.width
         border.width : 1
         border.color : Global.edgecolor
@@ -33,116 +51,16 @@ Controls.DropableItem{
         property var parentDomain
         property var itemArray : []
 
-        Column {
-
-            width : parent.width - 7
-            height : 420
-            y : 5
-            spacing : 4
-            x : 3
-
-            EditorHeader{}
-
-            Item {
-                id : parentdom
-                width : parent.width
-                height : 20
-                Text{
-                    id : parentLabel
-                    width : 100
-                    height : 20
-                    text : qsTr("Parent domain")
-                }
-                function isThematicDomain(objid){
-                    var tp = mastercatalog.id2type(objid)
-                    container.parentDomain = mastercatalog.id2object(objid, parentdom)
-                    if ( container.parentDomain && tp === "itemdomain"){
-                        return container.parentDomain.valuetype === "Thematic class"
-                    }else{
-                        container.parentDomain = null
-                        parentdomtxt.content = ""
-
-                    }
-                    return false
-                }
-
-                Controls.TextFieldDropArea{
-                    id : parentdomtxt
-                    anchors.left : parentLabel.right
-                    anchors.right: parent.right
-                    anchors.rightMargin: 4
-                    height: 20
-
-                    canUse: parentdom.isThematicDomain
-                    readOnly: false
-                    asName: false
-
-                    onContentChanged: {
-                        if ( content != ""){
-                            itemloader.source = ""
-                            itemloader.source = "SelectThematicItem.qml"
-                        }
-                        else
-                            dropItem.state = "invisible"
-                    }
-                }
-            }
-            Controls.TextEditLabelPair{
-                id : namevalue
-                labelText: qsTr("Name")
-                labelWidth: 100
-                width : parent.width
-            }
-            Controls.TextAreaLabelPair{
-                id : descvalue
-                labelText: qsTr("Description")
-                width : parent.width
-                height : 40
-                labelWidth: 100
-            }
-            CheckBox{
-                id : cbstrict
-                text: qsTr("Strict")
-                checked: true
-                enabled : parentdomtxt.content != ""
-                style : Base.CheckBoxStyle1{}
-            }
-            Text {
-                text : qsTr("Current items")
-                font.bold: true
-            }
-            Rectangle {
-                id : itemList
-                width : parent.width
-                height : 90
-                border.width: 1
-                border.color : Global.edgecolor
-                radius : 3
-                ScrollView{
-                    anchors.fill : parent
-                    ListView {
-                        id : domainitems
-                        anchors.fill : parent
-                        delegate: Component {
-                            Text{
-                                x : 4
-                                text : modelData
-                            }
-                        }
-                    }
-                }
-            }
-            Loader {
-                id : itemloader
-                width : parent.width
-                height : 170
-                onSourceChanged: {
-                    if ( item && container.parentDomain !== undefined){
-                        item.itemdomain = container.parentDomain
-                    }
-                }
-            }
+        ItemDomainCommonPart{
+            id : commonpart
+            domaintype: "itemdomain"
+            valuetype: "Thematic class"
+            parentItemList : "SelectThematicItem.qml"
+            newItemEditor: "AddNewThematicItem.qml"
+            domitems.source : "ItemTable.qml"
         }
+
+
         Item {
             width : parent.width
             height : 60
@@ -158,14 +76,18 @@ Controls.DropableItem{
                 onClicked: {
                     dropItem.state = "invisible"
                     var itemstring = ""
-                    if ( domainitems.model){
-                        for(var i = 0; i < domainitems.model.length; ++i){
+                    console.debug("a", commonpart.domitems.item.model, commonpart.domitems.item.model.length,commonpart.parentdomain)
+                    if ( commonpart.domitems.item.model){
+                        for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
-                            itemstring += domainitems.model[i];
+                            itemstring += commonpart.domitems.item.model[i].name;
+                            if (  commonpart.parentdomain == ""){
+                                itemstring += "|"+ commonpart.domitems.item.model[i].code;
+                                itemstring += "|"+ commonpart.domitems.item.model[i].description;
+                            }
                         }
-
-                        var createInfo = {parentdomain : parentdomtxt.content, type : "itemdomain", valuetype : "thematic", name :  namevalue.content, items : itemstring, description : descvalue.content,strict : cbstrict.checked}
+                        var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                         var ilwisid = objectcreator.createObject(createInfo)
                     }
                 }

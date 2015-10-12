@@ -6,7 +6,6 @@
 CONFIG += plugin
 
 QT       += sql
-QT       -= gui
 
 TARGET = baseoperations
 TEMPLATE = lib
@@ -48,7 +47,11 @@ HEADERS += \
     baseoperations/math/unarymathrasterandnumber.h \
     baseoperations/data/convertcolumndomain.h \
     baseoperations/creators/createnumericdomain.h \
-    baseoperations/creators/createthematicdomain.h
+    baseoperations/creators/createthematicdomain.h \
+    baseoperations/creators/createidentifierdomain.h \
+    baseoperations/creators/createintervaldomain.h \
+    baseoperations/creators/createpalettedomain.h \
+    baseoperations/creators/createcornersgeoreference.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -82,7 +85,11 @@ SOURCES += \
     baseoperations/math/unarymathrasterandnumber.cpp \
     baseoperations/data/convertcolumndomain.cpp \
     baseoperations/creators/createnumericdomain.cpp \
-    baseoperations/creators/createthematicdomain.cpp
+    baseoperations/creators/createthematicdomain.cpp \
+    baseoperations/creators/createidentifierdomain.cpp \
+    baseoperations/creators/createintervaldomain.cpp \
+    baseoperations/creators/createpalettedomain.cpp \
+    baseoperations/creators/createcornersgeoreference.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
@@ -94,5 +101,7 @@ win32{
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
+
+DISTFILES +=
 
 

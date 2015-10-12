@@ -64,7 +64,7 @@ OperationImplementation::State GridSize::prepare(ExecutionContext *, const Symbo
 quint64 GridSize::createMetadata()
 {
     OperationResource operation({"ilwis://operations/rastersize"});
-    operation.setSyntax("gridsize(rastercoverage,xsize|ysize|zsize)");
+    operation.setSyntax("gridsize(rastercoverage,dimension=xsize|ysize|zsize)");
     operation.setLongName("Raster Gridsize");
     operation.setDescription(TR("returns the pixel extent of a grid coverage dimension"));
     operation.setInParameterCount({2});

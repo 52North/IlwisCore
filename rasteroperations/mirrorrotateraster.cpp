@@ -158,7 +158,7 @@ Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionConte
 quint64 MirrorRotateRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/mirrorrotateraster"});
-    operation.setSyntax("mirrorrotateraster(inputraster,mirrhor | mirrvert | mirrdiag | transpose | rotate90 | rotate180 | rotate270)");
+    operation.setSyntax("mirrorrotateraster(inputraster,mirrortype=mirrhor | mirrvert | mirrdiag | transpose | rotate90 | rotate180 | rotate270)");
     operation.setDescription(TR("transpose the raster according to the method indicated by the second parameter"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER,  TR("input raster"),TR("ratser to be transposed"));

@@ -3,7 +3,7 @@ import QtQuick 2.0
 Item {
     id : container
     height : parent.height
-
+   // width : parent.width
 
 
     states: [
@@ -11,7 +11,7 @@ Item {
 
             PropertyChanges {
                 target: container
-                width : defaultFunctionBarWidth
+                width : parent.width
             }
         },
         State {

@@ -49,10 +49,10 @@ Ilwis::OperationImplementation::State MasterGeoreference::prepare(ExecutionConte
 quint64 MasterGeoreference::createMetadata()
 {
     OperationResource operation({"ilwis://operations/mastergeoreference"});
-    operation.setSyntax("mastergeoref(rastercoverage|targetgeoref)");
+    operation.setSyntax("mastergeoref(targetgeoref)");
     operation.setDescription(TR("Sets the georeference for all operations that trigger an on the fly resampling of a gridcoverage"));
     operation.setInParameterCount({1});
-    operation.addInParameter(0,itGEOREF | itRASTER, TR("georeference"),TR("input georeference or raster, in which case it takes the georeference of the raster"));
+    operation.addInParameter(0,itRASTER, TR("georeference"),TR("input georeference or raster, in which case it takes the georeference of the raster"));
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itUNKNOWN, TR(""));

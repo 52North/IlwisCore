@@ -122,7 +122,10 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             isOptional = false;
             ++optionGroup;
         } else if ( c == '|'){
-            choices << part.trimmed();
+            if ( part.indexOf("=") !=-1){
+                choices << part.split("=")[1];
+            }else
+                choices << part.trimmed();
             inChoiceList = true;
         }
         part.clear();
@@ -169,7 +172,7 @@ QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
     }
     if ( hasType(type, itFEATURE)){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ TypeHelper::type2name(itFEATURE);
+        keypart += "\""+ TypeHelper::type2name(itFEATURE) + "\"";
     }
     if ( hasType(type, itDOMAIN)){
         if ( keypart != "") keypart += ",";
@@ -367,7 +370,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
     // for debugging, check if the qml is ok; can be retrieved from teh log file
-   //kernel()->issues()->log(component);
+   kernel()->issues()->log(component);
 
     return component;
 

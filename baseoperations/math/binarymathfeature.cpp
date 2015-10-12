@@ -108,7 +108,7 @@ Envelope BinaryMathFeature::addEnvelopes() const {
 quint64 BinaryMathFeature::createMetadata()
 {
     OperationResource operation({"ilwis://operations/binarymathfeatures"});
-    operation.setSyntax("binarymathfeatures(featurecoverage1,featurescoverage2,!add|substract)");
+    operation.setSyntax("binarymathfeatures(featurecoverage1,featurescoverage2,featureoperation=!add|substract)");
     operation.setDescription(TR("generates a new featurecoverage that puts all the features of both coverages into one coverage"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itFEATURE, TR("first input feature coverage"));

@@ -128,7 +128,7 @@ Ilwis::OperationImplementation::State Ilwis::Geodrawer::RepresentationAttributeF
 quint64 Ilwis::Geodrawer::RepresentationAttributeFillColor::createMetadata()
 {
     OperationResource operation({"ilwis://operations/attributefillcolor"});
-    operation.setSyntax("attributefillcolor(viewid, layerindex|code,attribute,itemname, color)");
+    operation.setSyntax("attributefillcolor(viewid, selector=layerindex|code,attribute,itemname, color)");
     operation.setDescription(TR("changes the fill color of an representation item of an attribute"));
     operation.setInParameterCount({5});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));

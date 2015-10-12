@@ -75,7 +75,7 @@ quint64 Pixel2Coord::createMetadata()
 {
     OperationResource operation({"ilwis://operations/pixel2coord"});
     operation.setLongName("Pixel to Coordinate");
-    operation.setSyntax("pixel2coord(rastercoverage|georef,Pixel)");
+    operation.setSyntax("pixel2coord(datatype=rastercoverage|georef,Pixel)");
     operation.setDescription(TR("translates a pixel to a coordinate location based on the supplied georeference"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER | itGEOREF, TR("input rastercoverage or georeference"),TR("input rastercoverage with domain any domain or georefence"));

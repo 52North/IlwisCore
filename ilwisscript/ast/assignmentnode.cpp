@@ -66,6 +66,8 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::ITable>().as<IlwisObject>();
     if ( hasType(tp , itDOMAIN))
         return sym._var.value<Ilwis::IDomain>().as<IlwisObject>();
+    if ( hasType(tp , itGEOREF))
+        return sym._var.value<Ilwis::IGeoReference>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -132,7 +134,11 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     }
                     else if (hasType(tp, itFEATURE))
                         ok = copyObject<FeatureCoverage>(sym, result,symbols);
-                    else if (hasType(tp, itTABLE)){
+                    else if ( hasType(tp, itDOMAIN)){
+                        ok = copyObject<Domain>(sym, result,symbols);
+                    } else if ( hasType(tp, itGEOREF)){
+                        ok = copyObject<GeoReference>(sym, result,symbols);
+                    } else if (hasType(tp, itTABLE)){
                         ok = copyObject<Table>(sym, result,symbols,true);
                         QSharedPointer<Selector> selector = _outParms->selector(result);
                         if (!selector.isNull()){
@@ -146,8 +152,6 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                                 coldef.name(varName);
                             }
                         }
-                    } else if ( hasType(tp, itDOMAIN)){
-                        ok = copyObject<Domain>(sym, result,symbols);
                     }
 
                     if(!ok) {
@@ -164,25 +168,25 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     ctx->_results.push_back(result);
                     return ok;
 
-                } else {
-                    sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
-                    tp = sym.isValid() ? sym._type : itUNKNOWN;
-                    if ( tp == itUNKNOWN) {
-                        tp = Domain::ilwType(val);
-                    }
+            } else {
+                sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
+                tp = sym.isValid() ? sym._type : itUNKNOWN;
+                if ( tp == itUNKNOWN) {
+                    tp = Domain::ilwType(val);
                 }
-                ctx->clear();
-                // symbols.addSymbol(result, scope, tp, _expression->value());
-                ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
-
-                return true;
             }
+            ctx->clear();
+            // symbols.addSymbol(result, scope, tp, _expression->value());
+            ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
+
+            return true;
         }
-    } catch(const ErrorObject&){
-
     }
+} catch(const ErrorObject&){
 
-    return false;
+}
+
+return false;
 }
 
 void AssignmentNode::addOutputs(OutParametersNode *p)

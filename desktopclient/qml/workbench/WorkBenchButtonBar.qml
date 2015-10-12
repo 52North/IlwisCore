@@ -150,11 +150,19 @@ Rectangle {
                 minimumValue: 0
                 value : tranquilizerHandler.aggregateValue
                 opacity: value > 0 ? 0.35 : 0
+                style: ProgressBarStyle {
+                     background: Rectangle {
+                         radius: 2
+                         color: "lightgreen"
+                         border.color: "gray"
+                         border.width: 1
+                     }
+                }
 
             }
 
             action : progressClicked
-            iconname : "progressCS1.png"
+            iconname : "progress2CS1.png"
             label: qsTr("Progress")
 
         }

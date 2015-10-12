@@ -240,7 +240,7 @@ quint64 CrossRasters::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/cross"});
-    operation.setSyntax("cross(raster1, raster2, !ignoreundef1 | ignoreundef2 | ignoreundef | dontcare)");
+    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef1 | ignoreundef2 | ignoreundef | dontcare)");
     operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("input rastercoverage with domain item or integer"));

@@ -96,7 +96,7 @@ quint64 CreateNumericDomain::createMetadata()
     resource.addInParameter(2, itDOUBLE,TR("Resolution"), TR("Numerical space between the numbers in the range"));
     resource.addInParameter(3, itBOOL,TR("Strictness"), TR("Indicates how strict the realtion between domain and parent is; true for all domains without parents"));
     resource.addInParameter(4, itSTRING,TR("Description"), TR("Extra information about the new domain"));
-    resource.addOptionalInParameter(5, itSTRING, TR("Parent domain"), TR("optional indication of a parent domain"));
+    resource.addOptionalInParameter(5, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itNUMERICDOMAIN, TR("output domain"), TR("The newly created domain"));
     resource.setKeywords("domain, create, numeric");

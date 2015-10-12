@@ -118,7 +118,7 @@ Ilwis::OperationImplementation::State LayerManagement::prepare(ExecutionContext 
 quint64 LayerManagement::createMetadata()
 {
     OperationResource operation({"ilwis://operations/layermanagement"});
-    operation.setSyntax("layermanagement(viewid, drawername-index, up | !down|remove)");
+    operation.setSyntax("layermanagement(viewid, drawername-index, direction=up | !down|remove)");
     operation.setDescription(TR("changes the position of a layer within the layerview"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));

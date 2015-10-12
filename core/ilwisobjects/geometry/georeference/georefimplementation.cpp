@@ -67,7 +67,18 @@ bool GeoRefImplementation::compute()
     return true;
 }
 
+
 bool GeoRefImplementation::isCompatible(const IGeoReference &georefOther) const
 {
     return false;
+}
+
+void GeoRefImplementation::copyTo(GeoRefImplementation *impl)
+{
+    impl->_csy = _csy;
+    impl->_centerOfPixel = _centerOfPixel;
+    impl->_size = _size;
+    impl->name( name());
+    impl->setDescription(description());
+    impl->code(code());
 }

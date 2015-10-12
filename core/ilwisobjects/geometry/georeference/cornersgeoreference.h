@@ -4,6 +4,9 @@
 #include "kernel_global.h"
 
 namespace Ilwis {
+
+class GeoRefImplementation;
+
 class KERNELSHARED_EXPORT CornersGeoReference : public SimpelGeoReference
 {
 public:
@@ -14,10 +17,13 @@ public:
     QSize computeGridSize() const;
     bool isCornersOfCorners() const;
     Envelope envelope() const;
+    GeoRefImplementation *clone();
     static QString typeName();
+
 
     static GeoRefImplementation *create();
 private:
+    void copyTo(GeoRefImplementation *impl);
     Envelope _envelope;
 };
 
