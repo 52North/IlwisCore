@@ -1,4 +1,5 @@
 #include <QImage>
+#include <QOpenGLTexture>
 #include "raster.h"
 #include "pixeliterator.h"
 #include "rootdrawer.h"
@@ -14,113 +15,141 @@ using namespace Geodrawer;
 
 REGISTER_RASTERIMAGETYPE(RasterValueImage,itNUMERICDOMAIN);
 
-RasterValueImage::RasterValueImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options) :
-    RasterImage(rootDrawer,raster,vattribute, options)
+RasterValueImage::RasterValueImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
+: RasterImage(rootDrawer, raster, vattribute, options)
 {
 }
 
 RasterValueImage::~RasterValueImage()
 {
-
 }
 
-RasterImage *RasterValueImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute,const IOOptions &options)
+RasterImage *RasterValueImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
 {
     return new RasterValueImage(rootDrawer, raster, vattribute, options)    ;
 }
 
 bool RasterValueImage::prepare(int prepareType)
 {
-    bool resetImage = false;
-    BoundingBox bb(_raster->size());
-    // lines must be 32 bit alligned. an entry pixel is a byte, so everything must be 4 alligned (32 bit is 4 bytes)
-    int xl = (quint32)bb.xlength() % 4 == 0 ? bb.xlength() : (((quint32)bb.xlength() / 4) + 1) * 4;
-    int rest = xl - bb.xlength();
     if ( hasType(prepareType, DrawerInterface::ptRENDER)){
         std::vector<QColor> colors = _visualAttribute.colors();
         _colorTable = QVector<QRgb>(colors.size()) ;
         for(int i = 0; i < _colorTable.size(); ++i)
             _colorTable[i] = colors[i].rgba();
-        resetImage = true;
-
+        for (Texture * tex : _textures) {
+            ((ValueTexture*)tex)->setColorTable(_colorTable);
+        }
     }
 
     if ( hasType(prepareType, DrawerInterface::ptGEOMETRY)){
-        quint32 size = xl * bb.ylength();
-        _pixels.resize(size);
-        PixelIterator pixIter(_raster);
-
-
-
-
-        SPNumericRange numrange =  _raster->datadef().range<NumericRange>();
-        auto end = pixIter.end();
-        quint32 position = 0;
-        while(pixIter != end){
-            double value = *pixIter;
-            int index = value == rUNDEF ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
-            _pixels[position] = index;
-            ++pixIter;
-            if ( pixIter.ychanged()){
-                position += rest;
-            }
-            ++position;
-        }
-        resetImage = true;
     }
 
-    if ( resetImage)   {
-        const uchar *datablock = (const uchar *)_pixels.data();
-        _image.reset(new QImage(datablock,xl, bb.ylength(),QImage::Format_Indexed8));
-        _image->setColorTable(_colorTable);
-    }
-    return resetImage;
-
+    return true;
 }
 
-void RasterImage::makeImageTemp()
+Texture * RasterValueImage::GenerateTexture(const unsigned int offsetX, const unsigned int offsetY, const unsigned int sizeX, const unsigned int sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor) {
+    ValueTexture * tex = new ValueTexture(offsetX, offsetY, sizeX, sizeY, imgWidth2, imgHeight2, zoomFactor);
+    setTextureData(tex, offsetX, offsetY, sizeX, sizeY, zoomFactor);
+    _textures.push_back(tex);
+    return tex;
+}
+
+void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offsetX, const unsigned int offsetY, unsigned int texSizeX, unsigned int texSizeY, unsigned int zoomFactor)
 {
-    // doesnt work, but i keep it around for later checking, should be more efficient version of makeImage()
-//    BoundingBox bb(_raster->size()); // = _rootDrawer->screenGrf()->coord2Pixel(_raster->envelope());
-//    Size<> pixArea = _rootDrawer->pixelAreaSize();
-//    double dx = std::max(1.0,(double)bb.xlength() / pixArea.xsize());
-//    double dy = std::max(1.0,(double)bb.ylength() / pixArea.ysize());
-//    std::vector<double> xsteps(pixArea.xsize(),0);
-//    std::vector<double> ysteps(pixArea.ysize(),0);
+    long imageWidth = _raster->size().xsize();
+    long imageHeight = _raster->size().xsize();
+    long sizeX = texSizeX; // the size of the input (pixeliterator)
+    long sizeY = texSizeY;
+    if (offsetX + sizeX > imageWidth)
+        sizeX = imageWidth - offsetX;
+    if (offsetY + sizeY > imageHeight)
+        sizeY = imageHeight - offsetY;
+    if (sizeX == 0 || sizeY == 0)
+        return;
+    const long xSizeOut = (long)ceil((double)sizeX / ((double)zoomFactor)); // the size until which the pixels vector will be filled (this is commonly the same as texSizeX, except the rightmost / bottommost textures, as raster-images seldom have as size of ^2)
+    const long ySizeOut = (long)ceil((double)sizeY / ((double)zoomFactor));
+    texSizeX /= zoomFactor; // the actual size of the texture (commonly 256 or maxtexturesize, but smaller texture sizes may be allocated for the rightmost or bottommost textures)
+    texSizeY /= zoomFactor;
 
-//    for(int x = 1; x < xsteps.size(); ++x){
-//        xsteps[x] = xsteps[x-1] + dx;
-//    }
-//    for(int x = 1; x < xsteps.size(); ++x){
-//        xsteps[x] = (int)(xsteps[x] - (int)((x - 1) * dx));
+    BoundingBox bb(Pixel(offsetX, offsetY), Pixel(offsetX + sizeX - 1, offsetY + sizeY - 1));
+    // the "pixels" array must be made 32-bit aligned (32-bit-alignment is required by QImage)
+    int xl = (quint32)texSizeX % 4 == 0 ? texSizeX : ((texSizeX / 4) + 1) * 4;
+    int rest = xl - texSizeX;
+    quint32 size = xl * texSizeY;
+    std::vector<quint8> * pixels = new std::vector<quint8> ();
+    pixels->resize(size);
+    PixelIterator pixIter(_raster, bb); // This iterator runs through bb. The corners of bb are "inclusive".
 
-//    }
-//    for(int y = 1; y < ysteps.size(); ++y){
-//        ysteps[y] = ysteps[y-1] + dy;
-//    }
-//    for(int y = 1; y < ysteps.size(); ++y){
-//        ysteps[y] = (int)(ysteps[y] - (int)((y - 1) * dy));
-//    }
+    SPNumericRange numrange = _raster->datadef().range<NumericRange>();
+    auto end = pixIter.end();
+    quint32 position = 0;
+    while(pixIter != end){
+        double value = *pixIter;
+        int index = value == rUNDEF ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
+        (*pixels)[position] = index; // int32 to quint8 conversion (do we want this?)
+        pixIter += zoomFactor;
+        if ( pixIter.ychanged()) {
+            position += (rest + texSizeX - xSizeOut);
+            if (zoomFactor > 1)
+                pixIter += sizeX * (zoomFactor - 1);
+        }
+        ++position;
+    }
+    const uchar *datablock = (const uchar *)pixels->data();
+    QImage * image = new QImage(datablock, xl, texSizeY, QImage::Format_Indexed8);
+    image->setColorTable(_colorTable);
+    tex->setQImage(image, pixels); // carry over the image and the data-buffer to the texture object (see QImage documentation: the data-buffer must exist throughout the existence of the QImage)
+}
 
-//     _pixels.resize(pixArea.linearSize());
-//    PixelIterator pixIter(_raster);
-//    int xindex = 1;
-//    int yindex = 1;
+ValueTexture::ValueTexture(const long offsetX, const long offsetY, const unsigned long sizeX, const unsigned long sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor)
+: Texture(offsetX, offsetY, sizeX, sizeY, imgWidth2, imgHeight2, zoomFactor)
+, _image(0)
+, _pixels(0)
+, _recolor(false)
+{
+}
 
-//    while(yindex != ysteps.size()){
-//        double value = *pixIter;
-//        auto color = _visualAttribute.value2color(value);
-//        _pixels[yindex * pixArea.xsize() + xindex] = color;
-//        pixIter += xsteps[xindex++];
-//        if ( pixIter.ychanged()){
-//            pixIter = Pixel(0,pixIter.y() + ysteps[yindex++]);
-//            xindex = 0;
-//        }
+ValueTexture::~ValueTexture()
+{
+    delete _image;
+    delete _pixels;
+}
 
-//    }
+void ValueTexture::setQImage(QImage * image, std::vector<quint8> *pixels)
+{
+    if (_image != 0) {
+        delete _image;
+        delete _pixels;
+    }
+    _image = image;
+    _pixels = pixels;
+    if (_texture != 0)
+        delete _texture;
+    _texture = new QOpenGLTexture(*(_image));
+    _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
+    _texture->setWrapMode(QOpenGLTexture::ClampToEdge);
+    _recolor = false;
+}
 
-//    const uchar *datablock = (const uchar *)_pixels.data();
-//    _image.reset(new QImage(datablock,pixArea.xsize(), pixArea.ysize(),QImage::Format_RGBA8888));
+void ValueTexture::setColorTable(QVector<QRgb> & _colorTable)
+{
+    if (_image != 0) {
+        _image->setColorTable(_colorTable);
+        _recolor = true;
+    }
+}
+
+void ValueTexture::BindMe(QOpenGLShaderProgram &shaders, GLuint texturemat)
+{
+    if (_recolor && _image != 0) {
+        if (_texture)
+            delete _texture;
+        _texture = new QOpenGLTexture(*(_image));
+        _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
+        _texture->setWrapMode(QOpenGLTexture::ClampToEdge);
+        _recolor = false;
+    }
+    Texture::BindMe(shaders, texturemat);
 }
 
 

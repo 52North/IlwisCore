@@ -4,6 +4,9 @@
 #include <QQuickWindow>
 #include <QOpenGLTexture>
 #include <QOpenGLShaderProgram>
+#include "geos/geom/CoordinateArraySequence.h"
+#include "geos/geom/LinearRing.h"
+#include "geos/geom/Polygon.h"
 #include "raster.h"
 #include "table.h"
 #include "pixeliterator.h"
@@ -19,7 +22,6 @@
 #include "drawers/rasterimage.h"
 #include "rasterlayerdrawer.h"
 
-
 using namespace Ilwis;
 using namespace Geodrawer;
 
@@ -27,9 +29,7 @@ REGISTER_DRAWER(RasterLayerDrawer)
 
 RasterLayerDrawer::~RasterLayerDrawer()
 {
-
 }
-
 
 Ilwis::Geodrawer::RasterLayerDrawer::RasterLayerDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) :
     LayerDrawer("RasterLayerDrawer", parentDrawer, rootdrawer, options)
@@ -47,36 +47,36 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
     if ( !_rasterImage){
         setActiveVisualAttribute(PIXELVALUE);
        _visualAttribute = visualProperty(activeAttribute());
-       _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(),raster,_visualAttribute,IOOptions()));
+       _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(), raster,_visualAttribute,IOOptions()));
        if (!_rasterImage){
            ERROR2(ERR_NO_INITIALIZED_2,"RasterImage",raster->name());
            return false;
        }
 
+       _maxTextureSize = 256; // = min(512, getMaxTextureSize());
+       if ( raster->georeference().isValid() && raster->georeference()->isValid()) {
+           _imageWidth = raster->georeference()->size().xsize();
+           _imageHeight = raster->georeference()->size().ysize();
+       } else if ( raster.isValid()) {
+           _imageWidth = raster->size().xsize();
+           _imageHeight = raster->size().ysize();
+       }
+
+       double log2width = log((double)_imageWidth)/log(2.0);
+       log2width = max(6, ceil(log2width)); // 2^6 = 64 = the minimum texture size that OpenGL/TexImage2D supports
+       _width = pow(2, log2width);
+       double log2height = log((double)_imageHeight)/log(2.0);
+       log2height = max(6, ceil(log2height)); // 2^6 = 64 = the minimum texture size that OpenGL/TexImage2D supports
+       _height = pow(2, log2height);
     }
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
+        _texturemat = _shaders.uniformLocation("texmat");
         _texcoordid = _shaders.attributeLocation("texCoord");
         _textureid = _shaders.uniformLocation( "tex" );
-
         _prepared |= DrawerInterface::ptSHADERS;
     }
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
-        Envelope env = rootDrawer()->coordinateSystem()->convertEnvelope(raster->coordinateSystem(), raster->envelope());
-        _vertices.resize(6);
-
-        _vertices[0] = QVector3D(env.min_corner().x, env.min_corner().y, 0);
-        _vertices[1] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
-        _vertices[2] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
-        _vertices[3] = QVector3D(env.max_corner().x, env.min_corner().y, 0);
-        _vertices[4] = QVector3D(env.max_corner().x, env.max_corner().y, 0);
-        _vertices[5] = QVector3D(env.min_corner().x, env.max_corner().y, 0);
-
-        _texcoords.resize(6);
-        _texcoords = {{0,1},{1,1},{0,0},
-                      {1,1},{1,0},{0,0}
-                     };
-
         _prepared |= ( DrawerInterface::ptGEOMETRY);
     }
    if ( hasType(prepType, DrawerInterface::ptRENDER) && !isPrepared(DrawerInterface::ptRENDER)){
@@ -85,10 +85,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
        _rasterImage->visualAttribute(_visualAttribute);
        _prepared |= ( DrawerInterface::ptRENDER);
    }
-   if (_rasterImage->prepare((int)prepType)){
-       _texture.reset( new QOpenGLTexture(*(_rasterImage->image().get())));
-       _texture->setMinMagFilters(QOpenGLTexture::Nearest,QOpenGLTexture::Nearest);
-   }
+   _rasterImage->prepare((int)prepType);
    return true;
 }
 
@@ -123,15 +120,13 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
     IlwisTypes attrType = raster->datadef().domain()->valueType();
     VisualAttribute attr(raster->datadef().domain());
     if ( hasType(attrType, itNUMBER)){
-        auto numrange = raster->datadef().range<NumericRange>();
+        QSharedPointer<Ilwis::NumericRange> numrange = raster->datadef().range<NumericRange>();
         attr.actualRange(NumericRange(numrange->min(), numrange->max(), numrange->resolution()));
         visualProperty(PIXELVALUE, attr);
     } else if ( hasType(attrType, itCONTINUOUSCOLOR)){
-         visualProperty(PIXELVALUE, attr);
-
+        visualProperty(PIXELVALUE, attr);
     }else if ( hasType(attrType, itPALETTECOLOR)){
         auto colorrange = raster->datadef().range<ColorPalette>();
-
    }
 }
 
@@ -177,29 +172,262 @@ bool RasterLayerDrawer::draw(const IOOptions &options)
     if(!_shaders.bind())
         return false;
 
-    if ( !_texture)
-        return false;
     QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
-
-   _shaders.setUniformValue(_modelview, mvp);
-
-
-  _texture->bind();
-
-   _shaders.setUniformValue(_vboAlpha, alpha());
-   _shaders.setAttributeArray( _vboPosition, _vertices.constData() );
-   _shaders.setAttributeArray( _texcoordid, _texcoords.constData() );
-   _shaders.setUniformValue( _textureid, 0 );
-
-   _shaders.enableAttributeArray( _vboPosition );
-   _shaders.enableAttributeArray( _texcoordid );
-
-   glDrawArrays( GL_TRIANGLES, 0, 6 );
-
-   _shaders.disableAttributeArray( _vboPosition );
-   _shaders.disableAttributeArray( _texcoordid );
-
+    _shaders.setUniformValue(_modelview, mvp);
+    _shaders.setUniformValue(_vboAlpha, alpha());
+    _shaders.setUniformValue(_textureid, 0); // all "bind" calls bind to GL_TEXTURE0
+    DisplayImagePortion(0, 0, _width, _height);
     _shaders.release();
 
     return true;
+}
+
+#ifndef sqr
+#define sqr(x) ((x) * (x))
+#endif
+
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
+void RasterLayerDrawer::DisplayImagePortion(unsigned int imageOffsetX, unsigned int imageOffsetY, unsigned int imageSizeX, unsigned int imageSizeY)
+{
+    // if patch describes the "added" portion of the map, do not display
+    if (imageOffsetX > _imageWidth || imageOffsetY > _imageHeight)
+        return;
+
+    // if patch is outside viewport, do not display
+    const IRasterCoverage & raster = coverage().as<RasterCoverage>();
+    const IGeoReference & gr = raster->georeference();
+
+    Coordinate b1 = gr->pixel2Coord(Pixel(imageOffsetX, imageOffsetY));
+    Coordinate b2 = gr->pixel2Coord(Pixel(imageOffsetX + imageSizeX, imageOffsetY));
+    Coordinate b3 = gr->pixel2Coord(Pixel(imageOffsetX + imageSizeX, imageOffsetY + imageSizeY));
+    Coordinate b4 = gr->pixel2Coord(Pixel(imageOffsetX, imageOffsetY + imageSizeY));
+    Coordinate c1 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b1);
+    Coordinate c2 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b2);
+    Coordinate c3 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b3);
+    Coordinate c4 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b4);
+    if (!(c1.isValid() && c2.isValid() && c3.isValid() && c4.isValid()))
+        return;
+
+    const QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
+    Size<> viewport = rootDrawer()->pixelAreaSize();
+    QVector4D c1a (c1.x, c1.y, 0.0, 1.0);
+    QVector4D c2a (c2.x, c2.y, 0.0, 1.0);
+    QVector4D c3a (c3.x, c3.y, 0.0, 1.0);
+    QVector4D c4a (c4.x, c4.y, 0.0, 1.0);
+    QVector3D viewp (viewport.xsize(), viewport.ysize(), 1.0);
+    QVector4D win1 = mvp * c1a;
+    QVector4D win2 = mvp * c2a;
+    QVector4D win3 = mvp * c3a;
+    QVector4D win4 = mvp * c4a;
+    win1 /= win1.w();
+    win2 /= win2.w();
+    win3 /= win3.w();
+    win4 /= win4.w();
+    win1 *= 0.5;
+    win2 *= 0.5;
+    win3 *= 0.5;
+    win4 *= 0.5;
+    win1 += QVector4D(0.5, 0.5, 0.5, 0.5);
+    win2 += QVector4D(0.5, 0.5, 0.5, 0.5);
+    win3 += QVector4D(0.5, 0.5, 0.5, 0.5);
+    win4 += QVector4D(0.5, 0.5, 0.5, 0.5);
+    win1 *= viewp;
+    win2 *= viewp;
+    win3 *= viewp;
+    win4 *= viewp;
+
+    geos::geom::GeometryFactory factory;
+    const std::vector<geos::geom::Geometry *> holes;
+    geos::geom::CoordinateArraySequence * coordsTile = new geos::geom::CoordinateArraySequence();
+    coordsTile->add(Coordinate(win1.x(), win1.y()));
+    coordsTile->add(Coordinate(win2.x(), win2.y()));
+    coordsTile->add(Coordinate(win3.x(), win3.y()));
+    coordsTile->add(Coordinate(win4.x(), win4.y()));
+    coordsTile->add(Coordinate(win1.x(), win1.y()));
+    const geos::geom::LinearRing ringTile(coordsTile, &factory);
+    geos::geom::Polygon * polyTile(factory.createPolygon(ringTile, holes));
+
+    geos::geom::CoordinateArraySequence * coordsViewport = new geos::geom::CoordinateArraySequence();
+    coordsViewport->add(Coordinate(0, 0));
+    coordsViewport->add(Coordinate(viewport.xsize(), 0));
+    coordsViewport->add(Coordinate(viewport.xsize(), viewport.ysize()));
+    coordsViewport->add(Coordinate(0, viewport.ysize()));
+    coordsViewport->add(Coordinate(0, 0));
+    const geos::geom::LinearRing ringViewport(coordsViewport, &factory);
+    geos::geom::Polygon * polyViewport(factory.createPolygon(ringViewport, holes));
+
+    bool fContains = !polyViewport->disjoint(polyTile);
+    delete polyTile;
+    delete polyViewport;
+    if (!fContains)
+        return;
+
+    double screenPixelsY1 = sqrt(sqr(win2.x()-win1.x())+sqr(win2.y()-win1.y()));
+    double screenPixelsX1 = sqrt(sqr(win3.x()-win2.x())+sqr(win3.y()-win2.y()));
+    double screenPixelsY2 = sqrt(sqr(win4.x()-win3.x())+sqr(win4.y()-win3.y()));
+    double screenPixelsX2 = sqrt(sqr(win1.x()-win4.x())+sqr(win1.y()-win4.y()));
+    double zoom = min(imageSizeX/screenPixelsX1, min(imageSizeX/screenPixelsX2, min(imageSizeY/screenPixelsY1, imageSizeY/screenPixelsY2)));
+    // the minimum zoomout-factor, indicating that it is necessary to plot the patch more accurately
+
+    double log2zoom = log(zoom)/log(2.0);
+    log2zoom = floor(log2zoom);
+    const unsigned int zoomFactor = min(64, max(1, pow(2, log2zoom)));
+    if (0 == zoomFactor)
+        return;
+
+    // split the visible portion of the image into a number of patches, depending on the accuracy needed
+
+    bool xSplit = false;
+    bool ySplit = false;
+
+    if ((imageSizeX > 1) && (imageSizeX / zoomFactor > _maxTextureSize)) // imageSizeX / zoomFactor is the required pixels of the patch in the x-direction
+        xSplit = true;
+    if ((imageSizeY > 1) && (imageSizeY / zoomFactor > _maxTextureSize)) // imageSizeY / zoomFactor is the required pixels of the patch in the y-direction
+        ySplit = true;
+    if (xSplit && ySplit)
+    {
+        int sizeX2 = imageSizeX / 2;
+        int sizeY2 = imageSizeY / 2;
+        // Q1
+        DisplayImagePortion(imageOffsetX, imageOffsetY, sizeX2, sizeY2);
+        // Q2
+        DisplayImagePortion(imageOffsetX + sizeX2, imageOffsetY, sizeX2, sizeY2);
+        // Q3
+        DisplayImagePortion(imageOffsetX + sizeX2, imageOffsetY + sizeY2, sizeX2, sizeY2);
+        // Q4
+        DisplayImagePortion(imageOffsetX, imageOffsetY + sizeY2, sizeX2, sizeY2);
+    }
+    else if (xSplit)
+    {
+        int sizeX2 = imageSizeX / 2;
+        // Q1
+        DisplayImagePortion(imageOffsetX, imageOffsetY, sizeX2, imageSizeY);
+        // Q2
+        DisplayImagePortion(imageOffsetX + sizeX2, imageOffsetY, sizeX2, imageSizeY);
+    }
+    else if (ySplit)
+    {
+        int sizeY2 = imageSizeY / 2;
+        // Q1
+        DisplayImagePortion(imageOffsetX, imageOffsetY, imageSizeX, sizeY2);
+        // Q2
+        DisplayImagePortion(imageOffsetX, imageOffsetY + sizeY2, imageSizeX, sizeY2);
+    }
+    else
+    {
+        //if (getRootDrawer()->is3D() && demTriangulator)
+        //    DisplayTexture3D(c1, c2, c3, c4, imageOffsetX, imageOffsetY, imageSizeX, imageSizeY, zoomFactor);
+        //else
+            DisplayTexture(c1, c2, c3, c4, imageOffsetX, imageOffsetY, imageSizeX, imageSizeY, zoomFactor);
+    }
+}
+
+void RasterLayerDrawer::DisplayTexture(Coordinate & c1, Coordinate & c2, Coordinate & c3, Coordinate & c4, unsigned int imageOffsetX, unsigned int imageOffsetY, unsigned int imageSizeX, unsigned int imageSizeY, unsigned int zoomFactor)
+{
+    bool ok = _rasterImage->GetTexture(imageOffsetX, imageOffsetY, imageSizeX, imageSizeY, _width, _height, zoomFactor, _shaders, _texturemat);
+    if (ok)
+    {
+        const IRasterCoverage & raster = coverage().as<RasterCoverage>();
+        const IGeoReference & gr = raster->georeference();
+        QVector<QVector3D> vertices;
+        QVector<QVector2D> texcoords;
+        vertices.resize(4);
+        texcoords.resize(4);
+
+        bool fLinear = (rootDrawer()->coordinateSystem() == raster->coordinateSystem());
+        if (fLinear) {
+            double s1 = imageOffsetX / (double)_width;
+            double t1 = imageOffsetY / (double)_height;
+            double s2 = min(imageOffsetX + imageSizeX, _imageWidth) / (double)_width;
+            double t2 = min(imageOffsetY + imageSizeY, _imageHeight) / (double)_height;
+
+            Coordinate b1 = gr->pixel2Coord(Pixel(imageOffsetX, imageOffsetY));
+            Coordinate b2 = gr->pixel2Coord(Pixel(min(imageOffsetX + imageSizeX, _imageWidth), imageOffsetY));
+            Coordinate b3 = gr->pixel2Coord(Pixel(min(imageOffsetX + imageSizeX, _imageWidth), min(imageOffsetY + imageSizeY, _imageHeight)));
+            Coordinate b4 = gr->pixel2Coord(Pixel(imageOffsetX, min(imageOffsetY + imageSizeY, _imageHeight)));
+
+            c1 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b1);
+            c2 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b2);
+            c3 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b3);
+            c4 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b4);
+
+            vertices[0] = QVector3D(c1.x, c1.y, 0.0);
+            vertices[1] = QVector3D(c2.x, c2.y, 0.0);
+            vertices[2] = QVector3D(c3.x, c3.y, 0.0);
+            vertices[3] = QVector3D(c4.x, c4.y, 0.0);
+            texcoords[0] = QVector2D(s1, t1);
+            texcoords[1] = QVector2D(s2, t1);
+            texcoords[2] = QVector2D(s2, t2);
+            texcoords[3] = QVector2D(s1, t2);
+
+            _shaders.setAttributeArray( _vboPosition, vertices.constData() );
+            _shaders.setAttributeArray( _texcoordid, texcoords.constData() );
+
+            _shaders.enableAttributeArray( _vboPosition );
+            _shaders.enableAttributeArray( _texcoordid );
+
+            glDrawArrays( GL_QUADS, 0, 4 );
+
+            _shaders.disableAttributeArray( _vboPosition );
+            _shaders.disableAttributeArray( _texcoordid );
+        } else {
+            const unsigned int iSize = 10; // this makes 100 quads, thus 200 triangles per texture
+            // avoid plotting the "added" portion of the map that was there to make the texture size a power of 2
+            double colStep = min(imageSizeX, _imageWidth - imageOffsetX) / (double)iSize;
+            double rowStep = min(imageSizeY, _imageHeight - imageOffsetY) / (double)iSize;
+
+            double s1 = imageOffsetX / (double)_width;
+            for (int x = 0; x < iSize; ++x) {
+                double s2 = s1 + colStep / (double)_width;
+                double t1 = imageOffsetY / (double)_height;
+
+                Coordinate b1 = gr->pixel2Coord(Pixel(imageOffsetX + colStep * x, imageOffsetY));
+                Coordinate b2 = gr->pixel2Coord(Pixel(imageOffsetX + colStep * (x + 1), imageOffsetY));
+
+                c1 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b1);
+                c2 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b2);
+                for (int y = 1; y <= iSize ; ++y) {
+                    double t2 = t1 + rowStep / (double)_height;
+
+                    Coordinate b3 = gr->pixel2Coord(Pixel(imageOffsetX + colStep * (x + 1), imageOffsetY + rowStep * y));
+                    Coordinate b4 = gr->pixel2Coord(Pixel(imageOffsetX + colStep * x, imageOffsetY + rowStep * y));
+
+                    c3 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b3);
+                    c4 = rootDrawer()->coordinateSystem()->coord2coord(raster->coordinateSystem(), b4);
+
+                    vertices[0] = QVector3D(c1.x, c1.y, 0.0);
+                    vertices[1] = QVector3D(c2.x, c2.y, 0.0);
+                    vertices[2] = QVector3D(c3.x, c3.y, 0.0);
+                    vertices[3] = QVector3D(c4.x, c4.y, 0.0);
+                    texcoords[0] = QVector2D(s1, t1);
+                    texcoords[1] = QVector2D(s2, t1);
+                    texcoords[2] = QVector2D(s2, t2);
+                    texcoords[3] = QVector2D(s1, t2);
+
+                    _shaders.setAttributeArray( _vboPosition, vertices.constData() );
+                    _shaders.setAttributeArray( _texcoordid, texcoords.constData() );
+
+                    _shaders.enableAttributeArray( _vboPosition );
+                    _shaders.enableAttributeArray( _texcoordid );
+
+                    glDrawArrays( GL_QUADS, 0, 4 );
+
+                    _shaders.disableAttributeArray( _vboPosition );
+                    _shaders.disableAttributeArray( _texcoordid );
+
+                    t1 = t2;
+                    c1 = c4;
+                    c2 = c3;
+                }
+                s1 = s2;
+            }
+        }
+    }
 }

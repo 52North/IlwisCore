@@ -1,3 +1,4 @@
+#include <QOpenGLTexture>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "factory.h"

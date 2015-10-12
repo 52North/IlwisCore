@@ -28,13 +28,18 @@ public:
 
 private:
     bool draw(const IOOptions &options);
+    void DisplayImagePortion(unsigned int imageOffsetX, unsigned int imageOffsetY, unsigned int imageSizeX, unsigned int imageSizeY);
+    void DisplayTexture(Coordinate & c1, Coordinate & c2, Coordinate & c3, Coordinate & c4, unsigned int imageOffsetX, unsigned int imageOffsetY, unsigned int imageSizeX, unsigned int imageSizeY, unsigned int zoomFactor);
+    GLuint _texturemat = iUNDEF;
     GLuint _texcoordid = iUNDEF;
     GLuint _textureid = iUNDEF;
-    std::unique_ptr<QOpenGLTexture> _texture;
-    QVector<QVector3D> _vertices;
-    QVector<QVector2D> _texcoords;
     std::unique_ptr<RasterImage> _rasterImage;
     VisualAttribute _visualAttribute;
+    int _maxTextureSize;
+    unsigned long _imageWidth;
+    unsigned long _imageHeight;
+    unsigned long _width;
+    unsigned long _height;
 
 };
 }
