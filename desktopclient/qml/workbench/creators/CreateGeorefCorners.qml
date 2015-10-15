@@ -54,7 +54,6 @@ Controls.DropableItem{
                     if ( model){
                         csyBounds.islatlon = !model.isProjected
                         var bb = model.getProperty(model.isProjected ? "envelope" : "latlonenvelope")
-                        console.debug("bb", bb)
                         csyBounds.setBoundingBox(bb)
 
                     }
