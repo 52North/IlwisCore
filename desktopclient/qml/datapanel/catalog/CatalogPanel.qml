@@ -34,15 +34,19 @@ Item {
             datapanesplit.changePanel(filter, "catalog", container)
         }else {
             var type = mastercatalog.id2type(objectid)
+             var newPanel = null
             if ( !type)
                 return
             var resource = mastercatalog.id2Resource(objectid)
             if ( resource.typeName === "catalog"){
                 filter = "container='" + resource.url + "'"
-                datapanesplit.changePanel(filter, "catalog",resource.url)
+                newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
             }else {
                 filter = "itemid=" + resource.id
-                datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                newPanel =datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+            }
+            if ( resource && newPanel){
+                resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
             }
         }
     }
