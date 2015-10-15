@@ -123,8 +123,10 @@ Rectangle {
                             datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
                         }
                     }
+                    return newPanel
                 }
             }
+            return null
         }
 
         function newPanel(filter,outputtype, url,side) {
@@ -155,6 +157,7 @@ Rectangle {
             }else{
                 righttab.currentIndex = sidePanel.tabCount - 1
             }
+            return newPanel
 
         }
 
