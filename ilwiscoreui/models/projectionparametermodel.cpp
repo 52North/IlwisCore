@@ -9,10 +9,11 @@ ProjectionParameterModel::ProjectionParameterModel(const Ilwis::IProjection& pro
     QObject(parent)
 {
 
-   _name = proj->parameterName(type);
-   if ( proj->isSet(type)){
+   _name = Ilwis::Projection::parameterName(type);
+   if ( proj->isUsed(type)){
         _value = proj->parameter(type).toString();
     }
+   _valueType = proj->valueType(type);
 }
 
 ProjectionParameterModel::~ProjectionParameterModel()
@@ -34,4 +35,14 @@ QString ProjectionParameterModel::description() const
 {
     return _description;
 }
+
+QString ProjectionParameterModel::valueType() const
+{
+   // return "aap";
+    return Ilwis::TypeHelper::type2name(_valueType);
+}
+
+//bool ProjectionParameterModel::isSet(const QString& type){
+//    return proj->isSet(Ilwis::Projection::parameterName2type(type));
+//}
 
