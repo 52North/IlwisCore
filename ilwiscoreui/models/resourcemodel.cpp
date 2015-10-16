@@ -438,3 +438,7 @@ QString  ResourceModel::propertyTypeName(quint64 typ, const QString& propertyNam
     return "";
 }
 
+void ResourceModel::makeParent(QObject *item)
+{
+    setParent(item);
+}
