@@ -73,7 +73,7 @@ void PublicDatabase::prepare() {
     stmt = "create table ellipsoid (  code TEXT, name TEXT, wkt TEXT, authority TEXT, majoraxis REAL, invflattening REAL, source TEXT, description TEXT)";
     doQuery(stmt, sql);
 
-    stmt = "create table projection (  code TEXT, name TEXT, wkt TEXT, authority TEXT, description TEXT)";
+    stmt = "create table projection (  code TEXT, name TEXT, wkt TEXT, authority TEXT, description TEXT,parameters TEXT)";
     doQuery(stmt, sql);
 
     stmt = "create table filters (  code TEXT, type TEXT, rows INTEGER, columns INTEGER,definition TEXT, gain REAL, description TEXT)";
@@ -419,8 +419,8 @@ bool PublicDatabase::fillEpsgWithLatLonAxesOrderRecord(const QStringList &parts,
 }
 
 bool PublicDatabase::fillProjectionRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
-    if ( parts.size() == 5) {
-        auto parms = QString("'%1','%2','%3','%4','%5'").arg(parts[0],parts[1],parts[2], parts[3], parts[4]);
+    if ( parts.size() == 6) {
+        auto parms = QString("'%1','%2','%3','%4','%5','%6'").arg(parts[0],parts[1],parts[2], parts[3], parts[4],parts[5]);
         auto stmt = QString("INSERT INTO projection VALUES(%1)").arg(parms);
         if(!doQuery(stmt, sqlPublic))
             return false;
