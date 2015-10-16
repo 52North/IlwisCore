@@ -24,7 +24,7 @@ TabViewStyle {
         color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
         border.color:  Global.edgecolor
 
-        implicitWidth: Math.max(label.width + 4, 170)
+        implicitWidth: Math.max(label.width + 4, 140)
         implicitHeight: tabHeight
         radius: 5
         Text {
