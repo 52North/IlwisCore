@@ -90,6 +90,24 @@ bool Projection::isSet(Projection::ProjectionParamValue type) const
     return _implementation->isSet(type);
 }
 
+bool Projection::isUsed(Projection::ProjectionParamValue type) const
+{
+    if ( _implementation.isNull()) {
+        ERROR1(ERR_NO_INITIALIZED_1, name());
+        return false;
+    }
+    return _implementation->isUsed(type);
+}
+
+IlwisTypes Projection::valueType(Projection::ProjectionParamValue type) const
+{
+    if ( _implementation.isNull()) {
+        ERROR1(ERR_NO_INITIALIZED_1, name());
+        return itUNKNOWN;
+    }
+    return _implementation->valueType(type);
+}
+
 void Projection::setParameter(Projection::ProjectionParamValue type, const QVariant &value)
 {
     if ( _implementation.isNull()) {
@@ -99,7 +117,7 @@ void Projection::setParameter(Projection::ProjectionParamValue type, const QVari
     _implementation->setParameter(type, value);
 }
 
-QString Projection::parameterName(Projection::ProjectionParamValue pv) const
+QString Projection::parameterName(Projection::ProjectionParamValue pv)
 {
     switch (pv){
     case pvX0:
@@ -125,6 +143,38 @@ QString Projection::parameterName(Projection::ProjectionParamValue pv) const
         break;
     }
     return "";
+}
+
+Projection::ProjectionParamValue Projection::parameterName2type(const QString& name)
+{
+    if (name.indexOf("false easting") == 0)
+        return pvX0;
+    if (name.indexOf("false northing")==0)
+        return pvY0;
+    if( name.indexOf("latitude of origin")==0)
+        return pvLAT0;
+    if( name.indexOf("standard parallel 1")==0)
+        return pvLAT1;
+    if( name.indexOf("standard parallel 2")==0)
+        return pvLAT2;
+    if ( name.indexOf("latitude of true scale")==0)
+        return pvLATTS;
+    if ( name.indexOf("central meridian") == 0)
+        return pvLON0;
+    if ( name.indexOf("scale factor")==0)
+        return pvK0;
+    if ( name.indexOf("zone")==0)
+        return pvZONE;
+    if ( name.indexOf("tilt projection plane")==0)
+        return pvTILT;
+    if (name.indexOf("height") == 0)
+        return pvHEIGHT;
+    if (name.indexOf("azimuth y axis") == 0)
+        return pvAZIMYAXIS;
+
+
+
+    return pvNONE;
 }
 
 QString Projection::projectionCode2Name(const QString &code)
