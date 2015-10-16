@@ -69,6 +69,7 @@ public:
     Q_INVOKABLE QString getUrl(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
     Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QQuickItem *parent);
+    Q_INVOKABLE QStringList select(const QString &filter, const QString& property);
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     Q_INVOKABLE bool hasSelectedObjects() const;
@@ -76,6 +77,7 @@ public:
     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
+
 
 
 public slots:

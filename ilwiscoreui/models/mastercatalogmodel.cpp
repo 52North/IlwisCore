@@ -601,6 +601,19 @@ void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QS
     }
 }
 
+QStringList MasterCatalogModel::select(const QString &filter, const QString& property)
+{
+    std::vector<Resource> resources = mastercatalog()->select(filter);
+    QStringList resourceList;
+    for (const auto& resource : resources){
+        if (resource.isValid()){
+            if ( property == "name")
+                resourceList.append(QString::number(resource.id()) + "|" + resource.name());
+        }
+    }
+    return resourceList;
+}
+
 ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
 {
     bool ok;
