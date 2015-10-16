@@ -1,6 +1,7 @@
 #include <QThread>
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "ilwistypes.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
@@ -278,6 +279,11 @@ void UIContextModel::initializeDataPane()
              qDebug() << "failed";
      }
 
+}
+
+QString UIContextModel::typeName2typeId(const QString &nm) const
+{
+    return QString::number(Ilwis::IlwisObject::name2Type(nm));
 }
 
 QString UIContextModel::moduleData() const{
