@@ -111,7 +111,12 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         }
         checkUrl(tp);
     }
-    _rawUrl = _normalizedUrl;// for the moment, can always overrule it
+    if ( _container.toString() == "ilwis://internalcatalog"){
+        QString path = context()->persistentInternalCatalog().toString();
+        _rawContainer = QUrl(path);
+        _rawUrl = QUrl(path + "/" + name());
+    }else
+        _rawUrl = _normalizedUrl;// for the moment, can always overrule it
 
 }
 
