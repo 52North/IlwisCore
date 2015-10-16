@@ -40,9 +40,9 @@ Row {
             if ( degreestxt.text && degreestxt.text !== "" ){
                 half.checked = degreestxt.text[0] !== "-"
             }
+                degrees = degreestxt.text + " ° " + minutestxt.text + " ' " + secondstxt.text + " \""
+                metric = Number(degreestxt.text) + Number(minutestxt.text) / 60.0 + Number(secondstxt.text) / 3600.0
 
-            degrees = degreestxt.text + " ° " + minutestxt.text + " ' " + secondstxt.text + " \""
-            metric = Number(degreestxt.text) + Number(minutestxt.text) / 60.0 + Number(secondstxt.text) / 3600.0
         }
     }
 
@@ -60,6 +60,7 @@ Row {
         text : " °"
         width : 10
        height : parent.height
+       clip : true
     }
     ValidatedTextField{
         id : minutestxt
@@ -75,6 +76,7 @@ Row {
         text : " '"
         width : 10
        height : parent.height
+       clip : true
     }
     ValidatedTextField{
         id : secondstxt
@@ -90,6 +92,7 @@ Row {
         text : " \""
         width : 20
         height : parent.height
+       clip : true
     }
     Button{
         id : half
@@ -100,6 +103,7 @@ Row {
         onClicked:  {
             checked = !checked
         }
+       clip : true
     }
 }
 
