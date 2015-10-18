@@ -217,17 +217,17 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itUINT16:
         return "uint16";
     case itINT32:
-        return "Int32";
+        return "int32";
     case itUINT32:
         return "uint32";
     case itINT64:
-        return "Int64";
+        return "int64";
     case itUINT64:
         return "uint64";
     case itFLOAT:
-        return "Real32";
+        return "real32";
     case itDOUBLE:
-        return "Real64";
+        return "real64";
     case itVALUERANGE:
         return "valuerange";
     case itSTRING:
