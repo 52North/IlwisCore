@@ -8,10 +8,21 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 ListView {
+    function projectionParameters(){
+        var values = []
+        if ( model === undefined)
+            return values
+        for(var i=0; i < items.length; ++i){
+             values.push(items[i].parent.bb)
+        }
+        return values
+    }
 
     Component {
         id : editors
         Item {
+
+
             width : parent.width
             height : 21
 
@@ -29,11 +40,22 @@ ListView {
                 Item {
                     width : 120
                     height : 18
+                    property int bb : fieldvalue()
+                    function fieldvalue(){
+
+                        if ( vvalue.width != 0)
+                            return vvalue.text
+                        if ( llvalue.width != 0 )
+                            return llvalue.metric
+                        if ( bvalue.width != 0)
+                            return bvalue.checked ? 1 : 0
+                        return -100000
+                    }
                     Controls.ValidatedTextField{
                         id : vvalue
-                        width : valueType === "Real64" ? parent.width : 0
-                        opacity : valueType === "Real64" ? 1 : 0
-                        enabled : valueType === "Real64" ? true :false
+                        width : (valueType === "real64" || valueType=== "int8") ? parent.width : 0
+                        opacity : (valueType === "real64" || valueType=== "int8") ? 1 : 0
+                        enabled : (valueType === "real64" || valueType=== "int8") ? true :false
                         height : 18
                         text : value
                     }
@@ -55,8 +77,17 @@ ListView {
                         checked : value == "true" ? true : false
                     }
                 }
+                Component.onCompleted: {
+                    if ( vvalue.width != 0)
+                        items.push(vvalue)
+                    else if ( llvalue.width != 0 )
+                        items.push(llvalue)
+                    else if ( bvalue.width != 0)
+                        items.push(bvalue)
+                    else
+                        console.debug(" huh")
+                }
             }
-
         }
     }
 
