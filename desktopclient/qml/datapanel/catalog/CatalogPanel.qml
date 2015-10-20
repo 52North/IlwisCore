@@ -198,7 +198,9 @@ Item {
                     tabmodel.selectTab()
                 if ( currentIndex > 0){ // first entry is a default empty one
                     var filter = model[currentIndex].catalogQuery
-                    var url = "ilwis://mastercatalog"
+                    var url = model[currentIndex].url
+                    if ( url === "")
+                        url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
                     bigthing.changeCatalog(filter,"catalog", url)
                 }
