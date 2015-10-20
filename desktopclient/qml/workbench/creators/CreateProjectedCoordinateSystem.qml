@@ -11,7 +11,7 @@ import "../.." as Base
 
 Controls.DropableItem{
     id : dropItem
-    width : 550
+    width : 500
     height : 0
     x : 4
     clip:true
@@ -46,24 +46,9 @@ Controls.DropableItem{
             enabled : opacity != 0
             clip : true
         }
-        //        Row {
-        //            height : Global.rowHeight
-        //            width : parent.width
-        //            Text {
-        //                id : ellipsoidlabel
-        //                height : parent.height
-        //                width : 120
-        //                text : qsTr("Ellipsoid")
-        //                font.bold: true
-        //            }
-        Controls.IlwisComboBox{
-            width : parent.width
-            height : 20
-            z : 1
-
+        Controls.EllipsoidSelector{
+            id : ellipsoidselector
         }
-        //            z : 1
-        //        }
 
     }
 
@@ -80,15 +65,14 @@ Controls.DropableItem{
             width : 70
             text : qsTr("Apply")
             onClicked: {
-                //dropItem.state = "invisible"
-                //var points
-
-
-                var createinfo = { name : objectcommon.itemname,
+               var createinfo = { name : objectcommon.itemname,
                     type : "coordinatesystem",
                     subtype : "projected",
+                    projection : projectionParams.name,
                     projectionparameters : projectionParams.projectionInfo(),
-                    description :objectcommon.description}
+                    ellipsoid : ellipsoidselector.name,
+                    description :objectcommon.description,
+                }
                 objectcreator.createObject(createinfo)
             }
 
