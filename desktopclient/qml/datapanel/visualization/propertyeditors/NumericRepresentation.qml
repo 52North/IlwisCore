@@ -75,12 +75,12 @@ Rectangle {
         id : rprName
         width : parent.width - 20
         height : Global.rowHeight
-        currentText : editor.representationName
+        content : editor.representationName
         x : 10
         canUse: check
 
-        onCurrentTextChanged: {
-            editor.setRepresentation(currentText)
+        onContentChanged: {
+            editor.setRepresentation(content)
             rprCanvas.requestPaint()
         }
     }
