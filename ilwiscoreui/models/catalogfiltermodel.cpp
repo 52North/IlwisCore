@@ -22,6 +22,17 @@ CatalogFilterModel::CatalogFilterModel(QObject *parent,const QString& query, con
 {
 }
 
+CatalogFilterModel::CatalogFilterModel(QObject *parent, const QString &folder, const QString &name) :
+    QObject(parent),
+    _selectionState(true),
+    _query("container='" + folder + "'"),
+    _name(name),
+    _url(folder),
+    _readonly(true)
+{
+
+}
+
 bool CatalogFilterModel::selectionState() const
 {
     return _selectionState;
@@ -75,4 +86,9 @@ void CatalogFilterModel::setReadOnly(bool yesno)
 {
     _readonly = yesno;
     readOnlyChanged(_readonly);
+}
+
+QString CatalogFilterModel::url() const
+{
+    return _url;
 }
