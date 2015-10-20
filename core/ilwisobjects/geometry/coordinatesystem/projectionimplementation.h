@@ -9,7 +9,7 @@ class ConventionalCoordinateSystem;
 
 struct ProjectionParameter {
     ProjectionParameter(){}
-    ProjectionParameter(const QVariant& var, IlwisTypes datatype=itDOUBLE, bool isSet=false) : _value(var), _valueType(datatype),_isSet(isSet){}
+    ProjectionParameter(const QVariant& var, IlwisTypes datatype=itDOUBLE, bool isSet=false) : _value(var),_isSet(isSet), _valueType(datatype){}
     QVariant _value;
     bool _isSet=false;
     bool _isUsed=false;
