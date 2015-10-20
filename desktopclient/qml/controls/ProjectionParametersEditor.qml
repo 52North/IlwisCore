@@ -53,9 +53,9 @@ ListView {
                     }
                     Controls.ValidatedTextField{
                         id : vvalue
-                        width : (valueType === "real64" || valueType=== "int8") ? parent.width : 0
-                        opacity : (valueType === "real64" || valueType=== "int8") ? 1 : 0
-                        enabled : (valueType === "real64" || valueType=== "int8") ? true :false
+                        width : (valueType === "real64" || valueType=== "signedbyte") ? parent.width : 0
+                        opacity : (valueType === "real64" || valueType=== "signedbyte") ? 1 : 0
+                        enabled : (valueType === "real64" || valueType=== "signedbyte") ? true :false
                         height : 18
                         text : value
                     }
@@ -85,15 +85,13 @@ ListView {
                     else if ( bvalue.width != 0)
                         items.push(bvalue)
                     else
-                        console.debug(" huh")
+                        console.debug(valueType)
                 }
             }
         }
     }
 
     property var items : []
-    width : parent.width
-    height : parent.height
     delegate: editors
     clip : true
 
