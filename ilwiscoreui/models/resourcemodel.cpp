@@ -442,3 +442,13 @@ void ResourceModel::makeParent(QObject *item)
 {
     setParent(item);
 }
+
+bool ResourceModel::hasExtendedType(const QString &tp) const
+{
+    if ( _item.isValid()) {
+        IlwisTypes typ = Ilwis::IlwisObject::name2Type(tp);
+        if ( typ != itUNKNOWN)
+            return hasType(_item.extendedType(), typ);
+    }
+    return false;
+}
