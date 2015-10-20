@@ -51,6 +51,10 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
     ITable attTarget = _outputFeatures->attributeTable();
     _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget);
 
+    QVariant value;
+    value.setValue<IFeatureCoverage>(_outputFeatures);
+    ctx->setOutput(symTable,value,_outputFeatures->name(),itFEATURE,_outputFeatures->source());
+
     return true;
 }
 
