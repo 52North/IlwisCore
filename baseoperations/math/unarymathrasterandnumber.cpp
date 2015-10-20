@@ -116,7 +116,7 @@ OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContex
          _outputGC->datadefRef().range(newRange);
          for(quint32 i=0; i<_outputGC->size().zsize(); ++i){
                 QString index = _outputGC->stackDefinition().index(i);
-             _outputGC->setBandDefinition(index,{dom, newRange});
+             _outputGC->setBandDefinition(index,{dom, newRange->clone()});
          }
         _case = otSPATIAL;
         return sPREPARED;
