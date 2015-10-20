@@ -13,64 +13,12 @@ Item {
     id : createProjection
     height : projlabel.height + projchoice.height + parmcontainer.height
     width : parent.width
+    property string name : ""
 
     function projectionInfo() {
-        if ( projnames.currentIndex == -1)
-            return null
-        var id = projnames.model[currentIndex].split("|")[0]
         return prjparameters.projectionParameters()
 
     }
-
-//    Text {
-//        id : projlabel
-//        height : 20
-//        width : parent.width
-//        text : qsTr("Projections")
-//        font.bold: true
-//    }
-
-//    Rectangle {
-//        id : projlist
-//        anchors.top : projlabel.bottom
-//        width : parent.width
-//        height : 80
-//        border.width: 1
-//        radius: 3
-//        border.color : Global.edgecolor
-//        ScrollView{
-//            anchors.fill: parent
-//            ListView {
-//                id : projnames
-//                anchors.fill: parent
-//                clip:true
-//                currentIndex: -1
-//                model : mastercatalog.select("type=" + uicontext.typeName2typeId("projection"),"name")
-//                highlight : Rectangle { height : 16; width : parent.width; color : Global.selectedColor}
-//                delegate {
-//                    Text {
-//                        width : parent.width
-//                        height : 16
-//                        text : modelData.split("|")[1]
-//                        x : 3
-//                        font.pointSize: 9
-
-//                        MouseArea{
-//                            anchors.fill : parent
-//                            onClicked: {
-//                                projnames.currentIndex = index
-//                                var ilwobj = mastercatalog.id2object(modelData.split("|")[0],projnames)
-//                                if ( ilwobj){
-//                                    prjparameters.model = ilwobj.projectionItems;
-//                                    parmcontainer.state = "maximized"
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     Row {
         id : projchoice
@@ -85,7 +33,7 @@ Item {
             id : projlabel
             height : parent.height
             width : 120
-            text : qsTr("Projections")
+            text : qsTr("Projection")
             font.bold: true
         }
 
@@ -101,6 +49,7 @@ Item {
                 if ( ilwobj){
                     prjparameters.model = ilwobj.projectionItems;
                     parmcontainer.state = "maximized"
+                    name = droparea.content
                 }
             }
         }
@@ -127,16 +76,17 @@ Item {
             anchors.topMargin: 2
             width : parent.width
             height : parmcontainer.height - 25
-            border.width: 1
-            border.color: Global.edgecolor
-            radius: 3
+//            border.width: 1
+//            border.color: Global.edgecolor
+//            radius: 3
 
 
             Controls.ProjectionParametersEditor{
                 id : prjparameters
-                width : parent.width
-                height : parmborder.height
-                anchors.margins: 2
+                width : parent.width - 4
+                height : parmborder.height - 4
+                x: 2
+                y: 2
             }
         }
         states: [
