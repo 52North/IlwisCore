@@ -23,7 +23,7 @@
 using namespace Ilwis;
 using namespace Internal;
 
-PlateCaree::PlateCaree(const Ilwis::Resource &resource)
+PlateCaree::PlateCaree(const Ilwis::Resource &resource) : ProjectionImplementationInternal(resource)
 {
 
 }
