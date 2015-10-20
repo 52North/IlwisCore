@@ -85,14 +85,13 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 void MasterCatalogModel::addDefaultFilters(){
     //QString filter = QString("type=%1");
     QString filter = QString("type&%1!=0");
-    QString filter2 = QString("container='%1'");
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itUNKNOWN)),"",""));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- System Catalog -----------------------------",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/domains"),"Domains",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/representations"),"Representations",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/projections"),"Projections",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/ellipsoids"),"Ellipsoids",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://internalcatalog"),"Internal Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/domains","Domains"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/representations","Representations"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/projections","Projections"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/ellipsoids","Ellipsoids"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://internalcatalog","Internal Catalog"));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Most recently used --------------------------",""));
 
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Master Catalog-------------------------------",""));
