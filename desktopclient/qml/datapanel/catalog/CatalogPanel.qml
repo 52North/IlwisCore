@@ -38,7 +38,7 @@ Item {
             if ( !type)
                 return
             var resource = mastercatalog.id2Resource(objectid)
-            if ( resource.typeName === "catalog"){
+            if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){
                 filter = "container='" + resource.url + "'"
                 newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
             }else {
