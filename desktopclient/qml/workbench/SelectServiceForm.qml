@@ -28,7 +28,7 @@ Rectangle {
     }
 
     anchors.fill: parent
-    color : Global.alternatecolor1
+    color : "white"
     Item {
         id : protocol
         width : parent.width
