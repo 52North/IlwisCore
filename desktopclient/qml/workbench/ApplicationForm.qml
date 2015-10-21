@@ -36,6 +36,7 @@ Rectangle {
             background1 = formTitle == "" ? "transparent" : "white"
             currentAppForm = Qt.createQmlObject(formQML,
                 applicationArea, "autoform1");
+           height = currentAppForm.childrenRect.height + 60
         }
     }
 
@@ -47,6 +48,7 @@ Rectangle {
         if ( formComponent !== null) {
             var component = Qt.createComponent(formComponent)
             currentAppForm = component.createObject(applicationArea, {"x": 0, "y": 0});
+
         }
     }
 
