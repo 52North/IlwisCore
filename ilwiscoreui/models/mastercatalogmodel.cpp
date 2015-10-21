@@ -731,6 +731,18 @@ QString MasterCatalogModel::selectedIds() const
     }
     return selected;
 }
+
+void MasterCatalogModel::deleteObject(const QString &id)
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    Resource resource = mastercatalog()->id2Resource(objid);
+    IIlwisObject obj;
+    obj.prepare(resource);
+    if ( !obj.isValid())
+        return;
+    obj->remove();
+}
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
 {
