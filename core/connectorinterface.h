@@ -66,6 +66,7 @@ public:
     virtual QString format() const { return sUNDEF; }
     virtual bool isValid() const { return true;}
     virtual bool canUse(const Resource& ) const { return true; }
+    virtual void removeDataSource() { return;}
     /*!
      * \brief isReadOnly returns if a connector can write to a source.
      *

@@ -315,6 +315,7 @@ public:
     bool isSystemObject() const;
     bool isInternalObject() const;
     bool isRemote() const;
+    void remove();
     virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
     virtual bool isCompatibleWith( const IlwisObject* obj, bool strict=false) const;
 
