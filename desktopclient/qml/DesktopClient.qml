@@ -35,8 +35,8 @@ ApplicationWindow {
          mainSplit.changeCatalog(filter, outputtype, url)
      }
 
-     function transitionInfoPane(newpagename) {
-         workBench.transitionInfoPane(newpagename)
+     function transitionInfoPane(newpagename, show) {
+         workBench.transitionInfoPane(newpagename, show)
      }
 
      function unloadcontent(newpagename) {
@@ -68,8 +68,10 @@ ApplicationWindow {
     }
 
     function getWorkbenchPane(name){
-        if ( workBench.lastPage !== name)
-            workBench.transitionInfoPane(name)
+        if ( workBench.lastPage !== name){
+            workBench.transitionInfoPane(name, "visible")
+            workBenchButtons.setButtonStatus(name,"on")
+        }
     }
 
     Rectangle {

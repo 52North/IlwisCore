@@ -13,7 +13,7 @@ Rectangle {
     property int rightMargin : 18 // creates space for potential scrollbars
     property var currentpage : null
 
-     function transitionInfoPane(newpage) {
+     function transitionInfoPane(newpage,visstate) {
          var oldpage = currentpage
          if ( newpage === "navigator")
              currentpage = navigator
@@ -31,15 +31,24 @@ Rectangle {
              currentpage = info
          if ( newpage === "objectproperties")
              currentpage = objectproperties
-         if ( currentpage === oldpage ){
-             oldpage.state = oldpage.state === "invisible" ? "visible" : "invisible"
+         if ( oldpage && (currentpage === oldpage) ){
+             if ( visstate === "toggle")
+                oldpage.state = oldpage.state === "invisible" ? "visible" : "invisible"
+             else if ( visstate === "visible"){
+                currentpage.state = "visible"
+             } else
+                currentpage.state = "invisible"
          }
          if ( currentpage !== oldpage){
-             currentpage.state = "visible"
+             currentpage.state = (visstate === "toggle" || visstate === "visible")? "visible" : "invisible"
              if ( oldpage)
                 oldpage.state = "invisible"
          }
-         workBench.state = currentpage.state
+        if ( currentpage){
+            workBench.state = currentpage.state
+        }
+        else
+            workBench.state = "visible"
      }
 
 

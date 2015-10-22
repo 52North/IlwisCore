@@ -17,7 +17,27 @@ Rectangle {
 
     //signal transitionInfoPane(string pagename)
 
-    function toggle(button) {
+
+    function setButtonStatus(buttonname, status) {
+        prop.checked = nav.checked = workspace.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = workspace.checked = false
+        if ( buttonname === "navigator"){
+            nav.checked = status === "on"
+        }
+        if ( buttonname === "operationselection")
+            oper.checked = status === "on"
+        if ( buttonname === "objectproperties")
+           prop.checked = status === "on"
+        if ( buttonname === "messages")
+            errors.checked = status === "on"
+        if ( buttonname === "tranquilizer")
+            progress.checked = status === "on"
+        if ( buttonname === "objectcreation")
+            create.checked = status === "on"
+        if ( buttonname === "info")
+            info.checked = status === "on"
+
+    }
+    function toggle(button, visibility) {
         var currentValue = button.checked
         prop.checked = nav.checked = workspace.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = workspace.checked = false
         button.checked = !currentValue
@@ -27,7 +47,7 @@ Rectangle {
             id : navClicked
             onTriggered : {
                toggle(nav)
-                transitionInfoPane("navigator")
+                transitionInfoPane("navigator","toggle")
             }
 
         }
@@ -36,7 +56,7 @@ Rectangle {
             id : operClicked
             onTriggered : {
                 toggle(oper)
-                transitionInfoPane("operationselection")
+                transitionInfoPane("operationselection","toggle")
             }
 
         }
@@ -44,28 +64,28 @@ Rectangle {
             id : propertiesClicked
             onTriggered : {
                 toggle(prop)
-                transitionInfoPane("objectproperties")
+                transitionInfoPane("objectproperties","toggle")
             }
         }
         Action {
             id : messagesClicked
             onTriggered : {
                 toggle(errors)
-                transitionInfoPane("messages")
+                transitionInfoPane("messages","toggle")
             }
         }
         Action {
             id : progressClicked
             onTriggered : {
                 toggle(progress)
-                transitionInfoPane("tranquilizer")
+                transitionInfoPane("tranquilizers","toggle")
             }
 
         }
         Action {
             id : infoClicked
             onTriggered : {
-                transitionInfoPane("info")
+                transitionInfoPane("info","toggle")
             }
 
         }
@@ -73,7 +93,7 @@ Rectangle {
             id : createClicked
             onTriggered : {
                 toggle(create)
-                transitionInfoPane("objectcreation")
+                transitionInfoPane("objectcreation","toggle")
             }
 
         }
@@ -81,7 +101,7 @@ Rectangle {
             id : workspaceClicked
             onTriggered : {
                 toggle(workspace)
-                transitionInfoPane("workspaces")
+                transitionInfoPane("workspaces","toggle")
             }
 
         }
@@ -90,6 +110,7 @@ Rectangle {
             id : prefClicked
             onTriggered : {
                 toggle(preferences)
+                transitionInfoPane("preferences","toggle")
                 mastercatalog.longAction()
             }
 
