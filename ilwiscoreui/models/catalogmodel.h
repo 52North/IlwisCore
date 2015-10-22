@@ -23,6 +23,7 @@ public:
     Q_PROPERTY(bool initNode READ initNode CONSTANT)
     Q_PROPERTY(int level READ level CONSTANT)
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
+    Q_PROPERTY(bool canBeAnimated READ canBeAnimated CONSTANT)
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY contentChanged)
 
     ~CatalogModel();
@@ -44,6 +45,7 @@ public:
 
     void refresh(bool yesno);
     virtual void nameFilter(const QString&);
+    bool canBeAnimated() const;
     QString nameFilter() const;
 
     void setView(const Ilwis::CatalogView &view, bool threading = false);

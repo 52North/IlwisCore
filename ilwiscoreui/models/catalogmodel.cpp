@@ -134,6 +134,8 @@ QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
 void CatalogModel::makeParent(QObject *obj)
 {
     setParent(obj);
+    if ( obj == 0)
+        deleteLater();
 }
 
 void CatalogModel::filterChanged(const QString& typeIndication, bool state){
@@ -216,6 +218,15 @@ void CatalogModel::nameFilter(const QString &filter)
     _nameFilter = filter;
     _currentItems.clear();
     emit contentChanged();
+}
+
+bool CatalogModel::canBeAnimated() const
+{
+    bool canBeAnimated = false;
+    if ( resource().hasProperty("canbeanimated")){
+        canBeAnimated = resource()["canbeanimated"].toBool();
+    }
+    return canBeAnimated;
 }
 
 QString CatalogModel::nameFilter() const
