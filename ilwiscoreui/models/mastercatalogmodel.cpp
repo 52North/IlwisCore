@@ -460,6 +460,11 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             }
         }
     }else {
+        bool canBeAnimated = false;
+        Resource collection = mastercatalog()->name2Resource(inpath,itRASTER);
+        if ( collection.isValid()){
+            canBeAnimated = hasType(collection.extendedType(), itCATALOG)        ;
+        }
         Resource res(location, itCATALOGVIEW ) ;
         QStringList lst;
         lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
@@ -473,6 +478,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("type", "internal");
         if ( filter != "container=ilwis://mastercatalog")
             res.addProperty("filter",filter);
+        res.addProperty("canbeanimated",canBeAnimated);
         cview = CatalogView(res);
         CatalogModel *model = 0;
         if ( inpath.indexOf("ilwis://operations") == 0){

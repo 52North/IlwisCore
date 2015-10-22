@@ -447,8 +447,11 @@ bool ResourceModel::hasExtendedType(const QString &tp) const
 {
     if ( _item.isValid()) {
         IlwisTypes typ = Ilwis::IlwisObject::name2Type(tp);
-        if ( typ != itUNKNOWN)
-            return hasType(_item.extendedType(), typ);
+        if ( typ != itUNKNOWN) {
+            bool ok = hasType(_item.extendedType(), typ);
+            return ok;
+        }
+
     }
     return false;
 }
