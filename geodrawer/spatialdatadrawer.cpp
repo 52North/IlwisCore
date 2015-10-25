@@ -94,13 +94,16 @@ VisualAttribute SpatialDataDrawer::vPropertyFeatureCoverage(const QString &attrN
 
 VisualAttribute SpatialDataDrawer::vPropertyRasterCoverage(const QString &attrName) const
 {
-    //TODO later when displaying rasters with attributes
     VisualAttribute attr;
-    IRasterCoverage features = coverage().as<RasterCoverage>();
-    if ( !features.isValid()){
+    IRasterCoverage raster = coverage().as<RasterCoverage>();
+    if ( !raster.isValid()){
         ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
     }else {
-
+        int columnIndex = raster->attributeTable()->columnIndex(attrName);
+        if ( columnIndex == iUNDEF){ // test a fallbacks to be able to show at least something
+            columnIndex = raster->attributeTable()->columnIndex(COVERAGEKEYCOLUMN);
+        }
+        attr.setColumnIndex(columnIndex);
     }
     return attr;
 }

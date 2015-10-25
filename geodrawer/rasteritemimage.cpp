@@ -1,6 +1,8 @@
 #include <QImage>
 #include <QOpenGLTexture>
 #include "raster.h"
+#include "itemdomain.h"
+#include "table.h"
 #include "pixeliterator.h"
 #include "rootdrawer.h"
 #include "factory.h"
@@ -8,36 +10,39 @@
 #include "drawers/rasterimagefactory.h"
 #include "drawers/attributevisualproperties.h"
 
-#include "rastervalueimage.h"
+#include "rasteritemImage.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
 
-REGISTER_RASTERIMAGETYPE(RasterValueImage,itNUMERICDOMAIN);
+REGISTER_RASTERIMAGETYPE(RasterItemImage,itITEMDOMAIN)
 
-RasterValueImage::RasterValueImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
+RasterItemImage::RasterItemImage(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
 : RasterImage(rootDrawer, raster, vattribute, options)
 {
 }
 
-RasterValueImage::~RasterValueImage()
+RasterItemImage::~RasterItemImage()
 {
 }
 
-RasterImage *RasterValueImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
+RasterImage *RasterItemImage::create(DrawerInterface *rootDrawer, const IRasterCoverage& raster, const VisualAttribute &vattribute, const IOOptions &options)
 {
-    return new RasterValueImage(rootDrawer, raster, vattribute, options)    ;
+    return new RasterItemImage(rootDrawer, raster, vattribute, options)    ;
 }
 
-bool RasterValueImage::prepare(int prepareType)
+bool RasterItemImage::prepare(int prepareType)
 {
     if ( hasType(prepareType, DrawerInterface::ptRENDER)){
-        std::vector<QColor> colors = _visualAttribute.colors();
-        _colorTable = QVector<QRgb>(colors.size()) ;
-        for(int i = 0; i < _colorTable.size(); ++i)
-            _colorTable[i] = colors[i].rgba();
+        IDomain dom = _raster->datadef().domain();
+        auto itemdom = dom.as<ItemDomain<DomainItem>>();
+        _colorTable = QVector<QRgb>(itemdom->count() + 1) ;
+        _colorTable[0] = 0;
+        ITable attTable = _raster->attributeTable();
+        for(int i = 1; i < _colorTable.size(); ++i)
+            _colorTable[i] = _visualAttribute.value2color(attTable->cell(_visualAttribute.columnIndex(),i)).rgba();
         for (Texture * tex : _textures) {
-            ((ValueTexture*)tex)->setColorTable(_colorTable);
+            ((ItemTexture*)tex)->setColorTable(_colorTable);
         }
     }
 
@@ -47,14 +52,14 @@ bool RasterValueImage::prepare(int prepareType)
     return true;
 }
 
-Texture * RasterValueImage::GenerateTexture(const unsigned int offsetX, const unsigned int offsetY, const unsigned int sizeX, const unsigned int sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor) {
-    ValueTexture * tex = new ValueTexture(offsetX, offsetY, sizeX, sizeY, imgWidth2, imgHeight2, zoomFactor);
+Texture * RasterItemImage::GenerateTexture(const unsigned int offsetX, const unsigned int offsetY, const unsigned int sizeX, const unsigned int sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor) {
+    ItemTexture * tex = new ItemTexture(offsetX, offsetY, sizeX, sizeY, imgWidth2, imgHeight2, zoomFactor);
     setTextureData(tex, offsetX, offsetY, sizeX, sizeY, zoomFactor);
     _textures.push_back(tex);
     return tex;
 }
 
-void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offsetX, const unsigned int offsetY, unsigned int texSizeX, unsigned int texSizeY, unsigned int zoomFactor)
+void RasterItemImage::setTextureData(ItemTexture *tex, const unsigned int offsetX, const unsigned int offsetY, unsigned int texSizeX, unsigned int texSizeY, unsigned int zoomFactor)
 {
     long imageWidth = _raster->size().xsize();
     long imageHeight = _raster->size().xsize();
@@ -67,7 +72,6 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     if (sizeX == 0 || sizeY == 0)
         return;
     const long xSizeOut = (long)ceil((double)sizeX / ((double)zoomFactor)); // the size until which the pixels vector will be filled (this is commonly the same as texSizeX, except the rightmost / bottommost textures, as raster-images seldom have as size of ^2)
-    const long ySizeOut = (long)ceil((double)sizeY / ((double)zoomFactor));
     texSizeX /= zoomFactor; // the actual size of the texture (commonly 256 or maxtexturesize, but smaller texture sizes may be allocated for the rightmost or bottommost textures)
     texSizeY /= zoomFactor;
 
@@ -80,13 +84,11 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     pixels->resize(size);
     PixelIterator pixIter(_raster, bb); // This iterator runs through bb. The corners of bb are "inclusive".
 
-    SPNumericRange numrange = _raster->datadef().range<NumericRange>();
     auto end = pixIter.end();
     quint32 position = 0;
     while(pixIter != end){
         double value = *pixIter;
-        int index = isNumericalUndef(value) ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
-        (*pixels)[position] = index; // int32 to quint8 conversion (do we want this?)
+        (*pixels)[position] = value == rUNDEF ? 0 : (quint8)value + 1;
         pixIter += zoomFactor;
         if ( pixIter.ychanged()) {
             position += (rest + texSizeX - xSizeOut);
@@ -101,7 +103,7 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     tex->setQImage(image, pixels); // carry over the image and the data-buffer to the texture object (see QImage documentation: the data-buffer must exist throughout the existence of the QImage)
 }
 
-ValueTexture::ValueTexture(const long offsetX, const long offsetY, const unsigned long sizeX, const unsigned long sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor)
+ItemTexture::ItemTexture(const long offsetX, const long offsetY, const unsigned long sizeX, const unsigned long sizeY, const unsigned long imgWidth2, const unsigned long imgHeight2, unsigned int zoomFactor)
 : Texture(offsetX, offsetY, sizeX, sizeY, imgWidth2, imgHeight2, zoomFactor)
 , _image(0)
 , _pixels(0)
@@ -109,13 +111,13 @@ ValueTexture::ValueTexture(const long offsetX, const long offsetY, const unsigne
 {
 }
 
-ValueTexture::~ValueTexture()
+ItemTexture::~ItemTexture()
 {
     delete _image;
     delete _pixels;
 }
 
-void ValueTexture::setQImage(QImage * image, std::vector<quint8> *pixels)
+void ItemTexture::setQImage(QImage * image, std::vector<quint8> *pixels)
 {
     if (_image != 0) {
         delete _image;
@@ -131,7 +133,7 @@ void ValueTexture::setQImage(QImage * image, std::vector<quint8> *pixels)
     _recolor = false;
 }
 
-void ValueTexture::setColorTable(QVector<QRgb> & _colorTable)
+void ItemTexture::setColorTable(QVector<QRgb> & _colorTable)
 {
     if (_image != 0) {
         _image->setColorTable(_colorTable);
@@ -139,7 +141,7 @@ void ValueTexture::setColorTable(QVector<QRgb> & _colorTable)
     }
 }
 
-void ValueTexture::BindMe(QOpenGLShaderProgram &shaders, GLuint texturemat)
+void ItemTexture::BindMe(QOpenGLShaderProgram &shaders, GLuint texturemat)
 {
     if (_recolor && _image != 0) {
         if (_texture)
@@ -151,5 +153,7 @@ void ValueTexture::BindMe(QOpenGLShaderProgram &shaders, GLuint texturemat)
     }
     Texture::BindMe(shaders, texturemat);
 }
+
+
 
 

@@ -19,18 +19,20 @@ ItemRepresentationSetter::ItemRepresentationSetter(QObject *parent) :
 
 void ItemRepresentationSetter::prepare(VisualAttributeModel *vattrib, const IIlwisObject &obj, const ColumnDefinition &coldef)
 {
-   VisualAttributeEditor::prepare( vattrib, obj, coldef);
+    VisualAttributeEditor::prepare( vattrib, obj, coldef);
 
-   if ( attribute()->layer() && attribute()->layer()->drawer()){
-       IlwisData<ItemDomain<DomainItem>> itemdom = coldef.datadef().domain().as<ItemDomain<DomainItem>>();
-       for(auto item : itemdom){
-           QColor clr = attribute()->representation()->colors()->value2color(item->raw());
-           _rprElements.push_back(new RepresentationElement(item->raw(), item->name(), clr,this));
+    if ( attribute()->layer() && attribute()->layer()->drawer()){
+        IlwisData<ItemDomain<DomainItem>> itemdom = coldef.datadef().domain().as<ItemDomain<DomainItem>>();
+        for(auto item : itemdom){
+            if (attribute()->representation().isValid()){
+                QColor clr = attribute()->representation()->colors()->value2color(item->raw());
+                _rprElements.push_back(new RepresentationElement(item->raw(), item->name(), clr,this));
+            }
 
-       }
+        }
 
-       emit rprNameChanged();
-   }
+        emit rprNameChanged();
+    }
 }
 
 bool ItemRepresentationSetter::canUse(const IIlwisObject &obj, const ColumnDefinition &coldef) const{

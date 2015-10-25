@@ -45,7 +45,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
     IRasterCoverage raster = coverage().as<RasterCoverage>();
     if ( !_rasterImage){
-        setActiveVisualAttribute(PIXELVALUE);
+        setActiveVisualAttribute(raster->hasAttributes() ? COVERAGEKEYCOLUMN : PIXELVALUE);
        _visualAttribute = visualProperty(activeAttribute());
        _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(), raster,_visualAttribute,IOOptions()));
        if (!_rasterImage){
@@ -80,7 +80,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
         _prepared |= ( DrawerInterface::ptGEOMETRY);
     }
    if ( hasType(prepType, DrawerInterface::ptRENDER) && !isPrepared(DrawerInterface::ptRENDER)){
-        setActiveVisualAttribute(PIXELVALUE);
+        setActiveVisualAttribute(raster->hasAttributes() ? activeAttribute() : PIXELVALUE);
        _visualAttribute = visualProperty(activeAttribute());
        _rasterImage->visualAttribute(_visualAttribute);
        _prepared |= ( DrawerInterface::ptRENDER);
@@ -111,12 +111,11 @@ void RasterLayerDrawer::setActiveVisualAttribute(const QString &attr)
 void RasterLayerDrawer::coverage(const ICoverage &cov)
 {
     LayerDrawer::coverage(cov);
-    setActiveVisualAttribute(PIXELVALUE);
 
     IRasterCoverage raster = cov.as<RasterCoverage>();
     if (!raster.isValid())
         return;
-    // fot the moment test only single band value maps with no attribute table; will extend when this works
+
     IlwisTypes attrType = raster->datadef().domain()->valueType();
     VisualAttribute attr(raster->datadef().domain());
     if ( hasType(attrType, itNUMBER)){
@@ -126,8 +125,21 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
     } else if ( hasType(attrType, itCONTINUOUSCOLOR)){
         visualProperty(PIXELVALUE, attr);
     }else if ( hasType(attrType, itPALETTECOLOR)){
-        auto colorrange = raster->datadef().range<ColorPalette>();
-   }
+        raster->datadef().range<ColorPalette>();
+    }else if ( hasType(attrType, itDOMAINITEM)){
+        //initialize all possible attributes that can be used in visualization
+        for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
+            const ColumnDefinition& coldef = raster->attributeTable()->columndefinitionRef(i);
+            IlwisTypes attrType = coldef.datadef().domain()->ilwisType();
+            if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN | itTEXTDOMAIN)){
+                VisualAttribute props = createVisualProperty(coldef, i);
+                visualProperty(coldef.name(), props);
+            }
+        }
+
+    }
+    //set default
+    setActiveVisualAttribute(raster->hasAttributes() ? COVERAGEKEYCOLUMN : PIXELVALUE);
 }
 
 
@@ -331,6 +343,9 @@ void RasterLayerDrawer::DisplayImagePortion(unsigned int imageOffsetX, unsigned 
 
 void RasterLayerDrawer::DisplayTexture(Coordinate & c1, Coordinate & c2, Coordinate & c3, Coordinate & c4, unsigned int imageOffsetX, unsigned int imageOffsetY, unsigned int imageSizeX, unsigned int imageSizeY, unsigned int zoomFactor)
 {
+    if ( !_rasterImage)
+        return;
+
     bool ok = _rasterImage->GetTexture(imageOffsetX, imageOffsetY, imageSizeX, imageSizeY, _width, _height, zoomFactor, _shaders, _texturemat);
     if (ok)
     {

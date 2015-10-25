@@ -358,6 +358,31 @@ void RasterCoverage::size(const Size<> &sz)
     }
 }
 
+QVariant RasterCoverage::coord2value(const Coordinate &c, const QString &attrname)
+{
+    if ( _georef->isValid() && c.isValid()) {
+        Pixeld pix = _georef->coord2Pixel(c);
+        double value = pix2value(pix);
+        if ( isNumericalUndef(value))
+            return QVariant();
+        if ( attrname != "")
+            return value;
+        else{
+            QVariantMap vmap;
+            if (!hasAttributes())
+                vmap[PIXELVALUE] = value;
+            else{
+                for(int i=0; i < attributeTable()->columnCount(); ++i){
+                    QVariant attrvalue = attributeTable()->cell(i, (quint32)value);
+                    vmap[attributeTable()->columndefinitionRef(i).name()] = attrvalue;
+                }
+            }
+            return QVariant(vmap);
+        }
+    }
+    return QVariant();
+}
+
 ITable RasterCoverage::attributeTable() const
 {
     return _attributeTable;
