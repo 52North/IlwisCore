@@ -31,6 +31,8 @@ Rectangle {
              currentpage = info
          if ( newpage === "objectproperties")
              currentpage = objectproperties
+         if ( newpage === "preferences")
+             currentpage = preferences
          if ( oldpage && (currentpage === oldpage) ){
              if ( visstate === "toggle")
                 oldpage.state = oldpage.state === "invisible" ? "visible" : "invisible"
@@ -68,6 +70,7 @@ Rectangle {
     MessagesPane{ id : messages}
     Info{id : info}
     ObjectProperties{ id : objectproperties}
+    Preferences{id : preferences}
 
 
     states: [
