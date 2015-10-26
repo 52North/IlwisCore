@@ -21,7 +21,7 @@ TabViewStyle {
         id : selectRect
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
-        color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
+        color: tabmodel && tabmodel.selected ? "black" : nonselectColor
         border.color:  Global.edgecolor
 
         implicitWidth: Math.max(label.width + 4, 140)
