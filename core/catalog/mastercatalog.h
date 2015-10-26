@@ -2,8 +2,13 @@
 #define MASTERCATALOG_H
 
 #include <QMultiMap>
+#include <QObject>
 #include <QSqlQuery>
 #include <set>
+#include <memory>
+#include <mutex>
+#include "ilwis.h"
+#include "ilwistypes.h"
 #include "kernel_global.h"
 
 namespace Ilwis {
@@ -11,6 +16,7 @@ namespace Ilwis {
 class Resource;
 class CatalogConnector;
 class Catalog;
+class IlwisObject;
 
 typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 /*!
@@ -19,8 +25,10 @@ typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
  found in this database. The fields in the database are a reflection of the fields in the resource class and the
  variable set of properties each resource can have.
  */
-class KERNELSHARED_EXPORT MasterCatalog
+class KERNELSHARED_EXPORT MasterCatalog : public QObject
 {
+    Q_OBJECT
+
     friend KERNELSHARED_EXPORT MasterCatalog* mastercatalog();
 
 public:
@@ -189,7 +197,8 @@ public:
 
 #endif
     static const QString MASTERCATALOG;
-
+signals:
+    void contentChanged(const QUrl& container);
 private:
     static MasterCatalog *_masterCatalog;
     QHash<quint64, ESPIlwisObject> _lookup;

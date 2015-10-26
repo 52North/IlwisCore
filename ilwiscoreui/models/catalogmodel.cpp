@@ -48,6 +48,7 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
         _view = CatalogView(res);
         _displayName = _view.name();
     }
+    connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
 }
 
 CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
@@ -62,6 +63,7 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
         _view = CatalogView(item());
         _displayName = _view.name();
     }
+    connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
 }
 
 void CatalogModel::setView(const CatalogView &view, bool threading){
@@ -69,6 +71,7 @@ void CatalogModel::setView(const CatalogView &view, bool threading){
     resource(view.resource());
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     bool useThread = threading && inmainThread;
+    connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
     if ( useThread){
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
             QThread* thread = new QThread;
@@ -296,6 +299,19 @@ void CatalogModel::gatherItems() {
             _currentItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
         }
     }
+}
+
+void CatalogModel::refreshContent(const QUrl &url)
+{
+    _refresh = false;
+    for(auto *resource : _currentItems){
+        if ( resource->url() == url.toString())    {
+            _refresh = true;
+            break;
+        }
+    }
+    if ( _refresh)
+        emit contentChanged();
 }
 
 void CatalogModel::updateContainer()

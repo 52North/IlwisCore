@@ -221,6 +221,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         kernel()->issues()->logSql(queryItem.lastError());
         return false;
     }
+    std::set<QUrl> containers;
 
     for(const Resource &resource : items) {
         if (!resource.isValid())
@@ -230,8 +231,12 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
+        containers.insert(resource.container());
     }
     kernel()->database().exec("COMMIT TRANSACTION");
+
+    for(auto container : containers)
+        emit contentChanged(container);
 
 
     return true;

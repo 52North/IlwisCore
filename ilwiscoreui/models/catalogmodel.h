@@ -66,7 +66,8 @@ private:
     int _level;
     std::map<QString, bool> _filterState;
     QString _nameFilter;
-
+public slots:
+    void refreshContent(const QUrl& url);
 private slots:
     void updateContainer();
 signals:
