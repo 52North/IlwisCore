@@ -23,15 +23,16 @@ DesktopTranquilizer::~DesktopTranquilizer()
 
 bool DesktopTranquilizer::update(double step) {
     Locker<std::mutex> lock(_mutex);
-    if ( uicontext()->abort()){
+    if ( uicontext()->abort() || _end == rUNDEF){
         return false;
     }
     if ( _runsInMainThread) //  we do not update in main thread else everything is waiting
         return true;
     _current += step;
-    if ( _current >= _end || _current < _start){
+    if ( _current >= _end  || _current < _start){
         emit(updateTranquilizer(_id, _current));
         std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        _end = rUNDEF;
         emit(removeTranquilizer(_id));
     }else
         emit(updateTranquilizer(_id, _current));
