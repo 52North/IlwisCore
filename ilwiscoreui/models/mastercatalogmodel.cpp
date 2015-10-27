@@ -655,11 +655,23 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
     }
 }
 
+
+
 void MasterCatalogModel::refreshWorkingCatalog()
 {
-        auto items = context()->workingCatalog()->items();
-        mastercatalog()->removeItems(items);
-        context()->workingCatalog()->scan();
+    auto items = context()->workingCatalog()->items();
+    mastercatalog()->removeItems(items);
+
+    QThread* thread = new QThread;
+    CatalogWorker3* worker = new CatalogWorker3(_currentCatalog->resource());
+    worker->moveToThread(thread);
+    thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
+    thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
+    thread->connect(worker, &CatalogWorker3::finished, worker, &CatalogWorker3::deleteLater);
+    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->connect(worker, &CatalogWorker3::updateContainer, _currentCatalog, &CatalogModel::updateContainer);
+    thread->start();
+
 }
 
 int MasterCatalogModel::activeSplit() const
@@ -829,4 +841,25 @@ void worker::process(){
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
             trq->update(100);
     }
+}
+
+//--------------------------
+void CatalogWorker3::process()
+{
+    try{
+        ICatalog catalog(OSHelper::neutralizeFileName(_resource.url().toString()));
+        if ( !catalog.isValid()){
+            return ;
+        }
+        catalog->scan();
+        emit updateContainer();
+        emit finished();
+
+    } catch(const ErrorObject& ){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
 }

@@ -150,6 +150,23 @@ private:
     void calculatelatLonEnvelopes();
     void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
 };
+
+class CatalogWorker3 : public QObject {
+    Q_OBJECT
+
+public:
+    CatalogWorker3(const Ilwis::Resource& resource) : _resource(resource){}
+
+public slots:
+    void process();
+
+signals:
+    void finished();
+    void updateContainer();
+
+private:
+    Ilwis::Resource _resource;
+};
 //}
 //}
 
