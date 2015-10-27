@@ -51,6 +51,7 @@ public:
     void setView(const Ilwis::CatalogView &view, bool threading = false);
     Ilwis::CatalogView view() const;
 
+    void scanContainer(const QUrl &url);
 protected:
     Ilwis::CatalogView _view;
     virtual void gatherItems();
@@ -68,7 +69,6 @@ private:
     QString _nameFilter;
 public slots:
     void refreshContent(const QUrl& url);
-private slots:
     void updateContainer();
 signals:
     void selectionChanged();

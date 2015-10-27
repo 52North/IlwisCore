@@ -48,7 +48,7 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
         _view = CatalogView(res);
         _displayName = _view.name();
     }
-    connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
+   // connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
 }
 
 CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
@@ -63,7 +63,20 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
         _view = CatalogView(item());
         _displayName = _view.name();
     }
-    connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
+  //  connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
+}
+
+void CatalogModel::scanContainer(const QUrl& url)
+{
+    QThread* thread = new QThread;
+    CatalogWorker2* worker = new CatalogWorker2(url);
+    worker->moveToThread(thread);
+    thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
+    thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
+    thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
+    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
+    thread->start();
 }
 
 void CatalogModel::setView(const CatalogView &view, bool threading){
@@ -71,18 +84,10 @@ void CatalogModel::setView(const CatalogView &view, bool threading){
     resource(view.resource());
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     bool useThread = threading && inmainThread;
-    connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
+  //  connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
     if ( useThread){
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
-            QThread* thread = new QThread;
-            CatalogWorker2* worker = new CatalogWorker2(view.resource().url());
-            worker->moveToThread(thread);
-            thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
-            thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
-            thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
-            thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
-            thread->start();
+            scanContainer(resource().url());
         }
     }else
         mastercatalog()->addContainer(view.resource().url());
