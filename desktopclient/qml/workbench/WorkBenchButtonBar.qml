@@ -176,9 +176,13 @@ Rectangle {
                 style: ProgressBarStyle {
                      background: Rectangle {
                          radius: 2
-                         color: "lightgreen"
+                         color: "grey"
                          border.color: "gray"
                          border.width: 1
+                     }
+                     progress: Rectangle {
+                         color: "red"
+                         border.color: "steelblue"
                      }
                 }
 
