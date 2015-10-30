@@ -60,7 +60,7 @@ Rectangle {
         anchors.top: protocol.bottom
         anchors.topMargin: 10
         width : parent.width
-        height : 220
+        height : 250
 
     }
 
