@@ -51,9 +51,11 @@ Rectangle {
 
         }
         CatalogButton{
-            id : newcat
-            //action : propertiesClicked
+            id : refresh
             label: qsTr("Refresh")
+            onClicked: {
+                mastercatalog.refreshWorkingCatalog()
+            }
 
         }
     }
