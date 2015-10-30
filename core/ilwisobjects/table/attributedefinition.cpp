@@ -355,6 +355,18 @@ const FeatureAttributeDefinition& FeatureAttributeDefinition::featureAttributeDe
     return _subFeatureDefinition->featureAttributeDefinition(level - 1);
 }
 
+void FeatureAttributeDefinition::copyTo(Ilwis::FeatureAttributeDefinition &def) const
+{
+    def._dummy.reset(new FeatureAttributeDefinition());
+    def._columnDefinitionsByIndex = _columnDefinitionsByIndex;
+    def._columnDefinitionsByName = _columnDefinitionsByName;
+    def._subFeatureDomain = _subFeatureDomain;
+    def._index2subFeature = _index2subFeature;
+    def._subFeature2Index = _subFeature2Index;
+    if ( _subFeatureDefinition)
+        def._subFeatureDefinition.reset(new FeatureAttributeDefinition());
+}
+
 
 
 
