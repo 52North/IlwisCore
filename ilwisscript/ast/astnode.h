@@ -21,6 +21,7 @@ public:
     NodeValue& operator=(const NodeValue& a) ;
 
     void setContentType(ContentType tp);
+    void addValue(const QVariant& v, const QString& nid);
     ContentType content() const;
     QString id(int index=0) const;
     QString toString() const;

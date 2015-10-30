@@ -119,8 +119,10 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
         return false;
 
     try{
-        bool res = _expression->evaluate(symbols, scope, ctx);
-        if ( res) {
+        bool ok = _expression->evaluate(symbols, scope, ctx);
+        if ( ok) {
+            ctx->clear(true);
+
             NodeValue val = _expression->value();
             for(int i = 0; i < val.size(); ++i) {
                 Symbol sym = symbols.getSymbol(val.id(i),SymbolTable::gaREMOVEIFANON);
@@ -128,18 +130,18 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 QString result = _outParms->id(i);
 
                 if (  hasType(tp, itILWISOBJECT)) {
-                    bool ok;
+
                     if ( hasType(tp, itRASTER)) {
-                        ok = copyObject<RasterCoverage>(sym, result,symbols);
+                        ok &= copyObject<RasterCoverage>(sym, result,symbols);
                     }
                     else if (hasType(tp, itFEATURE))
-                        ok = copyObject<FeatureCoverage>(sym, result,symbols);
+                        ok &= copyObject<FeatureCoverage>(sym, result,symbols);
                     else if ( hasType(tp, itDOMAIN)){
-                        ok = copyObject<Domain>(sym, result,symbols);
+                        ok &= copyObject<Domain>(sym, result,symbols);
                     } else if ( hasType(tp, itGEOREF)){
-                        ok = copyObject<GeoReference>(sym, result,symbols);
+                        ok &= copyObject<GeoReference>(sym, result,symbols);
                     } else if (hasType(tp, itTABLE)){
-                        ok = copyObject<Table>(sym, result,symbols,true);
+                        ok &= copyObject<Table>(sym, result,symbols,true);
                         QSharedPointer<Selector> selector = _outParms->selector(result);
                         if (!selector.isNull()){
                             QString varName = selector->variable();
@@ -164,9 +166,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                         store2Format(specifier, sym, result);
 
                     }
-                    ctx->clear(true);
+
                     ctx->_results.push_back(result);
-                    return ok;
 
             } else {
                 sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
@@ -175,13 +176,11 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     tp = Domain::ilwType(val);
                 }
             }
-            ctx->clear();
-            // symbols.addSymbol(result, scope, tp, _expression->value());
-            ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
+            //ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
 
-            return true;
         }
     }
+    return ok;
 } catch(const ErrorObject&){
 
 }
