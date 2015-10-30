@@ -329,12 +329,13 @@ FeatureCoverage *FeatureCoverage::clone()
 
 void FeatureCoverage::copyTo(IlwisObject *obj)
 {
+    Locker<> lock(_mutex);
     Coverage::copyTo(obj);
     FeatureCoverage *fcov = static_cast<FeatureCoverage *>(obj);
     fcov->_featureTypes = _featureTypes;
     fcov->_featureInfo = _featureInfo;
     fcov->_features.resize(_features.size());
-   //fcov->_attributeDefinition = _attributeDefinition;
+    _attributeDefinition.copyTo(fcov->_attributeDefinition);
 
     for(int i=0; i < _features.size(); ++i){
         if ( _features[i])

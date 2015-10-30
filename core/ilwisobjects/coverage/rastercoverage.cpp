@@ -146,6 +146,8 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     Coverage::copyTo(obj);
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
     raster->_georef = _georef;
+    raster->_datadefBands = _datadefBands;
+    raster->_bandDefinition = _bandDefinition;
     raster->_datadefCoverage = _datadefCoverage;
     if ( _grid) {
         raster->_grid.reset(_grid->clone());
