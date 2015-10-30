@@ -76,7 +76,7 @@ Item {
             id : filetab
             height: parent.height
             width : parent.width
-            title : "File"
+            title : "Local"
             Item {
                 anchors.fill: parent
                 Connections{
@@ -91,7 +91,7 @@ Item {
         }
         Tab {
 
-            title : "Service"
+            title : "Remote"
             height: parent.height
             width : parent.width
             Item {
@@ -99,9 +99,6 @@ Item {
                 anchors.topMargin: 5
                 SelectServiceForm{}
             }
-        }
-        Tab {
-            title : "Database"
         }
 
         Tab {
