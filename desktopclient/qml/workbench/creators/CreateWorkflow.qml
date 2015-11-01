@@ -147,8 +147,10 @@ Controls.DropableItem{
                         var createInfo = {type : "workflow", name : nameedit.content, keywords : keywrds, description : descedit.content}
                         var ilwisid = objectcreator.createObject(createInfo)
                         var resource = mastercatalog.id2Resource(ilwisid)
-                        var filter = "itemid=" + resource.id
-                        bigthing.newCatalog(filter, "workflow",resource.url,"other")
+                        if (resource){
+                            var filter = "itemid=" + resource.id
+                            bigthing.newCatalog(filter, "workflow",resource.url,"other")
+                        }
                     }
                 }
                 Button{
