@@ -226,6 +226,8 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
     for(const Resource &resource : items) {
         if (!resource.isValid())
            continue;
+        if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
+            continue;
         if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
           continue;
 
