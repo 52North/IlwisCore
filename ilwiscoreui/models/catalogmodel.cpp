@@ -187,7 +187,7 @@ void CatalogModel::filter(const QString &filterString)
 
     _refresh = true;
     _view.filter(filterString);
-    contentChanged();
+    emit contentChanged();
 }
 
 void CatalogModel::refresh(bool yesno)
@@ -216,6 +216,14 @@ QStringList CatalogModel::objectCounts()
     }
 
     return QStringList();
+}
+
+void CatalogModel::refresh()
+{
+    _refresh = true;
+//    auto items = _view.items();
+//    mastercatalog()->removeItems(items);
+    emit contentChanged();
 }
 
 void CatalogModel::nameFilter(const QString &filter)
