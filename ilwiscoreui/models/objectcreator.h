@@ -48,6 +48,7 @@ private:
     QString createItemDomain(const QVariantMap &parms);
     QString createGeoreference(const QVariantMap &parms);
     QString createProjectedCoordinateSystem(const QVariantMap &parms);
+    QString createWorkflow(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H
