@@ -316,8 +316,6 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 format = "{format(stream,\"table\")}";
             }
             output = output + format;
-            //output = "a1" + format + ",a2" + format;
-
         }
     }
 
