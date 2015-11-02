@@ -27,11 +27,13 @@ TranquilizerHandler::TranquilizerHandler(QObject *parent) :
 
 TranquilizerList TranquilizerHandler::tranquilizers()
 {
-        return  QQmlListProperty<TranquilizerModel>(this, _tranquilizers);
+    Locker<> lock(_mutex);
+    return  QQmlListProperty<TranquilizerModel>(this, _tranquilizers);
 }
 
 void TranquilizerHandler::updateTranquilizer(quint64 id, double amount)
 {
+    Locker<> lock(_mutex);
     for(auto trq : _tranquilizers){
         if ( trq->id() == id){
             trq->currentValue(amount);
@@ -43,6 +45,7 @@ void TranquilizerHandler::updateTranquilizer(quint64 id, double amount)
 
 void TranquilizerHandler::createTranquilizer(quint64 id, const QString &title, const QString &description, double start, double end)
 {
+    Locker<> lock(_mutex);
     for(TranquilizerModel *trq : _tranquilizers){
         if ( id == trq->id()){
             if ( title != sUNDEF)
@@ -67,12 +70,15 @@ void TranquilizerHandler::createTranquilizer(quint64 id, const QString &title, c
 
 void TranquilizerHandler::removeTranquilizer(quint64 id)
 {
+    Locker<> lock(_mutex);
     for(auto trq  = _tranquilizers.begin(); trq != _tranquilizers.end(); ++trq){
         if ( (*trq)->id() == id){
             _tranquilizers.erase(trq);
+             // TODO this delete cause a crash when quickly moving to folders were one folder has a load of files probably the delete happens before the UI is properly handled and this leads to the use of a deleted pointer
+            //(*trq)->deleteLater();
             emit tranquilizersChanged();
             emit aggregateValueChanged();
-            (*trq)->deleteLater();
+
             uicontext()->updateThreadCount(-1);
             return;
         }
@@ -81,6 +87,7 @@ void TranquilizerHandler::removeTranquilizer(quint64 id)
 
 int TranquilizerHandler::aggregateValue() const
 {
+    Locker<> lock(_mutex);
     if ( _tranquilizers.size() == 0)
         return 0;
     int avp = 0;
@@ -93,20 +100,24 @@ int TranquilizerHandler::aggregateValue() const
 
 QString TranquilizerModel::title() const
 {
+    Locker<> lock(_mutex);
     return _title;
 }
 
 QString TranquilizerModel::description() const
 {
+    Locker<> lock(_mutex);
     return _description;
 }
 
 double TranquilizerModel::endValue() const
 {
+    Locker<> lock(_mutex);
     return _endValue;
 }
 
 double TranquilizerModel::startValue() const{
+    Locker<> lock(_mutex);
     return _beginValue;
 }
 
@@ -117,12 +128,14 @@ double TranquilizerModel::currentValue() const
 
 void TranquilizerModel::currentValue(double v)
 {
+    Locker<> lock(_mutex);
     _currentValue = v;
     emit currentValueChanged();
 }
 
 double TranquilizerModel::currentValueP() const
 {
+    Locker<> lock(_mutex);
     if ( (_endValue - _beginValue) == 0)
         return 0;
 
@@ -131,25 +144,30 @@ double TranquilizerModel::currentValueP() const
 
 void TranquilizerModel::title(const QString &t)
 {
+    Locker<> lock(_mutex);
     _title = t;
 }
 
 void TranquilizerModel::description(const QString &d)
 {
+    Locker<> lock(_mutex);
     _description = d;
 }
 
 void TranquilizerModel::startValue(double d)
 {
+    Locker<> lock(_mutex);
     _beginValue = d;
 }
 
 void TranquilizerModel::endValue(double d)
 {
+    Locker<> lock(_mutex);
     _endValue = d;
 }
 
 quint64 TranquilizerModel::id() const
 {
+    Locker<> lock(_mutex);
     return _id;
 }

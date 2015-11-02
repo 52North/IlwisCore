@@ -18,19 +18,31 @@ ProjectionImplementation::ProjectionImplementation(const QString &type) :
     _coordinateSystem(0),
     _projtype(type)
 {
-    _parameters[Projection::Projection::pvX0] = {rUNDEF};
+    _parameters[Projection::pvX0] = {0};
     _parameters[Projection::pvY0] = {0};
-    _parameters[Projection::pvK0] = {0};
-    _parameters[Projection::pvLAT0] = {0};
-    _parameters[Projection::pvLAT1] = {0};
-    _parameters[Projection::pvLAT2] = {0};
-    _parameters[Projection::pvZONE] = {1};
-    _parameters[Projection::pvNORIENTED] =  {true};
+    _parameters[Projection::pvK0] = {1};
+    _parameters[Projection::pvLAT0] = {0, itLATLON};
+    _parameters[Projection::pvLAT1] = {30, itLATLON};
+    _parameters[Projection::pvLAT2] = {60, itLATLON};
+    _parameters[Projection::pvLATTS] = {0, itLATLON};
+    _parameters[Projection::pvZONE] = {1, itINT8};
+    _parameters[Projection::pvNORIENTED] =  {true, itBOOL};
     _parameters[Projection::pvAZIMYAXIS] = {0};
-    _parameters[Projection::pvTILTED] =  {false};
+    _parameters[Projection::pvTILTED] =  {false,itBOOL};
     _parameters[Projection::pvAZIMCLINE] = {0};
     _parameters[Projection::pvHEIGHT] = {0};
-    _parameters[Projection::pvLON0] =  {0};
+    _parameters[Projection::pvLON0] =  {0, itLATLON};
+     InternalDatabaseConnection projs(QString("select parameters from projection where code='%1'").arg(_projtype));
+     while(projs.next()){
+        QString parms = projs.value(0).toString();
+        QStringList parts = parms.split("|");
+        for(const QString& part : parts){
+            Projection::ProjectionParamValue tp = Projection::parameterName2type(part);
+            _parameters[tp]._isUsed = true;
+        }
+     }
+
+
 }
 
 QString ProjectionImplementation::type() const
@@ -70,6 +82,24 @@ bool ProjectionImplementation::isSet(Projection::ProjectionParamValue type) cons
         return (*iter).second._isSet;
     }
     return false;
+}
+
+bool ProjectionImplementation::isUsed(Projection::ProjectionParamValue type) const
+{
+    auto iter = _parameters.find(type);
+    if ( iter != _parameters.end()) {
+        return (*iter).second._isUsed;
+    }
+    return false;
+}
+
+IlwisTypes ProjectionImplementation::valueType(Projection::ProjectionParamValue type) const
+{
+    auto iter = _parameters.find(type);
+    if ( iter != _parameters.end()) {
+        return (*iter).second._valueType;
+    }
+    return itUNKNOWN;
 }
 
 QString ProjectionImplementation::toWKT(quint32 spaces)

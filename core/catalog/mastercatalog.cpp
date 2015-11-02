@@ -107,7 +107,11 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource(location, itCATALOG);
+    Resource resource = name2Resource(location.toString());
+    if ( !resource.isValid() || !hasType(resource.extendedType(), itCATALOG)){
+         resource = Resource(location, itCATALOG);
+    }
+
     ICatalog catalog(resource, options);
     if ( !catalog.isValid()){
         return false;
@@ -217,17 +221,24 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         kernel()->issues()->logSql(queryItem.lastError());
         return false;
     }
+    std::set<QUrl> containers;
 
     for(const Resource &resource : items) {
         if (!resource.isValid())
            continue;
+        if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
+            continue;
         if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
           continue;
 
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
+        containers.insert(resource.container());
     }
     kernel()->database().exec("COMMIT TRANSACTION");
+
+    for(auto container : containers)
+        emit contentChanged(container);
 
 
     return true;

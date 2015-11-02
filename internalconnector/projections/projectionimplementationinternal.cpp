@@ -24,7 +24,8 @@
 using namespace Ilwis;
 using namespace Internal;
 
-ProjectionImplementationInternal::ProjectionImplementationInternal() :
+ProjectionImplementationInternal::ProjectionImplementationInternal(const Resource& resource) :
+    ProjectionImplementation(resource.code()),
     _easting(0),
     _northing(0),
     _maxis(6371007.180918499800),

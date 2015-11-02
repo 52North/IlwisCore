@@ -66,7 +66,7 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     _pjBase = pj_init_plus(_targetDef.toLatin1());
 }
 
-ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &resource)
+ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &resource) : ProjectionImplementation(resource.code())
 {
     QString cd = resource.code();
     _outputIsLatLon = cd == "latlong" || cd == "longlat";

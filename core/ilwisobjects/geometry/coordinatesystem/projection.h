@@ -40,8 +40,7 @@ public:
 
     QVariant parameter(Projection::ProjectionParamValue type) const;
     void setParameter(Projection::ProjectionParamValue type, const QVariant& value);
-    QString parameterName(Projection::ProjectionParamValue pv) const;
-    static QString projectionCode2Name(const QString& code);
+
 
     bool isEqual(const IlwisObject* obj) const;
     bool isValid() const;
@@ -50,6 +49,13 @@ public:
 
     void setCoordinateSystem(ConventionalCoordinateSystem *csy);
     bool isSet(Projection::ProjectionParamValue type) const;
+    bool isUsed(Projection::ProjectionParamValue type) const;
+    IlwisTypes valueType(Projection::ProjectionParamValue type) const;
+
+    static QString parameterName(Projection::ProjectionParamValue pv) ;
+    static Projection::ProjectionParamValue parameterName2type(const QString &name);
+    static QString projectionCode2Name(const QString& code);
+
 protected:
     static Projection::FindMatch find(const QString& v1, const QString& value) ;
 

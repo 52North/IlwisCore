@@ -19,7 +19,8 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index, b
     _changed(false)
 {
     datadef().domain(def.datadef().domain<>());
-    datadef().range(def.datadef().range()->clone());
+    if ( !def.datadef().range().isNull())
+        datadef().range(def.datadef().range()->clone());
 
 }
 

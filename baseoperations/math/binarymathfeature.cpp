@@ -51,6 +51,10 @@ bool BinaryMathFeature::execute(ExecutionContext *ctx, SymbolTable &symTable)
     ITable attTarget = _outputFeatures->attributeTable();
     _merger.mergeTableData(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable(), attTarget);
 
+    QVariant value;
+    value.setValue<IFeatureCoverage>(_outputFeatures);
+    ctx->setOutput(symTable,value,_outputFeatures->name(),itFEATURE,_outputFeatures->source());
+
     return true;
 }
 
@@ -108,7 +112,7 @@ Envelope BinaryMathFeature::addEnvelopes() const {
 quint64 BinaryMathFeature::createMetadata()
 {
     OperationResource operation({"ilwis://operations/binarymathfeatures"});
-    operation.setSyntax("binarymathfeatures(featurecoverage1,featurescoverage2,!add|substract)");
+    operation.setSyntax("binarymathfeatures(featurecoverage1,featurescoverage2,featureoperation=!add|substract)");
     operation.setDescription(TR("generates a new featurecoverage that puts all the features of both coverages into one coverage"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itFEATURE, TR("first input feature coverage"));

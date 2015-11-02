@@ -61,7 +61,7 @@ private:
                 needData();
 
             } catch(const std::bad_alloc& err){
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster")) ;
+                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), false);
             }
 
 

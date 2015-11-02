@@ -9,6 +9,7 @@ Item {
     id : tfdaContainer
     property string filterkeys
     property string content
+    property string objectid : ""
     property bool readOnly : true
     property var canUse
     property bool asName : true
@@ -26,6 +27,7 @@ Item {
                 if ( canUse(drag.source.ilwisobjectid)){
                     content = drag.source.message
                     textid.text = asName ? mastercatalog.getName(drag.source.ilwisobjectid) : mastercatalog.getUrl(drag.source.ilwisobjectid)
+                    objectid = drag.source.ilwisobjectid
                 }
             }else {
                 content = drag.source.message

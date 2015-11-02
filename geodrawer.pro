@@ -71,7 +71,8 @@ SOURCES += \
     geodrawer/operations/setbackgroundcolor.cpp \
     geodrawer/griddrawer.cpp \
     geodrawer/operations/setgridproperties.cpp \
-    geodrawer/operations/setlayeropacity.cpp
+    geodrawer/operations/setlayeropacity.cpp \
+    geodrawer/rasteritemimage.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -120,7 +121,8 @@ HEADERS += \
     geodrawer/operations/setbackgroundcolor.h \
     geodrawer/griddrawer.h \
     geodrawer/operations/setgridproperties.h \
-    geodrawer/operations/setlayeropacity.h
+    geodrawer/operations/setlayeropacity.h \
+    geodrawer/rasteritemimage.h
 
 
 OTHER_FILES = geodrawer/qmldir

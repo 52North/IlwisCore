@@ -44,9 +44,7 @@ bool BaseDrawer::prepare(DrawerInterface::PreparationType prepType,  const IOOpt
         _vboNormal = _shaders.attributeLocation("normal");
         _modelview = _shaders.uniformLocation("mvp");
         _vboAlpha = _shaders.uniformLocation("alpha");
-
     }
-
 
     return true;
 }

@@ -69,13 +69,16 @@ public:
     Q_INVOKABLE QString getUrl(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
     Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QQuickItem *parent);
+    Q_INVOKABLE QStringList select(const QString &filter, const QString& property);
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
     Q_INVOKABLE bool hasSelectedObjects() const;
     Q_INVOKABLE QString selectedIds() const;
+    Q_INVOKABLE void deleteObject(const QString& id);
     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
+
 
 
 public slots:
@@ -146,6 +149,23 @@ private:
     QList<std::pair<CatalogModel *, Ilwis::CatalogView>> _models;
     void calculatelatLonEnvelopes();
     void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
+};
+
+class CatalogWorker3 : public QObject {
+    Q_OBJECT
+
+public:
+    CatalogWorker3(const Ilwis::Resource& resource) : _resource(resource){}
+
+public slots:
+    void process();
+
+signals:
+    void finished();
+    void updateContainer();
+
+private:
+    Ilwis::Resource _resource;
 };
 //}
 //}

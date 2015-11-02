@@ -52,7 +52,10 @@ HEADERS += \
     baseoperations/creators/createthematicdomain.h \
     baseoperations/creators/createidentifierdomain.h \
     baseoperations/creators/createintervaldomain.h \
-    baseoperations/creators/createpalettedomain.h
+    baseoperations/creators/createpalettedomain.h \
+    baseoperations/creators/createcornersgeoreference.h \
+    baseoperations/creators/createprojectedcoordinatesystem.h \
+    baseoperations/util/testoperation.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -91,7 +94,10 @@ SOURCES += \
     baseoperations/creators/createthematicdomain.cpp \
     baseoperations/creators/createidentifierdomain.cpp \
     baseoperations/creators/createintervaldomain.cpp \
-    baseoperations/creators/createpalettedomain.cpp
+    baseoperations/creators/createpalettedomain.cpp \
+    baseoperations/creators/createcornersgeoreference.cpp \
+    baseoperations/creators/createprojectedcoordinatesystem.cpp \
+    baseoperations/util/testoperation.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

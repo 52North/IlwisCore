@@ -4,9 +4,10 @@
 
 using namespace Ilwis;
 
-ErrorObject::ErrorObject(const QString &message): _message(message)
+ErrorObject::ErrorObject(const QString &message, bool log): _message(message)
 {
-    kernel()->issues()->log(message);
+    if (log)
+        kernel()->issues()->log(message);
 }
 
 ErrorObject::~ErrorObject() throw()
@@ -77,7 +78,7 @@ const char *GeometryError::what() const throw()
     return "GeometryError";
 }
 
-OutOfMemoryError::OutOfMemoryError(const QString &message) : ErrorObject(message)
+OutOfMemoryError::OutOfMemoryError(const QString &message, bool log) : ErrorObject(message, log)
 {
 }
 

@@ -16,9 +16,15 @@ Rectangle {
         anchors.fill: parent
         z : 1
         CatalogButton{
-            id : workspace
-            //action: workspaceClicked
+            id : showobj
             label: qsTr("View")
+            onClicked: {
+                var ids = mastercatalog.selectedIds()
+                var idlist = ids.split("|")
+                for(var i=0; i < idlist.length; ++i){
+                    showObject(idlist[i]);
+                }
+            }
         }
         CatalogButton{
             id : oper
@@ -32,15 +38,24 @@ Rectangle {
         }
 
         CatalogButton{
-            id : prop
+            id : deleteobj
             //action : propertiesClicked
             label: qsTr("Delete")
+            onClicked: {
+                var ids = mastercatalog.selectedIds()
+                var idlist = ids.split("|")
+                for(var i=0; i < idlist.length; ++i){
+                   mastercatalog.deleteObject(idlist[i]);
+                }
+            }
 
         }
         CatalogButton{
-            id : newcat
-            //action : propertiesClicked
+            id : refresh
             label: qsTr("Refresh")
+            onClicked: {
+                mastercatalog.refreshWorkingCatalog()
+            }
 
         }
     }

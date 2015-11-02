@@ -438,3 +438,20 @@ QString  ResourceModel::propertyTypeName(quint64 typ, const QString& propertyNam
     return "";
 }
 
+void ResourceModel::makeParent(QObject *item)
+{
+    setParent(item);
+}
+
+bool ResourceModel::hasExtendedType(const QString &tp) const
+{
+    if ( _item.isValid()) {
+        IlwisTypes typ = Ilwis::IlwisObject::name2Type(tp);
+        if ( typ != itUNKNOWN) {
+            bool ok = hasType(_item.extendedType(), typ);
+            return ok;
+        }
+
+    }
+    return false;
+}

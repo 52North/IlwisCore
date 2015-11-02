@@ -12,7 +12,7 @@ using namespace Ilwis;
 quint64 BaseTranquilizer::_trqId = 0;
 
 BaseTranquilizer::BaseTranquilizer(const IOOptions &,QObject *parent) : Tranquilizer(parent),
- _id(i64UNDEF),_start(0),_end(0), _current(0)
+ _id(i64UNDEF),_start(rUNDEF),_end(rUNDEF), _current(rUNDEF)
 {
 
 }

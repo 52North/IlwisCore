@@ -43,6 +43,12 @@ void NodeValue::setContentType(ContentType tp) {
     _content = tp;
 }
 
+void NodeValue::addValue(const QVariant &v, const QString &nid)
+{
+    push_back(v);
+    _ids.push_back(nid);
+}
+
 NodeValue::ContentType NodeValue::content() const {
     return _content;
 }

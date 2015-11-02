@@ -47,6 +47,7 @@ public:
     Q_INVOKABLE void exitUI();
     Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
     Q_INVOKABLE QString moduleData() const;
+    Q_INVOKABLE QString typeName2typeId(const QString& nm) const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;

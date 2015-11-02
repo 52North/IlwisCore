@@ -401,6 +401,13 @@ PlanarCTPGeoReference::Transformation PlanarCTPGeoReference::transformation() co
     return _transformation;
 }
 
+GeoRefImplementation *PlanarCTPGeoReference::clone()
+{
+    GeoRefImplementation  *impl = new PlanarCTPGeoReference();
+    copyTo(impl);
+    return impl;
+}
+
 QString PlanarCTPGeoReference::typeName()
 {
     return "planartiepoints";
@@ -424,6 +431,20 @@ quint32 PlanarCTPGeoReference::minnr() const
     default:
       return 0;
   };
+}
+
+void PlanarCTPGeoReference::copyTo(GeoRefImplementation *impl)
+{
+    CTPGeoReference::copyTo(impl);
+    PlanarCTPGeoReference *ctpgrf = static_cast<PlanarCTPGeoReference *>(impl);
+
+    ctpgrf->_jacobian = _jacobian;
+    ctpgrf->_avgCrd = _avgCrd;
+    ctpgrf->_avgPix = _avgPix;
+    ctpgrf->_xyCoef = _xyCoef;
+    ctpgrf->_colrowCoef = _colrowCoef;
+    ctpgrf->_transformation = _transformation;
+    ctpgrf->_sigma = _sigma;
 }
 
 bool PlanarCTPGeoReference::isValid() const

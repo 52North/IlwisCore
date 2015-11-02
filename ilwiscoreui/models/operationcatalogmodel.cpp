@@ -279,6 +279,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         QString format;
         QStringList parts = output.split("@@");
         output = parts[0];
+
         QString formatName = parts[1];
         if ( hasType(outputtype, itTABLE)){
             if ( formatName == "Memory"){
@@ -317,6 +318,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
             output = output + format;
         }
     }
+
     if ( output == "")
         expression = QString("script %1(%2)").arg(operationresource.name()).arg(expression);
     else

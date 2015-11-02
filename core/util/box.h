@@ -496,12 +496,12 @@ public:
         if ( is3D()) {
             if (this->min_corner().valuetype() == itDOUBLE)
                 return QString("%1 %2 %3 %4 %5 %6").
-                        arg((double)this->min_corner().x,0,'g').
-                        arg((double)this->min_corner().y,0,'g').
-                        arg((double)this->min_corner().z,0,'g').
-                        arg((double)this->max_corner().x,0,'g').
-                        arg((double)this->max_corner().y,0,'g').
-                        arg((double)this->max_corner().z,0,'g');
+                        arg((double)this->min_corner().x,0,'f').
+                        arg((double)this->min_corner().y,0,'f').
+                        arg((double)this->min_corner().z,0,'f').
+                        arg((double)this->max_corner().x,0,'f').
+                        arg((double)this->max_corner().y,0,'f').
+                        arg((double)this->max_corner().z,0,'f');
             else
                 return QString("%1 %2 %3 %4 %5 %6").arg(this->min_corner().x).
                         arg(this->min_corner().y).
@@ -514,10 +514,10 @@ public:
         }else {
             if (this->min_corner().valuetype() == itDOUBLE)
                 return QString("%1 %2 %3 %4").
-                        arg((double)this->min_corner().x,0,'g').
-                        arg((double)this->min_corner().y,0,'g').
-                        arg((double)this->max_corner().x,0,'g').
-                        arg((double)this->max_corner().y,0,'g');
+                        arg((double)this->min_corner().x,0,'f').
+                        arg((double)this->min_corner().y,0,'f').
+                        arg((double)this->max_corner().x,0,'f').
+                        arg((double)this->max_corner().y,0,'f');
             else
                 return QString("%1 %2 %3 %4").
                         arg(this->min_corner().x).

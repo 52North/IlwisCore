@@ -51,7 +51,7 @@ DataDefinition &DataDefinition::operator =(const DataDefinition &def)
 
 void DataDefinition::range(Range* vr)
 {
-    _range = QSharedPointer<Range>(vr);
+    _range.reset(vr);
 }
 
 void DataDefinition::domain(const IDomain &dom)

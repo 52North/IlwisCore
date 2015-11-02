@@ -133,7 +133,7 @@ quint64 AreaNumbering::createMetadata()
 {
     OperationResource operation({"ilwis://operations/areanumbering"});
     operation.setLongName("Area Numbering");
-    operation.setSyntax("areanumbering(inputgridcoverage,!4|8)");
+    operation.setSyntax("areanumbering(inputgridcoverage,connectivity=!4|8)");
     operation.setDescription(TR("Area numbering assigns unique pixel values in an output map for connected areas (areas consisting of pixels with the same value, class name, or ID)"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("rastercoverage with domain item, boolean or identifier domain"));

@@ -73,7 +73,7 @@ WorkBenchShifter {
 
             ApplicationForm{
                 id : appFrame
-                width : parent.width
+                 width : parent.width
                 height : parent.height - 30 < 0 ?  0 : parent.height - 30
                 opacity : 0
 
@@ -91,7 +91,7 @@ WorkBenchShifter {
 
                     PropertyChanges {
                         target: applicationForm
-                        height : 300
+                        height : appFrame ? appFrame.height : 350
                         opacity : 1
 
                     }

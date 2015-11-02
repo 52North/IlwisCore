@@ -31,7 +31,8 @@ HEADERS += \
     internalconnector/internalcoordinatesystemconnector.h \
     internalconnector/internalrepresentation.h \
     internalconnector/workflowconnector.h \
-    internalconnector/operationmetadataconnector.h
+    internalconnector/operationmetadataconnector.h \
+    internalconnector/projections/cylindsinusinterrupt2.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -48,7 +49,8 @@ SOURCES += \
     internalconnector/internalcoordinatesystemconnector.cpp \
     internalconnector/internalrepresentation.cpp \
     internalconnector/workflowconnector.cpp \
-    internalconnector/operationmetadataconnector.cpp
+    internalconnector/operationmetadataconnector.cpp \
+    internalconnector/projections/cylindsinusinterrupt2.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

@@ -137,10 +137,12 @@ bool TermNode::doMethodStatement(SymbolTable &symbols, int scope, ExecutionConte
     parms += ")";
     QString expression = _id->id() + parms;
     bool ok = Ilwis::commandhandler()->execute(expression, ctx, symbols);
-    if ( !ok || ctx->_results.size() != 1)
+    if ( !ok )
         throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
 
-    _value = {symbols.getValue(ctx->_results[0]), ctx->_results[0], NodeValue::ctMethod};
+    for(int i = 0; i < ctx->_results.size(); ++i){
+        _value.addValue(symbols.getValue(ctx->_results[i]), ctx->_results[i]);
+    }
     return true;
 }
 

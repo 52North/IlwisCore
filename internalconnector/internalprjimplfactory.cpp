@@ -18,6 +18,7 @@
 #include "projectionimplementation.h"
 #include "projections/projectionimplementationinternal.h"
 #include "projections/platecaree.h"
+#include "projections/cylindsinusinterrupt2.h"
 
 using namespace Ilwis;
 using namespace Internal;
@@ -31,6 +32,8 @@ ProjectionImplementation *ProjectionImplFactory::create(const Ilwis::Resource &r
 
     if ( prj == "PRJPC")
         return new PlateCaree(resource);
+    if ( prj == "PRJSINI2")
+        return new CylindSinusInterrupt2(resource);
 
     return 0;
 }
@@ -44,6 +47,8 @@ bool ProjectionImplFactory::canUse(const Ilwis::Resource &resource) const
 {
     QString prj = resource.code();
     if ( prj == "PRJPC")
+        return true;
+    if ( prj == "PRJSINI2")
         return true;
 
     return false;

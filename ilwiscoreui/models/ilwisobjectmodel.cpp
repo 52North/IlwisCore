@@ -218,13 +218,15 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
                 IlwisTypes objecttype = _ilwisobject->ilwisType();
                 if ( objecttype == itRASTER){
                     IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-                    AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
-                    _attributes.push_back(attribute);
+
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
                             AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
                             _attributes.push_back(attribute);
                         }
+                    }else {
+                        AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
+                        _attributes.push_back(attribute);
                     }
                 } else if ( hasType(objecttype,itFEATURE)){
                     IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
@@ -287,15 +289,26 @@ QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
             proj = _ilwisobject.as<Projection>();
 
         if ( proj.isValid()){
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvX0, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvY0, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLON0, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT0, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT1, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT2, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLATTS, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvK0, this));
-            _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvZONE, this));
+            if ( proj->isUsed(Projection::pvX0))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvX0, this));
+            if ( proj->isUsed(Projection::pvY0))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvY0, this));
+            if ( proj->isUsed(Projection::pvLON0))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLON0, this));
+            if ( proj->isUsed(Projection::pvLAT0))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT0, this));
+            if ( proj->isUsed(Projection::pvLAT1))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT1, this));
+            if ( proj->isUsed(Projection::pvLAT2))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT2, this));
+            if ( proj->isUsed(Projection::pvLATTS))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLATTS, this));
+            if ( proj->isUsed(Projection::pvK0))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvK0, this));
+            if ( proj->isUsed(Projection::pvZONE))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvZONE, this));
+            if ( proj->isUsed(Projection::pvHEIGHT))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvHEIGHT, this));
         }
         return QQmlListProperty<ProjectionParameterModel>(this, _projectionParmItems);
     }

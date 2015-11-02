@@ -1,56 +1,56 @@
-CODE,NAME,WKT,AUTHORITY,DESCRIPTION
-aeqd,Azimuthal Equidistant,,,
-aitoff,Aitoff,,,
-aea,Albers Equal Area Conic,Albers_Conic_Equal_Area ,EPSG:9801,
-bonne,Bonne,,,
-cass,Cassini,Cassini_Soldner ,EPSG:9806,
-cc,Central Cylindrical,Cylindrical_Equal_Area,,
-PRJDRD,DutchRD,,,
-eck1,Eckert1,,,
-eck2,Eckert2,,,
-eck3,Eckert3,,,
-PRJEH,EOV Hungary,,,
-eqdc,Equidistant Conic,Equidistant_Conic,,
-PRJGBI,Gauss-Boaga Italy,,,
-PRJGC,Gauss Colombia,,,
-PRJGKE,Gauss-Krueger Germany,,,
-PRJGP,General Perspective,,,
-geos  ,GeoStationary Satellite View,GEOS,,
-gnom,Gnomonic,Gnomonic,,
-goode,Goode,,,
-PRJGI,Goode Interrupted,,,
-hammer,Hammer Aitoff,,,
-laea  ,Lambert Azimuthal EqualArea,Lambert_Azimuthal_Equal_Area,EPSG:9820,
-lcc,Lambert Conformal Conic,Lambert_Conformal_Conic_1SP,EPSG:9801,
-PRJLCCB72,Lambert Conform Conic Belgium 1972,Lambert_Conformal_Conic_2SP_Belgium,EPSG:9803,
-PRJLCCB08,Lambert Conform Conic Belgium 2008,,,
-PRJLCCF,Lambert Conform Conic France,,,
-leac,Lambert Cylindric EqualArea,,,
-merc,Mercator,Mercator_1SP,EPSG:9804,
-PRJMERS,Mercator Scaled,,,
-mill,Miller,Miller_Cylindrical,,
-moll,Mollweide,Mollweide,,
-PRJMSGP,MSG Perspective,,,
-nzmg,New Zealand Map Grid,New_Zealand_Map_Grid,EPSG:9811,
-omerc ,Oblique Mercator,Oblique_Mercator,EPSG:9815,
-ortho,Orthographic,Orthographic,,
-PRJPC,Plate Carree,Equirectangular,EPSG:9842,
-PRJPR,Plate Rectangle,,,
-PRJPOC,PolyConic,,,
-robin,Robinson,Robinson,,
-sinu,Sinusoidal,Sinusoidal,,
-PRJSINI,Sinusoidal Interrupted,,,
-PRJSINI2,Sinusoidal 2 x Interrupted,,,
-PRJSINI3,Sinusoidal 3 x Interrupted,,,
-sterea,Oblique StereoGraphic,Oblique_Stereographic,EPSG:9809,
-stere,StereoPolar,Polar_Stereographic,EPSG:9810,
-tmerc,Transverse Mercator,Transverse_Mercator,EPSG:9807,
-ups,UPS,,,
-utm,UTM,Transverse_Mercator,,
-vandg,VanderGrinten,VanDerGrinten,,
-PRJVH,VanHuut,,,
-PRJVP,Vertical Perspective,,,
-wag7,Wagner VII,,,
-wink1,Winkel I,,,
-wintri,Winkel Triple,,,
-longlat,WGS 84,,,
+CODE,NAME,WKT,AUTHORITY,DESCRIPTION,PARAMETERS
+aeqd,Azimuthal Equidistant,,,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+aitoff,Aitoff,,,,false easting|false northing|central meridian
+aea,Albers Equal Area Conic,Albers_Conic_Equal_Area ,EPSG:9801,,false easting|false northing|central meridian|latitude of origin|standard parallel 1|standard parallel 2
+bonne,Bonne,,,,false easting|false northing|central meridian|latitude of true scale
+cass,Cassini,Cassini_Soldner ,EPSG:9806,,false easting|false northing|central meridian|latitude of true scale|scale factor=1
+cc,Central Cylindrical,Cylindrical_Equal_Area,,,false easting|false northing|central meridian
+PRJDRD,DutchRD,,,,
+eck1,Eckert1,,,,false easting|false northing|central meridian
+eck2,Eckert2,,,,false easting|false northing|central meridian
+eck3,Eckert3,,,,false easting|false northing|central meridian
+PRJEH,EOV Hungary,,,,
+eqdc,Equidistant Conic,Equidistant_Conic,,,false easting|false northing|central meridian|latitude of origin|standard parallel 1|standard parallel 2
+PRJGBI,Gauss-Boaga Italy,,,,zone=1
+PRJGC,Gauss Colombia,,,,zone=1
+PRJGKE,Gauss-Krueger Germany,,,,zone=2
+PRJGP,General Perspective,,,,false easting|false northing|central meridian|latitude of origin|height perspective center|tilt projection plane|azimuth y axis
+geos  ,GeoStationary Satellite View,GEOS,,,false easting|false northing|central meridian|scale|height perspective center=35785831.0|scale factor=1
+gnom,Gnomonic,Gnomonic,,,false easting|false northing|central meridian|latitude of origin
+goode,Goode,,,,false easting|false northing|central meridian
+PRJGI,Goode Interrupted,,,,false easting|false northing
+hammer,Hammer Aitoff,,,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+laea  ,Lambert Azimuthal EqualArea,Lambert_Azimuthal_Equal_Area,EPSG:9820,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+lcc,Lambert Conformal Conic,Lambert_Conformal_Conic_1SP,EPSG:9801,,false easting|false northing|central meridian|latitude of origin|standard parallel 1=30|standard parallel 2=60|scale factor=1
+PRJLCCB72,Lambert Conform Conic Belgium 1972,Lambert_Conformal_Conic_2SP_Belgium,EPSG:9803,,
+PRJLCCB08,Lambert Conform Conic Belgium 2008,,,,
+PRJLCCF,Lambert Conform Conic France,,,,
+leac,Lambert Cylindric EqualArea,,,,false easting|false northing|central meridian|latitude of true scale
+merc,Mercator,Mercator_1SP,EPSG:9804,,false easting|false northing|central meridian|latitude of true scale
+PRJMERS,Mercator Scaled,,,,false easting|false northing|central meridian|latitude of true scale|scale factor=1
+mill,Miller,Miller_Cylindrical,,,false easting|false northing|central meridian
+moll,Mollweide,Mollweide,,,false easting|false northing|central meridian
+PRJMSGP,MSG Perspective,,,,false easting|false northing|central meridian|latitude of origin|scale|height=35785831.0|scale factor=1
+nzmg,New Zealand Map Grid,New_Zealand_Map_Grid,EPSG:9811,,
+omerc ,Oblique Mercator,Oblique_Mercator,EPSG:9815,,false easting|false northing|central meridian|latitude of origin|scale|azim central line of true scale|north oriented
+ortho,Orthographic,Orthographic,,,false easting|false northing|central meridian|latitude of origin
+PRJPC,Plate Carree,Equirectangular,EPSG:9842,,false easting|false northing|central meridian
+PRJPR,Plate Rectangle,,,,false easting|false northing|central meridian|latitude of true scale|latitude of origin
+PRJPOC,PolyConic,,,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+robin,Robinson,Robinson,,,false easting|false northing|central meridian
+sinu,Sinusoidal,Sinusoidal,,,false easting|false northing|central meridian
+PRJSINI,Sinusoidal Interrupted,,,,false easting|false northing|central meridian
+PRJSINI2,Sinusoidal 2 x Interrupted,,,,false easting|false northing|central meridian
+PRJSINI3,Sinusoidal 3 x Interrupted,,,,false easting|false northing|central meridian
+sterea,Oblique StereoGraphic,Oblique_Stereographic,EPSG:9809,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+stere,StereoPolar,Polar_Stereographic,EPSG:9810,,central meridian|latitude of true scale|latitude of origin
+tmerc,Transverse Mercator,Transverse_Mercator,EPSG:9807,,false easting|false northing|central meridian|latitude of origin|scale factor=1
+ups,UPS,,,,north oriented
+utm,UTM,Transverse_Mercator,,,north oriented|zone=1
+vandg,VanderGrinten,VanDerGrinten,,,false easting|false northing|central meridian
+PRJVH,VanHuut,,,,false easting|false northing|central meridian
+PRJVP,Vertical Perspective,,,,false easting|false northing|central meridian|latitude of origin|scale factor=1|height=6000000
+wag7,Wagner VII,,,,false easting|false northing|central meridian|latitude of true scale
+wink1,Winkel I,,,,false easting|false northing|central meridian|latitude of true scale
+wintri,Winkel Triple,,,,false easting|false northing|central meridian|latitude of true scale
+longlat,WGS 84,,,,

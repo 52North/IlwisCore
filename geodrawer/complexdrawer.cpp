@@ -333,9 +333,9 @@ void ComplexDrawer::cleanUp()
     for( auto& drawer : _postDrawers)    {
         drawer.second->cleanUp();
     }
-    _preDrawers.clear();
-    _mainDrawers.clear();
-    _postDrawers.clear();
+    _preDrawers = DrawerMap();
+    _mainDrawers = DrawerList();
+    _postDrawers= DrawerMap();
     unprepare(ptALL);
 
 }

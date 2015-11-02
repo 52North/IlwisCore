@@ -76,7 +76,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
      _bookmarks.push_back(addBookmark(TR("Operations"),
                QUrl("ilwis://operations"),
                TR("All operations available in Ilwis"),
-               "type=" + QString::number(itSINGLEOPERATION), false));
+               "type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW), false));
 
      addDefaultFilters();
      scanBookmarks();
@@ -85,12 +85,13 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
 void MasterCatalogModel::addDefaultFilters(){
     //QString filter = QString("type=%1");
     QString filter = QString("type&%1!=0");
-    QString filter2 = QString("container='%1'");
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itUNKNOWN)),"",""));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- System Catalog -----------------------------",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/domains"),"System Domains",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://system/representations"),"System Representations",""));
-    _defaultFilters.append(new CatalogFilterModel(this,filter2.arg("ilwis://internalcatalog"),"Internal Catalog",""));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/domains","Domains"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/representations","Representations"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/projections","Projections"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/ellipsoids","Ellipsoids"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://internalcatalog","Internal Catalog"));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Most recently used --------------------------",""));
 
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Master Catalog-------------------------------",""));
@@ -459,6 +460,11 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             }
         }
     }else {
+        bool canBeAnimated = false;
+        Resource collection = mastercatalog()->name2Resource(inpath,itRASTER);
+        if ( collection.isValid()){
+            canBeAnimated = hasType(collection.extendedType(), itCATALOG)        ;
+        }
         Resource res(location, itCATALOGVIEW ) ;
         QStringList lst;
         lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
@@ -472,6 +478,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("type", "internal");
         if ( filter != "container=ilwis://mastercatalog")
             res.addProperty("filter",filter);
+        res.addProperty("canbeanimated",canBeAnimated);
         cview = CatalogView(res);
         CatalogModel *model = 0;
         if ( inpath.indexOf("ilwis://operations") == 0){
@@ -601,6 +608,19 @@ void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QS
     }
 }
 
+QStringList MasterCatalogModel::select(const QString &filter, const QString& property)
+{
+    std::vector<Resource> resources = mastercatalog()->select(filter);
+    QStringList resourceList;
+    for (const auto& resource : resources){
+        if (resource.isValid()){
+            if ( property == "name")
+                resourceList.append(QString::number(resource.id()) + "|" + resource.name());
+        }
+    }
+    return resourceList;
+}
+
 ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
 {
     bool ok;
@@ -635,11 +655,23 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
     }
 }
 
+
+
 void MasterCatalogModel::refreshWorkingCatalog()
 {
-        auto items = context()->workingCatalog()->items();
-        mastercatalog()->removeItems(items);
-        context()->workingCatalog()->scan();
+    auto items = context()->workingCatalog()->items();
+    mastercatalog()->removeItems(items);
+
+    QThread* thread = new QThread;
+    CatalogWorker3* worker = new CatalogWorker3(_currentCatalog->resource());
+    worker->moveToThread(thread);
+    thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
+    thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
+    thread->connect(worker, &CatalogWorker3::finished, worker, &CatalogWorker3::deleteLater);
+    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->connect(worker, &CatalogWorker3::updateContainer, _currentCatalog, &CatalogModel::updateContainer);
+    thread->start();
+
 }
 
 int MasterCatalogModel::activeSplit() const
@@ -716,6 +748,18 @@ QString MasterCatalogModel::selectedIds() const
 
     }
     return selected;
+}
+
+void MasterCatalogModel::deleteObject(const QString &id)
+{
+    bool ok;
+    quint64 objid = id.toULongLong(&ok);
+    Resource resource = mastercatalog()->id2Resource(objid);
+    IIlwisObject obj;
+    obj.prepare(resource);
+    if ( !obj.isValid())
+        return;
+    obj->remove();
 }
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
@@ -797,4 +841,25 @@ void worker::process(){
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
             trq->update(100);
     }
+}
+
+//--------------------------
+void CatalogWorker3::process()
+{
+    try{
+        ICatalog catalog(OSHelper::neutralizeFileName(_resource.url().toString()));
+        if ( !catalog.isValid()){
+            return ;
+        }
+        catalog->scan();
+        emit updateContainer();
+        emit finished();
+
+    } catch(const ErrorObject& ){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
 }

@@ -295,6 +295,10 @@ OTHER_FILES += \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
+    core/resources/featurefragmentshader_nvdia.glsl \
+    core/resources/featurevertexshader_nvdia.glsl \
+    core/resources/rasterfragmentshader_nvdia.glsl \
+    core/resources/rastervertexshader_nvdia.glsl \
     LICENSE-2.0.txt \
     installer.nsi \
     core/resources/ilwis.config

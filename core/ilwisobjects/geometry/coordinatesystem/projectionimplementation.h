@@ -9,9 +9,11 @@ class ConventionalCoordinateSystem;
 
 struct ProjectionParameter {
     ProjectionParameter(){}
-    ProjectionParameter(const QVariant& var, bool isSet=false) : _value(var), _isSet(isSet){}
+    ProjectionParameter(const QVariant& var, IlwisTypes datatype=itDOUBLE, bool isSet=false) : _value(var),_isSet(isSet), _valueType(datatype){}
     QVariant _value;
     bool _isSet=false;
+    bool _isUsed=false;
+    IlwisTypes _valueType;
 };
 
 class KERNELSHARED_EXPORT ProjectionImplementation
@@ -39,6 +41,8 @@ public:
     bool isEqual(const QScopedPointer<ProjectionImplementation> &projimpl);
     QString toWKT(quint32 spaces=0);
     bool isSet(Projection::ProjectionParamValue type) const;
+    bool isUsed(Projection::ProjectionParamValue type) const;
+    IlwisTypes valueType(Projection::ProjectionParamValue type) const;
 protected:
     ConventionalCoordinateSystem *_coordinateSystem;
 

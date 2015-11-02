@@ -23,7 +23,6 @@ Item {
             cbuttonBar.side = tabmodel.side
     }
 
-
     signal catalogChanged()
 
     function showObject(objectid){
@@ -34,22 +33,32 @@ Item {
             datapanesplit.changePanel(filter, "catalog", container)
         }else {
             var type = mastercatalog.id2type(objectid)
+             var newPanel = null
             if ( !type)
                 return
             var resource = mastercatalog.id2Resource(objectid)
-            if ( resource.typeName === "catalog"){
+            if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){
                 filter = "container='" + resource.url + "'"
-                datapanesplit.changePanel(filter, "catalog",resource.url)
+                newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
             }else {
                 filter = "itemid=" + resource.id
-                datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                newPanel =datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                if ( newPanel == null){
+                    mastercatalog.setSelectedObjects(objectid)
+                    bigthing.getWorkbenchPane("objectproperties","visible");
+                }
+            }
+            if ( resource && newPanel){
+                resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
             }
         }
     }
 
     function addDataSource(filter, sourceName, sourceType){
         var url = sourceName
-        //console.debug(filter, sourceName, url)
+        if ( currentCatalog)
+            currentCatalog.makeParent(0) // begone though evil creature
+
         currentCatalog = mastercatalog.newCatalog(url,filter)
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
@@ -68,6 +77,7 @@ Item {
             showRpr.checked = showAll.checked
             showProj.checked = showAll.checked
             showEll.checked = showAll.checked
+            showOper.checked = showAll.checked
         }
 
         currentCatalog.filterChanged(objecttype, togglestate)
@@ -106,12 +116,12 @@ Item {
                 mastercatalog.refreshWorkingCatalog()
             }
         }
-        Action {
-            id : showProps
-            onTriggered :{
-               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
-            }
-        }
+//        Action {
+//            id : showProps
+//            onTriggered :{
+//               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
+//            }
+//        }
 
 
 
@@ -177,6 +187,11 @@ Item {
                 iconSource: iconsource("ellipsoid20.png")
                 onClicked: toggleFilter("ellipsoid", checked);
             }
+            ToolBarButton{
+                id : showOper
+                iconSource: iconsource("operation20.png")
+                onClicked: toggleFilter("operation", checked);
+            }
 
         }
         ComboBox{
@@ -185,7 +200,7 @@ Item {
             anchors.left : objectfilters.left
             anchors.leftMargin: 2
             anchors.topMargin: 2
-            width : 201
+            width : 170
             height : 22
             model : mastercatalog.defaultFilters
             textRole: "name"
@@ -194,7 +209,9 @@ Item {
                     tabmodel.selectTab()
                 if ( currentIndex > 0){ // first entry is a default empty one
                     var filter = model[currentIndex].catalogQuery
-                    var url = "ilwis://mastercatalog"
+                    var url = model[currentIndex].url
+                    if ( url === "")
+                        url = "ilwis://mastercatalog"
                     mastercatalog.selectedBookmark(url)
                     bigthing.changeCatalog(filter,"catalog", url)
                 }
@@ -204,7 +221,7 @@ Item {
 
         Row {
             id : layoutfilter
-            width : 95
+            width :87
             height : 22
             anchors.top : objectfilters.bottom
             anchors.topMargin: 2
@@ -219,8 +236,6 @@ Item {
                         catalogView.state = "iconGrid"
                     if ( showThumbs.checked)
                         catalogView.state = "thumbList"
-                    if ( showByLoc.checked)
-                        catalogView.state = "bylocation"
                 }
             }
             ToolBarButton{
@@ -241,37 +256,18 @@ Item {
                 exclusiveGroup: catalogViewStatus
                 checked: false
             }
-            ToolBarButton{
-                id : showByLoc
-                iconSource: iconsource("location20.png")
-                exclusiveGroup: catalogViewStatus
-                checked : false
-            }
         }
         ToolBarButton{
-            id : refresh
-            implicitHeight: heightButtons
-            iconSource: iconsource("refresh20.png")
-            action : refreshCatalog
-            anchors.left : objectfilters.right
-            anchors.leftMargin: 1
-            anchors.top: parent.top
+            id : showAnim
+            anchors.left : layoutfilter.right
+            anchors.top : objectfilters.bottom
             anchors.topMargin: 2
+            enabled : currentCatalog ? currentCatalog.canBeAnimated : false
+            opacity : currentCatalog ? (currentCatalog.canBeAnimated ? 1 : 0.0) : 0.0
+            iconSource: iconsource("animation20.png")
+            checkable: false
+            checked : false
         }
-//        Button{
-//            id : metadata
-//            implicitHeight: heightButtons
-//            width : heightButtons + 4
-//            iconSource: iconsource("metadata20.png")
-//            anchors.left : refresh.right
-//            anchors.leftMargin: 1
-//            anchors.top: parent.top
-//            anchors.topMargin: 2
-//            checkable: false
-//            action : showProps
-//        }
-
-
     }
     Item {
         id : catalogView

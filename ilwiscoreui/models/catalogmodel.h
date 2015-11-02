@@ -23,6 +23,7 @@ public:
     Q_PROPERTY(bool initNode READ initNode CONSTANT)
     Q_PROPERTY(int level READ level CONSTANT)
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
+    Q_PROPERTY(bool canBeAnimated READ canBeAnimated CONSTANT)
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY contentChanged)
 
     ~CatalogModel();
@@ -35,6 +36,7 @@ public:
     Q_INVOKABLE void filter(const QString& filterString);
     Q_INVOKABLE void prepareMapItems(LayerManager *manager, bool force=false);
     Q_INVOKABLE QStringList objectCounts();
+    Q_INVOKABLE void refresh();
 
     bool isScanned() const;
     bool initNode() const;
@@ -44,11 +46,13 @@ public:
 
     void refresh(bool yesno);
     virtual void nameFilter(const QString&);
+    bool canBeAnimated() const;
     QString nameFilter() const;
 
     void setView(const Ilwis::CatalogView &view, bool threading = false);
     Ilwis::CatalogView view() const;
 
+    void scanContainer(const QUrl &url);
 protected:
     Ilwis::CatalogView _view;
     virtual void gatherItems();
@@ -64,8 +68,8 @@ private:
     int _level;
     std::map<QString, bool> _filterState;
     QString _nameFilter;
-
-private slots:
+public slots:
+    void refreshContent(const QUrl& url);
     void updateContainer();
 signals:
     void selectionChanged();

@@ -15,6 +15,8 @@ class ILWISCOREUISHARED_EXPORT ProjectionParameterModel : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString value READ value CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
+    Q_PROPERTY(QString valueType READ valueType CONSTANT)
+    Q_PROPERTY(int parameterType READ parameterType CONSTANT)
 public:
     ProjectionParameterModel();
     explicit ProjectionParameterModel(const Ilwis::IProjection&, Ilwis::Projection::ProjectionParamValue type, QObject *parent = 0);
@@ -23,6 +25,9 @@ public:
     QString name() const;
     QString value() const;
     QString description() const;
+    QString valueType() const;
+    int parameterType() const;
+
 
 signals:
 
@@ -32,6 +37,8 @@ private:
     QString _name;
     QString _value;
     QString _description;
+    IlwisTypes _valueType;
+    int _parmType = Ilwis::Projection::pvNONE;
 };
 
 #endif // PROJECTIONPARAMETERMODEL_H

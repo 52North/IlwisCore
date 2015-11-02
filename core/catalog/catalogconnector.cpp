@@ -126,7 +126,9 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
         IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
         std::vector<Resource> items = explorer->loadItems(iooptions);
         cat->addItemsPrivate(items);
+
         mastercatalog()->addItems(items);
+
 
 
     }
@@ -157,7 +159,7 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     }
     QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
     res.waitForFinished();
-    cat->addItemsPrivate(res.result());
+        kernel()->startClock();
     mastercatalog()->addItems(res.result());
     return true;
 }

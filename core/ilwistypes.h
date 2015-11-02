@@ -45,8 +45,8 @@ const quint64 itVALUERANGE = 2 * itDOUBLE;             //34359738368
 const quint64 itSTRING = 2 * itVALUERANGE;             //68719476736
 const quint64 itDATE = 2 * itSTRING;                   //137438953472
 const quint64 itTIME = 2 * itDATE;                     //274877906944
-const quint64 itCOORDINATE = 2 * itTIME;               //549755813888
-const quint64 itPIXEL = 2 *itCOORDINATE;               //1099511627776
+const quint64 itMETRICCOORDINATE = 2 * itTIME;         //549755813888
+const quint64 itPIXEL = 2 *itMETRICCOORDINATE;         //1099511627776
 const quint64 itBINARY = 2 * itPIXEL;                  //2199023255552
 const quint64 itFILE = 2 * itBINARY;                   //4398046511104
 const quint64 itURL = 2 * itFILE;                      //8796093022208
@@ -63,6 +63,7 @@ const quint64 itCOLLECTION = 2 * itCATALOGVIEW;        //9007199254740992
 const quint64 itARRAY = 2 * itCOLLECTION;              //18014398509481984
 const quint64 itWORKFLOW = 2 * itARRAY;                //36028797018963968
 const quint64 itWORKSPACE = 2 * itWORKFLOW;            //72057594037927936
+const quint64 itLATLON = 2 * itWORKFLOW;               //144115188075855872
 
 const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE ; //15
 const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE; //7
@@ -79,6 +80,7 @@ const quint64 itNUMBER = itINTEGER | itFLOAT | itDOUBLE | itDATETIME;
 const quint64 itNUMERIC = itNUMBER | itNUMERICITEM | itTIMEITEM;
 const quint64 itDOMAINITEM = itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM | itTIMEITEM | itPALETTECOLOR;
 const quint64 itIDENTIFIERITEM = itNAMEDITEM | itINDEXEDITEM;
+const quint64 itCOORDINATE = itMETRICCOORDINATE | itLATLON;
 
 const quint64 itRESOURCELOCATION = itFILE | itURL;
 const quint64 itLOCATION = itCOORDINATE | itPIXEL;

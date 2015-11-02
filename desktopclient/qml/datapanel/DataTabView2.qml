@@ -136,11 +136,25 @@ Item {
                 width : parent.width
             }
         },
+        State { name: "smallsize"
+
+            PropertyChanges {
+                target: datatabview
+                width : 1 * parent.width / 4
+            }
+        },
         State { name: "halfsize"
 
             PropertyChanges {
                 target: datatabview
                 width : parent.width / 2
+            }
+        },
+        State { name: "bigsize"
+
+            PropertyChanges {
+                target: datatabview
+                width : 3 * parent.width / 4
             }
         },
         State {

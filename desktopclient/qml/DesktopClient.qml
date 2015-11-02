@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
+import QtQuick.Window 2.1
 import "workbench" as WorkBench
 import "datapanel" as DataPanel
 import "controls" as Control
@@ -14,8 +15,8 @@ import "controls" as Controls
 
 ApplicationWindow {
     id : bigthing
-    width: 1400
-    height : 1000
+    width: Screen.desktopAvailableWidth * 0.8
+    height : Screen.desktopAvailableHeight * 0.8
     color : "light grey"
 
     onClosing: {
@@ -23,7 +24,7 @@ ApplicationWindow {
     }
 
     property int maxPull : 500
-    property int defaultFunctionBarWidth : 350
+    property int defaultFunctionBarWidth : bigthing.width * 0.25
     property int activeCatalog: 0
 
     function newCatalog(filter, outputtype, url, side){
@@ -35,8 +36,8 @@ ApplicationWindow {
          mainSplit.changeCatalog(filter, outputtype, url)
      }
 
-     function transitionInfoPane(newpagename) {
-         workBench.transitionInfoPane(newpagename)
+     function transitionInfoPane(newpagename, show) {
+         workBench.transitionInfoPane(newpagename, show)
      }
 
      function unloadcontent(newpagename) {
@@ -68,8 +69,10 @@ ApplicationWindow {
     }
 
     function getWorkbenchPane(name){
-        if ( workBench.lastPage !== name)
-            workBench.transitionInfoPane(name)
+        if ( workBench.lastPage !== name){
+            workBench.transitionInfoPane(name, "visible")
+            workBenchButtons.setButtonStatus(name,"on")
+        }
     }
 
     Rectangle {

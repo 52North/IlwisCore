@@ -113,7 +113,7 @@ Ilwis::OperationImplementation::State RankOrderRasterFilter::prepare(ExecutionCo
 quint64 RankOrderRasterFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/rankorderrasterfilter"});
-    operation.setSyntax("rankorderrasterfilter(raster1, filtername ((,columns,rows)(,index)");
+    operation.setSyntax("rankorderrasterfilter(raster1, filtername [,columns,rows,index]");
     operation.setDescription(TR("generates a new raster based on the conditions as specified in the rank order definition"));
     operation.setInParameterCount({2,4,5});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage with numeric domain"));

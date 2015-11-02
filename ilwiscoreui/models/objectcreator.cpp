@@ -2,9 +2,17 @@
 #include "ilwisobjectcreatormodel.h"
 #include "ilwiscontext.h"
 #include "domain.h"
+#include "geometries.h"
+#include "projection.h"
+#include "coordinatesystem.h"
+#include "georeference.h"
 #include "numericdomain.h"
 #include "symboltable.h"
+#include "operationmetadata.h"
+#include "workflow.h"
 #include "commandhandler.h"
+#include "uicontextmodel.h"
+#include "operationcatalogmodel.h"
 #include "objectcreator.h"
 
 using namespace Ilwis;
@@ -21,9 +29,9 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators.append(new IlwisObjectCreatorModel("Time Interval Domain",itTIMEITEM | itITEMDOMAIN,"CreateNumDom.qml", 200, this));
 //    _creators.append(new IlwisObjectCreatorModel("Color Domain",itCOLORDOMAIN,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Color Palette Domain",itPALETTECOLOR | itITEMDOMAIN,"CreatePaletteDomain.qml", 560, this));
-    _creators.append(new IlwisObjectCreatorModel("Corners Georeference",itGEOREF,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Tiepoints Georeference",itGEOREF | itLOCATION,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Projected Coordinate System",itCONVENTIONALCOORDSYSTEM,"CreateNumDom.qml", 200, this));
+    _creators.append(new IlwisObjectCreatorModel("Corners Georeference",itGEOREF,"CreateGeorefCorners.qml", 350, this));
+    _creators.append(new IlwisObjectCreatorModel("Tiepoints Georeference",itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this));
+    _creators.append(new IlwisObjectCreatorModel("Projected Coordinate System",itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this));
     _creators.append(new IlwisObjectCreatorModel("LatLon Coordinate System",itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Bounds only Coordinate System",itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateNumDom.qml", 200, this));
@@ -156,28 +164,152 @@ QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
     return QString::number(i64UNDEF);
 }
 
+QString ObjectCreator::createGeoreference(const QVariantMap &parms){
+    QString expression;
+    if ( parms["subtype"].toString() == "corners")  {
+        expression = QString("script %1{format(stream,\"georeference\")}=createcornersgeoreference(%2,%3,%4,%5,%6,%7,%8,%9)").arg(parms["name"].toString())
+                .arg(parms["minx"].toDouble())
+                .arg(parms["miny"].toDouble())
+                .arg(parms["maxx"].toDouble())
+                .arg(parms["maxy"].toDouble())
+                .arg(parms["pixelsize"].toDouble())
+                .arg(parms["csy"].toString())
+                .arg(parms["centered"].toString())
+                .arg(parms["description"].toString());
+    }
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
+        IGeoReference obj = syms.getSymbol(ctx._results[0])._var.value<IGeoReference>();
+        return QString::number(obj->id());
+    }
+    return QString::number(i64UNDEF);
+}
+
+QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms){
+    QString expression;
+    //createprojectedcoordinatesystem(projectionname,falseeasting,falsenorthing,centralmeridian,latitudeoforigin,standardparallel1,standardparallel2,latitudeoftruescale,scale,zone,height,northoriented,azimtruescale,ellipsoid[,description])");
+    QString proj = parms["projection"].toString();
+    IProjection projection;
+    if ( proj.indexOf("ilwis:/") != -1){
+        projection.prepare(proj);
+    }else {
+        InternalDatabaseConnection db("Select code from projection where name='" + proj + "'");
+        if ( db.next()){
+            QString code = db.value(0).toString();
+            projection.prepare("ilwis://tables/projection?code=" + code);
+        }
+    }
+    if ( !projection.isValid()){
+        return QString::number(i64UNDEF);
+    }
+
+    QString code = projection->code();
+    InternalDatabaseConnection db("Select parameters from projection where code='" + code + "'");
+    if (!db.next()){
+        return QString::number(i64UNDEF);
+    }
+    QString parameters = db.value(0).toString();
+    QVariantList currentParms = parms["projectionparameters"].value<QVariantList>();
+
+    QStringList parmlist = parameters.split("|");
+    std::vector<QString> projectionparms(12,"0");
+    projectionparms[9] = "true";
+    projectionparms[8] = 1;
+    projectionparms[7] = 1;
+
+    int currentIndex = 0;
+    for(auto p : parmlist){
+        if ( p == "false easting")
+            projectionparms[0] = currentParms[currentIndex++].toString();
+        else if ( p == "false northing")
+            projectionparms[1] = currentParms[currentIndex++].toString();
+        else if ( p == "central meridian")
+            projectionparms[2] = currentParms[currentIndex++].toString();
+        else if ( p == "latitude of origin")
+            projectionparms[3] = currentParms[currentIndex++].toString();
+        else if ( p == "latitude of true scale")
+            projectionparms[4] = currentParms[currentIndex++].toString();
+        else if ( p == "standard parallel 1")
+            projectionparms[5] = currentParms[currentIndex++].toString();
+        else if ( p == "standard parallel 2")
+            projectionparms[6] = currentParms[currentIndex++].toString();
+        else if ( p == "scale factor")
+            projectionparms[7] = currentParms[currentIndex++].toString();
+        else if ( p == "zone")
+            projectionparms[8] = currentParms[currentIndex++].toString();
+        else if ( p == "north oriented")
+            projectionparms[9] = (currentParms[currentIndex++].toBool() ? "yes" : "no");
+        else if ( p == "height")
+            projectionparms[10] = currentParms[currentIndex++].toString();
+        else if ( p == "azim central line of true scale")
+            projectionparms[11] = currentParms[currentIndex++].toBool();
+
+    }
+    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(%2").arg(parms["name"].toString());
+    for(auto p : projectionparms){
+        expression += ","+ p;
+    }
+    expression += "," + parms["ellipsoid"].toString();
+    expression += "," + parms["description"].toString() + ")";
+
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
+        ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
+        return QString::number(obj->id());
+    }
+
+    return QString::number(i64UNDEF);
+}
+
+QString ObjectCreator::createWorkflow(const QVariantMap &parms)
+{
+    QString name = parms["name"].toString();
+    Resource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
+    res.setDescription(parms["description"].toString());
+    res.prepare();
+    mastercatalog()->addItems({res});
+    QVariant opercatalog = uicontext()->rootContext()->contextProperty("operations");
+    if ( opercatalog.isValid()){
+        OperationCatalogModel *ocmodel = opercatalog.value<OperationCatalogModel *>();
+        if (ocmodel){
+            ocmodel->refresh();
+        }
+    }
+    return QString::number(res.id());
+}
+
 QString ObjectCreator::createObject(const QVariantMap &parms)
 {
+    try {
     Resource res;
     res.setDescription(parms["decription"].toString());
-    IIlwisObject obj;
-    QString name = parms["name"].toString();
+
     QString type = parms["type"].toString();
     if (  type == "workflow" ){
-        res = Resource(QUrl("ilwis://internalcatalog/" + name), itWORKFLOW);
-        res.prepare();
-        obj.prepare(res);
+        return createWorkflow(parms);
     } else     if ( type == "numericdomain"){
         return createNumericDomain(parms);
     }
-    else     if ( type == "itemdomain"){
+    else if ( type == "itemdomain"){
             return createItemDomain(parms);
+    } else if ( type == "georef"){
+        return createGeoreference(parms);
+    } else if ( type == "coordinatesystem"){
+        if ( parms["subtype"].toString() == "projected")
+            return createProjectedCoordinateSystem(parms);
     }
 
 
 
+    return QString::number(i64UNDEF);
+    } catch (const ErrorObject& ){
 
-    return QString::number(obj->id());
+    } catch (std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+    return QString::number(i64UNDEF);
 }
 
 QQmlListProperty<IlwisObjectCreatorModel> ObjectCreator::activeCreators()

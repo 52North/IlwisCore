@@ -152,141 +152,145 @@ QString TypeHelper::type2name(IlwisTypes t)
 {
     switch(t) {
     case  itRASTER:
-        return TR("rastercoverage");
+        return "rastercoverage";
     case  itPOLYGON:
-        return TR("polygoncoverage");
+        return "polygoncoverage";
     case  itLINE:
-        return TR("linecoverage");
+        return "linecoverage";
     case  itPOINT:
-        return TR("pointcoverage");
+        return "pointcoverage";
     case  itPOINT+itLINE:
-        return TR("featurecoverage");
+        return "featurecoverage";
     case  itPOINT+itPOLYGON:
-        return TR("featurecoverage");
+        return "featurecoverage";
     case  itPOLYGON+itLINE:
-        return TR("featurecoverage");
+        return "featurecoverage";
     case  itNUMERICDOMAIN:
-        return TR("numericdomain");
+        return "numericdomain";
     case  itITEMDOMAIN:
-        return TR("itemdomain");
+        return "itemdomain";
     case  itCOLORDOMAIN:
-        return TR("colordomain");
+        return "colordomain";
     case  itTEXTDOMAIN:
-        return TR("textdomain");
+        return "textdomain";
     case  itCOORDSYSTEM:
-        return TR("coordinatesystem");
+        return "coordinatesystem";
     case  itCONVENTIONALCOORDSYSTEM:
-        return TR("conventionalcoordinatesystem");
+        return "conventionalcoordinatesystem";
     case itBOUNDSONLYCSY:
-        return TR("boundsonlycoordinatesystem");
+        return "boundsonlycoordinatesystem";
     case  itGEOREF:
-        return TR("georeference");
+        return "georeference";
     case  itTABLE:
-        return TR("table");
+        return "table";
     case  itPROJECTION:
-        return TR("projection");
+        return "projection";
     case  itELLIPSOID:
-        return TR("ellipsoid");
+        return "ellipsoid";
     case  itGEODETICDATUM:
-        return TR("geodeticdatum");
+        return "geodeticdatum";
     case  itCATALOG:
-        return TR("catalog");
+        return "catalog";
     case  itWORKFLOW:
-        return TR("workflow");
+        return "workflow";
     case  itSINGLEOPERATION:
-        return TR("singleoperation");
+        return "singleoperation";
     case  itOPERATIONMETADATA:
-        return TR("operationmetatadata");
+        return "operationmetatadata";
     case itREPRESENTATION:
-        return TR("representation");
+        return "representation";
         // nonilwisobjects
     case itENVELOPE:
-        return TR("envelope");
+        return "envelope";
     case itBOOL:
-        return TR("boolean");
+        return "boolean";
     case itBOUNDINGBOX:
-        return TR("boundingbox");
+        return "boundingbox";
     case itRASTERSIZE:
-        return TR("rastersize");
+        return "rastersize";
     case itINT8:
-        return TR("signedbyte");
+        return "signedbyte";
     case itUINT8:
-        return TR("byte");
+        return "byte";
     case itINT16:
-        return TR("int16");
+        return "int16";
     case itUINT16:
-        return TR("uint16");
+        return "uint16";
     case itINT32:
-        return TR("Int32");
+        return "int32";
     case itUINT32:
-        return TR("uint32");
+        return "uint32";
     case itINT64:
-        return TR("Int64");
+        return "int64";
     case itUINT64:
-        return TR("uint64");
+        return "uint64";
     case itFLOAT:
-        return TR("Real32");
+        return "real32";
     case itDOUBLE:
-        return TR("Real64");
+        return "real64";
     case itVALUERANGE:
-        return TR("valuerange");
+        return "valuerange";
     case itSTRING:
-        return TR("string");
+        return "sing";
     case itDATE:
-        return TR("date");
+        return "date";
     case itTIME:
-        return TR("time");
+        return "time";
     case itCOORDINATE:
-        return TR("coordinate");
+        return "coordinate";
     case itPIXEL:
-        return TR("pixel");
+        return "pixel";
     case itBINARY:
-        return TR("binary");
+        return "binary";
     case itFILE:
-        return TR("file");
+        return "file";
     case itURL:
-        return TR("url");
+        return "url";
     case itTHEMATICITEM:
-        return TR("thematicclass");
+        return "thematicclass";
     case itNAMEDITEM:
-        return TR("namedidentifier");
+        return "namedidentifier";
     case itINDEXEDITEM:
-        return TR("indexidentifier");
+        return "indexidentifier";
     case itNUMERICITEM:
-        return TR("numericinterval");
+        return "numericinterval";
     case itTIMEITEM:
-        return TR("timeinterval");
+        return "timeinterval";
     case itPALETTECOLOR:
-        return TR("palettecolor");
+        return "palettecolor";
     case itCONTINUOUSCOLOR:
-        return TR("color");
+        return "color";
     case itSAMPLESET:
-        return TR("sampleset");
+        return "sampleset";
     case itCATALOGVIEW:
-        return TR("catalogview");
+        return "catalogview";
     case itCOLLECTION:
-        return TR("collection");
+        return "collection";
     case itARRAY:
-        return TR("array");
+        return "array";
     case itCOVERAGE:
-        return TR("coverage");
+        return "coverage";
     case itFEATURE:
-        return TR("featurecoverage");
+        return "featurecoverage";
     case itDOMAIN:
-        return TR("domain");
+        return "domain";
     case itDATETIME:
-        return TR("datetime");
+        return "datetime";
     case itINTEGER:
-        return TR("int");
+        return "int";
     case itPOSITIVEINTEGER:
-        return TR("uint");\
+        return "uint";\
     case itNUMBER:
-        return TR("number");
+        return "number";
     case itDOMAINITEM:
-        return TR("domainitem");
+        return "domainitem";
     case itLOCATION:
-        return TR("location");
+        return "location";
+    case itMETRICCOORDINATE:
+        return "meiccoordinate";
+    case itLATLON:
+        return "latlon";
     }
-    return TR("?");
+    return sUNDEF;
 
 }

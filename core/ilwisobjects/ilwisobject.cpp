@@ -438,6 +438,13 @@ bool IlwisObject::isRemote() const
     return false;
 }
 
+void IlwisObject::remove()
+{
+    if (!connector().isNull()){
+        connector()->removeDataSource();
+    }
+}
+
 bool IlwisObject::store(const IOOptions &options)
 {
     if (!connector(cmOUTPUT).isNull()) {

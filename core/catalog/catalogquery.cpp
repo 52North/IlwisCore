@@ -67,7 +67,7 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         QString findTxt = "'" + name.key().toLower() + "'";
         query.replace(findTxt, QString::number(name.value()));
     }
-    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&","container","itemid"};
+    std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&","container","rawcontainer","itemid"};
     QString specialchars{"<>=!+- "};
     QString leftside, rightside, newquery;
     QString middel;

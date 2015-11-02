@@ -145,19 +145,8 @@ public:
      * \param c the coordinate
      * \return the value at the coordinates or undefined
      */
-    QVariant coord2value(const Coordinate &c, const QString& attrname=""){
-        if ( _georef->isValid() && c.isValid()) {
-            Pixeld pix = _georef->coord2Pixel(c);
-            if ( attrname != "")
-                return pix2value(pix);
-            else{
-                QVariantMap vmap;
-                vmap[PIXELVALUE] = pix2value(pix);
-                return QVariant(vmap);
-            }
-        }
-        return rUNDEF;
-    }
+    QVariant coord2value(const Coordinate &c, const QString& attrname="");
+
 
     /*!
      * transforms the value of a certain pixel in the grid to the relevant value<br>
@@ -174,6 +163,8 @@ public:
     double pix2value(const Pixeld& pix){
         if ( _georef->isValid() && !connector().isNull()) {
             double v = _grid->value(pix);
+            if ( datadefRef().domain()->ilwisType() == itITEMDOMAIN)
+                return v;
             return datadef().range()->ensure(v).value<double>();
         }
         return rUNDEF;

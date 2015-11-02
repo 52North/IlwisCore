@@ -61,7 +61,7 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         if  ( _layers.size() == 1)
             _layers.push_back(layer);
         else
-            _layers.insert(1,new CoverageLayerModel(_layers.size(), resource, drawer, this));
+            _layers.insert(1, layer);
         emit layerChanged();
         emit latlonEnvelopeChanged();
     }

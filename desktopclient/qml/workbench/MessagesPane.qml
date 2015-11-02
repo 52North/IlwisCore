@@ -11,7 +11,7 @@ WorkBenchShifter {
 
     clip : true
     state : "invisible"
-    height : 500
+    height : parent.height
 
     FunctionBarHeader{
         id : functionBar

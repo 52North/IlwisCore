@@ -32,7 +32,7 @@ public:
     quint32 definitionCount() const;
     bool isValid() const;
 
-private:
+protected:
     boost::container::flat_map<QString, quint32> _columnDefinitionsByName;
     std::vector<ColumnDefinition> _columnDefinitionsByIndex;
 };
@@ -65,6 +65,7 @@ public:
     void featureAttributeDefinition(FeatureAttributeDefinition *fad);
     FeatureAttributeDefinition& featureAttributeDefinitionRef(int level=0);
     const FeatureAttributeDefinition& featureAttributeDefinition(int level=0) const;
+    void copyTo(FeatureAttributeDefinition & ) const;
 private:
     UPFeatureAttributeDefinition _dummy;
     UPFeatureAttributeDefinition _subFeatureDefinition;

@@ -6,7 +6,7 @@ namespace Internal {
 class ProjectionImplementationInternal : public ProjectionImplementation
 {
 public:
-    ProjectionImplementationInternal();
+    ProjectionImplementationInternal(const Resource& resource);
 
     Coordinate latlon2coord(const LatLon&) const;
     LatLon coord2latlon(const Coordinate&) const;

@@ -78,4 +78,13 @@ QString CTPGeoReference::typeName()
     return "CTPGeoReference";
 }
 
+void CTPGeoReference::copyTo(GeoRefImplementation *impl){
+    GeoRefImplementation::copyTo(impl);
+
+    CTPGeoReference *ctpgrf = static_cast<CTPGeoReference *>(impl);
+
+    ctpgrf->_controlPoints = _controlPoints;
+    ctpgrf->_invalidCP = _invalidCP;
+}
+
 
