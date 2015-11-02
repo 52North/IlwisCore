@@ -163,7 +163,5 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     _outfeatures->coordinateSystem(_csy);
     Envelope env(_top, _top + std::vector<double>{_cellXSize * _xsize, _cellYSize * _ysize });
     _outfeatures->envelope(env);
-
-
     return sPREPARED;
 }

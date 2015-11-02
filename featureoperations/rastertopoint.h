@@ -21,6 +21,7 @@ public:
 private:
     IFeatureCoverage _outputfeatures;
     IRasterCoverage _inputraster;
+    ITable _attTable;
     bool _doCoordTransform  = false;
     ICoordinateSystem _csy;
     IGeoReference _inputgrf;

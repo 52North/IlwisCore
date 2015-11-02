@@ -1,11 +1,10 @@
 #include <functional>
 #include <future>
 #include "kernel.h"
+#include "coverage.h"
 #include "raster.h"
-#include "featurecoverage.h"
 #include "pixeliterator.h"
-#include "featureiterator.h"
-#include "feature.h"
+#include "geos/geom/Point.h"
 #include "geos/geom/GeometryFactory.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -13,15 +12,12 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "featureiterator.h"
-#include "symboltable.h"
-#include "operationExpression.h"
-#include "operationmetadata.h"
-#include "operation.h"
 #include "table.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
+#include "operation.h"
 #include "operationhelperfeatures.h"
 #include "rastertopoint.h"
 
@@ -51,21 +47,24 @@ bool RasterToPoint::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-
     PixelIterator iter(_inputraster);
     int count = 0;
-    SPFeatureI newFeature;
-    while( iter != _inputraster->end()){
-         Pixel p = iter.position();;
-         Coordinate coord = _inputraster->georeference()->pixel2Coord(Pixeld(p.x,p.y));
-         QVariant v= _inputraster->coord2value(coord);
-         newFeature(count,v);
-         if(*iter >= 0){
-              geos::geom::Point *pol = _outputfeatures->geomfactory()->createPoint(coord);
+    while( iter != iter.end()){
+         if(*iter != -32767){
+             Pixel p = iter.position();;
+             Coordinate coord = _inputraster->georeference()->pixel2Coord(Pixeld(p.x,p.y));
+
+             geos::geom::Point *pol = _outputfeatures->geomfactory()->createPoint(coord);
+             if(pol->isValid()){
+                 //std::cout<<"\n"<<coord.x<<","<<coord.y;
+                 _outputfeatures->newFeature(pol);
+             }
+             ++count;
          }
         ++iter;
-         count++;
+
     }
+    _outputfeatures->attributesFromTable(_attTable);
     if ( ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputfeatures);
@@ -83,32 +82,38 @@ Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *c
 {
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
+
     if (!_inputraster.prepare(raster, itRASTER)) {
+
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    _outputfeatures = OperationHelperFeatures::initialize(_inputraster,itPOINT,itCOORDSYSTEM | itDOMAIN | itENVELOPE);
-    if (outputName != sUNDEF){
-        _outputfeatures->name(outputName);
-        _outputfeatures->attributeTable()->name(outputName);
+    Resource resource = outputName != sUNDEF ? Resource("ilwis://internalcatalog/" + outputName, itFLATTABLE) : Resource(itFLATTABLE);
+    _attTable.prepare(resource);
+    IDomain covdom;
+    if (!covdom.prepare("count")){
+       return sPREPAREFAILED;
     }
-    _doCoordTransform = _inputraster->coordinateSystem() != _outputfeatures->coordinateSystem();
-
+    _inputgrf = _inputraster->georeference();
+    _outputfeatures.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    _csy = _inputgrf->coordinateSystem();
+    _outputfeatures->coordinateSystem(_csy);
+    Envelope env = _inputraster->georeference()->envelope();
+    _outputfeatures->envelope(env);
     return sPREPARED;
 }
 
 quint64 RasterToPoint::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/raster2point"});
-    operation.setLongName("Raster to point map");
-    operation.setKeywords("point,raster");
-    operation.setSyntax("raster2point(input-raster)");
+    OperationResource operation({"ilwis://operations/rastexddr2point"});
+    operation.setSyntax("raster2point(inputraster)");
     operation.setDescription(TR("translates the pixels of a rastercoverage to points in a featurecoverage"));
     operation.setInParameterCount({1});
     operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with any domain"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itPOINT, TR("output featurecoverage"), TR("output feauturecoverage with the domain of the input map"));
+    operation.addOutParameter(0,itPOINT, TR("output point coverage"), TR("output point coverage with the domain of the input map"));
+    operation.setKeywords("point,raster");
     mastercatalog()->addItems({operation});
-
     return operation.id();
 }
+
