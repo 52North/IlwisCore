@@ -119,9 +119,9 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     catalog->scan();
 
     addItems({catalog->source()});
-    if ( catalog->itemCount() > 0){
+    //if ( catalog->itemCount() > 0){
         _catalogs.insert(location);
-    }
+   // }
     return true;
 }
 
