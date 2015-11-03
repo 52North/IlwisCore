@@ -116,7 +116,6 @@ bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
-    QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
     for(const auto& explorer : _dataProviders){
 
         // TODO clear security issues which may arise here, as
@@ -126,7 +125,6 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
         IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
         std::vector<Resource> items = explorer->loadItems(iooptions);
         cat->addItemsPrivate(items);
-
         mastercatalog()->addItems(items);
 
 
@@ -151,7 +149,6 @@ void gatherData(std::vector<Resource>& outputItems, const std::vector<Resource>&
 }
 
 bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &options){
-    Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
     QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
     for(const auto& explorer : _dataProviders){
@@ -159,7 +156,6 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     }
     QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
     res.waitForFinished();
-        kernel()->startClock();
     mastercatalog()->addItems(res.result());
     return true;
 }
