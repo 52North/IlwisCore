@@ -1,11 +1,12 @@
 #ifndef BRESENHAM_H
 #define BRESENHAM_H
+#include "kernel_global.h"
 
 namespace Ilwis {
 
 class VertexIterator;
 
-class Bresenham
+class KERNELSHARED_EXPORT Bresenham
 {
 public:
     Bresenham(const IGeoReference &grf);

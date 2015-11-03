@@ -1,0 +1,119 @@
+#include <functional>
+#include <future>
+#include "kernel.h"
+#include "coverage.h"
+#include "raster.h"
+#include "pixeliterator.h"
+#include "geos/geom/Point.h"
+#include "geos/geom/GeometryFactory.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "featurefactory.h"
+#include "featurecoverage.h"
+#include "feature.h"
+#include "featureiterator.h"
+#include "table.h"
+#include "symboltable.h"
+#include "ilwisoperation.h"
+#include "operationExpression.h"
+#include "operationmetadata.h"
+#include "operation.h"
+#include "operationhelperfeatures.h"
+#include "rastertopoint.h"
+
+using namespace Ilwis;
+using namespace FeatureOperations;
+
+REGISTER_OPERATION(RasterToPoint)
+
+RasterToPoint::RasterToPoint()
+{
+
+}
+
+RasterToPoint::~RasterToPoint()
+{
+
+}
+
+RasterToPoint::RasterToPoint(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid,expr)
+{
+
+}
+
+
+bool RasterToPoint::execute(ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx,symTable)) != sPREPARED)
+            return false;
+    PixelIterator iter(_inputraster);
+    int count = 0;
+    while( iter != iter.end()){
+         if(*iter != -32767){
+             Pixel p = iter.position();;
+             Coordinate coord = _inputraster->georeference()->pixel2Coord(Pixeld(p.x,p.y));
+
+             geos::geom::Point *pol = _outputfeatures->geomfactory()->createPoint(coord);
+             if(pol->isValid()){
+                 //std::cout<<"\n"<<coord.x<<","<<coord.y;
+                 _outputfeatures->newFeature(pol);
+             }
+             ++count;
+         }
+        ++iter;
+
+    }
+    _outputfeatures->attributesFromTable(_attTable);
+    if ( ctx != 0) {
+        QVariant value;
+        value.setValue<IFeatureCoverage>(_outputfeatures);
+        ctx->setOutput(symTable,value,_outputfeatures->name(), itFEATURE, _outputfeatures->source() );
+    }
+    return true;
+}
+
+Ilwis::OperationImplementation *RasterToPoint::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new RasterToPoint(metaid,expr);
+}
+
+Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *ctx, const SymbolTable &)
+{
+    QString raster = _expression.parm(0).value();
+    QString outputName = _expression.parm(0,false).value();
+
+    if (!_inputraster.prepare(raster, itRASTER)) {
+
+        ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
+        return sPREPAREFAILED;
+    }
+    Resource resource = outputName != sUNDEF ? Resource("ilwis://internalcatalog/" + outputName, itFLATTABLE) : Resource(itFLATTABLE);
+    _attTable.prepare(resource);
+    IDomain covdom;
+    if (!covdom.prepare("count")){
+       return sPREPAREFAILED;
+    }
+    _inputgrf = _inputraster->georeference();
+    _outputfeatures.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    _csy = _inputgrf->coordinateSystem();
+    _outputfeatures->coordinateSystem(_csy);
+    Envelope env = _inputraster->georeference()->envelope();
+    _outputfeatures->envelope(env);
+    return sPREPARED;
+}
+
+quint64 RasterToPoint::createMetadata()
+{
+    OperationResource operation({"ilwis://operations/rastexddr2point"});
+    operation.setSyntax("raster2point(inputraster)");
+    operation.setDescription(TR("translates the pixels of a rastercoverage to points in a featurecoverage"));
+    operation.setInParameterCount({1});
+    operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with any domain"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itPOINT, TR("output point coverage"), TR("output point coverage with the domain of the input map"));
+    operation.setKeywords("point,raster");
+    mastercatalog()->addItems({operation});
+    return operation.id();
+}
+

@@ -116,3 +116,4 @@ std::vector<Pixel> Bresenham::makePixelLine(const Coordinate& crdStart, const Co
 
     return result;
 }
+

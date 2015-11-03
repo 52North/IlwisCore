@@ -44,6 +44,8 @@ HEADERS += \
     baseoperations/geometry/spatialrelation.h \
     baseoperations/util/workingcatalog.h \
     baseoperations/math/unarymathtable.h \
+    baseoperations/math/aggregation.h \
+    baseoperations/math/columnunaryoperation.h \
     baseoperations/math/unarymathrasterandnumber.h \
     baseoperations/data/convertcolumndomain.h \
     baseoperations/creators/createnumericdomain.h \
@@ -86,6 +88,8 @@ SOURCES += \
     baseoperations/math/unarymathtable.cpp \
     baseoperations/math/unarymathrasterandnumber.cpp \
     baseoperations/data/convertcolumndomain.cpp \
+    baseoperations/math/aggregation.cpp \
+    baseoperations/math/columnunaryoperation.cpp \
     baseoperations/creators/createnumericdomain.cpp \
     baseoperations/creators/createthematicdomain.cpp \
     baseoperations/creators/createidentifierdomain.cpp \

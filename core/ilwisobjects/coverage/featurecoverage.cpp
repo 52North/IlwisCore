@@ -153,6 +153,8 @@ SPFeatureI FeatureCoverage::newFeature(geos::geom::Geometry *geom, bool load) {
 
 }
 
+
+
 SPFeatureI FeatureCoverage::newFeatureFrom(const SPFeatureI& existingFeature, const ICoordinateSystem& csySource) {
     Locker<> lock(_mutex);
 
