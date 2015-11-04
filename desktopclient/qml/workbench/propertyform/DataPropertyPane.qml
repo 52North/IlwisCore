@@ -51,7 +51,7 @@ Rectangle {
             source = "TableProperties.qml"
         } else if ( typeName == "ellipsoid"){
             source = "EllipsoidProperties.qml"
-        } else if ( typeName == "operationmetatadata"){
+        } else if ( typeName == "singleoperation" || typeName == "workflow"){
             source = "OperationProperties.qml"
         } else if ( typeName == "catalog"){
             source = "CatalogProperties.qml"
