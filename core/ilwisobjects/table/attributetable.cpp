@@ -172,7 +172,7 @@ QVariant AttributeTable::cell(const quint32 index, quint32 rec, bool asRaw) cons
 
 void AttributeTable::recordCount(quint32 r)
 {
-    WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
+   // WARN2(ERR_OPERATION_NOTSUPPORTED2,TR("adding columns"), TR("attributes"));
 }
 
 void AttributeTable::setCell(const QString &columnName, quint32 rec, const QVariant &var)
