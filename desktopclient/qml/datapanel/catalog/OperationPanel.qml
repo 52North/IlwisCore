@@ -20,8 +20,9 @@ Item {
     signal catalogChanged()
 
     function setResources(){
-        if ( currentCatalog)
+        if ( currentCatalog){
             return currentCatalog.operations
+        }
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -59,10 +60,11 @@ Item {
             model : operations.keywords
             onCurrentIndexChanged: {
                 if ( currentCatalog){
-                    var filterString = "type='SingleOperation' or type='Workflow'"
+                    var filterString = "(type='SingleOperation' or type='Workflow')"
                     if (currentIndex != 0)
                         filterString += " and keyword='" + model[currentIndex] + "'"
                     currentCatalog.filter(filterString)
+                    catalogChanged()
                 }
             }
         }
@@ -121,7 +123,7 @@ Item {
 
     Component.onCompleted: {
         var url = mastercatalog.currentUrl
-        currentCatalog = mastercatalog.newCatalog(url,"type='SingleOperation' or type='Workflow'")
+        currentCatalog = mastercatalog.newCatalog(url,"(type='SingleOperation' or type='Workflow')")
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
