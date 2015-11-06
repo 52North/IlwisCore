@@ -221,8 +221,7 @@ QStringList CatalogModel::objectCounts()
 void CatalogModel::refresh()
 {
     _refresh = true;
-//    auto items = _view.items();
-//    mastercatalog()->removeItems(items);
+    _currentItems.clear();
     emit contentChanged();
 }
 

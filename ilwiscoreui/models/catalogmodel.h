@@ -36,7 +36,7 @@ public:
     Q_INVOKABLE void filter(const QString& filterString);
     Q_INVOKABLE void prepareMapItems(LayerManager *manager, bool force=false);
     Q_INVOKABLE QStringList objectCounts();
-    Q_INVOKABLE void refresh();
+    Q_INVOKABLE virtual void refresh();
 
     bool isScanned() const;
     bool initNode() const;
