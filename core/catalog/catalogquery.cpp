@@ -1,4 +1,5 @@
 #include <QString>
+#include <queue>
 #include "ilwis.h"
 #include "iooptions.h"
 #include "ilwisobject.h"
@@ -18,8 +19,8 @@ CatalogQuery::CatalogQuery()
     _names["domain"] = itDOMAIN;
     _names["table"] = itTABLE;
     _names["coverage"] = itCOVERAGE;
-   _names["representation"] = itREPRESENTATION;
-   _names["workflow"] = itWORKFLOW;
+    _names["representation"] = itREPRESENTATION;
+    _names["workflow"] = itWORKFLOW;
 }
 
 bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseNames, QString& side, bool left, bool uselike) const
@@ -34,12 +35,12 @@ bool CatalogQuery::checkForProperty(const std::vector<QString>& resourceBaseName
             break;
         }
     }
-//    if ( side[0] == '\'' && side[side.size()-1] == '\''){ // just a string
-//        return false;
-//    }
+    //    if ( side[0] == '\'' && side[side.size()-1] == '\''){ // just a string
+    //        return false;
+    //    }
     if ( !ok && inpropertiestable){
         if ( left){
-        side = QString("catalogitemproperties.propertyname='%1'").arg(side);
+            side = QString("catalogitemproperties.propertyname='%1'").arg(side);
             side += " and ";
         }else {
             if (uselike){
@@ -68,9 +69,10 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         query.replace(findTxt, QString::number(name.value()));
     }
     std::vector<QString> resourceBaseNames={"type", "extendedtype","size","dimensions","url","type&","container","rawcontainer","itemid"};
-    QString specialchars{"<>=!+- "};
+    QString specialchars{"()<>=!+- "};
     QString leftside, rightside, newquery;
     QString middel;
+    std::queue<QString> brackets;
     bool inquotes=false, onleftside = true;
     for(auto c : query){
 
@@ -89,9 +91,14 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
             bool likecases = leftside == "keyword";
             if( checkForProperty(resourceBaseNames, leftside, true,false))
                 middel = "";
-
             checkForProperty(resourceBaseNames, rightside, false, likecases);
+
             newquery += leftside + middel + rightside + " ";
+            if ( brackets.size() > 0){
+                QString br = brackets.front();;
+                newquery = br == "(" ? br + newquery : newquery + br;
+                brackets.pop();
+            }
             leftside = rightside = middel = "";
             onleftside = true;
         }
@@ -99,15 +106,11 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
             inquotes = !inquotes;
 
         } if ( specialchars.indexOf(c) != -1 && c != ' '){
-            if ( c == '(' ){
-                if(onleftside)
-                    leftside = '(' + leftside;
-                else
-                    rightside += ')';
-            }else{
+            if( c != '(' && c != ')'){
                 middel += c;
                 onleftside = false;
-            }
+            }else
+                brackets.push(c);
         }
 
     }
@@ -118,6 +121,11 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         checkForProperty(resourceBaseNames, rightside, false, likecases);
 
     newquery += leftside + middel + rightside;
+    if ( brackets.size() > 0){
+        QString br = brackets.front();;
+        newquery = br == "(" ? br + newquery : newquery + br;
+        brackets.pop();
+    }
 
     return newquery;
 }
