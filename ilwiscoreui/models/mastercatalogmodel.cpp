@@ -76,7 +76,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
      _bookmarks.push_back(addBookmark(TR("Operations"),
                QUrl("ilwis://operations"),
                TR("All operations available in Ilwis"),
-               "type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW), false));
+               "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")", false));
 
      addDefaultFilters();
      scanBookmarks();

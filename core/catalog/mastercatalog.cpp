@@ -568,6 +568,8 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
 
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query;
+    if ( selection.indexOf("operations") != -1)
+        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) nd catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
     if ( selection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     else
@@ -576,7 +578,7 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
-    //qDebug() << "loading container "<< resource.toString();
+    qDebug() << query;
    // kernel()->startClock();
     while( results.next()) {
         QSqlRecord rec = results.record();
