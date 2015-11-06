@@ -70,7 +70,10 @@ FocusScope {
                     mastercatalog.setSelectedObjects(selectedIds)
                 }
 
-                model : setResources()
+                model : {
+                    return currentCatalog ? currentCatalog.resources : null
+                }
+
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170
                 cellHeight: 18
