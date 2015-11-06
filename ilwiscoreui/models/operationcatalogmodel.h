@@ -37,6 +37,7 @@ public:
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
    Q_INVOKABLE OperationModel *operation(const QString& id);
    Q_INVOKABLE WorkflowModel *createWorkFlow(const QString& filter);
+   Q_INVOKABLE void refresh();
 
    void gatherItems();
 

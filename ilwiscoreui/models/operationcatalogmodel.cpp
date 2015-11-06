@@ -49,6 +49,15 @@ void OperationCatalogModel::nameFilter(const QString &filter)
     emit operationsChanged();
 }
 
+void OperationCatalogModel::refresh()
+{
+    CatalogModel::refresh();
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    _refresh = true;
+    emit operationsChanged();
+}
+
 void OperationCatalogModel::filter(const QString &filterString)
 {
     CatalogModel::filter(filterString);
@@ -165,7 +174,7 @@ void OperationCatalogModel::gatherItems() {
             lst << location.toString();
             res.addProperty("locations", lst);
             res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("type=%1 or type=%2").arg(itSINGLEOPERATION).arg(itWORKFLOW));
+            res.addProperty("filter",QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW));
             res.setDescription(descr);
             setView(CatalogView(res));
 
@@ -177,7 +186,7 @@ void OperationCatalogModel::gatherItems() {
             lst << location.toString();
             res.addProperty("locations", lst);
             res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("type=%1 and keyword='service'").arg(itSINGLEOPERATION));
+            res.addProperty("filter",QString("(type=%1 and keyword='service')").arg(itSINGLEOPERATION));
             res.setDescription(descr);
             CatalogView view(res);
             view.prepare();
