@@ -272,7 +272,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     mastercatalog()->addItems({res});
     QVariant opercatalog = uicontext()->rootContext()->contextProperty("operations");
     if ( opercatalog.isValid()){
-        OperationCatalogModel *ocmodel = opercatalog.value<OperationCatalogModel *>();
+        CatalogModel *ocmodel = opercatalog.value<CatalogModel *>();
         if (ocmodel){
             ocmodel->refresh();
         }
