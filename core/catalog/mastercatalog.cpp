@@ -578,8 +578,6 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
-    qDebug() << query;
-   // kernel()->startClock();
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));
