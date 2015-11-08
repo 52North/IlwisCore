@@ -116,13 +116,6 @@ Item {
                 mastercatalog.refreshWorkingCatalog()
             }
         }
-//        Action {
-//            id : showProps
-//            onTriggered :{
-//               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
-//            }
-//        }
-
 
 
         Row {
