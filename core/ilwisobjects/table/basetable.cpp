@@ -57,6 +57,9 @@ bool BaseTable::createTable()
 
 bool BaseTable::addColumn(const ColumnDefinition& def){
 
+    if ( !def.isValid())
+        return false;
+
     if ( isReadOnly())
         return false;
     changed(true);
