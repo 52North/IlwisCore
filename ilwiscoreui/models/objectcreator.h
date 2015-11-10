@@ -15,6 +15,7 @@ class IlwisObject;
 typedef IlwisData<IlwisObject> IIlwisObject;
 }
 class IlwisObjectCreatorModel;
+class CatalogModel;
 
 class ILWISCOREUISHARED_EXPORT ObjectCreator : public QObject
 {

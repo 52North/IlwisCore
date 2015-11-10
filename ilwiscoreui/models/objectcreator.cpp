@@ -12,6 +12,7 @@
 #include "workflow.h"
 #include "commandhandler.h"
 #include "uicontextmodel.h"
+#include "mastercatalogmodel.h"
 #include "operationcatalogmodel.h"
 #include "objectcreator.h"
 
@@ -270,10 +271,11 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     res.setDescription(parms["description"].toString());
     res.prepare();
     mastercatalog()->addItems({res});
-    QVariant opercatalog = uicontext()->rootContext()->contextProperty("operations");
-    if ( opercatalog.isValid()){
-        CatalogModel *ocmodel = opercatalog.value<CatalogModel *>();
-        if (ocmodel){
+    QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
+        CatalogModel *ocmodel = mcmodel->currentCatalog();
+        if ( dynamic_cast<OperationCatalogModel *>(ocmodel)){
             ocmodel->refresh();
         }
     }
