@@ -71,7 +71,7 @@ FocusScope {
                 }
 
                 model : {
-                    return currentCatalog ? currentCatalog.resources : null
+                    return setResources()
                 }
 
                 delegate: CatalogGridDelegate{}
