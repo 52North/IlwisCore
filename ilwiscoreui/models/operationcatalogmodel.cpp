@@ -54,7 +54,6 @@ void OperationCatalogModel::refresh()
     CatalogModel::refresh();
     _currentOperations.clear();
     _operationsByKey.clear();
-    _refresh = true;
     emit operationsChanged();
 }
 
