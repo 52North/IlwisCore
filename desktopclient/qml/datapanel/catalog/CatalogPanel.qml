@@ -113,7 +113,7 @@ Item {
         Action {
             id :refreshCatalog
             onTriggered: {
-                mastercatalog.refreshWorkingCatalog()
+                mastercatalog.refreshCatalog(currentCatalog.url)
             }
         }
 
