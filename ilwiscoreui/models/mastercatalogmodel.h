@@ -62,7 +62,7 @@ public:
     Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid);
     Q_INVOKABLE QStringList knownCatalogs(bool fileonly=true);
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
-    Q_INVOKABLE void refreshWorkingCatalog();
+    Q_INVOKABLE void refreshCatalog(const QString& path);
     Q_INVOKABLE int activeTab() const;
     Q_INVOKABLE void setActiveTab(int value);
     Q_INVOKABLE QString getName(const QString& id);
@@ -75,7 +75,7 @@ public:
     Q_INVOKABLE bool hasSelectedObjects() const;
     Q_INVOKABLE QString selectedIds() const;
     Q_INVOKABLE void deleteObject(const QString& id);
-    // for trq test
+     // for trq test
     Q_INVOKABLE void longAction();
     std::vector<Ilwis::Resource> select(const QString& filter);
 
@@ -155,7 +155,7 @@ class CatalogWorker3 : public QObject {
     Q_OBJECT
 
 public:
-    CatalogWorker3(const Ilwis::Resource& resource) : _resource(resource){}
+    CatalogWorker3(const QString& path) : _path(path){}
 
 public slots:
     void process();
@@ -165,7 +165,7 @@ signals:
     void updateContainer();
 
 private:
-    Ilwis::Resource _resource;
+    QString _path;
 };
 //}
 //}
