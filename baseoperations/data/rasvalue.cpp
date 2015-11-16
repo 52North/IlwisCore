@@ -67,7 +67,7 @@ quint64 RasValue::createMetadata()
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));
     operation.addInParameter(1,itINTEGER, TR("column"), TR("column number in the grid"));
     operation.addInParameter(2,itINTEGER, TR("row"), TR("row number in the grid"));
-    operation.addOptionalInParameter(1,itINTEGER, TR("band number"), TR("band number in the grid"));
+    operation.addOptionalInParameter(3,itINTEGER, TR("band number"), TR("band number in the grid"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itDOUBLE , TR("value"),TR("value at the indicated location"));
 

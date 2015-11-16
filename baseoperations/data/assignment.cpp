@@ -134,9 +134,9 @@ quint64 Assignment::createMetadata()
     operation.setSyntax("assignment(thing)");
     operation.setDescription(TR("copies the values/properties of the right hand of the expression to the left hand named object"));
     operation.setInParameterCount({1});
-    operation.addInParameter(0,itANY , TR("input thing"),TR("input thing"));
+    operation.addInParameter(0,itRASTER | itFEATURE , TR("input thing"),TR("input thing"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itANY, TR("copy of the object"));
+    operation.addOutParameter(0,itRASTER | itFEATURE, TR("copy of the object"));
 
     mastercatalog()->addItems({operation});
     return operation.id();

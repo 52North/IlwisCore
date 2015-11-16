@@ -116,7 +116,7 @@ quint64 RasterSlicing::createMetadata()
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with domain value"));
     operation.addInParameter(1,itITEMDOMAIN , TR("Numeric Item domain"),TR("The domain that used for the classification"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(1,itRASTER, TR("output rastercoverage with the item domain as domain"));
+    operation.addOutParameter(0,itRASTER, TR("classified raster"));
     operation.setKeywords("raster, classification");
 
     mastercatalog()->addItems({operation});

@@ -140,7 +140,7 @@ quint64 BoxClassification::createMetadata()
     operation.setInParameterCount({1 + n});
     operation.addInParameter(n,itNUMBER , TR("widen-factor"),TR("allows you to widen (factor > 1) the boxes that are 'drawn' around class means"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(1,itRASTER, TR("output rastercoverage with the domain of the sampleset"));
+    operation.addOutParameter(0,itRASTER, TR("output rastercoverage with the domain of the sampleset"));
     operation.setKeywords("classification,raster");
 
     mastercatalog()->addItems({operation});
