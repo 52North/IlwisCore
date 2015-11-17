@@ -111,7 +111,7 @@ quint64 IffRaster::createMetadata()
     operation.setInParameterCount({3});
     operation.addInParameter(0, itRASTER,TR("input rastercoverage"), TR("Input map must have boolean domain"));
     operation.addInParameter(1, itNUMBER | itSTRING | itBOOL | itRASTER, TR("first input raster coverage or number"));
-    operation.addInParameter(2,itRASTER | itNUMBER, TR("second input raster coverage or number"));
+    operation.addInParameter(2, itNUMBER | itSTRING | itBOOL | itRASTER, TR("second input raster coverage or number"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster coverage"),TR("rastercoverage with all pixels that correspond to the true value in the input having a value"));
     operation.setKeywords("raster, operation, condition");
