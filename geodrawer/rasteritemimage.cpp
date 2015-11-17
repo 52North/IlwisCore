@@ -62,7 +62,7 @@ Texture * RasterItemImage::GenerateTexture(const unsigned int offsetX, const uns
 void RasterItemImage::setTextureData(ItemTexture *tex, const unsigned int offsetX, const unsigned int offsetY, unsigned int texSizeX, unsigned int texSizeY, unsigned int zoomFactor)
 {
     long imageWidth = _raster->size().xsize();
-    long imageHeight = _raster->size().xsize();
+    long imageHeight = _raster->size().ysize();
     long sizeX = texSizeX; // the size of the input (pixeliterator)
     long sizeY = texSizeY;
     if (offsetX + sizeX > imageWidth)
