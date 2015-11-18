@@ -20,7 +20,7 @@ NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
 
 bool NumericRange::isValid() const
 {
-    return _min <= _max && _resolution >= 0;
+    return _min <= _max && _resolution >= 0 && !isNumericalUndef(_min) && !isNumericalUndef(_max);
 }
 
 Range *NumericRange::clone() const {
