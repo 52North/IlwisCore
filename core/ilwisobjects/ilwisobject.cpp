@@ -266,6 +266,16 @@ QString IlwisObject::provider(bool input) const
     return sUNDEF;
 }
 
+double IlwisObject::pseudoUndef() const
+{
+    return _pseudoUndef    ;
+}
+
+void IlwisObject::setPseudoUndef(double v)
+{
+    _pseudoUndef = v;
+}
+
 void IlwisObject::readOnly(bool yesno)
 {
     if (!isSystemObject())
