@@ -125,6 +125,14 @@ void ResourceModel::setDisplayName(const QString &name)
 {
     _displayName = name;
     _item.name(name, false);
+    emit displayNameChanged();
+}
+
+void ResourceModel::setDescription(const QString &desc)
+{
+    if ( _item.isValid())
+        _item.setDescription(desc);
+    emit descriptionChanged();
 }
 
 QString ResourceModel::url() const
