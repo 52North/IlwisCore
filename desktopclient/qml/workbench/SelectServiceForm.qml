@@ -86,7 +86,9 @@ Rectangle {
 
 
     Item {
-        y : currentAppForm != null ? currentAppForm.height  + protocol.height + 60: formFrame.height + protocol.height + 40
+        //y : currentAppForm != null ? currentAppForm.height  + protocol.height + 60: formFrame.height + protocol.height + 40
+        anchors.bottom: serviceConnectionArea.bottom
+        anchors.bottomMargin: 12
         anchors.right: parent.right
         anchors.rightMargin: 35
         width : 100

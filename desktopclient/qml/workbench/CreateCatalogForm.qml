@@ -15,7 +15,7 @@ Item {
     property string beginfolder
     property string currentFolder
 
-    signal bookmarkadded()
+
 
     function path2pathView(pathString){
         var index =  pathString.lastIndexOf("/..")
@@ -46,6 +46,16 @@ Item {
             newPath += parts[i]
         }
     }
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+
+        if ( name === "")
+            name = "redbuttonr.png"
+
+         var iconP = "../images/" + name
+         return iconP
+     }
 
 
 
@@ -66,7 +76,7 @@ Item {
     TabView {
         id : tabs
         y : 5
-        height : parent.height - addBookmarkButton.height - 15
+        height : parent.height - 15
         anchors.left: parent.left
         anchors.right : parent.right
         anchors.leftMargin: 5
@@ -108,41 +118,18 @@ Item {
 
     }
 
-    Action {
-        id :addbookmark
-        onTriggered: {
-            mastercatalog.addBookmark(currentFolder)
-            bookmarkadded()
-        }
+    Component.onCompleted: {
+        currentFolder =  mastercatalog.currentUrl
     }
-    Controls.ActionButton{
-        id : addBookmarkButton
-        anchors.right : createCatalogForm.right
-        anchors.bottom: createCatalogForm.bottom
-        anchors.rightMargin: 5
-        anchors.bottomMargin: 5
-        buttontext : "Add Bookmark"
-        iconsource : "../images/addbookmarkCS1.png"
-        height : 0
-        width :115
-        action : addbookmark
-        enabled : false
-        z : 1
-    }
-
 
     states: [
         State { name: "maximized"
 
             PropertyChanges {
                 target: createCatalogForm
-                height : 400
+                height : 370
                 opacity : 1
 
-            }
-            PropertyChanges {
-                target: addBookmarkButton
-                height : 40
             }
         },
         State {
@@ -151,10 +138,6 @@ Item {
                 target: createCatalogForm
                 height : 0
                 opacity : 0
-            }
-            PropertyChanges {
-                target: addBookmarkButton
-                height : 0
             }
         }
 
