@@ -16,6 +16,17 @@ WorkBenchShifter {
 
     clip : true
 
+    function iconSource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+
+        if ( name === "")
+            name = "redbuttonr.png"
+
+         var iconP = "../images/" + name
+         return iconP
+     }
+
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
     }
@@ -26,7 +37,7 @@ WorkBenchShifter {
     }
 
     Connections {
-        target: createCatalogForm
+        target: navCreatePanel
         onBookmarkadded: { refreshBookmarks()}
     }
 
@@ -52,12 +63,7 @@ WorkBenchShifter {
         }
     }
 
-    Action {
-        id : deleteBookmark
-        onTriggered : {
-            navCreatePanel.deleteCurrentBookmark()
-        }
-    }
+
     
     Action {
         id : createCatalogLeft
@@ -77,58 +83,77 @@ WorkBenchShifter {
 
     Item {
         id : buttonBar
-        height : 65
+        height : 50
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
-        x : functionBarHeader.x
+        x : 10
 
         Row {
+            id : buttonRow
             anchors.top : parent.top
             anchors.margins: 3
             Controls.ActionButton{
-                id : addContainer
-                iconsource : "../images/openCS1.png"
-                buttontext : qsTr("     Add\n Bookmark")
-                width : 82
-                height : buttonBar.height - 3
-                checkable: true
-                checked : false
-                action : changeCatalogContent
-            }
-            Controls.ActionButton{
-                id : removeBookmark
-                width : 82
-                height : buttonBar.height - 3
-                iconsource: "../images/deletebookmarkCS1.png"
-                buttontext :  qsTr("     Drop\n Bookmark");
-                action : deleteBookmark
-
-            }
-            Controls.ActionButton{
                 id : addCatalog
-                width : 82
+                width : 115
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog \n     Left")
+                buttontext :  qsTr("New Catalog Left")
                 action : createCatalogLeft
 
             }
             Controls.ActionButton{
                 id : addCatalog2
-                width : 82
+                width : 115
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog \n     Right")
+                buttontext :  qsTr("New Catalog Right")
                 action : createCatalogRight
 
             }
+
+        }
+
+    }
+    Row {
+        height : 20
+        anchors.right : functionBarHeader.right
+        anchors.rightMargin: -28
+        anchors.top : functionBarHeader.bottom
+        anchors.topMargin: 4
+        width : 75
+        Action {
+            id :maxButtons
+            onTriggered: {
+                createCatalogForm.state = "maximized"
+            }
+        }
+
+        Action {
+            id :minButtons
+            onTriggered: {
+                createCatalogForm.state = "minimized"
+            }
+        }
+        Button{
+            id : full
+            height : 20
+            width :20
+            action : maxButtons
+            Image { anchors.centerIn : parent; source: "../images/max1.png" }
+        }
+        Button{
+            id : close
+            height : 20
+            width :20
+            action : minButtons
+            Image { anchors.centerIn : parent; source: "../images/min1.png" }
         }
     }
     CreateCatalogForm{
         id : createCatalogForm
         width : parent.width - 10
-        height : 0
+        state : "maximized"
         anchors.top: buttonBar.bottom
         anchors.margins: 5
         x : parent.x + 5
