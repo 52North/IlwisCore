@@ -13,7 +13,7 @@ Rectangle {
     border.color: "#E6E6E6"
     property alias humannametext : displayString.text
     property string defintiontext
-    property string descriptiontext
+    property alias descriptiontext : descriptionString.text
 
     signal bookmarksChanged()
 
