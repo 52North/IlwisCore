@@ -250,6 +250,16 @@ QString CatalogModel::nameFilter() const
     return _nameFilter;
 }
 
+QString CatalogModel::keyFilter() const
+{
+    return _keyFilter;
+}
+
+void CatalogModel::keyFilter(const QString &keyf)
+{
+    _keyFilter = keyf;
+}
+
 void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
 {
     try{
