@@ -41,6 +41,7 @@ public:
 
    void gatherItems();
 
+   void keyFilter(const QString &keyf);
 private:
     QList<OperationModel *> _currentOperations;
     QList<OperationsByKeyModel *> _operationsByKey;
