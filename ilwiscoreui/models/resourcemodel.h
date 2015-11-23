@@ -21,7 +21,7 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(QString  coordinateSystemType READ coordinateSystemType CONSTANT)
     Q_PROPERTY(QString  geoReferenceName READ geoReferenceName CONSTANT)
     Q_PROPERTY(QString  geoReferenceType READ geoReferenceType CONSTANT)
-    Q_PROPERTY(QString  description READ description CONSTANT)
+    Q_PROPERTY(QString  description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(QString  dimensions READ dimensions CONSTANT)
     Q_PROPERTY(QString  displayName READ displayName WRITE setDisplayName NOTIFY displayNameChanged)
     Q_PROPERTY(QString  iconPath READ iconPath CONSTANT)
@@ -63,6 +63,7 @@ public:
     QString dimensions() const;
     QString displayName() const;
     void setDisplayName(const QString& name);
+    void setDescription(const QString& desc);
     QString url() const;
     QString container() const;
     QString iconPath() const;
@@ -97,6 +98,7 @@ private:
 
 signals:
     void displayNameChanged();
+    void descriptionChanged();
     void isSelectedChanged();
 public slots:
 

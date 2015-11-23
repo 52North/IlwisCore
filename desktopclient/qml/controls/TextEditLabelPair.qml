@@ -11,6 +11,7 @@ Item {
     property bool textCanBeCopied : false
     property int fontSize : 8
     property bool readOnly : false;
+    property bool transparentBackgrond : true
     property var regexvalidator
     height : 20
 
@@ -41,7 +42,7 @@ Item {
                 height: parent.height
                 border.color: parent.enabled ? Global.edgecolor : "transparent"
                 border.width: textid.readOnly ? 0: 1
-                color : "transparent"
+                color : transparentBackgrond ? "transparent" : "white"
             }
         }
         onTextChanged: {

@@ -82,7 +82,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/gridpropertyeditor.h \
     ilwiscoreui/propertyeditors/layeropacitysetter.h \
     ilwiscoreui/models/workflow/scenariodesignermodel.h \
-    ilwiscoreui/models/workflow/scenariobuildermodel.h
+    ilwiscoreui/models/workflow/scenariobuildermodel.h \
+    ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.h
 
 unix {
     target.path = /usr/lib
@@ -150,7 +151,8 @@ SOURCES += \
     ilwiscoreui/propertyeditors/gridpropertyeditor.cpp \
     ilwiscoreui/propertyeditors/layeropacitysetter.cpp \
     ilwiscoreui/models/workflow/scenariodesignermodel.cpp \
-    ilwiscoreui/models/workflow/scenariobuildermodel.cpp
+    ilwiscoreui/models/workflow/scenariobuildermodel.cpp \
+    ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

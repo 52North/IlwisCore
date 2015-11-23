@@ -42,9 +42,9 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     std::map<quint64, Combo> combos;
     std::for_each(iterIn1, iterIn1.end(), [&](double v1){
         double v2 = *iterIn2;
-        if ( isNumericalUndef(v1) )
+        if ( isNumericalUndef2(v1,_inputRaster1) )
             v1 = MAGIC_NUMBER;
-        if ( isNumericalUndef(v2) )
+        if ( isNumericalUndef2(v2,_inputRaster2) )
             v2 = MAGIC_NUMBER;
 
         bool ignore = (_undefhandling == uhIgnoreUndef ) && (v1 == MAGIC_NUMBER || v1 == MAGIC_NUMBER);

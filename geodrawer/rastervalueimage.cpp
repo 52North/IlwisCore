@@ -57,7 +57,7 @@ Texture * RasterValueImage::GenerateTexture(const unsigned int offsetX, const un
 void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offsetX, const unsigned int offsetY, unsigned int texSizeX, unsigned int texSizeY, unsigned int zoomFactor)
 {
     long imageWidth = _raster->size().xsize();
-    long imageHeight = _raster->size().xsize();
+    long imageHeight = _raster->size().ysize();
     long sizeX = texSizeX; // the size of the input (pixeliterator)
     long sizeY = texSizeY;
     if (offsetX + sizeX > imageWidth)
@@ -67,7 +67,6 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     if (sizeX == 0 || sizeY == 0)
         return;
     const long xSizeOut = (long)ceil((double)sizeX / ((double)zoomFactor)); // the size until which the pixels vector will be filled (this is commonly the same as texSizeX, except the rightmost / bottommost textures, as raster-images seldom have as size of ^2)
-    const long ySizeOut = (long)ceil((double)sizeY / ((double)zoomFactor));
     texSizeX /= zoomFactor; // the actual size of the texture (commonly 256 or maxtexturesize, but smaller texture sizes may be allocated for the rightmost or bottommost textures)
     texSizeY /= zoomFactor;
 
@@ -85,7 +84,7 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     quint32 position = 0;
     while(pixIter != end){
         double value = *pixIter;
-        int index = isNumericalUndef(value) ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
+        int index = isNumericalUndef2(value,_raster) ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
         (*pixels)[position] = index; // int32 to quint8 conversion (do we want this?)
         pixIter += zoomFactor;
         if ( pixIter.ychanged()) {

@@ -354,8 +354,14 @@ void OperationResource::addOptionalOutParameter(quint32 order, IlwisTypes type, 
 }
 
 void OperationResource::setKeywords(const QString& words) {
-
-    addProperty("keyword", words.trimmed().toLower());
+    QStringList parts = words.split(",");
+    QString result;
+    for(auto part : parts){
+        if ( result != "")
+            result += ",";
+        result += part.trimmed();
+    }
+    addProperty("keyword", result.toLower());
 }
 
 

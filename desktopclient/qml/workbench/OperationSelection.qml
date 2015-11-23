@@ -8,6 +8,7 @@ import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
 import ".." as Base
 import "../Global.js" as Global
+import "../controls" as Controls
 
 WorkBenchShifter {
     id : operationSelectionContainer
@@ -34,28 +35,41 @@ WorkBenchShifter {
 
     Rectangle {
         id : searchBar
-        height : 24
+        height : 48
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
         x : functionBarHeader.x
         color : Global.alternatecolor1
 
-        Text {
-            id : searchTextLabel
-            height : 20
-            text : qsTr("Filter Text")
-            width : 100
-            y : 4
-            x: 5
-        }
-        TextField {
-            id : searchText
-            anchors.left: searchTextLabel.right
-            height : 20
-            width : parent.width - searchTextLabel.width - 9
-            onTextChanged: {
-                operations.nameFilter = text
+        Column {
+            y : 2
+            anchors.fill: parent
+            spacing : 3
+            Controls.TextEditLabelPair{
+
+                labelText:  qsTr("Filter Text")
+                labelWidth: 100
+                width : parent.width - 9
+                transparentBackgrond: false
+                onContentChanged: {
+                    operations.nameFilter = content
+                }
+            }
+            Row {
+                height : 22
+                width : parent.width
+                Controls.TextEditLabelPair{
+                    labelText:  qsTr("Keyword filter")
+                    labelWidth: 100
+                    width : parent.width - 49
+                    transparentBackgrond: false
+                }
+                Button{
+                    width : 40
+                    height : 20
+                    text : qsTr("Apply")
+                }
             }
         }
     }

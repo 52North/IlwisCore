@@ -657,13 +657,13 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
 
 
 
-void MasterCatalogModel::refreshWorkingCatalog()
+void MasterCatalogModel::refreshCatalog(const QString& path)
 {
     auto items = context()->workingCatalog()->items();
     mastercatalog()->removeItems(items);
 
     QThread* thread = new QThread;
-    CatalogWorker3* worker = new CatalogWorker3(_currentCatalog->resource());
+    CatalogWorker3* worker = new CatalogWorker3(path);
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
     thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
@@ -761,6 +761,7 @@ void MasterCatalogModel::deleteObject(const QString &id)
         return;
     obj->remove();
 }
+
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
 {
@@ -847,7 +848,7 @@ void worker::process(){
 void CatalogWorker3::process()
 {
     try{
-        ICatalog catalog(OSHelper::neutralizeFileName(_resource.url().toString()));
+        ICatalog catalog(OSHelper::neutralizeFileName(_path));
         if ( !catalog.isValid()){
             return ;
         }

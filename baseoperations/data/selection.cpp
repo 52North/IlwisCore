@@ -66,7 +66,7 @@ bool Selection::execute(ExecutionContext *ctx, SymbolTable& symTable)
                     quint32 rec = coverageIndex[v_in];
                     QVariant var = inputRaster->attributeTable()->cell(colIndex, rec);
                     v = var.toDouble();
-                    if ( isNumericalUndef(v))
+                    if ( isNumericalUndef2(v,inputRaster))
                         v = rUNDEF;
                 } else {
                     v = v_in;
@@ -209,7 +209,7 @@ quint64 Selection::createMetadata()
     resource.addProperty("pin_2_name", TR("selection-definition"));
     resource.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
     resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("rastercoverage were the selection has been applied"));
+    resource.addProperty("pout_1_name", TR("sub raster"));
     resource.addProperty("pout_1_desc",TR(""));
     resource.prepare();
     url += "=" + QString::number(resource.id());

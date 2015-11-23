@@ -57,6 +57,8 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
         break;
     case Projection::pvNORTH:
         _targetDef += value == "No" ? " +south" : ""; break;
+    case Projection::pvHEIGHT:
+        _targetDef += " +h=" + value; break;
     default:
         _targetDef += "";
     }
@@ -122,7 +124,10 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         if ( shifts != sUNDEF) {
             _targetDef += " +towgs84=" + shifts;
         }
-
+        QString h = proj4["h"];
+        if ( h != sUNDEF){
+            _targetDef += " +h=" + b;
+        }
         QString name = proj4["datum"];
         if ( name != sUNDEF) {
             _targetDef += " +datum=" + name;

@@ -133,14 +133,15 @@ public:
 
 
 
-    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, int mode=pBASIC, int bins = 0){
+    template<typename IterType> bool calculate(const IterType& begin,  const IterType& end, int mode=pBASIC, int bins = 0, double pseudoUndef=rILLEGAL){
         Basic basicMarkers;
         Median median;
         Variance var;
         Skew skew;
         Kurtosis kurt;
         quint64 count = 0;
-        DataType undefined = undef<DataType>();
+        DataType undefined;
+        undefined = pseudoUndef != rILLEGAL ? undef<DataType>() : pseudoUndef;
         double sigDigits = 0;
         double rest = 0;
         std::for_each(begin, end, [&] (const DataType& sample){

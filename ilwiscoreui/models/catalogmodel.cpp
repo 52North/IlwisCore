@@ -66,8 +66,9 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
   //  connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
 }
 
-void CatalogModel::scanContainer(const QUrl& url)
+void CatalogModel::scanContainer()
 {
+    QUrl url = resource().url();
     QThread* thread = new QThread;
     CatalogWorker2* worker = new CatalogWorker2(url);
     worker->moveToThread(thread);
@@ -87,7 +88,7 @@ void CatalogModel::setView(const CatalogView &view, bool threading){
   //  connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
     if ( useThread){
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
-            scanContainer(resource().url());
+            scanContainer();
         }
     }else
         mastercatalog()->addContainer(view.resource().url());
@@ -249,6 +250,16 @@ QString CatalogModel::nameFilter() const
     return _nameFilter;
 }
 
+QString CatalogModel::keyFilter() const
+{
+    return _keyFilter;
+}
+
+void CatalogModel::keyFilter(const QString &keyf)
+{
+    _keyFilter = keyf;
+}
+
 void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
 {
     try{
@@ -330,6 +341,7 @@ void CatalogModel::updateContainer()
 {
     _refresh = true;
     emit contentChanged();
+    emit objectCountsChanged();
 }
  //-------------------------------------------------
 CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)

@@ -11,9 +11,9 @@ Rectangle {
     color : "white"
     border.width: 1
     border.color: "#E6E6E6"
-    property string humannametext
+    property alias humannametext : displayString.text
     property string defintiontext
-    property string descriptiontext
+    property alias descriptiontext : descriptionString.text
 
     signal bookmarksChanged()
 
@@ -24,71 +24,16 @@ Rectangle {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../../images/" + name
-         return iconP
-     }
-
-    Action {
-        id :maxButtons
-        onTriggered: {
-            catalogProperties.state = "maximized"
-        }
+        var iconP = "../../images/" + name
+        return iconP
     }
 
-    Action {
-        id :minButtons
-        onTriggered: {
-            catalogProperties.state = "minimized"
-        }
-    }
-
-    Action {
-        id :saveProperties
-        onTriggered: {
-            mastercatalog.setCatalogMetadata(displayString.text, descriptionString.text)
-            bookmarksChanged()
-        }
-    }
 
     Image {
         id : title
         width : parent.width
-        height : 24
+        height : 0
         source : iconsource("headerblue2CS1.png")
-    Text {
-        text : "Properties"
-        font.bold : true
-        x : 5
-        y : 5
-        width : 60
-    }
-    }
-    Row {
-        height : title.height
-        anchors.right : catalogProperties.right
-        width : 75
-        Button{
-            id : save
-            height : 20
-            width :20
-            action : saveProperties
-            Image { anchors.centerIn : parent; width : 16; height : 16; source: iconsource("minisave.png"); smooth : true}
-
-        }
-        Button{
-            id : full
-            height : 20
-            width :20
-            action : maxButtons
-            Image { anchors.centerIn : parent; source: iconsource("max1.png") }
-        }
-        Button{
-            id : close
-            height : 20
-            width :20
-            action : minButtons
-            Image { anchors.centerIn : parent; source: iconsource("min1.png") }
-        }
     }
 
     ColumnLayout {
@@ -152,14 +97,14 @@ Rectangle {
             name : "minimized"
             PropertyChanges {
                 target: catalogProperties
-                height : 25
+                height : 0
             }
         }
 
     ]
     transitions: [
         Transition {
-            NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "height"; duration : 500 ; easing.type: Easing.InOutCubic }
         }
     ]
 

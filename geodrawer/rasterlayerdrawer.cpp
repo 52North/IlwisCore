@@ -161,6 +161,9 @@ DrawerInterface *RasterLayerDrawer::create(DrawerInterface *parentDrawer, RootDr
 void RasterLayerDrawer::setAttribute(const QString &attrName, const QVariant &value)
 {
     LayerDrawer::setAttribute(attrName, value);
+    if ( attrName == "undefinedvalue"){
+        coverage()->setPseudoUndef(value.toDouble());
+    }
 }
 
 QVariant RasterLayerDrawer::attribute(const QString &attrName) const
@@ -168,6 +171,9 @@ QVariant RasterLayerDrawer::attribute(const QString &attrName) const
     QVariant var = LayerDrawer::attribute(attrName);
     if ( var.isValid())
         return var;
+    if ( attrName == "undefinedvalue"){
+        return coverage()->pseudoUndef();
+    }
 
     return QVariant();
 }

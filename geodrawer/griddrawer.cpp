@@ -184,7 +184,7 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
         Coordinate cmin = rootDrawer()->coverageEnvelope().min_corner();
         Coordinate cmax = rootDrawer()->coverageEnvelope().max_corner();
 
-        _indices.push_back(VertexIndex(_vertices.size(),4, itLINE));
+        _indices.push_back(VertexIndex(_vertices.size(),5, itLINE));
         _vertices.push_back(QVector3D(cmin.x,cmin.y,0));
         _vertices.push_back(QVector3D(cmin.x,cmax.y,0));
         _vertices.push_back(QVector3D(cmax.x,cmax.y,0));
@@ -197,12 +197,14 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
             _vertices.push_back(QVector3D(x,cmin.y,0));
             _vertices.push_back(QVector3D(x,cmax.y,0));
         }
-        for (double y = ceil(cmin.y / _cellDistance) * _cellDistance; y < cmax.y ; y += _cellDistance)
+        double y;
+        for (y = ceil(cmin.y / _cellDistance) * _cellDistance; y < cmax.y ; y += _cellDistance)
         {
             _indices.push_back(VertexIndex(_vertices.size(),2, itLINE));
             _vertices.push_back(QVector3D(cmin.x,y,0));
             _vertices.push_back(QVector3D(cmax.x,y,0));
         }
+
         _prepared |= DrawerInterface::ptGEOMETRY;
         // as colors are directly linked to vertices any change in geometry must trigger a render prepare
         unprepare(DrawerInterface::ptRENDER);

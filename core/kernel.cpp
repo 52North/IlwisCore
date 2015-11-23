@@ -245,16 +245,16 @@ void Kernel::deleteTranquilizer(quint64 id)
 }
 
 void Kernel::startClock(){
-     _start_clock = clock();
+     _start_clock = std::chrono::high_resolution_clock::now();
 }
 
 void Kernel::endClock(const QString& label){
-    clock_t end = clock();
-    double total = (double)(end - _start_clock) / CLOCKS_PER_SEC;
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - _start_clock);
     if ( label == "")
-        qDebug() << "calc in " << total << " seconds";
+        qDebug() << "calc in " << time_span.count() << " seconds";
     else
-        qDebug() << label << ": "<< "calc old in " << QString::number(total,'g', 7) << " seconds";
+        qDebug() << label << ": "<< "calc old in " << time_span.count() << " seconds";
 
 }
 

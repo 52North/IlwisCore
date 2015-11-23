@@ -369,6 +369,11 @@ WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
     return 0;
 }
 
+void OperationCatalogModel::keyFilter(const QString &keyf)
+{
+   CatalogModel::keyFilter(keyf);
+}
+
 
 
 

@@ -225,11 +225,11 @@ quint64 BinaryMathRaster::createMetadata()
     operation.setSyntax("binarymathraster(gridcoverage1,gridcoverage2|number,rasteroperation=!add|substract|divide|times|mod|power)");
     operation.setDescription(TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     operation.setInParameterCount({3});
-    operation.addInParameter(0,itRASTER | itNUMBER, TR("first input raster coverage or number"));
-    operation.addInParameter(1,itRASTER | itNUMBER, TR("second input raster coverage or number"));
-    operation.addInParameter(2,itSTRING , TR("Operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
+    operation.addInParameter(0,itRASTER | itNUMBER, TR("raster or number"));
+    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"));
+    operation.addInParameter(2,itSTRING , TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output raster coverage"));
+    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
     operation.setKeywords("raster, operation");
 
     mastercatalog()->addItems({operation});

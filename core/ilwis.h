@@ -130,6 +130,7 @@ typedef double Raw; // originally raws were integers and they still are but as t
 
 
 #define isNumericalUndef(v) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF)
+#define isNumericalUndef2(v,obj) (v == Ilwis::rUNDEF || v == Ilwis::iUNDEF || v == Ilwis::shUNDEF || v == Ilwis::flUNDEF || v == obj->pseudoUndef())
 
 //round
 template<typename T> T round(T x, T frac) {
