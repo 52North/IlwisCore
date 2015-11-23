@@ -371,7 +371,23 @@ WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
 
 void OperationCatalogModel::keyFilter(const QString &keyf)
 {
-   CatalogModel::keyFilter(keyf);
+   QStringList parts= keyf.split(" ",QString::SkipEmptyParts);
+   QString result;
+   for(QString part : parts){
+       if ( part.toLower() == "or")
+           result += " or ";
+       else if ( part.toLower() == "and")
+           result += " and ";
+       else {
+           result += "keyword='" + part + "'";
+       }
+
+   }
+   _currentOperations.clear();
+   _operationsByKey.clear();
+   _refresh = true;
+   CatalogModel::filter(result);
+   emit operationsChanged();
 }
 
 
