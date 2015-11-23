@@ -60,18 +60,24 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
     try{
     if ( geomRelation != 0) {
         for(auto iter : features){
-            int variantCount = iter->subFeatureCount();
-            for(int gindex = 0; gindex < variantCount; ++gindex){
                 for(int gi = 0; gi < geomRelation->getNumGeometries(); ++gi){
                     const geos::geom::Geometry *geomCoverage = iter->geometry().get();
+
                     if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(gi) )){
                         resultset.insert(index);
+                    }
+                    int variantCount = iter->subFeatureCount();
+                    for(int subGindex = 0; subGindex < variantCount; ++subGindex){
+                        const geos::geom::Geometry *geomCoverage =  iter->subFeatureRef(gi)->geometry().get();
+
+                        if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(subGindex) )){
+                            resultset.insert(index);
+                        }
                     }
                 }
             }
             ++index;
         }
-    }
     } catch(geos::util::GEOSException& exc){
         ERROR0(QString(exc.what()));
         return false;
@@ -164,7 +170,7 @@ OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const Symb
 quint64 Covers::createMetadata(){
     OperationResource operation({"ilwis://operations/covers"});
     operation.setLongName("Covers Feature Geometry");
-    operation.setSyntax("covers(coverage,wkt-defintion)");
+    operation.setSyntax("covers(coverage,wkt-definition)");
     operation.setDescription(TR("returns a feature-index of all features that satisfy the covers constraint"));
 
     return SpatialRelationOperation::createMetadata(operation);
@@ -196,7 +202,7 @@ quint64 CoveredBy::createMetadata()
 {
     OperationResource operation({"ilwis://operations/coveredby"});
     operation.setLongName("Covered by Feature Geometry");
-    operation.setSyntax("coveredby(coverage,wkt-defintion)");
+    operation.setSyntax("coveredby(coverage,wkt-definition)");
     operation.setDescription(TR("returns a feature-index of all features that satisfy the CoveredBy constraint"));
 
     return SpatialRelationOperation::createMetadata(operation);
@@ -420,3 +426,5 @@ quint64 Overlaps::createMetadata()
 
     return SpatialRelationOperation::createMetadata(operation);
 }
+
+
