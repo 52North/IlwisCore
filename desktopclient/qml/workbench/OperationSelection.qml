@@ -60,6 +60,7 @@ WorkBenchShifter {
                 height : 22
                 width : parent.width
                 Controls.TextEditLabelPair{
+                    id : filtertxt
                     labelText:  qsTr("Keyword filter")
                     labelWidth: 100
                     width : parent.width - 49
@@ -69,6 +70,9 @@ WorkBenchShifter {
                     width : 40
                     height : 20
                     text : qsTr("Apply")
+                    onClicked: {
+                        operations.keyFilter = filtertxt.content;
+                    }
                 }
             }
         }

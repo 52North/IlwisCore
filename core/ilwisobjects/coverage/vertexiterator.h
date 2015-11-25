@@ -89,12 +89,12 @@ inline Ilwis::VertexIterator end(const std::unique_ptr<geos::geom::Geometry> &ge
     return iter;
 }
 
-inline Ilwis::VertexIterator begin(Ilwis::VertexIterator &iter) {
+inline Ilwis::VertexIterator begin(const Ilwis::VertexIterator &iter) {
     Ilwis::VertexIterator iterNew(iter);
     return iterNew - Ilwis::ENDVERTEX;
 }
 
-inline Ilwis::VertexIterator end(Ilwis::VertexIterator& iter) {
+inline Ilwis::VertexIterator end(const Ilwis::VertexIterator& iter) {
     Ilwis::VertexIterator iterNew(iter);
     iterNew += Ilwis::ENDVERTEX; //  at the end;
     return iterNew;
