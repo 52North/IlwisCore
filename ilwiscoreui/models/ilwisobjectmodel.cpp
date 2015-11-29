@@ -21,21 +21,12 @@ IlwisObjectModel::IlwisObjectModel()
 
 IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *parent) : ResourceModel(source, parent)
 {
-    try{
-        if ( source.name() != "Global Layer"){ // special case for the dummy object of the global layer
-            _ilwisobject.prepare(resource());
-        }
-    } catch (const ErrorObject& ){
-
-    } catch ( std::exception& ex){
-        kernel()->issues()->log(ex.what());
-    }
 }
 
 QString IlwisObjectModel::creationDate() const
 {
-    if ( _ilwisobject.isValid()){
-        Time creationTime = _ilwisobject->createTime();
+    if ( object().isValid()){
+        Time creationTime = object()->createTime();
         if ( creationTime.isValid())
             return creationTime.toString();
     }
@@ -45,8 +36,8 @@ QString IlwisObjectModel::creationDate() const
 
 QString IlwisObjectModel::modifiedDate() const
 {
-    if ( _ilwisobject.isValid()){
-        Time modifiedTime = _ilwisobject->modifiedTime();
+    if ( object().isValid()){
+        Time modifiedTime = object()->modifiedTime();
         if ( modifiedTime.isValid())
             return modifiedTime.toString();
     }
@@ -56,23 +47,23 @@ QString IlwisObjectModel::modifiedDate() const
 
 bool IlwisObjectModel::readonly() const
 {
-    if ( _ilwisobject.isValid()){
-        return _ilwisobject->isReadOnly();
+    if ( object().isValid()){
+        return object()->isReadOnly();
     }
     return true;
 }
 
 void IlwisObjectModel::readonly(bool yesno) const
 {
-    if ( _ilwisobject.isValid()){
-        _ilwisobject->readOnly(yesno);
+    if ( object().isValid()){
+        object()->readOnly(yesno);
     }
 }
 
 QString IlwisObjectModel::description() const
 {
-    if ( _ilwisobject.isValid()){
-        QString desc = _ilwisobject->description();
+    if ( object().isValid()){
+        QString desc = object()->description();
         if ( desc != sUNDEF)
             return desc;
     }
@@ -81,10 +72,10 @@ QString IlwisObjectModel::description() const
 
 QString IlwisObjectModel::externalFormat() const
 {
-    if ( _ilwisobject.isValid()){
-        QString inFormat = _ilwisobject->formatCode();
-        QString outFormat = _ilwisobject->formatCode(false);
-        QString provider = _ilwisobject->provider();
+    if ( object().isValid()){
+        QString inFormat = object()->formatCode();
+        QString outFormat = object()->formatCode(false);
+        QString provider = object()->provider();
         if ( outFormat == "" && inFormat == "")
             return sUNDEF;
         if ( outFormat == inFormat)
@@ -100,26 +91,26 @@ QString IlwisObjectModel::externalFormat() const
 
 bool IlwisObjectModel::externalReadOnly() const
 {
-   if ( _ilwisobject.isValid()){
-       return _ilwisobject->outputConnectionReadonly();
+   if ( object().isValid()){
+       return object()->outputConnectionReadonly();
    }
    return true;
 }
 
 void IlwisObjectModel::description(const QString &desc) const
 {
-    if ( _ilwisobject.isValid())
-        _ilwisobject->setDescription(desc);
+    if ( object().isValid())
+        object()->setDescription(desc);
 }
 
 bool IlwisObjectModel::isProjectedCoordinateSystem() const
 {
     try {
         ICoordinateSystem csy;
-        if ( hasType(_ilwisobject->ilwisType(), itCOVERAGE | itCOORDSYSTEM)){
-            csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem() : _ilwisobject.as<CoordinateSystem>();
-        } if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
-            csy = _ilwisobject.as<GeoReference>()->coordinateSystem();
+        if ( hasType(object()->ilwisType(), itCOVERAGE | itCOORDSYSTEM)){
+            csy = hasType(object()->ilwisType(), itCOVERAGE) ? object().as<Coverage>()->coordinateSystem() : object().as<CoordinateSystem>();
+        } if ( hasType(object()->ilwisType(), itGEOREF)){
+            csy = object().as<GeoReference>()->coordinateSystem();
         }
         if ( csy.isValid()){
             if ( csy->isLatLon())
@@ -140,8 +131,8 @@ bool IlwisObjectModel::isProjectedCoordinateSystem() const
 
 bool IlwisObjectModel::isSystemObject() const
 {
-    if ( _ilwisobject.isValid()){
-        return _ilwisobject->isSystemObject();
+    if ( object().isValid()){
+        return object()->isSystemObject();
     }
     return true; // just block
 }
@@ -150,8 +141,8 @@ QString IlwisObjectModel::projectionInfo() const
 {
     try {
         if ( isProjectedCoordinateSystem()){
-            IConventionalCoordinateSystem csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem().as<ConventionalCoordinateSystem>()
-                                                                                               : _ilwisobject.as<ConventionalCoordinateSystem>();
+            IConventionalCoordinateSystem csy = hasType(object()->ilwisType(), itCOVERAGE) ? object().as<Coverage>()->coordinateSystem().as<ConventionalCoordinateSystem>()
+                                                                                               : object().as<ConventionalCoordinateSystem>();
             QString projection = Projection::projectionCode2Name(csy->projection()->code());
             QVariant var = csy->projection()->parameter(Projection::pvZONE);
             if ( var.isValid() && !var.toInt() == 1){
@@ -183,26 +174,26 @@ void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
 
     auto setAttributeModel = [&](int i, const ColumnDefinition& coldef, const QString& attributeName){
         if ( coldef.name() == attributeName){
-            AttributeModel *attribute = new AttributeModel(coldef, this, _ilwisobject);
+            AttributeModel *attribute = new AttributeModel(coldef, this, object());
             _attributes[i] = attribute;
         }
     };
 
-    IlwisTypes objecttype = _ilwisobject->ilwisType();
+    IlwisTypes objecttype = object()->ilwisType();
     if ( objecttype == itRASTER){
-        IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+        IRasterCoverage raster = object().as<RasterCoverage>();
         if ( raster->hasAttributes()){
             for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
                 setAttributeModel(i,raster->attributeTable()->columndefinition(i), attributeName);
             }
         }
     } else if ( hasType(objecttype,itFEATURE)){
-        IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+        IFeatureCoverage features = object().as<FeatureCoverage>();
         for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
             setAttributeModel(i,features->attributeTable()->columndefinition(i), attributeName);
         }
     } else if ( hasType(objecttype,itTABLE)){
-        ITable tbl = _ilwisobject.as<Table>();
+        ITable tbl = object().as<Table>();
         for(int i = 0; i < tbl->columnCount(); ++i){
             setAttributeModel(i,tbl->columndefinition(i),attributeName);
         }
@@ -214,30 +205,30 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
 {
     try {
         if ( _attributes.size() == 0){
-            if ( _ilwisobject.isValid())    {
-                IlwisTypes objecttype = _ilwisobject->ilwisType();
+            if ( object().isValid())    {
+                IlwisTypes objecttype = object()->ilwisType();
                 if ( objecttype == itRASTER){
-                    IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                    IRasterCoverage raster = object().as<RasterCoverage>();
 
                     if ( raster->hasAttributes()){
                         for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
-                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, _ilwisobject);
+                            AttributeModel *attribute = new AttributeModel(raster->attributeTable()->columndefinition(i), this, object());
                             _attributes.push_back(attribute);
                         }
                     }else {
-                        AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, _ilwisobject);
+                        AttributeModel *attribute = new AttributeModel(ColumnDefinition(PIXELVALUE, raster->datadef(),i64UNDEF), this, object());
                         _attributes.push_back(attribute);
                     }
                 } else if ( hasType(objecttype,itFEATURE)){
-                    IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                    IFeatureCoverage features = object().as<FeatureCoverage>();
                     for(int i = 0; i < features->attributeDefinitions().definitionCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this, _ilwisobject);
+                        AttributeModel *attribute = new AttributeModel(features->attributeDefinitions().columndefinition(i), this, object());
                         _attributes.push_back(attribute);
                     }
                 } else if ( hasType(objecttype,itTABLE)){
-                    ITable tbl = _ilwisobject.as<Table>();
+                    ITable tbl = object().as<Table>();
                     for(int i = 0; i < tbl->columnCount(); ++i){
-                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this, _ilwisobject);
+                        AttributeModel *attribute = new AttributeModel(tbl->columndefinition(i), this, object());
                         _attributes.push_back(attribute);
                     }
                 }
@@ -256,9 +247,9 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
 
 QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
 {
-    IlwisTypes objectype = _ilwisobject->ilwisType();
+    IlwisTypes objectype = object()->ilwisType();
     if ( hasType( objectype, itDOMAIN)){
-        IDomain domain = _ilwisobject.as<Domain>();
+        IDomain domain = object().as<Domain>();
         if ( hasType(domain->ilwisType(), itITEMDOMAIN)){
             SPItemRange itemrange =domain->range<ItemRange>();
             for(auto item : *(itemrange.data())) {
@@ -276,17 +267,17 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
 
 QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
 {
-    IlwisTypes objectype = _ilwisobject->ilwisType();
+    IlwisTypes objectype = object()->ilwisType();
     if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
         IProjection proj;
         _projectionParmItems.clear();
         if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
-            IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
+            IConventionalCoordinateSystem csyProj = object().as<ConventionalCoordinateSystem>();
             if ( csyProj.isValid()){
                 proj = csyProj->projection();
             }
         }else
-            proj = _ilwisobject.as<Projection>();
+            proj = object().as<Projection>();
 
         if ( proj.isValid()){
             if ( proj->isUsed(Projection::pvX0))
@@ -319,24 +310,24 @@ QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
 QString IlwisObjectModel::valuetype() const
 {
     try{
-        if ( !_ilwisobject.isValid())
+        if ( !object().isValid())
             return "";
 
-        IlwisTypes objectype = _ilwisobject->ilwisType();
+        IlwisTypes objectype = object()->ilwisType();
         IlwisTypes valueType = itUNKNOWN;
         if ( hasType( objectype, itCOVERAGE|itDOMAIN)){
             if ( objectype == itRASTER){
-                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                IRasterCoverage raster = object().as<RasterCoverage>();
                 valueType = raster->datadef().domain()->valueType();
             } else if ( hasType( objectype , itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
                 if ( coldef.isValid()){
                     valueType = coldef.datadef().domain()->valueType();
                 }
 
             } else if ( hasType( objectype , itDOMAIN)){
-                IDomain dom = _ilwisobject.as<Domain>();
+                IDomain dom = object().as<Domain>();
                 valueType = dom->valueType();
 
             }
@@ -352,11 +343,11 @@ QString IlwisObjectModel::valuetype() const
 
 QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QString& columnName) {
     try {
-        IlwisTypes objectype = _ilwisobject->ilwisType();
+        IlwisTypes objectype = object()->ilwisType();
         QString rangeString;
         if ( hasType( objectype, itCOVERAGE|itDOMAIN)){
             if ( objectype == itRASTER){
-                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                IRasterCoverage raster = object().as<RasterCoverage>();
                 if ( defaultRange){
                   rangeString = raster->datadef().domain()->range()->toString();
                 }else{
@@ -367,7 +358,7 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QS
                   rangeString = raster->datadef().range()->toString();
                 }
             } else if ( hasType( objectype , itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
                 if ( coldef.isValid()){
                     if ( defaultRange)
@@ -392,7 +383,7 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QS
                 }
 
             } else if ( hasType( objectype , itDOMAIN)){
-                rangeString = _ilwisobject.as<Domain>()->range()->toString();
+                rangeString = object().as<Domain>()->range()->toString();
             }
         }
         return rangeString;
@@ -404,8 +395,8 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QS
 }
 
 QString IlwisObjectModel::parentDomain() const {
-    if ( hasType(_ilwisobject->ilwisType(),itDOMAIN)){
-        IDomain domain = _ilwisobject.as<Domain>();
+    if ( hasType(object()->ilwisType(),itDOMAIN)){
+        IDomain domain = object().as<Domain>();
         if ( domain.isValid()){
             IDomain parentDomain = domain->parent();
             if ( parentDomain.isValid())
@@ -415,26 +406,26 @@ QString IlwisObjectModel::parentDomain() const {
     return "not defined";
 }
 QString IlwisObjectModel::pixSizeString() const{
-    if (hasType(_ilwisobject->ilwisType(), itRASTER | itGEOREF)){
+    if (hasType(object()->ilwisType(), itRASTER | itGEOREF)){
         double pixsizex=rUNDEF, pixsizey=rUNDEF;
-        if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
-            Size<> sz = _ilwisobject.as<RasterCoverage>()->size();
-            Envelope envelope = _ilwisobject.as<RasterCoverage>()->envelope();
+        if ( hasType(object()->ilwisType(), itRASTER)){
+            Size<> sz = object().as<RasterCoverage>()->size();
+            Envelope envelope = object().as<RasterCoverage>()->envelope();
             if ( envelope.isValid()){
                 pixsizex = envelope.xlength() / sz.xsize();
                 pixsizey = envelope.ylength() / sz.ysize();
-                if ( _ilwisobject.as<RasterCoverage>()->coordinateSystem()->isLatLon()){
+                if ( object().as<RasterCoverage>()->coordinateSystem()->isLatLon()){
                     pixsizex *= 360.0;
                     pixsizey *= 360.0;
                 }
             }
         }
-        if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
-            double pixsz = _ilwisobject.as<GeoReference>()->pixelSize();
+        if ( hasType(object()->ilwisType(), itGEOREF)){
+            double pixsz = object().as<GeoReference>()->pixelSize();
             if ( pixsz == rUNDEF)
                 return sUNDEF;
 
-            if ( _ilwisobject.as<GeoReference>()->coordinateSystem()->isLatLon()){
+            if ( object().as<GeoReference>()->coordinateSystem()->isLatLon()){
                 pixsz *= 360.0;
             }
             pixsizex = pixsizey = pixsz;
@@ -458,10 +449,10 @@ QString IlwisObjectModel::centerPixelLocation() const{
     IGeoReference grf(code);
     if ( grf.isValid()){
         Envelope envelope;
-        if ( hasType(_ilwisobject->ilwisType(), itCOVERAGE) )
-            envelope = _ilwisobject.as<Coverage>()->envelope(true) ;
-        else if ( hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM))
-            envelope = _ilwisobject.as<CoordinateSystem>()->envelope(true);
+        if ( hasType(object()->ilwisType(), itCOVERAGE) )
+            envelope = object().as<Coverage>()->envelope(true) ;
+        else if ( hasType(object()->ilwisType(), itCOORDSYSTEM))
+            envelope = object().as<CoordinateSystem>()->envelope(true);
 
         if ( !envelope.isValid())
             return "";
@@ -475,8 +466,8 @@ QString IlwisObjectModel::centerPixelLocation() const{
 }
 
 QString IlwisObjectModel::valueType() const {
-    if ( hasType(_ilwisobject->ilwisType(),itDOMAIN)){
-        IDomain domain = _ilwisobject.as<Domain>();
+    if ( hasType(object()->ilwisType(),itDOMAIN)){
+        IDomain domain = object().as<Domain>();
         if ( domain.isValid()){
             IlwisTypes tp = domain->valueType();
             return TypeHelper::type2name(tp);
@@ -484,19 +475,20 @@ QString IlwisObjectModel::valueType() const {
     }
     return "";
 }
+
 QString IlwisObjectModel::getProperty(const QString &propertyname)
 {
     try{
         QString property = ResourceModel::getProperty(propertyname);
         if ( property != sUNDEF)
             return property;
-        if ( !_ilwisobject.isValid())
+        if ( !object().isValid())
             return "";
         if ( propertyname == "latlonenvelope" || propertyname == "envelope"){
-            if (hasType(_ilwisobject->ilwisType(), itCOVERAGE)){
-                return _ilwisobject.as<Coverage>()->envelope(propertyname == "latlonenvelope").toString();
-            } if ( hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM)){
-                return _ilwisobject.as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope").toString();
+            if (hasType(object()->ilwisType(), itCOVERAGE)){
+                return object().as<Coverage>()->envelope(propertyname == "latlonenvelope").toString();
+            } if ( hasType(object()->ilwisType(), itCOORDSYSTEM)){
+                return object().as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope").toString();
             }
         }
         if ( propertyname == "pixelsize"){
@@ -512,74 +504,74 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
             return valueType();
         }
         if ( propertyname == "recordcount"){
-            if ( hasType(_ilwisobject->ilwisType(), itTABLE)){
-                return QString::number(_ilwisobject.as<Table>()->recordCount());
+            if ( hasType(object()->ilwisType(), itTABLE)){
+                return QString::number(object().as<Table>()->recordCount());
             }
         }
         if ( propertyname == "columncount"){
-            if ( hasType(_ilwisobject->ilwisType(), itTABLE)){
-                return QString::number(_ilwisobject.as<Table>()->columnCount());
+            if ( hasType(object()->ilwisType(), itTABLE)){
+                return QString::number(object().as<Table>()->columnCount());
             }
         }
         if ( propertyname == "polygoncount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+             if ( hasType(object()->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 return QString::number(features->featureCount(itPOLYGON));
              }
         }
         if ( propertyname == "linecount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+             if ( hasType(object()->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 return QString::number(features->featureCount(itLINE));
              }
         }
         if ( propertyname == "pointcount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+             if ( hasType(object()->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 return QString::number(features->featureCount(itPOINT));
              }
         }
         if ( propertyname == "featurecount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
-                IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+             if ( hasType(object()->ilwisType(), itFEATURE)){
+                IFeatureCoverage features = object().as<FeatureCoverage>();
                 return QString::number(features->featureCount());
              }
         }
         if ( propertyname == "majoraxis"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
-                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+             if ( hasType(object()->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = object().as<Ellipsoid>();
                 return QString::number(ellipsoid->majorAxis());
              }
         }
         if ( propertyname == "minoraxis"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
-                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+             if ( hasType(object()->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = object().as<Ellipsoid>();
                 return QString::number(ellipsoid->minorAxis());
              }
         }
         if ( propertyname == "flattening"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
-                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+             if ( hasType(object()->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = object().as<Ellipsoid>();
                 return QString::number(ellipsoid->flattening());
              }
         }
         if ( propertyname == "excentricity"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
-                IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
+             if ( hasType(object()->ilwisType(), itELLIPSOID)){
+                IEllipsoid ellipsoid = object().as<Ellipsoid>();
                 return QString::number(ellipsoid->excentricity());
              }
         }
         if (propertyname == "proj4def"){
-            IlwisTypes objectype = _ilwisobject->ilwisType();
+            IlwisTypes objectype = object()->ilwisType();
             if ( hasType( objectype, itPROJECTION | itCONVENTIONALCOORDSYSTEM)){
                 IProjection proj;
                 if ( hasType(objectype, itCONVENTIONALCOORDSYSTEM)){
-                    IConventionalCoordinateSystem csyProj = _ilwisobject.as<ConventionalCoordinateSystem>();
+                    IConventionalCoordinateSystem csyProj = object().as<ConventionalCoordinateSystem>();
                     if ( csyProj.isValid()){
                         proj = csyProj->projection();
                     }
                 }else
-                    proj = _ilwisobject.as<Projection>();
+                    proj = object().as<Projection>();
                 if ( proj.isValid()){
                     return proj->toProj4();
                 }
@@ -596,14 +588,14 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
 
 bool IlwisObjectModel::canUse(const QString &id)
 {
-    if ( _ilwisobject.isValid()){
+    if ( object().isValid()){
         bool ok;
         quint64 myid = id.toULongLong(&ok);
             if ( ok){
                 IIlwisObject obj;
                 obj.prepare(myid);
                 if ( obj.isValid())
-                    return _ilwisobject->canUse(obj.ptr());
+                    return object()->canUse(obj.ptr());
             }
     }
     return false;
@@ -611,11 +603,11 @@ bool IlwisObjectModel::canUse(const QString &id)
 
 void IlwisObjectModel::setAttribute(const QString &attrname, const QString &value, const QString &extra)
 {
-    if ( _ilwisobject.isValid()){
+    if ( object().isValid()){
         if ( attrname == "domain"){
             IDomain dom(value);
-            if ( _ilwisobject->ilwisType() == itRASTER){
-                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+            if ( object()->ilwisType() == itRASTER){
+                IRasterCoverage raster = object().as<RasterCoverage>();
                 if ( dom->id() != raster->datadefRef().domain()->id()){
                     raster->datadefRef().domain(dom);
                     raster->changed(true);
@@ -649,12 +641,24 @@ CatalogModel *IlwisObjectModel::catalog(const QString &id)
 
 bool IlwisObjectModel::isValid() const
 {
-    return _ilwisobject.isValid();
+    return object().isValid();
 }
 
 IIlwisObject IlwisObjectModel::object() const
 {
-    return _ilwisobject;
+
+    try{
+        if ( !_ilwisobject.isValid() && name() != "Global Layer"){ // special case for the dummy object of the global layer
+            _ilwisobject.prepare(resource());
+        }
+        return _ilwisobject;
+    } catch (const ErrorObject& ){
+
+    } catch ( std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    return IIlwisObject();
 }
 
 QString IlwisObjectModel::value2string(const QVariant &value, const QString &attrName)
@@ -670,14 +674,14 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
             return value.toString();
     };
     if ( attrName != "") {
-        IlwisTypes objectype = _ilwisobject->ilwisType();
+        IlwisTypes objectype = object()->ilwisType();
         if ( hasType(objectype, itFEATURE)){
-            IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+            IFeatureCoverage features = object().as<FeatureCoverage>();
             ColumnDefinition coldef = features->attributeDefinitions().columndefinition(attrName);
             return v2s(coldef, value);
 
         }else if (hasType(objectype, itRASTER)){
-             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+             IRasterCoverage raster = object().as<RasterCoverage>();
              if ( raster->hasAttributes()){
                 ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
                 return v2s(coldef, value);
