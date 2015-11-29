@@ -108,7 +108,7 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
              kernel()->issues()->log(mes, IssueObject::itWarning);
              return sPREPAREFAILED;
          }
-        _coverage->loadData();
+        //_coverage->loadData();
     }else {
         _drawerCode = _expression.input<QString>(1);
     }
