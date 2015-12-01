@@ -31,10 +31,23 @@ Rectangle {
         operationInParameters.model = operation.inParamNames
     }
 
+    function getBackground() {
+        var keywords = operation.keywords.split(', ')
+        if (keywords.indexOf('workflow') > -1) {
+            return iconsource("workflowitem.png")
+        } else {
+            return iconsource("operationitem.png")
+        }
+
+    }
+
+
+
+
     Image {
         id : box
         anchors.fill: parent
-        source : iconsource("operationitem.png")
+        source : getBackground()
     }
     Text{
         id : operationName
@@ -46,7 +59,6 @@ Rectangle {
         x : 15
         text : operation ? operation.name : "?"
         font.bold : true
-
     }
     Text {
         id : labelInput
@@ -154,9 +166,11 @@ Rectangle {
     }
 
     function drawFlows(ctx){
-        ctx.strokeStyle = "blue"
-        for(var i =0; i < flowConnections.length; ++i){
+
+        for(var i=0; i < flowConnections.length; i++){
+
             var item = flowConnections[i]
+
             var startPoint = item.attachsource.center()
             var endPoint = item.attachtarget.center()
             var fromx = startPoint.x
@@ -165,14 +179,26 @@ Rectangle {
             var toy = endPoint.y
             var headlen = 15;   // length of head in pixels
             var angle = Math.atan2(toy-fromy,tox-fromx);
+
+            ctx.beginPath();
             ctx.moveTo(fromx, fromy);
             ctx.lineTo(tox, toy);
             ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
             ctx.moveTo(tox, toy);
             ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+
+            if(item.isSelected)
+            {
+                ctx.strokeStyle = "red"
+                ctx.lineWidth = 3
+            }else {
+                ctx.strokeStyle = "blue"
+                ctx.lineWidth = 1
+            }
+
             ctx.stroke()
 
-            if ( flowConnections[i].flowPoints){
+            if ( item.flowPoints){
                 var p1 = item.flowPoints.fromParameterIndex
                 var p2 = item.flowPoints.toParameterIndex
                 var xcenter = (fromx + tox) / 2
@@ -182,37 +208,71 @@ Rectangle {
                 ctx.fillRect(xcenter - 15 ,ycenter - 10,35,15);
                 ctx.fillStyle = "#000";
                 ctx.fillText(label, xcenter-10, ycenter + 2);
-
             }
-
         }
     }
 
     function setFlow(target, attachRect, flowPoints){
+        if(workflow.hasValueDefined(target.itemid, flowPoints.toParameterIndex))
+        {
+            //TODO: Error gooien.
+            return;
+        }
+
         for(var i =0; i < flowConnections.length; ++i){
-            if ( flowConnections[i].target == target && flowConnections[i].attachement == attachRect)
+            if ( flowConnections[i].target == target)
                 return // dont add duplicates
         }
-        flowConnections.push({"target" : target, "source" :operationItem ,"attachtarget": attachRect, "attachsource" : selectedAttach, "flowPoints" : flowPoints})
-        workflow.addFlow(itemid, target.itemid, flowPoints)
+        flowConnections.push({
+            "target" : target,
+            "source" :operationItem,
+            "attachtarget" : attachRect,
+            "attachsource" : selectedAttach,
+            "flowPoints" : flowPoints,
+            "isSelected" : false
+        })
+        workflow.addFlow(
+            itemid,
+            target.itemid,
+            flowPoints,
+            attachRect.index,
+            selectedAttach.index
+        )
         target.resetInputModel()
         wfCanvas.stopWorkingLine()
     }
 
     function attachFlow(target, attachRect){
+        //If not connected to itself
         if ( wfCanvas.operationsList[wfCanvas.currentIndex] !== target){
             var flowPoints
-            if ( operation.needChoice(target.operation)){
-                 wfCanvas.showAttachementForm(true, target,attachRect)
 
+            if( operation.isLegalFlow(wfCanvas.operationsList[wfCanvas.currentIndex].operation, target.operation))
+            {
+                if ( operation.needChoice(target.operation)){
+                    wfCanvas.showAttachmentForm(true, target,attachRect)
+                }
+                else{
+                    wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect, null)
+                }
             }
-            else if ( operation.isLegalFlow(operation, target.operation, flowPoints)){
-                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect, null)
-            } else
-               wfCanvas.stopWorkingLine()
+            else
+            {
+                wfCanvas.stopWorkingLine()
+            }
 
             wfCanvas.canvasValid = false
         }
+    }
+
+    function index2Rectangle(index) {
+        for (var i = 0; i < operationItem.children.length; i++) {
+            var child = operationItem.children[i];
+            if(child.hasOwnProperty("index") && child.index == index){
+                return child
+            }
+        }
+        return 0
     }
 
     AttachmentRectangle{

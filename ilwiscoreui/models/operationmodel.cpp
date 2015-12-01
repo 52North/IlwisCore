@@ -224,20 +224,22 @@ bool OperationModel::needChoice(OperationModel *other) const
     return check("outparameters",this);
 }
 
-bool OperationModel::isLegalFlow(OperationModel *from, OperationModel *to, const QVariantMap &flow) const
+bool OperationModel::isLegalFlow(OperationModel *from, OperationModel *to) const
 {
+
     if ( !to || !from)
         return false;
 
-    if ( flow.size() == 0)    { // case were there is one output and one input but still they have to match
-        quint64 tp1 = to->getProperty("pin_" + QString::number(1) + "_type").toULongLong();
-        quint64 tp2 = from->getProperty("pout_" + QString::number(1) + "_type").toULongLong();
-        return hasType(tp1, tp2);
-    }else {
-        quint64 tp1 = to->getProperty("pin_" + QString::number(flow["toParameterIndex"].toInt() + 1) + "_type").toULongLong();
-        quint64 tp2 = from->getProperty("pout_" + QString::number(flow["fromParameterIndex"].toInt() + 1) + "_type").toULongLong();
-        return hasType(tp1, tp2);
+    int outParamCount = from->outParamNames().size();
+
+    for(int i = 0; i < outParamCount; i++)
+    {
+        if(to->parameterIndexes(from->outputparameterType(i), true).size() != 0)
+        {
+            return true;
+        }
     }
+    //TODO: Error gooien
     return false;
 }
 
@@ -258,11 +260,12 @@ QStringList OperationModel::parameterIndexes(const QString &typefilter, bool fro
             }
         }
         if ( found)
+        {
             // for from flow you want to get the output names of the from operation and vice versa for the other case
             indexes.push_back(QString::number(i) + ": " + (fromOperation ? outputparameterName(i) : inputparameterName(i)));
+        }
     }
     return indexes;
-
 }
 
 

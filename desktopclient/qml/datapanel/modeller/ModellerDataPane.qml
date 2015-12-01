@@ -13,13 +13,16 @@ Item {
     height : parent.height
     property TabModel tabmodel
     property ScenarioDesignerModel scenario
+    property double factor : 1.5
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
             if ( sourceType === "workflow")            {
                 scenario = scenarios.create()
                 var wf = scenario.addWorkflow(filter)
+                //TODO: mastercatalog id2resource
                 canvas.workflow = wf;
+                //canvas.drawFromWorkflow()
             }
         }
     }
@@ -61,6 +64,44 @@ Item {
         }
     }
 
+    function deleteSelectedOperation(){
+        canvas.deleteSelectedOperation()
+    }
+
+    function deleteSelectedEdge(){
+        canvas.deleteSelectedEdge()
+    }
+
+    function alterSelectedEdge(){
+        canvas.alterSelectedEdge()
+    }
+
+    function canvasZoomOut(){
+        scaleCanvas(1/factor);
+    }
+
+    function canvasZoomIn(){
+        scaleCanvas(factor);
+    }
+
+    function scaleCanvas(scaleFactor){
+        canvas.height /= scaleFactor;
+        canvas.width /= scaleFactor;
+        tform.xScale *=scaleFactor;
+        tform.yScale *=scaleFactor;
+    }
+
+    function asignConstantInputData(inputData, operationid) {
+        canvas.asignConstantInputData(inputData, operationid);
+    }
+
+    /**
+      Calls the WorkflowCanvas's run method
+      */
+    function run() {
+        canvas.run()
+    }
+
     signal exit;
 
     property bool canSeparate : true
@@ -77,15 +118,73 @@ Item {
         orientation: Qt.Vertical
         height : parent.height - modellertools.height
 
+
+        ModellerErrorView {
+            height: 0
+            id : errorview
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.right: parent.right
+            state: "smaller"
+
+            states: [
+                State {
+                    name : "bigger"
+                    PropertyChanges {
+                        target: errorview
+                        height : 80
+                    }
+                    PropertyChanges {
+                        target: datapane
+                        height : parent.height - modellertools.height - 170 - 80
+                    }
+                },
+                State { name: "smaller"
+
+                    PropertyChanges {
+                        target: errorview
+                        height : 0
+                    }
+                }
+            ]
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                }
+            ]
+        }
+
         Item {
             id : datapane
             width : parent.width
             height : parent.height - modellertools.height - 170
 
+            function asignConstantInputData(vertexIndex, parameterIndex, value){
+                canvas.asignConstantInputData(vertexIndex, parameterIndex, value)
+            }
+
 
             WorkFlow.WorkflowCanvas {
                 id: canvas
                 state : "visible"
+                transform : Scale{
+                    id : tform
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    propagateComposedEvents: true
+                    onWheel: {
+                        if(wheel.angleDelta.y > 0){  // zoom in
+                            modellerDataPane.canvasZoomIn();
+                        }
+                        else{                        // zoom out
+                            modellerDataPane.canvasZoomOut();
+                        }
+                    }
+                    onPressed:{mouse.accepted = false}
+                    onPositionChanged:{mouse.accepted = false}
+                    onReleased:{mouse.accepted = false}
+                }
             }
             ModellerDefinitionView{ id : defview}
             ModellerTemplateBuilder{ id : templateBuilder}
