@@ -386,7 +386,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
     columnStart = QString(columnStart).arg(results);
     QString component = columnStart + inputpart + seperator + outputPart + "}";
 
-    // for debugging, check if the qml is ok; can be retrieved from teh log file
+   //  for debugging, check if the qml is ok; can be retrieved from teh log file
   // kernel()->issues()->log(component);
 
     return component;

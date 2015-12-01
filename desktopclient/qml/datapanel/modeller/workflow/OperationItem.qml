@@ -9,6 +9,7 @@ Rectangle {
     id : operationItem
     width: 200
     height: 120
+    z: 0
     property OperationModel operation
     property int itemid
     property var selectedAttach
@@ -32,13 +33,13 @@ Rectangle {
     }
 
     function getBackground() {
-        var keywords = operation.keywords.split(', ')
-        if (keywords.indexOf('workflow') > -1) {
-            return iconsource("workflowitem.png")
-        } else {
-            return iconsource("operationitem.png")
+        if (operation) {
+            var keywords = operation.keywords.split(', ')
+            if (keywords.indexOf('workflow') > -1) {
+                return iconsource("workflowitem.png")
+            }
         }
-
+        return iconsource("operationitem.png")
     }
 
 
@@ -159,6 +160,12 @@ Rectangle {
     }
     onYChanged: {
         wfCanvas.canvasValid = false
+    }
+
+    onIsSelectedChanged: {
+        if (isSelected) {
+            z = highestZIndex++
+        }
     }
 
     function deselectAll(){

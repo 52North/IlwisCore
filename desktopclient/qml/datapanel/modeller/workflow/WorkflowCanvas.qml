@@ -12,6 +12,7 @@ Modeller.ModellerWorkArea {
     property OperationCatalogModel operationCatalog;
     property var deleteItemIndex;
     property var deleteEdgeIndex;
+    property var highestZIndex : 1;
 
     function asignConstantInputData(inputData, itemId) {
         workflow.asignConstantInputData(inputData, itemId)
@@ -159,6 +160,7 @@ Modeller.ModellerWorkArea {
       Calls the WorkflowModel's run method
       */
     function run(){
+        drawFromWorkflow();return;
         workflow.createMetadata()
         manager.retrieveRunFormValues()
     }
@@ -177,47 +179,60 @@ Modeller.ModellerWorkArea {
       Draws canvas from the workflow
       */
     function drawFromWorkflow() {
-        var nodes = workflow.getNodes(), node, resource, edges, edge, fromItemid,
+        var nodes = workflow.nodes, node, resource, unOrderdEdges = workflow.edges, edges = [], nodeEdges, edge, fromItemid,
                 toItemId, fromOperation=false, toOperation=false, flowPoints;
-        for (var i = 0; i < nodes.length; i++) {
-            node = nodes[i];
-            resource = mastercatalog.id2Resource(node.operationId)
-
-            wfCanvas.createItem(node.x, node.y, resource);
-            edges = workflow.getEdges(node)
-            for (var j = 0; j < edges.length; j++) {
-                edge = edges[j]
-                fromItemid = workflow.vertex2ItemID(node.vertex) //TODO: Temporary
-                toItemId = workflow.vertex2ItemID(edge.toVertex) //TODO: Temporary
-
-                for (var k = 0; k < wfCanvas.operationsList.length; k++) {
-                    if (wfCanvas.operationsList[k].itemid == fromItemid && !fromOperation) {
-                        fromOperation = wfCanvas.operationsList[k]
-                    } else if (wfCanvas.operationsList[k].itemid == toItemId && !toOperation) {
-                        toOperation = wfCanvas.operationsList[k]
-                    }
-                }
-
-                if (fromOperation && toOperation){
-                    flowPoints = {
-                        "fromParameterIndex" : edge.fromParameter,
-                        "toParameterIndex" : edge.toParameter
-                    }
-                    fromOperation.flowConnections.push({
-                       "target" : toOperation,
-                       "source" : fromOperation,
-                       "attachtarget" : toOperation.index2Rectangle(edge.toRect),
-                       "attachsource" : fromOperation.index2Rectangle(edge.fromRect),
-                       "flowPoints" : flowPoints,
-                       "isSelected" : false
-                    })
-                }
-
-                fromOperation = false
-                toOperation = false
+        for(var i = 0; i < unOrderdEdges.length; i++) {
+            edge = unOrderdEdges[i]
+            if (edge.fromVertex in edges) {
+                edges[edge.fromVertex].push(edge)
+            } else {
+                edges[edge.fromVertex] = [edge]
             }
         }
-        wfCanvas.draw(true)
+
+        for (var i = 0; i < nodes.length; i++) {
+            node = nodes[i];
+            resource = wfCanvas.getOperation(node.operationId)
+
+            wfCanvas.createItem(node.x, node.y, resource)
+        }
+        for (var i = 0; i < nodes.length; i++) {
+            node = nodes[i];
+            nodeEdges = edges[node.vertex]
+            if (nodeEdges) {
+                for (var j = 0; j < nodeEdges.length; j++) {
+                    edge = nodeEdges[j]
+                    fromItemid = workflow.vertex2ItemID(node.vertex) //TODO: Temporary
+                    toItemId = workflow.vertex2ItemID(edge.toVertex) //TODO: Temporary
+
+                    for (var k = 0; k < wfCanvas.operationsList.length; k++) {
+                        if (!fromOperation && wfCanvas.operationsList[k].itemid == fromItemid) {
+                            fromOperation = wfCanvas.operationsList[k]
+                        } else if (!toOperation && wfCanvas.operationsList[k].itemid == toItemId) {
+                            toOperation = wfCanvas.operationsList[k]
+                        }
+                    }
+
+                    if (fromOperation && toOperation){
+                        flowPoints = {
+                            "fromParameterIndex" : edge.fromParameter,
+                            "toParameterIndex" : edge.toParameter
+                        }
+                        fromOperation.flowConnections.push({
+                           "target" : toOperation,
+                           "source" : fromOperation,
+                           "attachtarget" : toOperation.index2Rectangle(edge.toRect),
+                           "attachsource" : fromOperation.index2Rectangle(edge.fromRect),
+                           "flowPoints" : flowPoints,
+                           "isSelected" : false
+                        })
+                    }
+
+                    fromOperation = false
+                    toOperation = false
+                }
+            }
+        }
     }
 
     Canvas {
@@ -374,7 +389,7 @@ Modeller.ModellerWorkArea {
             onPressed: {
                 wfCanvas.canvasValid = false;
 
-                var selected = false, pressed = -1;
+                var selected = false, pressed = -1, highestZ = -1;
 
                 for(var i=0; i < wfCanvas.operationsList.length; ++i){
 
@@ -410,15 +425,16 @@ Modeller.ModellerWorkArea {
                         }
                     }
 
-                    if ( isContained) {
+                    if ( isContained && item.z > highestZ ) {
                         pressed = i
+                        highestZ = item.z
                     }
                     item.isSelected = false
                 }
                 wfCanvas.oldx = mouseX
                 wfCanvas.oldy = mouseY
+                wfCanvas.currentIndex = pressed
                 if (pressed > -1) {
-                    wfCanvas.currentIndex = pressed;
                     item = wfCanvas.operationsList[pressed]
                     item.isSelected = true
 
@@ -485,6 +501,15 @@ Modeller.ModellerWorkArea {
             }
         }
 
+    }
 
+    Component.onDestruction: {
+        var coordinates = [], node;
+        for (var i = 0; i < wfCanvas.operationsList.length; i++) {
+            node = wfCanvas.operationsList[i]
+            coordinates[node.itemid] = node.x + '|' + node.y
+        }
+
+        workflow.store(coordinates)
     }
 }

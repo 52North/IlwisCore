@@ -17,7 +17,7 @@ Rectangle {
     property int itemId: -1
 
     function newForm(metaid, title, newItemId){
-        fillAppFrame(metaid, title, false, true)
+        fillAppFrame(metaid, title, false, true, [])
         itemId = newItemId
     }
 
@@ -25,24 +25,19 @@ Rectangle {
       Shows the operation's form. Passes the hidden fields to the index2Form method.
       */
     function newOperationFormWithHiddenFields(metaid, title, newItemId, hiddenFields){
+        fillAppFrame(metaid, title, false, true, hiddenFields)
         itemId = newItemId
-
-        operationid = metaid
-        var form= formbuilder.index2Form(metaid, false,false,hiddenFields)
-        appFrame.formQML = form
-        appFrame.formTitle = title
-        appFrame.opacity = 1
     }
 
     /**
       Shows the operation's form. A boolean (showOutput) has to be passed to this method which decides whether an ouput form is shown.
       */
     function newFormWithOutput(metaid, title){
-        fillAppFrame(metaid, title, true, false)
+        fillAppFrame(metaid, title, true, false, [])
     }
 
-    function fillAppFrame(metaid, title, output, showEmpty) {
-        var form= formbuilder.index2Form(metaid, output, showEmpty)
+    function fillAppFrame(metaid, title, output, showEmpty, hiddenFields) {
+        var form= formbuilder.index2Form(metaid, output, showEmpty ,hiddenFields)
         operationid = metaid
         appFrame.formQML = form
         appFrame.formTitle = title

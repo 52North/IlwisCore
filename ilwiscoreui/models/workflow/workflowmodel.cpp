@@ -17,6 +17,14 @@ WorkflowModel::WorkflowModel()
 {
 }
 
+WorkflowModel::~WorkflowModel()
+{
+    for(auto *node : _nodeProps)
+        delete node;
+    for(auto *edge : _edgeProps)
+        delete edge;
+}
+
 WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent) : OperationModel(source, parent)
 {
     _workflow.prepare(source);
@@ -29,18 +37,15 @@ void WorkflowModel::asignConstantInputData(QString inputData, int operationIndex
         OVertex vertex = _operationNodes[operationIndex];
         if(_workflow->hasInputAssignment(vertex,i)){
             SPAssignedInputData constantInput = _workflow->getAssignedInputData({vertex, i});
-            if (value.trimmed().isEmpty()) {
-                constantInput->value = QVariant::Invalid;
-            } else {
-                constantInput->value = value;
-            }
+            if (value.trimmed().size() == 0)
+                value = value.trimmed();
+            constantInput->value = value;
         }
     }
 }
 
 void WorkflowModel::addOperation(const QString &id)
 {
-    _workflow->debugWorkflowMetadata();
     bool ok;
     quint64 opid = id.toULongLong(&ok);
     if (!ok){
@@ -99,8 +104,22 @@ void WorkflowModel::deleteOperation(int index)
     try {
         if ( index < _operationNodes.size()){
             const OVertex& operationVertex = _operationNodes[index];
+
+            // In edges
+            std::pair<InEdgeIterator,InEdgeIterator> inIterators = _workflow->getInEdges(operationVertex);
+            for (auto &iter = inIterators.first; iter < inIterators.second; ++iter) {
+                _workflow->removeOperationFlow(*iter);
+            }
+
+            // Out edges
+            std::pair<OutEdgeIterator,OutEdgeIterator> outIterators = _workflow->getOutEdges(operationVertex);
+            for (auto &iter = outIterators.first; iter < outIterators.second; ++iter) {
+                _workflow->removeOperationFlow(*iter);
+            }
+
             _workflow->removeOperation(operationVertex);
             _operationNodes.erase(_operationNodes.begin() + index);
+
         } else {
             qDebug() << "There are no operations";
         }
@@ -135,25 +154,45 @@ void WorkflowModel::deleteFlow(int operationIndex1, int operationIndex2, int ind
 /**
  * Returns the nodes of the workflow
  */
-QList<NodePropObject*> WorkflowModel::getNodes()
+QQmlListProperty<NodePropObject> WorkflowModel::getNodes()
 {
-    std::pair<VertexIterator, VertexIterator> nodeIterators = _workflow->getNodeIterators();
-    QList<NodePropObject*> *nodeProps = new QList<NodePropObject*>();
+    if ( _nodeProps.size() != 0) {
+        for(auto *node : _nodeProps)
+            delete node;
+        _nodeProps.clear();
+    }
+
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
     for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
         NodePropObject *nodeProp = new NodePropObject();
         nodeProp->setProps(_workflow->nodeProperties(*iter), *iter);
-        nodeProps->append(nodeProp);
+        _nodeProps.append(std::move(nodeProp));
     }
-    return *nodeProps;
+    return  QQmlListProperty<NodePropObject>(this, _nodeProps);
 }
 
 ///**
 // * Returns the edges of the node
 // */
-//QList<EdgeProperties> WorkflowModel::getEdgesByNode()
-//{
-//    return *(new QList<EdgeProperties>());
-//}
+QQmlListProperty<EdgePropObject> WorkflowModel::getEdges()
+{
+    if ( _edgeProps.size() != 0) {
+        for(auto *edge : _edgeProps)
+            delete edge;
+        _edgeProps.clear();
+    }
+
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
+    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+        std::pair<OutEdgeIterator,OutEdgeIterator> edgeIterators = _workflow->getOutEdges(*iter);
+        for (auto &iter2 = edgeIterators.first; iter2 < edgeIterators.second; ++iter2) {
+            EdgePropObject *edgeProp = new EdgePropObject();
+            edgeProp->setProps(_workflow->edgeProperties(*iter2), *iter, _workflow->getTargetOperationNode(*iter2));
+            _edgeProps.append(std::move(edgeProp));
+        }
+    }
+    return  QQmlListProperty<EdgePropObject>(this, _edgeProps);
+}
 
 /**
  * Runs the createMetadata function on the workflow.
@@ -168,6 +207,37 @@ int WorkflowModel::vertex2ItemID(int vertex)
         }
     }
     return iUNDEF;
+}
+
+void WorkflowModel::store(const QStringList &coordinates)
+{
+    try {
+        for (int i = 0; i< coordinates.size(); i++) {
+            QStringList split = coordinates[i].split('|');
+            OVertex v = _operationNodes[i];
+            NodeProperties props = _workflow->nodeProperties(v);
+            props._x = split[0].toInt();
+            props._y = split[1].toInt();
+            _workflow->updateNodeProperties(v, props);
+        }
+
+        _workflow->name(_workflow->name());
+        _workflow->connectTo(QUrl("file:///C:/Users/vincent/Desktop/testdata/workflows/" + _workflow->name()), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
+        _workflow->createTime(Ilwis::Time::now());
+        _workflow->store();
+    } catch(const ErrorObject&){
+
+    }
+}
+
+void WorkflowModel::load()
+{
+    //_workflow->connectTo(QUrl("ilwis://internalcatalog/" + _workflow->name() + "_workflow"), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmINPUT);
+
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
+    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+        _operationNodes.push_back(*iter);
+    }
 }
 
 void WorkflowModel::createMetadata()

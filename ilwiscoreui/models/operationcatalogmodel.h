@@ -5,6 +5,7 @@
 #include "operationmodel.h"
 #include "operationsbykeymodel.h"
 #include "ilwiscoreui_global.h"
+#include "models/workflow/errormodel.h"
 
 class OperationModel;
 class OperationsByKeyModel;
@@ -51,6 +52,8 @@ private:
 
     QStringList keywords() const;
     QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
+
+    ErrorModel* em = ErrorModel::getInstance();
 
 public slots:
     void workSpaceChanged();

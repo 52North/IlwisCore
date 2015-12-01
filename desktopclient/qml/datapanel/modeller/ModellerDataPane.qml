@@ -17,12 +17,15 @@ Item {
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
-            if ( sourceType === "workflow")            {
+            if (sourceType === "workflow") {
                 scenario = scenarios.create()
-                var wf = scenario.addWorkflow(filter)
-                //TODO: mastercatalog id2resource
-                canvas.workflow = wf;
-                //canvas.drawFromWorkflow()
+
+                var resource = mastercatalog.id2Resource(filter.split('=')[1]);
+                canvas.workflow = scenario.addWorkflow(filter);
+                if (resource) {
+                    canvas.workflow.load()
+                    canvas.drawFromWorkflow()
+                }
             }
         }
     }
@@ -164,6 +167,7 @@ Item {
             }
 
 
+
             WorkFlow.WorkflowCanvas {
                 id: canvas
                 state : "visible"
@@ -186,6 +190,8 @@ Item {
                     onReleased:{mouse.accepted = false}
                 }
             }
+
+
             ModellerDefinitionView{ id : defview}
             ModellerTemplateBuilder{ id : templateBuilder}
             ModellerOperationalView{ id : operview}

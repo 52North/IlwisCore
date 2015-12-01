@@ -14,6 +14,7 @@
 #include "operationmetadata.h"
 #include "workflow.h"
 #include "nodepropobject.h"
+#include "edgepropobject.h"
 #include <QQmlListProperty>
 
 #include "rastercoverage.h"
@@ -32,7 +33,11 @@ class ILWISCOREUISHARED_EXPORT WorkflowModel: public OperationModel
      Q_OBJECT
 public:
     WorkflowModel();
+    ~WorkflowModel();
     explicit WorkflowModel(const Ilwis::Resource &source, QObject *parent=0);
+
+    Q_PROPERTY(QQmlListProperty<NodePropObject>  nodes READ getNodes CONSTANT)
+    Q_PROPERTY(QQmlListProperty<EdgePropObject>  edges READ getEdges CONSTANT)
 
     Q_INVOKABLE void asignConstantInputData(QString inputData, int operationIndex);
     Q_INVOKABLE void addOperation(const QString& id);
@@ -44,22 +49,26 @@ public:
 
     Q_INVOKABLE QString definedValueIndexes(int operationIndex);
 
-    Q_INVOKABLE QList<NodePropObject*> getNodes();
-//    Q_INVOKABLE QList<EdgeProperties> getEdgesByNode();
+    QQmlListProperty<NodePropObject> getNodes() ;
+    QQmlListProperty<EdgePropObject> getEdges();
     Q_INVOKABLE int vertex2ItemID(int vertex);
 
-    //Q_INVOKABLE int store(int vertex);
+    Q_INVOKABLE void store(const QStringList &coordinates);
+    Q_INVOKABLE void load();
 
     Q_INVOKABLE void createMetadata();
 
 private:
     Ilwis::IWorkflow _workflow;
     std::vector<Ilwis::OVertex> _operationNodes;
+    QList<NodePropObject *> _nodeProps;
+    QList<EdgePropObject *> _edgeProps;
 };
 
 
 typedef QQmlListProperty<WorkflowModel> QMLWorkflowList;
 
 Q_DECLARE_METATYPE(QMLWorkflowList)
+
 
 #endif // WORKFLOWMODEL_H

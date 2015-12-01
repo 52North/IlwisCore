@@ -60,7 +60,10 @@ ToolBar{
                 height : 25
                 width : 25
                 Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
+                    source : iconsource("refresh20.png")
                 }
                 onClicked: {
                     modellerDataPane.alterSelectedEdge()

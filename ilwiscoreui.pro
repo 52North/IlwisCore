@@ -85,7 +85,10 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/scenariobuildermodel.h \
     ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.h \
     ilwiscoreui/models/workflow/errormodel.h \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.h
+    ilwiscoreui/models/workflow/workflowcatalogmodel.h \
+    ilwiscoreui/models/workflowerrormodel.h \
+    ilwiscoreui/models/workflow/edgepropobject.h \
+    ilwiscoreui/models/workflow/nodepropobject.h
 
 unix {
     target.path = /usr/lib
@@ -156,7 +159,10 @@ SOURCES += \
     ilwiscoreui/models/workflow/scenariobuildermodel.cpp \
     ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.cpp \
     ilwiscoreui/models/workflow/errormodel.cpp \
-    ilwiscoreui/models/workflow/workflowcatalogmodel.cpp
+    ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
+    ilwiscoreui/models/workflowerrormodel.cpp \
+    ilwiscoreui/models/workflow/edgepropobject.cpp \
+    ilwiscoreui/models/workflow/nodepropobject.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
