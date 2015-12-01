@@ -113,7 +113,7 @@ bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, Symb
     if ( id != i64UNDEF) {
         QScopedPointer<OperationImplementation> oper(create( expr));
         if ( !oper.isNull() && oper->isValid()) {
-            return oper->execute(ctx, symTable);
+        return oper->execute(ctx, symTable);
         }
     }
     return false;
@@ -150,6 +150,7 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
 
     InternalDatabaseConnection db;
     InternalDatabaseConnection db2;
+    QUrl url = expr.metaUrl(false);
     QString query = QString("select * from mastercatalog where resource like '%1%' ").arg(expr.metaUrl().toString());
     if (db.exec(query)) {
         while ( db.next()){
@@ -161,51 +162,86 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                     QSqlRecord rec = db2.record();
                     values[rec.value("propertyname").toString()] = rec.value("propertyvalue").toString();
                 }
-                QString parmcount = values["inparameters"];
-                if ( !expr.matchesParameterCount(parmcount))
-                    continue;
                 bool found = true;
-                long index;
-                if ( (index = parmcount.indexOf('+')) != -1) {
-                    index = parmcount.left(index).toUInt();
-                } else
-                    index = 10000;
-                for(long i=0; i < expr.parameterCount(); ++i) {
-                    int n = min(i+1, index);
-                    QString key = QString("pin_%1_type").arg(n);
-                    IlwisTypes tpExpr = expr.parm(i).valuetype();
-                    auto iter = values.find(key);
-                    if ( iter == values.end()){
-                        found = false;
-                        break;
-                    }
-                    IlwisTypes tpMeta = (*iter).second.toULongLong();
-                    if ( tpMeta != itSTRING) { // string matches with all
-                        if ( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))
-                            continue;
-                        if ( hasType(tpMeta, itINTEGER) && hasType(tpExpr, itINTEGER))
-                            continue;
-                        if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
-                            if ( tpExpr == itSTRING){
-                                if (expr.parm(i).value() == ""){ // empty parameters are seen as strings and are acceptable. at operation level it should be decided what to do with it
-                                    continue;
-                                }else if ( expr.parm(i).pathType() == Parameter::ptREMOTE){
-                                    // we can't know what this parameter type realy is, so we accept it as valid
-                                    // if it is incorrect the prepare of the operation will fail so no harm done
-                                    continue;
+                if (expr.inputIsKeyword()) {
+                    const auto& keywordParameters = expr.getKeywordParameters();
+                    for(auto iter = keywordParameters.begin(); iter != keywordParameters.end(); ++iter) {
+                        Parameter parm = iter.value();
+                        bool paramExists = false;
+                        for(auto iter2 = values.begin(); iter2 != values.end(); ++iter2) {
+                            QString key = (*iter2).first;
+                            QString value = (*iter2).second;
+                            if (iter.key() == value && key.endsWith("parm_name")) {
+                                key = key.split("_")[1];
+                                if (parmIsValid(key.toInt(), parm, values)) {
+                                    // Delete this and the key
+                                    values.erase(iter2);
+                                    values.erase(QString("pin_%1_optional").arg(key));
+                                    paramExists = true;
                                 }
+                                break;
                             }
+                        }
+                        if (!paramExists) {
                             found = false;
                             break;
                         }
                     }
-
+                    if (found) { // Still correct?
+                        for(auto iter = values.begin(); iter != values.end(); ++iter) {
+                            if ((*iter).first.endsWith("optional") && (*iter).second == "false") {
+                                found = false;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    QString parmcount = values["inparameters"];
+                    if ( !expr.matchesParameterCount(parmcount))
+                        continue;
+                    long index = parmcount.indexOf('+') != -1 ? parmcount.left(index).toUInt() : 10000;
+                    for(long i=0; i < expr.parameterCount(); ++i) {
+                        int n = min(i+1, index);
+                        if (!parmIsValid(n, expr.parm(i), values)) {
+                            found = false;
+                            break;
+                        }
+                    }
                 }
-                if ( found)
+                if (found)
                     return itemid;
             }
         }
     }
     ERROR2(ERR_NO_INITIALIZED_2,"metadata",expr.name());
     return i64UNDEF;
+}
+
+bool CommandHandler::parmIsValid(int index, Parameter parm, std::map<QString, QString> values) const {
+    QString key = QString("pin_%1_type").arg(index);
+    IlwisTypes tpExpr = parm.valuetype();
+    auto iter = values.find(key);
+    if ( iter == values.end()){
+        return false;
+    }
+    IlwisTypes tpMeta = (*iter).second.toULongLong();
+    if ( tpMeta != itSTRING) { // string matches with all
+        if (!( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))) {
+            if (!( hasType(tpMeta, itINTEGER) && hasType(tpExpr, itINTEGER))) {
+                if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
+                    if ( tpExpr == itSTRING){
+                        if (parm.value() == ""){ // empty parameters are seen as strings and are acceptable. at operation level it should be decided what to do with it
+                            return true;
+                        }else if ( parm.pathType() == Parameter::ptREMOTE){
+                            // we can't know what this parameter type realy is, so we accept it as valid
+                            // if it is incorrect the prepare of the operation will fail so no harm done
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }

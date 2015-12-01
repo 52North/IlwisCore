@@ -13,6 +13,7 @@ namespace Ilwis {
 
 class OperationExpression;
 class OperationImplementation;
+class Parameter;
 class Resource;
 
 typedef std::function<OperationImplementation *(quint64 metaid, const OperationExpression&)> CreateOperation;
@@ -48,6 +49,7 @@ public:
     void addOperation(quint64 id, CreateOperation op);
     OperationImplementation *create(const Ilwis::OperationExpression &expr);
     quint64 findOperationId(const OperationExpression &expr) const;
+    bool parmIsValid(int index, Parameter parm, std::map<QString, QString> values) const;
 
 private:
     std::map<quint64, CreateOperation> _commands;

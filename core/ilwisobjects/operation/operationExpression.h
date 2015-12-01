@@ -2,6 +2,7 @@
 #define EXPRESSION_H
 
 #include <QList>
+#include <QMap>
 #include "kernel_global.h"
 
 namespace Ilwis {
@@ -91,6 +92,7 @@ public:
      *  An expression might have no return types and no parameters but it always must have a name
      * \return true if there is a name
      */
+    bool inputIsKeyword() const { return _inParametersMap.size() > 0; }
     bool isValid() const;
     bool isRemote() const;
     QUrl metaUrl(bool simple=true) const;
@@ -99,8 +101,10 @@ public:
     QString toString(bool rightsideonly=false) const;
     template<typename T> T input(quint32 ) { return T(); }
     template<typename T> T input(quint32, bool& ok ) { return T(); }
+    QMap<QString, Parameter> getKeywordParameters() const {return _inParametersMap; }
 private:
     QString _name;
+    QMap<QString, Parameter> _inParametersMap;
     QList<Parameter> _inParameters;
     QList<Parameter> _outParameters;
     OperationType _type;
