@@ -119,7 +119,7 @@ Rectangle {
             var fromIndex = getIndex(textid.currentText)
             var toIndex = getIndex(textid2.currentText)
             var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-            if (wfCanvas.currentItem.operation.isLegalFlow(operationFrom, operationTo, flowPoints)){
+            if (wfCanvas.currentItem.operation.isLegalFlow(operationFrom, operationTo)){
                 wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target,attachRect, flowPoints)
             }
             flowParameterForm.state = "invisible"

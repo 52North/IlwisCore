@@ -22,7 +22,7 @@ OperationImplementation::OperationImplementation(quint64 metaid, const Ilwis::Op
 
 const IOperationMetaData &OperationImplementation::metadata() const
 {
-    return _metadata;
+    return _metadata; //nop
 }
 
 UPTranquilizer &OperationImplementation::trq()

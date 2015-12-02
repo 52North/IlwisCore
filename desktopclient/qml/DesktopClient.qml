@@ -16,7 +16,7 @@ import "controls" as Controls
 ApplicationWindow {
     id : bigthing
     width: Screen.desktopAvailableWidth * 0.8
-    height : Screen.desktopAvailableHeight * 0.8
+    height : Screen.desktopAvailableHeight * 0.9
     color : "light grey"
 
     onClosing: {
@@ -24,7 +24,7 @@ ApplicationWindow {
     }
 
     property int maxPull : 500
-    property int defaultFunctionBarWidth : bigthing.width * 0.25
+    property int defaultFunctionBarWidth : Math.min(bigthing.width * 0.25,390)
     property int activeCatalog: 0
 
     function newCatalog(filter, outputtype, url, side){

@@ -33,7 +33,7 @@ WorkBenchShifter {
         anchors.top: functionBar.bottom
         width : parent.width
         anchors.bottom: parent.bottom
-        model : mastercatalog.selectedData
+        model : width > 0 ? mastercatalog.selectedData : null
         property int lastIndex : 0
         delegate : PropertyForm.DPropertyForm{}
     }

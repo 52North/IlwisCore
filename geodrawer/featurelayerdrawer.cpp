@@ -225,6 +225,10 @@ bool FeatureLayerDrawer::draw(const IOOptions& )
     //qDebug() << id();
     if(!_shaders.bind())
         return false;
+
+    if (_colors.size() == 0 || _vertices.size() == 0)
+        return false;
+
     QMatrix4x4 mvp = rootDrawer()->mvpMatrix();
     float oldwidth;
     glGetFloatv(GL_LINE_WIDTH,&oldwidth);

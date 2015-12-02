@@ -424,11 +424,11 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
                 continue;
 
             IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-            if ( ioModel->isValid()){
+            //if ( ioModel->isValid()){
                 _selectedObjects.append(ioModel);
                 emit selectionChanged();
-            }else
-                delete ioModel;
+           // }else
+            //    delete ioModel;
         }
         kernel()->issues()->silent(false);
     }catch(const ErrorObject& ){
@@ -777,7 +777,7 @@ void CatalogWorker::process(){
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){
-            //calculatelatLonEnvelopes();
+            calculatelatLonEnvelopes();
             emit finished();
         }
     } catch(const ErrorObject& err){

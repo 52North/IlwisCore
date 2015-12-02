@@ -66,20 +66,20 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
     parseInputNodeArguments(inputNodes, workflow);
 
     QList<OVertex> outputNodes = workflow->getNodesWithExternalOutputs();
-    for (OVertex outputNode : outputNodes) {
+    for (int i = 0; i<outputNodes.size(); ++i) {
         ExecutionContext ctx;
         SymbolTable symTable;
-        bool ok = reverseFollowExecutionPath(outputNode, &ctx, symTable);
-        if ( !ok) {
+        bool ok = reverseFollowExecutionPath(outputNodes[i], &ctx, symTable);
+        if (!ok) {
             ERROR0("workflow execution failed when executing!");
             return false;
         }
 
-        for (int i = 0 ; i < _expression.parameterCount(false) ; i++) {
-            Parameter parameter = _expression.parm(i, false);
-            Symbol symbol = symTable.getSymbol(ctx._results[i]);
-            copyToContext(symbol, parameter.value(), globalCtx, globalSymTable);
-        }
+        //for (int i = 0 ; i < _expression.parameterCount(false) ; i++) {
+        Parameter parameter = _expression.parm(i, false);
+        Symbol symbol = symTable.getSymbol(ctx._results[0]);
+        copyToContext(symbol, parameter.value(), globalCtx, globalSymTable);
+        //}
     }
     return true;
 }
@@ -134,9 +134,9 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                     arguments.insert(i, inputs.value(inputData));
                 } else {
                     QString argument;
-                    if (inputData->value.isValid()) {
+                    if (inputData->value.size() > 0) {
                         // constant input value
-                        argument = inputData->value.toString();
+                        argument = inputData->value;
                     } else {
                         argument = _expression.parm(inputParamIndex).value();
                         inputParamIndex++;
@@ -164,9 +164,9 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
                         arguments.insert(optionalIndex, namedOptional.arg(inputs.value(inputData)));
                     } else {
                         QString argument;
-                        if (inputData->value.isValid()) {
+                        if (inputData->value.size() > 0) {
                             // constant input value
-                            argument = inputData->value.toString();
+                            argument = inputData->value;
                         } else {
                             argument = _expression.parm(inputParamIndex).value();
                             inputParamIndex++;
@@ -225,14 +225,14 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
 
     for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
         SPAssignedInputData input = workflow->getAssignedInputData(assignment);
-        arguments.insert(assignment.second, input->value.toString());
+        arguments.insert(assignment.second, input->value);
     }
 
     ExecutionContext localCtx;
     SymbolTable localSymTable;
     //InEdgeIterator ei, ei_end;
     for (/*boost::tie(ei,ei_end) = workflow->getInEdges(v)*/; ei != ei_end; ++ei) {
-        OVertex previous = workflow->getPreviousOperationNode(*ei);
+        OVertex previous = workflow->getSourceOperationNode(*ei);
         ok = reverseFollowExecutionPath(previous, &localCtx, localSymTable);
         if ( !ok) {
             return false;
@@ -240,8 +240,8 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             std::vector<SPOperationParameter> outputs = meta->getOutputParameters();
             EdgeProperties edgeProperties = workflow->edgeProperties(*ei);
 
-            quint16 inIdx = edgeProperties._inputIndexNextOperation;
-            quint16 outIdx = edgeProperties._outputIndexLastOperation;
+            quint16 inIdx = edgeProperties._inputParameterIndex;
+            quint16 outIdx = edgeProperties._outputParameterIndex;
             QString resultName = localCtx._results[outIdx];
             Symbol tmpResult = localSymTable.getSymbol(resultName);
             //copyToContext(tmpResult, resultName, ctx, symTable);

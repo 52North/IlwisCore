@@ -201,6 +201,8 @@ SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parame
     return parameter;
 }
 
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 OperationParameter::OperationParameter(const OperationParameter &operationParameter):
     Identity(name()),
     _term(operationParameter._term),
@@ -270,6 +272,7 @@ OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, c
 }
 
 //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) :  Resource(inurl,itSINGLEOPERATION)
 {
     prepare();
@@ -294,6 +297,42 @@ void OperationResource::setLongName(const QString &longname)
 void OperationResource::setSyntax(const QString &syntax)
 {
     addProperty("syntax",syntax);
+    setInParameterNameFromSyntax(syntax);
+}
+
+void OperationResource::setInParameterNameFromSyntax(const QString &syntax)
+{
+    QString e = syntax;
+    int index = e.indexOf('(');
+    int len = e.size() - index - 2;
+    int prev = 0;
+    int i = 1;
+    int paramIndex = 1;
+    int trimEnd = 1;
+    QString rest = e.mid(index + 1 , len);
+    foreach(const QChar& cu, rest) {
+        char c = cu.toLatin1();
+        if (c== '[')
+            trimEnd++;
+
+        if (c == ',') {
+            QString value = rest.mid(prev, i - prev - trimEnd);
+            value = value.trimmed();
+            int index2 = value.indexOf('=');
+            if (index2 >= 0)
+                value = value.left(index2); // If it has an if, take everything from the left.
+            addProperty("pin_" + QString::number(paramIndex) + "_parm_name",value);
+            ++paramIndex;
+            prev = i;
+        }
+        ++i;
+    }
+    QString value = rest.mid(prev, i - prev - trimEnd);
+    value = value.trimmed();
+    int index2 = value.indexOf('=');
+    if (index2 >= 0)
+        value = value.left(index2);
+    addProperty("pin_" + QString::number(paramIndex) + "_parm_name",value);
 }
 
 void OperationResource::setInParameterCount(const std::vector<quint32> &counts)

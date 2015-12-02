@@ -171,6 +171,8 @@ Projection::ProjectionParamValue Projection::parameterName2type(const QString& n
         return pvHEIGHT;
     if (name.indexOf("azimuth y axis") == 0)
         return pvAZIMYAXIS;
+    if ( name.indexOf("north oriented") == 0)
+        return pvNORTH;
 
 
 

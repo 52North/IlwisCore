@@ -33,6 +33,8 @@
 #include "models/projectionparametermodel.h"
 #include "models/workflow/workflowmodel.h"
 #include "models/workflow/scenariobuildermodel.h"
+#include "models/workflow/errormodel.h"
+#include "models/workflowerrormodel.h"
 #include "models/visualattributemodel.h"
 #include "models/tablemodel.h"
 #include "models/layerinfoitem.h"
@@ -45,6 +47,8 @@
 #include "models/datapanemodel.h"
 #include "models/objectcreator.h"
 #include "models/ilwisobjectcreatormodel.h"
+#include "models/workflow/edgepropobject.h"
+#include "models/workflow/nodepropobject.h"
 #include "models/workflow/scenariodesignermodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/propertyeditors/itemrepresentationsetter.h"
@@ -116,7 +120,10 @@ int main(int argc, char *argv[])
         qmlRegisterType<ObjectCreator>("ObjectCreator", 1,0,"ObjectCreator");
         qmlRegisterType<IlwisObjectCreatorModel>("IlwisObjectCreatorModel", 1,0,"IlwisObjectCreatorModel");
         qmlRegisterType<ScenarioDesignerModel>("ScenarioDesignerModel", 1,0,"ScenarioDesignerModel");
-
+        qmlRegisterType<WorkflowErrorModel>("WorkflowErrorModel", 1,0,"WorkflowErrorModel");
+        qmlRegisterType<ErrorModel>("ErrorModel", 1,0,"ErrorModel");
+        qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");
+        qmlRegisterType<EdgePropObject>("EdgePropObject", 1,0,"EdgePropObject");
 
         MasterCatalogModel mastercatalogmodel(ctx);
 

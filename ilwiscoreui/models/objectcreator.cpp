@@ -15,6 +15,7 @@
 #include "mastercatalogmodel.h"
 #include "operationcatalogmodel.h"
 #include "objectcreator.h"
+#include "operationmetadata.h"
 
 using namespace Ilwis;
 
@@ -267,8 +268,9 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
 QString ObjectCreator::createWorkflow(const QVariantMap &parms)
 {
     QString name = parms["name"].toString();
-    Resource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
+    OperationResource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
     res.setDescription(parms["description"].toString());
+    res.setKeywords(parms["keywords"].toString());
     res.prepare();
     mastercatalog()->addItems({res});
     QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
@@ -293,8 +295,7 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createWorkflow(parms);
     } else     if ( type == "numericdomain"){
         return createNumericDomain(parms);
-    }
-    else if ( type == "itemdomain"){
+    } else if ( type == "itemdomain"){
             return createItemDomain(parms);
     } else if ( type == "georef"){
         return createGeoreference(parms);
