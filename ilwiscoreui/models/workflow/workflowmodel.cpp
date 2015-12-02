@@ -8,6 +8,7 @@
 #include "commandhandler.h"
 #include "featurecoverage.h"
 #include "workflowerrormodel.h"
+#include "ilwiscontext.h"
 #include "../../IlwisCore/core/ilwiscontext.h"
 
 using namespace Ilwis;
@@ -222,7 +223,8 @@ void WorkflowModel::store(const QStringList &coordinates)
         }
 
         _workflow->name(_workflow->name());
-        _workflow->connectTo(QUrl("file:///C:/Users/vincent/Desktop/testdata/workflows/" + _workflow->name()), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
+        QString workingcatalog = context()->workingCatalog()->source().url().toString();
+        _workflow->connectTo(QUrl(workingcatalog +"/"+ _workflow->name() + ".ilwis"), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
         _workflow->createTime(Ilwis::Time::now());
         _workflow->store();
     } catch(const ErrorObject&){
