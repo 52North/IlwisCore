@@ -111,7 +111,8 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         }
         checkUrl(tp);
     }
-    if ( _container.toString() == "ilwis://internalcatalog"){
+    if ( _container.toString() == "ilwis://internalcatalog" ||
+         (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
         QString path = context()->persistentInternalCatalog().toString();
         _rawContainer = QUrl(path);
         _rawUrl = QUrl(path + "/" + name());
