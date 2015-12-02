@@ -75,11 +75,7 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
             throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
         }
     }
-
-
-
-    Resource resource;
-    resource = mastercatalog()->id2Resource(id());
+    Resource resource = source();
     if ( !resource.isValid()) {
         resource = Resource(url,ilwisType(), false);
         resource.setId(id());
@@ -89,7 +85,8 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
         // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
         if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
             resource.setUrl(url);
-        resource.setUrl(url,true);
+        if ( url.scheme() != "ilwis") // raw urls can never go to an ilwis scheme
+            resource.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
