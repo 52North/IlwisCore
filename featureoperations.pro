@@ -20,14 +20,16 @@ HEADERS += \
     featureoperations/gridding.h \
     featureoperations/rastertopoint.h \
     featureoperations/pointrastercrossing.h \
-    featureoperations/transformcoordinates.h
+    featureoperations/transformcoordinates.h \
+    featureoperations/buffer.h
 
 SOURCES += \
     featureoperations/featureoperationsmodule.cpp \
     featureoperations/gridding.cpp \
     featureoperations/rastertopoint.cpp \
     featureoperations/pointrastercrossing.cpp \
-    featureoperations/transformcoordinates.cpp
+    featureoperations/transformcoordinates.cpp \
+    featureoperations/buffer.cpp
 
 OTHER_FILES += \ 
     featureoperations/featureoperations.json
