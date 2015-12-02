@@ -2,14 +2,14 @@
 #define EDGEPROPOBJECT_H
 
 #include <QObject>
-#include "kernel_global.h"
+#include "ilwiscoreui_global.h"
 
 namespace Ilwis {
 struct EdgeProperties;
 }
 
 
-class EdgePropObject : public QObject
+class ILWISCOREUISHARED_EXPORT EdgePropObject : public QObject
 {
     Q_OBJECT
 

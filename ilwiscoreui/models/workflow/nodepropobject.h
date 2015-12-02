@@ -2,14 +2,14 @@
 #define NODEPROPOBJECT_H
 
 #include <QObject>
-#include "kernel_global.h"
+#include "ilwiscoreui_global.h"
 
 namespace Ilwis {
 struct NodeProperties;
 }
 
 
-class NodePropObject : public QObject
+class ILWISCOREUISHARED_EXPORT NodePropObject : public QObject
 {
     Q_OBJECT
 
