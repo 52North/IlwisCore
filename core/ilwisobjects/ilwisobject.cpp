@@ -417,7 +417,9 @@ void IlwisObject::copyTo(IlwisObject *obj)
 bool IlwisObject::isSystemObject() const {
     InternalDatabaseConnection db;
     QString query = QString("Select linkedtable from codes where code = '%1'").arg(code());
-    return db.exec(query) &&  db.next();
+    bool ok = db.next();
+    ok &= db.exec(query);
+    return ok;
 }
 
 bool IlwisObject::isInternalObject() const
@@ -425,7 +427,7 @@ bool IlwisObject::isInternalObject() const
     if ( isAnonymous())
         return true;
     if (source().isValid()){
-        return source().url().scheme() == "ilwis";
+            return source().url().scheme() == "ilwis";
     }
     return false;
 }

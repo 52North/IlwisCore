@@ -313,7 +313,7 @@ public:
      */
     virtual bool merge(const IlwisObject* obj, int options=0);
     bool isSystemObject() const;
-    bool isInternalObject() const;
+    virtual bool isInternalObject() const;
     bool isRemote() const;
     void remove();
     virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
