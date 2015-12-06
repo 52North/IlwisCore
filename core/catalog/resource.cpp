@@ -580,7 +580,15 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
         if (  isRoot(rest) && rest.endsWith("/") == false) // add the potential missing slash due to the 'left' of above (only windows?)
             rest += "/";
 
-        addContainer(rest);
+        if ( hasType(tp, itOPERATIONMETADATA) && tp !=itANY){
+            if ( _rawUrl.scheme() == "file") {
+                QString currentName = name();
+                QString shortName = currentName.split(".")[0];
+                name(shortName);
+                setUrl( "ilwis://operations/" + shortName + "=" + QString::number(id()), false);
+            }
+        }else
+            addContainer(rest);
     }
 }
 
