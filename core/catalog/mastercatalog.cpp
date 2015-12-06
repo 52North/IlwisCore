@@ -511,9 +511,10 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
 
     // fourth case -- try name
     auto query = QString("select resource,type from mastercatalog where name = '%1' or code='%1'").arg(code);
-    auto results = kernel()->database().exec(query);
-    while ( results.next()) {
-        auto rec = results.record();
+    InternalDatabaseConnection db(query);
+    db.exec();
+    while ( db.next()) {
+        auto rec = db.record();
         auto type = rec.value(1).toLongLong();
         if ( type & tp)
             return rec.value(0).toString();
@@ -547,7 +548,7 @@ std::vector<Resource> MasterCatalog::select(const QString &selection) const
     if ( selection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where  %2").arg(selection);
     else
-        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid %2").arg(selection);
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid and %2").arg(selection);
 
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
@@ -569,7 +570,7 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query;
     if ( selection.indexOf("operations") != -1)
-        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) nd catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
+        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
     if ( selection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     else
