@@ -49,12 +49,14 @@ void WorkflowModel::addOperation(const QString &id)
 {
     bool ok;
     quint64 opid = id.toULongLong(&ok);
-    if (!ok){
-        kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
-        return ;
+    Resource res=mastercatalog()->id2Resource(opid);
+    if ( ok && res.isValid()){
+        auto vertex = _workflow->addOperation({res});
+        _operationNodes.push_back(vertex);
+    }else {
+       kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
     }
-    auto vertex = _workflow->addOperation({opid, _workflow->source()});
-    _operationNodes.push_back(vertex);
+
 
 }
 
@@ -236,9 +238,13 @@ void WorkflowModel::load()
 {
     //_workflow->connectTo(QUrl("ilwis://internalcatalog/" + _workflow->name() + "_workflow"), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmINPUT);
 
-    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
-    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
-        _operationNodes.push_back(*iter);
+    try{
+        std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
+        for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+            _operationNodes.push_back(*iter);
+        }
+    } catch (const ErrorObject& err){
+
     }
 }
 
