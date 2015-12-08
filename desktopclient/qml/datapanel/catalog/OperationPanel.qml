@@ -17,6 +17,26 @@ Item {
     height : parent.height
     property TabModel tabmodel
 
+    function showObject(objectid){
+        var type = mastercatalog.id2type(objectid)
+        var newPanel = null
+        if ( !type)
+            return
+        var resource = mastercatalog.id2Resource(objectid)
+        if ( resource){
+            if ( resource.typeName === "workflow"){
+                var filter = "itemid=" + resource.id
+                newPanel = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                if ( resource && newPanel){
+                    resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
+                }
+            }else {
+                mastercatalog.setSelectedObjects(objectid)
+                bigthing.getWorkbenchPane("objectproperties","visible");
+            }
+        }
+    }
+
     signal catalogChanged()
 
     function setResources(){

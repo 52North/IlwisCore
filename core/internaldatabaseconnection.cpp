@@ -18,7 +18,11 @@ InternalDatabaseConnection::InternalDatabaseConnection(const QString &query)
     Locker<std::recursive_mutex> lock(_guard);
     _connection = QSqlQuery(kernel()->database());
     _locknumber++;
-    exec(query);
+
+    if(!exec(query)){
+         kernel()->issues()->logSql(lastError());
+
+    }
 }
 
 InternalDatabaseConnection::~InternalDatabaseConnection()

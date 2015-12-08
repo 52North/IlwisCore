@@ -562,3 +562,11 @@ void Workflow::debugOperationParameter(const SPOperationParameter parameter) con
 {
     qDebug() << "\tterm: " << parameter->term() << ", " << "(name: " << parameter->name() << ", optional: " << parameter->isOptional() << ")";
 }
+
+bool Workflow::isInternalObject() const
+{
+    if ( isAnonymous())
+        return true;
+    //named workflows are never internal as there is a localized file backing it up;
+    return false;
+}

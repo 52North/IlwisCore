@@ -8,6 +8,7 @@
 #include "commandhandler.h"
 #include "featurecoverage.h"
 #include "workflowerrormodel.h"
+#include "ilwiscontext.h"
 #include "../../IlwisCore/core/ilwiscontext.h"
 
 using namespace Ilwis;
@@ -48,12 +49,14 @@ void WorkflowModel::addOperation(const QString &id)
 {
     bool ok;
     quint64 opid = id.toULongLong(&ok);
-    if (!ok){
-        kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
-        return ;
+    Resource res=mastercatalog()->id2Resource(opid);
+    if ( ok && res.isValid()){
+        auto vertex = _workflow->addOperation({res});
+        _operationNodes.push_back(vertex);
+    }else {
+       kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
     }
-    auto vertex = _workflow->addOperation({opid, _workflow->source()});
-    _operationNodes.push_back(vertex);
+
 
 }
 
@@ -222,7 +225,8 @@ void WorkflowModel::store(const QStringList &coordinates)
         }
 
         _workflow->name(_workflow->name());
-        _workflow->connectTo(QUrl("file:///C:/Users/vincent/Desktop/testdata/workflows/" + _workflow->name()), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
+        QString workingcatalog = context()->workingCatalog()->source().url().toString();
+        _workflow->connectTo(QUrl(workingcatalog +"/"+ _workflow->name() + ".ilwis"), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
         _workflow->createTime(Ilwis::Time::now());
         _workflow->store();
     } catch(const ErrorObject&){
@@ -234,9 +238,13 @@ void WorkflowModel::load()
 {
     //_workflow->connectTo(QUrl("ilwis://internalcatalog/" + _workflow->name() + "_workflow"), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmINPUT);
 
-    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
-    for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
-        _operationNodes.push_back(*iter);
+    try{
+        std::pair<WorkflowVertexIterator, WorkflowVertexIterator> nodeIterators = _workflow->getNodeIterators();
+        for (auto &iter = nodeIterators.first; iter < nodeIterators.second; ++iter) {
+            _operationNodes.push_back(*iter);
+        }
+    } catch (const ErrorObject& err){
+
     }
 }
 

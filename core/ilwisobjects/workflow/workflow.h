@@ -32,20 +32,23 @@ typedef std::shared_ptr<AssignedOutputData> SPAssignedOutputData;
 
 struct NodeProperties {
     NodeProperties(){}
-    NodeProperties(quint64 opid, Resource resource) : _operationid(opid){
-        _resourceUrl = resource.url();
-        _resourceProvider = resource["namespace"].toString();
+    NodeProperties(const Resource& res) : _operationid(res.id()){
+        _syntax = res["syntax"].toString();
+        _resourceProvider = res["namespace"].toString();
     }
-    NodeProperties(QUrl url, QString provider, quint16 x, quint16 y) {
-        _resourceUrl = url;
+    NodeProperties(const QString& syntax, QString provider, quint16 x, quint16 y) {
+        _syntax = syntax;
         _resourceProvider = provider;
         _x = x;
         _y = y;
-        _operationid = mastercatalog()->url2id(url, itOPERATIONMETADATA);
+        std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
+        if ( items.size() == 1){
+            _operationid = items[0].id();
+        }
         qDebug() << _operationid;
     }
     quint64 _operationid = i64UNDEF;
-    QUrl _resourceUrl;
+    QString _syntax;
     QString _resourceProvider;
     quint16 _x;
     quint16 _y;
@@ -147,6 +150,8 @@ public:
     void debugPrintEdges();
     void debugWorkflowMetadata() const;
     void debugOperationParameter(const SPOperationParameter parameter) const;
+
+    virtual bool isInternalObject() const;
 
 private:
     WorkflowGraph _wfGraph;
