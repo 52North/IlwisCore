@@ -92,6 +92,8 @@ OperationImplementation::State Buffer::prepare(ExecutionContext *, const SymbolT
 {
     QString inputFeatureCoverage = _expression.parm(0).value();
     QString inputBufferDistance = _expression.parm(1).value();
+    QString inputQuadSegments = _expression.parm(2).value();
+    QString inputEndCapStyle = _expression.parm(3).value();
 
     // retrieve from output params
     QString outputName = _expression.parm(0,false).value();
@@ -106,6 +108,26 @@ OperationImplementation::State Buffer::prepare(ExecutionContext *, const SymbolT
     _distance = inputBufferDistance.toDouble(&ok);
     if ( !ok ) {
         ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","2");
+        return sPREPAREFAILED;
+    }
+
+    _nQuadrantSegments = inputQuadSegments.toInt(&ok);
+    if ( !ok ) {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","3");
+        return sPREPAREFAILED;
+    }
+
+    _endCapStyle = GeosBuffer::BufferParameters::CAP_ROUND;
+
+    _nQuadrantSegments = inputQuadSegments.toInt(&ok);
+    if (inputEndCapStyle == "round")
+        _endCapStyle = GeosBuffer::BufferParameters::CAP_ROUND;
+    else if(inputEndCapStyle == "butt")
+        _endCapStyle = GeosBuffer::BufferParameters::CAP_FLAT;
+    else if(inputEndCapStyle == "square")
+        _endCapStyle = GeosBuffer::BufferParameters::CAP_SQUARE;
+    else {
+        ERROR2(ERR_ILLEGAL_VALUE_2,"parameter value","4");
         return sPREPAREFAILED;
     }
 
@@ -128,11 +150,13 @@ OperationImplementation::State Buffer::prepare(ExecutionContext *, const SymbolT
 quint64 Buffer::createMetadata()
 {
     OperationResource operation({"ilwis://operations/buffer"});
-    operation.setSyntax("buffer(coverage,distance)");
+    operation.setSyntax("buffer(coverage,distance, nQuadrantSegments, endCapStyle=!round|butt|square)");
     operation.setDescription(TR("returns a buffer around the given geometry, with a radius upto the given distance"));
-    operation.setInParameterCount({2});
+    operation.setInParameterCount({4});
     operation.addInParameter(0, itFEATURE,TR("input coverage"), TR("input coverage based on which the return buffer"));
     operation.addInParameter(1, itDOUBLE, TR("buffer distance"), TR("buffer distance around the polygon"));
+    operation.addInParameter(2, itINT32, TR("quadrant segments"), TR("number of segments used to approximate a quarter circle"));
+    operation.addInParameter(3, itSTRING, TR("end cap style"), TR("buffer end cap style"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE, TR("output buffer coverage"),TR("coverage containing the buffer around the input coverage"));
     operation.setKeywords("features, operation, buffer");
