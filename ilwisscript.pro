@@ -63,9 +63,9 @@ HEADERS +=\
     ilwisscript/ilwisscriptmodule.h \
     ilwisscript/calculator_global.h \
     ilwisscript/script.h \
-    ilwisscript/parserlexer/IlwisScriptParser.h \
+    ilwisscript/parserlexer/ilwisscriptParser.h \
     ilwisscript/parserlexer/IlwisScriptLexer.h \
-    ilwisscript/parserlexer/IlwisScript.g \
+    ilwisscript/parserlexer/ilwisscript.g \
     ilwisscript/ast/astnode.h \
     ilwisscript/ast/scriptlinenode.h \
     ilwisscript/ast/idnode.h \
@@ -120,4 +120,10 @@ DEPENDPATH += $$ANTLRLIB//local/include
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
+linux{
+    dependencies.files = $$LINUXLIB/libantlr3c.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
 
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

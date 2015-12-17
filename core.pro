@@ -295,6 +295,7 @@ OTHER_FILES += \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
+    core/resources/representations.csv \
     core/resources/featurefragmentshader_nvdia.glsl \
     core/resources/featurevertexshader_nvdia.glsl \
     core/resources/rasterfragmentshader_nvdia.glsl \
@@ -357,14 +358,17 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
+    core/resources/representations.csv \
     core/resources/ilwis.config
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
     resources.path = $$DLLDESTDIR/resources
 }
-unix {
-    resources.path = $$DESTDIR/resources
+linux{
+    resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+    INSTALLS += target
 }
 
 license.files =  LICENSE-2.0.txt

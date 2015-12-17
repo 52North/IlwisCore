@@ -27,3 +27,8 @@ win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }
 
+
+linux{
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/
+    INSTALLS += target
+}

@@ -10,7 +10,7 @@
 #include "drawers/rasterimagefactory.h"
 #include "drawers/attributevisualproperties.h"
 
-#include "rasteritemImage.h"
+#include "rasteritemimage.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;

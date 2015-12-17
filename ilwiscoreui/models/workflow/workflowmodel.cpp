@@ -7,7 +7,7 @@
 #include "symboltable.h"
 #include "commandhandler.h"
 #include "featurecoverage.h"
-#include "workflowerrormodel.h"
+#include "../workflowerrormodel.h"
 #include "ilwiscontext.h"
 #include "../../IlwisCore/core/ilwiscontext.h"
 

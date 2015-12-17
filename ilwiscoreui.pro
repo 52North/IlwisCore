@@ -90,11 +90,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/edgepropobject.h \
     ilwiscoreui/models/workflow/nodepropobject.h
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
-
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
     ilwiscoreui/models/catalogfiltermodel.cpp \
@@ -169,3 +164,10 @@ DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }
+
+
+linux {
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+    INSTALLS += target
+}
+

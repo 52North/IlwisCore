@@ -181,9 +181,14 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/ilwiscoreui/models \
                 $$ILWISCORE \
                 $$BOOST
+win32{
+    DESTDIR = $$PWD/../libraries/win32debug/extensions/ui/LayersView
+    DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/LayersView
+}
 
-DESTDIR = $$PWD/../libraries/win32debug/extensions/ui/LayersView
-DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/LayersView
+linux{
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
+}
 
 !equals(_PRO_FILE_PWD_, $$DLLDESTDIR) {
     copy_qmldir.target = $$DLLDESTDIR/qmldir
@@ -194,10 +199,20 @@ DLLDESTDIR = $$PWD/../output/win32debug/bin/extensions/ui/LayersView
 }
 
 qmldir.files = geodrawer/qmldir
-unix {
-    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
-    qmldir.path = $$installPath
-    target.path = $$installPath
-    INSTALLS += target qmldir
-}
+#unix {
+#    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
+#    qmldir.path = $$installPath
+#    target.path = $$installPath
+#    INSTALLS += target qmldir
+#}
 
+linux{
+    DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/ui/$$TARGET
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
+    qmldir.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
+
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
+
+    INSTALLS += qmldir target dependencies
+}

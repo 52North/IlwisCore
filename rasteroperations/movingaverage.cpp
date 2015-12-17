@@ -42,7 +42,7 @@ static int iFind(const std::string& s, const char* sArr[])
 {
       int i = 0;
       while (sArr[i]) {
-        if (_strnicmp(sArr[i], s.c_str(), s.length()) == 0)
+        if (strncasecmp(sArr[i], s.c_str(), s.length()) == 0)
           return i;
         i++;
       }

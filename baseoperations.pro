@@ -55,8 +55,7 @@ HEADERS += \
     baseoperations/creators/createpalettedomain.h \
     baseoperations/creators/createcornersgeoreference.h \
     baseoperations/creators/createprojectedcoordinatesystem.h \
-    baseoperations/util/testoperation.h \
-    baseoperations/conditions/numbercondition.h
+    baseoperations/util/testoperation.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -98,8 +97,7 @@ SOURCES += \
     baseoperations/creators/createpalettedomain.cpp \
     baseoperations/creators/createcornersgeoreference.cpp \
     baseoperations/creators/createprojectedcoordinatesystem.cpp \
-    baseoperations/util/testoperation.cpp \
-    baseoperations/conditions/numbercondition.cpp
+    baseoperations/util/testoperation.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
@@ -114,4 +112,8 @@ DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
 DISTFILES +=
 
+linux{
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target
+}
 

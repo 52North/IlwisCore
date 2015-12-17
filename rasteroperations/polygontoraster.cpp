@@ -10,7 +10,7 @@
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
-#include "geos/geom/Envelope.inl"
+#include "geos/geos/geom/Envelope.inl"
 #include "bresenham.h"
 #include "vertexiterator.h"
 #include "polygontoraster.h"

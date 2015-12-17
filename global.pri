@@ -23,7 +23,7 @@ win32{
     INCLUDEPATH += $$PWD/../external/geos
     DEPENDPATH += $$PWD/../external/geos
 }
-unix{
+linux{
     BOOST=/usr/include
     GEOSINCL=/usr/include
     GEOSLIB=/usr/lib
@@ -33,6 +33,15 @@ unix{
     DEPENDPATH += $$GEOSINCL
     LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
 }
+
+linux-g++{
+   !contains(QT_ARCH, x86_64){
+       LINUXLIB=/usr/lib/i386-linux-gnu/
+    } else {
+       LINUXLIB=/usr/lib/x86_64-linux-gnu/
+   }
+}
+
 EXTERNAL=../external
 
 QT += sql network concurrent
