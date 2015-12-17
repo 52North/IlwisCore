@@ -359,6 +359,10 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
     core/resources/representations.csv \
+    core/resources/featurefragmentshader_nvdia.glsl \
+    core/resources/featurevertexshader_nvdia.glsl \
+    core/resources/rasterfragmentshader_nvdia.glsl \
+    core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config
 
 win32{
