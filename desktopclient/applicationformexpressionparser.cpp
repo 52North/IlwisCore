@@ -167,9 +167,21 @@ QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itTABLE) + "\"";
     }
-    if ( hasType(type, itFEATURE)){
+    if ( type == itPOINT){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ TypeHelper::type2name(itFEATURE) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itPOINT) + "\"";
+    }
+    if ( type == itLINE){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itLINE) + "\"";
+    }
+    if ( type == itPOLYGON){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itPOLYGON) + "\"";
+    }
+    if ( type == itFEATURE){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itFEATURE) + "\"," + "\""+ TypeHelper::type2name(itPOINT) + "\"," + "\""+ TypeHelper::type2name(itLINE) + "\"," + "\""+ TypeHelper::type2name(itPOLYGON) + "\"";
     }
     if ( hasType(type, itDOMAIN)){
         if ( keypart != "") keypart += ",";
