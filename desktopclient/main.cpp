@@ -50,6 +50,7 @@
 #include "models/workflow/edgepropobject.h"
 #include "models/workflow/nodepropobject.h"
 #include "models/workflow/scenariodesignermodel.h"
+#include "models/preferencesmodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/propertyeditors/itemrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
@@ -124,6 +125,7 @@ int main(int argc, char *argv[])
         qmlRegisterType<ErrorModel>("ErrorModel", 1,0,"ErrorModel");
         qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");
         qmlRegisterType<EdgePropObject>("EdgePropObject", 1,0,"EdgePropObject");
+        qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
 
         MasterCatalogModel mastercatalogmodel(ctx);
 
@@ -135,6 +137,7 @@ int main(int argc, char *argv[])
         ScenarioBuilderModel scenarios;
         DataPaneModel datapane;
         ObjectCreator objcreator;
+        PreferencesModel preferences;
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
@@ -151,6 +154,7 @@ int main(int argc, char *argv[])
         ctx->setContextProperty("scenarios", &scenarios);
         ctx->setContextProperty("datapane", &datapane);
         ctx->setContextProperty("objectcreator", &objcreator);
+        ctx->setContextProperty("preferences",&preferences);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 
