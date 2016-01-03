@@ -8,14 +8,14 @@ quint64 InternalDatabaseConnection::_locknumber;
 
 InternalDatabaseConnection::InternalDatabaseConnection()
 {
-    Locker<std::recursive_mutex> lock(_guard);
+    _guard.lock();
     _connection = QSqlQuery(kernel()->database());
     _locknumber++;
 }
 
 InternalDatabaseConnection::InternalDatabaseConnection(const QString &query)
 {
-    Locker<std::recursive_mutex> lock(_guard);
+    _guard.lock();
     _connection = QSqlQuery(kernel()->database());
     _locknumber++;
 
@@ -27,60 +27,53 @@ InternalDatabaseConnection::InternalDatabaseConnection(const QString &query)
 
 InternalDatabaseConnection::~InternalDatabaseConnection()
 {
-   Locker<std::recursive_mutex> lock(_guard);
+    _connection.clear();
+    _connection.finish();
+    _guard.unlock();
 }
 
 bool InternalDatabaseConnection::exec(const QString &query)
 {
-    Locker<std::recursive_mutex> lock(_guard);
-    return _connection.exec(query);
+     return _connection.exec(query);
 }
 
 bool InternalDatabaseConnection::next()
 {
-       Locker<std::recursive_mutex> lock(_guard);
-    return _connection.next();
+     return _connection.next();
 }
 
 QSqlError InternalDatabaseConnection::lastError() const
 {
-       Locker<std::recursive_mutex> lock(_guard);
     return _connection.lastError();
 }
 
 QVariant InternalDatabaseConnection::value(int i) const
 {
-       Locker<std::recursive_mutex> lock(_guard);
-    return _connection.value(i);
+     return _connection.value(i);
 }
 
 QVariant InternalDatabaseConnection::value(const QString &name) const
 {
-       Locker<std::recursive_mutex> lock(_guard);
     return _connection.value(name);
 }
 
 QSqlRecord InternalDatabaseConnection::record() const
 {
-    Locker<std::recursive_mutex> lock(_guard);
     return _connection.record();
 }
 
 bool InternalDatabaseConnection::exec()
 {
-   Locker<std::recursive_mutex> lock(_guard);
-    return _connection.exec();
+     return _connection.exec();
 }
 
 bool InternalDatabaseConnection::prepare(const QString &query)
 {
-       Locker<std::recursive_mutex> lock(_guard);
     return _connection.prepare(query);
 }
 
 void InternalDatabaseConnection::bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type)
 {
-       Locker<std::recursive_mutex> lock(_guard);
     return _connection.bindValue(placeholder, val, type);
 }
 
