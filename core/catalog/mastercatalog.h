@@ -190,6 +190,7 @@ public:
     bool usesContainers(const QUrl &scheme) const;
     void addContainerException(const QString& scheme);
 
+
 #ifdef QT_DEBUG
     quint32 lookupSize() const { return _lookup.size(); }
     void dumpLookup() const;
