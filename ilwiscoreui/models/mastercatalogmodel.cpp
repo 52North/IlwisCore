@@ -410,6 +410,10 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
 {
     try {
         if ( objects == ""){
+            for(IlwisObjectModel *model : _selectedObjects){
+                model->setParent(0);
+                delete model;
+            }
             _selectedObjects.clear();
             emit selectionChanged();
             return;
@@ -424,11 +428,8 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
                 continue;
 
             IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-            //if ( ioModel->isValid()){
-                _selectedObjects.append(ioModel);
-                emit selectionChanged();
-           // }else
-            //    delete ioModel;
+            _selectedObjects.append(ioModel);
+            emit selectionChanged();
         }
         kernel()->issues()->silent(false);
     }catch(const ErrorObject& ){
@@ -791,7 +792,7 @@ void CatalogWorker::process(){
 
 void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
     try{
-        if ( !resource.hasProperty("latlonenvelope")){
+        if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
             ICoverage cov(resource);
             if ( cov.isValid()){
                 if ( cov->coordinateSystem()->isLatLon()){
@@ -823,10 +824,12 @@ void CatalogWorker::calculatelatLonEnvelopes(){
     trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
     ICoordinateSystem csyWgs84("code=epsg:4326");
     std::vector<Resource> updatedResources;
+    int count = 0;
     for(Resource& resource : resources){
         calcLatLon(csyWgs84, resource, updatedResources);
         if(!trq->update(1))
             return;
+        ++count;
 
     }
     kernel()->issues()->silent(false);
