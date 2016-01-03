@@ -49,9 +49,14 @@ public:
      */
     quint64 id() const;
     /*!
+     * \brief newId generates a new id for the identity. usefull after a copy constructor which should copy, not clone
+     */
+    void newId();
+    /*!
      * \brief name returns the name of an object. All objects have names though names need not to be unique
      * \return
      */
+
     virtual QString name() const;
     /*!
      * \brief setName sets the name of an object. All objects have names though names need not to be unique
@@ -63,7 +68,8 @@ public:
     bool store(QDataStream& stream) const;
     bool load(QDataStream &stream);
 
-    static QString newAnonymousName() ; 
+    static QString newAnonymousName() ;
+    static void setBaseId(quint64 base);
 
 
 protected:

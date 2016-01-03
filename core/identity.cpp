@@ -24,6 +24,11 @@ quint64 Identity::id() const
     return _id;
 }
 
+void Identity::newId()
+{
+    _id = Identity::_baseId++;
+}
+
 QString Identity::name() const
 {
     return _name;
@@ -69,6 +74,11 @@ QString Identity::newAnonymousName()
     return QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_baseId++);
 }
 
+void Identity::setBaseId(quint64 base)
+{
+    _baseId = base;
+}
+
 void Identity::code(const QString &code)
 {
     _code = code;
@@ -80,9 +90,15 @@ QString Identity::code() const
 }
 
 void Identity::prepare(quint64 base) {
-    if ( _id == i64UNDEF) {
-        _id = base + Identity::_baseId++;
-        name(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
+    if ( _id == i64UNDEF || base == i64UNDEF) {
+        if ( base != i64UNDEF){
+            _id = base + Identity::_baseId++;
+            name(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
+        }else{ // second case generates a new id for this object but will not overrule anynames unless they are undefined or anonymous
+            _id = Identity::_baseId++;
+            if ( _name == sUNDEF || _name.indexOf(ANONYMOUS_PREFIX) != 0)
+                name(QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_id)); // default name
+        }
     }
 }
 
