@@ -163,28 +163,37 @@ void IlwisObject::code(const QString& cd) {
 
 Time IlwisObject::modifiedTime() const
 {
-    return _modifiedTime;
+    if ( !connector().isNull())
+        return connector()->source().modifiedTime() ;
+    return tUNDEF;
 }
 
 void IlwisObject::modifiedTime(const Time &tme)
 {
+
     if ( isReadOnly())
         return;
+    if ( connector().isNull())
+        return;
+    connector()->source().modifiedTime(tme)        ;
     _changed = true;
-    _modifiedTime = tme;
 }
 
 Time IlwisObject::createTime() const
 {
-    return _createTime;
+    if ( !connector().isNull())
+        return connector()->source().createTime();
+    return tUNDEF;
 }
 
 void IlwisObject::createTime(const Time &time)
 {
     if ( isReadOnly())
         return;
+    if ( connector().isNull())
+        return;
+    connector()->source().createTime(time)        ;
     _changed = true;
-    _createTime = time;
 }
 
 QString IlwisObject::toString()
@@ -289,7 +298,9 @@ void IlwisObject::changed(bool yesno)
     if ( isReadOnly() || isSystemObject())
         return;
 
-    _modifiedTime = Time::now();
+    if ( !connector().isNull()){
+        connector()->source().modifiedTime(Time::now());
+    }
     _changed = yesno;
 }
 
@@ -398,8 +409,6 @@ void IlwisObject::copyTo(IlwisObject *obj)
     obj->_valid = _valid;
     obj->_readOnly = _readOnly;
     obj->_changed = _changed;
-    obj->_modifiedTime = Time::now();
-    obj->_createTime = Time::now();
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;
@@ -610,6 +619,9 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itSINGLEOPERATION;
     if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
         return  itWORKFLOW;
+    }
+    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0) {
+        return  itOPERATIONMETADATA;
     }
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;

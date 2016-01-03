@@ -392,8 +392,7 @@ private:
    bool _valid;
    bool _readOnly;
    bool _changed;
-   Time _modifiedTime;
-   Time _createTime;
+
    double _pseudoUndef=rUNDEF;
    QScopedPointer<Ilwis::ConnectorInterface> _connector;
    QScopedPointer<Ilwis::ConnectorInterface> _outConnector;
