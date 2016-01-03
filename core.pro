@@ -133,7 +133,8 @@ SOURCES += core/kernel.cpp \
     core/util/consoletranquilizer.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
-    core/internaldatabaseconnection.cpp
+    core/internaldatabaseconnection.cpp \
+    core/catalog/mastercatalogcache.cpp
 
 
 HEADERS += core/kernel.h\
@@ -284,7 +285,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/shapelookup.h \
     core/ilwisobjects/workflow/workflowoperationimplementation.h \
     core/identityinterface.h \
-    core/internaldatabaseconnection.h
+    core/internaldatabaseconnection.h \
+    core/catalog/mastercatalogcache.h
 
 
 OTHER_FILES += \

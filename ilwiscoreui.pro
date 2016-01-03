@@ -88,7 +88,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
     ilwiscoreui/models/workflowerrormodel.h \
     ilwiscoreui/models/workflow/edgepropobject.h \
-    ilwiscoreui/models/workflow/nodepropobject.h
+    ilwiscoreui/models/workflow/nodepropobject.h \
+    ilwiscoreui/models/preferencesmodel.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -157,7 +158,8 @@ SOURCES += \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
     ilwiscoreui/models/workflowerrormodel.cpp \
     ilwiscoreui/models/workflow/edgepropobject.cpp \
-    ilwiscoreui/models/workflow/nodepropobject.cpp
+    ilwiscoreui/models/workflow/nodepropobject.cpp \
+    ilwiscoreui/models/preferencesmodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
