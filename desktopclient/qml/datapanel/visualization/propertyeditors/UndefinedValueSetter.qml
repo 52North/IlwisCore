@@ -29,7 +29,6 @@ Column {
             if ( valueedit.content != ""){
                 var result  = parseFloat(valueedit.content)
                 if (  !isNaN(result)){
-                    console.debug(result)
                     editor.undefinedvalue = result
                 }
             }

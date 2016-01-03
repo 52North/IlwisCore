@@ -46,9 +46,6 @@ Item {
 
             clip : true
         }
-        Component.onCompleted: {
-            console.debug(model.length)
-        }
     }
 
 

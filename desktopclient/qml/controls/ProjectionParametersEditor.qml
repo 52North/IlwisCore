@@ -84,8 +84,6 @@ ListView {
                         items.push(llvalue)
                     else if ( bvalue.width != 0)
                         items.push(bvalue)
-                    else
-                        console.debug(valueType)
                 }
             }
         }
