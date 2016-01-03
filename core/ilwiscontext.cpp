@@ -13,6 +13,7 @@
 #include "catalog.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
+#include "mastercatalogcache.h"
 
 Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
@@ -31,20 +32,7 @@ IlwisContext* Ilwis::context(const QString & ilwisDir) {
 
 IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit)
 {
-    //TODO relocate directories through configuration
-    QDir localDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
-    QStringList files = localDir.entryList(QStringList() << "*.*", QDir::Files);
-    _cacheLocation = QUrl::fromLocalFile(localDir.absolutePath());
-    QString datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
-    localDir = QDir(datalocation);
-    if (!localDir.exists()){
-        localDir.mkpath(datalocation);
-    }
-    _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
-    files << localDir.entryList(QStringList() << "*", QDir::Files);
-    for(QString file : files)
-        localDir.remove(file);
-    _workingCatalog = new Catalog(); // empty catalog>
+     _workingCatalog = new Catalog(); // empty catalog>
 
 }
 
@@ -106,6 +94,38 @@ void IlwisContext::init(const QString &ilwisDir)
     }
     _configuration.prepare(file.absoluteFilePath());
 
+    QString location = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/cache-location",QString(sUNDEF));
+    if ( location == sUNDEF){
+        QDir localDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+        _cacheLocation = QUrl::fromLocalFile(localDir.absolutePath());
+    }else
+        _cacheLocation = QUrl(location);
+
+    QDir cacheDir(_cacheLocation.toLocalFile());
+
+    if (!cacheDir.exists()){
+        cacheDir.mkpath(location);
+    }
+    QStringList files = cacheDir.entryList(QStringList() << "gridblock*.*", QDir::Files);
+    for(QString file : files)
+        cacheDir.remove(file);
+
+    QString datalocation = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/internalcatalog-location",QString(sUNDEF));
+    if ( datalocation == sUNDEF){
+        datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
+    }else
+        datalocation = QUrl(datalocation).toLocalFile();
+
+    QDir localDir(datalocation);
+
+    if (!localDir.exists()){
+        localDir.mkpath(datalocation);
+    }
+    _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
+    files = localDir.entryList(QStringList() << "*.*", QDir::Files);
+    for(QString file : files)
+        localDir.remove(file);
+
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
     mastercatalog()->addContainer(persistentInternalCatalog());
     mastercatalog()->addContainer(QUrl("ilwis://operations"));
@@ -117,7 +137,6 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/ellipsoids"));
     mastercatalog()->addContainer(QUrl("ilwis://system/projections"));
     mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
-
 
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
     if ( loc != "")
@@ -137,6 +156,11 @@ const ICatalog &IlwisContext::systemCatalog() const
     return _systemCatalog;
 }
 
+const ICatalog &IlwisContext::lastUsedLocalFolder() const
+{
+    return _lastUsedLocalFolder;
+}
+
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
     // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
@@ -146,6 +170,10 @@ void IlwisContext::setWorkingCatalog(const ICatalog &cat)
     mastercatalog()->addContainer(cat->source().url());
     _workingCatalog = cat;
     context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->source().url().toString());
+    QFileInfo inf(cat->source().url().toLocalFile());
+    if ( inf.isDir()){
+        _lastUsedLocalFolder = cat;
+    }
 }
 
 QUrl IlwisContext::cacheLocation() const

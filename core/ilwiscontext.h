@@ -29,6 +29,7 @@ public:
     QFileInfo ilwisFolder() const;
     ICatalog workingCatalog() const;
     const ICatalog& systemCatalog() const;
+    const ICatalog& lastUsedLocalFolder() const;
     void setWorkingCatalog(const Ilwis::ICatalog &cat);
     QUrl cacheLocation() const;
     QUrl persistentInternalCatalog() const;
@@ -50,6 +51,8 @@ private:
     //QThreadStorage<Catalog *> _workingCatalog;
     ICatalog _workingCatalog;
     ICatalog _systemCatalog;
+    //last used local folder, often equals to working catalog but not necessary. The location is there to have a dependable location for (file)outputs if the working catalog is not a folder
+    ICatalog _lastUsedLocalFolder;
     quint64 _memoryLimit;
     quint64 _memoryLeft;
     QFileInfo _ilwisDir;
