@@ -48,6 +48,7 @@
 #include "operationmetadata.h"
 #include "operationExpression.h"
 #include "commandhandler.h"
+#include "mastercatalogcache.h"
 #include "operation.h"
 #include "tranquilizer.h"
 #include "tranquilizerfactory.h"
@@ -81,6 +82,8 @@ bool Ilwis::initIlwis(int mode, const QString & ilwisDir){
 }
 
 void Ilwis::exitIlwis(){
+    MasterCatalogCache cache;
+    cache.store();
     delete kernel();
 }
 
@@ -143,6 +146,8 @@ void Kernel::init() {
     // TODO: are these still necessary?
     mastercatalog()->addContainerException("http");
     mastercatalog()->addContainerException("https");
+
+
 
 }
 
