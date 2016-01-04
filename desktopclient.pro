@@ -24,7 +24,15 @@ include(deployment.pri)
 
 # Add more folders to ship with the application, here
 folder_01.source = desktopclient/qml
+
+win32{
+folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
+}
+
+linux{
 folder_01.target = ../output/$$PLATFORM$$CONF/bin
+}
+
 DEPLOYMENTFOLDERS = folder_01
 
 
