@@ -22,7 +22,7 @@
 
 
 using namespace Ilwis;
-using namespace BaseOperations;
+using namespace FeatureOperations;
 
 namespace GeosBuffer = ::geos::operation::buffer;
 

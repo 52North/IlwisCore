@@ -2,7 +2,7 @@
 #define BUFFER_H
 
 namespace Ilwis {
-namespace BaseOperations {
+namespace FeatureOperations {
 class Buffer : public OperationImplementation
 {
 public:
