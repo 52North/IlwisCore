@@ -26,11 +26,11 @@ include(deployment.pri)
 folder_01.source = desktopclient/qml
 
 win32{
-folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
+    folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
 }
 
 linux{
-folder_01.target = ../output/$$PLATFORM$$CONF/bin
+    folder_01.target = ../output/$$PLATFORM$$CONF/bin
 }
 
 DEPLOYMENTFOLDERS = folder_01
