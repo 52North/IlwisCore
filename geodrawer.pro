@@ -5,7 +5,7 @@ QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 TEMPLATE = lib
-TARGET = layersview
+TARGET = LayersView
 QT += qml quick sql opengl
 CONFIG += qt plugin
 
