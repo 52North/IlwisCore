@@ -8,6 +8,10 @@
 #include <QSqlQuery>
 #include <QQuickItem>
 #include <QApplication>
+#ifdef Q_OS_LINUX
+#include <QProcess>
+#include <QString>
+#endif
 #include <qtconcurrentmap.h>
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -504,16 +508,33 @@ QString MasterCatalogModel::getDrive(quint32 index){
 }
 
 QStringList MasterCatalogModel::driveList() const{
-#ifdef Q_OS_WIN
      QFileInfoList drives = QDir::drives();
      QStringList drivenames;
      for(auto item : drives){
         drivenames.append(item.filePath());
      }
-     return drivenames;
-#else
-    return QStringList();
+
+#ifdef Q_OS_LINUX
+    QProcess process;
+    process.start("lsblk", QStringList() << "-o" << "MOUNTPOINT");
+
+    if (process.waitForFinished()) {
+        QByteArray result = process.readAll();
+        if (result.length() > 0) {
+            QStringList mountpoints = QString(result).split('\n', QString::SplitBehavior::SkipEmptyParts);
+
+            QStringList unwantedStrings("MOUNTPOINT");
+            unwantedStrings.append("[SWAP]");
+            unwantedStrings.append("/");
+
+            for (QString mountp: mountpoints) {
+                if (!unwantedStrings.contains(mountp))
+                    drivenames.append(mountp);
+            }
+        }
+    }
 #endif
+     return drivenames;
 }
 
 void MasterCatalogModel::addBookmark(const QString& path){
