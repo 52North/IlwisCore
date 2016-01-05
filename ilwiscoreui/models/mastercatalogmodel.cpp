@@ -499,10 +499,12 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
     return 0;
 }
 
+// TODO insure that the drive "index" is coherent
 QString MasterCatalogModel::getDrive(quint32 index){
-    QFileInfoList drives = QDir::drives();
+    QStringList drives = MasterCatalogModel::driveList();
+
     if ( index < drives.size()){
-        return drives[index].filePath();
+        return drives[index];
     }
     return "";
 }
@@ -513,26 +515,25 @@ QStringList MasterCatalogModel::driveList() const{
      for(auto item : drives){
         drivenames.append(item.filePath());
      }
-
 #ifdef Q_OS_LINUX
-    QProcess process;
-    process.start("lsblk", QStringList() << "-o" << "MOUNTPOINT");
+     QProcess process;
+     process.start("lsblk", QStringList() << "-o" << "MOUNTPOINT");
 
-    if (process.waitForFinished()) {
-        QByteArray result = process.readAll();
-        if (result.length() > 0) {
-            QStringList mountpoints = QString(result).split('\n', QString::SplitBehavior::SkipEmptyParts);
+     if (process.waitForFinished()) {
+         QByteArray result = process.readAll();
+         if (result.length() > 0) {
+             QStringList mountpoints = QString(result).split('\n', QString::SplitBehavior::SkipEmptyParts);
 
-            QStringList unwantedStrings("MOUNTPOINT");
-            unwantedStrings.append("[SWAP]");
-            unwantedStrings.append("/");
+             QStringList unwantedStrings("MOUNTPOINT");
+             unwantedStrings.append("[SWAP]");
+             unwantedStrings.append("/");
 
-            for (QString mountp: mountpoints) {
-                if (!unwantedStrings.contains(mountp))
-                    drivenames.append(mountp);
-            }
-        }
-    }
+             for (QString mountp: mountpoints) {
+                 if (!unwantedStrings.contains(mountp))
+                     drivenames.append(mountp);
+             }
+         }
+     }
 #endif
      return drivenames;
 }
