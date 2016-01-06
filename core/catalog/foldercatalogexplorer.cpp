@@ -66,8 +66,11 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
 
          QStringList files = folder.entryList(namefilter);
          files.append(dirlist);
+
+         QString sourceUrl = source.url().toString();
+
          for(QString file : files) {
-             QString fullfile = source.url().toString() + slash +  file;
+             QString fullfile = sourceUrl + slash + file;
              fileList.push_back(fullfile);
          }
 
