@@ -510,11 +510,13 @@ QString MasterCatalogModel::getDrive(quint32 index){
 }
 
 QStringList MasterCatalogModel::driveList() const{
+    QStringList drivenames;
+#ifdef Q_OS_WIN
      QFileInfoList drives = QDir::drives();
-     QStringList drivenames;
      for(auto item : drives){
         drivenames.append(item.filePath());
      }
+#endif
 #ifdef Q_OS_LINUX
      QProcess process;
      process.start("lsblk", QStringList() << "-o" << "MOUNTPOINT");
@@ -523,10 +525,8 @@ QStringList MasterCatalogModel::driveList() const{
          QByteArray result = process.readAll();
          if (result.length() > 0) {
              QStringList mountpoints = QString(result).split('\n', QString::SplitBehavior::SkipEmptyParts);
-
              QStringList unwantedStrings("MOUNTPOINT");
              unwantedStrings.append("[SWAP]");
-             unwantedStrings.append("/");
 
              for (QString mountp: mountpoints) {
                  if (!unwantedStrings.contains(mountp))
