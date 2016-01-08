@@ -413,17 +413,21 @@ IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickI
 void MasterCatalogModel::setSelectedObjects(const QString &objects)
 {
     try {
-        if ( objects == ""){
+        auto clearList = [&](){
             for(IlwisObjectModel *model : _selectedObjects){
                 model->setParent(0);
-                delete model;
+                model->deleteLater();
             }
             _selectedObjects.clear();
+        };
+
+        if ( objects == ""){
+            clearList();
             emit selectionChanged();
             return;
         }
         QStringList parts = objects.split("|");
-        _selectedObjects.clear();
+        clearList();
         kernel()->issues()->silent(true);
         for(auto objectid : parts){
             bool ok;
@@ -637,8 +641,10 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
     QStringList resourceList;
     for (const auto& resource : resources){
         if (resource.isValid()){
+            QString result = QString::number(resource.id());
             if ( property == "name")
-                resourceList.append(QString::number(resource.id()) + "|" + resource.name());
+                result += "|" + resource.name();
+            resourceList.append(result);
         }
     }
     return resourceList;
