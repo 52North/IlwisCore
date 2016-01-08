@@ -110,6 +110,8 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     std::map<quint64, quint64> combos;
+    double pixarea = _inputRaster1->georeference()->pixelSize();
+    pixarea *= pixarea;
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         qint32 v2 = *iterIn2;
         quint64 combo = v1 + v2 * SHIFTER;
@@ -132,8 +134,8 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
         _outputTable->setCell(0,record,QVariant(record));
         _outputTable->setCell(1,record,QVariant(v1));
         _outputTable->setCell(2,record,QVariant(v2));
-        Combo cm = element.second;
-        _outputTable->setCell(3,record,QVariant(cm._count))        ;
+        _outputTable->setCell(3,record,QVariant(element.second))        ;
+        _outputTable->setCell(4,record,QVariant(element.second * pixarea))  ;
         ++record;
     }
     _crossDomain->range(idrange);
@@ -200,7 +202,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     else
         newTable.prepare();
 
-    QString crossName = QString("%1_%2").arg(raster1, raster2);
+    QString crossName = QString("%1_%2").arg(_inputRaster1->name(), _inputRaster2->name());
     crossName.replace(".","_");
     _crossDomain.prepare();
     _crossDomain->name(crossName);
