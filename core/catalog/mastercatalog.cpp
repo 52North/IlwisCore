@@ -204,7 +204,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
-    InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
+    //InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     InternalDatabaseConnection queryItem, queryProperties;
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
@@ -237,7 +237,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
     }
-    db.exec("COMMIT TRANSACTION");
+   // db.exec("COMMIT TRANSACTION");
 
     for(auto container : containers)
         emit contentChanged(container);
