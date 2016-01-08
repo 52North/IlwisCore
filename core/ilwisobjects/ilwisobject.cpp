@@ -540,6 +540,7 @@ QString IlwisObject::type2Name(IlwisTypes t)
     case  itSINGLEOPERATION:
         return "SingleOperation";
     }
+
     return sUNDEF;
 
 }
@@ -627,6 +628,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCATALOG;
     if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
         return  itREPRESENTATION;
+    if ( name.compare( "Column",Qt::CaseInsensitive) == 0)
+        return  itCOLUMN;
     // standard c++ types
     if ( name.compare( "int",Qt::CaseInsensitive) == 0)
         return  itINT32;
