@@ -62,7 +62,7 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::IRasterCoverage>().as<IlwisObject>();
     if ( tp & itFEATURE)
         return sym._var.value<Ilwis::IFeatureCoverage>().as<IlwisObject>();
-    if ( hasType(tp , itTABLE))
+    if ( hasType(tp , itTABLE|itCOLUMN))
         return sym._var.value<Ilwis::ITable>().as<IlwisObject>();
     if ( hasType(tp , itDOMAIN))
         return sym._var.value<Ilwis::IDomain>().as<IlwisObject>();
@@ -87,28 +87,33 @@ void AssignmentNode::getFormat(QSharedPointer<ASTNode>& node, QString& format, Q
 }
 
 void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& sym, const QString& result) {
-    QString format, fnamespace;
-    getFormat(node, format, fnamespace);
+    QString format, provider;
+    getFormat(node, format, provider);
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
-        bool wasAnonymous = object->isAnonymous();
-        QString name = result;
-        QUrl url;
-        if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url
-            url = result;
-            name = result.mid(result.lastIndexOf("/") + 1);
-        }
-        else
-            if ( fnamespace != "stream"){ // stream goes to the internal if nothing has ben defined and that is default.
-                url = context()->workingCatalog()->source().url().toString() + "/" + result;
+        if ( object.isValid()){
+            bool wasAnonymous = object->isAnonymous();
+            QString name = result;
+            QUrl url;
+            if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url
+                url = result;
+                name = result.mid(result.lastIndexOf("/") + 1);
             }
-        object->name(name);
-        object->connectTo(url, format, fnamespace, Ilwis::IlwisObject::cmOUTPUT);
-        object->createTime(Ilwis::Time::now());
-        if ( wasAnonymous)
-            mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
+            else
+                if ( provider != "stream"){ // stream goes to the internal if nothing has ben defined and that is default.
+                    url = context()->workingCatalog()->source().url().toString() + "/" + result;
+                }
+            object->name(name);
+            if ( object->provider() != provider)
+                object->connectTo(url, format, provider, Ilwis::IlwisObject::cmOUTPUT);
+            object->createTime(Ilwis::Time::now());
+            if ( wasAnonymous)
+                mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
-        object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+            object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+        }else {
+            kernel()->issues()->log(QString(TR("Couldn't retrieve symbol from symbol table, object will not be stored")));
+        }
 
     }
 }
@@ -121,6 +126,9 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
     try{
         bool ok = _expression->evaluate(symbols, scope, ctx);
         if ( ok) {
+            // we save the additional info  as we might need it but for the rest clear
+            // the results as the result of the assignment node is a newly filled ctx
+            auto additionalInfo = ctx->_additionalInfo;
             ctx->clear(true);
 
             NodeValue val = _expression->value();
@@ -129,7 +137,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
                 QString result = _outParms->id(i);
 
-                if (  hasType(tp, itILWISOBJECT)) {
+                if (  hasType(tp, itILWISOBJECT | itCOLUMN)) {
 
                     if ( hasType(tp, itRASTER)) {
                         ok &= copyObject<RasterCoverage>(sym, result,symbols);
@@ -140,13 +148,13 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                         ok &= copyObject<Domain>(sym, result,symbols);
                     } else if ( hasType(tp, itGEOREF)){
                         ok &= copyObject<GeoReference>(sym, result,symbols);
-                    } else if (hasType(tp, itTABLE)){
+                    } else if (hasType(tp, itTABLE | itCOLUMN)){
                         ok &= copyObject<Table>(sym, result,symbols,true);
                         QSharedPointer<Selector> selector = _outParms->selector(result);
                         if (!selector.isNull()){
                             QString varName = selector->variable();
                             ITable source =  sym._var.value<ITable>();
-                            QString oldColName = ctx->_additionalInfo[source->name()].toString();
+                            QString oldColName = additionalInfo[source->name()].toString();
                             QVariant newT= symbols.getValue(result);
                             ITable newTable = newT.value<ITable>();
                             ColumnDefinition& coldef = newTable->columndefinitionRef(oldColName);

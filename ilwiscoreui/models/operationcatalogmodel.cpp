@@ -314,11 +314,13 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
     bool duplicateFileNames = false;
 
-    for(int i=(parms.size() - operationresource["outparameters"].toInt()); i<parms.size(); ++i){
+    QStringList parts = operationresource["outparameters"].toString().split("|");
+    int maxparms = parts.last().toInt();
+    for(int i=(parms.size() - maxparms); i<parms.size(); ++i){
         QString output = parms[i];
 
 
-        QString pout = QString("pout_%1_type").arg((i-operationresource["inparameters"].toInt() + 1));
+        QString pout = QString("pout_%1_type").arg(i - maxparms);
 
         IlwisTypes outputtype = operationresource[pout].toULongLong();
         if ( output.indexOf("@@") != -1 ){
@@ -328,7 +330,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
             //Check if user didnt put the same output name in another output field
             int occurences = 0;
-            for(int j=(parms.size() - operationresource["outparameters"].toInt()); j<parms.size(); ++j){
+            for(int j=(parms.size() - maxparms); j<parms.size(); ++j){
                 QString compareString = parms[j].split("@@")[0];
                 if(output == compareString){
                     occurences++;
@@ -406,7 +408,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 }
             }
 
-            if ( hasType(outputtype, itTABLE)){
+            if ( hasType(outputtype, itCOLUMN)){
                 if ( formatName == "Memory"){
                     output = modifyTableOutputUrl(output, parms);
                 }else
@@ -415,8 +417,16 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
             if ( formatName == "Keep original"){
                 IIlwisObject obj;
                 obj.prepare(parms[0], operationresource["pin_1_type"].toULongLong());
-                if ( obj.isValid())
-                    format = "{format(" + obj->provider() + ",\"" + obj->formatCode() + "\")}";
+                if ( obj.isValid()){
+                    IlwisTypes type = operationresource[pout].toULongLong();
+                    QVariantList values = DataFormat::getFormatProperties(DataFormat::fpCODE,type,obj->provider());
+                    if ( values.size() != 0){
+                        format = "{format(" + obj->provider() + ",\"" + values[0].toString() + "\")}";
+                    }else{
+                        kernel()->issues()->log(QString("No valid conversion found for provider %1 and format %2").arg(obj->provider()).arg(IlwisObject::type2Name(type)));
+                        return sUNDEF;
+                    }
+                }
             }
             if ( formatName != "Memory"){ // special case
                 if ( format == "") {
@@ -427,7 +437,8 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                                 (*formats.begin()).second.property(DataFormat::fpCODE).toString() + "\")}";
                     }
                 }
-                if ( output.indexOf("://") == -1)
+                // if there is no path we extend it with a path unless the output is a new column, output is than the "old" table so no new output object
+                if ( output.indexOf("://") == -1 )
                     output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
                 else
                     output = output + format;
@@ -436,7 +447,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                     format = "{format(stream,\"rastercoverage\")}";
                 }else if (hasType(outputtype, itFEATURE)){
                     format = "{format(stream,\"featurecoverage\")}";
-                }else if (hasType(outputtype, itTABLE)){
+                }else if (hasType(outputtype, itTABLE | itCOLUMN)){
                     format = "{format(stream,\"table\")}";
                 }else if (hasType(outputtype, itCATALOG)){
                     format = "{format(stream,\"catalog\")}";
