@@ -18,9 +18,11 @@ ApplicationWindow {
     width: Screen.desktopAvailableWidth * 0.8
     height : Screen.desktopAvailableHeight * 0.9
     color : "light grey"
+    objectName: "mainwindow__mainui"
 
     onClosing: {
         uicontext.exitUI()
+        rootwindow.close()
     }
 
     property int maxPull : 500

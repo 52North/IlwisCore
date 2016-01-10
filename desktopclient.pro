@@ -131,14 +131,16 @@ HEADERS += \
     desktopclient/applicationformexpressionparser.h \
     desktopclient/ilwistype.h \
     desktopclient/keyfilter.h \
-    desktopclient/workflowmetadataformbuilder.h
+    desktopclient/workflowmetadataformbuilder.h \
+    desktopclient/startilwis.h
 
 SOURCES += \
     desktopclient/applicationformexpressionparser.cpp \
     desktopclient/ilwistype.cpp \
     desktopclient/main.cpp \
     desktopclient/keyfilter.cpp \
-    desktopclient/workflowmetadataformbuilder.cpp
+    desktopclient/workflowmetadataformbuilder.cpp \
+    desktopclient/startilwis.cpp
 
 DISTFILES += \
     desktopclient/qml/datapanel/visualization/Layers.qml \
