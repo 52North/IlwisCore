@@ -1,6 +1,6 @@
 CODE,RELATEDDOMAIN,TYPE,DEFINITION,DESCRIPTION
 greyscale,value,continuouscolor,0:1|#ff000000|#ffffffff,grey representation for numerical values
-monochromeblack,value,continuouscolor,0:1|#ff000000|#ff00000,monochrome black for numerical values
+monochromeblack,value,continuouscolor,0:1|#ff000000|#ff000000,monochrome black for numerical values
 pseudo,value,continuouscolor,0:0.2|#ff8000ff|#ff4040ff;0.2:0.3|#ff4040ff|#ff88ff00;0.3:0.45|#ff88ff00|#ff80ff00;0.45:0.6|#ff80ff00|#ffff8000;0.6:0.8|#ffff8000|#ffff4040;0.8:1.0|#ffff4040|#ffff0080,Pseudo color representation for value domains
 primarycolors,item,palettecolor,#ffaf0000|#ff00ff00|#ff0000ff|#ffff00ff|#ff00ffff|#ffffff00|#ff808080|#ffe0e0e0|#ff800000|#ff808000|#ff000080|#ff800080|#ff008080|#ff008000|#ffff8000|#ffbf0000|#ffbfbf00|#ff0000bf|#ffbf00bf|#ff00bfbf|#ff00bf00|#ffbfbfbf|#ffbfe0bf|#ff3f0000|#ff3f3f00|#ff00003f|#ff3f003f|#ff003f3f|#ff003f00|#ff3f3f3f|#ff803f00,default color scheme for item domains
 red,item,palettecolor,#ffff0000|#ffff8080|#ffffc0b0|#fff9967a|#ffc73838|#fffa143c|#ffcd5c5c|#ffb22222|#ff8b0000|#ff6b0303|#fffa0404|#ff880000, red color scheme for item domains

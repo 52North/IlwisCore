@@ -172,6 +172,8 @@ void MasterCatalog::addContainerException(const QString &scheme)
     _containerExceptions.insert(scheme);
 }
 
+
+
 bool MasterCatalog::removeItems(const std::vector<Resource> &items){
     Locker<std::recursive_mutex> lock(_guard);
 
@@ -202,11 +204,11 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
-    kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
+    //InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     InternalDatabaseConnection queryItem, queryProperties;
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
-                  :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions \
+                  :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions, :modifiedtime,:createtime \
                   )" );
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
@@ -235,7 +237,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
     }
-    kernel()->database().exec("COMMIT TRANSACTION");
+   // db.exec("COMMIT TRANSACTION");
 
     for(auto container : containers)
         emit contentChanged(container);
@@ -248,7 +250,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
 bool MasterCatalog::updateItems(const std::vector<Resource>& items)
 {
     Locker<std::recursive_mutex> lock(_guard);
-    kernel()->database().exec("BEGIN IMMEDIATE TRANSACTION");
+    InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     if( items.size() == 0) // nothing to do; not wrong perse
             return true;
 
@@ -265,7 +267,9 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
                                 "type=:type, "
                                 "extendedtype=:extendedtype, "
                                 "size=:size, "
-                                "dimensions=:dimensions "
+                                "dimensions=:dimensions, "
+                                "modifiedtime=:modifiedtime, "
+                                "createtime=:createtime "
                                 "WHERE itemid=:itemid");
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
@@ -290,7 +294,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
         deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
         resource.store(queryItem, queryProperties);
     }
-    kernel()->database().exec("COMMIT TRANSACTION");
+    db.exec("COMMIT TRANSACTION");
 
 
     return true;
@@ -303,9 +307,9 @@ quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive
     QString query = QString("select itemid,type from mastercatalog where (resource = '%1' or rawresource = '%1')").arg(url.toString());
     if (!casesensitive)
        query = QString("select itemid,type from mastercatalog where lower(resource) = '%1' or lower(rawresource) = '%1'").arg(url.toString().toLower()) ;
-    auto results = kernel()->database().exec(query);
-    while ( results.next()) {
-        auto rec = results.record();
+    InternalDatabaseConnection db(query);
+    while ( db.next()) {
+        auto rec = db.record();
         auto iid = rec.value(0).toLongLong();
         auto itype = rec.value(1).toLongLong();
         if ( (itype & tp) || tp == itUNKNOWN)
@@ -319,9 +323,9 @@ quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive
 Resource MasterCatalog::id2Resource(quint64 iid) const {
     Locker<std::recursive_mutex> lock(_guard);
     auto query = QString("select * from mastercatalog where itemid = %1").arg(iid);
-    auto results = kernel()->database().exec(query);
-    if ( results.next()) {
-        auto rec = results.record();
+    InternalDatabaseConnection db(query);
+    if ( db.next()) {
+        auto rec = db.record();
         return Resource(rec);
     }
     return Resource();
@@ -406,21 +410,21 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 
     resolvedName = OSHelper::neutralizeFileName(resolvedName.toString());
     auto query = QString("select * from mastercatalog where (resource = '%1' or rawresource = '%1') and (type & %2) != 0").arg(resolvedName.toString()).arg(tp);
-    auto results = kernel()->database().exec(query);
-    if ( results.next()) {
-        auto rec = results.record();
+    InternalDatabaseConnection db(query);
+    if ( db.next()) {
+        auto rec = db.record();
         return Resource(rec);
 
     } else {
         query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                         where ( mastercatalog.resource='%1' or mastercatalog.rawresource='%1') and mastercatalog.itemid=catalogitemproperties.itemid\
                 and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName.toString()).arg(tp);
-        auto viaExtType = kernel()->database().exec(query);
+        InternalDatabaseConnection db(query);
         bool isExternalRef = true;
-        while ( viaExtType.next()){ // external reference finding
+        while ( db.next()){ // external reference finding
             isExternalRef = false;
             bool ok;
-            auto propertyid = viaExtType.value(0).toLongLong(&ok);
+            auto propertyid = db.value(0).toLongLong(&ok);
             if (!ok) {
                 kernel()->issues()->log(QString(TR("Invalid catalog property, mastercatalog corrupted : %1?").arg(name)),IssueObject::itWarning);
             }
@@ -469,9 +473,9 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
             table = "datum";
         //auto query = QString("select code from %1 where wkt='%2'").arg(table, wkt);
         auto query = QString("select code from %1 where wkt like '%%2%'").arg(table, wkt);
-        auto codes = kernel()->database().exec(query);
-        if ( codes.next()) {
-            QString res = QString("ilwis://tables/%1?code=%2").arg(table,codes.value(0).toString());
+        InternalDatabaseConnection db(query);
+        if ( db.next()) {
+            QString res = QString("ilwis://tables/%1?code=%2").arg(table,db.value(0).toString());
             return res;
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(wkt));
@@ -511,9 +515,10 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
 
     // fourth case -- try name
     auto query = QString("select resource,type from mastercatalog where name = '%1' or code='%1'").arg(code);
-    auto results = kernel()->database().exec(query);
-    while ( results.next()) {
-        auto rec = results.record();
+    InternalDatabaseConnection db(query);
+    db.exec();
+    while ( db.next()) {
+        auto rec = db.record();
         auto type = rec.value(1).toLongLong();
         if ( type & tp)
             return rec.value(0).toString();
@@ -547,7 +552,7 @@ std::vector<Resource> MasterCatalog::select(const QString &selection) const
     if ( selection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where  %2").arg(selection);
     else
-        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid %2").arg(selection);
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid and %2").arg(selection);
 
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
@@ -569,7 +574,7 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
     QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
     QString query;
     if ( selection.indexOf("operations") != -1)
-        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) nd catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
+        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
     if ( selection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     else
@@ -578,8 +583,6 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
-    qDebug() << query;
-   // kernel()->startClock();
     while( results.next()) {
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));

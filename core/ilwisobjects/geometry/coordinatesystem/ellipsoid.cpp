@@ -256,7 +256,7 @@ QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
         }
     }
     _majorAxis = a;
-    _minoraxis = a * (1.0 - invf);
+    _minoraxis = a * (1.0 - _flattening);
     _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
 
     if(setCodeToo)

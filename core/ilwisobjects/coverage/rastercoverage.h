@@ -196,6 +196,7 @@ public:
     UPGrid& gridRef();
     const UPGrid &grid() const;
     void getData(quint32 blockIndex);
+    void setPseudoUndef(double v);
 
     bool canUse(const IlwisObject *obj, bool strict=false) const ;
 

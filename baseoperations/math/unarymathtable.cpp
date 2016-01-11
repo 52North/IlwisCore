@@ -41,7 +41,7 @@ bool UnaryMathTable::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( _outputTable.isValid()) {
         QVariant var;
         var.setValue<ITable>(_outputTable);
-        ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->source(), _outColumn);
+        ctx->setOutput(symTable,var, _outputTable->name(),itCOLUMN,_outputTable->source(), _outColumn);
         return true;
     }
 
@@ -89,9 +89,9 @@ Resource UnaryMathTable::populateMetadata(const QString& item, const QString& lo
     operation.setLongName(longname);
     operation.setInParameterCount({2});
     operation.addInParameter(0,itTABLE,"input table");
-    operation.addInParameter(1, itSTRING,TR("column name for tables"));
+    operation.addInParameter(1, itSTRING,TR("input column name"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itTABLE, "output name");
+    operation.addOutParameter(0,itCOLUMN, "output column name");
 
     return operation;
 

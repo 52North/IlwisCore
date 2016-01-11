@@ -5,6 +5,7 @@
 #include "operationmodel.h"
 #include "operationsbykeymodel.h"
 #include "ilwiscoreui_global.h"
+#include "models/workflow/errormodel.h"
 
 class OperationModel;
 class OperationsByKeyModel;
@@ -37,9 +38,11 @@ public:
    Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters);
    Q_INVOKABLE OperationModel *operation(const QString& id);
    Q_INVOKABLE WorkflowModel *createWorkFlow(const QString& filter);
+   Q_INVOKABLE void refresh();
 
    void gatherItems();
 
+   void keyFilter(const QString &keyf);
 private:
     QList<OperationModel *> _currentOperations;
     QList<OperationsByKeyModel *> _operationsByKey;
@@ -49,6 +52,8 @@ private:
 
     QStringList keywords() const;
     QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
+
+    ErrorModel* em = ErrorModel::getInstance();
 
 public slots:
     void workSpaceChanged();

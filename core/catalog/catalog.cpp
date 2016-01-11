@@ -116,8 +116,8 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
             query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                             where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
                     and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
-            auto viaExtType = kernel()->database().exec(query);
-            if ( viaExtType.next()){ // if it is in the extended type than it is ok
+            results.exec(query);
+            if ( results.next()){ // if it is in the extended type than it is ok
                 return resolvedName;
             }
         }

@@ -143,6 +143,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Domain Item");
     case itLOCATION:
         return TR("location");
+    case  itCOLUMN:
+        return TR("Column");
     }
     return TR("?");
 
@@ -290,6 +292,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "meiccoordinate";
     case itLATLON:
         return "latlon";
+    case itCOLUMN:
+        return "column"        ;
     }
     return sUNDEF;
 

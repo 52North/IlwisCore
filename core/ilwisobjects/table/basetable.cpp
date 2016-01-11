@@ -57,6 +57,9 @@ bool BaseTable::createTable()
 
 bool BaseTable::addColumn(const ColumnDefinition& def){
 
+    if ( !def.isValid())
+        return false;
+
     if ( isReadOnly())
         return false;
     changed(true);
@@ -218,10 +221,10 @@ void BaseTable::adjustRange(int index) {
             bool hasfraction = true;
             for(const QVariant& var : values ){
                 double v = var.toDouble();
-                if ( !isNumericalUndef(v))
+                if ( !isNumericalUndef2(v, this))
                     vmin = std::min(vmin, v) ;
                 v = var.toDouble();
-                if (!isNumericalUndef(v))                         {
+                if (!isNumericalUndef2(v, this))                         {
                     vmax = std::max(vmax, v)    ;
                 }
                 hasfraction |= (v - (qint64)v != 0);

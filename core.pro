@@ -133,7 +133,8 @@ SOURCES += core/kernel.cpp \
     core/util/consoletranquilizer.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
-    core/internaldatabaseconnection.cpp
+    core/internaldatabaseconnection.cpp \
+    core/catalog/mastercatalogcache.cpp
 
 
 HEADERS += core/kernel.h\
@@ -284,7 +285,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/shapelookup.h \
     core/ilwisobjects/workflow/workflowoperationimplementation.h \
     core/identityinterface.h \
-    core/internaldatabaseconnection.h
+    core/internaldatabaseconnection.h \
+    core/catalog/mastercatalogcache.h
 
 
 OTHER_FILES += \
@@ -295,6 +297,7 @@ OTHER_FILES += \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
+    core/resources/representations.csv \
     core/resources/featurefragmentshader_nvdia.glsl \
     core/resources/featurevertexshader_nvdia.glsl \
     core/resources/rasterfragmentshader_nvdia.glsl \
@@ -357,14 +360,21 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/epsg.pcs \
     core/resources/ellipsoids.csv \
     core/resources/datums.csv \
+    core/resources/representations.csv \
+    core/resources/featurefragmentshader_nvdia.glsl \
+    core/resources/featurevertexshader_nvdia.glsl \
+    core/resources/rasterfragmentshader_nvdia.glsl \
+    core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
     resources.path = $$DLLDESTDIR/resources
 }
-unix {
-    resources.path = $$DESTDIR/resources
+linux{
+    resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+    INSTALLS += target
 }
 
 license.files =  LICENSE-2.0.txt

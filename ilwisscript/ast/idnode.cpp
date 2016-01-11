@@ -48,7 +48,7 @@ bool IDNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx) {
 
     _type = Ilwis::IlwisObject::findType(id());
     if ( _type != itUNKNOWN){
-        _text = Ilwis::context()->workingCatalog()->resolve(_text);
+        _text = Ilwis::context()->workingCatalog()->resolve(_text, _type);
         return true;
     }else {
         quint64 id = mastercatalog()->name2id(_text);

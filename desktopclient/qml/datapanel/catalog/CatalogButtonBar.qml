@@ -54,7 +54,7 @@ Rectangle {
             id : refresh
             label: qsTr("Refresh")
             onClicked: {
-                mastercatalog.refreshWorkingCatalog()
+                mastercatalog.refreshCatalog(currentCatalog.url)
             }
 
         }

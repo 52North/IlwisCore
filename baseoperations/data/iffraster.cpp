@@ -105,30 +105,17 @@ OperationImplementation::State IffRaster::prepare(ExecutionContext *, const Symb
 
 quint64 IffRaster::createMetadata()
 {
-    QString url = QString("ilwis://operations/iff");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","iff");
-    resource.addProperty("syntax","iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)");
-    resource.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with boolean domain"));
-    resource.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itRASTER);
-    resource.addProperty("pin_2_name", TR("true choice"));
-    resource.addProperty("pin_2_desc",TR("value returned when the boolean input pixel is true"));
-    resource.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itRASTER);
-    resource.addProperty("pin_3_name", TR("false choice"));
-    resource.addProperty("pin_3_desc",TR("value returned when the boolean input pixel is false"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("rastercoverage"));
-    resource.addProperty("pout_1_desc",TR("rastercoverage with all pixels that correspond to the true value in the input having a value"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/iffraster"});
+    operation.setSyntax("iffraster(rastercoverage,outputchoicetrue, outputchoicefalse)");
+    operation.setDescription(TR("constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0, itRASTER,TR("input rastercoverage"), TR("Input map must have boolean domain"));
+    operation.addInParameter(1, itNUMBER | itSTRING | itBOOL | itRASTER, TR("first input raster coverage or number"));
+    operation.addInParameter(2, itNUMBER | itSTRING | itBOOL | itRASTER, TR("second input raster coverage or number"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output raster coverage"),TR("rastercoverage with all pixels that correspond to the true value in the input having a value"));
+    operation.setKeywords("raster, operation, condition");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

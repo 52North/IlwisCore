@@ -183,7 +183,11 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+    LIBS += -L$$GEOSLIB -llibgeos
+}
+
+linux{
+    LIBS +=  -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lgeos-3.4.2
 }
 
 INCLUDEPATH +=  $$PWD/../external/geos \
@@ -208,3 +212,12 @@ HEADERS += \
     projectionimplproj4/proj4/src/pj_list.h \
     projectionimplproj4/proj4/src/proj_api.h \
     projectionimplproj4/proj4/src/projects.h
+
+
+linux{
+    dependencies.files = $$GEOSLIB/libgeos-3.4.2.so
+    dependencies.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    INSTALLS += target dependencies
+}

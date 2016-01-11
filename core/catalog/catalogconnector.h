@@ -9,6 +9,7 @@ namespace Ilwis {
 class Catalog;
 class CatalogConnector;
 class CatalogExplorer;
+class MasterCatalogCache;
 
 typedef std::unique_ptr<CatalogConnector> UPCatalogConnector;
 typedef std::unique_ptr<CatalogExplorer> UPCatalogExplorer;
@@ -61,6 +62,8 @@ public:
     virtual QFileInfo toLocalFile(const Resource &datasource) const;
     virtual QFileInfo toLocalFile(const QUrl &url) const;
 
+    static const std::unique_ptr<MasterCatalogCache>& cache();
+
 
 
 protected:
@@ -71,6 +74,7 @@ private:
     std::vector<UPCatalogExplorer> _dataProviders;
     bool loadDataThreaded(IlwisObject *obj, const IOOptions &options);
     bool loadDataSingleThread(IlwisObject *obj, const IOOptions &options);
+    static std::unique_ptr<MasterCatalogCache> _mcCache;
 };
 
 }

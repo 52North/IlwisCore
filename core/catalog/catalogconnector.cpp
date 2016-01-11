@@ -20,13 +20,19 @@
 #include "ilwiscontext.h"
 #include "table.h"
 #include "catalog.h"
+#include "mastercatalogcache.h"
 #include "dataset.h"
 
 using namespace Ilwis;
 
+std::unique_ptr<MasterCatalogCache> CatalogConnector::_mcCache;
+
 CatalogConnector::CatalogConnector(const Resource &resource, bool load , const IOOptions &options) : IlwisObjectConnector(resource, load, options)
 {
-
+    if ( !_mcCache){
+        _mcCache.reset( new MasterCatalogCache());
+        _mcCache->load();
+    }
 }
 
 bool CatalogConnector::isValid() const
@@ -74,6 +80,11 @@ QFileInfo CatalogConnector::toLocalFile(const QUrl &url) const
         parentPath = parent;
     QFileInfo currentPath(parentPath.absoluteFilePath() + "/"+ ownSection);
     return currentPath;
+}
+
+const std::unique_ptr<MasterCatalogCache> &CatalogConnector::cache()
+{
+    return _mcCache;
 }
 
 QFileInfo CatalogConnector::toLocalFile(const Resource &resource) const

@@ -1,8 +1,8 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.0
-import QtQuick.Controls.Styles 1.0
-import QtQuick.Dialogs 1.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
+import QtQuick.Dialogs 1.1
 import MasterCatalogModel 1.0
 import OperationCatalogModel 1.0
 import OperationModel 1.0
@@ -16,10 +16,13 @@ Rectangle {
     property var operationsModel : operations.operations
     property bool byKey : false
 
+
     width : parent.width
     color : "white"
     opacity: width > 4 ? 1 : 0
     clip : true
+
+
     ListView {
         id : operationsList
         anchors.fill: parent
@@ -60,10 +63,42 @@ Rectangle {
                 anchors.fill: parent
                 cursorShape: Qt.ArrowCursor
 
+
                 onClicked: {
                     applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
                     operationsList.currentIndex = index;
                     makeForm(id, displayName, url)
+                }
+                onPressed:{
+                    drag.target =  Qt.createQmlObject('import QtQuick 2.0; Image{
+                    id : image
+                    width : 20; height : 20
+                    source : "../images/operation20.png"
+                    fillMode: Image.PreserveAspectFit
+                    x : mouseArea.mouseX + 50
+                    property string message :  model !== null ? url : ""
+                    property string ilwisobjectid : model !== null ? id : ""
+                    property string type : model !== null ? typeName : ""
+                    property string ids : model !== null ? mastercatalog.selectedIds() : ""
+
+                    Drag.keys: typeName
+                    Drag.active: mouseArea.drag.active
+                    Drag.hotSpot.x: 10
+                    Drag.hotSpot.y: 10
+                    opacity : Drag.active / 2
+
+                    states: State {
+                        when: mouseArea.drag.active
+                        ParentChange { target: image; parent: root }
+                        AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                    }
+                }', mouseArea, "dynamicImage");
+                }
+                onReleased: {
+                    drag.target.Drag.drop()
+                    drag.target.parent = mouseArea
+                    drag.target.anchors.fill = mouseArea
+                    drag.target.destroy();
                 }
             }
 

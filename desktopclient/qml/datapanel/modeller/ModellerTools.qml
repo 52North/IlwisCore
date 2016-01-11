@@ -35,6 +35,10 @@ ToolBar{
 
                     source : iconsource("deleteoperation20.png")
                 }
+                onClicked: {
+                    modellerDataPane.deleteSelectedOperation()
+
+                }
             }
             Button {
                 id : conbut
@@ -46,7 +50,26 @@ ToolBar{
 
                     source : iconsource("deleteconnection20.png")
                 }
+                onClicked: {
+                    modellerDataPane.deleteSelectedEdge()
+
+                }
             }
+            Button {
+                id : chanconbut
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("refresh20.png")
+                }
+                onClicked: {
+                    modellerDataPane.alterSelectedEdge()
+                }
+            }
+
             Button {
                 height : 25
                 width : 25
@@ -55,6 +78,9 @@ ToolBar{
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     source : iconsource("zoomin20.png")
+                }
+                onClicked: {
+                    modellerDataPane.canvasZoomIn()
                 }
             }
             Button {
@@ -65,6 +91,9 @@ ToolBar{
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     source : iconsource("zoomout20.png")
+                }
+                onClicked: {
+                    modellerDataPane.canvasZoomOut()
                 }
             }
         }
@@ -81,6 +110,10 @@ ToolBar{
 
                     source : iconsource("run20.png")
                 }
+                onClicked : {
+                    modellerDataPane.run()
+                }
+
             }
             Button {
                 height : 25
@@ -110,6 +143,26 @@ ToolBar{
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     source : iconsource("stop20.png")
+                }
+            }
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("error_sign.png")
+                }
+                onClicked: {
+
+                    if(errorview.state == "smaller")
+                    {
+                        errorview.state = "bigger"
+                    } else {
+                        errorview.state = "smaller"
+                    }
+
                 }
             }
         }

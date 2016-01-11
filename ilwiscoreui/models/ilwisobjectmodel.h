@@ -71,7 +71,7 @@ signals:
 private slots:
     QString valueType() const;
 private:
-    Ilwis::IIlwisObject _ilwisobject;
+    mutable Ilwis::IIlwisObject _ilwisobject;
     QList<DomainItemModel *> _domainItems;
     QList<ProjectionParameterModel *> _projectionParmItems;
     QString pixSizeString() const;

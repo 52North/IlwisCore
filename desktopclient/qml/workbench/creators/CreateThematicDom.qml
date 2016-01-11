@@ -76,7 +76,6 @@ Controls.DropableItem{
                 onClicked: {
                     dropItem.state = "invisible"
                     var itemstring = ""
-                    console.debug("a", commonpart.domitems.item.model, commonpart.domitems.item.model.length,commonpart.parentdomain)
                     if ( commonpart.domitems.item.model){
                         for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                             if (itemstring !== "")

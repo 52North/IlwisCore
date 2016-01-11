@@ -365,7 +365,7 @@ QVariant RasterCoverage::coord2value(const Coordinate &c, const QString &attrnam
     if ( _georef->isValid() && c.isValid()) {
         Pixeld pix = _georef->coord2Pixel(c);
         double value = pix2value(pix);
-        if ( isNumericalUndef(value))
+        if ( isNumericalUndef2(value,this))
             return QVariant();
         if ( attrname != "")
             return value;
@@ -430,6 +430,36 @@ void RasterCoverage::name(const QString &nam)
 QString RasterCoverage::name() const
 {
     return Identity::name();
+}
+
+void RasterCoverage::setPseudoUndef(double v){
+    if ( !hasType(datadef().domain()->ilwisType(), itNUMERICDOMAIN))
+        return;
+    Coverage::setPseudoUndef(v);
+    IRasterCoverage raster(this);
+    PixelIterator iter(raster,BoundingBox(size()));
+    double vmin=1e300, vmax = -1e300, vminlayer=1e300, vmaxlayer=-1e300;
+    auto end = iter.end();
+    while(iter != end){
+        double& oldvalue = *iter;
+        if ( isNumericalUndef2(oldvalue, this))
+            oldvalue = rUNDEF;
+        else{
+            vmin = std::min(vmin, oldvalue);
+            vmax = std::max(vmax, oldvalue);
+            vminlayer = std::min(vminlayer, oldvalue);
+            vmaxlayer = std::max(vmaxlayer, oldvalue);
+        }
+        ++iter;
+        if ( iter.zchanged()){
+            NumericRange *rng = new NumericRange(vminlayer, vmaxlayer, datadef().range<NumericRange>()->resolution());
+            datadefRef(iter.z()).range(rng);
+            vminlayer=1e300, vmaxlayer=-1e300;
+        }
+    }
+    NumericRange *rng = new NumericRange(vmin, vmax, datadef().range<NumericRange>()->resolution());
+    datadefRef().range(rng);
+
 }
 
 

@@ -12,8 +12,10 @@
 #include "workflow.h"
 #include "commandhandler.h"
 #include "uicontextmodel.h"
+#include "mastercatalogmodel.h"
 #include "operationcatalogmodel.h"
 #include "objectcreator.h"
+#include "operationmetadata.h"
 
 using namespace Ilwis;
 
@@ -266,14 +268,16 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
 QString ObjectCreator::createWorkflow(const QVariantMap &parms)
 {
     QString name = parms["name"].toString();
-    Resource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
+    OperationResource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
     res.setDescription(parms["description"].toString());
+    res.setKeywords(parms["keywords"].toString());
     res.prepare();
     mastercatalog()->addItems({res});
-    QVariant opercatalog = uicontext()->rootContext()->contextProperty("operations");
-    if ( opercatalog.isValid()){
-        OperationCatalogModel *ocmodel = opercatalog.value<OperationCatalogModel *>();
-        if (ocmodel){
+    QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
+        CatalogModel *ocmodel = mcmodel->currentCatalog();
+        if ( dynamic_cast<OperationCatalogModel *>(ocmodel)){
             ocmodel->refresh();
         }
     }
@@ -291,8 +295,7 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createWorkflow(parms);
     } else     if ( type == "numericdomain"){
         return createNumericDomain(parms);
-    }
-    else if ( type == "itemdomain"){
+    } else if ( type == "itemdomain"){
             return createItemDomain(parms);
     } else if ( type == "georef"){
         return createGeoreference(parms);

@@ -22,7 +22,6 @@ Controls.DropableItem{
             if ( items[i].name === "")
                 continue;
             if ( items[i].minvalue > items[i].maxvalue){
-                console.debug("a")
                 continue;
             }
             var illegal = false
@@ -36,7 +35,6 @@ Controls.DropableItem{
                     illegal = true
                 }
                 if ( items[i].minvalue < container.itemArray[j].minvalue){
-                    console.debug("b")
                     illegal = true
                 }
 

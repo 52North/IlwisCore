@@ -112,7 +112,9 @@ void PublicDatabase::prepare() {
                 type INTEGER, \
                 extendedtype INTEGER, \
                 size INTEGER, \
-                dimensions TEXT \
+                dimensions TEXT, \
+                modifiedtime REAL, \
+                createtime REAL \
                 )";
             doQuery(stmt, sql);
 

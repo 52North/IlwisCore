@@ -17,11 +17,32 @@ Item {
     height : parent.height
     property TabModel tabmodel
 
+    function showObject(objectid){
+        var type = mastercatalog.id2type(objectid)
+        var newPanel = null
+        if ( !type)
+            return
+        var resource = mastercatalog.id2Resource(objectid)
+        if ( resource){
+            if ( resource.typeName === "workflow"){
+                var filter = "itemid=" + resource.id
+                newPanel = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                if ( resource && newPanel){
+                    resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
+                }
+            }else {
+                mastercatalog.setSelectedObjects(objectid)
+                bigthing.getWorkbenchPane("objectproperties","visible");
+            }
+        }
+    }
+
     signal catalogChanged()
 
     function setResources(){
-        if ( currentCatalog)
+        if ( currentCatalog){
             return currentCatalog.operations
+        }
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -59,10 +80,11 @@ Item {
             model : operations.keywords
             onCurrentIndexChanged: {
                 if ( currentCatalog){
-                    var filterString = "type='SingleOperation' or type='Workflow'"
+                    var filterString = "(type='SingleOperation' or type='Workflow')"
                     if (currentIndex != 0)
                         filterString += " and keyword='" + model[currentIndex] + "'"
                     currentCatalog.filter(filterString)
+                    catalogChanged()
                 }
             }
         }
@@ -121,7 +143,7 @@ Item {
 
     Component.onCompleted: {
         var url = mastercatalog.currentUrl
-        currentCatalog = mastercatalog.newCatalog(url,"type='SingleOperation' or type='Workflow'")
+        currentCatalog = mastercatalog.newCatalog(url,"(type='SingleOperation' or type='Workflow')")
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog

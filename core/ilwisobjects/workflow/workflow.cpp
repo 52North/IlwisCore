@@ -16,7 +16,7 @@
 
 using namespace Ilwis;
 
-Workflow::Workflow(): OperationMetaData()
+Workflow::Workflow (): OperationMetaData()
 {
 }
 
@@ -121,6 +121,7 @@ void Workflow::removeOutputDataProperties(const OVertex &v, quint16 index)
 OVertex Workflow::addOperation(const NodeProperties &properties)
 {
     OVertex v = boost::add_vertex(properties, _wfGraph);
+
     IOperationMetaData meta = getOperationMetadata(v);
     std::vector<SPOperationParameter> inputs = meta->getInputParameters();
     for (int i = 0 ; i < inputs.size() ; i++) {
@@ -134,7 +135,6 @@ OVertex Workflow::addOperation(const NodeProperties &properties)
 
 void Workflow::removeOperation(OVertex vertex)
 {
-    boost::clear_vertex(vertex, _wfGraph);
     boost::remove_vertex(vertex, _wfGraph);
     removeAllInputAssignments(vertex);
 }
@@ -149,7 +149,7 @@ EdgeProperties Workflow::edgeProperties(const OEdge &e)
     return edgeIndex()[e];
 }
 
-// nodes where (some) pins do not match an in_edge
+// Gets all nodes which have input parameters which are open.
 QList<OVertex> Workflow::getNodesWithExternalInput()
 {
     if (_inputNodes.isEmpty()) {
@@ -179,7 +179,7 @@ QList<InputAssignment> Workflow::getConstantInputAssignments(const OVertex &v) c
     QList<InputAssignment> assignedPins;
     for (InputAssignment assignment : _inputAssignments.keys()) {
         if (assignment.first == v) {
-            if (_inputAssignments.value(assignment)->value.isValid()) {
+            if (_inputAssignments.value(assignment)->value.size() > 0) {
                 assignedPins.push_back(assignment);
             }
         }
@@ -204,7 +204,7 @@ QList<InputAssignment> Workflow::getImplicitInputAssignments(const OVertex &v)
     boost::graph_traits<WorkflowGraph>::in_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = getInEdges(v); ei != ei_end; ++ei) {
         // internal pins
-        InputAssignment assignment = std::make_pair(v, edgeProperties(*ei)._inputIndexNextOperation);
+        InputAssignment assignment = std::make_pair(v, edgeProperties(*ei)._inputParameterIndex);
         assignedPins.push_back(assignment);
     }
     return assignedPins;
@@ -247,7 +247,7 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
     boost::graph_traits<WorkflowGraph>::out_edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = getOutEdges(v); ei != ei_end; ++ei) {
         // implicitly assigned pins via edges
-        assignedPouts.push_back(edgeProperties(*ei)._outputIndexLastOperation);
+        assignedPouts.push_back(edgeProperties(*ei)._outputParameterIndex);
     }
     for (SPAssignedOutputData output : _outputProperties[v]) {
         // explicitly assigned pins via edges
@@ -256,12 +256,12 @@ std::vector<quint16> Workflow::getAssignedPouts(const OVertex &v)
     return assignedPouts;
 }
 
-OVertex Workflow::getPreviousOperationNode(const OEdge &e)
+OVertex Workflow::getSourceOperationNode(const OEdge &e)
 {
     return boost::source(e, _wfGraph);
 }
 
-OVertex Workflow::getNextOperationNode(const OEdge &e)
+OVertex Workflow::getTargetOperationNode(const OEdge &e)
 {
     return boost::target(e, _wfGraph);
 }
@@ -283,21 +283,55 @@ void Workflow::updateEdgeProperties(OEdge e, const EdgeProperties &properties)
 
 bool Workflow::hasValueDefined(const OVertex &operationVertex, int parameterIndex)
 {
-    for (const InputAssignment& assignment : _inputAssignments.keys()) {
-        if (assignment.first == operationVertex && assignment.second == parameterIndex) {
-           auto s  =getImplicitInputAssignments(operationVertex);
-           return s.size() > 0;
+    boost::graph_traits<WorkflowGraph>::vertex_iterator vi, vi_end;
+    // Loop through all vertices
+    for (boost::tie(vi, vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
+        // Does it exist?
+        if ((*vi) == operationVertex) {
+            // Does it have an edge asigned to it?
+            for (const InputAssignment& assignment : getImplicitInputAssignments(operationVertex)) {
+                if (assignment.first == operationVertex && assignment.second == parameterIndex) {
+                   return true;
+                }
+            }
+            return _inputAssignments.value({operationVertex, parameterIndex})->value.size() > 0;
         }
     }
     return false;
+}
+
+/**
+ * Returns the inputs of an operation which have already been defined (if they for example have a flow drawn to them)
+ * @param operationVertex the operations
+ * @return A string seperated by |
+ */
+QString Workflow::definedValueIndexes(const OVertex &operationVertex){
+    QString definedValues;
+
+    for (const InputAssignment& assignment : getImplicitInputAssignments(operationVertex)) {
+        if (assignment.first == operationVertex && hasValueDefined(operationVertex, assignment.second)) {
+            if(!definedValues.isEmpty()){
+                definedValues += "|";
+            }
+            definedValues += QString::number(assignment.second);
+        }
+    }
+
+    return definedValues;
 }
 
 OEdge Workflow::addOperationFlow(const OVertex &from, const OVertex &to, const EdgeProperties &properties)
 {
     // TODO allow multiple edges between v1 and v2?
 
-    removeInputAssignment(to, properties._inputIndexNextOperation);
+    removeInputAssignment(to, properties._inputParameterIndex);
     return (boost::add_edge(from, to, properties, _wfGraph)).first;
+}
+
+void Workflow::removeOperationFlow(OEdge edge) {
+    EdgeProperties edgeProps = edgeProperties(edge);
+    assignInputData(boost::target(edge, _wfGraph), edgeProps._inputParameterIndex);
+    boost::remove_edge(edge, _wfGraph);
 }
 
 IlwisTypes Workflow::ilwisType() const
@@ -312,6 +346,7 @@ quint64 Workflow::createMetadata()
     quint64 id = source().id();
 
     mastercatalog()->updateItems({source()});
+    //mastercatalog()->addItems({source()});
     commandhandler()->addOperation(id, WorkflowOperationImplementation::create);
     return id;
 }
@@ -356,34 +391,31 @@ void Workflow::parseInputParameters()
         // iterate over operation's pins
         IOperationMetaData meta = getOperationMetadata(inputNode);
         for (int i = 0; i < meta->getInputParameters().size() ; i++) {
+            //qDebug() << "nr of inputparameters";
+            //qDebug() << meta->getInputParameters().size();
             InputAssignment candidate = std::make_pair(inputNode, i);
 
-            if ( !implicitAssignments.contains(candidate)) {
+            if ( !implicitAssignments.contains(candidate) && !explicitAssignments.contains(candidate)) {
                 SPOperationParameter input = meta->getInputParameters().at(i);
 
                 QString term;
-                if (explicitAssignments.contains(candidate)) {
-                    continue;
+                if ( !hasInputAssignment(inputNode, i)) {
+                    term = inputTerms.at(i);
                 } else {
-                    if ( !hasInputAssignment(inputNode, i)) {
-                        term = inputTerms.at(i);
+                    SPAssignedInputData inputData = getAssignedInputData({inputNode, i});
+                    if (sharedInputs.contains(inputData)) {
+                        continue;
                     } else {
-                        SPAssignedInputData inputData = getAssignedInputData({inputNode, i});
-                        if (sharedInputs.contains(inputData)) {
-                            continue;
-                        } else {
-                            inputData->inputName = inputData->inputName.isEmpty()
-                                    ? inputTerms.at(i) :
-                                    inputData->inputName;
-                            term = inputData->inputName;
-                            sharedInputs.push_back(inputData);
-                        }
+                        inputData->inputName = inputData->inputName.isEmpty()
+                                ? inputTerms.at(i) : inputData->inputName;
+                        term = inputData->inputName;
+                        sharedInputs.push_back(inputData);
                     }
                 }
-
                 addParameter(input); // not yet assigned
                 input->copyMetaToResourceOf(connector(), parameterIndex++);
 
+                //qDebug()<<"Copymetatoresourceof fisished";
                 if (input->isOptional()) {
                     optionalInputs << term;
                 } else {
@@ -413,7 +445,7 @@ void Workflow::parseOutputParameters()
 
     QStringList mandatoryOutputs;
     QStringList optionalOutputs;
-    quint16 parameterIndex = 1;
+    quint16 parameterIndex = 0;
     for (OVertex outputNode : getNodesWithExternalOutputs()) {
 
         // TODO more readable syntax terms
@@ -529,4 +561,12 @@ void Workflow::debugWorkflowMetadata() const
 void Workflow::debugOperationParameter(const SPOperationParameter parameter) const
 {
     qDebug() << "\tterm: " << parameter->term() << ", " << "(name: " << parameter->name() << ", optional: " << parameter->isOptional() << ")";
+}
+
+bool Workflow::isInternalObject() const
+{
+    if ( isAnonymous())
+        return true;
+    //named workflows are never internal as there is a localized file backing it up;
+    return false;
 }

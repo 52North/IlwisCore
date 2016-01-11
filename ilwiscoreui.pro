@@ -82,12 +82,14 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/propertyeditors/gridpropertyeditor.h \
     ilwiscoreui/propertyeditors/layeropacitysetter.h \
     ilwiscoreui/models/workflow/scenariodesignermodel.h \
-    ilwiscoreui/models/workflow/scenariobuildermodel.h
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
+    ilwiscoreui/models/workflow/scenariobuildermodel.h \
+    ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.h \
+    ilwiscoreui/models/workflow/errormodel.h \
+    ilwiscoreui/models/workflow/workflowcatalogmodel.h \
+    ilwiscoreui/models/workflowerrormodel.h \
+    ilwiscoreui/models/workflow/edgepropobject.h \
+    ilwiscoreui/models/workflow/nodepropobject.h \
+    ilwiscoreui/models/preferencesmodel.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -150,10 +152,24 @@ SOURCES += \
     ilwiscoreui/propertyeditors/gridpropertyeditor.cpp \
     ilwiscoreui/propertyeditors/layeropacitysetter.cpp \
     ilwiscoreui/models/workflow/scenariodesignermodel.cpp \
-    ilwiscoreui/models/workflow/scenariobuildermodel.cpp
+    ilwiscoreui/models/workflow/scenariobuildermodel.cpp \
+    ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.cpp \
+    ilwiscoreui/models/workflow/errormodel.cpp \
+    ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
+    ilwiscoreui/models/workflowerrormodel.cpp \
+    ilwiscoreui/models/workflow/edgepropobject.cpp \
+    ilwiscoreui/models/workflow/nodepropobject.cpp \
+    ilwiscoreui/models/preferencesmodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
 }
+
+
+linux {
+    target.path = $$PWD/../output/$$PLATFORM$$CONF/bin
+    INSTALLS += target
+}
+

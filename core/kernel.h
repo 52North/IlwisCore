@@ -13,6 +13,7 @@
 #include <fstream>
 #include "boost/current_function.hpp"
 #include <time.h>
+#include <chrono>
 #include "kernel_global.h"
 #include "ilwis.h"
 #include "iooptions.h"
@@ -195,7 +196,7 @@ private:
     QNetworkAccessManager _networkmanager;
     QScopedPointer<IssueLogger> _issues;
     QHash<QString, FactoryInterface * > _masterfactory;
-    mutable clock_t _start_clock;
+    mutable std::chrono::high_resolution_clock::time_point _start_clock;
     static Kernel *_kernel;
 
 

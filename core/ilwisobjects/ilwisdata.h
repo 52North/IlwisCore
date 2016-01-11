@@ -242,6 +242,12 @@ public:
             Resource resource = mastercatalog()->id2Resource(id);
             if (!resource.isValid())
                 resource = resource1;
+            auto type = kernel()->demangle(typeid(T).name());
+            IlwisTypes objecttp = IlwisObject::name2Type(type);
+            if ( objecttp == itANY || !hasType(objecttp, resource.ilwisType())){
+                kernel()->issues()->log(TR("Requested object type doesnt match object type found in the master catalog; Is the requested resource correct?"));
+                return false;
+            }
             if (!mastercatalog()->isRegistered(resource.id())) {
                 T *data = static_cast<T *>(IlwisObject::create(resource, options));
                 if ( data == 0) {

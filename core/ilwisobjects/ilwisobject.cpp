@@ -75,11 +75,7 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
             throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
         }
     }
-
-
-
-    Resource resource;
-    resource = mastercatalog()->id2Resource(id());
+    Resource resource = source();
     if ( !resource.isValid()) {
         resource = Resource(url,ilwisType(), false);
         resource.setId(id());
@@ -89,7 +85,8 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
         // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
         if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
             resource.setUrl(url);
-        resource.setUrl(url,true);
+        if ( url.scheme() != "ilwis") // raw urls can never go to an ilwis scheme
+            resource.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
@@ -166,28 +163,37 @@ void IlwisObject::code(const QString& cd) {
 
 Time IlwisObject::modifiedTime() const
 {
-    return _modifiedTime;
+    if ( !connector().isNull())
+        return connector()->source().modifiedTime() ;
+    return tUNDEF;
 }
 
 void IlwisObject::modifiedTime(const Time &tme)
 {
+
     if ( isReadOnly())
         return;
+    if ( connector().isNull())
+        return;
+    connector()->source().modifiedTime(tme)        ;
     _changed = true;
-    _modifiedTime = tme;
 }
 
 Time IlwisObject::createTime() const
 {
-    return _createTime;
+    if ( !connector().isNull())
+        return connector()->source().createTime();
+    return tUNDEF;
 }
 
 void IlwisObject::createTime(const Time &time)
 {
     if ( isReadOnly())
         return;
+    if ( connector().isNull())
+        return;
+    connector()->source().createTime(time)        ;
     _changed = true;
-    _createTime = time;
 }
 
 QString IlwisObject::toString()
@@ -266,6 +272,16 @@ QString IlwisObject::provider(bool input) const
     return sUNDEF;
 }
 
+double IlwisObject::pseudoUndef() const
+{
+    return _pseudoUndef    ;
+}
+
+void IlwisObject::setPseudoUndef(double v)
+{
+    _pseudoUndef = v;
+}
+
 void IlwisObject::readOnly(bool yesno)
 {
     if (!isSystemObject())
@@ -282,7 +298,9 @@ void IlwisObject::changed(bool yesno)
     if ( isReadOnly() || isSystemObject())
         return;
 
-    _modifiedTime = Time::now();
+    if ( !connector().isNull()){
+        connector()->source().modifiedTime(Time::now());
+    }
     _changed = yesno;
 }
 
@@ -391,8 +409,6 @@ void IlwisObject::copyTo(IlwisObject *obj)
     obj->_valid = _valid;
     obj->_readOnly = _readOnly;
     obj->_changed = _changed;
-    obj->_modifiedTime = Time::now();
-    obj->_createTime = Time::now();
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;
@@ -410,7 +426,9 @@ void IlwisObject::copyTo(IlwisObject *obj)
 bool IlwisObject::isSystemObject() const {
     InternalDatabaseConnection db;
     QString query = QString("Select linkedtable from codes where code = '%1'").arg(code());
-    return db.exec(query) &&  db.next();
+    bool ok = db.next();
+    ok &= db.exec(query);
+    return ok;
 }
 
 bool IlwisObject::isInternalObject() const
@@ -418,7 +436,7 @@ bool IlwisObject::isInternalObject() const
     if ( isAnonymous())
         return true;
     if (source().isValid()){
-        return source().url().scheme() == "ilwis";
+            return source().url().scheme() == "ilwis";
     }
     return false;
 }
@@ -522,6 +540,7 @@ QString IlwisObject::type2Name(IlwisTypes t)
     case  itSINGLEOPERATION:
         return "SingleOperation";
     }
+
     return sUNDEF;
 
 }
@@ -602,10 +621,15 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
     if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
         return  itWORKFLOW;
     }
+    if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0) {
+        return  itOPERATIONMETADATA;
+    }
     if ( name.compare( "Catalog",Qt::CaseInsensitive) == 0)
         return  itCATALOG;
     if ( name.compare( "Representation",Qt::CaseInsensitive) == 0)
         return  itREPRESENTATION;
+    if ( name.compare( "Column",Qt::CaseInsensitive) == 0)
+        return  itCOLUMN;
     // standard c++ types
     if ( name.compare( "int",Qt::CaseInsensitive) == 0)
         return  itINT32;

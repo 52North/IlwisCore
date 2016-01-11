@@ -12,6 +12,8 @@ Row {
             checked = !checked
             propertyForm.editable = !propertyForm.editable
             propertyForm.editValues['avalue'] = 'twnety'
+            text = !checked ? qsTr("Cancel") : qsTr("Edit")
+            console.debug(text)
         }
     }
     Button {

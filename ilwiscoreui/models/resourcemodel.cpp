@@ -125,6 +125,14 @@ void ResourceModel::setDisplayName(const QString &name)
 {
     _displayName = name;
     _item.name(name, false);
+    emit displayNameChanged();
+}
+
+void ResourceModel::setDescription(const QString &desc)
+{
+    if ( _item.isValid())
+        _item.setDescription(desc);
+    emit descriptionChanged();
 }
 
 QString ResourceModel::url() const
@@ -143,13 +151,13 @@ QString ResourceModel::iconPath() const
         return _iconPath;
 
     quint64 tp = _item.ilwisType();
-    if ( hasType(_item.extendedType(), itCATALOG)){
-        return iconPath(tp | itCATALOG);
-    }
-    if ( hasType(_item.extendedType(), itFILE) && tp == itCATALOG)
+    if ( hasType(_item.extendedType(), itFEATURE) && tp == itCATALOG)
         return iconPath(tp | itCOVERAGE);
     if ( hasType(_item.extendedType(), itTABLE) && tp == itCATALOG)
         return iconPath(tp | itTABLE);
+    if ( hasType(_item.extendedType(), itRASTER)){
+        return iconPath(tp | itRASTER);
+    }
     if ( hasType(tp ,itCOORDSYSTEM)){
         return iconPath(itCOORDSYSTEM);
     }
@@ -168,7 +176,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     if ( tp == (itTABLE|itCATALOG))
         return "catalogTable20.png";
     if ( tp == (itCOVERAGE|itCATALOG))
-        return "catalogSpatial20.png";
+        return "folderFeature20.png";
     if ( tp & itRASTER)
         return "raster20CS1.png";
     else if ( tp == itPOLYGON)
@@ -229,6 +237,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "ellipsoid20.png";
     else if ( tp & itSTRING)
         return "text20.png";
+    else if ( tp & itWORKFLOW)
+        return "workflow20.png";
     else if ( tp & itOPERATIONMETADATA)
         return "operation20.png";
     else if ( tp & itCOORDINATE)

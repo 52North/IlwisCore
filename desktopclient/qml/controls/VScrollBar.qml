@@ -9,6 +9,7 @@ Rectangle {
     property double maxSize : 100
     property double currentSize : 100
     property double currentPosition : -1
+   property int oldPosition: -10000
 
     signal scrolled(double position)
 
@@ -72,16 +73,16 @@ Rectangle {
         anchors.bottom: bottomMarker.top
         width : parent.width
         hoverEnabled: true
-        property int oldpos: -10000
+
 
         onPositionChanged: {
             if ( pressed){
                 var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
                 var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
                 if ( mouse.y > scrollerTopThumbPos && mouse.y < scrollerBottomThumbPos){
-                    if ( oldpos != -10000){
+                    if ( oldPosition != -10000){
                         var rely = mouse.y / marea.height
-                        var oldRely = oldpos / marea.height
+                        var oldRely = oldPosition / marea.height
                         var difrely = rely - oldRely;
                         currentPosition = currentPosition + maxSize * difrely
                         if ( currentPosition > maxSize - currentSize)
@@ -90,7 +91,7 @@ Rectangle {
                             currentPosition = 0
                         scrolled(currentPosition)
                     }
-                    oldpos = mouse.y
+                    oldPosition = mouse.y
 
                 }
             }

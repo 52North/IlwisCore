@@ -313,7 +313,7 @@ public:
      */
     virtual bool merge(const IlwisObject* obj, int options=0);
     bool isSystemObject() const;
-    bool isInternalObject() const;
+    virtual bool isInternalObject() const;
     bool isRemote() const;
     void remove();
     virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
@@ -377,6 +377,8 @@ public:
 
     QString formatCode(bool input=true) const;
     QString provider(bool input=true) const;
+    double pseudoUndef() const;
+    virtual void setPseudoUndef(double v);
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
    const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
@@ -390,8 +392,8 @@ private:
    bool _valid;
    bool _readOnly;
    bool _changed;
-   Time _modifiedTime;
-   Time _createTime;
+
+   double _pseudoUndef=rUNDEF;
    QScopedPointer<Ilwis::ConnectorInterface> _connector;
    QScopedPointer<Ilwis::ConnectorInterface> _outConnector;
    static QVector<IlwisTypeFunction> _typeFunctions;

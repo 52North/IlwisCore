@@ -81,7 +81,10 @@ Rectangle {
             currentIndex = index
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
-            folderModel.folder = "file:///"+ drivePath
+            if(drivePath.indexOf("/") !== 0)
+                folderModel.folder = "file:///"+ drivePath
+            else
+                folderModel.folder = "file:////"+ drivePath
             var filter = "container='" + folderModel.folder + "'"
             mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
         }
@@ -180,7 +183,10 @@ Rectangle {
                         //fileFolders.currentIndex = index;
                         var path = folderModel.get(index,"filePath")
                         path = path2pathView(path)
-                        currentFolder = "file:///"+ path;
+                        if(path.indexOf("/") !== 0)
+                            currentFolder = "file:///"+ path;
+                        else
+                            currentFolder = "file:////"+ path;
                         folderModel.folder = currentFolder;
                         var filter = "container='" + folderModel.folder + "'"
                         mainSplit.changeCatalog(filter,"catalog", currentFolder)

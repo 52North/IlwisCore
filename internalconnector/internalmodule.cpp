@@ -100,13 +100,13 @@ void InternalModule::prepare()
     resource.prepare();
     mastercatalog()->addItems({resource});
 
-    url = QString("file:///%1/resources/country_boundaries.ilwis").arg(context()->ilwisFolder().absoluteFilePath());
-    resource = Resource(QUrl("ilwis://system/country_boundaries.ilwis"), QUrl(url),itFEATURE);
-    resource.code("catalogcountryboundaries");
-    resource.name("countryboundaries", false);
-    resource.addContainer(QUrl("ilwis://system"));
-    resource.prepare();
-    mastercatalog()->addItems({resource});
+//    url = QString("file:///%1/resources/country_boundaries.ilwis").arg(context()->ilwisFolder().absoluteFilePath());
+//    resource = Resource(QUrl("ilwis://system/country_boundaries.ilwis"), QUrl(url),itFEATURE);
+//    resource.code("catalogcountryboundaries");
+//    resource.name("countryboundaries", false);
+//    resource.addContainer(QUrl("ilwis://system"));
+//    resource.prepare();
+//    mastercatalog()->addItems({resource});
 
 
     IlwisObject::addTypeFunction(InternalModule::ilwisType);

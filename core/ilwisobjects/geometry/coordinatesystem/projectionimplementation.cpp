@@ -66,7 +66,9 @@ QVariant ProjectionImplementation::parameter(Projection::ProjectionParamValue ty
 
 void ProjectionImplementation::setParameter(Projection::ProjectionParamValue type, const QVariant &value)
 {
-    _parameters[type] = {value, true};
+    bool used = _parameters[type]._isUsed;
+    _parameters[type] = {value, _parameters[type]._valueType,true};
+   _parameters[type]._isUsed = used;
 }
 
 bool ProjectionImplementation::isEqual(const QScopedPointer<ProjectionImplementation>& projimpl) {
@@ -123,11 +125,13 @@ QString ProjectionImplementation::toWKT(quint32 spaces)
                     result += indent + QString("PARAMETER[\"central_meridian\",%1]").arg(parm.second._value.toDouble() * 6.0 - 183.0);
                 }
             }else {
-                QString name =kvp[parm.first];
-                QString v = parm.second._value.toString();
-                if ( result != "")
-                    result += ",";
-                result += indent + QString("PARAMETER[%1,%2]").arg(name).arg(v)  + ending ;
+                if ( parm.first != Projection::pvELLCODE){
+                    QString name =kvp[parm.first];
+                    QString v = parm.second._value.toString();
+                    if ( result != "")
+                        result += ",";
+                    result += indent + QString("PARAMETER[%1,%2]").arg(name).arg(v)  + ending ;
+                }
             }
         }
     }

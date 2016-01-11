@@ -92,8 +92,8 @@ Item {
                   var envView = renderer.viewEnvelope
                   maxSize = envView.maxx - envView.minx
                   var envZoom = renderer.zoomEnvelope
+                  oldPosition = -10000
                   currentSize = envZoom.maxx - envZoom.minx
-                  //console.debug(envView.maxx, envView.minx, envZoom.maxx, envZoom.minx)
                   if ( currentPosition === -1)
                     currentPosition = 0
                   else{
@@ -125,11 +125,11 @@ Item {
                   maxSize = envView.maxy - envView.miny
                   var envZoom = renderer.zoomEnvelope
                   currentSize = envZoom.maxy - envZoom.miny
+                  oldPosition = -10000
                   if ( currentPosition === -1)
                     currentPosition = 0
                   else{
-                      currentPosition = envZoom.miny - envView.miny
-
+                      currentPosition = envView.maxy - envZoom.maxy
                   }
 
                   return 0
@@ -140,8 +140,8 @@ Item {
                   var envView = renderer.viewEnvelope
                   var newPos1 = envView.maxy - position
                   var newPos2 = newPos1 - (envZoom.maxy - envZoom.miny)
-                  envZoom.miny = newPos1
-                  envZoom.maxy = newPos2
+                  envZoom.miny = newPos2
+                  envZoom.maxy = newPos1
                   renderer.zoomEnvelope = envZoom
 
               }

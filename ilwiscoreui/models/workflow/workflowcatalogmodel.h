@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "operationcatalogmodel.h"
+#include "../operationcatalogmodel.h"
 #include "workflowmodel.h"
 #include "ilwiscoreui_global.h"
 

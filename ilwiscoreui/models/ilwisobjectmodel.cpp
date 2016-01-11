@@ -261,14 +261,16 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
         IDomain domain = _ilwisobject.as<Domain>();
         if ( hasType(domain->ilwisType(), itITEMDOMAIN)){
             SPItemRange itemrange =domain->range<ItemRange>();
-            for(auto item : *(itemrange.data())) {
-                if ( item){
-                    DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
-                    _domainItems.push_back(domainitem);
+            if ( !itemrange.isNull()){
+                for(auto item : *(itemrange.data())) {
+                    if ( item){
+                        DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
+                        _domainItems.push_back(domainitem);
+                    }
                 }
+                if ( _domainItems.size() > 0)
+                    return QQmlListProperty<DomainItemModel>(this, _domainItems) ;
             }
-            if ( _domainItems.size() > 0)
-                return QQmlListProperty<DomainItemModel>(this, _domainItems) ;
         }
     }
     return QQmlListProperty<DomainItemModel>();

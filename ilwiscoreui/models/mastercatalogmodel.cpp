@@ -8,6 +8,10 @@
 #include <QSqlQuery>
 #include <QQuickItem>
 #include <QApplication>
+#ifdef Q_OS_LINUX
+#include <QProcess>
+#include <QString>
+#endif
 #include <qtconcurrentmap.h>
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -409,13 +413,21 @@ IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickI
 void MasterCatalogModel::setSelectedObjects(const QString &objects)
 {
     try {
-        if ( objects == ""){
+        auto clearList = [&](){
+            for(IlwisObjectModel *model : _selectedObjects){
+                model->setParent(0);
+                model->deleteLater();
+            }
             _selectedObjects.clear();
+        };
+
+        if ( objects == ""){
+            clearList();
             emit selectionChanged();
             return;
         }
         QStringList parts = objects.split("|");
-        _selectedObjects.clear();
+        clearList();
         kernel()->issues()->silent(true);
         for(auto objectid : parts){
             bool ok;
@@ -424,11 +436,8 @@ void MasterCatalogModel::setSelectedObjects(const QString &objects)
                 continue;
 
             IlwisObjectModel *ioModel = new IlwisObjectModel(resource, this);
-            if ( ioModel->isValid()){
-                _selectedObjects.append(ioModel);
-                emit selectionChanged();
-            }else
-                delete ioModel;
+            _selectedObjects.append(ioModel);
+            emit selectionChanged();
         }
         kernel()->issues()->silent(false);
     }catch(const ErrorObject& ){
@@ -494,25 +503,43 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
     return 0;
 }
 
+// TODO insure that the drive "index" is coherent
 QString MasterCatalogModel::getDrive(quint32 index){
-    QFileInfoList drives = QDir::drives();
+    QStringList drives = MasterCatalogModel::driveList();
+
     if ( index < drives.size()){
-        return drives[index].filePath();
+        return drives[index];
     }
     return "";
 }
 
 QStringList MasterCatalogModel::driveList() const{
+    QStringList drivenames;
 #ifdef Q_OS_WIN
      QFileInfoList drives = QDir::drives();
-     QStringList drivenames;
      for(auto item : drives){
         drivenames.append(item.filePath());
      }
-     return drivenames;
-#else
-    return QStringList();
 #endif
+#ifdef Q_OS_LINUX
+     QProcess process;
+     process.start("lsblk", QStringList() << "-o" << "MOUNTPOINT");
+
+     if (process.waitForFinished()) {
+         QByteArray result = process.readAll();
+         if (result.length() > 0) {
+             QStringList mountpoints = QString(result).split('\n', QString::SplitBehavior::SkipEmptyParts);
+             QStringList unwantedStrings("MOUNTPOINT");
+             unwantedStrings.append("[SWAP]");
+
+             for (QString mountp: mountpoints) {
+                 if (!unwantedStrings.contains(mountp))
+                     drivenames.append(mountp);
+             }
+         }
+     }
+#endif
+     return drivenames;
 }
 
 void MasterCatalogModel::addBookmark(const QString& path){
@@ -614,8 +641,10 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
     QStringList resourceList;
     for (const auto& resource : resources){
         if (resource.isValid()){
+            QString result = QString::number(resource.id());
             if ( property == "name")
-                resourceList.append(QString::number(resource.id()) + "|" + resource.name());
+                result += "|" + resource.name();
+            resourceList.append(result);
         }
     }
     return resourceList;
@@ -657,13 +686,13 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
 
 
 
-void MasterCatalogModel::refreshWorkingCatalog()
+void MasterCatalogModel::refreshCatalog(const QString& path)
 {
     auto items = context()->workingCatalog()->items();
     mastercatalog()->removeItems(items);
 
     QThread* thread = new QThread;
-    CatalogWorker3* worker = new CatalogWorker3(_currentCatalog->resource());
+    CatalogWorker3* worker = new CatalogWorker3(path);
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
     thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
@@ -761,6 +790,7 @@ void MasterCatalogModel::deleteObject(const QString &id)
         return;
     obj->remove();
 }
+
 //--------------------
 CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
 {
@@ -776,7 +806,7 @@ void CatalogWorker::process(){
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){
-            //calculatelatLonEnvelopes();
+            calculatelatLonEnvelopes();
             emit finished();
         }
     } catch(const ErrorObject& err){
@@ -790,7 +820,7 @@ void CatalogWorker::process(){
 
 void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
     try{
-        if ( !resource.hasProperty("latlonenvelope")){
+        if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
             ICoverage cov(resource);
             if ( cov.isValid()){
                 if ( cov->coordinateSystem()->isLatLon()){
@@ -822,10 +852,12 @@ void CatalogWorker::calculatelatLonEnvelopes(){
     trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
     ICoordinateSystem csyWgs84("code=epsg:4326");
     std::vector<Resource> updatedResources;
+    int count = 0;
     for(Resource& resource : resources){
         calcLatLon(csyWgs84, resource, updatedResources);
         if(!trq->update(1))
             return;
+        ++count;
 
     }
     kernel()->issues()->silent(false);
@@ -847,7 +879,7 @@ void worker::process(){
 void CatalogWorker3::process()
 {
     try{
-        ICatalog catalog(OSHelper::neutralizeFileName(_resource.url().toString()));
+        ICatalog catalog(OSHelper::neutralizeFileName(_path));
         if ( !catalog.isValid()){
             return ;
         }

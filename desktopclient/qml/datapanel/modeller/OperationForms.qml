@@ -14,31 +14,61 @@ Rectangle {
     width : 210
     height : parent.height
     property var operationid
+    property int itemId: -1
 
-    function newForm(metaid, title){
+    function newForm(metaid, title, newItemId){
+        fillAppFrame(metaid, title, false, true, [])
+        itemId = newItemId
+    }
+
+    /**
+      Shows the operation's form. Passes the hidden fields to the index2Form method.
+      */
+    function newOperationFormWithHiddenFields(metaid, title, newItemId, hiddenFields){
+        fillAppFrame(metaid, title, false, true, hiddenFields)
+        itemId = newItemId
+    }
+
+    /**
+      Shows the operation's form. A boolean (showOutput) has to be passed to this method which decides whether an ouput form is shown.
+      */
+    function newFormWithOutput(metaid, title){
+        fillAppFrame(metaid, title, true, false, [])
+    }
+
+    function fillAppFrame(metaid, title, output, showEmpty, hiddenFields) {
+        var form= formbuilder.index2Form(metaid, output, showEmpty ,hiddenFields)
         operationid = metaid
-        var form= formbuilder.index2Form(metaid, false)
         appFrame.formQML = form
         appFrame.formTitle = title
         appFrame.opacity = 1
     }
 
-
-    Bench.ApplicationForm{
-        id : appFrame
-        width : parent.width / 2
-        x : parent.width / 4
-        height : parent.height - 30 < 0 ?  0 : parent.height - 30
-        opacity : 0
-
+    /**
+      Executes the form
+      */
+    function executeForm() {
+        appFrame.doExecute(operationid)
+        return appFrame.currentAppForm.formresult
     }
-//    Bench.ApplicationForm{
-//        id : workflowFrame
+    ScrollView{
+        id: operationFormScrollView
+        anchors.fill: parent
 
-//        width : parent.width / 2
-//        height : parent.height - 30 < 0 ?  0 : parent.height - 30
-//        opacity : 0
-
-//    }
+        Bench.ApplicationForm{
+            id : appFrame
+            width : operationForm.width - 15
+            height : operationForm.height - 30 < 0 ?  0 : operationForm.height - 30
+            opacity : 0
+        }
+    }
+    Component.onCompleted: {
+        appFrame.formResultChanged.connect(asignConstantInputData)
+    }
+    function asignConstantInputData() {
+        if (itemId > -1){
+            modellerDataPane.asignConstantInputData(appFrame.currentAppForm.formresult, itemId)
+        }
+    }
 }
 

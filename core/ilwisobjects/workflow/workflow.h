@@ -3,6 +3,7 @@
 
 #include <QPoint>
 #include <QMap>
+#include <QUrl>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -17,7 +18,7 @@ namespace Ilwis {
 struct AssignedInputData {
     AssignedInputData() {}
     QString inputName;
-    QVariant value;
+    QString value;
 };
 
 struct AssignedOutputData {
@@ -31,16 +32,40 @@ typedef std::shared_ptr<AssignedOutputData> SPAssignedOutputData;
 
 struct NodeProperties {
     NodeProperties(){}
-    NodeProperties(quint64 opid) : _operationid(opid){}
+    NodeProperties(const Resource& res) : _operationid(res.id()){
+        _syntax = res["syntax"].toString();
+        _resourceProvider = res["namespace"].toString();
+    }
+    NodeProperties(const QString& syntax, QString provider, quint16 x, quint16 y) {
+        _syntax = syntax;
+        _resourceProvider = provider;
+        _x = x;
+        _y = y;
+        std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
+        if ( items.size() == 1){
+            _operationid = items[0].id();
+        }
+        qDebug() << _operationid;
+    }
     quint64 _operationid = i64UNDEF;
+    QString _syntax;
+    QString _resourceProvider;
+    quint16 _x;
+    quint16 _y;
 };
 
 struct EdgeProperties {
-    EdgeProperties(int out, int in) : _outputIndexLastOperation(out), _inputIndexNextOperation(in){}
+    EdgeProperties(int outParm, int inParm, int inRect, int outRect) :
+        _outputParameterIndex(outParm),
+        _inputParameterIndex(inParm),
+        _outputRectangleIndex(outRect),
+        _inputRectangleIndex(inRect){}
     QString outputName;
     bool temporary = true;
-    int _outputIndexLastOperation;
-    int _inputIndexNextOperation;
+    int _outputParameterIndex;
+    int _inputParameterIndex;
+    int _outputRectangleIndex;
+    int _inputRectangleIndex;
 };
 
 typedef boost::property<boost::vertex_index1_t, NodeProperties> NodeProperty;
@@ -56,6 +81,8 @@ typedef boost::graph_traits<WorkflowGraph>::edge_descriptor OEdge;
 
 typedef boost::graph_traits<WorkflowGraph>::in_edge_iterator InEdgeIterator;
 typedef boost::graph_traits<WorkflowGraph>::out_edge_iterator OutEdgeIterator;
+
+typedef boost::graph_traits<WorkflowGraph>::vertex_iterator WorkflowVertexIterator;
 
 typedef std::pair<OVertex, int> InputAssignment;
 
@@ -97,13 +124,25 @@ public:
     void updateNodeProperties(OVertex v, const NodeProperties &properties);
     void updateEdgeProperties(OEdge e, const EdgeProperties &properties);
 
+    OVertex getSourceOperationNode(const OEdge &e);
+    OVertex getTargetOperationNode(const OEdge &e);
+
+    std::pair<InEdgeIterator, InEdgeIterator> getInEdges(const OVertex &v);
+    std::pair<OutEdgeIterator, OutEdgeIterator> getOutEdges(const OVertex &v);
+
     //------- Queries
     bool hasValueDefined(const OVertex& operationVertex, int parameterIndex);
+
+    QString definedValueIndexes(const OVertex &operationVertex);
 
     // ------ operation metadata functions
     IOperationMetaData getOperationMetadata(const OVertex &v);
     IlwisTypes ilwisType() const;
     quint64 createMetadata();
+
+    // ------ Methods for saving
+    QMap<InputAssignment, SPAssignedInputData> getAllInputAssignments() { return _inputAssignments; }
+    std::pair<WorkflowVertexIterator, WorkflowVertexIterator> getNodeIterators() { return boost::vertices(_wfGraph); }
 
     // ------ for debugging
     void debugPrintGraph();
@@ -112,6 +151,8 @@ public:
     void debugWorkflowMetadata() const;
     void debugOperationParameter(const SPOperationParameter parameter) const;
 
+    virtual bool isInternalObject() const;
+
 private:
     WorkflowGraph _wfGraph;
     QList<OVertex> _inputNodes;
@@ -119,8 +160,6 @@ private:
 
     QMap<InputAssignment, SPAssignedInputData> _inputAssignments;
     QMap<OVertex, QList<SPAssignedOutputData>> _outputProperties;
-    //QList<NodeRenderingProperties> _nodeRenderingProperties;
-    //QList<EdgeRenderingProperties> _edgeRenderingProperties;
 
     NodePropertyMap nodeIndex();
     EdgePropertyMap edgeIndex();
@@ -136,11 +175,6 @@ private:
     QList<InputAssignment> getOpenInputAssignments(const OVertex &v) const;
     QList<InputAssignment> getImplicitInputAssignments(const OVertex &v);
     std::vector<quint16> getAssignedPouts(const OVertex &v);
-
-    OVertex getPreviousOperationNode(const OEdge &e);
-    OVertex getNextOperationNode(const OEdge &e);
-    std::pair<InEdgeIterator, InEdgeIterator> getInEdges(const OVertex &v);
-    std::pair<OutEdgeIterator, OutEdgeIterator> getOutEdges(const OVertex &v);
 };
 
 typedef IlwisData<Workflow> IWorkflow;

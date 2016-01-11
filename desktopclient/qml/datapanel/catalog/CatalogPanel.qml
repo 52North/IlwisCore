@@ -113,16 +113,9 @@ Item {
         Action {
             id :refreshCatalog
             onTriggered: {
-                mastercatalog.refreshWorkingCatalog()
+                mastercatalog.refreshCatalog(currentCatalog.url)
             }
         }
-//        Action {
-//            id : showProps
-//            onTriggered :{
-//               mastercatalog.setSelectedObjects(mastercatalog.currentCatalog.id)
-//            }
-//        }
-
 
 
         Row {
