@@ -50,21 +50,23 @@ bool RasterToPoint::execute(ExecutionContext *ctx, SymbolTable &symTable)
     PixelIterator iter(_inputraster);
     int count = 0;
     while( iter != iter.end()){
-         if(*iter != -32767){
-             Pixel p = iter.position();;
+         double res = _inputraster->pix2value(iter.position());
+         if(res != rUNDEF && res != 0){
+             std::cout<<res<<std::endl;
+             Pixel p = iter.position();
              Coordinate coord = _inputraster->georeference()->pixel2Coord(Pixeld(p.x,p.y));
-
-             geos::geom::Point *pol = _outputfeatures->geomfactory()->createPoint(coord);
-             if(pol->isValid()){
-                 //std::cout<<"\n"<<coord.x<<","<<coord.y;
-                 _outputfeatures->newFeature(pol);
+             geos::geom::Point *point = _outputfeatures->geomfactory()->createPoint(coord);
+             if(point->isValid()){
+                 _outputfeatures->newFeature(point);
              }
              ++count;
          }
+
         ++iter;
 
     }
-    _outputfeatures->attributesFromTable(_attTable);
+    std::cout<<count<<std::endl;
+    //_outputfeatures->attributesFromTable(_attTable);
     if ( ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputfeatures);
@@ -105,7 +107,7 @@ Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *c
 
 quint64 RasterToPoint::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/rastexddr2point"});
+    OperationResource operation({"ilwis://operations/raster2point"});
     operation.setSyntax("raster2point(inputraster)");
     operation.setDescription(TR("translates the pixels of a rastercoverage to points in a featurecoverage"));
     operation.setInParameterCount({1});

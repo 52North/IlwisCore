@@ -77,6 +77,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
              int value;
              Pixel position (middle + 0.5, y + 0.5); // take the polygon-value from the middle between two borders
              Coordinate crd = _inputgrf->pixel2Coord(position);
+
              QVariant d = _inputfeatures->coord2value(crd);
              if (d.isValid()){
                 QVariantMap vmap = d.value<QVariantMap>();

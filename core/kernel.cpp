@@ -92,7 +92,7 @@ Kernel::Kernel(QObject *parent) :
 
 void Kernel::init() {
 
-    if ( !_version.isNull())
+     if ( !_version.isNull())
         return;
      _issues.reset( new IssueLogger());
 

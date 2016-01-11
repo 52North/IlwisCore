@@ -146,7 +146,7 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-     IDomain dom;
+    IDomain dom;
     dom.prepare("boolean");
     _outputGC->datadefRef().domain(dom);
 

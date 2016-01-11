@@ -3,12 +3,12 @@
 #include "kernel.h"
 #include "raster.h"
 #include "featurecoverage.h"
+#include "table.h"
 #include "feature.h"
 #include "featureiterator.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "pointtoraster.h"
-
 using namespace Ilwis;
 using namespace RasterOperations;
 
@@ -60,9 +60,20 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         // but as a pointmap is representing a very sparsely filled raster we can use a slightly less performant operator (assignment)
         // to keep the code simple. There are not that many pixels to be filled
         pixiter = pix;
+        int rAtr;
+        QVariant d = _inputfeatures->coord2value(crd);
+        if (d.isValid() && crd != crdUNDEF){
+           QVariantMap vmap = d.value<QVariantMap>();
+           QVariant attribute =  vmap[COVERAGEKEYCOLUMN];
+           rAtr = attribute.toInt()+1;
+
+        }else{
+           rAtr = iUNDEF;
+        }
         // and we assign a value to the pixel
-        *pixiter = count;
-        ++count;
+        count++;
+        *pixiter = rAtr;
+
 
     }
     // we are done now. We need to transfer the generated output to the system so that other parts can also use it.
@@ -132,6 +143,7 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
         grf->compute(); // all members are set, now the initialization can take place
         _inputgrf = grf;
     }
+
     // we need a coordinate transformation when the two coordinatesystem dont match
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
 

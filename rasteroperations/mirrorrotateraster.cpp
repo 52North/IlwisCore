@@ -133,6 +133,7 @@ Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionConte
     _method = iter->second;
     Size<> sz = _inputRaster->size();
     Envelope outputenv = _inputRaster->envelope();
+
     if ( _method == tmTranspose || _method == tmRotate90 || _method == tmRotate270){
         sz = Size<>(sz.ysize(), sz.xsize(), sz.zsize());
         Coordinate center = (outputenv.max_corner() + outputenv.min_corner()) / 2.0;
