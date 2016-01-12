@@ -77,8 +77,11 @@ public:
     Q_INVOKABLE QString virtual getProperty(const QString& propertyname) const;
     Q_INVOKABLE void makeParent(QObject *item);
     Q_INVOKABLE bool hasExtendedType(const QString& tp) const;
+    Q_INVOKABLE void realizeThumbPath();
+
 
     static QString iconPath(IlwisTypes tp) ;
+
 protected:
     QString _displayName;
 private:
