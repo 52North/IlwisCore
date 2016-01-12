@@ -135,9 +135,18 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
     return  QQmlListProperty<ResourceModel>();
 }
 
-QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
+QQmlListProperty<ResourceModel> CatalogModel::mapItems()
 {
-   return  QQmlListProperty<CatalogMapItem>(this, _catalogMapItems);
+
+    try{
+        gatherItems();
+
+        return  QQmlListProperty<ResourceModel>(this, _coverageItems);
+    }
+    catch(const ErrorObject& err){
+
+    }
+    return  QQmlListProperty<ResourceModel>();
 }
 
 void CatalogModel::makeParent(QObject *obj)
@@ -223,6 +232,7 @@ void CatalogModel::refresh()
 {
     _refresh = true;
     _currentItems.clear();
+    _coverageItems.clear();
     emit contentChanged();
 }
 
@@ -233,6 +243,7 @@ void CatalogModel::nameFilter(const QString &filter)
 
     _nameFilter = filter;
     _currentItems.clear();
+    _coverageItems.clear();
     emit contentChanged();
 }
 
@@ -260,43 +271,6 @@ void CatalogModel::keyFilter(const QString &keyf)
     _keyFilter = keyf;
 }
 
-void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
-{
-    try{
-        if ( force){
-            _catalogMapItems.clear();
-            _refresh = true;
-            gatherItems();
-        }
-        std::map<qint64, std::vector<Resource>> hashes;
-        if ( _catalogMapItems.size() == 0){
-            kernel()->issues()->silent(true);
-            for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
-                if(hasType((*iter)->type(), itCOVERAGE)){
-                    Ilwis::Resource res =(*iter)->resource();
-                    if ( res.isValid() && res.hasProperty("latlonenvelope"))    {
-                        Envelope env = res["latlonenvelope"].toString();
-                        double hash = env.min_corner().x + env.max_corner().x + env.min_corner().y + env.max_corner().y + env.area();
-                        hash = hash * 1e9;
-                        hashes[(qint64)hash].push_back(res);
-                       //
-
-                    }
-                }
-            }
-            for(auto& lst : hashes ){
-                    _catalogMapItems.push_back(new CatalogMapItem({lst.second},manager->screenGrf(),this));
-            }
-            kernel()->issues()->silent(false);
-        }
-    } catch (const Ilwis::ErrorObject& ){
-
-    } catch (std::exception& ex){
-        Ilwis::kernel()->issues()->log(ex.what());
-    }
-    kernel()->issues()->silent(false);
-}
-
 void CatalogModel::gatherItems() {
     if ( _currentItems.isEmpty() || _refresh) {
         if ( !_view.isValid())
@@ -305,6 +279,7 @@ void CatalogModel::gatherItems() {
         _view.prepare();
 
         _currentItems.clear();
+        _coverageItems.clear();
         _refresh = false;
 
         std::vector<Resource> items = _view.items();
@@ -316,6 +291,9 @@ void CatalogModel::gatherItems() {
                 }
             }
             _currentItems.push_back(new ResourceModel(resource, this));
+            if ( hasType(resource.ilwisType(), itCOVERAGE)){
+                _coverageItems.push_back(new ResourceModel(resource, this));
+            }
 
         }
         if ( _view.hasParent()){
