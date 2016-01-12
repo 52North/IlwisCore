@@ -99,27 +99,13 @@ Item {
     MouseArea{
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-       // property CatalogContextMenu menu : CatalogContextMenu{}
         onClicked: {
             itemgrid.currentIndex = index;
             isSelected = !isSelected
-            itemgrid.setSelected(id)
+            setSelected(id)
             if (catalogViews && !catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
-
-
-         }
-        onPressed: {
-            if (mouse.button == Qt.RightButton){
-//                var ilwisobject = mastercatalog.id2Resource(id)
-//                if ( ilwisobject){
-//                    ilwisobject.makeParent(iconDelegate)
-//                    menu.ilwisobject = ilwisobject
-//                    menu.popup()
-//                }
-            }
         }
-
 
         onDoubleClicked: {
             if ( name == "..")
@@ -127,7 +113,7 @@ Item {
             else {
                 showObject(id)
                 isSelected = true
-                itemgrid.setSelected(id)
+                setSelected(id)
             }
         }
     }

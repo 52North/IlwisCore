@@ -180,15 +180,59 @@ id: thumbDelegate
         }
     }
     MouseArea{
+        id : mouseArea
         anchors.fill: parent
-        propagateComposedEvents: true
+        property variant image
+        drag.target: image
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            thumbGridView.currentIndex = index;
-            mouse.accepted = false
-         }
-        onDoubleClicked: {
-             showObject(id)
+            thumbGrid.currentIndex = index;
+            isSelected = !isSelected
+            setSelected(id)
+            if (catalogViews && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
+
+        onDoubleClicked: {
+            if ( name == "..")
+                showObject(-1)
+            else {
+                showObject(id)
+                isSelected = true
+                setSelected(id)
+            }
+        }
+        onReleased: {
+            image.Drag.drop()
+            image.parent = mouseArea
+            image.anchors.fill = mouseArea
+            image.destroy();
+        }
+
+        onPressed: {
+           image = Qt.createQmlObject('import QtQuick 2.0; Image{
+                id : image
+                width : 20; height : 20
+                source : iconSource(iconPath)
+                fillMode: Image.PreserveAspectFit
+                property string message :  model !== null ? url : ""
+                property string ilwisobjectid : model !== null ? id : ""
+                property string type : model !== null ? typeName : ""
+                property string ids : model !== null ? mastercatalog.selectedIds() : ""
+
+                Drag.keys: typeName
+                Drag.active: mouseArea.drag.active
+                Drag.hotSpot.x: 10
+                Drag.hotSpot.y: 10
+                opacity : Drag.active / 2
+
+                states: State {
+                    when: mouseArea.drag.active
+                    ParentChange { target: image; parent: root }
+                    AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                }
+            }', mouseArea, "dynamicImage");
+          }
     }
 
 }

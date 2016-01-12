@@ -84,6 +84,41 @@ Item {
         catalogChanged()
     }
 
+    function setSelected(objectid){
+        mastercatalog.setSelectedObjects("")
+        var selectedIds
+        if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
+            selectedIds = objectid
+            for(var i = 0; i < currentCatalog.resources.length; ++i){
+                if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
+                    currentCatalog.resources[i].isSelected=false
+            }
+        }else if ( uicontext.currentKey === Qt.Key_Shift){
+            var startRange = false
+            for(var j = 0; j < currentCatalog.resources.length; ++j){
+                if ( currentCatalog.resources[j].isSelected){
+                    startRange = !startRange;
+                    selectedIds = selectedIds == "" ? currentCatalog.resources[j].id : selectedIds + "|" +currentCatalog.resources[j].id
+                }else {
+                    if ( startRange){
+                        selectedIds = selectedIds + "|" +currentCatalog.resources[j].id
+                        currentCatalog.resources[j].isSelected = true
+                    }
+                    else {
+                        currentCatalog.resources[j].isSelected=false
+                    }
+                }
+            }
+        } else if ( uicontext.currentKey === Qt.Key_Control){
+          for(var k = 0; k < currentCatalog.resources.length; ++k){
+              if ( currentCatalog.resources[k].isSelected){
+                selectedIds = selectedIds == "" ? currentCatalog.resources[k].id : selectedIds + "|" +currentCatalog.resources[k].id
+              }
+          }
+        }
+        mastercatalog.setSelectedObjects(selectedIds)
+    }
+
     function setResources(){
         if ( currentCatalog)
             return currentCatalog.resources
