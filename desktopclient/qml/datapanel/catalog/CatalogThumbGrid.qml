@@ -15,7 +15,7 @@ Rectangle {
     color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
     GridView {
         id: thumbGridView
-        model: setResources()
+        model: currentCatalog ? currentCatalog.mapItems : null
         delegate: DCatalogThumb{}
         cacheBuffer: 1000
         cellWidth: 150

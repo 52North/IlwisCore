@@ -7,6 +7,8 @@ import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+import LayersView 1.0
+import "../../Global.js" as Global
 
 Item{
 id: thumbDelegate
@@ -38,7 +40,35 @@ id: thumbDelegate
         }
 
     }
+    Component {
+        id : defaultImage
+        Image {
+            id: img
+            anchors.fill: parent
+            anchors.margins: 2
 
+            source: iconSource(imagePath)
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+        }
+    }
+
+    Component {
+        id : layerDrawer
+        LayersView{
+            id : lyrview
+            anchors.fill: parent
+            anchors.margins: 2
+            objectName : "thumb_generator_mainui"
+            Component.onCompleted: {
+                var cmd = "adddrawer(" + viewerId + "," + url +",\"itemid=" + id + "\"," + typeName + ")"
+                addCommand(cmd)
+                setAttribute("GridDrawer", {"active" : false})
+                realizeThumbPath()
+                setAttribute("View",{"saveimage" : imagePath})
+            }
+        }
+    }
 
     Image {
         id : page
@@ -55,16 +85,14 @@ id: thumbDelegate
             height : 150
             border .width: 1
             border.color: "lightgrey"
-            Image {
-                id: img
-                    anchors.fill: parent
-                    anchors.margins: 2
-
-                source: iconSource(imagePath)
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
+            Loader{
+                id : imageLoader
+                anchors.fill: parent
+                sourceComponent : defaultImage
             }
+
         }
+
         Image {
             anchors.top : parent.top
             anchors.topMargin: 13
@@ -73,6 +101,29 @@ id: thumbDelegate
             source : iconSource(iconPath)
             width : 20
             height : 20
+
+        }
+
+        Button {
+            id : refreshBut
+            width : 16
+            height : 18
+            anchors.top : parent.top
+            anchors.topMargin: 13
+            anchors.right : parent.right
+            anchors.rightMargin: 13
+            Image {
+                source : iconSource("refresh20.png")
+                width : 14
+                height : 16
+                anchors.centerIn: parent
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked:{
+                        imageLoader.sourceComponent = layerDrawer
+                    }
+                }
+            }
 
         }
         Text{
@@ -130,8 +181,10 @@ id: thumbDelegate
     }
     MouseArea{
         anchors.fill: parent
+        propagateComposedEvents: true
         onClicked: {
             thumbGridView.currentIndex = index;
+            mouse.accepted = false
          }
         onDoubleClicked: {
              showObject(id)
