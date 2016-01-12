@@ -20,6 +20,8 @@ RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& opti
     _screenGrf = new GeoReference();
     _screenGrf->create("corners");
     _backgroundColor = "white";
+    GridDrawer *griddrawer = new GridDrawer(this,this,options);
+    addDrawer(griddrawer,DrawerInterface::dtPOST,iUNDEF,"GridDrawer");
 }
 
 RootDrawer::~RootDrawer()
@@ -258,9 +260,8 @@ bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOpti
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         if (!hasDrawer("GridDrawer", DrawerInterface::dtPOST)){
-            GridDrawer *griddrawer = new GridDrawer(this,this,options);
-            griddrawer->prepare(DrawerInterface::ptALL, options);
-            addDrawer(griddrawer,DrawerInterface::dtPOST,iUNDEF,"GridDrawer");
+            drawer("GridDrawer", DrawerInterface::dtPOST)->prepare(DrawerInterface::ptALL, options);
+
         }
     }
     return true;
