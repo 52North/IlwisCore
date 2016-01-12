@@ -280,8 +280,21 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
     if ( asRaw) {
         _rawUrl = url;
         _urlQuery = QUrlQuery(url);
-    } else
-        _normalizedUrl = url;
+    } else{
+        if ( url.scheme() == "file"){
+            // it might be a absolute path that points to the internalcatalog so we replace it we a correct normalized path
+            QUrl internalCatalog = context()->persistentInternalCatalog();
+            QFileInfo localInternal(internalCatalog.toLocalFile());
+            QFileInfo localFile(url.toLocalFile());
+            QString localPath = localFile.absolutePath();
+            QString localInternalPath = localInternal.absoluteFilePath();
+            if ( OSHelper::neutralizeFileName(localPath,true) == OSHelper::neutralizeFileName(localInternalPath,true)){
+                _normalizedUrl = "ilwis://internalcatalog/" + localFile.fileName();
+            }else
+                _normalizedUrl = url;
+        }else
+            _normalizedUrl = url;
+    }
 
     QString urlTxt = url.toString();
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
