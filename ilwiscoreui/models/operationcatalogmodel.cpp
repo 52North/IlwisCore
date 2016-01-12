@@ -320,7 +320,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         QString output = parms[i];
 
 
-        QString pout = QString("pout_%1_type").arg(i - maxparms);
+        QString pout = QString("pout_%1_type").arg(i - maxparms + 1);
 
         IlwisTypes outputtype = operationresource[pout].toULongLong();
         if ( output.indexOf("@@") != -1 ){
