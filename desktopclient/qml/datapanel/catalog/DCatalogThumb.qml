@@ -185,10 +185,12 @@ id: thumbDelegate
         property variant image
         drag.target: image
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents: true
         onClicked: {
             thumbGrid.currentIndex = index;
             isSelected = !isSelected
             setSelected(id)
+            mouse.accepted = false
             if (catalogViews && !catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
         }
@@ -201,12 +203,14 @@ id: thumbDelegate
                 isSelected = true
                 setSelected(id)
             }
+            mouse.accepted = false
         }
         onReleased: {
             image.Drag.drop()
             image.parent = mouseArea
             image.anchors.fill = mouseArea
             image.destroy();
+            mouse.accepted = false
         }
 
         onPressed: {
@@ -231,7 +235,8 @@ id: thumbDelegate
                     ParentChange { target: image; parent: root }
                     AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                 }
-            }', mouseArea, "dynamicImage");
+            }', mouseArea, "dynamicImage")
+            mouse.accepted = false
           }
     }
 
