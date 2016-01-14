@@ -87,14 +87,14 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
     name = Resource::quoted2string(name);
     name = OSHelper::neutralizeFileName(name);
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; check if it is the catalog
-        QString query = QString("select resource from mastercatalog where resource = '%2'").arg(name);
+        QString query = QString("select resource from mastercatalog where resource = '%1' or rawresource='%1'").arg(name);
         InternalDatabaseConnection results(query);
         if ( results.next()) {
             return name;
         }
         // might have been a fragment
         QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
-        query = QString("select resource from mastercatalog where resource = '%2'").arg(resolvedName);
+        query = QString("select resource from mastercatalog where resource = '%1' or rawresource='%1'").arg(resolvedName);
         results.exec(query);
         if ( results.next()) {
             return resolvedName;
