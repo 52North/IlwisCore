@@ -292,9 +292,9 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
             if (operationresource[QString("pout_%1_optional").arg(parm)] == "false" && i < operationresource["outparameters"].toInt()) {
                 QString value = parms[i + operationresource["inparameters"].toInt()];
                 if (value.split("@@")[0].size() == 0) {
-                em->addError(1, "Output parameter " + QString::number(i) + " is undefined with name " +  operationresource[QString("pout_%1_name").arg(parm)].toString());
-                hasMissingParameters = true;
-            }
+                    em->addError(1, "Output parameter " + QString::number(i) + " is undefined with name " +  operationresource[QString("pout_%1_name").arg(parm)].toString());
+                    hasMissingParameters = true;
+                }
             }
             if (operationresource[QString("pin_%1_optional").arg(parm)] == "false" && i < operationresource["inparameters"].toInt() && parms[i].size() == 0) {
                 em->addError(1, "Input parameter " + QString::number(i) + " is undefined with name " +  operationresource[QString("pin_%1_name").arg(parm)].toString());
@@ -327,6 +327,8 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
             QString format;
             QStringList parts = output.split("@@");
             output = parts[0];
+            if ( output == "")
+                continue;
 
             //Check if user didnt put the same output name in another output field
             int occurences = 0;
@@ -345,65 +347,67 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
             QString formatName = parts[1];
 
-            QStringList existingFileNames;
+            if ( operationresource.ilwisType() & itWORKFLOW) {
+                QStringList existingFileNames;
 
-            DIR *directory;
+                DIR *directory;
 
-            //If not memory
-            QString fileName;
+                //If not memory
+                QString fileName;
 
-            if(formatName == "Memory" && operationresource.ilwisType() & itWORKFLOW){
-                //Get all files in the internal catalog
-                QString dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
-                directory = opendir(dataLocation.toStdString().c_str());
-            }else if(operationresource.ilwisType() & itWORKFLOW){
-                //Get all files in the directory
-                QString dataLocation = output;
-                dataLocation.remove("file:///");
+                if(formatName == "Memory" ){
+                    //Get all files in the internal catalog
+                    QString dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
+                    directory = opendir(dataLocation.toStdString().c_str());
+                }else {
+                    //Get all files in the directory
+                    QString dataLocation = output;
+                    dataLocation.remove("file:///");
 
-                QStringList splitUrl = dataLocation.split("/");
+                    QStringList splitUrl = dataLocation.split("/");
 
-                fileName = splitUrl.last();
+                    fileName = splitUrl.last();
 
-                QString query = "name='" + formatName + "'";
-                std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
-                if ( formats.size() == 1){
-                     QString connector = (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString();
-                     QString code = (*formats.begin()).second.property(DataFormat::fpCODE).toString();
+                    QString query = "name='" + formatName + "'";
+                    std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
+                    if ( formats.size() == 1){
+                        QString connector = (*formats.begin()).second.property(DataFormat::fpCONNECTOR).toString();
+                        QString code = (*formats.begin()).second.property(DataFormat::fpCODE).toString();
 
-                     QVariantList extensions = Ilwis::DataFormat::getFormatProperties(DataFormat::fpEXTENSION,outputtype, connector, code);
+                        QVariantList extensions = Ilwis::DataFormat::getFormatProperties(DataFormat::fpEXTENSION,outputtype, connector, code);
 
-                     fileName += ".";
-                     fileName += extensions[0].toString();
+                        fileName += ".";
+                        fileName += extensions[0].toString();
+                    }
+
+                    splitUrl.removeLast();
+
+                    dataLocation = splitUrl.join("/");
+
+                    directory = opendir(dataLocation.toStdString().c_str());
                 }
 
-                splitUrl.removeLast();
+                struct dirent *file;
 
-                dataLocation = splitUrl.join("/");
+                //Put the existing file names in a list for later use
+                while ((file = readdir (directory)) != NULL) {
+                    existingFileNames.push_back(file->d_name);
+                }
 
-                directory = opendir(dataLocation.toStdString().c_str());
-            }
+                closedir(directory);
 
-            struct dirent *file;
-
-            //Put the existing file names in a list for later use
-            while ((file = readdir (directory)) != NULL) {
-                existingFileNames.push_back(file->d_name);
-            }
-
-            closedir(directory);
-
-            //Check if a file with the same name already exist
-            for(int j=0;j<existingFileNames.size();++j){
-                if(formatName == "Memory"){
-                    if(existingFileNames[j] == output) {
-                        duplicateFileNames = true;
-                        em->addError(1, "Workflow did not execute duplicate name: " + output + ". Please change this name.");
-                    }
-                }else{
-                    if(existingFileNames[j] == fileName){
-                        duplicateFileNames = true;
-                        em->addError(1, "Workflow did not execute duplicate name: " + fileName + ". Please change this name.");
+                //Check if a file with the same name already exist
+                for(int j=0;j<existingFileNames.size();++j){
+                    if(formatName == "Memory"){
+                        if(existingFileNames[j] == output) {
+                            duplicateFileNames = true;
+                            em->addError(1, "Workflow did not execute duplicate name: " + output + ". Please change this name.");
+                        }
+                    }else{
+                        if(existingFileNames[j] == fileName){
+                            duplicateFileNames = true;
+                            em->addError(1, "Workflow did not execute duplicate name: " + fileName + ". Please change this name.");
+                        }
                     }
                 }
             }
@@ -512,20 +516,20 @@ WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
 void OperationCatalogModel::keyFilter(const QString &keyf)
 {
     QStringList parts= keyf.split(" ",QString::SkipEmptyParts);
-   QString result;
-   for(QString part : parts){
-       if ( part.toLower() == "or")
-           result += " or ";
-       else if ( part.toLower() == "and")
-           result += " and ";
-       else {
-           result += "keyword='" + part + "'";
-       }
+    QString result;
+    for(QString part : parts){
+        if ( part.toLower() == "or")
+            result += " or ";
+        else if ( part.toLower() == "and")
+            result += " and ";
+        else {
+            result += "keyword='" + part + "'";
+        }
 
-   }
-   _currentOperations.clear();
-   _operationsByKey.clear();
-   _refresh = true;
-   CatalogModel::filter(result);
-   emit operationsChanged();
+    }
+    _currentOperations.clear();
+    _operationsByKey.clear();
+    _refresh = true;
+    CatalogModel::filter(result);
+    emit operationsChanged();
 }
