@@ -184,6 +184,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case  itGEOREF:
         return "georeference";
     case  itTABLE:
+    case itFLATTABLE:
         return "table";
     case  itPROJECTION:
         return "projection";
