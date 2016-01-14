@@ -17,7 +17,28 @@ NumericDomain::NumericDomain()
 
 NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
     setStrict(false);
-    range(new NumericRange(-1e300, 1e300));
+    if ( hasType(resource.extendedType(), itINT8))
+        range(new NumericRange(-127, 128,1));
+    else if (hasType(resource.extendedType(), itUINT8)){
+        range(new NumericRange(0, 255,1));
+    } else if (hasType(resource.extendedType(), itINT16)){
+        range(new NumericRange(-32768, 32768,1));
+    } else if (hasType(resource.extendedType(), itUINT16)){
+        range(new NumericRange(0, 65536,1));
+    } else if (hasType(resource.extendedType(), itINT32)){
+        range(new NumericRange(-2147483648, 2147483648,1));
+    }else if (hasType(resource.extendedType(), itUINT32)){
+        range(new NumericRange(0, 4294967296,1));
+    }else if (hasType(resource.extendedType(), itINT64)){
+        range(new NumericRange(-9223372036854775807LL, 9223372036854775807LL,1));
+    }else if (hasType(resource.extendedType(), itINT64)){
+        range(new NumericRange(0, 18446744073709551615ULL,1));
+    }else if (hasType(resource.extendedType(), itFLOAT)){
+        range(new NumericRange(-1e38, 1e38));
+    }else {
+        range(new NumericRange(-1e300, 1e300));
+    }
+
 }
 
 NumericDomain::NumericDomain(NumericRange *r)
