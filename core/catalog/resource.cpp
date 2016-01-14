@@ -108,13 +108,15 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                         }
                     }
                     _normalizedUrl = urltxt;
+                    QString container = urltxt.adjusted(QUrl::RemoveFilename).toString(); // there is now a '/'at the end, remove it
+                    _container = container.left(container.size() - 1);
 
                 }
             }
         }
         checkUrl(tp);
     }
-    if ( _container.toString() == "ilwis://internalcatalog" ||
+    if ( _container ==  INTERNAL_OBJECT ||
          (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
         QString path = context()->persistentInternalCatalog().toString();
         _rawContainer = QUrl(path);
@@ -278,8 +280,16 @@ QUrl Resource::url(bool asRaw) const
 void Resource::setUrl(const QUrl &url, bool asRaw)
 {
     if ( asRaw) {
-        _rawUrl = url;
-        _urlQuery = QUrlQuery(url);
+        if ( url.scheme() == "ilwis"){
+            // we dont want normalized paths to internal catalog in the raw url
+            if ( url.toString().indexOf(INTERNAL_OBJECT.toString())!= -1){
+                QString name = url.fileName();
+                _rawUrl = context()->persistentInternalCatalog().toString() + "/" + name;
+            }else
+               _rawUrl = url;
+        }else
+            _rawUrl = url;
+        _urlQuery = QUrlQuery(_rawUrl);
     } else{
         if ( url.scheme() == "file"){
             // it might be a absolute path that points to the internalcatalog so we replace it we a correct normalized path
@@ -386,14 +396,24 @@ void Resource::dimensions(const QString &dim)
 
 void Resource::addContainer(const QUrl& url, bool asRaw) {
     if ( asRaw ){
-        _rawContainer = url;
-        if ( !_container.isValid())
-            _container = url;
+        if ( url != INTERNAL_OBJECT)
+            _rawContainer = url;
+        if ( !_container.isValid()){
+            //the container must contain the normalized path so any real path to the internalcatalog is replaced by the normalized version
+            if ( url == context()->persistentInternalCatalog())
+                _container = INTERNAL_OBJECT;
+            else
+                _container = url;
+        }
     }
     else{
         _container = url;
         if ( !_rawContainer.isValid()){
-            _rawContainer = url;
+            // rawcontainer always have real paths to any references to the internal catalog must be replaced by their real path
+            if ( url == INTERNAL_OBJECT){
+                _rawContainer = context()->persistentInternalCatalog();
+            }else
+                _rawContainer = url;
         }
     }
 }
