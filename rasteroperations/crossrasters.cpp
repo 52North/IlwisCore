@@ -34,19 +34,47 @@ struct Combo {
     quint32 _count;
 };
 
+QString CrossRasters::determineCrossId(quint32 v1, quint32 v2) const{
+    QString elem1 = _inputRaster1->datadef().domain<>()->impliedValue(v1).toString();
+    QString elem2 = _inputRaster2->datadef().domain<>()->impliedValue(v2).toString();
+    QString id = QString("%1 * %2").arg(elem1 == "" ? "?" : elem1).arg(elem2 == "" ? "?" :elem2);
+    switch (_undefhandling){
+    case uhIgnoreUndef:
+        if (v1 == MAGIC_NUMBER || v2 == MAGIC_NUMBER)
+            id = "";
+        break;
+    case uhIgnoreUndef1:
+        if (v1 == MAGIC_NUMBER)
+            id = "";
+        break;
+    case uhIgnoreUndef2:
+        if (v2 == MAGIC_NUMBER)
+            id = "";
+        break;
+    default:
+        break;
+    }
+    return id;
+}
+
+void CrossRasters::checkUndef(double& v1, double& v2){
+    if ( isNumericalUndef2(v1,_inputRaster1) )
+        v1 = MAGIC_NUMBER;
+    if ( isNumericalUndef2(v2,_inputRaster2) )
+        v2 = MAGIC_NUMBER;
+}
+
 bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     PixelIterator iterOut(_outputRaster, box);
     quint32 idcount = 0;
+    double pixarea = _inputRaster1->georeference()->pixelSize();
     std::map<quint64, Combo> combos;
     std::for_each(iterIn1, iterIn1.end(), [&](double v1){
         double v2 = *iterIn2;
-        if ( isNumericalUndef2(v1,_inputRaster1) )
-            v1 = MAGIC_NUMBER;
-        if ( isNumericalUndef2(v2,_inputRaster2) )
-            v2 = MAGIC_NUMBER;
 
+        checkUndef(v1,v2);
         bool ignore = (_undefhandling == uhIgnoreUndef ) && (v1 == MAGIC_NUMBER || v1 == MAGIC_NUMBER);
 
         if (!ignore) {
@@ -72,25 +100,8 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
         quint32 v1 = combo  - v2 * SHIFTER;
-        QString elem1 = _inputRaster1->datadef().domain<>()->impliedValue(v1).toString();
-        QString elem2 = _inputRaster2->datadef().domain<>()->impliedValue(v2).toString();
-        QString id = QString("%1 * %2").arg(elem1).arg(elem2);;
-        switch (_undefhandling){
-        case uhIgnoreUndef:
-            if (v1 == MAGIC_NUMBER || v1 == MAGIC_NUMBER)
-                id = "";
-            break;
-        case uhIgnoreUndef1:
-            if (v1 == MAGIC_NUMBER)
-                id = elem2;
-            break;
-        case uhIgnoreUndef2:
-            if (v2 == MAGIC_NUMBER)
-                id = elem1;
-            break;
-        default:
-            break;
-        }
+
+        QString id = determineCrossId(v1,v2);
         if (id != ""){
             idrange->add(new NamedIdentifier(id, element.second._id ));
             _outputTable->setCell(0,record,QVariant(record));
@@ -98,6 +109,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
             _outputTable->setCell(2,record,QVariant(v2));
             Combo& cm = element.second;
             _outputTable->setCell(3,record,QVariant(cm._count))          ;
+            _outputTable->setCell(4,record,QVariant(cm._count * pixarea)) ;
             ++record;
         }
     }
@@ -113,7 +125,8 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     double pixarea = _inputRaster1->georeference()->pixelSize();
     pixarea *= pixarea;
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
-        qint32 v2 = *iterIn2;
+        double v2 = *iterIn2;
+        checkUndef(v1,v2);
         quint64 combo = v1 + v2 * SHIFTER;
         auto iterCombos = combos.find(combo);
         if ( iterCombos == combos.end())
@@ -128,15 +141,16 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
         quint32 v1 = combo  - v2 * SHIFTER;
-        QString id = QString("%1 * %2").arg(_inputRaster1->datadef().domain<>()->impliedValue(v1).toString()).
-                arg(_inputRaster2->datadef().domain<>()->impliedValue(v2).toString());
-        *idrange << id;
-        _outputTable->setCell(0,record,QVariant(record));
-        _outputTable->setCell(1,record,QVariant(v1));
-        _outputTable->setCell(2,record,QVariant(v2));
-        _outputTable->setCell(3,record,QVariant(element.second))        ;
-        _outputTable->setCell(4,record,QVariant(element.second * pixarea))  ;
-        ++record;
+        QString id = determineCrossId(v1,v2);
+        if ( id != "") {
+            *idrange << id;
+            _outputTable->setCell(0,record,QVariant(record));
+            _outputTable->setCell(1,record,QVariant(v1));
+            _outputTable->setCell(2,record,QVariant(v2));
+            _outputTable->setCell(3,record,QVariant(element.second))        ;
+            _outputTable->setCell(4,record,QVariant(element.second * pixarea))  ;
+            ++record;
+        }
     }
     _crossDomain->range(idrange);
 
@@ -242,7 +256,7 @@ quint64 CrossRasters::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/cross"});
-    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef1 | ignoreundef2 | ignoreundef | dontcare)");
+    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare)");
     operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("input rastercoverage with domain item or integer"));
