@@ -316,11 +316,12 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
     QStringList parts = operationresource["outparameters"].toString().split("|");
     int maxparms = parts.last().toInt();
+    int count = 1;
     for(int i=(parms.size() - maxparms); i<parms.size(); ++i){
         QString output = parms[i];
 
 
-        QString pout = QString("pout_%1_type").arg(i - maxparms + 1);
+        QString pout = QString("pout_%1_type").arg(count++);
 
         IlwisTypes outputtype = operationresource[pout].toULongLong();
         if ( output.indexOf("@@") != -1 ){
