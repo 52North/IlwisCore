@@ -66,7 +66,7 @@ Item {
             itemgrid.currentIndex = index;
             isSelected = !isSelected
             setSelected(id)
-            if (catalogViews && !catalogViews.tabmodel.selected)
+            if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
         }
 

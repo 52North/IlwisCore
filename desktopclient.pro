@@ -158,5 +158,6 @@ DISTFILES += \
     desktopclient/qml/datapanel/workflow/AttachmentRectangle.qml \
     desktopclient/qml/workbench/creators/PaletteColorList.qml \
     desktopclient/qml/workbench/creators/CreateGeorefCorners.qml \
-    desktopclient/qml/workbench/preferences/Locations.qml
+    desktopclient/qml/workbench/preferences/Locations.qml \
+    desktopclient/qml/datapanel/catalog/CatalogActions.qml
 
