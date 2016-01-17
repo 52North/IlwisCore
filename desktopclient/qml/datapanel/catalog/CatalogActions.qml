@@ -1,63 +1,67 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.0
-import QtQuick.Controls.Styles 1.0
-import MasterCatalogModel 1.0
-import UIContextModel 1.0
+import QtQuick 2.1
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
 import "../../Global.js" as Global
+import ".." as DataPanel
 
-Rectangle {
-    id : buttonB
+TabView {
+    id : catalogoptions
     height : 25
-    color : Global.alternatecolor2
+    width : parent.width
+    tabPosition: Qt.BottomEdge
     property string side
+    Layout.minimumHeight: 25
+    style: DataPanel.ButtonBarTabViewStyle{}
 
-    Row {
-        anchors.fill: parent
-        z : 1
-        CatalogButton{
-            id : showobj
-            label: qsTr("View")
-            onClicked: {
-                var ids = mastercatalog.selectedIds()
-                var idlist = ids.split("|")
-                for(var i=0; i < idlist.length; ++i){
-                    showObject(idlist[i]);
+    function tabClicked(index){
+        if ( currentIndex === index){
+            var tab = getTab(currentIndex)
+            if ( tab){
+                if ( tab.height <= 60){
+                    catalogView.state = "sized"
                 }
-            }
-        }
-        CatalogButton{
-            id : oper
-            //action: operClicked
-            label: qsTr("Copy")
-        }
-        CatalogButton{
-            id : modeller
-            //action: modellerClicked
-            label: qsTr("Move")
-        }
-
-        CatalogButton{
-            id : deleteobj
-            //action : propertiesClicked
-            label: qsTr("Delete")
-            onClicked: {
-                var ids = mastercatalog.selectedIds()
-                var idlist = ids.split("|")
-                for(var i=0; i < idlist.length; ++i){
-                   mastercatalog.deleteObject(idlist[i]);
+                else{
+                    catalogView.state = ""
+                    catalogView.state = "maxed"
                 }
             }
 
         }
-        CatalogButton{
-            id : refresh
-            label: qsTr("Refresh")
-            onClicked: {
-                mastercatalog.refreshCatalog(currentCatalog.url)
-            }
 
-        }
+        currentIndex = index
     }
+    Component {
+        id : viewOptions
+        CatalogViewOptions{}
+    }
+    Component {
+        id : filterOptions
+        CatalogViewOptions{}
+    }
+    Component {
+        id : copyOptions
+        ObjectCopyOptions{}
+    }
+    Component {
+        id : deleteOptions
+        ObjectDeleteOptions{}
+    }
+    Component {
+        id : refreshOptions
+        CatalogRefreshOptions{}
+    }
+
+    Component.onCompleted: {
+        addTab(qsTr("View"), viewOptions)
+        addTab(qsTr("Filter"), filterOptions)
+        addTab(qsTr("Copy"), copyOptions)
+        addTab(qsTr("Delete"), deleteOptions)
+        addTab(qsTr("Refresh"), refreshOptions)
+    }
+
+
 }
+
+
 
