@@ -33,9 +33,6 @@ Menu {
             onObjectRemoved: submenu.removeItem( object )
             MenuItem {
                 text: modelData
-                onTriggered: {
-                    console.debug(text)
-                }
 
             }
         }

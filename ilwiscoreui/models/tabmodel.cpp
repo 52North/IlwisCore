@@ -1,6 +1,7 @@
 #include "tabmodel.h"
 #include "datapanemodel.h"
 
+quint32 TabModel::_id = 0;
 TabModel::TabModel(QObject *parent) : QObject(parent)
 {
 
@@ -13,6 +14,7 @@ TabModel::TabModel(const QString &url, const QString &componentUrl, QObject *par
     QString path = QUrl(url).path();
     QStringList parts = path == "" ?  url.split("/") : path.split("/");
     _displayName = parts[parts.size() - 1];
+    ++_id;
 }
 
 QString TabModel::componentUrl() const
@@ -53,6 +55,11 @@ void TabModel::selectTab(){
         datapmodel->select(side()=="left",-1,false);
         setSelected(true);
     }
+}
+
+quint32 TabModel::id() const
+{
+    return _id;
 }
 
 QString TabModel::side() const

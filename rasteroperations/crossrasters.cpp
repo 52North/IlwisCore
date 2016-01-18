@@ -222,13 +222,17 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     _crossDomain->name(crossName);
     _crossDomain->range(new NamedIdentifierRange());
 
-    if ( _expression.parameterCount(false) == 2) {
+    if ( _expression.input<bool>(3)) { // need to create an output raster?
         outputName = _expression.parm(1,false).value();
         OperationHelperRaster helper;
         helper.initialize(_inputRaster1, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
         if ( _outputRaster.isValid()) {
-            _outputRaster->datadefRef().domain(_crossDomain);
-            _outputRaster->name(outputName);
+            DataDefinition def(_crossDomain);
+            _outputRaster->datadefRef() = def;
+            for ( int band = 0; band < _outputRaster->size().zsize(); ++band)
+                _outputRaster->datadefRef(band) = def;
+            if ( outputName != sUNDEF)
+                _outputRaster->name(outputName);
         }
 
     }
@@ -248,6 +252,9 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     newTable->addColumn("NPix", IlwisObject::create<IDomain>("count"));
     newTable->addColumn("Area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
+    if ( _outputRaster.isValid()){
+        _outputRaster->attributeTable(_outputTable);
+    }
 
     return sPREPARED;
 }
@@ -256,12 +263,13 @@ quint64 CrossRasters::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/cross"});
-    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare)");
+    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare,createraster)");
     operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
-    operation.setInParameterCount({3});
+    operation.setInParameterCount({4});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("input rastercoverage with domain item or integer"));
     operation.addInParameter(1,itRASTER , TR("second rastercoverage"),TR("input rastercoverage with domain item or integer"));
     operation.addInParameter(2,itSTRING , TR("undef handling"),TR("how undefs are handled can be defined per input raster"));
+    operation.addInParameter(3, itBOOL , TR("Generate raster"), TR("Generate an output raster with the domain of the cross table"));
     operation.setOutParameterCount({1,2});
     operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
     operation.addOptionalOutParameter(1,itRASTER, TR("output raster"),TR("optional output raster with the results of the cross operation"));

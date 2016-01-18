@@ -48,7 +48,6 @@ Rectangle {
             id : panButton1
             icon : "pan20.png"
             onClicked: {
-                console.debug("todo")
             }
         }
 
