@@ -24,9 +24,6 @@ using namespace RasterOperations;
 REGISTER_OPERATION(DensifyRaster)
 
 
-#define rHalf 0.4999999999
-
-
 DensifyRaster::DensifyRaster()
 {
 
@@ -161,9 +158,6 @@ Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *c
     if (inputTbl.isValid()) {
         _outputRaster->attributeTable(static_cast<Table *>(inputTbl->clone()));
     }
-
-    _outputRaster->datadef().domain<>()->valueType(_inputRaster->datadef().domain<>()->valueType());
-
 
     return sPREPARED;
 }
