@@ -110,6 +110,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
             Combo& cm = element.second;
             _outputTable->setCell(3,record,QVariant(cm._count))          ;
             _outputTable->setCell(4,record,QVariant(cm._count * pixarea)) ;
+            _outputTable->setCell(5,record,QVariant(record)); // coverage key
             ++record;
         }
     }
@@ -253,6 +254,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     newTable->addColumn("Area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
     if ( _outputRaster.isValid()){
+        _outputTable->addColumn(COVERAGEKEYCOLUMN, _crossDomain);
         _outputRaster->attributeTable(_outputTable);
     }
 
