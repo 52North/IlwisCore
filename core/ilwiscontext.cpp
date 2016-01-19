@@ -19,9 +19,9 @@ Ilwis::IlwisContext *Ilwis::IlwisContext::_context = 0;
 
 using namespace Ilwis;
 
-IlwisContext* Ilwis::context(const QString & ilwisDir) {
+IlwisContext* Ilwis::context(const QString & ilwisDir, int runMode) {
     if (Ilwis::IlwisContext::_context == 0) {
-        Ilwis::IlwisContext::_context = new Ilwis::IlwisContext();
+        Ilwis::IlwisContext::_context = new Ilwis::IlwisContext(runMode);
         Ilwis::IlwisContext::_context->init(ilwisDir);
 
     }
@@ -30,7 +30,7 @@ IlwisContext* Ilwis::context(const QString & ilwisDir) {
 
 
 
-IlwisContext::IlwisContext() : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit)
+IlwisContext::IlwisContext(int runMode) : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit), _runMode(runMode)
 {
      _workingCatalog = new Catalog(); // empty catalog>
 
@@ -139,8 +139,12 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
 
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
-    if ( loc != "")
+    if ( loc != ""){
         _workingCatalog = ICatalog(loc);
+        if ( hasType(_runMode, rmCOMMANDLINE)){
+            mastercatalog()->addContainer(loc);
+        }
+    }
 
 }
 
