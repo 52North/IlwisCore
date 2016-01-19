@@ -25,12 +25,60 @@ Item {
 
      }
 
+    Row {
+        anchors.fill: parent
+        spacing : 6
+        Image{
+            id : imageBase
+            x : 0
+            y : 0
+            width :18; height : parent.height - 2
+            source : iconSource(iconPath)
+            fillMode: Image.PreserveAspectFit
+        }
 
-    MouseArea {
+        Rectangle{
+            width : 130
+            height : iconDelegate.height
+            color : isSelected ? Global.selectedColor : "transparent"
+
+            Text {
+                id: txt
+                text: displayName
+                elide: Text.ElideMiddle
+                color: itemgrid.currentIndex === index ? "blue": "black"
+                width : parent.width
+
+                y : 4
+                font.pointSize: 8
+                verticalAlignment: Text.AlignVCenter
+
+            }
+        }
+    }
+    MouseArea{
+        anchors.fill: parent
         id : mouseArea
         property variant image
-        width : 20; height : parent.height
         drag.target: image
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+            itemgrid.currentIndex = index;
+            isSelected = !isSelected
+            setSelected(id)
+            if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
+        }
+
+        onDoubleClicked: {
+            if ( name == "..")
+                showObject(-1)
+            else {
+                showObject(id)
+                isSelected = true
+                setSelected(id)
+            }
+        }
         onReleased: {
             image.Drag.drop()
             image.parent = mouseArea
@@ -61,75 +109,6 @@ Item {
                 }
             }', mouseArea, "dynamicImage");
           }
-        z : 1
-    }
-
-    Image{
-        id : imageBase
-        x : mouseArea.x
-        y : mouseArea.y
-        width :18; height : parent.height - 2
-        source : iconSource(iconPath)
-        fillMode: Image.PreserveAspectFit
-        z : 0
-    }
-
-    Rectangle{
-        width : 130
-        height : iconDelegate.height
-        color : isSelected ? Global.selectedColor : "transparent"
-        anchors.left : mouseArea.right
-        anchors.leftMargin: 6
-        z : 0
-
-        Text {
-            id: txt
-            text: displayName
-            elide: Text.ElideMiddle
-            color: itemgrid.currentIndex === index ? "blue": "black"
-            width : parent.width
-
-            y : 4
-            font.pointSize: 8
-            verticalAlignment: Text.AlignVCenter
-            z : 1
-
-        }
-    }
-    MouseArea{
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-       // property CatalogContextMenu menu : CatalogContextMenu{}
-        onClicked: {
-            itemgrid.currentIndex = index;
-            isSelected = !isSelected
-            itemgrid.setSelected(id)
-            if (catalogViews && !catalogViews.tabmodel.selected)
-                catalogViews.tabmodel.selectTab()
-
-
-         }
-        onPressed: {
-            if (mouse.button == Qt.RightButton){
-//                var ilwisobject = mastercatalog.id2Resource(id)
-//                if ( ilwisobject){
-//                    ilwisobject.makeParent(iconDelegate)
-//                    menu.ilwisobject = ilwisobject
-//                    menu.popup()
-//                }
-            }
-        }
-
-
-        onDoubleClicked: {
-            if ( name == "..")
-                showObject(-1)
-            else {
-                showObject(id)
-                isSelected = true
-                itemgrid.setSelected(id)
-            }
-        }
     }
 
 }

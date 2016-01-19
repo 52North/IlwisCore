@@ -153,6 +153,7 @@ public:
         QUrl url(QString("ilwis://internalcatalog/%1").arg(name));
         res.name(name);
         res.setUrl(url);
+        res.setUrl(url, true);
         return prepare(res);
 
     }

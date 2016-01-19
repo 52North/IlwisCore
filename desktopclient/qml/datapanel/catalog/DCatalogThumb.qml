@@ -7,6 +7,8 @@ import QtQuick.Dialogs 1.0
 import MasterCatalogModel 1.0
 import CatalogModel 1.0
 import ResourceModel 1.0
+import LayersView 1.0
+import "../../Global.js" as Global
 
 Item{
 id: thumbDelegate
@@ -38,7 +40,35 @@ id: thumbDelegate
         }
 
     }
+    Component {
+        id : defaultImage
+        Image {
+            id: img
+            anchors.fill: parent
+            anchors.margins: 2
 
+            source: iconSource(imagePath)
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+        }
+    }
+
+    Component {
+        id : layerDrawer
+        LayersView{
+            id : lyrview
+            anchors.fill: parent
+            anchors.margins: 2
+            objectName : "thumb_generator_mainui"
+            Component.onCompleted: {
+                var cmd = "adddrawer(" + viewerId + "," + url +",\"itemid=" + id + "\"," + typeName + ")"
+                addCommand(cmd)
+                setAttribute("GridDrawer", {"active" : false})
+                realizeThumbPath()
+                setAttribute("View",{"saveimage" : imagePath})
+            }
+        }
+    }
 
     Image {
         id : page
@@ -55,16 +85,14 @@ id: thumbDelegate
             height : 150
             border .width: 1
             border.color: "lightgrey"
-            Image {
-                id: img
-                    anchors.fill: parent
-                    anchors.margins: 2
-
-                source: iconSource(imagePath)
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
+            Loader{
+                id : imageLoader
+                anchors.fill: parent
+                sourceComponent : defaultImage
             }
+
         }
+
         Image {
             anchors.top : parent.top
             anchors.topMargin: 13
@@ -73,6 +101,29 @@ id: thumbDelegate
             source : iconSource(iconPath)
             width : 20
             height : 20
+
+        }
+
+        Button {
+            id : refreshBut
+            width : 16
+            height : 18
+            anchors.top : parent.top
+            anchors.topMargin: 13
+            anchors.right : parent.right
+            anchors.rightMargin: 13
+            Image {
+                source : iconSource("refresh20.png")
+                width : 14
+                height : 16
+                anchors.centerIn: parent
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked:{
+                        imageLoader.sourceComponent = layerDrawer
+                    }
+                }
+            }
 
         }
         Text{
@@ -129,13 +180,64 @@ id: thumbDelegate
         }
     }
     MouseArea{
+        id : mouseArea
         anchors.fill: parent
+        property variant image
+        drag.target: image
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents: true
         onClicked: {
-            thumbGridView.currentIndex = index;
-         }
-        onDoubleClicked: {
-             showObject(id)
+            thumbGrid.currentIndex = index;
+            isSelected = !isSelected
+            setSelected(id)
+            mouse.accepted = false
+            if (catalogViews && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
         }
+
+        onDoubleClicked: {
+            if ( name == "..")
+                showObject(-1)
+            else {
+                showObject(id)
+                isSelected = true
+                setSelected(id)
+            }
+            mouse.accepted = false
+        }
+        onReleased: {
+            image.Drag.drop()
+            image.parent = mouseArea
+            image.anchors.fill = mouseArea
+            image.destroy();
+            mouse.accepted = false
+        }
+
+        onPressed: {
+           image = Qt.createQmlObject('import QtQuick 2.0; Image{
+                id : image
+                width : 20; height : 20
+                source : iconSource(iconPath)
+                fillMode: Image.PreserveAspectFit
+                property string message :  model !== null ? url : ""
+                property string ilwisobjectid : model !== null ? id : ""
+                property string type : model !== null ? typeName : ""
+                property string ids : model !== null ? mastercatalog.selectedIds() : ""
+
+                Drag.keys: typeName
+                Drag.active: mouseArea.drag.active
+                Drag.hotSpot.x: 10
+                Drag.hotSpot.y: 10
+                opacity : Drag.active / 2
+
+                states: State {
+                    when: mouseArea.drag.active
+                    ParentChange { target: image; parent: root }
+                    AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                }
+            }', mouseArea, "dynamicImage")
+            mouse.accepted = false
+          }
     }
 
 }

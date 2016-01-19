@@ -47,7 +47,7 @@ Rectangle {
         }
         else if ( typeName == "georeference"){
            source = "GeoreferenceProperties.qml"
-        } else if ( typeName == "table"){
+        } else if ( typeName == "table" || typeName == "flattable"){
             source = "TableProperties.qml"
         } else if ( typeName == "ellipsoid"){
             source = "EllipsoidProperties.qml"

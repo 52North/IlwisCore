@@ -19,7 +19,7 @@ class ILWISCOREUISHARED_EXPORT CatalogModel : public ResourceModel
     Q_OBJECT
 public:
     Q_PROPERTY(QQmlListProperty<ResourceModel> resources READ resources NOTIFY contentChanged)
-    Q_PROPERTY(QQmlListProperty<CatalogMapItem> mapItems READ mapItems NOTIFY mapItemsChanged)
+    Q_PROPERTY(QQmlListProperty<ResourceModel> mapItems READ mapItems NOTIFY mapItemsChanged)
     Q_PROPERTY(bool initNode READ initNode CONSTANT)
     Q_PROPERTY(int level READ level CONSTANT)
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
@@ -36,7 +36,6 @@ public:
     Q_INVOKABLE void makeParent(QObject *obj);
     Q_INVOKABLE void filterChanged(const QString &typeIndication, bool state);
     Q_INVOKABLE void filter(const QString& filterString);
-    Q_INVOKABLE void prepareMapItems(LayerManager *manager, bool force=false);
     Q_INVOKABLE virtual void refresh();
     Q_INVOKABLE void scanContainer();
 
@@ -44,7 +43,7 @@ public:
     bool initNode() const;
     int level() const;
     QQmlListProperty<ResourceModel> resources();
-    QQmlListProperty<CatalogMapItem> mapItems();
+    QQmlListProperty<ResourceModel> mapItems();
 
     void refresh(bool yesno);
     virtual void nameFilter(const QString&);
@@ -61,7 +60,7 @@ protected:
     Ilwis::CatalogView _view;
     virtual void gatherItems();
    QList<ResourceModel *> _currentItems;
-   QList<CatalogMapItem *> _catalogMapItems;
+   QList<ResourceModel *> _coverageItems;
    std::map<quint64, int> _objectCounts;
    bool _refresh = true;
 

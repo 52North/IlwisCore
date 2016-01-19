@@ -31,7 +31,8 @@ SOURCES += \
     rasteroperations/pointtoraster.cpp\
     rasteroperations/movingaverage.cpp\
     rasteroperations/polygontoraster.cpp\
-    rasteroperations/filter/timesat_nrs.cpp
+    rasteroperations/filter/timesat_nrs.cpp \
+    rasteroperations/densifyraster.cpp
 
 
 HEADERS += \
@@ -50,7 +51,8 @@ HEADERS += \
     rasteroperations/pointtoraster.h\
     rasteroperations/movingaverage.h\
     rasteroperations/polygontoraster.h\
-    rasteroperations/filter/timesat_nrs.h
+    rasteroperations/filter/timesat_nrs.h \
+    rasteroperations/densifyraster.h
 
 
 OTHER_FILES += \ 

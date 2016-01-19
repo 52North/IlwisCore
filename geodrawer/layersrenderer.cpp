@@ -60,6 +60,13 @@ void LayersRenderer::render()
 
         glDisable(GL_BLEND);
 
+        if ( _saveImagePath != "" && _fbo){
+            QImage image = _fbo->toImage();
+            QImage vflip = image.transformed(QMatrix().scale(1,-1));
+            QUrl url(_saveImagePath);
+            vflip.save(url.toLocalFile());
+        }
+
         emit drawDone();
     }
     catch(const ErrorObject& ){}
@@ -127,7 +134,11 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             auto pair = gdrawer->_attributeQueue.front();
             gdrawer->_attributeQueue.pop_front();
             for(QVariantMap::const_iterator iter = pair.second.begin(); iter != pair.second.end(); ++iter) {
-                _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
+                if ( pair.first.toLower() == "view"){
+                    handleRendererAttributes(iter.key(), iter.value())    ;
+                }else {
+                    _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
+                }
             }
             needPrepare = true;
         }
@@ -144,4 +155,10 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
     }
 }
 
+void LayersRenderer::handleRendererAttributes(const QString& code, const QVariant& value){
+    if ( code == "saveimage")    {
+        //QString path = value.toString();
+        _saveImagePath = value.toString();
+    }
+}
 

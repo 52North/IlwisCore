@@ -29,6 +29,8 @@ private:
 
     bool crossNoRaster(const BoundingBox& box);
     bool crossWithRaster(const  BoundingBox& box);
+    QString determineCrossId(quint32 v1, quint32 v2) const;
+    void checkUndef(double &v1, double &v2);
 };
 }
 }
