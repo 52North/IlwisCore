@@ -55,7 +55,7 @@ void DistanceRaster::ThiessenMapCalculation() {return;}
 
 
 
-bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz)
+bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight)
 {
     double pixOrigValue = *iter;
     quint32 iterx = iter.x();
@@ -63,22 +63,22 @@ bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbou
     quint32 iterz = iter.z();
 
     if (iterx > 0 && itery > 0)
-        *iter = min(*iter, *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);
     if (iterx < sz.xsize()-1 && itery > 0)
-        *iter = min(*iter, *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7 ) * weight);
     if (iterx > 0 && itery < sz.ysize()-1)
-        *iter = min(*iter, *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7 ) * weight);
     if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
-        *iter = min(*iter, *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7 ) * weight);
 
     if (iterx > 0)
-        *iter = min(*iter, *neighbour[Pixel(iterx-1, itery, iterz)] + 5);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery, iterz)] + 5 ) * weight);
     if (itery < sz.ysize()-1)
-        *iter = min(*iter, *neighbour[Pixel(iterx, itery+1, iterz)] + 5);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx, itery+1, iterz)] + 5 ) * weight);
     if (iterx < sz.xsize()-1)
-        *iter = min(*iter, *neighbour[Pixel(iterx+1, itery, iterz)] + 5);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery, iterz)] + 5 ) * weight);
     if (itery > 0)
-        *iter = min(*iter, *neighbour[Pixel(iterx, itery-1, iterz)] + 5);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx, itery-1, iterz)] + 5 ) * weight);
 
     return pixOrigValue != *iter;
 }
@@ -89,9 +89,10 @@ void DistanceRaster::distanceCalculation() {
     PixelIterator copyIter(_outputRaster); // hmm, find out how to reset an iterator....
     PixelIterator neighbour(_outputRaster);
     PixelIterator inpIter(_inputRaster);
+    PixelIterator weight(_inputWeightRaster);
+
     bool hasChanges = true; // the loop needs to start, so we set this as true...
     Size<> sz = _outputRaster->size();
-    bool doInitialization = true;
 
     Envelope envelope = _outputRaster->envelope();
     double pixsizex = 1;
@@ -118,18 +119,16 @@ void DistanceRaster::distanceCalculation() {
     while (hasChanges) {
         hasChanges = false;
         while (iter != end(_outputRaster)) {
-            hasChanges |= setDistanceValue(iter, neighbour, sz);
+            hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
             ++iter;
         }
-
-        doInitialization = false;
 
         if (hasChanges) {
             iter.end();
             hasChanges = false;
 
             while (iter != begin(_outputRaster)) {
-                hasChanges |= setDistanceValue(iter, neighbour, sz);
+                hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
                 --iter;
             }
         }
@@ -141,7 +140,6 @@ void DistanceRaster::distanceCalculation() {
         value *= pixsizex; // todo: check this!!
         value = value / 5 * 0.968;
     }
-    return;
 }
 
 
@@ -184,9 +182,14 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
         return sPREPAREFAILED;
     }
 
-    if (0 != inputWeightRaster.length() && !_inputWeightRaster.prepare(inputWeightRaster, itRASTER)) {
-        ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
-        return sPREPAREFAILED;
+    _hasWeightRaster = false;
+    if (0 != inputWeightRaster.length()) {
+        if(!_inputWeightRaster.prepare(inputWeightRaster, itRASTER)) {
+            ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
+            return sPREPAREFAILED;
+        } else {
+            _hasWeightRaster = true;
+        }
     }
 
     if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {

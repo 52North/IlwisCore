@@ -26,13 +26,14 @@ private:
     IRasterCoverage _inputWeightRaster; // optional
     IRasterCoverage _inputThiessenRaster; // optional
     IRasterCoverage _outputRaster;
-    IDomain         _domain; // ??
+
+    bool            _hasWeightRaster;
 
     void ThiessenMapCalculation();
     void distanceCalculation();
 
     NEW_OPERATION(DistanceRaster);
-    bool setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz);
+    bool setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight);
 };
 
 }
