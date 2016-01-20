@@ -193,7 +193,7 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
             if ( cov->ilwisType() == itRASTER){
                 IRasterCoverage raster = cov.as<RasterCoverage>();
                 Pixel pix = raster->georeference()->coord2Pixel(crd);
-                QString pixtxt = QString("%1 %2").arg(pix.x).arg(pix.y);
+                QString pixtxt = QString("%1 %2").arg(pix.x + 1).arg(pix.y + 1);
                 _layerInfoItems.push_back(new LayerInfoItem(TR("Pixel"), pixtxt, this));
 
             }
