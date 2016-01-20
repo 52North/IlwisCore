@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         bool scriptStatementAtBegin = false;
 
 #ifdef QT_DEBUG
-        QString expr = "r1_true.mpl{format(ilwis3,\"map\")}=timesat(r1sb.mpl,4,true,true,true)";
+        QString expr = "ext1_true.mpl{format(ilwis3,\"map\")}=timesat(test9pix.mpl,4,true,true,true)";
 #else
         QString expr;
         // expected:
