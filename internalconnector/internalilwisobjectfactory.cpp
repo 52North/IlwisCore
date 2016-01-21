@@ -387,7 +387,11 @@ bool InternalIlwisObjectFactory::createCoverage(const Resource& resource, Covera
                 if (!dom.prepare(newresource, options))
                     return false;
             }
+        } else if ( tpname == "qulonglong"){
+            if(!dom.prepare(resource["domain"].value<quint64>()))
+                return 0;
         }
+
         if ( dom.isValid()){
             RasterCoverage *raster = static_cast<RasterCoverage *>(coverage);
             raster->datadefRef().domain(dom);
