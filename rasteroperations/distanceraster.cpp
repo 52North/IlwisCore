@@ -89,7 +89,7 @@ void DistanceRaster::distanceCalculation() {
     PixelIterator copyIter(_outputRaster); // hmm, find out how to reset an iterator....
     PixelIterator neighbour(_outputRaster);
     PixelIterator inpIter(_inputRaster);
-    PixelIterator weight(_inputWeightRaster);
+    //PixelIterator weight(_inputWeightRaster);
 
     bool hasChanges = true; // the loop needs to start, so we set this as true...
     Size<> sz = _outputRaster->size();
@@ -119,7 +119,8 @@ void DistanceRaster::distanceCalculation() {
     while (hasChanges) {
         hasChanges = false;
         while (iter != end(_outputRaster)) {
-            hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
+            //hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
+            hasChanges |= setDistanceValue(iter, neighbour, sz, 1.0);
             ++iter;
         }
 
@@ -128,7 +129,8 @@ void DistanceRaster::distanceCalculation() {
             hasChanges = false;
 
             while (iter != begin(_outputRaster)) {
-                hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
+                //hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
+                hasChanges |= setDistanceValue(iter, neighbour, sz, 1.0);
                 --iter;
             }
         }
@@ -200,14 +202,11 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
     _outputRaster = OperationHelperRaster::initialize(_inputRaster, itRASTER, itCOORDSYSTEM | itENVELOPE | itGEOREF | itRASTERSIZE);
 
     IDomain dom;
-    dom.prepare("integer");
+    dom.prepare("value");
     _outputRaster->datadefRef() = DataDefinition(dom);
 
-    /*_outputRaster->georeference(_inputRaster->georeference());
-    _outputRaster->georeference()->compute();
-
-    _outputRaster->size(_inputRaster->size());
-    _outputRaster->envelope(_inputRaster->envelope());*/
+    for (int i = 0; i <_outputRaster->size().zsize(); i++)
+        _outputRaster->setBandDefinition(i, dom);
 
     if (outputRasterName != sUNDEF){
         _outputRaster->name(outputRasterName);
