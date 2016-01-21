@@ -433,6 +433,9 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                     }
                 }
             }
+            //overrule the user if he wants to store things in the internalcatalog, then the format is by defintion stream
+            if ( context()->workingCatalog()->source().url() == INTERNAL_OBJECT)
+                formatName == "Memory";
             if ( formatName != "Memory"){ // special case
                 if ( format == "") {
                     QString query = "name='" + formatName + "'";

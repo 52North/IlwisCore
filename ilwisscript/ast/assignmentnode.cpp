@@ -115,7 +115,9 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
             if ( wasAnonymous)
                 mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
-            object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+            IOOptions opt({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+            opt << IOOptions::Option{"format",format};
+            object->store(opt);
         }else {
             kernel()->issues()->log(QString(TR("Couldn't retrieve symbol from symbol table, object will not be stored")));
         }
