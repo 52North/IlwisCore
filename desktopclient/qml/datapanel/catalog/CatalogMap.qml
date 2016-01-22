@@ -46,7 +46,7 @@ Rectangle {
         }
     }
 
-    MapTools.LayerExtentsToolbar{
+    Controls.LayerExtentsToolbar{
         id : maptools
     }
     LayersView {

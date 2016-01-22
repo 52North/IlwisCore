@@ -15,6 +15,13 @@
 #include "chartmodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
+
+namespace Ilwis{
+class FeatureCoverage;
+
+typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+}
+
 using namespace Ilwis;
 
 class PropertyEditorObjectVisualizationModel;
@@ -23,6 +30,7 @@ class LayerManager;
 class CoverageLayerModel;
 class ConsoleScriptModel;
 class VisualAttributeModel;
+
 
 typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
 
@@ -37,6 +45,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QStringList colorNames READ colorNames CONSTANT)
     Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
 
+
 public:
     explicit UIContextModel(QObject *parent = 0);
 
@@ -48,6 +57,7 @@ public:
     Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
     Q_INVOKABLE QString moduleData() const;
     Q_INVOKABLE QString typeName2typeId(const QString& nm) const;
+    Q_INVOKABLE QString worldmapCommand(const QString &id) const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -74,6 +84,7 @@ public:
     void initializeDataPane();
 
 
+
 signals:
     void activeSplitChanged();
     void currentWorkSpaceChanged();
@@ -96,6 +107,7 @@ private:
     QStringList _colorNames;
     WorkSpaceModel *_currentWorkSpace = 0;
     std::vector<ConsoleScriptModel *> _consoles;
+    IFeatureCoverage _worldMap;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

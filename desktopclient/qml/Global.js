@@ -42,6 +42,7 @@ function calcZoomOutEnvelope(envelope, layers, viewmanager)
         var ny2 = (y2 + y1) / 2.0 + dy
         var newenvelope = nx1 + " " + ny1 + " " + nx2 + " " + ny2
         layers.newExtent(newenvelope)
-        viewmanager.newZoomExtent(newenvelope)
+        if (typeof viewmanager.newZoomExtent == 'function')
+            viewmanager.newZoomExtent(newenvelope)
     }
 }

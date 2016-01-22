@@ -75,7 +75,7 @@ Item {
             }
         }
     }
-    LayerExtentsToolbar{
+    Controls.LayerExtentsToolbar{
         id : maptools
 
         LocationBar{

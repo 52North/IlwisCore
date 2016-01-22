@@ -18,6 +18,7 @@ Item {
         id : operationsByKey
         anchors.fill: parent
         model : operations.operationKeywords
+        clip : true
         delegate: Controls.CollapsiblePanel {
             id : keylistdelegate
             width : parent.width

@@ -4,9 +4,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import UIContextModel 1.0
 import LayerManager 1.0
-import "../../workbench/propertyform" as MetaData
-import "../../controls" as Controls
-import "../../Global.js" as Global
+import "../controls" as Controls
+import "../Global.js" as Global
 import "../.." as Base
 
 Rectangle {
@@ -17,14 +16,15 @@ Rectangle {
     Action {
         id : zoomClicked
         onTriggered : {
-            if ( metatdata.manager){
+            if ( worldmapcontainer.manager){
                 if (!zoominButton1.checked ){
-                    overview.addCommand("removedrawer(" + overview.viewerId + ",selectiondrawer,post)");
-                    overview.update()
+                    worldmap.addCommand("removedrawer(" + worldmap.viewerId + ",selectiondrawer,post)");
+                    worldmap.update()
                 }
 
                 zoominButton1.checked = zoominButton1.checked ? false : true
-                metatdata.manager.zoomInMode = zoominButton1.checked
+                worldmapcontainer.manager.zoomInMode = zoominButton1.checked
+                console.debug(zoominButton1.checked)
             }
         }
     }
@@ -32,9 +32,9 @@ Rectangle {
     Action {
         id : zoomOutClicked
         onTriggered : {
-            if ( manager){
-                var envelope = renderer.attributeOfDrawer("rootdrawer","zoomenvelope");
-                Global.calcZoomOutEnvelope(envelope, layers, viewmanager)
+            if ( worldmapcontainer.manager){
+                var envelope = worldmap.attributeOfDrawer("rootdrawer","zoomenvelope");
+                Global.calcZoomOutEnvelope(envelope, worldmap, worldmapcontainer.manager)
             }
         }
     }
@@ -46,7 +46,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         Controls.MapExtentButton{
             id : panButton1
-            icon : "pan20.png"
+            icon : "entiremap20.png"
             onClicked: {
             }
         }
@@ -65,3 +65,5 @@ Rectangle {
         }
     }
 }
+
+

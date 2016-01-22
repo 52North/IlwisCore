@@ -4,9 +4,9 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import LayerManager 1.0
-import "./propertyeditors" as LayerManagement
-import "../../controls" as Controls
-import "../../Global.js" as Global
+//import "./propertyeditors" as LayerManagement
+import "../controls" as Controls
+import "../Global.js" as Global
 
 ToolBar{
     id : maptools
