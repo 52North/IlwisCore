@@ -37,7 +37,7 @@ TabView {
     }
     Component {
         id : filterOptions
-        CatalogViewOptions{}
+        CatalogFilterOptions{}
     }
     Component {
         id : copyOptions
