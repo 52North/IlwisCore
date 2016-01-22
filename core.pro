@@ -304,7 +304,9 @@ OTHER_FILES += \
     core/resources/rastervertexshader_nvdia.glsl \
     LICENSE-2.0.txt \
     installer.nsi \
-    core/resources/ilwis.config
+    core/resources/ilwis.config \
+    core/resources/c1.mps \
+    core/resources/c1.mps#
 
 
 win32{
