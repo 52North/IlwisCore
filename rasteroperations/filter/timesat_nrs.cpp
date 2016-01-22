@@ -228,6 +228,7 @@ std::vector<double> Timesat::savgol(std::vector<double> y, std::vector<bool> w)
                 std::sort(dut.begin(), dut.end());
                 yfit[i] = dut[dut.size() / 2];
             }
+            yfit[i] = floor(yfit[i]);   // increase compatibility with IDL version
             if (_forceUpperEnvelope) {
                 if ( (yfit[i] < y[i - org_offset]) && wfit[i] && (ienvi < last))
                     yfit[i] = y[i - org_offset];
