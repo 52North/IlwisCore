@@ -90,7 +90,7 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
         if ( pixIter.ychanged()) {
             position += (rest + texSizeX - xSizeOut);
             if (zoomFactor > 1)
-                pixIter += sizeX * (zoomFactor - 1);
+                pixIter += sizeX * (zoomFactor - 1) - ((zoomFactor - (sizeX % zoomFactor)) % zoomFactor);
         }
         ++position;
     }

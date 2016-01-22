@@ -75,7 +75,7 @@ void RasterColorImage::setTextureData(RGBTexture *tex, const unsigned int offset
         if ( pixIter.ychanged()) {
             position += (texSizeX - xSizeOut);
             if (zoomFactor > 1)
-                pixIter += sizeX * (zoomFactor - 1);
+                pixIter += sizeX * (zoomFactor - 1) - ((zoomFactor - (sizeX % zoomFactor)) % zoomFactor);
         }
         ++position;
     }
