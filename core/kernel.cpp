@@ -143,11 +143,6 @@ void Kernel::init() {
 
     _modules.addModules();
 
-    // TODO: are these still necessary?
-    mastercatalog()->addContainerException("http");
-    mastercatalog()->addContainerException("https");
-
-
 
 }
 
