@@ -20,10 +20,10 @@ Rectangle {
         GridView {
             id: thumbGrid
             model: currentCatalog ? currentCatalog.mapItems : null
-            delegate: DCatalogThumb{}
+            delegate: DCatalogListThumb{}
             cacheBuffer: 1000
-            cellWidth: 150
-            cellHeight: 230
+            cellWidth: 350
+            cellHeight: 170
             anchors.fill: parent
             clip : true
             highlight: Rectangle {
