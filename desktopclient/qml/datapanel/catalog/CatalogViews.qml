@@ -1,7 +1,7 @@
 import QtQuick 2.1
 
 Item {
-    id : catalogViews
+    id : catalogPanels
     width : parent.width
     Connections{
         target : iconListView
@@ -48,11 +48,11 @@ Item {
         },
         State {
             name : "sized"
-            PropertyChanges { target: catalogViews; height : parent.height - 200}
+            PropertyChanges { target: catalogPanels; height : parent.height - 200}
         },
         State {
             name : "maxed"
-            PropertyChanges { target: catalogViews; height : parent.height - 25}
+            PropertyChanges { target: catalogPanels; height : parent.height - 25}
         }
 
     ]
@@ -72,7 +72,7 @@ Item {
                 NumberAnimation { target: iconGridView; property: "opacity"; duration: 400; easing.type: Easing.InOutQuad }
             }
             ParallelAnimation {
-                NumberAnimation { target : catalogViews; properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                NumberAnimation { target : catalogPanels; properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
              }
         }
     ]
