@@ -7,26 +7,26 @@ import "../../controls" as Controls
 
 
 Item {
-    width: catalogoptions.width
-    height: catalogoptions.height
     Rectangle {
-        width: 200
-        height: 110
+        width: parent.width - 5
+        height: parent.height
         x : 5
         y : 5
         border.width: 1
         border.color : Global.edgecolor
 
-        Column {
+        Row {
+            id : buttonRow
             width : parent.width - 25
             height : parent.height - 30
             anchors.centerIn: parent
             spacing : 6
+            property int buttonWidth : 180
 
             Controls.WideButton{
                 image : "../images/openmult20.png"
                 label : qsTr("Open selected coverages\nin seperate panels")
-                width : 200
+                width : buttonRow.buttonWidth
                 height : 40
                 onClicked: {
                     var ids = mastercatalog.selectedIds()
@@ -40,13 +40,13 @@ Item {
             Controls.WideButton{
                 image : "../images/opensingle20.png"
                 label : qsTr("Open selected coverages\nin selected panel")
-                width : 200
+                width : buttonRow.buttonWidth
                 height : 40
             }
             Controls.WideButton{
                 image : "../images/openfloat20.png"
                 label : qsTr("Open selected coverages\nin floating panels")
-                width : 200
+                width : buttonRow.buttonWidth
                 height : 40
             }
         }
