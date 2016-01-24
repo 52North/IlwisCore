@@ -126,6 +126,8 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
             _objectCounts[resource->type()]+= 1;
         }
 
+        if ( _spatialFilter != "")
+            return mapItems() ;
 
         return  QQmlListProperty<ResourceModel>(this, _currentItems);
     }
@@ -271,6 +273,19 @@ void CatalogModel::keyFilter(const QString &keyf)
     _keyFilter = keyf;
 }
 
+QString CatalogModel::spatialFilter() const
+{
+     return _spatialFilter;
+
+}
+
+void CatalogModel::spatialFilter(const QString &filter)
+{
+    _refresh = true;
+    _spatialFilter = filter;
+    emit contentChanged();
+}
+
 void CatalogModel::gatherItems() {
     if ( _currentItems.isEmpty() || _refresh) {
         if ( !_view.isValid())
@@ -283,6 +298,16 @@ void CatalogModel::gatherItems() {
         _refresh = false;
 
         std::vector<Resource> items = _view.items();
+        std::vector<double> bounds(4);
+        if ( _spatialFilter != ""){
+            QStringList parts = _spatialFilter.split(" ");
+            if ( parts.size() == 4){
+                bounds[0] = parts[0].toDouble();
+                bounds[1] = parts[1].toDouble();
+                bounds[2] = parts[2].toDouble();
+                bounds[3] = parts[3].toDouble();
+            }
+        }
         for(const Resource& resource : items){
             if ( _nameFilter != ""){
                 if ( resource.name().indexOf(_nameFilter) == -1){
@@ -292,7 +317,26 @@ void CatalogModel::gatherItems() {
             }
             _currentItems.push_back(new ResourceModel(resource, this));
             if ( hasType(resource.ilwisType(), itCOVERAGE)){
-                _coverageItems.push_back(new ResourceModel(resource, this));
+                if ( _spatialFilter != ""){
+                    if ( resource.hasProperty("latlonenvelope")){
+                        QString envelope = resource["latlonenvelope"].toString();
+                        QStringList parts = envelope.split(" ");
+                        if ( parts.size() == 6){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[3].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[4].toDouble() <= bounds[3])
+                                _coverageItems.push_back(new ResourceModel(resource, this));
+                        }else if ( parts.size() == 4){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[2].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[3].toDouble() <= bounds[3])
+                                _coverageItems.push_back(new ResourceModel(resource, this));
+                         }
+                    }
+                }else
+                    _coverageItems.push_back(new ResourceModel(resource, this));
             }
 
         }
