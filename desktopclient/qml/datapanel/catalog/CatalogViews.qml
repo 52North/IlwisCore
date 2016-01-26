@@ -26,12 +26,19 @@ Item {
         opacity: 0
 
     }
+    CatalogMap{
+           id : catalogMapView
+           height : 0
+           enabled : false
+           opacity: 0
+       }
 
     states: [
         State {
             name : "iconGrid"
             PropertyChanges { target: thumbListView; height : 0; opacity : 0; enabled : false}
             PropertyChanges { target: iconListView; height : 0; opacity : 0;enabled : false}
+            PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
             PropertyChanges { target: iconGridView; height : parent.height; opacity : 1;enabled : true}
         },
         State {
@@ -39,20 +46,21 @@ Item {
             PropertyChanges { target: thumbListView; height : parent.height;opacity : 1; enabled : true}
             PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
             PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+            PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
         },
         State {
             name : "iconList"
             PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
             PropertyChanges { target: iconListView; height : parent.height;opacity : 1; enabled : true}
             PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+            PropertyChanges { target: catalogMapView; height : 0; opacity : 0; enabled : false}
         },
         State {
-            name : "sized"
-            PropertyChanges { target: catalogPanels; height : parent.height - 200}
-        },
-        State {
-            name : "maxed"
-            PropertyChanges { target: catalogPanels; height : parent.height - 25}
+            name : "bylocation"
+            PropertyChanges { target: thumbListView; height : 0; opacity : 0;enabled : false}
+            PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
+            PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
+            PropertyChanges { target: catalogMapView; height : parent.height;opacity : 1; enabled : true}
         }
 
     ]
