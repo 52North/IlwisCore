@@ -89,6 +89,7 @@ friend class LayersRenderer;
     Q_INVOKABLE QString layerInfo(const QString& pixelpair) const;
     Q_INVOKABLE void associate(const QString& name, const QString& event);
     Q_INVOKABLE void removeAssociate(const QString& name);
+    Q_INVOKABLE QVariantMap drawEnvelope(const QString &envelope) const;
 
     LayerManager *layerManager();
     Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
@@ -96,6 +97,7 @@ friend class LayersRenderer;
     bool active() const;
     void setActive(bool yesno);
     void setShowLayerInfo(bool yesno);
+
 
 signals:
     void currentCoordinateHasChanged();
