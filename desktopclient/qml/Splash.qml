@@ -15,8 +15,8 @@ Item {
         id : first
         x :  0 //rootwindow.width / 4
         y : 0 //rootwindow.height / 4
-        width : 181//362
-        height : 186 //373
+        width : 273
+        height : 200
         color : "red"
         endX : rootwindow.width / 2 - first.width
         endY : rootwindow.height / 2  - first.height + 1
@@ -54,8 +54,8 @@ Item {
         width : first.width
         height : first.height
         color : "green"
-        endX : rootwindow.width / 2 - 1
-        endY : rootwindow.height / 2
+        endX : rootwindow.width / 2 - 2
+        endY : rootwindow.height / 2 -1
         state : first.state
         Image {
             anchors.fill: parent
