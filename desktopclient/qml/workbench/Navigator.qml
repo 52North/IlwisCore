@@ -150,12 +150,18 @@ WorkBenchShifter {
             Image { anchors.centerIn : parent; source: "../images/min1.png" }
         }
     }
+    SplitView {
+        width : parent.width - 10
+        height : parent.height - buttonBar.height - functionBarHeader.height
+        anchors.top: buttonBar.bottom
+        anchors.margins: 5
+        orientation: Qt.Vertical
+
     CreateCatalogForm{
         id : createCatalogForm
         width : parent.width - 10
         state : "maximized"
-        anchors.top: buttonBar.bottom
-        anchors.margins: 5
+        height : parent.height / 2
         x : parent.x + 5
         beginfolder: startfolder
     }
@@ -172,5 +178,6 @@ WorkBenchShifter {
         listbackground: "#FFFEF8"
         listalternate: "#FFFEF8"
 
+    }
     }
 }
