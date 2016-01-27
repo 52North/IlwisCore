@@ -27,6 +27,11 @@ IOOptions CatalogExplorer::ioOptions() const
     return _options;
 }
 
+IOOptions &CatalogExplorer::ioOptionsRef()
+{
+    return _options;
+}
+
 QFileInfo CatalogExplorer::resolve2Local() const
 {
     return _resource.toLocalFile();
