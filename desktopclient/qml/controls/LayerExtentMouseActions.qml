@@ -12,6 +12,8 @@ MouseArea {
     property LayersView drawer
     property bool zoomStarted : false
     signal zoomEnded(string envelope)
+    signal click(int x, int y)
+    signal press(int x, int y)
 
     FloatingRectangle{
         id : floatrect
@@ -32,6 +34,7 @@ MouseArea {
                 drawer.update()
             }
             zoomStarted = true
+            press(mouseX, mouseY)
 
         }
 
@@ -58,7 +61,8 @@ MouseArea {
             zoomEnded(envelope)
             zoomStarted = false
             drawer.update()
-        }
+        }else
+            click(mouseX, mouseY)
         floatrect.enabled = false
         floatrect.opacity = 0
         floatrect.x = 0
