@@ -61,7 +61,15 @@ Item {
             PropertyChanges { target: iconListView; height :0; opacity : 0;enabled : false}
             PropertyChanges { target: iconGridView;  height : 0; opacity : 0;enabled : false}
             PropertyChanges { target: catalogMapView; height : parent.height;opacity : 1; enabled : true}
-        }
+        },
+        State {
+                name : "sized"
+                PropertyChanges { target: catalogPanels; height : parent.height - 200}
+            },
+            State {
+                name : "maxed"
+                PropertyChanges { target: catalogPanels; height : parent.height - 25}
+            }
 
     ]
 
