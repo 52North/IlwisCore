@@ -83,6 +83,7 @@ public:
     void synchronize(QQuickFramebufferObject *item);
 
     void cleanup();
+
 signals:
     void synchronizeDone();
     void drawDone();
@@ -98,6 +99,7 @@ private:
     QString _saveImagePath;
 
     void handleRendererAttributes(const QString &code, const QVariant &value);
+    void saveAsImage() const;
 private slots:
     void updateRenderer();
 };

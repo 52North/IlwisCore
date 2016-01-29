@@ -11,18 +11,20 @@ import LayerManager 1.0
 
 Item {
     id : selector
-    height : 40
-    width : 380
+    height : 30 + operList.height
+    width : 370
     Controls.CollapsiblePanel {
+        y : 4
+        x : 8
         id : worldmapcontainer
         width : parent.width
-        titleText: "bla"
+        titleText: qsTr("Spatial Selection")
         headerHeight: 20
-        panelHeight: 290
+        panelHeight: 270
         state : "collapsed"
-        headerColor: Global.alternatecolor3
         objectName: uicontext.uniqueName()
         property LayerManager manager
+        headerColor: Global.alternatecolor5
 
 
 
@@ -42,8 +44,16 @@ Item {
             LayersView{
                 id : worldmap
                 width : parent.width - 30
-                height : worldmapcontainer.panelHeight
-                x : 30
+                height : worldmapcontainer.panelHeight - 4
+                x : 28
+                y : 2
+                Connections{
+                    target : mouseActions
+                    onZoomEnded : {
+                        currentCatalog.spatialFilter = envelope
+                    }
+                }
+
                 function newExtent(ext){
                     addCommand("setviewextent("+ viewerId + "," + ext + ")");
                     update()
@@ -66,6 +76,8 @@ Item {
 
         clip : true
     }
+
+
     Component.onCompleted: {
        worldmapcontainer.manager = uicontext.createLayerManager(objectName)
        worldmap.setManager(worldmapcontainer.manager)

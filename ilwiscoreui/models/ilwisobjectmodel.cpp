@@ -146,6 +146,14 @@ bool IlwisObjectModel::isSystemObject() const
     return true; // just block
 }
 
+bool IlwisObjectModel::isCoverage() const
+{
+    if ( _ilwisobject.isValid()){
+        return hasType(_ilwisobject->ilwisType(), itCOVERAGE);
+    }
+    return false;
+}
+
 QString IlwisObjectModel::projectionInfo() const
 {
     try {

@@ -316,7 +316,12 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
                         //Probleem
                     }
                 } else if ( c == '=' ) {
-                    keyword = count;
+                    QString value = rest.mid(inputParams[paramIndex], rest.size() - count);
+                    // ignore '=' in urls, they are part of the url
+                    if ( value.indexOf("://") == -1){
+                        keyword = count;
+                    }
+
                 }
             }
 

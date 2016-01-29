@@ -48,6 +48,9 @@ Rectangle {
             id : panButton1
             icon : "entiremap20.png"
             onClicked: {
+                worldmap.addCommand("setviewextent("+ worldmap.viewerId + ",entiremap)");
+                worldmap.update()
+                currentCatalog.spatialFilter = ""
             }
         }
 

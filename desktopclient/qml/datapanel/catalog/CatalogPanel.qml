@@ -129,15 +129,10 @@ Item {
 
         CatalogViews {
             id : catalogView
-
-
-            Component.onCompleted: {
-                catalogView.height = parent.height - cbuttonBar.height - 36 ;
-            }
+            height : parent.height - 25
         }
         CatalogActions{
             id : cbuttonBar
-            Layout.fillHeight: true
         }
 
     }

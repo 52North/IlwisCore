@@ -9,11 +9,13 @@ import CatalogModel 1.0
 import ResourceModel 1.0
 import LayersView 1.0
 import "../../Global.js" as Global
+import "../../controls" as Controls
 
 Item{
-id: thumbDelegate
+    id: thumbDelegate
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
+    clip : true
 
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
@@ -21,10 +23,10 @@ id: thumbDelegate
         if ( !name || name === "?")
             name = "redbuttonr.png"
 
-         var iconP = "../../images/" + name
-         return iconP
+        var iconP = "../../images/" + name
+        return iconP
 
-     }
+    }
 
     function makeSize(size){
         if ( size < 1000)
@@ -72,7 +74,8 @@ id: thumbDelegate
 
     Image {
         id : page
-        anchors.fill: parent
+        height : parent.height
+        width : 150
         source : iconSource("page.png")
         Rectangle {
             id : frame
@@ -93,16 +96,7 @@ id: thumbDelegate
 
         }
 
-        Image {
-            anchors.top : parent.top
-            anchors.topMargin: 13
-            anchors.left : parent.left
-            anchors.leftMargin: 13
-            source : iconSource(iconPath)
-            width : 20
-            height : 20
 
-        }
 
         Button {
             id : refreshBut
@@ -126,59 +120,97 @@ id: thumbDelegate
             }
 
         }
-        Text{
-            x: 14
-            id: label
-            text: displayName
-            anchors.top : frame.bottom
-            height : 13
-            width : parent.width - 15
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignLeft
-            color: "black"
-            font.family: "Verdana"
-            font.pointSize: 7.5
-        }
-        Text{
-            x: 14
-            id: label2
-            text: domainName
-            anchors.top : label.bottom
-            height : 13
-            width : parent.width - 15
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignLeft
-            color: "black"
-            font.family: "Verdana"
-            font.pointSize: 7.5
-        }
-        Text{
-            x: 14
-            id: label3
-            text: dimensions
-            anchors.top : label2.bottom
-            height : 13
-            width : parent.width - 15
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignLeft
-            color: "black"
-            font.family: "Verdana"
-            font.pointSize: 7.5
-        }
-        Text{
-            x: 14
-            id: label4
-            text: makeSize(size)
-            anchors.top : label3.bottom
-            height : 13
-            width : parent.width - 15
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignLeft
-            color: "black"
-            font.family: "Verdana"
-            font.pointSize: 7.5
-        }
+
     }
+    Image {
+        id : typeicon
+        y : 8
+        anchors.left : page.right
+        anchors.leftMargin: 5
+        source : iconSource(iconPath)
+        width : 20
+        height : 20
+
+    }
+    Text{
+        id: label
+        text: displayName
+        y : 10
+        height : 13
+        width : parent.width - 15
+        elide: Text.ElideMiddle
+        horizontalAlignment: Text.AlignLeft
+        font.family: "Verdana"
+        font.bold: true
+        font.pointSize: 10
+        anchors.left : typeicon.right
+        anchors.leftMargin: 2
+    }
+    Column {
+        anchors.top : label.bottom
+        anchors.topMargin: 16
+        width : parent.width
+        height : thumbDelegate.height - label.height - 4
+        anchors.left : page.right
+        anchors.leftMargin: 5
+
+        Controls.TextEditLabelPair{
+            width : 240
+            content : dimensions
+            labelWidth: 80
+            readOnly: true
+            labelText: qsTr("Dimensions")
+            height : 17
+            boldLabel: false
+        }
+        Controls.TextEditLabelPair{
+            width : 240
+            content : domainType
+            labelWidth: 80
+            readOnly: true
+            labelText: qsTr("Domain type")
+            height : 17
+            boldLabel: false
+        }
+        Controls.TextEditLabelPair{
+            width : 240
+            content : domainName
+            labelWidth: 80
+            readOnly: true
+            labelText: qsTr("Domain")
+            height : 17
+            boldLabel: false
+        }
+        Controls.TextEditLabelPair{
+            width : 240
+            content : coordinateSystemName
+            labelWidth: 80
+            readOnly: true
+            labelText: qsTr("Coord system")
+            height : 17
+            boldLabel: false
+        }
+        Controls.TextEditLabelPair{
+            width : 240
+            content : typeName == "rastercoverage" ? geoReferenceName : ""
+            labelWidth: 80
+            readOnly: true
+            labelText: typeName == "rastercoverage" ? qsTr("Georeference") : ""
+            height : 17
+            boldLabel: false
+        }
+        Controls.TextEditLabelPair{
+            width : 240
+            content : makeSize(size)
+            labelWidth: 80
+            readOnly: true
+            labelText: qsTr("Physical size")
+            height : 17
+            boldLabel: false
+        }
+
+    }
+
     MouseArea{
         id : mouseArea
         anchors.fill: parent
@@ -211,7 +243,7 @@ id: thumbDelegate
         }
 
         onPressed: {
-           image = Qt.createQmlObject('import QtQuick 2.0; Image{
+            image = Qt.createQmlObject('import QtQuick 2.0; Image{
                 id : image
                 width : 20; height : 20
                 source : iconSource(iconPath)
@@ -233,7 +265,7 @@ id: thumbDelegate
                     AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                 }
             }', mouseArea, "dynamicImage")
-          }
+        }
     }
 
 }

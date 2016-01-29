@@ -23,9 +23,9 @@ WorkBenchShifter {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../images/" + name
-         return iconP
-     }
+        var iconP = "../images/" + name
+        return iconP
+    }
 
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
@@ -150,27 +150,34 @@ WorkBenchShifter {
             Image { anchors.centerIn : parent; source: "../images/min1.png" }
         }
     }
-    CreateCatalogForm{
-        id : createCatalogForm
+    SplitView {
         width : parent.width - 10
-        state : "maximized"
+        height : parent.height - buttonBar.height - functionBarHeader.height
         anchors.top: buttonBar.bottom
         anchors.margins: 5
-        x : parent.x + 5
-        beginfolder: startfolder
-    }
+        orientation: Qt.Vertical
 
-    Bookmarks{
-        id : navCreatePanel
-        width : parent.width - 10
-        x : parent.x + 5
-        defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
-        anchors.top: createCatalogForm.bottom
-        anchors.margins: 2
-        opacity : 1
-        background: Global.mainbackgroundcolor
-        listbackground: "#FFFEF8"
-        listalternate: "#FFFEF8"
+        CreateCatalogForm{
+            id : createCatalogForm
+            width : parent.width - 10
+            state : "maximized"
+            height : parent.height / 2
+            x : parent.x + 5
+            beginfolder: startfolder
+        }
 
+        Bookmarks{
+            id : navCreatePanel
+            width : parent.width - 10
+            x : parent.x + 5
+            defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
+            anchors.top: createCatalogForm.bottom
+            anchors.margins: 2
+            opacity : 1
+            background: Global.mainbackgroundcolor
+            listbackground: "#FFFEF8"
+            listalternate: "#FFFEF8"
+
+        }
     }
 }

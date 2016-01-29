@@ -61,3 +61,8 @@ IOOptions IlwisObjectConnector::ioOptions() const
     return _options;
 }
 
+IOOptions &IlwisObjectConnector::ioOptionsRef()
+{
+    return _options;
+}
+

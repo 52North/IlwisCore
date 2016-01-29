@@ -211,7 +211,7 @@ void UIContextModel::prepare()
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
     Ilwis::kernel()->addFactory(factory);
-    QString worldmp = "file:///"+ ilwisloc + "/resources/c1.mps";
+    QString worldmp = "file:///"+ ilwisloc + "/resources/country_boundaries.mps";
     _worldMap.prepare(worldmp);
 
 }

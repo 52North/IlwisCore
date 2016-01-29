@@ -12,7 +12,7 @@ Row {
     ExclusiveGroup { id : catalogViewStatus
         onCurrentChanged: {
             if( showList.checked)
-                catalogView.state = "iconList"
+                catalogView.state = "bylocation"
             if ( showGrid.checked)
                 catalogView.state = "iconGrid"
             if ( showThumbs.checked)

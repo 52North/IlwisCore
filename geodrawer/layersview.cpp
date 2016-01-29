@@ -97,6 +97,10 @@ void LayersView::addCommand(const QString &expression)
 void LayersView::setManager(LayerManager *manager)
 {
     _manager = manager;
+    auto *root = privateRootDrawer();
+    if ( root && _manager){
+        _manager->setScreenGeoReference(root->screenGrf());
+    }
 }
 
 QString LayersView::layerInfo(const QString& pixelpair) const
@@ -338,6 +342,31 @@ QString LayersView::currentLatLon() const
             return privateRootDrawer()->coordinateSystem()->coord2latlon(_currentCoordinate).toString();
     }
     return "";
+}
+
+QVariantMap LayersView::drawEnvelope(const QString& envelope) const{
+    QVariantMap vmap;
+    try {
+        if ( envelope == sUNDEF)
+            return QVariantMap();
+
+        Ilwis::Envelope llenv(envelope);
+        auto *root = privateRootDrawer();
+        if ( root && llenv.isValid() && !llenv.isNull() && root->screenGrf().isValid())    {
+
+            Ilwis::BoundingBox bb = root->screenGrf()->coord2Pixel(llenv);
+            vmap["minx"] = bb.min_corner().x;
+            vmap["miny"] = bb.min_corner().y;
+            vmap["width"] = bb.xlength();
+            vmap["height"] = bb.ylength();
+        }
+        return vmap;
+    } catch (const Ilwis::ErrorObject& err){
+
+    } catch (std::exception& ex){
+        Ilwis::kernel()->issues()->log(ex.what());
+    }
+    return vmap;
 }
 
 

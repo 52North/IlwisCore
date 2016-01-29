@@ -105,12 +105,14 @@ QString CatalogQuery::transformQuery(const QString& baseQuery) const{
         if ( c == '\''){
             inquotes = !inquotes;
 
-        } if ( specialchars.indexOf(c) != -1 && c != ' '){
-            if( c != '(' && c != ')'){
-                middel += c;
-                onleftside = false;
-            }else
-                brackets.push(c);
+        }  if (!inquotes){
+            if ( specialchars.indexOf(c) != -1 && c != ' '){
+                if( c != '(' && c != ')'){
+                    middel += c;
+                    onleftside = false;
+                }else
+                    brackets.push(c);
+            }
         }
 
     }

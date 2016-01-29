@@ -26,6 +26,7 @@ public:
     Q_PROPERTY(bool canBeAnimated READ canBeAnimated CONSTANT)
     Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY contentChanged)
     Q_PROPERTY(QString keyFilter READ keyFilter WRITE keyFilter NOTIFY contentChanged)
+    Q_PROPERTY(QString spatialFilter READ spatialFilter WRITE spatialFilter NOTIFY contentChanged)
     Q_PROPERTY(QStringList objectCounts READ objectCounts NOTIFY objectCountsChanged)
 
     ~CatalogModel();
@@ -51,6 +52,8 @@ public:
     QString nameFilter() const;
     virtual QString keyFilter() const;
     virtual void keyFilter(const QString& keyf);
+    QString spatialFilter() const;
+    void spatialFilter(const QString& filter);
 
     void setView(const Ilwis::CatalogView &view, bool threading = false);
     Ilwis::CatalogView view() const;
@@ -72,6 +75,7 @@ private:
     std::map<QString, bool> _filterState;
     QString _nameFilter;
     QString _keyFilter;
+    QString _spatialFilter;
     QStringList objectCounts();
 public slots:
     void refreshContent(const QUrl& url);

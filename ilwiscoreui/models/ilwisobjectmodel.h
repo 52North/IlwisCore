@@ -22,6 +22,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(bool isSystemObject READ isSystemObject CONSTANT)
     Q_PROPERTY(QString externalFormat READ externalFormat CONSTANT)
     Q_PROPERTY(bool externalReadOnly READ externalReadOnly CONSTANT)
+    Q_PROPERTY(bool isCoverage READ isCoverage CONSTANT)
     Q_PROPERTY(QString valuetype READ valuetype CONSTANT)
     Q_PROPERTY(bool isProjected READ isProjectedCoordinateSystem CONSTANT)
     Q_PROPERTY(QString projectionInfo READ projectionInfo CONSTANT)
@@ -44,6 +45,7 @@ public:
     void description(const QString& desc) const;
     bool isProjectedCoordinateSystem() const;
     bool isSystemObject() const;
+    bool isCoverage() const;
     QString projectionInfo() const;
 
     QStringList test101();

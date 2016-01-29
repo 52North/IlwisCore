@@ -1,30 +1,30 @@
 [Domain]
-Description=Domain UniqueID "world countries"
-Time=1385019362
+Description=Domain UniqueID "country_boundaries.mps"
+Time=1319278384
 Version=3.1
 Class=Domain UniqueID
-Width=8
+Width=13
 Type=DomainUniqueID
-[DomainSort]
-Sorting=AlphaNumeric
-Prefix=boundary
-[DomainIdentifier]
-Nr=1
 [Ilwis]
-Description=SegmentMapTransform(countries,LatlonWGS84,0.0000)
-Time=1453363176
+ContainsDom=True
+Description=All countires boundaries of the world (2011)
+Time=1319278458
 Version=3.1
 Class=ILWIS::Segment Map
 Type=BaseMap
+[DomainSort]
+Sorting=AlphaNumeric
+Prefix=Boundary
+[DomainIdentifier]
+Nr=1618
 [BaseMap]
 CoordSystem=LatlonWGS84.csy
-CoordBounds=-180 -90 180 83.64513
-Domain=c1.mps
-DomainInfo=c1.mps;Long;UniqueID;0;;
-ThreeDCoordinates=No
+CoordBounds=-180 -89.99889902136 180 83.599600328293
+Domain=country_boundaries.mps
+DomainInfo=country_boundaries.mps;Long;UniqueID;0;;
 HistogramSize=0
 Type=SegmentMap
-Proximity=0.868225650000
+Proximity=0.867992496748
 [SegmentMap]
 Snap Distance=3.600000000000
 Tunnel Width=0.360000000000
@@ -32,21 +32,21 @@ Type=SegmentMapStore
 [SegmentMapStore]
 Status=-32767
 Format=2
-Segments=287
+Segments=1629
 DeletedSegments=0
 Coordinates=0
 [Table]
 Description=
-Time=1453363176
+Time=1319296612
 Version=3.1
 Class=Table
 Domain=None.dom
 DomainInfo=none.dom;Byte;none;0;;
 Columns=5
-Records=287
+Records=1629
 Type=TableStore
 [TableStore]
-Data=c1.mps#
+Data=country_boundaries.mps#
 UseAs=No
 Col0=MinCoords
 Col1=MaxCoords
@@ -56,7 +56,7 @@ Col4=SegmentValue
 Type=TableBinary
 [Col:MinCoords]
 Description=
-Time=1453363176
+Time=1319296610
 Version=3.1
 Class=Column
 Domain=LatlonWGS84.csy
@@ -68,7 +68,7 @@ Stored=Yes
 Type=ColumnStore
 [Col:MaxCoords]
 Description=
-Time=1453363176
+Time=1319296610
 Version=3.1
 Class=Column
 Domain=LatlonWGS84.csy
@@ -80,7 +80,7 @@ Stored=Yes
 Type=ColumnStore
 [Col:Coords]
 Description=
-Time=1453363176
+Time=1319296610
 Version=3.1
 Class=Column
 Domain=CoordBuf.dom
@@ -92,7 +92,7 @@ Stored=Yes
 Type=ColumnStore
 [Col:Deleted]
 Description=
-Time=1453363176
+Time=1319296610
 Version=3.1
 Class=Column
 Domain=bool.dom
@@ -108,11 +108,11 @@ Stored=Yes
 Type=ColumnStore
 [Col:SegmentValue]
 Description=
-Time=1453363176
+Time=1319296610
 Version=3.1
 Class=Column
-Domain=c1.mps
-DomainInfo=c1.mps;Long;UniqueID;0;;
+Domain=country_boundaries.mps
+DomainInfo=country_boundaries.mps;Long;UniqueID;0;;
 ReadOnly=No
 OwnedByTable=No
 StoreType=Long

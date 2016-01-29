@@ -2,6 +2,7 @@
 #include <QtQuick/qquickwindow.h>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLContext>
+#include <QDir>
 #include "rootdrawer.h"
 #include "table.h"
 #include "layerdrawer.h"
@@ -34,6 +35,18 @@ LayersRenderer::~LayersRenderer()
 }
 
 
+void LayersRenderer::saveAsImage() const
+{
+    QImage image = _fbo->toImage();
+    QImage vflip = image.transformed(QMatrix().scale(1,-1));
+    QUrl url(_saveImagePath);
+    QFileInfo inf(url.toLocalFile());
+    QDir dir(inf.absoluteDir().absolutePath() );
+    if ( !dir.exists())
+        dir.mkdir(inf.absolutePath());
+    vflip.save(inf.absoluteFilePath());
+}
+
 void LayersRenderer::render()
 {
     try {
@@ -61,10 +74,7 @@ void LayersRenderer::render()
         glDisable(GL_BLEND);
 
         if ( _saveImagePath != "" && _fbo){
-            QImage image = _fbo->toImage();
-            QImage vflip = image.transformed(QMatrix().scale(1,-1));
-            QUrl url(_saveImagePath);
-            vflip.save(url.toLocalFile());
+            saveAsImage();
         }
 
         emit drawDone();
