@@ -13,6 +13,10 @@ Rectangle {
     width : parent.width
     id : catalogMapView
 
+    function closeGrid() {
+      grid.setSource("")
+    }
+
     Action {
         id : zoomClicked
         onTriggered : {
