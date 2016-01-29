@@ -80,6 +80,8 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     PixelIterator pixIter(_raster, bb); // This iterator runs through bb. The corners of bb are "inclusive".
 
     SPNumericRange numrange = _raster->datadef().range<NumericRange>();
+    if (!numrange->isValid())
+        _raster->statistics(NumericStatistics::pBASIC);
     auto end = pixIter.end();
     quint32 position = 0;
     while(pixIter != end){
