@@ -23,9 +23,9 @@ WorkBenchShifter {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../images/" + name
-         return iconP
-     }
+        var iconP = "../images/" + name
+        return iconP
+    }
 
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
@@ -157,27 +157,27 @@ WorkBenchShifter {
         anchors.margins: 5
         orientation: Qt.Vertical
 
-    CreateCatalogForm{
-        id : createCatalogForm
-        width : parent.width - 10
-        state : "maximized"
-        height : parent.height / 2
-        x : parent.x + 5
-        beginfolder: startfolder
-    }
+        CreateCatalogForm{
+            id : createCatalogForm
+            width : parent.width - 10
+            state : "maximized"
+            height : parent.height / 2
+            x : parent.x + 5
+            beginfolder: startfolder
+        }
 
-    Bookmarks{
-        id : navCreatePanel
-        width : parent.width - 10
-        x : parent.x + 5
-        defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
-        anchors.top: createCatalogForm.bottom
-        anchors.margins: 2
-        opacity : 1
-        background: Global.mainbackgroundcolor
-        listbackground: "#FFFEF8"
-        listalternate: "#FFFEF8"
+        Bookmarks{
+            id : navCreatePanel
+            width : parent.width - 10
+            x : parent.x + 5
+            defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
+            anchors.top: createCatalogForm.bottom
+            anchors.margins: 2
+            opacity : 1
+            background: Global.mainbackgroundcolor
+            listbackground: "#FFFEF8"
+            listalternate: "#FFFEF8"
 
-    }
+        }
     }
 }
