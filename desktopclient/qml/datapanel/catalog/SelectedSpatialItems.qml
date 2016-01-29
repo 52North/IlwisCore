@@ -28,7 +28,6 @@ Item {
         clip : true
 
         function iconSource(name) {
-            console.debug(name)
             if ( name.indexOf("/") !== -1)
                 return name
             if ( !name || name === "?")
