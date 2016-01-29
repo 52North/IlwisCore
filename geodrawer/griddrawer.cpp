@@ -170,8 +170,8 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         if ( _cellDistance == rUNDEF){
-            Coordinate cmin = rootDrawer()->coverageEnvelope().min_corner();
-            Coordinate cmax = rootDrawer()->coverageEnvelope().max_corner();
+            Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
+            Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
             _cellDistance = MathHelper::round((cmax.x - cmin.x) / 7.0);
         }
         _indices = std::vector<VertexIndex>();
@@ -181,8 +181,8 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
         if ( _opacity == rUNDEF)
             _opacity = 0.8;
 
-        Coordinate cmin = rootDrawer()->coverageEnvelope().min_corner();
-        Coordinate cmax = rootDrawer()->coverageEnvelope().max_corner();
+        Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
+        Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
 
         _indices.push_back(VertexIndex(_vertices.size(),5, itLINE));
         _vertices.push_back(QVector3D(cmin.x,cmin.y,0));
@@ -236,8 +236,8 @@ bool SecondaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, con
             _opacity = 0.5;
        _linewidth = 0.5;
 
-        Coordinate cmin = rootDrawer()->coverageEnvelope().min_corner();
-        Coordinate cmax = rootDrawer()->coverageEnvelope().max_corner();
+        Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
+        Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
         double xstart = ceil(cmin.x / dist) * dist - dist;
         for (double x = xstart; x < cmax.x ; x += dist)
         {

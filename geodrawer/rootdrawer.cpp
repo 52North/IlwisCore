@@ -147,6 +147,9 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
     _zoomRect = envelope;
     viewPoint(_zoomRect.center(), true);
     setMVP();
+    if ( hasDrawer("griddrawer",DrawerInterface::dtPOST)){
+        drawer("griddrawer",DrawerInterface::dtPOST)->unprepare(DrawerInterface::ptGEOMETRY);
+    }
 
 }
 
