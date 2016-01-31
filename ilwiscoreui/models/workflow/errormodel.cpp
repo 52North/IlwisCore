@@ -61,3 +61,8 @@ void ErrorModel::clearList()
     _errorlist.clear();
     emit errorlistChanged();
 }
+
+int ErrorModel::getCount()
+{
+    return _errorlist.count();
+}
