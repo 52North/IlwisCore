@@ -58,7 +58,7 @@ Item {
                     x : 5
                     y : 2
 
-                    source: iconSource(modelData.imagePath)
+                    source: thumbgrid.iconSource(modelData.imagePath)
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                 }

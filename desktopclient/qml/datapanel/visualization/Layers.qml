@@ -7,145 +7,47 @@ import "../../controls" as Controls
 import LayersView 1.0
 
 Item {
-
-  signal zoomEnded(string envelope)
-
-  function addDataSource(filter, sourceName, sourceType){
-      if ( filter.indexOf("=") !== -1){
-          filter = "\"" + filter + "\""
-      }
-      renderer.addCommand("adddrawer(" + renderer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
-      renderer.update()
-  }
-
-  function entireMap() {
-      renderer.addCommand("setviewextent("+ renderer.viewerId + ",entiremap)");
-      renderer.update()
-  }
-
-  function newExtent(ext){
-      renderer.addCommand("setviewextent("+ renderer.viewerId + "," + ext + ")");
-      renderer.update()
-  }
-
-  function transfer(datapanel){
-      var layers = datapanel.manager.layers;
-      for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
-          var expr = "adddrawer(" + renderer.viewerId + ","+ layers[i].name + ",\"itemid=" + layers[i].id + "\"," + layers[i].typeName + ")"
-          renderer.addCommand(expr)
-      }
-      renderer.update()
-  }
-
-  function setManager(layermanager){
-      renderer.setManager(layermanager)
-  }
-
-  function drawer(){
-      return renderer
-  }
+    id : layerContainer
+    signal zoomEnded(string envelope)
 
 
 
-  DropArea {
-      anchors.fill : parent
-      onDropped: {
-          var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
-          addDataSource(resource.url, resource.name, resource.typeName)
-      }
+    function setManager(layermanager){
+        maparea.drawer.setManager(layermanager)
+    }
 
-      Connections {
-          target: mouseActions
-          onZoomEnded :{
-              zoomEnded(envelope)
-          }
-      }
+    function drawer(){
+        return maparea.drawer
+    }
 
-      Item {
-          anchors.fill: parent
-          LayersView {
-              id: renderer
-              anchors.top: parent.top
-              height : parent.height - hscroller.height
-              width : parent.width - vscroller.width
-              anchors.margins: 1
-              objectName : "layers_" + uicontext.uniqueName()
+    function addDataSource(filter, sourceName, sourceType){
+        if ( filter.indexOf("=") !== -1){
+            filter = "\"" + filter + "\""
+        }
+        maparea.drawer.addCommand("adddrawer(" + maparea.drawer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
+        maparea.drawer.update()
+    }
 
-              LayerExtentMouseActions{
-                  id : mouseActions
-                  layerManager: manager
-                  drawer : renderer
-                  linkedDrawer: renderer
-                  showInfo: true
-              }
-              Component.onCompleted: {
-                  renderer.associate(hscroller.objectName,"synchronizeEnded")
-                  renderer.associate(vscroller.objectName,"synchronizeEnded")
-              }
-          }
-          Controls.HScrollBar{
-              anchors.top : renderer.bottom
-              id :hscroller
-              objectName: uicontext.uniqueName()
+    function newExtent(ext){
+        maparea.drawer.addCommand("setviewextent("+ maparea.drawer.viewerId + "," + ext + ")");
+        maparea.drawer.update()
+    }
 
-              function updateItem(){
-                  var envView = renderer.viewEnvelope
-                  maxSize = envView.maxx - envView.minx
-                  var envZoom = renderer.zoomEnvelope
-                  oldPosition = -10000
-                  currentSize = envZoom.maxx - envZoom.minx
-                  if ( currentPosition === -1)
-                    currentPosition = 0
-                  else{
-                      currentPosition = envZoom.minx - envView.minx
+    MapArea{
+        anchors.fill : parent
+        id : maparea
+    }
 
-                  }
+    MapScrollers {
+        anchors.fill: parent
+    }
 
-                  return 0
-              }
+//    PostMapPanelCanvas{
+//        anchors.fill: parent
 
-              onScrolled: {
-                  var envZoom = renderer.zoomEnvelope
-                  var envView = renderer.viewEnvelope
-                  var newPos1 = envView.minx + position
-                  var newPos2 = newPos1 + envZoom.maxx - envZoom.minx
-                  envZoom.minx = newPos1
-                  envZoom.maxx = newPos2
-                  renderer.zoomEnvelope = envZoom
-
-              }
-          }
-          Controls.VScrollBar{
-              anchors.left : renderer.right
-              id :vscroller
-              objectName: uicontext.uniqueName()
-
-              function updateItem(){
-                  var envView = renderer.viewEnvelope
-                  maxSize = envView.maxy - envView.miny
-                  var envZoom = renderer.zoomEnvelope
-                  currentSize = envZoom.maxy - envZoom.miny
-                  oldPosition = -10000
-                  if ( currentPosition === -1)
-                    currentPosition = 0
-                  else{
-                      currentPosition = envView.maxy - envZoom.maxy
-                  }
-
-                  return 0
-              }
-
-              onScrolled: {
-                  var envZoom = renderer.zoomEnvelope
-                  var envView = renderer.viewEnvelope
-                  var newPos1 = envView.maxy - position
-                  var newPos2 = newPos1 - (envZoom.maxy - envZoom.miny)
-                  envZoom.miny = newPos2
-                  envZoom.maxy = newPos1
-                  renderer.zoomEnvelope = envZoom
-
-              }
-          }
-      }
-  }
+//        Component.onCompleted: {
+//            addDrawer("drawers/GridDrawer.qml")
+//        }
+//    }
 }
+
