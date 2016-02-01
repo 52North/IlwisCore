@@ -10,7 +10,9 @@ Item {
     id : layerContainer
     signal zoomEnded(string envelope)
 
-
+    function entireMap() {
+        maparea.entireMap()
+    }
 
     function setManager(layermanager){
         maparea.drawer.setManager(layermanager)
