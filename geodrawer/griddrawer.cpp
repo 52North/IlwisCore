@@ -128,6 +128,9 @@ DrawerInterface::DrawerType SubGridDrawer::drawerType() const
 void SubGridDrawer::calcEnvelope(Coordinate& cmin, Coordinate& cmax){
     cmin = rootDrawer()->zoomEnvelope().min_corner();
     cmax = rootDrawer()->zoomEnvelope().max_corner();
+    if ( rootDrawer()->coordinateSystem()->isUnknown()) // cant do any extra calcs with unknown
+        return;
+
     bool isLatLon = rootDrawer()->coordinateSystem()->isLatLon();
     if ( isLatLon){
         if ( cmin.y <= -89)
