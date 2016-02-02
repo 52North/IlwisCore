@@ -19,13 +19,33 @@ Size<> GridBlockInternal::size() const {
     return _size;
 }
 
+void GridBlockInternal::prepare(bool fetchData) {
+    if (!_initialized) {
+        Locker<> lock(_mutex);
+        if ( _initialized) // may happen due to multithreading
+            return;
+        try{
+        _data.resize(blockSize());
+        std::fill(_data.begin(), _data.end(), _undef);
+        _initialized = true;
+        if (!_inMemory && _tempName != sUNDEF)
+            loadFromCache();
+        else if ( fetchData)
+            needData();
+        } catch(const std::bad_alloc& err){
+            throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), false);
+        }
+    }
+}
+
+
 GridBlockInternal *GridBlockInternal::clone()
 {
     GridBlockInternal *block = new GridBlockInternal(_id, i64UNDEF, _size.xsize(), _size.ysize());
     block->prepare();
     block->_undef = _undef;
     block->_blockSize = _blockSize;
-    if(!inMemory())
+    if(!_inMemory)
         loadFromCache();
     else if (!_initialized){
         needData();
@@ -116,8 +136,15 @@ void GridBlockInternal::needData()
     }
 }
 
+void GridBlockInternal::reset()
+{
+    _inMemory = false;
+    _initialized = false;
+    _data = std::vector<double>();
+}
 
 //----------------------------------------------------------------------
+
 Grid::Grid(int maxlines) : _inMemoryIndex(iUNDEF), _memUsed(0),_blocksPerBand(0), _maxLines(maxlines){
     //Locker lock(_mutex);
 
@@ -359,6 +386,7 @@ inline bool Grid::update(quint32 block, bool creation) {
             return false;
         }
         } catch (const OutOfMemoryError& err){ // probably exceeded memory cappacity, unload the blocks and try again.
+            _blocks[block]->reset(); // the block we were currently working on got corrupted; skip from save2Cache
             unload(false);
             try {
                 if(!_blocks[block]->loadFromCache()){

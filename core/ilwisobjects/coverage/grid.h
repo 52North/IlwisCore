@@ -44,30 +44,10 @@ public:
     bool inMemory() const { return _inMemory; }
     inline bool save2Cache() ;
     bool loadFromCache();
+    void reset();
 
 private:
-    void prepare(bool fetchData = true) {
-        if (!_initialized) {
-            Locker<> lock(_mutex);
-            if ( _initialized) // may happen due to multithreading
-                return;
-            try{
-            _data.resize(blockSize());
-            std::fill(_data.begin(), _data.end(), _undef);
-            _initialized = true;
-            if (!inMemory() && _tempName != sUNDEF)
-                loadFromCache();
-            else if ( fetchData)
-                needData();
-
-            } catch(const std::bad_alloc& err){
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), false);
-            }
-
-
-        }
-    }
-
+    void prepare(bool fetchData = true);
     void needData();
     std::recursive_mutex _mutex;
     std::vector<double> _data;
