@@ -122,7 +122,7 @@ void IlwisContext::init(const QString &ilwisDir)
         localDir.mkpath(datalocation);
     }
     _persistentInternalCatalog = QUrl::fromLocalFile(datalocation);
-    files = localDir.entryList(QStringList() << "*.*", QDir::Files);
+    files = localDir.entryList(QStringList() << "*", QDir::Files);
     for(QString file : files)
         localDir.remove(file);
 
