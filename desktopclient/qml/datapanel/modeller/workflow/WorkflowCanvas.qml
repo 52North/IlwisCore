@@ -803,7 +803,6 @@ Modeller.ModellerWorkArea {
             node = wfCanvas.operationsList[i]
             coordinates[node.itemid] = node.x + '|' + node.y
         }
-
         workflow.store(coordinates)
     }
 
