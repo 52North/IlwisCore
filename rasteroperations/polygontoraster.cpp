@@ -43,6 +43,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
     Ilwis::Bresenham algo(_outputraster->georeference());
     PixelIterator pixiter(_outputraster);
+    initialize(_inputfeatures->featureCount(itPOLYGON));
+    quint64 count = 0;
     for(auto feature :  _inputfeatures){
         if ( feature->geometryType() != itPOLYGON){
 
@@ -53,13 +55,18 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         Pixel pix;
         for(int i = 0; i< selectionPix.size(); i++){
             pix = selectionPix[i];
-            pixiter = pix;
+            // the pix may contain a fake z coordinate as this represents the index of the polygon in a set of polygons of a multi polygon
+            // we copy the z value of the output raster here
+            pixiter = Pixel(pix.x, pix.y, pixiter.z());
             *pixiter = -1;
         }
+        updateTranquilizer(++count,10);
     }
     Pixel pix;
     long xsize =_inputgrf->size().xsize();
     long ysize =_inputgrf->size().ysize();
+    initialize(ysize);
+    long mmax = -1, mmin = 10000000;
     for (long y = 0; y < ysize; ++y) {
          pix.y = y;
             // detect the polygon-borders (pixels with value -1), line-by-line
@@ -72,6 +79,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
                  borders.push_back(x); // each polygon boundary
         }
         borders.push_back(xsize); //
+
         for (int i = 1; i < borders.size(); ++i) {
              long middle = (borders[i-1] + borders[i] )/ 2;
              int value;
@@ -86,16 +94,21 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
              }else{
                 value = 0;
              }
+             mmax = Ilwis::max(mmax, value);
+             mmin = Ilwis::min(mmin, value);
              for(long x=borders[i-1]; x < borders[i]; ++x) {
                  pix.x = x; // y is already set
                  pixiter = pix;
                  *pixiter = value;
              }
         }
+        updateTranquilizer(y,1);
     }
-
+    NumericRange *rng = new NumericRange(mmin, mmax, 1);
+    _outputraster->datadefRef().range(rng);
+    _outputraster->datadefRef(0).range(rng->clone());
     QVariant value;
-    value.setValue<IFeatureCoverage>(_inputfeatures);
+    value.setValue<IRasterCoverage>(_outputraster);
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->source() );
 
     return true;
@@ -122,36 +135,23 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
             ERROR2(ERR_COULD_NOT_LOAD_2,georefname,"");
             return sPREPAREFAILED;
         }
-
-    }else if ( _expression.parameterCount() == 3){
-        bool ok;
-        int xsize = _expression.parm(1).value().toULong(&ok);
-        if ( !ok){
-           ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),_expression.parm(1).value());
-           return sPREPAREFAILED;
-        }
-        int ysize = _expression.parm(2).value().toULong(&ok);
-        if ( !ok){
-           ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),_expression.parm(2).value());
-           return sPREPAREFAILED;
-        }
-
-        IGeoReference grf(outputName);
-        grf->create("corners");
-        grf->size(Size<>(xsize, ysize,1));
-        grf->coordinateSystem(_inputfeatures->coordinateSystem());
-        grf->envelope(_inputfeatures->envelope());
-        grf->compute();
-        _inputgrf = grf;
     }
-     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
+    _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
     IDomain dom("code=count");
-    _outputraster = IRasterCoverage(outputName);
-    _outputraster->datadefRef().domain(dom);   
+    _outputraster.prepare();
+    if (outputName != sUNDEF)
+         _outputraster->name(outputName);
+
     _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
     env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
+   // _outputraster->datadefRef().domain(dom);
+    //_outputraster->datadefRef(0) = {dom};
+    std::vector<double> indexes = {0};
+    //_outputraster->stackDefinitionRef().setSubDefinition(dom, indexes);
+
+    _outputraster->setDataDefintions(dom,indexes);
     return sPREPARED;
 }
 
@@ -159,15 +159,14 @@ quint64 PolygonToRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/polygon2raster"});
     operation.setLongName("Polygon to raster map");
-    operation.setSyntax("polygon2raster(input-polygonmap,targetgeoref | xsize[,ysize])");
+    operation.setSyntax("polygon2raster(input-polygonmap,targetgeoref)");
     operation.setDescription(TR("translates a the points of a featurecoverage to pixels in a rastermap"));
-    operation.setInParameterCount({2,3});
+    operation.setInParameterCount({2});
     operation.addInParameter(0,itPOLYGON, TR("input featurecoverage"),TR("input featurecoverage with any domain"));
-    operation.addInParameter(1,itGEOREF | itINTEGER, TR("input georeference or x size"),TR("the parameter can either be a georeference or the x extent of the the to be created raster"));
-    operation.addInParameter(2,itINTEGER, TR("input y size"),TR("optional y size of the output raster. Only used of the previous parameter was an x size"));
+    operation.addInParameter(1,itGEOREF, TR("input georeference"),TR("Determines the geometry of the output raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
-    operation.setKeywords("raster,polygonmap");
+    operation.setKeywords("raster,polygoncoverage");
     mastercatalog()->addItems({operation});
     return operation.id();
 }
