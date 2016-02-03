@@ -12,6 +12,7 @@ Rectangle {
     property string formTitle
     property string operationId : "id"
     property string operationUrl : "url"
+    property bool showTitle: true
 
     signal formResultChanged();
 
@@ -58,8 +59,8 @@ Rectangle {
         BorderImage {
             id : title
             width: parent.width
-            height : formTitle != "" ? 25 : 0
-            opacity : formTitle != "" ? 1 : 0
+            height : formTitle != "" && showTitle ? 25 : 0
+            opacity : formTitle != "" && showTitle ? 1 : 0
             source : "../images/headerblue2CS1.png"
             border { left: 15; top: 0; right: 15; bottom: 0 }
             smooth : true
