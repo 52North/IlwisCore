@@ -57,22 +57,24 @@ void DistanceRaster::ThiessenMapCalculation() {return;}
 
 
 
-bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight)
+bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double inputWeight)
 {
     double pixOrigValue = *iter;
     quint32 iterx = iter.x();
     quint32 itery = iter.y();
     quint32 iterz = iter.z();
 
+    double weight = inputWeight == UNDEF ? 1e100 : inputWeight;
+
     if (iterx > 0 && itery > 0)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);
+        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);           
     if (iterx < sz.xsize()-1 && itery > 0)
         *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7 ) * weight);
+
     if (iterx > 0 && itery < sz.ysize()-1)
         *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7 ) * weight);
     if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
         *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7 ) * weight);
-
     if (iterx > 0)
         *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery, iterz)] + 5 ) * weight);
     if (itery < sz.ysize()-1)
@@ -95,38 +97,42 @@ void DistanceRaster::distanceCalculation() {
 
     if(_hasWeightRaster) weight.setRaster(_inputOptWeightRaster);
 
-    bool hasChanges = true; // the loop needs to start, so we set this as true...
+    bool hasChanges = false;
     bool firstPass = true;
     Size<> sz = _outputRaster->size();
+    double pixsize = _outputRaster->georeference()->pixelSize();
 
-    Envelope envelope = _outputRaster->envelope();
-    double pixsizex = 1;
+    quint64 currentCount = 0;
 
-    if ( envelope.isValid()){
-        pixsizex = envelope.xlength() / sz.xsize();
-    }
+    initialize(_inputRaster->size().linearSize() );
+    currentCount = 0;
 
     // copy input raster values to output raster
+    // All source pixels obtain distance value 0; all other pixels obtain a value distance value that is infinitely large.
     while (inpIter != end(_inputRaster)) {
-        *copyIter = *inpIter;
+
+        if (*inpIter != UNDEF)
+            *copyIter = 0;
+        else
+            *copyIter = 1e100;
+
         ++inpIter;
         ++copyIter;
     }
 
-    // All source pixels obtain distance value 0; all other pixels obtain a value distance value that is infinitely large.
-    for( auto& value : _outputRaster) {
-        if (value != rUNDEF && value != UNDEF)
-            value = 0;
-        else
-            value = 1e100;
-    }
+    while (hasChanges || firstPass) {
+        initialize(_inputRaster->size().linearSize() );
+        currentCount = 0;
 
-    while (hasChanges) {
         hasChanges = false;
         while (iter != end(_outputRaster)) {
             hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
             ++iter;
+            updateTranquilizer(currentCount++, 1000);
         }
+
+        initialize(_inputRaster->size().linearSize() );
+        currentCount = 0;
 
         if (hasChanges || firstPass) {
             iter.end();
@@ -135,16 +141,24 @@ void DistanceRaster::distanceCalculation() {
             while (iter != begin(_outputRaster)) {
                 hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
                 --iter;
+                updateTranquilizer(currentCount++, 1000);
             }
         }
-        firstPass = false;
+        firstPass = false;      
     }
+
+    initialize(_inputRaster->size().linearSize() );
+    currentCount = 0;
 
     // To obtain distance values in meters, these raw values are divided by 5 and
     // multiplied by the pixel size and a correction factor.
     for( auto& value : _outputRaster) {
-        value *= pixsizex; // todo: check this!!
+        value *= pixsize;
         value = value / 5 * 0.968;
+
+        if (value >= 1e100) {
+            value = UNDEF;
+        }
     }
 }
 
@@ -174,7 +188,6 @@ Ilwis::OperationImplementation *DistanceRaster::create(quint64 metaid, const Ilw
 {
     return new DistanceRaster(metaid, expr);
 }
-
 
 Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
@@ -207,18 +220,14 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 
     IDomain dom;
     dom.prepare("value");
-    _outputRaster->datadefRef() = DataDefinition(dom);
+
+    _outputRaster->datadefRef() = DataDefinition(dom);    
 
     for (int i = 0; i <_outputRaster->size().zsize(); i++)
         _outputRaster->setBandDefinition(i, dom);
 
     if (outputRasterName != sUNDEF){
         _outputRaster->name(outputRasterName);
-    }
-    ITable inputTbl = _inputRaster->attributeTable();
-
-    if (inputTbl.isValid()) {
-        _outputRaster->attributeTable(static_cast<Table *>(inputTbl->clone()));
     }
 
     return sPREPARED;
@@ -229,7 +238,7 @@ quint64 DistanceRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/distanceraster"});
     operation.setSyntax("distanceraster(raster, weightraster, thiessenraster)");
-    operation.setDescription(TR("allows you to reduce the pixel size of a map"));
+    operation.setDescription(TR("calculate raster map distances"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER , TR("input raster"),TR("input rastermap"));
     operation.addInParameter(1,itRASTER , TR("weight raster"),TR("input weightraster"));
