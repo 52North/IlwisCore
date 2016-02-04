@@ -47,6 +47,7 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                 coord = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),coord);
             *iterOut = interpolator.coord2value(coord, iterOut.position().z);
             ++iterOut;
+            updateTranquilizer(iterOut.linearPosition(), 1000);
         }
         return true;
     };
@@ -110,6 +111,8 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
         ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
         return sPREPAREFAILED;
     }
+
+    initialize(outputRaster->size().linearSize());
 
     return sPREPARED;
 }
