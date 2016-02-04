@@ -22,6 +22,8 @@ using namespace RasterOperations;
 
 REGISTER_OPERATION(DistanceRaster)
 
+#define UNDEF -1e+308
+
 DistanceRaster::DistanceRaster()
 {
 
@@ -89,9 +91,12 @@ void DistanceRaster::distanceCalculation() {
     PixelIterator copyIter(_outputRaster); // hmm, find out how to reset an iterator....
     PixelIterator neighbour(_outputRaster);
     PixelIterator inpIter(_inputRaster);
-    //PixelIterator weight(_inputWeightRaster);
+    PixelIterator weight;
+
+    if(_hasWeightRaster) weight.setRaster(_inputOptWeightRaster);
 
     bool hasChanges = true; // the loop needs to start, so we set this as true...
+    bool firstPass = true;
     Size<> sz = _outputRaster->size();
 
     Envelope envelope = _outputRaster->envelope();
@@ -110,7 +115,7 @@ void DistanceRaster::distanceCalculation() {
 
     // All source pixels obtain distance value 0; all other pixels obtain a value distance value that is infinitely large.
     for( auto& value : _outputRaster) {
-        if (value != rUNDEF && value != -1e+308)
+        if (value != rUNDEF && value != UNDEF)
             value = 0;
         else
             value = 1e100;
@@ -119,21 +124,20 @@ void DistanceRaster::distanceCalculation() {
     while (hasChanges) {
         hasChanges = false;
         while (iter != end(_outputRaster)) {
-            //hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
-            hasChanges |= setDistanceValue(iter, neighbour, sz, 1.0);
+            hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
             ++iter;
         }
 
-        if (hasChanges) {
+        if (hasChanges || firstPass) {
             iter.end();
             hasChanges = false;
 
             while (iter != begin(_outputRaster)) {
-                //hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
-                hasChanges |= setDistanceValue(iter, neighbour, sz, 1.0);
+                hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
                 --iter;
             }
         }
+        firstPass = false;
     }
 
     // To obtain distance values in meters, these raw values are divided by 5 and
@@ -186,7 +190,7 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 
     _hasWeightRaster = false;
     if (0 != inputWeightRaster.length()) {
-        if(!_inputWeightRaster.prepare(inputWeightRaster, itRASTER)) {
+        if(!_inputOptWeightRaster.prepare(inputWeightRaster, itRASTER)) {
             ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
             return sPREPAREFAILED;
         } else {

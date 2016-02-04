@@ -324,6 +324,19 @@ quint32 PixelIterator::linearPosition() const
     return _linearposition;
 }
 
+void PixelIterator::setRaster(const IRasterCoverage &raster) {
+    const BoundingBox box;
+
+    _raster = raster;
+    _box = box;
+    _localOffset = 0;
+    _currentBlock = 0;
+    _flow = fXYZ;
+    _isValid = false;
+
+    init();
+}
+
 PixelIterator& PixelIterator::operator=(const PixelIterator& iter) {
     copy(iter);
     return *this;
