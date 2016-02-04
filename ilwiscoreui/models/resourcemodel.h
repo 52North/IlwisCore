@@ -77,6 +77,7 @@ public:
     Q_INVOKABLE QString getProperty(const QString& propertyname) const;
     Q_INVOKABLE void makeParent(QObject *item);
     Q_INVOKABLE bool hasExtendedType(const QString& tp) const;
+    Q_INVOKABLE void setUrl(const QUrl &url, bool asRaw);
     Q_INVOKABLE void realizeThumbPath();
 
 

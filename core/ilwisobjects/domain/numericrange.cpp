@@ -9,7 +9,7 @@ NumericRange::NumericRange() : _min(1e300), _max(-1), _resolution(0) {
 }
 
 NumericRange::NumericRange(double mi, double ma, double step) : _min(mi), _max(ma), _resolution(step), _undefined(rUNDEF) {
-
+    _valuetype = determineType(true);
 }
 
 NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
@@ -212,6 +212,7 @@ void NumericRange::set(const NumericRange& vr)
     _resolution = vr._resolution;
     min(vr._min);
     max(vr._max);
+    _valuetype = determineType(true);
 }
 
 bool NumericRange::contains(const QVariant &value, bool inclusive) const
@@ -309,6 +310,7 @@ void NumericRange::clear()
     _min = 0;
     _max = -1;
     _undefined = rUNDEF;
+    _valuetype = itUNKNOWN;
 
 }
 

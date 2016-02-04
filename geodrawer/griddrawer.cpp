@@ -3,6 +3,8 @@
 #include "drawers/drawerfactory.h"
 #include "rootdrawer.h"
 #include "mathhelper.h"
+#include "ilwisdata.h"
+#include "coordinatesystem.h"
 #include "griddrawer.h"
 
 using namespace Ilwis;
@@ -15,6 +17,7 @@ SubGridDrawer::SubGridDrawer(const QString& gridname, Ilwis::Geodrawer::DrawerIn
     _vertexShader = "featurevertexshader_nvdia.glsl";
     _fragmentShader = "featurefragmentshader_nvdia.glsl";
     valid(true); //TODO must move to the prepare but the order of things is not yet ok
+    _latlon.prepare("code=epsg:4326");
 }
 
 bool SubGridDrawer::draw(const IOOptions &options)
@@ -68,6 +71,7 @@ bool SubGridDrawer::prepare(PreparationType prepType, const IOOptions &options)
     if (!SimpleDrawer::prepare(prepType, options)){
         return false;
     }
+
     if ( hasType(prepType, ptSHADERS) && !isPrepared(ptSHADERS)){
         _vboColor = _shaders.attributeLocation("vertexColor");
         _scaleCenter = _shaders.uniformLocation("scalecenter");
@@ -121,6 +125,36 @@ DrawerInterface::DrawerType SubGridDrawer::drawerType() const
    return DrawerInterface::dtMAIN;
 }
 
+void SubGridDrawer::calcEnvelope(Coordinate& cmin, Coordinate& cmax){
+    cmin = rootDrawer()->zoomEnvelope().min_corner();
+    cmax = rootDrawer()->zoomEnvelope().max_corner();
+    if ( rootDrawer()->coordinateSystem()->isUnknown()) // cant do any extra calcs with unknown
+        return;
+
+    bool isLatLon = rootDrawer()->coordinateSystem()->isLatLon();
+    if ( isLatLon){
+        if ( cmin.y <= -89)
+            cmin.y = -89;
+        if ( cmin.x < -180)
+            cmin.x = -180;
+        if ( cmax.y >= 89)
+            cmax.y = 89;
+        if ( cmax.x > 180)
+            cmax.x = 180;
+    }else {
+        LatLon llmin = rootDrawer()->coordinateSystem()->coord2latlon(cmin);
+        LatLon llmax = rootDrawer()->coordinateSystem()->coord2latlon(cmax);
+        if ( llmin.lat() <= -85)
+            cmin.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(-85,llmin.lon())).y;
+        if ( llmin.lon() < -180)
+            cmin.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmin.lat(), -180)).x;
+        if ( llmax.lat() > 85)
+            cmax.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(85, llmax.lon())).y;
+        if ( llmax.lon() > 180)
+            cmax.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmax.lat(), 180)).x;
+    }
+}
+
 //-------------------------------------------------------------------------------------------------------
 GridDrawer::GridDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options) :
  ComplexDrawer("GridDrawer", parentDrawer,rootdrawer, options)
@@ -169,9 +203,10 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
 {
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
+        Coordinate cmin, cmax;
+        calcEnvelope(cmin, cmax);
         if ( _cellDistance == rUNDEF){
-            Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
-            Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
+
             _cellDistance = MathHelper::round((cmax.x - cmin.x) / 7.0);
         }
         _indices = std::vector<VertexIndex>();
@@ -180,9 +215,6 @@ bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const
         _linewidth = 0.75;
         if ( _opacity == rUNDEF)
             _opacity = 0.8;
-
-        Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
-        Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
 
         _indices.push_back(VertexIndex(_vertices.size(),5, itLINE));
         _vertices.push_back(QVector3D(cmin.x,cmin.y,0));
@@ -236,8 +268,8 @@ bool SecondaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, con
             _opacity = 0.5;
        _linewidth = 0.5;
 
-        Coordinate cmin = rootDrawer()->zoomEnvelope().min_corner();
-        Coordinate cmax = rootDrawer()->zoomEnvelope().max_corner();
+        Coordinate cmin,cmax ;
+        calcEnvelope(cmin, cmax);
         double xstart = ceil(cmin.x / dist) * dist - dist;
         for (double x = xstart; x < cmax.x ; x += dist)
         {

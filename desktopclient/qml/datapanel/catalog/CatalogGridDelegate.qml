@@ -65,7 +65,7 @@ Item {
         onClicked: {
             itemgrid.currentIndex = index;
             isSelected = !isSelected
-            setSelected(id)
+            catalogViews.setSelected(id)
             if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
         }
@@ -76,7 +76,7 @@ Item {
             else {
                 showObject(id)
                 isSelected = true
-                setSelected(id)
+                catalogViews.setSelected(id)
             }
         }
         onReleased: {

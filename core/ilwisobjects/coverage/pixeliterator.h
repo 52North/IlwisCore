@@ -414,6 +414,15 @@ public:
     quint32 linearPosition() const;
 
     /*!
+     * \brief Sets the raster of this PixelIterator
+     *
+     * Sets the raster of this PixelIterator
+     *
+     * \param raster the given raster
+     */
+    void setRaster(const IRasterCoverage &raster);
+
+    /*!
      * \brief Substracts another pixeliterator fomr this PixelIterator
      * the direction moved in the raster depends on the boundingbox in combination with the flow<br>
      * this might have unexpected results if both iterators have a different flow.

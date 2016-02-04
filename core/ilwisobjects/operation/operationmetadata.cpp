@@ -284,8 +284,8 @@ OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) 
 OperationResource::OperationResource(const QUrl &inurl, const IlwisTypes &type, const QString &nmspace) : Resource(inurl,type)
 {
     prepare();
-    QString urls = url().toString() + "=" + QString::number(id());
-    setUrl(urls);
+    //QString urls = url().toString() + "=" + QString::number(id());
+    //setUrl(urls);
     addProperty("namespace",nmspace);
 }
 

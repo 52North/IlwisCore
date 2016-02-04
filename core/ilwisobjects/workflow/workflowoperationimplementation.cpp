@@ -210,9 +210,25 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
         return true;
     }
     IWorkflow workflow = (IWorkflow)_metadata;
+    IOperationMetaData meta = workflow->getOperationMetadata(v);
 
     InEdgeIterator ei, ei_end;
     boost::tie(ei,ei_end) = workflow->getInEdges(v);
+
+    bool conditionsResult = checkConditions(v, ctx, symTable);
+
+    // IF conditions are not met
+    if (!conditionsResult) {
+        // Return empty outputs and DON'T execute this operation.
+        QString resultName = CONDITION_FAILED;
+        for (int i = 0; i < meta->getOutputParameters().size(); ++i) {
+            ExecutionContext localCtx;
+            SymbolTable localSymTable;
+            localCtx.addOutput(localSymTable, QVariant(), resultName, itSTRING, Resource());
+            copyToContext(localSymTable.getSymbol(localCtx._results[i]), resultName, ctx, symTable);
+        }
+        return true; // Not false because it is valid for conditions to fail.
+    }
 
     // has external inputs only
     if (ei == ei_end/*workflow->isInputNode(v)*/) {
@@ -220,7 +236,6 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     }
 
     bool ok;
-    IOperationMetaData meta = workflow->getOperationMetadata(v);
     QStringList arguments;
 
     for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
@@ -246,12 +261,17 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             Symbol tmpResult = localSymTable.getSymbol(resultName);
             //copyToContext(tmpResult, resultName, ctx, symTable);
 
-            if (hasType(itILWISOBJECT, tmpResult._type)) {
-                // anonymous objects have to be resolved
-                arguments.insert(inIdx, resultName);
+            if (resultName != CONDITION_FAILED) {
+                if (hasType(itILWISOBJECT, tmpResult._type)) {
+                    // anonymous objects have to be resolved
+                    arguments.insert(inIdx, resultName);
+                } else {
+                    // simple types can be passed in directly
+                    arguments.insert(inIdx, tmpResult._var.toString());
+                }
             } else {
-                // simple types can be passed in directly
-                arguments.insert(inIdx, tmpResult._var.toString());
+                arguments.insert(inIdx, sUNDEF);
+                // TODO: handle of parameters with sUNDEF
             }
 
             if ( !edgeProperties.temporary) {
@@ -288,5 +308,70 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     }
     return success;
 
+}
+
+bool WorkflowOperationImplementation::checkConditions(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    IWorkflow workflow = (IWorkflow)_metadata;
+
+    QList<ConditionContainer> containers = workflow->getContainersByVertex(v);
+
+    for (int i = 0; i < containers.length(); ++i) {
+        if (_containers.contains(i)) {
+            // Check for false containers
+            if (_containers[i] == false) return false;
+        } else {
+            // Only if container does has not been executed
+            for (Condition condition : containers[i].conditions) {
+
+                // Get all parameter values
+                QStringList arguments;
+                ExecutionContext localCtx;
+                SymbolTable localSymTable;
+                for (EdgeProperties edge : condition._edges) {
+                    bool ok = reverseFollowExecutionPath(edge._outputOperationIndex, &localCtx, localSymTable);
+                    if (!ok) {
+                        _containers[i] = false;
+                        return false;
+                    }
+                    QString resultName = localCtx._results[edge._outputParameterIndex];
+                    Symbol tmpResult = localSymTable.getSymbol(resultName);
+                    arguments.insert(edge._inputParameterIndex, tmpResult._var.toString());
+
+                    copyToContext(tmpResult, resultName, ctx, symTable);
+                }
+
+                for (int inputIndex : condition._inputAssignments.keys()) {
+                    arguments.insert(inputIndex, condition._inputAssignments[inputIndex].value);
+                }
+
+                // Execute condition
+                QString execString = QString("%1(%2)").arg(condition._operation->name()).arg(arguments.join(","));
+                qDebug() << "Executing condition: " << execString;
+                ExecutionContext tempCtx;
+                SymbolTable tempSymTable;
+                bool success = commandhandler()->execute(execString, &tempCtx, tempSymTable);
+                if ( !success) {
+                    ERROR1("workflow execution failed when executing condition: %1", execString);
+                    _containers[i] = false;
+                    return false;
+                }
+
+                // Check condition
+                // TODO: Only checks for output 0. Maybe try to search for it?
+                bool conditionResult = tempSymTable.getSymbol(tempCtx._results[0])._var.value<bool>();
+                if (!conditionResult) {  // Condition is not met.
+                    _containers[i] = false;
+                    return false;
+                }
+            }
+
+            // If code reaches here, all conditions of the container are met. (Empty containers are also true)
+            _containers[i] = true;
+        }
+    }
+
+    // If code reaches here, all conditions of ALL containers are met.
+    return true;
 }
 

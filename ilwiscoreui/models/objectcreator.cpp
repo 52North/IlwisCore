@@ -271,6 +271,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     OperationResource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
     res.setDescription(parms["description"].toString());
     res.setKeywords(parms["keywords"].toString());
+    res.setUrl(parms["url"].toString(),true);
     res.prepare();
     mastercatalog()->addItems({res});
     QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");

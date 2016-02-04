@@ -23,7 +23,7 @@ private:
     bool isItemMap();
 
     IRasterCoverage _inputRaster;
-    IRasterCoverage _inputWeightRaster; // optional
+    IRasterCoverage _inputOptWeightRaster;
     IRasterCoverage _inputThiessenRaster; // optional
     IRasterCoverage _outputRaster;
 
