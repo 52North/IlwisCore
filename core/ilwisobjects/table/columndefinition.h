@@ -40,7 +40,7 @@ public:
      * @param colindex the index of the new ColumnDefinition
      * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(const QString& name, const DataDefinition& def, quint64 colindex, bool readOnly=false);
+    ColumnDefinition(const QString& name, const DataDefinition& def, quint32 colindex, bool readOnly=false);
 
     /**
      * Creates a new ColumnDefinition using a name, a Domain and an index. <br>
@@ -51,7 +51,7 @@ public:
      * @param colindex the index of the new ColumnDefinition
      * @param readOnly if the column will be readOnly (can't be changed afterwards)
      */
-    ColumnDefinition(const QString& name, const IDomain &dom, quint64 colindex=i64UNDEF,bool readOnly=false);
+    ColumnDefinition(const QString& name, const IDomain &dom, quint32 colindex=iUNDEF,bool readOnly=false);
 
     /**
      * Checks if this ColumnDefinition is valid.<br>
