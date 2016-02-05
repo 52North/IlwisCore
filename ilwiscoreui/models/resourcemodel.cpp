@@ -347,10 +347,15 @@ QString ResourceModel::geoReferenceType() const
 void ResourceModel::realizeThumbPath(){
     QFileInfo inf(_item.url().toLocalFile());
     QString path = inf.absolutePath();
-    QString thumbDir =  path + "/thumbs";
+    QString thumbDir =  path + "/.ilwis/thumbs";
     QDir dir(thumbDir) ;
     if (!dir.exists()){
-        QDir(path).mkdir("/thumbs");
+        QDir ilwdir(path + "/.ilwis");
+        if (!ilwdir.exists())
+            if(!QDir(path).mkdir(".ilwis"))
+                return;
+        if(!QDir(path + "/.ilwis").mkdir("thumbs"))
+            return ;
     }
     QFileInfo thumbPath = thumbDir + "/" + _displayName + ".png";
     _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
@@ -381,7 +386,7 @@ void ResourceModel::resource(const Ilwis::Resource& res)
         QString path = inf.absolutePath();
         _isRoot = inf.isRoot();
         _displayName = item.name();
-        QFileInfo thumbPath = path + "/thumbs/" + _displayName + ".png";
+        QFileInfo thumbPath = path + "/.ilwis/thumbs/" + _displayName + ".png";
         if ( thumbPath.exists()) {
             _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
         } else {
