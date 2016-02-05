@@ -152,7 +152,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     raster->_bandDefinition = _bandDefinition;
     raster->_datadefCoverage = _datadefCoverage;
     if ( _grid) {
-        raster->_grid.reset(_grid->clone());
+        raster->_grid.reset(_grid->clone(raster->id()));
     }
     raster->_attributeTable = _attributeTable;
     raster->_size = _size;
