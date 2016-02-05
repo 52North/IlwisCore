@@ -66,23 +66,29 @@ bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbou
 
     double weight = inputWeight == UNDEF ? 1e100 : inputWeight;
 
-    if (iterx > 0 && itery > 0)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);           
-    if (iterx < sz.xsize()-1 && itery > 0)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7 ) * weight);
+    if (*iter != UNDEF) {
+        if (weight == UNDEF) { // if aweight is not defined for that point, then distance is also not defined
+            *iter = UNDEF;
+        } else {
+            if (iterx > 0 && itery > 0)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);
+            if (iterx < sz.xsize()-1 && itery > 0)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7 ) * weight);
 
-    if (iterx > 0 && itery < sz.ysize()-1)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7 ) * weight);
-    if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7 ) * weight);
-    if (iterx > 0)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery, iterz)] + 5 ) * weight);
-    if (itery < sz.ysize()-1)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx, itery+1, iterz)] + 5 ) * weight);
-    if (iterx < sz.xsize()-1)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery, iterz)] + 5 ) * weight);
-    if (itery > 0)
-        *iter = min(*iter, ( *neighbour[Pixel(iterx, itery-1, iterz)] + 5 ) * weight);
+            if (iterx > 0 && itery < sz.ysize()-1)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7 ) * weight);
+            if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7 ) * weight);
+            if (iterx > 0)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery, iterz)] + 5 ) * weight);
+            if (itery < sz.ysize()-1)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx, itery+1, iterz)] + 5 ) * weight);
+            if (iterx < sz.xsize()-1)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery, iterz)] + 5 ) * weight);
+            if (itery > 0)
+                *iter = min(*iter, ( *neighbour[Pixel(iterx, itery-1, iterz)] + 5 ) * weight);
+        }
+    }
 
     return pixOrigValue != *iter;
 }
@@ -131,10 +137,10 @@ void DistanceRaster::distanceCalculation() {
             updateTranquilizer(currentCount++, 1000);
         }
 
-        initialize(_inputRaster->size().linearSize() );
-        currentCount = 0;
-
         if (hasChanges || firstPass) {
+            initialize(_inputRaster->size().linearSize() );
+            currentCount = 0;
+
             iter.end();
             hasChanges = false;
 
@@ -153,8 +159,7 @@ void DistanceRaster::distanceCalculation() {
     // To obtain distance values in meters, these raw values are divided by 5 and
     // multiplied by the pixel size and a correction factor.
     for( auto& value : _outputRaster) {
-        value *= pixsize;
-        value = value / 5 * 0.968;
+        value *= pixsize / 5 * 0.968;
 
         if (value >= 1e100) {
             value = UNDEF;
