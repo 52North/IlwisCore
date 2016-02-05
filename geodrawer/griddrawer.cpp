@@ -144,14 +144,16 @@ void SubGridDrawer::calcEnvelope(Coordinate& cmin, Coordinate& cmax){
     }else {
         LatLon llmin = rootDrawer()->coordinateSystem()->coord2latlon(cmin);
         LatLon llmax = rootDrawer()->coordinateSystem()->coord2latlon(cmax);
-        if ( llmin.lat() <= -85)
-            cmin.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(-85,llmin.lon())).y;
-        if ( llmin.lon() < -180)
-            cmin.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmin.lat(), -180)).x;
-        if ( llmax.lat() > 85)
-            cmax.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(85, llmax.lon())).y;
-        if ( llmax.lon() > 180)
-            cmax.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmax.lat(), 180)).x;
+        if (llmin.isValid() && llmax.isValid()) {
+            if ( llmin.lat() <= -85)
+                cmin.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(-85,llmin.lon())).y;
+            if ( llmin.lon() < -180)
+                cmin.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmin.lat(), -180)).x;
+            if ( llmax.lat() > 85)
+                cmax.y = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(85, llmax.lon())).y;
+            if ( llmax.lon() > 180)
+                cmax.x = rootDrawer()->coordinateSystem()->latlon2coord(LatLon(llmax.lat(), 180)).x;
+        }
     }
 }
 
