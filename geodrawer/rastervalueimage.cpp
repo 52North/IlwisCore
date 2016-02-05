@@ -86,7 +86,7 @@ void RasterValueImage::setTextureData(ValueTexture *tex, const unsigned int offs
     quint32 position = 0;
     while(pixIter != end){
         double value = *pixIter;
-        int index = isNumericalUndef2(value,_raster) ? 0 : 1 + (_colorTable.size() - 1) * (value - numrange->min()) / numrange->distance();
+        int index = isNumericalUndef2(value,_raster) ? 0 : 1 + (_colorTable.size() - 2) * (value - numrange->min()) / numrange->distance();
         (*pixels)[position] = index; // int32 to quint8 conversion (do we want this?)
         pixIter += zoomFactor;
         if ( pixIter.ychanged()) {
