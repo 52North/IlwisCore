@@ -134,7 +134,7 @@ term returns [ TermNode *node]
 	|	FLOAT						{ node->setNumerical((char *)($FLOAT.text->chars)); }
 	|	STRING						{ node->setString((char *)($STRING.text->chars)); }
 	|	id1 = ID '(' 					{ node->setId(new IDNode((char *)($id1.text->chars))); }
-		(actualParameters				{   node->setParameters($actualParameters.node); }
+		(actualParameters				{ node->setParameters($actualParameters.node); }
 		)? ')'						
 	|	id2 = ID 					{ node->setId(new IDNode((char *)($id2.text->chars)));}
 		(id3=selector					{node->addSelector($id3.node);})+
@@ -382,7 +382,7 @@ returnStatement returns [ ReturnNode *node]
 	
 // LEXER---------------------------------------------------------------------
 //---------------------------------------------------------------------------
-ID  :	('a'..'z'|'A'..'Z'|'_'|'..') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|':'| '/')*
+ID  :	('a'..'z'|'A'..'Z'|'_'|'..') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'.'|':'| '/'|'='|'?')*
     ;
 
 INT :	'0'..'9'+
