@@ -17,6 +17,10 @@ Item{
     height :  GridView.view.cellHeight
     clip : true
 
+    function changeImageLoader(newloader){
+        imageLoader.sourceComponent = newloader
+    }
+
     function iconSource(name) {
         if ( name.indexOf("/") !== -1)
             return name
@@ -114,7 +118,13 @@ Item{
                 MouseArea {
                     anchors.fill: parent
                     onClicked:{
+                        if ( thumbGrid.oldIndex !== -1) {
+                            thumbGrid.contentItem.children[thumbGrid.oldIndex].changeImageLoader(defaultImage)
+                        }
+                        thumbGrid.oldIndex = index
                         imageLoader.sourceComponent = layerDrawer
+
+
                     }
                 }
             }
