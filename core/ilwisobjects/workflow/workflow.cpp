@@ -494,8 +494,7 @@ IOperationMetaData Workflow::getOperationMetadata(const OVertex &v)
     quint64 id = nodeProperties(v)._operationid;
     metadata.prepare(mastercatalog()->id2Resource(id));
     if ( !metadata.isValid()) {
-        qDebug() << "operation with id" << id << " is unknown!";
-        return IOperationMetaData();
+         return IOperationMetaData();
     }
     return metadata;
 }

@@ -58,7 +58,6 @@ struct NodeProperties {
         if ( items.size() == 1){
             _operationid = items[0].id();
         }
-        qDebug() << _operationid;
     }
     quint64 _operationid = i64UNDEF;
     QString _syntax;
