@@ -91,6 +91,7 @@ private:
     QList<CatalogFilterModel *> _defaultFilters;
     QList<IlwisObjectModel *> _selectedObjects;
     QQmlContext *_qmlcontext = 0;
+    QObject *_rootObject = 0;
     QMLResourceList _currentList;
     int _selectedBookmarkIndex = 2; // from configuration
     QStringList _bookmarkids;

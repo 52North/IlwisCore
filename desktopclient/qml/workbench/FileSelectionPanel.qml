@@ -11,6 +11,14 @@ Rectangle {
     property string startFolder
     property string currentFolder
 
+    function changeFoloder(url){
+        if ( url !== folderModel.folder){
+            folderModel.folder = url
+            pathModel.fillModel()
+        }
+
+    }
+
     signal folderChanged(string newfolder)
 
     id : folderlist
@@ -60,6 +68,20 @@ Rectangle {
 
     ListModel {
         id: pathModel
+
+        function fillModel() {
+            var paths = mastercatalog.knownCatalogs(true)
+            var current =  mastercatalog.currentUrl
+            current = current.replace("file:///","")
+            pathModel.clear()
+            for(var i=0; i < paths.length; ++i){
+                var path = paths[i].replace("file:///","")
+                pathModel.append({"folderid" : path})
+                if ( path === current){
+                    pathText.currentIndex = i
+                }
+            }
+        }
     }
 
 
@@ -70,13 +92,6 @@ Rectangle {
         height : 20
         model: mastercatalog.driveList()
         Layout.fillWidth: true
-        Component.onCompleted: {
-//            if ( startFolder == "")
-//                startFolder = mastercatalog.currentUrl
-//            mastercatalog.addCatalog(startFolder,mastercatalog.activeSplit) // at this place else the indexchanged will overrule any previous path setting
-//            mastercatalog.setWorkingCatalog(startFolder)
-
-        }
         onActivated: {
             currentIndex = index
             var drivePath = mastercatalog.getDrive(currentIndex)
@@ -106,10 +121,7 @@ Rectangle {
             clip : true
             Component.onCompleted: {
                 privateProperty.pathCB = pathText
-                var paths = mastercatalog.knownCatalogs(true)
-                for(var i=0; i < paths.length; ++i){
-                    pathModel.append({"folderid" : paths[i].replace("file:///","")})
-                }
+                pathModel.fillModel()
             }
             onActivated: {
                 currentIndex = index
@@ -157,10 +169,16 @@ Rectangle {
 
             FolderListModel {
                 id: folderModel
-                folder : startfolder
                 showDirs: true
                 showDotAndDotDot: true
                 showFiles: false;
+
+                Component.onCompleted: {
+                    folder = mastercatalog.currentUrl
+                }
+                onFolderChanged: {
+
+                }
             }
 
             model: folderModel
@@ -190,6 +208,7 @@ Rectangle {
                         folderModel.folder = currentFolder;
                         var filter = "container='" + folderModel.folder + "'"
                         mainSplit.changeCatalog(filter,"catalog", currentFolder)
+                        pathModel.fillModel()
                     }
 
                 }

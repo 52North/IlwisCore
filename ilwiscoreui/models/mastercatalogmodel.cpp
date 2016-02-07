@@ -8,8 +8,11 @@
 #include <QSqlQuery>
 #include <QQuickItem>
 #include <QApplication>
+#include <QQmlEngine>
+#include <QQmlApplicationEngine>
 #ifdef Q_OS_LINUX
 #include <QProcess>
+
 #include <QString>
 #endif
 #include <qtconcurrentmap.h>
@@ -732,10 +735,27 @@ CatalogModel *MasterCatalogModel::currentCatalog() const
 
 void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
 {
+    if (!_rootObject){
+        QQmlApplicationEngine *engine = dynamic_cast<QQmlApplicationEngine *>(_qmlcontext->engine());
+        if ( engine){
+            QObject *top = engine->rootObjects().value(0);
+            QObject *topLevel = top->findChild<QObject *>("mainwindow__mainui");
+            if ( topLevel){
+                _rootObject = topLevel;
+            }
+        }
+    }
     if ( cat->url() == Catalog::DEFAULT_WORKSPACE){
         _currentCatalog = new CatalogModel(Ilwis::Resource(context()->workingCatalog()->source().url().toString(), itCATALOG), this);
-    } else
+    } else{
         _currentCatalog = cat;
+        if ( _rootObject){
+            QObject *obj = _rootObject->findChild<QObject *>("main_ui_catalogform");
+            if ( obj && cat->url().indexOf("file://") == 0){
+                obj->setProperty("currentFolder", cat->url());
+            }
+        }
+    }
 }
 
 

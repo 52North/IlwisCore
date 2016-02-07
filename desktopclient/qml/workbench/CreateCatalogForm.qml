@@ -11,11 +11,23 @@ Item {
     height : 0
     width : 0
     opacity: 0
+    objectName: "main_ui_catalogform"
 
     property string beginfolder
     property string currentFolder
 
+    onCurrentFolderChanged: {
+        if ( tabs){
+            var tabitem = tabs.getTab(0)
+            if ( tabitem){
+                tabitem.item.changeFolder(currentFolder)
+            }
+        }
+    }
 
+    function newCurrentFolder(url){
+        currentFolder = url;
+    }
 
     function path2pathView(pathString){
         var index =  pathString.lastIndexOf("/..")
@@ -87,7 +99,12 @@ Item {
             height: parent.height
             width : parent.width
             title : "Local"
+
+
             Item {
+                function changeFolder(url){
+                   fileselection.changeFoloder(url)
+                }
                 anchors.fill: parent
                 Connections{
                     target: fileselection
