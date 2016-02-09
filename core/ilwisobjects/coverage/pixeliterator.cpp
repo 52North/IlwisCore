@@ -235,8 +235,8 @@ bool PixelIterator::move2NextBlock() {
     quint32 localblock = _y /  _grid->maxLines();
     quint32 bandblocks = _grid->blocksPerBand() * _z;
     if ( bandblocks + localblock != _currentBlock) {
-        _currentBlock = bandblocks + localblock;;
-        _localOffset = _x;
+        _currentBlock = bandblocks + localblock;
+        _localOffset = _x + (_y % _grid->maxLines()) * _grid->size().xsize() ; // needs to be revised for z-dimension change (formula is wrong when moving with -- from topleft of band2 to bottomright of band1)
     }
     if ( _currentBlock >= _grid->blocks()){
         _linearposition = _endposition;
