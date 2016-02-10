@@ -85,6 +85,9 @@ Parameter::PathType Parameter::pathType() const
 
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
     IlwisTypes tp = IlwisObject::findType(value);
+    if ( value == "\"?\"")
+        tp = itANY;
+
     if ( tp != itUNKNOWN)
         return tp;
 
