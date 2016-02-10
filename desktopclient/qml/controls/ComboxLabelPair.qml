@@ -14,6 +14,7 @@ Item {
     property var itemModel
     property alias comboText : textid.currentText
     property string role
+    property alias currentIndex : textid.currentIndex
     height : 20
 
     Text {
