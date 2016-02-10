@@ -12,6 +12,9 @@ public:
     LatLon crd2ll(const Coordinate&) const;
     static bool canUse(const Ilwis::Resource &) ;
     bool prepare(const QString &parms = "");
+    ProjectionImplementation *clone();
+private:
+    PlateCaree();
 };
 }
 }

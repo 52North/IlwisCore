@@ -120,21 +120,21 @@ void Projection::setParameter(Projection::ProjectionParamValue type, const QVari
 QString Projection::parameterName(Projection::ProjectionParamValue pv)
 {
     switch (pv){
-    case pvX0:
+    case pvFALSEEASTING:
         return "false easting";
-    case pvY0:
+    case pvFALSENORTHING:
         return "false northing";
-    case pvLAT0:
+    case pvCENTRALPARALLEL:
         return "latitude of origin";
-    case pvLAT1:
+    case pvSTANDARDPARALLEL1:
         return "standard parallel 1";
-    case pvLAT2:
+    case pvSTANDARDPARALLEL2:
         return "standard parallel 2";
-    case pvLATTS:
+    case pvLATITUDEOFTRUESCALE:
         return "latitude of true scale";
-    case pvLON0:
+    case pvCENTRALMERIDIAN:
         return "central meridian";
-    case pvK0:
+    case pvSCALE:
         return "scale factor";
     case pvZONE:
         return "zone";
@@ -148,21 +148,21 @@ QString Projection::parameterName(Projection::ProjectionParamValue pv)
 Projection::ProjectionParamValue Projection::parameterName2type(const QString& name)
 {
     if (name.indexOf("false easting") == 0)
-        return pvX0;
+        return pvFALSEEASTING;
     if (name.indexOf("false northing")==0)
-        return pvY0;
+        return pvFALSENORTHING;
     if( name.indexOf("latitude of origin")==0)
-        return pvLAT0;
+        return pvCENTRALPARALLEL;
     if( name.indexOf("standard parallel 1")==0)
-        return pvLAT1;
+        return pvSTANDARDPARALLEL1;
     if( name.indexOf("standard parallel 2")==0)
-        return pvLAT2;
+        return pvSTANDARDPARALLEL2;
     if ( name.indexOf("latitude of true scale")==0)
-        return pvLATTS;
+        return pvLATITUDEOFTRUESCALE;
     if ( name.indexOf("central meridian") == 0)
-        return pvLON0;
+        return pvCENTRALMERIDIAN;
     if ( name.indexOf("scale factor")==0)
-        return pvK0;
+        return pvSCALE;
     if ( name.indexOf("zone")==0)
         return pvZONE;
     if ( name.indexOf("tilt projection plane")==0)
@@ -281,6 +281,38 @@ bool Projection::canConvertToCoordinate() const
         return _implementation->canConvertToCoordinate();
     }
     return false;
+}
+
+QStringList Projection::parameterNameList() const{
+    InternalDatabaseConnection db("Select parameters from projection where code='" + code() + "'");
+    if (!db.next()){
+        return QStringList();
+    }
+    QString parameters = db.value(0).toString();
+    QStringList parmlist = parameters.split("|");
+    QStringList cleanedParms;
+    for(auto parm : parmlist){
+        cleanedParms.push_back(parm.split("=")[0].trimmed());
+    }
+
+    return cleanedParms;
+}
+
+IlwisObject *Projection::clone()
+{
+    Projection *prj = new Projection();
+    copyTo(prj);
+    return prj;
+}
+
+void Projection::copyTo(IlwisObject *obj)
+{
+    Locker<> lock(_mutex);
+    IlwisObject::copyTo(obj);
+    Projection *prj = static_cast<Projection *>(obj);
+    prj->_wkt = _wkt;
+    prj->_authority = _authority;
+    prj->setImplementation(_implementation->clone());
 }
 
 

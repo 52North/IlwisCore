@@ -19,7 +19,11 @@ public:
      QString toProj4() const;
      bool canConvertToLatLon() const;
      bool canConvertToCoordinate() const;
+     virtual ProjectionImplementation* clone();
+ protected:
+     virtual void copyTo(ProjectionImplementation *prj);
 private:
+    ProjectionImplementationProj4();
     QString _targetDef;
     projPJ  _pjLatlon;
     projPJ  _pjBase;
