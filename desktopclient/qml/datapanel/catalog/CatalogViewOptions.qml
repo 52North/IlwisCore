@@ -15,7 +15,7 @@ Item {
         border.width: 1
         border.color : Global.edgecolor
 
-        Row {
+        Column {
             id : buttonRow
             width : parent.width - 25
             height : parent.height - 30
