@@ -221,7 +221,7 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 {
     QString inputRasterName = _expression.input<QString>(0);
     QString inputWeightRaster = _expression.input<QString>(1);
-    QString inputThiessenRaster = _expression.input<QString>(2);
+    //QString inputThiessenRaster = _expression.input<QString>(2);
     QString outputRasterName = _expression.parm(0,false).value();
 
     if (!_inputRaster.prepare(inputRasterName, itRASTER)) {
@@ -240,10 +240,10 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
         }
     }
 
-    if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
+    /*if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputThiessenRaster,"");
         return sPREPAREFAILED;
-    }
+    }*/
 
     _outputRaster = OperationHelperRaster::initialize(_inputRaster, itRASTER, itCOORDSYSTEM | itENVELOPE | itGEOREF | itRASTERSIZE);  
 
@@ -266,12 +266,12 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 quint64 DistanceRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/distanceraster"});
-    operation.setSyntax("distanceraster(raster, weightraster, thiessenraster)");
+    operation.setSyntax("distanceraster(raster, weightraster)");
     operation.setDescription(TR("calculate raster map distances"));
-    operation.setInParameterCount({3});
+    operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("input raster"),TR("input rastermap"));
     operation.addInParameter(1,itRASTER , TR("weight raster"),TR("input weightraster"));
-    operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
+    //operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output distance raster."));
     operation.setKeywords("distance, raster, map");
