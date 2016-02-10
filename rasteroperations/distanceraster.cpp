@@ -142,6 +142,9 @@ void DistanceRaster::distanceCalculation() {
         updateTranquilizer(currentCount++, 1000);
     }
 
+
+    // todo: handle properly maps with multiple layers (z > 0). Not tested with those yet, maybe needs some
+    // proper handling when passing from one layer to another
     while (hasChanges || firstPass) {
         initialize(_inputRaster->size().linearSize() );
         currentCount = 0;
