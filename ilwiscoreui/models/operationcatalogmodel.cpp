@@ -285,7 +285,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
     QString expression;
     QStringList parms = parameters.split("|");
     bool hasMissingParameters = false;
-
+    int maxinputparameters = operationresource["inparameters"].toString().split("|").last().toInt();
     for(int i = 0; i < parms.size(); ++ i){
         if (operationresource.ilwisType() & itWORKFLOW){
             int parm = i + 1;
@@ -301,11 +301,12 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 hasMissingParameters = true;
             }
         }
-        if(i < operationresource["inparameters"].toInt()){
+        if(i < maxinputparameters ){
             if ( expression.size() != 0)
                 expression += ",";
-            expression += parms[i];
+            expression += (parms[i] == "" ? "\"?\"": parms[i]);
         }
+
     }
 
     if (hasMissingParameters) return sUNDEF;
