@@ -18,20 +18,20 @@ ProjectionImplementation::ProjectionImplementation(const QString &type) :
     _coordinateSystem(0),
     _projtype(type)
 {
-    _parameters[Projection::pvX0] = {0};
-    _parameters[Projection::pvY0] = {0};
-    _parameters[Projection::pvK0] = {1};
-    _parameters[Projection::pvLAT0] = {0, itLATLON};
-    _parameters[Projection::pvLAT1] = {30, itLATLON};
-    _parameters[Projection::pvLAT2] = {60, itLATLON};
-    _parameters[Projection::pvLATTS] = {0, itLATLON};
+    _parameters[Projection::pvFALSEEASTING] = {0};
+    _parameters[Projection::pvFALSENORTHING] = {0};
+    _parameters[Projection::pvSCALE] = {1};
+    _parameters[Projection::pvCENTRALPARALLEL] = {0, itLATLON};
+    _parameters[Projection::pvSTANDARDPARALLEL1] = {30, itLATLON};
+    _parameters[Projection::pvSTANDARDPARALLEL2] = {60, itLATLON};
+    _parameters[Projection::pvLATITUDEOFTRUESCALE] = {0, itLATLON};
     _parameters[Projection::pvZONE] = {1, itINT8};
     _parameters[Projection::pvNORIENTED] =  {true, itBOOL};
     _parameters[Projection::pvAZIMYAXIS] = {0};
     _parameters[Projection::pvTILTED] =  {false,itBOOL};
     _parameters[Projection::pvAZIMCLINE] = {0};
     _parameters[Projection::pvHEIGHT] = {0};
-    _parameters[Projection::pvLON0] =  {0, itLATLON};
+    _parameters[Projection::pvCENTRALMERIDIAN] =  {0, itLATLON};
      InternalDatabaseConnection projs(QString("select parameters from projection where code='%1'").arg(_projtype));
      while(projs.next()){
         QString parms = projs.value(0).toString();
@@ -104,10 +104,16 @@ IlwisTypes ProjectionImplementation::valueType(Projection::ProjectionParamValue 
     return itUNKNOWN;
 }
 
+void ProjectionImplementation::copyTo(ProjectionImplementation *prj)
+{
+    prj->_projtype = _projtype;
+    prj->_parameters = _parameters;
+}
+
 QString ProjectionImplementation::toWKT(quint32 spaces)
 {
-    std::map<Projection::ProjectionParamValue, QString>  kvp = { { Projection::pvLAT1, "standard_parallel_1"}, { Projection::pvLAT2,"standard_parallel_2"},{ Projection::pvLAT0,"latitude_of_origin"}, { Projection::pvK0,"scale_factor"},
-                                                                 { Projection::pvLON0,"central_meridian"}, { Projection::pvX0,"false_easting"}, { Projection::pvY0,"false_northing"}};
+    std::map<Projection::ProjectionParamValue, QString>  kvp = { { Projection::pvSTANDARDPARALLEL1, "standard_parallel_1"}, { Projection::pvSTANDARDPARALLEL2,"standard_parallel_2"},{ Projection::pvCENTRALPARALLEL,"latitude_of_origin"}, { Projection::pvSCALE,"scale_factor"},
+                                                                 { Projection::pvCENTRALMERIDIAN,"central_meridian"}, { Projection::pvFALSEEASTING,"false_easting"}, { Projection::pvFALSENORTHING,"false_northing"}};
     QString result;
     QString indent = QString(" ").repeated(spaces);
     QString ending = spaces == 0 ? "" : "\n";

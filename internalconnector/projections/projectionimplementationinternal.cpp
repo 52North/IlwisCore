@@ -78,10 +78,10 @@ void ProjectionImplementationInternal::setCoordinateSystem(ConventionalCoordinat
     ProjectionImplementation::setCoordinateSystem(csy);
     IProjection prj = _coordinateSystem->projection();
     if ( prj.isValid()) {
-        _easting = prj->parameter(Projection::pvX0).toDouble();
-        _northing = prj->parameter(Projection::pvY0).toDouble();
+        _easting = prj->parameter(Projection::pvFALSEEASTING).toDouble();
+        _northing = prj->parameter(Projection::pvFALSENORTHING).toDouble();
         _maxis = _coordinateSystem->ellipsoid()->majorAxis();
-        _centralMeridian = prj->parameter(Projection::pvLON0).toDouble();
+        _centralMeridian = prj->parameter(Projection::pvCENTRALMERIDIAN).toDouble();
     }
 
 
@@ -102,3 +102,20 @@ bool ProjectionImplementationInternal::canConvertToCoordinate() const
 {
     return true;
 }
+
+void ProjectionImplementationInternal::copyTo(ProjectionImplementation *prj)
+{
+    ProjectionImplementation::copyTo(prj);
+    ProjectionImplementationInternal *impl = static_cast<ProjectionImplementationInternal *>(prj);
+    impl->_easting = _easting;
+    impl->_northing = _northing;
+    impl->_maxis = _maxis;
+    impl->_centralMeridian = _centralMeridian;
+}
+
+ProjectionImplementationInternal::ProjectionImplementationInternal()
+{
+
+}
+
+
