@@ -220,12 +220,15 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
 bool CommandHandler::parmIsValid(int index, Parameter parm, std::map<QString, QString> values) const {
     QString key = QString("pin_%1_type").arg(index);
     IlwisTypes tpExpr = parm.valuetype();
+    if ( tpExpr == itANY)
+        return true;
+
     auto iter = values.find(key);
     if ( iter == values.end()){
         return false;
     }
     IlwisTypes tpMeta = (*iter).second.toULongLong();
-    if ( tpMeta != itSTRING) { // string matches with all
+    if ( tpMeta != itSTRING ) { // string matches with all
         if (!( hasType(tpMeta, itDOUBLE) && hasType(tpExpr, itNUMBER))) {
             if (!( hasType(tpMeta, itINTEGER) && hasType(tpExpr, itINTEGER))) {
                 if ( (tpMeta & tpExpr) == 0 && tpExpr != i64UNDEF) {
