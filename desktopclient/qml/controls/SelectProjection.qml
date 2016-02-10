@@ -12,29 +12,27 @@ import ".." as Base
 Controls.ComboxLabelPair{
 
     ListModel {
-        id : ellipsoidList
+        id : projectionList
     }
 
-    id : ellipsoids
-    labelText: qsTr("Ellipsoid")
+    id : projections
+    labelText: qsTr("Projection")
     labelWidth: 120
     property var selectedObjectid
     property var items : []
     role : "text"
 
     onCurrentIndexChanged: {
-        selectedObjectid =  ellipsoids.items[currentIndex].split("|")[0]
+        selectedObjectid =  projections.items[currentIndex].split("|")[0]
     }
 
     Component.onCompleted: {
-        ellipsoids.items = mastercatalog.select("type=" + uicontext.typeName2typeId("ellipsoid"),"name")
-        for(var i = 0; i < ellipsoids.items.length; ++i){
-            var parts = ellipsoids.items[i].split("|")
-            ellipsoidList.append({"text": parts[1]})
+        projections.items = mastercatalog.select("type=" + uicontext.typeName2typeId("projection"),"name")
+        for(var i = 0; i < projections.items.length; ++i){
+            var parts = items[i].split("|")
+            projectionList.append({"text": parts[1]})
         }
-        itemModel = ellipsoidList
+        itemModel = projectionList
     }
 }
-
-
 

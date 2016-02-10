@@ -68,6 +68,8 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::IDomain>().as<IlwisObject>();
     if ( hasType(tp , itGEOREF))
         return sym._var.value<Ilwis::IGeoReference>().as<IlwisObject>();
+    if ( hasType(tp , itCOORDSYSTEM))
+        return sym._var.value<Ilwis::ICoordinateSystem>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -151,6 +153,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     }
                     else if (hasType(tp, itFEATURE))
                         ok &= copyObject<FeatureCoverage>(sym, result,symbols);
+                    else if (hasType(tp, itCOORDSYSTEM))
+                        ok &= copyObject<CoordinateSystem>(sym, result,symbols);
                     else if ( hasType(tp, itDOMAIN)){
                         ok &= copyObject<Domain>(sym, result,symbols);
                     } else if ( hasType(tp, itGEOREF)){

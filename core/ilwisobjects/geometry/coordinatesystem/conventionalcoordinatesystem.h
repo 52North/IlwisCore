@@ -43,7 +43,10 @@ public:
     QString unit() const;
     void unit(const QString &unit);
     bool isCompatibleWith(const IlwisObject *obj) const;
+    IlwisObject *clone();
 private:
+    void copyTo(IlwisObject *obj);
+
     IEllipsoid _ellipsoid;
     IProjection _projection;
     std::unique_ptr<GeodeticDatum> _datum;
@@ -53,5 +56,6 @@ private:
 typedef IlwisData<ConventionalCoordinateSystem> IConventionalCoordinateSystem;
 
 }
+Q_DECLARE_METATYPE(Ilwis::IConventionalCoordinateSystem);
 
 #endif // COORDINATESYSTEMVIALATLON_H

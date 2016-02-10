@@ -48,6 +48,14 @@ Controls.DropableItem{
         }
         Controls.EllipsoidSelector{
             id : ellipsoidselector
+            width : parent.width - 10
+            property string name : ""
+            onSelectedObjectidChanged : {
+                var ilwobj = mastercatalog.id2object(selectedObjectid,ellipsoidselector)
+                if ( ilwobj){
+                    ellipsoidselector.name = ilwobj.name
+                }
+            }
         }
 
     }

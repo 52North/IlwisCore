@@ -18,6 +18,8 @@ public:
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
     static quint64 createMetadata();
 
+    enum CalcDirection{cdForward, cdBackward};
+
 private:
     bool isValueMap();
     bool isItemMap();
@@ -27,13 +29,15 @@ private:
     IRasterCoverage _inputThiessenRaster; // optional
     IRasterCoverage _outputRaster;
 
+    bool            _needGeoRefTransformation;
     bool            _hasWeightRaster;
 
     void ThiessenMapCalculation();
     void distanceCalculation();
 
     NEW_OPERATION(DistanceRaster);
-    bool setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight);
+    bool setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight, CalcDirection cd);
+    double Min(double val1, double val2);
 };
 
 }

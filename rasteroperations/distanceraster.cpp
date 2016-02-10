@@ -56,8 +56,18 @@ void DistanceRaster::ThiessenMapCalculation() {return;}
  */
 
 
+double DistanceRaster::Min(double val1, double val2) {
+    if (val1 == val2 && val2 == UNDEF)
+        return UNDEF;
+    else if (val2 == UNDEF)
+        return val1;
+    else if (val1 == UNDEF)
+        return val2;
+    else return min(val1, val2);
 
-bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double inputWeight)
+}
+
+bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double inputWeight, CalcDirection cd)
 {
     double pixOrigValue = *iter;
     quint32 iterx = iter.x();
@@ -66,28 +76,29 @@ bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbou
 
     double weight = inputWeight == UNDEF ? 1e100 : inputWeight;
 
-    if (*iter != UNDEF) {
-        if (weight == UNDEF) { // if aweight is not defined for that point, then distance is also not defined
-            *iter = UNDEF;
-        } else {
-            if (iterx > 0 && itery > 0)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery-1, iterz)] + 7 ) * weight);
-            if (iterx < sz.xsize()-1 && itery > 0)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery-1, iterz)] + 7 ) * weight);
-
-            if (iterx > 0 && itery < sz.ysize()-1)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery+1, iterz)] + 7 ) * weight);
-            if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery+1, iterz)] + 7 ) * weight);
-            if (iterx > 0)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx-1, itery, iterz)] + 5 ) * weight);
-            if (itery < sz.ysize()-1)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx, itery+1, iterz)] + 5 ) * weight);
-            if (iterx < sz.xsize()-1)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx+1, itery, iterz)] + 5 ) * weight);
-            if (itery > 0)
-                *iter = min(*iter, ( *neighbour[Pixel(iterx, itery-1, iterz)] + 5 ) * weight);
-        }
+    // Algorithm functionality was kept as the way it was in Ilwis 3.8.5 (Scan-lines based)
+    if (cd == CalcDirection::cdForward) {
+        if (iterx > 0)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
+        if (iterx < sz.xsize()-1)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
+        if (itery > 0)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx, itery-1, iterz)] + (5 * weight));
+        if (iterx > 0 && itery > 0)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery-1, iterz)] + (7 * weight));
+        if (iterx < sz.xsize()-1 && itery > 0)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery-1, iterz)] + (7 * weight));
+    } else {
+        if (iterx < sz.xsize()-1)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
+        if (iterx > 0)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
+        if (itery < sz.ysize()-1)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx, itery+1, iterz)] + (5 * weight));
+        if (iterx > 0 && itery < sz.ysize()-1)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery+1, iterz)] + (7 * weight));
+        if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
+            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery+1, iterz)] + (7 * weight));
     }
 
     return pixOrigValue != *iter;
@@ -97,6 +108,7 @@ void DistanceRaster::distanceCalculation() {
 
     PixelIterator iter(_outputRaster);
     PixelIterator copyIter(_outputRaster); // hmm, find out how to reset an iterator....
+
     PixelIterator neighbour(_outputRaster);
     PixelIterator inpIter(_inputRaster);
     PixelIterator weight;
@@ -119,21 +131,28 @@ void DistanceRaster::distanceCalculation() {
 
         if (*inpIter != UNDEF)
             *copyIter = 0;
+        else if (_hasWeightRaster && *weight[Pixel(inpIter.x(), inpIter.y(), inpIter.z())] == UNDEF)
+            *copyIter = UNDEF;
         else
             *copyIter = 1e100;
 
         ++inpIter;
         ++copyIter;
+
+        updateTranquilizer(currentCount++, 1000);
     }
 
+
+    // todo: handle properly maps with multiple layers (z > 0). Not tested with those yet, maybe needs some
+    // proper handling when passing from one layer to another
     while (hasChanges || firstPass) {
         initialize(_inputRaster->size().linearSize() );
         currentCount = 0;
 
         hasChanges = false;
-        while (iter != end(_outputRaster)) {
-            hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
-            ++iter;
+
+        for( iter = begin(_outputRaster); iter != end(_outputRaster); ++iter) {
+            hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0, CalcDirection::cdForward );
             updateTranquilizer(currentCount++, 1000);
         }
 
@@ -142,15 +161,15 @@ void DistanceRaster::distanceCalculation() {
             currentCount = 0;
 
             iter.end();
-            hasChanges = false;
+            hasChanges = false;            
 
             while (iter != begin(_outputRaster)) {
-                hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0);
+                hasChanges |= setDistanceValue(iter, neighbour, sz, _hasWeightRaster ? *weight[Pixel(iter.x(), iter.y(), iter.z())] : 1.0, CalcDirection::cdBackward);
                 --iter;
                 updateTranquilizer(currentCount++, 1000);
             }
         }
-        firstPass = false;      
+        firstPass = false;
     }
 
     initialize(_inputRaster->size().linearSize() );
@@ -159,11 +178,12 @@ void DistanceRaster::distanceCalculation() {
     // To obtain distance values in meters, these raw values are divided by 5 and
     // multiplied by the pixel size and a correction factor.
     for( auto& value : _outputRaster) {
-        value *= pixsize / 5 * 0.968;
-
         if (value >= 1e100) {
             value = UNDEF;
+        } else {
+            value *= pixsize / 5 * 0.968;
         }
+        updateTranquilizer(currentCount++, 1000);
     }
 }
 
@@ -173,6 +193,12 @@ bool DistanceRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
+
+    if (_needGeoRefTransformation) {
+        if (!OperationHelperRaster::resample(_inputRaster, _inputOptWeightRaster, ctx)) {
+            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+        }
+    }
 
     BoxedAsyncFunc distanceFun = [&](const BoundingBox& box) -> bool {
         distanceCalculation();
@@ -198,7 +224,7 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 {
     QString inputRasterName = _expression.input<QString>(0);
     QString inputWeightRaster = _expression.input<QString>(1);
-    QString inputThiessenRaster = _expression.input<QString>(2);
+    //QString inputThiessenRaster = _expression.input<QString>(2);
     QString outputRasterName = _expression.parm(0,false).value();
 
     if (!_inputRaster.prepare(inputRasterName, itRASTER)) {
@@ -213,15 +239,16 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
             return sPREPAREFAILED;
         } else {
             _hasWeightRaster = true;
+            _needGeoRefTransformation = !_inputRaster->georeference()->isCompatible(_inputOptWeightRaster->georeference());
         }
     }
 
-    if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
+    /*if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputThiessenRaster,"");
         return sPREPAREFAILED;
-    }
+    }*/
 
-    _outputRaster = OperationHelperRaster::initialize(_inputRaster, itRASTER, itCOORDSYSTEM | itENVELOPE | itGEOREF | itRASTERSIZE);
+    _outputRaster = OperationHelperRaster::initialize(_inputRaster, itRASTER, itCOORDSYSTEM | itENVELOPE | itGEOREF | itRASTERSIZE);  
 
     IDomain dom;
     dom.prepare("value");
@@ -242,12 +269,12 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
 quint64 DistanceRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/distanceraster"});
-    operation.setSyntax("distanceraster(raster, weightraster, thiessenraster)");
+    operation.setSyntax("distanceraster(raster, weightraster)");
     operation.setDescription(TR("calculate raster map distances"));
-    operation.setInParameterCount({3});
+    operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("input raster"),TR("input rastermap"));
     operation.addInParameter(1,itRASTER , TR("weight raster"),TR("input weightraster"));
-    operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
+    //operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output distance raster."));
     operation.setKeywords("distance, raster, map");

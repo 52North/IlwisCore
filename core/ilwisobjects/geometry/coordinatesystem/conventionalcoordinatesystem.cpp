@@ -170,6 +170,23 @@ bool ConventionalCoordinateSystem::isCompatibleWith(const IlwisObject *obj) cons
     return false;
 }
 
+IlwisObject *ConventionalCoordinateSystem::clone()
+{
+    ConventionalCoordinateSystem *csy = new ConventionalCoordinateSystem();
+    copyTo(csy);
+    return csy;
+}
+
+void ConventionalCoordinateSystem::copyTo(IlwisObject *obj)
+{
+    Locker<> lock(_mutex);
+    CoordinateSystem::copyTo(obj);
+    ConventionalCoordinateSystem *csy = static_cast<ConventionalCoordinateSystem *>(obj);
+    csy->_ellipsoid.set( static_cast<Ellipsoid *>(_ellipsoid->clone()));
+    csy->_projection.set( static_cast<Projection *>(projection()->clone()));
+    csy->projection()->setCoordinateSystem(this);
+}
+
 const std::unique_ptr<GeodeticDatum>& ConventionalCoordinateSystem::datum() const
 {
     return _datum;

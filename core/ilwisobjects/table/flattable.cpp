@@ -208,7 +208,7 @@ void FlatTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 o
         // datagrid and recordcount might not have the same size as recordcount is the
         // number of records the metadata says that should be there and datagrid contains the actual
         // data that is loaded
-        recordCount(std::max(recordCount(),_datagrid.size()));
+        recordCount(std::max(recordCount(), (quint32)_datagrid.size()));
         rec = _datagrid.size() - 1;
     }
     quint32 col = offset;

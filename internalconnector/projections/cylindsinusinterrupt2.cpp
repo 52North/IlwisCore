@@ -89,4 +89,16 @@ bool CylindSinusInterrupt2::prepare(const QString &parms)
     return true;
 }
 
+ProjectionImplementation *CylindSinusInterrupt2::clone()
+{
+    CylindSinusInterrupt2 *csy = new CylindSinusInterrupt2();
+    copyTo(csy);
+    return csy;
+}
+
+CylindSinusInterrupt2::CylindSinusInterrupt2()
+{
+
+}
+
 
