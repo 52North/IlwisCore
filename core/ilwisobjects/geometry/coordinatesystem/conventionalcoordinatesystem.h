@@ -56,5 +56,6 @@ private:
 typedef IlwisData<ConventionalCoordinateSystem> IConventionalCoordinateSystem;
 
 }
+Q_DECLARE_METATYPE(Ilwis::IConventionalCoordinateSystem);
 
 #endif // COORDINATESYSTEMVIALATLON_H
