@@ -21,10 +21,10 @@ public:
 
 private:
     IProjection _projection;
-    double _falseeasting,_falsenorthing, _centralmeridian,_standardparallel1,_standardparallel2;
-    double _height,_scale, _zone,_centralparallel,_latoforigin,_lattruescale,_aztruescale;
-    bool _nortoriented;
-    QString _description;
+    IEllipsoid _ellipsoid;
+    std::map<QString, double> _parms;
+
+
 };
 }
 }
