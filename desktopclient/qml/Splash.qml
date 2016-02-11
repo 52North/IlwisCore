@@ -15,11 +15,11 @@ Item {
         id : first
         x :  0 //rootwindow.width / 4
         y : 0 //rootwindow.height / 4
-        width : 273
-        height : 200
+        width : 272
+        height : 201
         color : "red"
         endX : rootwindow.width / 2 - first.width
-        endY : rootwindow.height / 2  - first.height + 1
+        endY : rootwindow.height / 2  - first.height
         Image {
             anchors.fill: parent
             source: "images/lefttop.png"
@@ -38,8 +38,8 @@ Item {
         width : first.width
         height : first.height
         color : "blue"
-        endX : rootwindow.width / 2 - 1
-        endY : rootwindow.height / 2 - first.height + 1
+        endX : rootwindow.width / 2
+        endY : rootwindow.height / 2 - first.height
         state : first.state
         Image {
             anchors.fill: parent
@@ -54,8 +54,8 @@ Item {
         width : first.width
         height : first.height
         color : "green"
-        endX : rootwindow.width / 2 - 2
-        endY : rootwindow.height / 2 -1
+        endX : rootwindow.width / 2
+        endY : rootwindow.height / 2
         state : first.state
         Image {
             anchors.fill: parent
