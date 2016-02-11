@@ -380,6 +380,7 @@ void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QS
     QString prefix = "pout_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
+    addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", false);
 }
 
