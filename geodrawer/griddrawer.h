@@ -9,6 +9,7 @@
 
 namespace Ilwis{
 
+
 namespace Geodrawer{
 
 class GridDrawer : public ComplexDrawer {
@@ -21,6 +22,8 @@ public:
     DrawerInterface::DrawerType drawerType() const;
     quint32 defaultOrder() const;
     Envelope  envelope() const;
+
+
 
 };
 
@@ -36,7 +39,10 @@ public:
     QVariant attribute(const QString &attrName) const;
     DrawerInterface::DrawerType drawerType() const;
 
+
 protected:
+    void calcEnvelope(Coordinate &cmin, Coordinate &cmax);
+
     QVector<QVector3D> _vertices;
     QVector<QVector3D> _normals;
     std::vector<VertexIndex> _indices;
@@ -46,6 +52,8 @@ protected:
     QColor _lineColor;
     double _opacity = rUNDEF;
     float _linewidth = 1.0;
+    ICoordinateSystem _latlon;
+
 };
 
 class PrimaryGridDrawer : public SubGridDrawer{

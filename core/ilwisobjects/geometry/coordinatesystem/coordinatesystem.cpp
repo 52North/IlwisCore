@@ -64,6 +64,15 @@ void CoordinateSystem::envelope(const Envelope &env)
     _envelope = env;
 }
 
+void CoordinateSystem::copyTo(IlwisObject *obj)
+{
+    Locker<> lock(_mutex);
+    IlwisObject::copyTo(obj);
+    CoordinateSystem *csy = static_cast<CoordinateSystem *>(obj);
+    csy->_envelope = _envelope;
+
+}
+
 bool CoordinateSystem::isUnknown() const
 {
     return false;

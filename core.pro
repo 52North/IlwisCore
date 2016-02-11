@@ -304,7 +304,9 @@ OTHER_FILES += \
     core/resources/rastervertexshader_nvdia.glsl \
     LICENSE-2.0.txt \
     installer.nsi \
-    core/resources/ilwis.config
+    core/resources/ilwis.config \
+    core/resources/country_boundaries.mps \
+    core/resources/country_boundaries.mps#
 
 
 win32{
@@ -365,7 +367,9 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/featurevertexshader_nvdia.glsl \
     core/resources/rasterfragmentshader_nvdia.glsl \
     core/resources/rastervertexshader_nvdia.glsl \
-    core/resources/ilwis.config
+    core/resources/ilwis.config \
+    core/resources/country_boundaries.mps \
+    core/resources/country_boundaries.mps#
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin

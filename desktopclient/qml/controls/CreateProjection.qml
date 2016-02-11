@@ -11,7 +11,7 @@ import ".." as Base
 
 Item {
     id : createProjection
-    height : projlabel.height + projchoice.height + parmcontainer.height
+    height : projections.height + projchoice.height + parmcontainer.height
     width : parent.width
     property string name : ""
 
@@ -19,6 +19,7 @@ Item {
         return prjparameters.projectionParameters()
 
     }
+
 
     Row {
         id : projchoice
@@ -29,27 +30,15 @@ Item {
             var tp = mastercatalog.id2type(objid)
             return (tp === "projection")
         }
-        Text {
-            id : projlabel
-            height : parent.height
-            width : 120
-            text : qsTr("Projection")
-            font.bold: true
-        }
-
-        TextFieldDropArea {
-            id : droparea
-            canUse: projchoice.isPrj
-            width : projchoice.width - projlabel.width
-            height : parent.height
-            asName : true
-
-            onObjectidChanged: {
-                var ilwobj = mastercatalog.id2object(objectid,createProjection)
+        Controls.SelectProjection{
+            id : projections
+            width : projchoice.width - 10
+            onSelectedObjectidChanged : {
+                var ilwobj = mastercatalog.id2object(selectedObjectid,createProjection)
                 if ( ilwobj){
                     prjparameters.model = ilwobj.projectionItems;
                     parmcontainer.state = "maximized"
-                    name = droparea.content
+                    createProjection.name = ilwobj.name
                 }
             }
         }
@@ -76,9 +65,6 @@ Item {
             anchors.topMargin: 2
             width : parent.width
             height : parmcontainer.height - 25
-//            border.width: 1
-//            border.color: Global.edgecolor
-//            radius: 3
 
 
             Controls.ProjectionParametersEditor{

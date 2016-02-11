@@ -15,6 +15,8 @@ public:
     bool canConvertToLatLon() const;
     bool canConvertToCoordinate() const;
 protected:
+    void copyTo(ProjectionImplementation *prj);
+    ProjectionImplementationInternal();
     virtual Coordinate ll2crd(const LatLon&) const = 0;
     virtual LatLon crd2ll(const Coordinate&) const = 0;
 

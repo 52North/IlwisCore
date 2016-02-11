@@ -1,6 +1,7 @@
 #include <QString>
 #include <QFileInfo>
 #include <QUrl>
+#include <QDir>
 #include "kernel.h"
 #include "connectorinterface.h"
 #include "resource.h"
@@ -343,6 +344,22 @@ QString ResourceModel::geoReferenceType() const
 }
 
 
+void ResourceModel::realizeThumbPath(){
+    QFileInfo inf(_item.url().toLocalFile());
+    QString path = inf.absolutePath();
+    QString thumbDir =  path + "/.ilwis/thumbs";
+    QDir dir(thumbDir) ;
+    if (!dir.exists()){
+        QDir ilwdir(path + "/.ilwis");
+        if (!ilwdir.exists())
+            if(!QDir(path).mkdir(".ilwis"))
+                return;
+        if(!QDir(path + "/.ilwis").mkdir("thumbs"))
+            return ;
+    }
+    QFileInfo thumbPath = thumbDir + "/" + _displayName + ".png";
+    _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
+}
 
 void ResourceModel::resource(const Ilwis::Resource& res)
 {
@@ -369,7 +386,7 @@ void ResourceModel::resource(const Ilwis::Resource& res)
         QString path = inf.absolutePath();
         _isRoot = inf.isRoot();
         _displayName = item.name();
-        QFileInfo thumbPath = path + "/thumbs/" + _displayName + ".png";
+        QFileInfo thumbPath = path + "/.ilwis/thumbs/" + _displayName + ".png";
         if ( thumbPath.exists()) {
             _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
         } else {
@@ -464,4 +481,9 @@ bool ResourceModel::hasExtendedType(const QString &tp) const
 
     }
     return false;
+}
+
+void ResourceModel::setUrl(const QUrl &url, bool asRaw)
+{
+    _item.setUrl(url, asRaw);
 }

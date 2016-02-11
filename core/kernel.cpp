@@ -72,8 +72,8 @@ Ilwis::Kernel* Ilwis::kernel() {
 
 bool Ilwis::initIlwis(int mode, const QString & ilwisDir){
     try {
-        context(ilwisDir);
-        context()->runMode(mode);
+        context(ilwisDir, mode);
+//        context()->runMode(mode);
         return kernel() != 0;
     } catch (const ErrorObject& err) {
         std::cout << err.message().toStdString();
@@ -142,11 +142,6 @@ void Kernel::init() {
 
 
     _modules.addModules();
-
-    // TODO: are these still necessary?
-    mastercatalog()->addContainerException("http");
-    mastercatalog()->addContainerException("https");
-
 
 
 }

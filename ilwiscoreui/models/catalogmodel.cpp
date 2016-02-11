@@ -126,6 +126,8 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
             _objectCounts[resource->type()]+= 1;
         }
 
+        if ( _spatialFilter != "")
+            return mapItems() ;
 
         return  QQmlListProperty<ResourceModel>(this, _currentItems);
     }
@@ -135,9 +137,18 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
     return  QQmlListProperty<ResourceModel>();
 }
 
-QQmlListProperty<CatalogMapItem> CatalogModel::mapItems()
+QQmlListProperty<ResourceModel> CatalogModel::mapItems()
 {
-   return  QQmlListProperty<CatalogMapItem>(this, _catalogMapItems);
+
+    try{
+        gatherItems();
+
+        return  QQmlListProperty<ResourceModel>(this, _coverageItems);
+    }
+    catch(const ErrorObject& err){
+
+    }
+    return  QQmlListProperty<ResourceModel>();
 }
 
 void CatalogModel::makeParent(QObject *obj)
@@ -223,6 +234,7 @@ void CatalogModel::refresh()
 {
     _refresh = true;
     _currentItems.clear();
+    _coverageItems.clear();
     emit contentChanged();
 }
 
@@ -233,6 +245,7 @@ void CatalogModel::nameFilter(const QString &filter)
 
     _nameFilter = filter;
     _currentItems.clear();
+    _coverageItems.clear();
     emit contentChanged();
 }
 
@@ -260,41 +273,17 @@ void CatalogModel::keyFilter(const QString &keyf)
     _keyFilter = keyf;
 }
 
-void CatalogModel::prepareMapItems(LayerManager *manager, bool force)
+QString CatalogModel::spatialFilter() const
 {
-    try{
-        if ( force){
-            _catalogMapItems.clear();
-            _refresh = true;
-            gatherItems();
-        }
-        std::map<qint64, std::vector<Resource>> hashes;
-        if ( _catalogMapItems.size() == 0){
-            kernel()->issues()->silent(true);
-            for (auto iter  = _currentItems.begin(); iter != _currentItems.end(); ++iter){
-                if(hasType((*iter)->type(), itCOVERAGE)){
-                    Ilwis::Resource res =(*iter)->resource();
-                    if ( res.isValid() && res.hasProperty("latlonenvelope"))    {
-                        Envelope env = res["latlonenvelope"].toString();
-                        double hash = env.min_corner().x + env.max_corner().x + env.min_corner().y + env.max_corner().y + env.area();
-                        hash = hash * 1e9;
-                        hashes[(qint64)hash].push_back(res);
-                       //
+     return _spatialFilter;
 
-                    }
-                }
-            }
-            for(auto& lst : hashes ){
-                    _catalogMapItems.push_back(new CatalogMapItem({lst.second},manager->screenGrf(),this));
-            }
-            kernel()->issues()->silent(false);
-        }
-    } catch (const Ilwis::ErrorObject& ){
+}
 
-    } catch (std::exception& ex){
-        Ilwis::kernel()->issues()->log(ex.what());
-    }
-    kernel()->issues()->silent(false);
+void CatalogModel::spatialFilter(const QString &filter)
+{
+    _refresh = true;
+    _spatialFilter = filter;
+    emit contentChanged();
 }
 
 void CatalogModel::gatherItems() {
@@ -305,9 +294,20 @@ void CatalogModel::gatherItems() {
         _view.prepare();
 
         _currentItems.clear();
+        _coverageItems.clear();
         _refresh = false;
 
         std::vector<Resource> items = _view.items();
+        std::vector<double> bounds(4);
+        if ( _spatialFilter != ""){
+            QStringList parts = _spatialFilter.split(" ");
+            if ( parts.size() == 4){
+                bounds[0] = parts[0].toDouble();
+                bounds[1] = parts[1].toDouble();
+                bounds[2] = parts[2].toDouble();
+                bounds[3] = parts[3].toDouble();
+            }
+        }
         for(const Resource& resource : items){
             if ( _nameFilter != ""){
                 if ( resource.name().indexOf(_nameFilter) == -1){
@@ -316,6 +316,28 @@ void CatalogModel::gatherItems() {
                 }
             }
             _currentItems.push_back(new ResourceModel(resource, this));
+            if ( hasType(resource.ilwisType(), itCOVERAGE)){
+                if ( _spatialFilter != ""){
+                    if ( resource.hasProperty("latlonenvelope")){
+                        QString envelope = resource["latlonenvelope"].toString();
+                        QStringList parts = envelope.split(" ");
+                        if ( parts.size() == 6){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[3].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[4].toDouble() <= bounds[3])
+                                _coverageItems.push_back(new ResourceModel(resource, this));
+                        }else if ( parts.size() == 4){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[2].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[3].toDouble() <= bounds[3])
+                                _coverageItems.push_back(new ResourceModel(resource, this));
+                         }
+                    }
+                }else
+                    _coverageItems.push_back(new ResourceModel(resource, this));
+            }
 
         }
         if ( _view.hasParent()){

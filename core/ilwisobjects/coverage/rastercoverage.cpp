@@ -121,8 +121,10 @@ NumericStatistics &RasterCoverage::statistics(int mode, int bins)
     PixelIterator iter(raster);
     statistics().calculate(iter, iter.end(), (ContainerStatistics<double>::PropertySets)mode, bins);
     auto rng = raster->datadefRef().range<NumericRange>();
-    rng->min(statistics().prop(NumericStatistics::pMIN));
-    rng->max(statistics().prop(NumericStatistics::pMAX));
+    if ( rng){
+        rng->min(statistics().prop(NumericStatistics::pMIN));
+        rng->max(statistics().prop(NumericStatistics::pMAX));
+    }
     return Coverage::statistics(mode);
 }
 
@@ -150,7 +152,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     raster->_bandDefinition = _bandDefinition;
     raster->_datadefCoverage = _datadefCoverage;
     if ( _grid) {
-        raster->_grid.reset(_grid->clone());
+        raster->_grid.reset(_grid->clone(raster->id()));
     }
     raster->_attributeTable = _attributeTable;
     raster->_size = _size;

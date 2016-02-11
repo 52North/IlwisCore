@@ -84,19 +84,19 @@ void InternalModule::prepare()
     ok &= createPcs(db);
     ok &= createSpecialDomains();
 
-    QString url = QString("ilwis://system/unknown");
+    QString url = QString("ilwis://system/coordinatesystems/unknown");
     Resource resource(url, itBOUNDSONLYCSY);
     resource.code("unknown");
     resource.name("unknown", false);
-    resource.addContainer(QUrl("ilwis://system"));
+    resource.addContainer(QUrl("ilwis://system/coordinatesystems"));
     resource.prepare();
     mastercatalog()->addItems({resource});
 
-    url = QString("ilwis://system/undetermined");
+    url = QString("ilwis://system/georefs/undetermined");
     resource = Resource(url, itGEOREF);
     resource.code("undetermined");
     resource.name("undetermined", false);
-    resource.addContainer(QUrl("ilwis://system"));
+    resource.addContainer(QUrl("ilwis://system/georefs"));
     resource.prepare();
     mastercatalog()->addItems({resource});
 

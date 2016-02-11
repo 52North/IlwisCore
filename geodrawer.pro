@@ -23,8 +23,6 @@ win32{
     PLATFORM = win32
 }
 
-TARGET = $$qtLibraryTarget($$TARGET)
-
 # Input
 SOURCES += \
     geodrawer/geodrawer_plugin.cpp \

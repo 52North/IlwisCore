@@ -23,9 +23,9 @@ WorkBenchShifter {
         if ( name === "")
             name = "redbuttonr.png"
 
-         var iconP = "../images/" + name
-         return iconP
-     }
+        var iconP = "../images/" + name
+        return iconP
+    }
 
     function refreshBookmarks() {
         navCreatePanel.bookmarkModel = mastercatalog.bookmarked
@@ -62,8 +62,6 @@ WorkBenchShifter {
             createCatalogForm.opacity = 1
         }
     }
-
-
     
     Action {
         id : createCatalogLeft
@@ -80,97 +78,42 @@ WorkBenchShifter {
         }
 
     }
-
-    Item {
+    NavigatorTopButtonBar{
         id : buttonBar
         height : 50
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
-        x : 10
-
-        Row {
-            id : buttonRow
-            anchors.top : parent.top
-            anchors.margins: 3
-            Controls.ActionButton{
-                id : addCatalog
-                width : 115
-                height : buttonBar.height - 3
-                iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog Left")
-                action : createCatalogLeft
-
-            }
-            Controls.ActionButton{
-                id : addCatalog2
-                width : 115
-                height : buttonBar.height - 3
-                iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog Right")
-                action : createCatalogRight
-
-            }
-
-        }
-
     }
-    Row {
-        height : 20
-        anchors.right : functionBarHeader.right
-        anchors.rightMargin: -28
-        anchors.top : functionBarHeader.bottom
-        anchors.topMargin: 4
-        width : 75
-        Action {
-            id :maxButtons
-            onTriggered: {
-                createCatalogForm.state = "maximized"
-            }
-        }
 
-        Action {
-            id :minButtons
-            onTriggered: {
-                createCatalogForm.state = "minimized"
-            }
-        }
-        Button{
-            id : full
-            height : 20
-            width :20
-            action : maxButtons
-            Image { anchors.centerIn : parent; source: "../images/max1.png" }
-        }
-        Button{
-            id : close
-            height : 20
-            width :20
-            action : minButtons
-            Image { anchors.centerIn : parent; source: "../images/min1.png" }
-        }
-    }
-    CreateCatalogForm{
-        id : createCatalogForm
+    SplitView {
         width : parent.width - 10
-        state : "maximized"
+        height : parent.height - buttonBar.height - functionBarHeader.height
         anchors.top: buttonBar.bottom
         anchors.margins: 5
-        x : parent.x + 5
-        beginfolder: startfolder
-    }
+        orientation: Qt.Vertical
 
-    Bookmarks{
-        id : navCreatePanel
-        width : parent.width - 10
-        x : parent.x + 5
-        defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
-        anchors.top: createCatalogForm.bottom
-        anchors.margins: 2
-        opacity : 1
-        background: Global.mainbackgroundcolor
-        listbackground: "#FFFEF8"
-        listalternate: "#FFFEF8"
+        CreateCatalogForm{
+            id : createCatalogForm
+            width : parent.width - 10
+            state : "maximized"
+            height : parent.height / 2
+            x : parent.x + 5
+            beginfolder: startfolder
+        }
 
+        Bookmarks{
+            id : navCreatePanel
+            width : parent.width - 10
+            x : parent.x + 5
+            defaultHeight: parent.height - buttonBar.height - functionBarHeader.height - createCatalogForm.height - 15
+            anchors.top: createCatalogForm.bottom
+            anchors.margins: 2
+            opacity : 1
+            background: Global.mainbackgroundcolor
+            listbackground: "#FFFEF8"
+            listalternate: "#FFFEF8"
+
+        }
     }
 }

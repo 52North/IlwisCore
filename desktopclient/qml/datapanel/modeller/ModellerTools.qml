@@ -6,9 +6,14 @@ import QtQuick.Controls.Styles 1.0
 ToolBar{
     id : modellertools
     width : parent.width
-    height : 55
+    height : 31
+
+    property alias zoomLevel: zoomLabel
+
     Column {
-        anchors.fill: parent
+        height:parent.height
+        width: parent.width/3
+        id : editingColumn
         Row {
             width : parent.width
             height : 25
@@ -16,6 +21,7 @@ ToolBar{
             id : editingtools
 
             Button {
+                id : newcondition
                 height : 25
                 width : 25
                 Image {
@@ -24,6 +30,10 @@ ToolBar{
 
                     source : iconsource("choice20.png")
                 }
+                onClicked: {
+                    modellerDataPane.newCondition()
+
+                }
             }
 
             Button {
@@ -33,24 +43,10 @@ ToolBar{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    source : iconsource("deleteoperation20.png")
+                    source : iconsource("trash20.png")
                 }
                 onClicked: {
                     modellerDataPane.deleteSelectedOperation()
-
-                }
-            }
-            Button {
-                id : conbut
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("deleteconnection20.png")
-                }
-                onClicked: {
                     modellerDataPane.deleteSelectedEdge()
 
                 }
@@ -77,30 +73,37 @@ ToolBar{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    source : iconsource("zoomin20.png")
+                    source : iconsource("error_sign.png")
                 }
                 onClicked: {
-                    modellerDataPane.canvasZoomIn()
-                }
-            }
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    source : iconsource("zoomout20.png")
-                }
-                onClicked: {
-                    modellerDataPane.canvasZoomOut()
+                    if(errorview.state == "smaller")
+                    {
+                        errorview.state = "bigger"
+                    } else {
+                        errorview.state = "smaller"
+                    }
+
                 }
             }
         }
+
+    }
+
+    Column {
+        height:parent.height
+        width: parent.width/3
+
+        anchors{
+            right: zoomTools.left
+            left: editingColumn.right
+        }
+
         Row {
-            width : parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
             height : 25
             spacing : 2
+
             Button {
                 height : 25
                 width : 25
@@ -145,6 +148,24 @@ ToolBar{
                     source : iconsource("stop20.png")
                 }
             }
+        }
+    }
+
+    Column{
+        id:zoomTools
+        anchors{
+            right: parent.right
+        }
+
+        height: parent.height
+        width: parent.width/3
+        Row{
+            height : 25
+            spacing : 2
+            anchors{
+                right: parent.right
+            }
+
             Button {
                 height : 25
                 width : 25
@@ -152,20 +173,44 @@ ToolBar{
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    source : iconsource("error_sign.png")
+                    source : iconsource("zoomin20.png")
                 }
                 onClicked: {
-
-                    if(errorview.state == "smaller")
-                    {
-                        errorview.state = "bigger"
-                    } else {
-                        errorview.state = "smaller"
-                    }
-
+                    modellerDataPane.canvasZoom(3)
                 }
             }
+
+            Button {
+                height : 25
+                width : 75
+                text: "Default zoom"
+
+                onClicked: {
+                    modellerDataPane.defaultZoom()
+                }
+            }
+
+            Button {
+                height : 25
+                width : 25
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    source : iconsource("zoomout20.png")
+                }
+                onClicked: {
+                    modellerDataPane.canvasZoom(-3)
+                }
+            }
+
+            Text{
+                id:zoomLabel
+                text:"100%"
+                font.pixelSize: 18
+            }
         }
+
     }
 }
 

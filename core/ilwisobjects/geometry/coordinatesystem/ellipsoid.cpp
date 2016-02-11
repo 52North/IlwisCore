@@ -277,6 +277,25 @@ QString Ellipsoid::fromInternal(const QSqlRecord& rec ){
     return name();
 }
 
+IlwisObject *Ellipsoid::clone()
+{
+    Ellipsoid *ell = new Ellipsoid();
+    copyTo(ell);
+    return ell;
+}
+
+void Ellipsoid::copyTo(IlwisObject *e)
+{
+    IlwisObject::copyTo(e);
+    Ellipsoid *ell = static_cast<Ellipsoid *>(e);
+    ell->_majorAxis = _majorAxis;
+    ell->_minoraxis = _minoraxis;
+    ell->_flattening = _flattening;
+    ell->_excentricity = _excentricity;
+    ell->_authority = _authority;
+    ell->_wkt = _wkt;
+}
+
 QString Ellipsoid::authority() const
 {
     return _authority;

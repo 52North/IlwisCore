@@ -46,6 +46,7 @@ protected:
     }
 
     IOOptions ioOptions() const;
+    IOOptions& ioOptionsRef();
 
     Resource _resource;
     bool _binaryIsLoaded;

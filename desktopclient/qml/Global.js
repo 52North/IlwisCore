@@ -11,6 +11,9 @@ var headerlight = "lightsteelblue"
 var formBackGround = "#F9F9F9"
 var altFormBackGround = "#E6E6E6"
 var selectedColor = "#99CCFF"
+var selectedTabColor = "#B0C4DE"
+var alternateSelectedTabColor = "#87CEFA"
+var notSelectedTabColor = "white"
 var rowHeight = 20
 
 function isNumber(n) {
@@ -42,6 +45,7 @@ function calcZoomOutEnvelope(envelope, layers, viewmanager)
         var ny2 = (y2 + y1) / 2.0 + dy
         var newenvelope = nx1 + " " + ny1 + " " + nx2 + " " + ny2
         layers.newExtent(newenvelope)
-        viewmanager.newZoomExtent(newenvelope)
+        if (typeof viewmanager.newZoomExtent == 'function')
+            viewmanager.newZoomExtent(newenvelope)
     }
 }

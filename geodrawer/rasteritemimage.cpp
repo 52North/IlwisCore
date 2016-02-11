@@ -93,7 +93,7 @@ void RasterItemImage::setTextureData(ItemTexture *tex, const unsigned int offset
         if ( pixIter.ychanged()) {
             position += (rest + texSizeX - xSizeOut);
             if (zoomFactor > 1)
-                pixIter += sizeX * (zoomFactor - 1);
+                pixIter += sizeX * (zoomFactor - 1) - ((zoomFactor - (sizeX % zoomFactor)) % zoomFactor);
         }
         ++position;
     }

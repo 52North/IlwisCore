@@ -31,23 +31,23 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     ProjectionImplementation::setParameter(type, v);
     QString value = v.toString();
     switch(type) {
-    case Projection::pvX0:
+    case Projection::pvFALSEEASTING:
         _targetDef += " +x_0=" + value;break;
-    case Projection::pvY0:
+    case Projection::pvFALSENORTHING:
         _targetDef += " +y_0=" + value; break;
-    case Projection::pvLON0:
+    case Projection::pvCENTRALMERIDIAN:
         _targetDef += " +lon_0=" + value; break;
-    case Projection::pvLAT0:
+    case Projection::pvCENTRALPARALLEL:
         _targetDef += " +lat_0=" + value; break;
-    case Projection::pvLAT1:
+    case Projection::pvSTANDARDPARALLEL1:
         _targetDef += " +lat_1=" + value; break;
-    case Projection::pvLAT2:
+    case Projection::pvSTANDARDPARALLEL2:
         _targetDef += " +lat_2=" + value; break;
-    case Projection::pvLATTS:
+    case Projection::pvLATITUDEOFTRUESCALE:
         _targetDef += " +lat_ts=" + value; break;
     case Projection::pvZONE:
         _targetDef += " +zone=" + value; break;
-    case Projection::pvK0:
+    case Projection::pvSCALE:
         _targetDef += " +k_0=" + value; break;
     case Projection::pvELLCODE:
         if ( value.indexOf("+a") != -1)
@@ -98,8 +98,8 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         Proj4Parameters proj4(parms);
         //std::function<void(double)> assign; // = [&](double v)  -> void {}
 
-        std::map<QString,Projection::ProjectionParamValue>  alias = { { "lat_1",Projection::pvLAT1}, { "lat_2",Projection::pvLAT2},{ "lat_0",Projection::pvLAT0}, { "k",Projection::pvK0},
-                                                     { "lon_0",Projection::pvLON0}, { "x_0",Projection::pvX0}, { "y_0",Projection::pvY0}, { "zone",Projection::pvZONE},{ "k_0",Projection::pvK0}};
+        std::map<QString,Projection::ProjectionParamValue>  alias = { { "lat_1",Projection::pvSTANDARDPARALLEL1}, { "lat_2",Projection::pvSTANDARDPARALLEL2},{ "lat_0",Projection::pvCENTRALPARALLEL}, { "k",Projection::pvSCALE},
+                                                     { "lon_0",Projection::pvCENTRALMERIDIAN}, { "x_0",Projection::pvFALSEEASTING}, { "y_0",Projection::pvFALSENORTHING}, { "zone",Projection::pvZONE},{ "k_0",Projection::pvSCALE}};
         auto assign = [&](const QString& proj4Name)->void
         {
             QString sv = proj4[proj4Name];
@@ -171,6 +171,28 @@ bool ProjectionImplementationProj4::canConvertToLatLon() const
 bool ProjectionImplementationProj4::canConvertToCoordinate() const
 {
     return true;
+}
+
+ProjectionImplementation *ProjectionImplementationProj4::clone()
+{
+    ProjectionImplementationProj4 *prjimpl = new ProjectionImplementationProj4();
+    copyTo(prjimpl);
+    return prjimpl;
+}
+
+void ProjectionImplementationProj4::copyTo(ProjectionImplementation *prj)
+{
+    ProjectionImplementation::copyTo(prj);
+    ProjectionImplementationProj4 *prjimpl = static_cast<ProjectionImplementationProj4 *>(prj);
+    prjimpl->_outputIsLatLon = _outputIsLatLon;
+    prjimpl->_pjBase = pj_init_plus(_targetDef.toLatin1());
+    prjimpl->_pjLatlon = pj_init_plus("+proj=latlong +ellps=WGS84");
+    prjimpl->_targetDef = _targetDef;
+}
+
+ProjectionImplementationProj4::ProjectionImplementationProj4()
+{
+
 }
 
 Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const

@@ -34,7 +34,7 @@ Rectangle {
             width : parent.width;
             Rectangle {
                 anchors.fill: parent
-                color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
+                color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.alternatecolor4 : Global.alternatecolor2
                 Text {
                     id : operationName
                     text : displayName

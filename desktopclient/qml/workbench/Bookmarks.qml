@@ -33,7 +33,7 @@ Column {
     }
 
     opacity : 1
-    height : defaultHeight
+    //height : defaultHeight
     clip : true
     state : "visible"
     signal catalogChanged
@@ -244,7 +244,7 @@ Column {
             name : "invisible"
             PropertyChanges {
                 target: navigationFoldercreate
-                defaultHeight : height
+                //defaultHeight : height
                 opacity : 0
             }
         }
@@ -256,7 +256,7 @@ Column {
             { id : opatrans; properties: "opacity"; duration : 500 ; easing.type: Easing.OutCubic
                 onRunningChanged: {
                     if ( !opatrans.running ){
-                        height = opacity == 0 ? 0 : defaultHeight
+                        //height = opacity == 0 ? 0 : defaultHeight
                         if ( opacity == 0)
                             z = -1
                     }

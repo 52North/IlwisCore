@@ -48,6 +48,42 @@ Controls.DropableItem{
         }
         Controls.EllipsoidSelector{
             id : ellipsoidselector
+            width : parent.width - 10
+            property string name : ""
+            onSelectedObjectidChanged : {
+                var ilwobj = mastercatalog.id2object(selectedObjectid,ellipsoidselector)
+                if ( ilwobj){
+                    ellipsoidselector.name = ilwobj.name
+                }
+            }
+        }
+        Item {
+            height : Global.rowHeight
+            width : parent.width
+            CheckBox{
+                id : cbshifts
+                text : qsTr("Datum shifts (toWgs84)")
+                style : Base.CheckBoxStyle1{}
+                width : 140
+
+            }
+            TextField{
+                id : datumshifts
+                width : parent.width - cbshifts.width - 10
+                height : Global.rowHeight
+                anchors.left: cbshifts.right
+                enabled: cbshifts.checked
+                opacity : cbshifts.checked ? 1 : 0.5
+                style: TextFieldStyle {
+                    background: Rectangle {
+                        radius: 2
+                        width : parent.width
+                        height: parent.height
+                        border.color: Global.edgecolor
+                        color : "transparent"
+                    }
+                }
+            }
         }
 
     }
@@ -71,7 +107,8 @@ Controls.DropableItem{
                     projection : projectionParams.name,
                     projectionparameters : projectionParams.projectionInfo(),
                     ellipsoid : ellipsoidselector.name,
-                    description :objectcommon.description,
+                    envelope : csyBounds.getEnvelope(),
+                    datumshifts : datumshifts.text
                 }
                 objectcreator.createObject(createinfo)
             }

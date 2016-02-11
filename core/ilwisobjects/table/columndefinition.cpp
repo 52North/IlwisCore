@@ -24,7 +24,7 @@ ColumnDefinition::ColumnDefinition(const ColumnDefinition &def, quint32 index, b
 
 }
 
-ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint64 colindex, bool readOnly) :
+ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &def, quint32 colindex, bool readOnly) :
     Identity(name, colindex),
     _datadef(def),
     _readOnly(readOnly),
@@ -34,7 +34,7 @@ ColumnDefinition::ColumnDefinition(const QString &name, const DataDefinition &de
 
 }
 
-ColumnDefinition::ColumnDefinition(const QString &name, const IDomain &dom, quint64 colindex, bool readOnly) :
+ColumnDefinition::ColumnDefinition(const QString &name, const IDomain &dom, quint32 colindex, bool readOnly) :
     Identity(name, colindex),
     _readOnly(readOnly),
     _changed(false)

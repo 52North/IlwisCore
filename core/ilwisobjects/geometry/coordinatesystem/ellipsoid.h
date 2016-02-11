@@ -47,7 +47,10 @@ public:
     static const IEllipsoid wgs84ellipsoid;
 
     QString fromInternal(const QSqlRecord &rec);
+    IlwisObject* clone();
+
 private:
+    void copyTo(IlwisObject *e);
     Ellipsoid(double a, double f);
 
     double _flattening;

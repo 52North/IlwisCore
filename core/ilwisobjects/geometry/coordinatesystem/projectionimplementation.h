@@ -43,7 +43,9 @@ public:
     bool isSet(Projection::ProjectionParamValue type) const;
     bool isUsed(Projection::ProjectionParamValue type) const;
     IlwisTypes valueType(Projection::ProjectionParamValue type) const;
+    virtual ProjectionImplementation* clone() = 0;
 protected:
+    virtual void copyTo(ProjectionImplementation *prj);
     ConventionalCoordinateSystem *_coordinateSystem;
 
 private:

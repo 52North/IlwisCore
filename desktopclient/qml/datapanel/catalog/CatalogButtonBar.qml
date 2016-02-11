@@ -1,63 +1,31 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.0
-import QtQuick.Controls.Styles 1.0
-import MasterCatalogModel 1.0
-import UIContextModel 1.0
+import QtQuick 2.1
 import "../../Global.js" as Global
 
-Rectangle {
-    id : buttonB
-    height : 25
-    color : Global.alternatecolor2
-    property string side
+Rectangle{
+    id : toolbar
+    anchors.top : parent.top
+    width : parent.width
+    height : 52
+    border.width: 1
+    border.color: "grey"
+    color : Global.alternatecolor5
+    z : 1
 
-    Row {
-        anchors.fill: parent
-        z : 1
-        CatalogButton{
-            id : showobj
-            label: qsTr("View")
-            onClicked: {
-                var ids = mastercatalog.selectedIds()
-                var idlist = ids.split("|")
-                for(var i=0; i < idlist.length; ++i){
-                    showObject(idlist[i]);
-                }
-            }
-        }
-        CatalogButton{
-            id : oper
-            //action: operClicked
-            label: qsTr("Copy")
-        }
-        CatalogButton{
-            id : modeller
-            //action: modellerClicked
-            label: qsTr("Move")
-        }
-
-        CatalogButton{
-            id : deleteobj
-            //action : propertiesClicked
-            label: qsTr("Delete")
-            onClicked: {
-                var ids = mastercatalog.selectedIds()
-                var idlist = ids.split("|")
-                for(var i=0; i < idlist.length; ++i){
-                   mastercatalog.deleteObject(idlist[i]);
-                }
-            }
-
-        }
-        CatalogButton{
-            id : refresh
-            label: qsTr("Refresh")
-            onClicked: {
-                mastercatalog.refreshCatalog(currentCatalog.url)
-            }
-
-        }
+    CatalogFilterButtons{
+        id : objectfilters
     }
+
+    CatalogFilterComboBox{
+        id : catalogfilters
+        anchors.top : objectfilters.bottom
+        anchors.left : objectfilters.left
+    }
+
+    CatalogLayoutButtonBar {
+        id : layoutfilter
+        anchors.top : objectfilters.bottom
+        anchors.left : catalogfilters.right
+    }
+
 }
 

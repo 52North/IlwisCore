@@ -14,7 +14,7 @@ TabViewStyle {
 
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
-    property int tabHeight : 22
+    property int tabHeight : 35
 
 
     tab: Rectangle {
@@ -27,14 +27,36 @@ TabViewStyle {
         implicitWidth: Math.max(label.width + 4, 140)
         implicitHeight: tabHeight
         radius: 5
-        Text {
-            id: label
-            width : parent.width - closeButton.width - expandButton.width
-            anchors.centerIn: parent
-            text: tabmodel ? tabmodel.displayName : "?"
-            color: tabmodel && tabmodel.selected ? "white" : "black"
-            elide: Text.ElideMiddle
 
+
+        Item {
+            id : label
+            width : parent.width - closeButton.width - expandButton.width
+            height : tabHeight - 2
+            y : 1
+            x : 6
+            Column {
+                anchors.fill: parent
+                Text {
+                    width : parent.width
+                    height : 14
+                    text: tabmodel ? "[ " + tabmodel.id + " ]": "?"
+                    color: tabmodel && tabmodel.selected ? "white" : "black"
+                    font.pointSize: 8
+                }
+
+                Text {
+                    width : parent.width
+                    height : 20
+                    text: tabmodel ? tabmodel.displayName : "?"
+                    color: tabmodel && tabmodel.selected ? "white" : "black"
+                    elide: Text.ElideMiddle
+                    font.pointSize: tabmodel && tabmodel.selected ? 10 : 9
+                    font.bold: tabmodel && tabmodel.selected ? true : false
+
+
+                }
+            }
             MouseArea  {
                 anchors.fill : parent
                 onClicked : {

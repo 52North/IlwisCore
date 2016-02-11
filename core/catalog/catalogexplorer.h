@@ -19,6 +19,7 @@ public:
 
 protected:
     IOOptions ioOptions() const;
+    IOOptions& ioOptionsRef();
 
 private:
     Resource _resource;

@@ -7,6 +7,9 @@
 #include "table.h"
 #include "geometries.h"
 #include "georeference.h"
+#include "coverage.h"
+#include "featurecoverage.h"
+#include "feature.h"
 #include "uicontextmodel.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -18,6 +21,8 @@
 #include "tableoperations/tableoperationfactory.h"
 #include "consolescriptmodel.h"
 #include "ilwiscontext.h"
+
+using namespace Ilwis;
 
 quint64 UIContextModel::_objectCounter = 0;
 std::unique_ptr<UIContextModel> UIContextModel::_uicontext;
@@ -206,6 +211,8 @@ void UIContextModel::prepare()
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
     Ilwis::kernel()->addFactory(factory);
+    QString worldmp = "file:///"+ ilwisloc + "/resources/country_boundaries.mps";
+    _worldMap.prepare(worldmp);
 
 }
 
@@ -279,6 +286,13 @@ void UIContextModel::initializeDataPane()
              qDebug() << "failed";
      }
 
+}
+
+QString UIContextModel::worldmapCommand(const QString& id) const
+{
+    QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->source().url().toString()).arg(_worldMap->id());
+
+    return cmd;
 }
 
 QString UIContextModel::typeName2typeId(const QString &nm) const

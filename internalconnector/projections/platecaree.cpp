@@ -58,4 +58,17 @@ bool PlateCaree::prepare(const QString& parms){
     return true;
 }
 
+ProjectionImplementation *PlateCaree::clone()
+{
+    PlateCaree *csy = new PlateCaree();
+    copyTo(csy);
+    return csy;
+}
+
+PlateCaree::PlateCaree()
+{
+
+}
+
+
 

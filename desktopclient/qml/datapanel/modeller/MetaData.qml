@@ -20,10 +20,14 @@ Rectangle {
     }
 
     function setKeywords(words){
-        words = words.split(", ")
+        words = words.split(",")
         keywords.clear()
         for (var i = 0; i < words.length; i++) {
-            keywords.append({'xWord': words[i]})
+            var word = words[i]
+            while (word.substring(0,1) === ' ') {
+                word = word.substring(1, word.length)
+            }
+            keywords.append({'xWord': word})
         }
     }
 

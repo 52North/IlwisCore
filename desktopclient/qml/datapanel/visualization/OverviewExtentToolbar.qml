@@ -44,22 +44,21 @@ Rectangle {
         width : parent.width
         height : parent.height
         anchors.horizontalCenter: parent.horizontalCenter
-        MapExtentButton{
+        Controls.MapExtentButton{
             id : panButton1
             icon : "pan20.png"
             onClicked: {
-                console.debug("todo")
             }
         }
 
-        MapExtentButton{
+        Controls.MapExtentButton{
             id : zoominButton1
             icon : checked ? "zoomin20A.png" : "zoomin20.png"
             checkable: true
             checked: false
             action : zoomClicked
         }
-        MapExtentButton{
+        Controls.MapExtentButton{
             id : zoomoutButton1
             icon :"zoomout20.png"
             action : zoomOutClicked

@@ -211,55 +211,38 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
     if (!db.next()){
         return QString::number(i64UNDEF);
     }
-    QString parameters = db.value(0).toString();
     QVariantList currentParms = parms["projectionparameters"].value<QVariantList>();
 
-    QStringList parmlist = parameters.split("|");
-    std::vector<QString> projectionparms(12,"0");
-    projectionparms[9] = "true";
-    projectionparms[8] = 1;
-    projectionparms[7] = 1;
+    QStringList parameterNameList = projection->parameterNameList();
 
     int currentIndex = 0;
-    for(auto p : parmlist){
-        if ( p == "false easting")
-            projectionparms[0] = currentParms[currentIndex++].toString();
-        else if ( p == "false northing")
-            projectionparms[1] = currentParms[currentIndex++].toString();
-        else if ( p == "central meridian")
-            projectionparms[2] = currentParms[currentIndex++].toString();
-        else if ( p == "latitude of origin")
-            projectionparms[3] = currentParms[currentIndex++].toString();
-        else if ( p == "latitude of true scale")
-            projectionparms[4] = currentParms[currentIndex++].toString();
-        else if ( p == "standard parallel 1")
-            projectionparms[5] = currentParms[currentIndex++].toString();
-        else if ( p == "standard parallel 2")
-            projectionparms[6] = currentParms[currentIndex++].toString();
-        else if ( p == "scale factor")
-            projectionparms[7] = currentParms[currentIndex++].toString();
-        else if ( p == "zone")
-            projectionparms[8] = currentParms[currentIndex++].toString();
-        else if ( p == "north oriented")
-            projectionparms[9] = (currentParms[currentIndex++].toBool() ? "yes" : "no");
-        else if ( p == "height")
-            projectionparms[10] = currentParms[currentIndex++].toString();
-        else if ( p == "azim central line of true scale")
-            projectionparms[11] = currentParms[currentIndex++].toBool();
+    QString kvps;
+    for(auto p : parameterNameList){
+        if ( kvps != "")
+            kvps += ",";
+        kvps  += p + "= " + currentParms[currentIndex++].toString();
 
     }
-    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(%2").arg(parms["name"].toString());
-    for(auto p : projectionparms){
-        expression += ","+ p;
+    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\"").
+            arg(parms["name"].toString()).
+            arg(proj).
+            arg(kvps).
+            arg(parms["ellipsoid"].toString());
+    if ( parms.contains("envelope")){
+        expression += ",\"" + parms["envelope"].toString()+ "\"";
     }
-    expression += "," + parms["ellipsoid"].toString();
-    expression += "," + parms["description"].toString() + ")";
+    if ( parms.contains("datumshifts")){
+        expression += ",\"" + parms["datumshifts"].toString() + "\"";
+    }
+    expression += ")";
 
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
     if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
-        ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
-        return QString::number(obj->id());
+        if ( ctx._results.size() > 0){
+            ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
+            return QString::number(obj->id());
+        }
     }
 
     return QString::number(i64UNDEF);
@@ -271,6 +254,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     OperationResource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
     res.setDescription(parms["description"].toString());
     res.setKeywords(parms["keywords"].toString());
+    res.setUrl(parms["url"].toString(),true);
     res.prepare();
     mastercatalog()->addItems({res});
     QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");

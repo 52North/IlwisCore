@@ -6,6 +6,7 @@ import WorkflowModel 1.0
 import ScenarioBuilderModel 1.0
 import ScenarioDesignerModel 1.0
 import "./workflow" as WorkFlow
+import "../../Global.js" as Global
 
 Item {
     id: modellerDataPane
@@ -13,7 +14,8 @@ Item {
     height : parent.height
     property TabModel tabmodel
     property ScenarioDesignerModel scenario
-    property double factor : 1.5
+    property int ontTopZValue: 1000000
+    property double factor : 1.1
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
@@ -23,9 +25,9 @@ Item {
                 var resource = mastercatalog.id2Resource(filter.split('=')[1]);
                 canvas.workflow = scenario.addWorkflow(filter);
                 if (resource) {
-                    canvas.workflow.load()
                     canvas.drawFromWorkflow()
                 }
+                manager.showWorkflowMetadata(canvas.workflow)
             }
         }
     }
@@ -67,6 +69,10 @@ Item {
         }
     }
 
+    function newCondition() {
+        canvas.newCondition()
+    }
+
     function deleteSelectedOperation(){
         canvas.deleteSelectedOperation()
     }
@@ -79,23 +85,23 @@ Item {
         canvas.alterSelectedEdge()
     }
 
-    function canvasZoomOut(){
-        scaleCanvas(1/factor);
+    function canvasZoom(clicks){
+        canvas.zoom(clicks)
     }
 
-    function canvasZoomIn(){
-        scaleCanvas(factor);
+    /**
+    Sets the canvas' zoom back to 100%
+    */
+    function defaultZoom(){
+        canvas.defaultZoom();
     }
 
-    function scaleCanvas(scaleFactor){
-        canvas.height /= scaleFactor;
-        canvas.width /= scaleFactor;
-        tform.xScale *=scaleFactor;
-        tform.yScale *=scaleFactor;
-    }
-
-    function asignConstantInputData(inputData, operationid) {
-        canvas.asignConstantInputData(inputData, operationid);
+    /**
+    Sets the zoom percentage based on the tform's xScale
+    */
+    function setPercentage(){
+        var scl = canvas.getScale();
+        modellertools.zoomLevel.text = Math.round((scl * 100)) + "%"
     }
 
     /**
@@ -103,6 +109,10 @@ Item {
       */
     function run() {
         canvas.run()
+    }
+
+    function addError(id, error) {
+        errorview.addError(id, error)
     }
 
     signal exit;
@@ -115,58 +125,53 @@ Item {
         id : modellertools
     }
 
+    ModellerErrorView {
+        height: 0
+        id : errorview
+        width : parent.width
+        y: modellertools.height
+        z: ontTopZValue
+        color: Global.alternatecolor4
+        border.width: 1
+        border.color: Global.alternatecolor1
+
+        states: [
+            State {
+                name : "bigger"
+                PropertyChanges {
+                    target: errorview
+                    height : 80
+                }
+            },
+            State {
+                name: "smaller"
+                PropertyChanges {
+                    target: errorview
+                    height : 0
+                }
+            }
+        ]
+        transitions: [
+            Transition {
+                NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+            }
+        ]
+    }
+
     SplitView {
         anchors.top : modellertools.bottom
         width : parent.width
         orientation: Qt.Vertical
         height : parent.height - modellertools.height
 
-
-        ModellerErrorView {
-            height: 0
-            id : errorview
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.right: parent.right
-            state: "smaller"
-
-            states: [
-                State {
-                    name : "bigger"
-                    PropertyChanges {
-                        target: errorview
-                        height : 80
-                    }
-                    PropertyChanges {
-                        target: datapane
-                        height : parent.height - modellertools.height - 170 - 80
-                    }
-                },
-                State { name: "smaller"
-
-                    PropertyChanges {
-                        target: errorview
-                        height : 0
-                    }
-                }
-            ]
-            transitions: [
-                Transition {
-                    NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
-                }
-            ]
-        }
-
         Item {
             id : datapane
             width : parent.width
-            height : parent.height - modellertools.height - 170
+            height : parent.height - 300
 
             function asignConstantInputData(vertexIndex, parameterIndex, value){
                 canvas.asignConstantInputData(vertexIndex, parameterIndex, value)
             }
-
-
 
             WorkFlow.WorkflowCanvas {
                 id: canvas
@@ -174,21 +179,21 @@ Item {
                 transform : Scale{
                     id : tform
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    propagateComposedEvents: true
-                    onWheel: {
-                        if(wheel.angleDelta.y > 0){  // zoom in
-                            modellerDataPane.canvasZoomIn();
-                        }
-                        else{                        // zoom out
-                            modellerDataPane.canvasZoomOut();
-                        }
-                    }
-                    onPressed:{mouse.accepted = false}
-                    onPositionChanged:{mouse.accepted = false}
-                    onReleased:{mouse.accepted = false}
-                }
+//                MouseArea {
+//                    anchors.fill: parent
+//                    propagateComposedEvents: true
+//                    onWheel: {
+//                        if(wheel.angleDelta.y > 0){  // zoom in
+//                            modellerDataPane.canvasZoomIn();
+//                        }
+//                        else{                        // zoom out
+//                            modellerDataPane.canvasZoomOut();
+//                        }
+//                    }
+//                    onPressed:{mouse.accepted = false}
+//                    onPositionChanged:{mouse.accepted = false}
+//                    onReleased:{mouse.accepted = false}
+//                }
             }
 
 
@@ -201,14 +206,14 @@ Item {
 
                     PropertyChanges {
                         target: datapane
-                        height : parent.height - modellertools.height - 170
+                        height : parent.height - 170
                     }
                 },
                 State {
                     name : "bigger"
                     PropertyChanges {
                         target: datapane
-                        height : parent.height - modellertools.height + 10
+                        height : parent.height - 23
                     }
                 }
 
@@ -219,15 +224,12 @@ Item {
                 }
             ]
         }
+
         ModelManager{
             id : manager
-            height : 170
+            height : 300
             anchors.left: parent.left
-            anchors.leftMargin: 5
             anchors.right: parent.right
         }
-
-
     }
-
 }

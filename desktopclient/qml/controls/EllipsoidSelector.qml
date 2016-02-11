@@ -9,66 +9,36 @@ import "../Global.js" as Global
 import "../controls" as Controls
 import ".." as Base
 
-Item {
-    id : createEllipsoid
-    height : ellipsoidLabel.height + ellChoice.height
-    width : parent.width
-    property string name : "Wgs 84"
+Controls.ComboxLabelPair{
 
-    Row {
-        id : ellChoice
-        width : parent.width
-        height : 20
-
-        function isPrj(objid){
-            var tp = mastercatalog.id2type(objid)
-            return (tp === "ellipsoid")
-        }
-        Text {
-            id : ellipsoidLabel
-            height : parent.height
-            width : 120
-            text : qsTr("Ellipsoid")
-            font.bold: true
-        }
-
-        TextFieldDropArea {
-            id : droparea
-            canUse: ellChoice.isPrj
-            width : ellChoice.width - ellipsoidLabel.width
-            height : parent.height
-            asName : true
-            content : name
-
-            onObjectidChanged: {
-                name = droparea.content
-            }
-        }
+    ListModel {
+        id : ellipsoidList
     }
 
-    Item {
+    id : ellipsoids
+    labelText: qsTr("Ellipsoid")
+    labelWidth: 140
+    property var selectedObjectid
+    property var items : []
+    role : "text"
 
-        states: [
-            State { name: "maximized"
-                PropertyChanges {
-                    target: parmcontainer
-                    height : 155
-                }
-            },
-            State {
-                name : "minimized"
-                PropertyChanges {
-                    target: parmcontainer
-                    height : 0
-                }
-            }
+    onCurrentIndexChanged: {
+        selectedObjectid =  ellipsoids.items[currentIndex].split("|")[0]
+    }
 
-        ]
-        transitions: [
-            Transition {
-                NumberAnimation { properties: "height"; duration : 500 ; easing.type: Easing.InOutCubic }
+    Component.onCompleted: {
+        ellipsoids.items = mastercatalog.select("type=" + uicontext.typeName2typeId("ellipsoid"),"name")
+        var defaultChoice = 0
+        for(var i = 0; i < ellipsoids.items.length; ++i){
+            var parts = ellipsoids.items[i].split("|")
+            ellipsoidList.append({"text": parts[1]})
+            if ( parts[1] === "Wgs 84"){
+                defaultChoice = i
             }
-        ]
+        }
+        itemModel = ellipsoidList
+        currentIndex = defaultChoice
+
     }
 }
 

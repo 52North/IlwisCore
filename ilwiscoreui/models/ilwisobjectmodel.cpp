@@ -146,6 +146,14 @@ bool IlwisObjectModel::isSystemObject() const
     return true; // just block
 }
 
+bool IlwisObjectModel::isCoverage() const
+{
+    if ( _ilwisobject.isValid()){
+        return hasType(_ilwisobject->ilwisType(), itCOVERAGE);
+    }
+    return false;
+}
+
 QString IlwisObjectModel::projectionInfo() const
 {
     try {
@@ -291,22 +299,22 @@ QQmlListProperty<ProjectionParameterModel> IlwisObjectModel::projectionItems()
             proj = _ilwisobject.as<Projection>();
 
         if ( proj.isValid()){
-            if ( proj->isUsed(Projection::pvX0))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvX0, this));
-            if ( proj->isUsed(Projection::pvY0))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvY0, this));
-            if ( proj->isUsed(Projection::pvLON0))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLON0, this));
-            if ( proj->isUsed(Projection::pvLAT0))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT0, this));
-            if ( proj->isUsed(Projection::pvLAT1))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT1, this));
-            if ( proj->isUsed(Projection::pvLAT2))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLAT2, this));
-            if ( proj->isUsed(Projection::pvLATTS))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLATTS, this));
-            if ( proj->isUsed(Projection::pvK0))
-                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvK0, this));
+            if ( proj->isUsed(Projection::pvFALSEEASTING))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvFALSEEASTING, this));
+            if ( proj->isUsed(Projection::pvFALSENORTHING))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvFALSENORTHING, this));
+            if ( proj->isUsed(Projection::pvCENTRALMERIDIAN))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvCENTRALMERIDIAN, this));
+            if ( proj->isUsed(Projection::pvCENTRALPARALLEL))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvCENTRALPARALLEL, this));
+            if ( proj->isUsed(Projection::pvSTANDARDPARALLEL1))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvSTANDARDPARALLEL1, this));
+            if ( proj->isUsed(Projection::pvSTANDARDPARALLEL2))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvSTANDARDPARALLEL2, this));
+            if ( proj->isUsed(Projection::pvLATITUDEOFTRUESCALE))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvLATITUDEOFTRUESCALE, this));
+            if ( proj->isUsed(Projection::pvSCALE))
+                _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvSCALE, this));
             if ( proj->isUsed(Projection::pvZONE))
                 _projectionParmItems.append(new ProjectionParameterModel(proj, Projection::pvZONE, this));
             if ( proj->isUsed(Projection::pvHEIGHT))

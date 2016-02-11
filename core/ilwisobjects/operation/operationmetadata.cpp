@@ -284,8 +284,8 @@ OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) 
 OperationResource::OperationResource(const QUrl &inurl, const IlwisTypes &type, const QString &nmspace) : Resource(inurl,type)
 {
     prepare();
-    QString urls = url().toString() + "=" + QString::number(id());
-    setUrl(urls);
+    //QString urls = url().toString() + "=" + QString::number(id());
+    //setUrl(urls);
     addProperty("namespace",nmspace);
 }
 
@@ -380,6 +380,7 @@ void OperationResource::addOutParameter(quint32 order, IlwisTypes type, const QS
     QString prefix = "pout_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
+    addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", false);
 }
 

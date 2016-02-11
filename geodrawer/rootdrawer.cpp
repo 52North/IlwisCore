@@ -20,6 +20,8 @@ RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& opti
     _screenGrf = new GeoReference();
     _screenGrf->create("corners");
     _backgroundColor = "white";
+    GridDrawer *griddrawer = new GridDrawer(this,this,options);
+    addDrawer(griddrawer,DrawerInterface::dtPOST,iUNDEF,"GridDrawer");
 }
 
 RootDrawer::~RootDrawer()
@@ -145,6 +147,9 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
     _zoomRect = envelope;
     viewPoint(_zoomRect.center(), true);
     setMVP();
+    if ( hasDrawer("griddrawer",DrawerInterface::dtPOST)){
+        drawer("griddrawer",DrawerInterface::dtPOST)->unprepare(DrawerInterface::ptGEOMETRY);
+    }
 
 }
 
@@ -258,9 +263,8 @@ bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOpti
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         if (!hasDrawer("GridDrawer", DrawerInterface::dtPOST)){
-            GridDrawer *griddrawer = new GridDrawer(this,this,options);
-            griddrawer->prepare(DrawerInterface::ptALL, options);
-            addDrawer(griddrawer,DrawerInterface::dtPOST,iUNDEF,"GridDrawer");
+            drawer("GridDrawer", DrawerInterface::dtPOST)->prepare(DrawerInterface::ptALL, options);
+
         }
     }
     return true;

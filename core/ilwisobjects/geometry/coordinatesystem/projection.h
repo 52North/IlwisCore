@@ -11,9 +11,9 @@ class ConventionalCoordinateSystem;
 class KERNELSHARED_EXPORT Projection : public IlwisObject
 {
 public:
-     enum ProjectionParamValue { pvNONE, pvX0, pvY0, pvLON0,
-     pvLATTS, pvLAT0, pvK0, pvNORTH,
-     pvZONE, pvLAT1, pvLAT2, pvHEIGHT,
+     enum ProjectionParamValue { pvNONE, pvFALSEEASTING, pvFALSENORTHING, pvCENTRALMERIDIAN,
+     pvLATITUDEOFTRUESCALE, pvCENTRALPARALLEL, pvSCALE, pvNORTH,
+     pvZONE, pvSTANDARDPARALLEL1, pvSTANDARDPARALLEL2, pvHEIGHT,
      pvTILTED, pvTILT, pvAZIMYAXIS, pvAZIMCLINE,
      pvPOLE, pvNORIENTED, pvELLCODE, pvLAST };
 
@@ -56,7 +56,10 @@ public:
     static Projection::ProjectionParamValue parameterName2type(const QString &name);
     static QString projectionCode2Name(const QString& code);
 
+    QStringList parameterNameList() const;
+    IlwisObject *clone();
 protected:
+    void copyTo(IlwisObject *obj);
     static Projection::FindMatch find(const QString& v1, const QString& value) ;
 
 private:

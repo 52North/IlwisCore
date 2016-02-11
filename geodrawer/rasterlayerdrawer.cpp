@@ -128,12 +128,14 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
         raster->datadef().range<ColorPalette>();
     }else if ( hasType(attrType, itDOMAINITEM)){
         //initialize all possible attributes that can be used in visualization
-        for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
-            const ColumnDefinition& coldef = raster->attributeTable()->columndefinitionRef(i);
-            IlwisTypes attrType = coldef.datadef().domain()->ilwisType();
-            if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN | itTEXTDOMAIN)){
-                VisualAttribute props = createVisualProperty(coldef, i);
-                visualProperty(coldef.name(), props);
+        if ( raster->hasAttributes()){
+            for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
+                const ColumnDefinition& coldef = raster->attributeTable()->columndefinitionRef(i);
+                IlwisTypes attrType = coldef.datadef().domain()->ilwisType();
+                if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN | itTEXTDOMAIN)){
+                    VisualAttribute props = createVisualProperty(coldef, i);
+                    visualProperty(coldef.name(), props);
+                }
             }
         }
 

@@ -11,7 +11,7 @@
 #include "georeference.h"
 #include "uicontextmodel.h"
 #include "coveragelayermodel.h"
-#include "coverage.h"
+#include "raster.h"
 #include "layerinfoitem.h"
 #include "layermanager.h"
 #include "globallayermodel.h"
@@ -185,10 +185,18 @@ QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName
                     crd = cov->coordinateSystem()->coord2coord(csy, crd);
                 }
             }
+
             auto item = new LayerInfoItem("Layer",cov->name(), this);
             item->icon(layer->iconPath());
             item->layerHeader(true);
             _layerInfoItems.push_back(item);
+            if ( cov->ilwisType() == itRASTER){
+                IRasterCoverage raster = cov.as<RasterCoverage>();
+                Pixel pix = raster->georeference()->coord2Pixel(crd);
+                QString pixtxt = QString("%1 %2").arg(pix.x + 1).arg(pix.y + 1);
+                _layerInfoItems.push_back(new LayerInfoItem(TR("Pixel"), pixtxt, this));
+
+            }
             QVariant value = cov->coord2value(crd,attrName);
             if ( value.isValid()){
                 QString txt;

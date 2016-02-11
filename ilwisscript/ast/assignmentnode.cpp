@@ -68,6 +68,8 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::IDomain>().as<IlwisObject>();
     if ( hasType(tp , itGEOREF))
         return sym._var.value<Ilwis::IGeoReference>().as<IlwisObject>();
+    if ( hasType(tp , itCOORDSYSTEM))
+        return sym._var.value<Ilwis::ICoordinateSystem>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -92,25 +94,32 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
         if ( object.isValid()){
-            bool wasAnonymous = object->isAnonymous();
+            bool wasAnonymous = object->isAnonymous(); // if object is anonymous it will get a name due this method; this means it will now appear in the mastercatalog
+            // as (previous) anonymous objects are not in the mastercatalog ( though they are registered)
             QString name = result;
             QUrl url;
-            if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url
+            if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url, than we figure out its name from the url
                 url = result;
                 name = result.mid(result.lastIndexOf("/") + 1);
             }
             else
+                // no path information so we create our own path, the name has no path information so can be used as is
                 if ( provider != "stream"){ // stream goes to the internal if nothing has ben defined and that is default.
                     url = context()->workingCatalog()->source().url().toString() + "/" + result;
+                }else {
+                    url = context()->persistentInternalCatalog().toString() + "/" + result;
                 }
             object->name(name);
+            // we reuse an existing connector if it is of the same provider; it will than inherit/use properties of the "old" connector
             if ( object->provider() != provider)
                 object->connectTo(url, format, provider, Ilwis::IlwisObject::cmOUTPUT);
             object->createTime(Ilwis::Time::now());
             if ( wasAnonymous)
                 mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
-            object->store({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+            IOOptions opt({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
+            opt << IOOptions::Option{"format",format};
+            object->store(opt);
         }else {
             kernel()->issues()->log(QString(TR("Couldn't retrieve symbol from symbol table, object will not be stored")));
         }
@@ -144,6 +153,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     }
                     else if (hasType(tp, itFEATURE))
                         ok &= copyObject<FeatureCoverage>(sym, result,symbols);
+                    else if (hasType(tp, itCOORDSYSTEM))
+                        ok &= copyObject<CoordinateSystem>(sym, result,symbols);
                     else if ( hasType(tp, itDOMAIN)){
                         ok &= copyObject<Domain>(sym, result,symbols);
                     } else if ( hasType(tp, itGEOREF)){

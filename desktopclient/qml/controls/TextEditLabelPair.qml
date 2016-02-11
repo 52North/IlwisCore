@@ -13,6 +13,7 @@ Item {
     property bool readOnly : false;
     property bool transparentBackgrond : true
     property var regexvalidator
+    property bool boldLabel : true
     height : 20
 
     Text {
@@ -20,7 +21,7 @@ Item {
         height : parent.height
         width : labelWidth
         text : labelText
-        font.bold: true
+        font.weight: boldLabel ? Font.Bold : Font.DemiBold
         font.pointSize: fontSize
         y :3
     }

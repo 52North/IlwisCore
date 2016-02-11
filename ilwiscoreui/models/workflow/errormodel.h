@@ -38,6 +38,7 @@ public:
 
     Q_INVOKABLE void addError(int id, QString msg);
     Q_INVOKABLE void clearList();
+    Q_INVOKABLE int getCount();
 
 
 private:

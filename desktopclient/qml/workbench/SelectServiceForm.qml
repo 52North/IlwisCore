@@ -78,8 +78,13 @@ Rectangle {
         id : makeConnection
         onTriggered: {
             if (currentAppForm != null){
-                mastercatalog.addCatalog(currentAppForm.outputfield_0)
-                currentFolder = currentAppForm.outputfield_0
+                //mastercatalog.addCatalog(currentAppForm.outputfield_0)
+                var parts = currentAppForm.formresult.split("|")
+                var url = parts[parts.length - 1]
+                url.split('\"').join('')
+                var cmd = "container='" + url +"'"
+                bigthing.newCatalog(cmd,"catalog",url, "right")
+                currentFolder = url
             }
         }
     }

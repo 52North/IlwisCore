@@ -33,13 +33,13 @@ bool AttributeDefinition::addColumn(const QString &name, const QString &domainna
     IDomain dom;
     if(!dom.prepare(domainname))
         return false;
-    return addColumn({name, dom, readonly});
+    return addColumn({name, dom, _columnDefinitionsByIndex.size(), readonly});
 }
 
 
 bool AttributeDefinition::addColumn(const QString &name, const IDomain &domain, bool readonly)
 {
-    return addColumn({name, domain, readonly});
+    return addColumn({name, domain, _columnDefinitionsByIndex.size(), readonly});
 }
 
 ColumnDefinition AttributeDefinition::columndefinition(const QString &nme) const

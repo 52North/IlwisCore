@@ -85,6 +85,9 @@ Parameter::PathType Parameter::pathType() const
 
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
     IlwisTypes tp = IlwisObject::findType(value);
+    if ( value == "\"?\"")
+        tp = itANY;
+
     if ( tp != itUNKNOWN)
         return tp;
 
@@ -316,7 +319,12 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
                         //Probleem
                     }
                 } else if ( c == '=' ) {
-                    keyword = count;
+                    QString value = rest.mid(inputParams[paramIndex], rest.size() - count);
+                    // ignore '=' in urls, they are part of the url
+                    if ( value.indexOf("://") == -1){
+                        keyword = count;
+                    }
+
                 }
             }
 

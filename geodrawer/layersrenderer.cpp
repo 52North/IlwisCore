@@ -2,6 +2,7 @@
 #include <QtQuick/qquickwindow.h>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLContext>
+#include <QDir>
 #include "rootdrawer.h"
 #include "table.h"
 #include "layerdrawer.h"
@@ -34,6 +35,18 @@ LayersRenderer::~LayersRenderer()
 }
 
 
+void LayersRenderer::saveAsImage() const
+{
+    QImage image = _fbo->toImage();
+    QImage vflip = image.transformed(QMatrix().scale(1,-1));
+    QUrl url(_saveImagePath);
+    QFileInfo inf(url.toLocalFile());
+    QDir dir(inf.absoluteDir().absolutePath() );
+    if ( !dir.exists())
+        dir.mkdir(inf.absolutePath());
+    vflip.save(inf.absoluteFilePath());
+}
+
 void LayersRenderer::render()
 {
     try {
@@ -59,6 +72,10 @@ void LayersRenderer::render()
         _rootDrawer->draw( );
 
         glDisable(GL_BLEND);
+
+        if ( _saveImagePath != "" && _fbo){
+            saveAsImage();
+        }
 
         emit drawDone();
     }
@@ -127,7 +144,11 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
             auto pair = gdrawer->_attributeQueue.front();
             gdrawer->_attributeQueue.pop_front();
             for(QVariantMap::const_iterator iter = pair.second.begin(); iter != pair.second.end(); ++iter) {
-                _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
+                if ( pair.first.toLower() == "view"){
+                    handleRendererAttributes(iter.key(), iter.value())    ;
+                }else {
+                    _rootDrawer->drawerAttribute(pair.first.toLower(),iter.key(), iter.value());
+                }
             }
             needPrepare = true;
         }
@@ -144,4 +165,10 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
     }
 }
 
+void LayersRenderer::handleRendererAttributes(const QString& code, const QVariant& value){
+    if ( code == "saveimage")    {
+        //QString path = value.toString();
+        _saveImagePath = value.toString();
+    }
+}
 

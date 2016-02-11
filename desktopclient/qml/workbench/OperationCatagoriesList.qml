@@ -18,6 +18,7 @@ Item {
         id : operationsByKey
         anchors.fill: parent
         model : operations.operationKeywords
+        clip : true
         delegate: Controls.CollapsiblePanel {
             id : keylistdelegate
             width : parent.width
@@ -25,7 +26,7 @@ Item {
             headerHeight: 20
             panelHeight: 35 * operationCount
             state : "collapsed"
-            headerColor: Math.floor(index/5) % 2 == 0 ? Global.alternatecolor1 : Global.alternatecolor3
+            headerColor: Math.floor(index/5) % 2 == 0 ? Global.alternatecolor4 : Global.alternatecolor2
 
 
             OperationList{
