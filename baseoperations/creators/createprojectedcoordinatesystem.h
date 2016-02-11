@@ -22,6 +22,8 @@ public:
 private:
     IProjection _projection;
     IEllipsoid _ellipsoid;
+    Envelope _envelope;
+    std::vector<double> _datumShifts;
     std::map<QString, double> _parms;
 
 

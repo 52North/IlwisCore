@@ -41,6 +41,12 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
     }
     csy->setProjection(_projection);
     csy->setEllipsoid(_ellipsoid);
+    if ( _envelope.isValid()){
+        csy->envelope(_envelope);
+    }
+    if ( _datumShifts.size() != 0){
+        csy->setDatum(new GeodeticDatum(_datumShifts));
+    }
 
     QVariant value;
     value.setValue<ICoordinateSystem>(csy);
@@ -79,6 +85,26 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
         }
         return false;
     };
+    auto Optionals = [&](const QString& parameter) -> bool{
+        QStringList parts =  parameter.split(",");
+        if ( parts.size() == 2) {// its an envelope
+            _envelope = Envelope(parameter);
+            if (!_envelope.isValid())
+                return false;
+        }
+        if ( parts.size() == 3 || parts.size() == 7 || parts.size() == 10){
+            bool ok;
+            for(auto part : parts){
+                double shift = part.toDouble(&ok);
+                if (!ok){
+                    kernel()->issues()->log(TR("Invalid values in datum shift"));
+                    return false;
+                }
+                _datumShifts.push_back(shift);
+            }
+        }
+        return true;
+    };
 
     proj = _expression.input<QString>(0);
     proj = proj.remove('\"');
@@ -114,6 +140,18 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
             _ellipsoid.prepare("ilwis://tables/ellipsoid?code=" + code);
         }
     }
+    if ( _expression.parameterCount() == 4){
+        QString p1 = _expression.input<QString>(3).remove('\"');
+        if(!Optionals(p1))
+            return sPREPAREFAILED;
+    }else if(_expression.parameterCount() == 5){
+        QString p1 = _expression.input<QString>(3).remove('\"');
+        if(!Optionals(p1))
+            return sPREPAREFAILED;
+        p1 = _expression.input<QString>(4).remove('\"');
+        if(!Optionals(p1))
+            return sPREPAREFAILED;
+    }
 
     return sPREPARED;
 }
@@ -122,11 +160,13 @@ quint64 Ilwis::BaseOperations::CreateProjectedCoordinateSystem::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createprojectedcoordinatesystem"});
     resource.setLongName("Create Projected Coordinate system");
-    resource.setSyntax("createprojectedcoordinatesystem(projectionname,falseeasting,falsenorthing,centralmeridian,latitudeoforigin,standardparallel1,standardparallel2,latitudeoftruescale,scale,zone,height,northoriented,azimtruescale,ellipsoid[,description])");
-    resource.setInParameterCount({3});
+    resource.setSyntax("createprojectedcoordinatesystem(projectionname,projection parameters,ellipsoid[,datumshifts][,envelope])");
+    resource.setInParameterCount({3,4,5});
     resource.addInParameter(0, itSTRING,TR("Projection name"), TR("Name of the projection used by the system"));
     resource.addInParameter(1, itSTRING,TR("Projection Parameters"), TR("A key value pair organized list of the parameters particular to this projection"));
     resource.addInParameter(2, itSTRING,TR("Ellipsoid name"), TR("Name of the ellipsoid used by this coordinate system"));
+    resource.addOptionalInParameter(3, itSTRING,TR("Datum shifts"), TR("Optional datum shifts following the toWgs84 convention"));
+    resource.addOptionalInParameter(4, itSTRING,TR("Envelope"), TR("Optional envelope limiting the bounds of the coordinate system"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itCONVENTIONALCOORDSYSTEM, TR("output coordinatesystem"), TR("The newly created projected coordinatesystem"));
     resource.setKeywords("coordinatesystem, create, projection");
