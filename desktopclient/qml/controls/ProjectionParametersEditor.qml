@@ -8,12 +8,14 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 ListView {
+    id : fieldlist
     function projectionParameters(){
         var values = []
         if ( model === undefined)
             return values
-        for(var i=0; i < items.length; ++i){
-             values.push(items[i].parent.bb)
+        for(var i=0; i < count; ++i){
+            fieldlist.currentIndex = i
+            values.push(fieldlist.currentItem.fieldvalue())
         }
         return values
     }
@@ -21,10 +23,20 @@ ListView {
     Component {
         id : editors
         Item {
-
-
+            id : thing
             width : parent.width
             height : 21
+
+            function fieldvalue(){
+
+                if ( vvalue.width != 0)
+                    return vvalue.text
+                if ( llvalue.width != 0 )
+                    return llvalue.metric
+                if ( bvalue.width != 0)
+                    return bvalue.checked ? 1 : 0
+                return -100000
+            }
 
             Row {
                 width : parent.width
@@ -40,17 +52,7 @@ ListView {
                 Item {
                     width : 120
                     height : 18
-                    property int bb : fieldvalue()
-                    function fieldvalue(){
 
-                        if ( vvalue.width != 0)
-                            return vvalue.text
-                        if ( llvalue.width != 0 )
-                            return llvalue.metric
-                        if ( bvalue.width != 0)
-                            return bvalue.checked ? 1 : 0
-                        return -100000
-                    }
                     Controls.ValidatedTextField{
                         id : vvalue
                         width : (valueType === "real64" || valueType=== "signedbyte") ? parent.width : 0
@@ -77,19 +79,10 @@ ListView {
                         checked : value == "true" ? true : false
                     }
                 }
-                Component.onCompleted: {
-                    if ( vvalue.width != 0)
-                        items.push(vvalue)
-                    else if ( llvalue.width != 0 )
-                        items.push(llvalue)
-                    else if ( bvalue.width != 0)
-                        items.push(bvalue)
-                }
             }
         }
     }
 
-    property var items : []
     delegate: editors
     clip : true
 
