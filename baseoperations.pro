@@ -55,7 +55,8 @@ HEADERS += \
     baseoperations/creators/createpalettedomain.h \
     baseoperations/creators/createcornersgeoreference.h \
     baseoperations/creators/createprojectedcoordinatesystem.h \
-    baseoperations/util/testoperation.h
+    baseoperations/util/testoperation.h \
+    baseoperations/math/columnjoin.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -97,7 +98,8 @@ SOURCES += \
     baseoperations/creators/createpalettedomain.cpp \
     baseoperations/creators/createcornersgeoreference.cpp \
     baseoperations/creators/createprojectedcoordinatesystem.cpp \
-    baseoperations/util/testoperation.cpp
+    baseoperations/util/testoperation.cpp \
+    baseoperations/math/columnjoin.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

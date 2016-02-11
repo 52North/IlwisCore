@@ -61,12 +61,8 @@ bool RasterToPoint::execute(ExecutionContext *ctx, SymbolTable &symTable)
              }
              ++count;
          }
-
         ++iter;
-
     }
-    std::cout<<count<<std::endl;
-    //_outputfeatures->attributesFromTable(_attTable);
     if ( ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outputfeatures);
