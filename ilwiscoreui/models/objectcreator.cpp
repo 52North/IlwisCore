@@ -223,13 +223,26 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
         kvps  += p + "= " + currentParms[currentIndex++].toString();
 
     }
-    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\")").arg(parms["name"].toString()).arg(proj).arg(kvps).arg(parms["ellipsoid"].toString());
+    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\"").
+            arg(parms["name"].toString()).
+            arg(proj).
+            arg(kvps).
+            arg(parms["ellipsoid"].toString());
+    if ( parms.contains("envelope")){
+        expression += ",\"" + parms["envelope"].toString()+ "\"";
+    }
+    if ( parms.contains("datumshifts")){
+        expression += ",\"" + parms["datumshifts"].toString() + "\"";
+    }
+    expression += ")";
 
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
     if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
-        ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
-        return QString::number(obj->id());
+        if ( ctx._results.size() > 0){
+            ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
+            return QString::number(obj->id());
+        }
     }
 
     return QString::number(i64UNDEF);
