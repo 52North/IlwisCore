@@ -22,6 +22,22 @@ GeodeticDatum::GeodeticDatum(const QString& name) : Identity(name)
 
 }
 
+GeodeticDatum::GeodeticDatum(std::vector<double> &datumParameters)
+{
+    if ( datumParameters.size() == 3)    {
+        set3TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2]);
+    }
+    if ( datumParameters.size() == 7)    {
+        set7TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
+                datumParameters[3], datumParameters[4], datumParameters[5], datumParameters[6]);
+    }
+    if ( datumParameters.size() == 10)    {
+        set10TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
+                datumParameters[3], datumParameters[4], datumParameters[5],
+                datumParameters[6], Coordinate(datumParameters[7], datumParameters[8], datumParameters[9]));
+    }
+}
+
 void GeodeticDatum::set3TransformationParameters(double x, double z, double y){
     _datumParams[dmDX] = x;
     _datumParams[dmDY] = y;
