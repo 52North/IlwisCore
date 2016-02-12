@@ -19,7 +19,8 @@ Rectangle {
         anchors.margins: 2
         GridView {
             id: thumbGrid
-            property int oldIndex  : -1
+            property var oldLoader
+            property var oldImageName
             model: currentCatalog ? currentCatalog.mapItems : null
             delegate: DCatalogListThumb{}
             cacheBuffer: 1000

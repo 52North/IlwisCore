@@ -17,8 +17,8 @@ Item{
     height :  GridView.view.cellHeight
     clip : true
 
-    function changeImageLoader(newloader){
-        imageLoader.sourceComponent = newloader
+    function changeImageLoader(loader, img){
+        loader.setSource("ThumbImage.qml",{"imageName" : img})
     }
 
     function iconSource(name) {
@@ -46,18 +46,6 @@ Item{
         }
 
     }
-    Component {
-        id : defaultImage
-        Image {
-            id: img
-            anchors.fill: parent
-            anchors.margins: 2
-
-            source: iconSource(imagePath)
-            fillMode: Image.PreserveAspectFit
-            asynchronous: true
-        }
-    }
 
     Component {
         id : layerDrawer
@@ -72,6 +60,7 @@ Item{
                 setAttribute("GridDrawer", {"active" : false})
                 realizeThumbPath()
                 setAttribute("View",{"saveimage" : imagePath})
+                thumbGrid.oldImageName = imagePath
             }
         }
     }
@@ -95,7 +84,10 @@ Item{
             Loader{
                 id : imageLoader
                 anchors.fill: parent
-                sourceComponent : defaultImage
+
+            }
+            Component.onCompleted: {
+                 imageLoader.setSource("ThumbImage.qml",{"imageName" : imagePath})
             }
 
         }
@@ -118,19 +110,17 @@ Item{
                 MouseArea {
                     anchors.fill: parent
                     onClicked:{
-                        if ( thumbGrid.oldIndex !== -1) {
-                            thumbGrid.contentItem.children[thumbGrid.oldIndex].changeImageLoader(defaultImage)
+                        if ( thumbGrid.oldLoader) {
+                            console.debug("first", thumbGrid.oldImageName)
+                            changeImageLoader(thumbGrid.oldLoader, thumbGrid.oldImageName)
                         }
-                        thumbGrid.oldIndex = index
+                        thumbGrid.oldLoader = imageLoader
+                        thumbGrid.oldImageName = imagePath
                         imageLoader.sourceComponent = layerDrawer
-
-
                     }
                 }
             }
-
         }
-
     }
     Image {
         id : typeicon
