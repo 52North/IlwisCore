@@ -56,6 +56,7 @@ HEADERS += \
     baseoperations/creators/createcornersgeoreference.h \
     baseoperations/creators/createprojectedcoordinatesystem.h \
     baseoperations/util/testoperation.h \
+    baseoperations/math/columnjoin.h \
     baseoperations/data/saveas.h
 
 SOURCES += \
@@ -99,6 +100,7 @@ SOURCES += \
     baseoperations/creators/createcornersgeoreference.cpp \
     baseoperations/creators/createprojectedcoordinatesystem.cpp \
     baseoperations/util/testoperation.cpp \
+    baseoperations/math/columnjoin.cpp \
     baseoperations/data/saveas.cpp
 
 OTHER_FILES += \

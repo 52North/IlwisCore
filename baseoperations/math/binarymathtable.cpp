@@ -146,6 +146,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
     IDomain dom;
     dom.prepare("value");
     ColumnDefinition coldef(_outColumn,dom, index == iUNDEF ? _outputTable->columnCount() : index);
+
     coldef.datadef().range(newRange);
     if ( index == iUNDEF)
         _outputTable->addColumn(coldef);
