@@ -25,6 +25,8 @@ private:
     Envelope _envelope;
     std::vector<double> _datumShifts;
     std::map<QString, double> _parms;
+    int _epsg = 0;
+    QString _proj4Def;
 
 
 };

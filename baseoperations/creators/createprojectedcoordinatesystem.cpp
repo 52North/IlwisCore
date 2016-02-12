@@ -35,17 +35,28 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
             return false;
 
     IConventionalCoordinateSystem csy;
-    csy.prepare();
-    for(auto kvp : _parms) {
-        _projection->setParameter( Projection::parameterName2type(kvp.first), kvp.second);
+    if ( _epsg != 0){
+        csy.prepare("code=epsg:" + QString::number(_epsg))    ;
+    }else if (_proj4Def != ""){
+        csy.prepare("code=proj4:" + _proj4Def) ;
+    }else {
+
+        csy.prepare();
+        for(auto kvp : _parms) {
+            _projection->setParameter( Projection::parameterName2type(kvp.first), kvp.second);
+        }
+        csy->setProjection(_projection);
+        csy->setEllipsoid(_ellipsoid);
+        if ( _envelope.isValid()){
+            csy->envelope(_envelope);
+        }
+        if ( _datumShifts.size() != 0){
+            csy->setDatum(new GeodeticDatum(_datumShifts));
+        }
     }
-    csy->setProjection(_projection);
-    csy->setEllipsoid(_ellipsoid);
-    if ( _envelope.isValid()){
-        csy->envelope(_envelope);
-    }
-    if ( _datumShifts.size() != 0){
-        csy->setDatum(new GeodeticDatum(_datumShifts));
+    if ( !csy.isValid()){
+        kernel()->issues()->log(TR("Creating coordinate system failed. Invalid parameters encountered"));
+        return false;
     }
 
     QVariant value;
@@ -106,51 +117,62 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
         return true;
     };
 
-    proj = _expression.input<QString>(0);
-    proj = proj.remove('\"');
-    if ( proj.indexOf("ilwis:/") != -1){
-        _projection.prepare(proj);
-    }else {
-        InternalDatabaseConnection db("Select code from projection where name='" + proj + "'");
-        if ( db.next()){
-            QString code = db.value(0).toString();
-            _projection.prepare("ilwis://tables/projection?code=" + code);
+    if ( _expression.parameterCount() > 1){
+        proj = _expression.input<QString>(0);
+        proj = proj.remove('\"');
+        if ( proj.indexOf("ilwis:/") != -1){
+            _projection.prepare(proj);
+        }else {
+            InternalDatabaseConnection db("Select code from projection where name='" + proj + "'");
+            if ( db.next()){
+                QString code = db.value(0).toString();
+                _projection.prepare("ilwis://tables/projection?code=" + code);
+            }
         }
-    }
-    if ( !_projection.isValid()){
-        ProjError(TR("Invalid projection definition"));
-        return sPREPAREFAILED;
-    }
-    QStringList parameterNameList = _projection->parameterNameList();
-
-    for(int index = 0; index < parameterNameList.size(); ++index) {
-        bool ok = NumericParameter(parameterNameList[index]);
-        if (!ok)
+        if ( !_projection.isValid()){
+            ProjError(TR("Invalid projection definition"));
             return sPREPAREFAILED;
-    }
-    QString ell = _expression.input<QString>(2);
-    ell = ell.remove('\"');
-
-    if ( ell.indexOf("ilwis:/") != -1){
-        _ellipsoid.prepare(ell);
-    }else {
-        InternalDatabaseConnection db("Select code from ellipsoid where name='" + ell + "'");
-        if ( db.next()){
-            QString code = db.value(0).toString();
-            _ellipsoid.prepare("ilwis://tables/ellipsoid?code=" + code);
         }
-    }
-    if ( _expression.parameterCount() == 4){
-        QString p1 = _expression.input<QString>(3).remove('\"');
-        if(!Optionals(p1))
-            return sPREPAREFAILED;
-    }else if(_expression.parameterCount() == 5){
-        QString p1 = _expression.input<QString>(3).remove('\"');
-        if(!Optionals(p1))
-            return sPREPAREFAILED;
-        p1 = _expression.input<QString>(4).remove('\"');
-        if(!Optionals(p1))
-            return sPREPAREFAILED;
+        QStringList parameterNameList = _projection->parameterNameList();
+
+        for(int index = 0; index < parameterNameList.size(); ++index) {
+            bool ok = NumericParameter(parameterNameList[index]);
+            if (!ok)
+                return sPREPAREFAILED;
+        }
+        QString ell = _expression.input<QString>(2);
+        ell = ell.remove('\"');
+
+        if ( ell.indexOf("ilwis:/") != -1){
+            _ellipsoid.prepare(ell);
+        }else {
+            InternalDatabaseConnection db("Select code from ellipsoid where name='" + ell + "'");
+            if ( db.next()){
+                QString code = db.value(0).toString();
+                _ellipsoid.prepare("ilwis://tables/ellipsoid?code=" + code);
+            }
+        }
+        if ( _expression.parameterCount() == 4){
+            QString p1 = _expression.input<QString>(3).remove('\"');
+            if(!Optionals(p1))
+                return sPREPAREFAILED;
+        }else if(_expression.parameterCount() == 5){
+            QString p1 = _expression.input<QString>(3).remove('\"');
+            if(!Optionals(p1))
+                return sPREPAREFAILED;
+            p1 = _expression.input<QString>(4).remove('\"');
+            if(!Optionals(p1))
+                return sPREPAREFAILED;
+        }
+    }else if ( _expression.parameterCount() == 1){
+        bool ok;
+        _epsg = _expression.input<QString>(1).toInt(&ok);
+        if (!ok){
+            QString def = _expression.input<QString>(1);
+            def = def.trimmed().remove('\"');
+            _proj4Def = _expression.input<QString>(1);
+
+        }
     }
 
     return sPREPARED;
@@ -161,7 +183,7 @@ quint64 Ilwis::BaseOperations::CreateProjectedCoordinateSystem::createMetadata()
     OperationResource resource({"ilwis://operations/createprojectedcoordinatesystem"});
     resource.setLongName("Create Projected Coordinate system");
     resource.setSyntax("createprojectedcoordinatesystem(projectionname,projection parameters,ellipsoid[,datumshifts][,envelope])");
-    resource.setInParameterCount({3,4,5});
+    resource.setInParameterCount({1,3,4,5});
     resource.addInParameter(0, itSTRING,TR("Projection name"), TR("Name of the projection used by the system"));
     resource.addInParameter(1, itSTRING,TR("Projection Parameters"), TR("A key value pair organized list of the parameters particular to this projection"));
     resource.addInParameter(2, itSTRING,TR("Ellipsoid name"), TR("Name of the ellipsoid used by this coordinate system"));

@@ -111,7 +111,6 @@ Item{
                     anchors.fill: parent
                     onClicked:{
                         if ( thumbGrid.oldLoader) {
-                            console.debug("first", thumbGrid.oldImageName)
                             changeImageLoader(thumbGrid.oldLoader, thumbGrid.oldImageName)
                         }
                         thumbGrid.oldLoader = imageLoader
