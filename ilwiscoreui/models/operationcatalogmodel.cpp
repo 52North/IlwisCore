@@ -435,7 +435,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 }
             }
             //overrule the user if he wants to store things in the internalcatalog, then the format is by defintion stream
-            if ( context()->workingCatalog()->source().url() == INTERNAL_OBJECT)
+            if ( context()->workingCatalog()->resource().url() == INTERNAL_OBJECT)
                 formatName == "Memory";
             if ( formatName != "Memory"){ // special case
                 if ( format == "") {
@@ -448,7 +448,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 }
                 // if there is no path we extend it with a path unless the output is a new column, output is than the "old" table so no new output object
                 if ( output.indexOf("://") == -1 )
-                    output = context()->workingCatalog()->source().url().toString() + "/" + output + format;
+                    output = context()->workingCatalog()->resource().url().toString() + "/" + output + format;
                 else
                     output = output + format;
             }else{
