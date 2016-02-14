@@ -18,31 +18,7 @@ ProjectionImplementation::ProjectionImplementation(const QString &type) :
     _coordinateSystem(0),
     _projtype(type)
 {
-    _parameters[Projection::pvFALSEEASTING] = {0};
-    _parameters[Projection::pvFALSENORTHING] = {0};
-    _parameters[Projection::pvSCALE] = {1};
-    _parameters[Projection::pvCENTRALPARALLEL] = {0, itLATLON};
-    _parameters[Projection::pvSTANDARDPARALLEL1] = {30, itLATLON};
-    _parameters[Projection::pvSTANDARDPARALLEL2] = {60, itLATLON};
-    _parameters[Projection::pvLATITUDEOFTRUESCALE] = {0, itLATLON};
-    _parameters[Projection::pvZONE] = {1, itINT8};
-    _parameters[Projection::pvNORIENTED] =  {true, itBOOL};
-    _parameters[Projection::pvAZIMYAXIS] = {0};
-    _parameters[Projection::pvTILTED] =  {false,itBOOL};
-    _parameters[Projection::pvAZIMCLINE] = {0};
-    _parameters[Projection::pvHEIGHT] = {0};
-    _parameters[Projection::pvCENTRALMERIDIAN] =  {0, itLATLON};
-     InternalDatabaseConnection projs(QString("select parameters from projection where code='%1'").arg(_projtype));
-     while(projs.next()){
-        QString parms = projs.value(0).toString();
-        QStringList parts = parms.split("|");
-        for(const QString& part : parts){
-            Projection::ProjectionParamValue tp = Projection::parameterName2type(part);
-            _parameters[tp]._isUsed = true;
-        }
-     }
-
-
+    initParameterList(type);
 }
 
 QString ProjectionImplementation::type() const
@@ -108,6 +84,33 @@ void ProjectionImplementation::copyTo(ProjectionImplementation *prj)
 {
     prj->_projtype = _projtype;
     prj->_parameters = _parameters;
+}
+
+void ProjectionImplementation::initParameterList(const QString &projtype)
+{
+    _parameters[Projection::pvFALSEEASTING] = {0};
+    _parameters[Projection::pvFALSENORTHING] = {0};
+    _parameters[Projection::pvSCALE] = {1};
+    _parameters[Projection::pvCENTRALPARALLEL] = {0, itLATLON};
+    _parameters[Projection::pvSTANDARDPARALLEL1] = {30, itLATLON};
+    _parameters[Projection::pvSTANDARDPARALLEL2] = {60, itLATLON};
+    _parameters[Projection::pvLATITUDEOFTRUESCALE] = {0, itLATLON};
+    _parameters[Projection::pvZONE] = {1, itINT8};
+    _parameters[Projection::pvNORIENTED] =  {true, itBOOL};
+    _parameters[Projection::pvAZIMYAXIS] = {0};
+    _parameters[Projection::pvTILTED] =  {false,itBOOL};
+    _parameters[Projection::pvAZIMCLINE] = {0};
+    _parameters[Projection::pvHEIGHT] = {0};
+    _parameters[Projection::pvCENTRALMERIDIAN] =  {0, itLATLON};
+     InternalDatabaseConnection projs(QString("select parameters from projection where code='%1'").arg(projtype));
+     while(projs.next()){
+        QString parms = projs.value(0).toString();
+        QStringList parts = parms.split("|");
+        for(const QString& part : parts){
+            Projection::ProjectionParamValue tp = Projection::parameterName2type(part);
+            _parameters[tp]._isUsed = true;
+        }
+     }
 }
 
 QString ProjectionImplementation::toWKT(quint32 spaces)
