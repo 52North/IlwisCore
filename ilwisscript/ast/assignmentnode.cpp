@@ -98,6 +98,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
             // as (previous) anonymous objects are not in the mastercatalog ( though they are registered)
             QString name = result;
             QUrl url;
+            QUrl normalizedUrl;
             if ( result.indexOf(":/") != -1 && result.indexOf("//") != -1) {// is already an url, than we figure out its name from the url
                 url = result;
                 name = result.mid(result.lastIndexOf("/") + 1);
@@ -105,9 +106,10 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
             else
                 // no path information so we create our own path, the name has no path information so can be used as is
                 if ( provider != "stream"){ // stream goes to the internal if nothing has ben defined and that is default.
-                    url = context()->workingCatalog()->source().url().toString() + "/" + result;
+                    url = context()->workingCatalog()->resource().url().toString() + "/" + result;
                 }else {
                     url = context()->persistentInternalCatalog().toString() + "/" + result;
+                    normalizedUrl = "ilwis://internalcatalog/" + result;
                 }
             object->name(name);
             // we reuse an existing connector if it is of the same provider; it will than inherit/use properties of the "old" connector
@@ -115,7 +117,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
                 object->connectTo(url, format, provider, Ilwis::IlwisObject::cmOUTPUT);
             object->createTime(Ilwis::Time::now());
             if ( wasAnonymous)
-                mastercatalog()->addItems({object->source(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
+                mastercatalog()->addItems({object->resource(IlwisObject::cmOUTPUT | IlwisObject::cmEXTENDED)});
 
             IOOptions opt({"storemode",Ilwis::IlwisObject::smMETADATA | Ilwis::IlwisObject::smBINARYDATA});
             opt << IOOptions::Option{"format",format};
