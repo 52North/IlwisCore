@@ -31,7 +31,7 @@ bool MasterGeoreference::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    ctx->_masterGeoref = _georef->source().url().toString();
+    ctx->_masterGeoref = _georef->resource().url().toString();
 
     return true;
 }

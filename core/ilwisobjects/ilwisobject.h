@@ -125,7 +125,7 @@ public:
      *\sa Resource
      * @param source the resource to be used
      */
-    IlwisObject(const Resource &source);
+    IlwisObject(const Resource &resource);
 
     virtual ~IlwisObject();
 
@@ -281,7 +281,8 @@ public:
      * \brief source the location of the source that represents the physical read origin of this object
      * \return url that is sufficient to find the source
      */
-    virtual Resource source(int mode=cmINPUT) const;
+    virtual Resource resource(int mode=cmINPUT) const;
+    virtual Resource &resourceRef(int mode);
 
     /*!
      * \brief target the location of the source that represents the physical write target of this object
@@ -338,7 +339,7 @@ public:
      * @param source the Resource
      * @return a new ilwisObject when succesful, or 0 when it fails
      */
-    static IlwisObject *create(const Resource& source,const IOOptions& options=IOOptions());
+    static IlwisObject *create(const Resource& resource,const IOOptions& options=IOOptions());
 
     /**
       ??
@@ -346,7 +347,7 @@ public:
      * @param source
      * @return
      */
-    static IlwisTypes findType(const QString &source);
+    static IlwisTypes findType(const QString &resource);
 
     /**
      * creates a String with the name of the given IlwisTypes
