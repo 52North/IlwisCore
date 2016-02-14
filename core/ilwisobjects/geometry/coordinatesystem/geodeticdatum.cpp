@@ -66,6 +66,21 @@ void GeodeticDatum::set10TransformationParameters(double x, double z, double y, 
 
 }
 
+GeodeticDatum *GeodeticDatum::clone() const
+{
+    GeodeticDatum *datum = new GeodeticDatum();
+    datum->name(name())    ;
+    datum->code(code());
+    datum->setDescription(description());
+    datum->_area = _area;
+    datum->_authority = _authority;
+    datum->_datumParams = _datumParams;
+    datum->_isValid = _isValid;
+    datum->_wkt = _wkt;
+
+    return datum;
+}
+
 double GeodeticDatum::parameter(DatumParameters parm) const {
     return _datumParams[parm];
 }
