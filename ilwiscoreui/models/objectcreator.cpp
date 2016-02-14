@@ -258,7 +258,7 @@ QString ObjectCreator::createProjectedCoordinateSystemFromBase(const QVariantMap
 
 QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms){
     QString expression;
-    if ( parms.size() < 4){
+    if ( parms.size() == 4){
         expression =  createProjectedCoordinateSystemFromCode(parms);
     }else
         expression = createProjectedCoordinateSystemFromBase(parms);
