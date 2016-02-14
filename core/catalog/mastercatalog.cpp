@@ -118,7 +118,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     }
     catalog->scan();
 
-    addItems({catalog->source()});
+    addItems({catalog->resource()});
     //if ( catalog->itemCount() > 0){
         _catalogs.insert(location);
    // }
@@ -458,7 +458,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         if ( ok){
             return QUrl::fromLocalFile(name).toString();
         }else {
-            QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
+            QString resolvedName =  context()->workingCatalog()->resource().url().toString() + "/" + name;
             return resolvedName;
         }
 
@@ -600,7 +600,7 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
         data = iter.value();
     } else {
         if ( !data->isAnonymous())
-            addItems({data->source()});
+            addItems({data->resource()});
         _lookup[data->id()] = data;
 
     }
