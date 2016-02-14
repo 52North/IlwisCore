@@ -35,7 +35,7 @@ void ConvertColumnDomain::execute(const QVariantMap &parameters)
     try{
         QString colName = parameters["columnname"].toString();
         QString targetdom = parameters["targetdomaintype"].toString();
-        QString expr = QString("convertcolumndomain(%1,%2,%3)").arg(table()->source().url().toString()).arg(colName).arg(targetdom);
+        QString expr = QString("convertcolumndomain(%1,%2,%3)").arg(table()->resource().url().toString()).arg(colName).arg(targetdom);
 
         Ilwis::OperationExpression ex(expr);
         Ilwis::Operation op(ex);

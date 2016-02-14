@@ -31,11 +31,11 @@ void OperationWorker::process(){
                         if ( symbol._type == itRASTER){
                             IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
                             if ( raster.isValid())
-                                result = raster->source().url().toString();
+                                result = raster->resource().url().toString();
                         }else if(symbol._type == itTABLE){
                             ITable table = symbol._var.value<ITable>();
                             if(table.isValid())
-                                result = table->source().url().toString();
+                                result = table->resource().url().toString();
                         }
                     }
                 }

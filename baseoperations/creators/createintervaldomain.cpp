@@ -51,7 +51,7 @@ bool CreateIntervalDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IDomain>(intervaldomain);
-    ctx->setOutput(symTable,value,intervaldomain->name(),itDOMAIN,intervaldomain->source());
+    ctx->setOutput(symTable,value,intervaldomain->name(),itDOMAIN,intervaldomain->resource());
 
     return true;
 }

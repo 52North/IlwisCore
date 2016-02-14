@@ -47,7 +47,7 @@ public:
      * \sa Resource
      * \param source Resource that has to be used
      */
-    Coverage(const Resource& source);
+    Coverage(const Resource& resource);
 
     virtual ~Coverage();
 
@@ -104,7 +104,7 @@ public:
 
 
       //@override
-    Resource source(int mode=cmINPUT) const;
+    Resource resource(int mode=cmINPUT) const;
     bool canUse(const IlwisObject *obj, bool strict=false) const override;
 
     /**

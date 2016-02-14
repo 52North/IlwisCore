@@ -333,7 +333,7 @@ void WorkflowModel::store(const QStringList &coordinates)
         }
 
 
-        _workflow->connectTo(_workflow->source().url(true), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
+        _workflow->connectTo(_workflow->resource().url(true), QString("workflow"), QString("stream"), Ilwis::IlwisObject::cmOUTPUT);
         _workflow->createTime(Ilwis::Time::now());
         _workflow->store();
     } catch(const ErrorObject&){
@@ -385,7 +385,7 @@ QVariantList WorkflowModel::getConditions(int containerId)
         map.insert("xId", i);
         map.insert("name", "");
 
-        QString value = condition._operation->source()["keyword"].toString();
+        QString value = condition._operation->resource()["keyword"].toString();
         if (value.contains("condition")){
             map.insert("first", !condition._inputAssignments[0].value.isEmpty());
             map.insert("condition", condition._inputAssignments[1].value);

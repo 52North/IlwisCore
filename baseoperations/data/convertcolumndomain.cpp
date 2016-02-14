@@ -154,7 +154,7 @@ bool ConvertColumnDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( ctx != 0) {
             QVariant value;
             value.setValue<ITable>(_inputTable);
-            ctx->setOutput(symTable, value, _inputTable->name(), itTABLE,_inputTable->source());
+            ctx->setOutput(symTable, value, _inputTable->name(), itTABLE,_inputTable->resource());
         }
     }
 

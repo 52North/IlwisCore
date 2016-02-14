@@ -218,7 +218,7 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _outputTable.isValid()) {
         QVariant var;
         var.setValue<ITable>(_outputTable);
-        ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->source(),_outputColumn);
+        ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outputColumn);
         return true;
     }
     return false;

@@ -34,11 +34,12 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
+    IConventionalCoordinateSystem csyTemp;
     IConventionalCoordinateSystem csy;
     if ( _epsg != 0){
-        csy.prepare("code=epsg:" + QString::number(_epsg))    ;
+        csyTemp.prepare("code=epsg:" + QString::number(_epsg))    ;
     }else if (_proj4Def != ""){
-        csy.prepare("code=proj4:" + _proj4Def) ;
+        csyTemp.prepare("code=proj4:" + _proj4Def) ;
     }else {
 
         csy.prepare();
@@ -54,6 +55,13 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
             csy->setDatum(new GeodeticDatum(_datumShifts));
         }
     }
+    if ( csyTemp.isValid()){
+        csy.prepare();
+        csy->setDescription("created from " + csyTemp->code());
+        csy->setProjection(csyTemp->projection());
+        csy->setEllipsoid(csyTemp->ellipsoid());
+        csy->setDatum(csyTemp->datum()->clone());
+    }
     if ( !csy.isValid()){
         kernel()->issues()->log(TR("Creating coordinate system failed. Invalid parameters encountered"));
         return false;
@@ -61,7 +69,7 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
 
     QVariant value;
     value.setValue<ICoordinateSystem>(csy);
-    ctx->setOutput(symTable,value,csy->name(),itCOORDSYSTEM,csy->source());
+    ctx->setOutput(symTable,value,csy->name(),itCOORDSYSTEM,csy->resource());
     return true;
 }
 
@@ -165,9 +173,8 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
                 return sPREPAREFAILED;
         }
     }else if ( _expression.parameterCount() == 1){
-        bool ok;
-        _epsg = _expression.input<QString>(1).toInt(&ok);
-        if (!ok){
+        _epsg = _expression.input<int>(0);
+        if (_epsg == 0){
             QString def = _expression.input<QString>(1);
             def = def.trimmed().remove('\"');
             _proj4Def = _expression.input<QString>(1);

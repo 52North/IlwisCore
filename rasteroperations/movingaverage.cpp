@@ -135,7 +135,7 @@ bool MovingAverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
     QVariant value;
     value.setValue<IFeatureCoverage>(_inputfeatures);
-    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->source() );
+    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
     return true;
 }
 

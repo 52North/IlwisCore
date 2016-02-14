@@ -179,11 +179,11 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( ok && ctx != 0) {
         QVariant value;
         value.setValue<ITable>(_outputTable);
-        ctx->setOutput(symTable,value,_outputTable->name(), itTABLE, _outputTable->source() );
+        ctx->setOutput(symTable,value,_outputTable->name(), itTABLE, _outputTable->resource() );
         if ( _outputRaster.isValid()) {
             QVariant outraster;
             outraster.setValue<IRasterCoverage>(_outputRaster);
-            ctx->addOutput(symTable,outraster,_outputRaster->name(), itRASTER, _outputRaster->source() );
+            ctx->addOutput(symTable,outraster,_outputRaster->name(), itRASTER, _outputRaster->resource() );
         }
     }
     return ok;

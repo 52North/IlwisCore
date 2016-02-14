@@ -431,9 +431,9 @@ quint64 Workflow::createMetadata()
 {
     parseInputParameters();
     parseOutputParameters();
-    quint64 id = source().id();
+    quint64 id = resource().id();
 
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
     //mastercatalog()->addItems({source()});
     commandhandler()->addOperation(id, WorkflowOperationImplementation::create);
     return id;
@@ -671,9 +671,9 @@ void Workflow::debugPrintEdges()
 
 void Workflow::debugWorkflowMetadata() const
 {
-    qDebug() << "syntax: " << source()["syntax"].toString();
-    qDebug() << "inparameters: " << source()["inparameters"].toString();
-    qDebug() << "outparameters: " << source()["outparameters"].toString();
+    qDebug() << "syntax: " << resource()["syntax"].toString();
+    qDebug() << "inparameters: " << resource()["inparameters"].toString();
+    qDebug() << "outparameters: " << resource()["outparameters"].toString();
     qDebug() << "pins:";
     for (SPOperationParameter parameter : getInputParameters()) {
         debugOperationParameter(parameter);

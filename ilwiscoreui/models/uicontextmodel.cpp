@@ -265,7 +265,7 @@ void UIContextModel::setCurrentWorkSpace(WorkSpaceModel *cws)
                 }
                 QQuickItem *navbutton = rootObject()->findChild<QQuickItem*>("workbench_navbutton_mainui");
                 if ( navbutton){
-                    QString wcUrl = context()->workingCatalog()->source().url().toString();
+                    QString wcUrl = context()->workingCatalog()->resource().url().toString();
                     bool isWorkspace = wcUrl.indexOf("ilwis://internalcatalog/workspaces") == 0;
                     navbutton->setProperty("state" , isWorkspace ? "zerosize" : "fullsize");
                 }
@@ -279,7 +279,7 @@ void UIContextModel::initializeDataPane()
 {
      QObject *datapane = rootObject()->findChild<QObject*>("datapane_container_mainui");
      if ( datapane ){
-         QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
+         QUrl urlWorkingCatalog = context()->workingCatalog()->resource().url();
          QString filter="container='" + urlWorkingCatalog.toString() + "'";
          bool ok = QMetaObject::invokeMethod(datapane,"newCatalog",Q_ARG(QVariant, filter),Q_ARG(QVariant,"catalog"),Q_ARG(QVariant,urlWorkingCatalog.toString()),Q_ARG(QVariant,"left"));
          if ( !ok)
@@ -290,7 +290,7 @@ void UIContextModel::initializeDataPane()
 
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
-    QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->source().url().toString()).arg(_worldMap->id());
+    QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
 
     return cmd;
 }

@@ -52,7 +52,7 @@ bool UnaryMathRasterAndNumber::execute(ExecutionContext *ctx, SymbolTable& symTa
         if ( resource && ctx != 0) {
             QVariant value;
             value.setValue<IRasterCoverage>(_outputGC);
-            ctx->setOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->source() );
+            ctx->setOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
         }
     } else if (_case == otNUMBER) {
         double v = _unaryFun(_number);
