@@ -189,7 +189,7 @@ QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startB
 
 void MasterCatalogModel::setDefaultView()
 {
-    QString wcUrl = context()->workingCatalog()->source().url().toString();
+    QString wcUrl = context()->workingCatalog()->resource().url().toString();
     if ( wcUrl.indexOf("ilwis://internalcatalog/workspaces") == 0){
         for(auto workspace : _workspaces){
             if ( wcUrl == workspace->url()){
@@ -213,7 +213,7 @@ void MasterCatalogModel::scanBookmarks()
     QString ids = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids",QString(sUNDEF));
     if ( ids != sUNDEF)
         _bookmarkids = ids.split("|");
-    QUrl urlWorkingCatalog = context()->workingCatalog()->source().url();
+    QUrl urlWorkingCatalog = context()->workingCatalog()->resource().url();
     _currentUrl = urlWorkingCatalog.toString();
     int count = 3;
     std::vector<Resource> catalogResources;
@@ -746,7 +746,7 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
         }
     }
     if ( cat->url() == Catalog::DEFAULT_WORKSPACE){
-        _currentCatalog = new CatalogModel(Ilwis::Resource(context()->workingCatalog()->source().url().toString(), itCATALOG), this);
+        _currentCatalog = new CatalogModel(Ilwis::Resource(context()->workingCatalog()->resource().url().toString(), itCATALOG), this);
     } else{
         _currentCatalog = cat;
         if ( _rootObject){
