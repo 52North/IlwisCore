@@ -9,7 +9,7 @@ public:
     ProjectionImplFactory();
 
     ProjectionImplementation *create(const Ilwis::Resource &resource) const;
-    ProjectionImplementation *create(const QString&) const;
+    ProjectionImplementation *create(const QString&, const QString &) const;
     virtual bool canUse(const Ilwis::Resource &resource) const;
     virtual bool prepare();
 private:

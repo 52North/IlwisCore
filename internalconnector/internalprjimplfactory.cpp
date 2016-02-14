@@ -38,7 +38,7 @@ ProjectionImplementation *ProjectionImplFactory::create(const Ilwis::Resource &r
     return 0;
 }
 
-ProjectionImplementation *ProjectionImplFactory::create(const QString &) const
+ProjectionImplementation *ProjectionImplFactory::create(const QString&,const QString &) const
 {
     return nullptr;
 }

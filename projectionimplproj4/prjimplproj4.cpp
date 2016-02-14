@@ -75,16 +75,36 @@ ProjectionImplementationProj4::ProjectionImplementationProj4(const Resource &res
     _targetDef = QString("+proj=%1").arg(cd);
     _pjLatlon =  pj_init_plus("+proj=latlong +ellps=WGS84");
     _pjBase = pj_init_plus(_targetDef.toLatin1());
+    fillParameters(cd);
 }
 
-ProjectionImplementationProj4::ProjectionImplementationProj4(const QString &code)
+ProjectionImplementationProj4::ProjectionImplementationProj4(const QString &projtype, const QString &proj4def) : ProjectionImplementation(projtype)
 {
-    _outputIsLatLon = code.indexOf("latlong") != -1 || code.indexOf("longlat") != -1;
-    _targetDef = code;
+    _outputIsLatLon = proj4def.indexOf("latlong") != -1 || proj4def.indexOf("longlat") != -1;
+    _targetDef = proj4def;
     _pjLatlon =  pj_init_plus("+proj=latlong +ellps=WGS84");
     _pjBase = pj_init_plus(_targetDef.toLatin1());
+    fillParameters(proj4def);
 }
 
+void ProjectionImplementationProj4::fillParameters(const QString& code){
+    std::map<QString,Projection::ProjectionParamValue>  alias = { { "lat_1",Projection::pvSTANDARDPARALLEL1}, { "lat_2",Projection::pvSTANDARDPARALLEL2},{ "lat_0",Projection::pvCENTRALPARALLEL}, { "k",Projection::pvSCALE},
+                                                 { "lon_0",Projection::pvCENTRALMERIDIAN}, { "x_0",Projection::pvFALSEEASTING}, { "y_0",Projection::pvFALSENORTHING}, { "zone",Projection::pvZONE},{ "k_0",Projection::pvSCALE}};
+    QStringList parts = code.split("+");
+
+    initParameterList(_projtype);
+
+    for(auto part : parts) {
+        part = part.trimmed();
+        QStringList kvp = part.split("=");
+        auto iter = alias.find(kvp[0]);
+        if ( iter != alias.end() && kvp.size() == 2){
+            Projection::ProjectionParamValue key = (*iter).second;
+            ProjectionImplementation::setParameter(key,kvp[1]);
+        }
+    }
+
+}
 
 ProjectionImplementationProj4::~ProjectionImplementationProj4()
 {
@@ -95,6 +115,7 @@ ProjectionImplementationProj4::~ProjectionImplementationProj4()
 bool ProjectionImplementationProj4::prepare(const QString &parms)
 {
     if ( parms != "") {
+        _targetDef = "";
         Proj4Parameters proj4(parms);
         //std::function<void(double)> assign; // = [&](double v)  -> void {}
 
