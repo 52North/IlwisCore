@@ -37,7 +37,7 @@ Catalog::~Catalog()
 std::vector<Resource> Catalog::items() const
 {
     if  ( _items.size() == 0){
-         const_cast<Catalog *>(this)->_items = mastercatalog()->select(source().url(),"");
+         const_cast<Catalog *>(this)->_items = mastercatalog()->select(resource().url(),"");
     }
     return _items;
 }
@@ -58,9 +58,9 @@ void Catalog::scan()
 
 bool Catalog::prepare(const IOOptions &options)
 {
-    QString scheme =  source().url().scheme();
-    if ( !source().isValid() || scheme.size() <= 1)
-        return ERROR2(ERR_ILLEGAL_VALUE_2,"url",source().url().toString());
+    QString scheme =  resource().url().scheme();
+    if ( !resource().isValid() || scheme.size() <= 1)
+        return ERROR2(ERR_ILLEGAL_VALUE_2,"url",resource().url().toString());
 
 //    if ( !mastercatalog()->knownCatalogContent(source().url())){
 //            scan();
@@ -71,7 +71,7 @@ bool Catalog::prepare(const IOOptions &options)
 
 bool Catalog::isValid() const
 {
-    return source().url().isValid() && IlwisObject::isValid();
+    return resource().url().isValid() && IlwisObject::isValid();
 }
 
 IlwisTypes Catalog::ilwisType() const {
@@ -93,7 +93,7 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
             return name;
         }
         // might have been a fragment
-        QString resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
+        QString resolvedName =  context()->workingCatalog()->resource().url().toString() + "/" + name;
         query = QString("select resource from mastercatalog where resource = '%1' or rawresource='%1'").arg(resolvedName);
         results.exec(query);
         if ( results.next()) {
@@ -101,9 +101,9 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
         }
 
     }
-    QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(source().url().toString());
+    QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='%3'").arg(name).arg(tp).arg(resource().url().toString());
     if ( tp == itUNKNOWN) // incomplete info, we hope that the name will be unique. wrong selection must be handled at the caller side
-        query = QString("select resource from mastercatalog where name = '%1' and container='%2'").arg(name, source().url().toString());
+        query = QString("select resource from mastercatalog where name = '%1' and container='%2'").arg(name, resource().url().toString());
     InternalDatabaseConnection results;
     results.exec(query);
     if ( results.next()) {
@@ -112,7 +112,7 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
     } else {
         auto resolvedName = name;
         if ( context()->workingCatalog().isValid()) {
-            resolvedName =  context()->workingCatalog()->source().url().toString() + "/" + name;
+            resolvedName =  context()->workingCatalog()->resource().url().toString() + "/" + name;
             query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                             where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
                     and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
@@ -142,8 +142,8 @@ void Catalog::setParentCatalog(const QUrl &url)
 
 QUrl Catalog::filesystemLocation() const
 {
-    if (source().url().scheme() == "file")
-        return source().url();
+    if (resource().url().scheme() == "file")
+        return resource().url();
     else
         return context()->cacheLocation();
 }
