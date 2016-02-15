@@ -282,7 +282,7 @@ void Feature::loadGeometry(QDataStream &stream)
     stream >> gtype;
 
     auto LoadSequence = [&] (QDataStream& stream)-> geos::geom::CoordinateSequence *{
-        quint32 nrOfCoords;
+        quint64 nrOfCoords;
         stream >> nrOfCoords;
         std::vector<geos::geom::Coordinate> *coords = new std::vector<geos::geom::Coordinate>(nrOfCoords) ;
         for(int i = 0; i < nrOfCoords; ++i){
@@ -297,7 +297,7 @@ void Feature::loadGeometry(QDataStream &stream)
     auto LoadPolygon = [&] (QDataStream& stream )-> geos::geom::Polygon * {
         geos::geom::CoordinateSequence *seq = LoadSequence(stream);
         geos::geom::LinearRing *outerring = factory->createLinearRing(seq);
-        quint32 numInteriorRings;
+        quint64 numInteriorRings;
         stream >> numInteriorRings;
         std::vector<geos::geom::Geometry*> *inners = new std::vector<geos::geom::Geometry*>(numInteriorRings);
         for(int g = 0; g < numInteriorRings; ++g){
@@ -319,7 +319,7 @@ void Feature::loadGeometry(QDataStream &stream)
         geos::geom::CoordinateSequence *seq = LoadSequence(stream);
         _geometry.reset( factory->createLineString(seq));
     } else if ( gtype == geos::geom::GEOS_MULTILINESTRING){
-        quint32 numSubGeoms;
+        quint64 numSubGeoms;
         stream >> numSubGeoms;
         std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
         for(int g =0; g < numSubGeoms; ++g){
@@ -330,7 +330,7 @@ void Feature::loadGeometry(QDataStream &stream)
     } else if (gtype == geos::geom::GEOS_POLYGON ) {
         _geometry.reset(LoadPolygon(stream));
     } else if (gtype == geos::geom::GEOS_MULTIPOLYGON) {
-        quint32 numSubGeoms;
+        quint64 numSubGeoms;
         stream >> numSubGeoms;
         std::vector<geos::geom::Geometry*> *subgeoms = new std::vector<geos::geom::Geometry*>(numSubGeoms);
         for(int g = 0; g < numSubGeoms; ++g ){
