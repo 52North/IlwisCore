@@ -14,7 +14,8 @@ Item {
     property bool transparentBackgrond : true
     property var regexvalidator
     property bool boldLabel : true
-    height : 20
+    property int editWidth : width - label.width
+    height : Global.rowHeight
 
     Text {
         id : label
@@ -29,7 +30,7 @@ Item {
         id : textid
         anchors.left : label.right
         height : parent.height
-        width : parent.width - label.width
+        width : editWidth
         text : content
         font.pointSize: fontSize
         readOnly : parent.readOnly
