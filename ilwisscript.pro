@@ -107,16 +107,19 @@ win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
     LIBS +=  -L$$ANTLRLIB -llibantlr
 }
-unix {
+linux {
     LIBS += -L$$ANTLRLIB -lantlr3c
 }
 
+win32 {
+    INCLUDEPATH +=  $$PWD/ilwisscript/parserlexer/include
+    DEPENDPATH +=   $$PWD/ilwisscript/parserlexer/include
+}
 
-INCLUDEPATH +=  $$PWD/ilwisscript/parserlexer/include
-DEPENDPATH +=   $$PWD/ilwisscript/parserlexer/include
-
-INCLUDEPATH += $$ANTLRLIB/local/include
-DEPENDPATH += $$ANTLRLIB//local/include
+linux {
+    INCLUDEPATH += $$ANTLRLIB/local/include
+    DEPENDPATH += $$ANTLRLIB//local/include
+}
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 

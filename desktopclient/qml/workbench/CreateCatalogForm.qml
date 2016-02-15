@@ -47,17 +47,6 @@ Item {
 
     }
 
-    function parseFilePath(index){
-        var scheme = "file:///";
-        var path = currentFolder.slice(scheme.length())
-        var parts = path.split("/");
-        var newPath;
-        for(var i=0; i < index; ++i){
-            if ( i > 0)
-                newPath += "/"
-            newPath += parts[i]
-        }
-    }
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
             return name

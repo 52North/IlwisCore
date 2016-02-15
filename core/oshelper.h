@@ -11,6 +11,7 @@ public:
     static bool isAbsolute(const QString& fragment);
     static bool isFileName(const QString& filename);
     static QString operatingSystem();
+    static QString createFileUrlFromParts(const QString &left, const QString &right);
 };
 }
 

@@ -49,3 +49,18 @@ function calcZoomOutEnvelope(envelope, layers, viewmanager)
             viewmanager.newZoomExtent(newenvelope)
     }
 }
+
+
+function createfileUrlFromParts(left, right) {
+    if (Qt.platform.os === "windows") {
+        return "file:///" + left + right;
+    }
+    return "file://" + left + right;
+}
+
+function urlToLocalPath(path) {
+    if (Qt.platform.os === "windows") {
+        return path.replace("file:///","")
+    }
+    return path.replace("file://","")
+}

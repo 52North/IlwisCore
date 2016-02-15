@@ -30,7 +30,7 @@ win32{
 }
 
 linux{
-    folder_01.target = ../output/$$PLATFORM$$CONF/bin
+    folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
 }
 
 DEPLOYMENTFOLDERS = folder_01

@@ -41,3 +41,14 @@ QString OSHelper::operatingSystem() {
     #endif
     return operatingSystem;
 }
+
+
+QString OSHelper::createFileUrlFromParts(const QString& left, const QString& right) {
+    QString operatingSystem;
+    #ifdef Q_OS_WIN
+    return "file:///" + left + right;
+    #endif
+    #ifdef Q_OS_LINUX
+       return "file://" + left + right;
+    #endif
+}
