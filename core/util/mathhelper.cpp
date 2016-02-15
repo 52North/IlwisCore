@@ -58,7 +58,6 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
 {
     double Matrix[MAXTERMS][MAXTERMS], InvMat[MAXTERMS][MAXTERMS];
     double DU[MAXTERMS], DV[MAXTERMS], PolyProd[MAXTERMS];
-    double DX[4], DY[4];
     double D0, D1;
     int point, row, col, term, MaxPower, i;
 
@@ -71,6 +70,8 @@ bool MathHelper::findPolynom(int iTerms, int iPoints, const std::vector<Coordina
     if ( iPoints < iTerms ) return -2;
 
     MaxPower = PowerY[iTerms-1];
+
+    double DX[MaxPower], DY[MaxPower];
 
     //  Initialize Matrix and Dependent Vectors to Zero
     //  and Create Identity Matrix for Inversion
