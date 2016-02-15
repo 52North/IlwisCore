@@ -16,8 +16,15 @@ Item {
     property string boundingbox : setbb()
     property bool islatlon : false
 
-    function setBoundingBox(bb){
+    function setEnvelope(bb){
          valuepairs.item.setBounds(bb)
+    }
+
+    function getEnvelope() {
+        if ( minx == "" || maxx == "" || maxy == "" || miny == "")
+            return ""
+
+        return "("+ minx + " " + miny + "," + maxx + " " + maxy + ")"
     }
 
     function setbb() {
@@ -46,7 +53,7 @@ Item {
                 height : Global.rowHeight
                 width : parent.width
                 Text{
-                    width : 120
+                    width : 140
                     height : parent.height
                     text : qsTr("Minimum Latitude")
                     font.bold: true
@@ -64,7 +71,7 @@ Item {
                 height : Global.rowHeight
                 width : parent.width
                 Text{
-                    width : 120
+                    width : 140
                     height : parent.height
                     text : qsTr("Maximum Latitude")
                     font.bold: true
@@ -83,7 +90,7 @@ Item {
                 height : Global.rowHeight
                 width : parent.width
                 Text{
-                    width : 120
+                    width : 140
                     height : parent.height
                     text : qsTr("Minimum Longitude")
                     font.bold: true
@@ -102,7 +109,7 @@ Item {
                 height : Global.rowHeight
                 width : parent.width
                 Text{
-                    width : 120
+                    width : 140
                     height : parent.height
                     text : qsTr("Maximum Longitude")
                     font.bold: true
@@ -145,7 +152,7 @@ Item {
                     spacing : 2
                     Text {
                         text : qsTr("MinX/MinY")
-                        width : 120
+                        width : 140
                         height : 20
                         font.bold: true
                     }
@@ -174,7 +181,7 @@ Item {
                     Text {
                         text : qsTr("MaxX/MaxY")
                         font.bold: true
-                        width : 120
+                        width : 140
                         height : 20
                     }
                     TextField{

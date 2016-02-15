@@ -69,37 +69,37 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
 
     QUrl url(outurl);
     if (!url.isValid()){
-        url = source(cmode).url(true);
+        url = resource(cmode).url(true);
         if ( !url.isValid()){
             ERROR2(ERR_ILLEGAL_VALUE_2, "Url","");
             throw ErrorObject(TR(QString("illegal url %1 for format %2").arg(url.toString()).arg(format)));
         }
     }
-    Resource resource = source();
-    if ( !resource.isValid()) {
-        resource = Resource(url,ilwisType(), false);
-        resource.setId(id());
+    Resource res = resource();
+    if ( !res.isValid()) {
+        res = Resource(url,ilwisType(), false);
+        res.setId(id());
     }
     if ( url != QUrl()) {
-        QString currenturl = resource.url().toString();
+        QString currenturl = res.url().toString();
         // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
         if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
-            resource.setUrl(url);
+            res.setUrl(url);
         if ( url.scheme() != "ilwis") // raw urls can never go to an ilwis scheme
-            resource.setUrl(url,true);
+            res.setUrl(url,true);
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         throw ErrorObject(TR(QString("couldnt find factory for %1").arg(format)));
     IOOptions opt = options;
     opt.addOption("format", format);
-    Ilwis::ConnectorInterface *conn = factory->createFromFormat(resource, format,fnamespace,opt);
+    Ilwis::ConnectorInterface *conn = factory->createFromFormat(res, format,fnamespace,opt);
     if (!conn){
         throw ErrorObject(TR(QString("couldnt connect to %1 datasource for %2").arg(format).arg(url.toString())));
     }
     setConnector(conn, cmode, options);
     if ( Identity::name() == sUNDEF)
-        name(resource.name());
+        name(res.name());
 
 }
 
@@ -148,7 +148,7 @@ void IlwisObject::name(const QString &nam)
         }
     }
     if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
-        mastercatalog()->addItems({source()});
+        mastercatalog()->addItems({resource()});
 }
 
 void IlwisObject::code(const QString& cd) {
@@ -385,7 +385,7 @@ bool IlwisObject::isAnonymous() const
     return name().indexOf(ANONYMOUS_PREFIX) == 0;
 }
 
-Resource IlwisObject::source(int mode) const
+Resource IlwisObject::resource(int mode) const
 {
     if ( mode & cmINPUT || mode == cmEXTENDED) {
         if ( _connector.isNull() == false)
@@ -401,6 +401,21 @@ Resource IlwisObject::source(int mode) const
     return Resource();
 }
 
+Resource& IlwisObject::resourceRef(int mode)
+{
+    if ( mode & cmINPUT || mode == cmEXTENDED) {
+        if ( _connector.isNull() == false)
+            return _connector->source();
+    } else if (mode & cmOUTPUT) {
+        if ( _outConnector.isNull() == false) {
+            return _outConnector->source();
+        }
+        else if ( _connector.isNull() == false)
+            return _connector->source();
+    }
+    throw InternalError(TR("Incomplete ilwis object used for referencing information"));
+}
+
 void IlwisObject::copyTo(IlwisObject *obj)
 {
     obj->name(name());
@@ -412,13 +427,13 @@ void IlwisObject::copyTo(IlwisObject *obj)
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;
-    Resource resource = source().copy(obj->id());
+    Resource res = resource().copy(obj->id());
     if (!_connector.isNull()){
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _connector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _connector->provider());
         obj->setConnector(conn, cmINPUT);
     }
     if ( !_outConnector.isNull()) {
-        Ilwis::ConnectorInterface *conn = factory->createFromResource(resource, _outConnector->provider());
+        Ilwis::ConnectorInterface *conn = factory->createFromResource(res, _outConnector->provider());
         obj->setConnector(conn, cmOUTPUT);
     }
 }
@@ -435,22 +450,22 @@ bool IlwisObject::isInternalObject() const
 {
     if ( isAnonymous())
         return true;
-    if (source().isValid()){
-            return source().url().scheme() == "ilwis";
+    if (resource().isValid()){
+            return resource().url().scheme() == "ilwis";
     }
     return false;
 }
 
 bool IlwisObject::isRemote() const
 {
-    if ( !source().isValid())
+    if ( !resource().isValid())
         return false;
 
-    if (source().url().scheme() == "file" || source().url(true).scheme() == "file")
+    if (resource().url().scheme() == "file" || resource().url(true).scheme() == "file")
         return false;
-    if ( source().url().scheme() == "ilwis" || source().url(true).scheme() == "ilwis")
+    if ( resource().url().scheme() == "ilwis" || resource().url(true).scheme() == "ilwis")
         return false;
-    if (source().url().scheme() == "http" || source().url().scheme() == "https" || source().url(true).scheme() == "http" || source().url(true).scheme() == "https"){
+    if (resource().url().scheme() == "http" || resource().url().scheme() == "https" || resource().url(true).scheme() == "http" || resource().url(true).scheme() == "https"){
         return true;
     }
     return false;

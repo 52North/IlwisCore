@@ -22,6 +22,22 @@ GeodeticDatum::GeodeticDatum(const QString& name) : Identity(name)
 
 }
 
+GeodeticDatum::GeodeticDatum(std::vector<double> &datumParameters)
+{
+    if ( datumParameters.size() == 3)    {
+        set3TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2]);
+    }
+    if ( datumParameters.size() == 7)    {
+        set7TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
+                datumParameters[3], datumParameters[4], datumParameters[5], datumParameters[6]);
+    }
+    if ( datumParameters.size() == 10)    {
+        set10TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
+                datumParameters[3], datumParameters[4], datumParameters[5],
+                datumParameters[6], Coordinate(datumParameters[7], datumParameters[8], datumParameters[9]));
+    }
+}
+
 void GeodeticDatum::set3TransformationParameters(double x, double z, double y){
     _datumParams[dmDX] = x;
     _datumParams[dmDY] = y;
@@ -48,6 +64,21 @@ void GeodeticDatum::set10TransformationParameters(double x, double z, double y, 
     _datumParams[dmCENTERXR] = center.z;
     code(QString("%1,%2,%3,%4").arg(code()).arg( center.x).arg( center.y).arg( center.z));
 
+}
+
+GeodeticDatum *GeodeticDatum::clone() const
+{
+    GeodeticDatum *datum = new GeodeticDatum();
+    datum->name(name())    ;
+    datum->code(code());
+    datum->setDescription(description());
+    datum->_area = _area;
+    datum->_authority = _authority;
+    datum->_datumParams = _datumParams;
+    datum->_isValid = _isValid;
+    datum->_wkt = _wkt;
+
+    return datum;
 }
 
 double GeodeticDatum::parameter(DatumParameters parm) const {

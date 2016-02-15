@@ -22,14 +22,14 @@ OperationMetaData::~OperationMetaData()
 
 void OperationMetaData::init()
 {
-    QString pcount = source()["inparameters"].toString();
+    QString pcount = resource()["inparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
         _minInputCountParameters = parts.first().toInt();
         quint16 maxCountParameters = parts.back().toInt();
         parmfromResource(maxCountParameters,"pin");
     }
-    pcount = source()["outparameters"].toString();
+    pcount = resource()["outparameters"].toString();
     if ( pcount != "") {
         QStringList parts = pcount.split("|");
         _minOutputCountParameters = parts.first().toInt();
@@ -56,14 +56,14 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
             QString parmBase = base + QString("_%1_").arg(i+1);
 
             bool ok;
-            quint64 tp = source()[parmBase + "type"].toLongLong(&ok);
+            quint64 tp = resource()[parmBase + "type"].toLongLong(&ok);
             if (!ok) {
                 tp = i64UNDEF;
             }
-            QString name = source()[parmBase + "name"].toString();
-            QString domainName = source()[parmBase + "domain"].toString();
-            QString description = source()[parmBase + "desc"].toString();
-            bool optional = source()[parmBase + "optional"].toBool();
+            QString name = resource()[parmBase + "name"].toString();
+            QString domainName = resource()[parmBase + "domain"].toString();
+            QString description = resource()[parmBase + "desc"].toString();
+            bool optional = resource()[parmBase + "optional"].toBool();
 
             QString term;
             OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
@@ -84,7 +84,7 @@ void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList 
 {
 
     QRegExp argumentsrx("^.*\\((.*)\\)(\\s*)?$");
-    int argIdx = argumentsrx.indexIn(source()["syntax"].toString());
+    int argIdx = argumentsrx.indexIn(resource()["syntax"].toString());
     QString arguments =  argIdx != -1 ? argumentsrx.cap(1) : "";
 
     QRegExp requiredrx("(.*)\\[");
@@ -127,50 +127,50 @@ quint32 OperationMetaData::outputParameterCount() const
 
 QString OperationMetaData::getNamespace() const
 {
-    return source()["namespace"].toString();
+    return resource()["namespace"].toString();
 }
 
 QString OperationMetaData::getLongName() const
 {
-    return source()["longname"].toString();
+    return resource()["longname"].toString();
 }
 
 QStringList OperationMetaData::getKeywords() const
 {
     QRegExp commaWithWhiteSpaces("(\\s*,\\s*)");
-    QString keywords = source()["keywords"].toString();
+    QString keywords = resource()["keywords"].toString();
     return keywords.split(commaWithWhiteSpaces, QString::SkipEmptyParts);
 }
 
 void OperationMetaData::setNamespace(const QString &nspace)
 {
     connector()->setProperty("namespace", nspace);
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
 }
 
 void OperationMetaData::setLongName(const QString &longName)
 {
     connector()->setProperty("longname", longName);
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
 }
 
 void OperationMetaData::setKeywords(const QStringList &keywords)
 {
     connector()->setProperty("keywords", keywords);
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
 }
 
 void OperationMetaData::clearInputParameters()
 {
     removeParameterProperties("pin_%1_", _outputParameters.size());
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
     _inputParameters.clear();
 }
 
 void OperationMetaData::clearOutputParameters()
 {
     removeParameterProperties("pout_%1_", _outputParameters.size());
-    mastercatalog()->updateItems({source()});
+    mastercatalog()->updateItems({resource()});
     _outputParameters.clear();
 }
 

@@ -6,7 +6,7 @@ class ProjectionImplementationProj4 : public ProjectionImplementation
 {
 public:
     ProjectionImplementationProj4(const Ilwis::Resource &resource);
-     ProjectionImplementationProj4(const QString &code);
+     ProjectionImplementationProj4(const QString& projtype,const QString &code);
     ~ProjectionImplementationProj4();
     Coordinate latlon2coord(const LatLon&) const;
     LatLon coord2latlon(const Coordinate&) const;
@@ -28,6 +28,7 @@ private:
     projPJ  _pjLatlon;
     projPJ  _pjBase;
     bool _outputIsLatLon;
+    void fillParameters(const QString &code);
 };
 }
 

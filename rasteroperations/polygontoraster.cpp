@@ -109,7 +109,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     _outputraster->datadefRef(0).range(rng->clone());
     QVariant value;
     value.setValue<IRasterCoverage>(_outputraster);
-    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->source() );
+    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
 
     return true;
 }

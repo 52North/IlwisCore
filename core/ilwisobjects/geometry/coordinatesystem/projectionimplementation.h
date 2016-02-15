@@ -46,9 +46,9 @@ public:
     virtual ProjectionImplementation* clone() = 0;
 protected:
     virtual void copyTo(ProjectionImplementation *prj);
+    void initParameterList(const QString& projtype);
     ConventionalCoordinateSystem *_coordinateSystem;
 
-private:
     std::map<Projection::ProjectionParamValue, ProjectionParameter> _parameters;
     QString _projtype;
 };

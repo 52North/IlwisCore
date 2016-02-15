@@ -39,7 +39,7 @@ IlwisContext::IlwisContext(int runMode) : _workingCatalog(0), _memoryLimit(9e8),
 IlwisContext::~IlwisContext()
 {
     if ( _workingCatalog.isValid()){
-        _configuration.putValue("users/" + currentUser() + "/workingcatalog",_workingCatalog->source().url().toString());
+        _configuration.putValue("users/" + currentUser() + "/workingcatalog",_workingCatalog->resource().url().toString());
         _configuration.store();
     }
 }
@@ -168,13 +168,13 @@ const ICatalog &IlwisContext::lastUsedLocalFolder() const
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
     // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
-    if ( !cat.isValid() || cat->source().url().toString() == Catalog::DEFAULT_WORKSPACE)
+    if ( !cat.isValid() || cat->resource().url().toString() == Catalog::DEFAULT_WORKSPACE)
         return;
 
-    mastercatalog()->addContainer(cat->source().url());
+    mastercatalog()->addContainer(cat->resource().url());
     _workingCatalog = cat;
-    context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->source().url().toString());
-    QFileInfo inf(cat->source().url().toLocalFile());
+    context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->resource().url().toString());
+    QFileInfo inf(cat->resource().url().toLocalFile());
     if ( inf.isDir()){
         _lastUsedLocalFolder = cat;
     }

@@ -129,7 +129,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
                             if ( drawer){
                                 ICoverage cov = drawer->attribute("coverage").value<ICoverage>();
                                 if ( gdrawer->_manager)
-                                    gdrawer->_manager->addDataSource(cov->source().url(),cov->ilwisType(),drawer);
+                                    gdrawer->_manager->addDataSource(cov->resource().url(),cov->ilwisType(),drawer);
                             }
                         }
                     }

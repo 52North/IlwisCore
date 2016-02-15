@@ -159,9 +159,9 @@ void RasterCoverage::copyTo(IlwisObject *obj)
 
 }
 
-Resource RasterCoverage::source(int mode) const
+Resource RasterCoverage::resource(int mode) const
 {
-    Resource resource = Coverage::source(mode);
+    Resource resource = Coverage::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
         resource.addProperty("georeference", georeference()->id());
         resource.addProperty("domain", _datadefCoverage.domain()->id());

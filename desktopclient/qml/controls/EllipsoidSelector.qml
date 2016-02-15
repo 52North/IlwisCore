@@ -17,7 +17,7 @@ Controls.ComboxLabelPair{
 
     id : ellipsoids
     labelText: qsTr("Ellipsoid")
-    labelWidth: 120
+    labelWidth: 140
     property var selectedObjectid
     property var items : []
     role : "text"
@@ -28,11 +28,17 @@ Controls.ComboxLabelPair{
 
     Component.onCompleted: {
         ellipsoids.items = mastercatalog.select("type=" + uicontext.typeName2typeId("ellipsoid"),"name")
+        var defaultChoice = 0
         for(var i = 0; i < ellipsoids.items.length; ++i){
             var parts = ellipsoids.items[i].split("|")
             ellipsoidList.append({"text": parts[1]})
+            if ( parts[1] === "Wgs 84"){
+                defaultChoice = i
+            }
         }
         itemModel = ellipsoidList
+        currentIndex = defaultChoice
+
     }
 }
 

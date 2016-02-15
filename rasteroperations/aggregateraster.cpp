@@ -66,7 +66,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(outputRaster);
-        ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->source() );
+        ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->resource() );
     }
     return res;
 }

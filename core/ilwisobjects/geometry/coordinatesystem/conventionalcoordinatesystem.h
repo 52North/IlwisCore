@@ -7,7 +7,7 @@ namespace Ilwis {
 
 class Ellipsoid;
 class Projection;
-class GeodeticDataum;
+class GeodeticDatum;
 
 typedef IlwisData<Ellipsoid> IEllipsoid;
 typedef IlwisData<Projection> IProjection;

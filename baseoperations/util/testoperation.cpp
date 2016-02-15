@@ -48,11 +48,11 @@ bool TestOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value1;
     value1.setValue<IRasterCoverage>(newr1);
-    ctx->setOutput(symTable, value1, newr1->name(), itRASTER, newr1->source());
+    ctx->setOutput(symTable, value1, newr1->name(), itRASTER, newr1->resource());
 
     QVariant value2;
     value2.setValue<IRasterCoverage>(newr2);
-    ctx->addOutput(symTable, value2, newr2->name(), itRASTER, newr2->source());
+    ctx->addOutput(symTable, value2, newr2->name(), itRASTER, newr2->resource());
 
 
     return true;

@@ -50,6 +50,8 @@ private:
     QString createGeoreference(const QVariantMap &parms);
     QString createProjectedCoordinateSystem(const QVariantMap &parms);
     QString createWorkflow(const QVariantMap &parms);
+    QString createProjectedCoordinateSystemFromCode(const QVariantMap &parms);
+    QString createProjectedCoordinateSystemFromBase(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

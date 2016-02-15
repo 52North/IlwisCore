@@ -81,7 +81,7 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     // were the script is running.
     QVariant value;
     value.setValue<IFeatureCoverage>(_inputfeatures);
-    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->source() );
+    ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
     return true;
 }
 

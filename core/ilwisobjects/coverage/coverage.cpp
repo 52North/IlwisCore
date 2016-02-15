@@ -70,9 +70,9 @@ NumericStatistics &Coverage::statistics(int  )
         return _statistics;
 }
 
-Resource Coverage::source(int mode) const
+Resource Coverage::resource(int mode) const
 {
-    Resource resource = IlwisObject::source(mode);
+    Resource resource = IlwisObject::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
         resource.addProperty("coordinatesystem", coordinateSystem()->id());
         resource.setExtendedType( resource.extendedType() | itCOORDSYSTEM);

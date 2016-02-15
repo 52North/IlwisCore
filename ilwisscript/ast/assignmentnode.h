@@ -47,7 +47,7 @@ private:
         var.setValue<IlwisData<T1>>(target);
         symbols.addSymbol(name, 1000, target->ilwisType(), var);
         if ( wasAnonymous)
-            mastercatalog()->addItems({target->source(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
+            mastercatalog()->addItems({target->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
         return true;
     }

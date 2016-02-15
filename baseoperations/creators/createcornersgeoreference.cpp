@@ -44,7 +44,7 @@ bool CreateCornersGeoreference::execute(ExecutionContext *ctx, SymbolTable &symT
         xsize += 1;
         ysize += 1;
     }
-    QString code= QString("code=georef:type=corners,csy=%1,envelope=%2 %3 %4 %5,gridsize=%6 %7").arg(_csy->source().url().toString())
+    QString code= QString("code=georef:type=corners,csy=%1,envelope=%2 %3 %4 %5,gridsize=%6 %7").arg(_csy->resource().url().toString())
             .arg(_minx).arg(_miny).arg(_maxx).arg(_maxy)
             .arg(xsize).arg(ysize);
     IGeoReference georef;
@@ -55,7 +55,7 @@ bool CreateCornersGeoreference::execute(ExecutionContext *ctx, SymbolTable &symT
 
     QVariant value;
     value.setValue<IGeoReference>(georef);
-    ctx->setOutput(symTable,value,georef->name(),itGEOREF,georef->source());
+    ctx->setOutput(symTable,value,georef->name(),itGEOREF,georef->resource());
 
     return true;
 }

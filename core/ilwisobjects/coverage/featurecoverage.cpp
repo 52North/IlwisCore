@@ -61,7 +61,7 @@ bool FeatureCoverage::canUse(const IlwisObject *obj, bool strict) const
 std::vector<quint32> FeatureCoverage::select(const QString &spatialQuery) const
 {
     ExecutionContext ctx;
-    QString expr = QString("script %1=indexes from \"%2\" where %3").arg(Identity::newAnonymousName()).arg(source().url().toString()).arg(spatialQuery);
+    QString expr = QString("script %1=indexes from \"%2\" where %3").arg(Identity::newAnonymousName()).arg(resource().url().toString()).arg(spatialQuery);
     Ilwis::SymbolTable tbl;
     if ( Ilwis::commandhandler()->execute(expr, &ctx, tbl) ){
     if ( ctx._results.size() == 1)

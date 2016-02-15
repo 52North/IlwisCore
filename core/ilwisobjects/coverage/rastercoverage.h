@@ -174,7 +174,7 @@ public:
     NumericStatistics& statistics(int mode=0, int bins=0);
 
     //@override
-    Resource source(int mode=cmINPUT) const;
+    Resource resource(int mode=cmINPUT) const;
 
     /*!
      * unload the grid, generally used to clear some memory

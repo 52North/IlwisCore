@@ -10,6 +10,7 @@ class KERNELSHARED_EXPORT GeodeticDatum : public Identity
 public:
     enum DatumParameters{ dmDX, dmDY, dmDZ, dmRX, dmRY, dmRZ, dmSCALE,dmCENTERXR, dmCENTERYR, dmCENTERZR};
     GeodeticDatum(const QString &name=sUNDEF);
+    GeodeticDatum(std::vector<double>& datumParameters);
 
     QString area() const;
     void setArea(const QString& v);
@@ -24,6 +25,8 @@ public:
     void set3TransformationParameters(double x, double z, double y);
     void set7TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale);
     void set10TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale, Coordinate center);
+
+    GeodeticDatum *clone() const;
 private:
     QString _area;
     QString _authority;

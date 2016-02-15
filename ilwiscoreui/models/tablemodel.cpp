@@ -150,7 +150,7 @@ ITable TableModel::table() const
 QString TableModel::url() const
 {
     if ( _table.isValid())
-        return _table->source().url().toString();
+        return _table->resource().url().toString();
     return "";
 }
 

@@ -30,32 +30,75 @@ Controls.DropableItem{
         IlwisObjectCommon{
             id : objectcommon
         }
-        Controls.CreateProjection{
-            id : projectionParams
-        }
-        CheckBox{
-            id : cbenvelope
-            text : qsTr("Define Envelope")
-            style : Base.CheckBoxStyle1{}
-        }
-        Controls.CoordinateSystemBounds{
-            id : csyBounds
-            height : Global.rowHeight * 2.5
-            width : cbenvelope.checked ? parent.width : 0
-            opacity: cbenvelope.checked ? 1 : 0
-            enabled : opacity != 0
-            clip : true
-        }
-        Controls.EllipsoidSelector{
-            id : ellipsoidselector
-            width : parent.width - 10
-            property string name : ""
-            onSelectedObjectidChanged : {
-                var ilwobj = mastercatalog.id2object(selectedObjectid,ellipsoidselector)
-                if ( ilwobj){
-                    ellipsoidselector.name = ilwobj.name
+        GroupBox {
+            title: "Projected Coordinate system create methods"
+            RowLayout {
+                ExclusiveGroup {
+                    id: group
+                    onCurrentChanged: {
+                        if( epsg.checked){
+                            proj4def.height = 0
+                            proj4def.visible = false
+                            fromBase.state = "invisible"
+                            epsgnumber.height = Global.rowHeight
+                            epsgnumber.visible = true
+                        }
+                        if ( proj4.checked){
+                            proj4def.height = Global.rowHeight
+                            proj4def.visible = true
+                            fromBase.state = "invisible"
+                            epsgnumber.height = 0
+                            epsgnumber.visible = false
+                        }
+                        if ( full.checked){
+                            proj4def.height = 0
+                            proj4def.visible = false
+                            fromBase.state = "visible"
+                            epsgnumber.height = 0
+                            epsgnumber.visible = false
+                        }
+                    }
+                }
+                RadioButton {
+                    id : epsg
+                    text: "By EPSG number"
+                    checked: true
+                    exclusiveGroup: group
+                }
+                RadioButton {
+                    id : proj4
+                    text: "By Proj4 Defintion"
+                    exclusiveGroup: group
+                }
+                RadioButton {
+                    id : full
+                    text: "Full definition"
+                    exclusiveGroup: group
                 }
             }
+        }
+        CreateProjectionFromBase {
+            id : fromBase
+            width : parent.width - 10
+            height : 0
+            maxHeight: parent.height - objectcommon.height
+        }
+        Controls.TextEditLabelPair {
+            id : epsgnumber
+            labelText: qsTr("EPSG number")
+            labelWidth: 140
+            width : parent.width
+            regexvalidator: /^\d*/
+            visible : false
+            height : 0
+        }
+        Controls.TextEditLabelPair {
+            id : proj4def
+            labelText: qsTr("Proj4 definition")
+            labelWidth: 140
+            width : parent.width
+            visible : false
+            height : 0
         }
 
     }
@@ -73,15 +116,22 @@ Controls.DropableItem{
             width : 70
             text : qsTr("Apply")
             onClicked: {
-               var createinfo = { name : objectcommon.itemname,
-                    type : "coordinatesystem",
-                    subtype : "projected",
-                    projection : projectionParams.name,
-                    projectionparameters : projectionParams.projectionInfo(),
-                    ellipsoid : ellipsoidselector.name,
-                    description :objectcommon.description,
+                var createInfo
+                if ( fromBase.state == "visible")
+                    createInfo = fromBase.getCreateInfo()
+                else if ( epsgnumber.visible){
+                    createInfo = { name : objectcommon.itemname,
+                        type : "coordinatesystem",
+                        subtype : "projected",
+                        epsg : epsgnumber.content }
+                }else if ( proj4def.visible){
+                    createInfo = { name : objectcommon.itemname,
+                        type : "coordinatesystem",
+                        subtype : "projected",
+                        proj4 : proj4def.content }
                 }
-                objectcreator.createObject(createinfo)
+
+                objectcreator.createObject(createInfo)
             }
 
         }

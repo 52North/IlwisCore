@@ -70,7 +70,7 @@ bool DensifyRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if ( resource && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
-        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source() );
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     }
     return resource;
 }
@@ -130,7 +130,7 @@ Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *c
     quint32 xsz = (int)(_inputRaster->size().xsize() * _enlargementFactor);
     quint32 ysz = (int)(_inputRaster->size().ysize() * _enlargementFactor);
     QString code= QString("code=georef:type=corners,csy=%1,envelope=%2 %3 %4 %5,gridsize=%6 %7")
-            .arg(_inputRaster->coordinateSystem()->source().url().toString())
+            .arg(_inputRaster->coordinateSystem()->resource().url().toString())
             .arg(_inputRaster->envelope().min_corner().x).arg(_inputRaster->envelope().min_corner().y)
             .arg(_inputRaster->envelope().max_corner().x).arg(_inputRaster->envelope().max_corner().y)
             .arg(xsz).arg(ysz);

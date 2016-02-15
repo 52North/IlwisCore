@@ -90,17 +90,17 @@ void WorkflowOperationImplementation::copyToContext(const Symbol &symbol, const 
     IlwisTypes tp = symbol._type;
     if ( tp & itRASTER) {
         IIlwisObject o = symbol._var.value<IRasterCoverage>();
-        resource = o->source();
+        resource = o->resource();
         o->name(name);
     }
     if ( tp & itFEATURE) {
         IIlwisObject o = symbol._var.value<IFeatureCoverage>();
-        resource = o->source();
+        resource = o->resource();
         o->name(name);
     }
     if ( hasType(tp , itTABLE)) {
         IIlwisObject o = symbol._var.value<ITable>();
-        resource = o->source();
+        resource = o->resource();
         o->name(name);
     }
     ctx->addOutput(symTable, symbol._var, name, symbol._type, resource);

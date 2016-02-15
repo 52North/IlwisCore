@@ -102,7 +102,7 @@ bool MirrorRotateRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( ok && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
-        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->source() );
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     }
     return ok;
 }

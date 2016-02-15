@@ -42,7 +42,7 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
     _isScanned = false;
     _level = 0;
     if ( res.url().toString() == Catalog::DEFAULT_WORKSPACE){
-        _view = CatalogView(context()->workingCatalog()->source());
+        _view = CatalogView(context()->workingCatalog()->resource());
         setDisplayName("default");
     }else{
         _view = CatalogView(res);
@@ -57,7 +57,7 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
     _isScanned = false;
     _level = 0;
     if ( item().url().toString() == Catalog::DEFAULT_WORKSPACE){
-        _view = CatalogView(context()->workingCatalog()->source());
+        _view = CatalogView(context()->workingCatalog()->resource());
         setDisplayName("default");
     }else{
         _view = CatalogView(item());

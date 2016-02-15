@@ -188,7 +188,24 @@ QString ObjectCreator::createGeoreference(const QVariantMap &parms){
     return QString::number(i64UNDEF);
 }
 
-QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms){
+QString ObjectCreator::createProjectedCoordinateSystemFromCode(const QVariantMap &parms){
+    QString expression;
+    if ( parms.contains("epsg")){
+        expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(%2)").
+                arg(parms["name"].toString()).
+                arg(parms["epsg"].toString());
+
+    }
+    if ( parms.contains("proj4")){
+        expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\")").
+                arg(parms["name"].toString()).
+                arg(parms["proj4"].toString());
+
+    }
+    return expression;
+}
+
+QString ObjectCreator::createProjectedCoordinateSystemFromBase(const QVariantMap &parms){
     QString expression;
     //createprojectedcoordinatesystem(projectionname,falseeasting,falsenorthing,centralmeridian,latitudeoforigin,standardparallel1,standardparallel2,latitudeoftruescale,scale,zone,height,northoriented,azimtruescale,ellipsoid[,description])");
     QString proj = parms["projection"].toString();
@@ -223,13 +240,37 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
         kvps  += p + "= " + currentParms[currentIndex++].toString();
 
     }
-    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\")").arg(parms["name"].toString()).arg(proj).arg(kvps).arg(parms["ellipsoid"].toString());
+    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\"").
+            arg(parms["name"].toString()).
+            arg(proj).
+            arg(kvps).
+            arg(parms["ellipsoid"].toString());
+    if ( parms.contains("envelope")){
+        expression += ",\"" + parms["envelope"].toString()+ "\"";
+    }
+    if ( parms.contains("datumshifts")){
+        expression += ",\"" + parms["datumshifts"].toString() + "\"";
+    }
+    expression += ")";
+
+    return expression;
+}
+
+QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms){
+    QString expression;
+    if ( parms.size() == 4){
+        expression =  createProjectedCoordinateSystemFromCode(parms);
+    }else
+        expression = createProjectedCoordinateSystemFromBase(parms);
+
 
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
     if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
-        ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
-        return QString::number(obj->id());
+        if ( ctx._results.size() > 0){
+            ICoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<ICoordinateSystem>();
+            return QString::number(obj->id());
+        }
     }
 
     return QString::number(i64UNDEF);

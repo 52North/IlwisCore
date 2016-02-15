@@ -87,7 +87,7 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
         outputFC->attributesFromTable(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
-        ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->source());
+        ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
     }
     return ok;
 }

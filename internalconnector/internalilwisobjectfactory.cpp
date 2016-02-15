@@ -707,7 +707,7 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
                 if ( factory) {
                     ProjectionImplementation *projimpl = 0;
                     if ( options.contains("proj4"))
-                        projimpl = static_cast<ProjectionImplementation *>(factory->create(options["proj4"].toString()));
+                        projimpl = static_cast<ProjectionImplementation *>(factory->create(resource.code(), options["proj4"].toString()));
                     else
                         projimpl = static_cast<ProjectionImplementation *>(factory->create(resource));
                     if (!projimpl) {
