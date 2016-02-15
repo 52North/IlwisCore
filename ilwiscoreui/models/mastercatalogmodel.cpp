@@ -281,7 +281,7 @@ void MasterCatalogModel::scanBookmarks()
             _currentUrl = _bookmarks[_selectedBookmarkIndex]->url();
         }else {
             QString loc = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-            _currentUrl = "file:///" + loc;
+            _currentUrl = OSHelper::createFileUrlFromParts(loc, "");
         }
     }
 }

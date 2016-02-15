@@ -364,7 +364,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 }else {
                     //Get all files in the directory
                     QString dataLocation = output;
-                    dataLocation.remove("file:///");
+                    dataLocation = QUrl(dataLocation).toLocalFile();
 
                     QStringList splitUrl = dataLocation.split("/");
 

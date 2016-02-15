@@ -72,10 +72,10 @@ Rectangle {
         function fillModel() {
             var paths = mastercatalog.knownCatalogs(true)
             var current =  mastercatalog.currentUrl
-            current = current.replace("file:///","")
+            current = Global.urlToLocalPath(current)
             pathModel.clear()
             for(var i=0; i < paths.length; ++i){
-                var path = paths[i].replace("file:///","")
+                var path = Global.urlToLocalPath(paths[i])
                 pathModel.append({"folderid" : path})
                 if ( path === current){
                     pathText.currentIndex = i
@@ -96,10 +96,7 @@ Rectangle {
             currentIndex = index
             var drivePath = mastercatalog.getDrive(currentIndex)
             path2pathView(drivePath)
-            if(drivePath.indexOf("/") !== 0)
-                folderModel.folder = "file:///"+ drivePath
-            else
-                folderModel.folder = "file:////"+ drivePath
+            folderModel.folder = Global.createfileUrlFromParts(drivePath, "")
             var filter = "container='" + folderModel.folder + "'"
             mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
         }
@@ -127,7 +124,7 @@ Rectangle {
                 currentIndex = index
                 var path = pathModel.get(currentIndex)
                 if ( path !== null && typeof path != 'undefined'){
-                    folderModel.folder = "file:///" + path.folderid
+                    folderModel.folder = Global.createfileUrlFromParts(path.folderid, "")
                     var filter = "container='" + folderModel.folder + "'"
                     mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
                 }
@@ -146,7 +143,7 @@ Rectangle {
         Action {
             id : goPath
             onTriggered :{
-                currentFolder = "file:///"+ pathText.editText
+                currentFolder = Global.createfileUrlFromParts(pathText.editText, "")
                 folderModel.folder = currentFolder
                 var filter = "container='" + folderModel.folder + "'"
                 mainSplit.changeCatalog(filter,"catalog", currentFolder)
@@ -201,10 +198,7 @@ Rectangle {
                         //fileFolders.currentIndex = index;
                         var path = folderModel.get(index,"filePath")
                         path = path2pathView(path)
-                        if(path.indexOf("/") !== 0)
-                            currentFolder = "file:///"+ path;
-                        else
-                            currentFolder = "file:////"+ path;
+                        currentFolder = Global.createfileUrlFromParts(path, "")
                         folderModel.folder = currentFolder;
                         var filter = "container='" + folderModel.folder + "'"
                         mainSplit.changeCatalog(filter,"catalog", currentFolder)

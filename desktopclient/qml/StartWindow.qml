@@ -6,7 +6,7 @@ import StartIlwis 1.0
 Window {
     width: 1040
     height: 800
-    title: qsTr("Hello World")
+    title: qsTr("Ilwis 4")
     id : rootwindow
     visible: true
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground

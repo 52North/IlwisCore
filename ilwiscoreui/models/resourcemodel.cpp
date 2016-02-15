@@ -14,6 +14,7 @@
 #include "ilwisobject.h"
 #include "mastercatalog.h"
 #include "resourcemodel.h"
+#include "oshelper.h"
 
 #define tempHardPath "h:/projects/Ilwis4/projects/client/qml/desktop/mobile/images/"
 //#define tempHardPath "d:/projects/ilwis/Ilwis4/projects/client/qml/desktop/mobile/images/"
@@ -358,7 +359,7 @@ void ResourceModel::realizeThumbPath(){
             return ;
     }
     QFileInfo thumbPath = thumbDir + "/" + _displayName + ".png";
-    _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
+    _imagePath = QUrl::fromLocalFile( thumbPath.absoluteFilePath()).toString();
 }
 
 void ResourceModel::resource(const Ilwis::Resource& res)
@@ -388,7 +389,7 @@ void ResourceModel::resource(const Ilwis::Resource& res)
         _displayName = item.name();
         QFileInfo thumbPath = path + "/.ilwis/thumbs/" + _displayName + ".png";
         if ( thumbPath.exists()) {
-            _imagePath =  "file:///" +  thumbPath.absoluteFilePath();
+            _imagePath =  QUrl::fromLocalFile(thumbPath.absoluteFilePath()).toString();
         } else {
             if ( item.ilwisType() == itCATALOG) {
                 _imagePath = "catalog.png";

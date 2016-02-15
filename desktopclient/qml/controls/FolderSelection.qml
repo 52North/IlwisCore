@@ -8,6 +8,7 @@ import "../Global.js" as Global
 import "../controls" as Controls
 import PreferencesModel 1.0
 
+
 Column {
     property string startFolder
     property string currentFolder
@@ -98,11 +99,12 @@ Column {
             height : 20
             model: mastercatalog.driveList()
             Layout.fillWidth: true
+            visible: Qt.platform.os === "windows" ? true : false
             onActivated: {
                 currentIndex = index
                 var drivePath = mastercatalog.getDrive(currentIndex)
                 path2pathView(drivePath)
-                currentFolder = "file:///"+ drivePath;
+                currentFolder = Global.createfileUrlFromParts(drivePath, "")
                 folderModel.folder = currentFolder;
 
             }
@@ -147,7 +149,7 @@ Column {
                         onDoubleClicked: {
                             var path = folderModel.get(index,"filePath")
                             path = path2pathView(path)
-                            currentFolder = "file:///"+ path;
+                            currentFolder =  Global.createfileUrlFromParts(path, "");
                             folderModel.folder = currentFolder;
                         }
 
