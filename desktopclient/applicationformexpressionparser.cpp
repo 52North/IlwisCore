@@ -348,7 +348,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
                         arg(checkWidth).
                         arg(imagewidth).
                         arg(xshift).
-                        arg(input ? keys(parameters[i]._dataType) : EXPREMPTYPARAMETER).
+                        arg(input ? keys(parameters[i]._dataType) : "\"?\"").
                         arg(constantValue).
                         arg(checkEffects);
 
