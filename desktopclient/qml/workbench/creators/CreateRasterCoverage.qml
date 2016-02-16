@@ -34,27 +34,39 @@ Controls.DropableItem{
             EditorHeader{}
 
             Controls.TextEditLabelPair{
+                id : namevalue
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
             }
 
             Controls.FilteredTextEditLabelPair{
+                id : grfvalue
                 labelWidth: 100
                 labelText: qsTr("Georeference")
                 filterImage: "../images/georeference20.png"
                 filterType: "georeference"
                 width : parent.width
-                //useCreateButton: true
+                useCreateButton: true
             }
 
             Controls.FilteredTextEditLabelPair{
+                id : domvalue
                 labelWidth: 100
                 labelText: qsTr("Domain")
                 filterImage: "../images/domain.png"
                 filterType: "domain"
                 width : parent.width
                 useCreateButton: true
+            }
+
+            Controls.TextEditLabelPair{
+                id :bandsvalue
+                labelText: qsTr("Number of bands")
+                labelWidth: 100
+                width : parent.width
+                regexvalidator: /^\d*/
+                content : "1"
             }
 
 
@@ -64,6 +76,12 @@ Controls.DropableItem{
                 width : parent.width
                 height : 40
                 labelWidth: 100
+            }
+            Controls.TextEditLabelPair{
+                id :keywordsvalue
+                labelText: qsTr("Keywords")
+                labelWidth: 100
+                width : parent.width
             }
         }
         Item {
@@ -80,8 +98,15 @@ Controls.DropableItem{
                 y : 10
                 onClicked: {
                     dropItem.state = "invisible"
-                   // var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
-                   // var ilwisid = objectcreator.createObject(createInfo)
+                    var createInfo = {georeference : grfvalue.content,
+                        domain : domvalue.content,
+                        bands : bandsvalue.content,
+                        keywords : keywordsvalue.content,
+                        type : "rastercoverage",
+                        name :  namevalue.content,
+                        description : descvalue.content}
+
+                    var ilwisid = objectcreator.createObject(createInfo)
                 }
 
             }
