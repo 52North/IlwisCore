@@ -40,18 +40,23 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     if ( _georef.isValid() ) {
         _georef->compute();
         coordinateSystem(grf->coordinateSystem()); // mandatory
+        resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
+        resourceRef().addProperty("georeference",_georef->id());
+        resourceRef().addProperty("latlonenvelop", coordinateSystem()->envelope(true));
     }
     if (_georef.isValid()){
         if ( _size.isValid() && !_size.isNull() && !resetData)
             _size = Size<>(_georef->size().xsize(), _georef->size().ysize(), _size.zsize());
         else
             _size = _georef->size();
+
     }
     else
         _size = Size<>();
     if (!_grid && _size.isValid()){
             gridRef()->prepare(this,_size);
     }
+    resourceRef().dimensions(_size.toString());
 }
 
 IlwisTypes RasterCoverage::ilwisType() const
@@ -147,7 +152,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     Locker<> lock(_mutex);
     Coverage::copyTo(obj);
     RasterCoverage *raster = static_cast<RasterCoverage *>(obj);
-    raster->_georef = _georef;
+    raster->georeference(_georef);
     raster->_datadefBands = _datadefBands;
     raster->_bandDefinition = _bandDefinition;
     raster->_datadefCoverage = _datadefCoverage;
@@ -164,6 +169,7 @@ Resource RasterCoverage::resource(int mode) const
     Resource resource = Coverage::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
         resource.addProperty("georeference", georeference()->id());
+        resource.addProperty("coordinatesystem", coordinateSystem()->id());
         resource.addProperty("domain", _datadefCoverage.domain()->id());
         resource.setExtendedType( resource.extendedType() | itDOMAIN |  itGEOREF);
     }
@@ -359,6 +365,7 @@ void RasterCoverage::size(const Size<> &sz)
          stackDefinitionRef().setSubDefinition(sz.zsize()); // default filling, can be overruled
         for(int i = 0; i < sz.zsize(); ++i)
             datadefRef(i) = datadef();
+        resourceRef().dimensions(_size.toString());
     }
 }
 
