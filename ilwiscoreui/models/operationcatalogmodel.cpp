@@ -304,7 +304,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         if(i < maxinputparameters ){
             if ( expression.size() != 0)
                 expression += ",";
-            expression += (parms[i] == "" ? "\"?\"": parms[i]);
+            expression += (parms[i] == "" ? EXPREMPTYPARAMETER: parms[i]);
         }
 
     }

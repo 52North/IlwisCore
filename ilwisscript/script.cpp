@@ -12,10 +12,8 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "script.h"
-#include "parserlexer/IlwisScriptLexer.h"
 #include "parserlexer/ilwisscriptParser.h"
-
-
+#include "parserlexer/IlwisScriptLexer.h"
 
 using namespace Ilwis;
 OperationImplementation *Script::create(quint64 metaid, const Ilwis::OperationExpression &expr)
