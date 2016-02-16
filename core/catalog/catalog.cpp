@@ -110,15 +110,22 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
         QSqlRecord rec = results.record();
         return rec.value(0).toString();
     } else {
-        auto resolvedName = name;
-        if ( context()->workingCatalog().isValid()) {
-            resolvedName =  context()->workingCatalog()->resource().url().toString() + "/" + name;
-            query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
-                            where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
-                    and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
-            results.exec(query);
-            if ( results.next()){ // if it is in the extended type than it is ok
-                return resolvedName;
+        QString query = QString("select resource from mastercatalog where code = '%1' and (type & %2) != 0").arg(name).arg(tp);
+        results.exec(query);
+        if ( results.next()) {
+            QSqlRecord rec = results.record();
+            return rec.value(0).toString();
+        } else {
+            auto resolvedName = name;
+            if ( context()->workingCatalog().isValid()) {
+                resolvedName =  context()->workingCatalog()->resource().url().toString() + "/" + name;
+                query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
+                                where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
+                        and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
+                        results.exec(query);
+                        if ( results.next()){ // if it is in the extended type than it is ok
+                        return resolvedName;
+            }
             }
         }
         return sUNDEF;
