@@ -144,7 +144,10 @@ template<> inline double OperationExpression::input<double>(quint32 parmIndex) {
 
 
 template<> inline QString OperationExpression::input<QString>(quint32 parmIndex) {
-    return parm(parmIndex).value();
+    QString value = parm(parmIndex).value();
+    if (value == EXPREMPTYPARAMETER)
+        return "?";
+    return value;
 }
 
 template<> inline bool OperationExpression::input<bool>(quint32 parmIndex) {

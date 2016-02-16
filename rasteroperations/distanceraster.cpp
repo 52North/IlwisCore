@@ -233,7 +233,7 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
     }
 
     _hasWeightRaster = false;
-    if (0 != inputWeightRaster.length()) {
+    if (0 != inputWeightRaster.length() && inputWeightRaster != sUNDEF) {
         if(!_inputOptWeightRaster.prepare(inputWeightRaster, itRASTER)) {
             ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
             return sPREPAREFAILED;
