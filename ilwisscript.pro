@@ -92,7 +92,37 @@ HEADERS +=\
     ilwisscript/ast/domainformatter.h \
     ilwisscript/ast/ifnode.h \
     ilwisscript/ast/outparametersnode.h \
-    ilwisscript/ast/selectnode.h
+    ilwisscript/ast/selectnode.h \
+    ilwisscript/parserlexer/include/antlr3.h \
+    ilwisscript/parserlexer/include/antlr3baserecognizer.h \
+    ilwisscript/parserlexer/include/antlr3basetree.h \
+    ilwisscript/parserlexer/include/antlr3basetreeadaptor.h \
+    ilwisscript/parserlexer/include/antlr3bitset.h \
+    ilwisscript/parserlexer/include/antlr3collections.h \
+    ilwisscript/parserlexer/include/antlr3commontoken.h \
+    ilwisscript/parserlexer/include/antlr3commontree.h \
+    ilwisscript/parserlexer/include/antlr3commontreeadaptor.h \
+    ilwisscript/parserlexer/include/antlr3commontreenodestream.h \
+    ilwisscript/parserlexer/include/antlr3convertutf.h \
+    ilwisscript/parserlexer/include/antlr3cyclicdfa.h \
+    ilwisscript/parserlexer/include/antlr3debugeventlistener.h \
+    ilwisscript/parserlexer/include/antlr3defs.h \
+    ilwisscript/parserlexer/include/antlr3encodings.h \
+    ilwisscript/parserlexer/include/antlr3errors.h \
+    ilwisscript/parserlexer/include/antlr3exception.h \
+    ilwisscript/parserlexer/include/antlr3filestream.h \
+    ilwisscript/parserlexer/include/antlr3input.h \
+    ilwisscript/parserlexer/include/antlr3interfaces.h \
+    ilwisscript/parserlexer/include/antlr3intstream.h \
+    ilwisscript/parserlexer/include/antlr3lexer.h \
+    ilwisscript/parserlexer/include/antlr3memory.h \
+    ilwisscript/parserlexer/include/antlr3parser.h \
+    ilwisscript/parserlexer/include/antlr3parsetree.h \
+    ilwisscript/parserlexer/include/antlr3recognizersharedstate.h \
+    ilwisscript/parserlexer/include/antlr3rewritestreams.h \
+    ilwisscript/parserlexer/include/antlr3string.h \
+    ilwisscript/parserlexer/include/antlr3tokenstream.h \
+    ilwisscript/parserlexer/include/antlr3treeparser.h
 
 OTHER_FILES += ilwisscript/ilwisscript.json
 
@@ -117,8 +147,11 @@ win32 {
 }
 
 linux {
-    INCLUDEPATH += $$ANTLRLIB/local/include
-    DEPENDPATH += $$ANTLRLIB//local/include
+    #INCLUDEPATH += $$ANTLRLIB/local/include
+    #DEPENDPATH += $$ANTLRLIB//local/include
+
+    INCLUDEPATH +=  $$PWD/ilwisscript/parserlexer/include
+    DEPENDPATH +=   $$PWD/ilwisscript/parserlexer/include
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
