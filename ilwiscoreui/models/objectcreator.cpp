@@ -36,7 +36,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators.append(new IlwisObjectCreatorModel("Projected Coordinate System",itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this));
     _creators.append(new IlwisObjectCreatorModel("LatLon Coordinate System",itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Bounds only Coordinate System",itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateNumDom.qml", 200, this));
+    _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateRasterCoverage.qml", 290, this));
     _creators.append(new IlwisObjectCreatorModel("Feature Coverage",itFEATURE,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Table",itTABLE,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Representation",itREPRESENTATION,"CreateNumDom.qml", 250, this));
@@ -299,9 +299,6 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
 QString ObjectCreator::createObject(const QVariantMap &parms)
 {
     try {
-    Resource res;
-    res.setDescription(parms["decription"].toString());
-
     QString type = parms["type"].toString();
     if (  type == "workflow" ){
         return createWorkflow(parms);
@@ -314,6 +311,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
     } else if ( type == "coordinatesystem"){
         if ( parms["subtype"].toString() == "projected")
             return createProjectedCoordinateSystem(parms);
+    } else if ( type == "rastercoverage"){
+        return createRasterCoverage(parms);
     }
 
 
@@ -323,6 +322,38 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
 
     } catch (std::exception& ex){
         kernel()->issues()->log(ex.what());
+    }
+    return QString::number(i64UNDEF);
+}
+
+QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
+    QString name = parms["name"].toString();
+    if ( name == "")
+        return QString::number(i64UNDEF);
+
+    int bands = parms["bands"].toInt();;
+    QString expr = "createrastercoverage(";
+    expr += parms["georeference"].toString();
+    expr += ",";
+    expr += parms["domain"].toString();
+    expr += ",";
+    expr += QString::number(bands);
+    expr += ",";
+    expr += "\""+ parms["description"].toString() + "\"";
+    if ( parms.contains("keywords"))
+        expr += ",\""+ parms["keywords"].toString() + "\"";
+    expr += ")";
+
+    QString output = QString("script %1{format(stream,\"rastercoverage\")}=").arg(name);
+    expr = output + expr;
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(Ilwis::commandhandler()->execute(expr,&ctx,syms) ) {
+        if ( ctx._results.size() > 0){
+            IIlwisObject obj = syms.getSymbol(ctx._results[0])._var.value<IIlwisObject>();
+            if ( obj.isValid())
+                return QString::number(obj->id());
+        }
     }
     return QString::number(i64UNDEF);
 }

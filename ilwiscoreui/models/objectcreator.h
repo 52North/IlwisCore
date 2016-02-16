@@ -52,6 +52,7 @@ private:
     QString createWorkflow(const QVariantMap &parms);
     QString createProjectedCoordinateSystemFromCode(const QVariantMap &parms);
     QString createProjectedCoordinateSystemFromBase(const QVariantMap &parms);
+    QString createRasterCoverage(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H
