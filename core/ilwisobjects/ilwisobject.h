@@ -282,7 +282,7 @@ public:
      * \return url that is sufficient to find the source
      */
     virtual Resource resource(int mode=cmINPUT) const;
-    virtual Resource &resourceRef(int mode);
+    virtual Resource &resourceRef(int mode=cmINPUT);
 
     /*!
      * \brief target the location of the source that represents the physical write target of this object
