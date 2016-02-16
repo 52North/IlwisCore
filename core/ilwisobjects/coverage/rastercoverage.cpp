@@ -42,7 +42,7 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
         coordinateSystem(grf->coordinateSystem()); // mandatory
         resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
         resourceRef().addProperty("georeference",_georef->id());
-        resourceRef().addProperty("latlonenvelop", coordinateSystem()->envelope(true));
+        resourceRef().addProperty("latlonenvelop", coordinateSystem()->envelope(true).toString());
     }
     if (_georef.isValid()){
         if ( _size.isValid() && !_size.isNull() && !resetData)
