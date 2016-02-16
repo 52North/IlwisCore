@@ -20,6 +20,7 @@
 #include "tableoperations/convertcolumndomain.h"
 #include "tableoperations/tableoperationfactory.h"
 #include "consolescriptmodel.h"
+#include "oshelper.h"
 #include "ilwiscontext.h"
 
 using namespace Ilwis;
@@ -211,7 +212,7 @@ void UIContextModel::prepare()
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
     Ilwis::kernel()->addFactory(factory);
-    QString worldmp = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/worldmap.ilwis");
+    QString worldmp = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/country_boundaries.ilwis");
     _worldMap.prepare(worldmp);
 }
 
