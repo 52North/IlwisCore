@@ -11,14 +11,14 @@ void main() {
 vec4 pos;
 vec4 vColor = vertexColor;
 pos = position;
-if ( scalefactor != 1) {
+if ( scalefactor != 1.0) {
 	 float x = scalecenter[0] + (position[0] - scalecenter[0]) * scalefactor;
 	 float y = scalecenter[1] + (position[1] - scalecenter[1]) * scalefactor;
 	 float z = position[2];
 	pos[0] = x;
 	pos[1] = y;
 	pos[2] = z;
-	pos[3] = 1;
+        pos[3] = 1.0;
  }
  vColor.a = alpha * vertexColor.a;
  gl_Position =  mvp * pos;
