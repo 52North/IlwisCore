@@ -16,14 +16,6 @@ FocusScope {
         anchors.fill :parent
         color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
 
-        Image {
-            anchors.fill: parent
-            source : "../../images/remoteBig.png"
-            fillMode: Image.Stretch
-            opacity: 0.07
-
-        }
-
         ScrollView {
             id : catalogGrid
             property color background1 : "#EAECEE"
