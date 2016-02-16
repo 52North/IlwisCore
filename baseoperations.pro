@@ -57,7 +57,8 @@ HEADERS += \
     baseoperations/creators/createprojectedcoordinatesystem.h \
     baseoperations/util/testoperation.h \
     baseoperations/math/columnjoin.h \
-    baseoperations/data/saveas.h
+    baseoperations/data/saveas.h \
+    baseoperations/creators/createrastercoverage.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -101,7 +102,8 @@ SOURCES += \
     baseoperations/creators/createprojectedcoordinatesystem.cpp \
     baseoperations/util/testoperation.cpp \
     baseoperations/math/columnjoin.cpp \
-    baseoperations/data/saveas.cpp
+    baseoperations/data/saveas.cpp \
+    baseoperations/creators/createrastercoverage.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
