@@ -68,9 +68,5 @@ TextEditLabelPair {
         keys: [filterType]
         onDropped : {content = drag.source.message}
     }
-    Component.onCompleted: {
-
-        console.debug(editWidth)
-    }
 }
 
