@@ -85,7 +85,7 @@ Parameter::PathType Parameter::pathType() const
 
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
     IlwisTypes tp = IlwisObject::findType(value);
-    if ( value == EXPREMPTYPARAMETER)
+    if ( value == "\"?\"")
         tp = itANY;
 
     if ( tp != itUNKNOWN)
@@ -354,8 +354,9 @@ Parameter OperationExpression::parm(int index, bool in) const
 {
     if (!inputIsKeyword()) {
         const QList<Parameter>& parameters = in ? _inParameters : _outParameters;
-        if ( index < parameters.size())
-            return parameters[index];
+        if ( index < parameters.size()) {
+                return parameters[index];
+        }
     }
     return Parameter();
 }
@@ -369,8 +370,11 @@ Parameter OperationExpression::parm(const QString searchValue, bool caseInsensit
                 foreach(const auto& parm, _inParametersMap) {
                     QString k2 = _type == otFunction ? parm.name(): parm.value();
                     k2 = k2.toLower();
-                    if ( k1 == k2)
+                    if ( k1 == k2) {
+                        /*if (parm.value() == EXPREMPTYPARAMETER)
+                            parm.value("?");*/
                         return parm;
+                    }
                 }
             } else {
                 auto iter = _inParametersMap.find(searchValue);
