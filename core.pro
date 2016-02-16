@@ -305,9 +305,7 @@ OTHER_FILES += \
     LICENSE-2.0.txt \
     installer.nsi \
     core/resources/ilwis.config \
-    core/resources/worldmap.ilwis \
-    core/resources/country_boundaries.mps \
-    core/resources/country_boundaries.mps#
+    core/resources/country_boundaries.ilwis
 
 
 
@@ -370,9 +368,7 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/rasterfragmentshader_nvdia.glsl \
     core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config \
-    core/resources/worldmap.ilwis \
-    core/resources/country_boundaries.mps \
-    core/resources/country_boundaries.mps#
+    core/resources/country_boundaries.ilwis
 
 
 win32{
