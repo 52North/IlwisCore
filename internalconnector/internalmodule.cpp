@@ -233,6 +233,37 @@ bool InternalModule::createItems(InternalDatabaseConnection &db, const QString& 
 IlwisTypes InternalModule::ilwisType(const QString &name) {
     if ( name == sUNDEF)
         return itUNKNOWN;
+    bool ok;
+    name.toDouble(&ok); // numbers are not handled here
+    if ( ok)
+        return false;
+    if ( name.size() > 0 && name[0] == '\"') // quoted strings
+        return itSTRING;
+
+    auto FindType = [](InternalDatabaseConnection &dbi, const QString& code, const QString& sqltable)->bool{
+        QString query = QString("Select code from %2 where code='%1'").arg(code).arg(sqltable);
+        if ( dbi.exec(query))
+            return dbi.next();
+        return false;
+    };
+    InternalDatabaseConnection db;
+    if ( name.indexOf("/") == -1){ // no paths in codes
+        if ( FindType(db, name, "numericdomain"))
+            return itDOMAIN;
+        if ( FindType(db, name, "itemdomain"))
+            return itDOMAIN;
+        else if ( FindType(db, name, "projection"))
+            return itPROJECTION;
+        else if ( FindType(db, name, "projectedcsy"))
+            return itCOORDSYSTEM;
+        else if ( FindType(db, name, "ellipsoid"))
+            return itELLIPSOID;
+        else if ( FindType(db, name, "representation"))
+            return itREPRESENTATION;
+        else if ( FindType(db, name, "datum"))
+            return itGEODETICDATUM;
+    }
+
 
     QString objectlocation = name;
     if ( !name.contains(QRegExp("\\\\|/")))    {
