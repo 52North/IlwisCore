@@ -34,7 +34,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators.append(new IlwisObjectCreatorModel("Corners Georeference",itGEOREF,"CreateGeorefCorners.qml", 350, this));
     _creators.append(new IlwisObjectCreatorModel("Tiepoints Georeference",itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this));
     _creators.append(new IlwisObjectCreatorModel("Projected Coordinate System",itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this));
-    _creators.append(new IlwisObjectCreatorModel("LatLon Coordinate System",itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateNumDom.qml", 200, this));
+    _creators.append(new IlwisObjectCreatorModel("LatLon Coordinate System",itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this));
     _creators.append(new IlwisObjectCreatorModel("Bounds only Coordinate System",itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this));
     _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateRasterCoverage.qml", 290, this));
     _creators.append(new IlwisObjectCreatorModel("Feature Coverage",itFEATURE,"CreateNumDom.qml", 200, this));
@@ -228,17 +228,19 @@ QString ObjectCreator::createProjectedCoordinateSystemFromBase(const QVariantMap
     if (!db.next()){
         return QString::number(i64UNDEF);
     }
+    QString kvps;
+
     QVariantList currentParms = parms["projectionparameters"].value<QVariantList>();
 
-    QStringList parameterNameList = projection->parameterNameList();
+    if ( currentParms.size() > 0){
+        QStringList parameterNameList = projection->parameterNameList();
 
-    int currentIndex = 0;
-    QString kvps;
-    for(auto p : parameterNameList){
-        if ( kvps != "")
-            kvps += ",";
-        kvps  += p + "= " + currentParms[currentIndex++].toString();
-
+        int currentIndex = 0;
+        for(auto p : parameterNameList){
+            if ( kvps != "")
+                kvps += ",";
+            kvps  += p + "= " + currentParms[currentIndex++].toString();
+        }
     }
     expression = QString("script %1{format(stream,\"coordinatesystem\")}=createprojectedcoordinatesystem(\"%2\",\"%3\",\"%4\"").
             arg(parms["name"].toString()).
@@ -309,7 +311,7 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
     } else if ( type == "georef"){
         return createGeoreference(parms);
     } else if ( type == "coordinatesystem"){
-        if ( parms["subtype"].toString() == "projected")
+        if ( parms["subtype"].toString() == "conventional")
             return createProjectedCoordinateSystem(parms);
     } else if ( type == "rastercoverage"){
         return createRasterCoverage(parms);
