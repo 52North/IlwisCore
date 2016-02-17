@@ -19,7 +19,7 @@ OTHER_FILES += \
     spreadsheetconnectors/pythonscript.json
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/$$TARGET -lpython35
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lpython35
 		
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
