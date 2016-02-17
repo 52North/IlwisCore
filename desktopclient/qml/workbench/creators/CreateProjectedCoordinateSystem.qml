@@ -122,12 +122,12 @@ Controls.DropableItem{
                 else if ( epsgnumber.visible){
                     createInfo = { name : objectcommon.itemname,
                         type : "coordinatesystem",
-                        subtype : "projected",
+                        subtype : "conventional",
                         epsg : epsgnumber.content }
                 }else if ( proj4def.visible){
                     createInfo = { name : objectcommon.itemname,
                         type : "coordinatesystem",
-                        subtype : "projected",
+                        subtype : "conventional",
                         proj4 : proj4def.content }
                 }
 

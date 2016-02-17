@@ -18,7 +18,7 @@ Controls.DropableItem{
     function getCreateInfo() {
         var createinfo = { name : objectcommon.itemname,
             type : "coordinatesystem",
-            subtype : "projected",
+            subtype : "conventional",
             projection : projectionParams.name,
             projectionparameters : projectionParams.projectionInfo(),
             ellipsoid : ellipsoidselector.name,
