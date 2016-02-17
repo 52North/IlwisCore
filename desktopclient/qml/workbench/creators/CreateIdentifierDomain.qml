@@ -69,7 +69,6 @@ Controls.DropableItem{
                 width : 70
                 text : qsTr("Apply")
                 onClicked: {
-                    dropItem.state = "invisible"
                     var itemstring = ""
                     if ( commonpart.domitems.item.model){
                         for(var i = 0; i < domainitems.item.model.length; ++i){

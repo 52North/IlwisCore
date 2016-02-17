@@ -97,7 +97,6 @@ Controls.DropableItem{
                 text : qsTr("Apply")
                 y : 10
                 onClicked: {
-                    dropItem.state = "invisible"
                     var createInfo = {georeference : grfvalue.content,
                         domain : domvalue.content,
                         bands : bandsvalue.content,

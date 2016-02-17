@@ -122,7 +122,6 @@ Controls.DropableItem{
                 text : qsTr("Apply")
                 y : 10
                 onClicked: {
-                    dropItem.state = "invisible"
                     var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
                     var ilwisid = objectcreator.createObject(createInfo)
                 }

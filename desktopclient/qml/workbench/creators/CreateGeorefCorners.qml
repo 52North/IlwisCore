@@ -107,7 +107,6 @@ Controls.DropableItem{
             width : 70
             text : qsTr("Apply")
             onClicked: {
-                dropItem.state = "invisible"
                 var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
                     maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
                     centered : cbcorners.checked, pixelsize : pixsz.content,
