@@ -21,6 +21,7 @@ Row {
     spacing : 5
 
     function calcstrings() {
+        degreestxt.isChanging = true
         if ( degreestxt.text.indexOf(".") != -1){
             var dgr = Number(degreestxt.text) | 0
             var minutes = parseInt((Number(degreestxt.text) - dgr)*60.0, 10)
@@ -30,6 +31,7 @@ Row {
             secondstxt.text = secs
             if ( Number(degreestxt.text < 0)){
                 half.checked = false
+                degreestxt.text = Math.abs(dgr)
                 half.text = northsouth ? qsTr("South") : qsTr("West")
             }else{
                 half.checked = true
@@ -40,10 +42,19 @@ Row {
             if ( degreestxt.text && degreestxt.text !== "" ){
                 half.checked = degreestxt.text[0] !== "-"
             }
-                degrees = degreestxt.text + " ° " + minutestxt.text + " ' " + secondstxt.text + " \""
-                metric = Number(degreestxt.text) + Number(minutestxt.text) / 60.0 + Number(secondstxt.text) / 3600.0
+            if ( !half.checked){
+                degreestxt.text = Math.abs(Number(degreestxt.text))
+            }
+
+            degrees = degreestxt.text + " ° " + minutestxt.text + " ' " + secondstxt.text + " \""
+            metric = Number(degreestxt.text) + Number(minutestxt.text) / 60.0 + Number(secondstxt.text) / 3600.0
+            if ( !half.checked){
+                degrees = "-" + degrees
+                metric = "-" + metric
+            }
 
         }
+        degreestxt.isChanging = false
     }
 
     ValidatedTextField{
@@ -51,9 +62,11 @@ Row {
         width : 30
         height : parent.height
         regexvalidator: /^-?(\d*(\.\d*)?)/
+        property bool isChanging: false
 
         onTextChanged : {
-            calcstrings()
+            if (!isChanging)
+                calcstrings()
         }
     }
     Text {
