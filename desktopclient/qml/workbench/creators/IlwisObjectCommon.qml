@@ -9,16 +9,18 @@ import "../../controls" as Controls
 import "../.." as Base
 
 Column {
-    width : parent.width
+    id : common
+    width : parent.width - 10
     height : 65
     spacing : 4
+    property int labelWidth : 120
     property alias itemname: namevalue.content
     property alias description : descvalue.content
 
     Controls.TextEditLabelPair{
         id : namevalue
         labelText: qsTr("Name")
-        labelWidth: 120
+        labelWidth: common.labelWidth
         width : parent.width
     }
     Controls.TextAreaLabelPair{
@@ -26,7 +28,7 @@ Column {
         labelText: qsTr("Description")
         width : parent.width
         height : 40
-        labelWidth: 120
+        labelWidth: common.labelWidth
     }
 }
 
