@@ -45,9 +45,9 @@ void PythonScriptModule::prepare()
     try{
         QString home = ilwisconfig("extensionsettings/pythonscript/python-home", QString(sUNDEF));
         if ( home == sUNDEF){
-            home = QString::fromWCharArray(Py_GetPythonHome());
+            home = context()->ilwisFolder().absoluteFilePath() + "/extensions/pythonscript/python";
         }
-        QString checkhome = home + "/DLLs/python3.dll";
+        QString checkhome = home + "/python3.dll";
         QFileInfo inf(checkhome);
         if ( !inf.exists()){
             WARN2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
