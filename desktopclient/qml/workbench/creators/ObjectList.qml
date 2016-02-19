@@ -45,7 +45,10 @@ Item {
                     }
                 }
                 onCurrentIndexChanged: {
-                    objectcreator.setActiveCreator(currentIndex)
+                    if ( model[currentIndex]){
+                        editorList.model.append(objectcreator.creatorInfo(model[currentIndex].split('|')[1]))
+
+                    }
                 }
                 Component.objectName: {
                     objectlist.currentIndex = -1
@@ -63,7 +66,7 @@ Item {
                                 height : 23
                                 Image {
                                     id : icon
-                                    source : iconSource(modelData.split('|')[1])
+                                    source : iconSource(modelData.split('|')[2])
                                 }
                             }
                             Text {
