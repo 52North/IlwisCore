@@ -7,16 +7,33 @@ import IlwisObjectCreatorModel 1.0
 import "../../Global.js" as Global
 
 ListView {
+    ListModel {
+        id: creators
+    }
+    function oneStepBack(current) {
+        if ( editorList.model.count === 1)
+            current.state = "invisible"
+        if ( editorList.model.count > 1)
+            editorList.currentIndex = editorList.model.count - 2
+    }
+
     id : creatorList
     width: parent.width
-    model : objectcreator.activeCreators
+    model : creators
     orientation : ListView.Horizontal
+    highlight: Rectangle{ width : 100; height : creatorList.height; color : Global.selectedColor}
+    highlightMoveVelocity : 800
 
-      delegate: Component {
+    delegate: Component {
 
         Rectangle {
+            id : mydelegate
             width : creatorList.width
             height : creatorList.height
+
+            function setValue(type, value){
+                loader1.item.setValue(type, value)
+            }
 
             Loader {
                 id : loader1
