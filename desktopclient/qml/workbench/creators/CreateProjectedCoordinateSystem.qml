@@ -114,7 +114,7 @@ Controls.DropableItem{
             anchors.rightMargin: 6
             anchors.bottom: parent.bottom
             width : 70
-            text : qsTr("Apply")
+            text : qsTr(editorList.model.count === 1 ? "Apply" : "Set")
             onClicked: {
                 var createInfo
                 if ( fromBase.state == "visible")
@@ -131,7 +131,12 @@ Controls.DropableItem{
                         proj4 : proj4def.content }
                 }
 
-                objectcreator.createObject(createInfo)
+                var createdId = objectcreator.createObject(createInfo)
+                editorList.oneStepBack(dropItem)
+                if ( createdId !== "?" && editorList.model.count > 1)
+                    editorList.currentItem.setValue("coordinatesystem", createdId)
+                if ( editorList.model.count > 1)
+                    editorList.model.remove(editorList.model.count - 1)
             }
 
         }
@@ -143,7 +148,8 @@ Controls.DropableItem{
             width : 70
             text : qsTr("Close")
             onClicked: {
-                dropItem.state = "invisible"
+                editorList.oneStepBack(dropItem)
+                editorList.model.remove(editorList.model.count - 1)
             }
         }
     }
