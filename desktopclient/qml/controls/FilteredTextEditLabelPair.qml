@@ -9,6 +9,7 @@ TextEditLabelPair {
     property string filterImage
     property string filterType
     property bool useCreateButton : false
+    signal createClicked()
     editWidth : parent.width - ( useCreateButton ? Global.rowHeight + 3 : 2*Global.rowHeight + 3)
 
 
@@ -59,7 +60,7 @@ TextEditLabelPair {
         }
 
         onClicked : {
-            mastercatalog.currentCatalog.filterChanged(filterType + "|exclusive" , checked)
+            createClicked()
         }
     }
     DropArea{ x :labelWidth
