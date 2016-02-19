@@ -22,18 +22,17 @@ class ILWISCOREUISHARED_EXPORT ObjectCreator : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QStringList createableObjects READ createableObjects CONSTANT)
-    Q_PROPERTY( QQmlListProperty<IlwisObjectCreatorModel> activeCreators READ activeCreators NOTIFY activeCreatorsChanged)
 
 public:
     explicit ObjectCreator(QObject *parent = 0);
     ~ObjectCreator();
 
 
-    Q_INVOKABLE void setActiveCreator(qint32 index);
     Q_INVOKABLE QString createObject(const QVariantMap& parms);
+    Q_INVOKABLE QVariantMap creatorInfo(const QString &name)  const;
 
     QStringList createableObjects() const;
-    QQmlListProperty<IlwisObjectCreatorModel> activeCreators() ;
+
 
 signals:
     void activeCreatorsChanged();
@@ -41,9 +40,7 @@ signals:
 public slots:
 
 private:
-    QList<IlwisObjectCreatorModel *> _activeCreators;
-    QList<IlwisObjectCreatorModel *> _creators;
-
+    std::map<QString, IlwisObjectCreatorModel *> _creators;
 
     QString createNumericDomain(const QVariantMap &parms);
     QString createItemDomain(const QVariantMap &parms);

@@ -21,25 +21,25 @@ using namespace Ilwis;
 
 ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
-    _creators.append(new IlwisObjectCreatorModel("Workflow",itWORKFLOW,"CreateWorkflow.qml", 400, this));
-    _creators.append(new IlwisObjectCreatorModel("Numeric Domain",itNUMERICDOMAIN,"CreateNumDom.qml", 250, this));
-    _creators.append(new IlwisObjectCreatorModel("Thematic Domain",itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this));
-    _creators.append(new IlwisObjectCreatorModel("Identifier Domain",itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this));
-    //_creators.append(new IlwisObjectCreatorModel("Indexed Domain",itITEMDOMAIN | itINDEXEDITEM,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Interval Domain",itITEMDOMAIN | itNUMERICITEM,"CreateIntervalDomain.qml", 550, this));
-    _creators.append(new IlwisObjectCreatorModel("Time Domain",itTIME | itDOMAIN,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Time Interval Domain",itTIMEITEM | itITEMDOMAIN,"CreateNumDom.qml", 200, this));
-//    _creators.append(new IlwisObjectCreatorModel("Color Domain",itCOLORDOMAIN,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Color Palette Domain",itPALETTECOLOR | itITEMDOMAIN,"CreatePaletteDomain.qml", 560, this));
-    _creators.append(new IlwisObjectCreatorModel("Corners Georeference",itGEOREF,"CreateGeorefCorners.qml", 350, this));
-    _creators.append(new IlwisObjectCreatorModel("Tiepoints Georeference",itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this));
-    _creators.append(new IlwisObjectCreatorModel("Projected Coordinate System",itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this));
-    _creators.append(new IlwisObjectCreatorModel("LatLon Coordinate System",itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this));
-    _creators.append(new IlwisObjectCreatorModel("Bounds only Coordinate System",itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Raster Coverage",itRASTER,"CreateRasterCoverage.qml", 290, this));
-    _creators.append(new IlwisObjectCreatorModel("Feature Coverage",itFEATURE,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Table",itTABLE,"CreateNumDom.qml", 200, this));
-    _creators.append(new IlwisObjectCreatorModel("Representation",itREPRESENTATION,"CreateNumDom.qml", 250, this));
+    _creators["workflow"] = new IlwisObjectCreatorModel("workflow",TR("Workflow"),itWORKFLOW,"CreateWorkflow.qml", 400, this);
+    _creators["numericdomain" ] = new IlwisObjectCreatorModel("numericdomain",TR("Numeric Domain"),itNUMERICDOMAIN,"CreateNumDom.qml", 250, this);
+    _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
+    _creators["nameidentifierdomain" ] = new IlwisObjectCreatorModel("nameidentifierdomain",TR("Identifier Domain"),itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this);
+    //_creators[ ] = new IlwisObjectCreatorModel(TR("Indexed Domain",itITEMDOMAIN | itINDEXEDITEM,"CreateNumDom.qml", 200, this);
+    _creators["intervaldomain" ] = new IlwisObjectCreatorModel("intervaldomain",TR("Interval Domain"),itITEMDOMAIN | itNUMERICITEM,"CreateIntervalDomain.qml", 550, this);
+    _creators["timedomain" ] = new IlwisObjectCreatorModel("timedomain",TR("Time Domain"),itTIME | itDOMAIN,"CreateNumDom.qml", 200, this);
+    _creators["timeintervaldomain" ] = new IlwisObjectCreatorModel("timeintervaldomain", TR("Time Interval Domain"),itTIMEITEM | itITEMDOMAIN,"CreateNumDom.qml", 200, this);
+//    _creators[ ] = new IlwisObjectCreatorModel(TR("Color Domain",itCOLORDOMAIN,"CreateNumDom.qml", 200, this);
+    _creators["colorpalette" ] = new IlwisObjectCreatorModel("colorpalette", TR("Color Palette Domain"),itPALETTECOLOR | itITEMDOMAIN,"CreatePaletteDomain.qml", 560, this);
+    _creators["cornersgeoreferences" ] = new IlwisObjectCreatorModel("cornersgeoreferences", TR("Corners Georeference"),itGEOREF,"CreateGeorefCorners.qml", 350, this);
+    _creators["tiepointgeoreference" ] = new IlwisObjectCreatorModel("tiepointgeoreference",TR("Tiepoints Georeference"),itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this);
+    _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this);
+    _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("LatLon Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this);
+    _creators["boundsonlycoordinatesystem" ] = new IlwisObjectCreatorModel("boundsonlycoordinatesystem", TR("Bounds only Coordinate System"),itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this);
+    _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 290, this);
+    _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"CreateNumDom.qml", 200, this);
+    _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"CreateNumDom.qml", 200, this);
+    _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"CreateNumDom.qml", 250, this);
 }
 
 ObjectCreator::~ObjectCreator()
@@ -50,24 +50,15 @@ ObjectCreator::~ObjectCreator()
 QStringList ObjectCreator::createableObjects() const
 {
     QStringList nameiconpairs;
-    for(auto *model : _creators)
-        nameiconpairs.append(model->label() + "|" + ResourceModel::iconPath(model->type().toULongLong()));
+    for(auto kvp : _creators)
+        nameiconpairs.append(kvp.second->label() + "|" +
+                             kvp.second->name() + "|" +
+                             ResourceModel::iconPath(kvp.second->type().toULongLong()));
 
     return nameiconpairs;
 }
 
-void ObjectCreator::setActiveCreator(qint32 index)
-{
-    if ( index >= 0 && index < _creators.size()){
-        _activeCreators.clear();
-        _activeCreators.append(_creators[index]);
-        emit activeCreatorsChanged();
-    } if ( index == -1){
-        _activeCreators.clear();
-        emit activeCreatorsChanged();
 
-    }
-}
 
 QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     QString expression;
@@ -89,7 +80,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     if( parms["valuetype"].toString() == "identifier"){
         if ( parms["name"].toString() == ""){
             kernel()->issues()->log(TR("Domain must have a valid name"));
-            return QString::number(i64UNDEF);
+            return sUNDEF;
         }
         expression = QString("script %1{format(stream,\"domain\")}=createidentifierdomain(\"%2\",%3,%4")
                 .arg(parms["name"].toString())
@@ -103,7 +94,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     if( parms["valuetype"].toString() == "palette"){
         if ( parms["name"].toString() == ""){
             kernel()->issues()->log(TR("Domain must have a valid name"));
-            return QString::number(i64UNDEF);
+            return sUNDEF;
         }
         expression = QString("script %1{format(stream,\"domain\")}=createpalettedomain(\"%2\",%3,%4")
                 .arg(parms["name"].toString())
@@ -117,7 +108,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     if( parms["valuetype"].toString() == "interval"){
         if ( parms["name"].toString() == ""){
             kernel()->issues()->log(TR("Domain must have a valid name"));
-            return QString::number(i64UNDEF);
+            return sUNDEF;
         }
         expression = QString("script %1{format(stream,\"domain\")}=createintervaldomain(\"%2\",%3,%4,%5")
                 .arg(parms["name"].toString())
@@ -136,7 +127,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
         IDomain obj = syms.getSymbol(ctx._results[0])._var.value<IDomain>();
         return QString::number(obj->id());
     }
-    return QString::number(i64UNDEF);
+    return sUNDEF;
 }
 
 QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
@@ -163,7 +154,7 @@ QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
         IDomain obj = syms.getSymbol(ctx._results[0])._var.value<IDomain>();
         return QString::number(obj->id());
     }
-    return QString::number(i64UNDEF);
+    return sUNDEF;
 }
 
 QString ObjectCreator::createGeoreference(const QVariantMap &parms){
@@ -185,7 +176,7 @@ QString ObjectCreator::createGeoreference(const QVariantMap &parms){
         IGeoReference obj = syms.getSymbol(ctx._results[0])._var.value<IGeoReference>();
         return QString::number(obj->id());
     }
-    return QString::number(i64UNDEF);
+    return sUNDEF;
 }
 
 QString ObjectCreator::createProjectedCoordinateSystemFromCode(const QVariantMap &parms){
@@ -220,13 +211,13 @@ QString ObjectCreator::createProjectedCoordinateSystemFromBase(const QVariantMap
         }
     }
     if ( !projection.isValid()){
-        return QString::number(i64UNDEF);
+        return sUNDEF;
     }
 
     QString code = projection->code();
     InternalDatabaseConnection db("Select parameters from projection where code='" + code + "'");
     if (!db.next()){
-        return QString::number(i64UNDEF);
+        return sUNDEF;
     }
     QString kvps;
 
@@ -275,7 +266,7 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
         }
     }
 
-    return QString::number(i64UNDEF);
+    return sUNDEF;
 }
 
 QString ObjectCreator::createWorkflow(const QVariantMap &parms)
@@ -325,13 +316,28 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
     } catch (std::exception& ex){
         kernel()->issues()->log(ex.what());
     }
-    return QString::number(i64UNDEF);
+    return sUNDEF;
+}
+
+QVariantMap ObjectCreator::creatorInfo(const QString& name) const
+{
+    auto iter = _creators.find(name);
+    if ( iter != _creators.end()){
+        QVariantMap data;
+        data["name"] = (*iter).first;
+        data["type"] = (*iter).second->type();
+        data["label"] = (*iter).second->label();
+        data["componentUrl"] = (*iter).second->componentUrl();
+        data["itemHeight"] = (*iter).second->height();
+        return data;
+    }
+    return QVariantMap();
 }
 
 QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
     QString name = parms["name"].toString();
     if ( name == "")
-        return QString::number(i64UNDEF);
+        return sUNDEF;
 
     int bands = parms["bands"].toInt();;
     QString expr = "createrastercoverage(";
@@ -357,12 +363,11 @@ QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
                 return QString::number(obj->id());
         }
     }
-    return QString::number(i64UNDEF);
+    return sUNDEF;
 }
 
-QQmlListProperty<IlwisObjectCreatorModel> ObjectCreator::activeCreators()
-{
-    return  QQmlListProperty<IlwisObjectCreatorModel>(this, _activeCreators);
-}
+
+
+
 
 
