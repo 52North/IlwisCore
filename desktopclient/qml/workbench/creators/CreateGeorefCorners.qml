@@ -15,6 +15,13 @@ Controls.DropableItem{
     x : 4
     clip:true
 
+    function setValue(type, value){
+        if ( type === "coordinatesystem"){
+            var resource = mastercatalog.id2Resource(value)
+            csypart.content = resource.url
+        }
+    }
+
     Column {
         id : dataarea
         function isCsy(objid){
@@ -29,49 +36,26 @@ Controls.DropableItem{
         IlwisObjectCommon{
             id : objectcommon
         }
-        Row {
-            width : parent.width
-            height : Global.rowHeight
-            Text{
-                id : csyLabel
-                width : 120
-                height : 20
-                text : qsTr("Coordinate System")
-                font.bold: true
-            }
-
-            Controls.TextFieldDropArea{
-                id : csypart
-                width : parent.width - csyLabel.width - 23
-                height: Global.rowHeight
-
-                canUse: dataarea.isCsy
-                readOnly: false
-                asName: false
-                onObjectidChanged: {
-                    csyBounds.opacity = content != ""
-                    var model = mastercatalog.id2object(csypart.objectid, csypart)
-                    if ( model){
-                        csyBounds.islatlon = !model.isProjected
-                        var bb = model.getProperty(model.isProjected ? "envelope" : "latlonenvelope")
-                        csyBounds.setEnvelope(bb)
-
-                    }
-                }
-
-            }
-            Button {
-                height : 20
-                width : 20
-                Image {
-                    id: name
-                    source: "../../images/plus20.png"
-                    width : 16
-                    height : 16
-                    anchors.centerIn: parent
-                }
+        Connections {
+            target : csypart
+            onCreateClicked : {
+                editorList.model.append(objectcreator.creatorInfo("projectedcoordinatesystem"))
+                editorList.currentIndex = editorList.model.count - 1
             }
         }
+
+
+
+        Controls.FilteredTextEditLabelPair{
+            id : csypart
+            labelWidth: 120
+            labelText: qsTr("Coordinate System")
+            filterImage: "../images/csy20.png"
+            filterType: "coordinatesystem"
+            width : parent.width
+            useCreateButton: true
+        }
+
         CheckBox{
             id : cbcorners
             text : qsTr("Center of Pixels")
@@ -123,7 +107,11 @@ Controls.DropableItem{
             width : 70
             text : qsTr("Close")
                onClicked: {
-                dropItem.state = "invisible"
+                   if ( editorList.model.count === 1)
+                       dropItem.state = "invisible"
+                   if ( editorList.model.count === 1)
+                       dropItem.state = "invisible"
+                   onStepBack()
             }
         }
     }
