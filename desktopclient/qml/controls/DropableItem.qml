@@ -4,7 +4,9 @@ Item {
     id : dropableItem
     width: parent.width
     height: 0
+    visible: false
     property int maxHeight : 0
+    property int interval : 200
 
     states: [
         State { name: "visible"
@@ -12,6 +14,7 @@ Item {
             PropertyChanges {
                 target: dropableItem
                 height : maxHeight
+                visible : true
             }
         },
         State {
@@ -19,13 +22,22 @@ Item {
             PropertyChanges {
                 target: dropableItem
                 height : 0
+                visible : false
+            }
+        },
+        State {
+            name : "show"
+            PropertyChanges {
+                target: dropableItem
+                height : maxHeight
+                visible : true
             }
         }
 
     ]
     transitions: [
         Transition {
-            NumberAnimation { properties: "height"; duration : 400 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "height"; duration : interval ; easing.type: Easing.InOutCubic }
         }
     ]
 }
