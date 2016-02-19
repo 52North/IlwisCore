@@ -9,17 +9,19 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectCreatorModel : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString label READ label CONSTANT)
+    Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString type READ type CONSTANT)
     Q_PROPERTY(QString componentUrl READ componentUrl CONSTANT)
     Q_PROPERTY(int itemHeight READ height CONSTANT)
 public:
     explicit IlwisObjectCreatorModel(QObject *parent = 0);
-    IlwisObjectCreatorModel(const QString& label, quint64 type, const QString& creatorUrl, int height, QObject *parent);
+    IlwisObjectCreatorModel(const QString& name, const QString& label, quint64 type, const QString& creatorUrl, int height, QObject *parent);
     ~IlwisObjectCreatorModel();
 
     QString label() const;
     QString componentUrl() const;
     QString type() const;
+    QString name() const;
     int height() const;
 
 signals:
@@ -27,6 +29,7 @@ signals:
 public slots:
 
 private:
+    QString _name;
     QString _label;
     quint64 _type;
     QString _creatorUrl;

@@ -5,8 +5,9 @@ IlwisObjectCreatorModel::IlwisObjectCreatorModel(QObject *parent) : QObject(pare
 
 }
 
-IlwisObjectCreatorModel::IlwisObjectCreatorModel(const QString &label, quint64 type, const QString &creatorUrl, int height, QObject *parent):
+IlwisObjectCreatorModel::IlwisObjectCreatorModel(const QString& name,const QString &label, quint64 type, const QString &creatorUrl, int height, QObject *parent):
 QObject(parent),
+  _name(name),
   _label(label),
   _type(type),
   _creatorUrl(creatorUrl),
@@ -33,6 +34,11 @@ QString IlwisObjectCreatorModel::componentUrl() const
 QString IlwisObjectCreatorModel::type() const
 {
     return QString::number(_type);
+}
+
+QString IlwisObjectCreatorModel::name() const
+{
+    return _name;
 }
 
 int IlwisObjectCreatorModel::height() const
