@@ -15,6 +15,7 @@ Controls.DropableItem{
     width : 275
     height : 0
     clip:true
+    property var list
 
     Rectangle {
         height: parent.height
@@ -38,6 +39,13 @@ Controls.DropableItem{
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
+            }
+            Connections {
+                target : grfvalue
+                onCreateClicked : {
+                    editorList.model.append(objectcreator.creatorInfo("cornersgeoreferences"))
+                    editorList.currentIndex = editorList.model.count - 1
+                }
             }
 
             Controls.FilteredTextEditLabelPair{
@@ -118,8 +126,9 @@ Controls.DropableItem{
                 y : 10
 
                 onClicked: {
-                    dropItem.state = "invisible"
-                }
+                    if ( objectcreator.activeCreatorsCount === 1)
+                        dropItem.state = "invisible"
+                     }
             }
         }
     }
