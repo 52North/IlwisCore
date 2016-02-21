@@ -122,8 +122,11 @@ Controls.DropableItem{
                 text : qsTr("Apply")
                 y : 10
                 onClicked: {
+                    editorList.pop()
                     var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
                     var ilwisid = objectcreator.createObject(createInfo)
+                    if ( createdId !== "?" && editorList.depth > 1)
+                        editorList.currentItem.setValue("domain", createdId)
                 }
 
             }

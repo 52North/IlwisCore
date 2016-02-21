@@ -18,7 +18,33 @@ Item {
         text : qsTr("Objects that can be created")
         font.bold: true
     }
+    Component {
+        id : creatorContainer
+        Rectangle {
+            property var creator
 
+            id : mydelegate
+            width :200
+            height : 290
+
+            function setValue(type, value){
+                loader1.item.setValue(type, value)
+            }
+
+            Loader {
+                id : loader1
+                anchors.topMargin: 3
+                width : parent.width
+                source : creator.componentUrl
+                onStatusChanged:{
+                    if (loader1.status == Loader.Ready) {
+                        item.maxHeight = creator.itemHeight
+                        item.state = "visible"
+                    }
+                }
+            }
+        }
+    }
 
     Rectangle{
         anchors.top : label.bottom
@@ -46,7 +72,7 @@ Item {
                 }
                 onCurrentIndexChanged: {
                     if ( model[currentIndex]){
-                        editorList.model.append(objectcreator.creatorInfo(model[currentIndex].split('|')[1]))
+                        editorList.push({item:creatorContainer, properties:{creator:objectcreator.creatorInfo(model[currentIndex].split('|')[1])}})
 
                     }
                 }

@@ -7,7 +7,7 @@ Rectangle{
     height : 22
     color : Global.headerdark
     Text{
-        text : label
+        text : creator.label
         color: "white"
         x : 4
         font.pointSize: 9

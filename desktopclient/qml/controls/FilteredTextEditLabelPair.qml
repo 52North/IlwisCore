@@ -63,11 +63,6 @@ TextEditLabelPair {
             createClicked()
         }
     }
-    DropArea{ x :labelWidth
-        height : parent.height
-        width : parent.width
-        keys: [filterType]
-        onDropped : {content = drag.source.message}
-    }
+
 }
 

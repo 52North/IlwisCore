@@ -40,6 +40,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"CreateNumDom.qml", 200, this);
     _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"CreateNumDom.qml", 200, this);
     _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"CreateNumDom.qml", 250, this);
+        _creators["domain" ] = new IlwisObjectCreatorModel("domain",TR("Domain"),itDOMAIN,"CreateDomain.qml", 250, this);
 }
 
 ObjectCreator::~ObjectCreator()

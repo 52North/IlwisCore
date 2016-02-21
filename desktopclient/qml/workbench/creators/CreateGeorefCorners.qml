@@ -39,8 +39,7 @@ Controls.DropableItem{
         Connections {
             target : csypart
             onCreateClicked : {
-                editorList.model.append(objectcreator.creatorInfo("projectedcoordinatesystem"))
-                editorList.currentIndex = editorList.model.count - 1
+                editorList.push({item:creatorContainer, properties:{creator:objectcreator.creatorInfo("projectedcoordinatesystem")}})
             }
         }
 
@@ -95,7 +94,10 @@ Controls.DropableItem{
                     maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
                     centered : cbcorners.checked, pixelsize : pixsz.content,
                     description :objectcommon.description}
-                objectcreator.createObject(createinfo)
+                var createdId = objectcreator.createObject(createinfo)
+                editorList.pop()
+                if ( createdId !== "?" && editorList.depth > 1)
+                    editorList.currentItem.setValue("georeference", createdId)
             }
 
         }
@@ -106,12 +108,10 @@ Controls.DropableItem{
             anchors.bottom: parent.bottom
             width : 70
             text : qsTr("Close")
-               onClicked: {
-                   if ( editorList.model.count === 1)
-                       dropItem.state = "invisible"
-                   if ( editorList.model.count === 1)
-                       dropItem.state = "invisible"
-                   onStepBack()
+            onClicked: {
+                if ( editorList.depth <= 1)
+                    dropItem.state = "invisible"
+                //editorList.pop()
             }
         }
     }

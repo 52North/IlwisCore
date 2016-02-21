@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../Global.js" as Global
 
-Item {
+DropArea {
     property alias content : textid.text
     property string labelText
     property int labelWidth
@@ -56,6 +56,10 @@ Item {
                 oldText = textid.text
             }
         }
+    }
+    onDropped : {
+        content = drag.source.message
+        console.debug(drag.source.message)
     }
 }
 

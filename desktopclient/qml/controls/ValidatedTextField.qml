@@ -7,7 +7,7 @@ import "../Global.js" as Global
 
 TextField{
     id : textid
-    anchors.left : label.right
+   //anchors.left : label.right
     height : Global.rowHeight
     width : parent.width
     readOnly : false

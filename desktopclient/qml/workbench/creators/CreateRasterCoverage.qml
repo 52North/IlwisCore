@@ -17,6 +17,18 @@ Controls.DropableItem{
     clip:true
     property var list
 
+    function setValue(type, value){
+        var resource
+        if ( type === "georeference"){
+            resource = mastercatalog.id2Resource(value)
+            grfvalue.content = resource.url
+        }
+        if ( type === "domain"){
+            resource = mastercatalog.id2Resource(value)
+            domvalue.content = resource.url
+        }
+    }
+
     Rectangle {
         height: parent.height
         border.width : 1
@@ -43,8 +55,14 @@ Controls.DropableItem{
             Connections {
                 target : grfvalue
                 onCreateClicked : {
-                    editorList.model.append(objectcreator.creatorInfo("cornersgeoreferences"))
-                    editorList.currentIndex = editorList.model.count - 1
+                    editorList.push({item:creatorContainer, properties:{creator:objectcreator.creatorInfo("cornersgeoreferences")}})
+                }
+            }
+
+            Connections {
+                target : domvalue
+                onCreateClicked : {
+                    editorList.push({item:creatorContainer, properties:{creator:objectcreator.creatorInfo("domain")}})
                 }
             }
 
@@ -66,6 +84,7 @@ Controls.DropableItem{
                 filterType: "domain"
                 width : parent.width
                 useCreateButton: true
+                content : "value"
             }
 
             Controls.TextEditLabelPair{

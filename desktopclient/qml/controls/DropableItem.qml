@@ -22,8 +22,7 @@ Item {
             PropertyChanges {
                 target: dropableItem
                 height : 0
-                visible : false
-            }
+              }
         },
         State {
             name : "show"
@@ -37,7 +36,7 @@ Item {
     ]
     transitions: [
         Transition {
-            NumberAnimation { properties: "height"; duration : interval ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "height"; duration : 300 ; easing.type: Easing.InOutCubic }
         }
     ]
 }
