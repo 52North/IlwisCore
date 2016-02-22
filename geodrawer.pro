@@ -4,7 +4,7 @@ QMAKE_CXXFLAGS += -Wno-sign-compare
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 # QMAKE_CXXFLAGS += -fsanitize=address
-QMAKE_CXXFLAGS += -fstack-protector-all
+#QMAKE_CXXFLAGS += -fstack-protector-all
 
 
 TEMPLATE = lib
