@@ -3,6 +3,9 @@ QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_CXXFLAGS += -Wno-sign-compare
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+# QMAKE_CXXFLAGS += -fsanitize=address
+QMAKE_CXXFLAGS += -fstack-protector-all
+
 
 TEMPLATE = lib
 TARGET = LayersView
@@ -125,12 +128,12 @@ HEADERS += \
 
 OTHER_FILES = geodrawer/qmldir
 
-BOOST=../external
+# BOOST=../external
 ILWISCORE = ../IlwisCore
 INCLUDEPATH += $$PWD/$$ILWISCORE/core
 DEPENDPATH += $$PWD/$$ILWISCORE/core
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
+# INCLUDEPATH += $$PWD/../external/geos
+# DEPENDPATH += $$PWD/../external/geos
 INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
 DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
 
@@ -153,8 +156,8 @@ win32{
 }
 linux{
     BOOST=/usr/include
-    GEOSINCL=/usr/include
-    GEOSLIB=/usr/lib
+    GEOSINCL=/usr/local/include
+    GEOSLIB=/usr/local/lib
     SHAREDEXT=so
     PREFIXSHARED=lib
     INCLUDEPATH += $$GEOSINCL

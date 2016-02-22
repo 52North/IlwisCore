@@ -4,6 +4,9 @@ QMAKE_CXXFLAGS += -Wno-sign-compare
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
+
+
+
 CONFIG(debug, debug|release) {
 CONF=debug
 }
@@ -76,8 +79,8 @@ linux{
 
 INCLUDEPATH += $$PWD/../IlwisCore/core
 DEPENDPATH += $$PWD/../IlwisCore/core
-INCLUDEPATH += $$PWD/../external/geos
-DEPENDPATH += $$PWD/../external/geos
+# INCLUDEPATH += $$PWD/../external/geos
+# DEPENDPATH += $$PWD/../external/geos
 INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
 DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
 
