@@ -13,6 +13,8 @@ Row {
     property string degrees
     property string metric
     property bool northsouth : true
+    property bool isChanging: false
+    property bool isReadOnly : false
 
     function setCoordinate(crd){
         degreestxt.text = crd
@@ -21,14 +23,15 @@ Row {
     spacing : 5
 
     function calcstrings() {
-        degreestxt.isChanging = true
+        isChanging = true
         if ( degreestxt.text.indexOf(".") != -1){
             var dgr = Number(degreestxt.text) | 0
             var minutes = parseInt((Number(degreestxt.text) - dgr)*60.0, 10)
             var secs = (Number(degreestxt.text) - dgr - minutes/60.0) * 3600
+
             degreestxt.text = dgr
-            minutestxt.text = minutes
-            secondstxt.text = secs
+            minutestxt.text = Math.abs(minutes)
+            secondstxt.text = Math.abs(secs).toFixed(2)
             if ( Number(degreestxt.text < 0)){
                 half.checked = false
                 degreestxt.text = Math.abs(dgr)
@@ -54,7 +57,8 @@ Row {
             }
 
         }
-        degreestxt.isChanging = false
+        secondstxt.cursorPosition = 0
+        isChanging = false
     }
 
     ValidatedTextField{
@@ -62,7 +66,8 @@ Row {
         width : 30
         height : parent.height
         regexvalidator: /^-?(\d*(\.\d*)?)/
-        property bool isChanging: false
+        readOnly : isReadOnly
+
 
         onTextChanged : {
             if (!isChanging)
@@ -72,51 +77,56 @@ Row {
     Text {
         text : " °"
         width : 10
-       height : parent.height
-       clip : true
+        height : parent.height
+        clip : true
     }
     ValidatedTextField{
         id : minutestxt
         width : 30
         height : parent.height
         regexvalidator: /^\+?(0|[1-9]\d*)$/
+        readOnly : isReadOnly
 
         onTextChanged : {
-            calcstrings()
+            if (!isChanging)
+                calcstrings()
         }
     }
     Text {
         text : " '"
         width : 10
-       height : parent.height
-       clip : true
+        height : parent.height
+        clip : true
     }
     ValidatedTextField{
         id : secondstxt
         width : 50
         height : parent.height
         regexvalidator: /^\d*(\.\d*)?$/
+        readOnly : isReadOnly
 
         onTextChanged : {
-            calcstrings()
+            if (!isChanging)
+                calcstrings()
         }
     }
     Text {
         text : " \""
         width : 20
         height : parent.height
-       clip : true
+        clip : true
     }
     Button{
         id : half
         height : 20
         width : 40
         checked : true
+        enabled: isReadOnly ? false : true
         text : (northsouth ? (checked ? qsTr("North") : qsTr("South")) : (checked ? qsTr("East") : qsTr("West")))
         onClicked:  {
             checked = !checked
         }
-       clip : true
+        clip : true
     }
 }
 
