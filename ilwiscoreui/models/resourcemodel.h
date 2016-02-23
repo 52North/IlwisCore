@@ -32,6 +32,7 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(QString url READ url CONSTANT)
     Q_PROPERTY(QString container READ container CONSTANT)
     Q_PROPERTY(bool isSelected READ isSelected WRITE setIsSelected NOTIFY isSelectedChanged)
+    Q_PROPERTY(QString keywords READ keywords WRITE keywords NOTIFY keywordsChanged)
 
 
 
@@ -70,6 +71,8 @@ public:
     void iconPath(const QString& name);
     bool isRoot() const;
     QString id() const;
+    QString keywords() const;
+    void keywords(const QString& keys);
 
 
     Ilwis::Resource item() const;
@@ -104,6 +107,7 @@ signals:
     void displayNameChanged();
     void descriptionChanged();
     void isSelectedChanged();
+    void keywordsChanged();
 public slots:
 
 };

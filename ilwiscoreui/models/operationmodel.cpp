@@ -98,14 +98,6 @@ QString OperationModel::syntax() const
     return syn;
 }
 
-QString OperationModel::keywords() const
-{
-    QString kw =   getProperty("keyword");
-    if ( kw == sUNDEF)
-        return "";
-    return kw;
-}
-
 QString OperationModel::provider() const
 {
     QString kw =   getProperty("namespace");

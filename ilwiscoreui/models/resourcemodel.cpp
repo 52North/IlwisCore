@@ -488,3 +488,28 @@ void ResourceModel::setUrl(const QUrl &url, bool asRaw)
 {
     _item.setUrl(url, asRaw);
 }
+
+QString ResourceModel::keywords() const
+{
+    QString kw =   getProperty("keyword");
+    if ( kw == sUNDEF)
+        return "";
+    return kw;
+}
+
+void ResourceModel::keywords(const QString &keys)
+{
+    QString keywrds = keywords();
+    if ( keywrds == ""){
+        setProperty("keywords", keys);
+    }else {
+        QStringList parts1 = keywrds.split(",");
+        QStringList parts2 = keys.split(",");
+           for(QString key : parts2){
+            if ( !parts1.contains(key)){
+                keywrds += key    ;
+            }
+        }
+        setProperty("keywords", keywrds)   ;
+    }
+}
