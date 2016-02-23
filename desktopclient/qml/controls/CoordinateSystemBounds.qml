@@ -15,6 +15,7 @@ Item {
 
     property string boundingbox : setbb()
     property bool islatlon : false
+    property bool readOnly : false
 
     function setEnvelope(bb){
          valuepairs.item.setBounds(bb)
@@ -45,12 +46,18 @@ Item {
                     lonmax.setCoordinate(parts[2])
                     latmax.setCoordinate(parts[3])
                 }
+                if ( parts.length === 6){
+                    lonmin.setCoordinate(parts[0])
+                    latmin.setCoordinate(parts[1])
+                    lonmax.setCoordinate(parts[3])
+                    latmax.setCoordinate(parts[4])
+                }
             }
 
             anchors.fill: parent
             property string metricbb : lonmin.metric + " " + latmin.metric + " " + lonmax.metric + " " + latmin.metric
             Row {
-                height : Global.rowHeight
+                height : readOnly ? Global.rowHeight - 3 : Global.rowHeight
                 width : parent.width
                 Text{
                     width : 140
@@ -62,13 +69,14 @@ Item {
                 Controls.LatLonCoordinate{
                     id : latmin
                     width : 200
+                    isReadOnly: readOnly
                     onMetricChanged: {
                         miny = metric
                     }
                 }
             }
             Row {
-                height : Global.rowHeight
+                height : readOnly ? Global.rowHeight - 3 : Global.rowHeight
                 width : parent.width
                 Text{
                     width : 140
@@ -81,13 +89,14 @@ Item {
                 Controls.LatLonCoordinate{
                     id : latmax
                     width : 200
+                    isReadOnly: readOnly
                     onMetricChanged: {
                         maxy = metric
                     }
                 }
             }
             Row {
-                height : Global.rowHeight
+                height : readOnly ? Global.rowHeight - 3 : Global.rowHeight
                 width : parent.width
                 Text{
                     width : 140
@@ -100,13 +109,14 @@ Item {
                     id : lonmin
                     width : 200
                     northsouth: false
+                    isReadOnly: readOnly
                     onMetricChanged: {
                         minx = metric
                     }
                 }
             }
             Row {
-                height : Global.rowHeight
+                height : readOnly ? Global.rowHeight - 3 : Global.rowHeight
                 width : parent.width
                 Text{
                     width : 140
@@ -119,6 +129,7 @@ Item {
                     id :lonmax
                     width : 200
                     northsouth: false
+                    isReadOnly: readOnly
                     onMetricChanged: {
                         miny = metric
                     }
@@ -160,6 +171,7 @@ Item {
                         width : 110
                         height : 20
                         text : minx
+                        readOnly: csyBoundingBox.readOnly
                         onTextChanged: {
                             minx = text
                         }
@@ -169,6 +181,7 @@ Item {
                         width : 110
                         height : 20
                         text : miny
+                        readOnly: csyBoundingBox.readOnly
                         onTextChanged: {
                             miny = text
                         }
@@ -189,6 +202,7 @@ Item {
                         width : 110
                         height : 20
                         text : maxx
+                        readOnly: csyBoundingBox.readOnly
                         onTextChanged: {
                             maxx = text
                         }
@@ -198,6 +212,7 @@ Item {
                         width : 110
                         height : 20
                         text : maxy
+                        readOnly: csyBoundingBox.readOnly
                         onTextChanged: {
                             maxy = text
                         }
