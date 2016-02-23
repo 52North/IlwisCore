@@ -503,11 +503,15 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
         if ( !_ilwisobject.isValid())
             return "";
         if ( propertyname == "latlonenvelope" || propertyname == "envelope"){
+            Envelope env;
             if (hasType(_ilwisobject->ilwisType(), itCOVERAGE)){
-                return _ilwisobject.as<Coverage>()->envelope(propertyname == "latlonenvelope").toString();
+                env = _ilwisobject.as<Coverage>()->envelope(propertyname == "latlonenvelope");
             } if ( hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM)){
-                return _ilwisobject.as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope").toString();
+                env =_ilwisobject.as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope");
             }
+            if ( env.isNull() || !env.isValid())
+                return "unspecified";
+            return env.toString();
         }
         if ( propertyname == "pixelsize"){
             return pixSizeString();
