@@ -1,9 +1,15 @@
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
+import ObjectCreator 1.0
+import "../../controls" as Controls
 import "../../Global.js" as Global
 
 Rectangle {
+    id : csycontainer
     width: parent.width
-    height: 220
+    height: childrenRect.height
     property int lineheight : 19
      color : Global.formBackGround
 
@@ -23,13 +29,27 @@ Rectangle {
         source : isProjected ? "ProjectionProperties.qml" : ""
         anchors.top : line2.bottom
     }
-    Text { id : line3; text : qsTr("LatLon Envelope"); width: 120; font.bold: true ;anchors.top : projectionInfoLine.bottom; height : lineheight}
-    Text { text : getProperty("latlonenvelope");  height : lineheight;width: parent.width - line3.width - 2; anchors.left: line3.right;anchors.top : projectionInfoLine.bottom}
-    Text { id : line4; text : qsTr("Envelope"); width: 120; font.bold: true ;anchors.top : line3.bottom; height : lineheight}
-    Text { text : getProperty("envelope");  height : lineheight;width: parent.width - line4.width - 2; anchors.left: line4.right;anchors.top : line3.bottom}
+    Text { id : line3; text : qsTr("LatLon Envelope"); width: 120;anchors.top : projectionInfoLine.bottom; height : lineheight}
+    Envelope {
+        id : llenvelope
+        envelope : getProperty("latlonenvelope")
+        width : csycontainer.width - line3.width - 2
+        isLatLon: true
+        anchors.top : line3.bottom
+    }
+
+    Text { id : line4; text : qsTr("Envelope"); width: 120;anchors.top : llenvelope.bottom; height : lineheight }
+//   Text { text : getProperty("envelope");  height : lineheight;width: parent.width - line4.width - 2; anchors.left: line4.right;anchors.top : llenvelope.bottom}
+    Envelope {
+        id : prjenvelope
+        envelope : getProperty("envelope")
+        width : csycontainer.width - line4.width - 2
+        isLatLon: false
+        anchors.top : line4.bottom
+    }
     Image {
         source : "../../images/worldlines.PNG"
-        anchors.top : line4.bottom
+        anchors.top : prjenvelope.bottom
         anchors.topMargin: 5
         x : 10
         Rectangle{
