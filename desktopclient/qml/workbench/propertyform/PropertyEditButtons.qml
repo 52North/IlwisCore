@@ -11,8 +11,7 @@ Row {
             applyBut.enabled = !applyBut.enabled
             checked = !checked
             propertyForm.editable = !propertyForm.editable
-            propertyForm.editValues['avalue'] = 'twnety'
-            text = !checked ? qsTr("Cancel") : qsTr("Edit")
+            text = (text === qsTr("Edit")) ? qsTr("Cancel") : qsTr("Edit")
         }
     }
     Button {
