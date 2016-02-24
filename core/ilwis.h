@@ -78,7 +78,6 @@ const double EPS5=1.e-5;
 const int COVERAGEATRIB = 100000000;
 const int STREAMBLOCKSIZE = 10e6;
 const QString PIXELVALUE = "Pixel value";
-const QString EXPREMPTYPARAMETER = "__ILWIS_EXPRESSION_EMPTY_PARAMETER__";
 
 template<class T> inline IlwisTypes numericType() {
     bool isSigned = std::numeric_limits<T>::is_signed;
