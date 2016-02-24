@@ -330,8 +330,8 @@ protected:
     QString _dimensions;
     IlwisTypes _ilwtype;
     IlwisTypes _extendedType;
-    double _modifiedTime;
-    double _createTime;
+    double _modifiedTime = rUNDEF;
+    double _createTime = rUNDEF;
 
     void checkUrl(IlwisTypes tp);
 
