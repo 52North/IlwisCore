@@ -9,6 +9,8 @@ import "../../Global.js" as Global
 Rectangle {
     id : container
 
+    function storeData() {
+    }
 
     height : 70
     property string domainUsed
