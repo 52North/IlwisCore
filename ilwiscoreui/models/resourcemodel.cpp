@@ -132,9 +132,11 @@ void ResourceModel::setDisplayName(const QString &name)
 
 void ResourceModel::setDescription(const QString &desc)
 {
-    if ( _item.isValid())
+    if ( _item.isValid()){
         _item.setDescription(desc);
-    emit descriptionChanged();
+        mastercatalog()->changeResource(_item.id(), "description",desc);
+        emit descriptionChanged();
+    }
 }
 
 QString ResourceModel::url() const
