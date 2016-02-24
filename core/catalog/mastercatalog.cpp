@@ -359,10 +359,16 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
         return false;
 
     QString statement;
-    if ( attribute == "name"){
+    std::vector<QString> baseTextAttributes={"name","code","description","container","rawcontainer","resource","rawresource"};
+    std::vector<QString> baseOtherAttributes={"type","extendedtype","size","modifiedtime","createtime"};
+    if ( std::find(baseTextAttributes.begin(), baseTextAttributes.end(), attribute) != baseTextAttributes.end()){
         QString newname = var.toString();
         newname.replace("'","''");
-        statement = QString("update mastercatalog set name= '%1' where itemid=%2").arg(newname).arg(objectid) ;
+        statement = QString("update mastercatalog set %3= '%1' where itemid=%2").arg(newname).arg(objectid).arg(attribute) ;
+    }
+    if ( std::find(baseOtherAttributes.begin(), baseOtherAttributes.end(), attribute) != baseOtherAttributes.end()){
+        QString newvalue = var.toString();
+        statement = QString("update mastercatalog set %3= %1 where itemid=%2").arg(newvalue).arg(objectid).arg(attribute) ;
     }
     if ( extended){
         statement = setExtended(objectid, attribute,var);
