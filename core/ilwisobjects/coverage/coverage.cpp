@@ -98,7 +98,7 @@ bool Coverage::canUse(const IlwisObject *obj, bool strict) const
 
 void Coverage::name(const QString &nam)
 {
-    Identity::name(nam)    ;
+    IlwisObject::name(nam)    ;
 }
 
 void Coverage::copyTo(IlwisObject *obj)

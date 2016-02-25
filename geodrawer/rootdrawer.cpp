@@ -17,7 +17,7 @@ using namespace Geodrawer;
 RootDrawer::RootDrawer(const QQuickFramebufferObject *fbo, const IOOptions& options) : ComplexDrawer("RootDrawer",0,0, options), _frameBufferObject(fbo)
 {
     valid(true);
-    _screenGrf = new GeoReference();
+    _screenGrf.prepare();
     _screenGrf->create("corners");
     _backgroundColor = "white";
     GridDrawer *griddrawer = new GridDrawer(this,this,options);

@@ -35,6 +35,11 @@ Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
     }
 }
 
+Projection::Projection(const Resource &res)
+{
+
+}
+
 Projection::~Projection()
 {
 }

@@ -31,6 +31,8 @@
 #include "internaldomain.h"
 #include "internalcoordinatesystemconnector.h"
 #include "internalrepresentation.h"
+#include "internalprojectionconnector.h"
+#include "internalellipsoidconnector.h"
 #include "ilwiscontext.h"
 
 #include "coverage.h"
@@ -69,6 +71,8 @@ void InternalModule::prepare()
     factory->addCreator(itREPRESENTATION,"internal", InternalRepresentationConnector::create);
     factory->addCreator(itWORKFLOW,"internal", WorkflowConnector::create);
     factory->addCreator(itSINGLEOPERATION,"internal", OperationMetadataConnector::create);
+    factory->addCreator(itPROJECTION,"internal", InternalProjectionConnector::create);
+    factory->addCreator(itELLIPSOID,"internal", InternalEllipsoidConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();

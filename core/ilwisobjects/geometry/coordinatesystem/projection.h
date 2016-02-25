@@ -20,6 +20,7 @@ public:
     enum FindMatch{fmNoItem, fmNoValue,fmMatch};
 
     Projection();
+    Projection(const Resource &res);
     virtual ~Projection();
 
     virtual Coordinate latlon2coord(const LatLon&) const;

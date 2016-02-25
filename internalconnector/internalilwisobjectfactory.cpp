@@ -57,6 +57,8 @@
 #include "boundsonlycoordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
+#include "internalprojectionconnector.h"
+#include "internalgeoreferenceconnector.h"
 #include "epsg.h"
 #include "catalog.h"
 #include "workflow.h"
@@ -114,7 +116,9 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
 
 IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& resource, const IOOptions &options) const{
     QString code = resource.code();
-    Representation *rpr = new Representation(resource);
+    Representation *rpr = createFromResource<Representation>(resource, options);
+
+
     if ( code != sUNDEF) {
 
         InternalDatabaseConnection db;
@@ -152,29 +156,14 @@ IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& re
             return 0;
     }
 
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-    rpr->setConnector(connector,IlwisObject::cmINPUT, options);
+
     return rpr;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createCatalog(const Resource& resource, const IOOptions &options) const{
     if ( hasType(resource.ilwisType(), itCATALOG)){
-        Catalog *cat = new Catalog(resource);
-        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-        if (!factory) {
-            ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
-            return 0;
-        }
-        ConnectorInterface *connector = factory->createFromResource<>(resource, "ilwis");
-        if ( !connector) {
-            ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
-            return 0;
-        }
-        cat->setConnector(connector, IlwisObject::cmINPUT, options);
-
+        Catalog *cat = createFromResource<Catalog>(resource, options);
         return cat;
-
     }
     return nullptr;
 }
@@ -184,21 +173,9 @@ IlwisObject *InternalIlwisObjectFactory::createFeatureCoverage(const Resource& r
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
     }
-    FeatureCoverage *fcoverage = new FeatureCoverage(resource);
+    FeatureCoverage *fcoverage = createFromResource<FeatureCoverage>(resource, options);
     if (!createCoverage(resource, fcoverage, options))
         return 0;
-
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!factory) {
-        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
-        return 0;
-    }
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-    if ( !connector) {
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
-        return 0;
-    }
-    fcoverage->setConnector(connector, IlwisObject::cmINPUT, options);
 
     return fcoverage;
 
@@ -209,19 +186,8 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
     if (!hasType(resource.ilwisType(), itSINGLEOPERATION)){
         return nullptr;
     }
-    OperationMetaData *metadata = new OperationMetaData(resource);
+    OperationMetaData *metadata = createFromResource<OperationMetaData>(resource, options);
 
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!factory) {
-        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
-        return 0;
-    }
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-    if ( !connector) {
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
-        return 0;
-    }
-    metadata->setConnector(connector, IlwisObject::cmINPUT, options);
     metadata->init();
 
     return metadata;
@@ -231,19 +197,7 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
     if (!hasType(resource.ilwisType(), itWORKFLOW)){
         return nullptr;
     }
-    Workflow *workflow = new Workflow(resource);
-
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!factory) {
-        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
-        return 0;
-    }
-    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-    if ( !connector) {
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
-        return 0;
-    }
-    workflow->setConnector(connector, IlwisObject::cmINPUT, options);
+    Workflow *workflow = createFromResource<Workflow>(resource, options);
 
     return workflow;
 }
@@ -405,7 +359,7 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
         ERROR1(ERR_NO_INITIALIZED_1,"resource");
         return 0;
     }
-    RasterCoverage *gcoverage = new RasterCoverage(resource);
+    RasterCoverage *gcoverage = createFromResource<RasterCoverage>(resource, options);
     if (!createCoverage(resource, gcoverage, options))
         return 0;
 
@@ -461,19 +415,6 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
     if ( sz.isValid())
         gcoverage->size(sz);
 
-    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-    if (!factory) {
-        ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1, "ilwis::ConnectorFactory");
-        return 0;
-    }
-    InternalRasterCoverageConnector *connector = factory->createFromResource<InternalRasterCoverageConnector>(resource, "internal");
-    if ( !connector) {
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2, "connector", resource.name());
-        return 0;
-    }
-    gcoverage->setConnector(connector,IlwisObject::cmINPUT,options);
-    //connector->loadMetaData(gcoverage, IOOptions());
-
     return gcoverage;
 }
 template<class DomainItemType, class RangeType> Domain* createItemDomain2(const QSqlRecord& rec, const Resource& resource){
@@ -511,7 +452,7 @@ NumericDomain* InternalIlwisObjectFactory::createNumericDomain(const QString& co
     if (db.exec(query)) {
         if ( db.next()){
             QSqlRecord rec = db.record();
-            NumericDomain *dv = new NumericDomain(resource);
+            NumericDomain *dv = createFromResource<NumericDomain>(resource, options);
 
             dv->fromInternal(rec);
             double vmin = rec.field("minv").value().toDouble();
@@ -550,18 +491,17 @@ NumericDomain* InternalIlwisObjectFactory::createNumericDomain(const QString& co
     return 0;
 }
 
-
 IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, const IOOptions &options) const{
     if ( resource.ilwisType() == itTEXTDOMAIN || resource.code() == "text")
-        return new TextDomain(resource);
+        return createFromResource<TextDomain>(resource, options);
 
     if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "color") {
-        ColorDomain *dm = new ColorDomain(resource);
+        ColorDomain *dm = createFromResource<ColorDomain>(resource, options);
         ContinuousColorRange *rng = new ContinuousColorRange(QColor("#000000"), QColor("#FFFFFF"));
         dm->range(rng);
         return dm;
     }else if ( resource.ilwisType() == itCOLORDOMAIN || resource.code() == "colorpalette") {
-        ColorDomain *dm = new ColorDomain(resource);
+        ColorDomain *dm = createFromResource<ColorDomain>(resource, options);
         Range *rng = new ColorPalette();
         dm->range(rng);
         return dm;
@@ -592,36 +532,33 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
             if ( hasType(resource.extendedType(), itNAMEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                newdomain = new ItemDomain<NamedIdentifier>(res);
+                newdomain = createFromResource<ItemDomain<NamedIdentifier>>(res, options);
             }
             else if ( hasType(resource.extendedType(), itINDEXEDITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                newdomain = new ItemDomain<IndexedIdentifier>(res);
+                newdomain = createFromResource<ItemDomain<IndexedIdentifier>>(res, options);
             }
             else if ( hasType(resource.extendedType(), itTHEMATICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                newdomain = new ItemDomain<ThematicItem>(res);
+                newdomain = createFromResource<ItemDomain<ThematicItem>>(res, options);
             }
             else if ( hasType(resource.extendedType(), itNUMERICITEM)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                newdomain = new ItemDomain<Interval>(res);
+                newdomain = createFromResource<ItemDomain<Interval>>(res, options);
             }
             else if ( hasType(resource.extendedType(), itPALETTECOLOR)) {
                 Resource res = resource;
                 res.setIlwisType(itITEMDOMAIN);
-                newdomain = new ItemDomain<ColorItem>(res);
+                newdomain = createFromResource<ItemDomain<ColorItem>>(res, options);
             }
         } if ( hasType(resource.ilwisType(), itNUMERICDOMAIN)){
-            newdomain = new NumericDomain(resource);
+            newdomain = createFromResource<NumericDomain>(resource, options);
         }
     }
     if ( newdomain){
-        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-        newdomain->setConnector(connector,IlwisObject::cmINPUT, options);
         newdomain->readOnly(readonlyState);
     }
     return newdomain;
@@ -630,20 +567,14 @@ IlwisObject *InternalIlwisObjectFactory::createDomain(const Resource& resource, 
 IlwisObject *InternalIlwisObjectFactory::createCsy(const Resource& resource, const IOOptions &options) const {
     CoordinateSystem *csy = 0;
     if ( resource.ilwisType() == itBOUNDSONLYCSY){ // by default to csy unknow but this may be changed later
-        csy = new BoundsOnlyCoordinateSystem(resource);
+        csy = createFromResource<BoundsOnlyCoordinateSystem>(resource, options);
         csy->name("unknown");
         csy->code("unknown");
         csy->setDescription(TR("Unknown coordinate system"));
     }else if ( resource.ilwisType() == itCONVENTIONALCOORDSYSTEM){
-        csy = new ConventionalCoordinateSystem(resource);
+        csy = createFromResource<ConventionalCoordinateSystem>(resource, options);
         csy->name(resource.name());
         csy->code(resource.code());
-    }
-
-    if ( csy){
-        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-        csy->setConnector(connector, IlwisObject::cmINPUT, options);
     }
     return csy;
 }
@@ -669,22 +600,17 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
     }
     CoordinateSystem *csy = 0;
     if ( isUnknown){
-        csy = new BoundsOnlyCoordinateSystem(resource);
+        csy = createFromResource<BoundsOnlyCoordinateSystem>(resource, options);
         csy->name("unknown");
         csy->code("unknown");
         csy->setDescription(TR("Unknown coordinate system"));
     }else {
-        csy = new ConventionalCoordinateSystem(resource);
+        csy = createFromResource<ConventionalCoordinateSystem>(resource, options);
         csy->name(resource.name());
         csy->code(resource.code());
         csy->prepare("proj4=" + projParms);
     }
 
-    if ( csy){
-        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
-        csy->setConnector(connector, IlwisObject::cmINPUT, options);
-    }
     return csy;
 
 }
@@ -693,10 +619,12 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
     QString query;
     QString code = resource.code();
 
-    if ( code == sUNDEF) // meant for new projections which will be initialized later (e.g by the streaming connector)
-        return new Projection();
+    Projection *proj = 0;
+    if ( code == sUNDEF){ // meant for new projections which will be initialized later (e.g by the streaming connector)
+        proj = createFromResource<Projection>(resource, options);
+    }
 
-    if ( code != "") {
+    else if ( code != "") {
         InternalDatabaseConnection db;
         query = QString("Select * from projection where code = '%1'").arg(code);
         if ( db.exec(query)) {
@@ -714,12 +642,11 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
                         kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("projection", resource.name()));
                         return 0;
                     }
-                    Projection *proj = new Projection();
+                    proj = createFromResource<Projection>(resource, options);
                     proj->setImplementation(projimpl);
                     proj->fromInternal(rec);
                     proj->setAuthority(rec.field("authority").value().toString());
                     proj->setWkt(rec.field("wkt").value().toString());
-                    return proj;
                 } else {
                     kernel()->issues()->log(TR(ERR_COULDNT_CREATE_OBJECT_FOR_2).arg("ProjectionFactory",resource.name()));
                 }
@@ -732,7 +659,7 @@ IlwisObject *InternalIlwisObjectFactory::createProjection(const Resource& resour
     } else {
         kernel()->issues()->log(TR(ERR_MISSING_CODE_FOR_SYSTEM_OBJECT));
     }
-    return 0;
+    return proj;
 }
 
 GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource, const IOOptions &options) const {
@@ -789,7 +716,7 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
     Envelope env;
     Size<> sz;
     if ( isCorners){
-       cgrf = new GeoReference(resource);
+       cgrf = createFromResource<GeoReference>(resource, IOOptions());
        cgrf->create("corners");
        cgrf->name(ANONYMOUS_PREFIX + QString::number(cgrf->id()));
     }
@@ -853,7 +780,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
         Resource resnew = resource;
         resnew.name(sUNDEF); // this will force a new object with a new id
         resnew.setId(i64UNDEF);
-        cgrf = new GeoReference(resnew);
+        cgrf = createFromResource<GeoReference>(resource, options);
         cgrf->create("undetermined");
     } else if ( resource.code().indexOf("georef:") == 0){
         cgrf = createGrfFromCode(resource);
@@ -861,7 +788,7 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
             ERROR2(ERR_ILLEGAL_VALUE_2,"georef code", resource.code());
 
     }else {
-        cgrf = new GeoReference(resource);
+        cgrf = createFromResource<GeoReference>(resource, options);
         cgrf->create("corners");
         cgrf->name( resource["name"].toString());
 
@@ -886,20 +813,6 @@ IlwisObject *InternalIlwisObjectFactory::createGeoreference(const Resource& reso
             cgrf->centerOfPixel(resource["centerofpixel"].toBool());
     }
 
-    if ( cgrf){
-
-        cgrf->createTime(Time::now());
-        cgrf->modifiedTime(Time::now());
-        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-        Resource res= resource;
-        QString url = "ilwis://internalcatalog/" + cgrf->name();
-        res.setUrl(url);
-        res.setUrl(url,true);
-        res.name(cgrf->name());
-        ConnectorInterface *connector = factory->createFromResource<>(res, "internal");
-        cgrf->setConnector(connector, IlwisObject::cmINPUT, options);
-    }
-
     return cgrf;
 }
 
@@ -913,7 +826,7 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, c
        return 0;
    }
     Table *tbl;
-    tbl = new FlatTable(resource);
+    tbl = createFromResource<FlatTable>(resource, options);
     tbl->setConnector(connector, IlwisObject::cmINPUT, options);
     return tbl;
 
@@ -922,10 +835,12 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resourc
     QString query    ;
     QString code = resource.code();
 
-    if ( code != sUNDEF) {
+    IlwisObject *ell;
+    if ( code == sUNDEF) // meant for new projections which will be initialized later (e.g by the streaming connector)
+        ell = createFromResource<Ellipsoid>(resource, options);
+    else if ( code != sUNDEF) {
         query = QString("Select * from ellipsoid where code = '%1'").arg(code);
 
-    }else {
         QUrlQuery queryItem(resource.url());
         if ( queryItem.hasQueryItem("wkt")) {
 
@@ -935,18 +850,20 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resourc
             }
 
         }
+
+        ell =  createEllipsoidFromQuery(query, resource);
     }
-    return createEllipsoidFromQuery(query, resource);
+    return ell;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createEllipsoidFromQuery(const QString &query, const Resource& resource) const {
     if ( query == "") {
-        return new Ellipsoid(resource);
+        return createFromResource<Ellipsoid>(resource, IOOptions());
     }
 
     InternalDatabaseConnection db;
     if (db.exec(query) && db.next()) {
-        Ellipsoid *ellipsoid = new Ellipsoid(resource);
+        Ellipsoid *ellipsoid = createFromResource<Ellipsoid>(resource, IOOptions());
         ellipsoid->fromInternal(db.record());
         return ellipsoid;
     }

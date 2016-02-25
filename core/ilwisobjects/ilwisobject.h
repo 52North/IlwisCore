@@ -93,7 +93,7 @@ typedef IlwisTypes (*IlwisTypeFunction)(const QString& resource);
  * - itCOLOR : an item on a color domain
  * - itANY : the wildcard type
  */
-class KERNELSHARED_EXPORT IlwisObject : public QObject, public Identity
+class KERNELSHARED_EXPORT IlwisObject : public QObject, public IdentityInterface
 {
     Q_OBJECT
 
@@ -142,7 +142,7 @@ public:
      * @param nm the new name
      */
     void name(const QString& nm);
-    QString name() const { return Identity::name(); }
+    QString name() const;
 
     /**
      * Changes the code of this IlwisObject, can only happen when this object is not readonly,
@@ -151,7 +151,11 @@ public:
      * @param cd the new code
      */
     void code(const QString &cd);
-    QString code() const { return Identity::code();}
+    QString code() const;
+
+    QString description() const;
+    void setDescription(const QString& desc);
+    quint64 id() const;
 
     /*!
      *\brief returns the moment when the object was last modified

@@ -32,7 +32,7 @@ IlwisContext* Ilwis::context(const QString & ilwisDir, int runMode) {
 
 IlwisContext::IlwisContext(int runMode) : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit), _runMode(runMode)
 {
-     _workingCatalog = new Catalog(); // empty catalog>
+    // _workingCatalog = new Catalog(); // empty catalog>
 
 }
 

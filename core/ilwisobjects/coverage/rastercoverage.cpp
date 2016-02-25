@@ -438,7 +438,7 @@ void RasterCoverage::name(const QString &nam)
 
 QString RasterCoverage::name() const
 {
-    return Identity::name();
+    return IlwisObject::name();
 }
 
 void RasterCoverage::setPseudoUndef(double v){

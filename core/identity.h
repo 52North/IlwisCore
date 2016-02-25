@@ -3,6 +3,7 @@
 
 #include "kernel_global.h"
 #include "ilwis.h"
+#include "identityinterface.h"
 
 #define ANONYMOUS_PREFIX "_ANONYMOUS_"
 #define NAME_ALIAS "_ILWISOBJECT_"
@@ -22,7 +23,7 @@ struct SerializationOptions;
  class. Codes are not mandatory.
 
 */
-class KERNELSHARED_EXPORT Identity {
+class KERNELSHARED_EXPORT Identity : public IdentityInterface {
 public:
     friend class Resource;
 

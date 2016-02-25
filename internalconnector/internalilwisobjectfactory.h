@@ -48,6 +48,17 @@ private:
     IlwisObject *createRepresentation(const Resource &resource, const IOOptions &options) const;
     Domain *createItemDomain(Ilwis::InternalDatabaseConnection &db, const IOOptions &options, const Resource &resource) const;
     NumericDomain *createNumericDomain(const QString &code, Ilwis::InternalDatabaseConnection &db, const IOOptions &options, const Resource &resource) const;
+
+    template<class T> T *createFromResource(const Resource& resource, const IOOptions &options) const{
+        T *obj = new T(resource);
+        const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+        obj->setConnector(connector,IlwisObject::cmINPUT, options);
+        obj->createTime(Time::now());
+        obj->modifiedTime(Time::now());
+
+        return obj;
+    }
 };
 }
 }
