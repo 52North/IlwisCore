@@ -16,6 +16,7 @@ Rectangle {
             displayName = objectDisplayName.content
             description = descarea.text
             isReadonly = readOnlyStatus1.checked
+            keywords = keys.content
             mastercatalog.currentCatalog.refresh()
         }
     }
@@ -29,11 +30,11 @@ Rectangle {
         Controls.TextEditLabelPair{ id : objectDisplayName; labelText : qsTr("Name"); readOnly: !propertyForm.editable; labelWidth: 120; content : displayName; width : parent.width - 4}
         Controls.TextEditLabelPair{ labelText : qsTr("Location"); readOnly: true; labelWidth: 120; content : url; width : parent.width - 4}
         Controls.TextEditLabelPair{ labelText : qsTr("External format"); readOnly: true; labelWidth: 120; content : externalFormat; width : parent.width - 4}
-        Controls.TextEditLabelPair{ labelText : qsTr("Creation date"); readOnly: !propertyForm.editable; labelWidth: 120; content : creationDate; width : parent.width - 4}
-        Controls.TextEditLabelPair{ labelText : qsTr("Modified date"); readOnly: !propertyForm.editable; labelWidth: 120; content : modifiedDate; width : parent.width - 4}
+        Controls.TextEditLabelPair{ labelText : qsTr("Creation date"); readOnly: true; labelWidth: 120; content : creationDate; width : parent.width - 4}
+        Controls.TextEditLabelPair{ labelText : qsTr("Modified date"); readOnly: true; labelWidth: 120; content : modifiedDate; width : parent.width - 4}
         Controls.LabeledCheckBox{id : readOnlyStatus1; labelText : qsTr("Logical Read-only");checked : isReadonly; enabled: propertyForm.editable; labelWidth: 120}
         Controls.LabeledCheckBox{id : readOnlyStatus2; labelText : qsTr("Physical Read-only");checked : externalReadOnly; enabled: false; labelWidth: 120}
-        Controls.TextEditLabelPair{ labelText : qsTr("Keywords"); readOnly: !propertyForm.editable; labelWidth: 120; content : keywords; width : parent.width - 4}
+        Controls.TextEditLabelPair{ id : keys; labelText : qsTr("Keywords"); readOnly: !propertyForm.editable; labelWidth: 120; content : keywords; width : parent.width - 4}
 
         Item {
             width : parent.width
