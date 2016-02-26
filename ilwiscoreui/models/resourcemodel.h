@@ -60,7 +60,7 @@ public:
     QString geoReferenceName() const;
     QString geoReferenceType() const ;
     QString size() const;
-    virtual QString description() const;
+    QString description() const;
     QString dimensions() const;
     QString displayName() const;
     void setDisplayName(const QString& name);
@@ -88,6 +88,8 @@ public:
 
 protected:
     QString _displayName;
+    virtual Ilwis::Resource& itemRef();
+    virtual const Ilwis::Resource& itemRef() const;
 private:
     QString propertyTypeName(quint64 typ, const QString &propertyName) const;
     QString propertyName(const QString &property) const;

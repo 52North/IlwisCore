@@ -23,7 +23,7 @@ IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *paren
 {
     try{
         if ( source.name() != "Global Layer"){ // special case for the dummy object of the global layer
-            _ilwisobject.prepare(resource());
+            _ilwisobject.prepare(source);
         }
     } catch (const ErrorObject& ){
 
@@ -69,16 +69,6 @@ void IlwisObjectModel::readonly(bool yesno) const
     }
 }
 
-QString IlwisObjectModel::description() const
-{
-    if ( _ilwisobject.isValid()){
-        QString desc = _ilwisobject->description();
-        if ( desc != sUNDEF)
-            return desc;
-    }
-    return "";
-}
-
 QString IlwisObjectModel::externalFormat() const
 {
     if ( _ilwisobject.isValid()){
@@ -104,12 +94,6 @@ bool IlwisObjectModel::externalReadOnly() const
        return _ilwisobject->outputConnectionReadonly();
    }
    return true;
-}
-
-void IlwisObjectModel::description(const QString &desc) const
-{
-    if ( _ilwisobject.isValid())
-        _ilwisobject->setDescription(desc);
 }
 
 bool IlwisObjectModel::isProjectedCoordinateSystem() const
@@ -216,6 +200,20 @@ void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
         }
     }
 
+}
+
+Resource& IlwisObjectModel::itemRef()
+{
+    if ( _ilwisobject.isValid())
+        return _ilwisobject->resourceRef();
+    return ResourceModel::itemRef();
+}
+
+const Resource &IlwisObjectModel::itemRef() const
+{
+    if ( _ilwisobject.isValid())
+        return _ilwisobject->resourceRef();
+    return ResourceModel::itemRef();
 }
 
 QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()

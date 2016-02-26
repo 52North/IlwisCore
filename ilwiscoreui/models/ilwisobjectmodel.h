@@ -39,10 +39,8 @@ public:
     QString modifiedDate() const;
     bool readonly() const;
     void readonly(bool yesno) const;
-    QString description() const;
     QString externalFormat() const;
     bool externalReadOnly() const;
-    void description(const QString& desc) const;
     bool isProjectedCoordinateSystem() const;
     bool isSystemObject() const;
     bool isCoverage() const;
@@ -68,6 +66,8 @@ public:
 protected:
     QList<AttributeModel *> _attributes;
     void resetAttributeModel(const QString &attributeName);
+    Ilwis::Resource &itemRef();
+    const Ilwis::Resource &itemRef() const;
 signals:
     void readOnlyChanged();
 private slots:
