@@ -47,6 +47,10 @@ protected:
 
     IOOptions ioOptions() const;
     IOOptions& ioOptionsRef();
+    template<class T> T setter(const T& resourceValue, const T& dataSourceValue, const T& emptyValue){
+        return resourceValue == dataSourceValue || resourceValue == emptyValue ? dataSourceValue : resourceValue;
+
+    }
 
     Resource _resource;
     bool _binaryIsLoaded;
