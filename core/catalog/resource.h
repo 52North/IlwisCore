@@ -110,6 +110,7 @@ public:
      */
     void name(const QString& nm, bool adaptUrl=true);
     QString name() const { return Identity::name(); }
+    QString rawName() const;
 
     /**
      * override of the [] operator, allows you to query this resource for some of its data.<br>

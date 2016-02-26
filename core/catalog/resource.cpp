@@ -236,6 +236,15 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
     _normalizedUrl = QUrl(url);
 }
 
+QString Resource::rawName() const
+{
+    QString url = _rawUrl.toString(QUrl::RemoveScheme|QUrl::RemovePort|QUrl::RemoveQuery);
+    QStringList parts = url.split("/");
+    if ( parts.size() > 0)
+        return parts.last();
+    return sUNDEF;
+}
+
 QVariant Resource::operator [](const QString &prop) const
 {
     QString property = prop.toLower();
