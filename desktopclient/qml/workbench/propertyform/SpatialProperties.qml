@@ -7,6 +7,7 @@ import "../../Global.js" as Global
 Rectangle {
     function storeData() {
         if ( propertyForm.editable){
+            csyProps.storeData()
         }
     }
     CoordinateSystemProperties{
