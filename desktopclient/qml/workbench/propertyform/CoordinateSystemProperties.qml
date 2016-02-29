@@ -15,13 +15,32 @@ Rectangle {
 
     function storeData() {
         if ( propertyForm.editable){
+            setAttribute("coordinatesystem",line1.content)
         }
     }
 
-    Text { y : 5; id : line1; text : qsTr("Coordinate system"); width: 120; font.bold: true;height : lineheight }
-    Text { y : 5; text : coordinateSystemName;  height :40;width: parent.width - line1.width - 2; anchors.left: line1.right}
-    Text { id : line2; text : qsTr("Is Projected"); width: 120; font.bold: true ;anchors.top : line1.bottom; height : lineheight}
-    Text { text : isProjected ? qsTr("Yes") : qsTr("No");  height : lineheight;width: parent.width - line1.width - 2; anchors.left: line1.right;anchors.top : line1.bottom}
+    Controls.FilteredTextEditLabelPair{
+        id : line1
+        labelWidth: 120
+        labelText: qsTr("Coordinate system")
+        filterImage: "../images/csy20.png"
+        filterType: "coordinatesystem"
+        width : parent.width
+        content: coordinateSystemName
+        readOnly: !propertyForm.editable
+        y : 5
+    }
+
+    Controls.TextEditLabelPair{
+        id : line2
+        labelWidth: 120
+        labelText: qsTr("Is Projected")
+        width : parent.width
+        content: isProjected ? qsTr("Yes") : qsTr("No")
+        readOnly: true
+        y : 5
+        anchors.top : line1.bottom
+    }
     Loader{
         id : projectionInfoLine
         height : isProjected ? lineheight : 0
