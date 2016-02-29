@@ -68,6 +68,7 @@ private:
     QString _authority;
     QScopedPointer<ProjectionImplementation> _implementation;
     static std::map<QString, QString> _projcode2Name;
+    void fillProjectionCodes();
 };
 typedef Ilwis::IlwisData<Ilwis::Projection> IProjection;
 }
