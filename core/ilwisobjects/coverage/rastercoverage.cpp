@@ -267,6 +267,8 @@ void RasterCoverage::setBandDefinition(QString bandIndex, const DataDefinition &
             _datadefBands.resize(bndIndex + 1);
         _datadefBands[bndIndex] = def;
     }
+    if ( bndIndex == WHOLE_RASTER)
+        resourceRef().addProperty("domain",def.domain()->id());
 }
 
 void RasterCoverage::setBandDefinition(double bandIndex, const DataDefinition &def)
@@ -277,6 +279,8 @@ void RasterCoverage::setBandDefinition(double bandIndex, const DataDefinition &d
             _datadefBands.resize(bndIndex + 1);
         _datadefBands[bndIndex] = def;
     }
+    if ( bndIndex == WHOLE_RASTER)
+        resourceRef().addProperty("domain",def.domain()->id());
 }
 
 
