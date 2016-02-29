@@ -630,8 +630,26 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
                 if ( dom->id() != raster->datadefRef().domain()->id()){
                     raster->datadefRef().domain(dom);
+                    raster->resourceRef().addProperty("domain", dom->id());
                     raster->changed(true);
                     mastercatalog()->changeResource(raster->id(),"domain",dom->id(), true);
+                }
+            }
+        }else if ( attrname == "coordinatesystem"){
+            QString def = value;
+            bool ok;
+            value.toUInt(&ok);
+            if ( ok){
+                def = "code=epsg:" + value;
+            }else if ( def.indexOf("+proj") >= 0){
+                def = "code=proj4" + value;
+            }
+            ICoordinateSystem csy(def);
+            if ( csy.isValid()){
+                ICoverage coverage = _ilwisobject.as<Coverage>();
+                if ( coverage.isValid()){
+                    coverage->coordinateSystem(csy);
+                    mastercatalog()->changeResource(coverage->id(),"coordinatesystem",csy->id(), true);
                 }
             }
         }
