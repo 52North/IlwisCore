@@ -57,7 +57,7 @@ public:
      * \sa ICoordinateSystem
      * \return the coordinate system if it has one or else null
      */
-    ICoordinateSystem coordinateSystem() const;
+    virtual ICoordinateSystem coordinateSystem() const;
 
     /*!
      * Changes the coordinate system of this coverage into the one specified<br>
@@ -67,7 +67,7 @@ public:
      * \sa ICoordinateSystem
      * \param the new coordinate system
      */
-    void coordinateSystem(const ICoordinateSystem& csy);
+    virtual void coordinateSystem(const ICoordinateSystem& csy);
 
     /*!
      * Query for the envelope of this coverage, must fit in the coordinate system<br>

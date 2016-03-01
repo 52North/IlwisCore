@@ -59,6 +59,19 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     resourceRef().dimensions(_size.toString());
 }
 
+void RasterCoverage::coordinateSystem(const ICoordinateSystem &csy)
+{
+    Coverage::coordinateSystem(csy);
+    if ( _georef.isValid()){
+        _georef->coordinateSystem(csy);
+    }
+}
+
+ICoordinateSystem RasterCoverage::coordinateSystem() const
+{
+    return Coverage::coordinateSystem();
+}
+
 IlwisTypes RasterCoverage::ilwisType() const
 {
     return itRASTER;

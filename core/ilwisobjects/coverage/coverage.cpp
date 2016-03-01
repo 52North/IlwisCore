@@ -36,6 +36,7 @@ void Coverage::coordinateSystem(const ICoordinateSystem &csy)
 
     _coordinateSystem = csy;
     resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
+    mastercatalog()->changeResource(id(),"coordinatesystem",csy->id(), true);
 }
 
 Envelope Coverage::envelope(bool tolatlon) const

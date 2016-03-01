@@ -99,7 +99,8 @@ public:
      * \param grf the new georeference
      */
     void georeference(const IGeoReference& grf, bool resetData = false) ;
-
+    void coordinateSystem(const ICoordinateSystem& csy);
+    ICoordinateSystem coordinateSystem() const;
     /*!
      * Returns the size of this RasterCoverage<br>
      *
