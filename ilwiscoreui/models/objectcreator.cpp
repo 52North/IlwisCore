@@ -36,7 +36,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this);
     _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("Geographic (LatLon) Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this);
     _creators["boundsonlycoordinatesystem" ] = new IlwisObjectCreatorModel("boundsonlycoordinatesystem", TR("Bounds only Coordinate System"),itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this);
-    _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 290, this);
+    _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 390, this);
     _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"CreateNumDom.qml", 200, this);
     _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"CreateNumDom.qml", 200, this);
     _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"CreateNumDom.qml", 250, this);
@@ -342,17 +342,18 @@ QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
     if ( name == "")
         return sUNDEF;
 
-    int bands = parms["bands"].toInt();;
     QString expr = "createrastercoverage(";
     expr += parms["georeference"].toString();
     expr += ",";
     expr += parms["domain"].toString();
     expr += ",";
-    expr += QString::number(bands);
+    expr += parms["stackdomain"].toString();
     expr += ",";
-    expr += "\""+ parms["description"].toString() + "\"";
-    if ( parms.contains("keywords"))
-        expr += ",\""+ parms["keywords"].toString() + "\"";
+    expr += "\"" + parms["stackdefinition"].toString() + "\"";
+    expr += ",";
+    expr += parms["autoresample"].toBool() ? "yes" : "no";
+    expr += ",";
+    expr += "\"" + parms["bands"].toString() + "\"";
     expr += ")";
 
     QString output = QString("script %1{format(stream,\"rastercoverage\")}=").arg(name);
