@@ -649,7 +649,7 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
                 ICoverage coverage = _ilwisobject.as<Coverage>();
                 if ( coverage.isValid()){
                     coverage->coordinateSystem(csy);
-                    mastercatalog()->changeResource(coverage->id(),"coordinatesystem",csy->id(), true);
+
                 }
             }
         }
