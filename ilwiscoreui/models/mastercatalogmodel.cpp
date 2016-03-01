@@ -357,6 +357,21 @@ void MasterCatalogModel::longAction()
     thr->start();
 }
 
+bool MasterCatalogModel::isCompatible(const QString &objUrl1, const QString &objUrl2, const QString &type)
+{
+    if ( type == "georeference"){
+        if ( objUrl1 == objUrl2)
+            return true;
+
+        IGeoReference grf1(objUrl1, itGEOREF, {"mustexist", true});
+        IGeoReference grf2(objUrl2, itGEOREF, {"mustexist", true});
+        if ( grf1.isValid() && grf2.isValid()){
+            return grf1->isCompatible(grf2);
+        }
+    }
+    return false;
+}
+
 std::vector<Resource> MasterCatalogModel::select(const QString &filter)
 {
     return mastercatalog()->select(filter);
