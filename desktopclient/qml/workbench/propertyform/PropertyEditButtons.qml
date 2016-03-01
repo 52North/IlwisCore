@@ -21,6 +21,7 @@ Row {
         onClicked: {
             if ( enabled && propertyForm.editable){
                 propertyForm.storeData()
+                enabled = false
             }
 
         }
