@@ -72,8 +72,11 @@ ICoordinateSystem GeoReference::coordinateSystem() const
 
  void GeoReference::coordinateSystem(const ICoordinateSystem& csy)
 {
-     if ( isValid())
+     if ( isValid()){
         _georefImpl->coordinateSystem(csy);
+        resourceRef().addProperty("coordinatesystem",csy->id());
+        mastercatalog()->changeResource(id(),"coordinatesystem",csy->id(), true);
+     }
 
  }
 
