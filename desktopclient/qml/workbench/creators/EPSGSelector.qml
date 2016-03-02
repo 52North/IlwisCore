@@ -14,11 +14,9 @@ Column {
     height : 270
     function code() {
         var index = content.indexOf(":")
-        console.debug(content)
         if ( index == -1)
             return content
         var b = content.split(":")[0]
-        console.debug(b)
         return b
     }
 
