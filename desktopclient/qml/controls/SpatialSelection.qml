@@ -13,6 +13,7 @@ Item {
     id : selector
     height : 30 + operList.height
     width : 370
+    property alias showState : worldmapcontainer.state
     Controls.CollapsiblePanel {
         y : 4
         x : 8

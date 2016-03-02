@@ -8,33 +8,43 @@ import "../../controls" as Controls
 Item {
     width: catalogoptions.width
     height: catalogoptions.height
-    Controls.SpatialSelection{
-        id : spatselect
 
-    }
-    Controls.ComboxLabelPair{
-        id : countryselect
-        labelText: qsTr("Country select")
-        labelWidth: 100
-        width : spatselect.width
-        anchors.top : spatselect.bottom
-        anchors.topMargin: 4
 
-    }
-    Controls.ComboxLabelPair{
-        labelText: qsTr("Region select")
-        labelWidth: 100
-        width : spatselect.width
-        anchors.top : countryselect.bottom
-        anchors.topMargin: 4
-
-    }
     Column {
-        height : 200
-        width : 220
-        anchors.left: spatselect.right
-        anchors.leftMargin: 10
+        id : choices
+        height : 280
+        width : 320
         spacing : 4
+        CatalogFilterButtons{
+            id : objectfilters
+        }
+        Row {
+            width : parent.width + 40
+            height : 22
+            Text {
+                y : 3
+                width : 100
+                font.bold: true
+                text : qsTr("Standard queries")
+            }
+
+            CatalogFilterComboBox{
+                id : catalogfilters
+                width : parent.width - 140
+            }
+        }
+        Controls.ComboxLabelPair{
+            id : countryselect
+            labelText: qsTr("Country select")
+            labelWidth: 100
+            width : parent.width
+
+        }
+        Controls.ComboxLabelPair{
+            labelText: qsTr("Region select")
+            labelWidth: 100
+            width : parent.width
+        }
         Controls.ComboxLabelPair{
             labelText: qsTr("Keyword filters")
             labelWidth: 100
@@ -48,7 +58,7 @@ Item {
                 id : label1
                 labelText: qsTr("Name filter")
                 labelWidth: 100
-                width : parent.width
+                width : parent.width - 40
             }
             Button{
                 anchors.left: label1.right
@@ -65,7 +75,7 @@ Item {
                 id : label2
                 labelText: qsTr("Time filter")
                 labelWidth: 100
-                width : parent.width
+                width : parent.width - 40
             }
             Button{
                 anchors.left: label2.right
@@ -76,6 +86,12 @@ Item {
             }
         }
 
+    }
+    Controls.SpatialSelection{
+        id : spatselect
+        showState: "open"
+        anchors.left: choices.right
+        anchors.leftMargin: 10
     }
 
 

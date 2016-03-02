@@ -15,17 +15,5 @@ Rectangle{
         id : objectfilters
     }
 
-    CatalogFilterComboBox{
-        id : catalogfilters
-        anchors.top : objectfilters.bottom
-        anchors.left : objectfilters.left
-    }
-
-    CatalogLayoutButtonBar {
-        id : layoutfilter
-        anchors.top : objectfilters.bottom
-        anchors.left : catalogfilters.right
-    }
-
 }
 

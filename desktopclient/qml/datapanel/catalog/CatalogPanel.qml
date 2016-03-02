@@ -118,15 +118,10 @@ Item {
     }
 
 
-    CatalogButtonBar{
-        id : toolbar
-        anchors.top : parent.top
-    }
     SplitView {
-        anchors.top : toolbar.bottom
         width : parent.width
         orientation: Qt.Vertical
-        height : parent.height - toolbar.height
+        height : parent.height
 
         CatalogViews {
             id : catalogView

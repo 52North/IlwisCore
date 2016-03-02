@@ -8,13 +8,14 @@ TabViewStyle {
     property string selectColor : Global.headerdark
     property string nonselectColor : Global.headerlight
     property int tabHeight : 22
+    property int minimumWidth : 100
 
     frameOverlap: 1
     tab: Rectangle {
         color: styleData.selected ? selectColor : nonselectColor
         border.color:  selectColor
 
-        implicitWidth: Math.max(text.width + 4, 100)
+        implicitWidth: Math.max(text.width + 4, minimumWidth)
         implicitHeight: tabHeight
         radius: 2
         Text {

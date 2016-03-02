@@ -4,8 +4,6 @@ Row {
     width : 295
     height : 22
     spacing: 1
-    anchors.top: parent.top
-    anchors.topMargin: 2
 
     function toggleFilter(objecttype, togglestate){
         if ( objecttype === "all"){
