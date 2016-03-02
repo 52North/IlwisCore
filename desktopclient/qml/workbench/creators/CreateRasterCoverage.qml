@@ -111,16 +111,7 @@ Controls.DropableItem{
                 text : qsTr("Bands")
                 font.bold: true
             }
-            Item {
-                width : 100
-                height : Global.rowHeight
-                CheckBox{
-                    id : resampleCB
-                    anchors.fill: parent
-                    text : qsTr("Auto resample")
-                    checked : false
-                }
-            }
+
 
             Rectangle {
                 id : bands
@@ -167,6 +158,16 @@ Controls.DropableItem{
                 border.width: 1
                 border.color: Global.edgecolor
 
+            }
+            Item {
+                width : 100
+                height : Global.rowHeight
+                CheckBox{
+                    id : resampleCB
+                    anchors.fill: parent
+                    text : qsTr("Auto resample")
+                    checked : false
+                }
             }
 
         }
