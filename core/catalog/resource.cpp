@@ -66,8 +66,6 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
 
     if ( isNew)
         prepare();
-    _createTime = Time::now();
-    _modifiedTime = Time::now();
     int index = resourceName.indexOf(":");
     if ( index != -1 && index < 6) {
         _normalizedUrl = QUrl(resourceName);
@@ -116,6 +114,8 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         }
         checkUrl(tp);
     }
+    _createTime = Time::now();
+    _modifiedTime = Time::now();
     if ( _container ==  INTERNAL_OBJECT ||
          (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
         QString path = context()->persistentInternalCatalog().toString();
@@ -222,7 +222,7 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
         return;
 
     Identity::name(nm);
-    if ( id() != iUNDEF){
+    if ( id() != iUNDEF && _createTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
         mastercatalog()->changeResource(id(), "name",nm);
     }
     if ( !adaptNormalizedUrl || nm == sUNDEF)
@@ -234,6 +234,15 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
         url = url.left(index+1) + nm;
     }
     _normalizedUrl = QUrl(url);
+}
+
+QString Resource::rawName() const
+{
+    QString url = _rawUrl.toString(QUrl::RemoveScheme|QUrl::RemovePort|QUrl::RemoveQuery);
+    QStringList parts = url.split("/");
+    if ( parts.size() > 0)
+        return parts.last();
+    return sUNDEF;
 }
 
 QVariant Resource::operator [](const QString &prop) const

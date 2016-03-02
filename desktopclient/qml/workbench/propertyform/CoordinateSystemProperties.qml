@@ -1,21 +1,46 @@
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.1
+import ObjectCreator 1.0
+import "../../controls" as Controls
 import "../../Global.js" as Global
 
 Rectangle {
+    id : csycontainer
     width: parent.width
-    height: 220
+    height: childrenRect.height
     property int lineheight : 19
      color : Global.formBackGround
 
     function storeData() {
         if ( propertyForm.editable){
+            setAttribute("coordinatesystem",line1.content)
         }
     }
 
-    Text { y : 5; id : line1; text : qsTr("Coordinate system"); width: 120; font.bold: true;height : lineheight }
-    Text { y : 5; text : coordinateSystemName;  height :40;width: parent.width - line1.width - 2; anchors.left: line1.right}
-    Text { id : line2; text : qsTr("Is Projected"); width: 120; font.bold: true ;anchors.top : line1.bottom; height : lineheight}
-    Text { text : isProjected ? qsTr("Yes") : qsTr("No");  height : lineheight;width: parent.width - line1.width - 2; anchors.left: line1.right;anchors.top : line1.bottom}
+    Controls.FilteredTextEditLabelPair{
+        id : line1
+        labelWidth: 120
+        labelText: qsTr("Coordinate system")
+        filterImage: "../images/csy20.png"
+        filterType: "coordinatesystem"
+        width : parent.width
+        content: coordinateSystemName
+        readOnly: !propertyForm.editable
+        y : 5
+    }
+
+    Controls.TextEditLabelPair{
+        id : line2
+        labelWidth: 120
+        labelText: qsTr("Is Projected")
+        width : parent.width
+        content: isProjected ? qsTr("Yes") : qsTr("No")
+        readOnly: true
+        y : 5
+        anchors.top : line1.bottom
+    }
     Loader{
         id : projectionInfoLine
         height : isProjected ? lineheight : 0
@@ -23,13 +48,27 @@ Rectangle {
         source : isProjected ? "ProjectionProperties.qml" : ""
         anchors.top : line2.bottom
     }
-    Text { id : line3; text : qsTr("LatLon Envelope"); width: 120; font.bold: true ;anchors.top : projectionInfoLine.bottom; height : lineheight}
-    Text { text : getProperty("latlonenvelope");  height : lineheight;width: parent.width - line3.width - 2; anchors.left: line3.right;anchors.top : projectionInfoLine.bottom}
-    Text { id : line4; text : qsTr("Envelope"); width: 120; font.bold: true ;anchors.top : line3.bottom; height : lineheight}
-    Text { text : getProperty("envelope");  height : lineheight;width: parent.width - line4.width - 2; anchors.left: line4.right;anchors.top : line3.bottom}
+    Text { id : line3; text : qsTr("LatLon Envelope"); width: 120;anchors.top : projectionInfoLine.bottom; height : lineheight}
+    Envelope {
+        id : llenvelope
+        envelope : getProperty("latlonenvelope")
+        width : csycontainer.width - line3.width - 2
+        isLatLon: true
+        anchors.top : line3.bottom
+    }
+
+    Text { id : line4; text : qsTr("Envelope"); width: 120;anchors.top : llenvelope.bottom; height : lineheight }
+//   Text { text : getProperty("envelope");  height : lineheight;width: parent.width - line4.width - 2; anchors.left: line4.right;anchors.top : llenvelope.bottom}
+    Envelope {
+        id : prjenvelope
+        envelope : getProperty("envelope")
+        width : csycontainer.width - line4.width - 2
+        isLatLon: false
+        anchors.top : line4.bottom
+    }
     Image {
         source : "../../images/worldlines.PNG"
-        anchors.top : line4.bottom
+        anchors.top : prjenvelope.bottom
         anchors.topMargin: 5
         x : 10
         Rectangle{

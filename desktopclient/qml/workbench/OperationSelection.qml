@@ -66,7 +66,7 @@ WorkBenchShifter {
 
             }
             Tab {
-                title : qsTr("Operation Categories")
+                title : qsTr("Operation By Keyword")
                 OperationCatagoriesList{
                     id : operationCatagories
                     Connections {

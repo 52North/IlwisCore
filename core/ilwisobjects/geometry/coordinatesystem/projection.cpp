@@ -21,7 +21,7 @@ using namespace Ilwis;
 std::map<QString, QString> Projection::_projcode2Name;
 
 
-Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
+void Projection::fillProjectionCodes()
 {
     if ( _projcode2Name.size() == 0){
         InternalDatabaseConnection db;
@@ -33,6 +33,16 @@ Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
             _projcode2Name[code] = nme;
         }
     }
+}
+
+Projection::Projection() : _wkt(sUNDEF), _authority(sUNDEF)
+{
+    fillProjectionCodes();
+}
+
+Projection::Projection(const Resource &res)
+{
+   fillProjectionCodes();
 }
 
 Projection::~Projection()

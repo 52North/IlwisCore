@@ -16,6 +16,7 @@ DropArea {
     property bool boldLabel : true
     property int editWidth : width - label.width
     height : Global.rowHeight
+    width : parent.width
 
     Text {
         id : label

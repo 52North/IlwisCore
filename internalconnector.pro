@@ -32,7 +32,9 @@ HEADERS += \
     internalconnector/internalrepresentation.h \
     internalconnector/workflowconnector.h \
     internalconnector/operationmetadataconnector.h \
-    internalconnector/projections/cylindsinusinterrupt2.h
+    internalconnector/projections/cylindsinusinterrupt2.h \
+    internalconnector/internalprojectionconnector.h \
+    internalconnector/internalellipsoidconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -50,7 +52,9 @@ SOURCES += \
     internalconnector/internalrepresentation.cpp \
     internalconnector/workflowconnector.cpp \
     internalconnector/operationmetadataconnector.cpp \
-    internalconnector/projections/cylindsinusinterrupt2.cpp
+    internalconnector/projections/cylindsinusinterrupt2.cpp \
+    internalconnector/internalprojectionconnector.cpp \
+    internalconnector/internalellipsoidconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

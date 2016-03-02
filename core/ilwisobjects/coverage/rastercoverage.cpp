@@ -59,6 +59,19 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
     resourceRef().dimensions(_size.toString());
 }
 
+void RasterCoverage::coordinateSystem(const ICoordinateSystem &csy)
+{
+    Coverage::coordinateSystem(csy);
+    if ( _georef.isValid()){
+        _georef->coordinateSystem(csy);
+    }
+}
+
+ICoordinateSystem RasterCoverage::coordinateSystem() const
+{
+    return Coverage::coordinateSystem();
+}
+
 IlwisTypes RasterCoverage::ilwisType() const
 {
     return itRASTER;
@@ -267,6 +280,8 @@ void RasterCoverage::setBandDefinition(QString bandIndex, const DataDefinition &
             _datadefBands.resize(bndIndex + 1);
         _datadefBands[bndIndex] = def;
     }
+    if ( bndIndex == WHOLE_RASTER)
+        resourceRef().addProperty("domain",def.domain()->id());
 }
 
 void RasterCoverage::setBandDefinition(double bandIndex, const DataDefinition &def)
@@ -277,6 +292,8 @@ void RasterCoverage::setBandDefinition(double bandIndex, const DataDefinition &d
             _datadefBands.resize(bndIndex + 1);
         _datadefBands[bndIndex] = def;
     }
+    if ( bndIndex == WHOLE_RASTER)
+        resourceRef().addProperty("domain",def.domain()->id());
 }
 
 
@@ -438,7 +455,7 @@ void RasterCoverage::name(const QString &nam)
 
 QString RasterCoverage::name() const
 {
-    return Identity::name();
+    return IlwisObject::name();
 }
 
 void RasterCoverage::setPseudoUndef(double v){

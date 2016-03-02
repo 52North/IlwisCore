@@ -32,6 +32,7 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(QString url READ url CONSTANT)
     Q_PROPERTY(QString container READ container CONSTANT)
     Q_PROPERTY(bool isSelected READ isSelected WRITE setIsSelected NOTIFY isSelectedChanged)
+    Q_PROPERTY(QString keywords READ keywords WRITE keywords NOTIFY keywordsChanged)
 
 
 
@@ -59,7 +60,7 @@ public:
     QString geoReferenceName() const;
     QString geoReferenceType() const ;
     QString size() const;
-    virtual QString description() const;
+    QString description() const;
     QString dimensions() const;
     QString displayName() const;
     void setDisplayName(const QString& name);
@@ -70,6 +71,8 @@ public:
     void iconPath(const QString& name);
     bool isRoot() const;
     QString id() const;
+    QString keywords() const;
+    void keywords(const QString& keys);
 
 
     Ilwis::Resource item() const;
@@ -85,6 +88,8 @@ public:
 
 protected:
     QString _displayName;
+    virtual Ilwis::Resource& itemRef();
+    virtual const Ilwis::Resource& itemRef() const;
 private:
     QString propertyTypeName(quint64 typ, const QString &propertyName) const;
     QString propertyName(const QString &property) const;
@@ -104,6 +109,7 @@ signals:
     void displayNameChanged();
     void descriptionChanged();
     void isSelectedChanged();
+    void keywordsChanged();
 public slots:
 
 };

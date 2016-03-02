@@ -37,7 +37,7 @@ Component {
         }
 
         y : 4
-        height :340
+        height :460
         width : parent.width
 
         Component {

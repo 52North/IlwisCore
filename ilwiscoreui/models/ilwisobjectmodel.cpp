@@ -23,7 +23,7 @@ IlwisObjectModel::IlwisObjectModel(const Ilwis::Resource &source, QObject *paren
 {
     try{
         if ( source.name() != "Global Layer"){ // special case for the dummy object of the global layer
-            _ilwisobject.prepare(resource());
+            _ilwisobject.prepare(source);
         }
     } catch (const ErrorObject& ){
 
@@ -69,16 +69,6 @@ void IlwisObjectModel::readonly(bool yesno) const
     }
 }
 
-QString IlwisObjectModel::description() const
-{
-    if ( _ilwisobject.isValid()){
-        QString desc = _ilwisobject->description();
-        if ( desc != sUNDEF)
-            return desc;
-    }
-    return "";
-}
-
 QString IlwisObjectModel::externalFormat() const
 {
     if ( _ilwisobject.isValid()){
@@ -104,12 +94,6 @@ bool IlwisObjectModel::externalReadOnly() const
        return _ilwisobject->outputConnectionReadonly();
    }
    return true;
-}
-
-void IlwisObjectModel::description(const QString &desc) const
-{
-    if ( _ilwisobject.isValid())
-        _ilwisobject->setDescription(desc);
 }
 
 bool IlwisObjectModel::isProjectedCoordinateSystem() const
@@ -216,6 +200,20 @@ void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
         }
     }
 
+}
+
+Resource& IlwisObjectModel::itemRef()
+{
+    if ( _ilwisobject.isValid())
+        return _ilwisobject->resourceRef();
+    return ResourceModel::itemRef();
+}
+
+const Resource &IlwisObjectModel::itemRef() const
+{
+    if ( _ilwisobject.isValid())
+        return _ilwisobject->resourceRef();
+    return ResourceModel::itemRef();
 }
 
 QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
@@ -503,11 +501,15 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
         if ( !_ilwisobject.isValid())
             return "";
         if ( propertyname == "latlonenvelope" || propertyname == "envelope"){
+            Envelope env;
             if (hasType(_ilwisobject->ilwisType(), itCOVERAGE)){
-                return _ilwisobject.as<Coverage>()->envelope(propertyname == "latlonenvelope").toString();
+                env = _ilwisobject.as<Coverage>()->envelope(propertyname == "latlonenvelope");
             } if ( hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM)){
-                return _ilwisobject.as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope").toString();
+                env =_ilwisobject.as<CoordinateSystem>()->envelope(propertyname == "latlonenvelope");
             }
+            if ( env.isNull() || !env.isValid())
+                return "unspecified";
+            return env.toString();
         }
         if ( propertyname == "pixelsize"){
             return pixSizeString();
@@ -596,6 +598,14 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
             }
 
         }
+        if ( propertyname == "georefid"){
+            if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
+                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                if ( raster.isValid() && raster->georeference().isValid()){
+                    return QString::number(raster->georeference()->id());
+                }
+            }
+        }
 
         return "";
     } catch(const ErrorObject& ){
@@ -628,8 +638,26 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
                 if ( dom->id() != raster->datadefRef().domain()->id()){
                     raster->datadefRef().domain(dom);
+                    raster->resourceRef().addProperty("domain", dom->id());
                     raster->changed(true);
                     mastercatalog()->changeResource(raster->id(),"domain",dom->id(), true);
+                }
+            }
+        }else if ( attrname == "coordinatesystem"){
+            QString def = value;
+            bool ok;
+            value.toUInt(&ok);
+            if ( ok){
+                def = "code=epsg:" + value;
+            }else if ( def.indexOf("+proj") >= 0){
+                def = "code=proj4" + value;
+            }
+            ICoordinateSystem csy(def);
+            if ( csy.isValid()){
+                ICoverage coverage = _ilwisobject.as<Coverage>();
+                if ( coverage.isValid()){
+                    coverage->coordinateSystem(csy);
+
                 }
             }
         }

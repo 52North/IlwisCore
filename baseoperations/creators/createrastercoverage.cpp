@@ -7,6 +7,8 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "raster.h"
+#include "itemdomain.h"
+#include "itemiterator.h"
 #include "createrastercoverage.h"
 
 using namespace Ilwis;
@@ -32,15 +34,19 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     IRasterCoverage raster;
     raster.prepare();
     raster->georeference(_grf);
-    raster->size( Size<>(_grf->size().xsize(), _grf->size().ysize(), _bands));
-    raster->setDescription(_desc);
-    if ( _keywords != "")
-            raster->resourceRef()["keywords"] = _keywords;
-    std::vector<double> bands(_bands);
-    for(int band = 0; band < _bands; ++band){
-        bands[band] = band;
+    raster->size( Size<>(_grf->size().xsize(), _grf->size().ysize(), std::max(_stackValueNumbers.size(), _stackValueStrings.size())));
+    if ( _stackDomain->ilwisType() == itNUMERICDOMAIN)
+        raster->setDataDefintions(_domain, _stackValueNumbers , _stackDomain);
+    else
+         raster->setDataDefintions(_domain, _stackValueStrings, _stackDomain);
+
+    int layer = 0;
+    for(auto& band : _bands){
+        if ( _autoresample){
+
+        }
+        raster->copyBinary(band,0,layer++);
     }
-    raster->setDataDefintions(_domain,bands);
 
     QVariant value;
     value.setValue<IRasterCoverage>(raster);
@@ -52,6 +58,118 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 Ilwis::OperationImplementation *CreateRasterCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
     return new CreateRasterCoverage(metaid, expr);
+}
+
+bool CreateRasterCoverage::parseStackDefintionTimeCase(const QString& stackDef){
+    QStringList parts = stackDef.split(",");
+    if ( (parts.size() == 1 || parts.size() == 2) && stackDef.indexOf("..") > 0){
+        QStringList parts2 = parts[0].split("..");
+        if ( parts2.size() == 2){
+            Duration res(1.0);
+            Time mmin = parts2[0];
+            Time mmax = parts2[1];
+            if ( mmin > mmax) return false;
+            if ( parts.size() == 2){
+                res = parts[2];
+            }
+            if ( !mmin.isValid() || !mmax.isValid() || !res.isValid())
+                return false;
+            _stackValueNumbers.resize((mmax - mmin)/res);
+            double val = mmin;
+            for(int i=0; i < _stackValueNumbers.size(); ++i){
+                _stackValueNumbers[i] = val;
+                val += res;
+            }
+
+        }
+    }else {
+        _stackValueNumbers.resize(parts.size());
+        for(int i=0; i < _stackValueNumbers.size(); ++i){
+            _stackValueNumbers[i] = parts[i].toDouble();
+        }
+    }
+    return true;
+}
+
+bool CreateRasterCoverage::parseStackDefintionNumericCase(const QString& stackDef){
+    bool ok;
+    int nr = stackDef.toUInt(&ok);
+    if ( !ok){
+        QStringList parts = stackDef.split(",");
+        if ( (parts.size() == 1 || parts.size() == 2) && stackDef.indexOf("..") > 0){
+            QStringList parts2 = parts[0].split("..");
+            if ( parts2.size() == 2){
+                double res = 1;
+                double mmin = parts2[0].toDouble(&ok);
+                if (!ok) return false;
+                double mmax = parts2[1].toDouble(&ok);
+                if (!ok) return false;
+                if ( mmin > mmax) return false;
+                if ( parts.size() == 2){
+                    res = parts[2].toDouble(&ok);
+                    if (!ok && res <= 0) return false;
+                }
+                _stackValueNumbers.resize((1 + mmax - mmin)/res);
+                double val = mmin;
+                for(int i=0; i < _stackValueNumbers.size(); ++i){
+                    _stackValueNumbers[i] = val;
+                    val += res;
+                }
+                return true;
+
+            }
+        }else {
+            _stackValueNumbers.resize(parts.size());
+            for(int i=0; i < _stackValueNumbers.size(); ++i){
+                _stackValueNumbers[i] = parts[i].toDouble(&ok);
+                if (!ok) return false;
+            }
+            return true;
+        }
+
+    }else {
+        _stackValueNumbers.resize(nr);
+        for(int i=0; i < nr; ++i)
+            _stackValueNumbers[i] = i;
+        return true;
+    }
+    return false;
+}
+
+bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
+    QString stackDef = stacDef;
+    stackDef.remove('\"');
+    if ( _stackDomain->ilwisType() == itNUMERICDOMAIN){
+        if ( hasType(_stackDomain->valueType(), itINTEGER | itFLOAT | itDOUBLE)){
+            return parseStackDefintionNumericCase(stackDef);
+        }else if ( hasType(_stackDomain->valueType(), itDATETIME)){
+            //TODO
+        }
+    }else if ( _stackDomain->ilwisType() == itITEMDOMAIN){
+        IItemDomain itemdomain = _stackDomain.as<ItemDomain<DomainItem>>();
+        if ( stackDef == ""){ // all items
+
+            for(auto item : itemdomain){
+                _stackValueStrings.push_back(item->name());
+            }
+        }else {
+            QStringList parts = stackDef.split(",");
+            for(const QString& part : parts){
+                if ( itemdomain->contains(part)){
+                    _stackValueStrings.push_back(part);;
+                }else {
+                    return false;
+                }
+            }
+        }
+    } else if ( _stackDomain->ilwisType() == itTEXTDOMAIN){
+        QStringList parts = stackDef.split(",");
+        for(auto item : parts){
+            _stackValueStrings.push_back(item);
+        }
+    }
+    return true;
+
 }
 
 Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionContext *ctx, const SymbolTable &)
@@ -68,17 +186,34 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         kernel()->issues()->log(QString(TR("%1 is and invalid domain")).arg(dom));
         return sPREPAREFAILED;
     }
-    _bands = _expression.input<int>(2);
-    if ( _bands <= 0){
-        kernel()->issues()->log(QString(TR("%1 is and value for number of bands")).arg(dom));
+    QString stackDefinition = _expression.input<QString>(3);
+    dom = _expression.input<QString>(2);
+    _stackDomain.prepare(dom);
+    if ( !_stackDomain.isValid()){
+        kernel()->issues()->log(QString(TR("%1 is and invalid stack domain")).arg(dom));
         return sPREPAREFAILED;
     }
-    _desc = _expression.input<QString>(3);
-    _desc = _desc.remove('\"');
-    if ( _expression.parameterCount() == 5){
-        _keywords = _expression.input<QString>(4);
-        _keywords = _keywords.remove('\"');
+    if(!parseStackDefintion(stackDefinition)){
+        kernel()->issues()->log(QString(TR("%1 is and invalid stack definition")).arg(stackDefinition));
+        return sPREPAREFAILED;
     }
+    if ( _expression.parameterCount() == 6){
+        _autoresample = _expression.input<bool>(4);
+        QString maps = _expression.input<QString>(5);
+        if (maps != ""){
+            QStringList bands = maps.split(",");
+            for(QString band : bands){
+                IRasterCoverage raster(band);
+                if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
+                    _bands.push_back(raster);
+                }else{
+                    kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
+                    return sPREPAREFAILED;
+                }
+            }
+        }
+    }
+
     return sPREPARED;
 }
 
@@ -86,15 +221,16 @@ quint64 CreateRasterCoverage::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createrastercoverage"});
     resource.setLongName("Create Raster Coverage");
-    resource.setSyntax("createrastercoverage(georeference, domain, bands,description[, keywords])");
-    resource.setInParameterCount({4,5});
+    resource.setSyntax("createrastercoverage(georeference, domain, stack-defintion[,auto-resample,bands])");
+    resource.setInParameterCount({4,6});
     resource.addInParameter(0, itGEOREF|itSTRING,TR("Georeference"), TR("Geometry of the new rastercoverage, coordinatesystem and pixel size"));
     resource.addInParameter(1, itDOMAIN|itSTRING,TR("Domain"), TR("Domain used by the raster coverage"));
-    resource.addInParameter(2, itINTEGER,TR("Number of bands"), TR("Number of bands in the rastercoverage"));
-    resource.addInParameter(3, itSTRING,TR("Description"), TR("Extra information about the new domain"));
-    resource.addOptionalInParameter(4, itSTRING, TR("Keywords"), TR("optional list of comma seperated keywords"));
+    resource.addInParameter(2, itDOMAIN,TR("Stack domain"), TR("Domain of the z direction (stack)"));
+    resource.addInParameter(3, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
+    resource.addOptionalInParameter(4, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
+    resource.addOptionalInParameter(5,itSTRING, TR("Bands"), TR("Optional parameter defining a number of bands that will be copied to the new raster coverage"));
     resource.setOutParameterCount({1});
-    resource.addOutParameter(0, itITEMDOMAIN, TR("raster coverage"), TR("The newly created raster"));
+    resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
     resource.setKeywords("rastercoverage, create");
 
     mastercatalog()->addItems({resource});

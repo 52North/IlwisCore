@@ -36,6 +36,7 @@ void Coverage::coordinateSystem(const ICoordinateSystem &csy)
 
     _coordinateSystem = csy;
     resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
+    mastercatalog()->changeResource(id(),"coordinatesystem",csy->id(), true);
 }
 
 Envelope Coverage::envelope(bool tolatlon) const
@@ -98,7 +99,7 @@ bool Coverage::canUse(const IlwisObject *obj, bool strict) const
 
 void Coverage::name(const QString &nam)
 {
-    Identity::name(nam)    ;
+    IlwisObject::name(nam)    ;
 }
 
 void Coverage::copyTo(IlwisObject *obj)

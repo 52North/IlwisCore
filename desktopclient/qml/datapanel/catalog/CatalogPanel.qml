@@ -27,28 +27,29 @@ Item {
 
     function showObject(objectid){
         var filter
-        if ( objectid === -1){
+        if ( objectid === -1){ // case for  .. one step back
             var container = currentCatalog.container
             filter = "container='" + container + "'"
             datapanesplit.changePanel(filter, "catalog", container)
-        }else {
+        }else { // we want the object
             var type = mastercatalog.id2type(objectid)
-             var newPanel = null
-            if ( !type)
+            if ( !type) // unknow type, we can not show it
                 return
+            var newPanel = null
             var resource = mastercatalog.id2Resource(objectid)
-            if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){
+            if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){ // object as container case
                 filter = "container='" + resource.url + "'"
                 newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
-            }else {
+            }else { // object as 'real' data case
                 filter = "itemid=" + resource.id
+                // try to find a suitable data pane for it
                 newPanel =datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-                if ( newPanel == null){
+                if ( newPanel == null){ // we dont have a seperate pane for it so it is an object with only metadata to show
                     mastercatalog.setSelectedObjects(objectid)
                     bigthing.getWorkbenchPane("objectproperties","visible");
                 }
             }
-            if ( resource && newPanel){
+            if ( resource && newPanel){ // the default parent is too generic. so we choose this panel as its true parent
                 resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
             }
         }

@@ -34,9 +34,9 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["cornersgeoreferences" ] = new IlwisObjectCreatorModel("cornersgeoreferences", TR("Corners Georeference"),itGEOREF,"CreateGeorefCorners.qml", 350, this);
     _creators["tiepointgeoreference" ] = new IlwisObjectCreatorModel("tiepointgeoreference",TR("Tiepoints Georeference"),itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this);
     _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this);
-    _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("LatLon Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this);
+    _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("Geographic (LatLon) Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this);
     _creators["boundsonlycoordinatesystem" ] = new IlwisObjectCreatorModel("boundsonlycoordinatesystem", TR("Bounds only Coordinate System"),itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this);
-    _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 290, this);
+    _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 390, this);
     _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"CreateNumDom.qml", 200, this);
     _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"CreateNumDom.qml", 200, this);
     _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"CreateNumDom.qml", 250, this);
@@ -272,13 +272,15 @@ QString ObjectCreator::createProjectedCoordinateSystem(const QVariantMap &parms)
 
 QString ObjectCreator::createWorkflow(const QVariantMap &parms)
 {
+    IWorkflow wf;
+    wf.prepare();
     QString name = parms["name"].toString();
-    OperationResource res(QUrl("ilwis://operations/" + name), itWORKFLOW);
-    res.setDescription(parms["description"].toString());
-    res.setKeywords(parms["keywords"].toString());
-    res.setUrl(parms["url"].toString(),true);
-    res.prepare();
-    mastercatalog()->addItems({res});
+    wf->name(name);
+    wf->resourceRef().setUrl(QUrl("ilwis://operations/" + name));
+    wf->resourceRef().setUrl(parms["url"].toString(), true);
+    wf->resourceRef().setDescription(parms["description"].toString());
+    wf->resourceRef().addProperty("keyword", parms["keywords"].toString());
+    mastercatalog()->addItems({wf->resource()});
     QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
     if ( mastercatalog.isValid()){
         MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
@@ -287,7 +289,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
             ocmodel->refresh();
         }
     }
-    return QString::number(res.id());
+    return QString::number(wf->id());
 }
 
 QString ObjectCreator::createObject(const QVariantMap &parms)
@@ -340,17 +342,18 @@ QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
     if ( name == "")
         return sUNDEF;
 
-    int bands = parms["bands"].toInt();;
     QString expr = "createrastercoverage(";
     expr += parms["georeference"].toString();
     expr += ",";
     expr += parms["domain"].toString();
     expr += ",";
-    expr += QString::number(bands);
+    expr += parms["stackdomain"].toString();
     expr += ",";
-    expr += "\""+ parms["description"].toString() + "\"";
-    if ( parms.contains("keywords"))
-        expr += ",\""+ parms["keywords"].toString() + "\"";
+    expr += "\"" + parms["stackdefinition"].toString() + "\"";
+    expr += ",";
+    expr += parms["autoresample"].toBool() ? "yes" : "no";
+    expr += ",";
+    expr += "\"" + parms["bands"].toString() + "\"";
     expr += ")";
 
     QString output = QString("script %1{format(stream,\"rastercoverage\")}=").arg(name);

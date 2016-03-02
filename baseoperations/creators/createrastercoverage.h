@@ -21,11 +21,16 @@ public:
 
 private:
     IDomain _domain;
+    IDomain _stackDomain;
     IGeoReference _grf;
-    QString _desc;
-    QString _keywords;
-    int _bands;
+    std::vector<QString> _stackValueStrings;
+    std::vector<double> _stackValueNumbers;
+    std::vector<IRasterCoverage> _bands;
+    bool _autoresample;
 
+    bool parseStackDefintion(const QString &stackDef);
+    bool parseStackDefintionNumericCase(const QString &stackDef);
+    bool parseStackDefintionTimeCase(const QString &stackDef);
 };
 }
 }

@@ -52,6 +52,7 @@ Controls.DropableItem{
                 labelWidth: 100
                 width : parent.width
             }
+
             Connections {
                 target : grfvalue
                 onCreateClicked : {
@@ -86,30 +87,88 @@ Controls.DropableItem{
                 useCreateButton: true
                 content : "value"
             }
+            Controls.FilteredTextEditLabelPair{
+                id : stackdomvalue
+                labelWidth: 100
+                labelText: qsTr("Stack Domain")
+                filterImage: "../images/domain.png"
+                filterType: "domain"
+                width : parent.width
+                useCreateButton: true
+                content : "count"
+            }
 
             Controls.TextEditLabelPair{
                 id :bandsvalue
-                labelText: qsTr("Number of bands")
+                labelText: qsTr("Stack Defintion")
                 labelWidth: 100
                 width : parent.width
                 regexvalidator: /^\d*/
                 content : "1"
             }
-
-
-            Controls.TextAreaLabelPair{
-                id : descvalue
-                labelText: qsTr("Description")
-                width : parent.width
-                height : 40
-                labelWidth: 100
+            Text{
+                height: Global.rowHeight - 4
+                text : qsTr("Bands")
+                font.bold: true
             }
-            Controls.TextEditLabelPair{
-                id :keywordsvalue
-                labelText: qsTr("Keywords")
-                labelWidth: 100
-                width : parent.width
+            Item {
+                width : 100
+                height : Global.rowHeight
+                CheckBox{
+                    id : resampleCB
+                    anchors.fill: parent
+                    text : qsTr("Auto resample")
+                    checked : false
+                }
             }
+
+            Rectangle {
+                id : bands
+                width : parent.width
+                height : 90
+                DropArea {
+                    ListModel {
+                        id : rasters
+                    }
+
+                    anchors.fill: parent
+                    ListView {
+                        function bands() {
+                            var result
+                            for(var i=0; i < rasters.count; ++i){
+                                if ( result != "")
+                                    result += ","
+                                result += rasters.get(i)
+                            }
+                            return result
+                        }
+
+                        id : rasterlist
+                        anchors.fill : parent
+                        anchors.margins: 2
+                        model : rasters
+                        delegate :  Text { height : 16; text : path}
+                    }
+                    onDropped : {
+                        var id = drag.source.ilwisobjectid
+                        var obj = mastercatalog.id2object(id, rasterlist)
+                        console.debug(drag.source.ids,obj.typeName,drag.source.ilwisobjectid)
+                        if ( obj.typeName === "rastercoverage"){
+                            if ( grfvalue.content === ""){
+                                var grf = mastercatalog.id2object(id, rasterlist)
+                                if ( grf)
+                                    grfvalue.content = grf.url;
+                            }
+                            if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, obj.url, "georeference"))
+                                rasters.append({path : obj.url})
+                        }
+                    }
+                }
+                border.width: 1
+                border.color: Global.edgecolor
+
+            }
+
         }
         Item {
             width : parent.width
@@ -126,11 +185,12 @@ Controls.DropableItem{
                 onClicked: {
                     var createInfo = {georeference : grfvalue.content,
                         domain : domvalue.content,
-                        bands : bandsvalue.content,
-                        keywords : keywordsvalue.content,
+                        stackdefinition : bandsvalue.content,
                         type : "rastercoverage",
                         name :  namevalue.content,
-                        description : descvalue.content}
+                        stackdomain : stackdomvalue.content,
+                        bands : rasterlist.bands(),
+                        autoresample : resampleCB.checked}
 
                     var ilwisid = objectcreator.createObject(createInfo)
                 }

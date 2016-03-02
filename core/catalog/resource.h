@@ -110,6 +110,7 @@ public:
      */
     void name(const QString& nm, bool adaptUrl=true);
     QString name() const { return Identity::name(); }
+    QString rawName() const;
 
     /**
      * override of the [] operator, allows you to query this resource for some of its data.<br>
@@ -330,8 +331,8 @@ protected:
     QString _dimensions;
     IlwisTypes _ilwtype;
     IlwisTypes _extendedType;
-    double _modifiedTime;
-    double _createTime;
+    double _modifiedTime = rUNDEF;
+    double _createTime = rUNDEF;
 
     void checkUrl(IlwisTypes tp);
 

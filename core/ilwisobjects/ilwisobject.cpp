@@ -30,17 +30,13 @@ IlwisObject::IlwisObject() :
     _readOnly(false),
     _changed(false)
 {
-    Identity::prepare();
 }
 
-IlwisObject::IlwisObject(const Resource& resource) :
-    Identity(resource.name(), resource.id(), resource.code(), resource.description()) ,
+IlwisObject::IlwisObject(const Resource& ) :
     _valid(false),
     _readOnly(false),
     _changed(false)
 {
-    if (!resource.isValid())
-        Identity::prepare();
 }
 
 IlwisObject::~IlwisObject()
@@ -98,9 +94,6 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
         throw ErrorObject(TR(QString("couldnt connect to %1 datasource for %2").arg(format).arg(url.toString())));
     }
     setConnector(conn, cmode, options);
-    if ( Identity::name() == sUNDEF)
-        name(res.name());
-
 }
 
 IlwisObject *IlwisObject::clone()
@@ -139,7 +132,6 @@ void IlwisObject::name(const QString &nam)
     QString nm = nam;
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
-    Identity::name(nm);
     if ( !connector().isNull()){
         connector()->source().name(nm);
         if ( isInternalObject()){
@@ -151,14 +143,51 @@ void IlwisObject::name(const QString &nam)
         mastercatalog()->addItems({resource()});
 }
 
+QString IlwisObject::name() const
+{
+    if ( !connector().isNull()) {
+        return resource().name();
+    }
+    return sUNDEF;
+}
+
 void IlwisObject::code(const QString& cd) {
     if ( isReadOnly())
         return;
     _changed = true;
 
-    Identity::code(cd);
     if ( !connector().isNull())
         connector()->source().code(cd);
+}
+
+QString IlwisObject::code() const
+{
+    if ( !connector().isNull())
+        return connector()->source().code();
+    return sUNDEF;
+}
+
+QString IlwisObject::description() const
+{
+    if ( !connector().isNull()){
+        return connector()->source().description();
+    }
+    return sUNDEF;
+}
+
+void IlwisObject::setDescription(const QString &desc)
+{
+    if ( !connector().isNull()){
+        connector()->source().setDescription(desc);
+    }
+}
+
+quint64 IlwisObject::id() const
+{
+    if ( !connector().isNull()){
+        return connector()->source().id();
+    }
+    return i64UNDEF;
 }
 
 Time IlwisObject::modifiedTime() const
@@ -375,7 +404,7 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
     name(rec.field("code").value().toString()); // name and code are the same here
     setDescription(rec.field("description").value().toString());
     code(rec.field("code").value().toString());
-    setConnector(0);
+   //setConnector(0);
 
     return true;
 }

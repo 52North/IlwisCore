@@ -250,6 +250,9 @@ QStringList WorkflowModel::deleteFlow(int vertexFrom, int vertexTo, int paramete
  */
 QQmlListProperty<NodePropObject> WorkflowModel::getNodes()
 {
+    if ( !_workflow.isValid())
+        return QQmlListProperty<NodePropObject>();
+
     if ( _nodeProps.size() != 0) {
         for(auto *node : _nodeProps)
             delete node;
