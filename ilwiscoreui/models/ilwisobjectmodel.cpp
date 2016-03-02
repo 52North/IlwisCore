@@ -644,13 +644,15 @@ void IlwisObjectModel::setAttribute(const QString &attrname, const QString &valu
                 }
             }
         }else if ( attrname == "coordinatesystem"){
-            QString def = value;
+            QString def = value.trimmed();
             bool ok;
             value.toUInt(&ok);
             if ( ok){
                 def = "code=epsg:" + value;
             }else if ( def.indexOf("+proj") >= 0){
                 def = "code=proj4" + value;
+            }else if ( def.toLower() == "wgs84" || def.toLower() == "wgs 84"){
+                def = "code=epsg:4326";
             }
             ICoordinateSystem csy(def);
             if ( csy.isValid()){
