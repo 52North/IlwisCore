@@ -598,6 +598,14 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
             }
 
         }
+        if ( propertyname == "georefid"){
+            if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
+                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                if ( raster.isValid() && raster->georeference().isValid()){
+                    return QString::number(raster->georeference()->id());
+                }
+            }
+        }
 
         return "";
     } catch(const ErrorObject& ){

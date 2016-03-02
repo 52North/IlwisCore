@@ -77,6 +77,7 @@ public:
     Q_INVOKABLE void deleteObject(const QString& id);
      // for trq test
     Q_INVOKABLE void longAction();
+    Q_INVOKABLE bool isCompatible(const QString& objUrl1, const QString& objUrl2, const QString& type);
     std::vector<Ilwis::Resource> select(const QString& filter);
 
 

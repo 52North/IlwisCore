@@ -17,6 +17,25 @@ NumericRange::NumericRange(const NumericRange &vr): _undefined(rUNDEF)
     set(vr);
 }
 
+NumericRange::NumericRange(const QString& defintion){
+    QStringList parts = defintion.split(":");
+    if ( parts.size() == 2 && parts[0] == "numericrange"){
+        QStringList numberParts = parts[1].split("|");
+        if ( numberParts.size() == 2 || numberParts.size() == 3){
+            bool ok1, ok2, ok3;
+            _min = numberParts[0].toDouble(&ok1);
+            _max = numberParts[1].toDouble(&ok2);
+            if ( numberParts.size() == 3){
+                _resolution = numberParts[2].toDouble(&ok3);
+            }
+            if ( !ok1 || !ok2 || !ok3){
+                _min = 1e300;
+                _max = -1;
+            }
+        }
+    }
+}
+
 bool NumericRange::isValid() const
 {
     return _min <= _max && _resolution >= 0 && !isNumericalUndef(_min) && !isNumericalUndef(_max);

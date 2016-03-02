@@ -30,6 +30,7 @@ public:
      * \param vr other value range
      */
     NumericRange(const NumericRange &vr);
+    NumericRange(const QString& def);
 
 
     bool isValid() const;
