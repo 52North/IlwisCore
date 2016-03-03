@@ -143,7 +143,6 @@ Controls.DropableItem{
                     onDropped : {
                         var id = drag.source.ilwisobjectid
                         var obj = mastercatalog.id2object(id, rasterlist)
-                        console.debug(drag.source.ids,obj.typeName,drag.source.ilwisobjectid)
                         if ( obj.typeName === "rastercoverage"){
                             if ( grfvalue.content === ""){
                                 var grf = mastercatalog.id2object(id, rasterlist)
