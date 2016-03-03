@@ -2,13 +2,13 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
+import InternalDatabaseModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Item {
     width: catalogoptions.width
     height: catalogoptions.height
-
 
     Column {
         id : choices
@@ -38,12 +38,48 @@ Item {
             labelText: qsTr("Country select")
             labelWidth: 100
             width : parent.width
+            itemModel: internaldatabase.query("Select * from teritories where type='teritory' or type='all'order by name")
+            role : "name"
+            Component.onCompleted: {
+                currentIndex = itemModel.count - 4
+            }
+            onCurrentIndexChanged: {
+                if ( currentIndex >= 0) {
+                    var teritory = itemModel[currentIndex]
+                    if ( teritory.code !== "WORLD"){
+                        var envelope = teritory.longmin + " " + teritory.latmin + " " + teritory.longmax + " " + teritory.latmax
+                        currentCatalog.spatialFilter = envelope
+                        spatselect.currentEnvelope = envelope
+                    }else{
+                        currentIndex = -1
+                        spatselect.currentEnvelope = "entiremap"
+                    }
+                }
+            }
 
         }
         Controls.ComboxLabelPair{
             labelText: qsTr("Region select")
             labelWidth: 100
             width : parent.width
+            itemModel: internaldatabase.query("Select * from teritories where type='region' or type='all' order by name")
+            role : "name"
+            Component.onCompleted: {
+                currentIndex = itemModel.count - 1
+            }
+            onCurrentIndexChanged: {
+                if ( currentIndex >= 0) {
+                    var teritory = itemModel[currentIndex]
+                    if ( teritory.code !== "WORLD"){
+                        var envelope = teritory.longmin + " " + teritory.latmin + " " + teritory.longmax + " " + teritory.latmax
+                        currentCatalog.spatialFilter = envelope
+                        spatselect.currentEnvelope = envelope
+                    }else{
+                         currentIndex = -1
+                        spatselect.currentEnvelope = "entiremap"
+                    }
+                }
+            }
         }
         Controls.ComboxLabelPair{
             labelText: qsTr("Keyword filters")
