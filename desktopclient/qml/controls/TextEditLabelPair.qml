@@ -60,7 +60,6 @@ DropArea {
     }
     onDropped : {
         content = drag.source.message
-        console.debug(drag.source.message)
     }
 }
 
