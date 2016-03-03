@@ -17,6 +17,7 @@ class PreferencesModel;
 class MasterCatalogModel;
 class KeyFilter;
 class QThread;
+class InternalDatabaseModel;
 
 class StartIlwis : public QObject
 {
@@ -43,6 +44,7 @@ private:
     DataPaneModel *_datapane;
     ObjectCreator *_objcreator;
     PreferencesModel *_preferences;
+    InternalDatabaseModel *_database;
     KeyFilter *_keys;
 
     QQmlApplicationEngine *_engine;
