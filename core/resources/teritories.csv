@@ -1,0 +1,221 @@
+country,code,longmin,latmin,longmax,latmax,type
+Europe,EUR,-25,34.6,55.2,80.9,region
+Africa,AFR,-19,-35,51.5,37.7,region
+East Africa,EAF,28.6,-11.9,51.5,18.3,region
+World,WORLD,-180,-90,180,90,all
+Aruba,ABW,-70.983,12.4,-69.85,12.617,teritory
+Antigua and Barbuda,ATG,-62.417,16.817,-61.65,17.75,teritory
+United Arab Emirates,AE,45,22.167,59.25,26.133,teritory
+Afghanistan,AFG,60.433,29.15,75.033,38.484,teritory
+Algeria,DZA,-8.7,18.027,70.554,37.203,teritory
+Azerbaijan,AZE,44.783,38.417,50.858,41.911,teritory
+Albania,ALB,19,39.583,21.05,42.659,teritory
+Armenia,ARM,43.443,38.857,46.589,41.3,teritory
+Andorra,AND,1.417,42.433,1.783,42.65,teritory
+Angola,AGO,10,-33.806,24.35,-3.033,teritory
+Argentina,ARG,-73.533,-58.583,-53.367,-21.783,teritory
+Australia,AUS,112.467,-55.05,168,-9.133,teritory
+Austria,AUT,1.2,46.373,19,49.017,teritory
+Bahrain,BHR,45,25,50.954,26.566,teritory
+Barbados,BRB,-59.667,12.967,-59.383,13.333,teritory
+Botswana,BWA,20,-28.517,29.35,24.583,teritory
+Belgium,BEL,2.367,49.5,6.4,51.683,teritory
+Bahamas,BHS,-86,20,-70,29.547,teritory
+Bangladesh,BGD,84,20.6,92.683,26.817,teritory
+Belize,BLZ,-89.95,15,-75,18.483,teritory
+Bosnia and Herzegovina,BIH,15.746,42.558,19.671,45.268,teritory
+Bolivia,BOL,-69.65,-26.867,-57.55,9.678,teritory
+Myamar,MMR,91.833,6,102,28.35,teritory
+Benin,BEN,-4,5,92.219,21.322,teritory
+Belarus,BLR,22.55,50.717,32.85,56.133,teritory
+Solomon Islands,SLM,-130,-45,170.2,3.751,teritory
+Brazil,BRA,-73.817,-33.733,-28.85,16.8,teritory
+Bhutan,BTN,80,26.217,92.717,30,teritory
+Bulgaria,BGR,22.371,41,28.6,44.215,teritory
+Bouvet,BVT,3.278,-54.467,3.483,-54.386,teritory
+Brunei,BRN,110,-2,120,15,teritory
+Burundi,BDI,29.018,-4.455,31.783,-0.95,teritory
+Canada,CAN,-163.9,39,-52.083,83.133,teritory
+Cambodia,KHM,14.869,9.917,107.567,17.483,teritory
+Chad,TCD,2,7.483,27.133,26,teritory
+Sri Lanka,LKA,75,5.9,81.917,10.083,teritory
+Republic of Congo,COG,10,-6.067,20,5,teritory
+Democratic Republic of Congo,COD,12.2,-15.75,31.233,5.35,teritory
+China,CHN,74.167,18.163,135.078,53.5,teritory
+Chile,CHL,-109.467,-64.05,-8.847,42.583,teritory
+Cook Islands,COK,96.817,-12.208,96.925,-11.817,teritory
+Cameroon,CMR,8.467,1.417,20,16,teritory
+Comoros,COM,43.067,-13,45.317,-11.35,teritory
+Colombia,COL,-81.85,-5,76.833,15,teritory
+Costa Rica,CRI,-87.1,-0.792,-46.633,15,teritory
+Central African Republic,CAF,13.4,0,27.45,10.983,teritory
+Cuba,CUB,-90,15,83.917,25,teritory
+Cabo Verde,CPV,-25.367,14.8,-22.65,17.2,teritory
+Cyprus,CYP,32.271,34.567,34.6,35.7,teritory
+Denmark,DNK,4.517,53.583,18,64,teritory
+Djibouti,DJI,39.5,10.267,43.452,19,teritory
+Dominica,DMA,-61.55,15.167,-61.25,15.633,teritory
+Dominican Republic,DOM,-86,15,70.5,21,teritory
+Ecuador,ECU,-92,-4.967,-75.2,1.65,teritory
+Egypt,EGY,13,5,37,50.861,teritory
+Ireland,IRL,-10.683,51.367,-4,55.433,teritory
+Equatorial Guinea,GNQ,3.633,-1.483,11.4,5,teritory
+Estonia,EST,21.781,57.521,28.883,59.983,teritory
+Eritrea,ERI,20,0,43.417,18.033,teritory
+El Salvador,SLV,-90.184,13.15,-87.644,14.45,teritory
+Ethiopia,ETH,33.017,3.233,47.783,19,teritory
+Czech Republic,CZE,12.117,39.983,38.083,59.65,teritory
+Finland,FIN,18,0,60.203,70.083,teritory
+Fiji,FJI,-179.983,-45,180,-11.167,teritory
+Falkland Islands,FLK,-61.433,-52.967,-57.667,-50.967,teritory
+Faeroer,FRO,-7.8,61.333,-5.333,67.283,teritory
+French Polynesia,PF,-179.8,-27.917,180,16.633,teritory
+France,FRA,-5.225,41.333,9.55,51.2,teritory
+Gambia,GMB,-16.817,5,20,13.817,teritory
+Gabon,GAB,8.7,-3.95,14.533,5.983,teritory
+Georgia,GEO,40.009,41.15,46.659,43.582,teritory
+Ghana,GHA,-4,4.733,20,11.167,teritory
+Gibraltar,GIB,-5.433,36.1,-5.333,36.183,teritory
+Grenada,GRD,-61.8,11.983,-61.25,12.667,teritory
+Greenland,GRL,-73.05,51.7,-12.133,83.667,teritory
+Germany,GER,5.867,45.967,15.033,55.133,teritory
+Guadeloupe ,GLP,-86,13,-60.9,21,teritory
+Greece,GRC,19.382,34.8,29.667,44,teritory
+Guatemala,GTM,-92.583,13.749,-75,17.817,teritory
+Guinea,GIN,-15.417,4.367,20,13.3,teritory
+Guyana,GUY,-61.283,1.25,-56,8.433,teritory
+Haiti,HTI,-86,8.547,72.296,21,teritory
+Hong Kong,HKG,113.833,15,115,22.6,teritory
+Heard Island and McDonald Islands,HMD,72.567,-53.2,73.85,-52.9,teritory
+Honduras,HND,-89.967,13,-75,17.45,teritory
+Croatia,HRV,13.484,42.367,19.391,46.527,teritory
+Hungary,HUN,16.133,45.75,22.867,48.983,teritory
+Iceland,ISL,-26,62,-6,67.117,teritory
+Indonesia,IDN,0,-11.983,141.033,15,teritory
+Isle of Man,IMN,-5.45,53.15,-4.083,54.45,teritory
+India,IND,65,6,97.35,35.956,teritory
+British Indian Ocean Teritory,IOT,70.25,-7.417,72.6,-4.917,teritory
+Iran,IRN,27.445,5.322,96.024,39.933,teritory
+Israel,ISR,34.282,29,35.667,33.286,teritory
+Italy,ITA,1.133,28.969,54.824,49.2,teritory
+Ivory coast,CIV,-9.65,1.083,45.608,35.538,teritory
+Iraq,IRQ,38.782,28.833,49.433,37.358,teritory
+Japan,JPN,122.933,20.417,156.067,50.617,teritory
+Jersey,JEY,-2.328,49.1,-1.897,49.316,teritory
+Jamaica,JAM,-78.667,15,-70,18.533,teritory
+Jordan,JOR,34.783,29,39.1,33.333,teritory
+Kenya,KEN,24.283,-5.083,41.878,4.883,teritory
+Kyrgyzstan,KGZ,69.333,39.183,80.116,43.833,teritory
+North Korea,PRK,124.128,37.621,130.672,43.004,teritory
+Kiribati,KIR,-179.217,-45,180,30,teritory
+South Korea,KOR,124.612,29,131.867,38.6,teritory
+Kuwait,KWT,45,25,49.411,30.083,teritory
+Kazakhstan,KAZ,46.583,40.417,90,55.428,teritory
+Laos,LAO,100.083,13.933,107.683,22.5,teritory
+Lebanon,LBN,35.104,33.067,36.623,34.691,teritory
+Latvia,LVA,20.967,55.667,28.233,58.067,teritory
+Lithuania,LTU,20.991,53,28.233,56.467,teritory
+Liberia,LBR,-11.598,4.328,-4,9.5,teritory
+Slovakia,SVK,16.967,45.5,26.5,49.85,teritory
+Liechtenstei,LIE,9.5,47.05,9.75,47.25,teritory
+Lesotho,LSO,24,-30.667,29.483,-28.567,teritory
+Luxembourg,LUX,5.743,49.45,6.517,50.182,teritory
+Libya,LBY,5,20.25,25.5,33.15,teritory
+Madagascar,MDG,42.4,-25.9,50.483,-11.95,teritory
+Moldova,MDA,26.672,45.482,30.096,48.467,teritory
+Saint Martin,MAF,45.009,-13.006,45.295,-12.64,teritory
+Mongolia,MNG,87.783,41.55,119.917,52.1,teritory
+Malawi,MWI,32.717,-17.15,37,-5,teritory
+Montenegro,MNE,18.438,41.864,20.345,43.548,teritory
+Macedonia,MKD,20.405,40.867,23.033,42.373,teritory
+Mali,MLI,-13.75,4.318,20,26,teritory
+Monaco,MCO,7.4,43.717,7.439,43.746,teritory
+Morocco,MAR,-13.1,3.36,9.542,36.61,teritory
+Mauritius,MUS,56.567,-20.522,73.567,10.4,teritory
+Mauritania,MRT,-17.117,10,20,27.117,teritory
+Malta,MLT,14.184,35.782,15,36.333,teritory
+Oman,OMN,5.1,15.083,65,26.567,teritory
+Maldives,MDV,61.5,-10.5,75,20,teritory
+Mexico,MEX,-119.922,0,110.75,45,teritory
+Malaysia,MYS,98.933,0,124.125,15,teritory
+Mozambique,MOZ,4.017,-26.867,43,15.033,teritory
+New Caledonia,NCL,125.467,-45,180,0,teritory
+Norfolk Island,NFK,167.95,-29.05,167.95,-29.033,teritory
+Niger,NER,0.183,1.617,20,26,teritory
+Vanuatu,VUT,-130,-45,180,0,teritory
+Nigeria,NGA,2.483,3.883,20,13.867,teritory
+Netherlands,NLD,3.133,50.75,7.217,53.683,teritory
+Norway,NOR,2.553,56.15,31.833,71.5,teritory
+Nepal,NPL,80,25.767,88.183,30.45,teritory
+Nauru,NRU,166.917,-0.55,166.95,-0.5,teritory
+Suriname,SUR,-60,2,-53.967,6.017,teritory
+Nicaragua,NIC,-87.7,0,0,15,teritory
+New Zealand,NZL,-179,-52.617,179.067,36.783,teritory
+Paraguay,PRY,-62.633,-27.55,-54.267,-19.317,teritory
+Peru,PER,-81.458,-18.357,74.35,11.371,teritory
+Pakistan,PAK,17.899,23.733,77.8,43.713,teritory
+Poland,POL,-21.583,45.5,26.5,55.183,teritory
+Panama,PAN,-83.65,7.2,-8.433,15,teritory
+Portugal,PRT,-73.15,8.496,8.683,42.15,teritory
+Papua New Guinea,PNG,101.275,-12.583,160.5,17.797,teritory
+Palau,PLW,131.175,2.874,134.716,8.342,teritory
+Guinea-Bissau,GNB,-16.7,5,-4,12.8,teritory
+Qatar,QAT,50.644,24.285,52.75,26.441,teritory
+Serbia,SRB,18.859,41.844,22.967,46.167,teritory
+Reunion,REU,55.217,-21.383,57,-20,teritory
+Marshall Islands,MHL,155,4.567,175.833,70.15,teritory
+Romania,ROU,19,43.517,29.967,48.25,teritory
+Philippines,PHL,63.295,4.444,130.5,34.434,teritory
+Russian Fedration,RUS,-179.985,38.083,179.917,86.217,teritory
+Rwanda,RWA,28.867,-3.317,37,5,teritory
+Saudi Arabia,SAU,24.08,5,55.5,48.555,teritory
+Saint Kitts and Nevis ,KNA,-62.85,17.083,-62.517,17.417,teritory
+Seychelles,SYC,20.462,-10.217,57.083,42.641,teritory
+South Africa,ZAF,16.45,-35.5,33.533,-22.133,teritory
+Senegal,SEN,-17.683,12.267,-11.357,16.681,teritory
+Slovenia,SVN,13.427,44.083,17.467,46.933,teritory
+Sierra Leone,SLE,-13.417,5,-4,10,teritory
+San Marino,SMR,12.417,43.908,12.5,43.983,teritory
+Singapore,SGP,101.333,1.083,104.412,4,teritory
+Somalia,SOM,20,-1.659,65,20,teritory
+Spain,ESP,-18.167,27.633,6.033,44,teritory
+Saint Lucia,LCA,-61.083,13.5,-60.867,14.15,teritory
+Sudan,SDN,18.783,3.517,38.833,27.167,teritory
+Sweden,SWE,1.3,16.693,60.717,69.033,teritory
+Sint Maarten,SXM,-40,-59.467,-26.25,-53.959,teritory
+Syria,SYR,35.599,32,42.5,37.28,teritory
+Switzerland,CHE,5.967,45.15,12.467,52.883,teritory
+Trinidad and Tobago,TTO,-86,10,-60.5,21,teritory
+Thailand,THA,95,4.15,139.183,20.445,teritory
+Tajikistan,TJK,67.417,36.717,75,40.933,teritory
+Tokelau,TKL,-72.483,20.75,-70.25,24.717,teritory
+Tonga,TON,-179.117,-45,180,0,teritory
+Togo,TGO,-4,5,20,11.133,teritory
+Sao Tome and Principe,STP,6.467,-0.017,7.633,1.733,teritory
+Tunisia,TUN,4,23.717,13,37.667,teritory
+East Timor,TLS,124.069,-9.474,127.606,-7.557,teritory
+Turkey,TUR,25,35.819,44.85,42.1,teritory
+Tuvalu,TUV,176.1,-10.75,179.883,-5.65,teritory
+Taiwan,TWN,118.115,21,125,29,teritory
+Turkmenistan,TKM,52.117,35.212,66.65,42.633,teritory
+Tanzania,TZA,29.583,-11.733,40.45,5,teritory
+Uganda,UGA,29.467,-1.483,34.967,4.55,teritory
+United Kingdom,GBR,-13.683,48.5,3.858,64.067,teritory
+Ukraine,UKR,18.85,37.8,76.1,64.95,teritory
+United States,USA,167.74,8.732,167.74,8.732,teritory
+Burkina Faso,BFA,-5.483,9.4,20,14.983,teritory
+Uruguay,URY,-58.5,-35.783,-51.283,-30.117,teritory
+Uzbekistan,UZB,44.517,35.267,92.2,66.15,teritory
+Saint Vincent,VCT,-61.467,12.533,-61,13.5,teritory
+Venezuela,VEN,-76.434,-0.877,69.211,19.199,teritory
+Virgin Islands,VGB,-64.867,18,-64.2,18.767,teritory
+Vietnam,VNM,17.667,8.383,115,23.667,teritory
+Holy See,VAT,12.35,41.9,12.45,42.467,teritory
+Namibia,NAM,11.75,-32,36.283,-16.983,teritory
+Wallis and Futuna,WLF,-179.717,-14.417,-174.417,-10.25,teritory
+Samoa,WSM,-172.867,-14.05,-171,-13.417,teritory
+Swaziland,SWZ,30.35,-27.417,32.333,-25.75,teritory
+Yemen,YEM,39.5,12.1,65,27.695,teritory
+Zambia,ZMB,2.983,-18.05,39.283,5,teritory
+Zimbabwe,ZWE,18,-32,33.8,-13.633,teritory
+Solomon Islands,SLB,-56.517,46.721,-56.033,47.14,teritory
