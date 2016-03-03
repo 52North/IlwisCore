@@ -28,7 +28,6 @@ TabView {
             }
             id : iconListView
             height : parent.height
-            enabled : false
         }
     }
     Tab {
