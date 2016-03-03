@@ -136,6 +136,16 @@ void PublicDatabase::prepare() {
             proj_params TEXT NOT NULL)";
             doQuery(stmt, sql);
 
+    stmt = "CREATE TABLE teritories ( \
+            name TEXT NOT NULL PRIMARY KEY, \
+            code TEXT NOT NULL, \
+            longmin REAL, \
+            latmin REAL, \
+            longmax REAL, \
+            latmax REAL,\
+            type TEXT )";
+            doQuery(stmt, sql);
+
     stmt = "create table epsgcodeswithlatlonaxesorder \
             (\
                 code TEXT \
@@ -188,6 +198,7 @@ void PublicDatabase::loadPublicTables() {
     insertFile("filters.csv",sqlPublic);
     insertFile("codes_with_latlon_order.csv",sqlPublic);
     insertFile("representations.csv", sqlPublic);
+    insertFile("teritories.csv", sqlPublic);
     insertProj4Epsg(sqlPublic);
     insertItemDomains(sqlPublic);
 }
@@ -352,11 +363,25 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
             ok = fillEpsgWithLatLonAxesOrderRecord(parts, sqlPublic);
         else if ( filename == "representations.csv"){
             ok = fillRepresentationRecord(parts, sqlPublic);
+        } else if ( filename == "teritories.csv"){
+            ok = fillTeritoryRecord(parts, sqlPublic);
         }
         if (!ok)
             return ;
     }
 
+}
+bool PublicDatabase::fillTeritoryRecord(const QStringList& parts, QSqlQuery &sqlPublic){
+    if ( parts.size() == 7) {
+        QString parms = QString("'%1','%2',%3,%4,%5,%6,'%7'").arg(parts[0],parts[1],parts[2], parts[3],parts[4],parts[5],parts[6]);
+        QString stmt = QString("INSERT INTO teritories VALUES(%1)").arg(parms);
+        if(!doQuery(stmt, sqlPublic))
+            return false;
+        stmt = QString("INSERT INTO codes VALUES('%1', 'teritory')").arg(parts[1]);
+        return doQuery(stmt, sqlPublic);
+    }
+    kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("representations.csv"),IssueObject::itCritical);
+    return false;
 }
 
 bool PublicDatabase::fillRepresentationRecord(const QStringList& parts, QSqlQuery &sqlPublic) {
