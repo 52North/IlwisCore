@@ -111,16 +111,7 @@ Controls.DropableItem{
                 text : qsTr("Bands")
                 font.bold: true
             }
-            Item {
-                width : 100
-                height : Global.rowHeight
-                CheckBox{
-                    id : resampleCB
-                    anchors.fill: parent
-                    text : qsTr("Auto resample")
-                    checked : false
-                }
-            }
+
 
             Rectangle {
                 id : bands
@@ -152,7 +143,6 @@ Controls.DropableItem{
                     onDropped : {
                         var id = drag.source.ilwisobjectid
                         var obj = mastercatalog.id2object(id, rasterlist)
-                        console.debug(drag.source.ids,obj.typeName,drag.source.ilwisobjectid)
                         if ( obj.typeName === "rastercoverage"){
                             if ( grfvalue.content === ""){
                                 var grf = mastercatalog.id2object(id, rasterlist)
@@ -167,6 +157,16 @@ Controls.DropableItem{
                 border.width: 1
                 border.color: Global.edgecolor
 
+            }
+            Item {
+                width : 100
+                height : Global.rowHeight
+                CheckBox{
+                    id : resampleCB
+                    anchors.fill: parent
+                    text : qsTr("Auto resample")
+                    checked : false
+                }
             }
 
         }

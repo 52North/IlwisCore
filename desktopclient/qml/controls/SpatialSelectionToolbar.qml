@@ -24,7 +24,6 @@ Rectangle {
 
                 zoominButton1.checked = zoominButton1.checked ? false : true
                 worldmapcontainer.manager.zoomInMode = zoominButton1.checked
-                console.debug(zoominButton1.checked)
             }
         }
     }

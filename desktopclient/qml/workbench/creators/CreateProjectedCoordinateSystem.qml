@@ -83,15 +83,13 @@ Controls.DropableItem{
             height : 0
             maxHeight: parent.height - objectcommon.height
         }
-        Controls.TextEditLabelPair {
+        EPSGSelector{
             id : epsgnumber
-            labelText: qsTr("EPSG number")
-            labelWidth: 140
-            width : parent.width
-            regexvalidator: /^\d*/
             visible : false
+            enabled: visible
             height : 0
         }
+
         Controls.TextEditLabelPair {
             id : proj4def
             labelText: qsTr("Proj4 definition")
@@ -123,7 +121,7 @@ Controls.DropableItem{
                     createInfo = { name : objectcommon.itemname,
                         type : "coordinatesystem",
                         subtype : "conventional",
-                        epsg : epsgnumber.content }
+                        epsg : epsgnumber.code() }
                 }else if ( proj4def.visible){
                     createInfo = { name : objectcommon.itemname,
                         type : "coordinatesystem",

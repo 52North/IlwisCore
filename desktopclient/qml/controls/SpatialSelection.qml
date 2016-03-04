@@ -13,6 +13,19 @@ Item {
     id : selector
     height : 30 + operList.height
     width : 370
+    property alias showState : worldmapcontainer.state
+    property var currentEnvelope
+
+
+    onCurrentEnvelopeChanged: {
+        if ( currentEnvelope === "entiremap"){
+            worldmap.addCommand("setviewextent("+ worldmap.viewerId + ",entiremap)");
+            worldmap.update()
+            currentCatalog.spatialFilter = ""
+        }else
+            worldmap.newExtent(currentEnvelope)
+    }
+
     Controls.CollapsiblePanel {
         y : 4
         x : 8
@@ -51,6 +64,7 @@ Item {
                     target : mouseActions
                     onZoomEnded : {
                         currentCatalog.spatialFilter = envelope
+                        currentEnvelope = envelope
                     }
                 }
 

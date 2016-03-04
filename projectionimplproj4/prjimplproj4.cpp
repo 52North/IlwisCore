@@ -129,6 +129,10 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
                 setParameter(v, sv.toDouble());
             }
         };
+        QString proj = proj4["proj"];
+        if ( proj != sUNDEF) {
+            _targetDef += " +proj=" + proj;
+        }
         QString ellps = proj4["ellps"];
         if ( ellps != sUNDEF) {
             _targetDef += " +ellps=" + ellps;

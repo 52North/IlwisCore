@@ -7,7 +7,7 @@ ComboBox{
     id : catalogfilters
     anchors.leftMargin: 2
     anchors.topMargin: 2
-    width : 170
+    width : 120
     height : 22
     model : mastercatalog.defaultFilters
     textRole: "name"

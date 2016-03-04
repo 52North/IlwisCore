@@ -53,6 +53,7 @@ private:
     bool fillFiltersRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     bool fillRepresentationRecord(const QStringList &parts, QSqlQuery &sqlPublic);
     void insertItemDomains(QSqlQuery &sqlPublic);
+    bool fillTeritoryRecord(const QStringList &parts, QSqlQuery &sqlPublic);
 };
 }
 

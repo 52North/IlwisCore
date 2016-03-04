@@ -51,6 +51,7 @@
 #include "models/workflow/nodepropobject.h"
 #include "models/workflow/scenariodesignermodel.h"
 #include "models/preferencesmodel.h"
+#include "models/internaldatabasemodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
 #include "ilwiscoreui/propertyeditors/itemrepresentationsetter.h"
 #include "ilwiscoreui/tableoperations/tableoperation.h"
@@ -127,6 +128,7 @@ void StartIlwis::init() {
         qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");
         qmlRegisterType<EdgePropObject>("EdgePropObject", 1,0,"EdgePropObject");
         qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
+        qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
 
         _mastercatalogmodel = new MasterCatalogModel(ctx);
 
@@ -138,6 +140,7 @@ void StartIlwis::init() {
         _datapane =new DataPaneModel();
         _objcreator =new ObjectCreator();
         _preferences =new PreferencesModel();
+        _database = new InternalDatabaseModel();
         uicontext()->prepare();
         uicontext()->qmlContext(ctx);
 
@@ -154,6 +157,7 @@ void StartIlwis::init() {
         ctx->setContextProperty("datapane", _datapane);
         ctx->setContextProperty("objectcreator", _objcreator);
         ctx->setContextProperty("preferences",_preferences);
+        ctx->setContextProperty("internaldatabase",_database);
         ctx->setContextProperty("uicontext", uicontext().get());
 
 

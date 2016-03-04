@@ -72,7 +72,7 @@ MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(q
     TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
     factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
 
-    _bookmarks.push_back(addBookmark(TR("Internal Catalog"),
+    _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
                QUrl("ilwis://internalcatalog"),
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
                "",false));
@@ -655,17 +655,37 @@ void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QS
 
 QStringList MasterCatalogModel::select(const QString &filter, const QString& property)
 {
-    std::vector<Resource> resources = mastercatalog()->select(filter);
-    QStringList resourceList;
-    for (const auto& resource : resources){
-        if (resource.isValid()){
-            QString result = QString::number(resource.id());
-            if ( property == "name")
-                result += "|" + resource.name();
-            resourceList.append(result);
+    if ( property == "epsg" ){ // special case because its a very big list
+        QString query = QString("select itemid,name,code from mastercatalog where  %2 ").arg(filter);
+        InternalDatabaseConnection results(query);
+
+        std::map<quint32, QString> orderlist;
+        while( results.next()) {
+            QString epsgCode = results.value(2).toString().mid(5);
+            int code = epsgCode.toInt();
+            //qDebug() << code << results.value(2).toString();
+            QString str = QString("%1|%2|%3").arg(results.value(0).toString()).arg(results.value(1).toString()).arg(code,5,10,QChar('0'));
+            orderlist[code] = str ;
         }
+
+        QStringList items;
+        for(auto& item : orderlist)        {
+            items.append(item.second);
+        }
+        return items;
+    }else {
+        std::vector<Resource> resources = mastercatalog()->select(filter);
+        QStringList resourceList;
+        for (const auto& resource : resources){
+            if (resource.isValid()){
+                QString result = QString::number(resource.id());
+                if ( property == "name")
+                    result += "|" + resource.name();
+                resourceList.append(result);
+            }
+        }
+        return resourceList;
     }
-    return resourceList;
 }
 
 ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)

@@ -117,16 +117,26 @@ Item {
         return iconP
     }
 
-
-    CatalogButtonBar{
-        id : toolbar
-        anchors.top : parent.top
+    Rectangle{
+        id : infobar
+        width : parent.width
+        height : 20
+        color : Global.alternatecolor4
+        Text {
+            width : parent.width
+            height : 16
+            text : currentCatalog ? currentCatalog.url : ""
+            anchors.centerIn: parent
+            color : "#000099"
+            opacity: 0.7
+        }
     }
+
     SplitView {
-        anchors.top : toolbar.bottom
         width : parent.width
         orientation: Qt.Vertical
-        height : parent.height - toolbar.height
+        height : parent.height - infobar.height
+        anchors.top : infobar.bottom
 
         CatalogViews {
             id : catalogView
