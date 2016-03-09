@@ -47,7 +47,11 @@ Item {
                 if ( currentIndex >= 0) {
                     var teritory = itemModel[currentIndex]
                     if ( teritory.code !== "WORLD"){
-                        var envelope = teritory.longmin + " " + teritory.latmin + " " + teritory.longmax + " " + teritory.latmax
+                        var dx = Math.abs(teritory.longmin - teritory.longmax) * 0.05
+                        var dy = Math.abs(teritory.latmin - teritory.latmax) * 0.05
+                        var envelope = (teritory.longmin - dx) + " " + (teritory.latmin -dy) + " " +
+                                (teritory.longmax + dx) + " " + (teritory.latmax + dy)
+                        console.debug(envelope,dx,dy)
                         currentCatalog.spatialFilter = envelope
                         spatselect.currentEnvelope = envelope
                     }else{
@@ -70,8 +74,11 @@ Item {
             onCurrentIndexChanged: {
                 if ( currentIndex >= 0) {
                     var teritory = itemModel[currentIndex]
-                    if ( teritory.code !== "WORLD"){
-                        var envelope = teritory.longmin + " " + teritory.latmin + " " + teritory.longmax + " " + teritory.latmax
+                    if ( teritory.code !== "world"){
+                        var dx = Math.abs(teritory.longmin - teritory.longmax) * 0.05
+                        var dy = Math.abs(teritory.latmin - teritory.latmax) * 0.05
+                        var envelope = (teritory.longmin - dx) + " " + (teritory.latmin -dy) + " " +
+                                (teritory.longmax + dx) + " " + (teritory.latmax + dy)
                         currentCatalog.spatialFilter = envelope
                         spatselect.currentEnvelope = envelope
                     }else{
