@@ -12,6 +12,7 @@
 #include "errorobject.h"
 #include "publicdatabase.h"
 #include "proj4parameters.h"
+#include "geometries.h"
 
 using namespace Ilwis;
 
@@ -138,7 +139,10 @@ void PublicDatabase::prepare() {
 
     stmt = "CREATE TABLE teritories ( \
             name TEXT NOT NULL PRIMARY KEY, \
-            code TEXT NOT NULL, \
+            code TEXT, \
+            officialname TEXT,\
+            continent TEXT NOT NULL,\
+            region TEXT, \
             longmin REAL, \
             latmin REAL, \
             longmax REAL, \
@@ -201,6 +205,42 @@ void PublicDatabase::loadPublicTables() {
     insertFile("teritories.csv", sqlPublic);
     insertProj4Epsg(sqlPublic);
     insertItemDomains(sqlPublic);
+
+    addRegionallEnvelopes();
+}
+
+void PublicDatabase::addRegionallEnvelopes() {
+    InternalDatabaseConnection db;
+    QString query = "Select * from teritories where type='country'";
+    struct Info{
+        Info(const QString& name="", const Envelope& env=Envelope()) : _continent(name),_env(env) {}
+        QString _continent;
+        Envelope _env;
+    };
+
+    std::map<QString, Info> regions;
+    if ( db.exec(query)) {
+        while ( db.next()){
+            Envelope env(Coordinate(db.value(5).toDouble(), db.value(6).toDouble()),
+                         Coordinate(db.value(7).toDouble(),db.value(8).toDouble()));
+            if ( env.isValid() && !env.isNull()){
+                Info& old = regions[db.value(4).toString()];
+                old._continent = db.value(3).toString();
+                old._env += env;
+            }
+        }
+    }
+    for(auto& region : regions){
+        QString parms = QString("'%1','%2','%3','%4','%5',%6,%7,%8,%9,'%10'").arg(region.first).arg(region.first).arg("")
+                .arg(region.second._continent).arg("").arg(region.second._env.min_corner().x).arg(region.second._env.min_corner().y)
+                .arg(region.second._env.max_corner().x).arg(region.second._env.max_corner().y).arg("region");
+        QString stmt = QString("INSERT INTO teritories VALUES(%1)").arg(parms);
+        if(!db.exec(stmt)) {
+            qDebug() << db.lastError().text() << region.first;
+            kernel()->issues()->log(TR("Possible illegal records in teritories.csv at ") + region.first);
+        }
+    }
+
 }
 
 void PublicDatabase::insertItemDomains(QSqlQuery& itemdomaintable) {
@@ -372,8 +412,8 @@ void PublicDatabase::insertFile(const QString& filename, QSqlQuery& sqlPublic) {
 
 }
 bool PublicDatabase::fillTeritoryRecord(const QStringList& parts, QSqlQuery &sqlPublic){
-    if ( parts.size() == 7) {
-        QString parms = QString("'%1','%2',%3,%4,%5,%6,'%7'").arg(parts[0],parts[1],parts[2], parts[3],parts[4],parts[5],parts[6]);
+    if ( parts.size() == 10) {
+        QString parms = QString("'%1','%2','%3','%4','%5',%6,%7,%8,%9,'%10'").arg(parts[0],parts[1],parts[2], parts[3],parts[4],parts[5],parts[6],parts[7]).arg(parts[8],parts[9]);
         QString stmt = QString("INSERT INTO teritories VALUES(%1)").arg(parms);
         if(!doQuery(stmt, sqlPublic))
             return false;
