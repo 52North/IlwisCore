@@ -135,7 +135,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.margins: 5
         property bool canvasDirty: false
-        property var items : currentCatalog ? currentCatalog.mapItems : []
+        property var items : currentCatalog ? currentCatalog.coverages : []
         property var ctx
 
         function clear() {
@@ -153,7 +153,7 @@ Rectangle {
                 if (!mapItems.ctx && mapItems.available){
                     mapItems.ctx = mapItems.getContext('2d')
                 }
-                if (ctx && renderer.manager ) {
+                if (ctx && renderer.manager && items ) {
                     clear(ctx);
                     canvasDirty = false
                     var l = items.length

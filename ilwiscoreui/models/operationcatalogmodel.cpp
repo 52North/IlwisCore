@@ -45,24 +45,21 @@ QQmlListProperty<OperationsByKeyModel> OperationCatalogModel::operationKeywords(
 
 void OperationCatalogModel::nameFilter(const QString &filter)
 {
-    CatalogModel::nameFilter(filter);
-    _currentOperations.clear();
-    _operationsByKey.clear();
-    _refresh = true;
+    _nameFilter = filter;
     emit operationsChanged();
+    emit operationsByKeyChanged();
 }
 
 void OperationCatalogModel::refresh()
 {
     CatalogModel::refresh();
-    _currentOperations.clear();
-    _operationsByKey.clear();
     emit operationsChanged();
+    emit operationsByKeyChanged();
 }
 
 void OperationCatalogModel::filter(const QString &filterString)
 {
-    CatalogModel::filter(filterString);
+    //CatalogModel::filter(filterString);
     _currentOperations.clear();
     _operationsByKey.clear();
     _refresh = true;
@@ -100,37 +97,95 @@ QStringList OperationCatalogModel::serviceNames() const{
 
 }
 
+void OperationCatalogModel::fillByName(QList<ResourceModel*>& currentOperations) {
+    if ( _nameFilter == "")
+        return;
+
+    auto &currentList = currentOperations.size() > 0 ? currentOperations : _allItems;
+    QList<ResourceModel *> tempList;
+    for(ResourceModel * resource : currentList){
+        if ( resource->name().indexOf(_nameFilter) != -1){
+            tempList.push_back(resource);
+        }
+    }
+    currentOperations = QList<ResourceModel *>(tempList);
+}
+void OperationCatalogModel::fillByKeyword(QList<ResourceModel*>& currentOperations) {
+    _operationsByKey.clear();
+    auto &currentList = currentOperations.size() > 0 ? currentOperations : _allItems;
+    QList<ResourceModel *> tempList;
+    std::map<QString, std::vector<OperationModel *>> operationsByKey;
+    std::set<QString> keywordset;
+    QStringList temp = _keyFilter.split(",");
+    QStringList filterKeys;
+    for(auto k : temp)
+        filterKeys.append(k.trimmed());
+    for(ResourceModel * item : currentList){
+        if ( !( item->resource().ilwisType() & itOPERATIONMETADATA) )
+            continue;
+
+        if ( item->resource().hasProperty("keyword")){
+            QStringList validKeys;
+            QString keysstring = item->resource()["keyword"].toString();
+            if ( keysstring.indexOf("internal") != -1)
+                continue;
+            QStringList keys = keysstring.split(",");
+            bool found = true;
+            for(auto filterKey : filterKeys){
+                for(auto key : keys){
+                    if(key.indexOf(filterKey) >= 0){
+                        found &= true;
+                        validKeys.append(key);
+                    }
+
+                }
+            }
+            if(found && validKeys.size() > 0){
+                tempList.push_back(item);
+            }
+
+
+        }
+    }
+    for(ResourceModel *operation : tempList){
+        QString keysstring = operation->resource()["keyword"].toString();
+        QStringList keys = keysstring.split(",");
+        for(auto key : keys){
+            operationsByKey[key].push_back(static_cast<OperationModel *>(operation));
+            keywordset.insert(key);
+        }
+    }
+    _operationsByKey.clear();
+    for( const auto& item : operationsByKey){
+         _operationsByKey.push_back(new OperationsByKeyModel(item.first, item.second, this));
+    }
+    _keywords.clear();
+    for(auto keyword : keywordset)
+        _keywords.push_back(keyword);
+
+
+    qSort(_keywords.begin(), _keywords.end());
+
+    _keywords.push_front(""); // all
+    currentOperations = QList<ResourceModel *>(tempList);
+}
+
 QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 {
     try{
-        if ( _currentOperations.isEmpty()) {
-
-            gatherItems();
-
-            _currentOperations.clear();
-
-            std::map<QString, std::vector<OperationModel *>> operationsByKey;
-
-            for(auto item : _currentItems){
-                QString keywords = item->resource()["keyword"].toString();
-                if ( !( item->resource().ilwisType() & itOPERATIONMETADATA) )
-                    continue;
-                if ( keywords.indexOf("internal") != -1)
-                    continue;
-                _currentOperations.push_back(new OperationModel(item->resource(), this));
-                if ( keywords == sUNDEF)
-                    keywords = TR("Uncatagorized");
-                QStringList parts = keywords.split(",");
-                for(auto keyword : parts){
-                    operationsByKey[keyword].push_back(new OperationModel(item->resource(), this));
-                }
-            }
-            for(auto operation : operationsByKey){
-                _operationsByKey.push_back(new OperationsByKeyModel(operation.first, operation.second, this));
-            }
-
+        gatherItems();
+        QList<ResourceModel*> currentOperations;
+        if ( _keyFilter == "" && _nameFilter == "")
+            currentOperations = QList<ResourceModel *>(_allItems);
+        if (_nameFilter != "")
+            fillByName(currentOperations);
+        if (_keyFilter != ""){
+            fillByKeyword(currentOperations);
         }
-
+        _currentOperations.clear();
+        for(auto resource : currentOperations){
+            _currentOperations.append(static_cast<OperationModel *>(resource));
+        }
         return  QMLOperationList(this, _currentOperations);
     }
     catch(const ErrorObject& err){
@@ -198,25 +253,29 @@ void OperationCatalogModel::gatherItems() {
     }else {
         setView(currentModel->view());
     }
-    CatalogModel::gatherItems();
-    std::set<QString> keywordset;
+
+    _allItems.clear();
+    _filters.clear();
+    _refresh = false;
+
+    std::vector<Resource> items = _view.items();
     std::map<QString, std::vector<OperationModel *>> operationsByKey;
-    for(auto item : _currentItems){
-        QString keywords = item->resource()["keyword"].toString();
-        if ( !(item->resource().ilwisType() & itOPERATIONMETADATA))
-            continue;
-        if ( keywords.indexOf("internal") != -1)
-            continue;
-        _currentOperations.push_back(new OperationModel(item->resource(), this));
-        if ( keywords == sUNDEF)
-            keywords = TR("Uncatagorized");
-        QStringList parts = keywords.split(",");
-        for(auto keyword : parts){
-            keywordset.insert(keyword);
+    std::set<QString> keywordset;
+
+    for(const Resource& resource : items){
+        OperationModel *operation = new OperationModel(resource, this);
+        _allItems.push_back(operation);
+        QString keysstring = operation->resource()["keyword"].toString();
+        QStringList keys = keysstring.split(",");
+        for(auto key : keys){
+            operationsByKey[key].push_back(operation);
+            keywordset.insert(key);
         }
-        for(auto keyword : parts){
-            operationsByKey[keyword].push_back(new OperationModel(item->resource(), this));
-        }
+    }
+    _operationsByKey.clear();
+    for( const auto& item : operationsByKey){
+         _operationsByKey.push_back(new OperationsByKeyModel(item.first, item.second, this));
+
     }
     _keywords.clear();
     for(auto keyword : keywordset)
@@ -226,10 +285,6 @@ void OperationCatalogModel::gatherItems() {
     qSort(_keywords.begin(), _keywords.end());
 
     _keywords.push_front(""); // all
-
-    for(auto operation : operationsByKey){
-        _operationsByKey.push_back(new OperationsByKeyModel(operation.first, operation.second, this));
-    }
 }
 
 QStringList OperationCatalogModel::keywords() const
@@ -240,13 +295,14 @@ QStringList OperationCatalogModel::keywords() const
 void OperationCatalogModel::workSpaceChanged()
 {
     if ( !_isGlobalOperationsCatalog){
-        _currentItems.clear();
+        _allItems.clear();
         _currentOperations.clear();
         _operationsByKey.clear();
         _services.clear();
         _refresh = true;
 
         emit operationsChanged();
+        emit operationsByKeyChanged();
     }
 }
 
@@ -520,21 +576,16 @@ WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
 
 void OperationCatalogModel::keyFilter(const QString &keyf)
 {
-    QStringList parts= keyf.split(" ",QString::SkipEmptyParts);
-    QString result;
-    for(QString part : parts){
-        if ( part.toLower() == "or")
-            result += " or ";
-        else if ( part.toLower() == "and")
-            result += " and ";
-        else {
-            result += "keyword='" + part + "'";
-        }
-
-    }
-    _currentOperations.clear();
-    _operationsByKey.clear();
-    _refresh = true;
-    CatalogModel::filter(result);
+    _keyFilter = keyf;
     emit operationsChanged();
+    emit operationsByKeyChanged();
+}
+QString OperationCatalogModel::nameFilter() const
+{
+    return _nameFilter;
+}
+
+QString OperationCatalogModel::keyFilter() const
+{
+    return _keyFilter;
 }

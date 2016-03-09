@@ -21,7 +21,7 @@ Rectangle {
             id: thumbGrid
             property var oldLoader
             property var oldImageName
-            model: currentCatalog ? currentCatalog.mapItems : null
+            model: currentCatalog ? currentCatalog.coverages : null
             delegate: DCatalogListThumb{}
             cacheBuffer: 1000
             cellWidth: 350

@@ -19,7 +19,9 @@ class ILWISCOREUISHARED_EXPORT OperationCatalogModel : public CatalogModel
     Q_OBJECT
     Q_PROPERTY(QMLOperationList operations READ operations NOTIFY operationsChanged)
     Q_PROPERTY(QStringList keywords READ keywords NOTIFY operationsChanged)
-    Q_PROPERTY(QQmlListProperty<OperationsByKeyModel> operationKeywords READ operationKeywords CONSTANT)
+    Q_PROPERTY(QString nameFilter READ nameFilter WRITE nameFilter NOTIFY operationsChanged)
+    Q_PROPERTY(QString keyFilter READ keyFilter WRITE keyFilter NOTIFY operationsChanged)
+    Q_PROPERTY(QQmlListProperty<OperationsByKeyModel> operationKeywords READ operationKeywords NOTIFY operationsByKeyChanged)
 public:
 
 
@@ -52,9 +54,15 @@ private:
 
     QStringList keywords() const;
     QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
+    QString _keyFilter;
+    QString _nameFilter;
 
     ErrorModel* em = ErrorModel::getInstance();
 
+    QString keyFilter() const;
+    QString nameFilter() const;
+    void fillByName(QList<ResourceModel *> &currentOperations);
+    void fillByKeyword(QList<ResourceModel*>& currentOperations);
 public slots:
     void workSpaceChanged();
 
@@ -62,6 +70,7 @@ signals:
     void updateCatalog(const QUrl& url);
     void operationsChanged();
     void error(const QString& err);
+    void operationsByKeyChanged();
 
 };
 

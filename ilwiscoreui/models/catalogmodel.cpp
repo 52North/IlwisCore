@@ -122,14 +122,21 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
         gatherItems();
 
         _objectCounts.clear();
-        for(auto *resource : _currentItems){
+        for(auto *resource : _allItems){
             _objectCounts[resource->type()]+= 1;
         }
-
-        if ( _spatialFilter != "")
-            return mapItems() ;
-
-        return  QQmlListProperty<ResourceModel>(this, _currentItems);
+        _filteredItems.clear();
+        if ( _activeFilters.size() == 0)
+            return  QQmlListProperty<ResourceModel>(this, _allItems);
+        if ( isActiveFilter("spatial"))
+            fillSpatialFilter();
+        if ( isActiveFilter("object")){
+            fillObjectFilter();
+        }
+        if ( isActiveFilter("name")){
+            fillNameFilter();
+        }
+        return QQmlListProperty<ResourceModel>(this, _filteredItems);
     }
     catch(const ErrorObject& err){
 
@@ -137,18 +144,99 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
     return  QQmlListProperty<ResourceModel>();
 }
 
-QQmlListProperty<ResourceModel> CatalogModel::mapItems()
+QQmlListProperty<ResourceModel> CatalogModel::coverages()
+{
+    _coverages.clear();
+    auto& itemlist = _activeFilters.size() == 0 ? _allItems : _filteredItems;
+    for(auto *resource : itemlist){
+        if hasType(resource->type(), itCOVERAGE){
+            _coverages.push_back(resource);
+        }
+    }
+    return QQmlListProperty<ResourceModel>(this, _coverages);
+}
+
+void CatalogModel::fillObjectFilter() {
+    IlwisTypes type = itANY;
+    for(auto iter : _filterState){
+        if ( !iter.second){
+            type &= ~iter.first;
+        }
+    }
+    auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
+    QList<ResourceModel *> tempList;
+    for(ResourceModel * resource : currentList){
+        if(hasType(resource->type(), type)){
+            tempList.push_back(resource);
+        }
+    }
+    _filteredItems = QList<ResourceModel *>(tempList);
+
+}
+
+bool CatalogModel::isActiveFilter(const QString &name) const
+{
+    return std::find(_activeFilters.begin(), _activeFilters.end(), name) != _activeFilters.end();
+}
+void CatalogModel::fillNameFilter(){
+    auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
+    QList<ResourceModel *> tempList;
+    auto filter = _filters["name"];
+    QString filterValue = filter._filter.toString();
+    for(ResourceModel * resource : currentList){
+        if( resource->name().indexOf(filterValue)!= -1){
+            tempList.push_back(resource);
+        }
+    }
+    _filteredItems = QList<ResourceModel *>(tempList);
+}
+
+void CatalogModel::fillSpatialFilter()
 {
 
     try{
-        gatherItems();
+        std::vector<double> bounds;
+         QList<ResourceModel *> tempList;
+        if ( _filters["spatial"]._filter != ""){
+            QStringList parts = _filters["spatial"]._filter.toString().split(" ");
+            if ( parts.size() == 4){
+                bounds.push_back(parts[0].toDouble());
+                bounds.push_back(parts[1].toDouble());
+                bounds.push_back(parts[2].toDouble());
+                bounds.push_back(parts[3].toDouble());
+            }
+        }
+        auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
+        for(ResourceModel * resource : currentList){
+            if ( hasType(resource->type(), itCOVERAGE)){
+                if ( bounds.size() == 4 ){
+                    if ( resource->resource().hasProperty("latlonenvelope")){
+                        QString envelope = resource->resource()["latlonenvelope"].toString();
+                        QStringList parts = envelope.split(" ");
+                        if ( parts.size() == 6){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[3].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[4].toDouble() <= bounds[3])
+                                tempList.push_back(resource);
+                        }else if ( parts.size() == 4){
+                            if ( parts[0].toDouble() >= bounds[0] &&
+                                 parts[2].toDouble() <= bounds[2] &&
+                                 parts[1].toDouble() >= bounds[1] &&
+                                 parts[3].toDouble() <= bounds[3])
+                                tempList.push_back(resource);
+                         }
+                    }
+                }else
+                    tempList.push_back(resource);
+            }
+        }
+        _filteredItems = QList<ResourceModel *>(tempList);
 
-        return  QQmlListProperty<ResourceModel>(this, _coverageItems);
-    }
+      }
     catch(const ErrorObject& err){
 
     }
-    return  QQmlListProperty<ResourceModel>();
 }
 
 void CatalogModel::makeParent(QObject *obj)
@@ -161,45 +249,64 @@ void CatalogModel::makeParent(QObject *obj)
 void CatalogModel::filterChanged(const QString& typeIndication, bool state){
     QString objectType = typeIndication;
     bool exclusive = objectType.indexOf("|exclusive") != -1;
+
     if ( exclusive)
         objectType = objectType.split("|")[0];
     if ( objectType == "all" || exclusive){
-        _filterState["rastercoverage"] = exclusive ? false : state;
-        _filterState["featurecoverage"] = exclusive ? false :state;
-        _filterState["table"] = exclusive ? false :state;
-        _filterState["coordinatesystem"] = exclusive ? false :state;
-        _filterState["georeference"] = exclusive ? false :state;
-        _filterState["domain"] = exclusive ? false :state;
-        _filterState["representation"] = exclusive ? false :state;
-        _filterState["projection"] = exclusive ? false :state;
-        _filterState["ellipsoid"] = exclusive ? false :state;
-    }else
-        _filterState[objectType] = state;
-
-    QString filterString;
-    if ( exclusive){
-        if ( state)
-            filterString = QString("type") + "& '" + objectType.toLower() + "' !=0";
-    } else {
-        for(auto iter : _filterState){
-            if ( !iter.second){
-                if ( filterString != "")
-                    filterString += " and ";
-                filterString += QString("type") + "& '" + iter.first + "' =0";
-            }
-        }
+        _filterState[itRASTER] = exclusive ? false : state;
+        _filterState[itFEATURE] = exclusive ? false :state;
+        _filterState[itTABLE] = exclusive ? false :state;
+        _filterState[itCOORDSYSTEM] = exclusive ? false :state;
+        _filterState[itGEOREF] = exclusive ? false :state;
+        _filterState[itDOMAIN] = exclusive ? false :state;
+        _filterState[itREPRESENTATION] = exclusive ? false :state;
+        _filterState[itPROJECTION] = exclusive ? false :state;
+        _filterState[itELLIPSOID] = exclusive ? false :state;
+        _filterState[itCATALOG] = exclusive ? false :state;
+    }else {
+        _filterState[IlwisObject::name2Type(objectType)] = state;
     }
-    filter(filterString);
+    addActiveFilter("object");
 }
 
-void CatalogModel::filter(const QString &filterString)
+void CatalogModel::filter(const QString &name, const QString &filter)
 {
-    if ( _view.filter() == filterString)
+    if ( name == "")
         return;
 
-    _refresh = true;
-    _view.filter(filterString);
-    emit contentChanged();
+    auto iter = _filters.find(name);
+    if ( iter != _filters.end() && (*iter).second._filter == filter)
+        return;
+    if ( filter == ""){
+        auto iter = _filters.find(name);
+        if ( iter != _filters.end()){
+            _filters.erase(name);
+        }
+        removeActiveFilter(name);
+
+    }else {
+        _filters[name] = FilterItem(name,filter);
+        addActiveFilter(name);
+    }
+
+}
+
+void CatalogModel::addActiveFilter(const QString &filterName)
+{
+    if ( filterName != "")
+     _activeFilters.insert(filterName);
+   emit contentChanged();
+    emit coveragesChanged();
+}
+
+void CatalogModel::removeActiveFilter(const QString &filterName)
+{
+    auto iter = _activeFilters.find(filterName);
+    if ( iter != _activeFilters.end()){
+        _activeFilters.erase(iter);
+        emit contentChanged();
+        emit coveragesChanged();
+    }
 }
 
 void CatalogModel::refresh(bool yesno)
@@ -207,14 +314,13 @@ void CatalogModel::refresh(bool yesno)
     _refresh = yesno;
 }
 
-
 QStringList CatalogModel::objectCounts()
 {
     try{
         gatherItems();
 
         _objectCounts.clear();
-        for(auto *resource : _currentItems){
+        for(auto *resource : _allItems){
             _objectCounts[resource->type()]+= 1;
         }
         QStringList counts;
@@ -233,20 +339,11 @@ QStringList CatalogModel::objectCounts()
 void CatalogModel::refresh()
 {
     _refresh = true;
-    _currentItems.clear();
-    _coverageItems.clear();
-    emit contentChanged();
-}
+    _filters.clear();
+    _allItems.clear();
 
-void CatalogModel::nameFilter(const QString &filter)
-{
-    if ( _nameFilter == filter)
-        return;
-
-    _nameFilter = filter;
-    _currentItems.clear();
-    _coverageItems.clear();
     emit contentChanged();
+    emit coveragesChanged();
 }
 
 bool CatalogModel::canBeAnimated() const
@@ -258,90 +355,25 @@ bool CatalogModel::canBeAnimated() const
     return canBeAnimated;
 }
 
-QString CatalogModel::nameFilter() const
-{
-    return _nameFilter;
-}
-
-QString CatalogModel::keyFilter() const
-{
-    return _keyFilter;
-}
-
-void CatalogModel::keyFilter(const QString &keyf)
-{
-    _keyFilter = keyf;
-}
-
-QString CatalogModel::spatialFilter() const
-{
-     return _spatialFilter;
-
-}
-
-void CatalogModel::spatialFilter(const QString &filter)
-{
-    _refresh = true;
-    _spatialFilter = filter;
-    emit contentChanged();
-}
 
 void CatalogModel::gatherItems() {
-    if ( _currentItems.isEmpty() || _refresh) {
+    if ( _allItems.isEmpty() || _refresh) {
         if ( !_view.isValid())
             return;
 
         _view.prepare();
 
-        _currentItems.clear();
-        _coverageItems.clear();
+        _allItems.clear();
+        _filters.clear();
         _refresh = false;
 
         std::vector<Resource> items = _view.items();
-        std::vector<double> bounds(4);
-        if ( _spatialFilter != ""){
-            QStringList parts = _spatialFilter.split(" ");
-            if ( parts.size() == 4){
-                bounds[0] = parts[0].toDouble();
-                bounds[1] = parts[1].toDouble();
-                bounds[2] = parts[2].toDouble();
-                bounds[3] = parts[3].toDouble();
-            }
-        }
-        for(const Resource& resource : items){
-            if ( _nameFilter != ""){
-                if ( resource.name().indexOf(_nameFilter) == -1){
-                    if ( resource["longname"].toString().indexOf(_nameFilter) == -1)
-                        continue;
-                }
-            }
-            _currentItems.push_back(new ResourceModel(resource, this));
-            if ( hasType(resource.ilwisType(), itCOVERAGE)){
-                if ( _spatialFilter != ""){
-                    if ( resource.hasProperty("latlonenvelope")){
-                        QString envelope = resource["latlonenvelope"].toString();
-                        QStringList parts = envelope.split(" ");
-                        if ( parts.size() == 6){
-                            if ( parts[0].toDouble() >= bounds[0] &&
-                                 parts[3].toDouble() <= bounds[2] &&
-                                 parts[1].toDouble() >= bounds[1] &&
-                                 parts[4].toDouble() <= bounds[3])
-                                _coverageItems.push_back(new ResourceModel(resource, this));
-                        }else if ( parts.size() == 4){
-                            if ( parts[0].toDouble() >= bounds[0] &&
-                                 parts[2].toDouble() <= bounds[2] &&
-                                 parts[1].toDouble() >= bounds[1] &&
-                                 parts[3].toDouble() <= bounds[3])
-                                _coverageItems.push_back(new ResourceModel(resource, this));
-                         }
-                    }
-                }else
-                    _coverageItems.push_back(new ResourceModel(resource, this));
-            }
 
+        for(const Resource& resource : items){
+            _allItems.push_back(new ResourceModel(resource, this));
         }
         if ( _view.hasParent()){
-            _currentItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
+            _allItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
         }
     }
 }
@@ -349,14 +381,16 @@ void CatalogModel::gatherItems() {
 void CatalogModel::refreshContent(const QUrl &url)
 {
     _refresh = false;
-    for(auto *resource : _currentItems){
+    for(auto *resource : _allItems){
         if ( resource->url() == url.toString())    {
             _refresh = true;
             break;
         }
     }
-    if ( _refresh)
+    if ( _refresh){
         emit contentChanged();
+        emit coveragesChanged();
+    }
 }
 
 void CatalogModel::updateContainer()

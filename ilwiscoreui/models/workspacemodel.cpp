@@ -106,7 +106,7 @@ void WorkSpaceModel::gatherItems() {
         _operations.clear();
         _data.clear();
 
-        for(auto iter=_currentItems.begin(); iter != _currentItems.end(); ++iter){
+        for(auto iter=_allItems.begin(); iter != _allItems.end(); ++iter){
             if ( (*iter)->type() & itOPERATIONMETADATA){
                 _operations.push_back(new OperationModel((*iter)->resource(),this));
             }else if ( hasType((*iter)->type(), itILWISOBJECT)){
