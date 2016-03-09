@@ -38,7 +38,7 @@ Item {
             labelText: qsTr("Country select")
             labelWidth: 100
             width : parent.width
-            itemModel: internaldatabase.query("Select * from teritories where type='teritory' or type='all'order by name")
+            itemModel: internaldatabase.query("Select * from teritories where type='country' order by name")
             role : "name"
             Component.onCompleted: {
                 currentIndex = itemModel.count - 4
@@ -62,7 +62,7 @@ Item {
             labelText: qsTr("Region select")
             labelWidth: 100
             width : parent.width
-            itemModel: internaldatabase.query("Select * from teritories where type='region' or type='all' order by name")
+            itemModel: internaldatabase.query("Select * from teritories where type='region' order by name")
             role : "name"
             Component.onCompleted: {
                 currentIndex = itemModel.count - 1
