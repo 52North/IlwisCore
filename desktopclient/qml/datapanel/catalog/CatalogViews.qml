@@ -45,5 +45,22 @@ TabView {
             height : parent.height
         }
     }
+    states: [
+    State {
+             name : "sized"
+             PropertyChanges { target: catalogPanels; height : parent.height - 320}
+         },
+         State {
+             name : "maxed"
+             PropertyChanges { target: catalogPanels; height : parent.height - 25}
+         }
+    ]
+    transitions: [
+         Transition {
+             ParallelAnimation {
+                 NumberAnimation { target : catalogPanels; properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+              }
+         }
+     ]
 }
 
