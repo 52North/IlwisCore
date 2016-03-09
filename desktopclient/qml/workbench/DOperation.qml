@@ -59,6 +59,7 @@ Item{
                     width : 13
                     height : 13
                     source : "../images/" + modelData
+                    opacity: 0.65
                 }
             }
         }
