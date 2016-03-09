@@ -138,6 +138,10 @@ Rectangle {
         property var items : currentCatalog ? currentCatalog.coverages : []
         property var ctx
 
+        onItemsChanged: {
+            mapItems.requestPaint()
+        }
+
         function clear() {
             ctx.reset();
             ctx.clearRect(0, 0, width, height);
