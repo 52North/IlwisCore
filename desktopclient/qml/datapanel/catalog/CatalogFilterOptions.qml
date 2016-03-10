@@ -62,7 +62,6 @@ Item {
                             var dy = Math.abs(teritory.latmin - teritory.latmax) * 0.05
                             var envelope = (teritory.longmin - dx) + " " + (teritory.latmin -dy) + " " +
                                     (teritory.longmax + dx) + " " + (teritory.latmax + dy)
-                            console.debug(envelope,dx,dy)
                             currentCatalog.filter("spatial", envelope)
                             spatselect.currentEnvelope = envelope
                         }else{
