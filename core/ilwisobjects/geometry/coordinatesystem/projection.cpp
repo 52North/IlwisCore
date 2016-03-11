@@ -61,13 +61,17 @@ Coordinate Projection::latlon2coord(const LatLon &ll) const
 
 LatLon Projection::coord2latlon(const Coordinate &crd) const
 {
-    return _implementation->coord2latlon(crd);
+    if ( !_implementation.isNull())
+        return _implementation->coord2latlon(crd);
+    return LatLon();
 
 }
 
 bool Projection::prepare(const QString &parms)
 {
-    return _implementation->prepare(parms);
+    if ( !_implementation.isNull())
+        return _implementation->prepare(parms);
+    return false;
 }
 
 // TODO: this method should be merged with the method above
