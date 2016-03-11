@@ -185,6 +185,7 @@ public:
      * @return true when the combination is in the MasterCatalog
      */
     bool contains(const QUrl &url, IlwisTypes type) const;
+    bool contains(quint64 id) const;
     bool knownCatalogContent(const QUrl& path) const;
 
     bool usesContainers(const QUrl &scheme) const;
