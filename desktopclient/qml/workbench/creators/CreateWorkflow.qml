@@ -49,6 +49,7 @@ Controls.DropableItem{
                     anchors.left : urlLabel.right
                     anchors.right : urlButton.left
                     height : parent.height
+                    text : mastercatalog.currentCatalog.url
 
                     style: TextFieldStyle {
                         background: Rectangle {
