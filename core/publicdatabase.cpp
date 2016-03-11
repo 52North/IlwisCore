@@ -236,7 +236,6 @@ void PublicDatabase::addRegionallEnvelopes() {
                 .arg(region.second._env.max_corner().x).arg(region.second._env.max_corner().y).arg("region");
         QString stmt = QString("INSERT INTO teritories VALUES(%1)").arg(parms);
         if(!db.exec(stmt)) {
-            qDebug() << db.lastError().text() << region.first;
             kernel()->issues()->log(TR("Possible illegal records in teritories.csv at ") + region.first);
         }
     }
