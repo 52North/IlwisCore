@@ -324,7 +324,11 @@ Rectangle {
             if (operation.needChoice(target.operation)) {
                 wfCanvas.showAttachmentForm(target, attachRect)
             } else {
-                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target, attachRect, null)
+                var fromIndex = 0
+                var toIndex = 0
+                var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
+
+                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target, attachRect, flowPoints)
             }
 
             wfCanvas.canvasValid = false
