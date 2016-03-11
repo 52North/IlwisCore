@@ -238,12 +238,13 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
            continue;
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
+        if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
+            continue;
         if ( mastercatalog()->contains(resource.id())){
             updateItems({resource});
             continue;
         }
-        else if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
-            continue;
+
 
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
