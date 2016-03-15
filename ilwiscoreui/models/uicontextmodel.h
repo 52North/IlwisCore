@@ -58,6 +58,7 @@ public:
     Q_INVOKABLE QString moduleData() const;
     Q_INVOKABLE QString typeName2typeId(const QString& nm) const;
     Q_INVOKABLE QString worldmapCommand(const QString &id) const;
+    Q_INVOKABLE QColor code2color(const QString& code) const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -105,6 +106,7 @@ private:
     int _activeSplit = 1;
     int _currentKey = 0;
     QStringList _colorNames;
+    std::map<QString, QColor> _colorCodes;
     WorkSpaceModel *_currentWorkSpace = 0;
     std::vector<ConsoleScriptModel *> _consoles;
     IFeatureCoverage _worldMap;

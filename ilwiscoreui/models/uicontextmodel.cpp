@@ -208,6 +208,38 @@ void UIContextModel::prepare()
             _colorNames.push_back(txt);
         }
     }
+
+    QString colorcodes = ilwisloc + "/resources/color_chart.csv";
+    std::ifstream fstream2;
+    fstream2.open(colorcodes.toStdString());
+    std::vector<QColor> colors;
+    bool skip = true;
+    if ( fstream2.is_open()){
+        char txt[100];
+        while (fstream2.getline(txt,100)){
+            QStringList parts = QString(txt).split(",");
+            if ( !skip){
+                QColor clr(parts[1].toInt(), parts[2].toInt(), parts[3].toInt());
+                colors.push_back(clr);
+            }
+            skip = false;
+        }
+    }
+    int index = 0;
+    QString code;
+    for(int disk=6; disk >= 0 ; --disk){
+        code = QString("%1").arg(6-disk,2,10,QChar('0')) + "0000";
+        QColor clr = colors[index++];
+        _colorCodes[code] = clr;
+        for(int circle=1; circle <= disk; ++circle){
+            for(int cell = 0; cell < 6*circle; ++cell){
+                code = QString("%1%2%3").arg(6-disk,2,10,QChar('0')).arg(circle,2,10,QChar('0')).arg(cell,2,10,QChar('0'));
+                QColor clr = colors[index++];
+                _colorCodes[code] = clr;
+            }
+
+        }
+    }
     Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
@@ -293,6 +325,15 @@ QString UIContextModel::worldmapCommand(const QString& id) const
     QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
 
     return cmd;
+}
+
+QColor UIContextModel::code2color(const QString &code) const
+{
+    auto iter = _colorCodes.find(code);
+    if ( iter != _colorCodes.end()){
+        return (*iter).second;
+    }
+    return QColor();
 }
 
 QString UIContextModel::typeName2typeId(const QString &nm) const
