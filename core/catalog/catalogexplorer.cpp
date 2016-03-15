@@ -37,3 +37,8 @@ QFileInfo CatalogExplorer::resolve2Local() const
     return _resource.toLocalFile();
 }
 
+CatalogExplorer::ExplorerType CatalogExplorer::explorerType() const
+{
+    return etEXPLICIT;
+}
+
