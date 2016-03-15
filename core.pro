@@ -305,7 +305,8 @@ OTHER_FILES += \
     LICENSE-2.0.txt \
     installer.nsi \
     core/resources/ilwis.config \
-    core/resources/country_boundaries.ilwis
+    core/resources/country_boundaries.ilwis\
+    core/resources/color_chart.csv
 
 
 
@@ -368,7 +369,8 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/rasterfragmentshader_nvdia.glsl \
     core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config \
-    core/resources/country_boundaries.ilwis
+    core/resources/country_boundaries.ilwis\
+    coure/resources/color_chart.csv
 
 
 win32{
