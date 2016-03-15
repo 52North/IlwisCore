@@ -98,11 +98,12 @@ void MasterCatalogModel::addDefaultFilters(){
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/representations","Representations"));
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/projections","Projections"));
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/ellipsoids","Ellipsoids"));
-    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://internalcatalog","Internal Catalog"));
+    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://internalcatalog","Temporary Catalog"));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Most recently used --------------------------",""));
 
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Master Catalog-------------------------------",""));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itRASTER)),"Master Catalog Rasters","raster20.png"));
+    _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itCOVERAGE)),"Master Catalog Coverages","mapview.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itTABLE)),"Master Catalog Tables","table20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itDOMAIN)),"Master Catalog Domains","domain20.png"));
     _defaultFilters.append(new CatalogFilterModel(this,filter.arg(QString::number(itCOORDSYSTEM)),"Master Catalog Coordinate systems","csy20.png"));
