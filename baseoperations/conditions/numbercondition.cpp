@@ -54,8 +54,6 @@ bool NumberCondition::execute(ExecutionContext *ctx, SymbolTable& symTable)
         break;
     }
 
-    ctx->setOutput(symTable, _firstValue, sUNDEF, itINT32, Resource());
-    ctx->addOutput(symTable, _secondValue, sUNDEF, itINT32, Resource());
     ctx->addOutput(symTable, conditionIsTrue, sUNDEF, itBOOL, Resource());
 
     return true;
@@ -67,17 +65,14 @@ OperationImplementation::State NumberCondition::prepare(ExecutionContext *ctx,co
         return sPREPAREFAILED;
     }
 
-    IlwisTypes _firstValueType = _expression.parm(0).valuetype();
-    IlwisTypes _secondValueType = _expression.parm(1).valuetype();
-
-    if(!hasType(_firstValueType,itNUMBER) || !hasType(_secondValueType,itNUMBER) )
+    if (!hasType(_expression.parm(0).valuetype(),itNUMBER) || !hasType(_expression.parm(2).valuetype(),itNUMBER))
     {
         return sPREPAREFAILED;
     }
 
     _firstValue = _expression.parm(0).value().toDouble();
-    _secondValue = _expression.parm(1).value().toDouble();
-    QString parmOperation = _expression.parm(2).value();
+    QString parmOperation = _expression.parm(1).value();
+    _secondValue = _expression.parm(2).value().toDouble();
 
     if(parmOperation == "greater than") {
         _condition = 0;
@@ -109,15 +104,14 @@ quint64 NumberCondition::createMetadata()
 {
     OperationResource operation({"ilwis://operations/numbercondition"});
     operation.setLongName("conditions to compare/check integers");
-    operation.setSyntax("numbercondition(FirstValue, SecondValue, Condition");
+    operation.setSyntax("numbercondition(FirstValue, Condition=!greater than|smaller than|greater or equals|smaller or equals|equals|not equals, SecondValue)");
     operation.setDescription(TR("generates a rastercoverage where the atmospheric errors are corrected"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itNUMBER, TR("first number value"),TR("the first value used in the condition"));
-    operation.addInParameter(1,itNUMBER, TR("second number value"),TR("the first value used in the condition"));
-    operation.addInParameter(2,itSTRING, TR("the condition"),TR("the condition which has to be checked. 'greater than', 'equals', 'not equals'"));
-    operation.setOutParameterCount({2});
-    operation.addOutParameter(0,itNUMBER, TR("first inputvalue"), TR("the first inputparameter"));
-    operation.addOutParameter(1,itNUMBER, TR("second inputvalue"), TR("the second inputparameter"));
+    operation.addInParameter(1,itSTRING, TR("the condition"),TR("the condition which has to be checked. 'greater than', 'equals', 'not equals'"));
+    operation.addInParameter(2,itNUMBER, TR("second number value"),TR("the first value used in the condition"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itBOOL, TR("valid"), TR("true if condition is met"));
     operation.setKeywords("condition, number");
 
     mastercatalog()->addItems({operation});
