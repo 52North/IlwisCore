@@ -450,9 +450,9 @@ void Resource::setExtendedType(IlwisTypes tp)
     _extendedType = tp;
 }
 
-void Resource::prepare()
+void Resource::prepare(quint64 base)
 {
-    Identity::prepare();
+    Identity::prepare(base);
 }
 
 bool Resource::store(InternalDatabaseConnection &queryItem, InternalDatabaseConnection &queryProperties) const
@@ -618,7 +618,7 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
 
     checkUrl(tp);
     if ( isNew)
-        prepare();
+        prepare(hasType(tp,itOPERATIONMETADATA) ? 0 : 1000000);
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
         name(txt.mid(index + 1));
