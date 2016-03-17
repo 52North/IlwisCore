@@ -15,6 +15,7 @@
 #include "layerinfoitem.h"
 #include "layermanager.h"
 #include "globallayermodel.h"
+#include "resourcemanager.h"
 
 using namespace Ilwis;
 
@@ -53,7 +54,7 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         }
 
         if ( _masterCsy == 0) {// first real layer sets the csy
-            _masterCsy = new ResourceModel(coverage->coordinateSystem()->resource(), this);
+            _masterCsy = resourcemanager()->createResourceModel("resourcemodel", coverage->coordinateSystem()->resource());
             _viewEnvelope = coverage->envelope();
             emit coordinateSystemChanged();
         }
@@ -240,6 +241,15 @@ void LayerManager::refresh()
     emit layerChanged();
 }
 
+QVariantMap LayerManager::coord2Screen(const QVariantMap &var) const
+{
+    Envelope env(var);
+
+    BoundingBox bb = _screenGrf->coord2Pixel(env);
+
+    return bb.toMap();
+}
+
 void LayerManager::init()
 {
 
@@ -247,13 +257,7 @@ void LayerManager::init()
 
 QVariantMap LayerManager::viewEnvelope() const
 {
-    QVariantMap vmap;
-    vmap["minx"] = _viewEnvelope.min_corner().x;
-    vmap["miny"] = _viewEnvelope.min_corner().y;
-    vmap["maxx"] = _viewEnvelope.max_corner().x;
-    vmap["maxy"] = _viewEnvelope.max_corner().y;
-
-    return vmap;
+    return _viewEnvelope.toMap();
 }
 
 QVariantMap LayerManager::latlonEnvelope() const
@@ -262,12 +266,7 @@ QVariantMap LayerManager::latlonEnvelope() const
         QVariant var = _layers[1]->drawer()->attributeOfDrawer("rootdrawer", "latlonenvelope");
         Envelope env = var.value<Envelope>();
         if ( env.isValid()){
-            QVariantMap vmap;
-            vmap["minx"] = env.min_corner().x;
-            vmap["miny"] = env.min_corner().y;
-            vmap["maxx"] = env.max_corner().x;
-            vmap["maxy"] = env.max_corner().y;
-            return vmap;
+            env.toMap();
         }
     }
     return QVariantMap();
