@@ -28,9 +28,6 @@ Rectangle {
             cellHeight: 170
             anchors.fill: parent
             clip : true
-            highlight: Rectangle {
-                color: "#6084c2"
-            }
             focus : true
         }
 
