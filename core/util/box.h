@@ -57,6 +57,25 @@ public:
         }
     }
 
+    Box(const QVariantMap& box){
+        bool ok;
+        double minx = box["minx"].toDouble(&ok);
+        if (ok){
+            double miny = box["miny"].toDouble(&ok);
+            if (ok){
+                double maxx = box["maxx"].toDouble(&ok);
+                if (ok){
+                    double maxy = box["maxy"].toDouble(&ok);
+                    if (ok){
+                        _min_corner = PointType(minx,miny);
+                        _max_corner =  PointType(maxx,maxy);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     IlwisTypes valueType() const{
         return max_corner().valuetype();
     }
@@ -290,6 +309,7 @@ public:
         return 4;
     }
 
+
     Box<PointType>& operator=(Box<PointType>&& box) {
         _min_corner = std::move(box._min_corner);
         _max_corner = std::move(box._max_corner);
@@ -488,6 +508,14 @@ public:
         }
     }
 
+    QVariantMap toMap() const{
+        QVariantMap mp;
+        mp["minx"] = _min_corner.x;
+        mp["miny"] = _min_corner.y;
+        mp["maxx"] = _max_corner.x;
+        mp["maxy"] = _max_corner.y;
+        return mp;
+    }
 
     QString toString() const {
         if (!isValid())
