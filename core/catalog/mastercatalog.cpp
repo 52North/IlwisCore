@@ -245,7 +245,6 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
             continue;
         }
 
-
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
@@ -521,6 +520,9 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     }else if ( name.left(9) == "code=rpr:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://tables/representation?code=%1").arg(shortname);
+    }if ( name.indexOf("code=ellipsoid:") == 0) {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://tables/ellipsoid?code=%1").arg(shortname);
     }
     QString tt =  name.left(12);
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
