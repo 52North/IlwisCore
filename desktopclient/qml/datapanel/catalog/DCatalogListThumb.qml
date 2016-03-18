@@ -11,11 +11,12 @@ import LayersView 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
-Item{
+Rectangle{
     id: thumbDelegate
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
     clip : true
+    color :  isSelected ? Global.selectedColor : "white"
 
     function changeImageLoader(loader, img){
         loader.setSource("ThumbImage.qml",{"imageName" : img})

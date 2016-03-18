@@ -37,15 +37,18 @@ Rectangle {
                 labelWidth: 100
                 width : parent.width - 49
                 transparentBackgrond: false
-            }
-            Button{
-                width : 40
-                height : 20
-                text : qsTr("Apply")
-                onClicked: {
+                onContentChanged: {
                     operations.keyFilter = filtertxt.content;
                 }
             }
+//            Button{
+//                width : 40
+//                height : 20
+//                text : qsTr("Apply")
+//                onClicked: {
+//                    operations.keyFilter = filtertxt.content;
+//                }
+//            }
         }
     }
 }

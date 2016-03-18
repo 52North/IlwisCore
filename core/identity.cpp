@@ -24,9 +24,9 @@ quint64 Identity::id() const
     return _id;
 }
 
-void Identity::newId()
+void Identity::newId(quint64 base)
 {
-    _id = Identity::_baseId++;
+    _id = base + Identity::_baseId++;
 }
 
 QString Identity::name() const

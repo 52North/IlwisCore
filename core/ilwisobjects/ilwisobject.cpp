@@ -133,6 +133,7 @@ void IlwisObject::name(const QString &nam)
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     if ( !connector().isNull()){
+        connector()->source().modifiedTime(Time::now());
         connector()->source().name(nm);
         if ( isInternalObject()){
             QString path = context()->persistentInternalCatalog().toString() + "/" + nam;
@@ -156,8 +157,10 @@ void IlwisObject::code(const QString& cd) {
         return;
     _changed = true;
 
-    if ( !connector().isNull())
+    if ( !connector().isNull()){
+        connector()->source().modifiedTime(Time::now());
         connector()->source().code(cd);
+    }
 }
 
 QString IlwisObject::code() const
@@ -178,6 +181,7 @@ QString IlwisObject::description() const
 void IlwisObject::setDescription(const QString &desc)
 {
     if ( !connector().isNull()){
+        connector()->source().modifiedTime(Time::now());
         connector()->source().setDescription(desc);
     }
 }

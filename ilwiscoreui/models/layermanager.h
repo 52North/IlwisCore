@@ -38,6 +38,7 @@ public:
     Q_INVOKABLE void setLayerListName(const QString name);
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
     Q_INVOKABLE void refresh();
+    QVariantMap coord2Screen(const QVariantMap &var) const;
 
     void addVisualizationModel(CoverageLayerModel* model);
     void addDataSource(const QUrl& url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer);
@@ -59,6 +60,7 @@ public:
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
     QString layerInfo(const Ilwis::Coordinate& crd, const QString &attrName="");
+
 
 signals:
     void removeLayer(const Ilwis::Resource& resource);

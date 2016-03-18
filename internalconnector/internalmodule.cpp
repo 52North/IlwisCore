@@ -136,7 +136,6 @@ bool InternalModule::createSpecialDomains() {
     resource.code("text");
     resource.name("Text domain", false);
     resource.addContainer(QUrl("ilwis://system/domains"));
-    resource.prepare();
     resources.push_back(resource);
 
     url = QString("ilwis://system/domains/code=domain:color");
@@ -144,7 +143,6 @@ bool InternalModule::createSpecialDomains() {
     colorResource.code("color");
     colorResource.name("Color domain", false);
     colorResource.addContainer(QUrl("ilwis://system/domains"));
-    colorResource.prepare();
     resources.push_back(colorResource);
 
     url = QString("ilwis://system/domains/code=domain:colorpalette");
@@ -152,7 +150,6 @@ bool InternalModule::createSpecialDomains() {
     paletteResource.code("colorpalette");
     paletteResource.name("Color Palette domain", false);
     paletteResource.addContainer(QUrl("ilwis://system/domains"));
-    paletteResource.prepare();
     resources.push_back(paletteResource);
 
     InternalDatabaseConnection itemdomainTable;
@@ -166,7 +163,7 @@ bool InternalModule::createSpecialDomains() {
              res.code(code);
              res.name(rec.value("name").toString());
              res.addContainer({"ilwis://system/domains"});
-             res.prepare();
+             res.modifiedTime(Time::now());
              resources.push_back(res);
         }
     }

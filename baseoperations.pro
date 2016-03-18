@@ -58,7 +58,9 @@ HEADERS += \
     baseoperations/util/testoperation.h \
     baseoperations/math/columnjoin.h \
     baseoperations/data/saveas.h \
-    baseoperations/creators/createrastercoverage.h
+    baseoperations/creators/createrastercoverage.h \
+    baseoperations/conditions/junction.h \
+    baseoperations/conditions/numbercondition.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -103,7 +105,9 @@ SOURCES += \
     baseoperations/util/testoperation.cpp \
     baseoperations/math/columnjoin.cpp \
     baseoperations/data/saveas.cpp \
-    baseoperations/creators/createrastercoverage.cpp
+    baseoperations/creators/createrastercoverage.cpp \
+    baseoperations/conditions/junction.cpp \
+    baseoperations/conditions/numbercondition.cpp
 
 OTHER_FILES += \
     baseoperations/baseoperations.json

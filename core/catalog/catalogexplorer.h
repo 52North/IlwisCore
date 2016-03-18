@@ -6,6 +6,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT CatalogExplorer
 {
 public:
+    enum ExplorerType{etIMPLICIT, etEXPLICIT};
     CatalogExplorer();
     CatalogExplorer(const Resource& resource,const IOOptions& options=IOOptions());
     virtual ~CatalogExplorer();
@@ -16,6 +17,7 @@ public:
     Resource source() const;
     virtual QFileInfo toLocalFile(const QUrl &datasource) const = 0;
     QFileInfo resolve2Local() const;
+    virtual ExplorerType explorerType() const;
 
 protected:
     IOOptions ioOptions() const;

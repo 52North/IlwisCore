@@ -52,7 +52,7 @@ public:
     /*!
      * \brief newId generates a new id for the identity. usefull after a copy constructor which should copy, not clone
      */
-    void newId();
+    void newId(quint64 base=1000000);
     /*!
      * \brief name returns the name of an object. All objects have names though names need not to be unique
      * \return
@@ -76,7 +76,7 @@ public:
 protected:
     Identity(const QString &name, qint64 id=i64UNDEF, const QString &cde=sUNDEF, const QString &descr=sUNDEF);
 
-    void prepare(quint64 base=0);
+    virtual void prepare(quint64 base=1000000);
     void setId(quint64 newid);
 
 private:

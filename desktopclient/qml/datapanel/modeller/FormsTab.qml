@@ -76,12 +76,12 @@ Rectangle {
         Tab {
             id : operationForm
             active : true
-            title: qsTr("Operation form")
+            title: qsTr("Selected Operation")
             OperationForms{}
         }
 
         Tab {
-            title: qsTr("Workflow form")
+            title: qsTr("Workflow")
             id : workflowForm
             active: true
             OperationForms{}

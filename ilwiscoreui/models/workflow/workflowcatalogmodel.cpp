@@ -128,7 +128,7 @@ QMLWorkflowList WorkflowCatalogModel::workflows()
             gatherItems();
             _currentWorkflows.clear();
 
-            for(auto item : _currentItems){
+            for(auto item : _allItems){
                 QString keywords = item->resource()["keyword"].toString();
                 if ( keywords.indexOf("internal") != -1)
                     continue;
@@ -149,7 +149,7 @@ void WorkflowCatalogModel::nameFilter(const QString &filter)
 {
     QString workflowFilter(filter);
     workflowFilter.append(" and keyword='workflow'");
-    CatalogModel::nameFilter(workflowFilter);
+    //CatalogModel::nameFilter(workflowFilter);
     _currentWorkflows.clear();
     emit workflowsChanged();
 }

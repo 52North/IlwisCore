@@ -254,7 +254,7 @@ public:
     /**
      * Prepares this Resource
      */
-    void prepare();
+    virtual void prepare(quint64 base=1000000);
 
     /**
      * Store this resource in the sql database

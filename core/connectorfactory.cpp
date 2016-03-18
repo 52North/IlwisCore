@@ -81,7 +81,13 @@ std::nullptr_t ConnectorFactory::registerCatalogExplorer(createCatalogExplorer f
 }
 
 std::vector<CatalogExplorer*> ConnectorFactory::explorersForResource(const Resource& resource, const QString &provider) const{
-   std::vector<CatalogExplorer*> explorers;
+   // explorers are split into two classes; implicit and explicit. Implicit catalogs are catalogs that are compound objects, w
+   // while explicit catalogs exist withing the container organization of their management system ( OS, database). Implicit catalogs
+    // do not have special (catalog) meaning in the manamgement system
+    // as the content of implicit catalogs may depend on the content of the explicit catalog they are located in
+    //( e.g maps in an ilwis maplist), explicit containers have to be scammed first
+   std::vector<CatalogExplorer*> explorersImplicit;
+   std::vector<CatalogExplorer*> explorersExplicit;
    for( createCatalogExplorer createFunc : _explorers){
        IOOptions empty; // not options needed here
        CatalogExplorer *explorer = createFunc(resource, empty);
@@ -89,11 +95,21 @@ std::vector<CatalogExplorer*> ConnectorFactory::explorersForResource(const Resou
            bool resourceOk = explorer->canUse(resource);
            bool providerOk = explorer->provider() == provider || provider == sUNDEF;
            if (  resourceOk && providerOk) {
-               explorers.push_back(explorer);
+               if ( explorer->explorerType() == CatalogExplorer::etEXPLICIT)
+                   explorersExplicit.push_back(explorer);
+               else
+                   explorersImplicit.push_back(explorer);
            }else
                delete explorer;
        }
    }
+    std::vector<CatalogExplorer*> explorers;
+    for(auto expl : explorersExplicit){
+        explorers.push_back(expl);
+    }
+    for(auto expl : explorersImplicit){
+        explorers.push_back(expl);
+    }
    return explorers;
 }
 

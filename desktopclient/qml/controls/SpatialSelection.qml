@@ -63,7 +63,7 @@ Item {
                 Connections{
                     target : mouseActions
                     onZoomEnded : {
-                        currentCatalog.spatialFilter = envelope
+                        currentCatalog.filter("spatial", envelope)
                         currentEnvelope = envelope
                     }
                 }

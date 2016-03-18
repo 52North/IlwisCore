@@ -260,6 +260,11 @@ void OperationParameter::copyMetaToResourceOf(QScopedPointer<ConnectorInterface>
     otherconnector->setProperty(prefix + "optional", _optional);
 }
 
+void OperationParameter::prepare(quint64 base)
+{
+    Identity::prepare(0);
+}
+
 OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional) :
     Identity(name),
     _kind(kind),

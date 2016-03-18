@@ -1,221 +1,179 @@
-country,code,longmin,latmin,longmax,latmax,type
-Europe,EUR,-25,34.6,55.2,80.9,region
-Africa,AFR,-19,-35,51.5,37.7,region
-East Africa,EAF,28.6,-11.9,51.5,18.3,region
-World,WORLD,-180,-90,180,90,all
-Aruba,ABW,-70.983,12.4,-69.85,12.617,teritory
-Antigua and Barbuda,ATG,-62.417,16.817,-61.65,17.75,teritory
-United Arab Emirates,AE,45,22.167,59.25,26.133,teritory
-Afghanistan,AFG,60.433,29.15,75.033,38.484,teritory
-Algeria,DZA,-8.7,18.027,70.554,37.203,teritory
-Azerbaijan,AZE,44.783,38.417,50.858,41.911,teritory
-Albania,ALB,19,39.583,21.05,42.659,teritory
-Armenia,ARM,43.443,38.857,46.589,41.3,teritory
-Andorra,AND,1.417,42.433,1.783,42.65,teritory
-Angola,AGO,10,-33.806,24.35,-3.033,teritory
-Argentina,ARG,-73.533,-58.583,-53.367,-21.783,teritory
-Australia,AUS,112.467,-55.05,168,-9.133,teritory
-Austria,AUT,1.2,46.373,19,49.017,teritory
-Bahrain,BHR,45,25,50.954,26.566,teritory
-Barbados,BRB,-59.667,12.967,-59.383,13.333,teritory
-Botswana,BWA,20,-28.517,29.35,24.583,teritory
-Belgium,BEL,2.367,49.5,6.4,51.683,teritory
-Bahamas,BHS,-86,20,-70,29.547,teritory
-Bangladesh,BGD,84,20.6,92.683,26.817,teritory
-Belize,BLZ,-89.95,15,-75,18.483,teritory
-Bosnia and Herzegovina,BIH,15.746,42.558,19.671,45.268,teritory
-Bolivia,BOL,-69.65,-26.867,-57.55,9.678,teritory
-Myamar,MMR,91.833,6,102,28.35,teritory
-Benin,BEN,-4,5,92.219,21.322,teritory
-Belarus,BLR,22.55,50.717,32.85,56.133,teritory
-Solomon Islands,SLM,-130,-45,170.2,3.751,teritory
-Brazil,BRA,-73.817,-33.733,-28.85,16.8,teritory
-Bhutan,BTN,80,26.217,92.717,30,teritory
-Bulgaria,BGR,22.371,41,28.6,44.215,teritory
-Bouvet,BVT,3.278,-54.467,3.483,-54.386,teritory
-Brunei,BRN,110,-2,120,15,teritory
-Burundi,BDI,29.018,-4.455,31.783,-0.95,teritory
-Canada,CAN,-163.9,39,-52.083,83.133,teritory
-Cambodia,KHM,14.869,9.917,107.567,17.483,teritory
-Chad,TCD,2,7.483,27.133,26,teritory
-Sri Lanka,LKA,75,5.9,81.917,10.083,teritory
-Republic of Congo,COG,10,-6.067,20,5,teritory
-Democratic Republic of Congo,COD,12.2,-15.75,31.233,5.35,teritory
-China,CHN,74.167,18.163,135.078,53.5,teritory
-Chile,CHL,-109.467,-64.05,-8.847,42.583,teritory
-Cook Islands,COK,96.817,-12.208,96.925,-11.817,teritory
-Cameroon,CMR,8.467,1.417,20,16,teritory
-Comoros,COM,43.067,-13,45.317,-11.35,teritory
-Colombia,COL,-81.85,-5,76.833,15,teritory
-Costa Rica,CRI,-87.1,-0.792,-46.633,15,teritory
-Central African Republic,CAF,13.4,0,27.45,10.983,teritory
-Cuba,CUB,-90,15,83.917,25,teritory
-Cabo Verde,CPV,-25.367,14.8,-22.65,17.2,teritory
-Cyprus,CYP,32.271,34.567,34.6,35.7,teritory
-Denmark,DNK,4.517,53.583,18,64,teritory
-Djibouti,DJI,39.5,10.267,43.452,19,teritory
-Dominica,DMA,-61.55,15.167,-61.25,15.633,teritory
-Dominican Republic,DOM,-86,15,70.5,21,teritory
-Ecuador,ECU,-92,-4.967,-75.2,1.65,teritory
-Egypt,EGY,13,5,37,50.861,teritory
-Ireland,IRL,-10.683,51.367,-4,55.433,teritory
-Equatorial Guinea,GNQ,3.633,-1.483,11.4,5,teritory
-Estonia,EST,21.781,57.521,28.883,59.983,teritory
-Eritrea,ERI,20,0,43.417,18.033,teritory
-El Salvador,SLV,-90.184,13.15,-87.644,14.45,teritory
-Ethiopia,ETH,33.017,3.233,47.783,19,teritory
-Czech Republic,CZE,12.117,39.983,38.083,59.65,teritory
-Finland,FIN,18,0,60.203,70.083,teritory
-Fiji,FJI,-179.983,-45,180,-11.167,teritory
-Falkland Islands,FLK,-61.433,-52.967,-57.667,-50.967,teritory
-Faeroer,FRO,-7.8,61.333,-5.333,67.283,teritory
-French Polynesia,PF,-179.8,-27.917,180,16.633,teritory
-France,FRA,-5.225,41.333,9.55,51.2,teritory
-Gambia,GMB,-16.817,5,20,13.817,teritory
-Gabon,GAB,8.7,-3.95,14.533,5.983,teritory
-Georgia,GEO,40.009,41.15,46.659,43.582,teritory
-Ghana,GHA,-4,4.733,20,11.167,teritory
-Gibraltar,GIB,-5.433,36.1,-5.333,36.183,teritory
-Grenada,GRD,-61.8,11.983,-61.25,12.667,teritory
-Greenland,GRL,-73.05,51.7,-12.133,83.667,teritory
-Germany,GER,5.867,45.967,15.033,55.133,teritory
-Guadeloupe ,GLP,-86,13,-60.9,21,teritory
-Greece,GRC,19.382,34.8,29.667,44,teritory
-Guatemala,GTM,-92.583,13.749,-75,17.817,teritory
-Guinea,GIN,-15.417,4.367,20,13.3,teritory
-Guyana,GUY,-61.283,1.25,-56,8.433,teritory
-Haiti,HTI,-86,8.547,72.296,21,teritory
-Hong Kong,HKG,113.833,15,115,22.6,teritory
-Heard Island and McDonald Islands,HMD,72.567,-53.2,73.85,-52.9,teritory
-Honduras,HND,-89.967,13,-75,17.45,teritory
-Croatia,HRV,13.484,42.367,19.391,46.527,teritory
-Hungary,HUN,16.133,45.75,22.867,48.983,teritory
-Iceland,ISL,-26,62,-6,67.117,teritory
-Indonesia,IDN,0,-11.983,141.033,15,teritory
-Isle of Man,IMN,-5.45,53.15,-4.083,54.45,teritory
-India,IND,65,6,97.35,35.956,teritory
-British Indian Ocean Teritory,IOT,70.25,-7.417,72.6,-4.917,teritory
-Iran,IRN,27.445,5.322,96.024,39.933,teritory
-Israel,ISR,34.282,29,35.667,33.286,teritory
-Italy,ITA,1.133,28.969,54.824,49.2,teritory
-Ivory coast,CIV,-9.65,1.083,45.608,35.538,teritory
-Iraq,IRQ,38.782,28.833,49.433,37.358,teritory
-Japan,JPN,122.933,20.417,156.067,50.617,teritory
-Jersey,JEY,-2.328,49.1,-1.897,49.316,teritory
-Jamaica,JAM,-78.667,15,-70,18.533,teritory
-Jordan,JOR,34.783,29,39.1,33.333,teritory
-Kenya,KEN,24.283,-5.083,41.878,4.883,teritory
-Kyrgyzstan,KGZ,69.333,39.183,80.116,43.833,teritory
-North Korea,PRK,124.128,37.621,130.672,43.004,teritory
-Kiribati,KIR,-179.217,-45,180,30,teritory
-South Korea,KOR,124.612,29,131.867,38.6,teritory
-Kuwait,KWT,45,25,49.411,30.083,teritory
-Kazakhstan,KAZ,46.583,40.417,90,55.428,teritory
-Laos,LAO,100.083,13.933,107.683,22.5,teritory
-Lebanon,LBN,35.104,33.067,36.623,34.691,teritory
-Latvia,LVA,20.967,55.667,28.233,58.067,teritory
-Lithuania,LTU,20.991,53,28.233,56.467,teritory
-Liberia,LBR,-11.598,4.328,-4,9.5,teritory
-Slovakia,SVK,16.967,45.5,26.5,49.85,teritory
-Liechtenstei,LIE,9.5,47.05,9.75,47.25,teritory
-Lesotho,LSO,24,-30.667,29.483,-28.567,teritory
-Luxembourg,LUX,5.743,49.45,6.517,50.182,teritory
-Libya,LBY,5,20.25,25.5,33.15,teritory
-Madagascar,MDG,42.4,-25.9,50.483,-11.95,teritory
-Moldova,MDA,26.672,45.482,30.096,48.467,teritory
-Saint Martin,MAF,45.009,-13.006,45.295,-12.64,teritory
-Mongolia,MNG,87.783,41.55,119.917,52.1,teritory
-Malawi,MWI,32.717,-17.15,37,-5,teritory
-Montenegro,MNE,18.438,41.864,20.345,43.548,teritory
-Macedonia,MKD,20.405,40.867,23.033,42.373,teritory
-Mali,MLI,-13.75,4.318,20,26,teritory
-Monaco,MCO,7.4,43.717,7.439,43.746,teritory
-Morocco,MAR,-13.1,3.36,9.542,36.61,teritory
-Mauritius,MUS,56.567,-20.522,73.567,10.4,teritory
-Mauritania,MRT,-17.117,10,20,27.117,teritory
-Malta,MLT,14.184,35.782,15,36.333,teritory
-Oman,OMN,5.1,15.083,65,26.567,teritory
-Maldives,MDV,61.5,-10.5,75,20,teritory
-Mexico,MEX,-119.922,0,110.75,45,teritory
-Malaysia,MYS,98.933,0,124.125,15,teritory
-Mozambique,MOZ,4.017,-26.867,43,15.033,teritory
-New Caledonia,NCL,125.467,-45,180,0,teritory
-Norfolk Island,NFK,167.95,-29.05,167.95,-29.033,teritory
-Niger,NER,0.183,1.617,20,26,teritory
-Vanuatu,VUT,-130,-45,180,0,teritory
-Nigeria,NGA,2.483,3.883,20,13.867,teritory
-Netherlands,NLD,3.133,50.75,7.217,53.683,teritory
-Norway,NOR,2.553,56.15,31.833,71.5,teritory
-Nepal,NPL,80,25.767,88.183,30.45,teritory
-Nauru,NRU,166.917,-0.55,166.95,-0.5,teritory
-Suriname,SUR,-60,2,-53.967,6.017,teritory
-Nicaragua,NIC,-87.7,0,0,15,teritory
-New Zealand,NZL,-179,-52.617,179.067,36.783,teritory
-Paraguay,PRY,-62.633,-27.55,-54.267,-19.317,teritory
-Peru,PER,-81.458,-18.357,74.35,11.371,teritory
-Pakistan,PAK,17.899,23.733,77.8,43.713,teritory
-Poland,POL,-21.583,45.5,26.5,55.183,teritory
-Panama,PAN,-83.65,7.2,-8.433,15,teritory
-Portugal,PRT,-73.15,8.496,8.683,42.15,teritory
-Papua New Guinea,PNG,101.275,-12.583,160.5,17.797,teritory
-Palau,PLW,131.175,2.874,134.716,8.342,teritory
-Guinea-Bissau,GNB,-16.7,5,-4,12.8,teritory
-Qatar,QAT,50.644,24.285,52.75,26.441,teritory
-Serbia,SRB,18.859,41.844,22.967,46.167,teritory
-Reunion,REU,55.217,-21.383,57,-20,teritory
-Marshall Islands,MHL,155,4.567,175.833,70.15,teritory
-Romania,ROU,19,43.517,29.967,48.25,teritory
-Philippines,PHL,63.295,4.444,130.5,34.434,teritory
-Russian Fedration,RUS,-179.985,38.083,179.917,86.217,teritory
-Rwanda,RWA,28.867,-3.317,37,5,teritory
-Saudi Arabia,SAU,24.08,5,55.5,48.555,teritory
-Saint Kitts and Nevis ,KNA,-62.85,17.083,-62.517,17.417,teritory
-Seychelles,SYC,20.462,-10.217,57.083,42.641,teritory
-South Africa,ZAF,16.45,-35.5,33.533,-22.133,teritory
-Senegal,SEN,-17.683,12.267,-11.357,16.681,teritory
-Slovenia,SVN,13.427,44.083,17.467,46.933,teritory
-Sierra Leone,SLE,-13.417,5,-4,10,teritory
-San Marino,SMR,12.417,43.908,12.5,43.983,teritory
-Singapore,SGP,101.333,1.083,104.412,4,teritory
-Somalia,SOM,20,-1.659,65,20,teritory
-Spain,ESP,-18.167,27.633,6.033,44,teritory
-Saint Lucia,LCA,-61.083,13.5,-60.867,14.15,teritory
-Sudan,SDN,18.783,3.517,38.833,27.167,teritory
-Sweden,SWE,1.3,16.693,60.717,69.033,teritory
-Sint Maarten,SXM,-40,-59.467,-26.25,-53.959,teritory
-Syria,SYR,35.599,32,42.5,37.28,teritory
-Switzerland,CHE,5.967,45.15,12.467,52.883,teritory
-Trinidad and Tobago,TTO,-86,10,-60.5,21,teritory
-Thailand,THA,95,4.15,139.183,20.445,teritory
-Tajikistan,TJK,67.417,36.717,75,40.933,teritory
-Tokelau,TKL,-72.483,20.75,-70.25,24.717,teritory
-Tonga,TON,-179.117,-45,180,0,teritory
-Togo,TGO,-4,5,20,11.133,teritory
-Sao Tome and Principe,STP,6.467,-0.017,7.633,1.733,teritory
-Tunisia,TUN,4,23.717,13,37.667,teritory
-East Timor,TLS,124.069,-9.474,127.606,-7.557,teritory
-Turkey,TUR,25,35.819,44.85,42.1,teritory
-Tuvalu,TUV,176.1,-10.75,179.883,-5.65,teritory
-Taiwan,TWN,118.115,21,125,29,teritory
-Turkmenistan,TKM,52.117,35.212,66.65,42.633,teritory
-Tanzania,TZA,29.583,-11.733,40.45,5,teritory
-Uganda,UGA,29.467,-1.483,34.967,4.55,teritory
-United Kingdom,GBR,-13.683,48.5,3.858,64.067,teritory
-Ukraine,UKR,18.85,37.8,76.1,64.95,teritory
-United States,USA,167.74,8.732,167.74,8.732,teritory
-Burkina Faso,BFA,-5.483,9.4,20,14.983,teritory
-Uruguay,URY,-58.5,-35.783,-51.283,-30.117,teritory
-Uzbekistan,UZB,44.517,35.267,92.2,66.15,teritory
-Saint Vincent,VCT,-61.467,12.533,-61,13.5,teritory
-Venezuela,VEN,-76.434,-0.877,69.211,19.199,teritory
-Virgin Islands,VGB,-64.867,18,-64.2,18.767,teritory
-Vietnam,VNM,17.667,8.383,115,23.667,teritory
-Holy See,VAT,12.35,41.9,12.45,42.467,teritory
-Namibia,NAM,11.75,-32,36.283,-16.983,teritory
-Wallis and Futuna,WLF,-179.717,-14.417,-174.417,-10.25,teritory
-Samoa,WSM,-172.867,-14.05,-171,-13.417,teritory
-Swaziland,SWZ,30.35,-27.417,32.333,-25.75,teritory
-Yemen,YEM,39.5,12.1,65,27.695,teritory
-Zambia,ZMB,2.983,-18.05,39.283,5,teritory
-Zimbabwe,ZWE,18,-32,33.8,-13.633,teritory
-Solomon Islands,SLB,-56.517,46.721,-56.033,47.14,teritory
+name,code,officialname,continent,region,longmin,latmin,longmax,latmax,type
+Afghanistan,AFG,Islamic State of Afghanistan,Asia,Southern Asia,60.52842980331158,29.31857249604431,75.15802778514092,38.486281643216415,country
+Angola,AGO,Peoples Republic of Angola,Africa,Middle Africa,11.64009606288161,-17.93063648851971,24.079905226342902,-4.438023369976122,country
+Albania,ALB,Republic of Albania,Europe,Southern Europe,19.304486118250793,39.62499766698397,21.0200403174764,42.68824738216557,country
+United Arab Emirates,ARE,United Arab Emirates,Asia,Western Asia,51.57951867046327,22.496947536707136,56.396847365144005,26.05546417897398,country
+Argentina,ARG,Argentine Republic,South America,South America,-73.41543575712004,-55.25000000000002,-53.62834896504873,-21.832310479420684,country
+Armenia,ARM,Republic of Armenia,Asia,Western Asia,43.58274580259273,38.74120148371222,46.50571984231797,41.248128567055595,country
+Antarctica,ATA,,Antarctica,Antarctica,-179.99999999999997,-90.00000000000003,180.00000000000014,-63.27066048950458,region
+French Southern and Antarctic Lands,ATF,Territory of the French Southern and Antarctic Lands,Seven seas (open ocean),Seven seas (open ocean),68.72000000000001,-49.775000000000006,70.56,-48.62500000000001,region
+Australia,AUS,Commonwealth of Australia,Oceania,Australia and New Zealand,113.3389530782625,-43.634597263362096,153.5694690289442,-10.668185723516643,country
+Austria,AUT,Republic of Austria,Europe,Western Europe,9.479969516649021,46.43181732846955,16.979666782304037,49.03907420510758,country
+Azerbaijan,AZE,Republic of Azerbaijan,Asia,Western Asia,44.793989699082005,38.27037750910094,50.39282107931271,41.86067515722735,country
+Burundi,BDI,Republic of Burundi,Africa,Eastern Africa,29.024926385216787,-4.4999834122940925,30.752262811004954,-2.348486830254238,country
+Belgium,BEL,Kingdom of Belgium,Europe,Western Europe,2.5135730322461427,49.529483547557504,6.15665815595878,51.47502370869813,country
+Benin,BEN,Republic of Benin,Africa,Western Africa,0.7723356461714843,6.142157701029731,3.7971122575117136,12.235635891158267,country
+Burkina Faso,BFA,Burkina Faso,Africa,Western Africa,-5.470564947929006,9.610834865757141,2.177107781593776,15.116157741755728,country
+Bangladesh,BGD,Peoples Republic of Bangladesh,Asia,Southern Asia,88.08442223506242,20.670883287025347,92.67272098182556,26.446525580342723,country
+Bulgaria,BGR,Republic of Bulgaria,Europe,Eastern Europe,22.380525750424592,41.23448598893053,28.558081495891997,44.23492300066128,country
+Bahamas,BHS,Commonwealth of the Bahamas,North America,Caribbean,-78.97999999999996,23.70999999999998,-76.99999999999994,27.04000000000005,country
+Bosnia and Herzegovina,BIH,Bosnia and Herzegovina,Europe,Southern Europe,15.750026075918981,42.64999999999998,19.59976000000006,45.23377676043094,country
+Belarus,BLR,Republic of Belarus,Europe,Eastern Europe,23.199493849386187,51.31950348571566,32.69364301934604,56.169129950578814,country
+Belize,BLZ,Belize,North America,Central America,-89.22912167026928,15.886937567605171,-88.10681291375438,18.4999822046599,country
+Bolivia,BOL,Plurinational State of Bolivia,South America,South America,-69.59042375352405,-22.872918796482175,-57.49837114117099,-9.761987806846392,country
+Brazil,BRA,Federative Republic of Brazil,South America,South America,-73.98723548042966,-33.768377780900764,-34.729993455533034,5.244486395687602,country
+Brunei Darussalam,BRN,Negara Brunei Darussalam,Asia,South-Eastern Asia,114.20401655482837,4.007636826997754,115.45071048386981,5.447729803891534,country
+Bhutan,BTN,Kingdom of Bhutan,Asia,Southern Asia,88.81424848832056,26.719402981059957,92.10371178585974,28.296438503527217,country
+Botswana,BWA,Republic of Botswana,Africa,Southern Africa,19.89545779794068,-26.828542982695915,29.43218834810904,-17.661815687737374,country
+Central African Republic,CAF,Central African Republic,Africa,Middle Africa,14.459407179429348,2.267639675298085,27.37422610851749,11.142395127807546,country
+Canada,CAN,Canada,North America,Northern America,-140.99778,41.675105088867156,-52.64809872090419,83.23324000000002,country
+Switzerland,CHE,Swiss Confederation,Europe,Western Europe,6.022609490593538,45.776947740250776,10.44270145024663,47.83082754169129,country
+Chile,CHL,Republic of Chile,South America,South America,-75.64439531116545,-55.61182999999996,-66.95992000000004,-17.58001189541929,country
+China,CHN,Peoples Republic of China,Asia,Eastern Asia,73.67537926625485,18.197700913968617,135.02631147678673,53.45880442973464,country
+Côte dIvoire,CIV,Republic of Ivory Coast,Africa,Western Africa,-8.60288021486862,4.338288479017308,-2.562189500326241,10.524060777219134,country
+Cameroon,CMR,Republic of Cameroon,Africa,Middle Africa,8.48881554529089,1.7276726342802957,16.012852410555354,12.85939626713733,country
+Democratic Republic of the Congo,COD,Democratic Republic of the Congo,Africa,Middle Africa,12.182336866920252,-13.257226657771831,31.174149204235817,5.256087754737123,country
+Republic of Congo,COG,Republic of Congo,Africa,Middle Africa,11.093772820691925,-5.037986748884791,18.45306521980993,3.728196519379452,country
+Colombia,COL,Republic of Colombia,South America,South America,-78.99093522817104,-4.2981869441943275,-66.87632585312258,12.437303168177309,country
+Costa Rica,CRI,Republic of Costa Rica,North America,Central America,-85.94172543002176,8.225027980985985,-82.54619625520348,11.217119248901597,country
+Cuba,CUB,Republic of Cuba,North America,Caribbean,-84.97491105827311,19.855480861891877,-74.17802486845126,23.188610744717707,country
+Northern Cyprus,B20,Turkish Republic of Northern Cyprus,Asia,Western Asia,32.73178022637745,35.000344550103506,34.576473829900465,35.67159556735879,country
+Cyprus,CYP,Republic of Cyprus,Asia,Western Asia,32.25666710788596,34.57186941175544,34.00488081232004,35.17312470147138,country
+Czech Republic,CZE,Czech Republic,Europe,Eastern Europe,12.240111118222558,48.55530528420721,18.853144158613617,51.117267767941414,country
+Germany,DEU,Federal Republic of Germany,Europe,Western Europe,5.988658074577813,47.30248769793917,15.016995883858783,54.98310415304803,country
+Djibouti,DJI,Republic of Djibouti,Africa,Eastern Africa,41.66176000000013,10.92687856693442,43.31785241066467,12.699638576707116,country
+Denmark,DNK,Kingdom of Denmark,Europe,Northern Europe,8.08997684086225,54.80001455343793,12.690006137755631,57.73001658795485,country
+Dominican Republic,DOM,Dominican Republic,North America,Caribbean,-71.94511206733556,17.5985643579766,-68.31794328476897,19.8849105900821,country
+Algeria,DZA,Peoples Democratic Republic of Algeria,Africa,Northern Africa,-8.684399786809053,19.057364203360038,11.999505649471613,37.11838064223437,country
+Ecuador,ECU,Republic of Ecuador,South America,South America,-80.96776546906436,-4.959128513207389,-75.23372270374195,1.380923773601822,country
+Egypt,EGY,Arab Republic of Egypt,Africa,Northern Africa,24.70007,22.0,36.86623,31.58568,country
+Eritrea,ERI,State of Eritrea,Africa,Eastern Africa,36.32318891779812,12.455415757695675,43.08122602720016,17.998307399970315,country
+Spain,ESP,Kingdom of Spain,Europe,Southern Europe,-9.392883673530648,35.946850083961465,3.0394840836805486,43.74833771420099,country
+Estonia,EST,Republic of Estonia,Europe,Northern Europe,23.339795363058645,57.47452830670383,28.13169925305175,59.61109039981133,country
+Ethiopia,ETH,Federal Democratic Republic of Ethiopia,Africa,Eastern Africa,32.954180000000235,3.422060000000215,47.789420000000064,14.959430000000168,country
+Finland,FIN,Republic of Finland,Europe,Northern Europe,20.645592889089528,59.846373196036225,31.516092156711125,70.16419302029625,country
+Fiji,FJI,Republic of Fiji,Oceania,Melanesia,-179.99999999999997,-18.287989999999965,180.00000000000014,-16.02088225674123,country
+Falkland Islands,B12,Falkland Islands,South America,South America,-61.2,-52.300000000000004,-57.75,-51.10000000000001,country
+France,FRA,French Republic,Europe,Western Europe,-54.52475419779975,2.0533891870160375,9.560016310269134,51.14850617126186,country
+Gabon,GAB,Gabonese Republic,Africa,Middle Africa,8.79799563969317,-3.978826592630547,14.425455763413595,2.3267575138399934,country
+United Kingdom,GBR,United Kingdom of Great Britain and Northern Ireland,Europe,Northern Europe,-7.572167934591079,49.95999990498109,1.681530795914739,58.63500010846633,country
+Georgia,GEO,Georgia,Asia,Western Asia,39.955008579270924,41.06444468847411,46.63790815612058,43.553104153002316,country
+Ghana,GHA,Republic of Ghana,Africa,Western Africa,-3.244370083011262,4.710462144383371,1.0601216976049272,11.098340969278722,country
+Guinea,GIN,Republic of Guinea,Africa,Western Africa,-15.130311245168173,7.309037380396376,-7.832100389019188,12.586182969610194,country
+The Gambia,GMB,Republic of the Gambia,Africa,Western Africa,-16.841524624081273,13.130284125211332,-13.844963344772408,13.876491807505985,country
+Guinea-Bissau,GNB,Republic of Guinea-Bissau,Africa,Western Africa,-16.677451951554573,11.040411688679526,-13.700476040084325,12.628170070847347,country
+Equatorial Guinea,GNQ,Republic of Equatorial Guinea,Africa,Middle Africa,9.305613234096256,1.010119533691494,11.285078973036462,2.2838660750377358,country
+Greece,GRC,Hellenic Republic,Europe,Southern Europe,20.15001590341052,34.91998769788961,26.604195590936285,41.82690460872473,country
+Greenland,GRL,Greenland,North America,Northern America,-73.297,60.03676000000001,-12.20855,83.64513000000001,country
+Guatemala,GTM,Republic of Guatemala,North America,Central America,-92.22924862340628,13.735337632700734,-88.22502275262202,17.819326076727478,country
+Guyana,GUY,Co-operative Republic of Guyana,South America,South America,-61.410302903881956,1.2680882836925207,-56.539385748914555,8.367034816924047,country
+Honduras,HND,Republic of Honduras,North America,Central America,-89.35332597528281,12.984685777229004,-83.14721900097413,16.00540578863439,country
+Croatia,HRV,Republic of Croatia,Europe,Southern Europe,13.656975538801191,42.47999136002932,19.39047570158459,46.50375092221981,country
+Haiti,HTI,Republic of Haiti,North America,Caribbean,-74.45803361682478,18.030992743395004,-71.62487321642283,19.915683905511912,country
+Hungary,HUN,Republic of Hungary,Europe,Eastern Europe,16.202298211337364,45.759481106136136,22.710531447040495,48.623854071642384,country
+Indonesia,IDN,Republic of Indonesia,Asia,South-Eastern Asia,95.29302615761733,-10.359987481327963,141.0338517600139,5.479820868344817,country
+India,IND,Republic of India,Asia,Southern Asia,68.1766451353734,7.965534776232332,97.40256147663614,35.494009507787766,country
+Ireland,IRL,Ireland,Europe,Northern Europe,-9.977085740590269,51.669301255899356,-6.032985398777611,55.13162221945487,country
+Iran,IRN,Islamic Republic of Iran,Asia,Southern Asia,44.10922529478234,25.0782370061185,63.31663170761959,39.71300263117705,country
+Iraq,IRQ,Republic of Iraq,Asia,Western Asia,38.792340529136084,29.09902517345229,48.567971225789755,37.385263576805755,country
+Iceland,ISL,Republic of Iceland,Europe,Northern Europe,-24.326184047939336,63.49638296167582,-13.60973222497981,66.52679230413587,country
+Israel,ISR,State of Israel,Asia,Western Asia,34.26543338393569,29.501326198844524,35.836396925608625,33.2774264592763,country
+Italy,ITA,Italian Republic,Europe,Southern Europe,6.749955275101712,36.6199872909954,18.480247023195403,47.11539317482644,country
+Jamaica,JAM,Jamaica,North America,Caribbean,-78.33771928578561,17.70111623785982,-76.19965857614164,18.524218451404778,country
+Jordan,JOR,Hashemite Kingdom of Jordan,Asia,Western Asia,34.92260257339143,29.197494615184453,39.19546837744497,33.378686428352225,country
+Japan,JPN,Japan,Asia,Eastern Asia,129.40846316947258,31.029579169228242,145.54313724180278,45.55148346616136,country
+Kazakhstan,KAZ,Republic of Kazakhstan,Asia,Central Asia,46.46644575377627,40.6623245305949,87.35997033076268,55.38525014914353,country
+Kenya,KEN,Republic of Kenya,Africa,Eastern Africa,33.893568969666944,-4.67677,41.85508309264397,5.506,country
+Kyrgyzstan,KGZ,Kyrgyz Republic,Asia,Central Asia,69.46488691597753,39.27946320246437,80.2599902688853,43.29833934180337,country
+Cambodia,KHM,Kingdom of Cambodia,Asia,South-Eastern Asia,102.34809939983302,10.48654368737523,107.61454796756243,14.570583807834282,country
+Republic of Korea,KOR,Republic of Korea,Asia,Eastern Asia,126.11739790253229,34.39004588473648,129.4683044780665,38.61224294692785,country
+Kosovo,B57,Republic of Kosovo,Europe,Southern Europe,20.070700000000045,41.84711000000004,21.77505000000002,43.27205000000009,country
+Kuwait,KWT,State of Kuwait,Asia,Western Asia,46.568713413281756,28.526062730416143,48.416094191283946,30.059069932570722,country
+Lao PDR,LAO,Lao Peoples Democratic Republic,Asia,South-Eastern Asia,100.11598758341785,13.881091009979956,107.5645251811039,22.464753119389304,country
+Lebanon,LBN,Lebanese Republic,Asia,Western Asia,35.126052687324545,33.08904002535628,36.61175011571589,34.644914048800004,country
+Liberia,LBR,Republic of Liberia,Africa,Western Africa,-11.438779466182055,4.355755113131963,-7.539715135111763,8.541055202666925,country
+Libya,LBY,Libya,Africa,Northern Africa,9.31941084151822,19.580470000000105,25.164820000000077,33.13699575452324,country
+Sri Lanka,LKA,Democratic Socialist Republic of Sri Lanka,Asia,Southern Asia,79.69516686393513,5.968369859232155,81.7879590188914,9.824077663609557,country
+Lesotho,LSO,Kingdom of Lesotho,Africa,Southern Africa,26.999261915807637,-30.645105889612225,29.32516645683259,-28.64750172293757,country
+Lithuania,LTU,Republic of Lithuania,Europe,Northern Europe,21.055800408622417,53.905702216194754,26.58827924979039,56.37252838807963,country
+Luxembourg,LUX,Grand Duchy of Luxembourg,Europe,Western Europe,5.674051954784829,49.44266714130703,6.242751092156993,50.128051662794235,country
+Latvia,LVA,Republic of Latvia,Europe,Northern Europe,21.055800408622417,55.615106919977634,28.176709425577997,57.97015696881519,country
+Morocco,MAR,Kingdom of Morocco,Africa,Northern Africa,-17.02042843267577,21.420734157796687,-1.1245511539661948,35.75998810479399,country
+Moldova,MDA,Republic of Moldova,Europe,Eastern Europe,26.619336785597795,45.488283189468376,30.024658644335375,48.467119452501116,country
+Madagascar,MDG,Republic of Madagascar,Africa,Eastern Africa,43.254187046081,-25.60143442149309,50.47653689962553,-12.04055673589197,country
+Mexico,MEX,United Mexican States,North America,Central America,-117.12775999999985,14.538828640190957,-86.81198238803296,32.72082999999992,country
+Macedonia,MKD,Former Yugoslav Republic of Macedonia,Europe,Southern Europe,20.46315000000004,40.84272695572588,22.952377150166512,42.32025950781508,country
+Mali,MLI,Republic of Mali,Africa,Western Africa,-12.170750291380301,10.096360785355444,4.2702099951438015,24.974574082941,country
+Myanmar,MMR,Republic of the Union of Myanmar,Asia,South-Eastern Asia,92.30323449093868,9.932959906448545,101.18000532430754,28.335945136014345,country
+Montenegro,MNE,Montenegro,Europe,Southern Europe,18.450000000000045,41.87754999999993,20.339800000000082,43.52384000000001,country
+Mongolia,MNG,Mongolia,Asia,Eastern Asia,87.75126427607671,41.59740957291635,119.7728239278975,52.04736603454669,country
+Mozambique,MOZ,Republic of Mozambique,Africa,Eastern Africa,30.17948123548183,-26.742191664336197,40.775475294768995,-10.317096042525698,country
+Mauritania,MRT,Islamic Republic of Mauritania,Africa,Western Africa,-17.06342322434257,14.616834214735505,-4.923337368174231,27.395744126896005,country
+Malawi,MWI,Republic of Malawi,Africa,Eastern Africa,32.68816531752313,-16.801299737213093,35.77190473810836,-9.23059905358906,country
+Malaysia,MYS,Malaysia,Asia,South-Eastern Asia,100.08575687052709,0.7731314152009929,119.18190392463995,6.928052883324568,country
+Namibia,NAM,Republic of Namibia,Africa,Southern Africa,11.734198846085121,-29.04546192801728,25.08444339366457,-16.94134286872407,country
+New Caledonia,NCL,New Caledonia,Oceania,Melanesia,164.029605747736,-22.39997608814695,167.1200114280869,-20.105645847252354,country
+Niger,NER,Republic of Niger,Africa,Western Africa,0.29564639649521496,11.660167141155966,15.903246697664315,23.471668402596435,country
+Nigeria,NGA,Federal Republic of Nigeria,Africa,Western Africa,2.6917016943562544,4.240594183769517,14.577177768622533,13.865923977102298,country
+Nicaragua,NIC,Republic of Nicaragua,North America,Central America,-87.66849341505471,10.726839097532446,-83.14721900097413,15.016267198135537,country
+Netherlands,NLD,Kingdom of the Netherlands,Europe,Western Europe,3.3149711442285366,50.80372101501058,7.092053256873896,53.510403347378144,country
+Norway,NOR,Kingdom of Norway,Europe,Northern Europe,4.992078077829007,58.078884182357285,31.293418409965483,80.6571442735935,country
+Nepal,NPL,Nepal,Asia,Southern Asia,80.08842451367627,26.397898057556077,88.17480431514092,30.42271698660863,country
+New Zealand,NZL,New Zealand,Oceania,Australia and New Zealand,166.50914432196473,-46.641235446967855,178.51709354076283,-34.45066171645034,country
+Oman,OMN,Sultanate of Oman,Asia,Western Asia,52.00000980002224,16.65105113368898,59.80806033716286,26.39593435312895,country
+Pakistan,PAK,Islamic Republic of Pakistan,Asia,Southern Asia,60.87424848820879,23.69196503345671,77.83745079947457,37.13303091078912,country
+Panama,PAN,Republic of Panama,North America,Central America,-82.96578304719736,7.220541490096537,-77.24256649444008,9.611610012241528,country
+Peru,PER,Republic of Peru,South America,South America,-81.41094255239946,-18.34797535570887,-68.66507971868963,-0.05720549886486026,country
+Philippines,PHL,Republic of the Philippines,Asia,South-Eastern Asia,117.17427453010069,5.58100332277229,126.53742394420064,18.50522736253754,country
+Papua New Guinea,PN1,Independent State of Papua New Guinea,Oceania,Melanesia,141.00021040259188,-10.652476088099931,156.01996544822478,-2.5000021297340282,country
+Poland,POL,Republic of Poland,Europe,Eastern Europe,14.074521111719491,49.02739533140962,24.029985792748903,54.85153595643291,country
+Puerto Rico,PRI,Commonwealth of Puerto Rico,North America,Caribbean,-67.24242753769435,17.946553453030077,-65.59100379094295,18.52060110114435,country
+Dem. Rep. Korea,PRK,Democratic Peoples Republic of Korea,Asia,Eastern Asia,124.26562462778531,37.669070542952724,130.78000735893113,42.985386867843786,country
+Portugal,PR1,Portuguese Republic,Europe,Southern Europe,-9.526570603869715,36.83826854099627,-6.389087693700915,42.28046865495034,country
+Paraguay,PRY,Republic of Paraguay,South America,South America,-62.685057135657885,-27.548499037386293,-54.29295956075452,-19.342746677327426,country
+Palestine,PSX,West Bank and Gaza,Asia,Western Asia,34.92740848159457,31.353435370401414,35.54566531753454,32.53251068778894,country
+Qatar,QAT,State of Qatar,Asia,Western Asia,50.74391076030369,24.556330878186724,51.60670047384881,26.11458201751587,country
+Romania,ROU,Romania,Europe,Eastern Europe,20.220192498462836,43.68844472917472,29.62654340995877,48.22088125263035,country
+Russian Federation,RUS,Russian Federation,Europe,Eastern Europe,-179.99999999999997,41.15141612402135,180.00000000000014,81.25039999999996,country
+Rwanda,RWA,Republic of Rwanda,Africa,Eastern Africa,29.024926385216787,-2.917857761246097,30.816134881317712,-1.1346591121504161,country
+Western Sahara,B28,Sahrawi Arab Democratic Republic,Africa,Northern Africa,-17.06342322434257,20.999752102130827,-8.665124477564191,27.656425889592356,country
+Saudi Arabia,SAU,Kingdom of Saudi Arabia,Asia,Western Asia,34.63233605320798,16.347891343648683,55.666659376859826,32.16100881604267,country
+Sudan,SDN,Republic of the Sudan,Africa,Northern Africa,21.93680999999998,8.619729712933065,38.410089959473225,22.0,country
+South Sudan,SDS,Republic of South Sudan,Africa,Eastern Africa,23.886979580860668,3.5091699999999832,35.2980071182331,12.248007757149992,country
+Senegal,SEN,Republic of Senegal,Africa,Western Africa,-17.62504269049066,12.332089952031057,-11.467899135778524,16.59826365810281,country
+Solomon Islands,SLB,,Oceania,Melanesia,156.49135786359133,-10.82636728276212,162.39864586817222,-6.59933847415148,country
+Sierra Leone,SLE,Republic of Sierra Leone,Africa,Western Africa,-13.246550258832515,6.7859168563057475,-10.23009355309128,10.046983954300558,country
+El Salvador,SLV,Republic of El Salvador,North America,Central America,-90.09555457229098,13.149016831917137,-87.7235029772294,14.424132798719114,country
+Somaliland,B30,Republic of Somaliland,Africa,Eastern Africa,42.55875999999995,7.996876532417389,48.94820641459347,11.462039699748857,country
+Somalia,SOM,Federal Republic of Somalia,Africa,Eastern Africa,40.98105,-1.6832500000000001,51.13387,12.024640000000002,country
+Serbia,SRB,Republic of Serbia,Europe,Southern Europe,18.829820000000097,42.24522439706186,22.986018507588483,46.17172984474456,country
+Suriname,SUR,Republic of Suriname,South America,South America,-58.04469438336068,1.8176671411166012,-53.9580446030709,6.025291449401664,country
+Slovakia,SVK,Slovak Republic,Europe,Eastern Europe,16.879982944413,47.75842886005037,22.558137648211755,49.571574001659194,country
+Slovenia,SVN,Republic of Slovenia,Europe,Southern Europe,13.698109978905478,45.45231639259323,16.564808383864857,46.85238597267696,country
+Sweden,SWE,Kingdom of Sweden,Europe,Northern Europe,11.027368605196868,55.36173737245058,23.903378533633802,69.10624726020087,country
+Swaziland,SWZ,Kingdom of Swaziland,Africa,Southern Africa,30.67660851412964,-27.285879408478998,32.07166548028107,-25.66019052500895,country
+Syria,SYR,Syrian Arab Republic,Asia,Western Asia,35.70079796727475,32.312937526980775,42.34959109881177,37.2298725449041,country
+Chad,TCD,Republic of Chad,Africa,Middle Africa,13.540393507550789,7.421924546738012,23.886890000000108,23.409719999999993,country
+Togo,TGO,Togolese Republic,Africa,Western Africa,-0.04978471515994442,5.928837388528876,1.8652405127123188,11.018681748900804,country
+Thailand,THA,Kingdom of Thailand,Asia,South-Eastern Asia,97.37589643757354,5.691384182147715,105.58903852745016,20.417849636308187,country
+Tajikistan,TJK,Republic of Tajikistan,Asia,Central Asia,67.44221967964131,36.73817129164692,74.98000247589542,40.960213324541414,country
+Turkmenistan,TKM,Turkmenistan,Asia,Central Asia,52.50245975119615,35.270663967422294,66.54615034370022,42.75155101172305,country
+Timor-Leste,TLS,Democratic Republic of Timor-Leste,Asia,South-Eastern Asia,124.96868248911623,-9.393173109579294,127.33592817597463,-8.273344821814398,country
+Trinidad and Tobago,TTO,Republic of Trinidad and Tobago,North America,Caribbean,-61.95,10.0,-60.895,10.89,country
+Tunisia,TUN,Republic of Tunisia,Africa,Northern Africa,7.524481642292244,30.307556057246188,11.488787469131012,37.349994411766545,country
+Turkey,TUR,Republic of Turkey,Asia,Western Asia,26.04335127127254,35.82153473565367,44.793989699082005,42.141484890301314,country
+Taiwan,B77,,Asia,Eastern Asia,120.1061885926124,21.970571397382113,121.95124393116146,25.295458889257386,country
+Tanzania,TZA,United Republic of Tanzania,Africa,Eastern Africa,29.339997592900374,-11.720938002166747,40.31659000000002,-0.9499999999999886,country
+Uganda,UGA,Republic of Uganda,Africa,Eastern Africa,29.579466180141026,-1.4433224422297712,35.03599000000003,4.249884947362148,country
+Ukraine,UKR,Ukraine,Europe,Eastern Europe,22.085608351334855,44.36147858334407,40.08078901546935,52.335074571331695,country
+Uruguay,URY,Oriental Republic of Uruguay,South America,South America,-58.42707414410439,-34.952646579733624,-53.209588995971544,-30.109686374636127,country
+United States,USA,United States of America,North America,Northern America,-171.7911106028912,18.91619000000003,-66.96466000000001,71.35776357694175,country
+Uzbekistan,UZB,Republic of Uzbekistan,Asia,Central Asia,55.928917270741096,37.144994004864685,73.05541710804917,45.58680430763283,country
+Venezuela,VEN,Bolivarian Republic of Venezuela,South America,South America,-73.30495154488005,0.7244522159820121,-59.758284878159195,12.162307033736099,country
+Vietnam,VNM,Socialist Republic of Vietnam,Asia,South-Eastern Asia,102.17043582561358,8.599759629750494,109.33526981001722,23.352063300056912,country
+Vanuatu,VUT,Republic of Vanuatu,Oceania,Melanesia,166.62913699774649,-16.59784962327997,167.8448767438451,-14.626497084209603,country
+World,World,World,World,World,-180,-90,180,90,region
+Yemen,YEM,Republic of Yemen,Asia,Western Asia,42.60487267433362,12.585950425664876,53.10857262554751,19.000003363516058,country
+South Africa,ZAF,Republic of South Africa,Africa,Southern Africa,16.344976840895242,-34.81916635512371,32.830120477028885,-22.091312758067588,country
+Zambia,ZMB,Republic of Zambia,Africa,Eastern Africa,21.887842644953874,-17.961228936436484,33.48568769708359,-8.238256524288218,country
+Zimbabwe,ZWE,Republic of Zimbabwe,Africa,Eastern Africa,25.264225701608012,-22.271611830333935,32.84986087416439,-15.507786960515213,country

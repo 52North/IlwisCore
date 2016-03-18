@@ -155,6 +155,14 @@ bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     return false;
 }
 
+bool MasterCatalog::contains(quint64 iid) const
+{
+    Locker<std::recursive_mutex> lock(_guard);
+    auto query = QString("select * from mastercatalog where itemid = %1").arg(iid);
+    InternalDatabaseConnection db(query);
+    return db.next();
+}
+
 bool MasterCatalog::knownCatalogContent(const QUrl &path) const
 {
     Locker<std::recursive_mutex> lock(_guard);
@@ -231,7 +239,11 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
         if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
-          continue;
+            continue;
+        if ( mastercatalog()->contains(resource.id())){
+            updateItems({resource});
+            continue;
+        }
 
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
@@ -508,6 +520,9 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
     }else if ( name.left(9) == "code=rpr:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://tables/representation?code=%1").arg(shortname);
+    }if ( name.indexOf("code=ellipsoid:") == 0) {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://tables/ellipsoid?code=%1").arg(shortname);
     }
     QString tt =  name.left(12);
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
