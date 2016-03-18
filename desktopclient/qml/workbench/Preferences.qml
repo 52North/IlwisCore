@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../Global.js" as Global
 import "./preferences" as Preferences
+import "../controls" as Controls
 
 WorkBenchShifter {
     id : messageContainer
@@ -53,6 +54,9 @@ WorkBenchShifter {
         Preferences.PreferencesButton{
             imageSource : "../images/font20.png"
             labelText : qsTr("Fonts")
+        }
+        Controls.ColorPicker2{
+
         }
     }
 }
