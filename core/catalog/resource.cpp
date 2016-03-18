@@ -115,7 +115,6 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         checkUrl(tp);
     }
     _createTime = Time::now();
-    _modifiedTime = Time::now();
     if ( _container ==  INTERNAL_OBJECT ||
          (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
         QString path = context()->persistentInternalCatalog().toString();
@@ -136,7 +135,6 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
 {
     stringAsUrl(url.toString(), tp, isNew);
     _createTime = Time::now();
-    _modifiedTime = Time::now();
 }
 
 Resource::Resource(const QUrl& normalizedUrl,const QUrl &rawurl, quint64 tp, bool isNew) :
@@ -149,7 +147,6 @@ Resource::Resource(const QUrl& normalizedUrl,const QUrl &rawurl, quint64 tp, boo
 {
     stringAsUrl(normalizedUrl.toString(), tp, isNew);
     _createTime = Time::now();
-    _modifiedTime = Time::now();
 }
 
 Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
@@ -175,8 +172,6 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
         addContainer(nm.left(index));
     }
     _createTime = Time::now();
-    _modifiedTime = Time::now();
-
 }
 
 Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(),
@@ -220,9 +215,13 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
 {
     if ( name() == nm)
         return;
+    if ( nm == code() && name() != sUNDEF) //names and codes are usually different particular when there is al
+        return;
 
+    QString dummy = name();
     Identity::name(nm);
-    if ( id() != iUNDEF && _createTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
+
+    if ( id() != iUNDEF && _modifiedTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
         mastercatalog()->changeResource(id(), "name",nm);
     }
     if ( !adaptNormalizedUrl || nm == sUNDEF)
