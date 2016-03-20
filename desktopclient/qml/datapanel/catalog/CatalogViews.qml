@@ -48,7 +48,7 @@ TabView {
     states: [
     State {
              name : "sized"
-             PropertyChanges { target: catalogPanels; height : parent.height - 320}
+             PropertyChanges { target: catalogPanels; height : parent.height - 330}
          },
          State {
              name : "maxed"
