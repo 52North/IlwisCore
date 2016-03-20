@@ -258,8 +258,23 @@ void RootDrawer::cleanUp()
 
 bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
+    if ( prepType != ptALL && hasType(prepType, ptRESET)){
+        cleanUp();
+        _coordinateSystem.set(0);
+//        _zoomRect = Envelope();
+//        _coverageRect = Envelope();
+//        _viewEnvelope = Envelope();
+//        _aspectRatioCoverage = _aspectRatioView = 0;
+        _is3D = false;
+        _zoomScale = 1;
+
+        return true;
+    }
+
     if(!ComplexDrawer::prepare(prepType, options))
         return false;
+
+
 
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         if (!hasDrawer("GridDrawer", DrawerInterface::dtPOST)){
