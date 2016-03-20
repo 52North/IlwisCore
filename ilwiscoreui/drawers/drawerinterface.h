@@ -74,7 +74,7 @@ class ILWISCOREUISHARED_EXPORT DrawerInterface : public QObject, public Identity
 public:
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
-                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048,ptSHADERS=4096, ptALL=4294967295};
+                         ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048,ptSHADERS=4096, ptRESET=8192,ptALL=4294967295};
     enum ColorValueMeaning{cvmFRACTION, cvmTRUEVALUE};
     enum DrawerType{dtDONTCARE=0, dtPOST=1, dtPRE=2, dtMAIN=4, dtALL=0xFFFFFFFF};
 
