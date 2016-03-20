@@ -166,17 +166,20 @@ GridDrawer::GridDrawer(DrawerInterface *parentDrawer, RootDrawer *rootdrawer, co
 
 bool GridDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
-    if (!hasDrawer("PrimaryGridDrawer")){
-        SubGridDrawer *primarygrid = new PrimaryGridDrawer(this,rootDrawer(),options);
-        primarygrid->prepare(DrawerInterface::ptALL, options);
-        addDrawer(primarygrid,DrawerInterface::dtMAIN,iUNDEF,"PrimaryGridDrawer");
-        SubGridDrawer *secondarygrid = new SecondaryGridDrawer(this,rootDrawer(),options);
-        secondarygrid->prepare(DrawerInterface::ptALL, options);
-        addDrawer(secondarygrid,DrawerInterface::dtMAIN,iUNDEF,"SecondaryGridDrawer");
-    }
+    if ( rootDrawer()->coordinateSystem().isValid()){
+        if (!hasDrawer("PrimaryGridDrawer")){
+            SubGridDrawer *primarygrid = new PrimaryGridDrawer(this,rootDrawer(),options);
+            primarygrid->prepare(DrawerInterface::ptALL, options);
+            addDrawer(primarygrid,DrawerInterface::dtMAIN,iUNDEF,"PrimaryGridDrawer");
+            SubGridDrawer *secondarygrid = new SecondaryGridDrawer(this,rootDrawer(),options);
+            secondarygrid->prepare(DrawerInterface::ptALL, options);
+            addDrawer(secondarygrid,DrawerInterface::dtMAIN,iUNDEF,"SecondaryGridDrawer");
+        }
 
-    _prepared |= DrawerInterface::ptSHADERS; // there are no shaders in this drawer, childeren do the drawing
-    return ComplexDrawer::prepare(prepType, options);
+        _prepared |= DrawerInterface::ptSHADERS; // there are no shaders in this drawer, childeren do the drawing
+        return ComplexDrawer::prepare(prepType, options);
+    }
+    return true;
 }
 
 DrawerInterface::DrawerType GridDrawer::drawerType() const
