@@ -134,7 +134,7 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
             InternalDatabaseConnection db("Select code from projection where name='" + proj + "'");
             if ( db.next()){
                 QString code = db.value(0).toString();
-                _projection.prepare("ilwis://tables/projection?code=" + code);
+                _projection.prepare("ilwis://system/projection?code=" + code);
             }
         }
         if ( !_projection.isValid()){
@@ -157,7 +157,7 @@ Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoor
             InternalDatabaseConnection db("Select code from ellipsoid where name='" + ell + "'");
             if ( db.next()){
                 QString code = db.value(0).toString();
-                _ellipsoid.prepare("ilwis://tables/ellipsoid?code=" + code);
+                _ellipsoid.prepare("ilwis://system/ellipsoid?code=" + code);
             }
         }
         if ( _expression.parameterCount() == 4){
