@@ -166,7 +166,7 @@ Item {
             Controls.WideButton{
                 image : "../images/mapview.png"
                 label : qsTr("Generate previews\nof selected coverages")
-                width : buttonRow.buttonWidth
+                width : parent.width
                 height : 40
 
                 onClicked: {
@@ -174,9 +174,10 @@ Item {
                    frame.makeResourceList()
                 }
             }
+
             Image {
                 id : page
-                width : parent.width
+                width : parent.width - 5
                 height : 160
                 source : "../../images/page.png"
 
@@ -200,6 +201,7 @@ Item {
                         var list = mastercatalog.selectedData
                         frame.resources = []
                         currentMap = 0
+                        progress.maximumValue = list.length
                         for(var i=0; i < list.length; ++i){
                             var resource = list[i]
                             if ( resource.typeName === "rastercoverage" ||
@@ -217,6 +219,7 @@ Item {
                     function finalizeDraw() {
                         frame.resources[currentMap].unload()
                         ++currentMap
+                        progress.value = currentMap
                         setResource()
                     }
 
@@ -234,8 +237,18 @@ Item {
                         }
 
                 }
+                ProgressBar{
+                    id : progress
+                    height : page.height - 10
+                    width : 15
+                    anchors.left: frame.right
+                    orientation: Qt.Vertical
+                    minimumValue: 0
+                    maximumValue: 0
+                }
             }
         }
+
     }
 }
 
