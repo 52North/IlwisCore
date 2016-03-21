@@ -167,7 +167,7 @@ bool PercentileFilterStretch::execute(ExecutionContext *ctx, SymbolTable& symTab
     if ( resource && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(outputRaster);
-        ctx->setOutput(symTable, value, outputRaster->name(), itRASTER, outputRaster->source() );
+        ctx->setOutput(symTable, value, outputRaster->name(), itRASTER, outputRaster->resource() );
     }
     return resource;
 }
