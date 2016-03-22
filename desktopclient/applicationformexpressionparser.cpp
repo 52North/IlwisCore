@@ -440,7 +440,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
 
     std::vector<FormParameter> outparameters = getOutputParameters(resource);
     QString results;
-    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
+    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
     QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
     columnStart += exclusiveGroup;
     int width = 0;
