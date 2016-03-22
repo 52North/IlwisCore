@@ -12,6 +12,7 @@
 #include "kernel_global.h"
 #include "ilwistypes.h"
 #include "operationmetadata.h"
+#include "ilwisobjectmodel.h"
 #include "workflow.h"
 #include "nodepropobject.h"
 #include "edgepropobject.h"
@@ -40,6 +41,7 @@ public:
 
     Q_PROPERTY(QQmlListProperty<NodePropObject>  nodes READ getNodes CONSTANT)
     Q_PROPERTY(QQmlListProperty<EdgePropObject>  edges READ getEdges CONSTANT)
+    Q_PROPERTY(QQmlListProperty<IlwisObjectModel>  selectedOperation READ getSelectedOperation NOTIFY selectedOperationChanged)
 
 
     /*!
@@ -187,11 +189,19 @@ public:
      * \return A list of qvariantmaps for the condition list view
       */
     Q_INVOKABLE QVariantList getConditions(int containerId);
+    void selectedOperation(const QString &id);
+
+     QQmlListProperty<IlwisObjectModel> getSelectedOperation() ;
+    Q_INVOKABLE void setSelectedOperationId(const QString &selectedOperationId);
+signals:
+    void selectedOperationChanged();
 
 private:
     Ilwis::IWorkflow _workflow;
     QList<NodePropObject *> _nodeProps;
     QList<EdgePropObject *> _edgeProps;
+    QList<IlwisObjectModel *> _selectedOperation;
+
     int _inputParameterCount = 0;
 };
 
