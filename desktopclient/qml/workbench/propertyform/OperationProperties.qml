@@ -75,7 +75,7 @@ Rectangle {
         width : parent.width
         height : 110
         border.width : 1
-        border.color : "grey"
+        border.color : Global.edgecolor
         ScrollView {
             anchors.fill: parent
             anchors.margins: 1
@@ -102,7 +102,7 @@ Rectangle {
         width : parent.width
         height : 30
         border.width : 1
-        border.color : "grey"
+        border.color : Global.edgecolor
         ScrollView {
             anchors.fill: parent
             anchors.margins: 1

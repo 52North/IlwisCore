@@ -67,6 +67,8 @@ Item {
                 focus: true
                 clip : true
 
+
+
                 Component.onCompleted: {
                     manager.setLayerListName(layersList.objectName)
                 }
