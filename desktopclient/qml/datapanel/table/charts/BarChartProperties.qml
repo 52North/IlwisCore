@@ -78,7 +78,7 @@ Rectangle {
                         text : qsTr("Fill")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : fillcolor
 
                         onSelectedColorChanged: {
@@ -98,7 +98,7 @@ Rectangle {
                         text : qsTr("Stroke")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : strokecolor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){

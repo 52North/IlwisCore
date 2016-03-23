@@ -10,7 +10,7 @@ Rectangle {
     width: parent.width
     height: 10
 
-    Controls.ColorPicker{
+    Controls.ColorPicker2{
         x : 4
         y : 4
 

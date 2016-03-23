@@ -99,14 +99,10 @@ Item {
             enabled: primaryGridEnabled.checked
         }
 
-        Controls.ColorPicker{
+        Controls.ColorPicker2{
             onSelectedColorChanged: {
                 editor.lineColor = selectedColor
             }
-            lefttopColor: "red"
-            leftbottomColor: "yellow"
-            righttopColor: "white"
-            rightbottomColor: "black"
             enabled: primaryGridEnabled.checked
         }
     }

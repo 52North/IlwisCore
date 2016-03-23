@@ -43,7 +43,7 @@ Column {
             text : qsTr("Color")
         }
 
-        Controls.ColorPicker{
+        Controls.ColorPicker2{
             id : palettecolorPicker
             anchors.left : colorlabel.right
         }
