@@ -292,7 +292,6 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
     trq()->inform("\nWriting...\n");
     trq()->stop();
 
-
     bool resource = true;
     if ( resource && ctx != 0) {
         QVariant value;

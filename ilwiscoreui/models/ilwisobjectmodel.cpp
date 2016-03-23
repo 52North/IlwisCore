@@ -687,6 +687,14 @@ CatalogModel *IlwisObjectModel::catalog(const QString &id)
     return new CatalogModel(res, this);
 }
 
+void IlwisObjectModel::unload()
+{
+    if ( _ilwisobject.isValid() && hasType(_ilwisobject->ilwisType(), itRASTER) ){
+        IRasterCoverage raster= _ilwisobject.as<RasterCoverage>();
+        raster->unloadBinary();
+    }
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();

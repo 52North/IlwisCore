@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import LayersView 1.0
+import UIContextModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
@@ -22,17 +23,19 @@ Item {
                 id : lyrview
                 anchors.fill: parent
                 property var resource
-                anchors.margins: 2
-                objectName : "thumb_generator_mainui"
-                onResourceChanged: {
-                    if ( resource){
-                        var cmd = "adddrawer(" + viewerId + "," + resource.url +",\"itemid=" + resource.id + "\"," + resource.typeName + ")"
-                        addCommand(cmd)
-                        setAttribute("GridDrawer", {"active" : false})
-                        resource.realizeThumbPath()
-                        setAttribute("View",{"saveimage" : resource.imagePath})
-                    }
+                property var controller
+                function setResource(object, res){
+                    lyrview.associate(object.objectName,"drawEnded")
+                    var cmd = "adddrawer(" + viewerId + "," + res.url +",\"itemid=" + res.id + "\"," + res.typeName + ")"
+                    addCommand(cmd)
+                    setAttribute("GridDrawer", {"active" : false})
+                    res.realizeThumbPath()
+                    setAttribute("View",{"saveimage" : res.imagePath})
+                    lyrview.update()
+
                 }
+
+                anchors.margins: 2
             }
         }
 
@@ -163,33 +166,61 @@ Item {
             Controls.WideButton{
                 image : "../images/mapview.png"
                 label : qsTr("Generate previews\nof selected coverages")
-                width : buttonRow.buttonWidth
+                width : parent.width
                 height : 40
+
                 onClicked: {
-                    var list = mastercatalog.selectedData
-                    for(var i=0; i < list.length; ++i){
-                        var resource = list[i]
-                        if ( resource.typeName === "rastercoverage" ||
-                                resource.typeName === "featurecoverage" ||
-                                resource.typeName === "pointcoverage" ||
-                                resource.typeName === "linecoverage" ||
-                                resource.typeName === "polygoncoverage")
-                        frame.setResource(resource)
-                    }
+
+                   frame.makeResourceList()
                 }
             }
+
             Image {
                 id : page
-                width : parent.width
+                width : parent.width - 5
                 height : 160
                 source : "../../images/page.png"
 
+
+
                 Rectangle {
                     id : frame
-                    function setResource(res){
-                        imageLoader.sourceComponent = null
-                        imageLoader.sourceComponent = layerDrawer
-                        imageLoader.item.resource = res
+                    objectName : uicontext.uniqueName()
+                    property var resources : []
+                    property int currentMap : 0
+
+                    function setResource(){
+                        if ( frame.resources.length > 0 && frame.currentMap < frame.resources.length){
+                            imageLoader.sourceComponent = null
+                            imageLoader.sourceComponent = layerDrawer
+                            imageLoader.item.setResource(frame, frame.resources[currentMap])
+                        }
+                    }
+
+                    function makeResourceList() {
+                        var list = mastercatalog.selectedData
+                        frame.resources = []
+                        currentMap = 0
+                        progress.maximumValue = list.length
+                        for(var i=0; i < list.length; ++i){
+                            var resource = list[i]
+                            if ( resource.typeName === "rastercoverage" ||
+                                    resource.typeName === "featurecoverage" ||
+                                    resource.typeName === "pointcoverage" ||
+                                    resource.typeName === "linecoverage" ||
+                                    resource.typeName === "polygoncoverage")
+                                frame.resources.push(resource)
+                        }
+                        setResource()
+
+
+                    }
+
+                    function finalizeDraw() {
+                        frame.resources[currentMap].unload()
+                        ++currentMap
+                        progress.value = currentMap
+                        setResource()
                     }
 
                     anchors.left : parent.left
@@ -206,8 +237,18 @@ Item {
                         }
 
                 }
+                ProgressBar{
+                    id : progress
+                    height : page.height - 10
+                    width : 15
+                    anchors.left: frame.right
+                    orientation: Qt.Vertical
+                    minimumValue: 0
+                    maximumValue: 0
+                }
             }
         }
+
     }
 }
 

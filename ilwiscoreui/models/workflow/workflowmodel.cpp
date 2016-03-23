@@ -411,3 +411,19 @@ QVariantList WorkflowModel::getConditions(int containerId)
 
     return results;
 }
+
+void WorkflowModel::setSelectedOperationId(const QString& id)
+{
+    _selectedOperation.clear();
+    Resource res = mastercatalog()->id2Resource(id.toULongLong());
+    if ( res.isValid()){
+        IlwisObjectModel *iomodel = new IlwisObjectModel(res,this);
+        _selectedOperation.append(iomodel);
+    }
+}
+
+ QQmlListProperty<IlwisObjectModel> WorkflowModel::getSelectedOperation()
+{
+   return QQmlListProperty<IlwisObjectModel>(this, _selectedOperation) ;
+}
+

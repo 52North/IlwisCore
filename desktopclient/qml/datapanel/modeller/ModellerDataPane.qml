@@ -179,21 +179,6 @@ Item {
                 transform : Scale{
                     id : tform
                 }
-//                MouseArea {
-//                    anchors.fill: parent
-//                    propagateComposedEvents: true
-//                    onWheel: {
-//                        if(wheel.angleDelta.y > 0){  // zoom in
-//                            modellerDataPane.canvasZoomIn();
-//                        }
-//                        else{                        // zoom out
-//                            modellerDataPane.canvasZoomOut();
-//                        }
-//                    }
-//                    onPressed:{mouse.accepted = false}
-//                    onPositionChanged:{mouse.accepted = false}
-//                    onReleased:{mouse.accepted = false}
-//                }
             }
 
 

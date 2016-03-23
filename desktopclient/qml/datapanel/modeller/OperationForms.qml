@@ -7,7 +7,9 @@ import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
 import "../../workbench" as Bench
+import "../../workbench/propertyform" as PropertyForm
 import "../../Global.js" as Global
+import "workflow/forms" as Forms
 
 Rectangle {
     id : operationForm
@@ -25,8 +27,8 @@ Rectangle {
     function showRunForm(metaid, operationNames, parameterIndexes) {
         var validValues = [], parameterindex, action;
 
-        if (appFrame.currentAppForm != null) {
-            validValues = appFrame.currentAppForm.formresult.split('|')
+        if (operationFormScrollView.appForm.currentAppForm != null) {
+            validValues = operationFormScrollView.appForm.currentAppForm.formresult.split('|')
             for (var i = 0; i < parameterIndexes.length; i++) {
                 parameterindex = parameterIndexes[i].split('|');
                 action = parameterindex[1];
@@ -42,9 +44,10 @@ Rectangle {
         }
         var form = formbuilder.index2Form(metaid, true, false, [], operationNames, validValues)
         operationid = metaid
-        appFrame.formQML = form
-        appFrame.formTitle = qsTr("Set run values for workflow")
-        appFrame.opacity = 1
+
+        operationFormScrollView.appForm.formQML = form
+        operationFormScrollView.appForm.formTitle = qsTr("Set run values for workflow")
+        operationFormScrollView.appForm.opacity = 1
         saveButtonEnabled = false
         conditionIds = ""
         //canvas.workflow.resetParameterEntrySet()
@@ -79,23 +82,26 @@ Rectangle {
     function fillAppFrame(metaid, title, output, showEmpty, hiddenFields, constantValues) {
         var form = formbuilder.index2Form(metaid, output, showEmpty, hiddenFields, {}, constantValues)
         operationid = metaid
-        appFrame.formQML = ""
-        appFrame.formQML = form
-        appFrame.formTitle = title
-        appFrame.opacity = 1
+        operationFormScrollView.appForm.formQML = ""
+        operationFormScrollView.appForm.formQML = form
+        operationFormScrollView.appForm.formTitle = title
+        operationFormScrollView.appForm.opacity = 1
+        canvas.workflow.setSelectedOperationId(metaid)
+        props.model = canvas.workflow.selectedOperation
+
     }
 
     /**
       Executes the form
       */
     function executeForm() {
-        appFrame.doExecute(operationid)
+        operationFormScrollView.appForm.doExecute(operationid)
         return appFrame.currentAppForm.formresult
     }
 
     function clearOperationForm() {
-        appFrame.formTitle = "Nothing selected"
-        appFrame.formQML = ""
+        operationFormScrollView.appForm.formTitle = "Nothing selected"
+        operationFormScrollView.appForm.formQML = ""
         itemId = -1
         saveButtonEnabled = false
         conditionIds = ""
@@ -104,57 +110,53 @@ Rectangle {
     BorderImage {
         id : title
         width: parent.width
-        height : appFrame.formTitle != "" ? 25 : 0
-        opacity : appFrame.formTitle != "" ? 1 : 0
+        height : 25
+        opacity : 1
         anchors.bottomMargin: operationForm.formTitle != "" ? 20 : 0
         source : "../../images/headerblue2CS1.png"
         border { left: 15; top: 0; right: 15; bottom: 0 }
         smooth : true
         Text {
-            text : appFrame.formTitle
+            text : operationFormScrollView.appForm.formTitle
             font.pointSize: 11
             x : 5
         }
     }
-
-    ScrollView{
-        id: operationFormScrollView
-        width: parent.width
-        height: saveButtonEnabled ? parent.height - 60 : parent.height - 30
+    SplitView{
+        width : parent.width
+        height : saveButtonEnabled ? parent.height - 60 : parent.height - 30
         anchors.top: title.bottom
+        anchors.topMargin: 3
+        Item {
+            id: form
+            width: 440
+            height: parent.height
 
-        Bench.ApplicationForm{
-            id : appFrame
-            width : operationForm.width - 20
-            height : operationForm.height - 25 < 0 ?  0 : operationForm.height - 25
-            opacity : 0
-            showTitle: false
-        }
-    }
-    Button {
-        id : saveConstantInputButton
-        height : saveButtonEnabled ? 25 : 0
-        width : 70
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: operationFormScrollView.bottom
+            Forms.OperationForm{
+                id : operationFormScrollView
+                container : operationForm
+                height : parent.height - saveConstantInputButton.height - 10
+            }
 
-        Image {
-            height : parent.height
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: saveConstantInputText.left
 
-            source : iconsource("save20.png")
-        }
-        Text {
-            height : parent.height
-            id : saveConstantInputText
-            text: saveButtonEnabled ? 'Save' : ""
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
+            Forms.AppFormApplyButton{
+                id : saveConstantInputButton
+                height : saveButtonEnabled ? 25 : 0
+                width : 70
+                x: Math.min(350, operationFormScrollView.width - 60)
+                anchors.top: operationFormScrollView.bottom
+            }
+
         }
 
-        onClicked: {
-            asignConstantInputData()
+        Rectangle {
+            height:parent.height
+            ListView {
+                id : props
+                anchors.fill: parent
+                property int lastIndex : 0
+                delegate : PropertyForm.DPropertyForm{}
+            }
         }
     }
 

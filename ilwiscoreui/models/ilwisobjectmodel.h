@@ -58,6 +58,7 @@ public:
     Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
     Q_INVOKABLE OperationModel *operation(const QString& id);
     Q_INVOKABLE CatalogModel *catalog(const QString& id);
+    Q_INVOKABLE void unload();
 
 
     bool isValid() const;
