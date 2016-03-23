@@ -329,7 +329,7 @@ QString OperationCatalogModel::modifyTableOutputUrl(const QString& output, const
  * @param parameters the input and output parameters that the user filled in
  */
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters) {
-    if ( operationid == 0 || parameters == "")
+    if (  parameters == "")
         return sUNDEF;
 
     Resource operationresource = mastercatalog()->id2Resource(operationid);
