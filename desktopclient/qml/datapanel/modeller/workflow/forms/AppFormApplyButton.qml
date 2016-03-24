@@ -32,7 +32,4 @@ Button {
     onClicked: {
         asignConstantInputData()
     }
-    Component.onCompleted: {
-        console.debug(saveButtonEnabled)
-    }
 }

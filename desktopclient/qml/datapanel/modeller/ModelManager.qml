@@ -11,25 +11,26 @@ Rectangle {
     id : modelmanager
     width: parent.width
     height: 300
+    property var activeEditor
+
+    function setLayerIndex(index){
+        modelLayerOptions.item.setLayerIndex(index)
+    }
 
     /**
       Calls the newForm method and passes through the fields that should be hidden
       */
-    function showOperationFormWithHiddenFields(operation, itemId, constantValues, hiddenFields){
-        forms.item.showOperationFormWithHiddenFields(operation, itemId, constantValues, hiddenFields)
+    function showForm(parms){
+        if ( activeEditor){
+            activeEditor.enable(modelLayerOptions.item.getPropertyIndex(), parms)
+        }
     }
 
     function showConditionForm(operationId, hiddenFields, constantValues, conditionIds){
-        forms.item.showConditionForm(operationId, hiddenFields, constantValues, conditionIds)
+        if ( activeEditor)
+            activeEditor.showConditionForm(operationId, hiddenFields, constantValues, conditionIds)
     }
 
-    function showOperationForm(operation, itemId, constantValues){
-        forms.item.showOperationForm(operation, itemId, constantValues)
-    }
-
-    function showRunForm(workflowid, operationNames, parameterIndexes){
-        forms.item.showRunForm(workflowid, operationNames, parameterIndexes)
-    }
 
     function retrieveRunFormValues(){
         return forms.item.retrieveRunFormValues()
@@ -48,7 +49,8 @@ Rectangle {
     }
 
     function clearOperationForm() {
-        forms.item.clearOperationForm()
+        if ( activeEditor)
+            activeEditor.clearOperationForm()
     }
 
     TabView{
@@ -60,7 +62,6 @@ Rectangle {
             if ( currentIndex === index){
                 if ( modelmanager.height <= 60){
                     datapane.state = "smaller"
-
                 }
                 else{
                     datapane.state = "bigger"
@@ -76,14 +77,6 @@ Rectangle {
             title: "Model layers"
             active: true
             LayerManagement{}
-        }
-
-        Tab {
-            id : forms
-            active: true
-            title: "Input form"
-
-            FormsTab{}
         }
 
         Tab{
