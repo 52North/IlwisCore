@@ -16,6 +16,8 @@ public:
 
     static quint64 createMetadata();
 
+    const int _PSERIES = 5;
+
 private:
     IIlwisObject _inputObj;
     IIlwisObject _inputZones;

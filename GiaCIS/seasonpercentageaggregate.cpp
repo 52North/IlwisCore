@@ -193,7 +193,7 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
                 int recS = lutSeason[zone];    // point to record with season data for current zone
                 int len = seasons[recS]._length;
                 if (len > 0) {
-                    accu = 0;
+                    int loc_accu = 0;
 
                     int recL = lutLowPerc[zone];
                     int recH = lutHighPerc[zone];
@@ -206,15 +206,20 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
                         double pl = *plow;
                         double val = *(iterIn + z);
                         if (val > 0) {
+                            // constrain the value to within the bounds of the <low_perc..high_perc>
+                            // so the percentage calculated runs from <0..100>
                             val = std::max(pl, std::min(val, ph));
-                            double calc = 100.0 * (ph - val) / (ph - pl);
+                            int calc = 100 * (ph - val) / (ph - pl);
+                            // Add the specific thresholds
                             if (calc <= 5) calc = 0;
                             else if (calc <= 10) calc = 10;
-                            accu += (calc * seasons[recS]._data[z]) / len;
+                            // Accumulate
+                            loc_accu += calc * seasons[recS]._data[z];
                         }
                         plow++;
                         phigh++;
                     }
+                    accu = loc_accu * 1.0 / len;
                 }
             }
         }
