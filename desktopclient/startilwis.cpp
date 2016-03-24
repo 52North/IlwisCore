@@ -122,7 +122,7 @@ void StartIlwis::init() {
         qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
         qmlRegisterType<ObjectCreator>("ObjectCreator", 1,0,"ObjectCreator");
         qmlRegisterType<IlwisObjectCreatorModel>("IlwisObjectCreatorModel", 1,0,"IlwisObjectCreatorModel");
-        qmlRegisterType<ScenarioDesignerModel>("ScenarioDesignerModel", 1,0,"ScenarioDesignerModel");
+        qmlRegisterType<ScenarioDesignerModel>("Modeller", 1,0,"Modeller");
         qmlRegisterType<WorkflowErrorModel>("WorkflowErrorModel", 1,0,"WorkflowErrorModel");
         qmlRegisterType<ErrorModel>("ErrorModel", 1,0,"ErrorModel");
         qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");

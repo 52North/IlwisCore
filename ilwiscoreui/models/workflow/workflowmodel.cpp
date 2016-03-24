@@ -38,6 +38,8 @@ QStringList WorkflowModel::assignConstantInputData(QString inputData, int operat
 
     for (int i = 0; i < inputParameters.length(); ++i) {
         QString value = inputParameters[i];
+        if ( value == "")
+            continue;
         if(_workflow->hasInputAssignment(vertex,i)){
             SPAssignedInputData constantInput = _workflow->getAssignedInputData({vertex, i});
             bool oldValueFilled = constantInput->value.size() != 0;
@@ -420,6 +422,26 @@ void WorkflowModel::setSelectedOperationId(const QString& id)
         IlwisObjectModel *iomodel = new IlwisObjectModel(res,this);
         _selectedOperation.append(iomodel);
     }
+}
+
+QVariantList WorkflowModel::propertyList()
+{
+    QVariantList result;
+
+    QVariantMap workflow;
+    workflow["label"] = TR("Workflow form");
+    workflow["form"] = "OperationForms.qml";
+    result.append(workflow);
+    QVariantMap operation;
+    operation["label"] = TR("Selected operation form");
+    operation["form"] = "OperationForms.qml";
+    result.append(operation);
+    QVariantMap metadata;
+    metadata["label"] = TR("Metadata selected form");
+    metadata["form"] = "workflow/forms/OperationPropForm.qml";
+    result.append(metadata);
+
+    return result;
 }
 
  QQmlListProperty<IlwisObjectModel> WorkflowModel::getSelectedOperation()
