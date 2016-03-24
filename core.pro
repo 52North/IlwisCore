@@ -134,7 +134,12 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
-    core/catalog/mastercatalogcache.cpp
+    core/catalog/mastercatalogcache.cpp \
+    core/util/triangulation/satellitetriangulation.cpp \
+    core/util/triangulation/terraintriangulation.cpp \
+    core/util/triangulation/solartriangulation.cpp \
+    core/util/triangulation/solartriangulationcallbackbase.cpp \
+    core/util/triangulation/solartriangulationmemberfunctioncallback.cpp
 
 
 HEADERS += core/kernel.h\
@@ -286,7 +291,13 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/workflow/workflowoperationimplementation.h \
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
-    core/catalog/mastercatalogcache.h
+    core/catalog/mastercatalogcache.h \
+    core/util/triangulation/dynamicsuntriangulationcallback.h \
+    core/util/triangulation/satellitetriangulation.h \
+    core/util/triangulation/terraintriangulation.h \
+    core/util/triangulation/solartriangulation.h \
+    core/util/triangulation/solartriangulationcallbackbase.h \
+    core/util/triangulation/solartriangulationmemberfunctioncallback.h
 
 
 OTHER_FILES += \
@@ -369,8 +380,9 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/rasterfragmentshader_nvdia.glsl \
     core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config \
-    core/resources/country_boundaries.ilwis\
-    coure/resources/color_chart.csv
+    core/resources/country_boundaries.ilwis \
+    core/resources/teritories.csv \
+    core/resources/color_chart.csv
 
 
 win32{
@@ -390,3 +402,6 @@ installer.files =installer.nsi
 installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
+
+DISTFILES += \
+    core/resources/libraries.config

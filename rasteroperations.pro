@@ -33,7 +33,8 @@ SOURCES += \
     rasteroperations/polygontoraster.cpp\
     rasteroperations/filter/timesat_nrs.cpp \
     rasteroperations/densifyraster.cpp \
-    rasteroperations/distanceraster.cpp
+    rasteroperations/distanceraster.cpp \
+    rasteroperations/SEBS/atmosphericcorrection.cpp
 
 
 HEADERS += \
@@ -54,7 +55,8 @@ HEADERS += \
     rasteroperations/polygontoraster.h\
     rasteroperations/filter/timesat_nrs.h \
     rasteroperations/densifyraster.h \
-    rasteroperations/distanceraster.h
+    rasteroperations/distanceraster.h \
+    rasteroperations/SEBS/atmosphericcorrection.h
 
 
 OTHER_FILES += \ 
