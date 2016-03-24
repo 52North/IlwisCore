@@ -16,7 +16,7 @@ Rectangle {
         text : qsTr("Background color")
     }
 
-    Controls.ColorPicker{
+    Controls.ColorPicker2{
 
         onSelectedColorChanged: {
             renderer.addCommand("setbackgroundcolor(" + renderer.viewerId + "," + selectedColor + ")")
@@ -25,10 +25,10 @@ Rectangle {
 
         anchors.top : label.bottom
         anchors.topMargin: 4
-        lefttopColor: "white"
-        leftbottomColor: "Navy"
-        righttopColor: "black"
-        rightbottomColor: "#FFEFD5"
+//        lefttopColor: "white"
+//        leftbottomColor: "Navy"
+//        righttopColor: "black"
+//        rightbottomColor: "#FFEFD5"
     }
 }
 

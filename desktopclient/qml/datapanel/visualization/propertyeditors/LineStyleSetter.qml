@@ -77,7 +77,7 @@ Column {
             text : qsTr("Color")
             width : 50
         }
-        Controls.ColorPicker{
+        Controls.ColorPicker2{
             onSelectedColorChanged: {
                 editor.boundaryColor = selectedColor
             }

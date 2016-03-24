@@ -29,11 +29,26 @@ CatalogModel::~CatalogModel()
 
 }
 
+void CatalogModel::setFilterState(bool state)
+{
+    _filterState[itRASTER] = state;
+    _filterState[itFEATURE] = state;
+    _filterState[itTABLE] = state;
+    _filterState[itCOORDSYSTEM] = state;
+    _filterState[itGEOREF] = state;
+    _filterState[itDOMAIN] = state;
+    _filterState[itREPRESENTATION] = state;
+    _filterState[itPROJECTION] = state;
+    _filterState[itELLIPSOID] = state;
+    _filterState[itCATALOG] = state;
+}
+
 CatalogModel::CatalogModel(QObject *parent) : ResourceModel(Resource(), parent)
 {
     _initNode = true;
     _isScanned = false;
     _level = 0;
+    setFilterState(true);
 }
 
 CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel(res,parent)
@@ -48,7 +63,7 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
         _view = CatalogView(res);
         _displayName = _view.name();
     }
-   // connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
+    setFilterState(true);
 }
 
 CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
@@ -63,7 +78,7 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
         _view = CatalogView(item());
         _displayName = _view.name();
     }
-  //  connect(mastercatalog(),&MasterCatalog::contentChanged, this, &CatalogModel::refreshContent);
+   setFilterState(true);
 }
 
 void CatalogModel::scanContainer()
@@ -248,24 +263,29 @@ void CatalogModel::makeParent(QObject *obj)
 
 void CatalogModel::filterChanged(const QString& typeIndication, bool state){
     QString objectType = typeIndication;
+    IlwisTypes type = itUNKNOWN;
     bool exclusive = objectType.indexOf("|exclusive") != -1;
 
-    if ( exclusive)
-        objectType = objectType.split("|")[0];
-    if ( objectType == "all" || exclusive){
-        _filterState[itRASTER] = exclusive ? false : state;
-        _filterState[itFEATURE] = exclusive ? false :state;
-        _filterState[itTABLE] = exclusive ? false :state;
-        _filterState[itCOORDSYSTEM] = exclusive ? false :state;
-        _filterState[itGEOREF] = exclusive ? false :state;
-        _filterState[itDOMAIN] = exclusive ? false :state;
-        _filterState[itREPRESENTATION] = exclusive ? false :state;
-        _filterState[itPROJECTION] = exclusive ? false :state;
-        _filterState[itELLIPSOID] = exclusive ? false :state;
-        _filterState[itCATALOG] = exclusive ? false :state;
+    if (exclusive){
+        if ( !state){
+            setFilterState(true);
+        }else {
+            objectType = objectType.split("|")[0];
+            type = IlwisObject::name2Type(objectType);
+            setFilterState(false);
+            if ( type != itUNKNOWN){
+                _filterState[type] = state;
+            }
+        }
     }else {
-        _filterState[IlwisObject::name2Type(objectType)] = state;
+        type = IlwisObject::name2Type(objectType);
+        if ( type != itUNKNOWN){
+            _filterState[type] = state;
+        }else {
+            setFilterState(state);
+        }
     }
+
     addActiveFilter("object");
 }
 

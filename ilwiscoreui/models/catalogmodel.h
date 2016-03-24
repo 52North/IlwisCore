@@ -51,6 +51,7 @@ public:
     Ilwis::CatalogView view() const;
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<ResourceModel> coverages();
+
 protected:
     struct FilterItem{
         FilterItem() {}
@@ -79,6 +80,7 @@ private:
     void fillObjectFilter();
     bool isActiveFilter(const QString& name) const;
     void fillNameFilter();
+    void setFilterState(bool state);
 public slots:
     void refreshContent(const QUrl& url);
     void updateContainer();

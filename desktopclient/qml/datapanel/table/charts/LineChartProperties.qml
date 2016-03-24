@@ -108,7 +108,7 @@ Rectangle {
                         text : qsTr("Fill")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : fillcolor
 
                         onSelectedColorChanged: {
@@ -128,7 +128,7 @@ Rectangle {
                         text : qsTr("Stroke")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : strokecolor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
@@ -147,7 +147,7 @@ Rectangle {
                         text : qsTr("Point")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : pointcolor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
@@ -166,7 +166,7 @@ Rectangle {
                         text : qsTr("Point Stroke")
                         width : 70
                     }
-                    Controls.ColorPicker{
+                    Controls.ColorPicker2{
                         id : pointstrokeColor
                         onSelectedColorChanged: {
                             if ( graph && !colorgroup.initial){
