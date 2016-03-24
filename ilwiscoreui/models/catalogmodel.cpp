@@ -148,6 +148,9 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
         if ( isActiveFilter("object")){
             fillObjectFilter();
         }
+        if ( isActiveFilter("keyword")){
+            fillKeywordFilter();
+        }
         if ( isActiveFilter("name")){
             fillNameFilter();
         }
@@ -205,6 +208,30 @@ void CatalogModel::fillNameFilter(){
     }
     _filteredItems = QList<ResourceModel *>(tempList);
 }
+
+void CatalogModel::fillKeywordFilter(){
+    auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
+    QList<ResourceModel *> tempList;
+    auto filter = _filters["keyword"];
+    QStringList keys = filter._filter.toString().split(",");
+    for(ResourceModel * resource : currentList){
+        bool ok = true;
+        for(const QString& key : keys){
+            if ( resource->resource().hasProperty("keyword")){
+                if ( resource->keywords().indexOf(key) == -1){
+                    ok = false;
+                    break;
+                }
+            }else
+                ok = false;
+        }
+        if ( ok){
+            tempList.push_back(resource);
+        }
+    }
+    _filteredItems = QList<ResourceModel *>(tempList);
+}
+
 
 void CatalogModel::fillSpatialFilter()
 {

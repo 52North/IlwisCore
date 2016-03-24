@@ -81,6 +81,7 @@ private:
     bool isActiveFilter(const QString& name) const;
     void fillNameFilter();
     void setFilterState(bool state);
+    void fillKeywordFilter();
 public slots:
     void refreshContent(const QUrl& url);
     void updateContainer();
