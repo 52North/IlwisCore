@@ -16,7 +16,7 @@ Item {
             id : buttonRow
             anchors.top : parent.top
             anchors.margins: 3
-            Controls.ActionButton{
+            Controls.ActionButtonV{
                 id : addCatalog
                 width : 115
                 height : buttonBar.height - 3
@@ -25,7 +25,7 @@ Item {
                 action : createCatalogLeft
 
             }
-            Controls.ActionButton{
+            Controls.ActionButtonV{
                 id : addCatalog2
                 width : 115
                 height : buttonBar.height - 3
