@@ -429,7 +429,7 @@ QVariantList WorkflowModel::propertyList()
     QVariantList result;
 
     QVariantMap workflow;
-    workflow["label"] = TR("Workflow form");
+    workflow["label"] = TR("Workflow(Run) form");
     workflow["form"] = "OperationForms.qml";
     result.append(workflow);
     QVariantMap operation;
