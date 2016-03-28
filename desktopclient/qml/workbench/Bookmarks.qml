@@ -201,7 +201,7 @@ Column {
             }
         }
 
-        Controls.ActionButton{
+        Controls.ActionButtonV{
             id : removeBookmark
             width : 115
             height : 45
@@ -210,7 +210,7 @@ Column {
             action : deleteBookmark
 
         }
-        Controls.ActionButton{
+        Controls.ActionButtonV{
             id : addBookmarkButton
 
             buttontext : "Add Bookmark"
