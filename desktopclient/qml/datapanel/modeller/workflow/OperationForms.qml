@@ -13,8 +13,7 @@ import "forms" as Forms
 
 Rectangle {
     id : operationForm
-    width : 210
-    height : parent ? parent.height : 0
+    width : 440
     visible : height > 0
     property var operationid
     property int itemId: -1
@@ -32,21 +31,22 @@ Rectangle {
     */
     function showRunForm(parms) {
         var validValues = [], parameterindex, action;
-        if (operationFormScrollView.appForm.currentAppForm != null ) {
-            validValues = operationFormScrollView.appForm.currentAppForm.formresult.split('|')
-            for (var i = 0; i < (parms.parameterIndexes && parms.parameterIndexes.length); i++) {
-                parameterindex = parms.parameterIndexes[i].split('|');
-                action = parameterindex[1];
-                parameterindex = parameterindex[0];
 
-                if (action === 'insert') {
-                    validValues.splice(parameterindex, 0, "")
-                } else if (action === 'remove') {
-                    validValues.splice(parameterindex, 1)
-                }
-            }
-            validValues = validValues.slice(0, canvas.workflow.getInputParameterCount())
-        }
+//        if (operationFormScrollView.appForm.currentAppForm != null ) {
+//            validValues = operationFormScrollView.appForm.currentAppForm.formresult.split('|')
+//            for (var i = 0; i < (parms.parameterIndexes && parms.parameterIndexes.length); i++) {
+//                parameterindex = parms.parameterIndexes[i].split('|');
+//                action = parameterindex[1];
+//                parameterindex = parameterindex[0];
+
+//                if (action === 'insert') {
+//                    validValues.splice(parameterindex, 0, "")
+//                } else if (action === 'remove') {
+//                    validValues.splice(parameterindex, 1)
+//                }
+//            }
+//            validValues = validValues.slice(0, canvas.workflow.getInputParameterCount())
+//        }
         var form = formbuilder.index2Form(parms.workflowid, true, false, [], parms.operationNames, validValues)
         operationid = parms.workflowid
 
@@ -116,7 +116,7 @@ Rectangle {
       */
     function executeForm() {
         operationFormScrollView.appForm.doExecute(operationid)
-        return appFrame.currentAppForm.formresult
+        return operationFormScrollView.appForm.currentAppForm.formresult
     }
 
     function clearOperationForm() {
@@ -137,7 +137,7 @@ Rectangle {
 
     BorderImage {
         id : title
-        width: parent.width
+        width: 440
         height : 25
         opacity : 1
         anchors.bottomMargin: operationForm.formTitle != "" ? 20 : 0
