@@ -162,5 +162,6 @@ DISTFILES += \
     desktopclient/qml/workbench/creators/PaletteColorList.qml \
     desktopclient/qml/workbench/creators/CreateGeorefCorners.qml \
     desktopclient/qml/workbench/preferences/Locations.qml \
-    desktopclient/qml/datapanel/catalog/CatalogActions.qml
+    desktopclient/qml/datapanel/catalog/CatalogActions.qml \
+    desktopclient/qml/controls/ActionButtonV.qml
 
