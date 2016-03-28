@@ -29,13 +29,22 @@ Item {
 
     OperationForms{
         id : workflow
+        height : parent.height - 30
         visible: false
         enabled: false
+
+        RunForm {
+            width : parent.width
+            height : 25
+            anchors.top : workflow.bottom
+
+        }
     }
 
     OperationForms{
         id : operation
         visible: false
+        height : parent.height
         enabled : false
     }
 
