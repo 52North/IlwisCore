@@ -102,9 +102,12 @@ Rectangle {
         }
 
         function changePanel(filter, outputtype, url){
+
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
-            if ( tabview){
+            var oldType = tabview.getTab(tabview.currentIndex).item.panelType
+
+            if ( tabview && oldType === "catalog"){
                 tabview.removeTab(tabview.currentIndex)
                 var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
                 if ( newPanel){
@@ -125,7 +128,10 @@ Rectangle {
                     }
                     return newPanel
                 }
+            }else {
+                var p = datapanesplit.newPanel(filter,outputtype,url,"other")
             }
+
             return null
         }
 
