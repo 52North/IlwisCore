@@ -13,7 +13,7 @@ Item {
     width: parent.width
     height : parent.height
     property bool canSeparate : true
-
+    property string panelType : "tablepanel"
     property TabModel tabmodel
 
     property TableModel table
