@@ -13,7 +13,7 @@ Item {
     property int heightButtons :22
     property CatalogModel currentCatalog
     property TabModel tabmodel
-    property string panelType : "catalogpanel"
+    property string panelType : "catalog"
     id : catalogViews
     width : parent.width
     height : parent.height
