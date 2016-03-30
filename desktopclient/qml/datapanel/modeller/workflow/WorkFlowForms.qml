@@ -27,6 +27,10 @@ Item {
 
     }
 
+    function clearOperationForm() {
+        operation.clearOperationForm()
+    }
+
     OperationForms{
         id : workflow
         height : parent.height - 30
