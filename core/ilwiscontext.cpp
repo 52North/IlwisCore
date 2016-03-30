@@ -139,6 +139,13 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
 
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
+    if ( loc == ""){
+        loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
+        QDir datadir(loc);
+        bool ok = datadir.mkpath(loc);
+        loc = QUrl::fromLocalFile(loc).toString();
+
+    }
     if ( loc != ""){
         _workingCatalog = ICatalog(loc);
         if ( hasType(_runMode, rmCOMMANDLINE)){
