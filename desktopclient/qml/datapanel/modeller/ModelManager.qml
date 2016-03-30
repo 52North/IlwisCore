@@ -53,6 +53,10 @@ Rectangle {
             activeEditor.clearOperationForm()
     }
 
+    function selectedWorkflowItem(itemid){
+        modelLayerOptions.item.selectedWorkflowItem(itemid)
+    }
+
     TabView{
         id : modellerProperties
         anchors.fill: parent
@@ -76,7 +80,9 @@ Rectangle {
             id : modelLayerOptions
             title: "Model layers"
             active: true
-            LayerManagement{}
+            LayerManagement{
+                id : layermanagement
+            }
         }
 
         Tab{
