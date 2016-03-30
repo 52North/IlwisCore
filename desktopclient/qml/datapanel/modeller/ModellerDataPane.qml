@@ -43,6 +43,10 @@ Item {
         return iconP
     }
 
+    function selectedWorkflowItem(itemid){
+        manager.selectedWorkflowItem(itemid)
+    }
+
 
 
     function datapaneChanged(index){
