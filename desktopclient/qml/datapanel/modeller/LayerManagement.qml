@@ -23,6 +23,13 @@ Rectangle {
         editor.source = editUrl
     }
 
+    function selectedWorkflowItem(itemid){
+        if ( itemid >= 0)
+            properties.currentIndex = 1
+        else
+            properties.currentIndex = 0
+    }
+
     SplitView {
         id : layerprops
         property var layernames : ["Definition view","Operational view","Template view", "Workflow view"]
