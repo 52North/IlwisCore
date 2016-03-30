@@ -90,66 +90,6 @@ ToolBar{
 
     }
 
-    Column {
-        height:parent.height
-        width: parent.width/3
-
-        anchors{
-            right: zoomTools.left
-            left: editingColumn.right
-        }
-
-        Row {
-            anchors.horizontalCenter: parent.horizontalCenter
-            height : 25
-            spacing : 2
-
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("run20.png")
-                }
-                onClicked : {
-                    modellerDataPane.run()
-                }
-
-            }
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("step20.png")
-                }
-            }
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("pause20.png")
-                }
-            }
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("stop20.png")
-                }
-            }
-        }
-    }
 
     Column{
         id:zoomTools

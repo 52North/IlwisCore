@@ -49,7 +49,14 @@ Controls.DropableItem{
                     anchors.left : urlLabel.right
                     anchors.right : urlButton.left
                     height : parent.height
-                    text : mastercatalog.currentCatalog.url
+                    text : textid.urlText(mastercatalog.currentCatalog.url)
+
+                    function urlText(txt){ // must be a file location
+                        if ( txt.indexOf("file://") !== 0) {
+                            return ""
+                        }
+                        return txt
+                    }
 
                     style: TextFieldStyle {
                         background: Rectangle {

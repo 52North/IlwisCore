@@ -102,30 +102,38 @@ Rectangle {
         }
 
         function changePanel(filter, outputtype, url){
+
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
-            if ( tabview){
-                tabview.removeTab(tabview.currentIndex)
-                var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
-                if ( newPanel){
-                    var component = Qt.createComponent(newPanel.componentUrl)
-                    if (component.status === Component.Ready){
-                        mastercatalog.currentUrl = url
-                        var data= newPanel.displayName
-                        var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
-                        insertetTab.active = true
-                        if ( insertetTab && insertetTab.item){
-                            var ind = tabview.currentIndex
-                            tabview.currentIndex = -1;
-                            tabview.currentIndex = ind; // forces a reset of the index and thus a redraw
-                            insertetTab.item.addDataSource(filter, url, outputtype)
-                            insertetTab.item.tabmodel = newPanel
-                            datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+
+            if ( tabview ){
+                var oldType = tabview.getTab(tabview.currentIndex).item.panelType
+                if ( oldType === "catalog" || oldType == "operationcatalog"){
+                    tabview.removeTab(tabview.currentIndex)
+                    var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
+                    if ( newPanel){
+                        var component = Qt.createComponent(newPanel.componentUrl)
+                        if (component.status === Component.Ready){
+                            mastercatalog.currentUrl = url
+                            var data= newPanel.displayName
+                            var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
+                            insertetTab.active = true
+                            if ( insertetTab && insertetTab.item){
+                                var ind = tabview.currentIndex
+                                tabview.currentIndex = -1;
+                                tabview.currentIndex = ind; // forces a reset of the index and thus a redraw
+                                insertetTab.item.addDataSource(filter, url, outputtype)
+                                insertetTab.item.tabmodel = newPanel
+                                datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                            }
                         }
+                        return newPanel
                     }
-                    return newPanel
+                }else {
+                    var p = datapanesplit.newPanel(filter,outputtype,url,"other")
                 }
             }
+
             return null
         }
 

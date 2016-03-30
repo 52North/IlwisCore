@@ -16,6 +16,7 @@ Item {
     width : parent.width
     height : parent.height
     property TabModel tabmodel
+    property string panelType : "operationcatalog"
 
     function showObject(objectid){
         var type = mastercatalog.id2type(objectid)

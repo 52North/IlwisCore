@@ -137,9 +137,13 @@ Modeller.ModellerWorkArea {
 
                     implicitIndexes = workflow.implicitIndexes(operationSelected)
                     constantValues = workflow.getAsignedValuesByItemID(operationSelected)
-
                     if(implicitIndexes){
-                        manager.showOperationFormWithHiddenFields(item, operationSelected, constantValues, implicitIndexes)
+                        var parms = {"item" : item,
+                            "operation" : operationSelected,
+                            "constantValues": constantValues,
+                            "implicit" : implicitIndexes,
+                            "type": "operationform"}
+                        manager.showForm(parms)
                     }else{
                         manager.showOperationForm(item, operationSelected, constantValues)
                     }
@@ -147,6 +151,9 @@ Modeller.ModellerWorkArea {
                     manager.showMetaData(item.operation)
                 } else {
                     manager.resetMetaData();
+                }
+                if ( operationSelected == -1){
+                    manager.selectedWorkflowItem(-1)
                 }
             }
 
@@ -467,7 +474,11 @@ Modeller.ModellerWorkArea {
                 };
             }
             workflow.createMetadata()
-            manager.showRunForm(workflow.id, operationNames, parameterIndexes)
+            var parms = { "type" : "runform",
+                "workflowid" : workflow.id,
+                "operationNames" : operationNames,
+                "parameters" : parameterIndexes}
+            manager.showForm(parms)
         }
     }
 
@@ -485,13 +496,13 @@ Modeller.ModellerWorkArea {
             }
         }
 
-        for (var i = 0; i < nodes.length; i++) {
+        for (i = 0; i < nodes.length; i++) {
             node = nodes[i]
             resource = wfCanvas.getOperation(node.operationId)
 
             wfCanvas.createItem(node.x/wfCanvas.scale, node.y/wfCanvas.scale, resource)
         }
-        for (var i = 0; i < nodes.length; i++) {
+        for (i = 0; i < nodes.length; i++) {
             node = nodes[i]
             nodeEdges = edges[node.vertex]
             if (nodeEdges) {
@@ -788,6 +799,7 @@ Modeller.ModellerWorkArea {
            // force re-draw if the ModellerPanel height has changed
            wfCanvas.draw(true);
        }
+
 
        Forms.FlowParametersChoiceForm{
            id : attachementForm

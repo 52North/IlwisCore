@@ -98,13 +98,15 @@ Item {
                     }
                 }
             }
-
-            Controls.ComboxLabelPair{
+            Controls.TextEditLabelPair{
                 labelText: qsTr("Keyword filters")
                 labelWidth: 100
                 width : parent.width
-
+                onContentChanged: {
+                    currentCatalog.filter("keyword", content)
+                }
             }
+
             Item { 
                 height : 20
                 width : parent.width

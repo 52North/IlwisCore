@@ -11,90 +11,82 @@ Rectangle {
     width : parent.width
     height : parent.height
 
+    function setLayerIndex(index){
+        layerColumn.currentIndex = index
+    }
+
+    function getPropertyIndex() {
+        return properties.currentIndex
+    }
+
+    function setEditor(editUrl){
+        editor.source = editUrl
+    }
+
+    function selectedWorkflowItem(itemid){
+        if ( itemid >= 0)
+            properties.currentIndex = 1
+        else
+            properties.currentIndex = 0
+    }
+
     SplitView {
         id : layerprops
         property var layernames : ["Definition view","Operational view","Template view", "Workflow view"]
-        property var workflowitems : ["Workflow form", "Selected operation form", "Metadata selected form"]
         width : parent.width - 5
         height : parent.height
         y : 2
 
         function getItems(){
-            if ( layerColumn.currentIndex == 3)
-                return workflowitems
+            if ( layerColumn.currentIndex == 3){
+                if ( model){
+                    var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+                    if ( wf !== null)
+                        return wf.propertyList()
+                }
+            }
             return null
         }
         handleDelegate: Controls.SplitHandle{
             imageHeight: 15
         }
-
-            Item {
-                height : parent.height
-                width : 140
-                anchors.left: parent.left
-            Text {
-                id : label
-                text : qsTr("Model Layers")
-                font.bold: true
-                height : 22
-                x : 4
-            }
-
-            ListView{
-                id : layerColumn
-                anchors.top : label.bottom
-                anchors.bottom: parent.bottom
-                width : parent.width
-                model : layerprops.layernames
-                highlight: Rectangle{ width : parent.width; height : 20; color : Global.selectedColor}
-                delegate  {
-                    Item {
-                        width : parent.width
-                        height : 20
-                        x : 4
-                        Text {
-                            anchors.fill: parent
-                            text : modelData
-                            MouseArea{
-                                anchors.fill: parent
-                                onClicked: {
-                                    layerColumn.currentIndex = index
-                                }
-                            }
-                        }
+        ModelLayers{
+            id : layerColumn
+            height : parent.height
+            width : 130
+            anchors.left: parent.left
+            onCurrentIndexChanged: {
+                datapaneChanged(currentIndex)
+                if (!editor.item){
+                    if ( currentIndex == 3){
+                        editor.source = "workflow/WorkFlowForms.qml"
                     }
                 }
-                onCurrentIndexChanged: {
-                    datapaneChanged(currentIndex)
-                }
-
-                Component.onCompleted: {
-                    currentIndex = 3
-                }
-
             }
         }
-        ListView {
-            id : layerProperties
-            width : 230
+
+        ModelLayerProperties{
+            id : properties
+            width : 160
             height : parent.height
-            model : layerprops.getItems()
-            highlight: Rectangle{ width : parent.width; height : 20; color : Global.selectedColor}
-            delegate  {
-                Item {
-                    width : parent.width
-                    height : 20
-                    x : 4
-                    Text {
-                        anchors.fill: parent
-                        text : modelData
-                        MouseArea{
-                            anchors.fill: parent
-                            onClicked: {
-                                layerProperties.currentIndex = index
-                            }
-                        }
-                    }
+
+            onCurrentIndexChanged: {
+                if ( editor && editor.item){
+                    editor.item.enable(properties.currentIndex, null)
+                }
+            }
+        }
+
+        ModelPropertyEditor{
+            id : editor
+            width : 400
+            height : parent.height
+
+            onStatusChanged: {
+                if (editor.status === Loader.Ready) {
+                    item.height = height
+                    activeEditor = item
+                    console.debug("done")
                 }
             }
         }

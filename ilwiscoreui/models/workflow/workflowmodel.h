@@ -44,6 +44,7 @@ public:
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel>  selectedOperation READ getSelectedOperation NOTIFY selectedOperationChanged)
 
 
+
     /*!
      * \brief Assigns constant input data to the operation
      *
@@ -193,6 +194,7 @@ public:
 
      QQmlListProperty<IlwisObjectModel> getSelectedOperation() ;
     Q_INVOKABLE void setSelectedOperationId(const QString &selectedOperationId);
+    Q_INVOKABLE QVariantList propertyList();
 signals:
     void selectedOperationChanged();
 
@@ -203,6 +205,8 @@ private:
     QList<IlwisObjectModel *> _selectedOperation;
 
     int _inputParameterCount = 0;
+
+
 };
 
 

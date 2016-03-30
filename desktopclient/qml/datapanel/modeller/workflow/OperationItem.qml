@@ -17,6 +17,15 @@ Rectangle {
     color:"transparent"
     transform: Translate { id: transformTl }
 
+
+    property OperationModel operation
+    property int itemid
+    property var selectedAttach
+    property bool isSelected : false
+    property var flowConnections: []
+
+    property alias name:operationName
+
     function isSelected(matrix, mouseX, mouseY)
     {
         var startX = (operationItem.x + transformTl.x);
@@ -62,13 +71,7 @@ Rectangle {
         operationItem.scale *= scaleFactor;
     }
 
-    property OperationModel operation
-    property int itemid
-    property var selectedAttach
-    property bool isSelected : false
-    property var flowConnections: []
 
-    property alias name:operationName
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -82,8 +85,8 @@ Rectangle {
 
 
     function resetInputModel(){
-        operationInParameters.model = null
-        operationInParameters.model = operation.inParamNames
+        operationInParametersList.model = null
+        operationInParametersList.model = operation.inParamNames
     }
 
     function getBackground() {
@@ -93,7 +96,7 @@ Rectangle {
                 return iconsource("workflowitem.png")
             }
         }
-        return iconsource("operationitem.png")
+        return iconsource(isSelected ? "operationitemSelected.png": "operationitem.png")
     }
 
     function getTitle() {
@@ -111,7 +114,7 @@ Rectangle {
         anchors.topMargin: 4
         width : box.width -10
         elide: Text.ElideMiddle
-
+        font.pointSize: 11
         x : 15
         text : itemid + ". " + (operation ? operation.name : "?")
         font.bold : true
@@ -126,39 +129,43 @@ Rectangle {
         font.bold: true
     }
 
-    ListView{
+    ScrollView {
         id : operationInParameters
         anchors.top : labelInput.bottom
         anchors.topMargin: 3
         height : 30
-        width : box.width
+        width : box.width - 20
         clip : true
         x : 15
-        model : operation ? operation.inParamNames : null
-        interactive: false
-        delegate:
-            Item {
-            width : box.width
-            height: 10
-            Row {
-                spacing : 4
-                width : box.width - 15
-                height : 10
-                Text{
-                    text : index
-                    width : 20
+        ListView{
+            id : operationInParametersList
+            anchors.fill: parent
+            model : operation ? operation.inParamNames : null
+            interactive: false
+            delegate:
+                Item {
+                width : box.width
+                height: 10
+                Row {
+                    spacing : 4
+                    width : box.width - 15
                     height : 10
-                    font.pixelSize: 9
-                }
+                    Text{
+                        text : index
+                        width : 20
+                        height : 10
+                        font.pixelSize: 9
+                    }
 
-                Text {
-                    text : modelData
-                    font.bold: !workflow.hasValueDefined(itemid, index) ? true : false
-                    font.strikeout: workflow.hasValueDefined(itemid, index) ? true : false
-                    width : parent.width - 30
-                    height : 10
-                    font.pixelSize: 9
-                    elide: Text.ElideMiddle
+                    Text {
+                        text : modelData
+                        font.bold: !workflow.hasValueDefined(itemid, index) ? true : false
+                        font.strikeout: workflow.hasValueDefined(itemid, index) ? true : false
+                        width : parent.width - 30
+                        height : 10
+                        font.pixelSize: 9
+                        elide: Text.ElideMiddle
+                    }
                 }
             }
         }
@@ -223,6 +230,7 @@ Rectangle {
         if (isSelected) {
             z = highestZIndex++
         }
+        modellerDataPane.selectedWorkflowItem(itemid)
     }
 
     function deselectAll(){
@@ -297,31 +305,44 @@ Rectangle {
 
     function setFlow(target, attachRect, flowPoints){
         flowConnections.push({
-            "target" : target,
-            "source" :operationItem,
-            "attachtarget" : attachRect,
-            "attachsource" : selectedAttach,
-            "flowPoints" : flowPoints,
-            "isSelected" : false
-        })
+                                 "target" : target,
+                                 "source" :operationItem,
+                                 "attachtarget" : attachRect,
+                                 "attachsource" : selectedAttach,
+                                 "flowPoints" : flowPoints,
+                                 "isSelected" : false
+                             })
         var parameterIndexes = workflow.addFlow(
-            itemid,
-            target.itemid,
-            flowPoints,
-            selectedAttach.index,
-            attachRect.index
-        )
+                    itemid,
+                    target.itemid,
+                    flowPoints,
+                    selectedAttach.index,
+                    attachRect.index
+                    )
         target.resetInputModel()
         wfCanvas.stopWorkingLine()
 
         canvas.generateForm(parameterIndexes)
     }
 
+    function allParmsDefined(operationid){
+       // var defined = canvas.workflow.implicitIndexes(operationid)
+        var maxcount = canvas.workflow.operationInputParameterCount(operationid)
+        //console.debug(operationid,defined.length, maxcount)
+        if ( maxcount == 0){
+            return true
+        }
+        return false
+    }
+
     function attachFlow(target, attachRect){
         //If not connected to itself
         if ( wfCanvas.operationsList[wfCanvas.currentIndex] !== target){
+            if ( allParmsDefined(target.itemid))
+                return
 
             if (operation.needChoice(target.operation)) {
+
                 wfCanvas.showAttachmentForm(target, attachRect)
             } else {
                 var fromIndex = 0

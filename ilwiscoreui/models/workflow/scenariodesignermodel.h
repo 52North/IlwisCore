@@ -16,7 +16,7 @@ public:
     explicit ScenarioDesignerModel(QObject *parent = 0);
     ~ScenarioDesignerModel();
 
-    Q_INVOKABLE WorkflowModel *workflowModel(const QString& idname);
+    Q_INVOKABLE WorkflowModel *workflow(const QString& idname);
     Q_INVOKABLE WorkflowModel* addWorkflow(const QString& source);
 
 signals:

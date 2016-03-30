@@ -16,8 +16,13 @@ ScenarioDesignerModel::~ScenarioDesignerModel()
 
 }
 
-WorkflowModel *ScenarioDesignerModel::workflowModel(const QString &idname)
+WorkflowModel *ScenarioDesignerModel::workflow(const QString &idname)
 {
+    if ( idname == "first_workflow_model"){ // special case atm
+        if ( _workflows.size() == 0)
+            return 0;
+        return *_workflows.begin();
+    }
     for(auto *wf : _workflows)    {
         if ( wf->name() == idname){
             return wf;

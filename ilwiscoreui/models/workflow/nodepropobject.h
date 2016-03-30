@@ -13,8 +13,8 @@ class ILWISCOREUISHARED_EXPORT NodePropObject : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(quint16 x MEMBER _x)
-    Q_PROPERTY(quint16 y MEMBER _y)
+    Q_PROPERTY(qint32 x MEMBER _x)
+    Q_PROPERTY(qint32 y MEMBER _y)
     Q_PROPERTY(quint32 vertex MEMBER _vertex)
     Q_PROPERTY(quint64 operationId MEMBER _operationId)
 public:
@@ -22,8 +22,8 @@ public:
     void setProps(const Ilwis::NodeProperties& props, int v);
 
 private:
-    quint16 _x = 0;
-    quint16 _y = 0;
+    qint32 _x = 0;
+    qint32 _y = 0;
     quint32 _vertex = 0;
     quint64 _operationId = 0;
 };

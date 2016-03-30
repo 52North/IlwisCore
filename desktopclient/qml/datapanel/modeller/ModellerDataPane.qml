@@ -4,7 +4,7 @@ import QtQuick.Window 2.1
 import TabModel 1.0
 import WorkflowModel 1.0
 import ScenarioBuilderModel 1.0
-import ScenarioDesignerModel 1.0
+import Modeller 1.0
 import "./workflow" as WorkFlow
 import "../../Global.js" as Global
 
@@ -13,17 +13,18 @@ Item {
     width : parent.width
     height : parent.height
     property TabModel tabmodel
-    property ScenarioDesignerModel scenario
+    property Modeller model
     property int ontTopZValue: 1000000
     property double factor : 1.1
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
             if (sourceType === "workflow") {
-                scenario = scenarios.create()
+                model = scenarios.create()
 
                 var resource = mastercatalog.id2Resource(filter.split('=')[1]);
-                canvas.workflow = scenario.addWorkflow(filter);
+                canvas.workflow = model.addWorkflow(filter);
+                manager.setLayerIndex(3)
                 if (resource) {
                     canvas.drawFromWorkflow()
                 }
@@ -40,6 +41,10 @@ Item {
 
         var iconP = "../../images/" + name
         return iconP
+    }
+
+    function selectedWorkflowItem(itemid){
+        manager.selectedWorkflowItem(itemid)
     }
 
 

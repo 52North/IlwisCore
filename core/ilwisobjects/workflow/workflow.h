@@ -49,7 +49,7 @@ struct NodeProperties {
         _syntax = res["syntax"].toString();
         _resourceProvider = res["namespace"].toString();
     }
-    NodeProperties(const QString& syntax, QString provider, quint16 x, quint16 y) {
+    NodeProperties(const QString& syntax, QString provider, qint32 x, qint32 y) {
         _syntax = syntax;
         _resourceProvider = provider;
         _x = x;
@@ -62,8 +62,8 @@ struct NodeProperties {
     quint64 _operationid = i64UNDEF;
     QString _syntax;
     QString _resourceProvider;
-    quint16 _x;
-    quint16 _y;
+    qint32 _x = 0;
+    qint32 _y = 0;
 };
 
 /*!
