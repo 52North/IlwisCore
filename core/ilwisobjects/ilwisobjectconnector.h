@@ -26,7 +26,7 @@ public:
     void removeProperty(const QString &key);
     bool hasProperty(const QString &key);
     const Resource &source() const;
-    bool dataIsLoaded() const;
+    virtual bool dataIsLoaded() const;
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QUrl& defaultName) {
