@@ -325,11 +325,24 @@ Rectangle {
         canvas.generateForm(parameterIndexes)
     }
 
+    function allParmsDefined(operationid){
+       // var defined = canvas.workflow.implicitIndexes(operationid)
+        var maxcount = canvas.workflow.operationInputParameterCount(operationid)
+        //console.debug(operationid,defined.length, maxcount)
+        if ( maxcount == 0){
+            return true
+        }
+        return false
+    }
+
     function attachFlow(target, attachRect){
         //If not connected to itself
         if ( wfCanvas.operationsList[wfCanvas.currentIndex] !== target){
+            if ( allParmsDefined(target.itemid))
+                return
 
             if (operation.needChoice(target.operation)) {
+
                 wfCanvas.showAttachmentForm(target, attachRect)
             } else {
                 var fromIndex = 0
