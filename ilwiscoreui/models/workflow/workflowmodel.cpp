@@ -332,8 +332,8 @@ void WorkflowModel::store(const QStringList &coordinates)
             QStringList split = coordinates[i].split('|');
             OVertex v = i;
             NodeProperties props = _workflow->nodeProperties(v);
-            props._x = split[0].toInt();
-            props._y = split[1].toInt();
+            props._x = split[0].toLong();
+            props._y = split[1].toLong();
             _workflow->updateNodeProperties(v, props);
         }
 
