@@ -183,6 +183,7 @@ QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startB
     thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
     thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->connect(worker, &CatalogWorker::updateBookmarks, this, &MasterCatalogModel::updateBookmarks);
+    thread->connect(worker, &CatalogWorker::finished, this, &MasterCatalogModel::updateCurrentCatalog);
     thread->start();
 
     return models;
@@ -823,6 +824,13 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 
 }
 
+void MasterCatalogModel::updateCurrentCatalog()
+{
+    if ( _currentCatalog)    {
+        _currentCatalog->refresh();
+    }
+}
+
 QString MasterCatalogModel::selectedIds() const
 {
     QString selected;
@@ -865,6 +873,7 @@ void CatalogWorker::process(){
             calculatelatLonEnvelopes();
             emit finished();
         }
+        emit updateCatalog();
     } catch(const ErrorObject& err){
 
     } catch ( const std::exception& ex){
