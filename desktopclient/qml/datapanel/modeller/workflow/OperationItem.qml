@@ -326,9 +326,7 @@ Rectangle {
     }
 
     function allParmsDefined(operationid){
-       // var defined = canvas.workflow.implicitIndexes(operationid)
         var maxcount = canvas.workflow.operationInputParameterCount(operationid)
-        //console.debug(operationid,defined.length, maxcount)
         if ( maxcount == 0){
             return true
         }

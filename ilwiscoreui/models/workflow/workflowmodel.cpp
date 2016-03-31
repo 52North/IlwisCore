@@ -332,8 +332,8 @@ void WorkflowModel::store(const QStringList &coordinates)
             QStringList split = coordinates[i].split('|');
             OVertex v = i;
             NodeProperties props = _workflow->nodeProperties(v);
-            props._x = split[0].toLong();
-            props._y = split[1].toLong();
+            props._x = split[0].toDouble();
+            props._y = split[1].toDouble();
             _workflow->updateNodeProperties(v, props);
         }
 
@@ -440,8 +440,22 @@ QVariantList WorkflowModel::propertyList()
     metadata["label"] = TR("Metadata selected form");
     metadata["form"] = "workflow/forms/OperationPropForm.qml";
     result.append(metadata);
+    QVariantMap script;
+    metadata["label"] = TR("Script");
+    metadata["form"] = "workflow/forms/WorkflowPythonScript.qml";
+    result.append(metadata);
 
     return result;
+}
+
+void WorkflowModel::debug(const QString &code)
+{
+    if ( _workflow.isValid()){
+        if ( code == "graph")
+            _workflow->debugPrintGraph();
+        if ( code == "topologicalsort")
+            _workflow->debugPrintToplogicalOrder();
+    }
 }
 
  QQmlListProperty<IlwisObjectModel> WorkflowModel::getSelectedOperation()

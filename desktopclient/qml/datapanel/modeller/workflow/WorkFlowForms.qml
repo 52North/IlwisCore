@@ -24,6 +24,8 @@ Item {
             operation.enable(propertyIndex,parms)
         if ( propertyIndex === 2)
             metadata.enable(propertyIndex,parms)
+        if ( propertyIndex === 3)
+            script.enable(propertyIndex,parms)
 
     }
 
@@ -54,6 +56,13 @@ Item {
 
     Forms.OperationPropForm{
         id : metadata
+        width : parent.width
+        visible: false
+        enabled: false
+
+    }
+    Forms.WorkflowPythonScript{
+        id : script
         width : parent.width
         visible: false
         enabled: false

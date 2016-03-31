@@ -78,7 +78,7 @@ Rectangle {
 
         Tab {
             id : modelLayerOptions
-            title: "Model layers"
+            title: qsTr("Model layers")
             active: true
             LayerManagement{
                 id : layermanagement
@@ -88,7 +88,7 @@ Rectangle {
         Tab{
             id : metadata
             active: true
-            title: "Metadata"
+            title: qsTr("Metadata")
             MetaDataTab{}
         }
 

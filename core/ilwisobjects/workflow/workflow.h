@@ -49,9 +49,10 @@ struct NodeProperties {
         _syntax = res["syntax"].toString();
         _resourceProvider = res["namespace"].toString();
     }
-    NodeProperties(const QString& syntax, QString provider, qint32 x, qint32 y) {
+    NodeProperties(const QString& syntax, QString provider, qint32 x, qint32 y, quint64 id) {
         _syntax = syntax;
         _resourceProvider = provider;
+        _id = id;
         _x = x;
         _y = y;
         std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
@@ -59,11 +60,14 @@ struct NodeProperties {
             _operationid = items[0].id();
         }
     }
+    void setId();
     quint64 _operationid = i64UNDEF;
     QString _syntax;
     QString _resourceProvider;
     qint32 _x = 0;
     qint32 _y = 0;
+    quint64 _id = i64UNDEF;
+    static quint64 _baseid;
 };
 
 /*!
@@ -456,6 +460,7 @@ public:
     /*!
      * \brief Call this to print the graph
      */
+    void debugPrintToplogicalOrder();
     void debugPrintGraph();
     /*!
      * \brief Call this to print the vertices

@@ -84,6 +84,7 @@ public:
 
 public slots:
     void updateCatalog(const QUrl &url);
+    void updateCurrentCatalog();
     void updateBookmarks() ;
     
 private:
@@ -145,6 +146,7 @@ public slots:
 signals:
     void finished();
     void updateBookmarks();
+    void updateCatalog();
 
 
 private:
