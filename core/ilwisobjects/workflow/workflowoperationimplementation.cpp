@@ -204,17 +204,7 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
     return ok;
 }
 
-bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
-{
-    if (_nodeExecutionContext.contains(v)) {
-        return true;
-    }
-    IWorkflow workflow = (IWorkflow)_metadata;
-    IOperationMetaData meta = workflow->getOperationMetadata(v);
-
-    InEdgeIterator ei, ei_end;
-    boost::tie(ei,ei_end) = workflow->getInEdges(v);
-
+bool WorkflowOperationImplementation::doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable){
     bool conditionsResult = checkConditions(v, ctx, symTable);
 
     // IF conditions are not met
@@ -229,6 +219,122 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
         }
         return true; // Not false because it is valid for conditions to fail.
     }
+    return false;
+}
+
+bool WorkflowOperationImplementation::doInputEdges(InEdgeIterator& ei,
+                                                   const InEdgeIterator& ei_end,
+                                                   const IWorkflow& workflow,
+                                                   const OVertex &v,
+                                                   QStringList& arguments,
+                                                   ExecutionContext *ctx,
+                                                   SymbolTable &symTable) {
+    ExecutionContext localCtx;
+    SymbolTable localSymTable;
+    IOperationMetaData meta = workflow->getOperationMetadata(v);
+    // for all input parameters that come from previous operations
+    for (/*boost::tie(ei,ei_end) = workflow->getInEdges(v)*/; ei != ei_end; ++ei) {
+        //get the operation that produces this parameters and see if it can be calculated
+        OVertex previous = workflow->getSourceOperationNode(*ei);
+        bool ok = reverseFollowExecutionPath(previous, &localCtx, localSymTable);
+        if ( !ok) {
+            return false;
+        } else {
+            EdgeProperties edgeProperties = workflow->edgeProperties(*ei);
+
+            quint16 inIdx = edgeProperties._inputParameterIndex;
+            quint16 outIdx = edgeProperties._outputParameterIndex;
+            QString resultName = localCtx._results[outIdx];
+            Symbol tmpResult = localSymTable.getSymbol(resultName);
+
+            //previous operation might have been a condition
+            //so we only can do something when condtion was ok
+            if (resultName != CONDITION_FAILED) {
+                if (hasType(itILWISOBJECT, tmpResult._type)) {
+                    // anonymous objects have to be resolved
+                    arguments.insert(inIdx, resultName);
+                } else {
+                    // simple types can be passed in directly
+                    arguments.insert(inIdx, tmpResult._var.toString());
+                }
+            } else {
+                arguments.insert(inIdx, sUNDEF);
+                // TODO: handle of parameters with sUNDEF
+            }
+
+            if ( !edgeProperties.temporary) {
+                QString outputName = edgeProperties.outputName.isEmpty()
+                        ? QString("%1_node%2_pout%3").arg(workflow->name()).arg(v).arg(outIdx)
+                        : edgeProperties.outputName;
+
+                Symbol symbol = symTable.getSymbol(outputName);
+                if (symbol.isValid()) {
+                    // make unique in shared execution context/symbol table
+                    outputName = QString("%1_node%2_pout%3_%4").arg(workflow->name()).arg(v).arg(outIdx).arg(outputName);
+                }
+                copyToContext(symbol, outputName, ctx, symTable);
+            }
+        }
+    }
+    return true;
+}
+
+bool WorkflowOperationImplementation::reverseFollowScriptPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable, QStringList& script){
+    if (_nodeExecutionContext.contains(v)) {
+        return true;
+    }
+    IWorkflow workflow = (IWorkflow)_metadata;
+    IOperationMetaData meta = workflow->getOperationMetadata(v);
+
+    InEdgeIterator ei, ei_end;
+    boost::tie(ei,ei_end) = workflow->getInEdges(v);
+
+    if( doCondition(meta, v,ctx,symTable))
+        return true;
+    // has external inputs only
+    if (ei == ei_end/*workflow->isInputNode(v)*/) {
+        return executeInputNode(v, ctx, symTable);
+    }
+
+    bool ok;
+    QStringList arguments;
+
+    for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
+        SPAssignedInputData input = workflow->getAssignedInputData(assignment);
+        arguments.insert(assignment.second, input->value);
+    }
+
+    if(!doInputEdges(ei, ei_end,workflow,v,arguments,ctx,symTable))
+        return false;
+
+    QStringList externalInputs = _inputArgs.value(v);
+    for (int i = 0 ; i < externalInputs.size() ; i++) {
+        QString externalInput = externalInputs.at(i);
+        if ( !externalInput.isEmpty()) {
+            arguments.insert(i, externalInput);
+        }
+    }
+
+    QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
+    QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
+    qDebug() << "script: " << execString;
+     _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
+    return true;
+}
+
+bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_nodeExecutionContext.contains(v)) {
+        return true;
+    }
+    IWorkflow workflow = (IWorkflow)_metadata;
+    IOperationMetaData meta = workflow->getOperationMetadata(v);
+
+    InEdgeIterator ei, ei_end;
+    boost::tie(ei,ei_end) = workflow->getInEdges(v);
+
+    if( doCondition(meta, v,ctx,symTable))
+        return true;
 
     // has external inputs only
     if (ei == ei_end/*workflow->isInputNode(v)*/) {

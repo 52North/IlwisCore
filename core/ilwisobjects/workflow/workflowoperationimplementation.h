@@ -5,7 +5,7 @@
 
 namespace Ilwis {
 
-const QString CONDITION_FAILED = "CONDITION_FAILED";
+const QString CONDITION_FAILED = "WORKFLOW_CONDITION_FAILED";
 class WorkflowOperationImplementation: public OperationImplementation
 {
 
@@ -33,6 +33,7 @@ public:
      */
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const SymbolTable &);
 
+    bool reverseFollowScriptPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable, QStringList &script);
 protected:
 
 private:
@@ -78,6 +79,8 @@ private:
      */
     bool checkConditions(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
 
+    bool doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
+    bool doInputEdges(InEdgeIterator &ei, const InEdgeIterator &ei_end, const IWorkflow &workflow, const OVertex &v, QStringList &arguments, ExecutionContext *ctx, SymbolTable &symTable);
 };
 }
 
