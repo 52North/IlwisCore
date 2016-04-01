@@ -19,7 +19,10 @@ win32{
     BOOST=../external
     SHAREDEXT=dll
     PREFIXSHARED=
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos \
+            -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgsl-0 \
+            -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgslcblas-0
+
     INCLUDEPATH += $$PWD/../external/geos
     DEPENDPATH += $$PWD/../external/geos
 }
@@ -31,7 +34,9 @@ linux{
     PREFIXSHARED=lib
     INCLUDEPATH += $$GEOSINCL
     DEPENDPATH += $$GEOSINCL
-    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2
+    LIBS += -L$$GEOSLIB/ -lgeos-3.4.2 \
+            -L/usr/lib -lgsl \
+            -L/usr/lib -lgslcblas
 }
 
 linux-g++{

@@ -60,7 +60,12 @@ HEADERS += \
     baseoperations/data/saveas.h \
     baseoperations/creators/createrastercoverage.h \
     baseoperations/conditions/junction.h \
-    baseoperations/conditions/numbercondition.h
+    baseoperations/conditions/numbercondition.h \
+    baseoperations/triangulation/solarazimuthoperation.h \
+    baseoperations/triangulation/satellitezenithangleoperation.h \
+    baseoperations/triangulation/satelliteazimuthoperation.h \
+    baseoperations/triangulation/solarzenithangleoperation.h \
+    baseoperations/triangulation/triangulationoperationbase.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -107,7 +112,13 @@ SOURCES += \
     baseoperations/data/saveas.cpp \
     baseoperations/creators/createrastercoverage.cpp \
     baseoperations/conditions/junction.cpp \
-    baseoperations/conditions/numbercondition.cpp
+    baseoperations/conditions/numbercondition.cpp \
+    baseoperations/triangulation/solarazimuthoperation.cpp \
+    baseoperations/triangulation/satellitezenithangleoperation.cpp \
+    baseoperations/triangulation/satelliteazimuthoperation.cpp \
+    baseoperations/triangulation/solarzenithangleoperation.cpp \
+    baseoperations/triangulation/triangulationoperationbase.cpp
+
 
 OTHER_FILES += \
     baseoperations/baseoperations.json
@@ -116,13 +127,25 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    #LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
+    #INCLUDEPATH += $$PWD/../external/gsl
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
-DISTFILES +=
+DISTFILES += \
+    baseoperations/resources/libraries.config
+
+
+resources.files += baseoperations/resources/libraries.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+INSTALLS += resources
+
 
 linux{
+    LIBS += -L/usr/lib -lgsl
+    INCLUDEPATH += /usr/include/gsl
     target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
     INSTALLS += target
 }

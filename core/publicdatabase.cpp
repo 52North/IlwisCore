@@ -164,7 +164,7 @@ void PublicDatabase::prepare() {
 
     if ( kernel()->issues()->maxIssueLevel() == IssueObject::itCritical) {
         exec("ROLLBACK TRANSACTION");
-        throw ErrorObject(TR("Critical errors found when initialzing Public database"));
+        throw ErrorObject(TR("Critical errors found when initializing Public database"));
     }
 
 }

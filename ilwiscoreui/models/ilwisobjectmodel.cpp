@@ -711,7 +711,13 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
             if ( coldef.isValid()){
                 if ( coldef.datadef().domain()->ilwisType() == itTEXTDOMAIN)
                     return value.toString();
-                return coldef.datadef().domain()->impliedValue(value).toString();
+
+                QVariant impliedValue = coldef.datadef().domain()->impliedValue(value);
+                if (coldef.datadef().domain()->valueType() == itNUMERICDOMAIN && coldef.datadef().range().dynamicCast<NumericRange>()->resolution() == 0) {
+                    return QString::number(impliedValue.toDouble(), 'g', 4);
+                } else {
+                    return impliedValue.toString();
+                }
             }
             if ( value.toDouble() == rUNDEF)
                 return sUNDEF;
@@ -738,6 +744,6 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
     }
     if ( value.toDouble() == rUNDEF)
         return sUNDEF;
-    return value.toString();
+    return QString::number(value.toDouble(), 'g', 4);
 
 }
