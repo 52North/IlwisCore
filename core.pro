@@ -403,5 +403,4 @@ installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
 
-DISTFILES += \
-    core/resources/libraries.config
+DISTFILES +=
