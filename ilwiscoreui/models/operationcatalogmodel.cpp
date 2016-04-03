@@ -255,7 +255,7 @@ void OperationCatalogModel::gatherItems() {
     }
 
     _allItems.clear();
-    _filters.clear();
+    //_filters.clear();
     _refresh = false;
 
     std::vector<Resource> items = _view.items();
