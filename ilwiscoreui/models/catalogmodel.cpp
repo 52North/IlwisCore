@@ -19,6 +19,7 @@
 #include "layermanager.h"
 #include "ilwiscontext.h"
 #include "oshelper.h"
+#include "resourcemanager.h"
 
 
 using namespace Ilwis;
@@ -26,7 +27,8 @@ using namespace Ilwis;
 
 CatalogModel::~CatalogModel()
 {
-
+    for(auto *resource : _allItems)
+        resource->deref();
 }
 
 void CatalogModel::setFilterState(bool state)
@@ -417,10 +419,10 @@ void CatalogModel::gatherItems() {
         std::vector<Resource> items = _view.items();
 
         for(const Resource& resource : items){
-            _allItems.push_back(new ResourceModel(resource, this));
+            _allItems.push_back( resourcemanager()->createResourceModel("resourcemodel", resource));
         }
         if ( _view.hasParent()){
-            _allItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
+            _allItems.push_front(resourcemanager()->createResourceModel("resourcemodel",Resource(_view.resource().url().toString() + "/..", itCATALOG)));
         }
     }
 }
@@ -445,6 +447,11 @@ void CatalogModel::updateContainer()
     _refresh = true;
     emit contentChanged();
     emit objectCountsChanged();
+}
+
+QString CatalogModel::modelType() const
+{
+    return "catalogmodel";
 }
  //-------------------------------------------------
 CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)

@@ -131,3 +131,8 @@ QQmlListProperty<ResourceModel> WorkSpaceModel::data()
     return  QQmlListProperty<ResourceModel>(this, _data);
 }
 
+QString WorkSpaceModel::modelType() const
+{
+    return "workspacemodel";
+}
+

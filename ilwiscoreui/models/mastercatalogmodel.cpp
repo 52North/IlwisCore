@@ -37,6 +37,7 @@
 #include "catalogfiltermodel.h"
 #include "operationcatalogmodel.h"
 #include "oshelper.h"
+#include "resourcemanager.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -695,7 +696,7 @@ ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model = new ResourceModel(resource,this);
+        ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
         return model;
     }
     qDebug() << " wrong id used";

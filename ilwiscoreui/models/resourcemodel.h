@@ -6,11 +6,17 @@
 #include "catalog.h"
 #include "ilwiscoreui_global.h"
 
-//namespace Ilwis {
+namespace Ilwis {
+namespace UI {
+class ResourceManager;
+}
+}
 //namespace Desktopclient {
 
 class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
 {
+    friend class Ilwis::UI::ResourceManager;
+
     Q_OBJECT
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString imagePath READ imagePath CONSTANT)
@@ -38,7 +44,6 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
 
 public:
     ResourceModel();
-    explicit ResourceModel(const Ilwis::Resource &source, QObject *parent = 0);
     ResourceModel(const ResourceModel& model);
     ResourceModel& operator=(const ResourceModel& model);
     virtual ~ResourceModel();
@@ -85,11 +90,16 @@ public:
 
 
     static QString iconPath(IlwisTypes tp) ;
+    quint32 ref() const;
+    void deref();
+    void addref();
+    virtual QString modelType() const;
 
 protected:
     QString _displayName;
     virtual Ilwis::Resource& itemRef();
     virtual const Ilwis::Resource& itemRef() const;
+    explicit ResourceModel(const Ilwis::Resource &source, QObject *parent = 0);
 private:
     QString propertyTypeName(quint64 typ, const QString &propertyName) const;
     QString propertyName(const QString &property) const;
@@ -102,6 +112,7 @@ private:
     bool _isRoot;
     bool _selected = false;
     bool _is3d = false;
+    quint32 _ref = 0;
 
 
 

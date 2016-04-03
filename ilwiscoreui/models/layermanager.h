@@ -34,6 +34,7 @@ public:
 
     explicit LayerManager(QObject *parent = 0);
     LayerManager(QObject *parent, UIContextModel *context);
+    ~LayerManager();
 
     Q_INVOKABLE void setLayerListName(const QString name);
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);

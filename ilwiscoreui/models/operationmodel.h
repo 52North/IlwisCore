@@ -52,6 +52,7 @@ public:
     QStringList outParameterIconList() const;
 
 
+    QString modelType() const;
 private:
 
 };

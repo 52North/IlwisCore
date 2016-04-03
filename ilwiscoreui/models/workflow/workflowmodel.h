@@ -194,9 +194,11 @@ public:
 
      QQmlListProperty<IlwisObjectModel> getSelectedOperation() ;
     Q_INVOKABLE void setSelectedOperationId(const QString &selectedOperationId);
-    Q_INVOKABLE QVariantList propertyList();
 
      Q_INVOKABLE void debug(const QString& code);
+     Q_INVOKABLE QVariantList propertyList();
+     QString modelType() const;
+
 signals:
     void selectedOperationChanged();
 

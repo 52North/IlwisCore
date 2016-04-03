@@ -260,4 +260,9 @@ QStringList OperationModel::parameterIndexes(const QString &typefilter, bool fro
     return indexes;
 }
 
+QString OperationModel::modelType() const
+{
+    return "operationmodel";
+}
+
 

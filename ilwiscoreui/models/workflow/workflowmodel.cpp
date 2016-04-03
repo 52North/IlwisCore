@@ -463,3 +463,8 @@ void WorkflowModel::debug(const QString &code)
    return QQmlListProperty<IlwisObjectModel>(this, _selectedOperation) ;
 }
 
+ QString WorkflowModel::modelType() const
+ {
+     return "workflowmodel";
+ }
+

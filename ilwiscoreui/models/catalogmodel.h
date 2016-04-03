@@ -52,6 +52,7 @@ public:
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<ResourceModel> coverages();
 
+    QString modelType() const;
 protected:
     struct FilterItem{
         FilterItem() {}

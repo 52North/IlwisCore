@@ -29,7 +29,7 @@ private:
 
     ResourceModel *findResource(const QString &model, const Ilwis::Resource& resource) const;
     void addResource(ResourceModel *rm);
-    MasterCatalogModel *_mastercatalogmodel = 0;
+    //MasterCatalogModel *_mastercatalogmodel = 0;
     QString key(const QString& type, quint64 id) const{ return QString::number(id) + type;}
 };
 }

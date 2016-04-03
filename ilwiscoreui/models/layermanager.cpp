@@ -28,6 +28,12 @@ LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(p
 {
     _layers.append(new GlobalLayerModel(this));
 }
+
+LayerManager::~LayerManager()
+{
+    if ( _masterCsy)
+        _masterCsy->deref();
+}
 void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
     _layers.insert(1,newmodel);
