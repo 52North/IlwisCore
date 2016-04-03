@@ -54,19 +54,12 @@ public:
 
     QString modelType() const;
 protected:
-    struct FilterItem{
-        FilterItem() {}
-        FilterItem(const QString& name,const QVariant& filter):_filter(filter),_filterName(name){}
-        QVariant _filter;
-        QString _filterName;
-    };
+
     Ilwis::CatalogView _view;
     virtual void gatherItems();
    QList<ResourceModel *> _allItems;
    QList<ResourceModel *> _filteredItems;
    QList<ResourceModel *> _coverages;
-   std::map<QString,FilterItem> _filters;
-   std::set<QString> _activeFilters;
    std::map<quint64, int> _objectCounts;
    bool _refresh = true;
 
@@ -75,13 +68,11 @@ private:
     bool _isScanned;
     bool _initNode;
     int _level;
-    std::map<IlwisTypes, bool> _filterState;
     QStringList objectCounts();
     void fillSpatialFilter();
     void fillObjectFilter();
     bool isActiveFilter(const QString& name) const;
     void fillNameFilter();
-    void setFilterState(bool state);
     void fillKeywordFilter();
 public slots:
     void refreshContent(const QUrl& url);

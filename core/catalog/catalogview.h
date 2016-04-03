@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QSharedPointer>
 #include <QFileInfo>
+#include <set>
 #include "kernel_global.h"
 #include "identity.h"
 #include "resource.h"
@@ -52,10 +53,17 @@ public:
     void addFixedItem(quint64 id);
     void removeFixedItem(quint64 id);
     quint32 fixedItemCount() const;
-    QString filter() const;
-    void filter(const QString& filter);
     Resource resource() const;
     bool hasParent() const;
+    bool isActiveFilter(const QString& name) const;
+    void filter(const QString& filterName, const QString& filterString);
+    QString filter(const QString &name) const;
+    void addActiveFilter(const QString& filterName);
+    bool removeActiveFilter(const QString& filterName);
+    void filterChanged(const QString &typeIndication, bool state);
+    int filterCount() const;
+    IlwisTypes objectFilter() const;
+    void storeFilters() const;
 
      /*!
     Convenience method to retrieve the location the catalog is currently attached to.
@@ -67,14 +75,25 @@ public:
     */
     QUrl parentCatalogView() const;
     void setParentCatalogView(const QUrl& url);
+    void setFilterState(bool state);
+
 
 
 protected:
+    struct FilterItem{
+        FilterItem() {}
+        FilterItem(const QString& name,const QVariant& filter):_filter(filter),_filterName(name){}
+        QVariant _filter;
+        QString _filterName;
+    };
+
     bool fillCatalog();
 
-    QString _filter;
+    std::map<QString,FilterItem> _filters;
+    std::set<QString> _activeFilters;
     std::vector<QUrl> _locations;
     std::map<quint64, Resource> _fixedItems;
+    std::map<IlwisTypes, bool> _filterState;
     QUrl _parent;
     Resource _resource;
 
