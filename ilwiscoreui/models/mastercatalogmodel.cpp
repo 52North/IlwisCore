@@ -510,6 +510,16 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("filter",filter);
         res.addProperty("canbeanimated",canBeAnimated);
         cview = CatalogView(res);
+        if ( _currentCatalog == 0){
+            QString num = context()->configurationRef()("users/" + Ilwis::context()->currentUser() + "/filter-count",QString("0"));
+            int n = num.toInt();
+            for(int i = 0; i < n; ++i){
+                QString basekey = "users/" + Ilwis::context()->currentUser() + "/filters-" + QString::number(i);
+                QString name = context()->configurationRef()(basekey + "/filter-name", QString(""));
+                QString newfilter = context()->configurationRef()(basekey + "/filter-defintion", QString(""));
+                cview.filter(name,newfilter);
+            }
+        }
         CatalogModel *model = 0;
         if ( inpath.indexOf("ilwis://operations") == 0){
             model = new OperationCatalogModel(this);
