@@ -134,13 +134,7 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
-    core/catalog/mastercatalogcache.cpp \
-    core/util/triangulation/satellitetriangulation.cpp \
-    core/util/triangulation/terraintriangulation.cpp \
-    core/util/triangulation/solartriangulation.cpp \
-    core/util/triangulation/solartriangulationcallbackbase.cpp \
-    core/util/triangulation/solartriangulationmemberfunctioncallback.cpp
-
+    core/catalog/mastercatalogcache.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -291,14 +285,7 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/workflow/workflowoperationimplementation.h \
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
-    core/catalog/mastercatalogcache.h \
-    core/util/triangulation/dynamicsuntriangulationcallback.h \
-    core/util/triangulation/satellitetriangulation.h \
-    core/util/triangulation/terraintriangulation.h \
-    core/util/triangulation/solartriangulation.h \
-    core/util/triangulation/solartriangulationcallbackbase.h \
-    core/util/triangulation/solartriangulationmemberfunctioncallback.h
-
+    core/catalog/mastercatalogcache.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

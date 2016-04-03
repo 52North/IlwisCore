@@ -60,12 +60,7 @@ HEADERS += \
     baseoperations/data/saveas.h \
     baseoperations/creators/createrastercoverage.h \
     baseoperations/conditions/junction.h \
-    baseoperations/conditions/numbercondition.h \
-    baseoperations/triangulation/solarazimuthoperation.h \
-    baseoperations/triangulation/satellitezenithangleoperation.h \
-    baseoperations/triangulation/satelliteazimuthoperation.h \
-    baseoperations/triangulation/solarzenithangleoperation.h \
-    baseoperations/triangulation/triangulationoperationbase.h
+    baseoperations/conditions/numbercondition.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -112,12 +107,7 @@ SOURCES += \
     baseoperations/data/saveas.cpp \
     baseoperations/creators/createrastercoverage.cpp \
     baseoperations/conditions/junction.cpp \
-    baseoperations/conditions/numbercondition.cpp \
-    baseoperations/triangulation/solarazimuthoperation.cpp \
-    baseoperations/triangulation/satellitezenithangleoperation.cpp \
-    baseoperations/triangulation/satelliteazimuthoperation.cpp \
-    baseoperations/triangulation/solarzenithangleoperation.cpp \
-    baseoperations/triangulation/triangulationoperationbase.cpp
+    baseoperations/conditions/numbercondition.cpp
 
 
 OTHER_FILES += \
