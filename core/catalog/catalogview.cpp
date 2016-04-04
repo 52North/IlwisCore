@@ -169,26 +169,6 @@ void CatalogView::filterChanged(const QString& typeIndication, bool state){
     }
     _filters["object"]._filter = currentTypes;
 
-//    if (exclusive){
-//        if ( !state){
-//            setFilterState(true);
-//        }else {
-//            objectType = objectType.split("|")[0];
-//            type = IlwisObject::name2Type(objectType);
-//            setFilterState(false);
-//            if ( type != itUNKNOWN){
-//                _filterState[type] = state;
-//            }
-//        }
-//    }else {
-//        type = IlwisObject::name2Type(objectType);
-//        if ( type != itUNKNOWN){
-//            _filterState[type] = state;
-//        }else {
-//            setFilterState(state);
-//        }
-//    }
-
     addActiveFilter("object");
 }
 
@@ -220,13 +200,6 @@ void CatalogView::storeFilters() const
         context()->configurationRef().addValue(basekey + "/filter-name", filter.first);
         context()->configurationRef().addValue(basekey + "/filter-defintion", filter.second._filter.toString());
     }
-//    // special case object filters
-//    auto iter = _activeFilters.find("object");
-//    if ( iter != _activeFilters.end()){
-//        QString basekey = "users/" + Ilwis::context()->currentUser() + "/filters-" + QString::number(count++);
-//        context()->configurationRef().addValue(basekey + "/filter-name", "object-filter");
-//        context()->configurationRef().addValue(basekey + "/filter-defintion", QString::number(objectFilter()));
-//    }
     context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() + "/filter-count", QString::number(count));
 
 }
