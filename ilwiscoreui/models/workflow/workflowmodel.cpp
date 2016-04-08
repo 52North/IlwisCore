@@ -452,7 +452,7 @@ QVariantList WorkflowModel::propertyList()
 QString WorkflowModel::generateScript(const QString &type, const QString& parameters)
 {
     if ( type == "python"){
-        _expression = OperationCatalogModel::createExpression(_workflow->id(),parameters,true);
+        _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
         if ( !_expression.isValid())
             return "";
         _workflow->connectTo(QUrl("file:///d:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
