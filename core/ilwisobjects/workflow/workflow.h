@@ -482,6 +482,7 @@ public:
     QStringList getOutputTerms(const OVertex &v);
 
     std::vector<quint16> getAssignedPouts(const OVertex &v);
+    QList<InputAssignment> getConstantInputAssignments(const OVertex &v) const;
 
 private:
     // The graph representation of the workflow
@@ -515,7 +516,7 @@ private:
     QString createParametersCountString(const QStringList &mandatory, const QStringList &optionals) const;
 
     QList<InputAssignment> getOpenInputAssignments(const OVertex &v) const;
-    QList<InputAssignment> getConstantInputAssignments(const OVertex &v) const;
+
     QList<InputAssignment> getImplicitInputAssignments(const OVertex &v);
 };
 
