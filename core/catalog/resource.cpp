@@ -211,6 +211,11 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
     }
 }
 
+Resource::~Resource()
+{
+
+}
+
 void Resource::name(const QString &nm, bool adaptNormalizedUrl)
 {
     if ( name() == nm)
