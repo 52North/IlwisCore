@@ -86,7 +86,6 @@ Rectangle {
                 if (editor.status === Loader.Ready) {
                     item.height = height
                     activeEditor = item
-                    console.debug("done")
                 }
             }
         }
