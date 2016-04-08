@@ -23,7 +23,7 @@ Item {
         onClicked: {
             var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
             if ( wf !== null){
-                wf.debug("topologicalsort")
+                wf.generateScript("python",workflow.parameters())
             }
         }
     }
