@@ -7,6 +7,7 @@
 #include "symboltable.h"
 #include "commandhandler.h"
 #include "featurecoverage.h"
+#include "operationcatalogmodel.h"
 #include "../workflowerrormodel.h"
 #include "ilwiscontext.h"
 #include "ilwistypes.h"
@@ -446,6 +447,21 @@ QVariantList WorkflowModel::propertyList()
     result.append(metadata);
 
     return result;
+}
+
+QString WorkflowModel::generateScript(const QString &type, const QString& parameters)
+{
+    if ( type == "python"){
+        _expression = OperationCatalogModel::createExpression(_workflow->id(),parameters,true);
+        if ( !_expression.isValid())
+            return "";
+        _workflow->connectTo(QUrl("file:///d:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
+        QVariant value;
+        value.setValue(_expression);
+        IOOptions opt("expression", value);
+        _workflow->store(opt);
+    }
+    return "";
 }
 
 void WorkflowModel::debug(const QString &code)
