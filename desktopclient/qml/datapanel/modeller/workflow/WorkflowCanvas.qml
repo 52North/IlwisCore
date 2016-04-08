@@ -809,7 +809,7 @@ Modeller.ModellerWorkArea {
        }
    }
 
-    Component.onDestruction: {
+    function store() {
         var coordinates = [], node
         for (var i = 0; i < wfCanvas.operationsList.length; i++) {
             node = wfCanvas.operationsList[i]
