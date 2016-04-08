@@ -5,11 +5,19 @@
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
+#include "workflow.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "connectorinterface.h"
+#include "ilwisobjectconnector.h"
+#include "factory.h"
+#include "abstractfactory.h"
+#include "ilwisobjectfactory.h"
+#include "pythonobjectfactory.h"
+#include "connectorfactory.h"
 #include "ilwiscontext.h"
 #include "runpython.h"
-
+#include "pythonworkflowconnector.h"
 #include "pythonscript/pythonscriptmodule.h"
 
 using namespace Ilwis;
@@ -63,6 +71,16 @@ void PythonScriptModule::prepare()
             return;
         }
           commandhandler()->addOperation(RunPython::createMetadata(), RunPython::create);
+
+          PythonObjectFactory *objfactory = new PythonObjectFactory();
+          objfactory->prepare();
+          kernel()->addFactory(objfactory );
+
+          ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+          if (!factory)
+              return ;
+
+          factory->addCreator("workflow","python",PythonScript::PythonWorkflowConnector::create);
 
         kernel()->issues()->log("Loaded python script module",IssueObject::itMessage);
     } catch(std::exception ex){
