@@ -119,6 +119,10 @@ Rectangle {
         return operationFormScrollView.appForm.currentAppForm.formresult
     }
 
+    function parameters() {
+        return operationFormScrollView.appForm.currentAppForm.formresult
+    }
+
     function clearOperationForm() {
         operationFormScrollView.appForm.formTitle = "Nothing selected"
         operationFormScrollView.appForm.formQML = ""
