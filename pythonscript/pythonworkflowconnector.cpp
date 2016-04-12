@@ -19,7 +19,7 @@ PythonWorkflowConnector::PythonWorkflowConnector(const Ilwis::Resource &resource
 }
 
 bool PythonWorkflowConnector::openTarget() {
-    QString filename = _resource.url().toLocalFile();
+    QString filename = _resource.url(true).toLocalFile();
     QFileInfo inf(filename);
     if ( inf.suffix() != "ilwis"){
         filename = inf.absolutePath() + "/" + inf.baseName();
@@ -29,7 +29,7 @@ bool PythonWorkflowConnector::openTarget() {
     }
     QFile *file = new QFile(filename);
 
-    if (file->open(QIODevice::ReadWrite)) {
+    if (file->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
         _datasource.reset(file);
         return true;
     }
@@ -40,8 +40,10 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
 {
     Workflow *workflow = static_cast<Workflow *>(obj);
 
+    bool inMemory = true;
     if ( !options.contains("expression"))
         return false;
+
     auto expression = options["expression"].value<OperationExpression>();
     QString expr = expression.input<QString>(0); // we dont want the script command, just its tail
     int assignIndex = expr.indexOf("=");
@@ -49,11 +51,15 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
     QString leftTerm = expr.left(assignIndex);
     QStringList outs = leftTerm.split("},");
     for(auto output : outs){
+        QString res ;
         int index = output.lastIndexOf("/");
         if ( index != -1){
-            _outputNames.append(output.mid(index + 2));
+            res = output.mid(index + 2);
         }else
-            _outputNames.append(output);
+            res = output;
+        if (!res.endsWith("}")) // due to the nature how split works the last '}' will have been dropped
+            res += "}";
+        _outputNames.append(res);
     }
     _expression = rightTerm;
 
@@ -62,8 +68,9 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
     parseInputNodeArguments(workflow, inputNodes);
 
     QList<OVertex> outputNodes = workflow->getNodesWithExternalOutputs();
+    script.append("import ilwisobjects as ilwis");
     for (int i = 0; i<outputNodes.size(); ++i) {
-        bool ok = reverseFollowScriptPath(workflow, outputNodes[i], names, script);
+        bool ok = reverseFollowScriptPath(workflow, outputNodes[i], names, script,i);
         if (!ok) {
             ERROR0("workflow deduction failed when trying to generate script!");
             return false;
@@ -73,8 +80,10 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
 
     if (!openTarget())
         return false;
-    QDataStream stream(_datasource.get());
-
+    QTextStream stream(_datasource.get());
+    QString txt = script.join("\n");
+    stream << txt;
+    stream.device()->close();
     return true;
 
 }
@@ -168,9 +177,6 @@ void PythonWorkflowConnector::executeInputNode(Workflow *workflow,const OVertex 
     addGeneratedNames(v,names,meta);
     QString expr = names.join(",") + "=" + execString;
     script.append(expr);
-    qDebug() << "executing input node" << expr;
-
-
 }
 void PythonWorkflowConnector::addGeneratedNames(const OVertex &v, QStringList& names, const IOperationMetaData& meta)
 {
@@ -182,8 +188,9 @@ void PythonWorkflowConnector::addGeneratedNames(const OVertex &v, QStringList& n
     _nodeExecutionContext[v] = names;
 }
 
-bool PythonWorkflowConnector::reverseFollowScriptPath( Workflow *workflow,const OVertex &v,QStringList& names, QStringList& script){
+bool PythonWorkflowConnector::reverseFollowScriptPath(Workflow *workflow, const OVertex &v, QStringList& names, QStringList& script, int order){
     if (_nodeExecutionContext.contains(v)) {
+        names = _nodeExecutionContext[v];
         return true;
     }
     IOperationMetaData meta = workflow->getOperationMetadata(v);
@@ -220,10 +227,9 @@ bool PythonWorkflowConnector::reverseFollowScriptPath( Workflow *workflow,const 
         QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
         QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
         addGeneratedNames(v, names, meta);
-        QString expr = _outputNames[0] + "=" + execString;
+        QString out = order == -1 ? names.join(",") : _outputNames[order]; // order is only used for external (user) set names while else we used generated names
+        QString expr = out + "=" + execString;
         script.append(expr);
-        qDebug() << "script: " << expr;
-
     }
     return true;
 }

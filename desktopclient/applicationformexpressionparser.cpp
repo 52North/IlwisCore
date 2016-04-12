@@ -268,6 +268,8 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
             QString operationRowEnd;
 
             if(!operationNames.empty()){
+                if ( operationIndex == operationNames.end())
+                    throw ErrorObject(TR("Parsing auto generated form went wrong. Stopping form"));
                 QVariant values = (* operationIndex);
                 QVariantMap map = values.toMap();
 
@@ -278,8 +280,10 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
                     parameterCount = map.value("outParameterCount").toInt();
                 }
 
-                while(parameterCount<=0){
+                while(parameterCount<=0 ){
                     ++operationIndex;
+                    if ( operationIndex == operationNames.end())
+                        return "";
 
                     values = (* operationIndex);
                     map = values.toMap();
@@ -435,54 +439,60 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
 }
 
 QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues)  {
-    Resource resource = mastercatalog()->id2Resource(metaid);
-    std::vector<FormParameter> parameters = getParameters(resource);
+    try {
+        Resource resource = mastercatalog()->id2Resource(metaid);
+        std::vector<FormParameter> parameters = getParameters(resource);
 
-    std::vector<FormParameter> outparameters = getOutputParameters(resource);
-    QString results;
-    QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
-    QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
-    columnStart += exclusiveGroup;
-    int width = 0;
-    for(int i = 0; i < parameters.size(); ++i){
-        width = std::max(parameters[i]._label.size(), width);
-    }
-    width *= 10;
-    width = std::min(100, width);
+        std::vector<FormParameter> outparameters = getOutputParameters(resource);
+        QString results;
+        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
+        QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
+        columnStart += exclusiveGroup;
+        int width = 0;
+        for(int i = 0; i < parameters.size(); ++i){
+            width = std::max(parameters[i]._label.size(), width);
+        }
+        width *= 10;
+        width = std::min(100, width);
 
-    QString inputpart = makeFormPart(width, parameters, true, results, showEmptyOptionInList, hiddenFields, operationNames, constantValues);
+        QString inputpart = makeFormPart(width, parameters, true, results, showEmptyOptionInList, hiddenFields, operationNames, constantValues);
 
-    QString outputPart;
-    QString seperator;
-    if ( showoutputformat){ //TODO change to showoutputformat
-        outputPart = makeFormPart(width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
+        QString outputPart;
+        QString seperator;
+        if ( showoutputformat){ //TODO change to showoutputformat
+            outputPart = makeFormPart(width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
 
-        if (results.size() > 0) results = ": " + results;
-        results = "property var outputFormats;property string formresult" + results;
+            if (results.size() > 0) results = ": " + results;
+            results = "property var outputFormats;property string formresult" + results;
 
-        for(int i = 0; i < outparameters.size(); ++i){
-            results += QString(";property string outputfield_%1").arg(i);
-            if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE | itCOLUMN)){
-                results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+            for(int i = 0; i < outparameters.size(); ++i){
+                results += QString(";property string outputfield_%1").arg(i);
+                if ( hasType(outparameters[i]._dataType, itCOVERAGE | itTABLE | itCOLUMN)){
+                    results += QString(";property alias format_%1 :  pout_format_%1").arg(i);
+                }
             }
-        }
-        results += ";";
-        if(operationNames.isEmpty()){
-            seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
-        }else{
-            seperator = "Rectangle{width : parent.width - 12; x: 6; height:5;color : \"#B3B3B3\"}";
-        }
+            results += ";";
+            if(operationNames.isEmpty()){
+                seperator = "Rectangle{width : parent.width - 12; x: 6; height:2;color : \"#B3B3B3\"}";
+            }else{
+                seperator = "Rectangle{width : parent.width - 12; x: 6; height:5;color : \"#B3B3B3\"}";
+            }
 
-    }else
-        results = "property string formresult : " + results + ";";
-    columnStart = QString(columnStart).arg(results);
-    QString component = columnStart + inputpart + seperator + outputPart + "}";
+        }else
+            results = "property string formresult : " + results + ";";
+        columnStart = QString(columnStart).arg(results);
+        QString component = columnStart + inputpart + seperator + outputPart + "}";
 
 
-    // for debugging, check if the qml is ok; can be retrieved from teh log file
-//    kernel()->issues()->log(component);
+        // for debugging, check if the qml is ok; can be retrieved from teh log file
+        //    kernel()->issues()->log(component);
+        return component;
+    }catch(const ErrorObject&){
 
-    return component;
+    } catch(const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+    return "";
 }
 
 std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::createWorkflowMetadata(quint64 metaid) const

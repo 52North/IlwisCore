@@ -71,7 +71,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     quint32 idcount = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     std::map<quint64, Combo> combos;
-    std::for_each(iterIn1, iterIn1.end(), [&](double v1){
+    std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         double v2 = *iterIn2;
 
         checkUndef(v1,v2);
@@ -103,7 +103,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
 
         QString id = determineCrossId(v1,v2);
         if (id != ""){
-            idrange->add(new NamedIdentifier(id, element.second._id ));
+            *idrange << id;
             _outputTable->setCell(0,record,QVariant(record));
             _outputTable->setCell(1,record,QVariant(v1));
             _outputTable->setCell(2,record,QVariant(v2));

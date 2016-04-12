@@ -127,7 +127,7 @@ bool BaseTable::prepare(const IOOptions &options)
 
 bool BaseTable::isValid() const
 {
-    return _columns != 0;
+    return true;
 }
 
 bool  BaseTable::initLoad() {
