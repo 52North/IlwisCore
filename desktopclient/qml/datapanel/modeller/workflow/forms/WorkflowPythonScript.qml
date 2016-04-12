@@ -6,25 +6,29 @@ import MasterCatalogModel 1.0
 import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
+import "../../../../controls" as Controls
 
 Item {
     height:parent.height
     width : 440
 
     function enable(propertyIndex, parms){
-        visible = enabled = true
+        visible = enabled = !visible
     }
 
-    Button {
-        width : 100
-        height : 20
-        text : "Debug"
-
-        onClicked: {
-            var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
-            if ( wf !== null){
-                wf.generateScript("python",workflow.parameters())
-            }
+    function getScriptText() {
+        var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+        if ( wf !== null){
+            return wf.generateScript("python",workflow.parameters())
         }
+        return "";
     }
+
+    TextArea{
+        id : scripttext
+        width : parent.width
+        height : 150
+        text: getScriptText()
+    }
+
 }
