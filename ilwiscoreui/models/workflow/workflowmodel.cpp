@@ -7,6 +7,7 @@
 #include "symboltable.h"
 #include "commandhandler.h"
 #include "featurecoverage.h"
+#include "operationcatalogmodel.h"
 #include "../workflowerrormodel.h"
 #include "ilwiscontext.h"
 #include "ilwistypes.h"
@@ -332,8 +333,8 @@ void WorkflowModel::store(const QStringList &coordinates)
             QStringList split = coordinates[i].split('|');
             OVertex v = i;
             NodeProperties props = _workflow->nodeProperties(v);
-            props._x = split[0].toLong();
-            props._y = split[1].toLong();
+            props._x = split[0].toDouble();
+            props._y = split[1].toDouble();
             _workflow->updateNodeProperties(v, props);
         }
 
@@ -440,12 +441,46 @@ QVariantList WorkflowModel::propertyList()
     metadata["label"] = TR("Metadata selected form");
     metadata["form"] = "workflow/forms/OperationPropForm.qml";
     result.append(metadata);
+    QVariantMap script;
+    metadata["label"] = TR("Script");
+    metadata["form"] = "workflow/forms/WorkflowPythonScript.qml";
+    result.append(metadata);
 
     return result;
+}
+
+QString WorkflowModel::generateScript(const QString &type, const QString& parameters)
+{
+    if ( type == "python"){
+        _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
+        if ( !_expression.isValid())
+            return "";
+        _workflow->connectTo(QUrl("file:///d:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
+        QVariant value;
+        value.setValue(_expression);
+        IOOptions opt("expression", value);
+        _workflow->store(opt);
+    }
+    return "";
+}
+
+void WorkflowModel::debug(const QString &code)
+{
+    if ( _workflow.isValid()){
+        if ( code == "graph")
+            _workflow->debugPrintGraph();
+        if ( code == "topologicalsort")
+            _workflow->debugPrintToplogicalOrder();
+    }
 }
 
  QQmlListProperty<IlwisObjectModel> WorkflowModel::getSelectedOperation()
 {
    return QQmlListProperty<IlwisObjectModel>(this, _selectedOperation) ;
 }
+
+ QString WorkflowModel::modelType() const
+ {
+     return "workflowmodel";
+ }
 

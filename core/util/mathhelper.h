@@ -16,6 +16,7 @@ public:
     static bool findPolynom(int iTerms, int iPoints, const std::vector<Coordinate>& independent, const std::vector<Coordinate>& dependent, std::vector<Coefficient>& coef);
     static NumericRange roundRange(double rmin, double rmax);
     static double round(double r);
+    static double roundTo3DecimalDigits(const double value);
 };
 }
 #endif // MATHHELPER_H

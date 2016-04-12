@@ -315,11 +315,12 @@ public:
     //@override
     void valueType(IlwisTypes tp);
 
+    double gregorianToJulian(int year, int month, int day, int hour, int minutes, double seconds) const;
+
 protected:
     void checkDate(int year, int month, int day); // alters _valid
     void checkTime(int hour, int minute, double seconds); //alters _valid
 
-    double gregorianToJulian(int year, int month, int day, int hour, int minutes, double seconds) const;
     void julianToGregorian(int& year, int& month, int& day, int& hour, int& minutes, double& seconds) const;
     int julianyearday(int year, int month, int day) const;
     int tolong(double val) const;

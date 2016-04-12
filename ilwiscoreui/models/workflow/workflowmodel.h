@@ -13,7 +13,9 @@
 #include "ilwistypes.h"
 #include "operationmetadata.h"
 #include "ilwisobjectmodel.h"
+#include "symboltable.h"
 #include "workflow.h"
+#include "operationExpression.h"
 #include "nodepropobject.h"
 #include "edgepropobject.h"
 #include <QQmlListProperty>
@@ -194,7 +196,12 @@ public:
 
      QQmlListProperty<IlwisObjectModel> getSelectedOperation() ;
     Q_INVOKABLE void setSelectedOperationId(const QString &selectedOperationId);
-    Q_INVOKABLE QVariantList propertyList();
+
+     Q_INVOKABLE void debug(const QString& code);
+     Q_INVOKABLE QVariantList propertyList();
+     Q_INVOKABLE QString generateScript(const QString& type, const QString &parameters);
+     QString modelType() const;
+
 signals:
     void selectedOperationChanged();
 
@@ -205,6 +212,7 @@ private:
     QList<IlwisObjectModel *> _selectedOperation;
 
     int _inputParameterCount = 0;
+    OperationExpression _expression;
 
 
 };

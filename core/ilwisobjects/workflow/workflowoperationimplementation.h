@@ -5,7 +5,7 @@
 
 namespace Ilwis {
 
-const QString CONDITION_FAILED = "CONDITION_FAILED";
+const QString CONDITION_FAILED = "WORKFLOW_CONDITION_FAILED";
 class WorkflowOperationImplementation: public OperationImplementation
 {
 
@@ -77,7 +77,7 @@ private:
      * \return true when all conditions are met. False if otherwise.
      */
     bool checkConditions(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
-
+    bool doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
 };
 }
 

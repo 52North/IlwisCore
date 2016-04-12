@@ -109,6 +109,7 @@ SOURCES += \
     baseoperations/conditions/junction.cpp \
     baseoperations/conditions/numbercondition.cpp
 
+
 OTHER_FILES += \
     baseoperations/baseoperations.json
 
@@ -116,13 +117,25 @@ LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
+    #LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lgsl.dll
+    #INCLUDEPATH += $$PWD/../external/gsl
 }
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
-DISTFILES +=
+DISTFILES += \
+    baseoperations/resources/libraries.config
+
+
+resources.files += baseoperations/resources/libraries.config
+resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
+
+INSTALLS += resources
+
 
 linux{
+    LIBS += -L/usr/lib -lgsl
+    INCLUDEPATH += /usr/include/gsl
     target.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET
     INSTALLS += target
 }

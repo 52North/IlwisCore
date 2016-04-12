@@ -42,6 +42,9 @@ Item {
         var iconP = "../../images/" + name
         return iconP
     }
+     function store() {
+         canvas.store()
+     }
 
     function selectedWorkflowItem(itemid){
         manager.selectedWorkflowItem(itemid)

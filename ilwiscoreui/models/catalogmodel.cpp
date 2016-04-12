@@ -19,6 +19,7 @@
 #include "layermanager.h"
 #include "ilwiscontext.h"
 #include "oshelper.h"
+#include "resourcemanager.h"
 
 
 using namespace Ilwis;
@@ -26,29 +27,17 @@ using namespace Ilwis;
 
 CatalogModel::~CatalogModel()
 {
-
+    for(auto *resource : _allItems)
+        resource->deref();
 }
 
-void CatalogModel::setFilterState(bool state)
-{
-    _filterState[itRASTER] = state;
-    _filterState[itFEATURE] = state;
-    _filterState[itTABLE] = state;
-    _filterState[itCOORDSYSTEM] = state;
-    _filterState[itGEOREF] = state;
-    _filterState[itDOMAIN] = state;
-    _filterState[itREPRESENTATION] = state;
-    _filterState[itPROJECTION] = state;
-    _filterState[itELLIPSOID] = state;
-    _filterState[itCATALOG] = state;
-}
 
 CatalogModel::CatalogModel(QObject *parent) : ResourceModel(Resource(), parent)
 {
     _initNode = true;
     _isScanned = false;
     _level = 0;
-    setFilterState(true);
+    //setFilterState(true);
 }
 
 CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel(res,parent)
@@ -63,7 +52,7 @@ CatalogModel::CatalogModel(const Resource &res, QObject *parent) : ResourceModel
         _view = CatalogView(res);
         _displayName = _view.name();
     }
-    setFilterState(true);
+    _view.setFilterState(true);
 }
 
 CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(mastercatalog()->id2Resource(id), parent)
@@ -78,7 +67,7 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
         _view = CatalogView(item());
         _displayName = _view.name();
     }
-   setFilterState(true);
+    _view.setFilterState(true);
 }
 
 void CatalogModel::scanContainer()
@@ -100,7 +89,7 @@ void CatalogModel::setView(const CatalogView &view, bool threading){
     resource(view.resource());
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     bool useThread = threading && inmainThread;
-  //  connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
+    //  connect(mastercatalog(),&MasterCatalog::contentChanged,this, &CatalogModel::refreshContent);
     if ( useThread){
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(view.resource().url().toString()))){
             scanContainer();
@@ -141,17 +130,17 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
             _objectCounts[resource->type()]+= 1;
         }
         _filteredItems.clear();
-        if ( _activeFilters.size() == 0)
+        if ( _view.filterCount() == 1) // only base filter
             return  QQmlListProperty<ResourceModel>(this, _allItems);
-        if ( isActiveFilter("spatial"))
+        if ( _view.isActiveFilter("spatial"))
             fillSpatialFilter();
-        if ( isActiveFilter("object")){
+        if ( _view.isActiveFilter("object")){
             fillObjectFilter();
         }
-        if ( isActiveFilter("keyword")){
+        if ( _view.isActiveFilter("keyword")){
             fillKeywordFilter();
         }
-        if ( isActiveFilter("name")){
+        if ( _view.isActiveFilter("name")){
             fillNameFilter();
         }
         return QQmlListProperty<ResourceModel>(this, _filteredItems);
@@ -165,7 +154,7 @@ QQmlListProperty<ResourceModel> CatalogModel::resources() {
 QQmlListProperty<ResourceModel> CatalogModel::coverages()
 {
     _coverages.clear();
-    auto& itemlist = _activeFilters.size() == 0 ? _allItems : _filteredItems;
+    auto& itemlist = _view.filterCount() == 1 ? _allItems : _filteredItems;
     for(auto *resource : itemlist){
         if hasType(resource->type(), itCOVERAGE){
             _coverages.push_back(resource);
@@ -175,16 +164,13 @@ QQmlListProperty<ResourceModel> CatalogModel::coverages()
 }
 
 void CatalogModel::fillObjectFilter() {
-    IlwisTypes type = itANY;
-    for(auto iter : _filterState){
-        if ( !iter.second){
-            type &= ~iter.first;
-        }
-    }
+
+    IlwisTypes allowedObjects = _view.objectFilter();
+
     auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
     QList<ResourceModel *> tempList;
     for(ResourceModel * resource : currentList){
-        if(hasType(resource->type(), type)){
+        if(hasType(resource->type(), allowedObjects)){
             tempList.push_back(resource);
         }
     }
@@ -192,17 +178,12 @@ void CatalogModel::fillObjectFilter() {
 
 }
 
-bool CatalogModel::isActiveFilter(const QString &name) const
-{
-    return std::find(_activeFilters.begin(), _activeFilters.end(), name) != _activeFilters.end();
-}
 void CatalogModel::fillNameFilter(){
     auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
     QList<ResourceModel *> tempList;
-    auto filter = _filters["name"];
-    QString filterValue = filter._filter.toString();
+    auto filter = _view.filter("name");
     for(ResourceModel * resource : currentList){
-        if( resource->name().indexOf(filterValue)!= -1){
+        if( resource->name().indexOf(filter)!= -1){
             tempList.push_back(resource);
         }
     }
@@ -212,8 +193,8 @@ void CatalogModel::fillNameFilter(){
 void CatalogModel::fillKeywordFilter(){
     auto &currentList = _filteredItems.size() > 0 ? _filteredItems : _allItems;
     QList<ResourceModel *> tempList;
-    auto filter = _filters["keyword"];
-    QStringList keys = filter._filter.toString().split(",");
+    auto filter = _view.filter("keyword");
+    QStringList keys = filter.split(",");
     for(ResourceModel * resource : currentList){
         bool ok = true;
         for(const QString& key : keys){
@@ -238,9 +219,10 @@ void CatalogModel::fillSpatialFilter()
 
     try{
         std::vector<double> bounds;
-         QList<ResourceModel *> tempList;
-        if ( _filters["spatial"]._filter != ""){
-            QStringList parts = _filters["spatial"]._filter.toString().split(" ");
+        QList<ResourceModel *> tempList;
+        QString filter = _view.filter("spatial");
+        if ( filter != ""){
+            QStringList parts = filter.split(" ");
             if ( parts.size() == 4){
                 bounds.push_back(parts[0].toDouble());
                 bounds.push_back(parts[1].toDouble());
@@ -267,7 +249,7 @@ void CatalogModel::fillSpatialFilter()
                                  parts[1].toDouble() >= bounds[1] &&
                                  parts[3].toDouble() <= bounds[3])
                                 tempList.push_back(resource);
-                         }
+                        }
                     }
                 }else
                     tempList.push_back(resource);
@@ -275,7 +257,7 @@ void CatalogModel::fillSpatialFilter()
         }
         _filteredItems = QList<ResourceModel *>(tempList);
 
-      }
+    }
     catch(const ErrorObject& err){
 
     }
@@ -289,68 +271,27 @@ void CatalogModel::makeParent(QObject *obj)
 }
 
 void CatalogModel::filterChanged(const QString& typeIndication, bool state){
-    QString objectType = typeIndication;
-    IlwisTypes type = itUNKNOWN;
-    bool exclusive = objectType.indexOf("|exclusive") != -1;
-
-    if (exclusive){
-        if ( !state){
-            setFilterState(true);
-        }else {
-            objectType = objectType.split("|")[0];
-            type = IlwisObject::name2Type(objectType);
-            setFilterState(false);
-            if ( type != itUNKNOWN){
-                _filterState[type] = state;
-            }
-        }
-    }else {
-        type = IlwisObject::name2Type(objectType);
-        if ( type != itUNKNOWN){
-            _filterState[type] = state;
-        }else {
-            setFilterState(state);
-        }
-    }
-
-    addActiveFilter("object");
+    _view.filterChanged(typeIndication, state);
+    emit contentChanged();
 }
 
 void CatalogModel::filter(const QString &name, const QString &filter)
 {
-    if ( name == "")
-        return;
-
-    auto iter = _filters.find(name);
-    if ( iter != _filters.end() && (*iter).second._filter == filter)
-        return;
-    if ( filter == ""){
-        auto iter = _filters.find(name);
-        if ( iter != _filters.end()){
-            _filters.erase(name);
-        }
-        removeActiveFilter(name);
-
-    }else {
-        _filters[name] = FilterItem(name,filter);
-        addActiveFilter(name);
-    }
-
+    _view.filter(name, filter);
+    emit contentChanged();
+    emit coveragesChanged();
 }
 
 void CatalogModel::addActiveFilter(const QString &filterName)
 {
-    if ( filterName != "")
-     _activeFilters.insert(filterName);
-   emit contentChanged();
+    _view.addActiveFilter(filterName);
+    emit contentChanged();
     emit coveragesChanged();
 }
 
 void CatalogModel::removeActiveFilter(const QString &filterName)
 {
-    auto iter = _activeFilters.find(filterName);
-    if ( iter != _activeFilters.end()){
-        _activeFilters.erase(iter);
+    if ( _view.removeActiveFilter(filterName)){
         emit contentChanged();
         emit coveragesChanged();
     }
@@ -386,7 +327,6 @@ QStringList CatalogModel::objectCounts()
 void CatalogModel::refresh()
 {
     _refresh = true;
-    _filters.clear();
     _allItems.clear();
 
     emit contentChanged();
@@ -411,16 +351,15 @@ void CatalogModel::gatherItems() {
         _view.prepare();
 
         _allItems.clear();
-        _filters.clear();
         _refresh = false;
 
         std::vector<Resource> items = _view.items();
 
         for(const Resource& resource : items){
-            _allItems.push_back(new ResourceModel(resource, this));
+            _allItems.push_back( resourcemanager()->createResourceModel("resourcemodel", resource));
         }
         if ( _view.hasParent()){
-            _allItems.push_front(new ResourceModel(Resource(_view.resource().url().toString() + "/..", itCATALOG), this));
+            _allItems.push_front(resourcemanager()->createResourceModel("resourcemodel",Resource(_view.resource().url().toString() + "/..", itCATALOG)));
         }
     }
 }
@@ -446,16 +385,21 @@ void CatalogModel::updateContainer()
     emit contentChanged();
     emit objectCountsChanged();
 }
- //-------------------------------------------------
+
+QString CatalogModel::modelType() const
+{
+    return "catalogmodel";
+}
+//-------------------------------------------------
 CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
 {
 }
 
 void CatalogWorker2::process(){
     try {
-            mastercatalog()->addContainer(_container);
-            emit updateContainer();
-            emit finished();
+        mastercatalog()->addContainer(_container);
+        emit updateContainer();
+        emit finished();
     } catch(const ErrorObject& ){
 
     } catch ( const std::exception& ex){

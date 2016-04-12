@@ -37,6 +37,7 @@
 #include "catalogfiltermodel.h"
 #include "operationcatalogmodel.h"
 #include "oshelper.h"
+#include "resourcemanager.h"
 #include "mastercatalogmodel.h"
 
 using namespace Ilwis;
@@ -183,6 +184,7 @@ QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startB
     thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
     thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->connect(worker, &CatalogWorker::updateBookmarks, this, &MasterCatalogModel::updateBookmarks);
+    thread->connect(worker, &CatalogWorker::finished, this, &MasterCatalogModel::updateCurrentCatalog);
     thread->start();
 
     return models;
@@ -508,6 +510,16 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             res.addProperty("filter",filter);
         res.addProperty("canbeanimated",canBeAnimated);
         cview = CatalogView(res);
+        if ( _currentCatalog == 0){
+            QString num = context()->configurationRef()("users/" + Ilwis::context()->currentUser() + "/filter-count",QString("0"));
+            int n = num.toInt();
+            for(int i = 0; i < n; ++i){
+                QString basekey = "users/" + Ilwis::context()->currentUser() + "/filters-" + QString::number(i);
+                QString name = context()->configurationRef()(basekey + "/filter-name", QString(""));
+                QString newfilter = context()->configurationRef()(basekey + "/filter-defintion", QString(""));
+                cview.filter(name,newfilter);
+            }
+        }
         CatalogModel *model = 0;
         if ( inpath.indexOf("ilwis://operations") == 0){
             model = new OperationCatalogModel(this);
@@ -694,7 +706,7 @@ ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model = new ResourceModel(resource,this);
+        ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
         return model;
     }
     qDebug() << " wrong id used";
@@ -823,6 +835,13 @@ void MasterCatalogModel::updateCatalog(const QUrl &url)
 
 }
 
+void MasterCatalogModel::updateCurrentCatalog()
+{
+    if ( _currentCatalog)    {
+        _currentCatalog->refresh();
+    }
+}
+
 QString MasterCatalogModel::selectedIds() const
 {
     QString selected;
@@ -865,6 +884,7 @@ void CatalogWorker::process(){
             calculatelatLonEnvelopes();
             emit finished();
         }
+        emit updateCatalog();
     } catch(const ErrorObject& err){
 
     } catch ( const std::exception& ex){

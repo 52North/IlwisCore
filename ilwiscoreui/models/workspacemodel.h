@@ -22,6 +22,7 @@ public:
 
     bool isDefault() const;
 
+    QString modelType() const;
 signals:
     void dataChanged();
     void operationsChanged();

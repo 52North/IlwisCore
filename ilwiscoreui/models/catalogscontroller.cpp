@@ -1,4 +1,5 @@
 #include "catalogscontroller.h"
+#include "resourcemanager.h"
 
 using namespace Ilwis;
 using namespace Desktopclient;
@@ -71,7 +72,7 @@ void CatalogsController::getResourceList(const Ilwis::Resource& resource, const 
     std::vector<Resource> items = catalog->items();
     std::sort(items.begin(), items.end());
     foreach(const Ilwis::Resource& item , items) {
-        list.append(new ResourceModel(item));
+        list.append(resourcemanager()->createResourceModel("resourcemodel",item));
     }
 }
 
@@ -81,11 +82,11 @@ void CatalogsController::makePathList(const Ilwis::Resource& resource) {
 
     Ilwis::Resource res = resource;
 
-    pathList.push_front(new ResourceModel(res));
+    pathList.push_front(resourcemanager()->createResourceModel("resourcemodel",res));
     while(res.name() != "root") {
         quint64 id = Ilwis::mastercatalog()->url2id(res.container(), itCATALOG);
         res = Ilwis::mastercatalog()->id2Resource(id);
-        pathList.push_front(new ResourceModel(res));
+        pathList.push_front(resourcemanager()->createResourceModel("resourcemodel",res));
     }
 }
 

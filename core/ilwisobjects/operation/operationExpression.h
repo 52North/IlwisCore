@@ -102,6 +102,7 @@ public:
     template<typename T> T input(quint32 ) { return T(); }
     template<typename T> T input(quint32, bool& ok ) { return T(); }
     QMap<QString, Parameter> getKeywordParameters() const {return _inParametersMap; }
+    static OperationExpression createExpression(quint64 operationid, const QString &parameters, bool acceptIncompleteExpressions=false);
 private:
     QString _name;
     QMap<QString, Parameter> _inParametersMap;
@@ -115,6 +116,7 @@ private:
     void parseCommandExpression(const QString &expr, const SymbolTable &symtab);
     void parseSelectors(const QString& selectors, const SymbolTable &symtab);
     void specialExpressions(const QString &e, const SymbolTable &symtab);
+    static QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
 };
 
 template<> inline int OperationExpression::input<qint32>(quint32 parmIndex, bool& ok) {
@@ -157,5 +159,7 @@ template<> inline bool OperationExpression::input<bool>(quint32 parmIndex) {
 
 
 }
+
+Q_DECLARE_METATYPE(Ilwis::OperationExpression)
 
 #endif // EXPRESSION_H

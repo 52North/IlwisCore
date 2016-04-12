@@ -64,6 +64,7 @@ void IlwisConfiguration::putValue(const QString &key, const QString &value)
 
 void IlwisConfiguration::store(const QString &location)
 {
+    try {
     if ( _modified) {
         std::string loc = location.toStdString() ; //== sUNDEF ? _configLocation.toStdString() : location.toStdString();
         if ( loc == sUNDEF){
@@ -71,6 +72,9 @@ void IlwisConfiguration::store(const QString &location)
 
         }
         boost::property_tree::json_parser::write_json(loc,_configuration);
+    }
+    }catch(const std::exception& ex){
+        kernel()->issues()->log(ex.what());
     }
 }
 

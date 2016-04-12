@@ -235,10 +235,13 @@ bool CommandHandler::parmIsValid(int index, Parameter parm, std::map<QString, QS
                     if ( tpExpr == itSTRING){
                         if (parm.value() == ""){ // empty parameters are seen as strings and are acceptable. at operation level it should be decided what to do with it
                             return true;
-                        }else if ( parm.pathType() == Parameter::ptREMOTE){
-                            // we can't know what this parameter type realy is, so we accept it as valid
-                            // if it is incorrect the prepare of the operation will fail so no harm done
-                            return true;
+                        }else {
+                            Parameter::PathType pathType = parm.pathType();
+                            if ( pathType == Parameter::ptREMOTE || pathType == Parameter::ptLOCALOBJECT){
+                                // we can't know what this parameter type realy is, so we accept it as valid
+                                // if it is incorrect the prepare of the operation will fail so no harm done
+                                return true;
+                            }
                         }
                     }
                     return false;

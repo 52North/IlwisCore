@@ -85,8 +85,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
         }
     }
 
-    if ( loc.indexOf("ilwis://system") == 0||
-         loc.indexOf("ilwis://factory") == 0 ||
+    if ( loc.indexOf("ilwis://factory") == 0 ||
          loc == "file://" ||
          loc == "file:/" ||
          loc == "ilwis:/" ||
@@ -585,18 +584,29 @@ std::vector<Resource> MasterCatalog::select(const QString &selection) const
 
 }
 
+QString MasterCatalog::replaceSymbols(const QString& s) const{
+    QString selection = s;
+    if ( selection.indexOf("'SingleOperation'") != -1){
+        selection.replace("'SingleOperation'",QString::number(itSINGLEOPERATION));
+    }
+    if ( selection.indexOf("'Workflow'") != -1){
+        selection.replace("'Workflow'",QString::number(itWORKFLOW));
+    }
+    return selection;
+}
+
 std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString &selection) const
 {
     Locker<std::recursive_mutex> lock(_guard);
+    QString newselection = replaceSymbols(selection);
 
     if ( resource == MASTERCATALOG)
-        return select(selection);
+        return select(newselection);
 
-    QString rest = selection == "" ? "" : QString("and (%1)").arg(selection);
+    QString rest = newselection == "" ? "" : QString("and (%1)").arg(newselection);
     QString query;
-    if ( selection.indexOf("operations") != -1)
-        query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid and (mastercatalog.type=262144 or mastercatalog.type=36028797018963968) and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '% cross%'";
-    if ( selection.indexOf("catalogitemproperties.") == -1)
+
+    if ( newselection.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where container = '%1' %2").arg(resource.toString(), rest);
     else
         query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.container = '%1' and mastercatalog.itemid = catalogitemproperties.itemid %2").arg(resource.toString(), rest);

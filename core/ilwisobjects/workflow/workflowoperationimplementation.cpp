@@ -204,17 +204,7 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
     return ok;
 }
 
-bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
-{
-    if (_nodeExecutionContext.contains(v)) {
-        return true;
-    }
-    IWorkflow workflow = (IWorkflow)_metadata;
-    IOperationMetaData meta = workflow->getOperationMetadata(v);
-
-    InEdgeIterator ei, ei_end;
-    boost::tie(ei,ei_end) = workflow->getInEdges(v);
-
+bool WorkflowOperationImplementation::doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable){
     bool conditionsResult = checkConditions(v, ctx, symTable);
 
     // IF conditions are not met
@@ -229,6 +219,22 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
         }
         return true; // Not false because it is valid for conditions to fail.
     }
+    return false;
+}
+
+bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_nodeExecutionContext.contains(v)) {
+        return true;
+    }
+    IWorkflow workflow = (IWorkflow)_metadata;
+    IOperationMetaData meta = workflow->getOperationMetadata(v);
+
+    InEdgeIterator ei, ei_end;
+    boost::tie(ei,ei_end) = workflow->getInEdges(v);
+
+    if( doCondition(meta, v,ctx,symTable))
+        return true;
 
     // has external inputs only
     if (ei == ei_end/*workflow->isInputNode(v)*/) {

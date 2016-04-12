@@ -54,6 +54,10 @@ Rectangle {
         return workflowForm.item.executeForm()
     }
 
+    function parameters() {
+        return workflowForm.item.parameters()
+    }
+
     TabView{
         id : formTabs
         anchors.fill: parent

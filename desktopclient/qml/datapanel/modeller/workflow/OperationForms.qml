@@ -86,7 +86,7 @@ Rectangle {
       Shows the operation's form. Passes the hidden fields to the index2Form method.
       */
     function showOperationForm(parms){
-        fillAppFrame(parms.item.operation.id, parms.operation + "(" + parms.item.getTitle() + ")", false, true, parms.hiddenFields, parms.constantValues)
+        fillAppFrame(parms.item.operation.id, parms.item.getTitle(), false, true, parms.hiddenFields, parms.constantValues)
         itemId = parms.operation
         saveButtonEnabled = true
     }
@@ -116,6 +116,10 @@ Rectangle {
       */
     function executeForm() {
         operationFormScrollView.appForm.doExecute(operationid)
+        return operationFormScrollView.appForm.currentAppForm.formresult
+    }
+
+    function parameters() {
         return operationFormScrollView.appForm.currentAppForm.formresult
     }
 

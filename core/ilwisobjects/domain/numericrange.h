@@ -84,7 +84,7 @@ public:
     {
         double value = v.toDouble();
         if ( _resolution != 0.0)
-             value = (qint64)(value / _resolution) * _resolution;
+             value = (double)(value / _resolution) * _resolution;
         if ( !contains(value, inclusive))
             return _undefined;
 

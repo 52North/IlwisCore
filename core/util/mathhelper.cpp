@@ -215,3 +215,8 @@ double MathHelper::round(double r)
     else
       return 50;
 }
+
+
+double MathHelper::roundTo3DecimalDigits(const double value) {
+    return round(value * 1000.0) / 1000.0 ;
+}

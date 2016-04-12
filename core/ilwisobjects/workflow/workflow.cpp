@@ -13,8 +13,11 @@
 
 #include "workflow.h"
 #include "workflowoperationimplementation.h"
+#include <boost/graph/topological_sort.hpp>
 
 using namespace Ilwis;
+
+quint64 NodeProperties::_baseid = 0;
 
 Workflow::Workflow (): OperationMetaData()
 {
@@ -129,6 +132,7 @@ void Workflow::removeOutputDataProperties(const OVertex &v, quint16 index)
 
 OVertex Workflow::addOperation(const NodeProperties &properties)
 {
+    const_cast<NodeProperties &>(properties).setId();
     return boost::add_vertex(properties, _wfGraph);
 }
 
@@ -478,6 +482,8 @@ QList<ConditionContainer> Workflow::getContainersByVertex(const int v)
     return containers;
 }
 
+
+
 NodePropertyMap Workflow::nodeIndex()
 {
     return get(boost::vertex_index1, _wfGraph);
@@ -647,6 +653,17 @@ void Workflow::debugPrintGraph()
     debugPrintEdges();
 }
 
+void Workflow::debugPrintToplogicalOrder()
+{
+    typedef std::list<OVertex> MakeOrder;
+    MakeOrder make_order;
+    boost::topological_sort(_wfGraph, std::front_inserter(make_order));
+    for (MakeOrder::iterator i = make_order.begin();i != make_order.end(); ++i){
+        NodeProperties p = nodeIndex()[*i];
+        qDebug() << p._operationid<< p._id;
+    }
+}
+
 void Workflow::debugPrintVertices()
 {
     qDebug() << "vertices(g) = ";
@@ -654,7 +671,7 @@ void Workflow::debugPrintVertices()
     for (boost::tie(vi, vi_end) = boost::vertices(_wfGraph); vi != vi_end; ++vi) {
         OVertex v = *vi;
         NodeProperties p = nodeIndex()[v];
-        qDebug() << p._operationid;// /*<< " ";//*/ << " (id=" << v << ") ";
+        qDebug() << p._operationid<< (int)v ;// /*<< " ";//*/ << " (id=" << v << ") ";
     }
 }
 
@@ -663,8 +680,8 @@ void Workflow::debugPrintEdges()
     qDebug() << "edges(g) = ";
     boost::graph_traits<WorkflowGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(_wfGraph); ei != ei_end; ++ei)
-        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)]._operationid
-                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)]._operationid
+        qDebug() << "(" << nodeIndex()[boost::source(*ei, _wfGraph)]._operationid << nodeIndex()[boost::source(*ei, _wfGraph)]._id
+                  << "->" << nodeIndex()[boost::target(*ei, _wfGraph)]._operationid << nodeIndex()[boost::target(*ei, _wfGraph)]._id
                   //<< "[foo='" << edgeIndex()[*ei].foo << "']"
                   << ") ";
 }
@@ -695,4 +712,10 @@ bool Workflow::isInternalObject() const
         return true;
     //named workflows are never internal as there is a localized file backing it up;
     return false;
+}
+
+void NodeProperties::setId()
+{
+    if ( _id == i64UNDEF)
+        _id = ++_baseid;
 }

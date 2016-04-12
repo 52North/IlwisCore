@@ -207,6 +207,10 @@ void StartIlwis::initMainWindow()
 
 void StartIlwis::stop()
 {
+    if ( _mastercatalogmodel->currentCatalog()){
+        _mastercatalogmodel->currentCatalog()->view().storeFilters();
+    }
+
     Ilwis::exitIlwis();
     delete _mastercatalogmodel;
     delete _formbuilder;

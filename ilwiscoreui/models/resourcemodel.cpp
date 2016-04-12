@@ -261,6 +261,26 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "eye.png";
 }
 
+quint32 ResourceModel::ref() const
+{
+    return _ref;
+}
+
+void ResourceModel::deref()
+{
+    --_ref;
+}
+
+void ResourceModel::addref()
+{
+    ++_ref;
+}
+
+QString ResourceModel::modelType() const
+{
+    return "resourcemodel";
+}
+
 Resource &ResourceModel::itemRef()
 {
     return _item;

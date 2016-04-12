@@ -136,7 +136,6 @@ SOURCES += core/kernel.cpp \
     core/internaldatabaseconnection.cpp \
     core/catalog/mastercatalogcache.cpp
 
-
 HEADERS += core/kernel.h\
       core/kernel_global.h \
     core/version.h \
@@ -288,7 +287,6 @@ HEADERS += core/kernel.h\
     core/internaldatabaseconnection.h \
     core/catalog/mastercatalogcache.h
 
-
 OTHER_FILES += \
     core/resources/referencesystems.csv \
     core/resources/projections.csv \
@@ -369,8 +367,9 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/rasterfragmentshader_nvdia.glsl \
     core/resources/rastervertexshader_nvdia.glsl \
     core/resources/ilwis.config \
-    core/resources/country_boundaries.ilwis\
-    coure/resources/color_chart.csv
+    core/resources/country_boundaries.ilwis \
+    core/resources/teritories.csv \
+    core/resources/color_chart.csv
 
 
 win32{
@@ -390,3 +389,5 @@ installer.files =installer.nsi
 installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
+
+DISTFILES +=
