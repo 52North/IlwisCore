@@ -4,6 +4,7 @@
 #include "catalogmodel.h"
 #include "operationmodel.h"
 #include "operationsbykeymodel.h"
+#include "operationExpression.h"
 #include "ilwiscoreui_global.h"
 #include "models/workflow/errormodel.h"
 
@@ -53,7 +54,6 @@ private:
     bool _isGlobalOperationsCatalog = false;
 
     QStringList keywords() const;
-    QString modifyTableOutputUrl(const QString &output, const QStringList &parms);
     QString _keyFilter;
     QString _nameFilter;
 
@@ -63,6 +63,7 @@ private:
     QString nameFilter() const;
     void fillByName(QList<ResourceModel *> &currentOperations);
     void fillByKeyword(QList<ResourceModel*>& currentOperations);
+
 public slots:
     void workSpaceChanged();
 

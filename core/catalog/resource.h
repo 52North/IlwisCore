@@ -100,7 +100,7 @@ public:
      */
     Resource(const QSqlRecord& rec);
 
-    virtual ~Resource() {}
+    virtual ~Resource();
 
     /**
      * Changes the name of this resource, can adapt the file name on the disk

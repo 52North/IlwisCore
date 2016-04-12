@@ -33,7 +33,6 @@ public:
      */
     Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const SymbolTable &);
 
-    bool reverseFollowScriptPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable, QStringList &script);
 protected:
 
 private:
@@ -78,9 +77,7 @@ private:
      * \return true when all conditions are met. False if otherwise.
      */
     bool checkConditions(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
-
     bool doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
-    bool doInputEdges(InEdgeIterator &ei, const InEdgeIterator &ei_end, const IWorkflow &workflow, const OVertex &v, QStringList &arguments, ExecutionContext *ctx, SymbolTable &symTable);
 };
 }
 

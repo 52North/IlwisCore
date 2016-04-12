@@ -32,11 +32,15 @@ DEPENDPATH +=   $$PWD/core \
 
 HEADERS += \
     pythonscript/pythonscriptmodule.h \
-    pythonscript/runpython.h
+    pythonscript/runpython.h \
+    pythonscript/pythonobjectfactory.h \
+    pythonscript/pythonworkflowconnector.h
 
 SOURCES += \
     pythonscript/pythonscriptmodule.cpp \
-    pythonscript/runpython.cpp
+    pythonscript/runpython.cpp \
+    pythonscript/pythonobjectfactory.cpp \
+    pythonscript/pythonworkflowconnector.cpp
 
 
 

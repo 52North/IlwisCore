@@ -14,9 +14,9 @@ Rectangle {
         width : parent.width
         height : 31
         Controls.ActionButtonH {
-            width : parent.width / 3
+            width : parent.width / 4
             height : parent.height
-            buttontext : "Run"
+            buttontext : qsTr("Run")
             iconsource : "../images/run20.png"
 
             onClicked: {
@@ -24,16 +24,26 @@ Rectangle {
             }
         }
         Controls.ActionButtonH {
-            width : parent.width / 3
+            width : parent.width / 4
             height : parent.height
-            buttontext : "Step"
+            buttontext : qsTr("Step")
              iconsource : "../images/step20.png"
         }
         Controls.ActionButtonH {
-            width : parent.width / 3
+            width : parent.width / 4
             height : parent.height
-            buttontext : "Stop"
+            buttontext : qsTr("Stop")
             iconsource : "../images/stop20.png"
+        }
+        Controls.ActionButtonH {
+            width : parent.width / 4
+            height : parent.height
+            buttontext : qsTr("Save")
+            iconsource : "../images/save20.png"
+
+            onClicked:{
+                modellerDataPane.store()
+            }
         }
 
     }
