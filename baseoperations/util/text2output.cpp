@@ -70,25 +70,16 @@ Ilwis::OperationImplementation::State Text2Output::prepare(ExecutionContext *, c
 }
 
 quint64 Text2Output::createMetadata()
-{
-    QString url = QString("ilwis://operations/text2output");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","text2output");
-    resource.addProperty("syntax","text2output(text,[text]+)");
-    resource.addProperty("inparameters","1+");
-    resource.addProperty("pin_1_type", itANY);
-    resource.addProperty("pin_1_name", TR("input string"));
-    resource.addProperty("pin_1_desc",TR("input string"));
-    resource.addProperty("pin_2_type", itANY);
-    resource.addProperty("pin_2_name", TR("filename or path"));
-    resource.addProperty("pin_2_desc",TR("optional file were strings will be written; if no path is provided, current working folder will be used"));
-    resource.addProperty("pin_2_optional", true);
-    resource.addProperty("outparameters",0);
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+{    
+    OperationResource operation({"ilwis://operations/text2output"});
+    operation.setLongName("text2output");
+    operation.setSyntax("text2output(text[,text])");
+    operation.setInParameterCount({1,2});
+    operation.addInParameter(0,itANY, TR("input string"),TR("input string"));
+    operation.addOptionalInParameter(1,itANY, TR("filename or path"),TR("optional file where strings will be written; if no path is provided, current working folder will be used"));
+    operation.setOutParameterCount({0});
+    operation.setKeywords("text, output");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }

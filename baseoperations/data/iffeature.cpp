@@ -88,30 +88,18 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
 
 quint64 IfFeature::createMetadata()
 {
-    QString url = QString("ilwis://operations/iff");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","iff");
-    resource.addProperty("syntax","iffraster(featurecoverage,outputchoicetrue, outputchoicefalse)");
-    resource.addProperty("description","constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map");
-    resource.addProperty("inparameters","3");
-    resource.addProperty("pin_1_type", itFEATURE);
-    resource.addProperty("pin_1_name", TR("input featurecoverage"));
-    resource.addProperty("pin_1_desc",TR("input featurecoverage with boolean domain"));
-    resource.addProperty("pin_2_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
-    resource.addProperty("pin_2_name", TR("true choice"));
-    resource.addProperty("pin_2_desc",TR("value returned when the boolean input feature is true"));
-    resource.addProperty("pin_3_type", itNUMBER | itSTRING | itBOOL | itFEATURE);
-    resource.addProperty("pin_3_name", TR("false choice"));
-    resource.addProperty("pin_3_desc",TR("value returned when the boolean input feature is false"));
-    resource.addProperty("outparameters",1);
-    resource.addProperty("pout_1_type", itFEATURE);
-    resource.addProperty("pout_1_name", TR("featurecoverage"));
-    resource.addProperty("pout_1_desc",TR("featurecoverage with all features that correspond to the true value in the input having a value"));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/iff"});
+    operation.setLongName("iff");
+    operation.setSyntax("iffeature(featurecoverage,outputchoicetrue, outputchoicefalse)");
+    operation.setDescription(TR("constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map"));
+    operation.setInParameterCount({3});
+    operation.addInParameter(0,itFEATURE, TR("input featurecoverage"),TR("input featurecoverage with boolean domain"));
+    operation.addInParameter(1,itNUMBER | itSTRING | itBOOL | itFEATURE,  TR("true choice"),TR("value returned when the boolean input feature is true"));
+    operation.addInParameter(2,itNUMBER | itSTRING | itBOOL | itFEATURE, TR("false choice"),TR("value returned when the boolean input feature is false") );
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0, itFEATURE, TR("featurecoverage"), TR("featurecoverage with all features that correspond to the true value in the input having a value"));
+    operation.setKeywords("feature, operation, condition");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
