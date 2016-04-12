@@ -12,25 +12,10 @@ Item{
         Row {
             id : operationName
             height : 17
-            width : parent.width
+            width : parent.width - 4
+            x : 4
             spacing : 4
-            ListView {
-                id : outputIcons
-                model : operations.operation(id).outParameterIconList
-                //anchors.fill: parent
-                height : parent.height
-                width : childrenRect.width
-                orientation : ListView.Horizontal
-                delegate: Component{
-                    Image{
-                        y : 2
-                        x : 3
-                        width : 13
-                        height : 13
-                        source : "../images/" + modelData
-                    }
-                }
-            }
+
             Text {
                 id : label
                 text : displayName
@@ -42,25 +27,62 @@ Item{
             }
 
         }
-        ListView {
-            id : inputIcons
-            model : operations.operation(id).inParameterIconList
-            //anchors.fill: parent
-            height : parent.height
-            width : childrenRect.width
+        Row {
             anchors.right: parent.right
             anchors.rightMargin: 4
-            orientation : ListView.Horizontal
-            visible : currentOperation.width > 200
-            delegate: Component{
-                Image{
-                    y : 2
-                    x : 3
-                    width : 13
-                    height : 13
-                    source : "../images/" + modelData
-                    opacity: 0.65
+            height : parent.height
+            width : childrenRect.width
+            spacing : 2
+            ListView {
+                id : outputIcons
+                model : operations.operation(id).outParameterIconList
+                //anchors.fill: parent
+                height : parent.height
+                width : childrenRect.width
+                orientation : ListView.Horizontal
+                delegate: Component{
+                    Image{
+                        y : 2
+                        width : 10
+                        height : 10
+                        source : "../images/" + modelData
+                    }
                 }
+            }
+            Text {
+                width : 7
+                height : parent.height
+                text : "="
+            }
+            Text {
+                width : 7
+                height : parent.height
+                text : "("
+            }
+
+            ListView {
+                id : inputIcons
+                model : operations.operation(id).inParameterIconList
+                //anchors.fill: parent
+                height : parent.height
+                width : childrenRect.width
+
+                orientation : ListView.Horizontal
+                visible : currentOperation.width > 200
+                delegate: Component{
+                    Image{
+                        y : 2
+                        x : 3
+                        width : 10
+                        height : 10
+                        source : "../images/" + modelData
+                    }
+                }
+            }
+            Text {
+                width : 7
+                height : parent.height
+                text : ")"
             }
         }
         Text {
