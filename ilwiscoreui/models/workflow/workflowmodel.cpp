@@ -451,15 +451,27 @@ QVariantList WorkflowModel::propertyList()
 
 QString WorkflowModel::generateScript(const QString &type, const QString& parameters)
 {
-    if ( type == "python"){
-        _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
-        if ( !_expression.isValid())
-            return "";
-        _workflow->connectTo(QUrl("file:///d:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
-        QVariant value;
-        value.setValue(_expression);
-        IOOptions opt("expression", value);
-        _workflow->store(opt);
+    try {
+        QString result;
+        if ( type == "python"){
+            _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
+            if ( !_expression.isValid())
+                return "";
+            _workflow->connectTo(QUrl("file:///f:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
+            QVariant value;
+            value.setValue(_expression);
+            IOOptions opt("expression", value);
+            _workflow->store(opt);
+            QString filename = _workflow->resource(IlwisObject::cmOUTPUT).url(true).toLocalFile();
+            QFile file(filename);
+            if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+                QByteArray data = file.readAll();
+                result = QString(data);
+            }
+        }
+        return result;
+    }
+    catch (ErrorObject&){
     }
     return "";
 }
