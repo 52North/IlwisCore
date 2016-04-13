@@ -30,6 +30,7 @@ private:
     void executeInputNode(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script);
     void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
     void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
+    QString createArgumentList(const Ilwis::IOperationMetaData &meta, const QStringList &arguments);
 };
 }
 }
