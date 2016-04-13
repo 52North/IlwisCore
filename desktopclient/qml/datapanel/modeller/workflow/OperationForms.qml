@@ -120,7 +120,9 @@ Rectangle {
     }
 
     function parameters() {
-        return operationFormScrollView.appForm.currentAppForm.formresult
+        if ( operationFormScrollView.appForm.currentAppForm)
+            return operationFormScrollView.appForm.currentAppForm.formresult
+        return ""
     }
 
     function clearOperationForm() {
