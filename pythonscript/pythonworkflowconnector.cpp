@@ -22,7 +22,7 @@ bool PythonWorkflowConnector::openTarget() {
     QString filename = _resource.url(true).toLocalFile();
     QFileInfo inf(filename);
     if ( inf.suffix() != "ilwis"){
-        filename = inf.absolutePath() + "/" + inf.baseName();
+        filename = inf.absolutePath() + "/" + inf.fileName();
         QString correctUrl = QUrl::fromLocalFile(filename).toString();
         source().setUrl(correctUrl);
         source().setUrl(correctUrl,true);
@@ -40,7 +40,7 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
 {
     Workflow *workflow = static_cast<Workflow *>(obj);
 
-    bool inMemory = true;
+    //bool inMemory = true;
     if ( !options.contains("expression"))
         return false;
 
@@ -82,6 +82,20 @@ bool PythonWorkflowConnector::store(IlwisObject *obj, const IOOptions &options)
         return false;
     QTextStream stream(_datasource.get());
     QString txt = script.join("\n");
+    int parmIndex;
+    int count = 1;
+    while((parmIndex = txt.indexOf("?input_")) != -1){
+        QString front = txt.left(parmIndex);
+        QString back = txt.mid(parmIndex + 8);
+        txt = front + "argv[" + QString::number(count) + "]" + back;
+        ++count;
+    }
+    while((parmIndex = txt.indexOf("?output_")) != -1){
+        QString front = txt.left(parmIndex);
+        QString back = txt.mid(parmIndex + 9);
+        txt = front + "argv[" + QString::number(count) + "]" + back;
+        ++count;
+    }
     stream << txt;
     stream.device()->close();
     return true;
@@ -170,12 +184,12 @@ void PythonWorkflowConnector::executeInputNode(Workflow *workflow,const OVertex 
 {
     IOperationMetaData meta = workflow->getOperationMetadata(v);
 
-    QString execString = QString("%1(%2)");
+    QString execString = QString("ilwis.Engine.do(\"%1\",%2)");
     execString = execString.arg(meta->name());
-    QString argumentlist = _inputArgs[v].join(",").remove(QRegExp(",+$"));
-    execString = execString.arg(argumentlist);
+    QString args = createArgumentList(meta, _inputArgs[v]);
+    execString = execString.arg(args);
     addGeneratedNames(v,names,meta);
-    QString expr = names.join(",") + "=" + execString;
+    QString expr = names[0] + "=" + execString;
     script.append(expr);
 }
 void PythonWorkflowConnector::addGeneratedNames(const OVertex &v, QStringList& names, const IOperationMetaData& meta)
@@ -224,14 +238,57 @@ bool PythonWorkflowConnector::reverseFollowScriptPath(Workflow *workflow, const 
     }
     if (! _nodeExecutionContext.contains(v)){
 
-        QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
-        QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
+        QString args = createArgumentList(meta, arguments);
+        //QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
+        QString execString = QString("ilwis.Engine.do(\"%1\",%2)").arg(meta->name()).arg(args);;
         addGeneratedNames(v, names, meta);
-        QString out = order == -1 ? names.join(",") : _outputNames[order]; // order is only used for external (user) set names while else we used generated names
+        QString storeStatement;
+        QString out = order == -1 ? names[0] : _outputNames[order]; // order is only used for external (user) set names while else we used generated names
+        int index = out.indexOf("{");
+        if ( index != -1){
+            QString format = out.mid(index + 8,out.size() - 10 - index);
+            QString outName = out.left(index);
+            out = names[order == -1 ? 0 : order];
+
+            storeStatement = QString("%1.store(%2,\"%3\",\"%4\")").arg(out).arg(outName).arg(format.split(",")[1]).arg(format.split(",")[0]);
+        }
         QString expr = out + "=" + execString;
+
         script.append(expr);
+        if ( storeStatement != "")
+            script.append(storeStatement);
+
     }
     return true;
+}
+
+QString PythonWorkflowConnector::createArgumentList(const IOperationMetaData& meta, const QStringList& arguments){
+    QString args;
+    QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
+    QStringList parts = argumentlist.split(",");
+    for(int i =0; i < parts.size(); ++i){
+        SPOperationParameter parm = meta->inputParameter(i);
+        if ( parm){
+            if ( args != "")
+                args += ",";
+            QString value = parts[i];
+
+            if ( hasType(parm->type(), itILWISOBJECT)){
+                if ( value.indexOf(":") != -1){ // it is not a generated name but an url
+                    args += "\"" +value + "\"" ;
+                }else
+                    args += value;
+            }else {
+                if (hasType(parm->type(), itNUMBER)){
+                    args += value;
+                }else{
+                    args += "\"" + value + "\"" ;
+                }
+            }
+        }
+
+    }
+    return args;
 }
 
 bool PythonWorkflowConnector::doCondition(const IOperationMetaData& meta,const OVertex &v, QStringList &names){

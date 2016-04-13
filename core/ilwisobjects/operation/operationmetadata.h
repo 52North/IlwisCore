@@ -75,6 +75,8 @@ public:
     void setNamespace(const QString &nspace);
     void setLongName(const QString &longName);
     void setKeywords(const QStringList &keywords);
+    SPOperationParameter inputParameter(int index) const;
+    SPOperationParameter outputParameter(int index) const;
 
 protected:
     void clearInputParameters();
