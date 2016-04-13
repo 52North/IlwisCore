@@ -16,8 +16,8 @@ Item {
     property var oldRunFormParms
 
     function enable(propertyIndex, parms){
-        workflow.visible = operation.visible = metadata.visible = false
-        workflow.enabled = operation.enabled = metadata.enabled = false
+        workflow.visible = operation.visible = metadata.visible = script.visible = false
+        workflow.enabled = operation.enabled = metadata.enabled = script.enabled = false
         if ( propertyIndex === 0)
             workflow.enable(propertyIndex,parms);
         if ( propertyIndex === 1)

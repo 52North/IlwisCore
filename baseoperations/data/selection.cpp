@@ -195,28 +195,18 @@ Ilwis::OperationImplementation::State Selection::prepare(ExecutionContext *, con
 
 quint64 Selection::createMetadata()
 {
-    QString url = QString("ilwis://operations/selection");
-    Resource resource(QUrl(url), itSINGLEOPERATION);
-    resource.addProperty("namespace","ilwis");
-    resource.addProperty("longname","Sub raster");
-    resource.addProperty("syntax","selection(coverage,selection-definition)");
-    resource.addProperty("description",TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
-    resource.addProperty("inparameters","2");
-    resource.addProperty("pin_1_type", itRASTER);
-    resource.addProperty("pin_1_name", TR("input rastercoverage"));
-    resource.addProperty("pin_1_desc",TR("input rastercoverage with a domain as specified by the selection"));
-    resource.addProperty("pin_2_type", itSTRING);
-    resource.addProperty("pin_2_name", TR("selection-definition"));
-    resource.addProperty("pin_2_desc",TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    resource.addProperty("pout_1_type", itRASTER);
-    resource.addProperty("pout_1_name", TR("sub raster"));
-    resource.addProperty("pout_1_desc",TR(""));
-    resource.prepare();
-    url += "=" + QString::number(resource.id());
-    resource.setUrl(url);
+    OperationResource operation({"ilwis://operations/selection"});
+    operation.setLongName("Sub raster");
+    operation.setSyntax("selection(coverage,selection-definition)");
+    operation.setDescription(TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with a domain as specified by the selection"));
+    operation.addInParameter(1,itSTRING,  TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0, itRASTER, TR("sub raster"));
+    operation.setKeywords("raster, operation, selection");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
-
+    mastercatalog()->addItems({operation});
+    return operation.id();
 }
 

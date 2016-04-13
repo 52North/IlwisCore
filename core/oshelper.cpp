@@ -52,3 +52,26 @@ QString OSHelper::createFileUrlFromParts(const QString& left, const QString& rig
        return "file://" + left + right;
     #endif
 }
+
+
+QString OSHelper::ensureUniqueFilename(QString fileFullPath)
+{
+    quint16 idx = 1;
+    int lastPoint = fileFullPath.lastIndexOf(".");
+    QString fileNameNoExt = fileFullPath.left(lastPoint);
+    QString fileNameExtension = fileFullPath.right(fileFullPath.length() - lastPoint - 1);
+
+    while (idx < std::numeric_limits<quint16>::max()) {
+        QString tempFilename = QString("%1_%2.%3").arg(fileNameNoExt).arg(idx).arg(fileNameExtension);
+        QFileInfo fileInfo(tempFilename);
+
+        if (!fileInfo.exists()) {
+            return tempFilename;
+        }
+        ++idx;
+    }
+
+    qint64 fallback = QDateTime::currentMSecsSinceEpoch();
+
+    return QString("%1_%2.%3").arg(fileNameNoExt).arg(fallback).arg(fileNameExtension);
+}

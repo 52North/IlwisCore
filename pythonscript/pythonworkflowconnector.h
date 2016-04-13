@@ -24,12 +24,13 @@ private:
     QStringList _outputNames;
 
     bool openTarget();
-    bool reverseFollowScriptPath(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script);
+    bool reverseFollowScriptPath(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script,int order=-1);
     bool doCondition(const IOperationMetaData& meta, const OVertex &v, QStringList &names);
     bool doInputEdges(InEdgeIterator &ei, const InEdgeIterator &ei_end, Ilwis::Workflow *workflow, const OVertex &v, QStringList &arguments, QStringList &script);
     void executeInputNode(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script);
     void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
     void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
+    QString createArgumentList(const Ilwis::IOperationMetaData &meta, const QStringList &arguments);
 };
 }
 }

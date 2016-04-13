@@ -160,6 +160,22 @@ void OperationMetaData::setKeywords(const QStringList &keywords)
     mastercatalog()->updateItems({resource()});
 }
 
+SPOperationParameter OperationMetaData::inputParameter(int index) const
+{
+    if ( index < inputParameterCount()){
+        return _inputParameters[index];
+    }
+    return SPOperationParameter();
+}
+
+SPOperationParameter OperationMetaData::outputParameter(int index) const
+{
+    if ( index < outputParameterCount()){
+        return _outputParameters[index];
+    }
+    return SPOperationParameter();
+}
+
 void OperationMetaData::clearInputParameters()
 {
     removeParameterProperties("pin_%1_", _outputParameters.size());
