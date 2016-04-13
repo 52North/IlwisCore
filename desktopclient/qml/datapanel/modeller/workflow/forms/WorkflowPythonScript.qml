@@ -10,7 +10,7 @@ import "../../../../controls" as Controls
 
 Item {
     height:parent.height
-    width : 440
+    width : 250
 
     function enable(propertyIndex, parms){
         visible = enabled = !visible
@@ -27,8 +27,7 @@ Item {
     TextArea{
         id : scripttext
         width : parent.width
-        height : 150
+        height : parent.height - 10
         text: getScriptText()
     }
-
 }
