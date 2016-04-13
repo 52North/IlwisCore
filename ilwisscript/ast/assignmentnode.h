@@ -20,10 +20,14 @@ public:
     void addOutputs(OutParametersNode *p);
     void setOutId(IDNode *idnode);
 private:
-    template<typename T1> bool copyObject(const Symbol& sym, const QString& name,SymbolTable &symbols, bool useMerge=false) {
+    template<typename T1> bool copyObject(const Symbol& sym, QString& name,SymbolTable &symbols, bool useMerge=false) {
         IlwisData<T1> source =  sym._var.value<IlwisData<T1>>();
         if (!source.isValid())
             return false;
+        if (name == sUNDEF) {
+            IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
+            name = TypeHelper::type2name(tp) + "_" + QString::number(source->id());
+        }
         bool wasAnonymous = source->isAnonymous();
         bool done = false;
         IlwisData<T1> target;
