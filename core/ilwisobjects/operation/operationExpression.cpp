@@ -583,7 +583,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
         if(i < maxinputparameters ){
             if ( expression.size() != 0)
                 expression += ",";
-            expression += (parms[i] == "" ?  "?" + QString::number(i+1) : parms[i]);
+            expression += (parms[i] == "" ?  "?input_" + QString::number(i+1) : parms[i]);
         }
 
     }
@@ -612,7 +612,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
                 if (!acceptIncompleteExpressions)
                     continue;
                 else
-                    output = "?o" + QString::number(i);
+                    output = "?output_" + QString::number(i);
             }
 
             //Check if user didnt put the same output name in another output field
