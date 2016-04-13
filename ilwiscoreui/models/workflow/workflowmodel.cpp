@@ -457,7 +457,10 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
             _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
             if ( !_expression.isValid())
                 return "";
-            _workflow->connectTo(QUrl("file:///f:/temp/test.py"),"workflow","python",IlwisObject::cmOUTPUT);
+            QUrl url = _workflow->resource().url(true);
+            QFileInfo inf(url.toLocalFile());
+            QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
+            _workflow->connectTo(newName,"workflow","python",IlwisObject::cmOUTPUT);
             QVariant value;
             value.setValue(_expression);
             IOOptions opt("expression", value);
