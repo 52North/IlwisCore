@@ -2,6 +2,7 @@
 #define ICONNECTOR_H
 
 #include "kernel_global.h"
+#include <QVariant>
 #include <QExplicitlySharedDataPointer>
 
 namespace Ilwis {
@@ -74,9 +75,10 @@ public:
      * \return
      */
     virtual bool isReadOnly() const { return true; }
-    virtual void setProperty(const QString &, const QVariant &) {}
+    virtual void addProperty(const QString &, const QVariant &) {}
     virtual void removeProperty(const QString &) {}
-    virtual bool hasProperty(const QString &) { return false; }
+    virtual bool hasProperty(const QString &) const { return false; }
+    virtual QVariant getProperty(const QString& ) const { return QVariant(); }
 
 };
 
