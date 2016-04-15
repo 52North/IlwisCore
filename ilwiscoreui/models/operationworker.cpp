@@ -24,18 +24,18 @@ void OperationWorker::process(){
                 for(auto resultName : ctx._results){
                     Symbol symbol = tbl.getSymbol(resultName);
                     if ( hasType(symbol._type, itNUMBER)){
-                        result += symbol._var.toDouble();
+                        _result += symbol._var.toDouble();
                     }else if ( hasType(symbol._type, itSTRING)){
-                        result += symbol._var.toString();
+                        _result += symbol._var.toString();
                     }else if ( hasType(symbol._type, (itCOVERAGE | itTABLE))){
                         if ( symbol._type == itRASTER){
                             IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
                             if ( raster.isValid())
-                                result = raster->resource().url().toString();
+                                _result = raster->resource().url().toString();
                         }else if(symbol._type == itTABLE){
                             ITable table = symbol._var.value<ITable>();
                             if(table.isValid())
-                                result = table->resource().url().toString();
+                                _result = table->resource().url().toString();
                         }
                     }
                 }
