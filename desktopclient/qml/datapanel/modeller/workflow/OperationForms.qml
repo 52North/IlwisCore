@@ -114,10 +114,12 @@ Rectangle {
     /**
       Executes the form
       */
-    function executeForm() {
-        operationFormScrollView.appForm.doExecute(operationid)
+    function executeForm(stepMode) {
+        operationFormScrollView.appForm.doExecute(operationid, stepMode)
         return operationFormScrollView.appForm.currentAppForm.formresult
     }
+
+
 
     function parameters() {
         if ( operationFormScrollView.appForm.currentAppForm)
