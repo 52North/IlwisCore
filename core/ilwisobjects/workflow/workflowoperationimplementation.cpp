@@ -1,3 +1,4 @@
+#include <QThread>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "symboltable.h"
@@ -12,6 +13,11 @@
 #include "workflowoperationimplementation.h"
 
 using namespace Ilwis;
+
+WorkflowOperationImplementation::WorkflowOperationImplementation(QObject *parent) : OperationImplementation()
+{
+
+}
 
 WorkflowOperationImplementation::WorkflowOperationImplementation(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
 {
@@ -50,6 +56,39 @@ Ilwis::OperationImplementation::State WorkflowOperationImplementation::prepare(E
     return _prepState;
 }
 
+void WorkflowOperationImplementation::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
+{
+    if ( type == "workflow"){
+        Locker<std::mutex> lock(_lock);
+        bool ok;
+        quint64 id = parameters["id"].toLongLong(&ok);
+        if ( ok && id == _metadata->id()){ // check if this was meant for this workflow
+            if ( subtype == "stepmode"){
+                _stepMode = parameters.contains("id") ? parameters["stepmode"].toBool() : false;
+                _wait = _stepMode;
+            } else if ( subtype == "wait"){
+                _wait = parameters.contains("wait") ? parameters["wait"].toBool() : false;
+            }
+        }
+    }
+}
+
+void WorkflowOperationImplementation::wait(ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if ( !_stepMode)
+        return;
+    QVariantMap data;
+    for(int i=0; i<ctx->_results.size(); ++i){
+        QVariant var = symTable.getValue(ctx->_results[i]);
+        data[QString::number(i)] = var;
+    }
+    emit sendMessage("workflow","outputdata",data);
+
+    while(_wait){
+       std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+}
+
 
 bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, SymbolTable &globalSymTable)
 {
@@ -57,6 +96,15 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
         if((_prepState = prepare(globalCtx,globalSymTable)) != sPREPARED)
             return false;
 
+    connect(this, &WorkflowOperationImplementation::sendMessage, kernel(),&Kernel::acceptMessage);
+    connect(kernel(), &Kernel::sendMessage, this, &WorkflowOperationImplementation::acceptMessage);
+
+    QThread *current = QThread::currentThread();
+    QVariant var = current->property("stepmode");
+    if ( var.isValid()){
+        _stepMode = var.toBool();
+        _wait = _stepMode;
+    }
     /*
      * inputs/outputs are cached by the workflow so they have same
      * order which has been used when creating the metadata syntax
@@ -196,6 +244,7 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
     execString = execString.arg(argumentlist);
     qDebug() << "executing input node" << execString;
     bool ok = commandhandler()->execute(execString, ctx, symTable);
+    wait(ctx,symTable);
     if ( !ok) {
         ERROR1("workflow execution failed when executing: %1", execString);
     } else {
@@ -307,6 +356,7 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
     QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
     qDebug() << "executing " << execString;
     bool success = commandhandler()->execute(execString, ctx, symTable);
+    wait(ctx,symTable);
     if ( !success) {
         ERROR1("workflow execution failed when executing: %1", execString);
     } else {
