@@ -206,12 +206,12 @@ signals:
     void createTranquilizer(quint64 id,const QString &title, const QString &description, double start, double end);
     void removeTranquilizer(quint64 id);
     void stopAllThreads();
+    void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 
 public slots:
     void changeTranquilizer(quint64 id, double amount);
     void deleteTranquilizer(quint64 id);
-
-
+    void acceptMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 };
 KERNELSHARED_EXPORT Ilwis::Kernel* kernel();
 KERNELSHARED_EXPORT bool initIlwis(int mode, const QString & ilwisDir = "");
