@@ -1,6 +1,8 @@
 #ifndef PYTHONWORKFLOWCONNECTOR_H
 #define PYTHONWORKFLOWCONNECTOR_H
 
+#include <QBuffer>
+
 namespace Ilwis{
 class Workflow;
 
@@ -14,14 +16,17 @@ public:
     QString type() const;
     Ilwis::IlwisObject *create() const;
     QString provider() const;
-    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const IOOptions& options=IOOptions());
+    QVariant getProperty(const QString& ) const;
 
+    static ConnectorInterface *create(const Ilwis::Resource &resource,bool load = true,const IOOptions& options=IOOptions());
+    static ConnectorInterface *create2(const Ilwis::Resource &resource, bool load=true, const IOOptions &options=IOOptions());
 private:
     std::unique_ptr<QIODevice> _datasource;
     QMap<OVertex, QStringList> _nodeExecutionContext;
     QMap<OVertex, QStringList> _inputArgs;
     OperationExpression _expression;
     QStringList _outputNames;
+    QByteArray _data;
 
     bool openTarget();
     bool reverseFollowScriptPath(Workflow *workflow, const OVertex &v, QStringList &names, QStringList &script,int order=-1);
