@@ -89,7 +89,10 @@ void SimpelGeoReference::copyTo(GeoRefImplementation *impl)
 
 bool SimpelGeoReference::isCompatible(const IGeoReference &georefOther) const
 {
-
+    // TODO: this method should take into account the proper tolerance value,
+    // according to the georeference type -- Latlon (2 decimals); otherwise (6 decimals).
+    // Add a tolerance (delta) attribute to the georeference class, that should be filled
+    // inside its constructor accordingly
     if ( !georefOther->grfType<SimpelGeoReference>())
         return false;
     QSharedPointer<SimpelGeoReference> grfsmpl = georefOther->as<SimpelGeoReference>();
