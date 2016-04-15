@@ -384,9 +384,11 @@ public:
     QString provider(bool input=true) const;
     double pseudoUndef() const;
     virtual void setPseudoUndef(double v);
+    const QScopedPointer<ConnectorInterface> &constConnector(int mode=cmINPUT | cmOUTPUT) const;
+
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);
-   const QScopedPointer<ConnectorInterface> &connector(int mode=cmINPUT | cmOUTPUT) const;
+
    bool setValid(bool yesno);
    void copyTo(IlwisObject *obj);
 
