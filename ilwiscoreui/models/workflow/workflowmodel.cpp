@@ -30,6 +30,8 @@ WorkflowModel::~WorkflowModel()
 WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent) : OperationModel(source, parent)
 {
     _workflow.prepare(source);
+    connect(this, &WorkflowModel::sendMessage, kernel(), &Kernel::acceptMessage);
+    connect(kernel(), &Kernel::sendMessage, this, &WorkflowModel::acceptMessage);
 }
 
 QStringList WorkflowModel::assignConstantInputData(QString inputData, int operationIndex) {
@@ -459,24 +461,44 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
                 return "";
             QUrl url = _workflow->resource().url(true);
             QFileInfo inf(url.toLocalFile());
-            QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
-            _workflow->connectTo(newName,"workflow","python",IlwisObject::cmOUTPUT);
+           // QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
+            QUrl newName = "ilwis://internalcatalog/" + inf.baseName() + ".py";
+            _workflow->connectTo(newName,"inmemoryworkflow","python",IlwisObject::cmOUTPUT);
             QVariant value;
             value.setValue(_expression);
             IOOptions opt("expression", value);
             _workflow->store(opt);
-            QString filename = _workflow->resource(IlwisObject::cmOUTPUT).url(true).toLocalFile();
-            QFile file(filename);
-            if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
-                QByteArray data = file.readAll();
-                result = QString(data);
-            }
+            result = _workflow->constConnector(IlwisObject::cmOUTPUT)->getProperty("content").toString();
         }
         return result;
     }
     catch (ErrorObject&){
     }
     return "";
+}
+
+void WorkflowModel::gotoStepMode()
+{
+    QVariantMap parms;
+    parms["stepmode"] = true;
+    parms["id"] = _workflow->id();
+    emit sendMessage("workflow","stepmode", parms);
+}
+
+void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
+{
+    if ( type == "workflow"){
+        bool ok;
+        quint64 id = parameters["id"].toLongLong(&ok);
+        if ( ok && id == _workflow->id()){ // check if this was meant for this workflow
+
+        }
+    }
+}
+
+QList<QVariantMap> WorkflowModel::outputCurrentOperation() const
+{
+    return QList<QVariantMap>();
 }
 
 void WorkflowModel::debug(const QString &code)
