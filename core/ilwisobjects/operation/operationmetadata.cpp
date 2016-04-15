@@ -70,7 +70,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
             if (base == "pin") {
                 kind = OperationParameter::ptINPUT;
                 term = allParameterNames.at(i);
-                connector()->setProperty(base + "term", term);
+                connector()->addProperty(base + "term", term);
             } else {
                 term = ""; // formal output term not part of syntax
             }
@@ -144,19 +144,19 @@ QStringList OperationMetaData::getKeywords() const
 
 void OperationMetaData::setNamespace(const QString &nspace)
 {
-    connector()->setProperty("namespace", nspace);
+    connector()->addProperty("namespace", nspace);
     mastercatalog()->updateItems({resource()});
 }
 
 void OperationMetaData::setLongName(const QString &longName)
 {
-    connector()->setProperty("longname", longName);
+    connector()->addProperty("longname", longName);
     mastercatalog()->updateItems({resource()});
 }
 
 void OperationMetaData::setKeywords(const QStringList &keywords)
 {
-    connector()->setProperty("keywords", keywords);
+    connector()->addProperty("keywords", keywords);
     mastercatalog()->updateItems({resource()});
 }
 
@@ -269,11 +269,11 @@ void OperationParameter::copyMetaToResourceOf(QScopedPointer<ConnectorInterface>
     } else {
         prefix = "pout_" + QString::number(index + 1) + "_";
     }
-    otherconnector->setProperty(prefix + "type", _type);
-    otherconnector->setProperty(prefix + "term", _term);
-    otherconnector->setProperty(prefix + "name", name());
-    otherconnector->setProperty(prefix + "desc", description());
-    otherconnector->setProperty(prefix + "optional", _optional);
+    otherconnector->addProperty(prefix + "type", _type);
+    otherconnector->addProperty(prefix + "term", _term);
+    otherconnector->addProperty(prefix + "name", name());
+    otherconnector->addProperty(prefix + "desc", description());
+    otherconnector->addProperty(prefix + "optional", _optional);
 }
 
 void OperationParameter::prepare(quint64 base)
