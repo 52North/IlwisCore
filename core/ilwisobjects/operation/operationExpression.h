@@ -154,6 +154,14 @@ template<> inline bool OperationExpression::input<bool>(quint32 parmIndex) {
     return v == "yes" || v == "true";
 }
 
+template<> inline bool OperationExpression::input<bool>(quint32 parmIndex, bool& ok) {
+    QString v = parm(parmIndex).value().toLower();
+    ok = true;
+
+    if (v != "yes" && v != "true" && v != "no" && v != "false")
+        ok = false;
+    return v == "yes" || v == "true";
+}
 
 
 

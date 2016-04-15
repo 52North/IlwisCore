@@ -33,7 +33,7 @@ bool CreateCornersGeoreference::execute(ExecutionContext *ctx, SymbolTable &symT
 
     double xsize = std::ceil((_maxx - _minx) / _pixelsize);
     double ysize = std::ceil((_maxy - _miny) / _pixelsize);
-    double deltax = (xsize * _pixelsize - (_maxx - _maxy)) / 2;
+    double deltax = (xsize * _pixelsize - (_maxx - _minx)) / 2;
     double deltay = (ysize * _pixelsize - (_maxy - _miny)) / 2;
     _minx -= deltax;
     _miny -=	deltay;

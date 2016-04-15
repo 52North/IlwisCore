@@ -156,6 +156,9 @@ QString ApplicationFormExpressionParser::iconName(IlwisTypes dataType) const{
     if ( hasType(dataType, itDOMAIN)){
         return ResourceModel::iconPath(itDOMAIN);
     }
+    if ( hasType(dataType, itGEOREF)){
+        return ResourceModel::iconPath(itGEOREF);
+    }
     return sUNDEF;
 }
 
@@ -188,6 +191,10 @@ QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itDOMAIN) + "\"";
     }
+    if ( hasType(type, itGEOREF)){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itGEOREF) + "\"";
+    }
     if ( hasType(type, itNUMBER)){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itNUMBER) + "\"";
@@ -218,6 +225,10 @@ QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1
     }
     if ( hasType(parameters[i]._dataType, itDOMAIN)){
         imagePart += QString(iconField1).arg(iconName(itDOMAIN)).arg(IlwisObject::type2Name(itDOMAIN));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itGEOREF)){
+        imagePart += QString(iconField1).arg(iconName(itGEOREF)).arg(IlwisObject::type2Name(itGEOREF));
         imagewidth += iconsize;
     }
     if ( hasType(parameters[i]._dataType, itNUMBER)){
