@@ -311,11 +311,12 @@ void OperationCatalogModel::workSpaceChanged()
  * Executes an operation (or workflow) and generates output
  * @param parameters the input and output parameters that the user filled in
  */
-QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters) {
+QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters, bool stepMode) {
 
     auto opExpr = OperationExpression::createExpression(operationid, parameters);
     try {
         QThread* thread = new QThread;
+        thread->setProperty("stepmode",stepMode);
         OperationWorker* worker = new OperationWorker(opExpr);
         worker->moveToThread(thread);
         thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
