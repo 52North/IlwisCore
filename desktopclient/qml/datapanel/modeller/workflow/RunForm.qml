@@ -20,14 +20,24 @@ Rectangle {
             iconsource : "../images/run20.png"
 
             onClicked: {
-                workflow.executeForm()
+                workflow.executeForm(false)
             }
         }
         Controls.ActionButtonH {
+            id : stepButton
+            property bool init : true
             width : parent.width / 4
             height : parent.height
             buttontext : qsTr("Step")
              iconsource : "../images/step20.png"
+             onClicked :{
+                if ( stepButton.init){
+                    workflow.executeForm(true)
+                    stepButton.init = false
+                }
+                else
+                    modellerDataPane.stepMode()
+             }
         }
         Controls.ActionButtonH {
             width : parent.width / 4
