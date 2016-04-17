@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QNetworkAccessManager>
+#include <QDataStream>
 #include <fstream>
 #include "boost/current_function.hpp"
 #include <time.h>
