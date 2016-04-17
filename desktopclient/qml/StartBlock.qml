@@ -13,10 +13,7 @@ Rectangle{
     property int time : 2000
     property int count : 0
 
-
-
-
-    states{
+    states : [
         State {
             name : "end"
             PropertyChanges {target: first ; x : endX }
@@ -24,13 +21,13 @@ Rectangle{
             PropertyChanges {target: first ; rotation : 0}
             PropertyChanges {target: first ; opacity : 1}
 
-        }
+        },
         State {
             name : "begin"
             PropertyChanges {target: first ; x : endX }
             PropertyChanges {target: first ; y : endY}
         }
-    }
+    ]
     transitions: [
         Transition {
             NumberAnimation { properties: "x"; duration : time ; easing.type: easingType }
