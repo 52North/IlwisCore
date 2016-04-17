@@ -54,7 +54,7 @@ quint32 GridBlockInternal::blockSize() {
  * @return true if successful
  */
 
-inline bool GridBlockInternal::save2Cache() {
+bool GridBlockInternal::save2Cache() {
     if (!_inMemory) // nothing to do
         return true;
     if ( _gridblockFileName == sUNDEF) {
@@ -242,7 +242,7 @@ double Grid::value(const Pixel &pix) {
     return value(bandBlocks + block, offset);
 }
 
-inline double &Grid::value(quint32 block, int offset )  {
+double &Grid::value(quint32 block, int offset )  {
     if ( _blocks[block]->inMemory() ) // no load needed
         return _blocks[block]->at(offset);
     Locker<> lock(_mutex); // slower case. must prevent other threads to messup admin
@@ -252,7 +252,7 @@ inline double &Grid::value(quint32 block, int offset )  {
     return _blocks[block]->at(offset); // block is now in memory
 }
 
-inline void Grid::setValue(quint32 block, int offset, double v ) {
+void Grid::setValue(quint32 block, int offset, double v ) {
     if ( _blocks[block]->inMemory() ) {
         _blocks[block]->at(offset) = v;
         return;
@@ -378,7 +378,7 @@ int Grid::numberOfBlocks() {
     return nblocks * _size.zsize();
 }
 
-inline bool Grid::update(quint32 block, bool loadDiskData) {
+bool Grid::update(quint32 block, bool loadDiskData) {
     if ( block >= _blocks.size() ) // illegal, blocknumber is outside the allowed range
         return false;
 
