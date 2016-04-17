@@ -142,7 +142,7 @@ void IlwisContext::init(const QString &ilwisDir)
     if ( loc == ""){
         loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
         QDir datadir(loc);
-        bool ok = datadir.mkpath(loc);
+        datadir.mkpath(loc);
         loc = QUrl::fromLocalFile(loc).toString();
 
     }
