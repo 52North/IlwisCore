@@ -1,4 +1,6 @@
 QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=gnu++11
+QMAKE_CXXFLAGS += -fext-numeric-literals
 QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_CXXFLAGS += -Wno-sign-compare
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
