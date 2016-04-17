@@ -109,6 +109,7 @@ QColor ColorRangeBase::defaultColor(int index)
     if ( index < _defaultColorNames.size()){
         return _defaultColorNames.at(index);
     }
+    return QColor();
 }
 
 QColor ColorRangeBase::toColor(const QVariant &v, ColorRangeBase::ColorModel colormodel)
