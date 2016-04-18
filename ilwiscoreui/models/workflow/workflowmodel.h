@@ -44,6 +44,7 @@ public:
     Q_PROPERTY(QQmlListProperty<NodePropObject>  nodes READ getNodes CONSTANT)
     Q_PROPERTY(QQmlListProperty<EdgePropObject>  edges READ getEdges CONSTANT)
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel>  selectedOperation READ getSelectedOperation NOTIFY selectedOperationChanged)
+    Q_PROPERTY(QList<QVariantMap> outputCurrentOperation READ outputCurrentOperation NOTIFY outputCurrentOperationChanged)
 
 
 
@@ -200,19 +201,27 @@ public:
      Q_INVOKABLE void debug(const QString& code);
      Q_INVOKABLE QVariantList propertyList();
      Q_INVOKABLE QString generateScript(const QString& type, const QString &parameters);
+     Q_INVOKABLE void gotoStepMode();
      QString modelType() const;
 
 signals:
     void selectedOperationChanged();
+    void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
+    void outputCurrentOperationChanged();
 
+private slots:
+    void acceptMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 private:
     Ilwis::IWorkflow _workflow;
     QList<NodePropObject *> _nodeProps;
     QList<EdgePropObject *> _edgeProps;
     QList<IlwisObjectModel *> _selectedOperation;
+    QList<QVariantMap> _outputsCurrentOperation;
 
     int _inputParameterCount = 0;
     OperationExpression _expression;
+
+    QList<QVariantMap> outputCurrentOperation() const;
 
 
 };

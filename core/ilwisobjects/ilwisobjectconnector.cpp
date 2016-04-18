@@ -32,7 +32,7 @@ Resource &IlwisObjectConnector::source()
     return _resource;
 }
 
-void IlwisObjectConnector::setProperty(const QString &key, const QVariant &value)
+void IlwisObjectConnector::addProperty(const QString &key, const QVariant &value)
 {
     _resource.addProperty(key, value);
 }
@@ -42,9 +42,16 @@ void IlwisObjectConnector::removeProperty(const QString &key)
     _resource.removeProperty(key);
 }
 
-bool IlwisObjectConnector::hasProperty(const QString &key)
+bool IlwisObjectConnector::hasProperty(const QString &key) const
 {
     return _resource.hasProperty(key);
+}
+
+QVariant IlwisObjectConnector::getProperty(const QString &name) const
+{
+    if ( hasProperty(name))
+        return _resource[name];
+    return QVariant();
 }
 
 const Resource& IlwisObjectConnector::source() const{

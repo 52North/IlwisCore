@@ -19,19 +19,29 @@ PythonWorkflowConnector::PythonWorkflowConnector(const Ilwis::Resource &resource
 }
 
 bool PythonWorkflowConnector::openTarget() {
-    QString filename = _resource.url(true).toLocalFile();
-    QFileInfo inf(filename);
-    if ( inf.suffix() != "ilwis"){
-        filename = inf.absolutePath() + "/" + inf.fileName();
-        QString correctUrl = QUrl::fromLocalFile(filename).toString();
-        source().setUrl(correctUrl);
-        source().setUrl(correctUrl,true);
-    }
-    QFile *file = new QFile(filename);
 
-    if (file->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
-        _datasource.reset(file);
+    if ( ioOptions().contains("inmemory") && ioOptions()["inmemory"].toBool() == true){
+        _data.clear();
+        _data.resize(100000);
+        QBuffer *buf=  new QBuffer(&_data);
+        buf->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
+        _datasource.reset( buf );
         return true;
+    }else {
+        QString filename = _resource.url(true).toLocalFile();
+        QFileInfo inf(filename);
+        if ( inf.suffix() != "ilwis"){
+            filename = inf.absolutePath() + "/" + inf.fileName();
+            QString correctUrl = QUrl::fromLocalFile(filename).toString();
+            source().setUrl(correctUrl);
+            source().setUrl(correctUrl,true);
+        }
+        QFile *file = new QFile(filename);
+
+        if (file->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
+            _datasource.reset(file);
+            return true;
+        }
     }
     return false;
 }
@@ -362,7 +372,23 @@ QString PythonWorkflowConnector::provider() const
     return "python";
 }
 
+QVariant PythonWorkflowConnector::getProperty(const QString &name) const
+{
+    if ( name == "content"){
+        QString s(_data);
+        return s;
+    }
+    return IlwisObjectConnector::getProperty(name);
+}
+
 ConnectorInterface *PythonWorkflowConnector::create(const Ilwis::Resource &resource, bool load, const IOOptions &options)
 {
    return new PythonWorkflowConnector(resource, load, options);
+}
+
+ConnectorInterface *PythonWorkflowConnector::create2(const Ilwis::Resource &resource, bool load, const IOOptions &options)
+{
+    IOOptions opt = options;
+    opt.addOption("inmemory", true);
+   return new PythonWorkflowConnector(resource, load, opt);
 }

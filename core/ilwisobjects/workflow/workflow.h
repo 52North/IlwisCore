@@ -12,9 +12,6 @@
 #include "kernel_global.h"
 #include "ilwistypes.h"
 #include "operationmetadata.h"
-#include "resource.h"
-#include "ilwisobject.h"
-
 #include "iooptions.h"
 
 namespace Ilwis {

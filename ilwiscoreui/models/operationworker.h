@@ -25,7 +25,7 @@ signals:
 
 private:
    OperationExpression _expression;
-   QString result;
+   QString _result;
 
 };
 }

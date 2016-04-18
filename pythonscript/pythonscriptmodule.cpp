@@ -80,7 +80,8 @@ void PythonScriptModule::prepare()
           if (!factory)
               return ;
 
-          factory->addCreator("workflow","python",PythonScript::PythonWorkflowConnector::create);
+          factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
+          factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
 
         kernel()->issues()->log("Loaded python script module",IssueObject::itMessage);
     } catch(std::exception ex){

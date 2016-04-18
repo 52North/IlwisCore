@@ -32,7 +32,7 @@ Rectangle {
         text : "execute"
         height : 22
         x : parent.width - 60
-        onClicked: appFrame.doExecute(operationid)
+        onClicked: appFrame.doExecute(operationid, false)
     }
     states: [
         State { name: "maximized"

@@ -22,9 +22,9 @@ Rectangle {
     radius : 10
     color : background1
 
-    function doExecute(operationid) {
+    function doExecute(operationid, stepMode) {
         if ( currentAppForm != null) {
-            operations.executeoperation(operationid,currentAppForm.formresult)
+            operations.executeoperation(operationid,currentAppForm.formresult, stepMode)
         }
     }
 

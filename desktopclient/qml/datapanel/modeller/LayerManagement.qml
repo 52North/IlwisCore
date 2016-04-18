@@ -47,6 +47,17 @@ Rectangle {
             }
             return null
         }
+
+        function stepMode() {
+            if ( layerColumn.currentIndex == 3){
+                if ( model){
+                    var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+                    if ( wf !== null)
+                        return wf.gotoStepMode()
+                }
+            }
+        }
+
         handleDelegate: Controls.SplitHandle{
             imageHeight: 15
         }

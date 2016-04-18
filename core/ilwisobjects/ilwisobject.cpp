@@ -146,7 +146,7 @@ void IlwisObject::name(const QString &nam)
 
 QString IlwisObject::name() const
 {
-    if ( !connector().isNull()) {
+    if ( !constConnector().isNull()) {
         return resource().name();
     }
     return sUNDEF;
@@ -165,15 +165,15 @@ void IlwisObject::code(const QString& cd) {
 
 QString IlwisObject::code() const
 {
-    if ( !connector().isNull())
-        return connector()->source().code();
+    if ( !constConnector().isNull())
+        return constConnector()->source().code();
     return sUNDEF;
 }
 
 QString IlwisObject::description() const
 {
-    if ( !connector().isNull()){
-        return connector()->source().description();
+    if ( !constConnector().isNull()){
+        return constConnector()->source().description();
     }
     return sUNDEF;
 }
@@ -188,16 +188,16 @@ void IlwisObject::setDescription(const QString &desc)
 
 quint64 IlwisObject::id() const
 {
-    if ( !connector().isNull()){
-        return connector()->source().id();
+    if ( !constConnector().isNull()){
+        return constConnector()->source().id();
     }
     return i64UNDEF;
 }
 
 Time IlwisObject::modifiedTime() const
 {
-    if ( !connector().isNull())
-        return connector()->source().modifiedTime() ;
+    if ( !constConnector().isNull())
+        return constConnector()->source().modifiedTime() ;
     return tUNDEF;
 }
 
@@ -214,8 +214,8 @@ void IlwisObject::modifiedTime(const Time &tme)
 
 Time IlwisObject::createTime() const
 {
-    if ( !connector().isNull())
-        return connector()->source().createTime();
+    if ( !constConnector().isNull())
+        return constConnector()->source().createTime();
     return tUNDEF;
 }
 
@@ -266,20 +266,20 @@ bool IlwisObject::isReadOnly() const
 
 bool IlwisObject::outputConnectionReadonly() const
 {
-    if ( !connector(cmOUTPUT).isNull())
-        return connector(cmOUTPUT)->isReadOnly();
+    if ( !constConnector(cmOUTPUT).isNull())
+        return constConnector(cmOUTPUT)->isReadOnly();
     return true;
 }
 
 QString IlwisObject::formatCode(bool input) const
 {
     if ( input){
-        if ( !connector().isNull()){
-            return connector()->format();
+        if ( !constConnector().isNull()){
+            return constConnector()->format();
         }
     }else {
-        if(!connector(cmOUTPUT).isNull())
-           return connector(cmOUTPUT)->format();
+        if(!constConnector(cmOUTPUT).isNull())
+           return constConnector(cmOUTPUT)->format();
         else {
             return formatCode();
         }
@@ -291,12 +291,12 @@ QString IlwisObject::formatCode(bool input) const
 QString IlwisObject::provider(bool input) const
 {
     if ( input){
-        if ( !connector().isNull()){
-            return connector()->provider();
+        if ( !constConnector().isNull()){
+            return constConnector()->provider();
         }
     }else {
-        if(!connector(cmOUTPUT).isNull())
-           return connector(cmOUTPUT)->provider();
+        if(!constConnector(cmOUTPUT).isNull())
+           return constConnector(cmOUTPUT)->provider();
         else {
             return provider()    ;
         }
@@ -385,7 +385,7 @@ QScopedPointer<ConnectorInterface> &IlwisObject::connector(int mode)
     return _connector;
 }
 
-const QScopedPointer<ConnectorInterface> &IlwisObject::connector(int mode) const
+const QScopedPointer<ConnectorInterface> &IlwisObject::constConnector(int mode) const
 {
     if (  mode & cmINPUT)
         return _connector;

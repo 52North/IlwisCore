@@ -244,6 +244,11 @@ void Kernel::deleteTranquilizer(quint64 id)
     emit removeTranquilizer(id);
 }
 
+void Kernel::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
+{
+    emit sendMessage(type, subtype, parameters);
+}
+
 void Kernel::startClock(){
      _start_clock = std::chrono::high_resolution_clock::now();
 }

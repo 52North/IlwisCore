@@ -1,15 +1,27 @@
 #ifndef WORKFLOWOPERATIONIMPLEMENTATION_H
 #define WORKFLOWOPERATIONIMPLEMENTATION_H
 
+#include <mutex>
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "workflow.h"
+#include "symboltable.h"
+#include "operationExpression.h"
+#include "commandhandler.h"
+#include "operation.h"
+
 
 namespace Ilwis {
 
-const QString CONDITION_FAILED = "WORKFLOW_CONDITION_FAILED";
-class WorkflowOperationImplementation: public OperationImplementation
-{
+struct ExecutionContext;
+class SymbolTable;
 
+const QString CONDITION_FAILED = "WORKFLOW_CONDITION_FAILED";
+class WorkflowOperationImplementation: public QObject, public OperationImplementation
+{
+    Q_OBJECT
 public:
+    WorkflowOperationImplementation(QObject *parent = 0);
     WorkflowOperationImplementation(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     /*!
@@ -31,14 +43,23 @@ public:
      * \param ctx The current context
      * \return State of object.
      */
-    Ilwis::OperationImplementation::State prepare(Ilwis::ExecutionContext *ctx, const SymbolTable &);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
+signals:
+    void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
+public slots:
+    void acceptMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 protected:
 
 private:
     QMap<OVertex, QStringList> _inputArgs;
     QMap<int, bool> _containers;
     QMap<OVertex, std::pair<ExecutionContext*, SymbolTable>> _nodeExecutionContext;
+    bool _stepMode; // when in stepmode it pauses after each operation until it gets the order to continue
+    bool _wait;
+    std::mutex _lock;
+
+    void wait( ExecutionContext *ctx, SymbolTable &symTable);
     /*!
      * \brief Copies output to local context
      * \param symbol Symbol to save

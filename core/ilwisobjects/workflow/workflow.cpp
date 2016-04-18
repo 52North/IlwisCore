@@ -560,14 +560,14 @@ void Workflow::parseInputParameters()
         }
     }
     QString inparameters = createParametersCountString(mandatoryInputs, optionalInputs);
-    connector()->setProperty("inparameters", inparameters);
+    connector()->addProperty("inparameters", inparameters);
 
     QString bracketOpen = mandatoryInputs.isEmpty() ? "[" : "[,";
     QString opts = !optionalInputs.isEmpty()
             ? bracketOpen + optionalInputs.join(",") + "]"
             : "";
     QString workflowSyntax = QString("%1(%2%3)").arg(name()).arg(mandatoryInputs.join(",")).arg(opts);
-    connector()->setProperty("syntax", workflowSyntax);
+    connector()->addProperty("syntax", workflowSyntax);
 }
 
 void Workflow::parseOutputParameters()
@@ -604,7 +604,7 @@ void Workflow::parseOutputParameters()
         }
     }
     QString outparameters = createParametersCountString(mandatoryOutputs, optionalOutputs);
-    connector()->setProperty("outparameters", outparameters);
+    connector()->addProperty("outparameters", outparameters);
 }
 
 QStringList Workflow::getInputTerms(const OVertex &v)

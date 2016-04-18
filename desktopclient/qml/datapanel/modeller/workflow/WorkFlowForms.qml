@@ -12,6 +12,7 @@ import "../../../Global.js" as Global
 import "forms" as Forms
 
 Item {
+    id : forms
     property var oldOperationFormParms
     property var oldRunFormParms
 
@@ -43,7 +44,6 @@ Item {
             width : parent.width
             height : 25
             anchors.top : workflow.bottom
-
         }
     }
 
@@ -52,6 +52,10 @@ Item {
         visible: false
         height : parent.height
         enabled : false
+        StepForm {
+            width : forms.width - parent.width
+            height : parent.width
+        }
     }
 
     Forms.OperationPropForm{

@@ -123,6 +123,10 @@ Item {
         errorview.addError(id, error)
     }
 
+    function stepMode(){
+        canvas.workflow.gotoStepMode();
+    }
+
     signal exit;
 
     property bool canSeparate : true
