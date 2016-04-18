@@ -146,10 +146,10 @@ Item {
             function setBounds(bb){
                 var parts = bb.split(" ")
                 if ( parts.length === 4){
-                    minyfld.text = parts[0]
-                    maxyfld.text = parts[1]
-                    minxfld.text = parts[2]
-                    maxxfld.text = parts[3]
+                    minxfld.text = parts[0]
+                    minyfld.text = parts[1]
+                    maxxfld.text = parts[2]
+                    maxyfld.text = parts[3]
                 }
             }
             Column {
