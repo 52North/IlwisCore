@@ -44,8 +44,8 @@ public:
     Q_PROPERTY(QQmlListProperty<NodePropObject>  nodes READ getNodes CONSTANT)
     Q_PROPERTY(QQmlListProperty<EdgePropObject>  edges READ getEdges CONSTANT)
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel>  selectedOperation READ getSelectedOperation NOTIFY selectedOperationChanged)
-    Q_PROPERTY(QList<QVariantMap> outputCurrentOperation READ outputCurrentOperation NOTIFY outputCurrentOperationChanged)
-
+    Q_PROPERTY(QVariantList outputCurrentOperation READ outputCurrentOperation NOTIFY outputCurrentOperationChanged)
+    Q_PROPERTY(int lastOperationNode READ lastOperationNode NOTIFY operationNodeChanged)
 
 
     /*!
@@ -201,13 +201,18 @@ public:
      Q_INVOKABLE void debug(const QString& code);
      Q_INVOKABLE QVariantList propertyList();
      Q_INVOKABLE QString generateScript(const QString& type, const QString &parameters);
-     Q_INVOKABLE void gotoStepMode();
+     Q_INVOKABLE void toggleStepMode();
+     Q_INVOKABLE void nextStep();
+     Q_INVOKABLE quint32 runid() const ;
      QString modelType() const;
+
 
 signals:
     void selectedOperationChanged();
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
     void outputCurrentOperationChanged();
+    void operationNodeChanged();
+    void currentStepItemChanged();
 
 private slots:
     void acceptMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
@@ -216,12 +221,18 @@ private:
     QList<NodePropObject *> _nodeProps;
     QList<EdgePropObject *> _edgeProps;
     QList<IlwisObjectModel *> _selectedOperation;
-    QList<QVariantMap> _outputsCurrentOperation;
+    QVariantMap _outputsCurrentOperation;
+    QVariantList _outputs;
 
     int _inputParameterCount = 0;
+    bool _stepMode = false;
     OperationExpression _expression;
+    quint32 _runid;
+    qint32 _lastOperationNode = -1;
+    static quint32 _baserunid;
 
-    QList<QVariantMap> outputCurrentOperation() const;
+    QVariantList outputCurrentOperation();
+    int lastOperationNode() const;
 
 
 };

@@ -15,6 +15,8 @@
 using namespace Ilwis;
 using namespace boost;
 
+quint32 WorkflowModel::_baserunid = 0;
+
 WorkflowModel::WorkflowModel()
 {
 }
@@ -32,6 +34,7 @@ WorkflowModel::WorkflowModel(const Ilwis::Resource &source, QObject *parent) : O
     _workflow.prepare(source);
     connect(this, &WorkflowModel::sendMessage, kernel(), &Kernel::acceptMessage);
     connect(kernel(), &Kernel::sendMessage, this, &WorkflowModel::acceptMessage);
+    _runid = _baserunid++;
 }
 
 QStringList WorkflowModel::assignConstantInputData(QString inputData, int operationIndex) {
@@ -462,7 +465,7 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
             QUrl url = _workflow->resource().url(true);
             QFileInfo inf(url.toLocalFile());
            // QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
-            QUrl newName = "ilwis://internalcatalog/" + inf.baseName() + ".py";
+            QUrl newName = "ilwis://internalcatalog/" + inf.baseName() + ".ilwis";
             _workflow->connectTo(newName,"inmemoryworkflow","python",IlwisObject::cmOUTPUT);
             QVariant value;
             value.setValue(_expression);
@@ -477,12 +480,27 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
     return "";
 }
 
-void WorkflowModel::gotoStepMode()
+void WorkflowModel::toggleStepMode()
 {
     QVariantMap parms;
-    parms["stepmode"] = true;
+    parms["stepmode"] = _stepMode;
     parms["id"] = _workflow->id();
     emit sendMessage("workflow","stepmode", parms);
+
+}
+
+void WorkflowModel::nextStep()
+{
+    bool ok;
+    QWaitCondition &waitc = kernel()->waitcondition(_runid, ok);
+    if ( ok){
+        waitc.wakeAll();
+    }
+}
+
+quint32 WorkflowModel::runid() const
+{
+    return _runid;
 }
 
 void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
@@ -491,14 +509,28 @@ void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, c
         bool ok;
         quint64 id = parameters["id"].toLongLong(&ok);
         if ( ok && id == _workflow->id()){ // check if this was meant for this workflow
-
+            if ( subtype == "outputdata"){
+                _outputsCurrentOperation = parameters;
+                QVariantList newlist = _outputsCurrentOperation["results"].value<QVariantList>();
+                _lastOperationNode = newlist[0].toMap()["vertex"].toInt();
+                _outputs.append(newlist);
+                emit outputCurrentOperationChanged();
+                emit operationNodeChanged();
+            }else if ( subtype == "currentvertex"){
+                _lastOperationNode = parameters["vertex"].toInt();
+            }
         }
     }
 }
 
-QList<QVariantMap> WorkflowModel::outputCurrentOperation() const
+QVariantList WorkflowModel::outputCurrentOperation()
 {
-    return QList<QVariantMap>();
+    return _outputs;
+}
+
+int WorkflowModel::lastOperationNode() const
+{
+  return _lastOperationNode;
 }
 
 void WorkflowModel::debug(const QString &code)
