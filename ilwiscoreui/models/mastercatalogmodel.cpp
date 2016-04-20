@@ -708,6 +708,13 @@ ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
     if (ok && resource.isValid()){
         ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
         return model;
+    }else { // might be an anonymous object
+        auto obj = mastercatalog()->get(objectid.toULongLong(&ok));
+        if ( obj){
+            Resource res = obj->resource();
+            ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
+            return model;
+        }
     }
     qDebug() << " wrong id used";
     return 0;
