@@ -59,6 +59,7 @@ public:
     Q_INVOKABLE QString typeName2typeId(const QString& nm) const;
     Q_INVOKABLE QString worldmapCommand(const QString &id) const;
     Q_INVOKABLE QColor code2color(const QString& code) const;
+    Q_INVOKABLE QString type2typeName(const QString& tp) const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;

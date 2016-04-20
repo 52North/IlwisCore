@@ -336,6 +336,11 @@ QColor UIContextModel::code2color(const QString &code) const
     return QColor();
 }
 
+QString UIContextModel::type2typeName(const QString &tp) const
+{
+    return Ilwis::TypeHelper::type2HumanReadable(tp.toULongLong());
+}
+
 QString UIContextModel::typeName2typeId(const QString &nm) const
 {
     return QString::number(Ilwis::IlwisObject::name2Type(nm));
