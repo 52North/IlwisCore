@@ -123,8 +123,16 @@ Item {
         errorview.addError(id, error)
     }
 
-    function stepMode(){
-        canvas.workflow.gotoStepMode();
+    function toggleStepMode(){
+        canvas.workflow.toggleStepMode();
+    }
+
+    function workflowModel() {
+        return canvas.workflow
+    }
+
+    function nextStep() {
+        canvas.showLastSteppedItem()
     }
 
     signal exit;

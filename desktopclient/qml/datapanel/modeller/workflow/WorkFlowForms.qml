@@ -36,17 +36,24 @@ Item {
 
     OperationForms{
         id : workflow
-        height : parent.height - 30
+        height : parent.height - 55
         visible: false
         enabled: false
 
         RunForm {
+            id : runform
             width : parent.width
-            height : 25
+            height : 55
             anchors.top : workflow.bottom
         }
-    }
 
+    }
+    StepForm{
+        visible : runform.stepMode
+        anchors.left : workflow.right
+        anchors.right : forms.right
+        height : parent.height
+    }
     OperationForms{
         id : operation
         visible: false

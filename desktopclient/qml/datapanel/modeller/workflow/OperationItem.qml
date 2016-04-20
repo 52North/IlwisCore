@@ -10,6 +10,7 @@ import ErrorModel 1.0
 Rectangle {
     id : operationItem
     property int containerIndex : -1
+    property alias background : box.source
     width: 200
     height: 120
     transformOrigin: Item.TopLeft;
@@ -89,14 +90,22 @@ Rectangle {
         operationInParametersList.model = operation.inParamNames
     }
 
-    function getBackground() {
+    function getBackground(lastitem) {
         if (operation) {
             var keywords = operation.keywords.split(', ')
             if (keywords.indexOf('workflow') > -1) {
                 return iconsource("workflowitem.png")
             }
         }
-        return iconsource(isSelected ? "operationitemSelected.png": "operationitem.png")
+        if ( isSelected){
+            if ( itemid === lastitem)
+                return iconsource("operationitemSelectedStep.png")
+            return iconsource("operationitemSelected.png")
+        }else {
+            if ( itemid === lastitem)
+                return iconsource("operationitemStep.png")
+           return iconsource("operationitem.png")
+        }
     }
 
     function getTitle() {
@@ -106,8 +115,10 @@ Rectangle {
     Image {
         id : box
         anchors.fill: parent
-        source : getBackground()
+        source : getBackground(-1)
     }
+
+
     Text{
         id : operationName
         anchors.top : box.top

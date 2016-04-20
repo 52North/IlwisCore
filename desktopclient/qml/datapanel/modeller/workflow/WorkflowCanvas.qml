@@ -46,6 +46,15 @@ Modeller.ModellerWorkArea {
             }
         }
     }
+    function showLastSteppedItem(){
+        for(var i=0; i < wfCanvas.operationsList.length; ++i)    {
+            if ( wfCanvas.operationsList[i].itemid == workflow.lastOperationNode){
+                wfCanvas.operationsList[i].background = wfCanvas.operationsList[i].getBackground(workflow.lastOperationNode)
+            }else{
+                wfCanvas.operationsList[i].background = wfCanvas.operationsList[i].getBackground(-1)
+            }
+        }
+    }
 
     MouseArea {
         id: area
