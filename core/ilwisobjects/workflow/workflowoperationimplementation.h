@@ -45,6 +45,9 @@ public:
      */
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
+
+
+
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 public slots:
@@ -54,12 +57,12 @@ protected:
 private:
     QMap<OVertex, QStringList> _inputArgs;
     QMap<int, bool> _containers;
-    QMap<OVertex, std::pair<ExecutionContext*, SymbolTable>> _nodeExecutionContext;
+    QMap<OVertex, std::pair<std::vector<QString>, SymbolTable>> _nodeExecutionContext;
     bool _stepMode; // when in stepmode it pauses after each operation until it gets the order to continue
-    bool _wait;
     std::mutex _lock;
+    QMutex _syncMutex;
+    quint32 _runid=iUNDEF;
 
-    void wait( ExecutionContext *ctx, SymbolTable &symTable);
     /*!
      * \brief Copies output to local context
      * \param symbol Symbol to save
@@ -99,6 +102,10 @@ private:
      */
     bool checkConditions(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
     bool doCondition(const IOperationMetaData& meta,const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable);
+    void wait();
+    void sendData(const OVertex &v,ExecutionContext *ctx, SymbolTable &symTable);
+    quint64 var2id(const QVariant var, IlwisTypes tp) const;
+    Resource var2resource(const Symbol &sym);
 };
 }
 
