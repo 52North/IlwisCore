@@ -82,7 +82,7 @@ const QString PIXELVALUE = "Pixel value";
 template<class T> inline IlwisTypes numericType() {
     bool isSigned = std::numeric_limits<T>::is_signed;
     if ( std::numeric_limits<T>::is_integer) {
-        qint64 m2 = std::numeric_limits<T>::max();
+        T m2 = std::numeric_limits<T>::max();
         if ( m2 < 256)
             return isSigned ? itINT8 : itUINT8;
         else if ( m2 < 65536 )

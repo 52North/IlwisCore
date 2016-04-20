@@ -27,7 +27,7 @@ bool Ilwis::operator==(const Ilwis::Resource& resource1, const Ilwis::Resource& 
     return (resource1.url() == resource2.url()) && ( resource1.ilwisType() & resource2.ilwisType());
 }
 
-inline bool Ilwis::operator<(const Ilwis::Resource& resource1, const Ilwis::Resource& resource2 ){
+bool Ilwis::operator<(const Ilwis::Resource& resource1, const Ilwis::Resource& resource2 ){
     bool ok1 = resource1.url() < resource2.url();
     if ( resource1.url() == resource2.url())
         return resource1.ilwisType() < resource2.ilwisType();

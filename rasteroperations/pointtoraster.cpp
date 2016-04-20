@@ -80,7 +80,7 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     // This is mainly relevant when operations are used in a scripting enviroment as the output has to be known in the context
     // were the script is running.
     QVariant value;
-    value.setValue<IFeatureCoverage>(_inputfeatures);
+    value.setValue<IRasterCoverage>( _outputraster  );
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
     return true;
 }

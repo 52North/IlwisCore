@@ -25,7 +25,7 @@ bool Ilwis::operator==(const ConnectorFilter& filter1, const ConnectorFilter& fi
     return  typeOk && providerOk;
 }
 
-inline bool Ilwis::operator<(const ConnectorFilter& filter1, const ConnectorFilter& filter2 ){
+bool Ilwis::operator<(const ConnectorFilter& filter1, const ConnectorFilter& filter2 ){
     return filter1._provider < filter2._provider;
 }
 //---------------------------------------------------------------
@@ -42,7 +42,7 @@ bool Ilwis::operator==(const ConnectorFormatSelector& filter1, const ConnectorFo
 }
 
 
-inline bool Ilwis::operator<(const ConnectorFormatSelector& filter1, const ConnectorFormatSelector& filter2 ){
+bool Ilwis::operator<(const ConnectorFormatSelector& filter1, const ConnectorFormatSelector& filter2 ){
     return filter1._provider < filter2._provider;
 }
 
