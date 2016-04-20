@@ -338,6 +338,11 @@ Resource MasterCatalog::id2Resource(quint64 iid) const {
     if ( db.next()) {
         auto rec = db.record();
         return Resource(rec);
+    }else{ // might be an anonymous object
+        auto obj = mastercatalog()->get(iid);
+        if ( obj){
+            return obj->resource();
+        }
     }
     return Resource();
 }
@@ -565,14 +570,14 @@ bool MasterCatalog::unregister(quint64 id)
 
 }
 
-std::vector<Resource> MasterCatalog::select(const QString &selection) const
+std::vector<Resource> MasterCatalog::select(const QString &filter) const
 {
     Locker<std::recursive_mutex> lock(_guard);
     QString query;
-    if ( selection.indexOf("catalogitemproperties.") == -1)
-        query = QString("select * from mastercatalog where  %2").arg(selection);
+    if ( filter.indexOf("catalogitemproperties.") == -1)
+        query = QString("select * from mastercatalog where  %2").arg(filter);
     else
-        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid and %2").arg(selection);
+        query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.itemid = catalogitemproperties.itemid and %2").arg(filter);
 
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
@@ -580,6 +585,18 @@ std::vector<Resource> MasterCatalog::select(const QString &selection) const
         QSqlRecord rec = results.record();
         items.push_back(Resource(rec));
     }
+    // special case if we filter for anonymous objects; they dont exist in the regular table but only ion the 'get' list.
+    // In this case only simple query is allowed as we are not going to handle complex stuff
+    if ( items.size() == 0 && filter.indexOf("itemid=") == 0 && filter.indexOf(" ") == -1){
+        bool ok;
+        quint64 id = filter.split("=")[1].toULongLong(&ok);
+        if ( id != i64UNDEF && ok){
+            auto obj = get(id);
+            if ( obj)
+                items.push_back(obj->resource());
+        }
+    }
+
     return items;
 
 }
