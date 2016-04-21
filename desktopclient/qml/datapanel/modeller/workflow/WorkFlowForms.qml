@@ -50,11 +50,8 @@ Item {
             visible : workflow.visible & runform.stepMode
             enabled : workflow.enabled
             anchors.left: workflow.right
-            width : 400
+            anchors.right: forms.right
             height : parent.height
-            onVisibleChanged:  {
-                console.debug(runform.stepMode, workflow.enabled, visible,opacity, workflow.enabled)
-            }
         }
 
     }
