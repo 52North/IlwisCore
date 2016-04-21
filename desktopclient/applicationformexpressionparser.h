@@ -38,7 +38,7 @@ private:
     std::vector<ApplicationFormExpressionParser::FormParameter> getOutputParameters(const Ilwis::Resource &resource) const;
     QString makeFormPart(int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList = false, QStringList hiddenFields = QStringList(), QVariantList operationNames = QVariantList(), QStringList constantValues = QStringList()) const;
     QString iconName(IlwisTypes dataType) const;
-    QString keys(IlwisTypes type) const;
+    QString dropKeys(IlwisTypes type) const;
 
     std::vector<FormParameter> createWorkflowMetadata(quint64 metaid) const;
     QString formats(const QString &query, quint64 ilwtype) const;

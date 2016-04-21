@@ -162,7 +162,7 @@ QString ApplicationFormExpressionParser::iconName(IlwisTypes dataType) const{
     return sUNDEF;
 }
 
-QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
+QString ApplicationFormExpressionParser::dropKeys(IlwisTypes type) const{
     QString keypart;
     if ( hasType(type, itRASTER)){
         keypart += "\""+ TypeHelper::type2name(itRASTER) + "\"";
@@ -173,15 +173,15 @@ QString ApplicationFormExpressionParser::keys(IlwisTypes type) const{
     }
     if ( type == itPOINT){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ TypeHelper::type2name(itPOINT) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itPOINT) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
     }
     if ( type == itLINE){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ TypeHelper::type2name(itLINE) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itLINE) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
     }
     if ( type == itPOLYGON){
         if ( keypart != "") keypart += ",";
-        keypart += "\""+ TypeHelper::type2name(itPOLYGON) + "\"";
+        keypart += "\""+ TypeHelper::type2name(itPOLYGON) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
     }
     if ( type == itFEATURE){
         if ( keypart != "") keypart += ",";
@@ -363,7 +363,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
                         arg(checkWidth).
                         arg(imagewidth).
                         arg(xshift).
-                        arg(input ? keys(parameters[i]._dataType) : "\"?\"").
+                        arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
                         arg(constantValue).
                         arg(checkEffects);
 
