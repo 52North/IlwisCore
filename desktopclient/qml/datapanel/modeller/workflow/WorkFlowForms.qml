@@ -46,23 +46,24 @@ Item {
             height : 55
             anchors.top : workflow.bottom
         }
+        StepForm{
+            visible : workflow.visible & runform.stepMode
+            enabled : workflow.enabled
+            anchors.left: workflow.right
+            width : 400
+            height : parent.height
+            onVisibleChanged:  {
+                console.debug(runform.stepMode, workflow.enabled, visible,opacity, workflow.enabled)
+            }
+        }
 
     }
-    StepForm{
-        visible : runform.stepMode
-        anchors.left : workflow.right
-        anchors.right : forms.right
-        height : parent.height
-    }
+
     OperationForms{
         id : operation
         visible: false
         height : parent.height
         enabled : false
-        StepForm {
-            width : forms.width - parent.width
-            height : parent.width
-        }
     }
 
     Forms.OperationPropForm{
