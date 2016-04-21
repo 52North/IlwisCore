@@ -67,6 +67,12 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     long ysize =_inputgrf->size().ysize();
     initialize(ysize);
     long mmax = -1, mmin = 10000000;
+    int correction = 0;
+    QString valueColumn = FEATUREVALUECOLUMN;
+    if ( _inputfeatures->attributeDefinitions().columnCount() > 1){
+        correction = 1;
+        valueColumn = COVERAGEKEYCOLUMN;
+    }
     for (long y = 0; y < ysize; ++y) {
          pix.y = y;
             // detect the polygon-borders (pixels with value -1), line-by-line
@@ -89,8 +95,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
              QVariant d = _inputfeatures->coord2value(crd);
              if (d.isValid()){
                 QVariantMap vmap = d.value<QVariantMap>();
-                QVariant attribute =  vmap[COVERAGEKEYCOLUMN];
-                value = attribute.toInt()+1;
+                QVariant attribute =  vmap[valueColumn];
+                value = attribute.toInt()+correction;
              }else{
                 value = 0;
              }
