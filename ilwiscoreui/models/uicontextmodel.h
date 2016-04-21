@@ -84,9 +84,7 @@ public:
     WorkSpaceModel *currentWorkSpace() const;
     void setCurrentWorkSpace(WorkSpaceModel* cws);
     void initializeDataPane();
-
-
-
+    qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
 signals:
     void activeSplitChanged();
     void currentWorkSpaceChanged();
