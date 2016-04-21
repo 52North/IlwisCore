@@ -24,6 +24,7 @@ public:
     ColumnDefinition &columndefinitionRef(const QString &columnname);
     void columndefinition(const ColumnDefinition &coldef);
     quint32 columnIndex(const QString &nme) const;
+    quint32 columnCount() const;
     ColumnDefinition operator[](quint32 index);
     std::vector<IlwisTypes> ilwisColumnTypes() const;
     void clearAttributeDefinitions();

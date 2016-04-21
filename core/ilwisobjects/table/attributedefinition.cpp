@@ -111,6 +111,11 @@ quint32 AttributeDefinition::columnIndex(const QString &nme) const
     return (*iter).second;
 }
 
+quint32 AttributeDefinition::columnCount() const
+{
+    return _columnDefinitionsByIndex.size();
+}
+
 ColumnDefinition AttributeDefinition::operator[](quint32 index)
 {
     return columndefinition(index);
