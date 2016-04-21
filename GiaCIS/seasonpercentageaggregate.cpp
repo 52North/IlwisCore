@@ -238,10 +238,6 @@ quint64 SeasonPercentageAggregate::createMetadata()
     operation.addOptionalInParameter(5, itBOOL, TR("Apply running average"),TR("Calculate a running average percentage over the last 5 dekads") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("Average payment percentages"));
-//    operation.addOptionalOutParameter(1, itRASTER, TR("output rastercoverage"), TR("Average payment percentages, second period"));
-//    operation.addOptionalOutParameter(2, itRASTER, TR("output rastercoverage"), TR("Average payment percentages, third period"));
-//    operation.addOptionalOutParameter(3, itRASTER, TR("output rastercoverage"), TR("Average payment percentages, fourth period"));
-//    operation.addOptionalOutParameter(4, itRASTER, TR("output rastercoverage"), TR("Average payment percentages, fifth period"));
     operation.setKeywords("raster, zonal, payment, percentages, aggregate, mean");
 
     mastercatalog()->addItems({operation});
