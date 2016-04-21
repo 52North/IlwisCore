@@ -97,14 +97,14 @@ public:
     T *operator->() {
         T* p =  static_cast<T *>(_implementation.get());
         if (!p)
-            throw ErrorObject(TR("Using unitialized ilwis object"));
+            throw ErrorObject(TR("Using uninitialized ilwis object"));
         return p;
     }
 
     T *operator->() const{
         T* p =  static_cast<T *>(_implementation.get());
         if (!p)
-            throw ErrorObject(TR("Using unitialized ilwis object"));
+            throw ErrorObject(TR("Using uninitialized ilwis object"));
         return p;
     }
 
@@ -125,7 +125,7 @@ public:
     template<class C=IlwisObject> IlwisData<C> as() const {
         if (_implementation.get() == 0)
             return IlwisData<C>();
-            //throw ErrorObject(TR("Using unitialized object"));
+            //throw ErrorObject(TR("Using uninitialized object"));
         if ( hasType(_implementation->ilwisType(),itILWISOBJECT)) {
             IlwisData<C> obj;
             obj._implementation = std::static_pointer_cast<C>(_implementation);
