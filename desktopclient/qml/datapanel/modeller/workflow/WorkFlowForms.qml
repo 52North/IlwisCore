@@ -50,7 +50,7 @@ Item {
             visible : workflow.visible & runform.stepMode
             enabled : workflow.enabled
             anchors.left: workflow.right
-            anchors.right: forms.right
+            width : 440
             height : parent.height
         }
 
