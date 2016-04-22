@@ -237,13 +237,10 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
            continue;
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
-        if ( mastercatalog()->contains(resource.url(), resource.ilwisType()))
-            continue;
         if ( mastercatalog()->contains(resource.id())){
             updateItems({resource});
             continue;
         }
-
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
@@ -631,7 +628,7 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
         data = iter.value();
     } else {
         if ( !data->isAnonymous())
-            addItems({data->resource()});
+            addItems({data->resource(::IlwisObject::cmEXTENDED)});
         _lookup[data->id()] = data;
 
     }

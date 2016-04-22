@@ -344,6 +344,7 @@ private:
 KERNELSHARED_EXPORT uint qHash(const Ilwis::Resource& resource );
 KERNELSHARED_EXPORT uint qHash2(const QUrl& url, IlwisTypes tp );
 KERNELSHARED_EXPORT bool operator==(const Ilwis::Resource& resource1, const Ilwis::Resource& resource2 );
+KERNELSHARED_EXPORT bool operator!=(const Ilwis::Resource& resource1, const Ilwis::Resource& resource2 );
 KERNELSHARED_EXPORT bool operator<(const Ilwis::Resource& resource1, const Ilwis::Resource& resource2 );
 
 }
