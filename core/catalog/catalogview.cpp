@@ -149,23 +149,43 @@ bool CatalogView::prepare()
 }
 
 void CatalogView::filterChanged(const QString& typeIndication, bool state){
-    IlwisTypes tp = IlwisObject::name2Type(typeIndication);
+    QString type = typeIndication;
+    bool exclusive = false;
+    if ( typeIndication.indexOf("|exclusive") != -1){
+        type = typeIndication.split("|")[0];
+        exclusive = true;
+    }
+    IlwisTypes tp = IlwisObject::name2Type(type);
     auto iter  = _filters.find("object");
     if ( iter == _filters.end()){
         _filters["object"] = FilterItem("object",itANY);
 
     }
     quint64 currentTypes = _filters["object"]._filter.toULongLong();
-    if ( tp != itUNKNOWN){
-        if ( state)
-            currentTypes |= tp;
-        else
-            currentTypes &= ~tp;
+    if ( exclusive){
+        if ( tp != itUNKNOWN){
+            if ( state)
+                currentTypes = tp;
+            else
+                currentTypes = itANY;
+        }else {
+            if ( state)
+                currentTypes = itANY;
+            else
+                currentTypes = itUNKNOWN;
+        }
     }else {
-        if ( state)
-            currentTypes = itANY;
-        else
-            currentTypes = itUNKNOWN;
+        if ( tp != itUNKNOWN){
+            if ( state)
+                currentTypes |= tp;
+            else
+                currentTypes &= ~tp;
+        }else {
+            if ( state)
+                currentTypes = itANY;
+            else
+                currentTypes = itUNKNOWN;
+        }
     }
     _filters["object"]._filter = currentTypes;
 

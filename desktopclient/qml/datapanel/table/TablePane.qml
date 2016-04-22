@@ -51,6 +51,7 @@ Item {
                     tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
                 }
             }
+            return table.id
         }
     }
     SplitView {

@@ -65,6 +65,7 @@ Item {
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
         }
+        return currentCatalog.id
     }
 
     function setSelected(objectid){

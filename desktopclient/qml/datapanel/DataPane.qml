@@ -138,10 +138,11 @@ Rectangle {
         }
 
         function newPanel(filter,outputtype, url,side) {
+            var id = -1
             var allNew = datapane.leftSide.tabCount === 0 && datapane.rightSide.tabCount === 0
             var newPanel = datapane.createPanel(filter,outputtype, url, side)
             if ( !newPanel)
-                return
+                return id
             var component = Qt.createComponent(newPanel.componentUrl)
             if (component.status === Component.Error)
                 console.log("Error loading component:", component.errorString());
@@ -151,7 +152,7 @@ Rectangle {
                 var data= newPanel.displayName
                 var tab = tabview.addTab(data, component)
                 tab.active = true
-                tab.item.addDataSource(filter, url, outputtype)
+                id = tab.item.addDataSource(filter, url, outputtype)
                 tab.item.tabmodel = newPanel
             }
             if ( allNew){
@@ -165,7 +166,7 @@ Rectangle {
             }else{
                 righttab.currentIndex = sidePanel.tabCount - 1
             }
-            return newPanel
+            return id
 
         }
 

@@ -72,8 +72,8 @@ Controls.DropableItem{
             id : csyBounds
             height : Global.rowHeight * 4
             width : parent.width
-            opacity: 0
-            enabled : opacity != 0
+            visible: pixsz.content != ""
+            enabled : visible
         }
 
     }

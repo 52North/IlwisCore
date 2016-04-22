@@ -18,7 +18,8 @@ ConsoleTranquilizer::~ConsoleTranquilizer()
 // This tranquilizer will generate a progress indicator in a terminal window
 // When fully processed it will write:
 // 0..10..20..30..40..50..60..70..80..90..100
-// The output is streamed to the stderr channel
+// The output is streamed to the stdout channel
+// Note that when the total is less then 30, the indicator will not reach the 100 mark
 ConsoleTranquilizer::ConsoleTranquilizer(const IOOptions &opt, QObject *parent) : BaseTranquilizer(opt, parent)
 {
 
@@ -38,9 +39,9 @@ bool ConsoleTranquilizer::update(double howfar)
     _current = howfar;
     if (_current >= _next) {
         if (_count % 3 == 0)
-            std::cerr << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10
+            std::cout << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10
         else
-            std::cerr << ".";
+            std::cout << ".";
         _count++;
         _next += _inc;
     }
@@ -49,7 +50,7 @@ bool ConsoleTranquilizer::update(double howfar)
 
 bool ConsoleTranquilizer::inform(QString msg)
 {
-    std::cerr << msg.toStdString();
+    std::cout << msg.toStdString();
     return true;
 }
 

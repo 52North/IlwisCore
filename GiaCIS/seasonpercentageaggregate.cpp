@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <utility>
 #include "kernel.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -16,6 +17,7 @@
 #include "flattable.h"
 #include "juliantime.h"
 #include "aggregationtime.h"
+#include "zoneutil.h"
 #include "seasonpercentageaggregate.h"
 
 using namespace Ilwis;
@@ -23,19 +25,6 @@ using namespace GiaCIS;
 
 REGISTER_OPERATION(SeasonPercentageAggregate)
 
-template <class T> struct ZoneData
-{
-    int _zone;
-    int _length;
-    std::vector<T> _data;
-
-    ZoneData() {}
-
-    bool operator < (const ZoneData& zs) const
-    {
-        return (_zone < zs._zone);
-    }
-};
 
 Ilwis::OperationImplementation *SeasonPercentageAggregate::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
@@ -46,12 +35,28 @@ SeasonPercentageAggregate::SeasonPercentageAggregate()
 {
 }
 
+double SeasonPercentageAggregate::percentage(std::pair<double, double> lims, double val) {
+    int calc = 0;
+    if (val > 0) {
+        // constrain the value to within the bounds of the <low_perc..high_perc>
+        // so the percentage calculated runs from <0..100>
+        double pl = lims.first;
+        double ph = lims.second;
+        val = std::max(pl, std::min(val, ph));
+        calc = 100 * (ph - val) / (ph - pl);
+
+        // Add the specific thresholds
+        if (calc <= 5) calc = 0;
+        else if (calc <= 10) calc = 10;
+    }
+
+    return calc;
+}
+
 Ilwis::OperationImplementation::State SeasonPercentageAggregate::prepare(ExecutionContext *, const SymbolTable & )
 {
-    QString raster = _expression.parm(0).value();
-    QString outputName = _expression.parm(0,false).value();
-
     // open the input map list
+    QString raster = _expression.parm(0).value();
     if (!_inputObj.prepare(raster, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2, raster, "");
         return sPREPAREFAILED;
@@ -84,14 +89,25 @@ Ilwis::OperationImplementation::State SeasonPercentageAggregate::prepare(Executi
         return sPREPAREFAILED;
     }
 
+    // detect if we want a running average
+    _doRunning = false;
+    if (_expression.parameterCount() == 6)
+        _doRunning = _expression.input<bool>(5);
+
     // setup output map
     _outputObj = OperationHelperRaster::initialize(_inputObj, itRASTER, itGEOREF | itCOORDSYSTEM | itBOUNDINGBOX | itENVELOPE);
-    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
-    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
-
     if ( !_outputObj.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
+    }
+
+    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
+    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
+    _nb = inputRaster->size().zsize();
+    if (_doRunning) {
+        auto sz = inputRaster->size();
+        sz.zsize(std::min(_nb, 5));
+        outputRaster->size(sz);
     }
 
     IRasterCoverage zoneRaster = _inputZones.as<RasterCoverage>();
@@ -116,61 +132,23 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
     IRasterCoverage zoneRaster = _inputZones.as<RasterCoverage>();
 
-    ITable low = _lowPercentile.as<Table>();
-    ITable high = _highPercentile.as<Table>();
-
-    ITable seasonTable = _seasonTable.as<Table>();
-
     PixelIterator iterIn(inputRaster, BoundingBox(), PixelIterator::fZXY);
     PixelIterator iterZone(zoneRaster, BoundingBox(), PixelIterator::fXYZ); // only one layer so Z is irrelevant
     PixelIterator iterOut(outputRaster, BoundingBox(), PixelIterator::fZXY);
-    PixelIterator inEnd = iterIn.end();
 
-    _nb = inputRaster->size().zsize();
+    // Open the input maplist; the first band is assumed to be the first dekad of the year (1st of January)
+    // The number of bands may vary, because the data is evaluated every dekad.
     int rows = inputRaster->size().xsize();
     int cols = inputRaster->size().ysize();
-    std::vector<double> slice(_nb);
+
+    // read the season table, indicating per zone and dekad if we are in season (start at dekad 1 == 1 january)
+    ZoneSeasons<int> zoneSeas;
+    zoneSeas.loadFromTable(_seasonTable.as<Table>());
 
     // read the percentile tables; they are assumed to start at 1st of January
-    int totalRows = low->recordCount(); // same as high->recordCount()
-    int totalCols = low->columnCount(); // same as high->columnCount()
-    std::vector<ZoneData<double>> lowtab(low->recordCount());
-    std::vector<ZoneData<double>> hightab(high->recordCount());
-    for (int row = 0; row < totalRows; ++row) {
-        lowtab[row]._zone = row + 1;
-        hightab[row]._zone = row + 1;
-        for (int col = 0; col < totalCols; ++col) {
-            lowtab[row]._data.push_back(low->cell(col, row).toDouble());
-            hightab[row]._data.push_back(high->cell(col, row).toDouble());
-        }
-    }
-
-    // Read the seasons table
-    int totalSeasonRows = seasonTable->recordCount();
-    // The seasons table contains a one for all dekad's that belong to the growing season and
-    // zeroes otherwise. The growing season is a consecutive series of ones (no breaks)
-    std::vector<ZoneData<int>> seasons(totalSeasonRows);
-    for (int row = 0; row < totalSeasonRows; ++row) {
-        seasons[row]._zone = seasonTable->cell(0, row).toInt();
-        seasons[row]._length = 0;
-        for (int col = 1; col < seasonTable->columnCount(); ++col) {
-            seasons[row]._data.push_back(seasonTable->cell(col, row).toInt());
-        }
-        std::vector<int>::iterator sb = seasons[row]._data.begin();
-        std::vector<int>::iterator se = seasons[row]._data.end();
-        // Count the length of the season: this is at most only one consequtive period
-        seasons[row]._length = std::count_if(sb, se, [] (const int d) {return d > 0;});
-    }
-    std::map<int, int> lutSeason; // add lookup table to get from zone number to season table record
-    for (int i = 0; i < seasons.size(); ++i)
-        lutSeason[seasons[i]._zone] = i;
-
-    std::map<int, double> lutLowPerc;
-    std::map<int, double> lutHighPerc;
-    for (int i = 0; i < lowtab.size(); ++i) {
-        lutLowPerc[lowtab[i]._zone] = i;
-        lutHighPerc[hightab[i]._zone] = i;
-    }
+    // also they are assumed to be in 10 day periods (dekads) same as the raster input.
+    ZoneLimits<double> limits;
+    limits.loadFromTables(_lowPercentile.as<Table>(), _highPercentile.as<Table>());
 
     IDomain dom;
     dom.prepare("value");
@@ -178,49 +156,52 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
     def.range(new NumericRange(0, 100, 0)); // we are talking about percentages here
     outputRaster->datadefRef() = def;
 
-    double accu;
-    // timeseries are assumed to be 10 day periods.
-    int pixCount = 0;
-    while (iterIn != inEnd) {
+    std::vector<double> perc(_nb);
+    std::vector<double> psum(_nb);
+    int pixCount = 0;   // for progress indicator
+    auto fromZ = (_doRunning) ? _nb - 5 : _nb - 1;
+    int incZ = (_doRunning) ? std::min(_nb, 5) : 1;
+    while (iterIn != iterIn.end()) {
         trq()->update(pixCount++);
 
+        std::fill(psum.begin(), psum.end(), rUNDEF);
+
         // get the zone at the current location
+        // must be double, to be able to distinguish undef values
         double dzone = *iterZone;
-        accu = rUNDEF;
         if (dzone != rUNDEF) {
-            int zone = (long) dzone;
-            if (lutSeason.find(zone) != lutSeason.end()) {
-                int recS = lutSeason[zone];    // point to record with season data for current zone
-                int len = seasons[recS]._length;
-                if (len > 0) {
-                    accu = 0;
+            int zone = (int) dzone;
+            if (zoneSeas.isKnownZone(zone)) {
+                ZoneData<int>& zdata = zoneSeas.getSeasonData(zone);
 
-                    int recL = lutLowPerc[zone];
-                    int recH = lutHighPerc[zone];
-                    std::vector<double>::const_iterator plow = lowtab[recL]._data.begin();
-                    std::vector<double>::const_iterator phigh = hightab[recH]._data.begin();
+                if ((zdata._startIndex < _nb) && (zdata._length > 0)) {
+                    std::fill(psum.begin(), psum.end(), 0);
+                    std::fill(perc.begin(), perc.end(), 0);
 
-                    // accumulate the percentages in the growing season
-                    for (int z = 0; z < _nb; ++z) {
-                        double ph = *phigh;
-                        double pl = *plow;
-                        double val = *(iterIn + z);
-                        if (val > 0) {
-                            val = std::max(pl, std::min(val, ph));
-                            double calc = 100.0 * (ph - val) / (ph - pl);
-                            if (calc <= 5) calc = 0;
-                            else if (calc <= 10) calc = 10;
-                            accu += (calc * seasons[recS]._data[z]) / len;
-                        }
-                        plow++;
-                        phigh++;
-                    }
+                    // get the lower and upper NDVI values for this zone
+                    auto lims = limits.getLimits(zone);
+                    // only need to consider the values that are in the season
+                    // last will be either point to the end of the input or the end of the season (whichever comes first)
+                    int last = std::min(zdata._startIndex + zdata._length, _nb);
+                    // Calculate the insurance percentage for each of the dekads
+                    for (int z = zdata._startIndex; z < last; ++z)
+                        perc[z] = percentage(lims[z], *(iterIn + z)) * zdata._data[z];
+
+                    // Accumulate all percentages
+                    std::partial_sum(perc.begin(), perc.end(), psum.begin());
+                    // Divide by the length of the season up to the current dekad
+                    for (int z = zdata._startIndex; z < last; ++z)
+                        psum[z] /= (z - zdata._startIndex + 1);
+
+                    // copy the percentage of the last dekad in the season to the following if needed
+                    if (last > 0)
+                        std::fill(psum.begin() + last, psum.end(), psum[last - 1]);
                 }
             }
         }
-        *iterOut = accu;
+        std::copy(psum.begin() + fromZ, psum.end(), iterOut);
         iterIn += _nb;
-        iterOut += 1;
+        iterOut += incZ;
         iterZone += 1;
     }
 
@@ -248,14 +229,15 @@ quint64 SeasonPercentageAggregate::createMetadata()
     operation.setLongName("Average percentages per season");
     operation.setSyntax("seasonpercentageaggregate(inputgridcoverage,inputzonecoverage,seasontable,inputgridstartdate)");
     operation.setDescription(TR("Determine average payment percentage per growing season and zonal location"));
-    operation.setInParameterCount({5});
-    operation.addInParameter(0,itRASTER, TR("Input rastercoverage"),TR("Input time series rastercoverage with payment percentages"));
-    operation.addInParameter(1,itRASTER, TR("Zonal map"),TR("Input map indicating the different zonal areas"));
-    operation.addInParameter(2,itTABLE, TR("Low percentile zonal table"),TR("Table contains lower bound NDVI values per decad per zone") );
-    operation.addInParameter(3,itTABLE, TR("High percentile zonal table"),TR("Table contains upper bound NDVI values per decad per zone") );
-    operation.addInParameter(4,itTABLE, TR("Season table"),TR("Table contains growing season per zonal area and per dekad") );
+    operation.setInParameterCount({5,6});
+    operation.addInParameter(0, itRASTER, TR("Input rastercoverage"),TR("Input time series rastercoverage with payment percentages"));
+    operation.addInParameter(1, itRASTER, TR("Zonal map"),TR("Input map indicating the different zonal areas"));
+    operation.addInParameter(2, itTABLE, TR("Low percentile zonal table"),TR("Table contains lower bound NDVI values per decad per zone") );
+    operation.addInParameter(3, itTABLE, TR("High percentile zonal table"),TR("Table contains upper bound NDVI values per decad per zone") );
+    operation.addInParameter(4, itTABLE, TR("Season table"),TR("Table contains growing season per zonal area and per dekad") );
+    operation.addOptionalInParameter(5, itBOOL, TR("Apply running average"),TR("Calculate a running average percentage over the last 5 dekads") );
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("Average payment percentages"));
+    operation.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("Average payment percentages"));
     operation.setKeywords("raster, zonal, payment, percentages, aggregate, mean");
 
     mastercatalog()->addItems({operation});

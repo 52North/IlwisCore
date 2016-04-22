@@ -65,29 +65,25 @@ void WorkflowOperationImplementation::acceptMessage(const QString &type, const Q
         if ( ok && id == _metadata->id()){ // check if this was meant for this workflow
             if ( subtype == "stepmode"){
                 _stepMode = parameters.contains("id") ? parameters["stepmode"].toBool() : false;
-                _wait = _stepMode;
-            } else if ( subtype == "wait"){
-                _wait = parameters.contains("wait") ? parameters["wait"].toBool() : false;
+                if ( !_stepMode){
+                    _syncMutex.unlock();
+                }
             }
         }
     }
 }
 
-void WorkflowOperationImplementation::wait(ExecutionContext *ctx, SymbolTable &symTable)
-{
-    if ( !_stepMode)
-        return;
-    QVariantMap data;
-    for(int i=0; i<ctx->_results.size(); ++i){
-        QVariant var = symTable.getValue(ctx->_results[i]);
-        data[QString::number(i)] = var;
-    }
-    emit sendMessage("workflow","outputdata",data);
-
-    while(_wait){
-       std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-}
+//void WorkflowOperationImplementation::send(ExecutionContext *ctx, SymbolTable &symTable)
+//{
+//    if ( !_stepMode)
+//        return;
+//    QVariantMap data;
+//    for(int i=0; i<ctx->_results.size(); ++i){
+//        QVariant var = symTable.getValue(ctx->_results[i]);
+//        data[QString::number(i)] = var;
+//    }
+//    emit sendMessage("workflow","outputdata",data);
+//}
 
 
 bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, SymbolTable &globalSymTable)
@@ -100,10 +96,19 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
     connect(kernel(), &Kernel::sendMessage, this, &WorkflowOperationImplementation::acceptMessage);
 
     QThread *current = QThread::currentThread();
-    QVariant var = current->property("stepmode");
+    QVariant var = current->property("runparameters");
     if ( var.isValid()){
-        _stepMode = var.toBool();
-        _wait = _stepMode;
+        QVariantMap values = var.toMap();
+        _stepMode = values["stepmode"].toBool();
+        if ( _stepMode){
+            bool ok;
+            quint32 id = values["runid"].toUInt(&ok);
+            if ( ok){
+                _runid = id;
+                kernel()->addSyncLock(_runid);
+            }else
+                _stepMode = false;
+        }
     }
     /*
      * inputs/outputs are cached by the workflow so they have same
@@ -129,6 +134,10 @@ bool WorkflowOperationImplementation::execute(ExecutionContext *globalCtx, Symbo
         copyToContext(symbol, parameter.value(), globalCtx, globalSymTable);
         //}
     }
+    if ( _runid != iUNDEF){
+        kernel()->removeSyncLock(_runid)        ;
+    }
+    _nodeExecutionContext = QMap<OVertex, std::pair<std::vector<QString>, SymbolTable>>();
     return true;
 }
 
@@ -233,6 +242,83 @@ void WorkflowOperationImplementation::parseInputNodeArguments(const QList<OVerte
 }
 
 
+void WorkflowOperationImplementation::wait()
+{
+    if (_stepMode){
+        bool ok;
+        QWaitCondition& waitc = kernel()->waitcondition(_runid, ok);
+        if ( ok){
+            _syncMutex.lock();
+            waitc.wait(&_syncMutex);
+        }
+    }
+}
+
+void WorkflowOperationImplementation::sendData(const OVertex &v,ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if ( _stepMode){
+        QVariantList data;
+        QVariantMap generic;
+        generic["id"] = _metadata->id();
+        IWorkflow workflow = (IWorkflow)_metadata;
+        IOperationMetaData meta = workflow->getOperationMetadata(v);
+        for(int i=0; i<ctx->_results.size(); ++i){
+            QVariantMap opdata;
+            QVariant var = symTable.getValue(ctx->_results[i]);
+            opdata["value"] = var;
+            IlwisTypes tp = symTable.ilwisType(QVariant(),ctx->_results[i]);
+            opdata["type"] = tp;
+            opdata["resultname"] = ctx->_results[i];
+            opdata["vertex"] = v;
+            QString name = QString("%2=%1(%3)").arg(meta->name()).arg(v).arg(i);
+            opdata["name"] = name;
+            IlwisTypes id = var2id(var, tp);
+            Resource res = mastercatalog()->id2Resource(id);
+            opdata["id"] = id;
+
+            data.append(opdata);
+        }
+        generic["results"] = data;
+        emit sendMessage("workflow","outputdata",generic);
+        _syncMutex.unlock();
+    }
+}
+
+quint64 WorkflowOperationImplementation::var2id(const QVariant var, IlwisTypes tp) const{
+    quint64 id = -1;
+    if  ( hasType(tp, itRASTER)){
+        IRasterCoverage obj = var.value<IRasterCoverage>();
+        if ( obj.isValid())
+            id = obj->id();
+    }else    if  ( hasType(tp, itFEATURE)){
+        IFeatureCoverage obj = var.value<IFeatureCoverage>();
+        if ( obj.isValid())
+            id = obj->id();
+    }else if  ( hasType(tp, itTABLE)){
+        ITable obj = var.value<ITable>();
+        if ( obj.isValid())
+            id = obj->id();
+    }else if  ( hasType(tp, itGEOREF)){
+        IGeoReference obj = var.value<IGeoReference>();
+        if ( obj.isValid())
+            id = obj->id();
+    }else if  ( hasType(tp, itCOORDSYSTEM)){
+        ICoordinateSystem obj = var.value<ICoordinateSystem>();
+        if ( obj.isValid())
+            id = obj->id();
+    }else if  ( hasType(tp, itDOMAIN)){
+        IDomain obj = var.value<IDomain>();
+        if ( obj.isValid())
+            id = obj->id();
+    }
+    return id;
+}
+
+Resource WorkflowOperationImplementation::var2resource(const Symbol& sym){
+    quint64 id = var2id(sym._var, sym._type);
+    return mastercatalog()->id2Resource(id);
+}
+
 bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
 {
     IWorkflow workflow = (IWorkflow)_metadata;
@@ -240,15 +326,33 @@ bool WorkflowOperationImplementation::executeInputNode(const OVertex &v, Executi
 
     QString execString = QString("%1(%2)");
     execString = execString.arg(meta->name());
+    QString outputs;
+    for(int i = 0; i < meta->outputParameterCount(); ++i){
+        if ( outputs != "")
+            outputs += ",";
+        else
+            outputs = meta->name();
+        outputs += "_" + QString::number(v) + "_" + QString::number(i);
+    }
     QString argumentlist = _inputArgs[v].join(",").remove(QRegExp(",+$"));
     execString = execString.arg(argumentlist);
-    qDebug() << "executing input node" << execString;
+    //execString = outputs + "=" + execString;
+
+    QVariantMap mp;
+    mp["vertex"] = v;
+    mp["id"] = _metadata->id();
+    emit sendMessage("workflow","currentvertex",mp);
+
+    wait();
+   // qDebug() << "executing input node" << execString;
     bool ok = commandhandler()->execute(execString, ctx, symTable);
-    wait(ctx,symTable);
+
+
+    sendData(v, ctx, symTable);
     if ( !ok) {
         ERROR1("workflow execution failed when executing: %1", execString);
     } else {
-        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
+        _nodeExecutionContext[v] = std::make_pair(ctx->_results, symTable);
     }
     return ok;
 }
@@ -274,6 +378,9 @@ bool WorkflowOperationImplementation::doCondition(const IOperationMetaData& meta
 bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &v, ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_nodeExecutionContext.contains(v)) {
+        auto &value = _nodeExecutionContext[v];
+        ctx->_results = value.first;
+        symTable = value.second;
         return true;
     }
     IWorkflow workflow = (IWorkflow)_metadata;
@@ -312,6 +419,8 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
 
             quint16 inIdx = edgeProperties._inputParameterIndex;
             quint16 outIdx = edgeProperties._outputParameterIndex;
+            if ( outIdx >= localCtx._results.size())
+                return false;
             QString resultName = localCtx._results[outIdx];
             Symbol tmpResult = localSymTable.getSymbol(resultName);
             //copyToContext(tmpResult, resultName, ctx, symTable);
@@ -319,7 +428,8 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
             if (resultName != CONDITION_FAILED) {
                 if (hasType(itILWISOBJECT, tmpResult._type)) {
                     // anonymous objects have to be resolved
-                    arguments.insert(inIdx, resultName);
+                    Resource res = var2resource(tmpResult);
+                    arguments.insert(inIdx, res.url().toString());
                 } else {
                     // simple types can be passed in directly
                     arguments.insert(inIdx, tmpResult._var.toString());
@@ -352,15 +462,31 @@ bool WorkflowOperationImplementation::reverseFollowExecutionPath(const OVertex &
         }
     }
 
+    QVariantMap mp;
+    mp["vertex"] = v;
+    mp["id"] = _metadata->id();
+    emit sendMessage("workflow","currentvertex",mp);
+
+    wait();
     QString argumentlist = arguments.join(",").remove(QRegExp(",+$"));
     QString execString = QString("%1(%2)").arg(meta->name()).arg(argumentlist);
-    qDebug() << "executing " << execString;
+    QString outputs;
+    for(int i = 0; i < meta->outputParameterCount(); ++i){
+        if ( outputs != "")
+            outputs += ",";
+        else
+            outputs = meta->name();
+        outputs += "_" + QString::number(v) + "_" + QString::number(i);
+    }
+   // execString = outputs + "=" + execString;
+    ctx->clear();
     bool success = commandhandler()->execute(execString, ctx, symTable);
-    wait(ctx,symTable);
+    sendData(v,ctx,symTable);
+
     if ( !success) {
         ERROR1("workflow execution failed when executing: %1", execString);
     } else {
-        _nodeExecutionContext[v] = std::make_pair(ctx, symTable);
+        _nodeExecutionContext[v] = std::make_pair(ctx->_results, symTable);
     }
     return success;
 

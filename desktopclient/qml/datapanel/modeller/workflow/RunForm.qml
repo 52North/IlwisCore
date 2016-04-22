@@ -6,9 +6,25 @@ import UIContextModel 1.0
 import "../../../Global.js" as Global
 import "../../../controls" as Controls
 
-Rectangle {
+Column {
     width: parent.width
-    height: 35
+    height: 55
+    spacing : 2
+    property alias stepMode : stepModeCheck.checked
+    Rectangle {
+        height : 2
+        width : parent.width - 20
+        anchors.horizontalCenter: parent.horizontalCenter
+        border.width: 1
+        border.color: Global.edgecolor
+
+    }
+
+    CheckBox {
+        id : stepModeCheck
+        text : qsTr("Step Mode")
+        checked: false
+    }
 
     Row {
         width : parent.width
@@ -20,23 +36,22 @@ Rectangle {
             iconsource : "../images/run20.png"
 
             onClicked: {
-                workflow.executeForm(false)
+                var runid = modellerDataPane.workflowModel().runid()
+                workflow.executeForm({"runid" : runid, "stepmode" : stepModeCheck.checked})
             }
         }
         Controls.ActionButtonH {
             id : stepButton
-            property bool init : true
             width : parent.width / 4
             height : parent.height
             buttontext : qsTr("Step")
+            enabled : stepModeCheck.checked
+            opacity : enabled ? 1 : 0.5
              iconsource : "../images/step20.png"
              onClicked :{
-                if ( stepButton.init){
-                    workflow.executeForm(true)
-                    stepButton.init = false
-                }
-                else
-                    modellerDataPane.stepMode()
+                 if ( stepModeCheck.checked )
+                    modellerDataPane.workflowModel().nextStep()
+                    modellerDataPane.nextStep()
              }
         }
         Controls.ActionButtonH {

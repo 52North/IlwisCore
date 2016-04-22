@@ -38,7 +38,7 @@ public:
    Q_INVOKABLE quint64 operationId(quint32 index, bool byKey) const;
    Q_INVOKABLE quint64 serviceId(quint32 index) const;
    Q_INVOKABLE QStringList serviceNames() const;
-   Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters, bool stepMode=false);
+   Q_INVOKABLE QString executeoperation(quint64 operationid, const QString &parameters, QVariant stepMode=QVariant());
    Q_INVOKABLE OperationModel *operation(const QString& id);
    Q_INVOKABLE WorkflowModel *createWorkFlow(const QString& filter);
    Q_INVOKABLE void refresh();

@@ -1,4 +1,5 @@
 #include <QThread>
+#include <QGenericReturnArgument>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "ilwistypes.h"
@@ -320,6 +321,18 @@ void UIContextModel::initializeDataPane()
 
 }
 
+qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, const QString url){
+    QObject *datapane = rootObject()->findChild<QObject*>("datapane_mainui");
+    if ( datapane ){
+        QUrl urlWorkingCatalog = context()->workingCatalog()->resource().url();
+        QVariant ret;
+        bool ok = QMetaObject::invokeMethod(datapane,"newPanel",Q_RETURN_ARG(QVariant,ret ),Q_ARG(QVariant, filter),Q_ARG(QVariant,"coverage"),Q_ARG(QVariant,url),Q_ARG(QVariant,side));
+        if ( ok)
+            ret.toLongLong();
+    }
+    return -1;
+}
+
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
     QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
@@ -334,6 +347,11 @@ QColor UIContextModel::code2color(const QString &code) const
         return (*iter).second;
     }
     return QColor();
+}
+
+QString UIContextModel::type2typeName(const QString &tp) const
+{
+    return Ilwis::TypeHelper::type2HumanReadable(tp.toULongLong());
 }
 
 QString UIContextModel::typeName2typeId(const QString &nm) const

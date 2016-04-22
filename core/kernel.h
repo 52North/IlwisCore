@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QNetworkAccessManager>
 #include <QDataStream>
+#include <QWaitCondition>
 #include <fstream>
 #include "boost/current_function.hpp"
 #include <time.h>
@@ -188,6 +189,10 @@ public:
     void newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end);
     const Module* module(const QString& name) const;
     const ModuleMap& modules() const;
+    void addSyncLock(quint32 runid);
+    void removeSyncLock(quint32 runid);
+    QWaitCondition& waitcondition(quint32, bool& ok);
+    QWaitCondition _dummyWait;
 
 private:
     QThreadStorage<QCache<QString, QVariant> *> _caches;
@@ -199,6 +204,8 @@ private:
     QHash<QString, FactoryInterface * > _masterfactory;
     mutable std::chrono::high_resolution_clock::time_point _start_clock;
     static Kernel *_kernel;
+    std::mutex _syncLocksGuard;
+    std::map<quint32, QWaitCondition> _syncLocks;
 
 
 signals:

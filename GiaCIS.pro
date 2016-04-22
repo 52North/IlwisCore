@@ -23,7 +23,8 @@ SOURCES += GiaCIS/giacis_module.cpp \
 HEADERS += GiaCIS/giacis_module.h \
     GiaCIS/percentilefilterstretch.h \
     GiaCIS/seasonpercentageaggregate.h \
-    GiaCIS/aggregationtime.h
+    GiaCIS/aggregationtime.h \
+    GiaCIS/zoneutil.h
 
 OTHER_FILES += \
     giacis/giacis.json

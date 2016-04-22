@@ -28,6 +28,7 @@ Item {
         }
         maparea.drawer.addCommand("adddrawer(" + maparea.drawer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
         maparea.drawer.update()
+        return maparea.drawer.viewerId
     }
 
     function newExtent(ext){

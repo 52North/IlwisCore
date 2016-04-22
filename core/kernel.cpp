@@ -287,6 +287,39 @@ const ModuleMap &Kernel::modules() const
     return _modules;
 }
 
+void Kernel::addSyncLock(quint32 runid)
+{
+    Locker<std::mutex> locker(_syncLocksGuard);
+    if ( _syncLocks.find(runid) == _syncLocks.end()){
+        _syncLocks[runid];
+    }
+}
+
+void Kernel::removeSyncLock(quint32 runid)
+{
+    Locker<std::mutex> locker(_syncLocksGuard);
+    auto iter = _syncLocks.find(runid);
+    if ( iter != _syncLocks.end()){
+        _syncLocks.erase(iter);
+    }
+}
+
+QWaitCondition &Kernel::waitcondition(quint32 runid, bool &ok)
+{
+    Locker<std::mutex> locker(_syncLocksGuard);
+    auto iter = _syncLocks.find(runid);
+    if ( iter != _syncLocks.end()){
+        ok = true;
+        return (*iter).second;
+    }
+    ok = false;
+    return _dummyWait;
+}
+
+
+
+
+
 
 
 
