@@ -13,7 +13,7 @@ class ApplicationFormExpressionParser : public QObject
 {
     Q_OBJECT
 public:
-    enum FieldType{ ftTEXTEDIT=1, ftTEXTAREA=2, ftCOMBOBOX=4, ftCHECKBOX=8, ftRADIOBUTTON=16};
+    enum FieldType{ ftTEXTEDIT=1, ftTEXTAREA=2, ftCOMBOBOX=4, ftCHECKBOX=8, ftRADIOBUTTON=16, ftDropList=32};
     ApplicationFormExpressionParser();
 
     Q_INVOKABLE QString index2Form(quint64 metaid, bool showoutputformat = true, bool showEmptyOptionInList  = false, QStringList hiddenFields = QStringList(), QVariantList operationNames = QVariantList(), QStringList constantValues = QStringList());
