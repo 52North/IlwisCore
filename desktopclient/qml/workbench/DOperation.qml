@@ -73,8 +73,8 @@ Item{
                     Image{
                         y : 2
                         x : 3
-                        width : 10
-                        height : 10
+                        width : 12
+                        height : 12
                         source : "../images/" + modelData
                     }
                 }
