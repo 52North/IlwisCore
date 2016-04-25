@@ -80,6 +80,9 @@ Parameter::PathType Parameter::pathType() const
     if ( _value.indexOf("ilwis://") == 0){
         return ptLOCALOBJECT;
     }
+    if ( _value.indexOf("?") == 0)
+        return ptUNDEFINED;
+
     if ( hasType(_type, (itSTRING | itNUMBER | itBOOL)))
         return ptIRRELEVANT;
 

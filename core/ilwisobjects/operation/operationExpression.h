@@ -13,7 +13,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT Parameter : public Identity{
 public:
 
-    enum PathType{ptNONE, ptLOCALOBJECT, ptREMOTE, ptIRRELEVANT};
+    enum PathType{ptNONE, ptLOCALOBJECT, ptREMOTE, ptUNDEFINED, ptIRRELEVANT};
 
     Parameter();
     Parameter(const QString& name, const QString& value, IlwisTypes ,const SymbolTable& );
