@@ -12,6 +12,7 @@ Window {
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
     color: "#00000000"
 
+
     function initIlwis() {
         startilwis.init()
         windowloader.source = "DesktopClient.qml"
