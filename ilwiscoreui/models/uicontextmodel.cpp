@@ -21,6 +21,7 @@
 #include "tableoperations/convertcolumndomain.h"
 #include "tableoperations/tableoperationfactory.h"
 #include "consolescriptmodel.h"
+#include "dataformat.h"
 #include "oshelper.h"
 #include "ilwiscontext.h"
 
@@ -331,6 +332,32 @@ qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, c
             ret.toLongLong();
     }
     return -1;
+}
+
+QStringList UIContextModel::formatList(const QString& query, const QString& ilwtp) const
+{
+    bool ok;
+    IlwisTypes ilwtype = ilwtp.toULongLong(&ok);
+    if (!ok){
+        ilwtype = IlwisObject::name2Type(ilwtp);
+        if (ilwtype == itUNKNOWN)
+            return QStringList();
+    }
+    if ( hasType(ilwtype,itFEATURE )){
+        ilwtype = itFEATURE;
+    }
+    QString expr = query.arg(ilwtype);
+    std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, expr);
+    QStringList formatList;
+    for(auto &format : formats)    {
+        formatList.append(format.second.property(Ilwis::DataFormat::fpNAME).toString());
+    }
+    if ( formatList.size() != 0)
+       formatList.append("Memory");
+    if ( hasType(ilwtype, itCOLUMN)){
+        formatList.append("Keep original");
+    }
+    return formatList;
 }
 
 QString UIContextModel::worldmapCommand(const QString& id) const
