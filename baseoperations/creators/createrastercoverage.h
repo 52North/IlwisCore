@@ -31,6 +31,7 @@ private:
     bool parseStackDefintion(const QString &stackDef);
     bool parseStackDefintionNumericCase(const QString &stackDef);
     bool parseStackDefintionTimeCase(const QString &stackDef);
+    QString expandWildCards(const QString &wildmaps);
 };
 }
 }

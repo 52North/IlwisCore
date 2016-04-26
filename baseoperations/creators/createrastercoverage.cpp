@@ -9,7 +9,9 @@
 #include "raster.h"
 #include "itemdomain.h"
 #include "itemiterator.h"
+#include "catalog.h"
 #include "createrastercoverage.h"
+#include "ilwiscontext.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -195,6 +197,9 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         return sPREPAREFAILED;
     }
     QString maps = _expression.input<QString>(2);
+    if ( maps.indexOf("?") != -1 || maps.indexOf("*") != -1){
+        maps = expandWildCards(maps);
+    }
 
 
     _stackDomain = IDomain("count");
@@ -228,6 +233,22 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     }
 
     return sPREPARED;
+}
+
+QString CreateRasterCoverage::expandWildCards(const QString& wildmaps){
+    QString result;
+    QString maps = wildmaps;
+    maps.replace("*","%");
+    maps.replace("?","_");
+    QString containerPath = context()->workingCatalog()->resource().url().toString();
+    QString query = "container='" + containerPath + "' and name LIKE " + maps;
+    std::vector<Resource> resources = mastercatalog()->select(query);
+    for(auto resource : resources){
+        if ( result != "")
+            result += ",";
+        result += resource.url().toString();
+    }
+    return result;
 }
 
 quint64 CreateRasterCoverage::createMetadata()
