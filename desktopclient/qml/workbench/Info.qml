@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import WorkSpaceModel 1.0
+import StartIlwis 1.0
 import "../controls" as Controls
 import "../Global.js" as Global
 import ".." as Base
@@ -57,11 +58,21 @@ WorkBenchShifter {
                         }
                     }
                     Text {
-                        height : 30
-                        text : "Ilwis 4.0 pre alpha"
+                        height : 20
+                        text : "Ilwis 4 " + startilwis.buildType() + " " + startilwis.verionNumber();
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.pointSize: 14
                         font.bold : true
+                        width : parent.width
+                        opacity: width < 10 ? 0 : 1
+
+                        clip : true
+                    }
+                    Text {
+                        height : 15
+                        text : "Build number" + startilwis.buildNumber()
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pointSize: 10
                         width : parent.width
                         opacity: width < 10 ? 0 : 1
 
