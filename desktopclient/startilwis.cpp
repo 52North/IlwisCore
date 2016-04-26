@@ -208,7 +208,7 @@ void StartIlwis::initMainWindow()
 
 QString StartIlwis::buildType() const
 {
-#ifdef ILWIS_VERSION_NUMBER
+#ifdef ILWIS_VERSION_TYPE
     return ILWIS_VERSION_TYPE;
 #endif
     return "";
