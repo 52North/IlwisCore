@@ -28,6 +28,9 @@ public:
 
     Q_INVOKABLE void init();
     Q_INVOKABLE void initMainWindow();
+    Q_INVOKABLE QString buildType() const;
+    Q_INVOKABLE QString verionNumber() const;
+    Q_INVOKABLE QString buildNumber() const;
 
     void stop();
 signals:

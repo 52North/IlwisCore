@@ -1,13 +1,13 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Window 2.1
+import StartIlwis 1.0
 
 
 Rectangle {
     anchors.fill : parent
     property int count : 0
     color : "transparent"
-    property string version : "Alpha 1"
     Timer {
         interval: 1000; running: true; repeat: true
         onTriggered: {
@@ -85,9 +85,6 @@ Rectangle {
             source: "images/leftbottom.png"
         }
     }
-    function buildString() {
-        return "201604251305"
-    }
 
     Column {
         id : message
@@ -102,7 +99,7 @@ Rectangle {
             id : txt
             width : parent.width
             height : 30
-            text : version
+            text : startilwis.buildType() + " " + startilwis.verionNumber()
             font.pointSize: 18
             color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -110,7 +107,7 @@ Rectangle {
         Text {
             width : parent.width
             height : 30
-            text : "Build : " + buildString()
+            text : "Build : " + startilwis.buildNumber()
             font.pointSize: 12
             color : "darkblue"
             anchors.horizontalCenter: parent.horizontalCenter
