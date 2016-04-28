@@ -7,7 +7,7 @@
 
 using namespace Ilwis;
 
-const QString Ilwis::Version::IlwisVersion = QString("iv40");
+const QString Ilwis::Version::interfaceVersion = QString("iv40");
 
 Version::Version(){
 }
@@ -86,6 +86,31 @@ void Version::addModuleInterfaceVersion(const QString &inf) {
         moduleVersions.push_back(inf);
 
 }
+
+QString Version::buildType() const
+{
+#ifdef ILWIS_VERSION_TYPE
+    return ILWIS_VERSION_TYPE;
+#endif
+    return sUNDEF;
+}
+
+QString Version::verionNumber() const
+{
+#ifdef ILWIS_VERSION_NUMBER
+    return QString::number(ILWIS_VERSION_NUMBER);
+#endif
+    return sUNDEF;
+}
+
+QString Version::buildNumber() const
+{
+#ifdef ILWIS_BUILDNR
+    return QString::number(ILWIS_BUILDNR);
+#endif
+    return sUNDEF;
+}
+
 
 
 
