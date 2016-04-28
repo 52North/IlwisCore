@@ -192,13 +192,13 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     if ( tp & itRASTER)
         return "raster20CS1.png";
     else if ( tp == itPOLYGON)
-        return "polygon20CS1.png";
+        return "polygon20.png";
     else if ( tp == itLINE)
-        return "line20.png";
+        return "polygon20.png";
     else if ( tp == itPOINT)
-        return "point20.png";
+        return "polygon20.png";
     else if ( hasType(tp, itFEATURE))
-        return "feature20CS1.png";
+        return "polygon20.png";
     else if ( tp & itTABLE)
         return "table20CS1.png";
     else if ( tp == (itCONVENTIONALCOORDSYSTEM|itLOCATION))
