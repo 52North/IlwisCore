@@ -71,7 +71,7 @@ Controls.DropableItem{
                 onClicked: {
                     var itemstring = ""
                     if ( commonpart.domitems.item.model){
-                        for(var i = 0; i < domainitems.item.model.length; ++i){
+                        for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                             if (itemstring !== "")
                                 itemstring += "|"
                             itemstring += commonpart.domitems.item.model[i].name;
