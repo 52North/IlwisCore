@@ -85,44 +85,27 @@ Controls.DropableItem{
             }
         }
     }
+    function apply() {
+        var createinfo = { name : objectcommon.itemname,
+            type : "coordinatesystem",
+            subtype : "conventional",
+            projection : "WGS 84",
+            ellipsoid : ellipsoidselector.name,
+            envelope : csyBounds.getEnvelope(),
+            datumshifts : datumshifts.text
+        }
 
-    Item {
+        objectcreator.createObject(createinfo)
+    }
+
+    ApplyCreateButtons {
         width : parent.width
         height : 60
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-        Button {
-            id : applybutton
-            anchors.right: parent.right
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr("Apply")
-            onClicked: {
-                var createinfo = { name : objectcommon.itemname,
-                    type : "coordinatesystem",
-                    subtype : "conventional",
-                    projection : "WGS 84",
-                    ellipsoid : ellipsoidselector.name,
-                    envelope : csyBounds.getEnvelope(),
-                    datumshifts : datumshifts.text
-                }
 
-                objectcreator.createObject(createinfo)
-            }
+        createObject: dropItem.apply
 
-        }
-        Button {
-            id : closebutton
-            anchors.right: applybutton.left
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr("Close")
-            onClicked: {
-                dropItem.state = "invisible"
-            }
-        }
     }
 }
 

@@ -45,45 +45,29 @@ Controls.DropableItem{
             domitems.source : "PaletteColorList.qml"
         }
 
-         Item {
+        function apply() {
+            dropItem.state = "invisible"
+            var itemstring = ""
+            if ( commonpart.domitems.item.model){
+
+                for(var i = 0; i < commonpart.domitems.item.model.count; ++i){
+                    if (itemstring !== "")
+                        itemstring += "|"
+                    itemstring += commonpart.domitems.item.model.get(i).paletteColor;
+                }
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                var ilwisid = objectcreator.createObject(createInfo)
+            }
+        }
+
+         ApplyCreateButtons {
             width : parent.width
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
-            Button {
-                id : applybutton
-                anchors.right: parent.right
-                anchors.rightMargin: 3
-                anchors.bottom: parent.bottom
-                width : 70
-                text : qsTr("Apply")
-                onClicked: {
-                    dropItem.state = "invisible"
-                    var itemstring = ""
-                    if ( commonpart.domitems.item.model){
 
-                        for(var i = 0; i < commonpart.domitems.item.model.count; ++i){
-                            if (itemstring !== "")
-                                itemstring += "|"
-                            itemstring += commonpart.domitems.item.model.get(i).paletteColor;
-                        }
-                        var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
-                        var ilwisid = objectcreator.createObject(createInfo)
-                    }
-                }
+            createObject: container.apply
 
-            }
-            Button {
-                id : closebutton
-                anchors.right: applybutton.left
-                anchors.rightMargin: 5
-                anchors.bottom: parent.bottom
-                width : 70
-                text : qsTr("Close")
-                   onClicked: {
-                    dropItem.state = "invisible"
-                }
-            }
         }
 
     }

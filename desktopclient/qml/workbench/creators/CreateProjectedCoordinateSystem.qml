@@ -101,52 +101,33 @@ Controls.DropableItem{
 
     }
 
-    Item {
+    function apply() {
+        var createInfo
+        if ( fromBase.state == "visible")
+            createInfo = fromBase.getCreateInfo()
+        else if ( epsgnumber.visible){
+            createInfo = { name : objectcommon.itemname,
+                type : "coordinatesystem",
+                subtype : "conventional",
+                epsg : epsgnumber.code() }
+        }else if ( proj4def.visible){
+            createInfo = { name : objectcommon.itemname,
+                type : "coordinatesystem",
+                subtype : "conventional",
+                proj4 : proj4def.content }
+        }
+
+        var createdId = objectcreator.createObject(createInfo)
+        editorList.pop()
+        if ( createdId !== "?" && editorList.depth > 1)
+            editorList.currentItem.setValue("coordinatesystem", createdId)
+    }
+
+    ApplyCreateButtons {
         width : parent.width
         height : 60
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-        Button {
-            id : applybutton
-            anchors.right: parent.right
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr(editorList.depth === 1 ? "Apply" : "Set")
-            onClicked: {
-                var createInfo
-                if ( fromBase.state == "visible")
-                    createInfo = fromBase.getCreateInfo()
-                else if ( epsgnumber.visible){
-                    createInfo = { name : objectcommon.itemname,
-                        type : "coordinatesystem",
-                        subtype : "conventional",
-                        epsg : epsgnumber.code() }
-                }else if ( proj4def.visible){
-                    createInfo = { name : objectcommon.itemname,
-                        type : "coordinatesystem",
-                        subtype : "conventional",
-                        proj4 : proj4def.content }
-                }
-
-                var createdId = objectcreator.createObject(createInfo)
-                editorList.pop()
-                if ( createdId !== "?" && editorList.depth > 1)
-                    editorList.currentItem.setValue("coordinatesystem", createdId)
-
-            }
-
-        }
-        Button {
-            id : closebutton
-            anchors.right: applybutton.left
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr("Close")
-            onClicked: {
-               editorList.pop()
-            }
-        }
+        createObject: dropItem.apply
     }
 }

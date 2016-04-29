@@ -30,6 +30,7 @@ Controls.DropableItem{
     }
 
     Rectangle {
+        id : inner
         height: parent.height
         border.width : 1
         border.color : Global.edgecolor
@@ -203,45 +204,27 @@ Controls.DropableItem{
             }
 
         }
-        Item {
+
+        function apply(overwrite) {
+            var createInfo = {georeference : grfvalue.content,
+                domain : domvalue.content,
+                stackdefinition : bandsvalue.content,
+                type : "rastercoverage",
+                name :  namevalue.content,
+                stackdomain : stackdomvalue.content,
+                bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
+                autoresample : resampleCB.checked}
+
+            var ilwisid = objectcreator.createObject(createInfo)
+        }
+
+        ApplyCreateButtons {
             width : parent.width
             height : 30
             anchors.bottom : parent.bottom
             anchors.bottomMargin: 8
             anchors.rightMargin: 3
-            Button {
-                id : applybutton
-                anchors.right: parent.right
-                width : 70
-                text : qsTr("Apply")
-                y : 10
-                onClicked: {
-                    var createInfo = {georeference : grfvalue.content,
-                        domain : domvalue.content,
-                        stackdefinition : bandsvalue.content,
-                        type : "rastercoverage",
-                        name :  namevalue.content,
-                        stackdomain : stackdomvalue.content,
-                        bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
-                        autoresample : resampleCB.checked}
-
-                    var ilwisid = objectcreator.createObject(createInfo)
-                }
-
-            }
-            Button {
-                id : closebutton
-                anchors.right: applybutton.left
-                anchors.rightMargin: 5
-                width : 70
-                text : qsTr("Close")
-                y : 10
-
-                onClicked: {
-                    if ( objectcreator.activeCreatorsCount === 1)
-                        dropItem.state = "invisible"
-                }
-            }
+            createObject: inner.apply
         }
     }
 }
