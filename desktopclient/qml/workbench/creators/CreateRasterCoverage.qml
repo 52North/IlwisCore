@@ -30,6 +30,7 @@ Controls.DropableItem{
     }
 
     Rectangle {
+        id : inner
         height: parent.height
         border.width : 1
         border.color : Global.edgecolor
@@ -111,52 +112,85 @@ Controls.DropableItem{
                 text : qsTr("Bands")
                 font.bold: true
             }
+            Row {
+                width : parent.width
+                height : 22
+                spacing : 6
+                ExclusiveGroup {
+                    id: group
+                }
+                RadioButton {
+                    id : bywildcard
+                    text: qsTr("Per Wildcard")
+                    exclusiveGroup: group
+                }
+                RadioButton {
+                    id : bydraganddrop
+                    text: qsTr("Drag & Drop")
+                    exclusiveGroup: group
+                    checked: true
+                }
 
-
-            Rectangle {
-                id : bands
+            }
+            Item {
                 width : parent.width
                 height : 90
-                DropArea {
-                    ListModel {
-                        id : rasters
-                    }
-
-                    anchors.fill: parent
-                    ListView {
-                        function bands() {
-                            var result
-                            for(var i=0; i < rasters.count; ++i){
-                                if ( result != "")
-                                    result += ","
-                                result += rasters.get(i)
-                            }
-                            return result
-                        }
-
-                        id : rasterlist
-                        anchors.fill : parent
-                        anchors.margins: 2
-                        model : rasters
-                        delegate :  Text { height : 16; text : path}
-                    }
-                    onDropped : {
-                        var id = drag.source.ilwisobjectid
-                        var obj = mastercatalog.id2object(id, rasterlist)
-                        if ( obj.typeName === "rastercoverage"){
-                            if ( grfvalue.content === ""){
-                                var grf = mastercatalog.id2object(id, rasterlist)
-                                if ( grf)
-                                    grfvalue.content = grf.url;
-                            }
-                            if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, obj.url, "georeference"))
-                                rasters.append({path : obj.url})
-                        }
-                    }
+                Controls.TextEditLabelPair{
+                    id : bywildcardtext
+                    width : parent.width
+                    height : Global.rowHeight
+                    labelText: qsTr("Wildcards")
+                    labelWidth: 120
+                    visible: bywildcard.checked
+                    enabled: visible
                 }
-                border.width: 1
-                border.color: Global.edgecolor
 
+                Rectangle {
+                    id : bands
+                    width : parent.width
+                    height : 90
+                    visible : bydraganddrop.checked
+                    enabled : visible
+                    DropArea {
+                        ListModel {
+                            id : rasters
+                        }
+
+                        anchors.fill: parent
+                        ListView {
+                            function bands() {
+                                var result = ""
+                                for(var i=0; i < rasters.count; ++i){
+                                    if ( result != "")
+                                        result += ","
+                                    var r = rasters.get(i)
+                                    result += r.path
+                                }
+                                return result
+                            }
+
+                            id : rasterlist
+                            anchors.fill : parent
+                            anchors.margins: 2
+                            model : rasters
+                            delegate :  Text { height : 16; text : path}
+                        }
+                        onDropped : {
+                            var id = drag.source.ilwisobjectid
+                            var obj = mastercatalog.id2object(id, rasterlist)
+                            if ( obj && obj.typeName === "rastercoverage"){
+                                if ( grfvalue.content === ""){
+                                     grfvalue.content = obj.getProperty("georeferenceurl");
+                                }
+                                if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, obj.url, "georeference"))
+                                    rasters.append({path : obj.url})
+                            }
+                        }
+                    }
+                    border.width: 1
+                    border.color: Global.edgecolor
+
+                }
             }
             Item {
                 width : 100
@@ -170,45 +204,34 @@ Controls.DropableItem{
             }
 
         }
-        Item {
+
+        function apply(overwrite) {
+            if (!overwrite){
+                if ( mastercatalog.exists("ilwis://internalcatalog/"+ namevalue.content, "rastercoverage")){
+                    return false;
+                }
+            }
+            var createInfo = {georeference : grfvalue.content,
+                domain : domvalue.content,
+                stackdefinition : bandsvalue.content,
+                type : "rastercoverage",
+                name :  namevalue.content,
+                stackdomain : stackdomvalue.content,
+                bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
+                autoresample : resampleCB.checked}
+
+            objectcreator.createObject(createInfo)
+
+            return true;
+        }
+
+        ApplyCreateButtons {
             width : parent.width
             height : 30
             anchors.bottom : parent.bottom
             anchors.bottomMargin: 8
             anchors.rightMargin: 3
-            Button {
-                id : applybutton
-                anchors.right: parent.right
-                width : 70
-                text : qsTr("Apply")
-                y : 10
-                onClicked: {
-                    var createInfo = {georeference : grfvalue.content,
-                        domain : domvalue.content,
-                        stackdefinition : bandsvalue.content,
-                        type : "rastercoverage",
-                        name :  namevalue.content,
-                        stackdomain : stackdomvalue.content,
-                        bands : rasterlist.bands(),
-                        autoresample : resampleCB.checked}
-
-                    var ilwisid = objectcreator.createObject(createInfo)
-                }
-
-            }
-            Button {
-                id : closebutton
-                anchors.right: applybutton.left
-                anchors.rightMargin: 5
-                width : 70
-                text : qsTr("Close")
-                y : 10
-
-                onClicked: {
-                    if ( objectcreator.activeCreatorsCount === 1)
-                        dropItem.state = "invisible"
-                     }
-            }
+            createObject: inner.apply
         }
     }
 }

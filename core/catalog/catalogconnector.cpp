@@ -160,6 +160,10 @@ void gatherData(std::vector<Resource>& outputItems, const std::vector<Resource>&
 }
 
 bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &options){
+    Locker<std::mutex> lock(_load);
+    if ( _binaryIsLoaded)
+        return true;
+    _binaryIsLoaded = true; //  preventing any subsequent scans
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
     QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
     for(const auto& explorer : _dataProviders){

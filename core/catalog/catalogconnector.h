@@ -75,6 +75,7 @@ private:
     bool loadDataThreaded(IlwisObject *obj, const IOOptions &options);
     bool loadDataSingleThread(IlwisObject *obj, const IOOptions &options);
     static std::unique_ptr<MasterCatalogCache> _mcCache;
+    std::mutex _load;
 };
 
 }

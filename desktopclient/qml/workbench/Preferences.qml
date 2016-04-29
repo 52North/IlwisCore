@@ -55,9 +55,6 @@ WorkBenchShifter {
             imageSource : "../images/font20.png"
             labelText : qsTr("Fonts")
         }
-        Controls.ColorPicker2{
-
-        }
     }
 }
 

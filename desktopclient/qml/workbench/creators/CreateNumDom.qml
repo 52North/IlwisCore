@@ -16,6 +16,7 @@ Controls.DropableItem{
 
 
     Rectangle {
+        id : inner
         height: parent.height
         border.width : 1
         border.color : Global.edgecolor
@@ -109,39 +110,27 @@ Controls.DropableItem{
             }
 
         }
-        Item {
+        ApplyCreateButtons {
             width : parent.width
             height : 30
             anchors.bottom : parent.bottom
             anchors.bottomMargin: 8
             anchors.rightMargin: 3
-            Button {
-                id : applybutton
-                anchors.right: parent.right
-                width : 70
-                text : qsTr("Apply")
-                y : 10
-                onClicked: {
-                    editorList.pop()
-                    var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
-                    var ilwisid = objectcreator.createObject(createInfo)
-                    if ( createdId !== "?" && editorList.depth > 1)
-                        editorList.currentItem.setValue("domain", createdId)
-                }
 
-            }
-            Button {
-                id : closebutton
-                anchors.right: applybutton.left
-                anchors.rightMargin: 5
-                width : 70
-                text : qsTr("Close")
-                y : 10
+            createObject: inner.apply
+        }
 
-                onClicked: {
-                    dropItem.state = "invisible"
+        function apply(overwrite) {
+            if (!overwrite){
+                if ( mastercatalog.exists("ilwis://internalcatalog/"+ namevalue.content, "numericdomain")){
+                    return false;
                 }
             }
+            var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
+            var ilwisid = objectcreator.createObject(createInfo)
+            if ( ilwisid !== "?" && editorList.depth > 1)
+                editorList.currentItem.setValue("domain", ilwisid)
+            return true
         }
     }
 }

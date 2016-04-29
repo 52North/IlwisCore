@@ -17,8 +17,6 @@ Rectangle {
          var oldpage = currentpage
          if ( newpage === "navigator")
              currentpage = navigator
-         if ( newpage === "workspaces")
-             currentpage = workspaces
          if ( newpage === "tranquilizers")
              currentpage = tranquilizers
          if ( newpage === "operationselection")
@@ -63,7 +61,7 @@ Rectangle {
     color :  Global.alternatecolor2
 
     Navigator{ id : navigator}
-    Workspaces{ id : workspaces }
+    //Workspaces{ id : workspaces }
     Tranquilizers{ id : tranquilizers}
     OperationSelection{ id : operationselection}
     ObjectCreation{ id : objectcreation}

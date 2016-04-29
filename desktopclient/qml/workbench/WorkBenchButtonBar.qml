@@ -41,7 +41,7 @@ Rectangle {
     }
     function toggle(button, visibility) {
         var currentValue = button.checked
-        prop.checked = nav.checked = workspace.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = workspace.checked = false
+        prop.checked = nav.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = false
         button.checked = !currentValue
     }
 
@@ -100,15 +100,6 @@ Rectangle {
 
         }
         Action {
-            id : workspaceClicked
-            onTriggered : {
-                toggle(workspace)
-                transitionInfoPane("workspaces","toggle")
-            }
-
-        }
-
-        Action {
             id : prefClicked
             onTriggered : {
                 toggle(preferences)
@@ -129,12 +120,6 @@ Rectangle {
             label: qsTr("Navigator")
         }
 
-        WorkBenchButton{
-            id : workspace
-            action: workspaceClicked
-            iconname : "workspaceCS1.png"
-            label: qsTr("Workspace")
-        }
         WorkBenchButton{
             id : oper
             action: operClicked

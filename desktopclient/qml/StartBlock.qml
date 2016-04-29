@@ -11,7 +11,7 @@ Rectangle{
     opacity: 0
     property int easingType : Easing.InOutCubic
     property int time : 2000
-    property int count : 0
+
 
     states : [
         State {

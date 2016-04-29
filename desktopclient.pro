@@ -135,7 +135,8 @@ HEADERS += \
     desktopclient/ilwistype.h \
     desktopclient/keyfilter.h \
     desktopclient/workflowmetadataformbuilder.h \
-    desktopclient/startilwis.h
+    desktopclient/startilwis.h \
+    core/buildnumber.h
 
 SOURCES += \
     desktopclient/applicationformexpressionparser.cpp \

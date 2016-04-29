@@ -38,6 +38,8 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     else if ( parm._dataType == itBOOL){
         parm._fieldType = ftRADIOBUTTON;
         parm._choiceList = {"!yes", "no"};
+    }else if (resource["altUIType"] == "droplist"){
+        parm._fieldType = ftDropList;
     }
     else
         parm._fieldType = ftTEXTEDIT;
@@ -255,6 +257,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
            onDropped : { pin_%1.text = drag.source.message }\
         TextArea{ id : pin_%1; text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
 
+
    // QString textArea = "TextArea{ id : pin_%1; x : %2 + %5; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5 optionalOutputMarker}";
     QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : false;"
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
@@ -456,7 +459,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
 
         std::vector<FormParameter> outparameters = getOutputParameters(resource);
         QString results;
-        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
+        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;import \"../controls\" as Controls; Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
         QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
         columnStart += exclusiveGroup;
         int width = 0;
@@ -470,7 +473,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
 
         QString outputPart;
         QString seperator;
-        if ( showoutputformat){ //TODO change to showoutputformat
+        if ( showoutputformat){
             outputPart = makeFormPart(width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
 
             if (results.size() > 0) results = ": " + results;

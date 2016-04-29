@@ -60,6 +60,7 @@ public:
     Q_INVOKABLE QString worldmapCommand(const QString &id) const;
     Q_INVOKABLE QColor code2color(const QString& code) const;
     Q_INVOKABLE QString type2typeName(const QString& tp) const;
+    Q_INVOKABLE QStringList formatList(const QString &query, const QString& ilwtype) const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -85,6 +86,8 @@ public:
     void setCurrentWorkSpace(WorkSpaceModel* cws);
     void initializeDataPane();
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
+    QStringList formatList() const;
+
 signals:
     void activeSplitChanged();
     void currentWorkSpaceChanged();

@@ -57,6 +57,7 @@
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
 #include "startilwis.h"
+#include "../core/buildnumber.h"
 
 StartIlwis::StartIlwis()
 {
@@ -203,6 +204,30 @@ void StartIlwis::initMainWindow()
     }
 
     uicontext()->initializeDataPane();
+}
+
+QString StartIlwis::buildType() const
+{
+#ifdef ILWIS_VERSION_TYPE
+    return ILWIS_VERSION_TYPE;
+#endif
+    return "";
+}
+
+QString StartIlwis::verionNumber() const
+{
+#ifdef ILWIS_VERSION_NUMBER
+    return QString::number(ILWIS_VERSION_NUMBER);
+#endif
+return "";
+}
+
+QString StartIlwis::buildNumber() const
+{
+#ifdef ILWIS_BUILDNR
+    return QString::number(ILWIS_BUILDNR);
+#endif
+    return "";
 }
 
 void StartIlwis::stop()

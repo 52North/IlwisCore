@@ -606,6 +606,14 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
                 }
             }
         }
+        if ( propertyname == "georeferenceurl"){
+            if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
+                IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                if ( raster.isValid() && raster->georeference().isValid()){
+                    return raster->georeference()->resource().url().toString();
+                }
+            }
+        }
 
         return "";
     } catch(const ErrorObject& ){

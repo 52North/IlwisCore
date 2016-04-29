@@ -60,48 +60,36 @@ Controls.DropableItem{
             domitems.source : "ItemTable.qml"
         }
 
+        function apply(overwrite) {
+            var itemstring = ""
+            if ( commonpart.domitems.item.model){
+                for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
+                    if (itemstring !== "")
+                        itemstring += "|"
+                    itemstring += commonpart.domitems.item.model[i].name;
+                    if (  commonpart.parentdomain == ""){
+                        itemstring += "|"+ commonpart.domitems.item.model[i].code;
+                        itemstring += "|"+ commonpart.domitems.item.model[i].description;
+                    }
+                }
+                if (!overwrite){
+                    if ( mastercatalog.exists("ilwis://internalcatalog/"+ commonpart.name, "domain")){
+                        return false;
+                    }
+                }
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                var ilwisid = objectcreator.createObject(createInfo)
 
-        Item {
+                return true;
+            }
+        }
+
+        ApplyCreateButtons {
             width : parent.width
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
-            Button {
-                id : applybutton
-                anchors.right: parent.right
-                anchors.rightMargin: 3
-                anchors.bottom: parent.bottom
-                width : 70
-                text : qsTr("Apply")
-                onClicked: {
-                    var itemstring = ""
-                    if ( commonpart.domitems.item.model){
-                        for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
-                            if (itemstring !== "")
-                                itemstring += "|"
-                            itemstring += commonpart.domitems.item.model[i].name;
-                            if (  commonpart.parentdomain == ""){
-                                itemstring += "|"+ commonpart.domitems.item.model[i].code;
-                                itemstring += "|"+ commonpart.domitems.item.model[i].description;
-                            }
-                        }
-                        var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
-                        var ilwisid = objectcreator.createObject(createInfo)
-                    }
-                }
-
-            }
-            Button {
-                id : closebutton
-                anchors.right: applybutton.left
-                anchors.rightMargin: 5
-                anchors.bottom: parent.bottom
-                width : 70
-                text : qsTr("Close")
-                   onClicked: {
-                    dropItem.state = "invisible"
-                }
-            }
+            createObject: container.apply
         }
 
     }

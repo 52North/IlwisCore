@@ -16,8 +16,8 @@ public:
     void setInParameterNameFromSyntax(const QString& syntax);
     void setInParameterCount(const std::vector<quint32>& counts);
     void setOutParameterCount(const std::vector<quint32>& counts);
-    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
-    void addOptionalInParameter(quint32 order, IlwisTypes type,const QString& name=sUNDEF, const QString& description=sUNDEF);
+    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, const QString &altUIType=sUNDEF);
+    void addOptionalInParameter(quint32 order, IlwisTypes type,const QString& name=sUNDEF, const QString& description=sUNDEF,const QString& altUIType=sUNDEF);
     void addOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void addOptionalOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void setKeywords(const QString &words);

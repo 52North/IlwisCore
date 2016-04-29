@@ -378,21 +378,21 @@ void OperationResource::setOutParameterCount(const std::vector<quint32> &counts)
     addProperty("outparameters",lst);
 }
 
-void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description)
+void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description, const QString& altUIType)
 {
     QString prefix = "pin_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", false);
+    if ( altUIType != sUNDEF)
+        addProperty(prefix + "altUIType", altUIType);
 }
 
-void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description)
+void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description, const QString& altUIType)
 {
+    addInParameter(order, type, name, description, altUIType);
     QString prefix = "pin_" + QString::number(order + 1) + "_";
-    addProperty(prefix + "type", type);
-    addProperty(prefix + "name", name);
-    addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", true);
 }
 

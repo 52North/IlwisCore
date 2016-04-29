@@ -26,11 +26,12 @@ private:
     std::vector<QString> _stackValueStrings;
     std::vector<double> _stackValueNumbers;
     std::vector<IRasterCoverage> _bands;
-    bool _autoresample;
+    bool _autoresample = false;
 
     bool parseStackDefintion(const QString &stackDef);
     bool parseStackDefintionNumericCase(const QString &stackDef);
     bool parseStackDefintionTimeCase(const QString &stackDef);
+    QString expandWildCards(const QString &wildmaps);
 };
 }
 }

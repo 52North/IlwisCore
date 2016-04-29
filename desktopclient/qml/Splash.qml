@@ -1,14 +1,18 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Window 2.1
+import StartIlwis 1.0
 
 
-Item {
+Rectangle {
     anchors.fill : parent
-
+    property int count : 0
+    color : "transparent"
     Timer {
         interval: 1000; running: true; repeat: true
-        onTriggered: first.state = "end"
+        onTriggered: {
+              first.state = "end"
+        }
     }
 
     StartBlock{
@@ -24,6 +28,8 @@ Item {
             anchors.fill: parent
             source: "images/lefttop.png"
         }
+
+
         onRotationChanged: {
             if ( count != 0 && rotation == 0){
                 rootwindow.initIlwis()
@@ -45,6 +51,7 @@ Item {
             anchors.fill: parent
             source: "images/righttop.png"
         }
+
 
     }
 
@@ -76,6 +83,34 @@ Item {
             anchors.fill: parent
             id: name
             source: "images/leftbottom.png"
+        }
+    }
+
+    Column {
+        id : message
+        z : 100
+        y : 50 + parent.height / 2
+        x : 280
+        height : 60
+        width : parent.width / 2
+        opacity : first.opacity
+
+        Text {
+            id : txt
+            width : parent.width
+            height : 30
+            text : startilwis.buildType() + " " + startilwis.verionNumber()
+            font.pointSize: 18
+            color : "blue"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        Text {
+            width : parent.width
+            height : 30
+            text : "Build : " + startilwis.buildNumber()
+            font.pointSize: 12
+            color : "darkblue"
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }

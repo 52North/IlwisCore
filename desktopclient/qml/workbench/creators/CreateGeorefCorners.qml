@@ -77,43 +77,30 @@ Controls.DropableItem{
         }
 
     }
-    Item {
+    function apply(overwrite) {
+        if (!overwrite){
+            if ( mastercatalog.exists("ilwis://internalcatalog/"+ objectcommon.itemname, "georeference")){
+                return false;
+            }
+        }
+        var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
+            maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
+            centered : cbcorners.checked, pixelsize : pixsz.content,
+            description :objectcommon.description}
+        var createdId = objectcreator.createObject(createinfo)
+        if ( createdId !== "?" && editorList.depth > 1)
+            editorList.currentItem.setValue("georeference", createdId)
+        return true
+    }
+
+    ApplyCreateButtons {
         width : parent.width
         height : 60
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-        Button {
-            id : applybutton
-            anchors.right: parent.right
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr("Apply")
-            onClicked: {
-                var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
-                    maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
-                    centered : cbcorners.checked, pixelsize : pixsz.content,
-                    description :objectcommon.description}
-                var createdId = objectcreator.createObject(createinfo)
-                editorList.pop()
-                if ( createdId !== "?" && editorList.depth > 1)
-                    editorList.currentItem.setValue("georeference", createdId)
-            }
 
-        }
-        Button {
-            id : closebutton
-            anchors.right: applybutton.left
-            anchors.rightMargin: 6
-            anchors.bottom: parent.bottom
-            width : 70
-            text : qsTr("Close")
-            onClicked: {
-                if ( editorList.depth <= 1)
-                    dropItem.state = "invisible"
-                //editorList.pop()
-            }
-        }
+        createObject: dropItem.apply
+
     }
 }
 

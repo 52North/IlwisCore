@@ -9,7 +9,9 @@
 #include "raster.h"
 #include "itemdomain.h"
 #include "itemiterator.h"
+#include "catalog.h"
 #include "createrastercoverage.h"
+#include "ilwiscontext.h"
 
 using namespace Ilwis;
 using namespace BaseOperations;
@@ -174,42 +176,58 @@ bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
 
 Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    QString grf = _expression.input<QString>(0);
-    _grf.prepare(grf);
-    if ( !_grf.isValid()){
-        kernel()->issues()->log(QString(TR("%1 is and invalid georeference")).arg(grf));
-        return sPREPAREFAILED;
-    }
+    auto CreateStackDomain = [&](const QString& dom)-> Ilwis::OperationImplementation::State{
+        _stackDomain.prepare(dom);
+        if ( !_stackDomain.isValid()){
+            kernel()->issues()->log(QString(TR("%1 is and invalid stack domain")).arg(dom));
+            return sPREPAREFAILED;
+        }
+        return sPREPARED;
+    };
     QString dom = _expression.input<QString>(1);
     _domain.prepare(dom);
     if ( !_domain.isValid()){
         kernel()->issues()->log(QString(TR("%1 is and invalid domain")).arg(dom));
         return sPREPAREFAILED;
     }
-    QString stackDefinition = _expression.input<QString>(3);
-    dom = _expression.input<QString>(2);
-    _stackDomain.prepare(dom);
-    if ( !_stackDomain.isValid()){
-        kernel()->issues()->log(QString(TR("%1 is and invalid stack domain")).arg(dom));
+    QString grf = _expression.input<QString>(0);
+    _grf.prepare(grf);
+    if ( !_grf.isValid()){
+        kernel()->issues()->log(QString(TR("%1 is and invalid georeference")).arg(grf));
         return sPREPAREFAILED;
     }
-    if(!parseStackDefintion(stackDefinition)){
-        kernel()->issues()->log(QString(TR("%1 is and invalid stack definition")).arg(stackDefinition));
-        return sPREPAREFAILED;
+    QString maps = _expression.input<QString>(2);
+    if ( maps.indexOf("?") != -1 || maps.indexOf("*") != -1){
+        maps = expandWildCards(maps);
     }
-    if ( _expression.parameterCount() == 6){
-        _autoresample = _expression.input<bool>(4);
-        QString maps = _expression.input<QString>(5);
-        if (maps != ""){
-            QStringList bands = maps.split(",");
-            for(QString band : bands){
-                IRasterCoverage raster(band);
-                if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
-                    _bands.push_back(raster);
-                }else{
-                    kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
+
+
+    _stackDomain = IDomain("count");
+    _stackValueStrings = {"1"};
+    _stackValueNumbers = {1};
+    if ( _expression.parameterCount() >= 4){
+        for(int i=3; i < _expression.parameterCount(); ++i){
+            if ( hasType(_expression.parm(i).valuetype(),itSTRING|itINTEGER)){
+                parseStackDefintion(_expression.input<QString>(i));
+            }
+            else if ( hasType(_expression.parm(i).valuetype(),itDOMAIN)){
+                if (CreateStackDomain(_expression.input<QString>(i)) == sPREPAREFAILED)
                     return sPREPAREFAILED;
-                }
+            }
+            else if ( hasType(_expression.parm(i).valuetype(),itBOOL) && maps.size() != 0){
+                _autoresample = _expression.input<bool>(i);
+            }
+        }
+    }
+    if (maps != ""){
+        QStringList bands = maps.split(",");
+        for(QString band : bands){
+            IRasterCoverage raster(band);
+            if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
+                _bands.push_back(raster);
+            }else{
+                kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
+                return sPREPAREFAILED;
             }
         }
     }
@@ -217,18 +235,34 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     return sPREPARED;
 }
 
+QString CreateRasterCoverage::expandWildCards(const QString& wildmaps){
+    QString result;
+    QString maps = wildmaps;
+    maps.replace("*","%");
+    maps.replace("?","_");
+    QString containerPath = context()->workingCatalog()->resource().url().toString();
+    QString query = "container='" + containerPath + "' and name LIKE " + maps;
+    std::vector<Resource> resources = mastercatalog()->select(query);
+    for(auto resource : resources){
+        if ( result != "")
+            result += ",";
+        result += resource.url().toString();
+    }
+    return result;
+}
+
 quint64 CreateRasterCoverage::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createrastercoverage"});
     resource.setLongName("Create Raster Coverage");
-    resource.setSyntax("createrastercoverage(georeference, domain, stack-defintion[,auto-resample,bands])");
-    resource.setInParameterCount({4,6});
-    resource.addInParameter(0, itGEOREF|itSTRING,TR("Georeference"), TR("Geometry of the new rastercoverage, coordinatesystem and pixel size"));
+    resource.setSyntax("createrastercoverage(georeference, domain,bands[, stack-defintion][,stackdomain][,auto-resample])");
+    resource.setInParameterCount({3,4,5,6});
+    resource.addInParameter(0, itGEOREF,TR("Georeference"), TR("Geometry of the new rastercoverage"));
     resource.addInParameter(1, itDOMAIN|itSTRING,TR("Domain"), TR("Domain used by the raster coverage"));
-    resource.addInParameter(2, itDOMAIN,TR("Stack domain"), TR("Domain of the z direction (stack)"));
-    resource.addInParameter(3, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
-    resource.addOptionalInParameter(4, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
-    resource.addOptionalInParameter(5,itSTRING, TR("Bands"), TR("Optional parameter defining a number of bands that will be copied to the new raster coverage"));
+    resource.addInParameter(2, itSTRING, TR("Bands"), TR("parameter defining a the bands that will be copied to the new raster coverage, Note that the bands maybe empty in which case an empty raster will be created"));
+    resource.addOptionalInParameter(3, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
+    resource.addOptionalInParameter(4, itDOMAIN,TR("Stack domain"), TR("Option Domain of the z direction (stack), default is 'count'"));
+    resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
     resource.setKeywords("rastercoverage, create");

@@ -237,7 +237,7 @@ bool CommandHandler::parmIsValid(int index, Parameter parm, std::map<QString, QS
                             return true;
                         }else {
                             Parameter::PathType pathType = parm.pathType();
-                            if ( pathType == Parameter::ptREMOTE || pathType == Parameter::ptLOCALOBJECT){
+                            if ( pathType == Parameter::ptREMOTE || pathType == Parameter::ptLOCALOBJECT || Parameter::ptUNDEFINED){
                                 // we can't know what this parameter type realy is, so we accept it as valid
                                 // if it is incorrect the prepare of the operation will fail so no harm done
                                 return true;
