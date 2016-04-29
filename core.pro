@@ -375,6 +375,7 @@ resources.files = core/resources/referencesystems.csv \
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
     resources.path = $$DLLDESTDIR/resources
+    INSTALLS += resources
 }
 linux{
     resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
