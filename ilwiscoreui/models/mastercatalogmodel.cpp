@@ -811,6 +811,10 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
             }
         }
     }
+    ICatalog catalog(cat->url());
+    if ( catalog.isValid()){
+        context()->setWorkingCatalog(catalog);
+    }
 }
 
 
@@ -871,6 +875,15 @@ void MasterCatalogModel::deleteObject(const QString &id)
     if ( !obj.isValid())
         return;
     obj->remove();
+}
+
+bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
+{
+    IlwisTypes tp = IlwisObject:: name2Type(objecttype)   ;
+    if ( tp ==itUNKNOWN)
+        return false;
+    quint64 id = mastercatalog()->name2id(url,tp);
+   return  id != i64UNDEF;
 }
 
 //--------------------

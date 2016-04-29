@@ -75,6 +75,7 @@ public:
     Q_INVOKABLE bool hasSelectedObjects() const;
     Q_INVOKABLE QString selectedIds() const;
     Q_INVOKABLE void deleteObject(const QString& id);
+    Q_INVOKABLE bool exists(const QString& url, const QString& objecttype);
      // for trq test
     Q_INVOKABLE void longAction();
     Q_INVOKABLE bool isCompatible(const QString& objUrl1, const QString& objUrl2, const QString& type);
