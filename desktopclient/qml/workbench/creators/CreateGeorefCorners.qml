@@ -77,7 +77,12 @@ Controls.DropableItem{
         }
 
     }
-    function apply() {
+    function apply(overwrite) {
+        if (!overwrite){
+            if ( mastercatalog.exists("ilwis://internalcatalog/"+ objectcommon.itemname, "georeference")){
+                return false;
+            }
+        }
         var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
             maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
             centered : cbcorners.checked, pixelsize : pixsz.content,
@@ -85,6 +90,7 @@ Controls.DropableItem{
         var createdId = objectcreator.createObject(createinfo)
         if ( createdId !== "?" && editorList.depth > 1)
             editorList.currentItem.setValue("georeference", createdId)
+        return true
     }
 
     ApplyCreateButtons {

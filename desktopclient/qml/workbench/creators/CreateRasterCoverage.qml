@@ -206,6 +206,11 @@ Controls.DropableItem{
         }
 
         function apply(overwrite) {
+            if (!overwrite){
+                if ( mastercatalog.exists("ilwis://internalcatalog/"+ namevalue.content, "rastercoverage")){
+                    return false;
+                }
+            }
             var createInfo = {georeference : grfvalue.content,
                 domain : domvalue.content,
                 stackdefinition : bandsvalue.content,
@@ -215,7 +220,9 @@ Controls.DropableItem{
                 bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
                 autoresample : resampleCB.checked}
 
-            var ilwisid = objectcreator.createObject(createInfo)
+            objectcreator.createObject(createInfo)
+
+            return true;
         }
 
         ApplyCreateButtons {

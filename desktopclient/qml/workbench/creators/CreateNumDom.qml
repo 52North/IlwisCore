@@ -120,12 +120,17 @@ Controls.DropableItem{
             createObject: inner.apply
         }
 
-        function apply() {
+        function apply(overwrite) {
+            if (!overwrite){
+                if ( mastercatalog.exists("ilwis://internalcatalog/"+ namevalue.content, "numericdomain")){
+                    return false;
+                }
+            }
             var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
             var ilwisid = objectcreator.createObject(createInfo)
             if ( ilwisid !== "?" && editorList.depth > 1)
                 editorList.currentItem.setValue("domain", ilwisid)
-            return ilwisid
+            return true
         }
     }
 }

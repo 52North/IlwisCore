@@ -101,7 +101,12 @@ Controls.DropableItem{
 
     }
 
-    function apply() {
+    function apply(overwrite) {
+        if (!overwrite){
+            if ( mastercatalog.exists("ilwis://internalcatalog/"+ objectcommon.itemname, "coordinatesystem")){
+                return false;
+            }
+        }
         var createInfo
         if ( fromBase.state == "visible")
             createInfo = fromBase.getCreateInfo()
@@ -121,6 +126,8 @@ Controls.DropableItem{
         editorList.pop()
         if ( createdId !== "?" && editorList.depth > 1)
             editorList.currentItem.setValue("coordinatesystem", createdId)
+
+        return true
     }
 
     ApplyCreateButtons {

@@ -45,10 +45,15 @@ Controls.DropableItem{
             domitems.source : "PaletteColorList.qml"
         }
 
-        function apply() {
+        function apply(overwrite) {
             dropItem.state = "invisible"
             var itemstring = ""
             if ( commonpart.domitems.item.model){
+                if (!overwrite){
+                    if ( mastercatalog.exists("ilwis://internalcatalog/"+ commonpart.name, "itemdomain")){
+                        return false;
+                    }
+                }
 
                 for(var i = 0; i < commonpart.domitems.item.model.count; ++i){
                     if (itemstring !== "")
@@ -57,6 +62,8 @@ Controls.DropableItem{
                 }
                 var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
+
+                return true
             }
         }
 

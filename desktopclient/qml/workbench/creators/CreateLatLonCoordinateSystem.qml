@@ -85,7 +85,12 @@ Controls.DropableItem{
             }
         }
     }
-    function apply() {
+    function apply(overwrite) {
+        if (!overwrite){
+            if ( mastercatalog.exists("ilwis://internalcatalog/"+ objectcommon.itemname, "coordinatesystem")){
+                return false;
+            }
+        }
         var createinfo = { name : objectcommon.itemname,
             type : "coordinatesystem",
             subtype : "conventional",
@@ -96,6 +101,8 @@ Controls.DropableItem{
         }
 
         objectcreator.createObject(createinfo)
+
+        return true
     }
 
     ApplyCreateButtons {

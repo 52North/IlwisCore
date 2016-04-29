@@ -56,9 +56,14 @@ Controls.DropableItem{
             domitems.source : "ItemList.qml"
         }
 
-        function apply() {
+        function apply(overwrite) {
             var itemstring = ""
             if ( commonpart.domitems.item.model){
+                if (!overwrite){
+                    if ( mastercatalog.exists("ilwis://internalcatalog/"+ commonpart.name, "domain")){
+                        return false;
+                    }
+                }
                 for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                     if (itemstring !== "")
                         itemstring += "|"
@@ -66,7 +71,9 @@ Controls.DropableItem{
                 }
 
                 var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "identifier", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
-                var ilwisid = objectcreator.createObject(createInfo)
+                objectcreator.createObject(createInfo)
+
+                return true
             }
         }
         ApplyCreateButtons {

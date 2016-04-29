@@ -74,11 +74,9 @@ Controls.DropableItem{
                 }
                 if (!overwrite){
                     if ( mastercatalog.exists("ilwis://internalcatalog/"+ commonpart.name, "domain")){
-                        console.debug("exists")
                         return false;
                     }
                 }
-                console.debug("accepted")
                 var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
 

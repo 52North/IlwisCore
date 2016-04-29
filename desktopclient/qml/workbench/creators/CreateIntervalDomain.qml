@@ -80,9 +80,14 @@ Controls.DropableItem{
             additionalFields.sourceComponent : itemresolution
         }
 
-        function apply() {
+        function apply(overwrite) {
             var itemstring = ""
             if ( commonpart.domitems.item.model){
+                if (!overwrite){
+                    if ( mastercatalog.exists("ilwis://internalcatalog/"+ commonpart.name, "coordinatesystem")){
+                        return false;
+                    }
+                }
                 for(var i = 0; i < commonpart.domitems.item.model.length; ++i){
                     if (itemstring !== "")
                         itemstring += "|"
@@ -99,6 +104,7 @@ Controls.DropableItem{
                 var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "interval", name :  commonpart.name, resolution : res,  items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
             }
+            return true
         }
 
         ApplyCreateButtons {
