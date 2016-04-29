@@ -36,7 +36,7 @@ void ConsoleTranquilizer::prepare(const QString &title, const QString &descripti
 
 bool ConsoleTranquilizer::update(double howfar)
 {
-    _current = howfar;
+    _current += howfar;
     if (_current >= _next) {
         if (_count % 3 == 0)
             std::cout << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10

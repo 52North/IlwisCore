@@ -158,11 +158,10 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
 
     std::vector<double> perc(_nb);
     std::vector<double> psum(_nb);
-    int pixCount = 0;   // for progress indicator
     auto fromZ = (_doRunning) ? _nb - 5 : _nb - 1;
     int incZ = (_doRunning) ? std::min(_nb, 5) : 1;
     while (iterIn != iterIn.end()) {
-        trq()->update(pixCount++);
+        trq()->update(1);
 
         std::fill(psum.begin(), psum.end(), rUNDEF);
 
