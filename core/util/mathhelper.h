@@ -17,6 +17,8 @@ public:
     static NumericRange roundRange(double rmin, double rmax);
     static double round(double r);
     static double roundTo3DecimalDigits(const double value);
+
+    static quint8 lenDecimalDigits(double number);
 };
 }
 #endif // MATHHELPER_H

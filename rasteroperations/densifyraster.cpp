@@ -119,7 +119,8 @@ Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *c
     }
 
     //  For a bilinear or bicubic interpolation, the input raster map should be a value map
-    if (_interpolationMethod != RasterInterpolator::ipNEARESTNEIGHBOUR && isValueMap()) {
+    if ((_interpolationMethod == RasterInterpolator::ipBILINEAR  || _interpolationMethod == RasterInterpolator::ipBICUBIC )
+            && !isValueMap()) {
         ERROR3(ERR_ILLEGAL_PARM_3,"method",inputInterpolationMethod,"mapdensify");
         return sPREPAREFAILED;
     }

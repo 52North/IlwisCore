@@ -17,6 +17,8 @@
 #include <boost/accumulators/statistics/moment.hpp>
 #include <boost/accumulators/statistics/kurtosis.hpp>
 
+#include "mathhelper.h"
+
 using namespace boost::accumulators;
 
 namespace Ilwis{
@@ -105,26 +107,16 @@ public:
     }
 
 
-    void findSignificantDigits(double distance) {
-        if ( distance == 0)
-            _sigDigits = 0;
-        else{
-            double d = prop(pMAX) - prop(pMIN);
-            int lenBase = log10(std::abs(d)) / 2;
-            QString num = QString::number(distance,'g',10);
-            quint32 len = num.size();
-            for(int i=num.size() - 2; i >=0; ++i){
-                QChar n = num[i];
-                if ( n == '.')
-                    break;
-                if ( n != '0'){
-                    len = i;
-                    break;
-                }
+    template<typename IterType> quint32 findSignificantDigits(const IterType& begin,  const IterType& end, DataType undefined) {
+        quint32 numSigDecimalDigits = 0;
+
+        std::for_each(begin, end, [&] (const DataType& sample){
+            if ( sample != undefined) {
+                quint32 lenDecimalDigits = MathHelper::lenDecimalDigits(sample );
+                numSigDecimalDigits = std::max(numSigDecimalDigits, lenDecimalDigits);
             }
-            _sigDigits =  -log10(distance) + std::max( 3 - lenBase,1);
-            _sigDigits = std::min(len, _sigDigits);
-        }
+        });
+        return numSigDecimalDigits;
     }
 
     void binCount(quint32 value) {
@@ -178,7 +170,7 @@ public:
                 _markers[index(pVARIANCE)] = boost::accumulators::moment<2>(var);
                 _markers[index(pSKEW)] = boost::accumulators::moment<3>(skew);
                 _markers[index(pKURTOSIS)] = boost::accumulators::kurtosis(kurt);
-                findSignificantDigits(sigDigits);
+                _sigDigits = findSignificantDigits(begin, end, undefined);
 
                 if ( mode & pSTDEV) {
                     _markers[index(pSTDEV)] = calcStdDev(begin, end, undefined);
@@ -250,7 +242,7 @@ public:
         private:
         std::vector<double> _markers;
 
-                quint32 _sigDigits;
+        quint32 _sigDigits;
         std::vector<HistogramBin> _bins;
         quint32 _binCount=iUNDEF;
 
