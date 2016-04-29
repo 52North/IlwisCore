@@ -68,7 +68,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
             kernel()->issues()->log(TR("Domain must have a valid name"));
             return QString::number(i64UNDEF);
         }
-        expression = QString("script %1{format(stream,\"domain\")}=createthematicdomain(\"%2\",%3,%4")
+        expression = QString("script %1{format(stream,\"domain\")}=createthematicdomain(\"%2\",%3,\"%4\"")
                 .arg(parms["name"].toString())
                 .arg(parms["items"].toString())
                 .arg(parms["strict"].toBool() ? "yes" : "no")
@@ -83,7 +83,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
             kernel()->issues()->log(TR("Domain must have a valid name"));
             return sUNDEF;
         }
-        expression = QString("script %1{format(stream,\"domain\")}=createidentifierdomain(\"%2\",%3,%4")
+        expression = QString("script %1{format(stream,\"domain\")}=createidentifierdomain(\"%2\",%3,\"%4\"")
                 .arg(parms["name"].toString())
                 .arg(parms["items"].toString())
                 .arg(parms["strict"].toBool() ? "yes" : "no")
@@ -97,7 +97,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
             kernel()->issues()->log(TR("Domain must have a valid name"));
             return sUNDEF;
         }
-        expression = QString("script %1{format(stream,\"domain\")}=createpalettedomain(\"%2\",%3,%4")
+        expression = QString("script %1{format(stream,\"domain\")}=createpalettedomain(\"%2\",%3,\"%4\"")
                 .arg(parms["name"].toString())
                 .arg(parms["items"].toString())
                 .arg(parms["strict"].toBool() ? "yes" : "no")
@@ -111,7 +111,7 @@ QString ObjectCreator::createItemDomain(const QVariantMap &parms){
             kernel()->issues()->log(TR("Domain must have a valid name"));
             return sUNDEF;
         }
-        expression = QString("script %1{format(stream,\"domain\")}=createintervaldomain(\"%2\",%3,%4,%5")
+        expression = QString("script %1{format(stream,\"domain\")}=createintervaldomain(\"%2\",%3,%4,\"%5\"")
                 .arg(parms["name"].toString())
                 .arg(parms["items"].toString())
                 .arg(parms["resolution"].toDouble())
@@ -138,7 +138,7 @@ QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
         return QString::number(i64UNDEF);
     }
 
-    QString expression = QString("script %1{format(stream,\"domain\")}=createnumericdomain(%2,%3,%4,%5,%6")
+    QString expression = QString("script %1{format(stream,\"domain\")}=createnumericdomain(%2,%3,%4,%5,\"%6\"")
             .arg(parms["name"].toString())
             .arg(parms["minvalue"].toDouble())
             .arg(parms["maxvalue"].toDouble())
@@ -161,7 +161,7 @@ QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
 QString ObjectCreator::createGeoreference(const QVariantMap &parms){
     QString expression;
     if ( parms["subtype"].toString() == "corners")  {
-        expression = QString("script %1{format(stream,\"georeference\")}=createcornersgeoreference(%2,%3,%4,%5,%6,%7,%8,%9)").arg(parms["name"].toString())
+        expression = QString("script %1{format(stream,\"georeference\")}=createcornersgeoreference(%2,%3,%4,%5,%6,%7,%8,\"%9\")").arg(parms["name"].toString())
                 .arg(parms["minx"].toDouble())
                 .arg(parms["miny"].toDouble())
                 .arg(parms["maxx"].toDouble())
