@@ -120,7 +120,7 @@ QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes t
     if (db.exec(stmt)) {
         while(db.next()){
             QVariant var = db.value(0).toString();
-            if ( var.type() == QMetaType::QString){
+            if ( var.type() == QVariant::String){
                 QStringList parts = var.toString().split(",");
                 for(QString part : parts) {
                     if ( part.size() > 0)
@@ -230,11 +230,11 @@ bool DataFormat::store()
 
 QVariant DataFormat::set(const QVariant &original) const
 {
-    if ( original.type() == QMetaType::QString){
+    if ( original.type() == QVariant::String){
         if ( original.toString() == "")
             return sUNDEF;
     }
-    if ( original.type() == QMetaType::ULongLong){
+    if ( original.type() == QVariant::ULongLong){
         bool ok;
         original.toULongLong(&ok);
         if (!ok )

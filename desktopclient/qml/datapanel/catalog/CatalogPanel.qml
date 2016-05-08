@@ -70,33 +70,37 @@ Item {
 
     function setSelected(objectid){
         mastercatalog.setSelectedObjects("")
+        var resources = currentCatalog.resources
+        var sz = resources.length
         var selectedIds
         if ( uicontext.currentKey !== Qt.Key_Control &&  uicontext.currentKey !== Qt.Key_Shift)    {
             selectedIds = objectid
-            for(var i = 0; i < currentCatalog.resources.length; ++i){
-                if (currentCatalog.resources[i].isSelected && currentCatalog.resources[i].id !== objectid)
-                    currentCatalog.resources[i].isSelected=false
+
+            for(var i = 0; i < sz; ++i){
+                var resource = resources[i]
+                if (resource.isSelected && resource.id !== objectid)
+                    resource.isSelected=false
             }
         }else if ( uicontext.currentKey === Qt.Key_Shift){
             var startRange = false
-            for(var j = 0; j < currentCatalog.resources.length; ++j){
-                if ( currentCatalog.resources[j].isSelected){
+            for(var j = 0; j < sz; ++j){
+                if ( resources[j].isSelected){
                     startRange = !startRange;
-                    selectedIds = selectedIds == "" ? currentCatalog.resources[j].id : selectedIds + "|" +currentCatalog.resources[j].id
+                    selectedIds = selectedIds == "" ? resources[j].id : selectedIds + "|" + resources[j].id
                 }else {
                     if ( startRange){
-                        selectedIds = selectedIds + "|" +currentCatalog.resources[j].id
-                        currentCatalog.resources[j].isSelected = true
+                        selectedIds = selectedIds + "|" + resources[j].id
+                        resources[j].isSelected = true
                     }
                     else {
-                        currentCatalog.resources[j].isSelected=false
+                        resources[j].isSelected=false
                     }
                 }
             }
         } else if ( uicontext.currentKey === Qt.Key_Control){
-          for(var k = 0; k < currentCatalog.resources.length; ++k){
-              if ( currentCatalog.resources[k].isSelected){
-                selectedIds = selectedIds == "" ? currentCatalog.resources[k].id : selectedIds + "|" +currentCatalog.resources[k].id
+          for(var k = 0; k < sz; ++k){
+              if ( cresources[k].isSelected){
+                selectedIds = selectedIds == "" ? resources[k].id : selectedIds + "|" +resources[k].id
               }
           }
         }
@@ -147,5 +151,9 @@ Item {
             id : cbuttonBar
         }
 
+    }
+
+    Component.onDestruction: {
+        currentCatalog.makeParent(0)
     }
 }

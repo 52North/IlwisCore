@@ -6,7 +6,7 @@
 #include "workspacemodel.h"
 
 WorkSpaceModel::WorkSpaceModel(const QString &name, QObject *parent) :
-    CatalogModel( Ilwis::Resource("ilwis://internalcatalog/workspaces/" + name,itWORKSPACE),parent)
+    CatalogModel( Ilwis::Resource("ilwis://internalcatalog/workspaces/" + name,itWORKSPACE),CatalogModel::ctINTERNAL|CatalogModel::ctDATA|(CatalogModel::ctOPERATION|name == "default" ? CatalogModel::ctFIXED : CatalogModel::ctMUTABLE),parent)
 {
 }
 
@@ -40,7 +40,7 @@ void WorkSpaceModel::addItems(const QString& ids)
     Ilwis::InternalDatabaseConnection stmt;
     int count = 0;
     if (_view.fixedItemCount() == 0) {
-        QString query = QString("Insert into workspaces (workspaceid) values(%1)").arg(_view.id());
+        QString query = QString("Insert into workspaces (workspaceid) values(%1)").arg(id());
         if(!stmt.exec(query))
             return;
     }
@@ -62,12 +62,12 @@ void WorkSpaceModel::addItems(const QString& ids)
         _view.addFixedItem(idn);
         ++count;
 
-        QString query = QString("Select workspaceid from workspace where workspaceid=%1 and itemid=%2").arg(_view.id()).arg(idn);
+        QString query = QString("Select workspaceid from workspace where workspaceid=%1 and itemid=%2").arg(resource().id()).arg(idn);
         if (stmt.exec(query)) { // already there
             if ( stmt.next()) {
                 continue;
             }else{
-                query = QString("Insert into workspace (workspaceid, itemid) values(%1,%2)").arg(_view.id()).arg(idn);
+                query = QString("Insert into workspace (workspaceid, itemid) values(%1,%2)").arg(resource().id()).arg(idn);
                 if(!stmt.exec(query))
                     return;
             }

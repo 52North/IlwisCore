@@ -204,14 +204,3 @@ void Catalog::copyTo(IlwisObject* obj){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-

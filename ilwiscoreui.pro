@@ -91,7 +91,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/nodepropobject.h \
     ilwiscoreui/models/preferencesmodel.h \
     ilwiscoreui/models/internaldatabasemodel.h \
-    ilwiscoreui/models/resourcemanager.h
+    ilwiscoreui/models/resourcemanager.h \
+    ilwiscoreui/models/catalogviewmanager.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -163,7 +164,8 @@ SOURCES += \
     ilwiscoreui/models/workflow/nodepropobject.cpp \
     ilwiscoreui/models/preferencesmodel.cpp \
     ilwiscoreui/models/internaldatabasemodel.cpp \
-    ilwiscoreui/models/resourcemanager.cpp
+    ilwiscoreui/models/resourcemanager.cpp \
+    ilwiscoreui/models/catalogviewmanager.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

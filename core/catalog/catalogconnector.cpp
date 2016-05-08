@@ -37,7 +37,7 @@ CatalogConnector::CatalogConnector(const Resource &resource, bool load , const I
 
 bool CatalogConnector::isValid() const
 {
-    return source().isValid();
+    return sourceRef().isValid();
 }
 
 bool CatalogConnector::canUse(const Resource &resource) const
@@ -126,7 +126,7 @@ bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
 
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
-    kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
+    kernel()->issues()->log(QString(TR("Scanning %1")).arg(sourceRef().url(true).toString()),IssueObject::itMessage);
     for(const auto& explorer : _dataProviders){
 
         // TODO clear security issues which may arise here, as
@@ -177,9 +177,9 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
 
 Ilwis::IlwisObject *CatalogConnector::create() const
 {
-    if ( source().hasProperty("domain"))
-        return new DataSet(source());
-    return new Catalog(source());
+    if ( sourceRef().hasProperty("domain"))
+        return new DataSet(sourceRef());
+    return new Catalog(sourceRef());
 }
 
 bool CatalogConnector::loadExplorers()
@@ -188,9 +188,9 @@ bool CatalogConnector::loadExplorers()
         return true;
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
 
-    std::vector<CatalogExplorer*> explorers = factory->explorersForResource(source());
+    std::vector<CatalogExplorer*> explorers = factory->explorersForResource(sourceRef());
     if ( explorers.size() == 0) {
-        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", source().toLocalFile());
+        return ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"Catalog connector", sourceRef().toLocalFile());
     }
     _dataProviders.resize(explorers.size());
     int  i =0;

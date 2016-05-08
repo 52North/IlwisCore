@@ -11,7 +11,7 @@ std::unique_ptr<ResourceManager> ResourceManager::_manager;
 
 ResourceManager::ResourceManager()
 {
-
+   //connect(mastercatalog(), &MasterCatalog::contentChanged, this, &ResourceManager::containerChanged);
 }
 
 ResourceModel *ResourceManager::createResourceModel(const QString &type, const Resource &resource)
@@ -21,9 +21,6 @@ ResourceModel *ResourceManager::createResourceModel(const QString &type, const R
         if ( type == "resourcemodel"){
             model = new ResourceModel(resource);
         }
-//        if ( type == "catalogmodel"){
-//            model = new CatalogModel(resource);
-//        }
 //        if ( type == "workspacemodel"){
 //            model = new WorkSpaceModel(resource);
 //        }
@@ -49,6 +46,11 @@ void ResourceManager::deref(const QString& type, quint64 id)
         }
     }
 }
+
+//void ResourceManager::containerChanged(const QString &s)
+//{
+//    qDebug() << "detected 1" << s;
+//}
 
 
 

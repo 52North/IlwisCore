@@ -27,7 +27,12 @@ IlwisTypes IlwisObjectConnector::type() const
     return _resource.ilwisType();
 }
 
-Resource &IlwisObjectConnector::source()
+Resource &IlwisObjectConnector::sourceRef()
+{
+    return _resource;
+}
+
+const Resource &IlwisObjectConnector::source() const
 {
     return _resource;
 }
@@ -54,7 +59,7 @@ QVariant IlwisObjectConnector::getProperty(const QString &name) const
     return QVariant();
 }
 
-const Resource& IlwisObjectConnector::source() const{
+const Resource& IlwisObjectConnector::sourceRef() const{
     return _resource;
 }
 

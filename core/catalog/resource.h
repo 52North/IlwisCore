@@ -319,6 +319,11 @@ public:
     static QString quoted2string(const QString &name);
 
 
+    bool hasChanged() const;
+    void changed(bool yesno);
+    void code(const QString &code);
+    void setDescription(const QString &desc);
+    QString code() const;
 protected:
     void stringAsUrl(const QString& txt, IlwisTypes tp, bool isNew);
     QHash<QString, QVariant> _properties;
@@ -333,6 +338,7 @@ protected:
     IlwisTypes _extendedType;
     double _modifiedTime = rUNDEF;
     double _createTime = rUNDEF;
+    bool _changed = false;
 
     void checkUrl(IlwisTypes tp);
 

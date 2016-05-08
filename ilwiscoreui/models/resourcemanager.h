@@ -1,8 +1,11 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
+#include <QObject>
 #include <unordered_map>
 #include <map>
+#include <set>
+#include <memory>
 class ResourceModel;
 class MasterCatalogModel;
 
@@ -10,8 +13,10 @@ namespace Ilwis {
 
 class Resource;
 namespace UI{
-class ResourceManager
+class ResourceManager : public QObject
 {
+    Q_OBJECT
+
 public:
     friend std::unique_ptr<ResourceManager> &resourcemanager();
 
@@ -22,6 +27,8 @@ public:
 
     static std::unique_ptr<ResourceManager> _manager;
 
+private slots:
+    //void containerChanged(const QString&);
 private:
 
 

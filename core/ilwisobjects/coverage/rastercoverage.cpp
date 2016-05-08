@@ -182,10 +182,10 @@ Resource RasterCoverage::resource(int mode) const
     Resource resource = Coverage::resource(mode);
     if ( mode & IlwisObject::cmEXTENDED) {
         resource.addProperty("georeference", georeference()->id());
-        resource.addProperty("coordinatesystem", coordinateSystem()->id());
         resource.addProperty("domain", _datadefCoverage.domain()->id());
         resource.setExtendedType( resource.extendedType() | itDOMAIN |  itGEOREF);
     }
+    resource.changed(IlwisObject::resource().hasChanged());
     return resource;
 }
 

@@ -690,9 +690,7 @@ CatalogModel *IlwisObjectModel::catalog(const QString &id)
     if (!ok)
         return 0;
     Resource res = mastercatalog()->id2Resource(lid);
-    //res.addProperty("filter","container=" + res.url().toString());
-    res.addProperty("locations", res.url().toString());
-    return new CatalogModel(res, this);
+    return new CatalogModel(res, CatalogModel::ctDONTCARE, this);
 }
 
 void IlwisObjectModel::unload()

@@ -42,6 +42,8 @@ public:
     QString currentUser() const;
     int runMode() const;
     void runMode(int mode);
+    bool initializationFinished() const;
+    void initializationFinished(bool yesno);
 
 private:
     void init(const QString & ilwisDir);
@@ -62,6 +64,8 @@ private:
     QString _ipv4 = sUNDEF;
     QString _currentUser;
     int _runMode = rmDESKTOP;
+    bool _initializationFinished = false;
+    mutable std::mutex _lock;
 };
 
 /**

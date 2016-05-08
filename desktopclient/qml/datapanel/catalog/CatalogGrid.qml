@@ -27,9 +27,7 @@ FocusScope {
             GridView {
                 id : itemgrid
 
-                model : {
-                    return setResources()
-                }
+                model : setResources()
 
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170

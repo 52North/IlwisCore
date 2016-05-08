@@ -5,6 +5,7 @@
 #include <QQmlListProperty>
 #include <QQuickItem>
 #include <deque>
+#include <set>
 #include "resourcemodel.h"
 #include "catalogmodel.h"
 #include "workspacemodel.h"
@@ -48,6 +49,7 @@ public:
     void setCurrentCatalog(CatalogModel * cat);
     WorkSpaceModel *workspace(quint64 id);
     quint32 workspaceIndex(const QString& name);
+    void prepare();
 
     Q_INVOKABLE quint32 selectedBookmark(const QString &url);
     Q_INVOKABLE  CatalogModel *newCatalog(const QString& inpath, const QString &filter="");
@@ -84,8 +86,6 @@ public:
 
 
 public slots:
-    void updateCatalog(const QUrl &url);
-    void updateCurrentCatalog();
     void updateBookmarks() ;
     
 private:
@@ -93,6 +93,7 @@ private:
     QList<WorkSpaceModel *> _workspaces;
     QList<CatalogFilterModel *> _defaultFilters;
     QList<IlwisObjectModel *> _selectedObjects;
+
     QQmlContext *_qmlcontext = 0;
     QObject *_rootObject = 0;
     QMLResourceList _currentList;
@@ -106,7 +107,7 @@ private:
     
     CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query, bool threading = true);
     QString determineIdList(int dataCount, int operationCount, const QString &basekey);
-    QList<std::pair<CatalogModel *, Ilwis::CatalogView> > startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
+    QList<CatalogModel *> startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
     void scanBookmarks();
     QQmlListProperty<CatalogFilterModel> defaultFilters();
 
@@ -120,7 +121,9 @@ signals:
     void currentCatalogChanged();
     void bookmarksChanged();
     void workspacesChanged();
-};
+private slots:
+    void initFinished();
+ };
 
 class worker : public QObject{
     Q_OBJECT
@@ -137,7 +140,7 @@ class CatalogWorker : public QObject {
     Q_OBJECT
 
 public:
-    CatalogWorker(QList<std::pair<CatalogModel *, Ilwis::CatalogView>>&models);
+    CatalogWorker(QList<CatalogModel* >&models);
     ~CatalogWorker();
 
 public slots:
@@ -151,7 +154,7 @@ signals:
 
 
 private:
-    QList<std::pair<CatalogModel *, Ilwis::CatalogView>> _models;
+    QList<CatalogModel *> _models;
     void calculatelatLonEnvelopes();
     void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
 };

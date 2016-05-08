@@ -32,9 +32,12 @@
 
 using namespace Ilwis;
 
-OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel(p)
+OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel()
 {
+}
 
+OperationCatalogModel::OperationCatalogModel(const Resource &res,QObject *p) : CatalogModel(res,CatalogModel::ctOPERATION|CatalogModel::ctFIXED|CatalogModel::ctINTERNAL, p)
+{
 
 }
 
@@ -194,8 +197,10 @@ QQmlListProperty<OperationModel> OperationCatalogModel::operations()
     return  QMLOperationList();
 }
 void OperationCatalogModel::prepare(const IOOptions& opt){
+
     if ( opt.contains("globaloperationscatalog")){
         _isGlobalOperationsCatalog = opt["globaloperationscatalog"].toBool();
+        _view.filter("basefilter", "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")");
     }
     _refresh  = true;
     gatherItems();
@@ -222,40 +227,17 @@ void OperationCatalogModel::gatherItems() {
         isDefault = n == "default";
     }
     if ( currentModel == 0 || isDefault){
-        if ( !_view.isValid()){
-            QUrl location("ilwis://operations");
-            QString descr ="main catalog for ilwis operations";
-            Resource res(location, itCATALOGVIEW ) ;
-            res.name("ilwis-operations",false);
-            QStringList lst;
-            lst << location.toString();
-            res.addProperty("locations", lst);
-            res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW));
-            res.setDescription(descr);
-            setView(CatalogView(res));
+        setDescription("main catalog for ilwis operations");
+        filter(QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW));
 
-            location = QUrl("ilwis://operations");
-            descr ="main catalog for ilwis services";
-            res = Resource(location, itCATALOGVIEW ) ;
-            res.name("ilwis-services",false);
-            lst.clear();
-            lst << location.toString();
-            res.addProperty("locations", lst);
-            res.addProperty("type", "operation" );
-            res.addProperty("filter",QString("(type=%1 and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '%service%')").arg(itSINGLEOPERATION));
-            res.setDescription(descr);
-            CatalogView view(res);
-            view.prepare();
+        QString serviceFilter = QString("(type=%1 and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '%service%')").arg(itSINGLEOPERATION);
 
-            _services = view.items();
-        }
+        _services = mastercatalog()->select(serviceFilter);
     }else {
-        setView(currentModel->view());
+        setView(currentModel->viewRef());
     }
 
     _allItems.clear();
-    //_filters.clear();
     _refresh = false;
 
     std::vector<Resource> items = _view.items();

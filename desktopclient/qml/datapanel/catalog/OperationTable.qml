@@ -153,21 +153,6 @@ Rectangle {
             }
 
         }
-//        TableViewColumn{
-//            role : "outParameterCount"
-//            title : qsTr("Output Parameters")
-//            width : 40
-//            delegate : Component {
-//                Text {
-//                    text: styleData.value
-//                    verticalAlignment:Text.AlignVCenter
-//                    color : styleData.selected ? "white" : "black"
-//                    font.pixelSize: 10
-//                    elide: Text.ElideMiddle
-//                }
-//            }
-
-//        }
         TableViewColumn{
             role : "keywords"
             title : qsTr("Keywords")

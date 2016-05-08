@@ -132,7 +132,6 @@ void StartIlwis::init() {
         qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
 
         _mastercatalogmodel = new MasterCatalogModel(ctx);
-
         _formbuilder = new ApplicationFormExpressionParser();
         _messageHandler = new UserMessageHandler();
         _operations = new OperationCatalogModel();
@@ -142,11 +141,6 @@ void StartIlwis::init() {
         _objcreator =new ObjectCreator();
         _preferences =new PreferencesModel();
         _database = new InternalDatabaseModel();
-        uicontext()->prepare();
-        uicontext()->qmlContext(ctx);
-
-        _operations->prepare({"globaloperationscatalog", true});
-
         _trqthread = new QThread;
 
         ctx->setContextProperty("mastercatalog", _mastercatalogmodel);
@@ -161,8 +155,15 @@ void StartIlwis::init() {
         ctx->setContextProperty("internaldatabase",_database);
         ctx->setContextProperty("uicontext", uicontext().get());
 
+        uicontext()->prepare();
+        uicontext()->qmlContext(ctx);
+        _mastercatalogmodel->prepare();
+        _operations->prepare({"globaloperationscatalog", true});
 
-        _mastercatalogmodel->connect(_operations, &OperationCatalogModel::updateCatalog,_mastercatalogmodel, &MasterCatalogModel::updateCatalog );
+        qRegisterMetaType<IssueObject>("IssueObject");
+        qRegisterMetaType<UrlSet>("UrlSet");
+
+
         _operations->connect(uicontext().get(),&UIContextModel::currentWorkSpaceChanged, _operations, &OperationCatalogModel::workSpaceChanged);
         _messageHandler->connect(kernel()->issues().data(), &IssueLogger::updateIssues,_messageHandler, &UserMessageHandler::addMessage );
 
@@ -233,7 +234,7 @@ QString StartIlwis::buildNumber() const
 void StartIlwis::stop()
 {
     if ( _mastercatalogmodel->currentCatalog()){
-        _mastercatalogmodel->currentCatalog()->view().storeFilters();
+        _mastercatalogmodel->currentCatalog()->viewRef().storeFilters();
     }
 
     Ilwis::exitIlwis();

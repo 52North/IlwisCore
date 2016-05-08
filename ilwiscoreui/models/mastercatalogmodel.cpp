@@ -46,6 +46,8 @@ using namespace Ilwis;
 const int LEFTVIEW=0;
 const int RIGHTVIEW=1;
 
+
+
 MasterCatalogModel::MasterCatalogModel()
 {
 }
@@ -55,39 +57,15 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     Resource res(location, itCATALOGVIEW ) ;
     if ( label != "")
         res.name(label,false);
-    QStringList lst;
-    lst << location.toString();
-    res.addProperty("locations", lst);
-    res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-    res.addProperty("filter","");
+    res.addProperty("filter",query);
     res.setDescription(descr);
-    CatalogView cview(res);
-    cview.filter(query);
-    auto cm = new CatalogModel(this);
-    cm->setView(cview, threading);
+    auto cm = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctBOOKMARK));
+    cm->scanContainer(threading);
     return cm;
 }
 
 MasterCatalogModel::MasterCatalogModel(QQmlContext *qmlcontext) :  _qmlcontext(qmlcontext)
 {
-    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
-    factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
-
-    _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
-               QUrl("ilwis://internalcatalog"),
-               TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
-               "",false));
-     _bookmarks.push_back(addBookmark(TR("System Catalog"),
-               QUrl("ilwis://system"),
-               TR("Default objects that are always available in ilwis"),
-               "type<>" + QString::number(itGEODETICDATUM),false));
-     _bookmarks.push_back(addBookmark(TR("Operations"),
-               QUrl("ilwis://operations"),
-               TR("All operations available in Ilwis"),
-               "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")", false));
-
-     addDefaultFilters();
-     scanBookmarks();
 }
 
 void MasterCatalogModel::addDefaultFilters(){
@@ -167,13 +145,12 @@ void MasterCatalogModel::loadWorkSpaces(const QString workspaceList){
 
 }
 
-QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources)
+QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources)
 {
-    QList<std::pair<CatalogModel *, CatalogView>> models;
+    QList<CatalogModel *> models;
     for(Resource resource : catalogResources){
-        CatalogView view(resource);
-        CatalogModel *cm = new CatalogModel(this);
-        models.push_back(std::pair<CatalogModel *, CatalogView>(cm, view));
+        CatalogModel *cm = new CatalogModel(resource, CatalogModel::getCatalogType(resource));
+        models.push_back(cm);
     }
 
     QThread* thread = new QThread;
@@ -184,10 +161,14 @@ QList<std::pair<CatalogModel *, Ilwis::CatalogView> > MasterCatalogModel::startB
     thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
     thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->connect(worker, &CatalogWorker::updateBookmarks, this, &MasterCatalogModel::updateBookmarks);
-    thread->connect(worker, &CatalogWorker::finished, this, &MasterCatalogModel::updateCurrentCatalog);
+    thread->connect(worker, &CatalogWorker::finished, this, &MasterCatalogModel::initFinished);
     thread->start();
 
     return models;
+}
+
+void MasterCatalogModel::initFinished() {
+    Ilwis::context()->initializationFinished(true)    ;
 }
 
 void MasterCatalogModel::setDefaultView()
@@ -196,7 +177,7 @@ void MasterCatalogModel::setDefaultView()
     if ( wcUrl.indexOf("ilwis://internalcatalog/workspaces") == 0){
         for(auto workspace : _workspaces){
             if ( wcUrl == workspace->url()){
-                _workspaces[0]->setView(workspace->view());
+                _workspaces[0]->setView(workspace->viewRef());
                 _workspaces[0]->setDisplayName("default");
                 break;
             }
@@ -204,7 +185,7 @@ void MasterCatalogModel::setDefaultView()
     }else{
         for(auto bookmark : _bookmarks){
             if ( OSHelper::neutralizeFileName(wcUrl) == OSHelper::neutralizeFileName(bookmark->url())){
-                _workspaces[0]->setView(bookmark->view());
+                _workspaces[0]->setView(bookmark->viewRef());
                 _workspaces[0]->setDisplayName("default");
             }
         }
@@ -229,22 +210,17 @@ void MasterCatalogModel::scanBookmarks()
             Resource res(location, itCATALOGVIEW ) ;
             if ( label != "")
                 res.name(label,false);
-            QStringList lst;
-            lst << location.toString();
-            res.addProperty("locations", lst);
-            res.addProperty("type", location.scheme() == "file" ? "file" : "remote");
-            res.addProperty("filter","");
+            res.addProperty("filter","container='" + location.toString() +"'");
             res.setDescription(descr);
 
             if ( OSHelper::neutralizeFileName(urlWorkingCatalog.toString()) == OSHelper::neutralizeFileName(location.toString())){
-                CatalogView cview(res);
                 CatalogModel *model = 0;
                 if ( location.toString().indexOf("ilwis://operations") == 0){
                     model = new OperationCatalogModel(this);
                 }else
-                    model = new CatalogModel(this);
+                    model = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctBOOKMARK));
+                model->scanContainer(false);
                 _bookmarks.push_back(model);
-                _bookmarks.back()->setView(cview);
 
             }else{
                 catalogResources.push_back(res);
@@ -272,10 +248,10 @@ void MasterCatalogModel::scanBookmarks()
     // search for the workspace that represents this and copy its view
     setDefaultView();
 
-    QList<std::pair<CatalogModel *, CatalogView>> models = startBackgroundScans(catalogResources);
+    QList<CatalogModel *> models = startBackgroundScans(catalogResources);
 
     for(auto iter = models.begin(); iter != models.end(); ++iter){
-        _bookmarks.push_back((*iter).first);
+        _bookmarks.push_back(*iter);
     }
 
     if ( _currentUrl == ""){
@@ -473,6 +449,8 @@ bool MasterCatalogModel::hasSelectedObjects() const
     return _selectedObjects.size() != 0;
 }
 
+
+
 CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QString& filter)
 {
     if ( inpath == "" || inpath == sUNDEF )
@@ -496,20 +474,16 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             canBeAnimated = hasType(collection.extendedType(), itCATALOG)        ;
         }
         Resource res(location, itCATALOGVIEW ) ;
-        QStringList lst;
-        lst << ((inpath.indexOf("http://") == 0) ? res.container().toString() : inpath);
-        res.addProperty("locations", lst);
-        QString scheme = location.scheme();
-        if ( scheme == "file")
-            res.addProperty("type", "file");
-        if ( scheme == "http" || scheme == "https")
-            res.addProperty("type", "remote");
-        if ( scheme == "ilwis")
-            res.addProperty("type", "internal");
         if ( filter != "container=ilwis://mastercatalog")
             res.addProperty("filter",filter);
         res.addProperty("canbeanimated",canBeAnimated);
-        cview = CatalogView(res);
+
+        CatalogModel *model = 0;
+        if ( inpath.indexOf("ilwis://operations") == 0){
+            res.addProperty("filter", "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")");
+            model = new OperationCatalogModel(res, this);
+        }else
+            model = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctMUTABLE));
         if ( _currentCatalog == 0){
             QString num = context()->configurationRef()("users/" + Ilwis::context()->currentUser() + "/filter-count",QString("0"));
             int n = num.toInt();
@@ -517,15 +491,11 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
                 QString basekey = "users/" + Ilwis::context()->currentUser() + "/filters-" + QString::number(i);
                 QString name = context()->configurationRef()(basekey + "/filter-name", QString(""));
                 QString newfilter = context()->configurationRef()(basekey + "/filter-defintion", QString(""));
-                cview.filter(name,newfilter);
+                model->filter(name,newfilter);
             }
         }
-        CatalogModel *model = 0;
-        if ( inpath.indexOf("ilwis://operations") == 0){
-            model = new OperationCatalogModel(this);
-        }else
-            model = new CatalogModel(this);
-        model->setView(cview, true);
+
+        model->scanContainer(true);
         emit currentCatalogChanged();
         return model;
 
@@ -801,7 +771,8 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
         }
     }
     if ( cat->url() == Catalog::DEFAULT_WORKSPACE){
-        _currentCatalog = new CatalogModel(Ilwis::Resource(context()->workingCatalog()->resource().url().toString(), itCATALOG), this);
+        Resource res = Ilwis::Resource(context()->workingCatalog()->resource().url().toString(), itCATALOG);
+        _currentCatalog = new CatalogModel(res, CatalogModel::getCatalogType(res), this);
     } else{
         _currentCatalog = cat;
         if ( _rootObject){
@@ -816,8 +787,6 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
         context()->setWorkingCatalog(catalog);
     }
 }
-
-
 
 WorkSpaceModel *MasterCatalogModel::workspace(quint64 id)
 {
@@ -840,17 +809,27 @@ quint32 MasterCatalogModel::workspaceIndex(const QString &name)
 }
 
 
-
-void MasterCatalogModel::updateCatalog(const QUrl &url)
+void MasterCatalogModel::prepare()
 {
+    TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
+    factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
 
-}
+    _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
+               QUrl("ilwis://internalcatalog"),
+               TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
+               "type=" + QString::number(itANY) + " and container='ilwis://internalcatalog'",false));
+     _bookmarks.push_back(addBookmark(TR("System Catalog"),
+               QUrl("ilwis://system"),
+               TR("Default objects that are always available in ilwis"),
+               "type<>" + QString::number(itGEODETICDATUM),false));
+     _bookmarks.push_back(addBookmark(TR("Operations"),
+               QUrl("ilwis://operations"),
+               TR("All operations available in Ilwis"),
+               "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")", false));
 
-void MasterCatalogModel::updateCurrentCatalog()
-{
-    if ( _currentCatalog)    {
-        _currentCatalog->refresh();
-    }
+     addDefaultFilters();
+     scanBookmarks();
+
 }
 
 QString MasterCatalogModel::selectedIds() const
@@ -887,7 +866,7 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 }
 
 //--------------------
-CatalogWorker::CatalogWorker(QList<std::pair<CatalogModel *, CatalogView> > &models) : _models(models)
+CatalogWorker::CatalogWorker(QList<CatalogModel *> &models) : _models(models)
 {
 }
 
@@ -897,7 +876,7 @@ CatalogWorker::~CatalogWorker(){
 void CatalogWorker::process(){
     try {
         for(auto iter = _models.begin(); iter != _models.end(); ++iter){
-            (*iter).first->setView((*iter).second);
+            (*iter)->scanContainer(false);
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){

@@ -19,7 +19,6 @@ namespace Ilwis {
 class  CatalogConnector;
 class CatalogFactory;
 
-
 /*!
  The catalog class holds the collection of data in a certain data-source. Catalogs come in many shapes and sizes. Basically anything that can contain other
  Ilwis-objects is a catalog. The obvious example if of course a folder on the harddrive, but also file-formats that contain other objects can be considered catalogs, or services

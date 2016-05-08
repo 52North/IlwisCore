@@ -56,6 +56,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
     _extendedType = resource._extendedType;
     _modifiedTime = resource._modifiedTime;
     _createTime = resource._createTime;
+    _changed = resource._changed;
 }
 
 Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
@@ -126,6 +127,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         _rawUrl = QUrl(path + "/" + name());
     }else
         _rawUrl = _normalizedUrl;// for the moment, can always overrule it
+    changed(false);
 
 }
 
@@ -139,6 +141,7 @@ Resource::Resource(const QUrl &url, quint64 tp, bool isNew) :
 {
     stringAsUrl(url.toString(), tp, isNew);
     _createTime = Time::now();
+   changed(false);
 }
 
 Resource::Resource(const QUrl& normalizedUrl,const QUrl &rawurl, quint64 tp, bool isNew) :
@@ -151,6 +154,7 @@ Resource::Resource(const QUrl& normalizedUrl,const QUrl &rawurl, quint64 tp, boo
 {
     stringAsUrl(normalizedUrl.toString(), tp, isNew);
     _createTime = Time::now();
+   changed(false);
 }
 
 Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
@@ -176,6 +180,7 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
         addContainer(nm.left(index));
     }
     _createTime = Time::now();
+   changed(false);
 }
 
 Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(),
@@ -213,21 +218,39 @@ Resource::Resource(const QSqlRecord &rec) : Identity(rec.value("name").toString(
          }
          _properties[key] = value;
     }
+    changed(false);
 }
 
 Resource::~Resource()
 {
 
 }
+QString Resource::code() const
+{
+    return Identity::code();
+}
+
+void Resource::code(const QString &code)
+{
+    Identity::code(code);
+    changed(true);
+}
+
+void Resource::setDescription(const QString &desc)
+{
+    _description = desc;
+    changed(true);
+}
 
 void Resource::name(const QString &nm, bool adaptNormalizedUrl)
 {
     if ( name() == nm)
         return;
-    if ( nm == code() && name() != sUNDEF) //names and codes are usually different particular when there is al
+    if ( nm == Identity::code() && name() != sUNDEF) //names and codes are usually different particular when there is al
         return;
 
     QString dummy = name();
+    changed(true);
     Identity::name(nm);
 
     if ( id() != iUNDEF && _modifiedTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
@@ -279,11 +302,13 @@ bool Resource::hasProperty(const QString &prop) const
 
 void Resource::addProperty(const QString &key, const QVariant &value)
 {
+    changed(true);
     _properties[key.toLower()] = value;
 }
 
 void Resource::removeProperty(const QString &key)
 {
+    changed(true);
     _properties.remove(key);
 }
 
@@ -296,6 +321,7 @@ QUrl Resource::url(bool asRaw) const
 
 void Resource::setUrl(const QUrl &url, bool asRaw)
 {
+    changed(true);
     if ( asRaw) {
         if ( url.scheme() == "ilwis"){
             // we dont want normalized paths to internal catalog in the raw url
@@ -398,6 +424,7 @@ quint64 Resource::size() const
 
 void Resource::size(quint64 objectsz)
 {
+    changed(true);
     _size = objectsz;
 }
 
@@ -408,10 +435,12 @@ QString Resource::dimensions() const
 
 void Resource::dimensions(const QString &dim)
 {
+   changed(true);
     _dimensions = dim;
 }
 
 void Resource::addContainer(const QUrl& url, bool asRaw) {
+    changed(true);
     if ( asRaw ){
         if ( url != INTERNAL_OBJECT)
             _rawContainer = url;
@@ -447,6 +476,7 @@ IlwisTypes Resource::extendedType() const
 
 void Resource::setIlwisType(IlwisTypes tp)
 {
+    changed(true);
     if ( (tp & itILWISOBJECT) != 0 || tp == itCATALOG)
         _ilwtype = tp;
     else
@@ -455,6 +485,7 @@ void Resource::setIlwisType(IlwisTypes tp)
 
 void Resource::setExtendedType(IlwisTypes tp)
 {
+    changed(true);
     _extendedType = tp;
 }
 
@@ -469,7 +500,7 @@ bool Resource::store(InternalDatabaseConnection &queryItem, InternalDatabaseConn
 
     queryItem.bindValue(":itemid", id());
     queryItem.bindValue(":name", name());
-    queryItem.bindValue(":code", code());
+    queryItem.bindValue(":code", Identity::code());
     queryItem.bindValue(":description", description());
     queryItem.bindValue(":container", OSHelper::neutralizeFileName(container().toString()));
     queryItem.bindValue(":rawcontainer", OSHelper::neutralizeFileName(container(true).toString()));
@@ -493,7 +524,7 @@ bool Resource::store(InternalDatabaseConnection &queryItem, InternalDatabaseConn
         QString nameItem = iter.key();
         queryProperties.bindValue(":propertyname",nameItem);
         QString v;
-        if ( iter.value().type() == QMetaType::QStringList)
+        if ( iter.value().type() == QVariant::StringList)
             v = "STRINGLIST:" + iter.value().toStringList().join(",");
         v = iter.value().toString();
         queryProperties.bindValue(":propertyvalue", v);
@@ -531,6 +562,7 @@ bool Resource::load(QDataStream &stream){
     stream >> _modifiedTime;
     stream >> _ilwtype;
     stream >> _extendedType;
+    changed(false);
 
     return true;
 }
@@ -743,6 +775,7 @@ double Resource::modifiedTime() const
 
 void Resource::modifiedTime(const double &tme)
 {
+    _changed = true;
     _modifiedTime = tme;
 }
 
@@ -753,5 +786,18 @@ double Resource::createTime() const
 
 void Resource::createTime(const double &time)
 {
+    changed(true);
     _createTime = time;
+}
+
+bool Resource::hasChanged() const
+{
+    return _changed;
+}
+
+void Resource::changed(bool yesno)
+{
+    if ( yesno)
+        modifiedTime(Time::now());
+    _changed = yesno;
 }

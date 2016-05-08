@@ -10,6 +10,7 @@
 #include "catalogview.h"
 #include "catalogquery.h"
 #include "catalog.h"
+#include "geometries.h"
 #include "ilwiscontext.h"
 #include "mastercatalog.h"
 #include "ilwisconfiguration.h"
@@ -21,76 +22,32 @@ CatalogView::CatalogView(QObject *parent) :
 {
 }
 
-CatalogView::CatalogView(const QUrl &loc) : QObject(){
-    addLocation(loc);
-    QStringList parts = loc.toString().split("/");
-    name(parts.back());
-    _resource = Resource("ilwis://internalcatalog/" + name(), itCATALOGVIEW);
-    QStringList lst;
-    lst.append(loc.toString());
-    _resource["locations"] = lst;
+CatalogView::CatalogView(const Resource &resource) : QObject(){
+    filter("basefilter", resource["filter"].toString());
 }
 
-CatalogView::CatalogView(const Resource &resource) : QObject(), Identity(resource.name(),resource.id(),resource.code()){
-    filter("basefilter", resource["filter"].toString());
-    QStringList lst = resource["locations"].toStringList();
-    for(auto url : lst){
-        if ( url != sUNDEF)
-            _locations.push_back(QUrl(url));
-    }
-    _resource = resource;
+CatalogView::CatalogView(const QString &baseFilter) : QObject(){
+    filter("basefilter", baseFilter);
 }
 
 CatalogView::CatalogView(const CatalogView &cat) : QObject(),
-    Identity(sUNDEF,i64UNDEF,cat.code(),cat.description()),
-     _locations(cat._locations),
-     _fixedItems(cat._fixedItems),
-     _parent(cat._parent),
-     _resource(cat.resource())
+     _fixedItems(cat._fixedItems)
  {
-     Identity::prepare(); // bit inconveniet but the id must be set. this overrules the name so we set it again
-     name(cat.name());
      _filters = cat._filters;
      _activeFilters = cat._activeFilters;
-}
-
-void CatalogView::addLocation(const QUrl& loc){
-    if ( std::find(_locations.begin(), _locations.end(), loc) == _locations.end()){
-        _locations.push_back(loc);
-        if ( name() != sUNDEF)
-            return;
-
-        QStringList parts = loc.toString().split("/");
-        QString cid = parts.back();
-        name(cid);
-    }
+     _filterState = cat._filterState;
 }
 
 std::vector<Resource> CatalogView::items() const
 {
-    if (!isValid())
-        return std::vector<Resource>();
-
     std::vector<Resource> results;
     for(auto& item : _fixedItems){
         results.push_back(item.second);
     }
     auto iter = _filters.find("basefilter");
     QString filter = iter != _filters.end() ? (*iter).second._filter.toString() : "";
-    for(auto location : _locations) {
-        std::vector<Resource> items;
-        if ( location == QUrl("ilwis://system")){
-            if ( filter != "")
-                filter += " and ";
-            filter += QString("type<>%1").arg(QString::number(itGEODETICDATUM)); // datums are not visible in the catalogs
-        }
-        if ( location != MasterCatalog::MASTERCATALOG){
-            items =  mastercatalog()->select(location, filter);
-        }else
-            items =  mastercatalog()->select(filter);
+    results =  mastercatalog()->select(filter);
 
-        std::copy(items.begin(), items.end(),std::back_inserter(results));
-    }
     std::set<Resource> uniques(results.begin(), results.end());
     results.resize(uniques.size());
     std::copy(uniques.begin(), uniques.end(), results.begin());
@@ -118,35 +75,11 @@ quint32 CatalogView::fixedItemCount() const
     return _fixedItems.size();
 }
 
-//void CatalogView::filter(const QString &filter)
-//{
-//    CatalogQuery query;
-//    _filter = query.transformQuery(filter);
-//}
-
-Resource CatalogView::resource() const
-{
-    return _resource;
-}
-
-bool CatalogView::hasParent() const
-{
-    if ( _locations.size() != 1)
-        return false;
-    return _locations[0].scheme() == "file";
-}
-
 bool CatalogView::isActiveFilter(const QString &name) const
 {
     return std::find(_activeFilters.begin(), _activeFilters.end(), name) != _activeFilters.end();
 }
 
-bool CatalogView::prepare()
-{
-
-    Identity::prepare();
-    return true;
-}
 
 void CatalogView::filterChanged(const QString& typeIndication, bool state){
     QString type = typeIndication;
@@ -203,13 +136,6 @@ IlwisTypes CatalogView::objectFilter() const
     if ( iter != _filters.end())
         return (*iter).second._filter.toULongLong();
     return itANY;
-//    IlwisTypes type = itANY;
-//    for(auto iter : _filterState){
-//        if ( !iter.second){
-//            type &= ~iter.first;
-//        }
-//    }
-//    return type;
 }
 
 void CatalogView::storeFilters() const
@@ -240,19 +166,33 @@ void CatalogView::filter(const QString &name, const QString &filter)
         removeActiveFilter(name);
 
     }else {
-        _filters[name] = FilterItem(name,filter);
+        QVariant storedFilter = filter;
+        if ( name == "spatial"){
+            QStringList parts = filter.split(" ");
+            if ( parts.size() == 4){
+                Envelope env(filter);
+                storedFilter.setValue(env);
+            }
+        }
+
+        _filters[name] = FilterItem(name,storedFilter);
         addActiveFilter(name);
     }
 
 }
 
-QString CatalogView::filter(const QString& name) const
+bool CatalogView::hasFilter(const QString &name) const
+{
+    return _filters.find(name) != _filters.end();
+}
+
+QVariant CatalogView::filter(const QString& name) const
 {
     auto iter = _filters.find(name);
     if ( iter != _filters.end()){
-        return (*iter).second._filter.toString();
+        return (*iter).second._filter;
     }
-    return "";
+    return QVariant();
 }
 
 void CatalogView::addActiveFilter(const QString &filterName)
@@ -273,15 +213,10 @@ bool CatalogView::removeActiveFilter(const QString &filterName)
 
 CatalogView &CatalogView::operator=(const CatalogView &view)
 {
-    Identity::prepare();
-    name(view.name());
-    setDescription(view.description());
-    code(view.code());
     _filters = view._filters;
     _activeFilters = view._activeFilters;
-    _locations = view._locations;
-    _resource = view._resource;
     _fixedItems = view._fixedItems;
+    _filterState = view._filterState;
 
     return *this;
 
@@ -292,21 +227,6 @@ QString CatalogView::type() const
     return "CatalogView";
 }
 
-
-bool CatalogView::isValid() const
-{
-    return _locations.size() > 0 || _fixedItems.size() > 0 ;
-}
-
-QUrl CatalogView::parentCatalogView() const
-{
-    return _parent;
-}
-
-void CatalogView::setParentCatalogView(const QUrl &url)
-{
-    _parent = url;
-}
 
 void CatalogView::setFilterState(bool state)
 {
@@ -320,6 +240,46 @@ void CatalogView::setFilterState(bool state)
     _filterState[itPROJECTION] = state;
     _filterState[itELLIPSOID] = state;
     _filterState[itCATALOG] = state;
+}
+
+bool CatalogView::envelopeFilter(const Resource resource) const
+{
+    if ( hasType(resource.ilwisType(), itCOVERAGE)){
+         if ( hasFilter("spatial") ){
+            if ( resource.hasProperty("latlonenvelope")){
+                Envelope env = filter("spatial").value<Envelope>();
+                QString envelope = resource["latlonenvelope"].toString();
+                Envelope llEnv(envelope);
+                if ( env.contains(llEnv))
+                    return true;
+            }
+        }else
+            return true; // if there is no spatail filter everything is by defintion ok
+    }
+    return false;
+}
+
+bool CatalogView::isValid() const
+{
+    return _filters.size() != 0;
+}
+
+bool CatalogView::keywordFilter(const Resource resource) const{
+    if ( !hasFilter("keyword"))
+        return true;
+    if (!resource.hasProperty("keyword"))
+        return false;
+    QString keywords = resource["keyword"].toString();
+    auto keyfilter = filter("keyword").toString();
+    QStringList keys = keyfilter.split(",");
+    bool ok = true;
+    for(const QString& key : keys){
+        if ( keywords.indexOf(key) == -1){
+            ok = false;
+            break;
+        }
+    }
+    return ok;
 }
 
 

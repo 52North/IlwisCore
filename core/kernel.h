@@ -13,6 +13,7 @@
 #include <QDataStream>
 #include <QWaitCondition>
 #include <fstream>
+#include <set>
 #include "boost/current_function.hpp"
 #include <time.h>
 #include <chrono>
@@ -255,6 +256,7 @@ KERNELSHARED_EXPORT void exitIlwis();
 #define CRITICAL3(m, p1, p2, p3) ( kernel()->message(m,IssueObject::itCritical,p1, p2, p3, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
 
 typedef QList<IlwisTypes> IlwTypeList;
+typedef std::set<QUrl> UrlSet;
 
 
 

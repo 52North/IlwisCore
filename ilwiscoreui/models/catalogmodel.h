@@ -10,14 +10,20 @@
 #include "catalogmapitem.h"
 #include "ilwiscoreui_global.h"
 
+namespace Ilwis {
+class Resource;
 
+}
 //namespace Desktopclient {
 class LayerManager;
+class MasterCatalogModel;
 
 class ILWISCOREUISHARED_EXPORT CatalogModel : public ResourceModel
 {
     Q_OBJECT
 public:
+    enum CatalogType{ ctUNKNOWN=0, ctBOOKMARK=1, ctFIXED=2, ctMUTABLE=4, ctLOCAL=8, ctREMOTE=16, ctDATA=32, ctOPERATION=64, ctINTERNAL=128, ctDONTCARE=256};
+
     Q_PROPERTY(QQmlListProperty<ResourceModel> resources READ resources NOTIFY contentChanged)
     Q_PROPERTY(QQmlListProperty<ResourceModel> coverages READ coverages NOTIFY coveragesChanged)
     Q_PROPERTY(bool initNode READ initNode CONSTANT)
@@ -28,8 +34,8 @@ public:
 
 
     ~CatalogModel();
-    explicit CatalogModel(QObject *parent = 0);
-    CatalogModel(const Ilwis::Resource& res, QObject *parent);
+    explicit CatalogModel();
+    CatalogModel(const Ilwis::Resource& res, int tp=CatalogModel::ctDONTCARE, QObject *parent=0);
     CatalogModel(quint64 id, QObject *parent);
 
     Q_INVOKABLE void makeParent(QObject *obj);
@@ -38,7 +44,7 @@ public:
     Q_INVOKABLE void addActiveFilter(const QString& filterName);
     Q_INVOKABLE void removeActiveFilter(const QString& filterName);
     Q_INVOKABLE virtual void refresh();
-    Q_INVOKABLE void scanContainer();
+    Q_INVOKABLE void scanContainer(bool threaded);
 
     bool isScanned() const;
     bool initNode() const;
@@ -47,12 +53,16 @@ public:
     void refresh(bool yesno);
     bool canBeAnimated() const;
 
-    void setView(const Ilwis::CatalogView &view, bool threading = false);
-    Ilwis::CatalogView view() const;
+    void setView(const Ilwis::CatalogView &viewRef);
+    Ilwis::CatalogView& viewRef() ;
     QQmlListProperty<ResourceModel> resources();
     QQmlListProperty<ResourceModel> coverages();
 
-    QString modelType() const;
+    int catalogType() const;
+    void catalogType(int tp);
+
+    static CatalogModel::CatalogType locationTypePart(const Ilwis::Resource &resource);
+    static int getCatalogType(const Ilwis::Resource &res, int predefineds = CatalogModel::ctUNKNOWN);
 protected:
 
     Ilwis::CatalogView _view;
@@ -62,7 +72,7 @@ protected:
    QList<ResourceModel *> _coverages;
    std::map<quint64, int> _objectCounts;
    bool _refresh = true;
-
+   MasterCatalogModel *getMasterCatalogModel();
 
 private:
     bool _isScanned;

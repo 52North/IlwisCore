@@ -152,6 +152,9 @@ void IlwisContext::init(const QString &ilwisDir)
             mastercatalog()->addContainer(loc);
         }
     }
+    if (!hasType(_runMode, rmDESKTOP)){
+        initializationFinished(true);
+    }
 
 }
 
@@ -257,6 +260,19 @@ void IlwisContext::runMode(int mode)
 {
     _runMode = mode;
 }
+
+bool IlwisContext::initializationFinished() const
+{
+   // Locker<std::mutex> locker(_lock);
+    return _initializationFinished;
+}
+
+void IlwisContext::initializationFinished(bool yesno)
+{
+   //Locker<std::mutex> locker(_lock);
+    _initializationFinished = yesno;
+}
+
 
 
 

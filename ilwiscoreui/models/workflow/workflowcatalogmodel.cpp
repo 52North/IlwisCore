@@ -120,10 +120,6 @@ QMLWorkflowList WorkflowCatalogModel::workflows()
 {
     try{
         if ( _currentWorkflows.isEmpty()) {
-            if ( !_view.isValid()) {
-                qDebug() << "invalid catalog view. return empty list";
-                return QMLWorkflowList();
-            }
 
             gatherItems();
             _currentWorkflows.clear();

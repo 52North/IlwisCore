@@ -11,6 +11,8 @@
 #include "ilwistypes.h"
 #include "kernel_global.h"
 
+typedef std::set<QUrl> UrlSet;
+
 namespace Ilwis {
 
 class Resource;
@@ -59,8 +61,8 @@ public:
      * @param items the Resources that should be added
      * @return true when succesful
      */
-    bool addItems(const std::vector<Ilwis::Resource> &items);
-    bool updateItems(const std::vector<Resource> &items);
+    bool addItems(const std::vector<Ilwis::Resource> &items, bool silent=false);
+    bool updateItems(const std::vector<Resource> &iteme, bool silent=false);
 
 
     /**
@@ -200,7 +202,7 @@ public:
 #endif
     static const QString MASTERCATALOG;
 signals:
-    void contentChanged(const QUrl& container);
+    void contentChanged(const UrlSet& locs);
 private:
     static MasterCatalog *_masterCatalog;
     QHash<quint64, ESPIlwisObject> _lookup;

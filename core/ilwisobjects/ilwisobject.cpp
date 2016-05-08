@@ -27,15 +27,13 @@ QVector<IlwisTypeFunction> IlwisObject::_typeFunctions;
 
 IlwisObject::IlwisObject() :
     _valid(false),
-    _readOnly(false),
-    _changed(false)
+    _readOnly(false)
 {
 }
 
 IlwisObject::IlwisObject(const Resource& ) :
     _valid(false),
-    _readOnly(false),
-    _changed(false)
+    _readOnly(false)
 {
 }
 
@@ -133,11 +131,11 @@ void IlwisObject::name(const QString &nam)
     if ( nm == ANONYMOUS_PREFIX)
         nm += QString::number(id());
     if ( !connector().isNull()){
-        connector()->source().modifiedTime(Time::now());
-        connector()->source().name(nm);
+        connector()->sourceRef().modifiedTime(Time::now());
+        connector()->sourceRef().name(nm);
         if ( isInternalObject()){
             QString path = context()->persistentInternalCatalog().toString() + "/" + nam;
-            connector()->source().setUrl(path,true);
+            connector()->sourceRef().setUrl(path,true);
         }
     }
     if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
@@ -155,25 +153,25 @@ QString IlwisObject::name() const
 void IlwisObject::code(const QString& cd) {
     if ( isReadOnly())
         return;
-    _changed = true;
+    changed(true);
 
     if ( !connector().isNull()){
-        connector()->source().modifiedTime(Time::now());
-        connector()->source().code(cd);
+        connector()->sourceRef().modifiedTime(Time::now());
+        connector()->sourceRef().code(cd);
     }
 }
 
 QString IlwisObject::code() const
 {
     if ( !constConnector().isNull())
-        return constConnector()->source().code();
+        return constConnector()->sourceRef().code();
     return sUNDEF;
 }
 
 QString IlwisObject::description() const
 {
     if ( !constConnector().isNull()){
-        return constConnector()->source().description();
+        return constConnector()->sourceRef().description();
     }
     return sUNDEF;
 }
@@ -181,15 +179,15 @@ QString IlwisObject::description() const
 void IlwisObject::setDescription(const QString &desc)
 {
     if ( !connector().isNull()){
-        connector()->source().modifiedTime(Time::now());
-        connector()->source().setDescription(desc);
+        connector()->sourceRef().modifiedTime(Time::now());
+        connector()->sourceRef().setDescription(desc);
     }
 }
 
 quint64 IlwisObject::id() const
 {
     if ( !constConnector().isNull()){
-        return constConnector()->source().id();
+        return constConnector()->sourceRef().id();
     }
     return i64UNDEF;
 }
@@ -197,7 +195,7 @@ quint64 IlwisObject::id() const
 Time IlwisObject::modifiedTime() const
 {
     if ( !constConnector().isNull())
-        return constConnector()->source().modifiedTime() ;
+        return constConnector()->sourceRef().modifiedTime() ;
     return tUNDEF;
 }
 
@@ -208,14 +206,13 @@ void IlwisObject::modifiedTime(const Time &tme)
         return;
     if ( connector().isNull())
         return;
-    connector()->source().modifiedTime(tme)        ;
-    _changed = true;
+      changed(true);
 }
 
 Time IlwisObject::createTime() const
 {
     if ( !constConnector().isNull())
-        return constConnector()->source().createTime();
+        return constConnector()->sourceRef().createTime();
     return tUNDEF;
 }
 
@@ -225,8 +222,7 @@ void IlwisObject::createTime(const Time &time)
         return;
     if ( connector().isNull())
         return;
-    connector()->source().createTime(time)        ;
-    _changed = true;
+   changed(true);
 }
 
 QString IlwisObject::toString()
@@ -254,7 +250,7 @@ bool IlwisObject::setValid(bool yesno)
 {
     if ( isReadOnly())
         return _valid;
-    _changed = true;
+    changed(true);
     _valid = yesno;
     return _valid;
 }
@@ -323,18 +319,20 @@ void IlwisObject::readOnly(bool yesno)
 
 bool IlwisObject::hasChanged() const
 {
-    return _changed;
+    if ( _connector.isNull()){
+        return _connector->source().hasChanged();
+    }
+    return false;
 }
 
 void IlwisObject::changed(bool yesno)
 {
     if ( isReadOnly() || isSystemObject())
         return;
-
     if ( !connector().isNull()){
-        connector()->source().modifiedTime(Time::now());
+        return connector()->sourceRef().changed(yesno);
     }
-    _changed = yesno;
+
 }
 
 bool IlwisObject::prepare(const QString &)
@@ -349,15 +347,18 @@ bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
 {
     if ( isReadOnly())
         return false;
-    _changed = true;
+
 
     if (mode & cmINPUT){
         quint64 pointer = (quint64) ( _connector.data());
         quint64 npointer = (quint64) ( connector);
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
-            if ( !_connector.isNull())
-                return _connector->loadMetaData(this, options);
+            if ( !_connector.isNull()){
+                bool ok = _connector->loadMetaData(this, options);
+                changed(false);
+                return ok;
+            }
         }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
@@ -366,12 +367,14 @@ bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
     if ( mode == cmOUTPUT ){ // skip cmOUTPUt | cmINPUT;
         quint64 pointer = (quint64) ( _outConnector.data());
         quint64 npointer = (quint64) ( connector);
-        if ( pointer != npointer || npointer == 0)
+        if ( pointer != npointer || npointer == 0){
             _outConnector.reset(connector);
+        }
         else {
             kernel()->issues()->log(QString("Duplicate (out)connector assignement for input/output in %1").arg(name()),IssueObject::itWarning);
         }
     }
+
     return true;
 }
 
@@ -403,7 +406,7 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
 {
     if ( isReadOnly())
         return false;
-    _changed = true;
+    changed(true);
 
     name(rec.field("code").value().toString()); // name and code are the same here
     setDescription(rec.field("description").value().toString());
@@ -422,14 +425,14 @@ Resource IlwisObject::resource(int mode) const
 {
     if ( mode & cmINPUT || mode == cmEXTENDED) {
         if ( _connector.isNull() == false)
-            return _connector->source();
+            return _connector->sourceRef();
         return Resource();
     } else if (mode & cmOUTPUT) {
         if ( _outConnector.isNull() == false) {
-            return _outConnector->source();
+            return _outConnector->sourceRef();
         }
         else if ( _connector.isNull() == false)
-            return _connector->source();
+            return _connector->sourceRef();
     }
     return Resource();
 }
@@ -438,13 +441,13 @@ Resource& IlwisObject::resourceRef(int mode)
 {
     if ( mode & cmINPUT || mode == cmEXTENDED) {
         if ( _connector.isNull() == false)
-            return _connector->source();
+            return _connector->sourceRef();
     } else if (mode & cmOUTPUT) {
         if ( _outConnector.isNull() == false) {
-            return _outConnector->source();
+            return _outConnector->sourceRef();
         }
         else if ( _connector.isNull() == false)
-            return _connector->source();
+            return _connector->sourceRef();
     }
     throw InternalError(TR("Incomplete ilwis object used for referencing information"));
 }
@@ -456,7 +459,6 @@ void IlwisObject::copyTo(IlwisObject *obj)
     obj->setDescription(description());
     obj->_valid = _valid;
     obj->_readOnly = _readOnly;
-    obj->_changed = _changed;
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
         return;

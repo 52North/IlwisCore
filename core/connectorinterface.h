@@ -61,7 +61,8 @@ public:
      * \brief source returns the resource location were this connector is attached to
      * \return the url of the source
      */
-    virtual Resource& source() = 0;
+    virtual Resource& sourceRef() = 0;
+    virtual const Resource& source() const = 0;
     virtual QString provider() const = 0;
     virtual void format(const QString&) {}
     virtual QString format() const { return sUNDEF; }

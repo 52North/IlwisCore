@@ -166,6 +166,11 @@ quint64 IssueLogger::log(const QString &message, int it)
         }
         _repeatCount = 0;
     }
+#ifdef QT_DEBUG
+    if ( it == IssueObject::itError){
+        qDebug() << "Error occured: " << message;
+    }
+#endif
 
     _issues.enqueue(IssueObject(message, it, _issueId));
     if ( _lastmessage == message)

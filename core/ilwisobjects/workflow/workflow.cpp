@@ -498,6 +498,9 @@ IOperationMetaData Workflow::getOperationMetadata(const OVertex &v)
 {
     IOperationMetaData metadata;
     quint64 id = nodeProperties(v)._operationid;
+    if ( id == i64UNDEF)
+        return IOperationMetaData();
+
     metadata.prepare(mastercatalog()->id2Resource(id));
     if ( !metadata.isValid()) {
          return IOperationMetaData();
@@ -522,6 +525,8 @@ void Workflow::parseInputParameters()
 
         // iterate over operation's pins
         IOperationMetaData meta = getOperationMetadata(inputNode);
+        if ( !meta.isValid())
+            return;
         for (int i = 0; i < meta->getInputParameters().size() ; i++) {
             //qDebug() << "nr of inputparameters";
             //qDebug() << meta->getInputParameters().size();
@@ -559,6 +564,7 @@ void Workflow::parseInputParameters()
             }
         }
     }
+
     QString inparameters = createParametersCountString(mandatoryInputs, optionalInputs);
     connector()->addProperty("inparameters", inparameters);
 
@@ -586,6 +592,9 @@ void Workflow::parseOutputParameters()
 
         // iterate over operation's pouts
         IOperationMetaData meta = getOperationMetadata(outputNode);
+        if (!meta.isValid())
+            return;
+
         for (int i = 0 ; i < meta->getOutputParameters().size() ; i++) {
             SPOperationParameter output = meta->getOutputParameters().at(i);
             auto iter = std::find(assignedPouts.begin(), assignedPouts.end(), i);
@@ -610,13 +619,17 @@ void Workflow::parseOutputParameters()
 QStringList Workflow::getInputTerms(const OVertex &v)
 {
     IOperationMetaData meta = getOperationMetadata(v);
-    return createSyntaxTerms(v, meta->getInputParameters(), "_input_%1");
+    if ( meta.isValid())
+        return createSyntaxTerms(v, meta->getInputParameters(), "_input_%1");
+    return QStringList();
 }
 
 QStringList Workflow::getOutputTerms(const OVertex &v)
 {
     IOperationMetaData meta = getOperationMetadata(v);
-    return createSyntaxTerms(v, meta->getOutputParameters(), "_output_%1");
+    if ( meta.isValid())
+        return createSyntaxTerms(v, meta->getOutputParameters(), "_output_%1");
+    return QStringList();
 }
 
 QStringList Workflow::createSyntaxTerms(const OVertex &v, const std::vector<SPOperationParameter> &parameters, const QString &inoutTemplate)

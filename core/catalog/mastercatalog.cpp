@@ -52,11 +52,6 @@ bool MasterCatalog::prepare()
 {
     QSettings settings("52n","ilwis4");
 
-    //TODO: this piece code must move to a more appropriate place; at this moment it
-    // is not guaranteed that the catalogconnectors are already known due to the order of the plugins
-    // as they are loaded.
-//    QString local = settings.value("localfilesystem",QVariant(sUNDEF)).toString();
-
     return true;
 }
 
@@ -179,8 +174,6 @@ void MasterCatalog::addContainerException(const QString &scheme)
     _containerExceptions.insert(scheme);
 }
 
-
-
 bool MasterCatalog::removeItems(const std::vector<Resource> &items){
     Locker<std::recursive_mutex> lock(_guard);
 
@@ -205,7 +198,7 @@ bool MasterCatalog::removeItems(const std::vector<Resource> &items){
     return true;
 }
 
-bool MasterCatalog::addItems(const std::vector<Resource>& items)
+bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
 {
     Locker<std::recursive_mutex> lock(_guard);
 
@@ -238,7 +231,8 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
         if ( mastercatalog()->contains(resource.id())){
-            updateItems({resource});
+            if ( resource.hasChanged())
+                updateItems({resource}, silent);
             continue;
         }
         _knownHashes.insert(Ilwis::qHash(resource));
@@ -246,20 +240,20 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items)
         containers.insert(resource.container());
     }
    // db.exec("COMMIT TRANSACTION");
-
-    for(auto container : containers)
-        emit contentChanged(container);
+    // dont start sending message when the whole system is starting and dont send when we are not using a UI
+    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent)
+        emit contentChanged(containers);
 
 
     return true;
 
 }
 
-bool MasterCatalog::updateItems(const std::vector<Resource>& items)
+bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
 {
     Locker<std::recursive_mutex> lock(_guard);
     InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
-    if( items.size() == 0) // nothing to do; not wrong perse
+    if( iteme.size() == 0) // nothing to do; not wrong perse
             return true;
 
     InternalDatabaseConnection queryItem, queryProperties;
@@ -285,7 +279,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
 
     }
 
-
+    UrlSet containers;
     ok = queryProperties.prepare("INSERT INTO catalogitemproperties VALUES(\
                    :propertyvalue,:propertyname,:itemid\
                  )" );
@@ -294,16 +288,20 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& items)
         return false;
     }
 
-    for(const Resource &resource : items) {
-        if (!resource.isValid())
+    for(const Resource &resource : iteme) {
+        if (!resource.isValid() || !resource.hasChanged())
            continue;
 
         InternalDatabaseConnection deleteQuery;
         deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
         resource.store(queryItem, queryProperties);
+        containers.insert(resource.container());
     }
     db.exec("COMMIT TRANSACTION");
 
+    // dont start sending message when the whole system is starting and dont send when we are not using a UI
+    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent)
+        emit contentChanged(containers);
 
     return true;
 
@@ -570,6 +568,9 @@ bool MasterCatalog::unregister(quint64 id)
 std::vector<Resource> MasterCatalog::select(const QString &filter) const
 {
     Locker<std::recursive_mutex> lock(_guard);
+    if ( filter == "" || filter == sUNDEF)
+        return std::vector<Resource>();
+
     QString query;
     if ( filter.indexOf("catalogitemproperties.") == -1)
         query = QString("select * from mastercatalog where  %2").arg(filter);
@@ -645,7 +646,7 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
         data = iter.value();
     } else {
         if ( !data->isAnonymous())
-            addItems({data->resource(::IlwisObject::cmEXTENDED)});
+            addItems({data->resource(::IlwisObject::cmEXTENDED)},true);
         _lookup[data->id()] = data;
 
     }

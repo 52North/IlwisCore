@@ -21,12 +21,13 @@ public:
 
     virtual IlwisObject *create() const = 0;
     IlwisTypes type() const;
-    Resource& source() ;
+    Resource& sourceRef() ;
+    const Resource& source() const;
     void addProperty(const QString &key, const QVariant &value);
     void removeProperty(const QString &key);
     bool hasProperty(const QString &key) const;
     QVariant getProperty(const QString& ) const;
-    const Resource &source() const;
+    const Resource &sourceRef() const;
     virtual bool dataIsLoaded() const;
 
 protected:

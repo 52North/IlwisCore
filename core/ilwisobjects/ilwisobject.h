@@ -398,7 +398,6 @@ private:
 
    bool _valid;
    bool _readOnly;
-   bool _changed;
 
    double _pseudoUndef=rUNDEF;
    QScopedPointer<Ilwis::ConnectorInterface> _connector;
