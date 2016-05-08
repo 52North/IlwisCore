@@ -1,7 +1,11 @@
 #ifndef MATHHELPER_H
 #define MATHHELPER_H
 
+#include "kernel_global.h"
+
 namespace Ilwis {
+
+class Coordinate;
 
 struct KERNELSHARED_EXPORT Coefficient{
     Coefficient(double x=0, double y=0) : _x(x), _y(y){}
