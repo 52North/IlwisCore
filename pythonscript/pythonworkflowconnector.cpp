@@ -33,8 +33,8 @@ bool PythonWorkflowConnector::openTarget() {
         if ( inf.suffix() != "ilwis"){
             filename = inf.absolutePath() + "/" + inf.fileName();
             QString correctUrl = QUrl::fromLocalFile(filename).toString();
-            source().setUrl(correctUrl);
-            source().setUrl(correctUrl,true);
+            sourceRef().setUrl(correctUrl);
+            sourceRef().setUrl(correctUrl,true);
         }
         QFile *file = new QFile(filename);
 
