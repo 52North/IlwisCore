@@ -82,7 +82,7 @@ Controls.DropableItem{
                 labelText: qsTr("Maximum value")
                 labelWidth: 100
                 width : parent.width
-                regexvalidator: /^\d*(\.\d*)?$/
+                regexvalidator: /^-?\d*(\.\d*)?$/
                 content : "100"
             }
 
