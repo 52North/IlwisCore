@@ -76,9 +76,10 @@ Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionCon
     }
     QString items = _expression.input<QString>(0);
     items.remove("\"");
-    if ( !_parentdomain.isValid()) // each item must contain name/code/description in the case of non parented domains
+    if ( !_parentdomain.isValid()){ // each item must contain name/code/description in the case of non parented domains
         _items = items.split("|");
-    else { // in the case there is a parent domain only item names are expected as the rest of the info is already in the parent. still the list must be complete as the execute expects it; empty code/description are sufficient though
+
+    }else { // in the case there is a parent domain only item names are expected as the rest of the info is already in the parent. still the list must be complete as the execute expects it; empty code/description are sufficient though
         QStringList shortlist = items.split("|");
         for(auto item : shortlist){
             _items.push_back(item);
@@ -91,6 +92,17 @@ Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionCon
     if (_items.size() % 5 != 0) {
         kernel()->issues()->log(QString(TR("%1 item definition is not correct; do all items have name, code(may be empty), description (may be empty)?")).arg(_expression.input<QString>(3)));
         return sPREPAREFAILED;
+    }
+    //check if no ranges overlap
+    double last = -1e308;
+    for(int i=0; i < _items.size(); i+=5){
+       double currentMin = _items[i+1].toDouble();
+       double currentMax = _items[i+2].toDouble();
+       if ( currentMin < last){
+           kernel()->issues()->log(TR("Domain items overlap which is not allowed"));
+           return sPREPAREFAILED;
+       }
+       last = currentMax;
     }
     if ( _parentdomain.isValid()){
         for(int i =0; i < _items.size(); i+=5){
