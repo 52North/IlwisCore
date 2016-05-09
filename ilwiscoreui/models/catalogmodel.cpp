@@ -30,6 +30,7 @@ using namespace Ilwis;
 
 CatalogModel::~CatalogModel()
 {
+    catalogViewManager()->unRegisterCatalogModel(this);
     for(auto *resource : _allItems)
         resource->deref();
 }
