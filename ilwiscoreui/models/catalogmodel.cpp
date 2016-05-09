@@ -321,9 +321,16 @@ void CatalogModel::gatherItems() {
 
     std::vector<Resource> items = _view.items();
 
+    bool hasParent = true;
+    QUrl previousContainer;
     for(const Resource& resource : items){
         _allItems.push_back( resourcemanager()->createResourceModel("resourcemodel", resource));
+        hasParent &= (previousContainer.isValid() ? resource.container() == previousContainer : true);
+        previousContainer = resource.container();
     }
+    if ( hasParent)
+        _allItems.push_front(resourcemanager()->createResourceModel("resourcemodel",Resource(previousContainer.toString() + "/..", itCATALOG)));
+
 }
 
 MasterCatalogModel *CatalogModel::getMasterCatalogModel()
