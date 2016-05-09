@@ -230,11 +230,11 @@ void CatalogModel::fillSpatialFilter()
 
 void CatalogModel::makeParent(QObject *obj)
 {
-    setParent(obj);
     if ( obj == 0){
         catalogViewManager()->unRegisterCatalogModel(this);
-        deleteLater();
-    }
+        //deleteLater();
+    }else
+        setParent(obj);
 }
 
 void CatalogModel::filterChanged(const QString& typeIndication, bool state){
