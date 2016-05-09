@@ -47,7 +47,7 @@ Column {
             labelText: qsTr("Minimum Value")
             labelWidth: 100
             width : parent.width
-            regexvalidator: /^\d*(\.\d*)?$/
+            regexvalidator: /^-?\d*(\.\d*)?$/
         }
 
         Controls.TextEditLabelPair{
@@ -55,7 +55,7 @@ Column {
             labelText: qsTr("Maximum Value")
             labelWidth: 100
             width : parent.width
-            regexvalidator: /^\d*(\.\d*)?$/
+            regexvalidator: /^-?\d*(\.\d*)?$/
         }
 
         Controls.TextEditLabelPair{
