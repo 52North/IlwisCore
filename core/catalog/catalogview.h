@@ -50,7 +50,6 @@ public:
     void addFixedItem(quint64 id);
     void removeFixedItem(quint64 id);
     quint32 fixedItemCount() const;
-    bool hasParent() const;
     bool isActiveFilter(const QString& name) const;
     void filter(const QString& filterName, const QString& filterString);
     bool hasFilter(const QString& name) const;
