@@ -62,8 +62,10 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     default:
         _targetDef += "";
     }
-    if ( _pjBase)
+    if ( _pjBase){
         pj_free(_pjBase);
+        _pjBase = 0;
+    }
 
     _pjBase = pj_init_plus(_targetDef.toLatin1());
 }
@@ -161,8 +163,10 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         for(auto iter= alias.begin(); iter != alias.end(); ++iter) {
             assign(iter->first);
         }
-        if ( _pjBase)
+        if ( _pjBase){
             pj_free(_pjBase);
+            _pjBase = 0;
+        }
 
         _pjBase = pj_init_plus(_targetDef.toLatin1());
         return true;
@@ -174,8 +178,10 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         if ( _coordinateSystem->datum() && _coordinateSystem->datum()->isValid()) {
             _targetDef += " " + _coordinateSystem->datum()->code();
         }
-        if ( _pjBase)
+        if ( _pjBase) {
             pj_free(_pjBase);
+            _pjBase = 0;
+        }
 
         _pjBase = pj_init_plus(_targetDef.toLatin1());
         return true;
