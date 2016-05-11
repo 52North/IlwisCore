@@ -154,7 +154,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
     }
 
     QThread* thread = new QThread;
-    CatalogWorker* worker = new CatalogWorker(models);
+    CatalogWorker* worker = new CatalogWorker(catalogResources);
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
     thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
@@ -168,7 +168,10 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
 }
 
 void MasterCatalogModel::initFinished() {
-    Ilwis::context()->initializationFinished(true)    ;
+    bool isFinished = Ilwis::context()->initializationFinished();
+    Ilwis::context()->initializationFinished(true);
+    if (!isFinished)
+        _currentCatalog->refresh();
 }
 
 void MasterCatalogModel::setDefaultView()
@@ -866,7 +869,7 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 }
 
 //--------------------
-CatalogWorker::CatalogWorker(QList<CatalogModel *> &models) : _models(models)
+CatalogWorker::CatalogWorker(const std::vector<Ilwis::Resource>& resources) : _catalogs(resources)
 {
 }
 
@@ -875,15 +878,14 @@ CatalogWorker::~CatalogWorker(){
 
 void CatalogWorker::process(){
     try {
-        for(auto iter = _models.begin(); iter != _models.end(); ++iter){
-            (*iter)->scanContainer(false);
+        for(auto& resource : _catalogs){
+            mastercatalog()->addContainer(resource.url());
+            calculatelatLonEnvelopes(resource);
             emit updateBookmarks();
         }
-        if (!uicontext()->abort()){
-            calculatelatLonEnvelopes();
-            emit finished();
-        }
-        emit updateCatalog();
+        calculatelatLonEnvelopes(context()->workingCatalog()->resource());
+       emit finished();
+       emit updateCatalog();
     } catch(const ErrorObject& err){
 
     } catch ( const std::exception& ex){
@@ -893,7 +895,7 @@ void CatalogWorker::process(){
     emit finished();
 }
 
-void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
+void CalcLatLon::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
     try{
         if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
             ICoverage cov(resource);
@@ -919,12 +921,14 @@ void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource
     }
 }
 
-void CatalogWorker::calculatelatLonEnvelopes(){
+void CalcLatLon::calculatelatLonEnvelopes(const Ilwis::Resource& catalogResource){
     kernel()->issues()->silent(true);
-    QString query = QString("(type & %1) != 0").arg(QString::number(itCOVERAGE));
+    QString query = QString("(type & %1) != 0 and container='%2'").arg(QString::number(itCOVERAGE)).
+            arg(OSHelper::neutralizeFileName(catalogResource.url().toString()));
     std::vector<Resource> resources =mastercatalog()->select(query);
     UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
-    trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
+    QString message = QString("calculating latlon envelopes in %1").arg(catalogResource.name());
+    trq->prepare("LatLon Envelopes",message,resources.size());
     ICoordinateSystem csyWgs84("code=epsg:4326");
     std::vector<Resource> updatedResources;
     int count = 0;

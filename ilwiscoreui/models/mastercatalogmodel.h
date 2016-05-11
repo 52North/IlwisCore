@@ -136,11 +136,18 @@ public:
 
 };
 
-class CatalogWorker : public QObject {
+class CalcLatLon {
+public:
+    void calculatelatLonEnvelopes(const Ilwis::Resource &resource);
+private:
+    void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
+};
+
+class CatalogWorker : public QObject, protected CalcLatLon {
     Q_OBJECT
 
 public:
-    CatalogWorker(QList<CatalogModel* >&models);
+    CatalogWorker(const std::vector<Ilwis::Resource>& catalogResources);
     ~CatalogWorker();
 
 public slots:
@@ -154,10 +161,10 @@ signals:
 
 
 private:
-    QList<CatalogModel *> _models;
-    void calculatelatLonEnvelopes();
-    void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
+    std::vector<Ilwis::Resource> _catalogs;
+
 };
+
 
 class CatalogWorker3 : public QObject {
     Q_OBJECT
