@@ -252,7 +252,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
 bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
 {
     Locker<std::recursive_mutex> lock(_guard);
-    InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
+    //InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     if( iteme.size() == 0) // nothing to do; not wrong perse
             return true;
 
@@ -297,7 +297,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
     }
-    db.exec("COMMIT TRANSACTION");
+   // db.exec("COMMIT TRANSACTION");
 
     // dont start sending message when the whole system is starting and dont send when we are not using a UI
     if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent)
