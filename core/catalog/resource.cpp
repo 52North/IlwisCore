@@ -87,8 +87,11 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                 factoryType = "ellipsoid";
             if ( tp & itGEOREF)
                 factoryType = "georef";
-
             QString scode = resourceName.mid(5);
+            int index = resourceName.indexOf(":");
+            if ( index > 0) {
+                scode = resourceName.mid(index+1);
+            }
             code(scode);
             _normalizedUrl = QUrl("ilwis://internalcatalog/" + this->name());
             if ( scode == "csy:unknown")
@@ -230,9 +233,17 @@ QString Resource::code() const
     return Identity::code();
 }
 
-void Resource::code(const QString &code)
+void Resource::code(const QString &cde)
 {
-    Identity::code(code);
+    if ( cde.indexOf("code=") == 0){
+        int index = cde.indexOf(":");
+        if ( index > 0) {
+            Identity::code(cde.mid(index+1));
+        }else {
+            Identity::code(cde.mid(6));
+        }
+    }else
+        Identity::code(cde);
     changed(true);
 }
 
