@@ -21,13 +21,13 @@ ResourceModel *ResourceManager::createResourceModel(const QString &type, const R
         if ( type == "resourcemodel"){
             model = new ResourceModel(resource);
         }
-//        if ( type == "workspacemodel"){
-//            model = new WorkSpaceModel(resource);
-//        }
         if ( type == "operationmodel"){
             model = new OperationModel(resource);
         }
         addResource(model );
+    }else { // we found it but we update it the internal resource of the model to the info in the database
+        Resource res = mastercatalog()->id2Resource(resource.id());
+        model->resourceRef() = res;
     }
     model->addref();
     return model;
