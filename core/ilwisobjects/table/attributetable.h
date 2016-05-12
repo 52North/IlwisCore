@@ -46,6 +46,8 @@ public:
     Record& recordRef(quint32 n);
     const Record& record(quint32 n) const;
 
+    ITable toTable(const QString& name=sUNDEF) const;
+
 
     void dataLoaded(bool yesno);
     virtual bool isDataLoaded() const;

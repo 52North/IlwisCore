@@ -71,6 +71,22 @@ const Record &AttributeTable::record(quint32 n) const
     return (*iter)->record();
 }
 
+ITable AttributeTable::toTable(const QString &nm) const
+{
+    QString  url = "ilwis://internalcatalog/" + (nm != sUNDEF ? name() : nm);
+    ITable tbl;
+    tbl.prepare(url);
+    for(int i=0; i < columnCount(); ++i){
+        tbl->addColumn(columndefinition(i));
+    }
+    int i = 0;
+    for(auto feature : _features){
+        const Record& rec = feature->record();
+        tbl->record(i++, rec);
+    }
+    return tbl;
+}
+
 void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
     if (!_features.isValid() || rec >= recordCount()) {
