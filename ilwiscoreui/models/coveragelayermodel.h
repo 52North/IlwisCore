@@ -11,6 +11,11 @@ class LayerManager;
 class VisualAttributeModelEditor;
 class VisualAttributeModel;
 
+namespace Ilwis {
+class Coverage;
+typedef IlwisData<Coverage> ICoverage;
+
+}
 class ILWISCOREUISHARED_EXPORT CoverageLayerModel : public IlwisObjectModel
 {
     Q_OBJECT
@@ -36,6 +41,7 @@ public:
     void showInfo(bool yesno);
     void updateAttribute(const QString& attrName, const QString& rprTxt);
     void drawer(Ilwis::Geodrawer::DrawerInterface *drw);
+    Ilwis::ICoverage coverage() const;
 
 signals:
     void visualAttributesChanged();

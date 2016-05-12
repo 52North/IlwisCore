@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "coverage.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
@@ -153,6 +154,13 @@ void CoverageLayerModel::updateAttribute(const QString& attrName, const QString&
 void CoverageLayerModel::drawer(Geodrawer::DrawerInterface *drw)
 {
     _drawer = drw;
+}
+
+Ilwis::ICoverage CoverageLayerModel::coverage() const
+{
+    if (object().isValid() && hasType(object()->ilwisType(), itCOVERAGE))
+        return object().as<Coverage>();
+    return ICoverage();
 }
 
 void CoverageLayerModel::addVisualAttribute(VisualAttributeModel *attr)
