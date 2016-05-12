@@ -41,7 +41,7 @@ void OperationWorker::process(){
                 }
             }
 
-            kernel()->issues()->log(QString(TR("Operation has executed succesfully")), IssueObject::itError);
+            kernel()->issues()->log(QString(TR("Operation has executed succesfully")), IssueObject::itMessage);
         }else {
             qDebug() << "operation failed";
         }
