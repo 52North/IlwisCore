@@ -148,8 +148,8 @@ void Kernel::init() {
 
 Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
-    if ( _dbPublic.isOpen())
-        _dbPublic.close();
+    //if ( _dbPublic.isOpen())
+    //    _dbPublic.close();
     context()->configurationRef().store();
 }
 
