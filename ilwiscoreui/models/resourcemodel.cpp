@@ -14,6 +14,7 @@
 #include "ilwisobject.h"
 #include "mastercatalog.h"
 #include "resourcemodel.h"
+#include "resourcemanager.h"
 #include "oshelper.h"
 
 #define tempHardPath "h:/projects/Ilwis4/projects/client/qml/desktop/mobile/images/"
@@ -68,7 +69,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
 
 ResourceModel::~ResourceModel()
 {
-
+    resourcemanager()->deref("resourcemodel",_item.id(), false);
 }
 
 QString ResourceModel::imagePath() const
