@@ -23,7 +23,7 @@ public:
     ResourceManager();
 
     ResourceModel *createResourceModel(const QString& type, const Resource& resource);
-    void deref(const QString &model, quint64 id);
+    void deref(const QString &model, quint64 id, bool withDelete=true);
 
     static std::unique_ptr<ResourceManager> _manager;
 

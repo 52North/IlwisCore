@@ -33,7 +33,7 @@ ResourceModel *ResourceManager::createResourceModel(const QString &type, const R
     return model;
 }
 
-void ResourceManager::deref(const QString& type, quint64 id)
+void ResourceManager::deref(const QString& type, quint64 id, bool withDelete)
 {
     auto iter = _resources.find(key(type,id));
     if ( iter != _resources.end()){
@@ -41,8 +41,10 @@ void ResourceManager::deref(const QString& type, quint64 id)
         if ((*iter).second->ref() == 0){
             auto *model = (*iter).second;
             _resources.erase(iter);
-            if ( model->modelType() == "resourcemodel") // catalogtype of models are deleted by the system
-                delete model;
+            if ( withDelete){
+                if ( model->modelType() == "resourcemodel") // catalogtype of models are deleted by the system
+                    model->deleteLater();
+            }
         }
     }
 }
