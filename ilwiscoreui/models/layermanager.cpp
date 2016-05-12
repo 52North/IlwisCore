@@ -48,17 +48,18 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
         if ( !resource.isValid())
             return;
         ICoverage coverage(resource);
-        if ( _layers.size() > 0){
-
-            if ( !coverage.isValid())
-                return;
-            if ( coverage->coordinateSystem()->isUnknown()) {// after the first layer, nothing with unknown can be added
-                QString mes = QString("coordinate system 'unknown' not compatible with coordinate system of the layerview");
-                kernel()->issues()->log(mes, IssueObject::itWarning);
-                return;
+        if ( !coverage.isValid())
+            return;
+        bool isCsyUnknown = coverage->coordinateSystem()->isUnknown();
+        for(CoverageLayerModel *layer : _layers){
+            if ( layer->coverage().isValid()){
+                if (!layer->coverage()->coordinateSystem()->isUnknown() && isCsyUnknown){
+                    QString mes = QString("coordinate system 'unknown' not compatible with coordinate system of the layerview");
+                    kernel()->issues()->log(mes, IssueObject::itWarning);
+                    return;
+                }
             }
         }
-
         if ( _masterCsy == 0) {// first real layer sets the csy
             _masterCsy = resourcemanager()->createResourceModel("resourcemodel", coverage->coordinateSystem()->resource());
             _viewEnvelope = coverage->envelope();
