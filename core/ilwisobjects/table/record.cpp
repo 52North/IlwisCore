@@ -76,6 +76,12 @@ quint32 Record::columnCount() const
     return _data.size();
 }
 
+Ilwis::Record::operator std::vector<QVariant>()
+{
+    return _data;
+}
+
+
 void Record::loadData(const std::vector<IlwisTypes> &types, QDataStream &stream, const IOOptions &options)
 {
     quint8 valu8;

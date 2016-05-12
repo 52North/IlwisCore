@@ -28,6 +28,8 @@ public:
     QVariant cell(quint32 column) const;
     void cell(quint32 column, const QVariant& value);
     quint32 columnCount() const;
+    operator std::vector<QVariant>() ;
+
 
     void storeData(const std::vector<IlwisTypes> &types, QDataStream &stream, const IOOptions &options);
     void loadData(const std::vector<IlwisTypes> &types, QDataStream &stream, const IOOptions &options);
