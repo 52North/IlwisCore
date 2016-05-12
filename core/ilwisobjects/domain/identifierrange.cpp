@@ -195,7 +195,7 @@ void IndexedIdentifierRange::load(QDataStream &stream)
     stream >> _count;
     QString name, prefix;
     stream >> name >> prefix;
-    _start.reset(new IndexedIdentifier(name));
+    _start.reset(new IndexedIdentifier(name,0,_count));
     _start->setPrefix(prefix);
 }
 
