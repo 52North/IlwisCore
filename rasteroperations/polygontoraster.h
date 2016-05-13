@@ -23,6 +23,7 @@ private:
     IGeoReference _inputgrf;
     Envelope env;
     bool _needCoordinateTransformation = false;
+    bool _getsAttributeTable;
 
     NEW_OPERATION(PolygonToRaster);
 };

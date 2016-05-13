@@ -9,6 +9,7 @@
 #include "pixeliterator.h"
 #include "featureiterator.h"
 #include "symboltable.h"
+#include "attributetable.h"
 #include "ilwisoperation.h"
 #include "geos/geos/geom/Envelope.inl"
 #include "bresenham.h"
@@ -69,7 +70,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     long mmax = -1, mmin = 10000000;
     int correction = 0;
     QString valueColumn = FEATUREVALUECOLUMN;
-    if ( _inputfeatures->attributeDefinitions().columnCount() > 1){
+
+    if (_getsAttributeTable){
         correction = 1;
         valueColumn = COVERAGEKEYCOLUMN;
     }
@@ -110,9 +112,13 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }
         updateTranquilizer(y,1);
     }
-    NumericRange *rng = new NumericRange(mmin, mmax, 1);
-    _outputraster->datadefRef().range(rng);
-    _outputraster->datadefRef(0).range(rng->clone());
+    if ( !_getsAttributeTable){
+        NumericRange *rng = new NumericRange(mmin, mmax, 1);
+        _outputraster->datadefRef().range(rng);
+        _outputraster->datadefRef(0).range(rng->clone());
+    }else {
+        _outputraster->attributeTable(_inputfeatures->attributeTable().as<AttributeTable>()->toTable(_outputraster->name()));
+    }
     QVariant value;
     value.setValue<IRasterCoverage>(_outputraster);
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
@@ -143,7 +149,13 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
         }
     }
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
-    IDomain dom("code=count");
+    _getsAttributeTable =  _inputfeatures->attributeDefinitions().columnCount() > 1;
+    IDomain dom;
+    if ( _getsAttributeTable) {
+        dom = _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef().domain();
+    }else{
+        dom = _inputfeatures->attributeDefinitions().columndefinition(FEATUREVALUECOLUMN).datadef().domain();
+    }
     _outputraster.prepare();
     if (outputName != sUNDEF)
          _outputraster->name(outputName);
@@ -152,11 +164,7 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
     env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
-   // _outputraster->datadefRef().domain(dom);
-    //_outputraster->datadefRef(0) = {dom};
     std::vector<double> indexes = {0};
-    //_outputraster->stackDefinitionRef().setSubDefinition(dom, indexes);
-
     _outputraster->setDataDefintions(dom,indexes);
     return sPREPARED;
 }
