@@ -138,7 +138,7 @@ public:
 
 class CalcLatLon {
 public:
-    void calculatelatLonEnvelopes(const Ilwis::Resource &resource);
+    void calculatelatLonEnvelopes(const QString& query, const QString& name);
 private:
     void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
 };
@@ -147,7 +147,7 @@ class CatalogWorker : public QObject, protected CalcLatLon {
     Q_OBJECT
 
 public:
-    CatalogWorker(const std::vector<Ilwis::Resource>& catalogResources);
+    CatalogWorker(const std::vector<Ilwis::Resource>& catalogResources, bool initial=false);
     ~CatalogWorker();
 
 public slots:
@@ -162,9 +162,30 @@ signals:
 
 private:
     std::vector<Ilwis::Resource> _catalogs;
+    bool _initial;
 
+    void scanContainer(const QUrl &url, bool threading);
 };
 
+
+class CatalogWorker2 : public QObject {
+    Q_OBJECT
+
+public:
+    CatalogWorker2(const QUrl& url);
+
+public slots:
+    void process();
+
+
+signals:
+    void finished();
+    void updateContainer();
+
+
+private:
+    QUrl _container;
+};
 
 class CatalogWorker3 : public QObject {
     Q_OBJECT
