@@ -30,6 +30,6 @@ TabViewStyle {
             }
         }
     }
-    frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }
+    frame: Rectangle { color: Global.alternatecolor3; border.width: 1 ; border.color: "lightgrey" }
 }
 
