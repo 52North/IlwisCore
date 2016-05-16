@@ -7,6 +7,7 @@
 #include <QSqlField>
 #include "identity.h"
 #include "kernel.h"
+#include "version.h"
 #include "ilwisdata.h"
 #include "oshelper.h"
 #include "connectorinterface.h"
@@ -34,9 +35,11 @@ void MasterCatalogCache::store() const
         InternalDatabaseConnection db(query);
         stream << maxid;
         stream << maxid;
+        stream << kernel()->version()->cacheVersion;
         while( db.next()){
             QSqlRecord record = db.record();
             Resource resource(record);
+            stream << _MAGIC; // this marker ensure that every resource begins at the expected place. if not the version of the cache is still incompatible ( probably someone forgot to up the version number)
             resource.store(stream);
             maxid = std::max(maxid, resource.id());
         }
@@ -47,6 +50,16 @@ void MasterCatalogCache::store() const
 
     }
 
+}
+
+void MasterCatalogCache::deleteCache(QDataStream& stream)
+{
+    stream.device()->close();
+    kernel()->issues()->log(TR("Incompatible version of the mastercatalog cache, deleting cache"), IssueObject::itWarning);
+    QUrl url = context()->cacheLocation();
+    QString filename = url.toLocalFile() + "/mastercatalog.dump";
+    QFile::remove(filename);
+    _hashes.clear();
 }
 
 void MasterCatalogCache::load()
@@ -62,8 +75,20 @@ void MasterCatalogCache::load()
         // the magic number ensure that the last stream was closed correctly and that the dump is written correct
         if ( magic == _MAGIC){
             stream >> baseid;
+            QString cacheVersion;
+            stream >> cacheVersion;
+            if ( cacheVersion != kernel()->version()->cacheVersion){
+                deleteCache(stream);
+                return;
+            }
             while(!stream.atEnd()){
                 Resource resource;
+                quint64 magic;
+                stream >> magic;
+                if ( magic != _MAGIC){
+                    deleteCache(stream);
+                    return;
+                }
                 resource.load(stream);
                 if ( resource.isValid()){
                     uint hash = ::qHash(OSHelper::neutralizeFileName(resource.url(true).toString()));
