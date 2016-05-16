@@ -20,6 +20,7 @@ public:
     void addModuleInterfaceVersion(const QString& inf);
     const static QString interfaceVersion;
     const static QString IlwisShortName;
+    const static QString cacheVersion;
 
     QString buildType() const;
     QString verionNumber() const;
