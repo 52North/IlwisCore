@@ -808,7 +808,5 @@ bool Resource::hasChanged() const
 
 void Resource::changed(bool yesno)
 {
-    if ( yesno)
-        modifiedTime(Time::now());
     _changed = yesno;
 }
