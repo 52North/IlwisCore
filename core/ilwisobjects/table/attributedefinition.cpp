@@ -152,17 +152,20 @@ QVariant AttributeDefinition::checkInput(const QVariant& inputVar, quint32 colum
             return QVariant((int)iUNDEF);
         } else if ( typenm == "QString"){
             actualval = dm->impliedValue(inputVar);
-            SPItemRange rng1 = dm->range<ItemRange>();
+
             SPItemRange rng2 = coldef.datadef().range<ItemRange>();
 
-            SPDomainItem item = rng1->item(inputVar.toString());
-            if ( item.isNull()){
-                return QVariant((int)iUNDEF);
+            if ( !hasType(valueType,itINDEXEDITEM)){
+                SPItemRange rng1 = dm->range<ItemRange>();
+                SPDomainItem item = rng1->item(inputVar.toString());
+                if ( item.isNull()){
+                    return QVariant((int)iUNDEF);
+                }
+                if ( !rng2->contains(item->name())){
+                    rng2->add(item->clone());
+                }
+                actualval = item->raw();
             }
-            if ( !rng2->contains(item->name())){
-                rng2->add(item->clone());
-            }
-            actualval = item->raw();
         }
 
     }else if ( domtype == itNUMERICDOMAIN){
