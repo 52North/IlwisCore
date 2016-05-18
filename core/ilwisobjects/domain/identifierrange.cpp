@@ -49,12 +49,24 @@ QVariant IndexedIdentifierRange::impliedValue(const QVariant &v) const{
     bool ok;
     quint32 index = v.toUInt(&ok);
     if (!ok){
+        QString typName = v.typeName();
+        if ( typName == "QString"){
+            QString item = v.toString();
+            int index = item.indexOf("_");
+            if ( index != -1) {
+                QString num = item.mid(index + 1);
+                bool ok;
+                Raw raw = num.toULong(&ok);
+                if ( ok)
+                    return raw;
+            }
+        }
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
         return sUNDEF;
     }
-    QString s =  _start->name();
+    QString s =  _start->prefix();
     if ( index < count())
-        return s + QString::number(index);
+        return s +  "_" + QString::number(index);
     return sUNDEF;
 }
 quint32 IndexedIdentifierRange::count() const{
