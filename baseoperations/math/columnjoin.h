@@ -25,7 +25,7 @@ private:
         ITable _inputTable;
         ITable _outputTable;
         QString tableName = sUNDEF;
-        QString joinTable = sUNDEF;
+        QString _joinTable = sUNDEF;
 
         QString _primaryKeyColumn = sUNDEF;
         QString _outputColumn = sUNDEF;

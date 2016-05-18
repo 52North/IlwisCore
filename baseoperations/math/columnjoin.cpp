@@ -169,51 +169,68 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
+    boost::container::flat_map<QString, int> columns;
+    for(int i=0; i < _outputTable->columnCount(); ++i){
+        columns[_outputTable->columndefinition(i).name()] = i;
+    }
+
     InternalDatabaseConnection conn;
     deleteTable(tableName);
     bool deleteBaseTable = conn.exec(deleteSQL);
     deleteSQL = "";
-    deleteTable(joinTable);
+    deleteTable(_joinTable);
 
     bool deleteJoinTable = conn.exec(deleteSQL);
 
     createTable(tableName,_baseTable);
     bool createBaseTable = conn.exec(createSQL);
+    if ( !createBaseTable){
+        kernel()->issues()->log(conn.lastError().text());
+        return false ;
+    }
     createSQL = "";
-    createTable(joinTable,_inputTable);
+    createTable(_joinTable,_inputTable);
     bool createJoinTable = conn.exec(createSQL);
     addInsertChangedDataToTempTableStmt(tableName,_baseTable);
     bool insert1 = conn.exec(insertSQL);
     insertSQL = "";
-    addInsertChangedDataToTempTableStmt(joinTable,_inputTable);
+    addInsertChangedDataToTempTableStmt(_joinTable,_inputTable);
     bool insert2 = conn.exec(insertSQL);
 
-    selectSQL.append("SELECT "+tableName+"."+_primaryKeyColumn+","+joinTable+"."+_outputColumn+" FROM ");
+    selectSQL.append("SELECT * FROM ");
 
     selectSQL.append(tableName);
-    selectSQL.append(" INNER JOIN "+joinTable+" ON ");
+    selectSQL.append(" INNER JOIN "+_joinTable+" ON ");
     selectSQL.append(tableName);
     selectSQL.append(".");
     selectSQL.append(_primaryKeyColumn);
     selectSQL.append(" = ");
-    selectSQL.append(joinTable);
+    selectSQL.append(_joinTable);
     selectSQL.append(".");
     selectSQL.append(_foreignKeyColumn);
     //std::cout<<selectSQL.toStdString()<<std::endl;
 
     InternalDatabaseConnection db;
     int count = 0;
-    std::vector<QVariant> outdata(_baseTable->recordCount());
-    if(db.exec(selectSQL)){
+    std::vector<QVariant> outdata(_outputTable->columnCount());
+    bool queryok;
+    if((queryok=db.exec(selectSQL))){
+        int row = 0;
         while (db.next()){
             QSqlRecord rec = db.record();
-            outdata[count] = rec.value(1);
-            count++;
-            //std::cout<<rec.value(0).toString().toStdString()<<"  "<<rec.value(1).toString().toStdString()<<std::endl;
+            for(int i=0; i<rec.count(); ++i){
+                QString fieldname = rec.fieldName(i);
+                int index = columns[fieldname];
+                outdata[index] = rec.value(i);
+            }
+            _outputTable->record(row,outdata);
+            ++row;
         }
     }
-
-    _outputTable->column(_outputColumn,outdata);
+    if ( !queryok){
+        kernel()->issues()->log(db.lastError().text());
+        return false ;
+    }
 
     if ( _outputTable.isValid()) {
         QVariant var;
@@ -239,8 +256,8 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
 
     QString inputTable = _expression.parm(2).value();
     QUrl url(inputTable);
-    joinTable = url.fileName().split(".",QString::SkipEmptyParts).at(0);
-    joinTable = joinTable+"_join_tbl";
+    _joinTable = url.fileName().split(".",QString::SkipEmptyParts).at(0);
+    _joinTable = _joinTable+"_join_tbl";
     if (!_inputTable.prepare(inputTable)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputTable,"");
         return sPREPAREFAILED;
@@ -261,7 +278,6 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     }
     const Parameter& parm1 = _expression.parm(3);
     _inputColumn = parm1.value();
-    ColumnDefinition def3 = _inputTable->columndefinition(_inputColumn);
     bool ok = true;
     if ( hasType(parm1.valuetype(),itNUMBER)){
         _number1 = parm1.value().toDouble(&ok);
@@ -280,16 +296,12 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     } else{
         _outputTable = _baseTable;
     }
-    NumericRange *newRange = 0;
-
-    IDomain dom;
-    dom.prepare("value");
-    //ColumnDefinition coldef(_outputColumn,dom, index == iUNDEF ? _outputTable->columnCount() : index);
-    newRange = constructRangeFrom(def3.datadef().range<NumericRange>(), _number1);
-    newRange->resolution(0);
-    def3.datadef().range(newRange);
-    _outputTable->addColumn(def3);
-
+    for(int i=0; i < _baseTable->columnCount(); ++i){
+        _outputTable->addColumn(_baseTable->columndefinition(i));
+    }
+    for(int i=0; i < _inputTable->columnCount(); ++i){
+        _outputTable->addColumn(_inputTable->columndefinition(i));
+    }
     return sPREPARED;
 }
 
