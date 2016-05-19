@@ -73,7 +73,7 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
         for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
             QVariant v = feature->cell(_attribColumn);
             SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-            _attTable->record(NEW_RECORD,{newFeature->featureid(), v});
+            _attTable->record(NEW_RECORD,{v});
 
             ++iterIn;
         }
