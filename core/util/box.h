@@ -180,6 +180,13 @@ public:
     bool is3D() const {
         return this->min_corner().is3D() && this->max_corner().is3D();
     }
+
+    Box<PointType> twoD() const { // convenience method
+        if ( isValid()){
+            return Box<PointType>(PointType(min_corner().x, min_corner().y), PointType(max_corner().x, max_corner().y));
+        }
+        return Box<PointType>();
+    }
     quint64 area() const {
         if ( !isValid())
             return 0;
