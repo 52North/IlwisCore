@@ -98,7 +98,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
              if (d.isValid()){
                 QVariantMap vmap = d.value<QVariantMap>();
                 QVariant attribute =  vmap[valueColumn];
-                value = attribute.toInt()+correction;
+                value = attribute.toInt();
              }else{
                 value = 0;
              }
