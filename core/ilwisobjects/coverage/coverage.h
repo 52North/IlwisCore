@@ -119,6 +119,9 @@ public:
     QString name() const { return IlwisObject::name(); }
     virtual QVariant coord2value(const Coordinate& crd, const QString& attrname="") = 0;
 
+    virtual ITable attributeTable(quint32 level=0) = 0;
+    virtual void setAttributes(const ITable &otherTable) = 0;
+
     bool prepare(const IOOptions& options=IOOptions());
 protected:
     void copyTo(IlwisObject *obj) ;
