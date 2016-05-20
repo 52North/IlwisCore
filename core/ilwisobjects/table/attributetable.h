@@ -47,6 +47,7 @@ public:
     const Record& record(quint32 n) const;
 
     ITable toTable(const QString& name=sUNDEF) const;
+    void featureCoverage(FeatureCoverage* f);
 
 
     void dataLoaded(bool yesno);

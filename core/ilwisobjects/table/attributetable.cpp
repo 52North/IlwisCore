@@ -87,6 +87,12 @@ ITable AttributeTable::toTable(const QString &nm) const
     return tbl;
 }
 
+void AttributeTable::featureCoverage(FeatureCoverage *f)
+{
+    _features.set(f);
+    setValid(_features.isValid());
+}
+
 void AttributeTable::record(quint32 rec, const std::vector<QVariant>& vars, quint32 offset)
 {
     if (!_features.isValid() || rec >= recordCount()) {
