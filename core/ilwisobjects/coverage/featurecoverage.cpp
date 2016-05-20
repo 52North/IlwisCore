@@ -282,11 +282,12 @@ ITable FeatureCoverage::attributeTable(quint32 level)
     // TODO add level parameter to access subfeature attributes
 
     IAttributeTable tbl;
-    tbl.set( new AttributeTable(this, level));
+    tbl.prepare();
+    tbl->featureCoverage(this);
     return tbl;
 }
 
-void FeatureCoverage::attributesFromTable(const ITable& otherTable)
+void FeatureCoverage::setAttributes(const ITable& otherTable)
 {
     _attributeDefinition.clearAttributeDefinitions();
 

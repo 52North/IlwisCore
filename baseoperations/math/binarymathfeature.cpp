@@ -94,7 +94,7 @@ OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx,
 
     ITable attTable = _merger.mergeMetadataTables(_inputFeatureSet1->attributeTable(), _inputFeatureSet2->attributeTable());
     attTable->recordCount(_inputFeatureSet1->featureCount() + _inputFeatureSet2->featureCount());
-    _outputFeatures->attributesFromTable(attTable);
+    _outputFeatures->setAttributes(attTable);
 
     QString outname = _expression.parm(0,false).value();
     if ( outname != sUNDEF)

@@ -255,7 +255,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     _outputTable = newTable;
     if ( _outputRaster.isValid()){
         _outputTable->addColumn(COVERAGEKEYCOLUMN, _crossDomain);
-        _outputRaster->attributeTable(_outputTable);
+        _outputRaster->setAttributes(_outputTable);
     }
 
     return sPREPARED;

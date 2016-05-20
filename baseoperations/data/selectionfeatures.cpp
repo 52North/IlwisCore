@@ -84,7 +84,7 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
     bool ok = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
 
     if ( ok && ctx != 0) {
-        outputFC->attributesFromTable(_attTable);
+        outputFC->setAttributes(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
@@ -192,7 +192,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
          }
          _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
          IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-         outputFC->attributesFromTable(_attTable);
+         outputFC->setAttributes(_attTable);
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO: selections in features on bounding box

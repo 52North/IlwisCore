@@ -76,9 +76,9 @@ public:
 
     const DataDefinition& datadef(quint32 layer=WHOLE_RASTER) const;
     DataDefinition& datadefRef(quint32 layer=WHOLE_RASTER);
-    ITable attributeTable() const;
+    ITable attributeTable(quint32 level=0) ;
     bool hasAttributes() const;
-    void attributeTable(const ITable &tbl);
+    virtual void setAttributes(const ITable &otherTable);
 
 
     /*!

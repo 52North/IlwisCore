@@ -157,7 +157,7 @@ Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *c
     ITable inputTbl = _inputRaster->attributeTable();
 
     if (inputTbl.isValid()) {
-        _outputRaster->attributeTable(static_cast<Table *>(inputTbl->clone()));
+        _outputRaster->setAttributes(static_cast<Table *>(inputTbl->clone()));
     }
 
     return sPREPARED;

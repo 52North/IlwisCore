@@ -59,6 +59,7 @@
 #include "operationmetadata.h"
 #include "internalprojectionconnector.h"
 #include "internalgeoreferenceconnector.h"
+#include "attributetable.h"
 #include "epsg.h"
 #include "catalog.h"
 #include "workflow.h"
@@ -826,7 +827,10 @@ IlwisObject *InternalIlwisObjectFactory::createTable(const Resource& resource, c
        return 0;
    }
     Table *tbl;
-    tbl = createFromResource<FlatTable>(resource, options);
+    if ( resource.ilwisType() == itATTRIBUTETABLE)
+        tbl = createFromResource<AttributeTable>(resource, options);
+    else
+        tbl = createFromResource<FlatTable>(resource, options);
     tbl->setConnector(connector, IlwisObject::cmINPUT, options);
     return tbl;
 

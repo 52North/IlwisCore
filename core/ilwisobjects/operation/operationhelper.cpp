@@ -67,7 +67,7 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
                     return;
                 if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())
                     return;
-                rasCoverageOut->attributeTable(rasCoverageIn->attributeTable());
+                rasCoverageOut->setAttributes(rasCoverageIn->attributeTable());
             }
         }
     }

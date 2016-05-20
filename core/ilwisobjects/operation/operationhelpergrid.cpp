@@ -54,7 +54,7 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
         if ( inputRaster->attributeTable().isValid())    {
             if ( inputRaster->datadef().domain<>() == outputRaster->datadef().domain<>()) {
                 if ( outputRaster.isValid())
-                    outputRaster->attributeTable(inputRaster->attributeTable());
+                    outputRaster->setAttributes(inputRaster->attributeTable());
             }
         }
     }

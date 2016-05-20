@@ -55,7 +55,7 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
             _outfeatures->newFeature(pol);
         }
     }
-    _outfeatures->attributesFromTable(_attTable);
+    _outfeatures->setAttributes(_attTable);
 
     if ( ctx != 0) {
         QVariant value;

@@ -411,7 +411,7 @@ QVariant RasterCoverage::coord2value(const Coordinate &c, const QString &attrnam
     return QVariant();
 }
 
-ITable RasterCoverage::attributeTable() const
+ITable RasterCoverage::attributeTable(quint32 level)
 {
     return _attributeTable;
 }
@@ -421,7 +421,7 @@ bool RasterCoverage::hasAttributes() const
     return _attributeTable.isValid();
 }
 
-void RasterCoverage::attributeTable(const ITable& tbl)
+void RasterCoverage::setAttributes(const ITable& tbl)
 {
     if ( isReadOnly())
         return;
