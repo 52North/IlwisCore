@@ -157,7 +157,8 @@ Rectangle {
                 maximumValue: 100
                 minimumValue: 0
                 value : tranquilizerHandler.aggregateValue
-                opacity: value > 0 ? 0.35 : 0
+                opacity: (value > 0 && value !=100) ? 0.35 : 0
+
                 style: ProgressBarStyle {
                      background: Rectangle {
                          radius: 2
