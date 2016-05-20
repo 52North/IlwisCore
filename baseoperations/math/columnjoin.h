@@ -24,7 +24,9 @@ private:
         ITable _baseTable;
         ITable _inputTable;
         ITable _outputTable;
-        QString tableName = sUNDEF;
+        ICoverage _inputCoverage;
+        ICoverage _outputCoverage;
+        QString _objectname = sUNDEF;
         QString _joinTable = sUNDEF;
 
         QString _primaryKeyColumn = sUNDEF;

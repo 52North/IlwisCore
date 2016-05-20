@@ -10,6 +10,15 @@
 #include "table.h"
 #include "basetable.h"
 #include "flattable.h"
+#include "coverage.h"
+#include "rastercoverage.h"
+#include "featurecoverage.h"
+#include "operationhelper.h"
+#include "pixeliterator.h"
+#include "featureiterator.h"
+#include "feature.h"
+#include "operationhelpergrid.h"
+#include "operationhelperfeatures.h"
 #include "symboltable.h"
 #include "internaldatabaseconnection.h"
 #include "operationExpression.h"
@@ -175,14 +184,14 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
 
     InternalDatabaseConnection conn;
-    deleteTable(tableName);
+    deleteTable(_objectname);
     bool deleteBaseTable = conn.exec(deleteSQL);
     deleteSQL = "";
     deleteTable(_joinTable);
 
     bool deleteJoinTable = conn.exec(deleteSQL);
 
-    createTable(tableName,_baseTable);
+    createTable(_objectname,_baseTable);
     bool createBaseTable = conn.exec(createSQL);
     if ( !createBaseTable){
         kernel()->issues()->log(conn.lastError().text());
@@ -191,7 +200,7 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     createSQL = "";
     createTable(_joinTable,_inputTable);
     bool createJoinTable = conn.exec(createSQL);
-    addInsertChangedDataToTempTableStmt(tableName,_baseTable);
+    addInsertChangedDataToTempTableStmt(_objectname,_baseTable);
     bool insert1 = conn.exec(insertSQL);
     insertSQL = "";
     addInsertChangedDataToTempTableStmt(_joinTable,_inputTable);
@@ -199,9 +208,9 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     selectSQL.append("SELECT * FROM ");
 
-    selectSQL.append(tableName);
+    selectSQL.append(_objectname);
     selectSQL.append(" INNER JOIN "+_joinTable+" ON ");
-    selectSQL.append(tableName);
+    selectSQL.append(_objectname);
     selectSQL.append(".");
     selectSQL.append(_primaryKeyColumn);
     selectSQL.append(" = ");
@@ -233,9 +242,32 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
 
     if ( _outputTable.isValid()) {
-        QVariant var;
-        var.setValue<ITable>(_outputTable);
-        ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outputColumn);
+        IlwisTypes outputtype = itTABLE;
+        if ( _outputCoverage.isValid()){
+            _outputCoverage->setAttributes(_outputTable);
+            if ( outputtype == itRASTER){
+                IRasterCoverage raster = _outputCoverage.as<RasterCoverage>();
+                IRasterCoverage inputraster = _inputCoverage.as<RasterCoverage>();
+                raster->copyBinary(inputraster,0);
+                QVariant var;
+                var.setValue<IRasterCoverage>(raster);
+                ctx->setOutput(symTable,var, raster->name(),itRASTER,raster->resource());
+            }else {
+                IFeatureCoverage features = _outputCoverage.as<FeatureCoverage>();
+                IFeatureCoverage inputfeatures = _inputCoverage.as<FeatureCoverage>();
+
+                    for(const SPFeatureI& feature : inputfeatures)
+                        features->newFeatureFrom(feature);
+                    QVariant var;
+                    var.setValue<IFeatureCoverage>(features);
+                    ctx->setOutput(symTable,var, features->name(),itFEATURE,features->resource());
+            }
+
+        }else {
+            QVariant var;
+            var.setValue<ITable>(_outputTable);
+            ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outputColumn);
+        }
         return true;
     }
     return false;
@@ -243,15 +275,34 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-
     QString baseTable = _expression.parm(0).value();
     QUrl dr(baseTable);
-    tableName = dr.fileName().split(".",QString::SkipEmptyParts).at(0);
-    tableName = tableName+"_base_tbl";
-    if (!_baseTable.prepare(baseTable)){
-        ERROR2(ERR_COULD_NOT_LOAD_2,baseTable,"");
+    _objectname = dr.fileName().split(".",QString::SkipEmptyParts).at(0);
+    Resource res = mastercatalog()->name2Resource(baseTable, itTABLE | itCOVERAGE);
+    if ( !res.isValid()){
+        kernel()->issues()->log(QString(TR("%1 is not a valid resource").arg(baseTable)));
         return sPREPAREFAILED;
     }
+    if ( hasType(res.ilwisType(), itCOVERAGE)){
+        ICoverage cov(res);
+        if (!cov.isValid() ){
+            kernel()->issues()->log(QString(TR("%1 is not a valid resource").arg(baseTable)));
+            return sPREPAREFAILED;
+        }
+        _inputCoverage = cov;
+        _baseTable = _inputCoverage->attributeTable();
+        if ( !_baseTable.isValid()){
+            kernel()->issues()->log(QString(TR("%1 has no attribute table").arg(baseTable)));
+            return sPREPAREFAILED;
+        }
+
+    }else {
+        if (!_baseTable.prepare(baseTable)){
+            ERROR2(ERR_COULD_NOT_LOAD_2,baseTable,"");
+            return sPREPAREFAILED;
+        }
+    }
+   _objectname = _objectname+"_base_tbl";
     _primaryKeyColumn = _expression.parm(1).value();
 
     QString inputTable = _expression.parm(2).value();
@@ -302,6 +353,16 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     for(int i=0; i < _inputTable->columnCount(); ++i){
         _outputTable->addColumn(_inputTable->columndefinition(i));
     }
+
+    if ( _inputCoverage.isValid()){
+        if ( _inputCoverage->ilwisType() == itRASTER){
+             IRasterCoverage raster = OperationHelperRaster::initialize(_inputCoverage,itRASTER, itDOMAIN|itGEOREF|itCOORDSYSTEM|itRASTERSIZE|itENVELOPE);
+             _outputCoverage = raster;
+        }else {
+            IFeatureCoverage features = OperationHelperFeatures::initialize(_inputCoverage, itFEATURE, itDOMAIN|itCOORDSYSTEM|itENVELOPE);
+            _outputCoverage = features;
+        }
+    }
     return sPREPARED;
 }
 
@@ -312,12 +373,12 @@ quint64 ColumnJoin::createMetadata()
     operation.setSyntax("columnjoin(base-table,column-name|number,input-table, column-name|number)");
     operation.setDescription(TR("Join a base table with another table who share a common domain"));
     operation.setInParameterCount({4});
-    operation.addInParameter(0,itTABLE, TR("base-table"),TR("Base table from which where join is to do be done"));
+    operation.addInParameter(0,itTABLE|itCOVERAGE, TR("base-table"),TR("Base table from which where join is to do be done"));
     operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
     operation.addInParameter(2,itTABLE, TR("input-table"),TR("input table-column from which the input column will be chosen"));
     operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itTABLE, TR("output table"));
+    operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table"));
     operation.setKeywords("table");
     mastercatalog()->addItems({operation});
     return operation.id();
