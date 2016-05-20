@@ -173,19 +173,23 @@ QString ApplicationFormExpressionParser::dropKeys(IlwisTypes type) const{
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itTABLE) + "\"";
     }
+    bool excludeGenericFeature = false;
     if ( type == itPOINT){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itPOINT) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
+        excludeGenericFeature = true;
     }
     if ( type == itLINE){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itLINE) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
+        excludeGenericFeature = true;
     }
     if ( type == itPOLYGON){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itPOLYGON) + "\",\"" + TypeHelper::type2name(itFEATURE) + "\"";
+        excludeGenericFeature = true;
     }
-    if ( type == itFEATURE){
+    if ( hasType(type,itFEATURE) && !excludeGenericFeature){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itFEATURE) + "\"," + "\""+ TypeHelper::type2name(itPOINT) + "\"," + "\""+ TypeHelper::type2name(itLINE) + "\"," + "\""+ TypeHelper::type2name(itPOLYGON) + "\"";
     }
