@@ -155,6 +155,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
 
     QThread* thread = new QThread;
     CatalogWorker* worker = new CatalogWorker(catalogResources, true);
+    thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
     thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
@@ -724,6 +725,7 @@ void MasterCatalogModel::refreshCatalog(const QString& path)
 
     QThread* thread = new QThread;
     CatalogWorker3* worker = new CatalogWorker3(path);
+    thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
     thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
@@ -915,6 +917,7 @@ void CatalogWorker::scanContainer(const QUrl& url, bool threading)
          if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(url.toString()))){
              QThread* thread = new QThread;
              CatalogWorker2* worker = new CatalogWorker2(url);
+             thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
              worker->moveToThread(thread);
              thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
              thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);

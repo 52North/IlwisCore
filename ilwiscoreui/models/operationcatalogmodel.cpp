@@ -301,6 +301,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         thread->setProperty("runparameters",runparams);
         OperationWorker* worker = new OperationWorker(opExpr);
         worker->moveToThread(thread);
+        thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
         thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
         thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
         thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);

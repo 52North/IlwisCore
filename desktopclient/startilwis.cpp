@@ -169,6 +169,7 @@ void StartIlwis::init() {
 
 
         TranquilizerWorker *trw = new TranquilizerWorker;
+        _trqthread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
         trw->moveToThread(_trqthread);
         _trqthread->connect(kernel(), &Kernel::updateTranquilizer, trw, &TranquilizerWorker::updateTranquilizer);
         _trqthread->connect(kernel(), &Kernel::createTranquilizer, trw, &TranquilizerWorker::createTranquilizer);
