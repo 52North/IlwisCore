@@ -40,6 +40,9 @@ Item {
             if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){ // object as container case
                 filter = "container='" + resource.url + "'"
                 newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
+                if ( resource && newPanel){ // the default parent is too generic. so we choose this panel as its true parent
+                    resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
+                }
             }else { // object as 'real' data case
                 filter = "itemid=" + resource.id
                 // try to find a suitable data pane for it
@@ -49,9 +52,7 @@ Item {
                     bigthing.getWorkbenchPane("objectproperties","visible");
                 }
             }
-            if ( resource && newPanel){ // the default parent is too generic. so we choose this panel as its true parent
-                resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
-            }
+
         }
     }
 
