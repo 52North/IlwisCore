@@ -42,8 +42,9 @@ void ResourceManager::deref(const QString& type, quint64 id, bool withDelete)
             auto *model = (*iter).second;
             _resources.erase(iter);
             if ( withDelete){
-                if ( model->modelType() == "resourcemodel") // catalogtype of models are deleted by the system
-                    model->deleteLater();
+                if ( model->modelType() == "resourcemodel") {// catalogtype of models are deleted by the system
+                   // model->deleteLater();
+                }
             }
         }
     }
