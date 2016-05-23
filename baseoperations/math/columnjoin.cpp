@@ -256,14 +256,15 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
                 IFeatureCoverage features = _outputCoverage.as<FeatureCoverage>();
                 IFeatureCoverage inputfeatures = _inputCoverage.as<FeatureCoverage>();
 
-                    for(const SPFeatureI& feature : inputfeatures){
-                        auto newFeature = features->newFeatureFrom(feature);
-                        auto datarecord = feature->recordRef();
-                        newFeature->record(datarecord);
-                    }
-                    QVariant var;
-                    var.setValue<IFeatureCoverage>(features);
-                    ctx->setOutput(symTable,var, features->name(),itFEATURE,features->resource());
+                int count = 0;
+                for(const SPFeatureI& feature : inputfeatures){
+                    auto newFeature = features->newFeatureFrom(feature);
+                    auto datarecord = _outputTable->record(count++);
+                    newFeature->record(datarecord);
+                }
+                QVariant var;
+                var.setValue<IFeatureCoverage>(features);
+                ctx->setOutput(symTable,var, features->name(),itFEATURE,features->resource());
             }
 
         }else {
