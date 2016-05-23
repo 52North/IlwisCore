@@ -51,7 +51,6 @@ private:
 
     std::vector<QUrl> _systemlocations;
     //QThreadStorage<Catalog *> _workingCatalog;
-    ICatalog _workingCatalog;
     ICatalog _systemCatalog;
     //last used local folder, often equals to working catalog but not necessary. The location is there to have a dependable location for (file)outputs if the working catalog is not a folder
     ICatalog _lastUsedLocalFolder;
@@ -65,7 +64,7 @@ private:
     QString _currentUser;
     int _runMode = rmDESKTOP;
     bool _initializationFinished = false;
-    mutable std::mutex _lock;
+    mutable std::recursive_mutex _lock;
 };
 
 /**
