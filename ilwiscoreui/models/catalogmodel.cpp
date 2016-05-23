@@ -90,6 +90,7 @@ void CatalogModel::scanContainer(bool threading)
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(resource().url().toString()))){
             QThread* thread = new QThread;
             CatalogWorker* worker = new CatalogWorker({resource()});
+            thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
             worker->moveToThread(thread);
             thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
             thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
