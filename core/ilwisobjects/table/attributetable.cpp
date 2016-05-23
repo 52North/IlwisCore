@@ -24,8 +24,10 @@ AttributeTable::AttributeTable(FeatureCoverage *featureCoverage, int level) : _l
 AttributeTable::AttributeTable(const Resource &res)
 {
     quint64 id = mastercatalog()->name2id(res.url().toString(), itFEATURE);
-    _features.prepare(id);
-    setValid(_features.isValid());
+    if ( id != i64UNDEF){
+        _features.prepare(id);
+        setValid(_features.isValid());
+    }
 }
 
 IlwisTypes AttributeTable::ilwisType() const
