@@ -5,6 +5,7 @@
 #include <QSqlError>
 #include <QSettings>
 #include <QSqlField>
+#include <QThread>
 #include "identity.h"
 #include "kernel.h"
 #include "ilwisdata.h"
@@ -241,8 +242,9 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
     }
    // db.exec("COMMIT TRANSACTION");
     // dont start sending message when the whole system is starting and dont send when we are not using a UI
-    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent)
+    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent){
         emit contentChanged(containers);
+    }
 
 
     return true;
@@ -299,9 +301,10 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
     }
    // db.exec("COMMIT TRANSACTION");
 
-    // dont start sending message when the whole system is starting and dont send when we are not using a UI
-    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent)
-        emit contentChanged(containers);
+            // dont start sending message when the whole system is starting and dont send when we are not using a UI
+            if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent){
+            emit contentChanged(containers);
+}
 
     return true;
 
