@@ -2,6 +2,7 @@
 #define CATALOGCONNECTOR_H
 
 #include "kernel_global.h"
+#include <memory>
 #include <QStringList>
 
 namespace Ilwis {
@@ -12,7 +13,7 @@ class CatalogExplorer;
 class MasterCatalogCache;
 
 typedef std::unique_ptr<CatalogConnector> UPCatalogConnector;
-typedef std::unique_ptr<CatalogExplorer> UPCatalogExplorer;
+typedef std::shared_ptr<CatalogExplorer> SPCatalogExplorer;
 
 /**
  * The CatalogConnector is the only connector to connect to catalogs. As a catalog can be a hetregenous
@@ -49,7 +50,7 @@ public:
     Ilwis::IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    virtual ~CatalogConnector() {}
+    virtual ~CatalogConnector() ;
 
     QString provider() const;
 
@@ -71,7 +72,7 @@ protected:
 
 
 private:
-    std::vector<UPCatalogExplorer> _dataProviders;
+    std::vector<SPCatalogExplorer> _dataProviders;
     bool loadDataThreaded(IlwisObject *obj, const IOOptions &options);
     bool loadDataSingleThread(IlwisObject *obj, const IOOptions &options);
     static std::unique_ptr<MasterCatalogCache> _mcCache;
@@ -79,6 +80,8 @@ private:
 };
 
 }
+
+
 
 
 #endif // CATALOGCONNECTOR_H
