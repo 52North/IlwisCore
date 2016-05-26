@@ -355,4 +355,6 @@ KERNELSHARED_EXPORT bool operator<(const Ilwis::Resource& resource1, const Ilwis
 
 }
 
+Q_DECLARE_METATYPE(Ilwis::Resource)
+
 #endif // RESOURCE_H
