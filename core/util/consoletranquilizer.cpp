@@ -36,6 +36,11 @@ void ConsoleTranquilizer::prepare(const QString &title, const QString &descripti
 
 bool ConsoleTranquilizer::update(double howfar)
 {
+    if ((_current + howfar) > _end) {
+        stop();
+        return false;
+    }
+
     _current += howfar;
     if (_current >= _next) {
         if (_count % 3 == 0)

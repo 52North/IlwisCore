@@ -109,8 +109,6 @@ bool PercentileFilterStretch::execute(ExecutionContext *ctx, SymbolTable& symTab
     PixelIterator inEnd = iterIn.end();
 
     _nb = inputRaster->size().zsize();
-    int rows = inputRaster->size().xsize();
-    int cols = inputRaster->size().ysize();
     std::vector<double> slice(_nb);
     std::vector<int> percentage(_nb);
     int totalRows = low->recordCount(); // same as high->recordCount()
@@ -126,9 +124,8 @@ bool PercentileFilterStretch::execute(ExecutionContext *ctx, SymbolTable& symTab
         }
 
     // timeseries are assumed to be 10 day periods.
-    int pixCount = 0;
     while (iterIn != inEnd) {
-        trq()->update(pixCount++);
+        trq()->update(1);
 
         // get the time slice at the current location
         std::copy(iterIn, iterIn + _nb, slice.begin());
@@ -159,7 +156,6 @@ bool PercentileFilterStretch::execute(ExecutionContext *ctx, SymbolTable& symTab
         iterZone += 1;
     }
 
-    trq()->update(rows * cols);
     trq()->inform("\nWriting...\n");
     trq()->stop();
 

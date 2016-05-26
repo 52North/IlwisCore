@@ -254,14 +254,11 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
     PixelIterator inEnd = iterIn.end();
 
     _nb = inputRaster->size().zsize();
-    int rows = inputRaster->size().xsize();
-    int cols = inputRaster->size().ysize();
     std::vector<double> slice(_nb);
     std::vector<double> fitted(_nb);
     // timeseries are assumed to be 10 day periods.
-    int pixCount = 0;
     while (iterIn != inEnd) {
-        trq()->update(pixCount++);
+        trq()->update(1);
 
         std::copy(iterIn, iterIn + _nb, slice.begin());
         std::vector<bool> valid(_nb);
@@ -288,7 +285,6 @@ bool Timesat::execute(ExecutionContext *ctx, SymbolTable& symTable)
         iterIn += _nb;
         iterOut += _nb;
     }
-    trq()->update(rows * cols);
     trq()->inform("\nWriting...\n");
     trq()->stop();
 

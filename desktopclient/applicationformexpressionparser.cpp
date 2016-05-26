@@ -209,6 +209,10 @@ QString ApplicationFormExpressionParser::dropKeys(IlwisTypes type) const{
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itSTRING) + "\"";
     }
+    if ( hasType(type, itWORKFLOW)){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itWORKFLOW) + "\"";
+    }
     return keypart;
 }
 
