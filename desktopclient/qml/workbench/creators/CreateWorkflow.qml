@@ -182,6 +182,7 @@ Controls.DropableItem{
                 spacing : 5
 
                 Button {
+                    id : createButton
                     text : qsTr("Create & Open")
                     width : parent.width
                     height : 18
@@ -211,7 +212,7 @@ Controls.DropableItem{
                             url : url
                         }
                         var ilwisid = objectcreator.createObject(createInfo)
-                        var resource = mastercatalog.id2Resource(ilwisid)
+                        var resource = mastercatalog.id2Resource(ilwisid, createButton)
                         url = 'Ilwis://operations/' + name + '=' + ilwisid
                         resource.setUrl(url, false)
 

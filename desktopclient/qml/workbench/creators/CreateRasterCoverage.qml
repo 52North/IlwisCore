@@ -20,11 +20,11 @@ Controls.DropableItem{
     function setValue(type, value){
         var resource
         if ( type === "georeference"){
-            resource = mastercatalog.id2Resource(value)
+            resource = mastercatalog.id2Resource(value, inner)
             grfvalue.content = resource.url
         }
         if ( type === "domain"){
-            resource = mastercatalog.id2Resource(value)
+            resource = mastercatalog.id2Resource(value, inner)
             domvalue.content = resource.url
         }
     }
