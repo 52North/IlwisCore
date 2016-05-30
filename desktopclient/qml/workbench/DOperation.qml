@@ -19,9 +19,9 @@ Item{
             Text {
                 id : label
                 text : displayName
-                anchors.top : parent.top
-                width : parent.width - outputIcons.width - inputIcons.width
+                width : parent.width - outputIcons.width
                 height : 17
+                y : 5
                 x : 5
                 font.pointSize: 12
             }
@@ -49,52 +49,52 @@ Item{
                     }
                 }
             }
-            Text {
-                width : 7
-                height : parent.height
-                text : "="
-            }
-            Text {
-                width : 7
-                height : parent.height
-                text : "("
-            }
+//            Text {
+//                width : 7
+//                height : parent.height
+//                text : "="
+//            }
+//            Text {
+//                width : 7
+//                height : parent.height
+//                text : "("
+//            }
 
-            ListView {
-                id : inputIcons
-                model : operations.operation(id).inParameterIconList
-                //anchors.fill: parent
-                height : parent.height
-                width : childrenRect.width
+//            ListView {
+//                id : inputIcons
+//                model : operations.operation(id).inParameterIconList
+//                //anchors.fill: parent
+//                height : parent.height
+//                width : childrenRect.width
 
-                orientation : ListView.Horizontal
-                visible : currentOperation.width > 200
-                delegate: Component{
-                    Image{
-                        y : 2
-                        x : 3
-                        width : 12
-                        height : 12
-                        source : "../images/" + modelData
-                    }
-                }
-            }
-            Text {
-                width : 7
-                height : parent.height
-                text : ")"
-            }
+//                orientation : ListView.Horizontal
+//                visible : currentOperation.width > 200
+//                delegate: Component{
+//                    Image{
+//                        y : 2
+//                        x : 3
+//                        width : 12
+//                        height : 12
+//                        source : "../images/" + modelData
+//                    }
+//                }
+//            }
+//            Text {
+//                width : 7
+//                height : parent.height
+//                text : ")"
+//            }
         }
-        Text {
-            id : operationSyntax
-            text : syntax
-            anchors.top : operationName.bottom
-            width : parent.width
-            height : 12
-            font.pointSize: 8
-            x : 5
-            color : "grey"
-        }
+//        Text {
+//            id : operationSyntax
+//            text : syntax
+//            anchors.top : operationName.bottom
+//            width : parent.width
+//            height : 12
+//            font.pointSize: 8
+//            x : 5
+//            color : "grey"
+//        }
     }
 
     focus : true
