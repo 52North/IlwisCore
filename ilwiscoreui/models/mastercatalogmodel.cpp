@@ -397,7 +397,7 @@ QQmlListProperty<IlwisObjectModel> MasterCatalogModel::selectedData()
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
 }
 
-IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickItem *parent)
+IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QObject *parent)
 {
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
@@ -675,18 +675,18 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
     }
 }
 
-ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
+ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid, QObject *parent)
 {
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
+        ResourceModel *model =new ResourceModel(resource, parent);
         return model;
     }else { // might be an anonymous object
         auto obj = mastercatalog()->get(objectid.toULongLong(&ok));
         if ( obj){
             Resource res = obj->resource();
-            ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
+            ResourceModel *model =new ResourceModel(resource, parent);
             return model;
         }
     }
@@ -713,6 +713,7 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
     if ( path != ""){
         context()->setWorkingCatalog(ICatalog(path));
         _currentUrl = path;
+         mastercatalog()->addContainer(QUrl(path));
     }
 }
 
@@ -790,6 +791,7 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
     ICatalog catalog(cat->url());
     if ( catalog.isValid()){
         context()->setWorkingCatalog(catalog);
+        mastercatalog()->addContainer(cat->url());
     }
 }
 
@@ -893,6 +895,7 @@ void CatalogWorker::process(){
 //                arg(OSHelper::neutralizeFileName(context()->workingCatalog()->resource().url().toString()));
 //        calculatelatLonEnvelopes(query,"working catalog");
         if ( _initial){
+            qDebug() << " also latlon ";
              QString query = QString("(type & %1) != 0").arg(QString::number(itCOVERAGE));
              calculatelatLonEnvelopes(query, "mastercatalog");
         }
@@ -930,53 +933,7 @@ void CatalogWorker::scanContainer(const QUrl& url, bool threading)
          mastercatalog()->addContainer(url);
 
 }
-void CalcLatLon::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
-    try{
-        if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
-            ICoverage cov(resource);
-            if ( cov.isValid()){
-                if ( cov->coordinateSystem()->isLatLon()){
-                    QString envelope = cov->envelope().toString();
-                    resource.addProperty("latlonenvelope",envelope);
-                }else {
-                    Envelope env = cov->envelope();
-                    if ( env.isNull() || !env.isValid())
-                        return;
-                    Envelope llEnvelope = csyWgs84->convertEnvelope(cov->coordinateSystem(), env);
-                    if ( llEnvelope.isNull() || !llEnvelope.isValid())
-                        return;
 
-                    resource.addProperty("latlonenvelope",llEnvelope.toString());
-                }
-                updatedResources.push_back(resource);
-            }
-        }
-    } catch(const ErrorObject&){
-    } catch( std::exception& ){
-    }
-}
-
-void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& name){
-    kernel()->issues()->silent(true);
-
-    std::vector<Resource> resources =mastercatalog()->select(query);
-    UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
-    QString message = QString("calculating latlon envelopes in %1").arg(name);
-    trq->prepare("LatLon Envelopes",message,resources.size());
-    ICoordinateSystem csyWgs84("code=epsg:4326");
-    std::vector<Resource> updatedResources;
-    int count = 0;
-    for(Resource& resource : resources){
-        calcLatLon(csyWgs84, resource, updatedResources);
-        if(!trq->update(1))
-            return;
-        ++count;
-
-    }
-    kernel()->issues()->silent(false);
-    mastercatalog()->updateItems(updatedResources);
-
-}
 
 
 

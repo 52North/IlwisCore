@@ -11,6 +11,7 @@
 #include "workspacemodel.h"
 #include "catalogview.h"
 #include "tranquilizer.h"
+#include "mastercatalog.h"
 #include "ilwiscoreui_global.h"
 
 namespace Ilwis {
@@ -61,7 +62,7 @@ public:
     Q_INVOKABLE WorkSpaceModel *workspace(const QString& name);
     Q_INVOKABLE void deleteBookmark(quint32 index);
     Q_INVOKABLE void setCatalogMetadata(const QString &displayName, const QString &description);
-    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid);
+    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid, QObject *parent);
     Q_INVOKABLE QStringList knownCatalogs(bool fileonly=true);
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshCatalog(const QString& path);
@@ -70,7 +71,7 @@ public:
     Q_INVOKABLE QString getName(const QString& id);
     Q_INVOKABLE QString getUrl(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
-    Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QQuickItem *parent);
+    Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QObject *parent);
     Q_INVOKABLE QStringList select(const QString &filter, const QString& property);
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
@@ -136,14 +137,7 @@ public:
 
 };
 
-class CalcLatLon {
-public:
-    void calculatelatLonEnvelopes(const QString& query, const QString& name);
-private:
-    void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
-};
-
-class CatalogWorker : public QObject, protected CalcLatLon {
+class CatalogWorker : public QObject, protected Ilwis::CalcLatLon {
     Q_OBJECT
 
 public:
