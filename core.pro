@@ -134,7 +134,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
-    core/catalog/mastercatalogcache.cpp
+    core/catalog/mastercatalogcache.cpp \
+    core/catalog/catalogexplorerworker.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -285,7 +286,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/workflow/workflowoperationimplementation.h \
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
-    core/catalog/mastercatalogcache.h
+    core/catalog/mastercatalogcache.h \
+    core/catalog/catalogexplorerworker.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \
