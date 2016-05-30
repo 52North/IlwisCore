@@ -12,6 +12,7 @@ import "../../../workbench" as Bench
 import "../../../Global.js" as Global
 
 Column {
+    id : stepForm
     function showObject(objectid){
         var filter
         // we want the object
@@ -19,7 +20,7 @@ Column {
         if ( !type) // unknow type, we can not show it
             return
         var newPanel = null
-        var resource = mastercatalog.id2Resource(objectid)
+        var resource = mastercatalog.id2Resource(objectid, stepForm)
         // object as 'real' data case
         filter = "itemid=" + resource.id
         // try to find a suitable data pane for it
@@ -29,11 +30,7 @@ Column {
             mastercatalog.setSelectedObjects(objectid)
             bigthing.getWorkbenchPane("objectproperties","visible");
         }
-
-        if ( resource && newPanel){ // the default parent is too generic. so we choose this panel as its true parent
-            resource.makeParent(newPanel) // set the parent correctly as it needs to go as the panels goes and not when the mastercatalog goes(the default parent)
-        }
-    }
+     }
 
 
     height : 250
