@@ -915,7 +915,7 @@ void CatalogWorker::process(){
 void CatalogWorker::scanContainer(const QUrl& url, bool threading)
 {
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    bool useThread = threading && inmainThread;
+    bool useThread = threading && !inmainThread;
     if ( useThread){
          if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(url.toString()))){
              QThread* thread = new QThread;
