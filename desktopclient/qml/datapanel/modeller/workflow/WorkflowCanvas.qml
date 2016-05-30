@@ -181,7 +181,7 @@ Modeller.ModellerWorkArea {
                 }
             }
             if (operationSelected > -1) {
-                var resource = mastercatalog.id2Resource(item.operation.id)
+                var resource = mastercatalog.id2Resource(item.operation.id, area)
                 var filter = "itemid=" + resource.id
                 bigthing.newCatalog(filter, "workflow",resource.url,"other")
             }
