@@ -19,6 +19,10 @@
 #include "connectorfactory.h"
 #include "ilwiscontext.h"
 #include "catalog.h"
+#include "geometries.h"
+#include "coordinatesystem.h"
+#include "coverage.h"
+#include "tranquilizer.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 
@@ -104,7 +108,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
 
     Resource resource = name2Resource(location.toString());
     if ( !resource.isValid() || !hasType(resource.extendedType(), itCATALOG)){
-         resource = Resource(location, itCATALOG);
+        resource = Resource(location, itCATALOG);
     }
 
     ICatalog catalog(resource, options);
@@ -115,8 +119,8 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
 
     addItems({catalog->resource()});
     //if ( catalog->itemCount() > 0){
-        _catalogs.insert(location);
-   // }
+    _catalogs.insert(location);
+    // }
     return true;
 }
 
@@ -204,31 +208,31 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
     Locker<std::recursive_mutex> lock(_guard);
 
     if( items.size() == 0) // nothing to do; not wrong perse
-            return true;
+        return true;
     //InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     InternalDatabaseConnection queryItem, queryProperties;
 
     bool ok = queryItem.prepare("INSERT INTO mastercatalog VALUES(\
-                  :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions, :modifiedtime,:createtime \
-                  )" );
-    if (!ok) {
-        kernel()->issues()->logSql(queryItem.lastError());
-        return false;
+                                :itemid,:name,:code,:description,:container,:rawcontainer,:resource,:rawresource,:urlquery,:type,:extendedtype, :size,:dimensions, :modifiedtime,:createtime \
+                                )" );
+            if (!ok) {
+            kernel()->issues()->logSql(queryItem.lastError());
+            return false;
 
-    }
+}
 
-    ok = queryProperties.prepare("INSERT INTO catalogitemproperties VALUES(\
-                   :propertyvalue,:propertyname,:itemid\
-                 )" );
-    if (!ok) {
-        kernel()->issues()->logSql(queryItem.lastError());
-        return false;
-    }
-    std::set<QUrl> containers;
+            ok = queryProperties.prepare("INSERT INTO catalogitemproperties VALUES(\
+                                         :propertyvalue,:propertyname,:itemid\
+                                         )" );
+            if (!ok) {
+            kernel()->issues()->logSql(queryItem.lastError());
+            return false;
+}
+            std::set<QUrl> containers;
 
     for(const Resource &resource : items) {
         if (!resource.isValid())
-           continue;
+            continue;
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
         if ( mastercatalog()->contains(resource.id())){
@@ -240,7 +244,7 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
     }
-   // db.exec("COMMIT TRANSACTION");
+    // db.exec("COMMIT TRANSACTION");
     // dont start sending message when the whole system is starting and dont send when we are not using a UI
     if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent){
         emit contentChanged(containers);
@@ -256,7 +260,7 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
     Locker<std::recursive_mutex> lock(_guard);
     //InternalDatabaseConnection db("BEGIN IMMEDIATE TRANSACTION");
     if( iteme.size() == 0) // nothing to do; not wrong perse
-            return true;
+        return true;
 
     InternalDatabaseConnection queryItem, queryProperties;
 
@@ -283,8 +287,8 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
 
     UrlSet containers;
     ok = queryProperties.prepare("INSERT INTO catalogitemproperties VALUES(\
-                   :propertyvalue,:propertyname,:itemid\
-                 )" );
+                                 :propertyvalue,:propertyname,:itemid\
+                                 )" );
     if (!ok) {
         kernel()->issues()->logSql(queryItem.lastError());
         return false;
@@ -292,19 +296,20 @@ bool MasterCatalog::updateItems(const std::vector<Resource>& iteme, bool silent)
 
     for(const Resource &resource : iteme) {
         if (!resource.isValid() || !resource.hasChanged())
-           continue;
+            continue;
 
         InternalDatabaseConnection deleteQuery;
         deleteQuery.exec("DELETE from catalogitemproperties WHERE itemid=" + QString::number(resource.id())) ;
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
     }
-   // db.exec("COMMIT TRANSACTION");
+    // db.exec("COMMIT TRANSACTION");
 
-            // dont start sending message when the whole system is starting and dont send when we are not using a UI
-            if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent){
-            emit contentChanged(containers);
-}
+    // dont start sending message when the whole system is starting and dont send when we are not using a UI
+    if ( hasType(context()->runMode() ,rmDESKTOP) && context()->initializationFinished() && containers.size() > 0 && !silent){
+            if ( iteme.size() > 0)
+                emit contentChanged(containers);
+    }
 
     return true;
 
@@ -315,7 +320,7 @@ quint64 MasterCatalog::url2id(const QUrl &url, IlwisTypes tp, bool casesensitive
     Locker<std::recursive_mutex> lock(_guard);
     QString query = QString("select itemid,type from mastercatalog where (resource = '%1' or rawresource = '%1')").arg(url.toString());
     if (!casesensitive)
-       query = QString("select itemid,type from mastercatalog where lower(resource) = '%1' or lower(rawresource) = '%1'").arg(url.toString().toLower()) ;
+        query = QString("select itemid,type from mastercatalog where lower(resource) = '%1' or lower(rawresource) = '%1'").arg(url.toString().toLower()) ;
     InternalDatabaseConnection db(query);
     while ( db.next()) {
         auto rec = db.record();
@@ -358,7 +363,7 @@ quint64 MasterCatalog::name2id(const QString &name, IlwisTypes tp) const
 
 bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, const QVariant &var, bool extended)
 {
-   Locker<std::recursive_mutex> lock(_guard);
+    Locker<std::recursive_mutex> lock(_guard);
     auto setExtended = [](quint64 objectid, const QString &attribute, const QVariant &var)->QString{
         QString statement;
         Resource res = mastercatalog()->id2Resource(var.toLongLong());
@@ -397,7 +402,7 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
 }
 
 IlwisTypes MasterCatalog::id2type(quint64 iid) const {
-   Locker<std::recursive_mutex> lock(_guard);
+    Locker<std::recursive_mutex> lock(_guard);
     QString query = QString("select type from mastercatalog where itemid = %1").arg(iid);
     InternalDatabaseConnection results(query);
     if ( results.next()) {
@@ -409,7 +414,7 @@ IlwisTypes MasterCatalog::id2type(quint64 iid) const {
 
 Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 {
-   Locker<std::recursive_mutex> lock(_guard);
+    Locker<std::recursive_mutex> lock(_guard);
 
     if ( name == sUNDEF)
         return Resource();
@@ -439,8 +444,8 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
         query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                         where ( mastercatalog.resource='%1' or mastercatalog.rawresource='%1') and mastercatalog.itemid=catalogitemproperties.itemid\
                 and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName.toString()).arg(tp);
-        InternalDatabaseConnection db(query);
-        bool isExternalRef = true;
+                InternalDatabaseConnection db(query);
+                bool isExternalRef = true;
         while ( db.next()){ // external reference finding
             isExternalRef = false;
             bool ok;
@@ -463,16 +468,16 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
 }
 
 QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
-   Locker<std::recursive_mutex> lock(_guard);
+    Locker<std::recursive_mutex> lock(_guard);
 
     if ( name.contains(QRegExp("\\\\|/"))) { // is there already path info; then assume it is already a unique resource
         bool ok = OSHelper::isAbsolute(name); // name might be a partial path
         if ( ok && !OSHelper::isFileName(name))
-    // translate name to url; we have the following cases
-    // * already is a path, no big deal; just make an url of it
-    // * is a code; construct a path leading to the internal connector as all codes are handled there
-    // * no, path, no code. So it must be in the current working catalog.
-    // * backup case. we try it by name. may fail as names are not necessarily unique. system is robust enough to handle fail cases
+            // translate name to url; we have the following cases
+            // * already is a path, no big deal; just make an url of it
+            // * is a code; construct a path leading to the internal connector as all codes are handled there
+            // * no, path, no code. So it must be in the current working catalog.
+            // * backup case. we try it by name. may fail as names are not necessarily unique. system is robust enough to handle fail cases
 
             return name;
         if ( ok){
@@ -629,7 +634,7 @@ std::vector<Resource> MasterCatalog::select(const QUrl &resource, const QString 
     else
         query = QString("select * from mastercatalog,catalogitemproperties where mastercatalog.container = '%1' and mastercatalog.itemid = catalogitemproperties.itemid %2").arg(resource.toString(), rest);
 
-   // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
+    // query = "select * from mastercatalog,catalogitemproperties where mastercatalog.container = 'ilwis://operations' and mastercatalog.itemid = catalogitemproperties.itemid";
     InternalDatabaseConnection results(query);
     std::vector<Resource> items;
     while( results.next()) {
@@ -656,6 +661,57 @@ void MasterCatalog::registerObject(ESPIlwisObject &data)
 }
 
 
+//----------------------------------------------------------
+
+void calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
+
+    if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
+        ICoverage cov(resource);
+        if ( cov.isValid()){
+            if ( cov->coordinateSystem()->isLatLon()){
+                QString envelope = cov->envelope().toString();
+                resource.addProperty("latlonenvelope",envelope);
+            }else {
+                Envelope env = cov->envelope();
+                if ( env.isNull() || !env.isValid())
+                    return;
+                Envelope llEnvelope = csyWgs84->convertEnvelope(cov->coordinateSystem(), env);
+                if ( llEnvelope.isNull() || !llEnvelope.isValid())
+                    return;
+
+                resource.addProperty("latlonenvelope",llEnvelope.toString());
+            }
+            updatedResources.push_back(resource);
+        }
+    }
+
+}
+
+void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& name){
+    try{
+        kernel()->issues()->silent(true);
+
+        std::vector<Resource> resources =mastercatalog()->select(query);
+        UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+        QString message = QString("calculating latlon envelopes in %1").arg(name);
+        trq->prepare("LatLon Envelopes",message,resources.size());
+        ICoordinateSystem csyWgs84("code=epsg:4326");
+        std::vector<Resource> updatedResources;
+        int count = 0;
+        for(Resource& resource : resources){
+            calcLatLon(csyWgs84, resource, updatedResources);
+            if(!trq->update(1))
+                return;
+            ++count;
+
+        }
+        kernel()->issues()->silent(false);
+        mastercatalog()->updateItems(updatedResources);
+    } catch(const ErrorObject&){
+    } catch( std::exception& ){
+    }
+
+}
 
 #ifdef QT_DEBUG
 

@@ -19,6 +19,7 @@ class Resource;
 class CatalogConnector;
 class Catalog;
 class IlwisObject;
+class CoordinateSystem;
 
 typedef std::shared_ptr<IlwisObject> ESPIlwisObject;
 /*!
@@ -216,6 +217,11 @@ private:
 //typedef QHash<IlwisResource, QList<CatalogCreate>  > CatalogCollection;
 
 KERNELSHARED_EXPORT MasterCatalog* mastercatalog();
+
+class KERNELSHARED_EXPORT CalcLatLon {
+public:
+    void calculatelatLonEnvelopes(const QString& query, const QString& name);
+};
 
 }
 
