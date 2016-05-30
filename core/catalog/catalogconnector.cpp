@@ -123,9 +123,9 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 
 bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
 
-    if ( context()->runMode() == rmDESKTOP){
-        return loadDataThreaded(obj,options);
-    }
+//    if ( context()->runMode() == rmDESKTOP){
+//        return loadDataThreaded(obj,options);
+//    }
     return loadDataSingleThread(obj,options);
 }
 
@@ -187,11 +187,7 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     thread->connect(worker, &CatalogExplorerWorker::finished, thread, &QThread::quit);
     thread->connect(worker, &CatalogExplorerWorker::finished, worker, &CatalogExplorerWorker::deleteLater);
     thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    //thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
     thread->start();
-//    QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
-//    res.waitForFinished();
-//    mastercatalog()->addItems(res.result());
     return true;
 }
 
