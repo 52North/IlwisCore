@@ -49,6 +49,8 @@ quint32 Catalog::itemCount() const
 
 void Catalog::scan()
 {
+    Locker<> lock(_mutex);
+
     if (! connector().isNull()){
         if( connector()->loadData(this)){
             setValid(true);
@@ -161,6 +163,18 @@ IlwisObject *Catalog::clone()
     copyTo(catalog);
 
     return catalog;
+}
+
+bool Catalog::isSpatialDataLocation(const QUrl &url)
+{
+    QString loc = url.toString();
+    if ( loc.indexOf("ilwis://system/coverages") == 0)
+        return true;
+    if ( loc.indexOf("ilwis://system") == 0)
+        return false;
+    if ( loc.indexOf("ilwis://operations") == 0)
+        return false;
+    return true;
 }
 
 IIlwisObject Catalog::createObject(const QVariant &indexValue) const

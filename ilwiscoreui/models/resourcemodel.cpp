@@ -68,9 +68,7 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
 }
 
 ResourceModel::~ResourceModel()
-{
-    resourcemanager()->deref("resourcemodel",_item.id(), false);
-}
+{}
 
 QString ResourceModel::imagePath() const
 {

@@ -61,7 +61,7 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
             }
         }
         if ( _masterCsy == 0) {// first real layer sets the csy
-            _masterCsy = resourcemanager()->createResourceModel("resourcemodel", coverage->coordinateSystem()->resource());
+            _masterCsy = new ResourceModel(coverage->coordinateSystem()->resource(), this);
             _viewEnvelope = coverage->envelope();
             emit coordinateSystemChanged();
         }

@@ -17,7 +17,7 @@ Controls.DropableItem{
 
     function setValue(type, value){
         if ( type === "coordinatesystem"){
-            var resource = mastercatalog.id2Resource(value)
+            var resource = mastercatalog.id2Resource(value, dataarea)
             csypart.content = resource.url
         }
     }

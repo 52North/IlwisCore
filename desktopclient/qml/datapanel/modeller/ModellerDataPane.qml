@@ -22,7 +22,7 @@ Item {
             if (sourceType === "workflow") {
                 model = scenarios.create()
 
-                var resource = mastercatalog.id2Resource(filter.split('=')[1]);
+                var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
                 canvas.workflow = model.addWorkflow(filter);
                 manager.setLayerIndex(3)
                 if (resource) {

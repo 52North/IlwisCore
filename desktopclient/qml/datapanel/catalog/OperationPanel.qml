@@ -23,7 +23,7 @@ Item {
         var newPanel = null
         if ( !type)
             return
-        var resource = mastercatalog.id2Resource(objectid)
+        var resource = mastercatalog.id2Resource(objectid, catalogViews)
         if ( resource){
             if ( resource.typeName === "workflow"){
                 var filter = "itemid=" + resource.id

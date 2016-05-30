@@ -118,6 +118,7 @@ public:
     IlwisObject *clone();
 
     static const QString DEFAULT_WORKSPACE;
+    static bool isSpatialDataLocation(const QUrl& url);
 
 protected:
     virtual IIlwisObject createObject(const QVariant& indexValue) const;

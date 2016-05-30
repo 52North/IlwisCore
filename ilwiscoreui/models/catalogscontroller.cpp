@@ -72,7 +72,7 @@ void CatalogsController::getResourceList(const Ilwis::Resource& resource, const 
     std::vector<Resource> items = catalog->items();
     std::sort(items.begin(), items.end());
     foreach(const Ilwis::Resource& item , items) {
-        list.append(resourcemanager()->createResourceModel("resourcemodel",item));
+        list.append(new ResourceModel(item));
     }
 }
 
@@ -82,11 +82,11 @@ void CatalogsController::makePathList(const Ilwis::Resource& resource) {
 
     Ilwis::Resource res = resource;
 
-    pathList.push_front(resourcemanager()->createResourceModel("resourcemodel",res));
+    pathList.push_front(new ResourceModel(res));
     while(res.name() != "root") {
         quint64 id = Ilwis::mastercatalog()->url2id(res.container(), itCATALOG);
         res = Ilwis::mastercatalog()->id2Resource(id);
-        pathList.push_front(resourcemanager()->createResourceModel("resourcemodel",res));
+        pathList.push_front(new ResourceModel(res));
     }
 }
 

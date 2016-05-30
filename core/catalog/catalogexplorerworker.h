@@ -4,7 +4,11 @@
 #include <QObject>
 #include <memory>
 
+#include "kernel.h"
+#include "ilwisdata.h"
 #include "iooptions.h"
+#include "catalog.h"
+#include "mastercatalog.h"
 
 namespace Ilwis {
 
@@ -15,7 +19,7 @@ class IOOptions;
 typedef std::shared_ptr<CatalogExplorer> SPCatalogExplorer;
 
 }
-class CatalogExplorerWorker : public QObject {
+class CatalogExplorerWorker : public QObject, private Ilwis::CalcLatLon {
     Q_OBJECT
 
 public:

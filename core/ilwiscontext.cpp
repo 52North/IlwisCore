@@ -137,6 +137,7 @@ void IlwisContext::init(const QString &ilwisDir)
     }
     if ( loc != ""){
         setWorkingCatalog(ICatalog(loc));
+        mastercatalog()->addContainer(QUrl(loc));
         if ( hasType(_runMode, rmCOMMANDLINE)){
             mastercatalog()->addContainer(loc);
         }
@@ -188,18 +189,17 @@ const ICatalog &IlwisContext::lastUsedLocalFolder() const
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
 
-
+    Locker<> lock(_lock);
     // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
     if ( !cat.isValid() || cat->resource().url().toString() == Catalog::DEFAULT_WORKSPACE)
         return;
 
-    _lock.lock();
+
     QThread *thread = QThread::currentThread();
     QVariant var;
     var.setValue(cat);
     thread->setProperty("workingcatalog", var);
-    _lock.unlock();
-    mastercatalog()->addContainer(cat->resource().url());
+   // mastercatalog()->addContainer(cat->resource().url());
     context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->resource().url().toString());
     QFileInfo inf(cat->resource().url().toLocalFile());
     if ( inf.isDir()){

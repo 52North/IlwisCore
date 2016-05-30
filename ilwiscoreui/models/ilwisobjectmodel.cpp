@@ -462,7 +462,8 @@ QString IlwisObjectModel::pixSizeString() const{
 
 QString IlwisObjectModel::centerPixelLocation() const{
     Envelope envLatLon(Coordinate(-180,-61), Coordinate(180,81));
-    QString code = QString("code=georef:type=corners,csy=epsg:4326,envelope=%1,gridsize=301 120,name=templocal").arg(envLatLon.toString());
+    QString anonName = Identity::newAnonymousName();
+    QString code = QString("code=georef:type=corners,csy=epsg:4326,envelope=%1,gridsize=301 120,name=%2").arg(envLatLon.toString()).arg(anonName);
     IGeoReference grf(code);
     if ( grf.isValid()){
         Envelope envelope;

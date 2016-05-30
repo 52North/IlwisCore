@@ -222,6 +222,7 @@ bool IssueLogger::silent() const
 
 void IssueLogger::silent(bool yesno)
 {
+    Locker<std::recursive_mutex> lock(_guard);
     std::thread::id id = std::this_thread::get_id();
     if ( yesno == false){
         auto iter = _silentThreads.find(id) ;

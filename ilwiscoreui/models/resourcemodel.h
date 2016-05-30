@@ -46,6 +46,7 @@ public:
     ResourceModel();
     ResourceModel(const ResourceModel& model);
     ResourceModel& operator=(const ResourceModel& model);
+    explicit ResourceModel(const Ilwis::Resource &source, QObject *parent = 0);
     virtual ~ResourceModel();
     QString imagePath() const;
     quint64 type() const;
@@ -99,7 +100,7 @@ protected:
     QString _displayName;
     virtual Ilwis::Resource& itemRef();
     virtual const Ilwis::Resource& itemRef() const;
-    explicit ResourceModel(const Ilwis::Resource &source, QObject *parent = 0);
+
 private:
     QString propertyTypeName(quint64 typ, const QString &propertyName) const;
     QString propertyName(const QString &property) const;

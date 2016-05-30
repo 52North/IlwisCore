@@ -164,7 +164,7 @@ quint64 NaturalLogarithmCoverage::createMetadata() {
 double abs2(double v){
     if ( v == rUNDEF)
         return rUNDEF;
-    return v;
+    return std::abs(v);
 }
 REGISTER_OPERATION(AbsCoverage)
 AbsCoverage::AbsCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", abs2)

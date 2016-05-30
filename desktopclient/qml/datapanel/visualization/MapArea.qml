@@ -7,7 +7,7 @@ import "../../controls" as Controls
 import LayersView 1.0
 
 DropArea {
-
+    id : dropArea
     property alias drawer : renderer
 
     function entireMap() {
@@ -27,7 +27,7 @@ DropArea {
     }
 
     onDropped: {
-        var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid)
+        var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid, dropArea)
         addDataSource(resource.url, resource.name, resource.typeName)
     }
 
