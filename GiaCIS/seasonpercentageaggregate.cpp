@@ -106,7 +106,6 @@ Ilwis::OperationImplementation::State SeasonPercentageAggregate::prepare(Executi
     _nb = inputRaster->size().zsize();
     if (_doRunning) {
         auto sz = inputRaster->size();
-        sz.zsize(std::min(_nb, 5));
         outputRaster->size(sz);
     }
 
@@ -132,14 +131,11 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
     IRasterCoverage zoneRaster = _inputZones.as<RasterCoverage>();
 
+    // Open the input maplist; the first band is assumed to be the first dekad of the year (1st of January)
+    // The number of bands may vary, because the data is evaluated every dekad.
     PixelIterator iterIn(inputRaster, BoundingBox(), PixelIterator::fZXY);
     PixelIterator iterZone(zoneRaster, BoundingBox(), PixelIterator::fXYZ); // only one layer so Z is irrelevant
     PixelIterator iterOut(outputRaster, BoundingBox(), PixelIterator::fZXY);
-
-    // Open the input maplist; the first band is assumed to be the first dekad of the year (1st of January)
-    // The number of bands may vary, because the data is evaluated every dekad.
-    int rows = inputRaster->size().xsize();
-    int cols = inputRaster->size().ysize();
 
     // read the season table, indicating per zone and dekad if we are in season (start at dekad 1 == 1 january)
     ZoneSeasons<int> zoneSeas;
@@ -158,8 +154,8 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
 
     std::vector<double> perc(_nb);
     std::vector<double> psum(_nb);
-    auto fromZ = (_doRunning) ? _nb - 5 : _nb - 1;
-    int incZ = (_doRunning) ? std::min(_nb, 5) : 1;
+    auto fromZ = (_doRunning) ? 0 : _nb - 1;
+    int incZ = (_doRunning) ? _nb : 1;
     while (iterIn != iterIn.end()) {
         trq()->update(1);
 
@@ -204,7 +200,6 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
         iterZone += 1;
     }
 
-    trq()->update(rows * cols);
     trq()->inform("\nWriting...\n");
     trq()->stop();
 
@@ -226,7 +221,7 @@ quint64 SeasonPercentageAggregate::createMetadata()
 {
     OperationResource operation({"ilwis://operations/seasonpercentageaggregate"});
     operation.setLongName("Average percentages per season");
-    operation.setSyntax("seasonpercentageaggregate(inputgridcoverage,inputzonecoverage,seasontable,inputgridstartdate)");
+    operation.setSyntax("seasonpercentageaggregate(inputgridcoverage,inputzonecoverage,lowpercenttable,highpercenttable,seasontable[,dorunningaverage])");
     operation.setDescription(TR("Determine average payment percentage per growing season and zonal location"));
     operation.setInParameterCount({5,6});
     operation.addInParameter(0, itRASTER, TR("Input rastercoverage"),TR("Input time series rastercoverage with payment percentages"));
@@ -234,7 +229,7 @@ quint64 SeasonPercentageAggregate::createMetadata()
     operation.addInParameter(2, itTABLE, TR("Low percentile zonal table"),TR("Table contains lower bound NDVI values per decad per zone") );
     operation.addInParameter(3, itTABLE, TR("High percentile zonal table"),TR("Table contains upper bound NDVI values per decad per zone") );
     operation.addInParameter(4, itTABLE, TR("Season table"),TR("Table contains growing season per zonal area and per dekad") );
-    operation.addOptionalInParameter(5, itBOOL, TR("Apply running average"),TR("Calculate a running average percentage over the last 5 dekads") );
+    operation.addOptionalInParameter(5, itBOOL, TR("Apply running average"),TR("Calculate a running average percentage over the entire maplist") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("Average payment percentages"));
     operation.setKeywords("raster, zonal, payment, percentages, aggregate, mean");

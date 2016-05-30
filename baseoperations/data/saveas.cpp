@@ -30,6 +30,7 @@ bool SaveAs::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     _inputObject->connectTo(_outputUrl,_format,_provider,IlwisObject::cmOUTPUT);
+    _inputObject->store();
 
     return true;
 }
@@ -60,10 +61,10 @@ quint64 SaveAs::createMetadata()
     operation.setSyntax("saveas(inputobject,url,outputformat, outputprovider)");
     operation.setDescription(TR("saves the object in a certain format"));
     operation.setInParameterCount({4});
-    operation.addInParameter(0,itRASTER|itFEATURE|itTABLE , TR("input object"),TR("Raster, feature or table"));
-    operation.addInParameter(1,itSTRING, "Output url");
-    operation.addInParameter(2,itSTRING, TR("format"), TR("format code as determined by the provider"));
-    operation.addInParameter(3,itSTRING, TR("provider"), TR("provider/library that will translate the object"));
+    operation.addInParameter(0,itRASTER|itFEATURE|itTABLE|itWORKFLOW, TR("Input object"),TR("Raster, feature, table or workflow"));
+    operation.addInParameter(1,itSTRING, TR("Output url"), TR("Destination url for output"));
+    operation.addInParameter(2,itSTRING, TR("Format"), TR("format code as determined by the provider"));
+    operation.addInParameter(3,itSTRING, TR("Provider"), TR("provider/library that will translate the object"));
     operation.setOutParameterCount({0});
     operation.setKeywords("export, format");
 

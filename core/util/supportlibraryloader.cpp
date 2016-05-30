@@ -69,7 +69,7 @@ void SupportLibraryLoader::loadLibraries() const{
         lib.setFileName(path);
         ok = lib.load();
         if ( !ok){
-            ERROR2(ERR_COULD_NOT_LOAD_2, TR("name"), "connector");
+            ERROR2(ERR_COULD_NOT_LOAD_2, name.second, "connector");
         }
     }
 }
