@@ -112,19 +112,24 @@ bool BinaryMathRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 }
 
 bool BinaryMathRaster::prepareCoverageCoverage() {
-    QString raster =  _expression.parm(0).value();
+    QString raster = _expression.parm(0).value();
     if (!_inputGC1.prepare(raster)) {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    raster =  _expression.parm(1).value();
+    raster = _expression.parm(1).value();
     if (!_inputGC2.prepare(raster)) {
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    bool isNumeric = _inputGC1->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN && _inputGC2->datadef().domain<>()->ilwisType() == itNUMERICDOMAIN;
-    if (!isNumeric)
+    if (_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN) {
+        kernel()->issues()->log(TR("Math operation attempted on non-numeric raster %1").arg(_inputGC1->name()));
         return false;
+    }
+    if (_inputGC2->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN) {
+        kernel()->issues()->log(TR("Math operation attempted on non-numeric raster %1").arg(_inputGC2->name()));
+        return false;
+    }
 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
@@ -164,13 +169,15 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
         kernel()->issues()->log(TR(ERR_COULD_NOT_LOAD_2).arg(raster, ""));
         return false;
     }
-    if(_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN)
+    if(_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN) { // an itCOLORDOMAIN fails here, without reporting a clear reason to the user
+        kernel()->issues()->log(TR("Math operation attempted on non-numeric raster %1").arg(_inputGC1->name()));
         return false;
+    }
 
     _number1 = _expression.parm(nindex).value().toDouble();
 
     OperationHelperRaster helper;
-    _box = helper.initialize(_inputGC1, _outputGC,itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+    _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     auto nrange = _inputGC1->datadef().range<NumericRange>();
     if (nrange.isNull())
@@ -202,7 +209,7 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
 
     mathoperator(_expression.parm(2).value());
 
-    if ( (ptype1 == itRASTER && hasType(ptype2,itNUMBER)) || (ptype2 == itRASTER && hasType(ptype1,itNUMBER)) ) {
+    if ( (hasType(ptype1,itRASTER) && hasType(ptype2,itNUMBER)) || (hasType(ptype2,itRASTER) && hasType(ptype1,itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
 
