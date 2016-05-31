@@ -9,7 +9,8 @@ Rectangle {
     property double maxSize : 100
     property double currentSize : 100
     property double currentPosition : -1
-   property int oldPosition: -10000
+    property int oldPosition: -10000
+    property int viewportVerticalScrollPosition: -1
 
     signal scrolled(double position)
 
@@ -31,6 +32,62 @@ Rectangle {
             pos = 0
         return pos;
     }
+
+    function scroll(offset){
+        console.log("viewportVerticalScrollPosition", viewportVerticalScrollPosition)
+
+        var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
+        var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
+
+        if (viewportVerticalScrollPosition == -1) {
+            viewportVerticalScrollPosition = marea.height / 2
+        }
+
+        //var viewportMax = marea.height * (maxSize - currentSize)/maxSize;
+        var viewportMax = marea.height * maxSize;
+
+
+        console.log("***** DEBUG *****")
+        console.log("maxSize ", maxSize)
+        console.log("viewportMax ", viewportMax)
+        console.log("viewportVerticalScrollPosition ", viewportVerticalScrollPosition)
+        console.log("offset ", offset)
+        console.log("scrollerTopThumbPos ", scrollerTopThumbPos)
+        console.log("scrollerBottomThumbPos ", scrollerBottomThumbPos)
+
+
+        if (scrollerTopThumbPos + offset < 0) // try to keep the scrolling positions limited to upper/bottom positions
+            offset =  -scrollerTopThumbPos;
+
+        if (scrollerBottomThumbPos + offset > viewportMax) // try to keep the scrolling positions limited to upper/bottom positions
+            offset =  viewportMax - scrollerBottomThumbPos;
+
+        console.log("offset ", offset)
+
+        if ( (scrollerTopThumbPos + offset) >= 0 && (scrollerBottomThumbPos + offset) <= viewportMax){
+            viewportVerticalScrollPosition += offset
+            if ( oldPosition == -10000){
+                oldPosition = viewportVerticalScrollPosition // keep for the scroller draggable button
+            }
+
+            var rely = viewportVerticalScrollPosition / marea.height
+            var oldRely = oldPosition / marea.height
+            var difrely = rely - oldRely;
+            currentPosition = currentPosition + maxSize * difrely
+            if ( currentPosition > maxSize - currentSize)
+                currentPosition = maxSize - currentSize
+            if ( (currentPosition) < 0)
+                currentPosition = 0
+            scrolled(currentPosition)
+            console.log("currentPosition ", currentPosition)
+
+            oldPosition = viewportVerticalScrollPosition
+        }
+        console.log("onPositionChanged oldPosition ", oldPosition)
+    }
+
+
+
     Button{
         id : topMarker
         height : 14
@@ -42,8 +99,9 @@ Rectangle {
             width : 6
             height : 8
             anchors.centerIn: parent
-            rotation: 90
+            rotation: -180
         }
+        onClicked: scroll(-10)
     }
     Button{
         id : bottomMarker
@@ -51,13 +109,15 @@ Rectangle {
         width : parent.width - 2
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom : parent.bottom
+        anchors.bottomMargin: parent.width
         Image {
             source : "../images/darkbluearrow.png"
             width : 6
             height : 8
             anchors.centerIn: parent
-            rotation: -90
+            rotation: 0
         }
+        onClicked: scroll(10)
     }
 
     Button {
@@ -74,14 +134,18 @@ Rectangle {
         width : parent.width
         hoverEnabled: true
 
-
         onPositionChanged: {
             if ( pressed){
                 var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
                 var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
+
+                console.log("mouse.y ", mouse.y)
                 if ( mouse.y > scrollerTopThumbPos && mouse.y < scrollerBottomThumbPos){
-                    if ( oldPosition != -10000){
-                        var rely = mouse.y / marea.height
+                    viewportVerticalScrollPosition = mouse.y;
+                    if ( oldPosition == -10000){
+                        oldPosition = viewportVerticalScrollPosition
+                    }
+                        var rely = viewportVerticalScrollPosition / marea.height
                         var oldRely = oldPosition / marea.height
                         var difrely = rely - oldRely;
                         currentPosition = currentPosition + maxSize * difrely
@@ -90,8 +154,18 @@ Rectangle {
                         if ( (currentPosition) < 0)
                             currentPosition = 0
                         scrolled(currentPosition)
-                    }
-                    oldPosition = mouse.y
+                        console.log("currentPosition ", currentPosition)
+
+                        oldPosition = viewportVerticalScrollPosition
+                    //}
+
+                    console.log("onPositionChanged oldPosition ", oldPosition)
+
+                        console.log("***** DEBUG *****")
+                        console.log("maxSize ", maxSize)
+                        console.log("scrollerTopThumbPos ", scrollerTopThumbPos)
+                        console.log("scrollerBottomThumbPos ", scrollerBottomThumbPos)
+
 
                 }
             }
