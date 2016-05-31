@@ -50,7 +50,7 @@ public:
     Ilwis::IlwisObject *create() const;
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
 
-    virtual ~CatalogConnector() ;
+    virtual ~CatalogConnector() {}
 
     QString provider() const;
 

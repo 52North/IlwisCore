@@ -280,6 +280,18 @@ WorkSpaceModel *UIContextModel::currentWorkSpace() const
     return _currentWorkSpace;
 }
 
+MasterCatalogModel *UIContextModel::masterCatalogModel() const
+{
+    QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
+        if (mcmodel){
+            return mcmodel;
+        }
+    }
+    return 0;
+}
+
 void UIContextModel::setCurrentWorkSpace(WorkSpaceModel *cws)
 {
     if ( !_qmlcontext)

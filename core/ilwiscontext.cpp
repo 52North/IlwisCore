@@ -2,7 +2,6 @@
 #include <QDir>
 #include <QDesktopServices>
 #include <QJsonDocument>
-#include <QThread>
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "errorobject.h"
@@ -31,7 +30,7 @@ IlwisContext* Ilwis::context(const QString & ilwisDir, int runMode) {
 
 
 
-IlwisContext::IlwisContext(int runMode) : _memoryLimit(9e8), _memoryLeft(_memoryLimit), _runMode(runMode)
+IlwisContext::IlwisContext(int runMode) : _workingCatalog(0), _memoryLimit(9e8), _memoryLeft(_memoryLimit), _runMode(runMode)
 {
     // _workingCatalog = new Catalog(); // empty catalog>
 
@@ -39,8 +38,8 @@ IlwisContext::IlwisContext(int runMode) : _memoryLimit(9e8), _memoryLeft(_memory
 
 IlwisContext::~IlwisContext()
 {
-    if ( workingCatalog().isValid()){
-        _configuration.putValue("users/" + currentUser() + "/workingcatalog", workingCatalog()->resource().url().toString());
+    if ( _workingCatalog.isValid()){
+        _configuration.putValue("users/" + currentUser() + "/workingcatalog",_workingCatalog->resource().url().toString());
         _configuration.store();
     }
 }
@@ -127,22 +126,6 @@ void IlwisContext::init(const QString &ilwisDir)
     for(QString file : files)
         localDir.remove(file);
 
-    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
-    if ( loc == ""){
-        loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
-        QDir datadir(loc);
-        datadir.mkpath(loc);
-        loc = QUrl::fromLocalFile(loc).toString();
-
-    }
-    if ( loc != ""){
-        setWorkingCatalog(ICatalog(loc));
-        mastercatalog()->addContainer(QUrl(loc));
-        if ( hasType(_runMode, rmCOMMANDLINE)){
-            mastercatalog()->addContainer(loc);
-        }
-    }
-
     mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
     mastercatalog()->addContainer(persistentInternalCatalog());
     mastercatalog()->addContainer(QUrl("ilwis://operations"));
@@ -155,7 +138,20 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/projections"));
     mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
 
+    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
+    if ( loc == ""){
+        loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
+        QDir datadir(loc);
+        datadir.mkpath(loc);
+        loc = QUrl::fromLocalFile(loc).toString();
 
+    }
+    if ( loc != ""){
+        _workingCatalog = ICatalog(loc);
+        if ( hasType(_runMode, rmCOMMANDLINE)){
+            mastercatalog()->addContainer(loc);
+        }
+    }
     if (!hasType(_runMode, rmDESKTOP)){
         initializationFinished(true);
     }
@@ -163,17 +159,10 @@ void IlwisContext::init(const QString &ilwisDir)
 }
 
 ICatalog IlwisContext::workingCatalog() const{
-    Locker<> lock(_lock);
-    QThread *thread = QThread::currentThread();
-    QVariant var = thread->property("workingcatalog");
-    if ( var.isValid()){
-        ICatalog cat = var.value<ICatalog>();
-        if (cat.isValid())
-            return cat;
-    }
-    QString loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
-    return ICatalog(QUrl::fromLocalFile(loc).toString());
+//    if ( _workingCatalog.hasLocalData())
+//        return static_cast<Catalog *>(_workingCatalog.localData());
 
+    return _workingCatalog;
 }
 
 const ICatalog &IlwisContext::systemCatalog() const
@@ -188,18 +177,12 @@ const ICatalog &IlwisContext::lastUsedLocalFolder() const
 
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
-
-    Locker<> lock(_lock);
     // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
     if ( !cat.isValid() || cat->resource().url().toString() == Catalog::DEFAULT_WORKSPACE)
         return;
 
-
-    QThread *thread = QThread::currentThread();
-    QVariant var;
-    var.setValue(cat);
-    thread->setProperty("workingcatalog", var);
-   // mastercatalog()->addContainer(cat->resource().url());
+    mastercatalog()->addContainer(cat->resource().url());
+    _workingCatalog = cat;
     context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->resource().url().toString());
     QFileInfo inf(cat->resource().url().toLocalFile());
     if ( inf.isDir()){
@@ -280,7 +263,7 @@ void IlwisContext::runMode(int mode)
 
 bool IlwisContext::initializationFinished() const
 {
-   // Locker<std::mutex> locker(_lock);
+   // Locker<stdV::mutex> locker(_lock);
     return _initializationFinished;
 }
 
