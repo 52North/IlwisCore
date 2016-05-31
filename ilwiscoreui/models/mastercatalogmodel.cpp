@@ -676,13 +676,13 @@ ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
+        ResourceModel *model = new ResourceModel(resource, this);
         return model;
     }else { // might be an anonymous object
         auto obj = mastercatalog()->get(objectid.toULongLong(&ok));
         if ( obj){
             Resource res = obj->resource();
-            ResourceModel *model =resourcemanager()->createResourceModel("resourcemodel",resource);
+            ResourceModel *model = new ResourceModel(resource, this);
             return model;
         }
     }

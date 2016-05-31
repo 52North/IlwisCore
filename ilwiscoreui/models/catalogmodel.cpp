@@ -324,12 +324,12 @@ void CatalogModel::gatherItems() {
     bool hasParent = true;
     QUrl previousContainer;
     for(const Resource& resource : items){
-        _allItems.push_back( resourcemanager()->createResourceModel("resourcemodel", resource));
+        _allItems.push_back( new ResourceModel(resource, this));
         hasParent &= (previousContainer.isValid() ? resource.container() == previousContainer : true);
         previousContainer = resource.container();
     }
     if ( hasParent)
-        _allItems.push_front(resourcemanager()->createResourceModel("resourcemodel",Resource(previousContainer.toString() + "/..", itCATALOG)));
+        _allItems.push_front(new ResourceModel(Resource(previousContainer.toString() + "/..", itCATALOG), this));
 
 }
 
