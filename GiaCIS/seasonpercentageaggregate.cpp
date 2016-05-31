@@ -170,7 +170,7 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
                 ZoneData<int>& zdata = zoneSeas.getSeasonData(zone);
 
                 if ((zdata._startIndex < _nb) && (zdata._length > 0)) {
-                    std::fill(psum.begin(), psum.end(), 0);
+                    std::fill(psum.begin(), psum.end(), rUNDEF);
                     std::fill(perc.begin(), perc.end(), 0);
 
                     // get the lower and upper NDVI values for this zone
@@ -183,14 +183,15 @@ bool SeasonPercentageAggregate::execute(ExecutionContext *ctx, SymbolTable& symT
                         perc[z] = percentage(lims[z], *(iterIn + z)) * zdata._data[z];
 
                     // Accumulate all percentages
-                    std::partial_sum(perc.begin(), perc.end(), psum.begin());
-                    // Divide by the length of the season up to the current dekad
-                    for (int z = zdata._startIndex; z < last; ++z)
-                        psum[z] /= (z - zdata._startIndex + 1);
+                    std::partial_sum(perc.begin() + zdata._startIndex, perc.end(), psum.begin() + zdata._startIndex);
+                    // Divide by the length of the season
+                    std::transform(psum.begin() + zdata._startIndex, psum.end(), psum.begin() + zdata._startIndex, [&zdata] (const double d) { return d / zdata._length; });
 
                     // copy the percentage of the last dekad in the season to the following if needed
+                    // with single map output: copy last value until end
+                    // with running totals: set to undef until end
                     if (last > 0)
-                        std::fill(psum.begin() + last, psum.end(), psum[last - 1]);
+                        std::fill(psum.begin() + last, psum.end(), _doRunning ? rUNDEF : psum[last - 1]);
                 }
             }
         }
