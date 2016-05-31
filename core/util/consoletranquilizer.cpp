@@ -12,7 +12,7 @@ using namespace Ilwis;
 
 ConsoleTranquilizer::~ConsoleTranquilizer()
 {
-
+    stop();
 }
 
 // This tranquilizer will generate a progress indicator in a terminal window
@@ -22,26 +22,35 @@ ConsoleTranquilizer::~ConsoleTranquilizer()
 // Note that when the total is less then 30, the indicator will not reach the 100 mark
 ConsoleTranquilizer::ConsoleTranquilizer(const IOOptions &opt, QObject *parent) : BaseTranquilizer(opt, parent)
 {
-
+    _inc = 0.0;
+    _next = 0.0;
+    _count = 0;
 }
 
 void ConsoleTranquilizer::prepare(const QString &title, const QString &description, double end, double start)
 {
     BaseTranquilizer::prepare(title, description, end, start);
 
-    _inc = (end - start) / 30;
+    // handle case where existing tranquilizer is re-used
+    if (_count > 0)
+        std::cout << std::endl;
+
+     _inc = (end - start) / 30;
     _next = 0.0;
     _count = 0;
+
+    std::cout << title.toStdString() << ": ";
 }
 
 bool ConsoleTranquilizer::update(double howfar)
 {
-    if ((_current + howfar) > _end) {
+    if (howfar < 1) {
         stop();
         return false;
     }
 
     _current += howfar;
+
     if (_current >= _next) {
         if (_count % 3 == 0)
             std::cout << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10
