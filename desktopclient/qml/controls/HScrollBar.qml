@@ -34,8 +34,6 @@ Rectangle {
     }
 
     function scroll(offset){
-        console.log("viewportHorizontalScrollPosition", viewportHorizontalScrollPosition)
-
         var scrollerLeftThumbPos =  marea.width * currentPosition / maxSize
         var scrollerRightThumbPos = marea.width * ( currentPosition + currentSize) / maxSize
 
@@ -46,23 +44,11 @@ Rectangle {
         //var viewportMax = marea.height * (maxSize - currentSize)/maxSize;
         var viewportMax = marea.width * maxSize;
 
-
-        console.log("***** DEBUG *****")
-        console.log("maxSize ", maxSize)
-        console.log("viewportMax ", viewportMax)
-        console.log("viewportHorizontalScrollPosition ", viewportHorizontalScrollPosition)
-        console.log("offset ", offset)
-        console.log("scrollerLeftThumbPos ", scrollerLeftThumbPos)
-        console.log("scrollerRightThumbPos ", scrollerRightThumbPos)
-
-
         if (scrollerLeftThumbPos + offset < 0) // try to keep the scrolling positions limited to upper/bottom positions
             offset =  -scrollerLeftThumbPos;
 
         if (scrollerRightThumbPos + offset > viewportMax) // try to keep the scrolling positions limited to upper/bottom positions
             offset =  viewportMax - scrollerRightThumbPos;
-
-        console.log("offset ", offset)
 
         if ( (scrollerLeftThumbPos + offset) >= 0 && (scrollerRightThumbPos + offset) <= viewportMax){
             viewportHorizontalScrollPosition += offset
@@ -79,11 +65,9 @@ Rectangle {
             if ( (currentPosition) < 0)
                 currentPosition = 0
             scrolled(currentPosition)
-            console.log("currentPosition ", currentPosition)
 
             oldPosition = viewportHorizontalScrollPosition
         }
-        console.log("onPositionChanged oldPosition ", oldPosition)
     }
 
     Button{
@@ -130,11 +114,11 @@ Rectangle {
         anchors.left : leftMarker.right
         anchors.right: rightMarker.left
         height : parent.height
-        hoverEnabled: true
+        hoverEnabled: false
 
 
         onPositionChanged: {
-            if ( pressed){
+            if ( pressed && containsMouse){
                 var scrollerLeftThumbPos =  marea.width * currentPosition / maxSize
                 var scrollerRightThumbPos = marea.width * ( currentPosition + currentSize) / maxSize
                 if ( mouse.x > scrollerLeftThumbPos && mouse.x < scrollerRightThumbPos){
@@ -159,7 +143,6 @@ Rectangle {
                 }
             }
         }
-    }
-
+    }   
 }
 
