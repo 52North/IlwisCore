@@ -68,6 +68,12 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
                 if(rasCoverageIn->datadef().domain<>() != rasCoverageOut->datadef().domain<>())
                     return;
                 rasCoverageOut->setAttributes(rasCoverageIn->attributeTable());
+            }else { // we can only copy the structure of the table as the actual values are stored in the feature itself
+                IFeatureCoverage outputFC = covOutput.as<FeatureCoverage>();
+                IFeatureCoverage inputFC = covInput.as<FeatureCoverage>();
+                for(int c = 0; c < inputFC->attributeDefinitions().columnCount(); ++c){
+                    outputFC->attributeDefinitionsRef().addColumn(inputFC->attributeDefinitions().columndefinition(c));
+                }
             }
         }
     }

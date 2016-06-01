@@ -372,18 +372,18 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
 
 quint64 ColumnJoin::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/columnjoin"});
-    operation.setLongName("Column Join");
+    OperationResource operation({"ilwis://operations/joinattributes"});
+    operation.setLongName("Join Attributes");
     operation.setSyntax("columnjoin(base-table,column-name|number,input-table, column-name|number)");
-    operation.setDescription(TR("Join a base table with another table who share a common domain"));
+    operation.setDescription(TR("Join a base table or coverage with attributes with another table who share a common domain"));
     operation.setInParameterCount({4});
-    operation.addInParameter(0,itTABLE|itCOVERAGE, TR("base-table"),TR("Base table from which where join is to do be done"));
+    operation.addInParameter(0,itTABLE|itCOVERAGE, TR("table/ coverage"),TR("Base table or coverage with attributes from which where join is to do be done"));
     operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
     operation.addInParameter(2,itTABLE, TR("input-table"),TR("input table-column from which the input column will be chosen"));
     operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table"));
-    operation.setKeywords("table");
+    operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table/ coverage"));
+    operation.setKeywords("table or coverage");
     mastercatalog()->addItems({operation});
     return operation.id();
 }

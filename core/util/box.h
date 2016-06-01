@@ -27,7 +27,7 @@ public:
     }
 
     Box(const Box<PointType>& bx) : _min_corner(bx.min_corner()), _max_corner(bx.max_corner()) {
-
+        normalize();
     }
 
     Box(Box<PointType>&& box) :
@@ -38,6 +38,9 @@ public:
     }
 
     Box(const QSize& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.width()-1, sz.height()-1,0)){
+    }
+
+    Box(const geos::geom::Envelope& env) : _min_corner(PointType(env.getMinX(), env.getMinY(), 0)),_max_corner(PointType(env.getMaxX(), env.getMaxY(), 0)){
     }
 
     template<typename T> Box(const Size<T>& sz) : _min_corner(PointType(0,0,0)),_max_corner(PointType(sz.xsize()-1, sz.ysize()-1,sz.zsize()-1)){
@@ -69,6 +72,7 @@ public:
                     if (ok){
                         _min_corner = PointType(minx,miny);
                         _max_corner =  PointType(maxx,maxy);
+                        normalize();
                         return;
                     }
                 }
@@ -134,6 +138,7 @@ public:
                 this->max_corner().z = p1[5].trimmed().toDouble();
             }
         }
+        normalize();
     }
 
     PointType min_corner() const {

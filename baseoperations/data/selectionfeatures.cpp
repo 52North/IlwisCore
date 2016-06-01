@@ -2,6 +2,7 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include "geos/geom/Envelope.inl"
 #include "coverage.h"
 #include "table.h"
 #include "featurecoverage.h"
@@ -67,24 +68,57 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
 {
     IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
 
-    SubSetAsyncFunc selection = [&](const std::vector<quint32>& subset ) -> bool {
+    SubSetAsyncFunc attributeSelection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
 
-        for_each(iterIn, iterIn.end(), [&](SPFeatureI feature){
-            QVariant v = feature->cell(_attribColumn);
-            SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-            _attTable->record(NEW_RECORD,{v});
+        for(const auto& feature : inputFC){
+            QVariant val = feature->cell(_attribColumn);
 
-            ++iterIn;
+            if ( _operator != loNONE) {
+                QVariant val = feature(_attribColumn);
+                if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
+                    if ( !compare1(_operator,val.toString(), _rightSide.toString()))
+                       continue;
+                } else {
+                    bool ok1,ok2;
+                    double v1 = val.toDouble(&ok1);
+                    double v2 = _rightSide.toDouble(&ok2);
+                    bool ok3 = compare1(_operator, v1, v2);
+                    if (!( ok1&& ok2 && ok3))
+                        continue;
+
+                }
+                SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
+                _attTable->record(NEW_RECORD, feature->record());
+            }else
+                _attTable->record(NEW_RECORD,{val});
         }
-        );
+        outputFC->setAttributes(_attTable);
         return true;
     };
+
+    SubSetAsyncFunc spatialSelection = [&](const std::vector<quint32>& subset ) -> bool {
+        FeatureIterator iterIn(inputFC, subset);
+        Envelope env;
+        for(const auto& feature : inputFC){
+            if ( _box.contains(feature->geometry().get())){
+                SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
+                newFeature->record(feature->record());
+                env += Envelope(*newFeature->geometry()->getEnvelopeInternal());
+            }
+        }
+        outputFC->envelope(env);
+        return true;
+    };
+
+
     ctx->_threaded = false;
-    bool ok = OperationHelperFeatures::execute(ctx,selection, inputFC, outputFC, _attTable);
+    bool ok = OperationHelperFeatures::execute(ctx,
+                                               _attribColumn!="" ? attributeSelection : spatialSelection,
+                                               inputFC,
+                                               outputFC);
 
     if ( ok && ctx != 0) {
-        outputFC->setAttributes(_attTable);
         QVariant value;
         value.setValue<IFeatureCoverage>(outputFC);
         ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
@@ -190,9 +224,16 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
              ERROR2(ERR_NOT_FOUND2, TR("column"), inputFC->attributeTable()->name());
              return sPREPAREFAILED;
          }
-         _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
+
          IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-         outputFC->setAttributes(_attTable);
+         if ( _operator != loNONE){
+            for(int c = 0; c < inputFC->attributeDefinitions().columnCount(); ++c){
+                _attTable->addColumn( inputFC->attributeDefinitions().columndefinition(c));
+            }
+         }else{
+            _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
+            outputFC->setAttributes(_attTable);
+         }
      }
      if ( (_box.isValid() && !_box.isNull()) == 0) {
         //TODO: selections in features on bounding box
