@@ -19,11 +19,10 @@ Item {
             var envZoom = maparea.drawer.zoomEnvelope
             oldPosition = -10000
             currentSize = envZoom.maxx - envZoom.minx
-            if ( currentPosition === -1)
+            if ( currentPosition < 0)
                 currentPosition = 0
             else{
                 currentPosition = envZoom.minx - envView.minx
-
             }
 
             return 0
@@ -51,7 +50,7 @@ Item {
             var envZoom = maparea.drawer.zoomEnvelope
             currentSize = envZoom.maxy - envZoom.miny
             oldPosition = -10000
-            if ( currentPosition === -1)
+            if ( currentPosition < 0)
                 currentPosition = 0
             else{
                 currentPosition = envView.maxy - envZoom.maxy

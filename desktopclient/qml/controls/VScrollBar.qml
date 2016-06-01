@@ -41,7 +41,6 @@ Rectangle {
             viewportVerticalScrollPosition = marea.height / 2
         }
 
-        //var viewportMax = marea.height * (maxSize - currentSize)/maxSize;
         var viewportMax = marea.height * maxSize;
 
         if (scrollerTopThumbPos + offset < 0) // try to keep the scrolling positions limited to upper/bottom positions
@@ -65,7 +64,6 @@ Rectangle {
             if ( (currentPosition) < 0)
                 currentPosition = 0
             scrolled(currentPosition)
-
             oldPosition = viewportVerticalScrollPosition
         }
     }
@@ -120,27 +118,24 @@ Rectangle {
 
         onPositionChanged: {
             if ( pressed && containsMouse){
-                var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
-                var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
+                var scrollerTopThumbPos =  Math.floor(marea.height * currentPosition / maxSize)
+                var scrollerBottomThumbPos = Math.floor(marea.height * ( currentPosition + currentSize) / maxSize)
 
-                if ( mouse.y > scrollerTopThumbPos && mouse.y < scrollerBottomThumbPos){
-                    viewportVerticalScrollPosition = mouse.y;
-                    if ( oldPosition == -10000){
-                        oldPosition = viewportVerticalScrollPosition
-                    }
-
-                    var rely = viewportVerticalScrollPosition / marea.height
-                    var oldRely = oldPosition / marea.height
-                    var difrely = rely - oldRely;
-                    currentPosition = currentPosition + maxSize * difrely
-                    if ( currentPosition > maxSize - currentSize)
-                        currentPosition = maxSize - currentSize
-                    if ( (currentPosition) < 0)
-                        currentPosition = 0
-                    scrolled(currentPosition)
-
+                viewportVerticalScrollPosition = mouse.y;
+                if ( oldPosition == -10000){
                     oldPosition = viewportVerticalScrollPosition
                 }
+
+                var rely = viewportVerticalScrollPosition / marea.height
+                var oldRely = oldPosition / marea.height
+                var difrely = rely - oldRely;
+                currentPosition = currentPosition + maxSize * difrely
+                if ( currentPosition > maxSize - currentSize)
+                    currentPosition = maxSize - currentSize
+                if ( (currentPosition) < 0)
+                    currentPosition = 0
+                scrolled(currentPosition)
+                oldPosition = viewportVerticalScrollPosition
             }
         }
     }
