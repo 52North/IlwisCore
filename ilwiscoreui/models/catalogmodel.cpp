@@ -22,7 +22,7 @@
 #include "mastercatalogmodel.h"
 #include "catalogviewmanager.h"
 #include "oshelper.h"
-#include "resourcemanager.h"
+
 
 
 using namespace Ilwis;
@@ -30,8 +30,7 @@ using namespace Ilwis;
 
 CatalogModel::~CatalogModel()
 {
-    for(auto *resource : _allItems)
-        resource->deref();
+    catalogViewManager()->unRegisterCatalogModel(this);
 }
 
 
