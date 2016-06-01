@@ -34,8 +34,6 @@ Rectangle {
     }
 
     function scroll(offset){
-        console.log("viewportVerticalScrollPosition", viewportVerticalScrollPosition)
-
         var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
         var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
 
@@ -46,23 +44,11 @@ Rectangle {
         //var viewportMax = marea.height * (maxSize - currentSize)/maxSize;
         var viewportMax = marea.height * maxSize;
 
-
-        console.log("***** DEBUG *****")
-        console.log("maxSize ", maxSize)
-        console.log("viewportMax ", viewportMax)
-        console.log("viewportVerticalScrollPosition ", viewportVerticalScrollPosition)
-        console.log("offset ", offset)
-        console.log("scrollerTopThumbPos ", scrollerTopThumbPos)
-        console.log("scrollerBottomThumbPos ", scrollerBottomThumbPos)
-
-
         if (scrollerTopThumbPos + offset < 0) // try to keep the scrolling positions limited to upper/bottom positions
             offset =  -scrollerTopThumbPos;
 
         if (scrollerBottomThumbPos + offset > viewportMax) // try to keep the scrolling positions limited to upper/bottom positions
             offset =  viewportMax - scrollerBottomThumbPos;
-
-        console.log("offset ", offset)
 
         if ( (scrollerTopThumbPos + offset) >= 0 && (scrollerBottomThumbPos + offset) <= viewportMax){
             viewportVerticalScrollPosition += offset
@@ -79,11 +65,9 @@ Rectangle {
             if ( (currentPosition) < 0)
                 currentPosition = 0
             scrolled(currentPosition)
-            console.log("currentPosition ", currentPosition)
 
             oldPosition = viewportVerticalScrollPosition
         }
-        console.log("onPositionChanged oldPosition ", oldPosition)
     }
 
 
@@ -132,45 +116,33 @@ Rectangle {
         anchors.top : topMarker.bottom
         anchors.bottom: bottomMarker.top
         width : parent.width
-        hoverEnabled: true
+        hoverEnabled: false
 
         onPositionChanged: {
-            if ( pressed){
+            if ( pressed && containsMouse){
                 var scrollerTopThumbPos =  marea.height * currentPosition / maxSize
                 var scrollerBottomThumbPos = marea.height * ( currentPosition + currentSize) / maxSize
 
-                console.log("mouse.y ", mouse.y)
                 if ( mouse.y > scrollerTopThumbPos && mouse.y < scrollerBottomThumbPos){
                     viewportVerticalScrollPosition = mouse.y;
                     if ( oldPosition == -10000){
                         oldPosition = viewportVerticalScrollPosition
                     }
-                        var rely = viewportVerticalScrollPosition / marea.height
-                        var oldRely = oldPosition / marea.height
-                        var difrely = rely - oldRely;
-                        currentPosition = currentPosition + maxSize * difrely
-                        if ( currentPosition > maxSize - currentSize)
-                            currentPosition = maxSize - currentSize
-                        if ( (currentPosition) < 0)
-                            currentPosition = 0
-                        scrolled(currentPosition)
-                        console.log("currentPosition ", currentPosition)
 
-                        oldPosition = viewportVerticalScrollPosition
-                    //}
+                    var rely = viewportVerticalScrollPosition / marea.height
+                    var oldRely = oldPosition / marea.height
+                    var difrely = rely - oldRely;
+                    currentPosition = currentPosition + maxSize * difrely
+                    if ( currentPosition > maxSize - currentSize)
+                        currentPosition = maxSize - currentSize
+                    if ( (currentPosition) < 0)
+                        currentPosition = 0
+                    scrolled(currentPosition)
 
-                    console.log("onPositionChanged oldPosition ", oldPosition)
-
-                        console.log("***** DEBUG *****")
-                        console.log("maxSize ", maxSize)
-                        console.log("scrollerTopThumbPos ", scrollerTopThumbPos)
-                        console.log("scrollerBottomThumbPos ", scrollerBottomThumbPos)
-
-
+                    oldPosition = viewportVerticalScrollPosition
                 }
             }
         }
     }
-
 }
 
