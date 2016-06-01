@@ -11,7 +11,6 @@
 #include "workspacemodel.h"
 #include "catalogview.h"
 #include "tranquilizer.h"
-#include "mastercatalog.h"
 #include "ilwiscoreui_global.h"
 
 namespace Ilwis {
@@ -62,7 +61,7 @@ public:
     Q_INVOKABLE WorkSpaceModel *workspace(const QString& name);
     Q_INVOKABLE void deleteBookmark(quint32 index);
     Q_INVOKABLE void setCatalogMetadata(const QString &displayName, const QString &description);
-    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid, QObject *parent);
+    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid);
     Q_INVOKABLE QStringList knownCatalogs(bool fileonly=true);
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshCatalog(const QString& path);
@@ -71,7 +70,7 @@ public:
     Q_INVOKABLE QString getName(const QString& id);
     Q_INVOKABLE QString getUrl(const QString& id);
     Q_INVOKABLE QString id2type(const QString& id) const;
-    Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QObject *parent);
+    Q_INVOKABLE IlwisObjectModel *id2object(const QString& objectid, QQuickItem *parent);
     Q_INVOKABLE QStringList select(const QString &filter, const QString& property);
     QQmlListProperty<IlwisObjectModel> selectedData();
     Q_INVOKABLE void setSelectedObjects(const QString& objects);
@@ -88,7 +87,7 @@ public:
 
 public slots:
     void updateBookmarks() ;
-    
+
 private:
     QList<CatalogModel *> _bookmarks;
     QList<WorkSpaceModel *> _workspaces;
@@ -105,7 +104,7 @@ private:
     QString _currentUrl;
     CatalogModel *_currentCatalog = 0;
 
-    
+
     CatalogModel *addBookmark(const QString &label, const QUrl &location, const QString &descr, const QString &query, bool threading = true);
     QString determineIdList(int dataCount, int operationCount, const QString &basekey);
     QList<CatalogModel *> startBackgroundScans(const std::vector<Ilwis::Resource>& catalogResources);
@@ -137,11 +136,11 @@ public:
 
 };
 
-class CatalogWorker : public QObject, protected Ilwis::CalcLatLon {
+class CatalogWorker : public QObject {
     Q_OBJECT
 
 public:
-    CatalogWorker(const std::vector<Ilwis::Resource>& catalogResources, bool initial=false);
+    CatalogWorker(QList<CatalogModel* >&models);
     ~CatalogWorker();
 
 public slots:
@@ -155,30 +154,9 @@ signals:
 
 
 private:
-    std::vector<Ilwis::Resource> _catalogs;
-    bool _initial;
-
-    void scanContainer(const QUrl &url, bool threading);
-};
-
-
-class CatalogWorker2 : public QObject {
-    Q_OBJECT
-
-public:
-    CatalogWorker2(const QUrl& url);
-
-public slots:
-    void process();
-
-
-signals:
-    void finished();
-    void updateContainer();
-
-
-private:
-    QUrl _container;
+    QList<CatalogModel *> _models;
+    void calculatelatLonEnvelopes();
+    void calcLatLon(const Ilwis::ICoordinateSystem &csyWgs84, Ilwis::Resource &resource, std::vector<Ilwis::Resource> &updatedResources);
 };
 
 class CatalogWorker3 : public QObject {

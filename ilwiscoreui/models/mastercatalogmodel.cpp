@@ -154,8 +154,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
     }
 
     QThread* thread = new QThread;
-    CatalogWorker* worker = new CatalogWorker(catalogResources, true);
-    thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
+    CatalogWorker* worker = new CatalogWorker(models);
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
     thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
@@ -169,10 +168,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
 }
 
 void MasterCatalogModel::initFinished() {
-    bool isFinished = Ilwis::context()->initializationFinished();
-    Ilwis::context()->initializationFinished(true);
-    if (!isFinished)
-        _currentCatalog->refresh();
+    Ilwis::context()->initializationFinished(true)    ;
 }
 
 void MasterCatalogModel::setDefaultView()
@@ -397,7 +393,7 @@ QQmlListProperty<IlwisObjectModel> MasterCatalogModel::selectedData()
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedObjects);
 }
 
-IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QObject *parent)
+IlwisObjectModel *MasterCatalogModel::id2object(const QString &objectid, QQuickItem *parent)
 {
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
@@ -632,7 +628,7 @@ void MasterCatalogModel::setCatalogMetadata(const QString& displayName, const QS
     CatalogModel *model = _bookmarks[_selectedBookmarkIndex];
     if ( model ){
         model->setDisplayName(displayName);
-        model->resourceRef().setDescription(description); 
+        model->resourceRef().setDescription(description);
         QString key = "users/user-0/data-catalog-" + _bookmarkids[_selectedBookmarkIndex - 3];
         context()->configurationRef().putValue(key + "/label", displayName);
         context()->configurationRef().putValue(key + "/description", description);
@@ -675,18 +671,18 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
     }
 }
 
-ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid, QObject *parent)
+ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
 {
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model =new ResourceModel(resource, parent);
+        ResourceModel *model = new ResourceModel(resource, this);
         return model;
     }else { // might be an anonymous object
         auto obj = mastercatalog()->get(objectid.toULongLong(&ok));
         if ( obj){
             Resource res = obj->resource();
-            ResourceModel *model =new ResourceModel(resource, parent);
+            ResourceModel *model = new ResourceModel(resource, this);
             return model;
         }
     }
@@ -713,7 +709,6 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
     if ( path != ""){
         context()->setWorkingCatalog(ICatalog(path));
         _currentUrl = path;
-         mastercatalog()->addContainer(QUrl(path));
     }
 }
 
@@ -726,7 +721,6 @@ void MasterCatalogModel::refreshCatalog(const QString& path)
 
     QThread* thread = new QThread;
     CatalogWorker3* worker = new CatalogWorker3(path);
-    thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker3::process);
     thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
@@ -791,7 +785,6 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
     ICatalog catalog(cat->url());
     if ( catalog.isValid()){
         context()->setWorkingCatalog(catalog);
-        mastercatalog()->addContainer(cat->url());
     }
 }
 
@@ -873,7 +866,7 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 }
 
 //--------------------
-CatalogWorker::CatalogWorker(const std::vector<Ilwis::Resource>& resources, bool initial) : _catalogs(resources), _initial(false)
+CatalogWorker::CatalogWorker(QList<CatalogModel *> &models) : _models(models)
 {
 }
 
@@ -882,27 +875,15 @@ CatalogWorker::~CatalogWorker(){
 
 void CatalogWorker::process(){
     try {
-        for(auto& resource : _catalogs){
-            scanContainer(resource.url(), _catalogs.size() != 1);
-            if ( !_initial){
-                QString query = QString("(type & %1) != 0 and container='%2'").arg(QString::number(itCOVERAGE)).
-                        arg(OSHelper::neutralizeFileName(resource.url().toString()));
-                calculatelatLonEnvelopes(query, resource.name());
-            }
-
+        for(auto iter = _models.begin(); iter != _models.end(); ++iter){
+            (*iter)->scanContainer(false);
+            emit updateBookmarks();
         }
-//        QString query = QString("(type & %1) != 0 and container='%2'").arg(QString::number(itCOVERAGE)).
-//                arg(OSHelper::neutralizeFileName(context()->workingCatalog()->resource().url().toString()));
-//        calculatelatLonEnvelopes(query,"working catalog");
-        if ( _initial){
-            qDebug() << " also latlon ";
-             QString query = QString("(type & %1) != 0").arg(QString::number(itCOVERAGE));
-             calculatelatLonEnvelopes(query, "mastercatalog");
+        if (!uicontext()->abort()){
+            calculatelatLonEnvelopes();
+            emit finished();
         }
         emit updateCatalog();
-        emit updateBookmarks();
-       emit finished();
-
     } catch(const ErrorObject& err){
 
     } catch ( const std::exception& ex){
@@ -912,30 +893,52 @@ void CatalogWorker::process(){
     emit finished();
 }
 
-void CatalogWorker::scanContainer(const QUrl& url, bool threading)
-{
-    bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    bool useThread = threading && !inmainThread;
-    if ( useThread){
-         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(url.toString()))){
-             QThread* thread = new QThread;
-             CatalogWorker2* worker = new CatalogWorker2(url);
-             thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
-             worker->moveToThread(thread);
-             thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
-             thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
-             thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
-             thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-             //thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
-             thread->start();
-         }
-     }else
-         mastercatalog()->addContainer(url);
+void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
+    try{
+        if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
+            ICoverage cov(resource);
+            if ( cov.isValid()){
+                if ( cov->coordinateSystem()->isLatLon()){
+                    QString envelope = cov->envelope().toString();
+                    resource.addProperty("latlonenvelope",envelope);
+                }else {
+                    Envelope env = cov->envelope();
+                    if ( env.isNull() || !env.isValid())
+                        return;
+                    Envelope llEnvelope = csyWgs84->convertEnvelope(cov->coordinateSystem(), env);
+                    if ( llEnvelope.isNull() || !llEnvelope.isValid())
+                        return;
 
+                    resource.addProperty("latlonenvelope",llEnvelope.toString());
+                }
+                updatedResources.push_back(resource);
+            }
+        }
+    } catch(const ErrorObject&){
+    } catch( std::exception& ){
+    }
 }
 
+void CatalogWorker::calculatelatLonEnvelopes(){
+    kernel()->issues()->silent(true);
+    QString query = QString("(type & %1) != 0").arg(QString::number(itCOVERAGE));
+    std::vector<Resource> resources =mastercatalog()->select(query);
+    UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
+    ICoordinateSystem csyWgs84("code=epsg:4326");
+    std::vector<Resource> updatedResources;
+    int count = 0;
+    for(Resource& resource : resources){
+        calcLatLon(csyWgs84, resource, updatedResources);
+//        if(!trq->update(1))
+//            return;
+        ++count;
 
+    }
+    kernel()->issues()->silent(false);
+    mastercatalog()->updateItems(updatedResources);
 
+}
 
 //---------------------
 void worker::process(){
@@ -946,24 +949,7 @@ void worker::process(){
             trq->update(100);
     }
 }
-//-------------------------------------------------
-CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
-{
-}
 
-void CatalogWorker2::process(){
-    try {
-        mastercatalog()->addContainer(_container);
-        emit updateContainer();
-        emit finished();
-    } catch(const ErrorObject& ){
-
-    } catch ( const std::exception& ex){
-        kernel()->issues()->log(ex.what());
-    }
-
-    emit finished();
-}
 //--------------------------
 void CatalogWorker3::process()
 {

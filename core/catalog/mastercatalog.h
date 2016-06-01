@@ -220,7 +220,7 @@ KERNELSHARED_EXPORT MasterCatalog* mastercatalog();
 
 class KERNELSHARED_EXPORT CalcLatLon {
 public:
-    void calculatelatLonEnvelopes(const QString& query, const QString& name);
+    static void calculatelatLonEnvelopes(const QString& query, const QString& name);
 };
 
 }

@@ -10,6 +10,7 @@
 #include "catalogmapitem.h"
 #include "ilwiscoreui_global.h"
 
+
 namespace Ilwis {
 class Resource;
 
@@ -109,7 +110,24 @@ struct CatLess // public std::binary_function<bool, const T*, const T*>
   }
 };
 
+class CatalogWorker2 : public QObject {
+    Q_OBJECT
 
+public:
+    CatalogWorker2(const QUrl& url);
+
+public slots:
+    void process();
+
+
+signals:
+    void finished();
+    void updateContainer();
+
+
+private:
+    QUrl _container;
+};
 //}
 //}
 

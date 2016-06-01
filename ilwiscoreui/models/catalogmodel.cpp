@@ -30,7 +30,6 @@ using namespace Ilwis;
 
 CatalogModel::~CatalogModel()
 {
-    catalogViewManager()->unRegisterCatalogModel(this);
     for(auto *resource : _allItems)
         resource->deref();
 }
@@ -88,15 +87,15 @@ void CatalogModel::scanContainer(bool threading)
     bool useThread = threading && inmainThread;
     if ( useThread){
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(resource().url().toString()))){
+            QUrl url = resource().url();
             QThread* thread = new QThread;
-            CatalogWorker* worker = new CatalogWorker({resource()});
-            thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
+            CatalogWorker2* worker = new CatalogWorker2(url);
             worker->moveToThread(thread);
-            thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
-            thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
-            thread->connect(worker, &CatalogWorker::finished, worker, &CatalogWorker::deleteLater);
+            thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
+            thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
+            thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
             thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-           // thread->connect(worker, &CatalogWorker::updateContainer, this, &CatalogModel::updateContainer);
+            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
             thread->start();
         }
     }else
@@ -130,6 +129,7 @@ int CatalogModel::level() const
 QQmlListProperty<ResourceModel> CatalogModel::resources() {
 
     try{
+        qDebug() << "resources " << name();
         gatherItems();
 
         _objectCounts.clear();
@@ -318,7 +318,6 @@ void CatalogModel::gatherItems() {
 
     _allItems.clear();
     _refresh = false;
-    //qDebug() << "gather " << resource().url();
 
     std::vector<Resource> items = _view.items();
 
@@ -401,7 +400,24 @@ int CatalogModel::getCatalogType(const Resource& res, int predefineds){
     }
     return bits;
 }
+//-------------------------------------------------
+CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
+{
+}
 
+void CatalogWorker2::process(){
+    try {
+        mastercatalog()->addContainer(_container);
+        emit updateContainer();
+        emit finished();
+    } catch(const ErrorObject& ){
+
+    } catch ( const std::exception& ex){
+        kernel()->issues()->log(ex.what());
+    }
+
+    emit finished();
+}
 
 
 

@@ -21,7 +21,6 @@
 #include "table.h"
 #include "catalog.h"
 #include "mastercatalogcache.h"
-#include "catalogexplorerworker.h"
 #include "dataset.h"
 
 using namespace Ilwis;
@@ -112,10 +111,6 @@ ConnectorInterface *CatalogConnector::create(const Ilwis::Resource &resource, bo
     return new CatalogConnector(resource, load, options);
 }
 
-CatalogConnector::~CatalogConnector()
-{
-}
-
 bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 {
     return loadExplorers();
@@ -123,9 +118,9 @@ bool CatalogConnector::loadMetaData(IlwisObject *data,const IOOptions &)
 
 bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
 
-//    if ( context()->runMode() == rmDESKTOP){
-//        return loadDataThreaded(obj,options);
-//    }
+    if ( context()->runMode() == rmDESKTOP){
+        return loadDataThreaded(obj,options);
+    }
     return loadDataSingleThread(obj,options);
 }
 
@@ -151,9 +146,6 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
 
 std::vector<Resource> loadExplorerData(const std::pair<CatalogExplorer *, IOOptions>& expl){
     try {
-        QThread *thread = QThread::currentThread();
-        QVariant var = expl.second["workingcatalog"];
-        thread->setProperty("workingcatalog", qVariantFromValue(var));
         std::vector<Resource> items = expl.first->loadItems(expl.second);
 
         return items;
@@ -173,21 +165,13 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
         return true;
     _binaryIsLoaded = true; //  preventing any subsequent scans
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
-
-    std::vector<std::pair<SPCatalogExplorer, IOOptions>> explorers;
-     for(const auto& explorer : _dataProviders){
-        explorers.push_back({explorer, options});
-     }
-
-    QThread* thread = new QThread;
-    CatalogExplorerWorker* worker = new CatalogExplorerWorker(explorers);
-    thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
-    worker->moveToThread(thread);
-    thread->connect(thread, &QThread::started, worker, &CatalogExplorerWorker::process);
-    thread->connect(worker, &CatalogExplorerWorker::finished, thread, &QThread::quit);
-    thread->connect(worker, &CatalogExplorerWorker::finished, worker, &CatalogExplorerWorker::deleteLater);
-    thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    thread->start();
+    QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
+    for(const auto& explorer : _dataProviders){
+       explorers.push_back({explorer.get(), options});
+    }
+    QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
+    res.waitForFinished();
+    mastercatalog()->addItems(res.result());
     return true;
 }
 
