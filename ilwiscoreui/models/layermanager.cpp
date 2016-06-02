@@ -90,6 +90,16 @@ void LayerManager::setZoomInMode(bool yesno)
     _zoomInMode = yesno;
 }
 
+bool LayerManager::panningMode() const
+{
+    return _panningMode;
+}
+
+void LayerManager::setPanningMode(bool yesno)
+{
+    _panningMode = yesno;
+}
+
 bool LayerManager::hasSelectionDrawer() const
 {
     return _hasSelectionDrawer;
@@ -175,7 +185,7 @@ CoverageLayerModel *LayerManager::layer(quint32 layerIndex){
 
 QString LayerManager::layerInfo(const Coordinate &crdIn, const QString& attrName)
 {
-    if ( _zoomInMode) // when zooming we dont don' give info. costs too much performance
+    if ( _zoomInMode || _panningMode) // when zooming we dont don' give info. costs too much performance
         return "";
 
     std::vector<QString> texts;

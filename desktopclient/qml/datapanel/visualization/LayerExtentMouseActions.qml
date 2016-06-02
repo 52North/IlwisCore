@@ -44,6 +44,9 @@ MouseArea {
             zoomStarted = true
 
         }
+        if ( layerManager.panningMode ){
+            console.log("onPressed event: panningMode")
+        }
         if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
           floatrect.enabled = true
           floatrect.opacity = 1
@@ -87,6 +90,9 @@ MouseArea {
             zoomEnded(envelope)
             zoomStarted = false
             linkedDrawer.update()
+        }
+        if ( layerManager.panningMode ){
+            console.log("onReleased event: panningMode")
         }
         floatrect.enabled = false
         floatrect.opacity = 0

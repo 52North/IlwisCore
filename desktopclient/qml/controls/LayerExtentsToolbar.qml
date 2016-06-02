@@ -30,7 +30,13 @@ ToolBar{
 
         MapExtentButton{
             id : panButton
-            icon : "pan20.png"
+            icon : panButton.checked ? "pan20A.png" : "pan20.png"
+            action : panningClicked
+            checkable: true
+            checked: false
+            onClicked: {
+                checked = !checked
+            }
         }
 
         MapExtentButton{

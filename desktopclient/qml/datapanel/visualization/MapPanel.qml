@@ -47,6 +47,15 @@ Item {
     }
 
     Action {
+        id : panningClicked
+        onTriggered : {
+            if ( manager){
+                manager.panningMode = !manager.panningMode
+            }
+        }
+    }
+
+    Action {
         id : zoomClicked
         onTriggered : {
             if ( manager){
