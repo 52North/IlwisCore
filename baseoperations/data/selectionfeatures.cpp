@@ -71,11 +71,14 @@ bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, Executio
     SubSetAsyncFunc attributeSelection = [&](const std::vector<quint32>& subset ) -> bool {
         FeatureIterator iterIn(inputFC, subset);
 
+        ColumnDefinition coldef = inputFC->attributeDefinitions().columndefinition(_attribColumn);
         for(const auto& feature : inputFC){
             QVariant val = feature->cell(_attribColumn);
+            if ( coldef.datadef().domain()->ilwisType() == itITEMDOMAIN){
+                val = coldef.datadef().domain()->impliedValue(val);
+            }
 
             if ( _operator != loNONE) {
-                QVariant val = feature(_attribColumn);
                 if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
                     if ( !compare1(_operator,val.toString(), _rightSide.toString()))
                        continue;
