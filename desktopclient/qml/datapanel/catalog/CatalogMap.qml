@@ -18,6 +18,16 @@ Rectangle {
     }
 
     Action {
+        id : panningClicked
+        onTriggered : {
+            if ( renderer.manager){
+                renderer.manager.panningMode = !renderer.manager.panningMode
+                grid.setSource("")
+            }
+        }
+    }
+
+    Action {
         id : zoomClicked
         onTriggered : {
             if ( renderer.manager){
