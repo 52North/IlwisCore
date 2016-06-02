@@ -60,7 +60,8 @@ HEADERS += \
     baseoperations/data/saveas.h \
     baseoperations/creators/createrastercoverage.h \
     baseoperations/conditions/junction.h \
-    baseoperations/conditions/numbercondition.h
+    baseoperations/conditions/numbercondition.h \
+    baseoperations/data/aggregatetable.h
 
 SOURCES += \
     baseoperations/baseoperationsmodule.cpp \
@@ -107,7 +108,8 @@ SOURCES += \
     baseoperations/data/saveas.cpp \
     baseoperations/creators/createrastercoverage.cpp \
     baseoperations/conditions/junction.cpp \
-    baseoperations/conditions/numbercondition.cpp
+    baseoperations/conditions/numbercondition.cpp \
+    baseoperations/data/aggregatetable.cpp
 
 
 OTHER_FILES += \
