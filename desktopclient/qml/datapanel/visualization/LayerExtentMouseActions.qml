@@ -12,9 +12,13 @@ MouseArea {
     property LayerManager layerManager
     property LayersView drawer
     property LayersView linkedDrawer
+    property MapScrollers mapScrollers
     property bool showInfo : false
     property bool hasPermanence : false
     property bool zoomStarted : false
+    property bool panningStarted : false
+    property int panningPrevMouseX : -1
+    property int panningPrevMouseY : -1
     signal zoomEnded(string envelope)
 
     Controls.FloatingRectangle{
@@ -45,7 +49,12 @@ MouseArea {
 
         }
         if ( layerManager.panningMode ){
-            console.log("onPressed event: panningMode")
+            //console.log("onPressed event: panningMode")
+            panningStarted = true
+            panningPrevMouseX = mouseX
+            panningPrevMouseY = mouseY
+            cursorShape = Qt.ClosedHandCursor
+
         }
         if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
           floatrect.enabled = true
@@ -58,13 +67,28 @@ MouseArea {
 
     }
     onPositionChanged: {
+        if (!layerManager.panningMode) {
+            cursorShape = Qt.ArrowCursor
+        } else {
+            if (!panningStarted)
+                cursorShape = Qt.OpenHandCursor
+            else
+                cursorShape = Qt.ClosedHandCursor
+        }
+
         var mposition = mouseX + "|" + mouseY
         drawer.currentCoordinate = mposition
-        if ( zoomStarted && layerManager.hasSelectionDrawer){
+        if ( (zoomStarted || panningStarted) && layerManager.hasSelectionDrawer){
             var position = {currentx: mouseX, currenty:mouseY}
             drawer.setAttribute("selectiondrawer", position)
             drawer.copyAttribute("selectiondrawer","envelope");
             drawer.update()
+        }
+        if (panningStarted) {
+            mapScrollers.vscroller.scroll(mouseY - panningPrevMouseY)
+            mapScrollers.hscroller.scroll(mouseX - panningPrevMouseX)
+            panningPrevMouseX = mouseX
+            panningPrevMouseY = mouseY
         }
         if ( showInfo && floatrect.opacity > 0){
             floatrect.x = mouseX
@@ -92,7 +116,11 @@ MouseArea {
             linkedDrawer.update()
         }
         if ( layerManager.panningMode ){
-            console.log("onReleased event: panningMode")
+            //console.log("onReleased event: panningMode")
+            panningStarted = false
+            panningPrevMouseX = -1
+            panningPrevMouseY = -1
+            cursorShape = Qt.OpenHandCursor
         }
         floatrect.enabled = false
         floatrect.opacity = 0

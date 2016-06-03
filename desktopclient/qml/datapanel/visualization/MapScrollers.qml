@@ -7,6 +7,10 @@ import "../../controls" as Controls
 import LayersView 1.0
 
 Item {
+    id : mapscrollers
+
+    property alias vscroller : vscroller
+    property alias hscroller : hscroller
 
     Controls.HScrollBar{
         anchors.bottom : parent.bottom
