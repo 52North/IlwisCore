@@ -58,8 +58,8 @@ SelectionFeatures::ExpressionPart::ExpressionPart(const ITable& attributes, cons
                     if ((index2 = part.indexOf(op.first)) != -1){
                         if ( index2 < index1)    {
                             _operator = op.second;
-                            _leftSide = part.left(index2).trimmed();
-                            if ( attributes->columnIndex(_leftSide) == iUNDEF){
+                            QString leftSide = part.left(index2).trimmed();
+                            if ( (_leftSide = attributes->columnIndex(leftSide)) == iUNDEF){
                                 _isValid = false;
                             }
                             _rightSide = part.mid(index2 + op.first.size()).trimmed();
@@ -84,6 +84,10 @@ bool SelectionFeatures::ExpressionPart::match(const SPFeatureI &feature,Selectio
     }
     if ( _type == ExpressionPart::ptATTRIBUTESELECTION )   {
         QVariant val = feature(_leftSide);
+        ColumnDefinition coldef = feature->attributedefinition(_leftSide);
+        if ( coldef.datadef().domain()->ilwisType() == itITEMDOMAIN){
+            val = coldef.datadef().domain()->impliedValue(val);
+        }
         if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
             return operation->compare1(_operator,val.toString(), _rightSide.toString());
         } else {

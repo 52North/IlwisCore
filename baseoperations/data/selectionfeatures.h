@@ -27,7 +27,7 @@ private:
         ExpressionPart(const Ilwis::ITable &attribute, const QString& part);
         bool match(const SPFeatureI& feature,SelectionFeatures *operation) const;
         QVariant _rightSide;
-        QString _leftSide;
+        int _leftSide; // index of attribute
         PartType _type;
         LogicalOperator _operator = loNONE;
         LogicalOperator _andor = loNONE;
