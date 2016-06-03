@@ -8,7 +8,9 @@ import LayersView 1.0
 
 DropArea {
     id : dropArea
+    //property MapScrollers mapScrollers
     property alias drawer : renderer
+    property alias mouseActions : mouseActions
 
     function entireMap() {
         renderer.addCommand("setviewextent("+ renderer.viewerId + ",entiremap)");
@@ -55,6 +57,7 @@ DropArea {
                 drawer : renderer
                 linkedDrawer: renderer
                 showInfo: true
+                mapScrollers: mapScrollers
             }
 
         }

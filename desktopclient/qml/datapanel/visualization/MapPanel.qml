@@ -37,8 +37,8 @@ Item {
             var id = layers.addDataSource(sourceUrl, sourceName, sourceType)
             viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
             return id
-         }
-         return -1
+        }
+        return -1
     }
 
     function transfer(datapanel){

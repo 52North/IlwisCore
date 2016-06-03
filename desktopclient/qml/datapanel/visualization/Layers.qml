@@ -8,6 +8,8 @@ import LayersView 1.0
 
 Item {
     id : layerContainer
+    property alias layerContainerId : layerContainer
+    property alias mapScrollers : mapScrollers
     signal zoomEnded(string envelope)
 
     function entireMap() {
@@ -43,6 +45,10 @@ Item {
 
     MapScrollers {
         anchors.fill: parent
+        id : mapScrollers
+        Component.onCompleted: {
+            maparea.mouseActions.mapScrollers = mapScrollers
+        }
     }
 
 //    PostMapPanelCanvas{
