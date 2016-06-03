@@ -234,7 +234,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
 quint64 SelectionFeatures::createMetadata()
 {
     OperationResource operation({"ilwis://operations/selection"});
-    operation.setSyntax("selection(featurecoverage,selection-definition[,asIndex])");
+    operation.setSyntax("selection(featurecoverage,selection-definition)");
     operation.setLongName("Select features");
     operation.setDescription(TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
     operation.setInParameterCount({2});
