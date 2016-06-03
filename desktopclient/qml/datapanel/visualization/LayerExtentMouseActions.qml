@@ -85,8 +85,9 @@ MouseArea {
             drawer.update()
         }
         if (panningStarted) {
-            mapScrollers.vscroller.scroll(mouseY - panningPrevMouseY)
-            mapScrollers.hscroller.scroll(mouseX - panningPrevMouseX)
+            // todo: probably can be fine tuned, thus providing a smoother panning
+            mapScrollers.vscroller.scroll(-(mouseY - panningPrevMouseY))
+            mapScrollers.hscroller.scroll(-(mouseX - panningPrevMouseX))
             panningPrevMouseX = mouseX
             panningPrevMouseY = mouseY
         }
