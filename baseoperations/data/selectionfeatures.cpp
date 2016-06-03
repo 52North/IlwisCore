@@ -1,4 +1,5 @@
 #include <QString>
+#include <QRegularExpression>
 #include <functional>
 #include <future>
 #include <memory>
@@ -14,6 +15,7 @@
 #include "operationhelper.h"
 #include "operationhelperfeatures.h"
 #include "featureiterator.h"
+#include "geometryhelper.h"
 #include "selectionfeatures.h"
 
 using namespace Ilwis;
@@ -21,6 +23,83 @@ using namespace BaseOperations;
 
 REGISTER_OPERATION(SelectionFeatures)
 
+SelectionFeatures::ExpressionPart::ExpressionPart(const ITable& attributes, const QString& part){
+    _isValid = false;
+    int index = part.indexOf("box(");
+    if ( index != -1) {
+        _envelope = part;
+        _isValid = _envelope.isValid();
+        _type = ptBOX;
+    }else {
+        index = part.indexOf("polygon(");
+        if ( index != -1)
+        {
+            _polygon.reset(GeometryHelper::fromWKT(part,0));
+            _isValid = _polygon.get() != 0;
+            _type = ptPOLYGON;
+
+        }else {
+            index = part.indexOf("attribute=");
+            if ( index != -1) {
+                QStringList attribs = part.split(",");
+                for(auto attrib : attribs){
+                    if ( attributes->columnIndex(attrib) != iUNDEF)    {
+                        _attributes.push_back(attrib);
+                    }
+                }
+                _type = ptATTRIBUTE;
+            }else {
+                std::map<QString,LogicalOperator> operators = {{"==", loEQ},{"<=",loLESSEQ},{">=", loGREATEREQ},{"<",loLESS},{">", loGREATER},{"!=",loNEQ}};
+                int index1 = part.indexOf("\"");
+                if ( index1 == -1)
+                    index1 = 10000;
+                int index2 = 0;
+                for(auto op : operators){
+                    if ((index2 = part.indexOf(op.first)) != -1){
+                        if ( index2 < index1)    {
+                            _operator = op.second;
+                            _leftSide = part.left(index2).trimmed();
+                            if ( attributes->columnIndex(_leftSide) == iUNDEF){
+                                _isValid = false;
+                            }
+                            _rightSide = part.mid(index2 + op.first.size()).trimmed();
+                            _type = ptATTRIBUTESELECTION;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+bool SelectionFeatures::ExpressionPart::match(const SPFeatureI &feature,SelectionFeatures *operation) const
+{
+    if ( _type == ExpressionPart::ptBOX && _envelope.isValid())   {
+        return _envelope.contains(feature->geometry().get());
+    }
+    if ( _type == ExpressionPart::ptPOLYGON && _polygon.get() != 0)   {
+        return _polygon->contains(feature->geometry().get());
+    }
+    if ( _type == ExpressionPart::ptATTRIBUTESELECTION )   {
+        QVariant val = feature(_leftSide);
+        if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
+            return operation->compare1(_operator,val.toString(), _rightSide.toString());
+        } else {
+            bool ok1,ok2;
+            double v1 = val.toDouble(&ok1);
+            double v2 = _rightSide.toDouble(&ok2);
+            bool ok3 = operation->compare1(_operator, v1, v2);
+            return ok1&& ok2 && ok3;
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------------------------------------------------------------
+
+//
 SelectionFeatures::SelectionFeatures()
 {
 }
@@ -33,102 +112,6 @@ SelectionFeatures::~SelectionFeatures()
 {
 }
 
-bool SelectionFeatures::createIndexes(const IFeatureCoverage& inputFC, ExecutionContext *ctx, SymbolTable &symTable){
-    std::set<quint32> resultset;
-
-    quint32 index = 0;
-    for(const auto& feature : inputFC){
-        QVariant val = feature(_attribColumn);
-        if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
-            if ( compare1(_operator,val.toString(), _rightSide.toString()))
-                resultset.insert(index);
-        } else {
-            bool ok1,ok2;
-            double v1 = val.toDouble(&ok1);
-            double v2 = _rightSide.toDouble(&ok2);
-            bool ok3 = compare1(_operator, v1, v2);
-            if ( ok1&& ok2 && ok3)
-                resultset.insert(index);
-
-        }
-        ++index;
-
-    }
-    Indices result(resultset.begin(), resultset.end());
-    if ( ctx != 0) {
-        QVariant value;
-        value.setValue<Indices>(result);
-        ctx->addOutput(symTable, value, sUNDEF, itINTEGER | itCOLLECTION, Resource());
-    }
-
-    return true;
-}
-
-bool SelectionFeatures::createCoverage(const IFeatureCoverage& inputFC, ExecutionContext *ctx, SymbolTable &symTable)
-{
-    IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-
-    SubSetAsyncFunc attributeSelection = [&](const std::vector<quint32>& subset ) -> bool {
-        FeatureIterator iterIn(inputFC, subset);
-
-        ColumnDefinition coldef = inputFC->attributeDefinitions().columndefinition(_attribColumn);
-        for(const auto& feature : inputFC){
-            QVariant val = feature->cell(_attribColumn);
-            if ( coldef.datadef().domain()->ilwisType() == itITEMDOMAIN){
-                val = coldef.datadef().domain()->impliedValue(val);
-            }
-
-            if ( _operator != loNONE) {
-                if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
-                    if ( !compare1(_operator,val.toString(), _rightSide.toString()))
-                       continue;
-                } else {
-                    bool ok1,ok2;
-                    double v1 = val.toDouble(&ok1);
-                    double v2 = _rightSide.toDouble(&ok2);
-                    bool ok3 = compare1(_operator, v1, v2);
-                    if (!( ok1&& ok2 && ok3))
-                        continue;
-
-                }
-                SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-                _attTable->record(NEW_RECORD, feature->record());
-            }else
-                _attTable->record(NEW_RECORD,{val});
-        }
-        outputFC->setAttributes(_attTable);
-        return true;
-    };
-
-    SubSetAsyncFunc spatialSelection = [&](const std::vector<quint32>& subset ) -> bool {
-        FeatureIterator iterIn(inputFC, subset);
-        Envelope env;
-        for(const auto& feature : inputFC){
-            if ( _box.contains(feature->geometry().get())){
-                SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
-                newFeature->record(feature->record());
-                env += Envelope(*newFeature->geometry()->getEnvelopeInternal());
-            }
-        }
-        outputFC->envelope(env);
-        return true;
-    };
-
-
-    ctx->_threaded = false;
-    bool ok = OperationHelperFeatures::execute(ctx,
-                                               _attribColumn!="" ? attributeSelection : spatialSelection,
-                                               inputFC,
-                                               outputFC);
-
-    if ( ok && ctx != 0) {
-        QVariant value;
-        value.setValue<IFeatureCoverage>(outputFC);
-        ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
-    }
-    return ok;
-}
-
 bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_prepState == sNOTPREPARED)
@@ -137,10 +120,57 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
 
-    if ( _asIndex)
-        return createIndexes(inputFC, ctx, symTable);
-    else
-        return createCoverage(inputFC, ctx, symTable);
+   IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
+
+   std::vector<int> extraAtrrib;
+   for(const auto& epart : _expressionparts){
+       if ( epart._type != ExpressionPart::ptATTRIBUTE){
+           for(int i=0; i < epart._attributes.size();++i){
+               int index = inputFC->attributeDefinitions().columnIndex(epart._attributes[i]);
+               if ( index != iUNDEF){
+                   extraAtrrib.push_back(index);
+               }
+           }
+       }
+   }
+   if ( extraAtrrib.size() == 0){
+       for(int c = 0; c < inputFC->attributeDefinitions().columnCount(); ++c){
+           extraAtrrib.push_back(c);
+       }
+   }
+   for(int c = 0; c < extraAtrrib.size(); ++c){
+       _attTable->addColumn( inputFC->attributeDefinitions().columndefinition(extraAtrrib[c]));
+   }
+   int rec = 0;
+   Envelope env;
+   for(const auto& feature : inputFC){
+       bool ok = true;
+       for(const auto& epart : _expressionparts){
+           if ( epart._type != ExpressionPart::ptATTRIBUTE){
+               bool partOk =  epart.match(feature, this);
+               if ( epart._andor != loNONE)
+                   ok =  epart._andor == loAND ? ok && partOk : ok || partOk;
+               else
+                   ok = partOk;
+           }
+       }
+       if ( ok){
+           SPFeatureI newFeature = outputFC->newFeatureFrom(feature);
+           env += Envelope(*feature->geometry()->getEnvelopeInternal());
+           for(int i=0; i < extraAtrrib.size(); ++i){
+               _attTable->setCell(extraAtrrib[i], rec, feature->cell(extraAtrrib[i]));
+           }
+           ++rec;
+       }
+   }
+
+   outputFC->setAttributes(_attTable);
+   outputFC->envelope(env);
+
+   QVariant value;
+   value.setValue<IFeatureCoverage>(outputFC);
+   ctx->setOutput(symTable, value, outputFC->name(), itFEATURE,outputFC->resource());
+   return true;
 }
 
 Ilwis::OperationImplementation *SelectionFeatures::create(quint64 metaid, const Ilwis::OperationExpression &expr)
@@ -163,47 +193,26 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
     QString selector = _expression.parm(1).value();
     selector = selector.remove('"');
 
-    int index = selector.indexOf("box=");
-    Envelope box;
-    if ( index != -1) {
-        QString crdlist = "box(" + selector.mid(index+4) + ")";
-        _box = Envelope(crdlist);
-        copylist |= itDOMAIN | itTABLE;
-    }
-    index = selector.indexOf("polygon=");
-    if ( index != -1)
-    {
-        //TODO:
-        copylist |= itDOMAIN | itTABLE;
-    }
-    index = selector.indexOf("attribute=");
-    if ( index != -1 ) {
-        if (! inputFC->attributeTable().isValid()) {
-            ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
-            return sPREPAREFAILED;
+    QRegularExpression re("( and )|( or )");
+    QStringList parts = selector.split(re);
+
+    int lastIndex = 0;
+    for(QString& part : parts){
+        int index = selector.indexOf(part, lastIndex);
+        ExpressionPart epart(inputFC->attributeTable(), part);
+        if ( index != lastIndex){
+            QString logical = selector.mid(lastIndex,index - lastIndex);
+            logical = logical.trimmed().toLower();
+            if ( logical == "and")
+                epart._andor = loAND;
+            if ( logical == "or")
+                epart._andor = loOR;
+        }else{
+            ExpressionPart epart(inputFC->attributeTable(), part);
         }
-        std::map<QString,LogicalOperator> operators = {{"==", loEQ},{"<=",loLESSEQ},{">=", loGREATEREQ},{"<",loLESS},{">", loGREATER},{"!=",loNEQ}};
-        int index1 = selector.indexOf("\"");
-        if ( index1 == -1)
-            index1 = 10000;
-        int index2 = 0;
-        for(auto op : operators){
-            if ((index2 = selector.indexOf(op.first)) != -1){
-                if ( index2 < index1)    {
-                    _operator = op.second;
-                    index = selector.indexOf("=");
-                    _attribColumn = selector.mid(index + 1, index2 - index - 1).trimmed();
-                    _rightSide = selector.mid(index2 + op.first.size()).trimmed();
-                    break;
-                }
-            }
-        }
-        if (_attribColumn.size() == 0)
-            _attribColumn =  selector.mid(index+10);
-        copylist |= itENVELOPE;
-    }
-    if ( _expression.parameterCount() == 3){
-        _asIndex = _expression.parm(2).value().toLower() == "asindex";
+        lastIndex += part.size();
+
+        _expressionparts.push_back(epart);
     }
 
      _outputObj = OperationHelperFeatures::initialize(_inputObj,inputType, copylist);
@@ -215,32 +224,10 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
      if ( outputName != sUNDEF)
          _outputObj->name(outputName);
 
-     if ( _attribColumn != "") {
-         QString url = "ilwis://internalcatalog/" + outputName;
-         Resource resource(url, itFLATTABLE);
-         _attTable.prepare(resource);
-         IDomain covdom;
-         if (!covdom.prepare("count")){
-             return sPREPAREFAILED;
-         }
-         if ( inputFC->attributeTable()->columnIndex(_attribColumn) == iUNDEF) {
-             ERROR2(ERR_NOT_FOUND2, TR("column"), inputFC->attributeTable()->name());
-             return sPREPAREFAILED;
-         }
+     QString url = "ilwis://internalcatalog/" + outputName;
+     Resource resource(url, itFLATTABLE);
+     _attTable.prepare(resource);
 
-         IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
-         if ( _operator != loNONE){
-            for(int c = 0; c < inputFC->attributeDefinitions().columnCount(); ++c){
-                _attTable->addColumn( inputFC->attributeDefinitions().columndefinition(c));
-            }
-         }else{
-            _attTable->addColumn(_attribColumn, inputFC->attributeTable()->columndefinition(_attribColumn).datadef().domain<>());
-            outputFC->setAttributes(_attTable);
-         }
-     }
-     if ( (_box.isValid() && !_box.isNull()) == 0) {
-        //TODO: selections in features on bounding box
-     }
      return sPREPARED;
 }
 
@@ -250,10 +237,9 @@ quint64 SelectionFeatures::createMetadata()
     operation.setSyntax("selection(featurecoverage,selection-definition[,asIndex])");
     operation.setLongName("Select features");
     operation.setDescription(TR("the operation select parts of the spatial extent or attributes to create a 'smaller' coverage"));
-    operation.setInParameterCount({2,3});
+    operation.setInParameterCount({2});
     operation.addInParameter(0,itFEATURE, TR("input feature coverage"),TR("input feature rcoverage with a domain as specified by the selection"));
-    operation.addOptionalInParameter(1,itSTRING, TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
-    operation.addOptionalInParameter(2,itSTRING, TR("alternate return type"),TR("optional, if asIndex is used the result will be a selection of feature indexes in the coverage"));
+    operation.addInParameter(1,itSTRING, TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE | itCOLLECTION, TR("Selection"),TR("coverage or index were the selection has been applied") );
