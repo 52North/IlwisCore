@@ -5,12 +5,12 @@
 namespace Ilwis {
 namespace BaseOperations {
 
-class Selection : public OperationImplementation
+class SelectionRaster : public SelectionBase
 {
 public:
-    Selection();
-    Selection(quint64 metaid, const Ilwis::OperationExpression &expr);
-    ~Selection();
+    SelectionRaster();
+    SelectionRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
+    ~SelectionRaster();
 
     bool execute(ExecutionContext *ctx, SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
@@ -20,12 +20,10 @@ public:
 private:
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
-    QString _attribColumn;
-    BoundingBox _box;
     std::vector<qint32> _base;
     int _zvalue = iUNDEF;
 
-    NEW_OPERATION(Selection)    ;
+    NEW_OPERATION(SelectionRaster)    ;
 
 
 };

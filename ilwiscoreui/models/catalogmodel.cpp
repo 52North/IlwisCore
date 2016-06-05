@@ -128,7 +128,6 @@ int CatalogModel::level() const
 QQmlListProperty<ResourceModel> CatalogModel::resources() {
 
     try{
-        qDebug() << "resources " << name();
         gatherItems();
 
         _objectCounts.clear();

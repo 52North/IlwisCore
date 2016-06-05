@@ -3,7 +3,6 @@
 #include <functional>
 #include <future>
 #include <memory>
-#include "geos/geom/Envelope.inl"
 #include "coverage.h"
 #include "table.h"
 #include "featurecoverage.h"
@@ -16,6 +15,7 @@
 #include "operationhelperfeatures.h"
 #include "featureiterator.h"
 #include "geometryhelper.h"
+#include "selectionbase.h"
 #include "selectionfeatures.h"
 
 using namespace Ilwis;
@@ -23,83 +23,6 @@ using namespace BaseOperations;
 
 REGISTER_OPERATION(SelectionFeatures)
 
-SelectionFeatures::ExpressionPart::ExpressionPart(const ITable& attributes, const QString& part){
-    _isValid = false;
-    int index = part.indexOf("box(");
-    if ( index != -1) {
-        _envelope = part;
-        _isValid = _envelope.isValid();
-        _type = ptBOX;
-    }else {
-        index = part.indexOf("polygon(");
-        if ( index != -1)
-        {
-            _polygon.reset(GeometryHelper::fromWKT(part,0));
-            _isValid = _polygon.get() != 0;
-            _type = ptPOLYGON;
-
-        }else {
-            index = part.indexOf("attribute=");
-            if ( index != -1) {
-                QStringList attribs = part.split(",");
-                for(auto attrib : attribs){
-                    if ( attributes->columnIndex(attrib) != iUNDEF)    {
-                        _attributes.push_back(attrib);
-                    }
-                }
-                _type = ptATTRIBUTE;
-            }else {
-                std::map<QString,LogicalOperator> operators = {{"==", loEQ},{"<=",loLESSEQ},{">=", loGREATEREQ},{"<",loLESS},{">", loGREATER},{"!=",loNEQ}};
-                int index1 = part.indexOf("\"");
-                if ( index1 == -1)
-                    index1 = 10000;
-                int index2 = 0;
-                for(auto op : operators){
-                    if ((index2 = part.indexOf(op.first)) != -1){
-                        if ( index2 < index1)    {
-                            _operator = op.second;
-                            QString leftSide = part.left(index2).trimmed();
-                            if ( (_leftSide = attributes->columnIndex(leftSide)) == iUNDEF){
-                                _isValid = false;
-                            }
-                            _rightSide = part.mid(index2 + op.first.size()).trimmed();
-                            _type = ptATTRIBUTESELECTION;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-bool SelectionFeatures::ExpressionPart::match(const SPFeatureI &feature,SelectionFeatures *operation) const
-{
-    if ( _type == ExpressionPart::ptBOX && _envelope.isValid())   {
-        return _envelope.contains(feature->geometry().get());
-    }
-    if ( _type == ExpressionPart::ptPOLYGON && _polygon.get() != 0)   {
-        return _polygon->contains(feature->geometry().get());
-    }
-    if ( _type == ExpressionPart::ptATTRIBUTESELECTION )   {
-        QVariant val = feature(_leftSide);
-        ColumnDefinition coldef = feature->attributedefinition(_leftSide);
-        if ( coldef.datadef().domain()->ilwisType() == itITEMDOMAIN){
-            val = coldef.datadef().domain()->impliedValue(val);
-        }
-        if ( QString(val.typeName()) == "QString" && QString(_rightSide.typeName()) == "QString"){
-            return operation->compare1(_operator,val.toString(), _rightSide.toString());
-        } else {
-            bool ok1,ok2;
-            double v1 = val.toDouble(&ok1);
-            double v2 = _rightSide.toDouble(&ok2);
-            bool ok3 = operation->compare1(_operator, v1, v2);
-            return ok1&& ok2 && ok3;
-        }
-    }
-    return false;
-}
 
 //-----------------------------------------------------------------------------------------------
 
@@ -108,7 +31,7 @@ SelectionFeatures::SelectionFeatures()
 {
 }
 
-SelectionFeatures::SelectionFeatures(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
+SelectionFeatures::SelectionFeatures(quint64 metaid, const Ilwis::OperationExpression &expr) : SelectionBase(metaid, expr)
 {
 }
 
@@ -195,29 +118,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
 
 
     QString selector = _expression.parm(1).value();
-    selector = selector.remove('"');
-
-    QRegularExpression re("( and )|( or )");
-    QStringList parts = selector.split(re);
-
-    int lastIndex = 0;
-    for(QString& part : parts){
-        int index = selector.indexOf(part, lastIndex);
-        ExpressionPart epart(inputFC->attributeTable(), part);
-        if ( index != lastIndex){
-            QString logical = selector.mid(lastIndex,index - lastIndex);
-            logical = logical.trimmed().toLower();
-            if ( logical == "and")
-                epart._andor = loAND;
-            if ( logical == "or")
-                epart._andor = loOR;
-        }else{
-            ExpressionPart epart(inputFC->attributeTable(), part);
-        }
-        lastIndex += part.size();
-
-        _expressionparts.push_back(epart);
-    }
+    parseSelector(selector, inputFC->attributeTable());
 
      _outputObj = OperationHelperFeatures::initialize(_inputObj,inputType, copylist);
      if ( !_outputObj.isValid()) {

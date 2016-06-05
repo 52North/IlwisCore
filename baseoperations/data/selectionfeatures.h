@@ -8,7 +8,7 @@
 namespace Ilwis {
 namespace BaseOperations {
 
-class SelectionFeatures : public OperationImplementation
+class SelectionFeatures : public SelectionBase
 {
 public:
     SelectionFeatures();
@@ -21,28 +21,13 @@ public:
 
     static quint64 createMetadata();
 private:
-    struct ExpressionPart{
 
-        enum PartType{ptBOX, ptPOLYGON, ptATTRIBUTE, ptATTRIBUTESELECTION};
-        ExpressionPart(const Ilwis::ITable &attribute, const QString& part);
-        bool match(const SPFeatureI& feature,SelectionFeatures *operation) const;
-        QVariant _rightSide;
-        int _leftSide; // index of attribute
-        PartType _type;
-        LogicalOperator _operator = loNONE;
-        LogicalOperator _andor = loNONE;
-        std::shared_ptr<geos::geom::Geometry> _polygon;
-        Envelope _envelope;
-        QStringList _attributes;
-        bool _isValid;
-    };
 
     IIlwisObject _inputObj;
     IIlwisObject _outputObj;
     ITable _attTable;
     bool _asIndex = false;
 
-    std::vector<ExpressionPart> _expressionparts;
 
     NEW_OPERATION(SelectionFeatures);
 
