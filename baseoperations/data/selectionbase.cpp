@@ -3,7 +3,14 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include "geos/geom/PrecisionModel.h"
+#include "geos/algorithm/locate/SimplePointInAreaLocator.h"
+#include "geos/geom/Point.h"
+#ifdef Q_OS_WIN
+#include "geos/geom/PrecisionModel.inl"
 #include "geos/geom/Envelope.inl"
+#endif
+#include "geos/geom/GeometryFactory.h"
 #include "coverage.h"
 #include "table.h"
 #include "featurecoverage.h"
@@ -29,16 +36,19 @@ SelectionBase::SelectionBase()
 
 SelectionBase::SelectionBase(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
 {
+    geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
+    _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
 }
 
-SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const QString& part){
+SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const QString& p){
+    QString part = p.trimmed();
     _isValid = false;
     int index;
     if ( (index = part.indexOf("envelope("))!= -1) {
         _envelope = QString(part).replace("envelope", "box");
         _isValid = _envelope.isValid();
         _type = ptENVELOPE;
-    } else if ((index = part.indexOf("boundingbox="))==0){
+    } else if ((index = part.indexOf("boundingbox("))==0){
         _box = QString(part).replace("boundingbox", "box");
         _isValid = _box.isValid();
         _type = ptBOX;
@@ -63,9 +73,8 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         QStringList indexes = lst.split(",");
         IRasterCoverage raster = coverage.as<RasterCoverage>();
         for(auto ind : indexes){
-            int idx = ind.toInt();
-            if ( idx >= 0 && idx < raster->size().zsize())    {
-                _bands.push_back(idx);
+            if (raster->stackDefinition().index(ind) != iUNDEF){
+                _bands.push_back(ind);
                 _isValid = true;
             }
         }
@@ -93,8 +102,13 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
                 if ( index2 < index1)    {
                     _operator = op.second;
                     QString leftSide = part.left(index2).trimmed();
-                    if ( (_leftSide = coverage->attributeTable()->columnIndex(leftSide)) == iUNDEF){
-                        _isValid = false;
+                    if ( leftSide.toLower() == "pixelvalue"){
+                        _leftSide = iUNDEF;
+                        _isValid = true;
+                    }else {
+                        if ( (_leftSide = coverage->attributeTable()->columnIndex(leftSide)) == iUNDEF){
+                            _isValid = false;
+                        }
                     }
                     _rightSide = part.mid(index2 + op.first.size()).trimmed();
                     _type = ptATTRIBUTESELECTION;
@@ -111,7 +125,7 @@ bool SelectionBase::ExpressionPart::match(const SPFeatureI &feature,SelectionBas
     if ( _type == ExpressionPart::ptFEATURETYPE){
         return hasType(feature->geometryType(), _geometryType);
     }
-    if ( _type == ExpressionPart::ptBOX && _envelope.isValid())   {
+    if ( _type == ExpressionPart::ptENVELOPE && _envelope.isValid())   {
         return _envelope.contains(feature->geometry().get());
     }
     if ( _type == ExpressionPart::ptPOLYGON && _polygon.get() != 0)   {
@@ -135,10 +149,43 @@ bool SelectionBase::ExpressionPart::match(const SPFeatureI &feature,SelectionBas
     }
     return false;
 }
+
+bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValue, SelectionBase *operation) const
+{
+    if ( _type == ExpressionPart::ptBOX && _box.isValid())   {
+        return _box.contains(location);
+    }
+    if ( _type == ExpressionPart::ptPOLYGON && _polygon.get() != 0)   {
+       geos::geom::Point *pnt = operation->pixel2point(location);
+       bool ok = _polygon->contains(pnt);
+       delete pnt;
+       return ok;
+    }
+    if ( _type == ExpressionPart::ptATTRIBUTESELECTION ) {
+        if ( _leftSide == iUNDEF ) { // the pixelvalue pseudo attribute
+            bool ok1;
+            double v2 = _rightSide.toDouble(&ok1);
+            bool ok2 = operation->compare1(_operator, pixelValue, v2);
+            return ok1&& ok2;
+        }
+    }
+    return true;
+}
 //-------------------------------------------
+
+geos::geom::Point *SelectionBase::pixel2point(const Pixel& pix){
+    IRasterCoverage raster = _inputObj.as<RasterCoverage>();
+    if ( raster.isValid())    {
+        Coordinate crd = raster->georeference()->pixel2Coord(pix);
+        return _geomfactory->createPoint(crd);
+    }
+    return 0;
+}
+
 void SelectionBase::parseSelector(QString selector, const ITable& attTable){
     selector.remove('"');
 
+    selector.replace(" with:", " and ");
     QRegularExpression re("( and )|( or )");
     QStringList parts = selector.split(re);
 
@@ -153,8 +200,6 @@ void SelectionBase::parseSelector(QString selector, const ITable& attTable){
                 epart._andor = loAND;
             if ( logical == "or")
                 epart._andor = loOR;
-        }else{
-            epart = ExpressionPart(attTable, part);
         }
         lastIndex += part.size();
 
@@ -162,21 +207,70 @@ void SelectionBase::parseSelector(QString selector, const ITable& attTable){
     }
 }
 
-int SelectionBase::numberOfBandsInSelection() const
+std::vector<QString> SelectionBase::bands(const IRasterCoverage& raster) const
 {
-    int count = 0;
+    std::set<QString> bands;
     for(const auto& epart : _expressionparts){
-        count += epart._bands.size();
+        for(QString bandIndex : epart._bands)
+            bands.insert(bandIndex);
+        if ( epart._box.isValid()){
+            for(quint32 z=epart._box.min_corner().z; z < epart._box.max_corner().z; ++z){
+                bands.insert(raster->stackDefinition().index(z));
+            }
+        }
     }
-    return count;
+    std::vector<QString> result(bands.size());
+    std::copy(bands.begin(), bands.end(), result.begin());
+    return result;
 }
 
-BoundingBox SelectionBase::boundingBox() const
+QStringList SelectionBase::attributeNames() const
+{
+    QStringList result;
+    for(const auto& epart : _expressionparts){
+        result << epart._attributes;
+    }
+    return result;
+}
+
+BoundingBox SelectionBase::boundingBox(const IRasterCoverage& raster) const
 {
     BoundingBox box;
     for(const auto& epart : _expressionparts){
         box += epart._box;
+        if ( epart._polygon.get() != 0){
+            if ( raster.isValid()){
+                Envelope env(*(epart._polygon->getEnvelopeInternal()));
+                BoundingBox bb = raster->georeference()->coord2Pixel(env);
+                box += bb;
+            }
+        }
     }
     return box;
+}
+
+std::vector<int> SelectionBase::organizeAttributes(const ITable& sourceTable){
+    std::vector<int> extraAtrrib;
+    if ( sourceTable.isValid()){
+        for(const auto& epart : _expressionparts){
+            if ( epart._type != ExpressionPart::ptATTRIBUTE){
+                for(int i=0; i < epart._attributes.size();++i){
+                    int index = sourceTable->columnIndex(epart._attributes[i]);
+                    if ( index != iUNDEF){
+                        extraAtrrib.push_back(index);
+                    }
+                }
+            }
+        }
+        if ( extraAtrrib.size() == 0){
+            for(int c = 0; c < sourceTable->columnCount(); ++c){
+                extraAtrrib.push_back(c);
+            }
+        }
+        for(int c = 0; c < extraAtrrib.size(); ++c){
+            _attTable->addColumn( sourceTable->columndefinition(extraAtrrib[c]));
+        }
+    }
+    return extraAtrrib;
 }
 
