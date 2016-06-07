@@ -222,29 +222,42 @@ PixelIterator RasterCoverage::begin()
     return PixelIterator(raster);
 }
 
-PixelIterator RasterCoverage::band(const QString &variantIndex)
+PixelIterator RasterCoverage::band(const QString &variantIndex, const Ilwis::BoundingBox &box)
 {
     int index = _bandDefinition.index(variantIndex);
     if ( index >= size().zsize() || index < 0)
         return PixelIterator();
 
-    return bandPrivate(index);
+    return bandPrivate(index, box);
 }
 
-PixelIterator RasterCoverage::band(double bandIndex)
+PixelIterator RasterCoverage::band(double bandIndex, const Ilwis::BoundingBox &box)
 {
     int index = _bandDefinition.index(bandIndex);
     if ( index >= size().zsize() || index < 0)
         return PixelIterator();
 
-    return bandPrivate(index);
+    return bandPrivate(index, box);
 }
 
-PixelIterator RasterCoverage::bandPrivate(quint32 bandIndex)
+PixelIterator RasterCoverage::bandPrivate(quint32 bandIndex, const Ilwis::BoundingBox &box)
 {
-    BoundingBox box(Pixel(0,0,bandIndex), Pixel(size().xsize()-1,size().ysize()-1, bandIndex));
-    IRasterCoverage raster(this);
-    return PixelIterator(raster,box);
+    BoundingBox bbox;
+    if ( box.isValid() &&
+         box.min_corner().x >= 0 &&
+         box.min_corner().y >= 0 &&
+         box.max_corner().x < size().xsize() &&
+         box.max_corner().y < size().ysize()){
+        if ( box.isNull())
+            bbox = BoundingBox(Pixel(0,0,bandIndex), Pixel(size().xsize()-1,size().ysize()-1, bandIndex));
+        else {
+            bbox = BoundingBox(Pixel(box.min_corner().x,box.min_corner().y,bandIndex), Pixel(box.max_corner().x,box.max_corner().y, bandIndex));
+
+        }
+        IRasterCoverage raster(this);
+        return PixelIterator(raster,bbox);
+    }
+    return PixelIterator();
 }
 
 

@@ -185,8 +185,8 @@ public:
     PixelIterator end() ;
     PixelIterator begin() ;
 
-    PixelIterator band(const QString &variantIndex) ;
-    PixelIterator band(double bandIndex) ;
+    PixelIterator band(const QString &variantIndex, const BoundingBox& box=BoundingBox()) ;
+    PixelIterator band(double bandIndex, const Ilwis::BoundingBox &box=BoundingBox()) ;
     bool band(const QString& bandIndex, PixelIterator inputData);
     bool band(double bandIndex,  PixelIterator inputIter);
     void setBandDefinition(QString bandIndex, const DataDefinition& def);
@@ -221,7 +221,7 @@ private:
     ITable _attributeTable;
 
     bool bandPrivate(quint32 bandIndex,  PixelIterator inputIter) ;
-    PixelIterator bandPrivate(quint32 index);
+    PixelIterator bandPrivate(quint32 index, const Ilwis::BoundingBox &box=BoundingBox());
 };
 
 typedef IlwisData<RasterCoverage> IRasterCoverage;
