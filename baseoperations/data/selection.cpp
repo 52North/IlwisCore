@@ -36,56 +36,65 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
-    quint32 rec = 0;
-    quint32 colIndex = iUNDEF;
+    ITable attTable = inputRaster->attributeTable();
+    int keyColumn = attTable.isValid() ? attTable->columnIndex(COVERAGEKEYCOLUMN) : iUNDEF;
 
-//    std::unordered_map<quint32, quint32> coverageIndex;
-//    if ( _attribColumn != "") {
-//        ITable tbl = inputRaster->attributeTable();
-//        std::vector<QVariant> values = tbl->column(COVERAGEKEYCOLUMN);
-//        for(const QVariant& val : values) {
-//            coverageIndex[val.toInt()] = rec++;
-//        }
-//        colIndex  = tbl->columnIndex(_attribColumn);
-//    }
+    std::vector<int> extraAtrrib = organizeAttributes(inputRaster->attributeTable());
 
 
-//    BoxedAsyncFunc selection = [&](const BoundingBox& box ) -> bool {
-//        BoundingBox inpbox = box.size();
-//        inpbox += _base;
-//        inpbox += std::vector<qint32>{0, box.min_corner().y,0};
-//        if ( _zvalue == iUNDEF)
-//            inpbox.copyFrom(box, BoundingBox::dimZ);
-//        PixelIterator iterOut(outputRaster, box);
-//        PixelIterator iterIn(inputRaster, inpbox);
+    std::vector<QString> selectionBands = bands(inputRaster);
+    if ( selectionBands.size() == 0) // use all
+        selectionBands = inputRaster->stackDefinition().indexes();
 
-//        double v_in = 0;
-//        std::for_each(iterOut, iterOut.end(), [&](double& v){
-//            v_in = *iterIn;
-//            if ( v_in != rUNDEF) {
-//                if ( _attribColumn != "") {
-//                    quint32 rec = coverageIndex[v_in];
-//                    QVariant var = inputRaster->attributeTable()->cell(colIndex, rec);
-//                    v = var.toDouble();
-//                    if ( isNumericalUndef2(v,inputRaster))
-//                        v = rUNDEF;
-//                } else {
-//                    v = v_in;
-//                }
-//            }
-//            ++iterIn;
-//            ++iterOut;
-//        }
-//        );
-//        return true;
-//    };
+    std::set<double> keys;
+    PixelIterator iterOut(outputRaster);
 
-//    ctx->_threaded = false;
-//    bool resource = OperationHelperRaster::execute(ctx,selection, outputRaster, _box);
+    for(QString band : selectionBands){
+        PixelIterator iterIn = inputRaster->band(band, _box);
 
-        QVariant value;
-        value.setValue<IRasterCoverage>(outputRaster);
-        ctx->setOutput(symTable, value, outputRaster->name(), itRASTER,outputRaster->resource());
+        PixelIterator iterEnd = iterIn.end();
+        while(iterIn != iterEnd) {
+            bool ok = true;
+            double& pixValue = *iterIn;
+            double matchValue = pixValue;
+            if (keyColumn != iUNDEF){
+
+            }
+            for(const auto& epart : _expressionparts){
+                bool partOk = epart.match(iterIn.position(), matchValue,this);
+                if ( epart._andor != loNONE)
+                    ok =  epart._andor == loAND ? ok && partOk : ok || partOk;
+                else
+                    ok &= partOk;
+            }
+            if ( ok){
+                *iterOut = pixValue;
+                if ( extraAtrrib.size() > 0)
+                    keys.insert(pixValue);
+            }else
+                *iterOut = rUNDEF;
+
+            ++iterIn;
+            ++iterOut;
+        }
+        // if there is an attribute table we must copy the correct attributes and records
+        if ( keyColumn != iUNDEF){
+            for(int recIndex=0; recIndex < attTable->columnCount(); ++recIndex){
+                const Record& rec = attTable->record(recIndex);
+                double key = rec.cell(keyColumn).toDouble();
+                if ( keys.find(key) == keys.end())
+                    continue;
+                for(int i=0; i < extraAtrrib.size(); ++i){
+                    _attTable->setCell(extraAtrrib[i], NEW_RECORD, rec.cell(extraAtrrib[i]));
+                }
+            }
+        }
+    }
+
+
+    QVariant value;
+    value.setValue<IRasterCoverage>(outputRaster);
+    ctx->setOutput(symTable, value, outputRaster->name(), itRASTER,outputRaster->resource());
     return true;
 
 
@@ -110,92 +119,64 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
         return sPREPAREFAILED;
     }
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
-    quint64 copylist = itCOORDSYSTEM | itGEOREF | itDOMAIN;
+    quint64 copylist = itCOORDSYSTEM ;
 
 
     QString selector = _expression.parm(1).value();
     parseSelector(selector, inputRaster->attributeTable());
 
-    int numbands = numberOfBandsInSelection();
-    if ( numbands == 0)
-        numbands = inputRaster->size().zsize();
-    Size<> sz(inputRaster->size());
-    sz.zsize(numbands);
+    std::vector<QString> selectionBands = bands(inputRaster);
+    int numbands = selectionBands.size() == 0 ? iUNDEF : selectionBands.size();
+    _box = boundingBox(_inputObj.as<RasterCoverage>());
+    bool useOldGrf = numbands == iUNDEF;
+    if ( _box.isNull()){
+        _box = inputRaster->size();
+    } else
+        useOldGrf = false;
+
+    if ( useOldGrf){
+        copylist |= itGEOREF | itRASTERSIZE | itENVELOPE;
+    }
 
 
-
-//    int index = selector.indexOf("box=");
-//    Envelope box;
-//    if ( index != -1) {
-//        QString crdlist = "box(" + selector.mid(index+4) + ")";
-//        _box = BoundingBox(crdlist);
-//        box = inputRaster->georeference()->pixel2Coord(_box);
-//        copylist |= itDOMAIN | itTABLE;
-//        std::vector<qint32> vec{_box.min_corner().x, _box.min_corner().y,_box.min_corner().z};
-//        _base = vec;
-
-//    }
-//    index = selector.indexOf("polygon=");
-//    if ( index != -1)
-//    {
-//        //TODO:
-//        copylist |= itDOMAIN | itTABLE;
-//    }
-//    index = selector.indexOf("attribute=");
-//    if ( index != -1 ) {
-//        if (! inputRaster->attributeTable().isValid()) {
-//            ERROR2(ERR_NO_FOUND2,"attribute-table", "coverage");
-//            return sPREPAREFAILED;
-//        }
-//        _attribColumn =  selector.mid(index+10);
-//        copylist |= itRASTERSIZE | itGEOREF | itENVELOPE;
-//    }
-//    int indexindex = selector.indexOf("index=");
-//    if ( indexindex != -1) {
-//        copylist |= itDOMAIN | itGEOREF | itENVELOPE | itTABLE;
-//        _box = BoundingBox(inputRaster->size());
-//        QString zvalues = selector.mid(6);
-//        bool ok;
-//        _zvalue = zvalues.toInt(&ok);
-//        if ( !ok || _zvalue < 0) {
-//            ERROR3(ERR_ILLEGAL_PARM_3, TR("layer index"), zvalues,"Selection");
-//            return sPREPAREFAILED;
-//        }
-//        _box.min_corner().z = _zvalue;
-//        _box.max_corner().z = _zvalue;
-//        std::vector<qint32> vec{_box.min_corner().x, _box.min_corner().y,_box.min_corner().z};
-//        _base = vec;
-//    }
+    int selectedAttributes = attributeNames().size();
+    if (selectedAttributes != 1)
+        copylist |= itDOMAIN;
 
      _outputObj = OperationHelperRaster::initialize(_inputObj,inputType, copylist);
      if ( !_outputObj.isValid()) {
          ERROR1(ERR_NO_INITIALIZED_1, "output coverage");
          return sPREPAREFAILED;
      }
-//     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
-//     if ( (copylist & itDOMAIN) == 0) {
-//         outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
-//                                                   : outputRaster->datadefRef() = inputRaster->datadef();
-//     }
-//     QString outputName = _expression.parm(0,false).value();
-//     if ( outputName != sUNDEF)
-//         _outputObj->name(outputName);
-//     if ( (copylist & itGEOREF) == 0) {
-//        Resource resource(QUrl("ilwis://internalcatalog/georeference"),itGEOREF);
-//        resource.addProperty("size", IVARIANT(_box.size()));
-//        resource.addProperty("envelope", IVARIANT(box));
-//        resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
-//        resource.addProperty("name", _outputObj->name());
-//        resource.addProperty("centerofpixel",inputRaster->georeference()->centerOfPixel());
-//        IGeoReference  grf;
-//        grf.prepare(resource);
-//        outputRaster->georeference(grf);
-//        outputRaster->envelope(box);
-//    }
-//     if(indexindex != -1)  {
-//         Size<> sz(outputRaster->size().xsize(),outputRaster->size().xsize(), 1);
-//         outputRaster->size(sz);
-//     }
+     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
+
+     QString outputName = _expression.parm(0,false).value();
+     if ( outputName != sUNDEF)
+         _outputObj->name(outputName);
+
+     if ( selectedAttributes > 1) {
+         //outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
+         //                                          : outputRaster->datadefRef() = inputRaster->datadef();
+
+         QString url = "ilwis://internalcatalog/" + outputName;
+         Resource resource(url, itFLATTABLE);
+         _attTable.prepare(resource);
+     }
+
+
+     if ( (copylist & itGEOREF) == 0) {
+         Resource resource(QUrl("ilwis://internalcatalog/" + outputRaster->name() + "_grf_" + QString::number(outputRaster->id())),itGEOREF);
+         resource.addProperty("size", IVARIANT(_box.size()));
+         auto envelope = inputRaster->georeference()->pixel2Coord(_box);
+         resource.addProperty("envelope", IVARIANT(envelope));
+         resource.addProperty("coordinatesystem", IVARIANT(inputRaster->coordinateSystem()));
+         resource.addProperty("name", _outputObj->name());
+         resource.addProperty("centerofpixel",inputRaster->georeference()->centerOfPixel());
+         IGeoReference  grf;
+         grf.prepare(resource);
+         outputRaster->georeference(grf);
+         outputRaster->envelope(envelope);
+    }
 
     return sPREPARED;
 }

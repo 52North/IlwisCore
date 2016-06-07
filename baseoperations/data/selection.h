@@ -18,10 +18,7 @@ public:
 
     static quint64 createMetadata();
 private:
-    IIlwisObject _inputObj;
-    IIlwisObject _outputObj;
-    std::vector<qint32> _base;
-    int _zvalue = iUNDEF;
+    BoundingBox _box;
 
     NEW_OPERATION(SelectionRaster)    ;
 
