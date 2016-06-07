@@ -23,9 +23,7 @@ public:
 private:
 
 
-    IIlwisObject _inputObj;
-    IIlwisObject _outputObj;
-    ITable _attTable;
+
     bool _asIndex = false;
 
 

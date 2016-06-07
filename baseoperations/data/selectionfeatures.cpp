@@ -49,25 +49,8 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
 
-   std::vector<int> extraAtrrib;
-   for(const auto& epart : _expressionparts){
-       if ( epart._type != ExpressionPart::ptATTRIBUTE){
-           for(int i=0; i < epart._attributes.size();++i){
-               int index = inputFC->attributeDefinitions().columnIndex(epart._attributes[i]);
-               if ( index != iUNDEF){
-                   extraAtrrib.push_back(index);
-               }
-           }
-       }
-   }
-   if ( extraAtrrib.size() == 0){
-       for(int c = 0; c < inputFC->attributeDefinitions().columnCount(); ++c){
-           extraAtrrib.push_back(c);
-       }
-   }
-   for(int c = 0; c < extraAtrrib.size(); ++c){
-       _attTable->addColumn( inputFC->attributeDefinitions().columndefinition(extraAtrrib[c]));
-   }
+   std::vector<int> extraAtrrib = organizeAttributes(inputFC->attributeTable());
+
    int rec = 0;
    Envelope env;
    for(const auto& feature : inputFC){
