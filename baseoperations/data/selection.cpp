@@ -36,17 +36,16 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
-    ITable attTable = inputRaster->attributeTable();
-    int keyColumn = attTable.isValid() ? attTable->columnIndex(COVERAGEKEYCOLUMN) : iUNDEF;
 
-    std::vector<int> extraAtrrib = organizeAttributes(inputRaster->attributeTable());
+    int keyColumn = _inputAttributeTable.isValid() ? _inputAttributeTable->columnIndex(COVERAGEKEYCOLUMN) : iUNDEF;
+
+    std::vector<int> extraAtrrib = organizeAttributes();
 
 
     std::vector<QString> selectionBands = bands(inputRaster);
     if ( selectionBands.size() == 0) // use all
         selectionBands = inputRaster->stackDefinition().indexes();
 
-    std::set<double> keys;
     PixelIterator iterOut(outputRaster);
 
     for(QString band : selectionBands){
@@ -69,8 +68,6 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             }
             if ( ok){
                 *iterOut = pixValue;
-                if ( extraAtrrib.size() > 0)
-                    keys.insert(pixValue);
             }else
                 *iterOut = rUNDEF;
 
@@ -79,19 +76,16 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         }
         // if there is an attribute table we must copy the correct attributes and records
         if ( keyColumn != iUNDEF){
-            for(int recIndex=0; recIndex < attTable->columnCount(); ++recIndex){
-                const Record& rec = attTable->record(recIndex);
-                double key = rec.cell(keyColumn).toDouble();
-                if ( keys.find(key) == keys.end())
-                    continue;
+            for(int recIndex=0; recIndex < _inputAttributeTable->recordCount(); ++recIndex){
+                const Record& rec = _inputAttributeTable->record(recIndex);
                 for(int i=0; i < extraAtrrib.size(); ++i){
-                    _attTable->setCell(extraAtrrib[i], NEW_RECORD, rec.cell(extraAtrrib[i]));
+                    _attTable->setCell(extraAtrrib[i], recIndex, rec.cell(extraAtrrib[i]));
                 }
             }
         }
     }
 
-
+    outputRaster->setAttributes(_attTable);
     QVariant value;
     value.setValue<IRasterCoverage>(outputRaster);
     ctx->setOutput(symTable, value, outputRaster->name(), itRASTER,outputRaster->resource());
@@ -119,11 +113,12 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
         return sPREPAREFAILED;
     }
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
+    _inputAttributeTable = inputRaster->attributeTable();
     quint64 copylist = itCOORDSYSTEM ;
 
 
     QString selector = _expression.parm(1).value();
-    parseSelector(selector, inputRaster->attributeTable());
+    parseSelector(selector, inputRaster);
 
     std::vector<QString> selectionBands = bands(inputRaster);
     int numbands = selectionBands.size() == 0 ? iUNDEF : selectionBands.size();
@@ -154,7 +149,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
      if ( outputName != sUNDEF)
          _outputObj->name(outputName);
 
-     if ( selectedAttributes > 1) {
+     if ( selectedAttributes != 1) {
          //outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
          //                                          : outputRaster->datadefRef() = inputRaster->datadef();
 
