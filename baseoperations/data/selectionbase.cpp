@@ -162,12 +162,17 @@ bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValu
        return ok;
     }
     if ( _type == ExpressionPart::ptATTRIBUTESELECTION ) {
-        if ( _leftSide == iUNDEF ) { // the pixelvalue pseudo attribute
-            bool ok1;
-            double v2 = _rightSide.toDouble(&ok1);
-            bool ok2 = operation->compare1(_operator, pixelValue, v2);
-            return ok1&& ok2;
+        if ( _leftSide != iUNDEF ) { // the pixelvalue pseudo attribute
+            bool ok;
+            QVariant var = operation->attribute(pixelValue,_leftSide);
+            pixelValue = var.toDouble(&ok);
+            if (!ok)
+                return false;
         }
+        bool ok1;
+        double v2 = _rightSide.toDouble(&ok1);
+        bool ok2 = operation->compare1(_operator, pixelValue, v2);
+        return ok1&& ok2;
     }
     return true;
 }
@@ -182,7 +187,14 @@ geos::geom::Point *SelectionBase::pixel2point(const Pixel& pix){
     return 0;
 }
 
-void SelectionBase::parseSelector(QString selector, const ITable& attTable){
+QVariant SelectionBase::attribute(double pixelValue,int columnIndex){
+    if ( _inputAttributeTable.isValid()){
+       return _inputAttributeTable->cell(columnIndex, pixelValue);
+    }
+    return false;
+}
+
+void SelectionBase::parseSelector(QString selector, const ICoverage& coverage){
     selector.remove('"');
 
     selector.replace(" with:", " and ");
@@ -192,7 +204,7 @@ void SelectionBase::parseSelector(QString selector, const ITable& attTable){
     int lastIndex = 0;
     for(QString& part : parts){
         int index = selector.indexOf(part, lastIndex);
-        ExpressionPart epart(attTable, part);
+        ExpressionPart epart(coverage, part);
         if ( index != lastIndex){
             QString logical = selector.mid(lastIndex,index - lastIndex);
             logical = logical.trimmed().toLower();
@@ -249,13 +261,13 @@ BoundingBox SelectionBase::boundingBox(const IRasterCoverage& raster) const
     return box;
 }
 
-std::vector<int> SelectionBase::organizeAttributes(const ITable& sourceTable){
+std::vector<int> SelectionBase::organizeAttributes(){
     std::vector<int> extraAtrrib;
-    if ( sourceTable.isValid()){
+    if ( _inputAttributeTable.isValid()){
         for(const auto& epart : _expressionparts){
             if ( epart._type != ExpressionPart::ptATTRIBUTE){
                 for(int i=0; i < epart._attributes.size();++i){
-                    int index = sourceTable->columnIndex(epart._attributes[i]);
+                    int index = _inputAttributeTable->columnIndex(epart._attributes[i]);
                     if ( index != iUNDEF){
                         extraAtrrib.push_back(index);
                     }
@@ -263,12 +275,12 @@ std::vector<int> SelectionBase::organizeAttributes(const ITable& sourceTable){
             }
         }
         if ( extraAtrrib.size() == 0){
-            for(int c = 0; c < sourceTable->columnCount(); ++c){
+            for(int c = 0; c < _inputAttributeTable->columnCount(); ++c){
                 extraAtrrib.push_back(c);
             }
         }
         for(int c = 0; c < extraAtrrib.size(); ++c){
-            _attTable->addColumn( sourceTable->columndefinition(extraAtrrib[c]));
+            _attTable->addColumn( _inputAttributeTable->columndefinition(extraAtrrib[c]));
         }
     }
     return extraAtrrib;
