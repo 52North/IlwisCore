@@ -49,7 +49,7 @@ bool SelectionFeatures::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    IFeatureCoverage outputFC = _outputObj.as<FeatureCoverage>();
 
-   std::vector<int> extraAtrrib = organizeAttributes(inputFC->attributeTable());
+   std::vector<int> extraAtrrib = organizeAttributes();
 
    int rec = 0;
    Envelope env;
@@ -97,11 +97,12 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
         return sPREPAREFAILED;
     }
     IFeatureCoverage inputFC = _inputObj.as<FeatureCoverage>();
+    _inputAttributeTable = inputFC->attributeTable();
     quint64 copylist = itCOORDSYSTEM;
 
 
     QString selector = _expression.parm(1).value();
-    parseSelector(selector, inputFC->attributeTable());
+    parseSelector(selector, inputFC);
 
      _outputObj = OperationHelperFeatures::initialize(_inputObj,inputType, copylist);
      if ( !_outputObj.isValid()) {
