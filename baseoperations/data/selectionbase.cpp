@@ -101,6 +101,8 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
             if ((index2 = part.indexOf(op.first)) != -1){
                 if ( index2 < index1)    {
                     _operator = op.second;
+                    QString rights = part.mid(index2 + op.first.size()).trimmed();
+                    _rightSide = rights.remove("\'");
                     QString leftSide = part.left(index2).trimmed();
                     if ( leftSide.toLower() == "pixelvalue"){
                         _leftSide = iUNDEF;
@@ -108,9 +110,13 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
                     }else {
                         if ( (_leftSide = coverage->attributeTable()->columnIndex(leftSide)) == iUNDEF){
                             _isValid = false;
+                        }else {
+                            ColumnDefinition coldef = coverage->attributeTable()->columndefinition(_leftSide);
+                            QVariant val = coldef.datadef().domain()->impliedValue(_rightSide);
+                            _rightSide = val;
                         }
                     }
-                    _rightSide = part.mid(index2 + op.first.size()).trimmed();
+
                     _type = ptATTRIBUTESELECTION;
                     break;
                 }
