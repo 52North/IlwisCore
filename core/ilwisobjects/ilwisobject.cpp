@@ -355,6 +355,7 @@ bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
             if ( !_connector.isNull()){
+                connector->addProperty("connectormode",IlwisObject::cmINPUT);
                 bool ok = _connector->loadMetaData(this, options);
                 changed(false);
                 return ok;
@@ -368,6 +369,7 @@ bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
         quint64 pointer = (quint64) ( _outConnector.data());
         quint64 npointer = (quint64) ( connector);
         if ( pointer != npointer || npointer == 0){
+            connector->addProperty("connectormode",IlwisObject::cmOUTPUT);
             _outConnector.reset(connector);
         }
         else {
