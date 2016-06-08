@@ -270,6 +270,7 @@ void  FlatTable::setCell(quint32 index, quint32 rec, const QVariant& var){
 
     if ( rec >= _datagrid.size()) {
         newRecord();
+        rec = _datagrid.size() - 1;
     }
     _datagrid[rec].cell(index, checkInput(var, index));
     _datagrid[rec].changed(true);
