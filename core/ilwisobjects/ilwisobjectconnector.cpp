@@ -39,7 +39,11 @@ const Resource &IlwisObjectConnector::source() const
 
 void IlwisObjectConnector::addProperty(const QString &key, const QVariant &value)
 {
-    _resource.addProperty(key, value);
+    if ( key == "connectormode"){
+        _mode = (IlwisObject::ConnectorMode)value.toInt();
+
+    }else
+        _resource.addProperty(key, value);
 }
 
 void IlwisObjectConnector::removeProperty(const QString &key)

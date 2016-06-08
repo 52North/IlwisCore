@@ -57,6 +57,7 @@ protected:
     Resource _resource;
     bool _binaryIsLoaded;
     std::recursive_mutex _mutex;
+    IlwisObject::ConnectorMode _mode = IlwisObject::cmINPUT;
 
 private:
     IOOptions _options;
