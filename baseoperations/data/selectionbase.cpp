@@ -100,7 +100,9 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         _type = ptPOLYGON;
 
     }else if ( (index = part.indexOf("attributes("))!= -1) {
-        QString lst = part.mid(index + 1);
+        index = part.indexOf("(");
+        int len = part.lastIndexOf(")") - index - 1;
+        QString lst = part.mid(index + 1, len);
         QStringList attribs = lst.split(",");
         for(auto attrib : attribs){
             if ( coverage->attributeTable()->columnIndex(attrib) != iUNDEF)    {
@@ -110,7 +112,8 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         }
         _type = ptATTRIBUTE;
     } else if ((index = part.indexOf("rasterbands("))==0){
-        QString lst = part.mid(index + 1);
+        int len = part.lastIndexOf(")") - index - 1;
+        QString lst = part.mid(index + 1, len);
         QStringList indexes = lst.split(",");
         IRasterCoverage raster = coverage.as<RasterCoverage>();
         for(auto ind : indexes){
@@ -323,12 +326,10 @@ std::vector<int> SelectionBase::organizeAttributes(){
     std::vector<int> extraAtrrib;
     if ( _inputAttributeTable.isValid()){
         for(const auto& epart : _expressionparts){
-            if ( epart._type != ExpressionPart::ptATTRIBUTE){
-                for(int i=0; i < epart._attributes.size();++i){
-                    int index = _inputAttributeTable->columnIndex(epart._attributes[i]);
-                    if ( index != iUNDEF){
-                        extraAtrrib.push_back(index);
-                    }
+            for(int i=0; i < epart._attributes.size();++i){
+                int index = _inputAttributeTable->columnIndex(epart._attributes[i]);
+                if ( index != iUNDEF){
+                    extraAtrrib.push_back(index);
                 }
             }
         }
@@ -337,8 +338,10 @@ std::vector<int> SelectionBase::organizeAttributes(){
                 extraAtrrib.push_back(c);
             }
         }
-        for(int c = 0; c < extraAtrrib.size(); ++c){
-            _attTable->addColumn( _inputAttributeTable->columndefinition(extraAtrrib[c]));
+        if ( _attTable.isValid()){
+            for(int c = 0; c < extraAtrrib.size(); ++c){
+                _attTable->addColumn( _inputAttributeTable->columndefinition(extraAtrrib[c]));
+            }
         }
     }
     return extraAtrrib;

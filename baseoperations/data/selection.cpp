@@ -54,7 +54,7 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         PixelIterator iterEnd = iterIn.end();
         while(iterIn != iterEnd) {
             bool ok = true;
-            double& pixValue = *iterIn;
+            double pixValue = *iterIn;
             double matchValue = pixValue;
             if (keyColumn != iUNDEF){
 
@@ -65,6 +65,14 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                     ok =  epart._andor == loAND ? ok && partOk : ok || partOk;
                 else
                     ok &= partOk;
+                if (epart._type == ExpressionPart::ptATTRIBUTE && extraAtrrib.size() == 1){
+                    if ( pixValue < 0 || pixValue >= _inputAttributeTable->recordCount()){
+                        ok = false;
+                        continue;
+                    }
+                    const Record& rec = _inputAttributeTable->record(pixValue);
+                    pixValue = rec.cell(extraAtrrib[0]).toDouble();
+                }
             }
             if ( ok){
                 *iterOut = pixValue;
@@ -75,11 +83,11 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             ++iterOut;
         }
         // if there is an attribute table we must copy the correct attributes and records
-        if ( keyColumn != iUNDEF){
+        if ( keyColumn != iUNDEF && _attTable.isValid()){
             for(int recIndex=0; recIndex < _inputAttributeTable->recordCount(); ++recIndex){
                 const Record& rec = _inputAttributeTable->record(recIndex);
                 for(int i=0; i < extraAtrrib.size(); ++i){
-                    _attTable->setCell(extraAtrrib[i], recIndex, rec.cell(extraAtrrib[i]));
+                    _attTable->setCell(i, recIndex, rec.cell(extraAtrrib[i]));
                 }
             }
         }
@@ -150,12 +158,13 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
          _outputObj->name(outputName);
 
      if ( selectedAttributes > 1) {
-         //outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
-         //                                          : outputRaster->datadefRef() = inputRaster->datadef();
-
          QString url = "ilwis://internalcatalog/" + outputName;
          Resource resource(url, itFLATTABLE);
          _attTable.prepare(resource);
+     }
+     if ( selectedAttributes == 1 && _inputAttributeTable.isValid()){
+        QStringList names = attributeNames();
+        outputRaster->datadefRef().domain(_inputAttributeTable->columndefinition(names[0]).datadef().domain());
      }
 
 
