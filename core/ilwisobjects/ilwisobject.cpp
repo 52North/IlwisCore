@@ -522,7 +522,9 @@ bool IlwisObject::store(const IOOptions &options)
         if (connector() && !connector()->dataIsLoaded()) {
             connector()->loadData(this, options);
         }
-        return connector(cmOUTPUT)->store(this, options);
+        bool ok = connector(cmOUTPUT)->store(this, options);
+        changed(false);
+        return ok;
     }
 
     return ERROR1(ERR_NO_INITIALIZED_1,"connector");
