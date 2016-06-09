@@ -6,10 +6,13 @@
 #include "geos/geom/PrecisionModel.h"
 #include "geos/algorithm/locate/SimplePointInAreaLocator.h"
 #include "geos/geom/Point.h"
+#include "geos/geom/Polygon.h"
 #ifdef Q_OS_WIN
 #include "geos/geom/PrecisionModel.inl"
 #include "geos/geom/Envelope.inl"
+#include "geos/geom/Coordinate.inl"
 #endif
+#include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/GeometryFactory.h"
 #include "coverage.h"
 #include "table.h"
@@ -29,6 +32,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+std::unique_ptr<geos::geom::GeometryFactory> SelectionBase::_geomfactory;
+
 SelectionBase::SelectionBase()
 {
 
@@ -36,8 +41,39 @@ SelectionBase::SelectionBase()
 
 SelectionBase::SelectionBase(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
 {
-    geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
-    _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
+    if (!_geomfactory){
+        geos::geom::PrecisionModel *pm = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
+        _geomfactory.reset(new geos::geom::GeometryFactory(pm,-1));
+    }
+}
+
+void SelectionBase::ExpressionPart::setEnvelopePolygon(const IRasterCoverage& raster)
+{
+    double deltax = _envelope.size().xsize() / 10.0;
+    double deltay = _envelope.size().ysize() / 10.0;
+    std::vector<geos::geom::Coordinate> *coords = new std::vector<geos::geom::Coordinate>();
+    double x,y = _envelope.min_corner().y;
+    for(x = _envelope.min_corner().x; x < _envelope.max_corner().x; x+= deltax){
+       Pixel px = raster->georeference()->coord2Pixel(Coordinate(x,y));
+       coords->push_back(geos::geom::Coordinate(px.x, px.y,0));
+    }
+    for(y = _envelope.min_corner().y; y < _envelope.max_corner().y; y+= deltay){
+       Pixel px = raster->georeference()->coord2Pixel(Coordinate(x,y));
+       coords->push_back(geos::geom::Coordinate(px.x, px.y,0));
+    }
+    for(x = _envelope.max_corner().x; x > _envelope.min_corner().x; x-= deltax){
+       Pixel px = raster->georeference()->coord2Pixel(Coordinate(x,y));
+       coords->push_back(geos::geom::Coordinate(px.x, px.y,0));
+    }
+    for(y = _envelope.max_corner().y; y > _envelope.min_corner().y; y-= deltay){
+       Pixel px = raster->georeference()->coord2Pixel(Coordinate(x,y));
+       coords->push_back(geos::geom::Coordinate(px.x, px.y,0));
+    }
+    Pixel px = raster->georeference()->coord2Pixel(Coordinate(_envelope.min_corner().x,_envelope.min_corner().y));
+    coords->push_back(geos::geom::Coordinate(px.x, px.y,0));
+    geos::geom::CoordinateArraySequence *points = new  geos::geom::CoordinateArraySequence(coords);
+    geos::geom::LinearRing *ring = _geomfactory->createLinearRing(points);
+    _polygon.reset( _geomfactory->createPolygon(ring, 0));
 }
 
 SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const QString& p){
@@ -48,6 +84,11 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         _envelope = QString(part).replace("envelope", "box");
         _isValid = _envelope.isValid();
         _type = ptENVELOPE;
+        if ( coverage->ilwisType() == itRASTER && _envelope.isValid()){
+            IRasterCoverage raster = coverage.as<RasterCoverage>();
+            _box = raster->georeference()->coord2Pixel(_envelope);
+            //setEnvelopePolygon(raster);
+        }
     } else if ((index = part.indexOf("boundingbox("))==0){
         _box = QString(part).replace("boundingbox", "box");
         _isValid = _box.isValid();
@@ -58,7 +99,7 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         _isValid = _polygon.get() != 0;
         _type = ptPOLYGON;
 
-    }else if ( (index = part.indexOf("attribute="))!= -1) {
+    }else if ( (index = part.indexOf("attributes("))!= -1) {
         QString lst = part.mid(index + 1);
         QStringList attribs = lst.split(",");
         for(auto attrib : attribs){
@@ -68,7 +109,7 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
             }
         }
         _type = ptATTRIBUTE;
-    } else if ((index = part.indexOf("rasterband="))==0){
+    } else if ((index = part.indexOf("rasterbands("))==0){
         QString lst = part.mid(index + 1);
         QStringList indexes = lst.split(",");
         IRasterCoverage raster = coverage.as<RasterCoverage>();
@@ -80,7 +121,7 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         }
         _type = ptBANDS;
 
-    }else if ((index = part.indexOf("featuretype="))==0){
+    }else if ((index = part.indexOf("featuretype("))==0){
         QString ft = part.mid(index + 1);
         if ( ft == "point")
             _geometryType = itPOINT;
@@ -137,6 +178,7 @@ bool SelectionBase::ExpressionPart::match(const SPFeatureI &feature,SelectionBas
     if ( _type == ExpressionPart::ptPOLYGON && _polygon.get() != 0)   {
         return _polygon->contains(feature->geometry().get());
     }
+
     if ( _type == ExpressionPart::ptATTRIBUTESELECTION )   {
         QVariant val = feature(_leftSide);
         ColumnDefinition coldef = feature->attributedefinition(_leftSide);
@@ -167,6 +209,9 @@ bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValu
        delete pnt;
        return ok;
     }
+    if ( _type == ExpressionPart::ptENVELOPE && !_envelope.isNull())   {
+        return checkForBounds(location);
+    }
     if ( _type == ExpressionPart::ptATTRIBUTESELECTION ) {
         if ( _leftSide != iUNDEF ) { // the pixelvalue pseudo attribute
             bool ok;
@@ -182,6 +227,20 @@ bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValu
     }
     return true;
 }
+
+bool SelectionBase::ExpressionPart::checkForBounds(const Pixel& location) const{
+    bool ok = true;
+    if(!_box.contains(location))
+        ok = false;
+    if ( _polygon){
+        geos::geom::Point *pnt = _geomfactory->createPoint(geos::geom::Coordinate(location.x, location.y));
+        ok = _polygon->contains(pnt);
+        delete pnt;
+    }
+    return ok;
+
+}
+
 //-------------------------------------------
 
 geos::geom::Point *SelectionBase::pixel2point(const Pixel& pix){
@@ -256,13 +315,6 @@ BoundingBox SelectionBase::boundingBox(const IRasterCoverage& raster) const
     BoundingBox box;
     for(const auto& epart : _expressionparts){
         box += epart._box;
-        if ( epart._polygon.get() != 0){
-            if ( raster.isValid()){
-                Envelope env(*(epart._polygon->getEnvelopeInternal()));
-                BoundingBox bb = raster->georeference()->coord2Pixel(env);
-                box += bb;
-            }
-        }
     }
     return box;
 }

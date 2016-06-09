@@ -149,7 +149,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
      if ( outputName != sUNDEF)
          _outputObj->name(outputName);
 
-     if ( selectedAttributes != 1) {
+     if ( selectedAttributes > 1) {
          //outputRaster->datadefRef() = _attribColumn != "" ? inputRaster->attributeTable()->columndefinition(_attribColumn).datadef()
          //                                          : outputRaster->datadefRef() = inputRaster->datadef();
 

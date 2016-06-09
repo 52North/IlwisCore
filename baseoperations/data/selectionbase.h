@@ -36,6 +36,11 @@ protected:
         std::vector<QString> _bands;
         bool _isValid;
         IlwisTypes _geometryType = itFEATURE;
+
+    protected:
+        bool checkForBounds(const Pixel &location) const;
+    private:
+        void setEnvelopePolygon(const IRasterCoverage& raster);
     };
 
     std::vector<ExpressionPart> _expressionparts;
@@ -43,7 +48,7 @@ protected:
     IIlwisObject _outputObj;
     ITable _attTable;
     ITable _inputAttributeTable;
-    std::unique_ptr<geos::geom::GeometryFactory> _geomfactory;
+    static std::unique_ptr<geos::geom::GeometryFactory> _geomfactory;
 
     SelectionBase(quint64 metaid, const Ilwis::OperationExpression &expr);
     void parseSelector(QString select, const Ilwis::ICoverage &coverage);
