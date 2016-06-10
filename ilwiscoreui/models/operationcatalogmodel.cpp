@@ -49,25 +49,15 @@ QQmlListProperty<OperationsByKeyModel> OperationCatalogModel::operationKeywords(
 void OperationCatalogModel::nameFilter(const QString &filter)
 {
     _nameFilter = filter;
-    emit operationsChanged();
-    emit operationsByKeyChanged();
 }
 
 void OperationCatalogModel::refresh()
 {
-    CatalogModel::refresh();
+    _refresh = true;
+    _allItems.clear();
+
     emit operationsChanged();
     emit operationsByKeyChanged();
-}
-
-void OperationCatalogModel::filter(const QString &filterString)
-{
-    //CatalogModel::filter(filterString);
-    _currentOperations.clear();
-    _operationsByKey.clear();
-    _refresh = true;
-    emit operationsChanged();
-
 }
 
 quint64 OperationCatalogModel::operationId(quint32 index, bool byKey) const{
@@ -176,18 +166,21 @@ void OperationCatalogModel::fillByKeyword(QList<ResourceModel*>& currentOperatio
 QQmlListProperty<OperationModel> OperationCatalogModel::operations()
 {
     try{
-        gatherItems();
-        QList<ResourceModel*> currentOperations;
-        if ( _keyFilter == "" && _nameFilter == "")
-            currentOperations = QList<ResourceModel *>(_allItems);
-        if (_nameFilter != "")
-            fillByName(currentOperations);
-        if (_keyFilter != ""){
-            fillByKeyword(currentOperations);
-        }
-        _currentOperations.clear();
-        for(auto resource : currentOperations){
-            _currentOperations.append(static_cast<OperationModel *>(resource));
+        if ( _refresh || _currentOperations.size() == 0){
+            gatherItems();
+
+            QList<ResourceModel*> currentOperations;
+            if ( _keyFilter == "" && _nameFilter == "")
+                currentOperations = QList<ResourceModel *>(_allItems);
+            if (_nameFilter != "")
+                fillByName(currentOperations);
+            if (_keyFilter != ""){
+                fillByKeyword(currentOperations);
+            }
+            _currentOperations.clear();
+            for(auto resource : currentOperations){
+                _currentOperations.append(static_cast<OperationModel *>(resource));
+            }
         }
         return  QMLOperationList(this, _currentOperations);
     }
@@ -220,6 +213,9 @@ void OperationCatalogModel::gatherItems() {
     if (!_refresh)
         return;
 
+    _allItems.clear();
+    _refresh = false;
+
     WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
     bool isDefault = false;
     if (currentModel){
@@ -228,7 +224,6 @@ void OperationCatalogModel::gatherItems() {
     }
     if ( currentModel == 0 || isDefault){
         setDescription("main catalog for ilwis operations");
-        filter(QString("(type=%1 or type=%2)").arg(itSINGLEOPERATION).arg(itWORKFLOW));
 
         QString serviceFilter = QString("(type=%1 and catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '%service%')").arg(itSINGLEOPERATION);
 
@@ -236,9 +231,6 @@ void OperationCatalogModel::gatherItems() {
     }else {
         setView(currentModel->viewRef());
     }
-
-    _allItems.clear();
-    _refresh = false;
 
     std::vector<Resource> items = _view.items();
     std::map<QString, std::vector<OperationModel *>> operationsByKey;
@@ -281,10 +273,6 @@ void OperationCatalogModel::workSpaceChanged()
         _currentOperations.clear();
         _operationsByKey.clear();
         _services.clear();
-        _refresh = true;
-
-        emit operationsChanged();
-        emit operationsByKeyChanged();
     }
 }
 
@@ -333,8 +321,6 @@ WorkflowModel *OperationCatalogModel::createWorkFlow(const QString &filter)
 void OperationCatalogModel::keyFilter(const QString &keyf)
 {
     _keyFilter = keyf;
-    emit operationsChanged();
-    emit operationsByKeyChanged();
 }
 QString OperationCatalogModel::nameFilter() const
 {

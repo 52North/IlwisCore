@@ -32,7 +32,6 @@ public:
    QMLOperationList operations();
    QQmlListProperty<OperationsByKeyModel> operationKeywords();
    void nameFilter(const QString&);
-   Q_INVOKABLE void filter(const QString& filterString);
    void prepare(const Ilwis::IOOptions& options=Ilwis::IOOptions());
 
    Q_INVOKABLE quint64 operationId(const QString& name);
