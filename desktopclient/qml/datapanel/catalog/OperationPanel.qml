@@ -111,13 +111,13 @@ Item {
             width : 200
             anchors.verticalCenter: parent.verticalCenter
             model : operations.keywords
+            property bool init : true
             onCurrentIndexChanged: {
                 if ( currentCatalog){
-                    var filterString = "(type='SingleOperation' or type='Workflow')"
-                    if (currentIndex != 0)
-                        filterString += " and keyword='" + model[currentIndex] + "'"
-                    currentCatalog.filter(filterString)
-                    catalogChanged()
+                    currentCatalog.keyFilter = model[currentIndex];
+                    init = false
+                    if ( !init)
+                        currentCatalog.refresh()
                 }
             }
         }
