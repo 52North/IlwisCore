@@ -26,6 +26,7 @@ Rectangle {
             transparentBackgrond: false
             onContentChanged: {
                 operations.nameFilter = content
+                operations.refresh()
             }
         }
         Row {
@@ -39,6 +40,7 @@ Rectangle {
                 transparentBackgrond: false
                 onContentChanged: {
                     operations.keyFilter = filtertxt.content;
+                    operations.refresh()
                 }
             }
 //            Button{
