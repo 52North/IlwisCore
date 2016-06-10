@@ -168,7 +168,10 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
 }
 
 void MasterCatalogModel::initFinished() {
-    Ilwis::context()->initializationFinished(true)    ;
+    Ilwis::context()->initializationFinished(true);
+    if ( _currentCatalog){
+        _currentCatalog->refresh();
+    }
 }
 
 void MasterCatalogModel::setDefaultView()
@@ -930,8 +933,8 @@ void CatalogWorker::calculatelatLonEnvelopes(){
     int count = 0;
     for(Resource& resource : resources){
         calcLatLon(csyWgs84, resource, updatedResources);
-//        if(!trq->update(1))
-//            return;
+        if(!trq->update(1))
+            return;
         ++count;
 
     }
