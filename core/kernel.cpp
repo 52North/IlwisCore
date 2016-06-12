@@ -259,7 +259,7 @@ void Kernel::endClock(const QString& label){
     if ( label == "")
         qDebug() << "calc in " << time_span.count() << " seconds";
     else
-        qDebug() << label << ": "<< "calc old in " << time_span.count() << " seconds";
+        qDebug() << label << time_span.count() << " seconds";
 
 }
 
