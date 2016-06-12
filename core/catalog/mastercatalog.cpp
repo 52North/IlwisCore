@@ -86,10 +86,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     }
 
     if ( loc.indexOf("ilwis://factory") == 0 ||
-         loc == "file://" ||
-         loc == "file:/" ||
-         loc == "ilwis:/" ||
-         loc == MASTERCATALOG ||
+         loc.indexOf("ilwis://system") == 0 || // there is no need to scan the system dirs as they are added in the beginning
          loc.isEmpty())
         return true;
     QUrl location(loc);
@@ -687,18 +684,18 @@ void calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std
 
 }
 
-void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& name){
+void CalcLatLon::calculatelatLonEnvelopes(std::vector<Resource>& items, const QString& name){
     try{
         kernel()->issues()->silent(true);
 
-        std::vector<Resource> resources =mastercatalog()->select(query);
+
         UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
         QString message = QString("calculating latlon envelopes in %1").arg(name);
-        trq->prepare("LatLon Envelopes",message,resources.size());
+        trq->prepare("LatLon Envelopes",message,items.size());
         ICoordinateSystem csyWgs84("code=epsg:4326");
         std::vector<Resource> updatedResources;
         int count = 0;
-        for(Resource& resource : resources){
+        for(Resource& resource : items){
             calcLatLon(csyWgs84, resource, updatedResources);
             if(!trq->update(1))
                 return;
@@ -710,7 +707,15 @@ void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& n
     } catch(const ErrorObject&){
     } catch( std::exception& ){
     }
+}
 
+void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& name){
+    try{
+        std::vector<Resource> resources =mastercatalog()->select(query);
+        calculatelatLonEnvelopes(resources, name);
+    } catch(const ErrorObject&){
+    } catch( std::exception& ){
+    }
 }
 
 #ifdef QT_DEBUG
