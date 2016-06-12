@@ -31,7 +31,7 @@ bool DesktopTranquilizer::update(double step) {
     _current += step;
     if ( _current >= _end  || _current < _start){
         emit(updateTranquilizer(_id, _current));
-        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
         _end = rUNDEF;
         emit(removeTranquilizer(_id));
     }else
