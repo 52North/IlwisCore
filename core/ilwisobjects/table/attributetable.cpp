@@ -151,7 +151,7 @@ std::vector<QVariant> AttributeTable::column(quint32 index, quint32 start, quint
     FeatureIterator iter(_features, _level);
     iter = iter + start;
     for(quint32 i=start; i < stop; ++i) {
-        QVariant v = (*iter)(index);;
+        QVariant v = (*iter)(index);
         data[i - start] = v;
         ++iter;
     }
