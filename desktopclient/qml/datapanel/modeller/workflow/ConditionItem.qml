@@ -11,14 +11,20 @@ Rectangle {
     property int standardWidth: 200
     property int padding: 20
 
+    function inSideCondtion(centerY){
+        var relY = centerY - y;
+        return relY < listRectangle.height
+    }
+
     id : conditionItem
     width: standardWidth
     height: standardHeight
-    color: "#80bfff"
+    color: "#bfd9bf"
     border.width: 1
-    border.color: "black"
+    border.color: "grey"
     transformOrigin: Item.TopLeft;
     z: 0
+    radius : 5
     transform: Translate { id: transformTl }
     property var operationsList : []
     property var conditionContainerCanvas
@@ -83,14 +89,18 @@ Rectangle {
     }
 
     function finishCreation(component) {
-        if (canvasComponent.status == Component.Ready) {
+        if (canvasComponent.status === Component.Ready) {
             var sprite = canvasComponent.createObject(conditionRectangle, {});
-            if (sprite == null) {
+            if (sprite === null) {
                 console.log("Error creating object");
             }
-        } else if (canvasComponent.status == Component.Error) {
+        } else if (canvasComponent.status === Component.Error) {
             console.log("Error loading component:", canvasComponent.errorString());
         }
+    }
+
+    function openNewConditionDialogButtonFunction() {
+        wfCanvas.showConditionTypeForm(containerId)
     }
 
     function resize() {
@@ -126,18 +136,14 @@ Rectangle {
         if (yChanged) conditionItem.y = minY - listRectangle.height - padding
     }
 
-    function openNewConditionDialogButtonFunction() {
-        wfCanvas.showConditionTypeForm(containerId)
-    }
-
     function addCondition(conditionId, name) {
         testModel.append({
-            'first': false,
-            'condition': '',
-            'second': false,
-            'xId': conditionId,
-            'name': name
-        })
+                             'first': false,
+                             'condition': '',
+                             'second': false,
+                             'xId': conditionId,
+                             'name': name
+                         })
     }
 
     function refresh() {
@@ -157,12 +163,14 @@ Rectangle {
         id: listRectangle
 
         border.width: 1
-        border.color: "black"
-        color: "#cce5ff"
+        border.color: "grey"
+        color: "#b3e6c9"
         height : 65
         width : parent.width - 8
         x : 4
         y: 4
+        radius : 5
+
 
         ListView{
             id : conditionList
@@ -227,17 +235,17 @@ Rectangle {
         }
     }
 
-
     Rectangle {
         id: conditionRectangle
 
         anchors.topMargin: 4
         anchors.top: listRectangle.bottom
         border.width: 1
-        border.color: "black"
-        color : "white"
+        border.color: "grey"
+        color : "#fcf5e8"
         height: parent.height - listRectangle.height - 12
         width : parent.width - 8
         x : 4
+        radius : 5
     }
 }
