@@ -665,6 +665,8 @@ void calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std
     if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
         ICoverage cov(resource);
         if ( cov.isValid()){
+            if ( cov->coordinateSystem()->isUnknown()) // we cant do anything with unknown
+                return;
             if ( cov->coordinateSystem()->isLatLon()){
                 QString envelope = cov->envelope().toString();
                 resource.addProperty("latlonenvelope",envelope);
