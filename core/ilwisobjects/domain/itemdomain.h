@@ -98,6 +98,8 @@ public:
             return false;
         if(obj->ilwisType() != itITEMDOMAIN)
             return false;
+        if ( id() == obj->id())
+            return true;
         IDomain dom;
         dom.prepare(obj->id());
         if (!dom.isValid())
@@ -110,8 +112,13 @@ public:
         IlwisData<ItemDomain<D>> itemdom = dom.as<ItemDomain<D>>();
         if ( itemdom->theme() ==sUNDEF && !parent().isValid())
             return false;
-        if ( itemdom->parent().isValid() && parent().isValid()){
-            return itemdom->parent() == parent();
+        if ( parent().isValid() ){
+            if (parent()->isCompatibleWith(obj) )
+                return true;
+        }
+        if ( itemdom->parent().isValid())        {
+            if ( itemdom->parent()->isCompatibleWith(this))
+                return true;
         }
         return itemdom->theme() == theme();
 
