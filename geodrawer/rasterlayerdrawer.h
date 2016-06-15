@@ -23,6 +23,7 @@ public:
 
 
     NEW_DRAWER
+    void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr);
     void setAttribute(const QString &attrName, const QVariant &value);
     QVariant attribute(const QString &attrName) const;
 
