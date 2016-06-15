@@ -22,7 +22,10 @@ Rectangle {
             id : targets
             width : 200
             height : 20
-            model :  ["identifier","thematic","time","float","integer","color"]
+            model :  editor.allowedDomains()
+            Component.onCompleted: {
+                currentIndex = editor.domainTypeIndex()
+            }
         }
         Text {
             text : qsTr("Color scheme")
