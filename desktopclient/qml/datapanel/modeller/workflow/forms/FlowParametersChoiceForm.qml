@@ -167,7 +167,7 @@ WorkflowChoiceForm {
             var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
 
             if (!source) {
-                source = wfCanvas.operationsList[wfCanvas.currentIndex]
+                source = wfCanvas.operationsList[wfCanvas.currentOperationIndex]
             }
             source.setFlow(target, attachRect, flowPoints)
             refresh()
