@@ -78,7 +78,7 @@ public:
     DataDefinition& datadefRef(quint32 layer=WHOLE_RASTER);
     ITable attributeTable(quint32 level=0) ;
     bool hasAttributes() const;
-    virtual void setAttributes(const ITable &otherTable);
+    virtual void setAttributes(const ITable &otherTable, const QString& joinColumn=sUNDEF);
 
 
     /*!
