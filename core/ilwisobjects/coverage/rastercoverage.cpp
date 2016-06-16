@@ -45,12 +45,11 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
         resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
         resourceRef().addProperty("georeference",_georef->id());
         resourceRef().addProperty("latlonenvelop", coordinateSystem()->envelope(true).toString());
-    }
-    if (_georef.isValid()){
         if ( _size.isValid() && !_size.isNull() && !resetData)
             _size = Size<>(_georef->size().xsize(), _georef->size().ysize(), _size.zsize());
         else
             _size = _georef->size();
+        envelope(grf->envelope());
 
     }
     else
