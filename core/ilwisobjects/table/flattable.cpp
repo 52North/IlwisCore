@@ -82,7 +82,6 @@ bool FlatTable::addColumn(const QString &name, const IDomain &domain,const bool 
         initValuesColumn(name);
     }
     return true;
-
 }
 
 bool FlatTable::addColumn(const ColumnDefinition &def)
@@ -97,6 +96,22 @@ bool FlatTable::addColumn(const ColumnDefinition &def)
             row.changed(true);
         }
         initValuesColumn(def.name());
+    }
+    return true;
+}
+
+bool FlatTable::addColumn(const QString &name, const QString& domainname,const bool readonly)
+{
+    bool ok = BaseTable::addColumn(name, domainname, readonly);
+    if(!ok) {
+        return false;
+    }
+    if ( isDataLoaded()){
+        for(Record& row : _datagrid) {
+            row.addColumn();
+            row.changed(true);
+        }
+        initValuesColumn(name);
     }
     return true;
 }

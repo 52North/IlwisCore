@@ -74,6 +74,9 @@ public:
     bool addColumn(const ColumnDefinition& def);
 
     //@override
+    bool addColumn(const QString &name, const QString& domainname,const bool readonly=false);
+
+    //@override
     IlwisTypes ilwisType() const;
 
     //@override
