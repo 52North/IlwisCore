@@ -129,6 +129,26 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
     }
 }
 
+void createCatalog(const IRasterCoverage& raster){
+    Resource resCatalog = raster->resource();
+    resCatalog.newId();
+    resCatalog.name(raster->name());
+    resCatalog.setIlwisType(itCATALOG);
+    resCatalog.setExtendedType(resCatalog.extendedType() | itRASTER);
+    mastercatalog()->addItems({resCatalog});
+    std::vector<Resource> bands;
+    for(int band=0; band < raster->size().zsize(); ++band){
+        Resource resBand = raster->resource();
+        resBand.newId();
+        QUrl newUrl = resBand.url().toString();
+        QString newName = resBand.name() + "_" + QString::number(band);
+        resBand.setUrl(newUrl.toString() + "/" + newName);
+        resBand.addProperty("rasterband",band);
+        bands.push_back(resBand);
+    }
+    mastercatalog()->addItems(bands);
+}
+
 bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx)
 {
     if ( _expression.isNull())
@@ -152,6 +172,11 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
 
                     if ( hasType(tp, itRASTER)) {
                         ok &= copyObject<RasterCoverage>(sym, result,symbols);
+                        IRasterCoverage resultGC = symbols.getValue<IRasterCoverage>(result);
+                        if ( resultGC.isValid() && resultGC->size().zsize() > 1){
+                            createCatalog(resultGC);
+                        }
+
                     }
                     else if (hasType(tp, itFEATURE))
                         ok &= copyObject<FeatureCoverage>(sym, result,symbols);
