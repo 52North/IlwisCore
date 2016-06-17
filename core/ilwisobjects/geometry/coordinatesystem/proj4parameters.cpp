@@ -19,8 +19,11 @@ Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
         if ( kvp == "")
             continue;
         auto pair = kvp.split("=");
-        if ( pair.size() == 1)
+        if ( pair.size() == 1) {
+            if ( pair.front() == "south")
+                _keyvalues["south"] = "Yes";
             continue;
+        }
         if ( pair.front() == "towgs84") {
             parseShifts(pair.back());
         } else {

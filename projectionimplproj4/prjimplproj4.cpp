@@ -122,13 +122,18 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         //std::function<void(double)> assign; // = [&](double v)  -> void {}
 
         std::map<QString,Projection::ProjectionParamValue>  alias = { { "lat_1",Projection::pvSTANDARDPARALLEL1}, { "lat_2",Projection::pvSTANDARDPARALLEL2},{ "lat_0",Projection::pvCENTRALPARALLEL}, { "k",Projection::pvSCALE},
-                                                     { "lon_0",Projection::pvCENTRALMERIDIAN}, { "x_0",Projection::pvFALSEEASTING}, { "y_0",Projection::pvFALSENORTHING}, { "zone",Projection::pvZONE},{ "k_0",Projection::pvSCALE}};
+                                                     { "lon_0",Projection::pvCENTRALMERIDIAN}, { "x_0",Projection::pvFALSEEASTING}, { "y_0",Projection::pvFALSENORTHING}, { "zone",Projection::pvZONE}, { "south",Projection::pvNORTH}, { "k_0",Projection::pvSCALE}};
         auto assign = [&](const QString& proj4Name)->void
         {
-            QString sv = proj4[proj4Name];
-            if ( sv != sUNDEF) {
+            if (proj4Name == "south") {
                 Projection::ProjectionParamValue v = alias[proj4Name];
-                setParameter(v, sv.toDouble());
+                setParameter(v, "No");
+            } else {
+                QString sv = proj4[proj4Name];
+                if ( sv != sUNDEF) {
+                    Projection::ProjectionParamValue v = alias[proj4Name];
+                    setParameter(v, sv.toDouble());
+                }
             }
         };
         QString proj = proj4["proj"];
