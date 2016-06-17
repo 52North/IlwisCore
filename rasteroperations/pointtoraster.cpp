@@ -36,10 +36,15 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    quint32 count = 0;
     // we create a pixeliterator to move around on the output raster coverage
     PixelIterator pixiter(_outputraster);
-    // for all the features
+    // create an empty raster (all pixels nodata)
+    PixelIterator end = _outputraster->end();
+    while(pixiter != end) {
+        *pixiter = rUNDEF;
+        ++pixiter;
+    }
+    // loop over all features
     // the 'feature' object is actually something of the SPFeatureI class which is a simple wrapper for a featureinterface
     for(auto feature :  _inputfeatures){
         // we are only interested in points, other geometry types are skipped.
@@ -50,31 +55,17 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         Coordinate crd(*feature->geometry()->getCoordinate());
         // if the coordinate system of input and output dont match we need to transform the input coordinate to something that
         // makes sense in the system of the output raster
-        if ( _needCoordinateTransformation){
+        if ( _needCoordinateTransformation)
             crd = _outputraster->coordinateSystem()->coord2coord(_inputfeatures->coordinateSystem(), crd);
-        }
         // a raster contains pixels, each pixel represents a location(world coordinate) in the coordinate system of the raster
         // the georefence translate (both directions) between pixel locations and world locations
-        Pixel pix = _outputraster->georeference()->coord2Pixel(crd);
         // now we move the pixel iterator to the right location. normally we use operators like ++, --. +=, -= for this job
         // but as a pointmap is representing a very sparsely filled raster we can use a slightly less performant operator (assignment)
         // to keep the code simple. There are not that many pixels to be filled
-        pixiter = pix;
-        int rAtr;
-        QVariant d = _inputfeatures->coord2value(crd);
-        if (d.isValid() && crd != crdUNDEF){
-           QVariantMap vmap = d.value<QVariantMap>();
-           QVariant attribute =  vmap[COVERAGEKEYCOLUMN];
-           rAtr = attribute.toInt()+1;
-
-        }else{
-           rAtr = iUNDEF;
-        }
+        pixiter = _outputraster->georeference()->coord2Pixel(crd);
         // and we assign a value to the pixel
-        count++;
-        *pixiter = rAtr;
-
-
+        quint64 id = feature->featureid();
+        *pixiter = id;
     }
     // we are done now. We need to transfer the generated output to the system so that other parts can also use it.
     // This is mainly relevant when operations are used in a scripting enviroment as the output has to be known in the context
@@ -148,8 +139,8 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
 
     // we handle the domain a little but simplistic. In reality the domain has to be extracted from the featurecoverage
-    // but that complicates things for this example. We simply choose a simple count domain ( positive integers) as datatype
-    IDomain dom("code=count");
+    // but that complicates things for this example. We choose a value domain to support rUNDEF.
+    IDomain dom("value");
     // initialize the output rastercoverage.
     _outputraster = IRasterCoverage(outputName);
     _outputraster->datadefRef().domain(dom);
