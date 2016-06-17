@@ -194,9 +194,12 @@ bool DistanceRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-    if (_needGeoRefTransformation) {
-        if (!OperationHelperRaster::resample(_inputRaster, _inputOptWeightRaster, ctx)) {
-            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+    if (_hasWeightRaster) {
+        bool needGeoRefTransformation = !_inputRaster->georeference()->isCompatible(_inputOptWeightRaster->georeference());
+        if (needGeoRefTransformation) {
+            if (!OperationHelperRaster::resample(_inputRaster, _inputOptWeightRaster, ctx)) {
+                return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+            }
         }
     }
 
@@ -223,7 +226,6 @@ Ilwis::OperationImplementation *DistanceRaster::create(quint64 metaid, const Ilw
 Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
     QString inputRasterName = _expression.input<QString>(0);
-    QString inputWeightRaster = _expression.input<QString>(1);
     //QString inputThiessenRaster = _expression.input<QString>(2);
     QString outputRasterName = _expression.parm(0,false).value();
 
@@ -232,15 +234,15 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
         return sPREPAREFAILED;
     }
 
-    _hasWeightRaster = false;
-    if (0 != inputWeightRaster.length() && inputWeightRaster != sUNDEF) {
+    if (_expression.parameterCount() == 2) {
+        _hasWeightRaster = true;
+        QString inputWeightRaster = _expression.input<QString>(1);
         if(!_inputOptWeightRaster.prepare(inputWeightRaster, itRASTER)) {
             ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
             return sPREPAREFAILED;
-        } else {
-            _hasWeightRaster = true;
-            _needGeoRefTransformation = !_inputRaster->georeference()->isCompatible(_inputOptWeightRaster->georeference());
         }
+    } else {
+        _hasWeightRaster = false;
     }
 
     /*if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
@@ -271,9 +273,9 @@ quint64 DistanceRaster::createMetadata()
     OperationResource operation({"ilwis://operations/distanceraster"});
     operation.setSyntax("distanceraster(raster, weightraster)");
     operation.setDescription(TR("calculate raster map distances"));
-    operation.setInParameterCount({2});
+    operation.setInParameterCount({1,2});
     operation.addInParameter(0,itRASTER , TR("input raster"),TR("input rastermap"));
-    operation.addInParameter(1,itRASTER , TR("weight raster"),TR("input weightraster"));
+    operation.addOptionalInParameter(1,itRASTER , TR("weight raster"),TR("input weightraster"));
     //operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output distance raster."));

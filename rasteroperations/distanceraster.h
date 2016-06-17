@@ -29,7 +29,6 @@ private:
     IRasterCoverage _inputThiessenRaster; // optional
     IRasterCoverage _outputRaster;
 
-    bool            _needGeoRefTransformation;
     bool            _hasWeightRaster;
 
     void ThiessenMapCalculation();
