@@ -212,19 +212,16 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
 {
     TabModel *tab = 0;
 
-  //  if ( filter.indexOf("container=") == 0)
-  //      mastercatalog()->addContainer(url);
-    std::vector<Ilwis::Resource> resources = Ilwis::mastercatalog()->select(Ilwis::OSHelper::neutralizeFileName(filter));
+    if ( outputtype == "catalog"){
+        context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() +"/workingcatalog",url);
+        if ( filter == "container='ilwis://operations'")
+            tab = new TabModel(url,"catalog/OperationPanel.qml", this);
+        else
+            tab = new TabModel(url,"catalog/CatalogPanel.qml", this);
 
-    //if ( resources.size() > 0){
-        if ( outputtype == "catalog"){
-           context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() +"/workingcatalog",url);
-            if ( filter == "container='ilwis://operations'")
-                 tab = new TabModel(url,"catalog/OperationPanel.qml", this);
-            else
-                tab = new TabModel(url,"catalog/CatalogPanel.qml", this);
-
-        }else {
+    }else {
+        std::vector<Ilwis::Resource> resources = Ilwis::mastercatalog()->select(Ilwis::OSHelper::neutralizeFileName(filter));
+        if ( resources.size() > 0 ){
             if (hasType(resources[0].ilwisType(), itCOVERAGE)) {
                 tab = new TabModel(url,"visualization/MapPanel.qml", this);
             }
@@ -234,13 +231,13 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
                 tab = new TabModel(url,"modeller/ModellerDataPane.qml", this);
             }
         }
-        if ( tab){
-            if ( index >= _tabs.size())
-                _tabs.push_back(tab);
-            else
-                _tabs[index] = tab;
-        }
-    //}
+    }
+    if ( tab){
+        if ( index >= _tabs.size())
+            _tabs.push_back(tab);
+        else
+            _tabs[index] = tab;
+    }
     return tab;
 }
 
