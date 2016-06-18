@@ -146,7 +146,14 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
 
 std::vector<Resource> loadExplorerData(const std::pair<CatalogExplorer *, IOOptions>& expl){
     try {
+//#ifdef QT_DEBUG
+//        kernel()->startClock();
+//#endif
         std::vector<Resource> items = expl.first->loadItems(expl.second);
+//#ifdef QT_DEBUG
+//        QString lbl = QString("loading:%1  items:%2 provider:%3").arg(expl.first->source().url().toString()).arg(items.size()).arg(expl.first->provider());
+//        kernel()->endClock(lbl);
+//#endif
 
         return items;
     } catch (const ErrorObject& err){
@@ -171,7 +178,11 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     }
     QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
     res.waitForFinished();
-    mastercatalog()->addItems(res.result());
+    std::vector<Resource> items = res.result();
+    if ( items.size() > 0){
+        CalcLatLon::calculatelatLonEnvelopes(items, items[0].container().url());
+        mastercatalog()->addItems(items);
+    }
     return true;
 }
 
