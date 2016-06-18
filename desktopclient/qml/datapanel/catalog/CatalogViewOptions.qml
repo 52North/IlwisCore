@@ -3,46 +3,50 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import LayersView 1.0
+import QtGraphicalEffects 1.0
 import UIContextModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
-
 Item {
+    anchors.fill: parent
+    Component {
+        id : layerDrawer
+        LayersView{
+            id : lyrview
+            anchors.fill: parent
+            property var resource
+            property var controller
+            function setResource(object, res){
+                lyrview.associate(object.objectName,"drawEnded")
+                var cmd = "adddrawer(" + viewerId + "," + res.url +",\"itemid=" + res.id + "\"," + res.typeName + ")"
+                addCommand(cmd)
+                setAttribute("GridDrawer", {"active" : false})
+                res.realizeThumbPath()
+                setAttribute("View",{"saveimage" : res.imagePath})
+                lyrview.update()
+
+            }
+
+            anchors.margins: 2
+        }
+    }
     Rectangle {
-        width: parent.width - 5
-        height: parent.height
-        x : 5
-        y : 5
+        id : leftContainer
+        width : 260
+        height : parent.height
+        y : 4
         border.width: 1
         border.color : Global.edgecolor
+        color :   Global.actionItemColor
 
-        Component {
-            id : layerDrawer
-            LayersView{
-                id : lyrview
-                anchors.fill: parent
-                property var resource
-                property var controller
-                function setResource(object, res){
-                    lyrview.associate(object.objectName,"drawEnded")
-                    var cmd = "adddrawer(" + viewerId + "," + res.url +",\"itemid=" + res.id + "\"," + res.typeName + ")"
-                    addCommand(cmd)
-                    setAttribute("GridDrawer", {"active" : false})
-                    res.realizeThumbPath()
-                    setAttribute("View",{"saveimage" : res.imagePath})
-                    lyrview.update()
-
-                }
-
-                anchors.margins: 2
-            }
-        }
 
         Column {
+            y: 5
+            x : 5
             id : buttonRow
-            width : 220
-            height : parent.height - 30
+            width : parent.width
+            height : parent.height - 5
             spacing : 6
             property int buttonWidth : 220
 
@@ -158,97 +162,93 @@ Item {
                 }
             }
         }
-        Column {
-            width : 200
-            anchors.left: buttonRow.right
-            anchors.leftMargin: 5
-            spacing : 6
-            Controls.WideButton{
-                image : "../images/mapview.png"
-                label : qsTr("Generate previews\nof selected coverages")
-                width : parent.width
-                height : 40
+    }
+    Column {
+        width : 240
+        anchors.left: leftContainer.right
+        height : parent.height -5
+        spacing : 6
+        y : 5
+        Controls.WideButton{
+            image : "../images/mapview.png"
+            label : qsTr("Generate previews\nof selected coverages")
+            width : parent.width - 3
+            height : 40
+            x : 8
+            onClicked: {
 
-                onClicked: {
-
-                   frame.makeResourceList()
-                }
-            }
-
-            Image {
-                id : page
-                width : parent.width - 5
-                height : 160
-                source : "../../images/page.png"
-
-
-
-                Rectangle {
-                    id : frame
-                    objectName : uicontext.uniqueName()
-                    property var resources : []
-                    property int currentMap : 0
-
-                    function setResource(){
-                        if ( frame.resources.length > 0 && frame.currentMap < frame.resources.length){
-                            imageLoader.sourceComponent = null
-                            imageLoader.sourceComponent = layerDrawer
-                            imageLoader.item.setResource(frame, frame.resources[currentMap])
-                        }
-                    }
-
-                    function makeResourceList() {
-                        var list = mastercatalog.selectedData
-                        frame.resources = []
-                        currentMap = 0
-                        progress.maximumValue = list.length
-                        for(var i=0; i < list.length; ++i){
-                            var resource = list[i]
-                            if ( resource.typeName === "rastercoverage" ||
-                                    resource.typeName === "featurecoverage" ||
-                                    resource.typeName === "pointcoverage" ||
-                                    resource.typeName === "linecoverage" ||
-                                    resource.typeName === "polygoncoverage")
-                                frame.resources.push(resource)
-                        }
-                        setResource()
-
-
-                    }
-
-                    function finalizeDraw() {
-                        frame.resources[currentMap].unload()
-                        ++currentMap
-                        progress.value = currentMap
-                        setResource()
-                    }
-
-                    anchors.left : parent.left
-                    anchors.leftMargin: 10
-                    anchors.right: parent.right
-                    anchors.rightMargin: 10
-                    height : 150
-                    border .width: 1
-                    border.color: "lightgrey"
-
-                    Loader{
-                        id : imageLoader
-                        anchors.fill: parent
-                        }
-
-                }
-                ProgressBar{
-                    id : progress
-                    height : page.height - 10
-                    width : 15
-                    anchors.left: frame.right
-                    orientation: Qt.Vertical
-                    minimumValue: 0
-                    maximumValue: 0
-                }
+                frame.makeResourceList()
             }
         }
 
-    }
-}
 
+        Rectangle {
+            id : frame
+            objectName : uicontext.uniqueName()
+            property var resources : []
+            property int currentMap : 0
+
+            function setResource(){
+                if ( frame.resources.length > 0 && frame.currentMap < frame.resources.length){
+                    imageLoader.sourceComponent = null
+                    imageLoader.sourceComponent = layerDrawer
+                    imageLoader.item.setResource(frame, frame.resources[currentMap])
+                }
+            }
+
+            function makeResourceList() {
+                var list = mastercatalog.selectedData
+                frame.resources = []
+                currentMap = 0
+                progress.maximumValue = list.length
+                for(var i=0; i < list.length; ++i){
+                    var resource = list[i]
+                    if ( resource.typeName === "rastercoverage" ||
+                            resource.typeName === "featurecoverage" ||
+                            resource.typeName === "pointcoverage" ||
+                            resource.typeName === "linecoverage" ||
+                            resource.typeName === "polygoncoverage")
+                        frame.resources.push(resource)
+                }
+                setResource()
+
+
+            }
+
+            function finalizeDraw() {
+                frame.resources[currentMap].unload()
+                ++currentMap
+                progress.value = currentMap
+                setResource()
+            }
+
+            anchors.left : parent.left
+            anchors.leftMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            height : 150
+            border .width: 1
+            border.color: "lightgrey"
+
+            Loader{
+                id : imageLoader
+                anchors.fill: parent
+            }
+            ProgressBar{
+                id : progress
+                height : frame.height
+                width : 15
+                anchors.left: frame.right
+                anchors.top : frame.top
+                orientation: Qt.Vertical
+                minimumValue: 0
+                maximumValue: 0
+            }
+
+        }
+
+    }
+
+
+
+}

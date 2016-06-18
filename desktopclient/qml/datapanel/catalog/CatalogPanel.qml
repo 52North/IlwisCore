@@ -97,7 +97,7 @@ Item {
             }
         } else if ( uicontext.currentKey === Qt.Key_Control){
           for(var k = 0; k < sz; ++k){
-              if ( cresources[k].isSelected){
+              if ( resources[k].isSelected){
                 selectedIds = selectedIds == "" ? resources[k].id : selectedIds + "|" +resources[k].id
               }
           }

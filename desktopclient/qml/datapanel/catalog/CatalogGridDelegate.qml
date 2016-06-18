@@ -12,10 +12,11 @@ import "../../Global.js" as Global
 
 Item {
     id: iconDelegate
-    x: 2
-    y : 3
+    x: 2 * Global.uiScale
+    y : 3 * Global.uiScale
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
+
 
     function iconSource(name) {
         if ( name === "")
@@ -27,31 +28,35 @@ Item {
 
     Row {
         anchors.fill: parent
-        spacing : 6
+        spacing : 6 * Global.uiScale
         Image{
             id : imageBase
             x : 0
             y : 0
-            width :18; height : parent.height - 2
+            width :18 * Global.uiScale * 8.5/9.0; height : parent.height * Global.uiScale * 8.5/9.0
             source : iconSource(iconPath)
             fillMode: Image.PreserveAspectFit
         }
 
         Rectangle{
-            width : 130
+            width : 130 * Global.uiScale
             height : iconDelegate.height
             color : isSelected ? Global.selectedColor : "transparent"
-
+            anchors.verticalCenter: imageBase.verticalCenter
             Text {
+
                 id: txt
                 text: displayName
                 elide: Text.ElideMiddle
                 color: itemgrid.currentIndex === index ? "blue": "black"
                 width : parent.width
+                height : parent.height * Global.uiScale * 8.5/9.0
 
-                y : 4
-                font.pointSize: 8
+                anchors.verticalCenter: parent.verticalCenter
                 verticalAlignment: Text.AlignVCenter
+
+                font.pointSize: 8 * Global.uiScale
+               // verticalAlignment: Text.AlignVCenter
 
             }
         }
