@@ -28,7 +28,7 @@ Rectangle {
         color : Global.alternatecolor3
         Text{
             text : qsTr("Data Attributes")
-            font.weight: Font.DemiBold
+            font.bold: true
             x : 5
             anchors.verticalCenter: parent.verticalCenter
         }

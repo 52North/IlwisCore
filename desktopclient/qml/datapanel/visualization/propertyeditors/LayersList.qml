@@ -24,7 +24,7 @@ Item {
             color : Global.alternatecolor3
             Text{
                 text : qsTr("Layers")
-                font.weight: Font.DemiBold
+                font.bold: true
                 x : 5
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -34,7 +34,7 @@ Item {
             anchors.top: layersLabel.bottom
             anchors.topMargin: 2
             height : parent.height - layersLabel.height - 3
-            color : Global.alternatecolor2
+            color : Global.actionItemColor
 //            border.color: "lightgrey"
             radius : 4
 //            border.width: 1

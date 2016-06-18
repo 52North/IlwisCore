@@ -11,8 +11,6 @@ import LayerManager 1.0
 
 Item {
     id : selector
-    height : 30 + operList.height
-    width : 370
     property alias showState : worldmapcontainer.state
     property var currentEnvelope
 
@@ -33,7 +31,7 @@ Item {
         width : parent.width
         titleText: qsTr("Spatial Selection")
         headerHeight: 20
-        panelHeight: 270
+        panelHeight: 250
         state : "collapsed"
         objectName: uicontext.uniqueName()
         property LayerManager manager
@@ -46,8 +44,9 @@ Item {
             width : parent.width
             height : parent.height
             parent : worldmapcontainer.expandableArea
-            border.width : 1
-            border.color : Global.edgecolor
+//            border.width : 1
+//            border.color : Global.edgecolor
+//            color : Global.actionItemColor
 
             SpatialSelectionToolbar{
                 id : buttons
@@ -57,7 +56,7 @@ Item {
             LayersView{
                 id : worldmap
                 width : parent.width - 30
-                height : worldmapcontainer.panelHeight - 4
+                height : worldmapcontainer.panelHeight - 15
                 x : 28
                 y : 2
                 Connections{
