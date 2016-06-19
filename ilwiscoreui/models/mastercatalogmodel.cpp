@@ -154,7 +154,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
     }
 
     QThread* thread = new QThread;
-    CatalogWorker* worker = new CatalogWorker(models);
+    CatalogWorker* worker = new CatalogWorker(models, context()->workingCatalog());
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
     thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
@@ -869,8 +869,9 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 }
 
 //--------------------
-CatalogWorker::CatalogWorker(QList<CatalogModel *> &models) : _models(models)
+CatalogWorker::CatalogWorker(QList<CatalogModel *> &models, ICatalog cat) : _models(models)
 {
+    context()->setWorkingCatalog(cat);
 }
 
 CatalogWorker::~CatalogWorker(){

@@ -140,7 +140,7 @@ class CatalogWorker : public QObject {
     Q_OBJECT
 
 public:
-    CatalogWorker(QList<CatalogModel* >&models);
+    CatalogWorker(QList<CatalogModel* >&models, Ilwis::ICatalog cat);
     ~CatalogWorker();
 
 public slots:
