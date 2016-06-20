@@ -27,7 +27,7 @@ Rectangle {
         color : Global.alternatecolor3
         Text{
             text : qsTr("Property Editor")
-            font.weight: Font.DemiBold
+            font.bold: true
             anchors.verticalCenter: parent.verticalCenter
         }
     }

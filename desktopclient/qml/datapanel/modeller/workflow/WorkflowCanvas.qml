@@ -85,7 +85,7 @@ Modeller.ModellerWorkArea {
 
                     var EndCoords = transformedPoint(endX, endY);
 
-                    var isContained = mouseX >= (startCoords.x) && mouseY >= (startCoords.y) && mouseX <= endX && mouseY <= endY;
+                    var isOperationContained = mouseX >= (startCoords.x) && mouseY >= (startCoords.y) && mouseX <= endX && mouseY <= endY;
 
                     for(var j=0; j < item.flowConnections.length; j++)
                     {
@@ -117,7 +117,7 @@ Modeller.ModellerWorkArea {
                         flow.isSelected = false;
                     }
 
-                    if ( isContained && item.z > highestZ ) {
+                    if ( isOperationContained && item.z > highestZ ) {
                         operationSelected = i
                         highestZ = item.z
                     }
@@ -125,7 +125,7 @@ Modeller.ModellerWorkArea {
                 }
                 wfCanvas.oldx = mouseX
                 wfCanvas.oldy = mouseY
-                wfCanvas.currentIndex = operationSelected
+                wfCanvas.currentOperationIndex = operationSelected
 
                 if(!selectedFlow && operationSelected == -1)
                 {
@@ -209,9 +209,9 @@ Modeller.ModellerWorkArea {
                     wfCanvas.canvasValid = false
                 }
                 if (wfCanvas.oldx >= 0 && wfCanvas.oldy >= 0
-                        && wfCanvas.currentIndex >= 0) {
+                        && wfCanvas.currentOperationIndex >= 0) {
 
-                    var item = wfCanvas.operationsList[wfCanvas.currentIndex]
+                    var item = wfCanvas.operationsList[wfCanvas.currentOperationIndex]
                     if (item) {
                         cursorShape = Qt.SizeAllCursor
                         area.positionChanged = true
@@ -578,7 +578,7 @@ Modeller.ModellerWorkArea {
        property point workingLineBegin : Qt.point(-1,-1)
        property point workingLineEnd : Qt.point(-1,-1)
        property int currentConditionContainer: -1
-       property int currentIndex: 0
+       property int currentOperationIndex: 0
        property var component
        property var currentItem
        property var operationsList: []
@@ -782,7 +782,7 @@ Modeller.ModellerWorkArea {
 
        function showAttachmentForm(target, attachRect){
            canvasActive = false;
-           attachementForm.operationOut = operationsList[wfCanvas.currentIndex]
+           attachementForm.operationOut = operationsList[wfCanvas.currentOperationIndex]
            attachementForm.operationIn = target
            attachementForm.attachRect = attachRect
            attachementForm.target = target

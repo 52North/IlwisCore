@@ -233,6 +233,17 @@ void OperationCatalogModel::gatherItems() {
     }
 
     std::vector<Resource> items = _view.items();
+    std::sort(items.begin(), items.end(),[](const Resource& r1, const Resource& r2){
+        QString name1 = r1["longname"].toString();
+        if ( name1 == sUNDEF)
+            name1 = r1.name();
+        QString name2 = r2["longname"].toString();
+        if ( name2 == sUNDEF)
+            name2 = r2.name();
+        return name1.toLower() < name2.toLower();
+
+
+    });
     std::map<QString, std::vector<OperationModel *>> operationsByKey;
     std::set<QString> keywordset;
 

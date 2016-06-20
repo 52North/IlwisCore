@@ -3,6 +3,8 @@
 #include "symboltable.h"
 #include "table.h"
 #include "pixeliterator.h"
+#include "itemrange.h"
+#include "itemiterator.h"
 
 using namespace Ilwis;
 
@@ -43,12 +45,11 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
         resourceRef().addProperty("coordinatesystem",coordinateSystem()->id());
         resourceRef().addProperty("georeference",_georef->id());
         resourceRef().addProperty("latlonenvelop", coordinateSystem()->envelope(true).toString());
-    }
-    if (_georef.isValid()){
         if ( _size.isValid() && !_size.isNull() && !resetData)
             _size = Size<>(_georef->size().xsize(), _georef->size().ysize(), _size.zsize());
         else
             _size = _georef->size();
+        envelope(grf->envelope());
 
     }
     else
@@ -434,11 +435,34 @@ bool RasterCoverage::hasAttributes() const
     return _attributeTable.isValid();
 }
 
-void RasterCoverage::setAttributes(const ITable& tbl)
+void RasterCoverage::setAttributes(const ITable& tbl, const QString& joinColumn)
 {
     if ( isReadOnly())
         return;
     changed(true);
+    if (joinColumn != sUNDEF){
+//        int index = tbl->columnIndex(joinColumn);
+//        if ( index == iUNDEF){
+//            kernel()->issues()->log(TR("Join Column doesnt exist in potential attribute table ") + joinColumn, IssueObject::itWarning);
+//            return;
+//        }
+//        if ( !tbl->columndefinition(index).datadef().domain()->isCompatibleWith(datadef().domain().ptr())){
+//            kernel()->issues()->log(TR("Join Column Domain isnt compatible with raster domain") + joinColumn, IssueObject::itWarning);
+//            return;
+//        }
+//        ITable  newtabel;
+//        newtabel.prepare();
+//        newtabel->name(name());
+//        for(int i=0; i < tbl->columnCount(); ++i)
+//            newtabel->addColumn(tbl->columndefinition(i));
+
+//        ItemIterator<DomainItem> iter(static_cast<ItemRange *>(datadef().range().data()));
+
+//        while(iter != iter.end()){
+
+//        }
+
+    }
     _attributeTable = tbl;
 }
 

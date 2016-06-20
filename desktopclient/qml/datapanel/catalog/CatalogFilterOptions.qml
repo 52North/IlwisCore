@@ -8,29 +8,28 @@ import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Item {
-    width: catalogoptions.width
-    height: catalogoptions.height
-    y : 4
-    x : 4
-
+    anchors.fill: parent
+    anchors.topMargin: 3
     Rectangle {
         id : choices
-        height : spatselect.height - 6
-        width : 320
+        anchors.bottom : parent.bottom
+        width : 350
+        height : parent.height
         border.width: 1
         border.color: Global.edgecolor
+        color :  Global.actionItemColor
 
 
         Column {
-            height : 280
-            width : 310
+            height : parent.height
+            width : parent.width  - 5
             spacing : 4
-            x : 2
+            x : 5
             CatalogFilterButtons{
                 id : objectfilters
             }
             Row {
-                width : parent.width + 40
+                width : parent.width
                 height : 22
                 Text {
                     y : 3
@@ -41,14 +40,14 @@ Item {
 
                 CatalogFilterComboBox{
                     id : catalogfilters
-                    width : parent.width - 140
+                    width : parent.width - 105
                 }
             }
             Controls.ComboxLabelPair{
                 id : countryselect
                 labelText: qsTr("Country select")
                 labelWidth: 100
-                width : parent.width
+                width : parent.width - 5
                 itemModel: internaldatabase.query("Select * from teritories where type='country' order by name")
                 role : "name"
                 Component.onCompleted: {
@@ -75,7 +74,7 @@ Item {
             Controls.ComboxLabelPair{
                 labelText: qsTr("Region select")
                 labelWidth: 100
-                width : parent.width
+                width : parent.width - 5
                 itemModel: internaldatabase.query("Select * from teritories where type='region' order by name")
                 role : "name"
                 Component.onCompleted: {
@@ -101,7 +100,8 @@ Item {
             Controls.TextEditLabelPair{
                 labelText: qsTr("Keyword filters")
                 labelWidth: 100
-                width : parent.width
+                width : parent.width - 5
+                transparentBackgrond : false
                 onContentChanged: {
                     currentCatalog.filter("keyword", content)
                 }
@@ -114,7 +114,8 @@ Item {
                     id : label1
                     labelText: qsTr("Name filter")
                     labelWidth: 100
-                    width : parent.width
+                    width : parent.width -5
+                    transparentBackgrond : false
                     onContentChanged: {
                         currentCatalog.filter("name", content)
                     }
@@ -127,7 +128,8 @@ Item {
                     id : label2
                     labelText: qsTr("Time filter")
                     labelWidth: 100
-                    width : parent.width - 40
+                    width : parent.width - 47
+                    transparentBackgrond : false
                 }
                 Button{
                     anchors.left: label2.right
@@ -140,38 +142,14 @@ Item {
 
         }
     }
-    DropShadow {
-        anchors.left: choices.left
-        width : choices.width + 7
-        height : choices.height
-
-        horizontalOffset: 4
-        verticalOffset: 3
-        radius: 8.0
-        samples: 16
-        color: "#aaa"
-        source: choices
-    }
     Controls.SpatialSelection{
         id : spatselect
         showState: "open"
         anchors.left: choices.right
-        anchors.leftMargin: 5
+        anchors.leftMargin: 6
         z : 1
+        height : parent.height
+        width : 370
     }
-    DropShadow {
-        anchors.left: spatselect.left
-        width : spatselect.width + 7
-        height : spatselect.height
-
-        horizontalOffset: 4
-        verticalOffset: 3
-        radius: 8.0
-        samples: 16
-        color: "grey"
-        source: spatselect
-    }
-
-
 }
 

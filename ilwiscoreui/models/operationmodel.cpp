@@ -265,4 +265,12 @@ QString OperationModel::modelType() const
     return "operationmodel";
 }
 
+bool OperationModel::booleanOperation() const
+{
+    QString ret = getProperty("pout_" + QString::number(1) + "_type");
+    if ( ret == sUNDEF)
+        return false;
+    return ret == "16777216"; // bool
+}
+
 

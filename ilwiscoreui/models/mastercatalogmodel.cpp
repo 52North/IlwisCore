@@ -154,7 +154,7 @@ QList<CatalogModel *> MasterCatalogModel::startBackgroundScans(const std::vector
     }
 
     QThread* thread = new QThread;
-    CatalogWorker* worker = new CatalogWorker(models);
+    CatalogWorker* worker = new CatalogWorker(models, context()->workingCatalog());
     worker->moveToThread(thread);
     thread->connect(thread, &QThread::started, worker, &CatalogWorker::process);
     thread->connect(worker, &CatalogWorker::finished, thread, &QThread::quit);
@@ -869,8 +869,9 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 }
 
 //--------------------
-CatalogWorker::CatalogWorker(QList<CatalogModel *> &models) : _models(models)
+CatalogWorker::CatalogWorker(QList<CatalogModel *> &models, ICatalog cat) : _models(models)
 {
+    context()->setWorkingCatalog(cat);
 }
 
 CatalogWorker::~CatalogWorker(){
@@ -898,9 +899,11 @@ void CatalogWorker::process(){
 
 void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
     try{
-        if ( !resource.hasProperty("latlonenvelope") && hasType(resource.ilwisType(), itCOVERAGE)){
+        if ( !resource.hasProperty("latlonenvelope")){
             ICoverage cov(resource);
             if ( cov.isValid()){
+                if ( cov->coordinateSystem()->isUnknown()) // we cant do anything with unknown
+                    return;
                 if ( cov->coordinateSystem()->isLatLon()){
                     QString envelope = cov->envelope().toString();
                     resource.addProperty("latlonenvelope",envelope);
@@ -929,12 +932,19 @@ void CatalogWorker::calculatelatLonEnvelopes(){
     UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
     trq->prepare("LatLon Envelopes","calculating latlon envelopes",resources.size());
     ICoordinateSystem csyWgs84("code=epsg:4326");
+    ICoordinateSystem csyUnknowm("code=csy:unknown");
     std::vector<Resource> updatedResources;
     int count = 0;
     for(Resource& resource : resources){
-        calcLatLon(csyWgs84, resource, updatedResources);
-        if(!trq->update(1))
-            return;
+        if ( hasType(resource.ilwisType(), itCOVERAGE)){
+            bool ok;
+            quint64 id = resource["coordinatesystem"].toULongLong(&ok);
+            if ( ok && id != csyUnknowm->id()){
+                calcLatLon(csyWgs84, resource, updatedResources);
+                if(!trq->update(1))
+                    return;
+            }
+        }
         ++count;
 
     }

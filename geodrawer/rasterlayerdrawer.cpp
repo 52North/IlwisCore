@@ -454,3 +454,20 @@ void RasterLayerDrawer::DisplayTexture(Coordinate & c1, Coordinate & c2, Coordin
         }
     }
 }
+
+void RasterLayerDrawer::resetVisualProperty(const QString& propertyName, const IRepresentation& rpr){
+    IRasterCoverage raster = coverage().as<RasterCoverage>();
+    if ( raster->hasAttributes()){
+        for(int i = 0; i < raster->attributeTable()->columnCount(); ++i){
+            const ColumnDefinition& coldef = raster->attributeTable()->columndefinitionRef(i);
+            if ( coldef.name() == propertyName){
+                IlwisTypes attrType = coldef.datadef().domain()->ilwisType();
+                if ( hasType(attrType, itNUMERICDOMAIN | itITEMDOMAIN | itTEXTDOMAIN)){
+                    VisualAttribute props = createVisualProperty(coldef, i, rpr);
+                    visualProperty(coldef.name(), props);
+                    break;
+                }
+            }
+        }
+    }
+}

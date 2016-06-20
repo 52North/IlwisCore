@@ -7,6 +7,7 @@
 #include "table.h"
 #include "featurecoverage.h"
 #include "feature.h"
+#include "raster.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
@@ -174,10 +175,19 @@ Ilwis::OperationImplementation::State ConvertColumnDomain::prepare(ExecutionCont
     if(!_inputTable.prepare(sourceUrl,{"mustexist", true})){
         IFeatureCoverage fc;
         if(!fc.prepare(sourceUrl,{"mustexist", true})){
-            ERROR2(ERR_COULD_NOT_LOAD_2,sourceUrl,"");
-            return sPREPAREFAILED;
-        }
-        _inputTable = fc->attributeTable();
+
+            IRasterCoverage raster;
+            if(!raster.prepare(sourceUrl,{"mustexist", true})){
+                ERROR2(ERR_COULD_NOT_LOAD_2,sourceUrl,"");
+                return sPREPAREFAILED;
+            }else if ( raster->hasAttributes())
+                _inputTable = raster->attributeTable();
+            else{
+                kernel()->issues()->log(TR("Raster needs to have attribute table to be able to do this operation"));
+                return sPREPAREFAILED;
+            }
+        }else
+            _inputTable = fc->attributeTable();
     }
     QString colName = _expression.input<QString>(1);
     if ( _inputTable->columnIndex(colName) == iUNDEF){
@@ -212,7 +222,7 @@ quint64 ConvertColumnDomain::createMetadata()
     operation.setSyntax("convertcolumndomain(inputtable,columnname,targetdomaintype=!identifier|thematic|time|float|integer|color[, domain-name])");
     operation.setDescription(TR("translates the values of a string column in a table to a regular domain"));
     operation.setInParameterCount({3,4});
-    operation.addInParameter(0,itTABLE|itFEATURE, TR("input table/coverage"),TR("input table/coverage with a to be translated string/numeric or id domain column"));
+    operation.addInParameter(0,itTABLE|itFEATURE|itRASTER, TR("input table/coverage"),TR("input table/coverage with a to be translated string/numeric or id domain column"));
     operation.addInParameter(1,itSTRING,  TR("string column"),TR("Column to be translated; must contain string values"));
     operation.addInParameter(2,itSTRING, TR("target domain type"),TR("The domain to which the string values are to be translated") );
     operation.addOptionalInParameter(3,itSTRING,  TR("domain name"),TR("optional name of the to be created domain. If not given it will get the name of the column"));

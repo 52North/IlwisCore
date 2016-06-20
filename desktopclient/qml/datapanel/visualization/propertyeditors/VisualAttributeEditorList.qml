@@ -13,13 +13,13 @@ Item {
         color : Global.alternatecolor3
         Text{
             text : qsTr("Visual properties")
-            font.weight: Font.DemiBold
+            font.bold: true
             anchors.verticalCenter: parent.verticalCenter
         }
     }
     Rectangle {
         id : displayEditors
-        color : Global.alternatecolor2
+        color : Global.actionItemColor
         width : parent.width
         anchors.top: propertiesLabel.bottom
         anchors.topMargin: 2

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import CatalogModel 1.0
 import "../.." as Base
+import "../../Global.js" as Global
 
 TabView {
     id : catalogPanels
@@ -48,7 +49,7 @@ TabView {
     states: [
     State {
              name : "sized"
-             PropertyChanges { target: catalogPanels; height : parent.height - 330}
+             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarHeight}
          },
          State {
              name : "maxed"

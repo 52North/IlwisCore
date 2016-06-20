@@ -162,7 +162,7 @@ public:
      */
     void setFeatureCount(IlwisTypes types, qint32 featureCnt, quint32 level);
     ITable attributeTable(quint32 level=0) ;
-    void setAttributes(const ITable &otherTable);
+    void setAttributes(const ITable &otherTable, const QString& joinColumn=sUNDEF);
     FeatureAttributeDefinition& attributeDefinitionsRef(qint32 level=0) ;
     const FeatureAttributeDefinition& attributeDefinitions(qint32 level=0) const;
 

@@ -104,8 +104,7 @@ Controls.DropableItem{
                 labelText: qsTr("Stack Defintion")
                 labelWidth: 100
                 width : parent.width
-                regexvalidator: /^\d*/
-                content : "1"
+                content : "1.."
             }
             Text{
                 height: Global.rowHeight - 4
@@ -178,11 +177,12 @@ Controls.DropableItem{
                         onDropped : {
                             var id = drag.source.ilwisobjectid
                             var obj = mastercatalog.id2object(id, rasterlist)
+                            var grfurl = obj.getProperty("georeferenceurl");
                             if ( obj && obj.typeName === "rastercoverage"){
                                 if ( grfvalue.content === ""){
-                                     grfvalue.content = obj.getProperty("georeferenceurl");
+                                     grfvalue.content = grfurl
                                 }
-                                if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, obj.url, "georeference"))
+                                if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, grfurl, "georeference"))
                                     rasters.append({path : obj.url})
                             }
                         }

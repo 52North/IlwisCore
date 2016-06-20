@@ -116,14 +116,14 @@ Item {
         Layers{
 
             width : parent.width
-            height : parent.height - maptools.height - 170
+            height : parent.height - Global.actionBarHeight
             id : layers
             states: [
                 State { name: "visible"
 
                     PropertyChanges {
                         target: layers
-                        height : parent.height - maptools.height - 170
+                        height : parent.height -  Global.actionBarHeight
                     }
                 },
                 State {
@@ -144,7 +144,7 @@ Item {
         }
         ViewManager{
             id : viewmanager
-            height : 150
+            height : Global.actionBarHeight
             anchors.left: parent.left
             anchors.leftMargin: 5
             anchors.right: parent.right

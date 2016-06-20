@@ -221,6 +221,7 @@ KERNELSHARED_EXPORT MasterCatalog* mastercatalog();
 class KERNELSHARED_EXPORT CalcLatLon {
 public:
     static void calculatelatLonEnvelopes(const QString& query, const QString& name);
+    static void calculatelatLonEnvelopes(std::vector<Resource> &resources, const QString &name);
 };
 
 }

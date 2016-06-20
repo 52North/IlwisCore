@@ -28,10 +28,12 @@ FocusScope {
                 id : itemgrid
 
                 model : setResources()
+                width : parent.width * Global.uiScale
+                height : parent.height * Global.uiScale
 
                 delegate: CatalogGridDelegate{}
-                cellWidth: 170
-                cellHeight: 18
+                cellWidth: 170 * Global.uiScale
+                cellHeight: 18 * Global.uiScale
                 clip : true
                 cacheBuffer: 1000
                 flow: GridView.FlowTopToBottom

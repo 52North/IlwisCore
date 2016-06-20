@@ -9,6 +9,7 @@
 #include "raster.h"
 #include "itemdomain.h"
 #include "itemiterator.h"
+#include "pixeliterator.h"
 #include "catalog.h"
 #include "createrastercoverage.h"
 #include "ilwiscontext.h"
@@ -42,13 +43,18 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     else
          raster->setDataDefintions(_domain, _stackValueStrings, _stackDomain);
 
-    int layer = 0;
+    initialize(raster->size().linearSize());
+    PixelIterator pout(raster);
     for(auto& band : _bands){
-        if ( _autoresample){
-
+        PixelIterator pin(band);
+        for(double value : band){
+            *pout = value;
+//            if(!trq()->update(1))
+//                return false;
+            ++pout;
         }
-        raster->copyBinary(band,0,layer++);
     }
+
 
     QVariant value;
     value.setValue<IRasterCoverage>(raster);
@@ -105,7 +111,9 @@ bool CreateRasterCoverage::parseStackDefintionNumericCase(const QString& stackDe
                 double mmin = parts2[0].toDouble(&ok);
                 if (!ok) return false;
                 double mmax = parts2[1].toDouble(&ok);
-                if (!ok) return false;
+                if (!ok)
+                    mmax = _bands.size();
+
                 if ( mmin > mmax) return false;
                 if ( parts.size() == 2){
                     res = parts[2].toDouble(&ok);
@@ -200,6 +208,18 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     if ( maps.indexOf("?") != -1 || maps.indexOf("*") != -1){
         maps = expandWildCards(maps);
     }
+    if (maps != ""){
+        QStringList bands = maps.split(",");
+        for(QString band : bands){
+            IRasterCoverage raster(band);
+            if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
+                _bands.push_back(raster);
+            }else{
+                kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
+                return sPREPAREFAILED;
+            }
+        }
+    }
 
 
     _stackDomain = IDomain("count");
@@ -216,18 +236,6 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
             }
             else if ( hasType(_expression.parm(i).valuetype(),itBOOL) && maps.size() != 0){
                 _autoresample = _expression.input<bool>(i);
-            }
-        }
-    }
-    if (maps != ""){
-        QStringList bands = maps.split(",");
-        for(QString band : bands){
-            IRasterCoverage raster(band);
-            if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
-                _bands.push_back(raster);
-            }else{
-                kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
-                return sPREPAREFAILED;
             }
         }
     }

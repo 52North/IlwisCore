@@ -287,7 +287,7 @@ ITable FeatureCoverage::attributeTable(quint32 level)
     return tbl;
 }
 
-void FeatureCoverage::setAttributes(const ITable& otherTable)
+void FeatureCoverage::setAttributes(const ITable& otherTable, const QString &joinColumn)
 {
     _attributeDefinition.clearAttributeDefinitions();
 

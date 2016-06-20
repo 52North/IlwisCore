@@ -12,9 +12,12 @@ var formBackGround = "#F9F9F9"
 var altFormBackGround = "#E6E6E6"
 var selectedColor = "#99CCFF"
 var selectedTabColor = "#B0C4DE"
+var actionItemColor =  "#f2f0e9"
 var alternateSelectedTabColor = "#87CEFA"
 var notSelectedTabColor = "white"
 var rowHeight = 20
+var actionBarHeight = 260
+var uiScale = 1.0
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);

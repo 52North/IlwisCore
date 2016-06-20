@@ -146,7 +146,16 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
 
 std::vector<Resource> loadExplorerData(const std::pair<CatalogExplorer *, IOOptions>& expl){
     try {
+//#ifdef QT_DEBUG
+//        kernel()->startClock();
+//#endif
+        ICatalog cat = expl.second["workingcatalog"].value<ICatalog>();
+        context()->setWorkingCatalog(cat);
         std::vector<Resource> items = expl.first->loadItems(expl.second);
+//#ifdef QT_DEBUG
+//        QString lbl = QString("loading:%1  items:%2 provider:%3").arg(expl.first->source().url().toString()).arg(items.size()).arg(expl.first->provider());
+//        kernel()->endClock(lbl);
+//#endif
 
         return items;
     } catch (const ErrorObject& err){
@@ -167,11 +176,19 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(source().url(true).toString()),IssueObject::itMessage);
     QVector<std::pair<CatalogExplorer *, IOOptions>> explorers;
     for(const auto& explorer : _dataProviders){
-       explorers.push_back({explorer.get(), options});
+        QVariant var;
+        var.setValue(context()->workingCatalog());
+        IOOptions opt = options;
+        opt.addOption("workingcatalog", var);
+       explorers.push_back({explorer.get(), opt});
     }
     QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
     res.waitForFinished();
-    mastercatalog()->addItems(res.result());
+    std::vector<Resource> items = res.result();
+    if ( items.size() > 0){
+        CalcLatLon::calculatelatLonEnvelopes(items, items[0].container().url());
+        mastercatalog()->addItems(items);
+    }
     return true;
 }
 

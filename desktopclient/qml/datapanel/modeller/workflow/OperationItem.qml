@@ -91,10 +91,12 @@ Rectangle {
     }
 
     function getBackground(lastitem) {
-        if (operation) {
-            var keywords = operation.keywords.split(', ')
-            if (keywords.indexOf('workflow') > -1) {
-                return iconsource("workflowitem.png")
+         if (operation) {
+             if ( operation.typeName == "workflow"){
+                 if ( isSelected){
+                     return iconsource("workflowitemSelected.png")
+                 }
+                 return iconsource("workflowitem.png")
             }
         }
         if ( isSelected){
