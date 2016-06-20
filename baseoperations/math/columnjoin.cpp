@@ -374,8 +374,8 @@ quint64 ColumnJoin::createMetadata()
 {
     OperationResource operation({"ilwis://operations/joinattributes"});
     operation.setLongName("Join Attributes");
-    operation.setSyntax("columnjoin(base-table,column-name|number,input-table, column-name|number)");
-    operation.setDescription(TR("Join a base table or coverage with attributes with another table who share a common domain"));
+    operation.setSyntax("joinattributes(base-table,column-name|number,input-table, column-name|number)");
+    operation.setDescription(TR("Join a base table or coverage with attributes from another table that share a common domain"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE|itCOVERAGE, TR("table/ coverage"),TR("Base table or coverage with attributes from which where join is to do be done"));
     operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
