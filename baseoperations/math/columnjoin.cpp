@@ -49,7 +49,6 @@ OperationImplementation *ColumnJoin::create(quint64 metaid, const Ilwis::Operati
     return new ColumnJoin(metaid, expr);
 }
 
-
 void ColumnJoin::createTable(const QString &tmpTable, const ITable table)
 {
     int count = table->columnCount();
@@ -93,19 +92,16 @@ void ColumnJoin::addInsertChangedDataToTempTableStmt(const QString &tmpTable, co
     sqlBuilder.append(" ) VALUES ");
     for (int i = 0 ; i < table->recordCount() ; i++) {
         Record record = table->record(i);
-        if (record.isChanged()) {
-
-            // create value tuples
-            sqlBuilder.append(" ( ");
-            for (int j = 0 ; j < record.columnCount() ; j++) {
-                ColumnDefinition coldef = table->columndefinition(j);
-                QVariant value = record.cell(j);
-                sqlBuilder.append(createInsertValueString(value, coldef));
-                sqlBuilder.append(", ");
-            }
-            sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
-            sqlBuilder.append(" ), ");
+        // create value tuples
+        sqlBuilder.append(" ( ");
+        for (int j = 0 ; j < record.columnCount() ; j++) {
+            ColumnDefinition coldef = table->columndefinition(j);
+            QVariant value = record.cell(j);
+            sqlBuilder.append(createInsertValueString(value, coldef));
+            sqlBuilder.append(", ");
         }
+        sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
+        sqlBuilder.append(" ), ");
     }
     sqlBuilder = trimAndRemoveLastCharacter(sqlBuilder);
     sqlBuilder.append(" ; ");
@@ -209,7 +205,7 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     selectSQL.append("SELECT * FROM ");
 
     selectSQL.append(_objectname);
-    selectSQL.append(" INNER JOIN "+_joinTable+" ON ");
+    selectSQL.append(" LEFT JOIN "+_joinTable+" ON ");
     selectSQL.append(_objectname);
     selectSQL.append(".");
     selectSQL.append(_primaryKeyColumn);
@@ -220,11 +216,10 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     //std::cout<<selectSQL.toStdString()<<std::endl;
 
     InternalDatabaseConnection db;
-    int count = 0;
     std::vector<QVariant> outdata(_outputTable->columnCount());
     bool queryok;
+    int row = 0;
     if((queryok=db.exec(selectSQL))){
-        int row = 0;
         while (db.next()){
             QSqlRecord rec = db.record();
             for(int i=0; i<rec.count(); ++i){
@@ -258,8 +253,8 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
                 int count = 0;
                 for(const SPFeatureI& feature : inputfeatures){
-                    auto newFeature = features->newFeatureFrom(feature);
-                    auto datarecord = _outputTable->record(count++);
+                    SPFeatureI newFeature = features->newFeatureFrom(feature);
+                    Record datarecord = _outputTable->record(count++);
                     newFeature->record(datarecord);
                 }
                 QVariant var;
@@ -270,7 +265,7 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }else {
             QVariant var;
             var.setValue<ITable>(_outputTable);
-            ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outputColumn);
+            ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_foreignKeyColumn);
         }
         return true;
     }
@@ -279,34 +274,33 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    QString baseTable = _expression.parm(0).value();
-    QUrl dr(baseTable);
+    QString baseName = _expression.parm(0).value();
+    QUrl dr(baseName);
     _objectname = dr.fileName().split(".",QString::SkipEmptyParts).at(0);
-    Resource res = mastercatalog()->name2Resource(baseTable, itTABLE | itCOVERAGE);
-    if ( !res.isValid()){
-        kernel()->issues()->log(QString(TR("%1 is not a valid resource").arg(baseTable)));
+    IIlwisObject obj;
+    if (!obj.prepare(baseName)) {
+        kernel()->issues()->log(QString(TR("%1 is not a valid table").arg(baseName)));
         return sPREPAREFAILED;
     }
-    if ( hasType(res.ilwisType(), itCOVERAGE)){
-        ICoverage cov(res);
-        if (!cov.isValid() ){
-            kernel()->issues()->log(QString(TR("%1 is not a valid resource").arg(baseTable)));
-            return sPREPAREFAILED;
-        }
-        _inputCoverage = cov;
+    IlwisTypes tp = obj->ilwisType();
+    if (tp & itCOVERAGE) {
+        _inputCoverage = obj.as<Coverage>();
         _baseTable = _inputCoverage->attributeTable();
         if ( !_baseTable.isValid()){
-            kernel()->issues()->log(QString(TR("%1 has no attribute table").arg(baseTable)));
+            kernel()->issues()->log(QString(TR("%1 has no valid attribute table").arg(baseName)));
             return sPREPAREFAILED;
         }
-
-    }else {
-        if (!_baseTable.prepare(baseTable)){
-            ERROR2(ERR_COULD_NOT_LOAD_2,baseTable,"");
+    } else if (tp & itTABLE) {
+        _baseTable = obj.as<Table>();
+        if ( !_baseTable.isValid()){
+            kernel()->issues()->log(QString(TR("%1 is not a valid table").arg(baseName)));
             return sPREPAREFAILED;
         }
+    } else {
+        kernel()->issues()->log(QString(TR("%1 is not a valid table").arg(baseName)));
+        return sPREPAREFAILED;
     }
-   _objectname = _objectname+"_base_tbl";
+    _objectname = _objectname+"_base_tbl";
     _primaryKeyColumn = _expression.parm(1).value();
 
     QString inputTable = _expression.parm(2).value();
@@ -319,27 +313,9 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     }
 
     ColumnDefinition def1 = _baseTable->columndefinition(_primaryKeyColumn);
-    IDomain dmColumn1 = def1.datadef().domain<>();
-    IlwisTypes valueType1 = def1.datadef().domain<>()->valueType();
-
-    for(int j = 0; j < _inputTable->columnCount(); j++){
-        ColumnDefinition def2 = _inputTable->columndefinition(j);
-        IDomain dmColumn2 = def2.datadef().domain<>();
-        IlwisTypes valueType2 = def2.datadef().domain<>()->valueType();
-        if((dmColumn1 == dmColumn2) && (valueType1 == valueType2) ){
-
-            _foreignKeyColumn = def2.name();
-        }
-    }
-    const Parameter& parm1 = _expression.parm(3);
-    _inputColumn = parm1.value();
-    bool ok = true;
-    if ( hasType(parm1.valuetype(),itNUMBER)){
-        _number1 = parm1.value().toDouble(&ok);
-    }
-    _outputColumn = _inputColumn;
+    _foreignKeyColumn = _expression.parm(3).value();
     QString outName = _expression.parm(0, false).value();
-    if (baseTable != outName) {
+    if (baseName != outName) {
         if (outName == sUNDEF){
             IFlatTable  ftable;
             ftable.prepare();
