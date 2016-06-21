@@ -43,19 +43,18 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
             double v_in1 = *iterIn;
             if ( v_in1 != rUNDEF && _number != rUNDEF) {
                 v = compare2(_operator, v_in1, _number);
-            }
+            } else
+                v = rUNDEF;
             ++iterIn;
-            return true;
         });
         return true;
     };
 
+    ctx->_threaded = false;
     if (!OperationHelperRaster::execute(ctx, BinaryLogical, _outputGC))
             return false;
 
-
     return setOutput(ctx, symTable);
-
 }
 
 bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& symTable) {
@@ -71,14 +70,21 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
             v_in2 = *iterIn2;
             if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
                 v = compare2(_operator, v_in1, v_in2);
-            }
+            } else
+                v = rUNDEF;
             ++iterIn1;
             ++iterIn2;
-            return true;
         });
         return true;
-    };
+   };
 
+   if ( !_inputGC1->georeference()->isCompatible(_inputGC2->georeference())) {
+        if (!OperationHelperRaster::resample(_inputGC1, _inputGC2, ctx)) {
+            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+        }
+   }
+
+   ctx->_threaded = false;
    bool resource = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
 
     if (resource && ctx)

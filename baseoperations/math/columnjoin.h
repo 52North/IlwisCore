@@ -30,8 +30,6 @@ private:
         QString _joinTable = sUNDEF;
 
         QString _primaryKeyColumn = sUNDEF;
-        QString _outputColumn = sUNDEF;
-        QString _inputColumn = sUNDEF;
         QString _foreignKeyColumn = sUNDEF;
         QString insertSQL;
         QString createSQL;

@@ -153,10 +153,7 @@ void PixelIterator::init() {
     if ( isNumericalUndef(_endz))
         _endz = 0;
 
-    bool inside = contains(Pixel(_x,_y));
-    if ( inside) {
-        _grid = _raster->gridRef().get();
-    }
+    _grid = _raster->gridRef().get();
     if ( _grid == 0) {
         _isValid = false;
         if (!isValid())
@@ -164,6 +161,7 @@ void PixelIterator::init() {
     }
 
     initPosition();
+    bool inside = contains(Pixel(_x,_y));
     _isValid = inside;
     _xChanged = _yChanged = _zChanged = false;
 }
