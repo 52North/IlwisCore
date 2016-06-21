@@ -44,6 +44,8 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         *pixiter = rUNDEF;
         ++pixiter;
     }
+    // we need a coordinate transformation when the two coordinatesystem dont match
+    bool needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
     // loop over all features
     // the 'feature' object is actually something of the SPFeatureI class which is a simple wrapper for a featureinterface
     for(auto feature :  _inputfeatures){
@@ -55,17 +57,22 @@ bool PointToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         Coordinate crd(*feature->geometry()->getCoordinate());
         // if the coordinate system of input and output dont match we need to transform the input coordinate to something that
         // makes sense in the system of the output raster
-        if ( _needCoordinateTransformation)
+        if ( needCoordinateTransformation)
             crd = _outputraster->coordinateSystem()->coord2coord(_inputfeatures->coordinateSystem(), crd);
         // a raster contains pixels, each pixel represents a location(world coordinate) in the coordinate system of the raster
         // the georefence translate (both directions) between pixel locations and world locations
         // now we move the pixel iterator to the right location. normally we use operators like ++, --. +=, -= for this job
         // but as a pointmap is representing a very sparsely filled raster we can use a slightly less performant operator (assignment)
         // to keep the code simple. There are not that many pixels to be filled
-        pixiter = _outputraster->georeference()->coord2Pixel(crd);
-        // and we assign a value to the pixel
-        quint64 id = feature->featureid();
-        *pixiter = id;
+        if (crd.isValid()) {
+            Pixel pix = _outputraster->georeference()->coord2Pixel(crd);
+            if (pix.isValid() && pixiter.contains(pix)) {
+                pixiter = pix;
+                // and we assign a value to the pixel
+                quint64 id = feature->featureid();
+                *pixiter = id;
+            }
+        }
     }
     // we are done now. We need to transfer the generated output to the system so that other parts can also use it.
     // This is mainly relevant when operations are used in a scripting enviroment as the output has to be known in the context
@@ -135,9 +142,6 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
         _inputgrf = grf;
     }
 
-    // we need a coordinate transformation when the two coordinatesystem dont match
-    _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
-
     // we handle the domain a little but simplistic. In reality the domain has to be extracted from the featurecoverage
     // but that complicates things for this example. We choose a value domain to support rUNDEF.
     IDomain dom("value");
@@ -150,7 +154,6 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
     Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
-
 
     return sPREPARED;
 }

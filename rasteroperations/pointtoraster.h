@@ -22,7 +22,6 @@ private:
     IFeatureCoverage _inputfeatures;
     IRasterCoverage _outputraster;
     IGeoReference _inputgrf;
-    bool _needCoordinateTransformation = false;
 
     NEW_OPERATION(PointToRaster);
 };
