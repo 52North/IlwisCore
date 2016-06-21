@@ -31,7 +31,7 @@ void ExecutionContext::clear(bool resultsOnly)
         _masterCsy = sUNDEF;
         _masterGeoref = sUNDEF;
         _silent = false;
-        _threaded = true;
+        _threaded = false;
         _out = &std::cout;
         _useAdditionalParameters = false;
     }
