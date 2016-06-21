@@ -35,7 +35,7 @@ private:
     void distanceCalculation();
 
     NEW_OPERATION(DistanceRaster);
-    bool setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double weight, CalcDirection cd);
+    bool setDistanceValue(PixelIterator & iter, PixelIterator & neighbour, Size<> sz, double weight, CalcDirection cd);
     double Min(double val1, double val2);
 };
 

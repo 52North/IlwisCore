@@ -67,7 +67,7 @@ double DistanceRaster::Min(double val1, double val2) {
 
 }
 
-bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbour, Size<> sz, double inputWeight, CalcDirection cd)
+bool DistanceRaster::setDistanceValue(PixelIterator & iter, PixelIterator & neighbour, Size<> sz, double inputWeight, CalcDirection cd)
 {
     double pixOrigValue = *iter;
     quint32 iterx = iter.x();
@@ -77,31 +77,32 @@ bool DistanceRaster::setDistanceValue(PixelIterator iter, PixelIterator neighbou
     double weight = inputWeight == UNDEF ? 1e100 : inputWeight;
 
     // Algorithm functionality was kept as the way it was in Ilwis 3.8.5 (Scan-lines based)
+    double &value = *iter;
     if (cd == CalcDirection::cdForward) {
         if (iterx > 0)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
         if (iterx < sz.xsize()-1)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
         if (itery > 0)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx, itery-1, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx, itery-1, iterz)] + (5 * weight));
         if (iterx > 0 && itery > 0)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery-1, iterz)] + (7 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx-1, itery-1, iterz)] + (7 * weight));
         if (iterx < sz.xsize()-1 && itery > 0)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery-1, iterz)] + (7 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx+1, itery-1, iterz)] + (7 * weight));
     } else {
         if (iterx < sz.xsize()-1)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx+1, itery, iterz)] + (5 * weight));
         if (iterx > 0)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx-1, itery, iterz)] + (5 * weight));
         if (itery < sz.ysize()-1)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx, itery+1, iterz)] + (5 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx, itery+1, iterz)] + (5 * weight));
         if (iterx > 0 && itery < sz.ysize()-1)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx-1, itery+1, iterz)] + (7 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx-1, itery+1, iterz)] + (7 * weight));
         if (iterx < sz.xsize()-1 && itery < sz.ysize()-1)
-            *iter = Min(*iter,  *neighbour[Pixel(iterx+1, itery+1, iterz)] + (7 * weight));
+            value = Min(value,  *neighbour[Pixel(iterx+1, itery+1, iterz)] + (7 * weight));
     }
 
-    return pixOrigValue != *iter;
+    return pixOrigValue != value;
 }
 
 void DistanceRaster::distanceCalculation() {
