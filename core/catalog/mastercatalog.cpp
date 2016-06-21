@@ -103,7 +103,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource = name2Resource(location.toString());
+    Resource resource = name2Resource(location.toString(),itCATALOG);
     if ( !resource.isValid() || !hasType(resource.extendedType(), itCATALOG)){
         resource = Resource(location, itCATALOG);
     }
