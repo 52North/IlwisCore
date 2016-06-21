@@ -206,7 +206,8 @@ void IlwisObject::modifiedTime(const Time &tme)
         return;
     if ( connector().isNull())
         return;
-      changed(true);
+    changed(true);
+    constConnector()->sourceRef().modifiedTime(tme) ;
 }
 
 Time IlwisObject::createTime() const
