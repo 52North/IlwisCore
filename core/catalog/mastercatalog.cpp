@@ -446,9 +446,10 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
         while ( db.next()){ // external reference finding
             isExternalRef = false;
             bool ok;
-            auto propertyid = db.value(0).toLongLong(&ok);
+            QVariant v = db.value(0);
+            auto propertyid = v.toLongLong(&ok);
             if (!ok) {
-                kernel()->issues()->log(QString(TR("Invalid catalog property, mastercatalog corrupted : %1?").arg(name)),IssueObject::itWarning);
+                continue;
             }
             auto type = id2type(propertyid);
             if ( type & tp)
