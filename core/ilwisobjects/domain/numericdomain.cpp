@@ -158,6 +158,11 @@ bool NumericDomain::isCompatibleWith(const IlwisObject *obj, bool strict) const 
         return false;
     if(obj->ilwisType() != itNUMERICDOMAIN)
         return false;
+    if (strict) {
+        const NumericDomain * dm2 = static_cast<const NumericDomain*>(obj);
+        if (!_range.isNull() && !dm2->_range.isNull())
+            return *_range == *dm2->_range;
+    }
     return true;
 }
 
